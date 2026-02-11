@@ -29,19 +29,7 @@ import type AreaSeriesOptions from './AreaSeriesOptions';
  *
  * */
 
-
-/**
- * The area series type.
- *
- * @sample {highcharts} highcharts/demo/area-chart/
- *         Area chart
- * @sample {highstock} stock/demo/area/
- *         Area chart
- *
- * @extends      plotOptions.line
- * @excluding    useOhlcData
- * @product      highcharts highstock
- */
+/** @internal */
 const AreaSeriesDefaults: AreaSeriesOptions = {
 
     /**
@@ -167,6 +155,20 @@ const AreaSeriesDefaults: AreaSeriesOptions = {
     legendSymbol: 'areaMarker'
 
 };
+
+/**
+ * The area series type.
+ *
+ * @sample {highcharts} highcharts/demo/area-chart/
+ *         Area chart
+ * @sample {highstock} stock/demo/area/
+ *         Area chart
+ *
+ * @extends      plotOptions.line
+ * @excluding    useOhlcData
+ * @product      highcharts highstock
+ * @apioption    plotOptions.area
+ */
 
 /**
  * A `area` series. If the [type](#series.area.type) option is not

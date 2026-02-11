@@ -59,28 +59,14 @@ const {
  *
  * */
 
-/**
- * The area range series is a carteseian series with higher and lower values for
- * each point along an X axis, where the area between the values is shaded.
- *
- * @sample {highcharts} highcharts/demo/arearange/
- *         Area range chart
- * @sample {highstock} stock/demo/arearange/
- *         Area range chart
- *
- * @extends      plotOptions.area
- * @product      highcharts highstock
- * @excluding    stack, stacking
- * @requires     highcharts-more
- *
- * @private
- */
+/** @internal */
 const areaRangeSeriesOptions: AreaRangeSeriesOptions = {
 
     /**
      * @see [fillColor](#plotOptions.arearange.fillColor)
      * @see [fillOpacity](#plotOptions.arearange.fillOpacity)
      *
+     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      * @apioption plotOptions.arearange.color
      */
 
@@ -93,6 +79,7 @@ const areaRangeSeriesOptions: AreaRangeSeriesOptions = {
      * @see [color](#plotOptions.arearange.color)
      * @see [fillOpacity](#plotOptions.arearange.fillOpacity)
      *
+     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      * @apioption plotOptions.arearange.fillColor
      */
 
@@ -200,6 +187,22 @@ const areaRangeSeriesOptions: AreaRangeSeriesOptions = {
     }
 
 };
+
+/**
+ * The area range series is a carteseian series with higher and lower values for
+ * each point along an X axis, where the area between the values is shaded.
+ *
+ * @sample {highcharts} highcharts/demo/arearange/
+ *         Area range chart
+ * @sample {highstock} stock/demo/arearange/
+ *         Area range chart
+ *
+ * @extends      plotOptions.area
+ * @product      highcharts highstock
+ * @excluding    stack, stacking
+ * @requires     highcharts-more
+ * @apioption    plotOptions.arearange
+ */
 
 /* *
  *

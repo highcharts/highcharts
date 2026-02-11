@@ -47,6 +47,7 @@ const AreaRangeSeriesDefaults: AreaRangeSeriesOptions = {
      * @see [fillColor](#plotOptions.arearange.fillColor)
      * @see [fillOpacity](#plotOptions.arearange.fillOpacity)
      *
+     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      * @apioption plotOptions.arearange.color
      */
 
@@ -59,6 +60,7 @@ const AreaRangeSeriesDefaults: AreaRangeSeriesOptions = {
      * @see [color](#plotOptions.arearange.color)
      * @see [fillOpacity](#plotOptions.arearange.fillOpacity)
      *
+     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      * @apioption plotOptions.arearange.fillColor
      */
 
@@ -183,6 +185,7 @@ const AreaRangeSeriesDefaults: AreaRangeSeriesOptions = {
  * @see [fillColor](#series.arearange.fillColor)
  * @see [fillOpacity](#series.arearange.fillOpacity)
  *
+ * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
  * @apioption series.arearange.color
  */
 
@@ -259,6 +262,7 @@ const AreaRangeSeriesDefaults: AreaRangeSeriesOptions = {
  * @see [color](#series.arearange.color)
  * @see [fillColor](#series.arearange.fillColor)
  *
+ * @type      {number}
  * @default   {highcharts} 0.75
  * @default   {highstock} 0.75
  * @apioption series.arearange.fillOpacity
