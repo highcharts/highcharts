@@ -1,6 +1,4 @@
 ---
- name: Demo of xAxis.labels.align
- authors:
-   - Torstein Hønsi
- js_wrap: b
+name: Demo of xAxis.labels.align
+js_wrap: b
 ...
