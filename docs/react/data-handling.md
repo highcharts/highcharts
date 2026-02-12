@@ -67,7 +67,7 @@ export default function MyChart() {
 
 ## Data mutation
 
-By default, Highcharts mutates chart data for performance and memory efficiency (controlled by [allowMutatingData](https://api.highcharts.com/highcharts/chart.allowMutatingData)). The React integration disables this behavior to follow React's immutability principles and keep state read-only. If needed, you can adjust it:
+By default, Highcharts treats your data as immutable and keeps state read-only. Increased performance with large datasets can be achieved by allowing Highcharts to mutate the data:
 
 ```tsx
 import React, { useState } from 'react';
