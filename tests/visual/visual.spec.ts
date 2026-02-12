@@ -96,12 +96,36 @@ const CHART_LOAD_TIMEOUT_MS =
 const RENDER_WIDTH = 600;
 const RENDER_HEIGHT = 400;
 const SNAPSHOT_NAME_MAX_LENGTH = 90;
+const REMOVABLE_VISUAL_ELEMENT_IDS = [
+    'visual-test-script',
+    'visual-test-styles',
+    'highcharts.css',
+    'demo.css',
+    'test-hc-styles'
+];
 
 const defaultPageContent =
     '<div id="container" style="width: 600px; margin: 0 auto;"></div>';
 
 const getRelativeSamplePath = (samplePath: string): string =>
     relative(process.cwd(), samplePath).replace(/\\/g, '/');
+
+function getErrorMessage(error: unknown): string {
+    if (error instanceof Error) {
+        return error.message;
+    }
+
+    if (
+        typeof error === 'string' ||
+        typeof error === 'number' ||
+        typeof error === 'boolean' ||
+        typeof error === 'bigint'
+    ) {
+        return `${error}`;
+    }
+
+    return 'Unknown error';
+}
 
 function getSnapshotUpdateMode(value: unknown): SnapshotUpdateMode {
     const normalized =
@@ -219,6 +243,45 @@ const pageTemplate = (bodyContent = '') =>
     </body>
 </html>`;
 
+let cachedVisualScripts: string[] | undefined;
+
+async function getVisualScripts(): Promise<string[]> {
+    if (!cachedVisualScripts) {
+        cachedVisualScripts = [
+            ...(await getKarmaScripts()),
+            join('tmp', 'json-sources.js'),
+            join('tests', 'visual', 'visual-setup.js')
+        ];
+    }
+
+    return cachedVisualScripts;
+}
+
+async function initializeVisualPage(
+    currentContext: BrowserContext
+): Promise<Page> {
+    const nextPage = await currentContext.newPage();
+    await setupRoutes(nextPage);
+    await nextPage.setContent(pageTemplate(defaultPageContent));
+
+    const scripts = await getVisualScripts();
+    for (const script of scripts) {
+        await nextPage.addScriptTag({
+            path: script
+        });
+    }
+
+    await nextPage.waitForFunction(
+        () => window.HCVisualSetup?.initialized === true
+    );
+    await nextPage.evaluate(() => {
+        window.HCVisualSetup?.configure({ mode: 'fast' });
+        window.HCVisualSetup?.markOptionsClean();
+    });
+
+    return nextPage;
+}
+
 test.describe('Visual tests', () => {
     test.describe.configure({
         timeout: CHART_LOAD_TIMEOUT_MS + 5_000
@@ -259,48 +322,70 @@ test.describe('Visual tests', () => {
         await setupRoutes(renderPage);
 
         await context.clock.install({ time: FIXED_CLOCK_TIME });
-        page = await context.newPage();
         await context.clock.setFixedTime(FIXED_CLOCK_TIME);
-
-        await setupRoutes(page);
-
-        await page.setContent(pageTemplate(defaultPageContent));
-
-        const scripts = [
-            ...(await getKarmaScripts()),
-            join('tmp', 'json-sources.js'),
-            join('tests', 'visual', 'visual-setup.js')
-        ];
-
-        for (const script of scripts) {
-            await page.addScriptTag({
-                path: script
-            });
-        }
-
-        await page.waitForFunction(
-            () => window.HCVisualSetup?.initialized === true
-        );
-        await page.evaluate(() => {
-            window.HCVisualSetup?.configure({ mode: 'fast' });
-            window.HCVisualSetup?.markOptionsClean();
-        });
+        page = await initializeVisualPage(context);
     });
 
     test.afterEach(async () => {
-        if (!page) {
+        const currentPage = page;
+        if (!currentPage) {
             return;
         }
-        await page.evaluate(() => {
-            const elementsToRemove = document.querySelectorAll(
-                '#visual-test-script, #visual-test-styles'
-            );
-            for (const element of elementsToRemove) {
-                element.remove();
-            }
-        });
 
-        await page.evaluate(() => window.HCVisualSetup?.afterSample());
+        let cleanupFailed = false;
+        const info = test.info();
+
+        try {
+            await currentPage.evaluate((removableIds) => {
+                for (const id of removableIds) {
+                    document.getElementById(id)?.remove();
+                }
+            }, REMOVABLE_VISUAL_ELEMENT_IDS);
+        } catch {
+            cleanupFailed = true;
+        }
+
+        try {
+            await currentPage.evaluate(
+                () => window.HCVisualSetup?.afterSample()
+            );
+        } catch {
+            cleanupFailed = true;
+        }
+
+        const testFailed = info.status !== info.expectedStatus;
+        if (!cleanupFailed && !testFailed) {
+            return;
+        }
+
+        if (!context) {
+            return;
+        }
+
+        if (!currentPage.isClosed()) {
+            await currentPage.close().catch(() => {});
+        }
+
+        try {
+            await context.clock.setFixedTime(FIXED_CLOCK_TIME);
+            page = await initializeVisualPage(context);
+        } catch (error) {
+            page = undefined;
+
+            const message = `Failed to reinitialize visual page after sample: ${
+                getErrorMessage(error)
+            }`;
+
+            if (testFailed) {
+                info.annotations.push({
+                    type: 'warning',
+                    description: message
+                });
+                return;
+            }
+
+            throw new Error(message);
+        }
     });
 
     test.afterAll(async () => {
@@ -722,7 +807,7 @@ test.describe('Visual tests', () => {
                     caret: 'hide',
                     scale: 'css'
                 });
-                expect.soft(screenshot).toMatchSnapshot(snapshotName, {
+                expect(screenshot).toMatchSnapshot(snapshotName, {
                     maxDiffPixels: 0
                 });
 
