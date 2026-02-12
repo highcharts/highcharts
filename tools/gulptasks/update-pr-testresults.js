@@ -329,22 +329,22 @@ async function createPRReviewFile(testResults, pr) {
 
 /**
  * Based on a list of diffing samples (that contain visual test differences compared to a baseline/reference)
- * this function uploads the reference/candidate/diff images + JSON report + review file that are produced
+ * this function uploads reference/candidate assets + JSON report + review file that are produced
  * from a visual test run to S3 in order to make them easily available.
  * @param {Array} diffingSamples list
  * @param {number} pr number to upload for
  * @param {boolean} includeReview file
- * @param {boolean} includeDiffFiles upload image files
+ * @param {boolean} includeSampleAssets upload image files
  * @return {object|undefined} result of upload or undefined
  */
 async function uploadVisualTestFiles(
     diffingSamples,
     pr,
     includeReview = true,
-    includeDiffFiles = false
+    includeSampleAssets = false
 ) {
     let result;
-    const files = includeDiffFiles ? diffingSamples.reduce((resultingFiles, sample) => {
+    const files = includeSampleAssets ? diffingSamples.reduce((resultingFiles, sample) => {
         resultingFiles.push({
             from: `samples/${sample[0]}/reference.svg`,
             to: buildImgS3Path('reference.svg', sample[0], pr)
@@ -352,10 +352,6 @@ async function uploadVisualTestFiles(
         resultingFiles.push({
             from: `samples/${sample[0]}/candidate.svg`,
             to: buildImgS3Path('candidate.svg', sample[0], pr)
-        });
-        resultingFiles.push({
-            from: `samples/${sample[0]}/diff.gif`,
-            to: buildImgS3Path('diff.gif', sample[0], pr)
         });
         return resultingFiles;
     }, []) : [];
@@ -380,7 +376,7 @@ async function uploadVisualTestFiles(
                 files,
                 bucket: VISUAL_TESTS_BUCKET,
                 profile: argv.profile,
-                name: `image diff on PR #${pr}`,
+                name: `visual sample assets on PR #${pr}`,
                 s3Params: {
                     ACL: void 0 // use bucket permissions
                 }
