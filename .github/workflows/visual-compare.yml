@@ -146,40 +146,65 @@ jobs:
       - name: Setup Display
         run: sudo Xvfb -ac :99 -screen 0 1280x1024x24 > /dev/null 2>&1 &
 
+      - name: Restore visual reference cache
+        id: visual-reference-cache
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            samples/**/reference.svg
+          key: visual-reference-${{ runner.os }}-${{ github.event.pull_request.base.sha || github.sha }}-${{ hashFiles('tests/visual/**', 'tests/fixtures.ts', 'tests/utils.ts', 'playwright.config.ts', 'package-lock.json') }}-${{ vars.VISUAL_REFERENCE_CACHE_BUSTER || 'v1' }}
+
       - name: Checkout master samples and ts
+        if: steps.visual-reference-cache.outputs.cache-hit != 'true'
         run: |
           git fetch origin master --depth=1
           git checkout origin/master -- samples ts
 
       - name: Build Highcharts
+        if: steps.visual-reference-cache.outputs.cache-hit != 'true'
         run: npx gulp scripts
       - name: Generate samples
+        if: steps.visual-reference-cache.outputs.cache-hit != 'true'
         run: npx tsc -p samples --skipLibCheck --noEmitOnError false || true
 
       - name: Generate references (Highcharts)
+        if: steps.visual-reference-cache.outputs.cache-hit != 'true'
         run: PLAYWRIGHT_HTML_REPORT=playwright-report/master/highcharts npx playwright test --project=visual --update-snapshots --output test-results/master/highcharts || true
         env:
           VISUAL_TEST_PRODUCT: highcharts
 
       - name: Generate references (Maps)
+        if: steps.visual-reference-cache.outputs.cache-hit != 'true'
         run: PLAYWRIGHT_HTML_REPORT=playwright-report/master/maps npx playwright test --project=visual --update-snapshots --output test-results/master/maps || true
         env:
           VISUAL_TEST_PRODUCT: maps
 
       - name: Generate references (Stock)
+        if: steps.visual-reference-cache.outputs.cache-hit != 'true'
         run: PLAYWRIGHT_HTML_REPORT=playwright-report/master/stock npx playwright test --project=visual --update-snapshots --output test-results/master/stock || true
         env:
           VISUAL_TEST_PRODUCT: stock
 
       - name: Generate references (Gantt)
+        if: steps.visual-reference-cache.outputs.cache-hit != 'true'
         run: PLAYWRIGHT_HTML_REPORT=playwright-report/master/gantt npx playwright test --project=visual --update-snapshots --output test-results/master/gantt || true
         env:
           VISUAL_TEST_PRODUCT: gantt
 
       - name: Show git status after reference
+        if: steps.visual-reference-cache.outputs.cache-hit != 'true'
         run: git status --short
 
+      - name: Save visual reference cache
+        if: steps.visual-reference-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            samples/**/reference.svg
+          key: visual-reference-${{ runner.os }}-${{ github.event.pull_request.base.sha || github.sha }}-${{ hashFiles('tests/visual/**', 'tests/fixtures.ts', 'tests/utils.ts', 'playwright.config.ts', 'package-lock.json') }}-${{ vars.VISUAL_REFERENCE_CACHE_BUSTER || 'v1' }}
+
       - name: Restore current samples and ts
+        if: steps.visual-reference-cache.outputs.cache-hit != 'true'
         run: git checkout -- samples ts
 
       - name: Generate samples
