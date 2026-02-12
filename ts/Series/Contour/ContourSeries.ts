@@ -141,6 +141,7 @@ export default class ContourSeries extends ScatterSeries {
         redraw?: boolean
     ): void {
         options = diffObjects(options, this.userOptions);
+
         const uniformOptions = [
             'smoothColoring',
             'contourInterval',
@@ -151,29 +152,26 @@ export default class ContourSeries extends ScatterSeries {
         const isUniformOption = (key: string): boolean => (
             uniformOptions.includes(key as typeof uniformOptions[number])
         );
-        // If explicit non-uniform options are provided, defer to the base
-        // implementation directly.
-        const hasExplicitNonUniformChanges = Object.keys(options).some(
+        const hasNonUniformOptions = Object.keys(options).some(
             (key): boolean => !isUniformOption(key)
         );
 
-        if (hasExplicitNonUniformChanges) {
-            super.update(options, redraw);
-            return;
-        }
+        // Only fetch plotOptions if all options are uniform related.
+        const allOptions = (
+                hasNonUniformOptions ?
+                    void 0 :
+                    this.setOptions(merge(this.userOptions, options))
+            ),
+            hasNonUniformPlotOptions = allOptions ?
+                Object.keys(diffObjects(allOptions, this.options)).some(
+                    (key): boolean => !isUniformOption(key)
+                ) :
+                false;
 
-        // Check the fully merged options tree to catch inherited changes from
-        // plotOptions and decide if full update is needed.
-        const nextOptions = this.setOptions(merge(this.userOptions, options)),
-            changedOptions = diffObjects(nextOptions, this.options),
-            hasNonUniformMergedChanges = Object.keys(changedOptions).some(
-                (key): boolean => !isUniformOption(key)
-            );
-
-        if (hasNonUniformMergedChanges) {
+        if (hasNonUniformOptions || hasNonUniformPlotOptions) {
             super.update(options, redraw);
         } else {
-            this.options = nextOptions;
+            this.options = allOptions as ContourSeriesOptions;
             // If only uniform-related options changed, avoid full series
             // reconstruction and update uniforms only.
             this.setUniforms();
