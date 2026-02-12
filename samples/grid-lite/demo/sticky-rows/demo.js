@@ -24,6 +24,7 @@ function resolveRowId(cell) {
 
 const stickyMenuItems = [{
     label: 'Stick row',
+    icon: 'plus',
     onClick: function (cell) {
         const cellGrid = cell.row.viewport.grid;
         const rowId = resolveRowId(cell);
@@ -36,6 +37,7 @@ const stickyMenuItems = [{
     }
 }, {
     label: 'Unstick row',
+    icon: 'trash',
     onClick: function (cell) {
         const cellGrid = cell.row.viewport.grid;
         const rowId = resolveRowId(cell);
