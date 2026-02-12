@@ -314,8 +314,10 @@ module.exports = {
             'react/getting-started',
             'react/series-and-chart-types',
             'react/options',
+            'react/data-handling',
             'react/options-component-format',
             'react/nextjs',
+            'react/bundling-and-tree-shaking',
             'react/component-children',
             'react/v4-migration-guide'
         ]

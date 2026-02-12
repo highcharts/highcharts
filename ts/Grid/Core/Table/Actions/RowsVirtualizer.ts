@@ -304,6 +304,39 @@ class RowsVirtualizer {
     }
 
     /**
+     * Refreshes the rendered rows without a full teardown.
+     * It updates the row range and reuses existing rows when possible.
+     */
+    public async refreshRows(): Promise<void> {
+        await this.updateGridMetrics();
+
+        const tbody = this.viewport.tbodyElement;
+        const oldScrollLeft = tbody.scrollLeft;
+        const oldScrollTop = this.viewport.virtualRows ?
+            tbody.scrollTop :
+            void 0;
+
+        const maxRowCursor = Math.max(0, this.rowCount - 1);
+        if (this.rowCursor > maxRowCursor) {
+            this.rowCursor = maxRowCursor;
+        }
+
+        // Render missing rows, drop out-of-range ones, and ensure last row.
+        await this.renderRows(this.rowCursor);
+
+        const rows = this.viewport.rows;
+        for (let i = 0, iEnd = rows.length; i < iEnd; ++i) {
+            // Update row data so indices map to fresh provider values.
+            await rows[i].update();
+        }
+
+        if (this.viewport.virtualRows && defined(oldScrollTop)) {
+            tbody.scrollTop = oldScrollTop;
+        }
+        tbody.scrollLeft = oldScrollLeft;
+    }
+
+    /**
      * Method called on the viewport scroll event, only when the virtualization
      * is enabled.
      */
@@ -505,7 +538,11 @@ class RowsVirtualizer {
             }
 
             // The last row is always kept rendered for bottom alignment
-            const alwaysLastRow = rows.length > 0 ? rows.pop() : void 0;
+            let alwaysLastRow = rows.length > 0 ? rows.pop() : void 0;
+            if (alwaysLastRow && alwaysLastRow.index !== rowCount - 1) {
+                this.poolRow(alwaysLastRow);
+                alwaysLastRow = void 0;
+            }
 
             const from = Math.max(0, Math.min(
                 rowCursor - buffer,
@@ -619,7 +656,31 @@ class RowsVirtualizer {
                 }
             }
 
+            if (!alwaysLastRow && rowCount > 0) {
+                alwaysLastRow = await this.getOrCreateRow(rowCount - 1);
+            }
+
             if (alwaysLastRow) {
+                if (!alwaysLastRow.rendered) {
+                    if (
+                        !alwaysLastRow.htmlElement
+                            .hasAttribute('data-row-index')
+                    ) {
+                        await alwaysLastRow.init();
+                    }
+                    vp.tbodyElement.appendChild(alwaysLastRow.htmlElement);
+                    await alwaysLastRow.render();
+                    if (isVirtualization) {
+                        const topOffset = Math.min(
+                            alwaysLastRow.getDefaultTopOffset(),
+                            this.maxElementHeight -
+                            alwaysLastRow.htmlElement.offsetHeight
+                        );
+                        alwaysLastRow.setTranslateY(topOffset);
+                    }
+                } else if (!alwaysLastRow.htmlElement.isConnected) {
+                    vp.tbodyElement.appendChild(alwaysLastRow.htmlElement);
+                }
                 rows.push(alwaysLastRow);
             }
 
@@ -797,7 +858,7 @@ class RowsVirtualizer {
         const pooledRow = this.rowPool.pop();
 
         if (pooledRow) {
-            await pooledRow.reuse(index, false);
+            await pooledRow.reuse(index);
             if (isVirtualization) {
                 pooledRow.setTranslateY(pooledRow.getDefaultTopOffset());
             }

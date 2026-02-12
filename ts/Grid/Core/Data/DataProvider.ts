@@ -58,6 +58,7 @@ export abstract class DataProvider {
      */
     protected readonly options: DataProviderOptions;
 
+
     /* *
      *
      *  Constructor
@@ -77,6 +78,13 @@ export abstract class DataProvider {
      *  Methods
      *
      * */
+
+    /**
+     * Initializes the data provider.
+     */
+    public init(): Promise<void> {
+        return Promise.resolve();
+    }
 
     /**
      * Returns all available column IDs.
@@ -208,8 +216,10 @@ export type RowId = number | string;
 export interface DataProviderOptions {
     /**
      * The type of the data provider.
+     *
+     * @default 'local'
      */
-    providerType: string;
+    providerType?: string;
 }
 
 

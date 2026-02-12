@@ -7,9 +7,13 @@ export default defineConfig({
     testDir: './tests',
     fullyParallel: true,
     forbidOnly: !!process.env.CI,
-    retries: process.env.CI ? 2 : 0,
+    retries: 0,
     workers: process.env.CI ? 2 : undefined,
-    reporter: [['html', { open: 'never' }]],
+    reporter: [
+        [process.env.CI ? 'dot' : 'line'],
+        ['html', { open: 'never' }],
+        ['./tests/qunit/utils/browser-log-note-reporter.ts']
+    ],
     use: {
         trace: 'on-first-retry',
         baseURL: 'http://localhost',
@@ -53,7 +57,8 @@ export default defineConfig({
                         '--use-gl=angle',
                         '--disable-software-rasterizer'
                     ]
-                }
+                },
+                trace: 'off'
             },
             dependencies: ['setup-highcharts'],
         },
@@ -85,6 +90,7 @@ export default defineConfig({
             use: {
                 ...devices['Desktop Firefox'],
                 headless: true,
+                trace: 'off'
             },
             dependencies: ['setup-highcharts'],
         },

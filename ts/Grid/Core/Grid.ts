@@ -293,7 +293,7 @@ export class Grid {
     /**
      * The unique ID of the Grid.
      */
-    public id: string;
+    public readonly id: string;
 
     /**
      * The list of currently shown popups.
@@ -944,6 +944,8 @@ export class Grid {
                 return;
             }
 
+            await this.dataProvider?.init();
+
             if (
                 flagsToProcess.has('sorting') ||
                 flagsToProcess.has('filtering') ||
@@ -1197,7 +1199,7 @@ export class Grid {
             this.destroy(true);
         }
 
-        this.loadDataProvider();
+        await this.loadDataProvider().init();
 
         this.initContainer(this.renderTo);
         this.initAccessibility();
@@ -1515,7 +1517,7 @@ export class Grid {
         return result;
     }
 
-    private loadDataProvider(): void {
+    private loadDataProvider(): DataProviderType {
         this.dataProvider?.destroy();
         this.querying.shouldBeUpdated = true;
 
@@ -1534,13 +1536,15 @@ export class Grid {
         // End of backward compatibility snippet
 
         const DataProviderConstructor =
-            DataProviderRegistry.types[dataOptions.providerType] ??
+            DataProviderRegistry.types[dataOptions.providerType ?? 'local'] ??
             DataProviderRegistry.types.local;
 
         this.dataProvider = new DataProviderConstructor(
             this.querying,
             dataOptions as never
         );
+
+        return this.dataProvider;
     }
 
     /**
@@ -1760,14 +1764,20 @@ export class Grid {
                 columns: options.dataTable.columns
             };
         }
-        if (
-            options.data &&
-            'dataTable' in options.data &&
-            'clone' in options.data.dataTable
-        ) {
-            options.data.dataTable = {
-                columns: options.data.dataTable.columns
-            };
+
+        if (options.data?.providerType === 'local') {
+            if (options.data?.dataTable && 'clone' in options.data.dataTable) {
+                options.data.dataTable = {
+                    columns: options.data.dataTable.columns
+                };
+            }
+
+            if (
+                options.data?.connector &&
+                'initConverters' in options.data.connector
+            ) {
+                options.data.connector = options.data.connector.options;
+            }
         }
 
         // Clean up the column options by removing the ones that have no other

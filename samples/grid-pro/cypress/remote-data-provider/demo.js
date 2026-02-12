@@ -1,4 +1,4 @@
-(function () {
+(async function () {
     const state = {
         fetchCalls: [],
         grid: null,
@@ -35,7 +35,7 @@
         return ids;
     }
 
-    function createGrid(options) {
+    async function createGrid(options) {
         const {
             totalRowCount = 5,
             data = {},
@@ -51,7 +51,7 @@
             state.grid.destroy();
         }
 
-        state.grid = Grid.grid('container', {
+        state.grid = await Grid.grid('container', {
             data: {
                 providerType: 'remote',
                 ...data,
@@ -64,7 +64,7 @@
             columns,
             rendering,
             pagination
-        });
+        }, true);
 
         return state.grid;
     }
@@ -87,5 +87,5 @@
         }
     };
 
-    createGrid();
+    await createGrid();
 }());

@@ -22,18 +22,24 @@ The following provides an introduction to the various root configuration objects
 ```
 
 The `data` object defines how Grid receives, prepares, and updates data. The only required option for rendering is `data.dataTable`. You can pass either serialized options (from which Grid creates a `DataTable`) or an existing `DataTable` instance. The DataTable class stores key-value pairs: each key becomes a header label, and each value is an array with the corresponding column values. When users edit cells (for example via edit mode), Grid writes changes back through the configured data provider.
+Read more about [data handling and the DataTable class](https://www.highcharts.com/docs/dashboards/data-table).
+
+Instead of `dataTable`, you can also use data connectors for loading data.
 
 ```js
 {
     data: {
-        dataTable: { // data table instance or options
-            columns: data
+        connector: {
+            type: JSON,
+            data: [
+                ['colA', 'colB'],
+                [1, 2],
+                [3, 4]
+            ]
         }
     }
 }
 ```
-
-Read more about [data handling and the DataTable class](https://www.highcharts.com/docs/dashboards/data-table).
 
 ### Data providers
 Grid reads and writes data through a data provider. The default `LocalDataProvider` works with an in-memory `DataTable`, but you can register a custom provider for other data sources. In Grid Pro, the `RemoteDataProvider` is available for server-backed data and on-demand paging. For details and configuration examples, see the [Data providers article](https://www.highcharts.com/docs/grid/data-providers).

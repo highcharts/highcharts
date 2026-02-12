@@ -16,14 +16,14 @@ export interface ControlOptions {
     /**
      * The Highcharts option path, using dot notation
      */
-    path: string;
+    path?: string;
     /** The step value for number controls */
     step?: number;
     /**
      * The control type. If not specified, the generator will try to infer it
      * from the provided value or actual value in the chart or grid.
      */
-    type?: 'number' | 'text' | 'boolean' | 'select' | 'color';
+    type?: 'number' | 'text' | 'boolean' | 'select' | 'color' | 'separator';
     /**
      * The value for this control. If not specified, the generator will use
      * the actual value in the chart or grid.
@@ -71,6 +71,14 @@ export interface Details {
      * page
      */
     use_png_thumbnail?: boolean;
+}
+
+export type FlatTreeNode = {
+    default?: any;
+    extendsPath?: string;
+    mainType?: string;
+    name: string;
+    options?: string[];
 }
 
 export interface SampleGeneratorConfig {
