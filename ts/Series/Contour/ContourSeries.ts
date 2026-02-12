@@ -160,6 +160,9 @@ export default class ContourSeries extends ScatterSeries {
         if (Object.keys(options).length > 0) {
             super.update(options, redraw);
         } else {
+            // Keep inherited options (for example plotOptions.contour) in sync
+            // when Chart.update triggers series.update({}).
+            this.options = this.setOptions(this.userOptions);
             // If no options besides uniform ones are changed, just set the
             // uniforms without rerendering the series.
             this.setUniforms();
