@@ -226,6 +226,20 @@ export interface FirstLastButtonsOptions {
      * @default true
      */
     enabled?: boolean;
+
+    /**
+     * Icon name for the first page button (from the grid icon registry).
+     *
+     * @default 'firstPage'
+     */
+    firstIcon?: string;
+
+    /**
+     * Icon name for the last page button (from the grid icon registry).
+     *
+     * @default 'lastPage'
+     */
+    lastIcon?: string;
 }
 
 /**
@@ -238,4 +252,18 @@ export interface PreviousNextButtonsOptions {
      * @default true
      */
     enabled?: boolean;
+
+    /**
+     * Icon name for the previous page button (from the grid icon registry).
+     *
+     * @default 'prevPage'
+     */
+    prevIcon?: string;
+
+    /**
+     * Icon name for the next page button (from the grid icon registry).
+     *
+     * @default 'nextPage'
+     */
+    nextIcon?: string;
 }
