@@ -14,7 +14,7 @@ Highcharts.chart('container', {
 
 
     title: {
-        text: 'Sales per employee per weekday',
+        text: 'Simple heatmap',
         style: {
             fontSize: '1em'
         }
