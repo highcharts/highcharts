@@ -377,9 +377,12 @@ class Table {
             }
 
             const newRowCount = await dp.getRowCount();
-            if (shouldRerender || oldRowsCount !== newRowCount) {
+            if (shouldRerender) {
                 // Rerender all rows
                 await vp.rowsVirtualizer.rerender();
+            } else if (oldRowsCount !== newRowCount) {
+                // Refresh rows without full teardown
+                await vp.rowsVirtualizer.refreshRows();
             } else {
                 // Update existing rows - create a snapshot to avoid issues
                 // if array changes during iteration
