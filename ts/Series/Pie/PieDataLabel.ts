@@ -528,7 +528,7 @@ namespace ColumnDataLabel {
                         // Fix #21725 - apply overlap check on final position
                         if (
                             labelPosition.distance <= 0 &&
-                            dataLabelOptions.allowOverlap === false
+                            !dataLabelOptions.allowOverlap
                         ) {
                             const currentBBox = {
                                 x: x + (dataLabelOptions.x || 0),
