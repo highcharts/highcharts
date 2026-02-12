@@ -2,9 +2,6 @@ Highcharts.chart('container', {
     title: {
         text: 'Demo of <em>legend.itemHiddenStyle.color</em>'
     },
-    subtitle: {
-        text: 'Click legend items to see the effect'
-    },
     xAxis: {
         categories: [
             'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep',
@@ -19,8 +16,10 @@ Highcharts.chart('container', {
     series: [{
         data: [1, 3, 2, 4]
     }, {
-        data: [5, 3, 4, 2]
+        data: [5, 3, 4, 2],
+        visible: false
     }, {
-        data: [4, 2, 5, 3]
+        data: [4, 2, 5, 3],
+        visible: false
     }]
 });
