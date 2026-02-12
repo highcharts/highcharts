@@ -16,12 +16,19 @@ Grid.grid('container', {
                 weight: [182, 178, 150, 120],
                 price: [3.5, 2.5, 3, 2.2]
             }
-        }
+        },
+        // Optional: auto-refresh when the DataTable changes.
+        updateOnChange: true
     }
 });
 ```
 
 You can also pass a `DataTable` instance instead of serialized options.
+
+If you mutate the DataTable outside of Grid, you can set `updateOnChange: true`
+to refresh rows automatically after table change events. For batched updates,
+leave it `false` and call `grid.viewport.updateRows()` manually once. Updates
+triggered by Grid edits do not cause a second refresh.
 
 ## RemoteDataProvider (Grid Pro)
 Grid Pro includes `RemoteDataProvider` for server-backed data. Use it when you want to page, filter, or sort on the server and fetch rows on demand.
