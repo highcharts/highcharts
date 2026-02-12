@@ -5,6 +5,7 @@ import { setupRoutes } from '~/fixtures.ts';
 import {
     getKarmaScripts,
     getSample,
+    highchartsCSS as highchartsBaseCSS,
     setTestingOptions,
     transpileTS
 } from '~/utils.ts';
@@ -586,20 +587,14 @@ test.describe('Visual tests', () => {
 
             if (isStyledMode) {
                 // Add highcharts.css
-                const highchartsCSS = await page.evaluate(() => {
-                    return (window as VisualWindow).highchartsCSS || '';
+                const styleHandle = await page.addStyleTag({
+                    content: highchartsBaseCSS
                 });
-
-                if (highchartsCSS) {
-                    const styleHandle = await page.addStyleTag({
-                        content: highchartsCSS
-                    });
-                    await styleHandle.evaluate(
-                        (el: HTMLStyleElement) => {
-                            el.id = 'highcharts.css';
-                        }
-                    );
-                }
+                await styleHandle.evaluate(
+                    (el: HTMLStyleElement) => {
+                        el.id = 'highcharts.css';
+                    }
+                );
 
                 // Add demo.css if exists (for styled mode, use id 'demo.css' for SVG injection)
                 if (demoCss) {
