@@ -243,8 +243,7 @@ jobs:
           "s3://$HIGHCHARTS_VISUAL_TESTS_BUCKET/visualtests/diffs/pullrequests/$PR_NUMBER/" \
           --exclude "*" \
           --include "*/reference.svg" \
-          --include "*/candidate.svg" \
-          --include "*/diff.gif"
+          --include "*/candidate.svg"
         env:
           HIGHCHARTS_VISUAL_TESTS_BUCKET: ${{secrets.VISUAL_TESTS_S3_BUCKET}}
           AWS_ACCESS_KEY_ID: ${{secrets.VISUAL_TESTS_AWS_ACCESS_KEY_ID}}

@@ -319,7 +319,7 @@ tests run through Playwright instead of Karma.
 
 2. **Visual comparison** - Runs in Playwright's `visual` project. Pass/fail is
    based on Playwright screenshot assertions (`toHaveScreenshot`) while still
-   writing `reference.svg`, `candidate.svg`, `diff.gif`, plus
+   writing `reference.svg`, `candidate.svg`, plus
    `test/visual-test-results.json`. Use `VISUAL_TEST_PRODUCT` and
    `VISUAL_TEST_PATH` to scope the run.
 

@@ -3,7 +3,6 @@ import { chromium } from '@playwright/test';
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join, posix, sep } from 'node:path';
 import { PNG } from 'pngjs';
-import { GIFEncoder as gifenc, quantize, applyPalette } from 'gifenc';
 
 export interface ComparisonResult {
     passed: boolean;
@@ -11,7 +10,6 @@ export interface ComparisonResult {
     candidatePath: string;
     referencePath: string;
     referenceUpdated: boolean;
-    diffPath?: string;
 }
 
 type SnapshotUpdateMode = 'all' | 'changed' | 'missing' | 'none';
@@ -31,27 +29,6 @@ type PngConstructor = {
 };
 
 const Png = PNG as unknown as PngConstructor;
-
-type GifEncoderInstance = {
-    writeFrame: (
-        frame: Uint8Array,
-        width: number,
-        height: number,
-        options: { palette: Uint8Array; delay: number }
-    ) => void;
-    finish: () => void;
-    bytes: () => Uint8Array;
-};
-
-type GifEncoderFactory = () => GifEncoderInstance;
-
-type QuantizeFn = (data: Uint8Array, maxColors: number) => Uint8Array;
-
-type ApplyPaletteFn = (data: Uint8Array, palette: Uint8Array) => Uint8Array;
-
-const createGifEncoder = gifenc as unknown as GifEncoderFactory;
-const quantizePalette = quantize as unknown as QuantizeFn;
-const applyPaletteToFrame = applyPalette as unknown as ApplyPaletteFn;
 
 const CANVAS_WIDTH = 600;
 const CANVAS_HEIGHT = 400;
@@ -279,7 +256,6 @@ export async function compareSVG(
     samplePath: string,
     svgContent: string,
     options: {
-        generateDiff?: boolean;
         updateMode?: SnapshotUpdateMode;
         renderPage?: Page;
     } = {}
@@ -287,7 +263,6 @@ export async function compareSVG(
     const sampleDir = resolveSampleDir(samplePath);
     const candidatePath = join(sampleDir, 'candidate.svg');
     const referencePath = join(sampleDir, 'reference.svg');
-    const diffPath = join(sampleDir, 'diff.gif');
     const updateMode = options.updateMode ?? 'none';
 
     mkdirSync(sampleDir, { recursive: true });
@@ -356,7 +331,7 @@ export async function compareSVG(
     }
 
     const debugMode = shouldWriteDebug(samplePath);
-    if (!options.generateDiff && !debugMode) {
+    if (!debugMode) {
         return {
             passed: false,
             diffPixels: 1,
@@ -372,73 +347,18 @@ export async function compareSVG(
     );
     const candidatePng = await renderSvgToPng(svgContent, options.renderPage);
 
-    if (debugMode) {
-        writeDebugImages(sampleDir, referencePng, candidatePng);
-    }
-
+    writeDebugImages(sampleDir, referencePng, candidatePng);
 
     const diffPixels = countDiffPixels(referencePng, candidatePng);
     const passed = diffPixels === 0;
-
-    if (!passed && options.generateDiff) {
-        await generateDiffGif(
-            referencePath,
-            candidatePath,
-            diffPath,
-            options.renderPage
-        );
-    }
-
-    const resolvedDiffPath =
-        options.generateDiff && !passed ? diffPath : undefined;
 
     return {
         passed,
         diffPixels,
         candidatePath,
         referencePath,
-        referenceUpdated: false,
-        diffPath: resolvedDiffPath
+        referenceUpdated: false
     };
-}
-
-export async function generateDiffGif(
-    referencePath: string,
-    candidatePath: string,
-    outputPath: string,
-    renderPage?: Page
-): Promise<void> {
-    const referenceSvg = readFileSync(referencePath, 'utf8');
-    const candidateSvg = readFileSync(candidatePath, 'utf8');
-
-    const referencePng = await renderSvgToPng(referenceSvg, renderPage);
-    const candidatePng = await renderSvgToPng(candidateSvg, renderPage);
-
-    const frames = [referencePng.data, candidatePng.data];
-    const combinedData = new Uint8Array(
-        referencePng.data.length + candidatePng.data.length
-    );
-    combinedData.set(referencePng.data, 0);
-    combinedData.set(candidatePng.data, referencePng.data.length);
-    const palette = quantizePalette(combinedData, 256);
-    const gif = createGifEncoder();
-
-    for (const frame of frames) {
-        const indexedFrame = applyPaletteToFrame(frame, palette);
-        gif.writeFrame(
-            indexedFrame,
-            CANVAS_WIDTH,
-            CANVAS_HEIGHT,
-            {
-                palette,
-                delay: 500
-            }
-        );
-    }
-
-    gif.finish();
-    const gifData = gif.bytes();
-    writeFileSync(outputPath, Buffer.from(gifData));
 }
 
 export async function closeCompareBrowser(): Promise<void> {

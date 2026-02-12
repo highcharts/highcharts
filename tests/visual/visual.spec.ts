@@ -9,13 +9,11 @@ import {
     transpileTS
 } from '~/utils.ts';
 import { createHash } from 'node:crypto';
-import { existsSync } from 'node:fs';
 import { join, dirname, relative } from 'node:path';
 import { glob } from 'glob';
 import {
     closeCompareBrowser,
-    compareSVG,
-    generateDiffGif
+    compareSVG
 } from './visual-compare';
 
 type HighchartsChart = {
@@ -679,10 +677,9 @@ test.describe('Visual tests', () => {
                 const updateMode = getSnapshotUpdateMode(
                     test.info().config.updateSnapshots
                 );
-                const comparison = await compareSVG(
+                await compareSVG(
                     samplePath,
                     svgContent, {
-                        generateDiff: false,
                         updateMode,
                         renderPage
                     }
@@ -696,39 +693,20 @@ test.describe('Visual tests', () => {
                     browserName
                 );
 
-                try {
-                    const screenshot = await renderPage.screenshot({
-                        clip: {
-                            x: 0,
-                            y: 0,
-                            width: RENDER_WIDTH,
-                            height: RENDER_HEIGHT
-                        },
-                        animations: 'disabled',
-                        caret: 'hide',
-                        scale: 'css'
-                    });
-                    expect(screenshot).toMatchSnapshot(snapshotName, {
-                        maxDiffPixels: 0
-                    });
-                } catch (error) {
-                    if (
-                        existsSync(comparison.referencePath) &&
-                        existsSync(comparison.candidatePath)
-                    ) {
-                        await generateDiffGif(
-                            comparison.referencePath,
-                            comparison.candidatePath,
-                            join(
-                                dirname(comparison.candidatePath),
-                                'diff.gif'
-                            ),
-                            renderPage
-                        );
-                    }
-
-                    throw error;
-                }
+                const screenshot = await renderPage.screenshot({
+                    clip: {
+                        x: 0,
+                        y: 0,
+                        width: RENDER_WIDTH,
+                        height: RENDER_HEIGHT
+                    },
+                    animations: 'disabled',
+                    caret: 'hide',
+                    scale: 'css'
+                });
+                expect(screenshot).toMatchSnapshot(snapshotName, {
+                    maxDiffPixels: 0
+                });
 
                 // await page.screenshot({ fullPage: true });
             } finally {

@@ -25,8 +25,8 @@ candidate of Highcharts. The SVG output is rendered on two canvases, these are
 compared pixel by pixel, and the difference is logged. Auto-visual tests are
 less performant than unit tests, and unit tests should be favoured for
 regression testing. In CI, Playwright runs the visual comparisons using
-screenshot assertions, and still writes `reference.svg`, `candidate.svg`, and
-`diff.gif` into sample directories for the visual review tooling.
+screenshot assertions, and still writes `reference.svg` and `candidate.svg`
+into sample directories for the visual review tooling.
 
 2. **Manual tests**. Some tests, like some dealing with animation or complicated
 user input, are still manual. In the utils, they are marked with a checkbox to

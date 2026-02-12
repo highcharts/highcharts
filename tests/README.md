@@ -117,7 +117,7 @@ Available projects include browser variants:
 - `visual`, `internal`
 
 The `visual` project uses Playwright screenshot assertions for pass/fail and
-still writes `reference.svg`, `candidate.svg`, and `diff.gif` in sample
+still writes `reference.svg` and `candidate.svg` in sample
 directories for visual review tooling.
 
 ### By File
