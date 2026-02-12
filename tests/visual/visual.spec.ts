@@ -722,7 +722,7 @@ test.describe('Visual tests', () => {
                     caret: 'hide',
                     scale: 'css'
                 });
-                expect(screenshot).toMatchSnapshot(snapshotName, {
+                expect.soft(screenshot).toMatchSnapshot(snapshotName, {
                     maxDiffPixels: 0
                 });
 
