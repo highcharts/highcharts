@@ -63,11 +63,6 @@ class ColumnSorting {
     public headerCellElement: HTMLElement;
 
     /**
-     * Whether the invalid order sequence warning has already been shown.
-     */
-    private hasWarnedInvalidOrderSequence: boolean = false;
-
-    /**
      * Last index used from the configured order sequence.
      */
     private lastOrderSequenceIndex?: number;
@@ -212,54 +207,14 @@ class ColumnSorting {
     }
 
     /**
-     * Returns true if the provided sorting order sequence is valid.
-     *
-     * @param sequence
-     * Sorting order sequence to validate.
-     */
-    private isValidOrderSequence(
-        sequence?: Array<ColumnSortingOrder>
-    ): sequence is ColumnSortingOrder[] {
-        if (!Array.isArray(sequence)) {
-            return false;
-        }
-
-        const allowedValues: ColumnSortingOrder[] = ['asc', 'desc', null];
-
-        for (const value of sequence) {
-            if (!allowedValues.includes(value)) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    /**
      * Returns sorting order sequence for this column.
      */
     private getOrderSequence(): ColumnSortingOrder[] {
-        const defaultSequence: ColumnSortingOrder[] = ['asc', 'desc', null];
-        const configuredSequence = this.column.options.sorting?.orderSequence;
-
-        if (this.isValidOrderSequence(configuredSequence)) {
-            return configuredSequence;
-        }
-
-        if (
-            configuredSequence &&
-            !this.hasWarnedInvalidOrderSequence
-        ) {
-            this.hasWarnedInvalidOrderSequence = true;
-            // eslint-disable-next-line no-console
-            console.warn(
-                `Grid: Invalid sorting.orderSequence for column "${
-                    this.column.id
-                }". Expected an array containing only "asc", "desc", or null.`
-            );
-        }
-
-        return defaultSequence;
+        return this.column.options.sorting?.orderSequence || [
+            'asc',
+            'desc',
+            null
+        ];
     }
 
     /**

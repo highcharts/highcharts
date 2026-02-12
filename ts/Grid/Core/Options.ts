@@ -552,9 +552,6 @@ export interface ColumnSortingOptions {
      * If the sequence is empty (`[]`), sorting toggles become a no-op while
      * the sortable UI can still be shown.
      *
-     * If the sequence contains invalid values, it falls back to the default
-     * sequence and a warning is logged.
-     *
      * This option can be set in both `columnDefaults.sorting` and
      * `columns[].sorting`.
      *

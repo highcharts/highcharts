@@ -176,7 +176,6 @@ The optional `sorting` object consists of four configuration options:
   - Examples: `['asc', 'desc']`, `['asc', null, 'desc', null]`, `['asc']`, `[]`.
   - `['asc']` keeps the column in ascending order on every click while still showing sorting UI.
   - `[]` makes clicks no-op while keeping sortable UI.
-  - Invalid values fall back to default `['asc', 'desc', null]` and log a warning.
 
 See the [API reference](https://api.highcharts.com/dashboards/#interfaces/Grid_Options.ColumnOptions#sorting).
 
