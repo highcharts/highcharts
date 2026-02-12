@@ -858,7 +858,7 @@ class RowsVirtualizer {
         const pooledRow = this.rowPool.pop();
 
         if (pooledRow) {
-            await pooledRow.reuse(index, false);
+            await pooledRow.reuse(index);
             if (isVirtualization) {
                 pooledRow.setTranslateY(pooledRow.getDefaultTopOffset());
             }
