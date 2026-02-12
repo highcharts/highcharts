@@ -216,11 +216,11 @@ abstract class BaseForm {
 
             iconString = `url("data:image/svg+xml;charset=utf-8,${icon}")`;
         } else {
+            // Absolute icon URL support
             if (
                 iconsURL.startsWith('http') &&
                 iconsURL.match(/png|svg|jpeg|jpg|gif/ig)
             ) {
-                // Absolute icon URL support
                 return `url("${iconsURL}")`;
             }
 
