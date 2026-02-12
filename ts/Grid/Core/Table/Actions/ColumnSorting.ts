@@ -62,6 +62,11 @@ class ColumnSorting {
      */
     public headerCellElement: HTMLElement;
 
+    /**
+     * Whether the invalid order sequence warning has already been shown.
+     */
+    private hasWarnedInvalidOrderSequence: boolean = false;
+
 
     /* *
     *
@@ -202,6 +207,69 @@ class ColumnSorting {
     }
 
     /**
+     * Returns true if the provided sorting order sequence is valid.
+     *
+     * @param sequence
+     * Sorting order sequence to validate.
+     */
+    private isValidOrderSequence(
+        sequence?: Array<ColumnSortingOrder>
+    ): sequence is [
+        ColumnSortingOrder,
+        ColumnSortingOrder,
+        ColumnSortingOrder
+    ] {
+        if (!Array.isArray(sequence) || sequence.length !== 3) {
+            return false;
+        }
+
+        const allowedValues: ColumnSortingOrder[] = ['asc', 'desc', null];
+
+        for (const value of allowedValues) {
+            if (
+                sequence.indexOf(value) === -1 ||
+                sequence.lastIndexOf(value) !== sequence.indexOf(value)
+            ) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Returns sorting order sequence for this column.
+     */
+    private getOrderSequence():
+    [ColumnSortingOrder, ColumnSortingOrder, ColumnSortingOrder] {
+        const defaultSequence: [
+            ColumnSortingOrder,
+            ColumnSortingOrder,
+            ColumnSortingOrder
+        ] = ['asc', 'desc', null];
+        const configuredSequence = this.column.options.sorting?.orderSequence;
+
+        if (this.isValidOrderSequence(configuredSequence)) {
+            return configuredSequence;
+        }
+
+        if (
+            configuredSequence &&
+            !this.hasWarnedInvalidOrderSequence
+        ) {
+            this.hasWarnedInvalidOrderSequence = true;
+            // eslint-disable-next-line no-console
+            console.warn(
+                `Grid: Invalid sorting.orderSequence for column "${
+                    this.column.id
+                }". Expected an exact permutation of ["asc", "desc", null].`
+            );
+        }
+
+        return defaultSequence;
+    }
+
+    /**
      * Set sorting order for the column. It will modify the presentation data
      * and rerender the rows.
      *
@@ -291,7 +359,8 @@ class ColumnSorting {
     }
 
     /**
-     * Toggle sorting order for the column in the order: asc -> desc -> none
+     * Toggle sorting order for the column according to the configured
+     * sorting order sequence.
      *
      * @param e
      * Optional mouse or keyboard event.
@@ -314,15 +383,15 @@ class ColumnSorting {
                         sortingController.currentSorting.order :
                         null
                 )
-        ) || 'none';
+        ) ?? null;
+        const orderSequence = this.getOrderSequence();
+        const currentOrderIndex = orderSequence.indexOf(currentOrder);
+        const nextOrder = orderSequence[
+            currentOrderIndex === -1 ? 0 :
+                (currentOrderIndex + 1) % orderSequence.length
+        ];
 
-        const consequents = {
-            none: 'asc',
-            asc: 'desc',
-            desc: null
-        } as const;
-
-        void this.setOrder(consequents[currentOrder], additive);
+        void this.setOrder(nextOrder, additive);
     };
 }
 

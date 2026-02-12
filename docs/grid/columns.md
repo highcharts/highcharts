@@ -139,6 +139,7 @@ columns: [{
     sorting: {
         enabled: true,
         order: "desc",
+        orderSequence: ["desc", "asc", null],
         compare: (a, b) => ... // optionally, custom sorting logic
     }
 }]
@@ -169,6 +170,8 @@ The optional `sorting` object consists of four configuration options:
     ```
 
 - **`compare`**: Custom compare function to sort the column values. If not set, the default sorting behavior is used. It should return a negative number if `a < b`, `0` if `a === b`, and a positive number if `a > b`.
+
+- **`orderSequence`**: Controls the sorting order cycle used when the user toggles sorting from the UI. The value must be an exact permutation of `['asc', 'desc', null]` (all three values, no duplicates). Default sequence is `['asc', 'desc', null]`.
 
 See the [API reference](https://api.highcharts.com/dashboards/#interfaces/Grid_Options.ColumnOptions#sorting).
 

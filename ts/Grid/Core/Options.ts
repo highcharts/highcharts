@@ -543,6 +543,24 @@ export interface ColumnSortingOptions {
     sortable?: boolean;
 
     /**
+     * Sequence of sorting orders used when toggling sorting from the user
+     * interface (for example by clicking the column header).
+     *
+     * The sequence must be an exact permutation of `['asc', 'desc', null]`,
+     * containing each value exactly once.
+     *
+     * This option can be set in both `columnDefaults.sorting` and
+     * `columns[].sorting`.
+     *
+     * @default ['asc', 'desc', null]
+     */
+    orderSequence?: [
+        ColumnSortingOrder,
+        ColumnSortingOrder,
+        ColumnSortingOrder
+    ];
+
+    /**
      * Custom compare function to sort the column values. It overrides the
      * default sorting behavior. If not set, the default sorting behavior is
      * used.

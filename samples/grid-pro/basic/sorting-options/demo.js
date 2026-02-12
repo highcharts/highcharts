@@ -12,6 +12,11 @@ Grid.grid('container', {
             icon: ['Apples URL', 'Pears URL', 'Plums URL', 'Bananas URL']
         }
     },
+    columnDefaults: {
+        sorting: {
+            orderSequence: ['desc', 'asc', null]
+        }
+    },
     columns: [{
         id: 'product',
         sorting: {
