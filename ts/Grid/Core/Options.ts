@@ -31,6 +31,7 @@ import type {
 } from './Pagination/PaginationOptions';
 import type { ColumnResizingMode } from './Table/ColumnResizing/ColumnResizing';
 import type { ColumnDataType } from './Table/Column';
+import type { DataProviderOptionsType } from './Data/DataProviderType';
 import type DataTable from '../../Data/DataTable';
 import type { CellType as DataTableCellType } from '../../Data/DataTable';
 import type DataTableOptions from '../../Data/DataTableOptions';
@@ -176,7 +177,15 @@ export interface Options {
     columns?: Array<IndividualColumnOptions>;
 
     /**
+     * Options for the data provider.
+     */
+    data?: DataProviderOptionsType;
+
+    /**
      * Data table with the data to display in the grid structure.
+     *
+     * @deprecated
+     * Use `data.dataTable` instead.
      */
     dataTable?: DataTable | DataTableOptions;
 
