@@ -148,23 +148,34 @@ export default class ContourSeries extends ScatterSeries {
             'lineColor',
             'lineWidth'
         ] as const;
+        const isUniformOption = (key: string): boolean => (
+            uniformOptions.includes(key as typeof uniformOptions[number])
+        );
+        // If explicit non-uniform options are provided, defer to the base
+        // implementation directly.
+        const hasExplicitNonUniformChanges = Object.keys(options).some(
+            (key): boolean => !isUniformOption(key)
+        );
 
-        for (const key of uniformOptions) {
-            if (Object.prototype.hasOwnProperty.call(options, key)) {
-                (this.userOptions as any)[key] = (options as any)[key];
-                (this.options as any)[key] = (options as any)[key];
-                delete (options as any)[key];
-            }
+        if (hasExplicitNonUniformChanges) {
+            super.update(options, redraw);
+            return;
         }
 
-        if (Object.keys(options).length > 0) {
+        // Check the fully merged options tree to catch inherited changes from
+        // plotOptions and decide if full update is needed.
+        const nextOptions = this.setOptions(merge(this.userOptions, options)),
+            changedOptions = diffObjects(nextOptions, this.options),
+            hasNonUniformMergedChanges = Object.keys(changedOptions).some(
+                (key): boolean => !isUniformOption(key)
+            );
+
+        if (hasNonUniformMergedChanges) {
             super.update(options, redraw);
         } else {
-            // Keep inherited options (for example plotOptions.contour) in sync
-            // when Chart.update triggers series.update({}).
-            this.options = this.setOptions(this.userOptions);
-            // If no options besides uniform ones are changed, just set the
-            // uniforms without rerendering the series.
+            this.options = nextOptions;
+            // If only uniform-related options changed, avoid full series
+            // reconstruction and update uniforms only.
             this.setUniforms();
         }
     }
