@@ -1,6 +1,4 @@
 ---
- name: Demo of xAxis.labels.style options
- authors:
-   - Torstein Hønsi
- js_wrap: b
+name: Demo of xAxis.labels.style options
+js_wrap: b
 ...

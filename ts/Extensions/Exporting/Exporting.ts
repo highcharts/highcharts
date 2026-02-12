@@ -416,14 +416,17 @@ class Exporting {
     }
 
     /** @internal */
-    private static async fetchCSS(href: string): Promise<CSSStyleSheet> {
-        const content = await fetch(href)
-            .then((res): Promise<string> => res.text());
+    private static async fetchCSS(href: string): Promise<CSSStyleSheet | void> {
+        try {
+            const res = await fetch(href);
+            const content = await res.text();
+            const newSheet = new CSSStyleSheet();
+            newSheet.replaceSync(content);
 
-        const newSheet = new CSSStyleSheet();
-        newSheet.replaceSync(content);
-
-        return newSheet;
+            return newSheet;
+        } catch {
+            error(`Warning: Failed to fetch CSS from ${href}`, false);
+        }
     }
 
     /** @internal */
@@ -435,7 +438,9 @@ class Exporting {
             for (const rule of Array.from(sheet.cssRules)) {
                 if (rule instanceof CSSImportRule) {
                     const sheet = await Exporting.fetchCSS(rule.href);
-                    await Exporting.handleStyleSheet(sheet, resultArray);
+                    if (sheet) {
+                        await Exporting.handleStyleSheet(sheet, resultArray);
+                    }
                 }
 
                 if (rule instanceof CSSFontFaceRule) {
@@ -462,7 +467,9 @@ class Exporting {
         } catch {
             if (sheet.href) {
                 const newSheet = await Exporting.fetchCSS(sheet.href);
-                await Exporting.handleStyleSheet(newSheet, resultArray);
+                if (newSheet) {
+                    await Exporting.handleStyleSheet(newSheet, resultArray);
+                }
             }
         }
     }
