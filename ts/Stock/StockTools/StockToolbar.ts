@@ -839,15 +839,13 @@ class Toolbar {
             icon = encodeURIComponent(icon);
 
             iconString = `url("data:image/svg+xml;charset=utf-8,${icon}")`;
-        } else {
+        } else if (
+            iconsURL.startsWith('http') &&
+            iconsURL.match(/\.(png|svg|jpe?g|gif)$/ig)
+        ) {
             // Absolute icon URL support
-            if (
-                iconsURL.startsWith('http') &&
-                iconsURL.match(/png|svg|jpeg|jpg|gif/ig)
-            ) {
-                return `url("${iconsURL}")`;
-            }
-
+            iconString = 'url("' + iconsURL + '")';
+        } else {
             iconString = `url("${iconsURL}${iconName}")`;
         }
 
