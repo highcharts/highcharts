@@ -39,7 +39,6 @@ Explicit list of row IDs to treat as sticky.
 
 ```js
 sticky: {
-    idColumn: 'id',
     ids: ['SKU-002', 'SKU-010']
 }
 ```
@@ -64,7 +63,6 @@ row sticky.
 
 ```js
 sticky: {
-    idColumn: 'id',
     resolve: function (row) {
         return Number(row.stock) < 5;
     }

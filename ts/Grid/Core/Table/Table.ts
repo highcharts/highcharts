@@ -478,6 +478,21 @@ class Table {
         }
     }
 
+    /**
+     * Reflows currently rendered sticky rows so their cell widths stay aligned
+     * with the main table after layout changes (resize/column width updates).
+     */
+    private reflowStickyRows(): void {
+        const renderedIndexes = new Set<number>([
+            ...this.stickyTopIndexes,
+            ...this.stickyBottomIndexes
+        ]);
+
+        for (const index of renderedIndexes) {
+            this.stickyRows.get(index)?.reflow();
+        }
+    }
+
     private async updateStickyRows(): Promise<void> {
         const stickyMeta = this.grid.rowStickyMeta;
         const rowIndexes = stickyMeta?.stickyRowIndexes || [];
@@ -576,7 +591,7 @@ class Table {
                     await row.render();
                     this.stickyRows.set(index, row);
                 } else {
-                    await row.reuse(index, false);
+                    await row.reuse(index);
                 }
 
                 row.reflow();
@@ -720,6 +735,7 @@ class Table {
 
         // Reflow rows content dimensions
         this.rowsVirtualizer.reflowRows();
+        this.reflowStickyRows();
         this.syncStickyContainersGeometry();
 
         // Reflow the pagination

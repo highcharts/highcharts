@@ -44,6 +44,7 @@ async function runRemoteScenario(
     return await page.evaluate(async ({ options, mode }) => {
         const api = (window as any).remoteDataProviderTest;
         await api.createGrid(options);
+        await new Promise((resolve) => window.setTimeout(resolve, 0));
 
         const grid = api.getGrid();
         const dp = grid?.dataProvider;
@@ -282,7 +283,7 @@ test.describe('RemoteDataProvider', () => {
 
         const result = await page.evaluate(async () => {
             const api = (window as any).remoteDataProviderTest;
-            api.createGrid({
+            await api.createGrid({
                 totalRowCount: 40,
                 data: {
                     chunkSize: 80

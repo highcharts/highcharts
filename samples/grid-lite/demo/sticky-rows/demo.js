@@ -18,18 +18,14 @@ const columns = {
     price: rows.map(row => row.price)
 };
 
-function resolveRowId(cell) {
-    return String(cell.row.data.id || '');
-}
-
 const stickyMenuItems = [{
     label: 'Stick row',
     icon: 'plus',
     onClick: function (cell) {
         const cellGrid = cell.row.viewport.grid;
-        const rowId = resolveRowId(cell);
+        const rowId = cell.row.id;
 
-        if (!rowId || !cellGrid.stickRow) {
+        if (rowId === void 0 || !cellGrid.stickRow) {
             return;
         }
 
@@ -40,9 +36,9 @@ const stickyMenuItems = [{
     icon: 'trash',
     onClick: function (cell) {
         const cellGrid = cell.row.viewport.grid;
-        const rowId = resolveRowId(cell);
+        const rowId = cell.row.id;
 
-        if (!rowId || !cellGrid.unstickRow) {
+        if (rowId === void 0 || !cellGrid.unstickRow) {
             return;
         }
 
@@ -54,52 +50,20 @@ Grid.grid('container', {
     dataTable: {
         columns
     },
-    rendering: {
-        rows: {
-            virtualizationThreshold: 30,
-            sticky: {
-                idColumn: 'id',
-                ids: ['SKU-003', 'SKU-040']
+    columnDefaults: {
+        cells: {
+            contextMenu: {
+                items: stickyMenuItems
             }
         }
     },
-    columns: [{
-        id: 'id',
-        cells: {
-            contextMenu: {
-                items: stickyMenuItems
+    rendering: {
+        rows: {
+            sticky: {
+                // Without `idColumn`, sticky IDs use provider row IDs from the
+                // data source (stable across sorting/filtering).
+                ids: [20]
             }
         }
-    }, {
-        id: 'product',
-        cells: {
-            contextMenu: {
-                items: stickyMenuItems
-            }
-        }
-    }, {
-        id: 'category',
-        cells: {
-            contextMenu: {
-                items: stickyMenuItems
-            }
-        }
-    }, {
-        id: 'stock',
-        sorting: {
-            order: 'desc'
-        },
-        cells: {
-            contextMenu: {
-                items: stickyMenuItems
-            }
-        }
-    }, {
-        id: 'price',
-        cells: {
-            contextMenu: {
-                items: stickyMenuItems
-            }
-        }
-    }]
+    }
 });

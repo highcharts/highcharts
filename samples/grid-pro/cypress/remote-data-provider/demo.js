@@ -2,7 +2,8 @@
     const state = {
         fetchCalls: [],
         grid: null,
-        totalRowCount: 5
+        totalRowCount: 5,
+        creatingPromise: null
     };
 
     function createFetchResult(offset, limit, orderedIds) {
@@ -36,37 +37,53 @@
     }
 
     async function createGrid(options) {
-        const {
-            totalRowCount = 5,
-            data = {},
-            pagination = { enabled: false },
-            columns,
-            rendering
-        } = options || {};
-
-        state.totalRowCount = totalRowCount;
-        state.fetchCalls.length = 0;
-
-        if (state.grid) {
-            state.grid.destroy();
+        if (state.creatingPromise) {
+            await state.creatingPromise;
         }
 
-        state.grid = await Grid.grid('container', {
-            data: {
-                providerType: 'remote',
-                ...data,
-                fetchCallback: (query, offset, limit) => {
-                    const sortedIds = getSortedIds(query);
-                    state.fetchCalls.push({ offset, limit });
-                    return createFetchResult(offset, limit, sortedIds);
-                }
-            },
-            columns,
-            rendering,
-            pagination
-        }, true);
+        const createTask = (async () => {
+            const {
+                totalRowCount = 5,
+                data = {},
+                pagination = { enabled: false },
+                columns,
+                rendering
+            } = options || {};
 
-        return state.grid;
+            state.totalRowCount = totalRowCount;
+            state.fetchCalls.length = 0;
+
+            if (state.grid) {
+                state.grid.destroy();
+            }
+
+            state.grid = await Grid.grid('container', {
+                data: {
+                    providerType: 'remote',
+                    ...data,
+                    fetchCallback: (query, offset, limit) => {
+                        const sortedIds = getSortedIds(query);
+                        state.fetchCalls.push({ offset, limit });
+                        return createFetchResult(offset, limit, sortedIds);
+                    }
+                },
+                columns,
+                rendering,
+                pagination
+            }, true);
+
+            return state.grid;
+        })();
+
+        state.creatingPromise = createTask;
+
+        try {
+            return await createTask;
+        } finally {
+            if (state.creatingPromise === createTask) {
+                state.creatingPromise = null;
+            }
+        }
     }
 
     window.remoteDataProviderTest = {
@@ -87,5 +104,4 @@
         }
     };
 
-    await createGrid();
 }());
