@@ -1,4 +1,3 @@
-/* stylelint-disable max-line-length */
 .hcg-container .hcg-pagination-wrapper {
     background: var(--hcg-pagination-background, transparent);
     color: var(--hcg-pagination-color, var(--ig-color));
