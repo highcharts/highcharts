@@ -21,28 +21,35 @@ const {
     pick
 } = U;
 
+/** @internal */
 type EnvelopePoint = Record<'t'|'vol', number>;
+/** @internal */
 type Envelope = Array<EnvelopePoint>;
+/** @internal */
 type OscType = 'sine'|'square'|'sawtooth'|'triangle'|'whitenoise'|'pulse';
 
+/** @internal */
 interface FilterOptions {
     frequency?: number;
     frequencyPitchTrackingMultiplier?: number;
     Q?: number;
 }
 
+/** @internal */
 interface EQOptions {
     frequency?: number;
     gain?: number;
     Q?: number;
 }
 
+/** @internal */
 interface PulseOscOptions {
     detune?: number;
     pulseWidth?: number;
     frequency?: number;
 }
 
+/** @internal */
 interface OscOptions {
     attackEnvelope?: Envelope;
     detune?: number;

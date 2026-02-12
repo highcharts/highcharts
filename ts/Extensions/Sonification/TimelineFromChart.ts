@@ -34,19 +34,24 @@ const {
     format
 } = T;
 
+/** @internal */
 interface PointGroupItem {
     point: Point;
     time: number;
 }
+/** @internal */
 interface PropExtremes {
     max: number;
     min: number;
 }
+/** @internal */
 type PropExtremesCache = Record<string, PropExtremes>;
+/** @internal */
 interface ExtremesCache {
     globalExtremes: PropExtremesCache;
     seriesExtremes: Array<PropExtremesCache>;
 }
+/** @internal */
 export interface PropMetrics extends ExtremesCache {
     seriesTimeProps: Array<Record<string, boolean>>;
 }
@@ -1235,4 +1240,5 @@ function timelineFromChart(
  *
  * */
 
+/** @internal */
 export default timelineFromChart;

@@ -20,6 +20,7 @@ import SonificationInstrument from './SonificationInstrument.js';
 import U from '../../Core/Utilities.js';
 const { pick } = U;
 
+/** @internal */
 interface MIDIEvent {
     timeMS: number;
     type: 'NON'|'NOF'|'CTRL_CHG';
@@ -203,4 +204,5 @@ function toMIDI(channels: TimelineChannel[]): Uint8Array {
             }, [] as number[])));
 }
 
+/** @internal */
 export default toMIDI;

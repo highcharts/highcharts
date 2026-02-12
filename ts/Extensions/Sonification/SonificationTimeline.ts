@@ -31,11 +31,13 @@ const {
 
 declare global {
     namespace Sonification {
-        type TimelineFilterCallback = (
-            e: Sonification.TimelineEvent,
-            ix: number,
-            arr: Sonification.TimelineEvent[]
-        ) => boolean;
+        interface TimelineFilterCallback {
+            (
+                e: Sonification.TimelineEvent,
+                ix: number,
+                arr: Sonification.TimelineEvent[]
+            ): boolean;
+        }
     }
 }
 
@@ -92,7 +94,6 @@ function filterChannels(
  * The SonificationTimeline class. This class represents a timeline of
  * audio events scheduled to play. It provides functionality for manipulating
  * and navigating the timeline.
- * @internal
  */
 class SonificationTimeline {
     isPaused = false;

@@ -60,12 +60,24 @@ import timelineFromChart from './TimelineFromChart.js';
 
 declare module '../../Core/Chart/ChartBase' {
     interface ChartBase {
+        /**
+         * @requires modules/sonification
+         */
         sonification?: Sonification;
+        /**
+         * @requires modules/sonification
+         */
         sonify: (onEnd?: globalThis.Sonification.ChartCallback) => void;
+        /**
+         * @requires modules/sonification
+         */
         toggleSonify: (
             reset?: boolean,
             onEnd?: globalThis.Sonification.ChartCallback
         ) => void;
+        /**
+         * @internal
+         */
         updateSonificationEnabled: () => void;
     }
 }
@@ -85,6 +97,9 @@ declare module '../../Core/Series/SeriesBase' {
 }
 declare module '../../Core/Series/PointBase' {
     interface PointBase {
+        /**
+         * @requires modules/sonification
+         */
         sonify: () => void;
     }
 }
@@ -822,6 +837,7 @@ merge(
  *
  * */
 
+/** @internal */
 export default Sonification;
 
 
