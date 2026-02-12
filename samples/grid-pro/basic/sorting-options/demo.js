@@ -14,7 +14,7 @@ Grid.grid('container', {
     },
     columnDefaults: {
         sorting: {
-            orderSequence: ['desc', 'asc', null]
+            orderSequence: ['asc', null, 'desc', null]
         }
     },
     columns: [{

@@ -67,6 +67,11 @@ class ColumnSorting {
      */
     private hasWarnedInvalidOrderSequence: boolean = false;
 
+    /**
+     * Last index used from the configured order sequence.
+     */
+    private lastOrderSequenceIndex?: number;
+
 
     /* *
     *
@@ -214,22 +219,15 @@ class ColumnSorting {
      */
     private isValidOrderSequence(
         sequence?: Array<ColumnSortingOrder>
-    ): sequence is [
-        ColumnSortingOrder,
-        ColumnSortingOrder,
-        ColumnSortingOrder
-    ] {
-        if (!Array.isArray(sequence) || sequence.length !== 3) {
+    ): sequence is ColumnSortingOrder[] {
+        if (!Array.isArray(sequence)) {
             return false;
         }
 
         const allowedValues: ColumnSortingOrder[] = ['asc', 'desc', null];
 
-        for (const value of allowedValues) {
-            if (
-                sequence.indexOf(value) === -1 ||
-                sequence.lastIndexOf(value) !== sequence.indexOf(value)
-            ) {
+        for (const value of sequence) {
+            if (!allowedValues.includes(value)) {
                 return false;
             }
         }
@@ -240,13 +238,8 @@ class ColumnSorting {
     /**
      * Returns sorting order sequence for this column.
      */
-    private getOrderSequence():
-    [ColumnSortingOrder, ColumnSortingOrder, ColumnSortingOrder] {
-        const defaultSequence: [
-            ColumnSortingOrder,
-            ColumnSortingOrder,
-            ColumnSortingOrder
-        ] = ['asc', 'desc', null];
+    private getOrderSequence(): ColumnSortingOrder[] {
+        const defaultSequence: ColumnSortingOrder[] = ['asc', 'desc', null];
         const configuredSequence = this.column.options.sorting?.orderSequence;
 
         if (this.isValidOrderSequence(configuredSequence)) {
@@ -262,11 +255,23 @@ class ColumnSorting {
             console.warn(
                 `Grid: Invalid sorting.orderSequence for column "${
                     this.column.id
-                }". Expected an exact permutation of ["asc", "desc", null].`
+                }". Expected an array containing only "asc", "desc", or null.`
             );
         }
 
         return defaultSequence;
+    }
+
+    /**
+     * Normalizes arbitrary sorting values to valid order states.
+     *
+     * @param order
+     * Value to normalize.
+     */
+    private normalizeOrder(order?: unknown): ColumnSortingOrder {
+        return order === 'asc' || order === 'desc' ?
+            order :
+            null;
     }
 
     /**
@@ -371,25 +376,52 @@ class ColumnSorting {
         const sortingController = querying.sorting;
 
         const additive = !!e?.shiftKey;
+        let hasCurrentColumnSorting = false;
 
-        const currentOrder = (
-            additive ?
-                sortingController.currentSortings?.find((sorting): boolean =>
-                    sorting.columnId === this.column.id
-                )?.order :
-                (
-                    sortingController.currentSorting?.columnId ===
-                    this.column.id ?
-                        sortingController.currentSorting.order :
-                        null
-                )
-        ) ?? null;
+        const currentOrder = ((): ColumnSortingOrder => {
+            if (additive) {
+                const currentSorting = sortingController.currentSortings?.find(
+                    (sorting): boolean => sorting.columnId === this.column.id
+                );
+
+                hasCurrentColumnSorting = !!currentSorting;
+                return this.normalizeOrder(currentSorting?.order);
+            }
+
+            const currentSorting = sortingController.currentSorting;
+            hasCurrentColumnSorting =
+                currentSorting?.columnId === this.column.id;
+
+            return hasCurrentColumnSorting ?
+                this.normalizeOrder(currentSorting?.order) :
+                null;
+        })();
+
         const orderSequence = this.getOrderSequence();
-        const currentOrderIndex = orderSequence.indexOf(currentOrder);
-        const nextOrder = orderSequence[
-            currentOrderIndex === -1 ? 0 :
-                (currentOrderIndex + 1) % orderSequence.length
-        ];
+        if (orderSequence.length < 1) {
+            return;
+        }
+
+        let nextOrderIndex = 0;
+        const lastIndex = this.lastOrderSequenceIndex;
+
+        if (
+            hasCurrentColumnSorting &&
+            typeof lastIndex === 'number' &&
+            orderSequence[lastIndex] === currentOrder
+        ) {
+            nextOrderIndex = (lastIndex + 1) % orderSequence.length;
+        } else {
+            const currentOrderIndex = orderSequence.indexOf(currentOrder);
+            nextOrderIndex = (
+                currentOrderIndex === -1 ?
+                    0 :
+                    (currentOrderIndex + 1) % orderSequence.length
+            );
+        }
+
+        this.lastOrderSequenceIndex = nextOrderIndex;
+        const nextOrder = orderSequence[nextOrderIndex];
 
         void this.setOrder(nextOrder, additive);
     };

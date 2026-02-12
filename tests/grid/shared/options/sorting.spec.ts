@@ -91,14 +91,14 @@ test.describe('Grid sorting', () => {
         await expect(page.locator('th[data-column-id="icon"]')).toHaveClass(/hcg-column-sorted-asc/);
     });
 
-    test('Should apply custom sorting orderSequence for a column', async ({ page }) => {
+    test('Should cycle sorting with orderSequence [asc, desc]', async ({ page }) => {
         await page.evaluate(async () => {
             const grid = (window as any).grid;
             await grid.update({
                 columns: [{
                     id: 'weight',
                     sorting: {
-                        orderSequence: ['desc', null, 'asc']
+                        orderSequence: ['asc', 'desc']
                     }
                 }]
             });
@@ -119,8 +119,100 @@ test.describe('Grid sorting', () => {
         await page.locator('th[data-column-id="weight"]').click();
         await expect(
             page.locator('th[data-column-id="weight"]'),
-            'Third toggle should wrap back to no sorting.'
-        ).not.toHaveClass(/hcg-column-sorted-(asc|desc)/);
+            'Third toggle should cycle back to ascending order.'
+        ).toHaveClass(/hcg-column-sorted-asc/);
+    });
+
+    test('Should cycle sorting with duplicated null in orderSequence', async ({ page }) => {
+        await page.evaluate(async () => {
+            const grid = (window as any).grid;
+            await grid.update({
+                columns: [{
+                    id: 'weight',
+                    sorting: {
+                        orderSequence: ['asc', null, 'desc', null]
+                    }
+                }]
+            });
+        });
+
+        await page.locator('#select-order').selectOption('');
+        await page.locator('#apply-btn').click();
+
+        await page.locator('th[data-column-id="weight"]').click();
+        await expect(page.locator('th[data-column-id="weight"]'))
+            .toHaveClass(/hcg-column-sorted-desc/);
+
+        await page.locator('th[data-column-id="weight"]').click();
+        await expect(page.locator('th[data-column-id="weight"]'))
+            .not.toHaveClass(/hcg-column-sorted-(asc|desc)/);
+
+        await page.locator('th[data-column-id="weight"]').click();
+        await expect(page.locator('th[data-column-id="weight"]'))
+            .toHaveClass(/hcg-column-sorted-asc/);
+
+        await page.locator('th[data-column-id="weight"]').click();
+        await expect(page.locator('th[data-column-id="weight"]'))
+            .not.toHaveClass(/hcg-column-sorted-(asc|desc)/);
+
+        await page.locator('th[data-column-id="weight"]').click();
+        await expect(page.locator('th[data-column-id="weight"]'))
+            .toHaveClass(/hcg-column-sorted-desc/);
+    });
+
+    test('Should keep ascending sorting with orderSequence [asc]', async ({ page }) => {
+        await page.evaluate(async () => {
+            const grid = (window as any).grid;
+            await grid.update({
+                columns: [{
+                    id: 'weight',
+                    sorting: {
+                        orderSequence: ['asc']
+                    }
+                }]
+            });
+        });
+
+        await page.locator('#select-order').selectOption('');
+        await page.locator('#apply-btn').click();
+
+        await page.locator('th[data-column-id="weight"]').click();
+        await expect(page.locator('th[data-column-id="weight"]'))
+            .toHaveClass(/hcg-column-sorted-asc/);
+        await expect(page.locator('th[data-column-id="weight"]'))
+            .toHaveClass(/hcg-column-sortable/);
+
+        await page.locator('th[data-column-id="weight"]').click();
+        await expect(page.locator('th[data-column-id="weight"]'))
+            .toHaveClass(/hcg-column-sorted-asc/);
+    });
+
+    test('Should keep sorting unchanged with empty orderSequence', async ({ page }) => {
+        await page.evaluate(async () => {
+            const grid = (window as any).grid;
+            await grid.update({
+                columns: [{
+                    id: 'weight',
+                    sorting: {
+                        orderSequence: []
+                    }
+                }]
+            });
+        });
+
+        await page.locator('#select-order').selectOption('');
+        await page.locator('#apply-btn').click();
+
+        const beforeState = await getSortingState(page);
+        await page.locator('th[data-column-id="weight"]').click();
+        const afterState = await getSortingState(page);
+
+        await expect(page.locator('th[data-column-id="weight"]'))
+            .toHaveClass(/hcg-column-sortable/);
+        expect(
+            afterState.currentSorting,
+            'Sorting state should remain unchanged for empty sequence.'
+        ).toEqual(beforeState.currentSorting);
     });
 
     test('Should fallback to default sequence and warn once for invalid orderSequence', async ({ page }) => {
@@ -137,7 +229,7 @@ test.describe('Grid sorting', () => {
                 columns: [{
                     id: 'weight',
                     sorting: {
-                        orderSequence: ['asc', 'asc', null]
+                        orderSequence: ['asc', 'foo', null]
                     }
                 }]
             });
@@ -167,6 +259,31 @@ test.describe('Grid sorting', () => {
             invalidWarnings.length,
             'Invalid orderSequence warning should be emitted once.'
         ).toBe(1);
+    });
+
+    test('Should fallback to default sequence for non-array orderSequence', async ({ page }) => {
+        await page.evaluate(async () => {
+            const grid = (window as any).grid;
+            await grid.update({
+                columns: [{
+                    id: 'weight',
+                    sorting: {
+                        orderSequence: 'asc'
+                    }
+                }]
+            });
+        });
+
+        await page.locator('#select-order').selectOption('');
+        await page.locator('#apply-btn').click();
+
+        await page.locator('th[data-column-id="weight"]').click();
+        await expect(page.locator('th[data-column-id="weight"]'))
+            .toHaveClass(/hcg-column-sorted-asc/);
+
+        await page.locator('th[data-column-id="weight"]').click();
+        await expect(page.locator('th[data-column-id="weight"]'))
+            .toHaveClass(/hcg-column-sorted-desc/);
     });
 
     test('Per-column orderSequence should override columnDefaults orderSequence', async ({ page }) => {
@@ -289,7 +406,8 @@ test.describe('Grid sorting', () => {
                 columns: [{
                     id: 'weight',
                     sorting: {
-                        enabled: false
+                        enabled: false,
+                        orderSequence: ['asc']
                     }
                 }]
             });
