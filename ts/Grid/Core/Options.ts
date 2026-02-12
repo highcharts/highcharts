@@ -42,6 +42,7 @@ import type { LangOptionsCore } from '../../Shared/LangOptionsCore';
 import type {
     Condition as ColumnFilteringCondition
 } from './Table/Actions/ColumnFiltering/FilteringTypes';
+import type CSSObject from '../../Core/Renderer/CSSObject';
 
 
 /* *
@@ -61,6 +62,16 @@ export type CellFormatterCallback = (this: Cell) => string;
  * formatted header's string.
  */
 export type HeaderFormatterCallback = (this: Column) => string;
+
+/**
+ * Callback function to resolve dynamic style for a grid entity.
+ */
+export type StyleCallback<T> = (this: T, target: T) => CSSObject;
+
+/**
+ * A static style object or a callback that returns one.
+ */
+export type StyleValue<T> = CSSObject | StyleCallback<T>;
 
 /**
  * Column sorting order type.
@@ -461,6 +472,12 @@ export interface ColumnOptions {
      * Filtering options for the column.
      */
     filtering?: ColumnFilteringOptions;
+
+    /**
+     * CSS styles for the whole column, applied to the header and body cells.
+     * Can be a static style object or a callback that returns one.
+     */
+    style?: StyleValue<Column>;
 }
 
 /**
@@ -508,6 +525,12 @@ export interface ColumnCellOptions {
      * context menu will be shown on right-click.
      */
     contextMenu?: CellContextMenuOptions;
+
+    /**
+     * CSS styles for table body cells in the column.
+     * Can be a static style object or a callback that returns one.
+     */
+    style?: StyleValue<Cell>;
 }
 
 /**
@@ -537,6 +560,12 @@ export interface ColumnHeaderOptions {
      * A string to be set as a header cell's content.
      */
     formatter?: HeaderFormatterCallback;
+
+    /**
+     * CSS styles for the column header cells.
+     * Can be a static style object or a callback that returns one.
+     */
+    style?: StyleValue<Column>;
 }
 
 /**
