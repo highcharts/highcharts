@@ -1,6 +1,4 @@
 ---
- name: Demo of xAxis.title.align and text
- authors:
-   - Torstein Hønsi
- js_wrap: b
+name: Demo of xAxis.title.align and text
+js_wrap: b
 ...

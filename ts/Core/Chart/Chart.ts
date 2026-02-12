@@ -363,6 +363,12 @@ class Chart {
         c?: Chart.CallbackFunction
         /* eslint-enable @typescript-eslint/no-unused-vars */
     ) {
+        // Return early if there's no browser API (server environment).
+        if (!doc) {
+            error(36, false, this);
+            return;
+        }
+
         const args = [
             // ES5 builds fail unless we cast it to an Array
             ...arguments as unknown as Array<any>
@@ -1053,13 +1059,6 @@ class Chart {
             for (let i = fromIndex, iEnd = collection.length; i < iEnd; ++i) {
                 const item = collection[i];
                 if (item) {
-                    /**
-                     * Contains the series' index in the `Chart.series` array.
-                     *
-                     * @name Highcharts.Series#index
-                     * @type {number}
-                     * @readonly
-                     */
                     item.index = i;
 
                     if (item instanceof Series) {
@@ -2839,15 +2838,7 @@ class Chart {
                 linkedParent.linkedParent !== series
             ) {
                 linkedParent.linkedSeries.push(series);
-                /**
-                 * The parent series of the current series, if the current
-                 * series has a [linkedTo](https://api.highcharts.com/highcharts/series.line.linkedTo)
-                 * setting.
-                 *
-                 * @name Highcharts.Series#linkedParent
-                 * @type {Highcharts.Series}
-                 * @readonly
-                 */
+
                 series.linkedParent = linkedParent;
 
                 if (linkedParent.enabledDataSorting) {
@@ -2968,16 +2959,32 @@ class Chart {
         ) {
 
             const tempWidth = chart.plotWidth,
-                tempHeight = chart.plotHeight;
+                tempHeight = chart.plotHeight,
+                threshold = [1.05, 1.1];
 
             for (const axis of axes) {
+                const horizNum = +(axis.horiz || 0);
                 if (run === 0) {
                     // Get margins by pre-rendering axes
                     axis.setScale();
 
+                    // On datetime axes, consider the tick interval match. A
+                    // match close to 1 means that the current normalized tick
+                    // interval is an insecure match to the requested tick
+                    // interval, on the brink of landing on a higher unit. In
+                    // this case, we should redo the axis to get a more
+                    // appropriate tick interval (#17393).
+                    const tickIntervalMatch = axis.tickPositions?.info?.match;
+                    if (tickIntervalMatch) {
+                        threshold[horizNum] = Math.min(
+                            tickIntervalMatch,
+                            threshold[horizNum]
+                        );
+                    }
+
                 } else if (
-                    (axis.horiz && redoHorizontal) ||
-                    (!axis.horiz && redoVertical)
+                    (horizNum && redoHorizontal) ||
+                    (!horizNum && redoVertical)
                 ) {
                     // Update to reflect the new margins
                     axis.setTickInterval(true);
@@ -2990,8 +2997,10 @@ class Chart {
                 chart.getMargins();
             }
 
-            redoHorizontal = (tempWidth / chart.plotWidth) > (run ? 1 : 1.1);
-            redoVertical = (tempHeight / chart.plotHeight) > (run ? 1 : 1.05);
+            redoHorizontal = (tempWidth / chart.plotWidth) >
+                (run ? 1 : threshold[1]);
+            redoVertical = (tempHeight / chart.plotHeight) >
+                (run ? 1 : threshold[0]);
 
             run++;
         }
