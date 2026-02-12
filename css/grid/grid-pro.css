@@ -107,10 +107,6 @@
     padding: 0 !important;
 }
 
-.hcg-table tbody td.hcg-edited-cell {
-    padding: 0;
-}
-
 .hcg-cell-editing-container {
     position: absolute;
     top: 0;

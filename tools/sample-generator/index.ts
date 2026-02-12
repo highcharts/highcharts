@@ -4,15 +4,23 @@
  * Generates a Highcharts sample based on specified option paths,
  * creating HTML controls to manipulate those options at runtime.
  *
- * Usage:
+ * Usage with gulp:
+ * - Define config.ts files in sample directories
+ * - If you have changed anything in the Highcharts options structure, working
+ *   on new or changed defaults etc., run `gulp sample-generator --setup`.
+ * - `gulp sample-generator`
+ *
+ * Direct usage:
  * - Define desired option paths in the `paths` array.
  * - `node tools/sample-generator/index.ts`
  */
 
-/* eslint-disable no-console */
+/* eslint-disable no-console, node/no-unpublished-import */
 
 import type {
     ControlOptions,
+    Details,
+    FlatTreeNode,
     SampleGeneratorConfig
 } from './generator-config.d.ts';
 
@@ -22,16 +30,7 @@ import { dirname, join } from 'path';
 import { promises as fs } from 'fs';
 import { fileURLToPath } from 'url';
 
-import { loadExportedTypes } from './load-types.ts';
 import config from './config-example.ts';
-
-// Import Highcharts and modules so that we can read default options
-import Highcharts from '../../code/esm/highcharts.src.js';
-import '../../code/esm/highcharts-more.src.js';
-import '../../code/esm/highcharts-3d.src.js';
-import '../../code/esm/modules/stock.src.js';
-import '../../code/esm/modules/map.src.js';
-import '../../code/esm/modules/gantt.src.js';
 
 // Type handlers
 import * as booleanHandler from './type-handlers/boolean.ts';
@@ -40,23 +39,12 @@ import * as numberHandler from './type-handlers/number.ts';
 import * as selectHandler from './type-handlers/select.ts';
 import * as colorHandler from './type-handlers/color.ts';
 import * as textHandler from './type-handlers/text.ts';
-
-const types = await loadExportedTypes('code/highcharts.d.ts')
-    .catch(() => {
-        console.error(colors.red(
-            'Failed to load exported types from code/highcharts.d.ts. ' +
-            'Run `gulp jsdoc-dts` first.'
-        ));
-    });
-
-const executedDirectly = import.meta.url === process.argv[1] ||
-    import.meta.url === `file://${process.argv[1]}`;
-
+import * as separatorHandler from './type-handlers/separator.ts';
 interface MetaData {
     controlOptions?: ControlOptions;
-    path: string;
-    node: any;
-    mainType: string;
+    path?: string;
+    node?: FlatTreeNode;
+    mainType?: string;
     options?: string[];
     defaultValue?: any;
     overrideValue?: any;
@@ -64,18 +52,74 @@ interface MetaData {
 
 type MetaList = Array<MetaData>;
 
-const defaultOptions = Highcharts.getOptions();
+const executedDirectly = import.meta.url === process.argv[1] ||
+    import.meta.url === `file://${process.argv[1]}`;
 
-// --- Template helpers -------------------------------------------------------
+// The precompiled, flattenend abstract of tree.json. Compiled with
+// `node tools/sample-generator/setup.ts`.
+const flatTree: FlatTreeNode[] = JSON.parse(await fs.readFile(
+    join(dirname(fileURLToPath(import.meta.url)), 'flat-tree.json'),
+    'utf-8'
+));
+
+// The deep merge function from Highcharts
+function merge<T>(
+    extendOrSource: true | T,
+    ...sources: Array<Partial<T> | undefined>
+): T {
+    let i,
+        args = [extendOrSource, ...sources],
+        ret = {} as T;
+    const doCopy = function (copy: any, original: any): any {
+        // An object is replacing a primitive
+        if (typeof copy !== 'object') {
+            copy = {};
+        }
+
+        Object.entries(original).forEach(([key, value]) => {
+
+            // Prototype pollution (#14883)
+            if (key === '__proto__' || key === 'constructor') {
+                return;
+            }
+
+            // Copy the contents of objects, but not arrays or DOM nodes
+            if (
+                typeof value === 'object' &&
+                !Array.isArray(value) &&
+                value !== null
+            ) {
+                copy[key] = doCopy(copy[key] || {}, value);
+
+            // Primitives and arrays are copied over directly
+            } else {
+                copy[key] = original[key];
+            }
+        });
+        return copy;
+    };
+
+    // If first argument is true, copy into the existing object. Used in
+    // setOptions.
+    if (extendOrSource === true) {
+        ret = args[1] as T;
+        args = Array.prototype.slice.call(args, 2);
+    }
+
+    // For each argument, extend the return
+    const len = args.length;
+    for (i = 0; i < len; i++) {
+        ret = doCopy(ret, args[i]);
+    }
+
+    return ret;
+}
+
+// Template helpers
 async function loadTemplate(fileName: string) {
     // Templates live in ./tpl relative to this file
     const path = new URL(`./tpl/${fileName}`, import.meta.url);
     return await fs.readFile(path, 'utf-8');
-}
-
-// Get a nested value from an object given a dot-separated path.
-function getNestedValue(obj: any, path: string): any {
-    return path.split('.').reduce((current, key): any => current?.[key], obj);
 }
 
 // Parse override values from path definitions
@@ -113,44 +157,6 @@ function parsePathOverride(
     }
 
     return { path, overrideValue };
-}
-
-// Load the tree.json file
-export async function loadTree() {
-    const data = await fs.readFile(
-        '../highcharts/build/api/highcharts/tree.json',
-        'utf-8'
-    );
-    return JSON.parse(data);
-}
-
-// Find the node with the specified path
-export async function findNodeByPath(path: string) {
-    const tree = await loadTree();
-
-    const keys = path.split('.').map(key => key.replace(/\[(\d+)\]/gu, ''));
-    let currentNode = tree;
-
-    const extendNode = async (node: any) => {
-        if (node.doclet.extends) {
-            const parentNode = await findNodeByPath(node.doclet.extends);
-            if (parentNode) {
-                node.children = { ...parentNode.children, ...node.children };
-            }
-        }
-        return node;
-    };
-
-    for (const key of keys) {
-        const childNode = (currentNode)[key] || currentNode.children[key];
-        if (childNode) {
-            currentNode = await extendNode(childNode);
-        } else {
-            return null;
-        }
-    }
-
-    return currentNode;
 }
 
 // Function to generate sophisticated titles based on path analysis
@@ -256,7 +262,9 @@ async function generateChartConfig(
     metaList: MetaList
 ) {
     const { chartOptionsExtra } = config;
-    const paths = metaList.map(meta => meta.path);
+    const paths = metaList
+        .filter(meta => typeof meta.path === 'string')
+        .map(meta => meta.path);
     if (!metaList.length && paths) {
         throw new Error(`No nodes found for paths: ${paths.join(', ')}`);
     }
@@ -265,24 +273,27 @@ async function generateChartConfig(
     for (const optionsTpl of config.templates || ['column', 'categories-4']) {
         const tplModule = await import(`./tpl/chart-options/${optionsTpl}.ts`);
         const tplOptions = tplModule.default;
-        Highcharts.merge(true, chartOptions, tplOptions);
+        merge(true, chartOptions, tplOptions);
     }
 
     const titlePaths = metaList
-        .filter(meta => meta.controlOptions?.inTitle !== false)
+        .filter(
+            meta => meta.controlOptions?.inTitle !== false &&
+            typeof meta.path === 'string'
+        )
         .map(meta => meta.path);
-    Highcharts.merge(true, chartOptions, {
+    merge(true, chartOptions, {
         title: { text: generateTitle(titlePaths) }
     });
 
     if (chartOptionsExtra) {
-        Highcharts.merge(true, chartOptions, chartOptionsExtra);
+        merge(true, chartOptions, chartOptionsExtra);
     }
 
     if (config.dataFile) {
-        Highcharts.merge(true, chartOptions, {
-            series: [{ data: 'data' }]
-        });
+        chartOptions.series ||= [];
+        chartOptions.series[0] ||= {};
+        chartOptions.series[0].data = 'data';
     }
 
     for (const { defaultValue, path, overrideValue } of metaList) {
@@ -291,7 +302,9 @@ async function generateChartConfig(
             overrideValue :
             defaultValue;
 
-        extendObject(chartOptions, path, value);
+        if (path) {
+            extendObject(chartOptions, path, value);
+        }
     }
 
     // Order the keys recursively for consistent output. For the top-level,
@@ -339,91 +352,107 @@ async function generateChartConfig(
     return orderedChartOptions;
 }
 
-// Helper to compute mainType
-function getMainType(node: any) {
-    return node?.doclet.type?.names[0].replace('Highcharts.', '');
-}
-
 // Build a list of metadata for each path
-async function getPathMeta(config: SampleGeneratorConfig): Promise<MetaList> {
+function getPathMeta(config: SampleGeneratorConfig): MetaList {
     const list: MetaList = [];
     for (const controlOptions of config.controls || config.paths || []) {
-        let path: string, overrideValue: any;
+        let path: string | undefined,
+            overrideValue: any;
         if (typeof controlOptions === 'string') {
             ({ path, overrideValue } = parsePathOverride(controlOptions));
         } else {
             path = controlOptions.path;
             overrideValue = controlOptions.value;
         }
-        const node = await findNodeByPath(path);
-        if (!node) {
-            console.log(colors.gray(
-                `  - ${path} not found in tree.json, ` +
-                'trying to build control anyway.'
-            ));
-            // continue;
-        }
 
-        if (!types) {
-            throw new Error(
-                'E2: Exported types not loaded. Run gulp jsdoc-dts first.'
-            );
-        }
+        if (path) {
+            // Replace array indices for lookup in flat tree
+            const name = path.replace(/\[\d+\]/gu, '');
 
-        const mainType = getMainType(node);
-        let options: string[] | undefined;
-        if (node?.doclet.values) {
-            options = JSON.parse(node.doclet.values);
-        } else if (
-            types[mainType] &&
-            Array.isArray(types[mainType]) &&
-            types[mainType].length < 4
-        ) {
-            options = types[mainType];
-        }
+            let node = flatTree.find(n => n.name === name);
+            if (!node) {
+                const keys = path.split('.').map(
+                    k => k.replace(/\[\d+\]/gu, '[*]')
+                );
 
-        const defaultFromDocs = node?.doclet.defaultValue ?? node?.meta.default,
-            defaultFromCode = getNestedValue(defaultOptions, path),
-            // If the two defaults are the same, we skip setting it explicitly
-            // because the Controls will pick it up from Highcharts defaults
-            defaultValue = (
-                defaultFromCode === defaultFromDocs &&
-                // Except for ColorString, where CSS variables complicate things
-                mainType !== 'ColorString'
-            ) ?
-                void 0 :
-                defaultFromDocs;
+                // If the node is not found, start at the root and see if each
+                // parent extends another node. If it does, copy the options from
+                // the extended node until we find the path or run out of extends.
+                let currentPath = '';
+                for (const key of keys) {
+                    currentPath += (currentPath ? '.' : '') + key;
+                    const curPath = currentPath;
+                    const currentNode = flatTree.find(n => n.name === curPath);
+                    if (currentNode?.extendsPath) {
+                        flatTree
+                            .filter(
+                                n => n.name.startsWith(
+                                    currentNode.extendsPath + '.'
+                                )
+                            )
+                            .forEach(n => {
+                                const copyName = n.name.replace(
+                                    currentNode.extendsPath + '.',
+                                    curPath + '.'
+                                );
+                                if (!flatTree.some(
+                                    node => node.name === copyName
+                                )) {
+                                    flatTree.push({
+                                        ...n,
+                                        name: copyName
+                                    });
+                                }
+                            });
+                    }
+                }
 
-        if (executedDirectly) {
-            if (overrideValue !== void 0) {
-                console.log(colors.green(
-                    `Using override for ${path}: ${overrideValue}`
-                ));
-            } else if (defaultFromCode !== void 0) {
-                console.log(colors.green(
-                    `Found default from code for ${path}: ${defaultFromCode}`
-                ));
-            } else if (defaultFromDocs !== void 0) {
-                console.log(colors.green(
-                    `Found default from docs for ${path}: ${defaultFromDocs}`
-                ));
-            } else {
-                console.warn(colors.yellow(
-                    `No default value for path: ${path}`
+                node = flatTree.find(n => n.name === name);
+            }
+
+            if (!node) {
+                console.log(colors.gray(
+                    `  - ${path} not found in flat-tree.json, ` +
+                    'trying to build control anyway.'
                 ));
             }
-        }
 
-        list.push({
-            path,
-            controlOptions: typeof controlOptions === 'object' ?
-                controlOptions : void 0,
-            node,
-            mainType,
-            options,
-            defaultValue,
-            overrideValue
-        });
+            const { default: defaultValue, mainType, options } = node || {};
+
+            if (executedDirectly) {
+                if (overrideValue !== void 0) {
+                    console.log(colors.green(
+                        `Using override for ${path}: ${overrideValue}`
+                    ));
+                } else if (defaultValue !== void 0) {
+                    console.log(colors.green(
+                        `Found default for ${path}: ${defaultValue}`
+                    ));
+                } else {
+                    console.warn(colors.yellow(
+                        `No default value for path: ${path}`
+                    ));
+                }
+            }
+
+            list.push({
+                path,
+                controlOptions: typeof controlOptions === 'object' ?
+                    controlOptions : void 0,
+                node,
+                mainType,
+                options,
+                defaultValue,
+                overrideValue
+            });
+
+        // Separator or invalid path without override value
+        } else {
+            list.push({
+                controlOptions: typeof controlOptions === 'object' ?
+                    controlOptions : void 0
+            });
+        }
     }
     return list;
 }
@@ -433,6 +462,9 @@ function pickHandler(meta: MetaData) {
 
     const mainType = meta.mainType || '';
 
+    if (meta.controlOptions?.type === 'separator') {
+        return { kind: 'separator', mod: separatorHandler } as const;
+    }
     if (meta.controlOptions?.type === 'text') {
         return { kind: 'text', mod: textHandler } as const;
     }
@@ -473,6 +505,7 @@ function pickHandler(meta: MetaData) {
     }
 
     // Get it from validvalues. Case: xAxis.gridLineInterpolation.
+    /*
     if (meta.node?.doclet.type?.names.every(name => (
         typeof name === 'string' &&
         /^"[A-Za-z0-9_]*"$/u.test(name)
@@ -482,6 +515,7 @@ function pickHandler(meta: MetaData) {
         )));
         return { kind: 'select', mod: selectHandler } as const;
     }
+        */
 
     /*
     if (typeof value === 'number') {
@@ -898,6 +932,119 @@ export async function getDemoTS(
     return ts;
 }
 
+/**
+ * Convert a plain JS object into a simple YAML string.
+ * Supports: objects, arrays, strings, numbers, booleans, null.
+ * (No anchors/refs, no fancy YAML types.)
+ *
+ * @param {object} value The JavaScript object to convert to YAML.
+ */
+function objectToYml(value: unknown): string {
+    const isPlainObject = (v: unknown): v is Record<string, unknown> =>
+        !!v && typeof v === 'object' && !Array.isArray(v);
+
+    const quote = (s: string) => {
+        // Quote when empty, contains special chars, leading/trailing
+        // whitespace, or could be misread as YAML boolean/null/number-ish.
+        const needsQuotes =
+            s === '' ||
+            /^\s|\s$/u.test(s) ||
+            /[:\-[\]{},#&*!|>'"%@`]/u.test(s) ||
+            /\n/u.test(s) ||
+            /^(true|false|null|~|yes|no|on|off)$/iu.test(s) ||
+            /^[-+]?\d+(\.\d+)?$/u.test(s);
+
+        if (!needsQuotes) {
+            return s;
+        }
+        // Use double-quotes and escape backslash and quotes + newlines
+        return `"${s
+            .replace(/\\/gu, '\\\\')
+            .replace(/"/gu, '\\"')
+            .replace(/\n/gu, '\\n')}"`;
+    };
+
+    const scalarToYml = (v: unknown): string => {
+        if (v === null) {
+            return 'null';
+        }
+        if (v === void 0) {
+            return 'null';
+        }
+        if (typeof v === 'string') {
+            return quote(v);
+        }
+        if (typeof v === 'number') {
+            return Number.isFinite(v) ? String(v) : quote(String(v));
+        }
+        if (typeof v === 'boolean') {
+            return v ? 'true' : 'false';
+        }
+        // Fallback: stringify unknowns as strings
+        return quote(String(v));
+    };
+
+    const indentStr = (n: number) => '  '.repeat(n);
+
+    const render = (v: unknown, indent: number): string => {
+        if (Array.isArray(v)) {
+            if (v.length === 0) {
+                return '[]';
+            }
+            return v
+                .map(item => {
+                    if (Array.isArray(item) || isPlainObject(item)) {
+                        if (isPlainObject(item) && item.key) {
+                            // Special case for details.yml, where we want to
+                            // keep the "key: value" structure on the same line,
+                            // and put the rest of the object on the next line
+                            const { key, ...rest } = item as any;
+                            const inner = render(rest, indent + 1);
+                            return `${indentStr(indent)}- ${key}:\n${inner}`;
+                        }
+                        const inner = render(item, indent + 1);
+                        // Put complex item on next line
+                        return `${indentStr(indent)}- ${
+                            inner.includes('\n') ?
+                                '\n' + inner :
+                                inner
+                        }`;
+                    }
+                    return `${indentStr(indent)}- ${scalarToYml(item)}`;
+                })
+                .join('\n');
+        }
+
+        if (isPlainObject(v)) {
+            const entries = Object.entries(v);
+            if (entries.length === 0) {
+                return '{}';
+            }
+
+            return entries
+                .map(([k, val]) => {
+                    const key = quote(k)
+                        // Keep keys mostly bare, still safe-ish
+                        .replace(/^"|"$/gu, '');
+                    if (Array.isArray(val) || isPlainObject(val)) {
+                        const inner = render(val, indent + 1);
+                        return `${indentStr(indent)}${key}:\n${inner}`;
+                    }
+                    return `${
+                        indentStr(indent)
+                    }${key}: ${scalarToYml(val)}`;
+                })
+                .join('\n');
+        }
+
+        return `${indentStr(indent)}${scalarToYml(v)}`;
+    };
+
+    return '---\n' + render(value, 0) + '\n...';
+
+}
+
+
 // Function to get CSS from template
 export async function getDemoCSS(config: SampleGeneratorConfig) {
     let css = await loadTemplate('demo.css');
@@ -909,21 +1056,28 @@ export async function getDemoCSS(config: SampleGeneratorConfig) {
     return css;
 }
 
-export async function getDemoDetails(config: SampleGeneratorConfig) {
-    let details = await loadTemplate('demo.details');
-
+function getDemoDetails(config: SampleGeneratorConfig): string {
     const paths = config.controls ?
         config.controls
-            .filter(control => control.inTitle !== false)
+            .filter(
+                control => control.inTitle !== false &&
+                typeof control.path === 'string'
+            )
             .map(control => control.path) :
         config.paths || [];
 
-    details = details
-        .replace('Highcharts Demo', generateTitle(paths))
-        .replace(/<em>/gu, '')
-        .replace(/<\/em>/gu, '');
+    const details: Details = merge({
+        name: generateTitle(paths)
+            .replace(/<em>/gu, '')
+            .replace(/<\/em>/gu, ''),
+        /* eslint-disable-next-line camelcase */
+        js_wrap: 'b'
+    }, config.details || {});
 
-    return details;
+    // Convert to YML
+    const detailsYml = objectToYml(details);
+
+    return detailsYml;
 }
 
 // Function to save the generated configuration to Highcharts Samples
@@ -968,18 +1122,18 @@ async function saveChecksum(outputDir: string): Promise<void> {
 }
 
 export async function saveDemoFile(config: SampleGeneratorConfig) {
-    const metaList = await getPathMeta(config);
+    const metaList = getPathMeta(config);
     if (!metaList.length && config.paths) {
         throw new Error(`No nodes found for paths: ${config.paths.join(', ')}`);
     }
 
     // Build all assets in parallel based on per-path mainTypes
-    const [html, css, ts, details] = await Promise.all([
+    const [html, css, ts] = await Promise.all([
         getDemoHTML(config, metaList),
         getDemoCSS(config),
-        getDemoTS(config, metaList),
-        getDemoDetails(config)
+        getDemoTS(config, metaList)
     ]);
+    const details = getDemoDetails(config);
 
     const outputDir = join(
         dirname(fileURLToPath(import.meta.url)),
