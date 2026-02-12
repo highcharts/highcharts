@@ -221,7 +221,7 @@ abstract class BaseForm {
                 iconsURL.startsWith('http') &&
                 iconsURL.match(/png|svg|jpeg|jpg|gif/ig)
             ) {
-                return `url("${iconsURL}")`;
+                return 'url("' + iconsURL + '")';
             }
 
             iconString = `url("${iconsURL}${iconName}")`;
