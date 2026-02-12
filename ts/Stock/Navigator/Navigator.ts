@@ -886,7 +886,7 @@ class Navigator {
      * Set up the mouse and touch events for the shades and handles only.
      *
      * @private
-     * @function Highcharts.Navigator#addShadesAndHandelsEvents
+     * @function Highcharts.Navigator#addShadesAndHandlesEvents
      */
     public addShadesAndHandlesEvents(): void {
         this.shadesAndHandlesEventsToUnbind = this.getPartsEvents('mousedown'),
