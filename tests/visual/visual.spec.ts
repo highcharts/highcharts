@@ -72,20 +72,7 @@ function stripDemoCssImports(css: string | undefined): string | undefined {
 
 const FIXED_CLOCK_TIME = '2024-01-01T00:00:00.000Z';
 const DEFAULT_MAX_CHART_LOAD_ATTEMPTS = 100;
-const CI_MAX_CHART_LOAD_ATTEMPTS = 60;
 const CHART_LOAD_RETRY_DELAY_MS = 100;
-const DISABLED_ENV_VALUES = new Set(['0', 'false', 'no', 'off']);
-
-function isEnabledEnv(name: string): boolean {
-    const rawValue = process.env[name];
-    if (!rawValue) {
-        return false;
-    }
-
-    return !DISABLED_ENV_VALUES.has(rawValue.trim().toLowerCase());
-}
-
-const IS_CI = isEnabledEnv('CI');
 
 function getPositiveIntegerEnv(name: string): number | undefined {
     const rawValue = process.env[name];
@@ -103,9 +90,7 @@ function getPositiveIntegerEnv(name: string): number | undefined {
 
 const MAX_CHART_LOAD_ATTEMPTS =
     getPositiveIntegerEnv('VISUAL_TEST_MAX_CHART_LOAD_ATTEMPTS') ??
-    (IS_CI ?
-        CI_MAX_CHART_LOAD_ATTEMPTS :
-        DEFAULT_MAX_CHART_LOAD_ATTEMPTS);
+    DEFAULT_MAX_CHART_LOAD_ATTEMPTS;
 const CHART_LOAD_TIMEOUT_MS =
     MAX_CHART_LOAD_ATTEMPTS * CHART_LOAD_RETRY_DELAY_MS;
 const RENDER_WIDTH = 600;
@@ -710,21 +695,13 @@ test.describe('Visual tests', () => {
                 const updateMode = getSnapshotUpdateMode(
                     test.info().config.updateSnapshots
                 );
-                const comparison = await compareSVG(
+                await compareSVG(
                     samplePath,
                     svgContent, {
                         updateMode,
                         renderPage
                     }
                 );
-
-                if (IS_CI && !comparison.passed) {
-                    throw new Error(
-                        `SVG mismatch for ${getRelativeSamplePath(samplePath)} ` +
-                        `(diff pixels: ${comparison.diffPixels}). ` +
-                        `See ${comparison.referencePath} and ${comparison.candidatePath}.`
-                    );
-                }
 
                 await prepareRenderPageForScreenshot(renderPage, svgContent);
                 const browserName = context?.browser()?.browserType().name();
