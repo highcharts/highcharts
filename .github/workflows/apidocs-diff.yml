@@ -40,7 +40,7 @@ jobs:
 
       - name: Checkout code from current branch
         run: |
-          git fetch origin "${{ github.event.pull_request.head.sha }}"
+          git fetch origin "${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}"
           git checkout FETCH_HEAD -- ts                                                                                                                                                                            
 
       - run: npx gulp generate-samples
