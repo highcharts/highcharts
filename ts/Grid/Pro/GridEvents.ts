@@ -288,6 +288,8 @@ declare module '../Core/Options' {
     interface Options {
         /**
          * Events options triggered by the grid.
+         *
+         * @product gridpro
          */
         events?: GridEvents;
     }
@@ -295,6 +297,8 @@ declare module '../Core/Options' {
     interface ColumnCellOptions {
         /**
          * Events options triggered by the grid elements.
+         *
+         * @product gridpro
          */
         events?: CellEvents;
     }
@@ -302,6 +306,8 @@ declare module '../Core/Options' {
     interface ColumnOptions {
         /**
          * Events options triggered by the grid elements.
+         *
+         * @product gridpro
          */
         events?: ColumnEvents;
     }
@@ -309,6 +315,8 @@ declare module '../Core/Options' {
     interface ColumnHeaderOptions {
         /**
          * Events options triggered by the grid elements.
+         *
+         * @product gridpro
          */
         events?: HeaderEvents;
     }

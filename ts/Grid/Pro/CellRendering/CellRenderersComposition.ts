@@ -110,6 +110,8 @@ declare module '../../Core/Options' {
     interface ColumnCellOptions {
         /**
          * Options to control the cell content rendering.
+         *
+         * @product gridpro
          */
         renderer?: CellRendererType['options'];
     }

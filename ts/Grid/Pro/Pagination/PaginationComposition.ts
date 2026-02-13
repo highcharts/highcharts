@@ -107,6 +107,7 @@ declare module '../../Core/Pagination/PaginationOptions' {
         /**
          * Pagination events.
          *
+         * @product gridpro
          */
         events?: PaginationEvents;
     }
