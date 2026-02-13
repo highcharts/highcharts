@@ -1,6 +1,7 @@
 name: Diff tree.json with master
 
 on:
+  workflow_dispatch:
   pull_request:
     branches:
       - 'master'
