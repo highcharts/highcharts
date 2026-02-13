@@ -6,6 +6,13 @@ optionally filled bands) represent equal values, like elevation or intensity.
 
 <iframe style="width: 100%; border: none; height: 500px;" src="https://www.highcharts.com/samples/embed/highcharts/demo/contour-mountain" allow="fullscreen"></iframe>
 
+### Requirements
+
+The contour series is rendered using WebGPU technology. As of writing, this is
+not generally supported by all modern browsers. See [Can I use
+WebGPU](https://caniuse.com/webgpu) for an updated support table.
+
+
 ### Setting up the contour series
 
 Contour charts require the [modules/contour.js](https://code.highcharts.com/modules/contour.js)
