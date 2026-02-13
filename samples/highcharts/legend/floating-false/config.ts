@@ -11,7 +11,7 @@ export default {
     chartOptionsExtra: {
         legend: {
             align: 'right',
-            verticalAlign: 'middle',
+            verticalAlign: 'middle'
         }
     }
 } satisfies SampleGeneratorConfig;
