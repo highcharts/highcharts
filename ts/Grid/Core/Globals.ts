@@ -1,10 +1,10 @@
 /* *
  *
- *  (c) 2009-2025 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Dawid Dragula
@@ -48,7 +48,6 @@ export const rawClassNames = {
     rowEven: 'row-even',
     rowOdd: 'row-odd',
     hoveredRow: 'hovered-row',
-    columnElement: 'column',
     hoveredCell: 'hovered-cell',
     hoveredColumn: 'hovered-column',
     syncedRow: 'synced-row',
@@ -74,6 +73,7 @@ export const rawClassNames = {
     columnSortableIcon: 'column-sortable-icon',
     columnSortedAsc: 'column-sorted-asc',
     columnSortedDesc: 'column-sorted-desc',
+    sortPriorityIndicator: 'sort-priority-indicator',
     resizableContent: 'resizable-content',
     resizerHandles: 'column-resizer',
     resizedColumn: 'column-resized',
@@ -110,6 +110,10 @@ export const rawClassNames = {
     paginationNavButtonsContainer: 'pagination-nav-buttons-container',
     paginationNavDropdown: 'pagination-nav-dropdown',
     paginationPageSize: 'pagination-page-size',
+    paginationLeft: 'pagination-left',
+    paginationCenter: 'pagination-center',
+    paginationRight: 'pagination-right',
+    paginationDistributed: 'pagination-distributed',
     noWidth: 'no-width',
     rightAlign: 'right',
     centerAlign: 'center',

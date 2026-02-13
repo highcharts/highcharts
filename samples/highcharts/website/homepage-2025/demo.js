@@ -32,7 +32,7 @@ if (!reducedMotion) {
 
 // common data label format for the pie chart
 function pieLabels() {
-    let color = '--var(text-primary)';
+    let color = '#000';
     if (this.index === 0) {
         color = '#fff';
     }
@@ -2471,6 +2471,42 @@ function grid() {
 // product info for demo viewer
 const products = [
     {
+        name: 'Highcharts Stock',
+        tagline: 'Financial visualization and analysis tools',
+        id: 'stockTitle',
+        icon: 'icon-stock.svg',
+        chart: cs,
+        // eslint-disable-next-line max-len
+        demoTitle: 'Candlestick chart',
+        // eslint-disable-next-line max-len
+        demoDesc: 'Candlesticks make it easy to spot trends over time.',
+        // eslint-disable-next-line max-len
+        stopLink: `<button class="stop-link" 
+        id="stop-stock">(Stop chart animation)</button>`,
+        description: `<p>Dynamic Candlestick Chart</p>
+        <div>A purely decorative candlestick chart that updates with 
+        new data every 100 milliseconds.</div>`
+    },
+    {
+        name: 'Highcharts Grid ',
+        tagline: 'Tools for JavaScript data tables',
+        id: 'gridTitle',
+        chart: grid,
+        icon: 'icon-grid.svg',
+        // eslint-disable-next-line max-len
+        stopLink: `<button class="stop-link" 
+         id="stop-grid">(Stop chart animation)</button>`,
+        demoTitle: 'Data grid with sparklines',
+        demoDesc: `Combine tabular data and inline 
+        charts for instant visual context.`,
+        description: `<p>Data Grid with Sparklines</p>
+        A purely decorative data grid 
+        displaying the status and performance metrics of 30 virtual 
+        server instances. Each row represents an instance with columns 
+        for running status, CPU and memory utilization sparklines, 
+        public IP address, disk operations bar chart, and disk usage pie chart.`
+    },
+    {
         name: 'Highcharts Core',
         tagline: '40+ Chart Types',
         id: 'coreTitle',
@@ -2488,21 +2524,22 @@ const products = [
         and other toppings 5 percent.</div>`
     },
     {
-        name: 'Highcharts Stock',
-        tagline: 'Financial visualization and analysis tools',
-        id: 'stockTitle',
-        icon: 'icon-stock.svg',
-        chart: cs,
-        // eslint-disable-next-line max-len
-        demoTitle: 'Candlestick chart',
-        // eslint-disable-next-line max-len
-        demoDesc: 'Candlesticks make it easy to spot trends over time.',
-        // eslint-disable-next-line max-len
-        stopLink: `<button class="stop-link" 
-        id="stop-stock">(Stop chart animation)</button>`,
-        description: `<p>Dynamic Candlestick Chart</p>
-        <div>A purely decorative candlestick chart that updates with 
-        new data every 100 milliseconds.</div>`
+        name: 'Highcharts Dashboards',
+        tagline: 'Time-saving dashboard tools',
+        id: 'dashboardsTitle',
+        chart: dashboards,
+        icon: 'icon-dashboards.svg',
+        demoTitle: 'Personal finance dashboard',
+        stopLink: null,
+        demoDesc: 'Use our data sync tools to create dynamic dashboards fast.',
+        description: `<p>Personal Finance Dashboard</p>A purely decorative  
+        dashboard showing key financial metrics, including total 
+        balance, savings, earnings, spendings, and recent transactions. 
+        Line and area charts illustrate trends in balance, 
+        savings growth, and monthly earnings. A pie chart shows 
+        wallet condition, indicating 58 percent of income saved 
+        this month. A data table lists four recent transactions 
+        by receiver, amount, and remaining balance.`
     },
     {
         name: 'Highcharts Maps',
@@ -2540,43 +2577,6 @@ const products = [
         Prototyping is 95 percent complete, Development 
         tasks are 70 and 30 percent complete, and 
         Testing is 15 percent complete.`
-    },
-    {
-        name: 'Highcharts Dashboards',
-        tagline: 'Time-saving dashboard tools',
-        id: 'dashboardsTitle',
-        chart: dashboards,
-        icon: 'icon-dashboards.svg',
-        demoTitle: 'Personal finance dashboard',
-        stopLink: null,
-        demoDesc: 'Use our data sync tools to create dynamic dashboards fast.',
-        description: `<p>Personal Finance Dashboard</p>A purely decorative  
-        dashboard showing key financial metrics, including total 
-        balance, savings, earnings, spendings, and recent transactions. 
-        Line and area charts illustrate trends in balance, 
-        savings growth, and monthly earnings. A pie chart shows 
-        wallet condition, indicating 58 percent of income saved 
-        this month. A data table lists four recent transactions 
-        by receiver, amount, and remaining balance.`
-    },
-    {
-        name: 'Highcharts Grid ',
-        tagline: 'Tools for JavaScript data tables',
-        id: 'gridTitle',
-        chart: grid,
-        icon: 'icon-grid.svg',
-        // eslint-disable-next-line max-len
-        stopLink: `<button class="stop-link" 
-         id="stop-grid">(Stop chart animation)</button>`,
-        demoTitle: 'Data grid with sparklines',
-        demoDesc: `Combine tabular data and inline 
-        charts for instant visual context.`,
-        description: `<p>Data Grid with Sparklines</p>
-        A purely decorative data grid 
-        displaying the status and performance metrics of 30 virtual 
-        server instances. Each row represents an instance with columns 
-        for running status, CPU and memory utilization sparklines, 
-        public IP address, disk operations bar chart, and disk usage pie chart.`
     }
 ];
 
@@ -2862,7 +2862,7 @@ function ensureCorrectAnimationState() {
     Object.keys(chartAnimationState).forEach(key => {
         const isActive = chartAnimationState[key];
         // stock chart
-        if (key === 'stock' && currentIndex === 1) {
+        if (key === 'stock' && currentIndex === 0) { // stock index is 0
             if (isActive) {
                 startStockChartAnimation();
                 logAnim('Stock animation resumed');
@@ -2872,7 +2872,7 @@ function ensureCorrectAnimationState() {
             }
         }
         // map chart
-        if (key === 'maps' && currentIndex === 2) {
+        if (key === 'maps' && currentIndex === 4) { // maps index is 4
             if (isActive) {
                 startMapAnimation();
                 logAnim('Map animation resumed');
@@ -2882,7 +2882,8 @@ function ensureCorrectAnimationState() {
             }
         }
         // grid
-        if (key === 'grid' && gridControls && currentIndex === 5) {
+        // eslint-disable-next-line max-len
+        if (key === 'grid' && gridControls && currentIndex === 1) { // grid index is 1
             if (isActive) {
                 if (typeof gridControls.resumeGridUpdates === 'function') {
                     gridControls.resumeGridUpdates();

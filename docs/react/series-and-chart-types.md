@@ -90,7 +90,7 @@ This basic example uses the generic `Series` component for built-in chart types.
 pattern that wires up Stock indicators dynamically, see the dedicated
 [`Dynamic React indicators` sample](https://www.highcharts.com/samples/highcharts/react/dynamic-indicators).
 
-<iframe src="https://www.highcharts.com/samples/embed/highcharts/react/dynamic-basics" style="width: 100%; height: 600px; border: 0;"></iframe>
+<iframe src="https://www.highcharts.com/samples/embed/highcharts/react/dynamic-basics" title="Dynamic series chart demo showing add/remove series on user input"></iframe>
 
 
 ## Series type components
@@ -266,9 +266,9 @@ ReactDOM.createRoot(
 
 **Live demo:**
 
-<iframe src="https://www.highcharts.com/samples/embed/highcharts/react/bubble" style="width: 100%; height: 600px; border: 0;"></iframe>
+<iframe src="https://www.highcharts.com/samples/embed/highcharts/react/bubble" title="Bubble chart demo with multiple data series"></iframe>
 
 
 **Live demo:**
 
-<iframe src="https://www.highcharts.com/samples/embed/highcharts/react/venn-diagram" style="width: 100%; height: 600px; border: 0;"></iframe>
+<iframe src="https://www.highcharts.com/samples/embed/highcharts/react/venn-diagram" title="Venn diagram demo"></iframe>

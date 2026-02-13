@@ -8,7 +8,11 @@ const gridProDir =  '../../../samples/grid-pro/';
 
 function getDemoFiles(dir) {
     return readdirSync(dir,{ recursive: true })
-        .filter((file) => file.endsWith('.html'))
+        .filter((file) => (
+            file.endsWith('.html') &&
+            !file.includes('studies/') &&
+            !file.includes('cypress/')
+        ))
         .map((file) => file.replace('\/demo.html', ''));
 }
 
@@ -17,6 +21,7 @@ export default defineConfig({
     e2e: {
         ...defaultConfig.e2e,
         specPattern: 'test/cypress/grid/integration/**/*.cy.{js,jsx,ts,tsx}',
+        excludeSpecPattern: 'test/cypress/grid/integration/demos.cy.{js,jsx,ts,tsx}',
         setupNodeEvents(on, config) {
             config.env.demoPaths = {
                 gridLitePaths: getDemoFiles(gridLiteDir),

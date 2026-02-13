@@ -2,11 +2,11 @@
  *
  *  Grid HeaderRow class
  *
- *  (c) 2020-2025 Highsoft AS
+ *  (c) 2020-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Dawid Dragula
@@ -95,7 +95,7 @@ class HeaderRow extends Row {
      *
      * @internal
      */
-    public renderContent(level: number): void {
+    public async renderContent(level: number): Promise<void> {
         const headerOpt = this.viewport.grid.options?.header;
         const vp = this.viewport;
         const enabledColumns = vp.grid.enabledColumns || [];
@@ -105,7 +105,7 @@ class HeaderRow extends Row {
         this.htmlElement.classList.add(Globals.getClassName('headerRow'));
 
         if (!headerOpt) {
-            super.render();
+            await super.render();
         } else {
             const columnsOnLevel = this.getColumnsAtLevel(headerOpt, level);
 
@@ -163,7 +163,7 @@ class HeaderRow extends Row {
                     );
                 }
 
-                headerCell.render();
+                await headerCell.render();
 
                 if (columnId) {
                     headerCell.htmlElement.setAttribute(

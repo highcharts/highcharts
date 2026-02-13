@@ -2,11 +2,11 @@
  *
  *  Grid ColumnFiltering class
  *
- *  (c) 2020-2025 Highsoft AS
+ *  (c) 2020-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Dawid Dragula
@@ -443,7 +443,7 @@ class ColumnFiltering {
     private renderClearButton(inputWrapper: HTMLElement): void {
         this.clearButton = makeHTMLElement('button', {
             className: Globals.getClassName('clearFilterButton'),
-            innerText: 'Clear filter' // TODO: Lang
+            innerText: 'Clear filter' // TODO(lang): Lang
         }, inputWrapper);
         this.clearButton.setAttribute('tabindex', '-1');
         this.clearButton.disabled = !this.isFilteringApplied();

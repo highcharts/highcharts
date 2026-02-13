@@ -1,3 +1,19 @@
 <script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/accessibility.js"></script>
+<script src="https://code.highcharts.com/themes/adaptive.js"></script>
 
-<div id="container"></div>
+<script src="https://cdn.jsdelivr.net/npm/@highcharts/controls@0.7.0" type="module"></script>
+
+<figure class="highcharts-figure">
+  <div id="container"></div>
+</figure>
+
+<div class="highcharts-controls-wrapper">
+  <highcharts-controls>
+    <highcharts-group header="Update options">
+      <highcharts-control path="xAxis.plotBands[0].label.style.color" value="#888"></highcharts-control>
+      <highcharts-control path="xAxis.plotBands[0].label.style.fontSize" value="0.8em" min="0.5" max="2" step="0.1"></highcharts-control>
+      <highcharts-control path="xAxis.plotBands[0].label.style.fontWeight" value="bold" options="normal,bold,bolder,lighter"></highcharts-control>
+    </highcharts-group>
+  </highcharts-controls>
+</div>

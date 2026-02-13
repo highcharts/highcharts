@@ -2,11 +2,11 @@
  *
  *  Grid HeaderCell class
  *
- *  (c) 2020-2025 Highsoft AS
+ *  (c) 2020-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Dawid Dragula
@@ -167,17 +167,18 @@ class HeaderCell extends Cell {
     /**
      * Render the cell container.
      */
-    public override render(): void {
+    public override async render(): Promise<void> {
         const { column } = this;
         const options = createOptionsProxy(
             this.superColumnOptions,
             column?.options
         );
         const headerCellOptions = options.header || {};
+        const headerValue = column ?
+            headerCellOptions.formatter?.call(column) : void 0;
 
-
-        if (headerCellOptions.formatter) {
-            this.value = headerCellOptions.formatter.call(this).toString();
+        if (headerValue) {
+            this.value = headerValue.toString();
         } else if (isString(headerCellOptions.format)) {
             this.value = column ?
                 column.format(headerCellOptions.format) :
@@ -243,6 +244,8 @@ class HeaderCell extends Cell {
         this.setCustomClassName(options.header?.className);
 
         fireEvent(this, 'afterRender', { column });
+
+        return Promise.resolve();
     }
 
     public override reflow(): void {
@@ -264,7 +267,7 @@ class HeaderCell extends Cell {
         this.toolbar?.reflow();
     }
 
-    protected override onKeyDown(e: KeyboardEvent): void {
+    public override onKeyDown(e: KeyboardEvent): void {
         if (!this.column || e.target !== this.htmlElement) {
             return;
         }
@@ -278,7 +281,7 @@ class HeaderCell extends Cell {
         super.onKeyDown(e);
     }
 
-    protected override onClick(e: MouseEvent): void {
+    public override onClick(e: MouseEvent): void {
         const column = this.column;
 
         if (
@@ -290,8 +293,11 @@ class HeaderCell extends Cell {
             return;
         }
 
-        if (column.options.sorting?.sortable) {
-            column.sorting?.toggle();
+        if ((
+            column.options.sorting?.enabled ??
+            column.options.sorting?.sortable
+        )) {
+            column.sorting?.toggle(e);
         }
 
         fireEvent(this, 'click', {

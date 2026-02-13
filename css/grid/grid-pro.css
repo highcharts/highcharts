@@ -1,9 +1,12 @@
+/* SPDX-License-Identifier: LicenseRef-Highcharts */
+
 /**
  * @license Highcharts Grid Pro v@product.version@
  *
  * (c) 2009-2025 Highsoft AS
  *
- * License: www.highcharts.com/license
+ * A commercial license may be required depending on use.
+ * See www.highcharts.com/license
  */
 
 @import url("./grid-lite.css");
@@ -102,10 +105,6 @@
 
 .hcg-no-padding {
     padding: 0 !important;
-}
-
-.hcg-table tbody td.hcg-edited-cell {
-    padding: 0;
 }
 
 .hcg-cell-editing-container {

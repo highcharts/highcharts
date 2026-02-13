@@ -2,11 +2,11 @@
  *
  *  Text Cell Content class
  *
- *  (c) 2020-2025 Highsoft AS
+ *  (c) 2020-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Dawid Dragula
@@ -58,7 +58,7 @@ class TextContent extends CellContent {
 
     public static readonly defaultFormatsForDataTypes: Record<ColumnDataType, string> = {
         string: '{value}',
-        number: '{value}',
+        number: '{value:,.f}',
         'boolean': '{value}',
         datetime: '{value:%Y-%m-%d %H:%M:%S}'
     };
