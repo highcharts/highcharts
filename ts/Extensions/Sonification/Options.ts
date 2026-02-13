@@ -713,6 +713,9 @@ declare module '../../Core/Series/SeriesOptions' {
 
 
 const Options: DeepPartial<OptionsType> = {
+    /**
+     * @optionparent sonification
+     */
     sonification: {
         /**
          * Global tracks to add to every series.
