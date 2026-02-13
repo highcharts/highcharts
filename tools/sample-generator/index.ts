@@ -867,6 +867,11 @@ export async function getDemoTS(
             const indentWithKey = (indentMatch?.[0] || '')
                 .replace(/^[\n\r]+/u, '');
 
+            if (/\\n/u.test(p1)) {
+                // Already has line breaks, return as template string
+                return `: \`${p1.replace(/\\n/gu, '\n')}\``;
+            }
+
             // Check if the total line length exceeds 80 characters
             if (indentWithKey.length + `: '${p1}'`.length <= 80) {
                 return _match;

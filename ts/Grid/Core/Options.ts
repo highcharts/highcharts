@@ -586,6 +586,23 @@ export interface ColumnSortingOptions {
     sortable?: boolean;
 
     /**
+     * Sequence of sorting orders used when toggling sorting from the user
+     * interface (for example by clicking the column header).
+     *
+     * The sequence can contain any number of values, in any order, with
+     * duplicates allowed. Allowed values are: `'asc'`, `'desc'`, and `null`.
+     *
+     * If the sequence is empty (`[]`), sorting toggles become a no-op while
+     * the sortable UI can still be shown.
+     *
+     * This option can be set in both `columnDefaults.sorting` and
+     * `columns[].sorting`.
+     *
+     * @default ['asc', 'desc', null]
+     */
+    orderSequence?: ColumnSortingOrder[];
+
+    /**
      * Custom compare function to sort the column values. It overrides the
      * default sorting behavior. If not set, the default sorting behavior is
      * used.

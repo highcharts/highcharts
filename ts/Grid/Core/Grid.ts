@@ -886,6 +886,7 @@ export class Grid {
             }
             delete sortingDiff.compare;
             delete sortingDiff.order;
+            delete sortingDiff.orderSequence;
 
             // Idea: sortable - redraw only header cell
 
