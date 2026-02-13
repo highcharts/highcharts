@@ -5,7 +5,7 @@
  *  (c) Highsoft AS
  *
  *  Authors:
- *  - Sophie Bremer
+ *  - Mikkel Espolin Birkeland
  *
  * */
 

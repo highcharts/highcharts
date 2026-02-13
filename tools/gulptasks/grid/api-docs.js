@@ -266,6 +266,17 @@ function postProcessHTML(gridDir) {
         );
         fs.writeFileSync(searchPath, JSON.stringify(filtered), 'utf8');
     }
+
+    // Remove stubs from tree.json (api.js builds sidebar from this)
+    const treePath = path.join(gridDir, 'tree.json');
+    if (fs.existsSync(treePath)) {
+        const treeData = JSON.parse(
+            fs.readFileSync(treePath, 'utf8')
+        );
+        delete treeData.plotOptions;
+        delete treeData.series;
+        fs.writeFileSync(treePath, JSON.stringify(treeData), 'utf8');
+    }
 }
 
 /* *
