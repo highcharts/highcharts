@@ -1,0 +1,54 @@
+name: Diff tree.json with master
+
+on:
+  pull_request:
+    branches:
+      - 'master'
+    paths:
+      - 'ts/**/*.ts'
+
+permissions:
+   contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  notify:
+    runs-on: ubuntu-slim
+    steps:
+      - name: Checkout master
+        uses: actions/checkout@v6
+        with:
+          ref: master
+
+      - name: Use Node.js lts/*
+        uses: actions/setup-node@v6
+        with:
+          node-version: 'lts/*'
+          cache: 'npm'
+
+      - run: npm ci
+
+      - run: npx gulp generate-samples
+      - run: npx gulp jsdoc-dts
+
+      - name: Add master trees
+        run: git add -f "tree*.json"
+
+      - name: Checkout code from current branch
+        run: |
+          git fetch origin "${{ github.event.pull_request.head.sha }}"
+          git checkout FETCH_HEAD -- ts                                                                                                                                                                            
+
+      - run: npx gulp generate-samples
+      - run: npx gulp jsdoc-dts
+
+      - run: git --no-pager diff > changes.md
+    
+      - name: Store artifacts
+        uses: actions/upload-artifact@v6
+        with:
+          name: apidocs-diff
+          path: changes.md
