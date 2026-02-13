@@ -10,6 +10,7 @@ on:
 
 permissions:
    contents: read
+   pull-requests: write
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -46,7 +47,71 @@ jobs:
       - run: npx gulp generate-samples
       - run: npx gulp jsdoc-dts
 
-      - run: git --no-pager diff > changes.md
+      - name: Generate tree diff
+        id: tree-diff
+        run: |
+          git add -N tree*.json
+          git --no-pager diff -- tree*.json > changes.md
+          if [ -s changes.md ]; then
+            echo "has_changes=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_changes=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Comment on PR when trees change
+        if: github.event_name == 'pull_request' && steps.tree-diff.outputs.has_changes == 'true'
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const fs = require('fs');
+            const marker = '<!-- apidocs-diff -->';
+            const diff = fs.readFileSync('changes.md', 'utf8');
+            const maxLength = 60000;
+            const safeDiff = diff.length > maxLength
+              ? `${diff.slice(0, maxLength)}\n... (truncated)`
+              : diff;
+
+            const body = [
+              marker,
+              'API docs diff detected for `tree*.json`.',
+              '',
+              '<details><summary>Show diff</summary>',
+              '',
+              '```diff',
+              safeDiff,
+              '```',
+              '',
+              '</details>'
+            ].join('\n');
+
+            const { owner, repo } = context.repo;
+            const issue_number = context.issue.number;
+            const { data: comments } = await github.rest.issues.listComments({
+              owner,
+              repo,
+              issue_number,
+              per_page: 100
+            });
+
+            const existing = comments.find(comment =>
+              comment.user?.type === 'Bot' && comment.body?.includes(marker)
+            );
+
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner,
+                repo,
+                comment_id: existing.id,
+                body
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner,
+                repo,
+                issue_number,
+                body
+              });
+            }
       - name: Store artifacts
         uses: actions/upload-artifact@v6
         with:
