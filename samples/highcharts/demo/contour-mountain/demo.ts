@@ -6,65 +6,114 @@
 
     Highcharts.chart('container', {
         chart: {
-            height: 500,
+            height: '80%',
             zooming: {
                 type: 'xy'
             }
         },
         title: {
-            text: 'Mountain elevation'
+            text: 'Mountain topography'
+        },
+        subtitle: {
+            text: 'With WebGPU contour series'
         },
         xAxis: {
-            title: {
-                text: 'longitude'
-            },
             endOnTick: false,
             gridLineColor: '#fff4',
             gridLineWidth: 1,
             gridZIndex: 4,
-            lineWidth: 1,
+            labels: {
+                align: 'left',
+                format: '{value:.2f}°E',
+                style: {
+                    fontSize: '0.6em'
+                },
+                y: -2
+            },
+            lineWidth: 0,
             maxPadding: 0,
             minPadding: 0,
             startOnTick: false,
             tickInterval: 0.01,
-            tickWidth: 1
+            tickWidth: 0
         },
         yAxis: {
             title: {
-                text: 'latitude'
+                text: ''
             },
             endOnTick: false,
             gridLineColor: '#fff4',
             gridLineWidth: 1,
             gridZIndex: 4,
-            lineWidth: 1,
+            labels: {
+                align: 'left',
+                format: '{value:.2f}°N',
+                style: {
+                    fontSize: '0.6em'
+                },
+                x: 2,
+                y: -3
+            },
             maxPadding: 0,
             minPadding: 0,
             startOnTick: false,
-            tickInterval: 0.01,
-            tickWidth: 1
+            tickInterval: 0.01
         },
         colorAxis: {
+            labels: {
+                format: '{value} m'
+            },
             stops: [
                 [
                     0,
-                    '#3060cf'
+                    '#447cff'
                 ],
                 [
                     0.5,
-                    '#fffbbc'
+                    '#f5ff66'
                 ],
                 [
                     0.9,
-                    '#c4463a'
+                    '#ff5e4f'
                 ]
             ]
+        },
+        legend: {
+            title: {
+                text: 'Elevation'
+            },
+            align: 'right',
+            layout: 'vertical',
+            verticalAlign: 'middle'
+        },
+        responsive: {
+            rules: [{
+                chartOptions: {
+                    chart: {
+                        height: '130%'
+                    },
+                    colorAxis: {
+                        labels: {
+                            format: '{value}'
+                        }
+                    },
+                    legend: {
+                        align: 'center',
+                        layout: 'horizontal',
+                        verticalAlign: 'bottom'
+                    }
+                },
+                condition: {
+                    maxWidth: 500
+                }
+            }]
         },
         series: [{
             clip: true,
             contourInterval: 50,
             contourOffset: 0,
             data: data,
+            lineColor: '#888',
             lineWidth: 1,
             marker: {
                 states: {
@@ -100,7 +149,10 @@
             ],
             dataLabels: {
                 enabled: true,
-                format: '{point.name}'
+                format: '<b>{point.name}</b><br>{point.value} m',
+                style: {
+                    fontWeight: 'normal'
+                }
             },
             keys: ['x', 'y', 'value', 'name'],
             marker: {
@@ -112,8 +164,8 @@
             type: 'scatter'
         }],
         tooltip: {
-            pointFormat: '\n                lat: ' +
-                   '<strong>{point.x:.2f}</strong>,<br/>\n ' +
+            pointFormat: '\n                Latitude: <strong>{point.x:.2f} ' +
+                   'ºE</strong>,<br/>\n ' +
                    ' ' +
                    ' ' +
                    ' ' +
@@ -129,8 +181,9 @@
                    ' ' +
                    ' ' +
                    ' ' +
-                   'lon: ' +
-                   '<strong>{point.y:.2f}</strong>,<br/>\n ' +
+                   'Longitude: ' +
+                   '<strong>{point.y:.2f} ' +
+                   'ºN</strong>,<br/>\n ' +
                    ' ' +
                    ' ' +
                    ' ' +
@@ -146,7 +199,7 @@
                    ' ' +
                    ' ' +
                    ' ' +
-                   'elevation: ' +
+                   'Elevation: ' +
                    '<strong>{point.value} ' +
                    'm</strong>\n ' +
                    ' ' +

@@ -40,19 +40,27 @@ export default {
     },
     chartOptionsExtra: {
         chart: {
-            height: 500,
+            height: '80%',
             zooming: {
                 type: 'xy'
             }
         },
         title: {
-            text: 'Mountain elevation'
+            text: 'Mountain topography'
+        },
+        subtitle: {
+            text: 'With WebGPU contour series'
         },
         xAxis: {
             tickInterval: 0.01,
             gridLineWidth: 1,
-            title: {
-                text: 'longitude'
+            labels: {
+                align: 'left',
+                format: '{value:.2f}°E',
+                style: {
+                    fontSize: '0.6em'
+                },
+                y: -2
             },
             gridLineColor: '#fff4',
             gridZIndex: 4,
@@ -60,43 +68,61 @@ export default {
             maxPadding: 0,
             endOnTick: false,
             startOnTick: false,
-            tickWidth: 1,
-            lineWidth: 1
+            tickWidth: 0,
+            lineWidth: 0
         },
         yAxis: {
             tickInterval: 0.01,
             gridLineWidth: 1,
+            labels: {
+                align: 'left',
+                format: '{value:.2f}°N',
+                style: {
+                    fontSize: '0.6em'
+                },
+                x: 2,
+                y: -3
+            },
             title: {
-                text: 'latitude'
+                text: ''
             },
             gridLineColor: '#fff4',
             gridZIndex: 4,
             minPadding: 0,
             maxPadding: 0,
             endOnTick: false,
-            startOnTick: false,
-            tickWidth: 1,
-            lineWidth: 1
+            startOnTick: false
+        },
+        legend: {
+            title: {
+                text: 'Elevation'
+            },
+            align: 'right',
+            verticalAlign: 'middle',
+            layout: 'vertical'
         },
         colorAxis: {
+            labels: {
+                format: '{value} m'
+            },
             stops: [
-                [0, '#3060cf'],
-                [0.5, '#fffbbc'],
-                [0.9, '#c4463a']
+                [0, '#447cff'],
+                [0.5, '#f5ff66'],
+                [0.9, '#ff5e4f']
             ]
         },
         tooltip: {
             pointFormat: `
-                lat: <strong>{point.x:.2f}</strong>,<br/>
-                lon: <strong>{point.y:.2f}</strong>,<br/>
-                elevation: <strong>{point.value} m</strong>
+                Latitude: <strong>{point.x:.2f} ºE</strong>,<br/>
+                Longitude: <strong>{point.y:.2f} ºN</strong>,<br/>
+                Elevation: <strong>{point.value} m</strong>
             `
         },
         series: [{
-            contourInterval: 50,
             clip: true,
             type: 'contour',
             name: 'Elevation',
+            lineColor: '#888',
             marker: {
                 states: {
                     hover: {
@@ -122,12 +148,37 @@ export default {
             ],
             dataLabels: {
                 enabled: true,
-                format: '{point.name}'
+                format: '<b>{point.name}</b><br>{point.value} m',
+                style: {
+                    fontWeight: 'normal'
+                }
             },
             marker: {
                 symbol: 'triangle',
                 fillColor: '#000'
             }
-        }]
+        }],
+        responsive: {
+            rules: [{
+                condition: {
+                    maxWidth: 500
+                },
+                chartOptions: {
+                    chart: {
+                        height: '130%'
+                    },
+                    legend: {
+                        align: 'center',
+                        verticalAlign: 'bottom',
+                        layout: 'horizontal'
+                    },
+                    colorAxis: {
+                        labels: {
+                            format: '{value}'
+                        }
+                    }
+                }
+            }]
+        }
     }
 } satisfies SampleGeneratorConfig;

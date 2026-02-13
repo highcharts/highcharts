@@ -631,6 +631,8 @@ export async function getDemoTS(
     chartOptions = chartOptions.replace(/"([^"]+)":/gu, '$1:') // Keys
         // eslint-disable-next-line quotes
         .replace(/: "([^"]+)"/gu, ": '$1'") // String values
+        // eslint-disable-next-line quotes
+        .replace(/""/gu, "''") // Empty strings
         .replace(
             /\[([^\]]*)"([^"]+)"([^\]]*)\]/gu,
             // Array elements - replace all double quotes with single quotes
