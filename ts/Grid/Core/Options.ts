@@ -31,11 +31,14 @@ import type {
 } from './Pagination/PaginationOptions';
 import type { ColumnResizingMode } from './Table/ColumnResizing/ColumnResizing';
 import type { ColumnDataType } from './Table/Column';
+import type { DataProviderOptionsType } from './Data/DataProviderType';
 import type DataTable from '../../Data/DataTable';
 import type { CellType as DataTableCellType } from '../../Data/DataTable';
 import type DataTableOptions from '../../Data/DataTableOptions';
 import type Cell from './Table/Cell';
 import type Column from './Table/Column';
+import type TableCell from './Table/Body/TableCell';
+import type { GridIconName } from './UI/SvgIcons';
 import type { LangOptionsCore } from '../../Shared/LangOptionsCore';
 import type {
     Condition as ColumnFilteringCondition
@@ -64,6 +67,82 @@ export type HeaderFormatterCallback = (this: Column) => string;
  * Column sorting order type.
  */
 export type ColumnSortingOrder = 'asc' | 'desc' | null;
+
+/**
+ * Options for a single cell context menu item.
+ */
+export interface CellContextMenuActionItemOptions {
+    /**
+     * The label shown in the menu.
+     */
+    label: string;
+
+    /**
+     * Optional icon name for the menu item.
+     */
+    icon?: GridIconName;
+
+    /**
+     * Whether the menu item should be disabled.
+     */
+    disabled?: boolean;
+
+    /**
+     * Whether to render a divider instead of a button.
+     */
+    separator?: false;
+
+    /**
+     * Callback executed when the menu item is clicked.
+     *
+     * The cell is available on `this` and is also passed as the first argument
+     * to support arrow functions.
+     */
+    onClick?: (
+        this: TableCell,
+        cell: TableCell
+    ) => void;
+}
+
+/**
+ * Options for a divider item in the cell context menu.
+ */
+export interface CellContextMenuDividerItemOptions {
+    /**
+     * Whether to render a divider instead of a button.
+     */
+    separator: true;
+
+    /**
+     * Optional label for accessibility or testing.
+     * Not rendered as a clickable item.
+     */
+    label?: string;
+}
+
+/**
+ * Options for a single cell context menu item.
+ */
+export type CellContextMenuItemOptions =
+    CellContextMenuDividerItemOptions |
+    CellContextMenuActionItemOptions;
+
+/**
+ * Cell context menu options.
+ */
+export interface CellContextMenuOptions {
+    /**
+     * Whether the cell context menu is enabled.
+     *
+     * @default true
+     */
+    enabled?: boolean;
+
+    /**
+     * List of items to show in the cell context menu.
+     */
+    items?: Array<CellContextMenuItemOptions>;
+}
 
 
 /**
@@ -98,7 +177,15 @@ export interface Options {
     columns?: Array<IndividualColumnOptions>;
 
     /**
+     * Options for the data provider.
+     */
+    data?: DataProviderOptionsType;
+
+    /**
      * Data table with the data to display in the grid structure.
+     *
+     * @deprecated
+     * Use `data.dataTable` instead.
      */
     dataTable?: DataTable | DataTableOptions;
 
@@ -403,6 +490,12 @@ export interface ColumnCellOptions {
      * A string to be set as a table cell's content.
      */
     formatter?: CellFormatterCallback;
+
+    /**
+     * Context menu options for table body cells. When configured, a custom
+     * context menu will be shown on right-click.
+     */
+    contextMenu?: CellContextMenuOptions;
 }
 
 /**
@@ -457,6 +550,23 @@ export interface ColumnSortingOptions {
      * Use `enabled` instead
      */
     sortable?: boolean;
+
+    /**
+     * Sequence of sorting orders used when toggling sorting from the user
+     * interface (for example by clicking the column header).
+     *
+     * The sequence can contain any number of values, in any order, with
+     * duplicates allowed. Allowed values are: `'asc'`, `'desc'`, and `null`.
+     *
+     * If the sequence is empty (`[]`), sorting toggles become a no-op while
+     * the sortable UI can still be shown.
+     *
+     * This option can be set in both `columnDefaults.sorting` and
+     * `columns[].sorting`.
+     *
+     * @default ['asc', 'desc', null]
+     */
+    orderSequence?: ColumnSortingOrder[];
 
     /**
      * Custom compare function to sort the column values. It overrides the

@@ -14,6 +14,10 @@ is set, the user can press that key and drag the mouse in order to pan.
 Otherwise, the user can't pan the zoomed area but has to zoom out then in again
 on a new area.
 
+When both zooming and panning are enabled without their corresponding action keys
+([chart.zooming.key](https://api.highcharts.com/highcharts/chart.zooming.key)
+and [chart.panKey](https://api.highcharts.com/highcharts/chart.panKey)), zooming will take precedence over panning by default.
+
 When zooming, a button appears that lets the user zoom out. Programmatically,
 the _Chart.zoomOut_ function can be used to the same effect.
 
