@@ -1607,32 +1607,26 @@ QUnit.test('Multiple navigators tests.', function (assert) {
     document.getElementById('container').appendChild(container3);
 
     const chart1 = Highcharts.stockChart(container1, {
-        series: [
-            {
-                data: [1, 2, 3]
-            }
-        ]
+        series: [{
+            data: [1, 2, 3]
+        }]
     });
     const chart2 = Highcharts.stockChart(container2, {
-        series: [
-            {
-                data: [1, 2, 3]
-            }
-        ]
+        series: [{
+            data: [1, 2, 3]
+        }]
     });
     const chart3 = Highcharts.stockChart(container3, {
-        series: [
-            {
-                data: [1, 2, 3]
-            }
-        ]
+        series: [{
+            data: [1, 2, 3]
+        }]
     });
 
     assert.ok(
         chart1.navigator.hcEvents.setRange.length === 1 &&
         chart2.navigator.hcEvents.setRange.length === 1 &&
         chart3.navigator.hcEvents.setRange.length === 1,
-        'Each navigator should have only 1 setRange event.'
+        'Each navigator should have only 1 setRange event, #24057.'
     );
 
     chart1.destroy();
