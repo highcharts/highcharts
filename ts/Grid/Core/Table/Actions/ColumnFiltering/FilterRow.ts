@@ -71,7 +71,7 @@ class FilterRow extends HeaderRow {
         return new FilterCell(this, column);
     }
 
-    public override renderContent(): void {
+    public override async renderContent(): Promise<void> {
         const vp = this.viewport;
         const enabledColumns = vp.grid.enabledColumns || [];
 
@@ -86,7 +86,7 @@ class FilterRow extends HeaderRow {
 
             const cell = this.createCell(column);
 
-            cell.render();
+            await cell.render();
 
             if (column.options.filtering?.inline) {
                 column.filtering?.renderFilteringContent(cell.htmlElement);

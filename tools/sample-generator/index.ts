@@ -39,11 +39,12 @@ import * as numberHandler from './type-handlers/number.ts';
 import * as selectHandler from './type-handlers/select.ts';
 import * as colorHandler from './type-handlers/color.ts';
 import * as textHandler from './type-handlers/text.ts';
+import * as separatorHandler from './type-handlers/separator.ts';
 interface MetaData {
     controlOptions?: ControlOptions;
-    path: string;
-    node: FlatTreeNode;
-    mainType: string;
+    path?: string;
+    node?: FlatTreeNode;
+    mainType?: string;
     options?: string[];
     defaultValue?: any;
     overrideValue?: any;
@@ -261,7 +262,9 @@ async function generateChartConfig(
     metaList: MetaList
 ) {
     const { chartOptionsExtra } = config;
-    const paths = metaList.map(meta => meta.path);
+    const paths = metaList
+        .filter(meta => typeof meta.path === 'string')
+        .map(meta => meta.path);
     if (!metaList.length && paths) {
         throw new Error(`No nodes found for paths: ${paths.join(', ')}`);
     }
@@ -274,7 +277,10 @@ async function generateChartConfig(
     }
 
     const titlePaths = metaList
-        .filter(meta => meta.controlOptions?.inTitle !== false)
+        .filter(
+            meta => meta.controlOptions?.inTitle !== false &&
+            typeof meta.path === 'string'
+        )
         .map(meta => meta.path);
     merge(true, chartOptions, {
         title: { text: generateTitle(titlePaths) }
@@ -296,7 +302,9 @@ async function generateChartConfig(
             overrideValue :
             defaultValue;
 
-        extendObject(chartOptions, path, value);
+        if (path) {
+            extendObject(chartOptions, path, value);
+        }
     }
 
     // Order the keys recursively for consistent output. For the top-level,
@@ -348,7 +356,8 @@ async function generateChartConfig(
 function getPathMeta(config: SampleGeneratorConfig): MetaList {
     const list: MetaList = [];
     for (const controlOptions of config.controls || config.paths || []) {
-        let path: string, overrideValue: any;
+        let path: string | undefined,
+            overrideValue: any;
         if (typeof controlOptions === 'string') {
             ({ path, overrideValue } = parsePathOverride(controlOptions));
         } else {
@@ -356,85 +365,94 @@ function getPathMeta(config: SampleGeneratorConfig): MetaList {
             overrideValue = controlOptions.value;
         }
 
-        // Replace array indices for lookup in flat tree
-        const name = path.replace(/\[\d+\]/gu, '');
+        if (path) {
+            // Replace array indices for lookup in flat tree
+            const name = path.replace(/\[\d+\]/gu, '');
 
-        let node = flatTree.find(n => n.name === name);
-        if (!node) {
-            const keys = path.split('.').map(
-                k => k.replace(/\[\d+\]/gu, '[*]')
-            );
+            let node = flatTree.find(n => n.name === name);
+            if (!node) {
+                const keys = path.split('.').map(
+                    k => k.replace(/\[\d+\]/gu, '[*]')
+                );
 
-            // If the node is not found, start at the root and see if each
-            // parent extends another node. If it does, copy the options from
-            // the extended node until we find the path or run out of extends.
-            let currentPath = '';
-            for (const key of keys) {
-                currentPath += (currentPath ? '.' : '') + key;
-                const curPath = currentPath;
-                const currentNode = flatTree.find(n => n.name === curPath);
-                if (currentNode?.extendsPath) {
-                    flatTree
-                        .filter(
-                            n => n.name.startsWith(
-                                currentNode.extendsPath + '.'
+                // If the node is not found, start at the root and see if each
+                // parent extends another node. If it does, copy the options from
+                // the extended node until we find the path or run out of extends.
+                let currentPath = '';
+                for (const key of keys) {
+                    currentPath += (currentPath ? '.' : '') + key;
+                    const curPath = currentPath;
+                    const currentNode = flatTree.find(n => n.name === curPath);
+                    if (currentNode?.extendsPath) {
+                        flatTree
+                            .filter(
+                                n => n.name.startsWith(
+                                    currentNode.extendsPath + '.'
+                                )
                             )
-                        )
-                        .forEach(n => {
-                            const copyName = n.name.replace(
-                                currentNode.extendsPath + '.',
-                                curPath + '.'
-                            );
-                            if (!flatTree.some(
-                                node => node.name === copyName
-                            )) {
-                                flatTree.push({
-                                    ...n,
-                                    name: copyName
-                                });
-                            }
-                        });
+                            .forEach(n => {
+                                const copyName = n.name.replace(
+                                    currentNode.extendsPath + '.',
+                                    curPath + '.'
+                                );
+                                if (!flatTree.some(
+                                    node => node.name === copyName
+                                )) {
+                                    flatTree.push({
+                                        ...n,
+                                        name: copyName
+                                    });
+                                }
+                            });
+                    }
+                }
+
+                node = flatTree.find(n => n.name === name);
+            }
+
+            if (!node) {
+                console.log(colors.gray(
+                    `  - ${path} not found in flat-tree.json, ` +
+                    'trying to build control anyway.'
+                ));
+            }
+
+            const { default: defaultValue, mainType, options } = node || {};
+
+            if (executedDirectly) {
+                if (overrideValue !== void 0) {
+                    console.log(colors.green(
+                        `Using override for ${path}: ${overrideValue}`
+                    ));
+                } else if (defaultValue !== void 0) {
+                    console.log(colors.green(
+                        `Found default for ${path}: ${defaultValue}`
+                    ));
+                } else {
+                    console.warn(colors.yellow(
+                        `No default value for path: ${path}`
+                    ));
                 }
             }
 
-            node = flatTree.find(n => n.name === name);
+            list.push({
+                path,
+                controlOptions: typeof controlOptions === 'object' ?
+                    controlOptions : void 0,
+                node,
+                mainType,
+                options,
+                defaultValue,
+                overrideValue
+            });
+
+        // Separator or invalid path without override value
+        } else {
+            list.push({
+                controlOptions: typeof controlOptions === 'object' ?
+                    controlOptions : void 0
+            });
         }
-
-        if (!node) {
-            console.log(colors.gray(
-                `  - ${path} not found in flat-tree.json, ` +
-                'trying to build control anyway.'
-            ));
-        }
-
-        const { default: defaultValue, mainType, options } = node || {};
-
-        if (executedDirectly) {
-            if (overrideValue !== void 0) {
-                console.log(colors.green(
-                    `Using override for ${path}: ${overrideValue}`
-                ));
-            } else if (defaultValue !== void 0) {
-                console.log(colors.green(
-                    `Found default for ${path}: ${defaultValue}`
-                ));
-            } else {
-                console.warn(colors.yellow(
-                    `No default value for path: ${path}`
-                ));
-            }
-        }
-
-        list.push({
-            path,
-            controlOptions: typeof controlOptions === 'object' ?
-                controlOptions : void 0,
-            node,
-            mainType,
-            options,
-            defaultValue,
-            overrideValue
-        });
     }
     return list;
 }
@@ -444,6 +462,9 @@ function pickHandler(meta: MetaData) {
 
     const mainType = meta.mainType || '';
 
+    if (meta.controlOptions?.type === 'separator') {
+        return { kind: 'separator', mod: separatorHandler } as const;
+    }
     if (meta.controlOptions?.type === 'text') {
         return { kind: 'text', mod: textHandler } as const;
     }
@@ -846,6 +867,11 @@ export async function getDemoTS(
             const indentWithKey = (indentMatch?.[0] || '')
                 .replace(/^[\n\r]+/u, '');
 
+            if (/\\n/u.test(p1)) {
+                // Already has line breaks, return as template string
+                return `: \`${p1.replace(/\\n/gu, '\n')}\``;
+            }
+
             // Check if the total line length exceeds 80 characters
             if (indentWithKey.length + `: '${p1}'`.length <= 80) {
                 return _match;
@@ -1038,7 +1064,10 @@ export async function getDemoCSS(config: SampleGeneratorConfig) {
 function getDemoDetails(config: SampleGeneratorConfig): string {
     const paths = config.controls ?
         config.controls
-            .filter(control => control.inTitle !== false)
+            .filter(
+                control => control.inTitle !== false &&
+                typeof control.path === 'string'
+            )
             .map(control => control.path) :
         config.paths || [];
 
