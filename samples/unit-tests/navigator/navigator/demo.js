@@ -235,6 +235,7 @@ QUnit.test('General Navigator tests', function (assert) {
         'All series, including navSeries, removed without errors (#5581)'
     );
 
+    let setExtremesCount = -1;
     chart = Highcharts.stockChart('container', {
         chart: {
             animation: false,
@@ -268,7 +269,13 @@ QUnit.test('General Navigator tests', function (assert) {
         },
         xAxis: {
             min: 1512743400000,
-            max: 1513089000000
+            max: 1513089000000,
+            events: {
+                setExtremes: function () {
+                    // First call is from the first render, hence start from -1.
+                    setExtremesCount++;
+                }
+            }
         },
         series: [
             {
@@ -329,6 +336,18 @@ QUnit.test('General Navigator tests', function (assert) {
         ],
         'Navigator shades, outline and handles should be properly ' +
             'translated after yAxis label reserve more space (#12573).'
+    );
+
+    // #24114
+    const shadeBBox = chart.navigator.shades[0].getBBox(),
+        shadeX = shadeBBox.x + shadeBBox.width / 2,
+        shadeY = shadeBBox.y + shadeBBox.height / 2;
+    controller.click(shadeX, shadeY);
+    assert.strictEqual(
+        setExtremesCount,
+        1,
+        `SetExtremes event should be fired only once, per one navigator shade
+        click (#24114).`
     );
 
     chart = Highcharts.stockChart('container', {
