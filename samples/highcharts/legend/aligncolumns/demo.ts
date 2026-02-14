@@ -1,16 +1,13 @@
 Highcharts.chart('container', {
-
+    chart: {
+        width: 500
+    },
     title: {
-        text: 'Percentage legend width'
+        text: 'Demo of <em>legend.alignColumns</em>'
     },
-
     legend: {
-        align: 'right',
-        verticalAlign: 'middle',
-        width: '40%',
-        borderWidth: 1
+        alignColumns: true
     },
-
     series: [{
         data: [6, 4, 2],
         name: 'First'
