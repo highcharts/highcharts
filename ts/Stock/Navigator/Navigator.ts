@@ -163,7 +163,7 @@ class Navigator {
     public left!: number;
     public mouseMoveHandler?: Function;
     public mouseUpHandler?: Function;
-    public navigatorEnabled!: boolean;
+    public navigatorEnabled?: boolean;
     public navigatorGroup!: SVGElement;
     public navigatorOptions!: NavigatorOptions;
     public navigatorSeries!: Series;
@@ -705,40 +705,40 @@ class Navigator {
         pxMax = pick(pxMax, xAxis.toPixels(max, true));
 
         // Verify (#1851, #2238)
-        if (!isNumber(pxMin) || Math.abs(pxMin as any) === Infinity) {
+        if (!isNumber(pxMin) || Math.abs(pxMin) === Infinity) {
             pxMin = 0;
             pxMax = navigatorWidth;
         }
 
         // Are we below the minRange? (#2618, #6191)
-        const newMin = xAxis.toValue(pxMin as any, true),
-            newMax = xAxis.toValue(pxMax as any, true),
+        const newMin = xAxis.toValue(pxMin, true),
+            newMax = xAxis.toValue(pxMax, true),
             currentRange = Math.abs(correctFloat(newMax - newMin));
 
-        if (currentRange < (minRange as any)) {
+        if (defined(minRange) && currentRange < minRange) {
             if (this.grabbedLeft) {
                 pxMin = xAxis.toPixels(
-                    newMax - (minRange as any) - pointRange,
+                    newMax - minRange - pointRange,
                     true
                 );
             } else if (this.grabbedRight) {
                 pxMax = xAxis.toPixels(
-                    newMin + (minRange as any) + pointRange,
+                    newMin + minRange + pointRange,
                     true
                 );
             }
         } else if (
             defined(maxRange) &&
-            correctFloat(currentRange - pointRange) > (maxRange as any)
+            correctFloat(currentRange - pointRange) > maxRange
         ) {
             if (this.grabbedLeft) {
                 pxMin = xAxis.toPixels(
-                    newMax - (maxRange as any) - pointRange,
+                    newMax - maxRange - pointRange,
                     true
                 );
             } else if (this.grabbedRight) {
                 pxMax = xAxis.toPixels(
-                    newMin + (maxRange as any) + pointRange,
+                    newMin + maxRange + pointRange,
                     true
                 );
             }
@@ -746,14 +746,14 @@ class Navigator {
 
         // Handles are allowed to cross, but never exceed the plot area
         navigator.zoomedMax = clamp(
-            Math.max(pxMin, pxMax as any),
+            Math.max(pxMin, pxMax),
             0,
             zoomedMax
         );
         navigator.zoomedMin = clamp(
             navigator.fixedWidth ?
                 navigator.zoomedMax - navigator.fixedWidth :
-                Math.min(pxMin, pxMax as any),
+                Math.min(pxMin, pxMax),
             0,
             zoomedMax
         );
@@ -773,7 +773,7 @@ class Navigator {
             navigator.drawMasks(zoomedMin, zoomedMax, inverted, verb);
             navigator.drawOutline(zoomedMin, zoomedMax, inverted, verb);
 
-            if ((navigator.navigatorOptions.handles as any).enabled) {
+            if (navigator.navigatorOptions.handles?.enabled) {
                 navigator.drawHandle(zoomedMin, 0, inverted, verb);
                 navigator.drawHandle(zoomedMax, 1, inverted, verb);
             }
@@ -800,7 +800,7 @@ class Navigator {
             navigator.scrollbar.position(
                 scrollbarLeft,
                 scrollbarTop,
-                navigatorWidth as any,
+                navigatorWidth,
                 scrollbarHeight
             );
             // Keep scale 0-1
@@ -868,7 +868,7 @@ class Navigator {
                     navigator.series[0].xAxis,
                     'foundExtremes',
                     function (): void {
-                        (chart.navigator as any).modifyNavigatorAxisExtremes();
+                        chart.navigator?.modifyNavigatorAxisExtremes();
                     }
                 )
             );
@@ -971,10 +971,10 @@ class Navigator {
                 if (navigator.reversedExtremes) {
                     // #7713
                     left -= range;
-                    fixedMin = (navigator.getUnionExtremes() as any).dataMin;
+                    fixedMin = navigator.getUnionExtremes()?.dataMin;
                 } else {
                     // #2293, #3543
-                    fixedMax = (navigator.getUnionExtremes() as any).dataMax;
+                    fixedMax = navigator.getUnionExtremes()?.dataMax;
                 }
             }
             if (left !== zoomedMin) { // It has actually moved
@@ -1123,7 +1123,7 @@ class Navigator {
                     !this.chart.boosted
                 )
             ) {
-                (e as any).DOMType = e.type;
+                e.DOMType = e.type;
                 setTimeout(function (): void {
                     navigator.onMouseUp(e);
                 }, 0);
@@ -1160,7 +1160,7 @@ class Navigator {
             // which causes calling afterSetExtremes twice. Prevent first call
             // by checking if scrollbar is going to set new extremes (#6334)
             (navigator.hasDragged && (!scrollbar || !scrollbar.hasDragged)) ||
-            (e as any).trigger === 'scrollbar'
+            e.trigger === 'scrollbar'
         ) {
             unionExtremes = navigator.getUnionExtremes();
 
@@ -1196,7 +1196,7 @@ class Navigator {
                     min: Math.min(ext.min, ext.max),
                     max: Math.max(ext.min, ext.max),
                     redraw: true,
-                    animation: navigator.hasDragged ? false : (null as any),
+                    animation: navigator.hasDragged ? false : null,
                     eventArguments: {
                         trigger: 'navigator',
                         triggerOp: 'navigator-drag',
@@ -1207,8 +1207,8 @@ class Navigator {
         }
 
         if (
-            (e as any).DOMType !== 'mousemove' &&
-            (e as any).DOMType !== 'touchmove'
+            e.DOMType !== 'mousemove' &&
+            e.DOMType !== 'touchmove'
         ) {
             navigator.grabbedLeft = navigator.grabbedRight =
                 navigator.grabbedCenter = navigator.fixedWidth =
@@ -1233,7 +1233,7 @@ class Navigator {
             }
 
             if (
-                (navigator.navigatorOptions.handles as any).enabled &&
+                navigator.navigatorOptions.handles?.enabled &&
                     Object.keys(navigator.handles).length ===
                     navigator.handles.length
             ) {
@@ -1325,7 +1325,7 @@ class Navigator {
         this.scrollbarHeight = scrollbarHeight;
         this.scrollButtonSize = scrollButtonSize;
         this.scrollbarEnabled = scrollbarEnabled;
-        this.navigatorEnabled = navigatorEnabled as any;
+        this.navigatorEnabled = navigatorEnabled;
         this.navigatorOptions = navigatorOptions;
         this.scrollbarOptions = scrollbarOptions;
 
@@ -1395,7 +1395,7 @@ class Navigator {
             ), 'yAxis') as NavigatorAxisComposition;
 
             // If we have a base series, initialize the navigator series
-            if (baseSeries || (navigatorOptions.series as any).data) {
+            if (baseSeries || navigatorOptions.series?.data) {
                 navigator.updateNavigatorSeries(false);
 
             // If not, set up an event to listen for added series
@@ -1408,7 +1408,7 @@ class Navigator {
                         // We've got one, now add it as base
                         if (chart.series.length > 0 && !navigator.series) {
                             navigator.setBaseSeries();
-                            (navigator.unbindRedraw as any)(); // Reset
+                            navigator.unbindRedraw?.(); // Reset
                         }
                     }
                 );
@@ -1495,13 +1495,13 @@ class Navigator {
                 e: PointerEvent
             ): void {
                 const range = navigator.size,
-                    to = range * (this.to as any),
-                    from = range * (this.from as any);
+                    to = range * this.to,
+                    from = range * this.from;
 
-                navigator.hasDragged = (navigator.scrollbar as any).hasDragged;
+                navigator.hasDragged = navigator.scrollbar?.hasDragged;
                 navigator.render(0, 0, from, to);
 
-                if (this.shouldUpdateExtremes((e as any).DOMType)) {
+                if (this.shouldUpdateExtremes(e.DOMType)) {
                     setTimeout(function (): void {
                         navigator.onMouseUp(e);
                     });
@@ -1596,7 +1596,7 @@ class Navigator {
 
         baseSeriesOptions = (
             baseSeriesOptions ||
-            chart.options && (chart.options.navigator as any).baseSeries ||
+            chart.options.navigator?.baseSeries ||
             (chart.series.length ?
                 // Find the first non-navigator series (#8430)
                 (find(chart.series, (s: Series): boolean => (
@@ -1615,8 +1615,8 @@ class Navigator {
                 (
                     series.options.showInNavigator ||
                     (
-                        i === (baseSeriesOptions as any) ||
-                        series.options.id === (baseSeriesOptions as any)
+                        i === baseSeriesOptions ||
+                        series.options.id === baseSeriesOptions
                     ) &&
                     series.options.showInNavigator !== false
                 )
@@ -1667,7 +1667,7 @@ class Navigator {
                 (navigator.series || []).filter((navSeries): boolean => {
                     const base = navSeries.baseSeries;
 
-                    if (baseSeries.indexOf(base as any) < 0) { // Not in array
+                    if (base && baseSeries.indexOf(base) < 0) { // Not in array
                         // If there is still a base series connected to this
                         // series, remove event handler and reference.
                         if (base) {
@@ -1739,9 +1739,9 @@ class Navigator {
                     userNavOptions.pointRange,
                     baseNavigatorOptions.pointRange,
                     // Fallback to default values, e.g. `null` for column
-                    (defaultOptions.plotOptions as any)[
+                    defaultOptions.plotOptions[
                         mergedNavSeriesOptions.type || 'line'
-                    ].pointRange
+                    ]?.pointRange
                 );
 
                 // Merge data separately. Do a slice to avoid mutating the
@@ -1775,7 +1775,7 @@ class Navigator {
         // navigator.series as an array, we create these series on top of any
         // base series.
         if (
-            (chartNavigatorSeriesOptions as any).data &&
+            chartNavigatorSeriesOptions?.data &&
             !(baseSeries && baseSeries.length) ||
             isArray(chartNavigatorSeriesOptions)
         ) {
@@ -1790,7 +1790,7 @@ class Navigator {
                 navSeriesMixin.name =
                     'Navigator ' + (navigatorSeries.length + 1);
                 mergedNavSeriesOptions = merge(
-                    (defaultOptions.navigator as any).series,
+                    defaultOptions.navigator?.series,
                     {
                         // Since we don't have a base series to pull color from,
                         // try to fake it by using color from series with same
@@ -1801,8 +1801,8 @@ class Navigator {
                         color: chart.series[i] &&
                         !chart.series[i].options.isInternal &&
                         chart.series[i].color ||
-                        (chart.options.colors as any)[i] ||
-                        (chart.options.colors as any)[0]
+                        chart.options.colors?.[i] ||
+                        chart.options.colors?.[0]
                     },
                     navSeriesMixin,
                     userSeriesOptions
@@ -1931,8 +1931,8 @@ class Navigator {
                     unionExtremes.dataMax !== xAxis.max
                 )
             ) {
-                xAxis.min = unionExtremes.dataMin as any;
-                xAxis.max = unionExtremes.dataMax as any;
+                xAxis.min = unionExtremes.dataMin;
+                xAxis.max = unionExtremes.dataMax;
             }
         }
     }
@@ -1952,8 +1952,8 @@ class Navigator {
             baseDataMin = baseExtremes.dataMin,
             baseDataMax = baseExtremes.dataMax,
             range = baseMax - baseMin,
-            stickToMin = (navigator as any).stickToMin,
-            stickToMax = (navigator as any).stickToMax,
+            stickToMin = navigator?.stickToMin,
+            stickToMax = navigator?.stickToMax,
             overscroll = pick(baseXAxis.ordinal?.convertOverscroll(
                 baseXAxis.options.overscroll
             ), 0),
@@ -1989,7 +1989,7 @@ class Navigator {
                     newMin = Math.max(
                         baseDataMin, // Don't go below data extremes (#13184)
                         newMax - range,
-                        (navigator as any).getBaseSeriesMin(
+                        navigator.getBaseSeriesMin(
                             navigatorSeries && navigatorSeries.xData ?
                                 navigatorSeries.xData[0] :
                                 -Number.MAX_VALUE
@@ -2001,15 +2001,15 @@ class Navigator {
             // Update the extremes
             if (hasSetExtremes && (stickToMin || stickToMax)) {
                 if (isNumber(newMin)) {
-                    baseXAxis.min = baseXAxis.userMin = newMin as any;
-                    baseXAxis.max = baseXAxis.userMax = newMax as any;
+                    baseXAxis.min = baseXAxis.userMin = newMin;
+                    baseXAxis.max = baseXAxis.userMax = newMax;
                 }
             }
         }
 
         // Reset
         (navigator as any).stickToMin =
-            (navigator as any).stickToMax = null as any;
+            (navigator as any).stickToMax = null;
     }
 
     /**
@@ -2044,9 +2044,9 @@ class Navigator {
         if (navigatorSeries && !navigator.hasNavigatorData) {
             navigatorSeries.options.pointStart = baseSeries.getColumn('x')[0];
             navigatorSeries.setData(
-                baseSeries.options.data as any,
+                baseSeries.options.data,
                 false,
-                null as any,
+                void 0,
                 false
             ); // #5414
         }
