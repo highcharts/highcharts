@@ -1597,3 +1597,48 @@ QUnit.skip('Navigator, testing method: getBaseSeriesMin', function (assert) {
         );
     });
 });
+
+QUnit.test('Multiple navigators tests.', function (assert) {
+    const container1 = document.createElement('div'),
+        container2 = document.createElement('div'),
+        container3 = document.createElement('div');
+    document.getElementById('container').appendChild(container1);
+    document.getElementById('container').appendChild(container2);
+    document.getElementById('container').appendChild(container3);
+
+    const chart1 = Highcharts.stockChart(container1, {
+        series: [
+            {
+                data: [1, 2, 3]
+            }
+        ]
+    });
+    const chart2 = Highcharts.stockChart(container2, {
+        series: [
+            {
+                data: [1, 2, 3]
+            }
+        ]
+    });
+    const chart3 = Highcharts.stockChart(container3, {
+        series: [
+            {
+                data: [1, 2, 3]
+            }
+        ]
+    });
+
+    assert.ok(
+        chart1.navigator.hcEvents.setRange.length === 1 &&
+        chart2.navigator.hcEvents.setRange.length === 1 &&
+        chart3.navigator.hcEvents.setRange.length === 1,
+        'Each navigator should have only 1 setRange event.'
+    );
+
+    chart1.destroy();
+    container1.parentNode.removeChild(container1);
+    chart2.destroy();
+    container2.parentNode.removeChild(container2);
+    chart3.destroy();
+    container3.parentNode.removeChild(container3);
+});

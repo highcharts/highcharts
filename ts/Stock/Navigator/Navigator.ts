@@ -2145,7 +2145,7 @@ class Navigator {
                 }
             ),
             addEvent(
-                Navigator,
+                this,
                 'setRange',
                 function (this: Navigator, e: SetRangeEvent):void {
                     this.chart.xAxis[0].setExtremes(
