@@ -181,7 +181,6 @@ class Navigator {
     public scrollbarOptions?: ScrollbarOptions;
     public series?: Array<Series>;
     public shades!: Array<SVGElement>;
-    public shadesAndHandlesEventsToUnbind!: Function[];
     public size!: number;
     public stickToMax?: boolean;
     public stickToMin?: boolean;
@@ -524,11 +523,6 @@ class Navigator {
                             'highcharts-navigator-handle-' +
                             ['left', 'right'][index]
                         ).add(navigatorGroup);
-
-                    // Remove old events:
-                    navigator.removeShadesAndHandlesEvents();
-                    // Re-add the events with new elements:
-                    navigator.addShadesAndHandlesEvents();
                 }
                 if (chart.inverted) {
                     navigator.handles[index].attr({
@@ -833,8 +827,8 @@ class Navigator {
             chart = navigator.chart,
             container = chart.container;
 
-        const eventsToUnbind = [];
-        let mouseMoveHandler,
+        let eventsToUnbind = [],
+            mouseMoveHandler,
             mouseUpHandler;
 
         /**
@@ -852,6 +846,7 @@ class Navigator {
             navigator.onMouseUp(e);
         };
 
+        eventsToUnbind = navigator.getPartsEvents('mousedown');
         eventsToUnbind.push(
             // Add mouse move and mouseup events. These are bind to doc/div,
             // because Navigator.grabbedSomething flags are stored in mousedown
@@ -862,8 +857,7 @@ class Navigator {
             addEvent(chart.renderTo, 'touchmove', mouseMoveHandler),
             addEvent(container.ownerDocument, 'touchend', mouseUpHandler)
         );
-
-        navigator.addShadesAndHandlesEvents(); // (#21775)
+        eventsToUnbind.concat(navigator.getPartsEvents('touchstart'));
 
         navigator.eventsToUnbind = eventsToUnbind;
 
@@ -880,34 +874,6 @@ class Navigator {
             );
         }
 
-    }
-
-    /**
-     * Set up the mouse and touch events for the shades and handles only.
-     *
-     * @private
-     * @function Highcharts.Navigator#addShadesAndHandlesEvents
-     */
-    public addShadesAndHandlesEvents(): void {
-        this.shadesAndHandlesEventsToUnbind = this.getPartsEvents('mousedown'),
-        this.shadesAndHandlesEventsToUnbind.concat(
-            this.getPartsEvents('touchstart')
-        );
-    }
-
-    /**
-     * Remove the mouse and touch events for the shades and handles only.
-     *
-     * @private
-     * @function Highcharts.Navigator#removeShadesAndHandelsEvents
-     */
-    public removeShadesAndHandlesEvents(): void {
-        this.shadesAndHandlesEventsToUnbind.forEach(
-            (unbind: Function): void => {
-                unbind();
-            }
-        );
-        this.shadesAndHandlesEventsToUnbind = [];
     }
 
     /**
@@ -1290,7 +1256,6 @@ class Navigator {
             });
             this.eventsToUnbind = void 0;
         }
-        this.removeShadesAndHandlesEvents();
         this.removeBaseSeriesEvents();
     }
 
@@ -1352,7 +1317,6 @@ class Navigator {
 
         this.handles = [];
         this.shades = [];
-        this.shadesAndHandlesEventsToUnbind = [];
 
         this.chart = chart;
         this.setBaseSeries();
