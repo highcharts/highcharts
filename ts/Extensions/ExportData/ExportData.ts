@@ -1321,7 +1321,7 @@ namespace ExportData {
                                 {
                                     scope: 'col',
                                     colspan: curColspan + 1,
-                                    'aria-sort': 'ascending'
+                                    'aria-sort': 'none'
                                 },
                                 cur
                             ));
@@ -1345,7 +1345,7 @@ namespace ExportData {
                             const cell = getCellHTMLFromValue(
                                 'th',
                                 'highcharts-table-topheading',
-                                { scope: 'col', 'aria-sort': 'ascending' },
+                                { scope: 'col', 'aria-sort': 'none' },
                                 cur
                             );
                             if (rowspan > 1 && cell.attributes) {
@@ -1376,7 +1376,7 @@ namespace ExportData {
                                     null,
                                     {
                                         scope: 'col',
-                                        'aria-sort': 'ascending'
+                                        'aria-sort': 'none'
                                     },
                                     subheaders[i]
                                 )

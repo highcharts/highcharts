@@ -115,61 +115,61 @@ QUnit.test('Bullet chart', function (assert) {
 Chart title</caption>
 <thead>
 <tr>
-<th class=\"highcharts-text highcharts-table-topheading\" scope=\"col\" aria-sort=\"ascending\" valign=\"top\" rowspan=\"2\">
+<th class=\"highcharts-text highcharts-table-topheading\" scope=\"col\" aria-sort=\"none\" valign=\"top\" rowspan=\"2\">
 <button aria-pressed=\"true\">
 Year</button>
 </th>
-<th class=\"highcharts-text highcharts-table-topheading\" scope=\"col\" colspan=\"2\" aria-sort=\"ascending\">
+<th class=\"highcharts-text highcharts-table-topheading\" scope=\"col\" colspan=\"2\" aria-sort=\"none\">
 <button aria-pressed=\"true\">
 Bullet Series 1</button>
 </th>
-<th class=\"highcharts-text highcharts-table-topheading\" scope=\"col\" colspan=\"2\" aria-sort=\"ascending\">
+<th class=\"highcharts-text highcharts-table-topheading\" scope=\"col\" colspan=\"2\" aria-sort=\"none\">
 <button aria-pressed=\"true\">
 Bullet Series 2</button>
 </th>
-<th class=\"highcharts-text highcharts-table-topheading\" scope=\"col\" aria-sort=\"ascending\" valign=\"top\" rowspan=\"2\">
+<th class=\"highcharts-text highcharts-table-topheading\" scope=\"col\" aria-sort=\"none\" valign=\"top\" rowspan=\"2\">
 <button aria-pressed=\"true\">
 Line series</button>
 </th>
-<th class=\"highcharts-text highcharts-table-topheading\" scope=\"col\" colspan=\"2\" aria-sort=\"ascending\">
+<th class=\"highcharts-text highcharts-table-topheading\" scope=\"col\" colspan=\"2\" aria-sort=\"none\">
 <button aria-pressed=\"true\">
 Bullet Series 3</button>
 </th>
-<th class=\"highcharts-text highcharts-table-topheading\" scope=\"col\" colspan=\"2\" aria-sort=\"ascending\">
+<th class=\"highcharts-text highcharts-table-topheading\" scope=\"col\" colspan=\"2\" aria-sort=\"none\">
 <button aria-pressed=\"true\">
 Bullet Series 4</button>
 </th>
 </tr>
 <tr>
-<th class=\"highcharts-text\" scope=\"col\" aria-sort=\"ascending\">
+<th class=\"highcharts-text\" scope=\"col\" aria-sort=\"none\">
 <button aria-pressed=\"true\">
 y</button>
 </th>
-<th class=\"highcharts-text\" scope=\"col\" aria-sort=\"ascending\">
+<th class=\"highcharts-text\" scope=\"col\" aria-sort=\"none\">
 <button aria-pressed=\"true\">
 target</button>
 </th>
-<th class=\"highcharts-text\" scope=\"col\" aria-sort=\"ascending\">
+<th class=\"highcharts-text\" scope=\"col\" aria-sort=\"none\">
 <button aria-pressed=\"true\">
 y</button>
 </th>
-<th class=\"highcharts-text\" scope=\"col\" aria-sort=\"ascending\">
+<th class=\"highcharts-text\" scope=\"col\" aria-sort=\"none\">
 <button aria-pressed=\"true\">
 target</button>
 </th>
-<th class=\"highcharts-text\" scope=\"col\" aria-sort=\"ascending\">
+<th class=\"highcharts-text\" scope=\"col\" aria-sort=\"none\">
 <button aria-pressed=\"true\">
 y</button>
 </th>
-<th class=\"highcharts-text\" scope=\"col\" aria-sort=\"ascending\">
+<th class=\"highcharts-text\" scope=\"col\" aria-sort=\"none\">
 <button aria-pressed=\"true\">
 target</button>
 </th>
-<th class=\"highcharts-text\" scope=\"col\" aria-sort=\"ascending\">
+<th class=\"highcharts-text\" scope=\"col\" aria-sort=\"none\">
 <button aria-pressed=\"true\">
 y</button>
 </th>
-<th class=\"highcharts-text\" scope=\"col\" aria-sort=\"ascending\">
+<th class=\"highcharts-text\" scope=\"col\" aria-sort=\"none\">
 <button aria-pressed=\"true\">
 target</button>
 </th>
@@ -289,43 +289,43 @@ target</button>
 Chart title</caption>
 <thead>
 <tr>
-<th class=\"highcharts-text\" scope=\"col\" aria-sort=\"ascending\">
+<th class=\"highcharts-text\" scope=\"col\" aria-sort=\"none\">
 <button aria-pressed=\"true\">
 Year</button>
 </th>
-<th class=\"highcharts-text\" scope=\"col\" aria-sort=\"ascending\">
+<th class=\"highcharts-text\" scope=\"col\" aria-sort=\"none\">
 <button aria-pressed=\"true\">
 Bullet Series 1 (y)</button>
 </th>
-<th class=\"highcharts-text\" scope=\"col\" aria-sort=\"ascending\">
+<th class=\"highcharts-text\" scope=\"col\" aria-sort=\"none\">
 <button aria-pressed=\"true\">
 Bullet Series 1 (target)</button>
 </th>
-<th class=\"highcharts-text\" scope=\"col\" aria-sort=\"ascending\">
+<th class=\"highcharts-text\" scope=\"col\" aria-sort=\"none\">
 <button aria-pressed=\"true\">
 Bullet Series 2 (y)</button>
 </th>
-<th class=\"highcharts-text\" scope=\"col\" aria-sort=\"ascending\">
+<th class=\"highcharts-text\" scope=\"col\" aria-sort=\"none\">
 <button aria-pressed=\"true\">
 Bullet Series 2 (target)</button>
 </th>
-<th class=\"highcharts-text\" scope=\"col\" aria-sort=\"ascending\">
+<th class=\"highcharts-text\" scope=\"col\" aria-sort=\"none\">
 <button aria-pressed=\"true\">
 Line series</button>
 </th>
-<th class=\"highcharts-text\" scope=\"col\" aria-sort=\"ascending\">
+<th class=\"highcharts-text\" scope=\"col\" aria-sort=\"none\">
 <button aria-pressed=\"true\">
 Bullet Series 3 (y)</button>
 </th>
-<th class=\"highcharts-text\" scope=\"col\" aria-sort=\"ascending\">
+<th class=\"highcharts-text\" scope=\"col\" aria-sort=\"none\">
 <button aria-pressed=\"true\">
 Bullet Series 3 (target)</button>
 </th>
-<th class=\"highcharts-text\" scope=\"col\" aria-sort=\"ascending\">
+<th class=\"highcharts-text\" scope=\"col\" aria-sort=\"none\">
 <button aria-pressed=\"true\">
 Bullet Series 4 (y)</button>
 </th>
-<th class=\"highcharts-text\" scope=\"col\" aria-sort=\"ascending\">
+<th class=\"highcharts-text\" scope=\"col\" aria-sort=\"none\">
 <button aria-pressed=\"true\">
 Bullet Series 4 (target)</button>
 </th>
@@ -469,11 +469,11 @@ QUnit.test('Pie chart', function (assert) {
 WEBAIM survey</caption>
 <thead>
 <tr>
-<th class=\"highcharts-text\" scope=\"col\" aria-sort=\"ascending\">
+<th class=\"highcharts-text\" scope=\"col\" aria-sort=\"none\">
 <button aria-pressed=\"true\">
 Category</button>
 </th>
-<th class=\"highcharts-text\" scope=\"col\" aria-sort=\"ascending\">
+<th class=\"highcharts-text\" scope=\"col\" aria-sort=\"none\">
 <button aria-pressed=\"true\">
 Percentage usage</button>
 </th>
@@ -574,29 +574,29 @@ QUnit.test('Custom columnHeaderFormatter', function (assert) {
 Chart title</caption>
 <thead>
 <tr>
-<th class=\"highcharts-text highcharts-table-topheading\" scope=\"col\" aria-sort=\"ascending\">
+<th class=\"highcharts-text highcharts-table-topheading\" scope=\"col\" aria-sort=\"none\">
 <button aria-pressed=\"true\">
 Day</button>
 </th>
-<th class=\"highcharts-text highcharts-table-topheading\" scope=\"col\" colspan=\"3\" aria-sort=\"ascending\">
+<th class=\"highcharts-text highcharts-table-topheading\" scope=\"col\" colspan=\"3\" aria-sort=\"none\">
 <button aria-pressed=\"true\">
 Temperature</button>
 </th>
 </tr>
 <tr>
-<th class=\"highcharts-empty\" scope=\"col\" aria-sort=\"ascending\">
+<th class=\"highcharts-empty\" scope=\"col\" aria-sort=\"none\">
 <button aria-pressed=\"true\">
 </button>
 </th>
-<th class=\"highcharts-text\" scope=\"col\" aria-sort=\"ascending\">
+<th class=\"highcharts-text\" scope=\"col\" aria-sort=\"none\">
 <button aria-pressed=\"true\">
 avg</button>
 </th>
-<th class=\"highcharts-text\" scope=\"col\" aria-sort=\"ascending\">
+<th class=\"highcharts-text\" scope=\"col\" aria-sort=\"none\">
 <button aria-pressed=\"true\">
 low</button>
 </th>
-<th class=\"highcharts-text\" scope=\"col\" aria-sort=\"ascending\">
+<th class=\"highcharts-text\" scope=\"col\" aria-sort=\"none\">
 <button aria-pressed=\"true\">
 high</button>
 </th>
@@ -709,19 +709,19 @@ QUnit.test('Internationalize export-data table words.', function (assert) {
 Chart title</caption>
 <thead>
 <tr>
-<th class=\"highcharts-text\" scope=\"col\" aria-sort=\"ascending\">
+<th class=\"highcharts-text\" scope=\"col\" aria-sort=\"none\">
 <button aria-pressed=\"true\">
 Category</button>
 </th>
-<th class=\"highcharts-text\" scope=\"col\" aria-sort=\"ascending\">
+<th class=\"highcharts-text\" scope=\"col\" aria-sort=\"none\">
 <button aria-pressed=\"true\">
 Series 1</button>
 </th>
-<th class=\"highcharts-text\" scope=\"col\" aria-sort=\"ascending\">
+<th class=\"highcharts-text\" scope=\"col\" aria-sort=\"none\">
 <button aria-pressed=\"true\">
 DateTime</button>
 </th>
-<th class=\"highcharts-text\" scope=\"col\" aria-sort=\"ascending\">
+<th class=\"highcharts-text\" scope=\"col\" aria-sort=\"none\">
 <button aria-pressed=\"true\">
 Test series</button>
 </th>
@@ -857,7 +857,7 @@ QUnit.test('Annotation labels in export-data table.', function (assert) {
             // Remove the extra attributes from accessibility module, needed if
             // running as "gulp test".
             .replace(/<table[^>]+>/g, '<table>'),
-        '<table><caption class=\"highcharts-table-caption\">Annotation labels in export-data table.</caption><thead><tr><th class=\"highcharts-text\" scope=\"col\" aria-sort=\"ascending\"><button aria-pressed=\"true\">Category</button></th><th class=\"highcharts-text\" scope=\"col\" aria-sort=\"ascending\"><button aria-pressed=\"true\">Series 1</button></th><th class=\"highcharts-text\" scope=\"col\" aria-sort=\"ascending\"><button aria-pressed=\"true\">Series 2</button></th><th class=\"highcharts-text\" scope=\"col\" aria-sort=\"ascending\"><button aria-pressed=\"true\">Annotations 1</button></th><th class=\"highcharts-text\" scope=\"col\" aria-sort=\"ascending\"><button aria-pressed=\"true\">Annotations 2</button></th></tr></thead><tbody><tr><th class=\"highcharts-number\" scope=\"row\">0</th><td class=\"highcharts-number\">29</td><td class=\"highcharts-number\">2</td><td class=\"highcharts-empty\"></td><td class=\"highcharts-empty\"></td></tr><tr><th class=\"highcharts-number\" scope=\"row\">1</th><td class=\"highcharts-number\">71</td><td class=\"highcharts-number\">11</td><td class=\"highcharts-text\">Annotation I for pointI</td><td class=\"highcharts-text\">Annotation II connected with axis</td></tr><tr><th class=\"highcharts-number\" scope=\"row\">2</th><td class=\"highcharts-number\">106</td><td class=\"highcharts-number\">60</td><td class=\"highcharts-empty\"></td><td class=\"highcharts-empty\"></td></tr><tr><th class=\"highcharts-number\" scope=\"row\">3</th><td class=\"highcharts-number\">129</td><td class=\"highcharts-number\">44</td><td class=\"highcharts-text\">Annotation II for pointII</td><td class=\"highcharts-empty\"></td></tr><tr><th class=\"highcharts-number\" scope=\"row\">4</th><td class=\"highcharts-number\">144</td><td class=\"highcharts-number\">44</td><td class=\"highcharts-empty\"></td><td class=\"highcharts-empty\"></td></tr><tr><th class=\"highcharts-number\" scope=\"row\">1.5</th><td class=\"highcharts-empty\"></td><td class=\"highcharts-empty\"></td><td class=\"highcharts-text\">Annotation I connected with axis</td><td class=\"highcharts-empty\"></td></tr><tr><th class=\"highcharts-empty\" scope=\"row\"></th><td class=\"highcharts-empty\"></td><td class=\"highcharts-empty\"></td><td class=\"highcharts-text\">Freestanding annotation</td><td class=\"highcharts-empty\"></td></tr><tr><th class=\"highcharts-number\" scope=\"row\">2.5</th><td class=\"highcharts-empty\"></td><td class=\"highcharts-empty\"></td><td class=\"highcharts-text\">Annotation I connected with axis, and having the same point as other annotation.</td><td class=\"highcharts-empty\"></td></tr></tbody></table>',
+        '<table><caption class=\"highcharts-table-caption\">Annotation labels in export-data table.</caption><thead><tr><th class=\"highcharts-text\" scope=\"col\" aria-sort=\"none\"><button aria-pressed=\"true\">Category</button></th><th class=\"highcharts-text\" scope=\"col\" aria-sort=\"none\"><button aria-pressed=\"true\">Series 1</button></th><th class=\"highcharts-text\" scope=\"col\" aria-sort=\"none\"><button aria-pressed=\"true\">Series 2</button></th><th class=\"highcharts-text\" scope=\"col\" aria-sort=\"none\"><button aria-pressed=\"true\">Annotations 1</button></th><th class=\"highcharts-text\" scope=\"col\" aria-sort=\"none\"><button aria-pressed=\"true\">Annotations 2</button></th></tr></thead><tbody><tr><th class=\"highcharts-number\" scope=\"row\">0</th><td class=\"highcharts-number\">29</td><td class=\"highcharts-number\">2</td><td class=\"highcharts-empty\"></td><td class=\"highcharts-empty\"></td></tr><tr><th class=\"highcharts-number\" scope=\"row\">1</th><td class=\"highcharts-number\">71</td><td class=\"highcharts-number\">11</td><td class=\"highcharts-text\">Annotation I for pointI</td><td class=\"highcharts-text\">Annotation II connected with axis</td></tr><tr><th class=\"highcharts-number\" scope=\"row\">2</th><td class=\"highcharts-number\">106</td><td class=\"highcharts-number\">60</td><td class=\"highcharts-empty\"></td><td class=\"highcharts-empty\"></td></tr><tr><th class=\"highcharts-number\" scope=\"row\">3</th><td class=\"highcharts-number\">129</td><td class=\"highcharts-number\">44</td><td class=\"highcharts-text\">Annotation II for pointII</td><td class=\"highcharts-empty\"></td></tr><tr><th class=\"highcharts-number\" scope=\"row\">4</th><td class=\"highcharts-number\">144</td><td class=\"highcharts-number\">44</td><td class=\"highcharts-empty\"></td><td class=\"highcharts-empty\"></td></tr><tr><th class=\"highcharts-number\" scope=\"row\">1.5</th><td class=\"highcharts-empty\"></td><td class=\"highcharts-empty\"></td><td class=\"highcharts-text\">Annotation I connected with axis</td><td class=\"highcharts-empty\"></td></tr><tr><th class=\"highcharts-empty\" scope=\"row\"></th><td class=\"highcharts-empty\"></td><td class=\"highcharts-empty\"></td><td class=\"highcharts-text\">Freestanding annotation</td><td class=\"highcharts-empty\"></td></tr><tr><th class=\"highcharts-number\" scope=\"row\">2.5</th><td class=\"highcharts-empty\"></td><td class=\"highcharts-empty\"></td><td class=\"highcharts-text\">Annotation I connected with axis, and having the same point as other annotation.</td><td class=\"highcharts-empty\"></td></tr></tbody></table>',
         'Table should look like this with annotations (12789).'
     );
 
@@ -896,7 +896,7 @@ QUnit.test('Annotation labels in export-data table.', function (assert) {
             // Remove the extra attributes from accessibility module, needed if
             // running as "gulp test".
             .replace(/<table[^>]+>/g, '<table>'),
-        '<table><caption class=\"highcharts-table-caption\">Annotation labels in export-data table.</caption><thead><tr><th class=\"highcharts-text\" scope=\"col\" aria-sort=\"ascending\"><button aria-pressed=\"true\">Category</button></th><th class=\"highcharts-text\" scope=\"col\" aria-sort=\"ascending\"><button aria-pressed=\"true\">Series 1</button></th><th class=\"highcharts-text\" scope=\"col\" aria-sort=\"ascending\"><button aria-pressed=\"true\">Series 2</button></th><th class=\"highcharts-text\" scope=\"col\" aria-sort=\"ascending\"><button aria-pressed=\"true\">Annotations 1</button></th></tr></thead><tbody><tr><th class=\"highcharts-number\" scope=\"row\">0</th><td class=\"highcharts-number\">29</td><td class=\"highcharts-number\">2</td><td class=\"highcharts-empty\"></td></tr><tr><th class=\"highcharts-number\" scope=\"row\">1</th><td class=\"highcharts-number\">71</td><td class=\"highcharts-number\">11</td><td class=\"highcharts-text\">This is my annotation I</td></tr><tr><th class=\"highcharts-number\" scope=\"row\">2</th><td class=\"highcharts-number\">106</td><td class=\"highcharts-number\">60</td><td class=\"highcharts-empty\"></td></tr><tr><th class=\"highcharts-number\" scope=\"row\">3</th><td class=\"highcharts-number\">129</td><td class=\"highcharts-number\">44</td><td class=\"highcharts-empty\"></td></tr><tr><th class=\"highcharts-number\" scope=\"row\">4</th><td class=\"highcharts-number\">144</td><td class=\"highcharts-number\">44</td><td class=\"highcharts-empty\"></td></tr></tbody></table>',
+        '<table><caption class=\"highcharts-table-caption\">Annotation labels in export-data table.</caption><thead><tr><th class=\"highcharts-text\" scope=\"col\" aria-sort=\"none\"><button aria-pressed=\"true\">Category</button></th><th class=\"highcharts-text\" scope=\"col\" aria-sort=\"none\"><button aria-pressed=\"true\">Series 1</button></th><th class=\"highcharts-text\" scope=\"col\" aria-sort=\"none\"><button aria-pressed=\"true\">Series 2</button></th><th class=\"highcharts-text\" scope=\"col\" aria-sort=\"none\"><button aria-pressed=\"true\">Annotations 1</button></th></tr></thead><tbody><tr><th class=\"highcharts-number\" scope=\"row\">0</th><td class=\"highcharts-number\">29</td><td class=\"highcharts-number\">2</td><td class=\"highcharts-empty\"></td></tr><tr><th class=\"highcharts-number\" scope=\"row\">1</th><td class=\"highcharts-number\">71</td><td class=\"highcharts-number\">11</td><td class=\"highcharts-text\">This is my annotation I</td></tr><tr><th class=\"highcharts-number\" scope=\"row\">2</th><td class=\"highcharts-number\">106</td><td class=\"highcharts-number\">60</td><td class=\"highcharts-empty\"></td></tr><tr><th class=\"highcharts-number\" scope=\"row\">3</th><td class=\"highcharts-number\">129</td><td class=\"highcharts-number\">44</td><td class=\"highcharts-empty\"></td></tr><tr><th class=\"highcharts-number\" scope=\"row\">4</th><td class=\"highcharts-number\">144</td><td class=\"highcharts-number\">44</td><td class=\"highcharts-empty\"></td></tr></tbody></table>',
         'Table should look like this with includeInDataExport set (12789).'
     );
 
@@ -939,7 +939,7 @@ QUnit.test('Annotation labels in export-data table.', function (assert) {
             // Remove the extra attributes from accessibility module, needed if
             // running as "gulp test".
             .replace(/<table[^>]+>/g, '<table>'),
-        '<table><caption class=\"highcharts-table-caption\">Annotation labels in export-data table.</caption><thead><tr><th class=\"highcharts-text\" scope=\"col\" aria-sort=\"ascending\"><button aria-pressed=\"true\">Category</button></th><th class=\"highcharts-text\" scope=\"col\" aria-sort=\"ascending\"><button aria-pressed=\"true\">Series 1</button></th><th class=\"highcharts-text\" scope=\"col\" aria-sort=\"ascending\"><button aria-pressed=\"true\">Series 2</button></th><th class=\"highcharts-text\" scope=\"col\" aria-sort=\"ascending\"><button aria-pressed=\"true\">Annotations 1</button></th></tr></thead><tbody><tr><th class=\"highcharts-number\" scope=\"row\">0</th><td class=\"highcharts-number\">29</td><td class=\"highcharts-number\">2</td><td class=\"highcharts-empty\"></td></tr><tr><th class=\"highcharts-number\" scope=\"row\">1</th><td class=\"highcharts-number\">71</td><td class=\"highcharts-number\">11</td><td class=\"highcharts-text\">This is my annotation I for point I / This is my annotation II for point I</td></tr><tr><th class=\"highcharts-number\" scope=\"row\">2</th><td class=\"highcharts-number\">106</td><td class=\"highcharts-number\">60</td><td class=\"highcharts-empty\"></td></tr><tr><th class=\"highcharts-number\" scope=\"row\">3</th><td class=\"highcharts-number\">129</td><td class=\"highcharts-number\">44</td><td class=\"highcharts-text\">This is my annotation I for point II</td></tr><tr><th class=\"highcharts-number\" scope=\"row\">4</th><td class=\"highcharts-number\">144</td><td class=\"highcharts-number\">44</td><td class=\"highcharts-empty\"></td></tr></tbody></table>',
+        '<table><caption class=\"highcharts-table-caption\">Annotation labels in export-data table.</caption><thead><tr><th class=\"highcharts-text\" scope=\"col\" aria-sort=\"none\"><button aria-pressed=\"true\">Category</button></th><th class=\"highcharts-text\" scope=\"col\" aria-sort=\"none\"><button aria-pressed=\"true\">Series 1</button></th><th class=\"highcharts-text\" scope=\"col\" aria-sort=\"none\"><button aria-pressed=\"true\">Series 2</button></th><th class=\"highcharts-text\" scope=\"col\" aria-sort=\"none\"><button aria-pressed=\"true\">Annotations 1</button></th></tr></thead><tbody><tr><th class=\"highcharts-number\" scope=\"row\">0</th><td class=\"highcharts-number\">29</td><td class=\"highcharts-number\">2</td><td class=\"highcharts-empty\"></td></tr><tr><th class=\"highcharts-number\" scope=\"row\">1</th><td class=\"highcharts-number\">71</td><td class=\"highcharts-number\">11</td><td class=\"highcharts-text\">This is my annotation I for point I / This is my annotation II for point I</td></tr><tr><th class=\"highcharts-number\" scope=\"row\">2</th><td class=\"highcharts-number\">106</td><td class=\"highcharts-number\">60</td><td class=\"highcharts-empty\"></td></tr><tr><th class=\"highcharts-number\" scope=\"row\">3</th><td class=\"highcharts-number\">129</td><td class=\"highcharts-number\">44</td><td class=\"highcharts-text\">This is my annotation I for point II</td></tr><tr><th class=\"highcharts-number\" scope=\"row\">4</th><td class=\"highcharts-number\">144</td><td class=\"highcharts-number\">44</td><td class=\"highcharts-empty\"></td></tr></tbody></table>',
         'Table should look like this with set join and itemDelimiter (12789).'
     );
 });
