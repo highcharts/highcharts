@@ -2,11 +2,11 @@
  *
  *  Text Input Cell Renderer class
  *
- *  (c) 2020-2025 Highsoft AS
+ *  (c) 2020-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Dawid Dragula
@@ -30,8 +30,8 @@ import type {
     EditModeRendererTypeName
 } from '../../CellEditing/CellEditingComposition';
 
-import CellRenderer from '../CellRenderer.js';
-import CellRendererRegistry from '../CellRendererRegistry.js';
+import { CellRenderer, CellRendererOptions } from '../CellRenderer.js';
+import { registerRenderer } from '../CellRendererRegistry.js';
 import TextInputContent from '../ContentTypes/TextInputContent.js';
 
 import U from '../../../../Core/Utilities.js';
@@ -60,11 +60,11 @@ class TextInputRenderer extends CellRenderer implements EditModeRenderer {
     /**
      * Default options for the text input renderer.
      */
-    public static defaultOptions: TextInputRenderer.Options = {
+    public static defaultOptions: TextInputRendererOptions = {
         type: 'textInput'
     };
 
-    public override options: TextInputRenderer.Options;
+    public override options: TextInputRendererOptions;
 
 
     /* *
@@ -73,7 +73,7 @@ class TextInputRenderer extends CellRenderer implements EditModeRenderer {
      *
      * */
 
-    public constructor(column: Column, options: Partial<CellRenderer.Options>) {
+    public constructor(column: Column, options: Partial<CellRendererOptions>) {
         super(column);
         this.options = merge(TextInputRenderer.defaultOptions, options);
     }
@@ -97,39 +97,36 @@ class TextInputRenderer extends CellRenderer implements EditModeRenderer {
 
 /* *
  *
- *  Namespace
+ *  Declarations
  *
  * */
 
-namespace TextInputRenderer {
+/**
+ * Options to control the text input renderer content.
+ */
+export interface TextInputRendererOptions extends CellRendererOptions {
+    type: 'textInput';
 
     /**
-     * Options to control the text input renderer content.
+     * Whether the text input is disabled.
      */
-    export interface Options extends CellRenderer.Options {
-        type: 'textInput';
-
-        /**
-         * Whether the text input is disabled.
-         */
-        disabled?: boolean;
-
-        /**
-         * Attributes to control the text input.
-         */
-        attributes?:TextInputAttributes;
-    }
+    disabled?: boolean;
 
     /**
      * Attributes to control the text input.
      */
-    export interface TextInputAttributes {
-        minlength?: number;
-        maxlength?: number;
-        pattern?: string;
-        placeholder?: string;
-        size?: number;
-    }
+    attributes?:TextInputAttributes;
+}
+
+/**
+ * Attributes to control the text input.
+ */
+export interface TextInputAttributes {
+    minlength?: number;
+    maxlength?: number;
+    pattern?: string;
+    placeholder?: string;
+    size?: number;
 }
 
 
@@ -145,7 +142,7 @@ declare module '../CellRendererType' {
     }
 }
 
-CellRendererRegistry.registerRenderer('textInput', TextInputRenderer);
+registerRenderer('textInput', TextInputRenderer);
 
 
 /* *

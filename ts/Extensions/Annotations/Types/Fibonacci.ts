@@ -1,6 +1,5 @@
 /* *
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -14,7 +13,7 @@
 
 import type ColorString from '../../../Core/Color/ColorString';
 import type Controllable from '../Controllables/Controllable';
-import type MockPointOptions from '../MockPointOptions';
+import type MockPointOptions from '../AnnotationMockPointOptionsObject';
 import type SVGPath from '../../../Core/Renderer/SVG/SVGPath';
 
 import Annotation from '../Annotation.js';
@@ -27,7 +26,7 @@ import Tunnel from './Tunnel.js';
 import U from '../../../Core/Utilities.js';
 const { merge } = U;
 
-if (defaultOptions.annotations) {
+if (defaultOptions.annotations?.types) {
     defaultOptions.annotations.types.fibonacci = merge(
         defaultOptions.annotations.types.tunnel,
         /**
@@ -61,7 +60,7 @@ if (defaultOptions.annotations) {
 
                 /**
                  * An array of background colors:
-                 * Default to:
+                 * Defaults to:
                  * ```
                  * [
                  * 'rgba(130, 170, 255, 0.4)',
@@ -125,9 +124,7 @@ if (defaultOptions.annotations) {
  *
  * */
 
-/**
- * @private
- */
+/** @internal */
 function createPathDGenerator(
     retracementIndex: number,
     isBackground?: boolean
@@ -174,6 +171,7 @@ function createPathDGenerator(
  *
  * */
 
+/** @internal */
 class Fibonacci extends Tunnel {
 
     /* *
@@ -327,6 +325,7 @@ class Fibonacci extends Tunnel {
  *
  * */
 
+/** @internal */
 interface Fibonacci {
     defaultOptions: Tunnel['defaultOptions'];
     options: Fibonacci.Options;
@@ -338,6 +337,7 @@ interface Fibonacci {
  *
  * */
 
+/** @internal */
 declare module './AnnotationType' {
     interface AnnotationTypeRegistry {
         fibonacci: typeof Fibonacci;
@@ -353,15 +353,71 @@ Annotation.types.fibonacci = Fibonacci;
  * */
 
 namespace Fibonacci {
+    /**
+     * Options for the fibonacci annotation type.
+     *
+     * @sample highcharts/annotations-advanced/fibonacci/
+     *         Fibonacci
+     *
+     * @extends      annotations.types.crookedLine
+     * @product      highstock
+     * @optionparent annotations.types.fibonacci
+     */
     export interface Options extends Tunnel.Options {
         typeOptions: TypeOptions;
     }
     export interface TypeOptions extends Tunnel.TypeOptions {
-        reversed: boolean;
+        /**
+         * An array of background colors:
+         * Defaults to:
+         * ```
+         * [
+         * 'rgba(130, 170, 255, 0.4)',
+         * 'rgba(139, 191, 216, 0.4)',
+         * 'rgba(150, 216, 192, 0.4)',
+         * 'rgba(156, 229, 161, 0.4)',
+         * 'rgba(162, 241, 130, 0.4)',
+         * 'rgba(169, 255, 101, 0.4)'
+         * ]
+         * ```
+         */
         backgroundColors: Array<ColorString>;
+
+        /**
+         * The height of the fibonacci in terms of yAxis.
+         */
+        height: Tunnel.TypeOptions['height'];
+
+        /**
+         * An array with options for the labels.
+         *
+         * @type      {Array<*>}
+         * @extends   annotations.types.crookedLine.labelOptions
+         * @apioption annotations.types.fibonacci.typeOptions.labels
+         */
         labels: Array<CrookedLine.Options['labelOptions']>;
+
+        /**
+         * The color of line.
+         */
         lineColor: ColorString;
+
+        /**
+         * An array of colors for the lines.
+         */
         lineColors: Array<ColorString>;
+
+        /**
+         * Whether the annotation levels should be reversed. By default
+         * they start from 0 and go to 1.
+         *
+         * @sample highcharts/annotations-advanced/fibonacci-reversed/
+         *         Fibonacci annotation reversed
+         *
+         * @type {boolean}
+         * @apioption annotations.types.fibonacci.typeOptions.reversed
+         */
+        reversed: boolean;
     }
 }
 

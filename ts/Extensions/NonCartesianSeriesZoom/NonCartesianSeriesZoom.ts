@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2024 Hubert Kozik
+ *  (c) 2024-2026 Highsoft AS
+ *  Author: Hubert Kozik
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -62,7 +63,7 @@ declare module '../../Core/Series/SeriesBase' {
 
 /**
  * Logic for non-cartesian series zooming and panning
- * @private
+ * @internal
  */
 function onTransform(
     this: Chart,
@@ -253,7 +254,7 @@ function onTransform(
 
 /**
  * Apply zoom into series plot box
- * @private
+ * @internal
  */
 function onGetPlotBox(
     this: Series,
@@ -334,7 +335,7 @@ function onGetPlotBox(
 
 /**
  * Clip series and data labels group with zoom rect
- * @private
+ * @internal
  */
 function onAfterDrawChartBox(this: Chart): void {
     const chart = this;
@@ -366,7 +367,7 @@ function onAfterDrawChartBox(this: Chart): void {
 
 /**
  * Adjust tooltip position to scaled series group
- * @private
+ * @internal
  */
 function onGetAnchor(params: {
     point: Point,
@@ -389,7 +390,7 @@ function onGetAnchor(params: {
 
 /**
  * Adjust series group props
- * @private
+ * @internal
  */
 function onAfterSetChartSize(
     this: Chart,
@@ -411,7 +412,7 @@ function onAfterSetChartSize(
 
 /**
  * Create data labels parent group for clipping purposes after zoom-in
- * @private
+ * @internal
  */
 function onInitDataLabelsGroup(
     this: Series,
@@ -434,7 +435,7 @@ function onInitDataLabelsGroup(
 /**
  * The series type
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.tiledwebmap
  *

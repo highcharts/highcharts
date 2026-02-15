@@ -1,10 +1,10 @@
 /* *
  *
- *  (c) 2009-2025 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Sebastian Bochan
@@ -26,6 +26,7 @@ import type Component from '../Components/Component';
 import type CSSJSONObject from '../CSSJSONObject';
 import type { DeepPartial } from '../../Shared/Types';
 import type LayoutType from './Layout';
+import type { Options as LayoutOptions } from './Layout';
 import type Row from './Row';
 import type CellHTML from './CellHTML.js';
 
@@ -34,6 +35,7 @@ import Globals from '../Globals.js';
 import GUIElement from './GUIElement.js';
 import U from '../../Core/Utilities.js';
 const {
+    defined,
     merge,
     fireEvent
 } = U;
@@ -60,7 +62,7 @@ class Cell extends GUIElement {
      * @param {Row} row
      * Reference to the row instance.
      *
-     * @param {Cell.Options} options
+     * @param {Options} options
      * Options for the cell.
      *
      * @param {HTMLElement} cellElement
@@ -68,7 +70,7 @@ class Cell extends GUIElement {
      */
     public constructor(
         row: Row,
-        options: Cell.Options,
+        options: Options,
         cellElement?: HTMLElement
     ) {
         super();
@@ -87,6 +89,15 @@ class Cell extends GUIElement {
             rowOptions = row.options || {},
             cellClassName = layoutOptions.cellClassName || '';
 
+        const cellStyle = options.style || {};
+        const elementStyle = merge(
+            layoutOptions.style,
+            rowOptions.style,
+            cellStyle
+        );
+
+        this.applySizeOptions(options, cellStyle, elementStyle);
+
         this.container = this.getElementContainer({
             render: row.layout.board.guiEnabled,
             parentContainer: parentContainer,
@@ -97,14 +108,7 @@ class Cell extends GUIElement {
             },
             element: cellElement,
             elementId: options.id,
-            style: merge(
-                layoutOptions.style,
-                rowOptions.style,
-                options.style,
-                {
-                    height: this.height
-                }
-            )
+            style: elementStyle
         });
 
         // Nested layout
@@ -137,7 +141,7 @@ class Cell extends GUIElement {
     /**
      * The cell options.
      */
-    public options: Cell.Options;
+    public options: Options;
 
     /**
      * Component mounted in the cell.
@@ -198,6 +202,8 @@ class Cell extends GUIElement {
      * and mounted component.
      */
     public destroy(): void {
+        fireEvent(this, 'outdate');
+
         const cell = this;
         const { row } = cell;
 
@@ -225,8 +231,17 @@ class Cell extends GUIElement {
      * @internal
      *
      */
-    public getOptions(): DeepPartial<Cell.Options> {
-        return this.options;
+    public getOptions(): DeepPartial<Options> {
+        const cell = this;
+
+        if (cell.options.layout && cell.nestedLayout) {
+            return {
+                ...cell.options,
+                layout: cell.nestedLayout.getOptions()
+            };
+        }
+
+        return cell.options;
     }
 
     protected changeVisibility(
@@ -318,26 +333,30 @@ class Cell extends GUIElement {
             editMode = cell.row.layout.board.editMode;
 
         if (cell.container) {
-            if (width) {
+            if (defined(width)) {
                 if (
                     width === 'auto' &&
                     cell.container.style.flex !== '1 1 0%'
                 ) {
                     cell.container.style.flex = '1 1 0%';
+                    cell.options.width = cell.container.style.flex;
                 } else {
                     const cellWidth = cell.convertWidthToValue(width);
 
-                    if (
-                        cellWidth &&
-                        cell.container.style.flex !== '0 0 ' + cellWidth
-                    ) {
+                    if (cellWidth) {
                         cell.container.style.flex = '0 0 ' + cellWidth;
+                        cell.options.width = cell.container.style.flex;
                     }
                 }
             }
 
-            if (height) {
-                cell.height = cell.container.style.height = height + 'px';
+            if (defined(height)) {
+                const heightValue = (typeof height === 'number' ?
+                    height + 'px' :
+                    height);
+
+                cell.height = cell.container.style.height = heightValue;
+                cell.options.height = heightValue;
             }
 
             if (editMode) {
@@ -439,76 +458,133 @@ class Cell extends GUIElement {
         return GUIElement.getPercentageWidth(width) || '';
     }
 
-}
+    private applySizeOptions(
+        options: Options,
+        cellStyle: CSSJSONObject,
+        elementStyle: CSSJSONObject
+    ): void {
+        const heightValue = defined(options.height) ?
+            options.height :
+            cellStyle.height;
 
-/* *
- *
- *  Namespace
- *
- * */
+        if (defined(heightValue)) {
+            this.height = typeof heightValue === 'number' ?
+                heightValue + 'px' :
+                String(heightValue);
+            elementStyle.height = this.height;
+            options.height = this.height;
+        } else if (defined(elementStyle.height)) {
+            delete elementStyle.height;
+        }
 
-namespace Cell {
-    /**
-     * Checks if a valid cell instance.
-     */
-    export function isCell(cell: Cell | CellHTML | undefined): cell is Cell {
-        return (!!cell && 'row' in cell && cell.type === 'cell');
-    }
+        const widthSource = defined(options.width) ?
+            options.width :
+            cellStyle.flex;
 
-    /**
-     * Options for each cell.
-     **/
-    export interface Options {
-        /**
-         * Unique cell id.
-         **/
-        id: string;
+        if (
+            defined(widthSource) &&
+            (typeof widthSource === 'string' ||
+            typeof widthSource === 'number')
+        ) {
+            let flexValue: string | undefined;
 
-        /**
-         * Options controlling the edit mode for the cell.
-         **/
-        editMode?: {
-            /**
-             * Individual options for the toolbar items.
-             **/
-            toolbarItems?: {
-                /**
-                 * Options for the `destroy` toolbar item.
-                 */
-                destroy: {
-                    enabled?: boolean;
-                };
-                /**
-                 * Options for the `settings` toolbar item.
-                 */
-                drag: {
-                    enabled?: boolean;
-                };
-                /**
-                 * Options for the `settings` toolbar item.
-                 */
-                settings: {
-                    enabled?: boolean;
-                };
+            if (
+                typeof widthSource === 'string' &&
+                widthSource.indexOf(' ') !== -1
+            ) {
+                flexValue = widthSource;
+            } else if (widthSource === 'auto') {
+                flexValue = '1 1 0%';
+            } else {
+                const cellWidth = this.convertWidthToValue(widthSource);
+                if (cellWidth) {
+                    flexValue = '0 0 ' + cellWidth;
+                }
+            }
+
+            if (flexValue) {
+                elementStyle.flex = flexValue;
+                options.width = flexValue;
             }
         }
-        /**
-         * CSS styles for cell container.
-         **/
-        style?: CSSJSONObject;
-        /**
-         * Id of the container that holds the cell.
-         **/
-        parentContainerId?: string;
-        /**
-         * To create a nested layout, add a layout object to a cell.
-         *
-         * Try it:
-         *
-         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/gui/nested-layout/ | Nested layout}
-         **/
-        layout?: LayoutType.Options;
     }
+
+}
+
+/**
+ * Checks if a valid cell instance.
+ */
+export function isCell(cell: Cell | CellHTML | undefined): cell is Cell {
+    return (!!cell && 'row' in cell && cell.type === 'cell');
+}
+
+/**
+ * Options for each cell.
+ **/
+export interface Options {
+    /**
+     * Unique cell id.
+     **/
+    id: string;
+
+    /**
+     * Options controlling the edit mode for the cell.
+     **/
+    editMode?: {
+        /**
+         * Individual options for the toolbar items.
+         **/
+        toolbarItems?: {
+            /**
+             * Options for the `destroy` toolbar item.
+             */
+            destroy: {
+                enabled?: boolean;
+            };
+            /**
+             * Options for the `drag` toolbar item.
+             */
+            drag: {
+                enabled?: boolean;
+            };
+            /**
+             * Options for the `settings` toolbar item.
+             */
+            settings: {
+                enabled?: boolean;
+            };
+            /**
+             * Options for the `viewFullscreen` toolbar item.
+             */
+            viewFullscreen: {
+                enabled?: boolean;
+            };
+        }
+    }
+    /**
+     * CSS styles for cell container.
+     **/
+    style?: CSSJSONObject;
+    /**
+     * Set width of the cell.
+     **/
+    width?: (string|number);
+    /**
+     * Set height of the cell.
+     **/
+    height?: (string|number);
+    /**
+     * Id of the container that holds the cell.
+     **/
+    parentContainerId?: string;
+    /**
+     * To create a nested layout, add a layout object to a cell.
+     *
+     * Try it:
+     *
+     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/gui/nested-layout/ | Nested layout}
+     **/
+    layout?: LayoutOptions;
 }
 
 /* *

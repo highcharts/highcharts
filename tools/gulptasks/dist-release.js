@@ -118,17 +118,23 @@ async function npmPublish(push = false, releaseRepo = releaseRepos.Highcharts) {
         const answer = await askUser(
             '\nAbout to publish to npm using \'latest\' tag. To approve, \n' +
             'enter the one time password from your 2FA authentication setup. \n' +
+            'To try without OTP, enter \'Y\'\n' +
             'To abort, enter \'n\': '
         );
         if (answer === 'n') {
             const message = 'Aborted before invoking \'npm publish\'! Command must be run manually to complete the release.';
             throw new Error(message);
         }
-        if (!answer.match(/^\d{6}$/u)) {
+        if (answer !== 'Y' && !answer.match(/^\d{6}$/u)) {
             throw new Error('Invalid OTP. Please enter a 6 digit number.');
         }
+
+        let command = 'npm publish';
+        if (answer !== 'Y') {
+            command += ` --otp=${answer}`;
+        }
         childProcess.execSync(
-            `npm publish --otp=${answer}`,
+            command,
             { cwd: pathToDistRepo }
         );
         log.message('Successfully published to npm!');
@@ -171,7 +177,6 @@ async function removeFilesInFolder(folder, exceptions) {
  * To replace with
  * @param {Array<string>} files The files to update.
  * @param {string} [productName] The product name.
- * Files which should be updated.
  */
 function updateJSONFiles(version, files, productName) {
     log.message('Updating bower.json and package.json for ' + productName + '...');
@@ -186,6 +191,25 @@ function updateJSONFiles(version, files, productName) {
                     json.main ?
                         json.main.replace(/\.js$/u, '.d.ts') :
                         'highcharts.d.ts'
+                );
+
+                if (json.dependencies) {
+                    delete json.dependencies.jspdf;
+                    delete json.dependencies['svg2pdf.js'];
+                }
+
+                json.peerDependencies = Object.assign({}, json.peerDependencies, {
+                    jspdf: '^3.0.0',
+                    'svg2pdf.js': '^2.6.0'
+                });
+
+                json.peerDependenciesMeta = Object.assign(
+                    {},
+                    json.peerDependenciesMeta,
+                    {
+                        jspdf: { optional: true },
+                        'svg2pdf.js': { optional: true }
+                    }
                 );
             }
             json.version = version;
@@ -214,10 +238,10 @@ function copyFiles() {
 
     const files = {
         // 'vendor/canvg.js': join(pathToDistRepo, 'lib/canvg.js'),
-        'vendor/jspdf.js': join(pathToDistRepo, 'lib/jspdf.js'),
-        'vendor/jspdf.src.js': join(pathToDistRepo, 'lib/jspdf.src.js'),
-        'vendor/svg2pdf.js': join(pathToDistRepo, 'lib/svg2pdf.js'),
-        'vendor/svg2pdf.src.js': join(pathToDistRepo, 'lib/svg2pdf.src.js')
+        // 'vendor/jspdf.js': join(pathToDistRepo, 'lib/jspdf.js'),
+        // 'vendor/jspdf.src.js': join(pathToDistRepo, 'lib/jspdf.src.js'),
+        // 'vendor/svg2pdf.js': join(pathToDistRepo, 'lib/svg2pdf.js'),
+        // 'vendor/svg2pdf.src.js': join(pathToDistRepo, 'lib/svg2pdf.src.js')
     };
 
     const filesToIgnore = [

@@ -2,11 +2,11 @@
  *
  *  Grid Popup abstract class
  *
- *  (c) 2020-2025 Highsoft AS
+ *  (c) 2020-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Dawid Dragula
@@ -42,7 +42,7 @@ const { fireEvent } = U;
 /**
  * Abstract base class for for Grid popups.
  */
-abstract class Popup {
+export abstract class Popup {
 
     /* *
      *
@@ -88,7 +88,7 @@ abstract class Popup {
     /**
      * Options for the popup.
      */
-    private options: Popup.Options;
+    private options: PopupOptions;
 
 
     /* *
@@ -109,7 +109,7 @@ abstract class Popup {
      * @param options
      * Popup options.
      */
-    constructor(grid: Grid, button?: Button, options?: Popup.Options) {
+    constructor(grid: Grid, button?: Button, options?: PopupOptions) {
         this.grid = grid;
         this.button = button;
         this.options = options || {};
@@ -178,6 +178,8 @@ abstract class Popup {
             return;
         }
 
+        fireEvent(this, 'beforeHide');
+
         this.grid.popups.delete(this);
 
         this.isVisible = false;
@@ -234,6 +236,7 @@ abstract class Popup {
         }
 
         const next = this.options.nextToAnchor || false;
+        const edgePadding = 8;
         const popupRect = this.container.getBoundingClientRect();
         const parentRect = wrapper.getBoundingClientRect();
         const anchorRect = anchorElement?.getBoundingClientRect() ?? parentRect;
@@ -243,7 +246,7 @@ abstract class Popup {
 
         // If popup's right side is after the parent's right side, shift popup
         // to the left of the anchor element.
-        if (left + popupRect.width > parentRect.width) {
+        if (left + popupRect.width > parentRect.right - edgePadding) {
             left = -popupRect.width + (
                 next ? anchorRect.left + 4 : anchorRect.right
             );
@@ -251,8 +254,8 @@ abstract class Popup {
 
         // If popup's left side is before the parent's left side,
         // shift popup so it's aligned to parent's left.
-        if (left < parentRect.left) {
-            left = parentRect.left;
+        if (left < parentRect.left + edgePadding) {
+            left = parentRect.left + edgePadding;
         }
 
         // Apply positioning
@@ -261,13 +264,9 @@ abstract class Popup {
 
         // If the content is too tall, constrain the container to the bottom
         // of the parent to enable content Y-scrolling.
-        const contentRect = this.content.getBoundingClientRect();
-        if (
-            contentRect.height + contentRect.top - parentRect.top >
-            parentRect.height
-        ) {
+        if (top + popupRect.height > parentRect.bottom - edgePadding) {
             this.container.style.top = 'auto';
-            this.container.style.bottom = '0';
+            this.container.style.bottom = `${edgePadding}px`;
         } else {
             this.container.style.top = `${top - parentRect.top}px`;
             this.container.style.bottom = 'auto';
@@ -386,32 +385,30 @@ abstract class Popup {
 
 /* *
  *
- *  Namespace
+ *  Declarations
  *
  * */
 
-namespace Popup {
-    export interface Options {
-        /**
-         * Whether to position the popup next to the anchor element (`true`), or
-         * directly below it (`false`). Defaults to `false`.
-         */
-        nextToAnchor?: boolean;
+export interface PopupOptions {
+    /**
+     * Whether to position the popup next to the anchor element (`true`), or
+     * directly below it (`false`). Defaults to `false`.
+     */
+    nextToAnchor?: boolean;
 
+    /**
+     * The header of the popup.
+     */
+    header?: {
         /**
-         * The header of the popup.
+         * The prefix of the header label, placed before the label.
          */
-        header?: {
-            /**
-             * The prefix of the header label, placed before the label.
-             */
-            category?: string;
-            /**
-             * The label of the header.
-             */
-            label: string;
-        };
-    }
+        category?: string;
+        /**
+         * The label of the header.
+         */
+        label: string;
+    };
 }
 
 

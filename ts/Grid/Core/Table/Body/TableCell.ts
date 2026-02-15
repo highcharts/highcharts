@@ -2,11 +2,11 @@
  *
  *  Grid class
  *
- *  (c) 2020-2025 Highsoft AS
+ *  (c) 2020-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Dawid Dragula
@@ -22,7 +22,7 @@
  *
  * */
 
-import type DataTable from '../../../../Data/DataTable';
+import type { CellType as DataTableCellType } from '../../../../Data/DataTable';
 import type Column from '../Column';
 import type TableRow from './TableRow';
 
@@ -32,6 +32,7 @@ import CellContent from '../CellContent/CellContent.js';
 
 import Utils from '../../../../Core/Utilities.js';
 const {
+    defined,
     fireEvent
 } = Utils;
 
@@ -68,6 +69,17 @@ class TableCell extends Cell {
      */
     public content?: CellContent;
 
+    /**
+     * A token used to prevent stale async responses from overwriting cell
+     * data. In virtualized grids, cells are reused as rows scroll in/out of
+     * view. If a cell starts an async value fetch for row A, then gets reused
+     * for row B before the fetch completes, the stale response for row A
+     * could incorrectly overwrite row B's data. This token is incremented
+     * before each async fetch, and checked when the fetch completes - if the
+     * token has changed, the response is discarded as stale.
+     */
+    private asyncFetchToken: number = 0;
+
 
     /* *
     *
@@ -103,19 +115,19 @@ class TableCell extends Cell {
     /**
      * Renders the cell by appending it to the row and setting its value.
      */
-    public override render(): void {
-        super.render();
-        void this.setValue();
+    public override async render(): Promise<void> {
+        await super.render();
+        await this.setValue();
     }
 
     /**
-     * Edits the cell value and updates the data table. Call this instead of
+     * Edits the cell value and updates the dataset. Call this instead of
      * `setValue` when you want it to trigger the cell value user change event.
      *
      * @param value
      * The new value to set.
      */
-    public async editValue(value: DataTable.CellType): Promise<void> {
+    public async editValue(value: DataTableCellType): Promise<void> {
         if (this.value === value) {
             return;
         }
@@ -132,18 +144,49 @@ class TableCell extends Cell {
      * The raw value to set. If not provided, it will use the value from the
      * data table for the current row and column.
      *
-     * @param updateTable
-     * Whether to update the table after setting the content. Defaults to
-     * `false`, meaning the table will not be updated.
+     * @param updateDataset
+     * Whether to update the dataset after setting the content. Defaults to
+     * `false`, meaning the dataset will not be updated.
      */
     public async setValue(
-        value: DataTable.CellType = this.column.data?.[this.row.index],
-        updateTable: boolean = false
+        value?: DataTableCellType,
+        updateDataset: boolean = false
     ): Promise<void> {
+        const fetchToken = ++this.asyncFetchToken;
+        const { grid } = this.column.viewport;
+
+        // TODO(design): Design a better way to show the cell val being updated.
+        this.htmlElement.style.opacity = '0.5';
+
+        if (!defined(value)) {
+            value = await grid.dataProvider?.getValue(
+                this.column.id,
+                this.row.index
+            );
+
+            // Discard stale response if cell was reused for a different row
+            if (fetchToken !== this.asyncFetchToken) {
+                this.htmlElement.style.opacity = '';
+                return;
+            }
+        }
+
+        const oldValue = this.value;
         this.value = value;
 
-        if (updateTable && await this.updateDataTable()) {
-            return;
+        if (updateDataset) {
+            try {
+                grid.showLoading();
+                if (await this.updateDataset()) {
+                    return;
+                }
+            } catch (err: unknown) {
+                // eslint-disable-next-line no-console
+                console.error(err);
+                this.value = oldValue;
+            } finally {
+                grid.hideLoading();
+            }
         }
 
         if (this.content) {
@@ -162,44 +205,48 @@ class TableCell extends Cell {
         // Add custom class name from column options
         this.setCustomClassName(this.column.options.cells?.className);
 
+        // TODO(design): Remove this after the first part was implemented.
+        this.htmlElement.style.opacity = '';
+
         fireEvent(this, 'afterRender', { target: this });
     }
 
     /**
-     * Updates the the data table so that it reflects the current state of
-     * the grid.
+     * Updates the the dataset so that it reflects the current state of the
+     * grid.
      *
      * @returns
      * A promise that resolves to `true` if the cell triggered all the whole
-     * viewport rows to be updated, or `false` if the only change should be
-     * the cell's content.
+     * viewport rows to be updated, or `false` if the only change was the cell's
+     * content.
      */
-    private async updateDataTable(): Promise<boolean> {
-        if (this.column.data?.[this.row.index] === this.value) {
+    private async updateDataset(): Promise<boolean> {
+        const oldValue = await this.column.viewport.grid.dataProvider?.getValue(
+            this.column.id,
+            this.row.index
+        );
+
+        if (oldValue === this.value) {
             // Abort if the value is the same as in the data table.
             return false;
         }
 
         const vp = this.column.viewport;
-        const { dataTable: originalDataTable } = vp.grid;
+        const { dataProvider: dp } = vp.grid;
 
-        const rowTableIndex =
-            this.row.id &&
-            originalDataTable?.getLocalRowIndex(this.row.id);
-
-        if (!originalDataTable || rowTableIndex === void 0) {
+        const rowId = this.row.id;
+        if (!dp || rowId === void 0) {
             return false;
         }
 
         this.row.data[this.column.id] = this.value;
-        originalDataTable.setCell(
+        await dp.setValue(
+            this.value,
             this.column.id,
-            rowTableIndex,
-            this.value
+            rowId
         );
 
-        // If no modifiers, don't update all rows
-        if (vp.grid.dataTable === vp.grid.presentationTable) {
+        if (vp.grid.querying.willNotModify()) {
             return false;
         }
 
@@ -207,17 +254,20 @@ class TableCell extends Cell {
         return true;
     }
 
+    /**
+     * Initialize event listeners for table body cells.
+     *
+     * Most events (click, dblclick, keydown, mousedown, mouseover, mouseout)
+     * are delegated to Table for better performance with virtualization.
+     * Only focus/blur remain on individual cells for focus management.
+     */
     public override initEvents(): void {
-        this.cellEvents.push(['dblclick', (e): void => (
-            this.onDblClick(e as MouseEvent)
-        )]);
-        this.cellEvents.push(['mouseout', (): void => this.onMouseOut()]);
-        this.cellEvents.push(['mouseover', (): void => this.onMouseOver()]);
-        this.cellEvents.push(['mousedown', (e): void => {
-            this.onMouseDown(e as MouseEvent);
-        }]);
+        this.cellEvents.push(['blur', (): void => this.onBlur()]);
+        this.cellEvents.push(['focus', (): void => this.onFocus()]);
 
-        super.initEvents();
+        this.cellEvents.forEach((pair): void => {
+            this.htmlElement.addEventListener(pair[0], pair[1]);
+        });
     }
 
     /**
@@ -253,31 +303,14 @@ class TableCell extends Cell {
         });
     }
 
-    /**
-     * Handles the mouse over event on the cell.
-     * @internal
-     */
-    protected onMouseOver(): void {
-        const { grid } = this.row.viewport;
-        grid.hoverRow(this.row.index);
-        grid.hoverColumn(this.column.id);
-
-        fireEvent(this, 'mouseOver', {
-            target: this
-        });
+    public override onMouseOver(): void {
+        this.row.viewport.grid.hoverRow(this.row.index);
+        super.onMouseOver();
     }
 
-    /**
-     * Handles the mouse out event on the cell.
-     */
-    protected onMouseOut(): void {
-        const { grid } = this.row.viewport;
-        grid.hoverRow();
-        grid.hoverColumn();
-
-        fireEvent(this, 'mouseOut', {
-            target: this
-        });
+    public override onMouseOut(): void {
+        this.row.viewport.grid.hoverRow();
+        super.onMouseOut();
     }
 
     /**
@@ -334,17 +367,15 @@ class TableCell extends Cell {
 
 /* *
  *
- *  Class Namespace
+ *  Declarations
  *
  * */
 
-namespace TableCell {
-    /**
-     * Event interface for table cell events.
-     */
-    export interface TableCellEvent {
-        target: TableCell;
-    }
+/**
+ * Event interface for table cell events.
+ */
+export interface TableCellEvent {
+    target: TableCell;
 }
 
 

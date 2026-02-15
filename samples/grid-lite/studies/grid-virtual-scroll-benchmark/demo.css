@@ -1,0 +1,84 @@
+.demo {
+    max-width: 1200px;
+}
+
+.bench-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 12px;
+    align-items: center;
+    margin: 0 0 12px;
+}
+
+.bench-controls label {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: #3a3a3a;
+}
+
+.bench-controls input {
+    width: 90px;
+    padding: 4px 6px;
+}
+
+.bench-controls button {
+    padding: 6px 12px;
+}
+
+.bench-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 6px 14px;
+    margin: 0 0 14px;
+    padding: 10px 12px;
+    background: #f7f7f7;
+    border: 1px solid #e2e2e2;
+    border-radius: 6px;
+    font-size: 12px;
+}
+
+.bench-label {
+    color: #6d6d6d;
+    margin-right: 6px;
+}
+
+#container {
+    height: 520px;
+    border: 1px solid #e2e2e2;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+@media (prefers-color-scheme: dark) {
+    .bench-controls label {
+        color: #d6d6d6;
+    }
+
+    .bench-controls input {
+        background: #1f1f1f;
+        color: #f0f0f0;
+        border: 1px solid #3a3a3a;
+    }
+
+    .bench-controls button {
+        background: #2a2a2a;
+        color: #f0f0f0;
+        border: 1px solid #3a3a3a;
+    }
+
+    .bench-stats {
+        background: #1f1f1f;
+        border-color: #3a3a3a;
+        color: #f0f0f0;
+    }
+
+    .bench-label {
+        color: #b0b0b0;
+    }
+
+    #container {
+        border-color: #3a3a3a;
+    }
+}

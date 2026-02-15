@@ -1,11 +1,11 @@
 /* *
  *
- *  (c) 2016 Highsoft AS
+ *  (c) 2016-2026 Highsoft AS
  *  Authors: Lars A. V. Cabrera
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -58,12 +58,14 @@ const {
  *
  * */
 
+/** @internal */
 declare module './AxisComposition' {
     interface AxisComposition {
         grid?: GridAxisComposition['grid'];
     }
 }
 
+/** @internal */
 declare module './AxisBase' {
     interface AxisBase {
         axisBorder?: SVGElement;
@@ -81,43 +83,93 @@ declare module './AxisBase' {
 }
 
 declare module './AxisOptions' {
+    /** @internal */
     interface AxisLabelFormatterContextObject {
         point?: Point;
     }
     interface AxisOptions {
         grid?: GridAxisOptions;
+        /** @internal */
         isInternal?: boolean;
     }
 }
 
+/** @internal */
 declare module '../Chart/ChartBase'{
     interface ChartBase {
         marginRight: ChartOptions['marginRight'];
     }
 }
 
+/** @internal */
 declare module './TickBase' {
     interface TickBase {
         slotWidth?: number;
     }
 }
 
+/** @internal */
 declare module './AxisType' {
     interface AxisTypeRegistry {
         GridAxis: GridAxisComposition;
     }
 }
 
+/** @internal */
 export interface GridAxisComposition extends Axis {
     grid: GridAxisAdditions;
     linkedParent?: GridAxisComposition;
 }
 
+/**
+ * Set grid options for the axis labels. Requires Highcharts Gantt.
+ *
+ * @since     6.2.0
+ * @product   gantt
+ */
 export interface GridAxisOptions {
+    /**
+     * Set border color for the label grid lines.
+     *
+     * @default   #e6e6e6
+     */
     borderColor?: ColorType;
+    /**
+     * Set border width of the label grid lines.
+     *
+     * @default   1
+     */
     borderWidth?: number;
+    /**
+     * Set cell height for grid axis labels. By default this is calculated from
+     * font size. This option only applies to horizontal axes. For vertical
+     * axes, check the [#yAxis.staticScale](yAxis.staticScale) option.
+     *
+     * @sample gantt/grid-axis/cellheight
+     *         Gant chart with custom cell height
+     */
     cellHeight?: number;
+    /**
+     * Set specific options for each column (or row for horizontal axes) in the
+     * grid. Each extra column/row is its own axis, and the axis options can be
+     * set here.
+     *
+     * @sample gantt/demo/left-axis-table
+     *         Left axis as a table
+     * @sample gantt/demo/treegrid-columns
+     *         Collapsible tree grid with columns
+     * @sample gantt/grid-axis/horizontal-columns
+     *         Horizontal grid axis with columns rendered as rows
+     *
+     */
     columns?: Array<AxisOptions>;
+    /**
+     * Enable grid on the axis labels. Defaults to true for Gantt charts.
+     *
+     * @default   true
+     * @since     6.2.0
+     * @product   gantt
+     */
     enabled?: boolean;
 }
 
@@ -129,7 +181,7 @@ export interface GridAxisOptions {
 
 /**
  * Enum for which side the axis is on. Maps to axis.side.
- * @private
+ * @internal
  */
 enum GridAxisSide {
     top = 0,
@@ -144,24 +196,18 @@ enum GridAxisSide {
  *
  * */
 
-/**
- * @private
- */
+/** @internal */
 function argsToArray(args: IArguments): Array<any> {
     return Array.prototype.slice.call(args, 1);
 }
 
-/**
- * @private
- */
+/** @internal */
 function isObject(x: unknown): x is object {
     // Always use strict mode
     return U.isObject(x, true);
 }
 
-/**
- * @private
- */
+/** @internal */
 function applyGridOptions(axis: Axis): void {
     const options = axis.options;
 
@@ -195,7 +241,7 @@ function applyGridOptions(axis: Axis): void {
 
 /**
  * Extends axis class with grid support.
- * @private
+ * @internal
  */
 function compose<T extends typeof Axis>(
     AxisClass: T,
@@ -249,7 +295,7 @@ function compose<T extends typeof Axis>(
 /**
  * Get the largest label width and height.
  *
- * @private
+ * @internal
  * @function Highcharts.Axis#getMaxLabelDimensions
  *
  * @param {Highcharts.Dictionary<Highcharts.Tick>} ticks
@@ -322,7 +368,7 @@ function getMaxLabelDimensions(
 
 /**
  * Handle columns and getOffset.
- * @private
+ * @internal
  */
 function wrapGetOffset(this: Axis, proceed: Function): void {
     const {
@@ -354,9 +400,7 @@ function wrapGetOffset(this: Axis, proceed: Function): void {
 
 }
 
-/**
- * @private
- */
+/** @internal */
 function onAfterGetTitlePosition(
     this: Axis,
     e: { titlePosition: PositionObject }
@@ -413,9 +457,7 @@ function onAfterGetTitlePosition(
     }
 }
 
-/**
- * @private
- */
+/** @internal */
 function onAfterInit(this: Axis): void {
     const axis = this as GridAxisComposition;
     const {
@@ -459,7 +501,7 @@ function onAfterInit(this: Axis): void {
             const column = new Axis(
                 axis.chart,
                 columnOptions,
-                'yAxis'
+                axis.coll
             ) as GridAxisComposition;
             column.grid.isColumn = true;
             column.grid.columnIndex = columnIndex;
@@ -484,7 +526,7 @@ function onAfterInit(this: Axis): void {
  *             (axis.min) __________________________ (axis.max)
  *                        ___|____|____|____|____|__
  * ```
- * @private
+ * @internal
  */
 function onAfterRender(this: Axis): void {
     const axis = this,
@@ -693,9 +735,7 @@ function onAfterRender(this: Axis): void {
     }
 }
 
-/**
- * @private
- */
+/** @internal */
 function onAfterSetAxisTranslation(this: Axis): void {
     const axis = this;
     const tickInfo = axis.tickPositions?.info;
@@ -751,7 +791,7 @@ function onAfterSetAxisTranslation(this: Axis): void {
  *   wall
  * - Ensures that the rightmost tick is at the end of the axis, to
  *   create a right wall.
- * @private
+ * @internal
  */
 function onAfterSetOptions(
     this: Axis,
@@ -946,9 +986,7 @@ function onAfterSetOptions(
     }
 }
 
-/**
- * @private
- */
+/** @internal */
 function onAfterSetOptions2(
     this: Axis,
     e: { userOptions?: AxisOptions }
@@ -967,7 +1005,7 @@ function onAfterSetOptions2(
 
 /**
  * Handle columns and setScale.
- * @private
+ * @internal
  */
 function onAfterSetScale(this: Axis): void {
     const axis = this as GridAxisComposition;
@@ -978,7 +1016,7 @@ function onAfterSetScale(this: Axis): void {
 /**
  * Draw vertical axis ticks extra long to create cell floors and roofs.
  * Overrides the tickLength for vertical axes.
- * @private
+ * @internal
  */
 function onAfterTickSize(
     this: Axis,
@@ -1007,9 +1045,7 @@ function onAfterTickSize(
     }
 }
 
-/**
- * @private
- */
+/** @internal */
 function onChartAfterSetChartSize(this: Chart): void {
     this.axes.forEach((axis): void => {
         (axis.grid?.columns || []).forEach((column): void => {
@@ -1019,9 +1055,7 @@ function onChartAfterSetChartSize(this: Chart): void {
     });
 }
 
-/**
- * @private
- */
+/** @internal */
 function onDestroy(
     this: Axis,
     e: { keepEvents: boolean }
@@ -1038,7 +1072,7 @@ function onDestroy(
 
 /**
  * Wraps axis init to draw cell walls on vertical axes.
- * @private
+ * @internal
  */
 function onInit(
     this: Axis,
@@ -1064,7 +1098,7 @@ function onInit(
 
 /**
  * Center tick labels in cells.
- * @private
+ * @internal
  */
 function onTickAfterGetLabelPosition(
     this: Tick,
@@ -1188,9 +1222,7 @@ function onTickAfterGetLabelPosition(
     }
 }
 
-/**
- * @private
- */
+/** @internal */
 function onTickLabelFormat(ctx: AxisLabelFormatterContextObject): void {
     const {
         axis,
@@ -1241,7 +1273,7 @@ function onTickLabelFormat(ctx: AxisLabelFormatterContextObject): void {
  *                        |___|_______|_______|_______|
  *                          ^
  * ```
- * @private
+ * @internal
  * @todo Does this function do what the drawing says? Seems to affect
  *       ticks and not the labels directly?
  */
@@ -1300,7 +1332,7 @@ function onTrimTicks(this: Axis): void {
 
 /**
  * Avoid altering tickInterval when reserving space.
- * @private
+ * @internal
  */
 function wrapUnsquish(
     this: Axis,
@@ -1328,7 +1360,7 @@ function wrapUnsquish(
 
 /**
  * Additions for grid axes.
- * @private
+ * @internal
  * @class
  */
 class GridAxisAdditions {
@@ -1349,12 +1381,25 @@ class GridAxisAdditions {
     *
     * */
 
+    /** @internal */
     axis: GridAxisComposition;
+
+    /** @internal */
     axisLineExtra?: SVGElement;
+
+    /** @internal */
     upperBorder?: SVGElement;
+
+    /** @internal */
     lowerBorder?: SVGElement;
+
+    /** @internal */
     columnIndex?: number;
+
+    /** @internal */
     columns?: Array<GridAxisComposition>;
+
+    /** @internal */
     isColumn?: boolean;
 
     /* *
@@ -1372,7 +1417,7 @@ class GridAxisAdditions {
      * this function returns true if the axis supplied is the last
      * of the x-axes.
      *
-     * @private
+     * @internal
      *
      * @return {boolean}
      * True if the axis is the outermost axis in its dimension; false if
@@ -1425,8 +1470,8 @@ class GridAxisAdditions {
 
     /**
      * Add extra border based on the provided path.
-     * @private
-     * @param {SVGPath} path
+     * @internal
+     * @param {Highcharts.SVGPathArray} path
      * The path of the border.
      * @return {Highcharts.SVGElement}
      * Border
@@ -1495,10 +1540,12 @@ dateFormats.W = function (this: Time, timestamp: number): string {
  *
  * */
 
+/** @internal */
 const GridAxis = {
     compose
 };
 
+/** @internal */
 export default GridAxis;
 
 /* *
@@ -1556,6 +1603,8 @@ export default GridAxis;
  *         Left axis as a table
  * @sample gantt/demo/treegrid-columns
  *         Collapsible tree grid with columns
+ * @sample gantt/grid-axis/horizontal-columns
+ *         Horizontal grid axis with columns rendered as rows
  *
  * @type      {Array<Highcharts.XAxisOptions>}
  * @apioption xAxis.grid.columns
