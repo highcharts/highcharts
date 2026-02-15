@@ -96,6 +96,7 @@ namespace OfflineExporting {
      * */
 
     const defaultLibURL = ExportingDefaults.exporting?.libURL;
+    const invalidLibURLErrorPrefix = 'Invalid exporting.libURL:';
     const missingLibWarning = 'Warning: exporting.libURL not defined, PDF ' +
         'client side export will not work';
 
@@ -152,6 +153,47 @@ namespace OfflineExporting {
     }
 
     /**
+     * Validate and normalize an opt-in libURL.
+     *
+     * @private
+     */
+    function normalizeOptInLibURL(
+        optInLibURL?: string
+    ): (string | undefined) {
+        if (!optInLibURL) {
+            return void 0;
+        }
+
+        const normalizedLibURL = optInLibURL.slice(-1) !== '/' ?
+            optInLibURL + '/' :
+            optInLibURL;
+
+        let isValidLibURL: boolean;
+
+        if (win.URL?.canParse) {
+            isValidLibURL = win.URL.canParse(normalizedLibURL, doc.baseURI);
+        } else {
+            try {
+                // The baseURI allows both absolute and relative paths.
+                const parsedURL = new win.URL(normalizedLibURL, doc.baseURI);
+                isValidLibURL = !!parsedURL.href;
+            } catch {
+                isValidLibURL = false;
+            }
+        }
+
+        if (!isValidLibURL) {
+            throw new Error(
+                `${invalidLibURLErrorPrefix} "${optInLibURL}". ` +
+                'Provide a valid URL or path to the jsPDF and svg2pdf ' +
+                'scripts.'
+            );
+        }
+
+        return normalizedLibURL;
+    }
+
+    /**
      * Composition function.
      *
      * @internal
@@ -174,6 +216,7 @@ namespace OfflineExporting {
                 e: Exporting.DownloadSVGEventArgs
             ): Promise<void> {
                 const { svg, exportingOptions, exporting, preventDefault } = e;
+                const chart = exporting?.chart;
 
                 // Check if PDF export is requested
                 if (exportingOptions?.type === 'application/pdf') {
@@ -188,17 +231,12 @@ namespace OfflineExporting {
                             filename,
                             scale
                         } = G.Exporting.prepareImageOptions(exportingOptions);
-                        const chart = exporting?.chart;
                         const optInLibURL = chart ?
                             getOptInLibURL(chart, exportingOptions) :
                             void 0;
-                        const normalizedLibURL = optInLibURL ?
-                            (
-                                optInLibURL.slice(-1) !== '/' ?
-                                    optInLibURL + '/' :
-                                    optInLibURL
-                            ) :
-                            void 0;
+                        const normalizedLibURL = normalizeOptInLibURL(
+                            optInLibURL
+                        );
 
                         // Local PDF download
                         if (type === 'application/pdf') {
@@ -232,11 +270,28 @@ namespace OfflineExporting {
                                 exportingOptions?.pdfFont
                             );
                         }
-                    } catch (error) {
+                    } catch (caughtError) {
+                        const exportError = caughtError as Error;
+
+                        if (
+                            exportingOptions?.fallbackToExportServer !==
+                                false &&
+                            exportError.message.indexOf(
+                                invalidLibURLErrorPrefix
+                            ) === 0
+                        ) {
+                            error(
+                                `${exportError.message} Falling back to ` +
+                                'export server.',
+                                false,
+                                chart
+                            );
+                        }
+
                         // Try to fallback to the server
                         await exporting?.fallbackToServer(
                             exportingOptions,
-                            error as Error
+                            exportError
                         );
                     }
                 }
