@@ -527,7 +527,7 @@ class Pagination {
 
         const firstLastOpts = isObject(firstLastButtons) ?
             firstLastButtons : {};
-        const firstIconName = firstLastOpts.firstIcon ?? 'firstPage';
+        const firstIconName = firstLastOpts.firstIcon ?? 'doubleChevronLeft';
         const firstIconEl = createGridIcon(
             firstIconName,
             this.grid.options?.rendering?.icons
@@ -575,7 +575,7 @@ class Pagination {
 
         const prevNextOpts = isObject(previousNextButtons) ?
             previousNextButtons : {};
-        const prevIconName = prevNextOpts.prevIcon ?? 'prevPage';
+        const prevIconName = prevNextOpts.prevIcon ?? 'chevronLeft';
         const prevIconEl = createGridIcon(
             prevIconName,
             this.grid.options?.rendering?.icons
@@ -623,7 +623,7 @@ class Pagination {
 
         const prevNextOpts = isObject(previousNextButtons) ?
             previousNextButtons : {};
-        const nextIconName = prevNextOpts.nextIcon ?? 'nextPage';
+        const nextIconName = prevNextOpts.nextIcon ?? 'chevronRight';
         const nextIconEl = createGridIcon(
             nextIconName,
             this.grid.options?.rendering?.icons
@@ -668,7 +668,7 @@ class Pagination {
 
         const firstLastOpts = isObject(firstLastButtons) ?
             firstLastButtons : {};
-        const lastIconName = firstLastOpts.lastIcon ?? 'lastPage';
+        const lastIconName = firstLastOpts.lastIcon ?? 'doubleChevronRight';
         const lastIconEl = createGridIcon(
             lastIconName,
             this.grid.options?.rendering?.icons

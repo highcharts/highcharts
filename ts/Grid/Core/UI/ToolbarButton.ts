@@ -128,7 +128,10 @@ class ToolbarButton implements Button {
             {
                 className: (
                     Globals.getClassName('button') +
-                    (this.isActive ? ' active' : '')
+                    (this.isActive ?
+                        ' ' + Globals.getClassName('buttonSelected') :
+                        ''
+                    )
                 )
             },
             wrapper
@@ -193,12 +196,15 @@ class ToolbarButton implements Button {
 
     public setActive(active: boolean): void {
         this.isActive = active;
-        this.buttonEl?.classList.toggle('active', active);
-        this.renderActiveIndicator(active);
+        this.buttonEl?.classList.toggle(
+            Globals.getClassName('buttonSelected'), active
+        );
     }
 
     public setHighlighted(highlighted: boolean): void {
-        this.buttonEl?.classList.toggle('highlighted', highlighted);
+        this.buttonEl?.classList.toggle(
+            Globals.getClassName('buttonHighlighted'), highlighted
+        );
 
         const ariaExpanded = this.options.accessibility?.ariaExpanded;
         if (typeof ariaExpanded === 'boolean') {
@@ -234,30 +240,6 @@ class ToolbarButton implements Button {
      */
     protected clickHandler(event: MouseEvent): void {
         this.options.onClick?.(event, this);
-    }
-
-    /**
-     * Renders the active indicator for the button.
-     *
-     * @param render
-     * Whether the active indicator should be rendered.
-     */
-    protected renderActiveIndicator(render: boolean): void {
-        const button = this.buttonEl;
-        if (!button) {
-            return;
-        }
-
-        this.activeIndicator?.remove();
-
-        if (!render) {
-            delete this.activeIndicator;
-            return;
-        }
-
-        this.activeIndicator = makeHTMLElement('div', {
-            className: Globals.getClassName('toolbarButtonActiveIndicator')
-        }, button);
     }
 
     /**

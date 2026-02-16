@@ -169,7 +169,7 @@ class HeaderCell extends Cell {
     /**
      * Render the cell container.
      */
-    public override render(): void {
+    public override async render(): Promise<void> {
         const { column } = this;
         const options = createOptionsProxy(
             this.superColumnOptions,
@@ -248,6 +248,8 @@ class HeaderCell extends Cell {
         this.setCustomStyles(this.getColumnStyles());
 
         fireEvent(this, 'afterRender', { column });
+
+        return Promise.resolve();
     }
 
     /**

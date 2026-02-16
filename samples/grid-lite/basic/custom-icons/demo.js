@@ -1,6 +1,6 @@
 const customChevronRight = '<svg xmlns="http://www.w3.org/2000/svg" width="10" height="12" viewBox="0 0 10 12" fill="none"><path d="M2 1L2 11L10 6Z" fill="currentColor"/></svg>';
 
-const customUpDownArrows = '<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="4.5" stroke="currentColor" stroke-width="1.5"/></svg>';
+const circleSvg = '<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="4.5" stroke="currentColor" stroke-width="1.5"/></svg>';
 
 const customStarIcon = {
     width: 16,
@@ -30,7 +30,7 @@ Grid.grid('container', {
     rendering: {
         icons: {
             chevronRight: customChevronRight,
-            upDownArrows: customUpDownArrows,
+            arrowUpDown: circleSvg,
             star: customStarIcon
         }
     },

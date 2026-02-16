@@ -210,7 +210,7 @@ abstract class Cell {
                 return (row as TableRow).index - vp.rows[0].index;
             }
 
-            const level = (row as HeaderRow).level;
+            const level = (row as unknown as HeaderRow).level;
             if (!header || level === void 0) {
                 return 0;
             }
@@ -287,9 +287,10 @@ abstract class Cell {
     /**
      * Renders the cell by appending the HTML element to the row.
      */
-    public render(): void {
+    public async render(): Promise<void> {
         this.row.htmlElement.appendChild(this.htmlElement);
         this.reflow();
+        return Promise.resolve();
     }
 
     /**
