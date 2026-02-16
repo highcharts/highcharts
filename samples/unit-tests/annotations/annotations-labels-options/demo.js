@@ -20,7 +20,10 @@ QUnit.test('Setting graphic attributes for a label', function (assert) {
 
             annotations: [
                 {
-                    labels: [Highcharts.merge(expected, { point: 'max' })]
+                    labels: [
+                        Highcharts.merge(expected, { point: 'max' }),
+                        { point: 'max', y: 20 }
+                    ]
                 }
             ]
         }),
