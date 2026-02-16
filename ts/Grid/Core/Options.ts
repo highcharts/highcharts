@@ -31,6 +31,7 @@ import type {
 } from './Pagination/PaginationOptions';
 import type { ColumnResizingMode } from './Table/ColumnResizing/ColumnResizing';
 import type { ColumnDataType } from './Table/Column';
+import type { DataProviderOptionsType } from './Data/DataProviderType';
 import type DataTable from '../../Data/DataTable';
 import type { CellType as DataTableCellType } from '../../Data/DataTable';
 import type DataTableOptions from '../../Data/DataTableOptions';
@@ -176,7 +177,15 @@ export interface Options {
     columns?: Array<IndividualColumnOptions>;
 
     /**
+     * Options for the data provider.
+     */
+    data?: DataProviderOptionsType;
+
+    /**
      * Data table with the data to display in the grid structure.
+     *
+     * @deprecated
+     * Use `data.dataTable` instead.
      */
     dataTable?: DataTable | DataTableOptions;
 
@@ -541,6 +550,23 @@ export interface ColumnSortingOptions {
      * Use `enabled` instead
      */
     sortable?: boolean;
+
+    /**
+     * Sequence of sorting orders used when toggling sorting from the user
+     * interface (for example by clicking the column header).
+     *
+     * The sequence can contain any number of values, in any order, with
+     * duplicates allowed. Allowed values are: `'asc'`, `'desc'`, and `null`.
+     *
+     * If the sequence is empty (`[]`), sorting toggles become a no-op while
+     * the sortable UI can still be shown.
+     *
+     * This option can be set in both `columnDefaults.sorting` and
+     * `columns[].sorting`.
+     *
+     * @default ['asc', 'desc', null]
+     */
+    orderSequence?: ColumnSortingOrder[];
 
     /**
      * Custom compare function to sort the column values. It overrides the
