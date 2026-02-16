@@ -20,6 +20,13 @@ Highcharts.chart('container', {
         }
     },
 
+    subtitle: {
+        text: 'Sales per employee per weekday',
+        style: {
+            fontSize: '0.8em'
+        }
+    },
+
     xAxis: {
         categories: [
             'Alexander', 'Marie', 'Maximilian', 'Sophia', 'Lukas',
