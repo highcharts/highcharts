@@ -230,6 +230,72 @@ test.describe('Sticky rows', () => {
         expect(stickyRows).toContain('SKU-120');
     });
 
+    test('renders adjacent sticky pairs together on top and bottom', async ({
+        page
+    }) => {
+        await page.evaluate(async () => {
+            const grid = (window as any).stickyRowsTestGrid;
+            await grid.stickRow('SKU-006');
+            await grid.stickRow('SKU-136');
+        });
+
+        await page.evaluate(() => {
+            const grid = (window as any).stickyRowsTestGrid;
+            const vp = grid.viewport;
+            vp.tbodyElement.scrollTop = 6000;
+            vp.tbodyElement.dispatchEvent(new Event('scroll'));
+        });
+
+        await page.waitForFunction(() => {
+            const grid = (window as any).stickyRowsTestGrid;
+            const vp = grid.viewport;
+            const topIndexes = Array.from(
+                vp.stickyTopTbodyElement?.children || []
+            ).map((row: any) => row.getAttribute('data-row-index'));
+
+            return topIndexes.includes('4') && topIndexes.includes('5');
+        });
+
+        const topIndexes = await page.evaluate(() => {
+            const grid = (window as any).stickyRowsTestGrid;
+            const vp = grid.viewport;
+
+            return Array.from(vp.stickyTopTbodyElement?.children || []).map(
+                (row: any) => row.getAttribute('data-row-index')
+            );
+        });
+        expect(topIndexes).toContain('4');
+        expect(topIndexes).toContain('5');
+
+        await page.evaluate(() => {
+            const grid = (window as any).stickyRowsTestGrid;
+            const vp = grid.viewport;
+            vp.tbodyElement.scrollTop = 0;
+            vp.tbodyElement.dispatchEvent(new Event('scroll'));
+        });
+
+        await page.waitForFunction(() => {
+            const grid = (window as any).stickyRowsTestGrid;
+            const vp = grid.viewport;
+            const bottomIndexes = Array.from(
+                vp.stickyBottomTbodyElement?.children || []
+            ).map((row: any) => row.getAttribute('data-row-index'));
+
+            return bottomIndexes.includes('134') && bottomIndexes.includes('135');
+        });
+
+        const bottomIndexes = await page.evaluate(() => {
+            const grid = (window as any).stickyRowsTestGrid;
+            const vp = grid.viewport;
+
+            return Array.from(vp.stickyBottomTbodyElement?.children || []).map(
+                (row: any) => row.getAttribute('data-row-index')
+            );
+        });
+        expect(bottomIndexes).toContain('134');
+        expect(bottomIndexes).toContain('135');
+    });
+
     test('works with virtualization disabled', async ({ page }) => {
         await page.evaluate(() => {
             const createGrid = (window as any).stickyRowsCreateGrid;

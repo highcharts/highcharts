@@ -493,6 +493,52 @@ class Table {
         }
     }
 
+    private computeTopStickyIndexes(
+        rowIndexes: number[],
+        visibleFrom: number
+    ): number[] {
+        const topIndexes: number[] = [];
+
+        for (let i = 0, iEnd = rowIndexes.length; i < iEnd; ++i) {
+            const index = rowIndexes[i];
+
+            // Stack sticky rows progressively so each next sticky row sticks
+            // when it reaches the already-stuck block, not after passing it.
+            if (index <= visibleFrom + topIndexes.length) {
+                topIndexes.push(index);
+            }
+        }
+
+        return topIndexes;
+    }
+
+    private computeBottomStickyIndexes(
+        rowIndexes: number[],
+        visibleTo: number,
+        topIndexSet: Set<number>
+    ): number[] {
+        const bottomIndexes: number[] = [];
+
+        for (let i = rowIndexes.length - 1; i >= 0; --i) {
+            const index = rowIndexes[i];
+
+            if (topIndexSet.has(index)) {
+                continue;
+            }
+
+            // Keep existing behavior (rows below viewport stick at bottom),
+            // and progressively extend by one row per already-stuck bottom
+            // row so handoff happens on contact with the bottom sticky stack.
+            if (index >= visibleTo - bottomIndexes.length) {
+                bottomIndexes.push(index);
+            }
+        }
+
+        bottomIndexes.reverse();
+
+        return bottomIndexes;
+    }
+
     private async updateStickyRows(): Promise<void> {
         const stickyMeta = this.grid.rowStickyMeta;
         const rowIndexes = stickyMeta?.stickyRowIndexes || [];
@@ -558,11 +604,15 @@ class Table {
             );
         }
 
-        const topIndexes = rowIndexes.filter((index): boolean =>
-            index < visibleFrom
+        const topIndexes = this.computeTopStickyIndexes(
+            rowIndexes,
+            visibleFrom
         );
-        const bottomIndexes = rowIndexes.filter((index): boolean =>
-            index > visibleTo
+        const topIndexSet = new Set(topIndexes);
+        const bottomIndexes = this.computeBottomStickyIndexes(
+            rowIndexes,
+            visibleTo,
+            topIndexSet
         );
 
         if (
