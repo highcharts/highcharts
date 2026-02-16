@@ -330,7 +330,7 @@ const defaultOptions: DefaultOptions = {
          *
          * @since 12.2.0
          */
-        yAxisTitle: 'Values',
+        yAxisTitle: 'TEST',
 
         /**
          * The tooltip title for the label appearing when a chart is zoomed.

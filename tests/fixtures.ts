@@ -25,6 +25,20 @@ const contentTypes: Record<string, string> = {
     '.svg': 'image/svg+xml'
 };
 
+const tilePlaceholderPath = 'test/testimage.png';
+
+async function fulfillTilePlaceholder(route: Route): Promise<void> {
+    await route.fulfill({
+        path: tilePlaceholderPath,
+        contentType: 'image/png'
+    });
+
+    test.info().annotations.push({
+        type: 'redirect',
+        description: `${route.request().url()} --> ${tilePlaceholderPath}`
+    });
+}
+
 async function replaceHCCode(route: Route) {
     const url = route.request().url();
     let relativePath = url.split('/code.highcharts.com/')[1]
@@ -457,6 +471,24 @@ export async function setupRoutes(page: Page){
                 }
             },
             {
+                pattern: 'https://fonts.gstatic.com/**',
+                handler: async (route) => {
+                    const url = route.request().url();
+
+                    test.info().annotations.push({
+                        type: 'redirect',
+                        description: `${url} --> (blocked font file)`
+                    });
+
+                    // Return empty response for font files to prevent loading
+                    await route.fulfill({
+                        status: 200,
+                        contentType: 'font/woff2',
+                        body: Buffer.alloc(0)
+                    });
+                }
+            },
+            {
                 pattern: '**/font-awesome/**',
                 handler: async (route) => {
                     const url = route.request().url();
@@ -584,6 +616,26 @@ export async function setupRoutes(page: Page){
             {
                 pattern: '**/**/mapdata/**',
                 handler: replaceMapData
+            },
+            {
+                pattern: /https:\/\/(?:[a-c]\.)?tile\.openstreetmap\.org\/\d+\/\d+\/\d+\.png/iu,
+                handler: fulfillTilePlaceholder
+            },
+            {
+                pattern: /https:\/\/(?:[a-c]\.)?tile\.openstreetmap\.fr\/hot\/\d+\/\d+\/\d+\.png/iu,
+                handler: fulfillTilePlaceholder
+            },
+            {
+                pattern: /https:\/\/(?:[a-c]\.)?tile\.opentopomap\.org\/\d+\/\d+\/\d+\.png/iu,
+                handler: fulfillTilePlaceholder
+            },
+            {
+                pattern: /https:\/\/stamen-tiles-[a-d]\.a\.ssl\.fastly\.net\/(?:toner|toner-background|toner-lite|terrain|terrain-background|watercolor)\/\d+\/\d+\/\d+\.png/iu,
+                handler: fulfillTilePlaceholder
+            },
+            {
+                pattern: /https:\/\/basemap\.nationalmap\.gov\/arcgis\/rest\/services\/USGS[^/]*\/MapServer\/tile\/\d+\/\d+\/\d+/iu,
+                handler: fulfillTilePlaceholder
             },
             {
                 pattern: '**/**/{samples/graphics}/**',

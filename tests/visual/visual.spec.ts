@@ -1,16 +1,50 @@
-/* eslint-disable playwright/no-conditional-expect */
 /* eslint-disable playwright/no-conditional-in-test */
 import type { Page, BrowserContext } from '@playwright/test';
-import { test, expect} from '@playwright/test';
+import { expect, test } from '@playwright/test';
 import { setupRoutes } from '~/fixtures.ts';
 import {
     getKarmaScripts,
     getSample,
+    highchartsCSS as highchartsBaseCSS,
     setTestingOptions,
     transpileTS
 } from '~/utils.ts';
+import { createHash } from 'node:crypto';
 import { join, dirname, relative } from 'node:path';
 import { glob } from 'glob';
+import {
+    closeCompareBrowser,
+    compareSVG
+} from './visual-compare';
+
+type HighchartsChart = {
+    container?: HTMLElement;
+    renderer?: { forExport?: boolean };
+    styledMode?: boolean;
+};
+
+type HighchartsNamespace = {
+    charts?: Array<HighchartsChart | undefined>;
+    prepareShot?: (chart: HighchartsChart) => void;
+    setOptions?: (options: { 
+        chart?: { events?: { load?: () => void } 
+        } }) => void;
+};
+
+type VisualWindow = Window & {
+    Highcharts?: HighchartsNamespace;
+    setHCStyles?: (chart: HighchartsChart) => void;
+    highchartsCSS?: string;
+    HCVisualSetup?: {
+        initialized?: boolean;
+        configure?: (options: { mode: string }) => void;
+        markOptionsClean?: () => void;
+        beforeSample?: () => void;
+        afterSample?: () => void;
+    };
+};
+
+type SnapshotUpdateMode = 'all' | 'changed' | 'missing' | 'none';
 
 function transformVisualSampleScript(script: string | undefined): string {
     let transformed = script ?? '';
@@ -27,17 +61,182 @@ function transformVisualSampleScript(script: string | undefined): string {
     return `;(function () {\n${transformed.trim()}\n}).call(window);`;
 }
 
+const DEMO_CSS_IMPORT_REGEX = /@import [^;]+;/g;
+
+function stripDemoCssImports(css: string | undefined): string | undefined {
+    if (!css) {
+        return css;
+    }
+
+    return css.replace(DEMO_CSS_IMPORT_REGEX, '');
+}
+
 const FIXED_CLOCK_TIME = '2024-01-01T00:00:00.000Z';
-const MAX_CHART_LOAD_ATTEMPTS = 100;
+const DEFAULT_MAX_CHART_LOAD_ATTEMPTS = 100;
 const CHART_LOAD_RETRY_DELAY_MS = 100;
+
+function getPositiveIntegerEnv(name: string): number | undefined {
+    const rawValue = process.env[name];
+    if (!rawValue) {
+        return undefined;
+    }
+
+    const parsedValue = Number.parseInt(rawValue, 10);
+    if (!Number.isFinite(parsedValue) || parsedValue < 1) {
+        return undefined;
+    }
+
+    return parsedValue;
+}
+
+const MAX_CHART_LOAD_ATTEMPTS =
+    getPositiveIntegerEnv('VISUAL_TEST_MAX_CHART_LOAD_ATTEMPTS') ??
+    DEFAULT_MAX_CHART_LOAD_ATTEMPTS;
 const CHART_LOAD_TIMEOUT_MS =
     MAX_CHART_LOAD_ATTEMPTS * CHART_LOAD_RETRY_DELAY_MS;
+const RENDER_WIDTH = 600;
+const RENDER_HEIGHT = 400;
+const SNAPSHOT_NAME_MAX_LENGTH = 90;
+const REMOVABLE_VISUAL_ELEMENT_IDS = [
+    'visual-test-script',
+    'visual-test-styles',
+    'highcharts.css',
+    'demo.css',
+    'test-hc-styles'
+];
 
-const defaultPageContent = '<div id="container" style="width: 600px; margin 0 auto"></div>';
+const defaultPageContent =
+    '<div id="container" style="width: 600px; margin: 0 auto;"></div>';
+
+const getRelativeSamplePath = (samplePath: string): string =>
+    relative(process.cwd(), samplePath).replace(/\\/g, '/');
+
+function getErrorMessage(error: unknown): string {
+    if (error instanceof Error) {
+        return error.message;
+    }
+
+    if (
+        typeof error === 'string' ||
+        typeof error === 'number' ||
+        typeof error === 'boolean' ||
+        typeof error === 'bigint'
+    ) {
+        return `${error}`;
+    }
+
+    return 'Unknown error';
+}
+
+function getSnapshotUpdateMode(value: unknown): SnapshotUpdateMode {
+    const normalized =
+        typeof value === 'string' ? value.toLowerCase() : 'missing';
+
+    if (normalized.includes('all')) {
+        return 'all';
+    }
+
+    if (normalized.includes('changed')) {
+        return 'changed';
+    }
+
+    if (normalized.includes('none')) {
+        return 'none';
+    }
+
+    return 'missing';
+}
+
+function sanitizeSnapshotSegment(value: string): string {
+    return value
+        .replace(/[^a-zA-Z0-9/-]+/g, '-')
+        .replace(/[\\/]+/g, '-')
+        .replace(/-+/g, '-')
+        .replace(/^-|-$/g, '')
+        .toLowerCase();
+}
+
+function getSnapshotName(
+    samplePath: string,
+    projectName: string,
+    browserName?: string
+): string {
+    const relativePath = getRelativeSamplePath(samplePath)
+        .replace(/\/demo\.(js|mjs|ts)$/u, '')
+        .replace(/^samples\//, '');
+    const readableSegment = sanitizeSnapshotSegment(relativePath)
+        .slice(0, SNAPSHOT_NAME_MAX_LENGTH) || 'sample';
+    const hash = createHash('sha1').update(relativePath).digest('hex').slice(0, 10);
+    const suffix = sanitizeSnapshotSegment(
+        `${projectName}-${browserName ?? 'browser'}`
+    ) || 'visual-browser';
+
+    return `${readableSegment}-${hash}-${suffix}.png`;
+}
+
+const renderTemplate = (svgContent: string) =>
+    `<!DOCTYPE html><html><head><style>
+body { margin: 0; background: #fff; }
+#visual-render-frame {
+    width: ${RENDER_WIDTH}px;
+    height: ${RENDER_HEIGHT}px;
+    overflow: hidden;
+}
+svg { display: block; }
+</style></head><body>
+<div id="visual-render-frame">${svgContent}</div>
+</body></html>`;
+
+async function prepareRenderPageForScreenshot(
+    currentRenderPage: Page,
+    svgContent: string
+): Promise<void> {
+    await currentRenderPage.setContent(renderTemplate(svgContent), {
+        waitUntil: 'domcontentloaded'
+    });
+    await currentRenderPage.evaluate(() => {
+        if ('ready' in document.fonts) {
+            return document.fonts.ready;
+        }
+        return null;
+    });
+
+    await currentRenderPage.evaluate(async () => {
+        const images = Array.from(document.querySelectorAll('image'));
+        if (!images.length) {
+            return;
+        }
+
+        await Promise.all(images.map((image) => {
+            const href = image.getAttribute('href') ??
+                image.getAttribute('xlink:href');
+            if (!href) {
+                return Promise.resolve();
+            }
+            return new Promise<void>((resolve) => {
+                const loader = new Image();
+                loader.onload = () => resolve();
+                loader.onerror = () => resolve();
+                loader.src = href;
+            });
+        }));
+    });
+
+    await currentRenderPage.evaluate(
+        () => new Promise(requestAnimationFrame)
+    );
+}
 
 const pageTemplate = (bodyContent = '') =>
     `<!DOCTYPE html>
 <html>
+    <head>
+        <style>
+            body {
+                margin: 0;
+            }
+        </style>
+    </head>
     <body>
         <div data-test-container>
             ${bodyContent}
@@ -45,13 +244,54 @@ const pageTemplate = (bodyContent = '') =>
     </body>
 </html>`;
 
+let cachedVisualScripts: string[] | undefined;
+
+async function getVisualScripts(): Promise<string[]> {
+    if (!cachedVisualScripts) {
+        cachedVisualScripts = [
+            ...(await getKarmaScripts()),
+            join('tmp', 'json-sources.js'),
+            join('tests', 'visual', 'visual-setup.js')
+        ];
+    }
+
+    return cachedVisualScripts;
+}
+
+async function initializeVisualPage(
+    currentContext: BrowserContext
+): Promise<Page> {
+    const nextPage = await currentContext.newPage();
+    await setupRoutes(nextPage);
+    await nextPage.setContent(pageTemplate(defaultPageContent));
+
+    const scripts = await getVisualScripts();
+    for (const script of scripts) {
+        await nextPage.addScriptTag({
+            path: script
+        });
+    }
+
+    await nextPage.waitForFunction(
+        () => window.HCVisualSetup?.initialized === true
+    );
+    await nextPage.evaluate(() => {
+        window.HCVisualSetup?.configure({ mode: 'fast' });
+        window.HCVisualSetup?.markOptionsClean();
+    });
+
+    return nextPage;
+}
+
 test.describe('Visual tests', () => {
     test.describe.configure({
-        timeout: 5_000,
+        timeout: CHART_LOAD_TIMEOUT_MS + 5_000
     });
 
     let page: Page | undefined;
     let context: BrowserContext | undefined;
+    let renderPage: Page | undefined;
+    let renderContext: BrowserContext | undefined;
 
     // eslint-disable-next-line @typescript-eslint/no-misused-promises
     process.once('SIGINT', async () => {
@@ -73,47 +313,80 @@ test.describe('Visual tests', () => {
 
         await context.setOffline(true);
 
-        await context.clock.install({ time: FIXED_CLOCK_TIME });
-        page = await context.newPage();
-        await context.clock.setFixedTime(FIXED_CLOCK_TIME);
-
-        await setupRoutes(page);
-
-        await page.setContent(pageTemplate(defaultPageContent));
-
-        const scripts = [
-            ...(await getKarmaScripts()),
-            join('tmp', 'json-sources.js'),
-            join('tests', 'visual', 'visual-setup.js')
-        ];
-
-        for (const script of scripts) {
-            await page.addScriptTag({
-                path: script
-            });
-        }
-
-        await page.waitForFunction(
-            () => window.HCVisualSetup?.initialized === true
-        );
-        await page.evaluate(() => {
-            window.HCVisualSetup?.configure({ mode: 'fast' });
-            window.HCVisualSetup?.markOptionsClean();
+        renderContext ??= await browser.newContext({
+            viewport: { width: RENDER_WIDTH, height: RENDER_HEIGHT },
+            deviceScaleFactor: 1,
+            colorScheme: 'light'
         });
+        await renderContext.setOffline(true);
+        renderPage = await renderContext.newPage();
+        await setupRoutes(renderPage);
+
+        await context.clock.install({ time: FIXED_CLOCK_TIME });
+        await context.clock.setFixedTime(FIXED_CLOCK_TIME);
+        page = await initializeVisualPage(context);
     });
 
     test.afterEach(async () => {
-        if (!page) {
+        const currentPage = page;
+        if (!currentPage) {
             return;
         }
-        await page.evaluate(() => {
-            const elementsToRemove = document.querySelectorAll(
-                '#visual-test-script, #visual-test-styles'
-            );
-            elementsToRemove.forEach((el) => el.remove());
-        });
 
-        await page.evaluate(() => window.HCVisualSetup?.afterSample());
+        let cleanupFailed = false;
+        const info = test.info();
+
+        try {
+            await currentPage.evaluate((removableIds) => {
+                for (const id of removableIds) {
+                    document.getElementById(id)?.remove();
+                }
+            }, REMOVABLE_VISUAL_ELEMENT_IDS);
+        } catch {
+            cleanupFailed = true;
+        }
+
+        try {
+            await currentPage.evaluate(
+                () => window.HCVisualSetup?.afterSample()
+            );
+        } catch {
+            cleanupFailed = true;
+        }
+
+        const testFailed = info.status !== info.expectedStatus;
+        if (!cleanupFailed && !testFailed) {
+            return;
+        }
+
+        if (!context) {
+            return;
+        }
+
+        if (!currentPage.isClosed()) {
+            await currentPage.close().catch(() => {});
+        }
+
+        try {
+            await context.clock.setFixedTime(FIXED_CLOCK_TIME);
+            page = await initializeVisualPage(context);
+        } catch (error) {
+            page = undefined;
+
+            const message = `Failed to reinitialize visual page after sample: ${
+                getErrorMessage(error)
+            }`;
+
+            if (testFailed) {
+                info.annotations.push({
+                    type: 'warning',
+                    description: message
+                });
+                return;
+            }
+
+            throw new Error(message);
+        }
     });
 
     test.afterAll(async () => {
@@ -129,6 +402,12 @@ test.describe('Visual tests', () => {
 
     const pathEnv = process.env.VISUAL_TEST_PATH ?? '';
     const pathFilters = pathEnv
+        .split(/[,;\n]/)
+        .map((value) => value.trim())
+        .filter(Boolean)
+        .map((value) => value.replace(/\\/g, '/'));
+    const productEnv = process.env.VISUAL_TEST_PRODUCT ?? '';
+    const productFilters = productEnv
         .split(/[,;\n]/)
         .map((value) => value.trim())
         .filter(Boolean)
@@ -207,19 +486,31 @@ test.describe('Visual tests', () => {
         windowsPathsNoEscape: true
     });
 
-    const filteredSamples = pathFilters.length ?
-        samples.filter((samplePath) => {
-            const relativePath = relative(process.cwd(), samplePath).replace(/\\/g, '/');
+    const filteredSamples = samples.filter((samplePath) => {
+        const relativePath = getRelativeSamplePath(samplePath);
+
+        if (productFilters.length) {
+            const matchesProduct = productFilters.some((product) =>
+                relativePath.includes(`samples/${product}/`)
+            );
+            if (!matchesProduct) {
+                return false;
+            }
+        }
+
+        if (pathFilters.length) {
             return pathFilters.some(
                 (pathFilter) =>
                     relativePath.includes(pathFilter) ||
                     samplePath.includes(pathFilter)
             );
-        }) :
-        samples;
+        }
+
+        return true;
+    });
 
     for (const samplePath of filteredSamples){
-        test(samplePath + '', async () =>{
+        test(`${samplePath}`, async () =>{
             if (context) {
                 await context.clock.setFixedTime(FIXED_CLOCK_TIME);
             }
@@ -227,6 +518,14 @@ test.describe('Visual tests', () => {
             const sample = getSample(dirname(samplePath), true);
             if (sample.script && samplePath.endsWith('.ts')) {
                 sample.script = transpileTS(sample.script);
+            }
+
+            const hasModuleImports = sample.script ?
+                /^\s*import\s/m.test(sample.script) :
+                false;
+            if (hasModuleImports) {
+                // eslint-disable-next-line playwright/no-skipped-test
+                test.skip();
             }
 
             if (
@@ -241,29 +540,40 @@ test.describe('Visual tests', () => {
                 throw new Error('Page not initialized');
             }
 
+            const sampleHtml = sample.html ?? defaultPageContent;
+
             await page.evaluate(body => {
                 window.HCVisualSetup?.beforeSample();
 
                 const testContainer = document.querySelector('div[data-test-container]');
-                testContainer.innerHTML = body;
-            }, sample.html ?? defaultPageContent);
+
+                if (!testContainer) {
+                    return;
+                }
+
+                const template = document.createElement('template');
+                template.innerHTML = body;
+
+                const scripts = template.content.querySelectorAll('script');
+                for (const script of scripts) {
+                    script.remove();
+                }
+
+                const links = template.content.querySelectorAll('link[href]');
+                for (const link of links) {
+                    const href = link.getAttribute('href') || '';
+                    if (/fonts\.googleapis\.com|fonts\.gstatic\.com/i.test(href)) {
+                        link.remove();
+                    }
+                }
+
+                testContainer.replaceChildren(template.content);
+            }, sampleHtml);
 
             await setTestingOptions(page);
 
             await page.evaluate(() => {
                 window.HCVisualSetup?.markOptionsClean();
-
-                if (window.Highcharts) {
-                    (window.Highcharts as any).setOptions({
-                        chart: {
-                            events: {
-                                load: function () {
-                                    (window as any).setHCStyles(this);
-                                }
-                            }
-                        }
-                    });
-                }
             });
 
             // Inject CSS for styled mode like karma-conf.js does
@@ -271,39 +581,30 @@ test.describe('Visual tests', () => {
                 sample.script
             );
             const isStyledMode = transformedScript.indexOf('styledMode: true') !== -1;
+            const demoCss = isStyledMode ?
+                stripDemoCssImports(sample.css) :
+                undefined;
 
             if (isStyledMode) {
                 // Add highcharts.css
-                const highchartsCSS = await page.evaluate(() => {
-                    return (window as any).highchartsCSS || '';
+                const styleHandle = await page.addStyleTag({
+                    content: highchartsBaseCSS
                 });
-
-                if (highchartsCSS) {
-                    const styleHandle = await page.addStyleTag({
-                        content: highchartsCSS
-                    });
-                    await styleHandle.evaluate(
-                        (el: HTMLStyleElement) => el.id = 'highcharts.css'
-                    );
-                }
+                await styleHandle.evaluate(
+                    (el: HTMLStyleElement) => {
+                        el.id = 'highcharts.css';
+                    }
+                );
 
                 // Add demo.css if exists (for styled mode, use id 'demo.css' for SVG injection)
-                if (sample.css) {
+                if (demoCss) {
                     const styleHandle = await page.addStyleTag({
-                        content: sample.css
+                        content: demoCss
                     });
                     await styleHandle.evaluate(
-                        (el: HTMLStyleElement) => el.id = 'demo.css'
-                    );
-                }
-            } else {
-                // For non-styled mode, add demo.css with standard id
-                if (sample.css) {
-                    const styleHandle = await page.addStyleTag({
-                        content: sample.css
-                    });
-                    await styleHandle.evaluate(
-                        (el: HTMLStyleElement) => el.id = 'visual-test-styles'
+                        (el: HTMLStyleElement) => {
+                            el.id = 'demo.css';
+                        }
                     );
                 }
             }
@@ -315,9 +616,48 @@ test.describe('Visual tests', () => {
 
             try {
                 // Wait for chart to load, similar to karma-conf.js waitForChartToLoad
-                const { chartCount, svgContent } = await page.evaluate(
+                const { svgContent } = await page.evaluate(
                     async ({ maxAttempts, retryDelay, timeoutMs }) => {
-                        const Highcharts = (window as any).Highcharts;
+                        const Highcharts = (window as VisualWindow).Highcharts;
+
+                        const isTiledWebMapReady = (chart) => {
+                            if (!chart || !chart.series) {
+                                return true;
+                            }
+
+                            const tiledSeries = chart.series
+                                .filter(series =>
+                                    series &&
+                                    series.type === 'tiledwebmap' &&
+                                    series.visible !== false
+                                );
+
+                            if (!tiledSeries.length) {
+                                return true;
+                            }
+
+                            const zoom = typeof chart.mapView?.zoom === 'number' ?
+                                Math.floor(chart.mapView.zoom) :
+                                null;
+                            const zoomKey = zoom === null ? 
+                                null : String(Math.max(0, zoom));
+
+                            return tiledSeries.every(series => {
+                                const tiles = (series as {
+                                    tiles?: Record<string, { loaded?: boolean }>
+                                }).tiles;
+                                if (!tiles) {
+                                    return false;
+                                }
+
+                                if (zoomKey && tiles[zoomKey]?.loaded) {
+                                    return true;
+                                }
+
+                                return Object.values(tiles)
+                                    .some(tile => Boolean(tile?.loaded));
+                            });
+                        };
 
                         // Modern while loop approach instead of recursion
                         let attempts = 0;
@@ -325,24 +665,38 @@ test.describe('Visual tests', () => {
                             const chart = Highcharts?.charts?.at(-1);
 
                             if (chart || document.getElementsByTagName('svg').length) {
+                                if (document.fonts && document.fonts.status !== 'loaded') {
+                                    await document.fonts.ready;
+                                }
+
+                                if (chart && !isTiledWebMapReady(chart)) {
+                                    attempts++;
+                                    await new Promise(
+                                        resolve => 
+                                            setTimeout(resolve, retryDelay)
+                                    );
+                                    continue;
+                                }
+
                                 // Chart exists, prepare shot like karma-setup.js:prepareShot
-                                if (Highcharts && chart) {
+                                if (Highcharts?.prepareShot && chart) {
                                     Highcharts.prepareShot(chart);
                                 }
 
                                 // Extract SVG similar to karma-setup.js:getSVG
                                 const validCharts = Highcharts?.charts?.filter(
-                                    (c: any) => c &&
-                                        c.container &&
-                                        !c.renderer?.forExport
+                                    candidate => Boolean(
+                                        candidate?.container &&
+                                        !candidate?.renderer?.forExport
+                                    )
                                 ) || [];
 
                                 const count = validCharts.length;
                                 let svg: string | null = null;
 
                                 if (count >= 1 && validCharts[0]) {
-                                    const container = validCharts[0].container;
-                                    const svgElement = container.querySelector('svg');
+                                    const container = validCharts[0]?.container;
+                                    const svgElement = container?.querySelector('svg');
 
                                     if (svgElement) {
                                         // Step 1: Extract SVG and add xmlns:xlink namespace
@@ -352,7 +706,7 @@ test.describe('Visual tests', () => {
                                         );
 
                                         // Step 2: For styled mode, inject CSS into SVG like karma-setup.js
-                                        if (validCharts[0].styledMode) {
+                                        if (validCharts[0]?.styledMode) {
                                             // Inject Highcharts base CSS
                                             const highchartsCSS = document.getElementById('highcharts.css');
                                             if (highchartsCSS) {
@@ -410,29 +764,74 @@ test.describe('Visual tests', () => {
                     }
                 );
 
-                if (svgContent) {
-                    expect(svgContent).toMatchSnapshot(`${samplePath}.svg`);
+                if (!svgContent) {
+                    return;
                 }
 
-                if (svgContent && chartCount === 1) {
-                    // For single chart, still take screenshot but don't compare
-                    await page.screenshot({ fullPage: true });
-                } else {
-                    await expect(page).toHaveScreenshot({
-                        fullPage: true
-                    });
+                if (!renderPage) {
+                    throw new Error('Render page not initialized');
                 }
-            } catch {
-                // noop
+
+                const updateMode = getSnapshotUpdateMode(
+                    test.info().config.updateSnapshots
+                );
+                await compareSVG(
+                    samplePath,
+                    svgContent, {
+                        updateMode,
+                        renderPage
+                    }
+                );
+
+                await prepareRenderPageForScreenshot(renderPage, svgContent);
+                const browserName = context?.browser()?.browserType().name();
+                const snapshotName = getSnapshotName(
+                    samplePath,
+                    test.info().project.name,
+                    browserName
+                );
+
+                const screenshot = await renderPage.screenshot({
+                    clip: {
+                        x: 0,
+                        y: 0,
+                        width: RENDER_WIDTH,
+                        height: RENDER_HEIGHT
+                    },
+                    animations: 'disabled',
+                    caret: 'hide',
+                    scale: 'css'
+                });
+                expect(screenshot).toMatchSnapshot(snapshotName, {
+                    maxDiffPixels: 0
+                });
+
+                // await page.screenshot({ fullPage: true });
             } finally {
-                if (page && scriptHandle) {
-                    await scriptHandle.evaluate(
-                        (element: HTMLScriptElement) => {
-                            element.id = 'visual-test-script';
-                        }
-                    );
+                if (page && scriptHandle && !page.isClosed()) {
+                    try {
+                        await scriptHandle.evaluate(
+                            (element: HTMLScriptElement) => {
+                                element.id = 'visual-test-script';
+                            }
+                        );
+                    } catch {
+                        // Ignore cleanup failures if the page closed.
+                    }
                 }
             }
         });
     }
+
+    test.afterAll(async () => {
+        if (renderPage) {
+            await renderPage.close();
+            renderPage = undefined;
+        }
+        if (renderContext) {
+            await renderContext.close();
+            renderContext = undefined;
+        }
+        await closeCompareBrowser();
+    });
 });

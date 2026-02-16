@@ -650,7 +650,7 @@ const ChartDefaults: ChartOptions = {
      * @default [10, 10, 15, 10]
      * @since   3.0.6
      */
-    spacing: [10, 10, 15, 10],
+    spacing: [15, 10, 15, 10],
 
     /**
      * The button that appears after a selection zoom, allowing the user
@@ -1291,7 +1291,7 @@ const ChartDefaults: ChartOptions = {
      *
      * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      */
-    borderColor: Palette.highlightColor80,
+    borderColor: Palette.neutralColor100,
 
     /**
      * The pixel width of the outer chart border.
