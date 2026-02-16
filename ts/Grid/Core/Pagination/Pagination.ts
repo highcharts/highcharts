@@ -525,11 +525,8 @@ class Pagination {
             return;
         }
 
-        const firstLastOpts = isObject(firstLastButtons) ?
-            firstLastButtons : {};
-        const firstIconName = firstLastOpts.firstIcon ?? 'doubleChevronLeft';
         const firstIconEl = createGridIcon(
-            firstIconName,
+            'doubleChevronLeft',
             this.grid.options?.rendering?.icons
         );
         this.firstButton = makeHTMLElement('button', {
@@ -573,9 +570,7 @@ class Pagination {
             return;
         }
 
-        const prevNextOpts = isObject(previousNextButtons) ?
-            previousNextButtons : {};
-        const prevIconName = prevNextOpts.prevIcon ?? 'chevronLeft';
+        const prevIconName = 'chevronLeft';
         const prevIconEl = createGridIcon(
             prevIconName,
             this.grid.options?.rendering?.icons
@@ -621,9 +616,7 @@ class Pagination {
             return;
         }
 
-        const prevNextOpts = isObject(previousNextButtons) ?
-            previousNextButtons : {};
-        const nextIconName = prevNextOpts.nextIcon ?? 'chevronRight';
+        const nextIconName = 'chevronRight';
         const nextIconEl = createGridIcon(
             nextIconName,
             this.grid.options?.rendering?.icons
@@ -666,9 +659,7 @@ class Pagination {
             return;
         }
 
-        const firstLastOpts = isObject(firstLastButtons) ?
-            firstLastButtons : {};
-        const lastIconName = firstLastOpts.lastIcon ?? 'doubleChevronRight';
+        const lastIconName = 'doubleChevronRight';
         const lastIconEl = createGridIcon(
             lastIconName,
             this.grid.options?.rendering?.icons

@@ -226,20 +226,6 @@ export interface FirstLastButtonsOptions {
      * @default true
      */
     enabled?: boolean;
-
-    /**
-     * Icon name for the first page button (from the grid icon registry).
-     *
-     * @default 'doubleChevronLeft'
-     */
-    firstIcon?: string;
-
-    /**
-     * Icon name for the last page button (from the grid icon registry).
-     *
-     * @default 'doubleChevronRight'
-     */
-    lastIcon?: string;
 }
 
 /**
@@ -252,18 +238,4 @@ export interface PreviousNextButtonsOptions {
      * @default true
      */
     enabled?: boolean;
-
-    /**
-     * Icon name for the previous page button (from the grid icon registry).
-     *
-     * @default 'chevronLeft'
-     */
-    prevIcon?: string;
-
-    /**
-     * Icon name for the next page button (from the grid icon registry).
-     *
-     * @default 'chevronRight'
-     */
-    nextIcon?: string;
 }

@@ -27,13 +27,6 @@ Grid.grid('container', {
             price: [1.5, 2.53, 5, 4.5, 3.2, 4, 0.8, 2.1, 1.9, 6]
         }
     },
-    rendering: {
-        icons: {
-            chevronRight: customChevronRight,
-            arrowUpDown: circleSvg,
-            star: customStarIcon
-        }
-    },
     columnDefaults: {
         cells: {
             contextMenu: {
@@ -53,10 +46,14 @@ Grid.grid('container', {
         controls: {
             pageSizeSelector: {
                 options: [2, 5, 10]
-            },
-            previousNextButtons: {
-                nextIcon: 'chevronRight'
             }
+        }
+    },
+    rendering: {
+        icons: {
+            chevronRight: customChevronRight,
+            arrowUpDown: circleSvg,
+            star: customStarIcon
         }
     }
 });
