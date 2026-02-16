@@ -50,7 +50,9 @@ QUnit.test(
                     symbols: [
                         'url(https://www.highcharts.com/samples/graphics/sun.png)',
                         'url(https://www.highcharts.com/samples/graphics/sun.png)'
-                    ]
+                    ],
+                    width: 20,
+                    height: 20
                 }
             }
         });
@@ -59,6 +61,18 @@ QUnit.test(
             chart.navigator.handles[0].element.tagName,
             'image',
             'Navigator handles should be updated to images. (#21660)'
+        );
+
+        const controller = new TestController(chart),
+            handleX = chart.navigator.handles[1].translateX - 2,
+            handleY = chart.navigator.handles[1].translateY + 10,
+            extremesBefore = chart.xAxis[0].getExtremes();
+
+        controller.pan([handleX, handleY], [handleX - 50, handleY]);
+
+        assert.ok(
+            extremesBefore.max > chart.xAxis[0].max,
+            'Dragging navigator handle should update axis extremes.'
         );
 
         const plotSizeYBefore = chart.plotSizeY;

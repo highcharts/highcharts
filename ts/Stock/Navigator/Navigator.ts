@@ -42,6 +42,8 @@ const { isTouchDevice } = H;
 import NavigatorAxisAdditions from '../../Core/Axis/NavigatorAxisComposition.js';
 import NavigatorComposition from './NavigatorComposition.js';
 import Scrollbar from '../Scrollbar/Scrollbar.js';
+import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
+const { prototype: { symbols } } = SVGRenderer;
 
 import U from '../../Core/Utilities.js';
 const {
@@ -497,17 +499,18 @@ class Navigator {
                 { height, width } = handlesOptions;
 
             [0, 1].forEach((index: number): void => {
-                const symbolName = handlesOptions.symbols[index];
-                if (
-                    !navigator.handles[index] ||
-                    navigator.handles[index].symbolName !== symbolName
+                const navEvents = navigator.eventsToUnbind,
+                    newSymbolName = handlesOptions.symbols[index],
+                    isUrlSymbol =
+                        navigator.handles[index]?.isImg ||
+                        newSymbolName.startsWith('url');
 
-                ) {
-                    // Generate symbol from scratch if we're dealing with an URL
+                // First render of handles or update from/to url symbol
+                if (!navigator.handles[index] || isUrlSymbol) {
                     navigator.handles[index]?.destroy();
 
                     navigator.handles[index] = renderer.symbol(
-                        symbolName,
+                        newSymbolName,
                         -width / 2 - 1,
                         0,
                         width,
@@ -523,7 +526,32 @@ class Navigator {
                             'highcharts-navigator-handle-' +
                             ['left', 'right'][index]
                         ).add(navigatorGroup);
+
+                // Updating handle path, when changing from symbol to symbol
+                } else if (
+                    navigator.handles[index].symbolName !== newSymbolName
+                ) {
+                    const symbolFn = symbols[newSymbolName],
+                        path = symbolFn.call(
+                            symbols,
+                            -width / 2 - 1,
+                            0,
+                            width,
+                            height
+                        );
+
+                    navigator.handles[index].attr({
+                        d: path
+                    });
+                    navigator.handles[index].symbolName = newSymbolName;
                 }
+                // Add new handles events if we destroyed the handle and created
+                // a new one with an url symbol
+                if (isUrlSymbol && navEvents) {
+                    navEvents.concat(navigator.getPartsEvents('mousedown'));
+                    navEvents.concat(navigator.getPartsEvents('touchstart'));
+                }
+
                 if (chart.inverted) {
                     navigator.handles[index].attr({
                         rotation: 90,
