@@ -454,12 +454,19 @@
     --ig-header-column-color: var(--hcg-column-color, var(--hcg-cell-color, var(--ig-color, inherit)));
     --ig-header-base-color: var(--hcg-header-color, var(--ig-header-column-color));
     --ig-header-current-color: var(--ig-header-base-color);
+    --ig-header-font-weight: var(--hcg-header-font-weight, var(--hcg-cell-font-weight, var(--ig-font-weight)));
+    --ig-header-font-size: var(--hcg-header-font-size, var(--hcg-cell-font-size, var(--ig-font-size)));
+    --ig-header-font-family: var(--hcg-header-font-family, var(--hcg-cell-font-family, var(--ig-font-family)));
+    --ig-header-font: var(--ig-header-font-weight) var(--ig-header-font-size) var(--ig-header-font-family);
+    --ig-header-text-align: var(--hcg-header-text-align, var(--hcg-cell-text-align, var(--ig-text-align)));
 
     border-right: var(--ig-header-column-border);
     border-bottom: var(--ig-header-row-border);
     padding: var(--ig-header-padding);
     background: var(--ig-header-background);
     color: var(--ig-header-current-color);
+    font: var(--ig-header-font);
+    text-align: var(--ig-header-text-align);
 }
 
 .hcg-table thead th:nth-child(even) {
@@ -471,14 +478,8 @@
 }
 
 .hcg-table thead th .hcg-header-cell-content {
-    --ig-header-font-weight: var(--hcg-header-font-weight, var(--hcg-cell-font-weight, var(--ig-font-weight)));
-    --ig-header-font-size: var(--hcg-header-font-size, var(--hcg-cell-font-size, var(--ig-font-size)));
-    --ig-header-font-family: var(--hcg-header-font-family, var(--hcg-cell-font-family, var(--ig-font-family)));
-    --ig-header-font: var(--ig-header-font-weight) var(--ig-header-font-size) var(--ig-header-font-family);
-    --ig-header-text-align: var(--hcg-header-text-align, var(--hcg-cell-text-align, var(--ig-text-align)));
-
-    font: var(--ig-header-font);
-    text-align: var(--ig-header-text-align);
+    font: inherit;
+    text-align: inherit;
 }
 
 .hcg-table thead tr:first-of-type th:first-child {

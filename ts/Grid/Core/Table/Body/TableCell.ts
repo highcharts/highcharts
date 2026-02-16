@@ -23,12 +23,14 @@
  * */
 
 import type { CellType as DataTableCellType } from '../../../../Data/DataTable';
+import type CSSObject from '../../../../Core/Renderer/CSSObject';
 import type Column from '../Column';
 import type TableRow from './TableRow';
 
 import Globals from '../../Globals.js';
 import Cell from '../Cell.js';
 import CellContent from '../CellContent/CellContent.js';
+import { mergeStyleValues } from '../../GridUtils.js';
 
 import Utils from '../../../../Core/Utilities.js';
 const {
@@ -162,7 +164,31 @@ class TableCell extends Cell {
         // Add custom class name from column options
         this.setCustomClassName(this.column.options.cells?.className);
 
+        this.setCustomStyles(this.getCellStyles());
+
         fireEvent(this, 'afterRender', { target: this });
+    }
+
+    /**
+     * Returns merged styles from defaults and current column options.
+     */
+    private getCellStyles(): CSSObject {
+        const { grid } = this.column.viewport;
+        const rawColumnOptions =
+            grid.columnOptionsMap?.[this.column.id]?.options;
+
+        return {
+            ...mergeStyleValues(
+                this.column,
+                grid.options?.columnDefaults?.style,
+                rawColumnOptions?.style
+            ),
+            ...mergeStyleValues(
+                this,
+                grid.options?.columnDefaults?.cells?.style,
+                rawColumnOptions?.cells?.style
+            )
+        };
     }
 
     /**
