@@ -72,11 +72,20 @@ const config = {
             })
         ]
     ],
-
     plugins: [
-        customStartMessagePlugin
+        customStartMessagePlugin,
+        [
+            'docusaurus-plugin-llms',
+            {
+                generateLLMsTxt: true,
+                generateLLMsFullTxt: true,
+                docsDir: '../../docs',
+                pathTransformation: {
+                    ignorePaths: ['../../docs']
+                }
+            }
+        ]
     ],
-
     themeConfig:
         /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
         ({
