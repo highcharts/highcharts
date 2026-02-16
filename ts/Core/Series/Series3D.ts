@@ -130,7 +130,10 @@ class Series3D extends Series {
         series.zPadding = stack *
             (seriesOptions.depth || 0 + (seriesOptions.groupZPadding || 1));
 
-        series.data.forEach((rawPoint): void => {
+        // #24042, when the series uses dataGrouping, use series.points
+        const points = series.data.length > 0 ? series.data : series.points;
+
+        points.forEach((rawPoint): void => {
             if (zAxis?.translate) {
                 zValue = zAxis.logarithmic && zAxis.val2lin ?
                     zAxis.val2lin(rawPoint.z as any) :
@@ -161,7 +164,7 @@ class Series3D extends Series {
 
         const projectedPoints = perspective(rawPoints, chart, true);
 
-        series.data.forEach((rawPoint, i): void => {
+        points.forEach((rawPoint, i): void => {
             projectedPoint = projectedPoints[i];
 
             rawPoint.plotX = projectedPoint.x;
