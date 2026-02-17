@@ -548,8 +548,20 @@ class Navigator {
                 // Add new handles events if we destroyed the handle and created
                 // a new one with an url symbol
                 if (isUrlSymbol && navEvents) {
-                    navEvents.concat(navigator.getPartsEvents('mousedown'));
-                    navEvents.concat(navigator.getPartsEvents('touchstart'));
+                    ['mousedown', 'touchstart'].forEach(
+                        (eventName): void => {
+                            addEvent(
+                                navigator.handles[index].element,
+                                eventName,
+                                function (e: PointerEvent): void {
+                                    navigator.handlesMousedown(
+                                        e,
+                                        index
+                                    );
+                                }
+                            );
+                        }
+                    );
                 }
 
                 if (chart.inverted) {

@@ -57,15 +57,29 @@ QUnit.test(
             }
         });
 
+        const leftHandle = chart.navigator.handles[0],
+            rightHandle = chart.navigator.handles[1],
+            lhEvents = leftHandle.element.hcEvents,
+            rhEvents = rightHandle.element.hcEvents;
+
+        assert.ok(
+            lhEvents.mousedown.length === 1 &&
+            rhEvents.mousedown.length === 1 &&
+            lhEvents.touchstart.length === 1 &&
+            rhEvents.touchstart.length === 1,
+            `Navigator handles should always have only one mousedown and
+            touchstart event.`
+        );
+
         assert.strictEqual(
-            chart.navigator.handles[0].element.tagName,
+            leftHandle.element.tagName,
             'image',
             'Navigator handles should be updated to images. (#21660)'
         );
 
         const controller = new TestController(chart),
-            handleX = chart.navigator.handles[1].translateX - 2,
-            handleY = chart.navigator.handles[1].translateY + 10,
+            handleX = rightHandle.translateX - 2,
+            handleY = rightHandle.translateY + 10,
             extremesBefore = chart.xAxis[0].getExtremes();
 
         controller.pan([handleX, handleY], [handleX - 50, handleY]);
