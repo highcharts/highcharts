@@ -59,6 +59,39 @@ declare module '../../Core/Series/SeriesBase' {
     }
 }
 
+declare module '../../Core/Series/SeriesOptions' {
+    interface SeriesOptions {
+        /**
+         * Whether to zoom non-cartesian series. If `chart.zooming` is set, the
+         * option allows to disable zooming on an individual non-cartesian
+         * series.
+         *
+         * Note: This option works only for non-cartesian series.
+         *
+         * @type      {boolean}
+         * @default   true
+         * @since     12.3.0
+         * @requires  modules/non-cartesian-zoom
+         * @apioption plotOptions.series.zoomEnabled
+         */
+
+        /**
+         * Whether to zoom non-cartesian series. If `chart.zooming` is set, the
+         * option allows to disable zooming on an individual non-cartesian
+         * series.
+         *
+         * Note: This option works only for non-cartesian series.
+         *
+         * @type      {boolean}
+         * @default   true
+         * @since     12.3.0
+         * @requires  modules/non-cartesian-zoom
+         * @apioption series.zoomEnabled
+         */
+        zoomEnabled?: boolean;
+    }
+}
+
 /* /* *
  *
  *  Functions
@@ -436,15 +469,7 @@ function onInitDataLabelsGroup(
  *
  * */
 
-/**
- * The series type
- *
- * @internal
- * @class
- * @name Highcharts.seriesTypes.tiledwebmap
- *
- * @augments Highcharts.Series
- */
+/** @internal */
 class NonCartesianSeriesZoom {
 
     /* *
@@ -491,7 +516,9 @@ export default NonCartesianSeriesZoom;
  * Note: This option works only for non-cartesian series.
  *
  * @type      {boolean}
- * @since 12.3.0
+ * @default   true
+ * @since     12.3.0
+ * @requires  modules/non-cartesian-zoom
  * @apioption plotOptions.series.zoomEnabled
  */
 
@@ -503,7 +530,9 @@ export default NonCartesianSeriesZoom;
  * Note: This option works only for non-cartesian series.
  *
  * @type      {boolean}
- * @since 12.3.0
+ * @default   true
+ * @since     12.3.0
+ * @requires  modules/non-cartesian-zoom
  * @apioption series.zoomEnabled
  */
 
