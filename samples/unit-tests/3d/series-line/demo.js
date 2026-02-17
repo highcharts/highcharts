@@ -60,3 +60,58 @@ QUnit.test('3D line series', function (assert) {
         'The generated SVG should not contain paths starting with line segment'
     );
 });
+
+QUnit.test('3D line series with datagrouping (#24042)', function (assert) {
+    var chart = Highcharts.chart('container', {
+        chart: {
+            type: 'line',
+            options3d: {
+                enabled: true,
+                alpha: 10,
+                beta: 10,
+                viewDistance: 25,
+                depth: 40
+            }
+        },
+
+        title: {
+            text: '3D line with datagrouping'
+        },
+
+        yAxis: {
+            min: 0,
+            max: 10
+        },
+
+        series: [
+            {
+                dataGrouping: {
+                    enabled: true,
+                    groupPixelWidth: 400
+                },
+                data: [
+                    [0, 2],
+                    [2, 4],
+                    [3, 9],
+                    [5, 6],
+                    [7, 8],
+                    [8, 5],
+                    [10, 4]
+                ]
+            }
+        ]
+    });
+
+    const series = chart.series[0];
+
+    assert.strictEqual(
+        series.data.length,
+        0,
+        'series.data should be empty when dataGrouping is applied'
+    );
+
+    assert.ok(
+        typeof series.points[0].plotZ === 'number',
+        'plotZ should exist and be a number'
+    );
+});
