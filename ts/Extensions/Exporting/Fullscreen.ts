@@ -137,10 +137,18 @@ function onChartBeforeRender(
     this.fullscreen = new Fullscreen(this);
 }
 
-/** @internal */
+/**
+ * @internal
+ * Tolerance in CSS pixels used to detect whether the page was at bottom.
+ * A small non-zero value absorbs minor rounding differences on reflow.
+ */
 const scrollBottomTolerance = 2;
 
-/** @internal */
+/**
+ * @internal
+ * Duration in milliseconds used to keep restoring scroll after fullscreen
+ * exit, allowing delayed viewport/layout updates to settle.
+ */
 const scrollRestoreDuration = 900;
 
 /* *
@@ -481,7 +489,7 @@ class Fullscreen {
      * Gets vertical scroll position and maximum available scroll.
      *
      * @private
-     * @return {Highcharts.FullscreenScrollPosition|undefined}
+     * @return {Highcharts.Fullscreen.ScrollPosition|undefined}
      * Current vertical scroll data.
      */
     private getScrollPosition():
@@ -549,6 +557,7 @@ class Fullscreen {
             const position = fullscreen.getScrollPosition();
 
             if (!position || !win) {
+                // Defensive check for async ticks after teardown.
                 fullscreen.stopScrollRestore();
                 return;
             }
@@ -566,10 +575,7 @@ class Fullscreen {
             }
         };
 
-        const bump = (): void => {
-            // 900ms should be enough to restore scroll position after exiting
-            // fullscreen, even if browser fires scroll event with a delay
-            // (e.g. Safari).
+        const extendRestoreDeadline = (): void => {
             fullscreen.restoreScrollUntil = Date.now() + scrollRestoreDuration;
             if (!fullscreen.restoreScrollRAF) {
                 fullscreen.restoreScrollRAF = win.requestAnimationFrame(tick);
@@ -610,8 +616,8 @@ class Fullscreen {
             }
         };
 
-        const unbindResize = addEvent(win, 'resize', bump),
-            unbindFocusin = addEvent(doc, 'focusin', bump),
+        const unbindResize = addEvent(win, 'resize', extendRestoreDeadline),
+            unbindFocusin = addEvent(doc, 'focusin', extendRestoreDeadline),
             unbindWheel = addEvent(win, 'wheel', stopOnUserScroll),
             unbindTouchMove = addEvent(win, 'touchmove', stopOnUserScroll),
             unbindKeyDown = addEvent(doc, 'keydown', stopOnUserScroll),
@@ -620,7 +626,7 @@ class Fullscreen {
             }),
             unbindViewport = (
                 win.visualViewport &&
-                addEvent(win.visualViewport as any, 'resize', bump)
+                addEvent(win.visualViewport, 'resize', extendRestoreDeadline)
             );
 
         fullscreen.unbindScrollRestore = (): void => {
@@ -637,7 +643,7 @@ class Fullscreen {
 
         fullscreen.restoreScrollWasBlurred = false;
         blur();
-        bump();
+        extendRestoreDeadline();
     }
 
     /**
@@ -647,18 +653,22 @@ class Fullscreen {
      * @return {void}
      */
     private stopScrollRestore(): void {
-        const win = this.chart.container.ownerDocument.defaultView;
+        const chart = this.chart,
+            container = chart && chart.container,
+            doc = container && container.ownerDocument,
+            win = doc && doc.defaultView;
 
-        if (win && this.restoreScrollRAF) {
+        if (win && typeof this.restoreScrollRAF === 'number') {
             win.cancelAnimationFrame(this.restoreScrollRAF);
         }
 
-        this.restoreScrollRAF = 0;
+        this.restoreScrollRAF = void 0;
         this.restoreScrollWasBlurred = false;
         this.restoreScrollUntil = void 0;
 
         if (this.unbindScrollRestore) {
-            this.unbindScrollRestore = this.unbindScrollRestore();
+            this.unbindScrollRestore();
+            this.unbindScrollRestore = void 0;
         }
     }
 
