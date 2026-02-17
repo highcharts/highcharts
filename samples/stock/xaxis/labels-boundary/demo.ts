@@ -11,8 +11,10 @@
         xAxis: {
             dateTimeLabelFormats: {
                 month: {
-                    boundary: '<b>%Y</b>',
-                    main: '%[bY]'
+                    main: '%b'
+                },
+                year: {
+                    boundary: '<b>%Y</b>'
                 }
             }
         },

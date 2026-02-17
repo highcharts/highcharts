@@ -4,11 +4,11 @@ import type {
 
 export default {
     controls: [{
-        path: 'xAxis.dateTimeLabelFormats.month.boundary',
+        path: 'xAxis.dateTimeLabelFormats.year.boundary',
         value: '<b>%Y</b>'
     }, {
         path: 'xAxis.dateTimeLabelFormats.month.main',
-        value: '%[bY]'
+        value: '%b'
     }],
     dataFile: 'usdeur.json',
     templates: [],

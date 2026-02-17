@@ -1,4 +1,4 @@
 ---
-name: Demo of xAxis.dateTimeLabelFormats.month.boundary and main
+name: Demo of xAxis.dateTimeLabelFormats.year.boundary and month.main
 js_wrap: b
 ...
