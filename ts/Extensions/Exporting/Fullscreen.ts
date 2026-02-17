@@ -137,6 +137,12 @@ function onChartBeforeRender(
     this.fullscreen = new Fullscreen(this);
 }
 
+/** @internal */
+const scrollBottomTolerance = 2;
+
+/** @internal */
+const scrollRestoreDuration = 900;
+
 /* *
  *
  *  Class
@@ -284,6 +290,9 @@ class Fullscreen {
 
     /** @internal */
     public restoreScrollWasAtBottom?: boolean;
+
+    /** @internal */
+    public restoreScrollWasBlurred?: boolean;
 
     /** @internal */
     public restoreScrollUntil?: number;
@@ -509,7 +518,9 @@ class Fullscreen {
         }
 
         this.restoreScrollTop = position.y;
-        this.restoreScrollWasAtBottom = (position.maxY - position.y <= 2);
+        this.restoreScrollWasAtBottom = (
+            position.maxY - position.y <= scrollBottomTolerance
+        );
     }
 
     /**
@@ -542,14 +553,6 @@ class Fullscreen {
                 return;
             }
 
-            const activeElement = doc.activeElement;
-            if (
-                activeElement instanceof HTMLElement &&
-                chart.renderTo.contains(activeElement)
-            ) {
-                activeElement.blur();
-            }
-
             const targetY = fullscreen.restoreScrollWasAtBottom ?
                 position.maxY :
                 Math.min(originalY, position.maxY);
@@ -564,14 +567,54 @@ class Fullscreen {
         };
 
         const bump = (): void => {
-            fullscreen.restoreScrollUntil = Date.now() + 900;
+            // 900ms should be enough to restore scroll position after exiting
+            // fullscreen, even if browser fires scroll event with a delay
+            // (e.g. Safari).
+            fullscreen.restoreScrollUntil = Date.now() + scrollRestoreDuration;
             if (!fullscreen.restoreScrollRAF) {
                 fullscreen.restoreScrollRAF = win.requestAnimationFrame(tick);
             }
         };
 
+        const blur = (): void => {
+            if (fullscreen.restoreScrollWasBlurred) {
+                return;
+            }
+            const activeElement = doc.activeElement;
+            if (
+                activeElement instanceof HTMLElement &&
+                chart.renderTo.contains(activeElement)
+            ) {
+                activeElement.blur();
+            }
+            fullscreen.restoreScrollWasBlurred = true;
+        };
+
+        const stopOnUserScroll = (
+            e: Event
+        ): void => {
+            const event = e as KeyboardEvent;
+            if (
+                event.type !== 'keydown' ||
+                (
+                    event.key === 'ArrowDown' ||
+                    event.key === 'ArrowUp' ||
+                    event.key === 'PageDown' ||
+                    event.key === 'PageUp' ||
+                    event.key === 'Home' ||
+                    event.key === 'End' ||
+                    event.key === ' '
+                )
+            ) {
+                fullscreen.stopScrollRestore();
+            }
+        };
+
         const unbindResize = addEvent(win, 'resize', bump),
             unbindFocusin = addEvent(doc, 'focusin', bump),
+            unbindWheel = addEvent(win, 'wheel', stopOnUserScroll),
+            unbindTouchMove = addEvent(win, 'touchmove', stopOnUserScroll),
+            unbindKeyDown = addEvent(doc, 'keydown', stopOnUserScroll),
             unbindDestroy = addEvent(chart, 'destroy', (): void => {
                 fullscreen.stopScrollRestore();
             }),
@@ -583,12 +626,17 @@ class Fullscreen {
         fullscreen.unbindScrollRestore = (): void => {
             unbindResize();
             unbindFocusin();
+            unbindWheel();
+            unbindTouchMove();
+            unbindKeyDown();
             unbindDestroy();
             if (unbindViewport) {
                 unbindViewport();
             }
         };
 
+        fullscreen.restoreScrollWasBlurred = false;
+        blur();
         bump();
     }
 
@@ -606,6 +654,7 @@ class Fullscreen {
         }
 
         this.restoreScrollRAF = 0;
+        this.restoreScrollWasBlurred = false;
         this.restoreScrollUntil = void 0;
 
         if (this.unbindScrollRestore) {
