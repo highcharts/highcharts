@@ -250,11 +250,11 @@ class FilteringController {
             const columnIds = Object.keys(columnOptionsMap);
             for (let i = 0, iEnd = columnIds.length; i < iEnd; ++i) {
                 const columnId = columnIds[i];
-                if (this.querying.grid.isColumnUnbound(columnId)) {
+                if (this.querying.grid.columnPolicy.isColumnUnbound(columnId)) {
                     continue;
                 }
                 const sourceColumnId = this.querying.grid
-                    .getColumnDataBinding(columnId).sourceColumnId;
+                    .columnPolicy.getColumnSourceId(columnId);
                 const filteringOptions =
                     columnOptionsMap[columnId]?.options?.filtering;
 
@@ -290,11 +290,11 @@ class FilteringController {
         columnId: string,
         options: FilteringCondition
     ): void {
-        if (this.querying.grid.isColumnUnbound(columnId)) {
+        if (this.querying.grid.columnPolicy.isColumnUnbound(columnId)) {
             return;
         }
         const sourceColumnId = this.querying.grid
-            .getColumnDataBinding(columnId).sourceColumnId;
+            .columnPolicy.getColumnSourceId(columnId);
         if (!sourceColumnId) {
             return;
         }

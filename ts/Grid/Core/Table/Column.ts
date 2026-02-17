@@ -123,16 +123,6 @@ export class Column {
     public filtering?: ColumnFiltering;
 
     /**
-     * The resolved id of the source column in the data provider.
-     */
-    private sourceColumnId?: string;
-
-    /**
-     * Whether the column is unbound to data provider columns.
-     */
-    private unbound: boolean = false;
-
-
     /* *
     *
     *  Constructor
@@ -205,16 +195,15 @@ export class Column {
      */
     public loadData(): void {
         const dp = this.viewport.grid.dataProvider;
-        const binding = this.viewport.grid.getColumnDataBinding(this.id);
-        this.sourceColumnId = binding.sourceColumnId;
-        this.unbound = binding.isUnbound;
+        const sourceColumnId = this.getSourceColumnId();
+        const isUnbound = this.isUnbound();
 
         if (
             dp && 'getDataTable' in dp &&
-            this.sourceColumnId && !this.unbound
+            sourceColumnId && !isUnbound
         ) {
             this.data = dp.getDataTable(true)?.getColumn(
-                this.sourceColumnId,
+                sourceColumnId,
                 true
             );
         } else {
@@ -240,7 +229,7 @@ export class Column {
             return await valueGetter.call(cell, cell);
         }
 
-        const sourceColumnId = this.sourceColumnId;
+        const sourceColumnId = this.getSourceColumnId();
         if (!sourceColumnId) {
             return void 0;
         }
@@ -276,65 +265,63 @@ export class Column {
             return type;
         }
 
-        if (this.isUnbound() || !this.sourceColumnId) {
+        const sourceColumnId = this.getSourceColumnId();
+        if (this.isUnbound() || !sourceColumnId) {
             return 'string';
         }
 
-        return (await dp?.getColumnDataType(this.sourceColumnId)) ?? 'string';
+        return (await dp?.getColumnDataType(sourceColumnId)) ?? 'string';
     }
 
     /**
      * Returns the resolved source column id used in the data provider.
      */
     public getSourceColumnId(): string | undefined {
-        return this.sourceColumnId;
+        return this.viewport.grid.columnPolicy.getColumnSourceId(this.id);
     }
 
     /**
      * Returns whether the column is unbound to provider data.
      */
     public isUnbound(): boolean {
-        return this.unbound;
+        return this.viewport.grid.columnPolicy.isColumnUnbound(this.id);
     }
 
     /**
      * Returns whether sorting is enabled for this column.
      */
     public isSortingEnabled(): boolean {
-        if (this.isUnbound()) {
-            return false;
-        }
-
-        const sortingOptions = this.options.sorting;
-        return !!(sortingOptions?.enabled ?? sortingOptions?.sortable);
+        return this.viewport.grid.columnPolicy.isColumnSortingEnabled(this.id);
     }
 
     /**
      * Returns whether filtering is enabled for this column.
      */
     public isFilteringEnabled(): boolean {
-        return !this.isUnbound() && !!this.options.filtering?.enabled;
+        return this.viewport.grid.columnPolicy
+            .isColumnFilteringEnabled(this.id);
     }
 
     /**
      * Returns whether inline filtering is enabled for this column.
      */
     public isInlineFilteringEnabled(): boolean {
-        return this.isFilteringEnabled() && !!this.options.filtering?.inline;
+        return this.viewport.grid.columnPolicy
+            .isColumnInlineFilteringEnabled(this.id);
     }
 
     /**
      * Returns whether editing is enabled for this column.
      */
     public isEditable(): boolean {
-        return !this.isUnbound() && !!this.options.cells?.editMode?.enabled;
+        return this.viewport.grid.columnPolicy.isColumnEditable(this.id);
     }
 
     /**
      * Returns whether the column should be exported.
      */
     public isExportable(): boolean {
-        return !this.isUnbound() && this.options.exportable !== false;
+        return this.viewport.grid.columnPolicy.isColumnExportable(this.id);
     }
 
     /**

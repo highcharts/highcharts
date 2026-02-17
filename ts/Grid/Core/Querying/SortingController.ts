@@ -195,7 +195,7 @@ class SortingController {
         }> = [];
         for (let i = 0, iEnd = columnIDs.length; i < iEnd; ++i) {
             const columnId = columnIDs[i];
-            if (grid.isColumnUnbound(columnId)) {
+            if (grid.columnPolicy.isColumnUnbound(columnId)) {
                 continue;
             }
             const columnOptions = columnOptionsMap[columnId]?.options || {};
@@ -269,7 +269,7 @@ class SortingController {
         ): sorting is SortingState & { columnId: string } => !!(
             sorting.columnId &&
             sorting.order &&
-            !this.querying.grid.isColumnUnbound(sorting.columnId)
+            !this.querying.grid.columnPolicy.isColumnUnbound(sorting.columnId)
         ));
 
         if (!sortings.length) {
@@ -283,9 +283,9 @@ class SortingController {
                 sourceColumnId?: string;
             }) => ({
                 ...sorting,
-                sourceColumnId: grid.getColumnDataBinding(
+                sourceColumnId: grid.columnPolicy.getColumnSourceId(
                     sorting.columnId
-                ).sourceColumnId
+                )
             }))
             .filter((sorting): sorting is SortingState & {
                 columnId: string;

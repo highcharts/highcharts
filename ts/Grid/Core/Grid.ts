@@ -43,6 +43,7 @@ import type { DeepPartial } from '../../Shared/Types';
 
 import Accessibility from './Accessibility/Accessibility.js';
 import AST from '../../Core/Renderer/HTML/AST.js';
+import ColumnPolicyResolver from './ColumnPolicyResolver.js';
 import DataProviderRegistry from './Data/DataProviderRegistry.js';
 import { defaultOptions } from './Defaults.js';
 import GridUtils from './GridUtils.js';
@@ -181,6 +182,12 @@ export class Grid {
      * @internal
      */
     public columnOptionsMap: Record<string, ColumnOptionsMapItem> = {};
+
+    /**
+     * Resolver for data binding and column capabilities.
+     */
+    public readonly columnPolicy: ColumnPolicyResolver =
+        new ColumnPolicyResolver();
 
     /**
      * The container of the grid.
@@ -522,12 +529,14 @@ export class Grid {
 
         if (!colOptions) {
             this.columnOptionsMap = {};
+            this.columnPolicy.setColumnOptionsMap({});
             return;
         }
 
         if (colOptions.length < 1) {
             delete this.userOptions.columns;
             this.columnOptionsMap = {};
+            this.columnPolicy.setColumnOptionsMap({});
             return;
         }
 
@@ -540,6 +549,16 @@ export class Grid {
         }
 
         this.columnOptionsMap = columnOptionsMap;
+        this.columnPolicy.setColumnOptionsMap(columnOptionsMap);
+    }
+
+    /**
+     * Refreshes the cached source column ids available in the data provider.
+     */
+    private async refreshAvailableSourceColumnIds(): Promise<void> {
+        this.columnPolicy.setAvailableSourceColumnIds(
+            (await this.dataProvider?.getColumnIds()) || []
+        );
     }
 
     /**
@@ -957,6 +976,7 @@ export class Grid {
             }
 
             await this.dataProvider?.init();
+            await this.refreshAvailableSourceColumnIds();
 
             if (
                 flagsToProcess.has('sorting') ||
@@ -1111,7 +1131,7 @@ export class Grid {
         const normalized = (sortings || []).filter((sorting): boolean => !!(
             sorting.columnId &&
             sorting.order &&
-            !this.isColumnUnbound(sorting.columnId)
+            !this.columnPolicy.isColumnUnbound(sorting.columnId)
         ));
 
         const sortingController = this.querying.sorting;
@@ -1218,6 +1238,7 @@ export class Grid {
         this.initContainer(this.renderTo);
         this.initAccessibility();
         this.initPagination();
+        await this.refreshAvailableSourceColumnIds();
 
         this.querying.loadOptions();
         await this.querying.proceed();
@@ -1508,11 +1529,16 @@ export class Grid {
         const dataOptions = this.options?.data;
         const autogenerateColumns = !dataOptions ||
             dataOptions.autogenerateColumns !== false;
+        let autoColumns = this.columnPolicy.getAvailableSourceColumnIds();
+        if (!autoColumns) {
+            await this.refreshAvailableSourceColumnIds();
+            autoColumns = this.columnPolicy.getAvailableSourceColumnIds() || [];
+        }
         const columnsIncluded = (
             headerColumns && headerColumns.length > 0 ?
                 headerColumns :
                 autogenerateColumns ?
-                    await this.dataProvider?.getColumnIds() :
+                    autoColumns :
                     this.options?.columns?.map((column): string => column.id)
         );
 
@@ -1545,6 +1571,7 @@ export class Grid {
     private loadDataProvider(): DataProviderType {
         this.dataProvider?.destroy();
         this.querying.shouldBeUpdated = true;
+        this.columnPolicy.setAvailableSourceColumnIds();
 
         const dataOptions = this.options?.data ?? {
             providerType: 'local',
@@ -1609,75 +1636,6 @@ export class Grid {
         }
 
         return columnIds;
-    }
-
-    /**
-     * Resolves data binding for a Grid column.
-     *
-     * @param columnId
-     * The Grid column id.
-     */
-    public getColumnDataBinding(columnId: string): ColumnDataBinding {
-        const columnOptions = this.columnOptionsMap?.[columnId]?.options;
-        const declaredDataId = columnOptions?.dataId;
-        let sourceColumnId: string | undefined;
-
-        if (declaredDataId === null) {
-            return { isUnbound: true };
-        }
-
-        if (typeof declaredDataId === 'string') {
-            sourceColumnId = declaredDataId;
-        } else {
-            sourceColumnId = columnId;
-        }
-
-        const dp = this.dataProvider;
-        if (!dp || !('getDataTable' in dp)) {
-            return {
-                sourceColumnId,
-                isUnbound: !sourceColumnId
-            };
-        }
-
-        const table = dp.getDataTable(true) || dp.getDataTable();
-        if (!table || !sourceColumnId) {
-            return {
-                sourceColumnId,
-                isUnbound: !sourceColumnId
-            };
-        }
-
-        return {
-            sourceColumnId,
-            isUnbound: table.getColumn(sourceColumnId, true) === void 0
-        };
-    }
-
-    /**
-     * Returns whether the given column has no data binding in the provider.
-     *
-     * @param columnId
-     * The Grid column id.
-     */
-    public isColumnUnbound(columnId: string): boolean {
-        return this.getColumnDataBinding(columnId).isUnbound;
-    }
-
-    /**
-     * Returns whether the given column should be exported.
-     *
-     * @param columnId
-     * The Grid column id.
-     */
-    public isColumnExportable(columnId: string): boolean {
-        if (this.isColumnUnbound(columnId)) {
-            return false;
-        }
-
-        const exportable =
-            this.columnOptionsMap?.[columnId]?.options?.exportable;
-        return exportable !== false;
     }
 
     /**
@@ -1822,12 +1780,12 @@ export class Grid {
         for (const columnId of this.enabledColumns) {
             const column = this.viewport?.getColumn(columnId);
             const sourceColumnId =
-                this.getColumnDataBinding(columnId).sourceColumnId;
+                this.columnPolicy.getColumnSourceId(columnId);
 
             if (
                 !column ||
                 !sourceColumnId ||
-                !this.isColumnExportable(columnId)
+                !this.columnPolicy.isColumnExportable(columnId)
             ) {
                 continue;
             }
@@ -1949,12 +1907,6 @@ export interface ColumnOptionsMapItem {
 /**
  * Resolved data binding for a Grid column.
  */
-export interface ColumnDataBinding {
-    sourceColumnId?: string;
-    isUnbound: boolean;
-}
-
-
 /* *
  *
  *  Default Export

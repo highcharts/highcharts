@@ -164,7 +164,9 @@ class Exporting {
         }
 
         const columnIds = (grid.enabledColumns ?? []).filter(
-            (columnId): boolean => grid.isColumnExportable(columnId)
+            (columnId): boolean => grid.columnPolicy.isColumnExportable(
+                columnId
+            )
         );
         const columnsCount = columnIds?.length;
         const csvRows: string[] = [];
@@ -207,10 +209,7 @@ class Exporting {
             const columnId = columnIds[columnIndex],
                 column = grid.viewport?.getColumn(columnId),
                 colType = column?.dataType,
-                sourceColumnId = (
-                    column?.getSourceColumnId() ??
-                    grid.getColumnDataBinding(columnId).sourceColumnId
-                ),
+                sourceColumnId = grid.columnPolicy.getColumnSourceId(columnId),
                 columnArray = sourceColumnId ?
                     (dataTable.getColumn(sourceColumnId) ?? []) :
                     [],
