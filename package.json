@@ -146,7 +146,7 @@
     "semver": "^7.6.2",
     "stylelint": "^14.16.1",
     "stylelint-config-standard": "^29.0.0",
-    "svg2pdf.js": "2.6.0",
+    "svg2pdf.js": "2.7.0",
     "topojson-client": "^3.1.0",
     "ts-node": "^10.9.2",
     "tsx": "^4.20.6",
