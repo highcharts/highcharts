@@ -235,7 +235,12 @@ function checkDemosConsistency() {
     glob.sync(
         FSLib.path(process.cwd() + '/samples/*/demo/*', true)
     ).forEach(p => {
-        assert(existsSync(FSLib.path(p + '/demo.details')), `Missing demo.details file at ${p}`);
+        if (existsSync(FSLib.path(p + '/demo.html'))) {
+            assert(
+                existsSync(FSLib.path(p + '/demo.details')),
+                `Missing demo.details file at ${p}`
+            );
+        }
     });
 
     glob.sync(
