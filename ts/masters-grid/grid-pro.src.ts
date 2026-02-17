@@ -40,7 +40,6 @@ import TableCell from '../Grid/Core/Table/Body/TableCell.js';
 import SvgIcons from '../Grid/Core/UI/SvgIcons.js';
 
 import ResponsiveComposition from '../Grid/Core/Responsive/ResponsiveComposition.js';
-import RowStickyComposition from '../Grid/Core/RowSticky/RowStickyComposition.js';
 
 import GridEvents from '../Grid/Pro/GridEvents.js';
 import CellEditingComposition from '../Grid/Pro/CellEditing/CellEditingComposition.js';
@@ -50,6 +49,7 @@ import ValidatorComposition from '../Grid/Pro/ColumnTypes/ValidatorComposition.j
 import CellRenderersComposition from '../Grid/Pro/CellRendering/CellRenderersComposition.js';
 import CellRendererRegistry from '../Grid/Pro/CellRendering/CellRendererRegistry.js';
 import PaginationComposition from '../Grid/Pro/Pagination/PaginationComposition.js';
+import RowPinningComposition from '../Grid/Core/RowPinning/RowPinningComposition.js';
 import Pagination from '../Grid/Core/Pagination/Pagination.js';
 import CellContentPro from '../Grid/Pro/CellRendering/CellContentPro.js';
 import CellRenderer from '../Grid/Pro/CellRendering/CellRenderer.js';
@@ -98,7 +98,6 @@ import '../Grid/Pro/CellRendering/Renderers/NumberInputRenderer.js';
 
 import '../Grid/Core/Data/LocalDataProvider.js';
 import '../Grid/Pro/Data/RemoteDataProvider.js';
-import '../Grid/Core/Responsive/ResponsiveComposition.js';
 
 
 /* *
@@ -148,8 +147,8 @@ ExportingComposition.compose(G.Grid);
 ValidatorComposition.compose(G.Table);
 CellRenderersComposition.compose(G.Column);
 PaginationComposition.compose(G.Pagination);
+RowPinningComposition.compose(G.Grid);
 ResponsiveComposition.compose(G.Grid);
-RowStickyComposition.compose(G.Grid);
 
 
 /* *

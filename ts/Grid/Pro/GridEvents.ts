@@ -25,6 +25,8 @@ import type TableCell from '../Core/Table/Body/TableCell';
 import type HeaderCell from '../Core/Table/Header/HeaderCell';
 import type { GridEvent } from '../Core/GridUtils';
 import type Grid from '../Core/Grid';
+import type { RowPinningChangedEvent } from
+    '../Core/RowPinning/RowPinningComposition';
 
 import U from '../../Core/Utilities.js';
 import Globals from '../../Core/Globals.js';
@@ -105,6 +107,15 @@ function compose(
         });
     });
 
+    addEvent(
+        GridClass,
+        'rowPinningChanged',
+        (e: GridEvent<Grid> & RowPinningChangedEvent): void => {
+            const grid = e.target;
+            grid.options?.events?.rowPinningChanged?.call(grid, e);
+        }
+    );
+
     ([ // TableCell Events
         'mouseOver',
         'mouseOut',
@@ -168,6 +179,10 @@ export type ColumnEventCallback = (this: Column) => void;
  * Callback function to be called when a grid event is triggered.
  */
 export type GridEventCallback = (this: Grid, e: AnyRecord) => void;
+export type RowPinningChangedEventCallback = (
+    this: Grid,
+    e: GridEvent<Grid> & RowPinningChangedEvent
+) => void;
 
 /**
  * Events related to the cells.
@@ -281,6 +296,11 @@ export interface GridEvents {
      * update.
      */
     afterRedraw?: GridEventCallback;
+
+    /**
+     * Callback function to be called after runtime row pinning state changes.
+     */
+    rowPinningChanged?: RowPinningChangedEventCallback;
 }
 
 declare module '../Core/Options' {

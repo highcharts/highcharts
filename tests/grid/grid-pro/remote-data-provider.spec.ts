@@ -192,9 +192,9 @@ test.describe('RemoteDataProvider', () => {
                     rows: {
                         virtualization: true,
                         virtualizationThreshold: 20,
-                        sticky: {
+                        pinning: {
                             idColumn: 'id',
-                            ids: [5, 20, 70]
+                            topIds: [5, 20, 70]
                         }
                     }
                 }
@@ -226,8 +226,12 @@ test.describe('RemoteDataProvider', () => {
                 0,
                 Math.floor(vp.tbodyElement.scrollTop / rowHeight)
             );
+            const pinnedRows = grid.getPinnedRows ? grid.getPinnedRows() : {
+                topIds: [],
+                bottomIds: []
+            };
             const excluded = new Set(
-                (grid.getStickyRows() || []).map(
+                [...pinnedRows.topIds, ...pinnedRows.bottomIds].map(
                     (id: string | number) => String(id)
                 )
             );
@@ -251,28 +255,31 @@ test.describe('RemoteDataProvider', () => {
             if (target.index === -1) {
                 return {
                     target,
-                    stickyTopIndexes: vp.stickyTopIndexes || [],
-                    stickyRows: grid.getStickyRows() || []
+                    pinnedRows: grid.getPinnedRows ? grid.getPinnedRows() : {
+                        topIds: [],
+                        bottomIds: []
+                    }
                 };
             }
 
-            await grid.stickRow(target.id);
+            await grid.pinRow(target.id);
 
             return {
                 target,
-                stickyRows: grid.getStickyRows() || [],
-                stickyMetaIds: grid.rowStickyMeta?.stickyRowIds || [],
-                stickyMetaIndexes: grid.rowStickyMeta?.stickyRowIndexes || []
+                pinnedRows: grid.getPinnedRows ? grid.getPinnedRows() : {
+                    topIds: [],
+                    bottomIds: []
+                },
+                pinnedMetaTopIds: grid.rowPinningMeta?.topRowIds || []
             };
         });
 
         expect(result.target.index).toBeGreaterThan(-1);
-        expect(result.stickyRows).toContain(result.target.id);
-        expect(result.stickyMetaIds).toContain(result.target.id);
-        expect(result.stickyMetaIndexes).toContain(result.target.index);
+        expect(result.pinnedRows.topIds).toContain(result.target.id);
+        expect(result.pinnedMetaTopIds).toContain(result.target.id);
     });
 
-    test('supports toggleStickyRow and emits sticky change events', async ({
+    test('supports pinRow/unpinRow for remote data', async ({
         page
     }) => {
         await page.goto('/grid-pro/cypress/remote-data-provider');
@@ -290,51 +297,37 @@ test.describe('RemoteDataProvider', () => {
                 },
                 rendering: {
                     rows: {
-                        sticky: {
+                        pinning: {
                             idColumn: 'id',
-                            ids: [5]
+                            topIds: [5]
                         }
                     }
                 }
             });
 
             const grid = api.getGrid();
-            (window as any).stickyRowsEvents = [];
-            grid.hcEvents = grid.hcEvents || {};
-            grid.hcEvents.afterStickyRowsChange =
-                grid.hcEvents.afterStickyRowsChange || [];
-
-            grid.hcEvents.afterStickyRowsChange.push({
-                fn: function (e: any): void {
-                    (window as any).stickyRowsEvents.push({
-                        rowId: e.rowId,
-                        action: e.action,
-                        stickyRows: e.stickyRows
-                    });
-                }
-            });
-
-            if (typeof grid.toggleStickyRow !== 'function') {
+            if (
+                typeof grid.pinRow !== 'function' ||
+                typeof grid.unpinRow !== 'function' ||
+                typeof grid.getPinnedRows !== 'function'
+            ) {
                 return {
-                    hasToggle: false,
-                    events: [],
-                    stickyRows: []
+                    hasApi: false,
+                    pinnedRows: { topIds: [], bottomIds: [] }
                 };
             }
 
-            await grid.toggleStickyRow(5);
+            await grid.unpinRow(5);
+            await grid.pinRow(7);
 
             return {
-                hasToggle: true,
-                events: (window as any).stickyRowsEvents,
-                stickyRows: grid.getStickyRows()
+                hasApi: true,
+                pinnedRows: grid.getPinnedRows()
             };
         });
 
-        expect(result.hasToggle).toBe(true);
-        expect(result.events.length).toBeGreaterThanOrEqual(1);
-        expect(result.events[0].rowId).toBe(5);
-        expect(result.events[0].action).toBe('unstick');
-        expect(result.stickyRows).not.toContain(5);
+        expect(result.hasApi).toBe(true);
+        expect(result.pinnedRows.topIds).not.toContain(5);
+        expect(result.pinnedRows.topIds).toContain(7);
     });
 });

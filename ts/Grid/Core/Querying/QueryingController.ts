@@ -24,6 +24,7 @@
 
 import type DataModifier from '../../../Data/Modifiers/DataModifier.js';
 import type Grid from '../Grid.js';
+import type RowPinningController from '../RowPinning/RowPinningController.js';
 
 import SortingController from './SortingController.js';
 import FilteringController from './FilteringController.js';
@@ -148,14 +149,45 @@ class QueryingController {
      * Apply all modifiers to the data provider.
      */
     private async modifyData(): Promise<void> {
-        await this.grid.dataProvider?.applyQuery();
+        const dataProvider = this.grid.dataProvider;
+        if (!dataProvider) {
+            return;
+        }
 
-        const rowSticky = this.grid.rowSticky;
-        if (rowSticky?.isEnabled()) {
-            this.grid.rowStickyMeta = await rowSticky.computeStickyState();
+        const rowPinning = (this.grid as {
+            rowPinning?: RowPinningController;
+        }).rowPinning;
+
+        const sortingActive = !!this.sorting.modifier;
+        const filteringActive = !!this.filtering.modifier;
+
+        await dataProvider.applyQuery();
+
+        if (rowPinning?.isEnabled()) {
+            const pinningResult =
+                await rowPinning.computePinnedStateForProvider(
+                    dataProvider,
+                    {
+                        sortingActive,
+                        filteringActive,
+                        paginationEnabled: this.pagination.enabled,
+                        currentPage: this.pagination.currentPage,
+                        currentPageSize: this.pagination.currentPageSize
+                    }
+                );
+            await dataProvider.setPinningView(
+                rowPinning.createProviderPinningViewState(pinningResult)
+            );
+            this.grid.rowPinningMeta = {
+                topCount: pinningResult.topCount,
+                bottomCount: pinningResult.bottomCount,
+                scrollableCount: pinningResult.scrollableCount,
+                topRowIds: pinningResult.topRowIds.slice(),
+                bottomRowIds: pinningResult.bottomRowIds.slice()
+            };
         } else {
-            rowSticky?.resetEffectiveState();
-            delete this.grid.rowStickyMeta;
+            delete this.grid.rowPinningMeta;
+            await dataProvider.setPinningView(void 0);
         }
 
         this.shouldBeUpdated = false;

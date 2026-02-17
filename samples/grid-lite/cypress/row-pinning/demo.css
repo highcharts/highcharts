@@ -1,6 +1,5 @@
 @import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-lite/css/grid-lite.css");
 
 #container {
-    width: 900px;
-    height: 440px;
+    height: 520px;
 }

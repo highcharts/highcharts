@@ -23,10 +23,8 @@ function test_grid() {
         }
     });
 
-    Grid.grid('container', {
-        data: {
-            dataTable,
-        },
+    const grid = Grid.grid('container', {
+        dataTable,
         header: [{
             format: 'grouped header',
             columns: [{
@@ -57,16 +55,11 @@ function test_grid() {
         columns: [{
             id: 'hidden',
             enabled: false
-        }],
-        responsive: {
-            rules: [{
-                condition: {
-                    minHeight: 500
-                },
-                gridOptions: {
-                    header: ['x']
-                }
-            }]
-        }
+        }]
     });
+
+    grid.pinRow('A', 'top');
+    grid.toggleRow('A');
+    grid.unpinRow('A');
+    grid.getPinnedRows();
 }

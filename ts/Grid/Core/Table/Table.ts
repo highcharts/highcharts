@@ -22,6 +22,7 @@
  *
  * */
 
+import TableRow from './Body/TableRow.js';
 import type DataTable from '../../../Data/DataTable';
 import type { RowId } from '../Data/DataProvider';
 
@@ -39,7 +40,6 @@ import type TableCell from './Body/TableCell';
 
 import Cell from './Cell.js';
 import CellContextMenu from './Body/CellContextMenu.js';
-import TableRow from './Body/TableRow.js';
 
 const { makeHTMLElement } = GridUtils;
 const {
@@ -86,6 +86,16 @@ class Table {
     public readonly tbodyElement: HTMLElement;
 
     /**
+     * The HTML element containing top pinned rows.
+     */
+    public readonly pinnedTopTbodyElement: HTMLElement;
+
+    /**
+     * The HTML element containing bottom pinned rows.
+     */
+    public readonly pinnedBottomTbodyElement: HTMLElement;
+
+    /**
      * The head of the table.
      */
     public header?: TableHeader;
@@ -99,6 +109,16 @@ class Table {
      * The visible rows of the table.
      */
     public rows: TableRow[] = [];
+
+    /**
+     * The rendered top pinned rows.
+     */
+    public pinnedTopRows: TableRow[] = [];
+
+    /**
+     * The rendered bottom pinned rows.
+     */
+    public pinnedBottomRows: TableRow[] = [];
 
     /**
      * The resize observer for the table container.
@@ -154,40 +174,9 @@ class Table {
     private cellContextMenu?: CellContextMenu;
 
     /**
-     * Sticky row container rendered above the table body.
+     * Whether pinned scrollbar compensation is queued for next frame.
      */
-    private stickyTopContainer?: HTMLElement;
-
-    /**
-     * Sticky row container rendered below the table body.
-     */
-    private stickyBottomContainer?: HTMLElement;
-
-    /**
-     * Sticky top table body.
-     */
-    private stickyTopTbodyElement?: HTMLElement;
-
-    /**
-     * Sticky bottom table body.
-     */
-    private stickyBottomTbodyElement?: HTMLElement;
-
-    /**
-     * Cache for sticky row instances by row index.
-     */
-    private stickyRows: Map<number, TableRow> = new Map();
-
-    /**
-     * Sticky rows currently rendered in the top container.
-     */
-    private stickyTopIndexes: number[] = [];
-
-    /**
-     * Sticky rows currently rendered in the bottom container.
-     */
-    private stickyBottomIndexes: number[] = [];
-
+    private pinnedScrollbarCompensationQueued = false;
 
     /* *
     *
@@ -216,7 +205,18 @@ class Table {
         if (grid.options?.rendering?.header?.enabled) {
             this.theadElement = makeHTMLElement('thead', {}, tableElement);
         }
+        this.pinnedTopTbodyElement = makeHTMLElement(
+            'tbody',
+            { className: Globals.getClassName('pinnedTopTbodyElement') }
+        );
         this.tbodyElement = makeHTMLElement('tbody', {}, tableElement);
+        this.tbodyElement.classList.add(
+            Globals.getClassName('scrollableTbodyElement')
+        );
+        this.pinnedBottomTbodyElement = makeHTMLElement(
+            'tbody',
+            { className: Globals.getClassName('pinnedBottomTbodyElement') }
+        );
 
         this.rowsVirtualizer = new RowsVirtualizer(this);
 
@@ -227,19 +227,9 @@ class Table {
         this.resizeObserver.observe(tableElement);
 
         this.tbodyElement.addEventListener('scroll', this.onScroll);
-        this.tbodyElement.addEventListener('focus', this.onTBodyFocus);
-
-        // Delegated cell events
-        this.tbodyElement.addEventListener('click', this.onCellClick);
-        this.tbodyElement.addEventListener('dblclick', this.onCellDblClick);
-        this.tbodyElement.addEventListener(
-            'contextmenu',
-            this.onCellContextMenu
-        );
-        this.tbodyElement.addEventListener('mousedown', this.onCellMouseDown);
-        this.tbodyElement.addEventListener('mouseover', this.onCellMouseOver);
-        this.tbodyElement.addEventListener('mouseout', this.onCellMouseOut);
-        this.tbodyElement.addEventListener('keydown', this.onCellKeyDown);
+        this.addBodyEventListeners(this.tbodyElement);
+        this.addBodyEventListeners(this.pinnedTopTbodyElement);
+        this.addBodyEventListeners(this.pinnedBottomTbodyElement);
     }
 
     /* *
@@ -268,7 +258,6 @@ class Table {
     public async init(): Promise<void> {
         try {
             this.grid.showLoading();
-
             const { tableElement } = this;
             const renderingOptions = this.grid.options?.rendering;
             const customClassName = renderingOptions?.table?.className;
@@ -305,13 +294,37 @@ class Table {
             // this.footer = new TableFooter(this);
             // this.footer.render();
 
+            // Ensure row widths are ready before first row render to prevent
+            // initial pinned-row misalignment.
+            this.columnResizing.reflow();
             await this.rowsVirtualizer.initialRender();
-            await this.updateStickyRows();
         } finally {
             fireEvent(this, 'afterInit');
             this.reflow();
             this.grid.hideLoading();
         }
+    }
+
+    private addBodyEventListeners(body: HTMLElement): void {
+        body.addEventListener('focus', this.onTBodyFocus);
+        body.addEventListener('click', this.onCellClick);
+        body.addEventListener('dblclick', this.onCellDblClick);
+        body.addEventListener('contextmenu', this.onCellContextMenu);
+        body.addEventListener('mousedown', this.onCellMouseDown);
+        body.addEventListener('mouseover', this.onCellMouseOver);
+        body.addEventListener('mouseout', this.onCellMouseOut);
+        body.addEventListener('keydown', this.onCellKeyDown);
+    }
+
+    private removeBodyEventListeners(body: HTMLElement): void {
+        body.removeEventListener('focus', this.onTBodyFocus);
+        body.removeEventListener('click', this.onCellClick);
+        body.removeEventListener('dblclick', this.onCellDblClick);
+        body.removeEventListener('contextmenu', this.onCellContextMenu);
+        body.removeEventListener('mousedown', this.onCellMouseDown);
+        body.removeEventListener('mouseover', this.onCellMouseOver);
+        body.removeEventListener('mouseout', this.onCellMouseOut);
+        body.removeEventListener('keydown', this.onCellKeyDown);
     }
 
     /**
@@ -333,340 +346,6 @@ class Table {
     }
 
     /**
-     * Creates sticky row containers. These are rendered outside the table
-     * semantics (`aria-hidden`) and mirror sticky rows only.
-     */
-    private createStickyContainers(): void {
-        const wrapper = this.grid.contentWrapper;
-        if (!wrapper) {
-            return;
-        }
-
-        const createContainer = (
-            position: 'stickyRowsTop' | 'stickyRowsBottom'
-        ): {
-            container: HTMLElement;
-            tbody: HTMLElement;
-        } => {
-            const container = makeHTMLElement('div', {
-                className: (
-                    Globals.getClassName('stickyRowsContainer') + ' ' +
-                    Globals.getClassName(position)
-                )
-            }, wrapper);
-            container.setAttribute('aria-hidden', 'true');
-
-            const table = makeHTMLElement('table', {
-                className: Globals.getClassName('tableElement')
-            }, container);
-            const tbody = makeHTMLElement('tbody', {}, table);
-
-            for (const eventName of [
-                'click',
-                'dblclick',
-                'contextmenu',
-                'mousedown',
-                'mouseover',
-                'mouseout'
-            ] as const) {
-                const handler = {
-                    click: this.onCellClick,
-                    dblclick: this.onCellDblClick,
-                    contextmenu: this.onCellContextMenu,
-                    mousedown: this.onCellMouseDown,
-                    mouseover: this.onCellMouseOver,
-                    mouseout: this.onCellMouseOut
-                }[eventName];
-
-                tbody.addEventListener(eventName, handler);
-            }
-
-            return { container, tbody };
-        };
-
-        const top = createContainer('stickyRowsTop');
-        const bottom = createContainer('stickyRowsBottom');
-
-        this.stickyTopContainer = top.container;
-        this.stickyTopTbodyElement = top.tbody;
-        this.stickyBottomContainer = bottom.container;
-        this.stickyBottomTbodyElement = bottom.tbody;
-    }
-
-    private destroyStickyContainers(): void {
-        const removeListeners = (tbody: HTMLElement | undefined): void => {
-            if (!tbody) {
-                return;
-            }
-
-            tbody.removeEventListener('click', this.onCellClick);
-            tbody.removeEventListener('dblclick', this.onCellDblClick);
-            tbody.removeEventListener('contextmenu', this.onCellContextMenu);
-            tbody.removeEventListener('mousedown', this.onCellMouseDown);
-            tbody.removeEventListener('mouseover', this.onCellMouseOver);
-            tbody.removeEventListener('mouseout', this.onCellMouseOut);
-        };
-
-        removeListeners(this.stickyTopTbodyElement);
-        removeListeners(this.stickyBottomTbodyElement);
-
-        this.stickyTopContainer?.remove();
-        this.stickyBottomContainer?.remove();
-        delete this.stickyTopContainer;
-        delete this.stickyBottomContainer;
-        delete this.stickyTopTbodyElement;
-        delete this.stickyBottomTbodyElement;
-
-        this.stickyTopIndexes.length = 0;
-        this.stickyBottomIndexes.length = 0;
-
-        for (const row of this.stickyRows.values()) {
-            row.destroy();
-        }
-        this.stickyRows.clear();
-    }
-
-    private syncStickyContainersGeometry(): void {
-        const wrapper = this.grid.contentWrapper;
-        const top = this.stickyTopContainer;
-        const bottom = this.stickyBottomContainer;
-
-        if (!wrapper || !top || !bottom) {
-            return;
-        }
-
-        const wrapperRect = wrapper.getBoundingClientRect();
-        const tbodyRect = this.tbodyElement.getBoundingClientRect();
-
-        const topOffset = tbodyRect.top - wrapperRect.top;
-        const leftOffset = tbodyRect.left - wrapperRect.left;
-
-        const apply = (container: HTMLElement, isTop: boolean): void => {
-            container.style.left = leftOffset + 'px';
-            container.style.width = this.tbodyElement.clientWidth + 'px';
-
-            if (isTop) {
-                container.style.top = topOffset + 'px';
-                container.style.bottom = '';
-            } else {
-                container.style.top = '';
-                container.style.bottom = (
-                    wrapperRect.bottom - tbodyRect.bottom
-                ) + 'px';
-            }
-        };
-
-        apply(top, true);
-        apply(bottom, false);
-
-        this.syncStickyHorizontalScroll();
-    }
-
-    private syncStickyHorizontalScroll(): void {
-        const scrollLeft = this.tbodyElement.scrollLeft;
-
-        if (this.stickyTopContainer?.firstElementChild) {
-            (
-                this.stickyTopContainer.firstElementChild as HTMLElement
-            ).style.transform = `translateX(${-scrollLeft}px)`;
-        }
-
-        if (this.stickyBottomContainer?.firstElementChild) {
-            (
-                this.stickyBottomContainer.firstElementChild as HTMLElement
-            ).style.transform = `translateX(${-scrollLeft}px)`;
-        }
-    }
-
-    /**
-     * Reflows currently rendered sticky rows so their cell widths stay aligned
-     * with the main table after layout changes (resize/column width updates).
-     */
-    private reflowStickyRows(): void {
-        const renderedIndexes = new Set<number>([
-            ...this.stickyTopIndexes,
-            ...this.stickyBottomIndexes
-        ]);
-
-        for (const index of renderedIndexes) {
-            this.stickyRows.get(index)?.reflow();
-        }
-    }
-
-    private computeTopStickyIndexes(
-        rowIndexes: number[],
-        visibleFrom: number
-    ): number[] {
-        const topIndexes: number[] = [];
-
-        for (let i = 0, iEnd = rowIndexes.length; i < iEnd; ++i) {
-            const index = rowIndexes[i];
-
-            // Stack sticky rows progressively so each next sticky row sticks
-            // when it reaches the already-stuck block, not after passing it.
-            if (index <= visibleFrom + topIndexes.length) {
-                topIndexes.push(index);
-            }
-        }
-
-        return topIndexes;
-    }
-
-    private computeBottomStickyIndexes(
-        rowIndexes: number[],
-        visibleTo: number,
-        topIndexSet: Set<number>
-    ): number[] {
-        const bottomIndexes: number[] = [];
-
-        for (let i = rowIndexes.length - 1; i >= 0; --i) {
-            const index = rowIndexes[i];
-
-            if (topIndexSet.has(index)) {
-                continue;
-            }
-
-            // Keep existing behavior (rows below viewport stick at bottom),
-            // and progressively extend by one row per already-stuck bottom
-            // row so handoff happens on contact with the bottom sticky stack.
-            if (index >= visibleTo - bottomIndexes.length) {
-                bottomIndexes.push(index);
-            }
-        }
-
-        bottomIndexes.reverse();
-
-        return bottomIndexes;
-    }
-
-    private async updateStickyRows(): Promise<void> {
-        const stickyMeta = this.grid.rowStickyMeta;
-        const rowIndexes = stickyMeta?.stickyRowIndexes || [];
-
-        if (!rowIndexes.length) {
-            this.destroyStickyContainers();
-            return;
-        }
-
-        if (!this.stickyTopContainer || !this.stickyBottomContainer) {
-            this.createStickyContainers();
-        }
-
-        const topTbody = this.stickyTopTbodyElement;
-        const bottomTbody = this.stickyBottomTbodyElement;
-        const topContainer = this.stickyTopContainer;
-        const bottomContainer = this.stickyBottomContainer;
-
-        if (!topTbody || !bottomTbody || !topContainer || !bottomContainer) {
-            return;
-        }
-
-        const rowCount = await this.grid.dataProvider?.getRowCount() || 0;
-        if (!rowCount) {
-            return;
-        }
-
-        let visibleFrom: number;
-        let visibleTo: number;
-
-        if (this.virtualRows) {
-            const rowHeight = this.rowsVirtualizer.defaultRowHeight ||
-                this.rows[0]?.htmlElement.offsetHeight ||
-                1;
-
-            visibleFrom = Math.max(0, Math.floor(
-                this.tbodyElement.scrollTop / rowHeight
-            ));
-            visibleTo = Math.min(
-                rowCount - 1,
-                Math.ceil(
-                    (
-                        this.tbodyElement.scrollTop +
-                        this.tbodyElement.clientHeight
-                    ) / rowHeight
-                ) - 1
-            );
-        } else {
-            const rowHeight = this.rows[0]?.htmlElement.offsetHeight ||
-                this.rowsVirtualizer.defaultRowHeight;
-
-            visibleFrom = Math.max(0, Math.floor(
-                this.tbodyElement.scrollTop / rowHeight
-            ));
-            visibleTo = Math.min(
-                rowCount - 1,
-                Math.ceil(
-                    (
-                        this.tbodyElement.scrollTop +
-                        this.tbodyElement.clientHeight
-                    ) / rowHeight
-                ) - 1
-            );
-        }
-
-        const topIndexes = this.computeTopStickyIndexes(
-            rowIndexes,
-            visibleFrom
-        );
-        const topIndexSet = new Set(topIndexes);
-        const bottomIndexes = this.computeBottomStickyIndexes(
-            rowIndexes,
-            visibleTo,
-            topIndexSet
-        );
-
-        if (
-            areArraysEqual(this.stickyTopIndexes, topIndexes) &&
-            areArraysEqual(this.stickyBottomIndexes, bottomIndexes)
-        ) {
-            this.syncStickyContainersGeometry();
-            return;
-        }
-
-        this.stickyTopIndexes = topIndexes;
-        this.stickyBottomIndexes = bottomIndexes;
-        const renderRows = async (
-            indexes: number[],
-            tbody: HTMLElement
-        ): Promise<void> => {
-            tbody.innerHTML = '';
-            const fragment = document.createDocumentFragment();
-
-            for (let i = 0, iEnd = indexes.length; i < iEnd; ++i) {
-                const index = indexes[i];
-                let row = this.stickyRows.get(index);
-                if (!row) {
-                    row = new TableRow(this, index);
-                    await row.init();
-                    await row.render();
-                    this.stickyRows.set(index, row);
-                } else {
-                    await row.reuse(index);
-                }
-
-                row.reflow();
-                row.htmlElement.style.height = '';
-                row.htmlElement.style.transform = '';
-
-                for (const cell of row.cells) {
-                    cell.htmlElement.style.transform = '';
-                }
-
-                fragment.appendChild(row.htmlElement);
-            }
-
-            tbody.appendChild(fragment);
-        };
-
-        await renderRows(topIndexes, topTbody);
-        await renderRows(bottomIndexes, bottomTbody);
-
-        topContainer.style.display = topIndexes.length ? '' : 'none';
-        bottomContainer.style.display = bottomIndexes.length ? '' : 'none';
-        this.syncStickyContainersGeometry();
-    }
-
-    /**
      * Checks if rows virtualization should be enabled.
      *
      * @returns
@@ -679,9 +358,10 @@ class Table {
             return rows.virtualization;
         }
 
-        // Consider changing this to use the presentation table row count
-        // instead of the original data table row count.
-        const rowCount = (await this.grid.dataProvider?.getRowCount()) ?? 0;
+        const rowCount = (
+            grid.rowPinningMeta?.scrollableCount ??
+            await this.grid.dataProvider?.getRowCount()
+        ) ?? 0;
         const threshold = rows?.virtualizationThreshold ?? 50;
 
         if (grid.pagination) {
@@ -720,8 +400,11 @@ class Table {
         if (!dp) {
             return;
         }
-
-        vp.grid.querying.pagination.clampPage();
+        const oldPinningMeta = vp.grid.rowPinningMeta;
+        let focusedRowId: RowId | undefined;
+        if (vp.focusCursor) {
+            focusedRowId = await dp.getRowId(vp.focusCursor[0]);
+        }
 
         try {
             this.grid.showLoading();
@@ -730,7 +413,14 @@ class Table {
             const oldRowsCount = vp.rows.length > 0 ?
                 (vp.rows[vp.rows.length - 1]?.index ?? -1) + 1 :
                 0;
-            await vp.grid.querying.proceed();
+            const forceQuerying = !!(vp.grid as {
+                rowPinning?: { isEnabled(): boolean };
+            }).rowPinning?.isEnabled();
+            await vp.grid.querying.proceed(forceQuerying);
+            vp.grid.querying.pagination.clampPage();
+            if (vp.grid.querying.shouldBeUpdated) {
+                await vp.grid.querying.proceed(forceQuerying);
+            }
             for (const column of vp.columns) {
                 column.loadData();
             }
@@ -746,18 +436,29 @@ class Table {
                 );
                 shouldRerender = true;
             }
+            const newPinningMeta = vp.grid.rowPinningMeta;
+            const pinningMetaChanged = (
+                oldPinningMeta?.topCount !== newPinningMeta?.topCount ||
+                oldPinningMeta?.bottomCount !== newPinningMeta?.bottomCount ||
+                oldPinningMeta?.scrollableCount !==
+                    newPinningMeta?.scrollableCount ||
+                oldPinningMeta?.topRowIds.join('|') !==
+                    newPinningMeta?.topRowIds.join('|') ||
+                oldPinningMeta?.bottomRowIds.join('|') !==
+                    newPinningMeta?.bottomRowIds.join('|')
+            );
+            if (pinningMetaChanged) {
+                shouldRerender = true;
+            }
 
             const newRowCount = await dp.getRowCount();
-            if (shouldRerender) {
+            if (shouldRerender || oldRowsCount !== newRowCount) {
                 // Rerender all rows
                 await vp.rowsVirtualizer.rerender();
-            } else if (oldRowsCount !== newRowCount) {
-                // Refresh rows without full teardown
-                await vp.rowsVirtualizer.refreshRows();
             } else {
                 // Update existing rows - create a snapshot to avoid issues
                 // if array changes during iteration
-                const rowsToUpdate = [...vp.rows];
+                const rowsToUpdate = [...vp.getRenderedRows()];
                 for (let i = 0, iEnd = rowsToUpdate.length; i < iEnd; ++i) {
                     await rowsToUpdate[i].update();
                 }
@@ -765,8 +466,21 @@ class Table {
 
             // Update the pagination controls
             vp.grid.pagination?.updateControls();
-            await this.updateStickyRows();
             vp.reflow();
+
+            if (focusedRowId !== void 0 && vp.focusCursor) {
+                const newRowIndex = await dp.getRowIndex(focusedRowId);
+                if (newRowIndex !== void 0) {
+                    vp.scrollToRow(newRowIndex);
+                    setTimeout((): void => {
+                        if (!defined(vp.focusCursor?.[1])) {
+                            return;
+                        }
+                        vp.getRenderedRowByIndex(newRowIndex)
+                            ?.cells[vp.focusCursor[1]].htmlElement.focus();
+                    });
+                }
+            }
         } finally {
             this.grid.hideLoading();
         }
@@ -785,8 +499,14 @@ class Table {
 
         // Reflow rows content dimensions
         this.rowsVirtualizer.reflowRows();
-        this.reflowStickyRows();
-        this.syncStickyContainersGeometry();
+        for (let i = 0, iEnd = this.pinnedTopRows.length; i < iEnd; ++i) {
+            this.pinnedTopRows[i].reflow();
+        }
+        for (let i = 0, iEnd = this.pinnedBottomRows.length; i < iEnd; ++i) {
+            this.pinnedBottomRows[i].reflow();
+        }
+        this.applyPinnedScrollbarCompensation();
+        this.syncPinnedHorizontalScroll(this.tbodyElement.scrollLeft);
 
         // Reflow the pagination
         this.grid.pagination?.reflow();
@@ -807,9 +527,7 @@ class Table {
      */
     private onTBodyFocus = (e: FocusEvent): void => {
         e.preventDefault();
-
-        this.rows[this.rowsVirtualizer.rowCursor - this.rows[0].index]
-            ?.cells[0]?.htmlElement.focus();
+        this.getRenderedRows()[0]?.cells[0]?.htmlElement.focus();
     };
 
     /**
@@ -825,15 +543,11 @@ class Table {
     private onScroll = (): void => {
         if (this.virtualRows) {
             void this.rowsVirtualizer.scroll();
-            requestAnimationFrame((): void => {
-                void this.updateStickyRows();
-            });
-        } else {
-            void this.updateStickyRows();
         }
 
+        this.syncPinnedHorizontalScroll(this.tbodyElement.scrollLeft);
+
         this.header?.scrollHorizontally(this.tbodyElement.scrollLeft);
-        this.syncStickyHorizontalScroll();
     };
 
     /**
@@ -1002,21 +716,33 @@ class Table {
      * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/grid-lite/basic/scroll-to-row | Scroll to row}
      */
     public scrollToRow(index: number): void {
+        const topPinnedCount = this.grid.rowPinningMeta?.topCount || 0;
         if (this.virtualRows) {
-            this.tbodyElement.scrollTop =
-                index * this.rowsVirtualizer.defaultRowHeight;
+            this.tbodyElement.scrollTop = Math.max(
+                0,
+                (index - topPinnedCount) * this.rowsVirtualizer.defaultRowHeight
+            );
             return;
         }
 
         const rowClass = '.' + Globals.getClassName('rowElement');
-        const firstRowTop = this.tbodyElement
-            .querySelectorAll(rowClass)[0]
-            .getBoundingClientRect().top;
+        const scrollableIndex = Math.max(0, index - topPinnedCount);
+        const rows = this.tbodyElement.querySelectorAll(rowClass);
+        const firstRow = rows[0];
+        const safeIndex = Math.min(
+            scrollableIndex,
+            Math.max(0, rows.length - 1)
+        );
+        const targetRow = rows[safeIndex];
+
+        if (!firstRow || !targetRow) {
+            return;
+        }
+
+        const firstRowTop = firstRow.getBoundingClientRect().top;
 
         this.tbodyElement.scrollTop = (
-            this.tbodyElement
-                .querySelectorAll(rowClass)[index]
-                .getBoundingClientRect().top
+            targetRow.getBoundingClientRect().top
         ) - firstRowTop;
     }
 
@@ -1082,9 +808,7 @@ class Table {
         }
 
         const rowIndex = parseInt(rowIndexAttr, 10);
-        const firstRowIndex = this.rows[0]?.index ?? 0;
-        const row = this.rows[rowIndex - firstRowIndex] ||
-            this.stickyRows.get(rowIndex);
+        const row = this.getRenderedRowByIndex(rowIndex);
         if (!row) {
             return;
         }
@@ -1098,24 +822,11 @@ class Table {
      * Destroys the grid table.
      */
     public destroy(): void {
-        this.tbodyElement.removeEventListener('focus', this.onTBodyFocus);
         this.tbodyElement.removeEventListener('scroll', this.onScroll);
-        this.tbodyElement.removeEventListener('click', this.onCellClick);
-        this.tbodyElement.removeEventListener('dblclick', this.onCellDblClick);
-        this.tbodyElement.removeEventListener(
-            'contextmenu',
-            this.onCellContextMenu
-        );
-        this.tbodyElement.removeEventListener(
-            'mousedown', this.onCellMouseDown
-        );
-        this.tbodyElement.removeEventListener(
-            'mouseover', this.onCellMouseOver
-        );
-        this.tbodyElement.removeEventListener('mouseout', this.onCellMouseOut);
-        this.tbodyElement.removeEventListener('keydown', this.onCellKeyDown);
+        this.removeBodyEventListeners(this.tbodyElement);
+        this.removeBodyEventListeners(this.pinnedTopTbodyElement);
+        this.removeBodyEventListeners(this.pinnedBottomTbodyElement);
         this.resizeObserver.disconnect();
-        this.destroyStickyContainers();
         this.columnsResizer?.removeEventListeners();
         this.header?.destroy();
         this.cellContextMenu?.hide();
@@ -1123,6 +834,12 @@ class Table {
 
         for (let i = 0, iEnd = this.rows.length; i < iEnd; ++i) {
             this.rows[i]?.destroy();
+        }
+        for (let i = 0, iEnd = this.pinnedTopRows.length; i < iEnd; ++i) {
+            this.pinnedTopRows[i].destroy();
+        }
+        for (let i = 0, iEnd = this.pinnedBottomRows.length; i < iEnd; ++i) {
+            this.pinnedBottomRows[i].destroy();
         }
 
         fireEvent(this, 'afterDestroy');
@@ -1156,12 +873,11 @@ class Table {
     ): void {
         this.tbodyElement.scrollTop = meta.scrollTop;
         this.tbodyElement.scrollLeft = meta.scrollLeft;
-        this.syncStickyHorizontalScroll();
-        void this.updateStickyRows();
+        this.syncPinnedHorizontalScroll(meta.scrollLeft);
 
         if (meta.focusCursor) {
             const [rowIndex, columnIndex] = meta.focusCursor;
-            const row = this.rows[rowIndex - this.rows[0].index];
+            const row = this.getRenderedRowByIndex(rowIndex);
             row?.cells[columnIndex]?.htmlElement.focus();
         }
     }
@@ -1205,31 +921,229 @@ class Table {
      * The ID of the row.
      */
     public getRow(id: RowId): TableRow | undefined {
-        return this.rows.find((row): boolean => row.id === id);
-    }
-}
-
-/**
- * Returns true when both arrays contain exactly the same values in order.
- *
- * @param a
- * First array.
- *
- * @param b
- * Second array.
- */
-function areArraysEqual(a: number[], b: number[]): boolean {
-    if (a.length !== b.length) {
-        return false;
+        return this.getRenderedRows().find((row): boolean => row.id === id);
     }
 
-    for (let i = 0, iEnd = a.length; i < iEnd; ++i) {
-        if (a[i] !== b[i]) {
-            return false;
+    /**
+     * Returns all rendered rows in visual order.
+     *
+     * @internal
+     */
+    public getRenderedRows(): TableRow[] {
+        return [
+            ...this.pinnedTopRows,
+            ...this.rows,
+            ...this.pinnedBottomRows
+        ];
+    }
+
+    /**
+     * Returns the rendered row with the provided presentation index.
+     *
+     * @param index
+     * The row index in the presentation table.
+     *
+     * @internal
+     */
+    public getRenderedRowByIndex(index: number): TableRow | undefined {
+        return this.getRenderedRows()
+            .find((row): boolean => row.index === index);
+    }
+
+    /**
+     * Re-renders top and bottom pinned rows using current row pinning meta.
+     *
+     * @internal
+     */
+    public async renderPinnedRows(): Promise<void> {
+        const meta = this.grid.rowPinningMeta;
+        const hasPinning = !!meta;
+        this.ensurePinnedBodiesRendered(hasPinning);
+
+        if (!hasPinning) {
+            this.pinnedTopRows.forEach((row): void => row.destroy());
+            this.pinnedBottomRows.forEach((row): void => row.destroy());
+            this.pinnedTopRows.length = 0;
+            this.pinnedBottomRows.length = 0;
+            this.tbodyElement.style.display = '';
+            return;
+        }
+
+        const topCount = meta?.topCount || 0;
+        const bottomCount = meta?.bottomCount || 0;
+        const rowCount = await this.grid.dataProvider?.getRowCount() || 0;
+
+        await this.syncPinnedRows(
+            this.pinnedTopRows,
+            this.pinnedTopTbodyElement,
+            0,
+            topCount
+        );
+        await this.syncPinnedRows(
+            this.pinnedBottomRows,
+            this.pinnedBottomTbodyElement,
+            rowCount - bottomCount,
+            bottomCount
+        );
+
+        this.pinnedTopTbodyElement.classList.toggle(
+            Globals.getClassName('pinnedTbodyElementActive'),
+            topCount > 0
+        );
+        this.pinnedBottomTbodyElement.classList.toggle(
+            Globals.getClassName('pinnedTbodyElementActive'),
+            bottomCount > 0
+        );
+        this.tbodyElement.style.display = (
+            meta &&
+            meta.scrollableCount < 1 &&
+            topCount + bottomCount > 0
+        ) ?
+            'none' :
+            '';
+        this.syncPinnedHorizontalScroll(this.tbodyElement.scrollLeft);
+
+        this.applyPinnedScrollbarCompensation();
+    }
+
+    private syncPinnedHorizontalScroll(scrollLeft: number): void {
+        if (!this.pinnedTopTbodyElement.isConnected) {
+            return;
+        }
+
+        this.pinnedTopTbodyElement.scrollLeft = scrollLeft;
+        this.pinnedBottomTbodyElement.scrollLeft = scrollLeft;
+
+        const offset = -scrollLeft;
+        const transform = offset ? `translateX(${offset}px)` : '';
+
+        for (let i = 0, iEnd = this.pinnedTopRows.length; i < iEnd; ++i) {
+            this.pinnedTopRows[i].htmlElement.style.transform = transform;
+        }
+        for (
+            let i = 0, iEnd = this.pinnedBottomRows.length;
+            i < iEnd;
+            ++i
+        ) {
+            this.pinnedBottomRows[i].htmlElement.style.transform = transform;
         }
     }
 
-    return true;
+    private async syncPinnedRows(
+        targetRows: TableRow[],
+        tbody: HTMLElement,
+        startIndex: number,
+        count: number
+    ): Promise<void> {
+        const safeCount = Math.max(0, count);
+        const safeStart = Math.max(0, startIndex);
+
+        while (targetRows.length > safeCount) {
+            targetRows.pop()?.destroy();
+        }
+
+        for (let i = 0; i < safeCount; ++i) {
+            const rowIndex = safeStart + i;
+            let row = targetRows[i];
+
+            if (!row) {
+                row = new TableRow(this, rowIndex);
+                targetRows.push(row);
+                await row.init();
+                tbody.appendChild(row.htmlElement);
+                await row.render();
+                row.reflow();
+                continue;
+            }
+
+            await row.reuse(rowIndex, false);
+            row.reflow();
+            if (!row.htmlElement.isConnected) {
+                tbody.appendChild(row.htmlElement);
+            }
+        }
+    }
+
+    /**
+     * Keeps pinned sections aligned with the scrollable tbody content width by
+     * compensating for the vertical scrollbar gutter.
+     */
+    private applyPinnedScrollbarCompensation(): void {
+        const scrollableBody = this.tbodyElement;
+        const mainGutterWidth = Math.max(
+            0,
+            scrollableBody.offsetWidth - scrollableBody.clientWidth
+        );
+        const applyToPinnedBody = (pinnedBody: HTMLElement): void => {
+            if (!pinnedBody.isConnected) {
+                pinnedBody.style.width = '';
+                return;
+            }
+            const pinnedGutterWidth = Math.max(
+                0,
+                pinnedBody.offsetWidth - pinnedBody.clientWidth
+            );
+            const compensation = Math.max(
+                0,
+                mainGutterWidth - pinnedGutterWidth
+            );
+
+            pinnedBody.style.width = compensation > 0 ?
+                `calc(100% - ${compensation}px)` :
+                '';
+        };
+
+        applyToPinnedBody(this.pinnedTopTbodyElement);
+        applyToPinnedBody(this.pinnedBottomTbodyElement);
+
+        if (!this.pinnedScrollbarCompensationQueued) {
+            this.pinnedScrollbarCompensationQueued = true;
+            requestAnimationFrame((): void => {
+                this.pinnedScrollbarCompensationQueued = false;
+                applyToPinnedBody(this.pinnedTopTbodyElement);
+                applyToPinnedBody(this.pinnedBottomTbodyElement);
+            });
+        }
+    }
+
+    /**
+     * Ensure pinned tbody elements are attached only when row pinning is
+     * active, keeping a single tbody in the default non-pinning mode.
+     *
+     * @param shouldRender
+     * Whether pinned tbody elements should be attached.
+     */
+    private ensurePinnedBodiesRendered(shouldRender: boolean): void {
+        const {
+            tableElement,
+            pinnedTopTbodyElement,
+            pinnedBottomTbodyElement
+        } = this;
+        const topConnected = (
+            pinnedTopTbodyElement.parentElement === tableElement
+        );
+        const bottomConnected = (
+            pinnedBottomTbodyElement.parentElement === tableElement
+        );
+
+        if (!shouldRender) {
+            if (topConnected) {
+                pinnedTopTbodyElement.remove();
+            }
+            if (bottomConnected) {
+                pinnedBottomTbodyElement.remove();
+            }
+            return;
+        }
+
+        if (!topConnected) {
+            tableElement.insertBefore(pinnedTopTbodyElement, this.tbodyElement);
+        }
+        if (!bottomConnected) {
+            tableElement.appendChild(pinnedBottomTbodyElement);
+        }
+    }
+
 }
 
 /**

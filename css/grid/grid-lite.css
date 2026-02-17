@@ -185,14 +185,22 @@
         position: relative;
     }
 
-    &.hcg-scrollable-content tbody {
+    /* <tbody> */
+    &.hcg-scrollable-content tbody.hcg-tbody-scrollable {
         height: 100%;
         overflow: auto;
         min-height: 0;
         flex: 1;
     }
 
-    &.hcg-virtualization tbody {
+    tbody.hcg-tbody-pinned-top,
+    tbody.hcg-tbody-pinned-bottom {
+        display: block;
+        overflow: hidden;
+        flex: 0 0 auto;
+    }
+
+    &.hcg-virtualization tbody.hcg-tbody-scrollable {
         display: block;
         position: relative;
     }
@@ -223,11 +231,11 @@
         border-bottom: none;
     }
 
-    &.hcg-scrollable-content tbody tr {
+    &.hcg-scrollable-content tbody.hcg-tbody-scrollable tr {
         display: block;
     }
 
-    &.hcg-virtualization tbody tr {
+    &.hcg-virtualization tbody.hcg-tbody-scrollable tr {
         position: absolute;
     }
 
@@ -239,57 +247,6 @@
     tbody td:focus {
         outline: none;
     }
-}
-
-.hcg-sticky-rows-container {
-    position: absolute;
-    z-index: 4;
-    overflow: hidden;
-    pointer-events: none;
-}
-
-.hcg-sticky-rows-container .hcg-table {
-    margin: 0;
-    border: 0;
-    border-radius: 0;
-    background: var(--highcharts-background-color);
-    width: max-content;
-}
-
-.hcg-sticky-rows-container .hcg-table tbody {
-    height: auto;
-    flex: 0;
-    overflow: visible;
-}
-
-.hcg-sticky-rows-container .hcg-table tbody tr {
-    display: block;
-    position: relative;
-    --ig-row-background-current:
-        var(
-            --hcg-row-background,
-            var(--highcharts-background-color)
-        );
-}
-
-.hcg-sticky-rows-container .hcg-table tbody tr.hcg-row-even {
-    --ig-row-background-current:
-        var(
-            --hcg-row-even-background,
-            var(--hcg-row-background, var(--highcharts-background-color))
-        );
-}
-
-.hcg-sticky-rows-container .hcg-table tbody tr td {
-    pointer-events: auto;
-}
-
-.hcg-sticky-rows-top {
-    border-bottom: 1px solid var(--ig-row-border-color);
-}
-
-.hcg-sticky-rows-bottom {
-    border-top: 1px solid var(--ig-row-border-color);
 }
 
 /* ----------------------------------------------------------

@@ -58,7 +58,6 @@ export abstract class DataProvider {
      */
     protected readonly options: DataProviderOptions;
 
-
     /* *
      *
      *  Constructor
@@ -80,7 +79,7 @@ export abstract class DataProvider {
      * */
 
     /**
-     * Initializes the data provider.
+     * Optional asynchronous initialization hook.
      */
     public init(): Promise<void> {
         return Promise.resolve();
@@ -150,10 +149,156 @@ export abstract class DataProvider {
     public abstract destroy(): void;
 
     /**
+     * Returns the number of rows in a specific query scope.
+     *
+     * @param scope
+     * The query scope to read.
+     */
+    public async getScopedRowCount(
+        scope: ProviderQueryScope = 'active'
+    ): Promise<number> {
+        if (scope !== 'active') {
+            this.warnScopeFallback(scope, 'getScopedRowCount');
+        }
+        return this.getRowCount();
+    }
+
+    /**
+     * Returns row index for a row ID in a specific query scope.
+     *
+     * @param rowId
+     * The row ID to find.
+     *
+     * @param scope
+     * The query scope to read.
+     */
+    public async getScopedRowIndex(
+        rowId: RowId,
+        scope: ProviderQueryScope = 'active'
+    ): Promise<number | undefined> {
+        if (scope === 'active') {
+            return this.getRowIndex(rowId);
+        }
+
+        this.warnScopeFallback(scope, 'getScopedRowIndex');
+        const rowCount = await this.getScopedRowCount(scope);
+        for (let i = 0; i < rowCount; ++i) {
+            const scopedRowId = await this.getScopedRowId(i, scope);
+            if (scopedRowId === rowId) {
+                return i;
+            }
+        }
+    }
+
+    /**
+     * Returns row ID for a row index in a specific query scope.
+     *
+     * @param rowIndex
+     * The row index in the scope.
+     *
+     * @param scope
+     * The query scope to read.
+     */
+    public async getScopedRowId(
+        rowIndex: number,
+        scope: ProviderQueryScope = 'active'
+    ): Promise<RowId | undefined> {
+        if (scope !== 'active') {
+            this.warnScopeFallback(scope, 'getScopedRowId');
+        }
+        return this.getRowId(rowIndex);
+    }
+
+    /**
+     * Returns row object for a row index in a specific query scope.
+     *
+     * @param rowIndex
+     * The row index in the scope.
+     *
+     * @param scope
+     * The query scope to read.
+     */
+    public async getScopedRowObject(
+        rowIndex: number,
+        scope: ProviderQueryScope = 'active'
+    ): Promise<RowObjectType | undefined> {
+        if (scope !== 'active') {
+            this.warnScopeFallback(scope, 'getScopedRowObject');
+        }
+        return this.getRowObject(rowIndex);
+    }
+
+    /**
+     * Returns row objects keyed by row ID for provided row IDs in a scope.
+     *
+     * @param rowIds
+     * Row IDs to resolve.
+     *
+     * @param scope
+     * The query scope to read.
+     */
+    public async getScopedRowsByIds(
+        rowIds: RowId[],
+        scope: ProviderQueryScope = 'active'
+    ): Promise<Map<RowId, RowObjectType>> {
+        const result = new Map<RowId, RowObjectType>();
+        for (const rowId of rowIds) {
+            const rowIndex = await this.getScopedRowIndex(rowId, scope);
+            if (rowIndex === void 0) {
+                continue;
+            }
+            const row = await this.getScopedRowObject(rowIndex, scope);
+            if (row) {
+                result.set(rowId, row);
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Applies row pinning view state.
+     *
+     * @param state
+     * Pinning view state.
+     */
+    public setPinningView(
+        state?: ProviderPinningViewState
+    ): Promise<void> {
+        void state;
+        // Overridden in providers that support scoped pinning views.
+        return Promise.resolve();
+    }
+
+    /**
      * Returns the number of items before pagination has been applied.
      */
     public async getPrePaginationRowCount(): Promise<number> {
         return await this.getRowCount();
+    }
+
+    /**
+     * Warn about expensive fallback scoped operations once per scope+method.
+     *
+     * @param scope
+     * The scope that uses fallback.
+     *
+     * @param methodName
+     * The fallback method name.
+     */
+    protected warnScopeFallback(
+        scope: ProviderQueryScope,
+        methodName: string
+    ): void {
+        const key = `${this.constructor.name}:${scope}:${methodName}`;
+        if (fallbackWarnings.has(key)) {
+            return;
+        }
+        fallbackWarnings.add(key);
+        // eslint-disable-next-line no-console
+        console.warn(
+            `Grid ${this.constructor.name}: falling back to active-scope ` +
+            `implementation for "${methodName}" in "${scope}" scope.`
+        );
     }
 
     /**
@@ -211,16 +356,34 @@ export abstract class DataProvider {
 export type RowId = number | string;
 
 /**
+ * Query scope used by provider-aware row pinning.
+ */
+export type ProviderQueryScope = 'raw' | 'grouped' | 'sortingOnly' | 'active';
+
+/**
+ * Provider view state for row pinning.
+ */
+export interface ProviderPinningViewState {
+    topRowIds: RowId[];
+    bottomRowIds: RowId[];
+    scrollableRowIds: RowId[];
+    activeRowIds: RowId[];
+    topCount: number;
+    bottomCount: number;
+    scrollableCount: number;
+}
+
+/**
  * A base interface for the data provider options (`grid.options.data`).
  */
 export interface DataProviderOptions {
     /**
      * The type of the data provider.
-     *
-     * @default 'local'
      */
-    providerType?: string;
+    providerType: string;
 }
+
+const fallbackWarnings = new Set<string>();
 
 
 /* *

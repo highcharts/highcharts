@@ -73,6 +73,11 @@ function test_grid() {
                     header: ['x']
                 }
             }]
+        },
+        events: {
+            rowPinningChanged: function (e): void {
+                e.target;
+            }
         }
     });
 }
