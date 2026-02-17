@@ -11,6 +11,7 @@ Highcharts.chart('container', {
     legend: {
         backgroundColor: '#aaaaaa40',
         borderColor: '#999999',
+        borderRadius: 0,
         borderWidth: 2
     },
     series: [{

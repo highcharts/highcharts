@@ -1,6 +1,4 @@
 ---
- name: Demo of yAxis.minorTickWidth
- authors:
-   - Torstein Hønsi
- js_wrap: b
+name: Demo of yAxis.minorTickWidth
+js_wrap: b
 ...

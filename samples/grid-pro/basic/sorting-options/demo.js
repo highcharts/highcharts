@@ -18,6 +18,11 @@ Grid.grid('container', {
             enabled: false
         }
     }, {
+        id: 'weight',
+        sorting: {
+            orderSequence: ['asc', null, 'desc', null]
+        }
+    }, {
         id: 'price',
         sorting: {
             order: 'asc'
