@@ -28,7 +28,10 @@ import type CellContent from './CellContent/CellContent';
 import type HeaderCell from './Header/HeaderCell';
 import type { DeepPartial } from '../../../Shared/Types';
 import type { NonArrayColumnOptions } from '../Grid';
-import type { Column as DataTableColumn } from '../../../Data/DataTable';
+import type {
+    CellType as DataTableCellType,
+    Column as DataTableColumn
+} from '../../../Data/DataTable';
 
 import Table from './Table.js';
 import Utils from '../../../Core/Utilities.js';
@@ -119,6 +122,16 @@ export class Column {
      */
     public filtering?: ColumnFiltering;
 
+    /**
+     * The resolved id of the source column in the data provider.
+     */
+    private sourceColumnId?: string;
+
+    /**
+     * Whether the column is unbound to data provider columns.
+     */
+    private unbound: boolean = false;
+
 
     /* *
     *
@@ -165,9 +178,6 @@ export class Column {
             grid.options?.columnDefaults
         );
 
-        if (this.options.filtering?.enabled) {
-            this.filtering = new ColumnFiltering(this);
-        }
     }
 
     /* *
@@ -182,6 +192,11 @@ export class Column {
     public async init(): Promise<void> {
         this.loadData();
         this.dataType = await this.assumeDataType();
+
+        if (this.isFilteringEnabled()) {
+            this.filtering = new ColumnFiltering(this);
+        }
+
         fireEvent(this, 'afterInit');
     }
 
@@ -190,11 +205,50 @@ export class Column {
      */
     public loadData(): void {
         const dp = this.viewport.grid.dataProvider;
-        if (dp && 'getDataTable' in dp) {
-            this.data = dp.getDataTable(true)?.getColumn(this.id, true);
+        const binding = this.viewport.grid.getColumnDataBinding(this.id);
+        this.sourceColumnId = binding.sourceColumnId;
+        this.unbound = binding.isUnbound;
+
+        if (
+            dp && 'getDataTable' in dp &&
+            this.sourceColumnId && !this.unbound
+        ) {
+            this.data = dp.getDataTable(true)?.getColumn(
+                this.sourceColumnId,
+                true
+            );
         } else {
             delete this.data;
         }
+
+        if (this.isFilteringEnabled()) {
+            this.filtering ??= new ColumnFiltering(this);
+        } else {
+            delete this.filtering;
+        }
+    }
+
+    /**
+     * Resolves the raw value for a table cell.
+     *
+     * @param cell
+     * The cell to resolve the value for.
+     */
+    public async getCellValue(cell: TableCell): Promise<DataTableCellType> {
+        const valueGetter = this.options.cells?.valueGetter;
+        if (valueGetter) {
+            return await valueGetter.call(cell, cell);
+        }
+
+        const sourceColumnId = this.sourceColumnId;
+        if (!sourceColumnId) {
+            return void 0;
+        }
+
+        return this.viewport.grid.dataProvider?.getValue(
+            sourceColumnId,
+            cell.row.index
+        );
     }
 
     /**
@@ -222,7 +276,65 @@ export class Column {
             return type;
         }
 
-        return (await dp?.getColumnDataType(this.id)) ?? 'string';
+        if (this.isUnbound() || !this.sourceColumnId) {
+            return 'string';
+        }
+
+        return (await dp?.getColumnDataType(this.sourceColumnId)) ?? 'string';
+    }
+
+    /**
+     * Returns the resolved source column id used in the data provider.
+     */
+    public getSourceColumnId(): string | undefined {
+        return this.sourceColumnId;
+    }
+
+    /**
+     * Returns whether the column is unbound to provider data.
+     */
+    public isUnbound(): boolean {
+        return this.unbound;
+    }
+
+    /**
+     * Returns whether sorting is enabled for this column.
+     */
+    public isSortingEnabled(): boolean {
+        if (this.isUnbound()) {
+            return false;
+        }
+
+        const sortingOptions = this.options.sorting;
+        return !!(sortingOptions?.enabled ?? sortingOptions?.sortable);
+    }
+
+    /**
+     * Returns whether filtering is enabled for this column.
+     */
+    public isFilteringEnabled(): boolean {
+        return !this.isUnbound() && !!this.options.filtering?.enabled;
+    }
+
+    /**
+     * Returns whether inline filtering is enabled for this column.
+     */
+    public isInlineFilteringEnabled(): boolean {
+        return this.isFilteringEnabled() && !!this.options.filtering?.inline;
+    }
+
+    /**
+     * Returns whether editing is enabled for this column.
+     */
+    public isEditable(): boolean {
+        return !this.isUnbound() && !!this.options.cells?.editMode?.enabled;
+    }
+
+    /**
+     * Returns whether the column should be exported.
+     */
+    public isExportable(): boolean {
+        return !this.isUnbound() && this.options.exportable !== false;
     }
 
     /**

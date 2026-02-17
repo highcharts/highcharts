@@ -120,16 +120,15 @@ class HeaderCellToolbar implements Toolbar {
      */
     private renderFull(): void {
         const columnOptions = this.column.options;
-        const sortingEnabled = columnOptions.sorting?.enabled ??
-            columnOptions.sorting?.sortable;
+        const sortingEnabled = this.column.isSortingEnabled();
 
         if (sortingEnabled) {
             new SortToolbarButton().add(this);
         }
 
         if (
-            columnOptions.filtering?.enabled &&
-            !columnOptions.filtering.inline
+            this.column.isFilteringEnabled() &&
+            !columnOptions.filtering?.inline
         ) {
             new FilterToolbarButton().add(this);
         }
@@ -137,13 +136,12 @@ class HeaderCellToolbar implements Toolbar {
 
     private renderMinimized(): void {
         const columnOptions = this.column.options;
-        const sortingEnabled = columnOptions.sorting?.enabled ??
-            columnOptions.sorting?.sortable;
+        const sortingEnabled = this.column.isSortingEnabled();
 
         if (
             sortingEnabled || (
-                columnOptions.filtering?.enabled &&
-                !columnOptions.filtering.inline
+                this.column.isFilteringEnabled() &&
+                !columnOptions.filtering?.inline
             )
         ) {
             new MenuToolbarButton().add(this);

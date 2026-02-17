@@ -1084,7 +1084,9 @@ export class Grid {
         }
 
         const normalized = (sortings || []).filter((sorting): boolean => !!(
-            sorting.columnId && sorting.order
+            sorting.columnId &&
+            sorting.order &&
+            !this.isColumnUnbound(sorting.columnId)
         ));
 
         const sortingController = this.querying.sorting;
@@ -1476,29 +1478,40 @@ export class Grid {
      * grid, in the correct order.
      */
     private async getEnabledColumnIDs(): Promise<string[]> {
-        const { columnOptionsMap } = this;
         const header = this.options?.header;
         const headerColumns = this.getColumnIds(header || [], false);
-        const columnsIncluded = this.options?.rendering?.columns?.included || (
+        const dataOptions = this.options?.data;
+        const autogenerateColumns = !dataOptions ||
+            dataOptions.autogenerateColumns !== false;
+        const columnsIncluded = (
             headerColumns && headerColumns.length > 0 ?
-                headerColumns : await this.dataProvider?.getColumnIds()
+                headerColumns :
+                autogenerateColumns ?
+                    await this.dataProvider?.getColumnIds() :
+                    this.options?.columns?.map((column): string => column.id)
         );
 
         if (!columnsIncluded?.length) {
             return [];
         }
 
-        if (!columnOptionsMap) {
-            return columnsIncluded;
-        }
-
-        let columnId: string;
+        const seen = new Set<string>();
         const result: string[] = [];
-        for (let i = 0, iEnd = columnsIncluded.length; i < iEnd; ++i) {
-            columnId = columnsIncluded[i];
-            if (columnOptionsMap?.[columnId]?.options?.enabled !== false) {
-                result.push(columnId);
+        for (const columnId of columnsIncluded) {
+            const columnEnabled = (
+                this.columnOptionsMap?.[columnId]?.options as {
+                    enabled?: boolean;
+                } | undefined
+            )?.enabled;
+            if (
+                seen.has(columnId) ||
+                columnEnabled === false
+            ) {
+                continue;
             }
+
+            seen.add(columnId);
+            result.push(columnId);
         }
 
         return result;
@@ -1571,6 +1584,75 @@ export class Grid {
         }
 
         return columnIds;
+    }
+
+    /**
+     * Resolves data binding for a Grid column.
+     *
+     * @param columnId
+     * The Grid column id.
+     */
+    public getColumnDataBinding(columnId: string): ColumnDataBinding {
+        const columnOptions = this.columnOptionsMap?.[columnId]?.options;
+        const declaredDataId = columnOptions?.dataId;
+        let sourceColumnId: string | undefined;
+
+        if (declaredDataId === null) {
+            return { isUnbound: true };
+        }
+
+        if (typeof declaredDataId === 'string') {
+            sourceColumnId = declaredDataId;
+        } else {
+            sourceColumnId = columnId;
+        }
+
+        const dp = this.dataProvider;
+        if (!dp || !('getDataTable' in dp)) {
+            return {
+                sourceColumnId,
+                isUnbound: !sourceColumnId
+            };
+        }
+
+        const table = dp.getDataTable(true) || dp.getDataTable();
+        if (!table || !sourceColumnId) {
+            return {
+                sourceColumnId,
+                isUnbound: !sourceColumnId
+            };
+        }
+
+        return {
+            sourceColumnId,
+            isUnbound: table.getColumn(sourceColumnId, true) === void 0
+        };
+    }
+
+    /**
+     * Returns whether the given column has no data binding in the provider.
+     *
+     * @param columnId
+     * The Grid column id.
+     */
+    public isColumnUnbound(columnId: string): boolean {
+        return this.getColumnDataBinding(columnId).isUnbound;
+    }
+
+    /**
+     * Returns whether the given column should be exported.
+     *
+     * @param columnId
+     * The Grid column id.
+     */
+    public isColumnExportable(columnId: string): boolean {
+        if (this.isColumnUnbound(columnId)) {
+            return false;
+        }
+
+        const exportable =
+            this.columnOptionsMap?.[columnId]?.options?.exportable;
+        return exportable !== false;
     }
 
     /**
@@ -1712,19 +1794,32 @@ export class Grid {
             );
         };
 
-        for (const columnId of Object.keys(tableColumns)) {
+        for (const columnId of this.enabledColumns) {
             const column = this.viewport?.getColumn(columnId);
-            if (column) {
-                const columnData = tableColumns[columnId];
-                const parser = typeParser(column.dataType);
-                outputColumns[columnId] = ((): DataTableColumn => {
-                    const result = [];
-                    for (let i = 0, iEnd = columnData.length; i < iEnd; ++i) {
-                        result.push(parser(columnData[i]));
-                    }
-                    return result;
-                })();
+            const sourceColumnId =
+                this.getColumnDataBinding(columnId).sourceColumnId;
+
+            if (
+                !column ||
+                !sourceColumnId ||
+                !this.isColumnExportable(columnId)
+            ) {
+                continue;
             }
+
+            const columnData = tableColumns[sourceColumnId];
+            if (!columnData) {
+                continue;
+            }
+
+            const parser = typeParser(column.dataType);
+            outputColumns[columnId] = ((): DataTableColumn => {
+                const result = [];
+                for (let i = 0, iEnd = columnData.length; i < iEnd; ++i) {
+                    result.push(parser(columnData[i]));
+                }
+                return result;
+            })();
         }
 
         return JSON.stringify(outputColumns, null, 2);
@@ -1770,10 +1865,13 @@ export class Grid {
         // Clean up the column options by removing the ones that have no other
         // options than `id`:
         const oldColumnOptions = options.columns;
+        const dataOptions = options.data;
+        const keepIdOnlyColumns = !!dataOptions &&
+            dataOptions.autogenerateColumns === false;
         if (oldColumnOptions) {
             options.columns = [];
             for (const columnOption of oldColumnOptions) {
-                if (Object.keys(columnOption).length > 1) {
+                if (keepIdOnlyColumns || Object.keys(columnOption).length > 1) {
                     options.columns.push(columnOption);
                 }
             }
@@ -1821,6 +1919,14 @@ export type GridDirtyFlags = (
 export interface ColumnOptionsMapItem {
     index: number;
     options: NoIdColumnOptions
+}
+
+/**
+ * Resolved data binding for a Grid column.
+ */
+export interface ColumnDataBinding {
+    sourceColumnId?: string;
+    isUnbound: boolean;
 }
 
 

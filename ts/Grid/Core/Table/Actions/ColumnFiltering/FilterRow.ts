@@ -88,7 +88,7 @@ class FilterRow extends HeaderRow {
 
             await cell.render();
 
-            if (column.options.filtering?.inline) {
+            if (column.isInlineFilteringEnabled()) {
                 column.filtering?.renderFilteringContent(cell.htmlElement);
             }
         }

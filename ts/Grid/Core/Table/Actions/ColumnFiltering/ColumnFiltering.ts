@@ -185,7 +185,7 @@ class ColumnFiltering {
     public renderFilteringContent(container: HTMLElement): void {
         const column = this.column;
         const columnType = column.dataType;
-        if (!column.options.filtering?.enabled) {
+        if (!column.isFilteringEnabled()) {
             return;
         }
 

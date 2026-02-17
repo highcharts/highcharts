@@ -220,6 +220,17 @@ export interface DataProviderOptions {
      * @default 'local'
      */
     providerType?: string;
+
+    /**
+     * Whether columns should be generated automatically from data source
+     * column ids.
+     *
+     * If set to `false`, only columns explicitly configured in `columns[]`
+     * (or referenced by `header`) will be rendered.
+     *
+     * @default true
+     */
+    autogenerateColumns?: boolean;
 }
 
 

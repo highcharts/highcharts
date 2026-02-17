@@ -195,6 +195,9 @@ class SortingController {
         }> = [];
         for (let i = 0, iEnd = columnIDs.length; i < iEnd; ++i) {
             const columnId = columnIDs[i];
+            if (grid.isColumnUnbound(columnId)) {
+                continue;
+            }
             const columnOptions = columnOptionsMap[columnId]?.options || {};
             const order = columnOptions.sorting?.order;
 
@@ -264,7 +267,9 @@ class SortingController {
         ).filter((
             sorting
         ): sorting is SortingState & { columnId: string } => !!(
-            sorting.columnId && sorting.order
+            sorting.columnId &&
+            sorting.order &&
+            !this.querying.grid.isColumnUnbound(sorting.columnId)
         ));
 
         if (!sortings.length) {
@@ -272,16 +277,34 @@ class SortingController {
         }
 
         const grid = this.querying.grid;
+        const sourceSortings = sortings
+            .map((sorting): (SortingState & {
+                columnId: string;
+                sourceColumnId?: string;
+            }) => ({
+                ...sorting,
+                sourceColumnId: grid.getColumnDataBinding(
+                    sorting.columnId
+                ).sourceColumnId
+            }))
+            .filter((sorting): sorting is SortingState & {
+                columnId: string;
+                sourceColumnId: string;
+            } => !!sorting.sourceColumnId);
+
+        if (!sourceSortings.length) {
+            return;
+        }
 
         const defaultCompare =
             grid.options?.columnDefaults?.sorting?.compare;
 
         return new SortModifier({
-            direction: sortings[0].order as ('asc'|'desc'),
-            columns: sortings.map((
+            direction: sourceSortings[0].order as ('asc'|'desc'),
+            columns: sourceSortings.map((
                 sorting
             ): SortModifierOrderByOption => ({
-                column: sorting.columnId,
+                column: sorting.sourceColumnId,
                 direction: sorting.order as ('asc'|'desc'),
                 compare: grid.columnOptionsMap?.[sorting.columnId]
                     ?.options?.sorting?.compare || defaultCompare

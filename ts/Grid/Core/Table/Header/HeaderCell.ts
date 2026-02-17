@@ -325,10 +325,7 @@ class HeaderCell extends Cell {
             return;
         }
 
-        if ((
-            column.options.sorting?.enabled ??
-            column.options.sorting?.sortable
-        )) {
+        if (column.isSortingEnabled()) {
             column.sorting?.toggle(e);
         }
 

@@ -89,9 +89,7 @@ class ColumnSorting {
 
         this.addHeaderElementAttributes();
 
-        const sortingOptions = column.options.sorting;
-        const sortingEnabled = sortingOptions?.enabled ??
-            sortingOptions?.sortable;
+        const sortingEnabled = column.isSortingEnabled();
 
         if (sortingEnabled) {
             headerCellElement.classList.add(
@@ -113,15 +111,13 @@ class ColumnSorting {
     private addHeaderElementAttributes(): void {
         const col = this.column;
         const a11y = col.viewport.grid.accessibility;
-        const sortingOptions = col.options.sorting;
         const { currentSorting, currentSortings } =
             col.viewport.grid.querying.sorting;
         const sortedAscClassName = Globals.getClassName('columnSortedAsc');
         const sortedDescClassName = Globals.getClassName('columnSortedDesc');
 
         const el = this.headerCellElement;
-        const sortingEnabled = sortingOptions?.enabled ??
-            sortingOptions?.sortable;
+        const sortingEnabled = col.isSortingEnabled();
 
         const columnSorting = (
             currentSortings?.find((sorting): boolean =>

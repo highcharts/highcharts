@@ -125,7 +125,8 @@ export const defaultOptions: DeepPartial<Options> = {
         }
     },
     data: {
-        providerType: 'local'
+        providerType: 'local',
+        autogenerateColumns: true
     },
     time: {
         timezone: 'UTC'

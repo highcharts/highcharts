@@ -119,10 +119,7 @@ class TableHeader {
 
         // Render an extra row for inline filtering.
         if (vp.columns.some((column): boolean =>
-            (
-                column.options.filtering?.enabled &&
-                column.options.filtering.inline
-            ) || false
+            column.isInlineFilteringEnabled()
         )) {
             const row = new FilterRow(vp);
             await row.renderContent();
