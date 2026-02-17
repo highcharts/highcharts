@@ -47,7 +47,7 @@
     --ifm-font-color-base-inverse: var(--primitives-neutral-0);
     --docusaurus-highlighted-code-line-bg: rgba(67, 86, 201, 0.1);
     --ifm-navbar-background-color: var(--primitives-neutral-0);
-    --ifm-navbar-height: 82px;
+    --ifm-navbar-height: unset;
     --ifm-navbar-shadow: unset;
     --ifm-navbar-padding-horizontal: unset;
     --ifm-navbar-padding-vertical: unset;
@@ -172,6 +172,20 @@ main h4:has(.grid-pro-badge) .grid-pro-badge,
 main h5:has(.grid-pro-badge) .grid-pro-badge,
 main h6:has(.grid-pro-badge) .grid-pro-badge {
     margin-top: 0.7em;
+}
+
+#mobile-sidebar-toggle-wrapper {
+    background-color: var(--primitives-neutral-700);
+    display: flex;
+    justify-content: center;
+
+    [data-theme="light"] & {
+        background-color: var(--primitives-neutral-50);
+    }
+}
+
+.navbar-sidebar {
+    z-index: 9999;
 }
 
 [data-theme="dark"] .grid-pro-badge {

@@ -95,15 +95,7 @@ const config = {
                 respectPrefersColorScheme: true
             },
             navbar: {
-                title: 'Highcharts Documentation',
-                items: [
-                    {
-                        type: 'docSidebar',
-                        sidebarId: 'docs',
-                        position: 'left',
-                        label: 'Docs'
-                    }
-                ]
+                hideOnScroll: true
             },
             footer: {
                 style: 'dark',
