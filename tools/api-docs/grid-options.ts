@@ -62,6 +62,33 @@ const STACK: Array<TSLib.CodeInfo> = [];
 
 const TREE: TreeLib.Options = {};
 
+interface RendererOptionSpec {
+    interfaceName: string;
+    typeName: string;
+}
+
+const VIEW_RENDERER_OPTIONS: Array<RendererOptionSpec> = [
+    { interfaceName: 'TextRendererOptions', typeName: 'text' },
+    { interfaceName: 'CheckboxRendererOptions', typeName: 'checkbox' },
+    { interfaceName: 'SelectRendererOptions', typeName: 'select' },
+    { interfaceName: 'SparklineRendererOptions', typeName: 'sparkline' },
+    { interfaceName: 'TextInputRendererOptions', typeName: 'textInput' },
+    { interfaceName: 'DateInputRendererOptions', typeName: 'dateInput' },
+    { interfaceName: 'DateTimeInputRendererOptions', typeName: 'dateTimeInput' },
+    { interfaceName: 'TimeInputRendererOptions', typeName: 'timeInput' },
+    { interfaceName: 'NumberInputRendererOptions', typeName: 'numberInput' }
+];
+
+const EDIT_RENDERER_OPTIONS: Array<RendererOptionSpec> = [
+    { interfaceName: 'CheckboxRendererOptions', typeName: 'checkbox' },
+    { interfaceName: 'SelectRendererOptions', typeName: 'select' },
+    { interfaceName: 'TextInputRendererOptions', typeName: 'textInput' },
+    { interfaceName: 'DateInputRendererOptions', typeName: 'dateInput' },
+    { interfaceName: 'DateTimeInputRendererOptions', typeName: 'dateTimeInput' },
+    { interfaceName: 'TimeInputRendererOptions', typeName: 'timeInput' },
+    { interfaceName: 'NumberInputRendererOptions', typeName: 'numberInput' }
+];
+
 
 /* *
  *
@@ -307,15 +334,22 @@ function addTreeNode(
                     TSLib.extractTagText(_infoDoclet, _tag, true);
 
                 if (typeof _defaultValue !== 'undefined') {
-                    if (!isNaN(Number(_defaultValue))) {
+                    _defaultValue = normalizeDefaultValue(_defaultValue);
+
+                    if (
+                        typeof _defaultValue === 'string' &&
+                        !isNaN(Number(_defaultValue))
+                    ) {
                         _defaultValue = Number(_defaultValue);
-                    } else {
+                    } else if (typeof _defaultValue === 'string') {
                         _defaultValue = ({
                             false: false,
                             null: null,
                             true: true
                         } as Record<string, any>)[_defaultValue] ||
                             _defaultValue;
+                    } else {
+                        _defaultValue = _defaultValue;
                     }
 
                     _nodeDoclet.defaultvalue = _defaultValue;
@@ -400,8 +434,14 @@ function addTreeNode(
         }
     }
 
+    appendDeprecationToDescription(_infoDoclet, _nodeDoclet);
+
     // Expand callback type aliases to show the actual function signature
     expandCallbackTypes(sourceInfo, _nodeDoclet, info);
+    expandRendererOptionChildren(_nodeDoclet, _treeNode, debug);
+    expandDataProviderOptionChildren(
+        sourceInfo, info, _nodeDoclet, _treeNode, debug
+    );
 
     for (const _moreInfo of _moreInfos) {
 
@@ -455,6 +495,288 @@ function findTypeAlias(
         }
     }
     return void 0;
+}
+
+function findInterfaceInfoByName(
+    name: string
+): { info: TSLib.CodeInfo; sourceInfo: TSLib.SourceInfo } | undefined {
+    for (const sourceKey of Object.keys(TSLib.SOURCE_CACHE)) {
+        const sourceInfo = TSLib.SOURCE_CACHE[sourceKey];
+
+        for (const code of sourceInfo.code) {
+            if (code.kind === 'Interface' && code.name === name) {
+                return { info: code, sourceInfo };
+            }
+        }
+    }
+
+    return void 0;
+}
+
+function normalizeDefaultValue(
+    value: (boolean | number | string)
+): (boolean | number | string) {
+    if (typeof value !== 'string') {
+        return value;
+    }
+
+    let normalized = value
+        .replace(/\s*\/\/\s*eslint-disable-line.*$/u, '')
+        .trim();
+
+    const quoted = normalized.match(/^(['"])([\s\S]*)\1$/u);
+    if (quoted) {
+        normalized = quoted[2]
+            .replace(/\\'/gu, '\'')
+            .replace(/\\"/gu, '"');
+        return `'${normalized.replace(/'/gu, '\\\'')}'`;
+    }
+
+    return normalized;
+}
+
+function appendDeprecationToDescription(
+    infoDoclet: TSLib.DocletInfo,
+    nodeDoclet: Record<string, any>
+): void {
+    if (!infoDoclet.tags.deprecated) {
+        return;
+    }
+
+    const deprecatedText = (
+        TSLib.extractTagText(infoDoclet, 'deprecated', true) || ''
+    ).trim();
+    const deprecatedHTML = deprecatedText ?
+        `<p><em>Deprecated:</em> ${deprecatedText}</p>` :
+        '<p><em>Deprecated.</em></p>';
+    const existingDescription = nodeDoclet.description || '';
+
+    if (!existingDescription.includes('Deprecated:')) {
+        nodeDoclet.description = existingDescription + deprecatedHTML;
+    }
+}
+
+function expandRendererOptionChildren(
+    nodeDoclet: Record<string, any>,
+    treeNode: TreeLib.Option,
+    debug?: boolean
+): void {
+    const typeNames = nodeDoclet.type?.names;
+
+    if (!Array.isArray(typeNames)) {
+        return;
+    }
+
+    const specs = (
+        typeNames.includes('EditModeRendererType[\'options\']') ?
+            EDIT_RENDERER_OPTIONS :
+            typeNames.includes('CellRendererType[\'options\']') ?
+                VIEW_RENDERER_OPTIONS :
+                void 0
+    );
+
+    if (!specs) {
+        return;
+    }
+
+    const applicability: Record<string, Set<string>> = {};
+
+    for (const spec of specs) {
+        const interfaceInfo = findInterfaceInfoByName(spec.interfaceName);
+
+        if (!interfaceInfo) {
+            continue;
+        }
+
+        const { info, sourceInfo } = interfaceInfo;
+
+        if (info.kind !== 'Interface') {
+            continue;
+        }
+
+        for (const member of info.members) {
+            addTreeNode(sourceInfo, treeNode, member, debug);
+
+            const memberName = TSLib.extractInfoName(member);
+            if (!memberName) {
+                continue;
+            }
+
+            const memberFullname = `${treeNode.meta.fullname}.${memberName}`;
+            if (!applicability[memberFullname]) {
+                applicability[memberFullname] = new Set();
+            }
+            applicability[memberFullname].add(spec.typeName);
+        }
+    }
+
+    for (const fullname of Object.keys(applicability)) {
+        const memberNode = findTreeNode(fullname);
+
+        if (!memberNode) {
+            continue;
+        }
+
+        const types = Array.from(applicability[fullname]).sort();
+        const applicabilityHTML = '<p>Applies to renderer type(s): ' +
+            types.map(typeName => `<code>'${typeName}'</code>`).join(', ') +
+            '.</p>';
+
+        memberNode.doclet.description = (
+            memberNode.doclet.description || ''
+        ) + applicabilityHTML;
+    }
+}
+
+function getDataProviderOptionInterfaces(
+    sourceInfo: TSLib.SourceInfo,
+    info: TSLib.CodeInfo
+): Array<{
+    providerType: string;
+    interfaceInfo: TSLib.CodeInfo;
+    sourceInfo: TSLib.SourceInfo;
+}> {
+    const results: Array<{
+        providerType: string;
+        interfaceInfo: TSLib.CodeInfo;
+        sourceInfo: TSLib.SourceInfo;
+    }> = [];
+    const seen = new Set<string>();
+
+    for (const sourceKey of Object.keys(TSLib.SOURCE_CACHE)) {
+        const registrySource = TSLib.SOURCE_CACHE[sourceKey];
+
+        for (const code of registrySource.code) {
+            if (
+                code.kind !== 'Interface' ||
+                code.name !== 'DataProviderTypeRegistry'
+            ) {
+                continue;
+            }
+
+            for (const member of code.members) {
+                if (member.kind !== 'Property' || !member.type?.length) {
+                    continue;
+                }
+
+                const providerType = member.name;
+                const classType = member.type.find(
+                    type => type.startsWith('typeof ')
+                );
+
+                if (!classType) {
+                    continue;
+                }
+
+                const className = classType.replace(/^typeof\s+/u, '');
+                const classInfo = tryResolve(registrySource, className, member);
+
+                if (!classInfo || classInfo.kind !== 'Class') {
+                    continue;
+                }
+
+                let optionsInterface: TSLib.CodeInfo | undefined;
+                const optionsMember = classInfo.members.find(
+                    classMember => (
+                        classMember.kind === 'Property' &&
+                        classMember.name === 'options' &&
+                        (classMember as any).type?.length
+                    )
+                );
+
+                if ((optionsMember as any)?.type?.[0]) {
+                    optionsInterface = resolveTypeToInterface(
+                        registrySource,
+                        (optionsMember as any).type[0],
+                        info
+                    );
+                }
+
+                if (!optionsInterface) {
+                    const fallbackName = `${className}Options`;
+                    const fallback = findInterfaceInfoByName(fallbackName);
+                    if (fallback) {
+                        optionsInterface = fallback.info;
+                    }
+                }
+
+                if (!optionsInterface || optionsInterface.kind !== 'Interface') {
+                    continue;
+                }
+
+                const key = `${providerType}:${optionsInterface.name}`;
+                if (seen.has(key)) {
+                    continue;
+                }
+                seen.add(key);
+                results.push({
+                    providerType,
+                    interfaceInfo: optionsInterface,
+                    sourceInfo: TSLib.getSourceInfo(optionsInterface.meta.file)
+                });
+            }
+        }
+    }
+
+    return results;
+}
+
+function expandDataProviderOptionChildren(
+    sourceInfo: TSLib.SourceInfo,
+    info: TSLib.CodeInfo,
+    nodeDoclet: Record<string, any>,
+    treeNode: TreeLib.Option,
+    debug?: boolean
+): void {
+    const typeNames = nodeDoclet.type?.names;
+
+    if (
+        !Array.isArray(typeNames) ||
+        !typeNames.includes('DataProviderOptionsType')
+    ) {
+        return;
+    }
+
+    const optionInterfaces = getDataProviderOptionInterfaces(sourceInfo, info);
+    const applicability: Record<string, Set<string>> = {};
+
+    for (const provider of optionInterfaces) {
+        if (provider.interfaceInfo.kind !== 'Interface') {
+            continue;
+        }
+
+        for (const member of provider.interfaceInfo.members) {
+            addTreeNode(provider.sourceInfo, treeNode, member, debug);
+
+            const memberName = TSLib.extractInfoName(member);
+            if (!memberName) {
+                continue;
+            }
+
+            const memberFullname = `${treeNode.meta.fullname}.${memberName}`;
+            if (!applicability[memberFullname]) {
+                applicability[memberFullname] = new Set();
+            }
+            applicability[memberFullname].add(provider.providerType);
+        }
+    }
+
+    for (const fullname of Object.keys(applicability)) {
+        const memberNode = findTreeNode(fullname);
+
+        if (!memberNode) {
+            continue;
+        }
+
+        const providerTypes = Array.from(applicability[fullname]).sort();
+        const applicabilityHTML = '<p>Applies to provider type(s): ' +
+            providerTypes.map(typeName => `<code>'${typeName}'</code>`).join(', ') +
+            '.</p>';
+
+        memberNode.doclet.description = (
+            memberNode.doclet.description || ''
+        ) + applicabilityHTML;
+    }
 }
 
 
@@ -1165,6 +1487,8 @@ function walkDefaultsObject(
             ) {
                 let defaultVal: any = member.value;
 
+                defaultVal = normalizeDefaultValue(defaultVal);
+
                 if (!isNaN(Number(defaultVal))) {
                     defaultVal = Number(defaultVal);
                 } else if (defaultVal === 'true') {
@@ -1298,26 +1622,11 @@ async function saveJSON() {
         LogLib.message('Saved', filePath, '.');
     };
 
-    const emptyNode = {
-        doclet: {},
-        meta: { fullname: '', name: '' },
-        children: {}
-    };
-
     TREE._meta = {
         branch: await GitLib.getBranch(),
         commit: await GitLib.getLatestCommitShaSync(),
         version: JSON.parse(FS.readFileSync('package.json', 'utf8')).version
     } as any;
-
-    // The documentation generator requires `plotOptions` and `series` stubs
-    // (hardcoded series hack). Provide empty nodes to prevent crashes.
-    if (!TREE.plotOptions) {
-        TREE.plotOptions = { ...emptyNode, meta: { fullname: 'plotOptions', name: 'plotOptions' } };
-    }
-    if (!TREE.series) {
-        TREE.series = { ...emptyNode, meta: { fullname: 'series', name: 'series' } };
-    }
 
     save('tree-grid.json', { _meta: TREE._meta, ...TREE });
 }

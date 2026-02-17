@@ -107,6 +107,124 @@ function postProcessApiJS(gridDir, classMap) {
 
 
 /**
+ * Scope content-panel selectors to avoid collisions with sidebar tree nodes.
+ *
+ * @param {string} gridDir
+ * Path to the Grid API docs output directory.
+ */
+function postProcessCSS(gridDir) {
+    const fs = require('fs');
+    const path = require('path');
+    const stylePath = path.join(gridDir, 'style.css');
+
+    if (!fs.existsSync(stylePath)) {
+        return;
+    }
+
+    let content = fs.readFileSync(stylePath, 'utf8');
+
+    content = content.replace(
+        /^\.option-header h1 \{/gmu,
+        '#option-list .option-header h1 {'
+    );
+    content = content.replace(
+        /^\.option-header h1 span \{/gmu,
+        '#option-list .option-header h1 span {'
+    );
+    content = content.replace(
+        /^\.option-header, \.option \{/gmu,
+        '#option-list .option-header, #option-list .option {'
+    );
+
+    fs.writeFileSync(stylePath, content, 'utf8');
+}
+
+/**
+ * Remove Core-only stubs and URL residues from generated JSON artifacts.
+ *
+ * @param {string} gridDir
+ * Path to the Grid API docs output directory.
+ */
+function postProcessJSONArtifacts(gridDir) {
+    const fs = require('fs');
+    const path = require('path');
+
+    const treePath = path.join(gridDir, 'tree.json');
+    if (fs.existsSync(treePath)) {
+        const treeData = JSON.parse(fs.readFileSync(treePath, 'utf8'));
+        delete treeData.plotOptions;
+        delete treeData.series;
+        fs.writeFileSync(treePath, JSON.stringify(treeData), 'utf8');
+    }
+
+    const searchPath = path.join(gridDir, 'search.json');
+    if (fs.existsSync(searchPath)) {
+        const searchData = JSON.parse(fs.readFileSync(searchPath, 'utf8'));
+        const filtered = searchData.filter(
+            entry => !entry.startsWith('plotOptions') && !entry.startsWith('series')
+        );
+        fs.writeFileSync(searchPath, JSON.stringify(filtered), 'utf8');
+    }
+
+    const navPath = path.join(gridDir, 'nav/index.json');
+    if (fs.existsSync(navPath)) {
+        const navData = JSON.parse(fs.readFileSync(navPath, 'utf8'));
+        if (Array.isArray(navData.children)) {
+            navData.children = navData.children.filter(
+                entry => (
+                    entry &&
+                    entry.fullname !== 'plotOptions' &&
+                    entry.fullname !== 'series'
+                )
+            );
+        }
+        fs.writeFileSync(navPath, JSON.stringify(navData), 'utf8');
+    }
+
+    const dumpPath = path.join(gridDir, 'dump.json');
+    if (fs.existsSync(dumpPath)) {
+        const dumpData = JSON.parse(fs.readFileSync(dumpPath, 'utf8'));
+        const filtered = dumpData.filter(
+            entry => (
+                entry &&
+                entry.fullname !== 'plotOptions' &&
+                entry.fullname !== 'series'
+            )
+        );
+        fs.writeFileSync(dumpPath, JSON.stringify(filtered), 'utf8');
+    }
+}
+
+/**
+ * Rewrite sitemap URLs from /highcharts/ to /grid/ and remove stubs.
+ *
+ * @param {string} gridDir
+ * Path to the Grid API docs output directory.
+ */
+function postProcessSitemap(gridDir) {
+    const fs = require('fs');
+    const path = require('path');
+    const sitemapPath = path.join(gridDir, 'sitemap.xml');
+
+    if (!fs.existsSync(sitemapPath)) {
+        return;
+    }
+
+    let content = fs.readFileSync(sitemapPath, 'utf8');
+
+    content = content.replace(
+        /https:\/\/api\.highcharts\.com\/highcharts\//gu,
+        'https://api.highcharts.com/grid/'
+    );
+    content = content.replace(
+        /<url><loc>[^<]*\/(?:plotOptions|series)(?:\.[^<]*)?<\/loc><priority>[^<]*<\/priority><\/url>/gu,
+        ''
+    );
+
+    fs.writeFileSync(sitemapPath, content, 'utf8');
+}
+
+/**
  * Post-process generated HTML files to replace Highcharts Core branding
  * with Grid branding. The documentation generator only knows about
  * Highcharts product names, so we fix up the output afterwards.
@@ -150,7 +268,7 @@ function postProcessHTML(gridDir) {
 
         // Sidebar code snippets
         [/Highcharts\.setOptions\(\{/gu, '// Global options'],
-        [/Highcharts\.chart\(\{/gu, 'new Grid.Grid(\'container\', {'],
+        [/Highcharts\.chart\(\{/gu, 'Grid.grid(\'container\', {'],
         [/<h3 id="options-header">Configuration options<\/h3>/gu,
             '<h3 id="options-header">Configuration options</h3>'],
         [
@@ -160,14 +278,20 @@ function postProcessHTML(gridDir) {
 
         // Remove platform selector (JS/iOS/Android) - not relevant for Grid
         [
-            /<div id="platform-selector"[\s\S]*?<\/div>\s*<\/div>\s*<\/div>/gu,
+            /<div id="platform-selector" class="menu" expanded="false">[\s\S]*?<\/div>\s*/gu,
             ''
         ],
 
-        // Remove Namespaces/Classes/Interfaces links
+        // Remove unrelated header links
         [/<div id="namespaces"[\s\S]*?<\/div>/gu, ''],
-        [/<div id="classes"[\s\S]*?<\/div>/gu, ''],
         [/<div id="interfaces"[\s\S]*?<\/div>/gu, ''],
+        // Replace "Classes" header item with "Code docs" for Grid
+        [
+            /<div id="classes" class="menu">[\s\S]*?<\/div>/gu,
+            '<div id="classes" class="menu">\n' +
+            '                            <a href="/grid/typedoc/index.html">Code docs</a>\n' +
+            '                        </div>'
+        ],
 
         // Fix "JS API Reference" title link
         [
@@ -255,28 +379,46 @@ function postProcessHTML(gridDir) {
         }
     }
 
-    // Remove stubs from search index
-    const searchPath = path.join(gridDir, 'search.json');
-    if (fs.existsSync(searchPath)) {
-        const searchData = JSON.parse(
-            fs.readFileSync(searchPath, 'utf8')
-        );
-        const filtered = searchData.filter(
-            entry => entry !== 'plotOptions' && entry !== 'series'
-        );
-        fs.writeFileSync(searchPath, JSON.stringify(filtered), 'utf8');
+    postProcessJSONArtifacts(gridDir);
+    postProcessSitemap(gridDir);
+    postProcessCSS(gridDir);
+}
+
+/**
+ * Generator requires `series`/`plotOptions` roots for product=highcharts.
+ * Inject in-memory only, keep source tree-grid.json clean.
+ *
+ * @param {Object} sourceJSON
+ * Source Grid options tree.
+ *
+ * @return {Object}
+ * JSON with temporary generator stubs.
+ */
+function withGeneratorStubs(sourceJSON) {
+    const clone = JSON.parse(JSON.stringify(sourceJSON));
+    const emptyNode = {
+        doclet: {},
+        meta: {
+            fullname: '',
+            name: ''
+        },
+        children: {}
+    };
+
+    if (!clone.plotOptions) {
+        clone.plotOptions = {
+            ...emptyNode,
+            meta: { fullname: 'plotOptions', name: 'plotOptions' }
+        };
+    }
+    if (!clone.series) {
+        clone.series = {
+            ...emptyNode,
+            meta: { fullname: 'series', name: 'series' }
+        };
     }
 
-    // Remove stubs from tree.json (api.js builds sidebar from this)
-    const treePath = path.join(gridDir, 'tree.json');
-    if (fs.existsSync(treePath)) {
-        const treeData = JSON.parse(
-            fs.readFileSync(treePath, 'utf8')
-        );
-        delete treeData.plotOptions;
-        delete treeData.series;
-        fs.writeFileSync(treePath, JSON.stringify(treeData), 'utf8');
-    }
+    return clone;
 }
 
 /* *
@@ -312,9 +454,10 @@ async function apiDocs() {
     const apidocs =
         require('@highcharts/highcharts-documentation-generators').ApiDocs;
     const sourceJSON = JSON.parse(fs.readFileSync(OPTIONS_TREE, 'utf8'));
+    const generatorJSON = withGeneratorStubs(sourceJSON);
 
     await new Promise((resolve, reject) => {
-        apidocs(sourceJSON, TEMP_DIR + '/', ['highcharts'], error => {
+        apidocs(generatorJSON, TEMP_DIR + '/', ['highcharts'], error => {
             if (error) {
                 log.failure(error);
                 reject(error);
