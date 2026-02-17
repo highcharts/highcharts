@@ -468,14 +468,24 @@ export class Grid {
         newOptions = merge(newOptions);
 
         const diff: DeepPartial<NonArrayOptions> = {};
+        const preserveIdOnlyColumnOptions = (
+            newOptions.data?.autogenerateColumns ??
+            this.userOptions.data?.autogenerateColumns ??
+            this.options?.data?.autogenerateColumns
+        ) === false;
 
         if (newOptions.columns) {
             if (oneToOne) {
                 diff.columns = this.setColumnOptionsOneToOne(
-                    newOptions.columns
+                    newOptions.columns,
+                    preserveIdOnlyColumnOptions
                 );
             } else {
-                diff.columns = this.setColumnOptions(newOptions.columns);
+                diff.columns = this.setColumnOptions(
+                    newOptions.columns,
+                    false,
+                    preserveIdOnlyColumnOptions
+                );
             }
             delete newOptions.columns;
         }
@@ -542,6 +552,9 @@ export class Grid {
      * Whether to overwrite the existing column options with the new ones.
      * Default is `false`.
      *
+     * @param preserveIdOnlyColumnOptions
+     * Whether to preserve the id only column options. Default is `false`.
+     *
      * @returns
      * An object of the changed column options in form of a record of
      * `[column.id]: column.options`.
@@ -550,7 +563,8 @@ export class Grid {
      */
     public setColumnOptions(
         newColumnOptions: IndividualColumnOptions[],
-        overwrite = false
+        overwrite = false,
+        preserveIdOnlyColumnOptions = false
     ): DeepPartial<NonArrayColumnOptions> {
         const columnDiffOptions: DeepPartial<NonArrayColumnOptions> = {};
 
@@ -566,6 +580,10 @@ export class Grid {
 
             // If the new column options contain only the id.
             if (Object.keys(newOptions).length < 2) {
+                if (preserveIdOnlyColumnOptions && colOptionsIndex === -1) {
+                    columnOptions.push(newOptions);
+                    continue;
+                }
                 if (overwrite && colOptionsIndex !== -1) {
                     columnDiffOptions[newOptions.id] = diffObjects(
                         columnOptions[colOptionsIndex],
@@ -613,12 +631,16 @@ export class Grid {
      * @param newColumnOptions
      * The new column options that should be loaded.
      *
+     * @param preserveIdOnlyColumnOptions
+     * Whether to preserve the id only column options. Default is `false`.
+     *
      * @returns
      * The difference between the previous and the new column options in form
      * of a record of `[column.id]: column.options`.
      */
     private setColumnOptionsOneToOne(
-        newColumnOptions: IndividualColumnOptions[]
+        newColumnOptions: IndividualColumnOptions[],
+        preserveIdOnlyColumnOptions = false
     ): DeepPartial<NonArrayColumnOptions> {
         const prevColumnOptions = this.userOptions.columns;
         const columnOptions = [];
@@ -642,7 +664,10 @@ export class Grid {
             }
 
             const resultOptions = merge(prevOptions ?? {}, newOptions);
-            if (Object.keys(resultOptions).length > 1) {
+            if (
+                preserveIdOnlyColumnOptions ||
+                Object.keys(resultOptions).length > 1
+            ) {
                 columnOptions.push(resultOptions);
             }
         }
