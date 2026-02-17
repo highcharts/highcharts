@@ -58,8 +58,10 @@ function test_grid() {
         }]
     });
 
+    grid.pinRow('A');
     grid.pinRow('A', 'top');
     grid.toggleRow('A');
+    grid.toggleRow('A', 'bottom');
     grid.unpinRow('A');
     grid.getPinnedRows();
 }

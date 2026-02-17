@@ -61,6 +61,24 @@ function unpinRow(cell) {
     });
 }
 
+const rowContextMenu = {
+    items: [{
+        label: 'Pin row to top',
+        icon: 'addRowAbove',
+        onClick: pinToTop
+    }, {
+        label: 'Pin row to bottom',
+        icon: 'addRowBelow',
+        onClick: pinToBottom
+    }, {
+        separator: true
+    }, {
+        label: 'Unpin row',
+        icon: 'trash',
+        onClick: unpinRow
+    }]
+};
+
 const grid = Grid.grid('container', {
     dataTable: {
         columns: {
@@ -73,7 +91,6 @@ const grid = Grid.grid('container', {
     },
     rendering: {
         rows: {
-            virtualizationThreshold: 30,
             pinning: {
                 topIds: [0],
                 bottomIds: [rowCount - 1]
@@ -82,23 +99,7 @@ const grid = Grid.grid('container', {
     },
     columnDefaults: {
         cells: {
-            contextMenu: {
-                items: [{
-                    label: 'Pin row to top',
-                    icon: 'addRowAbove',
-                    onClick: pinToTop
-                }, {
-                    label: 'Pin row to bottom',
-                    icon: 'addRowBelow',
-                    onClick: pinToBottom
-                }, {
-                    separator: true
-                }, {
-                    label: 'Unpin row',
-                    icon: 'trash',
-                    onClick: unpinRow
-                }]
-            }
+            contextMenu: rowContextMenu
         }
     },
     columns: [{
@@ -126,5 +127,4 @@ const grid = Grid.grid('container', {
     }]
 });
 
-(window).grid = grid;
 updatePinnedSummary(grid);

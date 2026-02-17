@@ -304,10 +304,7 @@ export class RemoteDataProvider extends DataProvider {
                 (_, i): number => i + chunkOffset
             );
             const rowSettings = this.querying.grid.options?.rendering?.rows;
-            const idColumn = (
-                rowSettings?.pinning?.idColumn ||
-                rowSettings?.pinned?.idColumn
-            );
+            const idColumn = rowSettings?.pinning?.idColumn;
             const idColumnValues = (
                 idColumn &&
                 chunk.columns[idColumn] ?

@@ -28,16 +28,19 @@ Grid.grid('container', {
 
 Use `pinning.idColumn` to define stable row identity for persistence and
 restore.
-If it is not set, Grid uses the original row index.
+If it is not set, Grid uses a default row id derived from the row's
+position.
 
 ## Runtime API
 
 Use runtime methods to update pinning dynamically:
 
 ```js
+await grid.pinRow('row-001'); // defaults to top
 await grid.pinRow('row-010', 'top');
 await grid.pinRow('row-025', 'bottom');
-await grid.toggleRow('row-025');
+await grid.toggleRow('row-025'); // defaults to top when currently unpinned
+await grid.toggleRow('row-030', 'bottom');
 await grid.unpinRow('row-010');
 
 const pinned = grid.getPinnedRows();

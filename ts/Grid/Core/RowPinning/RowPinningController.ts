@@ -108,24 +108,17 @@ class RowPinningController {
         idColumn?: string;
         topIds?: RowId[];
         bottomIds?: RowId[];
-        top?: RowId[];
-        bottom?: RowId[];
         resolve?: (row: DataTableRowObject) => ('top'|'bottom'|null|undefined);
         sorting?: 'exclude'|'include';
         filtering?: 'exclude'|'include';
     }|undefined {
-        const rowsOptions = this.grid.options?.rendering?.rows;
-        return rowsOptions?.pinning || rowsOptions?.pinned;
+        return this.grid.options?.rendering?.rows?.pinning;
     }
 
     public loadOptions(): void {
         const pinningOptions = this.getPinningOptions();
-        const top = pinningOptions?.topIds || pinningOptions?.top || [];
-        const bottom = (
-            pinningOptions?.bottomIds ||
-            pinningOptions?.bottom ||
-            []
-        );
+        const top = pinningOptions?.topIds || [];
+        const bottom = pinningOptions?.bottomIds || [];
         const hash = JSON.stringify({
             top,
             bottom,

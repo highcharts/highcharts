@@ -165,14 +165,18 @@ async function pinRow(
 
 /**
  * Toggle row pinning for a row. If already pinned, unpin it; otherwise pin to
- * top.
+ * selected position (defaults to top).
  *
  * @param rowId
  * Row ID to toggle.
+ *
+ * @param position
+ * Pin position used when the row is currently unpinned.
  */
 async function toggleRow(
     this: Grid,
-    rowId: GridRowId
+    rowId: GridRowId,
+    position: RowPinningPosition = 'top'
 ): Promise<void> {
     const previous = this.rowPinning?.getPinnedRows() || {
         topIds: [],
@@ -187,7 +191,7 @@ async function toggleRow(
     if (isPinned) {
         this.rowPinning?.unpinRow(rowId);
     } else {
-        this.rowPinning?.pinRow(rowId, 'top');
+        this.rowPinning?.pinRow(rowId, position);
     }
 
     const next = this.rowPinning?.getPinnedRows() || {
@@ -197,7 +201,7 @@ async function toggleRow(
     fireEvent(this, 'rowPinningChanged', {
         rowId,
         action: 'toggle',
-        position: isPinned ? void 0 : 'top',
+        position: isPinned ? void 0 : position,
         changed: (
             !sameIds(previous.topIds, next.topIds) ||
             !sameIds(previous.bottomIds, next.bottomIds)
@@ -293,11 +297,6 @@ declare module '../../Core/Options' {
          * Row pinning options.
          */
         pinning?: RowPinningOptions;
-
-        /**
-         * @deprecated Use `pinning` instead.
-         */
-        pinned?: RowPinningOptions;
     }
 }
 
@@ -319,9 +318,12 @@ declare module '../../Core/Grid' {
 
         /**
          * Toggle row pinning. If already pinned, unpin it; otherwise pin to
-         * top.
+         * selected position (defaults to top).
          */
-        toggleRow(rowId: GridRowId): Promise<void>;
+        toggleRow(
+            rowId: GridRowId,
+            position?: RowPinningPosition
+        ): Promise<void>;
 
         /**
          * Remove row pinning for a row.
@@ -345,16 +347,6 @@ export interface RowPinningOptions {
     idColumn?: string;
     topIds?: GridRowId[];
     bottomIds?: GridRowId[];
-
-    /**
-     * @deprecated Use `topIds` instead.
-     */
-    top?: GridRowId[];
-
-    /**
-     * @deprecated Use `bottomIds` instead.
-     */
-    bottom?: GridRowId[];
     resolve?: (row: DataTableRowObject) => ('top'|'bottom'|null|undefined);
     sorting?: RowPinningMode;
     filtering?: RowPinningMode;

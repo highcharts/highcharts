@@ -534,10 +534,7 @@ export class LocalDataProvider extends DataProvider {
     ): RowId {
         const row = table.getRowObject(rowIndex);
         const rowSettings = this.querying.grid.options?.rendering?.rows;
-        const idColumn = (
-            rowSettings?.pinning?.idColumn ||
-            rowSettings?.pinned?.idColumn
-        );
+        const idColumn = rowSettings?.pinning?.idColumn;
 
         if (row && idColumn && table.hasColumns([idColumn])) {
             const value = row[idColumn];
