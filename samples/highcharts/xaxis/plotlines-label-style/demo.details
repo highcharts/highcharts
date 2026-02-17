@@ -1,6 +1,4 @@
 ---
- name: Demo of yAxis.plotLines.label.style options
- authors:
-   - Torstein Hønsi
- js_wrap: b
+name: Demo of yAxis.plotLines.label.style options
+js_wrap: b
 ...
