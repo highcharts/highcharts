@@ -154,17 +154,17 @@ export class Column {
 
         // Populate column options map if not exists, to prepare option
         // references for each column.
-        if (grid.options && !grid.columnOptionsMap?.[id]) {
+        if (grid.options && !grid.columnPolicy.hasColumnOptions(id)) {
             const columnOptions: IndividualColumnOptions = { id };
             (grid.options.columns ??= []).push(columnOptions);
-            grid.columnOptionsMap[id] = {
+            grid.columnPolicy.setColumnOption(id, {
                 index: grid.options.columns.length - 1,
                 options: columnOptions
-            };
+            });
         }
 
         this.options = createOptionsProxy(
-            grid.columnOptionsMap?.[id]?.options ?? {},
+            grid.columnPolicy.getIndividualColumnOptions(id) ?? {},
             grid.options?.columnDefaults
         );
 
@@ -183,7 +183,7 @@ export class Column {
         this.loadData();
         this.dataType = await this.assumeDataType();
 
-        if (this.isFilteringEnabled()) {
+        if (this.viewport.grid.columnPolicy.isColumnFilteringEnabled(this.id)) {
             this.filtering = new ColumnFiltering(this);
         }
 
@@ -194,9 +194,10 @@ export class Column {
      * Loads the data of the column from the viewport's data table.
      */
     public loadData(): void {
-        const dp = this.viewport.grid.dataProvider;
-        const sourceColumnId = this.getSourceColumnId();
-        const isUnbound = this.isUnbound();
+        const grid = this.viewport.grid;
+        const dp = grid.dataProvider;
+        const sourceColumnId = grid.columnPolicy.getColumnSourceId(this.id);
+        const isUnbound = grid.columnPolicy.isColumnUnbound(this.id);
 
         if (
             dp && 'getDataTable' in dp &&
@@ -210,7 +211,7 @@ export class Column {
             delete this.data;
         }
 
-        if (this.isFilteringEnabled()) {
+        if (grid.columnPolicy.isColumnFilteringEnabled(this.id)) {
             this.filtering ??= new ColumnFiltering(this);
         } else {
             delete this.filtering;
@@ -229,7 +230,8 @@ export class Column {
             return await valueGetter.call(cell, cell);
         }
 
-        const sourceColumnId = this.getSourceColumnId();
+        const sourceColumnId = this.viewport.grid.columnPolicy
+            .getColumnSourceId(this.id);
         if (!sourceColumnId) {
             return void 0;
         }
@@ -259,69 +261,19 @@ export class Column {
         const { grid } = this.viewport;
 
         const dp = grid.dataProvider;
-        const type = grid.columnOptionsMap?.[this.id]?.options.dataType ??
+        const type = grid.columnPolicy
+            .getIndividualColumnOptions(this.id)?.dataType ??
             grid.options?.columnDefaults?.dataType;
         if (type) {
             return type;
         }
 
-        const sourceColumnId = this.getSourceColumnId();
-        if (this.isUnbound() || !sourceColumnId) {
+        const sourceColumnId = grid.columnPolicy.getColumnSourceId(this.id);
+        if (grid.columnPolicy.isColumnUnbound(this.id) || !sourceColumnId) {
             return 'string';
         }
 
         return (await dp?.getColumnDataType(sourceColumnId)) ?? 'string';
-    }
-
-    /**
-     * Returns the resolved source column id used in the data provider.
-     */
-    public getSourceColumnId(): string | undefined {
-        return this.viewport.grid.columnPolicy.getColumnSourceId(this.id);
-    }
-
-    /**
-     * Returns whether the column is unbound to provider data.
-     */
-    public isUnbound(): boolean {
-        return this.viewport.grid.columnPolicy.isColumnUnbound(this.id);
-    }
-
-    /**
-     * Returns whether sorting is enabled for this column.
-     */
-    public isSortingEnabled(): boolean {
-        return this.viewport.grid.columnPolicy.isColumnSortingEnabled(this.id);
-    }
-
-    /**
-     * Returns whether filtering is enabled for this column.
-     */
-    public isFilteringEnabled(): boolean {
-        return this.viewport.grid.columnPolicy
-            .isColumnFilteringEnabled(this.id);
-    }
-
-    /**
-     * Returns whether inline filtering is enabled for this column.
-     */
-    public isInlineFilteringEnabled(): boolean {
-        return this.viewport.grid.columnPolicy
-            .isColumnInlineFilteringEnabled(this.id);
-    }
-
-    /**
-     * Returns whether editing is enabled for this column.
-     */
-    public isEditable(): boolean {
-        return this.viewport.grid.columnPolicy.isColumnEditable(this.id);
-    }
-
-    /**
-     * Returns whether the column should be exported.
-     */
-    public isExportable(): boolean {
-        return this.viewport.grid.columnPolicy.isColumnExportable(this.id);
     }
 
     /**

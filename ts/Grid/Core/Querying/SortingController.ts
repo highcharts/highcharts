@@ -180,14 +180,9 @@ class SortingController {
      * Returns the sorting options from the data grid options.
      */
     private getSortingOptions(): SortingState[] {
-        const grid = this.querying.grid,
-            { columnOptionsMap } = grid;
-
-        if (!columnOptionsMap) {
-            return [];
-        }
-
-        const columnIDs = Object.keys(columnOptionsMap);
+        const grid = this.querying.grid;
+        const columnPolicy = grid.columnPolicy;
+        const columnIDs = columnPolicy.getColumnIds();
 
         const sortings: Array<SortingState & {
             priority?: number;
@@ -195,10 +190,11 @@ class SortingController {
         }> = [];
         for (let i = 0, iEnd = columnIDs.length; i < iEnd; ++i) {
             const columnId = columnIDs[i];
-            if (grid.columnPolicy.isColumnUnbound(columnId)) {
+            if (columnPolicy.isColumnUnbound(columnId)) {
                 continue;
             }
-            const columnOptions = columnOptionsMap[columnId]?.options || {};
+            const columnOptions = columnPolicy
+                .getIndividualColumnOptions(columnId) || {};
             const order = columnOptions.sorting?.order;
 
             if (order) {
@@ -306,8 +302,9 @@ class SortingController {
             ): SortModifierOrderByOption => ({
                 column: sorting.sourceColumnId,
                 direction: sorting.order as ('asc'|'desc'),
-                compare: grid.columnOptionsMap?.[sorting.columnId]
-                    ?.options?.sorting?.compare || defaultCompare
+                compare: grid.columnPolicy
+                    .getIndividualColumnOptions(sorting.columnId)
+                    ?.sorting?.compare || defaultCompare
             }))
         });
     }

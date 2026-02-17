@@ -88,7 +88,9 @@ class FilterRow extends HeaderRow {
 
             await cell.render();
 
-            if (column.isInlineFilteringEnabled()) {
+            if (
+                vp.grid.columnPolicy.isColumnInlineFilteringEnabled(column.id)
+            ) {
                 column.filtering?.renderFilteringContent(cell.htmlElement);
             }
         }

@@ -43,7 +43,9 @@ import type { DeepPartial } from '../../Shared/Types';
 
 import Accessibility from './Accessibility/Accessibility.js';
 import AST from '../../Core/Renderer/HTML/AST.js';
-import ColumnPolicyResolver from './ColumnPolicyResolver.js';
+import ColumnPolicyResolver, {
+    type ColumnOptionsMapItemLike
+} from './ColumnPolicyResolver.js';
 import DataProviderRegistry from './Data/DataProviderRegistry.js';
 import { defaultOptions } from './Defaults.js';
 import GridUtils from './GridUtils.js';
@@ -175,13 +177,6 @@ export class Grid {
      * The caption element of the Grid.
      */
     public captionElement?: HTMLElement;
-
-    /**
-     * The user options declared for the columns as an object of column ID to
-     * column options.
-     * @internal
-     */
-    public columnOptionsMap: Record<string, ColumnOptionsMapItem> = {};
 
     /**
      * Resolver for data binding and column capabilities.
@@ -509,10 +504,11 @@ export class Grid {
             this.options ?? defaultOptions,
             this.userOptions
         );
+        this.columnPolicy.setColumnDefaults(this.options?.columnDefaults);
 
         this.viewport?.columns.forEach((column: Column): void => {
             column.options = createOptionsProxy(
-                this.columnOptionsMap?.[column.id]?.options ?? {},
+                this.columnPolicy.getIndividualColumnOptions(column.id) ?? {},
                 this.options?.columnDefaults
             );
         });
@@ -528,19 +524,17 @@ export class Grid {
         const colOptions = this.userOptions.columns;
 
         if (!colOptions) {
-            this.columnOptionsMap = {};
-            this.columnPolicy.setColumnOptionsMap({});
+            this.columnPolicy.clearColumnOptions();
             return;
         }
 
         if (colOptions.length < 1) {
             delete this.userOptions.columns;
-            this.columnOptionsMap = {};
-            this.columnPolicy.setColumnOptionsMap({});
+            this.columnPolicy.clearColumnOptions();
             return;
         }
 
-        const columnOptionsMap: Record<string, ColumnOptionsMapItem> = {};
+        const columnOptionsMap: Record<string, ColumnOptionsMapItemLike> = {};
         for (let i = 0, iEnd = colOptions.length; i < iEnd; ++i) {
             columnOptionsMap[colOptions[i].id] = {
                 index: i,
@@ -548,7 +542,6 @@ export class Grid {
             };
         }
 
-        this.columnOptionsMap = columnOptionsMap;
         this.columnPolicy.setColumnOptionsMap(columnOptionsMap);
     }
 
@@ -595,7 +588,7 @@ export class Grid {
         for (let i = 0, iEnd = newColumnOptions.length; i < iEnd; ++i) {
             const newOptions = newColumnOptions[i];
             const colOptionsIndex =
-                this.columnOptionsMap?.[newOptions.id]?.index ?? -1;
+                this.columnPolicy.getColumnOptionIndex(newOptions.id) ?? -1;
 
             // If the new column options contain only the id.
             if (Object.keys(newOptions).length < 2) {
@@ -1534,38 +1527,13 @@ export class Grid {
             await this.refreshAvailableSourceColumnIds();
             autoColumns = this.columnPolicy.getAvailableSourceColumnIds() || [];
         }
-        const columnsIncluded = (
-            headerColumns && headerColumns.length > 0 ?
-                headerColumns :
-                autogenerateColumns ?
-                    autoColumns :
-                    this.options?.columns?.map((column): string => column.id)
+
+        return this.columnPolicy.getColumnsForRender(
+            headerColumns,
+            autogenerateColumns,
+            autoColumns,
+            this.options?.columns?.map((column): string => column.id)
         );
-
-        if (!columnsIncluded?.length) {
-            return [];
-        }
-
-        const seen = new Set<string>();
-        const result: string[] = [];
-        for (const columnId of columnsIncluded) {
-            const columnEnabled = (
-                this.columnOptionsMap?.[columnId]?.options as {
-                    enabled?: boolean;
-                } | undefined
-            )?.enabled;
-            if (
-                seen.has(columnId) ||
-                columnEnabled === false
-            ) {
-                continue;
-            }
-
-            seen.add(columnId);
-            result.push(columnId);
-        }
-
-        return result;
     }
 
     private loadDataProvider(): DataProviderType {
@@ -1848,9 +1816,7 @@ export class Grid {
         // Clean up the column options by removing the ones that have no other
         // options than `id`:
         const oldColumnOptions = options.columns;
-        const dataOptions = options.data;
-        const keepIdOnlyColumns = !!dataOptions &&
-            dataOptions.autogenerateColumns === false;
+        const keepIdOnlyColumns = options.data?.autogenerateColumns === false;
         if (oldColumnOptions) {
             options.columns = [];
             for (const columnOption of oldColumnOptions) {
@@ -1894,15 +1860,6 @@ export type NonArrayOptions = Omit<Options, 'columns'> & {
 export type GridDirtyFlags = (
     'grid' | 'rows' | 'sorting' | 'filtering' | 'reflow'
 );
-
-/**
- * @internal
- * An item in the column options map.
- */
-export interface ColumnOptionsMapItem {
-    index: number;
-    options: NoIdColumnOptions
-}
 
 /**
  * Resolved data binding for a Grid column.

@@ -89,7 +89,8 @@ class ColumnSorting {
 
         this.addHeaderElementAttributes();
 
-        const sortingEnabled = column.isSortingEnabled();
+        const sortingEnabled = column.viewport.grid.columnPolicy
+            .isColumnSortingEnabled(column.id);
 
         if (sortingEnabled) {
             headerCellElement.classList.add(
@@ -117,7 +118,8 @@ class ColumnSorting {
         const sortedDescClassName = Globals.getClassName('columnSortedDesc');
 
         const el = this.headerCellElement;
-        const sortingEnabled = col.isSortingEnabled();
+        const sortingEnabled = col.viewport.grid.columnPolicy
+            .isColumnSortingEnabled(col.id);
 
         const columnSorting = (
             currentSortings?.find((sorting): boolean =>

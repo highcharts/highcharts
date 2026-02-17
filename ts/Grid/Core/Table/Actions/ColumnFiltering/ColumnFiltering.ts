@@ -185,7 +185,11 @@ class ColumnFiltering {
     public renderFilteringContent(container: HTMLElement): void {
         const column = this.column;
         const columnType = column.dataType;
-        if (!column.isFilteringEnabled()) {
+        if (
+            !column.viewport.grid.columnPolicy.isColumnFilteringEnabled(
+                column.id
+            )
+        ) {
             return;
         }
 

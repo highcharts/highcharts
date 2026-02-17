@@ -72,9 +72,11 @@ class MenuPopup extends ContextMenu {
         const lang = this.grid.options?.lang || {};
         const column = this.button.toolbar?.column;
         const columnOptions = column?.options || {};
-        const filteringEnabled = !!column?.isFilteringEnabled() &&
+        const filteringEnabled = !!column &&
+            this.grid.columnPolicy.isColumnFilteringEnabled(column.id) &&
             !columnOptions.filtering?.inline;
-        const sortingEnabled = !!column?.isSortingEnabled();
+        const sortingEnabled = !!column &&
+            this.grid.columnPolicy.isColumnSortingEnabled(column.id);
 
         this.addHeader(
             this.button.toolbar?.column.header?.value || '',

@@ -112,7 +112,12 @@ abstract class Cell {
         this.htmlElement = this.init();
         this.htmlElement.setAttribute('tabindex', '-1');
 
-        if (!this.column?.isEditable()) {
+        if (
+            !this.column ||
+            !this.column.viewport.grid.columnPolicy.isColumnEditable(
+                this.column.id
+            )
+        ) {
             this.htmlElement.setAttribute('aria-readonly', 'true');
         }
 

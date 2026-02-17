@@ -130,7 +130,11 @@ class TableCell extends Cell {
      * The new value to set.
      */
     public async editValue(value: DataTableCellType): Promise<void> {
-        if (!this.column.isEditable()) {
+        if (
+            !this.column.viewport.grid.columnPolicy.isColumnEditable(
+                this.column.id
+            )
+        ) {
             return;
         }
 
@@ -222,7 +226,7 @@ class TableCell extends Cell {
     private getCellStyles(): CSSObject {
         const { grid } = this.column.viewport;
         const rawColumnOptions =
-            grid.columnOptionsMap?.[this.column.id]?.options;
+            grid.columnPolicy.getIndividualColumnOptions(this.column.id);
 
         return {
             ...mergeStyleValues(
@@ -248,7 +252,8 @@ class TableCell extends Cell {
      * content.
      */
     private async updateDataset(): Promise<boolean> {
-        const sourceColumnId = this.column.getSourceColumnId();
+        const sourceColumnId = this.column.viewport.grid.columnPolicy
+            .getColumnSourceId(this.column.id);
         if (!sourceColumnId) {
             return false;
         }

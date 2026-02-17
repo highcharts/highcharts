@@ -193,7 +193,7 @@ function createEditModeRenderer(column: Column): EditModeRendererType {
  * Callback function called after column initialization.
  */
 function afterColumnInit(this: Column): void {
-    if (this.isEditable()) {
+    if (this.viewport.grid.columnPolicy.isColumnEditable(this.id)) {
         this.editModeRenderer = createEditModeRenderer(this);
     } else {
         delete this.editModeRenderer;
@@ -241,7 +241,12 @@ function addEditableCellA11yHint(this: TableCell): void {
     const editableLang = this.row.viewport.grid.options
         ?.lang?.accessibility?.cellEditing?.editable;
 
-    if (!this.column.isEditable() || !editableLang) {
+    if (
+        !this.column.viewport.grid.columnPolicy.isColumnEditable(
+            this.column.id
+        ) ||
+        !editableLang
+    ) {
         return;
     }
 
