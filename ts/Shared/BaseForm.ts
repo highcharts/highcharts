@@ -103,8 +103,6 @@ abstract class BaseForm {
     protected addCloseButton(
         className: string = 'highcharts-popup-close'
     ): HTMLElement {
-        const popup = this;
-
         // Create close popup button.
         const closeButton = createElement(
             'button',
@@ -123,16 +121,16 @@ abstract class BaseForm {
             addEvent(
                 closeButton,
                 eventName,
-                popup.closeButtonEvents.bind(popup)
+                this.closeButtonEvents.bind(this)
             );
         });
 
         // Close popup when press ESC
         addEvent(
             document,
-            'keydown', function (event: KeyboardEvent):void {
+            'keydown', (event: KeyboardEvent): void => {
                 if (event.code === 'Escape') {
-                    popup.closeButtonEvents();
+                    this.closeButtonEvents();
                 }
             }
         );

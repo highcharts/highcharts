@@ -112,7 +112,7 @@ declare module '../Exporting/NavigationOptions' {
          * from a different server.
          *
          * @type      {string}
-         * @default   https://code.highcharts.com/@product.version@/gfx/stock-icons/
+         * @default   undefined
          * @since     7.1.3
          * @apioption navigation.iconsURL
          */
