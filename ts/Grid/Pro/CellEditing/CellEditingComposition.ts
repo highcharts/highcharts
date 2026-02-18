@@ -399,7 +399,6 @@ declare module '../../Core/Accessibility/A11yOptions' {
          * Enable accessibility announcements for the cell editing.
          *
          * @default true
-         * @product gridpro
          */
         cellEditing?: boolean;
     }
@@ -407,8 +406,6 @@ declare module '../../Core/Accessibility/A11yOptions' {
     interface LangAccessibilityOptions {
         /**
          * Language options for the accessibility descriptions in cell editing.
-         *
-         * @product gridpro
          */
         cellEditing?: CellEditingLangA11yOptions;
     }
@@ -420,8 +417,6 @@ declare module '../../Core/Options' {
          * Whether to enabled the cell edit mode functionality. It allows to
          * edit the cell value in a separate input field that is displayed
          * after double-clicking the cell or pressing the Enter key.
-         *
-         * @product gridpro
          */
         editMode?: ColumnEditModeOptions;
     }

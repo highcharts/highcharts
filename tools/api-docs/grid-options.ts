@@ -312,6 +312,16 @@ function addTreeNode(
     const _treeNode = getTreeNode(_fullname);
     const _nodeDoclet = _treeNode.doclet;
     const _nodeMeta = _treeNode.meta;
+    const sourcePath = (
+        (info.meta && info.meta.file) ||
+        sourceInfo.path ||
+        ''
+    );
+    const isGridProSource =
+        /(^|[\\/])ts[\\/]Grid[\\/]Pro[\\/]/u.test(sourcePath);
+    const hasExplicitProductTag =
+        Array.isArray(_infoDoclet.tags.product) &&
+        _infoDoclet.tags.product.length > 0;
 
     let _array: Array<Record<string, (string | Array<string>)>>;
     let _split: Array<string>;
@@ -434,6 +444,16 @@ function addTreeNode(
                 break;
 
         }
+    }
+
+    // Default all options defined under ts/Grid/Pro to Grid Pro unless
+    // explicitly overridden by a @product tag in JSDoc.
+    if (
+        isGridProSource &&
+        !hasExplicitProductTag &&
+        typeof (_nodeDoclet as any).product === 'undefined'
+    ) {
+        (_nodeDoclet as any).product = 'gridpro';
     }
 
     appendDeprecationToDescription(_infoDoclet, _nodeDoclet);
@@ -790,6 +810,13 @@ function expandDataProviderOptionChildren(
         const providerNode = getTreeNode(
             `${treeNode.meta.fullname}.${provider.providerType}`
         );
+        const providerSourcePath = (
+            provider.interfaceInfo.meta.file ||
+            provider.sourceInfo.path ||
+            ''
+        );
+        const isGridProProvider =
+            /(^|[\\/])ts[\\/]Grid[\\/]Pro[\\/]/u.test(providerSourcePath);
 
         if (!providerNode.doclet.description) {
             const interfaceDesc = (
@@ -805,6 +832,12 @@ function expandDataProviderOptionChildren(
                 `Options for data provider type ` +
                 `<code>'${provider.providerType}'</code>.`
             );
+        }
+        if (
+            isGridProProvider &&
+            typeof (providerNode.doclet as any).product === 'undefined'
+        ) {
+            (providerNode.doclet as any).product = 'gridpro';
         }
 
         let hasProviderSpecificMembers = false;

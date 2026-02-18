@@ -154,6 +154,66 @@ function postProcessApiJS(gridDir, classMap) {
         'var discriminatorKey = /^data\\.[a-z0-9]+$/.test(def.fullname) ? \'providerType\' : \'type\';\n' +
         '        title.innerHTML = \'{ <span class="type-item">\' + discriminatorKey + \': "\' + def.name + \'",</span>\';'
     );
+    // Mark Grid Pro-only options in the right panel and option header.
+    content = content.replace(
+        /deprecated,\n\s+since,/u,
+        'deprecated,\n      proOnly,\n      since,'
+    );
+    content = content.replace(
+        /deprecated,\n\s+description,/u,
+        'deprecated,\n          proOnly,\n          description,'
+    );
+    content = content.replace(
+        /deprecated,\n\s+description =/u,
+        'deprecated,\n          proOnly,\n          description ='
+    );
+    content = content.replace(
+        /samples = getSampleList\(def\);/u,
+        'if (def.product === \'gridpro\') {\n' +
+        '      proOnly = cr(\'p\', \'pro-only\', \'Grid Pro only\');\n' +
+        '      option.setAttribute(\n' +
+        '        \'class\', option.getAttribute(\'class\') + \' gridpro-only\'\n' +
+        '      );\n' +
+        '    }\n\n' +
+        '    samples = getSampleList(def);'
+    );
+    content = content.replace(
+        /if \(def\.deprecated\) \{\n\s+deprecated = cr\('p', 'deprecated', 'Deprecated' \+ \(\n\s+def\.deprecated === true \? '' : ' ' \+ def\.deprecated\n\s+\)\);\n\s+option\.setAttribute\(\n\s+'class', option\.getAttribute\('class'\) \+ ' deprecated'\n\s+\);\n\s+\}\n\n\s+state\.split/u,
+        'if (def.deprecated) {\n' +
+        '          deprecated = cr(\'p\', \'deprecated\', \'Deprecated\' + (\n' +
+        '            def.deprecated === true ? \'\' : \' \' + def.deprecated\n' +
+        '          ));\n' +
+        '          option.setAttribute(\n' +
+        '            \'class\', option.getAttribute(\'class\') + \' deprecated\'\n' +
+        '          );\n' +
+        '        }\n' +
+        '        if (def.product === \'gridpro\') {\n' +
+        '          proOnly = cr(\'p\', \'pro-only\', \'Grid Pro only\');\n' +
+        '          option.setAttribute(\n' +
+        '            \'class\', option.getAttribute(\'class\') + \' gridpro-only\'\n' +
+        '          );\n' +
+        '        }\n\n' +
+        '        state.split'
+    );
+    // Add a Grid Pro marker in the left sidebar nodes.
+    content = content.replace(
+        /expanded = false,\n\s+hasNext = false;/u,
+        'expanded = false,\n      hasNext = false,\n      proBadge;'
+    );
+    content = content.replace(
+        /if \(def\.deprecated\) \{\n\s+node\.className \+= ' deprecated';\n\s+\}/u,
+        'if (def.deprecated) {\n' +
+        '      node.className += \' deprecated\';\n' +
+        '    }\n' +
+        '    if (def.product === \'gridpro\') {\n' +
+        '      node.className += \' gridpro-only\';\n' +
+        '      proBadge = cr(\'span\', \'product-badge\', \'Pro\');\n' +
+        '    }'
+    );
+    content = content.replace(
+        /ap\(\n\s+title,\n\s+arrow\n\s+\)/u,
+        'ap(\n          title,\n          proBadge,\n          arrow\n        )'
+    );
 
     fs.writeFileSync(apiJsPath, content, 'utf8');
 }
@@ -201,6 +261,44 @@ function postProcessCSS(gridDir) {
         '  text-decoration: line-through;\n' +
         '  text-decoration-thickness: from-font;\n' +
         '}\n';
+    content += '\n' +
+        ':root {\n' +
+        '  --grid-pro-badge-border: #8f5fff;\n' +
+        '  --grid-pro-badge-text: #5b3bb8;\n' +
+        '  --grid-pro-badge-bg: #f2ecff;\n' +
+        '}\n' +
+        '@media (prefers-color-scheme: dark) {\n' +
+        '  :root {\n' +
+        '    --grid-pro-badge-border: #b8a3ff;\n' +
+        '    --grid-pro-badge-text: #f0eaff;\n' +
+        '    --grid-pro-badge-bg: #45326f;\n' +
+        '  }\n' +
+        '}\n' +
+        '.product-badge,\n' +
+        '.pro-only {\n' +
+        '  display: inline-block;\n' +
+        '  margin-left: 8px;\n' +
+        '  padding: 1px 6px;\n' +
+        '  border-radius: 10px;\n' +
+        '  border: 1px solid var(--grid-pro-badge-border);\n' +
+        '  color: var(--grid-pro-badge-text);\n' +
+        '  background: var(--grid-pro-badge-bg);\n' +
+        '  font-size: 0.72em;\n' +
+        '  font-weight: 600;\n' +
+        '  text-decoration: none;\n' +
+        '  vertical-align: middle;\n' +
+        '}\n' +
+        '.options-tree .product-badge {\n' +
+        '  margin-left: 6px;\n' +
+        '}\n' +
+        // Show sidebar Pro marker only at the first pro boundary level.
+        '.options-tree .node.gridpro-only .children .node.gridpro-only > .title .product-badge {\n' +
+        '  display: none;\n' +
+        '}\n' +
+        '.option .pro-only {\n' +
+        '  float: right;\n' +
+        '  margin-top: 2px;\n' +
+        '}\n';
 
     fs.writeFileSync(stylePath, content, 'utf8');
 }
@@ -214,12 +312,53 @@ function postProcessCSS(gridDir) {
 function postProcessJSONArtifacts(gridDir) {
     const fs = require('fs');
     const path = require('path');
+    const productByFullname = {};
+    function collectProducts(node) {
+        if (!node || typeof node !== 'object') {
+            return;
+        }
+        if (
+            node.meta &&
+            typeof node.meta.fullname === 'string' &&
+            node.doclet &&
+            typeof node.doclet.product === 'string'
+        ) {
+            productByFullname[node.meta.fullname] = node.doclet.product;
+        }
+        if (node.children && typeof node.children === 'object') {
+            for (const child of Object.values(node.children)) {
+                collectProducts(child);
+            }
+        }
+    }
+    function annotateEntry(entry) {
+        if (!entry || typeof entry !== 'object') {
+            return;
+        }
+        if (
+            typeof entry.fullname === 'string' &&
+            typeof productByFullname[entry.fullname] === 'string'
+        ) {
+            entry.product = productByFullname[entry.fullname];
+        }
+        if (Array.isArray(entry.children)) {
+            entry.children.forEach(annotateEntry);
+        }
+    }
 
     const treePath = path.join(gridDir, 'tree.json');
     if (fs.existsSync(treePath)) {
         const treeData = JSON.parse(fs.readFileSync(treePath, 'utf8'));
         delete treeData.plotOptions;
         delete treeData.series;
+
+        for (const [key, node] of Object.entries(treeData)) {
+            if (key === '_meta') {
+                continue;
+            }
+            collectProducts(node);
+        }
+
         fs.writeFileSync(treePath, JSON.stringify(treeData), 'utf8');
     }
 
@@ -245,6 +384,26 @@ function postProcessJSONArtifacts(gridDir) {
             );
         }
         fs.writeFileSync(navPath, JSON.stringify(navData), 'utf8');
+    }
+
+    const navDir = path.join(gridDir, 'nav');
+    if (fs.existsSync(navDir)) {
+        for (const file of fs.readdirSync(navDir)) {
+            if (!file.endsWith('.json')) {
+                continue;
+            }
+
+            const filePath = path.join(navDir, file);
+            const json = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+            const nodeName = file.replace(/\.json$/u, '');
+
+            if (typeof productByFullname[nodeName] === 'string') {
+                json.product = productByFullname[nodeName];
+            }
+            annotateEntry(json);
+
+            fs.writeFileSync(filePath, JSON.stringify(json), 'utf8');
+        }
     }
 
     const dumpPath = path.join(gridDir, 'dump.json');

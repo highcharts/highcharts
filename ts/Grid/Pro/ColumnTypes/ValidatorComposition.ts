@@ -100,8 +100,6 @@ declare module '../../Pro/CellEditing/CellEditingComposition' {
          *
          * If not set, the validation rules are applied according to the data
          * type.
-         *
-         * @product gridpro
          */
         validationRules?: (RuleKey|RuleDefinition)[];
     }
@@ -114,8 +112,6 @@ declare module '../../Core/Options' {
          *
          * If not set, the validation rules are applied according to the data
          * type.
-         *
-         * @product gridpro
          */
         validationErrors?: RulesRegistryType;
     }

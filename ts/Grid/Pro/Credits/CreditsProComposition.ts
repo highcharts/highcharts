@@ -85,8 +85,6 @@ declare module '../../Core/Options' {
          * Options for the credits label.
          *
          * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/grid-pro/credits | Credits options}
-         *
-         * @product gridpro
          */
         credits?: CreditsOptions;
     }
