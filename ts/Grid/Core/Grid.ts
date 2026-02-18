@@ -190,9 +190,7 @@ export class Grid {
      * @deprecated
      * Use `columnPolicy` methods instead.
      */
-    public get columnOptionsMap(): Readonly<
-        Record<string, ColumnOptionsMapItemLike>
-    > {
+    public get columnOptionsMap(): Record<string, ColumnOptionsMapItemLike> {
         return this.columnPolicy.columnOptionsMap;
     }
 
