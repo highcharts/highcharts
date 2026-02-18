@@ -150,6 +150,8 @@ function postProcessCSS(gridDir) {
         /^\.option-header, \.option \{/gmu,
         '#option-list .option-header, #option-list .option {'
     );
+    // Keep DOM structure intact, but hide the legacy global-options snippet.
+    content += '\n#option-trees-wrapper .global-options.options-tree { display: none; }\n';
 
     fs.writeFileSync(stylePath, content, 'utf8');
 }
@@ -300,8 +302,9 @@ function postProcessHTML(gridDir, gridVersion) {
         ],
 
         // Sidebar code snippets
-        [/Highcharts\.setOptions\(\{/gu, '// Global options'],
+        [/Highcharts\.setOptions\(\{/gu, ''],
         [/Highcharts\.chart\(\{/gu, 'Grid.grid(\'container\', {'],
+        // Keep only one snippet line before the options tree
         [/<h3 id="options-header">Configuration options<\/h3>/gu,
             '<h3 id="options-header">Configuration options</h3>'],
         [
@@ -312,11 +315,11 @@ function postProcessHTML(gridDir, gridVersion) {
         // Remove unrelated header links
         [/<div id="namespaces"[\s\S]*?<\/div>/gu, ''],
         [/<div id="interfaces"[\s\S]*?<\/div>/gu, ''],
-        // Replace "Classes" header item with "Code docs" for Grid
+        // Replace "Classes" header item with "Class reference" for Grid
         [
             /<div id="classes" class="menu">[\s\S]*?<\/div>/gu,
             '<div id="classes" class="menu">\n' +
-            '                            <a href="/grid/typedoc/index.html">Code docs</a>\n' +
+            '                            <a href="/grid/typedoc/index.html">Class reference</a>\n' +
             '                        </div>'
         ],
 
