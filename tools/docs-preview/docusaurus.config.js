@@ -28,7 +28,7 @@ function removeIframeStyle() {
 /** @type {import('@docusaurus/types').Config} */
 const config = {
     title: 'Highcharts Documentation (preview)',
-    favicon: 'img/favicon.ico',
+    favicon: 'img/highcharts-logo.svg',
 
     // Set the production url of your site here
     url: 'https://www.highcharts.com',
