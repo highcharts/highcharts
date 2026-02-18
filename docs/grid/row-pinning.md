@@ -26,6 +26,24 @@ Grid.grid('container', {
 });
 ```
 
+Row pinning is enabled by default. Use `pinning.enabled: false` to disable it:
+
+```js
+Grid.grid('container', {
+    rendering: {
+        rows: {
+            pinning: {
+                enabled: false
+            }
+        }
+    }
+});
+```
+
+When disabled, Grid ignores row pinning config (`topIds`, `bottomIds`,
+`resolve`, etc.), runtime pinning methods are no-op, and pinned row sections
+are not rendered.
+
 Use `pinning.idColumn` to define stable row identity for persistence and
 restore.
 If it is not set, Grid uses a default row id derived from the row's
@@ -47,13 +65,17 @@ const pinned = grid.getPinnedRows();
 // { topIds: [...], bottomIds: [...] }
 ```
 
-In Grid Pro, you can also listen to `events.rowPinningChanged`:
+In Grid Pro, you can also listen to
+`events.beforeRowPinningChange` and `events.afterRowPinningChange`:
 
 ```js
 Grid.grid('container', {
     events: {
-        rowPinningChanged(e) {
-            console.log(e.action, e.rowId, e.topIds, e.bottomIds);
+        beforeRowPinningChange(e) {
+            console.log('before', e.action, e.rowId, e.topIds, e.bottomIds);
+        },
+        afterRowPinningChange(e) {
+            console.log('after', e.action, e.rowId, e.topIds, e.bottomIds);
         }
     }
 });
@@ -67,6 +89,9 @@ Event payload fields:
 - `changed`: whether pinned state actually changed
 - `previousTopIds` / `previousBottomIds`
 - `topIds` / `bottomIds`
+
+`beforeRowPinningChange` fires before redraw, and
+`afterRowPinningChange` fires after redraw.
 
 ## Sorting and filtering behavior
 
@@ -85,6 +110,28 @@ rendering: {
 
 Set `sorting: 'include'` or `filtering: 'include'` when pinned rows should also
 follow active sorting/filtering while still remaining pinned.
+
+## Pinned section max height
+
+You can make top/bottom pinned sections scroll independently by setting
+`pinning.top.maxHeight` and/or `pinning.bottom.maxHeight`.
+
+```js
+rendering: {
+    rows: {
+        pinning: {
+            topIds: ['row-001', 'row-002', 'row-003'],
+            bottomIds: ['row-998', 'row-999'],
+            top: {
+                maxHeight: 120 // pixels
+            },
+            bottom: {
+                maxHeight: '25%' // percent of table height
+            }
+        }
+    }
+}
+```
 
 ## Notes
 

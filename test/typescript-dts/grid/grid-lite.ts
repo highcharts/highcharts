@@ -38,6 +38,19 @@ function test_grid() {
                 resizing: {
                     mode: 'distributed'
                 }
+            },
+            rows: {
+                pinning: {
+                    enabled: true,
+                    topIds: ['A'],
+                    bottomIds: ['C'],
+                    top: {
+                        maxHeight: 120
+                    },
+                    bottom: {
+                        maxHeight: '25%'
+                    }
+                }
             }
         },
         columnDefaults: {

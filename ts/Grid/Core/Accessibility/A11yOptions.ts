@@ -78,6 +78,13 @@ export interface A11yAnnouncementsOptions {
      * @default true
      */
     filtering?: boolean;
+
+    /**
+     * Enable accessibility announcements for row pinning.
+     *
+     * @default true
+     */
+    rowPinning?: boolean;
 }
 
 /**
@@ -98,6 +105,11 @@ export interface LangAccessibilityOptions {
      * Language options for the accessibility descriptions in filtering.
      */
     filtering?: FilteringLangA11yOptions;
+
+    /**
+     * Language options for the accessibility descriptions in row pinning.
+     */
+    rowPinning?: RowPinningLangA11yOptions;
 
     /**
      * Language options for screen reader sections before and after the Grid.
@@ -206,6 +218,32 @@ export interface FilteringLangA11yOptions {
          * @default 'Filter cleared for {columnId}. {rowsCount} results found.'
          */
         filterCleared?: string;
+    }
+}
+
+/**
+ * Accessibility options for row pinning announcements.
+ */
+export interface RowPinningLangA11yOptions {
+    /**
+     * Language options for the accessibility descriptions in row pinning.
+     */
+    announcements?: {
+        /**
+         * The message when a row was pinned. Use `{rowId}` and `{position}`
+         * as template variables.
+         *
+         * @default 'Row {rowId} pinned to {position}.'
+         */
+        pinned?: string;
+
+        /**
+         * The message when a row was unpinned. Use `{rowId}` as a template
+         * variable.
+         *
+         * @default 'Row {rowId} unpinned.'
+         */
+        unpinned?: string;
     }
 }
 

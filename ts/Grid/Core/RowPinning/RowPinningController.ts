@@ -105,6 +105,7 @@ class RowPinningController {
     }
 
     private getPinningOptions(): {
+        enabled?: boolean;
         idColumn?: string;
         topIds?: RowId[];
         bottomIds?: RowId[];
@@ -120,6 +121,7 @@ class RowPinningController {
         const top = pinningOptions?.topIds || [];
         const bottom = pinningOptions?.bottomIds || [];
         const hash = JSON.stringify({
+            enabled: pinningOptions?.enabled !== false,
             top,
             bottom,
             idColumn: pinningOptions?.idColumn,
@@ -132,6 +134,16 @@ class RowPinningController {
         }
 
         this.optionsHash = hash;
+
+        if (!this.isOptionEnabled()) {
+            this.topRowIds.length = 0;
+            this.bottomRowIds.length = 0;
+            this.effectiveTopRowIds.length = 0;
+            this.effectiveBottomRowIds.length = 0;
+            this.hasEffectivePinnedState = false;
+            return;
+        }
+
         this.topRowIds = RowPinningController.uniqueRowIds(top);
         this.bottomRowIds = RowPinningController.uniqueRowIds(bottom).filter((
             rowId
@@ -143,6 +155,10 @@ class RowPinningController {
 
     public isEnabled(): boolean {
         this.loadOptions();
+
+        if (!this.isOptionEnabled()) {
+            return false;
+        }
 
         const pinningOptions = this.getPinningOptions();
         return !!(
@@ -158,6 +174,10 @@ class RowPinningController {
         this.stickyTopRowIds = rowIds;
     }
 
+    public isOptionEnabled(): boolean {
+        return this.getPinningOptions()?.enabled !== false;
+    }
+
     public getStickyTopRowIds(): RowId[] {
         return this.stickyTopRowIds;
     }
@@ -167,6 +187,9 @@ class RowPinningController {
     }
 
     public requiresTbodySplit(): boolean {
+        if (!this.isOptionEnabled()) {
+            return false;
+        }
         return this.hasEffectivePinnedState || this.hasStickyRows();
     }
 
@@ -188,6 +211,9 @@ class RowPinningController {
         index?: number
     ): void {
         this.loadOptions();
+        if (!this.isOptionEnabled()) {
+            return;
+        }
 
         this.explicitUnpinned.delete(rowId);
 
@@ -225,6 +251,9 @@ class RowPinningController {
 
     public unpinRow(rowId: RowId): void {
         this.loadOptions();
+        if (!this.isOptionEnabled()) {
+            return;
+        }
 
         const topIndex = this.topRowIds.indexOf(rowId);
         if (topIndex !== -1) {
@@ -243,6 +272,13 @@ class RowPinningController {
     }
 
     public getPinnedRows(): { topIds: RowId[]; bottomIds: RowId[] } {
+        if (!this.isOptionEnabled()) {
+            return {
+                topIds: [],
+                bottomIds: []
+            };
+        }
+
         if (this.hasEffectivePinnedState) {
             return {
                 topIds: this.effectiveTopRowIds.slice(),

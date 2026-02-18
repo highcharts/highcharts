@@ -209,6 +209,9 @@ class Table {
             'tbody',
             { className: Globals.getClassName('pinnedTopTbodyElement') }
         );
+        this.pinnedTopTbodyElement.setAttribute(
+            'aria-label', 'Pinned top rows'
+        );
         this.tbodyElement = makeHTMLElement('tbody', {}, tableElement);
         this.tbodyElement.classList.add(
             Globals.getClassName('scrollableTbodyElement')
@@ -216,6 +219,9 @@ class Table {
         this.pinnedBottomTbodyElement = makeHTMLElement(
             'tbody',
             { className: Globals.getClassName('pinnedBottomTbodyElement') }
+        );
+        this.pinnedBottomTbodyElement.setAttribute(
+            'aria-label', 'Pinned bottom rows'
         );
 
         this.rowsVirtualizer = new RowsVirtualizer(this);
@@ -401,6 +407,8 @@ class Table {
             return;
         }
         const oldPinningMeta = vp.grid.rowPinningMeta;
+        const oldPinningMaxHeightSignature =
+            this.getPinnedBodyMaxHeightSignature();
         let focusedRowId: RowId | undefined;
         if (vp.focusCursor) {
             focusedRowId = await dp.getRowId(vp.focusCursor[0]);
@@ -447,7 +455,14 @@ class Table {
                 oldPinningMeta?.bottomRowIds.join('|') !==
                     newPinningMeta?.bottomRowIds.join('|')
             );
+            const pinningMaxHeightChanged = (
+                oldPinningMaxHeightSignature !==
+                this.getPinnedBodyMaxHeightSignature()
+            );
             if (pinningMetaChanged) {
+                shouldRerender = true;
+            }
+            if (pinningMaxHeightChanged) {
                 shouldRerender = true;
             }
 
@@ -505,6 +520,7 @@ class Table {
         for (let i = 0, iEnd = this.pinnedBottomRows.length; i < iEnd; ++i) {
             this.pinnedBottomRows[i].reflow();
         }
+        this.applyPinnedBodyMaxHeights();
         this.applyPinnedScrollbarCompensation();
         this.syncPinnedHorizontalScroll(this.tbodyElement.scrollLeft);
 
@@ -956,6 +972,12 @@ class Table {
      * @internal
      */
     public async renderPinnedRows(): Promise<void> {
+        // Cancel any active cell editing before destroying/moving rows to
+        // prevent orphaned inputs and stale cell references.
+        if (this.cellEditing?.editedCell) {
+            this.cellEditing.stopEditing(false);
+        }
+
         const meta = this.grid.rowPinningMeta;
         const hasPinning = !!meta;
         this.ensurePinnedBodiesRendered(hasPinning);
@@ -966,6 +988,7 @@ class Table {
             this.pinnedTopRows.length = 0;
             this.pinnedBottomRows.length = 0;
             this.tbodyElement.style.display = '';
+            this.applyPinnedBodyMaxHeights();
             return;
         }
 
@@ -1001,9 +1024,100 @@ class Table {
         ) ?
             'none' :
             '';
+        this.applyPinnedBodyMaxHeights();
         this.syncPinnedHorizontalScroll(this.tbodyElement.scrollLeft);
 
         this.applyPinnedScrollbarCompensation();
+    }
+
+    /**
+     * Reads pinned tbody max-height options from row pinning config.
+     *
+     * @param position
+     * The pinned section position.
+     */
+    private getPinnedBodyMaxHeight(
+        position: 'top'|'bottom'
+    ): number|string|undefined {
+        const pinningOptions = this.grid.options?.rendering?.rows?.pinning;
+        const userPinningOptions = this.grid.userOptions?.rendering?.rows
+            ?.pinning;
+        return position === 'top' ?
+            (
+                pinningOptions?.top?.maxHeight ??
+                userPinningOptions?.top?.maxHeight
+            ) :
+            (
+                pinningOptions?.bottom?.maxHeight ??
+                userPinningOptions?.bottom?.maxHeight
+            );
+    }
+
+    /**
+     * Converts max-height option values to a CSS length.
+     *
+     * @param value
+     * The max-height option value.
+     */
+    private normalizeMaxHeight(
+        value?: number|string
+    ): string {
+        if (typeof value === 'number' && value >= 0) {
+            return value + 'px';
+        }
+        if (typeof value !== 'string') {
+            return '';
+        }
+
+        const trimmed = value.trim();
+        const percentMatch = trimmed.match(/^(\d+(\.\d+)?)%$/);
+        if (percentMatch) {
+            const percent = parseFloat(percentMatch[1]);
+            const tableHeight = this.tableElement.clientHeight ||
+                this.tbodyElement.clientHeight;
+            const pxHeight = Math.max(
+                0, Math.round(tableHeight * percent / 100)
+            );
+            return pxHeight + 'px';
+        }
+
+        if (/^\d+(\.\d+)?px$/.test(trimmed)) {
+            return trimmed;
+        }
+
+        return '';
+    }
+
+    /**
+     * Returns a normalized signature used to detect max-height option changes.
+     */
+    private getPinnedBodyMaxHeightSignature(): string {
+        return [
+            this.normalizeMaxHeight(this.getPinnedBodyMaxHeight('top')),
+            this.normalizeMaxHeight(this.getPinnedBodyMaxHeight('bottom'))
+        ].join('|');
+    }
+
+    /**
+     * Applies optional max-height scrolling behavior to pinned tbodies.
+     */
+    private applyPinnedBodyMaxHeights(): void {
+        const apply = (tbody: HTMLElement, value?: number|string): void => {
+            const maxHeight = this.normalizeMaxHeight(value);
+
+            tbody.style.maxHeight = maxHeight;
+            tbody.style.overflowY = maxHeight ? 'auto' : '';
+            tbody.style.overflowX = maxHeight ? 'hidden' : '';
+        };
+
+        apply(
+            this.pinnedTopTbodyElement,
+            this.getPinnedBodyMaxHeight('top')
+        );
+        apply(
+            this.pinnedBottomTbodyElement,
+            this.getPinnedBodyMaxHeight('bottom')
+        );
     }
 
     private syncPinnedHorizontalScroll(scrollLeft: number): void {
@@ -1050,6 +1164,9 @@ class Table {
                 row = new TableRow(this, rowIndex);
                 targetRows.push(row);
                 await row.init();
+                row.htmlElement.setAttribute(
+                    'aria-roledescription', 'pinned row'
+                );
                 tbody.appendChild(row.htmlElement);
                 await row.render();
                 row.reflow();
@@ -1057,6 +1174,9 @@ class Table {
             }
 
             await row.reuse(rowIndex, false);
+            row.htmlElement.setAttribute(
+                'aria-roledescription', 'pinned row'
+            );
             row.reflow();
             if (!row.htmlElement.isConnected) {
                 tbody.appendChild(row.htmlElement);

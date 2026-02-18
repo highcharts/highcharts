@@ -2,6 +2,9 @@ const topPinned = document.getElementById('topPinned');
 const bottomPinned = document.getElementById('bottomPinned');
 
 const rowCount = 80;
+const pinnedRowsVisibleCount = 4;
+const estimatedRowHeight = 41;
+const pinnedSectionMaxHeight = pinnedRowsVisibleCount * estimatedRowHeight;
 const rows = Array.from({ length: rowCount }, (_, i) => {
     const id = 'SKU-' + String(i + 1).padStart(3, '0');
 
@@ -64,17 +67,17 @@ function unpinRow(cell) {
 const rowContextMenu = {
     items: [{
         label: 'Pin row to top',
-        icon: 'addRowAbove',
+        icon: 'pin01',
         onClick: pinToTop
     }, {
         label: 'Pin row to bottom',
-        icon: 'addRowBelow',
+        icon: 'pin01',
         onClick: pinToBottom
     }, {
         separator: true
     }, {
         label: 'Unpin row',
-        icon: 'trash',
+        icon: 'pin02',
         onClick: unpinRow
     }]
 };
@@ -93,7 +96,13 @@ const grid = Grid.grid('container', {
         rows: {
             pinning: {
                 topIds: [0],
-                bottomIds: [rowCount - 1]
+                bottomIds: [rowCount - 1],
+                top: {
+                    maxHeight: pinnedSectionMaxHeight
+                },
+                bottom: {
+                    maxHeight: pinnedSectionMaxHeight
+                }
             }
         }
     },

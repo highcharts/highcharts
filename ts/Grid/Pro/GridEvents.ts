@@ -25,7 +25,7 @@ import type TableCell from '../Core/Table/Body/TableCell';
 import type HeaderCell from '../Core/Table/Header/HeaderCell';
 import type { GridEvent } from '../Core/GridUtils';
 import type Grid from '../Core/Grid';
-import type { RowPinningChangedEvent } from
+import type { RowPinningChangeEvent } from
     '../Core/RowPinning/RowPinningComposition';
 
 import U from '../../Core/Utilities.js';
@@ -109,10 +109,19 @@ function compose(
 
     addEvent(
         GridClass,
-        'rowPinningChanged',
-        (e: GridEvent<Grid> & RowPinningChangedEvent): void => {
+        'beforeRowPinningChange',
+        (e: GridEvent<Grid> & RowPinningChangeEvent): void => {
             const grid = e.target;
-            grid.options?.events?.rowPinningChanged?.call(grid, e);
+            grid.options?.events?.beforeRowPinningChange?.call(grid, e);
+        }
+    );
+
+    addEvent(
+        GridClass,
+        'afterRowPinningChange',
+        (e: GridEvent<Grid> & RowPinningChangeEvent): void => {
+            const grid = e.target;
+            grid.options?.events?.afterRowPinningChange?.call(grid, e);
         }
     );
 
@@ -179,9 +188,9 @@ export type ColumnEventCallback = (this: Column) => void;
  * Callback function to be called when a grid event is triggered.
  */
 export type GridEventCallback = (this: Grid, e: AnyRecord) => void;
-export type RowPinningChangedEventCallback = (
+export type RowPinningChangeEventCallback = (
     this: Grid,
-    e: GridEvent<Grid> & RowPinningChangedEvent
+    e: GridEvent<Grid> & RowPinningChangeEvent
 ) => void;
 
 /**
@@ -298,9 +307,16 @@ export interface GridEvents {
     afterRedraw?: GridEventCallback;
 
     /**
-     * Callback function to be called after runtime row pinning state changes.
+     * Callback function to be called before runtime row pinning state changes
+     * are redrawn.
      */
-    rowPinningChanged?: RowPinningChangedEventCallback;
+    beforeRowPinningChange?: RowPinningChangeEventCallback;
+
+    /**
+     * Callback function to be called after runtime row pinning state changes
+     * are redrawn.
+     */
+    afterRowPinningChange?: RowPinningChangeEventCallback;
 }
 
 declare module '../Core/Options' {

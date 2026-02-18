@@ -75,7 +75,10 @@ function test_grid() {
             }]
         },
         events: {
-            rowPinningChanged: function (e): void {
+            beforeRowPinningChange: function (e): void {
+                e.target;
+            },
+            afterRowPinningChange: function (e): void {
                 e.target;
             }
         }

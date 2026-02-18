@@ -139,7 +139,7 @@ test.describe('Grid Lite row pinning', () => {
         expect(state.after).toEqual(['ROW-010']);
     });
 
-    test('Pinned sections do not apply internal max-height scrolling', async ({ page }) => {
+    test('Pinned sections have no internal max-height scrolling by default', async ({ page }) => {
         const state = await page.evaluate(async () => {
             const grid = (window as any).grid;
             const topTbody = grid.viewport.pinnedTopTbodyElement;
@@ -168,6 +168,115 @@ test.describe('Grid Lite row pinning', () => {
         expect(state.bottomMaxHeight).toBe('');
         expect(state.bottomOverflowY).toBe('');
         expect(state.bottomOverflowX).toBe('');
+    });
+
+    test('Pinned sections apply configured max-height scrolling', async ({ page }) => {
+        const state = await page.evaluate(async () => {
+            const grid = (window as any).grid;
+
+            await grid.update({
+                rendering: {
+                    rows: {
+                        pinning: {
+                            topIds: ['ROW-001', 'ROW-002', 'ROW-003'],
+                            bottomIds: ['ROW-058', 'ROW-059', 'ROW-060'],
+                            top: {
+                                maxHeight: 80
+                            },
+                            bottom: {
+                                maxHeight: '25%'
+                            }
+                        }
+                    }
+                }
+            });
+
+            const topTbody = grid.viewport.pinnedTopTbodyElement;
+            const bottomTbody = grid.viewport.pinnedBottomTbodyElement;
+
+            return {
+                topMaxHeight: topTbody.style.maxHeight,
+                topOverflowY: topTbody.style.overflowY,
+                topOverflowX: topTbody.style.overflowX,
+                bottomMaxHeight: bottomTbody.style.maxHeight,
+                bottomOverflowY: bottomTbody.style.overflowY,
+                bottomOverflowX: bottomTbody.style.overflowX,
+                tableHeight: grid.viewport.tableElement.clientHeight
+            };
+        });
+
+        expect(state.topMaxHeight).toBe('80px');
+        expect(state.topOverflowY).toBe('auto');
+        expect(state.topOverflowX).toBe('hidden');
+        expect(state.bottomMaxHeight).toBe(
+            Math.round(state.tableHeight * 0.25) + 'px'
+        );
+        expect(state.bottomOverflowY).toBe('auto');
+        expect(state.bottomOverflowX).toBe('hidden');
+    });
+
+    test('Disabling pinning ignores config and runtime pinning API', async ({ page }) => {
+        const state = await page.evaluate(async () => {
+            const grid = (window as any).grid;
+
+            await grid.update({
+                rendering: {
+                    rows: {
+                        pinning: {
+                            enabled: false,
+                            topIds: ['ROW-001', 'ROW-002'],
+                            bottomIds: ['ROW-060'],
+                            resolve: () => 'top'
+                        }
+                    }
+                }
+            });
+
+            const afterDisable = {
+                pinned: grid.getPinnedRows(),
+                rowPinningMeta: grid.rowPinningMeta || null,
+                topConnected: (
+                    grid.viewport.pinnedTopTbodyElement.parentElement ===
+                    grid.viewport.tableElement
+                ),
+                bottomConnected: (
+                    grid.viewport.pinnedBottomTbodyElement.parentElement ===
+                    grid.viewport.tableElement
+                )
+            };
+
+            await grid.pinRow('ROW-005', 'top');
+            await grid.toggleRow('ROW-006', 'bottom');
+            await grid.unpinRow('ROW-001');
+
+            return {
+                afterDisable,
+                afterRuntimeCalls: {
+                    pinned: grid.getPinnedRows(),
+                    rowPinningMeta: grid.rowPinningMeta || null,
+                    topConnected: (
+                        grid.viewport.pinnedTopTbodyElement.parentElement ===
+                        grid.viewport.tableElement
+                    ),
+                    bottomConnected: (
+                        grid.viewport.pinnedBottomTbodyElement.parentElement ===
+                        grid.viewport.tableElement
+                    )
+                }
+            };
+        });
+
+        expect(state.afterDisable.pinned.topIds).toEqual([]);
+        expect(state.afterDisable.pinned.bottomIds).toEqual([]);
+        expect(state.afterDisable.rowPinningMeta).toBeNull();
+        expect(state.afterDisable.topConnected).toBe(false);
+        expect(state.afterDisable.bottomConnected).toBe(false);
+
+        expect(state.afterRuntimeCalls.pinned.topIds).toEqual([]);
+        expect(state.afterRuntimeCalls.pinned.bottomIds).toEqual([]);
+        expect(state.afterRuntimeCalls.rowPinningMeta).toBeNull();
+        expect(state.afterRuntimeCalls.topConnected).toBe(false);
+        expect(state.afterRuntimeCalls.bottomConnected).toBe(false);
     });
 
     test('Sorting and filtering include/exclude matrix behaves as expected', async ({ page }) => {

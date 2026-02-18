@@ -200,6 +200,34 @@
         flex: 0 0 auto;
     }
 
+    tbody.hcg-tbody-pinned-top.hcg-tbody-pinned-active {
+        position: relative;
+        z-index: 1;
+        border-bottom: var(--ig-pinned-border);
+        border-radius: 0;
+        box-shadow: var(--ig-pinned-top-shadow);
+    }
+
+    tbody.hcg-tbody-pinned-top.hcg-tbody-pinned-active tr:last-of-type td {
+        border-radius: 0;
+    }
+
+    tbody.hcg-tbody-pinned-bottom.hcg-tbody-pinned-active {
+        position: relative;
+        z-index: 1;
+        border-top: var(--ig-pinned-border);
+        box-shadow: var(--ig-pinned-bottom-shadow);
+    }
+
+    /* Remove bottom radius from scrollable tbody when bottom pinned is active */
+    &:has(tbody.hcg-tbody-pinned-bottom.hcg-tbody-pinned-active) tbody.hcg-tbody-scrollable {
+        border-radius: 0;
+    }
+
+    &:has(tbody.hcg-tbody-pinned-bottom.hcg-tbody-pinned-active) tbody.hcg-tbody-scrollable tr:last-of-type td {
+        border-radius: 0;
+    }
+
     &.hcg-virtualization tbody.hcg-tbody-scrollable {
         display: block;
         position: relative;
