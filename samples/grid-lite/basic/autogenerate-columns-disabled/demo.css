@@ -17,3 +17,14 @@ body {
 #container {
     padding: 8px;
 }
+
+#container:has(table.hcg-virtualization) {
+    height: 600px;
+}
+
+#controls {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin: 8px 8px 0;
+}
