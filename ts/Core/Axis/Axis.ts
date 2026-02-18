@@ -4525,17 +4525,17 @@ class Axis {
                 pos = e &&
                     (
                         this.horiz ?
-                            e.chartX - (this.pos as any) :
-                            this.len - e.chartY + (this.pos as any)
+                            e.chartX - this.pos :
+                            this.len - e.chartY + this.pos
                     );
             } else if (defined(point)) {
                 // #3834
                 pos = pick(
                     this.coll !== 'colorAxis' ?
-                        (point as any).crosshairPos : // 3D axis extension
+                        point.crosshairPos : // 3D axis extension
                         null,
                     this.isXAxis ?
-                        (point as any).plotX :
+                        point.plotX :
                         this.len - (point as any).plotY
                 );
             }
@@ -4545,7 +4545,7 @@ class Axis {
                     // Value, only used on radial
                     value: point && (this.isXAxis ?
                         point.x :
-                        pick(point.stackY, point.y)) as any,
+                        pick(point.stackY, point.y)),
                     translatedValue: pos
                 };
 
@@ -4571,9 +4571,7 @@ class Axis {
 
             categorized = this.categories && !this.isRadial;
 
-            // Define the logic that shows or updates the crosshair.
-            // This will be called either immediately or after a delay.
-            const doShow = (): void => {
+            this.crossShowTimer = syncTimeout((): void => {
                 // Get the *current* crosshair, in case it was
                 // created by another call while this one was delayed.
                 let currentCross = this.cross;
@@ -4625,26 +4623,15 @@ class Axis {
                         'stroke-width': this.transA
                     });
                 }
-                this.cross ? this.cross.e = e : null;
-            };
-
-            // Get delay and visibility
-            const showDelay = pick(options.showDelay, 0);
-
-            // Check if the crosshair is currently hidden.
-            // 'graphic' is the state from the *start* of the function.
-            const isHidden = !graphic ||
-            graphic.attr('visibility') === 'hidden';
-
-            if (!isHidden || showDelay === 0) {
-                // Show immediately if already visible or no delay
-                doShow();
-            } else {
-                // Delay showing
-                this.crossShowTimer = setTimeout((): void => {
-                    doShow();
-                }, showDelay);
-            }
+                if (this.cross) {
+                    this.cross.e = e;
+                }
+            },
+            // Only use delay if the crosshair is currently hidden
+            (!graphic || graphic.attr('visibility') === 'hidden') ?
+                pick(options.showDelay, 0) :
+                0
+            );
         }
 
         fireEvent(this, 'afterDrawCrosshair', { e: e, point: point });
