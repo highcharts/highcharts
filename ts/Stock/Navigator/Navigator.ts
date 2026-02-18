@@ -42,8 +42,6 @@ const { isTouchDevice } = H;
 import NavigatorAxisAdditions from '../../Core/Axis/NavigatorAxisComposition.js';
 import NavigatorComposition from './NavigatorComposition.js';
 import Scrollbar from '../Scrollbar/Scrollbar.js';
-import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
-const { prototype: { symbols } } = SVGRenderer;
 
 import U from '../../Core/Utilities.js';
 const {
@@ -499,14 +497,13 @@ class Navigator {
                 { height, width } = handlesOptions;
 
             [0, 1].forEach((index: number): void => {
-                const navEvents = navigator.eventsToUnbind,
-                    newSymbolName = handlesOptions.symbols[index],
-                    isUrlSymbol =
-                        navigator.handles[index]?.isImg ||
-                        newSymbolName.startsWith('url');
+                const newSymbolName = handlesOptions.symbols[index];
 
-                // First render of handles or update from/to url symbol
-                if (!navigator.handles[index] || isUrlSymbol) {
+                // First render of handles or update of handle symbol
+                if (
+                    !navigator.handles[index] ||
+                    navigator.handles[index].symbolName !== newSymbolName
+                ) {
                     navigator.handles[index]?.destroy();
 
                     navigator.handles[index] = renderer.symbol(
@@ -527,42 +524,24 @@ class Navigator {
                             ['left', 'right'][index]
                         ).add(navigatorGroup);
 
-                // Updating handle path, when changing from symbol to symbol
-                } else if (
-                    navigator.handles[index].symbolName !== newSymbolName
-                ) {
-                    const symbolFn = symbols[newSymbolName],
-                        path = symbolFn.call(
-                            symbols,
-                            -width / 2 - 1,
-                            0,
-                            width,
-                            height
+                    if (navigator.eventsToUnbind?.length) {
+                        ['mousedown', 'touchstart'].forEach(
+                            (eventName): void => {
+                                addEvent(
+                                    navigator.handles[index].element,
+                                    eventName,
+                                    function (e: PointerEvent): void {
+                                        navigator.handlesMousedown(
+                                            e,
+                                            index
+                                        );
+                                    }
+                                );
+                            }
                         );
+                    }
+                }
 
-                    navigator.handles[index].attr({
-                        d: path
-                    });
-                    navigator.handles[index].symbolName = newSymbolName;
-                }
-                // Add new handles events if we destroyed the handle and created
-                // a new one with an url symbol
-                if (isUrlSymbol && navEvents) {
-                    ['mousedown', 'touchstart'].forEach(
-                        (eventName): void => {
-                            addEvent(
-                                navigator.handles[index].element,
-                                eventName,
-                                function (e: PointerEvent): void {
-                                    navigator.handlesMousedown(
-                                        e,
-                                        index
-                                    );
-                                }
-                            );
-                        }
-                    );
-                }
 
                 if (chart.inverted) {
                     navigator.handles[index].attr({
