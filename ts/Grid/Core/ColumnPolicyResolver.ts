@@ -31,18 +31,6 @@ import type { NoIdColumnOptions } from './Table/Column';
  *
  * */
 
-export interface ColumnDataBinding {
-    /**
-     * Resolved source column id in the data provider.
-     */
-    sourceColumnId?: string;
-
-    /**
-     * Whether the column should be treated as unbound.
-     */
-    isUnbound: boolean;
-}
-
 export interface ColumnOptionsMapItemLike {
     /**
      * Index of the column in `options.columns`.
@@ -73,8 +61,14 @@ class ColumnPolicyResolver {
      *
      * */
 
-    private columnOptionsMap: Record<string, ColumnOptionsMapItemLike> = {};
+    /**
+     * Individual column options map keyed by Grid column id.
+     */
+    public columnOptionsMap: Record<string, ColumnOptionsMapItemLike> = {};
 
+    /**
+     * Source column id map keyed by Grid column id.
+     */
     private sourceColumnIdMap: Record<string, (string | undefined)> = {};
 
     /**
@@ -210,19 +204,6 @@ class ColumnPolicyResolver {
         return this.availableSourceColumnIds ?
             Array.from(this.availableSourceColumnIds) :
             void 0;
-    }
-
-    /**
-     * Resolves full data binding information for a Grid column.
-     *
-     * @param columnId
-     * Grid column id.
-     */
-    public getColumnDataBinding(columnId: string): ColumnDataBinding {
-        return {
-            sourceColumnId: this.getColumnSourceId(columnId),
-            isUnbound: this.isColumnUnbound(columnId)
-        };
     }
 
     /**

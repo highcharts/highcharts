@@ -185,6 +185,18 @@ export class Grid {
         new ColumnPolicyResolver();
 
     /**
+     * Backward-compatible access to column options map.
+     *
+     * @deprecated
+     * Use `columnPolicy` methods instead.
+     */
+    public get columnOptionsMap(): Readonly<
+        Record<string, ColumnOptionsMapItemLike>
+    > {
+        return this.columnPolicy.columnOptionsMap;
+    }
+
+    /**
      * The container of the grid.
      */
     public container?: HTMLElement;
