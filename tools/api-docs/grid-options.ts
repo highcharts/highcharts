@@ -528,10 +528,19 @@ function normalizeDefaultValue(
 
     const quoted = normalized.match(/^(['"])([\s\S]*)\1$/u);
     if (quoted) {
-        normalized = quoted[2]
-            .replace(/\\'/gu, '\'')
-            .replace(/\\"/gu, '"');
-        return normalized;
+        const quoteChar = quoted[1];
+        const inner = quoted[2];
+
+        // Normalize escaped literals in a stable order:
+        // 1) escaped backslashes, 2) escaped quote char.
+        // This preserves literal backslashes and avoids malformed
+        // re-interpretation of escape sequences.
+        return inner
+            .replace(/\\\\/gu, '\\')
+            .replace(
+                quoteChar === '\'' ? /\\'/gu : /\\"/gu,
+                quoteChar
+            );
     }
 
     return normalized;
