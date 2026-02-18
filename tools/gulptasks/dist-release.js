@@ -199,7 +199,7 @@ function updateJSONFiles(version, files, productName) {
                 }
 
                 json.peerDependencies = Object.assign({}, json.peerDependencies, {
-                    jspdf: '^4.0.0',
+                    jspdf: '^4.1.0',
                     'svg2pdf.js': '^2.7.0'
                 });
 
