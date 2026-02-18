@@ -117,6 +117,30 @@ function postProcessApiJS(gridDir, classMap) {
         '    if (gridUrl) return gridUrl;\n'
     );
 
+    // In the right option panel, render string defaults with single quotes.
+    // Keep sidebar rendering unchanged.
+    content = content.replace(
+        /'Defaults to <code>' \+ defaultHTML \+ '<\/code>\.',/gu,
+        '\'Defaults to <code>\' + formatGridOptionDefault(def, defaultHTML) + \'</code>.\','
+    );
+    content = content.replace(
+        /function createOption\(target, def, parentDef, state, origState\) \{/u,
+        'function formatGridOptionDefault(def, defaultHTML) {\n' +
+        '  var typeNames = def && def.typeList && def.typeList.names;\n' +
+        '  if (\n' +
+        '    Array.isArray(typeNames) &&\n' +
+        '    typeNames.indexOf(\'string\') !== -1 &&\n' +
+        '    defaultHTML !== \'undefined\' &&\n' +
+        '    defaultHTML !== \'null\' &&\n' +
+        '    !/^(&quot;|&#39;|\\\\\'|")/.test(defaultHTML)\n' +
+        '  ) {\n' +
+        '    return \'\\\'\' + defaultHTML + \'\\\'\';\n' +
+        '  }\n' +
+        '  return defaultHTML;\n' +
+        '}\n\n' +
+        'function createOption(target, def, parentDef, state, origState) {'
+    );
+
     fs.writeFileSync(apiJsPath, content, 'utf8');
 }
 

@@ -531,7 +531,7 @@ function normalizeDefaultValue(
         normalized = quoted[2]
             .replace(/\\'/gu, '\'')
             .replace(/\\"/gu, '"');
-        return `'${normalized.replace(/'/gu, '\\\'')}'`;
+        return normalized;
     }
 
     return normalized;
