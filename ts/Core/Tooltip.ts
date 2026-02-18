@@ -1178,9 +1178,7 @@ class Tooltip {
         if (text === false) {
             this.hide();
         } else {
-            // Define the logic that shows or updates the tooltip.
-            // This will be called either immediately or after a delay.
-            const doShow = (): void => {
+            this.showTimer = syncTimeout((): void => {
                 // Update text
                 if (tooltip.split && tooltip.allowShared) { // #13868
                     tooltip.renderSplit(text, points);
@@ -1222,8 +1220,8 @@ class Tooltip {
                             // Add class before the label BBox calculation
                             // (#21035)
                             'class': tooltip.getClassName(point),
-                            text: text && (text as any).join ?
-                                (text as any).join('') :
+                            text: isArray(text) ?
+                                text.join('') :
                                 text
                         });
 
@@ -1275,22 +1273,7 @@ class Tooltip {
                     }).show();
                 }
                 tooltip.isHidden = false;
-            };
-
-            // Get the showDelay, defaulting to 0
-            const showDelay = pick(options.showDelay, 0);
-
-            if (!tooltip.isHidden || showDelay === 0) {
-                // If tooltip is already visible OR there's no delay,
-                // run the show/update logic immediately.
-                doShow();
-            } else {
-                // If tooltip is hidden and delay is set,
-                // run the logic after a timeout.
-                this.showTimer = setTimeout((): void => {
-                    doShow();
-                }, showDelay);
-            }
+            }, tooltip.isHidden ? pick(options.showDelay, 0) : 0);
         }
 
         fireEvent(this, 'refresh');
