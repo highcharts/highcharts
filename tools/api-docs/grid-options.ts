@@ -530,11 +530,6 @@ function normalizeDefaultValue(
     if (quoted) {
         const quoteChar = quoted[1];
         const inner = quoted[2];
-
-        // Normalize escaped literals in a stable order:
-        // 1) escaped backslashes, 2) escaped quote char.
-        // This preserves literal backslashes and avoids malformed
-        // re-interpretation of escape sequences.
         return inner
             .replace(/\\\\/gu, '\\')
             .replace(
