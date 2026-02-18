@@ -40,6 +40,7 @@ import type TableCell from './Body/TableCell';
 
 import Cell from './Cell.js';
 import CellContextMenu from './Body/CellContextMenu.js';
+import CellContextMenuBuiltInActions from './Body/CellContextMenuBuiltInActions.js';
 
 const { makeHTMLElement } = GridUtils;
 const {
@@ -697,7 +698,10 @@ class Table {
             return false;
         }
 
-        const items = options?.items || [];
+        const items =
+            CellContextMenuBuiltInActions.resolveCellContextMenuItems(
+                tableCell
+            );
         if (!items.length) {
             return false; // Keep native browser menu
         }

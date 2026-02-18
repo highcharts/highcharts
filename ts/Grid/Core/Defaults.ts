@@ -76,6 +76,9 @@ export const defaultLangOptions: DeepPartial<LangOptions> = {
     filter: 'Filter',
     sortAscending: 'Sort ascending',
     sortDescending: 'Sort descending',
+    pinRowTop: 'Pin row to top',
+    pinRowBottom: 'Pin row to bottom',
+    unpinRow: 'Unpin row',
     column: 'Column',
     setFilter: 'Set filter',
     pagination: {

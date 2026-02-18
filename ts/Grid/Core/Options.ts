@@ -69,6 +69,12 @@ export type HeaderFormatterCallback = (this: Column) => string;
 export type ColumnSortingOrder = 'asc' | 'desc' | null;
 
 /**
+ * Built-in action IDs for the cell context menu.
+ */
+export type CellContextMenuActionId =
+    'pinRowTop' | 'pinRowBottom' | 'unpinRow';
+
+/**
  * Options for a single cell context menu item.
  */
 export interface CellContextMenuActionItemOptions {
@@ -102,6 +108,11 @@ export interface CellContextMenuActionItemOptions {
         this: TableCell,
         cell: TableCell
     ) => void;
+
+    /**
+     * Nested submenu items.
+     */
+    items?: Array<CellContextMenuItemOptions>;
 }
 
 /**
@@ -121,11 +132,43 @@ export interface CellContextMenuDividerItemOptions {
 }
 
 /**
+ * Options for a built-in item in the cell context menu.
+ */
+export interface CellContextMenuBuiltInItemOptions {
+    /**
+     * Built-in action ID.
+     */
+    actionId: CellContextMenuActionId;
+
+    /**
+     * Optional custom label for this built-in action.
+     */
+    label?: string;
+
+    /**
+     * Optional icon override for this built-in action.
+     */
+    icon?: GridIconName;
+
+    /**
+     * Whether this built-in action should be disabled.
+     */
+    disabled?: boolean;
+
+    /**
+     * Nested submenu items.
+     */
+    items?: Array<CellContextMenuItemOptions>;
+}
+
+/**
  * Options for a single cell context menu item.
  */
 export type CellContextMenuItemOptions =
     CellContextMenuDividerItemOptions |
-    CellContextMenuActionItemOptions;
+    CellContextMenuActionItemOptions |
+    CellContextMenuBuiltInItemOptions |
+    CellContextMenuActionId;
 
 /**
  * Cell context menu options.
@@ -822,6 +865,27 @@ export interface LangOptions extends LangOptionsCore {
      * Language options for pagination text values.
      */
     pagination?: PaginationLangOptions;
+
+    /**
+     * `Pin row to top` translation.
+     *
+     * @default 'Pin row to top'
+     */
+    pinRowTop?: string;
+
+    /**
+     * `Pin row to bottom` translation.
+     *
+     * @default 'Pin row to bottom'
+     */
+    pinRowBottom?: string;
+
+    /**
+     * `Unpin row` translation.
+     *
+     * @default 'Unpin row'
+     */
+    unpinRow?: string;
 }
 
 

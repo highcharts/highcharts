@@ -25,27 +25,6 @@ function updatePinnedInputs(grid) {
     }
 }
 
-function getRowId(cell) {
-    return cell.row.data.id;
-}
-
-function pinTop(cell) {
-    const grid = cell.row.viewport.grid;
-    void grid.pinRow(getRowId(cell), 'top')
-        .then(() => updatePinnedInputs(grid));
-}
-
-function pinBottom(cell) {
-    const grid = cell.row.viewport.grid;
-    void grid.pinRow(getRowId(cell), 'bottom')
-        .then(() => updatePinnedInputs(grid));
-}
-
-function unpin(cell) {
-    const grid = cell.row.viewport.grid;
-    void grid.unpinRow(getRowId(cell)).then(() => updatePinnedInputs(grid));
-}
-
 const grid = Grid.grid('container', {
     dataTable: {
         columns: {
@@ -68,20 +47,33 @@ const grid = Grid.grid('container', {
     columnDefaults: {
         cells: {
             contextMenu: {
-                items: [{
-                    label: 'Pin row to top',
-                    onClick: pinTop
-                }, {
-                    label: 'Pin row to bottom',
-                    onClick: pinBottom
-                }, {
-                    label: 'Unpin row',
-                    onClick: unpin
-                }]
+                enabled: true
             }
         }
     }
 });
+
+const pinRow = grid.pinRow.bind(grid);
+const toggleRow = grid.toggleRow.bind(grid);
+const unpinRow = grid.unpinRow.bind(grid);
+
+grid.pinRow = function (...args) {
+    return pinRow(...args).then(() => {
+        updatePinnedInputs(grid);
+    });
+};
+
+grid.toggleRow = function (...args) {
+    return toggleRow(...args).then(() => {
+        updatePinnedInputs(grid);
+    });
+};
+
+grid.unpinRow = function (...args) {
+    return unpinRow(...args).then(() => {
+        updatePinnedInputs(grid);
+    });
+};
 
 (window).grid = grid;
 updatePinnedInputs(grid);

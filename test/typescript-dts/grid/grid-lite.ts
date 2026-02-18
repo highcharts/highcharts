@@ -56,12 +56,35 @@ function test_grid() {
         columnDefaults: {
             cells: {
                 contextMenu: {
-                    items: [{
-                        label: 'Test',
-                        onClick: function () {
-                            // noop
+                    enabled: true,
+                    items: [
+                        'pinRowTop',
+                        {
+                            actionId: 'unpinRow',
+                            label: 'Unpin now',
+                            icon: 'pin02'
+                        },
+                        {
+                            label: 'Pinning',
+                            items: [
+                                {
+                                    actionId: 'pinRowBottom',
+                                    items: [{
+                                        label: 'Leaf action',
+                                        onClick: function () {
+                                            // noop
+                                        }
+                                    }]
+                                }
+                            ]
+                        },
+                        {
+                            label: 'Test',
+                            onClick: function () {
+                                // noop
+                            }
                         }
-                    }]
+                    ]
                 }
             }
         },

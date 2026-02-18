@@ -93,6 +93,36 @@ Event payload fields:
 `beforeRowPinningChange` fires before redraw, and
 `afterRowPinningChange` fires after redraw.
 
+## Built-in context menu actions
+
+The cell context menu supports built-in row pinning actions:
+`pinRowTop`, `pinRowBottom`, and `unpinRow`.
+
+```js
+columnDefaults: {
+    cells: {
+        contextMenu: {
+            items: ['pinRowTop', 'pinRowBottom', 'unpinRow']
+        }
+    }
+}
+```
+
+You can also group built-ins in a submenu:
+
+```js
+columnDefaults: {
+    cells: {
+        contextMenu: {
+            items: [{
+                label: 'Pinning',
+                items: ['pinRowTop', 'pinRowBottom', 'unpinRow']
+            }]
+        }
+    }
+}
+```
+
 ## Sorting and filtering behavior
 
 By default, pinned rows are excluded from sorting and filtering changes.

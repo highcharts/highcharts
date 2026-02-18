@@ -193,6 +193,11 @@
         flex: 1;
     }
 
+    &:has(tbody.hcg-tbody-pinned-top.hcg-tbody-pinned-active) tbody.hcg-tbody-scrollable,
+    &:has(tbody.hcg-tbody-pinned-bottom.hcg-tbody-pinned-active) tbody.hcg-tbody-scrollable {
+        height: auto;
+    }
+
     tbody.hcg-tbody-pinned-top,
     tbody.hcg-tbody-pinned-bottom {
         display: block;
@@ -259,7 +264,9 @@
         border-bottom: none;
     }
 
-    &.hcg-scrollable-content tbody.hcg-tbody-scrollable tr {
+    &.hcg-scrollable-content tbody.hcg-tbody-scrollable tr,
+    tbody.hcg-tbody-pinned-top tr,
+    tbody.hcg-tbody-pinned-bottom tr {
         display: block;
     }
 

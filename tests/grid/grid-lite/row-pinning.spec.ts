@@ -170,6 +170,41 @@ test.describe('Grid Lite row pinning', () => {
         expect(state.bottomOverflowX).toBe('');
     });
 
+    test('Pinning rows does not increase total grid height', async ({ page }) => {
+        const state = await page.evaluate(async () => {
+            const grid = (window as any).grid;
+            const container = document.getElementById('container');
+            const rowIds = Array.from({ length: 20 }, (_, i) => (
+                'ROW-' + String(i + 1).padStart(3, '0')
+            ));
+
+            const before = {
+                containerHeight: container?.clientHeight || 0,
+                tableHeight: grid.viewport.tableElement.clientHeight
+            };
+
+            await Promise.all(
+                rowIds.map((rowId) => grid.pinRow(rowId, 'top'))
+            );
+
+            return {
+                before,
+                after: {
+                    containerHeight: container?.clientHeight || 0,
+                    tableHeight: grid.viewport.tableElement.clientHeight
+                }
+            };
+        });
+
+        expect(state.before.containerHeight).toBeGreaterThan(0);
+        expect(state.before.tableHeight).toBeLessThanOrEqual(
+            state.before.containerHeight + 1
+        );
+        expect(state.after.tableHeight).toBeLessThanOrEqual(
+            state.after.containerHeight + 1
+        );
+    });
+
     test('Pinned sections apply configured max-height scrolling', async ({ page }) => {
         const state = await page.evaluate(async () => {
             const grid = (window as any).grid;

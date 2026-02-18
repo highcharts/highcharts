@@ -33,53 +33,8 @@ function updatePinnedSummary(grid) {
     }
 }
 
-function getRowId(cell) {
-    return cell.row.id;
-}
-
-function pinToTop(cell) {
-    const grid = cell.row.viewport.grid;
-    const rowId = getRowId(cell);
-
-    void grid.pinRow(rowId, 'top').then(() => {
-        updatePinnedSummary(grid);
-    });
-}
-
-function pinToBottom(cell) {
-    const grid = cell.row.viewport.grid;
-    const rowId = getRowId(cell);
-
-    void grid.pinRow(rowId, 'bottom').then(() => {
-        updatePinnedSummary(grid);
-    });
-}
-
-function unpinRow(cell) {
-    const grid = cell.row.viewport.grid;
-    const rowId = getRowId(cell);
-
-    void grid.unpinRow(rowId).then(() => {
-        updatePinnedSummary(grid);
-    });
-}
-
 const rowContextMenu = {
-    items: [{
-        label: 'Pin row to top',
-        icon: 'pin01',
-        onClick: pinToTop
-    }, {
-        label: 'Pin row to bottom',
-        icon: 'pin01',
-        onClick: pinToBottom
-    }, {
-        separator: true
-    }, {
-        label: 'Unpin row',
-        icon: 'pin02',
-        onClick: unpinRow
-    }]
+    items: ['pinRowTop', 'pinRowBottom', 'unpinRow']
 };
 
 const grid = Grid.grid('container', {
@@ -135,5 +90,27 @@ const grid = Grid.grid('container', {
         }
     }]
 });
+
+const pinRow = grid.pinRow.bind(grid);
+const toggleRow = grid.toggleRow.bind(grid);
+const unpinRow = grid.unpinRow.bind(grid);
+
+grid.pinRow = function (...args) {
+    return pinRow(...args).then(() => {
+        updatePinnedSummary(grid);
+    });
+};
+
+grid.toggleRow = function (...args) {
+    return toggleRow(...args).then(() => {
+        updatePinnedSummary(grid);
+    });
+};
+
+grid.unpinRow = function (...args) {
+    return unpinRow(...args).then(() => {
+        updatePinnedSummary(grid);
+    });
+};
 
 updatePinnedSummary(grid);
