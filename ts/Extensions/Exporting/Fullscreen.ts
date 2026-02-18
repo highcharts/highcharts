@@ -29,7 +29,11 @@ import type Chart from '../../Core/Chart/Chart';
 
 import AST from '../../Core/Renderer/HTML/AST.js';
 import H from '../../Core/Globals.js';
-const { composed } = H;
+const {
+    composed,
+    win,
+    doc
+} = H;
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -492,11 +496,7 @@ class Fullscreen {
      * @return {Highcharts.Fullscreen.ScrollPosition|undefined}
      * Current vertical scroll data.
      */
-    private getScrollPosition():
-    (Fullscreen.ScrollPosition|undefined) {
-        const doc = this.chart.container.ownerDocument,
-            win = doc.defaultView;
-
+    private getScrollPosition(): (Fullscreen.ScrollPosition|undefined) {
         if (!win) {
             return;
         }
@@ -540,8 +540,6 @@ class Fullscreen {
     private restoreScrollPosition(): void {
         const fullscreen = this,
             chart = fullscreen.chart,
-            doc = chart.container.ownerDocument,
-            win = doc.defaultView,
             originalY = fullscreen.restoreScrollTop;
 
         if (
@@ -653,11 +651,6 @@ class Fullscreen {
      * @return {void}
      */
     private stopScrollRestore(): void {
-        const chart = this.chart,
-            container = chart && chart.container,
-            doc = container && container.ownerDocument,
-            win = doc && doc.defaultView;
-
         if (win && typeof this.restoreScrollRAF === 'number') {
             win.cancelAnimationFrame(this.restoreScrollRAF);
         }
