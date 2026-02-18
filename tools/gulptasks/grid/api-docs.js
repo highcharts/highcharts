@@ -141,6 +141,20 @@ function postProcessApiJS(gridDir, classMap) {
         'function createOption(target, def, parentDef, state, origState) {'
     );
 
+    // Display renderer-type branches in the same "{ type: ..., ... }" style
+    // used by series-type branches in the left navigation tree.
+    content = content.replace(
+        /\/\^series\\\.\[a-z0-9\]\+\$\/\.test\(def\.fullname\)/u,
+        '/(^series\\.[a-z0-9]+$)|(^.*renderer\\.[A-Za-z0-9]+$)|(^data\\.[a-z0-9]+$)/.test(def.fullname)'
+    );
+
+    // For data provider branches, use `providerType` as discriminator key.
+    content = content.replace(
+        /title\.innerHTML = '\{ <span class="type-item">type: "' \+ def\.name \+ '",<\/span>';/u,
+        'var discriminatorKey = /^data\\.[a-z0-9]+$/.test(def.fullname) ? \'providerType\' : \'type\';\n' +
+        '        title.innerHTML = \'{ <span class="type-item">\' + discriminatorKey + \': "\' + def.name + \'",</span>\';'
+    );
+
     fs.writeFileSync(apiJsPath, content, 'utf8');
 }
 

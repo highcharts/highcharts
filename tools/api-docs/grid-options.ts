@@ -599,7 +599,9 @@ function expandRendererOptionChildren(
         return;
     }
 
-    const applicability: Record<string, Set<string>> = {};
+    // Render renderer type branches as array items in the left sidebar,
+    // analogous to how `series` options are presented in Core docs.
+    nodeDoclet.supportsArray = true;
 
     for (const spec of specs) {
         const interfaceInfo = findInterfaceInfoByName(spec.interfaceName);
@@ -614,37 +616,47 @@ function expandRendererOptionChildren(
             continue;
         }
 
-        for (const member of info.members) {
-            addTreeNode(sourceInfo, treeNode, member, debug);
+        // Group renderer-specific options by renderer type, similar to
+        // how Highcharts Core groups series options by series type.
+        const typeNode = getTreeNode(`${treeNode.meta.fullname}.${spec.typeName}`);
+        if (!typeNode.doclet.description) {
+            const interfaceDesc = (
+                info.doclet &&
+                TSLib.extractTagText(info.doclet, 'description', true)
+            ) || '';
 
-            const memberName = TSLib.extractInfoName(member);
-            if (!memberName) {
+            typeNode.doclet.description = interfaceDesc || (
+                `Options for renderer type <code>'${spec.typeName}'</code>.`
+            );
+        }
+
+        let hasTypeSpecificMembers = false;
+        for (const member of info.members) {
+            // `type` is already represented by the synthetic renderer branch
+            // label: `{ type: "<rendererType>", ... }`.
+            if (TSLib.extractInfoName(member) === 'type') {
                 continue;
             }
+            hasTypeSpecificMembers = true;
+            addTreeNode(sourceInfo, typeNode, member, debug);
+        }
 
-            const memberFullname = `${treeNode.meta.fullname}.${memberName}`;
-            if (!applicability[memberFullname]) {
-                applicability[memberFullname] = new Set();
+        // Keep type branches expandable even when a renderer has no
+        // extra options besides `type`, but avoid rendering `undefined`.
+        if (!hasTypeSpecificMembers) {
+            const typeMember = info.members.find(
+                member => TSLib.extractInfoName(member) === 'type'
+            );
+
+            if (typeMember) {
+                addTreeNode(sourceInfo, typeNode, typeMember, debug);
+                const typeValueNode = findTreeNode(`${typeNode.meta.fullname}.type`);
+
+                if (typeValueNode) {
+                    typeValueNode.doclet.defaultvalue = `'${spec.typeName}'`;
+                }
             }
-            applicability[memberFullname].add(spec.typeName);
         }
-    }
-
-    for (const fullname of Object.keys(applicability)) {
-        const memberNode = findTreeNode(fullname);
-
-        if (!memberNode) {
-            continue;
-        }
-
-        const types = Array.from(applicability[fullname]).sort();
-        const applicabilityHTML = '<p>Applies to renderer type(s): ' +
-            types.map(typeName => `<code>'${typeName}'</code>`).join(', ') +
-            '.</p>';
-
-        memberNode.doclet.description = (
-            memberNode.doclet.description || ''
-        ) + applicabilityHTML;
     }
 }
 
@@ -758,44 +770,67 @@ function expandDataProviderOptionChildren(
     }
 
     const optionInterfaces = getDataProviderOptionInterfaces(sourceInfo, info);
-    const applicability: Record<string, Set<string>> = {};
+    if (!optionInterfaces.length) {
+        return;
+    }
+
+    // Render provider-specific branches as array items in the left sidebar,
+    // analogous to how `series` options are presented in Core docs.
+    nodeDoclet.supportsArray = true;
 
     for (const provider of optionInterfaces) {
         if (provider.interfaceInfo.kind !== 'Interface') {
             continue;
         }
 
-        for (const member of provider.interfaceInfo.members) {
-            addTreeNode(provider.sourceInfo, treeNode, member, debug);
+        const providerNode = getTreeNode(
+            `${treeNode.meta.fullname}.${provider.providerType}`
+        );
 
-            const memberName = TSLib.extractInfoName(member);
-            if (!memberName) {
+        if (!providerNode.doclet.description) {
+            const interfaceDesc = (
+                provider.interfaceInfo.doclet &&
+                TSLib.extractTagText(
+                    provider.interfaceInfo.doclet,
+                    'description',
+                    true
+                )
+            ) || '';
+
+            providerNode.doclet.description = interfaceDesc || (
+                `Options for data provider type ` +
+                `<code>'${provider.providerType}'</code>.`
+            );
+        }
+
+        let hasProviderSpecificMembers = false;
+        for (const member of provider.interfaceInfo.members) {
+            if (TSLib.extractInfoName(member) === 'providerType') {
                 continue;
             }
+            hasProviderSpecificMembers = true;
+            addTreeNode(provider.sourceInfo, providerNode, member, debug);
+        }
 
-            const memberFullname = `${treeNode.meta.fullname}.${memberName}`;
-            if (!applicability[memberFullname]) {
-                applicability[memberFullname] = new Set();
+        // Keep provider branches expandable even when a provider has no
+        // extra options besides `providerType`, but avoid `undefined`.
+        if (!hasProviderSpecificMembers) {
+            const providerTypeMember = provider.interfaceInfo.members.find(
+                member => TSLib.extractInfoName(member) === 'providerType'
+            );
+
+            if (providerTypeMember) {
+                addTreeNode(provider.sourceInfo, providerNode, providerTypeMember, debug);
+                const providerTypeNode = findTreeNode(
+                    `${providerNode.meta.fullname}.providerType`
+                );
+
+                if (providerTypeNode) {
+                    providerTypeNode.doclet.defaultvalue =
+                        `'${provider.providerType}'`;
+                }
             }
-            applicability[memberFullname].add(provider.providerType);
         }
-    }
-
-    for (const fullname of Object.keys(applicability)) {
-        const memberNode = findTreeNode(fullname);
-
-        if (!memberNode) {
-            continue;
-        }
-
-        const providerTypes = Array.from(applicability[fullname]).sort();
-        const applicabilityHTML = '<p>Applies to provider type(s): ' +
-            providerTypes.map(typeName => `<code>'${typeName}'</code>`).join(', ') +
-            '.</p>';
-
-        memberNode.doclet.description = (
-            memberNode.doclet.description || ''
-        ) + applicabilityHTML;
     }
 }
 
