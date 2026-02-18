@@ -190,6 +190,17 @@ function postProcessCSS(gridDir) {
     );
     // Keep DOM structure intact, but hide the legacy global-options snippet.
     content += '\n#option-trees-wrapper .global-options.options-tree { display: none; }\n';
+    // Make deprecated options easier to spot in both sidebar and details panel.
+    content += '\n' +
+        '.options-tree .deprecated > .title,\n' +
+        '.options-tree .deprecated > .title .type-item,\n' +
+        '.option.deprecated > .title,\n' +
+        '.option.deprecated > .title a,\n' +
+        '.option.deprecated > .title .type-list,\n' +
+        '.option.deprecated > .title .type-list a {\n' +
+        '  text-decoration: line-through;\n' +
+        '  text-decoration-thickness: from-font;\n' +
+        '}\n';
 
     fs.writeFileSync(stylePath, content, 'utf8');
 }
