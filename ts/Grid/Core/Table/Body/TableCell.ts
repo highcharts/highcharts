@@ -130,14 +130,6 @@ class TableCell extends Cell {
      * The new value to set.
      */
     public async editValue(value: DataTableCellType): Promise<void> {
-        if (
-            !this.column.viewport.grid.columnPolicy.isColumnEditable(
-                this.column.id
-            )
-        ) {
-            return;
-        }
-
         if (this.value === value) {
             return;
         }
