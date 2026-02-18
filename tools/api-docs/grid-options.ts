@@ -359,7 +359,9 @@ function addTreeNode(
 
             case 'description':
                 _nodeDoclet[_tag] =
-                    TSLib.extractTagText(_infoDoclet, _tag, true);
+                    formatJSDocLinks(
+                        TSLib.extractTagText(_infoDoclet, _tag, true) || ''
+                    );
                 break;
 
             case 'extends':
@@ -533,6 +535,24 @@ function normalizeDefaultValue(
     }
 
     return normalized;
+}
+
+function formatJSDocLinks(
+    text: string
+): string {
+    return text.replace(
+        /\{@link\s+([^}\s|]+)(?:\s*\|\s*([^}]+)|\s+([^}]+))?\}/gu,
+        (_match, target: string, pipeLabel?: string, spaceLabel?: string) => {
+            const href = target.trim();
+            const label = (pipeLabel || spaceLabel || href).trim();
+
+            if (/^https?:\/\//u.test(href)) {
+                return `<a href="${href}">${label}</a>`;
+            }
+
+            return label;
+        }
+    );
 }
 
 function appendDeprecationToDescription(
@@ -1247,7 +1267,7 @@ function parseInlineObjectType(
                 .replace(/\n\s*\*\s?/g, ' ')
                 .trim();
             if (desc) {
-                childNode.doclet.description = desc;
+                childNode.doclet.description = formatJSDocLinks(desc);
             }
         }
 
