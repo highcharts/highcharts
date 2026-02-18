@@ -31,6 +31,7 @@ import type {
 import U from '../../Core/Utilities.js';
 import AST from '../../Core/Renderer/HTML/AST.js';
 import StockToolsUtilities from './StockToolsUtilities.js';
+import HTMLAttributes from '../../Core/Renderer/HTML/HTMLAttributes';
 const {
     addEvent,
     createElement,
@@ -372,6 +373,7 @@ class Toolbar {
     ): Record<string, HTMLDOMElement> {
         const btnOptions: StockToolsGuiDefinitionsButtonsOptions =
                 options[btnName] as any,
+            btnLabelName = lang[btnName] || btnName,
             items = btnOptions.items,
             classMapping = Toolbar.prototype.classMapping,
             userClassName = btnOptions.className || '';
@@ -379,14 +381,16 @@ class Toolbar {
         // Main button wrapper
         const buttonWrapper = createElement('li', {
             className: pick(classMapping[btnName], '') + ' ' + userClassName,
-            title: lang[btnName] || btnName
+            title: btnLabelName
         }, void 0, target);
 
         // Single button
         const elementType = (btnOptions.elementType || 'button') as string;
         const mainButton = createElement(elementType, {
-            className: 'highcharts-menu-item-btn'
-        }, void 0, buttonWrapper);
+            className: 'highcharts-menu-item-btn',
+            ariaLabel: btnLabelName,
+            tabindex: 0
+        } as HTMLAttributes, void 0, buttonWrapper);
 
         // Submenu
         if (items && items.length) {
@@ -394,8 +398,9 @@ class Toolbar {
             // Arrow is a hook to show / hide submenu
             const submenuArrow = createElement('button', {
                 className: 'highcharts-submenu-item-arrow ' +
-                    'highcharts-arrow-right'
-            }, void 0, buttonWrapper);
+                    'highcharts-arrow-right',
+                ariaLabel: `Toggle ${btnLabelName} submenu`
+            } as HTMLAttributes, void 0, buttonWrapper);
 
             submenuArrow.style.backgroundImage = 'url(' +
                 this.iconsURL + 'arrow-bottom.svg)';
@@ -537,8 +542,10 @@ class Toolbar {
         // Toolbar
         this.toolbar = toolbar = createElement('ul', {
             className: 'highcharts-stocktools-toolbar ' +
-                    guiOptions.toolbarClassName
-        });
+                    guiOptions.toolbarClassName,
+            role: 'group',
+            ariaLabel: 'Stock chart tools'
+        } as HTMLAttributes);
 
         // Add container for list of buttons
         this.listWrapper = listWrapper = createElement('div', {
