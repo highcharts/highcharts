@@ -56,6 +56,21 @@ function buildClassReferenceMap(typedocDir) {
     return map;
 }
 
+/**
+ * Read current Grid version from local build properties.
+ *
+ * @return {string|undefined}
+ * Version string prefixed with "v", e.g. "v2.2.0".
+ */
+function fetchGridVersion() {
+    try {
+        const version = require('./build-properties.json').version;
+        return version ? `v${version}` : void 0;
+    } catch {
+        return void 0;
+    }
+}
+
 
 /**
  * Post-process the generated api.js to extend getClassReferenceUrl
@@ -231,8 +246,11 @@ function postProcessSitemap(gridDir) {
  *
  * @param {string} gridDir
  * Path to the Grid API docs output directory.
+ *
+ * @param {string|undefined} gridVersion
+ * Grid version string (e.g. "v2.2.0") for the navbar.
  */
-function postProcessHTML(gridDir) {
+function postProcessHTML(gridDir, gridVersion) {
     const fs = require('fs');
     const path = require('path');
 
@@ -265,6 +283,21 @@ function postProcessHTML(gridDir) {
             /(<a href="#" class="dropdown-link">)Highcharts Core/gu,
             '$1Highcharts Grid'
         ],
+        // Remove platform selector (JS/iOS/Android) for Grid API docs
+        [
+            /<div id="platform-selector" class="menu" expanded="false">[\s\S]*?<\/div>\s*<\/div>/gu,
+            ''
+        ],
+        // Keep navbar version aligned with Grid release version
+        ...(gridVersion ? [[
+            /(<div id="version" class="menu">\s*<a [^>]*>)v[\d.]+(<\/a>\s*<\/div>)/gu,
+            `$1${gridVersion}$2`
+        ]] : []),
+        // Link navbar version directly to Grid changelog section
+        [
+            /(<div id="version" class="menu">\s*<a [^>]*href=")https:\/\/www\.highcharts\.com\/changelog\/(")/gu,
+            '$1https://www.highcharts.com/changelog/#highcharts-grid$2'
+        ],
 
         // Sidebar code snippets
         [/Highcharts\.setOptions\(\{/gu, '// Global options'],
@@ -274,12 +307,6 @@ function postProcessHTML(gridDir) {
         [
             /For initial declarative chart setup\./gu,
             'For initial declarative grid setup.'
-        ],
-
-        // Remove platform selector (JS/iOS/Android) - not relevant for Grid
-        [
-            /<div id="platform-selector" class="menu" expanded="false">[\s\S]*?<\/div>\s*/gu,
-            ''
         ],
 
         // Remove unrelated header links
@@ -488,7 +515,16 @@ async function apiDocs() {
 
     // 5. Post-process HTML to apply Grid branding
     log.message('Post-processing HTML for Grid branding...');
-    postProcessHTML(TARGET_DIRECTORY + 'grid');
+    const gridVersion = await fetchGridVersion();
+    if (gridVersion) {
+        log.message('Using Grid version', gridVersion, 'for navbar.');
+    } else {
+        log.warn(
+            'Could not read Grid version from build-properties.json. ' +
+            'Keeping generated version label.'
+        );
+    }
+    postProcessHTML(TARGET_DIRECTORY + 'grid', gridVersion);
 
     // 6. Post-process api.js to support Grid class type linking
     const classMap = buildClassReferenceMap(
