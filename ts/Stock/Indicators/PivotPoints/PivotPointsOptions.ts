@@ -36,7 +36,6 @@ import type {
  * @product      highstock
  * @requires     stock/indicators/indicators
  * @requires     stock/indicators/pivot-points
- * @optionparent plotOptions.pivotpoints
  * @interface Highcharts.PivotPointsOptions
  */
 export interface PivotPointsOptions extends SMAOptions {

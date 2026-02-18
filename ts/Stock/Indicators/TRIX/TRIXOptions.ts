@@ -41,7 +41,6 @@ import type {
  * @requires     stock/indicators/indicators
  * @requires     stock/indicators/tema
  * @requires     stock/indicators/trix
- * @optionparent plotOptions.trix
  * @interface Highcharts.TRIXOptions
  */
 export interface TRIXOptions extends SMAOptions {

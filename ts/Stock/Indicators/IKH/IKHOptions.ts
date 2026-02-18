@@ -49,7 +49,6 @@ export interface IKHMarkerOptions extends PointMarkerOptions {
  * @product      highstock
  * @requires     stock/indicators/indicators
  * @requires     stock/indicators/ichimoku-kinko-hyo
- * @optionparent plotOptions.ikh
  * @interface Highcharts.IKHOptions
  */
 export interface IKHOptions extends SMAOptions {
@@ -130,9 +129,7 @@ export interface IKHSenkouSpanOptions {
      * @sample {highstock} stock/indicators/ichimoku-kinko-hyo
      *         Ichimoku Kinko Hyo color
      *
-     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      * @since     7.0.0
-     * @apioption plotOptions.ikh.senkouSpan.color
      */
     color?: ColorType;
     /**
@@ -142,9 +139,7 @@ export interface IKHSenkouSpanOptions {
      * @sample {highstock} stock/indicators/ikh-negative-color
      *         Ichimoku Kinko Hyo negativeColor
      *
-     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      * @since     7.0.0
-     * @apioption plotOptions.ikh.senkouSpan.negativeColor
      */
     negativeColor?: ColorType;
     styles?: CSSObject & {
@@ -152,7 +147,6 @@ export interface IKHSenkouSpanOptions {
          * Color of the area between Senkou Span A and B.
          *
          * @deprecated
-         * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          */
         fill: ColorType;
     };

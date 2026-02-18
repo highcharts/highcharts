@@ -41,7 +41,6 @@ import type {
  *               stacking
  * @requires     stock/indicators/indicators
  * @requires     stock/indicators/tema
- * @optionparent plotOptions.tema
  * @interface Highcharts.TEMAOptions
  */
 export interface TEMAOptions extends EMAOptions {

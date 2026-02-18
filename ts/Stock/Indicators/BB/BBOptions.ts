@@ -39,7 +39,6 @@ import type {
  * @product      highstock
  * @requires     stock/indicators/indicators
  * @requires     stock/indicators/bollinger-bands
- * @optionparent plotOptions.bb
  * @interface Highcharts.BBOptions
  */
 export interface BBOptions extends SMAOptions, MultipleLinesComposition.IndicatorOptions {
@@ -49,9 +48,7 @@ export interface BBOptions extends SMAOptions, MultipleLinesComposition.Indicato
      * @sample {highstock} stock/indicators/indicator-area-fill
      *      Background fill between lines.
      *
-     * @type      {Highcharts.ColorType}
      * @since     9.3.2
-     * @apioption plotOptions.bb.fillColor
      */
     fillColor?: ColorType;
 

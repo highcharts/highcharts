@@ -38,7 +38,6 @@ import type {
  *               pointRange, pointStart, showInNavigator, stacking
  * @requires     stock/indicators/indicators
  * @requires     stock/indicators/apo
- * @optionparent plotOptions.apo
  * @interface Highcharts.APOOptions
  */
 export interface APOOptions extends EMAOptions {
@@ -53,7 +52,6 @@ export interface APOParamsOptions extends EMAParamsOptions {
     /**
      * Periods for Absolute Price Oscillator calculations.
      *
-     * @type    {Array<number>}
      * @default [10, 20]
      * @since   7.0.0
      */

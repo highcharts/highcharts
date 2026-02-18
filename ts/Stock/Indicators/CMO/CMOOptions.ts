@@ -37,7 +37,6 @@ import type {
  * @product      highstock
  * @requires     stock/indicators/indicators
  * @requires     stock/indicators/cmo
- * @optionparent plotOptions.cmo
  * @interface Highcharts.CMOOptions
  */
 export interface CMOOptions extends SMAOptions {

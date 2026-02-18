@@ -44,7 +44,6 @@ import type {
  *               stacking
  * @requires     stock/indicators/indicators
  * @requires     stock/indicators/acceleration-bands
- * @optionparent plotOptions.abands
  * @interface Highcharts.ABandsOptions
  */
 export interface ABandsOptions extends SMAOptions, MultipleLinesComposition.IndicatorOptions {
@@ -54,9 +53,7 @@ export interface ABandsOptions extends SMAOptions, MultipleLinesComposition.Indi
      * @sample {highstock} stock/indicators/indicator-area-fill
      *      Background fill between lines.
      *
-     * @type {Highcharts.Color}
      * @since 9.3.2
-     * @apioption plotOptions.abands.fillColor
      */
     fillColor?: ColorType;
 

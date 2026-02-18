@@ -50,7 +50,6 @@ export interface MACDGappedExtensionOptions {
  * @product      highstock
  * @requires     stock/indicators/indicators
  * @requires     stock/indicators/macd
- * @optionparent plotOptions.macd
  * @interface Highcharts.MACDOptions
  */
 export interface MACDOptions extends SMAOptions {
@@ -106,8 +105,6 @@ export interface MACDLineStyleOptions extends CSSObject {
     lineWidth?: number;
     /**
      * Color of the line.
-     *
-     * @type  {Highcharts.ColorString}
      */
     lineColor?: ColorString;
 }

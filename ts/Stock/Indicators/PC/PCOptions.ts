@@ -43,7 +43,6 @@ import type {
  *               stacking
  * @requires     stock/indicators/indicators
  * @requires     stock/indicators/price-channel
- * @optionparent plotOptions.pc
  * @interface Highcharts.PCOptions
  */
 export interface PCOptions extends SMAOptions, MultipleLinesComposition.IndicatorOptions {
@@ -52,9 +51,6 @@ export interface PCOptions extends SMAOptions, MultipleLinesComposition.Indicato
      *
      * @sample {highstock} stock/indicators/indicator-area-fill
      *      Background fill between lines.
-     *
-     * @type {Highcharts.Color}
-     * @apioption plotOptions.pc.fillColor
      */
     fillColor?: ColorType;
     params?: PCParamsOptions;

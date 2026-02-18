@@ -69,7 +69,6 @@ declare module '../../Core/Options'{
          * boxes where min and max dates can be manually input.
          *
          * @product      highstock gantt
-         * @optionparent rangeSelector
          */
         rangeSelector?: DeepPartial<RangeSelectorOptions>;
     }
@@ -98,8 +97,6 @@ export interface RangeSelectorButtonsEventsOptions {
      * @sample {highstock} stock/rangeselector/button-click/
      *         Click event on the button
      *
-     * @type      {Highcharts.RangeSelectorClickCallbackFunction}
-     * @apioption rangeSelector.buttons.events.click
      */
     click?: RangeSelectorClickCallbackFunction;
 }
@@ -115,9 +112,7 @@ export interface RangeSelectorButtonOptions {
      * How many units of the defined type the button should span. If `type`
      * is "month" and `count` is 3, the button spans three months.
      *
-     * @type      {number}
      * @default   1
-     * @apioption rangeSelector.buttons.count
      */
     count?: number;
 
@@ -129,9 +124,7 @@ export interface RangeSelectorButtonOptions {
      * @sample {highstock} stock/demo/rangeselector-datagrouping/
      *         Data grouping by range selector buttons
      *
-     * @type      {*}
      * @extends   plotOptions.series.dataGrouping
-     * @apioption rangeSelector.buttons.dataGrouping
      */
     dataGrouping?: DataGroupingOptions;
 
@@ -139,8 +132,6 @@ export interface RangeSelectorButtonOptions {
      * Explanation for the button, shown as a tooltip on hover, and used by
      * assistive technology.
      *
-     * @type      {string}
-     * @apioption rangeSelector.buttons.title
      */
     title?: string;
 
@@ -153,10 +144,8 @@ export interface RangeSelectorButtonOptions {
      * @sample {highstock} stock/rangeselector/min-max-offsets/
      *         Button offsets
      *
-     * @type      {number}
      * @default   0
      * @since     6.0.0
-     * @apioption rangeSelector.buttons.offsetMax
      */
     offsetMax?: number;
 
@@ -167,10 +156,8 @@ export interface RangeSelectorButtonOptions {
      * @sample {highstock} stock/rangeselector/min-max-offsets/
      *         Button offsets
      *
-     * @type      {number}
      * @default   0
      * @since     6.0.0
-     * @apioption rangeSelector.buttons.offsetMin
      */
     offsetMin?: number;
 
@@ -182,18 +169,14 @@ export interface RangeSelectorButtonOptions {
      * @sample {highstock} stock/rangeselector/preserve-datagrouping/
      *         Different preserveDataGrouping settings
      *
-     * @type      {boolean}
      * @default   false
      * @since     6.1.2
-     * @apioption rangeSelector.buttons.preserveDataGrouping
      */
     preserveDataGrouping?: boolean;
 
     /**
      * The text for the button itself.
      *
-     * @type      {string}
-     * @apioption rangeSelector.buttons.text
      */
     text?: string;
 
@@ -202,8 +185,6 @@ export interface RangeSelectorButtonOptions {
      * `second`, `minute`, `hour`, `day`, `week`, `month`, `year`, `ytd`,
      * and `all`.
      *
-     * @type       {Highcharts.RangeSelectorButtonTypeValue}
-     * @apioption  rangeSelector.buttons.type
      */
     type?: RangeSelectorButtonTypeValue;
 }
@@ -300,7 +281,6 @@ export interface RangeSelectorOptions {
      * @sample {highstock} stock/demo/rangeselector-datagrouping/
      *         Data grouping by buttons
      *
-     * @type      {Array<*>}
      */
     buttons: Array<RangeSelectorButtonOptions>;
 
@@ -327,7 +307,6 @@ export interface RangeSelectorOptions {
      * @sample {highstock} stock/rangeselector/styling/
      *         Styling the buttons and inputs
      *
-     * @type {Highcharts.SVGAttributes}
      */
     buttonTheme: ButtonThemeObject;
 
@@ -355,7 +334,6 @@ export interface RangeSelectorOptions {
      * @sample {highstock} stock/rangeselector/enabled/
      *         Disable the range selector
      *
-     * @type {boolean|undefined}
      * @default {highstock} true
      */
     enabled?: boolean;
@@ -377,7 +355,6 @@ export interface RangeSelectorOptions {
      * calculated dynamically.
      *
      * @deprecated
-     * @type  {number|undefined}
      * @since 2.1.9
      */
     height?: number;
@@ -388,7 +365,6 @@ export interface RangeSelectorOptions {
      * @sample {highstock} stock/rangeselector/styling/
      *         Styling the buttons and inputs
      *
-     * @type      {Highcharts.ColorString}
      * @since     1.3.7
      */
     inputBoxBorderColor: ColorString;
@@ -410,7 +386,6 @@ export interface RangeSelectorOptions {
      * @sample {highstock} stock/rangeselector/styling/
      *         Styling the buttons and inputs
      *
-     * @type   {number|undefined}
      * @since  1.3.7
      */
     inputBoxWidth?: number;
@@ -445,7 +420,6 @@ export interface RangeSelectorOptions {
      * @sample {highstock} stock/rangeselector/input-format/
      *         Milliseconds in the range selector
      *
-     * @type      {Highcharts.RangeSelectorParseCallbackFunction}
      * @since     1.3.3
      */
     inputDateParser?: RangeSelectorParseCallbackFunction;
@@ -495,8 +469,6 @@ export interface RangeSelectorOptions {
      * @sample {highstock} stock/rangeselector/styling/
      *         Styling the buttons and inputs
      *
-     * @type      {Highcharts.CSSObject}
-     * @apioption rangeSelector.inputStyle
      */
     inputStyle: CSSObject;
 
@@ -509,7 +481,6 @@ export interface RangeSelectorOptions {
      * @sample {highstock} stock/rangeselector/styling/
      *         Styling the buttons and inputs
      *
-     * @type {Highcharts.CSSObject}
      */
     labelStyle: CSSObject;
 
@@ -518,7 +489,6 @@ export interface RangeSelectorOptions {
      * exceeds the total data range and the 'all' option is available,
      * the 'all' option, showing the full range, is automatically selected.
      *
-     * @type      {number}
      */
     selected?: number;
 
@@ -531,7 +501,6 @@ export interface RangeSelectorOptions {
      * @sample {highstock} stock/rangeselector/vertical-align-bottom/
      *         Bottom
      *
-     * @type  {Highcharts.VerticalAlignValue}
      * @since 6.0.0
      */
     verticalAlign: VerticalAlignValue;
@@ -585,7 +554,6 @@ export interface RangeSelectorPositionOptions {
      * @sample {highstock} stock/rangeselector/input-button-same-alignment/
      *         Same alignment for buttons and input
      *
-     * @type  {Highcharts.AlignValue}
      * @since 6.0.0
      */
     align: AlignValue;

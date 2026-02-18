@@ -37,7 +37,6 @@ import type {
  * @product      highstock
  * @requires     stock/indicators/indicators
  * @requires     stock/indicators/zigzag
- * @optionparent plotOptions.zigzag
  * @interface Highcharts.ZigzagOptions
  */
 export interface ZigzagOptions extends SMAOptions {

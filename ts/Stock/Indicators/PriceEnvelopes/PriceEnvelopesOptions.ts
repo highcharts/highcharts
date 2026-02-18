@@ -40,7 +40,6 @@ import type {
  * @product      highstock
  * @requires     stock/indicators/indicators
  * @requires     stock/indicators/price-envelopes
- * @optionparent plotOptions.priceenvelopes
  * @interface Highcharts.PriceEnvelopesOptions
  */
 export interface PriceEnvelopesOptions extends SMAOptions, MultipleLinesComposition.IndicatorOptions {
@@ -50,9 +49,7 @@ export interface PriceEnvelopesOptions extends SMAOptions, MultipleLinesComposit
      * @sample {highstock} stock/indicators/indicator-area-fill
      *      Background fill between lines.
      *
-     * @type {Highcharts.Color}
      * @since 11.0.0
-     * @apioption plotOptions.priceenvelopes.fillColor
      */
     fillColor?: ColorType;
     bottomLine?: Record<string, CSSObject>;

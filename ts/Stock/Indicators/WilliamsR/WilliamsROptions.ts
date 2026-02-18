@@ -39,7 +39,6 @@ import type {
  *               pointRange, pointStart, showInNavigator, stacking
  * @requires     stock/indicators/indicators
  * @requires     stock/indicators/williams-r
- * @optionparent plotOptions.williamsr
  * @interface Highcharts.WilliamsROptions
  */
 export interface WilliamsROptions extends SMAOptions {

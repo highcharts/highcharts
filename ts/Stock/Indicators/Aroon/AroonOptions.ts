@@ -43,7 +43,6 @@ import type {
  *               stacking
  * @requires     stock/indicators/indicators
  * @requires     stock/indicators/aroon
- * @optionparent plotOptions.aroon
  * @interface Highcharts.AroonOptions
  */
 export interface AroonOptions extends SMAOptions, MultipleLinesComposition.IndicatorOptions {

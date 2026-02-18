@@ -36,7 +36,6 @@ import type {
  * @product      highstock
  * @requires     stock/indicators/indicators
  * @requires     stock/indicators/regressions
- * @optionparent plotOptions.linearregression
  * @interface Highcharts.LinearRegressionOptions
  */
 export interface LinearRegressionOptions extends SMAOptions {
@@ -88,7 +87,6 @@ export interface LinearRegressionParamsOptions extends SMAParamsOptions {
      * // indicator's point will be `2.3148148148148148e-8` which is
      * // harder to interpret for a human.
      *
-     * @type    {null|number}
      * @product highstock
      */
     xAxisUnit?: null|number;

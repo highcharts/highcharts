@@ -36,7 +36,6 @@ import type {
  * @product      highstock
  * @requires     stock/indicators/indicators
  * @requires     stock/indicators/mfi
- * @optionparent plotOptions.mfi
  * @interface Highcharts.MFIOptions
  */
 export interface MFIOptions extends SMAOptions {

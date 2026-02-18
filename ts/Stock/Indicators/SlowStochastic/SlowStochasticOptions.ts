@@ -39,7 +39,6 @@ import type {
  * @requires     stock/indicators/indicators
  * @requires     stock/indicators/stochastic
  * @requires     stock/indicators/slow-stochastic
- * @optionparent plotOptions.slowstochastic
  * @interface Highcharts.SlowStochasticOptions
  */
 export interface SlowStochasticOptions extends StochasticOptions, MultipleLinesComposition.IndicatorOptions {
@@ -50,7 +49,6 @@ export interface SlowStochasticParamsOptions extends StochasticParamsOptions {
     /**
      * Periods for Slow Stochastic oscillator: [%K, %D, SMA(%D)].
      *
-     * @type    {Array<number,number,number>}
      * @default [14, 3, 3]
      */
     periods?: Array<number>;

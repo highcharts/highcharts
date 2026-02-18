@@ -40,7 +40,6 @@ import type {
  *               pointRange, pointStart, showInNavigator, stacking
  * @requires     stock/indicators/indicators
  * @requires     stock/indicators/ao
- * @optionparent plotOptions.ao
  * @interface Highcharts.AOOptions
  */
 export interface AOOptions extends SMAOptions {
@@ -52,7 +51,6 @@ export interface AOOptions extends SMAOptions {
      * @sample {highstock} stock/indicators/ao/
      *         greaterBarColor
      *
-     * @type  {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      * @since 7.0.0
      */
     greaterBarColor?: ColorString;
@@ -65,7 +63,6 @@ export interface AOOptions extends SMAOptions {
      * @sample {highstock} stock/indicators/ao/
      *         lowerBarColor
      *
-     * @type  {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      * @since 7.0.0
      */
     lowerBarColor?: ColorString;

@@ -36,7 +36,6 @@ import type LineSeriesOptions from '../../../Series/Line/LineSeriesOptions';
  *               stacking, useOhlcData
  * @product      highstock
  * @requires     stock/indicators/indicators
- * @optionparent plotOptions.sma
  * @interface Highcharts.SMAOptions
  */
 export interface SMAOptions extends LineSeriesOptions {
@@ -47,8 +46,6 @@ export interface SMAOptions extends LineSeriesOptions {
      * @sample {highstock} stock/plotoptions/series-comparetomain/
      *         Difference between comparing SMA values to the main series
      *         and its own values.
-     *
-     * @type {boolean}
      */
     compareToMain?: boolean;
     data?: Array<Array<number>>;

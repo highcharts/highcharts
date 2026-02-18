@@ -37,7 +37,6 @@ import type {
  * @product      highstock
  * @requires     stock/indicators/indicators
  * @requires     stock/indicators/klinger
- * @optionparent plotOptions.klinger
  * @interface Highcharts.KlingerOptions
  */
 export interface KlingerOptions extends SMAOptions {

@@ -42,7 +42,6 @@ import type {
  * @requires     stock/indicators/indicators
  * @requires     stock/indicators/aroon
  * @requires     stock/indicators/aroon-oscillator
- * @optionparent plotOptions.aroonoscillator
  * @interface Highcharts.AroonOscillatorOptions
  */
 export interface AroonOscillatorOptions

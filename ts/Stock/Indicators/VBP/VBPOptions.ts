@@ -40,7 +40,6 @@ import type VBPIndicator from './VBPIndicator';
  * @product      highstock
  * @requires     stock/indicators/indicators
  * @requires     stock/indicators/volume-by-price
- * @optionparent plotOptions.vbp
  * @interface Highcharts.VBPOptions
  */
 export interface VBPOptions extends SMAOptions {

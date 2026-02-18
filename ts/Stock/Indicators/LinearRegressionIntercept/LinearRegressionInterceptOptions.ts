@@ -34,7 +34,6 @@ import type LinearRegressionOptions from
  * @product      highstock
  * @requires     stock/indicators/indicators
  * @requires     stock/indicators/regressions
- * @optionparent plotOptions.linearregressionintercept
  * @interface Highcharts.LinearRegressionInterceptOptions
  */
 export interface LinearRegressionInterceptOptions

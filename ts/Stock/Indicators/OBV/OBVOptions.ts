@@ -42,7 +42,6 @@ import type { PointMarkerOptions } from '../../../Core/Series/PointOptions';
  * @excluding    allAreas, colorAxis, joinBy, keys, navigatorOptions,
  *               pointInterval, pointIntervalUnit, pointPlacement,
  *               pointRange, pointStart, showInNavigator, stacking
- * @optionparent plotOptions.obv
  * @interface Highcharts.OBVOptions
  */
 export interface OBVOptions extends SMAOptions {

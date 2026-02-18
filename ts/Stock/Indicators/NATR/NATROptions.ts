@@ -37,7 +37,6 @@ import type {
  * @product      highstock
  * @requires     stock/indicators/indicators
  * @requires     stock/indicators/natr
- * @optionparent plotOptions.natr
  * @interface Highcharts.NATROptions
  */
 export interface NATROptions extends SMAOptions {

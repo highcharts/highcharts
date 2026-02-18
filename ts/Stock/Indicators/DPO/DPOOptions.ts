@@ -40,7 +40,6 @@ import type {
  *               stacking
  * @requires     stock/indicators/indicators
  * @requires     stock/indicators/dpo
- * @optionparent plotOptions.dpo
  * @interface Highcharts.DPOOptions
  */
 export interface DPOOptions extends SMAOptions {

@@ -35,7 +35,6 @@ import type {
  * @since        6.0.0
  * @product      highstock
  * @requires     stock/indicators/indicators
- * @optionparent plotOptions.ema
  * @interface Highcharts.EMAOptions
  */
 export interface EMAOptions extends SMAOptions {

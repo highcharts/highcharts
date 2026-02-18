@@ -43,7 +43,6 @@ import type {
  *               stacking
  * @requires     stock/indicators/indicators
  * @requires     stock/indicators/keltner-channels
- * @optionparent plotOptions.keltnerchannels
  * @interface Highcharts.KeltnerChannelsOptions
  */
 export interface KeltnerChannelsOptions extends SMAOptions {
@@ -53,9 +52,7 @@ export interface KeltnerChannelsOptions extends SMAOptions {
      * @sample {highstock} stock/indicators/indicator-area-fill
      *      Background fill between lines.
      *
-     * @type {Highcharts.Color}
      * @since 9.3.2
-     * @apioption plotOptions.keltnerchannels.fillColor
      */
     fillColor?: ColorType;
 

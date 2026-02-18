@@ -36,7 +36,6 @@ import type { SeriesStatesOptions } from '../../../Core/Series/SeriesOptions';
  * @product      highstock
  * @requires     stock/indicators/indicators
  * @requires     stock/indicators/wma
- * @optionparent plotOptions.wma
  * @interface Highcharts.WMAOptions
  */
 export interface WMAOptions extends SMAOptions {

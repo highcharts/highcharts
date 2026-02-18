@@ -46,7 +46,6 @@ import type SupertrendPoint from './SupertrendPoint';
  *               stacking, threshold
  * @requires     stock/indicators/indicators
  * @requires     stock/indicators/supertrend
- * @optionparent plotOptions.supertrend
  * @interface Highcharts.SupertrendOptions
  */
 export interface SupertrendOptions extends SMAOptions {
@@ -62,8 +61,6 @@ export interface SupertrendOptions extends SMAOptions {
      *
      * @sample {highstock} stock/indicators/supertrend/
      *         Example with fallingTrendColor
-     *
-     * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      */
     fallingTrendColor?: ColorType;
     params?: SupertrendParamsOptions;
@@ -72,8 +69,6 @@ export interface SupertrendOptions extends SMAOptions {
      *
      * @sample {highstock} stock/indicators/supertrend/
      *         Example with risingTrendColor
-     *
-     * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      */
     risingTrendColor?: ColorType;
 }

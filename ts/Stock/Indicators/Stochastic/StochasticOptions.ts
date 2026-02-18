@@ -45,7 +45,6 @@ import type {
  *               pointRange, pointStart, showInNavigator, stacking
  * @requires     stock/indicators/indicators
  * @requires     stock/indicators/stochastic
- * @optionparent plotOptions.stochastic
  * @interface Highcharts.StochasticOptions
  */
 export interface StochasticOptions extends SMAOptions, MultipleLinesComposition.IndicatorOptions {
@@ -59,7 +58,6 @@ export interface StochasticParamsOptions extends SMAParamsOptions {
     /**
      * Periods for Stochastic oscillator: [%K, %D].
      *
-     * @type    {Array<number,number>}
      * @default [14, 3]
      */
     periods?: Array<number>;

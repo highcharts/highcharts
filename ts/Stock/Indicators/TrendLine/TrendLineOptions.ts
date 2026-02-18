@@ -37,7 +37,6 @@ import type {
  * @product      highstock
  * @requires     stock/indicators/indicators
  * @requires     stock/indicators/trendline
- * @optionparent plotOptions.trendline
  * @interface Highcharts.TrendLineOptions
  */
 export interface TrendLineOptions extends SMAOptions {

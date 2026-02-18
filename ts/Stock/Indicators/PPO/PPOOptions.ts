@@ -40,7 +40,6 @@ import type {
  *               pointRange, pointStart, showInNavigator, stacking
  * @requires     stock/indicators/indicators
  * @requires     stock/indicators/ppo
- * @optionparent plotOptions.ppo
  * @interface Highcharts.PPOOptions
  */
 export interface PPOOptions extends EMAOptions {
@@ -51,8 +50,7 @@ export interface PPOParamsOptions extends EMAParamsOptions {
     /**
      * Periods for Percentage Price Oscillator calculations.
      *
-     * @type    {Array<number>}
-     * @default [12, 26]
+         * @default [12, 26]
      */
     periods?: Array<number>;
 

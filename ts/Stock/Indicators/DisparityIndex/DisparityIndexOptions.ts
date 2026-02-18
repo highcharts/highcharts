@@ -40,7 +40,6 @@ import type {
  *               pointRange, pointStart, showInNavigator, stacking
  * @requires     stock/indicators/indicators
  * @requires     stock/indicators/disparity-index
- * @optionparent plotOptions.disparityindex
  * @interface Highcharts.DisparityIndexOptions
  */
 export interface DisparityIndexOptions extends SMAOptions {

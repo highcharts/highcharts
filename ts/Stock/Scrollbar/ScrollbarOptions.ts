@@ -42,7 +42,6 @@ declare module '../../Core/Options'{
          *         A scrollbar on a simple bar chart
          *
          * @product highstock gantt
-         * @optionparent scrollbar
          */
         scrollbar?: ScrollbarOptions;
     }
@@ -56,14 +55,11 @@ export interface ScrollbarOptions {
      * @sample stock/scrollbar/style/
      *         Scrollbar styling
      *
-     * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      */
     barBackgroundColor?: ColorType;
 
     /**
      * The color of the scrollbar's border.
-     *
-     * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      */
     barBorderColor?: ColorType;
 
@@ -88,8 +84,6 @@ export interface ScrollbarOptions {
      *
      * @sample stock/scrollbar/style/
      *         Scrollbar styling
-     *
-     * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      */
     buttonArrowColor?: ColorType;
 
@@ -98,8 +92,6 @@ export interface ScrollbarOptions {
      *
      * @sample stock/scrollbar/style/
      *         Scrollbar styling
-     *
-     * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      */
     buttonBackgroundColor?: ColorType;
 
@@ -108,8 +100,6 @@ export interface ScrollbarOptions {
      *
      * @sample stock/scrollbar/style/
      *         Scrollbar styling
-     *
-     * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      */
     buttonBorderColor?: ColorType;
 
@@ -142,9 +132,7 @@ export interface ScrollbarOptions {
      * @sample stock/scrollbar/enabled/
      *         Disable the scrollbar, only use navigator
      *
-     * @type      {boolean}
      * @default   true
-     * @apioption scrollbar.enabled
      */
     enabled?: boolean;
 
@@ -155,8 +143,6 @@ export interface ScrollbarOptions {
      *
      * @sample stock/scrollbar/style/
      *         Non-default height
-     *
-     * @type    {number}
      */
     height?: number;
 
@@ -171,7 +157,6 @@ export interface ScrollbarOptions {
      * @sample stock/scrollbar/liveredraw
      *         Setting live redraw to false
      *
-     * @type  {boolean}
      * @since 1.3
      */
     liveRedraw?: boolean;
@@ -180,8 +165,6 @@ export interface ScrollbarOptions {
      * The margin between the scrollbar and its axis when the scrollbar is
      * applied directly to an axis, or the navigator in case that is enabled.
      * Defaults to 10 for axis, 3 for navigator.
-     *
-     * @type {number|undefined}
      */
     margin?: number;
 
@@ -204,7 +187,6 @@ export interface ScrollbarOptions {
      * @sample stock/yaxis/scrollbar-opposite/
      *         A scrollbar not on the opposite side
      *
-     * @type      {boolean}
      * @default   true
      * @since 9.3.0
      */
@@ -212,8 +194,6 @@ export interface ScrollbarOptions {
 
     /**
      * The color of the small rifles in the middle of the scrollbar.
-     *
-     * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      */
     rifleColor?: ColorType;
 
@@ -221,9 +201,7 @@ export interface ScrollbarOptions {
      * Whether to show or hide the scrollbar when the scrolled content is
      * zoomed out to it full extent.
      *
-     * @type      {boolean}
      * @default   true
-     * @apioption scrollbar.showFull
      */
     showFull?: boolean;
 
@@ -231,7 +209,6 @@ export interface ScrollbarOptions {
      * The width of a vertical scrollbar or height of a horizontal
      * scrollbar. Defaults to 20 on touch devices.
      *
-     * @type      {number}
      * @default   14
      * @since     4.2.6
      * @product   highstock
@@ -246,8 +223,6 @@ export interface ScrollbarOptions {
      *
      * @sample stock/scrollbar/style/
      *         Scrollbar styling
-     *
-     * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      */
     trackBackgroundColor?: ColorType;
 
@@ -256,8 +231,6 @@ export interface ScrollbarOptions {
      *
      * @sample stock/scrollbar/style/
      *         Scrollbar styling
-     *
-     * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      */
     trackBorderColor?: ColorType;
 

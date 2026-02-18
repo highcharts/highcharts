@@ -36,7 +36,6 @@ import type {
  * @product      highstock
  * @requires     stock/indicators/indicators
  * @requires     stock/indicators/cci
- * @optionparent plotOptions.cci
  * @interface Highcharts.CCIOptions
  */
 export interface CCIOptions extends SMAOptions {

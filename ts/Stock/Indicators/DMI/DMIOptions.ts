@@ -42,7 +42,6 @@ import type {
  *               pointRange, pointStart, showInNavigator, stacking
  * @requires     stock/indicators/indicators
  * @requires     stock/indicators/dmi
- * @optionparent plotOptions.dmi
  * @interface Highcharts.DMIOptions
  */
 export interface DMIOptions extends SMAOptions, MultipleLinesComposition.IndicatorOptions {

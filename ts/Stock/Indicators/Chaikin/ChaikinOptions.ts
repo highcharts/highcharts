@@ -39,7 +39,6 @@ import type {
  *               pointRange, pointStart, showInNavigator, stacking
  * @requires     stock/indicators/indicators
  * @requires     stock/indicators/chaikin
- * @optionparent plotOptions.chaikin
  * @interface Highcharts.ChaikinOptions
  */
 export interface ChaikinOptions extends EMAOptions {
@@ -68,7 +67,6 @@ export interface ChaikinParamsOptions extends EMAParamsOptions {
     /**
      * Periods for Chaikin Oscillator calculations.
      *
-     * @type    {Array<number>}
      * @default [3, 10]
      */
     periods?: Array<number>;
