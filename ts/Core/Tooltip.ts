@@ -356,6 +356,15 @@ class Tooltip {
     }
 
     /**
+     * Clear the hide and show timers.
+     * @private
+     */
+    public clearTimeouts(): void {
+        clearTimeout(this.hideTimer);
+        clearTimeout(this.showTimer);
+    }
+
+    /**
      * Removes and destroys the tooltip and its elements.
      *
      * @function Highcharts.Tooltip#destroy
@@ -375,8 +384,7 @@ class Tooltip {
             this.renderer = this.renderer.destroy() as any;
             discardElement(this.container);
         }
-        clearTimeout(this.hideTimer);
-        clearTimeout(this.showTimer);
+        this.clearTimeouts();
     }
 
     /**
@@ -923,8 +931,7 @@ class Tooltip {
         const tooltip = this;
 
         // Disallow duplicate timers (#1728, #1766)
-        clearTimeout(this.hideTimer);
-        clearTimeout(this.showTimer);
+        this.clearTimeouts();
         delay = pick(delay, this.options.hideDelay);
         if (!this.isHidden) {
             this.hideTimer = syncTimeout(function (): void {
@@ -1124,8 +1131,7 @@ class Tooltip {
             return;
         }
 
-        clearTimeout(this.hideTimer);
-        clearTimeout(this.showTimer);
+        this.clearTimeouts();
 
         // A switch saying if this specific tooltip configuration allows shared
         // or split modes
@@ -1803,8 +1809,7 @@ class Tooltip {
             // For a rapid move going outside of the elements keeping the
             // tooltip visible, cancel the hide (#23512).
             addEvent(tooltip.tracker.element, 'mouseenter', (): void => {
-                clearTimeout(tooltip.hideTimer);
-                clearTimeout(tooltip.showTimer);
+                tooltip.clearTimeouts();
             });
 
             if (!chart.styledMode) {
