@@ -113,6 +113,7 @@ let maps: AnyRecord = {};
 /**
  * Compute the zoom from given bounds and the size of the playing field. Used in
  * two places, hence the local function.
+ *
  * @internal
  */
 function zoomFromBounds(
