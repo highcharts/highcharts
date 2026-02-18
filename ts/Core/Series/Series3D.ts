@@ -131,7 +131,7 @@ class Series3D extends Series {
             (seriesOptions.depth || 0 + (seriesOptions.groupZPadding || 1));
 
         // #24042, when the series uses dataGrouping, use series.points
-        const points = series.data.length > 0 ? series.data : series.points;
+        const points = series.data.length ? series.data : series.points;
 
         points.forEach((rawPoint): void => {
             if (zAxis?.translate) {

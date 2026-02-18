@@ -1,7 +1,6 @@
 QUnit.test('3D line series', function (assert) {
-    var chart = Highcharts.chart('container', {
+    const chart = Highcharts.chart('container', {
         chart: {
-            type: 'line',
             options3d: {
                 enabled: true,
                 alpha: 15,
@@ -62,9 +61,8 @@ QUnit.test('3D line series', function (assert) {
 });
 
 QUnit.test('3D line series with datagrouping (#24042)', function (assert) {
-    var chart = Highcharts.chart('container', {
+    const chart = Highcharts.chart('container', {
         chart: {
-            type: 'line',
             options3d: {
                 enabled: true,
                 alpha: 10,
@@ -89,24 +87,15 @@ QUnit.test('3D line series with datagrouping (#24042)', function (assert) {
                     enabled: true,
                     groupPixelWidth: 400
                 },
-                data: [
-                    [0, 2],
-                    [2, 4],
-                    [3, 9],
-                    [5, 6],
-                    [7, 8],
-                    [8, 5],
-                    [10, 4]
-                ]
+                data: [2, 4, 9, 6, 8, 5, 4]
             }
         ]
     });
 
     const series = chart.series[0];
 
-    assert.strictEqual(
-        series.data.length,
-        0,
+    assert.ok(
+        series.data.length === 0,
         'series.data should be empty when dataGrouping is applied'
     );
 
