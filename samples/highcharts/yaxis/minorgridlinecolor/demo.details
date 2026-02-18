@@ -1,6 +1,4 @@
 ---
- name: Demo of yAxis.minorGridLineColor
- authors:
-   - Torstein Hønsi
- js_wrap: b
+name: Demo of yAxis.minorGridLineColor
+js_wrap: b
 ...

@@ -152,6 +152,7 @@ describe('Grid Pro - cell and column events.', () => {
             .type('Strawberries{enter}');
 
         cy.get('#cellAfterEdit').should('have.value', 'cellAfterEdit');
+        cy.get('body').click();
 
         // ColumnOptions
         cy.get('.hcg-row[data-row-index="1"] > td[data-column-id="weight"]')
