@@ -2710,7 +2710,7 @@ function isProductRelated (
  * @return
  * Target infos as reference.
  */
-function mergeCodeInfos<T extends (CodeInfo|SourceInfo)> (
+export function mergeCodeInfos<T extends (CodeInfo|SourceInfo)> (
     targetInfo: T,
     sourceInfo: (CodeInfo|SourceInfo)
 ): T {
