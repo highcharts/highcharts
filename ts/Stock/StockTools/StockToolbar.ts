@@ -31,7 +31,7 @@ import type {
 import U from '../../Core/Utilities.js';
 import AST from '../../Core/Renderer/HTML/AST.js';
 import StockToolsUtilities from './StockToolsUtilities.js';
-import HTMLAttributes from '../../Core/Renderer/HTML/HTMLAttributes';
+import type HTMLAttributes from '../../Core/Renderer/HTML/HTMLAttributes';
 const {
     addEvent,
     createElement,
@@ -374,6 +374,8 @@ class Toolbar {
         const btnOptions: StockToolsGuiDefinitionsButtonsOptions =
                 options[btnName] as any,
             btnLabelName = lang[btnName] || btnName,
+            arrowLabel = this.chart.options.lang.accessibility
+                ?.stockTools.arrowLabel,
             items = btnOptions.items,
             classMapping = Toolbar.prototype.classMapping,
             userClassName = btnOptions.className || '';
@@ -399,7 +401,7 @@ class Toolbar {
             const submenuArrow = createElement('button', {
                 className: 'highcharts-submenu-item-arrow ' +
                     'highcharts-arrow-right',
-                ariaLabel: `Toggle ${btnLabelName} submenu`
+                ariaLabel: arrowLabel
             } as HTMLAttributes, void 0, buttonWrapper);
 
             submenuArrow.style.backgroundImage = 'url(' +
@@ -492,6 +494,8 @@ class Toolbar {
      */
     public createContainer(): void {
         const chart = this.chart,
+            groupLabel = chart.options.lang.accessibility
+                ?.stockTools.groupLabel,
             guiOptions = this.options,
             container = chart.container,
             navigation = chart.options.navigation,
@@ -544,7 +548,7 @@ class Toolbar {
             className: 'highcharts-stocktools-toolbar ' +
                     guiOptions.toolbarClassName,
             role: 'group',
-            ariaLabel: 'Stock chart tools'
+            ariaLabel: groupLabel
         } as HTMLAttributes);
 
         // Add container for list of buttons
