@@ -25,6 +25,7 @@ import type Chart from '../../../Core/Chart/Chart';
 import type { HTMLDOMElement } from '../../../Core/Renderer/DOMElementType';
 
 import BaseForm from '../../../Shared/BaseForm.js';
+import Color from '../../../Core/Color/Color.js';
 import H from '../../../Core/Globals.js';
 const { doc } = H;
 import D from '../../../Core/Defaults.js';
@@ -144,6 +145,15 @@ function getFields(
     return fieldsOutput;
 }
 
+/**
+ * Convert RGBA to #rrggbb for native color input.
+ * @internal
+ */
+function rgbaToHex(rgba: Color.RGBA): string {
+    const toHex = (n: number): string => ('0' + n.toString(16)).slice(-2);
+    return '#' + toHex(rgba[0]) + toHex(rgba[1]) + toHex(rgba[2]);
+}
+
 /* *
  *
  *  Class
@@ -233,7 +243,8 @@ class Popup extends BaseForm {
             inputName = 'highcharts-' + indicatorType + '-' + pick(
                 inputAttributes.htmlFor,
                 optionName
-            );
+            ),
+            value = inputAttributes.value;
 
         if (!optionName.match(/^\d+$/)) {
             // Add label
@@ -250,12 +261,112 @@ class Popup extends BaseForm {
             );
         }
 
+        if (inputAttributes.type === 'color') {
+            // Wrapper for text+color row + opacity slider below
+            const wrapper = createElement(
+                'div',
+                { className: 'highcharts-popup-color-wrapper' },
+                void 0,
+                parentDiv
+            );
+
+            const row = createElement(
+                'div',
+                {
+                    className: (
+                        'highcharts-popup-field-row highcharts-popup-color-row'
+                    )
+                },
+                void 0,
+                wrapper
+            );
+
+            const textInput = createElement(
+                'input',
+                {
+                    name: inputName,
+                    id: inputName,
+                    value,
+                    type: 'text',
+                    className: (
+                        'highcharts-popup-field highcharts-popup-field-text'
+                    )
+                },
+                void 0,
+                row
+            ) as HTMLInputElement;
+            textInput.setAttribute('highcharts-data-name', option);
+
+            const rgba = Color.parse(value).rgba,
+                colorInput = createElement(
+                    'input',
+                    {
+                        type: 'color',
+                        value: rgbaToHex(rgba),
+                        className: (
+                            'highcharts-popup-field ' +
+                            'highcharts-popup-field-color'
+                        )
+                    },
+                    void 0,
+                    row
+                ) as HTMLInputElement;
+
+            // Opacity slider: updates 'a' in rgba in text input
+            const opacitySlider = createElement(
+                'input',
+                {
+                    type: 'range',
+                    value: String(rgba[3] * 100),
+                    className: 'highcharts-popup-field highcharts-popup-opacity'
+                },
+                void 0,
+                wrapper
+            ) as HTMLInputElement;
+            opacitySlider.setAttribute('min', '0');
+            opacitySlider.setAttribute('max', '100');
+
+            const setSliderColor = (): void => {
+                const rgba = Color.parse(textInput.value).rgba;
+                opacitySlider.style.setProperty(
+                    '--highcharts-slider-rgb',
+                    `rgb(${rgba[0]},${rgba[1]},${rgba[2]})`
+                );
+            };
+            setSliderColor();
+
+            addEvent(colorInput, 'input', (): void => {
+                const rgba = Color.parse(colorInput.value).rgba,
+                    a = Color.parse(textInput.value).rgba[3] || 1;
+
+                textInput.value = `rgba(${rgba[0]},${rgba[1]},${rgba[2]},${a})`;
+                opacitySlider.value = String(a * 100);
+                setSliderColor();
+            });
+            addEvent(textInput, 'input', (): void => {
+                const rgba = Color.parse(textInput.value).rgba;
+
+                colorInput.value = rgbaToHex(rgba);
+                opacitySlider.value = String(rgba[3] * 100);
+                setSliderColor();
+            });
+            addEvent(opacitySlider, 'input', (): void => {
+                const rgba = Color.parse(textInput.value).rgba,
+                    a = Number(opacitySlider.value) / 100;
+
+                textInput.value = `rgba(${rgba[0]},${rgba[1]},${rgba[2]},${a})`;
+                setSliderColor();
+            });
+
+            return wrapper as HTMLDOMElement;
+        }
+
         // Add input
         const input = createElement(
             'input',
             {
                 name: inputName,
-                value: inputAttributes.value,
+                value,
                 type: inputAttributes.type,
                 className: 'highcharts-popup-field'
             },

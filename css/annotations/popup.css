@@ -349,3 +349,94 @@ input.highcharts-input-search-indicators {
     background-color: var(--highcharts-highlight-color-80, #335cad);
     cursor: pointer;
 }
+
+/* Color field: text input and color picker side by side */
+.highcharts-popup-color-wrapper {
+    clear: both;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.highcharts-popup-field-row.highcharts-popup-color-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 6px;
+}
+
+.highcharts-popup-color-row .highcharts-popup-field-text,
+.highcharts-popup-color-row .highcharts-popup-field-color {
+    float: none;
+    margin-bottom: 0;
+}
+
+.highcharts-popup-color-row .highcharts-popup-field-text {
+    flex: 1;
+    min-width: 0;
+}
+
+.highcharts-popup-color-row .highcharts-popup-field-color {
+    flex-shrink: 0;
+    width: 40px;
+    height: 32px;
+    padding: 2px;
+    cursor: pointer;
+}
+
+.highcharts-popup-color-wrapper .highcharts-popup-opacity {
+    float: none;
+    display: block;
+    width: 100%;
+    margin-bottom: 0;
+    margin-top: 4px;
+    padding: 0;
+    cursor: pointer;
+    --highcharts-slider-rgb: rgb(0, 0, 0);
+}
+
+/* Opacity track: neutral base so left isn't browser default (e.g. blue) */
+.highcharts-popup-color-wrapper .highcharts-popup-opacity::-webkit-slider-runnable-track {
+    background:
+        linear-gradient(
+            to right,
+            var(--highcharts-neutral-color-10, #e6e6e6),
+            var(--highcharts-slider-rgb, rgb(0, 0, 0))
+        );
+    height: 6px;
+    border-radius: 3px;
+    width: 100%;
+}
+
+.highcharts-popup-color-wrapper .highcharts-popup-opacity::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--highcharts-slider-rgb, rgb(0, 0, 0));
+    border: 2px solid var(--highcharts-neutral-color-3, #f7f7f7);
+    cursor: pointer;
+    margin-top: -4px;
+}
+
+.highcharts-popup-color-wrapper .highcharts-popup-opacity::-moz-range-track {
+    background:
+        linear-gradient(
+            to right,
+            var(--highcharts-neutral-color-10, #e6e6e6),
+            var(--highcharts-slider-rgb, rgb(0, 0, 0))
+        );
+    height: 6px;
+    border-radius: 3px;
+    width: 100%;
+}
+
+.highcharts-popup-color-wrapper .highcharts-popup-opacity::-moz-range-thumb {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--highcharts-slider-rgb, rgb(0, 0, 0));
+    border: 2px solid var(--highcharts-neutral-color-3, #f7f7f7);
+    cursor: pointer;
+}
