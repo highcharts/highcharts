@@ -71,9 +71,8 @@ QUnit.test('Stocktools GUI', function (assert) {
         'Indicators',
         'Toolbar buttons should have aria labels'
     );
+
     // Shorthand for selecting a button
-
-
     function selectButton(name, text = '') {
 
         let button = document.getElementsByClassName('highcharts-' + name)[0];
