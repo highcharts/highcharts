@@ -20,7 +20,6 @@ import type {
 import type ChartOptions from '../../Core/Chart/ChartOptions';
 import type ColorType from '../../Core/Color/ColorType';
 import type { DeepPartial } from '../../Shared/Types';
-import type RangeSelector from '../RangeSelector/RangeSelector';
 import type { SymbolTypeRegistry } from '../../Core/Renderer/SVG/SymbolType';
 import type { SeriesTypeOptions } from '../../Core/Series/SeriesType';
 import type Utilities from '../../Core/Utilities';
@@ -33,13 +32,17 @@ import type Utilities from '../../Core/Utilities';
 
 declare module '../../Core/Axis/AxisOptions' {
     interface AxisOptions {
+        /**
+         * Maximum range which can be set using the navigator's handles.
+         * Opposite of [xAxis.minRange](#xAxis.minRange).
+         *
+         * @sample {highstock} stock/navigator/maxrange/
+         *         Defined max and min range
+         *
+         * @since     6.0.0
+         * @product   highstock gantt
+         */
         maxRange?: number;
-        toFixedRange?: (
-            pxMin: number,
-            pxMax: number,
-            fixedMin: number,
-            fixedMax: number
-        ) => RangeSelector.RangeObject;
     }
 }
 
