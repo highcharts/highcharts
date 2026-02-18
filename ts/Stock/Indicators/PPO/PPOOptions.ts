@@ -50,7 +50,7 @@ export interface PPOParamsOptions extends EMAParamsOptions {
     /**
      * Periods for Percentage Price Oscillator calculations.
      *
-         * @default [12, 26]
+     * @default [12, 26]
      */
     periods?: Array<number>;
 
