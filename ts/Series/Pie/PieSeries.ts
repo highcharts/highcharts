@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Honsi
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -46,9 +47,31 @@ const {
  *
  * */
 
-declare module '../../Core/Series/SeriesLike' {
-    interface SeriesLike {
+declare module '../../Core/Series/SeriesBase' {
+    interface SeriesBase {
+        /* *
+        *
+        *  Properties
+        *
+        * */
+
+        /**
+         * The series center position, read only. This applies only to
+         * circular chart types like pie and sunburst. It is an array of
+         * `[centerX, centerY, diameter, innerDiameter]`.
+         */
+        center?: Array<number>;
+
+        /* *
+        *
+        *  Functions
+        *
+        * */
+
+        /** @internal */
         redrawPoints?(): void;
+
+        /** @internal */
         updateTotals?(): void;
     }
 }
@@ -274,11 +297,11 @@ class PieSeries extends Series {
 
     /**
      * Define hasData function for non-cartesian series. Returns true if the
-     * series has points at all.
+     * series has at least one visible point (#23235)
      * @private
      */
     public hasData(): boolean {
-        return !!this.dataTable.rowCount;
+        return this.points.some((point): boolean => point.visible);
     }
 
     /**

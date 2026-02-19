@@ -37,7 +37,10 @@ The main boost configuration is set in the `boost` property in the chart options
     boost: {
         useGPUTranslations: true,
         // Chart-level boost when there are more than 5 series in the chart
-        seriesThreshold: 5
+        seriesThreshold: 5,
+        // Points processed per frame when building the k-d tree.
+        // Must be > 0; otherwise it falls back to the default (3000).
+        chunkSize: 3000
     },
 
     title: {
@@ -82,7 +85,7 @@ The Boost module contains a WebGL renderer that replaces parts of the SVG render
 * Marker shapes, apart from circles, are not supported.
 * Dash style for lines is not supported.
 * Stacking, and negative colors are not supported.
-* Line width is limited to 1px.
+* Line width is supported, but handled globally. The `lineWidth` setting applies to all boosted line series and individual per-series values are not respected. For consistent behavior, it is recommended to set the width via `plotOptions.line.lineWidth` rather than per series.
 * [`stickyTracking`](https://api.highcharts.com/highcharts/plotOptions.series.stickyTracking) is forced.
 
 The intended way of using the module, is to set thresholds in such a way that the SVG-renderer “takes over” rendering when zooming in. This approach gives the expected interactivity when the points are less dense, coupled with high performance when the point density is high.
@@ -94,6 +97,7 @@ Optimizing tips
 
 * Set the extremes ([min](https://api.highcharts.com/highcharts/xAxis.min) and [max](https://api.highcharts.com/highcharts/xAxis.max)) explicitly on the `xAxis` and `yAxis` in order for Highcharts to avoid computing the extremes. In a scatter chart with 1M points, this may reduce the rendering time by ~10%.
 * If the value increments on both the X and Y axis aren't small, consider setting [`useGPUTranslations`](https://api.highcharts.com/highcharts/boost.useGPUTranslations) to true. If you do this and the increments are small (e.g. datetime axis with small time increments) it may cause rendering issues due to floating point rounding errors, so this should be considered case by case.
+* Tune [`chunkSize`](https://api.highcharts.com/highcharts/boost.chunkSize) to balance UI responsiveness against k-d tree build time in boost mode. The value must be greater than `0`; values less than or equal to `0` fall back to the default (`3000`).
 
 
 Getting timing information

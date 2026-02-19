@@ -28,6 +28,13 @@ QUnit.test('#6007 - exporting after chart.update()', function (assert) {
                 }
             });
 
+            // Click to close menu
+            Highcharts.fireEvent(
+                chart.exporting.svgElements[0].element,
+                'click'
+            );
+
+            // Click to reopen menu
             Highcharts.fireEvent(
                 chart.exporting.svgElements[0].element,
                 'click'

@@ -4463,8 +4463,7 @@ const spb = {
         style: {
             color: '#f0f0f0'
         },
-        useHTML: true,
-        pointFormat: '<b>{point.name}:</b> {point.value}m CO<sub>2</sub>'
+        pointFormat: '<b>{point.name}:</b> {point.value}m CO₂'
     },
     legend: {
         enabled: false
@@ -5666,22 +5665,22 @@ const charts = [
         chart: jellypus,
         title: 'Network Graph',
         demo: 'https://www.highcharts.com/demo/highcharts/network-graph',
-        description: `<p>Network Graph</p><div>A purely decorative 
-        network graph with linked nodes where one node is larger 
-        and has more mass than the other nodes. This chart illustrates 
-        how mass affects the network graph's layout alogirthm, 
-        as the smaller, lighter 
-        nodes are simultaneously attracted and 
+        description: `<p>Network Graph</p><div>A purely decorative
+        network graph with linked nodes where one node is larger
+        and has more mass than the other nodes. This chart illustrates
+        how mass affects the network graph's layout alogirthm,
+        as the smaller, lighter
+        nodes are simultaneously attracted and
         repulsed by the larger, heavier node.</div>`
     },
     {
         chart: str,
         title: 'Streamgraph Chart',
         demo: 'https://www.highcharts.com/demo/highcharts/streamgraph',
-        description: `<p>Streamgraph Chart</p> <div>A purely decorative 
-        streamgraph chart visualizing 
-        the number of medals earned in the Winter Olympic Games 
-        for each participating country since 1924, 
+        description: `<p>Streamgraph Chart</p> <div>A purely decorative
+        streamgraph chart visualizing
+        the number of medals earned in the Winter Olympic Games
+        for each participating country since 1924,
         using a relative scale. </div>`
     },
     {
@@ -5690,7 +5689,7 @@ const charts = [
         <span id="stop">(Stop animation)</span>`,
         demo: 'https://www.highcharts.com/demo/stock/live-candlestick',
         description: `<p>Dynamic Candlestick Chart</p>
-        <div>A purely decorative candlestick chart that updates with 
+        <div>A purely decorative candlestick chart that updates with
         new data every 100 milliseconds.</div>`
     },
     {
@@ -5698,7 +5697,7 @@ const charts = [
         title: 'Bar Chart Race',
         demo: 'https://www.highcharts.com/demo/highcharts/bar-race',
         description: `<p>Bar Chart Race</p>
-        <div>A purely decorative animated bar chart showing the growth in world 
+        <div>A purely decorative animated bar chart showing the growth in world
         population by country over the
         course of 58 years, from 1960 to 2018. </div>`
     },
@@ -5707,9 +5706,9 @@ const charts = [
         title: 'Split PackedBubble Chart',
         demo: 'https://www.highcharts.com/demo/highcharts/packed-bubble-split',
         description: `<p>Split PackedBubble Chart</p>
-        <div> This purely decorative chart shows carbon emissions 
+        <div> This purely decorative chart shows carbon emissions
         around the world from 2014.
-        In the chart, smaller bubbles that represent countries are grouped 
+        In the chart, smaller bubbles that represent countries are grouped
         inside larger bubbles that represent geographical regions.</div>`
     },
     {
@@ -5717,10 +5716,10 @@ const charts = [
         title: 'Dependency Wheel',
         demo: 'https://www.highcharts.com/demo/highcharts/dependency-wheel',
         description: `<p>Dependency Wheel</p>
-        <div>A purely decorative chart showing a dependency wheel, 
-        where each point consists 
-        of multiple weighted links to other points. This chart 
-        type is often used to visualize data flow, and can 
+        <div>A purely decorative chart showing a dependency wheel,
+        where each point consists
+        of multiple weighted links to other points. This chart
+        type is often used to visualize data flow, and can
         be a striking way to illustrate relationships in data.</div>`
     },
     {
@@ -5728,11 +5727,11 @@ const charts = [
         title: 'Funnel Chart',
         demo: 'https://www.highcharts.com/demo/highcharts/funnel',
         description: `<p>Funnel Chart</p>
-        <div>This purely decorative chart shows a sales funnel. 
-        A funnel chart is 
-        often used to visualize data from stages of a 
-        process. Readers can quickly identify bottlenecks 
-        in the process by comparing the area size 
+        <div>This purely decorative chart shows a sales funnel.
+        A funnel chart is
+        often used to visualize data from stages of a
+        process. Readers can quickly identify bottlenecks
+        in the process by comparing the area size
         variation of each stage. </div>`
     },
 
@@ -5742,13 +5741,13 @@ const charts = [
         demo: 'https://www.highcharts.com/demo/maps/geoheatmap-orthographic',
         description: `<p>GeoHeatMap</p>
         <div>Map of World</div>
-        <div>This purely decorative chart shows the density of 
-        cities in the world, 
-        plotted by their latitude and longitude. It uses the 
+        <div>This purely decorative chart shows the density of
+        cities in the world,
+        plotted by their latitude and longitude. It uses the
         orthographic projection and
         geoheatmap series type, which creates a grid of tiles that
         correspond to the latitude and longitude of each data point.
-        The value of the geoheatmap is represented 
+        The value of the geoheatmap is represented
         by the color of each tile.</div>`
     },
     {
@@ -5756,10 +5755,10 @@ const charts = [
         title: 'Gantt Chart',
         demo: 'https://www.highcharts.com/demo/gantt/project-management',
         description: `<p>Project Management Gantt Chart</p>
-        <div>This purely decorative gantt chart visualizes project 
-        tasks and their dependencies. 
-        The breakdown of the project is described in tasks which are listed on 
-        the vertical axis where the duration of the tasks is offset 
+        <div>This purely decorative gantt chart visualizes project
+        tasks and their dependencies.
+        The breakdown of the project is described in tasks which are listed on
+        the vertical axis where the duration of the tasks is offset
         against the horizontal axis.</div>`
     },
 
@@ -5768,9 +5767,9 @@ const charts = [
         title: 'Streamgraph Chart',
         demo: 'https://www.highcharts.com/demo/highcharts/streamgraph',
         description: `<p>Streamgraph Chart</p>
-        <div>Streamgraphs are a type of stacked area charts where 
-        the areas are displaced around a central axis. This 
-        purely decorative chart is showing price indices for air freight, 
+        <div>Streamgraphs are a type of stacked area charts where
+        the areas are displaced around a central axis. This
+        purely decorative chart is showing price indices for air freight,
         importing and exporting.</div>`
     },
     {
@@ -5778,10 +5777,10 @@ const charts = [
         title: 'Arc Diagram',
         demo: 'https://www.highcharts.com/demo/highcharts/arc-diagram',
         description: `<p>Arc Diagram</p>
-        <div>A purely decorative arc diagram with circles of different 
-        sizes along the X axis, and connections drawn as 
-        arcs between them. From the chart we can see 
-        that Paris is the city with the most connections 
+        <div>A purely decorative arc diagram with circles of different
+        sizes along the X axis, and connections drawn as
+        arcs between them. From the chart we can see
+        that Paris is the city with the most connections
         to other cities.</div>`
     },
     {
@@ -5789,7 +5788,7 @@ const charts = [
         title: 'Radial Bar Chart',
         demo: 'https://www.highcharts.com/demo/highcharts/polar-radial-bar',
         description: `<p>Radial Bar Chart</p>
-        <div>A purely decorative radial bar chart. It is similar to a 
+        <div>A purely decorative radial bar chart. It is similar to a
         bar chart, but the y-axis is circular.</div>`
     },
     {
@@ -5797,8 +5796,8 @@ const charts = [
         title: 'Sankey Chart',
         demo: 'https://www.highcharts.com/demo/highcharts/sankey-diagram',
         description: `<p>Sankey Chart</p>
-        <div>This purely decorative sankey chart shows 
-        the total funding for Fintech companies in the 
+        <div>This purely decorative sankey chart shows
+        the total funding for Fintech companies in the
         internet software &amp; services through 2022.</div>`
     },
     {
@@ -5806,7 +5805,7 @@ const charts = [
         title: 'Column Range Chart',
         demo: 'https://www.highcharts.com/demo/highcharts/columnrange',
         description: `<p>Column Range Chart</p>
-        <div>This purely decorative columnrange chart displays a range 
+        <div>This purely decorative columnrange chart displays a range
         between a lower and higher value for each point.</div>`
     }
 ];

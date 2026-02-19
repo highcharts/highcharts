@@ -24,10 +24,10 @@ using a custom HTML layout.
 The CSS must be explicitly imported, as shown here:
 ```css
 @import url("https://code.highcharts.com/dashboards/css/dashboards.css");
-@import url("https://code.highcharts.com/dashboards/css/datagrid.css");
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/css/grid-pro.css");
 ```
 
-The file `datagrid.css` is needed only if the Grid component is used in the dashboard.
+The file `grid-pro.css` is needed only if the Grid component is used in the dashboard.
 
 ## General CSS classes
 Each class name contains the prefix `highcharts-dashboards` and a suffix that
@@ -147,31 +147,12 @@ For information on how to individually style the dashboard's `Highcharts chart` 
 ### Grid component
 To style the dashboard's **Grid Component** `div` and its content:
 ```css
-.highcharts-datagrid-container {
+.highcharts-grid-container {
     border-radius: 10px;
 }
 ```
 
-To style the dashboard's Grid header:
-```css
-.highcharts-datagrid-column-header {
-    background-color: gray;
-}
-```
-
-To style the dashboard's Grid row:
-```css
-.highcharts-datagrid-row {
-    background-color: gray;
-}
-```
-
-Note that you can use the `child selector` to style even and odd rows:
-```css
-.highcharts-datagrid-row:nth-child(even) {
-    background-color: white;
-}
-```
+For detailed guidance on styling the Grid component, refer to the [Introduction to Theming](https://www.highcharts.com/docs/grid/theming/theming) article.
 
 ### HTML component
 Since the user defines the whole structure of the HTML component, it differs between use cases.
@@ -222,7 +203,7 @@ Custom classes and IDs can be used to style the dashboard:
 
 The final result might look like:
 
-<iframe src="https://www.highcharts.com/samples/embed/dashboards/demo/personal-finance" allow="fullscreen"></iframe>
+<iframe src="https://www.highcharts.com/samples/embed/dashboards/demo/personal-finance?force-light-theme" allow="fullscreen"></iframe>
 
 ## Edit Mode classes
 You can also change how the Edit Mode looks like. The Edit mode is based on the

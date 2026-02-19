@@ -1,12 +1,13 @@
 /* *
  *
- *  (c) 2009-2025 Øystein Moseng
+ *  (c) 2009-2026 Highsoft AS
+ *  Author: Øystein Moseng
  *
  *  Sonification module.
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -57,8 +58,8 @@ import InstrumentPresets from './InstrumentPresets.js';
 import timelineFromChart from './TimelineFromChart.js';
 
 
-declare module '../../Core/Chart/ChartLike' {
-    interface ChartLike {
+declare module '../../Core/Chart/ChartBase' {
+    interface ChartBase {
         sonification?: Sonification;
         sonify: (onEnd?: globalThis.Sonification.ChartCallback) => void;
         toggleSonify: (
@@ -68,13 +69,22 @@ declare module '../../Core/Chart/ChartLike' {
         updateSonificationEnabled: () => void;
     }
 }
-declare module '../../Core/Series/SeriesLike' {
-    interface SeriesLike {
+declare module '../../Core/Series/SeriesBase' {
+    interface SeriesBase {
+        /**
+         * Play a sonification of a series.
+         *
+         * @function Highcharts.Series#sonify
+         * @param {Highcharts.SonificationChartEventCallback} [onEnd]
+         * Callback to call after play completed
+         *
+         * @requires modules/sonification
+         */
         sonify: (onEnd?: globalThis.Sonification.ChartCallback) => void;
     }
 }
-declare module '../../Core/Series/PointLike' {
-    interface PointLike {
+declare module '../../Core/Series/PointBase' {
+    interface PointBase {
         sonify: () => void;
     }
 }
@@ -101,18 +111,18 @@ class Sonification {
     /**
      * Used for testing when working audio is not needed, but we want
      * synchronous timeline calculation.
-     * @private
+     * @internal
      */
     forceReady?: boolean;
     /**
      * Used for testing, updated on timeline creation
-     * @private
+     * @internal
      */
     propMetrics?: PropMetrics;
     /**
      * The internal SonificationTimeline, accessed for more advanced
      * functionality & testing
-     * @private
+     * @internal
      */
     timeline?: SonificationTimeline;
 
@@ -145,6 +155,7 @@ class Sonification {
             if (window.speechSynthesis) {
                 window.speechSynthesis.getVoices();
             }
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         } catch (e) { /* Ignore */ }
     }
 
@@ -427,7 +438,7 @@ class Sonification {
 
     /**
      * Implementation of chart.sonify
-     * @private
+     * @internal
      */
     sonifyChart(
         resetAfter?: boolean, onEnd?: globalThis.Sonification.ChartCallback
@@ -446,7 +457,7 @@ class Sonification {
 
     /**
      * Implementation of series.sonify
-     * @private
+     * @internal
      */
     sonifySeries(
         series: Series, resetAfter?: boolean,
@@ -471,7 +482,7 @@ class Sonification {
 
     /**
      * Implementation of point.sonify
-     * @private
+     * @internal
      */
     sonifyPoint(
         point: Point, onEnd?: globalThis.Sonification.ChartCallback
@@ -493,7 +504,7 @@ class Sonification {
     /**
      * Set the overall/master volume for the sonification.
      * Usually handled through chart update.
-     * @private
+     * @internal
      */
     setMasterVolume(vol: number): void {
         if (this.timeline) {
@@ -504,7 +515,7 @@ class Sonification {
 
     /**
      * Destroy the sonification capabilities
-     * @private
+     * @internal
      */
     destroy(): void {
         this.unbindKeydown();
@@ -528,7 +539,7 @@ class Sonification {
      * automatically. Note that the [sonification.updateInterval](https://api.highcharts.com/highcharts/sonification.updateInterval)
      * option can stop updates from happening in rapid succession, including
      * manual calls to this function.
-     * @private
+     * @internal
      */
     update(): void {
         const sOpts = this.chart.options && this.chart.options.sonification;
@@ -575,7 +586,7 @@ class Sonification {
     /**
      * Only continue if sonification enabled. If audioContext is
      * suspended, retry up to 20 times with a small delay.
-     * @private
+     * @internal
      */
     private ready(whenReady: () => void): boolean {
         if (
@@ -610,7 +621,7 @@ class Sonification {
 
     /**
      * Call beforePlay event handler if exists
-     * @private
+     * @internal
      */
     private beforePlay(): void {
         const opts = this.chart.options.sonification,
@@ -623,7 +634,7 @@ class Sonification {
 
     /**
      * Initialize the builtin boundary hit instrument
-     * @private
+     * @internal
      */
     private initBoundaryInstrument(): void {
         if (!this.boundaryInstrument) {
@@ -641,7 +652,7 @@ class Sonification {
 
     /**
      * The default boundary hit sound
-     * @private
+     * @internal
      */
     private defaultBoundaryHit(): void {
         if (this.boundaryInstrument) {
@@ -658,7 +669,7 @@ namespace Sonification {
 
     /**
      * Update sonification object on chart.
-     * @private
+     * @internal
      */
     function updateSonificationEnabled(this: Chart): void {
         const sonification = this.sonification,
@@ -680,7 +691,7 @@ namespace Sonification {
 
     /**
      * Destroy with chart.
-     * @private
+     * @internal
      */
     function chartOnDestroy(this: Chart): void {
         if (this && this.sonification) {
@@ -691,7 +702,7 @@ namespace Sonification {
 
     /**
      * Update on render
-     * @private
+     * @internal
      */
     function chartOnRender(this: Chart): void {
         if (this.updateSonificationEnabled) {
@@ -702,7 +713,7 @@ namespace Sonification {
 
     /**
      * Update
-     * @private
+     * @internal
      */
     function chartOnUpdate(this: Chart, e: { options: Options }): void {
         const newOptions = e.options.sonification;
@@ -715,7 +726,7 @@ namespace Sonification {
 
     /**
      * Compose
-     * @private
+     * @internal
      */
     export function compose(
         ChartClass: typeof Chart,

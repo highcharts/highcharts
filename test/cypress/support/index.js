@@ -73,7 +73,7 @@ Cypress.Commands.add('openCellEditSidebar', (cellId) => {
     cy.get('.highcharts-dashboards-edit-menu-item > div')
         .each(($el) => {
             const backgroundImage = $el.css('background-image');
-            if (backgroundImage.includes('/code/dashboards/gfx/dashboards-icons/settings.svg')) {
+            if (backgroundImage.includes('dashboards-icons/settings.svg')) {
                 cy.wrap($el).click();
             }
         });
@@ -155,8 +155,15 @@ Cypress.Commands.add('selectRange', (range) =>
 );
 
 Cypress.Commands.add('toggleEditMode', () => {
-    cy.get('.highcharts-dashboards-edit-context-menu-btn').click();
-    cy.get('.highcharts-dashboards-edit-toggle-slider').first().click();
+    cy.get('body').then($body => {
+        const $toggle = $body.find('.highcharts-dashboards-edit-toggle-container:visible');
+        if ($toggle.length) {
+            cy.get('.highcharts-dashboards-edit-toggle-container').click();
+        } else {
+            cy.get('.highcharts-dashboards-edit-context-menu-btn').click();
+            cy.get('.highcharts-dashboards-edit-toggle-slider').first().click();
+        }
+    });
 });
 
 Cypress.Commands.add('submitEditing', () => {
@@ -194,3 +201,11 @@ Cypress.Commands.add('grid', () =>
         return grid;
     })
 );
+
+Cypress.Commands.add('editGridCell', (rowIndex, columnId, newValue) => {
+    cy.get(`tr[data-row-index="${rowIndex}"] td[data-column-id="${columnId}"]`)
+        .dblclick()
+        .find('input')
+        .clear()
+        .type(`${newValue}{enter}`);
+});

@@ -2,11 +2,12 @@
  *
  *  Client side exporting module
  *
- *  (c) 2015 Torstein Honsi / Oystein Moseng
+ *  (c) 2015-2026 Highsoft AS
+ *  Author: Torstein Honsi / Oystein Moseng
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -35,11 +36,10 @@ const {
     getOptions,
     setOptions
 } = D;
-import DownloadURL from '../DownloadURL.js';
-const {
+import {
     downloadURL,
     getScript
-} = DownloadURL;
+} from '../../Shared/DownloadURL.js';
 import G from '../../Core/Globals.js';
 const {
     composed,
@@ -60,8 +60,8 @@ const {
  *
  * */
 
-declare module '../../Core/Chart/ChartLike' {
-    interface ChartLike {
+declare module '../../Core/Chart/ChartBase' {
+    interface ChartBase {
         /**
          * Deprecated in favor of [Exporting.exportChart](https://api.highcharts.com/class-reference/Highcharts.Exporting#exportChart).
          *
@@ -73,8 +73,8 @@ declare module '../../Core/Chart/ChartLike' {
     }
 }
 
-declare module '../../Core/GlobalsLike.d.ts' {
-    interface GlobalsLike {
+declare module '../../Core/GlobalsBase' {
+    interface GlobalsBase {
         Exporting: typeof Exporting
     }
 }
@@ -96,7 +96,7 @@ namespace OfflineExporting {
     /**
      * Composition function.
      *
-     * @private
+     * @internal
      * @function compose
      *
      * @param {ExportingClass} ExportingClass
@@ -233,7 +233,7 @@ namespace OfflineExporting {
      * function processes the SVG, applies necessary font adjustments, converts
      * it to a PDF, and initiates the file download.
      *
-     * @private
+     * @internal
      * @async
      * @function downloadPDF
      *
@@ -281,7 +281,7 @@ namespace OfflineExporting {
      * It fetches font files (if provided in `pdfFont`), converts them to
      * base64, and registers them with jsPDF.
      *
-     * @private
+     * @internal
      * @function loadPdfFonts
      *
      * @param {SVGElement} svgElement
@@ -371,7 +371,7 @@ namespace OfflineExporting {
                     if (variant === 'normal') {
                         normalBase64 = base64;
                     }
-                } catch (e) {
+                } catch {
                     // If fetch or reading fails, fallback to next variant
                 }
             } else {
@@ -389,7 +389,7 @@ namespace OfflineExporting {
      * a given SVG string, applies font styles inherited from parent elements,
      * and removes text outlines and title elements to improve PDF rendering.
      *
-     * @private
+     * @internal
      * @function preparePDF
      *
      * @param {string} svg
@@ -484,7 +484,7 @@ namespace OfflineExporting {
      * Transform from PDF to SVG.
      *
      * @async
-     * @private
+     * @internal
      * @function svgToPdf
      *
      * @param {Highcharts.SVGElement} svgElement

@@ -1,6 +1,6 @@
-@import url("https://code.highcharts.com/dashboards/css/datagrid.css");
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/css/grid-pro.css");
 
-* {
+body {
     font-family:
         -apple-system,
         BlinkMacSystemFont,
@@ -12,27 +12,37 @@
         "Segoe UI Emoji",
         "Segoe UI Symbol",
         sans-serif;
+    background: var(--highcharts-background-color);
+    color: var(--highcharts-neutral-color-100);
 }
 
-.content {
-    padding: 8px;
-}
-
-#container {
-    height: 500px;
-}
-
-.highcharts-data-label > span,
-.highcharts-light .highcharts-data-label > span {
-    color: #000 !important;
+:root,
+.highcharts-light {
+    --anchor-color: #007bff;
 }
 
 @media (prefers-color-scheme: dark) {
-    .highcharts-data-label > span {
-        color: #fff !important;
+    :root {
+        --anchor-color: #8ec3fc;
     }
 }
 
-.highcharts-dark .highcharts-data-label > span {
-    color: #fff !important;
+.highcharts-dark {
+    --anchor-color: #8ec3fc;
+}
+
+.demo {
+    padding: 8px 12px;
+}
+
+.highcharts-description {
+    padding: 0 8px;
+}
+
+.highcharts-description a {
+    color: var(--anchor-color);
+}
+
+.spark-label {
+    color: var(--hcg-color);
 }

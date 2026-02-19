@@ -3,7 +3,7 @@ describe('Remove the dashboard.', () => {
         cy.visit('/dashboards/cypress/grid-hidden');
     });
 
-    it('Rows should be visible when datagrid is switched from hidden.', () => {
+    it('Rows should be visible when grid is switched from hidden.', () => {
         // Act
         cy.get('#show').trigger('click');
 
@@ -12,8 +12,8 @@ describe('Remove the dashboard.', () => {
     });
 
     it('Rows should have even and odd classes.', () => {
-        cy.get('tbody tr').eq(0).should('have.class', 'highcharts-datagrid-row-odd');
-        cy.get('tbody tr').eq(1).should('have.class', 'highcharts-datagrid-row-even');
+        cy.get('tbody tr').eq(0).should('have.class', 'hcg-row-odd');
+        cy.get('tbody tr').eq(1).should('have.class', 'hcg-row-even');
     });
 });
 
@@ -26,5 +26,27 @@ describe('Grid rows removal.', () => {
         cy.get('#delete-rows-btn').click();
         // All grid rows should be removed.
         cy.get('tbody').should('be.empty');
+    });
+});
+
+describe('Rendering size.', () => {
+    before(() => {
+        cy.visit('/grid-lite/cypress/rendering-size');
+    });
+
+    it('Fixed height grid.', () => {
+        cy.get('#container').should('have.css', 'height', '200px');
+    });
+
+    it('Percentage height grid inside fixed container.', () => {
+        cy.get('#grid2').should('have.css', 'height', '200px');
+    });
+
+    it('Max height inside fixed container.', () => {
+        cy.get('#grid3').should('have.css', 'height', '180px');
+    });
+
+    it('Flex grow inside fixed flexbox.', () => {
+        cy.get('#grid4').should('have.css', 'height', '200px');
     });
 });

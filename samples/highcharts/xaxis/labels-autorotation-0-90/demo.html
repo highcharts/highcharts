@@ -1,5 +1,17 @@
 <script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/accessibility.js"></script>
+<script src="https://code.highcharts.com/themes/adaptive.js"></script>
 
-<div id="container"></div>
+<script src="https://cdn.jsdelivr.net/npm/@highcharts/controls@0.7.0" type="module"></script>
 
-<input id="width" type="range" value="500" min="100" max="1000" />
+<figure class="highcharts-figure">
+  <div id="container"></div>
+</figure>
+
+<div class="highcharts-controls-wrapper">
+  <highcharts-controls>
+    <highcharts-group header="Update options">
+      <highcharts-control path="chart.width" value="360" min="100" max="1000"></highcharts-control>
+    </highcharts-group>
+  </highcharts-controls>
+</div>

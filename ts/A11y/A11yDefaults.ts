@@ -13,6 +13,7 @@
 'use strict';
 
 import type { Options } from '../Core/Options.js';
+import type { DeepPartial } from '../Shared/Types';
 
 const Options: DeepPartial<Options> = {
     a11y: {

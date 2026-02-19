@@ -1,1 +1,0 @@
-Before testing, run `gulp scripts-compile`

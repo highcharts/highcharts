@@ -1,10 +1,10 @@
 /* *
  *
- *  (c) 2009-2025 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Pawel Lysy
@@ -19,14 +19,13 @@
  *
  * */
 
-import type Globals from '../Globals';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import type JSON from '../JSON';
+import type { AnyRecord } from '../../Shared/Types';
+import type { JSONObject } from '../JSON';
 import type JSONConnectorOptions from '../../Data/Connectors/JSONConnectorOptions';
 
 import JSONConnector from '../../Data/Connectors/JSONConnector.js';
 import DataTableHelper from './DataTableHelper.js';
-import Serializable from '../Serializable.js';
+import type { Helper as SerializableHelper, JSON as SerializableJSON } from '../Serializable';
 import U from '../../Core/Utilities.js';
 const { merge } = U;
 
@@ -39,14 +38,14 @@ const { merge } = U;
 /**
  * Converts the given JSON to a class instance.
  *
- * @param {JSONConnectorHelper.JSON} json
+ * @param {JSON} json
  * JSON to deserialize as a class instance or object.
  *
  * @return {JSONConnector}
  * Returns the class instance or object, or throws an exception.
  */
 function fromJSON(
-    json: JSONConnectorHelper.JSON
+    json: JSON
 ): JSONConnector {
     return new JSONConnector(json.options);
 }
@@ -54,14 +53,14 @@ function fromJSON(
 /**
  * Validates the given class instance for JSON support.
  *
- * @param {Globals.AnyRecord} obj
+ * @param {AnyRecord} obj
  * Class instance or object to validate.
  *
  * @return {boolean}
  * Returns true, if the function set can convert the given object, otherwise
  * false.
  */
-function jsonSupportFor(obj: Globals.AnyRecord): obj is JSONConnector {
+function jsonSupportFor(obj: AnyRecord): obj is JSONConnector {
     return obj instanceof JSONConnector;
 }
 
@@ -71,15 +70,15 @@ function jsonSupportFor(obj: Globals.AnyRecord): obj is JSONConnector {
  * @param {JSONConnector} obj
  * Class instance or object to serialize as JSON.
  *
- * @return {JSONConnectorHelper.JSON}
+ * @return {JSON}
  * Returns the JSON of the class instance or object.
  */
 function toJSON(
     obj: JSONConnector
-): JSONConnectorHelper.JSON {
-    const options = merge(obj.options) as JSONConnectorHelper.OptionsJSON;
+): JSON {
+    const options = merge(obj.options) as OptionsJSON;
 
-    options.dataTable = DataTableHelper.toJSON(obj.table);
+    options.dataTable = DataTableHelper.toJSON(obj.getTable());
 
     return {
         $class: 'Data.JSONConnector',
@@ -89,25 +88,15 @@ function toJSON(
 
 /* *
  *
- *  Namespace
+ *  Declarations
  *
  * */
 
-namespace JSONConnectorHelper {
-
-    /* *
-     *
-     *  Declarations
-     *
-     * */
-
-    export interface JSON extends Serializable.JSON<'Data.JSONConnector'> {
-        options: OptionsJSON;
-    }
-
-    export type OptionsJSON = (JSON.Object&JSONConnectorOptions);
-
+export interface JSON extends SerializableJSON<'Data.JSONConnector'> {
+    options: OptionsJSON;
 }
+
+export type OptionsJSON = (JSONObject&JSONConnectorOptions);
 
 /* *
  *
@@ -115,7 +104,7 @@ namespace JSONConnectorHelper {
  *
  * */
 
-const JSONConnectorHelper: Serializable.Helper<JSONConnector, JSONConnectorHelper.JSON> = {
+const JSONConnectorHelper: SerializableHelper<JSONConnector, JSON> = {
     $class: 'Data.JSONConnector',
     fromJSON,
     jsonSupportFor,

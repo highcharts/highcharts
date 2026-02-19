@@ -2,14 +2,15 @@
  *
  *  Checkbox Cell Content class
  *
- *  (c) 2020-2025 Highsoft AS
+ *  (c) 2020-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Dawid Dragula
+ *  - Sebastian Bochan
  *
  * */
 
@@ -22,7 +23,7 @@
  * */
 
 import type CheckboxRenderer from '../Renderers/CheckboxRenderer';
-import type DataTable from '../../../../Data/DataTable';
+import type { CellType as DataTableCellType } from '../../../../Data/DataTable';
 import type { EditModeContent } from '../../CellEditing/CellEditMode';
 import type TableCell from '../../../Core/Table/Body/TableCell';
 
@@ -81,20 +82,27 @@ class CheckboxContent extends CellContentPro implements EditModeContent {
         parentElement: HTMLElement = this.cell.htmlElement
     ): HTMLInputElement {
         const cell = this.cell;
+        const { options } = this.renderer as CheckboxRenderer;
+        const input = this.input = document.createElement('input');
 
-        this.input = document.createElement('input');
-        this.input.tabIndex = -1;
-        this.input.type = 'checkbox';
-        this.input.name = cell.column.id + '-' + cell.row.id;
+        input.tabIndex = -1;
+        input.type = 'checkbox';
+        input.name = cell.column.id + '-' + cell.row.id;
+        input.classList.add(Globals.getClassName('input'));
+
+        if (options.attributes) {
+            Object.entries(options.attributes).forEach(([key, value]): void => {
+                input.setAttribute(key, value);
+            });
+        }
 
         this.update();
 
         parentElement.appendChild(this.input);
-        this.input.classList.add(Globals.classNamePrefix + 'field-auto-width');
 
-        this.input.addEventListener('change', this.onChange);
-        this.input.addEventListener('keydown', this.onKeyDown);
-        this.input.addEventListener('blur', this.onBlur);
+        input.addEventListener('change', this.onChange);
+        input.addEventListener('keydown', this.onKeyDown);
+        input.addEventListener('blur', this.onBlur);
         this.cell.htmlElement.addEventListener('keydown', this.onCellKeyDown);
 
         return this.input;
@@ -113,7 +121,7 @@ class CheckboxContent extends CellContentPro implements EditModeContent {
         return this.input.checked ? 'true' : 'false';
     }
 
-    public get value(): DataTable.CellType {
+    public get value(): DataTableCellType {
         const val = this.input.checked;
         switch (this.cell.column.dataType) {
             case 'datetime':
@@ -148,7 +156,7 @@ class CheckboxContent extends CellContentPro implements EditModeContent {
         if (this.changeHandler) {
             this.changeHandler(e);
         } else {
-            void this.cell.setValue(this.value, true);
+            void this.cell.editValue(this.value);
         }
     };
 

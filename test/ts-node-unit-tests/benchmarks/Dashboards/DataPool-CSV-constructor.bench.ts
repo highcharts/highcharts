@@ -34,15 +34,11 @@ export default async function benchmarkTest(
     performance.mark('Start');
 
     new DataPool({
-        connectors: [
-            {
-                id: size,
-                type: 'CSV',
-                options: {
-                    csv
-                }
-            }
-        ]
+        connectors: [{
+            id: size,
+            type: 'CSV',
+            csv
+        }]
     });
 
     performance.mark('End');

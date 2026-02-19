@@ -1,0 +1,234 @@
+/* SPDX-License-Identifier: LicenseRef-Highcharts */
+
+/**
+ * @license Highcharts Grid Pro v@product.version@
+ *
+ * (c) 2009-2025 Highsoft AS
+ *
+ * A commercial license may be required depending on use.
+ * See www.highcharts.com/license
+ */
+
+@import url("./grid-lite.css");
+
+/* Grid Pro specific styles */
+
+.hcg-container,
+.highcharts-light .hcg-container {
+    /* Credits fonts */
+    --ig-credits-font-weight: var(--hcg-credits-font-weight, var(--ig-font-weight));
+    --ig-credits-font-size: var(--hcg-credits-font-size, 0.9em);
+    --ig-credits-font-family: var(--hcg-credits-font-family, var(--ig-font-family));
+    --ig-credits-color: var(--hcg-credits-color, var(--ig-color));
+    --ig-credits-font: var(--ig-credits-font-weight) var(--ig-credits-font-size) var(--ig-credits-font-family);
+    --ig-credits-text-align: var(--hcg-credits-text-align, right);
+
+    /* Credits padding */
+    --ig-credits-horizontal-padding: var(--hcg-credits-horizontal-padding, var(--hcg-credits-padding, 5px));
+    --ig-credits-vertical-padding: var(--hcg-credits-vertical-padding, var(--hcg-credits-padding, 5px));
+    --ig-credits-padding:
+        var(--ig-credits-vertical-padding)
+        var(--ig-credits-horizontal-padding)
+        0
+        var(--ig-credits-horizontal-padding);
+
+    /* CSS helpers */
+    --ig-highlight-border-size: var(--hcg-highlight-border-size, 1px);
+
+    /* Negative colors */
+    --ig-negative-border-size: var(--hcg-negative-border-size, var(--ig-highlight-border-size));
+
+    /* Neutral colors */
+    --ig-neutral-border-size: var(--hcg-neutral-border-size, var(--ig-highlight-border-size));
+
+    /* Positive colors */
+    --ig-positive-border-size: var(--hcg-positive-border-size, var(--ig-highlight-border-size));
+
+    /* Notification fonts */
+    --ig-notification-font-weight: var(--hcg-notification-font-weight, var(--ig-font-weight));
+    --ig-notification-font-size: var(--hcg-notification-font-size, var(--ig-font-size));
+    --ig-notification-font-family:
+        var(
+            --hcg-notification-font-family,
+            var(--ig-font-family)
+        );
+    --ig-notification-color: var(--hcg-notification-color, var(--ig-color));
+    --ig-notification-font:
+        var(--ig-notification-font-weight)
+        var(--ig-notification-font-size)
+        var(--ig-notification-font-family);
+    --ig-notification-text-align:
+        var(
+            --hcg-notification-text-align,
+            var(--ig-text-align)
+        );
+
+    /* Notification padding */
+    --ig-notification-horizontal-padding:
+        var(
+            --hcg-notification-horizontal-padding,
+            var(--hcg-notification-padding, var(--ig-horizontal-padding))
+        );
+    --ig-notification-vertical-padding:
+        var(
+            --hcg-notification-vertical-padding,
+            var(
+                --hcg-notification-padding,
+                var(--ig-vertical-padding)
+            )
+        );
+    --ig-notification-padding: var(--ig-notification-vertical-padding) var(--ig-notification-horizontal-padding);
+
+    /* Notification border */
+    --ig-notification-border-radius: var(--hcg-notification-border-radius, var(--ig-border-radius));
+    --ig-notification-border-width: var(--hcg-notification-border-width, 1px);
+    --ig-notification-border-style: var(--hcg-notification-border-style, solid);
+    --ig-notification-border-color: var(--hcg-notification-border-color, var(--ig-color));
+    --ig-notification-border:
+        var(
+            --ig-notification-border-width
+        ) var(--ig-notification-border-style) var(--ig-notification-border-color);
+
+    /*  Editable cell */
+    --ig-cell-editable-background: #dbeaff;
+}
+
+@media (prefers-color-scheme: dark) {
+    .hcg-container {
+        --ig-cell-editable-background: #2d415e;
+    }
+}
+
+.highcharts-dark .hcg-container {
+    --ig-cell-editable-background: #2d415e;
+}
+
+.hcg-no-padding {
+    padding: 0 !important;
+}
+
+.hcg-cell-editing-container {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    padding: inherit;
+    z-index: 1;
+    background: var(--ig-cell-editable-background);
+    color: var(--ig-color);
+    box-shadow: inset var(--ig-focus-ring);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.hcg-cell-editing-container:has(.hcg-input[type="checkbox"]) {
+    padding: var(--ig-padding);
+}
+
+.hcg-table tbody td.hcg-edited-cell .hcg-input:not([type="checkbox"]) {
+    border-width: 0;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    outline: none;
+    float: left;
+    font: var(--ig-font);
+    background-color: transparent;
+    color: unset;
+    padding: var(--ig-padding);
+    max-height: unset;
+    height: unset;
+    border-radius: unset;
+    line-height: 1.2em;
+}
+
+.hcg-table tbody td.hcg-edited-cell select {
+    appearance: none;
+}
+
+.hcg-table tbody td.hcg-edited-cell-error .hcg-input {
+    color: var(--ig-color);
+    box-shadow: inset 0 0 0 var(--ig-focus-ring-width) var(--ig-negative-border-color) !important;
+    background-color: var(--ig-negative-background) !important;
+}
+
+/* Grid Pro Credits Pro styles */
+.hcg-credits-container.hcg-credits-pro {
+    text-align: var(--ig-credits-text-align);
+    padding: var(--ig-credits-padding);
+}
+
+.hcg-credits-container.hcg-credits-pro .hcg-credits {
+    color: var(--ig-credits-color);
+    font: var(--ig-credits-font);
+    text-decoration: none;
+    display: inline-block;
+}
+
+/*
+ * When custom credits text is provided in Grid Pro, the anchor element
+ * is no longer empty. In that case, hide the default logo background
+ * coming from Grid Lite and let the text be visible instead.
+ */
+.hcg-credits-container.hcg-credits-pro .hcg-credits:not(:empty) {
+    background-image: none;
+
+    /* Allow text to size naturally instead of the fixed logo size */
+    width: auto;
+    height: auto;
+}
+
+/* Notification container */
+.hcg-notification {
+    position: absolute;
+    left: 0;
+    top: 0;
+    margin: 10px;
+    width: calc(100% - 20px);
+    display: none;
+    padding: var(--ig-notification-padding);
+    font: var(--ig-notification-font);
+    background: var(--ig-background);
+    border-radius: var(--ig-notification-border-radius);
+    border: var(--ig-notification-border);
+    box-shadow: 0 0 15px 1px #00000030;
+}
+
+/* Notification states */
+.hcg-notification-error {
+    color: var(--ig-negative-color);
+    background: var(--ig-negative-background);
+    border-color: var(--ig-negative-border-color);
+}
+
+.hcg-notification-warning {
+    color: var(--ig-neutral-color);
+    background: var(--ig-neutral-background);
+    border-color: var(--ig-neutral-border-color);
+}
+
+.hcg-notification-success {
+    color: var(--ig-positive-color);
+    background: var(--ig-positive-background);
+    border-color: var(--ig-positive-border-color);
+}
+
+/* Notification animation */
+.hcg-notification-animation {
+    display: block;
+    animation: notification-animation 0.5s;
+}
+
+@keyframes notification-animation {
+    0% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}

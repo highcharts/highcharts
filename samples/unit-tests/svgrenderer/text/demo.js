@@ -19,7 +19,7 @@ QUnit.test('Hide label with useHTML (#4938)', function (assert) {
     );
 });
 
-QUnit.test('Legend rtl and useHTML(#4449)', function (assert) {
+QUnit.test('Legend rtl and useHTML (#4449)', function (assert) {
     var ren = new Highcharts.Renderer(
         document.getElementById('container'),
         500,
@@ -863,6 +863,17 @@ QUnit.test('Text height', function (assert) {
                 textOutline: '6px silver'
             })
             .add();
+
+        // Backwards compatibility, #22807
+        assert.deepEqual(
+            renderer.fontMetrics(14),
+            {
+                h: 17,
+                b: 14,
+                f: 14
+            },
+            'Number should be supported by fontMetrics.'
+        );
 
         // Highcharts 4.1.1, Issue #3842:
         // Bar dataLabels positions in 4.1.x - Firefox, Internet Explorer

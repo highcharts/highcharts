@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Honsi
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -19,6 +20,7 @@
 import type AxisOptions from '../../Core/Axis/AxisOptions';
 import type Chart from '../../Core/Chart/Chart.js';
 import type CSSObject from '../../Core/Renderer/CSSObject';
+import type { DeepPartial } from '../../Shared/Types';
 import type { NavigatorAxisComposition } from '../../Core/Axis/NavigatorAxisComposition';
 import type {
     NavigatorHandlesOptions,
@@ -40,8 +42,7 @@ const { isTouchDevice } = H;
 import NavigatorAxisAdditions from '../../Core/Axis/NavigatorAxisComposition.js';
 import NavigatorComposition from './NavigatorComposition.js';
 import Scrollbar from '../Scrollbar/Scrollbar.js';
-import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
-const { prototype: { symbols } } = SVGRenderer;
+
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -180,6 +181,7 @@ class Navigator {
     public scrollbarOptions?: ScrollbarOptions;
     public series?: Array<Series>;
     public shades!: Array<SVGElement>;
+    public shadesAndHandlesEventsToUnbind!: Function[];
     public size!: number;
     public stickToMax?: boolean;
     public stickToMin?: boolean;
@@ -489,7 +491,7 @@ class Navigator {
             });
         }
 
-        // Create the handlers:
+        // Create the handles:
         if (navigatorOptions.handles?.enabled) {
             const handlesOptions =
                 navigatorOptions.handles as Required<NavigatorHandlesOptions>,
@@ -497,10 +499,10 @@ class Navigator {
 
             [0, 1].forEach((index: number): void => {
                 const symbolName = handlesOptions.symbols[index];
-
                 if (
                     !navigator.handles[index] ||
-                    navigator.handles[index].symbolUrl !== symbolName
+                    navigator.handles[index].symbolName !== symbolName
+
                 ) {
                     // Generate symbol from scratch if we're dealing with an URL
                     navigator.handles[index]?.destroy();
@@ -523,25 +525,10 @@ class Navigator {
                             ['left', 'right'][index]
                         ).add(navigatorGroup);
 
-                    navigator.addMouseEvents();
-                // If the navigator symbol changed, update its path and name
-                } else if (
-                    !navigator.handles[index].isImg &&
-                    navigator.handles[index].symbolName !== symbolName
-                ) {
-                    const symbolFn = symbols[symbolName],
-                        path = symbolFn.call(
-                            symbols,
-                            -width / 2 - 1,
-                            0,
-                            width,
-                            height
-                        );
-
-                    navigator.handles[index].attr({
-                        d: path
-                    });
-                    navigator.handles[index].symbolName = symbolName;
+                    // Remove old events:
+                    navigator.removeShadesAndHandlesEvents();
+                    // Re-add the events with new elements:
+                    navigator.addShadesAndHandlesEvents();
                 }
                 if (chart.inverted) {
                     navigator.handles[index].attr({
@@ -846,8 +833,8 @@ class Navigator {
             chart = navigator.chart,
             container = chart.container;
 
-        let eventsToUnbind = [],
-            mouseMoveHandler,
+        const eventsToUnbind = [];
+        let mouseMoveHandler,
             mouseUpHandler;
 
         /**
@@ -865,8 +852,6 @@ class Navigator {
             navigator.onMouseUp(e);
         };
 
-        // Add shades and handles mousedown events
-        eventsToUnbind = navigator.getPartsEvents('mousedown');
         eventsToUnbind.push(
             // Add mouse move and mouseup events. These are bind to doc/div,
             // because Navigator.grabbedSomething flags are stored in mousedown
@@ -877,7 +862,8 @@ class Navigator {
             addEvent(chart.renderTo, 'touchmove', mouseMoveHandler),
             addEvent(container.ownerDocument, 'touchend', mouseUpHandler)
         );
-        eventsToUnbind.concat(navigator.getPartsEvents('touchstart'));
+
+        navigator.addShadesAndHandlesEvents(); // (#21775)
 
         navigator.eventsToUnbind = eventsToUnbind;
 
@@ -893,6 +879,35 @@ class Navigator {
                 )
             );
         }
+
+    }
+
+    /**
+     * Set up the mouse and touch events for the shades and handles only.
+     *
+     * @private
+     * @function Highcharts.Navigator#addShadesAndHandlesEvents
+     */
+    public addShadesAndHandlesEvents(): void {
+        this.shadesAndHandlesEventsToUnbind = this.getPartsEvents('mousedown'),
+        this.shadesAndHandlesEventsToUnbind.concat(
+            this.getPartsEvents('touchstart')
+        );
+    }
+
+    /**
+     * Remove the mouse and touch events for the shades and handles only.
+     *
+     * @private
+     * @function Highcharts.Navigator#removeShadesAndHandelsEvents
+     */
+    public removeShadesAndHandlesEvents(): void {
+        this.shadesAndHandlesEventsToUnbind.forEach(
+            (unbind: Function): void => {
+                unbind();
+            }
+        );
+        this.shadesAndHandlesEventsToUnbind = [];
     }
 
     /**
@@ -1082,7 +1097,7 @@ class Navigator {
         // In iOS, a mousemove event with e.pageX === 0 is fired when holding
         // the finger down in the center of the scrollbar. This should be
         // ignored.
-        if (!(e as any).touches || (e as any).touches[0].pageX !== 0) { // #4696
+        if (!e.touches || e.touches[0].pageX !== 0) { // #4696
 
             e = chart.pointer?.normalize(e) || e;
             chartX = e.chartX;
@@ -1112,30 +1127,29 @@ class Navigator {
                     chartX - left
                 );
             // Drag scrollbar or open area in navigator
-            } else if (navigator.grabbedCenter) {
+            } else if (navigator.grabbedCenter && dragOffset) {
                 navigator.hasDragged = true;
-                if (chartX < (dragOffset as any)) { // Outside left
+                if (chartX < dragOffset) { // Outside left
                     chartX = dragOffset;
                 // Outside right
                 } else if (
                     chartX >
-                    navigatorSize + (dragOffset as any) - range
+                    navigatorSize + dragOffset - range
                 ) {
-                    chartX = navigatorSize + (dragOffset as any) - range;
+                    chartX = navigatorSize + dragOffset - range;
                 }
 
                 navigator.render(
                     0,
                     0,
-                    (chartX as any) - (dragOffset as any),
-                    (chartX as any) - (dragOffset as any) + range
+                    chartX - dragOffset,
+                    chartX - dragOffset + range
                 );
             }
             if (
                 navigator.hasDragged &&
-                navigator.scrollbar &&
                 pick(
-                    navigator.scrollbar.options.liveRedraw,
+                    navigator.scrollbarOptions?.liveRedraw,
 
                     // By default, don't run live redraw on touch
                     // devices or if the chart is in boost.
@@ -1276,6 +1290,7 @@ class Navigator {
             });
             this.eventsToUnbind = void 0;
         }
+        this.removeShadesAndHandlesEvents();
         this.removeBaseSeriesEvents();
     }
 
@@ -1337,6 +1352,7 @@ class Navigator {
 
         this.handles = [];
         this.shades = [];
+        this.shadesAndHandlesEventsToUnbind = [];
 
         this.chart = chart;
         this.setBaseSeries();
@@ -1452,7 +1468,7 @@ class Navigator {
                 navigatorAxis: {
                     fake: true
                 },
-                translate: function (value: number, reverse?: boolean): void {
+                translate: function (value: number, reverse?: boolean): number {
                     const axis = chart.xAxis[0],
                         ext = axis.getExtremes(),
                         scrollTrackWidth = axis.len - 2 * scrollButtonSize,

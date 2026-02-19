@@ -43,8 +43,10 @@ async function run() {
     // ...
   }, true);
   // A component usually performs access to the data pool.
-  const table = await board.dataPool.getConnectorTable('My Currency Data');
-  const modifiedTable = table.modified;
+  const table = await board.dataPool
+    .getConnector('My Currency Data')
+    .then((connector) => connector.getTable());
+  const modifiedTable = table.getModified();
 }
 run();
 ```
@@ -62,7 +64,7 @@ connectors. You can access the registry via `DataConnector.types`.
 The `CSVConnector` allows the loading of structured text data, where a comma or semicolon separates each table
 cell, while a line break separates each row. You can provide data via a URL or directly with a CSV string. Details
 of all available options can be found in the
-[API documentation](https://api.highcharts.com/dashboards/#interfaces/Data_Connectors_CSVConnectorOptions.CSVConnectorOptions-1).
+[API documentation](https://api.highcharts.com/dashboards/#interfaces/Data_Connectors_CSVConnectorOptions.CSVConnectorOptions).
 
 ### CSVConnector Example
 
@@ -83,7 +85,7 @@ run();
 With the `GoogleSheetsConnector`, is it possible to load table data from a Google
 Docs spreadsheet. The connector needs the API key related to a Google account
 and the document ID. See the
-[API documentation](https://api.highcharts.com/dashboards/#interfaces/Data_Connectors_GoogleSheetsConnectorOptions.GoogleSheetsConnectorOptions-1)
+[API documentation](https://api.highcharts.com/dashboards/#interfaces/Data_Connectors_GoogleSheetsConnectorOptions.GoogleSheetsConnectorOptions)
 for all options.
 
 Please note that the Google account needs read access to the document. Usually
@@ -111,7 +113,7 @@ With the `GoogleSheetsConnector` in Highcharts Dashboards, you can load tables f
 components, whether a Grid, KPI, or chart. Like with other connectors, DataModifiers may be applied during parsing.
 Alternatively, the data may be filtered or modified before it is parsed in the `beforeParse` callback.
 
-The connector requires two API keys: one for the Google Spreadsheets API and one for the document itself. In addition, the Google account owner must grant read access to the document. See the [GoogleSheetsConnector API](https://api.highcharts.com/dashboards/typedoc/interfaces/Data_Connectors_GoogleSheetsConnectorOptions.GoogleSheetsConnectorOptions-1.html) for further details.
+The connector requires two API keys: one for the Google Spreadsheets API and one for the document itself. In addition, the Google account owner must grant read access to the document. See the [GoogleSheetsConnector API](https://api.highcharts.com/dashboards/typedoc/interfaces/Data_Connectors_GoogleSheetsConnectorOptions.GoogleSheetsConnectorOptions.html) for further details.
 
 ### Google API key
 
@@ -132,7 +134,7 @@ Spreadsheet key: **1U17c4GljMWpgk1bcTvUzIuWT8vdOnlCBHTm5S8Jh8tw**
 
 ### Basic demo
 
-<iframe style="width: 100%; height: 450px; border: none;" src="https://www.highcharts.com/samples/embed/dashboards/data/googlesheets-tutorial" allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 450px; border: none;" src="https://www.highcharts.com/samples/embed/dashboards/data/googlesheets-tutorial?force-light-theme" allow="fullscreen"></iframe>
 
 
 ## HTMLTableConnector
@@ -141,7 +143,7 @@ The `HTMLTableConnector` allows the import and export of an HTML table as a
 `DataTable`. It is the only connector not supporting loading from a
 remote source. Instead, one provides an element reference from the current web
 page. Details are listed in the
-[API documentation](https://api.highcharts.com/dashboards/#interfaces/Data_Connectors_HTMLTableConnectorOptions.HTMLTableConnectorOptions-1).
+[API documentation](https://api.highcharts.com/dashboards/#interfaces/Data_Connectors_HTMLTableConnectorOptions.HTMLTableConnectorOptions).
 
 ### HTMLTableConnector Example
 
@@ -160,7 +162,7 @@ run();
 The `JSONConnector` supports loading data in a row-oriented structure, as found
 in Highcharts series types. The connector options can also control how columns
 and rows are structured in the JSON array to support other structures. See the
-[API documentation](https://api.highcharts.com/dashboards/#interfaces/Data_Connectors_JSONConnectorOptions.JSONConnectorOptions-1)
+[API documentation](https://api.highcharts.com/dashboards/#interfaces/Data_Connectors_JSONConnectorOptions.JSONConnectorOptions)
 for all possible combinations.
 
 ### JSONConnector Example
@@ -303,4 +305,4 @@ The `MQTTConnector` can be reused for other applications by copying the entire c
 MQTTConnector.registerType('MQTT', MQTTConnector);
 ```
 
-<iframe style="width: 100%; height: 450px; border: none;" src="https://www.highcharts.com/samples/embed/dashboards/data/mqtt-connector" allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 450px; border: none;" src="https://www.highcharts.com/samples/embed/dashboards/data/mqtt-connector?force-light-theme" allow="fullscreen"></iframe>

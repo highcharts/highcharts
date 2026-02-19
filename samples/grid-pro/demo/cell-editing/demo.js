@@ -38,7 +38,10 @@ Grid.grid('container', {
         id: 'weight',
         cells: {
             editMode: {
-                validationRules: ['notEmpty', 'number']
+                validationRules: ['notEmpty', 'number'],
+                renderer: {
+                    type: 'numberInput'
+                }
             }
         }
     }, {

@@ -1,14 +1,13 @@
+// SPDX-License-Identifier: LicenseRef-Highcharts
 /**
  * @license Highcharts Grid v@product.version@ (@product.date@)
  * @module grid/grid-lite
  *
- * (c) 2009-2025 Highsoft AS
+ * (c) 2009-2026 Highsoft AS
  *
- * License: www.highcharts.com/license
+ * A commercial license may be required depending on use.
+ * See www.highcharts.com/license
  */
-
-
-'use strict';
 
 
 /* *
@@ -21,7 +20,7 @@ import type _Options from '../Grid/Core/Options.ts';
 
 import AST from '../Core/Renderer/HTML/AST.js';
 import Templating from '../Core/Templating.js';
-import ColumnDistribution from '../Grid/Core/Table/ColumnDistribution/ColumnDistribution.js';
+import ColumnResizing from '../Grid/Core/Table/ColumnResizing/ColumnResizing.js';
 import DataConnector from '../Data/Connectors/DataConnector.js';
 import DataConverter from '../Data/Converters/DataConverter.js';
 import DataCursor from '../Data/DataCursor.js';
@@ -35,6 +34,10 @@ import whcm from '../Accessibility/HighContrastMode.js';
 import Table from '../Grid/Core/Table/Table.js';
 import CreditsLiteComposition from '../Grid/Lite/Credits/CreditsLiteComposition.js';
 import Utilities from '../Core/Utilities.js';
+import SvgIcons from '../Grid/Core/UI/SvgIcons.js';
+import Pagination from '../Grid/Core/Pagination/Pagination.js';
+import DataProviderRegistry from '../Grid/Core/Data/DataProviderRegistry.js';
+import ResponsiveComposition from '../Grid/Core/Responsive/ResponsiveComposition.js';
 
 // Fill registries
 import '../Data/Connectors/CSVConnector.js';
@@ -45,39 +48,10 @@ import '../Data/Modifiers/ChainModifier.js';
 import '../Data/Modifiers/InvertModifier.js';
 import '../Data/Modifiers/RangeModifier.js';
 import '../Data/Modifiers/SortModifier.js';
+import '../Data/Modifiers/FilterModifier.js';
 
-/* *
- *
- *  Declarations
- *
- * */
-
-declare global {
-    interface GridNamespace {
-        win: typeof Globals.win;
-        product: 'Grid Lite',
-        AST: typeof AST;
-        Grid: typeof _Grid;
-        grid: typeof _Grid.grid;
-        grids: Array<(_Grid|undefined)>;
-        ColumnDistribution: typeof ColumnDistribution;
-        DataConverter: typeof DataConverter;
-        DataCursor: typeof DataCursor;
-        DataModifier: typeof DataModifier;
-        DataConnector: typeof DataConnector;
-        DataPool: typeof DataPool;
-        DataTable: typeof DataTable;
-        Table: typeof Table;
-        isHighContrastModeActive: typeof whcm.isHighContrastModeActive;
-        defaultOptions: typeof Defaults.defaultOptions;
-        setOptions: typeof Defaults.setOptions;
-        Templating: typeof Templating;
-        merge: typeof Utilities.merge;
-    }
-    interface Window {
-        Grid: GridNamespace;
-    }
-}
+import '../Grid/Core/Data/LocalDataProvider.js';
+import '../Grid/Core/Responsive/ResponsiveComposition.js';
 
 
 /* *
@@ -86,53 +60,72 @@ declare global {
  *
  * */
 
-
-const G = Globals as unknown as GridNamespace;
-
-G.AST = AST;
-G.DataConnector = DataConnector;
-G.DataCursor = DataCursor;
-G.DataConverter = DataConverter;
-G.Grid = _Grid;
-G.grid = _Grid.grid;
-G.grids = _Grid.grids;
-G.ColumnDistribution = ColumnDistribution;
-G.DataModifier = DataModifier;
-G.DataPool = DataPool;
-G.DataTable = DataTable;
-G.defaultOptions = Defaults.defaultOptions;
-G.isHighContrastModeActive = whcm.isHighContrastModeActive;
-G.Templating = Templating;
-G.product = 'Grid Lite';
-G.setOptions = Defaults.setOptions;
-G.merge = Utilities.merge;
-
-G.Table = G.Table || Table;
+const G = {
+    AST,
+    ColumnResizing,
+    DataConnector,
+    DataConverter,
+    DataCursor,
+    DataModifier,
+    DataPool,
+    DataProviderRegistry,
+    DataTable,
+    defaultOptions: Defaults.defaultOptions,
+    Grid: _Grid,
+    grid: _Grid.grid,
+    grids: _Grid.grids,
+    isHighContrastModeActive: whcm.isHighContrastModeActive,
+    merge: Utilities.merge,
+    Pagination,
+    product: 'Grid Lite',
+    setOptions: Defaults.setOptions,
+    SvgIcons,
+    Table,
+    Templating,
+    version: Globals.version,
+    win: Globals.win
+};
 
 CreditsLiteComposition.compose(G.Grid, G.Table);
+ResponsiveComposition.compose(G.Grid);
 
 
 /* *
  *
- *  Export types
+ * Named Exports
  *
  * */
 
-namespace G {
-    export type Options = _Options;
-}
+export {
+    AST,
+    ColumnResizing,
+    DataConnector,
+    DataConverter,
+    DataCursor,
+    DataModifier,
+    DataPool,
+    DataProviderRegistry,
+    DataTable,
+    _Grid as Grid,
+    _Options as Options,
+    Pagination,
+    SvgIcons,
+    Table,
+    Templating
+};
 
+export const {
+    defaultOptions,
+    grid,
+    grids,
+    isHighContrastModeActive,
+    merge,
+    product,
+    setOptions,
+    version,
+    win
+} = G;
 
-/* *
- *
- *  Classic Export
- *
- * */
-
-
-if (!G.win.Grid) {
-    G.win.Grid = G;
-}
 
 /* *
  *
@@ -140,5 +133,8 @@ if (!G.win.Grid) {
  *
  * */
 
+namespace G {
+    export type Options = _Options;
+}
 
 export default G;

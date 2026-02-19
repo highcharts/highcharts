@@ -1,10 +1,10 @@
 /* *
  *
- *  (c) 2009-2025 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Sophie Bremer
@@ -21,7 +21,7 @@
  * */
 
 
-import type Globals from '../../Globals';
+import type { DeepPartial } from '../../../Shared/Types';
 import type Options from './NavigatorComponentOptions';
 
 import Component from '../Component.js';
@@ -33,7 +33,7 @@ import Component from '../Component.js';
  *
  * */
 
-const NavigatorComponentDefaults: Globals.DeepPartial<Options> = {
+const NavigatorComponentDefaults: DeepPartial<Options> = {
     type: 'Navigator',
     className: [
         Component.defaultOptions.className,

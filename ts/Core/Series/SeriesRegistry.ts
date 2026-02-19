@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Honsi
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -16,8 +17,9 @@
  *
  * */
 
-import type Series from './Series.js';
+import type { DeepPartial } from '../../Shared/Types';
 import type { SeriesTypeRegistry } from './SeriesType';
+import type Series from './Series.js';
 
 import H from '../Globals.js';
 import D from '../Defaults.js';
@@ -62,7 +64,15 @@ namespace SeriesRegistry {
     /**
      * Registers class pattern of a series.
      *
-     * @private
+     * @param {string} seriesType
+     * The series type as an identifier string in lower case.
+     *
+     * @param {Function} SeriesClass
+     * The series class as a class pattern or a constructor function with
+     * prototype.
+     *
+     * @return {boolean}
+     * True if series type was added, false if it already exists.
      */
     export function registerSeriesType(
         seriesType: string,
@@ -119,7 +129,7 @@ namespace SeriesRegistry {
      * derivatives.
      */
     export function seriesType<T extends typeof Series>(
-        type: keyof SeriesTypeRegistry,
+        type: Extract<keyof SeriesTypeRegistry, string>,
         parent: (keyof SeriesTypeRegistry|undefined),
         options: T['prototype']['options'],
         seriesProto?: DeepPartial<T['prototype']>,
@@ -137,10 +147,13 @@ namespace SeriesRegistry {
 
         // Create the class
         delete seriesTypes[type];
-        registerSeriesType(type, extendClass(
-            seriesTypes[parent] as any || function (): void {},
-            seriesProto
-        ) as any);
+        const parentClass = (
+                seriesTypes[parent] as typeof Series ||
+                (H as unknown as { Series: typeof Series }).Series
+            ),
+            childClass = extendClass(parentClass, seriesProto) as typeof Series;
+
+        registerSeriesType(type, childClass);
         seriesTypes[type].prototype.type = type;
 
         // Create the point class if needed

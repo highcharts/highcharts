@@ -1,10 +1,10 @@
 /* *
  *
- *  (c) 2009-2025 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Dawid Dragula
@@ -22,7 +22,9 @@
  * */
 
 
-import type DataEvent from '../DataEvent';
+import type {
+    DataEventDetail
+} from '../DataEvent';
 import type {
     CallbackCondition,
     FilterCondition,
@@ -30,7 +32,10 @@ import type {
 } from './FilterModifierOptions';
 
 import DataModifier from './DataModifier.js';
-import DataTable from '../DataTable.js';
+import DataTable, {
+    type CellType as DataTableCellType,
+    type RowObject as DataTableRowObject
+} from '../DataTable.js';
 import U from '../../Core/Utilities.js';
 const {
     isFunction,
@@ -105,24 +110,32 @@ class FilterModifier extends DataModifier {
             }
         }
 
-        const { columnName: col, value } = condition;
+        const { columnId: col, value } = condition;
         switch (op) {
-            case 'eq':
+            case '==':
+                // eslint-disable-next-line eqeqeq
+                return (row): boolean => row[col] == value;
+            case '===':
                 return (row): boolean => row[col] === value;
-            case 'ne':
+            case '!=':
+                // eslint-disable-next-line eqeqeq
+                return (row): boolean => row[col] != value;
+            case '!==':
                 return (row): boolean => row[col] !== value;
-            case 'gt':
+            case '>':
                 return (row): boolean => (row[col] || 0) > (value || 0);
-            case 'ge':
+            case '>=':
                 return (row): boolean => (row[col] || 0) >= (value || 0);
-            case 'lt':
+            case '<':
                 return (row): boolean => (row[col] || 0) < (value || 0);
-            case 'le':
+            case '<=':
                 return (row): boolean => (row[col] || 0) <= (value || 0);
+            case 'empty':
+                return (row): boolean => row[col] === null || row[col] === '';
         }
 
         const { ignoreCase } = condition;
-        const str = (val: DataTable.CellType): string => {
+        const str = (val: DataTableCellType): string => {
             const s = '' + val;
             return (ignoreCase ?? true) ? s.toLowerCase() : s;
         };
@@ -145,7 +158,7 @@ class FilterModifier extends DataModifier {
     /**
      * Constructs an instance of the filter modifier.
      *
-     * @param {Partial<FilterModifier.Options>} [options]
+     * @param {Partial<FilterModifierOptions>} [options]
      * Options to configure the filter modifier.
      */
     public constructor(
@@ -176,21 +189,24 @@ class FilterModifier extends DataModifier {
      * */
 
     /**
-     * Replaces table rows with filtered rows.
+     * Filters out table rows matching a given condition. If the given table
+     * does not have defined a `modified` property, the filtering is applied
+     * in-place on the original table rather than on a `modified` copy.
      *
      * @param {DataTable} table
      * Table to modify.
      *
-     * @param {DataEvent.Detail} [eventDetail]
+     * @param {DataEventDetail} [eventDetail]
      * Custom information for pending events.
      *
      * @return {DataTable}
-     * Table with `modified` property as a reference.
+     * Table with `modified` property as a reference or modified table, if
+     * `modified` property of the original table is undefined.
      */
-    public modifyTable<T extends DataTable>(
-        table: T,
-        eventDetail?: DataEvent.Detail
-    ): T {
+    public override modifyTable(
+        table: DataTable,
+        eventDetail?: DataEventDetail
+    ): DataTable {
         const modifier = this;
 
         modifier.emit({ type: 'modify', detail: eventDetail, table });
@@ -203,10 +219,9 @@ class FilterModifier extends DataModifier {
 
         const matchRow = FilterModifier.compile(condition);
 
-        // This line should be investigated further when reworking Data Layer.
-        const modified = table.modified;
+        const modified = table.getModified();
 
-        const rows: DataTable.RowObject[] = [];
+        const rows: DataTableRowObject[] = [];
         const indexes: Array<number|undefined> = [];
 
         for (
@@ -222,7 +237,7 @@ class FilterModifier extends DataModifier {
 
             if (matchRow(row, table, i)) {
                 rows.push(row);
-                indexes.push(modified.getOriginalRowIndex(i));
+                indexes.push(table.getOriginalRowIndex(i));
             }
         }
 

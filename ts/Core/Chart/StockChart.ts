@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Honsi
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -24,6 +25,7 @@ import type {
 } from '../Axis/AxisOptions';
 import type BBoxObject from '../Renderer/BBoxObject';
 import type CSSObject from '../Renderer/CSSObject';
+import type { DeepPartial } from '../../Shared/Types';
 import type { HTMLDOMElement } from '../Renderer/DOMElementType';
 import type Options from '../Options';
 import type PointerEvent from '../PointerEvent';
@@ -69,35 +71,40 @@ const {
  *
  * */
 
-declare module '../Axis/AxisLike' {
-    interface AxisLike {
+/** @internal */
+declare module '../Axis/AxisBase' {
+    interface AxisBase {
         crossLabel?: SVGElement;
     }
 }
 
-declare module './ChartLike' {
-    interface ChartLike {
+/** @internal */
+declare module './ChartBase' {
+    interface ChartBase {
         _labelPanes?: Record<string, Axis>;
         fixedRange?: number;
         setFixedRange(range: number|undefined): void;
     }
 }
 
+/** @internal */
 declare module '../Options'{
     interface Options {
         isStock?: boolean;
     }
 }
 
-declare module '../Series/SeriesLike' {
-    interface SeriesLike {
+/** @internal */
+declare module '../Series/SeriesBase' {
+    interface SeriesBase {
         clipBox?: BBoxObject;
         forceCropping(): boolean|undefined;
     }
 }
 
-declare module '../Renderer/SVG/SVGRendererLike' {
-    interface SVGRendererLike {
+/** @internal */
+declare module '../Renderer/SVG/SVGRendererBase' {
+    interface SVGRendererBase {
         crispPolyLine(points: SVGPath, width: number): SVGPath;
     }
 }
@@ -112,7 +119,7 @@ declare module '../Renderer/SVG/SVGRendererLike' {
 /**
  * Get stock-specific default axis options.
  *
- * @private
+ * @internal
  * @function getDefaultAxisOptions
  */
 function getDefaultAxisOptions(
@@ -150,7 +157,7 @@ function getDefaultAxisOptions(
 /**
  * Get stock-specific forced axis options.
  *
- * @private
+ * @internal
  * @function getForcedAxisOptions
  */
 function getForcedAxisOptions(
@@ -329,7 +336,7 @@ class StockChart extends Chart {
      * Factory for creating different axis types.
      * Extended to add stock defaults.
      *
-     * @private
+     * @internal
      * @function Highcharts.StockChart#createAxis
      * @param {string} coll
      * An axis type.
@@ -377,6 +384,7 @@ addEvent(Chart, 'update', function (
  *
  * */
 
+/** @internal */
 namespace StockChart {
 
     /* *
@@ -385,7 +393,23 @@ namespace StockChart {
      *
      * */
 
-    /** @private */
+    /**
+     * Composes the chart with the stock-specific functionality.
+     *
+     * @internal
+     *
+     * @param {Highcharts.Class<Highcharts.Chart>} ChartClass
+     * The chart class to compose.
+     *
+     * @param {Highcharts.Class<Highcharts.Axis>} AxisClass
+     * The axis class to compose.
+     *
+     * @param {Highcharts.Class<Highcharts.Series>} SeriesClass
+     * The series class to compose.
+     *
+     * @param {Highcharts.Class<Highcharts.SVGRenderer>} SVGRendererClass
+     * The SVG renderer class to compose.
+     */
     export function compose(
         ChartClass: typeof Chart,
         AxisClass: typeof Axis,
@@ -414,7 +438,7 @@ namespace StockChart {
 
     /**
      * Extend crosshairs to also draw the label.
-     * @private
+     * @internal
      */
     function onAxisAfterDrawCrosshair(
         this: Axis,
@@ -611,7 +635,7 @@ namespace StockChart {
 
     /**
      * Wrapper to hide the label.
-     * @private
+     * @internal
      */
     function onAxisAfterHideCrosshair(
         this: Axis
@@ -626,7 +650,7 @@ namespace StockChart {
     /**
      * Override the automatic label alignment so that the first Y axis' labels
      * are drawn on top of the grid line, and subsequent axes are drawn outside.
-     * @private
+     * @internal
      */
     function onAxisAutoLabelAlign(
         this: Axis,
@@ -661,7 +685,7 @@ namespace StockChart {
 
     /**
      * Clear axis from label panes. (#6071)
-     * @private
+     * @internal
      */
     function onAxisDestroy(
         this: Axis
@@ -680,7 +704,7 @@ namespace StockChart {
 
     /**
      * Override getPlotLinePath to allow for multipane charts.
-     * @private
+     * @internal
      */
     function onAxisGetPlotLinePath(
         this: Axis,
@@ -692,22 +716,27 @@ namespace StockChart {
                     axis.linkedParent.series :
                     axis.series
             ),
-            chart = axis.chart,
+            { chart, horiz } = axis,
             renderer = chart.renderer,
-            axisLeft = axis.left,
-            axisTop = axis.top,
             result = [] as SVGPath,
-            translatedValue = e.translatedValue,
-            value = e.value,
-            force = e.force,
+            { acrossPanes = true, force, translatedValue, value } = e,
+            allPerpendicularAxes = (
+                axis.isXAxis ? chart.yAxis : chart.xAxis
+            ) || [],
             /**
              * Return the other axis based on either the axis option or on
              * related series.
-             * @private
+             * @internal
              */
             getAxis = (coll: string): Array<Axis> => {
                 const otherColl = coll === 'xAxis' ? 'yAxis' : 'xAxis',
                     opt = (axis.options as AnyRecord)[otherColl];
+
+                if (acrossPanes && !axis.options.isInternal) {
+                    return allPerpendicularAxes.filter((a): boolean =>
+                        !a.options.isInternal
+                    );
+                }
 
                 // Other axis indexed by number
                 if (isNumber(opt)) {
@@ -723,20 +752,28 @@ namespace StockChart {
                 return series.map((s): Axis => s[otherColl]);
             };
 
-        let x1,
-            y1,
-            x2,
-            y2,
-            axes = [], // #3416 need a default array
-            axes2: Array<Axis>,
+        /**
+         * Push a segment to the result SVGPath array
+         */
+        function pushSegment(
+            pos: number,
+            crossingPos1: number,
+            crossingPos2: number
+        ): void {
+            result.push(
+                ['M', horiz ? pos : crossingPos1, horiz ? crossingPos1 : pos],
+                ['L', horiz ? pos : crossingPos2, horiz ? crossingPos2 : pos]
+            );
+        }
+
+        let axes = [], // #3416 need a default array
             uniqueAxes: Array<Axis>,
             transVal: number;
 
-        if (// For stock chart, by default render paths across the panes
-            // except the case when `acrossPanes` is disabled by user (#6644)
-            (chart.options.isStock && e.acrossPanes !== false) &&
+        if (
+            chart.options.isStock &&
             // Ignore in case of colorAxis or zAxis. #3360, #3524, #6720
-            axis.coll === 'xAxis' || axis.coll === 'yAxis'
+            (axis.coll === 'xAxis' || axis.coll === 'yAxis')
         ) {
 
             e.preventDefault();
@@ -745,14 +782,12 @@ namespace StockChart {
             axes = getAxis(axis.coll);
 
             // Get the related axes based options.*Axis setting #2810
-            axes2 = (axis.isXAxis ? chart.yAxis : chart.xAxis);
-            for (const A of axes2) {
+            for (const A of allPerpendicularAxes) {
                 if (!A.options.isInternal) {
                     const a = (A.isXAxis ? 'yAxis' : 'xAxis'),
                         relatedAxis: Axis = (
-                            defined((A.options as any)[a]) ?
-                                (chart as any)[a][(A.options as any)[a]] :
-                                (chart as any)[a][0]
+                            defined((A.options as any)[a]) &&
+                                (chart as any)[a][(A.options as any)[a]]
                         );
 
                     if (axis === relatedAxis) {
@@ -785,59 +820,55 @@ namespace StockChart {
                 translatedValue,
                 axis.translate(value || 0, void 0, void 0, e.old)
             );
+
             if (isNumber(transVal)) {
-                if (axis.horiz) {
-                    for (const axis2 of uniqueAxes) {
-                        let skip;
+                let skip,
+                    pos = horiz ?
+                        transVal + axis.pos :
+                        axis.pos + axis.len - transVal;
 
-                        y1 = axis2.pos;
-                        y2 = y1 + axis2.len;
-                        x1 = x2 = Math.round(transVal + axis.transB);
-
-                        // Outside plot area
-                        if (
-                            force !== 'pass' &&
-                            (x1 < axisLeft || x1 > axisLeft + axis.width)
-                        ) {
-                            if (force) {
-                                x1 = x2 = clamp(
-                                    x1,
-                                    axisLeft,
-                                    axisLeft + axis.width
-                                );
-                            } else {
-                                skip = true;
-                            }
-                        }
-                        if (!skip) {
-                            result.push(['M', x1, y1], ['L', x2, y2]);
-                        }
+                // Outside plot area
+                if (
+                    force !== 'pass' &&
+                    (pos < axis.pos || pos > axis.pos + axis.len)
+                ) {
+                    if (force) {
+                        pos = clamp(
+                            pos,
+                            axis.pos,
+                            axis.pos + axis.len
+                        );
+                    } else {
+                        skip = true;
                     }
-                } else {
-                    for (const axis2 of uniqueAxes) {
-                        let skip;
+                }
 
-                        x1 = axis2.pos;
-                        x2 = x1 + axis2.len;
-                        y1 = y2 = axisTop + axis.height - transVal;
-
-                        // Outside plot area
-                        if (
-                            force !== 'pass' &&
-                            (y1 < axisTop || y1 > axisTop + axis.height)
-                        ) {
-                            if (force) {
-                                y1 = y2 = clamp(
-                                    y1,
-                                    axisTop,
-                                    axisTop + axis.height
-                                );
-                            } else {
-                                skip = true;
-                            }
-                        }
-                        if (!skip) {
-                            result.push(['M', x1, y1], ['L', x2, y2]);
+                if (!skip) {
+                    const crossingPosName = horiz ? 'top' : 'left',
+                        crossingLenName = horiz ? 'height' : 'width';
+                    if (
+                        !acrossPanes &&
+                        // If the perpendicular position is set explicitly on
+                        // the axis, use it. For example, if `top` and `height`
+                        // options are set on a horizontal x-axis, the grid
+                        // lines should conform to that position.
+                        (
+                            axis.options[crossingPosName] ||
+                            axis.options[crossingLenName]
+                        )
+                    ) {
+                        pushSegment(
+                            pos,
+                            axis[crossingPosName],
+                            axis[crossingPosName] + axis[crossingLenName]
+                        );
+                    } else {
+                        for (const perpendicularAxis of uniqueAxes) {
+                            pushSegment(
+                                pos,
+                                perpendicularAxis.pos,
+                                perpendicularAxis.pos + perpendicularAxis.len
+                            );
                         }
                     }
                 }
@@ -852,7 +883,7 @@ namespace StockChart {
     /**
      * Handle som Stock-specific series defaults, override the plotOptions
      * before series options are handled.
-     * @private
+     * @internal
      */
     function onSeriesSetOptions(
         this: Series,
@@ -957,7 +988,7 @@ namespace StockChart {
     /**
      * Function to crisp a line with multiple segments
      *
-     * @private
+     * @internal
      * @function Highcharts.SVGRenderer#crispPolyLine
      */
     function svgRendererCrispPolyLine(

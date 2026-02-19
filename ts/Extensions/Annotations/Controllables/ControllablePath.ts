@@ -1,6 +1,5 @@
 /* *
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -16,6 +15,7 @@ import type Annotation from '../Annotation';
 import type AST from '../../../Core/Renderer/HTML/AST';
 import type Chart from '../../../Core/Chart/Chart';
 import type { ControllableShapeOptions } from './ControllableOptions';
+import type MockPointOptions from '../AnnotationMockPointOptionsObject';
 import type SVGAttributes from '../../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../../Core/Renderer/SVG/SVGPath';
@@ -40,24 +40,63 @@ const {
  *
  * */
 
-declare module './ControllableLike' {
-    interface ControllableLike {
+/** @internal */
+declare module './ControllableBase' {
+    /** @internal */
+    interface ControllableBase {
         markerEnd?: SVGElement;
         markerStart?: SVGElement;
     }
 }
+
 declare module '../../../Core/Options'{
     interface Options {
+        /**
+         * Options for configuring markers for annotations.
+         *
+         * An example of the arrow marker:
+         * <pre>
+         * {
+         *   arrow: {
+         *     id: 'arrow',
+         *     tagName: 'marker',
+         *     refY: 5,
+         *     refX: 5,
+         *     markerWidth: 10,
+         *     markerHeight: 10,
+         *     children: [{
+         *       tagName: 'path',
+         *       attrs: {
+         *         d: 'M 0 0 L 10 5 L 0 10 Z',
+         *         'stroke-width': 0
+         *       }
+         *     }]
+         *   }
+         * }
+         * </pre>
+         *
+         * @sample highcharts/annotations/custom-markers/
+         *         Define a custom marker for annotations
+         *
+         * @sample highcharts/css/annotations-markers/
+         *         Define markers in a styled mode
+         *
+         * @type         {Highcharts.Dictionary<Highcharts.ASTNode>}
+         * @since        6.0.0
+         * @optionparent defs
+         */
         defs?: Record<string, AST.Node>;
     }
 }
 
-declare module '../../../Core/Renderer/SVG/SVGRendererLike' {
-    interface SVGRendererLike {
+/** @internal */
+declare module '../../../Core/Renderer/SVG/SVGRendererBase' {
+    interface SVGRendererBase {
         addMarker(id: string, markerOptions: AST.Node): SVGElement;
     }
 }
 
+/** @internal */
 interface MarkerSetterFunction {
     (this: SVGElement, value: string): void;
 }
@@ -81,9 +120,8 @@ const TRACKER_FILL = 'rgba(192,192,192,' + (H.svg ? 0.0001 : 0.002) + ')';
  *
  * */
 
-/**
- * @private
- */
+
+/** @internal */
 function createMarkerSetter(
     markerType: string
 ): MarkerSetterFunction {
@@ -92,9 +130,7 @@ function createMarkerSetter(
     };
 }
 
-/**
- * @private
- */
+/** @internal */
 function onChartAfterGetContainer(
     this: Chart
 ): void {
@@ -113,9 +149,7 @@ function onChartAfterGetContainer(
     // }, this);
 }
 
-/**
- * @private
- */
+/** @internal */
 function svgRendererAddMarker(
     this: SVGRenderer,
     id: string,
@@ -163,9 +197,9 @@ function svgRendererAddMarker(
 /**
  * A controllable path class.
  *
+ * @internal
  * @requires modules/annotations
  *
- * @private
  * @class
  * @name Highcharts.AnnotationControllablePath
  *
@@ -248,13 +282,41 @@ class ControllablePath extends Controllable {
      *
      * */
 
+    public init(
+        annotation: Annotation,
+        options: ControllableShapeOptions,
+        index: number
+    ): void {
+        if (defined(options.yAxis)) {
+            (options.points as Array<MockPointOptions>).forEach(
+                (point): void => {
+                    if (point && typeof point !== 'string') {
+                        point.yAxis = options.yAxis;
+                    }
+                }
+            );
+        }
+
+        if (defined(options.xAxis)) {
+            (options.points as Array<MockPointOptions>).forEach(
+                (point): void => {
+                    if (point && typeof point !== 'string') {
+                        point.xAxis = options.xAxis;
+                    }
+                }
+            );
+        }
+
+        super.init(annotation, options, index);
+    }
+
     /**
      * Map the controllable path to 'd' path attribute.
      *
      * @return {Highcharts.SVGPathArray|null}
      * A path's d attribute.
      */
-    public toD(): (SVGPath|null) {
+    public toD(): (SVGPath|string|null) {
         const dOption = this.options.d;
 
         if (dOption) {
@@ -360,7 +422,7 @@ class ControllablePath extends Controllable {
 
     /**
      * Set markers.
-     * @private
+     *
      * @param {Highcharts.AnnotationControllablePath} item
      */
     public setMarkers(item: ControllablePath): void {
@@ -425,6 +487,7 @@ class ControllablePath extends Controllable {
  *
  * */
 
+/** @internal */
 interface ControllablePath {
     collections: 'shapes';
     itemType: 'shape';
@@ -438,6 +501,7 @@ interface ControllablePath {
  *
  * */
 
+/** @internal */
 declare module './ControllableType' {
     interface ControllableShapeTypeRegistry {
         path: typeof ControllablePath;
@@ -450,4 +514,5 @@ declare module './ControllableType' {
  *
  * */
 
+/** @internal */
 export default ControllablePath;

@@ -46,8 +46,8 @@ const {
 } = U;
 
 // Declarations
-declare module '../Core/Chart/ChartLike' {
-    interface ChartLike {
+declare module '../Core/Chart/ChartBase' {
+    interface ChartBase {
         a11y?: A11y;
         needsA11yStatusCheck?: boolean;
     }

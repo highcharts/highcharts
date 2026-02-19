@@ -1,13 +1,26 @@
 {
     "extends": "../tsconfig.json",
     "compilerOptions": {
+        "lib": ["ES2020", "DOM"],
         "paths": {
-            "@highcharts/dashboards": ["code/dashboards/dashboards"],
-            "@highcharts/dashboards/*": ["code/dashboards/*"],
-            "highcharts": ["code/highcharts.src"],
-            "highcharts/*": ["code/*"],
-            "@highcharts/dashboards/datagrid": ["code/datagrid/datagrid.src"],
-            "@highcharts/dashboards/datagrid/*": ["code/datagrid/*"],
+            "@highcharts/dashboards": [
+                "code/dashboards/dashboards.src"
+            ],
+            "@highcharts/dashboards/*": [
+                "code/dashboards/*"
+            ],
+            "highcharts": [
+                "code/highcharts.src"
+            ],
+            "highcharts/*": [
+                "code/*"
+            ],
+            "@highcharts/grid/grid-pro": [
+                "code/grid/grid-pro.src"
+            ],
+            "@highcharts/grid/grid-pro/*": [
+                "code/grid/grid-pro/*"
+            ],
         },
         "skipLibCheck": true
     }

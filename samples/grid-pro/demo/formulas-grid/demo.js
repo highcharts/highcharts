@@ -210,7 +210,8 @@ const initGrid = data => {
                                     overflow: 'allow',
                                     useHTML: true,
                                     enabled: true,
-                                    format: '{y:.2f}%'
+                                    // eslint-disable-next-line max-len
+                                    format: '<span class="spark-label">{y:.2f}%</span>'
                                 },
                                 negativeColor: '#f00'
                             }
@@ -218,7 +219,15 @@ const initGrid = data => {
                     }
                 }
             }
-        }]
+        }],
+        pagination: {
+            enabled: true,
+            controls: {
+                pageButtons: {
+                    count: 5
+                }
+            }
+        }
     });
 };
 
@@ -241,5 +250,5 @@ const initGrid = data => {
     await dataTable.setModifier(mathModifier);
 
     // Init the grid with the combined data
-    initGrid(dataTable.modified);
+    initGrid(dataTable.getModified());
 })();

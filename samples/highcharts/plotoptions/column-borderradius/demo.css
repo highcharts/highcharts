@@ -14,10 +14,15 @@
 
 .highcharts-figure {
     max-width: 800px;
-    margin: 0 auto;
-    padding: 10px;
+    margin: 1em auto;
 }
 
-#container {
-    margin: 0 -10px;
+.highcharts-controls-wrapper {
+    max-width: 800px;
+    margin: 1em auto;
+    padding: 0 10px;
+}
+
+highcharts-controls {
+    display: inline-block;
 }

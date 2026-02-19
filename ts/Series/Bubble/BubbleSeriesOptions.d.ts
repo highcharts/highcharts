@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Honsi
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -16,6 +17,7 @@
 
 import type { BubblePointMarkerOptions } from './BubblePointOptions';
 import type ScatterSeriesOptions from '../Scatter/ScatterSeriesOptions';
+import { ScatterSeriesTooltipOptions } from '../Scatter/ScatterSeriesOptions';
 
 /* *
  *
@@ -30,9 +32,20 @@ export interface BubbleSeriesOptions extends ScatterSeriesOptions {
     maxSize?: (number|string);
     sizeBy?: BubbleSizeByValue;
     sizeByAbsoluteValue?: boolean;
+
+    tooltip?: BubbleSeriesTooltipOptions;
+
     zMax?: number;
     zMin?: number;
     zThreshold?: number;
+}
+
+export interface BubbleSeriesTooltipOptions
+    extends ScatterSeriesTooltipOptions {
+    /**
+     * @default '({point.x}, {point.y}), Size: {point.z}'
+     */
+    pointFormat?: ScatterSeriesTooltipOptions['pointFormat'];
 }
 
 export type BubbleSizeByValue = ('area'|'width');

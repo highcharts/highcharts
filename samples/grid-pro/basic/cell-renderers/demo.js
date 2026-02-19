@@ -11,6 +11,8 @@ Grid.grid('container', {
             textInput_textInput: [
                 'Alpha', 'Beta', 'Gamma', 'Delta', 'Epsilon', 'Zeta', 'Eta'
             ],
+            text_numberInput: [1, 2, 3, 4, 5, 6, 7],
+            numberInput_numberInput: [1, 2, 3, 4, 5, 6, 7],
             text_select: ['R', 'B', 'G', 'B', 'G', 'R', 'B'],
             select_select: ['R', 'B', 'G', 'B', 'G', 'R', 'B'],
             text_date: [
@@ -59,7 +61,37 @@ Grid.grid('container', {
         id: 'textInput_textInput',
         cells: {
             renderer: {
-                type: 'textInput'
+                type: 'textInput',
+                attributes: {
+                    placeholder: 'Enter text'
+                }
+            }
+        }
+    }, {
+        id: 'text_numberInput',
+        cells: {
+            editMode: {
+                renderer: {
+                    type: 'numberInput',
+                    attributes: {
+                        step: '1',
+                        min: '0',
+                        max: '10'
+                    }
+                }
+            }
+        }
+    }, {
+        id: 'numberInput_numberInput',
+        dataType: 'number',
+        cells: {
+            renderer: {
+                type: 'numberInput',
+                attributes: {
+                    step: '0.5',
+                    min: '0',
+                    max: '10'
+                }
             }
         }
     }, {

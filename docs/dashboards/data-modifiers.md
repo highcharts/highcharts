@@ -21,12 +21,10 @@ To add the modifier, specify it in the connector options.
 connector: {
     type: 'CSV',
     id: 'connector-id',
-    options: {
-        //... other options
-        dataModifier: {
-            type: 'Math' // or 'Invert'|'Math' etc,
-            // additional modifier options
-        }
+    //... other options
+    dataModifier: {
+        type: 'Math' // or 'Invert'|'Math' etc,
+        // additional modifier options
     }
 }
 ```
@@ -48,7 +46,7 @@ dataModifier: {
     }]
 }
 ```
-[API documentation](https://api.highcharts.com/dashboards/typedoc/interfaces/Data_Modifiers_ChainModifierOptions.ChainModifierOptions-1.html)
+[API documentation](https://api.highcharts.com/dashboards/typedoc/interfaces/Data_Modifiers_ChainModifierOptions.ChainModifierOptions.html)
 
 ### Filter
 Filters rows based on arbitrary conditions - numeric comparisons, text matching, logical combinations or non-serializable JavaScript function. Keeps only the rows for which the condition returns true. 
@@ -60,19 +58,19 @@ dataModifier: {
     condition: {
         operator: 'and', // combine multiple checks
         conditions: [{
-            operator: 'gt', // numeric “greater than”
-            columnName: 'score',
+            operator: '>', // numeric “greater than”
+            columnId: 'score',
             value: 50
         }, {
             operator: 'contains', // text “contains”
-            columnName: 'name',
+            columnId: 'name',
             value: 'smith',
             ignoreCase: true
         }]
     }
 }
 ```
-[API documentation](https://api.highcharts.com/dashboards/#interfaces/Data_Modifiers_FilterModifierOptions.FilterModifierOptions-1)
+[API documentation](https://api.highcharts.com/dashboards/#interfaces/Data_Modifiers_FilterModifierOptions.FilterModifierOptions)
 
 
 ### Invert
@@ -95,21 +93,18 @@ dataModifier: {
     }]
 }
 ```
-[API documentation](https://api.highcharts.com/dashboards/typedoc/interfaces/Data_Modifiers_MathModifierOptions.MathModifierOptions-1.html)
+[API documentation](https://api.highcharts.com/dashboards/typedoc/interfaces/Data_Modifiers_MathModifierOptions.MathModifierOptions.html)
 
 ### Range
-Can filter the data by minimal and maximal values. Older version of Filter Modifier and in the future it may be replaced by it completely. It works both for numbers and alphanumerical values. The `column` option specifies from which column the values should be used to perform filtering, and the `minValue` and `maxValue` specify the range limits. Here is an example:
+Allows on slicing rows of the original table based on a specified range of indices. Option `start` specifies the index at which the slice begins; option `end` specifies the index at which it ends (excluding the row at the end index), analogous to JavaScript’s slice method. Here is an example:
 ```js
 dataModifier: {
     type: 'Range',
-    ranges: [{
-        column: 'year',
-        minValue: '1961',
-        maxValue: '2021'
-    }]
+    start: 5,
+    end: 100
 }
 ```
-[API documentation](https://api.highcharts.com/dashboards/typedoc/interfaces/Data_Modifiers_RangeModifierOptions.RangeModifierOptions-1.html)
+[API documentation](https://api.highcharts.com/dashboards/typedoc/interfaces/Data_Modifiers_RangeModifierOptions.RangeModifierOptions.html)
 
 
 ### Sort
@@ -123,20 +118,20 @@ dataModifier: {
     orderInColumn: ''  // Optional
 }
 ```
-[API documentation](https://api.highcharts.com/dashboards/typedoc/interfaces/Data_Modifiers_SortModifierOptions.SortModifierOptions-1.html)
+[API documentation](https://api.highcharts.com/dashboards/typedoc/interfaces/Data_Modifiers_SortModifierOptions.SortModifierOptions.html)
 
 ## Original and Modified Table relations
 
 Every modified table contains two methods that allow you to manage the relationships between the rows of the original and modified tables:
-- [`getLocalRowIndex`](https://api.highcharts.com/dashboards/#classes/Data_DataTable.DataTable-1#getLocalRowIndex) - Takes the original row index as an argument and returns the local row index in the modified table for which this function is called.
-- [`getOriginalRowIndex`](https://api.highcharts.com/dashboards/#classes/Data_DataTable.DataTable-1#getOriginalRowIndex) - Takes the local row index (in the modified table for which it is called) as an argument and returns the index of the corresponding row in the original table.
+- [`getLocalRowIndex`](https://api.highcharts.com/dashboards/#classes/Data_DataTable.DataTable#getLocalRowIndex) - Takes the original row index as an argument and returns the local row index in the modified table for which this function is called.
+- [`getOriginalRowIndex`](https://api.highcharts.com/dashboards/#classes/Data_DataTable.DataTable#getOriginalRowIndex) - Takes the local row index (in the modified table for which it is called) as an argument and returns the index of the corresponding row in the original table.
 
 
 ## Example demos
 You can check the modifiers in action with the following demos:
 
 ### Grid with MathModifier
-<iframe style="width: 100%; height: 700px; border: none;" src="https://www.highcharts.com/samples/embed/dashboards/demo/grid-mathmodifier" allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 700px; border: none;" src="https://www.highcharts.com/samples/embed/dashboards/demo/grid-mathmodifier?force-light-theme" allow="fullscreen"></iframe>
 
-### CSV data with RangeModifier
-<iframe style="width: 100%; height: 733px; border: none;" src="https://www.highcharts.com/samples/embed/dashboards/data/csv-modifiers" allow="fullscreen"></iframe>
+### CSV data with FilterModifier
+<iframe style="width: 100%; height: 733px; border: none;" src="https://www.highcharts.com/samples/embed/dashboards/data/csv-modifiers?force-light-theme" allow="fullscreen"></iframe>

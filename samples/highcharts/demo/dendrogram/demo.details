@@ -1,0 +1,11 @@
+---
+name: Dendrogram
+authors:
+  - Torstein Hønsi, Øystein Moseng
+js_wrap: b
+new_until: 2026-03-12
+tags:
+  - Highcharts demo
+categories:
+  - Trees and networks
+...

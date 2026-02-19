@@ -1,10 +1,10 @@
 /* *
  *
- *  (c) 2009-2025 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Sebastian Bochan
@@ -24,11 +24,12 @@
 
 import type { ComponentType } from '../Components/ComponentType';
 import type Board from '../Board';
-import type GUIElement from '../Layout/GUIElement';
+import type { BindedGUIElementEvent } from '../Layout/GUIElement';
 import type Cell from '../Layout/Cell';
 import type Layout from '../Layout/Layout';
 import type Row from '../Layout/Row';
 import type Component from '../Components/Component.js';
+import type { Options as ComponentOptions } from '../Components/Component.js';
 
 import ComponentRegistry from '../Components/ComponentRegistry.js';
 import CellHTML from '../Layout/CellHTML.js';
@@ -41,249 +42,239 @@ const {
 
 /* *
  *
- *  Namespace
+ *  Declarations
  *
  * */
 
-namespace Bindings {
+export interface MountedComponent {
+    cell: Cell|CellHTML;
+    component: ComponentType;
+    options: Partial<ComponentOptions>;
+}
 
-    /* *
-     *
-     *  Declarations
-     *
-     * */
+/* *
+ *
+ *  Functions
+ *
+ * */
 
-    export interface MountedComponent {
-        cell: Cell|CellHTML;
-        component: ComponentType;
-        options: Partial<Component.Options>;
+function getGUIElement(
+    idOrElement: string,
+    parentElement?: HTMLElement
+): Cell|Row|Layout|undefined {
+    let guiElement;
+
+    if (
+        typeof idOrElement === 'string' &&
+        document.querySelectorAll('#' + idOrElement).length > 1
+    ) {
+        // eslint-disable-next-line no-console
+        console.warn(
+            `Multiple cells have identical ID %c${idOrElement}%c, potentially leading to unexpected behavior. \nEnsure that each cell has a unique ID on the page.`,
+            'font-weight: bold',
+            ''
+        );
     }
 
-    /* *
-     *
-     *  Functions
-     *
-     * */
+    const container = parentElement ?
+        parentElement.querySelector('#' + idOrElement) :
+        document.getElementById(idOrElement);
 
-    function getGUIElement(
-        idOrElement: string,
-        parentElement?: HTMLElement
-    ): Cell|Row|Layout|undefined {
-        let guiElement;
-
-        if (
-            typeof idOrElement === 'string' &&
-            document.querySelectorAll('#' + idOrElement).length > 1
-        ) {
-            // eslint-disable-next-line no-console
-            console.warn(
-                `Multiple cells have identical ID %c${idOrElement}%c, potentially leading to unexpected behavior. \nEnsure that each cell has a unique ID on the page.`,
-                'font-weight: bold',
-                ''
-            );
-        }
-
-        const container = parentElement ?
-            parentElement.querySelector('#' + idOrElement) :
-            document.getElementById(idOrElement);
-
-        if (container !== null) {
-            fireEvent(container, 'bindedGUIElement', {}, function (
-                e: GUIElement.BindedGUIElementEvent
-            ): void {
-                guiElement = e.guiElement;
-            });
-        }
-
-        return guiElement;
-    }
-
-    export async function addComponent(
-        options: Partial<ComponentType['options']>,
-        board: Board,
-        cell?: Cell
-    ): Promise<(Component|void)> {
-        const optionsStates = options.states;
-        const optionsEvents = options.events;
-        const renderTo = options.renderTo || options.cell;
-
-        if (!renderTo) {
-            // eslint-disable-next-line no-console
-            console.error(
-                'The%c renderTo%c option is required to render the component.',
-                'font-weight: bold',
-                ''
-            );
-            return;
-        }
-
-        if (
-            board.mountedComponents.filter(
-                (el): boolean => (
-                    (el.options.renderTo || el.options.cell) === renderTo)
-            ).length > 0
-        ) {
-            // eslint-disable-next-line no-console
-            console.error(
-                `A component has already been declared in the cell %c${renderTo}%c use a different cell.`,
-                'font-weight: bold',
-                ''
-            );
-            return;
-        }
-
-        cell = cell || Bindings.getCell(renderTo, board.container);
-
-        const componentContainer =
-            cell?.container || document.querySelector('#' + renderTo);
-
-        if (!componentContainer || !options.type) {
-            // eslint-disable-next-line no-console
-            console.error(
-                `The component is unable to find the HTML cell element %c${renderTo}%c to render the content.`,
-                'font-weight: bold',
-                ''
-            );
-            return;
-        }
-
-        let ComponentClass =
-            ComponentRegistry.types[options.type] as Class<ComponentType>;
-
-        if (!ComponentClass) {
-            // eslint-disable-next-line no-console
-            console.error(
-                `The component's type %c${options.type}%c does not exist.`,
-                'font-weight: bold',
-                ''
-            );
-
-            if (cell) {
-                ComponentClass =
-                    ComponentRegistry.types['HTML'] as Class<ComponentType>;
-
-                options.title = {
-                    text: board.editMode?.lang.errorMessage ||
-                        'Something went wrong',
-                    className:
-                        Globals.classNamePrefix + 'component-title-error ' +
-                        Globals.classNamePrefix + 'component-title'
-                };
-            }
-        }
-
-        const component = new ComponentClass(cell, options, board);
-        const promise = component.load()['catch']((e): void => {
-            // eslint-disable-next-line no-console
-            console.error(e);
-            component.update({
-                connector: {
-                    id: ''
-                },
-                title: {
-                    text: board.editMode?.lang.errorMessage ||
-                        'Something went wrong',
-                    className:
-                        Globals.classNamePrefix + 'component-title-error ' +
-                        Globals.classNamePrefix + 'component-title'
-                }
-            });
+    if (container !== null) {
+        fireEvent(container, 'bindedGUIElement', {}, function (
+            e: BindedGUIElementEvent
+        ): void {
+            guiElement = e.guiElement;
         });
+    }
+
+    return guiElement;
+}
+
+export async function addComponent(
+    options: Partial<ComponentType['options']>,
+    board: Board,
+    cell?: Cell
+): Promise<(Component|void)> {
+    const optionsStates = options.states;
+    const optionsEvents = options.events;
+    const renderTo = options.renderTo;
+
+    if (!renderTo) {
+        // eslint-disable-next-line no-console
+        console.error(
+            'The%c renderTo%c option is required to render the component.',
+            'font-weight: bold',
+            ''
+        );
+        return;
+    }
+
+    if (
+        board.mountedComponents.filter(
+            (el): boolean => el.options.renderTo === renderTo
+        ).length > 0
+    ) {
+        // eslint-disable-next-line no-console
+        console.error(
+            `A component has already been declared in the cell %c${renderTo}%c use a different cell.`,
+            'font-weight: bold',
+            ''
+        );
+        return;
+    }
+
+    cell = cell || Bindings.getCell(renderTo, board.container);
+
+    const componentContainer =
+        cell?.container || document.querySelector('#' + renderTo);
+
+    if (!componentContainer || !options.type) {
+        // eslint-disable-next-line no-console
+        console.error(
+            `The component is unable to find the HTML cell element %c${renderTo}%c to render the content.`,
+            'font-weight: bold',
+            ''
+        );
+        return;
+    }
+
+    let ComponentClass =
+        ComponentRegistry.types[options.type] as Class<ComponentType>;
+
+    if (!ComponentClass) {
+        // eslint-disable-next-line no-console
+        console.error(
+            `The component's type %c${options.type}%c does not exist.`,
+            'font-weight: bold',
+            ''
+        );
 
         if (cell) {
-            component.setCell(cell);
-            cell.mountedComponent = component;
+            ComponentClass =
+                ComponentRegistry.types['HTML'] as Class<ComponentType>;
+
+            options.title = {
+                text: board.editMode?.lang.errorMessage ||
+                    'Something went wrong',
+                className:
+                    Globals.classNamePrefix + 'component-title-error ' +
+                    Globals.classNamePrefix + 'component-title'
+            };
+        }
+    }
+
+    const component = new ComponentClass(cell, options, board);
+    const promise = component.load()['catch']((e): void => {
+        // eslint-disable-next-line no-console
+        console.error(e);
+        component.update({
+            connector: {
+                id: ''
+            },
+            title: {
+                text: board.editMode?.lang.errorMessage ||
+                    'Something went wrong',
+                className:
+                    Globals.classNamePrefix + 'component-title-error ' +
+                    Globals.classNamePrefix + 'component-title'
+            }
+        });
+    });
+
+    if (cell) {
+        component.setCell(cell);
+        cell.mountedComponent = component;
+    }
+
+    board.mountedComponents.push({
+        options: options,
+        component: component,
+        cell: cell || new CellHTML({
+            id: renderTo,
+            container: componentContainer as HTMLElement,
+            mountedComponent: component
+        })
+    });
+
+    if (
+        cell &&
+        optionsStates?.active?.enabled &&
+        optionsStates?.active?.isActive
+    ) {
+        cell.setActiveState();
+        component.isActive = true;
+    }
+
+    fireEvent(component, 'mount');
+
+    // Events
+    addEvent(componentContainer, 'click', ():void => {
+        // Call the component's click callback
+        if (optionsEvents && optionsEvents.click) {
+            optionsEvents.click.call(component);
         }
 
-        board.mountedComponents.push({
-            options: options,
-            component: component,
-            cell: cell || new CellHTML({
-                id: renderTo,
-                container: componentContainer as HTMLElement,
-                mountedComponent: component
-            })
-        });
-
+        // Default behavior
         if (
             cell &&
-            optionsStates?.active?.enabled &&
-            optionsStates?.active?.isActive
+            component &&
+            componentContainer &&
+            optionsStates?.active?.enabled
         ) {
             cell.setActiveState();
             component.isActive = true;
         }
-
-        fireEvent(component, 'mount');
-
-        // Events
-        addEvent(componentContainer, 'click', ():void => {
-            // Call the component's click callback
-            if (optionsEvents && optionsEvents.click) {
-                optionsEvents.click.call(component);
-            }
-
-            // Default behavior
-            if (
-                cell &&
-                component &&
-                componentContainer &&
-                optionsStates?.active?.enabled
-            ) {
-                cell.setActiveState();
-                component.isActive = true;
-            }
-        });
+    });
 
 
-        // States
-        if (optionsStates?.hover?.enabled) {
-            componentContainer.classList.add(Globals.classNames.cellHover);
-        }
-
-        fireEvent(component, 'afterLoad');
-
-        return promise;
+    // States
+    if (optionsStates?.hover?.enabled) {
+        componentContainer.classList.add(Globals.classNames.cellHover);
     }
 
-    export function getCell(
-        idOrElement: string,
-        parentElement?: HTMLElement
-    ): (Cell|undefined) {
-        const cell = getGUIElement(idOrElement, parentElement);
+    fireEvent(component, 'afterLoad');
 
-        if (!(cell && cell.getType() === 'cell')) {
-            return;
-        }
+    return promise;
+}
 
-        return (cell as Cell);
+export function getCell(
+    idOrElement: string,
+    parentElement?: HTMLElement
+): (Cell|undefined) {
+    const cell = getGUIElement(idOrElement, parentElement);
+
+    if (!(cell && cell.getType() === 'cell')) {
+        return;
     }
 
-    export function getRow(
-        idOrElement: string,
-        parentElement?: HTMLElement
-    ): (Row|undefined) {
-        const row = getGUIElement(idOrElement, parentElement);
+    return (cell as Cell);
+}
 
-        if (!(row && row.getType() === 'row')) {
-            return;
-        }
+export function getRow(
+    idOrElement: string,
+    parentElement?: HTMLElement
+): (Row|undefined) {
+    const row = getGUIElement(idOrElement, parentElement);
 
-        return (row as Row);
+    if (!(row && row.getType() === 'row')) {
+        return;
     }
 
-    export function getLayout(
-        idOrElement: string,
-        parentElement?: HTMLElement
-    ): (Layout|undefined) {
-        const layout = getGUIElement(idOrElement, parentElement);
+    return (row as Row);
+}
 
-        if (!(layout && layout.getType() === 'layout')) {
-            return;
-        }
+export function getLayout(
+    idOrElement: string,
+    parentElement?: HTMLElement
+): (Layout|undefined) {
+    const layout = getGUIElement(idOrElement, parentElement);
 
-        return layout as Layout;
+    if (!(layout && layout.getType() === 'layout')) {
+        return;
     }
+
+    return layout as Layout;
 }
 
 /* *
@@ -291,5 +282,12 @@ namespace Bindings {
  *  Default Export
  *
  * */
+
+const Bindings = {
+    addComponent,
+    getCell,
+    getLayout,
+    getRow
+};
 
 export default Bindings;

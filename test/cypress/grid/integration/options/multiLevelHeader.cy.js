@@ -1,4 +1,4 @@
-describe('DataGrid events.', () => {
+describe('Grid events.', () => {
     before(() => {
         cy.visit('grid-lite/cypress/grouped-headers');
     });

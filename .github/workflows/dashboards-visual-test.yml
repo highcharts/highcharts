@@ -3,10 +3,10 @@ on:
   pull_request:
     branches:
       - 'master'
+      - 'dash/**'
     paths:
       - '.github/workflows/dashboards-visual-test.yml'
       - 'css/dashboards*'
-      - 'css/datagrid*'
       - 'samples/dashboards/**'
       - 'test/cypress/dashboards/**'
       - 'ts/Dashboards/**'
@@ -30,22 +30,34 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: master
+          path: highcharts
 
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
+          cache-dependency-path: highcharts/package-lock.json
 
-      - name: Install dependencies
-        uses: cypress-io/github-action@v6
-        with:
-          runTests: false
+      - name: Install Highcharts dependencies
+        run: |
+          cd highcharts
+          npm ci
 
       - name: Build Highcharts
-        run: npx gulp scripts
+        run: |
+          cd highcharts
+          npx gulp scripts
+
+      - name: Build Grid
+        run: |
+          cd highcharts
+          npx gulp scripts --product Grid
+
       - name: Build Dashboards
-        run: npx gulp dashboards/scripts
+        run: |
+          cd highcharts
+          npx gulp scripts --product Dashboards
 
       - name: Checkout utils
         uses: actions/checkout@v4
@@ -57,14 +69,15 @@ jobs:
       - name: Install Highcharts Utils
         run: |
           cd utils
-          npm i
+          npm ci
 
       - name: Create visual test base images
         uses: cypress-io/github-action@v6
         with:
-          start: node utils/server --localOnly
+          start: node ../utils/server --localOnly
           wait-on: 'http://localhost:3031/dashboards.js'
           env: type=base
+          working-directory: highcharts
           config-file: test/cypress/dashboards/visual.config.mjs
           install: false
 
@@ -75,29 +88,42 @@ jobs:
         uses: actions/checkout@v4
         with:
           clean: false
+          path: highcharts
 
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
+          cache-dependency-path: highcharts/package-lock.json
 
-      - name: Install dependencies
-        uses: cypress-io/github-action@v6
-        with:
-          runTests: false
+      - name: Install Highcharts dependencies
+        run: |
+          cd highcharts
+          npm ci
 
       - name: Build Highcharts
-        run: npx gulp scripts
+        run: |
+          cd highcharts
+          npx gulp scripts
+
+      - name: Build Grid
+        run: |
+          cd highcharts
+          npx gulp scripts --product Grid
+
       - name: Build Dashboards
-        run: npx gulp dashboards/scripts
+        run: |
+          cd highcharts
+          npx gulp scripts --product Dashboards
 
       - name: Run visual test
         uses: cypress-io/github-action@v6
         with:
-          start: node utils/server --localOnly
+          start: node ../utils/server --localOnly
           wait-on: 'http://localhost:3031/dashboards.js'
           env: type=actual
+          working-directory: highcharts
           config-file: test/cypress/dashboards/visual.config.mjs
           install: false
 
@@ -106,10 +132,10 @@ jobs:
         with:
           github-token: ${{secrets.PR_COMMENT_TOKEN}}
           script: |
-            const { createOrUpdateComment } = require('./.github/scripts/commentOnPR');
+            const { createOrUpdateComment } = require('./highcharts/.github/scripts/commentOnPR');
             const { readFile } = require('node:fs/promises')
 
-            const jsonFile = await readFile('./tmp/dashboards-visual-results.json')
+            const jsonFile = await readFile('./highcharts/tmp/dashboards-visual-results.json')
               .catch(() => null);
             const commentTitle = 'Dashboard visual diffs';
 

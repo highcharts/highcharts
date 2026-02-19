@@ -2,11 +2,11 @@
  *
  *  Grid options
  *
- *  (c) 2020-2025 Highsoft AS
+ *  (c) 2020-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Dawid Dragula
@@ -25,12 +25,25 @@ import type {
     HeaderCellA11yOptions,
     LangAccessibilityOptions
 } from './Accessibility/A11yOptions';
-import type ColumnDistribution from './Table/ColumnDistribution/ColumnDistribution';
+import type {
+    PaginationLangOptions,
+    PaginationOptions
+} from './Pagination/PaginationOptions';
+import type { ColumnResizingMode } from './Table/ColumnResizing/ColumnResizing';
+import type { ColumnDataType } from './Table/Column';
+import type { DataProviderOptionsType } from './Data/DataProviderType';
 import type DataTable from '../../Data/DataTable';
+import type { CellType as DataTableCellType } from '../../Data/DataTable';
 import type DataTableOptions from '../../Data/DataTableOptions';
 import type Cell from './Table/Cell';
 import type Column from './Table/Column';
+import type TableCell from './Table/Body/TableCell';
+import type { IconRegistryValue } from './UI/SvgIcons';
 import type { LangOptionsCore } from '../../Shared/LangOptionsCore';
+import type {
+    Condition as ColumnFilteringCondition
+} from './Table/Actions/ColumnFiltering/FilteringTypes';
+import type CSSObject from '../../Core/Renderer/CSSObject';
 
 
 /* *
@@ -40,20 +53,108 @@ import type { LangOptionsCore } from '../../Shared/LangOptionsCore';
  * */
 
 /**
- * The resizing strategy of the columns in the grid structure.
- */
-export type ColumnDistributionType = ColumnDistribution.StrategyType;
-
-/**
  * Callback function to be called when a header event is triggered. Returns a
  * formatted cell's string.
  */
 export type CellFormatterCallback = (this: Cell) => string;
 
 /**
+ * Callback function to be called when a header event is triggered. Returns a
+ * formatted header's string.
+ */
+export type HeaderFormatterCallback = (this: Column) => string;
+
+/**
+ * Callback function to resolve dynamic style for a grid entity.
+ */
+export type StyleCallback<T> = (this: T, target: T) => CSSObject;
+
+/**
+ * A static style object or a callback that returns one.
+ */
+export type StyleValue<T> = CSSObject | StyleCallback<T>;
+
+/**
  * Column sorting order type.
  */
 export type ColumnSortingOrder = 'asc' | 'desc' | null;
+
+/**
+ * Options for a single cell context menu item.
+ */
+export interface CellContextMenuActionItemOptions {
+    /**
+     * The label shown in the menu.
+     */
+    label: string;
+
+    /**
+     * Optional icon name for the menu item (built-in name from the default
+     * registry or custom name from rendering.icons).
+     */
+    icon?: string;
+
+    /**
+     * Whether the menu item should be disabled.
+     */
+    disabled?: boolean;
+
+    /**
+     * Whether to render a divider instead of a button.
+     */
+    separator?: false;
+
+    /**
+     * Callback executed when the menu item is clicked.
+     *
+     * The cell is available on `this` and is also passed as the first argument
+     * to support arrow functions.
+     */
+    onClick?: (
+        this: TableCell,
+        cell: TableCell
+    ) => void;
+}
+
+/**
+ * Options for a divider item in the cell context menu.
+ */
+export interface CellContextMenuDividerItemOptions {
+    /**
+     * Whether to render a divider instead of a button.
+     */
+    separator: true;
+
+    /**
+     * Optional label for accessibility or testing.
+     * Not rendered as a clickable item.
+     */
+    label?: string;
+}
+
+/**
+ * Options for a single cell context menu item.
+ */
+export type CellContextMenuItemOptions =
+    CellContextMenuDividerItemOptions |
+    CellContextMenuActionItemOptions;
+
+/**
+ * Cell context menu options.
+ */
+export interface CellContextMenuOptions {
+    /**
+     * Whether the cell context menu is enabled.
+     *
+     * @default true
+     */
+    enabled?: boolean;
+
+    /**
+     * List of items to show in the cell context menu.
+     */
+    items?: Array<CellContextMenuItemOptions>;
+}
 
 
 /**
@@ -65,6 +166,11 @@ export interface Options {
      * Accessibility options for the grid.
      */
     accessibility?: A11yOptions;
+
+    /**
+     * Pagination options for the grid.
+     */
+    pagination?: PaginationOptions;
 
     /**
      * Options for the table caption.
@@ -83,7 +189,15 @@ export interface Options {
     columns?: Array<IndividualColumnOptions>;
 
     /**
+     * Options for the data provider.
+     */
+    data?: DataProviderOptionsType;
+
+    /**
      * Data table with the data to display in the grid structure.
+     *
+     * @deprecated
+     * Use `data.dataTable` instead.
      */
     dataTable?: DataTable | DataTableOptions;
 
@@ -98,7 +212,7 @@ export interface Options {
      *
      * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/grid-lite/basic/grouped-headers | Grouped headers}
      */
-    header?: Array<GroupedHeaderOptions|string>;
+    header?: Array<GroupedHeaderOptions | string>;
 
     /**
      * The unique id of the grid. It is generated automatically, if not set.
@@ -125,6 +239,26 @@ export interface Options {
  * Options to control the way grid is rendered.
  */
 export interface RenderingSettings {
+    /**
+     * Custom or override icons for the grid. Keys are icon names (either
+     * built-in names from the default registry or custom names). Values
+     * are either an SVG definition object or a raw SVG markup string.
+     * Built-in icons can be overridden; new names can be used for custom
+     * icons and referenced where an icon name is accepted (e.g. menu
+     * items, pagination buttons).
+     *
+     * @example
+     * ```js
+     * rendering: {
+     *   icons: {
+     *     chevronRight: '<svg>...</svg>',
+     *     myCustomIcon: { width: 16, height: 16, children: [{ d: '...' }] }
+     *   }
+     * }
+     * ```
+     */
+    icons?: Record<string, IconRegistryValue>;
+
     /**
      * Options to control the columns rendering.
      */
@@ -158,11 +292,6 @@ export interface RenderingSettings {
  * Options to control the columns rendering.
  */
 export interface ColumnsSettings {
-    /**
-     * @deprecated
-     * Use `resizing.mode` instead.
-     */
-    distribution?: ColumnDistributionType;
 
     /**
      * Columns included in the grid structure - contains the columns IDs.
@@ -197,21 +326,21 @@ export interface ResizingOptions {
     enabled?: boolean;
 
     /**
-     * Resizing mode of the columns. If `full`, the columns will be
-     * distributed so that the first and the last column are at the edges of
-     * the grid. If `fixed`, the columns will have a fixed width, only the
-     * resized column will be affected. If `mixed`, resizing will change the
-     * width of the neighboring columns, but the rest will remain in the same
-     * place.
+     * Determines how column widths are adjusted when resizing.
+     * - `'adjacent'`: Resizing a column will also adjust the width of its
+     *   immediate neighbor, keeping the rest of the columns in the same place.
+     *   This is the default mode.
+     * - `'independent'`: Only the resized column is changed; all columns to
+     *   its right retain their current pixel widths, effectively "freezing"
+     *   their widths.
+     * - `'distributed'`: Only the resized column is affected; other column
+     *   width settings will not be changed.
      *
-     * If `undefined`, the default column rensizing strategy will be used, which
-     * is `mixed`, if `width` is set for any column, otherwise `full`.
+     * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/grid-lite/basic/column-resizing | Resizing overview}
      *
-     * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/grid-lite/basic/column-distribution | Resizing overview}
-     *
-     * @default undefined
+     * @default 'adjacent'
      */
-    mode?: ColumnDistributionType;
+    mode?: ColumnResizingMode;
 }
 
 /**
@@ -322,7 +451,7 @@ export interface ColumnOptions {
      * If not set, the data type is inferred from the first cell in the
      * column.
      */
-    dataType?: Column.DataType;
+    dataType?: ColumnDataType;
 
     /**
      * Options for all the header cells in the column.
@@ -337,15 +466,9 @@ export interface ColumnOptions {
     sorting?: ColumnSortingOptions;
 
     /**
-     * @deprecated
-     * Use `rendering.columns.resizing.enabled` instead.
-     */
-    resizing?: boolean;
-
-    /**
-     * The width of the column. It can be set in pixels or as a percentage of
-     * the table width. If unset, the width is distributed evenly between all
-     * columns.
+     * The width of the column. It can be set in pixels, as a percentage of the
+     * table width, or `'auto'`. If unset or `'auto'`, the width is distributed
+     * evenly between columns without a fixed width.
      *
      * This option does not work with the `resizing` option set to `full`.
      *
@@ -353,6 +476,17 @@ export interface ColumnOptions {
      * `width` option is used to set the width of the column.
      */
     width?: number | string;
+
+    /**
+     * Filtering options for the column.
+     */
+    filtering?: ColumnFilteringOptions;
+
+    /**
+     * CSS styles for the whole column, applied to the header and body cells.
+     * Can be a static style object or a callback that returns one.
+     */
+    style?: StyleValue<Column>;
 }
 
 /**
@@ -394,6 +528,18 @@ export interface ColumnCellOptions {
      * A string to be set as a table cell's content.
      */
     formatter?: CellFormatterCallback;
+
+    /**
+     * Context menu options for table body cells. When configured, a custom
+     * context menu will be shown on right-click.
+     */
+    contextMenu?: CellContextMenuOptions;
+
+    /**
+     * CSS styles for table body cells in the column.
+     * Can be a static style object or a callback that returns one.
+     */
+    style?: StyleValue<Cell>;
 }
 
 /**
@@ -422,11 +568,17 @@ export interface ColumnHeaderOptions {
      * @return
      * A string to be set as a header cell's content.
      */
-    formatter?: CellFormatterCallback;
+    formatter?: HeaderFormatterCallback;
+
+    /**
+     * CSS styles for the column header cells.
+     * Can be a static style object or a callback that returns one.
+     */
+    style?: StyleValue<Column>;
 }
 
 /**
- * Column sorting options avalable for applying to all columns at once.
+ * Column sorting options available for applying to all columns at once.
  */
 export interface ColumnSortingOptions {
     /**
@@ -441,7 +593,30 @@ export interface ColumnSortingOptions {
      *
      * @default true
      */
+    enabled?: boolean;
+
+    /**
+     * @deprecated
+     * Use `enabled` instead
+     */
     sortable?: boolean;
+
+    /**
+     * Sequence of sorting orders used when toggling sorting from the user
+     * interface (for example by clicking the column header).
+     *
+     * The sequence can contain any number of values, in any order, with
+     * duplicates allowed. Allowed values are: `'asc'`, `'desc'`, and `null`.
+     *
+     * If the sequence is empty (`[]`), sorting toggles become a no-op while
+     * the sortable UI can still be shown.
+     *
+     * This option can be set in both `columnDefaults.sorting` and
+     * `columns[].sorting`.
+     *
+     * @default ['asc', 'desc', null]
+     */
+    orderSequence?: ColumnSortingOrder[];
 
     /**
      * Custom compare function to sort the column values. It overrides the
@@ -458,7 +633,7 @@ export interface ColumnSortingOptions {
      * A number indicating whether the first value (`a`) is less than (`-1`),
      * equal to (`0`), or greater than (`1`) the second value (`b`).
      */
-    compare?: (a: DataTable.CellType, b: DataTable.CellType) => number;
+    compare?: (a: DataTableCellType, b: DataTableCellType) => number;
 }
 
 /**
@@ -472,6 +647,12 @@ export interface IndividualColumnSortingOptions extends ColumnSortingOptions {
      * @default null
      */
     order?: ColumnSortingOrder;
+
+    /**
+     * Priority of this column when multiple columns are sorted. Lower numbers
+     * have higher priority.
+     */
+    priority?: number;
 }
 
 /**
@@ -509,14 +690,6 @@ export interface IndividualColumnOptions extends ColumnOptions {
     id: string;
 
     sorting?: IndividualColumnSortingOptions;
-
-    /**
-     * @internal
-     * @private
-     * @deprecated
-     * It will be removed in the next major release.
-     */
-    resizing?: boolean;
 }
 
 export interface CaptionOptions {
@@ -524,6 +697,16 @@ export interface CaptionOptions {
      * The custom CSS class name for the table caption.
      */
     className?: string;
+
+    /**
+     * The HTML tag to use for the caption. When set, the caption is rendered
+     * as that element (e.g. `h1`, `p`, `span`). Must be one of
+     * [AST.allowedTags](https://api.highcharts.com/class-reference/Highcharts.AST#allowedTags)
+     * (e.g. `div`, `p`, `span`, `h1`–`h6`).
+     *
+     * @default 'div'
+     */
+    htmlTag?: string;
 
     /**
      * The caption of the grid.
@@ -617,6 +800,7 @@ export interface CreditsOptions {
     position?: 'bottom' | 'top';
 }
 
+
 /**
  * Language options for the grid.
  */
@@ -640,7 +824,55 @@ export interface LangOptions extends LangOptionsCore {
      * @default 'No data to display'
      */
     noData?: string;
+
+    /**
+     * `Filter` translation.
+     *
+     * @default 'Filter'
+     */
+    filter?: string;
+
+    /**
+     * `Sort ascending` translation.
+     *
+     * @default 'Sort ascending'
+     */
+    sortAscending?: string;
+
+    /**
+     * `Sort descending` translation.
+     *
+     * @default 'Sort descending'
+     */
+    sortDescending?: string;
+
+    /**
+     * `Column` translation.
+     *
+     * @default 'Column'
+     */
+    column?: string;
+
+    /**
+     * `Set filter` translation.
+     *
+     * @default 'Set filter'
+     */
+    setFilter?: string;
+
+    /**
+     * Language options for column filtering conditions.
+     */
+    columnFilteringConditions?: Partial<
+        Record<ColumnFilteringCondition, string>
+    >;
+
+    /**
+     * Language options for pagination text values.
+     */
+    pagination?: PaginationLangOptions;
 }
+
 
 /**
  * Options for the time settings.
@@ -655,6 +887,35 @@ export interface TimeOptions {
     timezone?: string;
 }
 
+/**
+ * Column filtering options.
+ */
+export interface FilteringCondition {
+    /**
+     * The condition to use for filtering the column.
+     */
+    condition?: ColumnFilteringCondition;
+
+    /**
+     * The value that is used with the condition to filter the column.
+     */
+    value?: string | number | boolean | null;
+}
+
+export interface ColumnFilteringOptions extends FilteringCondition {
+    /**
+     * Whether the filtering is enabled or not.
+     */
+    enabled?: boolean;
+
+    /**
+     * Whether the filtering inputs should be rendered inline in the special
+     * table header row (`true`), or should be accessed via a popup (`false`).
+     *
+     * @default false
+     */
+    inline?: boolean;
+}
 
 /* *
  *

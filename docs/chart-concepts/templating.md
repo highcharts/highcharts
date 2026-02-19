@@ -8,16 +8,21 @@ Expressions in format strings are enclosed by `{single brackets}`. They can be s
 
 **Variables** and properties are inserted directly inside the bracket, for example `"The point value at {point.x} is {point.y}"`. Nested properties are supported using the dot notation. Arrays are also indexed using dot notation, for example `{series.xAxis.categories.0}`, or more practical, with a subexpression `{series.xAxis.categories.(point.x)}`
 
-**Numbers** are formatted with a subset of float formatting conventions from the C library function `sprintf`. The formatting is appended inside the expression, separated from the value by a colon. Note that even though a dot and a comma symbolizes the decimal point and the thousands separator respectively, how it is actually rendered depends on the [language settings](https://api.highcharts.com/highcharts/lang). For example:
+**Numbers** are formatted with a subset of float formatting conventions from the C library function `sprintf`. The formatting is appended inside the expression, separated from the value by a colon. Note that even though a dot and a comma symbolizes the decimal point and the thousands separator respectively, how it is actually rendered depends on the chart's [lang.locale](https://api.highcharts.com/highcharts/lang.locale) setting. The default for `lang.locale` is the browser's locate, but it can be overridden either with a HTML `lang` attribute, or with an explicit setting . Examples:
 
-*   Two decimal places: `"{point.y:.2f}"` [[Demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/labels/two-decimal-places)]
-*   Thousands separator, no decimal places: `{point.y:,.0f}` [[Demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/labels/no-decimal-places)]
-*   Thousands separator, one decimal place: `{point.y:,.1f}` [[Demo, internationalized](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/labels/one-decimal-place)]
+*   Two decimal places:  `"{point.y:.2f}"` [[Demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/labels/two-decimal-places)]
+*   Default thousands separator from browser locale, no decimal places: `{point.y:,.0f}` [[Demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/labels/no-decimal-places)]
+*   Forced `de-DE` locale with one decimal place after a comma: `{point.y:,.1f}` [[Demo, internationalized](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/labels/one-decimal-place)]
 
 **Dates** allow, like numbers, the format to be appended behind a colon. The format conventions allowed are the same as those of [Highcharts.dateFormat()](https://api.highcharts.com/class-reference/Highcharts.Time#dateFormat). For example:
 
 *   Full date: `{value:%Y-%m-%d}` [[Demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/labels/full-date)]
 *   Locale-aware full date: `{value:%[Ymd]}` [[Demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/labels/full-date)]
+
+_Note: Locale-aware formats use names from the active locale.
+To apply custom names from `lang.months`, `lang.weekdays`, etc., use non-locale-aware formats._
+
+For example, `{value:%b}` uses `lang.shortMonths`, while `{value:%[b]}` follows the locale.
 
 ## Helpers
 Helpers define either a conditional block or a function to be used in an expression. Highcharts includes a number of [built-in helpers](#built-in-helpers), and allows custom helpers to be added.
@@ -103,6 +108,7 @@ format: '{log}'
 * **multiply**. Multiply two numbers. For example `{multiply value 1000}`. [Demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/series-datalabels-format-subexpression).
 * **ne**. Not equal, JavaScript `!=`. Doubles as block helper and subexpression.
 * **subtract**. Subtract the second number from the first. Example `{subtract 5 2}` prints 3.
+* **ucfirst**. Uppercase the first character in a string. For example `{ucfirst point.key}`.
 * **#unless**. The inverse of `#if`. `{#unless point.isNull}The value is {point.y}{/unless}`.
 
 ## Limitations

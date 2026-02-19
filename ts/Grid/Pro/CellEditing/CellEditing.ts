@@ -2,11 +2,11 @@
  *
  *  Grid Cell Editing class.
  *
- *  (c) 2020-2025 Highsoft AS
+ *  (c) 2020-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Dawid Dragula
@@ -139,17 +139,21 @@ class CellEditing {
 
         if (submit) {
             const validationErrors: string[] = [];
-            if (!vp.validator.validate(cell, validationErrors)) {
-                vp.validator.initErrorBox(cell, validationErrors);
+            if (!vp.validator?.validate(cell, validationErrors)) {
+                vp.validator?.initErrorBox(cell, validationErrors);
+                this.setA11yAttributes(false);
+
                 return false;
             }
+
+            this.setA11yAttributes(true);
 
             vp.validator.hide();
             vp.validator.errorCell = void 0;
         }
 
         // Hide notification
-        this.viewport.validator.hide();
+        this.viewport.validator?.hide();
 
         // Hide input
         this.destroy();
@@ -160,18 +164,38 @@ class CellEditing {
         cell.htmlElement.focus();
 
         const isValueChanged = cell.value !== newValue;
+
         void cell.setValue(
             submit ? newValue : cell.value,
             submit && isValueChanged
-        );
+        ).then((): void => {
 
-        if (isValueChanged) {
-            fireEvent(cell, 'stoppedEditing', { submit });
-        }
+            if (isValueChanged) {
+                fireEvent(cell, 'stoppedEditing', { submit });
+            }
 
-        delete this.editedCell;
+            delete this.editedCell;
+        });
 
         return true;
+    }
+
+    public setA11yAttributes(valid: boolean): void {
+        const mainElement = this.editModeContent?.getMainElement();
+        if (!mainElement) {
+            return;
+        }
+
+        if (!valid) {
+            mainElement.setAttribute('aria-invalid', 'true');
+            mainElement.setAttribute(
+                'aria-errormessage',
+                'notification-error'
+            );
+        } else {
+            mainElement.setAttribute('aria-invalid', 'false');
+            mainElement.setAttribute('aria-errormessage', '');
+        }
     }
 
     /**
@@ -235,8 +259,7 @@ class CellEditing {
 
         this.containerElement = this.containerElement ||
             document.createElement('div');
-        this.containerElement.className =
-            CellEditing.classNames.cellEditingContainer;
+        this.containerElement.className = classNames.cellEditingContainer;
         this.editedCell?.htmlElement.appendChild(this.containerElement);
 
         this.editModeContent = cell.column.editModeRenderer?.render(
@@ -247,6 +270,15 @@ class CellEditing {
         this.editModeContent.blurHandler = this.onInputBlur;
         this.editModeContent.changeHandler = this.onInputChange;
         this.editModeContent.keyDownHandler = this.onInputKeyDown;
+
+        const rules = cell.column.options?.cells?.editMode?.validationRules ||
+            [];
+        if (rules.includes('notEmpty')) {
+            this.editModeContent.getMainElement().setAttribute(
+                'aria-required',
+                'true'
+            );
+        }
     }
 
     /**
@@ -264,23 +296,19 @@ class CellEditing {
     }
 }
 
+
 /* *
  *
- *  Namespace
+ *  Declarations
  *
  * */
 
-
-namespace CellEditing {
-
-    /**
-     * The class names used by the CellEditing functionality.
-     */
-    export const classNames = {
-        cellEditingContainer: Globals.classNamePrefix + 'cell-editing-container'
-    } as const;
-
-}
+/**
+ * The class names used by the CellEditing functionality.
+ */
+export const classNames = {
+    cellEditingContainer: Globals.classNamePrefix + 'cell-editing-container'
+} as const;
 
 
 /* *

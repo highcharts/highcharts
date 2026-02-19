@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Honsi
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -17,7 +18,7 @@
  * */
 
 import type Chart from '../../Core/Chart/Chart';
-import type GlobalsLike from '../../Core/GlobalsLike';
+import type GlobalsBase from '../../Core/GlobalsBase';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
 import D from '../../Core/Defaults.js';
@@ -39,14 +40,25 @@ const {
  *
  * */
 
-declare module '../../Core/Chart/ChartLike'{
-    interface ChartLike {
+/** @internal */
+declare module '../../Core/Chart/ChartBase'{
+    interface ChartBase {
         errorElements?: Array<SVGElement>;
     }
 }
 
 declare module '../../Core/Chart/ChartOptions'{
     interface ChartOptions {
+        /**
+         * Whether to display errors on the chart. When `false`, the errors will
+         * be shown only in the console.
+         *
+         * @sample highcharts/chart/display-errors/
+         *         Show errors on chart
+         *
+         * @since    7.0.0
+         * @requires modules/debugger
+         */
         displayErrors?: boolean;
     }
 }
@@ -82,9 +94,7 @@ const defaultOptions = {
  *
  * */
 
-/**
- * @private
- */
+/** @internal */
 function compose(
     ChartClass: typeof Chart
 ): void {
@@ -99,9 +109,7 @@ function compose(
 
 }
 
-/**
- * @private
- */
+/** @internal */
 function onChartBeforeRedraw(
     this: Chart
 ): void {
@@ -116,11 +124,9 @@ function onChartBeforeRedraw(
     delete this.errorElements;
 }
 
-/**
- * @private
- */
+/** @internal */
 function onHighchartsDisplayError(
-    this: GlobalsLike,
+    this: GlobalsBase,
     e: U.ErrorMessageEventObject
 ): void {
     // Display error on the chart causing the error or the last created chart.
@@ -216,8 +222,10 @@ function onHighchartsDisplayError(
  *
  * */
 
+/** @internal */
 const Debugger = {
     compose
 };
 
+/** @internal */
 export default Debugger;

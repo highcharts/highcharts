@@ -2,11 +2,11 @@
  *
  *  Grid Credits class
  *
- *  (c) 2020-2025 Highsoft AS
+ *  (c) 2020-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Dawid Dragula
@@ -52,11 +52,7 @@ class Credits {
      */
     public static defaultOptions: CreditsOptions = {
         enabled: true,
-        // eslint-disable-next-line no-console
-        text: `<picture class="hcg-logo-wrapper">
-            <source srcset="https://assets.highcharts.com/grid/logo_darkx2.png 2x, https://assets.highcharts.com/grid/logo_dark.png 1x" media="(prefers-color-scheme: dark)">
-            <img src="https://assets.highcharts.com/grid/logo_light.png" srcset="https://assets.highcharts.com/grid/logo_lightx2.png 2x, https://assets.highcharts.com/grid/logo_light.png 1x" alt="Highcharts logo" style="height: 20px !important; width: auto !important; display: inline-block !important;">
-        </picture>`,
+        text: '',
         href: 'https://www.highcharts.com',
         position: 'bottom'
     };
@@ -141,8 +137,10 @@ class Credits {
             this.textElement = this.renderAnchor();
         }
 
-        if (text && href) {
+        if (text) {
             setHTMLContent(this.textElement, text);
+        }
+        if (href) {
             this.textElement.setAttribute('href', href || '');
         }
 
@@ -162,6 +160,7 @@ class Credits {
         }, this.containerElement);
 
         anchorElement.setAttribute('target', '_blank');
+        anchorElement.setAttribute('alt', 'Highcharts logo');
 
         return anchorElement;
     }
@@ -181,17 +180,6 @@ class Credits {
     public destroy(): void {
         this.containerElement.remove();
     }
-}
-
-
-/* *
- *
- *  Class Namespace
- *
- * */
-
-namespace Credits {
-
 }
 
 

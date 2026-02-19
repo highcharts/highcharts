@@ -6,18 +6,19 @@
             <script type="importmap">
             {
                 "imports": {
-                    "react": "https://esm.sh/react",
-                    "react-dom": "https://esm.sh/react-dom/client",
-                    "highcharts/": "https://code.highcharts.com/",
-                    "@highcharts/react": "https://esm.sh/@highcharts/react@next/index.js",
-                    "@highcharts/react/": "https://esm.sh/@highcharts/react@next/"
+                    "react": "https://esm.sh/react@19.1.0",
+                    "react-dom": "https://esm.sh/react-dom@19.1.0/client",
+                    "react-dom/": "https://esm.sh/react-dom@19.1.0/",
+                    "@highcharts/react": "https://unpkg.com/@highcharts/react@next/index.js",
+                    "@highcharts/react/": "https://unpkg.com/@highcharts/react@next/",
+                    "highcharts/": "https://unpkg.com/highcharts@12.2.0/"
                 }
             }
             </script>
             <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/a11y-light.min.css">
             <figure class="highcharts-figure">
                     <div id="container"></div>
-            </figure><style>
+            </figure><style nonce="highcharts">
 #container {
     min-height: 400px;
 }
@@ -51,82 +52,4 @@ details {
         }
     }
 }
-</style><details><summary>Code</summary><pre><code><span class="hljs-keyword">import</span> <span class="hljs-title class_">React</span>, { useState } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;react&#x27;</span>;
-<span class="hljs-keyword">import</span> <span class="hljs-title class_">ReactDOM</span> <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;react-dom&#x27;</span>;
-<span class="hljs-keyword">import</span> {
-    <span class="hljs-title class_">Chart</span>,
-    <span class="hljs-title class_">Series</span>,
-    <span class="hljs-title class_">Title</span>,
-    <span class="hljs-title class_">XAxis</span>
-} <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@highcharts/react&#x27;</span>;
-
-<span class="hljs-keyword">function</span> <span class="hljs-title function_">CountrySelect</span>(<span class="hljs-params">{ currentCountry, countryData, onChange }</span>) {
-    <span class="hljs-keyword">return</span> (
-        <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span>
-            <span class="hljs-tag">&lt;<span class="hljs-name">h2</span>&gt;</span>Select country<span class="hljs-tag">&lt;/<span class="hljs-name">h2</span>&gt;</span>
-            {Object.keys(countryData).map((countryName) =&gt; (
-                <span class="hljs-tag">&lt;<span class="hljs-name">label</span> <span class="hljs-attr">key</span>=<span class="hljs-string">{countryName}</span>&gt;</span>
-                    <span class="hljs-tag">&lt;<span class="hljs-name">input</span>
-                        <span class="hljs-attr">type</span>=<span class="hljs-string">&quot;radio&quot;</span>
-                        <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;country&quot;</span>
-                        <span class="hljs-attr">value</span>=<span class="hljs-string">{countryName}</span>
-                        <span class="hljs-attr">checked</span>=<span class="hljs-string">{currentCountry</span> === <span class="hljs-string">countryName}</span>
-                        <span class="hljs-attr">onChange</span>=<span class="hljs-string">{()</span> =&gt;</span> onChange(countryName)}
-                    /&gt;
-                    {countryName}
-                <span class="hljs-tag">&lt;/<span class="hljs-name">label</span>&gt;</span>
-            ))}
-        <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></span>
-    );
-}
-
-<span class="hljs-keyword">function</span> <span class="hljs-title function_">TitleFormat</span>(<span class="hljs-params">{ country }</span>) {
-    <span class="hljs-keyword">return</span> (
-        <span class="language-xml"><span class="hljs-tag">&lt;&gt;</span>Fruit consumption in <span class="hljs-tag">&lt;<span class="hljs-name">em</span>&gt;</span>{country}<span class="hljs-tag">&lt;/<span class="hljs-name">em</span>&gt;</span><span class="hljs-tag">&lt;/&gt;</span></span>
-    );
-}
-
-<span class="hljs-keyword">function</span> <span class="hljs-title function_">ChartComponent</span>(<span class="hljs-params"></span>) {
-    <span class="hljs-keyword">const</span> countryData = {
-        <span class="hljs-title class_">Norway</span>: [
-            [<span class="hljs-string">&#x27;Apples&#x27;</span>, <span class="hljs-number">1</span>],
-            [<span class="hljs-string">&#x27;Pears&#x27;</span>, <span class="hljs-number">2</span>],
-            [<span class="hljs-string">&#x27;Bananas&#x27;</span>, <span class="hljs-number">3</span>],
-            [<span class="hljs-string">&#x27;Oranges&#x27;</span>, <span class="hljs-number">4</span>]
-        ],
-        <span class="hljs-title class_">Sweden</span>: [
-            [<span class="hljs-string">&#x27;Apples&#x27;</span>, <span class="hljs-number">2</span>],
-            [<span class="hljs-string">&#x27;Pears&#x27;</span>, <span class="hljs-number">1</span>],
-            [<span class="hljs-string">&#x27;Bananas&#x27;</span>, <span class="hljs-number">5</span>],
-            [<span class="hljs-string">&#x27;Oranges&#x27;</span>, <span class="hljs-number">1</span>]
-        ]
-    };
-
-    <span class="hljs-keyword">const</span> [
-        country,
-        setCountry
-    ] = <span class="hljs-title function_">useState</span>(<span class="hljs-title class_">Object</span>.<span class="hljs-title function_">keys</span>(countryData)[<span class="hljs-number">0</span>]);
-
-    <span class="hljs-keyword">return</span> (
-        <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span>
-            <span class="hljs-tag">&lt;<span class="hljs-name">Chart</span>&gt;</span>
-                <span class="hljs-tag">&lt;<span class="hljs-name">Title</span>&gt;</span>
-                    <span class="hljs-tag">&lt;<span class="hljs-name">TitleFormat</span> <span class="hljs-attr">country</span>=<span class="hljs-string">{country}</span> /&gt;</span>
-                <span class="hljs-tag">&lt;/<span class="hljs-name">Title</span>&gt;</span>
-                <span class="hljs-tag">&lt;<span class="hljs-name">XAxis</span> <span class="hljs-attr">type</span>=<span class="hljs-string">&quot;category&quot;</span> /&gt;</span>
-                <span class="hljs-tag">&lt;<span class="hljs-name">Series</span> <span class="hljs-attr">type</span>=<span class="hljs-string">&quot;column&quot;</span> <span class="hljs-attr">data</span>=<span class="hljs-string">{countryData[country]}</span> /&gt;</span>
-            <span class="hljs-tag">&lt;/<span class="hljs-name">Chart</span>&gt;</span>
-
-            <span class="hljs-tag">&lt;<span class="hljs-name">CountrySelect</span>
-                <span class="hljs-attr">currentCountry</span>=<span class="hljs-string">{country}</span>
-                <span class="hljs-attr">countryData</span>=<span class="hljs-string">{countryData}</span>
-                <span class="hljs-attr">onChange</span>=<span class="hljs-string">{(c)</span> =&gt;</span> setCountry(c)}
-            /&gt;
-        <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></span>
-    );
-}
-
-<span class="hljs-title class_">ReactDOM</span>.<span class="hljs-title function_">createRoot</span>(
-    <span class="hljs-variable language_">document</span>.<span class="hljs-title function_">querySelector</span>(<span class="hljs-string">&#x27;#container&#x27;</span>)
-)?.<span class="hljs-title function_">render</span>(<span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">ChartComponent</span> /&gt;</span></span>);
-</code></pre></details>
+</style>

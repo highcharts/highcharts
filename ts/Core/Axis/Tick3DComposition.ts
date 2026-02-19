@@ -1,12 +1,13 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Honsi
  *
  *  Extension for 3d axes
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -38,9 +39,7 @@ const {
  *
  * */
 
-/**
- * @private
- */
+/** @internal */
 function compose(
     TickClass: typeof Tick
 ): void {
@@ -57,9 +56,7 @@ function compose(
 
 }
 
-/**
- * @private
- */
+/** @internal */
 function onTickAfterGetLabelPosition(
     this: Tick,
     e: {
@@ -75,9 +72,7 @@ function onTickAfterGetLabelPosition(
     }
 }
 
-/**
- * @private
- */
+/** @internal */
 function wrapTickGetMarkPath(
     this: Tick,
     proceed: Function
@@ -110,8 +105,10 @@ function wrapTickGetMarkPath(
  *
  * */
 
+/** @internal */
 const Tick3DAdditions = {
     compose
 };
 
+/** @internal */
 export default Tick3DAdditions;

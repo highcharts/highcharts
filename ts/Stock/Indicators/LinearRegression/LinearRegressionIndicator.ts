@@ -1,10 +1,12 @@
+// SPDX-License-Identifier: LicenseRef-Highcharts
 /**
  *
- *  (c) 2010-2025 Kamil Kulig
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Kamil Kulig
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -15,7 +17,7 @@
  *  Imports
  *
  * */
-import type { IndicatorLinkedSeriesLike } from '../IndicatorLike';
+import type { IndicatorLinkedSeriesBase } from '../IndicatorBase';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type {
     LinearRegressionOptions,
@@ -292,7 +294,7 @@ class LinearRegressionIndicator extends SMAIndicator {
     // Required to be implemented - starting point for indicator's logic
     public getValues<TLinkedSeries extends LineSeries>(
         this: LinearRegressionIndicator,
-        baseSeries: TLinkedSeries&IndicatorLinkedSeriesLike,
+        baseSeries: TLinkedSeries&IndicatorLinkedSeriesBase,
         regressionSeriesParams:
         LinearRegressionParamsOptions
     ): IndicatorValuesObject<TLinkedSeries> {
@@ -300,9 +302,7 @@ class LinearRegressionIndicator extends SMAIndicator {
             yData: Array<number> = (baseSeries.yData as any),
             period: number = (regressionSeriesParams.period as any),
             // Format required to be returned
-            indicatorData: IndicatorValuesObject<
-            TLinkedSeries
-            > = {
+            indicatorData: IndicatorValuesObject<TLinkedSeries> = {
                 xData: [], // By getValues() method
                 yData: [],
                 values: []

@@ -163,7 +163,7 @@ function addCustomEvents(isTodoGrid) {
     const targetGrid = Grid.grids[isTodoGrid ? 1 : 0];
 
     sourceGrid.dataTable.on('afterSetCell', function (e) {
-        if (e.columnName !== 'Done') {
+        if (e.columnId !== 'Done') {
             return;
         }
 
@@ -173,12 +173,22 @@ function addCustomEvents(isTodoGrid) {
             const rowIndex = e.rowIndex;
             const rowData = dataTable.getRowObject(rowIndex);
             const data = { ...rowData, Completed: selected };
+            const accessibility = sourceGrid.accessibility;
+            const taskName = data.Task;
 
             targetGrid.dataTable.setRow(data);
             dataTable.deleteRows(rowIndex);
 
-            sourceGrid.viewport.loadPresentationData();
-            targetGrid.viewport.loadPresentationData();
+            sourceGrid.viewport.updateRows();
+            targetGrid.viewport.updateRows();
+
+            // Accessibility
+            accessibility.announce(
+                `Moved ${taskName} to ${
+                    isTodoGrid && selected ? 'Done' : 'Todo'
+                }.`,
+                true
+            );
         }
     });
 }
@@ -236,9 +246,16 @@ columns.forEach(col => {
 
 openModal.addEventListener('click', () => {
     modal.style.display = 'flex';
+
+    document.getElementById('Category').focus();
 });
 closeModalBtn.addEventListener('click', () => {
     modal.style.display = 'none';
+});
+document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') {
+        modal.style.display = 'none';
+    }
 });
 
 form.addEventListener('submit', function (e) {
@@ -258,7 +275,7 @@ form.addEventListener('submit', function (e) {
     }
 
     todoGrid.dataTable.setRow(rowData);
-    todoGrid.viewport.loadPresentationData();
+    todoGrid.viewport.updateRows();
 
     form.reset();
     modal.style.display = 'none';

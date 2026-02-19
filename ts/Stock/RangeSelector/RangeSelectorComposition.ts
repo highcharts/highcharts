@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Honsi
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -244,6 +245,10 @@ function onChartBeforeRender(
     }
 
 }
+/**
+ * Redraw rangeSelector on chart redraw event
+ * @private
+ */
 function redrawRangeSelector(this: Chart): void {
     const chart = this;
     const rangeSelector = this.rangeSelector;
@@ -264,7 +269,7 @@ function redrawRangeSelector(this: Chart): void {
 
     // Re-align the legend so that it's below the rangeselector
     if (
-        legend.display &&
+        legend?.display &&
             verticalAlign === 'top' &&
             verticalAlign === legend.options.verticalAlign
     ) {
@@ -299,7 +304,8 @@ function onChartDestroy(
 }
 
 /**
- *
+ * Reflow rangeSelector and adjust chart layout
+ * @private
  */
 function onChartGetMargins(
     this: Chart
@@ -307,6 +313,17 @@ function onChartGetMargins(
     const rangeSelector = this.rangeSelector;
 
     if (rangeSelector?.options?.enabled) {
+
+        // Rerender rangeSelector in order to return correct plotHeight, #23058
+        const { min, max } = this.xAxis[0].getExtremes();
+        if (
+            isNumber(min) &&
+            rangeSelector.inputGroup &&
+            rangeSelector.inputGroup.getBBox().width < 20
+        ) {
+            rangeSelector.render(min, max);
+        }
+
         const rangeSelectorHeight = rangeSelector.getHeight();
 
         const verticalAlign = rangeSelector.options.verticalAlign;
