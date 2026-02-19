@@ -1,0 +1,50 @@
+.hcg-container .hcg-menu-container,
+.highcharts-light .hcg-container .hcg-menu-container {
+    --ig-menu-item-hover-background: var(--hcg-menu-item-hover-background, #ffffff);
+    --ig-menu-item-hover-border-color: var(--hcg-menu-item-hover-border-color, #e8e8e8);
+    --ig-menu-item-active-background: var(--hcg-menu-item-active-background, #e1e3ff);
+    --ig-menu-item-active-border-color: var(--hcg-menu-item-active-border-color, #c3c8ff);
+    --ig-menu-item-divider-color: var(--hcg-menu-item-divider-color, #e8e8e8);
+}
+
+@media (prefers-color-scheme: dark) {
+    .hcg-container .hcg-menu-container {
+        --ig-menu-item-hover-background: var(--hcg-menu-item-hover-background, #3b3b3b);
+        --ig-menu-item-hover-border-color: var(--hcg-menu-item-hover-border-color, #4f4f4f);
+        --ig-menu-item-active-background: var(--hcg-menu-item-active-background, #3f4699);
+        --ig-menu-item-active-border-color: var(--hcg-menu-item-active-border-color, #4a55c9);
+        --ig-menu-item-divider-color: var(--hcg-menu-item-divider-color, #4f4f4f);
+    }
+}
+
+.highcharts-dark .hcg-container .hcg-menu-container {
+    --ig-menu-item-hover-background: var(--hcg-menu-item-hover-background, #3b3b3b);
+    --ig-menu-item-hover-border-color: var(--hcg-menu-item-hover-border-color, #4f4f4f);
+    --ig-menu-item-active-background: var(--hcg-menu-item-active-background, #3f4699);
+    --ig-menu-item-active-border-color: var(--hcg-menu-item-active-border-color, #4a55c9);
+    --ig-menu-item-divider-color: var(--hcg-menu-item-divider-color, #4f4f4f);
+}
+
+.hcg-container .hcg-menu-container {
+    .hcg-menu-item:focus-visible {
+        box-shadow: var(--ig-focus-ring);
+    }
+
+    .hcg-menu-item:focus-visible,
+    .hcg-menu-item:not(:disabled):hover,
+    .hcg-menu-item.highlighted {
+        background: var(--ig-menu-item-hover-background);
+        border-color: var(--ig-menu-item-hover-border-color);
+    }
+
+    .hcg-menu-item.active,
+    .hcg-menu-item.active:hover,
+    .hcg-menu-item.active.highlighted {
+        background: var(--ig-menu-item-active-background);
+        border-color: var(--ig-menu-item-active-border-color);
+    }
+
+    .hcg-menu-divider {
+        border-top-color: var(--ig-menu-item-divider-color);
+    }
+}

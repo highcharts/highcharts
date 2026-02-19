@@ -1123,7 +1123,9 @@ export async function calculateChecksum(outputDir: string): Promise<string> {
 async function saveChecksum(outputDir: string): Promise<void> {
     const checksum = await calculateChecksum(outputDir);
     const checksumPath = join(outputDir, '.generated-checksum');
-    await fs.writeFile(checksumPath, checksum, 'utf-8');
+    await fs.writeFile(
+        checksumPath, checksum, { encoding: 'utf-8', mode: 0o644 }
+    );
 }
 
 export async function saveDemoFile(config: SampleGeneratorConfig) {
@@ -1153,10 +1155,26 @@ export async function saveDemoFile(config: SampleGeneratorConfig) {
 
     // Write all files in parallel
     await Promise.all([
-        fs.writeFile(join(outputDir, 'demo.html'), html, 'utf-8'),
-        fs.writeFile(join(outputDir, 'demo.css'), css, 'utf-8'),
-        fs.writeFile(join(outputDir, 'demo.details'), details, 'utf-8'),
-        fs.writeFile(join(outputDir, '.gitignore'), 'demo.js', 'utf-8')
+        fs.writeFile(
+            join(outputDir, 'demo.html'),
+            html,
+            { encoding: 'utf-8', mode: 0o644 }
+        ),
+        fs.writeFile(
+            join(outputDir, 'demo.css'),
+            css,
+            { encoding: 'utf-8', mode: 0o644 }
+        ),
+        fs.writeFile(
+            join(outputDir, 'demo.details'),
+            details,
+            { encoding: 'utf-8', mode: 0o644 }
+        ),
+        fs.writeFile(
+            join(outputDir, '.gitignore'),
+            'demo.js',
+            { encoding: 'utf-8', mode: 0o644 }
+        )
     ]);
 
     // If demo.ts is successfully written, delete demo.js if it exists
@@ -1183,15 +1201,17 @@ export async function saveDemoFile(config: SampleGeneratorConfig) {
     );
 
     if (results[0].output) {
-        await fs.writeFile(`${outputDir}/demo.ts`, results[0].output, 'utf-8');
+        await fs.writeFile(`${outputDir}/demo.ts`, results[0].output, { encoding: 'utf-8', mode: 0o644 });
     } else {
-        await fs.writeFile(`${outputDir}/demo.ts`, results[0].source, 'utf-8');
+        await fs.writeFile(`${outputDir}/demo.ts`, results[0].source, { encoding: 'utf-8', mode: 0o644 });
         console.error(
             colors.red(results[0].messages.map(msg => msg.message).join('\n'))
         );
     }
     */
-    await fs.writeFile(join(outputDir, 'demo.ts'), ts, 'utf-8');
+    await fs.writeFile(
+        join(outputDir, 'demo.ts'), ts, { encoding: 'utf-8', mode: 0o644 }
+    );
 
     // Calculate and save checksum for validation
     await saveChecksum(outputDir);
