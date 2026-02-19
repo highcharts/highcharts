@@ -79,7 +79,7 @@ declare module '../../Core/Series/SeriesOptions' {
          * @product   highstock
          */
         navigatorOptions?: SeriesOptions;
-        
+
         /**
          * Whether or not to show the series in the navigator. Takes precedence
          * over [navigator.baseSeries](#navigator.baseSeries) if defined.
