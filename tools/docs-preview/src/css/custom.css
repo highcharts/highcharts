@@ -174,18 +174,10 @@ main h6:has(.grid-pro-badge) .grid-pro-badge {
     margin-top: 0.7em;
 }
 
-#mobile-sidebar-toggle-wrapper {
-    background-color: var(--primitives-neutral-700);
-    display: flex;
-    justify-content: center;
-
-    [data-theme="light"] & {
-        background-color: var(--primitives-neutral-50);
+.theme-layout-navbar {
+    &:has(button[aria-expanded="true"]) {
+        height: 100vh;
     }
-}
-
-.navbar-sidebar {
-    z-index: 9999;
 }
 
 [data-theme="dark"] .grid-pro-badge {

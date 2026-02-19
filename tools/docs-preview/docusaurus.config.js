@@ -95,7 +95,7 @@ const config = {
                 respectPrefersColorScheme: true
             },
             navbar: {
-                hideOnScroll: true
+                // hideOnScroll: true
             },
             footer: {
                 style: 'dark',

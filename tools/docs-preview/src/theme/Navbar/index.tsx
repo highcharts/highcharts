@@ -9,14 +9,14 @@ export default function Navbar(_props: Props): JSX.Element {
     const { pathname } = useLocation();
 
     return (
-        <NavbarLayout>
-            <Header
-                host=""
-                pathname={pathname}
-            />
-            <div id="mobile-sidebar-toggle-wrapper">
+        <Header
+            host=""
+            pathname={pathname}
+            cssVariable={true}
+        >
+            <NavbarLayout>
                 <MobileSidebarToggle />
-            </div>
-        </NavbarLayout>
+            </NavbarLayout>
+        </Header>
     );
 }
