@@ -142,6 +142,7 @@ extend(LinearRegressionAngleIndicator.prototype, {
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         linearregressionangle: typeof LinearRegressionAngleIndicator;
+        linearRegressionAngle: typeof LinearRegressionAngleIndicator;
     }
 }
 
@@ -150,6 +151,11 @@ SeriesRegistry.registerSeriesType(
     LinearRegressionAngleIndicator
 );
 
+// Keep for backwards compatibility
+SeriesRegistry.registerSeriesType(
+    'linearRegressionAngle',
+    LinearRegressionAngleIndicator
+);
 
 /* *
  *
