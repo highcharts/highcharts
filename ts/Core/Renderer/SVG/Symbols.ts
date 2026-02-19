@@ -522,6 +522,7 @@ declare module './SymbolType' {
         square: typeof rect;
         triangle: typeof triangle;
         'triangle-down': typeof triangleDown;
+        cross: SymbolFunction
     }
 }
 
