@@ -251,7 +251,7 @@ namespace ForcedMarkersComposition {
             options = series.options;
 
         if (shouldForceMarkers(series)) {
-            if (options.marker && options.marker.enabled === false) {
+            if (options.marker?.enabled === false) {
                 series.a11yMarkersForced = true;
                 forceZeroOpacityMarkerOptions(series.options);
             }
@@ -265,13 +265,12 @@ namespace ForcedMarkersComposition {
             // Mark series dirty to ensure marker graphics are cleaned up
             series.isDirty = true;
             unforceSeriesMarkerOptions(series);
-            if (options.marker && options.marker.enabled === false) { // #23329
+            if (options.marker?.enabled === false) { // #23329
                 delete series.resetA11yMarkerOptions; // #16624
             }
         } else if (
             series.chart.styledMode &&
-            options.marker &&
-            options.marker.enabled === false &&
+            options.marker?.enabled === false &&
             !hasIndividualPointMarkerOptions(series)
         ) {
             // `a11yMarkersForced` can be reset during `Series.update`.
