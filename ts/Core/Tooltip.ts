@@ -70,6 +70,9 @@ const {
  *
  *  Declarations
  *
+ *
+ *
+ *
  * */
 
 declare module './Chart/ChartBase' {
