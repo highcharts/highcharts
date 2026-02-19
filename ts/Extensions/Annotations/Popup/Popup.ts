@@ -340,7 +340,6 @@ class Popup extends BaseForm {
                     a = Color.parse(textInput.value).rgba[3] || 1;
 
                 textInput.value = `rgba(${rgba[0]},${rgba[1]},${rgba[2]},${a})`;
-                opacitySlider.value = String(a * 100);
                 setSliderColor();
             });
             addEvent(textInput, 'input', (): void => {
@@ -355,10 +354,9 @@ class Popup extends BaseForm {
                     a = Number(opacitySlider.value) / 100;
 
                 textInput.value = `rgba(${rgba[0]},${rgba[1]},${rgba[2]},${a})`;
-                setSliderColor();
             });
 
-            return wrapper as HTMLDOMElement;
+            return wrapper;
         }
 
         // Add input
