@@ -46,7 +46,6 @@ const lang: Partial<LangOptions> = {
      * @since    3.0.8
      * @product  highcharts highstock
      * @requires modules/no-data-to-display
-     * @default  No data to display
      */
     noData: 'No data to display'
 };
@@ -84,8 +83,6 @@ const noData: NoDataOptions = {
      * Whether to insert the label as HTML, or as pseudo-HTML rendered with
      * SVG.
      *
-     * @type      {boolean}
-     * @default   false
      * @since     4.1.10
      * @product   highcharts highstock gantt
      * @requires  modules/no-data-to-display
@@ -104,7 +101,6 @@ const noData: NoDataOptions = {
          * Horizontal offset of the label, in pixels.
          *
          * @requires modules/no-data-to-display
-         * @default  0
          */
         x: 0,
 
@@ -112,7 +108,6 @@ const noData: NoDataOptions = {
          * Vertical offset of the label, in pixels.
          *
          * @requires modules/no-data-to-display
-         * @default  0
          */
         y: 0,
 
@@ -121,7 +116,6 @@ const noData: NoDataOptions = {
          *
          * @type {Highcharts.AlignValue}
          * @requires modules/no-data-to-display
-         * @default  center
          */
         align: 'center',
 
@@ -130,7 +124,6 @@ const noData: NoDataOptions = {
          *
          * @type {Highcharts.VerticalAlignValue}
          * @requires modules/no-data-to-display
-         * @default  middle
          */
         verticalAlign: 'middle'
     },
