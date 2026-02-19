@@ -60,7 +60,18 @@ QUnit.test(
         let leftHandle = chart.navigator.handles[0],
             rightHandle = chart.navigator.handles[1],
             lhEvents = leftHandle.element.hcEvents,
-            rhEvents = rightHandle.element.hcEvents;
+            rhEvents = rightHandle.element.hcEvents,
+            shadesEvents = chart.navigator.shades.map(
+                shade => shade.element.hcEvents
+            );
+
+        assert.ok(
+            shadesEvents.every(
+                se => se.mousedown.length === 1 && se.touchstart.length === 1
+            ),
+            `Navigator shades should always have only one mousedown and
+            touchstart event after update.`
+        );
 
         assert.ok(
             lhEvents.mousedown.length === 1 &&
@@ -113,6 +124,9 @@ QUnit.test(
         rightHandle = chart.navigator.handles[1];
         lhEvents = leftHandle.element.hcEvents;
         rhEvents = rightHandle.element.hcEvents;
+        shadesEvents = chart.navigator.shades.map(
+            shade => shade.element.hcEvents
+        );
 
         assert.ok(
             lhEvents.mousedown.length === 1 &&
@@ -120,6 +134,14 @@ QUnit.test(
             lhEvents.touchstart.length === 1 &&
             rhEvents.touchstart.length === 1,
             `Navigator handles should always have only one mousedown and
+            touchstart event after navigator enabled toggle.`
+        );
+
+        assert.ok(
+            shadesEvents.every(
+                se => se.mousedown.length === 1 && se.touchstart.length === 1
+            ),
+            `Navigator shades should always have only one mousedown and
             touchstart event after navigator enabled toggle.`
         );
     }

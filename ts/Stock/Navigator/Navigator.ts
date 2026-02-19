@@ -552,6 +552,12 @@ class Navigator {
             });
 
             if (redrawHandles) {
+                navigator.partsEventsToUnbind?.forEach(
+                    (unbind: Function): void => {
+                        unbind();
+                    }
+                );
+
                 navigator.partsEventsToUnbind = [
                     ...navigator.getPartsEvents('mousedown'),
                     ...navigator.getPartsEvents('touchstart')
@@ -1259,12 +1265,11 @@ class Navigator {
      * @function Highcharts.Navigator#removeEvents
      */
     public removeEvents(): void {
-        if (this.eventsToUnbind) {
-            this.eventsToUnbind.forEach(function (unbind: Function): void {
-                unbind();
-            });
-            this.eventsToUnbind = void 0;
-        }
+        this.eventsToUnbind?.forEach((unbind: Function): void => {
+            unbind();
+        });
+        this.eventsToUnbind = void 0;
+
         this.removeBaseSeriesEvents();
     }
 
