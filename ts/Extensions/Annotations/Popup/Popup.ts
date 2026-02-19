@@ -326,7 +326,7 @@ class Popup extends BaseForm {
             opacitySlider.setAttribute('min', '0');
             opacitySlider.setAttribute('max', '100');
 
-            const setSliderColorAndVisibility = (): void => {
+            const setOpacitySliderAttributes = (): void => {
                 if (textInput.value.startsWith('rgba')) {
                     const rgba = Color.parse(textInput.value).rgba;
                     opacitySlider.style.setProperty(
@@ -340,21 +340,20 @@ class Popup extends BaseForm {
                 }
             };
 
-            setSliderColorAndVisibility();
+            setOpacitySliderAttributes();
 
             addEvent(colorInput, 'input', (): void => {
                 const rgba = Color.parse(colorInput.value).rgba,
                     a = Color.parse(textInput.value).rgba[3] || 1;
 
                 textInput.value = `rgba(${rgba[0]},${rgba[1]},${rgba[2]},${a})`;
-                setSliderColorAndVisibility();
+                setOpacitySliderAttributes();
             });
             addEvent(textInput, 'input', (): void => {
                 const rgba = Color.parse(textInput.value).rgba;
 
                 colorInput.value = rgbaToHex(rgba);
-                opacitySlider.value = String(rgba[3] * 100);
-                setSliderColorAndVisibility();
+                setOpacitySliderAttributes();
             });
             addEvent(opacitySlider, 'input', (): void => {
                 const rgba = Color.parse(textInput.value).rgba,
