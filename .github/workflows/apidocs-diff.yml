@@ -18,12 +18,13 @@ concurrency:
 
 jobs:
   notify:
-    runs-on: ubuntu-slim
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
     steps:
-      - name: Checkout master
+      - name: Checkout code
         uses: actions/checkout@v6
         with:
-          ref: master
+          ref: ${{ github.event_name == 'pull_request' && 'master' || github.ref }}
 
       - name: Use Node.js lts/*
         uses: actions/setup-node@v6
@@ -33,30 +34,15 @@ jobs:
 
       - run: npm ci
 
-      - run: npx gulp generate-samples
-      - run: npx gulp jsdoc-dts
-
-      - name: Add master trees
-        run: git add -f "tree*.json"
-
-      - name: Checkout code from current branch
+      - name: Overlay PR TypeScript changes on trusted checkout
+        if: github.event_name == 'pull_request'
         run: |
-          git fetch origin "${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}"
-          git checkout FETCH_HEAD -- ts
-
-      - run: npx gulp generate-samples
-      - run: npx gulp jsdoc-dts
+          git fetch origin "pull/${{ github.event.pull_request.number }}/head:pr-head"
+          git checkout pr-head -- ts
 
       - name: Generate tree diff
         id: tree-diff
-        run: |
-          git add -N tree*.json
-          git --no-pager diff -- tree*.json > changes.md
-          if [ -s changes.md ]; then
-            echo "has_changes=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "has_changes=false" >> "$GITHUB_OUTPUT"
-          fi
+        run: node tools/apidocs-diff.js compare --base origin/master --fetch-base --output /tmp/changes.md --github-output "$GITHUB_OUTPUT"
 
       - name: Comment on PR when trees change
         if: github.event_name == 'pull_request' && steps.tree-diff.outputs.has_changes == 'true'
@@ -65,7 +51,7 @@ jobs:
           script: |
             const fs = require('fs');
             const marker = '<!-- apidocs-diff -->';
-            const diff = fs.readFileSync('changes.md', 'utf8');
+            const diff = fs.readFileSync('/tmp/changes.md', 'utf8');
             const maxLength = 60000;
             const safeDiff = diff.length > maxLength
               ? `${diff.slice(0, maxLength)}\n... (truncated)`
@@ -116,4 +102,4 @@ jobs:
         uses: actions/upload-artifact@v6
         with:
           name: apidocs-diff
-          path: changes.md
+          path: /tmp/changes.md
