@@ -4,7 +4,7 @@
 
 import type { Page } from '@playwright/test';
 import type { QUnitErrorDetails } from '~/qunit/types.ts';
-import { getCapturedConsoleLogs, filterRelevantLogs } from '~/qunit/utils/console-capture.ts';
+import { getCapturedConsoleLogs } from '~/qunit/utils/console-capture.ts';
 
 /**
  * Captures comprehensive error details from a QUnit test execution
@@ -22,9 +22,8 @@ export async function captureQUnitErrorDetails(
         page.evaluate(() => window.__qunitFailedAssertions__ || [])
     ]);
 
-    // Capture and filter console logs
+    // Capture console/browser logs
     const consoleLogs = await getCapturedConsoleLogs(page);
-    const filteredLogs = filterRelevantLogs(consoleLogs);
 
     const endTime = Date.now();
 
@@ -33,8 +32,8 @@ export async function captureQUnitErrorDetails(
         qunitResults: qunitResults || { failed: 0, passed: 0, total: 0 },
         failedTests: failedTests || [],
         failedAssertions: failedAssertions || [],
-        browserLogs: filteredLogs.logs.map(log => log.message),
-        consoleErrors: filteredLogs.errors.map(error => error.message),
+        browserLogs: consoleLogs.logs.map(log => log.message),
+        consoleErrors: consoleLogs.errors.map(error => error.message),
         timing: {
             scriptLoad: 0, // Will be set by the caller
             testExecution: endTime - startTime,

@@ -22,6 +22,7 @@
  *
  * */
 
+import type Grid from '../../../Grid';
 import type Toolbar from '../../../UI/Toolbar';
 import type Column from '../../Column';
 
@@ -59,6 +60,13 @@ class HeaderCellToolbar implements Toolbar {
      * The column that this toolbar belongs to.
      */
     public column: Column;
+
+    /**
+     * Reference to the Grid instance for icon registry and options.
+     */
+    public get grid(): Grid {
+        return this.column.viewport.grid;
+    }
 
     public buttons: ToolbarButton[] = [];
 

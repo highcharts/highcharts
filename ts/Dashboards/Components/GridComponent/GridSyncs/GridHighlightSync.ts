@@ -63,10 +63,14 @@ const syncPair: SyncPair = {
         const onCellHover = (e: TableCellEvent): void => {
             if (table) {
                 const cell = e.target;
+                const rowId = cell.row.id;
+                if (typeof rowId !== 'number') {
+                    return;
+                }
 
                 cursor.emitCursor(table, {
                     type: 'position',
-                    row: cell.row.id,
+                    row: rowId,
                     column: cell.column.id,
                     state: 'point.mouseOver' + groupKey,
                     sourceId: this.id
@@ -77,10 +81,14 @@ const syncPair: SyncPair = {
         const onCellMouseOut = (e: TableCellEvent): void => {
             if (table) {
                 const cell = e.target;
+                const rowId = cell.row.id;
+                if (typeof rowId !== 'number') {
+                    return;
+                }
 
                 cursor.emitCursor(table, {
                     type: 'position',
-                    row: cell.row.id,
+                    row: rowId,
                     column: cell.column.id,
                     state: 'point.mouseOut' + groupKey,
                     sourceId: this.id
@@ -142,7 +150,7 @@ const syncPair: SyncPair = {
                 return;
             }
 
-            const rowIndex = viewport.dataTable.getLocalRowIndex(row);
+            const rowIndex = viewport.dataTable?.getLocalRowIndex(row);
             if (rowIndex === void 0) {
                 return;
             }

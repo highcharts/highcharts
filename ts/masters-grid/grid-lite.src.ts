@@ -35,6 +35,7 @@ import Table from '../Grid/Core/Table/Table.js';
 import CreditsLiteComposition from '../Grid/Lite/Credits/CreditsLiteComposition.js';
 import SvgIcons from '../Grid/Core/UI/SvgIcons.js';
 import Pagination from '../Grid/Core/Pagination/Pagination.js';
+import DataProviderRegistry from '../Grid/Core/Data/DataProviderRegistry.js';
 import ResponsiveComposition from '../Grid/Core/Responsive/ResponsiveComposition.js';
 import { merge } from '../Shared/Utilities.js';
 
@@ -48,6 +49,9 @@ import '../Data/Modifiers/InvertModifier.js';
 import '../Data/Modifiers/RangeModifier.js';
 import '../Data/Modifiers/SortModifier.js';
 import '../Data/Modifiers/FilterModifier.js';
+
+import '../Grid/Core/Data/LocalDataProvider.js';
+import '../Grid/Core/Responsive/ResponsiveComposition.js';
 
 
 /* *
@@ -64,6 +68,7 @@ const G = {
     DataCursor,
     DataModifier,
     DataPool,
+    DataProviderRegistry,
     DataTable,
     defaultOptions: Defaults.defaultOptions,
     Grid: _Grid,
@@ -99,6 +104,7 @@ export {
     DataCursor,
     DataModifier,
     DataPool,
+    DataProviderRegistry,
     DataTable,
     _Grid as Grid,
     _Options as Options,

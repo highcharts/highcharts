@@ -49,7 +49,6 @@ class FilterToolbarButton extends ToolbarButton {
 
     public override popup?: FilterPopup;
 
-
     /* *
      *
      *  Constructor

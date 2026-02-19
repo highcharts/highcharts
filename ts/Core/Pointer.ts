@@ -45,6 +45,7 @@ import {
     addEvent,
     attr,
     css,
+    defined,
     extend,
     find,
     fireEvent,
@@ -75,6 +76,27 @@ declare module './Chart/ChartBase'{
         pointer?: Pointer;
     }
 }
+
+/**
+ *
+ *  Functions
+ *
+ */
+
+/**
+ * Check whether the configured action key allows the interaction.
+ *
+ * @internal
+ * @param {Event} e
+ *        A mouse event.
+ * @param {string | undefined} key
+ *        Zoom or pan key.
+ * @return {boolean}
+ *         True if the key is undefined
+ *         or if the action key is pressed. False otherwise.
+ */
+const checkActionKey = (e: Event, key: string | undefined): boolean =>
+    !defined(key) || (e as any)[`${key}Key`];
 
 /* *
  *
@@ -516,7 +538,10 @@ class Pointer {
             }
 
             // Panning
-            if (clickedInside && !selectionMarker && panningEnabled) {
+            if (
+                clickedInside && !selectionMarker && panningEnabled &&
+                (checkActionKey(e, panKey))
+            ) {
                 chart.pan(e, panning as any);
             }
         }
@@ -2153,7 +2178,9 @@ class Pointer {
         this.zoomY = zoomY = /y/.test(zoomType);
         this.zoomHor = (zoomX && !inverted) || (zoomY && inverted);
         this.zoomVert = (zoomY && !inverted) || (zoomX && inverted);
-        this.hasZoom = zoomX || zoomY;
+        this.hasZoom = (zoomX || zoomY) &&
+            (checkActionKey(e, chart.zooming.key));
+
     }
 }
 

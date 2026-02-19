@@ -23,6 +23,7 @@
  * */
 
 import type { CellType as DataTableCellType } from '../../../Data/DataTable';
+import type CSSObject from '../../../Core/Renderer/CSSObject';
 import type TableRow from './Body/TableRow';
 import type HeaderRow from './Header/HeaderRow';
 
@@ -69,6 +70,11 @@ abstract class Cell {
      * An additional, custom class name that can be changed dynamically.
      */
     private customClassName?: string;
+
+    /**
+     * Custom inline styles currently applied from user options.
+     */
+    private customStyleProperties?: string[];
 
     /**
      * Array of cell events to be removed when the cell is destroyed.
@@ -200,7 +206,7 @@ abstract class Cell {
                 return (row as TableRow).index - vp.rows[0].index;
             }
 
-            const level = (row as HeaderRow).level;
+            const level = (row as unknown as HeaderRow).level;
             if (!header || level === void 0) {
                 return 0;
             }
@@ -277,9 +283,10 @@ abstract class Cell {
     /**
      * Renders the cell by appending the HTML element to the row.
      */
-    public render(): void {
+    public async render(): Promise<void> {
         this.row.htmlElement.appendChild(this.htmlElement);
         this.reflow();
+        return Promise.resolve();
     }
 
     /**
@@ -335,6 +342,48 @@ abstract class Cell {
 
         element.classList.add(...newClassName.split(/\s+/g));
         this.customClassName = newClassName;
+    }
+
+    /**
+     * Sets custom inline styles from options and removes the previously applied
+     * custom styles to keep updates deterministic.
+     *
+     * @param styles
+     * A style object to apply.
+     */
+    protected setCustomStyles(styles?: CSSObject): void {
+        const elementStyle = this.htmlElement.style;
+        const getCSSPropertyName = (property: string): string => (
+            property.indexOf('-') > -1 ?
+                property :
+                property.replace(/[A-Z]/g, '-$&').toLowerCase()
+        );
+
+        if (this.customStyleProperties) {
+            for (const property of this.customStyleProperties) {
+                elementStyle.removeProperty(property);
+            }
+        }
+
+        if (!styles) {
+            delete this.customStyleProperties;
+            return;
+        }
+
+        const appliedProperties: string[] = [];
+
+        for (const key of Object.keys(styles) as Array<keyof CSSObject>) {
+            const value = styles[key];
+            if (value === void 0 || value === null) {
+                continue;
+            }
+
+            const property = getCSSPropertyName(String(key));
+            elementStyle.setProperty(property, String(value));
+            appliedProperties.push(property);
+        }
+
+        this.customStyleProperties = appliedProperties;
     }
 
     /**

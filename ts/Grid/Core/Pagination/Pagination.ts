@@ -30,7 +30,7 @@ import type {
 } from './PaginationOptions';
 import type { DeepPartial } from '../../../Shared/Types';
 
-import Icons from './Icons.js';
+import { createGridIcon } from '../UI/SvgIcons.js';
 import Globals from '../Globals.js';
 import GridUtils from '../GridUtils.js';
 import AST from '../../../Core/Renderer/HTML/AST.js';
@@ -530,11 +530,14 @@ class Pagination {
             return;
         }
 
-        // Create first button
+        const firstIconEl = createGridIcon(
+            'doubleChevronLeft',
+            this.grid.options?.rendering?.icons
+        );
         this.firstButton = makeHTMLElement('button', {
-            className: Globals.getClassName('button'),
-            innerHTML: Icons.first
+            className: Globals.getClassName('button')
         }, container);
+        this.firstButton.appendChild(firstIconEl);
         this.firstButton.title = this.lang?.firstPage ?? '';
 
         // Set aria-label for a11y
@@ -572,11 +575,15 @@ class Pagination {
             return;
         }
 
-        // Create previous button
+        const prevIconName = 'chevronLeft';
+        const prevIconEl = createGridIcon(
+            prevIconName,
+            this.grid.options?.rendering?.icons
+        );
         this.prevButton = makeHTMLElement('button', {
-            className: Globals.getClassName('button'),
-            innerHTML: Icons.previous
+            className: Globals.getClassName('button')
         }, container);
+        this.prevButton.appendChild(prevIconEl);
         this.prevButton.title = this.lang?.previousPage ?? '';
 
         // Set aria-label for a11y
@@ -614,11 +621,15 @@ class Pagination {
             return;
         }
 
-        // Create next button
+        const nextIconName = 'chevronRight';
+        const nextIconEl = createGridIcon(
+            nextIconName,
+            this.grid.options?.rendering?.icons
+        );
         this.nextButton = makeHTMLElement('button', {
-            className: Globals.getClassName('button'),
-            innerHTML: Icons.next
+            className: Globals.getClassName('button')
         }, container);
+        this.nextButton.appendChild(nextIconEl);
         this.nextButton.title = this.lang?.nextPage ?? '';
 
         // Set aria-label for a11y
@@ -653,11 +664,15 @@ class Pagination {
             return;
         }
 
-        // Create last button
+        const lastIconName = 'doubleChevronRight';
+        const lastIconEl = createGridIcon(
+            lastIconName,
+            this.grid.options?.rendering?.icons
+        );
         this.lastButton = makeHTMLElement('button', {
-            className: Globals.getClassName('button'),
-            innerHTML: Icons.last
+            className: Globals.getClassName('button')
         }, container);
+        this.lastButton.appendChild(lastIconEl);
         this.lastButton.title = this.lang?.lastPage ?? '';
 
         // Set aria-label for a11y

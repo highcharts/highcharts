@@ -103,7 +103,6 @@ declare module '../../Core/Pagination/PaginationOptions' {
     interface PaginationOptions {
         /**
          * Pagination events.
-         *
          */
         events?: PaginationEvents;
     }

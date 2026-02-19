@@ -25,22 +25,23 @@
 
 import type { GroupedHeaderOptions } from '../../Options';
 import type { NoIdColumnOptions } from '../Column';
+import type CSSObject from '../../../../Core/Renderer/CSSObject';
 
 import Cell from '../Cell.js';
 import Column from '../Column';
 import Row from '../Row';
-import GridUtils from '../../GridUtils.js';
+import {
+    makeHTMLElement,
+    setHTMLContent,
+    createOptionsProxy,
+    resolveStyleValue,
+    mergeStyleValues
+} from '../../GridUtils.js';
 import ColumnSorting from '../Actions/ColumnSorting.js';
 import Globals from '../../Globals.js';
 import TableHeader from './TableHeader.js';
 import ColumnToolbar from './ColumnToolbar/ColumnToolbar.js';
 import { fireEvent, isString } from '../../../../Shared/Utilities.js';
-
-const {
-    makeHTMLElement,
-    setHTMLContent,
-    createOptionsProxy
-} = GridUtils;
 
 /* *
  *
@@ -162,7 +163,7 @@ class HeaderCell extends Cell {
     /**
      * Render the cell container.
      */
-    public override render(): void {
+    public override async render(): Promise<void> {
         const { column } = this;
         const options = createOptionsProxy(
             this.superColumnOptions,
@@ -238,7 +239,39 @@ class HeaderCell extends Cell {
         // Add custom class name from column options
         this.setCustomClassName(options.header?.className);
 
+        this.setCustomStyles(this.getColumnStyles());
+
         fireEvent(this, 'afterRender', { column });
+
+        return Promise.resolve();
+    }
+
+    /**
+     * Returns merged header styles from defaults and current column options.
+     *
+     */
+    private getColumnStyles(): (CSSObject | undefined) {
+        const { column } = this;
+
+        if (!column) {
+            return resolveStyleValue(this.superColumnOptions.header?.style);
+        }
+
+        const { grid } = this.row.viewport;
+        const rawColumnOptions = grid.columnOptionsMap?.[column.id]?.options;
+
+        return {
+            ...mergeStyleValues(
+                column,
+                grid.options?.columnDefaults?.style,
+                rawColumnOptions?.style
+            ),
+            ...mergeStyleValues(
+                column,
+                grid.options?.columnDefaults?.header?.style,
+                rawColumnOptions?.header?.style
+            )
+        };
     }
 
     public override reflow(): void {

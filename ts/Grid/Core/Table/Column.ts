@@ -38,7 +38,7 @@ import TextContent from './CellContent/TextContent.js';
 import Globals from '../Globals.js';
 import TableCell from './Body/TableCell';
 import GridUtils from '../GridUtils.js';
-import { defined, fireEvent } from '../../../Shared/Utilities.js';
+import { fireEvent } from '../../../Shared/Utilities.js';
 
 const {
     createOptionsProxy
@@ -70,7 +70,7 @@ export class Column {
     /**
      * Type of the data in the column.
      */
-    public readonly dataType: ColumnDataType;
+    public dataType: ColumnDataType = 'string';
 
     /**
      * The cells of the column.
@@ -83,7 +83,9 @@ export class Column {
     public id: string;
 
     /**
-     * The data of the column.
+     * The data of the column. Shouldn't be used directly in all cases, because
+     * it's not guaranteed to be defined (e.g. when using the lazy loading,
+     * `RemoteDataProvider`).
      */
     public data?: DataTableColumn;
 
@@ -143,10 +145,6 @@ export class Column {
         this.index = index;
         this.viewport = viewport;
 
-        this.loadData();
-
-        this.dataType = this.assumeDataType();
-
         // Populate column options map if not exists, to prepare option
         // references for each column.
         if (grid.options && !grid.columnOptionsMap?.[id]) {
@@ -166,10 +164,7 @@ export class Column {
         if (this.options.filtering?.enabled) {
             this.filtering = new ColumnFiltering(this);
         }
-
-        fireEvent(this, 'afterInit');
     }
-
 
     /* *
     *
@@ -178,10 +173,24 @@ export class Column {
     * */
 
     /**
+     * Initializes the column data-related properties.
+     */
+    public async init(): Promise<void> {
+        this.loadData();
+        this.dataType = await this.assumeDataType();
+        fireEvent(this, 'afterInit');
+    }
+
+    /**
      * Loads the data of the column from the viewport's data table.
      */
     public loadData(): void {
-        this.data = this.viewport.dataTable.getColumn(this.id, true);
+        const dp = this.viewport.grid.dataProvider;
+        if (dp && 'getDataTable' in dp) {
+            this.data = dp.getDataTable(true)?.getColumn(this.id, true);
+        } else {
+            delete this.data;
+        }
     }
 
     /**
@@ -199,49 +208,17 @@ export class Column {
      * Assumes the data type of the column based on the options or data in the
      * column if not specified.
      */
-    private assumeDataType(): ColumnDataType {
+    private async assumeDataType(): Promise<ColumnDataType> {
         const { grid } = this.viewport;
 
+        const dp = grid.dataProvider;
         const type = grid.columnOptionsMap?.[this.id]?.options.dataType ??
             grid.options?.columnDefaults?.dataType;
         if (type) {
             return type;
         }
 
-        if (!this.data) {
-            return 'string';
-        }
-
-        if (!Array.isArray(this.data)) {
-            // Typed array
-            return 'number';
-        }
-
-        for (let i = 0, iEnd = Math.min(this.data.length, 30); i < iEnd; ++i) {
-            if (!defined(this.data[i])) {
-                // If the data is null or undefined, we should look
-                // at the next value to determine the type.
-                continue;
-            }
-
-            switch (typeof this.data[i]) {
-                case 'number':
-                    return 'number';
-                case 'boolean':
-                    return 'boolean';
-                default:
-                    return 'string';
-            }
-        }
-
-        // eslint-disable-next-line no-console
-        console.warn(
-            `Column "${this.id}" contains too few data points with ` +
-            'unambiguous types to correctly determine its dataType. It\'s ' +
-            'recommended to set the `dataType` option for it.'
-        );
-
-        return 'string';
+        return (await dp?.getColumnDataType(this.id)) ?? 'string';
     }
 
     /**

@@ -94,7 +94,7 @@ class HeaderRow extends Row {
      *
      * @internal
      */
-    public renderContent(level: number): void {
+    public async renderContent(level: number): Promise<void> {
         const headerOpt = this.viewport.grid.options?.header;
         const vp = this.viewport;
         const enabledColumns = vp.grid.enabledColumns || [];
@@ -104,7 +104,7 @@ class HeaderRow extends Row {
         this.htmlElement.classList.add(Globals.getClassName('headerRow'));
 
         if (!headerOpt) {
-            super.render();
+            await super.render();
         } else {
             const columnsOnLevel = this.getColumnsAtLevel(headerOpt, level);
 
@@ -162,7 +162,7 @@ class HeaderRow extends Row {
                     );
                 }
 
-                headerCell.render();
+                await headerCell.render();
 
                 if (columnId) {
                     headerCell.htmlElement.setAttribute(
