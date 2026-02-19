@@ -333,6 +333,8 @@ export function createElement(
 /**
  * Utility for crisping a line position to the nearest full pixel depening on
  * the line width
+ *
+ * @internal
  * @param {number} value       The raw pixel position
  * @param {number} lineWidth   The line width
  * @param {boolean} [inverted] Whether the containing group is inverted.
@@ -989,6 +991,8 @@ export const find = (Array.prototype as any).find ?
  * (e.g. by `chart.destroy()`). For the details see
  * [issue #7901](https://github.com/highcharts/highcharts/issues/7901).
  *
+ * @internal
+ *
  * @function Highcharts.clearTimeout
  *
  * @param {number|undefined} id
@@ -1084,7 +1088,17 @@ export function isArray(obj: unknown): obj is Array<unknown> {
     return str === '[object Array]' || str === '[object Array Iterator]';
 }
 
-
+/**
+ * Utility function to check if object is a function.
+ *
+ * @function Highcharts.isFunction
+ *
+ * @param {*} obj
+ *        The item to check.
+ *
+ * @return {boolean}
+ *         True if the argument is a function.
+ */
 export function isFunction(obj: unknown): obj is Function { // eslint-disable-line
     return typeof obj === 'function';
 }
@@ -1465,6 +1479,8 @@ export function pInt(s: any, mag?: number): number {
 /**
  * Adds an item to an array, if it is not present in the array.
  *
+ * @internal
+ *
  * @function Highcharts.pushUnique
  *
  * @param {Array<unknown>} array
@@ -1514,6 +1530,8 @@ export function relativeLength(
 /**
  * Replaces text in a string with a given replacement in a loop to catch nested
  * matches after previous replacements.
+ *
+ * @internal
  *
  * @function Highcharts.replaceNested
  *
@@ -1722,6 +1740,9 @@ export function syncTimeout(
     return -1;
 }
 
+/**
+ * @internal
+ */
 export function ucfirst(s: unknown): string {
     return (
         (isString(s) ?
