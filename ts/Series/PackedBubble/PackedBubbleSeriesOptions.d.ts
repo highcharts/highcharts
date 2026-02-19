@@ -77,8 +77,7 @@ export interface PackedBubbleParentNodeOptions {
  *
  * @excluding connectEnds, connectNulls, cropThreshold, dragDrop, jitter,
  *            keys, pointPlacement, sizeByAbsoluteValue, step, xAxis,
- *            yAxis, zMax, zMin, dataSorting, boostThreshold,
- *            boostBlending
+ *            yAxis, dataSorting, boostThreshold, boostBlending
  *
  * @excluding cropThreshold, dataParser, dataSorting, dataURL, dragDrop, stack,
  *            boostThreshold, boostBlending
@@ -223,6 +222,36 @@ export interface PackedBubbleSeriesOptions
      * @since 7.1.0
      */
     useSimulation?: boolean;
+
+    /**
+     * The minimum for the Z value range. Defaults to the lowest Z value
+     * in the data.
+     *
+     * @see [zMax](#plotOptions.packedbubble.zMax)
+     *
+     * @sample {highcharts} highcharts/plotoptions/bubble-zmin-zmax/
+     *         Z has a possible range of 0-100
+     *
+     * @type      {number}
+     * @since     7.0.0
+     * @product   highcharts
+     */
+    zMin?: number;
+
+    /**
+     * The maximum for the Z value range. Defaults to the highest Z value
+     * in the data.
+     *
+     * @see [zMin](#plotOptions.packedbubble.zMin)
+     *
+     * @sample {highcharts} highcharts/plotoptions/bubble-zmin-zmax/
+     *         Z has a possible range of 0-100
+     *
+     * @type      {number}
+     * @since     7.0.0
+     * @product   highcharts
+     */
+    zMax?: number;
 
     zoneAxis?: ('x'|'y'|'z'|undefined);
 
