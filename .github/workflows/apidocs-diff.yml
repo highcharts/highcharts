@@ -23,8 +23,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
-        with:
-          ref: ${{ github.event_name == 'pull_request' && 'master' || github.ref }}
 
       - name: Use Node.js lts/*
         uses: actions/setup-node@v6
@@ -33,12 +31,6 @@ jobs:
           cache: 'npm'
 
       - run: npm ci
-
-      - name: Overlay PR TypeScript changes on trusted checkout
-        if: github.event_name == 'pull_request'
-        run: |
-          git fetch origin "pull/${{ github.event.pull_request.number }}/head:pr-head"
-          git checkout pr-head -- ts
 
       - name: Generate tree diff
         id: tree-diff
