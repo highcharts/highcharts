@@ -1,0 +1,63 @@
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/css/grid-pro.css");
+
+.table-wrapper {
+    margin: 10px;
+}
+
+.highcharts-light .theme-conditional-cells,
+.theme-conditional-cells {
+    td[data-value="Sales"] {
+        --hcg-cell-background: lightgreen;
+    }
+
+    td[data-value="Manager"] {
+        --hcg-cell-background: lightblue;
+        --hcg-row-hover-background: lightblue;
+    }
+
+    td[data-value="Katie"]::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        border: 2px dashed #b54242;
+    }
+}
+
+.highcharts-light .theme-conditional-rows,
+.theme-conditional-rows {
+    tr[data-row-index="0"] {
+        --hcg-cell-background: green;
+        --hcg-cell-color: #fff;
+        --hcg-row-hover-opacity: 30%;
+    }
+
+    tr:has(td[data-value*="Executive"]) {
+        --hcg-cell-background: blue;
+        --hcg-row-hover-background: blue;
+        --hcg-cell-color: #fff;
+    }
+}
+
+.highcharts-light .theme-conditional-columns,
+.theme-conditional-columns {
+    td:nth-of-type(1) {
+        --hcg-column-hover-background: #393939;
+        --hcg-column-hover-color: #fff;
+        --hcg-cell-hover-background: #393939;
+        --hcg-cell-hover-opacity: 80%;
+    }
+
+    td[data-column-id="Department"] {
+        --hcg-row-hover-opacity: 40%;
+        --hcg-cell-background: lightgreen;
+        --hcg-cell-hover-color: white;
+        --hcg-cell-hover-background: green;
+        --hcg-cell-hover-opacity: 100%;
+    }
+
+    th[data-column-id="Department"] {
+        --hcg-header-background: green;
+        --hcg-header-color: #fff;
+    }
+}

@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Honsi
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -637,11 +638,8 @@ class MapSeries extends ScatterSeries {
         // Handle state specific border or line width
         if (state) {
             const stateOptions = merge(
-                    this.options.states &&
-                    this.options.states[state] as MapSeriesOptions,
-                    point.options.states &&
-                    point.options.states[state] as MapPointOptions ||
-                    {}
+                    this.options.states?.[state] as MapSeriesOptions,
+                    point.options.states?.[state] || {}
                 ),
                 stateStrokeWidth = this.getStrokeWidth(stateOptions);
 

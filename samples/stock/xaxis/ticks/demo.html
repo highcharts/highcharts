@@ -1,4 +1,21 @@
-<div id="container"></div>
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/stock.js"></script>
+<script src="https://code.highcharts.com/modules/accessibility.js"></script>
+<script src="https://code.highcharts.com/themes/adaptive.js"></script>
 
-<script src="https://code.highcharts.com/stock/highstock.js"></script>
-<script src="https://code.highcharts.com/stock/modules/exporting.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@highcharts/controls@0.7.0" type="module"></script>
+
+<figure class="highcharts-figure">
+  <div id="container"></div>
+</figure>
+
+<div class="highcharts-controls-wrapper">
+  <highcharts-controls>
+    <highcharts-group header="Update options">
+      <highcharts-control type="color" path="xAxis.tickColor" value="#00c000"></highcharts-control>
+      <highcharts-control type="number" path="xAxis.tickLength" value="10" min="0" max="50"></highcharts-control>
+      <highcharts-control path="xAxis.tickWidth" value="2" min="0" max="5"></highcharts-control>
+      <highcharts-control type="select" path="xAxis.tickPosition" value="inside" options="inside,outside"></highcharts-control>
+    </highcharts-group>
+  </highcharts-controls>
+</div>

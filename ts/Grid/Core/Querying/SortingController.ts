@@ -2,11 +2,11 @@
  *
  *  Grid Sorting Controller class
  *
- *  (c) 2020-2025 Highsoft AS
+ *  (c) 2020-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Dawid Dragula
@@ -22,6 +22,7 @@
  * */
 
 import type { ColumnSortingOrder } from '../Options.js';
+import type { SortModifierOrderByOption } from '../../../Data/Modifiers/SortModifierOptions.js';
 
 import QueryingController from './QueryingController.js';
 import SortModifier from '../../../Data/Modifiers/SortModifier.js';
@@ -54,11 +55,9 @@ class SortingController {
     public currentSorting?: SortingState;
 
     /**
-     * The initial sorting options: column ID and sorting order.
-     * This is the sorting that is applied when the data grid is created or
-     * after the whole viewport is reloaded with changed sorting options.
+     * The current multi-column sorting options in priority order.
      */
-    private initialSorting?: SortingState;
+    public currentSortings?: SortingState[];
 
     /**
      * The modifier that is applied to the data table.
@@ -100,7 +99,35 @@ class SortingController {
      * @param columnId
      * The column ID to sort by.
      */
-    public setSorting(order: ColumnSortingOrder, columnId?: string): void {
+    public setSorting(order: ColumnSortingOrder, columnId?: string): void;
+    public setSorting(sortings: SortingState[]): void;
+    public setSorting(
+        orderOrSortings: (ColumnSortingOrder|SortingState[]),
+        columnId?: string
+    ): void {
+        if (Array.isArray(orderOrSortings)) {
+            const sortings = orderOrSortings
+                .filter((sorting): boolean => !!(
+                    sorting.columnId && sorting.order
+                ))
+                .map((sorting): SortingState => ({
+                    columnId: sorting.columnId,
+                    order: sorting.order
+                }));
+
+            const currentSortings = this.currentSortings || [];
+            if (!SortingController.sortingsEqual(sortings, currentSortings)) {
+                this.querying.shouldBeUpdated = true;
+                this.currentSortings = sortings;
+                this.currentSorting = sortings[0] || { order: null };
+            }
+
+            this.modifier = this.createModifier();
+            return;
+        }
+
+        const order = orderOrSortings;
+
         if (
             this.currentSorting?.columnId !== columnId ||
             this.currentSorting?.order !== order
@@ -110,67 +137,120 @@ class SortingController {
                 columnId,
                 order
             };
+            this.currentSortings = (
+                order && columnId ?
+                    [{ columnId, order }] :
+                    []
+            );
         }
 
         this.modifier = this.createModifier();
     }
 
     /**
+     * Checks whether two sorting state arrays are equal.
+     *
+     * @param a
+     * First sorting state array.
+     *
+     * @param b
+     * Second sorting state array.
+     */
+    private static sortingsEqual(
+        a: SortingState[],
+        b: SortingState[]
+    ): boolean {
+        if (a.length !== b.length) {
+            return false;
+        }
+
+        for (let i = 0, iEnd = a.length; i < iEnd; ++i) {
+            if (
+                a[i].columnId !== b[i].columnId ||
+                a[i].order !== b[i].order
+            ) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
      * Returns the sorting options from the data grid options.
      */
-    private getSortingOptions(): SortingState {
+    private getSortingOptions(): SortingState[] {
         const grid = this.querying.grid,
             { columnOptionsMap } = grid;
 
         if (!columnOptionsMap) {
-            return { order: null };
+            return [];
         }
 
         const columnIDs = Object.keys(columnOptionsMap);
 
-        let foundOrder: ColumnSortingOrder = null;
-        let foundColumnId: string | undefined;
-        for (let i = columnIDs.length - 1; i > -1; --i) {
+        const sortings: Array<SortingState & {
+            priority?: number;
+            index: number;
+        }> = [];
+        for (let i = 0, iEnd = columnIDs.length; i < iEnd; ++i) {
             const columnId = columnIDs[i];
             const columnOptions = columnOptionsMap[columnId]?.options || {};
             const order = columnOptions.sorting?.order;
 
             if (order) {
-                if (foundColumnId) {
-                    // eslint-disable-next-line no-console
-                    console.warn(
-                        'Grid: Only one column can be sorted at a time. ' +
-                        'Data will be sorted only by the last found column ' +
-                        `with the sorting order defined in the options: "${
-                            foundColumnId
-                        }".`
-                    );
-                    break;
-                }
-
-                foundOrder = order;
-                foundColumnId = columnId;
+                sortings.push({
+                    columnId,
+                    order,
+                    priority: columnOptions.sorting?.priority,
+                    index: i
+                });
             }
         }
 
-        return {
-            columnId: foundColumnId,
-            order: foundOrder
-        };
+        if (sortings.some((sorting): boolean =>
+            typeof sorting.priority === 'number'
+        )) {
+            sortings.sort((a, b): number => {
+                const aPriority = (
+                    typeof a.priority === 'number' ?
+                        a.priority :
+                        Number.POSITIVE_INFINITY
+                );
+                const bPriority = (
+                    typeof b.priority === 'number' ?
+                        b.priority :
+                        Number.POSITIVE_INFINITY
+                );
+
+                if (aPriority !== bPriority) {
+                    return aPriority - bPriority;
+                }
+
+                return a.index - b.index;
+            });
+        } else {
+            sortings.reverse();
+        }
+
+        return sortings.map((sorting): SortingState => ({
+            columnId: sorting.columnId,
+            order: sorting.order
+        }));
     }
 
     /**
      * Loads sorting options from the data grid options.
      */
     public loadOptions(): void {
-        const stateFromOptions = this.getSortingOptions();
-
+        const sortingsFromOptions = this.getSortingOptions();
         if (
-            stateFromOptions.columnId !== this.initialSorting?.columnId ||
-            stateFromOptions.order !== this.initialSorting?.order
+            !SortingController.sortingsEqual(
+                sortingsFromOptions,
+                this.currentSortings || []
+            )
         ) {
-            this.initialSorting = stateFromOptions;
-            this.setSorting(stateFromOptions.order, stateFromOptions.columnId);
+            this.setSorting(sortingsFromOptions);
         }
     }
 
@@ -178,22 +258,34 @@ class SortingController {
      * Returns the sorting modifier based on the loaded sorting options.
      */
     private createModifier(): SortModifier | undefined {
-        if (!this.currentSorting) {
+        const sortings = (
+            this.currentSortings ||
+            (this.currentSorting ? [this.currentSorting] : [])
+        ).filter((
+            sorting
+        ): sorting is SortingState & { columnId: string } => !!(
+            sorting.columnId && sorting.order
+        ));
+
+        if (!sortings.length) {
             return;
         }
 
-        const { columnId, order } = this.currentSorting;
-        if (!order || !columnId) {
-            return;
-        }
         const grid = this.querying.grid;
 
+        const defaultCompare =
+            grid.options?.columnDefaults?.sorting?.compare;
+
         return new SortModifier({
-            orderByColumn: columnId,
-            direction: order,
-            compare: grid.columnOptionsMap?.[columnId]?.options
-                ?.sorting?.compare ||
-                grid.options?.columnDefaults?.sorting?.compare
+            direction: sortings[0].order as ('asc'|'desc'),
+            columns: sortings.map((
+                sorting
+            ): SortModifierOrderByOption => ({
+                column: sorting.columnId,
+                direction: sorting.order as ('asc'|'desc'),
+                compare: grid.columnOptionsMap?.[sorting.columnId]
+                    ?.options?.sorting?.compare || defaultCompare
+            }))
         });
     }
 }

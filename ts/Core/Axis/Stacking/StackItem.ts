@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Honsi
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -47,6 +48,7 @@ const {
  *
  * */
 
+/** @internal */
 export interface AdjustStackPositionProps {
     labelBox: BBoxObject;
     verticalAlign: VerticalAlignValue;
@@ -60,6 +62,7 @@ export interface AlignOptions {
     y?: number;
 }
 
+/** @internal */
 export interface StackBoxProps {
     xOffset: number;
     width: number;
@@ -68,6 +71,12 @@ export interface StackBoxProps {
     defaultX?: number;
     xAxis?: Axis;
 }
+
+/**
+ * Use StackItem instead.
+ * @deprecated
+ */
+export type StackItemObject = StackItem;
 
 /* *
  *
@@ -78,7 +87,6 @@ export interface StackBoxProps {
 /**
  * The class for stacks. Each stack, on a specific X value and either negative
  * or positive, has its own stack item.
- * @private
  */
 class StackItem {
 
@@ -88,6 +96,7 @@ class StackItem {
      *
      * */
 
+    /** @internal */
     public constructor(
         axis: StackingAxis,
         options: StackLabelOptions,
@@ -150,25 +159,96 @@ class StackItem {
      *
      * */
 
+    /**
+     * Alignment settings
+     * @name Highcharts.StackItemObject#alignOptions
+     * @type {Highcharts.AlignObject}
+     */
     public alignOptions: AlignOptions;
+
+    /**
+     * Related axis
+     * @name Highcharts.StackItemObject#axis
+     * @type {Highcharts.Axis}
+     */
     public axis: StackingAxis;
+
+    /** @internal */
     public base?: string;
+
+    /**
+     * Cumulative value of the stacked data points
+     * @name Highcharts.StackItemObject#cumulative
+     * @type {number}
+     */
     public cumulative: number | null;
+
+    /** @internal */
     public hasValidPoints: boolean;
+
+    /**
+     * True if on the negative side
+     * @name Highcharts.StackItemObject#isNegative
+     * @type {boolean}
+     */
     public isNegative: boolean;
+
+    /**
+     * Related SVG element
+     * @name Highcharts.StackItemObject#label
+     * @type {Highcharts.SVGElement}
+     */
     public label?: SVGLabel;
+
+    /** @internal */
     public leftCliff: number;
+
+    /**
+     * Related stack options
+     * @name Highcharts.StackItemObject#options
+     * @type {Highcharts.YAxisStackLabelsOptions}
+     */
     public options: StackLabelOptions;
+
+    /** @internal */
     public padding?: number;
+
+    /** @internal */
     public points: Record<string, Array<number>>;
+
+    /** @internal */
     public rightCliff: number;
+
+    /** @internal */
     public rotation?: number;
+
+    /** @internal */
     public shadow?: SVGElement;
+
+    /** @internal */
     public shadowGroup?: SVGElement;
+
+    /** @internal */
     public stack?: string|number;
+
+    /** @internal */
     public textAlign: AlignValue;
+
+    /**
+     * Total value of the stacked data points
+     * @name Highcharts.StackItemObject#total
+     * @type {number}
+     */
     public total: number | null;
+
+    /** @internal */
     public touched?: number;
+
+    /**
+     * Shared x value of the stack
+     * @name Highcharts.StackItemObject#x
+     * @type {number}
+     */
     public x: number;
 
     /* *
@@ -177,16 +257,14 @@ class StackItem {
      *
      * */
 
-    /**
-     * @private
-     */
+    /** @internal */
     public destroy(): void {
         destroyObjectProperties(this, this.axis);
     }
 
     /**
      * Renders the stack total label and adds it to the stack label group.
-     * @private
+     * @internal
      */
     public render(group: SVGElement): void {
         const chart = this.axis.chart,
@@ -245,7 +323,7 @@ class StackItem {
     /**
      * Sets the offset that the stack has from the x value and repositions the
      * label.
-     * @private
+     * @internal
      */
     public setOffset(
         xOffset: number,
@@ -346,8 +424,10 @@ class StackItem {
      * Adjust the stack BBox position, to take into consideration the alignment
      * of the dataLabel. This is necessary to make the stackDataLabel work with
      * core methods like `SVGLabel.adjust` and `Series.justifyDataLabel`.
+     * @internal
      * @param AdjustStackPositionProps
-     * @return {{x: number, y: number}} Adjusted BBox position of the stack.
+     * @return {{x: number, y: number}}
+     * Adjusted BBox position of the stack.
      */
     public adjustStackPosition({
         labelBox,
@@ -362,9 +442,10 @@ class StackItem {
     }
     /**
      * Get the bbox of the stack.
-     * @private
+     * @internal
      * @function Highcharts.StackItem#getStackBox
-     * @return {BBoxObject} The x, y, height, width of the stack.
+     * @return {BBoxObject}
+     * The x, y, height, width of the stack.
      */
     public getStackBox(stackBoxProps: StackBoxProps): BBoxObject {
         const stackItem = this,

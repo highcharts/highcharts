@@ -1,6 +1,4 @@
 ---
- name: Color axis width and height
- authors:
-   - Hubert Kozik
- js_wrap: b
+name: Demo of colorAxis.width and height
+js_wrap: b
 ...

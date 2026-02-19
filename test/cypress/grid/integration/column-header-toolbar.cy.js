@@ -13,12 +13,12 @@ describe('Column Header Toolbar', () => {
 
     it('One active button is present.', () => {
         cy.viewport(1900, 600);
-        cy.get('.hcg-button.active').should('have.length', 1);
+        cy.get('.hcg-button.hcg-button-selected').should('have.length', 1);
     });
 
     it('Clicking filter button opens menu.', () => {
         cy.viewport(1900, 600);
-        cy.get('.hcg-button.active').first().click();
+        cy.get('.hcg-button.hcg-button-selected').first().click();
         cy.get('.hcg-popup-content').should('have.length', 1);
     })
 
@@ -26,8 +26,8 @@ describe('Column Header Toolbar', () => {
         cy.viewport(1900, 600);
         cy.get('.hcg-popup-content input')
             .type('{backspace}{backspace}{backspace}{backspace}');
-        cy.get('.hcg-button.active').should('have.length', 0);
-        cy.get('#container').click();
+        cy.get('.hcg-button.hcg-button-selected').should('have.length', 0);
+        cy.get('#container').click({ force: true });
         cy.get('.hcg-popup-content').should('not.exist');
     });
 
@@ -36,18 +36,18 @@ describe('Column Header Toolbar', () => {
         cy.grid().then(grid => {
             grid.viewport.getColumn('product').sorting.setOrder('desc');
         });
-        cy.get('.hcg-button.active').should('have.length', 1);
+        cy.get('.hcg-button.hcg-button-selected').should('have.length', 1);
     });
 
     it('Shrinking window minifies toolbar.', () => {
         cy.viewport(800, 600);
-        cy.get('.hcg-button.active').first().parent()
+        cy.get('.hcg-button.hcg-button-selected').first().parent()
             .should('have.class', 'hcg-header-cell-menu-icon');
     });
 
     it('Clicking menu icon opens menu.', () => {
         cy.viewport(800, 600);
-        cy.get('.hcg-button.active').click();
+        cy.get('.hcg-button.hcg-button-selected').click();
         cy.get('.hcg-popup').should('have.length', 1);
     });
 

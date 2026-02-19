@@ -2,11 +2,11 @@
  *
  *  Cell Content Pro composition
  *
- *  (c) 2020-2025 Highsoft AS
+ *  (c) 2020-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Dawid Dragula
@@ -96,6 +96,9 @@ function afterColumnInit(this: Column): void {
  * Formatted cell content.
  */
 function createCellContent(this: Column, cell: TableCell): CellContent {
+    if (!this.cellRenderer) {
+        throw new Error('Called cell renderer on uninitialized column.');
+    }
     return this.cellRenderer.render(cell);
 }
 
@@ -120,7 +123,7 @@ declare module '../../Core/Table/Column' {
         /**
          * The cell view renderer instance for the column.
          */
-        cellRenderer: CellRendererType;
+        cellRenderer?: CellRendererType;
     }
 }
 

@@ -1,6 +1,5 @@
 /* *
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -14,11 +13,14 @@
 
 import type Annotation from './Annotation';
 import type AnnotationChart from './AnnotationChart';
+import type { AnnotationMockPointOptions } from './AnnotationOptions';
 import type { AnnotationPointType } from './AnnotationSeries';
 import type BBoxObject from '../../Core/Renderer/BBoxObject';
 import type Controllable from './Controllables/Controllable';
 import type ControlTargetOptions from './ControlTargetOptions';
-import type MockPointOptions from './MockPointOptions';
+import type {
+    AnnotationMockPointOptionsObject
+} from './AnnotationMockPointOptionsObject';
 
 import ControlPoint from './ControlPoint.js';
 import MockPoint from './MockPoint.js';
@@ -31,22 +33,53 @@ import U from '../../Core/Utilities.js';
  * */
 
 interface ControlTarget {
+    /** @internal */
     annotation?: Annotation;
+
+    /** @internal */
     chart: AnnotationChart;
+
+    /**
+     * @internal
+     * @name Highcharts.AnnotationControllable#controlPoints
+     * @type {Array<Highcharts.AnnotationControlPoint>}
+     */
     controlPoints: Array<ControlPoint>;
+
+    /** @internal */
     options: ControlTargetOptions;
+
+    /** @internal */
     points: Array<AnnotationPointType>;
+
+    /** @internal */
     addControlPoints(): void;
+
+    /** @internal */
     anchor(point: AnnotationPointType): ControlTarget.Anchor;
+
+    /** @internal */
     destroyControlTarget(): void;
-    getPointsOptions(): Array<MockPointOptions>;
+
+    /** @internal */
+    getPointsOptions(): Array<AnnotationMockPointOptions>;
+
+    /** @internal */
     linkPoints(): (Array<AnnotationPointType>|undefined);
+
+    /** @internal */
     point(
-        pointOptions: (string|Function|MockPoint|MockPointOptions),
+        pointOptions: AnnotationMockPointOptions | MockPoint,
         point: (AnnotationPointType|null)
     ): (AnnotationPointType|null);
+
+    /** @internal */
     redrawControlPoints(animation?: boolean): void;
+
+    /** @internal */
     renderControlPoints(): void;
+
+    /** @internal */
     transform(
         transformation: string,
         cx: (number|null),
@@ -54,6 +87,8 @@ interface ControlTarget {
         p1: number,
         p2?: number
     ): void;
+
+    /** @internal */
     transformPoint(
         transformation: string,
         cx: (number|null),
@@ -62,7 +97,11 @@ interface ControlTarget {
         p2: (number|undefined),
         i: number
     ): void;
+
+    /** @internal */
     translate(dx: number, dy: number): void;
+
+    /** @internal */
     translatePoint(dx: number, dy: number, i: number): void;
 }
 
@@ -72,6 +111,7 @@ interface ControlTarget {
  *
  * */
 
+/** @internal */
 namespace ControlTarget {
 
     /* *
@@ -80,11 +120,34 @@ namespace ControlTarget {
      *
      * */
 
+    /**
+     * An object which denotes a controllable's anchor positions - relative and
+     * absolute.
+     *
+     * @internal
+     * @interface Highcharts.AnnotationAnchorObject
+     */
     export interface Anchor {
+        /**
+         * Absolute position.
+         *
+         * @internal
+         * @name Highcharts.AnnotationAnchorObject#absolutePosition
+         * @type {Highcharts.BBoxObject}
+         */
         absolutePosition: BBoxObject;
+
+        /**
+         * Relative to the plot area position.
+         *
+         * @internal
+         * @name Highcharts.AnnotationAnchorObject#relativePosition
+         * @type {Highcharts.BBoxObject}
+         */
         relativePosition: BBoxObject;
     }
 
+    /** @internal */
     export type Class = (typeof Annotation|typeof Controllable);
 
     /* *
@@ -95,7 +158,7 @@ namespace ControlTarget {
 
     /**
      * Add control points.
-     * @private
+     * @internal
      */
     function addControlPoints(
         this: ControlTarget
@@ -125,7 +188,8 @@ namespace ControlTarget {
 
     /**
      * Returns object which denotes anchor position - relative and absolute.
-     * @private
+     *
+     * @internal
      * @param {Highcharts.AnnotationPointType} point
      * An annotation point.
      *
@@ -165,7 +229,7 @@ namespace ControlTarget {
 
     /**
      * Adds shared functions to be used with targets of ControlPoint.
-     * @private
+     * @internal
      */
     export function compose(
         ControlTargetClass: Class
@@ -193,7 +257,7 @@ namespace ControlTarget {
 
     /**
      * Destroy control points.
-     * @private
+     * @internal
      */
     function destroyControlTarget(
         this: ControlTarget
@@ -215,13 +279,14 @@ namespace ControlTarget {
 
     /**
      * Get the points options.
-     * @private
+     *
+     * @internal
      * @return {Array<Highcharts.PointOptionsObject>}
      * An array of points' options.
      */
     function getPointsOptions(
         this: ControlTarget
-    ): Array<MockPointOptions> {
+    ): Array<AnnotationMockPointOptionsObject> {
         const options = this.options;
 
         return (
@@ -232,7 +297,8 @@ namespace ControlTarget {
 
     /**
      * Find point-like objects based on points options.
-     * @private
+     *
+     * @internal
      * @return {Array<Annotation.PointBase>}
      *         An array of point-like objects.
      */
@@ -241,7 +307,7 @@ namespace ControlTarget {
     ): (Array<AnnotationPointType>|undefined) {
         const pointsOptions = this.getPointsOptions(),
             points = this.points,
-            len = (pointsOptions && pointsOptions.length) || 0;
+            len = pointsOptions?.length || 0;
 
         let i: number,
             point: (AnnotationPointType|null);
@@ -267,8 +333,14 @@ namespace ControlTarget {
 
     /**
      * Map point's options to a point-like object.
-     * @private
-     * @param {string|Function|Highcharts.AnnotationMockPointOptionsObject|Highcharts.AnnotationPointType} pointOptions
+     *
+     * @internal
+     * @param {
+     *      string|
+     *      Function|
+     *      Highcharts.AnnotationMockPointOptionsObject|
+     *      Highcharts.AnnotationPointType
+     * } pointOptions
      *        Point's options.
      * @param {Highcharts.AnnotationPointType} point
      *        A point-like instance.
@@ -277,10 +349,12 @@ namespace ControlTarget {
      */
     function point(
         this: ControlTarget,
-        pointOptions: (string|Function|MockPoint|MockPointOptions),
+        pointOptions: (
+            string|Function|MockPoint|AnnotationMockPointOptionsObject
+        ),
         point: (AnnotationPointType|null)
     ): (AnnotationPointType|null) {
-        if (pointOptions && (pointOptions as MockPointOptions).series) {
+        if (pointOptions && (pointOptions as any).series) {
             return pointOptions as any;
         }
 
@@ -289,16 +363,17 @@ namespace ControlTarget {
                 point = new MockPoint(
                     this.chart,
                     this,
-                    pointOptions as MockPointOptions
+                    pointOptions as AnnotationMockPointOptionsObject
                 );
             } else if (U.isString(pointOptions)) {
                 point = (this.chart.get(pointOptions) as any) || null;
             } else if (typeof pointOptions === 'function') {
-                const pointConfig: (MockPoint|MockPointOptions) =
-                    pointOptions.call(point, this);
+                const pointConfigOrPoint: (
+                    MockPoint | AnnotationMockPointOptionsObject
+                ) = pointOptions.call(point, this);
 
-                point = pointConfig.series ?
-                    pointConfig :
+                point = pointConfigOrPoint.series ?
+                    pointConfigOrPoint :
                     new MockPoint(
                         this.chart,
                         this,
@@ -312,7 +387,7 @@ namespace ControlTarget {
 
     /**
      * Redraw control points.
-     * @private
+     * @internal
      */
     function redrawControlPoints(
         this: ControlTarget,
@@ -325,7 +400,7 @@ namespace ControlTarget {
 
     /**
      * Render control points.
-     * @private
+     * @internal
      */
     function renderControlPoints(
         this: ControlTarget
@@ -337,7 +412,8 @@ namespace ControlTarget {
 
     /**
      * Transform control points with a specific transformation.
-     * @private
+     *
+     * @internal
      * @param {string} transformation
      *        A transformation name
      * @param {number|null} cx
@@ -373,7 +449,8 @@ namespace ControlTarget {
      * Transform a point with a specific transformation
      * If a transformed point is a real point it is replaced with
      * the mock point.
-     * @private
+     *
+     * @internal
      * @param {string} transformation
      *        A transformation name
      * @param {number|null} cx
@@ -407,7 +484,8 @@ namespace ControlTarget {
 
     /**
      * Translate control points.
-     * @private
+     *
+     * @internal
      * @param {number} dx
      *        Translation for x coordinate
      * @param {number} dy
@@ -423,7 +501,8 @@ namespace ControlTarget {
 
     /**
      * Translate a specific control point.
-     * @private
+     *
+     * @internal
      * @param {number} dx
      *        Translation for x coordinate
      * @param {number} dy

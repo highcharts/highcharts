@@ -1,6 +1,6 @@
 {
   "name": "highcharts",
-  "version": "12.4.0",
+  "version": "12.5.0",
   "private": true,
   "description": "JavaScript charting framework",
   "module": "esm/highcharts.js",
@@ -32,16 +32,23 @@
     "dlint": "gulp lint --product Dashboards",
     "gapi": "gulp grid/api-docs && gulp api-server --product Grid",
     "gcode": "gulp scripts --product Grid",
+    "gemini": "npm x -y --package=@google/gemini-cli gemini -- --approval-mode auto_edit --model gemini-2.5-flash",
     "glint": "cd ts/Grid && npx eslint .",
     "gtest": "gulp test --product Grid --force",
-    "test": "npx gulp test-ts --force && npx gulp test --force --speak",
+    "test": "npx playwright test --project=setup-highcharts --project=setup-dashboards --project=setup-grid-lite --project=setup-grid-pro --project=highcharts --project=dashboards --project=grid-lite --project=grid-pro --project=grid-shared --project=qunit",
     "test-node": "tsx ./test/ts-node-unit-tests/index.ts",
     "test-node:watch": "tsx ./test/ts-node-unit-tests/index.ts --watch",
-    "test:precommit": "npx gulp test-ts --modified && npx gulp test --modified && npm run test-node",
-    "testall": "npx gulp test --browsers all --force --speak",
-    "test-all": "npx gulp test --browsers all --force --speak",
+    "test:precommit": "npx playwright test --project=setup-highcharts --project=setup-dashboards --project=dashboards --project=highcharts && npx gulp test --modified && npm run test-node",
+    "test:pw": "playwright test --project=setup-highcharts --project=highcharts",
+    "test:pw:all": "playwright test",
+    "test:pw:qunit": "playwright test --project=setup-highcharts --project=qunit --project=qunit-firefox",
+    "test:pw:visual": "playwright test --project=setup-highcharts --project=visual",
+    "test:pw:dashboards": "playwright test --project=setup-dashboards --project=dashboards",
+    "test:pw:dashboards:all": "playwright test --project=setup-dashboards --project=dashboards --project=dashboards-firefox --project=dashboards-webkit",
+    "test:pw:internal": "playwright test --project=setup-highcharts --project=setup-dashboards --project=internal",
+    "testall": "npx playwright test",
+    "test-all": "npx playwright test",
     "test-dts": "npx gulp scripts && npx gulp jsdoc-dts && npx gulp lint-dts",
-    "test-tskarma": "gulp test-karma",
     "build": "npx gulp dist",
     "jsdoc": "npx gulp jsdoc-watch --skip-websearch",
     "jsdoc-highcharts": "npx gulp jsdoc-watch --products highcharts --skip-websearch",
@@ -66,17 +73,20 @@
     "@babel/preset-env": "^7.26.0",
     "@babel/preset-typescript": "^7.26.0",
     "@cypress-audit/lighthouse": "1.4.2",
-    "@highcharts/eslint-plugin-highcharts": "github:highcharts/eslint-plugin-highcharts#v1.1.0",
+    "@highcharts/eslint-plugin-highcharts": "github:highcharts/eslint-plugin-highcharts#v1.1.1",
     "@highcharts/highcharts-assembler": "github:highcharts/highcharts-assembler#v1.5.6",
     "@highcharts/highcharts-declarations-generator": "github:highcharts/highcharts-declarations-generator#v1.4.3",
     "@highcharts/highcharts-documentation-generators": "github:highcharts/highcharts-documentation-generators#v0.6.19",
     "@highcharts/highsoft-websearch": "github:highcharts/highsoft-websearch#v0.0.5",
     "@highcharts/map-collection": "^2.2.0",
     "@octokit/rest": "^20.1.1",
+    "@playwright/test": "^1.53.2",
     "@stylistic/eslint-plugin": "^3.0.0",
     "@swc/core": "^1.9.2",
     "@types/gulp": "^4.0.17",
     "@types/jquery": "^3.5.30",
+    "@types/js-yaml": "^4.0.9",
+    "@types/node": "^24.0.12",
     "@types/qunit": "^2.19.10",
     "@types/trusted-types": "^2.0.7",
     "@types/yargs": "^17.0.32",
@@ -89,6 +99,7 @@
     "cloudflare": "^3.2.0",
     "colors": "^1.4.0",
     "cspell": "^8.16.0",
+    "css-loader": "7.1.3",
     "cypress": "^13.11.0",
     "cypress-visual-regression": "3.0.0",
     "eslint": "^8.57.0",
@@ -104,7 +115,6 @@
     "gulp-jsdoc3": "^3.0.0",
     "gulp-zip": "5.1.0",
     "gzip-size": "6.0.0",
-    "highlight.js": "^11.10.0",
     "husky": "^8.0.3",
     "jquery": "^3.7.1",
     "js-yaml": "3.14.1",
@@ -123,6 +133,7 @@
     "lint-staged": "^15.2.5",
     "lolex": "^6.0.0",
     "marked": "^4.2.12",
+    "mini-css-extract-plugin": "2.10.0",
     "moment": "2.30",
     "moment-timezone": "^0.5.45",
     "node-fetch": "^2.6.12",
@@ -145,10 +156,12 @@
     "undertaker-forward-reference": "^2.0.0",
     "webpack": "^5.102.0",
     "webpack-cli": "^5.1.4",
+    "webpack-remove-empty-scripts": "1.1.1",
     "yargs": "^17.7.2"
   },
   "workspaces": [
-    "tools/docs-preview"
+    "tools/docs-preview",
+    "tests/"
   ],
   "overrides": {
     "gulp-jsdoc3": {
@@ -178,10 +191,13 @@
       "npm run glint"
     ],
     "*.css": [
-      "stylelint"
+      "stylelint --allow-empty-input"
     ],
     "./docs/**/*.md": [
       "npx cspell -c ./tools/cspell/cspell.json"
+    ],
+    "./tests/**": [
+      "npx --workspace tests eslint"
     ]
   },
   "license": "SEE LICENSE IN <license.txt>"

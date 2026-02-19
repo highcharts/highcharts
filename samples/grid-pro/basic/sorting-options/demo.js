@@ -15,7 +15,12 @@ Grid.grid('container', {
     columns: [{
         id: 'product',
         sorting: {
-            sortable: false
+            enabled: false
+        }
+    }, {
+        id: 'weight',
+        sorting: {
+            orderSequence: ['asc', null, 'desc', null]
         }
     }, {
         id: 'price',

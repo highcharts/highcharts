@@ -2,11 +2,11 @@
  *
  *  Grid Pro Pagination class
  *
- *  (c) 2020-2025 Highsoft AS
+ *  (c) 2020-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Sebastian Bochan
@@ -41,6 +41,7 @@ const { addEvent, pushUnique } = Utilities;
  * @param PaginationClass
  * The class to extend.
  *
+ * @internal
  */
 export function compose(
     PaginationClass: typeof Pagination
@@ -55,7 +56,7 @@ export function compose(
         'beforePageChange',
         (e: PaginationEvent): void => {
             const { target, currentPage, nextPage, pageSize } = e;
-            target.options.events?.beforePageChange?.call(target, {
+            target.options?.events?.beforePageChange?.call(target, {
                 currentPage: currentPage,
                 nextPage: nextPage,
                 pageSize: pageSize
@@ -68,7 +69,7 @@ export function compose(
         'afterPageChange',
         (e: PaginationEvent): void => {
             const { target, currentPage, previousPage, pageSize } = e;
-            target.options.events?.afterPageChange?.call(target, {
+            target.options?.events?.afterPageChange?.call(target, {
                 currentPage: currentPage,
                 previousPage: previousPage,
                 pageSize: pageSize
@@ -81,7 +82,7 @@ export function compose(
         'beforePageSizeChange',
         (e: PaginationEvent): void => {
             const { target, newPageSize, pageSize } = e;
-            target.options.events?.beforePageSizeChange?.call(target, {
+            target.options?.events?.beforePageSizeChange?.call(target, {
                 pageSize: pageSize,
                 newPageSize: newPageSize
             });
@@ -93,7 +94,7 @@ export function compose(
         'afterPageSizeChange',
         (e: PaginationEvent): void => {
             const { target, previousPageSize, pageSize } = e;
-            target.options.events?.afterPageSizeChange?.call(target, {
+            target.options?.events?.afterPageSizeChange?.call(target, {
                 pageSize: pageSize,
                 previousPageSize: previousPageSize
             });

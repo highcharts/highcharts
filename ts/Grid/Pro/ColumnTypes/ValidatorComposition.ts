@@ -2,11 +2,11 @@
  *
  *  Validator Composition.
  *
- *  (c) 2020-2024 Highsoft AS
+ *  (c) 2020-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Sebastian Bochan
@@ -59,7 +59,7 @@ export function compose(
         return;
     }
 
-    addEvent(TableClass, 'afterInit', initValidatorComposition);
+    addEvent(TableClass, 'beforeInit', initValidatorComposition);
     addEvent(TableClass, 'afterDestroy', destroy);
 }
 
@@ -74,7 +74,7 @@ function initValidatorComposition(this: Table): void {
  * Callback function called after table destroy.
  */
 function destroy(this: Table): void {
-    this.validator.destroy();
+    this.validator?.destroy();
 }
 
 
@@ -89,7 +89,7 @@ declare module '../../Core/Table/Table' {
         /**
          * The validator object.
          */
-        validator: Validator;
+        validator?: Validator;
     }
 }
 
