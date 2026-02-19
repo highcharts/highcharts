@@ -103,6 +103,10 @@ h1 {
 }
 
 @media only screen and (max-width: 1400px) {
+    .card.small {
+        grid-column-end: span 4;
+    }
+
     .card.medium,
     .card.large {
         grid-column-end: span 4;
