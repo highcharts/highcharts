@@ -42,6 +42,7 @@ jobs:
         with:
           script: |
             const fs = require('fs');
+            const { createOrUpdateComment } = require('./.github/scripts/commentOnPR');
             const marker = '<!-- apidocs-diff -->';
             const diff = fs.readFileSync('/tmp/changes.md', 'utf8');
             const maxLength = 60000;
@@ -62,34 +63,13 @@ jobs:
               '</details>'
             ].join('\n');
 
-            const { owner, repo } = context.repo;
-            const issue_number = context.issue.number;
-            const { data: comments } = await github.rest.issues.listComments({
-              owner,
-              repo,
-              issue_number,
-              per_page: 100
-            });
-
-            const existing = comments.find(comment =>
-              comment.user?.type === 'Bot' && comment.body?.includes(marker)
+            await createOrUpdateComment(
+              github,
+              context,
+              'API docs diff',
+              body,
+              marker
             );
-
-            if (existing) {
-              await github.rest.issues.updateComment({
-                owner,
-                repo,
-                comment_id: existing.id,
-                body
-              });
-            } else {
-              await github.rest.issues.createComment({
-                owner,
-                repo,
-                issue_number,
-                body
-              });
-            }
       - name: Store artifacts
         uses: actions/upload-artifact@v6
         with:
