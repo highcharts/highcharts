@@ -6,6 +6,7 @@ const Os = require('node:os');
 const Path = require('node:path');
 
 const TREE_FILE_PATTERN = /^tree.*\.json$/u;
+const IGNORED_META_FIELDS = ['commit', 'date'];
 
 /**
  * @typedef {{
@@ -231,6 +232,51 @@ function copyTreeFiles(sourceDirectory, targetDirectory) {
     }
 
     return files;
+}
+
+/**
+ * Remove volatile metadata fields from parsed tree JSON.
+ * @param {Record<string, any>} parsedTree Parsed tree JSON object.
+ * @return {void} Nothing.
+ */
+function stripIgnoredMetaFields(parsedTree) {
+    for (const key of ['meta', '_meta']) {
+        const meta = parsedTree[key];
+        if (!meta || typeof meta !== 'object' || Array.isArray(meta)) {
+            continue;
+        }
+
+        for (const field of IGNORED_META_FIELDS) {
+            if (Object.prototype.hasOwnProperty.call(meta, field)) {
+                delete meta[field];
+            }
+        }
+    }
+}
+
+/**
+ * Normalize tree JSON files in a snapshot directory before diffing.
+ * @param {string} snapshotDirectory Directory containing copied tree JSON files.
+ * @return {void} Nothing.
+ */
+function normalizeSnapshotTrees(snapshotDirectory) {
+    for (const fileName of listTreeFiles(snapshotDirectory)) {
+        const filePath = Path.join(snapshotDirectory, fileName);
+        const originalContent = Fs.readFileSync(filePath, 'utf8');
+
+        try {
+            /** @type {Record<string, any>} */
+            const parsed = JSON.parse(originalContent);
+            if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
+                continue;
+            }
+
+            stripIgnoredMetaFields(parsed);
+            Fs.writeFileSync(filePath, `${JSON.stringify(parsed, null, 4)}\n`, 'utf8');
+        } catch {
+            // Keep original content when parsing fails.
+        }
+    }
 }
 
 /**
@@ -656,6 +702,9 @@ async function main(options) {
                     fail('No tree*.json files were generated.');
                 }
 
+                normalizeSnapshotTrees(baseSnapshot);
+                normalizeSnapshotTrees(currentSnapshot);
+
                 diff = createDiff(tempRoot, 'base', 'current');
                 break;
             }
@@ -694,6 +743,9 @@ async function main(options) {
                 if (!currentFiles.length) {
                     fail('No tree*.json files were generated from the working tree.');
                 }
+
+                normalizeSnapshotTrees(baseSnapshot);
+                normalizeSnapshotTrees(currentSnapshot);
 
                 diff = createDiff(tempRoot, 'base', 'current');
                 break;
