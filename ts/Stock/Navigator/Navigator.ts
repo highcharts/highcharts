@@ -171,6 +171,7 @@ class Navigator {
     public opposite!: boolean;
     public otherHandlePos?: number;
     public outline!: SVGElement;
+    public partsEventsToUnbind?: Array<Function>;
     public range!: number;
     public rendered!: boolean;
     public reversedExtremes?: boolean;
@@ -492,18 +493,19 @@ class Navigator {
 
         // Create the handles:
         if (navigatorOptions.handles?.enabled) {
+            let redrawHandles;
+
             const handlesOptions =
                 navigatorOptions.handles as Required<NavigatorHandlesOptions>,
                 { height, width } = handlesOptions;
 
             [0, 1].forEach((index: number): void => {
                 const newSymbolName = handlesOptions.symbols[index];
+                redrawHandles =
+                        navigator.handles[index]?.symbolName !== newSymbolName;
 
                 // First render of handles or update of handle symbol
-                if (
-                    !navigator.handles[index] ||
-                    navigator.handles[index].symbolName !== newSymbolName
-                ) {
+                if (redrawHandles) {
                     navigator.handles[index]?.destroy();
 
                     navigator.handles[index] = renderer.symbol(
@@ -523,23 +525,6 @@ class Navigator {
                             'highcharts-navigator-handle-' +
                             ['left', 'right'][index]
                         ).add(navigatorGroup);
-
-                    if (navigator.eventsToUnbind?.length) {
-                        ['mousedown', 'touchstart'].forEach(
-                            (eventName): void => {
-                                addEvent(
-                                    navigator.handles[index].element,
-                                    eventName,
-                                    function (e: PointerEvent): void {
-                                        navigator.handlesMousedown(
-                                            e,
-                                            index
-                                        );
-                                    }
-                                );
-                            }
-                        );
-                    }
                 }
 
 
@@ -565,6 +550,13 @@ class Navigator {
                         .css(mouseCursor);
                 }
             });
+
+            if (redrawHandles) {
+                navigator.partsEventsToUnbind = [
+                    ...navigator.getPartsEvents('mousedown'),
+                    ...navigator.getPartsEvents('touchstart')
+                ];
+            }
         }
     }
 
@@ -846,8 +838,8 @@ class Navigator {
             chart = navigator.chart,
             container = chart.container;
 
-        let eventsToUnbind = [],
-            mouseMoveHandler,
+        const eventsToUnbind = [];
+        let mouseMoveHandler,
             mouseUpHandler;
 
         /**
@@ -865,7 +857,6 @@ class Navigator {
             navigator.onMouseUp(e);
         };
 
-        eventsToUnbind = navigator.getPartsEvents('mousedown');
         eventsToUnbind.push(
             // Add mouse move and mouseup events. These are bind to doc/div,
             // because Navigator.grabbedSomething flags are stored in mousedown
@@ -876,7 +867,6 @@ class Navigator {
             addEvent(chart.renderTo, 'touchmove', mouseMoveHandler),
             addEvent(container.ownerDocument, 'touchend', mouseUpHandler)
         );
-        eventsToUnbind.concat(navigator.getPartsEvents('touchstart'));
 
         navigator.eventsToUnbind = eventsToUnbind;
 
@@ -911,11 +901,11 @@ class Navigator {
     public getPartsEvents(
         eventName: string
     ): Array<Function> {
-        const navigator = this,
+        const navigator = this as any,
             events = [] as Array<Function>;
 
         ['shades', 'handles'].forEach(function (name: string): void {
-            (navigator as any)[name].forEach(function (
+            navigator[name].forEach(function (
                 navigatorItem: SVGElement,
                 index: number
             ): void {
@@ -924,7 +914,7 @@ class Navigator {
                         navigatorItem.element,
                         eventName,
                         function (e: PointerEvent): void {
-                            (navigator as any)[name + 'Mousedown'](e, index);
+                            navigator[name + 'Mousedown'](e, index);
                         }
                     )
                 );

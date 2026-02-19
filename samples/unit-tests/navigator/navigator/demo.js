@@ -57,7 +57,7 @@ QUnit.test(
             }
         });
 
-        const leftHandle = chart.navigator.handles[0],
+        let leftHandle = chart.navigator.handles[0],
             rightHandle = chart.navigator.handles[1],
             lhEvents = leftHandle.element.hcEvents,
             rhEvents = rightHandle.element.hcEvents;
@@ -68,7 +68,7 @@ QUnit.test(
             lhEvents.touchstart.length === 1 &&
             rhEvents.touchstart.length === 1,
             `Navigator handles should always have only one mousedown and
-            touchstart event.`
+            touchstart event after update.`
         );
 
         assert.strictEqual(
@@ -107,6 +107,20 @@ QUnit.test(
             plotSizeYBefore,
             plotSizeYAfter,
             'Navigator toggle should not shrink the chart. (#21775)'
+        );
+
+        leftHandle = chart.navigator.handles[0];
+        rightHandle = chart.navigator.handles[1];
+        lhEvents = leftHandle.element.hcEvents;
+        rhEvents = rightHandle.element.hcEvents;
+
+        assert.ok(
+            lhEvents.mousedown.length === 1 &&
+            rhEvents.mousedown.length === 1 &&
+            lhEvents.touchstart.length === 1 &&
+            rhEvents.touchstart.length === 1,
+            `Navigator handles should always have only one mousedown and
+            touchstart event after navigator enabled toggle.`
         );
     }
 );
