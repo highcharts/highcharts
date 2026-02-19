@@ -1,9 +1,9 @@
 # PlotOptions
 
-You can configure default series options using the `PlotOptions` component:
+You can set default options that affect multiple series by using the `PlotOptions` component:
 
 ```tsx
-import { Chart, Serie, PlotOptions } from "@highcharts/react";
+import { Chart, Series, PlotOptions } from "@highcharts/react";
 
 export default function PlotOptionsChart() {
   return (
@@ -15,4 +15,4 @@ export default function PlotOptionsChart() {
 }
 ```
 
-The `PlotOptions` component accepts all [plotOptions API options](https://api.highcharts.com/highcharts/plotOptions) as props.
+At the moment, the `PlotOptions` component accepts only the [series API option](https://api.highcharts.com/highcharts/plotOptions.series).

@@ -3,7 +3,7 @@
 You can add the [data module](https://www.highcharts.com/docs/working-with-data/data-module) to your chart using the `Data` component:
 
 ```tsx
-import { Chart, Series } from "@highcharts/react";
+import { Chart } from "@highcharts/react";
 import { Data } from "@highcharts/react/options/data";
 
 const csvData = `Month,Sales,Expenses
@@ -17,8 +17,6 @@ export default function DataChart() {
   return (
     <Chart>
       <Data csv={csvData} />
-      <Series />
-      <Series />
     </Chart>
   );
 }

@@ -3,36 +3,29 @@
 You can add [drilldown](https://www.highcharts.com/docs/chart-concepts/drilldown) to your chart using the `Drilldown` component:
 
 ```tsx
-import { Chart, Series } from "@highcharts/react";
+import { Chart, XAxis } from "@highcharts/react";
+import { ColumnSeries } from "@highcharts/react/series/Column";
 import { Drilldown } from "@highcharts/react/options/drilldown";
 
 export default function DrilldownChart() {
   return (
-    <Chart
-      options={{
-        chart: {
-          type: "column",
-        },
-        xAxis: {
-          type: "category",
-        },
-      }}
-    >
-      <Series
+    <Chart>
+      <XAxis type="category" />
+      <ColumnSeries
         data={[
           { name: "Animals", y: 5, drilldown: "animals" },
           { name: "Fruits", y: 2, drilldown: "fruits" },
         ]}
       />
       <Drilldown>
-        <Series
+        <ColumnSeries
           data={[
             ["Cats", 3],
             ["Dogs", 5],
           ]}
           id="animals"
         />
-        <Series
+        <ColumnSeries
           data={[
             ["Apples", 2],
             ["Oranges", 5],
