@@ -76,6 +76,141 @@ test.describe('Cell Context Menu', () => {
             }, { timeout: 10000 });
         });
 
+        test(
+            'No contextMenu config and no pinning keeps native context menu',
+            async ({ page }) => {
+                await page.evaluate(() => {
+                    const existing = document.getElementById('cm-auto-off');
+                    existing?.remove();
+
+                    const container = document.createElement('div');
+                    container.id = 'cm-auto-off';
+                    document.body.appendChild(container);
+
+                    (window as any).Grid.grid(container, {
+                        dataTable: {
+                            columns: {
+                                id: ['ROW-001'],
+                                value: [1]
+                            }
+                        }
+                    });
+                });
+
+                const cell = page.locator(
+                    '#cm-auto-off tbody tr[data-row-index="0"] td[data-column-id="id"]'
+                );
+                await cell.click({ button: 'right' });
+
+                await expect(page.locator('.hcg-popup')).toHaveCount(0);
+            }
+        );
+
+        test(
+            'No contextMenu config with explicit pinning shows defaults',
+            async ({ page }) => {
+                await page.evaluate(() => {
+                    const existing = document.getElementById('cm-auto-on');
+                    existing?.remove();
+
+                    const container = document.createElement('div');
+                    container.id = 'cm-auto-on';
+                    document.body.appendChild(container);
+
+                    (window as any).Grid.grid(container, {
+                        dataTable: {
+                            columns: {
+                                id: ['ROW-001'],
+                                value: [1]
+                            }
+                        },
+                        rendering: {
+                            rows: {
+                                pinning: {
+                                    idColumn: 'id'
+                                }
+                            }
+                        }
+                    });
+                });
+
+                const cell = page.locator(
+                    '#cm-auto-on tbody tr[data-row-index="0"] td[data-column-id="id"]'
+                );
+                await cell.click({ button: 'right' });
+
+                const popup = page.locator('.hcg-popup').last();
+                await expect(popup).toContainText('Pin row to top');
+                await expect(popup).toContainText('Pin row to bottom');
+                await expect(popup).toContainText('Unpin row');
+            }
+        );
+
+        test('Auto mode reacts to runtime pinning updates', async ({ page }) => {
+            await page.evaluate(() => {
+                const existing = document.getElementById('cm-auto-runtime');
+                existing?.remove();
+
+                const container = document.createElement('div');
+                container.id = 'cm-auto-runtime';
+                document.body.appendChild(container);
+
+                (window as any).cmAutoRuntimeGrid = (window as any).Grid.grid(
+                    container,
+                    {
+                        dataTable: {
+                            columns: {
+                                id: ['ROW-001'],
+                                value: [1]
+                            }
+                        }
+                    }
+                );
+            });
+
+            const cell = page.locator(
+                '#cm-auto-runtime tbody tr[data-row-index="0"] td[data-column-id="id"]'
+            );
+
+            await cell.click({ button: 'right' });
+            await expect(page.locator('.hcg-popup')).toHaveCount(0);
+
+            await page.evaluate(async () => {
+                await (window as any).cmAutoRuntimeGrid.update({
+                    rendering: {
+                        rows: {
+                            pinning: {
+                                idColumn: 'id'
+                            }
+                        }
+                    }
+                });
+            });
+
+            await cell.click({ button: 'right' });
+            const popup = page.locator('.hcg-popup').last();
+            await expect(popup).toContainText('Pin row to top');
+
+            await popup.press('Escape');
+            await expect(popup).toBeHidden();
+
+            await page.evaluate(async () => {
+                await (window as any).cmAutoRuntimeGrid.update({
+                    rendering: {
+                        rows: {
+                            pinning: {
+                                enabled: false,
+                                idColumn: 'id'
+                            }
+                        }
+                    }
+                });
+            });
+
+            await cell.click({ button: 'right' });
+            await expect(page.locator('.hcg-popup')).toHaveCount(0);
+        });
+
         test('Context menu closes after scrolling and refreshes context', async ({ page }) => {
             const initialState = await page.evaluate(() => {
                 const grid = (window as any).Grid.grids[0];

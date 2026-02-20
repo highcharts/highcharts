@@ -181,6 +181,51 @@ function isPinningOptionEnabled(cell: TableCell): boolean {
 }
 
 /**
+ * Returns whether row pinning was explicitly configured by the user.
+ *
+ * @param cell
+ * Table cell for the context menu.
+ *
+ * @return
+ * True when row pinning exists in user options and is not disabled.
+ */
+function isPinningExplicitlyConfigured(cell: TableCell): boolean {
+    const userPinning = cell.row.viewport.grid.userOptions
+        ?.rendering
+        ?.rows
+        ?.pinning;
+
+    return !!(userPinning && userPinning.enabled !== false);
+}
+
+/**
+ * Returns whether the context menu should be enabled for a cell.
+ *
+ * @param cell
+ * Table cell for the context menu.
+ *
+ * @return
+ * True when the context menu is effectively enabled.
+ */
+function isContextMenuEnabled(cell: TableCell): boolean {
+    const options = cell.column?.options.cells?.contextMenu;
+
+    if (options?.enabled === false) {
+        return false;
+    }
+
+    if (options?.enabled === true) {
+        return true;
+    }
+
+    if (options?.items !== void 0) {
+        return true;
+    }
+
+    return isPinningExplicitlyConfigured(cell);
+}
+
+/**
  * Resolves the default built-in action label.
  *
  * @param cell
@@ -447,11 +492,11 @@ function resolveCellContextMenuItemsAtLevel(
 export function resolveCellContextMenuItems(
     cell: TableCell
 ): ResolvedCellContextMenuItemOptions[] {
-    const options = cell.column?.options.cells?.contextMenu;
-    if (options?.enabled === false) {
+    if (!isContextMenuEnabled(cell)) {
         return [];
     }
 
+    const options = cell.column?.options.cells?.contextMenu;
     return resolveCellContextMenuItemsAtLevel(cell, options?.items, true);
 }
 

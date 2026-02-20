@@ -175,9 +175,9 @@ export type CellContextMenuItemOptions =
  */
 export interface CellContextMenuOptions {
     /**
-     * Whether the cell context menu is enabled.
-     *
-     * @default true
+     * Whether the cell context menu is enabled. When omitted, the menu is
+     * enabled when `items` are provided, or when row pinning is explicitly
+     * configured in `rendering.rows.pinning` and not disabled.
      */
     enabled?: boolean;
 
