@@ -53,4 +53,30 @@ QUnit.test('Scatter series general tests.', function (assert) {
         '1',
         'The point with the last index should be highlighted'
     );
+
+    // --- Added tests for #24096 ---
+    // 1. Verify Scatter series allows outside plot interaction
+    const mockEvent = {
+        target: series.points[0].graphic.element
+    };
+
+    assert.strictEqual(
+        series.allowOutsidePlotInteraction(mockEvent),
+        true,
+        'ScatterSeries should allow interaction when targeting a ' +
+        'highcharts-point element (#24096).'
+    );
+
+    // 2. Add a column series to verify the base Series class fallback
+    const columnSeries = chart.addSeries({
+        type: 'column',
+        data: [1, 2]
+    });
+
+    assert.strictEqual(
+        columnSeries.allowOutsidePlotInteraction(mockEvent),
+        false,
+        'Default series (Column) should NOT allow interaction outside ' +
+        'he plot area (#24096).'
+    );
 });
