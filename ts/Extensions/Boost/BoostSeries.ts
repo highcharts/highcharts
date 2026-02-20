@@ -780,6 +780,7 @@ function exitBoost(
 }
 
 /**
+ * True when we can skip the expensive data loop (processData/getExtremes).
  * @internal
  * @function Highcharts.Series#hasExtremes
  */
@@ -790,7 +791,6 @@ function hasExtremes(
     const options = series.options,
         threshold = pick(options.boostThreshold, Number.MAX_VALUE);
 
-    // Return early if boost is disabled.
     if (threshold === 0) {
         return false;
     }
@@ -802,17 +802,10 @@ function hasExtremes(
 
     return (
         dataLength >= threshold &&
-        // Defined yAxis extremes
-        isNumber(yAxis.min) &&
-        isNumber(yAxis.max) &&
-        // Defined (and required) xAxis extremes
-        (!checkX ||
-            (isNumber(xAxis.min) && isNumber(xAxis.max))
-        ) &&
-        // Defined (e.g. heatmap) colorAxis extremes
-        (!colorAxis ||
-            (isNumber(colorAxis.min) && isNumber(colorAxis.max))
-        )
+        isNumber(yAxis?.min) &&
+        isNumber(yAxis?.max) &&
+        (!checkX || (isNumber(xAxis?.min) && isNumber(xAxis?.max))) &&
+        (!colorAxis || (isNumber(colorAxis.min) && isNumber(colorAxis.max)))
     );
 }
 
@@ -1472,6 +1465,11 @@ function seriesRenderCanvas(this: Series): void {
 
     /** @internal */
     const boostOptions = renderer.settings,
+        chunkSize = (
+            isNumber(boostOptions.chunkSize) && boostOptions.chunkSize > 0 ?
+                boostOptions.chunkSize :
+                CHUNK_SIZE
+        ),
         doneProcessing = (): void => {
             fireEvent(this, 'renderedCanvas');
 
@@ -1501,7 +1499,8 @@ function seriesRenderCanvas(this: Series): void {
                 this.data.slice(cropStart) :
                 (xData || rawData),
             processPoint,
-            doneProcessing
+            doneProcessing,
+            chunkSize
         );
     }
 }
@@ -1615,13 +1614,10 @@ function wrapSeriesGetExtremes(
 ): DataExtremesObject {
 
     if (this.boosted) {
-        if (hasExtremes(this)) {
+        if (hasExtremes(this, true)) {
             return {};
         }
-        if (this.xAxis.isPanning || this.yAxis.isPanning) {
-            // Do not re-compute the extremes during panning, because looping
-            // the data is expensive. The `this` contains the `dataMin` and
-            // `dataMax` to use.
+        if (this.xAxis?.isPanning || this.yAxis?.isPanning) {
             return this;
         }
     }

@@ -443,7 +443,7 @@ class ColumnFiltering {
     private renderClearButton(inputWrapper: HTMLElement): void {
         this.clearButton = makeHTMLElement('button', {
             className: Globals.getClassName('clearFilterButton'),
-            innerText: 'Clear filter' // TODO: Lang
+            innerText: 'Clear filter' // TODO(lang): Lang
         }, inputWrapper);
         this.clearButton.setAttribute('tabindex', '-1');
         this.clearButton.disabled = !this.isFilteringApplied();

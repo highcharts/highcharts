@@ -1,0 +1,20 @@
+/* SPDX-License-Identifier: LicenseRef-Highcharts */
+
+/**
+ * @license Highcharts Grid Lite v@product.version@
+ *
+ * (c) 2009-2025 Highsoft AS
+ *
+ * A commercial license may be required depending on use.
+ * See www.highcharts.com/license
+ */
+
+/*  ==== UPGRADE WARNING NOTE  ==== */
+/**
+ * This file is provided for backward compatibility only.
+ * Please use grid-lite.css directly instead.
+ * This file will be removed in the future.
+ */
+/* ==== END UPGRADE WARNING NOTE ==== */
+
+@import url("./grid-lite.css");

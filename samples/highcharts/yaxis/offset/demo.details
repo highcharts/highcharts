@@ -1,6 +1,4 @@
 ---
- name: Demo of axis offset options
- authors:
-   - Torstein Hønsi
- js_wrap: b
+name: Demo of axis offset options
+js_wrap: b
 ...

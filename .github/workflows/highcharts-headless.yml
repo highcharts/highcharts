@@ -96,7 +96,7 @@ jobs:
         run: npx gulp scripts
 
       - name: Run Highcharts Playwright tests
-        run: npx playwright test --project=setup-highcharts --project=highcharts
+        run: npx playwright test --project=highcharts
 
       - name: Run QUnit Playwright tests
         run: npx playwright test --project=qunit
