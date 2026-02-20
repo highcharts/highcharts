@@ -1,6 +1,6 @@
 describe('Grid sorting.', () => {
     before(() => {
-        cy.visit('grid-pro/cypress/sorting-options');
+        cy.visit('grid-pro/e2e/sorting-options');
     });
 
     it('Grid should be sorted initially by price in ascending order.', () => {

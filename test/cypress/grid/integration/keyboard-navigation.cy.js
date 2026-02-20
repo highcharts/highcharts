@@ -1,6 +1,6 @@
 describe('Keyboard navigation in Grid.', () => {
     before(() => {
-        cy.visit('/grid-pro/basic/overview');
+        cy.visit('grid-pro/basic/overview');
     });
 
     it('The first visible cell is focusable.', () => {
