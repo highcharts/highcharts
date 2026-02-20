@@ -29,6 +29,7 @@ import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
  *
  * */
 
+/** @internal */
 class BulletPoint extends ColumnSeries.prototype.pointClass {
 
     /* *
@@ -71,4 +72,5 @@ class BulletPoint extends ColumnSeries.prototype.pointClass {
  *
  * */
 
+/** @internal */
 export default BulletPoint;
