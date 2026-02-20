@@ -911,9 +911,6 @@ function filterSeries(
         }
     });
 
-
-    // Filter out depricated duplicates
-
     return Array.from(filteredSeriesMap.values());
 }
 
