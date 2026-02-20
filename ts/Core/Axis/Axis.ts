@@ -4607,9 +4607,15 @@ class Axis {
                 }
             }
 
-            graphic.show().attr({
-                d: path
-            });
+            graphic.show();
+
+            // Animate the crosshair when it has animation options (e.g. color
+            // axis marker) and has been drawn before
+            graphic.animate(
+                { d: path },
+                options?.animation ?
+                    animObject(options.animation) : { duration: 0 }
+            );
 
             if (categorized && !(options as any).width) {
                 graphic.attr({
