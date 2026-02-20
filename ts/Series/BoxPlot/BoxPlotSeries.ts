@@ -46,7 +46,7 @@ const {
 /**
  * The boxplot series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes#boxplot
  *
@@ -418,6 +418,7 @@ extend(BoxPlotSeries.prototype, {
  *
  * */
 
+/** @internal */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         boxplot: typeof BoxPlotSeries;
