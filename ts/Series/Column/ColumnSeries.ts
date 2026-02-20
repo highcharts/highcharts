@@ -874,10 +874,10 @@ class ColumnSeries extends Series {
                                 visiblePlotOnly: true
                             }
                         ) ||
-                        // Added condition for scatter points on the edge,
-                        // #24096
+                        // Allow specific series types to extend interaction
+                        // outside the plot area, #24096
                         (
-                            series.type === 'scatter' &&
+                            series.allowOutsidePlotInteraction(e) ||
                             pointer?.inClass(
                                 e.target as any,
                                 'highcharts-point'

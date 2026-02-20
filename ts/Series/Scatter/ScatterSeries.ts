@@ -19,6 +19,7 @@
 
 import type ScatterPoint from './ScatterPoint';
 import type ScatterSeriesOptions from './ScatterSeriesOptions';
+import type PointerEvent from '../../Core/PointerEvent.js';
 
 import ScatterSeriesDefaults from './ScatterSeriesDefaults.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
@@ -141,6 +142,21 @@ class ScatterSeries extends LineSeries {
         } else if (this.graph) {
             this.graph = this.graph.destroy();
         }
+    }
+
+    /**
+     * Allow scatter points on the edge to be interacted with outside the plot
+     * area, #24096.
+     * * @private
+     * @function Highcharts.ScatterSeries#allowOutsidePlotInteraction
+     * @param {PointerEvent} e The pointer event.
+     * @return {boolean} True if interaction is allowed.
+     */
+    public allowOutsidePlotInteraction(e: PointerEvent): boolean {
+        return !!this.chart.pointer?.inClass(
+            e.target as any,
+            'highcharts-point'
+        );
     }
 
     /* eslint-enable valid-jsdoc */
