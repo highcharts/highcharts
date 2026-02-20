@@ -4618,7 +4618,7 @@ class Axis {
                     d: path as SVGPath
                 });
 
-                if (categorized && !(options).width) {
+                if (categorized && !options.width) {
                     currentCross.attr({
                         'stroke-width': this.transA
                     });
