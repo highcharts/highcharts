@@ -14,15 +14,22 @@
 /* eslint-disable max-len */
 
 /**
+ * Helper function to generate SVG icon prefix with given viewBox size.
+ * @internal
+ */
+const stockIconPrefix = (viewBox: number): string =>
+    `<?xml version="1.0" encoding="utf-8"?>
+        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 ${viewBox} ${viewBox}">`;
+
+/**
  * Constants
  */
-const openingTag = `<?xml version="1.0" encoding="utf-8"?>
-    <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" x="0px" y="0px"`;
+
 const fillColor = '#4B4B4D';
+const iconStrokeAttrs = 'fill="none" stroke="#4B4B4D" stroke-width="1.5" stroke-miterlimit="10"';
 
 export default {
-    'annotations-hidden.svg': `${openingTag}
-       viewBox="0 0 32 32" enable-background="new 0 0 32 32">
+    'annotations-hidden.svg': `${stockIconPrefix(32)}
   <g>
       <g>
           <path fill="${fillColor}" d="M16.001,20.25c-2.344,0-4.25-1.906-4.25-4.25c0-2.343,1.906-4.25,4.25-4.25s4.25,1.907,4.25,4.25
@@ -38,8 +45,7 @@ export default {
   </g>
   </svg>
   `,
-    'annotations-visible.svg': `${openingTag}
-       viewBox="0 0 32 32" enable-background="new 0 0 32 32">
+    'annotations-visible.svg': `${stockIconPrefix(32)}
   <g>
       <path fill="${fillColor}" d="M11.751,16c0,0.427,0.082,0.831,0.2,1.22l1.309-1.31c0.048-1.443,1.208-2.604,2.652-2.651l1.309-1.309
           c-0.389-0.118-0.793-0.2-1.22-0.2C13.657,11.75,11.751,13.656,11.751,16z"/>
@@ -55,21 +61,18 @@ export default {
   </g>
   </svg>
   `,
-    'arrow-bottom.svg': `${openingTag}
-       viewBox="0 0 32 32" enable-background="new 0 0 32 32">
+    'arrow-bottom.svg': `${stockIconPrefix(32)}
   <g>
       <polygon fill="${fillColor}" transform="rotate(45,15,15)" points="12.78,25.03 11.72,23.97 19.689,16 11.72,8.03 12.78,6.97 21.811,16"/>
   </g>
   </svg>`,
-    'arrow-left.svg': `${openingTag}
-       viewBox="0 0 32 32" enable-background="new 0 0 32 32">
+    'arrow-left.svg': `${stockIconPrefix(32)}
   <g>
       <polygon fill="${fillColor}" points="19.22,25.03 10.189,16 19.22,6.97 20.28,8.03 12.311,16 20.28,23.97"/>
   </g>
   </svg>
   `,
-    'arrow-line.svg': `${openingTag}
-       viewBox="0 0 32 32" enable-background="new 0 0 32 32">
+    'arrow-line.svg': `${stockIconPrefix(32)}
   <path fill="${fillColor}" d="M26.679,8.25L28,4l-4.25,1.321l0.934,0.935l-3.502,3.502c-0.212-0.083-0.44-0.133-0.682-0.133
       c-1.035,0-1.875,0.84-1.875,1.875c0,0.241,0.05,0.47,0.133,0.682l-7.576,7.576c-0.212-0.083-0.44-0.133-0.682-0.133
       c-1.035,0-1.875,0.84-1.875,1.875c0,0.241,0.05,0.47,0.133,0.682L4.97,25.97L6.03,27.03l3.788-3.788
@@ -77,23 +80,20 @@ export default {
       c0.212,0.083,0.44,0.133,0.682,0.133c1.035,0,1.875-0.84,1.875-1.875c0-0.241-0.05-0.47-0.133-0.682l3.502-3.502L26.679,8.25z"/>
   </svg>
   `,
-    'arrow-ray.svg': `${openingTag}
-       viewBox="0 0 32 32" enable-background="new 0 0 32 32">
+    'arrow-ray.svg': `${stockIconPrefix(32)}
   <path fill="${fillColor}" d="M25.429,9.5L27,5l-4.5,1.571l0.934,0.935l-5.252,5.252c-0.212-0.083-0.44-0.133-0.682-0.133
       c-1.035,0-1.875,0.84-1.875,1.875c0,0.241,0.05,0.47,0.133,0.682l-7.576,7.576c-0.212-0.083-0.44-0.133-0.682-0.133
       c-1.035,0-1.875,0.84-1.875,1.875s0.84,1.875,1.875,1.875s1.875-0.84,1.875-1.875c0-0.241-0.05-0.47-0.133-0.682l7.576-7.576
       c0.212,0.083,0.44,0.133,0.682,0.133c1.035,0,1.875-0.84,1.875-1.875c0-0.241-0.05-0.47-0.133-0.682l5.252-5.252L25.429,9.5z"/>
   </svg>
   `,
-    'arrow-right.svg': `${openingTag}
-       viewBox="0 0 32 32" enable-background="new 0 0 32 32">
+    'arrow-right.svg': `${stockIconPrefix(32)}
   <g>
       <polygon fill="${fillColor}" points="12.78,25.03 11.72,23.97 19.689,16 11.72,8.03 12.78,6.97 21.811,16"/>
   </g>
   </svg>
   `,
-    'arrow-segment.svg': `${openingTag}
-       viewBox="0 0 32 32" enable-background="new 0 0 32 32">
+    'arrow-segment.svg': `${stockIconPrefix(32)}
   <g>
       <circle fill="${fillColor}" cx="24.5" cy="7.5" r="1.875"/>
       <path fill="${fillColor}" d="M19.684,11.256L8.182,22.758c-0.212-0.083-0.44-0.133-0.682-0.133c-1.035,0-1.875,0.84-1.875,1.875
@@ -102,19 +102,14 @@ export default {
   </g>
   </svg>
   `,
-    'arrow.svg': `${openingTag}
-       viewBox="0 0 60 60" style="enable-background:new 0 0 60 60;">
-  <style type="text/css">
-      .st0{fill:none;stroke:#666666;stroke-width:5;stroke-miterlimit:10;}
-  </style>
+    'arrow.svg': `${stockIconPrefix(60)}
   <g>
-      <polyline class="st0" points="49,26 49,11 34,11"/>
-      <line class="st0" x1="20" y1="40.7" x2="49" y2="11"/>
-      <circle class="st0" cx="17" cy="44" r="5"/>
+      <polyline ${iconStrokeAttrs} points="49,26 49,11 34,11"/>
+      <line ${iconStrokeAttrs} x1="20" y1="40.7" x2="49" y2="11"/>
+      <circle ${iconStrokeAttrs} cx="17" cy="44" r="5"/>
   </g>
   </svg>`,
-    'circle.svg': `${openingTag}
-       viewBox="0 0 32 32" enable-background="new 0 0 32 32">
+    'circle.svg': `${stockIconPrefix(32)}
   <path fill="${fillColor}" d="M26.249,15.999c0.001-2.737-1.065-5.312-3.002-7.248C21.312,6.815,18.737,5.749,16,5.75
       c-2.738,0-5.312,1.065-7.248,3.002C6.816,10.688,5.75,13.262,5.75,16c0,2.736,1.065,5.312,3.002,7.248
       c1.937,1.935,4.511,3.001,7.249,3.001c1.993,0,3.898-0.572,5.536-1.628c0.864,0.73,2.154,0.697,2.968-0.116
@@ -124,14 +119,12 @@ export default {
       s-0.726,1.249-0.608,1.929c-1.41,0.926-3.059,1.426-4.784,1.426C13.663,24.749,11.466,23.839,9.813,22.186z"/>
   </svg>
   `,
-    'close.svg': `${openingTag}
-       viewBox="0 0 32 32" enable-background="new 0 0 32 32">
+    'close.svg': `${stockIconPrefix(32)}
   <polygon fill="${fillColor}" points="24.308,8.756 23.248,7.695 16.002,14.941 8.757,7.695 7.695,8.754 14.941,16.001 7.696,23.246
       8.755,24.308 16.002,17.061 23.247,24.307 24.308,23.248 17.062,16.001"/>
   </svg>
   `,
-    'crooked-3.svg': `${openingTag}
-       viewBox="0 0 32 32" enable-background="new 0 0 32 32">
+    'crooked-3.svg': `${stockIconPrefix(32)}
   <g>
       <g>
           <path fill="${fillColor}" d="M5.048,22.258c-0.234,0-0.464-0.109-0.61-0.312c-0.241-0.338-0.164-0.806,0.173-1.047l14.468-10.37
@@ -141,8 +134,7 @@ export default {
   </g>
   </svg>
   `,
-    'crooked-5.svg': `${openingTag}
-       viewBox="0 0 32 32" enable-background="new 0 0 32 32">
+    'crooked-5.svg': `${stockIconPrefix(32)}
   <g>
       <path fill="${fillColor}" d="M27.53,14.03c0.293-0.293,0.293-0.768,0-1.061l-5.064-5.064l-7.5,8.5L10.461,11.9l-7.027,8.109
           c-0.271,0.313-0.238,0.786,0.075,1.058C3.65,21.189,3.825,21.25,4,21.25c0.21,0,0.419-0.088,0.566-0.259l5.973-6.891l4.495,4.495
@@ -150,8 +142,7 @@ export default {
   </g>
   </svg>
   `,
-    'current-price-hide.svg': `${openingTag}
-       viewBox="0 0 32 32" enable-background="new 0 0 32 32">
+    'current-price-hide.svg': `${stockIconPrefix(32)}
   <g>
       <g opacity="0.5">
           <polygon fill="${fillColor}" points="12.509,22.893 12.509,17.428 11.409,17.428 9.651,18.718 10.229,19.507 11.363,18.628
@@ -187,8 +178,7 @@ export default {
   </g>
   </svg>
   `,
-    'current-price-show.svg': `${openingTag}
-       viewBox="0 0 32 32" enable-background="new 0 0 32 32">
+    'current-price-show.svg': `${stockIconPrefix(32)}
   <g>
       <g>
           <polygon fill="${fillColor}" points="12.509,22.893 12.509,17.428 11.409,17.428 9.651,18.718 10.229,19.507 11.363,18.628
@@ -226,8 +216,7 @@ export default {
   </g>
   </svg>
   `,
-    'destroy.svg': `${openingTag}
-       viewBox="0 0 32 32" enable-background="new 0 0 32 32">
+    'destroy.svg': `${stockIconPrefix(32)}
   <g>
       <rect x="12.75" y="14" fill="${fillColor}" width="1.5" height="10"/>
       <rect x="17.75" y="14" fill="${fillColor}" width="1.5" height="10"/>
@@ -238,8 +227,7 @@ export default {
   </g>
   </svg>
   `,
-    'drawing.svg': `${openingTag}
-       viewBox="0 0 32 32" style="enable-background:new 0 0 32 32;">
+    'drawing.svg': `${stockIconPrefix(32)}
   <path fill="${fillColor}" d="M18.3,8.6c-0.5,0.2-0.8,0.7-0.9,1.2l-1,7.6l0.5,0.3l3.1-4.5c-0.1-0.1-0.2-0.3-0.2-0.5c-0.1-0.7,0.3-1.3,1-1.4
       s1.3,0.3,1.4,1s-0.3,1.3-1,1.4c-0.2,0-0.4,0-0.5,0l-3.1,4.5l0.5,0.3l6.7-3.7c0.5-0.3,0.8-0.8,0.8-1.3L26,9.4l-4-2.6L18.3,8.6z
        M27.2,5.2L25.4,4c-0.6-0.4-1.3-0.2-1.7,0.3L22.5,6l3.9,2.6L27.5,7C27.9,6.4,27.8,5.7,27.2,5.2C27.2,5.3,27.2,5.2,27.2,5.2z"/>
@@ -251,16 +239,14 @@ export default {
       C17.6,17.7,17.8,19.1,17.1,18.9z"/>
   <rect fill="none" width="32" height="32"/>
   </svg>`,
-    'edit.svg': `${openingTag}
-       viewBox="0 0 32 32" enable-background="new 0 0 32 32">
+    'edit.svg': `${stockIconPrefix(32)}
   <path fill="${fillColor}" d="M22.125,3.814L5.817,20.122l-1.818,7.879l7.879-1.818L28.186,9.875L22.125,3.814z M26.064,9.875
       l-1.439,1.439l-3.939-3.939l1.439-1.439L26.064,9.875z M10.186,22.875l9.939-9.939l1.439,1.439l-9.939,9.939L10.186,22.875z
        M7.686,20.375l9.939-9.939l1.439,1.439l-9.939,9.939L7.686,20.375z M18.686,9.375l0.939-0.939l3.939,3.939l-0.939,0.939
       L18.686,9.375z M6.974,21.784l3.242,3.242l-4.215,0.973L6.974,21.784z"/>
   </svg>
   `,
-    'elliott-3.svg': `${openingTag}
-       viewBox="0 0 32 32" enable-background="new 0 0 32 32">
+    'elliott-3.svg': `${stockIconPrefix(32)}
   <g>
       <g>
           <path fill="${fillColor}" d="M5.048,22.258c-0.234,0-0.464-0.109-0.61-0.312c-0.241-0.338-0.164-0.806,0.173-1.047l14.468-10.37
@@ -316,8 +302,7 @@ export default {
   </g>
   </svg>
   `,
-    'elliott-5.svg': `${openingTag}
-       viewBox="0 0 32 32" enable-background="new 0 0 32 32">
+    'elliott-5.svg': `${stockIconPrefix(32)}
   <g>
       <path fill="${fillColor}" d="M27.53,14.03c0.293-0.293,0.293-0.768,0-1.061l-5.064-5.064l-7.5,8.5L10.461,11.9l-7.027,8.109
           c-0.271,0.313-0.238,0.786,0.075,1.058C3.65,21.189,3.825,21.25,4,21.25c0.21,0,0.419-0.088,0.566-0.259l5.973-6.891l4.495,4.495
@@ -355,15 +340,13 @@ export default {
   </g>
   </svg>
   `,
-    'ellipse.svg': `${openingTag}
-       viewBox="0 0 32 32" style="enable-background:new 0 0 32 32">
+    'ellipse.svg': `${stockIconPrefix(32)}  style="enable-background:new 0 0 32 32">
   <path fill="${fillColor}" d="M16.3,7.2C10.1,7.2,5,11.1,5,15.9s5.1,8.7,11.3,8.7s11.3-3.9,11.3-8.7S22.5,7.2,16.3,7.2z M16.3,23.3
       c-5.5,0-9.9-3.3-9.9-7.4s4.4-7.4,9.9-7.4s9.9,3.3,9.9,7.4S21.8,23.3,16.3,23.3L16.3,23.3z"/>
   <circle fill="${fillColor}" cx="23.5" cy="22.2" r="2.3"/>
   <rect fill="none" width="32" height="32"/>
   </svg>`,
-    'fibonacci-timezone.svg': `${openingTag}
-        viewBox="0 0 32 32" style="enable-background:new 0 0 32 32">
+    'fibonacci-timezone.svg': `${stockIconPrefix(32)}   style="enable-background:new 0 0 32 32">
   <polyline fill="${fillColor}" points="5.2,7.3 5.2,5.6 3.6,5.6 3.6,23.3 3.6,24.8 3.6,27.5 5.2,27.5 5.2,8.8 "/>
   <polyline fill="${fillColor}" points="9.6,7.3 9.6,5.6 8,5.6 8,23.3 8,24.8 8,27.5 9.6,27.5 9.6,8.8 "/>
   <polyline fill="${fillColor}" points="11.6,7.3 11.6,5.6 10,5.6 10,23.3 10,24.8 10,27.5 11.6,27.5 11.6,8.8 "/>
@@ -372,8 +355,7 @@ export default {
   <polyline fill="${fillColor}" points="27.5,7.3 27.5,5.6 25.9,5.6 25.9,23.3 25.9,24.8 25.9,27.5 27.5,27.5 27.5,8.8 "/>
   <rect fill="none" width="32" height="32"/>
   </svg>`,
-    'fibonacci.svg': `${openingTag}
-       viewBox="0 0 32 32" enable-background="new 0 0 32 32">
+    'fibonacci.svg': `${stockIconPrefix(32)}
   <g>
       <rect x="19.5" y="19.75" fill="${fillColor}" width="3" height="1.5"/>
       <rect x="24.5" y="19.75" fill="${fillColor}" width="3" height="1.5"/>
@@ -395,16 +377,14 @@ export default {
   </g>
   </svg>
   `,
-    'flag-basic.svg': `${openingTag}
-       viewBox="0 0 32 32" enable-background="new 0 0 32 32">
+    'flag-basic.svg': `${stockIconPrefix(32)}
   <g>
       <path fill="${fillColor}" d="M27.25,4.75H15V3h-1.65v22.175c0,0.456,0.369,0.825,0.825,0.825S15,25.631,15,25.175V16.25h12.25L21.5,10.5
           L27.25,4.75z M23.689,14.75H15v-8.5h8.689l-4.25,4.25L23.689,14.75z"/>
   </g>
   </svg>
   `,
-    'flag-diamond.svg': `${openingTag}
-       viewBox="0 0 32 32" enable-background="new 0 0 32 32">
+    'flag-diamond.svg': `${stockIconPrefix(32)}
   <g>
       <path fill="${fillColor}" d="M27.25,4.75H15V3h-1.65v20.175c0,0.456,0.369,0.825,0.825,0.825S15,23.631,15,23.175V16.25h12.25L21.5,10.5
           L27.25,4.75z M23.689,14.75H15v-8.5h8.689l-4.25,4.25L23.689,14.75z"/>
@@ -413,8 +393,7 @@ export default {
   </g>
   </svg>
   `,
-    'flag-elipse.svg': `${openingTag}
-       viewBox="0 0 32 32" enable-background="new 0 0 32 32">
+    'flag-elipse.svg': `${stockIconPrefix(32)}
   <g>
       <path fill="${fillColor}" d="M17,20.385v1.506c4.129,0.398,6.25,1.558,6.25,2.109c0,0.673-3.146,2.5-9.25,2.5S4.75,24.673,4.75,24
           c0-0.552,2.121-1.711,6.25-2.109v-1.506C6.879,20.757,3.25,21.922,3.25,24c0,2.576,5.572,4,10.75,4s10.75-1.424,10.75-4
@@ -424,8 +403,7 @@ export default {
   </g>
   </svg>
   `,
-    'flag-trapeze.svg': `${openingTag}
-       viewBox="0 0 32 32" enable-background="new 0 0 32 32">
+    'flag-trapeze.svg': `${stockIconPrefix(32)}
   <g>
       <polygon fill="${fillColor}" points="19.29,20.3 17,20.3 17,21.7 18.71,21.7 23.311,26.3 6.133,26.3 8.433,21.7 11,21.7 11,20.3
           7.567,20.3 3.867,27.7 26.69,27.7"/>
@@ -436,8 +414,7 @@ export default {
   </g>
   </svg>
   `,
-    'fullscreen.svg': `${openingTag}
-       viewBox="0 0 32 32" enable-background="new 0 0 32 32">
+    'fullscreen.svg': `${stockIconPrefix(32)}
   <g>
       <polygon fill="${fillColor}" points="22.593,21.657 19.297,18.361 18.413,19.244 21.71,22.541 20.465,23.786 24.75,24.75 23.786,20.464"/>
       <polygon fill="${fillColor}" points="11.535,8.214 7.25,7.25 8.214,11.536 9.459,10.291 12.756,13.588 13.641,12.703 10.343,9.406"/>
@@ -446,14 +423,12 @@ export default {
   </g>
   </svg>
   `,
-    'horizontal-line.svg': `${openingTag}
-      viewBox="0 0 32 32" enable-background="new 0 0 32 32">
+    'horizontal-line.svg': `${stockIconPrefix(32)}
   <path fill="${fillColor}" d="M27,14.751H15.143c-0.289-0.663-0.948-1.126-1.718-1.126s-1.429,0.463-1.718,1.126H5v1.5h6.709
       c0.289,0.661,0.947,1.124,1.716,1.124s1.427-0.463,1.716-1.124H27V14.751z"/>
   </svg>
   `,
-    'indicators.svg': `${openingTag}
-      viewBox="0 0 32 32" enable-background="new 0 0 32 32">
+    'indicators.svg': `${stockIconPrefix(32)}
   <g>
   </g>
   <g>
@@ -476,8 +451,7 @@ export default {
   </g>
   </svg>
   `,
-    'label.svg': `${openingTag}
-       viewBox="0 0 32 32" enable-background="new 0 0 32 32">
+    'label.svg': `${stockIconPrefix(32)}
   <g>
       <path fill="${fillColor}" d="M3.75,7.749v14.5h7.939L16,26.561l4.31-4.312h7.94v-14.5H3.75z M26.75,20.749h-7.062L16,24.439l-3.689-3.69
           H5.25v-11.5h21.5V20.749z"/>
@@ -490,8 +464,7 @@ export default {
   </g>
   </svg>
   `,
-    'line.svg': `${openingTag}
-       viewBox="0 0 32 32" enable-background="new 0 0 32 32">
+    'line.svg': `${stockIconPrefix(32)}
   <path fill="${fillColor}" d="M27.03,6.03L25.97,4.97l-3.788,3.788c-0.212-0.083-0.44-0.133-0.682-0.133c-1.035,0-1.875,0.84-1.875,1.875
       c0,0.241,0.05,0.47,0.133,0.682l-8.576,8.576c-0.212-0.083-0.44-0.133-0.682-0.133c-1.035,0-1.875,0.84-1.875,1.875
       c0,0.241,0.05,0.47,0.133,0.682L4.97,25.97L6.03,27.03l3.788-3.788c0.212,0.083,0.44,0.133,0.682,0.133
@@ -499,14 +472,13 @@ export default {
       c1.035,0,1.875-0.84,1.875-1.875c0-0.241-0.05-0.47-0.133-0.682L27.03,6.03z"/>
   </svg>
   `,
-    'linear.svg': `${openingTag}
-       viewBox="0 0 32 32" style="enable-background:new 0 0 32 32;">
+    'linear.svg': `${stockIconPrefix(32)}
   <polyline fill="${fillColor}" points="8.4,7 8.4,5.3 6.8,5.3 6.8,23 6.8,24.5 6.8,27.3 8.4,27.3 8.4,8.5"/>
   <polyline fill="${fillColor}" points="22.8,10.3 24.1,9 22.9,7.9 10.4,20.5 9.3,21.5 7.4,23.5 8.5,24.6 21.8,11.3"/>
   <polyline fill="${fillColor}" points="25.2,25.4 26.9,25.4 26.9,23.8 9.2,23.8 7.7,23.8 4.9,23.8 4.9,25.4 23.7,25.4"/>
   <rect fill="none" width="32" height="32"/>
   </svg>`,
-    'logarithmic.svg': `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+    'logarithmic.svg': `<svg xmlns="http://www.w3.org/2000/svg"
         <g>
             <g>
                 <g id="logarithmic"><polyline fill="${fillColor}" points="8.41 7.01 8.41 5.26 6.81 5.26 6.81 23.01 6.81 24.51 6.81 27.26 8.41 27.26 8.41 8.51"/>
@@ -517,8 +489,7 @@ export default {
             </g>
         </g>
     </svg>`,
-    'measure-x.svg': `${openingTag}
-       viewBox="0 0 32 32" enable-background="new 0 0 32 32">
+    'measure-x.svg': `${stockIconPrefix(32)}
   <g>
       <g>
           <polygon fill="${fillColor}" points="14.673,21 15.984,19.177 17.287,21 18.808,21 16.766,18.344 18.559,16 17.12,16 16.006,17.553
@@ -538,8 +509,7 @@ export default {
   </g>
   </svg>
   `,
-    'measure-xy.svg': `${openingTag}
-       viewBox="0 0 32 32" enable-background="new 0 0 32 32">
+    'measure-xy.svg': `${stockIconPrefix(32)}
   <g>
       <g>
           <rect x="26.75" y="19" fill="${fillColor}" width="1.5" height="3"/>
@@ -564,8 +534,7 @@ export default {
   </g>
   </svg>
   `,
-    'measure-y.svg': `${openingTag}
-       viewBox="0 0 32 32" enable-background="new 0 0 32 32">
+    'measure-y.svg': `${stockIconPrefix(32)}
   <g>
       <g>
           <rect x="24" y="4.75" fill="${fillColor}" width="3" height="1.5"/>
@@ -586,8 +555,7 @@ export default {
   </g>
   </svg>
   `,
-    'panning.svg': `${openingTag}
-       viewBox="0 0 32 32" style="enable-background:new 0 0 32 32">
+    'panning.svg': `${stockIconPrefix(32)}
   <path id="panning-2" fill="${fillColor}" d="M20.8,10.7v-0.4c0-1.4-1.1-2.6-2.5-2.6c-0.2,0-0.4,0-0.7,0.1C17,6.5,15.5,6,14.3,6.6
       c-0.5,0.2-0.9,0.7-1.2,1.2c-1.4-0.3-2.8,0.5-3.1,1.9C9.9,9.8,9.9,10,9.9,10.2v4.9c-0.8-0.3-1.7-0.2-2.4,0.3C6.4,16.3,6.2,17.9,7,19
       l4.6,6.5c0.2,0.3,0.6,0.5,1,0.5h8.6c0.6,0,1.1-0.4,1.2-1l1.2-5.1c0.1-0.6,0.2-1.2,0.2-1.8v-5c0-1.4-1.1-2.6-2.5-2.6
@@ -599,8 +567,7 @@ export default {
       c0-0.4,0.2-0.7,0.6-0.8c0.4,0,0.7,0.2,0.8,0.6c0,0.1,0,0.1,0,0.2L21.9,18.3L21.9,18.3z"/>
   <rect fill="none" width="32" height="32"/>
   </svg>`,
-    'parallel-channel.svg': `${openingTag}
-       viewBox="0 0 32 32" enable-background="new 0 0 32 32">
+    'parallel-channel.svg': `${stockIconPrefix(32)}
   <g>
       <path fill="${fillColor}" d="M17.258,7.802C17.487,7.896,17.737,7.95,18,7.95c1.077,0,1.95-0.873,1.95-1.95S19.077,4.05,18,4.05
           c-1.076,0-1.95,0.873-1.95,1.95c0,0.263,0.054,0.513,0.147,0.742l-9.455,9.456C6.513,16.104,6.263,16.05,6,16.05
@@ -612,8 +579,7 @@ export default {
   </g>
   </svg>
   `,
-    'pitchfork.svg': `${openingTag}
-       viewBox="0 0 32 32" enable-background="new 0 0 32 32">
+    'pitchfork.svg': `${stockIconPrefix(32)}
   <path fill="${fillColor}" d="M28.057,15.006l-1.059-1.062l-7.865,7.863c-0.212-0.083-0.441-0.133-0.683-0.133
       c-0.243,0-0.474,0.05-0.687,0.134l-3.254-3.255l8.548-8.548l-1.06-1.061l-8.549,8.548l-3.257-3.259
       c0.083-0.213,0.133-0.442,0.133-0.685c0-0.241-0.05-0.47-0.132-0.682l7.863-7.862l-1.059-1.061l-7.865,7.862
@@ -623,22 +589,19 @@ export default {
       c0,1.036,0.839,1.875,1.875,1.875s1.875-0.839,1.875-1.875c0-0.241-0.05-0.47-0.132-0.682L28.057,15.006z"/>
   </svg>
   `,
-    'ray.svg': `${openingTag}
-       viewBox="0 0 32 32" enable-background="new 0 0 32 32">
+    'ray.svg': `${stockIconPrefix(32)}
   <path fill="${fillColor}" d="M27.03,6.03L25.97,4.97l-7.788,7.788c-0.212-0.083-0.44-0.133-0.682-0.133c-1.035,0-1.875,0.84-1.875,1.875
       c0,0.241,0.05,0.47,0.133,0.682l-7.576,7.576c-0.212-0.083-0.44-0.133-0.682-0.133c-1.035,0-1.875,0.84-1.875,1.875
       s0.84,1.875,1.875,1.875s1.875-0.84,1.875-1.875c0-0.241-0.05-0.47-0.133-0.682l7.576-7.576c0.212,0.083,0.44,0.133,0.682,0.133
       c1.035,0,1.875-0.84,1.875-1.875c0-0.241-0.05-0.47-0.133-0.682L27.03,6.03z"/>
   </svg>
   `,
-    'rectangle.svg': `${openingTag}
-       viewBox="0 0 32 32" enable-background="new 0 0 32 32">
+    'rectangle.svg': `${stockIconPrefix(32)}
   <path fill="${fillColor}" d="M25.25,22.783V6.75H6.75v18.5h16.033c0.29,0.662,0.949,1.125,1.717,1.125c1.035,0,1.875-0.84,1.875-1.875
       C26.375,23.731,25.912,23.073,25.25,22.783z M23.75,22.783c-0.432,0.189-0.777,0.535-0.967,0.967H8.25V8.25h15.5V22.783z"/>
   </svg>
   `,
-    'remove-annotations.svg': `${openingTag}
-       viewBox="0 0 32 32" enable-background="new 0 0 32 32">
+    'remove-annotations.svg': `${stockIconPrefix(32)}
   <g>
       <rect x="5" y="23.7" fill="${fillColor}" width="3" height="1.5"/>
       <rect x="7.69" y="26.011" transform="matrix(-0.7071 -0.7071 0.7071 -0.7071 -5.046 52.9314)" fill="${fillColor}" width="1.5" height="3"/>
@@ -649,8 +612,7 @@ export default {
   </g>
   </svg>
   `,
-    'save-chart.svg': `${openingTag}
-       viewBox="0 0 32 32" enable-background="new 0 0 32 32">
+    'save-chart.svg': `${stockIconPrefix(32)}
   <g>
       <polygon fill="${fillColor}" points="8.749,21.25 12.75,21.25 12.75,26 14.25,26 14.25,19.75 12.37,19.75 15.999,16.12 19.629,19.75
           17.75,19.75 17.75,26 19.25,26 19.25,21.25 23.25,21.25 16,14"/>
@@ -659,24 +621,21 @@ export default {
   </g>
   </svg>
   `,
-    'segment.svg': `${openingTag}
-       viewBox="0 0 32 32" enable-background="new 0 0 32 32">
+    'segment.svg': `${stockIconPrefix(32)}
   <path fill="${fillColor}" d="M24.5,5.625c-1.035,0-1.875,0.84-1.875,1.875c0,0.241,0.05,0.47,0.133,0.682L8.182,22.758
       c-0.212-0.083-0.44-0.133-0.682-0.133c-1.035,0-1.875,0.84-1.875,1.875s0.84,1.875,1.875,1.875s1.875-0.84,1.875-1.875
       c0-0.241-0.05-0.47-0.133-0.682L23.818,9.242c0.212,0.083,0.44,0.133,0.682,0.133c1.035,0,1.875-0.84,1.875-1.875
       S25.535,5.625,24.5,5.625z"/>
   </svg>
   `,
-    'separator.svg': `${openingTag}
-       viewBox="0 0 32 32" enable-background="new 0 0 32 32">
+    'separator.svg': `${stockIconPrefix(32)}
   <g>
       <path fill="#CDCDCC" d="M32,16.251h-3.52v-1.5H32V16.251z M24.92,16.251h-3.56v-1.5h3.56V16.251z M17.8,16.251h-3.56v-1.5h3.56
           V16.251z M10.68,16.251H7.12v-1.5h3.56V16.251z M3.56,16.251H0v-1.5h3.56V16.251z"/>
   </g>
   </svg>
   `,
-    'series-candlestick.svg': `${openingTag}
-       viewBox="0 0 32 32" enable-background="new 0 0 32 32">
+    'series-candlestick.svg': `${stockIconPrefix(32)}
   <g>
       <polygon fill="${fillColor}" points="7,26 8,26 8,23 9,23 9,18 8,18 8,14 7,14 7,18 6,18 6,23 7,23"/>
       <polygon fill="${fillColor}" points="13,20 14,20 14,17 15,17 15,11 14,11 14,6 13,6 13,11 12,11 12,17 13,17"/>
@@ -685,8 +644,7 @@ export default {
   </g>
   </svg>
   `,
-    'series-heikin-ashi.svg': `${openingTag}
-       viewBox="0 0 32 32">
+    'series-heikin-ashi.svg': `${stockIconPrefix(32)}
         <g>
             <g id="heikin-ashi-series">
                 <g id="heikin-ashi-series-2" data-name="heikin-ashi-series">
@@ -702,8 +660,7 @@ export default {
             </g>
         </g>
     </svg>`,
-    'series-hlc.svg': `${openingTag}
-       viewBox="0 0 32 32">
+    'series-hlc.svg': `${stockIconPrefix(32)}
         <g>
             <g id="hlc-series">
                 <g id="hlc-series-2" data-name="hlc-series">\
@@ -715,8 +672,7 @@ export default {
             </g>
         </g>
     </svg>`,
-    'series-hollow-candlestick.svg': `${openingTag}
-       viewBox="0 0 32 32">
+    'series-hollow-candlestick.svg': `${stockIconPrefix(32)}
         <g>
             <g id="hollow-candlestick-series">
                 <g id="hollow-candlestick-series-2" data-name="hollow-candlestick-series">
@@ -736,8 +692,7 @@ export default {
             </g>
         </g>
     </svg>`,
-    'series-line.svg': `${openingTag}
-       viewBox="0 0 32 32" enable-background="new 0 0 32 32">
+    'series-line.svg': `${stockIconPrefix(32)}
   <g>
       <path fill="${fillColor}" d="M4.125,28.95c-0.079,0-0.16-0.012-0.239-0.035c-0.436-0.132-0.683-0.593-0.551-1.028L8.844,9.664
           l5.229,11.505l4.674-8.413l3.879,3.031l4.602-12.081c0.163-0.426,0.641-0.64,1.064-0.477c0.426,0.162,0.641,0.639,0.479,1.064
@@ -745,8 +700,7 @@ export default {
   </g>
   </svg>
   `,
-    'series-ohlc.svg': `${openingTag}
-       viewBox="0 0 32 32" enable-background="new 0 0 32 32">
+    'series-ohlc.svg': `${stockIconPrefix(32)}
   <g>
       <polygon fill="${fillColor}" points="8.3,6.001 6.7,6.001 6.7,9.75 3.75,9.75 3.75,11.25 6.7,11.25 6.7,24 8.3,24 8.3,19.25
           11.25,19.25 11.25,17.75 8.3,17.75"/>
@@ -757,19 +711,14 @@ export default {
   </g>
   </svg>
   `,
-    'text.svg': `${openingTag}
-       viewBox="0 0 60 60" style="enable-background:new 0 0 60 60">
-  <style type="text/css">
-      .st0{fill:none;stroke:#666666;stroke-width:5;stroke-miterlimit:10;}
-  </style>
+    'text.svg': `${stockIconPrefix(60)}
   <g>
-      <line class="st0" x1="31" y1="12" x2="31" y2="48"/>
-      <line class="st0" x1="24" y1="48" x2="37" y2="48"/>
-      <polyline class="st0" points="45,19 45,12 17,12 17,19"/>
+      <line ${iconStrokeAttrs} x1="31" y1="12" x2="31" y2="48"/>
+      <line ${iconStrokeAttrs} x1="24" y1="48" x2="37" y2="48"/>
+      <polyline ${iconStrokeAttrs} points="45,19 45,12 17,12 17,19"/>
   </g>
   </svg>`,
-    'time-cycles.svg': `${openingTag}
-        viewBox="0 0 32 32" style="enable-background:new 0 0 32 32">
+    'time-cycles.svg': `${stockIconPrefix(32)}
   <path fill="${fillColor}" d="M12.1,27c0-2.2-1.8-4-4-4s-4,1.8-4,4 M5.5,27c-0.1-1.4,1-2.7,2.4-2.7c1.4-0.1,2.7,1,2.7,2.4c0,0.1,0,0.2,0,0.3"
       />
   <path fill="${fillColor}" d="M20.1,27c0-2.2-1.8-4-4-4s-4,1.8-4,4 M13.5,27c-0.1-1.4,1-2.7,2.4-2.7c1.4-0.1,2.7,1,2.7,2.4c0,0.1,0,0.2,0,0.3
@@ -797,13 +746,11 @@ export default {
   <rect x="7.5" y="3.6" fill="${fillColor}" width="1.4" height="1.4"/>
   <rect fill="none" width="32" height="32"/>
   </svg>`,
-    'vertical-arrow.svg': `${openingTag}
-       viewBox="0 0 32 32" enable-background="new 0 0 32 32">
+    'vertical-arrow.svg': `${stockIconPrefix(32)}
   <polygon fill="${fillColor}" points="16.251,23.243 16.251,4.001 14.751,4.001 14.751,23.244 13,23.244 15.5,28 18,23.243 "/>
   </svg>
   `,
-    'vertical-counter.svg': `${openingTag}
-       viewBox="0 0 32 32" enable-background="new 0 0 32 32">
+    'vertical-counter.svg': `${stockIconPrefix(32)}
   <g>
       <polygon fill="${fillColor}" points="16.251,11 14.751,11 14.751,23.244 13,23.244 15.5,28 18,23.243 16.251,23.243"/>
       <polygon fill="${fillColor}" points="9.085,5.241 9.693,6.074 10.618,5.36 10.618,9 11.794,9 11.794,4.044 10.716,4.044"/>
@@ -823,16 +770,14 @@ export default {
   </g>
   </svg>
   `,
-    'vertical-double-arrow.svg': `${openingTag}
-       viewBox="0 0 32 32" enable-background="new 0 0 32 32">
+    'vertical-double-arrow.svg': `${stockIconPrefix(32)}
   <g>
       <polygon fill="${fillColor}" points="18,10.243 16.251,10.243 16.251,4.001 14.751,4.001 14.751,10.244 13,10.244 15.5,15"/>
       <polygon fill="${fillColor}" points="13,21.757 14.749,21.757 14.749,27.999 16.249,27.999 16.249,21.756 18,21.756 15.5,17"/>
   </g>
   </svg>
   `,
-    'vertical-label.svg': `${openingTag}
-       viewBox="0 0 32 32" enable-background="new 0 0 32 32">
+    'vertical-label.svg': `${stockIconPrefix(32)}
   <g>
       <polygon fill="${fillColor}" points="16.251,11 14.751,11 14.751,23.244 13,23.244 15.5,28 18,23.243 16.251,23.243"/>
       <polygon fill="${fillColor}" points="8.5,5.066 9.899,5.066 9.899,9 11.097,9 11.097,5.066 12.497,5.066 12.497,4.044 8.5,4.044"/>
@@ -843,14 +788,12 @@ export default {
   </g>
   </svg>
   `,
-    'vertical-line.svg': `${openingTag}
-       viewBox="0 0 32 32" enable-background="new 0 0 32 32">
+    'vertical-line.svg': `${stockIconPrefix(32)}
   <path fill="${fillColor}" d="M17.375,18.574c0-0.769-0.463-1.427-1.124-1.716V5h-1.5v11.856c-0.663,0.29-1.126,0.949-1.126,1.718
       c0,0.771,0.463,1.429,1.126,1.718V27h1.5v-6.709C16.912,20.001,17.375,19.344,17.375,18.574z"/>
   </svg>
   `,
-    'zoom-x.svg': `${openingTag}
-       viewBox="0 0 32 32" enable-background="new 0 0 32 32">
+    'zoom-x.svg': `${stockIconPrefix(32)}
   <g>
       <polygon fill="${fillColor}" points="16.25,18 16.25,15.25 19,15.25 19,13.75 16.25,13.75 16.25,11 14.75,11 14.75,13.75 12,13.75
           12,15.25 14.75,15.25 14.75,18"/>
@@ -864,8 +807,7 @@ export default {
   </g>
   </svg>
   `,
-    'zoom-xy.svg': `${openingTag}
-       viewBox="0 0 32 32" enable-background="new 0 0 32 32">
+    'zoom-xy.svg': `${stockIconPrefix(32)}
   <g>
       <path fill="${fillColor}" d="M26.083,24.917l-5.556-5.555c1.075-1.331,1.723-3.021,1.723-4.861c0-4.273-3.477-7.75-7.75-7.75
           s-7.75,3.477-7.75,7.75s3.477,7.75,7.75,7.75c1.84,0,3.53-0.647,4.861-1.723l5.556,5.555L26.083,24.917z M8.25,14.501
@@ -875,8 +817,7 @@ export default {
   </g>
   </svg>
   `,
-    'zoom-y.svg': `${openingTag}
-       viewBox="0 0 32 32" enable-background="new 0 0 32 32">
+    'zoom-y.svg': `${stockIconPrefix(32)}
   <g>
       <path fill="${fillColor}" d="M27.083,24.917l-5.567-5.566c1.075-1.331,1.734-3.01,1.734-4.85c0-3.21-1.962-5.97-4.75-7.146v1.665
           c1.936,1.063,3.25,3.121,3.25,5.48s-1.314,4.417-3.25,5.48v1.665c0.675-0.284,1.298-0.666,1.859-1.12l5.558,5.557L27.083,24.917z"
