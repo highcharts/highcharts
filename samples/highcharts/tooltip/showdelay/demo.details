@@ -1,6 +1,4 @@
 ---
- name: Highcharts Demo
- authors:
-   - Andrzej Bułeczka
- js_wrap: b
+name: Demo of various chart options
+js_wrap: b
 ...

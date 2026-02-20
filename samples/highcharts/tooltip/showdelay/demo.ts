@@ -1,8 +1,12 @@
 Highcharts.chart('container', {
+    chart: {
+        type: 'column'
+    },
     title: {
-        text: 'Crosshair showDelay demo'
+        text: 'Crosshair and Tooltip showDelay demo'
     },
     xAxis: {
+        categories: ['Apples', 'Bananas', 'Oranges', 'Pears'],
         crosshair: {
             showDelay: 1000
         }
@@ -12,13 +16,11 @@ Highcharts.chart('container', {
             showDelay: 1000
         }
     },
-
-    tooltip: {
-        showDelay: 1000,
-        hideDelay: 1500
-    },
-
     series: [{
         data: [4, 3, 5, 6, 2, 3]
-    }]
+    }],
+    tooltip: {
+        hideDelay: 1500,
+        showDelay: 1000
+    }
 });

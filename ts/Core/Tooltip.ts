@@ -66,6 +66,17 @@ const {
     syncTimeout
 } = U;
 
+/**
+ * Clear all timeouts for showing and hiding the tooltip.
+ *
+ * @internal
+ */
+function clearTimeouts(this: Tooltip): void {
+    clearTimeout(this.hideTimer);
+    clearTimeout(this.showTimer);
+}
+
+
 /* *
  *
  *  Declarations
@@ -356,15 +367,6 @@ class Tooltip {
     }
 
     /**
-     * Clear the hide and show timers.
-     * @private
-     */
-    public clearTimeouts(): void {
-        clearTimeout(this.hideTimer);
-        clearTimeout(this.showTimer);
-    }
-
-    /**
      * Removes and destroys the tooltip and its elements.
      *
      * @function Highcharts.Tooltip#destroy
@@ -384,7 +386,7 @@ class Tooltip {
             this.renderer = this.renderer.destroy() as any;
             discardElement(this.container);
         }
-        this.clearTimeouts();
+        clearTimeouts.call(this);
     }
 
     /**
@@ -931,7 +933,7 @@ class Tooltip {
         const tooltip = this;
 
         // Disallow duplicate timers (#1728, #1766)
-        this.clearTimeouts();
+        clearTimeouts.call(this);
         delay = pick(delay, this.options.hideDelay);
         if (!this.isHidden) {
             this.hideTimer = syncTimeout(function (): void {
@@ -1131,7 +1133,7 @@ class Tooltip {
             return;
         }
 
-        this.clearTimeouts();
+        clearTimeouts.call(this);
 
         // A switch saying if this specific tooltip configuration allows shared
         // or split modes
@@ -1273,7 +1275,7 @@ class Tooltip {
                     }).show();
                 }
                 tooltip.isHidden = false;
-            }, tooltip.isHidden ? pick(options.showDelay, 0) : 0);
+            }, tooltip.isHidden ? options.showDelay || 0 : 0);
         }
 
         fireEvent(this, 'refresh');
@@ -1791,9 +1793,11 @@ class Tooltip {
 
             // For a rapid move going outside of the elements keeping the
             // tooltip visible, cancel the hide (#23512).
-            addEvent(tooltip.tracker.element, 'mouseenter', (): void => {
-                tooltip.clearTimeouts();
-            });
+            addEvent(
+                tooltip.tracker.element,
+                'mouseenter',
+                clearTimeouts.bind(tooltip)
+            );
 
             if (!chart.styledMode) {
                 tooltip.tracker.attr({
