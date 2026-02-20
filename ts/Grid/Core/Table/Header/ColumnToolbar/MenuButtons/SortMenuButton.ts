@@ -54,7 +54,6 @@ class SortMenuButton extends ContextMenuButton {
 
     private baseLabel: string;
 
-
     /* *
      *
      *  Constructor
