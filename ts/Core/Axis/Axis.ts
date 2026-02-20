@@ -4629,7 +4629,7 @@ class Axis {
             },
             // Only use delay if the crosshair is currently hidden
             (!graphic || graphic.attr('visibility') === 'hidden') ?
-                pick(options.showDelay, 0) :
+                options.showDelay || 0 :
                 0
             );
         }
