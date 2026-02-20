@@ -19,9 +19,9 @@
 import type AreaSplineSeriesOptions from '../AreaSpline/AreaSplineSeriesOptions';
 import type DerivedComposition from '../DerivedComposition';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
-import type { PointMarkerOptions, PointShortOptions } from '../../Core/Series/PointOptions';
+import type { PointShortOptions } from '../../Core/Series/PointOptions';
 import type ColorType from '../../Core/Color/ColorType';
-import BellcurvePointOptions from './BellcurvePointOptions';
+import type BellcurvePointOptions from './BellcurvePointOptions';
 
 /* *
  *
@@ -67,8 +67,6 @@ export interface BellcurveSeriesOptions extends AreaSplineSeriesOptions, Derived
     /**
      * An integer identifying the index to use for the base series, or a string
      * representing the id of the series.
-     *
-     * @type {number|string}
      */
     baseSeries?: (number|string);
 
@@ -87,8 +85,6 @@ export interface BellcurveSeriesOptions extends AreaSplineSeriesOptions, Derived
      *
      * @sample {highcharts} highcharts/chart/reflow-true/
      *         Numerical values
-     *
-     * @type {Array<number|null>|null|*}
      *
      * @extends series.line.data
      *
@@ -114,8 +110,6 @@ export interface BellcurveSeriesOptions extends AreaSplineSeriesOptions, Derived
      */
     pointsInInterval: number;
     states?: SeriesStatesOptions<BellcurveSeriesOptions>;
-
-    marker?: PointMarkerOptions;
 
     /**
      *
