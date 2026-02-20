@@ -493,7 +493,7 @@ class Navigator {
 
         // Create the handles:
         if (navigatorOptions.handles?.enabled) {
-            let redrawHandles;
+            let redrawHandles = false;
 
             const handlesOptions =
                 navigatorOptions.handles as Required<NavigatorHandlesOptions>,
@@ -501,8 +501,8 @@ class Navigator {
 
             [0, 1].forEach((index: number): void => {
                 const newSymbolName = handlesOptions.symbols[index];
-                redrawHandles =
-                        navigator.handles[index]?.symbolName !== newSymbolName;
+                redrawHandles = redrawHandles ||
+                    (navigator.handles[index]?.symbolName !== newSymbolName);
 
                 // First render of handles or update of handle symbol
                 if (redrawHandles) {
