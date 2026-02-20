@@ -164,56 +164,11 @@
             type: 'scatter'
         }],
         tooltip: {
-            pointFormat: '\n                Latitude: <strong>{point.x:.2f} ' +
-                   'ºE</strong>,<br/>\n ' +
-                   ' ' +
-                   ' ' +
-                   ' ' +
-                   ' ' +
-                   ' ' +
-                   ' ' +
-                   ' ' +
-                   ' ' +
-                   ' ' +
-                   ' ' +
-                   ' ' +
-                   ' ' +
-                   ' ' +
-                   ' ' +
-                   ' ' +
-                   'Longitude: ' +
-                   '<strong>{point.y:.2f} ' +
-                   'ºN</strong>,<br/>\n ' +
-                   ' ' +
-                   ' ' +
-                   ' ' +
-                   ' ' +
-                   ' ' +
-                   ' ' +
-                   ' ' +
-                   ' ' +
-                   ' ' +
-                   ' ' +
-                   ' ' +
-                   ' ' +
-                   ' ' +
-                   ' ' +
-                   ' ' +
-                   'Elevation: ' +
-                   '<strong>{point.value} ' +
-                   'm</strong>\n ' +
-                   ' ' +
-                   ' ' +
-                   ' ' +
-                   ' ' +
-                   ' ' +
-                   ' ' +
-                   ' ' +
-                   ' ' +
-                   ' ' +
-                   ' ' +
-                   ' ' +
-                   ''
+            pointFormat: `
+                Latitude: <strong>{point.x:.2f} ºE</strong>,<br/>
+                Longitude: <strong>{point.y:.2f} ºN</strong>,<br/>
+                Elevation: <strong>{point.value} m</strong>
+            `
         }
     });
 
