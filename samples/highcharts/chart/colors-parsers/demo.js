@@ -1,10 +1,27 @@
+const colorParserCanvas = document.createElement('canvas');
+const colorParserContext = colorParserCanvas.getContext('2d');
+
+colorParserCanvas.width = 1;
+colorParserCanvas.height = 1;
+
 Highcharts.Color.parsers.push({
     regex: /^[a-z]+$/u,
     parse: result => {
-        const rgb = new RGBColor(result[0]);
-        if (rgb.ok) {
-            return [rgb.r, rgb.g, rgb.b, 1]; // returns rgba to Highcharts
+        if (
+            !colorParserContext ||
+            typeof CSS === 'undefined' ||
+            !CSS.supports('color', result[0])
+        ) {
+            return;
         }
+
+        colorParserContext.clearRect(0, 0, 1, 1);
+        colorParserContext.fillStyle = result[0];
+        colorParserContext.fillRect(0, 0, 1, 1);
+
+        const [r, g, b, a] = colorParserContext.getImageData(0, 0, 1, 1).data;
+
+        return [r, g, b, a / 255];
     }
 });
 
