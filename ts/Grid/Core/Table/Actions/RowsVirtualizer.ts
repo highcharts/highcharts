@@ -788,6 +788,68 @@ class RowsVirtualizer {
     }
 
     /**
+     * Measures the height of the first rendered row's first cell.
+     *
+     * @returns
+     * The measured row height or undefined if it cannot be measured.
+     */
+    public measureRenderedRowHeight(): number|undefined {
+        const rows = this.viewport.rows;
+
+        if (!rows.length) {
+            return;
+        }
+
+        for (let i = 0, iEnd = rows.length; i < iEnd; ++i) {
+            const cell = rows[i].cells[0]?.htmlElement;
+            if (cell) {
+                const height = cell.offsetHeight;
+                return height > 0 ? height : void 0;
+            }
+        }
+    }
+
+    /**
+     * Applies a newly measured row height and refreshes related metrics.
+     *
+     * @param measuredHeight
+     * The measured row height in pixels.
+     *
+     * @returns
+     * Whether the default row height changed.
+     */
+    public applyMeasuredRowHeight(measuredHeight: number): boolean {
+        const nextHeight = Math.max(1, Math.round(measuredHeight));
+
+        if (!nextHeight || nextHeight === this.defaultRowHeight) {
+            return false;
+        }
+
+        this.defaultRowHeight = nextHeight;
+        this.totalGridHeight = this.rowCount * this.defaultRowHeight;
+        this.gridHeightOverflow = Math.max(
+            this.totalGridHeight - this.maxElementHeight,
+            0
+        );
+
+        const target = this.viewport.tbodyElement;
+        const scrollDenominator = this.maxElementHeight - target.clientHeight;
+        const scrollPercentage = scrollDenominator > 0 ?
+            target.scrollTop / scrollDenominator :
+            0;
+        this.scrollOffset = Math.floor(
+            scrollPercentage * this.gridHeightOverflow
+        );
+
+        if (this.viewport.virtualRows) {
+            this.adjustRowHeights();
+            this.adjustRowOffsets();
+        }
+
+        return true;
+    }
+
+    /**
      * Gets a row from the pool or creates a new one for the given index.
      *
      * @param index

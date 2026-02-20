@@ -179,6 +179,11 @@ class Table {
      */
     private pinnedScrollbarCompensationQueued = false;
 
+    /**
+     * Whether the table body min-height was set by the grid.
+     */
+    private tbodyMinHeightManaged = false;
+
     /* *
     *
     *  Constructor
@@ -342,14 +347,33 @@ class Table {
         const minVisibleRows = options?.rendering?.rows?.minVisibleRows;
 
         const tbody = this.tbodyElement;
-        if (
-            defined(minVisibleRows) &&
-            !getStyle(tbody, 'min-height', true)
-        ) {
-            tbody.style.minHeight = (
-                minVisibleRows * this.rowsVirtualizer.defaultRowHeight
-            ) + 'px';
+        if (!defined(minVisibleRows)) {
+            if (this.tbodyMinHeightManaged) {
+                tbody.style.minHeight = '';
+                this.tbodyMinHeightManaged = false;
+            }
+            return;
         }
+
+        const hasUserMinHeight = !!getStyle(tbody, 'min-height', true);
+        if (!this.tbodyMinHeightManaged && hasUserMinHeight) {
+            return;
+        }
+
+        const rowPinningMeta = this.grid.rowPinningMeta;
+        const pinnedRowsCount = (
+            (rowPinningMeta?.topCount || 0) +
+            (rowPinningMeta?.bottomCount || 0)
+        );
+        const minScrollableRows = Math.max(
+            0,
+            minVisibleRows - pinnedRowsCount
+        );
+
+        tbody.style.minHeight = (
+            minScrollableRows * this.rowsVirtualizer.defaultRowHeight
+        ) + 'px';
+        this.tbodyMinHeightManaged = true;
     }
 
     /**
@@ -372,7 +396,7 @@ class Table {
         const threshold = rows?.virtualizationThreshold ?? 50;
 
         if (grid.pagination) {
-            return grid.querying.pagination.currentPageSize >= threshold;
+            return grid.querying.pagination.effectivePageSize >= threshold;
         }
 
         return rowCount >= threshold;
@@ -515,6 +539,13 @@ class Table {
 
         // Reflow rows content dimensions
         this.rowsVirtualizer.reflowRows();
+        const measuredRowHeight = (
+            this.rowsVirtualizer.measureRenderedRowHeight()
+        );
+        if (defined(measuredRowHeight)) {
+            this.rowsVirtualizer.applyMeasuredRowHeight(measuredRowHeight);
+        }
+        this.setTbodyMinHeight();
         for (let i = 0, iEnd = this.pinnedTopRows.length; i < iEnd; ++i) {
             this.pinnedTopRows[i].reflow();
         }
@@ -992,6 +1023,7 @@ class Table {
             this.pinnedTopRows.length = 0;
             this.pinnedBottomRows.length = 0;
             this.tbodyElement.style.display = '';
+            this.setTbodyMinHeight();
             this.applyPinnedBodyMaxHeights();
             return;
         }
@@ -1028,6 +1060,7 @@ class Table {
         ) ?
             'none' :
             '';
+        this.setTbodyMinHeight();
         this.applyPinnedBodyMaxHeights();
         this.syncPinnedHorizontalScroll(this.tbodyElement.scrollLeft);
 

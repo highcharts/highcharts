@@ -615,7 +615,7 @@ test.describe('Grid Lite row pinning', () => {
         expect(state.page3.scrollable).not.toContain('ROW-025');
     });
 
-    test('Pagination pageSize applies to scrollable rows only', async ({ page }) => {
+    test('Pagination pageSize includes pinned rows', async ({ page }) => {
         const state = await page.evaluate(async () => {
             const grid = (window as any).grid;
 
@@ -644,7 +644,7 @@ test.describe('Grid Lite row pinning', () => {
         });
 
         expect(state.topCount).toBe(2);
-        expect(state.scrollableCount).toBe(10);
+        expect(state.scrollableCount).toBe(7);
         expect(state.bottomCount).toBe(1);
     });
 

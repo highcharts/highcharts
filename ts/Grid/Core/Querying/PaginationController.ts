@@ -66,6 +66,16 @@ class PaginationController {
      */
     public totalItemsCount?: number;
 
+    /**
+     * Number of pinned rows rendered on every page.
+     */
+    private pinnedRowsCount: number = 0;
+
+    /**
+     * Number of non-pinned rows used for pagination math.
+     */
+    private nonPinnedItemsCount?: number;
+
 
     /* *
     *
@@ -95,16 +105,48 @@ class PaginationController {
      * Total number of items (rows before pagination).
      */
     public get totalItems(): number {
+        if (this.nonPinnedItemsCount !== void 0) {
+            return this.nonPinnedItemsCount;
+        }
         return this.totalItemsCount ?? 0;
+    }
+
+    /**
+     * Number of scrollable rows available on a page.
+     */
+    public get effectivePageSize(): number {
+        return Math.max(this.currentPageSize - this.pinnedRowsCount, 1);
     }
 
     /**
      * Gets the total number of pages.
      */
     public get totalPages(): number {
-        return this.currentPageSize > 0 ? Math.ceil(
-            this.totalItems / this.currentPageSize
+        return this.effectivePageSize > 0 ? Math.ceil(
+            this.totalItems / this.effectivePageSize
         ) : 1;
+    }
+
+    /**
+     * Sets pagination context derived from pinned rows.
+     *
+     * @param pinnedRowsCount
+     * Number of rows pinned on each page.
+     *
+     * @param nonPinnedItemsCount
+     * Number of rows available for scrollable pagination.
+     */
+    public setPinnedRowsContext(
+        pinnedRowsCount: number,
+        nonPinnedItemsCount?: number
+    ): void {
+        this.pinnedRowsCount = Math.max(0, Math.round(pinnedRowsCount));
+        this.nonPinnedItemsCount = (
+            this.pinnedRowsCount > 0 &&
+            nonPinnedItemsCount !== void 0
+        ) ?
+            nonPinnedItemsCount :
+            void 0;
     }
 
     /**

@@ -68,6 +68,7 @@ export interface ProviderPinningResult {
     topCount: number;
     bottomCount: number;
     scrollableCount: number;
+    nonPinnedCount: number;
 }
 
 /* *
@@ -588,13 +589,19 @@ class RowPinningController {
 
         let scrollableRowIds = nonPinned;
         if (context.paginationEnabled) {
+            const pinnedCount = effectiveTop.length + effectiveBottom.length;
+            const pageSize = Math.max(
+                context.currentPageSize - pinnedCount,
+                0
+            );
+            const pageStep = Math.max(pageSize, 1);
             const start = Math.max(
                 0,
-                (context.currentPage - 1) * context.currentPageSize
+                (context.currentPage - 1) * pageStep
             );
             scrollableRowIds = nonPinned.slice(
                 start,
-                start + context.currentPageSize
+                start + pageSize
             );
         }
 
@@ -613,7 +620,8 @@ class RowPinningController {
             ],
             topCount: effectiveTop.length,
             bottomCount: effectiveBottom.length,
-            scrollableCount: scrollableRowIds.length
+            scrollableCount: scrollableRowIds.length,
+            nonPinnedCount: nonPinned.length
         };
     }
 

@@ -290,5 +290,116 @@ test.describe('Pagination', () => {
         await expect(page.locator('.hcg-button[title="Last page"]')).toBeVisible();
         await expect(page.locator('.hcg-button[title="First page"]')).toBeVisible();
     });
-});
 
+    test('Pinning on last page keeps grid height stable', async ({ page }) => {
+        await page.goto('/grid-lite/demo/grid-pagination', {
+            waitUntil: 'networkidle'
+        });
+
+        await page.waitForFunction(() => {
+            return typeof (window as any).Grid !== 'undefined' &&
+                (window as any).Grid.grids &&
+                (window as any).Grid.grids.length > 0;
+        });
+
+        const state = await page.evaluate(async () => {
+            const grid = (window as any).Grid.grids[0];
+            const host = document.getElementById('container');
+            const getHeight = (element: HTMLElement | null): number =>
+                Math.round(element?.getBoundingClientRect().height || 0);
+
+            await grid.update({
+                pagination: {
+                    page: 26
+                }
+            });
+
+            const beforePin = {
+                hostHeight: getHeight(host),
+                gridHeight: getHeight(grid.container),
+                tableHeight: getHeight(grid.viewport.tableElement)
+            };
+
+            await grid.pinRow(250, 'top');
+
+            return {
+                beforePin,
+                afterPin: {
+                    hostHeight: getHeight(host),
+                    gridHeight: getHeight(grid.container),
+                    tableHeight: getHeight(grid.viewport.tableElement)
+                }
+            };
+        });
+
+        expect(state.afterPin.hostHeight).toBe(state.beforePin.hostHeight);
+        expect(state.afterPin.gridHeight).toBe(state.beforePin.gridHeight);
+        expect(state.afterPin.tableHeight).toBe(state.beforePin.tableHeight);
+    });
+
+    test('Pinned rows are counted in pagination page size', async ({ page }) => {
+        const state = await page.evaluate(async () => {
+            const grid = (window as any).grid;
+            const getScrollableIds = (): string[] => Array.from(
+                document.querySelectorAll(
+                    'tbody.hcg-tbody-scrollable td[data-column-id="ID"]'
+                )
+            ).map((el): string => (el.textContent || '').trim());
+
+            await grid.update({
+                pagination: {
+                    enabled: true,
+                    pageSize: 10,
+                    page: 1
+                },
+                rendering: {
+                    rows: {
+                        virtualization: false
+                    }
+                }
+            });
+
+            const beforePin = {
+                top: grid.viewport.pinnedTopRows.length,
+                scrollable: grid.viewport.rows.length,
+                bottom: grid.viewport.pinnedBottomRows.length
+            };
+
+            await grid.pinRow(0, 'top');
+
+            const afterTopPin = {
+                top: grid.viewport.pinnedTopRows.length,
+                scrollable: grid.viewport.rows.length,
+                bottom: grid.viewport.pinnedBottomRows.length,
+                scrollableIds: getScrollableIds()
+            };
+
+            await grid.pinRow(1, 'bottom');
+
+            const afterBottomPin = {
+                top: grid.viewport.pinnedTopRows.length,
+                scrollable: grid.viewport.rows.length,
+                bottom: grid.viewport.pinnedBottomRows.length
+            };
+
+            return {
+                beforePin,
+                afterTopPin,
+                afterBottomPin
+            };
+        });
+
+        expect(state.beforePin.top).toBe(0);
+        expect(state.beforePin.scrollable).toBe(10);
+        expect(state.beforePin.bottom).toBe(0);
+
+        expect(state.afterTopPin.top).toBe(1);
+        expect(state.afterTopPin.scrollable).toBe(9);
+        expect(state.afterTopPin.bottom).toBe(0);
+        expect(state.afterTopPin.scrollableIds).not.toContain('11');
+
+        expect(state.afterBottomPin.top).toBe(1);
+        expect(state.afterBottomPin.scrollable).toBe(8);
+        expect(state.afterBottomPin.bottom).toBe(1);
+    });
+});

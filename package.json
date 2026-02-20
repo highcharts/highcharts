@@ -197,7 +197,7 @@
       "npx cspell -c ./tools/cspell/cspell.json"
     ],
     "./tests/**": [
-      "npx --workspace tests eslint"
+      "cd tests && npx eslint"
     ]
   },
   "license": "SEE LICENSE IN <license.txt>"

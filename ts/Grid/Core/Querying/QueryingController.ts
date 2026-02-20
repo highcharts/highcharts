@@ -175,6 +175,10 @@ class QueryingController {
                         currentPageSize: this.pagination.currentPageSize
                     }
                 );
+            this.pagination.setPinnedRowsContext(
+                pinningResult.topCount + pinningResult.bottomCount,
+                pinningResult.nonPinnedCount
+            );
             await dataProvider.setPinningView(
                 rowPinning.createProviderPinningViewState(pinningResult)
             );
@@ -186,6 +190,7 @@ class QueryingController {
                 bottomRowIds: pinningResult.bottomRowIds.slice()
             };
         } else {
+            this.pagination.setPinnedRowsContext(0);
             delete this.grid.rowPinningMeta;
             await dataProvider.setPinningView(void 0);
         }
