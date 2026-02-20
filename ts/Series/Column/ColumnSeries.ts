@@ -874,7 +874,8 @@ class ColumnSeries extends Series {
                                 visiblePlotOnly: true
                             }
                         ) ||
-                        // Added condtion for scatter points on the edge, #24096
+                        // Added condition for scatter points on the edge,
+                        // #24096
                         (
                             series.type === 'scatter' &&
                             pointer?.inClass(
