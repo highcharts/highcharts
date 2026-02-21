@@ -669,7 +669,7 @@ namespace DataLabel {
             contrastColor = renderer.getContrast(
                 (isString(plotBackgroundColor) && plotBackgroundColor) ||
                 (isString(backgroundColor) && backgroundColor) ||
-                'var(--highcharts-neutral-color-100)'
+                'var(--highcharts-background-color)'
             ),
             seriesDlOptions = mergedDataLabelOptions(series);
 

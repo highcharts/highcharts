@@ -82,7 +82,6 @@ namespace DarkUnicaTheme {
         plotOptions: {
             series: {
                 dataLabels: {
-                    color: '#f0f0f3',
                     style: {
                         fontSize: '13px'
                     }
