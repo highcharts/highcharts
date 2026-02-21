@@ -44,9 +44,9 @@ const themeCases: ThemeCase[] = [
     {
         name: 'dark-unica',
         expected: {
-            titleColor: '#E0E0E3',
+            titleColor: 'var(--highcharts-neutral-color-80)',
             titleTextTransform: 'uppercase',
-            themeTitleColor: '#E0E0E3',
+            themeTitleColor: null,
             themeTitleTextTransform: 'uppercase'
         }
     },
