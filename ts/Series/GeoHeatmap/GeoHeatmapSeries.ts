@@ -467,7 +467,7 @@ class GeoHeatmapSeries extends MapSeries {
 
                     ctx.putImageData(
                         new ImageData(
-                            projectedPixelData,
+                            projectedPixelData as ImageDataArray,
                             projectedWidth,
                             projectedHeight
                         ),
