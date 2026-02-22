@@ -1,26 +1,31 @@
 Highcharts.chart('container', {
-    chart: {
-        type: 'column'
-    },
     title: {
-        text: 'Crosshair and Tooltip showDelay demo'
+        text: 'Crosshair and Tooltip <em>showDelay</em> demo'
     },
     xAxis: {
-        categories: ['Apples', 'Bananas', 'Oranges', 'Pears'],
         crosshair: {
             showDelay: 1000
-        }
+        },
+        type: 'datetime'
     },
     yAxis: {
         crosshair: {
             showDelay: 1000
         }
     },
+    plotOptions: {
+        series: {
+            pointIntervalUnit: 'month',
+            pointStart: '2026-01-01'
+        }
+    },
     series: [{
-        data: [4, 3, 5, 6, 2, 3]
+        data: [
+            29.9, 71.5, 106.4, 129.2, 144, 176, 135.6, 148.5, 216.4, 194.1,
+            95.6, 54.4
+        ]
     }],
     tooltip: {
-        hideDelay: 1500,
         showDelay: 1000
     }
 });

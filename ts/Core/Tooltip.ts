@@ -71,10 +71,10 @@ const {
  *
  * @internal
  */
-function clearTimeouts(this: Tooltip): void {
-    clearTimeout(this.hideTimer);
-    clearTimeout(this.showTimer);
-}
+const clearTimeouts = (tooltip: Tooltip): void => {
+    clearTimeout(tooltip.hideTimer);
+    clearTimeout(tooltip.showTimer);
+};
 
 
 /* *
@@ -386,7 +386,7 @@ class Tooltip {
             this.renderer = this.renderer.destroy() as any;
             discardElement(this.container);
         }
-        clearTimeouts.call(this);
+        clearTimeouts(this);
     }
 
     /**
@@ -933,7 +933,7 @@ class Tooltip {
         const tooltip = this;
 
         // Disallow duplicate timers (#1728, #1766)
-        clearTimeouts.call(this);
+        clearTimeouts(this);
         delay = pick(delay, this.options.hideDelay);
         if (!this.isHidden) {
             this.hideTimer = syncTimeout(function (): void {
@@ -1133,7 +1133,7 @@ class Tooltip {
             return;
         }
 
-        clearTimeouts.call(this);
+        clearTimeouts(this);
 
         // A switch saying if this specific tooltip configuration allows shared
         // or split modes
@@ -1796,7 +1796,7 @@ class Tooltip {
             addEvent(
                 tooltip.tracker.element,
                 'mouseenter',
-                clearTimeouts.bind(tooltip)
+                (): void => clearTimeouts(tooltip)
             );
 
             if (!chart.styledMode) {

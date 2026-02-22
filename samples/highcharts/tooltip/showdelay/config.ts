@@ -22,26 +22,10 @@ export default {
         min: 0,
         step: 100
     }],
+    templates: ['linear-12', 'datetime'],
     chartOptionsExtra: {
         title: {
-            text: 'Crosshair and Tooltip showDelay demo'
-        },
-        xAxis: {
-            crosshair: {
-                showDelay: 1000
-            }
-        },
-        yAxis: {
-            crosshair: {
-                showDelay: 1000
-            }
-        },
-        tooltip: {
-            showDelay: 1000,
-            hideDelay: 1500
-        },
-        series: [{
-            data: [4, 3, 5, 6, 2, 3]
-        }]
+            text: 'Crosshair and Tooltip <em>showDelay</em> demo'
+        }
     }
 } satisfies SampleGeneratorConfig;

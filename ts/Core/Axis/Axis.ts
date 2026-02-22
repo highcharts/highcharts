@@ -4572,13 +4572,13 @@ class Axis {
             categorized = this.categories && !this.isRadial;
 
             this.crossShowTimer = syncTimeout((): void => {
-                // Get the *current* crosshair, in case it was
-                // created by another call while this one was delayed.
-                let currentCross = this.cross;
+                // Get the *current* crosshair, in case it was created by
+                // another call while this one was delayed.
+                let cross = this.cross;
 
                 // Draw the cross
-                if (!currentCross) {
-                    this.cross = currentCross = chart.renderer
+                if (!cross) {
+                    this.cross = cross = chart.renderer
                         .path()
                         .addClass(
                             'highcharts-crosshair highcharts-crosshair-' +
@@ -4592,7 +4592,7 @@ class Axis {
 
                     // Presentational attributes
                     if (!chart.styledMode) {
-                        currentCross.attr({
+                        cross.attr({
                             stroke: options.color ||
                                 (
                                     categorized ?
@@ -4607,19 +4607,19 @@ class Axis {
                             'pointer-events': 'none'
                         });
                         if (options.dashStyle) {
-                            currentCross.attr({
+                            cross.attr({
                                 dashstyle: options.dashStyle
                             });
                         }
                     }
                 }
 
-                currentCross.show().attr({
+                cross.show().attr({
                     d: path as SVGPath
                 });
 
                 if (categorized && !options.width) {
-                    currentCross.attr({
+                    cross.attr({
                         'stroke-width': this.transA
                     });
                 }
