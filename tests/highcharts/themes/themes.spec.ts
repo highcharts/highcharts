@@ -80,9 +80,9 @@ const themeCases: ThemeCase[] = [
     {
         name: 'sand-signika',
         expected: {
-            titleColor: 'black',
+            titleColor: 'var(--highcharts-neutral-color-100)',
             titleTextTransform: null,
-            themeTitleColor: 'black',
+            themeTitleColor: 'var(--highcharts-neutral-color-100)',
             themeTitleTextTransform: null
         }
     },
