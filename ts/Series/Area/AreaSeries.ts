@@ -475,9 +475,13 @@ class AreaSeries extends LineSeries {
                         i += upOrDown;
                     }
                     y = pick(y, 0);
-                    y = yAxis.translate(// #6272
-                        y, 0 as any, 1 as any, 0 as any, 1 as any
-                    );
+                    if (yAxis.logarithmic && y <= 0) {
+                        y = yAxis.getThreshold(0);
+                    } else {
+                        y = yAxis.translate(// #6272
+                            y, 0 as any, 1 as any, 0 as any, 1 as any
+                        );
+                    }
                     segment.push({ // @todo create real point object
                         isNull: true,
                         plotX: xAxis.translate(// #6272

@@ -52,5 +52,30 @@ QUnit.test(
             areaBBox.width > 0 && areaBBox.height > 0,
             'Area series with negative values should have a valid area drawing.'
         );
+
+        chart.series[0].setData([1, 0.1, 1], false);
+        chart.addSeries({
+            data: [2, 3, null, 3, 4]
+        }, false);
+
+
+        chart.update({
+            plotOptions: {
+                series: {
+                    connectNulls: true,
+                    stacking: 'normal'
+                }
+            }
+        });
+
+        const isValidArea = chart.series[1].areaPath.every(segment =>
+            segment[0] === 'Z' || isFinite(segment[2])
+        );
+
+        assert.ok(
+            isValidArea,
+            `Stacked area with log axis and connectNulls should have a valid
+            area path.`
+        );
     }
 );
