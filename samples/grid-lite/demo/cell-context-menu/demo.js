@@ -47,7 +47,31 @@ function getNextColumnId(existingIds) {
     return id;
 }
 
-function addRowBelow(cell) {
+async function getSourceRowIndex(cell) {
+    const grid = cell.row.viewport.grid;
+    const rowId = cell.row.id;
+
+    if (rowId !== void 0 && grid.dataProvider?.getScopedRowIndex) {
+        const resolvedIndex = await grid.dataProvider.getScopedRowIndex(
+            rowId,
+            'raw'
+        );
+
+        if (typeof resolvedIndex === 'number') {
+            return resolvedIndex;
+        }
+    }
+
+    if (typeof rowId === 'number') {
+        return rowId;
+    }
+
+    if (typeof cell.row.index === 'number') {
+        return cell.row.index;
+    }
+}
+
+async function addRowBelow(cell) {
     const grid = cell.row.viewport.grid;
     const dt = grid.dataTable;
 
@@ -55,7 +79,7 @@ function addRowBelow(cell) {
         return;
     }
 
-    const insertAt = cell.row.id;
+    const insertAt = await getSourceRowIndex(cell);
     if (typeof insertAt !== 'number') {
         return;
     }
@@ -76,7 +100,7 @@ function addRowBelow(cell) {
     void grid.viewport.updateRows();
 }
 
-function addRowAbove(cell) {
+async function addRowAbove(cell) {
     const grid = cell.row.viewport.grid;
     const dt = grid.dataTable;
 
@@ -84,7 +108,7 @@ function addRowAbove(cell) {
         return;
     }
 
-    const insertAt = cell.row.id;
+    const insertAt = await getSourceRowIndex(cell);
     if (typeof insertAt !== 'number') {
         return;
     }
@@ -169,7 +193,7 @@ function addColumnRight(cell) {
     });
 }
 
-function deleteRow(cell) {
+async function deleteRow(cell) {
     const grid = cell.row.viewport.grid;
     const dt = grid.dataTable;
 
@@ -177,7 +201,7 @@ function deleteRow(cell) {
         return;
     }
 
-    const deleteAt = cell.row.id;
+    const deleteAt = await getSourceRowIndex(cell);
     if (typeof deleteAt !== 'number') {
         return;
     }
@@ -209,25 +233,45 @@ const menuItems = [{
 }, {
     separator: true
 }, {
-    label: 'Add row above',
-    icon: 'addRowAbove',
-    onClick: addRowAbove
+    label: 'Pinning',
+    icon: 'pin01',
+    items: [
+        'pinRowTop',
+        'pinRowBottom',
+        {
+            actionId: 'unpinRow',
+            icon: 'pin02'
+        }
+    ]
 }, {
-    label: 'Add row below',
-    icon: 'addRowBelow',
-    onClick: addRowBelow
-}, {
-    label: 'Add column left',
-    icon: 'addColumnLeft',
-    onClick: addColumnLeft
-}, {
-    label: 'Add column right',
-    icon: 'addColumnRight',
-    onClick: addColumnRight
-}, {
-    label: 'Delete row',
-    icon: 'trash',
-    onClick: deleteRow
+    label: 'Edit',
+    items: [{
+        label: 'Rows',
+        items: [{
+            label: 'Add row above',
+            icon: 'addRowAbove',
+            onClick: addRowAbove
+        }, {
+            label: 'Add row below',
+            icon: 'addRowBelow',
+            onClick: addRowBelow
+        }, {
+            label: 'Delete row',
+            icon: 'trash',
+            onClick: deleteRow
+        }]
+    }, {
+        label: 'Columns',
+        items: [{
+            label: 'Add column left',
+            icon: 'addColumnLeft',
+            onClick: addColumnLeft
+        }, {
+            label: 'Add column right',
+            icon: 'addColumnRight',
+            onClick: addColumnRight
+        }]
+    }]
 }];
 
 Grid.grid('container', {
@@ -253,4 +297,6 @@ Grid.grid('container', {
     }
 });
 
-logEvent('Ready. Right-click a cell to open the menu.');
+logEvent(
+    'Ready. Right-click a cell to open the menu with pinning and nested items.'
+);

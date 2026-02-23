@@ -31,6 +31,6 @@ describe('Keyboard navigation in Grid.', () => {
 
     it('Editing by pressing Enter key on a table cell should be possible.', () => {
         cy.focused().type('{esc}{downarrow}{downarrow}{enter}0{enter}');
-        cy.focused().parent().should('have.attr', 'data-row-index', '1');
+        cy.focused().should('have.attr', 'data-value', '0');
     });
 });

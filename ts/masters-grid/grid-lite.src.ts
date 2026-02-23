@@ -38,6 +38,7 @@ import SvgIcons from '../Grid/Core/UI/SvgIcons.js';
 import Pagination from '../Grid/Core/Pagination/Pagination.js';
 import DataProviderRegistry from '../Grid/Core/Data/DataProviderRegistry.js';
 import ResponsiveComposition from '../Grid/Core/Responsive/ResponsiveComposition.js';
+import RowPinningComposition from '../Grid/Core/RowPinning/RowPinningComposition.js';
 
 // Fill registries
 import '../Data/Connectors/CSVConnector.js';
@@ -51,7 +52,6 @@ import '../Data/Modifiers/SortModifier.js';
 import '../Data/Modifiers/FilterModifier.js';
 
 import '../Grid/Core/Data/LocalDataProvider.js';
-import '../Grid/Core/Responsive/ResponsiveComposition.js';
 
 
 /* *
@@ -88,6 +88,7 @@ const G = {
 
 CreditsLiteComposition.compose(G.Grid, G.Table);
 ResponsiveComposition.compose(G.Grid);
+RowPinningComposition.compose(G.Grid);
 
 
 /* *

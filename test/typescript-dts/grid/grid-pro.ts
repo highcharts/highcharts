@@ -73,6 +73,14 @@ function test_grid() {
                     header: ['x']
                 }
             }]
+        },
+        events: {
+            beforeRowPinningChange: function (e): void {
+                e.target;
+            },
+            afterRowPinningChange: function (e): void {
+                e.target;
+            }
         }
     });
 }

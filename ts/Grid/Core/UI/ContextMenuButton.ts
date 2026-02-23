@@ -182,6 +182,13 @@ export class ContextMenuButton implements Button {
         }
     }
 
+    /**
+     * Triggers button click programmatically.
+     */
+    public click(): void {
+        this.buttonEl?.click();
+    }
+
     public setLabel(label: string): void {
         if (this.spanEl) {
             this.spanEl.innerText = label;
@@ -226,6 +233,7 @@ export class ContextMenuButton implements Button {
      * Destroys the button.
      */
     public destroy(): void {
+        this.popup?.hide();
         this.removeEventListeners();
         this.wrapper?.remove();
 

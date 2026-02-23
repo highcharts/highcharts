@@ -185,14 +185,55 @@
         position: relative;
     }
 
-    &.hcg-scrollable-content tbody {
+    /* <tbody> */
+    &.hcg-scrollable-content tbody.hcg-tbody-scrollable {
         height: 100%;
         overflow: auto;
         min-height: 0;
         flex: 1;
     }
 
-    &.hcg-virtualization tbody {
+    &:has(tbody.hcg-tbody-pinned-top.hcg-tbody-pinned-active) tbody.hcg-tbody-scrollable,
+    &:has(tbody.hcg-tbody-pinned-bottom.hcg-tbody-pinned-active) tbody.hcg-tbody-scrollable {
+        height: auto;
+    }
+
+    tbody.hcg-tbody-pinned-top,
+    tbody.hcg-tbody-pinned-bottom {
+        display: block;
+        overflow: hidden;
+        flex: 0 0 auto;
+    }
+
+    tbody.hcg-tbody-pinned-top.hcg-tbody-pinned-active {
+        position: relative;
+        z-index: 1;
+        border-bottom: var(--ig-pinned-border);
+        border-radius: 0;
+        box-shadow: var(--ig-pinned-top-shadow);
+    }
+
+    tbody.hcg-tbody-pinned-top.hcg-tbody-pinned-active tr:last-of-type td {
+        border-radius: 0;
+    }
+
+    tbody.hcg-tbody-pinned-bottom.hcg-tbody-pinned-active {
+        position: relative;
+        z-index: 1;
+        border-top: var(--ig-pinned-border);
+        box-shadow: var(--ig-pinned-bottom-shadow);
+    }
+
+    /* Remove bottom radius from scrollable tbody when bottom pinned is active */
+    &:has(tbody.hcg-tbody-pinned-bottom.hcg-tbody-pinned-active) tbody.hcg-tbody-scrollable {
+        border-radius: 0;
+    }
+
+    &:has(tbody.hcg-tbody-pinned-bottom.hcg-tbody-pinned-active) tbody.hcg-tbody-scrollable tr:last-of-type td {
+        border-radius: 0;
+    }
+
+    &.hcg-virtualization tbody.hcg-tbody-scrollable {
         display: block;
         position: relative;
     }
@@ -223,11 +264,13 @@
         border-bottom: none;
     }
 
-    &.hcg-scrollable-content tbody tr {
+    &.hcg-scrollable-content tbody.hcg-tbody-scrollable tr,
+    tbody.hcg-tbody-pinned-top tr,
+    tbody.hcg-tbody-pinned-bottom tr {
         display: block;
     }
 
-    &.hcg-virtualization tbody tr {
+    &.hcg-virtualization tbody.hcg-tbody-scrollable tr {
         position: absolute;
     }
 

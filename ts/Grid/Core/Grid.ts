@@ -40,6 +40,7 @@ import type Column from './Table/Column';
 import type { ColumnDataType, NoIdColumnOptions } from './Table/Column';
 import type Popup from './UI/Popup.js';
 import type { DeepPartial } from '../../Shared/Types';
+import type RowPinningController from './RowPinning/RowPinningController';
 
 import Accessibility from './Accessibility/Accessibility.js';
 import AST from '../../Core/Renderer/HTML/AST.js';
@@ -67,6 +68,14 @@ const {
     merge,
     pick
 } = U;
+
+export interface RowPinningMeta {
+    topCount: number;
+    bottomCount: number;
+    scrollableCount: number;
+    topRowIds: Array<string|number>;
+    bottomRowIds: Array<string|number>;
+}
 
 
 /* *
@@ -261,6 +270,18 @@ export class Grid {
     public querying: QueryingController;
 
     /**
+     * Row pinning metadata for the current queried dataset.
+     * @internal
+     */
+    public rowPinningMeta?: RowPinningMeta;
+
+    /**
+     * Row pinning controller.
+     * @internal
+     */
+    public rowPinning?: RowPinningController;
+
+    /**
      * The time instance.
      */
     public time: TimeBase;
@@ -390,6 +411,15 @@ export class Grid {
         const dp = this.dataProvider;
         if (dp && 'getDataTable' in dp) {
             return dp.getDataTable(true);
+        }
+    }
+
+    public set presentationTable(table: DataTable | undefined) {
+        const dp = this.dataProvider as {
+            setPresentationTable?: (dataTable?: DataTable) => void;
+        };
+        if (dp.setPresentationTable) {
+            dp.setPresentationTable(table);
         }
     }
 
@@ -1211,19 +1241,18 @@ export class Grid {
      * The index of the row.
      */
     public hoverRow(rowIndex?: number): void {
-        const rows = this.viewport?.rows;
-        if (!rows) {
+        const viewport = this.viewport;
+        if (!viewport) {
             return;
         }
 
-        const firstRowIndex = this.viewport?.rows[0]?.index ?? 0;
-
         if (this.hoveredRowIndex !== void 0) {
-            rows[this.hoveredRowIndex - firstRowIndex]?.setHoveredState(false);
+            viewport.getRenderedRowByIndex(this.hoveredRowIndex)
+                ?.setHoveredState(false);
         }
 
         if (rowIndex !== void 0) {
-            rows[rowIndex - firstRowIndex]?.setHoveredState(true);
+            viewport.getRenderedRowByIndex(rowIndex)?.setHoveredState(true);
         }
 
         this.hoveredRowIndex = rowIndex;
@@ -1262,19 +1291,18 @@ export class Grid {
      * The index of the row.
      */
     public syncRow(rowIndex?: number): void {
-        const rows = this.viewport?.rows;
-        if (!rows) {
+        const viewport = this.viewport;
+        if (!viewport) {
             return;
         }
 
-        const firstRowIndex = this.viewport?.rows[0]?.index ?? 0;
-
         if (this.syncedRowIndex !== void 0) {
-            rows[this.syncedRowIndex - firstRowIndex]?.setSyncedState(false);
+            viewport.getRenderedRowByIndex(this.syncedRowIndex)
+                ?.setSyncedState(false);
         }
 
         if (rowIndex !== void 0) {
-            rows[rowIndex - firstRowIndex]?.setSyncedState(true);
+            viewport.getRenderedRowByIndex(rowIndex)?.setSyncedState(true);
         }
 
         this.syncedRowIndex = rowIndex;

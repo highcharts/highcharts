@@ -24,6 +24,8 @@ Configured in `events` at the root of grid options:
 | `afterUpdate`          | Triggered after grid options are updated via `update()`. | `this: Grid`          |
 | `beforeRedraw`         | Triggered before the grid DOM is redrawn. Fired by default when `update()` is called, unless `redraw` is set to `false`. | `this: Grid`          |
 | `afterRedraw`          | Triggered after the grid DOM is redrawn. Fired by default when `update()` is called, unless `redraw` is set to `false`. | `this: Grid`          |
+| `beforeRowPinningChange` | Triggered before a runtime row pinning change is redrawn. | `this: Grid`        |
+| `afterRowPinningChange`  | Triggered after a runtime row pinning change is redrawn.  | `this: Grid`        |
 
 ## Column-level events
 
@@ -96,6 +98,12 @@ Grid-level events are configured at the root `events` property:
         },
         afterRedraw: function () {
             console.log('Grid DOM redraw finished.');
+        },
+        beforeRowPinningChange: function (e) {
+            console.log('Before row pinning change:', e.action, e.rowId);
+        },
+        afterRowPinningChange: function (e) {
+            console.log('After row pinning change:', e.action, e.rowId);
         }
     }
 }

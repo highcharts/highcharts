@@ -44,6 +44,7 @@ async function runRemoteScenario(
     return await page.evaluate(async ({ options, mode }) => {
         const api = (window as any).remoteDataProviderTest;
         await api.createGrid(options);
+        await new Promise((resolve) => window.setTimeout(resolve, 0));
 
         const grid = api.getGrid();
         const dp = grid?.dataProvider;
@@ -169,5 +170,164 @@ test.describe('RemoteDataProvider', () => {
         ]));
         expect(result.rowId0).toBe('row-4');
         expect(result.rowId1).toBe('row-3');
+    });
+
+    test('supports sticky rows with remote provider and virtualization', async ({
+        page
+    }) => {
+        await page.goto('/grid-pro/cypress/remote-data-provider');
+        await page.waitForFunction(() => {
+            const api = (window as any).remoteDataProviderTest;
+            return !!(api && api.createGrid && api.getGrid);
+        });
+
+        await page.evaluate(() => {
+            const api = (window as any).remoteDataProviderTest;
+            api.createGrid({
+                totalRowCount: 80,
+                data: {
+                    chunkSize: 200
+                },
+                rendering: {
+                    rows: {
+                        virtualization: true,
+                        virtualizationThreshold: 20,
+                        pinning: {
+                            idColumn: 'id',
+                            topIds: [5, 20, 70]
+                        }
+                    }
+                }
+            });
+        });
+
+        await page.waitForFunction(() => {
+            const grid = (window as any).remoteDataProviderTest.getGrid();
+            return !!grid?.viewport?.rowsVirtualizer;
+        });
+
+        const result = await page.evaluate(async () => {
+            const api = (window as any).remoteDataProviderTest;
+            const grid = api.getGrid();
+            const vp = grid.viewport;
+            const rowCount = await grid.dataProvider.getRowCount();
+
+            await new Promise((resolve) => window.setTimeout(resolve, 0));
+
+            const rowHeight = vp.rowsVirtualizer.defaultRowHeight ||
+                vp.rows[0]?.htmlElement.offsetHeight ||
+                1;
+            vp.tbodyElement.scrollTop = rowHeight * 60;
+            vp.tbodyElement.dispatchEvent(new Event('scroll'));
+
+            await new Promise((resolve) => window.setTimeout(resolve, 0));
+
+            const visibleFrom = Math.max(
+                0,
+                Math.floor(vp.tbodyElement.scrollTop / rowHeight)
+            );
+            const pinnedRows = grid.getPinnedRows ? grid.getPinnedRows() : {
+                topIds: [],
+                bottomIds: []
+            };
+            const excluded = new Set(
+                [...pinnedRows.topIds, ...pinnedRows.bottomIds].map(
+                    (id: string | number) => String(id)
+                )
+            );
+
+            let target: { index: number; id: number } = { index: -1, id: -1 };
+            for (const row of vp.rows) {
+                if (
+                    row.index < visibleFrom &&
+                    row.index > 0 &&
+                    row.index < rowCount - 1 &&
+                    !excluded.has(String(row.data.id))
+                ) {
+                    target = {
+                        index: row.index,
+                        id: Number(row.data.id)
+                    };
+                    break;
+                }
+            }
+
+            if (target.index === -1) {
+                return {
+                    target,
+                    pinnedRows: grid.getPinnedRows ? grid.getPinnedRows() : {
+                        topIds: [],
+                        bottomIds: []
+                    }
+                };
+            }
+
+            await grid.pinRow(target.id);
+
+            return {
+                target,
+                pinnedRows: grid.getPinnedRows ? grid.getPinnedRows() : {
+                    topIds: [],
+                    bottomIds: []
+                },
+                pinnedMetaTopIds: grid.rowPinningMeta?.topRowIds || []
+            };
+        });
+
+        expect(result.target.index).toBeGreaterThan(-1);
+        expect(result.pinnedRows.topIds).toContain(result.target.id);
+        expect(result.pinnedMetaTopIds).toContain(result.target.id);
+    });
+
+    test('supports pinRow/unpinRow for remote data', async ({
+        page
+    }) => {
+        await page.goto('/grid-pro/cypress/remote-data-provider');
+        await page.waitForFunction(() => {
+            const api = (window as any).remoteDataProviderTest;
+            return !!(api && api.createGrid && api.getGrid);
+        });
+
+        const result = await page.evaluate(async () => {
+            const api = (window as any).remoteDataProviderTest;
+            await api.createGrid({
+                totalRowCount: 40,
+                data: {
+                    chunkSize: 80
+                },
+                rendering: {
+                    rows: {
+                        pinning: {
+                            idColumn: 'id',
+                            topIds: [5]
+                        }
+                    }
+                }
+            });
+
+            const grid = api.getGrid();
+            if (
+                typeof grid.pinRow !== 'function' ||
+                typeof grid.unpinRow !== 'function' ||
+                typeof grid.getPinnedRows !== 'function'
+            ) {
+                return {
+                    hasApi: false,
+                    pinnedRows: { topIds: [], bottomIds: [] }
+                };
+            }
+
+            await grid.unpinRow(5);
+            await grid.pinRow(7);
+
+            return {
+                hasApi: true,
+                pinnedRows: grid.getPinnedRows()
+            };
+        });
+
+        expect(result.hasApi).toBe(true);
+        expect(result.pinnedRows.topIds).not.toContain(5);
+        expect(result.pinnedRows.topIds).toContain(7);
     });
 });

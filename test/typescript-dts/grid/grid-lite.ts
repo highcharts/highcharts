@@ -23,10 +23,8 @@ function test_grid() {
         }
     });
 
-    Grid.grid('container', {
-        data: {
-            dataTable,
-        },
+    const grid = Grid.grid('container', {
+        dataTable,
         header: [{
             format: 'grouped header',
             columns: [{
@@ -40,33 +38,66 @@ function test_grid() {
                 resizing: {
                     mode: 'distributed'
                 }
+            },
+            rows: {
+                pinning: {
+                    enabled: true,
+                    topIds: ['A'],
+                    bottomIds: ['C'],
+                    top: {
+                        maxHeight: 120
+                    },
+                    bottom: {
+                        maxHeight: '25%'
+                    }
+                }
             }
         },
         columnDefaults: {
             cells: {
                 contextMenu: {
-                    items: [{
-                        label: 'Test',
-                        onClick: function () {
-                            // noop
+                    enabled: true,
+                    items: [
+                        'pinRowTop',
+                        {
+                            actionId: 'unpinRow',
+                            label: 'Unpin now',
+                            icon: 'pin02'
+                        },
+                        {
+                            label: 'Pinning',
+                            items: [
+                                {
+                                    actionId: 'pinRowBottom',
+                                    items: [{
+                                        label: 'Leaf action',
+                                        onClick: function () {
+                                            // noop
+                                        }
+                                    }]
+                                }
+                            ]
+                        },
+                        {
+                            label: 'Test',
+                            onClick: function () {
+                                // noop
+                            }
                         }
-                    }]
+                    ]
                 }
             }
         },
         columns: [{
             id: 'hidden',
             enabled: false
-        }],
-        responsive: {
-            rules: [{
-                condition: {
-                    minHeight: 500
-                },
-                gridOptions: {
-                    header: ['x']
-                }
-            }]
-        }
+        }]
     });
+
+    grid.pinRow('A');
+    grid.pinRow('A', 'top');
+    grid.toggleRow('A');
+    grid.toggleRow('A', 'bottom');
+    grid.unpinRow('A');
+    grid.getPinnedRows();
 }

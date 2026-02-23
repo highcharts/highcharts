@@ -151,6 +151,21 @@ Use these prefixes to refine borders by section. If no section-specific variable
 | --hcg-header-row    | --hcg-row    |
 | --hcg-header-column | --hcg-column |
 
+### Pinned Row Separators
+
+When rows are pinned to the top or bottom, a separator line and shadow are shown to visually distinguish pinned rows from the scrollable area. These variables control the separator appearance.
+
+| Variable                   | Default Value                      | Valid Values                                                                  |
+| -------------------------- | ---------------------------------- | ----------------------------------------------------------------------------- |
+| --hcg-pinned-border-width  | --hcg-row-border-width             | [border-width](https://developer.mozilla.org/en-US/docs/Web/CSS/border-width) |
+| --hcg-pinned-border-style  | --hcg-row-border-style             | [border-style](https://developer.mozilla.org/en-US/docs/Web/CSS/border-style) |
+| --hcg-pinned-border-color  | --hcg-row-border-color             | [border-color](https://developer.mozilla.org/en-US/docs/Web/CSS/border-color) |
+| --hcg-pinned-shadow        | 0 3px 5px -2px rgba(0, 0, 0, 0.1) | [box-shadow](https://developer.mozilla.org/en-US/docs/Web/CSS/box-shadow)     |
+| --hcg-pinned-top-shadow    | --hcg-pinned-shadow                | [box-shadow](https://developer.mozilla.org/en-US/docs/Web/CSS/box-shadow)     |
+| --hcg-pinned-bottom-shadow | --hcg-pinned-shadow                | [box-shadow](https://developer.mozilla.org/en-US/docs/Web/CSS/box-shadow)     |
+
+Set `--hcg-pinned-shadow: none` to disable shadows entirely.
+
 ### Example
 
 This example starts with a 3px global border. Rows and columns have narrower borders, and header column borders use a different style and color.
