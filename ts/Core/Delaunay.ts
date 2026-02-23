@@ -22,6 +22,8 @@
 
 /**
  * Delaunay triangulation of a 2D point set.
+ *
+ * @internal
  */
 class Delaunay<T extends Float32Array|Float64Array = Float32Array> {
 
