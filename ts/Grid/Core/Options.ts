@@ -38,11 +38,12 @@ import type DataTableOptions from '../../Data/DataTableOptions';
 import type Cell from './Table/Cell';
 import type Column from './Table/Column';
 import type TableCell from './Table/Body/TableCell';
-import type { GridIconName } from './UI/SvgIcons';
+import type { IconRegistryValue } from './UI/SvgIcons';
 import type { LangOptionsCore } from '../../Shared/LangOptionsCore';
 import type {
     Condition as ColumnFilteringCondition
 } from './Table/Actions/ColumnFiltering/FilteringTypes';
+import type CSSObject from '../../Core/Renderer/CSSObject';
 
 
 /* *
@@ -64,6 +65,16 @@ export type CellFormatterCallback = (this: Cell) => string;
 export type HeaderFormatterCallback = (this: Column) => string;
 
 /**
+ * Callback function to resolve dynamic style for a grid entity.
+ */
+export type StyleCallback<T> = (this: T, target: T) => CSSObject;
+
+/**
+ * A static style object or a callback that returns one.
+ */
+export type StyleValue<T> = CSSObject | StyleCallback<T>;
+
+/**
  * Column sorting order type.
  */
 export type ColumnSortingOrder = 'asc' | 'desc' | null;
@@ -78,9 +89,10 @@ export interface CellContextMenuActionItemOptions {
     label: string;
 
     /**
-     * Optional icon name for the menu item.
+     * Optional icon name for the menu item (built-in name from the default
+     * registry or custom name from rendering.icons).
      */
-    icon?: GridIconName;
+    icon?: string;
 
     /**
      * Whether the menu item should be disabled.
@@ -227,6 +239,26 @@ export interface Options {
  * Options to control the way grid is rendered.
  */
 export interface RenderingSettings {
+    /**
+     * Custom or override icons for the grid. Keys are icon names (either
+     * built-in names from the default registry or custom names). Values
+     * are either an SVG definition object or a raw SVG markup string.
+     * Built-in icons can be overridden; new names can be used for custom
+     * icons and referenced where an icon name is accepted (e.g. menu
+     * items, pagination buttons).
+     *
+     * @example
+     * ```js
+     * rendering: {
+     *   icons: {
+     *     chevronRight: '<svg>...</svg>',
+     *     myCustomIcon: { width: 16, height: 16, children: [{ d: '...' }] }
+     *   }
+     * }
+     * ```
+     */
+    icons?: Record<string, IconRegistryValue>;
+
     /**
      * Options to control the columns rendering.
      */
@@ -449,6 +481,12 @@ export interface ColumnOptions {
      * Filtering options for the column.
      */
     filtering?: ColumnFilteringOptions;
+
+    /**
+     * CSS styles for the whole column, applied to the header and body cells.
+     * Can be a static style object or a callback that returns one.
+     */
+    style?: StyleValue<Column>;
 }
 
 /**
@@ -496,6 +534,12 @@ export interface ColumnCellOptions {
      * context menu will be shown on right-click.
      */
     contextMenu?: CellContextMenuOptions;
+
+    /**
+     * CSS styles for table body cells in the column.
+     * Can be a static style object or a callback that returns one.
+     */
+    style?: StyleValue<Cell>;
 }
 
 /**
@@ -525,6 +569,12 @@ export interface ColumnHeaderOptions {
      * A string to be set as a header cell's content.
      */
     formatter?: HeaderFormatterCallback;
+
+    /**
+     * CSS styles for the column header cells.
+     * Can be a static style object or a callback that returns one.
+     */
+    style?: StyleValue<Column>;
 }
 
 /**
@@ -550,6 +600,23 @@ export interface ColumnSortingOptions {
      * Use `enabled` instead
      */
     sortable?: boolean;
+
+    /**
+     * Sequence of sorting orders used when toggling sorting from the user
+     * interface (for example by clicking the column header).
+     *
+     * The sequence can contain any number of values, in any order, with
+     * duplicates allowed. Allowed values are: `'asc'`, `'desc'`, and `null`.
+     *
+     * If the sequence is empty (`[]`), sorting toggles become a no-op while
+     * the sortable UI can still be shown.
+     *
+     * This option can be set in both `columnDefaults.sorting` and
+     * `columns[].sorting`.
+     *
+     * @default ['asc', 'desc', null]
+     */
+    orderSequence?: ColumnSortingOrder[];
 
     /**
      * Custom compare function to sort the column values. It overrides the

@@ -4,7 +4,6 @@
     "vendor/moment-timezone-with-data-2012-2022.js",
     "vendor/proj4.js",
     "vendor/topojson-client.min.js",
-    "vendor/rgbcolor.js",
     "node_modules/lolex/lolex.js",
 
     "code/highcharts.src.js",
@@ -81,6 +80,7 @@
     "code/modules/navigator.src.js",
     "code/modules/textpath.src.js",
     "code/indicators/indicators-all.src.js",
+    "code/modules/contour.src.js",
 
     "node_modules/@highcharts/map-collection/countries/gb/gb-all.js",
     "node_modules/@highcharts/map-collection/custom/british-isles.js",

@@ -155,6 +155,7 @@ module.exports = {
         'Chart and series types': [
             'chart-and-series-types/chart-types',
             'chart-and-series-types/combining-chart-types',
+            'chart-and-series-types/contour',
             'chart-and-series-types/3d-cylinder',
             'chart-and-series-types/funnel-3d',
             'chart-and-series-types/pyramid-3d',
@@ -311,11 +312,34 @@ module.exports = {
         ],
         'React integration': [
             'react/getting-started',
-            'react/series-and-chart-types',
-            'react/options',
+            {
+                'Components': [
+                    'react/components/chart',
+                    'react/components/series-types',
+                    {
+                        'Chart elements': [
+                            'react/components/chart-elements/accessibility',
+                            'react/components/chart-elements/credits',
+                            'react/components/chart-elements/data',
+                            'react/components/chart-elements/drilldown',
+                            'react/components/chart-elements/exporting',
+                            'react/components/chart-elements/legend',
+                            'react/components/chart-elements/plot-options',
+                            'react/components/chart-elements/subtitle',
+                            'react/components/chart-elements/title',
+                            'react/components/chart-elements/tooltip',
+                            'react/components/chart-elements/x-axis',
+                            'react/components/chart-elements/y-axis'
+                        ]
+                    },
+                    'react/components/technical-indicators'
+                ]
+            },
             'react/data-handling',
+            'react/chart-instance',
             'react/options-component-format',
             'react/nextjs',
+            'react/bundling-and-tree-shaking',
             'react/component-children',
             'react/v4-migration-guide'
         ]
