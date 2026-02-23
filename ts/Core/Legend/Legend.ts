@@ -484,43 +484,46 @@ class Legend {
      * @internal
      * @function Highcharts.Legend#getSafePointAttribs
      *
-     * @param {Highcharts.Series} series
-     * The series to get attributes from.
+     * @param {Highcharts.Series|Highcharts.Point} item
+     * The series or point to get attributes from.
      *
-     * @return {Highcharts.SVGAttributes|null}
-     * Returns a style object or null if it fails or isn't applicable.
+     * @return {Highcharts.SVGAttributes|undefined}
+     * SVG attributes for the legend symbol, or undefined when not applicable
+     * (e.g. colorByPoint, complex color sources, value-based colorKey,
+     * or path-based series geometry).
      */
-    private getSafePointAttribs(item: (Series|Point)): SVGAttributes | null {
+    private getSafePointAttribs(
+        item: (Series|Point)
+    ): SVGAttributes | undefined {
+        const series = (item as Series);
         if (
             !item ||
-            typeof (item as any).pointAttribs !== 'function' ||
-            typeof (item as any).is !== 'function'
+            typeof series.pointAttribs !== 'function' ||
+            typeof series.is !== 'function'
         ) {
-            return null;
+            return;
         }
 
-        const series = item as Series,
-            options = series.options,
+        const options = series.options,
             pointArrayMap = series.pointArrayMap || [],
             // Check for complex data series (OHLC, Ranges)
-            isComplex = (pointArrayMap.length > 1 ||
-                (pointArrayMap.length === 1 && pointArrayMap[0] !== 'y')) &&
-                !series.is('bubble');
+            isComplex = (
+                pointArrayMap.length > 1 ||
+                (pointArrayMap.length === 1 && pointArrayMap[0] !== 'y')
+            ) && !series.is('bubble');
 
-        if (options.colorByPoint || isComplex || series.colorKey === 'value') {
-            return null;
-        }
-
-        // Map shape protection
-        if ((series.parallelArrays || []).indexOf('path') !== -1) {
-            return null;
+        if (
+            options.colorByPoint ||
+            isComplex ||
+            series.colorKey === 'value' ||
+            series.parallelArrays?.includes('path')
+        ) {
+            return;
         }
 
         const attribs = series.pointAttribs(void 0, 'normal');
 
-        return (attribs && typeof attribs === 'object') ?
-            (attribs as SVGAttributes) :
-            null;
+        return (attribs && typeof attribs === 'object') ? attribs : void 0;
     }
 
     /**
