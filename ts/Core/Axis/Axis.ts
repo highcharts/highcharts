@@ -4613,8 +4613,7 @@ class Axis {
             // axis marker) and has been drawn before
             graphic.animate(
                 { d: path },
-                options?.animation ?
-                    animObject(options.animation) : { duration: 0 }
+                animObject(options?.animation)
             );
 
             if (categorized && !(options as any).width) {
