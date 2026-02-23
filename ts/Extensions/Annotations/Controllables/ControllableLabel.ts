@@ -427,7 +427,7 @@ class ControllableLabel extends Controllable {
         label.attr({
             text: text ?
                 format(String(text), point, this.annotation.chart) :
-                options.formatter!.call(point, this, point)
+                options.formatter!.call(point, point)
         });
 
         const anchor = this.anchor(point);

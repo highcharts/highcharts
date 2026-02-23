@@ -61,11 +61,14 @@ export interface EventCallback<TScope, TEvent=AnyRecord|Event> {
  * @param {TEvent} e
  * Event argument.
  *
+ * @param {TScope} [ctx]
+ * The context for the callback.
+ *
  * @return {string}
  * Return value.
  */
 export interface FormatterCallback<TScope, TEvent=unknown> {
-    (this: TScope, e: TEvent): string;
+    (this: TScope, e: TEvent, ctx?: TScope): string;
 }
 
 /* *

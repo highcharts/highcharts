@@ -565,7 +565,7 @@ namespace StockChart {
         if (formatOption) {
             text = format(formatOption, { value }, chart);
         } else if (options.formatter && isNumber(value)) {
-            text = (options.formatter as any).call(axis, value, axis);
+            text = options.formatter.call(axis, value, axis);
         }
 
         crossLabel.attr({

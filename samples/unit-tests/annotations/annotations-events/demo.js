@@ -277,12 +277,19 @@ QUnit.test('Annotations events - general', function (assert) {
     const customButton = chart.exporting.svgElements[3].element;
 
     Highcharts.fireEvent(customButton, 'click');
+
+    // Purge chart position for non-headless testing - QUnit header moved chart.
+    delete chart.pointer.chartPosition;
+
     controller.click(150, 150);
     assert.ok(
         customButtonClicked && chart.annotations[2].options.visible,
         `#16675: Annotation should be added from the custom button, that has a
         custom SVG symbol.`
     );
+
+    // Purge chart position for non-headless testing - QUnit header moved chart.
+    delete chart.pointer.chartPosition;
 
     chart.addAxis({
         height: '50%',

@@ -1079,7 +1079,9 @@ export default PlotLineOrBand;
 /**
  * Callback JavaScript function to format the label. Useful properties like
  * the value of plot line or the range of plot band (`from` & `to`
- * properties) can be found in `this.options` object.
+ * properties) can be found in `this.options` object. Since v12.5.0, the
+ * callback also receives `ctx` as the first argument, so that arrow functions
+ * can access the same context as regular functions using `this`.
  *
  * @sample {highcharts} highcharts/xaxis/plotlines-plotbands-label-formatter
  *         Label formatters for plot line and plot band.

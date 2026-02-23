@@ -82,7 +82,7 @@ export interface LegendOptions {
     itemWidth?: number;
     layout: ('horizontal'|'vertical'|'proximate');
     labelFormat?: string;
-    labelFormatter: F.Es6FormatterCallback<Legend.Item>;
+    labelFormatter: F.FormatterCallback<Legend.Item>;
     /** @deprecated */
     lineHeight?: number;
     margin?: number;

@@ -556,10 +556,7 @@ const Templating = {
 
 namespace Templating {
     export interface FormatterCallback<T> {
-        (this: T): string;
-    }
-    export interface Es6FormatterCallback<T> {
-        (this: T, ctx: T): string;
+        (this: T, ...args: Array<any>): string;
     }
     export interface OwnerOptions {
         /**

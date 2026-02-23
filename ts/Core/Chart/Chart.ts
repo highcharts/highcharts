@@ -5168,6 +5168,10 @@ export default Chart;
  *        The thousands separator, defaults to the one given in the lang
  *        options, or a space character.
  *
+ * @param {Highcharts.Chart} [ctx]
+ *        Since v12.5.0, the chart context passed as an extra argument for
+ *        arrow functions.
+ *
  * @return {string} The formatted number.
  */
 

@@ -1279,6 +1279,10 @@ namespace Measure {
         /**
          * Formatter function for the label text.
          *
+         * Since v12.5.0, the callback also receives `ctx` as the first
+         * argument, so that arrow functions can access the same context as
+         * regular functions using `this`.
+         *
          * Available data are:
          *
          * <table>
@@ -1325,7 +1329,7 @@ namespace Measure {
          * @type {Function}
          *
          */
-        formatter?: Templating.Es6FormatterCallback<Measure>;
+        formatter?: Templating.FormatterCallback<Measure>;
 
         /**
          * CSS styles for the measure label.

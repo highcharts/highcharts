@@ -131,6 +131,7 @@ interface CurrentDateIndicatorLabelOptions {
     y?: number;
 
 }
+
 interface CurrentDateIndicatorOptions {
 
     /** @internal */

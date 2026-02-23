@@ -2000,7 +2000,7 @@ namespace Tooltip {
         (
             this: Point,
             tooltip: Tooltip,
-            ctx: Point
+            ctx?: Point
         ): (false|string|Array<string>);
     }
 
@@ -2100,6 +2100,10 @@ export default Tooltip;
  * @param {Highcharts.Tooltip} tooltip
  * The tooltip instance
  *
+ * @param {Highcharts.Point} [ctx]
+ * Since v12.5.0, the point context passed as an extra argument for arrow
+ * functions.
+ *
  * @return {false|string|Array<(string|null|undefined)>|null|undefined}
  * Formatted text or false
  */
@@ -2120,6 +2124,10 @@ export default Tooltip;
  *
  * @param {Highcharts.TooltipPositionerPointObject} point
  * Point information for positioning a tooltip.
+ *
+ * @param {Highcharts.Tooltip} [ctx]
+ * Since v12.5.0, the tooltip context passed as an extra argument for arrow
+ * functions.
  *
  * @return {Highcharts.PositionObject}
  * New position for the tooltip.

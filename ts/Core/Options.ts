@@ -261,7 +261,8 @@ export interface LoadingOptions {
  * space character.
  *
  * @param {Highcharts.Chart} [ctx]
- * The chart context for the callback.
+ * Since v12.5.0, the chart context passed as an extra argument for arrow
+ * functions.
  *
  * @return {string}
  * The formatted number.
