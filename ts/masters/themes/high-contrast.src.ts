@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: LicenseRef-Highcharts
 /**
  * @license Highcharts JS v@product.version@ (@product.date@)
- * @module highcharts/themes/high-contrast-dark
+ * @module highcharts/themes/high-contrast-light
  * @requires highcharts
  *
  * (c) 2009-2026 Highsoft AS
@@ -11,7 +11,7 @@
  */
 'use strict';
 import H from '../../Core/Globals.js';
-import HighContrastDarkTheme from '../../Extensions/Themes/HighContrastDark.js';
-H.theme = HighContrastDarkTheme.options;
-HighContrastDarkTheme.apply();
+import HighContrastTheme from '../../Extensions/Themes/HighContrast.js';
+H.theme = HighContrastTheme.options;
+HighContrastTheme.apply();
 export default H;
