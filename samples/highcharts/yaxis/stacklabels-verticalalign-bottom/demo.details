@@ -1,6 +1,4 @@
 ---
- name: Demo of yAxis.stackLabels.verticalAlign
- authors:
-   - Torstein Hønsi
- js_wrap: b
+name: Demo of yAxis.stackLabels.verticalAlign
+js_wrap: b
 ...

@@ -23,15 +23,18 @@
  * */
 
 import type { CellType as DataTableCellType } from '../../../../Data/DataTable';
+import type CSSObject from '../../../../Core/Renderer/CSSObject';
 import type Column from '../Column';
 import type TableRow from './TableRow';
 
 import Globals from '../../Globals.js';
 import Cell from '../Cell.js';
 import CellContent from '../CellContent/CellContent.js';
+import { mergeStyleValues } from '../../GridUtils.js';
 
 import Utils from '../../../../Core/Utilities.js';
 const {
+    defined,
     fireEvent
 } = Utils;
 
@@ -68,6 +71,17 @@ class TableCell extends Cell {
      */
     public content?: CellContent;
 
+    /**
+     * A token used to prevent stale async responses from overwriting cell
+     * data. In virtualized grids, cells are reused as rows scroll in/out of
+     * view. If a cell starts an async value fetch for row A, then gets reused
+     * for row B before the fetch completes, the stale response for row A
+     * could incorrectly overwrite row B's data. This token is incremented
+     * before each async fetch, and checked when the fetch completes - if the
+     * token has changed, the response is discarded as stale.
+     */
+    private asyncFetchToken: number = 0;
+
 
     /* *
     *
@@ -103,13 +117,13 @@ class TableCell extends Cell {
     /**
      * Renders the cell by appending it to the row and setting its value.
      */
-    public override render(): void {
-        super.render();
-        void this.setValue();
+    public override async render(): Promise<void> {
+        await super.render();
+        await this.setValue();
     }
 
     /**
-     * Edits the cell value and updates the data table. Call this instead of
+     * Edits the cell value and updates the dataset. Call this instead of
      * `setValue` when you want it to trigger the cell value user change event.
      *
      * @param value
@@ -132,18 +146,49 @@ class TableCell extends Cell {
      * The raw value to set. If not provided, it will use the value from the
      * data table for the current row and column.
      *
-     * @param updateTable
-     * Whether to update the table after setting the content. Defaults to
-     * `false`, meaning the table will not be updated.
+     * @param updateDataset
+     * Whether to update the dataset after setting the content. Defaults to
+     * `false`, meaning the dataset will not be updated.
      */
     public async setValue(
-        value: DataTableCellType = this.column.data?.[this.row.index],
-        updateTable: boolean = false
+        value?: DataTableCellType,
+        updateDataset: boolean = false
     ): Promise<void> {
+        const fetchToken = ++this.asyncFetchToken;
+        const { grid } = this.column.viewport;
+
+        // TODO(design): Design a better way to show the cell val being updated.
+        this.htmlElement.style.opacity = '0.5';
+
+        if (!defined(value)) {
+            value = await grid.dataProvider?.getValue(
+                this.column.id,
+                this.row.index
+            );
+
+            // Discard stale response if cell was reused for a different row
+            if (fetchToken !== this.asyncFetchToken) {
+                this.htmlElement.style.opacity = '';
+                return;
+            }
+        }
+
+        const oldValue = this.value;
         this.value = value;
 
-        if (updateTable && await this.updateDataTable()) {
-            return;
+        if (updateDataset) {
+            try {
+                grid.showLoading();
+                if (await this.updateDataset()) {
+                    return;
+                }
+            } catch (err: unknown) {
+                // eslint-disable-next-line no-console
+                console.error(err);
+                this.value = oldValue;
+            } finally {
+                grid.hideLoading();
+            }
         }
 
         if (this.content) {
@@ -162,44 +207,72 @@ class TableCell extends Cell {
         // Add custom class name from column options
         this.setCustomClassName(this.column.options.cells?.className);
 
+        this.setCustomStyles(this.getCellStyles());
+
+        // TODO(design): Remove this after the first part was implemented.
+        this.htmlElement.style.opacity = '';
+
         fireEvent(this, 'afterRender', { target: this });
     }
 
     /**
-     * Updates the the data table so that it reflects the current state of
-     * the grid.
+     * Returns merged styles from defaults and current column options.
+     */
+    private getCellStyles(): CSSObject {
+        const { grid } = this.column.viewport;
+        const rawColumnOptions =
+            grid.columnOptionsMap?.[this.column.id]?.options;
+
+        return {
+            ...mergeStyleValues(
+                this.column,
+                grid.options?.columnDefaults?.style,
+                rawColumnOptions?.style
+            ),
+            ...mergeStyleValues(
+                this,
+                grid.options?.columnDefaults?.cells?.style,
+                rawColumnOptions?.cells?.style
+            )
+        };
+    }
+
+    /**
+     * Updates the the dataset so that it reflects the current state of the
+     * grid.
      *
      * @returns
      * A promise that resolves to `true` if the cell triggered all the whole
-     * viewport rows to be updated, or `false` if the only change should be
-     * the cell's content.
+     * viewport rows to be updated, or `false` if the only change was the cell's
+     * content.
      */
-    private async updateDataTable(): Promise<boolean> {
-        if (this.column.data?.[this.row.index] === this.value) {
+    private async updateDataset(): Promise<boolean> {
+        const oldValue = await this.column.viewport.grid.dataProvider?.getValue(
+            this.column.id,
+            this.row.index
+        );
+
+        if (oldValue === this.value) {
             // Abort if the value is the same as in the data table.
             return false;
         }
 
         const vp = this.column.viewport;
-        const { dataTable: originalDataTable } = vp.grid;
+        const { dataProvider: dp } = vp.grid;
 
-        const rowTableIndex =
-            this.row.id &&
-            originalDataTable?.getLocalRowIndex(this.row.id);
-
-        if (!originalDataTable || rowTableIndex === void 0) {
+        const rowId = this.row.id;
+        if (!dp || rowId === void 0) {
             return false;
         }
 
         this.row.data[this.column.id] = this.value;
-        originalDataTable.setCell(
+        await dp.setValue(
+            this.value,
             this.column.id,
-            rowTableIndex,
-            this.value
+            rowId
         );
 
-        // If no modifiers, don't update all rows
-        if (vp.grid.dataTable === vp.grid.presentationTable) {
+        if (vp.grid.querying.willNotModify()) {
             return false;
         }
 
