@@ -363,6 +363,12 @@ class Chart {
         c?: Chart.CallbackFunction
         /* eslint-enable @typescript-eslint/no-unused-vars */
     ) {
+        // Return early if there's no browser API (server environment).
+        if (!doc) {
+            error(36, false, this);
+            return;
+        }
+
         const args = [
             // ES5 builds fail unless we cast it to an Array
             ...arguments as unknown as Array<any>
@@ -3232,7 +3238,7 @@ class Chart {
         chart.pointer?.getChartPosition(); // #14973
 
         // Fire the load event if there are no external images
-        if (!chart.renderer.imgCount && !chart.hasLoaded) {
+        if (!chart.renderer.asyncCounter && !chart.hasLoaded) {
             chart.onload();
         }
 
@@ -3825,14 +3831,17 @@ class Chart {
         // update the first series in the chart. Setting two series without
         // an id will update the first and the second respectively (#6019)
         // chart.update and responsive.
-        this.collectionsWithUpdate.forEach(function (coll: string): void {
+        this.collectionsWithUpdate.forEach((coll: string): void => {
 
             if ((options as any)[coll]) {
 
-                splat((options as any)[coll]).forEach(function (
+                splat((options as any)[coll]).forEach((
                     newOptions,
                     i
-                ): void {
+                ): void => {
+                    if (!newOptions) {
+                        return;
+                    }
                     const hasId = defined(newOptions.id);
                     let item: (Axis|Series|Point|undefined);
 
@@ -3886,7 +3895,7 @@ class Chart {
 
                 // Add items for removal
                 if (oneToOne) {
-                    (chart as any)[coll].forEach(function (item: any): void {
+                    (chart as any)[coll].forEach((item: any): void => {
                         if (!item.touched && !item.options.isInternal) {
                             itemsForRemoval.push(item);
                         } else {
@@ -3899,7 +3908,7 @@ class Chart {
             }
         });
 
-        itemsForRemoval.forEach(function (item: any): void {
+        itemsForRemoval.forEach((item: any): void => {
             if (item.chart && item.remove) { // #9097, avoid removing twice
                 item.remove(false);
             }

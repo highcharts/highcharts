@@ -24,7 +24,9 @@ function test_grid() {
     });
 
     Grid.grid('container', {
-        dataTable,
+        data: {
+            dataTable,
+        },
         header: [{
             format: 'grouped header',
             columns: [{
@@ -40,9 +42,31 @@ function test_grid() {
                 }
             }
         },
+        columnDefaults: {
+            cells: {
+                contextMenu: {
+                    items: [{
+                        label: 'Test',
+                        onClick: function () {
+                            // noop
+                        }
+                    }]
+                }
+            }
+        },
         columns: [{
             id: 'hidden',
             enabled: false
-        }]
+        }],
+        responsive: {
+            rules: [{
+                condition: {
+                    minHeight: 500
+                },
+                gridOptions: {
+                    header: ['x']
+                }
+            }]
+        }
     });
 }
