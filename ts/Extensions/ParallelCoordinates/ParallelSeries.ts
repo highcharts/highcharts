@@ -46,6 +46,7 @@ const {
  *
  * */
 
+/** @internal */
 namespace ParallelSeries {
 
     /* *

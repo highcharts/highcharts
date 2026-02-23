@@ -28,6 +28,9 @@ import type ParallelCoordinatesOptions from './ParallelCoordinatesOptions';
  *
  * */
 
+/**
+ * @optionparent chart
+ */
 const chartDefaults: ParallelCoordinatesOptions = {
     /**
      * Flag to render charts as a parallel coordinates plot. In a parallel
@@ -48,6 +51,25 @@ const chartDefaults: ParallelCoordinatesOptions = {
     /**
      * Common options for all yAxes rendered in a parallel coordinates plot.
      * This feature requires `modules/parallel-coordinates.js`.
+     *
+     * The default options are:
+     * ```js
+     * parallelAxes: {
+     *    lineWidth: 1,       // classic mode only
+     *    gridlinesWidth: 0,  // classic mode only
+     *    title: {
+     *        text: '',
+     *        reserveSpace: false
+     *    },
+     *    labels: {
+     *        x: 0,
+     *        y: 0,
+     *        align: 'center',
+     *        reserveSpace: false
+     *    },
+     *    offset: 0
+     * }
+     * ```
      *
      * @sample {highcharts} highcharts/parallel-coordinates/parallelaxes/
      *         Set the same tickAmount for all yAxes

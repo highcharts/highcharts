@@ -34,21 +34,83 @@ declare module '../../Core/Chart/ChartOptions' {
 
 interface ParallelCoordinatesOptions {
     /**
-     * Common options for all yAxes rendered in a parallel coordinates plot.
+     * Flag to render charts as a parallel coordinates plot. In a parallel
+     * coordinates plot (||-coords) by default all required yAxes are generated
+     * and the legend is disabled. This feature requires
+     * `modules/parallel-coordinates.js`.
+     *
+     * @sample {highcharts} /highcharts/demo/parallel-coordinates/
+     *         Parallel coordinates demo
+     * @sample {highcharts} highcharts/parallel-coordinates/polar/
+     *         Star plot, multivariate data in a polar chart
      *
      * @since    6.0.0
-     * @requires modules/parallel-coordinates
-     */
-    parallelAxes?: DeepPartial<AxisOptions>;
-
-    /**
-     * Flag to render charts as a parallel coordinates plot.
-     *
-     * @since    6.0.0
+     * @product  highcharts
      * @requires modules/parallel-coordinates
      */
     parallelCoordinates?: boolean;
+
+    /**
+     * Common options for all yAxes rendered in a parallel coordinates plot.
+     * This feature requires `modules/parallel-coordinates.js`.
+     *
+     * The default options are:
+     * ```js
+     * parallelAxes: {
+     *    lineWidth: 1,       // classic mode only
+     *    gridlinesWidth: 0,  // classic mode only
+     *    title: {
+     *        text: '',
+     *        reserveSpace: false
+     *    },
+     *    labels: {
+     *        x: 0,
+     *        y: 0,
+     *        align: 'center',
+     *        reserveSpace: false
+     *    },
+     *    offset: 0
+     * }
+     * ```
+     *
+     * @sample {highcharts} highcharts/parallel-coordinates/parallelaxes/
+     *         Set the same tickAmount for all yAxes
+     *
+     * @extends   yAxis
+     * @since     6.0.0
+     * @product   highcharts
+     * @excluding alternateGridColor, breaks, id, gridLineColor,
+     *            gridLineDashStyle, gridLineWidth, minorGridLineColor,
+     *            minorGridLineDashStyle, minorGridLineWidth, plotBands,
+     *            plotLines, angle, gridLineInterpolation, maxColor, maxZoom,
+     *            minColor, scrollbar, stackLabels, stops,
+     * @requires  modules/parallel-coordinates
+     */
+    parallelAxes?: ParallelAxesOptions;
 }
+
+type ParallelAxesOptions = DeepPartial<Omit<
+    AxisOptions,
+    | 'alternateGridColor'
+    | 'breaks'
+    | 'id'
+    | 'gridLineColor'
+    | 'gridLineDashStyle'
+    | 'gridLineWidth'
+    | 'minorGridLineColor'
+    | 'minorGridLineDashStyle'
+    | 'minorGridLineWidth'
+    | 'plotBands'
+    | 'plotLines'
+    | 'angle'
+    | 'gridLineInterpolation'
+    | 'maxColor'
+    | 'maxZoom'
+    | 'minColor'
+    | 'scrollbar'
+    | 'stackLabels'
+    | 'stops'
+>>;
 
 /* *
  *
