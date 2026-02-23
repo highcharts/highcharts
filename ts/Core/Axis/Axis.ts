@@ -4614,9 +4614,12 @@ class Axis {
                     }
                 }
 
-                cross.show().attr({
-                    d: path as SVGPath
-                });
+                cross
+                    .show()
+                    .animate(
+                        { d: path as SVGPath },
+                        animObject(options?.animation)
+                    );
 
                 if (categorized && !options.width) {
                     cross.attr({
