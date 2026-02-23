@@ -3,7 +3,7 @@ import { test, expect } from '~/fixtures.ts';
 test.describe('Grid events', () => {
 
     test.beforeEach(async ({ page }) => {
-        await page.goto('grid-lite/cypress/grouped-headers');
+        await page.goto('grid-lite/e2e/grouped-headers');
     });
 
     test('Renders multilevel header', async ({ page }) => {

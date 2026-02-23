@@ -14,6 +14,7 @@
  *
  * */
 
+import type AnimationOptions from '../Animation/AnimationOptions';
 import type { AlignValue } from '../Renderer/AlignObject';
 import type Axis from './Axis';
 import type Chart from '../Chart/Chart';
@@ -198,6 +199,15 @@ export interface AxisCrosshairLabelOptions {
 }
 
 export interface AxisCrosshairOptions {
+
+    /**
+     * Animation for the crosshair as it moves between values. Set to
+     * `false` to disable animation. Used by the color axis marker.
+     *
+     * @product highcharts highstock highmaps
+     * @since next
+     */
+    animation?: (boolean|Partial<AnimationOptions>);
 
     /**
      * A class name for the crosshair, especially as a hook for styling.
