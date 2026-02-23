@@ -95,6 +95,7 @@
     "@types/yargs": "^17.0.32",
     "@typescript-eslint/eslint-plugin": "8.39.1",
     "@typescript-eslint/parser": "8.39.1",
+    "@webgpu/types": "^0.1.64",
     "babel-eslint": "^10.1.0",
     "browserify": "^17.0.0",
     "bundle-declarations-webpack-plugin": "^5.1.1",

@@ -155,6 +155,7 @@ module.exports = {
         'Chart and series types': [
             'chart-and-series-types/chart-types',
             'chart-and-series-types/combining-chart-types',
+            'chart-and-series-types/contour',
             'chart-and-series-types/3d-cylinder',
             'chart-and-series-types/funnel-3d',
             'chart-and-series-types/pyramid-3d',
