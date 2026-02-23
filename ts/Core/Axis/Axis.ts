@@ -4607,14 +4607,12 @@ class Axis {
                 }
             }
 
-            graphic.show();
-
-            // Animate the crosshair when it has animation options (e.g. color
-            // axis marker) and has been drawn before
-            graphic.animate(
-                { d: path },
-                animObject(options?.animation)
-            );
+            graphic
+                .show()
+                .animate(
+                    { d: path },
+                    animObject(options?.animation)
+                );
 
             if (categorized && !(options as any).width) {
                 graphic.attr({
