@@ -59,11 +59,11 @@ function test_grid() {
                     enabled: true,
                     items: [
                         'pinRowTop',
-                        {
-                            actionId: 'unpinRow',
-                            label: 'Unpin now',
-                            icon: 'pin02'
-                        },
+	                        {
+	                            actionId: 'unpinRow',
+	                            label: 'Unpin now',
+	                            icon: 'unpin'
+	                        },
                         {
                             label: 'Pinning',
                             items: [

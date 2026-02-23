@@ -267,9 +267,9 @@ function getBuiltInIcon(
     switch (actionId) {
         case 'pinRowTop':
         case 'pinRowBottom':
-            return 'pin01';
+            return 'pin';
         case 'unpinRow':
-            return 'pin02';
+            return 'unpin';
     }
 }
 

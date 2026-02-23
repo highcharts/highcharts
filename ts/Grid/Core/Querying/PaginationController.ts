@@ -122,9 +122,11 @@ class PaginationController {
      * Gets the total number of pages.
      */
     public get totalPages(): number {
-        return this.effectivePageSize > 0 ? Math.ceil(
+        const computed = this.effectivePageSize > 0 ? Math.ceil(
             this.totalItems / this.effectivePageSize
         ) : 1;
+
+        return Math.max(1, computed);
     }
 
     /**

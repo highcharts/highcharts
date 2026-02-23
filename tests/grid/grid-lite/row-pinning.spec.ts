@@ -648,6 +648,94 @@ test.describe('Grid Lite row pinning', () => {
         expect(state.bottomCount).toBe(1);
     });
 
+    test('Pinned overflow still pages scrollable rows', async ({ page }) => {
+        const state = await page.evaluate(async () => {
+            const grid = (window as any).grid;
+            const collectPinnedTopIds = (): string[] => Array.from(
+                grid.viewport.pinnedTopTbodyElement.querySelectorAll(
+                    'td[data-column-id="id"]'
+                )
+            ).map((el: Element) => (el.textContent || '').trim());
+            const getFirstScrollableId = (): string => (
+                grid.viewport.tbodyElement.querySelector(
+                    'td[data-column-id="id"]'
+                )?.textContent || ''
+            ).trim();
+
+            await grid.update({
+                pagination: {
+                    enabled: true,
+                    pageSize: 2,
+                    page: 1
+                },
+                rendering: {
+                    rows: {
+                        virtualization: false,
+                        pinning: {
+                            topIds: ['ROW-001', 'ROW-002', 'ROW-003']
+                        }
+                    }
+                }
+            });
+
+            const page1 = {
+                pinnedTop: collectPinnedTopIds(),
+                scrollableCount: grid.viewport.rows.length,
+                firstScrollableId: getFirstScrollableId()
+            };
+
+            await grid.update({
+                pagination: {
+                    page: 2
+                }
+            });
+
+            const page2 = {
+                scrollableCount: grid.viewport.rows.length,
+                firstScrollableId: getFirstScrollableId()
+            };
+
+            return { page1, page2 };
+        });
+
+        expect(state.page1.pinnedTop).toEqual(['ROW-001', 'ROW-002', 'ROW-003']);
+        expect(state.page1.scrollableCount).toBe(1);
+        expect(state.page1.firstScrollableId).toBe('ROW-004');
+
+        expect(state.page2.scrollableCount).toBe(1);
+        expect(state.page2.firstScrollableId).toBe('ROW-005');
+    });
+
+    test('All rows pinned does not show "page 1 of 0"', async ({ page }) => {
+        await page.evaluate(async () => {
+            const grid = (window as any).grid;
+            const rowIds = Array.from({ length: 60 }, (_, i) => (
+                'ROW-' + String(i + 1).padStart(3, '0')
+            ));
+
+            await grid.update({
+                pagination: {
+                    enabled: true,
+                    pageSize: 10,
+                    page: 1
+                },
+                rendering: {
+                    rows: {
+                        virtualization: false,
+                        pinning: {
+                            idColumn: 'id',
+                            topIds: rowIds
+                        }
+                    }
+                }
+            });
+        });
+
+        const pageInfo = page.locator('.hcg-pagination-info').first();
+        await expect(pageInfo).toContainText('Showing 0 - 0 of 0');
+        await expect(pageInfo).toContainText('page 1 of 1');
+    });
+
     test('Non-virtual sorting include reorders pinned rows', async ({ page }) => {
         const state = await page.evaluate(async () => {
             const grid = (window as any).grid;

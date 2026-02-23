@@ -40,7 +40,7 @@ test.describe('Grid Pro row pinning events', () => {
                     }
                 },
                 events: {
-                    beforeRowPinningChange(e: any): void {
+                    beforeRowPin(e: any): void {
                         output.push({
                             type: 'before',
                             action: e.action,
@@ -52,7 +52,7 @@ test.describe('Grid Pro row pinning events', () => {
                             changed: e.changed
                         });
                     },
-                    afterRowPinningChange(e: any): void {
+                    afterRowPin(e: any): void {
                         output.push({
                             type: 'after',
                             action: e.action,
@@ -135,10 +135,10 @@ test.describe('Grid Pro row pinning events', () => {
                     }
                 },
                 events: {
-                    beforeRowPinningChange(): void {
+                    beforeRowPin(): void {
                         output.push('before');
                     },
-                    afterRowPinningChange(): void {
+                    afterRowPin(): void {
                         output.push('after');
                     }
                 }

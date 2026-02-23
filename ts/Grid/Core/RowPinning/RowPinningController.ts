@@ -589,20 +589,26 @@ class RowPinningController {
 
         let scrollableRowIds = nonPinned;
         if (context.paginationEnabled) {
-            const pinnedCount = effectiveTop.length + effectiveBottom.length;
-            const pageSize = Math.max(
-                context.currentPageSize - pinnedCount,
-                0
-            );
-            const pageStep = Math.max(pageSize, 1);
-            const start = Math.max(
-                0,
-                (context.currentPage - 1) * pageStep
-            );
-            scrollableRowIds = nonPinned.slice(
-                start,
-                start + pageSize
-            );
+            const pinnedCount = effectiveTop.length +
+                effectiveBottom.length;
+            const idealScrollablePerPage = context.currentPageSize -
+                pinnedCount;
+            const scrollablePerPage = nonPinned.length > 0 ?
+                Math.max(idealScrollablePerPage, 1) :
+                0;
+
+            if (scrollablePerPage > 0) {
+                const start = Math.max(
+                    0,
+                    (context.currentPage - 1) * scrollablePerPage
+                );
+                scrollableRowIds = nonPinned.slice(
+                    start,
+                    start + scrollablePerPage
+                );
+            } else {
+                scrollableRowIds = [];
+            }
         }
 
         this.effectiveTopRowIds = effectiveTop.slice();

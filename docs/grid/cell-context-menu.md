@@ -1,7 +1,7 @@
 # Cell context menu
 
-Highcharts Grid supports context menus for table body cells. By default, Grid
-shows a context menu on right-click for all cells.
+Highcharts Grid supports context menus for table body cells. When enabled, Grid
+shows a context menu on right-click for table body cells.
 
 This is a v1 foundation intended to be extended over time (for example with
 built-in actions like add/delete row, hide column, etc.).
@@ -32,8 +32,18 @@ Grid.grid('container', {
 });
 ```
 
-By default (when `items` is omitted), Grid uses built-in row pinning actions:
-`pinRowTop`, `pinRowBottom`, `unpinRow`.
+### Enabling behavior
+
+The context menu is enabled/disabled per column using `contextMenu.enabled`.
+
+When `enabled` is omitted, Grid enables the context menu when:
+
+- `contextMenu.items` is provided (explicit opt-in), or
+- row pinning is explicitly configured via `rendering.rows.pinning` and not
+  disabled.
+
+If the context menu is enabled and `items` is omitted, Grid uses built-in row
+pinning actions by default: `pinRowTop`, `pinRowBottom`, `unpinRow`.
 
 If `items` is empty, the browser's native context menu is kept.
 
@@ -70,7 +80,7 @@ contextMenu: {
         {
             actionId: 'unpinRow',
             label: 'Unpin now',
-            icon: 'pin02'
+            icon: 'unpin'
         },
         { separator: true },
         {

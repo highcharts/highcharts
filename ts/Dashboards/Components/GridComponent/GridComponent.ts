@@ -136,10 +136,11 @@ class GridComponent extends Component {
                 grid.update({
                     dataTable: table?.getModified()
                 }, false);
-            } else if ( // #24067 -Update the dataTable in the options if it has changed
+            } else if (
+                // #24067 - Update options.dataTable when it changes.
                 options.gridOptions?.dataTable &&
                 this.options.gridOptions
-            ) { 
+            ) {
                 this.options.gridOptions.dataTable =
                     options.gridOptions.dataTable;
             }

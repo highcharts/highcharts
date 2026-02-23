@@ -14,6 +14,12 @@ area and rendered in dedicated pinned sections.
 
 ```js
 Grid.grid('container', {
+    dataTable: {
+        columns: {
+            id: ['row-001', 'row-002', 'row-999'],
+            price: [1, 2, 999]
+        }
+    },
     rendering: {
         rows: {
             pinning: {
@@ -66,15 +72,15 @@ const pinned = grid.getPinnedRows();
 ```
 
 In Grid Pro, you can also listen to
-`events.beforeRowPinningChange` and `events.afterRowPinningChange`:
+`events.beforeRowPin` and `events.afterRowPin`:
 
 ```js
 Grid.grid('container', {
     events: {
-        beforeRowPinningChange(e) {
+        beforeRowPin(e) {
             console.log('before', e.action, e.rowId, e.topIds, e.bottomIds);
         },
-        afterRowPinningChange(e) {
+        afterRowPin(e) {
             console.log('after', e.action, e.rowId, e.topIds, e.bottomIds);
         }
     }
@@ -90,8 +96,8 @@ Event payload fields:
 - `previousTopIds` / `previousBottomIds`
 - `topIds` / `bottomIds`
 
-`beforeRowPinningChange` fires before redraw, and
-`afterRowPinningChange` fires after redraw.
+`beforeRowPin` fires before redraw, and
+`afterRowPin` fires after redraw.
 
 ## Built-in context menu actions
 

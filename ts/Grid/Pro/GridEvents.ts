@@ -109,19 +109,19 @@ function compose(
 
     addEvent(
         GridClass,
-        'beforeRowPinningChange',
+        'beforeRowPin',
         (e: GridEvent<Grid> & RowPinningChangeEvent): void => {
             const grid = e.target;
-            grid.options?.events?.beforeRowPinningChange?.call(grid, e);
+            grid.options?.events?.beforeRowPin?.call(grid, e);
         }
     );
 
     addEvent(
         GridClass,
-        'afterRowPinningChange',
+        'afterRowPin',
         (e: GridEvent<Grid> & RowPinningChangeEvent): void => {
             const grid = e.target;
-            grid.options?.events?.afterRowPinningChange?.call(grid, e);
+            grid.options?.events?.afterRowPin?.call(grid, e);
         }
     );
 
@@ -310,13 +310,13 @@ export interface GridEvents {
      * Callback function to be called before runtime row pinning state changes
      * are redrawn.
      */
-    beforeRowPinningChange?: RowPinningChangeEventCallback;
+    beforeRowPin?: RowPinningChangeEventCallback;
 
     /**
      * Callback function to be called after runtime row pinning state changes
      * are redrawn.
      */
-    afterRowPinningChange?: RowPinningChangeEventCallback;
+    afterRowPin?: RowPinningChangeEventCallback;
 }
 
 declare module '../Core/Options' {

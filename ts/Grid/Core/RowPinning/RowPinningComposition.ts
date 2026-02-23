@@ -211,12 +211,12 @@ async function pinRow(
         bottomIds: next.bottomIds.slice()
     } as RowPinningChangeEvent;
 
-    fireEvent(this, 'beforeRowPinningChange', eventPayload);
+    fireEvent(this, 'beforeRowPin', eventPayload);
 
     this.querying.shouldBeUpdated = true;
     this.dirtyFlags.add('rows');
     await this.redraw();
-    fireEvent(this, 'afterRowPinningChange', eventPayload);
+    fireEvent(this, 'afterRowPin', eventPayload);
     announceRowPinningChange(this, 'pin', rowId, position);
 }
 
@@ -273,12 +273,12 @@ async function toggleRow(
         bottomIds: next.bottomIds.slice()
     } as RowPinningChangeEvent;
 
-    fireEvent(this, 'beforeRowPinningChange', eventPayload);
+    fireEvent(this, 'beforeRowPin', eventPayload);
 
     this.querying.shouldBeUpdated = true;
     this.dirtyFlags.add('rows');
     await this.redraw();
-    fireEvent(this, 'afterRowPinningChange', eventPayload);
+    fireEvent(this, 'afterRowPin', eventPayload);
     announceRowPinningChange(
         this,
         isPinned ? 'unpin' : 'pin',
@@ -325,12 +325,12 @@ async function unpinRow(
         bottomIds: next.bottomIds.slice()
     } as RowPinningChangeEvent;
 
-    fireEvent(this, 'beforeRowPinningChange', eventPayload);
+    fireEvent(this, 'beforeRowPin', eventPayload);
 
     this.querying.shouldBeUpdated = true;
     this.dirtyFlags.add('rows');
     await this.redraw();
-    fireEvent(this, 'afterRowPinningChange', eventPayload);
+    fireEvent(this, 'afterRowPin', eventPayload);
     announceRowPinningChange(this, 'unpin', rowId);
 }
 
