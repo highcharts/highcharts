@@ -4607,9 +4607,12 @@ class Axis {
                 }
             }
 
-            graphic.show().attr({
-                d: path
-            });
+            graphic
+                .show()
+                .animate(
+                    { d: path },
+                    animObject(options?.animation)
+                );
 
             if (categorized && !(options as any).width) {
                 graphic.attr({
