@@ -1,6 +1,4 @@
 ---
- name: Demo of legend.enabled
- authors:
-   - Torstein Hønsi
- js_wrap: b
+name: Demo of legend.enabled
+js_wrap: b
 ...

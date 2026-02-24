@@ -162,7 +162,6 @@ class ColumnsResizer {
         vp.columnResizing.resize(this, diff);
 
         vp.reflow();
-        vp.rowsVirtualizer.adjustRowHeights();
 
         fireEvent(this.draggedColumn, 'afterResize', {
             target: this.draggedColumn,
