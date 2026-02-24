@@ -6,7 +6,7 @@ test.describe('Grid sorting', () => {
     });
 
     test.beforeEach(async ({ page }) => {
-        await page.goto('grid-pro/cypress/sorting-options');
+        await page.goto('grid-pro/e2e/sorting-options');
     });
 
     const getSortingState = async (page: any) => {
