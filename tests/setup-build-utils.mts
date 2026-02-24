@@ -58,17 +58,24 @@ export function shouldBuild(check: string, inputs: readonly string[]): boolean {
     }
 
     const outputMTime = Number(outputStats.mtimeMs);
+    let hasExistingInput = false;
 
     for (const input of inputs) {
         if (!existsSync(input)) {
             continue;
         }
 
+        hasExistingInput = true;
+
         const inputMTime = getNewestMTime(input);
 
         if (!Number.isFinite(inputMTime) || inputMTime > outputMTime) {
             return true;
         }
+    }
+
+    if (!hasExistingInput) {
+        return true;
     }
 
     return false;
