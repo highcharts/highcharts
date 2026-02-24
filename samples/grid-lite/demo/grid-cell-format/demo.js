@@ -38,9 +38,6 @@ Grid.grid('container', {
             }
         }
     },
-    rendering: {
-        theme: 'custom-theme'
-    },
     description: {
         text: '* Performance Score'
     },

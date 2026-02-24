@@ -1,0 +1,24 @@
+.hcg-container .hcg-popup,
+.highcharts-light .hcg-container .hcg-popup {
+    --ig-popup-color: var(--hcg-popup-color, var(--ig-default-color));
+    --ig-popup-background: var(--hcg-popup-background, #f6f6f6);
+    --ig-popup-border-color: var(--hcg-popup-border-color, #e8e8e8);
+}
+
+@media (prefers-color-scheme: dark) {
+    .hcg-container .hcg-popup {
+        --ig-popup-background: var(--hcg-popup-background, #272727);
+        --ig-popup-border-color: var(--hcg-popup-border-color, #4f4f4f);
+    }
+}
+
+.highcharts-dark .hcg-container .hcg-popup {
+    --ig-popup-background: var(--hcg-popup-background, #272727);
+    --ig-popup-border-color: var(--hcg-popup-border-color, #4f4f4f);
+}
+
+.hcg-container .hcg-popup {
+    color: var(--ig-popup-color);
+    background: var(--ig-popup-background);
+    border-color: var(--ig-popup-border-color);
+}
