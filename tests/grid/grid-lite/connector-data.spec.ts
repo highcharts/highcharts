@@ -2,7 +2,7 @@ import { test, expect } from '~/fixtures.ts';
 
 test.describe('Connector data', () => {
     test('Renders data from CSV connector', async ({ page }) => {
-        await page.goto('/grid-lite/cypress/connector-data/');
+        await page.goto('/grid-lite/e2e/connector-data/');
 
         const productCell = page.locator(
             '.hcg-row[data-row-index="0"] > td[data-column-id="product"]'

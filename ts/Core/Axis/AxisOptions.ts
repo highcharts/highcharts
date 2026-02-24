@@ -14,6 +14,7 @@
  *
  * */
 
+import type AnimationOptions from '../Animation/AnimationOptions';
 import type { AlignValue } from '../Renderer/AlignObject';
 import type Axis from './Axis';
 import type Chart from '../Chart/Chart';
@@ -200,6 +201,15 @@ export interface AxisCrosshairLabelOptions {
 export interface AxisCrosshairOptions {
 
     /**
+     * Animation for the crosshair as it moves between values. Set to
+     * `false` to disable animation. Used by the color axis marker.
+     *
+     * @product highcharts highstock highmaps
+     * @since next
+     */
+    animation?: (boolean|Partial<AnimationOptions>);
+
+    /**
      * A class name for the crosshair, especially as a hook for styling.
      *
      * @since 5.0.0
@@ -249,6 +259,17 @@ export interface AxisCrosshairOptions {
      * @product highstock
      */
     label?: AxisCrosshairLabelOptions;
+
+    /**
+    * The number of milliseconds to wait until the crosshair is shown when
+    * mouse over a point. Works on initial hover.
+    *
+    * @sample {highcharts|highstock} highcharts/tooltip/showdelay/
+    *
+    * @default 0
+    * @since next
+    */
+    showDelay?: number,
 
     /**
      * Whether the crosshair should snap to the point or follow the pointer

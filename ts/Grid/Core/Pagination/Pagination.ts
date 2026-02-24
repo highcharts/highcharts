@@ -525,11 +525,14 @@ class Pagination {
             return;
         }
 
-        // Create first button
+        const firstIconEl = createGridIcon(
+            'doubleChevronLeft',
+            this.grid.options?.rendering?.icons
+        );
         this.firstButton = makeHTMLElement('button', {
             className: Globals.getClassName('button')
         }, container);
-        this.firstButton.appendChild(createGridIcon('doubleChevronLeft'));
+        this.firstButton.appendChild(firstIconEl);
         this.firstButton.title = this.lang?.firstPage ?? '';
 
         // Set aria-label for a11y
@@ -567,11 +570,15 @@ class Pagination {
             return;
         }
 
-        // Create previous button
+        const prevIconName = 'chevronLeft';
+        const prevIconEl = createGridIcon(
+            prevIconName,
+            this.grid.options?.rendering?.icons
+        );
         this.prevButton = makeHTMLElement('button', {
             className: Globals.getClassName('button')
         }, container);
-        this.prevButton.appendChild(createGridIcon('chevronLeft'));
+        this.prevButton.appendChild(prevIconEl);
         this.prevButton.title = this.lang?.previousPage ?? '';
 
         // Set aria-label for a11y
@@ -609,11 +616,15 @@ class Pagination {
             return;
         }
 
-        // Create next button
+        const nextIconName = 'chevronRight';
+        const nextIconEl = createGridIcon(
+            nextIconName,
+            this.grid.options?.rendering?.icons
+        );
         this.nextButton = makeHTMLElement('button', {
             className: Globals.getClassName('button')
         }, container);
-        this.nextButton.appendChild(createGridIcon('chevronRight'));
+        this.nextButton.appendChild(nextIconEl);
         this.nextButton.title = this.lang?.nextPage ?? '';
 
         // Set aria-label for a11y
@@ -648,11 +659,15 @@ class Pagination {
             return;
         }
 
-        // Create last button
+        const lastIconName = 'doubleChevronRight';
+        const lastIconEl = createGridIcon(
+            lastIconName,
+            this.grid.options?.rendering?.icons
+        );
         this.lastButton = makeHTMLElement('button', {
             className: Globals.getClassName('button')
         }, container);
-        this.lastButton.appendChild(createGridIcon('doubleChevronRight'));
+        this.lastButton.appendChild(lastIconEl);
         this.lastButton.title = this.lang?.lastPage ?? '';
 
         // Set aria-label for a11y

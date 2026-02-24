@@ -26,7 +26,7 @@ import type Toolbar from './Toolbar';
 import type Button from './Button';
 import type Popup from './Popup';
 
-import { GridIconName, createGridIcon } from './SvgIcons.js';
+import { createGridIcon } from './SvgIcons.js';
 import Globals, { ClassNameKey } from '../Globals.js';
 import GridUtils from '../GridUtils.js';
 
@@ -182,11 +182,15 @@ class ToolbarButton implements Button {
      * Sets the icon for the button.
      *
      * @param icon
-     * The icon to set.
+     * The icon to set (built-in name or custom name from rendering.icons).
      */
-    public setIcon(icon: GridIconName): void {
+    public setIcon(icon: string): void {
         this.icon?.remove();
-        this.icon = createGridIcon(icon);
+        const grid = this.toolbar?.grid;
+        this.icon = createGridIcon(
+            icon,
+            grid?.options?.rendering?.icons
+        );
         this.buttonEl?.appendChild(this.icon);
     }
 
@@ -275,9 +279,9 @@ class ToolbarButton implements Button {
  */
 export interface ToolbarButtonOptions {
     /**
-     * The icon for the button.
+     * The icon for the button (built-in name or custom from rendering.icons).
      */
-    icon: GridIconName;
+    icon: string;
 
     /**
      * The class name key for the button.
