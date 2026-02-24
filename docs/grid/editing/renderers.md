@@ -4,7 +4,7 @@ tags: ["grid-pro"]
 
 # Cell renderers
 
-**Note:** Cell renderers are only available in Grid Pro. Grid Lite users can as an alternative use `formatter` and `format` to control [how data is rendered inside cells](https://www.highcharts.com/docs/grid/columns#cells).
+**Note:** Cell renderers are only available in Grid Pro. Grid Lite users can as an alternative use `formatter` and `format` to control [how data is rendered inside cells](https://www.highcharts.com/docs/grid/cells/formatting).
 
 Highcharts Grid Pro supports different cell renderers to provide interactive data presentation inside table cells. You can do this by setting the `columns[].cells.renderer` property for each column. This lets you control how each cell is displayed and interacted with, by e.g. turning a static value into an editable input field or a dropdown selector.
 
