@@ -76,7 +76,7 @@ async function verifyRowsContent(
 test.describe('Grid filtering', () => {
     test.beforeEach(async ({ page }) => {
         // Note: filtering tests use grid-lite demo as filtering works the same in both versions
-        await page.goto('/grid-lite/cypress/inline-filtering', { waitUntil: 'networkidle' });
+        await page.goto('/grid-lite/e2e/inline-filtering', { waitUntil: 'networkidle' });
         // Wait for Grid to be initialized
         await page.waitForFunction(() => {
             return typeof (window as any).Grid !== 'undefined' &&
