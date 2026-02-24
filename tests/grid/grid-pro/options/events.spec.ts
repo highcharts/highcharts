@@ -2,7 +2,7 @@ import { test, expect } from '~/fixtures.ts';
 
 test.describe('Grid Pro - grid events', () => {
     test.beforeEach(async ({ page }) => {
-        await page.goto('/grid-pro/cypress/grid-events', { waitUntil: 'networkidle' });
+        await page.goto('/grid-pro/e2e/grid-events', { waitUntil: 'networkidle' });
     });
 
     test('Grid beforeLoad event', async ({ page }) => {
@@ -47,7 +47,7 @@ test.describe('Grid Pro - grid events', () => {
 
 test.describe('Grid Pro - cell and column events', () => {
     test.beforeEach(async ({ page }) => {
-        await page.goto('grid-pro/cypress/column-cell-events');
+        await page.goto('grid-pro/e2e/column-cell-events');
     });
 
     test('Cell mouseOver / mouseOut event', async ({ page }) => {
