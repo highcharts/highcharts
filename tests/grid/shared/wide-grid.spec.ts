@@ -6,7 +6,7 @@ test.describe('Sorting and resizing wide grid', () => {
     });
 
     test.beforeEach(async ({ page }) => {
-        await page.goto('/grid-lite/cypress/wide-grid');
+        await page.goto('/grid-lite/e2e/wide-grid');
     });
 
     test('scroll position should stay the same after sorting', async ({ page }) => {

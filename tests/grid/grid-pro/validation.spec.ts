@@ -21,7 +21,7 @@ async function editGridCell(
 
 test.describe('Grid Pro - validation', () => {
     test.beforeEach(async ({ page }) => {
-        await page.goto('/grid-pro/cypress/cell-editing', { waitUntil: 'networkidle' });
+        await page.goto('/grid-pro/e2e/cell-editing', { waitUntil: 'networkidle' });
     });
 
     test('Notification position', async ({ page }) => {

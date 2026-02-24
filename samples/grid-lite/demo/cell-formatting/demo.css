@@ -20,6 +20,11 @@ body {
 .highcharts-light {
     --code-background: #f7f7f7;
     --code-border: #e1e1e1;
+    --highlight-color: #e2e2e2;
+    --highlight-border-color: #cec184;
+    --high-color: #348700;
+    --low-color: #d8003a;
+    --row-highlight-color: #e7ffe7;
 }
 
 .demo {
@@ -41,89 +46,57 @@ code {
     display: inline-block;
 }
 
-.custom-theme,
-.highcharts-light .custom-theme {
-    /* Start of by defining some custom color variabled */
-    --highlight-color: #e2e2e2;
-    --highlight-border-color: #cec184;
-    --high-color: #348700;
-    --low-color: #d8003a;
-    --row-highlight-color: #e7ffe7;
-
-    /* The custom variables are then applied to the included theming --hcg variables */
-    --hcg-hover-opacity: 50%;
-    --hcg-padding: 10px;
-    --hcg-border-color: var(--highlight-color);
-    --hcg-border-width: 1px;
-    --hcg-cell-hover-background: var(--highlight-color);
-    --hcg-button-color: #333;
-    --hcg-button-border-radius: 6px;
-    --hcg-button-hover-color: #000;
-    --hcg-button-hover-background: var(--highlight-color);
-    --hcg-icon-hover-color: #000;
-}
-
 @media (prefers-color-scheme: dark) {
     :root {
         --code-background: #2a2a2a;
         --code-border: #4a4a4a;
-    }
-
-    .custom-theme {
-        --highlight-color: #4c4c4c;
+        --highlight-color: #353434;
         --highlight-border-color: #7d754c;
         --high-color: #98d76a;
         --low-color: #ffa8a8;
-        --row-highlight-color: #292e29;
-        --hcg-button-color: #ddd;
-        --hcg-button-hover-color: #fff;
-        --hcg-icon-hover-color: #fff;
+        --row-highlight-color: #272a27;
     }
 }
 
 .highcharts-dark {
     --code-background: #2a2a2a;
     --code-border: #4a4a4a;
-}
-
-.highcharts-dark .custom-theme {
-    --highlight-color: #4c4c4c;
+    --highlight-color: #353434;
     --highlight-border-color: #7d754c;
     --high-color: #98d76a;
     --low-color: #ffa8a8;
-    --row-highlight-color: #292e29;
-    --hcg-button-color: #ddd;
-    --hcg-button-hover-color: #fff;
-    --hcg-icon-hover-color: #fff;
+    --row-highlight-color: #272a27;
 }
 
-.custom-theme td.bold {
-    font-weight: bold;
-}
+.hcg-container .hcg-table {
+    /* It is recommended to use CSS variables when styling table elements such as tr and td */
+    tr:has(.highlight-color) td {
+        --hcg-cell-background: var(--row-highlight-color);
+    }
 
-/* It is recommended to use CSS variables when styling table elements such as tr and td */
-.custom-theme tr:has(.highlight-color) {
-    --hcg-row-background: var(--row-highlight-color);
-}
+    td.high-color {
+        --hcg-cell-color: var(--high-color);
+    }
 
-.custom-theme td.high-color {
-    --hcg-cell-color: var(--high-color);
-}
+    td.low-color {
+        --hcg-cell-color: var(--low-color);
+    }
 
-.custom-theme td.low-color {
-    --hcg-cell-color: var(--low-color);
-}
+    td.bold {
+        font-weight: bold;
+    }
 
-/* When styling elements inside table elements regular CSS is needed */
-.custom-theme span.box {
-    font-weight: inherit;
-    display: inline-block;
-    padding: 2px 5px;
-    border: 1px solid transparent;
-    border-radius: 5px;
-}
+    /* When styling elements inside table elements regular CSS is needed */
+    span.box {
+        font-weight: inherit;
+        display: inline-block;
+        padding: 2px 5px;
+        border: 1px solid transparent;
+        border-radius: 5px;
+    }
 
-.custom-theme span.highlight {
-    background: var(--highlight-color);
-    border-color: var(--highlight-border-color);
+    span.highlight {
+        background: var(--highlight-color);
+        border-color: var(--highlight-border-color);
+    }
 }

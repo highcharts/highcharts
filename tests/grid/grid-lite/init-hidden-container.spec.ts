@@ -2,7 +2,7 @@ import { test, expect } from '~/fixtures.ts';
 
 test.describe('Grid init in a hidden container', () => {
     test('Should not keep `noWidth` class on header containers after showing', async ({ page }) => {
-        await page.goto('grid-lite/cypress/init-hidden-container', { waitUntil: 'networkidle' });
+        await page.goto('grid-lite/e2e/init-hidden-container', { waitUntil: 'networkidle' });
         
         // Sample starts hidden on purpose.
         await expect(page.locator('#outer')).toHaveCSS('display', 'none');
