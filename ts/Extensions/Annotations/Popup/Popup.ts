@@ -124,8 +124,9 @@ function getFields(
 
             if (slider) {
                 const rgba = Color.parse(input.value).rgba;
-                fieldsOutput.fields[param] =
-                    `rgba(${rgba[0]},${rgba[1]},${rgba[2]},${opacity})`;
+                fieldsOutput.fields[param] = !Number.isNaN(rgba[0]) ?
+                    `rgba(${rgba[0]},${rgba[1]},${rgba[2]},${opacity})` :
+                    input.value;
             } else {
                 fieldsOutput.fields[param] = input.value;
             }
