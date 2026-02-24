@@ -46,7 +46,6 @@ export interface PaneBackgroundOptions {
      *
      * @default { linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 }, stops: [[0, #ffffff], [1, #e6e6e6]] }
      * @since    2.3.0
-     * @product  highcharts
      * @requires highcharts-more
      */
     backgroundColor?: ColorType;
@@ -54,7 +53,6 @@ export interface PaneBackgroundOptions {
      * The pane background border color.
      *
      * @since    2.3.0
-     * @product  highcharts
      * @requires highcharts-more
      */
     borderColor?: ColorType;
@@ -65,7 +63,6 @@ export interface PaneBackgroundOptions {
      * @sample   highcharts/series-solidgauge/pane-borderradius
      *           Circular gauge and pane with equal border radius
      * @since    11.4.2
-     * @product  highcharts
      * @requires highcharts-more
      */
     borderRadius?: number|string;
@@ -73,7 +70,6 @@ export interface PaneBackgroundOptions {
      * The pixel border width of the pane background.
      *
      * @since    2.3.0
-     * @product  highcharts
      * @requires highcharts-more
      */
     borderWidth?: number;
@@ -87,7 +83,6 @@ export interface PaneBackgroundOptions {
      * @sample   {highmaps} highcharts/css/pane/
      *           Panes styled by CSS
      *
-     * @default  ''
      * @since    5.0.0
      * @requires highcharts-more
      */
@@ -99,7 +94,6 @@ export interface PaneBackgroundOptions {
      * (pixels) or a percentage string.
      *
      * @since    2.3.0
-     * @product  highcharts
      * @requires highcharts-more
      */
     innerRadius?: (number|string);
@@ -108,7 +102,6 @@ export interface PaneBackgroundOptions {
      * numeric (pixels) or a percentage string.
      *
      * @since    2.3.0
-     * @product  highcharts
      * @requires highcharts-more
      */
     outerRadius?: (number|string);
@@ -118,7 +111,6 @@ export interface PaneBackgroundOptions {
      * to the max of the value axis.
      *
      * @since    2.3.0
-     * @product  highcharts
      * @requires highcharts-more
      */
     shape?: PaneBackgroundShapeValue;
@@ -147,19 +139,17 @@ export interface PaneOptions {
      * @sample   {highcharts} highcharts/demo/gauge-vu-meter/
      *           Two gauges with different center
      * @since    2.3.0
-     * @product  highcharts
      * @requires highcharts-more
      */
     center?: Array<(string|number)>;
     /**
      * The end angle of the polar X axis or gauge value axis, given in
-     * degrees where 0 is north. Defaults to [startAngle](#pane.startAngle)
-     * + 360.
+     * degrees where 0 is north. Defaults to
+     * [startAngle](#pane.startAngle) plus 360.
      *
      * @sample   {highcharts} highcharts/demo/gauge-vu-meter/
      *           VU-meter with custom start and end angle
      * @since    2.3.0
-     * @product  highcharts
      * @requires highcharts-more
      */
     endAngle?: number;
@@ -175,7 +165,6 @@ export interface PaneOptions {
      *
      * @sample   {highcharts} highcharts/series-polar/column-inverted-inner
      *           The inner size set to 20%
-     * @product  highcharts
      * @requires highcharts-more
      */
     innerSize?: (number|string);
@@ -186,18 +175,16 @@ export interface PaneOptions {
      *
      * @sample   {highcharts} highcharts/demo/gauge-vu-meter/
      *           Smaller size
-     * @product  highcharts
      * @requires highcharts-more
      */
     size?: (number|string);
     /**
      * The start angle of the polar X axis or gauge axis, given in degrees
-     * where 0 is north. Defaults to 0.
+     * where 0 is north.
      *
      * @sample   {highcharts} highcharts/demo/gauge-vu-meter/
      *           VU-meter with custom start and end angle
      * @since    2.3.0
-     * @product  highcharts
      * @requires highcharts-more
      */
     startAngle?: number;

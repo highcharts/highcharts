@@ -56,7 +56,6 @@ const background: PaneBackgroundOptions = {
      *         Panes styled by CSS
      *
      * @type      {string}
-     * @default   ''
      * @since     5.0.0
      * @requires  highcharts-more
      * @apioption pane.background.className
@@ -177,8 +176,8 @@ const pane: PaneOptions|Array<PaneOptions> = {
 
     /**
      * The end angle of the polar X axis or gauge value axis, given in
-     * degrees where 0 is north. Defaults to [startAngle](#pane.startAngle)
-     * + 360.
+     * degrees where 0 is north. Defaults to
+     * [startAngle](#pane.startAngle) plus 360.
      *
      * @sample {highcharts} highcharts/demo/gauge-vu-meter/
      *         VU-meter with custom start and end angle
@@ -234,7 +233,7 @@ const pane: PaneOptions|Array<PaneOptions> = {
 
     /**
      * The start angle of the polar X axis or gauge axis, given in degrees
-     * where 0 is north. Defaults to 0.
+     * where 0 is north.
      *
      * @sample {highcharts} highcharts/demo/gauge-vu-meter/
      *         VU-meter with custom start and end angle
