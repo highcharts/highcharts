@@ -29,8 +29,6 @@ import ContourSeriesDefaults from './ContourSeriesDefaults.js';
 import Delaunay from '../../Core/Delaunay.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import U from '../../Core/Utilities.js';
-import SVGPath from '../../Core/Renderer/SVG/SVGPath.js';
-import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 
 const {
     seriesTypes: {
@@ -833,23 +831,6 @@ export default class ContourSeries extends ScatterSeries {
         ].map((val): number => val / 255);
     }
 }
-
-function cross(
-    x: number,
-    y: number,
-    w: number,
-    h: number
-): SVGPath {
-    return [
-        ['M', x, y],
-        ['L', x + w, y + h],
-        ['M', x + w, y],
-        ['L', x, y + h],
-        ['z']
-    ];
-}
-
-SVGRenderer.prototype.symbols.cross = cross;
 
 extend(ContourSeries.prototype, {
     pointClass: ContourPoint,
