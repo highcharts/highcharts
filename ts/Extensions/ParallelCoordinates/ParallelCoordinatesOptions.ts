@@ -79,17 +79,12 @@ interface ParallelCoordinatesOptions {
      * @extends   yAxis
      * @since     6.0.0
      * @product   highcharts
-     * @excluding alternateGridColor, breaks, id, gridLineColor,
-     *            gridLineDashStyle, gridLineWidth, minorGridLineColor,
-     *            minorGridLineDashStyle, minorGridLineWidth, plotBands,
-     *            plotLines, angle, gridLineInterpolation, maxColor, maxZoom,
-     *            minColor, scrollbar, stackLabels, stops,
      * @requires  modules/parallel-coordinates
      */
     parallelAxes?: ParallelAxesOptions;
 }
 
-type ParallelAxesOptions = DeepPartial<Omit<
+interface ParallelAxesOptions extends DeepPartial<Omit<
     AxisOptions,
     | 'alternateGridColor'
     | 'breaks'
@@ -110,7 +105,52 @@ type ParallelAxesOptions = DeepPartial<Omit<
     | 'scrollbar'
     | 'stackLabels'
     | 'stops'
->>;
+>> {
+    /**
+     * @default 1
+     */
+    lineWidth?: AxisOptions['lineWidth'];
+
+    /**
+     * Titles for yAxes are taken from
+     * [xAxis.categories](#xAxis.categories). All options for `xAxis.labels`
+     * applies to parallel coordinates titles. For example, to style
+     * categories, use [xAxis.labels.style](#xAxis.labels.style).
+     *
+     * @excluding align, enabled, margin, offset, position3d, reserveSpace,
+     *            rotation, skew3d, style, text, useHTML, x, y
+     * @default {"text":"", "reserveSpace": false}
+     */
+    title?: (
+        DeepPartial<Omit<
+            AxisOptions['title'],
+            | 'align'
+            | 'enabled'
+            | 'margin'
+            | 'offset'
+            | 'position3d'
+            | 'reserveSpace'
+            | 'rotation'
+            | 'skew3d'
+            | 'style'
+            | 'text'
+            | 'useHTML'
+            | 'x'
+            | 'y'
+        >> &
+        Pick<AxisOptions['title'], 'reserveSpace'|'text'>
+    );
+
+    /**
+     * @default {"x": 0, "y": 4, "align": "center", "reserveSpace": false}
+     */
+    labels?: DeepPartial<AxisOptions['labels']>;
+
+    /**
+     * @default 0
+     */
+    offset?: AxisOptions['offset'];
+}
 
 /* *
  *
