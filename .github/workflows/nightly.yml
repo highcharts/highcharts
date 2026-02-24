@@ -122,11 +122,11 @@ jobs:
 
       - name: Call Slack webhook
         id: slack
-        uses: slackapi/slack-github-action@v1.24.0
+        uses: slackapi/slack-github-action@v2.1.1
         with:
           payload-file-path: "info.json"
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_NIGHTLY_ERROR_WEBHOOK }}
+          webhook: ${{ secrets.SLACK_NIGHTLY_ERROR_WEBHOOK }}
+          webhook-type: webhook-trigger
 
   nightly_playwright_all_browsers:
     name: Playwright tests (all browsers)
@@ -373,9 +373,9 @@ jobs:
       - name: Call Slack webhook
         id: slack
         if: ${{ steps.makelist.outputs.lines > 0 }}
-        uses: slackapi/slack-github-action@v1.26.0
+        uses: slackapi/slack-github-action@v2.1.1
         with:
           payload-file-path: "24hoursofhighcharts.json"
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_NIGHTLY_CHANGES_WEBHOOK }}
+          webhook: ${{ secrets.SLACK_NIGHTLY_CHANGES_WEBHOOK }}
+          webhook-type: webhook-trigger
 
