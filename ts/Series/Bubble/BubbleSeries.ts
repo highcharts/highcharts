@@ -728,13 +728,7 @@ class BubbleSeries extends ScatterSeries {
             pos = Math.sqrt(pos);
         }
 
-        // Reserve space for the stroke so the full visual extent fits within
-        // the plot area. Clamp to minSize/2 to respect the minimum bubble size.
-        const lineWidth = (this.options.marker as any)?.lineWidth || 0;
-        return Math.max(
-            minSize / 2,
-            Math.ceil(minSize + pos * (maxSize - minSize - 2 * lineWidth)) / 2
-        );
+        return Math.ceil(minSize + pos * (maxSize - minSize)) / 2;
     }
 
     /**
