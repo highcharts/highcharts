@@ -78,11 +78,17 @@ declare global {
             /**
              * A point property to map the mapping parameter to.
              *
+             * @sample highcharts/sonification/polarity-invert
+             *         Inverted mapping to property
+             *
              * @requires modules/sonification
              */
             mapTo: string;
             /**
              * How to perform the mapping.
+             *
+             * @sample highcharts/sonification/log-mapping
+             *         Logarithmic mapping to property
              *
              * @requires modules/sonification
              */
@@ -90,11 +96,17 @@ declare global {
             /**
              * What data values to map the parameter within.
              *
+             * @sample highcharts/sonification/mapping-within
+             *         Mapping within demonstrated
+             *
              * @requires modules/sonification
              */
             within?: 'chart'|'series'|'xAxis'|'yAxis';
             /**
              * A fixed value to use for the prop when mapping.
+             *
+             * @sample highcharts/demo/plotline-context
+             *         Map to fixed y value
              *
              * @requires modules/sonification
              */
@@ -117,6 +129,9 @@ declare global {
             /**
              * Map pitches to a musical scale. The scale is defined as an array
              * of semitone offsets from the root note.
+             *
+             * @sample highcharts/sonification/all-scales
+             *         Predefined scale presets
              *
              * @requires modules/sonification
              */
@@ -204,11 +219,16 @@ declare global {
             /**
              * Define a condition for when a track should be active and not.
              *
+             * @sample highcharts/sonification/mapping-zones
+             *         Mapping zones
+             *
              * @requires modules/sonification
              */
             activeWhen?: TrackPredicateCallback|ValueConstraints;
             /**
              * Show play marker (tooltip and/or crosshair) for a track.
+             *
+             * @default true
              *
              * @requires modules/sonification
              */
@@ -228,12 +248,19 @@ declare global {
              * defined as an offset in milliseconds, where 0 means it plays
              * immediately when the chart is sonified.
              *
+             * @sample highcharts/sonification/point-play-time
+             *         Play points in order of Y value
+             *
+             * @default "x"
+             *
              * @requires modules/sonification
              */
             time?: MappingParameter;
             /**
              * Pan refers to the stereo panning position of the sound. It is
              * defined from -1 (left) to 1 (right).
+             *
+             * @default "x"
              *
              * @requires modules/sonification
              */
@@ -246,6 +273,13 @@ declare global {
             volume?: MappingParameter;
             /**
              * Musical pitch refers to how high or low notes are played.
+             *
+             * @sample highcharts/sonification/pitch-mapping
+             *         Various types of mapping used
+             * @sample highcharts/sonification/polarity-invert
+             *         Inverted mapping to property
+             * @sample highcharts/sonification/log-mapping
+             *         Logarithmic mapping to property
              *
              * @requires modules/sonification
              */
@@ -262,6 +296,11 @@ declare global {
              * Gap in milliseconds between notes if pitch is mapped to an
              * array of notes.
              *
+             * @sample maps/demo/audio-map
+             *         Mapping to gap between notes
+             *
+             * @default 100
+             *
              * @requires modules/sonification
              */
             gapBetweenNotes?: MappingParameter;
@@ -275,6 +314,8 @@ declare global {
             /**
              * Note duration determines for how long a note plays, in
              * milliseconds.
+             *
+             * @default 200
              *
              * @requires modules/sonification
              */
@@ -317,11 +358,27 @@ declare global {
              * referencing a synth preset, or it can be a synth configuration
              * object.
              *
+             * @sample highcharts/demo/all-instruments
+             *         Overview of available presets
+             * @sample highcharts/sonification/custom-instrument
+             *         Custom instrument
+             *
+             * @default "piano"
+             *
              * @requires modules/sonification
              */
             instrument: string|SynthPatch.SynthPatchOptions;
             /**
              * Mapping options for the audio parameters.
+             *
+             * @sample highcharts/sonification/mapping-overview
+             *         Overview of common mapping parameters
+             * @sample highcharts/sonification/pitch-mapping
+             *         Various types of mapping used
+             * @sample highcharts/sonification/polarity-invert
+             *         Inverted mapping to property
+             * @sample highcharts/sonification/log-mapping
+             *         Logarithmic mapping to property
              *
              * @requires modules/sonification
              */
@@ -330,6 +387,8 @@ declare global {
              * Round pitch mapping to musical notes. If `false`, will play the
              * exact mapped note, even if it is out of tune compared to the
              * musical notes as defined by 440Hz standard tuning.
+             *
+             * @default true
              *
              * @requires modules/sonification
              */
@@ -423,12 +482,17 @@ declare global {
             /**
              * Time mapping determines what time each point plays.
              *
+             * @default "x"
+             *
              * @requires modules/sonification
              */
             time?: MappingParameter;
             /**
              * The text to announce for speech tracks. Can either be a format
              * string or a function.
+             *
+             * @sample highcharts/sonification/speak-values
+             *         Speak values
              *
              * @requires modules/sonification
              */
@@ -443,17 +507,26 @@ declare global {
             /**
              * Speech rate (speed) multiplier.
              *
+             * @default 1.3
+             *
              * @requires modules/sonification
              */
             rate?: MappingParameter;
             /**
              * Speech pitch (how high/low the voice is) multiplier.
              *
+             * @sample highcharts/sonification/speak-values
+             *         Speak values
+             *
+             * @default 1
+             *
              * @requires modules/sonification
              */
             pitch?: MappingParameter;
             /**
              * Volume of the speech announcement.
+             *
+             * @default 0.4
              *
              * @requires modules/sonification
              */
@@ -482,6 +555,11 @@ declare global {
             /**
              * The language to speak in for speech tracks, as an IETF BCP 47
              * language tag.
+             *
+             * @sample maps/demo/audio-map
+             *         French language speech
+             *
+             * @default "en-US"
              *
              * @requires modules/sonification
              */
@@ -641,17 +719,26 @@ declare global {
              * Context tracks to add globally, an array of either instrument
              * tracks, speech tracks, or a mix.
              *
+             * @sample highcharts/demo/plotline-context
+             *         Using contexts
+             *
              * @requires modules/sonification
              */
             globalContextTracks?: ContextTrackOptions;
             /**
              * Default sonification options for all instrument tracks.
              *
+             * @sample highcharts/sonification/point-sonify
+             *         Sonify points on click
+             *
              * @requires modules/sonification
              */
             defaultInstrumentOptions: InstrumentTrackOptions;
             /**
              * Default sonification options for all speech tracks.
+             *
+             * @sample highcharts/sonification/speak-values
+             *         Speak values
              *
              * @requires modules/sonification
              */
