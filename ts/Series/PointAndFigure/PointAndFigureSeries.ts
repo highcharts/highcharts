@@ -19,6 +19,7 @@
 import PointAndFigurePoint from './PointAndFigurePoint.js';
 import PointAndFigureSeriesDefaults from './PointAndFigureSeriesDefaults.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+import CrossSymbols from '../CrossSymbols.js';
 
 import type Point from '../../Core/Series/Point.js';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes.js';
@@ -95,8 +96,9 @@ class PointAndFigureSeries extends ScatterSeries {
     public static compose(
         SVGRendererClass: typeof SVGRenderer
     ): void {
-        void SVGRendererClass;
-        pushUnique(composed, 'pointandfigure');
+        if (pushUnique(composed, 'pointandfigure')) {
+            CrossSymbols.compose(SVGRendererClass);
+        }
     }
 
     /* *

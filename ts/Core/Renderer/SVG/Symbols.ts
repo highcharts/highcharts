@@ -342,36 +342,6 @@ function circle(
 }
 
 /**
- * Cross symbol path.
- *
- * @param {number} x
- * X coordinate
- * @param {number} y
- * Y coordinate
- * @param {number} w
- * Width
- * @param {number} h
- * Height
- * @return {Highcharts.SVGPathArray}
- * Path
- */
-function cross(
-    x: number,
-    y: number,
-    w: number,
-    h: number
-): SVGPath {
-    return [
-        ['M', x, y],
-        ['L', x + w, y + h],
-        ['M', x + w, y],
-        ['L', x, y + h],
-        ['Z']
-    ];
-}
-
-
-/**
  * Diamond symbol path.
  *
  * @param {number} x
@@ -551,7 +521,6 @@ declare module './SymbolType' {
         square: typeof rect;
         triangle: typeof triangle;
         'triangle-down': typeof triangleDown;
-        cross: typeof cross;
     }
 }
 
@@ -608,22 +577,6 @@ const Symbols: SymbolTypeRegistry = {
      * Path
      */
     circle,
-
-    /**
-     * Cross symbol path.
-     *
-     * @param {number} x
-     * X coordinate
-     * @param {number} y
-     * Y coordinate
-     * @param {number} w
-     * Width
-     * @param {number} h
-     * Height
-     * @return {Highcharts.SVGPathArray}
-     * Path
-     */
-    cross,
 
     /**
      * Diamond symbol path.
