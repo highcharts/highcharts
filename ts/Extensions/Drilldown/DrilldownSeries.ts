@@ -143,7 +143,7 @@ function columnAnimateDrilldown(
         chart = series.chart as Drilldown.ChartComposition,
         { drilldownLevels, styledMode } = chart,
         animationOptions = animObject(chart.options.drilldown?.animation),
-        xAxis = this.xAxis;
+        { xAxis, yAxis } = this;
 
     if (!init) {
         let animateFrom: (SVGAttributes|undefined);
@@ -156,14 +156,21 @@ function columnAnimateDrilldown(
                     level.lowerSeriesOptions._ddSeriesId
             ) {
                 animateFrom = level.shapeArgs;
-                if (!styledMode && animateFrom) {
-                    // Add the point colors to animate from
-                    animateFrom.fill = level.color;
+
+                if (animateFrom) {
+                    // Adjust for changing axis positions
+                    animateFrom.x = (animateFrom.x || 0) +
+                        (level.plotLeft ?? xAxis.pos) - xAxis.pos;
+                    animateFrom.y = (animateFrom.y || 0) +
+                        (level.plotTop ?? yAxis.pos) - yAxis.pos;
+
+                    if (!styledMode) {
+                        // Add the point colors to animate from
+                        animateFrom.fill = level.color;
+                    }
                 }
             }
         });
-
-        (animateFrom as any).x += pick(xAxis.oldPos, xAxis.pos) - xAxis.pos;
 
         series.points.forEach((point: Point): void => {
             const animateTo = point.shapeArgs;
@@ -662,11 +669,15 @@ function pieAnimateDrilldown(
     }
     // Unable to drill down in the horizontal item series #13372
     if (series.center) {
-        const animateFrom = level.shapeArgs,
-            start = (animateFrom as any).start,
-            angle = (animateFrom as any).end - start,
+        const animateFrom = level.shapeArgs || {},
+            start = animateFrom.start || 0,
+            angle = (animateFrom.end || 0) - start,
             startAngle = angle / series.points.length,
             styledMode = chart.styledMode;
+
+        // Adjust for moving plot area, typically adjusting to breadcrumbs
+        animateFrom.y = (animateFrom.y || 0) +
+            ((level.plotTop ?? chart.plotTop) - chart.plotTop) / 2;
 
         if (!init) {
             let animateTo: (SVGAttributes|undefined),

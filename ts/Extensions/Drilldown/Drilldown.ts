@@ -76,9 +76,6 @@ declare module '../../Core/Axis/AxisBase' {
         /** @internal */
         ddPoints?: Record<string, Array<(false|Point)>>;
 
-        /** @internal */
-        oldPos?: number;
-
         /**
          * Drill down to a given category. This is the same as clicking on an
          * axis label. If multiple series with drilldown are present, all will
@@ -523,6 +520,8 @@ class ChartAdditions {
             oldSeries = point.series,
             xAxis = oldSeries.xAxis,
             yAxis = oldSeries.yAxis,
+            horizAxis = xAxis && chart.inverted ? yAxis : xAxis,
+            vertAxis = xAxis && chart.inverted ? xAxis : yAxis,
             colorProp: SeriesOptions = chart.styledMode ?
                 { colorIndex: pick(point.colorIndex, oldSeries.colorIndex) } :
                 { color: point.color || oldSeries.color },
@@ -585,6 +584,8 @@ class ChartAdditions {
             bBox: point.graphic ? point.graphic.getBBox() : {},
             color: point.isNull ? 'rgba(0,0,0,0)' : colorProp.color,
             lowerSeriesOptions: ddOptions,
+            plotTop: vertAxis?.pos ?? chart.plotTop,
+            plotLeft: horizAxis?.pos ?? chart.plotLeft,
             pointOptions: point.options,
             pointIndex: point.index,
             oldExtremes: {
@@ -608,7 +609,6 @@ class ChartAdditions {
         const newSeries = level.lowerSeries = chart.addSeries(ddOptions, false);
         newSeries.options._levelNumber = levelNumber + 1;
         if (xAxis) {
-            xAxis.oldPos = xAxis.pos;
             xAxis.userMin = xAxis.userMax = null as any;
             yAxis.userMin = yAxis.userMax = null as any;
         }
@@ -1255,6 +1255,8 @@ namespace Drilldown {
         lowerSeries: Series;
         lowerSeriesOptions: SeriesOptions;
         oldExtremes: Record<string, (number|undefined)>;
+        plotTop: number;
+        plotLeft: number;
         pointIndex: number;
         pointOptions: (PointOptions|PointShortOptions);
         seriesOptions: SeriesOptions;
