@@ -35,7 +35,7 @@ async function runRemoteScenario(
 ): Promise<Record<string, unknown> & {
     fetchCalls: Array<{ offset: number; limit: number }>;
 }> {
-    await page.goto('/grid-pro/cypress/remote-data-provider');
+    await page.goto('/grid-pro/e2e/remote-data-provider');
     await page.waitForFunction(() => {
         const api = (window as any).remoteDataProviderTest;
         return !!(api && api.createGrid && api.getGrid);

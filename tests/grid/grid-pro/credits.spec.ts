@@ -2,7 +2,7 @@ import { test, expect } from '~/fixtures.ts';
 
 test.describe('Credits', () => {
     test.beforeEach(async ({ page }) => {
-        await page.goto('/grid-pro/cypress/credits-pro/', { waitUntil: 'networkidle' });
+        await page.goto('/grid-pro/e2e/credits-pro/', { waitUntil: 'networkidle' });
         // Wait for Grid to be initialized
         await page.waitForFunction(() => {
             return typeof (window as any).Grid !== 'undefined' &&
