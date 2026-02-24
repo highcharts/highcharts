@@ -14,6 +14,7 @@ const IGNORED_META_FIELDS = ['commit', 'date'];
  *   base: string,
  *   output: string,
  *   referenceDir: string,
+ *   currentDir: (string|undefined),
  *   githubOutput: (string|undefined),
  *   fetchBase: boolean,
  *   help: boolean
@@ -56,6 +57,7 @@ function parseCli(argv) {
         base: 'origin/master',
         output: '/tmp/changes.md',
         referenceDir: '.apidocs-diff-reference',
+        currentDir: void 0,
         githubOutput: void 0,
         fetchBase: false,
         help: false
@@ -89,6 +91,10 @@ function parseCli(argv) {
                 break;
             case '--reference-dir':
                 options.referenceDir = requireValue(argv, token, ++index);
+                index += 1;
+                break;
+            case '--current-dir':
+                options.currentDir = requireValue(argv, token, ++index);
                 index += 1;
                 break;
             case '--github-output':
@@ -656,20 +662,31 @@ async function main(options) {
             '  --fetch-base            Fetch base ref from origin before compare',
             '  --output, --out <file> Diff output file (default: /tmp/changes.md)',
             '  --reference-dir <dir>   Directory used by make-reference/compare-reference',
+            '  --current-dir <dir>     Prepared tree*.json directory for compare-reference',
             '  --github-output <file>  Append has_changes output for GitHub Actions',
             '  --help, -h              Show this help'
         ].join('\n')}\n`);
         return;
     }
 
-    const repoRoot = run(
+    if (options.currentDir && options.command !== 'compare-reference') {
+        fail('--current-dir is only supported with compare-reference.');
+    }
+
+    const requiresWorkingTree = !(
+        options.command === 'compare-reference' && options.currentDir
+    );
+    const repoRoot = requiresWorkingTree ? run(
         'git',
         ['rev-parse', '--show-toplevel'],
         { capture: true }
-    ).stdout.trim();
+    ).stdout.trim() : '';
 
     const outputPath = Path.resolve(process.cwd(), options.output);
     const referenceDirectory = Path.resolve(process.cwd(), options.referenceDir);
+    const currentDirectory = options.currentDir ?
+        Path.resolve(process.cwd(), options.currentDir) :
+        void 0;
     const tempRoot = Fs.mkdtempSync(Path.join(Os.tmpdir(), 'apidocs-diff-'));
     const cleanupWorktrees = [];
 
@@ -733,15 +750,21 @@ async function main(options) {
             case 'compare-reference': {
                 snapshotReferenceFiles(referenceDirectory, baseSnapshot);
 
-                const currentFiles = buildSnapshotFromWorkingTree(
-                    repoRoot,
-                    tempRoot,
-                    currentSnapshot,
-                    cleanupWorktrees
-                );
+                const currentFiles = currentDirectory ?
+                    snapshotReferenceFiles(currentDirectory, currentSnapshot) :
+                    buildSnapshotFromWorkingTree(
+                        repoRoot,
+                        tempRoot,
+                        currentSnapshot,
+                        cleanupWorktrees
+                    );
 
                 if (!currentFiles.length) {
-                    fail('No tree*.json files were generated from the working tree.');
+                    fail(
+                        currentDirectory ?
+                            `No tree*.json files found in ${currentDirectory}` :
+                            'No tree*.json files were generated from the working tree.'
+                    );
                 }
 
                 normalizeSnapshotTrees(baseSnapshot);
