@@ -129,6 +129,11 @@ function onAxisFoundExtremes(
             }
 
             if (range > 0) {
+                // Add the full stroke width to the fill radius so the
+                // axis extension covers the complete visual extent of
+                // the bubble including its border (#XXXX).
+                const strokeR =
+                    (series.options.marker as any)?.lineWidth || 0;
                 let i = data.length;
                 while (i--) {
                     if (
@@ -136,7 +141,8 @@ function onAxisFoundExtremes(
                         (this.dataMin as any) <= data[i] &&
                         data[i] <= (this.max as any)
                     ) {
-                        const radius = series.radii && series.radii[i] || 0;
+                        const radius =
+                            (series.radii && series.radii[i] || 0) + strokeR;
                         pxMin = Math.min(
                             ((data[i] - (min as any)) * transA) - radius,
                             pxMin
@@ -154,24 +160,41 @@ function onAxisFoundExtremes(
     // Apply the padding to the min and max properties
     if (hasActiveSeries && range > 0 && !this.logarithmic) {
         pxMax -= axisLength;
+
+        // #8901: Clamp pxMin to 0 when user-set min/max is present to avoid
+        // transA collapse; otherwise use pxMin as-is for correct padding.
+        const isCategoryAxis =
+            !!(this.categories?.length || this.options.type === 'category');
+        const hasUserMin = defined(
+            pick((this.options as any).min, (this as any).userMin)
+        );
+        const pxMinUsed = (isCategoryAxis || hasUserMin) ?
+            Math.max(0, pxMin) : pxMin;
+
         transA *= (
             axisLength +
-            Math.max(0, pxMin) - // #8901
+            pxMinUsed -
             Math.min(pxMax, axisLength)
         ) / axisLength;
         (
             [
-                ['min', 'userMin', pxMin],
-                ['max', 'userMax', pxMax]
-            ] as Array<[string, string, number]>
-        ).forEach((keys: [string, string, number]): void => {
+                ['min', 'userMin', pxMin, 'startOnTick'],
+                ['max', 'userMax', pxMax, 'endOnTick']
+            ] as Array<[string, string, number, string]>
+        ).forEach((keys: [string, string, number, string]): void => {
+            // Only extend the axis if the user hasn't set an explicit min/max.
             if (
-                typeof pick(
+                !defined(pick(
                     (this.options as any)[keys[0]],
                     (this as any)[keys[1]]
-                ) === 'undefined'
+                ))
             ) {
                 (this as any)[keys[0]] += keys[2] / transA;
+                // Prevent tick snapping from overriding bubble padding,
+                // unless the user explicitly set it.
+                if ((this.userOptions as any)[keys[3]] !== true) {
+                    (this.options as any)[keys[3]] = false;
+                }
             }
         });
     }
@@ -705,7 +728,13 @@ class BubbleSeries extends ScatterSeries {
             pos = Math.sqrt(pos);
         }
 
-        return Math.ceil(minSize + pos * (maxSize - minSize)) / 2;
+        // Reserve space for the stroke so the full visual extent fits within
+        // the plot area. Clamp to minSize/2 to respect the minimum bubble size.
+        const lineWidth = (this.options.marker as any)?.lineWidth || 0;
+        return Math.max(
+            minSize / 2,
+            Math.ceil(minSize + pos * (maxSize - minSize - 2 * lineWidth)) / 2
+        );
     }
 
     /**

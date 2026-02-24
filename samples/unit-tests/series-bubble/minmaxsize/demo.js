@@ -326,3 +326,41 @@ QUnit.test('Bubble zMin update, #24138.', function (assert) {
         'Radius should update after zMin change.'
     );
 });
+
+QUnit.test('Bubble marker fully visible with maxSize 100%', function (assert) {
+    var chart = Highcharts.chart('container', {
+            chart: {
+                type: 'bubble',
+                animation: false
+            },
+            plotOptions: { bubble: { maxSize: '100%' } },
+            series: [{
+                data: [[823667, -276003, 359003], [526000, -114001, 87001]]
+            }]
+        }),
+        series = chart.series[0],
+        plotWidth = chart.plotWidth,
+        plotHeight = chart.plotHeight;
+
+    series.points.forEach(function (point, i) {
+        // Full visual radius = fill radius + full stroke width as margin
+        var r = point.graphic.width / 2 + point.graphic.strokeWidth();
+
+        assert.ok(
+            point.plotX - r >= 0,
+            'Point ' + i + ' left X bound'
+        );
+        assert.ok(
+            point.plotX + r <= plotWidth,
+            'Point ' + i + ' right X bound'
+        );
+        assert.ok(
+            point.plotY - r >= 0,
+            'Point ' + i + ' top Y bound'
+        );
+        assert.ok(
+            point.plotY + r <= plotHeight,
+            'Point ' + i + ' bottom Y bound'
+        );
+    });
+});
