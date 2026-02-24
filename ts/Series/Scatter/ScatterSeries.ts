@@ -147,7 +147,7 @@ class ScatterSeries extends LineSeries {
     /**
      * Allow scatter points on the edge to be interacted with outside the plot
      * area, #24096.
-     * * @private
+     * * @intenal
      * @function Highcharts.ScatterSeries#allowOutsidePlotInteraction
      * @param {PointerEvent} e The pointer event.
      * @return {boolean} True if interaction is allowed.
