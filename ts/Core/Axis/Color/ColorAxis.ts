@@ -291,7 +291,7 @@ class ColorAxis extends Axis implements ColorAxisBase {
      * color stops.
      * @private
      */
-    public setOptions(userOptions: DeepPartial<ColorAxis.Options>): void {
+    public setOptions(userOptions: DeepPartial<ColorAxisOptions>): void {
         const legend = this.chart.options.legend || {},
             horiz = userOptions.layout ?
                 userOptions.layout !== 'vertical' :
@@ -302,7 +302,7 @@ class ColorAxis extends Axis implements ColorAxisBase {
 
         const options = merge(
             sideSpecific,
-            defaultOptions.colorAxis as ColorAxis.Options,
+            defaultOptions.colorAxis as ColorAxisOptions,
             userOptions,
             // Forced options
             {
