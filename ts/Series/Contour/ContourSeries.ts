@@ -25,7 +25,7 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 
 import Color from '../../Core/Color/Color.js';
 import ContourPoint from './ContourPoint.js';
-import contourShader from './contourShader.js';
+import contourShader from './ContourShader.js';
 import ContourSeriesDefaults from './ContourSeriesDefaults.js';
 import Delaunay from '../../Core/Delaunay.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
