@@ -160,12 +160,16 @@ declare global {
             /**
              * Whether or not to group points.
              *
+             * @default true
+             *
              * @requires modules/sonification
              */
             enabled?: boolean;
             /**
              * The size of each group in milliseconds. Audio events closer
              * than this are grouped together.
+             *
+             * @default 15
              *
              * @requires modules/sonification
              */
@@ -174,12 +178,16 @@ declare global {
              * The grouping algorithm, deciding which points to keep when
              * grouping a set of points together.
              *
+             * @default "minmax"
+             *
              * @requires modules/sonification
              */
             algorithm?: PointGroupingAlgorithmTypes;
             /**
              * The data property for each point to compare when deciding
              * which points to keep in the group.
+             *
+             * @default "y"
              *
              * @requires modules/sonification
              */
@@ -368,6 +376,9 @@ declare global {
              * Set a context track to play periodically every `timeInterval`
              * milliseconds while the sonification is playing.
              *
+             * @sample highcharts/demo/plotline-context
+             *         Using contexts
+             *
              * @requires modules/sonification
              */
             timeInterval?: number;
@@ -376,6 +387,9 @@ declare global {
              * units of a data property `valueProp` while the sonification is
              * playing.
              *
+             * @sample highcharts/demo/plotline-context
+             *         Using contexts
+             *
              * @requires modules/sonification
              */
             valueInterval?: number;
@@ -383,12 +397,16 @@ declare global {
              * The point property to play context for when using
              * `valueInterval`.
              *
+             * @default "x"
+             *
              * @requires modules/sonification
              */
             valueProp?: string;
             /**
              * How to map context events to time when using the
              * `valueInterval` option.
+             *
+             * @default "linear"
              *
              * @requires modules/sonification
              */
@@ -532,11 +550,15 @@ declare global {
             /**
              * Enable sonification functionality for the chart.
              *
+             * @default true
+             *
              * @requires modules/sonification
              */
             enabled: boolean;
             /**
              * The total duration of the sonification, in milliseconds.
+             *
+             * @default 6000
              *
              * @requires modules/sonification
              */
@@ -545,11 +567,20 @@ declare global {
              * The time to wait in milliseconds after each data series when
              * playing the series one after the other.
              *
+             * @sample highcharts/sonification/chart-earcon
+             *         Notification after series
+             *
+             * @see [order](#sonification.order)
+             *
+             * @default 700
+             *
              * @requires modules/sonification
              */
             afterSeriesWait: number;
             /**
              * Overall/master volume for the sonification, from 0 to 1.
+             *
+             * @default 0.7
              *
              * @requires modules/sonification
              */
@@ -558,6 +589,11 @@ declare global {
              * What order to play the data series in, either `sequential`
              * where the series play individually one after the other, or
              * `simultaneous` where the series play all at once.
+             *
+             * @sample highcharts/sonification/chart-simultaneous
+             *         Simultaneous sonification
+             *
+             * @default "sequential"
              *
              * @requires modules/sonification
              */
@@ -571,11 +607,20 @@ declare global {
             /**
              * Show tooltip as the chart plays.
              *
+             * @see [showCrosshair](#sonification.showCrosshair)
+             *
+             * @default true
+             *
              * @requires modules/sonification
              */
             showTooltip: boolean;
             /**
              * Show X and Y axis crosshairs as the chart plays.
+             *
+             * @see [showTooltip](#sonification.showTooltip)
+             * @see [crosshair](#xAxis.crosshair)
+             *
+             * @default true
              *
              * @requires modules/sonification
              */
@@ -615,6 +660,8 @@ declare global {
              * How long to wait between each recomputation of the
              * sonification, if the chart updates rapidly. Given in
              * milliseconds.
+             *
+             * @default 200
              *
              * @requires modules/sonification
              */
@@ -685,12 +732,16 @@ declare module '../../Core/Options'{
         /**
          * The text for the MIDI download menu item in the export menu.
          *
+         * @default "Download MIDI"
+         *
          * @since 11.0.0
          * @requires modules/sonification
          */
         downloadMIDI?: string;
         /**
          * The text for the Play as sound menu item in the export menu.
+         *
+         * @default "Play as sound"
          *
          * @since 11.0.0
          * @requires modules/sonification
