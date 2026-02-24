@@ -261,6 +261,17 @@ export interface AxisCrosshairOptions {
     label?: AxisCrosshairLabelOptions;
 
     /**
+    * The number of milliseconds to wait until the crosshair is shown when
+    * mouse over a point. Works on initial hover.
+    *
+    * @sample {highcharts|highstock} highcharts/tooltip/showdelay/
+    *
+    * @default 0
+    * @since next
+    */
+    showDelay?: number,
+
+    /**
      * Whether the crosshair should snap to the point or follow the pointer
      * independent of points.
      *
