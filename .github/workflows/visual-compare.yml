@@ -115,7 +115,7 @@ jobs:
 
       - name: Upload file size comparison artifact
         if: ${{ always() && hashFiles('tmp/filesizes/comparison.md') != '' }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: filesize-comparison-${{ github.event.pull_request.number || github.run_id }}
           path: |
@@ -256,7 +256,7 @@ jobs:
 
 
       - name: Store artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         if: ${{ always() }}
         with:
           name: visual-test-results
