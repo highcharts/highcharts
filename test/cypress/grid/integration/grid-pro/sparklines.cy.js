@@ -1,6 +1,6 @@
 describe('Sparklines update for null-cells.', () => {
     beforeEach(() => {
-        cy.visit('/grid-pro/cypress/cell-update-sparkline/');
+        cy.visit('grid-pro/e2e/cell-update-sparkline/');
     });
 
     it('Highcharts should be built & loaded.', () => {
