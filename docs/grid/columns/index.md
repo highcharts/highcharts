@@ -1,6 +1,17 @@
-# Columns options
+---
+sidebar_label: "Overview"
+---
+
+# Columns overview
 
 Many of the available configuration options in Grid apply to the columns and their corresponding row and header cells.
+
+For focused topics, see:
+- [Column headers](https://www.highcharts.com/docs/grid/columns/header)
+- [Column grouping](https://www.highcharts.com/docs/grid/columns/grouping)
+- [Column resizing and width](https://www.highcharts.com/docs/grid/columns/resizing-and-width)
+- [Column sorting](https://www.highcharts.com/docs/grid/columns/sorting)
+- [Column filtering](https://www.highcharts.com/docs/grid/columns/filtering)
 
 ## Defaults
 
@@ -29,6 +40,27 @@ The ' columnDefaults ' object defines default options for all columns in the Gri
 
 Note that most options in `columnDefaults` are mirrored 1:1 in the `columns[]` array of objects.
 
+### Quick start example
+
+```js
+Grid.grid('container', {
+    columnDefaults: {
+        cells: {
+            format: '{value}'
+        }
+    },
+    columns: [{
+        id: 'price',
+        header: {
+            format: 'Price'
+        },
+        cells: {
+            format: '${value}'
+        }
+    }]
+});
+```
+
 ## Header
 
 ```js
@@ -52,7 +84,7 @@ Note that `className` and `format` support templating as described in [Templatin
 
 Suppose you need more advanced formatting that is not supported through templating. Use the `formatted` callback function instead. As in Highcharts Core, we always recommend `format` if possible. [Read more here...](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting#formatter-callbacks)
 
-You can exclude the column, including its header, from the Grid by setting `enabled` to false. For an alternative approach to header configuration, including grouped headers, see the [article on Header](https://www.highcharts.com/docs/grid/header).
+You can exclude the column, including its header, from the Grid by setting `enabled` to false. For an alternative approach to header configuration, including grouped headers, see the [article on Header](https://www.highcharts.com/docs/grid/columns/header).
 
 ## Cells
 
@@ -71,9 +103,9 @@ columns: [{
 
 The `columns[].cells` option can configure the cells in individual columns. If needed, you can set defaults for all columns in `columnDefaults.cells`.
 
-The end user can edit each cell in a column directly by setting the `editMode.enabled` option to true. Read more in the [Cell editing](https://www.highcharts.com/docs/grid/cell-editing) article.
+The end user can edit each cell in a column directly by setting the `editMode.enabled` option to true. Read more in the [Editing overview](https://www.highcharts.com/docs/grid/editing/index) article.
 
-To add a right-click menu for cells, see the [Cell context menu](https://www.highcharts.com/docs/grid/cell-context-menu) article.
+To add a right-click menu for cells, see the [Cell context menu](https://www.highcharts.com/docs/grid/cells/context-menu) article.
 
 Note that `className` and `format` support templating as described in [Templating](https://www.highcharts.com/docs/chart-concepts/templating), and `{value}` references the cell value.
 
@@ -218,7 +250,7 @@ columns: [{
 
 The `columns[].filtering` property can be used to enable/disable filtering, configure the filtering interface (inline or dropdown), and set initial filter conditions for individual columns. Use `columnDefaults.filtering` to set the default configuration for all columns.
 
-For more information on filtering options and events, see the [Column filtering article](https://www.highcharts.com/docs/grid/column-filtering) or the [API reference](https://api.highcharts.com/grid/#interfaces/Grid_Core_Options.ColumnFilteringOptions).
+For more information on filtering options and events, see the [Column filtering article](https://www.highcharts.com/docs/grid/columns/filtering) or the [API reference](https://api.highcharts.com/grid/#interfaces/Grid_Core_Options.ColumnFilteringOptions).
 
 ## Formatting
 
@@ -273,4 +305,4 @@ If this property is not defined, the data type is automatically inferred from th
 
 <iframe src="https://www.highcharts.com/samples/embed/grid/basic/column-data-type?force-light-theme" allow="fullscreen"></iframe>
 
-For more details on customizing cell content, refer to the [cell content section](https://www.highcharts.com/docs/grid/cell-renderers).
+For more details on customizing cell content, refer to the [cell content section](https://www.highcharts.com/docs/grid/editing/renderers).

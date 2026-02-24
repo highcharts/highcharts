@@ -1,13 +1,17 @@
-# Performance and rendering
+---
+sidebar_label: "Performance"
+---
+
+# Row performance and rendering
 Row virtualization is a performance optimization technique used in Grid. Instead of rendering all the rows of data at once, which can be thousands of entries, row virtualization renders only the rows currently visible within the user's viewport (plus a small buffer). As the user scrolls, the Grid dynamically renders new rows and removes those that scroll out of view.
 
-Alternatively, if you prefer to display data in discrete pages rather than continuous scrolling, you can use [Pagination](https://www.highcharts.com/docs/grid/pagination) to also avoid rendering all rows at once.
+Alternatively, if you prefer to display data in discrete pages rather than continuous scrolling, you can use [Pagination](https://www.highcharts.com/docs/grid/rows/pagination) to also avoid rendering all rows at once.
 
-![Illustration showing virtualization of rows](ill_virtualization.png)
+![Illustration showing virtualization of rows](../ill_virtualization.png)
 
 This technique significantly enhances performance, leading to faster load times and efficient updates. Row virtualization reduces memory consumption, allowing the application to handle large datasets smoothly without compromising performance. Users benefit from a smoother experience with fluid scrolling and more responsive interactions such as sorting rows.
 
-The row virtualization is enabled by default; however, you can easily disable it using the [`virtualization`](https://api.highcharts.com/dashboards/#interfaces/Grid_Options.RowsSettings#virtualization) option.
+Row virtualization can be set explicitly with the [`virtualization`](https://api.highcharts.com/dashboards/#interfaces/Grid_Options.RowsSettings#virtualization) option, or controlled automatically by `virtualizationThreshold` (default `50`).
 Please note that large datasets also impact resizing and sorting performance. Some animations or interactions might not be smooth.
 
 ## Optimizing performance
@@ -32,6 +36,19 @@ The default [`bufferSize`](https://api.highcharts.com/dashboards/#interfaces/Gri
 ### strictHeights
 By default, rows adjust their height to fit all content, which can reduce performance and scrolling smoothness. Setting `strictHeights: true` ensures all rows have a uniform height, truncating multiline text with an ellipsis. This skips height calculations and boosts performance.
 
+### minVisibleRows
+Use [`minVisibleRows`](https://api.highcharts.com/grid/#interfaces/Grid_Core_Options.RowsSettings#minVisibleRows) to set a minimum `tbody` height based on how many rows should remain visible.
+
+```js
+{
+    rendering: {
+        rows: {
+            minVisibleRows: 4
+        }
+    }
+}
+```
+
 ## Rendering
 ```js
 {
@@ -44,7 +61,7 @@ By default, rows adjust their height to fit all content, which can reduce perfor
         },
         columns: {
             resizing: {
-                mode: "fixed"
+                mode: "adjacent"
             }
         }
     }
@@ -54,10 +71,11 @@ These options can be used to configure how the table should be rendered.
 
 [`table.className`](https://api.highcharts.com/grid/#interfaces/Grid_Core_Options.TableSettings#className) is appended to the `<table>` element.
 
-[`header.enabled: false`](https://api.highcharts.com/grid/#interfaces/Grid_Core_Options.HeaderSettings#enabled) disables all [column headers](https://www.highcharts.com/docs/grid/header) by not rendering the `thead` element.
+[`header.enabled: false`](https://api.highcharts.com/grid/#interfaces/Grid_Core_Options.HeaderSettings#enabled) disables all [column headers](https://www.highcharts.com/docs/grid/columns/header) by not rendering the `thead` element.
 
 [`columns.resizing.mode`](https://api.highcharts.com/grid/#interfaces/Grid_Core_Options.ResizingOptions#mode) is used to configure initial column widths.
 
-[`columns.resizing.mode: "full"`](https://api.highcharts.com/grid/#interfaces/Grid_Core_Options.ResizingOptions#mode) renders a full width (`width: 100%;`) responsive table with evenly distributed column widths. `columns.resizing.mode: "fixed"` renders a table were columns have a fixed width in pixels. It should be set to support your specific use case.
-
-
+Use [`columns.resizing.mode`](https://api.highcharts.com/grid/#interfaces/Grid_Core_Options.ResizingOptions#mode) to control how widths are redistributed when users resize columns:
+- `adjacent`: resize current column and compensate in the next column.
+- `independent`: resize only the current column and keep following column widths fixed.
+- `distributed`: resize current column and rebalance remaining flexible columns.
