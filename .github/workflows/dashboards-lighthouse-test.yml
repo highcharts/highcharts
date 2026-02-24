@@ -143,7 +143,7 @@ jobs:
           cat highcharts/tmp/lighthousetable.md >> $GITHUB_STEP_SUMMARY
 
       - name: Comment on PR
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         if: ${{ always() }}
         with:
           github-token: ${{secrets.PR_COMMENT_TOKEN}}
