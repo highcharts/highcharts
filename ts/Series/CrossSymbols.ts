@@ -17,8 +17,7 @@ import type SVGRenderer from '../Core/Renderer/SVG/SVGRenderer';
 
 declare module '../Core/Renderer/SVG/SymbolType' {
     interface SymbolTypeRegistry {
-        /** @requires Series/PointAndFigure */
-        /** @requires Series/Contour */
+        /** Shared by Series/PointAndFigure and Series/Contour. */
         cross: SymbolFunction;
     }
 }
