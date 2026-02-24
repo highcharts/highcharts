@@ -41,17 +41,16 @@ import type { SeriesLabelOptions } from './SeriesLabelOptions';
  * @sample highcharts/series-label/stock-chart
  *         Stock chart
  *
- * @type     {object}
+ * @declare  Highcharts.SeriesLabelOptionsObject
  * @since    6.0.0
  * @product  highcharts highstock gantt
- * @apioption plotOptions.series.label
+ * @requires modules/series-label
+ * @optionparent plotOptions.series.label
  */
 const SeriesLabelDefaults: SeriesLabelOptions = {
 
     /**
      * Enable the series label per series.
-     *
-     * @default  true
      */
     enabled: true,
 
@@ -62,16 +61,12 @@ const SeriesLabelDefaults: SeriesLabelOptions = {
      * algorithm with systematically search for open spaces in the
      * whole plot area. Visually, it may also result in a more
      * cluttered chart, though more of the series will be labeled.
-     *
-     * @default  false
      */
     connectorAllowed: false,
 
     /**
      * If the label is closer than this to a neighbour graph, draw a
      * connector.
-     *
-     * @default  24
      */
     connectorNeighbourDistance: 24,
 
@@ -89,7 +84,8 @@ const SeriesLabelDefaults: SeriesLabelOptions = {
 
     /**
      * Callback function to format each of the series' labels. The
-     * `this` keyword refers to the series object.
+     * `this` keyword refers to the series object. By default the
+     * `formatter` is undefined and the `series.name` is rendered.
      *
      * @type {Highcharts.FormatterCallbackFunction<Series>}
      * @since 8.1.0
@@ -98,45 +94,45 @@ const SeriesLabelDefaults: SeriesLabelOptions = {
 
     /**
      * For area-like series, allow the font size to vary so that
-     * small areas get a smaller font size.
+     * small areas get a smaller font size. The default applies this
+     * effect to area-like series but not line-like series.
      *
      * @sample highcharts/demo/streamgraph
      *         Min and max font size on a streamgraph
      * @type   {number|null}
-     * @default null
      */
     minFontSize: null,
 
     /**
      * For area-like series, allow the font size to vary so that
-     * small areas get a smaller font size.
+     * small areas get a smaller font size. The default applies this
+     * effect to area-like series but not line-like series.
      *
      * @sample highcharts/demo/streamgraph
      *         Min and max font size on a streamgraph
      *
      * @type   {number|null}
-     * @default null
      */
     maxFontSize: null,
 
     /**
-     * Draw the label on the area of an area series. Set it to
-     * `false` to draw it next to the graph instead.
+     * Draw the label on the area of an area series. By default it
+     * is drawn on the area. Set it to `false` to draw it next to
+     * the graph instead.
      *
      * @type {boolean|null}
-     * @default null
      */
     onArea: null,
 
     /**
-     * Styles for the series label.
+     * Styles for the series label. The color defaults to the series
+     * color, or a contrast color if `onArea`.
      *
      * @type {Highcharts.CSSObject}
      */
     style: {
         /**
          * @type {number|string}
-         * @default "0.8em"
          */
         fontSize: '0.8em',
         /** @internal */
@@ -145,8 +141,6 @@ const SeriesLabelDefaults: SeriesLabelOptions = {
 
     /**
      * Whether to use HTML to render the series label.
-     *
-     * @default  false
      */
     useHTML: false,
 

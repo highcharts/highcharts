@@ -24,7 +24,6 @@ import type {
 import type Axis from '../../Core/Axis/Axis';
 import type DataGroupingOptions from './DataGroupingOptions';
 import type { ColumnCollection } from '../../Data/DataTable';
-import type DataTable from '../../Data/DataTable';
 import type IndicatorBase from '../../Stock/Indicators/IndicatorBase';
 import type Point from '../../Core/Series/Point';
 import type {
@@ -211,9 +210,9 @@ export interface DataGroupingInfoObject {
 export interface DataGroupingResultObject {
     /**
      * @name Highcharts.DataGroupingResultObject#modified
-     * @type {Highcharts.DataTable}
+     * @type {Highcharts.DataTableCore}
      */
-    modified: DataTable;
+    modified: DataTableCore;
 
     /**
      * @name Highcharts.DataGroupingResultObject#groupMap
@@ -550,7 +549,7 @@ function applyGrouping(
                 xAxis.min || 0,
                 xAxis.max || 0
             );
-            modified = croppedData.modified as unknown as DataTable;
+            modified = croppedData.modified;
             groupedXData = modified.getColumn('x') as Array<number>;
 
             series.cropStart = croppedData.start; // #15005
@@ -703,7 +702,7 @@ function groupData(
         data = series.data,
         dataOptions = series.options && series.options.data,
         groupedXData = [],
-        modified = new DataTableCore() as unknown as DataTable,
+        modified = new DataTableCore(),
         groupMap = [],
         dataLength = table.rowCount,
         // When grouping the fake extended axis for panning, we don't need to

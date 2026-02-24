@@ -79,40 +79,21 @@ const {
  *
  * */
 
+/** @internal */
 declare module '../../Core/Chart/ChartBase'{
     interface ChartBase {
-        /**
-         * @internal
-         */
         boxesToAvoid?: Array<LabelIntersectBoxObject>;
-        /**
-         * @internal
-         */
         labelSeries?: Array<Series>;
-        /**
-         * @internal
-         */
         labelSeriesMaxSum?: number;
-        /**
-         * @internal
-         */
         seriesLabelTimer?: number;
     }
 }
 
+/** @internal */
 declare module '../../Core/Series/SeriesBase' {
     interface SeriesBase {
-        /**
-         * @internal
-         */
         interpolatedPoints?: Array<ControlPoint>;
-        /**
-         * @internal
-         */
         labelBySeries?: SVGElement;
-        /**
-         * @internal
-         */
         sum?: number;
     }
 }
@@ -128,11 +109,9 @@ declare module '../../Core/Series/SeriesOptions' {
     }
 }
 
+/** @internal */
 declare module '../../Core/Renderer/SVG/SymbolType' {
     interface SymbolTypeRegistry {
-        /**
-         * @internal
-         */
         connector: SymbolFunction;
     }
 }
