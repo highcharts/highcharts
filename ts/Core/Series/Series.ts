@@ -5119,22 +5119,6 @@ class Series {
     }
 
     /**
-     * Determines whether the series allows interaction outside the plot area.
-     * Overridden by specific series types (like Scatter) that need extended
-     * interaction.
-     *
-     * @function Highcharts.Series#allowOutsidePlotInteraction
-     * @param {global.PointerEvent} e The pointer event.
-     * @return {boolean} True if interaction outside the plot area is allowed.
-     */
-    public allowOutsidePlotInteraction(
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        e: PointerEvent
-    ): boolean {
-        return false;
-    }
-
-    /**
      * Draws the legend symbol based on the legendSymbol user option.
      *
      * @internal

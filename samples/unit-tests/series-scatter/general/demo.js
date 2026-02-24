@@ -74,9 +74,9 @@ QUnit.test('Scatter series general tests.', function (assert) {
     });
 
     assert.strictEqual(
-        columnSeries.allowOutsidePlotInteraction(mockEvent),
-        false,
+        typeof columnSeries.allowOutsidePlotInteraction,
+        'undefined',
         'Default series (Column) should NOT allow interaction outside ' +
-        'he plot area (#24096).'
+        'the plot area (#24096).'
     );
 });

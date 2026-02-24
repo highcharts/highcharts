@@ -207,6 +207,12 @@ declare module '../../Core/Series/SeriesType' {
 }
 SeriesRegistry.registerSeriesType('scatter', ScatterSeries);
 
+
+declare module '../../Core/Series/SeriesBase' {
+    interface SeriesBase {
+        allowOutsidePlotInteraction(e: PointerEvent): boolean;
+    }
+}
 /* *
  *
  *  Default Export
