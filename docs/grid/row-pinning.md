@@ -7,17 +7,19 @@ sidebar_label: "Row pinning"
 Row pinning lets you keep selected rows visible at the top or bottom while the
 main rows scroll normally.
 
-Pinned rows are existing `dataTable` rows. They are removed from the scrollable
-area and rendered in dedicated pinned sections.
+Pinned rows are existing `data.dataTable` rows. They are removed from the
+scrollable area and rendered in dedicated pinned sections.
 
 ## Basic configuration
 
 ```js
 Grid.grid('container', {
-    dataTable: {
-        columns: {
-            id: ['row-001', 'row-002', 'row-999'],
-            price: [1, 2, 999]
+    data: {
+        dataTable: {
+            columns: {
+                id: ['row-001', 'row-002', 'row-999'],
+                price: [1, 2, 999]
+            }
         }
     },
     rendering: {
