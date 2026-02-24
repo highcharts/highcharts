@@ -9,7 +9,7 @@ jobs:
     name: Node unit tests
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: actions/setup-node@v4
         with:
           node-version: 'lts/*'
@@ -28,7 +28,7 @@ jobs:
     name: Cypress tests
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           path: highcharts
 
@@ -49,7 +49,7 @@ jobs:
           npx gulp scripts
 
       - name: Checkout utils
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           repository: highcharts/highcharts-utils
           path: utils
@@ -77,7 +77,7 @@ jobs:
     env:
       DISPLAY: :99
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: actions/setup-node@v4
         with:
           node-version: 'lts/*'

@@ -28,7 +28,7 @@ jobs:
       matrix:
         node-version: [lts/*]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           ref: master
           path: highcharts
@@ -56,7 +56,7 @@ jobs:
           npx gulp scripts --product Grid
 
       - name: Checkout utils
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           repository: highcharts/highcharts-utils
           path: utils
@@ -83,7 +83,7 @@ jobs:
         run: kill $(lsof -t -i:3030)
 
       - name: Checkout current branch
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           path: highcharts
           clean: false # do not remove files from previous run

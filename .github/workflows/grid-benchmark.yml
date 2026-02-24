@@ -25,7 +25,7 @@ jobs:
       matrix:
         node-version: [lts/*]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           ref: master
 
@@ -47,7 +47,7 @@ jobs:
         run: cd test/ts-node-unit-tests && node --import tsx bench.ts --context base --pattern Grid/
 
       - name: Checkout current branch
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
            clean: false # do not remove files from previous run
       - run: npm ci

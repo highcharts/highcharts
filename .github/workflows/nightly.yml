@@ -19,7 +19,7 @@ jobs:
     name: Node unit tests
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: actions/setup-node@v4
         with:
           node-version: 'lts/*'
@@ -38,7 +38,7 @@ jobs:
     name: Cypress tests
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           path: highcharts
 
@@ -59,7 +59,7 @@ jobs:
           npx gulp scripts
 
       - name: Checkout utils
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           repository: highcharts/highcharts-utils
           path: utils
@@ -88,7 +88,7 @@ jobs:
       JSON_NEEDS: ${{ toJSON(needs) }}
     steps:
       - name: Checkout repository scripts
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           sparse-checkout: |
             .github/scripts
@@ -135,7 +135,7 @@ jobs:
     env:
       DISPLAY: :99
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: actions/setup-node@v4
         with:
           node-version: 'lts/*'
@@ -221,7 +221,7 @@ jobs:
       BROWSER_COUNT: 2
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Use Node.js
         uses: actions/setup-node@v4
@@ -281,12 +281,12 @@ jobs:
     needs: [nightly_unit_tests, nightly_cypress, nightly_playwright_all_browsers, nightly_visual_diff]
     steps:
       - name: Checkout highcharts
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           path: highcharts
 
       - name: Checkout highcharts-dist
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           repository: highcharts/highcharts-dist
           token: ${{ secrets.PR_COMMENT_TOKEN }}
@@ -341,7 +341,7 @@ jobs:
       AWS_REGION: ${{secrets.VISUAL_TESTS_AWS_REGION}}
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0 # get the full history
 

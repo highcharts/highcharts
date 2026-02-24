@@ -33,7 +33,7 @@ jobs:
       PWTEST_WORKER_COUNT: 2
     steps:
       - name: Checkout master
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           ref: master
 
@@ -93,7 +93,7 @@ jobs:
         run: node --import tsx tests/analyze-snapshots.mts
 
       - name: Checkout current branch
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           clean: false
           fetch-depth: 0

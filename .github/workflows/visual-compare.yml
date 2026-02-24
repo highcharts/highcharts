@@ -21,7 +21,7 @@ jobs:
   file_size_comparison:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           ref: master
 
@@ -50,7 +50,7 @@ jobs:
         run: npx gulp write-file-sizes --filename master.json
 
       - name: Checkout current branch
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           clean: false
           fetch-depth: 0
@@ -131,7 +131,7 @@ jobs:
       matrix:
         node-version: [lts/*]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           ref: master
 
@@ -153,7 +153,7 @@ jobs:
       - run: npx karma start test/karma-conf.js --tests gantt/*/* --ts --reference --browsercount 2 --no-fail-on-empty-test-suite
 
       - name: Checkout current branch
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           clean: false
           fetch-depth: 0
