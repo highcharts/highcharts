@@ -77,7 +77,7 @@ export interface PackedBubbleParentNodeOptions {
  *
  * @excluding connectEnds, connectNulls, cropThreshold, dragDrop, jitter,
  *            keys, pointPlacement, sizeByAbsoluteValue, step, xAxis,
- *            yAxis, zMax, zMin, dataSorting, boostThreshold,
+ *            yAxis, dataSorting, boostThreshold,
  *            boostBlending
  *
  * @excluding cropThreshold, dataParser, dataSorting, dataURL, dragDrop, stack,

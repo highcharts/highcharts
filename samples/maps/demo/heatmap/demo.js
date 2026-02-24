@@ -17,7 +17,7 @@ Highcharts.chart('container', {
     },
 
     title: {
-        text: 'Highcharts heat map',
+        text: 'Temperature heatmap',
         align: 'left'
     },
 

@@ -2512,6 +2512,16 @@ const defaultOptions: DefaultOptions = {
         hideDelay: 500,
 
         /**
+         * The number of milliseconds to wait until the tooltip is shown when
+         * mouse over a point. Works on initial hover.
+         *
+         * @sample {highcharts|highstock} highcharts/tooltip/showdelay/
+         *
+         * @since next
+         */
+        showDelay: 0,
+
+        /**
          * Padding inside the tooltip, in pixels.
          *
          * @since 5.0.0

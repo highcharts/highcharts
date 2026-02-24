@@ -2,7 +2,7 @@ import { test, expect } from '~/fixtures.ts';
 
 test.describe('Rendering types and formatters', () => {
     test.beforeEach(async ({ page }) => {
-        await page.goto('/grid-lite/cypress/column-data-type', { waitUntil: 'networkidle' });
+        await page.goto('/grid-lite/e2e/column-data-type', { waitUntil: 'networkidle' });
         // Wait for Grid table to be rendered (this also ensures Grid is initialized)
         await expect(page.locator('.hcg-table')).toBeVisible({ timeout: 10000 });
     });

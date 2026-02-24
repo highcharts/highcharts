@@ -25,6 +25,10 @@
  * */
 
 import Globals from '../Globals.js';
+import { setHTMLContent } from '../GridUtils.js';
+import U from '../../../Core/Utilities.js';
+
+const { defined } = U;
 
 
 /* *
@@ -34,7 +38,16 @@ import Globals from '../Globals.js';
  * */
 
 /**
- * The name of the icon from SvgIcons registry
+ * The name of the icon from SvgIcons registry.
+ * Use these names wherever an icon is accepted (toolbar, menu, pagination).
+ * Can be overridden or extended via `rendering.icons`.
+ *
+ * Default icons available in the registry:
+ * - `filter`, `menu`, `checkmark`
+ * - `arrowUpDown`, `arrowUp`, `arrowDown`
+ * - `chevronLeft`, `chevronRight`, `doubleChevronLeft`, `doubleChevronRight`
+ * - `copy`, `clipboard`, `plus`, `trash`
+ * - `addRowAbove`, `addRowBelow`, `addColumnLeft`, `addColumnRight`
  */
 export type GridIconName = (
     'filter' | 'menu' | 'checkmark' | 'arrowUpDown' | 'arrowUp' |
@@ -248,6 +261,12 @@ export interface SVGDefinition {
     children?: PathDefinition[];
 }
 
+/**
+ * Value for an entry in the icon registry: either an SVG definition object
+ * or a raw SVG markup string (e.g. `'<svg>...</svg>'`).
+ */
+export type IconRegistryValue = SVGDefinition | string;
+
 
 /* *
 *
@@ -256,26 +275,53 @@ export interface SVGDefinition {
 * */
 
 /**
- * Creates an SVG icon element from the SvgIcons registry.
+ * Parses a raw SVG markup string into an SVG element and applies a class.
  *
- * @param name
- * The name of the icon from SvgIcons registry
- *
+ * @param svgString
+ * Raw SVG markup
  * @param className
- * CSS class name for the SVG element (default: 'hcg-icon')
- *
+ * CSS class name for the SVG element
  * @returns
- * SVG element with the specified icon
+ * SVG element, or a fallback empty SVG if parsing fails
  */
-export function createGridIcon(
-    name: GridIconName,
-    className: string = Globals.getClassName('icon')
+function parseSvgString(svgString: string, className: string): SVGElement {
+    const div = document.createElement('div');
+    setHTMLContent(div, svgString);
+    const svg = div.firstElementChild;
+    if (!svg || svg.namespaceURI !== 'http://www.w3.org/2000/svg') {
+        const fallback = document.createElementNS(
+            'http://www.w3.org/2000/svg',
+            'svg'
+        );
+        fallback.setAttribute('width', '16');
+        fallback.setAttribute('height', '16');
+        fallback.classList.add(className);
+        return fallback;
+    }
+    const clone = svg.cloneNode(true) as SVGElement;
+    clone.classList.add(className);
+    return clone;
+}
+
+/**
+ * Builds an SVG element from an SVG definition object.
+ *
+ * @param def
+ * SVG definition from the registry
+ * @param className
+ * CSS class name for the SVG element
+ * @returns
+ * SVG element
+ */
+function createSvgFromDefinition(
+    def: SVGDefinition,
+    className: string
 ): SVGElement {
     const createElement = (type: string): SVGElement =>
         document.createElementNS('http://www.w3.org/2000/svg', type);
     const {
         width = 16, height = 16, viewBox, fill, children
-    } = icons[name];
+    } = def;
 
     const svg = createElement('svg');
     svg.setAttribute('width', width.toString());
@@ -304,6 +350,66 @@ export function createGridIcon(
     return svg;
 }
 
+/**
+ * Looks up an icon by name, checking custom icons first and then falling
+ * back to the built-in registry.
+ *
+ * @param name
+ * Icon name to look up.
+ *
+ * @param customIcons
+ * Optional map of icon names provided via `rendering.icons`.
+ *
+ * @returns
+ * Icon registry value (definition or raw SVG string), or `undefined` if
+ * neither a custom nor a built-in icon exists for the given name.
+ */
+export function getIconFromRegistry(
+    name: string,
+    customIcons?: Record<string, IconRegistryValue>
+): IconRegistryValue | undefined {
+    if (customIcons && Object.prototype.hasOwnProperty.call(customIcons, name)) {
+        return customIcons[name];
+    }
+
+    return icons[name as GridIconName];
+}
+
+/**
+ * Creates an SVG icon element from the SvgIcons registry or a custom
+ * registry. When `customIcons` is provided, `name` can be any registered
+ * name (built-in or custom). When omitted, only built-in `GridIconName`
+ * values are allowed. The SVG element always receives the default icon
+ * class name from `Globals`.
+ *
+ * @param name
+ * The name of the icon (built-in or from registry)
+ *
+ * @param customIcons
+ * Optional custom icons map from `rendering.icons`. When provided, custom
+ * and override icons are used and arbitrary names are allowed.
+ *
+ * @returns
+ * SVG element with the specified icon
+ */
+export function createGridIcon(
+    name: string,
+    customIcons?: Record<string, IconRegistryValue>
+): SVGElement {
+    const className = Globals.getClassName('icon');
+    const value = getIconFromRegistry(name, customIcons);
+
+    if (!defined(value)) {
+        return createSvgFromDefinition(icons.filter, className);
+    }
+
+    if (typeof value === 'string') {
+        return parseSvgString(value, className);
+    }
+
+    return createSvgFromDefinition(value, className);
+}
+
 
 /* *
  *
@@ -313,6 +419,7 @@ export function createGridIcon(
 
 export default {
     createGridIcon,
+    getIconFromRegistry,
     icons,
     pathDefaults
 } as const;
