@@ -877,9 +877,10 @@ QUnit.test(
         var chart = Highcharts.chart('container', {
                 series: [{
                     type: 'column',
-                    data: [5, 10, 15],
+                    data: [5, -3, 7, -6],
                     color: {
                         pattern: {
+                            id: 'custom-column-pattern',
                             path: 'M 0 0 L 5 5',
                             width: 10,
                             height: 10,
@@ -892,7 +893,9 @@ QUnit.test(
             points = chart.series[0].points,
             firstPatternId = getPointFillId(points[0]),
             secondPatternId = getPointFillId(points[1]),
-            thirdPatternId = getPointFillId(points[2]);
+            thirdPatternId = getPointFillId(points[2]),
+            initialPatternIds = points.map(getPointFillId),
+            redrawPatternIds;
 
         assert.notStrictEqual(
             firstPatternId,
@@ -929,6 +932,15 @@ QUnit.test(
             firstPattern.getAttribute('height'),
             '10',
             'Anchored pattern height should use the specified height value'
+        );
+
+        chart.redraw();
+        redrawPatternIds = chart.series[0].points.map(getPointFillId);
+
+        assert.deepEqual(
+            redrawPatternIds,
+            initialPatternIds,
+            'Anchored pattern IDs should stay stable after redraw'
         );
     });
 

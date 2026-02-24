@@ -569,7 +569,7 @@ function onRendererComplexColor(
         // the same pattern definition reuse existing pattern elements by
         // default. We combine two hashes, the second with an additional
         // preSeed algorithm, to minimize collision probability.
-        if (forceHashId || !pattern.id) {
+        if (forceHashId || !pattern.id || pattern.anchorToPoint) {
             // Make a copy so we don't accidentally edit options when setting ID
             pattern = merge({}, pattern);
 
