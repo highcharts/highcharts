@@ -847,10 +847,16 @@ class BubbleSeries extends ScatterSeries {
         };
 
         const minPxSize = getPxSize(pick(this.options.minSize, 8));
+        // Reserve space for the marker stroke so the full visual extent
+        // (fill + stroke) fits within the plot area. Only for cartesian
+        // series — packedbubble/mapbubble position bubbles independently
+        // of axes and don't need this correction.
+        const lineWidth = this.isCartesian ?
+            ((this.options.marker as any)?.lineWidth || 0) : 0;
         // Prioritize min size if conflict to make sure bubbles are
         // always visible. #5873
         const maxPxSize = Math.max(
-            getPxSize(pick(this.options.maxSize, '20%')),
+            getPxSize(pick(this.options.maxSize, '20%')) - 2 * lineWidth,
             minPxSize
         );
 
