@@ -10,6 +10,8 @@
     "deploy": "docusaurus deploy",
     "clear": "docusaurus clear",
     "serve": "docusaurus serve",
+    "test:pw": "playwright test --config ./playwright.config.ts --pass-with-no-tests",
+    "test:pw:headed": "playwright test --config ./playwright.config.ts --headed --pass-with-no-tests",
     "write-translations": "docusaurus write-translations",
     "write-heading-ids": "docusaurus write-heading-ids"
   },

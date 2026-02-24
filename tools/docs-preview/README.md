@@ -12,17 +12,20 @@ This installs dependencies for every workspace, including the docs preview site.
 
 ## Useful npm Scripts
 
-- Local development: `npm run start --workspace docs-preview`
+- Local development: `npm run start --workspace=docs-preview`
   Starts the Docusaurus dev server on `http://localhost:3000`, hot-reloading when you edit docs, sidebar config, or component source.
 
-- Production build: `npm run build --workspace docs-preview`
+- Production build: `npm run build --workspace=docs-preview`
   Emits a static site into `tools/docs-preview/build`. Useful for CI output and verifying that MDX compiles without warnings.
 
-- Serve build locally: `npm run serve --workspace docs-preview`
+- Serve build locally: `npm run serve --workspace=docs-preview`
   Serves the contents of the `build` directory so you can validate the production bundle.
 
-- Clear caches: `npm run clear --workspace docs-preview`
+- Clear caches: `npm run clear --workspace=docs-preview`
   Removes generated metadata (helpful when switching branches or Docusaurus versions).
+
+- Playwright docs tests: `npm run test:pw --workspace=docs-preview`
+  Runs docs-specific Playwright tests with `tools/docs-preview/playwright.config.ts`.
 
 Additional scripts (such as `write-translations` or `swizzle`) are available in `tools/docs-preview/package.json`.
 
