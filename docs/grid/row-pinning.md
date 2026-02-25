@@ -1,8 +1,8 @@
 ---
-sidebar_label: "Row pinning"
+sidebar_label: "Pinning"
 ---
 
-# Row pinning (Grid Lite)
+# Row pinning
 
 Row pinning lets you keep selected rows visible at the top or bottom while the
 main rows scroll normally.
@@ -54,8 +54,7 @@ are not rendered.
 
 Use `pinning.idColumn` to define stable row identity for persistence and
 restore.
-If it is not set, Grid uses a default row id derived from the row's
-position.
+If it is not set, Grid uses a default row id.
 
 ## Runtime API
 
@@ -170,15 +169,6 @@ rendering: {
     }
 }
 ```
-
-## Notes
-
-- Pinned rows are always visible and are not paginated.
-- A row cannot be both pinned and scrollable at the same time.
-- Row pinning works with both local and remote data providers.
-- With remote providers, `resolve(row)` may require scanning rows to derive
-  initial state, which can be expensive on very large datasets.
-- Row pinning is available in **Grid Lite** and **Grid Pro**.
 
 ## Demo
 
