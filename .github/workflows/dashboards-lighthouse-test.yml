@@ -73,7 +73,7 @@ jobs:
           npm ci
 
       - name: Run cypress via action
-        uses: cypress-io/github-action@v5
+        uses: cypress-io/github-action@v6
         continue-on-error: true
         with:
           browser: chrome
@@ -114,7 +114,7 @@ jobs:
           npx gulp scripts --product Dashboards
 
       - name: Run cypress via action
-        uses: cypress-io/github-action@v5
+        uses: cypress-io/github-action@v6
         with:
           browser: chrome
           start: node ../utils/server --localOnly
