@@ -131,9 +131,8 @@ function onAxisFoundExtremes(
             if (range > 0) {
                 // Add the full stroke width to the fill radius so the
                 // axis extension covers the complete visual extent of
-                // the bubble including its border (#XXXX).
-                const strokeR =
-                    (series.options.marker as any)?.lineWidth || 0;
+                // the bubble including its border.
+                const strokeR = series.options.marker?.lineWidth || 0;
                 let i = data.length;
                 while (i--) {
                     if (
@@ -165,9 +164,7 @@ function onAxisFoundExtremes(
         // transA collapse; otherwise use pxMin as-is for correct padding.
         const isCategoryAxis =
             !!(this.categories?.length || this.options.type === 'category');
-        const hasUserMin = defined(
-            pick((this.options as any).min, (this as any).userMin)
-        );
+        const hasUserMin = defined(pick(this.options.min, this.userMin));
         const pxMinUsed = (isCategoryAxis || hasUserMin) ?
             Math.max(0, pxMin) : pxMin;
 
@@ -191,8 +188,12 @@ function onAxisFoundExtremes(
             ) {
                 (this as any)[keys[0]] += keys[2] / transA;
                 // Prevent tick snapping from overriding bubble padding,
-                // unless the user explicitly set it.
-                if ((this.userOptions as any)[keys[3]] !== true) {
+                // but only when there is actual overflow (keys[2] !== 0).
+                // Charts without overflow keep their startOnTick/endOnTick.
+                if (
+                    keys[2] !== 0 &&
+                    (this.userOptions as any)[keys[3]] !== true
+                ) {
                     (this.options as any)[keys[3]] = false;
                 }
             }
@@ -852,7 +853,7 @@ class BubbleSeries extends ScatterSeries {
         // series — packedbubble/mapbubble position bubbles independently
         // of axes and don't need this correction.
         const lineWidth = this.isCartesian ?
-            ((this.options.marker as any)?.lineWidth || 0) : 0;
+            (this.options.marker?.lineWidth || 0) : 0;
         // Prioritize min size if conflict to make sure bubbles are
         // always visible. #5873
         const maxPxSize = Math.max(
