@@ -155,14 +155,17 @@ function onAxisFoundExtremes(
     if (hasActiveSeries && range > 0 && !this.logarithmic) {
         pxMax -= axisLength;
 
-        // #8901: For category axes or when user set an explicit min, clamp
-        // pxMin to 0 to avoid transA collapse. For numeric axes, use pxMin
-        // directly so the extension converges for large bubbles.
+        // #8901: For category axes or user-defined min/max, clamp pxMin to 0
+        // to prevent transA collapse from out-of-range points. For numeric
+        // axes with large overflow (fill radius ≥ half the axis), use pxMin
+        // directly so the extension converges in one pass.
         const isCategoryAxis =
             !!(this.categories?.length || this.options.type === 'category');
-        const hasUserMin = defined(pick(this.options.min, this.userMin));
-        const pxMinUsed = (isCategoryAxis || hasUserMin) ?
-            Math.max(0, pxMin) : pxMin;
+        const hasUserMinOrMax = defined(pick(this.options.min, this.userMin)) ||
+            defined(pick(this.options.max, this.userMax));
+        const pxMinUsed = (
+            isCategoryAxis || hasUserMinOrMax || pxMin > -axisLength / 2
+        ) ? Math.max(0, pxMin) : pxMin;
 
         transA *= (
             axisLength +
