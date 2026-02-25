@@ -628,6 +628,7 @@ class ChartAdditions {
                 (this as this).chart ||
                 (this as Drilldown.ChartComposition)
             ),
+            drilldownOptions = chart.options.drilldown,
             drilldownLevels = chart.drilldownLevels;
 
         let levelToRemove: (number|undefined);
@@ -643,8 +644,7 @@ class ChartAdditions {
 
                 if (
                     chart.mapView &&
-                    chart.options.drilldown &&
-                    chart.options.drilldown.mapZooming
+                    drilldownOptions?.mapZooming
                 ) {
                     chart.redraw();
                     level.lowerSeries.isDrilling = false;
@@ -677,8 +677,8 @@ class ChartAdditions {
                                 boolean|Partial<AnimationOptions>|undefined
                             ) = {};
 
-                            if (chart.options.drilldown) {
-                                animOptions = chart.options.drilldown.animation;
+                            if (drilldownOptions) {
+                                animOptions = drilldownOptions.animation;
                             }
 
                             series.group.animate({
@@ -745,7 +745,7 @@ class ChartAdditions {
                 });
             }
 
-            chart.redraw();
+            chart.redraw(drilldownOptions?.animation);
             fireEvent(chart, 'afterApplyDrilldown');
         }
     }
@@ -1015,7 +1015,7 @@ class ChartAdditions {
         }
 
         if (!chart.mapView && !isMultipleDrillUp) {
-            chart.redraw();
+            chart.redraw(chart.options.drilldown?.animation);
         }
 
         if (chart.ddDupes) {
