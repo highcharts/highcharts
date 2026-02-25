@@ -159,28 +159,71 @@ function getFields(
 }
 
 /**
- * Resolve CSS variables and 'rgba()' values to hex.
+ * Resolve CSS variables, 'color-mix()' and 'rgba()' values to hex and alpha.
  * @internal
  */
 function resolveColorValue(
     value: string,
     contextElement?: HTMLDOMElement
-): string {
-    // Convert 'rgba()' to hex
-    if (value.startsWith('rgba')) {
+): { value?: string, alpha: number } {
+    const varToHex = (value: string): string | undefined => {
+        if (contextElement) {
+            return window.getComputedStyle(contextElement).getPropertyValue(
+                value.slice(4, -1)
+            ) || value;
+        }
+    };
+
+    const rgbaToHex = (value: string): string | undefined => {
         const [r, g, b] = Color.parse(value).rgba;
         const toHex = (n: number): string => ('0' + n.toString(16)).slice(-2);
         return '#' + toHex(r) + toHex(g) + toHex(b);
+    };
+
+    if (value.startsWith('rgba(')) {
+        return { value: rgbaToHex(value), alpha: 1 };
     }
 
-    if (!contextElement || !value.startsWith('var(') || !value.endsWith(')')) {
-        return value;
+    if (value.startsWith('var(')) {
+        return { value: varToHex(value), alpha: 1 };
     }
 
-    // Convert CSS variable to hex
-    return window.getComputedStyle(contextElement).getPropertyValue(
-        value.slice(4, -1)
-    ) || value;
+    if (value.startsWith('color-mix(')) {
+        const match = value.match(
+            /color-mix\(in\s+srgb,\s*(.+?)\s+(\d+%),\s*(.+)\)/
+        );
+        if (match) {
+            const color1 = match[1].trim(),
+                alpha = parseInt(match[2], 10) / 100,
+                color2 = match[3].trim();
+
+            const [color1Hex, color2Hex] =
+                [color1, color2].map((color: string): string => {
+                    if (color.startsWith('var(')) {
+                        return varToHex(color) || '';
+                    }
+                    if (color.startsWith('rgba(')) {
+                        return rgbaToHex(color) || '';
+                    }
+                    return color;
+                });
+
+            if (color1Hex.startsWith('#') && color2Hex.startsWith('#')) {
+                return ({
+                    value: Color.parse(color1Hex).tweenTo(
+                        Color.parse(color2Hex), alpha
+                    ).toString(),
+                    alpha: 1
+                });
+            }
+
+            if (color2 === 'transparent') {
+                return { value: color1Hex, alpha };
+            }
+        }
+    }
+
+    return { value, alpha: 1 };
 }
 
 /* *
@@ -272,8 +315,7 @@ class Popup extends BaseForm {
             inputName = 'highcharts-' + indicatorType + '-' + pick(
                 inputAttributes.htmlFor,
                 optionName
-            ),
-            value = inputAttributes.value;
+            );
 
         if (!optionName.match(/^\d+$/)) {
             // Add label
@@ -291,10 +333,13 @@ class Popup extends BaseForm {
         }
 
         if (inputAttributes.type === 'color') {
-            const resolvedValue = resolveColorValue(
-                value || '',
+            const { value, alpha } = resolveColorValue(
+                inputAttributes.value || '',
                 this.chart?.container
             );
+
+            const parsedOpacity = Color.parse(inputAttributes.value).rgba[3],
+                opacity = isNaN(parsedOpacity) ? alpha : parsedOpacity;
 
             const wrapper = createElement(
                 'div',
@@ -307,7 +352,7 @@ class Popup extends BaseForm {
                 'input',
                 {
                     type: 'color',
-                    value: resolvedValue,
+                    value,
                     className: (
                         'highcharts-popup-field highcharts-popup-field-color'
                     )
@@ -321,7 +366,7 @@ class Popup extends BaseForm {
                 {
                     name: inputName,
                     id: inputName,
-                    value: resolvedValue,
+                    value,
                     type: 'text',
                     className: (
                         'highcharts-popup-field highcharts-popup-field-text'
@@ -336,7 +381,7 @@ class Popup extends BaseForm {
                 'input',
                 {
                     type: 'range',
-                    value: String((Color.parse(value).rgba[3] || 1) * 100),
+                    value: String(opacity * 100),
                     className: 'highcharts-popup-field highcharts-popup-opacity'
                 },
                 void 0,
@@ -371,7 +416,7 @@ class Popup extends BaseForm {
             'input',
             {
                 name: inputName,
-                value,
+                value: inputAttributes.value,
                 type: inputAttributes.type,
                 className: 'highcharts-popup-field'
             },
