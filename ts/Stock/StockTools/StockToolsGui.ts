@@ -34,6 +34,8 @@ const { setOptions } = D;
 import StockToolsDefaults from './StockToolsDefaults.js';
 import Toolbar from './StockToolbar.js';
 import U from '../../Core/Utilities.js';
+import getIcon from '../../Shared/BaseFormUtils';
+import StockToolsIcons from './StockToolsIcons';
 const {
     addEvent,
     getStyle,
@@ -238,15 +240,16 @@ function onChartRender(
         this.options.series &&
         button
     ) {
+        const { iconsURL } = stockTools;
         if (
             this.navigationBindings.utils
                 ?.isPriceIndicatorEnabled?.(this.series)
         ) {
-            button.firstChild.style['background-image'] = stockTools
-                .getIcon('current-price-hide.svg');
+            button.firstChild.style['background-image'] =
+                getIcon('current-price-hide.svg', iconsURL, StockToolsIcons);
         } else {
-            button.firstChild.style['background-image'] = stockTools
-                .getIcon('current-price-show.svg');
+            button.firstChild.style['background-image'] =
+                getIcon('current-price-show.svg', iconsURL, StockToolsIcons);
         }
     }
 }
