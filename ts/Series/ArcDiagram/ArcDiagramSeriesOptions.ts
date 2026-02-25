@@ -70,6 +70,27 @@ export interface ArcDiagramSeriesMarkerOptions extends PointMarkerOptions {
  *
  * An `arcdiagram` series. If the [type](#series.arcdiagram.type)
  * option is not specified, it is inherited from [chart.type](#chart.type).
+ *
+ * @sample highcharts/demo/arc-diagram/
+ *         Arc Diagram
+ *
+ * @extends plotOptions.sankey
+ *
+ * @extends series,plotOptions.arcdiagram
+ *
+ * @since 10.0.0
+ *
+ * @product highcharts
+ *
+ * @requires modules/arc-diagram
+ *
+ * @requires modules/sankey
+ *
+ * @exclude boostBlending, boostThreshold, centerInCategory, colorAxis,
+ * colorKey, connectEnds, connectNulls, curveFactor, dataSorting, dragDrop,
+ * getExtremesFromAll, nodeAlignment, nodePadding, pointInterval,
+ * pointIntervalUnit, pointPlacement, pointStart, relativeXValue, scale,
+ * softThreshold, stack, stacking, step, xAxis, yAxis
  */
 export interface ArcDiagramSeriesOptions extends SankeySeriesOptions {
     /**

@@ -51,7 +51,7 @@ import type ArcDiagramSeriesOptions from './ArcDiagramSeriesOptions';
  *               nodeAlignment, nodePadding, centerInCategory, pointInterval,
  *               pointIntervalUnit, pointPlacement, pointStart, relativeXValue,
  *               softThreshold, stack, stacking, step, xAxis, yAxis
- * @apioption    plotOptions.arcdiagram
+ * @optionparent plotOptions.arcdiagram
  */
 const ArcDiagramSeriesDefaults: ArcDiagramSeriesOptions = {
 
@@ -87,7 +87,6 @@ const ArcDiagramSeriesDefaults: ArcDiagramSeriesOptions = {
      * string by default.
      *
      * @declare Highcharts.SeriesArcDiagramDataLabelsOptionsObject
-     * @apioption plotOptions.arcdiagram.dataLabels
      */
     dataLabels: {
 
@@ -106,6 +105,7 @@ const ArcDiagramSeriesDefaults: ArcDiagramSeriesOptions = {
 
             /**
              * @type    {Highcharts.SVGAttributes}
+             * @default {"startOffset":"25%"}
              */
             attributes: {
 

@@ -33,6 +33,26 @@ import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
  *
  * A `area` series. If the [type](#series.area.type) option is not
  * specified, it is inherited from [chart.type](#chart.type).
+ *
+ * @sample {highcharts} highcharts/demo/area-chart/
+ *         Area chart
+ *
+ * @sample {highstock} stock/demo/area/
+ *         Area chart
+ *
+ * @extends plotOptions.line
+ *
+ * @extends series,plotOptions.area
+ *
+ * @excluding useOhlcData
+ *
+ * @excluding dataParser, dataURL, useOhlcData
+ *
+ * @product highcharts highstock
+ *
+ * @optionparent plotOptions.area
+ *
+ * @optionparent series.area
  */
 export interface AreaSeriesOptions extends LineSeriesOptions {
 

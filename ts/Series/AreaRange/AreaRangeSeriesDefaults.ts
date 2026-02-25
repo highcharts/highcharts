@@ -38,6 +38,7 @@ import type AreaRangeSeriesOptions from './AreaRangeSeriesOptions';
  * @product      highcharts highstock
  * @excluding    stack, stacking
  * @requires     highcharts-more
+ * @optionparent plotOptions.arearange
  *
  * @private
  */
