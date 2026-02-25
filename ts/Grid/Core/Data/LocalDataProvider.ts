@@ -115,9 +115,8 @@ export class LocalDataProvider extends DataProvider {
     private connectorEventDestructors: Function[] = [];
 
     /**
-     * A map of original row indexes to row IDs.
-     *
-     * Using original row indexes as keys when `undefined`.
+     * Map of row IDs (from `idColumn`) to original data table row indexes.
+     * Set only when `options.idColumn` is configured.
      */
     private originalRowIndexesMap?: Map<RowId, number>;
 
@@ -177,10 +176,16 @@ export class LocalDataProvider extends DataProvider {
 
             const map = new Map<RowId, number>();
             for (let i = 0, len = idColumn.length; i < len; ++i) {
-                map.set(idColumn[i] as RowId, i);
+                const value = idColumn[i];
+                if (!isString(value) && !isNumber(value)) {
+                    throw new Error(
+                        'idColumn must contain only string or number values.'
+                    );
+                }
+                map.set(value, i);
             }
             if (map.size !== idColumn.length) {
-                throw new Error('`idColumn` must contain unique values.');
+                throw new Error('idColumn must contain unique values.');
             }
             this.originalRowIndexesMap = map;
         }
@@ -390,11 +395,21 @@ export class LocalDataProvider extends DataProvider {
         columnId: string,
         rowId: RowId
     ): Promise<void> {
-        if (typeof rowId !== 'number') {
-            throw new Error('LocalDataProvider supports only numeric row ids.');
+        const localRowIndex = await this.getRowIndex(rowId);
+        if (!defined(localRowIndex)) {
+            // eslint-disable-next-line no-console
+            console.error('setValue: Wrong row ID:', rowId);
+            return;
         }
-        this.dataTable?.setCell(columnId, rowId, value, { fromGrid: true });
-        return Promise.resolve();
+        const rowIndex = await this.getOriginalRowIndexFromLocal(localRowIndex);
+        if (!defined(rowIndex)) {
+            // eslint-disable-next-line no-console
+            console.error('setValue: Wrong local row index:', localRowIndex);
+            return;
+        }
+
+        this.dataTable?.setCell(columnId, rowIndex, value, { fromGrid: true });
+        return;
     }
 
     /**
