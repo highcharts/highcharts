@@ -67,6 +67,35 @@ interface OscOptions {
 }
 
 namespace SynthPatch {
+    /**
+     * An EQ filter definition for a low/highpass filter.
+     *
+     * @requires modules/sonification
+     */
+    export interface PassFilter {
+        /**
+         * Filter frequency.
+         *
+         * @requires modules/sonification
+         */
+        frequency?: number;
+        /**
+         * A pitch tracking multiplier similarly to the one for oscillator
+         * volume. Affects the filter frequency.
+         *
+         * @requires modules/sonification
+         */
+        frequencyPitchTrackingMultiplier?: number;
+        /**
+         * Filter resonance bump/dip in dB.
+         *
+         * @default 0
+         *
+         * @requires modules/sonification
+         */
+        Q?: number;
+    }
+
     export interface SynthPatchOptions {
         eq?: Array<EQOptions>;
         masterAttackEnvelope?: Envelope;
