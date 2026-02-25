@@ -239,6 +239,7 @@ export default class ContourSeries extends ScatterSeries {
 
         if (!gpu || !context) {
             error(37, false, chart);
+            renderer.asyncCounter--;
             return;
         }
 
