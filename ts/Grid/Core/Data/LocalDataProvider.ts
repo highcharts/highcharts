@@ -398,13 +398,13 @@ export class LocalDataProvider extends DataProvider {
         const localRowIndex = await this.getRowIndex(rowId);
         if (!defined(localRowIndex)) {
             // eslint-disable-next-line no-console
-            console.error('setValue: Wrong row ID:', rowId);
+            console.error('[setValue] Wrong row ID:', rowId);
             return;
         }
         const rowIndex = await this.getOriginalRowIndexFromLocal(localRowIndex);
         if (!defined(rowIndex)) {
             // eslint-disable-next-line no-console
-            console.error('setValue: Wrong local row index:', localRowIndex);
+            console.error('[setValue] Wrong local row index:', localRowIndex);
             return;
         }
 

@@ -78,7 +78,9 @@ Grid.grid('container', {
             urlTemplate:
                 '/api/grid?page={page}&pageSize={pageSize}&' +
                 'sortBy={sortBy}&sortOrder={sortOrder}&filter={filter}'
-        }
+        },
+        // Column that contains stable row IDs.
+        rowIdColumn: 'id'
     }
 });
 ```
@@ -103,9 +105,7 @@ dataSource: {
         };
     },
     // Request timeout in ms (use 0 to disable).
-    fetchTimeout: 30000,
-    // Column that contains stable row IDs.
-    rowIdColumn: 'id'
+    fetchTimeout: 30000
 }
 ```
 
