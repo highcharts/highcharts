@@ -66,9 +66,16 @@ class TableRow extends Row {
     public index: number;
 
     /**
-     * The index of the row in the original data table (ID).
+     * The unique ID of the row.
      */
     public id?: RowId;
+
+    /**
+     * The index of the row in the original data table, when using local data
+     * provider.
+     * @internal
+     */
+    public originalIndex?: number;
 
     /**
      * The vertical translation of the row.
@@ -103,7 +110,13 @@ class TableRow extends Row {
     * */
 
     public async init(): Promise<void> {
-        this.id = await this.viewport.grid.dataProvider?.getRowId(this.index);
+        const dp = this.viewport.grid.dataProvider;
+        this.id = await dp?.getRowId(this.index);
+        if (dp && 'getOriginalRowIndexFromLocal' in dp) {
+            this.originalIndex = await dp?.getOriginalRowIndexFromLocal(
+                this.index
+            );
+        }
         await this.loadData();
         this.setRowAttributes();
     }

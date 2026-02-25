@@ -64,7 +64,7 @@ const syncPair: SyncPair = {
         const onCellHover = (e: TableCellEvent): void => {
             if (table) {
                 const cell = e.target;
-                const rowId = cell.row.id;
+                const rowId = cell.row.originalIndex ?? cell.row.id;
                 if (typeof rowId !== 'number') {
                     return;
                 }
@@ -82,7 +82,7 @@ const syncPair: SyncPair = {
         const onCellMouseOut = (e: TableCellEvent): void => {
             if (table) {
                 const cell = e.target;
-                const rowId = cell.row.id;
+                const rowId = cell.row.originalIndex ?? cell.row.id;
                 if (typeof rowId !== 'number') {
                     return;
                 }
