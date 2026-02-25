@@ -235,13 +235,12 @@ export default class ContourSeries extends ScatterSeries {
             gpu = navigator.gpu,
             context = series.context = canvas.getContext('webgpu');
 
-        renderer.asyncCounter += 1;
-
         if (!gpu || !context) {
             error(37, false, chart);
-            renderer.asyncCounter--;
             return;
         }
+
+        renderer.asyncCounter += 1;
 
         if (context) {
             let device = this.device;
