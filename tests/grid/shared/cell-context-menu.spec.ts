@@ -3,7 +3,7 @@ import { test, expect } from '~/fixtures.ts';
 const cases = [
     {
         name: 'Grid Lite',
-        url: '/grid-lite/cypress/cell-context-menu'
+        url: '/grid-lite/e2e/cell-context-menu'
     }
 ];
 
@@ -67,7 +67,7 @@ test.describe('Cell Context Menu', () => {
     test.describe('Grid Lite', () => {
         test.beforeEach(async ({ page }) => {
             await page.setViewportSize({ width: 900, height: 500 });
-            await page.goto('/grid-lite/cypress/cell-context-menu', { waitUntil: 'networkidle' });
+            await page.goto('/grid-lite/e2e/cell-context-menu', { waitUntil: 'networkidle' });
 
             await page.waitForFunction(() => {
                 return typeof (window as any).Grid !== 'undefined' &&

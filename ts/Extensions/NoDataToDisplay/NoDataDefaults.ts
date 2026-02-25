@@ -21,7 +21,7 @@
  * */
 
 import type { LangOptions } from '../../Core/Options';
-import type NoDataOptions from './NoDataOptions';
+import type { NoDataOptions } from './NoDataOptions';
 
 import { Palette } from '../../Core/Color/Palettes.js';
 
@@ -62,6 +62,7 @@ const lang: Partial<LangOptions> = {
  *
  * @product      highcharts highstock gantt
  * @requires     modules/no-data-to-display
+ * @since        3.0.8
  * @optionparent noData
  */
 const noData: NoDataOptions = {
@@ -70,8 +71,8 @@ const noData: NoDataOptions = {
      * An object of additional SVG attributes for the no-data label.
      *
      * @type      {Highcharts.SVGAttributes}
-     * @since     3.0.8
      * @product   highcharts highstock gantt
+     * @requires  modules/no-data-to-display
      * @apioption noData.attr
      */
     attr: {
@@ -82,10 +83,9 @@ const noData: NoDataOptions = {
      * Whether to insert the label as HTML, or as pseudo-HTML rendered with
      * SVG.
      *
-     * @type      {boolean}
-     * @default   false
      * @since     4.1.10
      * @product   highcharts highstock gantt
+     * @requires  modules/no-data-to-display
      * @apioption noData.useHTML
      */
 
@@ -93,17 +93,21 @@ const noData: NoDataOptions = {
      * The position of the no-data label, relative to the plot area.
      *
      * @type  {Highcharts.AlignObject}
-     * @since 3.0.8
+     * @requires modules/no-data-to-display
      */
     position: {
 
         /**
          * Horizontal offset of the label, in pixels.
+         *
+         * @requires modules/no-data-to-display
          */
         x: 0,
 
         /**
          * Vertical offset of the label, in pixels.
+         *
+         * @requires modules/no-data-to-display
          */
         y: 0,
 
@@ -111,6 +115,7 @@ const noData: NoDataOptions = {
          * Horizontal alignment of the label.
          *
          * @type {Highcharts.AlignValue}
+         * @requires modules/no-data-to-display
          */
         align: 'center',
 
@@ -118,6 +123,7 @@ const noData: NoDataOptions = {
          * Vertical alignment of the label.
          *
          * @type {Highcharts.VerticalAlignValue}
+         * @requires modules/no-data-to-display
          */
         verticalAlign: 'middle'
     },
@@ -129,6 +135,7 @@ const noData: NoDataOptions = {
      *         Styled no-data text
      *
      * @type {Highcharts.CSSObject}
+     * @requires modules/no-data-to-display
      */
     style: {
         /** @ignore */
@@ -147,9 +154,11 @@ const noData: NoDataOptions = {
  *
  * */
 
+/** @internal */
 const NoDataDefaults = {
     lang,
     noData
 };
 
+/** @internal */
 export default NoDataDefaults;

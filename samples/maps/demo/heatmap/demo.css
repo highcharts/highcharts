@@ -5,8 +5,17 @@ body {
 
 #container {
     height: 450px;
-    max-width: 450px;
+}
+
+.highcharts-figure {
     margin: 0 auto;
+    min-width: 310px;
+    max-width: 450px;
+    height: 600px;
+}
+
+.highcharts-description {
+    margin: 0.3rem 10px;
 }
 
 pre#csv {

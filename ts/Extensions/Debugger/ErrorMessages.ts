@@ -119,6 +119,10 @@ const errorMessages: Record<string, Record<string, string>> = {
     "36": {
         "title": "Chart constructor called in non-browser environment",
         "text": "<h1>Chart constructor called in non-browser environment</h1><p>This error occurs when attempting to create a chart during server-side rendering (SSR) or in other environments without DOM support.</p><p>Highcharts requires a browser environment to render charts. If using server-side rendering frameworks, ensure that chart initialization only occurs client-side.</p>"
+    },
+    "37": {
+        "title": "WebGPU Unsupported",
+        "text": "<h1>WebGPU Unsupported</h1><p>This error occurs if your browser does not support WebGPU.</p>"
     }
 };
 
