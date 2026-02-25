@@ -129,10 +129,6 @@ function onAxisFoundExtremes(
             }
 
             if (range > 0) {
-                // Add the full stroke width to the fill radius so the
-                // axis extension covers the complete visual extent of
-                // the bubble including its border.
-                const strokeR = series.options.marker?.lineWidth || 0;
                 let i = data.length;
                 while (i--) {
                     if (
@@ -140,8 +136,7 @@ function onAxisFoundExtremes(
                         (this.dataMin as any) <= data[i] &&
                         data[i] <= (this.max as any)
                     ) {
-                        const radius =
-                            (series.radii && series.radii[i] || 0) + strokeR;
+                        const radius = series.radii && series.radii[i] || 0;
                         pxMin = Math.min(
                             ((data[i] - (min as any)) * transA) - radius,
                             pxMin
@@ -848,16 +843,10 @@ class BubbleSeries extends ScatterSeries {
         };
 
         const minPxSize = getPxSize(pick(this.options.minSize, 8));
-        // Reserve space for the marker stroke so the full visual extent
-        // (fill + stroke) fits within the plot area. Only for cartesian
-        // series — packedbubble/mapbubble position bubbles independently
-        // of axes and don't need this correction.
-        const lineWidth = this.isCartesian ?
-            (this.options.marker?.lineWidth || 0) : 0;
         // Prioritize min size if conflict to make sure bubbles are
         // always visible. #5873
         const maxPxSize = Math.max(
-            getPxSize(pick(this.options.maxSize, '20%')) - 2 * lineWidth,
+            getPxSize(pick(this.options.maxSize, '20%')),
             minPxSize
         );
 
