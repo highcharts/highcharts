@@ -112,34 +112,14 @@ interface ParallelAxesOptions extends DeepPartial<Omit<
     lineWidth?: AxisOptions['lineWidth'];
 
     /**
-     * Titles for yAxes are taken from
+     * Visually the parallel coordinates titles are done through
      * [xAxis.categories](#xAxis.categories). All options for `xAxis.labels`
-     * applies to parallel coordinates titles. For example, to style
-     * categories, use [xAxis.labels.style](#xAxis.labels.style).
+     * applies to parallel coordinates titles. For example, to style categories,
+     * use [xAxis.labels.style](#xAxis.labels.style).
      *
-     * @excluding align, enabled, margin, offset, position3d, reserveSpace,
-     *            rotation, skew3d, style, text, useHTML, x, y
      * @default {"text":"", "reserveSpace": false}
      */
-    title?: (
-        DeepPartial<Omit<
-            AxisOptions['title'],
-            | 'align'
-            | 'enabled'
-            | 'margin'
-            | 'offset'
-            | 'position3d'
-            | 'reserveSpace'
-            | 'rotation'
-            | 'skew3d'
-            | 'style'
-            | 'text'
-            | 'useHTML'
-            | 'x'
-            | 'y'
-        >> &
-        Pick<AxisOptions['title'], 'reserveSpace'|'text'>
-    );
+    title?: AxisOptions['title'];
 
     /**
      * @default {"x": 0, "y": 4, "align": "center", "reserveSpace": false}

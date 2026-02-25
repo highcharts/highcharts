@@ -118,7 +118,7 @@ export interface Axis3DTitleOptions {
      * @product  highcharts
      * @requires highcharts-3d
      */
-    position3d: (Axis3DPositionValue|null);
+    position3d?: (Axis3DPositionValue|null);
 
     /**
      * If enabled, the axis title will skewed to follow the perspective.
@@ -137,8 +137,7 @@ export interface Axis3DTitleOptions {
      * @product  highcharts
      * @requires highcharts-3d
      */
-    skew3d: (boolean|null);
-
+    skew3d?: (boolean|null);
 }
 
 /* *
