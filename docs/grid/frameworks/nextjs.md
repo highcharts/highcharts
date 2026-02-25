@@ -41,11 +41,13 @@ const Grid = dynamic(
 
 export default function Page() {
     const [options] = useState<GridOptions>({
-        dataTable: {
-            columns: {
-                name: ['Alice', 'Bob', 'Charlie', 'David'],
-                age: [23, 34, 45, 56],
-                city: ['New York', 'Oslo', 'Paris', 'Tokyo']
+        data: {
+            dataTable: {
+                columns: {
+                    name: ['Alice', 'Bob', 'Charlie', 'David'],
+                    age: [23, 34, 45, 56],
+                    city: ['New York', 'Oslo', 'Paris', 'Tokyo']
+                }
             }
         }
     });
@@ -77,10 +79,12 @@ const Grid = dynamic(
 
 export default function Page() {
     const [options] = useState<GridOptions>({
-        dataTable: {
-            columns: {
-                name: ['Alice', 'Bob', 'Charlie', 'David'],
-                age: [23, 34, 45, 56]
+        data: {
+            dataTable: {
+                columns: {
+                    name: ['Alice', 'Bob', 'Charlie', 'David'],
+                    age: [23, 34, 45, 56]
+                }
             }
         },
         pagination: {
@@ -126,20 +130,24 @@ const Grid = dynamic(
 
 export default function Page() {
     const [options, setOptions] = useState<GridOptions>({
-        dataTable: {
-            columns: {
-                name: ['Alice', 'Bob'],
-                age: [23, 34]
+        data: {
+            dataTable: {
+                columns: {
+                    name: ['Alice', 'Bob'],
+                    age: [23, 34]
+                }
             }
         }
     });
 
     const loadNewData = () => {
         setOptions({
-            dataTable: {
-                columns: {
-                    name: ['Charlie', 'Diana', 'Eve'],
-                    age: [45, 56, 67]
+            data: {
+                dataTable: {
+                    columns: {
+                        name: ['Charlie', 'Diana', 'Eve'],
+                        age: [45, 56, 67]
+                    }
                 }
             }
         });

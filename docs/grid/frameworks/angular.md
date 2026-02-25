@@ -44,11 +44,13 @@ import '@highcharts/grid-lite/css/grid-lite.css';
 })
 export class AppComponent implements OnInit {
     private options: Grid.Options = {
-        dataTable: {
-            columns: {
-                name: ['Alice', 'Bob', 'Charlie', 'David'],
-                age: [23, 34, 45, 56],
-                city: ['New York', 'Oslo', 'Paris', 'Tokyo'],
+        data: {
+            dataTable: {
+                columns: {
+                    name: ['Alice', 'Bob', 'Charlie', 'David'],
+                    age: [23, 34, 45, 56],
+                    city: ['New York', 'Oslo', 'Paris', 'Tokyo'],
+                }
             }
         }
     }
@@ -60,4 +62,3 @@ export class AppComponent implements OnInit {
 ```
 
 See the live example [here](https://stackblitz.com/edit/highcharts-grid-angular-nfxuhkpv).
-
