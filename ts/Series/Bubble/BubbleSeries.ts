@@ -129,6 +129,9 @@ function onAxisFoundExtremes(
             }
 
             if (range > 0) {
+                // Include stroke width so the full visual extent of the bubble
+                // (fill + border) is accounted for in the axis extension.
+                const strokeR = series.options.marker?.lineWidth || 0;
                 let i = data.length;
                 while (i--) {
                     if (
@@ -136,7 +139,8 @@ function onAxisFoundExtremes(
                         (this.dataMin as any) <= data[i] &&
                         data[i] <= (this.max as any)
                     ) {
-                        const radius = series.radii && series.radii[i] || 0;
+                        const radius =
+                            (series.radii && series.radii[i] || 0) + strokeR;
                         pxMin = Math.min(
                             ((data[i] - (min as any)) * transA) - radius,
                             pxMin
@@ -155,8 +159,9 @@ function onAxisFoundExtremes(
     if (hasActiveSeries && range > 0 && !this.logarithmic) {
         pxMax -= axisLength;
 
-        // #8901: Clamp pxMin to 0 when user-set min/max is present to avoid
-        // transA collapse; otherwise use pxMin as-is for correct padding.
+        // #8901: For category axes or when user set an explicit min, clamp
+        // pxMin to 0 to avoid transA collapse. For numeric axes, use pxMin
+        // directly so the extension converges for large bubbles.
         const isCategoryAxis =
             !!(this.categories?.length || this.options.type === 'category');
         const hasUserMin = defined(pick(this.options.min, this.userMin));
@@ -170,10 +175,10 @@ function onAxisFoundExtremes(
         ) / axisLength;
         (
             [
-                ['min', 'userMin', pxMin, 'startOnTick'],
-                ['max', 'userMax', pxMax, 'endOnTick']
-            ] as Array<[string, string, number, string]>
-        ).forEach((keys: [string, string, number, string]): void => {
+                ['min', 'userMin', pxMin],
+                ['max', 'userMax', pxMax]
+            ] as Array<[string, string, number]>
+        ).forEach((keys: [string, string, number]): void => {
             // Only extend the axis if the user hasn't set an explicit min/max.
             if (
                 !defined(pick(
@@ -182,15 +187,6 @@ function onAxisFoundExtremes(
                 ))
             ) {
                 (this as any)[keys[0]] += keys[2] / transA;
-                // Prevent tick snapping from overriding bubble padding,
-                // but only when there is actual overflow (keys[2] !== 0).
-                // Charts without overflow keep their startOnTick/endOnTick.
-                if (
-                    keys[2] !== 0 &&
-                    (this.userOptions as any)[keys[3]] !== true
-                ) {
-                    (this.options as any)[keys[3]] = false;
-                }
             }
         });
     }
@@ -843,10 +839,14 @@ class BubbleSeries extends ScatterSeries {
         };
 
         const minPxSize = getPxSize(pick(this.options.minSize, 8));
+        // Reserve space for the marker stroke. Only for cartesian series —
+        // packedbubble/mapbubble position bubbles independently of axes.
+        const lineWidth = this.isCartesian ?
+            (this.options.marker?.lineWidth || 0) : 0;
         // Prioritize min size if conflict to make sure bubbles are
         // always visible. #5873
         const maxPxSize = Math.max(
-            getPxSize(pick(this.options.maxSize, '20%')),
+            getPxSize(pick(this.options.maxSize, '20%')) - 2 * lineWidth,
             minPxSize
         );
 

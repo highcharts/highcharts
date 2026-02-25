@@ -334,6 +334,8 @@ QUnit.test('Bubble marker fully visible with maxSize 100%', function (assert) {
                 animation: false
             },
             plotOptions: { bubble: { maxSize: '100%' } },
+            xAxis: { startOnTick: false, endOnTick: false },
+            yAxis: { startOnTick: false, endOnTick: false },
             series: [{
                 data: [[823667, -276003, 359003], [526000, -114001, 87001]]
             }]
