@@ -345,8 +345,7 @@ QUnit.test('Bubble marker fully visible with maxSize 100%', function (assert) {
         plotHeight = chart.plotHeight;
 
     series.points.forEach(function (point, i) {
-        // Full visual radius = fill radius + full stroke width as margin
-        var r = point.graphic.width / 2 + point.graphic.strokeWidth();
+        var r = point.graphic.width / 2;
 
         assert.ok(
             point.plotX - r >= 0,

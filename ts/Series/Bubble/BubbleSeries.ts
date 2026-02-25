@@ -101,11 +101,6 @@ function onAxisFoundExtremes(
         { coll, isXAxis, min } = this,
         range = (this.max || 0) - (min || 0);
 
-    // Category axes use named ticks — stroke padding must not push beyond
-    // their fixed boundaries, so strokeR is only applied to numeric axes.
-    const isCategoryAxis =
-        !!(this.categories?.length || this.options.type === 'category');
-
     let pxMin = 0,
         pxMax = axisLength,
         transA = axisLength / range,
@@ -134,10 +129,6 @@ function onAxisFoundExtremes(
             }
 
             if (range > 0) {
-                // Include stroke width for numeric axes so the full visual
-                // extent of the bubble (fill + border) is accounted for.
-                const strokeR = isCategoryAxis ?
-                    0 : (series.options.marker?.lineWidth || 0);
                 let i = data.length;
                 while (i--) {
                     if (
@@ -145,8 +136,7 @@ function onAxisFoundExtremes(
                         (this.dataMin as any) <= data[i] &&
                         data[i] <= (this.max as any)
                     ) {
-                        const radius =
-                            (series.radii && series.radii[i] || 0) + strokeR;
+                        const radius = series.radii && series.radii[i] || 0;
                         pxMin = Math.min(
                             ((data[i] - (min as any)) * transA) - radius,
                             pxMin
@@ -168,6 +158,8 @@ function onAxisFoundExtremes(
         // #8901: For category axes or when user set an explicit min, clamp
         // pxMin to 0 to avoid transA collapse. For numeric axes, use pxMin
         // directly so the extension converges for large bubbles.
+        const isCategoryAxis =
+            !!(this.categories?.length || this.options.type === 'category');
         const hasUserMin = defined(pick(this.options.min, this.userMin));
         const pxMinUsed = (isCategoryAxis || hasUserMin) ?
             Math.max(0, pxMin) : pxMin;
@@ -843,26 +835,10 @@ class BubbleSeries extends ScatterSeries {
         };
 
         const minPxSize = getPxSize(pick(this.options.minSize, 8));
-        // Reserve space for the marker stroke so the full visual extent fits
-        // within the plot area. Skip for packedbubble/mapbubble (non-cartesian)
-        // and for series on category axes, where tick positions must not shift.
-        const xIsCat = !!(
-            this.xAxis?.categories?.length ||
-            this.xAxis?.options.type === 'category'
-        );
-        const yIsCat = !!(
-            this.yAxis?.categories?.length ||
-            this.yAxis?.options.type === 'category'
-        );
-        const lineWidth = (this.isCartesian && !xIsCat && !yIsCat) ?
-            (this.options.marker?.lineWidth || 0) : 0;
         // Prioritize min size if conflict to make sure bubbles are
         // always visible. #5873
-        const rawMaxPxSize = getPxSize(pick(this.options.maxSize, '20%'));
         const maxPxSize = Math.max(
-            lineWidth ?
-                Math.min(rawMaxPxSize, smallestSize - 2 * lineWidth) :
-                rawMaxPxSize,
+            getPxSize(pick(this.options.maxSize, '20%')),
             minPxSize
         );
 
