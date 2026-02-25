@@ -72,7 +72,7 @@ jobs:
           npm ci
 
       - name: Create visual test base images
-        uses: cypress-io/github-action@v6
+        uses: cypress-io/github-action@v7
         with:
           start: node ../utils/server --localOnly
           wait-on: 'http://localhost:3031/dashboards.js'
@@ -118,7 +118,7 @@ jobs:
           npx gulp scripts --product Dashboards
 
       - name: Run visual test
-        uses: cypress-io/github-action@v6
+        uses: cypress-io/github-action@v7
         with:
           start: node ../utils/server --localOnly
           wait-on: 'http://localhost:3031/dashboards.js'

@@ -88,7 +88,7 @@ jobs:
           npm ci
 
       - name: Run Grid Cypress Tests
-        uses: cypress-io/github-action@v6
+        uses: cypress-io/github-action@v7
         with:
           start: node ../utils/server --localOnly
           wait-on: 'http://localhost:3031/grid/grid-lite.js http://localhost:3031/grid/grid-pro.js'
