@@ -18,7 +18,7 @@
 import type AreaPoint from '../Area/AreaPoint';
 import type AreaSplinePointOptions from './AreaSplinePointOptions';
 import type AreaSplineSeries from './AreaSplineSeries';
-import type SplinePoint from '../Spline/SplinePoint';
+import SplinePoint from '../Spline/SplinePoint.js';
 
 /* *
  *
