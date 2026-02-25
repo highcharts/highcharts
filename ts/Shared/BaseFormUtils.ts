@@ -30,10 +30,10 @@
 const getIcon = (
     iconName: string,
     iconsURL: string,
-    Icons?: object
+    icons: Record<string, string>
 ): string => {
-    let icon = (Icons as any)[iconName];
-    let iconString;
+    let icon = icons[iconName];
+    let iconString: string;
 
     if (iconsURL === 'renderer' && icon) {
         icon = encodeURIComponent(icon);
