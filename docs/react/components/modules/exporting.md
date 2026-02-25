@@ -3,14 +3,15 @@
 You can add the [exporting module](https://www.highcharts.com/docs/export-module/export-module-overview) to your chart using the `Exporting` component:
 
 ```tsx
-import { Chart, Series } from "@highcharts/react";
-import { Exporting } from "@highcharts/react/options/exporting";
+import { Chart } from "@highcharts/react";
+import { LineSeries } from "@highcharts/react/series/Line";
+import { Exporting } from "@highcharts/react/modules/exporting";
 
 export default function ExportingChart() {
   return (
     <Chart>
       <Exporting chartOptions={{ title: { text: "exported Chart" } }} />
-      <Series data={[3, 4, 1, 5, 2]} />
+      <LineSeries data={[3, 4, 1, 5, 2]} />
     </Chart>
   );
 }

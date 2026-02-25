@@ -40,7 +40,7 @@ import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 
 // After (@highcharts/react)
-import { Chart, Series, Title } from "@highcharts/react";
+import { Chart, LineSeries, Title } from "@highcharts/react";
 ```
 
 **Note:** Unless you need a custom Highcharts instance (typically for loading additional modules or setting global options), you no longer need to import `Highcharts`.
@@ -122,7 +122,7 @@ import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 
 // After - chart and its options as dedicated React components
-import { Chart, Series, Title } from "@highcharts/react";
+import { Chart, LineSeries, Title } from "@highcharts/react";
 ```
 
 ### Component Props Interface
@@ -144,7 +144,7 @@ import { Chart, Series, Title } from "@highcharts/react";
 ```javascript
 <Chart ref={chartRef}>
   <Title>Basic Chart</Title>
-  <Series data={[1, 2, 3, 4, 5]} />
+  <LineSeries data={[1, 2, 3, 4, 5]} />
 </Chart>
 ```
 
@@ -191,13 +191,14 @@ const BasicChart = () => {
 
 ```javascript
 import React from "react";
-import { Chart, Series, Title } from "@highcharts/react";
+import { Chart, Title } from "@highcharts/react";
+import { LineSeries } from "@highcharts/react/series/Line";
 
 const BasicChart = () => {
   return (
     <Chart>
       <Title>Basic Chart</Title>
-      <Series data={[1, 2, 3, 4, 5]} />
+      <LineSeries data={[1, 2, 3, 4, 5]} />
     </Chart>
   );
 };
@@ -238,23 +239,16 @@ const MultiSeriesChart = () => {
 
 ```javascript
 import React from "react";
-import { Chart, Series, Title, XAxis } from "@highcharts/react";
+import { Chart, Title, XAxis } from "@highcharts/react";
+import { ColumnSeries } from "@highcharts/react/series/Column";
 
 const MultiSeriesChart = () => {
   return (
     <Chart>
       <Title>Revenue by Quarter</Title>
       <XAxis categories={["Q1", "Q2", "Q3", "Q4"]} />
-      <Series
-        type="column"
-        data={[100, 120, 140, 160]}
-        options={{ name: "2023" }}
-      />
-      <Series
-        type="column"
-        data={[110, 130, 150, 170]}
-        options={{ name: "2024" }}
-      />
+      <ColumnSeries data={[100, 120, 140, 160]} options={{ name: "2023" }} />
+      <ColumnSeries data={[110, 130, 150, 170]} options={{ name: "2024" }} />
     </Chart>
   );
 };
@@ -295,7 +289,8 @@ const CustomChart = () => {
 
 ```javascript
 import React from "react";
-import { Chart, Series, Title, YAxis } from "@highcharts/react";
+import { Chart, Title, YAxis } from "@highcharts/react";
+import { AreaSeries } from "@highcharts/react/series/Area";
 
 const CustomChart = () => {
   return (
@@ -308,8 +303,7 @@ const CustomChart = () => {
     >
       <Title>Sales Trend</Title>
       <YAxis>Sales ($)</YAxis>
-      <Series
-        type="area"
+      <AreaSeries
         data={[1000, 1200, 1100, 1300, 1500]}
         options={{
           name: "Sales",
@@ -354,7 +348,8 @@ const options = {
 **After** (`@highcharts/react`):
 
 ```javascript
-import { Chart, Series, Title, Highcharts } from "@highcharts/react";
+import { Chart, Title, Highcharts } from "@highcharts/react";
+import { LineSeries } from "@highcharts/react/series/Line";
 
 // Access built-in Highcharts instance directly
 Highcharts.setOptions({
@@ -364,7 +359,7 @@ Highcharts.setOptions({
 // Use in component - no need to pass Highcharts
 <Chart>
   <Title>My Chart</Title>
-  <Series data={[1, 2, 3, 4, 5]} />
+  <LineSeries data={[1, 2, 3, 4, 5]} />
 </Chart>;
 ```
 
@@ -410,28 +405,29 @@ const ChartWithRef = () => {
 import type { HighchartsReactRefObject } from '@highcharts/react'
 
 import React, { useRef, useEffect } from 'react';
-import { Chart, Series, Title } from '@highcharts/react';
+import { Chart, Title } from '@highcharts/react';
+import { LineSeries } from "@highcharts/react/series/Line";
 
 const ChartWithRef = () => {
-    const chartRef = useRef<HighchartsReactRefObject>(null);
+  const chartRef = useRef<HighchartsReactRefObject>(null);
 
-    useEffect(() => {
-        if (chartRef.current?.chart) {
-            // Access chart instance
-            chartRef.current.chart.reflow();
-        }
-        if (chartRef.current?.container) {
-            // Access container element
-            console.log('Container:', chartRef.current.container);
-        }
-    }, []);
+  useEffect(() => {
+    if (chartRef.current?.chart) {
+      // Access chart instance
+      chartRef.current.chart.reflow();
+    }
+    if (chartRef.current?.container) {
+      // Access container element
+      console.log('Container:', chartRef.current.container);
+    }
+  }, []);
 
-    return (
-        <Chart ref={chartRef}>
-            <Title>Chart with Ref</Title>
-            <Series data={[1, 2, 3, 4, 5]} />
-        </Chart>
-    );
+  return (
+    <Chart ref={chartRef}>
+      <Title>Chart with Ref</Title>
+      <LineSeries data={[1, 2, 3, 4, 5]} />
+    </Chart>
+  );
 };
 ```
 
@@ -464,7 +460,8 @@ const options = {
 **After** (`@highcharts/react`):
 
 ```javascript
-import { Chart, Series, Title, setHighcharts } from "@highcharts/react";
+import { Chart, Title, setHighcharts } from "@highcharts/react";
+import { LineSeries } from "@highcharts/react/series/Line";
 import Highcharts from "highcharts/highcharts";
 import "highcharts/modules/exporting";
 import "highcharts/modules/accessibility";
@@ -477,7 +474,7 @@ export function ChartWithCustomHC() {
   return (
     <Chart>
       <Title>Custom Chart</Title>
-      <Series data={[1, 2, 3, 4, 5]} />
+      <LineSeries data={[1, 2, 3, 4, 5]} />
     </Chart>
   );
 }
@@ -517,7 +514,8 @@ const options = {
 **After** (`@highcharts/react`):
 
 ```javascript
-import { Chart, Series } from "@highcharts/react";
+import { Chart } from "@highcharts/react";
+import { LineSeries } from "@highcharts/react/series/Line";
 
 <Chart
   options={{
@@ -530,8 +528,7 @@ import { Chart, Series } from "@highcharts/react";
     },
   }}
 >
-  <Series
-    type="line"
+  <LineSeries
     data={[1, 2, 3]}
     options={{
       events: {
@@ -554,13 +551,13 @@ The `@highcharts/react` package provides specialized components for different ch
 
 ```javascript
 // Stock Charts
-import { StockChart, StockSeries } from "@highcharts/react/Stock";
+import { StockChart } from "@highcharts/react/Stock";
+import { CandlestickSeries } from "@highcharts/react/series/Candlestick";
 
 export function StockExample() {
   return (
     <StockChart>
-      <StockSeries
-        type="candlestick"
+      <CandlestickSeries
         data={[
           [1609459200000, 100, 110, 90, 105],
           [1609545600000, 105, 115, 95, 110],
@@ -592,9 +589,9 @@ export function VennExample() {
 ```
 
 ```javascript
+import React, { useEffect, useState } from "react";
 import { MapsChart } from "@highcharts/react/Maps";
 import { MapSeries } from "@highcharts/react/series/Map";
-import React, { useEffect, useState } from "react";
 
 // Dynamically import the map data for compatibility with most bundlers
 export function MapExample() {
@@ -633,13 +630,14 @@ SSR compatibility can be achieved using dynamic imports or client-side only comp
 // Next.js App Router - Mark component as client-side
 "use client";
 
-import { Chart, Series, Title } from "@highcharts/react";
+import { Chart, Title } from "@highcharts/react";
+import { LineSeries } from "@highcharts/react/series/Line";
 
 export default function ChartComponent({ data, title }) {
   return (
     <Chart>
       <Title>{title}</Title>
-      <Series data={data} />
+      <LineSeries data={data} />
     </Chart>
   );
 }

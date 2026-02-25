@@ -49,7 +49,9 @@ export default function VennChart() {
 }
 ```
 
-**Note:** To determine which module is needed, refer to the **Requires** section under each [series](https://api.highcharts.com/highcharts/series).
+> **Note:** You should import additional modules using their ESM versions. See the [Bundling and tree shaking](https://www.highcharts.com/docs/react/bundling-and-tree-shaking) documentation.
+
+To determine which module is needed, refer to the **Requires** section under each [series](https://api.highcharts.com/highcharts/series).
 
 ### Other chart types
 
@@ -72,6 +74,10 @@ All chart type series components share the following props:
 | options   | `object` | -       | Configuration options for the series. Available options depend on the `type` (see [series](https://api.highcharts.com/highcharts/series.line)). |
 | id        | `string` | -       | ID for the series. Maps to [series.id](https://api.highcharts.com/highcharts/series.line.id).                                                   |
 | className | `string` | -       | Class name for the series' graphical elements. Maps to [series.className](https://api.highcharts.com/highcharts/series.line.className).         |
+
+### When to use generic series
+
+We recommend using [dedicated series](https://www.highcharts.com/docs/react/components/series-types#dedicated-series) components in most cases to keep your code lean. Reserve the generic `Series` component for situations where dedicated components become impractical — for example, when [adding series dynamically](https://www.highcharts.com/docs/react/data-handling#add-series-dynamically).
 
 ## Dedicated series
 
