@@ -424,8 +424,8 @@ function onAfterGetTitlePosition(
         } = axis;
         const tickSize = axis.tickSize();
         const titleWidth = axisTitle?.getBBox().width;
-        const xOption = options.title.x;
-        const yOption = options.title.y;
+        const xOption = options.title.x || 0;
+        const yOption = options.title.y || 0;
         const titleMargin = pick(options.title.margin, horiz ? 5 : 10);
         const titleFontSize = axisTitle ? axis.chart.renderer.fontMetrics(
             axisTitle
@@ -543,7 +543,7 @@ function onAfterRender(this: Axis): void {
             axisTitle &&
             !axis.chart.styledMode &&
             firstTick?.slotWidth &&
-            !axis.options.title.style.width
+            !axis.options.title.style?.width
         ) {
             axisTitle.css({ width: `${firstTick.slotWidth}px` });
         }

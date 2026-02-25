@@ -3668,7 +3668,7 @@ class Axis {
         // Max width defaults to the length of the axis
         if (
             !styledMode &&
-            !axisTitleOptions.style.width &&
+            !axisTitleOptions.style?.width &&
             !axis.isRadial
         ) {
             axis.axisTitle.css({
@@ -4027,8 +4027,8 @@ class Axis {
             margin = horiz ? axisLeft : axisTop,
             opposite = this.opposite,
             offset = this.offset,
-            xOption = axisTitleOptions.x,
-            yOption = axisTitleOptions.y,
+            xOption = axisTitleOptions.x || 0,
+            yOption = axisTitleOptions.y || 0,
             fontMetrics = this.chart.renderer.fontMetrics(axisTitle),
             // The part of a multiline text that is below the baseline of the
             // first line. Subtract 1 to preserve pixel-perfectness from the
@@ -4043,7 +4043,7 @@ class Axis {
                 low: margin + (horiz ? 0 : axisLength),
                 middle: margin + axisLength / 2,
                 high: margin + (horiz ? axisLength : 0)
-            })[axisTitleOptions.align],
+            })[axisTitleOptions.align || 'middle'],
 
             // The position in the perpendicular direction of the axis
             offAxis = (horiz ? axisTop + this.height : axisLeft) +
