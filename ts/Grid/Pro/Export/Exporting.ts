@@ -163,7 +163,11 @@ class Exporting {
             itemDelimiter = (decimalPoint === ',' ? ';' : ',');
         }
 
-        const columnIds = grid.enabledColumns ?? [];
+        const columnIds = (grid.enabledColumns ?? []).filter(
+            (columnId): boolean => grid.columnPolicy.isColumnExportable(
+                columnId
+            )
+        );
         const columnsCount = columnIds?.length;
         const csvRows: string[] = [];
         const rowArray: DataTableCellType[][] = [];
@@ -205,7 +209,10 @@ class Exporting {
             const columnId = columnIds[columnIndex],
                 column = grid.viewport?.getColumn(columnId),
                 colType = column?.dataType,
-                columnArray = dataTable.getColumn(columnId) ?? [],
+                sourceColumnId = grid.columnPolicy.getColumnSourceId(columnId),
+                columnArray = sourceColumnId ?
+                    (dataTable.getColumn(sourceColumnId) ?? []) :
+                    [],
                 columnLength = columnArray?.length,
                 parser = typeParser(colType ?? 'string');
 

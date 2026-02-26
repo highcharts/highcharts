@@ -28,7 +28,10 @@ import type CellContent from './CellContent/CellContent';
 import type HeaderCell from './Header/HeaderCell';
 import type { DeepPartial } from '../../../Shared/Types';
 import type { NonArrayColumnOptions } from '../Grid';
-import type { Column as DataTableColumn } from '../../../Data/DataTable';
+import type {
+    CellType as DataTableCellType,
+    Column as DataTableColumn
+} from '../../../Data/DataTable';
 
 import Table from './Table.js';
 import Utils from '../../../Core/Utilities.js';
@@ -119,7 +122,7 @@ export class Column {
      */
     public filtering?: ColumnFiltering;
 
-
+    /**
     /* *
     *
     *  Constructor
@@ -151,23 +154,20 @@ export class Column {
 
         // Populate column options map if not exists, to prepare option
         // references for each column.
-        if (grid.options && !grid.columnOptionsMap?.[id]) {
+        if (grid.options && !grid.columnPolicy.hasColumnOptions(id)) {
             const columnOptions: IndividualColumnOptions = { id };
             (grid.options.columns ??= []).push(columnOptions);
-            grid.columnOptionsMap[id] = {
+            grid.columnPolicy.setColumnOption(id, {
                 index: grid.options.columns.length - 1,
                 options: columnOptions
-            };
+            });
         }
 
         this.options = createOptionsProxy(
-            grid.columnOptionsMap?.[id]?.options ?? {},
+            grid.columnPolicy.getIndividualColumnOptions(id) ?? {},
             grid.options?.columnDefaults
         );
 
-        if (this.options.filtering?.enabled) {
-            this.filtering = new ColumnFiltering(this);
-        }
     }
 
     /* *
@@ -182,6 +182,11 @@ export class Column {
     public async init(): Promise<void> {
         this.loadData();
         this.dataType = await this.assumeDataType();
+
+        if (this.viewport.grid.columnPolicy.isColumnFilteringEnabled(this.id)) {
+            this.filtering = new ColumnFiltering(this);
+        }
+
         fireEvent(this, 'afterInit');
     }
 
@@ -189,12 +194,52 @@ export class Column {
      * Loads the data of the column from the viewport's data table.
      */
     public loadData(): void {
-        const dp = this.viewport.grid.dataProvider;
-        if (dp && 'getDataTable' in dp) {
-            this.data = dp.getDataTable(true)?.getColumn(this.id, true);
+        const grid = this.viewport.grid;
+        const dp = grid.dataProvider;
+        const sourceColumnId = grid.columnPolicy.getColumnSourceId(this.id);
+        const isUnbound = grid.columnPolicy.isColumnUnbound(this.id);
+
+        if (
+            dp && 'getDataTable' in dp &&
+            sourceColumnId && !isUnbound
+        ) {
+            this.data = dp.getDataTable(true)?.getColumn(
+                sourceColumnId,
+                true
+            );
         } else {
             delete this.data;
         }
+
+        if (grid.columnPolicy.isColumnFilteringEnabled(this.id)) {
+            this.filtering ??= new ColumnFiltering(this);
+        } else {
+            delete this.filtering;
+        }
+    }
+
+    /**
+     * Resolves the raw value for a table cell.
+     *
+     * @param cell
+     * The cell to resolve the value for.
+     */
+    public async getCellValue(cell: TableCell): Promise<DataTableCellType> {
+        const valueGetter = this.options.cells?.valueGetter;
+        if (valueGetter) {
+            return await valueGetter.call(cell, cell);
+        }
+
+        const sourceColumnId = this.viewport.grid.columnPolicy
+            .getColumnSourceId(this.id);
+        if (!sourceColumnId) {
+            return void 0;
+        }
+
+        return this.viewport.grid.dataProvider?.getValue(
+            sourceColumnId,
+            cell.row.index
+        );
     }
 
     /**
@@ -216,13 +261,19 @@ export class Column {
         const { grid } = this.viewport;
 
         const dp = grid.dataProvider;
-        const type = grid.columnOptionsMap?.[this.id]?.options.dataType ??
+        const type = grid.columnPolicy
+            .getIndividualColumnOptions(this.id)?.dataType ??
             grid.options?.columnDefaults?.dataType;
         if (type) {
             return type;
         }
 
-        return (await dp?.getColumnDataType(this.id)) ?? 'string';
+        const sourceColumnId = grid.columnPolicy.getColumnSourceId(this.id);
+        if (grid.columnPolicy.isColumnUnbound(this.id) || !sourceColumnId) {
+            return 'string';
+        }
+
+        return (await dp?.getColumnDataType(sourceColumnId)) ?? 'string';
     }
 
     /**

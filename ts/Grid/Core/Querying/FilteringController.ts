@@ -243,28 +243,31 @@ class FilteringController {
      * Loads filtering options from the data grid options.
      */
     public loadOptions(): void {
-        const columnOptionsMap = this.querying.grid.columnOptionsMap;
+        const columnPolicy = this.querying.grid.columnPolicy;
         const newConditions: Record<string, FilterCondition> = {};
 
-        if (columnOptionsMap) {
-            const columnIds = Object.keys(columnOptionsMap);
-            for (let i = 0, iEnd = columnIds.length; i < iEnd; ++i) {
-                const columnId = columnIds[i];
-                const filteringOptions =
-                    columnOptionsMap[columnId]?.options?.filtering;
+        const columnIds = columnPolicy.getColumnIds();
+        for (let i = 0, iEnd = columnIds.length; i < iEnd; ++i) {
+            const columnId = columnIds[i];
+            if (columnPolicy.isColumnUnbound(columnId)) {
+                continue;
+            }
+            const sourceColumnId = columnPolicy.getColumnSourceId(columnId);
+            const filteringOptions = columnPolicy
+                .getIndividualColumnOptions(columnId)
+                ?.filtering;
 
-                if (!filteringOptions) {
-                    continue;
-                }
+            if (!filteringOptions || !sourceColumnId) {
+                continue;
+            }
 
-                const condition = FilteringController.mapOptionsToFilter(
-                    columnId,
-                    filteringOptions
-                );
+            const condition = FilteringController.mapOptionsToFilter(
+                sourceColumnId,
+                filteringOptions
+            );
 
-                if (condition) {
-                    newConditions[columnId] = condition;
-                }
+            if (condition) {
+                newConditions[columnId] = condition;
             }
         }
 
@@ -285,8 +288,17 @@ class FilteringController {
         columnId: string,
         options: FilteringCondition
     ): void {
+        if (this.querying.grid.columnPolicy.isColumnUnbound(columnId)) {
+            return;
+        }
+        const sourceColumnId = this.querying.grid
+            .columnPolicy.getColumnSourceId(columnId);
+        if (!sourceColumnId) {
+            return;
+        }
+
         const condition = FilteringController.mapOptionsToFilter(
-            columnId,
+            sourceColumnId,
             options
         );
 

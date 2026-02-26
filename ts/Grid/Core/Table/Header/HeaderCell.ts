@@ -264,7 +264,8 @@ class HeaderCell extends Cell {
         }
 
         const { grid } = this.row.viewport;
-        const rawColumnOptions = grid.columnOptionsMap?.[column.id]?.options;
+        const rawColumnOptions = grid.columnPolicy
+            .getIndividualColumnOptions(column.id);
 
         return {
             ...mergeStyleValues(
@@ -325,10 +326,9 @@ class HeaderCell extends Cell {
             return;
         }
 
-        if ((
-            column.options.sorting?.enabled ??
-            column.options.sorting?.sortable
-        )) {
+        if (
+            column.viewport.grid.columnPolicy.isColumnSortingEnabled(column.id)
+        ) {
             column.sorting?.toggle(e);
         }
 

@@ -161,10 +161,7 @@ class TableCell extends Cell {
         this.htmlElement.style.opacity = '0.5';
 
         if (!defined(value)) {
-            value = await grid.dataProvider?.getValue(
-                this.column.id,
-                this.row.index
-            );
+            value = await this.column.getCellValue(this);
 
             // Discard stale response if cell was reused for a different row
             if (fetchToken !== this.asyncFetchToken) {
@@ -221,7 +218,7 @@ class TableCell extends Cell {
     private getCellStyles(): CSSObject {
         const { grid } = this.column.viewport;
         const rawColumnOptions =
-            grid.columnOptionsMap?.[this.column.id]?.options;
+            grid.columnPolicy.getIndividualColumnOptions(this.column.id);
 
         return {
             ...mergeStyleValues(
@@ -247,8 +244,14 @@ class TableCell extends Cell {
      * content.
      */
     private async updateDataset(): Promise<boolean> {
+        const sourceColumnId = this.column.viewport.grid.columnPolicy
+            .getColumnSourceId(this.column.id);
+        if (!sourceColumnId) {
+            return false;
+        }
+
         const oldValue = await this.column.viewport.grid.dataProvider?.getValue(
-            this.column.id,
+            sourceColumnId,
             this.row.index
         );
 
@@ -266,9 +269,12 @@ class TableCell extends Cell {
         }
 
         this.row.data[this.column.id] = this.value;
+        if (sourceColumnId !== this.column.id) {
+            this.row.data[sourceColumnId] = this.value;
+        }
         await dp.setValue(
             this.value,
-            this.column.id,
+            sourceColumnId,
             rowId
         );
 

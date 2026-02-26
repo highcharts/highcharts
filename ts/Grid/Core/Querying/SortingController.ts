@@ -180,14 +180,9 @@ class SortingController {
      * Returns the sorting options from the data grid options.
      */
     private getSortingOptions(): SortingState[] {
-        const grid = this.querying.grid,
-            { columnOptionsMap } = grid;
-
-        if (!columnOptionsMap) {
-            return [];
-        }
-
-        const columnIDs = Object.keys(columnOptionsMap);
+        const grid = this.querying.grid;
+        const columnPolicy = grid.columnPolicy;
+        const columnIDs = columnPolicy.getColumnIds();
 
         const sortings: Array<SortingState & {
             priority?: number;
@@ -195,7 +190,11 @@ class SortingController {
         }> = [];
         for (let i = 0, iEnd = columnIDs.length; i < iEnd; ++i) {
             const columnId = columnIDs[i];
-            const columnOptions = columnOptionsMap[columnId]?.options || {};
+            if (columnPolicy.isColumnUnbound(columnId)) {
+                continue;
+            }
+            const columnOptions = columnPolicy
+                .getIndividualColumnOptions(columnId) || {};
             const order = columnOptions.sorting?.order;
 
             if (order) {
@@ -264,7 +263,9 @@ class SortingController {
         ).filter((
             sorting
         ): sorting is SortingState & { columnId: string } => !!(
-            sorting.columnId && sorting.order
+            sorting.columnId &&
+            sorting.order &&
+            !this.querying.grid.columnPolicy.isColumnUnbound(sorting.columnId)
         ));
 
         if (!sortings.length) {
@@ -272,19 +273,38 @@ class SortingController {
         }
 
         const grid = this.querying.grid;
+        const sourceSortings = sortings
+            .map((sorting): (SortingState & {
+                columnId: string;
+                sourceColumnId?: string;
+            }) => ({
+                ...sorting,
+                sourceColumnId: grid.columnPolicy.getColumnSourceId(
+                    sorting.columnId
+                )
+            }))
+            .filter((sorting): sorting is SortingState & {
+                columnId: string;
+                sourceColumnId: string;
+            } => !!sorting.sourceColumnId);
+
+        if (!sourceSortings.length) {
+            return;
+        }
 
         const defaultCompare =
             grid.options?.columnDefaults?.sorting?.compare;
 
         return new SortModifier({
-            direction: sortings[0].order as ('asc'|'desc'),
-            columns: sortings.map((
+            direction: sourceSortings[0].order as ('asc'|'desc'),
+            columns: sourceSortings.map((
                 sorting
             ): SortModifierOrderByOption => ({
-                column: sorting.columnId,
+                column: sorting.sourceColumnId,
                 direction: sorting.order as ('asc'|'desc'),
-                compare: grid.columnOptionsMap?.[sorting.columnId]
-                    ?.options?.sorting?.compare || defaultCompare
+                compare: grid.columnPolicy
+                    .getIndividualColumnOptions(sorting.columnId)
+                    ?.sorting?.compare || defaultCompare
             }))
         });
     }
