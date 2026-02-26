@@ -314,21 +314,21 @@ class HeaderCell extends Cell {
     }
 
     public override onClick(e: MouseEvent): void {
-        const column = this.column;
-
         if (
-            !column ||
+            !this.column ||
             !this.htmlElement.contains(e.target as Node) ||
-            column.viewport.columnsResizer?.isResizing
+            this.column.viewport.columnsResizer?.isResizing
         ) {
             return;
         }
 
-        if ((
-            column.options.sorting?.enabled ??
-            column.options.sorting?.sortable
-        )) {
-            column.sorting?.toggle(e);
+        // Toggle sort only when clicking header text/area, not toolbar icons
+        if (
+            !this.toolbar?.container?.contains(e.target as Node) &&
+            (this.column.options.sorting?.enabled ??
+                this.column.options.sorting?.sortable)
+        ) {
+            this.column.sorting?.toggle(e);
         }
 
         fireEvent(this, 'click', {
