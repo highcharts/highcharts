@@ -1,4 +1,5 @@
 const gulp = require('gulp');
+const { version: highchartsVersion } = require('../../package.json');
 
 // Gulp task to transpile .jsx to .mjs
 async function transpileJSXSamples() {
@@ -31,7 +32,7 @@ async function transpileJSXSamples() {
                     "react-dom/": "https://esm.sh/react-dom@19.1.0/",
                     "@highcharts/react": "https://unpkg.com/@highcharts/react@next/index.js",
                     "@highcharts/react/": "https://unpkg.com/@highcharts/react@next/",
-                    "highcharts/": "https://unpkg.com/highcharts@12.2.0/"
+                    "highcharts/": "https://unpkg.com/highcharts@${highchartsVersion}/"
                 }
             }
             </script>
@@ -106,7 +107,10 @@ details {
             { force: true }
         );
 
-        await writeFile(jsxPath.replace('.jsx', '.mjs'), `// DO NOT EDIT, ${isGeneratedText}\n` + output.code);
+        await writeFile(
+            jsxPath.replace('.jsx', '.mjs'),
+            `// DO NOT EDIT, ${isGeneratedText}\n${output.code}`
+        );
     }
 
 }

@@ -52,6 +52,8 @@ exporting-server/java/highcharts-export/highcharts-export-web/src/main/webapp/.e
 # Sample generator checksums
 samples/**/.generated-checksum
 samples/**/config.js
+# Temporary: ignore generated React sample outputs
+samples/*/react/**
 nbproject/
 *.DS_Store
 /node_modules/
