@@ -509,78 +509,35 @@ specified by config.imageCapture.resultsOutputPath.
             await gulp.task('scripts')(gulpback);
 
             // Determine which Playwright projects to run
-            const playwrightProjects = [];
-            const affectedProducts = argv.modified ? getProducts() : null;
-            const productsToUse =
-            (affectedProducts && affectedProducts.length > 0) ?
-                affectedProducts : (argv.product ? [argv.product] : null);
-
-            // Set argv.product for grep logic when using --modified with single product
-            if (argv.modified && productsToUse && productsToUse.length === 1) {
-                argv.product = productsToUse[0];
+            const products = argv.modified ? getProducts() : (argv.product ? [argv.product] : null);
+            const prods = products?.length ? products : ['Core'];
+            const hasGrid = prods.includes('Grid');
+            const hasDashboards = prods.includes('Dashboards');
+            const hasHC = prods.some(p => ['Core', 'Stock', 'Maps', 'Gantt', 'Accessibility'].includes(p));
+            if (argv.modified && prods.length === 1) {
+                argv.product = prods[0];
             }
 
-            if (productsToUse) {
-                const hasGrid = productsToUse.includes('Grid');
-                const hasDashboards = productsToUse.includes('Dashboards');
-                const hasHighcharts = productsToUse.some(
-                    p => ['Core', 'Stock', 'Maps', 'Gantt', 'Accessibility'].includes(p)
-                );
-
-                if (hasGrid) {
-                    playwrightProjects.push(
-                        'setup-grid-lite', 'setup-grid-pro',
-                        'grid-lite', 'grid-pro', 'grid-shared'
-                    );
-                }
-                if (hasDashboards) {
-                    playwrightProjects.push('setup-dashboards', 'dashboards');
-                }
-                if (hasHighcharts) {
-                    playwrightProjects.push('setup-highcharts', 'highcharts', 'qunit');
-                }
-                // Always run accessibility tests (from karma-product-tests always array)
-                if ((hasGrid || hasDashboards) && !hasHighcharts) {
-                    playwrightProjects.push('setup-highcharts', 'qunit');
-                }
-            } else {
-                playwrightProjects.push('setup-highcharts', 'qunit');
-            }
-
-            // Split projects: grep applies to ALL projects, so Grid/Dashboards must run separately
-            const gridDashProjects = ['setup-grid-lite', 'setup-grid-pro', 'grid-lite', 'grid-pro', 'grid-shared', 'setup-dashboards', 'dashboards'];
-            const hasGridOrDashboards = gridDashProjects.some(p => playwrightProjects.includes(p));
-            const qunitProjects = ['setup-highcharts', 'qunit'];
-            const hasQunit = playwrightProjects.includes('qunit');
+            const gridProj = ['setup-grid-lite', 'setup-grid-pro', 'grid-lite', 'grid-pro', 'grid-shared'];
+            const dashProj = ['setup-dashboards', 'dashboards'];
+            const hcProj = ['setup-highcharts', 'highcharts', 'qunit'];
+            const a11yProj = ['setup-highcharts', 'qunit'];
 
             const commands = [];
-
-            if (hasGridOrDashboards) {
-                const gridProj = gridDashProjects.filter(p => playwrightProjects.includes(p));
-                commands.push({ projects: gridProj, grep: '' });
-            }
-            if (hasQunit) {
-                const grepArg = (argv.product === 'Grid' || argv.product === 'Dashboards') ?
-                    '--grep "unit-tests/(accessibility)"' :
-                    (Array.isArray(productTests) && productTests.length > 0 ?
-                        `--grep "unit-tests/(${productTests.join('|')})"` : '');
-                commands.push({ projects: qunitProjects, grep: grepArg });
-            }
+            if (hasGrid) { commands.push({ projects: gridProj, grep: '' }); }
+            if (hasDashboards) { commands.push({ projects: dashProj, grep: '' }); }
+            if (hasHC) { commands.push({ projects: hcProj, grep: Array.isArray(productTests) && productTests.length > 0 ? `--grep "unit-tests/(${productTests.join('|')})"` : '' }); }
+            if ((hasGrid || hasDashboards) && !hasHC) { commands.push({ projects: a11yProj, grep: '--grep "unit-tests/(accessibility)"' }); }
+            if (commands.length === 0) { commands.push({ projects: hcProj, grep: '' }); }
 
             for (const { projects, grep } of commands) {
-                const projectArgs = projects.map(p => `--project=${p}`).join(' ');
-                const command = `npx playwright test ${projectArgs} ${grep}`.trim();
-                logLib.message(`Running: ${command}`);
-
+                const cmd = `npx playwright test ${projects.map(p => `--project=${p}`).join(' ')} ${grep}`.trim();
+                logLib.message(`Running: ${cmd}`);
                 try {
-                    await processLib.exec(command);
+                    await processLib.exec(cmd);
                 } catch (error) {
-                    if (argv.speak) {
-                        logLib.say('Tests failed!');
-                    }
-                    throw new PluginError('playwright', {
-                        message: 'Tests failed'
-                    });
+                    if (argv.speak) { logLib.say('Tests failed!'); }
+                    throw new PluginError('playwright', { message: 'Tests failed' });
                 }
             }
         }
