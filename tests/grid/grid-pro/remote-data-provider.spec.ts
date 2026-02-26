@@ -6,6 +6,7 @@ type RemoteScenarioOptions = {
     data?: {
         chunkSize?: number;
         chunksLimit?: number;
+        idColumn?: string;
     };
     columns?: Array<{
         id: string;
@@ -61,8 +62,10 @@ async function runRemoteScenario(
             result.v1 = await dp.getValue('name', 1);
             result.v2 = await dp.getValue('name', 2);
             result.rowId0 = await dp.getRowId(0);
+            result.rowId1 = await dp.getRowId(1);
             result.rowId2 = await dp.getRowId(2);
             result.rowIndex2 = await dp.getRowIndex(result.rowId2);
+            result.rowIndex1 = await dp.getRowIndex(result.rowId1);
             result.rowIndexMissing = await dp.getRowIndex('missing-row');
         } else if (mode === 'pagination') {
             result.rowCount = await dp.getRowCount();
@@ -169,5 +172,42 @@ test.describe('RemoteDataProvider', () => {
         ]));
         expect(result.rowId0).toBe('row-4');
         expect(result.rowId1).toBe('row-3');
+    });
+
+    test('uses idColumn for row IDs when provided', async ({ page }) => {
+        const result = await runRemoteScenario(
+            page,
+            {
+                totalRowCount: 5,
+                data: { chunkSize: 2, idColumn: 'id' }
+            },
+            'cache'
+        );
+
+        expect(result.error).toBeUndefined();
+        expect(result.fetchCalls).toEqual(expect.arrayContaining([
+            { offset: 0, limit: 2 },
+            { offset: 2, limit: 2 }
+        ]));
+        // Row IDs come from column 'id' (numeric) instead of default rowIds
+        expect(result.rowId0).toBe(0);
+        expect(result.rowId2).toBe(2);
+        expect(result.rowIndex2).toBe(2);
+        expect(result.rowIndexMissing).toBeUndefined();
+    });
+
+    test('with idColumn: getRowIndex resolves row ID to local index', async ({ page }) => {
+        const result = await runRemoteScenario(
+            page,
+            {
+                totalRowCount: 4,
+                data: { chunkSize: 2, idColumn: 'id' }
+            },
+            'cache'
+        );
+
+        expect(result.error).toBeUndefined();
+        expect(result.rowId1).toBe(1);
+        expect(result.rowIndex1).toBe(1);
     });
 });
