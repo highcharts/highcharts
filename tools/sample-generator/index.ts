@@ -618,6 +618,7 @@ export async function getDemoHTML(
 }
 
 // Build chart options as a formatted JS object literal string.
+// See tools/sample-generator/README.md for before/after formatting examples.
 async function getChartOptionsLiteral(
     config: SampleGeneratorConfig,
     metaList: MetaList,
