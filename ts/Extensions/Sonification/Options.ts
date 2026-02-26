@@ -28,13 +28,48 @@ declare global {
             point?: Point;
             value?: number;
         }
+        /**
+         * Event context object sent to sonification chart events.
+         *
+         * @requires modules/sonification
+         */
         interface ChartEventContext {
+            /**
+             * The relevant chart.
+             *
+             * @requires modules/sonification
+             */
             chart?: Chart,
+            /**
+             * The playing timeline object with advanced and internal content.
+             *
+             * @requires modules/sonification
+             */
             timeline?: SonificationTimeline,
+            /**
+             * The points that were played, if any.
+             *
+             * @requires modules/sonification
+             */
             pointsPlayed?: Point[]
         }
+        /**
+         * Event context object sent to sonification series events.
+         *
+         * @requires modules/sonification
+         */
         interface SeriesEventContext {
+            /**
+             * The relevant series.
+             *
+             * @requires modules/sonification
+             */
             series?: Series,
+            /**
+             * The playing timeline object with advanced and internal content.
+             *
+             * @requires modules/sonification
+             */
             timeline?: SonificationTimeline
         }
         interface BoundaryHitContext {
@@ -42,7 +77,17 @@ declare global {
             timeline: SonificationTimeline,
             attemptedNext?: boolean
         }
+        /**
+         * Callback function for sonification events on series.
+         *
+         * @requires modules/sonification
+         */
         type SeriesCallback = (s: SeriesEventContext) => void;
+        /**
+         * Callback function for sonification events on chart.
+         *
+         * @requires modules/sonification
+         */
         type ChartCallback = (c: ChartEventContext) => void;
         type BoundaryHitCallback = (e: BoundaryHitContext) => void;
         type TrackValueCallback = (context: TimelineEventContext) => number;
