@@ -200,18 +200,22 @@ class Toolbar {
             wrapper = this.wrapper,
             menuWrapper = this.listWrapper,
             allButtons = this.toolbar.childNodes,
+            title = buttonWrapper.title,
             // Create submenu container
             submenuWrapper = this.submenu = createElement('ul', {
-                className: 'highcharts-submenu-wrapper'
-            }, void 0, buttonWrapper);
+                className: 'highcharts-submenu-wrapper',
+                id: 'highcharts-submenu-wrapper-' +
+                    title.toLowerCase().replace(/\s+/g, '-'),
+                role: 'menu'
+            } as HTMLAttributes, void 0, buttonWrapper);
 
         // Create submenu buttons and select the first one
         this.addSubmenuItems(buttonWrapper, button);
+        submenuArrow.setAttribute('aria-controls', submenuWrapper.id);
 
         // Show / hide submenu
         this.eventsToUnbind.push(
             addEvent(submenuArrow, 'click', (e: Event): void => {
-
                 e.stopPropagation();
                 // Erase active class on all other buttons
                 this.eraseActiveButtons(allButtons, buttonWrapper);
@@ -221,11 +225,14 @@ class Toolbar {
                     buttonWrapper.className
                         .indexOf('highcharts-current') >= 0
                 ) {
+                    submenuArrow.setAttribute('aria-expanded', false);
                     menuWrapper.style.width =
-                        (menuWrapper as any).startWidth + 'px';
+                    (menuWrapper as any).startWidth + 'px';
                     buttonWrapper.classList.remove('highcharts-current');
                     (submenuWrapper as any).style.display = 'none';
                 } else {
+
+                    submenuArrow.setAttribute('aria-expanded', true);
                     // Show menu
                     // to calculate height of element
                     (submenuWrapper as any).style.display = 'block';
@@ -391,7 +398,8 @@ class Toolbar {
         const mainButton = createElement(elementType, {
             className: 'highcharts-menu-item-btn',
             ariaLabel: btnLabelName,
-            tabindex: 0
+            tabindex: 0,
+            role: 'menuitem'
         } as HTMLAttributes, void 0, buttonWrapper);
 
         // Submenu
@@ -401,7 +409,8 @@ class Toolbar {
             const submenuArrow = createElement('button', {
                 className: 'highcharts-submenu-item-arrow ' +
                     'highcharts-arrow-right',
-                ariaLabel: arrowLabel
+                ariaLabel: arrowLabel,
+                ariaExpanded: false
             } as HTMLAttributes, void 0, buttonWrapper);
 
             submenuArrow.style.backgroundImage = 'url(' +
@@ -507,8 +516,9 @@ class Toolbar {
         // Create main container
         const wrapper = this.wrapper = createElement('div', {
             className: 'highcharts-stocktools-wrapper ' +
-                guiOptions.className + ' ' + bindingsClassName
-        });
+                guiOptions.className + ' ' + bindingsClassName,
+            ariaHidden: false
+        } as HTMLAttributes);
 
         container.appendChild(wrapper);
 
