@@ -1,15 +1,3 @@
-// Map the species IDs to their respective SVG URLs
-
-const iconURLs = {
-    'redpanda-icon': 'https://www.highcharts.com/samples/graphics/redpanda.svg',
-    'raccoon-icon': 'https://www.highcharts.com/samples/graphics/raccoon.svg',
-    'panda-icon': 'https://www.highcharts.com/samples/graphics/panda.svg',
-    'spectacled-icon': 'https://www.highcharts.com/samples/graphics/spectacled.svg',
-    'blackbear-icon': 'https://www.highcharts.com/samples/graphics/blackbear.svg',
-    'polarbear-icon': 'https://www.highcharts.com/samples/graphics/polarbear.svg',
-    'brownbear-icon': 'https://www.highcharts.com/samples/graphics/brownbear.svg'
-};
-
 // Data for the tree.
 // [Parent, ID, visible name, million years ago, level, icon]
 const treeData = [
@@ -26,22 +14,14 @@ const treeData = [
     ['ursus', 'brown-polar', '', 0.3],
     ['brown-polar', 'polar', 'Polar Bear', 0, 6, 'polarbear-icon'],
     ['brown-polar', 'brown', 'Brown Bear', 0, 6, 'brownbear-icon']
-].map(e => {
-    type IconKey = keyof typeof iconURLs;
-
-    const key = e[5] as IconKey;
-
-    const markerConfig = key ? { symbol: `url(${iconURLs[key]})` } : undefined;
-
-    return {
-        parent: e[0],
-        id: e[1],
-        name: e[2],
-        x: e[3],
-        level: e[4], // Pass these through as is
-        marker: markerConfig // icon
-    };
-});
+].map(e => [
+    e[0],
+    e[1],
+    e[2],
+    e[3],
+    e[4], // Pass these through as is
+    typeof e[5] === 'string' && document.getElementById(e[5]).innerHTML // icon
+]);
 
 Highcharts.chart('container', {
     chart: {
@@ -64,9 +44,7 @@ Highcharts.chart('container', {
         enabled: false
     },
     exporting: {
-        allowHTML: true,
-        sourceWidth: 800,
-        scale: 1
+        allowHTML: true
     },
     series: [
         {
