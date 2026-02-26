@@ -36,6 +36,7 @@ declare global {
 /**
  * Represents a channel of TimelineEvents for an engine (either an instrument
  * or a speaker).
+ * @internal
  */
 class TimelineChannel {
     events: Sonification.TimelineEvent[];

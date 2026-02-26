@@ -61,14 +61,28 @@ import timelineFromChart from './TimelineFromChart.js';
 declare module '../../Core/Chart/ChartBase' {
     interface ChartBase {
         /**
+         * Sonification capabilities for the chart.
+         *
          * @requires modules/sonification
          */
         sonification?: Sonification;
         /**
+         * Play a sonification of a chart.
+         *
+         * @param onEnd
+         * Callback to call after play completed.
+         *
          * @requires modules/sonification
          */
         sonify: (onEnd?: globalThis.Sonification.ChartCallback) => void;
         /**
+         * Play/pause sonification of a chart.
+         *
+         * @param reset
+         * Reset the playing cursor after play completed.
+         * @param onEnd
+         * Callback to call after play completed.
+         *
          * @requires modules/sonification
          */
         toggleSonify: (
@@ -98,9 +112,25 @@ declare module '../../Core/Series/SeriesBase' {
 declare module '../../Core/Series/PointBase' {
     interface PointBase {
         /**
+         * Play a sonification of a point.
+         *
+         * @param onEnd
+         * Callback to call after play completed.
+         *
          * @requires modules/sonification
          */
-        sonify: () => void;
+        sonify: (onEnd?: globalThis.Sonification.ChartCallback) => void;
+    }
+}
+
+declare module '../../Core/Globals' {
+    interface GlobalsBase {
+        /**
+         * Global Sonification classes and objects.
+         *
+         * @requires modules/sonification
+         */
+        sonification: Sonification.GlobalObject;
     }
 }
 
@@ -123,6 +153,8 @@ declare module '../../Core/Series/PointBase' {
  * @param {Highcharts.Chart} chart The chart to tie the sonification to
  */
 class Sonification {
+    /** @internal */
+    private chart: Chart;
     /**
      * Used for testing when working audio is not needed, but we want
      * synchronous timeline calculation.
@@ -141,16 +173,23 @@ class Sonification {
      */
     timeline?: SonificationTimeline;
 
-    // Internal props
+    /** @internal */
     private unbindKeydown: Function;
+    /** @internal */
     private audioContext?: AudioContext;
+    /** @internal */
     private retryContextCounter = 0;
+    /** @internal */
     private lastUpdate = 0;
+    /** @internal */
     private scheduledUpdate?: number;
+    /** @internal */
     private audioDestination?: AudioDestinationNode;
+    /** @internal */
     private boundaryInstrument?: SynthPatch;
 
-    constructor(private chart: Chart) {
+    constructor(chart: Chart) {
+        this.chart = chart;
         this.unbindKeydown = addEvent(
             doc, 'keydown',
             function (e: KeyboardEvent): void {
@@ -674,6 +713,43 @@ class Sonification {
 namespace Sonification {
 
     const composedClasses: Array<Function> = [];
+    /**
+     * Collection of Sonification classes and objects.
+     *
+     * @requires modules/sonification
+     */
+    export interface GlobalObject {
+        /**
+         * SynthPatch presets.
+         *
+         * @requires modules/sonification
+         */
+        InstrumentPresets?: typeof import('./InstrumentPresets').default;
+        /**
+         * Musical scale presets.
+         *
+         * @requires modules/sonification
+         */
+        Scales?: typeof import('./Scales').default;
+        /**
+         * SynthPatch class.
+         *
+         * @requires modules/sonification
+         */
+        SynthPatch?: typeof SynthPatch;
+        /**
+         * SonificationInstrument class.
+         *
+         * @requires modules/sonification
+         */
+        SonificationInstrument?: typeof SonificationInstrument;
+        /**
+         * SonificationSpeaker class.
+         *
+         * @requires modules/sonification
+         */
+        SonificationSpeaker?: typeof SonificationSpeaker;
+    }
 
     /**
      * Update sonification object on chart.

@@ -19,6 +19,11 @@ const {
 } = U;
 
 namespace SonificationSpeaker {
+    /**
+     * Configuration for a SonificationSpeaker.
+     *
+     * @requires modules/sonification
+     */
     export interface SpeakerOptions {
         /**
          * Name of the voice synthesis to use. If not found, reverts to the

@@ -94,6 +94,7 @@ function filterChannels(
  * The SonificationTimeline class. This class represents a timeline of
  * audio events scheduled to play. It provides functionality for manipulating
  * and navigating the timeline.
+ * @internal
  */
 class SonificationTimeline {
     isPaused = false;
