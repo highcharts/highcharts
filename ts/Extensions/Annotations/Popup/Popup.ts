@@ -398,6 +398,22 @@ class Popup extends BaseForm {
             opacitySlider.setAttribute('min', '0');
             opacitySlider.setAttribute('max', '100');
 
+            const opacityNumberInput = createElement(
+                'input',
+                {
+                    type: 'number',
+                    value: String(opacity),
+                    className: (
+                        'highcharts-popup-field highcharts-popup-opacity-number'
+                    )
+                },
+                void 0,
+                wrapper
+            ) as HTMLInputElement;
+            opacityNumberInput.setAttribute('min', '0');
+            opacityNumberInput.setAttribute('max', '1');
+            opacityNumberInput.setAttribute('step', '0.01');
+
             const setOpacitySliderColor = (): void => {
                 opacitySlider.style.setProperty(
                     '--highcharts-slider-rgb',
@@ -406,6 +422,16 @@ class Popup extends BaseForm {
             };
             setOpacitySliderColor();
 
+            addEvent(opacitySlider, 'input', (): void => {
+                opacityNumberInput.value = String(
+                    Number(opacitySlider.value) / 100
+                );
+            });
+            addEvent(opacityNumberInput, 'input', (): void => {
+                opacitySlider.value = String(
+                    Number(opacityNumberInput.value) * 100
+                );
+            });
             addEvent(colorInput, 'input', (): void => {
                 textInput.value = colorInput.value.toUpperCase();
                 setOpacitySliderColor();

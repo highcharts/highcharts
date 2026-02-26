@@ -361,9 +361,17 @@ input.highcharts-input-search-indicators {
 
 .highcharts-popup-color-wrapper .highcharts-popup-field-text,
 .highcharts-popup-color-wrapper .highcharts-popup-field-color,
-.highcharts-popup-color-wrapper .highcharts-popup-opacity {
+.highcharts-popup-color-wrapper .highcharts-popup-opacity,
+.highcharts-popup-color-wrapper .highcharts-popup-opacity-number {
     float: none;
     margin-bottom: 0;
+}
+
+.highcharts-popup-color-wrapper .highcharts-popup-opacity-number {
+    width: 55px;
+    flex-shrink: 0;
+    padding-left: 4px;
+    padding-right: 4px;
 }
 
 .highcharts-popup-color-wrapper .highcharts-popup-field-color {
@@ -386,7 +394,7 @@ input.highcharts-input-search-indicators {
     margin-left: 8px;
     padding: 0;
     cursor: pointer;
-    --highcharts-slider-rgb: rgb(0, 0, 0);
+    --highcharts-slider-rgb: #000000;
 }
 
 /* Opacity track: override browser default (e.g. blue) */
@@ -395,7 +403,7 @@ input.highcharts-input-search-indicators {
         linear-gradient(
             to right,
             var(--highcharts-neutral-color-10, #e6e6e6),
-            var(--highcharts-slider-rgb, rgb(0, 0, 0))
+            var(--highcharts-slider-rgb, #000000)
         );
     height: 6px;
     border-radius: 3px;
@@ -408,7 +416,7 @@ input.highcharts-input-search-indicators {
     width: 14px;
     height: 14px;
     border-radius: 50%;
-    background: var(--highcharts-slider-rgb, rgb(0, 0, 0));
+    background: var(--highcharts-slider-rgb, #000000);
     border: 2px solid var(--highcharts-neutral-color-3, #f7f7f7);
     cursor: pointer;
     margin-top: -4px;
@@ -419,7 +427,7 @@ input.highcharts-input-search-indicators {
         linear-gradient(
             to right,
             var(--highcharts-neutral-color-10, #e6e6e6),
-            var(--highcharts-slider-rgb, rgb(0, 0, 0))
+            var(--highcharts-slider-rgb, #000000)
         );
     height: 6px;
     border-radius: 3px;
@@ -430,7 +438,7 @@ input.highcharts-input-search-indicators {
     width: 14px;
     height: 14px;
     border-radius: 50%;
-    background: var(--highcharts-slider-rgb, rgb(0, 0, 0));
+    background: var(--highcharts-slider-rgb, #000000);
     border: 2px solid var(--highcharts-neutral-color-3, #f7f7f7);
     cursor: pointer;
 }
