@@ -317,10 +317,9 @@ class HeaderCell extends Cell {
         const column = this.column;
 
         if (
-            !column || (
-                e.target !== this.htmlElement &&
-                e.target !== column.header?.headerContent
-            ) || column.viewport.columnsResizer?.isResizing
+            !column ||
+            !this.htmlElement.contains(e.target as Node) ||
+            column.viewport.columnsResizer?.isResizing
         ) {
             return;
         }
