@@ -36,6 +36,22 @@ const {
 
 /* *
  *
+ *  Declarations
+ *
+ * */
+
+declare module '../../Core/Series/SeriesBase' {
+    interface SeriesBase {
+        /**
+         * Allow scatter points on the edge to be interacted
+         * with outside the plot.
+         */
+        allowOutsidePlotInteraction(e: PointerEvent): boolean;
+    }
+}
+
+/* *
+ *
  *  Class
  *
  * */
@@ -147,10 +163,15 @@ class ScatterSeries extends LineSeries {
     /**
      * Allow scatter points on the edge to be interacted with outside the plot
      * area, #24096.
-     * * @intenal
+     * @internal
+     *
      * @function Highcharts.ScatterSeries#allowOutsidePlotInteraction
-     * @param {PointerEvent} e The pointer event.
-     * @return {boolean} True if interaction is allowed.
+     *
+     * @param {PointerEvent} e
+     * The pointer event.
+     *
+     * @return {boolean}
+     * True if interaction is allowed.
      */
     public allowOutsidePlotInteraction(e: PointerEvent): boolean {
         return !!this.chart.pointer?.inClass(
@@ -208,11 +229,6 @@ declare module '../../Core/Series/SeriesType' {
 SeriesRegistry.registerSeriesType('scatter', ScatterSeries);
 
 
-declare module '../../Core/Series/SeriesBase' {
-    interface SeriesBase {
-        allowOutsidePlotInteraction(e: PointerEvent): boolean;
-    }
-}
 /* *
  *
  *  Default Export
