@@ -12,11 +12,15 @@ Grid.grid('container', {
         providerType: 'local', // optional
         dataTable: {
             columns: {
+                id: ['a1', 'p1', 'o1', 'b1'],
                 product: ["Apple", "Pear", "Orange", "Banana"],
                 weight: [182, 178, 150, 120],
                 price: [3.5, 2.5, 3, 2.2]
             }
         },
+        // Optional: column that contains stable, unique row IDs (string or number).
+        // If not set, the original row index is used as the row ID.
+        idColumn: 'id',
         // Optional: auto-refresh when the DataTable changes.
         updateOnChange: true
     }
@@ -24,6 +28,8 @@ Grid.grid('container', {
 ```
 
 You can also pass a `DataTable` instance instead of serialized options.
+
+**idColumn** – When you need custom stable row identifiers, set `idColumn` to the ID of a column whose values are unique per row. Row IDs will then be those values instead of original numeric indices. The column must contain only strings or numbers, and all values must be unique.
 
 If you mutate the DataTable outside of Grid, you can set `updateOnChange: true`
 to refresh rows automatically after table change events. For batched updates,
@@ -79,8 +85,9 @@ Grid.grid('container', {
                 '/api/grid?page={page}&pageSize={pageSize}&' +
                 'sortBy={sortBy}&sortOrder={sortOrder}&filter={filter}'
         },
-        // Column that contains stable row IDs.
-        rowIdColumn: 'id'
+        // ID of the column that contains stable row IDs. If not set, uses
+        // `rowIds` from fetch result body or row indices.
+        idColumn: 'id'
     }
 });
 ```
