@@ -146,6 +146,18 @@ async function replaceHCCode(route: Route) {
 
             if (existsSync(gridCssPath)) {
                 resolvedRelativePath = gridCssCandidate;
+            } else {
+                const sourceGridCss = join('css', 'grid', cssTail);
+                const sourceGridCssPath = join(
+                    __dirname,
+                    '..',
+                    sourceGridCss
+                );
+
+                if (existsSync(sourceGridCssPath)) {
+                    resolvedRootPath = '';
+                    resolvedRelativePath = sourceGridCss;
+                }
             }
         }
     }

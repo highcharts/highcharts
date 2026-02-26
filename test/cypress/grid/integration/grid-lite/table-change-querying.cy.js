@@ -1,6 +1,6 @@
 describe('Querying on table change.', () => {
     before(() => {
-        cy.visit('/grid-lite/cypress/table-change-querying/');
+        cy.visit('grid-lite/e2e/table-change-querying/');
     });
 
     it('Add a new row to the table.', () => {

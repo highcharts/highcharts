@@ -128,6 +128,17 @@ export interface BoostOptions {
     enabled?: boolean;
 
     /**
+     * The number of points processed per frame when building the k-d tree for
+     * boosted series. Lower values improve responsiveness but increase the time
+     * it takes to build the tree.
+     *
+     * @type      {number}
+     * @default   3000
+     * @apioption boost.chunkSize
+     */
+    chunkSize?: number;
+
+    /**
      * The pixel ratio for the WebGL content. If 0, the
      * `window.devicePixelRatio` is used. This ensures sharp graphics on high
      * DPI displays like Apple's Retina, as well as when a page is zoomed.
