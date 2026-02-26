@@ -164,17 +164,13 @@ function getFields(
  */
 function resolveColorValue(
     value: string,
-    contextElement?: HTMLDOMElement
+    contextElement: HTMLDOMElement
 ): { value: string, alpha: number } {
     // Convert CSS variable to hex value.
-    const varToHex = (value: string): string => {
-        if (contextElement) {
-            return window.getComputedStyle(contextElement).getPropertyValue(
-                value.slice(4, -1)
-            ).toUpperCase() || value;
-        }
-        return value;
-    };
+    const varToHex = (value: string): string => window
+        .getComputedStyle(contextElement)
+        .getPropertyValue(value.slice(4, -1))
+        .toUpperCase();
 
     // Convert rgba() value to hex value.
     const rgbaToHex = (value: string): string => {
@@ -340,10 +336,10 @@ class Popup extends BaseForm {
             );
         }
 
-        if (inputAttributes.type === 'color') {
+        if (inputAttributes.type === 'color' && this.chart?.container) {
             const { value, alpha } = resolveColorValue(
                 inputAttributes.value || '',
-                this.chart?.container
+                this.chart.container
             );
 
             const parsedOpacity = Color.parse(inputAttributes.value).rgba[3],
