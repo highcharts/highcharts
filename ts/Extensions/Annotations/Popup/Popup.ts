@@ -159,24 +159,28 @@ function getFields(
 }
 
 /**
- * Resolve CSS variables, 'color-mix()' and 'rgba()' values to hex and alpha.
+ * Resolve CSS 'var()', 'color-mix()' and 'rgba()' values to hex and alpha.
  * @internal
  */
 function resolveColorValue(
     value: string,
     contextElement?: HTMLDOMElement
-): { value?: string, alpha: number } {
-    const varToHex = (value: string): string | undefined => {
+): { value: string, alpha: number } {
+    // Convert CSS variable to hex value.
+    const varToHex = (value: string): string => {
         if (contextElement) {
             return window.getComputedStyle(contextElement).getPropertyValue(
                 value.slice(4, -1)
-            ) || value;
+            ).toUpperCase() || value;
         }
+        return value;
     };
 
-    const rgbaToHex = (value: string): string | undefined => {
-        const [r, g, b] = Color.parse(value).rgba;
-        const toHex = (n: number): string => ('0' + n.toString(16)).slice(-2);
+    // Convert rgba() value to hex value.
+    const rgbaToHex = (value: string): string => {
+        const [r, g, b] = Color.parse(value).rgba,
+            toHex = (n: number): string =>
+                ('0' + n.toString(16)).slice(-2).toUpperCase();
         return '#' + toHex(r) + toHex(g) + toHex(b);
     };
 
@@ -189,15 +193,17 @@ function resolveColorValue(
     }
 
     if (value.startsWith('color-mix(')) {
+        // Split color-mix into color1, mix ratio, color2.
         const match = value.match(
             /color-mix\(in\s+srgb,\s*(.+?)\s+(\d+%),\s*(.+)\)/
         );
         if (match) {
             const color1 = match[1].trim(),
-                alpha = parseInt(match[2], 10) / 100,
+                mix = parseInt(match[2], 10) / 100,
                 color2 = match[3].trim();
 
-            const [color1Hex, color2Hex] =
+            // Convert both colors to hex, or return raw value if not parsable.
+            const [parsedColor1, parsedColor2] =
                 [color1, color2].map((color: string): string => {
                     if (color.startsWith('var(')) {
                         return varToHex(color) || '';
@@ -208,17 +214,19 @@ function resolveColorValue(
                     return color;
                 });
 
-            if (color1Hex.startsWith('#') && color2Hex.startsWith('#')) {
+            // If both colors are hex, mix them using mix ratio.
+            if (parsedColor1.startsWith('#') && parsedColor2.startsWith('#')) {
                 return ({
-                    value: Color.parse(color1Hex).tweenTo(
-                        Color.parse(color2Hex), alpha
+                    value: Color.parse(parsedColor1).tweenTo(
+                        Color.parse(parsedColor2), mix
                     ).toString(),
                     alpha: 1
                 });
             }
 
-            if (color2 === 'transparent') {
-                return { value: color1Hex, alpha };
+            // If color2 is transparent, mix ratio becomes opacity for color1.
+            if (parsedColor2 === 'transparent') {
+                return { value: parsedColor1, alpha: mix };
             }
         }
     }
@@ -391,16 +399,15 @@ class Popup extends BaseForm {
             opacitySlider.setAttribute('max', '100');
 
             const setOpacitySliderColor = (): void => {
-                const rgba = Color.parse(textInput.value).rgba;
                 opacitySlider.style.setProperty(
                     '--highcharts-slider-rgb',
-                    `rgb(${rgba[0]},${rgba[1]},${rgba[2]})`
+                    textInput.value
                 );
             };
             setOpacitySliderColor();
 
             addEvent(colorInput, 'input', (): void => {
-                textInput.value = colorInput.value;
+                textInput.value = colorInput.value.toUpperCase();
                 setOpacitySliderColor();
             });
             addEvent(textInput, 'input', (): void => {
