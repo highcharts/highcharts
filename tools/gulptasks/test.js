@@ -437,7 +437,7 @@ specified by config.imageCapture.resultsOutputPath.
         project: projectParam
     };
 
-    const { getProductTests } = require('./lib/test');
+    const { getProductTests, getProducts } = require('./lib/test');
     const productTests = getProductTests();
 
     // If false, there's no modified products
@@ -510,58 +510,78 @@ specified by config.imageCapture.resultsOutputPath.
 
             // Determine which Playwright projects to run
             const playwrightProjects = [];
+            const affectedProducts = argv.modified ? getProducts() : null;
+            const productsToUse =
+            (affectedProducts && affectedProducts.length > 0) ?
+                affectedProducts : (argv.product ? [argv.product] : null);
 
-            if (argv.product === 'Grid') {
-                playwrightProjects.push('setup-grid-lite', 'setup-grid-pro', 'grid-lite', 'grid-pro', 'grid-shared');
-            } else if (argv.product === 'Dashboards') {
-                playwrightProjects.push('setup-dashboards', 'dashboards');
+            // Set argv.product for grep logic when using --modified with single product
+            if (argv.modified && productsToUse && productsToUse.length === 1) {
+                argv.product = productsToUse[0];
+            }
+
+            if (productsToUse) {
+                const hasGrid = productsToUse.includes('Grid');
+                const hasDashboards = productsToUse.includes('Dashboards');
+                const hasHighcharts = productsToUse.some(
+                    p => ['Core', 'Stock', 'Maps', 'Gantt', 'Accessibility'].includes(p)
+                );
+
+                if (hasGrid) {
+                    playwrightProjects.push(
+                        'setup-grid-lite', 'setup-grid-pro',
+                        'grid-lite', 'grid-pro', 'grid-shared'
+                    );
+                }
+                if (hasDashboards) {
+                    playwrightProjects.push('setup-dashboards', 'dashboards');
+                }
+                if (hasHighcharts) {
+                    playwrightProjects.push('setup-highcharts', 'highcharts', 'qunit');
+                }
+                // Always run accessibility tests (from karma-product-tests always array)
+                if ((hasGrid || hasDashboards) && !hasHighcharts) {
+                    playwrightProjects.push('setup-highcharts', 'qunit');
+                }
             } else {
                 playwrightProjects.push('setup-highcharts', 'qunit');
             }
 
-            // Always include grid-shared when running grid-lite or grid-pro individually
-            // Check if any grid project is in the list
-            const hasGridLite = playwrightProjects.includes('grid-lite');
-            const hasGridPro = playwrightProjects.includes('grid-pro');
-            if ((hasGridLite || hasGridPro) && !playwrightProjects.includes('grid-shared')) {
-                // Add required setups if not already present
-                if (hasGridLite && !playwrightProjects.includes('setup-grid-lite')) {
-                    playwrightProjects.push('setup-grid-lite');
-                }
-                if (hasGridPro && !playwrightProjects.includes('setup-grid-pro')) {
-                    playwrightProjects.push('setup-grid-pro');
-                }
-                playwrightProjects.push('grid-shared');
+            // Split projects: grep applies to ALL projects, so Grid/Dashboards must run separately
+            const gridDashProjects = ['setup-grid-lite', 'setup-grid-pro', 'grid-lite', 'grid-pro', 'grid-shared', 'setup-dashboards', 'dashboards'];
+            const hasGridOrDashboards = gridDashProjects.some(p => playwrightProjects.includes(p));
+            const qunitProjects = ['setup-highcharts', 'qunit'];
+            const hasQunit = playwrightProjects.includes('qunit');
+
+            const commands = [];
+
+            if (hasGridOrDashboards) {
+                const gridProj = gridDashProjects.filter(p => playwrightProjects.includes(p));
+                commands.push({ projects: gridProj, grep: '' });
+            }
+            if (hasQunit) {
+                const grepArg = (argv.product === 'Grid' || argv.product === 'Dashboards') ?
+                    '--grep "unit-tests/(accessibility)"' :
+                    (Array.isArray(productTests) && productTests.length > 0 ?
+                        `--grep "unit-tests/(${productTests.join('|')})"` : '');
+                commands.push({ projects: qunitProjects, grep: grepArg });
             }
 
-            // Build grep pattern for product-specific tests
-            // Skip grep for Grid/Dashboards as they use different test structure
-            let grepArg = '';
-            if (argv.product !== 'Grid' && argv.product !== 'Dashboards') {
-                if (Array.isArray(productTests) && productTests.length > 0) {
-                    // Convert product test paths to grep pattern
-                    // e.g., ['axis', 'chart'] -> '--grep "unit-tests/(axis|chart)"'
-                    const pattern = productTests.join('|');
-                    grepArg = `--grep "unit-tests/(${pattern})"`;
+            for (const { projects, grep } of commands) {
+                const projectArgs = projects.map(p => `--project=${p}`).join(' ');
+                const command = `npx playwright test ${projectArgs} ${grep}`.trim();
+                logLib.message(`Running: ${command}`);
+
+                try {
+                    await processLib.exec(command);
+                } catch (error) {
+                    if (argv.speak) {
+                        logLib.say('Tests failed!');
+                    }
+                    throw new PluginError('playwright', {
+                        message: 'Tests failed'
+                    });
                 }
-            }
-
-            const projectArgs = playwrightProjects
-                .map(p => `--project=${p}`)
-                .join(' ');
-
-            const command = `npx playwright test ${projectArgs} ${grepArg}`.trim();
-            logLib.message(`Running: ${command}`);
-
-            try {
-                await processLib.exec(command);
-            } catch (error) {
-                if (argv.speak) {
-                    logLib.say('Tests failed!');
-                }
-                throw new PluginError('playwright', {
-                    message: 'Tests failed'
-                });
             }
         }
 

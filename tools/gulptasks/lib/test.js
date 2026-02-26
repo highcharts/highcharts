@@ -55,7 +55,20 @@ function getProducts(logPaths) {
     }
 
     paths.forEach(path => {
-        // Any path part check
+        const pathParts = path.split('/');
+
+        // Docs: use directory-based matching only (avoid filename matching e.g. docs/grid/accessibility.md)
+        if (pathParts[0] === 'docs' && pathParts.length > 1) {
+            const docsSection = pathParts[1].toLowerCase();
+            if (docsSection === 'grid') {
+                mark('Grid');
+            } else if (docsSection === 'dashboards') {
+                mark('Dashboards');
+            }
+            return;
+        }
+
+        // Any path part check (for non-docs paths)
         products.forEach(productName => {
             const productNameRegex = new RegExp(productName, 'iu');
             if (productNameRegex.test(path)) {
@@ -64,8 +77,6 @@ function getProducts(logPaths) {
         });
 
         // By directory detection
-        const pathParts = path.split('/');
-
         if (pathParts.length > 2 && pathParts[0] === 'ts') {
             if (['Shared', 'Data'].indexOf(pathParts[1]) !== -1) {
                 mark('Core');
