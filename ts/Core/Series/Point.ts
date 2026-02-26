@@ -628,9 +628,16 @@ class Point {
         // Copy options directly to point
         extend(point, options as any);
 
-        point.options = point.options ?
-            extend(point.options, options as any) :
-            options;
+        // If we're updating, extend or merge existing options. If we're not
+        // allowed to mutate, merge new data into existing and return a copy,
+        // because `point.options` is a reference to `options.data[i]`.
+        if (point.options) {
+            point.options = series.chart.options.chart.allowMutatingData ?
+                extend(point.options, options as any) :
+                merge(point.options, options as any);
+        } else {
+            point.options = options;
+        }
 
         // Since options are copied into the Point instance, some accidental
         // options must be shielded (#5681)
@@ -1301,7 +1308,8 @@ class Point {
             series = point.series,
             graphic = point.graphic,
             chart = series.chart,
-            seriesOptions = series.options;
+            seriesOptions = series.options,
+            data = seriesOptions.data;
         let i: number;
         redraw = pick(redraw, true);
 
@@ -1352,13 +1360,12 @@ class Point {
 
             // Record the options to options.data. If the old or the new config
             // is an object, use point options, otherwise use raw options
-            // (#4701, #4916).
-            (seriesOptions.data as any)[i] = (
-                isObject((seriesOptions.data as any)[i], true) ||
-                    isObject(options, true)
-            ) ?
-                point.options :
-                pick(options, (seriesOptions.data as any)[i]);
+            // (#4701, #4916, #24225).
+            if (data) {
+                data[i] = (isObject(data[i], true) || isObject(options, true)) ?
+                    point.options :
+                    (options ?? data[i]);
+            }
 
             // Redraw
             series.isDirty = series.isDirtyData = true;
