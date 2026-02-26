@@ -15,11 +15,7 @@ const treeData = [
     ['brown-polar', 'polar', 'Polar Bear', 0, 6, 'polarbear-icon'],
     ['brown-polar', 'brown', 'Brown Bear', 0, 6, 'brownbear-icon']
 ].map(e => [
-    e[0],
-    e[1],
-    e[2],
-    e[3],
-    e[4], // Pass these through as is
+    e[0], e[1], e[2], e[3], e[4], // Pass these through as is
     typeof e[5] === 'string' && document.getElementById(e[5]).innerHTML // icon
 ]);
 
@@ -49,11 +45,10 @@ Highcharts.chart('container', {
     series: [
         {
             type: 'treegraph',
+            keys: ['parent', 'id', 'name', 'x', 'level', 'custom.iconSVG'],
             data: treeData,
             reversed: true,
             marker: {
-                width: 40,
-                height: 40,
                 radius: 0
             },
             link: {
@@ -80,7 +75,7 @@ Highcharts.chart('container', {
                 // Data labels for leaf nodes, the current species
                 {
                     pointFormat: `{#if point.node.isLeaf}
-                        {point.name}
+                        {point.name}<br>{point.custom.iconSVG}
                     {/if}`,
                     padding: 0,
                     crop: false,
@@ -97,64 +92,54 @@ Highcharts.chart('container', {
                     y: 10
                 }
             ],
-
             collapseButton: {
                 enabled: false
             }
         }
     ],
-
     responsive: {
-        rules: [
-            {
-                condition: {
-                    maxWidth: 500
+        rules: [{
+            condition: {
+                maxWidth: 500
+            },
+            chartOptions: {
+                chart: {
+                    marginBottom: 170,
+                    className: 'dendrogram-small'
                 },
-                chartOptions: {
-                    chart: {
-                        marginBottom: 170,
-                        className: 'dendrogram-small'
-                    },
-                    xAxis: {
-                        offset: 20
-                    },
-                    series: [
+                xAxis: {
+                    offset: 20
+                },
+                series: [{
+                    type: 'treegraph',
+                    dataLabels: [
                         {
-                            type: 'treegraph',
-                            dataLabels: [
-                                {
-                                    align: 'center'
-                                },
-                                // Smaller icons and rotated labels for small
-                                // screens
-                                {
-                                    pointFormat: `{#if point.node.isLeaf}
-                                        {point.name}
-                                    {/if}`,
-                                    rotation: 90
-                                }
-                            ]
+                            align: 'center'
+                        },
+                        // Smaller icons and rotated labels for small screens
+                        {
+                            pointFormat: `{#if point.node.isLeaf}
+                                {point.custom.iconSVG}{point.name}
+                            {/if}`,
+                            rotation: 90
                         }
                     ]
-                }
+                }]
             }
-        ]
+        }]
     }
-});
+} satisfies Highcharts.Options);
 
 // Add button functionality
 document.querySelectorAll('.button-row button').forEach(btn => {
     btn.addEventListener('click', () => {
-        const val =
-        btn.getAttribute('data-value') as 'orthogonal' | 'curved' | 'straight';
+        const val = btn.getAttribute('data-value');
         Highcharts.charts[0].series[0].update({
-            type: 'treegraph',
             link: {
-                type: val
+                type: val as ('curved' | 'orthogonal' | 'straight')
             }
-        });
-        document
-            .querySelectorAll('.button-row button')
+        } as Highcharts.SeriesTreegraphOptions);
+        document.querySelectorAll('.button-row button')
             .forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
     });
