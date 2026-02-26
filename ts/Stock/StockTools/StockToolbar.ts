@@ -227,7 +227,7 @@ class Toolbar {
                 ) {
                     submenuArrow.setAttribute('aria-expanded', false);
                     menuWrapper.style.width =
-                    (menuWrapper as any).startWidth + 'px';
+                        (menuWrapper as any).startWidth + 'px';
                     buttonWrapper.classList.remove('highcharts-current');
                     (submenuWrapper as any).style.display = 'none';
                 } else {
