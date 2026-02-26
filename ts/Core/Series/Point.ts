@@ -628,13 +628,14 @@ class Point {
         // Copy options directly to point
         extend(point, options as any);
 
-        // If we're updating, extend or merge existing options. If we're not
-        // allowed to mutate, merge new data into existing and return a copy,
-        // because `point.options` is a reference to `options.data[i]`.
+        // If we're updating, extend or merge existing options
         if (point.options) {
+            // If we're not allowed to mutate, merge new data into existing and
+            // return a copy, because `point.options` is a reference to
+            // `options.data[i]`
             point.options = series.chart.options.chart.allowMutatingData ?
-                extend(point.options, options as any) :
-                merge(point.options, options as any);
+                extend(point.options, options) :
+                merge(point.options, options);
         } else {
             point.options = options;
         }
