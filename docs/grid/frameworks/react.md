@@ -52,7 +52,7 @@ For Grid Pro, swap the imports to `@highcharts/grid-pro-react` and render
 `<Grid options={options} />`.
 
 See the live Grid Lite example [here](https://stackblitz.com/edit/highcharts-grid-lite-integration-demo).
-See the live Grid Pro example [here](https://stackblitz.com/edit/highcharts-grid-pro-integration-demo-t4b9k5os).
+See the live Grid Pro example [here](https://stackblitz.com/edit/highcharts-grid-pro-integration-demo).
 
 ## 3. Access the Grid instance (optional)
 You can access the underlying Grid instance via the `gridRef` prop or a callback:
