@@ -43,8 +43,27 @@ Grid.grid('container', {
             firstLastButtons: true,
             previousNextButtons: true,
             pageButtons: {
-                enabled: true
+                enabled: true,
+                count: 9
             }
         }
+    },
+    responsive: {
+        rules: [{
+            condition: {
+                maxWidth: 800
+            },
+            gridOptions: {
+                pagination: {
+                    controls: {
+                        firstLastButtons: false,
+                        pageButtons: {
+                            count: 5
+                        }
+                    }
+                }
+            }
+        }
+        ]
     }
 });
