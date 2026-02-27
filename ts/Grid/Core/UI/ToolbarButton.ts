@@ -26,7 +26,7 @@ import type Toolbar from './Toolbar';
 import type Button from './Button';
 import type Popup from './Popup';
 
-import { GridIconName, createGridIcon } from './SvgIcons.js';
+import { createGridIcon } from './SvgIcons.js';
 import Globals, { ClassNameKey } from '../Globals.js';
 import GridUtils from '../GridUtils.js';
 
@@ -128,7 +128,10 @@ class ToolbarButton implements Button {
             {
                 className: (
                     Globals.getClassName('button') +
-                    (this.isActive ? ' active' : '')
+                    (this.isActive ?
+                        ' ' + Globals.getClassName('buttonSelected') :
+                        ''
+                    )
                 )
             },
             wrapper
@@ -179,22 +182,29 @@ class ToolbarButton implements Button {
      * Sets the icon for the button.
      *
      * @param icon
-     * The icon to set.
+     * The icon to set (built-in name or custom name from rendering.icons).
      */
-    public setIcon(icon: GridIconName): void {
+    public setIcon(icon: string): void {
         this.icon?.remove();
-        this.icon = createGridIcon(icon);
+        const grid = this.toolbar?.grid;
+        this.icon = createGridIcon(
+            icon,
+            grid?.options?.rendering?.icons
+        );
         this.buttonEl?.appendChild(this.icon);
     }
 
     public setActive(active: boolean): void {
         this.isActive = active;
-        this.buttonEl?.classList.toggle('active', active);
-        this.renderActiveIndicator(active);
+        this.buttonEl?.classList.toggle(
+            Globals.getClassName('buttonSelected'), active
+        );
     }
 
     public setHighlighted(highlighted: boolean): void {
-        this.buttonEl?.classList.toggle('highlighted', highlighted);
+        this.buttonEl?.classList.toggle(
+            Globals.getClassName('buttonHighlighted'), highlighted
+        );
 
         const ariaExpanded = this.options.accessibility?.ariaExpanded;
         if (typeof ariaExpanded === 'boolean') {
@@ -230,30 +240,6 @@ class ToolbarButton implements Button {
      */
     protected clickHandler(event: MouseEvent): void {
         this.options.onClick?.(event, this);
-    }
-
-    /**
-     * Renders the active indicator for the button.
-     *
-     * @param render
-     * Whether the active indicator should be rendered.
-     */
-    protected renderActiveIndicator(render: boolean): void {
-        const button = this.buttonEl;
-        if (!button) {
-            return;
-        }
-
-        this.activeIndicator?.remove();
-
-        if (!render) {
-            delete this.activeIndicator;
-            return;
-        }
-
-        this.activeIndicator = makeHTMLElement('div', {
-            className: Globals.getClassName('toolbarButtonActiveIndicator')
-        }, button);
     }
 
     /**
@@ -293,9 +279,9 @@ class ToolbarButton implements Button {
  */
 export interface ToolbarButtonOptions {
     /**
-     * The icon for the button.
+     * The icon for the button (built-in name or custom from rendering.icons).
      */
-    icon: GridIconName;
+    icon: string;
 
     /**
      * The class name key for the button.
