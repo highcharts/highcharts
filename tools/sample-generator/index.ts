@@ -618,7 +618,6 @@ export async function getDemoHTML(
 }
 
 // Build chart options as a formatted JS object literal string.
-// See tools/sample-generator/README.md for before/after formatting examples.
 async function getChartOptionsLiteral(
     config: SampleGeneratorConfig,
     metaList: MetaList,
@@ -668,6 +667,27 @@ async function getChartOptionsLiteral(
     // For arrays of objects, put the open brace on the same line and reindent
     // the inner properties. Make no distinction between single lines/objects
     // and multiple lines/objects.
+    //
+    // Example:
+    // - Input:
+    //     series: [
+    //         {
+    //             type: 'line',
+    //             data: [1, 2, 3]
+    //         },
+    //         {
+    //             type: 'line',
+    //             data: [4, 5, 6]
+    //         }
+    //     ]
+    // - Output:
+    //     series: [{
+    //         type: 'line',
+    //         data: [1, 2, 3]
+    //     }, {
+    //         type: 'line',
+    //         data: [4, 5, 6]
+    //     }]
     const origChartOptions = chartOptions;
     chartOptions = chartOptions.replace(
         /\[\s*\{\s*([\s\S]*?)\s*\}\s*(,\s*\{\s*([\s\S]*?)\s*\}\s*)*\]/gu,
@@ -711,6 +731,34 @@ async function getChartOptionsLiteral(
 
     // For arrays of numbers, put them on one line. If the total line width,
     // including the indentation, exceeds 80 chars, break after commas.
+    // - Example input 1, single line:
+    //     data: [
+    //         29.9,
+    //         71.5,
+    //         106.4,
+    //         129.2
+    //     ]
+    // - Example output 1:
+    //     data: [29.9, 71.5, 106.4, 129.2]
+    // - Example input 2, multiple lines:
+    //     data: [
+    //         29.9,
+    //         71.5,
+    //         106.4,
+    //         129.2,
+    //         144,
+    //         176,
+    //         135.6,
+    //         148.5,
+    //         216.4,
+    //         194.1,
+    //         95.6
+    //     ]
+    // - Example output 2:
+    //     data: [
+    //         29.9, 71.5, 106.4, 129.2, 144, 176,
+    //         135.6, 148.5, 216.4, 194.1, 95.6
+    //     ]
     chartOptions = chartOptions.replace(
         /\[\s*((?:-?\d+(?:\.\d+)?\s*,\s*)*-?\d+(?:\.\d+)?)\s*\]/gu,
         (_match, p1, offset, string) => {
@@ -760,6 +808,35 @@ async function getChartOptionsLiteral(
 
     // Similarly, for arrays of strings, put them on one line. If the total line
     // width, including the indentation, exceeds 80 chars, break after commas.
+    // - Example input 1, single line:
+    //     categories: [
+    //         'Apples',
+    //         'Bananas',
+    //         'Oranges',
+    //         'Pears'
+    //     ]
+    // - Example output 1:
+    //     categories: ['Apples', 'Bananas', 'Oranges', 'Pears']
+    // - Example input 2, multiple lines:
+    //     categories: [
+    //         'January',
+    //         'February',
+    //         'March',
+    //         'April',
+    //         'May',
+    //         'June',
+    //         'July',
+    //         'August',
+    //         'September',
+    //         'October',
+    //         'November',
+    //         'December'
+    //     ]
+    // - Example output 2:
+    //     categories: [
+    //         'January', 'February', 'March', 'April', 'May', 'June',
+    //         'July', 'August', 'September', 'October', 'November', 'December'
+    //     ]
     chartOptions = chartOptions.replace(
         /\[\s*('(?:[^'\\]|\\.)*'\s*,\s*)*'(?:[^'\\]|\\.)*'\s*\]/gu,
         (_match, _p1, offset, string) => {

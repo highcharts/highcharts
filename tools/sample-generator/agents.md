@@ -6,6 +6,9 @@ This file describes when to run unit tests and when to add new tests for
 For generator usage and output-format examples, see
 `tools/sample-generator/README.md`.
 
+Do not remove existing comments in code, unless explicitly requested
+or required for correctness.
+
 ## Run unit tests when
 
 - You change generator logic in `index.ts`.
