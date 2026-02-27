@@ -64,7 +64,7 @@ class PaginationController {
     /**
      * The number of rows before pagination.
      */
-    private _totalItems?: number;
+    public totalItemsCount?: number;
 
 
     /* *
@@ -92,10 +92,10 @@ class PaginationController {
     * */
 
     /**
-     * Total number of items (rows)
+     * Total number of items (rows before pagination).
      */
     public get totalItems(): number {
-        return this._totalItems ?? this.querying.grid.dataTable?.rowCount ?? 0;
+        return this.totalItemsCount ?? 0;
     }
 
     /**
@@ -188,7 +188,7 @@ class PaginationController {
             rowsCountBeforePagination
         );
 
-        this._totalItems = rowsCountBeforePagination;
+        this.totalItemsCount = rowsCountBeforePagination;
 
         return new RangeModifier({
             start,

@@ -100,12 +100,6 @@ declare module '../../Series/SeriesBase' {
     }
 }
 
-declare module '../../Series/SeriesOptions' {
-    interface SeriesOptions {
-        colorKey?: string;
-    }
-}
-
 defaultOptions.colorAxis = merge(defaultOptions.xAxis, ColorAxisDefaults);
 
 /* *
@@ -373,13 +367,6 @@ class ColorAxis extends Axis implements ColorAxisBase {
 
             legend.render();
             this.chart.getMargins(true);
-
-            // If not drilling down/up
-            if (!this.chart.series.some((series): boolean | undefined =>
-                series.isDrilling
-            )) {
-                axis.isDirty = true; // Flag to fire drawChartBox
-            }
 
             // First time only
             if (!axis.added) {

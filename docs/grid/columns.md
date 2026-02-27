@@ -73,6 +73,8 @@ The `columns[].cells` option can configure the cells in individual columns. If n
 
 The end user can edit each cell in a column directly by setting the `editMode.enabled` option to true. Read more in the [Cell editing](https://www.highcharts.com/docs/grid/cell-editing) article.
 
+To add a right-click menu for cells, see the [Cell context menu](https://www.highcharts.com/docs/grid/cell-context-menu) article.
+
 Note that `className` and `format` support templating as described in [Templating](https://www.highcharts.com/docs/chart-concepts/templating), and `{value}` references the cell value.
 
 Suppose you need more advanced formatting that is not supported through templating. Use the `formatted` callback function instead. As in **Highcharts Core**, we always recommend `format` if possible. [Read more here...](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting#formatter-callbacks)
@@ -137,6 +139,7 @@ columns: [{
     sorting: {
         enabled: true,
         order: "desc",
+        orderSequence: ["desc", "asc", null],
         compare: (a, b) => ... // optionally, custom sorting logic
     }
 }]
@@ -168,9 +171,16 @@ The optional `sorting` object consists of four configuration options:
 
 - **`compare`**: Custom compare function to sort the column values. If not set, the default sorting behavior is used. It should return a negative number if `a < b`, `0` if `a === b`, and a positive number if `a > b`.
 
+- **`orderSequence`**: Controls the sorting order cycle used when the user toggles sorting from the UI.
+  The sequence can have any length, any order, and can contain duplicates. Allowed values are `'asc'`, `'desc'`, and `null`.
+  - Examples: `['asc', 'desc']`, `['asc', null, 'desc', null]`, `['asc']`, `[]`.
+  - `['asc']` keeps the column in ascending order on every click while still showing sorting UI.
+  - `[]` makes clicks no-op while keeping sortable UI.
+
 See the [API reference](https://api.highcharts.com/dashboards/#interfaces/Grid_Options.ColumnOptions#sorting).
 
 When the `enabled` option is `true`, clicking the header will toggle the sorting order.
+When `enabled` is `false`, click sorting is disabled even if `orderSequence` is set.
 
 To build a multi-column sort, hold Shift while clicking additional headers. The order is shown as a priority indicator when more than one column is active. You can also set multi-column sorting programmatically, where the order in the array determines the priority (the first element is the primary sort):
 

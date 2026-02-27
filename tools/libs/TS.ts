@@ -483,6 +483,7 @@ function addInfoFlags (
     if (
         (
             TS.isBindingElement(node) ||
+            TS.isParameter(node) ||
             TS.isParameterPropertyDeclaration(node, node.parent) ||
             TS.isTupleTypeNode(node)
         ) &&
@@ -497,11 +498,15 @@ function addInfoFlags (
         TS.isFunctionDeclaration(node) ||
         TS.isGetAccessorDeclaration(node) ||
         TS.isMethodDeclaration(node) ||
+        TS.isParameter(node) ||
         TS.isPropertyDeclaration(node) ||
         TS.isSetAccessorDeclaration(node) ||
         TS.isVariableDeclaration(node)
     ) {
-        if (node.exclamationToken) {
+        if (
+            !TS.isParameter(node) &&
+            node.exclamationToken
+        ) {
             _flags.push('assured');
         }
         if (node.questionToken) {
@@ -1548,14 +1553,12 @@ function getDocletInfosBetween (
             case TS.SyntaxKind.JSDocLink:
             case TS.SyntaxKind.JSDocLinkCode:
             case TS.SyntaxKind.JSDocLinkPlain:
-                return (
-                    '{@link ' +
-                    ((tag as TS.JSDocLink).name?.getText() || '') +
-                    tag.getText() +
-                    '}'
-                );
+                return tag.getText()
+                    // Fix line breaks
+                    .replace(/(\r\n|\n)\s+\*\s+/g, ' ');
             case TS.SyntaxKind.JSDocText:
-                return tag.getText();
+                // Text is already cleaned. getText keeps comment's '*'.
+                return (tag as TS.JSDocText).text;
             default:
                 return tag
                     .getText()
@@ -2520,7 +2523,7 @@ function getTypeAliasInfo (
  * Retrieves variable information from the given node.
  *
  * @param node
- * Node that might be a variable or assignment.
+ * Node that might be a variable, parameter, or assignment.
  *
  * @param includeNodes
  * Whether to include the TypeScript node in the information.
@@ -2534,7 +2537,10 @@ function getVariableInfo (
 ): (VariableInfo|undefined) {
 
     if (
-        !TS.isVariableDeclaration(node) ||
+        (
+            !TS.isVariableDeclaration(node) &&
+            !TS.isParameter(node)
+        ) ||
         TS.isArrayBindingPattern(node.name) || // See getDeconstructInfo
         TS.isObjectBindingPattern(node.name)
     ) {
@@ -2712,7 +2718,7 @@ function isProductRelated (
  * @return
  * Target infos as reference.
  */
-function mergeCodeInfos<T extends (CodeInfo|SourceInfo)> (
+export function mergeCodeInfos<T extends (CodeInfo|SourceInfo)> (
     targetInfo: T,
     sourceInfo: (CodeInfo|SourceInfo)
 ): T {
