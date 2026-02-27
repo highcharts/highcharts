@@ -1373,8 +1373,7 @@ class Exporting {
      * - **scale:** Scaling factor of downloaded image compared to source.
      * Default is `2`.
      * - **libURL:** URL pointing to location of dependency scripts to download
-     * on demand. Default is the exporting.libURL option of the global
-     * Highcharts options pointing to our server.
+     * on demand.
      *
      * @async
      * @internal
@@ -1506,6 +1505,12 @@ class Exporting {
                     // object URL yet since we are doing things
                     // asynchronously
                     if (!win.canvg) {
+                        if (!libURL) {
+                            throw new Error(
+                                'Image export requires canvg. Set ' +
+                                'exporting.libURL or preload canvg.'
+                            );
+                        }
                         Exporting.objectURLRevoke = true;
                         await getScript(libURL + 'canvg.js');
                     }
@@ -2723,7 +2728,7 @@ namespace Exporting {
         type: string;
         filename: string;
         scale: number;
-        libURL: string;
+        libURL?: string;
     }
 
     /**

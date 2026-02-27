@@ -341,9 +341,11 @@ export interface ExportingOptions {
      * [jsPDF](https://github.com/parallax/jsPDF) and
      * [svg2pdf.js](https://github.com/yWorks/svg2pdf.js), required for client
      * side export in certain browsers.
+     * Since v13, this option has no default and must be configured explicitly.
+     * To load dependencies from the Highcharts CDN, set it to
+     * `https://code.highcharts.com/{version}/lib/`.
      *
      * @type      {string}
-     * @default   https://code.highcharts.com/{version}/lib
      * @since     5.0.0
      * @apioption exporting.libURL
      */

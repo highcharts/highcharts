@@ -36,7 +36,6 @@ const {
     getOptions,
     setOptions
 } = D;
-import ExportingDefaults from '../Exporting/ExportingDefaults.js';
 import {
     downloadURL,
     getScript
@@ -53,6 +52,7 @@ const {
     addEvent,
     error,
     extend,
+    merge,
     pushUnique
 } = U;
 
@@ -95,7 +95,6 @@ namespace OfflineExporting {
      *
      * */
 
-    const defaultLibURL = ExportingDefaults.exporting?.libURL;
     const invalidLibURLErrorPrefix = 'Invalid exporting.libURL:';
     const missingLibWarning = 'Warning: exporting.libURL not defined, PDF ' +
         'client side export will not work';
@@ -120,7 +119,7 @@ namespace OfflineExporting {
     }
 
     /**
-     * Resolve an explicit libURL opt-in from chart/exporting options.
+     * Resolve libURL from merged chart/exporting options.
      *
      * @private
      */
@@ -128,28 +127,7 @@ namespace OfflineExporting {
         chart: Chart,
         exportingOptions?: ExportingOptions
     ): (string | undefined) {
-        const chartLibURL = chart.userOptions.exporting?.libURL;
-        if (chartLibURL) {
-            return chartLibURL;
-        }
-
-        const optionsLibURL = chart.options.exporting?.libURL;
-        const exportingLibURL = exportingOptions?.libURL;
-        if (
-            exportingLibURL &&
-            exportingLibURL !== optionsLibURL
-        ) {
-            return exportingLibURL;
-        }
-
-        if (
-            optionsLibURL &&
-            optionsLibURL !== defaultLibURL
-        ) {
-            return optionsLibURL;
-        }
-
-        return void 0;
+        return merge(chart.options.exporting, exportingOptions).libURL;
     }
 
     /**
@@ -351,8 +329,7 @@ namespace OfflineExporting {
      * - **scale:** Scaling factor of downloaded image compared to source.
      * Default is `1`.
      * - **libURL:** URL pointing to location of dependency scripts to download
-     * on demand. Default is the exporting.libURL option of the global
-     * Highcharts options pointing to our server.
+     * on demand.
      *
      * @function Highcharts.downloadSVGLocal
      * @deprecated

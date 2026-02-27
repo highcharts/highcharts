@@ -220,13 +220,14 @@ const exporting: ExportingOptions = {
      * external libraries (including [optional dependencies](https://www.highcharts.com/docs/getting-started/optional-dependencies))
      * loaded through `exporting.libURL`. These libraries are not licensed or
      * warrantied under the Highcharts license.
+     * Since v13, this option has no default and must be configured explicitly.
+     * To load dependencies from the Highcharts CDN, set it to
+     * `https://code.highcharts.com/{version}/lib/`.
      *
      * @type      {string}
-     * @default   https://code.highcharts.com/{version}/lib
      * @since     5.0.0
      * @apioption exporting.libURL
      */
-    libURL: 'https://code.highcharts.com/@product.version@/lib/',
 
     /**
      * Whether the chart should be exported using the browser's built-in
