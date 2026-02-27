@@ -119,7 +119,7 @@ interface ParallelAxesOptions extends DeepPartial<Omit<
      *
      * @default {"text":"", "reserveSpace": false}
      */
-    title?: AxisOptions['title'];
+    title: DeepPartial<AxisOptions['title']>;
 
     /**
      * @default {"x": 0, "y": 4, "align": "center", "reserveSpace": false}

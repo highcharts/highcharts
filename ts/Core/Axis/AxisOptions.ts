@@ -1971,7 +1971,7 @@ export interface AxisTitleOptions {
      *
      * @default middle
      */
-    align?: ('high'|'low'|'middle');
+    align: ('high'|'low'|'middle');
 
     /**
      * Deprecated. Set the `text` to `undefined` to disable the title.
@@ -2038,7 +2038,7 @@ export interface AxisTitleOptions {
      * @sample {highcharts} highcharts/css/axis/
      *         Styled mode
      */
-    style?: CSSObject;
+    style: CSSObject;
 
     /**
      * The actual text of the axis title. It can contain basic HTML tags
@@ -2080,7 +2080,7 @@ export interface AxisTitleOptions {
      *
      * @product highcharts highstock gantt
      */
-    useHTML?: boolean;
+    useHTML: boolean;
 
     /**
      * Horizontal pixel offset of the title position.
@@ -2088,14 +2088,14 @@ export interface AxisTitleOptions {
      * @since   4.1.6
      * @product highcharts highstock gantt
      */
-    x?: number;
+    x: number;
 
     /**
      * Vertical pixel offset of the title position.
      *
      * @product highcharts highstock gantt
      */
-    y?: number;
+    y: number;
 
 }
 
