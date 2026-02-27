@@ -1,5 +1,5 @@
 Grid.grid('container', {
-    dataTable: {
+    data: {
         columns: {
             a: Array.from({ length: 100 }, (_, i) => `A${i} quite a long text`),
             b: Array.from({ length: 100 }, (_, i) => `B${i} Lorem ipsum dolor sit amet, consectetur adipiscing elit.`), // eslint-disable-line

@@ -31,7 +31,7 @@ function generateRandomData(rows) {
 
 // Example 1: Bottom pagination (default)
 Grid.grid('container', {
-    dataTable: {
+    data: {
         columns: generateRandomData(100)
     },
     caption: {
@@ -48,7 +48,7 @@ Grid.grid('container', {
 
 // Example 2: Top pagination
 Grid.grid('container-top', {
-    dataTable: {
+    data: {
         columns: generateRandomData(100)
     },
     caption: {
@@ -65,7 +65,7 @@ Grid.grid('container-top', {
 
 // Example 3: Footer pagination (tfoot)
 Grid.grid('container-footer', {
-    dataTable: {
+    data: {
         columns: generateRandomData(100)
     },
     caption: {
@@ -82,7 +82,7 @@ Grid.grid('container-footer', {
 
 // Example 4: Custom container pagination
 Grid.grid('container-custom', {
-    dataTable: {
+    data: {
         columns: generateRandomData(100)
     },
     caption: {

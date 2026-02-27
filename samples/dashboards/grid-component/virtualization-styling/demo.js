@@ -36,13 +36,13 @@ function generateRandomData(rows) {
 const dataColumns = generateRandomData(100);
 
 const staticGrid = Grid.grid('container', {
-    dataTable: {
+    data: {
         columns: dataColumns
     }
 });
 
 const autoGrid = Grid.grid('container-noheight', {
-    dataTable: {
+    data: {
         columns: dataColumns
     }
 });
@@ -72,7 +72,7 @@ const board = Dashboards.board('dashboard-container', {
         renderTo: 'dashboard-col-1',
         type: 'Grid',
         gridOptions: {
-            dataTable: {
+            data: {
                 columns: dataColumns
             }
         }

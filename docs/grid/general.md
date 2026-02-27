@@ -29,7 +29,7 @@ Let's dive right in with a bare minimum example of a fully functional **Grid Lit
         <div id="container"></div>
         <script type="text/javascript">
             Grid.grid("container", {
-                dataTable: {
+                data: {
                     columns: {
                         product: ["Apple", "Pear", "Plum", "Banana"],
                         weight: [100, 40, 0.5, 200],
@@ -57,7 +57,7 @@ The CSS includes the necessary styles for the grid to function correctly and the
 
 ```js
 Grid.grid('container', {
-    dataTable: {
+    data: {
         columns: {
             product: ['Apple', 'Pear', 'Plum', 'Banana'],
             weight: [100, 40, 0.5, 200],
@@ -72,7 +72,7 @@ Inside the `<script>` tag, create a new instance of Grid by utilizing the `Grid.
 1. The ID of the HTML element where Grid should be rendered.
 2. The Grid configuration object.
 
-Only the `dataTable` option is required for Grid to be rendered. For more information on the configuration object, read the [Understanding Grid](https://www.highcharts.com/docs/grid/understanding-grid) article.
+Only `data.columns` is required for Grid to be rendered. For more information on the configuration object, read the [Understanding Grid](https://www.highcharts.com/docs/grid/understanding-grid) article.
 
 ### 3. Add the HTML Element
 

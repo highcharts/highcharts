@@ -23,7 +23,7 @@ class CustomColumnResizingMode extends Grid.ColumnResizing.types.independent {
 Grid.ColumnResizing.types.custom = CustomColumnResizingMode;
 
 Grid.grid('container', {
-    dataTable: {
+    data: {
         columns: {
             product: Array.from({ length: 40 }, (_, i) => `A${i}`),
             weight: Array.from({ length: 40 }, (_, i) => `B${i}`),

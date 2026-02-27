@@ -1,7 +1,7 @@
 Grid.AST.allowedTags.push('input');
 Grid.AST.allowedAttributes.push('checked');
 Grid.grid('container', {
-    dataTable: {
+    data: {
         columns: {
             ID: [1, 2, 3],
             Header: ['Title 1', 'Title 2', 'Title 3'],

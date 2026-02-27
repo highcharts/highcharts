@@ -1,7 +1,7 @@
 /* eslint-disable camelcase */
 
 Grid.grid('container', {
-    dataTable: {
+    data: {
         columns: {
             text_checkbox: [true, false, true, false, true, false, true],
             checkbox_checkbox: [true, false, true, false, true, false, true],

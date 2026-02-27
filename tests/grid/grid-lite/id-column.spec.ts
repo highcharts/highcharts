@@ -20,11 +20,9 @@ test.describe('LocalDataProvider idColumn', () => {
         const result = await page.evaluate(async () => {
             const grid = await (window as any).Grid.grid('container', {
                 data: {
-                    dataTable: {
-                        columns: {
-                            id: ['a', 'b', 'c'],
-                            name: ['Alice', 'Bob', 'Carol']
-                        }
+                    columns: {
+                        id: ['a', 'b', 'c'],
+                        name: ['Alice', 'Bob', 'Carol']
                     }
                 }
             }, true);
@@ -46,11 +44,9 @@ test.describe('LocalDataProvider idColumn', () => {
         const result = await page.evaluate(async () => {
             const grid = await (window as any).Grid.grid('container', {
                 data: {
-                    dataTable: {
-                        columns: {
-                            id: ['user-1', 'user-2', 'user-3'],
-                            name: ['Alice', 'Bob', 'Carol']
-                        }
+                    columns: {
+                        id: ['user-1', 'user-2', 'user-3'],
+                        name: ['Alice', 'Bob', 'Carol']
                     },
                     idColumn: 'id'
                 }
@@ -73,11 +69,9 @@ test.describe('LocalDataProvider idColumn', () => {
         const result = await page.evaluate(async () => {
             const grid = await (window as any).Grid.grid('container', {
                 data: {
-                    dataTable: {
-                        columns: {
-                            id: ['r1', 'r2', 'r3'],
-                            name: ['A', 'B', 'C']
-                        }
+                    columns: {
+                        id: ['r1', 'r2', 'r3'],
+                        name: ['A', 'B', 'C']
                     },
                     idColumn: 'id'
                 }

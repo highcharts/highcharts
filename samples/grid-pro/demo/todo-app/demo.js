@@ -98,7 +98,7 @@ Grid.grid('container', {
     time: {
         locale: ''
     },
-    dataTable: {
+    data: {
         columns: {
             Done: [false, false, false, false],
             Category: ['CL', 'SH', 'CL', 'GR'],
@@ -131,7 +131,7 @@ Grid.grid('container', {
     }
 });
 Grid.grid('container-done', {
-    dataTable: {
+    data: {
         columns: {
             Done: [true, true, true],
             Category: ['CK', 'GR', 'MT'],

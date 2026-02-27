@@ -525,7 +525,7 @@ function init() {
     els.rowsPerSec.value = DEFAULT_ROWS_PER_SECOND.toString();
 
     grid = Grid.grid('container', {
-        dataTable: {
+        data: {
             columns: generateColumns(ROW_COUNT, COLUMN_COUNT)
         },
         rendering: {

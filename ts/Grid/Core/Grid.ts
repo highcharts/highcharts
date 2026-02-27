@@ -31,7 +31,6 @@ import type {
     IndividualColumnOptions
 } from './Options';
 import type { DataProviderType } from './Data/DataProviderType';
-import type DataTable from '../../Data/DataTable';
 import type {
     CellType as DataTableCellType,
     Column as DataTableColumn
@@ -52,6 +51,7 @@ import QueryingController from './Querying/QueryingController.js';
 import Globals from './Globals.js';
 import TimeBase from '../../Shared/TimeBase.js';
 import Pagination from './Pagination/Pagination.js';
+import DataTable from '../../Data/DataTable.js';
 
 const {
     makeHTMLElement,
@@ -708,7 +708,9 @@ export class Grid {
                     this.options?.dataTable &&
                     this.options?.data?.providerType === 'local'
                 ) {
-                    this.options.data.dataTable = this.options.dataTable;
+                    const userDT = this.options.dataTable;
+                    this.options.data.dataTable = 'clone' in userDT ?
+                        userDT : new DataTable(userDT);
                 }
 
                 this.loadDataProvider(); // Rebuild the data provider
@@ -1508,17 +1510,19 @@ export class Grid {
         this.dataProvider?.destroy();
         this.querying.shouldBeUpdated = true;
 
+        const userDT = this.options?.dataTable;
         const dataOptions = this.options?.data ?? {
             providerType: 'local',
-            dataTable: this.options?.dataTable ?? {}
+            dataTable: userDT ?? {}
         };
 
         // Just for the backward compatibility, remove in the future
         if (
             dataOptions.providerType === 'local' &&
-            !dataOptions.dataTable && this.options?.dataTable
+            !dataOptions.dataTable && userDT
         ) {
-            dataOptions.dataTable = this.options?.dataTable;
+            dataOptions.dataTable = 'clone' in userDT ?
+                userDT : new DataTable(userDT);
         }
         // End of backward compatibility snippet
 
@@ -1754,9 +1758,7 @@ export class Grid {
 
         if (options.data?.providerType === 'local') {
             if (options.data?.dataTable && 'clone' in options.data.dataTable) {
-                options.data.dataTable = {
-                    columns: options.data.dataTable.columns
-                };
+                options.data.columns = options.data.dataTable.columns;
             }
 
             if (

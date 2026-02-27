@@ -5,7 +5,7 @@ const show = document.getElementById('show');
 outer.style.display = 'none';
 
 Grid.grid('container', {
-    dataTable: {
+    data: {
         columns: {
             a: [1, 2, 3, 4],
             b: [1, 2, 3, 4]

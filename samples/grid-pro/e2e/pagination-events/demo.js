@@ -32,7 +32,7 @@ function generateRandomData(rows) {
 
 
 Grid.grid('container', {
-    dataTable: {
+    data: {
         columns: generateRandomData(254)
     },
     pagination: {

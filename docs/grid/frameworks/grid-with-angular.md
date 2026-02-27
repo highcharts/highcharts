@@ -44,7 +44,7 @@ import '@highcharts/grid-lite/css/grid-lite.css';
 })
 export class AppComponent implements OnInit {
     private options: Grid.Options = {
-        dataTable: {
+        data: {
             columns: {
                 name: ['Alice', 'Bob', 'Charlie', 'David'],
                 age: [23, 34, 45, 56],

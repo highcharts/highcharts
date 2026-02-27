@@ -3,7 +3,7 @@ const jsonBtn = document.querySelector('#jsonExport');
 const result = document.querySelector('#result');
 
 const grid = Grid.grid('container', {
-    dataTable: {
+    data: {
         columns: {
             product: ['Apples', 'Pears', 'Plums', 'Bananas'],
             weight: [100, 40, 0.5, 200],

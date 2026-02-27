@@ -11,7 +11,7 @@ To enable pagination in your Grid, you can use either `pagination: true` for def
 ```js
 // Using default settings
 Grid.grid('container', {
-    dataTable: {
+    data: {
         columns: {
             product: ["Apple", "Pear", "Orange", "Banana", "Grape", "Mango"],
             weight: [182, 178, 150, 120, 85, 200],
@@ -23,7 +23,7 @@ Grid.grid('container', {
 
 // Using custom configuration
 Grid.grid('container', {
-    dataTable: {
+    data: {
         columns: {
             product: ["Apple", "Pear", "Orange", "Banana", "Grape", "Mango"],
             weight: [182, 178, 150, 120, 85, 200],
@@ -237,7 +237,7 @@ grid.pagination.setPageSize(25);
 **Example:**
 ```js
 const grid = Grid.grid('container', {
-    dataTable: { /* your data */ },
+    data: { columns: { /* your data */ } },
     pagination: { enabled: true }
 });
 

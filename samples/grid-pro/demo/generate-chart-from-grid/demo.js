@@ -3,7 +3,7 @@ let chart = null; // Chart is not created initially
 const activeCols = new Set();
 
 Grid.grid('grid', {
-    dataTable: {
+    data: {
         columns: {
             Year: [
                 2010, 2011, 2012, 2013, 2014, 2015,

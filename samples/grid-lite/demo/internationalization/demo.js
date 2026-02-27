@@ -199,7 +199,7 @@ const grid = Grid.grid('container', {
     lang: languages.en.lang,
     caption: languages.en.caption,
     header: languages.en.header,
-    dataTable: {
+    data: {
         columns: {
             id: [1, 2, 3, 4],
             productEN: ['Apple', 'Pear', 'Plum', 'Banana'],
