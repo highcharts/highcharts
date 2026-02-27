@@ -9,22 +9,20 @@ The following provides an introduction to the various root configuration objects
 ```js
 {
     data: {
-        dataTable: {
-            columns: {
-                product: ["Apple", "Pear", "Orange", "Banana"],
-                weight: [182, 178, 150, 120],
-                price: [3.5, 2.5, 3, 2.2],
-                vitamin_a: [54,27,225,64]
-            }
+        columns: {
+            product: ["Apple", "Pear", "Orange", "Banana"],
+            weight: [182, 178, 150, 120],
+            price: [3.5, 2.5, 3, 2.2],
+            vitamin_a: [54,27,225,64]
         }
     }
 }
 ```
 
-The `data` object defines how Grid receives, prepares, and updates data. The only required option for rendering is `data.dataTable`. You can pass either serialized options (from which Grid creates a `DataTable`) or an existing `DataTable` instance. The DataTable class stores key-value pairs: each key becomes a header label, and each value is an array with the corresponding column values. When users edit cells (for example via edit mode), Grid writes changes back through the configured data provider.
+The `data` object defines how Grid receives, prepares, and updates data. For column data, use `data.columns` (an object where each key is a column ID and each value is an array of cell values). Alternatively, pass an existing `DataTable` instance via `data.dataTable`. The DataTable class stores key-value pairs: each key becomes a header label, and each value is an array with the corresponding column values. When users edit cells (for example via edit mode), Grid writes changes back through the configured data provider.
 Read more about [data handling and the DataTable class](https://www.highcharts.com/docs/dashboards/data-table).
 
-Instead of `dataTable`, you can also use data connectors for loading data.
+Instead of `data.columns` or `data.dataTable`, you can also use data connectors for loading data.
 
 ```js
 {
@@ -46,7 +44,7 @@ Grid reads and writes data through a data provider. The default `LocalDataProvid
 
 ### Data modifiers
 
-Alternatively to serializable options, you can pass a reference to the [DataTable](https://www.highcharts.com/docs/dashboards/data-table) you want to use when rendering the Grid. This lets you, for example, apply a [Math Modifier](https://www.highcharts.com/docs/dashboards/mathmodifier-module) from Highcharts Dashboards library to it beforehand to add a new column whose values are the result of a mathematical operation on one or more existing columns.
+When you have an existing [DataTable](https://www.highcharts.com/docs/dashboards/data-table) instance (for example, one created with a [Math Modifier](https://www.highcharts.com/docs/dashboards/mathmodifier-module) from Highcharts Dashboards library to add computed columns), pass it via `data.dataTable`.
 
 You can read more about Data Modifiers [here](https://www.highcharts.com/docs/dashboards/data-modifiers).
 
@@ -157,7 +155,7 @@ Use `responsive.rules` to apply different Grid options at different container si
 
 ```js
 Grid.grid('container', {
-    data: { dataTable: { columns: data } },
+    data: { columns: data },
     responsive: {
         rules: [{
             condition: { maxWidth: 800 },

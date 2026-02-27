@@ -512,7 +512,10 @@ specified by config.imageCapture.resultsOutputPath.
             const playwrightProjects = [];
 
             if (argv.product === 'Grid') {
-                playwrightProjects.push('setup-grid-lite', 'setup-grid-pro', 'grid-lite', 'grid-pro', 'grid-shared');
+                playwrightProjects.push(
+                    'setup-highcharts', 'setup-grid-lite', 'setup-grid-pro',
+                    'grid-lite', 'grid-pro', 'grid-shared'
+                );
             } else if (argv.product === 'Dashboards') {
                 playwrightProjects.push('setup-dashboards', 'dashboards');
             } else {

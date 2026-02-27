@@ -10,7 +10,7 @@ Let's look at a basic example that produces the illustration above:
 
 ```js
 {
-    dataTable: {
+    data: {
         columns: {
             product: ["Apple", "Pear"],
             weight: [182, 178],

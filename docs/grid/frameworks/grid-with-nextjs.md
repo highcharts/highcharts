@@ -41,7 +41,7 @@ const Grid = dynamic(
 
 export default function Page() {
     const [options] = useState<GridOptions>({
-        dataTable: {
+        data: {
             columns: {
                 name: ['Alice', 'Bob', 'Charlie', 'David'],
                 age: [23, 34, 45, 56],
@@ -77,7 +77,7 @@ const Grid = dynamic(
 
 export default function Page() {
     const [options] = useState<GridOptions>({
-        dataTable: {
+        data: {
             columns: {
                 name: ['Alice', 'Bob', 'Charlie', 'David'],
                 age: [23, 34, 45, 56]
@@ -126,7 +126,7 @@ const Grid = dynamic(
 
 export default function Page() {
     const [options, setOptions] = useState<GridOptions>({
-        dataTable: {
+        data: {
             columns: {
                 name: ['Alice', 'Bob'],
                 age: [23, 34]
@@ -136,7 +136,7 @@ export default function Page() {
 
     const loadNewData = () => {
         setOptions({
-            dataTable: {
+            data: {
                 columns: {
                     name: ['Charlie', 'Diana', 'Eve'],
                     age: [45, 56, 67]

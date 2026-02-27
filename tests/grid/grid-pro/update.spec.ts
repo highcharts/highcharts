@@ -22,7 +22,7 @@ test('Grid partial update: columns[].sorting.order', async ({ page }) => {
         }
 
         const grid = await (window as any).Grid.grid(parentElement, {
-            dataTable: {
+            data: {
                 columns: {
                     product: ['Apples', 'Pears', 'Plums', 'Bananas', 'Cherries', 'Figs'],
                     weight: [100, 40, 0.5, 200, 10, 20],
@@ -90,7 +90,7 @@ test('Grid partial update: columns[].filtering.condition and value', async ({ pa
         }
 
         const grid = await (window as any).Grid.grid(parentElement, {
-            dataTable: {
+            data: {
                 columns: {
                     product: ['Apples', 'Pears', 'Plums', 'Bananas', 'Cherries', 'Figs'],
                     weight: [100, 40, 0.5, 200, 10, 20],
@@ -169,7 +169,7 @@ test('Grid partial update: columns[].width', async ({ page }) => {
         }
 
         const grid = await (window as any).Grid.grid(parentElement, {
-            dataTable: {
+            data: {
                 columns: {
                     product: ['Apples', 'Pears', 'Plums', 'Bananas', 'Cherries', 'Figs'],
                     weight: [100, 40, 0.5, 200, 10, 20],
@@ -230,7 +230,7 @@ test('Grid partial update: pagination.page and pageSize', async ({ page }) => {
         }
 
         const grid = await (window as any).Grid.grid(parentElement, {
-            dataTable: {
+            data: {
                 columns: {
                     product: ['Apples', 'Pears', 'Plums', 'Bananas', 'Cherries', 'Figs'],
                     weight: [100, 40, 0.5, 200, 10, 20],
@@ -299,7 +299,7 @@ test('Grid full update: pagination.enabled', async ({ page }) => {
         }
 
         const grid = await (window as any).Grid.grid(parentElement, {
-            dataTable: {
+            data: {
                 columns: {
                     product: ['Apples', 'Pears', 'Plums', 'Bananas', 'Cherries', 'Figs'],
                     weight: [100, 40, 0.5, 200, 10, 20],

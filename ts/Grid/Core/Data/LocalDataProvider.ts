@@ -23,7 +23,7 @@
  * */
 
 import type { DataProviderOptions, RowId } from './DataProvider';
-import type DataTableOptions from '../../../Data/DataTableOptions';
+import { DataTableValue } from '../../../Data/DataTableOptions';
 import type { ColumnDataType } from '../Table/Column';
 import type {
     RowObject as RowObjectType,
@@ -34,7 +34,7 @@ import type DataConnectorType from '../../../Data/Connectors/DataConnectorType';
 import type {
     DataConnectorTypeOptions
 } from '../../../Data/Connectors/DataConnectorType';
-import type { MakeOptional } from '../../../Shared/Types';
+import type { MakeOptional, TypedArray } from '../../../Shared/Types';
 
 import { DataProvider } from './DataProvider.js';
 import DataTable from '../../../Data/DataTable.js';
@@ -145,12 +145,12 @@ export class LocalDataProvider extends DataProvider {
             return;
         }
 
-        const tableOptions = this.options.dataTable;
-
-        // If the table is passed as a reference, it should be used instead of
-        // creating a new one.
-        const dataTable = tableOptions && 'clone' in tableOptions ?
-            tableOptions : new DataTable(tableOptions || {});
+        let dataTable = this.options.dataTable;
+        if (!dataTable) {
+            dataTable = new DataTable({
+                columns: this.options.columns ?? {}
+            });
+        }
 
         this.setDataTable(dataTable);
     }
@@ -510,14 +510,19 @@ export interface LocalDataProviderOptions extends DataProviderOptions {
     providerType?: 'local';
 
     /**
-     * The data table used by the provider.
+     * Data table as a source of data for the grid.
      */
-    dataTable?: DataTable | DataTableOptions;
+    dataTable?: DataTable;
 
     /**
      * Connector instance or options used to populate the data table.
      */
     connector?: GridDataConnectorTypeOptions | DataConnectorType;
+
+    /**
+     * Columns data to initialize the Grid with.
+     */
+    columns?: Record<string, Array<DataTableValue> | TypedArray>;
 
     /**
      * Automatically update the grid when the data table changes. It is disabled

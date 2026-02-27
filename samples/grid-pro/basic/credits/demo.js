@@ -13,7 +13,7 @@ const dataTable = new Grid.DataTable({
 });
 
 Grid.grid('container', {
-    dataTable: dataTable
+    data: { dataTable: dataTable }
 }, true).then(grid => {
     const credits = grid.options.credits;
 
@@ -24,7 +24,7 @@ Grid.grid('container', {
 
     document.getElementById('no-data-cbx').addEventListener('change', e => {
         grid.update({
-            dataTable: e.target.checked ? {} : dataTable
+            data: e.target.checked ? { columns: {} } : { dataTable: dataTable }
         });
     });
 
