@@ -314,7 +314,7 @@ class Pagination {
     }
 
     private getAlignmentClass(): string {
-        const alignment = this.options?.alignment || '';
+        const alignment = this.options?.align || '';
 
         return alignmentClassName(alignment);
     }

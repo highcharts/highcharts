@@ -42,7 +42,7 @@ Grid.grid('container', {
     pagination: {
         enabled: true,
         pageSize: 10,
-        alignment: 'center',
+        align: 'distributed',
         controls: {
             pageSizeSelector: true,
             pageInfo: true,
