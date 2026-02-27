@@ -34,15 +34,9 @@ Grid.grid('container', {
     dataTable: {
         columns: generateRandomData(120)
     },
-    rendering: {
-        rows: {
-            minVisibleRows: 10
-        }
-    },
     pagination: {
         enabled: true,
         pageSize: 10,
-        align: 'distributed',
         controls: {
             pageSizeSelector: true,
             pageInfo: true,

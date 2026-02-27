@@ -1,8 +1,21 @@
 @import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-lite/css/grid-lite.css");
 
+#container,
+#custom-position,
 .content,
 .highcharts-controls-wrapper {
-    padding: 0 10px;
+    margin: 10px;
+}
+
+#custom-position {
+    margin-bottom: 20px;
+}
+
+.highcharts-light .custom-pagination-theme {
+    --hcg-pagination-background: #fff7f7;
+    --hcg-color: #8c4e4e;
+    --hcg-button-color: #8c4e4e;
+    --hcg-pagination-button-selected-background: #8c4e4e;
 }
 
 highcharts-controls {
