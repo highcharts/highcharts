@@ -356,6 +356,7 @@ input.highcharts-input-search-indicators {
     gap: 8px;
     align-items: center;
     width: 100%;
+    height: 32px;
     margin-bottom: 10px;
 }
 
@@ -365,6 +366,8 @@ input.highcharts-input-search-indicators {
 .highcharts-popup-color-wrapper .highcharts-popup-opacity-number {
     float: none;
     margin-bottom: 0;
+    height: 32px;
+    box-sizing: border-box;
 }
 
 .highcharts-popup-color-wrapper .highcharts-popup-opacity-number {
@@ -377,7 +380,6 @@ input.highcharts-input-search-indicators {
 .highcharts-popup-color-wrapper .highcharts-popup-field-color {
     flex-shrink: 0;
     width: 40px;
-    height: 32px;
     padding: 2px;
     cursor: pointer;
 }
@@ -394,6 +396,8 @@ input.highcharts-input-search-indicators {
     margin-left: 8px;
     padding: 0;
     cursor: pointer;
+    display: flex;
+    align-items: center;
     --highcharts-slider-rgb: #000000;
 }
 
