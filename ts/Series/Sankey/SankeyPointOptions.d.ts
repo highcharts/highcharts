@@ -60,7 +60,16 @@ export interface SankeyPointOptions extends ColumnPointOptions, NodesComposition
      */
     from?: string;
 
+    /**
+     * Whether the node is disabled.
+     *
+     * @product highcharts
+     */
+    disabled?: boolean;
+
     height?: number;
+
+    minHeight?: number;
 
     level?: number;
 

@@ -26,6 +26,7 @@ import U from '../../Core/Utilities.js';
 const {
     defined,
     getAlignFactor,
+    pick,
     relativeLength
 } = U;
 
@@ -114,6 +115,38 @@ namespace SankeyColumnComposition {
 
         public series: SankeySeries;
 
+        private isNodeDisabled(node: SankeyPoint): boolean {
+            return this.series.type === 'sankey' && !!node.options.disabled;
+        }
+
+        private getNodeHeight(
+            node: SankeyPoint,
+            factor: number
+        ): number {
+            if (this.isNodeDisabled(node)) {
+                return this.series.options.disabledNodeHeight || 0;
+            }
+            const minNodeHeight = pick(
+                node.options.minHeight,
+                this.series.options.minNodeHeight,
+                0
+            );
+            return Math.max(
+                node.getSum() * factor,
+                this.series.options.minLinkWidth || 0,
+                minNodeHeight
+            );
+        }
+
+        private getEnabledSum(): number {
+            return this.points.reduce((
+                sum: number,
+                node: SankeyPoint
+            ): number => (
+                this.isNodeDisabled(node) ? sum : sum + node.getSum()
+            ), 0);
+        }
+
         /* *
          *
          *  Functions
@@ -136,7 +169,11 @@ namespace SankeyColumnComposition {
             const column = this.points,
                 nodes = column.slice(),
                 chart = series.chart,
-                minLinkWidth = series.options.minLinkWidth || 0;
+                minLinkWidth = series.options.minLinkWidth || 0,
+                disabledNodeHeight = series.options.disabledNodeHeight || 0,
+                disabledNodes = nodes.filter(
+                    (node): boolean => this.isNodeDisabled(node)
+                );
 
             let skipPoint: boolean,
                 factor = 0,
@@ -144,20 +181,36 @@ namespace SankeyColumnComposition {
                 remainingHeight = (
                     (chart.plotSizeY || 0) -
                     (series.options.borderWidth || 0) -
-                    (column.length - 1) * series.nodePadding
+                    (column.length - 1) * series.nodePadding -
+                    disabledNodes.length * disabledNodeHeight
                 );
+
+            remainingHeight = Math.max(0, remainingHeight);
+
+            const enabledNodes = nodes.filter(
+                (node): boolean => !this.isNodeDisabled(node)
+            );
+
+            if (!enabledNodes.length) {
+                return Infinity;
+            }
 
             // Because the minLinkWidth option doesn't obey the direct
             // translation, we need to run translation iteratively, check
             // node heights, remove those nodes affected by minLinkWidth,
             // check again, etc.
-            while (column.length) {
-                factor = remainingHeight / column.sankeyColumn.sum();
+            while (enabledNodes.length) {
+                const enabledSum = enabledNodes.reduce((
+                    sum: number,
+                    node: SankeyPoint
+                ): number => (sum + node.getSum()), 0);
+
+                factor = enabledSum ? remainingHeight / enabledSum : Infinity;
                 skipPoint = false;
-                i = column.length;
+                i = enabledNodes.length;
                 while (i--) {
-                    if (column[i].getSum() * factor < minLinkWidth) {
-                        column.splice(i, 1);
+                    if (enabledNodes[i].getSum() * factor < minLinkWidth) {
+                        enabledNodes.splice(i, 1);
                         remainingHeight =
                             Math.max(0, remainingHeight - minLinkWidth);
                         skipPoint = true;
@@ -166,13 +219,6 @@ namespace SankeyColumnComposition {
                 if (!skipPoint) {
                     break;
                 }
-            }
-
-            // Re-insert original nodes
-            column.length = 0;
-
-            for (const node of nodes) {
-                column.push(node);
             }
 
             return factor;
@@ -200,11 +246,7 @@ namespace SankeyColumnComposition {
                     if (height > 0) {
                         height += nodePadding;
                     }
-                    const nodeHeight = Math.max(
-                        node.getSum() * factor,
-                        series.options.minLinkWidth || 0
-                    );
-                    height += nodeHeight;
+                    height += this.getNodeHeight(node, factor);
                     return height;
                 }, 0);
 
@@ -245,10 +287,7 @@ namespace SankeyColumnComposition {
                     const nodeWidth = equalNodes ?
                         maxNodesLength / node.series.nodes.length -
                             nodePadding :
-                        Math.max(
-                            node.getSum() * factor,
-                            series.options.minLinkWidth || 0
-                        );
+                        this.getNodeHeight(node, factor);
                     width += nodeWidth;
                     return width;
                 }, 0);
@@ -268,12 +307,7 @@ namespace SankeyColumnComposition {
          * Sum of all nodes inside column
          */
         public sum(): number {
-            return this.points.reduce((
-                sum: number,
-                node: SankeyPoint
-            ): number => (
-                sum + node.getSum()
-            ), 0);
+            return this.getEnabledSum();
         }
 
         /**
@@ -306,11 +340,7 @@ namespace SankeyColumnComposition {
             }
 
             for (let i = 0; i < column.length; i++) {
-                const sum = column[i].getSum();
-                const height = Math.max(
-                    sum * factor,
-                    series.options.minLinkWidth || 0
-                );
+                const height = this.getNodeHeight(column[i], factor);
                 const directionOffset = node.options[
                         series.chart.inverted ?
                             'offsetHorizontal' :
@@ -318,7 +348,7 @@ namespace SankeyColumnComposition {
                     ],
                     optionOffset = node.options.offset || 0;
 
-                if (sum) {
+                if (height) {
                     totalNodeOffset = height + nodePadding;
                 } else {
                     // If node sum equals 0 nodePadding is missed #12453
