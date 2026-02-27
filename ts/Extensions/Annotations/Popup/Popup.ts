@@ -450,13 +450,19 @@ class Popup extends BaseForm {
             wrapper
         ) as HTMLInputElement;
 
-        const setOpacitySliderColor = (): void => {
-            opacitySlider.style.setProperty(
-                '--highcharts-slider-rgb',
-                textInput.value
-            );
+        const updateOpacityInputsAttribs = (): void => {
+            const isHex = /^#[0-9A-Fa-f]{6}$/.test(textInput.value);
+            opacitySlider.style.display = isHex ? '' : 'none';
+            opacityNumberInput.style.display = isHex ? '' : 'none';
+            if (isHex) {
+                opacitySlider.style.setProperty(
+                    '--highcharts-slider-rgb',
+                    textInput.value
+                );
+            }
         };
-        setOpacitySliderColor();
+
+        updateOpacityInputsAttribs();
 
         addEvent(opacitySlider, 'input', (): void => {
             opacityNumberInput.value = String(
@@ -470,11 +476,11 @@ class Popup extends BaseForm {
         });
         addEvent(colorInput, 'input', (): void => {
             textInput.value = colorInput.value.toUpperCase();
-            setOpacitySliderColor();
+            updateOpacityInputsAttribs();
         });
         addEvent(textInput, 'input', (): void => {
             colorInput.value = textInput.value;
-            setOpacitySliderColor();
+            updateOpacityInputsAttribs();
         });
 
         return wrapper;
