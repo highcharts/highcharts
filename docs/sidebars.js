@@ -123,37 +123,67 @@ module.exports = {
             'grid/general',
             'grid/installation',
             'grid/understanding-grid',
-            'grid/columns',
-            'grid/header',
-            'grid/cell-editing',
-            'grid/cell-renderers',
-            'grid/cell-context-menu',
-            'grid/sparklines',
-            'grid/column-filtering',
-            'grid/events',
-            'grid/exporting',
-            'grid/pagination',
             {
-                'Theming': [
-                    'grid/theming/theming',
-                    'grid/theming/theming-variables',
-                    'grid/theming/conditional-theming',
+                'Columns': [
+                    'grid/columns/index',
+                    'grid/columns/header',
+                    'grid/columns/grouping',
+                    'grid/columns/resizing-and-width',
+                    'grid/columns/sorting',
+                    'grid/columns/filtering'
                 ]
             },
-            'grid/performance',
+            {
+                'Rows': [
+                    'grid/rows/index',
+                    'grid/rows/data',
+                    'grid/rows/sorting',
+                    'grid/rows/pagination',
+                    'grid/rows/virtualization',
+                    'grid/rows/performance'
+                ]
+            },
+            {
+                'Cells': [
+                    'grid/cells/index',
+                    'grid/cells/formatting',
+                    'grid/cells/context-menu'
+                ]
+            },
+            {
+                'Editing': [
+                    'grid/editing/index',
+                    'grid/editing/renderers',
+                    'grid/editing/validation',
+                    'grid/editing/custom-renderers'
+                ]
+            },
+            {
+                'Theming': [
+                    'grid/theming/index',
+                    'grid/theming/variables',
+                    'grid/theming/conditional',
+                ]
+            },
+            'grid/data-providers',
+            'grid/events',
             'grid/accessibility',
+            'grid/exporting',
+            'grid/sparklines',
             {
                 'Frameworks': [
-                    'grid/frameworks/grid-with-angular',
-                    'grid/frameworks/grid-with-nextjs',
-                    'grid/frameworks/grid-with-react',
-                    'grid/frameworks/grid-with-vue'
+                    'grid/frameworks/index',
+                    'grid/frameworks/angular',
+                    'grid/frameworks/nextjs',
+                    'grid/frameworks/react',
+                    'grid/frameworks/vue'
                 ]
             }
         ],
         'Chart and series types': [
             'chart-and-series-types/chart-types',
             'chart-and-series-types/combining-chart-types',
+            'chart-and-series-types/contour',
             'chart-and-series-types/3d-cylinder',
             'chart-and-series-types/funnel-3d',
             'chart-and-series-types/pyramid-3d',
@@ -310,10 +340,34 @@ module.exports = {
         ],
         'React integration': [
             'react/getting-started',
-            'react/series-and-chart-types',
-            'react/options',
+            {
+                'Components': [
+                    'react/components/chart',
+                    'react/components/series-types',
+                    {
+                        'Chart elements': [
+                            'react/components/chart-elements/accessibility',
+                            'react/components/chart-elements/credits',
+                            'react/components/chart-elements/data',
+                            'react/components/chart-elements/drilldown',
+                            'react/components/chart-elements/exporting',
+                            'react/components/chart-elements/legend',
+                            'react/components/chart-elements/plot-options',
+                            'react/components/chart-elements/subtitle',
+                            'react/components/chart-elements/title',
+                            'react/components/chart-elements/tooltip',
+                            'react/components/chart-elements/x-axis',
+                            'react/components/chart-elements/y-axis'
+                        ]
+                    },
+                    'react/components/technical-indicators'
+                ]
+            },
+            'react/data-handling',
+            'react/chart-instance',
             'react/options-component-format',
             'react/nextjs',
+            'react/bundling-and-tree-shaking',
             'react/component-children',
             'react/v4-migration-guide'
         ]

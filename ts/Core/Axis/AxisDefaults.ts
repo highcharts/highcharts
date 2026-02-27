@@ -413,6 +413,18 @@ namespace AxisDefaults {
          */
 
         /**
+         * The number of milliseconds to wait until the crosshair is shown when
+         * the mouse is over a point. Works on initial hover.
+         *
+         * @sample {highcharts|highstock} highcharts/tooltip/showdelay/
+         *
+         * @type      {number}
+         * @default   0
+         * @since     next
+         * @apioption xAxis.crosshair.showDelay
+         */
+
+        /**
          * Whether the crosshair should snap to the point or follow the pointer
          * independent of points.
          *

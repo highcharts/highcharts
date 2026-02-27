@@ -1,6 +1,14 @@
 {
-    "extends": "../.stylelintrc.json",
-    "rules": {
-        "length-zero-no-unit": [true, { "ignore": ["custom-properties"] }]
-    }
+    "overrides": [{
+        "files": ["grid/**/*.css"],
+        "rules": {
+            "length-zero-no-unit": [true, { "ignore": ["custom-properties"] }],
+            "max-line-length": null
+        }
+    }, {
+        "files": ["grid/grid.css"],
+        "rules": {
+            "comment-empty-line-before": null
+        }
+    }]
 }

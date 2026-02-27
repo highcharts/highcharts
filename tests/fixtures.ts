@@ -29,7 +29,7 @@ const contentTypes: Record<string, string> = {
 async function replaceHCCode(route: Route) {
     const url = route.request().url();
     let relativePath = url.split('/code.highcharts.com/')[1]
-        .replace(/^(stock|maps|gantt|grid)\//u, '');
+        .replace(/^(stock|maps|gantt)\//u, '');
 
     if (relativePath.endsWith('.js') && !relativePath.endsWith('.src.js')) {
         relativePath = relativePath.replace('.js', '.src.js');
@@ -98,16 +98,100 @@ async function replaceHCCode(route: Route) {
         }
     }
 
+    let resolvedRelativePath = relativePath;
+    let resolvedRootPath = rootPath;
+
+    if (
+        rootPath === 'code' &&
+        relativePath.startsWith('dashboards/css/') &&
+        relativePath.endsWith('.css')
+    ) {
+        const cssTail = relativePath.replace(/^dashboards\/css\//u, '');
+        const dashboardsGridCss = join('css', 'grid', cssTail);
+        const dashboardsGridCssPath = join(
+            __dirname,
+            '..',
+            dashboardsGridCss
+        );
+
+        if (existsSync(dashboardsGridCssPath)) {
+            resolvedRootPath = '';
+            resolvedRelativePath = dashboardsGridCss;
+        }
+    }
+
+    if (
+        rootPath === 'code' &&
+        relativePath.startsWith('grid/') &&
+        relativePath.endsWith('.css')
+    ) {
+        const cssTail = relativePath.replace(/^grid\//u, '');
+        const gridModulesCss = join('grid', 'css', 'modules', cssTail);
+        const gridModulesCssPath = join(
+            __dirname,
+            '..',
+            rootPath,
+            gridModulesCss
+        );
+
+        if (existsSync(gridModulesCssPath)) {
+            resolvedRelativePath = gridModulesCss;
+        } else {
+            const gridCssCandidate = join('grid', 'css', cssTail);
+            const gridCssPath = join(
+                __dirname,
+                '..',
+                rootPath,
+                gridCssCandidate
+            );
+
+            if (existsSync(gridCssPath)) {
+                resolvedRelativePath = gridCssCandidate;
+            } else {
+                const sourceGridCss = join('css', 'grid', cssTail);
+                const sourceGridCssPath = join(
+                    __dirname,
+                    '..',
+                    sourceGridCss
+                );
+
+                if (existsSync(sourceGridCssPath)) {
+                    resolvedRootPath = '';
+                    resolvedRelativePath = sourceGridCss;
+                }
+            }
+        }
+    }
+
+    if (
+        rootPath === 'code' &&
+        relativePath.startsWith('css/') &&
+        relativePath.endsWith('.css')
+    ) {
+        const cssTail = relativePath.replace(/^css\//u, '');
+        const dashboardsGridCss = join('css', 'grid', cssTail);
+        const dashboardsGridCssPath = join(
+            __dirname,
+            '..',
+            dashboardsGridCss
+        );
+
+        if (existsSync(dashboardsGridCssPath)) {
+            resolvedRootPath = '';
+            resolvedRelativePath = dashboardsGridCss;
+        }
+    }
+
     const localPath = join(
         __dirname,
         '..',
-        rootPath,
-        relativePath
+        resolvedRootPath,
+        resolvedRelativePath
     );
 
     test.info().annotations.push({
         type: 'redirect',
-        description: `${url} --> ${join('code', relativePath)}`
+        description: `${url} --> ${join(resolvedRootPath, resolvedRelativePath)}`
     });
 
     try {

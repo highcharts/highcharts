@@ -6,7 +6,7 @@ test.describe('Column distribution strategies', () => {
     });
 
     test.beforeEach(async ({ page }) => {
-        await page.goto('/grid-lite/cypress/column-resizing-mode', { waitUntil: 'networkidle' });
+        await page.goto('/grid-lite/e2e/column-resizing-mode', { waitUntil: 'networkidle' });
         // Wait for Grid to be initialized
         await page.waitForFunction(() => {
             return typeof (window as any).Grid !== 'undefined' &&

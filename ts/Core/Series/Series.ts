@@ -1658,7 +1658,6 @@ class Series {
         // First try to run Point.update which is cheaper, allows animation, and
         // keeps references to points.
         if (
-            chart.options.chart.allowMutatingData &&
             updatePoints !== false &&
             dataLength &&
             oldDataLength &&

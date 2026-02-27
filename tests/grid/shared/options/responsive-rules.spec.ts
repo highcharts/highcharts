@@ -25,7 +25,7 @@ test.describe('Responsive rules', () => {
     };
 
     test.beforeEach(async ({ page }) => {
-        await page.goto('grid-lite/cypress/responsive-rules');
+        await page.goto('grid-lite/e2e/responsive-rules');
     });
 
     test('should render desktop layout by default', async ({ page }) => {

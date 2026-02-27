@@ -176,7 +176,7 @@ declare module '../../Core/Chart/ChartBase' {
          *
          * @deprecated 11.4.1
          */
-        getSVG(chartOptions?: Partial<Options>): (string | void);
+        getSVG(chartOptions?: Partial<Options>): string | void;
 
         /**
          * Deprecated in favor of [Exporting.print](https://api.highcharts.com/class-reference/Highcharts.Exporting#print).
@@ -1570,7 +1570,7 @@ class Exporting {
             );
         } else {
             // Get the SVG representation
-            const svg = this.getSVGForExport(
+            const svg = await this.getSVGForExport(
                 exportingOptions,
                 chartOptions
             );
@@ -1652,6 +1652,32 @@ class Exporting {
         }
         this.resolveCSSVariables();
 
+        // Move canvas contents over to SVG image elements
+        chart.container.querySelectorAll('canvas').forEach(function (
+            canvas: HTMLCanvasElement
+        ): void {
+            const imageDataURL = canvas.toDataURL('image/png'),
+                foreignObject = canvas.parentNode,
+                imageElem = chart.renderer.image(
+                    imageDataURL,
+                    0,
+                    0,
+                    canvas.width,
+                    canvas.height
+                );
+
+            css(imageElem.element, {
+                width: canvas.style.width,
+                height: canvas.style.height
+            });
+
+            foreignObject.parentNode.insertBefore(
+                imageElem.element,
+                foreignObject
+            );
+            foreignObject.remove();
+        });
+
         return chart.container.innerHTML;
     }
 
@@ -1693,6 +1719,14 @@ class Exporting {
         return filename;
     }
 
+    public getSVG(
+        chartOptions: Partial<Options> | undefined,
+        async: true
+    ): Promise<string>;
+    public getSVG(
+        chartOptions?: Partial<Options>,
+        async?: false
+    ): string;
     /**
      * Return an SVG representation of the chart.
      *
@@ -1707,7 +1741,13 @@ class Exporting {
      * either merged in to the original item of the same `id`, or to the first
      * item if a common id is not found.
      *
-     * @return {string}
+     * @param {boolean} [async=false]
+     * Whether to get the SVG synchronously or asynchronously. The async mode
+     * should be used when additional resources like WebGPU canvas needs to be
+     * inlined before getting the SVG. In async mode, `getSVG` returns a
+     * Promise.
+     *
+     * @return {string|Promise<string>}
      * The SVG representation of the rendered chart.
      *
      * @emits Highcharts.Chart#event:getSVG
@@ -1715,8 +1755,9 @@ class Exporting {
      * @requires modules/exporting
      */
     public getSVG(
-        chartOptions?: Partial<Options>
-    ): string {
+        chartOptions?: Partial<Options>,
+        async?: boolean
+    ): string|Promise<string> {
         const chart = this.chart;
         let svg,
             seriesOptions: DeepPartial<SeriesTypeOptions>,
@@ -1819,81 +1860,101 @@ class Exporting {
         // added when the user actually applies it.
         options.colorAxis = chart.userOptions.colorAxis;
 
-        // Generate the chart copy
-        const chartCopy = new (chart.constructor as typeof Chart)(
-            options,
-            chart.callback
-        );
+        // Operations to carry out on the chart copy when created. We need to do
+        // this in a callback so that we can handle both sync and async calls.
+        const postprocessAndGetSVG = (chartCopy: Chart): string => {
+            // Axis options and series options  (#2022, #3900, #5982)
+            if (chartOptions) {
+                type CollType = ('xAxis' | 'yAxis' | 'series');
+                (['xAxis', 'yAxis', 'series'] as Array<CollType>).forEach(
+                    function (coll: CollType): void {
+                        if (chartOptions[coll]) {
+                            chartCopy.update({
+                                [coll]: chartOptions[coll]
+                            } as Partial<Options>);
+                        }
+                    }
+                );
+            }
 
-        // Axis options and series options  (#2022, #3900, #5982)
-        if (chartOptions) {
-            type CollType = ('xAxis' | 'yAxis' | 'series');
-            (['xAxis', 'yAxis', 'series'] as Array<CollType>).forEach(
-                function (coll: CollType): void {
-                    if (chartOptions[coll]) {
-                        chartCopy.update({
-                            [coll]: chartOptions[coll]
-                        } as Partial<Options>);
+            // Reflect axis extremes in the export (#5924)
+            chart.axes.forEach(function (axis): void {
+                const axisCopy = find(chartCopy.axes, (copy: Axis): boolean =>
+                    copy.options.internalKey === axis.userOptions.internalKey
+                );
+
+                if (axisCopy) {
+                    const extremes = axis.getExtremes(),
+                        // Make sure min and max overrides in the
+                        // `exporting.chartOptions.xAxis` settings are
+                        // reflected. These should override user-set extremes
+                        // via zooming, scrollbar etc (#7873).
+                        exportOverride = splat(
+                            chartOptions?.[axis.coll] || {}
+                        )[0],
+                        userMin = 'min' in exportOverride ?
+                            exportOverride.min :
+                            extremes.userMin,
+                        userMax = 'max' in exportOverride ?
+                            exportOverride.max :
+                            extremes.userMax;
+
+                    if (
+                        ((
+                            typeof userMin !== 'undefined' &&
+                            userMin !== axisCopy.min
+                        ) || (
+                            typeof userMax !== 'undefined' &&
+                            userMax !== axisCopy.max
+                        ))
+                    ) {
+                        axisCopy.setExtremes(
+                            userMin ?? void 0,
+                            userMax ?? void 0,
+                            true,
+                            false
+                        );
                     }
                 }
+            });
+
+            // Get the SVG from the container's innerHTML
+            svg = chartCopy.exporting?.getChartHTML(
+                chart.styledMode ||
+                options?.exporting?.applyStyleSheets
+            ) || '';
+
+            fireEvent(chart, 'getSVG', { chartCopy: chartCopy });
+
+            svg = Exporting.sanitizeSVG(svg, options);
+
+            // Free up memory
+            options = void 0;
+            chartCopy.destroy();
+            discardElement(sandbox);
+
+            return svg;
+        };
+
+        // Return a string in sync mode
+        if (!async) {
+            const chartCopy = new (chart.constructor as typeof Chart)(
+                options,
+                chart.callback
             );
+            return postprocessAndGetSVG(chartCopy);
         }
 
-        // Reflect axis extremes in the export (#5924)
-        chart.axes.forEach(function (axis): void {
-            const axisCopy = find(chartCopy.axes, (copy: Axis): boolean =>
-                copy.options.internalKey === axis.userOptions.internalKey
-            );
-
-            if (axisCopy) {
-                const extremes = axis.getExtremes(),
-                    // Make sure min and max overrides in the
-                    // `exporting.chartOptions.xAxis` settings are reflected.
-                    // These should override user-set extremes via zooming,
-                    // scrollbar etc (#7873).
-                    exportOverride = splat(chartOptions?.[axis.coll] || {})[0],
-                    userMin = 'min' in exportOverride ?
-                        exportOverride.min :
-                        extremes.userMin,
-                    userMax = 'max' in exportOverride ?
-                        exportOverride.max :
-                        extremes.userMax;
-
-                if (
-                    ((
-                        typeof userMin !== 'undefined' &&
-                        userMin !== axisCopy.min
-                    ) || (
-                        typeof userMax !== 'undefined' &&
-                        userMax !== axisCopy.max
-                    ))
-                ) {
-                    axisCopy.setExtremes(
-                        userMin ?? void 0,
-                        userMax ?? void 0,
-                        true,
-                        false
-                    );
+        // Otherwise return a promise
+        return new Promise((resolve): Chart =>
+            new (chart.constructor as typeof Chart)(
+                options || {},
+                function (e): void {
+                    chart.callback?.call(this, e);
+                    resolve(postprocessAndGetSVG(this));
                 }
-            }
-        });
+            ));
 
-        // Get the SVG from the container's innerHTML
-        svg = chartCopy.exporting?.getChartHTML(
-            chart.styledMode ||
-            options.exporting?.applyStyleSheets
-        ) || '';
-
-        fireEvent(chart, 'getSVG', { chartCopy: chartCopy });
-
-        svg = Exporting.sanitizeSVG(svg, options);
-
-        // Free up memory
-        options = void 0;
-        chartCopy.destroy();
-        discardElement(sandbox);
-
-        return svg;
     }
 
     /**
@@ -1913,12 +1974,12 @@ class Exporting {
      *
      * @requires modules/exporting
      */
-    public getSVGForExport(
+    public async getSVGForExport(
         exportingOptions?: ExportingOptions,
         chartOptions?: Partial<Options>
-    ): string {
+    ): Promise<string> {
         const currentExportingOptions: ExportingOptions = this.options;
-        return this.getSVG(merge(
+        return await this.getSVG(merge(
             { chart: { borderRadius: 0 } },
             currentExportingOptions.chartOptions,
             chartOptions,
@@ -1934,7 +1995,7 @@ class Exporting {
                     )
                 }
             }
-        ));
+        ), true);
     }
 
     /**
@@ -2313,7 +2374,7 @@ class Exporting {
 
         try {
             // Trigger hook to get chart copy
-            this.getSVGForExport(exportingOptions, chartOptions);
+            await this.getSVGForExport(exportingOptions, chartOptions);
 
             // Get the static array
             const imagesArray = images ? Array.from(images) : [];
@@ -2774,9 +2835,9 @@ namespace Exporting {
             },
             getSVG: function (
                 this: Chart,
-                chartOptions?: Partial<Options>
-            ): (string | void) {
-                return this.exporting?.getSVG(chartOptions);
+                chartOptions: Partial<Options> | undefined
+            ): string | undefined {
+                return this.exporting?.getSVG(chartOptions, false);
             },
             print: function (
                 this: Chart
@@ -2852,24 +2913,30 @@ namespace Exporting {
         // testing of export
         // let button, viewImage, viewSource;
         // if (!chart.renderer.forExport) {
-        //     viewImage = function (): void {
+        //     viewImage = async function (): Promise<void> {
         //         const div = doc.createElement('div');
-        //         div.innerHTML = chart.exporting?.getSVGForExport() || '';
+        //         div.style.margin = '10px';
+        //         div.innerHTML = await chart.exporting?.getSVGForExport() ||
+        //             '';
         //         chart.renderTo.parentNode.appendChild(div);
         //     };
 
-        //     viewSource = function (): void {
+        //     viewSource = async function (): Promise<void> {
         //         const pre = doc.createElement('pre');
-        //         pre.innerHTML = chart.exporting?.getSVGForExport()
+        //         pre.style.margin = '10px';
+        //         pre.innerHTML = (
+        //             await chart.exporting?.getSVGForExport() || ''
+        //         )
         //             .replace(/</g, '\n&lt;')
-        //             .replace(/>/g, '&gt;') || '';
+        //             .replace(/>/g, '&gt;');
         //         chart.renderTo.parentNode.appendChild(pre);
         //     };
 
-        //     viewImage();
+        //     viewImage().catch;
 
         //     // View SVG Image
         //     button = doc.createElement('button');
+        //     button.style.margin = '10px';
         //     button.innerHTML = 'View SVG Image';
         //     chart.renderTo.parentNode.appendChild(button);
         //     button.onclick = viewImage;

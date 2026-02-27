@@ -50,7 +50,7 @@
             data: data,
             id: 'base'
         }, {
-            type: 'linearRegressionSlope',
+            type: 'linearregressionslope',
             name: 'Linear Regression Slope: 1 mintue xAxisUnit',
             linkedTo: 'base',
             yAxis: 1,

@@ -13,7 +13,7 @@ Highcharts.chart('container', {
     },
 
     title: {
-        text: 'Highcharts heat map',
+        text: 'Large heatmap',
         align: 'left',
         x: 40
     },
