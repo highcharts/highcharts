@@ -40,7 +40,7 @@ jobs:
         run: npx playwright install --with-deps chromium
 
       - name: Run Grid Tests
-        run: npx playwright test --project=setup-grid-lite --project=setup-grid-pro --project=grid-lite --project=grid-pro --project=grid-shared
+        run: npx playwright test --project=setup-highcharts --project=setup-grid-lite --project=setup-grid-pro --project=grid-lite --project=grid-pro --project=grid-shared
 
   grid_cypress:
     runs-on: ubuntu-latest

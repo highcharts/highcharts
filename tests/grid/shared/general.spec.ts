@@ -1,12 +1,12 @@
 import { test, expect } from '~/fixtures.ts';
 
-test.describe('Remove the dashboard', () => {
+test.describe('Rendering hidden grid', () => {
     test.beforeAll(async () => {
         // Setup
     });
 
     test.beforeEach(async ({ page }) => {
-        await page.goto('/dashboards/cypress/grid-hidden', { waitUntil: 'networkidle' });
+        await page.goto('/grid-lite/e2e/hidden', { waitUntil: 'networkidle' });
     });
 
     test('Rows should be visible when grid is switched from hidden', async ({ page }) => {
