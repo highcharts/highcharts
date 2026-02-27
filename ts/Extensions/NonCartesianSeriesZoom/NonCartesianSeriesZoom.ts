@@ -59,6 +59,7 @@ declare module '../../Core/Series/SeriesBase' {
     }
 }
 
+/** @internal */
 declare module '../../Core/Series/SeriesOptions' {
     interface SeriesOptions {
         /**
