@@ -8,10 +8,14 @@ on:
     paths:
       - '.github/workflows/dashboards-test.yml'
       - 'css/dashboards*'
+      - 'css/grid*'
       - 'samples/dashboards/**'
       - 'test/cypress/dashboards/visual/**'
       - 'ts/Dashboards/**'
       - 'ts/Data/**'
+      - 'ts/Grid/**'
+      - 'ts/masters-dashboards/**'
+      - 'ts/masters-grid/**'
 
 permissions:
   contents: read
@@ -38,7 +42,7 @@ jobs:
         run: npx playwright install --with-deps chromium
 
       - name: Run Dashboards Tests
-        run: npx playwright test --project=setup-highcharts --project=setup-dashboards --project=dashboards
+        run: npx playwright test --project=setup-highcharts --project=setup-grid-lite --project=setup-grid-pro --project=setup-dashboards --project=dashboards
 
   dashboards_cypress:
     runs-on: ubuntu-latest
