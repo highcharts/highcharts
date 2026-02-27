@@ -331,39 +331,48 @@
 ------------------------------------------------------------ */
 
 .hcg-container .hcg-pagination-wrapper {
-    display: grid;
-    grid-template-columns: 1fr auto 1fr;
+    display: flex;
     align-items: center;
-    white-space: nowrap;
+    gap: 0.75rem;
+    flex-wrap: nowrap;
 
-    .hcg-pagination-controls-container div.hcg-pagination-nav-buttons-container {
-        display: inline-flex;
+    > * {
+        flex: 1 1 0;
+        min-width: 0;
+        display: flex;
         align-items: center;
-        justify-content: center;
+    }
+
+    .hcg-pagination-info {
+        justify-content: flex-start;
     }
 
     .hcg-pagination-controls-container {
-        display: flex;
-        align-items: center;
-        gap: 2px;
-        flex-wrap: nowrap;
+        justify-content: center;
 
-        .hcg-button {
-            min-width: 30px;
-        }
-
-        span {
+        .hcg-pagination-nav-buttons-container {
             display: flex;
-            justify-content: center;
-            min-width: 20px;
-        }
-
-        div.hcg-pagination-nav-buttons-container {
+            flex-wrap: nowrap;
             gap: 2px;
+
+            .hcg-button {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                min-width: 30px;
+            }
+
+            span {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                min-width: 20px;
+            }
         }
     }
 
     .hcg-pagination-page-size {
+        justify-content: flex-end;
         text-align: right;
 
         select.hcg-input {
@@ -376,21 +385,46 @@
         display: none;
         min-width: 200px;
     }
+
+    &.hcg-pagination-left,
+    &.hcg-pagination-center,
+    &.hcg-pagination-right {
+        > * {
+            flex: 0 0 auto;
+            min-width: auto;
+        }
+    }
+
+    &.hcg-pagination-left {
+        justify-content: flex-start;
+    }
+
+    &.hcg-pagination-center {
+        justify-content: center;
+    }
+
+    &.hcg-pagination-right {
+        justify-content: flex-end;
+    }
 }
 
-@container hcg (max-width: 1024px) {
+@container hcg (max-width: 800px) {
     .hcg-container .hcg-pagination-wrapper {
-        grid-template-columns: 1fr;
-        justify-items: center;
-        gap: 10px;
+        flex-direction: column;
+        align-items: stretch;
 
-        .hcg-pagination-nav-dropdown {
-            display: block;
+        > * {
+            flex: 0 0 auto;
+            justify-content: center;
         }
 
-        .hcg-pagination-controls-container div.hcg-pagination-nav-buttons-container {
-            display: none;
+        /* override per-slot row alignment */
+        .hcg-pagination-info,
+        .hcg-pagination-controls-container,
+        .hcg-pagination-page-size {
+            justify-content: center;
         }
+
     }
 }
 
