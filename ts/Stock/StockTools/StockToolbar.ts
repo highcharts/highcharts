@@ -815,7 +815,7 @@ class Toolbar {
     }
 
     /**
-     * Get the Icons URL
+     * Get the icons URL
      *
      * @internal
      * @return {string} Icons URL

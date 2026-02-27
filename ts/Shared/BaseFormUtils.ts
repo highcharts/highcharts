@@ -22,7 +22,7 @@
  * @param {string} iconsURL
  *                 Icons URL
  *
- * @param {object} Icons
+ * @param {Record<string, string>} icons
  *                 Icons object
  *
  * @return {string} Icon string
