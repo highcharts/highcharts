@@ -453,10 +453,13 @@ class Pagination {
      * Render the controls buttons and page numbers.
      */
     public renderControls(): void {
+
         const navContainer = makeHTMLElement('div', {
             className: Globals.getClassName('paginationControls')
         }, this.contentWrapper);
+
         const controls = this.options?.controls || {};
+
 
         // Render first/previous buttons
         if (controls.firstLastButtons) {
@@ -474,7 +477,7 @@ class Pagination {
         }
 
         // Render dropdown page selector
-        this.renderDropdownPageSelector(navContainer);
+        //this.renderDropdownPageSelector(navContainer);
 
         // Render next button
         if (controls.previousNextButtons) {
@@ -485,6 +488,7 @@ class Pagination {
         if (controls.firstLastButtons) {
             this.renderLastButton(navContainer);
         }
+
     }
 
     /**
@@ -859,7 +863,7 @@ class Pagination {
         }
 
         // Update dropdown selector if it exists
-        this.updateDropdownPageSelector();
+        //this.updateDropdownPageSelector();
     }
 
     /**

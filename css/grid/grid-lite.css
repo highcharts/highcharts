@@ -381,12 +381,11 @@
         }
     }
 
-    .hcg-pagination-nav-dropdown {
+    /* .hcg-pagination-nav-dropdown {
         display: none;
         min-width: 200px;
-    }
+    } */
 
-    /* Alignment overrides (row mode only) */
     &.hcg-pagination-left,
     &.hcg-pagination-center,
     &.hcg-pagination-right {
@@ -400,7 +399,6 @@
     &.hcg-pagination-center { justify-content: center; }
     &.hcg-pagination-right  { justify-content: flex-end; }
 
-    /* If there's no info slot, left-align controls in row layout */
     &:not(:has(.hcg-pagination-info)) .hcg-pagination-controls {
         justify-content: flex-start;
     }
@@ -415,10 +413,8 @@
         flex-direction: column;
         align-items: stretch;
 
-        /* Stacked default: center (applies to distributed + centered mode) */
         --ig-pagination-stacked-align: center;
 
-        /* Keep intent for left/right modes */
         &.hcg-pagination-left  { --ig-pagination-stacked-align: flex-start; }
         &.hcg-pagination-right { --ig-pagination-stacked-align: flex-end; }
 
@@ -427,21 +423,18 @@
             justify-content: var(--ig-pagination-stacked-align);
         }
 
-        /* Override per-slot row alignment in stacked mode */
         .hcg-pagination-info,
         .hcg-pagination-controls,
         .hcg-pagination-page-size {
             justify-content: var(--ig-pagination-stacked-align);
         }
 
-        /* Handle text alignment only where it matters */
         .hcg-pagination-page-size {
             text-align: center;
         }
         &.hcg-pagination-left .hcg-pagination-page-size { text-align: left; }
         &.hcg-pagination-right .hcg-pagination-page-size { text-align: right; }
 
-        /* "no info" rule should follow stacked alignment, not force left */
         &:not(:has(.hcg-pagination-page-size)) .hcg-pagination-controls,
         &:not(:has(.hcg-pagination-info)) .hcg-pagination-controls {
             justify-content: var(--ig-pagination-stacked-align);
