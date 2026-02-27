@@ -479,13 +479,13 @@ class AreaSeries extends LineSeries {
                         y = yAxis.getThreshold(series.options.threshold ?? 0);
                     } else {
                         y = yAxis.translate(// #6272
-                            y, 0 as any, 1 as any, 0 as any, 1 as any
+                            y, false, true, false, true
                         );
                     }
                     segment.push({ // @todo create real point object
                         isNull: true,
                         plotX: xAxis.translate(// #6272
-                            x as any, 0 as any, 0 as any, 0 as any, 1 as any
+                            x as any, false, false, false, true
                         ),
                         x: x as any,
                         plotY: y,
