@@ -19,8 +19,8 @@ jobs:
     name: Node unit tests
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
         with:
           node-version: 'lts/*'
           cache: 'npm'
@@ -38,11 +38,11 @@ jobs:
     name: Cypress tests
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           path: highcharts
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
           node-version: 'lts/*'
           cache: 'npm'
@@ -59,7 +59,7 @@ jobs:
           npx gulp scripts
 
       - name: Checkout utils
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           repository: highcharts/highcharts-utils
           path: utils
@@ -71,7 +71,7 @@ jobs:
           npm ci
 
       - name: Run Cypress test
-        uses: cypress-io/github-action@v6
+        uses: cypress-io/github-action@v7
         with:
           start: node ../utils/server --localOnly
           wait-on: 'http://localhost:3031/highcharts.js'
@@ -88,13 +88,13 @@ jobs:
       JSON_NEEDS: ${{ toJSON(needs) }}
     steps:
       - name: Checkout repository scripts
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           sparse-checkout: |
             .github/scripts
 
       - name: Create list of failed jobs
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           script: |
             const { writeFileSync } = require('fs');
@@ -122,11 +122,11 @@ jobs:
 
       - name: Call Slack webhook
         id: slack
-        uses: slackapi/slack-github-action@v1.24.0
+        uses: slackapi/slack-github-action@v2.1.1
         with:
           payload-file-path: "info.json"
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_NIGHTLY_ERROR_WEBHOOK }}
+          webhook: ${{ secrets.SLACK_NIGHTLY_ERROR_WEBHOOK }}
+          webhook-type: webhook-trigger
 
   nightly_playwright_all_browsers:
     name: Playwright tests (all browsers)
@@ -135,8 +135,8 @@ jobs:
     env:
       DISPLAY: :99
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
         with:
           node-version: 'lts/*'
           cache: 'npm'
@@ -180,7 +180,7 @@ jobs:
 
       - name: Upload Playwright report
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: playwright-report
           path: playwright-report
@@ -221,10 +221,10 @@ jobs:
       BROWSER_COUNT: 2
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Use Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: 'lts/*'
           cache: 'npm'
@@ -281,12 +281,12 @@ jobs:
     needs: [nightly_unit_tests, nightly_cypress, nightly_playwright_all_browsers, nightly_visual_diff]
     steps:
       - name: Checkout highcharts
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           path: highcharts
 
       - name: Checkout highcharts-dist
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           repository: highcharts/highcharts-dist
           token: ${{ secrets.PR_COMMENT_TOKEN }}
@@ -295,7 +295,7 @@ jobs:
           fetch-depth: 0
 
       - name: Use Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: 'lts/*'
           cache: 'npm'
@@ -341,7 +341,7 @@ jobs:
       AWS_REGION: ${{secrets.VISUAL_TESTS_AWS_REGION}}
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0 # get the full history
 
@@ -373,9 +373,9 @@ jobs:
       - name: Call Slack webhook
         id: slack
         if: ${{ steps.makelist.outputs.lines > 0 }}
-        uses: slackapi/slack-github-action@v1.26.0
+        uses: slackapi/slack-github-action@v2.1.1
         with:
           payload-file-path: "24hoursofhighcharts.json"
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_NIGHTLY_CHANGES_WEBHOOK }}
+          webhook: ${{ secrets.SLACK_NIGHTLY_CHANGES_WEBHOOK }}
+          webhook-type: webhook-trigger
 

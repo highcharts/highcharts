@@ -655,7 +655,7 @@ class SonificationTimeline {
                 'chart'
             ) + '.mid',
             blob = new Blob(
-                [data],
+                [data as BlobPart],
                 { type: 'application/octet-stream' }
             ),
             url = window.URL.createObjectURL(blob);

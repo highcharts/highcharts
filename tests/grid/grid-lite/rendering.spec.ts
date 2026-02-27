@@ -2,7 +2,7 @@ import { test, expect } from '~/fixtures.ts';
 
 test.describe('Rendering types and formatters', () => {
     test.beforeEach(async ({ page }) => {
-        await page.goto('/grid-lite/cypress/column-data-type', { waitUntil: 'networkidle' });
+        await page.goto('/grid-lite/e2e/column-data-type', { waitUntil: 'networkidle' });
         // Wait for Grid table to be rendered (this also ensures Grid is initialized)
         await expect(page.locator('.hcg-table')).toBeVisible({ timeout: 10000 });
     });
@@ -36,5 +36,10 @@ test.describe('Rendering types and formatters', () => {
     test('Lang options should be used for number formatting', async ({ page }) => {
         await expect(page.locator('td[data-column-id="thousands"]').first()).toHaveText('12_452|4524');
         await expect(page.locator('td[data-column-id="thousands"]').nth(2)).toHaveText('1_234');
+    });
+
+    test('When formatter returns number, the cell should display it as string', async ({ page }) => {
+        const cell = page.locator('td[data-column-id="formatterNumber"]').first();
+        await expect(cell).toHaveText('1');
     });
 });

@@ -7,7 +7,7 @@ A heat map is a graphical representation of data where the individual values con
 
 ### Setting up the heat map series
 
-Heat maps require the [modules/heatmap.js](https://code.highcharts.com/modules/heatmap.js) file to be loaded.
+In Highcharts Core, load the heatmap module ([modules/heatmap.js](https://code.highcharts.com/modules/heatmap.js)) to use heat maps. In Highcharts Maps, the heatmap functionality is built in, so you don’t need to load the module separately.
 
 The heat map series is defined by setting the type to `heatmap`. A heat map has an X and Y axis like any cartesian series. The point definitions however, take three values, `x`, `y` as well as `value`, which serves as the value for color coding the point. These values can also be given as an array of three numbers.
 

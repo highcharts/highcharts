@@ -2,7 +2,7 @@ import { test, expect } from '~/fixtures.ts';
 
 test.describe('Grid Pro - grid events', () => {
     test.beforeEach(async ({ page }) => {
-        await page.goto('/grid-pro/cypress/grid-events', { waitUntil: 'networkidle' });
+        await page.goto('/grid-pro/e2e/grid-events', { waitUntil: 'networkidle' });
     });
 
     test('Grid beforeLoad event', async ({ page }) => {
@@ -47,7 +47,7 @@ test.describe('Grid Pro - grid events', () => {
 
 test.describe('Grid Pro - cell and column events', () => {
     test.beforeEach(async ({ page }) => {
-        await page.goto('grid-pro/cypress/column-cell-events');
+        await page.goto('grid-pro/e2e/column-cell-events');
     });
 
     test('Cell mouseOver / mouseOut event', async ({ page }) => {
@@ -197,6 +197,19 @@ test.describe('Grid Pro - cell and column events', () => {
         await expect(page.locator('#beforeColumnSorting')).toHaveValue('beforeSortColumnOption');
         await expect(page.locator('#headerClick')).toHaveValue('headerClickColumnOption');
         await expect(page.locator('#afterColumnSorting')).toHaveValue('afterSortColumnOption');
+    });
+
+    test('Header click event fires when clicking on toolbar icons', async ({ page }) => {
+        // Reset headerClick to verify the event fires
+        await page.locator('#headerClick').fill('');
+
+        // Click on the sort icon (not the header text) - header.events.click should fire
+        const sortIcon = page.locator(
+            'th[data-column-id="product"] .hcg-header-cell-icons button'
+        ).first();
+        await sortIcon.click({ force: true });
+
+        await expect(page.locator('#headerClick')).toHaveValue('headerClick');
     });
 
     test('Filtering column event', async ({ page }) => {
