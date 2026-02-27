@@ -291,8 +291,8 @@ class Pagination {
                 'nav',
                 {
                     className: alignmentClass ?
-                        `${Globals.getClassName('paginationWrapper')} ${alignmentClass}` :
-                        Globals.getClassName('paginationWrapper')
+                        `${Globals.getClassName('pagination')} ${alignmentClass}` :
+                        Globals.getClassName('pagination')
                 },
                 position === 'footer' ?
                     this.paginationContainer : grid.contentWrapper
@@ -314,7 +314,7 @@ class Pagination {
     }
 
     private getAlignmentClass(): string {
-        const alignment = this.options?.alignment || 'distributed';
+        const alignment = this.options?.alignment || '';
 
         return alignmentClassName(alignment);
     }
@@ -390,7 +390,7 @@ class Pagination {
 
         // Set content wrapper to the custom container
         this.contentWrapper = makeHTMLElement('div', {
-            className: Globals.getClassName('paginationContainer')
+            className: Globals.getClassName('pagination')
         }, customContainer);
     }
 
@@ -407,7 +407,7 @@ class Pagination {
         }
 
         this.pageInfoElement = makeHTMLElement('div', {
-            className: Globals.getClassName('paginationPageInfo')
+            className: Globals.getClassName('paginationInfo')
         }, this.contentWrapper);
 
         this.updatePageInfo();
@@ -450,7 +450,7 @@ class Pagination {
      */
     public renderControls(): void {
         const navContainer = makeHTMLElement('div', {
-            className: Globals.getClassName('paginationControlsContainer')
+            className: Globals.getClassName('paginationControls')
         }, this.contentWrapper);
         const controls = this.options?.controls || {};
 
@@ -703,7 +703,7 @@ class Pagination {
         }
 
         this.pageNumbersContainer = makeHTMLElement('div', {
-            className: Globals.getClassName('paginationNavButtonsContainer')
+            className: Globals.getClassName('paginationPages')
         }, container);
 
         this.updatePageNumbers();

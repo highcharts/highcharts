@@ -69,7 +69,7 @@
         --ig-button-selected-border-color: var(--hcg-cell-button-selected-border-color, var(--ig-button-selected-border-color-base));
     }
 
-    .hcg-pagination-wrapper {
+    .hcg-pagination {
         --ig-button-background: var(--hcg-pagination-button-background, var(--ig-button-background-base));
         --ig-button-color: var(--hcg-pagination-button-color, var(--ig-button-color-base));
         --ig-button-border-width: var(--hcg-pagination-button-border-width, var(--ig-button-border-width-base));
