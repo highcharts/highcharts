@@ -387,10 +387,14 @@ class Pagination {
         }
 
         this.paginationContainer = customContainer;
+        const alignmentClass = this.getAlignmentClass();
+        const className = alignmentClass ?
+            `${Globals.getClassName('pagination')} ${alignmentClass}` :
+            Globals.getClassName('pagination');
 
         // Set content wrapper to the custom container
         this.contentWrapper = makeHTMLElement('div', {
-            className: Globals.getClassName('pagination')
+            className: className
         }, customContainer);
     }
 
