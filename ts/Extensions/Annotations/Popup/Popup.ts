@@ -337,107 +337,13 @@ class Popup extends BaseForm {
         }
 
         if (inputAttributes.type === 'color' && this.chart?.container) {
-            const { value, alpha } = resolveColorValue(
-                inputAttributes.value || '',
+            return this.createColorInput(
+                option,
+                inputName,
+                inputAttributes,
+                parentDiv,
                 this.chart.container
             );
-
-            const parsedOpacity = Color.parse(inputAttributes.value).rgba[3],
-                opacity = isNaN(parsedOpacity) ? alpha : parsedOpacity;
-
-            const wrapper = createElement(
-                'div',
-                { className: 'highcharts-popup-color-wrapper' },
-                void 0,
-                parentDiv
-            );
-
-            const colorInput: HTMLInputElement = createElement(
-                'input',
-                {
-                    type: 'color',
-                    value,
-                    className: (
-                        'highcharts-popup-field highcharts-popup-field-color'
-                    )
-                },
-                void 0,
-                wrapper
-            ) as HTMLInputElement;
-
-            const textInput = createElement(
-                'input',
-                {
-                    name: inputName,
-                    id: inputName,
-                    value,
-                    type: 'text',
-                    className: (
-                        'highcharts-popup-field highcharts-popup-field-text'
-                    )
-                },
-                void 0,
-                wrapper
-            ) as HTMLInputElement;
-            textInput.setAttribute('highcharts-data-name', option);
-
-            const opacitySlider = createElement(
-                'input',
-                {
-                    type: 'range',
-                    value: String(opacity * 100),
-                    className: 'highcharts-popup-field highcharts-popup-opacity'
-                },
-                void 0,
-                wrapper
-            ) as HTMLInputElement;
-            opacitySlider.setAttribute('min', '0');
-            opacitySlider.setAttribute('max', '100');
-
-            const opacityNumberInput = createElement(
-                'input',
-                {
-                    type: 'number',
-                    value: String(opacity),
-                    className: (
-                        'highcharts-popup-field highcharts-popup-opacity-number'
-                    )
-                },
-                void 0,
-                wrapper
-            ) as HTMLInputElement;
-            opacityNumberInput.setAttribute('min', '0');
-            opacityNumberInput.setAttribute('max', '1');
-            opacityNumberInput.setAttribute('step', '0.01');
-
-            const setOpacitySliderColor = (): void => {
-                opacitySlider.style.setProperty(
-                    '--highcharts-slider-rgb',
-                    textInput.value
-                );
-            };
-            setOpacitySliderColor();
-
-            addEvent(opacitySlider, 'input', (): void => {
-                opacityNumberInput.value = String(
-                    Number(opacitySlider.value) / 100
-                );
-            });
-            addEvent(opacityNumberInput, 'input', (): void => {
-                opacitySlider.value = String(
-                    Number(opacityNumberInput.value) * 100
-                );
-            });
-            addEvent(colorInput, 'input', (): void => {
-                textInput.value = colorInput.value.toUpperCase();
-                setOpacitySliderColor();
-            });
-            addEvent(textInput, 'input', (): void => {
-                colorInput.value = textInput.value;
-                setOpacitySliderColor();
-            });
-
-            return wrapper;
         }
 
         // Add input
@@ -456,6 +362,122 @@ class Popup extends BaseForm {
         input.setAttribute('highcharts-data-name', option);
 
         return input;
+    }
+
+    /**
+     * Create color input group with color picker, text field and opacity
+     * controls.
+     */
+    public createColorInput(
+        option: string,
+        inputName: string,
+        inputAttributes: InputAttributes,
+        parentDiv: HTMLDOMElement,
+        container: HTMLDOMElement
+    ): HTMLDOMElement {
+        const { value, alpha } = resolveColorValue(
+            inputAttributes.value || '',
+            container
+        );
+
+        const parsedOpacity = Color.parse(inputAttributes.value || '').rgba[3],
+            opacity = isNaN(parsedOpacity) ? alpha : parsedOpacity;
+
+        const wrapper = createElement(
+            'div',
+            { className: 'highcharts-popup-color-wrapper' },
+            void 0,
+            parentDiv
+        );
+
+        const colorInput: HTMLInputElement = createElement(
+            'input',
+            {
+                type: 'color',
+                value,
+                className: (
+                    'highcharts-popup-field highcharts-popup-field-color'
+                )
+            },
+            void 0,
+            wrapper
+        ) as HTMLInputElement;
+
+        const textInput = createElement(
+            'input',
+            {
+                name: inputName,
+                id: inputName,
+                value,
+                type: 'text',
+                className: (
+                    'highcharts-popup-field highcharts-popup-field-text'
+                )
+            },
+            void 0,
+            wrapper
+        ) as HTMLInputElement;
+        textInput.setAttribute('highcharts-data-name', option);
+
+        const opacitySlider = createElement(
+            'input',
+            {
+                type: 'range',
+                value: String(opacity * 100),
+                className: (
+                    'highcharts-popup-field highcharts-popup-opacity'
+                ),
+                min: '0',
+                max: '100'
+            },
+            void 0,
+            wrapper
+        ) as HTMLInputElement;
+
+        const opacityNumberInput = createElement(
+            'input',
+            {
+                type: 'number',
+                value: String(opacity),
+                className: (
+                    'highcharts-popup-field highcharts-popup-opacity-number'
+                ),
+                min: '0',
+                max: '1',
+                step: '0.01'
+            },
+            void 0,
+            wrapper
+        ) as HTMLInputElement;
+
+        const setOpacitySliderColor = (): void => {
+            opacitySlider.style.setProperty(
+                '--highcharts-slider-rgb',
+                textInput.value
+            );
+        };
+        setOpacitySliderColor();
+
+        addEvent(opacitySlider, 'input', (): void => {
+            opacityNumberInput.value = String(
+                Number(opacitySlider.value) / 100
+            );
+        });
+        addEvent(opacityNumberInput, 'input', (): void => {
+            opacitySlider.value = String(
+                Number(opacityNumberInput.value) * 100
+            );
+        });
+        addEvent(colorInput, 'input', (): void => {
+            textInput.value = colorInput.value.toUpperCase();
+            setOpacitySliderColor();
+        });
+        addEvent(textInput, 'input', (): void => {
+            colorInput.value = textInput.value;
+            setOpacitySliderColor();
+        });
+
+        return wrapper;
     }
 
     public closeButtonEvents(): void {
