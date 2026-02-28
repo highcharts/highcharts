@@ -273,5 +273,90 @@ test.describe('Pagination', () => {
         await expect(page.locator('.hcg-table tfoot')).toBeVisible();
         await expect(page.locator('.hcg-table tfoot .hcg-pagination')).toBeVisible();
     });
-});
 
+    test('Alignment classes - left', async ({ page }) => {
+        const pagination = page.locator('.hcg-pagination');
+
+        await page.evaluate(() => {
+            (window as any).Grid.grids[0].update({
+                pagination: {
+                    position: 'bottom',
+                    align: 'left'
+                }
+            });
+        });
+
+        await expect(pagination).toHaveClass(/\bhcg-pagination-left\b/);
+        await expect(pagination).not.toHaveClass(/\bhcg-pagination-center\b/);
+        await expect(pagination).not.toHaveClass(/\bhcg-pagination-right\b/);
+        await expect(pagination).not.toHaveClass(/\bhcg-pagination-distributed\b/);
+    });
+
+    test('Alignment classes - center', async ({ page }) => {
+        const pagination = page.locator('.hcg-pagination');
+
+        await page.evaluate(() => {
+            (window as any).Grid.grids[0].update({
+                pagination: {
+                    align: 'center'
+                }
+            });
+        });
+
+        await expect(pagination).toHaveClass(/\bhcg-pagination-center\b/);
+        await expect(pagination).not.toHaveClass(/\bhcg-pagination-left\b/);
+        await expect(pagination).not.toHaveClass(/\bhcg-pagination-right\b/);
+        await expect(pagination).not.toHaveClass(/\bhcg-pagination-distributed\b/);
+    });
+
+    test('Alignment classes - right', async ({ page }) => {
+        const pagination = page.locator('.hcg-pagination');
+
+        await page.evaluate(() => {
+            (window as any).Grid.grids[0].update({
+                pagination: {
+                    align: 'right'
+                }
+            });
+        });
+
+        await expect(pagination).toHaveClass(/\bhcg-pagination-right\b/);
+        await expect(pagination).not.toHaveClass(/\bhcg-pagination-left\b/);
+        await expect(pagination).not.toHaveClass(/\bhcg-pagination-center\b/);
+        await expect(pagination).not.toHaveClass(/\bhcg-pagination-distributed\b/);
+    });
+
+    test('Alignment classes - distributed', async ({ page }) => {
+        const pagination = page.locator('.hcg-pagination');
+
+        await page.evaluate(() => {
+            (window as any).Grid.grids[0].update({
+                pagination: {
+                    align: 'distributed'
+                }
+            });
+        });
+
+        await expect(pagination).toHaveClass(/\bhcg-pagination-distributed\b/);
+        await expect(pagination).not.toHaveClass(/\bhcg-pagination-left\b/);
+        await expect(pagination).not.toHaveClass(/\bhcg-pagination-center\b/);
+        await expect(pagination).not.toHaveClass(/\bhcg-pagination-right\b/);
+    });
+
+    test('Alignment classes - undefined', async ({ page }) => {
+        const pagination = page.locator('.hcg-pagination');
+
+        await page.evaluate(() => {
+            (window as any).Grid.grids[0].update({
+                pagination: {
+                    align: undefined
+                }
+            });
+        });
+
+        await expect(pagination).not.toHaveClass(/\bhcg-pagination-left\b/);
+        await expect(pagination).not.toHaveClass(/\bhcg-pagination-center\b/);
+        await expect(pagination).not.toHaveClass(/\bhcg-pagination-right\b/);
+        await expect(pagination).not.toHaveClass(/\bhcg-pagination-distributed\b/);
+    });
+});
