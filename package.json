@@ -92,6 +92,7 @@
     "@types/yargs": "^17.0.32",
     "@typescript-eslint/eslint-plugin": "8.39.1",
     "@typescript-eslint/parser": "8.39.1",
+    "@webgpu/types": "^0.1.64",
     "babel-eslint": "^10.1.0",
     "browserify": "^17.0.0",
     "bundle-declarations-webpack-plugin": "^5.1.1",
@@ -190,14 +191,8 @@
     "./ts/Grid/**/*.ts": [
       "npm run glint"
     ],
-    "css/dashboards/*.css": [
-      "npm run dlintcss"
-    ],
-    "samples/**/*.css": [
-      "npx stylelint --config .stylelintrc.json 'samples/**/*.css'"
-    ],
-    "css/**/*.css": [
-      "npx stylelint --config css/.stylelintrc.json 'css/**/*.css'"
+    "*.css": [
+      "stylelint --allow-empty-input"
     ],
     "./docs/**/*.md": [
       "npx cspell -c ./tools/cspell/cspell.json"

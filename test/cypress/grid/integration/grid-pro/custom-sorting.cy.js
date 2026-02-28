@@ -1,6 +1,6 @@
 describe('Custom sorting.', () => {
     beforeEach(() => {
-        cy.visit('grid-pro/cypress/custom-sorting');
+        cy.visit('grid-pro/e2e/custom-sorting');
     });
 
     it('Custom sorting defined in the default column options should be applied.', () => {
