@@ -400,12 +400,17 @@ class Sonification {
     ): void {
         const speaker = new SonificationSpeaker(
             merge({
-                language: 'en-US',
+                language: 'en',
                 rate: 1.5,
                 volume: 0.4
             }, speakerOptions || {})
         );
-        speaker.sayAtTime(delayMs, text, {}, onEnd);
+        speaker.sayAtTime(delayMs, text, {}, ((e: Event): void => {
+            speaker.destroy();
+            if (onEnd) {
+                onEnd(e);
+            }
+        }) as EventListener);
     }
 
 

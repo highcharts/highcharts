@@ -2429,7 +2429,6 @@ const wordcloudKbdHandlers = (() => {
         chart.sonification.speak(
             point.name,
             {
-                language: 'en-US',
                 name: 'Samantha',
                 volume: value * 0.8 + 0.2,
                 rate: speechFactor * 3.5 - value * 2,

@@ -15,6 +15,7 @@
 
 import U from '../../Core/Utilities.js';
 const {
+    addEvent,
     pick
 } = U;
 
@@ -48,16 +49,24 @@ namespace SonificationSpeaker {
 class SonificationSpeaker {
     private synthesis: SpeechSynthesis;
     private voice?: SpeechSynthesisVoice;
+    private unbindVoicesChanged?: Function;
     private scheduled: number[];
     private masterVolume = 1;
 
     constructor(private options: SonificationSpeaker.SpeakerOptions) {
         this.synthesis = window.speechSynthesis;
-        if (typeof speechSynthesis.onvoiceschanged !== 'undefined') {
-            speechSynthesis.onvoiceschanged = this.setVoice.bind(this);
-        }
-        this.setVoice();
         this.scheduled = [];
+        this.setVoice();
+        if (
+            !this.voice &&
+            typeof speechSynthesis.onvoiceschanged !== 'undefined'
+        ) {
+            this.unbindVoicesChanged = addEvent(
+                this.synthesis,
+                'voiceschanged',
+                this.setVoice.bind(this)
+            );
+        }
     }
 
 
@@ -78,7 +87,15 @@ class SonificationSpeaker {
     ): void {
         if (this.synthesis) {
             this.synthesis.cancel();
+            this.setVoice(options);
             const utterance = new SpeechSynthesisUtterance(message);
+
+            utterance.lang = pick(
+                options && options.language,
+                this.options.language,
+                this.voice && this.voice.lang,
+                'en'
+            );
             if (this.voice) {
                 utterance.voice = this.voice;
             }
@@ -142,7 +159,10 @@ class SonificationSpeaker {
     destroy(): void {
         // Ran on TimelineChannel.destroy
         // (polymorphism with SonificationInstrument).
-        // Currently all we need to do is cancel.
+        if (this.unbindVoicesChanged) {
+            this.unbindVoicesChanged();
+            delete this.unbindVoicesChanged;
+        }
         this.cancel();
     }
 
@@ -163,26 +183,102 @@ class SonificationSpeaker {
      * Set the active synthesis voice for the speaker.
      * @internal
      */
-    private setVoice(): void {
+    private setVoice(
+        options?: SonificationSpeaker.SpeakerOptions
+    ): void {
         if (this.synthesis) {
-            const name = this.options.name,
-                lang = this.options.language || 'en-US',
+            const name = pick(
+                    options && options.name,
+                    this.options.name,
+                    ''
+                ).toLowerCase(),
+                lang = pick(
+                    options && options.language,
+                    this.options.language,
+                    'en'
+                )
+                    .toLowerCase().replace(/_/g, '-'),
+                baseLang = lang.split('-')[0],
                 voices = this.synthesis.getVoices(),
-                len = voices.length;
-            let langFallback;
-            for (let i = 0; i < len; ++i) {
-                if (name && voices[i].name === name) {
-                    this.voice = voices[i];
-                    return;
+                langMatches = (
+                    voiceLang: string,
+                    targetLang: string
+                ): boolean =>
+                    voiceLang === targetLang ||
+                    (
+                        targetLang.indexOf('-') < 0 &&
+                        voiceLang.indexOf(targetLang + '-') === 0
+                    );
+            let exactNameAndLang,
+                exactName,
+                fuzzyNameAndLang,
+                fuzzyName,
+                defaultLangFallback,
+                defaultBaseLangFallback,
+                defaultFallback;
+            for (let i = 0; i < voices.length; ++i) {
+                const voice = voices[i],
+                    voiceName = voice.name.toLowerCase(),
+                    voiceLang = voice.lang.toLowerCase().replace(/_/g, '-');
+
+                if (!defaultFallback && voice.default) {
+                    defaultFallback = voice;
                 }
-                if (!langFallback && voices[i].lang === lang) {
-                    langFallback = voices[i];
-                    if (!name) {
+                if (
+                    !defaultLangFallback &&
+                    voice.default &&
+                    langMatches(voiceLang, lang)
+                ) {
+                    defaultLangFallback = voice;
+                } else if (
+                    !defaultBaseLangFallback &&
+                    voice.default &&
+                    baseLang !== lang &&
+                    baseLang &&
+                    langMatches(voiceLang, baseLang)
+                ) {
+                    defaultBaseLangFallback = voice;
+                }
+
+                if (!name) {
+                    continue;
+                }
+                if (voiceName === name) {
+                    if (!exactName) {
+                        exactName = voice;
+                    }
+                    if (!exactNameAndLang && langMatches(voiceLang, lang)) {
+                        exactNameAndLang = voice;
                         break;
                     }
+                    continue;
+                }
+                if (
+                    voiceName.indexOf(name) < 0 &&
+                    name.indexOf(voiceName) < 0
+                ) {
+                    continue;
+                }
+                if (!fuzzyName) {
+                    fuzzyName = voice;
+                }
+                if (!fuzzyNameAndLang && langMatches(voiceLang, lang)) {
+                    fuzzyNameAndLang = voice;
                 }
             }
-            this.voice = langFallback;
+
+            this.voice = exactNameAndLang ||
+                exactName ||
+                fuzzyNameAndLang ||
+                fuzzyName ||
+                defaultLangFallback ||
+                defaultBaseLangFallback ||
+                defaultFallback;
+
+            if (this.voice && this.unbindVoicesChanged) {
+                this.unbindVoicesChanged();
+                delete this.unbindVoicesChanged;
+            }
         }
     }
 }
@@ -213,7 +309,7 @@ export default SonificationSpeaker;
  * @name Highcharts.SonificationSpeakerOptionsObject#name
  * @type {string|undefined}
  *//**
- * The language of the voice synthesis. Defaults to `"en-US"`.
+ * The language of the voice synthesis. Defaults to `"en"`.
  * @name Highcharts.SonificationSpeakerOptionsObject#language
  * @type {string|undefined}
  *//**

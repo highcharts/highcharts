@@ -1051,7 +1051,7 @@ const Options: DeepPartial<OptionsType> = {
              * @sample  maps/demo/audio-map
              *          French language speech
              */
-            language: 'en-US',
+            language: 'en',
 
             /**
              * Mapping configuration for the speech/audio parameters.
