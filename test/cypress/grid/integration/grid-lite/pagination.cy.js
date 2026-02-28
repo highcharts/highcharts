@@ -77,7 +77,7 @@ describe('Pagination.', () => {
 
     it('Direct page number.', () => {
         // Click on page number
-        cy.get('.hcg-pagination-buttons .hcg-button').contains('3').click();
+        cy.get('.hcg-pagination-pages .hcg-button').contains('3').click();
 
         // Check we're on page
         cy.get('.hcg-pagination-info').should('contain', 'Showing 45 - 66 of 254');
@@ -178,7 +178,7 @@ describe('Pagination.', () => {
                 .should('exist');
             cy.get('#test-custom-container .hcg-pagination-info')
                 .should('exist');
-            cy.get('#test-custom-container .hcg-pagination-buttons .hcg-button')
+            cy.get('#test-custom-container .hcg-pagination-pages .hcg-button')
                 .should('exist');
         });
     });
