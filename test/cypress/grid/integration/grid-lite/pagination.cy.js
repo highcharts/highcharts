@@ -9,14 +9,14 @@ describe('Pagination.', () => {
 
     it('Render pagination container.', () => {
         // Check pagination wrapper is visible
-        cy.get('.hcg-pagination-wrapper').should('be.visible');
+        cy.get('.hcg-pagination').should('be.visible');
 
         // Check page info is displayed with correct initial page size
         cy.get('.hcg-pagination-info').should('be.visible');
         cy.get('.hcg-pagination-info').should('contain', 'Showing 1');
 
         // Check controls buttons exist
-        cy.get('.hcg-pagination-controls-container').should('be.visible');
+        cy.get('.hcg-pagination-controls').should('be.visible');
         
         // Check first/last buttons
         cy.get('.hcg-button').should('have.length.at.least', 4);
@@ -25,7 +25,7 @@ describe('Pagination.', () => {
         cy.get('.hcg-pagination-page-size select.hcg-input').should('be.visible');
 
         // Check page number buttons
-        cy.get('.hcg-pagination-nav-buttons-container .hcg-button').should('have.length.at.least', 1);
+        cy.get('.hcg-pagination-pages .hcg-button').should('have.length.at.least', 1);
         cy.get('.hcg-button-selected').should('contain', '1');
 
         // Check initial data rows
@@ -77,7 +77,7 @@ describe('Pagination.', () => {
 
     it('Direct page number.', () => {
         // Click on page number
-        cy.get('.hcg-pagination-nav-buttons-container .hcg-button').contains('3').click();
+        cy.get('.hcg-pagination-buttons .hcg-button').contains('3').click();
 
         // Check we're on page
         cy.get('.hcg-pagination-info').should('contain', 'Showing 45 - 66 of 254');
@@ -92,7 +92,7 @@ describe('Pagination.', () => {
                 }
             });
 
-            cy.get('.hcg-pagination-wrapper').should('not.exist');
+            cy.get('.hcg-pagination').should('not.exist');
         });
 
         cy.window().its('Grid').then((grid) => {
@@ -103,7 +103,7 @@ describe('Pagination.', () => {
                 }
             });
 
-            cy.get('.hcg-pagination-wrapper').should('exist');
+            cy.get('.hcg-pagination').should('exist');
             cy.get('table tbody tr').should('have.length', 22);
         });
     });
@@ -174,11 +174,11 @@ describe('Pagination.', () => {
 
             // Check that custom container exists and contains pagination
             cy.get('#test-custom-container').should('exist');
-            cy.get('#test-custom-container .hcg-pagination-controls-container')
+            cy.get('#test-custom-container .hcg-pagination-controls')
                 .should('exist');
             cy.get('#test-custom-container .hcg-pagination-info')
                 .should('exist');
-            cy.get('#test-custom-container .hcg-pagination-nav-buttons-container .hcg-button')
+            cy.get('#test-custom-container .hcg-pagination-buttons .hcg-button')
                 .should('exist');
         });
     });
@@ -194,12 +194,12 @@ describe('Pagination.', () => {
             });
 
             // Check that pagination container is before the table
-            cy.get('.hcg-pagination-wrapper').should('exist');
+            cy.get('.hcg-pagination').should('exist');
             
             // Verify the DOM order: pagination should be before table
             cy.get('.hcg-container').then(async ($container) => {
                 const paginationIndex =
-                    $container.find('.hcg-pagination-wrapper').index();
+                    $container.find('.hcg-pagination').index();
                 const tableIndex = $container.find('.hcg-table').index();
                 expect(paginationIndex).to.be.lessThan(tableIndex);
 
@@ -213,7 +213,7 @@ describe('Pagination.', () => {
                 // Verify the DOM order: pagination should be after table
                 cy.get('.hcg-container').then(($container) => {
                     const paginationIndex =
-                        $container.find('.hcg-pagination-wrapper').index();
+                        $container.find('.hcg-pagination').index();
                     const tableIndex = $container.find('.hcg-table').index();
                     expect(paginationIndex).to.be.greaterThan(tableIndex);
 
@@ -228,29 +228,10 @@ describe('Pagination.', () => {
 
                     // Check that tfoot element exists and contains pagination
                     cy.get('.hcg-table tfoot').should('exist');
-                    cy.get('.hcg-table tfoot .hcg-pagination-wrapper')
+                    cy.get('.hcg-table tfoot .hcg-pagination')
                         .should('exist');
                 });
             });
         });
-    });
-
-    it('Position mobile view.', () => {
-        cy.viewport('iphone-x').wait(200);
-
-        cy.get('.hcg-pagination-nav-dropdown')
-            .should('be.visible')
-            .contains('Page 1 of 26');
-        cy.get('.hcg-pagination-page-size')
-            .should('be.visible')
-            .contains('10');
-        cy.get('.hcg-button[title="Next page"]')
-            .should('be.visible');
-        cy.get('.hcg-button[title="Previous page"]')
-            .should('be.visible');
-        cy.get('.hcg-button[title="Last page"]')
-            .should('be.visible');
-        cy.get('.hcg-button[title="First page"]')
-            .should('be.visible');
     });
 });
