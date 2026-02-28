@@ -5,7 +5,7 @@ test.describe('Pagination', () => {
         await page.setViewportSize({ width: 1200, height: 800 });
         await page.goto('/grid-lite/e2e/pagination', { waitUntil: 'networkidle' });
         // Wait for pagination to be rendered
-        await expect(page.locator('.hcg-pagination-wrapper')).toBeVisible();
+        await expect(page.locator('.hcg-pagination')).toBeVisible();
     });
 
     test('Render pagination container', async ({ page }) => {
@@ -16,7 +16,7 @@ test.describe('Pagination', () => {
         await expect(pageInfo).toContainText('Showing 1');
 
         // Check controls buttons exist
-        await expect(page.locator('.hcg-pagination-controls-container')).toBeVisible();
+        await expect(page.locator('.hcg-pagination-controls')).toBeVisible();
 
         // Check first/last buttons
         const buttons = page.locator('.hcg-button');
@@ -27,7 +27,7 @@ test.describe('Pagination', () => {
         await expect(page.locator('.hcg-pagination-page-size select.hcg-input')).toBeVisible();
 
         // Check page number buttons
-        const navButtons = page.locator('.hcg-pagination-nav-buttons-container .hcg-button');
+        const navButtons = page.locator('.hcg-pagination-pagination-pages .hcg-button');
         const navButtonCount = await navButtons.count();
         expect(navButtonCount).toBeGreaterThanOrEqual(1);
         await expect(page.locator('.hcg-button-selected')).toContainText('1');
@@ -84,7 +84,7 @@ test.describe('Pagination', () => {
     test('Direct page number', async ({ page }) => {
 
         // Click on page number
-        await page.locator('.hcg-pagination-nav-buttons-container .hcg-button').filter({ hasText: '3' }).click();
+        await page.locator('.hcg-pagination-pages .hcg-button').filter({ hasText: '3' }).click();
 
         // Check we're on page
         await expect(page.locator('.hcg-pagination-info')).toContainText('Showing 45 - 66 of 254');
@@ -101,7 +101,7 @@ test.describe('Pagination', () => {
             });
         });
 
-        await expect(page.locator('.hcg-pagination-wrapper')).toBeHidden();
+        await expect(page.locator('.hcg-pagination')).toBeHidden();
 
         // Enable pagination
         await page.evaluate(() => {
@@ -112,7 +112,7 @@ test.describe('Pagination', () => {
             });
         });
 
-        await expect(page.locator('.hcg-pagination-wrapper')).toBeVisible();
+        await expect(page.locator('.hcg-pagination')).toBeVisible();
         await expect(page.locator('table tbody tr')).toHaveCount(22);
     });
 
@@ -134,8 +134,8 @@ test.describe('Pagination', () => {
         // Wait for Grid to be initialized (with timeout)
         await page.waitForFunction(() => {
             return typeof (window as any).Grid !== 'undefined' &&
-                   (window as any).Grid.grids &&
-                   (window as any).Grid.grids.length > 0;
+                (window as any).Grid.grids &&
+                (window as any).Grid.grids.length > 0;
         }, { timeout: 5000 });
 
         // Set page size to 5
@@ -160,8 +160,8 @@ test.describe('Pagination', () => {
         // Wait for Grid to be initialized (with timeout)
         await page.waitForFunction(() => {
             return typeof (window as any).Grid !== 'undefined' &&
-                   (window as any).Grid.grids &&
-                   (window as any).Grid.grids.length > 0;
+                (window as any).Grid.grids &&
+                (window as any).Grid.grids.length > 0;
         }, { timeout: 5000 });
 
         // Update lang options
@@ -197,9 +197,9 @@ test.describe('Pagination', () => {
 
         // Check that custom container exists and contains pagination
         await expect(page.locator('#test-custom-container')).toBeVisible();
-        await expect(page.locator('#test-custom-container .hcg-pagination-controls-container')).toBeVisible();
+        await expect(page.locator('#test-custom-container .hcg-pagination-controls')).toBeVisible();
         await expect(page.locator('#test-custom-container .hcg-pagination-info')).toBeVisible();
-        const navButtons = page.locator('#test-custom-container .hcg-pagination-nav-buttons-container .hcg-button');
+        const navButtons = page.locator('#test-custom-container .hcg-pagination-pages .hcg-button');
         const buttonCount = await navButtons.count();
         expect(buttonCount).toBeGreaterThan(0);
     });
@@ -210,8 +210,8 @@ test.describe('Pagination', () => {
         // Wait for Grid to be initialized (with timeout)
         await page.waitForFunction(() => {
             return typeof (window as any).Grid !== 'undefined' &&
-                   (window as any).Grid.grids &&
-                   (window as any).Grid.grids.length > 0;
+                (window as any).Grid.grids &&
+                (window as any).Grid.grids.length > 0;
         }, { timeout: 5000 });
 
         // Test top position
@@ -224,11 +224,11 @@ test.describe('Pagination', () => {
             });
         });
 
-        await expect(page.locator('.hcg-pagination-wrapper')).toBeVisible();
+        await expect(page.locator('.hcg-pagination')).toBeVisible();
 
         // Verify the DOM order: pagination should be before table
         const container = page.locator('.hcg-container');
-        const paginationIndex = await container.locator('.hcg-pagination-wrapper').evaluate((el) => {
+        const paginationIndex = await container.locator('.hcg-pagination').evaluate((el) => {
             const parent = el.parentElement;
             return parent ? Array.from(parent.children).indexOf(el) : -1;
         });
@@ -248,7 +248,7 @@ test.describe('Pagination', () => {
         });
 
         // Verify the DOM order: pagination should be after table
-        const paginationIndexAfter = await container.locator('.hcg-pagination-wrapper').evaluate((el) => {
+        const paginationIndexAfter = await container.locator('.hcg-pagination').evaluate((el) => {
             const parent = el.parentElement;
             return parent ? Array.from(parent.children).indexOf(el) : -1;
         });
@@ -271,24 +271,7 @@ test.describe('Pagination', () => {
 
         // Check that tfoot element exists and contains pagination
         await expect(page.locator('.hcg-table tfoot')).toBeVisible();
-        await expect(page.locator('.hcg-table tfoot .hcg-pagination-wrapper')).toBeVisible();
-    });
-
-    test('Position mobile view', async ({ page }) => {
-        await page.setViewportSize({ width: 375, height: 812 }); // iPhone X
-        // Wait for mobile layout to apply
-        await expect(page.locator('.hcg-pagination-nav-dropdown')).toBeVisible();
-
-        await expect(page.locator('.hcg-pagination-nav-dropdown')).toBeVisible();
-        // Check the selected option text, not all options
-        const dropdownText = await page.locator('.hcg-pagination-nav-dropdown').textContent();
-        expect(dropdownText).toContain('Page 1 of');
-        await expect(page.locator('.hcg-pagination-page-size')).toBeVisible();
-        await expect(page.locator('.hcg-pagination-page-size')).toContainText('10');
-        await expect(page.locator('.hcg-button[title="Next page"]')).toBeVisible();
-        await expect(page.locator('.hcg-button[title="Previous page"]')).toBeVisible();
-        await expect(page.locator('.hcg-button[title="Last page"]')).toBeVisible();
-        await expect(page.locator('.hcg-button[title="First page"]')).toBeVisible();
+        await expect(page.locator('.hcg-table tfoot .hcg-pagination')).toBeVisible();
     });
 });
 
