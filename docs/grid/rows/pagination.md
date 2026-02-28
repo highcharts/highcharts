@@ -3,50 +3,30 @@ sidebar_label: "Pagination"
 ---
 
 # Row pagination
+Pagination splits row data into pages, so the grid renders a manageable subset of rows at a time. This is useful for large datasets and helps keep the interface fast and readable.
 
-Pagination splits row data into pages, so the Grid renders a manageable subset of rows at a time. This is useful for large datasets and helps keep the interface fast and readable.
-
-If you prefer continuous scrolling instead of pages, consider row virtualization under `rendering.rows`.
-
-## Enable pagination
+## Enable pagination with default configuration
 
 ```js
 Grid.grid('container', {
     data: {
         dataTable: {
-            columns: {
-                product: ['Apple', 'Pear', 'Orange', 'Banana', 'Grape', 'Mango'],
-                price: [3.5, 2.5, 3, 2.2, 4.1, 3.8]
-            }
-        }
-    },
-    pagination: true
-});
-```
-
-To customize pagination, use the object form:
-
-```js
-Grid.grid('container', {
-    data: {
-        dataTable: {
-            columns: {
-                product: ['Apple', 'Pear', 'Orange', 'Banana', 'Grape', 'Mango'],
-                price: [3.5, 2.5, 3, 2.2, 4.1, 3.8]
-            }
+            columns: {...}
         }
     },
     pagination: {
-        enabled: true,
-        pageSize: 5,
-        position: 'bottom'
+        enabled: true
     }
 });
 ```
 
+This enables pagination with all default elements and controls enabled, and can be customized further if needed.
+
 ## Page size
 
 The `pageSize` option controls how many rows appear on each page. The default value is `10`.
+
+Pagination does not disable row virtualization. If `pageSize` is higher than the number of rows that fit in the grid viewport, only the visible subset of rows in the current page is rendered at a time, and additional rows are rendered as you scroll.
 
 ```js
 pagination: {
@@ -55,9 +35,53 @@ pagination: {
 }
 ```
 
-## Pagination controls
+## Position
 
-You can enable or disable individual UI controls, such as the page size selector or the page buttons:
+Use `pagination.position` to control where the pagination UI is rendered.
+
+Supported values are:
+- `top`: renders pagination before the grid.
+- `bottom`: renders pagination after the grid (default).
+- `footer`: renders pagination inside the grid footer.
+- `#element-id`: renders pagination inside a custom container selected by ID.
+
+```js
+pagination: {
+    enabled: true,
+    position: '#my-pagination'
+}
+```
+
+## Alignment
+
+Use `pagination.align` to control how the pagination controls are aligned inside the pagination container.
+
+Supported values are:
+- `distributed` (default)
+- `left`
+- `center`
+- `right`
+
+```js
+pagination: {
+    enabled: true,
+    position: 'bottom',
+    align: 'left'
+}
+```
+
+## Controls
+
+Use `pagination.controls` to enable or disable individual pagination UI parts. All options accepts both `boolean` or an object with `enabled`.
+
+Available options are:
+- `pageSizeSelector`: number of rows per page selector.
+- `pageInfo`: page summary text (for example, "Showing 1 - 10 of 42").
+- `firstLastButtons`: first and last page navigation buttons.
+- `previousNextButtons`: previous and next page navigation buttons.
+- `pageButtons`: numbered page buttons.
+
+Example with all controls configured:
 
 ```js
 pagination: {
@@ -65,17 +89,59 @@ pagination: {
     controls: {
         pageSizeSelector: {
             enabled: true,
-            options: [10, 25, 50]
+            options: [10, 25, 50, 100]
         },
-        pageInfo: {
-            enabled: true
-        },
+        pageInfo: true,
+        firstLastButtons: false,
+        previousNextButtons: true,
         pageButtons: {
             enabled: true,
-            count: 7
+            count: 9
         }
     }
 }
 ```
 
-For a complete list of options and methods, see the [Pagination article](https://www.highcharts.com/docs/grid/rows/pagination) or the [pagination API reference](https://api.highcharts.com/grid/#interfaces/Grid_Core_Pagination_PaginationOptions.PaginationOptions).
+## Responsive pagination
+
+Pagination is a typical use case for `responsive.rules`. Use it to override pagination settings for smaller grid widths and reduce control density on e.g. mobile devices.
+
+```js
+Grid.grid('container', {
+    data: {
+        dataTable: {
+            columns: {...}
+        }
+    },
+    pagination: {
+        enabled: true,
+        pageSize: 25,
+        controls: {
+            pageButtons: {
+                count: 9
+            }
+        }
+    },
+    responsive: {
+        rules: [{
+            condition: {
+                maxWidth: 600
+            },
+            gridOptions: {
+                pagination: {
+                    pageSize: 10,
+                    controls: {
+                        pageSizeSelector: false,
+                        prevNextButtons: false,
+                        pageButtons: {
+                            count: 5
+                        }
+                    }
+                }
+            }
+        }]
+    }
+});
+```
+
+For a complete list of options and methods, see the [pagination API reference](https://api.highcharts.com/grid/pagination).
