@@ -153,23 +153,20 @@ The `rendering` option object can be used to configure options related to perfor
 For more information on rendering options, please read our article on [Performance and rendering](https://www.highcharts.com/docs/grid/rows/performance) or see the [API reference](https://api.highcharts.com/grid/#interfaces/Grid_Core_Options.RenderingSettings).
 
 ## responsive
-Use `responsive.rules` to apply different Grid options at different container sizes. Each rule contains a `condition` (such as `maxWidth` or `minWidth`) and a `gridOptions` object that will be merged into the base options when the rule matches.
+Use `responsive.rules[]` to apply different Grid options at different container sizes. Each rule contains a `condition` (such as `maxWidth` or `minWidth`) and a `gridOptions` object that will be merged into the base options when the rule matches.
 
 ```js
-Grid.grid('container', {
-    data: { dataTable: { columns: data } },
+{
     responsive: {
         rules: [{
             condition: { maxWidth: 800 },
             gridOptions: { header: ['firstName', 'email', 'mobile'] }
         }]
     }
-});
+}
 ```
 
-See a live sample [here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/grid-lite/basic/responsive-rules/).
-
-See the [API reference](https://api.highcharts.com/grid/#interfaces/Grid_Core_Responsive_ResponsiveOptions.ResponsiveOptions) for available rule options.
+Read more in the [Responsive grid article](https://www.highcharts.com/docs/grid/responsive-grid).
 
 ## pagination
 The `pagination` option object enables you to split large datasets into manageable pages, improving performance and user experience. When enabled, pagination displays a subset of data at a time with navigation controls.
@@ -179,34 +176,12 @@ The `pagination` option object enables you to split large datasets into manageab
     pagination: {
         enabled: true,
         pageSize: 25,
-        position: 'bottom',
-        align: 'center',
-        controls: {
-            pageSizeSelector: {
-                enabled: true,
-                options: [10, 25, 50, 100]
-            },
-            pageInfo: {
-                enabled: true
-            },
-            firstLastButtons: {
-                enabled: true
-            },
-            previousNextButtons: {
-                enabled: true
-            },
-            pageButtons: {
-                enabled: true,
-                count: 7
-            }
-        }
+        position: 'footer',
     }
 }
 ```
 
-The pagination controls include page size selection, page information display, first/last page buttons, previous/next buttons, and numbered page buttons. You can also configure pagination events (in the Grid Pro version) to respond to page changes and page size modifications.
-
-For more information on pagination options and events, see the [Pagination article](https://www.highcharts.com/docs/grid/rows/pagination) or the [API reference](https://api.highcharts.com/grid/#interfaces/Grid_Core_Pagination_PaginationOptions.PaginationOptions).
+Read more in the [Pagination article](https://www.highcharts.com/docs/grid/rows/pagination).
 
 ## events __grid_pro__
 Highcharts Grid Pro supports several event listeners that can be added to the header, columns and cells. These provide custom functionality and extendibility of Grid. Read more about events in the [Events article](https://www.highcharts.com/docs/grid/events).
