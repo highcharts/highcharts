@@ -144,4 +144,34 @@ Grid.grid('container', {
 });
 ```
 
-For a complete list of options and methods, see the [pagination API reference](https://api.highcharts.com/grid/pagination).
+## Events __grid_pro__
+
+In Grid Pro, pagination events are configured in `pagination.events`.
+
+Available events are:
+- `beforePageChange`
+- `afterPageChange`
+- `beforePageSizeChange`
+- `afterPageSizeChange`
+
+```js
+pagination: {
+    enabled: true,
+    events: {
+        beforePageChange: function (e) {
+            console.log('Page changing from', e.currentPage, 'to', e.nextPage);
+        },
+        afterPageChange: function (e) {
+            console.log('Page changed to', e.currentPage);
+        },
+        beforePageSizeChange: function (e) {
+            console.log('Page size changing from', e.pageSize, 'to', e.newPageSize);
+        },
+        afterPageSizeChange: function (e) {
+            console.log('Page size changed to', e.pageSize);
+        }
+    }
+}
+```
+
+For a complete list of pagination options, see the [pagination API reference](https://api.highcharts.com/grid/pagination).
