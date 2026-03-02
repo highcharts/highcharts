@@ -5,8 +5,11 @@ authors:
 requiresManualTesting: true
 js_wrap: b
 tags:
+  - Highcharts overview
   - Highcharts Maps demo
 categories:
+  - Basics:
+      priority: 11
   - General
 use_png_thumbnail: true
 ...

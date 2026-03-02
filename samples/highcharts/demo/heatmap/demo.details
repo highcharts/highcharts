@@ -5,8 +5,11 @@ authors:
 compareTooltips: true
 js_wrap: b
 tags:
+  - Highcharts overview
   - Highcharts demo
 categories:
+  - Basics:
+      priority: 9
   - Heat and tree maps:
       priority: 1
 ...
