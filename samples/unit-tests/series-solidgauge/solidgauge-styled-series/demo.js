@@ -70,6 +70,22 @@ QUnit.test('Solid gauge styled series color (#6350)', function (assert) {
         })
     );
 
+    var chartWithoutStops = Highcharts.chart(
+        'container-without-stops',
+        Highcharts.merge(gaugeOptions, {
+            yAxis: {
+                stops: null,
+                min: 0,
+                max: 200
+            },
+            series: [
+                {
+                    data: [{ y: 80 }, { y: 20, colorIndex: 2 }]
+                }
+            ]
+        })
+    );
+
     assert.strictEqual(
         chart.series[0].data[0].graphic.element.className.baseVal,
         'highcharts-point',
@@ -81,5 +97,24 @@ QUnit.test('Solid gauge styled series color (#6350)', function (assert) {
         chart.series[0].data[0].graphic.element.className.baseVal,
         'highcharts-point',
         'Color class should be updated (#8791)'
+    );
+
+    assert.strictEqual(
+        chartWithoutStops.series[0].data[0].graphic.element.className.baseVal,
+        'highcharts-point highcharts-color-0',
+        'Color classes are applied when stops are not defined.'
+    );
+
+    assert.strictEqual(
+        chartWithoutStops.series[0].data[1].graphic.element.className.baseVal,
+        'highcharts-point highcharts-color-2',
+        'Color classes are applied based on colorIndex.'
+    );
+
+    chartWithoutStops.series[0].points[0].update({ colorIndex: 1 });
+    assert.strictEqual(
+        chartWithoutStops.series[0].data[0].graphic.element.className.baseVal,
+        'highcharts-point highcharts-color-1',
+        'Color class should be updated when stops are not defined'
     );
 });

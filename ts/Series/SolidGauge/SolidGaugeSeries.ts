@@ -32,6 +32,7 @@ const {
 } = SeriesRegistry.seriesTypes;
 import SolidGaugeAxis from '../../Core/Axis/SolidGaugeAxis.js';
 import SolidGaugeSeriesDefaults from './SolidGaugeSeriesDefaults.js';
+import { GradientColorStop } from '../../Core/Color/GradientColor';
 import U from '../../Core/Utilities.js';
 const {
     clamp,
@@ -256,7 +257,13 @@ class SolidGaugeSeries extends GaugeSeries {
                         stroke: options.borderColor || 'none',
                         'stroke-width': options.borderWidth || 0
                     });
-                } else if (series.yAxis?.stops) {
+                } else if (
+                    series.yAxis?.stops &&
+                    series.yAxis.stops.every(
+                        (stop: GradientColorStop): boolean =>
+                            stop.color?.get('rgb') !== ''
+                    )
+                ) {
                     className = className
                         .replace(/highcharts-color-\d/gm, '')
                         .trim();
