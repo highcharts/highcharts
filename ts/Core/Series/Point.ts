@@ -853,10 +853,15 @@ class Point {
         const point = this;
         const seriesOptions = point.series.options as Record<string, unknown>;
         const negativeColor = point.negative &&
+            seriesOptions.negativeColor !== false &&
             (
-                seriesOptions.negativeColor ||
                 seriesOptions.negativeFillColor ||
-                seriesOptions.displayNegative === true
+                seriesOptions.displayNegative === true ||
+                // Waterfall series uses zone className for negative color
+                (
+                    point.zone?.className?.includes('highcharts-negative') ||
+                    point.series.chart.styledMode
+                )
             );
 
         return 'highcharts-point' +
