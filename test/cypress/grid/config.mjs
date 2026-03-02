@@ -11,7 +11,7 @@ function getDemoFiles(dir) {
         .filter((file) => (
             file.endsWith('.html') &&
             !file.includes('studies/') &&
-            !file.includes('cypress/')
+            !file.includes('e2e/')
         ))
         .map((file) => file.replace('\/demo.html', ''));
 }

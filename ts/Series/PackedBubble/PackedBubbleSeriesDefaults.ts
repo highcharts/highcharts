@@ -33,7 +33,7 @@ import { isNumber } from '../../Shared/Utilities.js';
  * @excluding    boostThreshold, boostBlending,connectEnds, connectNulls,
  *               cropThreshold, dataSorting, dragDrop, jitter,
  *               legendSymbolColor, keys, pointPlacement, sizeByAbsoluteValue,
- *               step, xAxis, yAxis, zMax, zMin
+ *               step, xAxis, yAxis
  * @product      highcharts
  * @since        7.0.0
  * @requires     highcharts-more

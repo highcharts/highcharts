@@ -27,7 +27,7 @@ import type LinearRegressionInterceptPoint from
 
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
-    linearRegression: LinearRegressionIndicator
+    linearregression: LinearRegressionIndicator
 } = SeriesRegistry.seriesTypes;
 import { extend, merge } from '../../../Shared/Utilities.js';
 
@@ -118,10 +118,17 @@ extend(LinearRegressionInterceptIndicator.prototype, {
 
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
+        linearregressionintercept: typeof LinearRegressionInterceptIndicator;
         linearRegressionIntercept: typeof LinearRegressionInterceptIndicator;
     }
 }
 
+SeriesRegistry.registerSeriesType(
+    'linearregressionintercept',
+    LinearRegressionInterceptIndicator
+);
+
+// Keep for backwards compatibility
 SeriesRegistry.registerSeriesType(
     'linearRegressionIntercept',
     LinearRegressionInterceptIndicator

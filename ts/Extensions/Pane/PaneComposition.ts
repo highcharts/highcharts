@@ -4,7 +4,7 @@
  *
  * */
 
-import type BBoxObject from '../../Core/Renderer/BBoxObject';
+import type { BBoxObject } from '../../Core/Renderer/BBoxObject';
 import type Chart from '../../Core/Chart/Chart';
 import type Pane from './Pane';
 import type Pointer from '../../Core/Pointer';
@@ -23,7 +23,8 @@ import {
  *
  * */
 
-declare module '../../Core/Chart/ChartBase'{
+/** @internal */
+declare module '../../Core/Chart/ChartBase' {
     interface ChartBase {
         hoverPane?: Pane;
         pane?: Array<Pane>;
@@ -31,11 +32,12 @@ declare module '../../Core/Chart/ChartBase'{
     }
 }
 
-export interface PaneChart extends Chart {
+/** @internal */
+export type PaneChart = Chart & {
     hoverPane?: Pane;
     pane: Array<Pane>;
     getHoverPane(eventArgs: any): (Pane|undefined);
-}
+};
 
 /* *
  *
@@ -230,7 +232,7 @@ function onChartAfterIsInsiderPlot(
 }
 
 /**
- *
+ * @internal
  */
 function onPointerAfterGetHoverData(
     this: Pointer,
@@ -287,8 +289,10 @@ function onPointerBeforeGetHoverData(
  *
  * */
 
+/** @internal */
 const PaneComposition = {
     compose
 };
 
+/** @internal */
 export default PaneComposition;

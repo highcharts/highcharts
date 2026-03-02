@@ -3,6 +3,26 @@ Data providers are the bridge between Grid and your data source. A provider is r
 
 Providers are configured under the `data` option. The `providerType` selects which provider to use and the rest of the `data` object is passed as provider-specific options.
 
+## Common loading patterns
+
+- In-memory tables with `providerType: 'local'`
+- Remote paging/filtering/sorting with `providerType: 'remote'`
+- Data connector-backed local tables
+
+```js
+Grid.grid('container', {
+    data: {
+        providerType: 'remote',
+        dataSource: {
+            urlTemplate: '/api/grid?page={page}&pageSize={pageSize}'
+        }
+    },
+    pagination: {
+        enabled: true
+    }
+});
+```
+
 ## LocalDataProvider (default)
 When you provide `data.dataTable`, Grid uses `LocalDataProvider` by default. It works entirely in memory and is a good fit for fully-loaded datasets and [Data Modifiers](https://www.highcharts.com/docs/dashboards/data-modifiers).
 

@@ -33,12 +33,12 @@ jobs:
       PWTEST_WORKER_COUNT: 2
     steps:
       - name: Checkout master
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           ref: master
 
       - name: Use Node.js lts/*
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: 'lts/*'
           cache: 'npm'
@@ -93,13 +93,13 @@ jobs:
         run: node --import tsx tests/analyze-snapshots.mts
 
       - name: Checkout current branch
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           clean: false
           fetch-depth: 0
 
       - name: Use Node.js lts/*
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: 'lts/*'
           cache: 'npm'
@@ -154,7 +154,7 @@ jobs:
 
       - name: Upload Playwright artifacts
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: playwright-visual-results
           path: |

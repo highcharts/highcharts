@@ -858,7 +858,7 @@ function filterSeries(
             lang.navigation &&
             lang.navigation.popup &&
             lang.navigation.popup.indicatorAliases,
-        filteredSeriesArray: Array<FilteredSeries> = [];
+        filteredSeriesMap: Map<string, FilteredSeries> = new Map();
 
     let filteredSeries: FilteredSeries;
 
@@ -894,7 +894,8 @@ function filterSeries(
                         series: series as any
                     };
 
-                    filteredSeriesArray.push(filteredSeries);
+                    filteredSeriesMap
+                        .set(indicatorType.toLowerCase(), filteredSeries);
                 }
             } else {
                 filteredSeries = {
@@ -903,12 +904,13 @@ function filterSeries(
                     series: series as any
                 };
 
-                filteredSeriesArray.push(filteredSeries);
+                filteredSeriesMap
+                    .set(indicatorType.toLowerCase(), filteredSeries);
             }
         }
     });
 
-    return filteredSeriesArray;
+    return Array.from(filteredSeriesMap.values());
 }
 
 /**

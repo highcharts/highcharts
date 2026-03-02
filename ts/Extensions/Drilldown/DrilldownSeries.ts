@@ -43,8 +43,9 @@ import {
     addEvent,
     extend,
     fireEvent,
+    isString,
     merge,
-    pick,
+    splat,
     syncTimeout
 } from '../../Shared/Utilities.js';
 
@@ -142,7 +143,7 @@ function columnAnimateDrilldown(
         chart = series.chart as Drilldown.ChartComposition,
         { drilldownLevels, styledMode } = chart,
         animationOptions = animObject(chart.options.drilldown?.animation),
-        xAxis = this.xAxis;
+        { xAxis, yAxis } = this;
 
     if (!init) {
         let animateFrom: (SVGAttributes|undefined);
@@ -155,34 +156,32 @@ function columnAnimateDrilldown(
                     level.lowerSeriesOptions._ddSeriesId
             ) {
                 animateFrom = level.shapeArgs;
-                if (!styledMode && animateFrom) {
-                    // Add the point colors to animate from
-                    animateFrom.fill = level.color;
+
+                if (animateFrom) {
+                    // Adjust for changing axis positions
+                    animateFrom.x = (animateFrom.x || 0) +
+                        (level.plotLeft ?? xAxis.pos) - xAxis.pos;
+                    animateFrom.y = (animateFrom.y || 0) +
+                        (level.plotTop ?? yAxis.pos) - yAxis.pos;
+
+                    if (!styledMode) {
+                        // Add the point colors to animate from
+                        animateFrom.fill = level.color;
+                    }
                 }
             }
         });
 
-        (animateFrom as any).x += pick(xAxis.oldPos, xAxis.pos) - xAxis.pos;
-
         series.points.forEach((point: Point): void => {
-            const animateTo = point.shapeArgs;
-
-            if (!styledMode) {
-                // Add the point colors to animate to
-                (animateTo as any).fill = point.color;
-            }
-
-            if (point.graphic) {
-                point.graphic
-                    .attr(animateFrom)
-                    .animate(
-                        extend(
-                            point.shapeArgs,
-                            { fill: point.color || series.color }
-                        ),
-                        animationOptions
-                    );
-            }
+            point.graphic
+                ?.attr(animateFrom)
+                .animate(
+                    extend(
+                        point.shapeArgs,
+                        { fill: point.color || series.color }
+                    ),
+                    animationOptions
+                );
         });
 
         this.dataLabelsGroups?.forEach(
@@ -279,7 +278,8 @@ function columnAnimateDrillupTo(
     init?: boolean
 ): void {
     const series = this,
-        level = series.drilldownLevel;
+        level = series.drilldownLevel,
+        animation = animObject(series.chart.options.drilldown?.animation);
 
     if (!init) {
 
@@ -336,9 +336,7 @@ function columnAnimateDrillupTo(
                     }
                 });
             }
-        }, Math.max(
-            (series.chart.options.drilldown as any).animation.duration - 50, 0
-        ));
+        }, Math.max(animation.duration - 50, 0));
 
         // Reset to prototype
         delete (this as AnyRecord).animate;
@@ -436,8 +434,8 @@ function mapAnimateDrilldown(
                 (): void => {
                     if (series.options) {
                         series.options.inactiveOtherPoints = false;
-                        series.options.enableMouseTracking = pick(
-                            series.userOptions?.enableMouseTracking,
+                        series.options.enableMouseTracking = (
+                            series.userOptions?.enableMouseTracking ??
                             true
                         );
                     }
@@ -557,7 +555,7 @@ function onPointClick(
         false
     ) {
         // #5822, x changed
-        series.xAxis.drilldownCategory(point.x as any, e);
+        series.xAxis.drilldownCategory(point.x, e);
     } else {
         point.runDrilldown(void 0, void 0, e);
     }
@@ -589,31 +587,34 @@ function onSeriesAfterDrawDataLabels(
 ): void {
     const series = this,
         chart = series.chart,
-        css = (chart.options.drilldown as any).activeDataLabelStyle,
+        css = chart.options.drilldown?.activeDataLabelStyle || {},
         renderer = chart.renderer,
         styledMode = chart.styledMode;
 
     for (const point of series.points) {
-        const dataLabelsOptions = point.options.dataLabels,
-            pointCSS = pick(
-                point.dlOptions,
-                dataLabelsOptions && (dataLabelsOptions as any).style,
+        const dataLabelsOptions = splat(point.options.dataLabels)[0] || {},
+            pointCSS = (
+                point.dlOptions ||
+                dataLabelsOptions.style ||
                 {}
             ) as CSSObject;
 
         if (point.drilldown && point.dataLabel) {
 
             if (css.color === 'contrast' && !styledMode) {
-                pointCSS.color = renderer.getContrast(
-                    (point.color as any) || (series.color as any)
+                const itemColor = (
+                    (isString(point.color) && point.color) ||
+                    (isString(series.color) && series.color)
                 );
+                if (isString(itemColor)) {
+                    pointCSS.color = renderer.getContrast(itemColor);
+                }
             }
 
-            if (dataLabelsOptions && (dataLabelsOptions as any).color) {
-                pointCSS.color = (dataLabelsOptions as any).color;
+            if (dataLabelsOptions && dataLabelsOptions.color) {
+                pointCSS.color = dataLabelsOptions.color;
             }
-            point.dataLabel
-                .addClass('highcharts-drilldown-data-label');
+            point.dataLabel.addClass('highcharts-drilldown-data-label');
 
             if (!styledMode) {
                 point.dataLabel
@@ -649,23 +650,24 @@ function pieAnimateDrilldown(
     const series = this,
         chart = series.chart as Drilldown.ChartComposition,
         points = series.points,
-        level: Drilldown.LevelObject =
-            (chart.drilldownLevels as any)[
-                (chart.drilldownLevels as any).length - 1
-            ],
-        animationOptions =
-            (chart.options.drilldown as any).animation;
+        drilldownLevels = chart.drilldownLevels || [],
+        level = drilldownLevels[drilldownLevels.length - 1],
+        animation = animObject(chart.options.drilldown?.animation);
 
     if (series.is('item')) {
-        animationOptions.duration = 0;
+        animation.duration = 0;
     }
     // Unable to drill down in the horizontal item series #13372
     if (series.center) {
-        const animateFrom = level.shapeArgs,
-            start = (animateFrom as any).start,
-            angle = (animateFrom as any).end - start,
+        const animateFrom = level.shapeArgs || {},
+            start = animateFrom.start || 0,
+            angle = (animateFrom.end || 0) - start,
             startAngle = angle / series.points.length,
             styledMode = chart.styledMode;
+
+        // Adjust for moving plot area, typically adjusting to breadcrumbs
+        animateFrom.y = (animateFrom.y || 0) +
+            ((level.plotTop ?? chart.plotTop) - chart.plotTop) / 2;
 
         if (!init) {
             let animateTo: (SVGAttributes|undefined),
@@ -673,23 +675,21 @@ function pieAnimateDrilldown(
 
             for (let i = 0, iEnd = points.length; i < iEnd; ++i) {
                 point = points[i];
-                animateTo = point.shapeArgs;
+                animateTo = point.shapeArgs || {};
 
                 if (!styledMode) {
-                    (animateFrom as any).fill = level.color;
-                    (animateTo as any).fill = point.color;
+                    animateFrom.fill = level.color;
+                    animateTo.fill = point.color;
                 }
 
-                if (point.graphic) {
-                    point.graphic.attr(merge(animateFrom, {
-                        start: start + i * startAngle,
-                        end: start + (i + 1) * startAngle
-                    }))[animationOptions ? 'animate' : 'attr'](
-                        (
-                            animateTo as any),
-                        animationOptions
-                    );
-                }
+                const attr = merge(animateFrom, {
+                    start: start + i * startAngle,
+                    end: start + (i + 1) * startAngle
+                } as SVGAttributes);
+                point.graphic?.attr(attr).animate(
+                    animateTo,
+                    animation
+                );
             }
 
             series.dataLabelsGroups?.forEach(

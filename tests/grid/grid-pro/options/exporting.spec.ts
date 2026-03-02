@@ -38,7 +38,7 @@ test.describe('Exporting the Grid', () => {
     });
 
     test.beforeEach(async ({ page }) => {
-        await page.goto('grid-pro/cypress/exporting');
+        await page.goto('grid-pro/e2e/exporting');
     });
 
     test('Grid should be exported to JSON', async ({ page }) => {
