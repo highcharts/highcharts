@@ -1,8 +1,10 @@
 ---
-name: Grid Accessibility
+name: Accessibility
 authors:
   - Dawid Dragula
 js_wrap: b
+alt_text: >-
+  Accessible data grid for all users
 tags:
   - Highcharts Grid demo
 categories:

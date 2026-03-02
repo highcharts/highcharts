@@ -1,12 +1,14 @@
 ---
-name: Custom HTML in cells
+name: Theming
 authors:
-  - Karol Kolodziej
+  - Stian Totland
 js_wrap: b
+alt_text: >-
+  Theming and styling a data grid
 tags:
   - Highcharts Grid demo
 categories:
   - General:
-        priority: 60
+        priority: 40
 use_png_thumbnail: true
 ...

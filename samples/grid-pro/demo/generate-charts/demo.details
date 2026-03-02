@@ -1,8 +1,10 @@
 ---
-name: Generate charts from Grid
+name: Generate charts
 authors:
   - Mikkel Espolin Birkeland
 js_wrap: b
+alt_text: >-
+  Create charts from data grid selections
 tags:
   - Highcharts Grid demo
 categories:
