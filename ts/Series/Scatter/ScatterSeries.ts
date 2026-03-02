@@ -19,6 +19,7 @@
 
 import type ScatterPoint from './ScatterPoint';
 import type ScatterSeriesOptions from './ScatterSeriesOptions';
+import type PointerEvent from '../../Core/PointerEvent.js';
 
 import ScatterSeriesDefaults from './ScatterSeriesDefaults.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
@@ -32,6 +33,22 @@ const {
     extend,
     merge
 } = U;
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+declare module '../../Core/Series/SeriesBase' {
+    interface SeriesBase {
+        /**
+         * Allow scatter points on the edge to be interacted
+         * with outside the plot.
+         */
+        allowOutsidePlotInteraction?(e: PointerEvent): boolean;
+    }
+}
 
 /* *
  *
@@ -157,6 +174,28 @@ interface ScatterSeries {
     pointClass: typeof ScatterPoint;
 }
 extend(ScatterSeries.prototype, {
+    /**
+     * Allow scatter points on the edge to be interacted with outside the plot
+     * area.
+     * @internal
+     *
+     * @function Highcharts.ScatterSeries#allowOutsidePlotInteraction
+     *
+     * @param {PointerEvent} e
+     * The pointer event.
+     *
+     * @return {boolean}
+     * True if interaction is allowed.
+     */
+    allowOutsidePlotInteraction: function (
+        this: ScatterSeries,
+        e: PointerEvent
+    ): boolean {
+        return !!this.chart.pointer?.inClass(
+            e.target as any,
+            'highcharts-point'
+        );
+    },
     drawTracker: ColumnSeries.prototype.drawTracker,
     sorted: false,
     requireSorting: false,
@@ -190,6 +229,7 @@ declare module '../../Core/Series/SeriesType' {
     }
 }
 SeriesRegistry.registerSeriesType('scatter', ScatterSeries);
+
 
 /* *
  *
