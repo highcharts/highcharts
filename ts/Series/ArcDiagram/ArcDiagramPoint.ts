@@ -20,8 +20,8 @@
  * */
 
 import type ArcDiagramPointOptions from './ArcDiagramPointOptions';
+import type ArcDiagramSeries from './ArcDiagramSeries';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
-import ArcDiagramSeries from './ArcDiagramSeries';
 import NodesComposition from '../NodesComposition.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {

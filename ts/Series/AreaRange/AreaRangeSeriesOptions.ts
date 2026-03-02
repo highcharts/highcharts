@@ -40,16 +40,6 @@ declare module '../../Core/Series/SeriesOptions' {
 /**
  * A `arearange` series. If the [type](#series.arearange.type) option is not
  * specified, it is inherited from [chart.type](#chart.type).
- *
- * @extends series,plotOptions.arearange
- *
- * @excluding dataParser, dataURL, stack, stacking
- *
- * @product highcharts highstock
- *
- * @requires highcharts-more
- *
- * @apioption series.arearange
  */
 export interface AreaRangeSeriesOptions extends AreaSeriesOptions {
 
@@ -73,25 +63,9 @@ export interface AreaRangeSeriesOptions extends AreaSeriesOptions {
      *
      * @extends plotOptions.series.marker
      *
-     * @default undefined
-     *
      * @product highcharts highstock
      */
     lowMarker?: PointMarkerOptions;
-
-    /**
-     *
-     * @sample {highcharts} highcharts/series-arearange/lowmarker/
-     *         Area range chart with `lowMarker` option
-     *
-     * @declare Highcharts.PointMarkerOptionsObject
-     *
-     * @extends plotOptions.series.marker.symbol
-     *
-     * @product highcharts highstock
-     *
-     * @apioption plotOptions.arearange.lowMarker.symbol
-     */
 
     /**
      *

@@ -26,7 +26,7 @@ import type AreaRangeSeriesOptions from './AreaRangeSeriesOptions';
  * */
 
 /**
- * The area range series is a carteseian series with higher and lower values for
+ * The area range series is a cartesian series with higher and lower values for
  * each point along an X axis, where the area between the values is shaded.
  *
  * @sample {highcharts} highcharts/demo/arearange/
@@ -48,6 +48,7 @@ const AreaRangeSeriesDefaults: AreaRangeSeriesOptions = {
      * @see [fillColor](#plotOptions.arearange.fillColor)
      * @see [fillOpacity](#plotOptions.arearange.fillOpacity)
      *
+     * @type      {Highcharts.ColorType}
      * @apioption plotOptions.arearange.color
      */
 
@@ -60,6 +61,7 @@ const AreaRangeSeriesDefaults: AreaRangeSeriesOptions = {
      * @see [color](#plotOptions.arearange.color)
      * @see [fillOpacity](#plotOptions.arearange.fillOpacity)
      *
+     * @type      {Highcharts.ColorType}
      * @apioption plotOptions.arearange.fillColor
      */
 
@@ -122,8 +124,7 @@ const AreaRangeSeriesDefaults: AreaRangeSeriesOptions = {
      * @exclude x, y
      * @since   2.3.0
      * @product highcharts highstock
-     *
-     * @private
+     * @apioption plotOptions.arearange.dataLabels
      */
     dataLabels: {
 
@@ -185,6 +186,7 @@ const AreaRangeSeriesDefaults: AreaRangeSeriesOptions = {
  * @see [fillColor](#series.arearange.fillColor)
  * @see [fillOpacity](#series.arearange.fillOpacity)
  *
+ * @type      {Highcharts.ColorType}
  * @apioption series.arearange.color
  */
 
@@ -261,6 +263,7 @@ const AreaRangeSeriesDefaults: AreaRangeSeriesOptions = {
  * @see [color](#series.arearange.color)
  * @see [fillColor](#series.arearange.fillColor)
  *
+ * @type      {number}
  * @default   {highcharts} 0.75
  * @default   {highstock} 0.75
  * @apioption series.arearange.fillOpacity
@@ -274,7 +277,6 @@ const AreaRangeSeriesDefaults: AreaRangeSeriesOptions = {
  *
  * @declare   Highcharts.PointMarkerOptionsObject
  * @extends   plotOptions.series.marker
- * @default   undefined
  * @product   highcharts highstock
  * @apioption plotOptions.arearange.lowMarker
  */

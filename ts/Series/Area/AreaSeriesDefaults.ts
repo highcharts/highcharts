@@ -29,7 +29,6 @@ import type AreaSeriesOptions from './AreaSeriesOptions';
  *
  * */
 
-
 /**
  * The area series type.
  *

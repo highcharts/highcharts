@@ -17,7 +17,7 @@
 
 import type AreaPointOptions from './AreaPointOptions';
 import type AreaSeries from './AreaSeries';
-import type LinePoint from '../Line/LinePoint';
+import LinePoint from '../Line/LinePoint.js';
 
 /* *
  *
