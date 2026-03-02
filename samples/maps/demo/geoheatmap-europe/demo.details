@@ -1,5 +1,5 @@
 ---
-name: Geo heatmap of Europe
+name: GeoHeatmap of Europe
 authors:
   - Piotr Madej, Magdalena Gut
 js_wrap: b
