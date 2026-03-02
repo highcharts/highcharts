@@ -64,14 +64,16 @@ const syncPair: SyncPair = {
         const onCellHover = (e: TableCellEvent): void => {
             if (table) {
                 const cell = e.target;
-                const rowId = cell.row.id;
-                if (typeof rowId !== 'number') {
+                const localIndex = cell.row.index;
+                const originalIndex =
+                    grid.viewport?.dataTable?.getOriginalRowIndex(localIndex);
+                if (typeof originalIndex !== 'number') {
                     return;
                 }
 
                 cursor.emitCursor(table, {
                     type: 'position',
-                    row: rowId,
+                    row: originalIndex,
                     column: cell.column.id,
                     state: 'point.mouseOver' + groupKey,
                     sourceId: this.id
@@ -82,14 +84,16 @@ const syncPair: SyncPair = {
         const onCellMouseOut = (e: TableCellEvent): void => {
             if (table) {
                 const cell = e.target;
-                const rowId = cell.row.id;
-                if (typeof rowId !== 'number') {
+                const localIndex = cell.row.index;
+                const originalIndex =
+                    grid.viewport?.dataTable?.getOriginalRowIndex(localIndex);
+                if (typeof originalIndex !== 'number') {
                     return;
                 }
 
                 cursor.emitCursor(table, {
                     type: 'position',
-                    row: rowId,
+                    row: originalIndex,
                     column: cell.column.id,
                     state: 'point.mouseOut' + groupKey,
                     sourceId: this.id
@@ -152,6 +156,7 @@ const syncPair: SyncPair = {
             }
 
             const rowIndex = viewport.dataTable?.getLocalRowIndex(row);
+
             if (rowIndex === void 0) {
                 return;
             }

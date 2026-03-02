@@ -221,7 +221,7 @@ class Table {
     public get dataTable(): DataTable | undefined {
         const dp = this.grid.dataProvider;
         if (dp && 'getDataTable' in dp) {
-            return dp.getDataTable();
+            return dp.getDataTable(true);
         }
     }
 

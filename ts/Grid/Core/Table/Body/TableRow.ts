@@ -66,7 +66,7 @@ class TableRow extends Row {
     public index: number;
 
     /**
-     * The index of the row in the original data table (ID).
+     * The unique ID of the row.
      */
     public id?: RowId;
 
@@ -103,7 +103,8 @@ class TableRow extends Row {
     * */
 
     public async init(): Promise<void> {
-        this.id = await this.viewport.grid.dataProvider?.getRowId(this.index);
+        const dp = this.viewport.grid.dataProvider;
+        this.id = await dp?.getRowId(this.index);
         await this.loadData();
         this.setRowAttributes();
     }
@@ -164,8 +165,6 @@ class TableRow extends Row {
         }
 
         this.index = index;
-        this.id = await this.viewport.grid.dataProvider?.getRowId(index);
-
         this.htmlElement.setAttribute('data-row-index', index);
         this.updateRowAttributes();
         this.updateParityClass();

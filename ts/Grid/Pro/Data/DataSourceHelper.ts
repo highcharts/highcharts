@@ -22,7 +22,6 @@
  *
  * */
 
-import type { RowId } from '../../Core/Data/DataProvider';
 import type { RemoteFetchCallbackResult } from './RemoteDataProvider';
 import type QueryingController from '../../Core/Querying/QueryingController';
 import type { ColumnSortingOrder } from '../../Core/Options';
@@ -292,17 +291,6 @@ export async function dataSourceFetch(
                 await fetch(url);
 
             const data = await parseResponse(res);
-            if (options.rowIdColumn) {
-                const rowIdsColumn = data.columns[options.rowIdColumn];
-                if (!rowIdsColumn) {
-                    // eslint-disable-next-line no-console
-                    console.warn(`DataSourceHelper: rowIdColumn "${
-                        options.rowIdColumn
-                    }" not found in response.`);
-                    return data;
-                }
-                data.rowIds = rowIdsColumn as RowId[];
-            }
 
             return data;
         } finally {
@@ -378,15 +366,6 @@ export interface DataSourceOptions {
      * @default 30000
      */
     fetchTimeout?: number;
-
-    /**
-     * ID of a column that contains stable row IDs.
-     *
-     * If not defined, the row IDs will be extracted from the `meta.rowIds`
-     * property if available. If `meta.rowIds` is also not defined, the row IDs
-     * will default to the indices of the rows in their display order.
-     */
-    rowIdColumn?: string;
 }
 
 export interface QueryState {
