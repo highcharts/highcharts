@@ -1,0 +1,7 @@
+---
+ name: Highcharts AMD ES5 Demo
+ authors:
+   - Karol Kolodziej
+ requiresManualTesting: true
+ js_wrap: b
+...
