@@ -179,30 +179,43 @@
         assert.strictEqual(verify(boxes), true, 'Equal, unranked boxes');
     });
 
-    QUnit.test('Equal ranked boxes are decimated (#23541)', function (assert) {
-        var boxes = [];
+    QUnit.test(
+        'Equal ranked boxes are decimated from center outwards (#23541)',
+        function (assert) {
+            var boxes = [];
+            var hiddenTargets;
 
-        for (var i = 0, ie = 400; i < ie; ++i) {
-            boxes[i] = {
-                size: 20,
-                target: i * 2,
-                rank: 1
-            };
+            for (var i = 0, ie = 40; i < ie; ++i) {
+                boxes[i] = {
+                    size: 20,
+                    target: i * 10,
+                    rank: 1
+                };
+            }
+
+            Highcharts.distribute(boxes, len);
+            hiddenTargets = boxes
+                .filter(function (box) {
+                    return typeof box.pos !== 'number';
+                })
+                .map(function (box) {
+                    return box.target;
+                })
+                .sort(function (a, b) {
+                    return a - b;
+                });
+
+            assert.strictEqual(
+                verify(boxes),
+                true,
+                'Equal ranked boxes should be distributed within bounds'
+            );
+            assert.deepEqual(
+                hiddenTargets,
+                [10, 40, 60, 90, 110, 140, 190, 240, 290, 340],
+                'Equal ranked boxes should be decimated by recursive ' +
+                'center splitting'
+            );
         }
-
-        Highcharts.distribute(boxes, len, 100);
-
-        assert.strictEqual(
-            verify(boxes),
-            true,
-            'Equal ranked boxes should be distributed within bounds'
-        );
-        assert.strictEqual(
-            boxes.filter(function (box) {
-                return typeof box.pos === 'number';
-            }).length <= len / 20,
-            true,
-            'Equal ranked boxes should be decimated to fit the length'
-        );
-    });
+    );
 }());
