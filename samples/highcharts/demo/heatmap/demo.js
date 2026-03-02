@@ -7,7 +7,7 @@ Highcharts.chart('container', {
 
     chart: {
         type: 'heatmap',
-        marginTop: 40,
+        marginTop: 60,
         marginBottom: 80,
         plotBorderWidth: 1
     },
