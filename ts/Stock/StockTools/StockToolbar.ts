@@ -55,7 +55,7 @@ const {
 /**
  * Toolbar Class
  *
- * @private
+ * @internal
  * @class
  *
  * @param {object} options
@@ -141,7 +141,7 @@ class Toolbar {
 
     /**
      * Create and set up stockTools buttons with their events and submenus.
-     * @private
+     * @internal
      */
     public createButtons(): void {
         const lang = this.lang,
@@ -181,7 +181,7 @@ class Toolbar {
      * Create submenu (list of buttons) for the option. In example main button
      * is Line, in submenu will be buttons with types of lines.
      *
-     * @private
+     * @internal
      *
      * @param {Highcharts.Dictionary<Highcharts.HTMLDOMElement>} parentBtn
      *        Button which has submenu
@@ -264,7 +264,7 @@ class Toolbar {
     /**
      * Create buttons in submenu
      *
-     * @private
+     * @internal
      *
      * @param {Highcharts.HTMLDOMElement} buttonWrapper
      *        Button where submenu is placed
@@ -318,7 +318,7 @@ class Toolbar {
 
     /**
      * Erase active class on all other buttons.
-     * @private
+     * @internal
      */
     public eraseActiveButtons(
         buttons: NodeListOf<ChildNode>,
@@ -344,7 +344,7 @@ class Toolbar {
      * Create single button. Consist of HTML elements `li`, `button`, and (if
      * exists) submenu container.
      *
-     * @private
+     * @internal
      *
      * @param {Highcharts.HTMLDOMElement} target
      *        HTML reference, where button should be added
@@ -418,7 +418,7 @@ class Toolbar {
 
     /**
      * Create navigation's HTML elements: container and arrows.
-     * @private
+     * @internal
      */
     public addNavigation(): void {
         const wrapper = this.wrapper;
@@ -451,7 +451,7 @@ class Toolbar {
     /**
      * Add events to navigation (two arrows) which allows user to scroll
      * top/down GUI buttons, if container's height is not enough.
-     * @private
+     * @internal
      */
     public scrollButtons(): void {
         const wrapper = this.wrapper,
@@ -555,7 +555,7 @@ class Toolbar {
     }
     /**
      * Function called in redraw verifies if the navigation should be visible.
-     * @private
+     * @internal
      */
     public showHideNavigation(): void {
         // Arrows
@@ -575,7 +575,7 @@ class Toolbar {
     }
     /**
      * Create button which shows or hides GUI toolbar.
-     * @private
+     * @internal
      */
     public showHideToolbar(): void {
         const wrapper = this.wrapper,
@@ -651,7 +651,7 @@ class Toolbar {
 
     /**
      * Set select state (active class) on button.
-     * @private
+     * @internal
      */
     public toggleButtonActiveClass(
         button: HTMLDOMElement
@@ -667,7 +667,7 @@ class Toolbar {
 
     /**
      * Remove active class from all buttons except defined.
-     * @private
+     * @internal
      */
     public unselectAllButtons(
         button: HTMLDOMElement
@@ -684,7 +684,7 @@ class Toolbar {
 
     /**
      * Update GUI with given options.
-     * @private
+     * @internal
      */
     public update(
         options: StockToolsOptions,
@@ -708,7 +708,7 @@ class Toolbar {
 
     /**
      * Destroy all HTML GUI elements.
-     * @private
+     * @internal
      */
     public destroy(): void {
         const stockToolsDiv = this.wrapper,
@@ -724,7 +724,7 @@ class Toolbar {
 
     /**
      * Redraws the toolbar based on the current state of the options.
-     * @private
+     * @internal
      */
     public redraw(): void {
         if (this.options.enabled !== this.guiEnabled) {
@@ -744,7 +744,7 @@ class Toolbar {
 
     /**
      * Hadles the change of the `enabled` option.
-     * @private
+     * @internal
      */
     private handleGuiEnabledChange(): void {
         if (this.options.enabled === false) {
@@ -762,7 +762,7 @@ class Toolbar {
 
     /**
      * Updates the class names of the GUI and toolbar elements.
-     * @private
+     * @internal
      */
     private updateClassNames(): void {
         if (this.options.className !== this.guiClassName) {
@@ -788,7 +788,7 @@ class Toolbar {
 
     /**
      * Updates the buttons in the toolbar if the button options have changed.
-     * @private
+     * @internal
      */
     private updateButtons(): void {
         if (
@@ -802,7 +802,7 @@ class Toolbar {
 
     /**
      * Updates visibility based on current options.
-     * @private
+     * @internal
      */
     private updateVisibility(): void {
         if (defined(this.options.visible)) {
@@ -810,9 +810,7 @@ class Toolbar {
         }
     }
 
-    /**
-     * @private
-     */
+    /** @internal */
     public getIconsURL(): string {
         return (this.chart.options.navigation as any).iconsURL ||
             this.options.iconsURL ||
@@ -827,10 +825,11 @@ class Toolbar {
  *
  * */
 
+/** @internal */
 interface Toolbar {
     /**
      * Mapping JSON fields to CSS classes.
-     * @private
+     * @internal
      */
     classMapping: Record<string, string>;
 }
@@ -890,4 +889,5 @@ Toolbar.prototype.classMapping = {
  *
  * */
 
+/** @internal */
 export default Toolbar;

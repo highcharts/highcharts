@@ -47,7 +47,7 @@ const {
 /**
  * The CMF series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.cmf
  *
@@ -64,7 +64,7 @@ class CMFIndicator extends SMAIndicator {
     /**
      * Chaikin Money Flow indicator (cmf).
      *
-     * @sample stock/indicators/cmf/
+     * @sample {highstock} stock/indicators/cmf/
      *         Chaikin Money Flow indicator
      *
      * @extends      plotOptions.sma
@@ -112,7 +112,7 @@ class CMFIndicator extends SMAIndicator {
     /**
      * Checks if the series and volumeSeries are accessible, number of
      * points.x is longer than period, is series has OHLC data
-     * @private
+     * @internal
      * @param {Highcharts.CMFIndicator} this indicator to use.
      * @return {boolean} True if series is valid and can be computed,
      * otherwise false.
@@ -133,7 +133,7 @@ class CMFIndicator extends SMAIndicator {
             );
 
         /**
-         * @private
+         * @internal
          * @param {Highcharts.Series} serie to check length validity on.
          * @return {boolean|undefined} true if length is valid.
          */
@@ -154,7 +154,7 @@ class CMFIndicator extends SMAIndicator {
 
     /**
      * Returns indicator's data.
-     * @private
+     * @internal
      * @param {Highcharts.CMFIndicator} this indicator to use.
      * @param {Highcharts.Series} series to calculate values from
      * @param {Highcharts.CMFIndicatorParamsOptions} params to pass
@@ -180,7 +180,7 @@ class CMFIndicator extends SMAIndicator {
     }
 
     /**
-     * @private
+     * @internal
      *
      * @param {Array<number>} xData
      * x timestamp values
@@ -218,7 +218,7 @@ class CMFIndicator extends SMAIndicator {
          * Calculates money flow volume, changes i, nullIndex vars from
          * upper scope!
          *
-         * @private
+         * @internal
          *
          * @param {Array<number>} ohlc
          * OHLC point
@@ -246,7 +246,7 @@ class CMFIndicator extends SMAIndicator {
 
 
             /**
-             * @private
+             * @internal
              * @param {number} h
              * High value
              * @param {number} l
@@ -326,6 +326,7 @@ class CMFIndicator extends SMAIndicator {
  *
  * */
 
+/** @internal */
 interface CMFIndicator {
     pointClass: typeof CMFPoint;
 }
@@ -336,6 +337,7 @@ interface CMFIndicator {
  *
  * */
 
+/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         cmf: typeof CMFIndicator;
@@ -350,6 +352,7 @@ SeriesRegistry.registerSeriesType('cmf', CMFIndicator);
  *
  * */
 
+/** @internal */
 export default CMFIndicator;
 
 /* *

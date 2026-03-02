@@ -36,6 +36,7 @@ const { seriesTypes } = SeriesRegistry;
  * a view of the entire data set. It provides tools to zoom in and
  * out on parts of the data as well as panning across the dataset.
  *
+ * @internal
  * @product      highstock gantt
  * @optionparent navigator
  */
@@ -588,6 +589,7 @@ const NavigatorDefaults: NavigatorOptions = {
  *
  * */
 
+/** @internal */
 export default NavigatorDefaults;
 
 /* *

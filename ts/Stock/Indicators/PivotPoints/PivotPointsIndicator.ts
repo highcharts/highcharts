@@ -47,7 +47,7 @@ const {
 /**
  * The Pivot Points series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.pivotpoints
  *
@@ -65,7 +65,7 @@ class PivotPointsIndicator extends SMAIndicator {
      * Pivot points indicator. This series requires the `linkedTo` option to be
      * set and should be loaded after `stock/indicators/indicators.js` file.
      *
-     * @sample stock/indicators/pivot-points
+     * @sample {highstock} stock/indicators/pivot-points
      *         Pivot points
      *
      * @extends      plotOptions.sma
@@ -421,6 +421,7 @@ class PivotPointsIndicator extends SMAIndicator {
  *
  * */
 
+/** @internal */
 interface PivotPointsIndicator{
     nameBase: string;
     pointArrayMap: Array<string>;
@@ -448,6 +449,7 @@ SeriesRegistry.registerSeriesType('pivotpoints', PivotPointsIndicator);
  *
  * */
 
+/** @internal */
 export default PivotPointsIndicator;
 
 /* *

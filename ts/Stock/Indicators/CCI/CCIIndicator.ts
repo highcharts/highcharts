@@ -39,18 +39,14 @@ const {
  * */
 
 // Utils:
-/**
- * @private
- */
+/** @internal */
 function sumArray(array: Array<number>): number {
     return array.reduce(function (prev, cur): number {
         return prev + cur;
     }, 0);
 }
 
-/**
- * @private
- */
+/** @internal */
 function meanDeviation(arr: Array<number>, sma: number): number {
     const len = arr.length;
     let sum = 0,
@@ -72,7 +68,7 @@ function meanDeviation(arr: Array<number>, sma: number): number {
 /**
  * The CCI series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.cci
  *
@@ -90,7 +86,7 @@ class CCIIndicator extends SMAIndicator {
      * Commodity Channel Index (CCI). This series requires `linkedTo` option to
      * be set.
      *
-     * @sample stock/indicators/cci
+     * @sample {highstock} stock/indicators/cci
      *         CCI indicator
      *
      * @extends      plotOptions.sma
@@ -194,6 +190,7 @@ class CCIIndicator extends SMAIndicator {
  *
  * */
 
+/** @internal */
 interface CCIIndicator {
     pointClass: typeof CCIPoint;
 }
@@ -204,6 +201,7 @@ interface CCIIndicator {
  *
  * */
 
+/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         cci: typeof CCIIndicator;
@@ -218,6 +216,7 @@ SeriesRegistry.registerSeriesType('cci', CCIIndicator);
  *
  * */
 
+/** @internal */
 export default CCIIndicator;
 
 /* *

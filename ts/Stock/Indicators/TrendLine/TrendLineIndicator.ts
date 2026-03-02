@@ -41,7 +41,7 @@ const {
 /**
  * The Trend line series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.trendline
  *
@@ -60,7 +60,7 @@ class TrendLineIndicator extends SMAIndicator {
      * using a method called the Sum Of Least Squares. This series requires the
      * `linkedTo` option to be set.
      *
-     * @sample stock/indicators/trendline
+     * @sample {highstock} stock/indicators/trendline
      *         Trendline indicator
      *
      * @extends      plotOptions.sma
@@ -173,6 +173,7 @@ class TrendLineIndicator extends SMAIndicator {
  *
  * */
 
+/** @internal */
 interface TrendLineIndicator {
     nameBase: string;
     nameComponents: Array<string>|undefined;
@@ -190,6 +191,7 @@ extend(TrendLineIndicator.prototype, {
  *
  * */
 
+/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         trendline: typeof TrendLineIndicator;
@@ -204,6 +206,7 @@ SeriesRegistry.registerSeriesType('trendline', TrendLineIndicator);
  *
  * */
 
+/** @internal */
 export default TrendLineIndicator;
 
 /* *

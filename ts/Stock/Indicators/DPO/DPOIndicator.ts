@@ -43,9 +43,7 @@ const {
 
 // Utils:
 
-/**
- * @private
- */
+/** @internal */
 function accumulatePoints(
     sum: number,
     yVal: (Array<number> | Array<Array<number>>),
@@ -73,7 +71,7 @@ function accumulatePoints(
 /**
  * The DPO series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.dpo
  *
@@ -206,6 +204,7 @@ class DPOIndicator extends SMAIndicator {
  *
  * */
 
+/** @internal */
 interface DPOIndicator {
     nameBase: string;
 }
@@ -220,6 +219,7 @@ extend(DPOIndicator.prototype, {
  *
  * */
 
+/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         dpo: typeof DPOIndicator;
@@ -234,6 +234,7 @@ SeriesRegistry.registerSeriesType('dpo', DPOIndicator);
  *
  * */
 
+/** @internal */
 export default DPOIndicator;
 
 /* *

@@ -1,0 +1,36 @@
+/* *
+ *
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
+ *
+ *
+ * */
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type ROCIndicator from './ROCIndicator';
+import type SMAPoint from '../SMA/SMAPoint';
+
+/* *
+ *
+ *  Class
+ *
+ * */
+
+/** @internal */
+declare class ROCPoint extends SMAPoint {
+    public series: ROCIndicator;
+}
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+/** @internal */
+export default ROCPoint;

@@ -41,9 +41,7 @@ const {
  *
  * */
 
-/**
- * @private
- */
+/** @internal */
 function getBaseForBand(low: number, high: number, factor: number): number {
     return ((
         (correctFloat(high - low)) /
@@ -51,16 +49,12 @@ function getBaseForBand(low: number, high: number, factor: number): number {
     ) * 1000) * factor;
 }
 
-/**
- * @private
- */
+/** @internal */
 function getPointUB(high: number, base: number): number {
     return high * (correctFloat(1 + 2 * base));
 }
 
-/**
- * @private
- */
+/** @internal */
 function getPointLB(low: number, base: number): number {
     return low * (correctFloat(1 - 2 * base));
 }
@@ -74,7 +68,7 @@ function getPointLB(low: number, base: number): number {
 /**
  * The ABands series type
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.abands
  *
@@ -270,6 +264,7 @@ class ABandsIndicator extends SMAIndicator {
  *
  * */
 
+/** @internal */
 interface ABandsIndicator extends MultipleLinesComposition.IndicatorComposition {
     nameBase: string;
     nameComponents: Array<string>;
@@ -293,6 +288,7 @@ MultipleLinesComposition.compose(ABandsIndicator);
  *
  * */
 
+/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         abands: typeof ABandsIndicator;
@@ -306,6 +302,7 @@ SeriesRegistry.registerSeriesType('abands', ABandsIndicator);
  *
  * */
 
+/** @internal */
 export default ABandsIndicator;
 
 /* *

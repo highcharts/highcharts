@@ -49,7 +49,7 @@ const {
 /**
  * The Disparity Index series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.disparityindex
  *
@@ -68,7 +68,7 @@ class DisparityIndexIndicator extends SMAIndicator {
      * This series requires the `linkedTo` option to be set and should
      * be loaded after the `stock/indicators/indicators.js` file.
      *
-     * @sample stock/indicators/disparity-index
+     * @sample {highstock} stock/indicators/disparity-index
      *         Disparity Index indicator
      *
      * @extends      plotOptions.sma
@@ -196,6 +196,7 @@ class DisparityIndexIndicator extends SMAIndicator {
  *
  * */
 
+/** @internal */
 interface DisparityIndexIndicator {
     nameBase: string;
     nameComponents: Array<string>;
@@ -213,6 +214,7 @@ extend(DisparityIndexIndicator.prototype, {
  *
  * */
 
+/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         disparityindex: typeof DisparityIndexIndicator;
@@ -227,6 +229,7 @@ SeriesRegistry.registerSeriesType('disparityindex', DisparityIndexIndicator);
  *
  * */
 
+/** @internal */
 export default DisparityIndexIndicator;
 
 /* *
