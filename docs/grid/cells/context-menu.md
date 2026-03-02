@@ -1,3 +1,7 @@
+---
+sidebar_label: "Context menu"
+---
+
 # Cell context menu
 
 Highcharts Grid supports context menus for table body cells. When
