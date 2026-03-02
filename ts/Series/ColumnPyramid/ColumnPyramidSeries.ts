@@ -96,11 +96,11 @@ class ColumnPyramidSeries extends ColumnSeries {
             threshold = options.threshold,
             minPointLength = pick(options.minPointLength, 5),
             metrics = series.getColumnMetrics(),
-            pointWidth = metrics.width,
             pointXOffset = series.pointXOffset = metrics.offset;
+        let pointWidth = metrics.width;
 
         let translatedThreshold = series.translatedThreshold =
-                yAxis.getThreshold(threshold as any),
+            yAxis.getThreshold(threshold as any),
             // Postprocessed for border width
             seriesBarW = series.barW =
                 Math.max(pointWidth, 1 + 2 * borderWidth);
@@ -122,7 +122,7 @@ class ColumnPyramidSeries extends ColumnSeries {
 
         // Record the new values
         for (const point of series.points) {
-            const yBottom = pick<number|undefined, number>(
+            const yBottom = pick<number | undefined, number>(
                     point.yBottom, translatedThreshold as any
                 ),
                 safeDistance = 999 + Math.abs(yBottom),
@@ -147,12 +147,14 @@ class ColumnPyramidSeries extends ColumnSeries {
 
             // Adjust for null or missing points
             if (options.centerInCategory) {
-                barX = series.adjustForMissingColumns(
+                const newMetrics = series.adjustForMissingColumns(
                     barX,
                     pointWidth,
                     point,
                     metrics
                 );
+                barX = newMetrics.offset;
+                pointWidth = newMetrics.width;
             }
 
             point.barX = barX;
@@ -230,9 +232,9 @@ class ColumnPyramidSeries extends ColumnSeries {
 
                 // Proportion tanges
                 topXwidth = (barW *
-                (topPointY - invBarPos)) / stackHeight;
+                    (topPointY - invBarPos)) / stackHeight;
                 bottomXwidth = (barW *
-                (topPointY - (invBarPos - barH))) / stackHeight;
+                    (topPointY - (invBarPos - barH))) / stackHeight;
 
                 x1 = barX + barW + topXwidth; // Top bottom
                 x2 = x1 - 2 * topXwidth; // Top top
