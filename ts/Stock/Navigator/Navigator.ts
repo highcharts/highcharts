@@ -163,7 +163,7 @@ class Navigator {
     public left!: number;
     public mouseMoveHandler?: Function;
     public mouseUpHandler?: Function;
-    public navigatorEnabled?: boolean;
+    public navigatorEnabled!: boolean;
     public navigatorGroup!: SVGElement;
     public navigatorOptions!: NavigatorOptions;
     public navigatorSeries!: Series;
@@ -834,7 +834,9 @@ class Navigator {
     }
 
     /**
-     * Set up the mouse and touch events for the navigator
+     * Set up the mouse and touch events for the navigator. Shades and handles
+     * events are added inside the `renderElements` method by calling the
+     * `getPartsEvents` method.
      *
      * @private
      * @function Highcharts.Navigator#addMouseEvents
@@ -907,10 +909,10 @@ class Navigator {
     public getPartsEvents(
         eventName: string
     ): Array<Function> {
-        const navigator = this as any,
-            events = [] as Array<Function>;
+        const navigator = this,
+            events: Array<Function> = [];
 
-        ['shades', 'handles'].forEach(function (name: string): void {
+        (['shades', 'handles'] as const).forEach((name): void => {
             navigator[name].forEach(function (
                 navigatorItem: SVGElement,
                 index: number
@@ -920,7 +922,7 @@ class Navigator {
                         navigatorItem.element,
                         eventName,
                         function (e: PointerEvent): void {
-                            navigator[name + 'Mousedown'](e, index);
+                            navigator[`${name}Mousedown`](e, index);
                         }
                     )
                 );
@@ -1339,7 +1341,7 @@ class Navigator {
         this.scrollbarHeight = scrollbarHeight;
         this.scrollButtonSize = scrollButtonSize;
         this.scrollbarEnabled = scrollbarEnabled;
-        this.navigatorEnabled = navigatorEnabled;
+        this.navigatorEnabled = !!navigatorEnabled;
         this.navigatorOptions = navigatorOptions;
         this.scrollbarOptions = scrollbarOptions;
 
