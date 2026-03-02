@@ -524,19 +524,34 @@ specified by config.imageCapture.resultsOutputPath.
             const a11yProj = ['setup-highcharts', 'qunit'];
 
             const commands = [];
-            if (hasGrid) { commands.push({ projects: gridProj, grep: '' }); }
-            if (hasDashboards) { commands.push({ projects: dashProj, grep: '' }); }
-            if (hasHC) { commands.push({ projects: hcProj, grep: Array.isArray(productTests) && productTests.length > 0 ? `--grep "unit-tests/(${productTests.join('|')})"` : '' }); }
-            if ((hasGrid || hasDashboards) && !hasHC) { commands.push({ projects: a11yProj, grep: '--grep "unit-tests/(accessibility)"' }); }
-            if (commands.length === 0) { commands.push({ projects: hcProj, grep: '' }); }
+            if (hasGrid) {
+                commands.push({ projects: gridProj, grep: '' });
+            }
+            if (hasDashboards) {
+                commands.push({ projects: dashProj, grep: '' });
+            }
+            if (hasHC) {
+                const hcGrep = Array.isArray(productTests) && productTests.length > 0 ?
+                    `--grep "unit-tests/(${productTests.join('|')})"` :
+                    '';
+                commands.push({ projects: hcProj, grep: hcGrep });
+            }
+            if ((hasGrid || hasDashboards) && !hasHC) {
+                commands.push({ projects: a11yProj, grep: '--grep "unit-tests/(accessibility)"' });
+            }
+            if (commands.length === 0) {
+                commands.push({ projects: hcProj, grep: '' });
+            }
 
             for (const { projects, grep } of commands) {
                 const cmd = `npx playwright test ${projects.map(p => `--project=${p}`).join(' ')} ${grep}`.trim();
                 logLib.message(`Running: ${cmd}`);
                 try {
                     await processLib.exec(cmd);
-                } catch (error) {
-                    if (argv.speak) { logLib.say('Tests failed!'); }
+                } catch {
+                    if (argv.speak) {
+                        logLib.say('Tests failed!');
+                    }
                     throw new PluginError('playwright', { message: 'Tests failed' });
                 }
             }
