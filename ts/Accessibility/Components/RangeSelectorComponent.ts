@@ -35,12 +35,7 @@ const {
 } = ChartUtilities;
 import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';
 import RangeSelector from '../../Stock/RangeSelector/RangeSelector.js';
-import U from '../../Core/Utilities.js';
-const {
-    addEvent,
-    attr
-} = U;
-
+import { addEvent, attr } from '../../Shared/Utilities.js';
 
 /* *
  *

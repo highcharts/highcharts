@@ -26,9 +26,7 @@ import type { Options, LangOptions } from './Options';
 import type { DeepPartial } from '../../Shared/Types';
 
 import Pagination from './Pagination/Pagination.js';
-import Utils from '../../Core/Utilities.js';
-
-const { merge } = Utils;
+import { merge } from '../../Shared/Utilities.js';
 
 /**
  * Default language options for the Grid.

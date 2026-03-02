@@ -27,7 +27,6 @@ import type DataTable from '../../../Data/DataTable';
 import type { RowId } from '../Data/DataProvider';
 
 import GridUtils from '../GridUtils.js';
-import Utils from '../../../Core/Utilities.js';
 import ColumnResizing from './ColumnResizing/ColumnResizing.js';
 import ColumnResizingMode from './ColumnResizing/ResizingMode.js';
 import Column from './Column.js';
@@ -39,14 +38,10 @@ import Globals from '../Globals.js';
 import type TableCell from './Body/TableCell';
 
 import Cell from './Cell.js';
+import { defined, fireEvent, getStyle } from '../../../Shared/Utilities.js';
 import CellContextMenu from './Body/CellContextMenu.js';
 
 const { makeHTMLElement } = GridUtils;
-const {
-    fireEvent,
-    getStyle,
-    defined
-} = Utils;
 
 /* *
  *

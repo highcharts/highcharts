@@ -25,11 +25,10 @@ import type SankeySeries from './SankeySeries';
 import NodesComposition from '../NodesComposition.js';
 import Point from '../../Core/Series/Point.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+import { defined } from '../../Shared/Utilities.js';
 const {
     column: ColumnSeries
 } = SeriesRegistry.seriesTypes;
-import U from '../../Core/Utilities.js';
-const { defined } = U;
 
 /* *
  *

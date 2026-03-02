@@ -26,13 +26,13 @@ const { setOptions } = D;
 import ErrorMessages from './ErrorMessages.js';
 import H from '../../Core/Globals.js';
 const { composed } = H;
-import U from '../../Core/Utilities.js';
-const {
+import {
     addEvent,
     find,
     isNumber,
     pushUnique
-} = U;
+} from '../../Shared/Utilities.js';
+import { type ErrorMessageEventObject } from '../../Core/Utilities.js';
 
 /* *
  *
@@ -127,7 +127,7 @@ function onChartBeforeRedraw(
 /** @internal */
 function onHighchartsDisplayError(
     this: GlobalsBase,
-    e: U.ErrorMessageEventObject
+    e: ErrorMessageEventObject
 ): void {
     // Display error on the chart causing the error or the last created chart.
     const chart = (

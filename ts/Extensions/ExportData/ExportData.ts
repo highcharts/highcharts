@@ -53,8 +53,7 @@ const {
     doc,
     win
 } = G;
-import U from '../../Core/Utilities.js';
-const {
+import {
     addEvent,
     defined,
     extend,
@@ -63,7 +62,7 @@ const {
     isNumber,
     pick,
     pushUnique
-} = U;
+} from '../../Shared/Utilities.js';
 
 /* *
  *

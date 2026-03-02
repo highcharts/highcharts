@@ -25,8 +25,7 @@ const {
     tooltipFormatter: pointTooltipFormatter
 } = Point.prototype;
 import Series from '../Core/Series/Series.js';
-import U from '../Core/Utilities.js';
-const {
+import {
     addEvent,
     arrayMax,
     arrayMin,
@@ -36,7 +35,7 @@ const {
     isNumber,
     isString,
     pick
-} = U;
+} from '../Shared/Utilities.js';
 
 /* *
  *

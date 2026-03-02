@@ -29,11 +29,7 @@ const {
 import { Palette } from './Color/Palettes.js';
 import Palettes from './Color/Palettes.js';
 import Time from './Time.js';
-import U from './Utilities.js';
-const {
-    fireEvent,
-    merge
-} = U;
+import { fireEvent, merge } from '../Shared/Utilities.js';
 
 /* *
  *

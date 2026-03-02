@@ -38,14 +38,13 @@ const {
     doc,
     isTouchDevice
 } = H;
-import U from '../../Core/Utilities.js';
-const {
+import {
     addEvent,
     fireEvent,
     objectEach,
     pick,
     removeEvent
-} = U;
+} from '../../Shared/Utilities.js';
 
 /* *
  *

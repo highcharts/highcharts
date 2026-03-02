@@ -15,6 +15,7 @@
 'use strict';
 
 
+import { isString } from '../../Shared/Utilities.js';
 /* *
  *
  *  Imports
@@ -31,10 +32,6 @@ import type {
     Reference,
     Value
 } from './FormulaTypes.js';
-import U from '../../Core/Utilities.js';
-const {
-    isString
-} = U;
 
 
 /* *

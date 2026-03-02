@@ -13,7 +13,6 @@
  *  - Sophie Bremer
  *
  * */
-import U from '../../Core/Utilities.js';
 import type Row from '../Layout/Row.js';
 import type Cell from '../Layout/Cell.js';
 import type { ContextDetails } from './ContextDetection';
@@ -23,14 +22,8 @@ import EditMode from '../EditMode/EditMode.js';
 import { HTMLDOMElement } from '../../Core/Renderer/DOMElementType.js';
 import GUIElement from '../Layout/GUIElement.js';
 import ContextDetection from './ContextDetection.js';
+import { addEvent, createElement, css, fireEvent, merge } from '../../Shared/Utilities.js';
 
-const {
-    addEvent,
-    merge,
-    css,
-    fireEvent,
-    createElement
-} = U;
 
 /**
  * Class providing a drag and drop functionality.

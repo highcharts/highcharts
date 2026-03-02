@@ -27,8 +27,14 @@ import type PointAndFigureSeriesOptions from './PointAndFigureSeriesOptions';
 import type SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 
 import H from '../../Core/Globals.js';
-import U from '../../Core/Utilities.js';
 import Series from '../../Core/Series/Series.js';
+import {
+    extend,
+    isNumber,
+    merge,
+    pushUnique,
+    relativeLength
+} from '../../Shared/Utilities.js';
 const { composed } = H;
 const {
     scatter: ScatterSeries,
@@ -36,13 +42,6 @@ const {
         prototype: columnProto
     }
 } = SeriesRegistry.seriesTypes;
-const {
-    extend,
-    merge,
-    pushUnique,
-    isNumber,
-    relativeLength
-} = U;
 
 
 /* *

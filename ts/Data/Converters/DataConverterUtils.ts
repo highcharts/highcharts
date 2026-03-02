@@ -16,18 +16,15 @@
  *  Imports
  *
  * */
-
 import DataConverter, {
     type Type as DataConverterType
 } from './DataConverter';
 import type {
     Column as DataTableColumn,
     ColumnCollection as DataTableColumnCollection
-} from '../DataTable.js';
-import U from '../../Core/Utilities.js';
-const {
-    isNumber
-} = U;
+} from '../DataTable';
+
+import { isNumber } from '../../Shared/Utilities.js';
 
 /* *
  *

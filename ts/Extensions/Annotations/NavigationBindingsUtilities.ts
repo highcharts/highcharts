@@ -19,12 +19,7 @@
 
 import type Pointer from '../../Core/Pointer';
 
-import U from '../../Core/Utilities.js';
-const {
-    defined,
-    isNumber,
-    pick
-} = U;
+import { defined, isNumber, pick } from '../../Shared/Utilities.js';
 
 /* *
  *

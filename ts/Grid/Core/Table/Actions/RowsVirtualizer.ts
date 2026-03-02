@@ -27,11 +27,7 @@ import type { RowsSettings } from '../../Options';
 import Table from '../Table.js';
 import TableRow from '../Body/TableRow.js';
 import Globals from '../../Globals.js';
-import U from '../../../../Core/Utilities.js';
-
-const {
-    defined
-} = U;
+import { defined } from '../../../../Shared/Utilities.js';
 
 /* *
  *

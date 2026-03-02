@@ -26,17 +26,16 @@ const {
     SVG_NS,
     win
 } = H;
-import U from '../../Utilities.js';
-const {
+import {
     attr,
     createElement,
     css,
-    error,
     isFunction,
     isString,
     objectEach,
     splat
-} = U;
+} from '../../../Shared/Utilities.js';
+import { error } from '../../Utilities.js';
 const {
     trustedTypes
 } = win;

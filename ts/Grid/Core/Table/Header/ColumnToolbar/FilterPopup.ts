@@ -26,9 +26,7 @@ import type Button from '../../../UI/Button';
 
 import ColumnFiltering from '../../Actions/ColumnFiltering/ColumnFiltering.js';
 import Popup, { PopupOptions } from '../../../UI/Popup.js';
-import U from '../../../../../Core/Utilities.js';
-
-const { merge } = U;
+import { merge } from '../../../../../Shared/Utilities.js';
 
 
 /* *

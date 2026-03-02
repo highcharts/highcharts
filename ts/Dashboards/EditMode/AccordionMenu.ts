@@ -27,15 +27,10 @@ import type { Options as EditableOption } from '../Components/EditableOptions';
 import type { Options as HTMLOptions } from '../Components/HTMLComponent/HTMLComponentOptions';
 
 import EditRenderer from './EditRenderer.js';
-import U from '../../Core/Utilities.js';
 import EditGlobals from './EditGlobals.js';
 import ConfirmationPopup from './ConfirmationPopup.js';
-const {
-    createElement,
-    merge,
-    error,
-    fireEvent
-} = U;
+import { createElement, fireEvent, merge } from '../../Shared/Utilities.js';
+import { error } from '../../Core/Utilities.js';
 
 /* *
  *

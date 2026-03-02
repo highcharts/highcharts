@@ -28,18 +28,17 @@ import type Series from '../../../Core/Series/Series';
 
 import H from '../../../Core/Globals.js';
 const { composed } = H;
-import U from '../../../Core/Utilities.js';
-const {
-    addEvent,
-    defined,
-    pushUnique
-} = U;
-
 import Announcer from '../../Utils/Announcer.js';
 import ChartUtilities from '../../Utils/ChartUtilities.js';
 const { getChartTitle } = ChartUtilities;
 import EventProvider from '../../Utils/EventProvider.js';
 import SeriesDescriber from './SeriesDescriber.js';
+import {
+    addEvent,
+    defined,
+    internalClearTimeout,
+    pushUnique
+} from '../../../Shared/Utilities.js';
 const {
     defaultPointDescriptionFormatter,
     defaultSeriesDescriptionFormatter
@@ -307,7 +306,7 @@ class NewDataAnnouncer {
             if (message) {
                 // Is there already one queued?
                 if (this.queuedAnnouncement) {
-                    clearTimeout(this.queuedAnnouncementTimer);
+                    internalClearTimeout(this.queuedAnnouncementTimer);
                 }
 
                 // Build the announcement

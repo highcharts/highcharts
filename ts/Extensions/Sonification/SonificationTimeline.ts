@@ -22,12 +22,7 @@ import toMIDI from './MIDI.js';
 import {
     downloadURL
 } from '../../Shared/DownloadURL.js';
-import U from '../../Core/Utilities.js';
-const {
-    defined,
-    find,
-    merge
-} = U;
+import { defined, find, merge } from '../../Shared/Utilities.js';
 
 declare global {
     namespace Sonification {

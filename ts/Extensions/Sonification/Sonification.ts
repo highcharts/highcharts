@@ -36,14 +36,6 @@ const {
     defaultOptions,
     getOptions
 } = D;
-import U from '../../Core/Utilities.js';
-const {
-    addEvent,
-    extend,
-    fireEvent,
-    merge,
-    pick
-} = U;
 import H from '../../Core/Globals.js';
 const {
     doc,
@@ -56,6 +48,14 @@ import SonificationSpeaker from './SonificationSpeaker.js';
 import SynthPatch from './SynthPatch.js';
 import InstrumentPresets from './InstrumentPresets.js';
 import timelineFromChart from './TimelineFromChart.js';
+import {
+    addEvent,
+    extend,
+    fireEvent,
+    internalClearTimeout,
+    merge,
+    pick
+} from '../../Shared/Utilities.js';
 
 
 declare module '../../Core/Chart/ChartBase' {
@@ -544,7 +544,7 @@ class Sonification {
         const now = Date.now(),
             updateInterval = sOpts.updateInterval;
         if (now - this.lastUpdate < updateInterval && !this.forceReady) {
-            clearTimeout(this.scheduledUpdate);
+            internalClearTimeout(this.scheduledUpdate);
             this.scheduledUpdate = setTimeout(
                 this.update.bind(this), updateInterval / 2
             );

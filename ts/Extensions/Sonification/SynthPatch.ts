@@ -14,12 +14,7 @@
 
 'use strict';
 
-import U from '../../Core/Utilities.js';
-const {
-    clamp,
-    defined,
-    pick
-} = U;
+import { clamp, defined, pick } from '../../Shared/Utilities.js';
 
 type EnvelopePoint = Record<'t'|'vol', number>;
 type Envelope = Array<EnvelopePoint>;

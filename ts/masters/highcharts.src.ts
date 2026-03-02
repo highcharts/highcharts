@@ -10,7 +10,6 @@
  */
 'use strict';
 import Highcharts from '../Core/Globals.js';
-import Utilities from '../Core/Utilities.js';
 import Defaults from '../Core/Defaults.js';
 import Fx from '../Core/Animation/Fx.js';
 import Animation from '../Core/Animation/AnimationUtilities.js';
@@ -49,14 +48,62 @@ import '../Series/Scatter/ScatterSeries.js';
 import '../Series/Pie/PieSeries.js';
 import PieDataLabel from '../Series/Pie/PieDataLabel.js';
 import DataLabel from '../Core/Series/DataLabel.js';
-import {
-    composeOverlappingDataLabels
-} from '../Core/Series/OverlappingDataLabels.js';
+import { composeOverlappingDataLabels } from '../Core/Series/OverlappingDataLabels.js';
 import BorderRadius from '../Extensions/BorderRadius.js';
 import Responsive from '../Core/Responsive.js';
 import Color from '../Core/Color/Color.js';
 import Time from '../Core/Time.js';
+import {
+    addEvent,
+    arrayMax,
+    arrayMin,
+    attr,
+    clamp,
+    correctFloat,
+    createElement,
+    css,
+    defined,
+    destroyObjectProperties,
+    diffObjects,
+    discardElement,
+    erase,
+    extend,
+    extendClass,
+    find,
+    fireEvent,
+    getMagnitude,
+    getStyle,
+    isArray,
+    isClass,
+    isDOMElement,
+    isFunction,
+    isNumber,
+    isObject,
+    isString,
+    merge,
+    normalizeTickInterval,
+    objectEach,
+    offset,
+    pad,
+    pick,
+    pInt,
+    relativeLength,
+    removeEvent,
+    splat,
+    stableSort,
+    syncTimeout,
+    wrap
+} from '../Shared/Utilities.js';
+import {
+    error,
+    insertItem,
+    timeUnits,
+    uniqueKey,
+    useSerialIds
+} from '../Core/Utilities.js';
+
 const G: AnyRecord = Highcharts;
+
 // Classes
 G.AST = AST;
 G.Axis = Axis;
@@ -81,24 +128,70 @@ G.Templating = Templating;
 G.Tick = Tick;
 G.Time = Time;
 G.Tooltip = Tooltip;
+
 // Utilities
-G.animate = Animation.animate;
+G.addEvent = addEvent;
 G.animObject = Animation.animObject;
+G.animate = Animation.animate;
+G.arrayMax = arrayMax;
+G.arrayMin = arrayMin;
+G.attr = attr;
 G.chart = Chart.chart;
+G.clamp = clamp;
 G.color = Color.parse;
+G.correctFloat = correctFloat;
+G.createElement = createElement;
+G.css = css;
 G.dateFormat = Templating.dateFormat;
 G.defaultOptions = Defaults.defaultOptions;
+G.defined = defined;
+G.destroyObjectProperties = destroyObjectProperties;
+G.diffObjects = diffObjects;
+G.discardElement = discardElement;
 G.distribute = RendererUtilities.distribute;
+G.erase = erase;
+G.error = error;
+G.extend = extend;
+G.extendClass = extendClass;
+G.find = find;
+G.fireEvent = fireEvent;
 G.format = Templating.format;
 G.getDeferredAnimation = Animation.getDeferredAnimation;
+G.getMagnitude = getMagnitude;
 G.getOptions = Defaults.getOptions;
+G.getStyle = getStyle;
+G.insertItem = insertItem;
+G.isArray = isArray;
+G.isClass = isClass;
+G.isDOMElement = isDOMElement;
+G.isFunction = isFunction;
+G.isNumber = isNumber;
+G.isObject = isObject;
+G.isString = isString;
+G.merge = merge;
+G.normalizeTickInterval = normalizeTickInterval;
 G.numberFormat = Templating.numberFormat;
+G.objectEach = objectEach;
+G.offset = offset;
+G.pad = pad;
+G.pick = pick;
+G.pInt = pInt;
+G.relativeLength = relativeLength;
+G.removeEvent = removeEvent;
 G.seriesType = SeriesRegistry.seriesType;
 G.setAnimation = Animation.setAnimation;
 G.setOptions = Defaults.setOptions;
+G.splat = splat;
+G.stableSort = stableSort;
 G.stop = Animation.stop;
+G.syncTimeout = syncTimeout;
 G.time = Defaults.defaultTime;
 G.timers = Fx.timers;
+G.timeUnits = timeUnits;
+G.uniqueKey = uniqueKey;
+G.useSerialIds = useSerialIds;
+G.wrap = wrap;
+
 // Compositions
 BorderRadius.compose(G.Series, G.SVGElement, G.SVGRenderer);
 ColumnDataLabel.compose(G.Series.types.column);
@@ -115,6 +208,5 @@ Responsive.compose(G.Chart);
 ScrollablePlotArea.compose(G.Axis, G.Chart, G.Series);
 StackingAxis.compose(G.Axis, G.Chart, G.Series);
 Tooltip.compose(G.Pointer);
-Utilities.extend(G, Utilities);
 // Default Export
 export default G;

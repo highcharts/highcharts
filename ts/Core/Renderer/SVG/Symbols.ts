@@ -21,12 +21,7 @@ import type SVGPath from './SVGPath';
 import type SymbolOptions from './SymbolOptions';
 import type { SymbolTypeRegistry } from './SymbolType';
 
-import U from '../../Utilities.js';
-const {
-    defined,
-    isNumber,
-    pick
-} = U;
+import { defined, isNumber, pick } from '../../../Shared/Utilities.js';
 
 /* *
  *

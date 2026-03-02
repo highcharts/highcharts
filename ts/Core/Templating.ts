@@ -29,8 +29,7 @@ import G from './Globals.js';
 const {
     pageLang
 } = G;
-import U from './Utilities.js';
-const {
+import {
     extend,
     getNestedProperty,
     isArray,
@@ -39,7 +38,7 @@ const {
     isString,
     pick,
     ucfirst
-} = U;
+} from '../Shared/Utilities.js';
 
 /** @internal */
 interface MatchObject {

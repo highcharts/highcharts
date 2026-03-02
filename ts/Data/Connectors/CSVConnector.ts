@@ -35,8 +35,7 @@ import CSVConverter from '../Converters/CSVConverter.js';
 import DataConnector, {
     type Event as DataConnectorEvent
 } from './DataConnector.js';
-import U from '../../Core/Utilities.js';
-const { merge, fireEvent } = U;
+import { fireEvent, merge } from '../../Shared/Utilities.js';
 
 /* *
  *

@@ -48,18 +48,17 @@ const {
     },
     sma: SMAIndicator
 } = SeriesRegistry.seriesTypes;
-import U from '../../../Core/Utilities.js';
-const {
+import {
     addEvent,
     arrayMax,
     arrayMin,
     correctFloat,
     defined,
-    error,
     extend,
     isArray,
     merge
-} = U;
+} from '../../../Shared/Utilities.js';
+import { error } from '../../../Core/Utilities.js';
 
 /* *
  *

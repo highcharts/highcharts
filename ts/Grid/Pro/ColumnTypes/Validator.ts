@@ -32,13 +32,12 @@ import AST from '../../../Core/Renderer/HTML/AST.js';
 import Globals from '../../Core/Globals.js';
 import GridUtils from '../../Core/GridUtils.js';
 import Cell from '../../Core/Table/Cell.js';
-import U from '../../../Core/Utilities.js';
+import { defined } from '../../../Shared/Utilities.js';
 
 const {
     makeDiv,
     setHTMLContent
 } = GridUtils;
-const { defined } = U;
 
 /* *
  *

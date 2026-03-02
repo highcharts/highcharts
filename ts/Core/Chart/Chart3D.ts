@@ -37,14 +37,13 @@ const {
     shapeArea3D
 } = Math3D;
 import Series from '../Series/Series.js';
-import U from '../Utilities.js';
-const {
+import {
     addEvent,
     isArray,
     merge,
     pick,
     wrap
-} = U;
+} from '../../Shared/Utilities.js';
 
 /* *
  *

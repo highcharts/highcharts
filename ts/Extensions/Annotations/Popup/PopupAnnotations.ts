@@ -29,15 +29,14 @@ const {
     doc,
     isFirefox
 } = H;
-import U from '../../../Core/Utilities.js';
-const {
+import {
     createElement,
     isArray,
     isObject,
     objectEach,
     pick,
     stableSort
-} = U;
+} from '../../../Shared/Utilities.js';
 
 /* *
  *

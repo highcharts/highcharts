@@ -47,12 +47,7 @@ const {
 import DragDropDefaults from './DragDropDefaults.js';
 import H from '../../Core/Globals.js';
 const { doc } = H;
-import U from '../../Core/Utilities.js';
-const {
-    addEvent,
-    isArray,
-    merge
-} = U;
+import { addEvent, isArray, merge } from '../../Shared/Utilities.js';
 
 /* *
  *

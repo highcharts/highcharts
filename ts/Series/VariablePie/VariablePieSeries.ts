@@ -26,8 +26,8 @@ import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     pie: PieSeries
 } = SeriesRegistry.seriesTypes;
-import U from '../../Core/Utilities.js';
-const {
+import VariablePieSeriesDefaults from './VariablePieSeriesDefaults.js';
+import {
     arrayMax,
     arrayMin,
     clamp,
@@ -35,8 +35,7 @@ const {
     fireEvent,
     merge,
     pick
-} = U;
-import VariablePieSeriesDefaults from './VariablePieSeriesDefaults.js';
+} from '../../Shared/Utilities.js';
 
 /* *
  *

@@ -37,15 +37,14 @@ const { composed } = H;
 import MapNavigationDefaults from './MapNavigationDefaults.js';
 import MapPointer from './MapPointer.js';
 import MapSymbols from './MapSymbols.js';
-import U from '../Core/Utilities.js';
-const {
-    addEvent,
+import {
     extend,
-    merge,
     objectEach,
+    merge,
     pick,
-    pushUnique
-} = U;
+    pushUnique,
+    addEvent
+} from '../Shared/Utilities.js';
 
 /* *
  *

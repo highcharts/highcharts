@@ -26,8 +26,7 @@ import type CoreSeries from '../Core/Series/Series';
 import type ColorType from '../Core/Color/ColorType';
 
 import Color from '../Core/Color/Color.js';
-import U from '../Core/Utilities.js';
-const {
+import {
     extend,
     isArray,
     isNumber,
@@ -35,7 +34,7 @@ const {
     merge,
     pick,
     relativeLength
-} = U;
+} from '../Shared/Utilities.js';
 
 /* *
  *

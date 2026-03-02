@@ -22,11 +22,7 @@ import type DumbbellPointOptions from './DumbbellPointOptions';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
 import AreaRangePoint from '../AreaRange/AreaRangePoint.js';
-import U from '../../Core/Utilities.js';
-const {
-    extend,
-    pick
-} = U;
+import { extend, pick } from '../../Shared/Utilities.js';
 
 /* *
  *

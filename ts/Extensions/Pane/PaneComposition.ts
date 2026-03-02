@@ -10,13 +10,12 @@ import type Pane from './Pane';
 import type Pointer from '../../Core/Pointer';
 import type Series from '../../Core/Series/Series';
 
-import U from '../../Core/Utilities.js';
-const {
+import {
     addEvent,
     correctFloat,
     defined,
     pick
-} = U;
+} from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -120,14 +119,12 @@ function compose(
         chartProto.getHoverPane = chartGetHoverPane;
 
         addEvent(ChartClass, 'afterIsInsidePlot', onChartAfterIsInsiderPlot);
-
         addEvent(PointerClass, 'afterGetHoverData', onPointerAfterGetHoverData);
         addEvent(
             PointerClass,
             'beforeGetHoverData',
             onPointerBeforeGetHoverData
         );
-
         addEvent(SeriesClass, 'setClip', onSetClip);
     }
 

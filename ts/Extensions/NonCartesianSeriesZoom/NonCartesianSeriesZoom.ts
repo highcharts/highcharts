@@ -25,11 +25,7 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import H from '../../Core/Globals.js';
 const { composed } = H;
 
-import U from '../../Core/Utilities.js';
-const {
-    addEvent,
-    pushUnique
-} = U;
+import { addEvent, pushUnique } from '../../Shared/Utilities.js';
 
 /* *
  *

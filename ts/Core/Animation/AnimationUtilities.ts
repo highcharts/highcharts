@@ -27,8 +27,7 @@ import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 
 import Fx from './Fx.js';
-import U from '../Utilities.js';
-const {
+import {
     defined,
     getStyle,
     isArray,
@@ -37,7 +36,7 @@ const {
     merge,
     objectEach,
     pick
-} = U;
+} from '../../Shared/Utilities.js';
 
 /* *
  *

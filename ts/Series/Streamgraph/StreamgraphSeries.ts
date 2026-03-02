@@ -27,12 +27,7 @@ const {
     areaspline: AreaSplineSeries
 } = SeriesRegistry.seriesTypes;
 import StreamgraphSeriesDefaults from './StreamgraphSeriesDefaults.js';
-import U from '../../Core/Utilities.js';
-const {
-    addEvent,
-    merge,
-    extend
-} = U;
+import { addEvent, extend, merge } from '../../Shared/Utilities.js';
 
 /**
  * Streamgraph series type

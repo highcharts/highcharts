@@ -16,10 +16,7 @@
 import type CSSObject from '../../Core/Renderer/CSSObject';
 
 import AST from '../../Core/Renderer/HTML/AST.js';
-import U from '../../Core/Utilities.js';
-const {
-    isObject
-} = U;
+import { isObject } from '../../Shared/Utilities.js';
 
 AST.allowedAttributes.push(
     'srcset',

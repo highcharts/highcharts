@@ -63,8 +63,7 @@ import H from '../Globals.js';
 const { deg2rad } = H;
 import { Palette } from '../Color/Palettes.js';
 import Tick from './Tick.js';
-import U from '../Utilities.js';
-const {
+import {
     arrayMax,
     arrayMin,
     clamp,
@@ -72,11 +71,9 @@ const {
     defined,
     destroyObjectProperties,
     erase,
-    error,
     extend,
     fireEvent,
     getClosestDistance,
-    insertItem,
     isArray,
     isNumber,
     isString,
@@ -88,7 +85,8 @@ const {
     removeEvent,
     splat,
     syncTimeout
-} = U;
+} from '../../Shared/Utilities.js';
+import { error, insertItem } from '../Utilities.js';
 
 const getNormalizedTickInterval = (
     axis: Axis,

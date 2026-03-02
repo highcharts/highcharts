@@ -32,15 +32,11 @@ import type {
 } from './FilterModifierOptions';
 
 import DataModifier from './DataModifier.js';
+import { isFunction, merge } from '../../Shared/Utilities.js';
 import DataTable, {
     type CellType as DataTableCellType,
     type RowObject as DataTableRowObject
 } from '../DataTable.js';
-import U from '../../Core/Utilities.js';
-const {
-    isFunction,
-    merge
-} = U;
 
 
 /* *

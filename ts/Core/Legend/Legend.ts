@@ -53,8 +53,7 @@ import R from '../Renderer/RendererUtilities.js';
 const { distribute } = R;
 import T from '../Templating.js';
 const { format } = T;
-import U from '../Utilities.js';
-const {
+import {
     addEvent,
     createElement,
     css,
@@ -69,7 +68,7 @@ const {
     relativeLength,
     stableSort,
     syncTimeout
-} = U;
+} from '../../Shared/Utilities.js';
 
 /* *
  *

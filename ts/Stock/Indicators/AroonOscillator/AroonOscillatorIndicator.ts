@@ -27,11 +27,7 @@ import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     aroon: AroonIndicator
 } = SeriesRegistry.seriesTypes;
-import U from '../../../Core/Utilities.js';
-const {
-    extend,
-    merge
-} = U;
+import { extend, merge } from '../../../Shared/Utilities.js';
 
 /* *
  *

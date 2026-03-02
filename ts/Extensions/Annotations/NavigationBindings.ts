@@ -46,8 +46,7 @@ const {
 import NavigationBindingDefaults from './NavigationBindingsDefaults.js';
 import NBU from './NavigationBindingsUtilities.js';
 const { getAssignedAxis, getFieldType } = NBU;
-import U from '../../Core/Utilities.js';
-const {
+import {
     addEvent,
     attr,
     defined,
@@ -60,7 +59,7 @@ const {
     objectEach,
     pick,
     pushUnique
-} = U;
+} from '../../Shared/Utilities.js';
 
 /* *
  *

@@ -26,14 +26,13 @@ import type WordcloudSeries from './WordcloudSeries';
 
 import H from '../../Core/Globals.js';
 const { deg2rad } = H;
-import U from '../../Core/Utilities.js';
-const {
+import {
     extend,
     find,
     isNumber,
     isObject,
     merge
-} = U;
+} from '../../Shared/Utilities.js';
 
 /* *
  *

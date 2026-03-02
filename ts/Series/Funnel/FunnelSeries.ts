@@ -41,8 +41,7 @@ const {
     column: ColumnSeries,
     pie: PieSeries
 } = SeriesRegistry.seriesTypes;
-import U from '../../Core/Utilities.js';
-const {
+import {
     addEvent,
     correctFloat,
     extend,
@@ -53,7 +52,7 @@ const {
     pushUnique,
     relativeLength,
     splat
-} = U;
+} from '../../Shared/Utilities.js';
 
 /* *
  *

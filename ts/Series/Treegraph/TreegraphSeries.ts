@@ -42,16 +42,6 @@ import TreegraphNode from './TreegraphNode.js';
 import TreegraphPoint from './TreegraphPoint.js';
 import TU from '../TreeUtilities.js';
 const { getLevelOptions, getNodeWidth } = TU;
-import U from '../../Core/Utilities.js';
-const {
-    arrayMax,
-    crisp,
-    extend,
-    merge,
-    pick,
-    relativeLength,
-    splat
-} = U;
 
 import TreegraphLink from './TreegraphLink.js';
 import TreegraphLayout from './TreegraphLayout.js';
@@ -60,6 +50,15 @@ import TreegraphSeriesDefaults from './TreegraphSeriesDefaults.js';
 import TreemapPoint from '../Treemap/TreemapPoint.js';
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 import TextPath from '../../Extensions/TextPath.js';
+import {
+    arrayMax,
+    crisp,
+    extend,
+    merge,
+    pick,
+    relativeLength,
+    splat
+} from '../../Shared/Utilities.js';
 TextPath.compose(SVGElement);
 /* *
  *

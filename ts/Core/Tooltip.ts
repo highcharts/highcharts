@@ -45,16 +45,15 @@ import { Palette } from './Color/Palettes.js';
 import R from './Renderer/RendererUtilities.js';
 const { distribute } = R;
 import RendererRegistry from './Renderer/RendererRegistry.js';
-import U from './Utilities.js';
-const {
+import {
     addEvent,
     clamp,
     css,
-    clearTimeout,
     discardElement,
     extend,
     fireEvent,
     getAlignFactor,
+    internalClearTimeout,
     isArray,
     isNumber,
     isObject,
@@ -64,7 +63,7 @@ const {
     pushUnique,
     splat,
     syncTimeout
-} = U;
+} from '../Shared/Utilities.js';
 
 /**
  * Clear all timeouts for showing and hiding the tooltip.
@@ -386,6 +385,7 @@ class Tooltip {
             this.renderer = this.renderer.destroy() as any;
             discardElement(this.container);
         }
+        internalClearTimeout(this.hideTimer);
         clearTimeouts(this);
     }
 

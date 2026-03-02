@@ -22,9 +22,8 @@ import type Pane from '../../Extensions/Pane/Pane';
 import type RadialAxis from './RadialAxis';
 import type RadialAxisOptions from './RadialAxisOptions';
 
+import { extend } from '../../Shared/Utilities.js';
 import ColorAxisBase from './Color/ColorAxisBase.js';
-import U from '../Utilities.js';
-const { extend } = U;
 
 /* *
  *

@@ -34,9 +34,8 @@ import DataConnector, {
 } from './DataConnector.js';
 import HTMLTableConverter from '../Converters/HTMLTableConverter.js';
 import H from '../../Core/Globals.js';
+import { merge } from '../../Shared/Utilities.js';
 const { win } = H;
-import U from '../../Core/Utilities.js';
-const { merge } = U;
 
 /* *
  *

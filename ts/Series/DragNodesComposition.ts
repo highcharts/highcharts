@@ -28,11 +28,7 @@ import type SeriesOptions from '../Core/Series/SeriesOptions';
 
 import H from '../Core/Globals.js';
 const { composed } = H;
-import U from '../Core/Utilities.js';
-const {
-    addEvent,
-    pushUnique
-} = U;
+import { addEvent, pushUnique } from '../Shared/Utilities.js';
 
 /* *
  *

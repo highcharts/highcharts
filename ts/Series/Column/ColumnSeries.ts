@@ -39,8 +39,7 @@ import H from '../../Core/Globals.js';
 const { noop } = H;
 import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-import U from '../../Core/Utilities.js';
-const {
+import {
     clamp,
     crisp,
     defined,
@@ -49,9 +48,9 @@ const {
     isArray,
     isNumber,
     merge,
-    pick,
-    objectEach
-} = U;
+    objectEach,
+    pick
+} from '../../Shared/Utilities.js';
 
 /* *
  *

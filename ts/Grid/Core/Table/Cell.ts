@@ -30,11 +30,7 @@ import type HeaderRow from './Header/HeaderRow';
 import Column from './Column';
 import Row from './Row';
 import Templating from '../../../Core/Templating.js';
-import U from '../../../Core/Utilities.js';
-
-const {
-    fireEvent
-} = U;
+import { fireEvent } from '../../../Shared/Utilities.js';
 
 
 /* *

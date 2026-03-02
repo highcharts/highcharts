@@ -33,12 +33,12 @@ import MU from '../../Maps/MapUtilities.js';
 const { boundsFromPath } = MU;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const ScatterPoint = SeriesRegistry.seriesTypes.scatter.prototype.pointClass;
-import U from '../../Core/Utilities.js';
-const {
+import {
     extend,
+    internalClearTimeout,
     isNumber,
     pick
-} = U;
+} from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -209,7 +209,7 @@ class MapPoint extends ScatterPoint {
     public onMouseOver(
         e?: PointerEvent
     ): void {
-        U.clearTimeout(this.colorInterval);
+        internalClearTimeout(this.colorInterval);
 
         if (
             // Valid...

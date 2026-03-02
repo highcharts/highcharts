@@ -23,13 +23,12 @@ import type { AnyRecord } from '../../Shared/Types';
 import type { JSONObject } from '../JSON';
 import type HTMLTableConnectorOptions from '../../Data/Connectors/HTMLTableConnectorOptions';
 import type HTMLTableConverterOptions from '../../Data/Converters/HTMLTableConverterOptions';
+import type { Helper as SerializableHelper, JSON as SerializableJSON } from '../Serializable';
 
 import DataTableHelper from './DataTableHelper.js';
 import HTMLTableConnector from '../../Data/Connectors/HTMLTableConnector.js';
 import Serializable from '../Serializable.js';
-import type { Helper as SerializableHelper, JSON as SerializableJSON } from '../Serializable';
-import U from '../../Core/Utilities.js';
-const { merge } = U;
+import { merge } from '../../Shared/Utilities.js';
 
 /* *
  *

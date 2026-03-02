@@ -31,13 +31,8 @@ import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
 import Point from '../Core/Series/Point.js';
-import U from '../Core/Utilities.js';
-const {
-    defined,
-    error,
-    merge,
-    objectEach
-} = U;
+import { defined, merge, objectEach } from '../Shared/Utilities.js';
+import { error } from '../Core/Utilities.js';
 
 /* *
  *

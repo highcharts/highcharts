@@ -59,7 +59,8 @@ import HighchartsPlugin from '../Dashboards/Plugins/HighchartsPlugin.js';
 import PluginHandler from '../Dashboards/PluginHandler.js';
 import Sync from '../Dashboards/Components/Sync/Sync.js';
 import Utilities from '../Dashboards/Utilities.js';
-import CoreUtilities from '../Core/Utilities.js';
+import { addEvent, merge, removeEvent } from '../Shared/Utilities.js';
+import { uniqueKey } from '../Core/Utilities.js';
 
 
 /* *
@@ -71,14 +72,14 @@ import CoreUtilities from '../Core/Utilities.js';
 
 declare global {
     interface Dashboards {
-        addEvent: typeof Utilities.addEvent;
+        addEvent: typeof addEvent;
         board: typeof Board.board;
         boards: typeof Globals.boards;
         error: typeof Utilities.error;
-        merge: typeof Utilities.merge;
-        removeEvent: typeof Utilities.removeEvent;
+        merge: typeof merge;
+        removeEvent: typeof removeEvent;
         setOptions: typeof Defaults.setOptions;
-        uniqueKey: typeof Utilities.uniqueKey;
+        uniqueKey: typeof uniqueKey;
         version: typeof Globals.version;
         win: typeof Globals.win;
         AST: typeof AST;
@@ -116,12 +117,12 @@ declare global {
 const G = Globals as unknown as Dashboards;
 
 G.board = Board.board;
-G.addEvent = Utilities.addEvent;
+G.addEvent = addEvent;
 G.error = Utilities.error;
-G.merge = Utilities.merge;
-G.removeEvent = Utilities.removeEvent;
+G.merge = merge;
+G.removeEvent = removeEvent;
 G.setOptions = Defaults.setOptions;
-G.uniqueKey = Utilities.uniqueKey;
+G.uniqueKey = uniqueKey;
 G.AST = AST;
 G.Board = Board;
 G.Component = Component;
@@ -137,9 +138,6 @@ G.GridPlugin = GridPlugin;
 G.HighchartsPlugin = HighchartsPlugin;
 G.PluginHandler = PluginHandler;
 G.Sync = Sync;
-
-// Extend with Core utilities
-CoreUtilities.extend(G, CoreUtilities);
 
 
 /* *

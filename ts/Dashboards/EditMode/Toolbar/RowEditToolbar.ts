@@ -17,7 +17,6 @@
 import type { Options as EditModeOptions } from '../EditMode';
 
 import EditMode from '../EditMode.js';
-import U from '../../../Core/Utilities.js';
 import Row from '../../Layout/Row.js';
 import EditGlobals from '../EditGlobals.js';
 import MenuItem from '../Menu/MenuItem.js';
@@ -26,12 +25,7 @@ import type { Options as MenuItemOptions } from '../Menu/MenuItem';
 
 import EditToolbar from './EditToolbar.js';
 import GUIElement from '../../Layout/GUIElement.js';
-
-const {
-    fireEvent,
-    merge,
-    objectEach
-} = U;
+import { fireEvent, merge, objectEach } from '../../../Shared/Utilities.js';
 
 /**
  * @internal

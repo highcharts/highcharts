@@ -27,8 +27,7 @@ import type { GridHighlightSyncOptions } from '../GridComponentOptions';
 import type { TableCellEvent } from '../../../Plugins/GridTypes';
 
 import Component from '../../Component';
-import U from '../../../../Core/Utilities.js';
-const { addEvent, removeEvent } = U;
+import { addEvent, removeEvent } from '../../../../Shared/Utilities.js';
 
 /* *
  *

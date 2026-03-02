@@ -47,12 +47,8 @@ const {
     updateNthPoint,
     updateRectSize
 } = STU;
-import U from '../../Core/Utilities.js';
 import FibonacciTimeZones from '../../Extensions/Annotations/Types/FibonacciTimeZones';
-const {
-    fireEvent,
-    merge
-} = U;
+import { fireEvent, merge } from '../../Shared/Utilities.js';
 
 /* *
  *

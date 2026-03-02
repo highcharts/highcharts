@@ -53,8 +53,9 @@ const {
     initDataLabels,
     initDataLabelsDefer
 } = D;
-import U from '../../Core/Utilities.js';
-const {
+import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
+import TextPath from '../../Extensions/TextPath.js';
+import {
     addEvent,
     clamp,
     defined,
@@ -64,9 +65,7 @@ const {
     isNumber,
     merge,
     pick
-} = U;
-import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
-import TextPath from '../../Extensions/TextPath.js';
+} from '../../Shared/Utilities.js';
 TextPath.compose(SVGElement);
 
 /* *

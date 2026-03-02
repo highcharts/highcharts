@@ -57,21 +57,20 @@ const {
     column: ColumnSeries,
     scatter: ScatterSeries
 } = SeriesRegistry.seriesTypes;
-import U from '../../Core/Utilities.js';
-const {
+import {
+    defined,
     extend,
     find,
     fireEvent,
     getNestedProperty,
     isArray,
-    defined,
     isNumber,
     isObject,
     merge,
     objectEach,
     pick,
     splat
-} = U;
+} from '../../Shared/Utilities.js';
 
 /* *
  *

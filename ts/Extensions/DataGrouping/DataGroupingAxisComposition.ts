@@ -22,13 +22,7 @@ import type AxisType from '../../Core/Axis/AxisType';
 import type DataGroupingOptions from './DataGroupingOptions';
 
 import DataGroupingDefaults from './DataGroupingDefaults.js';
-import U from '../../Core/Utilities.js';
-const {
-    addEvent,
-    extend,
-    merge,
-    pick
-} = U;
+import { addEvent, extend, merge, pick } from '../../Shared/Utilities.js';
 
 /* *
  *

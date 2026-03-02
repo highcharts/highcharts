@@ -22,13 +22,13 @@
 import type { AnyRecord } from '../../Shared/Types';
 import type { JSONObject } from '../JSON';
 import type GoogleSheetsConnectorOptions from '../../Data/Connectors/GoogleSheetsConnectorOptions';
+import type { Helper as SerializableHelper, JSON as SerializableJSON } from '../Serializable';
 
 import DataTableHelper from './DataTableHelper.js';
 import GoogleSheetsConnector from '../../Data/Connectors/GoogleSheetsConnector.js';
 import Serializable from '../Serializable.js';
-import type { Helper as SerializableHelper, JSON as SerializableJSON } from '../Serializable';
-import U from '../../Core/Utilities.js';
-const { merge } = U;
+import { merge } from '../../Shared/Utilities.js';
+
 
 /* *
  *

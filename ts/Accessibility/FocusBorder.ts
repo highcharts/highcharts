@@ -28,11 +28,7 @@ import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 
 import Chart from '../Core/Chart/Chart.js';
 import SVGElement from '../Core/Renderer/SVG/SVGElement.js';
-import U from '../Core/Utilities.js';
-const {
-    addEvent,
-    pick
-} = U;
+import { addEvent, pick } from '../Shared/Utilities.js';
 
 /* *
  *

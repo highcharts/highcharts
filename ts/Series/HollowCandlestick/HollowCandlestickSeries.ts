@@ -20,12 +20,12 @@
 import HollowCandlestickPoint from './HollowCandlestickPoint.js';
 import type HollowCandlestickSeriesOptions from './HollowCandlestickSeriesOptions';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-import U from '../../Core/Utilities.js';
 import { StatesOptionsKey } from '../../Core/Series/StatesOptions.js';
 import SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes.js';
 import { Palette } from '../../Core/Color/Palettes.js';
 import Axis from '../../Core/Axis/Axis.js';
 import ColorType from '../../Core/Color/ColorType.js';
+import { addEvent, merge } from '../../Shared/Utilities.js';
 
 const {
     seriesTypes: {
@@ -33,10 +33,6 @@ const {
     }
 } = SeriesRegistry;
 
-const {
-    addEvent,
-    merge
-} = U;
 interface HollowcandleInfo {
     isBullish: boolean;
     trendDirection: 'down'|'up';

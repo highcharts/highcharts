@@ -8,8 +8,8 @@ import type PackedBubblePoint from './PackedBubblePoint';
 import type PackedBubbleSeriesOptions from './PackedBubbleSeriesOptions';
 import type Point from '../../Core/Series/Point';
 
-import U from '../../Core/Utilities.js';
-const { isNumber } = U;
+import { isNumber } from '../../Shared/Utilities.js';
+
 
 /* *
  *

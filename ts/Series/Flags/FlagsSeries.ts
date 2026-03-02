@@ -38,8 +38,7 @@ const {
     }
 } = SeriesRegistry;
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
-import U from '../../Core/Utilities.js';
-const {
+import {
     addEvent,
     defined,
     extend,
@@ -47,7 +46,7 @@ const {
     merge,
     objectEach,
     wrap
-} = U;
+} from '../../Shared/Utilities.js';
 
 /* *
  *

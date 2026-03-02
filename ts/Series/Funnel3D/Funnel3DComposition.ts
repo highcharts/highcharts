@@ -32,12 +32,8 @@ import type SVGRenderer3D from '../../Core/Renderer/SVG/SVGRenderer3D';
 import SVGElement3DFunnel from './SVGElement3DFunnel.js';
 import H from '../../Core/Globals.js';
 const { charts } = H;
-import U from '../../Core/Utilities.js';
-const {
-    error,
-    extend,
-    merge
-} = U;
+import { extend, merge } from '../../Shared/Utilities.js';
+import { error } from '../../Core/Utilities.js';
 
 /* *
  *

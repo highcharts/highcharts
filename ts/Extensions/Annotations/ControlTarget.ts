@@ -24,7 +24,7 @@ import type {
 
 import ControlPoint from './ControlPoint.js';
 import MockPoint from './MockPoint.js';
-import U from '../../Core/Utilities.js';
+import { isObject, isString, merge, splat } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -167,7 +167,7 @@ namespace ControlTarget {
             controlPointsOptions = this.options.controlPoints || [];
 
         controlPointsOptions.forEach((controlPointOptions, i): void => {
-            const options = U.merge(
+            const options = merge(
                 this.options.controlPointOptions,
                 controlPointOptions
             );
@@ -218,7 +218,7 @@ namespace ControlTarget {
 
         return {
             relativePosition: anchor,
-            absolutePosition: U.merge(anchor, {
+            absolutePosition: merge(anchor, {
                 x: anchor.x + (
                     point.mock ? plotBox.translateX : chart.plotLeft
                 ),
@@ -237,7 +237,7 @@ namespace ControlTarget {
         const controlProto = ControlTargetClass.prototype;
 
         if (!controlProto.addControlPoints) {
-            U.merge(true, controlProto, {
+            merge(true, controlProto, {
                 addControlPoints,
                 anchor,
                 destroyControlTarget,
@@ -291,7 +291,7 @@ namespace ControlTarget {
 
         return (
             options.points ||
-            (options.point && U.splat(options.point))
+            (options.point && splat(options.point))
         ) as any;
     }
 
@@ -359,13 +359,13 @@ namespace ControlTarget {
         }
 
         if (!point || point.series === null) {
-            if (U.isObject(pointOptions)) {
+            if (isObject(pointOptions)) {
                 point = new MockPoint(
                     this.chart,
                     this,
                     pointOptions as AnnotationMockPointOptionsObject
                 );
-            } else if (U.isString(pointOptions)) {
+            } else if (isString(pointOptions)) {
                 point = (this.chart.get(pointOptions) as any) || null;
             } else if (typeof pointOptions === 'function') {
                 const pointConfigOrPoint: (

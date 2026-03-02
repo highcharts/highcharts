@@ -31,12 +31,7 @@ const {
     pie: { prototype: { pointClass: PiePoint } },
     scatter: { prototype: { pointClass: ScatterPoint } }
 } = SeriesRegistry.seriesTypes;
-import U from '../../Core/Utilities.js';
-const {
-    extend,
-    isNumber,
-    pick
-} = U;
+import { extend, isNumber, pick } from '../../Shared/Utilities.js';
 
 /* *
  *

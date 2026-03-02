@@ -36,8 +36,7 @@ import type {
     Row as DataTableRow
 } from '../DataTable.js';
 import DataConverterUtils from './DataConverterUtils.js';
-import U from '../../Core/Utilities.js';
-const { merge } = U;
+import { merge } from '../../Shared/Utilities.js';
 
 /* *
  *

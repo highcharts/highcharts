@@ -19,14 +19,8 @@ import type { CSSObject } from '../../Core/Renderer/CSSObject';
 import type HTMLAttributes from '../../Core/Renderer/HTML/HTMLAttributes';
 
 import Globals from '../Globals.js';
-import U from '../../Core/Utilities.js';
-const {
-    addEvent,
-    createElement,
-    uniqueKey,
-    objectEach,
-    error
-} = U;
+import { addEvent, createElement, objectEach } from '../../Shared/Utilities.js';
+import { error, uniqueKey } from '../../Core/Utilities.js';
 
 abstract class GUIElement {
 

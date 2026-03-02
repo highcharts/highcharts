@@ -23,11 +23,7 @@ import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     line: { prototype: lineProto }
 } = SeriesRegistry.seriesTypes;
-import U from '../../Core/Utilities.js';
-const {
-    pushUnique,
-    wrap
-} = U;
+import { pushUnique, wrap } from '../../Shared/Utilities.js';
 
 /* *
  *

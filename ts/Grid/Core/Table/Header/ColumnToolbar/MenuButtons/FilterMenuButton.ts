@@ -28,9 +28,7 @@ import type { LangOptions } from '../../../../Options';
 import FilterPopup from '../FilterPopup.js';
 import StateHelpers from '../StateHelpers.js';
 import ContextMenuButton from '../../../../UI/ContextMenuButton.js';
-import U from '../../../../../../Core/Utilities.js';
-
-const { addEvent } = U;
+import { addEvent } from '../../../../../../Shared/Utilities.js';
 
 
 /* *

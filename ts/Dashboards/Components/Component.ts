@@ -58,20 +58,6 @@ import Sync from './Sync/Sync.js';
 import Globals from '../Globals.js';
 const { classNamePrefix } = Globals;
 
-import U from '../../Core/Utilities.js';
-const {
-    createElement,
-    isArray,
-    merge,
-    fireEvent,
-    addEvent,
-    objectEach,
-    isFunction,
-    getStyle,
-    diffObjects,
-    removeEvent
-} = U;
-
 import CU from './ComponentUtilities.js';
 const {
     getMargins,
@@ -79,9 +65,10 @@ const {
 } = CU;
 
 import DU from '../Utilities.js';
+import { addEvent, createElement, diffObjects, fireEvent, getStyle, isArray, isFunction, merge, objectEach, removeEvent } from '../../Shared/Utilities.js';
+import { uniqueKey } from '../../Core/Utilities.js';
 const {
-    deepClone,
-    uniqueKey
+    deepClone
 } = DU;
 
 /* *

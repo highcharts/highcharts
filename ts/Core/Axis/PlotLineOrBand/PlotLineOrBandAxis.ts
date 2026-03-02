@@ -23,12 +23,7 @@ import type PlotLineOptions from './PlotLineOptions';
 import type PlotLineOrBand from './PlotLineOrBand';
 import type SVGPath from '../../Renderer/SVG/SVGPath';
 
-import U from '../../Utilities.js';
-const {
-    erase,
-    extend,
-    isNumber
-} = U;
+import { erase, extend, isNumber } from '../../../Shared/Utilities.js';
 
 /* *
  *

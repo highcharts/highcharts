@@ -31,8 +31,10 @@ const {
     column: ColumnSeries,
     line: LineSeries
 } = SeriesRegistry.seriesTypes;
-import U from '../../Core/Utilities.js';
-const {
+import WaterfallAxis from '../../Core/Axis/WaterfallAxis.js';
+import WaterfallPoint from './WaterfallPoint.js';
+import WaterfallSeriesDefaults from './WaterfallSeriesDefaults.js';
+import {
     addEvent,
     arrayMax,
     arrayMin,
@@ -43,10 +45,7 @@ const {
     merge,
     objectEach,
     pick
-} = U;
-import WaterfallAxis from '../../Core/Axis/WaterfallAxis.js';
-import WaterfallPoint from './WaterfallPoint.js';
-import WaterfallSeriesDefaults from './WaterfallSeriesDefaults.js';
+} from '../../Shared/Utilities.js';
 
 /* *
  *

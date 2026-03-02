@@ -18,13 +18,9 @@
  * */
 
 import type Chart from '../Core/Chart/Chart';
+import { error } from '../Core/Utilities.js';
 
-import U from '../Core/Utilities.js';
-const {
-    error,
-    merge,
-    pick
-} = U;
+import { merge, pick } from '../Shared/Utilities.js';
 
 /* *
  *

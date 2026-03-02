@@ -39,15 +39,9 @@ import {
 } from '../../GridUtils.js';
 import ColumnSorting from '../Actions/ColumnSorting.js';
 import Globals from '../../Globals.js';
-import Utilities from '../../../../Core/Utilities.js';
 import TableHeader from './TableHeader.js';
 import ColumnToolbar from './ColumnToolbar/ColumnToolbar.js';
-
-const {
-    fireEvent,
-    isString
-} = Utilities;
-
+import { fireEvent, isString } from '../../../../Shared/Utilities.js';
 
 /* *
  *

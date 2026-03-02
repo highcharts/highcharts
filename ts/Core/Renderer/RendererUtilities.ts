@@ -16,14 +16,7 @@
  *  Imports
  *
  * */
-
-import U from '../Utilities.js';
-const {
-    clamp,
-    pick,
-    pushUnique,
-    stableSort
-} = U;
+import { clamp, pick, pushUnique, stableSort } from '../../Shared/Utilities.js';
 
 /* *
  *

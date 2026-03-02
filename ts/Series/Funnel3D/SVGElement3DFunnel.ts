@@ -31,11 +31,11 @@ const { parse: color } = Color;
 import H from '../../Core/Globals.js';
 const { charts } = H;
 import RendererRegistry from '../../Core/Renderer/RendererRegistry.js';
+import { merge } from '../../Shared/Utilities.js';
 const {
     Element3D: SVGElement3D
 } = RendererRegistry.getRendererType().prototype;
-import U from '../../Core/Utilities.js';
-const { merge } = U;
+
 
 /* *
  *
