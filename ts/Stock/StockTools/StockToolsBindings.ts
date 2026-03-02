@@ -49,6 +49,8 @@ const {
 } = STU;
 import U from '../../Core/Utilities.js';
 import FibonacciTimeZones from '../../Extensions/Annotations/Types/FibonacciTimeZones';
+import getIcon from '../../Shared/BaseFormUtils';
+import StockToolsIcons from './StockToolsIcons';
 const {
     fireEvent,
     merge
@@ -1947,8 +1949,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
             button: HTMLDOMElement
         ): void {
             const chart = this.chart,
-                gui: Toolbar = chart.stockTools as any,
-                iconsURL = gui.getIconsURL();
+                gui: Toolbar = chart.stockTools as any;
 
             this.toggledAnnotations = !this.toggledAnnotations;
 
@@ -1962,12 +1963,18 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
             if (gui && gui.guiEnabled) {
                 if (this.toggledAnnotations) {
                     (button.firstChild as any).style['background-image'] =
-                        'url("' + iconsURL +
-                            'annotations-hidden.svg")';
+                        getIcon(
+                            'annotations-hidden.svg',
+                            gui.iconsURL,
+                            StockToolsIcons
+                        );
                 } else {
                     (button.firstChild as any).style['background-image'] =
-                        'url("' + iconsURL +
-                            'annotations-visible.svg")';
+                        getIcon(
+                            'annotations-visible.svg',
+                            gui.iconsURL,
+                            StockToolsIcons
+                        );
                 }
             }
 

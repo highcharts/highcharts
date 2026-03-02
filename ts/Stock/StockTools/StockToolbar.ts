@@ -31,6 +31,10 @@ import type {
 import U from '../../Core/Utilities.js';
 import AST from '../../Core/Renderer/HTML/AST.js';
 import StockToolsUtilities from './StockToolsUtilities.js';
+
+import getIcon from '../../Shared/BaseFormUtils';
+import StockToolsIcons from '../../Stock/StockTools/StockToolsIcons.js';
+
 const {
     addEvent,
     createElement,
@@ -82,9 +86,8 @@ class Toolbar {
     ) {
         this.chart = chart;
         this.options = options;
-        this.lang = langOptions;
-        // Set url for icons.
         this.iconsURL = this.getIconsURL();
+        this.lang = langOptions;
         this.guiEnabled = options.enabled;
         this.visible = pick(options.visible, true);
         this.guiClassName = options.className;
@@ -397,8 +400,8 @@ class Toolbar {
                     'highcharts-arrow-right'
             }, void 0, buttonWrapper);
 
-            submenuArrow.style.backgroundImage = 'url(' +
-                this.iconsURL + 'arrow-bottom.svg)';
+            submenuArrow.style.backgroundImage =
+                getIcon('arrow-bottom.svg', this.iconsURL, StockToolsIcons);
 
             return {
                 buttonWrapper,
@@ -407,8 +410,9 @@ class Toolbar {
             };
         }
 
-        mainButton.style.backgroundImage = 'url(' +
-            this.iconsURL + btnOptions.symbol + ')';
+        mainButton.style.backgroundImage = getIcon(
+            btnOptions.symbol as string, this.iconsURL, StockToolsIcons
+        );
 
         return {
             buttonWrapper,
@@ -433,14 +437,14 @@ class Toolbar {
         }, void 0, this.arrowWrapper);
 
         this.arrowUp.style.backgroundImage =
-            'url(' + this.iconsURL + 'arrow-right.svg)';
+            getIcon('arrow-right.svg', this.iconsURL, StockToolsIcons);
 
         this.arrowDown = createElement('div', {
             className: 'highcharts-arrow-down'
         }, void 0, this.arrowWrapper);
 
         this.arrowDown.style.backgroundImage =
-            'url(' + this.iconsURL + 'arrow-right.svg)';
+            getIcon('arrow-right.svg', this.iconsURL, StockToolsIcons);
 
         wrapper.insertBefore(this.arrowWrapper, wrapper.childNodes[0]);
 
@@ -586,7 +590,7 @@ class Toolbar {
         let visible = this.visible;
 
         showHideBtn.style.backgroundImage =
-            'url(' + this.iconsURL + 'arrow-right.svg)';
+            getIcon('arrow-right.svg', this.iconsURL, StockToolsIcons);
 
         if (!visible) {
             // Hide
@@ -811,12 +815,15 @@ class Toolbar {
     }
 
     /**
-     * @private
+     * Get the icons URL
+     *
+     * @internal
+     * @return {string} Icons URL
      */
-    public getIconsURL(): string {
-        return (this.chart.options.navigation as any).iconsURL ||
+    private getIconsURL(): string {
+        return this.chart.options.navigation?.iconsURL ||
             this.options.iconsURL ||
-            'https://code.highcharts.com/@product.version@/gfx/stock-icons/';
+            'renderer';
     }
 
 }

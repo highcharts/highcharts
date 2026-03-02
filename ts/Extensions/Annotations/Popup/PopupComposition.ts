@@ -106,7 +106,7 @@ function onNavigationBindingsShowPopup(
                     this.chart.options.stockTools &&
                     this.chart.options.stockTools.gui.iconsURL
                 ) ||
-                'https://code.highcharts.com/@product.version@/gfx/stock-icons/'
+                'renderer'
             ), this.chart
         );
     }

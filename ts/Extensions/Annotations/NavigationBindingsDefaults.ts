@@ -510,10 +510,11 @@ const navigation: NavigationOptions = {
 
     /**
      * Path where Highcharts will look for icons. Change this to use icons
-     * from a different server.
+     * from a different server. When undefined, icons are loaded from
+     * the library's internal source.
      *
-     * @type      {string}
-     * @default   https://code.highcharts.com/@product.version@/gfx/stock-icons/
+     * @type      {string|undefined}
+     * @default   undefined
      * @since     7.1.3
      * @apioption navigation.iconsURL
      */

@@ -1,29 +1,35 @@
 QUnit.test('Stocktools GUI', function (assert) {
     const chart = Highcharts.stockChart('container', {
-        stockTools: {
-            gui: {
-                enabled: true,
-                definitions: {
-                    measure: {
-                        items: ['measureX']
+            stockTools: {
+                gui: {
+                    enabled: true,
+                    definitions: {
+                        measure: {
+                            items: ['measureX']
+                        }
                     }
                 }
-            }
-        },
-        title: {
-            text: 'Chart title',
-            align: 'left'
-        },
-        legend: {
-            enabled: true,
-            align: 'left'
-        },
-        series: [
-            {
-                data: [1, 2, 3]
-            }
-        ]
-    });
+            },
+            title: {
+                text: 'Chart title',
+                align: 'left'
+            },
+            legend: {
+                enabled: true,
+                align: 'left'
+            },
+            series: [
+                {
+                    data: [1, 2, 3]
+                }
+            ]
+        }),
+        buttons = chart.stockTools.toolbar.querySelectorAll(
+            'li:not(.highcharts-separator)'
+        ),
+        areAllIconsLocal = [...buttons].every(button =>
+            button.childNodes[0].style['background-image'].startsWith('url("data:image/svg+xml')
+        );
 
     assert.ok(
         1,
@@ -101,6 +107,11 @@ QUnit.test('Stocktools GUI', function (assert) {
     assert.strictEqual(
         textLabel,
         'Periods', 'APO should have Periods text-label.'
+    );
+
+    assert.ok(
+        areAllIconsLocal,
+        'All Stock Tools icons should be loaded from local data URL.'
     );
 });
 
