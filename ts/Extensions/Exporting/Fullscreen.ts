@@ -29,7 +29,11 @@ import type Chart from '../../Core/Chart/Chart';
 
 import AST from '../../Core/Renderer/HTML/AST.js';
 import H from '../../Core/Globals.js';
-const { composed } = H;
+const {
+    composed,
+    win,
+    doc
+} = H;
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -136,6 +140,20 @@ function onChartBeforeRender(
      */
     this.fullscreen = new Fullscreen(this);
 }
+
+/**
+ * @internal
+ * Tolerance in CSS pixels used to detect whether the page was at bottom.
+ * A small non-zero value absorbs minor rounding differences on reflow.
+ */
+const scrollBottomTolerance = 2;
+
+/**
+ * @internal
+ * Duration in milliseconds used to keep restoring scroll after fullscreen
+ * exit, allowing delayed viewport/layout updates to settle.
+ */
+const scrollRestoreDuration = 900;
 
 /* *
  *
@@ -277,6 +295,24 @@ class Fullscreen {
     public origWidthOption?: (number | null);
 
     /** @internal */
+    public restoreScrollRAF?: number;
+
+    /** @internal */
+    public restoreScrollTop?: number;
+
+    /** @internal */
+    public restoreScrollWasAtBottom?: boolean;
+
+    /** @internal */
+    public restoreScrollWasBlurred?: boolean;
+
+    /** @internal */
+    public restoreScrollUntil?: number;
+
+    /** @internal */
+    public unbindScrollRestore?: Function;
+
+    /** @internal */
     public unbindFullscreenEvent?: Function;
 
     /* *
@@ -334,6 +370,7 @@ class Fullscreen {
             fullscreen.isOpen = false;
 
             fullscreen.setButtonText();
+            fullscreen.restoreScrollPosition();
 
         });
     }
@@ -363,6 +400,7 @@ class Fullscreen {
             }
             fullscreen.origWidth = chart.chartWidth;
             fullscreen.origHeight = chart.chartHeight;
+            fullscreen.saveScrollPosition();
 
             // Handle exitFullscreen() method when user clicks 'Escape' button.
             if (fullscreen.browserProps) {
@@ -452,6 +490,182 @@ class Fullscreen {
     }
 
     /**
+     * Gets vertical scroll position and maximum available scroll.
+     *
+     * @private
+     * @return {Highcharts.Fullscreen.ScrollPosition|undefined}
+     * Current vertical scroll data.
+     */
+    private getScrollPosition(): (Fullscreen.ScrollPosition|undefined) {
+        if (!win) {
+            return;
+        }
+
+        const scrollingElement = (doc.scrollingElement || doc.documentElement),
+            maxY = Math.max(0, scrollingElement.scrollHeight - win.innerHeight);
+
+        return {
+            maxY,
+            y: win.scrollY
+        };
+    }
+
+    /**
+     * Saves scroll position before entering fullscreen mode.
+     *
+     * @private
+     * @return {void}
+     */
+    private saveScrollPosition(): void {
+        const position = this.getScrollPosition();
+
+        this.stopScrollRestore();
+
+        if (!position) {
+            return;
+        }
+
+        this.restoreScrollTop = position.y;
+        this.restoreScrollWasAtBottom = (
+            position.maxY - position.y <= scrollBottomTolerance
+        );
+    }
+
+    /**
+     * Restores scroll position after exiting fullscreen mode.
+     *
+     * @private
+     * @return {void}
+     */
+    private restoreScrollPosition(): void {
+        const fullscreen = this,
+            chart = fullscreen.chart,
+            originalY = fullscreen.restoreScrollTop;
+
+        if (
+            !win ||
+            typeof originalY !== 'number'
+        ) {
+            return;
+        }
+
+        fullscreen.stopScrollRestore();
+
+        const tick = (): void => {
+            const position = fullscreen.getScrollPosition();
+
+            if (!position || !win) {
+                // Defensive check for async ticks after teardown.
+                fullscreen.stopScrollRestore();
+                return;
+            }
+
+            const targetY = fullscreen.restoreScrollWasAtBottom ?
+                position.maxY :
+                Math.min(originalY, position.maxY);
+
+            win.scrollTo(0, targetY);
+
+            if (Date.now() < (fullscreen.restoreScrollUntil || 0)) {
+                fullscreen.restoreScrollRAF = win.requestAnimationFrame(tick);
+            } else {
+                fullscreen.stopScrollRestore();
+            }
+        };
+
+        const extendRestoreDeadline = (): void => {
+            fullscreen.restoreScrollUntil = Date.now() + scrollRestoreDuration;
+            if (!fullscreen.restoreScrollRAF) {
+                fullscreen.restoreScrollRAF = win.requestAnimationFrame(tick);
+            }
+        };
+
+        const blur = (): void => {
+            if (fullscreen.restoreScrollWasBlurred) {
+                return;
+            }
+            const activeElement = doc.activeElement;
+            if (
+                activeElement instanceof HTMLElement &&
+                chart.renderTo.contains(activeElement)
+            ) {
+                activeElement.blur();
+            }
+            fullscreen.restoreScrollWasBlurred = true;
+        };
+
+        const stopOnUserScroll = (
+            e: Event
+        ): void => {
+            const event = e as KeyboardEvent;
+            if (
+                event.type !== 'keydown' ||
+                (
+                    event.key === 'ArrowDown' ||
+                    event.key === 'ArrowUp' ||
+                    event.key === 'PageDown' ||
+                    event.key === 'PageUp' ||
+                    event.key === 'Home' ||
+                    event.key === 'End' ||
+                    event.key === ' '
+                )
+            ) {
+                fullscreen.stopScrollRestore();
+            }
+        };
+
+        const unbindResize = addEvent(win, 'resize', extendRestoreDeadline),
+            unbindFocusin = addEvent(doc, 'focusin', extendRestoreDeadline),
+            unbindWheel = addEvent(win, 'wheel', stopOnUserScroll),
+            unbindTouchMove = addEvent(win, 'touchmove', stopOnUserScroll),
+            unbindKeyDown = addEvent(doc, 'keydown', stopOnUserScroll),
+            unbindDestroy = addEvent(chart, 'destroy', (): void => {
+                fullscreen.stopScrollRestore();
+            }),
+            unbindViewport = (
+                win.visualViewport &&
+                addEvent(win.visualViewport, 'resize', extendRestoreDeadline)
+            );
+
+        fullscreen.unbindScrollRestore = (): void => {
+            unbindResize();
+            unbindFocusin();
+            unbindWheel();
+            unbindTouchMove();
+            unbindKeyDown();
+            unbindDestroy();
+            if (unbindViewport) {
+                unbindViewport();
+            }
+        };
+
+        fullscreen.restoreScrollWasBlurred = false;
+        blur();
+        extendRestoreDeadline();
+    }
+
+    /**
+     * Stops pending scroll restoration.
+     *
+     * @private
+     * @return {void}
+     */
+    private stopScrollRestore(): void {
+        if (win && typeof this.restoreScrollRAF === 'number') {
+            win.cancelAnimationFrame(this.restoreScrollRAF);
+        }
+
+        this.restoreScrollRAF = void 0;
+        this.restoreScrollWasBlurred = false;
+        this.restoreScrollUntil = void 0;
+
+        if (this.unbindScrollRestore) {
+            this.unbindScrollRestore();
+            this.unbindScrollRestore = void 0;
+        }
+    }
+
+    /**
      * Toggles displaying the chart in fullscreen mode.
      * By default, when the exporting module is enabled, a context button with
      * a drop down menu in the upper right corner accesses this function.
@@ -511,6 +725,11 @@ namespace Fullscreen {
             'webkitExitFullscreen' |
             'msExitFullscreen'
         );
+    }
+
+    export interface ScrollPosition {
+        maxY: number;
+        y: number;
     }
 
 }
