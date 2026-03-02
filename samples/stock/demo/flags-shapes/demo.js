@@ -80,8 +80,8 @@
                 title: 'C',
                 text: 'Shape: "flag"'
             }],
-            color: Highcharts.getOptions().colors[0], // same as onSeries
-            fillColor: Highcharts.getOptions().colors[0],
+            color: 'var(--highcharts-color-0)', // same as onSeries
+            fillColor: 'var(--highcharts-color-0)',
             onSeries: 'dataseries',
             width: 16,
             style: { // text style

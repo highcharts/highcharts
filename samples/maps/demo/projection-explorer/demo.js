@@ -269,7 +269,7 @@
                         borderWidth: 0.25
                     },
                     mapline: {
-                        color: Highcharts.getOptions().colors[0]
+                        color: 'var(--highcharts-color-0)'
                     }
                 },
 

@@ -97,7 +97,7 @@ Highcharts.chart('container', {
     },
     series: [{
         data: [[20, 20], [80, 80]],
-        color: Highcharts.getOptions().colors[3],
+        color: 'var(--highcharts-color-3)',
         marker: {
             lineWidth: 2,
             radius: 6
