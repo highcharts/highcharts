@@ -25,6 +25,7 @@ import type Chart from '../../../Core/Chart/Chart';
 import type { HTMLDOMElement } from '../../../Core/Renderer/DOMElementType';
 
 import BaseForm from '../../../Shared/BaseForm.js';
+import Color from '../../../Core/Color/Color.js';
 import H from '../../../Core/Globals.js';
 const { doc } = H;
 import D from '../../../Core/Defaults.js';
@@ -115,7 +116,20 @@ function getFields(
         if (seriesId) {
             fieldsOutput.seriesId = input.value;
         } else if (param) {
-            fieldsOutput.fields[param] = input.value;
+            const wrapper = input.closest('.highcharts-popup-color-wrapper'),
+                slider = wrapper?.querySelector(
+                    '.highcharts-popup-opacity'
+                ) as HTMLInputElement,
+                opacity = slider ? Number(slider.value) / 100 : 1;
+
+            if (slider) {
+                const rgba = Color.parse(input.value).rgba;
+                fieldsOutput.fields[param] = !Number.isNaN(rgba[0]) ?
+                    `rgba(${rgba[0]},${rgba[1]},${rgba[2]},${opacity})` :
+                    input.value;
+            } else {
+                fieldsOutput.fields[param] = input.value;
+            }
         } else {
             // Type like sma / ema
             fieldsOutput.type = input.value;
@@ -142,6 +156,78 @@ function getFields(
     }
 
     return fieldsOutput;
+}
+
+/**
+ * Resolve CSS 'var()', 'color-mix()' and 'rgba()' values to hex and alpha.
+ * @internal
+ */
+function resolveColorValue(
+    value: string,
+    contextElement: HTMLDOMElement
+): { value: string, alpha: number } {
+    // Convert CSS variable to hex value.
+    const varToHex = (value: string): string => window
+        .getComputedStyle(contextElement)
+        .getPropertyValue(value.slice(4, -1))
+        .toUpperCase();
+
+    // Convert rgba() value to hex value.
+    const rgbaToHex = (value: string): string => {
+        const [r, g, b] = Color.parse(value).rgba,
+            toHex = (n: number): string =>
+                ('0' + n.toString(16)).slice(-2).toUpperCase();
+        return '#' + toHex(r) + toHex(g) + toHex(b);
+    };
+
+    if (value.startsWith('rgba(')) {
+        return { value: rgbaToHex(value), alpha: 1 };
+    }
+
+    if (value.startsWith('var(')) {
+        return { value: varToHex(value), alpha: 1 };
+    }
+
+    if (value.startsWith('color-mix(')) {
+        // Split color-mix into color1, mix ratio, color2.
+        const match = value.match(
+            /color-mix\(in\s+srgb,\s*(.+?)\s+(\d+%),\s*(.+)\)/
+        );
+        if (match) {
+            const color1 = match[1].trim(),
+                mix = parseInt(match[2], 10) / 100,
+                color2 = match[3].trim();
+
+            // Convert both colors to hex, or return raw value if not parsable.
+            const [parsedColor1, parsedColor2] =
+                [color1, color2].map((color: string): string => {
+                    if (color.startsWith('var(')) {
+                        return varToHex(color) || '';
+                    }
+                    if (color.startsWith('rgba(')) {
+                        return rgbaToHex(color) || '';
+                    }
+                    return color;
+                });
+
+            // If both colors are hex, mix them using mix ratio.
+            if (parsedColor1.startsWith('#') && parsedColor2.startsWith('#')) {
+                return ({
+                    value: Color.parse(parsedColor1).tweenTo(
+                        Color.parse(parsedColor2), mix
+                    ).toString(),
+                    alpha: 1
+                });
+            }
+
+            // If color2 is transparent, mix ratio becomes opacity for color1.
+            if (parsedColor2 === 'transparent') {
+                return { value: parsedColor1, alpha: mix };
+            }
+        }
+    }
+
+    return { value, alpha: 1 };
 }
 
 /* *
@@ -250,6 +336,16 @@ class Popup extends BaseForm {
             );
         }
 
+        if (inputAttributes.type === 'color' && this.chart?.container) {
+            return this.createColorInput(
+                option,
+                inputName,
+                inputAttributes,
+                parentDiv,
+                this.chart.container
+            );
+        }
+
         // Add input
         const input = createElement(
             'input',
@@ -266,6 +362,128 @@ class Popup extends BaseForm {
         input.setAttribute('highcharts-data-name', option);
 
         return input;
+    }
+
+    /**
+     * Create color input group with color picker, text field and opacity
+     * controls.
+     */
+    public createColorInput(
+        option: string,
+        inputName: string,
+        inputAttributes: InputAttributes,
+        parentDiv: HTMLDOMElement,
+        container: HTMLDOMElement
+    ): HTMLDOMElement {
+        const { value, alpha } = resolveColorValue(
+            inputAttributes.value || '',
+            container
+        );
+
+        const parsedOpacity = Color.parse(inputAttributes.value || '').rgba[3],
+            opacity = isNaN(parsedOpacity) ? alpha : parsedOpacity;
+
+        const wrapper = createElement(
+            'div',
+            { className: 'highcharts-popup-color-wrapper' },
+            void 0,
+            parentDiv
+        );
+
+        const colorInput: HTMLInputElement = createElement(
+            'input',
+            {
+                type: 'color',
+                value,
+                className: (
+                    'highcharts-popup-field highcharts-popup-field-color'
+                )
+            },
+            void 0,
+            wrapper
+        ) as HTMLInputElement;
+
+        const textInput = createElement(
+            'input',
+            {
+                name: inputName,
+                id: inputName,
+                value,
+                type: 'text',
+                className: (
+                    'highcharts-popup-field highcharts-popup-field-text'
+                )
+            },
+            void 0,
+            wrapper
+        ) as HTMLInputElement;
+        textInput.setAttribute('highcharts-data-name', option);
+
+        const opacitySlider = createElement(
+            'input',
+            {
+                type: 'range',
+                value: String(opacity * 100),
+                className: (
+                    'highcharts-popup-field highcharts-popup-opacity'
+                ),
+                min: '0',
+                max: '100'
+            },
+            void 0,
+            wrapper
+        ) as HTMLInputElement;
+
+        const opacityNumberInput = createElement(
+            'input',
+            {
+                type: 'number',
+                value: String(opacity),
+                className: (
+                    'highcharts-popup-field highcharts-popup-opacity-number'
+                ),
+                min: '0',
+                max: '1',
+                step: '0.01'
+            },
+            void 0,
+            wrapper
+        ) as HTMLInputElement;
+
+        const updateOpacityInputsAttribs = (): void => {
+            const isHex = /^#[0-9A-Fa-f]{6}$/.test(textInput.value);
+            opacitySlider.style.display = isHex ? '' : 'none';
+            opacityNumberInput.style.display = isHex ? '' : 'none';
+            if (isHex) {
+                opacitySlider.style.setProperty(
+                    '--highcharts-slider-rgb',
+                    textInput.value
+                );
+            }
+        };
+
+        updateOpacityInputsAttribs();
+
+        addEvent(opacitySlider, 'input', (): void => {
+            opacityNumberInput.value = String(
+                Number(opacitySlider.value) / 100
+            );
+        });
+        addEvent(opacityNumberInput, 'input', (): void => {
+            opacitySlider.value = String(
+                Number(opacityNumberInput.value) * 100
+            );
+        });
+        addEvent(colorInput, 'input', (): void => {
+            textInput.value = colorInput.value.toUpperCase();
+            updateOpacityInputsAttribs();
+        });
+        addEvent(textInput, 'input', (): void => {
+            colorInput.value = textInput.value;
+            updateOpacityInputsAttribs();
+        });
+
+        return wrapper;
     }
 
     public closeButtonEvents(): void {

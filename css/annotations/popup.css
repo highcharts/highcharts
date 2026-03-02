@@ -349,3 +349,100 @@ input.highcharts-input-search-indicators {
     background-color: var(--highcharts-highlight-color-80, #335cad);
     cursor: pointer;
 }
+
+.highcharts-popup-color-wrapper {
+    clear: both;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    width: 100%;
+    height: 32px;
+    margin-bottom: 10px;
+}
+
+.highcharts-popup-color-wrapper .highcharts-popup-field-text,
+.highcharts-popup-color-wrapper .highcharts-popup-field-color,
+.highcharts-popup-color-wrapper .highcharts-popup-opacity,
+.highcharts-popup-color-wrapper .highcharts-popup-opacity-number {
+    float: none;
+    margin-bottom: 0;
+    height: 32px;
+    box-sizing: border-box;
+}
+
+.highcharts-popup-color-wrapper .highcharts-popup-opacity-number {
+    width: 55px;
+    flex-shrink: 0;
+    padding-left: 4px;
+    padding-right: 4px;
+}
+
+.highcharts-popup-color-wrapper .highcharts-popup-field-color {
+    flex-shrink: 0;
+    width: 40px;
+    padding: 2px;
+    cursor: pointer;
+}
+
+.highcharts-popup-color-wrapper .highcharts-popup-field-text {
+    flex: 0 1 auto;
+    min-width: 0;
+    max-width: 140px;
+}
+
+.highcharts-popup-color-wrapper .highcharts-popup-opacity {
+    flex: 1;
+    min-width: 50%;
+    margin-left: 8px;
+    padding: 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    --highcharts-slider-rgb: #000000;
+}
+
+/* Opacity track: override browser default (e.g. blue) */
+.highcharts-popup-color-wrapper .highcharts-popup-opacity::-webkit-slider-runnable-track {
+    background:
+        linear-gradient(
+            to right,
+            var(--highcharts-neutral-color-10, #e6e6e6),
+            var(--highcharts-slider-rgb, #000000)
+        );
+    height: 6px;
+    border-radius: 3px;
+    width: 100%;
+}
+
+.highcharts-popup-color-wrapper .highcharts-popup-opacity::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--highcharts-slider-rgb, #000000);
+    border: 2px solid var(--highcharts-neutral-color-3, #f7f7f7);
+    cursor: pointer;
+    margin-top: -4px;
+}
+
+.highcharts-popup-color-wrapper .highcharts-popup-opacity::-moz-range-track {
+    background:
+        linear-gradient(
+            to right,
+            var(--highcharts-neutral-color-10, #e6e6e6),
+            var(--highcharts-slider-rgb, #000000)
+        );
+    height: 6px;
+    border-radius: 3px;
+    width: 100%;
+}
+
+.highcharts-popup-color-wrapper .highcharts-popup-opacity::-moz-range-thumb {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--highcharts-slider-rgb, #000000);
+    border: 2px solid var(--highcharts-neutral-color-3, #f7f7f7);
+    cursor: pointer;
+}
