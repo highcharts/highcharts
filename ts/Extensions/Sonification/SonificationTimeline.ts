@@ -31,11 +31,13 @@ const {
 
 declare global {
     namespace Sonification {
-        type TimelineFilterCallback = (
-            e: Sonification.TimelineEvent,
-            ix: number,
-            arr: Sonification.TimelineEvent[]
-        ) => boolean;
+        interface TimelineFilterCallback {
+            (
+                e: Sonification.TimelineEvent,
+                ix: number,
+                arr: Sonification.TimelineEvent[]
+            ): boolean;
+        }
     }
 }
 
