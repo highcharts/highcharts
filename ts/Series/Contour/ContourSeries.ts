@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Honsi
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -24,7 +25,7 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 
 import Color from '../../Core/Color/Color.js';
 import ContourPoint from './ContourPoint.js';
-import contourShader from './contourShader.js';
+import contourShader from './ContourShader.js';
 import ContourSeriesDefaults from './ContourSeriesDefaults.js';
 import Delaunay from '../../Core/Delaunay.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
@@ -234,12 +235,12 @@ export default class ContourSeries extends ScatterSeries {
             gpu = navigator.gpu,
             context = series.context = canvas.getContext('webgpu');
 
-        renderer.asyncCounter += 1;
-
         if (!gpu || !context) {
-            error(36, false);
+            error(37, false, chart);
             return;
         }
+
+        renderer.asyncCounter += 1;
 
         if (context) {
             let device = this.device;
