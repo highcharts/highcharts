@@ -478,6 +478,55 @@ class Legend {
     }
 
     /**
+     * Safely gets default point attributes for a series to be used
+     * in the legend.
+     *
+     * @internal
+     * @function Highcharts.Legend#getSafePointAttribs
+     *
+     * @param {Highcharts.Series|Highcharts.Point} item
+     * The series or point to get attributes from.
+     *
+     * @return {Highcharts.SVGAttributes|undefined}
+     * SVG attributes for the legend symbol, or undefined when not applicable
+     * (e.g. colorByPoint, complex color sources, value-based colorKey,
+     * or path-based series geometry).
+     */
+    private getSafePointAttribs(
+        item: (Series|Point)
+    ): SVGAttributes | undefined {
+        const series = (item as Series);
+        if (
+            !item ||
+            typeof series.pointAttribs !== 'function' ||
+            typeof series.is !== 'function'
+        ) {
+            return;
+        }
+
+        const options = series.options,
+            pointArrayMap = series.pointArrayMap || [],
+            // Check for complex data series (OHLC, Ranges)
+            isComplex = (
+                pointArrayMap.length > 1 ||
+                (pointArrayMap.length === 1 && pointArrayMap[0] !== 'y')
+            ) && !series.is('bubble');
+
+        if (
+            options.colorByPoint ||
+            isComplex ||
+            series.colorKey === 'value' ||
+            series.parallelArrays?.includes('path')
+        ) {
+            return;
+        }
+
+        const attribs = series.pointAttribs(void 0, 'normal');
+
+        return (attribs && typeof attribs === 'object') ? attribs : void 0;
+    }
+
+    /**
      * Set the colors for the legend item.
      *
      * @internal
@@ -527,12 +576,50 @@ class Legend {
             line?.attr(colorizeHidden({ stroke: lineColor || item.color }));
 
             if (symbol) {
-                // Apply marker options
-                symbol.attr(colorizeHidden(
-                    marker && symbol.isMarker ? // #585
-                        (item as Series).pointAttribs() :
-                        { fill: item.color }
-                ));
+                const series = item as Series;
+                const isMarker = marker && symbol.isMarker;
+                const pointAttribs = this.getSafePointAttribs(series);
+
+                const hasVisuals = !!pointAttribs && (
+                    typeof pointAttribs.fill !== 'undefined' ||
+                    (typeof pointAttribs['stroke-width'] !== 'undefined' &&
+                    Number(pointAttribs['stroke-width']) > 0)
+                );
+
+                if (isMarker && pointAttribs) {
+                    symbol.attr(colorizeHidden(pointAttribs));
+                } else if (!isMarker && hasVisuals && pointAttribs) {
+                    const options = series.options,
+                        attrStrokeWidth = Number(pointAttribs['stroke-width']);
+
+                    const isInternalAntialiasingBorder =
+                        attrStrokeWidth === 1 &&
+                        pointAttribs.stroke === pointAttribs.fill &&
+                        typeof options.borderWidth === 'undefined';
+
+                    const finalStrokeWidth = isInternalAntialiasingBorder ?
+                        0 : attrStrokeWidth;
+
+                    // Apply attributes while filtering out 'undefined'
+                    const attrs: SVGAttributes = {
+                        fill: pointAttribs.fill,
+                        stroke: pointAttribs.stroke,
+                        'stroke-width': finalStrokeWidth
+                    };
+
+                    if (typeof pointAttribs.opacity !== 'undefined') {
+                        attrs.opacity = pointAttribs.opacity;
+                    }
+                    if (typeof pointAttribs['fill-opacity'] !== 'undefined') {
+                        attrs['fill-opacity'] = pointAttribs['fill-opacity'];
+                    }
+
+                    symbol.attr(colorizeHidden(attrs));
+
+                } else {
+                    // Fallback for Maps/Financial
+                    symbol.attr(colorizeHidden({ fill: item.color }));
+                }
             }
 
             area?.attr(colorizeHidden({
