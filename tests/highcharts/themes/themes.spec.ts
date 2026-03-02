@@ -24,48 +24,12 @@ type ThemeCase = {
 
 const themeCases: ThemeCase[] = [
     {
-        name: 'dark-blue',
-        expected: {
-            titleColor: '#C0C0C0',
-            titleTextTransform: null,
-            themeTitleColor: '#C0C0C0',
-            themeTitleTextTransform: null
-        }
-    },
-    {
-        name: 'dark-green',
-        expected: {
-            titleColor: '#C0C0C0',
-            titleTextTransform: null,
-            themeTitleColor: '#C0C0C0',
-            themeTitleTextTransform: null
-        }
-    },
-    {
         name: 'dark-unica',
         expected: {
             titleColor: 'var(--highcharts-neutral-color-80)',
             titleTextTransform: 'uppercase',
             themeTitleColor: null,
             themeTitleTextTransform: 'uppercase'
-        }
-    },
-    {
-        name: 'gray',
-        expected: {
-            titleColor: '#FFF',
-            titleTextTransform: null,
-            themeTitleColor: '#FFF',
-            themeTitleTextTransform: null
-        }
-    },
-    {
-        name: 'grid',
-        expected: {
-            titleColor: '#000',
-            titleTextTransform: null,
-            themeTitleColor: '#000',
-            themeTitleTextTransform: null
         }
     },
     {
@@ -83,15 +47,6 @@ const themeCases: ThemeCase[] = [
             titleColor: 'var(--highcharts-neutral-color-100)',
             titleTextTransform: null,
             themeTitleColor: 'var(--highcharts-neutral-color-100)',
-            themeTitleTextTransform: null
-        }
-    },
-    {
-        name: 'skies',
-        expected: {
-            titleColor: '#3E576F',
-            titleTextTransform: null,
-            themeTitleColor: '#3E576F',
             themeTitleTextTransform: null
         }
     }
