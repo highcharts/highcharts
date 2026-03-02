@@ -19,8 +19,6 @@
 
 import type CandlestickSeriesOptions from './CandlestickSeriesOptions';
 
-import { Palette } from '../../Core/Color/Palettes.js';
-
 /* *
  *
  *  API Options
@@ -89,7 +87,7 @@ const CandlestickSeriesDefaults: CandlestickSeriesOptions = {
      * @default #000000
      * @product highstock
      */
-    lineColor: Palette.neutralColor100,
+    lineColor: 'var(--highcharts-neutral-color-100)',
     /**
      * The pixel width of the candlestick line/border. Defaults to `1`.
      *
@@ -116,7 +114,7 @@ const CandlestickSeriesDefaults: CandlestickSeriesOptions = {
      * @product highstock
     */
 
-    upColor: Palette.backgroundColor,
+    upColor: 'var(--highcharts-background-color)',
     /**
      * @product highstock
      */

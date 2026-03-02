@@ -1,21 +1,19 @@
 // eslint-disable-next-line max-len
 // Data retrieved from https://www.ssb.no/en/transport-og-reiseliv/landtransport/statistikk/bilparken
 // Radialize the colors
-Highcharts.setOptions({
-    colors: Highcharts.getOptions().colors.map(function (color) {
-        return {
-            radialGradient: {
-                cx: 0.5,
-                cy: 0.3,
-                r: 0.7
-            },
-            stops: [
-                [0, color],
-                [1, Highcharts.color(color).brighten(-0.3).get('rgb')] // darken
-            ]
-        };
-    })
-});
+const colors = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map(i => ({
+    radialGradient: {
+        cx: 0.5,
+        cy: 0.3,
+        r: 0.7
+    },
+    stops: [
+        // Base color
+        [0, `var(--highcharts-color-${i})`],
+        // Darker color
+        [1, `color-mix(in srgb, var(--highcharts-color-${i}), #000 30%)`]
+    ]
+}));
 
 // Build the chart
 Highcharts.chart('container', {
@@ -38,6 +36,7 @@ Highcharts.chart('container', {
     },
     plotOptions: {
         pie: {
+            colors,
             allowPointSelect: true,
             cursor: 'pointer',
             dataLabels: {

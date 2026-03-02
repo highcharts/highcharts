@@ -1,4 +1,5 @@
 
+
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 import type {
     Route,
@@ -384,7 +385,9 @@ export async function setupRoutes(page: Page){
                         return;
                     }
 
+
                     const ext = extname(localPath);
+
 
                     try {
                         const body = await readFile(

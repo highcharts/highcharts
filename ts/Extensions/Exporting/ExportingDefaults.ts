@@ -22,7 +22,6 @@ import type NavigationOptions from './NavigationOptions';
 
 import H from '../../Core/Globals.js';
 const { isTouchDevice } = H;
-import { Palette } from '../../Core/Color/Palettes.js';
 
 /* *
  *
@@ -835,7 +834,7 @@ const navigation: NavigationOptions = {
          * @type  {Highcharts.ColorString | Highcharts.GradientColorObject | Highcharts.PatternObject}
          * @since 2.0
          */
-        symbolFill: Palette.neutralColor60,
+        symbolFill: 'var(--highcharts-neutral-color-60)',
 
         /**
          * The color of the symbol's stroke or line.
@@ -846,7 +845,7 @@ const navigation: NavigationOptions = {
          * @type  {Highcharts.ColorString}
          * @since 2.0
          */
-        symbolStroke: Palette.neutralColor60,
+        symbolStroke: 'var(--highcharts-neutral-color-60)',
 
         /**
          * The pixel stroke width of the symbol on the button.
@@ -878,7 +877,7 @@ const navigation: NavigationOptions = {
              *
              * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
              */
-            fill: Palette.backgroundColor,
+            fill: 'var(--highcharts-background-color)',
 
             /**
              * Padding for the button.
@@ -919,7 +918,7 @@ const navigation: NavigationOptions = {
         /** @ignore-option */
         borderRadius: '3px',
         /** @ignore-option */
-        background: Palette.backgroundColor,
+        background: 'var(--highcharts-background-color)',
         /** @ignore-option */
         padding: '0.5em'
     },
@@ -946,7 +945,7 @@ const navigation: NavigationOptions = {
         /** @ignore-option */
         borderRadius: '3px',
         /** @ignore-option */
-        color: Palette.neutralColor80,
+        color: 'var(--highcharts-neutral-color-80)',
         /** @ignore-option */
         padding: '0.5em',
         /** @ignore-option */
@@ -972,7 +971,7 @@ const navigation: NavigationOptions = {
      */
     menuItemHoverStyle: {
         /** @ignore-option */
-        background: Palette.neutralColor5
+        background: 'var(--highcharts-neutral-color-5)'
     }
 
 };

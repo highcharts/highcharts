@@ -30,7 +30,6 @@ import type {
 import type SupertrendPoint from './SupertrendPoint';
 import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
 
-import { Palette } from '../../../Core/Color/Palettes.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     atr: ATRIndicator,
@@ -137,7 +136,7 @@ class SupertrendIndicator extends SMAIndicator {
          *
          * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          */
-        risingTrendColor: Palette.positiveColor,
+        risingTrendColor: 'var(--highcharts-positive-color)',
         /**
          * Color of the Supertrend series line that is above the main series.
          *
@@ -146,7 +145,7 @@ class SupertrendIndicator extends SMAIndicator {
          *
          * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          */
-        fallingTrendColor: Palette.negativeColor,
+        fallingTrendColor: 'var(--highcharts-negative-color)',
         /**
          * The styles for the Supertrend line that intersect main series.
          *
@@ -165,7 +164,7 @@ class SupertrendIndicator extends SMAIndicator {
                  *
                  * @type {Highcharts.ColorString}
                  */
-                lineColor: Palette.neutralColor80,
+                lineColor: 'var(--highcharts-neutral-color-80)',
 
                 /**
                  * The dash or dot style of the grid lines. For possible

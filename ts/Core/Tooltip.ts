@@ -41,7 +41,6 @@ const {
     doc,
     isSafari
 } = H;
-import { Palette } from './Color/Palettes.js';
 import R from './Renderer/RendererUtilities.js';
 const { distribute } = R;
 import RendererRegistry from './Renderer/RendererRegistry.js';
@@ -547,6 +546,7 @@ class Tooltip {
                 this.container = container = H.doc.createElement('div');
 
                 container.className = (
+                    'highcharts-container ' +
                     'highcharts-tooltip-container ' +
                     (
                         chart.renderTo.className.match(
@@ -554,6 +554,10 @@ class Tooltip {
                         ) || [].join(' ')
                     )
                 );
+
+                // For picking up the specific palette
+                container.dataset['highchartsChart'] = chart.index.toString();
+
                 // We need to set pointerEvents = 'none' as otherwise it makes
                 // the area under the tooltip non-hoverable even after the
                 // tooltip disappears, #19035.
@@ -562,7 +566,7 @@ class Tooltip {
                     top: '1px',
                     pointerEvents: 'none',
                     zIndex: Math.max(
-                        this.options.style.zIndex || 0,
+                        options.style.zIndex || 0,
                         (chartStyle?.zIndex || 0) + 3
                     )
                 });
@@ -1249,7 +1253,7 @@ class Tooltip {
                                     options.borderColor ||
                                     point.color ||
                                     currentSeries.color ||
-                                    Palette.neutralColor60
+                                    'var(--highcharts-neutral-color-60)'
                                 )
                             });
                         }
@@ -1499,7 +1503,7 @@ class Tooltip {
                             ttOptions.borderColor ||
                             point.color ||
                             series.color ||
-                            Palette.neutralColor80
+                            'var(--highcharts-neutral-color-80)'
                         )
                     });
             }

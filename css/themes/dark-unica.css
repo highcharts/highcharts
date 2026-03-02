@@ -28,7 +28,7 @@
     --highcharts-neutral-color-5: #505053;
     --highcharts-neutral-color-3: #303033;
 
-    /* Highlight colors https://jsfiddle.net/highcharts/pukradvh/ */
+    /* Highlight colors */
     --highcharts-highlight-color-100: rgb(166, 199, 237);
     --highcharts-highlight-color-80: rgb(134, 165, 201);
     --highcharts-highlight-color-60: rgb(102, 131, 164);
@@ -50,51 +50,14 @@
     font-size: 1.7em;
 }
 
-/* Tooltip */
-.highcharts-tooltip text {
-    fill: #f0f0f0;
-}
-
-.highcharts-tooltip-box {
-    fill: #000000;
-}
-
-/* Range-selector */
-.highcharts-range-selector-buttons text {
-    fill: silver;
-}
-
-/* Axes */
-.highcharts-yaxis-grid {
-    stroke-width: 1px;
-}
-
-.highcharts-axis-labels,
-.highcharts-axis-title {
-    fill: #e0e0e3;
-}
-
-/* Navigator */
-.highcharts-navigator .highcharts-navigator-handle {
-    fill: var(--highcharts-neutral-color-40);
-    stroke: #aaaaaa;
-}
-
-.highcharts-navigator .highcharts-navigator-outline {
-    stroke: #cccccc;
-}
-
-.highcharts-navigator .highcharts-navigator-xaxis .highcharts-grid-line {
-    stroke: var(--highcharts-neutral-color-5);
+/* Legend */
+.highcharts-legend-box {
+    fill: #00000388;
 }
 
 /* Buttons */
 .highcharts-button {
     fill: var(--highcharts-neutral-color-5);
-}
-
-.highcharts-button text {
-    fill: #cccccc;
 }
 
 .highcharts-button-hover {
@@ -112,32 +75,4 @@
 
 .highcharts-button-pressed text {
     fill: var(--highcharts-neutral-color-100);
-}
-
-/* Scrollbar */
-.highcharts-scrollbar .highcharts-scrollbar-rifles {
-    stroke: var(--highcharts-neutral-color-100);
-}
-
-.highcharts-scrollbar .highcharts-scrollbar-button {
-    stroke: #606063;
-    fill: #606063;
-}
-
-.highcharts-scrollbar .highcharts-scrollbar-arrow {
-    fill: #cccccc;
-}
-
-.highcharts-scrollbar .highcharts-scrollbar-thumb {
-    fill: #808083;
-    stroke: #808083;
-}
-
-/* Navigation */
-.highcharts-contextbutton {
-    fill: var(--highcharts-neutral-color-5);
-}
-
-.highcharts-contextbutton .highcharts-button-symbol {
-    stroke: #dddddd;
 }

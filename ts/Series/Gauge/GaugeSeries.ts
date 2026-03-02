@@ -32,7 +32,6 @@ import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import GaugePoint from './GaugePoint.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
-import { Palette } from '../../Core/Color/Palettes.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     series: Series,
@@ -139,7 +138,7 @@ class GaugeSeries extends Series {
              * @product highcharts
              */
             dataLabels: {
-                borderColor: Palette.neutralColor20,
+                borderColor: 'var(--highcharts-neutral-color-20)',
                 borderRadius: 3,
                 borderWidth: 1,
                 crop: false,
@@ -176,7 +175,7 @@ class GaugeSeries extends Series {
                  * @product   highcharts
                  * @apioption plotOptions.gauge.dial.backgroundColor
                  */
-                backgroundColor: Palette.neutralColor100,
+                backgroundColor: 'var(--highcharts-neutral-color-100)',
 
                 /**
                  * The length of the dial's base part, relative to the total
@@ -222,7 +221,7 @@ class GaugeSeries extends Series {
                  * @product   highcharts
                  * @apioption plotOptions.gauge.dial.borderColor
                  */
-                borderColor: Palette.neutralColor20,
+                borderColor: 'var(--highcharts-neutral-color-20)',
 
                 /**
                  * The width of the gauge dial border in pixels.
@@ -371,7 +370,7 @@ class GaugeSeries extends Series {
                  * @product   highcharts
                  * @apioption plotOptions.gauge.pivot.borderColor
                  */
-                borderColor: Palette.neutralColor20,
+                borderColor: 'var(--highcharts-neutral-color-20)',
 
                 /**
                  * The background color or fill of the pivot.
@@ -385,7 +384,7 @@ class GaugeSeries extends Series {
                  * @product   highcharts
                  * @apioption plotOptions.gauge.pivot.backgroundColor
                  */
-                backgroundColor: Palette.neutralColor100
+                backgroundColor: 'var(--highcharts-neutral-color-100)'
             },
 
             tooltip: {

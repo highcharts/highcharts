@@ -21,8 +21,6 @@ import type PieSeries from './PieSeries';
 import type { PlotOptionsOf } from '../../Core/Series/SeriesOptions';
 import type Point from '../../Core/Series/Point';
 
-import { Palette } from '../../Core/Color/Palettes.js';
-
 /* *
  *
  *  API Options
@@ -139,7 +137,7 @@ const PieSeriesDefaults: PlotOptionsOf<PieSeries> = {
      *         Empty pie series
      *
      * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-     * @default   ${palette.neutralColor20}
+     * @default   $var(--highcharts-neutral-color-20)
      * @apioption plotOptions.pie.color
      */
 
@@ -586,7 +584,7 @@ const PieSeriesDefaults: PlotOptionsOf<PieSeries> = {
      *
      * @private
      */
-    borderColor: Palette.backgroundColor,
+    borderColor: 'var(--highcharts-background-color)',
 
     /**
      * The width of the border surrounding each slice.

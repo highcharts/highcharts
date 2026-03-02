@@ -74,7 +74,6 @@ const {
     win
 } = H;
 import LegendSymbol from '../Legend/LegendSymbol.js';
-import { Palette } from '../Color/Palettes.js';
 import Point from './Point.js';
 import SeriesDefaults from './SeriesDefaults.js';
 import SeriesRegistry from './SeriesRegistry.js';
@@ -1254,18 +1253,20 @@ class Series {
      * @function Highcharts.Series#getColor
      */
     public getColor(): void {
-        if (this.chart.styledMode) {
+        const chart = this.chart;
+        if (chart.styledMode) {
             this.getCyclic('color');
 
         } else if (this.options.colorByPoint) {
-            this.color = Palette.neutralColor20;
+            this.color = 'var(--highcharts-neutral-color-20)';
 
         } else {
             this.getCyclic(
                 'color',
                 this.options.color ||
-                (defaultOptions.plotOptions as any)[this.type].color,
-                this.chart.options.colors
+                defaultOptions.plotOptions[this.type]?.color,
+                chart.options.colors ||
+                chart.palette?.dataColors
             );
         }
     }

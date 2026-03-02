@@ -21,8 +21,6 @@
 import type BreadcrumbsOptions from './BreadcrumbsOptions';
 import type { LangOptions } from '../../Core/Options';
 
-import { Palette } from '../../Core/Color/Palettes.js';
-
 /* *
  *
  *  Constants
@@ -95,7 +93,7 @@ const options: BreadcrumbsOptions = {
             }
         },
         style: {
-            color: Palette.highlightColor80
+            color: 'var(--highcharts-highlight-color-80)'
         }
     },
 
@@ -244,7 +242,7 @@ const options: BreadcrumbsOptions = {
          *  @since 10.0.0
          */
         style: {
-            color: Palette.neutralColor60,
+            color: 'var(--highcharts-neutral-color-60)',
             fontSize: '0.8em'
         }
     },

@@ -35,7 +35,6 @@ import type { YAxisOptions } from '../../Core/Axis/AxisOptions';
 
 import H from '../../Core/Globals.js';
 import NavigationBindings from '../../Extensions/Annotations/NavigationBindings.js';
-import { Palette } from '../../Core/Color/Palettes.js';
 import STU from './StockToolsUtilities.js';
 const {
     addFlagFromForm,
@@ -723,6 +722,11 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
                                 { x, y },
                                 { x, y }
                             ]
+                        },
+                        labelOptions: {
+                            style: {
+                                color: 'var(--highcharts-neutral-color-60)'
+                            }
                         }
                     },
                     navigation.annotationsOptions,
@@ -1174,7 +1178,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
                                 y: coordsY.value,
                                 controlPoint: {
                                     style: {
-                                        fill: Palette.negativeColor
+                                        fill: 'var(--highcharts-negative-color)'
                                     }
                                 }
                             },
@@ -1367,8 +1371,8 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
     /**
      * A vertical arrow annotation bindings. Includes `start` event. On click,
      * finds the closest point and marks it with an arrow.
-     * `${palette.positiveColor}` is the color of the arrow when
-     * pointing from above and `${palette.negativeColor}`
+     * `$var(--highcharts-positive-color)` is the color of the arrow when
+     * pointing from above and `$var(--highcharts-negative-color)`
      * when pointing from below the point.
      *
      * @type    {Highcharts.NavigationBindingsOptionsObject}
@@ -1417,8 +1421,8 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
                             connector: {
                                 fill: 'none',
                                 stroke: closestPoint.below ?
-                                    Palette.negativeColor :
-                                    Palette.positiveColor
+                                    'var(--highcharts-negative-color)' :
+                                    'var(--highcharts-positive-color)'
                             }
                         }
                     },

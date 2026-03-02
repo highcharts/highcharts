@@ -23,8 +23,6 @@
 import type MarkerClusterOptions from './MarkerClusterOptions';
 import type TooltipOptions from '../../Core/TooltipOptions';
 
-import { Palette } from '../../Core/Color/Palettes.js';
-
 /* *
  *
  *  API Options
@@ -257,7 +255,7 @@ const cluster: MarkerClusterOptions = {
         /** @internal */
         lineWidth: 0,
         /** @internal */
-        lineColor: Palette.backgroundColor
+        lineColor: 'var(--highcharts-background-color)'
     },
 
     /**

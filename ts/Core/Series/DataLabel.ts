@@ -36,7 +36,6 @@ import A from '../Animation/AnimationUtilities.js';
 const { getDeferredAnimation } = A;
 import F from '../Templating.js';
 const { format } = F;
-import { Palette } from '../Color/Palettes.js';
 import R from '../Renderer/RendererUtilities.js';
 import U from '../Utilities.js';
 const {
@@ -670,7 +669,7 @@ namespace DataLabel {
             contrastColor = renderer.getContrast(
                 (isString(plotBackgroundColor) && plotBackgroundColor) ||
                 (isString(backgroundColor) && backgroundColor) ||
-                Palette.neutralColor100
+                'var(--highcharts-background-color)'
             ),
             seriesDlOptions = mergedDataLabelOptions(series);
 
@@ -762,7 +761,7 @@ namespace DataLabel {
                                 labelOptions.color,
                                 style.color,
                                 isString(series.color) ? series.color : void 0,
-                                Palette.neutralColor100
+                                'var(--highcharts-neutral-color-100)'
                             );
                             // Get automated contrast color
                             if (style.color === 'contrast') {

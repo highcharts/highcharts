@@ -29,7 +29,6 @@ const {
     composed,
     noop
 } = H;
-import { Palette } from '../../Core/Color/Palettes.js';
 import R from '../../Core/Renderer/RendererUtilities.js';
 const { distribute } = R;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
@@ -659,7 +658,7 @@ namespace ColumnDataLabel {
                                     'stroke': (
                                         connectorColor ||
                                         point.color ||
-                                        Palette.neutralColor60
+                                        'var(--highcharts-neutral-color-60)'
                                     )
                                 });
                             }

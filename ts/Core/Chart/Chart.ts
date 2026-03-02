@@ -795,7 +795,7 @@ class Chart {
         // Fire the event with a default function
         fireEvent(this, 'init', { args: arguments }, function (): void {
 
-            const options = merge(defaultOptions, userOptions), // Do the merge
+            const options = merge(defaultOptions, userOptions),
                 optionsChart = options.chart,
                 renderTo = this.renderTo || optionsChart.renderTo;
 
@@ -2000,7 +2000,11 @@ class Chart {
      * The additional class name.
      */
     public setClassName(className?: string): void {
-        this.container.className = 'highcharts-container ' + (className || '');
+        const classList = this.container.classList;
+        classList.add.apply(
+            classList,
+            ['highcharts-container', className].filter(Boolean) as string[]
+        );
     }
 
     /**
@@ -2131,7 +2135,9 @@ class Chart {
             void 0,
             optionsChart.forExport,
             options.exporting?.allowHTML,
-            chart.styledMode
+            chart.styledMode,
+            options.palette,
+            chart.index
         );
 
         // Set the initial animation from the options
@@ -2141,15 +2147,14 @@ class Chart {
         chart.setClassName(optionsChart.className);
         if (!chart.styledMode) {
             chart.renderer.setStyle(optionsChart.style as any);
+            this.palette = chart.renderer.palette;
+
         } else {
             // Initialize definitions
             for (const key in options.defs) { // eslint-disable-line guard-for-in
                 this.renderer.definition((options.defs as any)[key]);
             }
         }
-
-        // Add a reference to the charts index
-        chart.renderer.chartIndex = chart.index;
 
         fireEvent(this, 'afterGetContainer');
     }
