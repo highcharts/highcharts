@@ -1660,15 +1660,19 @@ namespace ExportData {
                                 tableBody?.appendChild(tr);
                             });
 
-                            headers.forEach((th): void => {
+                            headers.forEach((header): void => {
                                 [
                                     'highcharts-sort-ascending',
                                     'highcharts-sort-descending'
                                 ].forEach((className): void => {
-                                    if (th.classList.contains(className)) {
-                                        th.classList.remove(className);
+                                    if (header.classList.contains(className)) {
+                                        header.classList.remove(className);
                                     }
                                 });
+
+                                if (header !== th) {
+                                    header.setAttribute('aria-sort', 'none');
+                                }
                             });
 
                             th.classList.add(
@@ -1677,7 +1681,7 @@ namespace ExportData {
                                     'highcharts-sort-descending'
                             );
 
-                            th?.setAttribute(
+                            th.setAttribute(
                                 'aria-sort',
                                 exporting.ascendingOrderInTable ?
                                     'ascending' :

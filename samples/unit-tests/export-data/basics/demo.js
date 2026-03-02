@@ -1487,6 +1487,30 @@ QUnit.test('Sortable table (#16972)', function (assert) {
         '100',
         'After sorting, values should correspond to the one on the chart.'
     );
+
+    const headers = chart
+        .exporting
+        .dataTableDiv
+        .querySelectorAll('thead tr th');
+
+    headers[0].children[0].click();
+    headers[1].children[0].click();
+
+    assert.strictEqual(
+        headers[0].getAttribute('aria-sort'),
+        'none',
+        'When sorting a different column, previous aria-sort should reset.'
+    );
+    assert.strictEqual(
+        headers[1].getAttribute('aria-sort'),
+        'descending',
+        'Currently sorted column should have aria-sort state.'
+    );
+    assert.strictEqual(
+        headers[2].getAttribute('aria-sort'),
+        'none',
+        'Unsorted columns should keep aria-sort set to none.'
+    );
 });
 
 QUnit.test('Exporting duplicated points (#17639)', function (assert) {
