@@ -50,15 +50,54 @@ QUnit.test(
                     symbols: [
                         'url(https://www.highcharts.com/samples/graphics/sun.png)',
                         'url(https://www.highcharts.com/samples/graphics/sun.png)'
-                    ]
+                    ],
+                    width: 20,
+                    height: 20
                 }
             }
         });
 
+        let leftHandle = chart.navigator.handles[0],
+            rightHandle = chart.navigator.handles[1],
+            lhEvents = leftHandle.element.hcEvents,
+            rhEvents = rightHandle.element.hcEvents,
+            shadesEvents = chart.navigator.shades.map(
+                shade => shade.element.hcEvents
+            );
+
+        assert.ok(
+            shadesEvents.every(
+                se => se.mousedown.length === 1 && se.touchstart.length === 1
+            ),
+            `Navigator shades should always have only one mousedown and
+            touchstart event after update.`
+        );
+
+        assert.ok(
+            lhEvents.mousedown.length === 1 &&
+            rhEvents.mousedown.length === 1 &&
+            lhEvents.touchstart.length === 1 &&
+            rhEvents.touchstart.length === 1,
+            `Navigator handles should always have only one mousedown and
+            touchstart event after update.`
+        );
+
         assert.strictEqual(
-            chart.navigator.handles[0].element.tagName,
+            leftHandle.element.tagName,
             'image',
             'Navigator handles should be updated to images. (#21660)'
+        );
+
+        const controller = new TestController(chart),
+            handleX = rightHandle.translateX - 2,
+            handleY = rightHandle.translateY + 10,
+            extremesBefore = chart.xAxis[0].getExtremes();
+
+        controller.pan([handleX, handleY], [handleX - 50, handleY]);
+
+        assert.ok(
+            extremesBefore.max > chart.xAxis[0].max,
+            'Dragging navigator handle should update axis extremes.'
         );
 
         const plotSizeYBefore = chart.plotSizeY;
@@ -79,6 +118,31 @@ QUnit.test(
             plotSizeYBefore,
             plotSizeYAfter,
             'Navigator toggle should not shrink the chart. (#21775)'
+        );
+
+        leftHandle = chart.navigator.handles[0];
+        rightHandle = chart.navigator.handles[1];
+        lhEvents = leftHandle.element.hcEvents;
+        rhEvents = rightHandle.element.hcEvents;
+        shadesEvents = chart.navigator.shades.map(
+            shade => shade.element.hcEvents
+        );
+
+        assert.ok(
+            lhEvents.mousedown.length === 1 &&
+            rhEvents.mousedown.length === 1 &&
+            lhEvents.touchstart.length === 1 &&
+            rhEvents.touchstart.length === 1,
+            `Navigator handles should always have only one mousedown and
+            touchstart event after navigator enabled toggle.`
+        );
+
+        assert.ok(
+            shadesEvents.every(
+                se => se.mousedown.length === 1 && se.touchstart.length === 1
+            ),
+            `Navigator shades should always have only one mousedown and
+            touchstart event after navigator enabled toggle.`
         );
     }
 );
@@ -235,6 +299,7 @@ QUnit.test('General Navigator tests', function (assert) {
         'All series, including navSeries, removed without errors (#5581)'
     );
 
+    let setExtremesCount = -1;
     chart = Highcharts.stockChart('container', {
         chart: {
             animation: false,
@@ -268,7 +333,13 @@ QUnit.test('General Navigator tests', function (assert) {
         },
         xAxis: {
             min: 1512743400000,
-            max: 1513089000000
+            max: 1513089000000,
+            events: {
+                setExtremes: function () {
+                    // First call is from the first render, hence start from -1.
+                    setExtremesCount++;
+                }
+            }
         },
         series: [
             {
@@ -329,6 +400,18 @@ QUnit.test('General Navigator tests', function (assert) {
         ],
         'Navigator shades, outline and handles should be properly ' +
             'translated after yAxis label reserve more space (#12573).'
+    );
+
+    // #24114
+    const shadeBBox = chart.navigator.shades[0].getBBox(),
+        shadeX = shadeBBox.x + shadeBBox.width / 2,
+        shadeY = shadeBBox.y + shadeBBox.height / 2;
+    controller.click(shadeX, shadeY);
+    assert.strictEqual(
+        setExtremesCount,
+        1,
+        `SetExtremes event should be fired only once, per one navigator shade
+        click (#24114).`
     );
 
     chart = Highcharts.stockChart('container', {
@@ -1577,4 +1660,43 @@ QUnit.skip('Navigator, testing method: getBaseSeriesMin', function (assert) {
             `With config: ${JSON.stringify(mock)}, the min should not be a NaN`
         );
     });
+});
+
+QUnit.test('Multiple navigators tests.', function (assert) {
+    const container1 = document.createElement('div'),
+        container2 = document.createElement('div'),
+        container3 = document.createElement('div');
+    document.getElementById('container').appendChild(container1);
+    document.getElementById('container').appendChild(container2);
+    document.getElementById('container').appendChild(container3);
+
+    const chart1 = Highcharts.stockChart(container1, {
+        series: [{
+            data: [1, 2, 3]
+        }]
+    });
+    const chart2 = Highcharts.stockChart(container2, {
+        series: [{
+            data: [1, 2, 3]
+        }]
+    });
+    const chart3 = Highcharts.stockChart(container3, {
+        series: [{
+            data: [1, 2, 3]
+        }]
+    });
+
+    assert.ok(
+        chart1.navigator.hcEvents.setRange.length === 1 &&
+        chart2.navigator.hcEvents.setRange.length === 1 &&
+        chart3.navigator.hcEvents.setRange.length === 1,
+        'Each navigator should have only 1 setRange event, #24057.'
+    );
+
+    chart1.destroy();
+    container1.parentNode.removeChild(container1);
+    chart2.destroy();
+    container2.parentNode.removeChild(container2);
+    chart3.destroy();
+    container3.parentNode.removeChild(container3);
 });
