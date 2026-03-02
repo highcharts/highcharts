@@ -693,6 +693,9 @@ export interface SeriesOptions {
     keys?: Array<string>;
 
     /**
+     * The line cap used for line ends and line joins on the graph.
+     *
+     * @productdesc {highcharts|highstock}
      * The SVG value used for the `stroke-linecap` and `stroke-linejoin`
      * of a line graph. Round means that lines are rounded in the ends and
      * bends.
@@ -701,9 +704,10 @@ export interface SeriesOptions {
      *         Line cap comparison
      *
      * @default 'round'
-     * @since 3.0.7
+     * @since   3.0.7
      */
     linecap?: SeriesLinecapValue;
+
     lineColor?: ColorType;
 
     /**

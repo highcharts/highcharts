@@ -77,15 +77,15 @@ const MapSeriesDefaults: MapSeriesOptions = {
     },
 
     /**
+     * @productdesc {highmaps}
      * The SVG value used for the `stroke-linecap` and `stroke-linejoin` of
      * the map borders. Round means that borders are rounded in the ends and
      * bends.
      *
-     * @sample maps/demo/mappoint-mapmarker/
+     * @sample {highmaps} maps/demo/mappoint-mapmarker/
      *         Backdrop coastline with round linecap
      *
-     * @type   {Highcharts.SeriesLinecapValue}
-     * @since  10.3.3
+     * @since 10.3.3
      */
     linecap: 'round',
 
@@ -144,10 +144,9 @@ const MapSeriesDefaults: MapSeriesOptions = {
      * @sample maps/plotoptions/series-allareas-false/
      *         All areas set to false
      *
-     * @type      {boolean}
-     * @default   true
-     * @product   highmaps
-     * @apioption plotOptions.series.allAreas
+     * @type    {boolean}
+     * @default true
+     * @product highmaps
      *
      * @private
      */

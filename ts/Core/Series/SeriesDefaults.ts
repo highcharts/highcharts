@@ -38,17 +38,6 @@ const seriesDefaults: PlotOptionsOf<Series> = {
     // Base series options
 
     /**
-     * The SVG value used for the `stroke-linecap` and `stroke-linejoin`
-     * of a line graph. Round means that lines are rounded in the ends and
-     * bends.
-     *
-     * @type       {Highcharts.SeriesLinecapValue}
-     * @default    round
-     * @since      3.0.7
-     * @apioption  plotOptions.line.linecap
-     */
-
-    /**
      * Pixel width of the graph line.
      *
      * @see In styled mode, the line stroke-width can be set with the
@@ -473,12 +462,17 @@ const seriesDefaults: PlotOptionsOf<Series> = {
     /**
      * The line cap used for line ends and line joins on the graph.
      *
+     * @productdesc {highcharts|highstock}
+     * The SVG value used for the `stroke-linecap` and `stroke-linejoin`
+     * of a line graph. Round means that lines are rounded in the ends and
+     * bends.
+     *
      * @sample highcharts/series-line/linecap/
      *         Line cap comparison
      *
      * @type       {Highcharts.SeriesLinecapValue}
      * @default    round
-     * @product    highcharts highstock
+     * @since      3.0.7
      * @apioption  plotOptions.series.linecap
      */
 

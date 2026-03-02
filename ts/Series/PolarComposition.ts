@@ -113,6 +113,16 @@ declare module '../Core/Series/SeriesBase' {
 
 declare module '../Core/Series/SeriesOptions' {
     interface SeriesOptions {
+        /**
+         * Polar charts only. Whether to connect the ends of a line series
+         * plot across the extremes.
+         *
+         * @sample {highcharts} highcharts/plotoptions/line-connectends-false/
+         *         Do not connect
+         *
+         * @since   2.3.0
+         * @product highcharts
+         */
         connectEnds?: boolean;
     }
 }
@@ -931,7 +941,7 @@ function wrapColumnSeriesAlignDataLabel(
                             .xAxis.startAngleRad,
                         // Radius
                         (point as ColumnPoint).barX +
-                        (point as ColumnPoint).pointWidth / 2
+                        ((point as ColumnPoint).pointWidth || 0) / 2
                     );
 
                 alignTo = merge(alignTo, {
@@ -1114,7 +1124,7 @@ function onAfterColumnTranslate(
                 // In case when radius, inner radius or both are negative, a
                 // point is rendered but partially or as a center point
                 innerR = Math.max(barX, 0);
-                r = Math.max(barX + point.pointWidth, 0);
+                r = Math.max(barX + (point.pointWidth || 0), 0);
 
                 // Handle border radius
                 const brOption = options.borderRadius,
@@ -1149,7 +1159,7 @@ function onAfterColumnTranslate(
                     point.yBottom,
                     point.plotY,
                     start,
-                    start + point.pointWidth
+                    start + (point.pointWidth || 0)
                 );
 
                 // Disallow border radius on polar columns for now. It would
@@ -1169,7 +1179,7 @@ function onAfterColumnTranslate(
             if (chart.inverted) {
                 tooltipPos = yAxis.postTranslate(
                     point.rectPlotY,
-                    barX + point.pointWidth / 2
+                    barX + (point.pointWidth || 0) / 2
                 );
 
                 point.tooltipPos = [
