@@ -39,6 +39,9 @@ Highcharts.chart('container', {
     tooltip: {
         enabled: false
     },
+    exporting: {
+        allowHTML: true
+    },
     series: [
         {
             type: 'treegraph',
