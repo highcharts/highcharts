@@ -18,7 +18,7 @@
  * */
 
 import type { LangOptions } from '../../Core/Options';
-import { LangStockToolsOptions } from '../../Stock/StockTools/StockToolsOptions';
+import type { LangStockToolsOptions } from '../../Stock/StockTools/StockToolsOptions';
 
 /* *
  *

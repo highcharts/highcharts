@@ -205,8 +205,7 @@ class Toolbar {
             submenuWrapper = this.submenu = createElement('ul', {
                 className: 'highcharts-submenu-wrapper',
                 id: 'highcharts-submenu-wrapper-' +
-                    title.toLowerCase().replace(/\s+/g, '-'),
-                role: 'menu'
+                    title.toLowerCase().replace(/\s+/g, '-')
             } as HTMLAttributes, void 0, buttonWrapper);
 
         // Create submenu buttons and select the first one
@@ -389,17 +388,15 @@ class Toolbar {
 
         // Main button wrapper
         const buttonWrapper = createElement('li', {
-            className: pick(classMapping[btnName], '') + ' ' + userClassName,
-            title: btnLabelName
+            className: pick(classMapping[btnName], '') + ' ' + userClassName
         }, void 0, target);
 
         // Single button
         const elementType = (btnOptions.elementType || 'button') as string;
         const mainButton = createElement(elementType, {
             className: 'highcharts-menu-item-btn',
-            ariaLabel: btnLabelName,
-            tabindex: 0,
-            role: 'menuitem'
+            title: btnLabelName,
+            ariaLabel: btnLabelName
         } as HTMLAttributes, void 0, buttonWrapper);
 
         // Submenu
@@ -557,7 +554,6 @@ class Toolbar {
         this.toolbar = toolbar = createElement('ul', {
             className: 'highcharts-stocktools-toolbar ' +
                     guiOptions.toolbarClassName,
-            role: 'group',
             ariaLabel: groupLabel
         } as HTMLAttributes);
 
