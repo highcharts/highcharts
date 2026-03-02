@@ -73,6 +73,12 @@
         "../../../ts/Grid/Core/Pagination/PaginationOptions.d.ts",
         "../../../ts/Grid/Core/Pagination/Pagination.ts",
 
+        "../../../ts/Grid/Core/Data/DataProvider.ts",
+        "../../../ts/Grid/Core/Data/LocalDataProvider.ts",
+        "../../../ts/Grid/Core/Data/DataProviderRegistry.ts",
+        "../../../ts/Grid/Pro/Data/RemoteDataProvider.ts",
+        "../../../ts/Grid/Pro/Data/DataSourceHelper.ts",
+
         "../../../ts/Grid/Core/Responsive/ResponsiveOptions.ts"
     ],
     "entryPointStrategy": "expand",
