@@ -51,6 +51,17 @@ async function setupPage(page: import('@playwright/test').Page, needsMoment = fa
     }
 }
 
+test('dateTimeFormat returns empty string for NaN (#24199)', async ({ page }) => {
+    await setupPage(page, false);
+
+    const result = await page.evaluate(() => {
+        const time = new (window as any).Highcharts.Time({});
+        return time.dateTimeFormat({}, NaN);
+    });
+
+    expect(result).toBe('');
+});
+
 for (const tz of TIMEZONES) {
     test.describe(`Timezone: ${tz}`, () => {
         test.use({ timezoneId: tz });

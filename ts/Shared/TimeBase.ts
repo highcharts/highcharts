@@ -358,6 +358,17 @@ class TimeBase {
 
         this.dTLCache[cacheKey] = dTL;
 
+        // Guard against non-finite timestamps (e.g. from spacing: undefined)
+        // Intl.DateTimeFormat.format() throws RangeError on NaN/Infinity
+        if (
+            defined(timestamp) &&
+            !Number.isFinite(
+                timestamp instanceof Date ? timestamp.getTime() : timestamp
+            )
+        ) {
+            return '';
+        }
+
         return dTL?.format(timestamp) || '';
     }
 
