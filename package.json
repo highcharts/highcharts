@@ -38,7 +38,7 @@
     "test": "npx playwright test --project=setup-highcharts --project=setup-dashboards --project=setup-grid-lite --project=setup-grid-pro --project=highcharts --project=dashboards --project=grid-lite --project=grid-pro --project=grid-shared --project=qunit",
     "test-node": "tsx ./test/ts-node-unit-tests/index.ts",
     "test-node:watch": "tsx ./test/ts-node-unit-tests/index.ts --watch",
-    "test:precommit": "npx playwright test --project=setup-highcharts --project=setup-dashboards --project=dashboards --project=highcharts && npx gulp test --modified && npm run test-node",
+    "test:precommit": "npx gulp test --modified && npm run test-node",
     "test:pw": "playwright test --project=setup-highcharts --project=highcharts",
     "test:pw:all": "playwright test",
     "test:pw:qunit": "playwright test --project=setup-highcharts --project=qunit --project=qunit-firefox",

@@ -437,7 +437,7 @@ specified by config.imageCapture.resultsOutputPath.
         project: projectParam
     };
 
-    const { getProductTests } = require('./lib/test');
+    const { getProductTests, getProducts } = require('./lib/test');
     const productTests = getProductTests();
 
     // If false, there's no modified products
@@ -509,59 +509,51 @@ specified by config.imageCapture.resultsOutputPath.
             await gulp.task('scripts')(gulpback);
 
             // Determine which Playwright projects to run
-            const playwrightProjects = [];
-
-            if (argv.product === 'Grid') {
-                playwrightProjects.push('setup-grid-lite', 'setup-grid-pro', 'grid-lite', 'grid-pro', 'grid-shared');
-            } else if (argv.product === 'Dashboards') {
-                playwrightProjects.push('setup-dashboards', 'dashboards');
-            } else {
-                playwrightProjects.push('setup-highcharts', 'qunit');
+            const products = argv.modified ? getProducts() : (argv.product ? [argv.product] : null);
+            const prods = products?.length ? products : ['Core'];
+            const hasGrid = prods.includes('Grid');
+            const hasDashboards = prods.includes('Dashboards');
+            const hasHC = prods.some(p => ['Core', 'Stock', 'Maps', 'Gantt', 'Accessibility'].includes(p));
+            if (argv.modified && prods.length === 1) {
+                argv.product = prods[0];
             }
 
-            // Always include grid-shared when running grid-lite or grid-pro individually
-            // Check if any grid project is in the list
-            const hasGridLite = playwrightProjects.includes('grid-lite');
-            const hasGridPro = playwrightProjects.includes('grid-pro');
-            if ((hasGridLite || hasGridPro) && !playwrightProjects.includes('grid-shared')) {
-                // Add required setups if not already present
-                if (hasGridLite && !playwrightProjects.includes('setup-grid-lite')) {
-                    playwrightProjects.push('setup-grid-lite');
-                }
-                if (hasGridPro && !playwrightProjects.includes('setup-grid-pro')) {
-                    playwrightProjects.push('setup-grid-pro');
-                }
-                playwrightProjects.push('grid-shared');
+            const gridProj = ['setup-grid-lite', 'setup-grid-pro', 'grid-lite', 'grid-pro', 'grid-shared'];
+            const dashProj = ['setup-dashboards', 'dashboards'];
+            const hcProj = ['setup-highcharts', 'highcharts', 'qunit'];
+            const a11yProj = ['setup-highcharts', 'qunit'];
+
+            const commands = [];
+            if (hasGrid) {
+                commands.push({ projects: gridProj, grep: '' });
+            }
+            if (hasDashboards) {
+                commands.push({ projects: dashProj, grep: '' });
+            }
+            if (hasHC) {
+                const hcGrep = Array.isArray(productTests) && productTests.length > 0 ?
+                    `--grep "unit-tests/(${productTests.join('|')})"` :
+                    '';
+                commands.push({ projects: hcProj, grep: hcGrep });
+            }
+            if ((hasGrid || hasDashboards) && !hasHC) {
+                commands.push({ projects: a11yProj, grep: '--grep "unit-tests/(accessibility)"' });
+            }
+            if (commands.length === 0) {
+                commands.push({ projects: hcProj, grep: '' });
             }
 
-            // Build grep pattern for product-specific tests
-            // Skip grep for Grid/Dashboards as they use different test structure
-            let grepArg = '';
-            if (argv.product !== 'Grid' && argv.product !== 'Dashboards') {
-                if (Array.isArray(productTests) && productTests.length > 0) {
-                    // Convert product test paths to grep pattern
-                    // e.g., ['axis', 'chart'] -> '--grep "unit-tests/(axis|chart)"'
-                    const pattern = productTests.join('|');
-                    grepArg = `--grep "unit-tests/(${pattern})"`;
+            for (const { projects, grep } of commands) {
+                const cmd = `npx playwright test ${projects.map(p => `--project=${p}`).join(' ')} ${grep}`.trim();
+                logLib.message(`Running: ${cmd}`);
+                try {
+                    await processLib.exec(cmd);
+                } catch {
+                    if (argv.speak) {
+                        logLib.say('Tests failed!');
+                    }
+                    throw new PluginError('playwright', { message: 'Tests failed' });
                 }
-            }
-
-            const projectArgs = playwrightProjects
-                .map(p => `--project=${p}`)
-                .join(' ');
-
-            const command = `npx playwright test ${projectArgs} ${grepArg}`.trim();
-            logLib.message(`Running: ${command}`);
-
-            try {
-                await processLib.exec(command);
-            } catch (error) {
-                if (argv.speak) {
-                    logLib.say('Tests failed!');
-                }
-                throw new PluginError('playwright', {
-                    message: 'Tests failed'
-                });
             }
         }
 
