@@ -15,7 +15,6 @@
  *
  * */
 
-import type BoxPlotPoint from './BoxPlotPoint';
 import type ColumnPointOptions from '../Column/ColumnPointOptions';
 
 /* *
@@ -35,15 +34,11 @@ export interface BoxPlotPointOptions extends ColumnPointOptions {
      * @sample {highcharts} highcharts/css/boxplot/
      *         Box plot in styled mode
      *
-     * @type {Highcharts.DashStyleValue}
-     *
      * @default Solid
      *
      * @since 8.1.0
      *
      * @product highcharts
-     *
-     * @apioption series.boxplot.data.boxDashStyle
      */
 
     /**
@@ -55,15 +50,11 @@ export interface BoxPlotPointOptions extends ColumnPointOptions {
      * @sample {highcharts} highcharts/css/boxplot/
      *         Box plot in styled mode
      *
-     * @type {Highcharts.DashStyleValue}
-     *
      * @default Solid
      *
      * @since 8.1.0
      *
      * @product highcharts
-     *
-     * @apioption series.boxplot.data.medianDashStyle
      */
 
     /**
@@ -75,15 +66,11 @@ export interface BoxPlotPointOptions extends ColumnPointOptions {
      * @sample {highcharts} highcharts/css/boxplot/
      *         Box plot in styled mode
      *
-     * @type {Highcharts.DashStyleValue}
-     *
      * @default Solid
      *
      * @since 8.1.0
      *
      * @product highcharts
-     *
-     * @apioption series.boxplot.data.stemDashStyle
      */
 
     /**
@@ -95,36 +82,28 @@ export interface BoxPlotPointOptions extends ColumnPointOptions {
      * @sample {highcharts} highcharts/css/boxplot/
      *         Box plot in styled mode
      *
-     * @type {Highcharts.DashStyleValue}
-     *
      * @default Solid
      *
      * @since 8.1.0
      *
      * @product highcharts
-     *
-     * @apioption series.boxplot.data.whiskerDashStyle
      */
 
     /**
      * The `high` value for each data point, signifying the highest value
      * in the sample set. The top whisker is drawn here.
      *
-     * @type {number}
-     *
      * @product highcharts
      */
-    high?: BoxPlotPoint['high'];
+    high?: number;
 
     /**
      * The `low` value for each data point, signifying the lowest value
      * in the sample set. The bottom whisker is drawn here.
      *
-     * @type {number}
-     *
      * @product highcharts
      */
-    low?: BoxPlotPoint['low'];
+    low?: number;
 
     /**
      * The length of a BoxPlot point's lower whisker. Overrides BoxPlot series'
@@ -135,40 +114,32 @@ export interface BoxPlotPointOptions extends ColumnPointOptions {
      * @sample {highcharts} highcharts/series-boxplot/whisker-length
      *         Configuring whisker lengths
      *
-     * @type {number|string}
-     *
      * @product highcharts
      */
-    lowerWhiskerLength?: BoxPlotPoint['whiskerLength'];
+    lowerWhiskerLength?: (number|string);
 
     /**
      * The median for each data point. This is drawn as a line through the
      * middle area of the box.
      *
-     * @type {number}
-     *
      * @product highcharts
      */
-    median?: BoxPlotPoint['median'];
+    median?: number;
 
     /**
      * The lower quartile for each data point. This is the bottom of the
      * box.
      *
-     * @type {number}
-     *
      * @product highcharts
      */
-    q1?: BoxPlotPoint['q1'];
+    q1?: number;
 
     /**
      * The higher quartile for each data point. This is the top of the box.
      *
-     * @type {number}
-     *
      * @product highcharts
      */
-    q3?: BoxPlotPoint['q3'];
+    q3?: number;
 
     /**
      * The length of a BoxPlot point's upper whisker. Overrides BoxPlot series'
@@ -179,11 +150,9 @@ export interface BoxPlotPointOptions extends ColumnPointOptions {
      * @sample {highcharts} highcharts/series-boxplot/whisker-length
      *         Configuring whisker length
      *
-     * @type {number|string}
-     *
      * @product highcharts
      */
-    upperWhiskerLength?: BoxPlotPoint['whiskerLength'];
+    upperWhiskerLength?: (number|string);
 
     /**
      * The length of the whiskers, the horizontal lines marking low and
@@ -199,13 +168,11 @@ export interface BoxPlotPointOptions extends ColumnPointOptions {
      * @sample {highcharts} highcharts/series-boxplot/whisker-length
      *         Configuring whisker lengths
      *
-     * @type {number|string}
-     *
      * @since 3.0
      *
      * @product highcharts
      */
-    whiskerLength?: BoxPlotPoint['whiskerLength'];
+    whiskerLength?: (number|string);
 }
 
 /* *
