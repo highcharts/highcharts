@@ -215,6 +215,13 @@ export interface PlotLineOptions {
     color?: ColorString;
 
     /**
+     * Use a palette color by index instead of a direct color. Applies the class
+     * highcharts-color-{n} and CSS variable --highcharts-color-{n}. If both
+     * color and colorIndex are set, color takes precedence.
+     */
+    colorIndex?: number;
+
+    /**
      * The dashing or dot style for the plot line. For possible values see
      * [this overview](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/series-dashstyle-all/).
      *
