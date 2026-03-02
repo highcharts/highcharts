@@ -1,0 +1,77 @@
+name: Diff tree.json with master
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - 'master'
+    paths:
+      - 'ts/**/*.ts'
+
+permissions:
+   contents: read
+   pull-requests: write
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Use Node.js lts/*
+        uses: actions/setup-node@v6
+        with:
+          node-version: 'lts/*'
+          cache: 'npm'
+
+      - run: npm ci
+
+      - name: Generate tree diff
+        id: tree-diff
+        run: node tools/apidocs-diff.js compare --base origin/master --fetch-base --output /tmp/changes.md --github-output "$GITHUB_OUTPUT"
+
+      - name: Comment on PR when trees change
+        if: github.event_name == 'pull_request' && steps.tree-diff.outputs.has_changes == 'true'
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const fs = require('fs');
+            const { createOrUpdateComment } = require('./.github/scripts/commentOnPR');
+            const marker = '<!-- apidocs-diff -->';
+            const diff = fs.readFileSync('/tmp/changes.md', 'utf8');
+            const maxLength = 60000;
+            const safeDiff = diff.length > maxLength
+              ? `${diff.slice(0, maxLength)}\n... (truncated)`
+              : diff;
+
+            const body = [
+              marker,
+              'API docs diff detected for `tree*.json`.',
+              '',
+              '<details><summary>Show diff</summary>',
+              '',
+              '```diff',
+              safeDiff,
+              '```',
+              '',
+              '</details>'
+            ].join('\n');
+
+            await createOrUpdateComment(
+              github,
+              context,
+              'API docs diff',
+              body,
+              marker
+            );
+      - name: Store artifacts
+        uses: actions/upload-artifact@v6
+        with:
+          name: apidocs-diff
+          path: /tmp/changes.md

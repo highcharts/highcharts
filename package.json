@@ -20,6 +20,9 @@
     "webpack"
   ],
   "scripts": {
+    "apidocs-diff": "node tools/apidocs-diff.js compare --base master --output /tmp/changes.md",
+    "apidocs-diff:make-reference": "node tools/apidocs-diff.js make-reference --reference-dir .apidocs-diff-reference",
+    "apidocs-diff:compare-reference": "node tools/apidocs-diff.js compare-reference --reference-dir .apidocs-diff-reference --output /tmp/changes.md",
     "api": "gulp api",
     "clean": "gulp --series clean update-vendor",
     "dapi": "gulp dashboards/api",

@@ -11,18 +11,22 @@
  * @param {GitHubContext} context GitHub Actions runtime context.
  * @param {string} title Title used as the heading in the comment.
  * @param {string} body Markdown content that follows the heading.
+ * @param {string} [matcher] Optional marker used to find an existing comment.
  * @return {Promise<void>}
  */
-async function createOrUpdateComment(github, context, title, body) {
-    const { data: comments } = await github.rest.issues.listComments({
+async function createOrUpdateComment(github, context, title, body, matcher) {
+    const comments = await github.paginate(github.rest.issues.listComments, {
         issue_number: context.issue.number,
         owner: context.repo.owner,
-        repo: context.repo.repo
+        repo: context.repo.repo,
+        per_page: 100
     });
 
     const normalizedTitle = title.split('-')[0].trim();
     const commentToUpdate = comments.find(comment =>
-        (comment.body || '').startsWith('## ' + normalizedTitle)
+        matcher ?
+            (comment.body || '').includes(matcher) :
+            (comment.body || '').startsWith(`## ${normalizedTitle}`)
     );
 
     const commentBody = `## ${title}
