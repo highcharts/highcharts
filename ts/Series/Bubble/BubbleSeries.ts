@@ -154,9 +154,22 @@ function onAxisFoundExtremes(
     // Apply the padding to the min and max properties
     if (hasActiveSeries && range > 0 && !this.logarithmic) {
         pxMax -= axisLength;
+
+        // #8901: For category axes or user-defined min/max, clamp pxMin to 0
+        // to prevent transA collapse from out-of-range points. For numeric
+        // axes with large overflow (fill radius ≥ half the axis), use pxMin
+        // directly so the extension converges in one pass.
+        const isCategoryAxis =
+            !!(this.categories?.length || this.options.type === 'category');
+        const hasUserMinOrMax = defined(pick(this.options.min, this.userMin)) ||
+            defined(pick(this.options.max, this.userMax));
+        const pxMinUsed = (
+            isCategoryAxis || hasUserMinOrMax || pxMin > -axisLength / 2
+        ) ? Math.max(0, pxMin) : pxMin;
+
         transA *= (
             axisLength +
-            Math.max(0, pxMin) - // #8901
+            pxMinUsed -
             Math.min(pxMax, axisLength)
         ) / axisLength;
         (
@@ -165,11 +178,12 @@ function onAxisFoundExtremes(
                 ['max', 'userMax', pxMax]
             ] as Array<[string, string, number]>
         ).forEach((keys: [string, string, number]): void => {
+            // Only extend the axis if the user hasn't set an explicit min/max.
             if (
-                typeof pick(
+                !defined(pick(
                     (this.options as any)[keys[0]],
                     (this as any)[keys[1]]
-                ) === 'undefined'
+                ))
             ) {
                 (this as any)[keys[0]] += keys[2] / transA;
             }
