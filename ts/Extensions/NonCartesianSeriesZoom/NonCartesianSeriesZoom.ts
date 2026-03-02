@@ -36,18 +36,21 @@ const {
  *  Declarations
  *
  * */
-interface Zooming {
-    x: number;
-    y: number;
-    height: number;
-    width: number;
-    zoomX: number;
-    zoomY: number;
-    scale: number,
-    panX: number;
-    panY: number;
-}
 
+/** @internal */
+type Zooming = {
+    x: number,
+    y: number,
+    height: number,
+    width: number,
+    zoomX: number,
+    zoomY: number,
+    scale: number,
+    panX: number,
+    panY: number
+};
+
+/** @internal */
 declare module '../../Core/Series/SeriesBase' {
     interface SeriesBase {
         dataLabelsParentGroups?: Array<SVGElement>;
@@ -55,7 +58,24 @@ declare module '../../Core/Series/SeriesBase' {
     }
 }
 
-/* /* *
+declare module '../../Core/Series/SeriesOptions' {
+    interface SeriesOptions {
+        /**
+         * Whether to zoom non-cartesian series. If `chart.zooming` is set, the
+         * option allows to disable zooming on an individual non-cartesian
+         * series. By default zooming is enabled for all series.
+         *
+         * **Note**: This option works only for non-cartesian series.
+         *
+         * @default  true
+         * @since    12.3.0
+         * @requires modules/non-cartesian-zoom
+         */
+        zoomEnabled?: boolean;
+    }
+}
+
+/* *
  *
  *  Functions
  *
@@ -432,15 +452,7 @@ function onInitDataLabelsGroup(
  *
  * */
 
-/**
- * The series type
- *
- * @internal
- * @class
- * @name Highcharts.seriesTypes.tiledwebmap
- *
- * @augments Highcharts.Series
- */
+/** @internal */
 class NonCartesianSeriesZoom {
 
     /* *
@@ -470,6 +482,7 @@ class NonCartesianSeriesZoom {
  *
  * */
 
+/** @internal */
 export default NonCartesianSeriesZoom;
 
 /* *
@@ -483,23 +496,13 @@ export default NonCartesianSeriesZoom;
  * allows to disable zooming on an individual non-cartesian series. By default
  * zooming is enabled for all series.
  *
- * Note: This option works only for non-cartesian series.
+ * **Note**: This option works only for non-cartesian series.
  *
  * @type      {boolean}
- * @since 12.3.0
+ * @default   true
+ * @since     12.3.0
+ * @requires  modules/non-cartesian-zoom
  * @apioption plotOptions.series.zoomEnabled
- */
-
-/**
- * Whether to zoom non-cartesian series. If `chart.zooming` is set, the option
- * allows to disable zooming on an individual non-cartesian series. By default
- * zooming is enabled for all series.
- *
- * Note: This option works only for non-cartesian series.
- *
- * @type      {boolean}
- * @since 12.3.0
- * @apioption series.zoomEnabled
  */
 
 (''); // Keeps doclets above in JS file
