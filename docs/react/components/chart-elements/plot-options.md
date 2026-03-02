@@ -3,13 +3,14 @@
 You can set default options that affect multiple series by using the `PlotOptions` component:
 
 ```tsx
-import { Chart, Series, PlotOptions } from "@highcharts/react";
+import { Chart, PlotOptions } from "@highcharts/react";
+import { LineSeries } from "@highcharts/react/series/Line";
 
 export default function PlotOptionsChart() {
   return (
     <Chart>
       <PlotOptions series={{ dataLabels: { enabled: true } }} />
-      <Series data={[3, 4, 1, 5, 2]} />
+      <LineSeries data={[3, 4, 1, 5, 2]} />
     </Chart>
   );
 }
