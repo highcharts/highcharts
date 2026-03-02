@@ -36,6 +36,7 @@ const {
  *  Declarations
  *
  * */
+
 /** @internal */
 type Zooming = {
     x: number,
@@ -52,14 +53,11 @@ type Zooming = {
 /** @internal */
 declare module '../../Core/Series/SeriesBase' {
     interface SeriesBase {
-        /** @internal */
         dataLabelsParentGroups?: Array<SVGElement>;
-        /** @internal */
         zooming?: Zooming
     }
 }
 
-/** @internal */
 declare module '../../Core/Series/SeriesOptions' {
     interface SeriesOptions {
         /**
@@ -67,11 +65,11 @@ declare module '../../Core/Series/SeriesOptions' {
          * option allows to disable zooming on an individual non-cartesian
          * series. By default zooming is enabled for all series.
          *
-         * Note: This option works only for non-cartesian series.
+         * **Note**: This option works only for non-cartesian series.
          *
-         * @default   true
-         * @since     12.3.0
-         * @requires  modules/non-cartesian-zoom
+         * @default  true
+         * @since    12.3.0
+         * @requires modules/non-cartesian-zoom
          */
         zoomEnabled?: boolean;
     }
@@ -498,27 +496,13 @@ export default NonCartesianSeriesZoom;
  * allows to disable zooming on an individual non-cartesian series. By default
  * zooming is enabled for all series.
  *
- * Note: This option works only for non-cartesian series.
+ * **Note**: This option works only for non-cartesian series.
  *
  * @type      {boolean}
  * @default   true
  * @since     12.3.0
  * @requires  modules/non-cartesian-zoom
  * @apioption plotOptions.series.zoomEnabled
- */
-
-/**
- * Whether to zoom non-cartesian series. If `chart.zooming` is set, the option
- * allows to disable zooming on an individual non-cartesian series. By default
- * zooming is enabled for all series.
- *
- * Note: This option works only for non-cartesian series.
- *
- * @type      {boolean}
- * @default   true
- * @since     12.3.0
- * @requires  modules/non-cartesian-zoom
- * @apioption series.zoomEnabled
  */
 
 (''); // Keeps doclets above in JS file
