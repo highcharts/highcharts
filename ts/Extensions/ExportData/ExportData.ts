@@ -1224,6 +1224,8 @@ namespace ExportData {
                 attributes: HTMLAttributes,
                 value: (number | string)
             ): AST.Node {
+                const children: Array<AST.Node> = [];
+
                 let textContent = pick(value, ''),
                     className =
                         'highcharts-text' + (classes ? ' ' + classes : '');
@@ -1242,17 +1244,42 @@ namespace ExportData {
                     className = 'highcharts-empty';
                 }
 
+                if (tagName === 'th' && attributes['aria-sort']) {
+                    children.push({
+                        tagName: 'button',
+                        attributes: {
+                            'aria-pressed': true
+                        },
+                        textContent,
+                        style: {
+                            color: 'inherit',
+                            borderWidth: 0,
+                            backgroundColor: 'transparent',
+                            cursor: 'pointer',
+                            padding: 0,
+                            fontSize: 'inherit',
+                            fontWeight: 'inherit'
+                        }
+                    });
+                }
+
                 attributes = extend(
                     { 'class': className },
                     attributes
                 );
 
-                return {
+                const result: AST.Node = {
                     tagName,
-                    attributes,
-                    textContent
+                    attributes
                 };
 
+                if (children.length > 0) {
+                    result.children = children;
+                } else {
+                    result.textContent = textContent;
+                }
+
+                return result;
             },
             // Get table header markup from row data
             getTableHeaderHTML = function (
@@ -1293,7 +1320,8 @@ namespace ExportData {
                                 'highcharts-table-topheading',
                                 {
                                     scope: 'col',
-                                    colspan: curColspan + 1
+                                    colspan: curColspan + 1,
+                                    'aria-sort': 'none'
                                 },
                                 cur
                             ));
@@ -1317,7 +1345,7 @@ namespace ExportData {
                             const cell = getCellHTMLFromValue(
                                 'th',
                                 'highcharts-table-topheading',
-                                { scope: 'col' },
+                                { scope: 'col', 'aria-sort': 'none' },
                                 cur
                             );
                             if (rowspan > 1 && cell.attributes) {
@@ -1344,7 +1372,13 @@ namespace ExportData {
                         if (typeof subheaders[i] !== 'undefined') {
                             trChildren.push(
                                 getCellHTMLFromValue(
-                                    'th', null, { scope: 'col' }, subheaders[i]
+                                    'th',
+                                    null,
+                                    {
+                                        scope: 'col',
+                                        'aria-sort': 'none'
+                                    },
+                                    subheaders[i]
                                 )
                             );
                         }
@@ -1626,21 +1660,32 @@ namespace ExportData {
                                 tableBody?.appendChild(tr);
                             });
 
-                            headers.forEach((th): void => {
+                            headers.forEach((header): void => {
                                 [
                                     'highcharts-sort-ascending',
                                     'highcharts-sort-descending'
                                 ].forEach((className): void => {
-                                    if (th.classList.contains(className)) {
-                                        th.classList.remove(className);
+                                    if (header.classList.contains(className)) {
+                                        header.classList.remove(className);
                                     }
                                 });
+
+                                if (header !== th) {
+                                    header.setAttribute('aria-sort', 'none');
+                                }
                             });
 
                             th.classList.add(
                                 exporting.ascendingOrderInTable ?
                                     'highcharts-sort-ascending' :
                                     'highcharts-sort-descending'
+                            );
+
+                            th.setAttribute(
+                                'aria-sort',
+                                exporting.ascendingOrderInTable ?
+                                    'ascending' :
+                                    'descending'
                             );
                         }
                     });
