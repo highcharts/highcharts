@@ -12,6 +12,7 @@
 
         exporting: {
             fallbackToExportServer: false,
+            libURL: 'https://code.highcharts.com/lib/',
             buttons: {
                 contextButton: {
                     menuItems: [

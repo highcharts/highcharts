@@ -52,7 +52,6 @@ const {
     addEvent,
     error,
     extend,
-    merge,
     pushUnique
 } = U;
 
@@ -96,9 +95,6 @@ namespace OfflineExporting {
      * */
 
     const invalidLibURLErrorPrefix = 'Invalid exporting.libURL:';
-    const missingLibWarning = 'Warning: exporting.libURL not defined, PDF ' +
-        'client side export will not work';
-
     /* *
      *
      *  Functions
@@ -116,18 +112,6 @@ namespace OfflineExporting {
             win.jspdf?.jsPDF &&
             win.svg2pdf
         );
-    }
-
-    /**
-     * Resolve libURL from merged chart/exporting options.
-     *
-     * @private
-     */
-    function getOptInLibURL(
-        chart: Chart,
-        exportingOptions?: ExportingOptions
-    ): (string | undefined) {
-        return merge(chart.options.exporting, exportingOptions).libURL;
     }
 
     /**
@@ -209,9 +193,9 @@ namespace OfflineExporting {
                             filename,
                             scale
                         } = G.Exporting.prepareImageOptions(exportingOptions);
-                        const optInLibURL = chart ?
-                            getOptInLibURL(chart, exportingOptions) :
-                            void 0;
+                        const optInLibURL =
+                            exportingOptions.libURL ||
+                            chart?.options.exporting?.libURL;
                         const normalizedLibURL = normalizeOptInLibURL(
                             optInLibURL
                         );
@@ -288,8 +272,13 @@ namespace OfflineExporting {
                 return;
             }
 
-            if (!getOptInLibURL(this)) {
-                error(missingLibWarning, false, this);
+            if (!this.options.exporting?.libURL) {
+                error(
+                    'Warning: exporting.libURL not defined, PDF client side ' +
+                    'export will not work',
+                    false,
+                    this
+                );
             }
         });
 
