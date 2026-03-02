@@ -347,7 +347,6 @@ class Exporting {
      *  Static Functions
      *
      * */
-
     /**
      * Make hyphenated property names out of camelCase.
      *
@@ -832,7 +831,7 @@ class Exporting {
                 if (e) {
                     e.stopPropagation();
                 }
-                onclick.call(chart, e);
+                onclick.call(chart, e, chart);
             };
         } else if (menuItems) {
             callback = function (

@@ -176,7 +176,7 @@ QUnit.test(
         let iteratorPB = 0,
             iteratorAB = 0;
 
-        Highcharts.chart('container', {
+        const chart = Highcharts.chart('container', {
             chart: {
                 width: 500,
                 height: 400,
@@ -233,6 +233,34 @@ QUnit.test(
 
         assert.strictEqual(iteratorAB, 7, 'All after breaks called');
         assert.strictEqual(iteratorPB, 8, 'All point breaks called');
+
+        // Testing es6 arrow functions for axis event callbacks.
+        let es6AfterBreaksFlag = false;
+
+        chart.update({
+            xAxis: {
+                breaks: [
+                    {
+                        from: 5,
+                        to: 15,
+                        breakSize: 1
+                    }
+                ],
+                events: {
+                    afterBreaks: (e, axis) => {
+                        es6AfterBreaksFlag = (
+                            e && axis && true
+                        ) || false;
+                    }
+                }
+            }
+        });
+
+        assert.strictEqual(
+            es6AfterBreaksFlag,
+            true,
+            'Es6 arrow-function should work for axis events.'
+        );
     }
 );
 

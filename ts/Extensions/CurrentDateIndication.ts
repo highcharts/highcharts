@@ -131,6 +131,7 @@ interface CurrentDateIndicatorLabelOptions {
     y?: number;
 
 }
+
 interface CurrentDateIndicatorOptions {
 
     /** @internal */
@@ -316,7 +317,12 @@ function wrapPlotLineOrBandGetLabelText(
 
         (options as any).value = Date.now();
         return (options as any).label.formatter
-            .call(this, (options as any).value, (options as any).label.format);
+            .call(
+                this,
+                (options as any).value,
+                (options as any).label.format,
+                this
+            );
     }
     return defaultMethod.call(this, defaultLabelOptions);
 }

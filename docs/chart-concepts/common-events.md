@@ -222,6 +222,32 @@ Highcharts.chart("container", {
 * [Demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/chart/events-click/)
 * [API](https://api.highcharts.com/highcharts/chart.events.click)
 
+### Arrow Functions and Callback Context
+
+For user-supplied option callbacks, Highcharts provides an explicit context
+argument (typically named `ctx`). The `ctx` argument is always passed as the
+last callback argument: `callback(arg1, arg2, ..., ctx)`. This makes arrow
+functions a first-class option without losing access to callback context:
+
+```javascript
+labels: {
+  formatter: (ctx) => `Value: ${ctx.value}`
+}
+```
+
+Regular functions are still supported:
+
+```javascript
+labels: {
+  formatter: function () {
+    return `Value: ${this.value}`;
+  }
+}
+```
+
+For lower-level extension hooks (for example `addEvent` and `wrap`), `this`
+binding still matters, so regular functions are recommended there.
+
 ## Dealing with Promises and Asynchronous Data in Highcharts
 
 Highcharts expects data to be available when `Highcharts.chart()` runs. However, loading data asynchronously is very common. In these cases, the chart is typically initialized with **empty or placeholder data**, and the real data is added once it has been fetched.

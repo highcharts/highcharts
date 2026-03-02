@@ -38,7 +38,8 @@ export interface ControlPointDragEventFunction {
 export interface ControlPointPositionerFunction {
     (
         this: ControlPoint,
-        target: ControlTarget
+        target: ControlTarget,
+        ctx: ControlPoint
     ): PositionObject;
 }
 

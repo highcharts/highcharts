@@ -1254,7 +1254,10 @@ const defaultOptions: DefaultOptions = {
         /**
          * Callback function to format each of the series' labels. The `this`
          * keyword refers to the series object, or the point object in case of
-         * pie charts. By default the series or point name is printed.
+         * pie charts. By default the series or point name is printed. Since
+         * v12.5.0, the callback also receives `ctx` as the first argument, so
+         * that arrow functions can access the same context as regular
+         * functions using `this`.
          *
          * @productdesc {highmaps}
          * In Highmaps the context can also be a data class in case of a
@@ -2204,6 +2207,10 @@ const defaultOptions: DefaultOptions = {
          * @sample {highmaps} maps/tooltip/formatter/
          *         String formatting
          *
+         * Since v12.5.0, the callback also receives `ctx` as the second
+         * argument, so that arrow functions can access the same context as
+         * regular functions using `this`.
+         *
          * @type      {Highcharts.TooltipFormatterCallbackFunction}
          * @apioption tooltip.formatter
          */
@@ -2211,7 +2218,8 @@ const defaultOptions: DefaultOptions = {
         /**
          * Callback function to format the text of the tooltip for
          * visible null points.
-         * Works analogously to [formatter](#tooltip.formatter).
+         * Works analogously to [formatter](#tooltip.formatter), including the
+         * `ctx` callback argument added in v12.5.0.
          *
          * @sample highcharts/plotoptions/series-nullformat
          *         Format data label and tooltip for null point.
@@ -2247,7 +2255,9 @@ const defaultOptions: DefaultOptions = {
         /**
          * A callback function for formatting the HTML output for a single point
          * in the tooltip. Like the `pointFormat` string, but with more
-         * flexibility.
+         * flexibility. Since v12.5.0, the callback also receives `ctx` as the
+         * first argument, so that arrow functions can access the same context
+         * as regular functions using `this`.
          *
          * @type      {Highcharts.FormatterCallbackFunction<Highcharts.Point>}
          * @since     4.1.0
@@ -2257,10 +2267,13 @@ const defaultOptions: DefaultOptions = {
 
         /**
          * A callback function to place the tooltip in a custom position. The
-         * callback receives three parameters: `labelWidth`, `labelHeight` and
-         * `point`, where point contains values for `plotX` and `plotY` telling
-         * where the reference point is in the plot area. Add `chart.plotLeft`
-         * and `chart.plotTop` to get the full coordinates.
+         * callback receives four parameters: `labelWidth`, `labelHeight`,
+         * `point`, and `ctx`, where point contains values for `plotX` and
+         * `plotY` telling where the reference point is in the plot area, and
+         * `ctx` is the tooltip context (so that arrow-functions can access the
+         * same context as a normal function using `this`). Add
+         * `chart.plotLeft` and `chart.plotTop` to get the full coordinates.
+         * Since v12.5.0, the callback receives `ctx`.
          *
          * To find the actual hovered `Point` instance, use
          * `this.chart.hoverPoint`. For shared or split tooltips, all the hover

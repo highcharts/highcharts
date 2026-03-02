@@ -419,6 +419,9 @@ const ChartDefaults: ChartOptions = {
     /**
      * Callback function to override the default function that formats all
      * the numbers in the chart. Returns a string with the formatted number.
+     * Since v12.5.0, the callback also receives `ctx` as the last argument,
+     * so that arrow functions can access the same context as regular
+     * functions using `this`.
      *
      * @sample highcharts/members/highcharts-numberformat
      *      Arabic digits in Highcharts

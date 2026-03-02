@@ -148,7 +148,7 @@ class ControlPoint extends EventEmitter {
      */
     public redraw(animation?: boolean): void {
         this.graphic[animation ? 'animate' : 'attr'](
-            this.options.positioner.call(this, this.target)
+            this.options.positioner.call(this, this.target, this)
         );
     }
 

@@ -1030,7 +1030,7 @@ class Axis {
                     value !== 0
                 ) { // #5480
                     ret = numberFormatter(
-                        value / multi, -1
+                        value / multi, -1, void 0, void 0, chart
                     ) + numericSymbols[i];
                 }
             }
@@ -1038,9 +1038,9 @@ class Axis {
 
         if (typeof ret === 'undefined') {
             if (Math.abs(value) >= 10000) { // Add thousands separators
-                ret = numberFormatter(value, -1);
+                ret = numberFormatter(value, -1, void 0, void 0, chart);
             } else { // Small numbers
-                ret = numberFormatter(value, -1, void 0, ''); // #2466
+                ret = numberFormatter(value, -1, void 0, '', chart); // #2466
             }
         }
 
@@ -2458,7 +2458,7 @@ class Axis {
                 this.tickPositions = tickPositions;
                 tickPositionerResult = tickPositioner.apply(
                     axis,
-                    [this.min, this.max]
+                    [this.min, this.max, axis]
                 );
                 if (tickPositionerResult) {
                     tickPositions = tickPositionerResult;
@@ -4981,6 +4981,8 @@ export default Axis;
  * @param {Highcharts.AxisLabelsFormatterContextObject} this
  *
  * @param {Highcharts.AxisLabelsFormatterContextObject} ctx
+ * Since v12.5.0, the formatter context passed as an extra argument for arrow
+ * functions.
  *
  * @return {string}
  */
@@ -5092,7 +5094,17 @@ export default Axis;
  *
  * @param {Highcharts.Axis} this
  *
- * @return {Highcharts.AxisTickPositionsArray}
+ * @param {number} min
+ * Current minimum value.
+ *
+ * @param {number} max
+ * Current maximum value.
+ *
+ * @param {Highcharts.Axis} [ctx]
+ * Since v12.5.0, the axis context passed as an extra argument for arrow
+ * functions.
+ *
+ * @return {Highcharts.AxisTickPositionsArray|undefined}
  */
 
 /**
@@ -5159,6 +5171,10 @@ export default Axis;
  *
  * @param {number} value
  * Y value of the data point
+ *
+ * @param {Highcharts.Axis} [ctx]
+ * Since v12.5.0, the axis context passed as an extra argument for arrow
+ * functions.
  *
  * @return {string}
  */

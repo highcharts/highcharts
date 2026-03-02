@@ -86,6 +86,13 @@ import { Palette } from '../../Core/Color/Palettes.js';
  * @param {global.MouseEvent} evt
  *        Mouse click event
  *
+ * @param {Highcharts.Chart} [chart]
+ *        Chart context.
+ *
+ * @param {global.GlobalEventHandlers} [ctx]
+ *        Since v12.5.0, the global event handlers context passed as an extra
+ *        argument for arrow functions.
+ *
  * @return {void}
  */
 
@@ -96,6 +103,10 @@ import { Palette } from '../../Core/Color/Palettes.js';
  *
  * @param {T} context
  *        Context to format
+ *
+ * @param {*} [outerContext]
+ *        Since v12.5.0, the outer context passed as an extra argument for
+ *        arrow functions.
  *
  * @return {string}
  *         Formatted string for the screen reader module.

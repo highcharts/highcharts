@@ -556,7 +556,7 @@ const Templating = {
 
 namespace Templating {
     export interface FormatterCallback<T> {
-        (this: T): string;
+        (this: T, ...args: Array<any>): string;
     }
     export interface OwnerOptions {
         /**

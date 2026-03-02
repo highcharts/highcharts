@@ -306,7 +306,8 @@ class Tooltip {
                 point.tooltipFormatter
             ).call(
                 point,
-                (tooltipOptions as any)[formatPrefix + 'Format'] || ''
+                (tooltipOptions as any)[formatPrefix + 'Format'] || '',
+                point
             );
         });
     }
@@ -1167,7 +1168,7 @@ class Tooltip {
         this.len = points.length; // #6128
         const text = isString(formatString) ?
             format(formatString, point, chart) :
-            formatter.call(point, tooltip);
+            formatter.call(point, tooltip, point);
 
         // Reset the preliminary circular references
         point.points = void 0;
@@ -1400,6 +1401,7 @@ class Tooltip {
             boxWidth,
             boxHeight,
             point,
+            ctx,
             anchor = [0, 0],
             alignedLeft = true
         ): PositionObject {
@@ -1556,6 +1558,7 @@ class Tooltip {
                             boxWidth,
                             size,
                             point,
+                            tooltip,
                             [anchorX, anchorY]
                         );
 
@@ -1605,6 +1608,7 @@ class Tooltip {
                     box.boxWidth,
                     box.size,
                     box.point,
+                    void 0,
                     [box.anchorX, box.anchorY],
                     false
                 );
@@ -1937,7 +1941,8 @@ class Tooltip {
                 this,
                 width,
                 height,
-                point
+                point,
+                this
             ),
             doc = H.doc;
 
@@ -2013,7 +2018,8 @@ namespace Tooltip {
     export interface FormatterCallbackFunction {
         (
             this: Point,
-            tooltip: Tooltip
+            tooltip: Tooltip,
+            ctx?: Point
         ): (false|string|Array<string>);
     }
 
@@ -2029,6 +2035,7 @@ namespace Tooltip {
             labelWidth: number,
             labelHeight: number,
             point: (Point|PositionerPointObject),
+            ctx?: Tooltip,
             anchor?: [number, number],
             alignLeft?: boolean
         ): PositionObject;
@@ -2112,6 +2119,10 @@ export default Tooltip;
  * @param {Highcharts.Tooltip} tooltip
  * The tooltip instance
  *
+ * @param {Highcharts.Point} [ctx]
+ * Since v12.5.0, the point context passed as an extra argument for arrow
+ * functions.
+ *
  * @return {false|string|Array<(string|null|undefined)>|null|undefined}
  * Formatted text or false
  */
@@ -2132,6 +2143,10 @@ export default Tooltip;
  *
  * @param {Highcharts.TooltipPositionerPointObject} point
  * Point information for positioning a tooltip.
+ *
+ * @param {Highcharts.Tooltip} [ctx]
+ * Since v12.5.0, the tooltip context passed as an extra argument for arrow
+ * functions.
  *
  * @return {Highcharts.PositionObject}
  * New position for the tooltip.
