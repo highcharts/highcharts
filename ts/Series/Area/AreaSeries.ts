@@ -34,6 +34,7 @@ const {
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
 const {
+    defined,
     extend,
     merge,
     objectEach,
@@ -230,7 +231,13 @@ class AreaSeries extends LineSeries {
                     bottom = stackedValues[0] + cliffVal;
                     isNull = !!nullVal;
 
-                } else if (!stacking && points[otherI]?.isNull) {
+                } else if (
+                    !stacking &&
+                    otherI >= 0 &&
+                    otherI < points.length &&
+                    (points[otherI]?.isNull ||
+                        !defined(points[otherI]?.plotY))
+                ) {
                     top = bottom = threshold;
                 }
 
@@ -274,7 +281,9 @@ class AreaSeries extends LineSeries {
                     points[i].leftNull = points[i].rightNull = void 0;
             }
 
-            isNull = points[i].isNull;
+            // Treat points with undefined plotY as null (e.g. non-positive
+            // values on logarithmic axis, #18422)
+            isNull = points[i].isNull || !defined(points[i].plotY);
             plotX = pick(points[i].rectPlotX, points[i].plotX);
             yBottom = stacking ?
                 pick(points[i].yBottom, translatedThreshold) :
@@ -466,13 +475,17 @@ class AreaSeries extends LineSeries {
                         i += upOrDown;
                     }
                     y = pick(y, 0);
-                    y = yAxis.translate(// #6272
-                        y, 0 as any, 1 as any, 0 as any, 1 as any
-                    );
+                    if (yAxis.logarithmic && y <= 0) {
+                        y = yAxis.getThreshold(series.options.threshold ?? 0);
+                    } else {
+                        y = yAxis.translate(// #6272
+                            y, false, true, false, true
+                        );
+                    }
                     segment.push({ // @todo create real point object
                         isNull: true,
                         plotX: xAxis.translate(// #6272
-                            x as any, 0 as any, 0 as any, 0 as any, 1 as any
+                            x as any, false, false, false, true
                         ),
                         x: x as any,
                         plotY: y,
