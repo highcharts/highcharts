@@ -1,13 +1,13 @@
 /* *
  *
- *  Imports
+ *  Shared cross marker symbol registration used by series modules.
+ *  This keeps `cross` out of Core SVG symbols while allowing modules
+ *  like PointAndFigure and Contour to compose it when needed.
  *
  * */
 
-import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
-import type SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer';
-
-import RendererRegistry from '../../Core/Renderer/RendererRegistry.js';
+import type SVGPath from '../Core/Renderer/SVG/SVGPath';
+import type SVGRenderer from '../Core/Renderer/SVG/SVGRenderer';
 
 /* *
  *
@@ -15,9 +15,9 @@ import RendererRegistry from '../../Core/Renderer/RendererRegistry.js';
  *
  * */
 
-declare module '../../Core/Renderer/SVG/SymbolType' {
+declare module '../Core/Renderer/SVG/SymbolType' {
     interface SymbolTypeRegistry {
-        /** @requires Series/PointAndFigure */
+        /** Shared by Series/PointAndFigure and Series/Contour. */
         cross: SymbolFunction;
     }
 }
@@ -28,7 +28,7 @@ declare module '../../Core/Renderer/SVG/SymbolType' {
  *
  * */
 
-namespace PointAndFigureSymbols {
+namespace CrossSymbols {
 
     /* *
      *
@@ -44,36 +44,24 @@ namespace PointAndFigureSymbols {
      *
      * */
 
-    /* eslint-disable valid-jsdoc */
-
     /**
+     * Register the shared `cross` symbol on a renderer class.
+     *
      * @private
      */
     export function compose(
         SVGRendererClass: typeof SVGRenderer
     ): void {
-
         if (modifiedMembers.indexOf(SVGRendererClass) === -1) {
             modifiedMembers.push(SVGRendererClass);
 
-            const symbols = SVGRendererClass.prototype.symbols;
-
-            symbols.cross = cross;
-
+            SVGRendererClass.prototype.symbols.cross = cross;
         }
-
-        const RendererClass = RendererRegistry.getRendererType();
-
-        // The symbol callbacks are generated on the SVGRenderer object in all
-        // browsers.
-        if (modifiedMembers.indexOf(RendererClass)) {
-            modifiedMembers.push(RendererClass);
-        }
-
     }
 
     /**
-     *
+     * Cross marker path.
+     * @private
      */
     function cross(
         x: number,
@@ -89,7 +77,6 @@ namespace PointAndFigureSymbols {
             ['Z']
         ];
     }
-
 }
 
 /* *
@@ -98,4 +85,4 @@ namespace PointAndFigureSymbols {
  *
  * */
 
-export default PointAndFigureSymbols;
+export default CrossSymbols;
