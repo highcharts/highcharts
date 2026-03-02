@@ -23,7 +23,7 @@ describe('Pagination.', () => {
         cy.get('#afterPageChange').should('have.value', '1');
 
         // Click on page number
-        cy.get('.hcg-pagination-nav-buttons-container .hcg-button').contains('3').click();
+        cy.get('.hcg-pagination-pages .hcg-button').contains('3').click();
 
         // Check event logging
         cy.get('#beforePageChange').should('have.value', '1');

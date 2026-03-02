@@ -180,6 +180,7 @@ The `pagination` option object enables you to split large datasets into manageab
         enabled: true,
         pageSize: 25,
         position: 'bottom',
+        align: 'center',
         controls: {
             pageSizeSelector: {
                 enabled: true,
