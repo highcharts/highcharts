@@ -42,6 +42,18 @@ function test_grid() {
                 resizing: {
                     mode: 'distributed'
                 }
+            },
+            rows: {
+                pinning: {
+                    events: {
+                        beforeRowPin: function (e): void {
+                            e.target;
+                        },
+                        afterRowPin: function (e): void {
+                            e.target;
+                        }
+                    }
+                }
             }
         },
         columns: [{
@@ -73,14 +85,6 @@ function test_grid() {
                     header: ['x']
                 }
             }]
-        },
-        events: {
-            beforeRowPin: function (e): void {
-                e.target;
-            },
-            afterRowPin: function (e): void {
-                e.target;
-            }
         }
     });
 }

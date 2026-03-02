@@ -72,17 +72,37 @@ const pinned = grid.getPinnedRows();
 // { topIds: [...], bottomIds: [...] }
 ```
 
-In Grid Pro, you can also listen to
-`events.beforeRowPin` and `events.afterRowPin`:
+In Grid Pro, you can also listen to runtime row pinning events in
+`rendering.rows.pinning.events`:
 
 ```js
 Grid.grid('container', {
-    events: {
-        beforeRowPin(e) {
-            console.log('before', e.action, e.rowId, e.topIds, e.bottomIds);
-        },
-        afterRowPin(e) {
-            console.log('after', e.action, e.rowId, e.topIds, e.bottomIds);
+    rendering: {
+        rows: {
+            pinning: {
+                events: {
+                    beforeRowPin: function (event) {
+                        console.log(
+                            this,
+                            'before',
+                            event.action,
+                            event.rowId,
+                            event.topIds,
+                            event.bottomIds
+                        );
+                    },
+                    afterRowPin: function (event) {
+                        console.log(
+                            this,
+                            'after',
+                            event.action,
+                            event.rowId,
+                            event.topIds,
+                            event.bottomIds
+                        );
+                    }
+                }
+            }
         }
     }
 });

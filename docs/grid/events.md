@@ -11,6 +11,7 @@ tags: ["grid-pro"]
 - **Cell events** are configured in [columnDefaults.cells.events](https://api.highcharts.com/grid/#interfaces/Grid_Pro_GridEvents.CellEvents) or [columns[].cells.events](https://api.highcharts.com/grid/#interfaces/Grid_Pro_GridEvents.CellEvents)
 - **Header events** are configured in [columnDefaults.header.events](https://api.highcharts.com/grid/#interfaces/Grid_Pro_GridEvents.HeaderEvents) or [columns[].header.events](https://api.highcharts.com/grid/#interfaces/Grid_Pro_GridEvents.HeaderEvents)
 - **Pagination events** are configured in [pagination.events](https://api.highcharts.com/grid/#interfaces/Grid_Core_Pagination_PaginationOptions.PaginationOptions#events)
+- **Row pinning events** are configured in `rendering.rows.pinning.events`
 
 ## Grid-level events
 
@@ -24,8 +25,6 @@ Configured in `events` at the root of grid options:
 | `afterUpdate`          | Triggered after grid options are updated via `update()`. | `this: Grid`          |
 | `beforeRedraw`         | Triggered before the grid DOM is redrawn. Fired by default when `update()` is called, unless `redraw` is set to `false`. | `this: Grid`          |
 | `afterRedraw`          | Triggered after the grid DOM is redrawn. Fired by default when `update()` is called, unless `redraw` is set to `false`. | `this: Grid`          |
-| `beforeRowPin` | Triggered before a runtime row pinning change is redrawn. | `this: Grid`        |
-| `afterRowPin`  | Triggered after a runtime row pinning change is redrawn.  | `this: Grid`        |
 
 ## Column-level events
 
@@ -99,11 +98,38 @@ Grid-level events are configured at the root `events` property:
         afterRedraw: function () {
             console.log('Grid DOM redraw finished.');
         },
-        beforeRowPin: function (e) {
-            console.log('Before row pinning change:', e.action, e.rowId);
-        },
-        afterRowPin: function (e) {
-            console.log('After row pinning change:', e.action, e.rowId);
+    }
+}
+```
+
+## Row pinning events
+
+Row pinning events are configured in `rendering.rows.pinning.events`:
+
+```js
+{
+    rendering: {
+        rows: {
+            pinning: {
+                events: {
+                    beforeRowPin: function (event) {
+                        console.log(
+                            'Before row pinning change:',
+                            this,
+                            event.action,
+                            event.rowId
+                        );
+                    },
+                    afterRowPin: function (event) {
+                        console.log(
+                            'After row pinning change:',
+                            this,
+                            event.action,
+                            event.rowId
+                        );
+                    }
+                }
+            }
         }
     }
 }

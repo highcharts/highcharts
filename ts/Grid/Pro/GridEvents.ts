@@ -25,8 +25,6 @@ import type TableCell from '../Core/Table/Body/TableCell';
 import type HeaderCell from '../Core/Table/Header/HeaderCell';
 import type { GridEvent } from '../Core/GridUtils';
 import type Grid from '../Core/Grid';
-import type { RowPinningChangeEvent } from
-    '../Core/RowPinning/RowPinningComposition';
 
 import U from '../../Core/Utilities.js';
 import Globals from '../../Core/Globals.js';
@@ -107,24 +105,6 @@ function compose(
         });
     });
 
-    addEvent(
-        GridClass,
-        'beforeRowPin',
-        (e: GridEvent<Grid> & RowPinningChangeEvent): void => {
-            const grid = e.target;
-            grid.options?.events?.beforeRowPin?.call(grid, e);
-        }
-    );
-
-    addEvent(
-        GridClass,
-        'afterRowPin',
-        (e: GridEvent<Grid> & RowPinningChangeEvent): void => {
-            const grid = e.target;
-            grid.options?.events?.afterRowPin?.call(grid, e);
-        }
-    );
-
     ([ // TableCell Events
         'mouseOver',
         'mouseOut',
@@ -188,11 +168,6 @@ export type ColumnEventCallback = (this: Column) => void;
  * Callback function to be called when a grid event is triggered.
  */
 export type GridEventCallback = (this: Grid, e: AnyRecord) => void;
-export type RowPinningChangeEventCallback = (
-    this: Grid,
-    e: GridEvent<Grid> & RowPinningChangeEvent
-) => void;
-
 /**
  * Events related to the cells.
  */
@@ -306,17 +281,6 @@ export interface GridEvents {
      */
     afterRedraw?: GridEventCallback;
 
-    /**
-     * Callback function to be called before runtime row pinning state changes
-     * are redrawn.
-     */
-    beforeRowPin?: RowPinningChangeEventCallback;
-
-    /**
-     * Callback function to be called after runtime row pinning state changes
-     * are redrawn.
-     */
-    afterRowPin?: RowPinningChangeEventCallback;
 }
 
 declare module '../Core/Options' {

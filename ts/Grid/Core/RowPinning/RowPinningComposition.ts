@@ -25,6 +25,7 @@ import type Grid from '../../Core/Grid';
 import type { DeepPartial } from '../../../Shared/Types';
 import type Options from '../../Core/Options';
 import type { RowObject as DataTableRowObject } from '../../../Data/DataTable';
+import type { GridEvent } from '../../Core/GridUtils';
 
 import { defaultOptions as gridDefaultOptions } from '../../Core/Defaults.js';
 import Globals from '../../Core/Globals.js';
@@ -50,6 +51,7 @@ export const defaultOptions: DeepPartial<Options> = {
                 enabled: true,
                 topIds: [],
                 bottomIds: [],
+                events: {},
                 top: {},
                 bottom: {},
                 sorting: 'exclude',
@@ -140,6 +142,36 @@ function announceRowPinningChange(
 }
 
 /**
+ * Calls configured row pinning event callbacks from `pinning.events`.
+ *
+ * @param grid
+ * Grid instance.
+ *
+ * @param eventName
+ * Row pinning event callback name.
+ *
+ * @param eventPayload
+ * Event payload object.
+ */
+function callRowPinningEventCallback(
+    grid: Grid,
+    eventName: keyof RowPinningEvents,
+    eventPayload: RowPinningChangeEvent
+): void {
+    const callback = (
+        grid.options?.rendering?.rows?.pinning?.events?.[eventName] ||
+        grid.userOptions?.rendering?.rows?.pinning?.events?.[eventName]
+    );
+
+    const callbackEvent = {
+        target: grid,
+        ...eventPayload
+    } as (GridEvent<Grid> & RowPinningChangeEvent);
+
+    callback?.call(grid, callbackEvent);
+}
+
+/**
  * Compare row id arrays by value and order.
  *
  * @param a
@@ -161,6 +193,65 @@ function sameIds(a: GridRowId[], b: GridRowId[]): boolean {
         }
     }
     return true;
+}
+
+/**
+ * Compute the next pinned state without mutating the controller.
+ *
+ * @param previous
+ * Current pinned row IDs.
+ *
+ * @param previous.topIds
+ * Current top-pinned row IDs.
+ *
+ * @param previous.bottomIds
+ * Current bottom-pinned row IDs.
+ *
+ * @param action
+ * Whether to pin or unpin.
+ *
+ * @param rowId
+ * Row ID being pinned or unpinned.
+ *
+ * @param position
+ * Pin position (only used when action is 'pin').
+ *
+ * @param index
+ * Optional insertion index (only used when action is 'pin').
+ *
+ * @return
+ * Predicted next state of pinned row IDs.
+ */
+function computeNextPinnedIds(
+    previous: { topIds: GridRowId[]; bottomIds: GridRowId[] },
+    action: 'pin'|'unpin',
+    rowId: GridRowId,
+    position?: RowPinningPosition,
+    index?: number
+): { topIds: GridRowId[]; bottomIds: GridRowId[] } {
+    const topIds = previous.topIds.slice();
+    const bottomIds = previous.bottomIds.slice();
+
+    // Remove from both lists first.
+    const topIdx = topIds.indexOf(rowId);
+    if (topIdx !== -1) {
+        topIds.splice(topIdx, 1);
+    }
+    const bottomIdx = bottomIds.indexOf(rowId);
+    if (bottomIdx !== -1) {
+        bottomIds.splice(bottomIdx, 1);
+    }
+
+    if (action === 'pin' && position) {
+        const target = position === 'top' ? topIds : bottomIds;
+        if (typeof index === 'number' && index >= 0) {
+            target.splice(Math.min(index, target.length), 0, rowId);
+        } else {
+            target.push(rowId);
+        }
+    }
+
+    return { topIds, bottomIds };
 }
 
 /**
@@ -189,13 +280,7 @@ async function pinRow(
         topIds: [],
         bottomIds: []
     };
-
-    this.rowPinning?.pinRow(rowId, position, index);
-
-    const next = this.rowPinning?.getPinnedRows() || {
-        topIds: [],
-        bottomIds: []
-    };
+    const next = computeNextPinnedIds(previous, 'pin', rowId, position, index);
     const eventPayload = {
         rowId,
         action: 'pin',
@@ -212,11 +297,14 @@ async function pinRow(
     } as RowPinningChangeEvent;
 
     fireEvent(this, 'beforeRowPin', eventPayload);
+    callRowPinningEventCallback(this, 'beforeRowPin', eventPayload);
 
+    this.rowPinning?.pinRow(rowId, position, index);
     this.querying.shouldBeUpdated = true;
     this.dirtyFlags.add('rows');
     await this.redraw();
     fireEvent(this, 'afterRowPin', eventPayload);
+    callRowPinningEventCallback(this, 'afterRowPin', eventPayload);
     announceRowPinningChange(this, 'pin', rowId, position);
 }
 
@@ -243,22 +331,16 @@ async function toggleRow(
         topIds: [],
         bottomIds: []
     };
-    const pinnedRows = previous;
     const isPinned = (
-        pinnedRows.topIds.includes(rowId) ||
-        pinnedRows.bottomIds.includes(rowId)
+        previous.topIds.includes(rowId) ||
+        previous.bottomIds.includes(rowId)
     );
-
-    if (isPinned) {
-        this.rowPinning?.unpinRow(rowId);
-    } else {
-        this.rowPinning?.pinRow(rowId, position);
-    }
-
-    const next = this.rowPinning?.getPinnedRows() || {
-        topIds: [],
-        bottomIds: []
-    };
+    const next = computeNextPinnedIds(
+        previous,
+        isPinned ? 'unpin' : 'pin',
+        rowId,
+        isPinned ? void 0 : position
+    );
     const eventPayload = {
         rowId,
         action: 'toggle',
@@ -274,11 +356,18 @@ async function toggleRow(
     } as RowPinningChangeEvent;
 
     fireEvent(this, 'beforeRowPin', eventPayload);
+    callRowPinningEventCallback(this, 'beforeRowPin', eventPayload);
 
+    if (isPinned) {
+        this.rowPinning?.unpinRow(rowId);
+    } else {
+        this.rowPinning?.pinRow(rowId, position);
+    }
     this.querying.shouldBeUpdated = true;
     this.dirtyFlags.add('rows');
     await this.redraw();
     fireEvent(this, 'afterRowPin', eventPayload);
+    callRowPinningEventCallback(this, 'afterRowPin', eventPayload);
     announceRowPinningChange(
         this,
         isPinned ? 'unpin' : 'pin',
@@ -305,13 +394,7 @@ async function unpinRow(
         topIds: [],
         bottomIds: []
     };
-
-    this.rowPinning?.unpinRow(rowId);
-
-    const next = this.rowPinning?.getPinnedRows() || {
-        topIds: [],
-        bottomIds: []
-    };
+    const next = computeNextPinnedIds(previous, 'unpin', rowId);
     const eventPayload = {
         rowId,
         action: 'unpin',
@@ -326,11 +409,14 @@ async function unpinRow(
     } as RowPinningChangeEvent;
 
     fireEvent(this, 'beforeRowPin', eventPayload);
+    callRowPinningEventCallback(this, 'beforeRowPin', eventPayload);
 
+    this.rowPinning?.unpinRow(rowId);
     this.querying.shouldBeUpdated = true;
     this.dirtyFlags.add('rows');
     await this.redraw();
     fireEvent(this, 'afterRowPin', eventPayload);
+    callRowPinningEventCallback(this, 'afterRowPin', eventPayload);
     announceRowPinningChange(this, 'unpin', rowId);
 }
 
@@ -367,6 +453,25 @@ export interface RowPinningChangeEvent {
     previousBottomIds: GridRowId[];
     topIds: GridRowId[];
     bottomIds: GridRowId[];
+}
+
+export type RowPinningChangeEventCallback = (
+    this: Grid,
+    e: GridEvent<Grid> & RowPinningChangeEvent
+) => void;
+
+export interface RowPinningEvents {
+    /**
+     * Callback function to be called before runtime row pinning state changes
+     * are redrawn (Grid Pro).
+     */
+    beforeRowPin?: RowPinningChangeEventCallback;
+
+    /**
+     * Callback function to be called after runtime row pinning state changes
+     * are redrawn (Grid Pro).
+     */
+    afterRowPin?: RowPinningChangeEventCallback;
 }
 
 declare module '../../Core/Options' {
@@ -432,6 +537,7 @@ export interface RowPinningOptions {
     bottomIds?: GridRowId[];
     top?: RowPinningSectionOptions;
     bottom?: RowPinningSectionOptions;
+    events?: RowPinningEvents;
     resolve?: (row: DataTableRowObject) => ('top'|'bottom'|null|undefined);
     sorting?: RowPinningMode;
     filtering?: RowPinningMode;
