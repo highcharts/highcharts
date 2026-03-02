@@ -30,21 +30,21 @@
  *
  * */
 
-import type AnimationOptions from '../../Core/Animation/AnimationOptions';
-import type BBoxObject from '../../Core/Renderer/BBoxObject';
+import type { AnimationOptions } from '../../Core/Animation/AnimationOptions';
+import type { BBoxObject } from '../../Core/Renderer/BBoxObject';
 import type Chart from '../../Core/Chart/Chart.js';
-import type CSSObject from '../../Core/Renderer/CSSObject';
-import type PositionObject from '../../Core/Renderer/PositionObject';
+import type { CSSObject } from '../../Core/Renderer/CSSObject';
+import type { PositionObject } from '../../Core/Renderer/PositionObject';
 import type {
     LabelIntersectBoxObject,
     SeriesLabelOptions
 } from './SeriesLabelOptions';
 import type SplineSeries from '../../Series/Spline/SplineSeries';
-import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+import type { SVGAttributes } from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
-import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+import type { SVGPath } from '../../Core/Renderer/SVG/SVGPath';
 import type SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer';
-import type SymbolOptions from '../../Core/Renderer/SVG/SymbolOptions';
+import type { SymbolOptions } from '../../Core/Renderer/SVG/SymbolOptions';
 
 import A from '../../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
@@ -79,6 +79,7 @@ const {
  *
  * */
 
+/** @internal */
 declare module '../../Core/Chart/ChartBase'{
     interface ChartBase {
         boxesToAvoid?: Array<LabelIntersectBoxObject>;
@@ -88,6 +89,7 @@ declare module '../../Core/Chart/ChartBase'{
     }
 }
 
+/** @internal */
 declare module '../../Core/Series/SeriesBase' {
     interface SeriesBase {
         interpolatedPoints?: Array<ControlPoint>;
@@ -98,13 +100,33 @@ declare module '../../Core/Series/SeriesBase' {
 
 declare module '../../Core/Series/SeriesOptions' {
     interface SeriesOptions {
+        /**
+         * Series labels are placed as close to the series as possible in a
+         * natural way, seeking to avoid other series. The goal of this
+         * feature is to make the chart more easily readable, like if a
+         * human designer placed the labels in the optimal position.
+         *
+         * The series labels currently work with series types having a
+         * `graph` or an `area`.
+         *
+         * @sample highcharts/series-label/line-chart
+         *         Line chart
+         * @sample highcharts/demo/streamgraph
+         *         Stream graph
+         * @sample highcharts/series-label/stock-chart
+         *         Stock chart
+         *
+         * @since    6.0.0
+         * @product  highcharts highstock gantt
+         * @requires modules/series-label
+         */
         label?: SeriesLabelOptions;
     }
 }
 
+/** @internal */
 declare module '../../Core/Renderer/SVG/SymbolType' {
     interface SymbolTypeRegistry {
-        /** @requires Extensions/SeriesLabel */
         connector: SymbolFunction;
     }
 }
@@ -1107,10 +1129,12 @@ function symbolConnector(
  *
  * */
 
+/** @internal */
 const SeriesLabel = {
     compose
 };
 
+/** @internal */
 export default SeriesLabel;
 
 /* *
