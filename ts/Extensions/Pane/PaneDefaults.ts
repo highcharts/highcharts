@@ -40,12 +40,13 @@ import { Palette } from '../../Core/Color/Palettes.js';
  *         Speedometer gauge with multiple backgrounds
  *
  * @type         {*|Array<*>}
+ * @requires     highcharts-more
  * @optionparent pane.background
  */
 const background: PaneBackgroundOptions = {
 
     /**
-     * The class name for this background.
+     * An additional class name to apply to the pane background.
      *
      * @sample {highcharts} highcharts/css/pane/
      *         Panes styled by CSS
@@ -55,8 +56,8 @@ const background: PaneBackgroundOptions = {
      *         Panes styled by CSS
      *
      * @type      {string}
-     * @default   highcharts-pane
      * @since     5.0.0
+     * @requires  highcharts-more
      * @apioption pane.background.className
      */
 
@@ -68,6 +69,7 @@ const background: PaneBackgroundOptions = {
      * @type    {Highcharts.PaneBackgroundShapeValue}
      * @since   2.3.0
      * @product highcharts
+     * @requires highcharts-more
      */
     shape: 'circle',
 
@@ -80,6 +82,7 @@ const background: PaneBackgroundOptions = {
      *          Circular gauge and pane with equal border radius
      * @product highcharts
      * @type    {number|string}
+     * @requires highcharts-more
      */
     borderRadius: 0,
 
@@ -88,6 +91,7 @@ const background: PaneBackgroundOptions = {
      *
      * @since 2.3.0
      * @product highcharts
+     * @requires highcharts-more
      */
     borderWidth: 1,
 
@@ -97,6 +101,7 @@ const background: PaneBackgroundOptions = {
      * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      * @since   2.3.0
      * @product highcharts
+     * @requires highcharts-more
      */
     borderColor: Palette.neutralColor20,
 
@@ -107,6 +112,7 @@ const background: PaneBackgroundOptions = {
      * @default { linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 }, stops: [[0, #ffffff], [1, #e6e6e6]] }
      * @since   2.3.0
      * @product highcharts
+     * @requires highcharts-more
      */
     backgroundColor: {
 
@@ -131,6 +137,7 @@ const background: PaneBackgroundOptions = {
      * @type    {number|string}
      * @since   2.3.0
      * @product highcharts
+     * @requires highcharts-more
      */
     innerRadius: 0,
 
@@ -144,6 +151,7 @@ const background: PaneBackgroundOptions = {
      * @type     {number|string}
      * @since    2.3.0
      * @product  highcharts
+     * @requires highcharts-more
      */
     outerRadius: '105%'
 
@@ -168,8 +176,8 @@ const pane: PaneOptions|Array<PaneOptions> = {
 
     /**
      * The end angle of the polar X axis or gauge value axis, given in
-     * degrees where 0 is north. Defaults to [startAngle](#pane.startAngle)
-     * + 360.
+     * degrees where 0 is north. Defaults to
+     * [startAngle](#pane.startAngle) plus 360.
      *
      * @sample {highcharts} highcharts/demo/gauge-vu-meter/
      *         VU-meter with custom start and end angle
@@ -177,6 +185,7 @@ const pane: PaneOptions|Array<PaneOptions> = {
      * @type      {number}
      * @since     2.3.0
      * @product   highcharts
+     * @requires  highcharts-more
      * @apioption pane.endAngle
      */
 
@@ -189,9 +198,9 @@ const pane: PaneOptions|Array<PaneOptions> = {
      *         Two gauges with different center
      *
      * @type    {Array<string|number>}
-     * @default ["50%", "50%"]
      * @since   2.3.0
      * @product highcharts
+     * @requires highcharts-more
      */
     center: ['50%', '50%'],
 
@@ -205,6 +214,7 @@ const pane: PaneOptions|Array<PaneOptions> = {
      *
      * @type    {number|string}
      * @product highcharts
+     * @requires highcharts-more
      */
     size: '85%',
 
@@ -217,18 +227,20 @@ const pane: PaneOptions|Array<PaneOptions> = {
      *
      * @type    {number|string}
      * @product highcharts
+     * @requires highcharts-more
      */
     innerSize: '0%',
 
     /**
      * The start angle of the polar X axis or gauge axis, given in degrees
-     * where 0 is north. Defaults to 0.
+     * where 0 is north.
      *
      * @sample {highcharts} highcharts/demo/gauge-vu-meter/
      *         VU-meter with custom start and end angle
      *
      * @since   2.3.0
      * @product highcharts
+     * @requires highcharts-more
      */
     startAngle: 0
 
@@ -242,9 +254,11 @@ defaultOptions.pane = pane;
  *
  * */
 
+/** @internal */
 const PaneDefaults = {
     pane,
     background
 };
 
+/** @internal */
 export default PaneDefaults;

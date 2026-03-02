@@ -54,7 +54,7 @@
             data: data,
             id: 'base'
         }, {
-            type: 'linearRegressionAngle',
+            type: 'linearregressionangle',
             linkedTo: 'base',
             yAxis: 1,
             zIndex: -1,
@@ -62,7 +62,7 @@
                 period: 5
             }
         }, {
-            type: 'linearRegressionAngle',
+            type: 'linearregressionangle',
             linkedTo: 'base',
             yAxis: 1,
             zIndex: -1,

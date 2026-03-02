@@ -28,13 +28,13 @@ jobs:
       matrix:
         node-version: [lts/*]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           ref: master
           path: highcharts
 
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
@@ -56,7 +56,7 @@ jobs:
           npx gulp scripts --product Grid
 
       - name: Checkout utils
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           repository: highcharts/highcharts-utils
           path: utils
@@ -68,7 +68,7 @@ jobs:
           npm ci
 
       - name: Run cypress via action
-        uses: cypress-io/github-action@v5
+        uses: cypress-io/github-action@v7
         continue-on-error: true
         with:
           browser: chrome
@@ -83,7 +83,7 @@ jobs:
         run: kill $(lsof -t -i:3030)
 
       - name: Checkout current branch
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           path: highcharts
           clean: false # do not remove files from previous run
@@ -104,7 +104,7 @@ jobs:
           npx gulp scripts --product Grid
 
       - name: Run cypress via action
-        uses: cypress-io/github-action@v5
+        uses: cypress-io/github-action@v7
         with:
           browser: chrome
           start: node ../utils/server --localOnly
@@ -115,7 +115,7 @@ jobs:
           install: false
 
       - name: Store artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: tmp-files
           path: |
@@ -133,7 +133,7 @@ jobs:
           cat highcharts/tmp/lighthousetable.md >> $GITHUB_STEP_SUMMARY
 
       - name: Comment on PR
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         if: ${{ always() }}
         with:
           github-token: ${{secrets.PR_COMMENT_TOKEN}}
