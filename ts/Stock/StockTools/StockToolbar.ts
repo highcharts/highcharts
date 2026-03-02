@@ -31,6 +31,7 @@ import type {
 import U from '../../Core/Utilities.js';
 import AST from '../../Core/Renderer/HTML/AST.js';
 import StockToolsUtilities from './StockToolsUtilities.js';
+import type HTMLAttributes from '../../Core/Renderer/HTML/HTMLAttributes';
 const {
     addEvent,
     createElement,
@@ -199,18 +200,21 @@ class Toolbar {
             wrapper = this.wrapper,
             menuWrapper = this.listWrapper,
             allButtons = this.toolbar.childNodes,
+            title = buttonWrapper.title,
             // Create submenu container
             submenuWrapper = this.submenu = createElement('ul', {
-                className: 'highcharts-submenu-wrapper'
-            }, void 0, buttonWrapper);
+                className: 'highcharts-submenu-wrapper',
+                id: 'highcharts-submenu-wrapper-' +
+                    title.toLowerCase().replace(/\s+/g, '-')
+            } as HTMLAttributes, void 0, buttonWrapper);
 
         // Create submenu buttons and select the first one
         this.addSubmenuItems(buttonWrapper, button);
+        submenuArrow.setAttribute('aria-controls', submenuWrapper.id);
 
         // Show / hide submenu
         this.eventsToUnbind.push(
             addEvent(submenuArrow, 'click', (e: Event): void => {
-
                 e.stopPropagation();
                 // Erase active class on all other buttons
                 this.eraseActiveButtons(allButtons, buttonWrapper);
@@ -220,11 +224,14 @@ class Toolbar {
                     buttonWrapper.className
                         .indexOf('highcharts-current') >= 0
                 ) {
+                    submenuArrow.setAttribute('aria-expanded', false);
                     menuWrapper.style.width =
                         (menuWrapper as any).startWidth + 'px';
                     buttonWrapper.classList.remove('highcharts-current');
                     (submenuWrapper as any).style.display = 'none';
                 } else {
+
+                    submenuArrow.setAttribute('aria-expanded', true);
                     // Show menu
                     // to calculate height of element
                     (submenuWrapper as any).style.display = 'block';
@@ -372,21 +379,25 @@ class Toolbar {
     ): Record<string, HTMLDOMElement> {
         const btnOptions: StockToolsGuiDefinitionsButtonsOptions =
                 options[btnName] as any,
+            btnLabelName = lang[btnName] || btnName,
+            arrowLabel = this.chart.options.lang.accessibility
+                ?.stockTools.arrowLabel,
             items = btnOptions.items,
             classMapping = Toolbar.prototype.classMapping,
             userClassName = btnOptions.className || '';
 
         // Main button wrapper
         const buttonWrapper = createElement('li', {
-            className: pick(classMapping[btnName], '') + ' ' + userClassName,
-            title: lang[btnName] || btnName
+            className: pick(classMapping[btnName], '') + ' ' + userClassName
         }, void 0, target);
 
         // Single button
         const elementType = (btnOptions.elementType || 'button') as string;
         const mainButton = createElement(elementType, {
-            className: 'highcharts-menu-item-btn'
-        }, void 0, buttonWrapper);
+            className: 'highcharts-menu-item-btn',
+            title: btnLabelName,
+            ariaLabel: btnLabelName
+        } as HTMLAttributes, void 0, buttonWrapper);
 
         // Submenu
         if (items && items.length) {
@@ -394,8 +405,10 @@ class Toolbar {
             // Arrow is a hook to show / hide submenu
             const submenuArrow = createElement('button', {
                 className: 'highcharts-submenu-item-arrow ' +
-                    'highcharts-arrow-right'
-            }, void 0, buttonWrapper);
+                    'highcharts-arrow-right',
+                ariaLabel: arrowLabel,
+                ariaExpanded: false
+            } as HTMLAttributes, void 0, buttonWrapper);
 
             submenuArrow.style.backgroundImage = 'url(' +
                 this.iconsURL + 'arrow-bottom.svg)';
@@ -487,6 +500,8 @@ class Toolbar {
      */
     public createContainer(): void {
         const chart = this.chart,
+            groupLabel = chart.options.lang.accessibility
+                ?.stockTools.groupLabel,
             guiOptions = this.options,
             container = chart.container,
             navigation = chart.options.navigation,
@@ -498,8 +513,9 @@ class Toolbar {
         // Create main container
         const wrapper = this.wrapper = createElement('div', {
             className: 'highcharts-stocktools-wrapper ' +
-                guiOptions.className + ' ' + bindingsClassName
-        });
+                guiOptions.className + ' ' + bindingsClassName,
+            ariaHidden: false
+        } as HTMLAttributes);
 
         container.appendChild(wrapper);
 
@@ -537,8 +553,9 @@ class Toolbar {
         // Toolbar
         this.toolbar = toolbar = createElement('ul', {
             className: 'highcharts-stocktools-toolbar ' +
-                    guiOptions.toolbarClassName
-        });
+                    guiOptions.toolbarClassName,
+            ariaLabel: groupLabel
+        } as HTMLAttributes);
 
         // Add container for list of buttons
         this.listWrapper = listWrapper = createElement('div', {

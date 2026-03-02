@@ -34,6 +34,8 @@ export interface LangOptions {
 
 export interface LangStockToolsOptions {
     gui?: Record<string, string>;
+    groupLabel?: string;
+    arrowLabel?: string;
 }
 
 export interface StockToolsGuiDefinitionsButtonOptions {

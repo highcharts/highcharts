@@ -61,6 +61,17 @@ QUnit.test('Stocktools GUI', function (assert) {
     );
     */
 
+    // Get the aria label of the indicators button
+    const indicatorsAria = document
+        .querySelector('.highcharts-indicators > *')
+        ?.getAttribute('aria-label');
+
+    assert.strictEqual(
+        indicatorsAria,
+        'Indicators',
+        'Toolbar buttons should have aria labels'
+    );
+
     // Shorthand for selecting a button
     function selectButton(name, text = '') {
 
