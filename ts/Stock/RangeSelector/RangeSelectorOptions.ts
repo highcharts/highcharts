@@ -243,6 +243,7 @@ export interface RangeSelectorOptions {
     /**
      * Positioning for the button row.
      *
+     * @default {"align":"left","x":0,"y":0}
      * @since 1.2.4
      */
     buttonPosition: RangeSelectorPositionOptions;

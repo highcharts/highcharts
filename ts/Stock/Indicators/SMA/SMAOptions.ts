@@ -14,6 +14,7 @@
  * */
 
 import type LineSeriesOptions from '../../../Series/Line/LineSeriesOptions';
+import type { SeriesTooltipOptions } from '../../../Core/TooltipOptions';
 
 /* *
  *
@@ -39,6 +40,23 @@ import type LineSeriesOptions from '../../../Series/Line/LineSeriesOptions';
  * @interface Highcharts.SMAOptions
  */
 export interface SMAOptions extends LineSeriesOptions {
+    /**
+     * The main series ID that indicator will be based on. Required for this
+     * indicator.
+     */
+    linkedTo?: string;
+    /**
+     * The name of the series as shown in the legend, tooltip etc. If not
+     * set, it will be based on a technical indicator type and default
+     * params.
+     */
+    name?: string;
+    /**
+     * The tooltip options for the indicator series.
+     *
+     * @default {"valueDecimals":4}
+     */
+    tooltip?: Partial<SeriesTooltipOptions>;
     /**
      * Whether to compare indicator to the main series values
      * or indicator values.
