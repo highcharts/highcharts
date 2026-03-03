@@ -61,17 +61,17 @@ const {
     boxIntersectLine,
     intersectRect
 } = SLU;
-import U from '../../Core/Utilities.js';
 import { Palette } from '../../Core/Color/Palettes';
-const {
+import {
     addEvent,
     extend,
     fireEvent,
+    internalClearTimeout,
     isNumber,
     pick,
     pushUnique,
     syncTimeout
-} = U;
+} from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -983,7 +983,7 @@ function onChartRedraw(this: Chart, e: Event): void {
         chart.labelSeriesMaxSum = 0;
 
         if (chart.seriesLabelTimer) {
-            U.clearTimeout(chart.seriesLabelTimer);
+            internalClearTimeout(chart.seriesLabelTimer);
         }
 
         // Which series should have labels

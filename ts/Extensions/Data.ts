@@ -36,18 +36,18 @@ const { ajax } = HU;
 import Point from '../Core/Series/Point.js';
 import SeriesRegistry from '../Core/Series/SeriesRegistry.js';
 const { seriesTypes } = SeriesRegistry;
-import U from '../Core/Utilities.js';
-const {
+import {
     addEvent,
     defined,
     extend,
     fireEvent,
+    internalClearTimeout,
     isNumber,
     merge,
     objectEach,
     pick,
     splat
-} = U;
+} from '../Shared/Utilities.js';
 
 /* *
  *
@@ -420,7 +420,7 @@ class Data {
 
         // Always stop old polling when we have new options
         if (this.liveDataTimeout !== void 0) {
-            clearTimeout(this.liveDataTimeout);
+            internalClearTimeout(this.liveDataTimeout);
         }
 
         // This is a two-dimensional array holding the raw, trimmed string
@@ -1249,7 +1249,7 @@ class Data {
                 }
 
                 if (initialFetch) {
-                    clearTimeout(data.liveDataTimeout);
+                    internalClearTimeout(data.liveDataTimeout);
                     chart.liveDataURL = url;
                 }
 

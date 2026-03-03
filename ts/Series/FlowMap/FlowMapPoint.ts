@@ -34,12 +34,7 @@ const {
         }
     }
 } = SeriesRegistry;
-import U from '../../Core/Utilities.js';
-const {
-    pick,
-    isString,
-    isNumber
-} = U;
+import { isNumber, isString, pick } from '../../Shared/Utilities.js';
 
 /* *
  *
