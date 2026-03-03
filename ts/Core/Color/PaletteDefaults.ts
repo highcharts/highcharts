@@ -92,17 +92,33 @@ const palette: PaletteOptions = {
      */
     light: {
         /**
-         * Chart background, point stroke for markers and columns etc
+         * Chart background, point stroke for markers and columns etc. The
+         * background is also used as base for interpolated neutral and
+         * highlight colors.
          * @type {Highcharts.ColorType}
          */
         backgroundColor: '#ffffff',
         /**
-         * Strong text.
+         * Neutral color to be used as base for interpolated colors. For
+         * example, `var(--highcharts-neutral-color-60)` is a blend of the
+         * `neutralColor` and the `backgroundColor`, with a weight of 60%
+         * `neutralColor` and 40% `backgroundColor`.
+         *
+         * Neutral colors are by default used for basic text, lines, borders,
+         * basically most elements except the data itself, and highlighted
+         * elements.
          * @type {Highcharts.ColorType}
          */
         neutralColor: '#000000',
         /**
-         * Drilldown clickable labels, color axis max color.
+         * Highlight color to be used as base for interpolated colors. For
+         * example, `var(--highcharts-highlight-color-60)` is a blend of the
+         * `highlightColor` and the `backgroundColor`, with a weight of 60%
+         * `highlightColor` and 40% `backgroundColor`.
+         *
+         * Highlight colors are by default used for highlighted or active
+         * elements, like the zoom selection marker, clickable Stock Range
+         * Selector date input boxes, clickable drilldown labels and more.
          * @type {Highcharts.ColorType}
          */
         highlightColor: '#0022ff',
