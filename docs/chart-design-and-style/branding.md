@@ -8,8 +8,11 @@ Branding in Highcharts works best when you split it into layers:
    text colors, etc).
 3. Apply typography and credits customization for a complete branded result.
 
-The first two layers are both theme configuration and are typically done with
+All layers are theme configuration and are typically done with
 `Highcharts.setOptions`.
+
+<iframe style="width: 100%; height: 470px; border: none;"
+src="https://www.highcharts.com/samples/embed/highcharts/palette/branding" allow="fullscreen"></iframe>
 
 The palette layer (light and dark)
 ----------------------------------
@@ -21,35 +24,24 @@ light and dark palettes and can switch automatically based on user preference.
 Highcharts.setOptions({
     palette: {
         light: {
-            backgroundColor: '#ffffff',
-            neutralColor: '#171A21',
-            highlightColor: '#0057FF',
             colors: [
-                '#0057FF',
-                '#4E5AE8',
-                '#00A86B',
-                '#F26B1D',
-                '#C23D9A',
-                '#1E8AA8',
-                '#C0A000',
-                '#7D4CDB'
-            ]
+                '#e32412',
+                '#fadb8b',
+                '#2364b9',
+                '#059649'
+            ],
+            backgroundColor: '#f6f5f4',
+            highlightColor: '#e32412'
         },
-
         dark: {
-            backgroundColor: '#0F1115',
-            neutralColor: '#F3F5F8',
-            highlightColor: '#66A3FF',
             colors: [
-                '#66A3FF',
-                '#8C94FF',
-                '#37D39B',
-                '#FF9A57',
-                '#F48AE0',
-                '#6FD3ED',
-                '#F6D65B',
-                '#B39DFF'
-            ]
+                '#e32412',
+                '#fadb8b',
+                '#2364b9',
+                '#059649'
+            ],
+            backgroundColor: '#1b1918',
+            highlightColor: '#fadb8b'
         }
     }
 });
@@ -82,25 +74,26 @@ Highcharts.setOptions({
 
     // ... palette options ...
 
-    chart: {
-        backgroundColor: 'light-dark(#F7F9FC, #171A21)',
-        plotBackgroundColor: 'light-dark(#FFFFFF, #11151C)',
-        borderRadius: 10
+    // Define the colors and styles for the specific chart elements,
+    // extending the general palette
+    yAxis: {
+        // This is how to set a literal color
+        gridLineColor: '#888a'
     },
 
     title: {
         style: {
-            color: 'light-dark(#111827, #F3F4F6)'
+            // This is how to use a color from the palette
+            color: 'var(--highcharts-neutral-color-60)',
+            fontSize: '1.5em'
         }
     },
 
-    xAxis: {
-        gridLineColor: 'light-dark(#E5E7EB, #2A2E39)',
-        labels: {
-            style: {
-                color: 'light-dark(#4B5563, #D1D5DB)'
-            }
-        }
+    tooltip: {
+        borderWidth: 1,
+        // This is how to use the `light-dark` CSS function to set a color
+        // that adapts to light and dark mode
+        borderColor: 'light-dark(#fff, #666)'
     }
 });
 ```
@@ -132,7 +125,9 @@ Highcharts.setOptions({
 
     chart: {
         style: {
-            fontFamily: '"IBM Plex Sans", "Segoe UI", sans-serif'
+            // Arial Narrow serves as a proxy for the Morningstar corporate font
+            fontFamily: 'Arial Narrow, sans-serif',
+            fontSize: '1.2rem'
         }
     },
     title: {
@@ -167,7 +162,8 @@ Highcharts.setOptions({
             'style="height:12px;vertical-align:middle" />',
         style: {
             cursor: 'pointer'
-        }
+        },
+        useHTML: true
     }
 });
 ```
@@ -178,7 +174,8 @@ You can combine logo and text:
 credits: {
     href: 'https://example.com',
     text: '<img src="/assets/brand-mark.svg" alt="" ' +
-        'style="height:12px;vertical-align:middle" /> Example Analytics'
+        'style="height:12px;vertical-align:middle" /> Example Analytics',
+    useHTML: true
 }
 ```
 

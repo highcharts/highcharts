@@ -3071,7 +3071,8 @@ class Chart {
             this.credits = this.renderer.text(
                 creds.text + (this.mapCredits || ''),
                 0,
-                0
+                0,
+                creds.useHTML
             )
                 .addClass('highcharts-credits')
                 .on('click', function (e: PointerEvent): void {
@@ -4779,6 +4780,14 @@ namespace Chart {
          *         Custom URL and text
          */
         text?: string;
+
+        /**
+         * Whether to render the credits as HTML
+         *
+         * @since  next
+         * @sample highcharts/palette/branding
+         */
+        useHTML?: boolean;
 
     }
 
