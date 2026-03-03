@@ -43,11 +43,11 @@ import D from '../Defaults.js';
 const { defaultOptions } = D;
 import F from '../Templating.js';
 const { format } = F;
-import U from '../Utilities.js';
-const {
+import {
     addEvent,
     crisp,
     erase,
+    type EventWrapperObject,
     extend,
     fireEvent,
     getNestedProperty,
@@ -57,10 +57,10 @@ const {
     isObject,
     merge,
     pick,
-    syncTimeout,
     removeEvent,
-    uniqueKey
-} = U;
+    syncTimeout
+} from '../../Shared/Utilities.js';
+import { uniqueKey } from '../Utilities.js';
 
 /* *
  *
@@ -1909,7 +1909,7 @@ interface Point extends PointBase {
      */
     hcEvents?: Record<
         string,
-        Array<U.EventWrapperObject<Series>> & { userEvent?: boolean }
+        Array<EventWrapperObject<Series>> & { userEvent?: boolean }
     >;
 }
 

@@ -28,10 +28,9 @@ import type {
     StockToolsOptions
 } from './StockToolsOptions';
 
-import U from '../../Core/Utilities.js';
 import AST from '../../Core/Renderer/HTML/AST.js';
 import StockToolsUtilities from './StockToolsUtilities.js';
-const {
+import {
     addEvent,
     createElement,
     css,
@@ -41,7 +40,7 @@ const {
     isArray,
     merge,
     pick
-} = U;
+} from '../../Shared/Utilities.js';
 const {
     shallowArraysEqual
 } = StockToolsUtilities;
