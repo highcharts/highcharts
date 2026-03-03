@@ -59,8 +59,12 @@ const palette: PaletteOptions = {
     /**
      * Whether to inject the CSS for the dark and light mode. If not injected,
      * you need to include the CSS manually in your page or application, with
-     * the appropriate CSS variables. The default CSS is available in
-     * [css/highcharts.css](https://code.highcharts.com/css/highcharts.css).
+     * the appropriate CSS variables. A file with the default CSS variables is
+     * available at
+     * [css/highcharts-palette.css](https://code.highcharts.com/css/highcharts-palette.css).
+     *
+     * @sample     highcharts/palette/injectcss-false
+     *             Not injecting CSS variables, import file instead
      *
      * @type       {boolean}
      * @default    true
