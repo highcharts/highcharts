@@ -462,3 +462,36 @@ input.highcharts-input-search-indicators {
     border: 3px solid var(--highcharts-neutral-color-3, #f7f7f7);
     cursor: pointer;
 }
+
+@media (max-width: 480px) {
+    .highcharts-popup-color-wrapper {
+        display: grid;
+        grid-template-columns: 40px 1fr 55px;
+        grid-template-rows: auto auto;
+        height: auto;
+        gap: 8px;
+        align-items: center;
+    }
+
+    .highcharts-popup-color-wrapper .highcharts-popup-field-color {
+        grid-column: 1;
+        grid-row: 1;
+    }
+
+    .highcharts-popup-color-wrapper .highcharts-popup-field-text {
+        grid-column: 2 / -1;
+        grid-row: 1;
+        max-width: none;
+    }
+
+    .highcharts-popup-color-wrapper .highcharts-popup-opacity {
+        grid-column: 1 / 3;
+        grid-row: 2;
+        margin-left: 0;
+    }
+
+    .highcharts-popup-color-wrapper .highcharts-popup-opacity-number {
+        grid-column: 3;
+        grid-row: 2;
+    }
+}
