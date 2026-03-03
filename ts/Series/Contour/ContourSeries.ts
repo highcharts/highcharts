@@ -27,7 +27,7 @@ import Color from '../../Core/Color/Color.js';
 import ContourPoint from './ContourPoint.js';
 import contourShader from './contourShader.js';
 import ContourSeriesDefaults from './ContourSeriesDefaults.js';
-import CrossSymbols from '../CrossSymbols.js';
+import CrossSymbol from '../CrossSymbol.js';
 import Delaunay from '../../Core/Delaunay.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import U from '../../Core/Utilities.js';
@@ -68,7 +68,7 @@ export default class ContourSeries extends ScatterSeries {
     public static compose(
         SVGRendererClass: typeof SVGRenderer
     ): void {
-        CrossSymbols.compose(SVGRendererClass);
+        CrossSymbol.compose(SVGRendererClass);
     }
 
 
