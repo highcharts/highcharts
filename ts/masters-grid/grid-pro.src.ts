@@ -31,7 +31,7 @@ import DataTable from '../Data/DataTable.js';
 import Defaults from '../Grid/Core/Defaults.js';
 import Globals from '../Grid/Core/Globals.js';
 import whcm from '../Accessibility/HighContrastMode.js';
-import Utilities from '../Core/Utilities.js';
+import { merge } from '../Shared/Utilities.js';
 
 import Table from '../Grid/Core/Table/Table.js';
 import Column from '../Grid/Core/Table/Column.js';
@@ -127,7 +127,7 @@ const G = {
     grids: _Grid.grids,
     HeaderCell,
     isHighContrastModeActive: whcm.isHighContrastModeActive,
-    merge: Utilities.merge,
+    merge: merge,
     Pagination,
     Popup,
     product: 'Grid Pro',
@@ -187,7 +187,6 @@ export const {
     grid,
     grids,
     isHighContrastModeActive,
-    merge,
     product,
     setOptions,
     version,

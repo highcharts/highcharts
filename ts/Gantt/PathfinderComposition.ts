@@ -30,12 +30,8 @@ import type PositionObject from '../Core/Renderer/PositionObject';
 import ConnectorsDefaults from './ConnectorsDefaults.js';
 import D from '../Core/Defaults.js';
 const { setOptions } = D;
-import U from '../Core/Utilities.js';
-const {
-    defined,
-    error,
-    merge
-} = U;
+import { defined, merge } from '../Shared/Utilities.js';
+import { error } from '../Core/Utilities.js';
 
 /* *
  *

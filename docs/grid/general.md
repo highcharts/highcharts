@@ -51,7 +51,7 @@ Let's dive right in with a bare minimum example of a fully functional **Grid Lit
 
 Import the required JS and CSS from our public CDN. The [Installation article](https://www.highcharts.com/docs/grid/installation) provides more information and other installation options.
 
-The CSS includes the necessary styles for the grid to function correctly and the default style theme. For more information on custom theming, see [the article on theming](https://www.highcharts.com/docs/grid/theming/theming).
+The CSS includes the necessary styles for the grid to function correctly and the default style theme. For more information on custom theming, see [the article on theming](https://www.highcharts.com/docs/grid/theming/index).
 
 ### 2. Configure the grid
 
@@ -72,7 +72,7 @@ Inside the `<script>` tag, create a new instance of Grid by utilizing the `Grid.
 1. The ID of the HTML element where Grid should be rendered.
 2. The Grid configuration object.
 
-Only `data.columns` is required for Grid to be rendered. For more information on the configuration object, read the [Understanding Grid](https://www.highcharts.com/docs/grid/understanding-grid) article.
+Only the `data.columns` option is required for Grid to be rendered. For more information on the configuration object, read the [Understanding Grid](https://www.highcharts.com/docs/grid/understanding-grid) article.
 
 ### 3. Add the HTML Element
 

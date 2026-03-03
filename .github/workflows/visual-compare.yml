@@ -21,12 +21,12 @@ jobs:
   file_size_comparison:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           ref: master
 
       - name: Use Node.js lts/*
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: 'lts/*'
           cache: 'npm'
@@ -50,13 +50,13 @@ jobs:
         run: npx gulp write-file-sizes --filename master.json
 
       - name: Checkout current branch
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           clean: false
           fetch-depth: 0
 
       - name: Use Node.js lts/*
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: 'lts/*'
           cache: 'npm'
@@ -85,7 +85,7 @@ jobs:
 
       - name: Comment PR with file size table
         if: ${{ github.event.pull_request.number && hashFiles('tmp/filesizes/comparison.md') != '' }}
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           github-token: ${{secrets.PR_COMMENT_TOKEN}}
           script: |
@@ -115,7 +115,7 @@ jobs:
 
       - name: Upload file size comparison artifact
         if: ${{ always() && hashFiles('tmp/filesizes/comparison.md') != '' }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: filesize-comparison-${{ github.event.pull_request.number || github.run_id }}
           path: |
@@ -131,12 +131,12 @@ jobs:
       matrix:
         node-version: [lts/*]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           ref: master
 
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
@@ -153,13 +153,13 @@ jobs:
       - run: npx karma start test/karma-conf.js --tests gantt/*/* --ts --reference --browsercount 2 --no-fail-on-empty-test-suite
 
       - name: Checkout current branch
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           clean: false
           fetch-depth: 0
 
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
@@ -220,7 +220,7 @@ jobs:
           PR_NUMBER: ${{github.event.pull_request.number}}
 
       - name: Comment on PR
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         if: ${{ always() && hashFiles('tmp/pr-visual-test-comment.json') != '' }}
         with:
           github-token: ${{secrets.PR_COMMENT_TOKEN}}
@@ -256,7 +256,7 @@ jobs:
 
 
       - name: Store artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         if: ${{ always() }}
         with:
           name: visual-test-results

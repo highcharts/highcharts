@@ -152,7 +152,7 @@ To style the dashboard's **Grid Component** `div` and its content:
 }
 ```
 
-For detailed guidance on styling the Grid component, refer to the [Introduction to Theming](https://www.highcharts.com/docs/grid/theming/theming) article.
+For detailed guidance on styling the Grid component, refer to the [Introduction to Theming](https://www.highcharts.com/docs/grid/theming/index) article.
 
 ### HTML component
 Since the user defines the whole structure of the HTML component, it differs between use cases.

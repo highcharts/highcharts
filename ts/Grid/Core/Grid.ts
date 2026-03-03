@@ -43,30 +43,27 @@ import type { DeepPartial } from '../../Shared/Types';
 import Accessibility from './Accessibility/Accessibility.js';
 import AST from '../../Core/Renderer/HTML/AST.js';
 import DataProviderRegistry from './Data/DataProviderRegistry.js';
+import DataTable from '../../Data/DataTable.js';
 import { defaultOptions } from './Defaults.js';
-import GridUtils from './GridUtils.js';
+import {
+    makeHTMLElement,
+    setHTMLContent,
+    createOptionsProxy
+} from './GridUtils.js';
 import Table from './Table/Table.js';
-import U from '../../Core/Utilities.js';
 import QueryingController from './Querying/QueryingController.js';
 import Globals from './Globals.js';
 import TimeBase from '../../Shared/TimeBase.js';
 import Pagination from './Pagination/Pagination.js';
-import DataTable from '../../Data/DataTable.js';
-
-const {
-    makeHTMLElement,
-    setHTMLContent,
-    createOptionsProxy
-} = GridUtils;
-
-const {
+import {
     defined,
     diffObjects,
     extend,
     fireEvent,
     merge,
     pick
-} = U;
+} from '../../Shared/Utilities.js';
+import { uniqueKey } from '../../Core/Utilities.js';
 
 
 /* *
@@ -340,7 +337,7 @@ export class Grid {
         this.renderTo = renderTo;
 
         this.loadUserOptions(options);
-        this.id = this.options?.id || U.uniqueKey();
+        this.id = this.options?.id || uniqueKey();
         this.querying = new QueryingController(this);
         this.locale = this.options?.lang?.locale || (
             (this.container?.closest('[lang]') as HTMLElement | null)?.lang

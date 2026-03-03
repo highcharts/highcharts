@@ -20,7 +20,8 @@ Grid.grid('container', {
                 null,
                 Date.UTC(2023, 0, 4)
             ],
-            thousands: [12452.4524, 6612.34444, 1234, 2345.6]
+            thousands: [12452.4524, 6612.34444, 1234, 2345.6],
+            formatterNumber: [6, 5, 4, 3]
         }
     },
     columns: [{
@@ -56,6 +57,13 @@ Grid.grid('container', {
         header: {
             formatter: function () {
                 return '';
+            }
+        }
+    }, {
+        id: 'formatterNumber',
+        cells: {
+            formatter: function () {
+                return this.row.data.int;
             }
         }
     }]
