@@ -512,20 +512,23 @@ specified by config.imageCapture.resultsOutputPath.
             const products = argv.modified ? getProducts() : (argv.product ? [argv.product] : null);
             const prods = products?.length ? products : ['Core'];
             const hasGrid = prods.includes('Grid');
+
             const hasDashboards = prods.includes('Dashboards');
             const hasHC = prods.some(p => ['Core', 'Stock', 'Maps', 'Gantt', 'Accessibility'].includes(p));
             if (argv.modified && prods.length === 1) {
                 argv.product = prods[0];
             }
 
-            const gridProj = ['setup-grid-lite', 'setup-grid-pro', 'grid-lite', 'grid-pro', 'grid-shared'];
+            const gridLiteProj = ['grid-lite', 'grid-shared'];
+            const gridProProj = ['grid-pro'];
             const dashProj = ['setup-dashboards', 'dashboards'];
             const hcProj = ['setup-highcharts', 'highcharts', 'qunit'];
             const a11yProj = ['setup-highcharts', 'qunit'];
 
             const commands = [];
             if (hasGrid) {
-                commands.push({ projects: gridProj, grep: '' });
+                commands.push({ projects: gridLiteProj, grep: '' });
+                commands.push({ projects: gridProProj, grep: '' });
             }
             if (hasDashboards) {
                 commands.push({ projects: dashProj, grep: '' });
