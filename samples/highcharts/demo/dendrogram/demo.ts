@@ -40,7 +40,9 @@ Highcharts.chart('container', {
         enabled: false
     },
     exporting: {
-        allowHTML: true
+        allowHTML: true,
+        sourceWidth: 800,
+        sourceHeight: 400
     },
     series: [
         {
