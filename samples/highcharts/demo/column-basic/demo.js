@@ -3,12 +3,14 @@ Highcharts.chart('container', {
         type: 'column'
     },
     title: {
-        text: 'Corn vs wheat estimated production for 2023'
+        text: 'Corn vs wheat estimated production for 2023',
+        align: 'left'
     },
     subtitle: {
         text:
             'Source: <a target="_blank" ' +
-            'href="https://www.indexmundi.com/agriculture/?commodity=corn">indexmundi</a>'
+            'href="https://www.indexmundi.com/agriculture/?commodity=corn">indexmundi</a>',
+        align: 'left'
     },
     xAxis: {
         categories: ['USA', 'China', 'Brazil', 'EU', 'Argentina', 'India'],
@@ -24,11 +26,12 @@ Highcharts.chart('container', {
         }
     },
     tooltip: {
-        valueSuffix: ' (1000 MT)'
+        valueSuffix: ' (1000 MT)',
+        shared: true
     },
     plotOptions: {
         column: {
-            pointPadding: 0.2,
+            pointPadding: 0.1,
             borderWidth: 0
         }
     },
