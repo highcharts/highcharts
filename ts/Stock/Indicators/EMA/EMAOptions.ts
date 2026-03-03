@@ -51,6 +51,8 @@ export interface EMAParamsOptions extends SMAParamsOptions {
      * Highcharts Stock 7 by default index is set to 3
      * which means that the ema indicator will be
      * calculated using Close values.
+     *
+     * @default 3
      */
     index?: number;
 }

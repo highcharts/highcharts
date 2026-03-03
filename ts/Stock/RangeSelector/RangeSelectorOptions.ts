@@ -39,24 +39,28 @@ declare module '../../Core/Options'{
          * selector. Since v9.0, this string is empty as the label is not
          * rendered by default.
          *
+         * @default ""
          * @product highstock gantt
          */
         rangeSelectorFrom?: string;
         /**
          * The text for the label for the "to" input box in the range selector.
          *
+         * @default →
          * @product highstock gantt
          */
         rangeSelectorTo?: string;
         /**
          * The text for the label for the range selector buttons.
          *
+         * @default Zoom
          * @product highstock gantt
          */
         rangeSelectorZoom?: string;
         /**
          * The default text for the rangeselector buttons.
          *
+         * @default {"allText":"All","allTitle":"View all","monthText":"{count}m","monthTitle":"View {count} {#eq count 1}month{else}months{/eq}","yearText":"{count}y","yearTitle":"View {count} {#eq count 1}year{else}years{/eq}","ytdText":"YTD","ytdTitle":"View year to date"}
          * @since 12.2.0
          */
         rangeSelector?: Partial<Record<RangeSelectorButtonLangKey, string>>;
@@ -231,6 +235,7 @@ export interface RangeSelectorOptions {
      * @sample {highstock} stock/rangeselector/allbuttonsenabled-true/
      *         All buttons enabled
      *
+     * @default   false
      * @since     2.0.3
      */
     allButtonsEnabled: boolean;
@@ -286,6 +291,8 @@ export interface RangeSelectorOptions {
 
     /**
      * The space in pixels between the buttons in the range selector.
+     *
+     * @default 5
      */
     buttonSpacing: number;
 
@@ -322,6 +329,7 @@ export interface RangeSelectorOptions {
      * @sample {highstock} stock/rangeselector/dropdown/
      *         Dropdown option
      *
+     * @default "responsive"
      * @validvalue ["always", "responsive", "never"]
      * @since 9.0.0
      */
@@ -346,6 +354,7 @@ export interface RangeSelectorOptions {
      *         Placing the range selector between the plot area and the
      *         navigator
      *
+     * @default false
      * @since 6.0.0
      */
     floating: boolean;
@@ -365,6 +374,7 @@ export interface RangeSelectorOptions {
      * @sample {highstock} stock/rangeselector/styling/
      *         Styling the buttons and inputs
      *
+     * @default none
      * @since     1.3.7
      */
     inputBoxBorderColor: ColorString;
@@ -375,6 +385,7 @@ export interface RangeSelectorOptions {
      * @sample {highstock} stock/rangeselector/styling/
      *         Styling the buttons and inputs
      *
+     * @default   17
      * @since     1.3.7
      */
     inputBoxHeight: number;
@@ -403,6 +414,8 @@ export interface RangeSelectorOptions {
      *         Input types
      * @sample {highstock} stock/rangeselector/input-format/
      *         Milliseconds in the range selector
+     *
+     * @default   %e %b %Y
      */
     inputDateFormat: Time.DateTimeFormat;
 
@@ -435,11 +448,15 @@ export interface RangeSelectorOptions {
      *
      * @sample {highstock} stock/rangeselector/input-format/
      *         Milliseconds in the range selector
+     *
+     * @default   %Y-%m-%d
      */
     inputEditDateFormat: string;
 
     /**
      * Enable or disable the date input boxes.
+     *
+     * @default true
      */
     inputEnabled: boolean;
 
@@ -447,6 +464,7 @@ export interface RangeSelectorOptions {
      * Positioning for the input boxes. Allowed properties are `align`,
      *  `x` and `y`.
      *
+     * @default {"align":"right","x":0,"y":0}
      * @since 1.2.4
      */
     inputPosition: RangeSelectorPositionOptions;
@@ -455,6 +473,7 @@ export interface RangeSelectorOptions {
      * The space in pixels between the labels and the date input boxes in
      * the range selector.
      *
+     * @default 5
      * @since 9.0.0
      */
     inputSpacing: number;
@@ -501,6 +520,7 @@ export interface RangeSelectorOptions {
      * @sample {highstock} stock/rangeselector/vertical-align-bottom/
      *         Bottom
      *
+     * @default top
      * @since 6.0.0
      */
     verticalAlign: VerticalAlignValue;
@@ -509,6 +529,7 @@ export interface RangeSelectorOptions {
      * The x offset of the range selector relative to its horizontal
      * alignment within `chart.spacingLeft` and `chart.spacingRight`.
      *
+     * @default 0
      * @since 6.0.0
      */
     x: number;
@@ -517,6 +538,7 @@ export interface RangeSelectorOptions {
      * The y offset of the range selector relative to its horizontal
      * alignment within `chart.spacingLeft` and `chart.spacingRight`.
      *
+     * @default 0
      * @since 6.0.0
      */
     y: number;

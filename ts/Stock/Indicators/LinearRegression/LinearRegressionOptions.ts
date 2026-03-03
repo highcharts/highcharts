@@ -87,6 +87,7 @@ export interface LinearRegressionParamsOptions extends SMAParamsOptions {
      * // indicator's point will be `2.3148148148148148e-8` which is
      * // harder to interpret for a human.
      *
+     * @default null
      * @product highstock
      */
     xAxisUnit?: null|number;

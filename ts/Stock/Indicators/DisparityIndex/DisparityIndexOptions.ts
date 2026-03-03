@@ -55,6 +55,8 @@ export interface DisparityIndexParamsOptions extends SMAParamsOptions {
      *
      * If value is different than `ema`, `dema`, `tema` or `wma`,
      * then sma is used.
+     *
+     * @default sma
      */
     average: 'sma'|'ema'|'dema'|'tema'|'wma';
 }
