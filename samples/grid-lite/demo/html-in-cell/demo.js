@@ -3,7 +3,7 @@ Grid.AST.allowedAttributes.push('checked');
 Grid.grid('container', {
     dataTable: {
         columns: {
-            Id: [1, 2, 3],
+            ID: [1, 2, 3],
             Header: ['Title 1', 'Title 2', 'Title 3'],
             Description: [
                 `Loreum ipsum dolor sit amet, consectetur adipiscing elit.
@@ -29,6 +29,9 @@ Grid.grid('container', {
         }
     },
     columns: [{
+        id: 'ID',
+        width: 60
+    }, {
         id: 'Header',
         cells: {
             format: '<h2>{value}</h2>'

@@ -1,0 +1,41 @@
+name: Grid Test
+
+on:
+  push:
+    branches: ['master', 'grid/**']
+  pull_request:
+    branches: ['master', 'grid/**']
+    paths:
+      - '.github/workflows/grid-test.yml'
+      - 'css/grid*'
+      - 'samples/grid-lite/**'
+      - 'samples/grid-pro/**'
+      - 'ts/Data/**'
+      - 'ts/Grid/**'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  grid_playwright:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 'lts/*'
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm i
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Run Grid Tests
+        run: npx playwright test --project=setup-highcharts --project=setup-dashboards --project=dashboards --grep grid

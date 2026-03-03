@@ -4,13 +4,12 @@
  *
  * */
 
-import type AnnotationOptions from './AnnotationOptions';
+import type { AnnotationOptions, AnnotationTypeOptions } from './AnnotationOptions';
 import type { AnnotationPoint } from './AnnotationSeries';
 import type ControlPointOptions from './ControlPointOptions';
 
 import { Palette } from '../../Core/Color/Palettes.js';
-import U from '../../Core/Utilities.js';
-const { defined } = U;
+import { defined } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -43,9 +42,16 @@ const { defined } = U;
  * @since        6.0.0
  * @requires     modules/annotations
  * @optionparent annotations
+ * @internal
  */
-
 const AnnotationDefaults: AnnotationOptions = {
+    /**
+     * A class name for styling by CSS.
+     *
+     * @since 12.5.0
+     * @type      {string}
+     * @apioption annotations.className
+     */
 
     /**
      * Sets an ID for an annotation. Can be user later when
@@ -157,13 +163,12 @@ const AnnotationDefaults: AnnotationOptions = {
         allowOverlap: false,
 
         /**
-         * The background color or gradient for the annotation's
-         * label.
+         * The background color or gradient for the annotation's label.
          *
          * @sample highcharts/annotations/label-presentation/
          *         Set labels graphic options
          *
-         * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @type {Highcharts.ColorType}
          */
         backgroundColor: 'rgba(0, 0, 0, 0.75)',
 
@@ -173,7 +178,7 @@ const AnnotationDefaults: AnnotationOptions = {
          * @sample highcharts/annotations/label-presentation/
          *         Set labels graphic options
          *
-         * @type {Highcharts.ColorString}
+         * @type {Highcharts.ColorType}
          */
         borderColor: Palette.neutralColor100,
 
@@ -186,7 +191,7 @@ const AnnotationDefaults: AnnotationOptions = {
         borderRadius: 3,
 
         /**
-         * The border width in pixels for the annotation's label
+         * The border width in pixels for the annotation's label.
          *
          * @sample highcharts/annotations/label-presentation/
          *         Set labels graphic options
@@ -227,7 +232,7 @@ const AnnotationDefaults: AnnotationOptions = {
          * [format](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting)
          * string for the data label.
          *
-         * @see [plotOptions.series.dataLabels.format](plotOptions.series.dataLabels.format.html)
+         * @see [plotOptions.series.dataLabels.format](#plotOptions.series.dataLabels.format)
          *
          * @sample highcharts/annotations/label-text/
          *         Set labels text
@@ -239,7 +244,7 @@ const AnnotationDefaults: AnnotationOptions = {
         /**
          * Alias for the format option.
          *
-         * @see [format](annotations.labelOptions.format.html)
+         * @see [format](#annotations.labelOptions.format)
          *
          * @sample highcharts/annotations/label-text/
          *         Set labels text
@@ -267,8 +272,8 @@ const AnnotationDefaults: AnnotationOptions = {
         },
 
         /**
-         * Whether the annotation is visible in the exported data
-         * table.
+         * Whether all the labels for an annotation are visible in the exported
+         * data table.
          *
          * @sample highcharts/annotations/include-in-data-export/
          *         Do not include in the data export
@@ -330,6 +335,7 @@ const AnnotationDefaults: AnnotationOptions = {
          *         Set labels graphic options
          *
          * @type {Highcharts.CSSObject}
+         * @default {"fontSize": "0.7em", "fontWeight": "normal", "color": "contrast"}
          */
         style: {
             /** @ignore */
@@ -388,6 +394,17 @@ const AnnotationDefaults: AnnotationOptions = {
      */
 
     /**
+     * The array of control points.
+     *
+     * @sample highcharts/annotations/ellipse
+     *         Ellipse annotation
+     *
+     * @extends annotations.controlPointOptions
+     * @type {Array<AnnotationControlPointOptionsObject>}
+     * @apioption annotations.labels.controlPoints
+     */
+
+    /**
      * This option defines the point to which the label will be
      * connected. It can be either the point which exists in the
      * series - it is referenced by the point's id - or a new point
@@ -398,12 +415,7 @@ const AnnotationDefaults: AnnotationOptions = {
      * @sample highcharts/annotations/mock-points/
      *         Attach annotation to a mock point with different ways
      *
-     * @declare   Highcharts.AnnotationMockPointOptionsObject
-     * @type      {
-     *               string|
-     *               Highcharts.AnnotationMockPointOptionsObject|
-     *               Highcharts.AnnotationMockPointFunction
-     *            }
+     * @type      {Highcharts.AnnotationMockPointOptions}
      * @requires  modules/annotations
      * @apioption annotations.labels.point
      */
@@ -419,6 +431,17 @@ const AnnotationDefaults: AnnotationOptions = {
      */
 
     /**
+     * The array of control points.
+     *
+     * @sample highcharts/annotations-advanced/controllable-image
+     *         Controllable image annotation
+     *
+     * @extends annotations.controlPointOptions
+     * @type {Array<AnnotationControlPointOptionsObject>}
+     * @apioption annotations.shapes.controlPoints
+     */
+
+    /**
      * This option defines the point to which the shape will be
      * connected. It can be either the point which exists in the
      * series - it is referenced by the point's id - or a new point
@@ -427,12 +450,7 @@ const AnnotationDefaults: AnnotationOptions = {
      * @sample highcharts/annotations/mock-points/
      *         Attach annotation to a mock point with different ways
      *
-     * @declare   Highcharts.AnnotationMockPointOptionsObject
-     * @type      {
-     *               string|
-     *               Highcharts.AnnotationMockPointOptionsObject|
-     *               Highcharts.AnnotationMockPointFunction
-     *            }
+     * @type      {Highcharts.AnnotationMockPointOptions}
      * @extends   annotations.labels.point
      * @requires  modules/annotations
      * @apioption annotations.shapes.point
@@ -446,30 +464,18 @@ const AnnotationDefaults: AnnotationOptions = {
      * for shapes which can use multiple points such as path. A
      * point can be either a point object or a point's id.
      *
-     * @see [annotations.shapes.point](annotations.shapes.point.html)
+     * @see [annotations.shapes.point](#annotations.shapes.point)
      *
-     * @type      {Array<Highcharts.AnnotationShapePointOptions>}
+     * @type      {Array<Highcharts.AnnotationMockPointOptions>}
      * @extends   annotations.labels.point
      * @apioption annotations.shapes.points
-     */
-
-    /**
-     * The URL for an image to use as the annotation shape. Note,
-     * type has to be set to `'image'`.
-     *
-     * @see [annotations.shapes.type](annotations.shapes.type)
-     * @sample highcharts/annotations/shape-src/
-     *         Define a marker image url for annotations
-     *
-     * @type      {string}
-     * @apioption annotations.shapes.src
      */
 
     /**
      * Id of the marker which will be drawn at the final vertex of
      * the path. Custom markers can be defined in defs property.
      *
-     * @see [defs.markers](defs.markers.html)
+     * @see [defs.markers](#defs.markers)
      *
      * @sample highcharts/annotations/custom-markers/
      *         Define a custom marker for annotations
@@ -482,7 +488,7 @@ const AnnotationDefaults: AnnotationOptions = {
      * Id of the marker which will be drawn at the first vertex of
      * the path. Custom markers can be defined in defs property.
      *
-     * @see [defs.markers](defs.markers.html)
+     * @see [defs.markers](#defs.markers)
      *
      * @sample {highcharts} highcharts/annotations/custom-markers/
      *         Define a custom marker for annotations
@@ -502,9 +508,9 @@ const AnnotationDefaults: AnnotationOptions = {
     shapeOptions: {
 
         /**
-         *
-         * The radius of the shape in y direction.
-         * Used for the ellipse.
+         * The radius of the `ellipse` shape in y direction. Can be defined in
+         * pixels or yAxis units, if
+         * [shapes.yAxis](#annotations.shapeOptions.yAxis) index is defined.
          *
          * @sample highcharts/annotations/ellipse/
          *         Ellipse annotation
@@ -514,25 +520,42 @@ const AnnotationDefaults: AnnotationOptions = {
          **/
 
         /**
+         * The xAxis index which should be used for annotation's sizes and
+         * points coordinates conversion.
          *
-         * The xAxis index to which the points should be attached.
-         * Used for the ellipse.
+         * This option is used for `rect` shape
+         * [width](#annotations.shapeOptions.width), and all shapes
+         * [point](#annotations.shapes.point) and
+         * [points](#annotations.shapes.points) coordinates.
          *
+         * @sample highcharts/annotations/shapes-axis-units/
+         *         Shapes created with axis units
          * @type      {number}
          * @apioption annotations.shapeOptions.xAxis
          **/
 
         /**
-         * The yAxis index to which the points should be attached.
-         * Used for the ellipse.
+         * The yAxis index which should be used for annotation's sizes and
+         * points coordinates conversion.
          *
+         * This option is used for `rect` shape
+         * [height](#annotations.shapeOptions.height), `circle` shape
+         * [radius](#annotations.shapeOptions.r), `ellipse`
+         * [y direction radius](#annotations.shapeOptions.ry), and all shapes
+         * [point](#annotations.shapes.point) and
+         * [points](#annotations.shapes.points) coordinates.
+         *
+         * @sample highcharts/annotations/shapes-axis-units/
+         *         Shapes created with axis units
          * @type      {number}
          * @apioption annotations.shapeOptions.yAxis
          **/
 
 
         /**
-         * The width of the shape.
+         * The width of the `rect` shape. Can be defined in pixels or xAxis
+         * units, if [shapes.xAxis](#annotations.shapeOptions.xAxis) index is
+         * defined.
          *
          * @sample highcharts/annotations/shape/
          *         Basic shape annotation
@@ -542,7 +565,9 @@ const AnnotationDefaults: AnnotationOptions = {
          **/
 
         /**
-         * The height of the shape.
+         * The height of the `rect` shape. Can be defined in pixels or yAxis
+         * units, if [shapes.yAxis](#annotations.shapeOptions.yAxis) index is
+         * defined.
          *
          * @sample highcharts/annotations/shape/
          *         Basic shape annotation
@@ -553,7 +578,7 @@ const AnnotationDefaults: AnnotationOptions = {
 
         /**
          * The type of the shape.
-         * Available options are circle, rect and ellipse.
+         * Available options are `circle`, `rect`, `ellipse` and `path`.
          *
          * @sample highcharts/annotations/shape/
          *         Basic shape annotation
@@ -570,7 +595,8 @@ const AnnotationDefaults: AnnotationOptions = {
          * The URL for an image to use as the annotation shape.
          * Note, type has to be set to `'image'`.
          *
-         * @see [annotations.shapeOptions.type](annotations.shapeOptions.type)
+         * @see [annotations.shapeOptions.type](#annotations.shapeOptions.type)
+         *
          * @sample highcharts/annotations/shape-src/
          *         Define a marker image url for annotations
          *
@@ -594,7 +620,7 @@ const AnnotationDefaults: AnnotationOptions = {
          * @sample highcharts/annotations/shape/
          *         Basic shape annotation
          *
-         * @type {Highcharts.ColorString}
+         * @type {Highcharts.ColorType}
          */
         stroke: 'rgba(0, 0, 0, 0.75)',
 
@@ -612,12 +638,14 @@ const AnnotationDefaults: AnnotationOptions = {
          * @sample highcharts/annotations/shape/
          *         Basic shape annotation
          *
-         * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @type {Highcharts.ColorType}
          */
         fill: 'rgba(0, 0, 0, 0.75)',
 
         /**
-         * The radius of the shape.
+         * The radius of the `circle` shape. Can be defined in pixels or yAxis
+         * units, if [shapes.yAxis](#annotations.shapeOptions.yAxis) index is
+         * defined.
          *
          * @sample highcharts/annotations/shape/
          *         Basic shape annotation
@@ -720,6 +748,83 @@ const AnnotationDefaults: AnnotationOptions = {
     events: {},
 
     /**
+     *
+     * Additional options for an annotation with the type.
+     *
+     * @requires  modules/annotations
+     * @apioption annotations.typeOptions
+     */
+    typeOptions: {
+
+        /**
+         * Background shape options for the annotation.
+         *
+         * @extends annotations.shapeOptions
+         * @apioption annotations.typeOptions.background
+         */
+
+        /**
+         * Height of the annotation in pixels.
+         *
+         * @type {number}
+         * @apioption annotations.typeOptions.height
+         */
+
+        /**
+         * Line options.
+         *
+         * @extends annotations.shapeOptions
+         * @apioption annotations.typeOptions.line
+         */
+
+        /**
+         * A single point that the annotation is attached to. It can be either
+         * the point which exists in the series - it is referenced by the
+         * point's id - or a new point with defined x, y properties
+         * and optionally axes.
+         *
+         * @type {string | Highcharts.AnnotationMockPointOptionsObject}
+         * @apioption annotations.typeOptions.point
+         */
+
+        /**
+         * An array of points that the annotation is attached to. Each point can
+         * the point which exists in the series - it is referenced by the
+         * point's id - or a new point with defined x, y properties
+         * and optionally axes.
+         *
+         * @type {Array<(string | Highcharts.AnnotationMockPointOptionsObject)>}
+         * @apioption annotations.typeOptions.points
+         */
+
+        /**
+         * The annotation type identifier.
+         *
+         * @type {string}
+         * @apioption annotations.typeOptions.type
+         */
+
+        /**
+         * This number defines which `xAxis` the point is connected to.
+         * It refers to either the axis id or the index of the axis
+         * in the `xAxis` array.
+         *
+         * @type {number}
+         * @apioption annotations.typeOptions.xAxis
+         */
+
+        /**
+         * This number defines which `yAxis` the point is connected to.
+         * It refers to either the axis id or the index of the axis
+         * in the `yAxis` array.
+         *
+         * @type {number}
+         * @apioption annotations.typeOptions.yAxis
+         */
+
+    } as AnnotationTypeOptions,
+
+    /**
      * Option override for specific advanced annotation types. This collection
      * is intended for general theming using `Highcharts.setOptions()`.
      *
@@ -743,4 +848,5 @@ const AnnotationDefaults: AnnotationOptions = {
  *
  * */
 
+/** @internal */
 export default AnnotationDefaults;

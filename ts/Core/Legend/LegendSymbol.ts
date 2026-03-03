@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Honsi
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -16,6 +17,7 @@
  *
  * */
 
+import type ColorType from '../Color/ColorType';
 import type Legend from './Legend';
 import type LegendItem from './LegendItem';
 import type Point from '../Series/Point';
@@ -24,12 +26,7 @@ import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 import type SymbolOptions from '../Renderer/SVG/SymbolOptions';
 
-import U from '../Utilities.js';
-const {
-    extend,
-    merge,
-    pick
-} = U;
+import { extend, merge, pick } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -37,26 +34,65 @@ const {
  *
  * */
 
-declare module '../Axis/AxisLike' {
-    interface AxisLike extends LegendItem {
+declare module '../Axis/AxisBase' {
+    interface AxisBase extends LegendItem {
         // Nothing to add
     }
 }
 
-declare module '../Series/PointLike' {
-    interface PointLike extends LegendItem {
+declare module '../Series/PointBase' {
+    interface PointBase extends LegendItem {
         // Nothing to add
     }
 }
 
-declare module '../Series/SeriesLike' {
-    interface SeriesLike extends LegendItem {
+declare module '../Series/SeriesBase' {
+    interface SeriesBase extends LegendItem {
+        /**
+         * Legend data for the series.
+         *
+         * @since 10.3.0
+         */
+        legendItem?: LegendItem['legendItem'];
+
+        /** @internal */
         drawLegendSymbol: (
             legend: Legend,
             item: (Point|Series)
         ) => void;
     }
 }
+
+declare module '../Series/SeriesOptions' {
+    interface SeriesOptions {
+        /**
+         * What type of legend symbol to render for this series. Can be one of
+         * `areaMarker`, `lineMarker` or `rectangle`.
+         *
+         * @sample {highcharts} highcharts/series/legend-symbol/
+         *         Change the legend symbol
+         *
+         * @default 'rectangle'
+         * @since   11.0.1
+         */
+        legendSymbol?: LegendSymbolType;
+
+        /**
+         * Defines the color of the legend symbol for this series. Defaults to
+         * undefined, in which case the series color is used. Does not work with
+         * styled mode.
+         *
+         * @sample {highcharts|highstock} highcharts/series/legend-symbol-color/
+         *         Change the legend symbol color
+         *
+         * @since   12.0.0
+         * @product highcharts highstock highmaps
+         */
+        legendSymbolColor?: ColorType;
+    }
+}
+
+export type LegendSymbolType = ('areaMarker' | 'lineMarker' | 'rectangle');
 
 /* *
  *
@@ -65,16 +101,16 @@ declare module '../Series/SeriesLike' {
  * */
 
 namespace LegendSymbol {
+
     /* *
-    *
-    *  Functions
-    *
-    * */
+     *
+     *  Functions
+     *
+     * */
 
     /**
      * Draw a line, a point marker and an area in the legend.
      *
-     * @private
      * @function Highcharts.LegendSymbolMixin.areaMarker
      *
      * @param {Highcharts.Legend} legend
@@ -91,7 +127,6 @@ namespace LegendSymbol {
     /**
      * Draw a line and a point marker in the legend.
      *
-     * @private
      * @function Highcharts.LegendSymbolMixin.lineMarker
      *
      * @param {Highcharts.Legend} legend
@@ -210,7 +245,6 @@ namespace LegendSymbol {
      * This method should be overridable to create custom symbols through
      * Highcharts.seriesTypes[type].prototype.drawLegendSymbol.
      *
-     * @private
      * @function Highcharts.LegendSymbolMixin.rectangle
      *
      * @param {Highcharts.Legend} legend

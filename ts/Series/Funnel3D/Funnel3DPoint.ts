@@ -2,13 +2,13 @@
  *
  *  Highcharts funnel3d series module
  *
- *  (c) 2010-2025 Highsoft AS
+ *  (c) 2010-2026 Highsoft AS
  *
  *  Author: Kacper Madej
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -23,13 +23,12 @@
 import type Funnel3DPointOptions from './Funnel3DPointOptions';
 import type Funnel3DSeries from './Funnel3DSeries';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+import { extend } from '../../Shared/Utilities.js';
 const {
     seriesTypes: {
         column: ColumnSeries
     }
 } = SeriesRegistry;
-import U from '../../Core/Utilities.js';
-const { extend } = U;
 
 /* *
  *

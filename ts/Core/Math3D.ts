@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Honsi
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -21,9 +22,8 @@ import type Position3DObject from './Renderer/Position3DObject';
 import type PositionObject from './Renderer/PositionObject';
 
 import H from './Globals.js';
+import { pick } from '../Shared/Utilities.js';
 const { deg2rad } = H;
-import U from './Utilities.js';
-const { pick } = U;
 
 /* *
  *
@@ -31,16 +31,30 @@ const { pick } = U;
  *
  * */
 
-declare module './Chart/ChartLike'{
-    interface ChartLike {
+/** @internal */
+declare module './Chart/ChartBase'{
+    interface ChartBase {
         scale3d?: number;
     }
 }
 
+/** @internal */
 interface Rotation3DObject {
+    /**
+     * Cosine of the alpha (roll) angle.
+     */
     cosA: number;
+    /**
+     * Cosine of the beta (pitch) angle.
+     */
     cosB: number;
+    /**
+     * Sine of the alpha (roll) angle.
+     */
     sinA: number;
+    /**
+     * Sine of the beta (pitch) angle.
+     */
     sinB: number;
 }
 
@@ -75,14 +89,14 @@ interface Rotation3DObject {
  * | - sinA * sinB |  cosA  | - sinA * cosB |  x  | y |  =  | py |
  * |  cosA * sinB  |  sinA  |  cosA * cosB  |     | z |     | pz |
  *
- * @private
+ * @internal
  * @function rotate3D
  */
 /* eslint-enable max-len */
 
 /**
  * Rotates the position as defined in angles.
- * @private
+ * @internal
  * @param {number} x
  *        X coordinate
  * @param {number} y
@@ -112,7 +126,7 @@ function rotate3D(
 /**
  * Transforms a given array of points according to the angles in chart.options.
  *
- * @private
+ * @internal
  * @function Highcharts.perspective
  *
  * @param {Array<Highcharts.Position3DObject>} points
@@ -195,7 +209,7 @@ function perspective(
 /**
  * Perspective3D function is available in global Highcharts scope because is
  * needed also outside of perspective() function (#8042).
- * @private
+ * @internal
  * @function Highcharts.perspective3D
  *
  * @param {Highcharts.Position3DObject} coordinate
@@ -234,7 +248,7 @@ function perspective3D(
  * Calculate a distance from camera to points - made for calculating zIndex of
  * scatter points.
  *
- * @private
+ * @internal
  * @function Highcharts.pointCameraDistance
  *
  * @param {Highcharts.Dictionary<number>} coordinates
@@ -282,7 +296,7 @@ function pointCameraDistance(
  * Calculate area of a 2D polygon using Shoelace algorithm
  * https://en.wikipedia.org/wiki/Shoelace_formula
  *
- * @private
+ * @internal
  * @function Highcharts.shapeArea
  *
  * @param {Array<Highcharts.PositionObject>} vertexes
@@ -308,7 +322,7 @@ function shapeArea(vertexes: Array<PositionObject>): number {
 /**
  * Calculate area of a 3D polygon after perspective projection
  *
- * @private
+ * @internal
  * @function Highcharts.shapeArea3d
  *
  * @param {Array<Highcharts.Position3DObject>} vertexes
@@ -339,6 +353,7 @@ function shapeArea3D(
  *
  * */
 
+/** @internal */
 const Math3D = {
     perspective,
     perspective3D,
@@ -347,4 +362,5 @@ const Math3D = {
     shapeArea3D
 };
 
+/** @internal */
 export default Math3D;

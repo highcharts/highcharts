@@ -1,10 +1,10 @@
 /* *
  *
- *  (c) 2009-2025 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Sebastian Bochan
@@ -14,19 +14,16 @@
  *
  * */
 
-import type CSSJSONObject from '../CSSJSONObject';
 import type Board from '../Board.js';
-
-import U from '../../Core/Utilities.js';
-const {
-    pick,
-    defined
-} = U;
+import type CSSJSONObject from '../CSSJSONObject';
+import type { DeepPartial } from '../../Shared/Types';
+import type { Options as RowOptions } from './Row';
 
 import Cell from './Cell.js';
 import Row from './Row.js';
 import GUIElement from './GUIElement.js';
 import Globals from '../Globals.js';
+import { defined, pick } from '../../Shared/Utilities.js';
 
 /**
  * @internal
@@ -44,12 +41,12 @@ class Layout extends GUIElement {
      * @param {Dashboard} board
      * Reference to the dashboard instance.
      *
-     * @param {Layout.Options} options
+     * @param {Options} options
      * Options for the layout.
      */
     public constructor(
         board: Board,
-        options: Layout.Options,
+        options: Options,
         parentCell?: Cell
     ) {
         super();
@@ -122,7 +119,7 @@ class Layout extends GUIElement {
     /**
      * The layout options.
      */
-    public options: Layout.Options;
+    public options: Options;
 
     public copyId?: string;
 
@@ -168,7 +165,7 @@ class Layout extends GUIElement {
     /**
      * Add a new Row instance to the layout rows array.
      *
-     * @param {Row.Options} options
+     * @param {RowOptions} options
      * Options of a row.
      *
      * @param {HTMLElement} rowElement
@@ -178,7 +175,7 @@ class Layout extends GUIElement {
      * Returns the Row object.
      */
     public addRow(
-        options: Row.Options,
+        options: RowOptions,
         rowElement?: HTMLElement,
         index?: number
     ): Row {
@@ -313,7 +310,7 @@ class Layout extends GUIElement {
      * @internal
      *
      */
-    public getOptions(): Globals.DeepPartial<Layout.Options> {
+    public getOptions(): DeepPartial<Options> {
         const layout = this,
             rows = [];
 
@@ -334,55 +331,53 @@ class Layout extends GUIElement {
 }
 
 interface Layout {
-    options: Layout.Options;
+    options: Options;
 }
 
 
-namespace Layout {
+/**
+ * Each layout's options.
+ **/
+export interface Options {
     /**
-     * Each layout's options.
+     * Unique id of the layout.
      **/
-    export interface Options {
-        /**
-         * Unique id of the layout.
-         **/
-        id?: string;
-        /**
-         * Id of the parent container.
-         * @internal
-         **/
-        parentContainerId?: string;
-        /**
-         * @internal
-         **/
-        copyId?: string;
-        /**
-         * The class name of the layout container.
-         **/
-        layoutClassName?: string;
-        /**
-         * The class name applied to each row that is in that exact layout.
-         * Note that the layout container is also treated as a row thus this
-         * class is also being applied to the layout container.
-         **/
-        rowClassName?: string;
-        /**
-         * The class name applied to each cell that is in that exact layout.
-         *
-         * Try it:
-         *
-         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/gui/cell-class-name/ | Set cell class names}
-         **/
-        cellClassName?: string;
-        /**
-         * An array of rows. Each row can contain an array of cells.
-         **/
-        rows?: Array<Row.Options>;
-        /**
-         * CSS styles of the layout.
-         **/
-        style?: CSSJSONObject;
-    }
+    id?: string;
+    /**
+     * Id of the parent container.
+     * @internal
+     **/
+    parentContainerId?: string;
+    /**
+     * @internal
+     **/
+    copyId?: string;
+    /**
+     * The class name of the layout container.
+     **/
+    layoutClassName?: string;
+    /**
+     * The class name applied to each row that is in that exact layout.
+     * Note that the layout container is also treated as a row thus this
+     * class is also being applied to the layout container.
+     **/
+    rowClassName?: string;
+    /**
+     * The class name applied to each cell that is in that exact layout.
+     *
+     * Try it:
+     *
+     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/gui/cell-class-name/ | Set cell class names}
+     **/
+    cellClassName?: string;
+    /**
+     * An array of rows. Each row can contain an array of cells.
+     **/
+    rows?: Array<RowOptions>;
+    /**
+     * CSS styles of the layout.
+     **/
+    style?: CSSJSONObject;
 }
 
 export default Layout;

@@ -1,0 +1,6 @@
+---
+ name: Grid lite pagination alignment controls
+ authors:
+   - Mikkel Espolin Birkeland
+ js_wrap: b
+...

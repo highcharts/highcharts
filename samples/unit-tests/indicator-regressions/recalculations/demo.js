@@ -35,7 +35,7 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
                 15
             ]
         }, {
-            type: 'linearRegression',
+            type: 'linearregression',
             linkedTo: 'main'
         }]
     });
@@ -106,7 +106,7 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
 
     // Change the type of the indicator series to angle.
     chart.series[1].update({
-        type: 'linearRegressionAngle'
+        type: 'linearregressionangle'
     });
 
     assert.deepEqual(

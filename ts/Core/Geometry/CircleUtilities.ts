@@ -1,10 +1,10 @@
 /* *
  *
- *  (c) 2010-2025 Highsoft AS
+ *  (c) 2010-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -23,6 +23,7 @@ import type PositionObject from '../Renderer/PositionObject';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 
 import Geometry from './GeometryUtilities.js';
+import { correctFloat } from '../../Shared/Utilities.js';
 const {
     getAngleBetweenPoints,
     getCenterOfPoints,
@@ -35,6 +36,7 @@ const {
  *
  * */
 
+/** @internal */
 namespace CircleUtilities {
 
     /* *
@@ -44,7 +46,7 @@ namespace CircleUtilities {
      * */
 
     /**
-     * @private
+     * @internal
      *
      * @param {number} x
      * Number to round
@@ -63,7 +65,7 @@ namespace CircleUtilities {
     /**
      * Calculates the area of a circle based on its radius.
      *
-     * @private
+     * @internal
      *
      * @param {number} r
      * The radius of the circle.
@@ -75,7 +77,7 @@ namespace CircleUtilities {
         if (r <= 0) {
             throw new Error('radius of circle must be a positive number.');
         }
-        return Math.PI * r * r;
+        return correctFloat(Math.PI * r * r);
     }
 
     /**
@@ -84,7 +86,7 @@ namespace CircleUtilities {
      *
      * @see http://mathworld.wolfram.com/CircularSegment.html
      *
-     * @private
+     * @internal
      *
      * @param {number} r
      * The radius of the circle.
@@ -108,7 +110,7 @@ namespace CircleUtilities {
      *
      * @see http://mathworld.wolfram.com/Circle-CircleIntersection.html
      *
-     * @private
+     * @internal
      *
      * @param {number} r1
      * Radius of the first circle.
@@ -158,7 +160,7 @@ namespace CircleUtilities {
      *
      * NOTE: does not handle floating errors well.
      *
-     * @private
+     * @internal
      *
      * @param {Highcharts.CircleObject} c1
      * The first circle.
@@ -207,7 +209,7 @@ namespace CircleUtilities {
     /**
      * Calculates all the intersection points for between a list of circles.
      *
-     * @private
+     * @internal
      *
      * @param {Array<Highcharts.CircleObject>} circles
      * The circles to calculate the points from.
@@ -242,7 +244,7 @@ namespace CircleUtilities {
      * Tests whether the first circle is completely overlapping the second
      * circle.
      *
-     * @private
+     * @internal
      *
      * @param {Highcharts.CircleObject} circle1
      * The first circle.
@@ -265,7 +267,7 @@ namespace CircleUtilities {
 
     /**
      * Tests whether a point lies within a given circle.
-     * @private
+     * @internal
      * @param {Highcharts.PositionObject} point
      * The point to test for.
      *
@@ -285,7 +287,7 @@ namespace CircleUtilities {
     /**
      * Tests whether a point lies within a set of circles.
      *
-     * @private
+     * @internal
      *
      * @param {Highcharts.PositionObject} point
      * The point to test.
@@ -310,7 +312,7 @@ namespace CircleUtilities {
      *
      * TODO: add unit tests.
      *
-     * @private
+     * @internal
      *
      * @param {Highcharts.PositionObject} point
      * The point to test.
@@ -334,7 +336,7 @@ namespace CircleUtilities {
      * Calculates the points for the polygon of the intersection area between
      * a set of circles.
      *
-     * @private
+     * @internal
      *
      * @param {Array<Highcharts.CircleObject>} circles
      * List of circles to calculate polygon of.
@@ -356,7 +358,7 @@ namespace CircleUtilities {
      *
      * @todo handle cases with only 1 or 0 arcs.
      *
-     * @private
+     * @internal
      *
      * @param {Array<Highcharts.CircleObject>} circles
      * List of circles to calculate area of.
@@ -487,4 +489,5 @@ namespace CircleUtilities {
  *
  * */
 
+/** @internal */
 export default CircleUtilities;

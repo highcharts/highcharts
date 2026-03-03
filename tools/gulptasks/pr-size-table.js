@@ -4,7 +4,6 @@ const fs = require('fs');
 const gulp = require('gulp');
 const { sync: gzipSize } = require('gzip-size');
 const scriptsCompile = require('./scripts-compile');
-const { createPRComment, updatePRComment, fetchPRComments } = require('./lib/github');
 const log = require('../libs/log');
 
 /* *
@@ -29,7 +28,8 @@ const files = argv.files ? argv.files.split(',') : [
     'modules/offline-exporting.src.js',
     'dashboards/dashboards.src.js',
     'dashboards/modules/layout.src.js',
-    'datagrid/datagrid.src.js'
+    'grid/grid-pro.src.js',
+    'grid/grid-lite.src.js'
 ];
 
 /* *
@@ -60,7 +60,7 @@ function getFileSizes(out) {
 
     return Promise.resolve()
         .then(() => scriptsCompile(files.map(file => join('code', file))))
-        .then(() => scriptsCompile(void 0, require('./dashboards/_config.json')))
+        .then(() => scriptsCompile(void 0, require('./scripts-dts/dashboards/_config.json')), 'dashboards')
         .then(() => getSizeOfSourceCompiledAndGzip(files))
 
         // Output the result to the console, or a file if filePath is defined
@@ -172,41 +172,5 @@ async function writeTable() {
     throw new Error('Please provide all required arguments');
 }
 
-/**
- * Adds or updates a comment to a pull request containing
- * a file comparison table. Pull request id is specified with `--pr <id>`.
- * Updates are limited to the user specified with `--user <username>`
- * @return {void}
- */
-async function comment() {
-    try {
-        const { pr, user } = argv;
-        if (pr) {
-            const existingComment = await fetchPRComments(pr, user || '', '### File size comparison');
-            const commentBody = fs.readFileSync('./tmp/filesizes/comparison.md').toString();
-            if (existingComment.length) {
-                await updatePRComment(existingComment[0].id, commentBody);
-            } else if (commentBody) {
-                await createPRComment(pr, commentBody);
-            }
-        } else {
-            log.failure('Please specify a PR id with \'--pr\' and a user with \'--user\' ');
-        }
-    } catch (error) {
-        log.failure(error);
-    }
-}
-
-comment.description = 'Updates/creates file size comparison for pull requests';
-comment.flags = {
-    '--pr': 'Pull request number',
-    '--user': 'Github user',
-    '--token': 'Github token (can also be specified with GITHUB_TOKEN env var)',
-    '--fail-silently': 'Will always return exitCode 0 (success)',
-    '--dryrun': 'Just runs through the task for testing purposes without doing external requests. '
-};
-
 gulp.task('write-size-table', writeTable);
 gulp.task('write-file-sizes', writeFileSizes);
-gulp.task('pr-comment-sizes', comment);
-gulp.task('compare-size-and-comment', gulp.series(writeTable, comment));

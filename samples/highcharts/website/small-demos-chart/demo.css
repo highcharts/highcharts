@@ -1,13 +1,14 @@
-body {
-    background-color: #46465c;
+body,
+#demo-content {
+    background-color: var(--highcharts-background-color);
     margin: 0;
     padding: 0;
-    color: #fff;
+    color: var(--highcharts-neutral-color-100);
 }
 
 a,
 a:hover {
-    color: #fff;
+    color: var(--highcharts-neutral-color-100);
 }
 
 a:hover {
@@ -15,7 +16,6 @@ a:hover {
 }
 
 .chart-container {
-    border: 0 solid #000;
     width: 100%;
     height: 260px !important;
     overflow: hidden;

@@ -1,12 +1,13 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Honsi
  *
  *  Scatter 3D series.
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -22,9 +23,8 @@ import type Scatter3DPointOptions from './Scatter3DPointOptions';
 import type Scatter3DSeries from './Scatter3DSeries';
 
 import ScatterSeries from '../Scatter/ScatterSeries.js';
+import { defined } from '../../Shared/Utilities.js';
 const { pointClass: ScatterPoint } = ScatterSeries.prototype;
-import U from '../../Core/Utilities.js';
-const { defined } = U;
 
 /* *
  *

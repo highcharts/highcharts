@@ -6,6 +6,9 @@ Dashboards.board('container', {
         },
         contextMenu: {
             enabled: true
+        },
+        viewFullscreen: {
+            enabled: false
         }
     },
     gui: {

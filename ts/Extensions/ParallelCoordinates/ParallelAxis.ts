@@ -2,11 +2,12 @@
  *
  *  Parallel coordinates module
  *
- *  (c) 2010-2025 Pawel Fus
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Pawel Fus
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -23,15 +24,14 @@ import type AxisOptions from '../../Core/Axis/AxisOptions';
 import type ParallelCoordinates from './ParallelCoordinates';
 
 import ParallelCoordinatesDefaults from './ParallelCoordinatesDefaults.js';
-import U from '../../Core/Utilities.js';
-const {
+import {
     addEvent,
     arrayMax,
     arrayMin,
     isNumber,
     merge,
     pick
-} = U;
+} from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -41,11 +41,38 @@ const {
 
 declare module '../../Core/Axis/AxisOptions' {
     interface AxisOptions {
-        angle?: number;
+        /**
+         * Parallel coordinates only. Format that will be used for point.y
+         * and available in [tooltip.pointFormat](#tooltip.pointFormat) as
+         * `{point.formattedValue}`. If not set, `{point.formattedValue}`
+         * will use other options, in this order:
+         *
+         * 1. [yAxis.labels.format](#yAxis.labels.format) will be used if
+         *    set
+         *
+         * 2. If yAxis is a category, then category name will be displayed
+         *
+         * 3. If yAxis is a datetime, then value will use the same format as
+         *    yAxis labels
+         *
+         * 4. If yAxis is linear/logarithmic type, then simple value will be
+         *    used
+         *
+         * @sample {highcharts}
+         *         /highcharts/parallel-coordinates/tooltipvalueformat/
+         *         Different tooltipValueFormats's
+         *
+         * @type     {string}
+         * @default  undefined
+         * @since    6.0.0
+         * @product  highcharts
+         * @requires modules/parallel-coordinates
+         */
         tooltipValueFormat?: string;
     }
 }
 
+/** @internal */
 declare module '../../Core/Axis/AxisComposition' {
     interface AxisComposition {
         parallelCoordinates?: ParallelAxis.Composition['parallelCoordinates'];
@@ -60,7 +87,7 @@ declare module '../../Core/Axis/AxisComposition' {
 
 /**
  * Support for parallel axes.
- * @private
+ * @internal
  * @class
  */
 class ParallelAxisAdditions {
@@ -96,7 +123,7 @@ class ParallelAxisAdditions {
      * Set predefined left+width and top+height (inverted) for yAxes.
      * This method modifies options param.
      *
-     * @private
+     * @internal
      *
      * @param  {Array<string>} axisPosition
      * ['left', 'width', 'height', 'top'] or ['top', 'height', 'width', 'left']
@@ -135,6 +162,7 @@ class ParallelAxisAdditions {
  *
  * */
 
+/** @internal */
 namespace ParallelAxis {
 
     /* *
@@ -145,7 +173,7 @@ namespace ParallelAxis {
 
     /**
      * Axis with parallel support.
-     * @private
+     * @internal
      */
     export declare class Composition extends Axis {
         chart: ParallelCoordinates.ChartComposition;
@@ -160,7 +188,7 @@ namespace ParallelAxis {
 
     /**
      * Adds support for parallel axes.
-     * @private
+     * @internal
      */
     export function compose(
         AxisClass: typeof Axis
@@ -181,7 +209,7 @@ namespace ParallelAxis {
 
     /**
      * Update default options with predefined for a parallel coords.
-     * @private
+     * @internal
      */
     function onAfterSetOptions(
         this: Composition,
@@ -227,7 +255,7 @@ namespace ParallelAxis {
      * series.data. Not like the default one, which gathers extremes from all
      * series bind to this axis. Consider using series.points instead of
      * series.yData.
-     * @private
+     * @internal
      */
     function onGetSeriesExtremes(
         this: Composition,
@@ -267,7 +295,7 @@ namespace ParallelAxis {
 
     /**
      * Add parallel addition
-     * @private
+     * @internal
      */
     function onInit(
         this: Composition
@@ -286,4 +314,5 @@ namespace ParallelAxis {
  *
  * */
 
+/** @internal */
 export default ParallelAxis;

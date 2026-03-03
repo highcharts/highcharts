@@ -10,12 +10,10 @@ Then import the package into your project:
 import * as Dashboards from '@highcharts/dashboards';
 ```
 
-If you don't intend to use your own [custom layout](https://www.highcharts.com/docs/dashboards/layout-description#custom-layout), import and register the layout module as well:
+If you don't intend to use your own [custom layout](https://www.highcharts.com/docs/dashboards/layout-description#custom-layout), import the layout module as well:
 ```js
 import * as Dashboards from '@highcharts/dashboards';
-import LayoutModule from '@highcharts/dashboards/modules/layout';
-
-LayoutModule(Dashboards);
+import '@highcharts/dashboards/modules/layout';
 ```
 
 ## Include Dashboards by script tag

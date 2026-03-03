@@ -1,6 +1,6 @@
-describe('Keyboard navigation in DataGrid.', () => {
+describe('Keyboard navigation in Grid.', () => {
     before(() => {
-        cy.visit('/grid-pro/basic/overview');
+        cy.visit('grid-pro/basic/overview');
     });
 
     it('The first visible cell is focusable.', () => {
@@ -30,7 +30,7 @@ describe('Keyboard navigation in DataGrid.', () => {
     });
 
     it('Editing by pressing Enter key on a table cell should be possible.', () => {
-        cy.focused().type('{downarrow}{downarrow}{enter}0{enter}');
-        cy.focused().parent().should('have.attr', 'data-row-index', '9');
+        cy.focused().type('{esc}{downarrow}{downarrow}{enter}0{enter}');
+        cy.focused().parent().should('have.attr', 'data-row-index', '1');
     });
 });

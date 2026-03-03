@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Honsi
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -25,13 +26,12 @@ import Axis from './Axis/Axis.js';
 import Chart from './Chart/Chart.js';
 import Legend from './Legend/Legend.js';
 import Series from './Series/Series.js';
-import U from './Utilities.js';
-const {
+import {
     addEvent,
     isFunction,
     objectEach,
     removeEvent
-} = U;
+} from '../Shared/Utilities.js';
 
 /* *
  *
@@ -39,6 +39,7 @@ const {
  *
  * */
 
+/** @internal */
 namespace Foundation {
 
     /* *
@@ -54,7 +55,7 @@ namespace Foundation {
      * should be subject to Chart.update, Axis.update and Series.update. This is
      * contrary to general handlers that are set directly using addEvent either
      * on the class or on the instance. #6538, #6943, #10861.
-     * @private
+     * @internal
      */
     export function registerEventOptions(
         component: Axis|Chart|Legend|Series,
@@ -102,4 +103,5 @@ namespace Foundation {
  *
  * */
 
+/** @internal */
 export default Foundation;

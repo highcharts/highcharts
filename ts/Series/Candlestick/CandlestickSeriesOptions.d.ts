@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Honsi
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -14,7 +15,6 @@
  *
  * */
 
-import type CandlestickSeries from './CandlestickSeries';
 import type CandlestickPointOptions from './CandlestickPointOptions';
 import type ColorType from '../../Core/Color/ColorType';
 import type OHLCSeriesOptions from '../OHLC/OHLCSeriesOptions';
@@ -67,7 +67,7 @@ export interface CandlestickSeriesOptions extends OHLCSeriesOptions {
      */
     lineColor?: ColorType;
 
-    states?: SeriesStatesOptions<CandlestickSeries>;
+    states?: SeriesStatesOptions<CandlestickSeriesOptions>;
 
     /**
      * The specific line color for up candle sticks. The default is to

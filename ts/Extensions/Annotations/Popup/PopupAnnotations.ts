@@ -2,11 +2,12 @@
  *
  *  Popup generator for Stock tools
  *
- *  (c) 2009-2025 Sebastian Bochan
+ *  (c) 2009-2026 Highsoft AS
+ *  Author: Sebastian Bochan
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -28,15 +29,14 @@ const {
     doc,
     isFirefox
 } = H;
-import U from '../../../Core/Utilities.js';
-const {
+import {
     createElement,
     isArray,
     isObject,
     objectEach,
     pick,
     stableSort
-} = U;
+} from '../../../Shared/Utilities.js';
 
 /* *
  *
@@ -47,7 +47,8 @@ const {
 /**
  * Create annotation simple form.
  * It contains fields with param names.
- * @private
+ *
+ * @internal
  * @param {Highcharts.Chart} chart
  * Chart
  * @param {Object} options
@@ -127,7 +128,8 @@ function addForm(
 /**
  * Create annotation simple form. It contains two buttons
  * (edit / remove) and text label.
- * @private
+ *
+ * @internal
  * @param {Highcharts.Chart} - chart
  * @param {Highcharts.AnnotationsOptions} - options
  * @param {Function} - on click callback
@@ -218,7 +220,8 @@ function addToolbar(
 
 /**
  * Create annotation's form fields.
- * @private
+ *
+ * @internal
  * @param {Highcharts.HTMLDOMElement} parentDiv
  * Div where inputs are placed
  * @param {Highcharts.Chart} chart
@@ -334,9 +337,11 @@ function addFormFields(
  *
  * */
 
+/** @internal */
 const PopupAnnotations = {
     addForm,
     addToolbar
 };
 
+/** @internal */
 export default PopupAnnotations;

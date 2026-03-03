@@ -1,7 +1,9 @@
 Histogram
 ===
 
-A histogram series is a graphical representation of the data distribution. Histogram creates intervals (bins) and counts how many values fall into each bin.
+A histogram series is a graphical representation of the data distribution of an attribute. Histogram creates intervals (bins) and counts how many values fall into each bin. The module [modules/histogram-bellcurve.js](https://code.highcharts.com/modules/histogram-bellcurve.js) is required for this chart.
+
+The histogram encodes one-dimensional data. For datasets with more than one attribute, multiple histograms must be created (one per attribute).
 
 _For more detailed samples and documentation check the [API](https://api.highcharts.com/highcharts/plotOptions.histogram)._
 
@@ -9,16 +11,15 @@ _For more detailed samples and documentation check the [API](https://api.highcha
 
 Click [here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/demo/histogram/) to check the code.
 
-How to create a Histogram
+How to create a Histogram based on derived data
 -------------------------
 
-The histogram requires the following module [modules/histogram-bellcurve.js](https://code.highcharts.com/modules/histogram-bellcurve.js).
+The histogram series is a column series with no padding between the columns and with self-setting data. The [data](https://api.highcharts.com/highcharts/series.histogram) property can be substituted by a base series (more precisely y values of the data).
 
-The histogram series is a column series with no padding between the columns and with self-setting data. Unlike most other Highcharts series, the [data](https://api.highcharts.com/highcharts/series.histogram) property is not available - it is set internally based on the base series data (more precisely y values of the data).
+**Two steps are required to create an Histogram chart:**
 
-Two steps are required to create an Histogram chart:
-
-1. Set the series type to histogram 2. Set baseSeries to the right data series’ id or index.
+1. Set the series type to histogram 
+2. Set baseSeries to the right data series’ id or index.
 
 ```js
 series: [{

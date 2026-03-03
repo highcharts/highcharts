@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Honsi
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -30,8 +31,10 @@ const {
     column: ColumnSeries,
     line: LineSeries
 } = SeriesRegistry.seriesTypes;
-import U from '../../Core/Utilities.js';
-const {
+import WaterfallAxis from '../../Core/Axis/WaterfallAxis.js';
+import WaterfallPoint from './WaterfallPoint.js';
+import WaterfallSeriesDefaults from './WaterfallSeriesDefaults.js';
+import {
     addEvent,
     arrayMax,
     arrayMin,
@@ -42,10 +45,7 @@ const {
     merge,
     objectEach,
     pick
-} = U;
-import WaterfallAxis from '../../Core/Axis/WaterfallAxis.js';
-import WaterfallPoint from './WaterfallPoint.js';
-import WaterfallSeriesDefaults from './WaterfallSeriesDefaults.js';
+} from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -53,8 +53,8 @@ import WaterfallSeriesDefaults from './WaterfallSeriesDefaults.js';
  *
  * */
 
-declare module '../../Core/Series/SeriesLike' {
-    interface SeriesLike {
+declare module '../../Core/Series/SeriesBase' {
+    interface SeriesBase {
         showLine?: WaterfallSeries['showLine'];
     }
 }

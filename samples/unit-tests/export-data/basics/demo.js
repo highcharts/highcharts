@@ -1697,3 +1697,18 @@ QUnit.test('Dot notation in exporting data (#20470)', function (assert) {
         'Key notation values should be visible in exported data, #20470.'
     );
 });
+
+QUnit.test('Thousand separator from lang options', function (assert) {
+    const chart = Highcharts.chart('container', {
+        lang: {
+            thousandsSep: '_THOUSAND_SEPARATOR_'
+        },
+        series: [{
+            data: [
+                [10000]
+            ]
+        }]
+    });
+
+    assert.ok(chart.getTable().includes('_THOUSAND_SEPARATOR_'));
+});

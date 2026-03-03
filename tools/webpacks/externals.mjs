@@ -121,6 +121,22 @@ export function loadExternalsJSON(filePath) {
 
 }
 
+/**
+ * Appends additional externals to the current list.
+ *
+ * @param {Array<ExternalsDefinition>} [entries]
+ * Additional externals to register.
+ */
+export function appendExternals(entries) {
+    if (!entries) {
+        return;
+    }
+
+    for (const entry of entries) {
+        externals.push(entry);
+    }
+}
+
 
 /**
  * Creates external references for masters. It can make secondary product

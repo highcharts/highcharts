@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Honsi
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -14,7 +15,6 @@
  *
  * */
 
-import type AreaSplineSeries from './AreaSplineSeries';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 import type SplineSeriesOptions from '../Spline/SplineSeriesOptions';
 
@@ -25,7 +25,7 @@ import type SplineSeriesOptions from '../Spline/SplineSeriesOptions';
  * */
 
 export interface AreaSplineSeriesOptions extends SplineSeriesOptions {
-    states?: SeriesStatesOptions<AreaSplineSeries>;
+    states?: SeriesStatesOptions<AreaSplineSeriesOptions>;
 }
 
 /* *

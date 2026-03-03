@@ -1,6 +1,4 @@
 ---
- name: Highcharts Demo
- authors:
-   - Marensius Bae Pettersen
- js_wrap: b
+name: Demo of xAxis.labels.allowOverlap
+js_wrap: b
 ...

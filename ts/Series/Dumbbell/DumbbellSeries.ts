@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2010-2025 Sebastian Bochan, Rafal Sebestjanski
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Sebastian Bochan, Rafal Sebestjanski
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -34,12 +35,7 @@ const {
     columnrange: ColumnRangeSeries
 } = SeriesRegistry.seriesTypes;
 import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
-import U from '../../Core/Utilities.js';
-const {
-    extend,
-    merge,
-    pick
-} = U;
+import { extend, merge, pick } from '../../Shared/Utilities.js';
 
 /* *
  *

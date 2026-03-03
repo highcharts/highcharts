@@ -2,11 +2,12 @@
  *
  *  Sankey diagram module
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Honsi
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -42,8 +43,9 @@ import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
 import TU from '../TreeUtilities.js';
 const { getLevelOptions, getNodeWidth } = TU;
-import U from '../../Core/Utilities.js';
-const {
+import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
+import TextPath from '../../Extensions/TextPath.js';
+import {
     clamp,
     crisp,
     extend,
@@ -52,9 +54,7 @@ const {
     pick,
     relativeLength,
     stableSort
-} = U;
-import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
-import TextPath from '../../Extensions/TextPath.js';
+} from '../../Shared/Utilities.js';
 TextPath.compose(SVGElement);
 
 /* *
@@ -110,7 +110,10 @@ class SankeySeries extends ColumnSeries {
             ),
             options = merge({
                 style: {}
-            }, optionsLevel, optionsPoint);
+            }, optionsLevel, optionsPoint, {
+                // Not a point option. zIndex is set for the data labels group.
+                zIndex: optionsLevel?.zIndex
+            });
         return options;
     }
 
@@ -675,10 +678,13 @@ class SankeySeries extends ColumnSeries {
             }
 
             // Calculate data label options for the point
-            node.dlOptions = SankeySeries.getDLOptions({
-                level: (this.mapOptionsToLevel as any)[node.level],
-                optionsPoint: node.options
-            });
+            node.dlOptions = {
+                ...SankeySeries.getDLOptions({
+                    level: (this.mapOptionsToLevel as any)[node.level],
+                    optionsPoint: node.options
+                }),
+                zIndex: void 0
+            };
 
             // Pass test in drawPoints
             node.plotX = 1;

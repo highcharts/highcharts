@@ -1,12 +1,12 @@
 /* *
  *
- *  (c) 2010-2025 Highsoft AS
+ *  (c) 2010-2026 Highsoft AS
  *
  *  Author: Paweł Potaczek
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -39,15 +39,14 @@ import H from '../../Core/Globals.js';
 const { noop } = H;
 import Legend from '../../Core/Legend/Legend.js';
 import Series from '../../Core/Series/Series.js';
-import U from '../../Core/Utilities.js';
-const {
+import {
     arrayMax,
     arrayMin,
     isNumber,
     merge,
     pick,
     stableSort
-} = U;
+} from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -55,20 +54,20 @@ const {
  *
  * */
 
-declare module '../../Core/Legend/LegendLike' {
-    interface LegendLike {
+declare module '../../Core/Legend/LegendBase' {
+    interface LegendBase {
         bubbleLegend?: BubbleLegendItem;
     }
 }
 
-declare module '../../Core/Series/PointLike' {
-    interface PointLike {
+declare module '../../Core/Series/PointBase' {
+    interface PointBase {
         isBubble?: boolean;
     }
 }
 
-declare module '../../Core/Series/SeriesLike' {
-    interface SeriesLike {
+declare module '../../Core/Series/SeriesBase' {
+    interface SeriesBase {
         ignoreSeries?: boolean;
         isBubble?: boolean;
     }

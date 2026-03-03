@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Honsi
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -22,18 +23,13 @@ import type {
 } from './PaneOptions';
 import type { PaneChart } from './PaneComposition';
 import type RadialAxis from '../../Core/Axis/RadialAxis';
-import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+import type { SVGAttributes } from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
 import CU from '../../Series/CenteredUtilities.js';
 import PaneComposition from './PaneComposition.js';
 import PaneDefaults from './PaneDefaults.js';
-import U from '../../Core/Utilities.js';
-const {
-    extend,
-    merge,
-    splat
-} = U;
+import { extend, merge, splat } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -41,8 +37,9 @@ const {
  *
  * */
 
-declare module '../../Core/Axis/AxisLike' {
-    interface AxisLike {
+/** @internal */
+declare module '../../Core/Axis/AxisBase' {
+    interface AxisBase {
         pane?: Pane;
     }
 }
@@ -58,7 +55,7 @@ declare module '../../Core/Axis/AxisLike' {
  *
  * In the future, this can be extended to basic Highcharts and Highcharts Stock.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.Pane
  * @param {Highcharts.PaneOptions} options
@@ -116,7 +113,7 @@ class Pane {
     /**
      * Initialize the Pane object
      *
-     * @private
+     * @internal
      * @function Highcharts.Pane#init
      *
      * @param {Highcharts.PaneOptions} options
@@ -136,7 +133,7 @@ class Pane {
     }
 
     /**
-     * @private
+     * @internal
      * @function Highcharts.Pane#setOptions
      *
      * @param {Highcharts.PaneOptions} options
@@ -154,7 +151,7 @@ class Pane {
     /**
      * Render the pane with its backgrounds.
      *
-     * @private
+     * @internal
      * @function Highcharts.Pane#render
      */
     public render(): void {
@@ -202,7 +199,7 @@ class Pane {
     /**
      * Render an individual pane background.
      *
-     * @private
+     * @internal
      * @function Highcharts.Pane#renderBackground
      *
      * @param {Highcharts.PaneBackgroundOptions} backgroundOptions
@@ -250,7 +247,7 @@ class Pane {
     /**
      * Gets the center for the pane and its axis.
      *
-     * @private
+     * @internal
      * @function Highcharts.Pane#updateCenter
      * @param {Highcharts.Axis} [axis]
      */
@@ -266,7 +263,7 @@ class Pane {
      * Destroy the pane item
      *
      * @ignore
-     * @private
+     * @internal
      * @function Highcharts.Pane#destroy
      * /
     destroy: function () {
@@ -282,7 +279,7 @@ class Pane {
     /**
      * Update the pane item with new options
      *
-     * @private
+     * @internal
      * @function Highcharts.Pane#update
      * @param {Highcharts.PaneOptions} options
      *        New pane options
@@ -312,6 +309,7 @@ class Pane {
  *
  * */
 
+/** @internal */
 export default Pane;
 
 /* *

@@ -2,11 +2,11 @@
  *
  *  Text Input Cell Content class
  *
- *  (c) 2020-2025 Highsoft AS
+ *  (c) 2020-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Dawid Dragula
@@ -22,17 +22,14 @@
  *
  * */
 
-import type DataTable from '../../../../Data/DataTable';
+import type { CellType as DataTableCellType } from '../../../../Data/DataTable';
 import type { EditModeContent } from '../../CellEditing/CellEditMode';
 import type TableCell from '../../../Core/Table/Body/TableCell';
 import type TextInputRenderer from '../Renderers/TextInputRenderer';
 
 import CellContentPro from '../CellContentPro.js';
-import U from '../../../../Core/Utilities.js';
-
-const {
-    defined
-} = U;
+import Globals from '../../../Core/Globals.js';
+import { defined } from '../../../../Shared/Utilities.js';
 
 
 /* *
@@ -99,9 +96,10 @@ class TextInputContent extends CellContentPro implements EditModeContent {
 
         input.tabIndex = -1;
         input.name = cell.column.id + '-' + cell.row.id;
+        input.classList.add(Globals.getClassName('input'));
 
         if (options.attributes) {
-            Object.entries(options.attributes).forEach(([key, value]):void => {
+            Object.entries(options.attributes).forEach(([key, value]): void => {
                 input.setAttribute(key, value);
             });
         }
@@ -137,7 +135,7 @@ class TextInputContent extends CellContentPro implements EditModeContent {
     /**
      * Gets the value of the input element.
      */
-    public get value(): DataTable.CellType {
+    public get value(): DataTableCellType {
         const val = this.input.value;
         switch (this.cell.column.dataType) {
             case 'datetime':
@@ -195,7 +193,7 @@ class TextInputContent extends CellContentPro implements EditModeContent {
             return;
         }
 
-        void this.cell.setValue((e.target as HTMLSelectElement).value, true);
+        void this.cell.editValue((e.target as HTMLSelectElement).value);
     };
 
     private readonly onKeyDown = (e: KeyboardEvent): void => {

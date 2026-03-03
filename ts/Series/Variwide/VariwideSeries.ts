@@ -2,11 +2,12 @@
  *
  *  Highcharts variwide module
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Honsi
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -30,17 +31,15 @@ const {
 import VariwideComposition from './VariwideComposition.js';
 import VariwidePoint from './VariwidePoint.js';
 import VariwideSeriesDefaults from './VariwideSeriesDefaults.js';
-import U from '../../Core/Utilities.js';
-const {
+import {
     addEvent,
-    arrayMin,
     arrayMax,
+    arrayMin,
     crisp,
     extend,
     merge,
     pick
-} = U;
-
+} from '../../Shared/Utilities.js';
 
 /* *
  *

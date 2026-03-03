@@ -1,5 +1,5 @@
 ---
-name: Heat map
+name: Simple heatmap
 authors:
   - Torstein Hønsi
 compareTooltips: true

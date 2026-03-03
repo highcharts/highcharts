@@ -22,11 +22,6 @@ Highcharts.chart('container', {
             enabled: true,
             inside: true
         }
-    }, {
-        type: 'scatter',
-        boostThreshold: 1,
-        data: [300, 399, 300],
-        name: 'Boosted scatter'
     }],
 
     exporting: {

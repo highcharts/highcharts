@@ -1,11 +1,11 @@
 /* *
  *
- *  (c) 2016 Highsoft AS
+ *  (c) 2016-2026 Highsoft AS
  *  Author: Øystein Moseng
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -22,8 +22,7 @@ import type PositionObject from '../Core/Renderer/PositionObject';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 
 import PathUtilities from '../Series/PathUtilities.js';
-import U from '../Core/Utilities.js';
-const { pick } = U;
+import { pick } from '../Shared/Utilities.js';
 
 /* *
  *
@@ -31,6 +30,7 @@ const { pick } = U;
  *
  * */
 
+/** @internal */
 export interface Obstacle {
     xMax: number;
     xMin: number;
@@ -38,16 +38,19 @@ export interface Obstacle {
     yMin: number;
 }
 
+/** @internal */
 export interface ObstacleSegment {
     end: (PositionObject|Record<string, number>);
     start: (PositionObject|Record<string, number>);
 }
 
+/** @internal */
 export interface PathfinderAlgorithmFunction {
     (...args: Array<any>): PathfinderAlgorithmResultObject;
     requiresObstacles?: boolean;
 }
 
+/** @internal */
 export interface PathfinderAlgorithmResultObject {
     obstacles: Array<ObstacleSegment>;
     path: SVGPath;
@@ -75,7 +78,7 @@ const {
  * Get index of last obstacle before xMin. Employs a type of binary search, and
  * thus requires that obstacles are sorted by xMin value.
  *
- * @private
+ * @internal
  * @function findLastObstacleBefore
  *
  * @param {Array<object>} obstacles
@@ -120,7 +123,7 @@ function findLastObstacleBefore(
 /**
  * Test if a point lays within an obstacle.
  *
- * @private
+ * @internal
  * @function pointWithinObstacle
  *
  * @param {Object} obstacle
@@ -148,7 +151,7 @@ function pointWithinObstacle(
  * Find the index of an obstacle that wraps around a point.
  * Returns -1 if not found.
  *
- * @private
+ * @internal
  * @function findObstacleFromPoint
  *
  * @param {Array<object>} obstacles
@@ -181,7 +184,7 @@ function findObstacleFromPoint(
 /**
  * Get SVG path array from array of line segments.
  *
- * @private
+ * @internal
  * @function pathFromSegments
  *
  * @param {Array<object>} segments
@@ -206,7 +209,7 @@ function pathFromSegments(segments: Array<any>): SVGPath {
  * Limits obstacle max/mins in all directions to bounds. Modifies input
  * obstacle.
  *
- * @private
+ * @internal
  * @function limitObstacleToBounds
  *
  * @param {Object} obstacle
@@ -231,6 +234,7 @@ function limitObstacleToBounds(
  * Get an SVG path from a starting coordinate to an ending coordinate.
  * Draws a straight line.
  *
+ * @internal
  * @function Highcharts.Pathfinder.algorithms.straight
  *
  * @param {Highcharts.PositionObject} start
@@ -262,6 +266,7 @@ function straight(
  * right angles only, and taking only starting/ending obstacle into
  * consideration.
  *
+ * @internal
  * @function Highcharts.Pathfinder.algorithms.simpleConnect
  *
  * @param {Highcharts.PositionObject} start
@@ -307,7 +312,7 @@ const simpleConnect = function (
     /**
      * Return a clone of a point with a property set from a target object,
      * optionally with an offset
-     * @private
+     * @internal
      */
     function copyFromPoint(
         from: any,
@@ -328,7 +333,7 @@ const simpleConnect = function (
     // eslint-disable-next-line valid-jsdoc
     /**
      * Return waypoint outside obstacle.
-     * @private
+     * @internal
      */
     function getMeOut(
         obstacle: any,
@@ -435,6 +440,7 @@ simpleConnect.requiresObstacles = true;
  * obstacles into consideration. Might not always find the optimal path,
  * but is fast, and usually good enough.
  *
+ * @internal
  * @function Highcharts.Pathfinder.algorithms.fastAvoid
  *
  * @param {Highcharts.PositionObject} start
@@ -516,7 +522,7 @@ function fastAvoid(
     /**
      * How far can you go between two points before hitting an obstacle?
      * Does not work for diagonal lines (because it doesn't have to).
-     * @private
+     * @internal
      */
     function pivotPoint(
         fromPoint: any,
@@ -603,7 +609,7 @@ function fastAvoid(
      *
      * (? Returns a string, either xMin, xMax, yMin or yMax.)
      *
-     * @private
+     * @internal
      * @function
      *
      * @param {Object} obstacle
@@ -689,7 +695,7 @@ function fastAvoid(
     // eslint-disable-next-line valid-jsdoc
     /**
      * Find a clear path between point.
-     * @private
+     * @internal
      */
     function clearPathTo(
         fromPoint: any,
@@ -871,7 +877,7 @@ function fastAvoid(
     /**
      * Extract point to outside of obstacle in whichever direction is
      * closest. Returns new point outside obstacle.
-     * @private
+     * @internal
      */
     function extractFromObstacle(
         obstacle: any,
@@ -955,13 +961,17 @@ fastAvoid.requiresObstacles = true;
  *
  * */
 
-// Define the available pathfinding algorithms.
-// Algorithms take up to 3 arguments: starting point, ending point, and an
-// options object.
-const algorithms = {
+/**
+ * Defines the available pathfinding algorithms. Algorithms take up to 3
+ * arguments: starting point, ending point, and an options object.
+ *
+ * @internal
+ */
+const algorithms: Record<string, PathfinderAlgorithmFunction> = {
     fastAvoid,
     straight,
     simpleConnect
 };
 
+/** @internal */
 export default algorithms;

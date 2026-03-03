@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Honsi
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -340,9 +341,7 @@ const PieSeriesDefaults: PlotOptionsOf<PieSeries> = {
          * @type {Highcharts.DataLabelsFormatterCallbackFunction}
          * @default function () { return this.point.isNull ? void 0 : this.point.name; }
          */
-        formatter: function (
-            this: Point
-        ): (string|undefined) { // #2945
+        formatter: function (this: Point): (string|undefined) { // #2945
             return this.isNull ? void 0 : this.name;
         },
 

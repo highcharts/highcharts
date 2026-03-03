@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2010-2025 Mateusz Bernacik
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Mateusz Bernacik
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -22,18 +23,12 @@ import type { Options } from '../../Core/Options';
 import Chart from '../../Core/Chart/Chart.js';
 import Navigator, { SetRangeEvent } from './Navigator.js';
 import G from '../../Core/Globals.js';
-import U from '../../Core/Utilities.js';
 import Axis from '../../Core/Axis/Axis.js';
 import standaloneNavigatorDefaults from './StandaloneNavigatorDefaults.js';
-const {
-    merge,
-    addEvent,
-    fireEvent,
-    pick
-} = U;
+import { addEvent, fireEvent, merge, pick } from '../../Shared/Utilities.js';
 
-declare module '../../Core/GlobalsLike.d.ts' {
-    interface GlobalsLike {
+declare module '../../Core/GlobalsBase' {
+    interface GlobalsBase {
         navigators: Array<StandaloneNavigator>;
     }
 }
@@ -180,7 +175,9 @@ class StandaloneNavigator {
                     if (
                         e.trigger === 'pan' ||
                         e.trigger === 'zoom' ||
-                        e.trigger === 'mousewheel'
+                        e.trigger === 'mousewheel' ||
+                        e.trigger === 'rangeSelectorButton' ||
+                        e.trigger === 'rangeSelectorInput'
                     ) {
                         nav.setRange(
                             e.min,

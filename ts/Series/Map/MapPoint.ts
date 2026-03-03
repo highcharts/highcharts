@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Honsi
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -32,12 +33,12 @@ import MU from '../../Maps/MapUtilities.js';
 const { boundsFromPath } = MU;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const ScatterPoint = SeriesRegistry.seriesTypes.scatter.prototype.pointClass;
-import U from '../../Core/Utilities.js';
-const {
+import {
     extend,
+    internalClearTimeout,
     isNumber,
     pick
-} = U;
+} from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -208,7 +209,7 @@ class MapPoint extends ScatterPoint {
     public onMouseOver(
         e?: PointerEvent
     ): void {
-        U.clearTimeout(this.colorInterval);
+        internalClearTimeout(this.colorInterval);
 
         if (
             // Valid...

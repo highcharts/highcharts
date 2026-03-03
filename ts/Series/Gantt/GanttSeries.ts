@@ -1,12 +1,12 @@
 /* *
  *
- *  (c) 2016-2025 Highsoft AS
+ *  (c) 2016-2026 Highsoft AS
  *
  *  Author: Lars A. V. Cabrera
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -37,12 +37,7 @@ const {
 } = SeriesRegistry;
 import StaticScale from '../../Extensions/StaticScale.js';
 import TreeGridAxis from '../../Core/Axis/TreeGrid/TreeGridAxis.js';
-import U from '../../Core/Utilities.js';
-const {
-    extend,
-    isNumber,
-    merge
-} = U;
+import { extend, isNumber, merge } from '../../Shared/Utilities.js';
 
 /* *
  *

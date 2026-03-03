@@ -41,5 +41,14 @@ function generateRandomData(rows) {
 Grid.grid('container', {
     dataTable: {
         columns: generateRandomData(10000)
-    }
+    },
+    rendering: {
+        rows: {
+            minVisibleRows: 20
+        }
+    },
+    columns: [{
+        id: 'ID',
+        width: 60
+    }]
 });

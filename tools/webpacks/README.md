@@ -65,7 +65,8 @@ Circular dependencies must be avoided.
  *
  * (c) 2009-2025 Highsoft AS
  *
- * License: www.highcharts.com/license
+ * A commercial license may be required depending on use.
+ * See www.highcharts.com/license
  */
 'use strict';
 import Highcharts from '../../Core/Globals.js';
@@ -97,7 +98,8 @@ This helps Webpack to make the correct decision when to bundle the code and when
  *
  * (c) 2009-2025 Highsoft AS
  *
- * License: www.highcharts.com/license
+ * A commercial license may be required depending on use.
+ * See www.highcharts.com/license
  */
 'use strict';
 import Highcharts from '../../Core/Globals.js';
@@ -119,7 +121,8 @@ export default Highcharts;
  *
  * (c) 2009-2025 Highsoft AS
  *
- * License: www.highcharts.com/license
+ * A commercial license may be required depending on use.
+ * See www.highcharts.com/license
  */
 'use strict';
 import Highcharts from '../../Core/Globals.js';
@@ -268,6 +271,7 @@ Before hunting for the bug, take a minute to understand our plugins.
 * `externals.mjs`: This Webpack callback decides, whether a file should be bundled or can be expected on the namespace.
   In `externals.json` can you map imports to the namespace and modules.
   If a file is not mentioned in `externals.mjs` it gets always bundled as an import.
+  **Note:** Changes in this file affect all webpack configurations, means all product teams have to review these changes.
 
 * `plugins/MastersLoader.mjs`: This is a Webpack loader to prepare masters files for ESM bundling.
   It adds all `@requires` modules of a master file as imports to auto-resolve.

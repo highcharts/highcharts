@@ -1,6 +1,12 @@
-/// <reference path="../code/highcharts.src.d.ts" />
-/// <reference path="../node_modules/@types/jquery/index.d.ts" />
-/// <reference path="../node_modules/@types/qunit/index.d.ts" />
-/// <reference path="../test/test-controller.d.ts" />
-/// <reference path="../test/test-template.d.ts" />
-/// <reference path="../test/test-utilities.d.ts" />
+/**
+ * Global test typings. Side-effect imports ensure the declaration files are
+ * included by the compiler.
+ */
+/* eslint-disable node/no-unpublished-import */
+import '../code/highcharts';
+import 'jquery';
+import 'qunit';
+import '../test/controls';
+import '../test/test-controller.d';
+import '../test/test-template.d';
+import '../test/test-utilities.d';

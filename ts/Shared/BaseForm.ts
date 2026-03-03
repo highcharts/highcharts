@@ -1,10 +1,10 @@
 /* *
  *
- *  (c) 2009-2025 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -17,11 +17,7 @@
  * */
 
 import AST from '../Core/Renderer/HTML/AST.js';
-import U from '../Core/Utilities.js';
-const {
-    addEvent,
-    createElement
-} = U;
+import { addEvent, createElement } from './Utilities.js';
 
 /* *
  *

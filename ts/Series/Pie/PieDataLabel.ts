@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Honsi
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -33,8 +34,7 @@ import R from '../../Core/Renderer/RendererUtilities.js';
 const { distribute } = R;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const { series: Series } = SeriesRegistry;
-import U from '../../Core/Utilities.js';
-const {
+import {
     arrayMax,
     clamp,
     defined,
@@ -42,7 +42,7 @@ const {
     pick,
     pushUnique,
     relativeLength
-} = U;
+} from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -50,8 +50,8 @@ const {
  *
  * */
 
-declare module '../../Core/Renderer/SVG/SVGElementLike' {
-    interface SVGElementLike {
+declare module '../../Core/Renderer/SVG/SVGElementBase' {
+    interface SVGElementBase {
         connector?: SVGElement;
         dataLabelPosition?: DataLabel.LabelPositionObject;
     }
@@ -619,7 +619,7 @@ namespace ColumnDataLabel {
 
 
             this.points.forEach((point): void => {
-                (point.dataLabels || []).forEach((dataLabel): void => {
+                point.dataLabels?.forEach((dataLabel, i): void => {
                     // #8864: every connector can have individual options
                     const {
                             connectorColor,
@@ -649,7 +649,7 @@ namespace ColumnDataLabel {
                                                 ''
                                         )
                                     )
-                                    .add(series.dataLabelsGroup);
+                                    .add(series.dataLabelsGroups?.[i]);
                             }
 
                             if (!chart.styledMode) {

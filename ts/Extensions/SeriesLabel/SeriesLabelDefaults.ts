@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2009-2025 Torstein Honsi
+ *  (c) 2009-2026 Highsoft AS
+ *  Author: Torstein Honsi
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -16,7 +17,7 @@
  *
  * */
 
-import type SeriesLabelOptions from './SeriesLabelOptions';
+import type { SeriesLabelOptions } from './SeriesLabelOptions';
 
 /* *
  *
@@ -159,4 +160,5 @@ const SeriesLabelDefaults: SeriesLabelOptions = {
  *
  * */
 
+/** @internal */
 export default SeriesLabelDefaults;

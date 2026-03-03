@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2010-2025 Pawel Lysy Grzegorz Blachlinski
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Pawel Lysy Grzegorz Blachlinski
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -88,7 +89,20 @@ const TreegraphSeriesDefaults = {
          * @default   0.5
          * @product   highcharts
          * @since 10.3.0
-         * @apioption series.treegraph.link.curveFactor
+         * @apioption plotOptions.treegraph.link.curveFactor
+         */
+
+        /**
+         * For the orthogonal link type, this defines how far down the link
+         * bends. A number defines the pixel offset from the start of the link,
+         * and a percentage defines the relative position on the link. For
+         * example, a `bendAt` of `50%` means that the link bends in the middle.
+         *
+         * @type      {number|string}
+         * @since 12.5.0
+         * @product   highcharts
+         * @default   50%
+         * @apioption plotOptions.treegraph.link.bendAt
          */
 
         /**
@@ -107,7 +121,7 @@ const TreegraphSeriesDefaults = {
         lineWidth: 1,
         /**
          * Radius for the rounded corners of the links between nodes.
-         * Works for `default` link type.
+         * Works for the `orthogonal` link type.
          *
          * @private
          */
@@ -119,12 +133,22 @@ const TreegraphSeriesDefaults = {
          * @sample   highcharts/series-treegraph/link-types
          *           Different link types
          *
-         * @type {'default' | 'curved' | 'straight'}
+         * @type {'orthogonal' | 'curved' | 'straight'}
          * @product highcharts
          *
          */
         type: 'curved'
     },
+    /**
+     * Can set the options of dataLabels on each point which lies on the
+     * level.
+     * [plotOptions.treegraph.dataLabels](#plotOptions.treegraph.dataLabels)
+     * for possible values.
+     *
+     * @extends   plotOptions.treegraph.dataLabels
+     * @product   highcharts
+     * @apioption plotOptions.treegraph.levels.dataLabels
+     */
     /**
      * Options applied to collapse Button. The collape button is the
      * small button which indicates, that the node is collapsable.
@@ -192,13 +216,12 @@ const TreegraphSeriesDefaults = {
      */
     tooltip: {
         /**
-         * The HTML of the point's line in the tooltip. Variables are
-         * enclosed by curly brackets. Available variables are
-         * `point.id`,  `point.fromNode.id`, `point.toNode.id`,
-         * `series.name`, `series.color` and other properties on the
-         * same form. Furthermore, This can also be overridden for each
-         * series, which makes it a good hook for displaying units. In
-         * styled mode, the dot is colored by a class name rather than
+         * The HTML of the point's line in the tooltip. Variables are enclosed
+         * by curly brackets. Available variables are `point.id`,
+         * `point.fromNode.id`, `point.toNode.id`, `series.name`, `series.color`
+         * and other properties on the same form. Furthermore, This can also be
+         * overridden for each series, which makes it a good hook for displaying
+         * units. In styled mode, the dot is colored by a class name rather than
          * the point color.
          *
          * @type {string}
@@ -249,10 +272,28 @@ const TreegraphSeriesDefaults = {
         },
         enabled: true,
         linkFormatter: (): string => '',
+        /**
+         * The
+         * [format string](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting)
+         * specifying what to show for _nodes_ in the treegraph. Overrides
+         * `format`. Use `pointFormat` and `linkFormat` to differentiate between
+         * node and link data labels.
+         *
+         * @type {string}
+         */
+        pointFormat: void 0,
         padding: 5,
         style: {
             textOverflow: 'none'
         }
+        /**
+         * Callback function to format data labels for _nodes_ in the
+         * treegraph, when `pointFormat` is not sufficient.
+         *
+         * @type {function}
+         * @apioption series.treegraph.dataLabels.pointFormatter
+         */
+
     },
     /**
      * The distance between nodes in a tree graph in the longitudinal direction.

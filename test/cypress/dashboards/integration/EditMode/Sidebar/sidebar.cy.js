@@ -113,11 +113,26 @@ describe('Edit Mode sidebar', () => {
 
         // Navigate to the option
         cy.get('.highcharts-dashboards-edit-standalone-element').should('exist');
-        cy.get('.highcharts-dashboards-edit-accordion-header').eq(1).click();
+        cy.get('.highcharts-dashboards-edit-accordion-header').eq(2).click();
         cy.get('.highcharts-dashboards-edit-accordion-standalone-wrapper')
             .find('.highcharts-dashboards-edit-accordion-header-wrapper')
             .should('exist')
             .find('.highcharts-dashboards-edit-accordion-header-icon')
             .should('not.exist');
     });
+
+    it('Toggle should exist with on and off labels, #23699', () => {
+        cy.toggleEditMode();
+
+        // Open sidebar
+        cy.get('#dashboard-col-0').click();
+        cy.get('.highcharts-dashboards-edit-toolbar-cell').children().eq(0).click();
+
+        // Navigate to the option
+        cy.contains('.highcharts-dashboards-edit-accordion-content', 'Legend')
+            .within(() => {
+                cy.contains('.highcharts-dashboards-edit-toggle-labels', 'off').should('exist')
+                cy.contains('.highcharts-dashboards-edit-toggle-labels', 'on').should('exist')
+            })
+        });
 });

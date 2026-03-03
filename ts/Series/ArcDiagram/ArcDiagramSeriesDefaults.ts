@@ -2,11 +2,12 @@
  *
  *  Arc diagram module
  *
- *  (c) 2021 Piotr Madej, Grzegorz Blachliński
+ *  (c) 2021-2026 Highsoft AS
+ *  Author: Piotr Madej, Grzegorz Blachliński
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -86,8 +87,6 @@ const ArcDiagramSeriesDefaults: ArcDiagramSeriesOptions = {
      * string by default.
      *
      * @declare Highcharts.SeriesArcDiagramDataLabelsOptionsObject
-     *
-     * @private
      */
     dataLabels: {
 
@@ -149,6 +148,13 @@ const ArcDiagramSeriesDefaults: ArcDiagramSeriesOptions = {
      */
 
     /**
+     * Options for the point markers of arc diagram series. Properties like
+     * `fillColor`, `lineColor` and `lineWidth` define the visual appearance of
+     * the markers, while the `symbol` option defines their shape.
+     *
+     * In styled mode, the markers can be styled with the `.highcharts-point`,
+     * `.highcharts-point-hover` and `.highcharts-point-select` class names.
+     *
      * @extends   plotOptions.series.marker
      * @excluding enabled, enabledThreshold, height, width
      */
@@ -214,11 +220,6 @@ const ArcDiagramSeriesDefaults: ArcDiagramSeriesOptions = {
  * @excluding enabled, enabledThreshold, height, radius, width
  * @apioption series.arcdiagram.marker
  */
-/**
- * @type      {Highcharts.SeriesArcDiagramDataLabelsOptionsObject|Array<Highcharts.SeriesArcDiagramDataLabelsOptionsObject>}
- * @product   highcharts
- * @apioption series.arcdiagram.data.dataLabels
- */
 
 /**
  * A collection of options for the individual nodes. The nodes in an arc diagram
@@ -240,15 +241,6 @@ const ArcDiagramSeriesDefaults: ArcDiagramSeriesOptions = {
  * {Highcharts.SeriesArcDiagramDataLabelsOptionsObject|Array<Highcharts.SeriesArcDiagramDataLabelsOptionsObject>}
  *
  * @apioption series.arcdiagram.nodes.dataLabels
- */
-
-/**
- * Individual data label for each node. The options are the same as the ones for
- * [series.arcdiagram.dataLabels](#series.arcdiagram.dataLabels).
- *
- * @type
- * {Highcharts.SeriesArcDiagramDataLabelsOptionsObject|Array<Highcharts.SeriesArcDiagramDataLabelsOptionsObject>}
- *
  */
 
 /**
@@ -275,8 +267,28 @@ const ArcDiagramSeriesDefaults: ArcDiagramSeriesOptions = {
  * @type      {Array<*>}
  * @extends   series.sankey.data
  * @product   highcharts
- * @excluding outgoing, dataLabels
+ * @excluding outgoing
  * @apioption series.arcdiagram.data
+ */
+
+/**
+ * @type      {Highcharts.SeriesArcDiagramDataLabelsOptionsObject|Array<Highcharts.SeriesArcDiagramDataLabelsOptionsObject>}
+ * @product   highcharts
+ * @apioption series.arcdiagram.data.dataLabels
+ */
+
+/**
+ * The link weight, in pixels. If not set, width is calculated per link,
+ * depending on the weight value.
+ *
+ * @sample highcharts/series-arcdiagram/link-weight
+ *         Link weight set on series
+ *
+ * @type {number}
+ * @since 10.0.0
+ * @default undefined
+ * @product highcharts
+ * @apioption series.arcdiagram.data.linkWeight
  */
 
 ''; // Adds doclets above to the transpiled file

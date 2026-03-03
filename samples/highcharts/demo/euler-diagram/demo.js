@@ -93,15 +93,15 @@ Highcharts.chart('container', {
             value: 1,
             name: 'Data Layer'
         }, {
-            sets: ['Dashboards', 'DataGrid'],
+            sets: ['Dashboards', 'Grid'],
             value: 0.5,
-            name: 'DataGrid'
+            name: 'Grid'
         }, {
             sets: ['Dashboards', 'KPI'],
             value: 0.5,
             name: 'KPI'
         }, {
-            sets: ['DataGrid'],
+            sets: ['Grid'],
             value: 0.5,
             name: ''
         }, {

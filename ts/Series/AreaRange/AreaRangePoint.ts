@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Honsi
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -33,11 +34,7 @@ const {
         }
     }
 } = SeriesRegistry.seriesTypes;
-import U from '../../Core/Utilities.js';
-const {
-    defined,
-    isNumber
-} = U;
+import { defined, isNumber } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -45,9 +42,22 @@ const {
  *
  * */
 
-declare module '../../Core/Series/PointLike' {
-    interface PointLike {
+declare module '../../Core/Series/PointBase' {
+    interface PointBase {
+        /**
+         * Range series only. The high or maximum value for each data point.
+         */
+        high?: AreaRangePoint['high'];
+
+        /**
+         * Range series only. The low or minimum value for each data point.
+         */
+        low?: AreaRangePoint['low'];
+
+        /** @internal */
         plotHigh?: AreaRangePoint['plotHigh'];
+
+        /** @internal */
         plotLow?: AreaRangePoint['plotLow'];
     }
 }
@@ -95,18 +105,6 @@ class AreaRangePoint extends AreaPoint {
     public plotX!: number;
 
     public series!: AreaRangeSeries;
-
-    /**
-     * Range series only. The high or maximum value for each data point.
-     * @name Highcharts.Point#high
-     * @type {number|undefined}
-     */
-
-    /**
-     * Range series only. The low or minimum value for each data point.
-     * @name Highcharts.Point#low
-     * @type {number|undefined}
-     */
 
     /* *
      *
@@ -214,3 +212,24 @@ class AreaRangePoint extends AreaPoint {
  * */
 
 export default AreaRangePoint;
+
+/* *
+ *
+ *  API Options
+ *
+ * */
+
+/**
+ * Range series only. The high or maximum value for each data point.
+ *
+ * @name Highcharts.Point#high
+ * @type {number|undefined}
+ */
+/**
+ * Range series only. The low or minimum value for each data point.
+ *
+ * @name Highcharts.Point#low
+ * @type {number|undefined}
+ */
+
+''; // Keeps doclets above in JS file.

@@ -1,5 +1,6 @@
 QUnit.test('Export buttons', function (assert) {
     var chartClickEventRan = false,
+        done = assert.async(),
         chart = Highcharts.chart('container', {
             chart: {
                 events: {
@@ -128,21 +129,23 @@ QUnit.test('Export buttons', function (assert) {
 
     var originalPost = Highcharts.HttpUtilities.post;
 
-    try {
-        var postData;
+    var postData;
 
-        Highcharts.HttpUtilities.post = function (url, data) {
-            postData = data;
-        };
+    Highcharts.HttpUtilities.post = function (url, data) {
+        postData = data;
+    };
 
-        // Click it
-        Highcharts.fireEvent(button, 'click');
+    // Click it
+    Highcharts.fireEvent(button, 'click');
 
+    setTimeout(function () {
         assert.strictEqual(postData.type, 'application/pdf', 'Posting for PNG');
         assert.strictEqual(typeof postData.svg, 'string', 'SVG is posted');
-    } finally {
+
+
         Highcharts.HttpUtilities.post = originalPost;
-    }
+        done();
+    }, 10);
 });
 
 QUnit.test('View/hide data table button, #14338.', function (assert) {

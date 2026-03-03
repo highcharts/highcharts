@@ -1,26 +1,26 @@
 {
     "locale": "en-US",
-    "chartTitle": "Chart title",
+    "chartTitle": "Chart Title",
     "pieSliceName": "Slice",
     "seriesName": "Series {add index 1}",
-    "yAxisTitle": "Values",
+    "yAxisTitle": "Value",
     "rangeSelector": {
         "allText": "All",
         "allTitle": "View all",
-        "monthText": "{count}m",
-        "monthTitle": "View {count} {#eq count 1}month{else}months{/eq}",
-        "yearText": "{count}y",
-        "yearTitle": "View {count} {#eq count 1}year{else}years{/eq}",
-        "ytdText": "YTD",
+        "monthText": "{count} months",
+        "monthTitle": "View {count} months",
+        "yearText": "{count} years",
+        "yearTitle": "View {count} years",
+        "ytdText": "Year to date",
         "ytdTitle": "View year to date"
     },
-    "weekFrom": "week from",
+    "weekFrom": "Week starting Monday",
     "stockOpen": "Open",
     "stockHigh": "High",
     "stockLow": "Low",
     "stockClose": "Close",
-    "viewFullscreen": "View in full screen",
-    "exitFullscreen": "Exit from full screen",
+    "viewFullscreen": "View in fullscreen",
+    "exitFullscreen": "Exit fullscreen",
     "printChart": "Print chart",
     "downloadPNG": "Download PNG image",
     "downloadJPEG": "Download JPEG image",
@@ -31,7 +31,7 @@
     "numericSymbols": [
         "k",
         "M",
-        "G",
+        "B",
         "T",
         "P",
         "E"
@@ -46,7 +46,7 @@
     "downloadCSV": "Download CSV",
     "downloadXLS": "Download XLS",
     "exportData": {
-        "annotationHeader": "Annotations",
+        "annotationHeader": "Annotation",
         "categoryHeader": "Category",
         "categoryDatetimeHeader": "DateTime"
     },
@@ -55,7 +55,7 @@
     "exportInProgress": "Exporting...",
     "accessibility": {
         "defaultChartTitle": "Chart",
-        "chartContainerLabel": "{title}. Highcharts interactive chart.",
+        "chartContainerLabel": "{title}. Interactive Highcharts chart.",
         "svgContainerLabel": "Interactive chart",
         "drillUpButton": "{buttonText}",
         "credits": "Chart credits: {creditsStr}",
@@ -67,15 +67,32 @@
             "afterRegionLabel": "",
             "annotations": {
                 "heading": "Chart annotations summary",
-                "descriptionSinglePoint": "{annotationText}. Related to {annotationPoint}",
-                "descriptionMultiplePoints": "{annotationText}. Related to {annotationPoint}{#each additionalAnnotationPoints}, also related to {this}{/each}",
+                "descriptionSinglePoint": "{annotationText}. Linked to {annotationPoint}",
+                "descriptionMultiplePoints": "{annotationText}. Linked to {annotationPoint}{#each additionalAnnotationPoints}, also linked to {this}{/each}",
                 "descriptionNoPoints": "{annotationText}"
             },
             "endOfChartMarker": "End of interactive chart."
         },
+        "axis": {
+            "xAxisDescriptionSingular": "The chart has 1 X axis displaying {names[0]}. {ranges[0]}",
+            "xAxisDescriptionPlural": "The chart has {numAxes} X axes displaying {#each names}{#unless @first},{/unless}{#if @last} and{/if} {this}{/each}.",
+            "yAxisDescriptionSingular": "The chart has 1 Y axis displaying {names[0]}. {ranges[0]}",
+            "yAxisDescriptionPlural": "The chart has {numAxes} Y axes displaying {#each names}{#unless @first},{/unless}{#if @last} and{/if} {this}{/each}.",
+            "timeRangeDays": "Data range: {range} days.",
+            "timeRangeHours": "Data range: {range} hours.",
+            "timeRangeMinutes": "Data range: {range} minutes.",
+            "timeRangeSeconds": "Data range: {range} seconds.",
+            "rangeFromTo": "Data ranges from {rangeFrom} to {rangeTo}.",
+            "rangeCategories": "Data range: {numCategories} categories.",
+            "defaultAxisNames": {
+                "categories": "categories",
+                "time": "time",
+                "values": "values"
+            }
+        },
         "sonification": {
             "playAsSoundButtonText": "Play as sound, {chartTitle}",
-            "playAsSoundClickAnnouncement": "Play"
+            "playAsSoundClickAnnouncement": "Playing"
         },
         "legend": {
             "legendLabelNoTitle": "Toggle series visibility, {chartTitle}",
@@ -83,8 +100,8 @@
             "legendItem": "Show {itemName}"
         },
         "zoom": {
-            "mapZoomIn": "Zoom chart",
-            "mapZoomOut": "Zoom out chart",
+            "mapZoomIn": "Zoom in the chart",
+            "mapZoomOut": "Zoom out the chart",
             "resetZoomButton": "Reset zoom"
         },
         "rangeSelector": {
@@ -94,20 +111,20 @@
             "clickButtonAnnouncement": "Viewing {axisRangeDescription}"
         },
         "navigator": {
-            "handleLabel": "{#eq handleIx 0}Start, percent{else}End, percent{/eq}",
+            "handleLabel": "{#eq handleIx 0}Start, percentage{else}End, percentage{/eq}",
             "groupLabel": "Axis zoom",
             "changeAnnouncement": "{axisRangeDescription}"
         },
         "table": {
             "viewAsDataTableButtonText": "View as data table, {chartTitle}",
-            "tableSummary": "Table representation of chart."
+            "tableSummary": "Table representation of the chart."
         },
         "announceNewData": {
-            "newDataAnnounce": "Updated data for chart {chartTitle}",
+            "newDataAnnounce": "Updated data in chart {chartTitle}",
             "newSeriesAnnounceSingle": "New data series: {seriesDesc}",
             "newPointAnnounceSingle": "New data point: {pointDesc}",
-            "newSeriesAnnounceMultiple": "New data series in chart {chartTitle}: {seriesDesc}",
-            "newPointAnnounceMultiple": "New data point in chart {chartTitle}: {pointDesc}"
+            "newSeriesAnnounceMultiple": "New data series in {chartTitle}: {seriesDesc}",
+            "newPointAnnounceMultiple": "New data points in {chartTitle}: {pointDesc}"
         },
         "seriesTypeDescriptions": {
             "boxplot": "Box plot charts are typically used to display groups of statistical data. Each data point in the chart can have up to 5 values: minimum, lower quartile, median, upper quartile, and maximum.",
@@ -143,18 +160,6 @@
             "boxplotMultiple": "Boxplot with {numSeries} data series.",
             "bubbleSingle": "Bubble chart with {numPoints} {#eq numPoints 1}bubbles{else}bubble{/eq}.",
             "bubbleMultiple": "Bubble chart with {numSeries} data series."
-        },
-        "axis": {
-            "xAxisDescriptionSingular": "The chart has 1 X axis displaying {names[0]}. {ranges[0]}",
-            "xAxisDescriptionPlural": "The chart has {numAxes} X axes displaying {#each names}{#unless @first},{/unless}{#if @last} and{/if} {this}{/each}.",
-            "yAxisDescriptionSingular": "The chart has 1 Y axis displaying {names[0]}. {ranges[0]}",
-            "yAxisDescriptionPlural": "The chart has {numAxes} Y axes displaying {#each names}{#unless @first},{/unless}{#if @last} and{/if} {this}{/each}.",
-            "timeRangeDays": "Data range: {range} days.",
-            "timeRangeHours": "Data range: {range} hours.",
-            "timeRangeMinutes": "Data range: {range} minutes.",
-            "timeRangeSeconds": "Data range: {range} seconds.",
-            "rangeFromTo": "Data ranges from {rangeFrom} to {rangeTo}.",
-            "rangeCategories": "Data range: {numCategories} categories."
         },
         "exporting": {
             "chartMenuLabel": "Chart menu",
@@ -194,6 +199,9 @@
             "pointAnnotationsDescription": "{#each annotations}Annotation: {this}{/each}"
         }
     },
+    "mainBreadcrumb": "Home",
+    "downloadMIDI": "Download MIDI",
+    "playAsSound": "Play as sound",
     "navigation": {
         "popup": {
             "simpleShapes": "Simple shapes",
@@ -231,15 +239,15 @@
             "arrowInfinityLine": "Arrow line",
             "horizontalLine": "Horizontal line",
             "verticalLine": "Vertical line",
-            "crooked3": "Crooked 3 line",
-            "crooked5": "Crooked 5 line",
-            "elliott3": "Elliott 3 line",
-            "elliott5": "Elliott 5 line",
+            "crooked3": "Crooked 3 lines",
+            "crooked5": "Crooked 5 lines",
+            "elliott3": "Elliott 3 lines",
+            "elliott5": "Elliott 5 lines",
             "verticalCounter": "Vertical counter",
             "verticalLabel": "Vertical label",
             "verticalArrow": "Vertical arrow",
             "fibonacci": "Fibonacci",
-            "fibonacciTimeZones": "Fibonacci Time Zones",
+            "fibonacciTimeZones": "Fibonacci time zones",
             "pitchfork": "Pitchfork",
             "parallelChannel": "Parallel channel",
             "infinityLine": "Infinity line",
@@ -247,7 +255,7 @@
             "measureXY": "Measure XY",
             "measureX": "Measure X",
             "measureY": "Measure Y",
-            "timeCycles": "Time Cycles",
+            "timeCycles": "Time cycles",
             "flags": "Flags",
             "addButton": "Add",
             "saveButton": "Save",
@@ -262,9 +270,9 @@
             "crosshairY": "Crosshair Y",
             "tunnel": "Tunnel",
             "background": "Background",
-            "noFilterMatch": "No match",
-            "searchIndicators": "Search Indicators",
-            "clearFilter": "✕ clear filter",
+            "noFilterMatch": "No matches found",
+            "searchIndicators": "Search indicators",
+            "clearFilter": "✕ Clear filter",
             "index": "Index",
             "period": "Period",
             "periods": "Periods",
@@ -281,166 +289,69 @@
             "topBand": "Top band",
             "bottomBand": "Bottom band",
             "initialAccelerationFactor": "Initial acceleration factor",
-            "maxAccelerationFactor": "Max acceleration factor",
+            "maxAccelerationFactor": "Maximum acceleration factor",
             "increment": "Increment",
             "multiplier": "Multiplier",
             "ranges": "Ranges",
             "highIndex": "High index",
             "lowIndex": "Low index",
             "deviation": "Deviation",
-            "xAxisUnit": "x-axis unit",
+            "xAxisUnit": "X-axis unit",
             "factor": "Factor",
             "fastAvgPeriod": "Fast average period",
             "slowAvgPeriod": "Slow average period",
             "average": "Average",
             "indicatorAliases": {
-                "abands": [
-                    "Acceleration Bands"
-                ],
-                "bb": [
-                    "Bollinger Bands"
-                ],
-                "dema": [
-                    "Double Exponential Moving Average"
-                ],
-                "ema": [
-                    "Exponential Moving Average"
-                ],
-                "ikh": [
-                    "Ichimoku Kinko Hyo"
-                ],
-                "keltnerchannels": [
-                    "Keltner Channels"
-                ],
-                "linearRegression": [
-                    "Linear Regression"
-                ],
-                "pivotpoints": [
-                    "Pivot Points"
-                ],
-                "pc": [
-                    "Price Channel"
-                ],
-                "priceenvelopes": [
-                    "Price Envelopes"
-                ],
-                "psar": [
-                    "Parabolic SAR"
-                ],
-                "sma": [
-                    "Simple Moving Average"
-                ],
-                "supertrend": [
-                    "Super Trend"
-                ],
-                "tema": [
-                    "Triple Exponential Moving Average"
-                ],
-                "vbp": [
-                    "Volume by Price"
-                ],
-                "vwap": [
-                    "Volume Weighted Moving Average"
-                ],
-                "wma": [
-                    "Weighted Moving Average"
-                ],
-                "zigzag": [
-                    "Zig Zag"
-                ],
-                "apo": [
-                    "Absolute price indicator"
-                ],
-                "ad": [
-                    "Accumulation/Distribution"
-                ],
-                "aroon": [
-                    "Aroon"
-                ],
-                "aroonoscillator": [
-                    "Aroon oscillator"
-                ],
-                "atr": [
-                    "Average True Range"
-                ],
-                "ao": [
-                    "Awesome oscillator"
-                ],
-                "cci": [
-                    "Commodity Channel Index"
-                ],
-                "chaikin": [
-                    "Chaikin"
-                ],
-                "cmf": [
-                    "Chaikin Money Flow"
-                ],
-                "cmo": [
-                    "Chande Momentum Oscillator"
-                ],
-                "disparityindex": [
-                    "Disparity Index"
-                ],
-                "dmi": [
-                    "Directional Movement Index"
-                ],
-                "dpo": [
-                    "Detrended price oscillator"
-                ],
-                "klinger": [
-                    "Klinger Oscillator"
-                ],
-                "linearRegressionAngle": [
-                    "Linear Regression Angle"
-                ],
-                "linearRegressionIntercept": [
-                    "Linear Regression Intercept"
-                ],
-                "linearRegressionSlope": [
-                    "Linear Regression Slope"
-                ],
-                "macd": [
-                    "Moving Average Convergence Divergence"
-                ],
-                "mfi": [
-                    "Money Flow Index"
-                ],
-                "momentum": [
-                    "Momentum"
-                ],
-                "natr": [
-                    "Normalized Average True Range"
-                ],
-                "obv": [
-                    "On-Balance Volume"
-                ],
-                "ppo": [
-                    "Percentage Price oscillator"
-                ],
-                "roc": [
-                    "Rate of Change"
-                ],
-                "rsi": [
-                    "Relative Strength Index"
-                ],
-                "slowstochastic": [
-                    "Slow Stochastic"
-                ],
-                "stochastic": [
-                    "Stochastic"
-                ],
-                "trix": [
-                    "TRIX"
-                ],
-                "williamsr": [
-                    "Williams %R"
-                ]
+                "abands": ["Acceleration Bands"],
+                "bb": ["Bollinger Bands"],
+                "dema": ["Double Exponential Moving Average"],
+                "ema": ["Exponential Moving Average"],
+                "ikh": ["Ichimoku Cloud"],
+                "keltnerchannels": ["Keltner Channels"],
+                "linearRegression": ["Linear Regression"],
+                "pivotpoints": ["Pivot Points"],
+                "pc": ["Price Channel"],
+                "priceenvelopes": ["Price Envelopes"],
+                "psar": ["Parabolic SAR"],
+                "sma": ["Simple Moving Average"],
+                "supertrend": ["Supertrend"],
+                "tema": ["Triple Exponential Moving Average"],
+                "vbp": ["Volume by Price"],
+                "vwap": ["Volume Weighted Average Price"],
+                "wma": ["Weighted Moving Average"],
+                "zigzag": ["Zig Zag"],
+                "apo": ["Absolute Price Oscillator"],
+                "ad": ["Accumulation/Distribution"],
+                "aroon": ["Aroon"],
+                "aroonoscillator": ["Aroon Oscillator"],
+                "atr": ["Average True Range"],
+                "ao": ["Awesome Oscillator"],
+                "cci": ["Commodity Channel Index"],
+                "chaikin": ["Chaikin"],
+                "cmf": ["Chaikin Money Flow"],
+                "cmo": ["Chande Momentum Oscillator"],
+                "disparityindex": ["Disparity Index"],
+                "dmi": ["Directional Movement Indicator"],
+                "dpo": ["Detrended Price Oscillator"],
+                "klinger": ["Klinger Oscillator"],
+                "linearRegressionAngle": ["Linear Regression Angle"],
+                "linearRegressionIntercept": ["Linear Regression Intercept"],
+                "linearRegressionSlope": ["Linear Regression Slope"],
+                "macd": ["Moving Average Convergence/Divergence"],
+                "mfi": ["Money Flow Index"],
+                "momentum": ["Momentum"],
+                "natr": ["Normalized Average True Range"],
+                "obv": ["On-Balance Volume"],
+                "ppo": ["Percentage Price Oscillator"],
+                "roc": ["Rate of Change"],
+                "rsi": ["Relative Strength Index"],
+                "slowstochastic": ["Slow Stochastic"],
+                "stochastic": ["Stochastic Oscillator"],
+                "trix": ["TRIX"],
+                "williamsr": ["Williams %R"]
             }
         }
     },
-    "mainBreadcrumb": "Main",
-    "downloadMIDI": "Download MIDI",
-    "playAsSound": "Play as sound",
     "stockTools": {
         "gui": {
             "simpleShapes": "Simple shapes",
@@ -455,25 +366,25 @@
             "typeChange": "Type change",
             "saveChart": "Save chart",
             "indicators": "Indicators",
-            "currentPriceIndicator": "Current Price Indicators",
+            "currentPriceIndicator": "Current price indicator",
             "zoomX": "Zoom X",
             "zoomY": "Zoom Y",
-            "zoomXY": "Zooom XY",
+            "zoomXY": "Zoom XY",
             "fullScreen": "Fullscreen",
             "typeOHLC": "OHLC",
             "typeLine": "Line",
             "typeCandlestick": "Candlestick",
             "typeHLC": "HLC",
-            "typeHollowCandlestick": "Hollow Candlestick",
-            "typeHeikinAshi": "Heikin Ashi",
+            "typeHollowCandlestick": "Hollow candlestick",
+            "typeHeikinAshi": "Heikin-Ashi",
             "circle": "Circle",
             "ellipse": "Ellipse",
             "label": "Label",
             "rectangle": "Rectangle",
-            "flagCirclepin": "Flag circle",
-            "flagDiamondpin": "Flag diamond",
-            "flagSquarepin": "Flag square",
-            "flagSimplepin": "Flag simple",
+            "flagCirclepin": "Circle pin flag",
+            "flagDiamondpin": "Diamond pin flag",
+            "flagSquarepin": "Square pin flag",
+            "flagSimplepin": "Simple flag",
             "measureXY": "Measure XY",
             "measureX": "Measure X",
             "measureY": "Measure Y",
@@ -486,18 +397,18 @@
             "horizontalLine": "Horizontal line",
             "verticalLine": "Vertical line",
             "infinityLine": "Infinity line",
-            "crooked3": "Crooked 3 line",
-            "crooked5": "Crooked 5 line",
-            "elliott3": "Elliott 3 line",
-            "elliott5": "Elliott 5 line",
+            "crooked3": "Crooked 3 lines",
+            "crooked5": "Crooked 5 lines",
+            "elliott3": "Elliott 3 lines",
+            "elliott5": "Elliott 5 lines",
             "verticalCounter": "Vertical counter",
             "verticalLabel": "Vertical label",
             "verticalArrow": "Vertical arrow",
             "fibonacci": "Fibonacci",
-            "fibonacciTimeZones": "Fibonacci Time Zones",
+            "fibonacciTimeZones": "Fibonacci time zones",
             "pitchfork": "Pitchfork",
             "parallelChannel": "Parallel channel",
-            "timeCycles": "Time Cycles"
+            "timeCycles": "Time cycles"
         }
     },
     "noData": "No data to display"

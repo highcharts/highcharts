@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2010-2025 Grzegorz Blachlinski, Sebastian Bochan
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Grzegorz Blachlinski, Sebastian Bochan
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -26,12 +27,7 @@ import type Series from '../../Core/Series/Series';
 import GraphLayout from '../GraphLayoutComposition.js';
 import PackedBubbleIntegration from './PackedBubbleIntegration.js';
 import ReingoldFruchtermanLayout from '../Networkgraph/ReingoldFruchtermanLayout.js';
-import U from '../../Core/Utilities.js';
-const {
-    addEvent,
-    defined,
-    pick
-} = U;
+import { addEvent, defined, pick } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -39,8 +35,8 @@ const {
  *
  * */
 
-declare module '../../Core/Chart/ChartLike' {
-    interface ChartLike {
+declare module '../../Core/Chart/ChartBase' {
+    interface ChartBase {
         allDataPoints?: Array<PackedBubbleSeries.Data>;
         allParentNodes: Array<PackedBubblePoint>;
         getSelectedParentNodes(): Array<PackedBubblePoint>;

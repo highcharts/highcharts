@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Honsi
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -473,6 +474,10 @@ const ChartDefaults: ChartOptions = {
      * #tooltip.followTouchMove) option is `true` (default), panning
      * requires two fingers. To allow panning with one finger, set
      * `followTouchMove` to `false`.
+     *
+     * **Note:** If both zooming and panning are enabled without keys, zooming
+     * will take precedence by default. To prioritize panning, either set
+     * [chart.zooming.key](#chart.zooming.key) or panKey.
      *
      * @sample  {highcharts} highcharts/chart/pankey/ Zooming and panning
      * @sample  {highstock} stock/chart/panning/ Zooming and xy panning
@@ -1121,6 +1126,10 @@ const ChartDefaults: ChartOptions = {
          * avoid zooming while moving points. Should be set different than
          * [chart.panKey](#chart.panKey).
          *
+         * **Note:** If both zooming and panning are enabled without keys,
+         * zooming will take precedence by default. To prioritize panning,
+         * either set zooming key or [chart.panKey](#chart.panKey).
+         *
          * @type       {string}
          * @default    {highcharts} undefined
          * @validvalue ["alt", "ctrl", "meta", "shift"]
@@ -1203,14 +1212,12 @@ const ChartDefaults: ChartOptions = {
              */
             position: {
 
-                /**
-                 * The horizontal alignment of the button.
-                 */
+
+                /** @internal */
                 align: 'right',
 
-                /**
-                 * The horizontal offset of the button.
-                 */
+
+                /** @internal */
                 x: -10,
 
                 /**
@@ -1221,9 +1228,8 @@ const ChartDefaults: ChartOptions = {
                  * @apioption  chart.zooming.resetButton.position.verticalAlign
                  */
 
-                /**
-                 * The vertical offset of the button.
-                 */
+
+                /** @internal */
                 y: 10
             }
         }

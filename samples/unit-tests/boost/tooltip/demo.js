@@ -39,6 +39,32 @@ QUnit.test('Tooltip on a boosted chart with categories', function (assert) {
         2,
         'The last hoverable point should be the last in the series. (#18856)'
     );
+
+    const color = 'lime';
+
+    chart.series[0].update({
+        type: 'scatter',
+        data: [{
+            x: 0,
+            y: 3,
+            color
+        }, {
+            x: 5000,
+            y: 1,
+            color: 'black'
+        }]
+    });
+
+    controller.moveTo(
+        chart.series[0].points[0].plotX + chart.plotLeft,
+        chart.series[0].points[0].plotY + chart.plotTop
+    );
+
+    assert.strictEqual(
+        chart.hoverPoint.color,
+        color,
+        'Hover point should be same as declared in data, #23370.'
+    );
 });
 
 QUnit.test(
@@ -122,4 +148,5 @@ QUnit.test(
             ],
             'Tooltip should use the filtered points'
         );
-    });
+    }
+);

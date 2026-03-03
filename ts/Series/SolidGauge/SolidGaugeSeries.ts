@@ -2,11 +2,12 @@
  *
  *  Solid angular gauge module
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Honsi
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -31,15 +32,14 @@ const {
 } = SeriesRegistry.seriesTypes;
 import SolidGaugeAxis from '../../Core/Axis/SolidGaugeAxis.js';
 import SolidGaugeSeriesDefaults from './SolidGaugeSeriesDefaults.js';
-import U from '../../Core/Utilities.js';
-const {
+import {
     clamp,
     extend,
     isNumber,
     merge,
-    pick,
-    pInt
-} = U;
+    pInt,
+    pick
+} from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -274,8 +274,8 @@ class SolidGaugeSeries extends GaugeSeries {
             this.startAngleRad = this.thresholdAngleRad;
             PieSeries.prototype.animate.call(this, init);
         }
-    }
 
+    }
 }
 
 /* *

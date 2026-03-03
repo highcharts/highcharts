@@ -27,9 +27,7 @@ Then, import the package and the dedicated plugin to connect it to the dashboard
 ```typescript
     import * as Highcharts from 'highcharts';
     import * as Dashboards from '@highcharts/dashboards';
-    import LayoutModule from '@highcharts/dashboards/modules/layout';
-
-    LayoutModule(Dashboards);
+    import '@highcharts/dashboards/modules/layout';
 
     Dashboards.HighchartsPlugin.custom.connectHighcharts(Highcharts);
     Dashboards.PluginHandler.addPlugin(Dashboards.HighchartsPlugin);
@@ -101,14 +99,12 @@ Dashboards.board('container', {
         connectors: [{
             id: 'Vitamin',
             type: 'CSV',
-            options: {
-                csv: `Food,Vitamin A,Iron
-                Beef Liver,6421,6.5
-                Lamb Liver,2122,6.5
-                Cod Liver Oil,1350,0.9
-                Mackerel,388,1
-                Tuna,214,0.6`,
-            },
+            csv: `Food,Vitamin A,Iron
+            Beef Liver,6421,6.5
+            Lamb Liver,2122,6.5
+            Cod Liver Oil,1350,0.9
+            Mackerel,388,1
+            Tuna,214,0.6`,
         }]
     },
     gui: {

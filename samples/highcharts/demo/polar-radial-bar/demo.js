@@ -61,7 +61,10 @@ Highcharts.chart('container', {
             borderWidth: 0,
             pointPadding: 0,
             groupPadding: 0.15,
-            borderRadius: '50%'
+            borderRadius: {
+                radius: '50%',
+                where: 'all'
+            }
         }
     },
     series: [{

@@ -1,6 +1,6 @@
-@import url("https://code.highcharts.com/dashboards/css/datagrid.css");
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/css/grid-pro.css");
 
-* {
+body {
     font-family:
         -apple-system,
         BlinkMacSystemFont,
@@ -18,12 +18,7 @@
     padding: 8px;
 }
 
-.highcharts-datagrid-column {
-    width: 15%;
-}
-
 .custom-column-class-name,
-.highcharts-datagrid-table tbody tr td.custom-column-class-name {
+.custom-column-class-name span {
     color: #f00 !important;
-    width: 40%;
 }

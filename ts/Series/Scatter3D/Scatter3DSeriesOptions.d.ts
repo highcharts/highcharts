@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Honsi
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -15,8 +16,10 @@
  * */
 
 import type Scatter3DPointOptions from './Scatter3DPointOptions';
-import type ScatterSeriesOptions from '../Scatter/ScatterSeriesOptions';
-import type TooltipOptions from '../../Core/TooltipOptions';
+import type {
+    ScatterSeriesOptions,
+    ScatterSeriesTooltipOptions
+} from '../Scatter/ScatterSeriesOptions';
 
 /* *
  *
@@ -118,8 +121,15 @@ export interface Scatter3DSeriesOptions extends ScatterSeriesOptions {
      */
     data?: Array<Array<number>|Scatter3DPointOptions>;
 
-    tooltip?: Partial<TooltipOptions>;
+    tooltip?: Scatter3DSeriesTooltipOptions;
+}
 
+export interface Scatter3DSeriesTooltipOptions
+    extends ScatterSeriesTooltipOptions {
+    /**
+     * @default 'x: <b>{point.x}</b><br/>y: <b>{point.y}</b><br/>z: <b>{point.z}</b><br/>'
+     */
+    pointFormat?: ScatterSeriesTooltipOptions['pointFormat'];
 }
 
 /* *

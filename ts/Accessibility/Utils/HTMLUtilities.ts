@@ -1,12 +1,13 @@
 /* *
  *
- *  (c) 2009-2025 Øystein Moseng
+ *  (c) 2009-2026 Highsoft AS
+ *  Author: Øystein Moseng
  *
  *  Utility functions for accessibility module.
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -24,12 +25,11 @@ import type {
 } from '../../Core/Renderer/DOMElementType';
 
 import H from '../../Core/Globals.js';
+import { css } from '../../Shared/Utilities.js';
 const {
     doc,
     win
 } = H;
-import U from '../../Core/Utilities.js';
-const { css } = U;
 
 
 /* *

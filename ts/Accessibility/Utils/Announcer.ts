@@ -1,12 +1,13 @@
 /* *
  *
- *  (c) 2009-2025 Øystein Moseng
+ *  (c) 2009-2026 Highsoft AS
+ *  Author: Øystein Moseng
  *
  *  Create announcer to speak messages to screen readers and other AT.
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -30,8 +31,7 @@ const {
     addClass,
     visuallyHideElement
 } = HU;
-import U from '../../Core/Utilities.js';
-const { attr } = U;
+import { attr, internalClearTimeout } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -43,8 +43,8 @@ const { attr } = U;
  * Internal types.
  * @private
  */
-declare module '../../Core/Chart/ChartLike'{
-    interface ChartLike {
+declare module '../../Core/Chart/ChartBase'{
+    interface ChartBase {
         announcerContainer?: HTMLDOMElement;
     }
 }
@@ -97,7 +97,7 @@ class Announcer {
         // Delete contents after a little while to avoid user finding the live
         // region in the DOM.
         if (this.clearAnnouncementRegionTimer) {
-            clearTimeout(this.clearAnnouncementRegionTimer);
+            internalClearTimeout(this.clearAnnouncementRegionTimer);
         }
         this.clearAnnouncementRegionTimer = setTimeout((): void => {
             this.announceRegion.innerHTML = AST.emptyHTML;

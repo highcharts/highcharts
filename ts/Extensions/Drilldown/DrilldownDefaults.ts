@@ -4,9 +4,9 @@
  *
  *  Author: Torstein Honsi
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -33,17 +33,13 @@ import { Palette } from '../../Core/Color/Palettes.js';
  * Options for drill down, the concept of inspecting increasingly high
  * resolution data through clicking on chart items like columns or pie slices.
  *
- * The drilldown feature requires the drilldown.js file to be loaded,
- * found in the modules directory of the download package, or online at
- * [code.highcharts.com/modules/drilldown.js
- * ](https://code.highcharts.com/modules/drilldown.js).
- *
  * @sample {highcharts} highcharts/series-organization/drilldown
  *         Organization chart drilldown
  *
  * @product      highcharts highmaps
  * @requires     modules/drilldown
  * @optionparent drilldown
+ * @internal
  */
 const DrilldownDefaults: DrilldownOptions = {
 
@@ -137,21 +133,19 @@ const DrilldownDefaults: DrilldownOptions = {
 
     /**
      * Set the animation for all drilldown animations. Animation of a drilldown
-     * occurs when drilling between a column point and a column series,
-     * or a pie slice and a full pie series. Drilldown can still be used
-     * between series and points of different types, but animation will
-     * not occur.
+     * occurs when drilling between a column point and a column series, or a pie
+     * slice and a full pie series. Drilldown can still be used between series
+     * and points of different types, but animation will not occur.
      *
-     * The animation can either be set as a boolean or a configuration
-     * object. If `true`, it will use the 'swing' jQuery easing and a duration
-     * of 500 ms. If used as a configuration object, the following properties
-     * are supported:
+     * The animation can either be set as a boolean or a configuration object.
+     * If `true`, it will use a duration of 500 ms. If used as a configuration
+     * object, the following properties are supported:
      *
      * - `duration`: The duration of the animation in milliseconds.
      *
      * - `easing`: A string reference to an easing function set on the `Math`
-     *   object. See
-     *   [the easing demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/series-animation-easing/).
+     *   object. See [the easing
+     *   demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/series-animation-easing/).
      *
      * @type    {boolean|Highcharts.AnimationOptionsObject}
      * @since   3.0.8
@@ -188,6 +182,7 @@ const DrilldownDefaults: DrilldownOptions = {
          * @type       {Highcharts.ButtonRelativeToValue}
          * @default    plotBox
          * @since      3.0.8
+         * @deprecated 9.3.2
          * @product    highcharts highmaps
          * @apioption  drilldown.drillUpButton.relativeTo
          */
@@ -209,6 +204,7 @@ const DrilldownDefaults: DrilldownOptions = {
          *
          * @type      {Object}
          * @since     3.0.8
+         * @deprecated 9.3.2
          * @product   highcharts highmaps
          * @apioption drilldown.drillUpButton.theme
          */
@@ -219,6 +215,7 @@ const DrilldownDefaults: DrilldownOptions = {
          *
          * @type    {Highcharts.AlignObject}
          * @since   3.0.8
+         * @deprecated 9.3.2
          * @product highcharts highmaps
          */
         position: {
@@ -227,6 +224,7 @@ const DrilldownDefaults: DrilldownOptions = {
              * Vertical alignment of the button.
              *
              * @type      {Highcharts.VerticalAlignValue}
+             * @deprecated 9.3.2
              * @default   top
              * @product   highcharts highmaps
              * @apioption drilldown.drillUpButton.position.verticalAlign
@@ -236,16 +234,21 @@ const DrilldownDefaults: DrilldownOptions = {
              * Horizontal alignment.
              *
              * @type {Highcharts.AlignValue}
+             * @deprecated 9.3.2
              */
             align: 'right',
 
             /**
              * The X offset of the button.
+             *
+             * @deprecated 9.3.2
              */
             x: -10,
 
             /**
              * The Y offset of the button.
+             *
+             * @deprecated 9.3.2
              */
             y: 10
         }
@@ -361,4 +364,5 @@ const DrilldownDefaults: DrilldownOptions = {
  *
  * */
 
+/** @internal */
 export default DrilldownDefaults;

@@ -1,12 +1,13 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Honsi
  *
  *  Extension to the Series object in 3D charts.
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -26,15 +27,14 @@ const { composed } = H;
 import Math3D from '../Math3D.js';
 const { perspective } = Math3D;
 import Series from '../Series/Series.js';
-import U from '../Utilities.js';
-const {
+import {
     addEvent,
     extend,
     isNumber,
     merge,
     pick,
     pushUnique
-} = U;
+} from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -42,15 +42,17 @@ const {
  *
  * */
 
-declare module './PointLike' {
-    interface PointLike {
+/** @internal */
+declare module './PointBase' {
+    interface PointBase {
         plotZ?: number;
         z?: number;
     }
 }
 
-declare module './SeriesLike' {
-    interface SeriesLike {
+/** @internal */
+declare module './SeriesBase' {
+    interface SeriesBase {
         zAxis?: ZAxis;
         rawPointsX?: Array<number>;
         zPadding?: number;
@@ -65,6 +67,7 @@ declare module './SeriesLike' {
  *
  * */
 
+/** @internal */
 class Series3D extends Series {
 
     /* *
@@ -107,7 +110,7 @@ class Series3D extends Series {
 
     /**
      * Translate the plotX, plotY properties and add plotZ.
-     * @private
+     * @internal
      */
     public translate3dPoints(): void {
         const series = this,
@@ -126,7 +129,7 @@ class Series3D extends Series {
         series.zPadding = stack *
             (seriesOptions.depth || 0 + (seriesOptions.groupZPadding || 1));
 
-        series.data.forEach((rawPoint): void => {
+        series.points.forEach((rawPoint): void => {
             if (zAxis?.translate) {
                 zValue = zAxis.logarithmic && zAxis.val2lin ?
                     zAxis.val2lin(rawPoint.z as any) :
@@ -157,7 +160,7 @@ class Series3D extends Series {
 
         const projectedPoints = perspective(rawPoints, chart, true);
 
-        series.data.forEach((rawPoint, i): void => {
+        series.points.forEach((rawPoint, i): void => {
             projectedPoint = projectedPoints[i];
 
             rawPoint.plotX = projectedPoint.x;
@@ -174,4 +177,5 @@ class Series3D extends Series {
  *
  * */
 
+/** @internal */
 export default Series3D;

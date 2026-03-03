@@ -2,11 +2,12 @@
  *
  *  X-range series module
  *
- *  (c) 2010-2025 Torstein Honsi, Lars A. V. Cabrera
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Honsi, Lars A. V. Cabrera
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -41,8 +42,9 @@ import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     column: ColumnSeries
 } = SeriesRegistry.seriesTypes;
-import U from '../../Core/Utilities.js';
-const {
+import XRangeSeriesDefaults from './XRangeSeriesDefaults.js';
+import XRangePoint from './XRangePoint.js';
+import {
     addEvent,
     clamp,
     crisp,
@@ -55,9 +57,7 @@ const {
     pick,
     pushUnique,
     relativeLength
-} = U;
-import XRangeSeriesDefaults from './XRangeSeriesDefaults.js';
-import XRangePoint from './XRangePoint.js';
+} from '../../Shared/Utilities.js';
 
 /* *
  *

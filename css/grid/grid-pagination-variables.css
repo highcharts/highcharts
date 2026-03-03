@@ -1,0 +1,12 @@
+.hcg-container .hcg-pagination-wrapper {
+    background: var(--hcg-pagination-background, transparent);
+    color: var(--hcg-pagination-color, var(--ig-color));
+    font-weight: var(--hcg-pagination-font-weight, var(--ig-font-weight));
+    font-size: var(--hcg-pagination-font-size, var(--ig-font-size));
+    font-family: var(--hcg-pagination-font-family, var(--ig-font-family));
+    text-align: var(--hcg-pagination-text-align, var(--ig-text-align));
+    padding-top: var(--hcg-pagination-vertical-padding, var(--hcg-pagination-padding, var(--ig-vertical-padding)));
+    padding-right: var(--hcg-pagination-horizontal-padding, var(--hcg-pagination-padding, var(--ig-horizontal-padding)));
+    padding-bottom: var(--hcg-pagination-vertical-padding, var(--hcg-pagination-padding, var(--ig-vertical-padding)));
+    padding-left: var(--hcg-pagination-horizontal-padding, var(--hcg-pagination-padding, var(--ig-horizontal-padding)));
+}

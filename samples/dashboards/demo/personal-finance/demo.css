@@ -1,12 +1,17 @@
 @import url("https://code.highcharts.com/css/highcharts.css");
 @import url("https://code.highcharts.com/dashboards/css/dashboards.css");
-@import url("https://code.highcharts.com/dashboards/css/datagrid.css");
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/css/grid-pro.css");
 
 /* Colors */
 :root {
     --highcharts-dashboards-green: #20d17e;
     --highcharts-dashboards-orange: #feaa61;
     --highcharts-dashboards-green-transparent: #20d17e30;
+}
+
+body {
+    background: var(--highcharts-background-color);
+    color: var(--highcharts-neutral-color-100);
 }
 
 /* General */
@@ -66,6 +71,7 @@
 .hcg-custom-theme {
     --hcg-padding: 10px;
     --hcg-row-border-width: 1px;
+    --hcg-header-background: transparent;
 }
 
 /* Components specific */

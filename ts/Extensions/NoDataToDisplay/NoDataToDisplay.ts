@@ -2,13 +2,13 @@
  *
  *  Plugin for displaying a message when there is no data visible in chart.
  *
- *  (c) 2010-2025 Highsoft AS
+ *  (c) 2010-2026 Highsoft AS
  *
  *  Author: Oystein Moseng
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -20,19 +20,14 @@
  *
  * */
 
-import type NoDataOptions from './NoDataOptions';
-import type Options from '../../Core/Options';
+import type { NoDataOptions } from './NoDataOptions';
+import type { Options } from '../../Core/Options';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
 import AST from '../../Core/Renderer/HTML/AST.js';
 import Chart from '../../Core/Chart/Chart.js';
 import NoDataDefaults from './NoDataDefaults.js';
-import U from '../../Core/Utilities.js';
-const {
-    addEvent,
-    extend,
-    merge
-} = U;
+import { addEvent, extend, merge } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -40,23 +35,72 @@ const {
  *
  * */
 
-declare module '../../Core/Chart/ChartLike' {
-    interface ChartLike {
+/** @internal */
+declare module '../../Core/Chart/ChartBase' {
+    interface ChartBase {
+        /**
+         * The no-data label instance.
+         *
+         * @requires modules/no-data-to-display
+         */
         noDataLabel?: SVGElement;
-        /** @requires modules/no-data-to-display */
+
+        /**
+         * Display the no-data message.
+         *
+         * @requires modules/no-data-to-display
+         */
         showNoData(str?: string): void;
-        /** @requires modules/no-data-to-display */
+
+        /**
+         * Hide the no-data message.
+         *
+         * @requires modules/no-data-to-display
+         */
         hideNoData(): void;
-        /** @requires modules/no-data-to-display */
+
+        /**
+         * Whether the chart has visible data.
+         *
+         * @requires modules/no-data-to-display
+         */
         hasData(): (boolean|undefined);
     }
 }
 
-declare module '../../Core/Options'{
+declare module '../../Core/Options' {
     interface LangOptions {
+        /**
+         * The text to display when the chart contains no data.
+         *
+         * @see [noData](#noData)
+         *
+         * @sample highcharts/no-data-to-display/no-data-line
+         *         No-data text
+         *
+         * @since    3.0.8
+         * @product  highcharts highstock
+         * @requires modules/no-data-to-display
+         * @default  No data to display
+         */
         noData?: string;
     }
     interface Options {
+        /**
+         * Options for displaying a message like "No data to display".
+         * This feature requires the file no-data-to-display.js to be loaded in
+         * the page. The actual text to display is set in the lang.noData
+         * option.
+         *
+         * @sample highcharts/no-data-to-display/no-data-line
+         *         Line chart with no-data module
+         * @sample highcharts/no-data-to-display/no-data-pie
+         *         Pie chart with no-data module
+         *
+         * @product      highcharts highstock gantt
+         * @requires     modules/no-data-to-display
+         * @since        3.0.8
+         */
         noData?: NoDataOptions;
     }
 }
@@ -70,7 +114,7 @@ declare module '../../Core/Options'{
 /**
  * Returns true if there are data points within the plot area now.
  *
- * @private
+ * @internal
  * @function Highcharts.Chart#hasData
  * @return {boolean|undefined}
  * True, if there are data points.
@@ -95,9 +139,9 @@ function chartHasData(
 
 
 /**
- * Hide no-data message.
+ * Hide the no-data message.
  *
- * @private
+ * @internal
  * @function Highcharts.Chart#hideNoData
  * @return {void}
  * @requires modules/no-data-to-display
@@ -113,8 +157,9 @@ function chartHideNoData(
 }
 
 /**
- * Display a no-data message.
- * @private
+ * Display the no-data message.
+ *
+ * @internal
  * @function Highcharts.Chart#showNoData
  * @param {string} [str]
  * An optional message to show in place of the default one
@@ -163,7 +208,7 @@ function chartShowNoData(
     }
 }
 
-/** @private */
+/** @internal */
 function compose(
     ChartClass: typeof Chart,
     highchartsDefaultOptions: Options
@@ -183,8 +228,8 @@ function compose(
 }
 
 /**
- * Add event listener to handle automatic show or hide no-data message.
- * @private
+ * Add event listener to handle automatic show or hide the no-data message.
+ * @internal
  */
 function onChartRender(
     this: Chart
@@ -204,8 +249,10 @@ function onChartRender(
  *
  * */
 
+/** @internal */
 const NoDataToDisplay = {
     compose
 };
 
+/** @internal */
 export default NoDataToDisplay;
