@@ -515,9 +515,6 @@ specified by config.imageCapture.resultsOutputPath.
 
             const hasDashboards = prods.includes('Dashboards');
             const hasHC = prods.some(p => ['Core', 'Stock', 'Maps', 'Gantt', 'Accessibility'].includes(p));
-            if (argv.modified && prods.length === 1) {
-                argv.product = prods[0];
-            }
 
             const gridLiteProj = ['grid-lite', 'grid-shared'];
             const gridProProj = ['grid-pro'];
