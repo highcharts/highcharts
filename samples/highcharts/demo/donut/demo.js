@@ -20,7 +20,7 @@ Highcharts.chart('container', {
             format: '{point.name}'
         }, {
             format: '{point.percentage:.0f}%',
-            distance: -25, // Placing the label inside
+            distance: -25 // Placing the label inside
         }],
         data: [
             ['Health care', 34],
