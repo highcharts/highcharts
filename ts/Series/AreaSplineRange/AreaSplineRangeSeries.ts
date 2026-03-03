@@ -40,7 +40,7 @@ const {
 /**
  * The areasplinerange series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.areasplinerange
  *
@@ -92,7 +92,7 @@ extend(AreaSplineRangeSeries.prototype, {
  * */
 
 /**
- * @private
+ * @internal
  */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {

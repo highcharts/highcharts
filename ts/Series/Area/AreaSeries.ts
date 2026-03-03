@@ -68,7 +68,7 @@ declare module '../../Core/Series/SeriesBase' {
 /**
  * Area series type.
  *
- * @private
+ * @internal
  * @class
  * @name AreaSeries
  *
@@ -111,7 +111,7 @@ class AreaSeries extends LineSeries {
      * Draw the graph and the underlying area. This method calls the Series
      * base function and adds the area. The areaPath is calculated in the
      * getSegmentPath method called from Series.prototype.drawGraph.
-     * @private
+     * @internal
      */
     public drawGraph(): void {
 
@@ -186,7 +186,7 @@ class AreaSeries extends LineSeries {
     }
 
     /**
-     * @private
+     * @internal
      */
     public getGraphPath(points: Array<AreaPoint>): SVGPath {
         const getGraphPath = LineSeries.prototype.getGraphPath,
@@ -337,7 +337,7 @@ class AreaSeries extends LineSeries {
      * Return an array of stacked points, where null and missing points are
      * replaced by dummy points in order for gaps to be drawn correctly in
      * stacks.
-     * @private
+     * @internal
      */
     public getStackPoints(
         points: Array<AreaPoint>

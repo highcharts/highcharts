@@ -40,7 +40,7 @@ import type AreaRangeSeriesOptions from './AreaRangeSeriesOptions';
  * @requires     highcharts-more
  * @optionparent plotOptions.arearange
  *
- * @private
+ * @internal
  */
 const AreaRangeSeriesDefaults: AreaRangeSeriesOptions = {
 
@@ -90,7 +90,7 @@ const AreaRangeSeriesDefaults: AreaRangeSeriesOptions = {
      *
      * @since 2.3.0
      *
-     * @private
+     * @internal
      */
     lineWidth: 1,
 
@@ -110,7 +110,7 @@ const AreaRangeSeriesDefaults: AreaRangeSeriesOptions = {
      *
      * @since 2.3.0
      *
-     * @private
+     * @internal
      */
     trackByArea: true,
 

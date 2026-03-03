@@ -41,7 +41,7 @@ const {
 /**
  * AreaSpline series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.areaspline
  *

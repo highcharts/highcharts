@@ -63,7 +63,7 @@ const {
 /**
  * The AreaRange series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.arearange
  *
@@ -110,7 +110,7 @@ class AreaRangeSeries extends AreaSeries {
      * to true plotHigh coordinates. This is an addition of the toXY method
      * found in Polar.js, because it runs too early for arearanges to be
      * considered (#3419).
-     * @private
+     * @internal
      */
     public highToXY(point: AreaRangePoint): void {
         // Find the polar plotX and plotY
@@ -128,7 +128,7 @@ class AreaRangeSeries extends AreaSeries {
     /**
      * Extend the line series' getSegmentPath method by applying the segment
      * path to both lower and higher values of the range.
-     * @private
+     * @internal
      */
     public getGraphPath(points: Array<AreaRangePoint>): SVGPath {
 
@@ -246,7 +246,7 @@ class AreaRangeSeries extends AreaSeries {
     /**
      * Extend the basic drawDataLabels method by running it for both lower and
      * higher values.
-     * @private
+     * @internal
      */
     public drawDataLabels(): void {
 
