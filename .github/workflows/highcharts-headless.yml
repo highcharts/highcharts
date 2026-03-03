@@ -9,8 +9,8 @@ jobs:
     name: Node unit tests
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
         with:
           node-version: 'lts/*'
           cache: 'npm'
@@ -28,11 +28,11 @@ jobs:
     name: Cypress tests
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           path: highcharts
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
           node-version: 'lts/*'
           cache: 'npm'
@@ -49,7 +49,7 @@ jobs:
           npx gulp scripts
 
       - name: Checkout utils
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           repository: highcharts/highcharts-utils
           path: utils
@@ -61,7 +61,7 @@ jobs:
           npm ci
 
       - name: Run Cypress test
-        uses: cypress-io/github-action@v6
+        uses: cypress-io/github-action@v7
         with:
           start: node ../utils/server --localOnly
           wait-on: 'http://localhost:3031/highcharts.js'
@@ -77,8 +77,8 @@ jobs:
     env:
       DISPLAY: :99
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
         with:
           node-version: 'lts/*'
           cache: 'npm'

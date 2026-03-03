@@ -2,60 +2,38 @@
 tags: ["grid-pro"]
 ---
 
-# Cell editing
+# Input validation
 
-## Enable editMode
+Validation rules are configured in `columns[].cells.editMode.validationRules`.
 
-End users can edit data in cells if `editMode` is enabled by setting the `columnDefaults.cells.editMode.enabled` and/or `columns[].cells.editMode.enabled` API options:
+## Enable edit mode with validation
 
 ```js
-columnDefaults: {
-    cells: {
-        editMode: {
-            enabled: true
-        }
-    }
-},
-columns: [{
-    id: "whatever",
-    cells: {
-        editMode: {
-            enabled: false
-        }
-    }
-}]
-```
-
-In the example above cell editing is enabled for ALL columns, expect the `firstName` column. The reverse can be achived by not setting `columnDefaults` and `columns[].cells.editMode.enabled: true` instead.
-
-## Cell renderers
-
-Cell renderers define how the cell input is displayed and interacted with when editing is enabled. You can use built-in renderers such as text fields, checkboxes and select dropdowns, or implement custom renderers to match your application's requirements. This allows for flexible editing experiences tailored to different data types and use cases. Unless specified the default input element is a regular text input.
-
-You can read more about cell renderers in the [article on cell renderers](https://www.highcharts.com/docs/grid/cell-renderers).
-
-```ts
-columns: [{
-    id: "role",
-    cells: {
-        editMode: {
-            enabled: true,
-            renderer: {
-                type: 'select',
-                options: [
-                    { value: 'admin', label: 'Administrator' },
-                    { value: 'editor', label: 'Editor' },
-                    { value: 'viewer', label: 'Viewer' }
-                ]
+Grid.grid('container', {
+    data: {
+        dataTable: {
+            columns: {
+                email: ['anna@example.com', 'john@example.com']
             }
         }
-    }
-}]
+    },
+    columns: [{
+        id: 'email',
+        dataType: 'string',
+        cells: {
+            editMode: {
+                enabled: true,
+                validationRules: ['notEmpty', {
+                    validate: ({ value }) => /.+@.+\..+/.test(value),
+                    notification: 'Value must be a valid email address.'
+                }]
+            }
+        }
+    }]
+});
 ```
 
-## Validation
-
-### Predefined Validation Rules
+## Predefined Validation Rules
 
 Each column has a specific `dataType`, which can be set explicitly or inferred from the data. All data types can accept `null` values by default. Each `dataType` comes with its own set of predefined validation rules, and e.g. columns with `dataType: 'number'` will automatically reject `NaN` values.
 
@@ -100,7 +78,7 @@ lang: {
 }
 ```
 
-### Custom Validation Rules
+## Custom Validation Rules
 
 You can define custom validation rules and error messages directly in the column options:
 
@@ -128,7 +106,7 @@ Note that a validator is a callback function that receives an object as its firs
 
 This distinction allows you to implement validation logic based on either the parsed value or the raw user input, depending on your requirements. For example, you might want to validate the format of the input string (`rawValue`) before parsing, or check the parsed value (`value`) for business logic constraints.
 
-### Registering Custom Validators
+## Registering Custom Validators
 
 You can also register custom validators globally in the `Validator.rulesRegistry` and then reference them by name in your columns:
 

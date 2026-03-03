@@ -36,11 +36,7 @@ const { unhideChartElementFromAT } = CU;
 import HU from '../Utils/HTMLUtilities.js';
 const { getFakeMouseEvent } = HU;
 import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';
-import U from '../../Core/Utilities.js';
-const {
-    attr,
-    pick
-} = U;
+import { attr, pick } from '../../Shared/Utilities.js';
 
 
 /* *

@@ -19,16 +19,11 @@ import type CSSJSONObject from '../CSSJSONObject';
 import type { DeepPartial } from '../../Shared/Types';
 import type { Options as RowOptions } from './Row';
 
-import U from '../../Core/Utilities.js';
-const {
-    pick,
-    defined
-} = U;
-
 import Cell from './Cell.js';
 import Row from './Row.js';
 import GUIElement from './GUIElement.js';
 import Globals from '../Globals.js';
+import { defined, pick } from '../../Shared/Utilities.js';
 
 /**
  * @internal

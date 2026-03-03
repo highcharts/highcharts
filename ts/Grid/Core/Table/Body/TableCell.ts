@@ -30,13 +30,8 @@ import type TableRow from './TableRow';
 import Globals from '../../Globals.js';
 import Cell from '../Cell.js';
 import CellContent from '../CellContent/CellContent.js';
+import { defined, fireEvent } from '../../../../Shared/Utilities.js';
 import { mergeStyleValues } from '../../GridUtils.js';
-
-import Utils from '../../../../Core/Utilities.js';
-const {
-    defined,
-    fireEvent
-} = Utils;
 
 
 /* *

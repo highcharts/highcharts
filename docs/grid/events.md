@@ -25,6 +25,9 @@ Configured in `events` at the root of grid options:
 | `beforeRedraw`         | Triggered before the grid DOM is redrawn. Fired by default when `update()` is called, unless `redraw` is set to `false`. | `this: Grid`          |
 | `afterRedraw`          | Triggered after the grid DOM is redrawn. Fired by default when `update()` is called, unless `redraw` is set to `false`. | `this: Grid`          |
 
+Related topic:
+- [Overview / Understanding](https://www.highcharts.com/docs/grid/understanding-grid)
+
 ## Column-level events
 
 Configured in `columnDefaults.events` or `columns[].events`:
@@ -36,6 +39,11 @@ Configured in `columnDefaults.events` or `columns[].events`:
 | `afterSort`        | Triggered after sorting a column.                        | `this: Column`        |
 | `beforeFilter`     | Triggered before filtering a column.                     | `this: Column`        |
 | `afterFilter`      | Triggered after filtering a column.                      | `this: Column`        |
+
+Related topics:
+- [Columns / Sorting](https://www.highcharts.com/docs/grid/columns/sorting)
+- [Columns / Filtering](https://www.highcharts.com/docs/grid/columns/filtering)
+- [Columns / Resizing and width](https://www.highcharts.com/docs/grid/columns/resizing-and-width)
 
 ## Cell events
 
@@ -50,6 +58,10 @@ Configured in `columnDefaults.cells.events` or `columns[].cells.events`:
 | `mouseOver`        | Triggered when the mouse is hovered over a cell.         | `this: Cell`          |
 | `mouseOut`         | Triggered when the mouse leaves a cell.                  | `this: Cell`          |
 
+Related topics:
+- [Editing / Overview](https://www.highcharts.com/docs/grid/editing/index)
+- [Cells / Context menu](https://www.highcharts.com/docs/grid/cells/context-menu)
+
 ## Header events
 
 Configured in `columnDefaults.header.events` or `columns[].header.events`:
@@ -58,6 +70,9 @@ Configured in `columnDefaults.header.events` or `columns[].header.events`:
 |--------------------|----------------------------------------------------------|-----------------------|
 | `click`            | Triggered after clicking on a column header.             | `this: Column`        |
 | `afterRender`      | Triggered after init of a column header.                 | `this: Column`        |
+
+Related topic:
+- [Columns / Header](https://www.highcharts.com/docs/grid/columns/header)
 
 ## Pagination events
 
@@ -69,6 +84,9 @@ Configured in `pagination.events`:
 | `afterPageChange`  | Triggered after a page change occurs.                    | `this: Pagination`    |
 | `beforePageSizeChange` | Triggered before the page size setting changes.      | `this: Pagination`    |
 | `afterPageSizeChange`  | Triggered after the page size setting changes.       | `this: Pagination`    |
+
+Related topic:
+- [Rows / Pagination](https://www.highcharts.com/docs/grid/rows/pagination)
 
 # Examples
 

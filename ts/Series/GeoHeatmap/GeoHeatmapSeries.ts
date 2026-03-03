@@ -48,16 +48,15 @@ const {
         map: MapSeries
     }
 } = SeriesRegistry;
-import U from '../../Core/Utilities.js';
-const {
+import {
     addEvent,
-    error,
     extend,
     isNumber,
     isObject,
     merge,
     pick
-} = U;
+} from '../../Shared/Utilities.js';
+import { error } from '../../Core/Utilities.js';
 
 /**
  * Normalize longitute value to -180:180 range.

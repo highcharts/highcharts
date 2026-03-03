@@ -34,14 +34,8 @@ const {
         scatter: ScatterSeries
     }
 } = SeriesRegistry;
-import U from '../../Core/Utilities.js';
-const {
-    arrayMax,
-    extend,
-    merge,
-    pick
-} = U;
 import VectorSeriesDefaults from './VectorSeriesDefaults.js';
+import { arrayMax, extend, merge, pick } from '../../Shared/Utilities.js';
 
 /* *
  *
