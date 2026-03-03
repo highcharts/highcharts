@@ -161,6 +161,7 @@ class TableRow extends Row {
         }
 
         this.index = index;
+        this.id = await this.viewport.grid.dataProvider?.getRowId(this.index);
         this.htmlElement.setAttribute('data-row-index', index);
         this.updateRowAttributes();
         this.updateParityClass();
