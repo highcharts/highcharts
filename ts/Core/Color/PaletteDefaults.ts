@@ -37,7 +37,10 @@ import type PaletteOptions from './PaletteOptions';
  * For example, `var(--highcharts-color-0)` is the first color in the `colors`
  * array, `var(--highcharts-color-1)` is the second color, and so on.
  *
- * @sample       highcharts/palette/general General palette options
+ * @sample       highcharts/palette/general
+ *               General palette options
+ * @sample       highcharts/palette/branding
+ *               Branded chart
  * @type         {*}
  * @since        13.0.0
  * @optionparent palette
