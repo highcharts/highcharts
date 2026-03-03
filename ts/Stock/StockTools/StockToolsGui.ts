@@ -47,6 +47,7 @@ const {
  *
  * */
 
+/** @internal */
 declare module '../../Core/Chart/ChartBase'{
     interface ChartBase {
         stockTools?: Toolbar;
@@ -55,6 +56,7 @@ declare module '../../Core/Chart/ChartBase'{
     }
 }
 
+/** @internal */
 declare module '../../Core/Options'{
     interface LangOptions {
         stockTools?: LangStockToolsOptions;
@@ -72,7 +74,7 @@ declare module '../../Core/Options'{
 
 /**
  * Verify if Toolbar should be added.
- * @private
+ * @internal
  */
 function chartSetStockTools(
     this: Chart,
@@ -93,9 +95,7 @@ function chartSetStockTools(
     }
 }
 
-/**
- * @private
- */
+/** @internal */
 function compose(
     ChartClass: typeof Chart,
     NavigationBindingsClass: typeof NavigationBindings
@@ -129,7 +129,7 @@ function compose(
 
 /**
  * Run HTML generator
- * @private
+ * @internal
  */
 function onChartAfterGetContainer(
     this: Chart
@@ -139,7 +139,7 @@ function onChartAfterGetContainer(
 
 /**
  * Handle beforeRedraw and beforeRender
- * @private
+ * @internal
  */
 function onChartBeforeRedraw(this: Chart): void {
     if (this.stockTools) {
@@ -150,7 +150,7 @@ function onChartBeforeRedraw(this: Chart): void {
 
 /**
  * Function to calculate and set the offset width for stock tools.
- * @private
+ * @internal
  */
 function setOffset(chart: Chart): void {
     if (chart.stockTools?.guiEnabled) {
@@ -191,9 +191,7 @@ function setOffset(chart: Chart): void {
     }
 }
 
-/**
- * @private
- */
+/** @internal */
 function onChartDestroy(
     this: Chart
 ): void {
@@ -202,9 +200,7 @@ function onChartDestroy(
     }
 }
 
-/**
- * @private
- */
+/** @internal */
 function onChartGetMargins(
     this: Chart
 ): void {
@@ -219,7 +215,7 @@ function onChartGetMargins(
 
 /**
  * Check if the correct price indicator button is displayed, #15029.
- * @private
+ * @internal
  */
 function onChartRender(
     this: Chart
@@ -251,9 +247,7 @@ function onChartRender(
     }
 }
 
-/**
- * @private
- */
+/** @internal */
 function onNavigationBindingsDeselectButton(
     this: NavigationBindings,
     event: Record<string, HTMLDOMElement>
@@ -275,7 +269,7 @@ function onNavigationBindingsDeselectButton(
 
 /**
  * Communication with bindings
- * @private
+ * @internal
  */
 function onNavigationBindingsSelectButton(
     this: NavigationBindings,
@@ -305,8 +299,10 @@ function onNavigationBindingsSelectButton(
  *
  * */
 
+/** @internal */
 const StockToolsGui = {
     compose
 };
 
+/** @internal */
 export default StockToolsGui;

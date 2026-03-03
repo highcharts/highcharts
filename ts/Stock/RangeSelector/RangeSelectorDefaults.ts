@@ -610,9 +610,11 @@ const rangeSelector: RangeSelectorOptions = {
  *
  * */
 
+/** @internal */
 const RangeSelectorDefaults = {
     lang,
     rangeSelector
 };
 
+/** @internal */
 export default RangeSelectorDefaults;

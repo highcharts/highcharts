@@ -1275,9 +1275,11 @@ const stockTools: StockToolsOptions = {
  *
  * */
 
+/** @internal */
 const StockToolsDefaults = {
     lang,
     stockTools
 };
 
+/** @internal */
 export default StockToolsDefaults;

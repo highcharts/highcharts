@@ -77,7 +77,9 @@ const abs = Math.abs;
 
 // Utils
 /**
- * @private
+ * Calculate extremes for OHLC data.
+ *
+ * @internal
  */
 function arrayExtremesOHLC(
     data: Array<Array<number>>
@@ -115,7 +117,7 @@ function arrayExtremesOHLC(
 /**
  * The Volume By Price (VBP) series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.vbp
  *
@@ -134,7 +136,7 @@ class VBPIndicator extends SMAIndicator {
      *
      * This series requires `linkedTo` option to be set.
      *
-     * @sample stock/indicators/volume-by-price
+     * @sample {highstock} stock/indicators/volume-by-price
      *         Volume By Price indicator
      *
      * @extends      plotOptions.sma
@@ -886,6 +888,7 @@ class VBPIndicator extends SMAIndicator {
  *
  * */
 
+/** @internal */
 interface VBPIndicator {
     nameBase: string;
     nameComponents: Array<string>;
@@ -940,6 +943,7 @@ namespace VBPIndicator {
  *
  * */
 
+/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         vbp: typeof VBPIndicator;

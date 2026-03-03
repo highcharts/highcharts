@@ -47,7 +47,7 @@ const {
 /**
  * The Klinger oscillator series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.klinger
  *
@@ -65,7 +65,7 @@ class KlingerIndicator extends SMAIndicator {
      * Klinger oscillator. This series requires the `linkedTo` option to be set
      * and should be loaded after the `stock/indicators/indicators.js` file.
      *
-     * @sample stock/indicators/klinger
+     * @sample {highstock} stock/indicators/klinger
      *         Klinger oscillator
      *
      * @extends      plotOptions.sma
@@ -377,6 +377,7 @@ class KlingerIndicator extends SMAIndicator {
  *
  * */
 
+/** @internal */
 interface KlingerIndicator extends MultipleLinesComposition.IndicatorComposition {
     linesApiNames: Array<string>;
     nameBase: string;
@@ -403,6 +404,7 @@ MultipleLinesComposition.compose(KlingerIndicator);
  *
  * */
 
+/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         klinger: typeof KlingerIndicator;
@@ -416,6 +418,7 @@ SeriesRegistry.registerSeriesType('klinger', KlingerIndicator);
  *
  * */
 
+/** @internal */
 export default KlingerIndicator;
 
 /* *
