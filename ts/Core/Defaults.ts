@@ -96,6 +96,7 @@ const defaultOptions: DefaultOptions = {
      *
      * @type    {Array<(Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject)>}
      * @default undefined
+     * @deprecated
      * @apioption colors
      */
 
