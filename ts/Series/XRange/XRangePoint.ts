@@ -85,11 +85,14 @@ class XRangePoint extends ColumnPoint {
         series: Series,
         point: Point
     ): AnyRecord {
-        const colors = series.options.colors || series.chart.options.colors,
+        const chart = series.chart,
+            colors = series.options.colors ||
+                chart.options.colors ||
+                chart.palette?.dataColors,
             colorCount = colors ?
                 colors.length :
-                series.chart.options.chart.colorCount as any,
-            colorIndex = (point.y as any) % colorCount,
+                (chart.options.chart.colorCount || 1),
+            colorIndex = (point.y || 0) % colorCount,
             color = colors?.[colorIndex];
 
         return {
