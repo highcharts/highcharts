@@ -28,22 +28,21 @@ import contourShader from './contourShader.js';
 import ContourSeriesDefaults from './ContourSeriesDefaults.js';
 import Delaunay from '../../Core/Delaunay.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-import U from '../../Core/Utilities.js';
 import SVGPath from '../../Core/Renderer/SVG/SVGPath.js';
 import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
+import {
+    diffObjects,
+    extend,
+    merge,
+    normalizeTickInterval
+} from '../../Shared/Utilities.js';
+import { error } from '../../Core/Utilities.js';
 
 const {
     seriesTypes: {
         scatter: ScatterSeries
     }
 } = SeriesRegistry;
-const {
-    diffObjects,
-    error,
-    extend,
-    merge,
-    normalizeTickInterval
-} = U;
 
 
 /* *

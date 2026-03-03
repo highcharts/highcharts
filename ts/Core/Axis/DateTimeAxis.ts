@@ -23,13 +23,12 @@ import type TickPositionsArray from './TickPositionsArray';
 import type Time from '../Time';
 import type Types from '../../Shared/Types';
 
-import U from '../Utilities.js';
-const {
+import {
     addEvent,
     getMagnitude,
-    normalizeTickInterval,
-    timeUnits
-} = U;
+    normalizeTickInterval
+} from '../../Shared/Utilities.js';
+import { timeUnits } from '../Utilities.js';
 
 /* *
  *

@@ -138,7 +138,6 @@ export interface Axis3DTitleOptions {
      * @requires highcharts-3d
      */
     skew3d: (boolean|null);
-
 }
 
 /* *
