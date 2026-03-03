@@ -258,7 +258,7 @@ export default class Palette {
         if (renderTo) {
             if (
                 isString(options.colorScheme) &&
-                ['light', 'dark'].includes(options.colorScheme)
+                ['light', 'dark', 'inherit'].includes(options.colorScheme)
             ) {
                 renderTo.style.colorScheme = options.colorScheme;
             } else {
