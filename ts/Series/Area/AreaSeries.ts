@@ -215,6 +215,7 @@ class AreaSeries extends LineSeries {
                 side: string
             ): void {
                 const point = points[i],
+                    otherPoint = points[otherI],
                     stackedValues =
                         stacking && (stacks[point.x].points[seriesIndex]),
                     nullVal = (point as any)[side + 'Null'] || 0,
@@ -233,10 +234,9 @@ class AreaSeries extends LineSeries {
 
                 } else if (
                     !stacking &&
-                    otherI >= 0 &&
-                    otherI < points.length &&
-                    (points[otherI]?.isNull ||
-                        !defined(points[otherI]?.plotY))
+                    otherPoint &&
+                    (otherPoint.isNull ||
+                        !defined(otherPoint.plotY))
                 ) {
                     top = bottom = threshold;
                 }
@@ -361,7 +361,10 @@ class AreaSeries extends LineSeries {
             yAxisSeries = yAxis.series,
             seriesLength = yAxisSeries.length,
             upOrDown = yAxis.options.reversedStacks ? 1 : -1,
-            seriesIndex = yAxisSeries.indexOf(series);
+            seriesIndex = yAxisSeries.indexOf(series),
+            translatedThreshold = yAxis.getThreshold(
+                series.options.threshold || 0
+            );
 
 
         points = points || this.points;
@@ -474,22 +477,20 @@ class AreaSeries extends LineSeries {
                         // down
                         i += upOrDown;
                     }
-                    y = pick(y, 0);
-                    if (yAxis.logarithmic && y <= 0) {
-                        y = yAxis.getThreshold(series.options.threshold ?? 0);
-                    } else {
-                        y = yAxis.translate(// #6272
+                    y ||= 0;
+                    const plotY = yAxis.positiveValuesOnly && y <= 0 ?
+                        translatedThreshold :
+                        yAxis.translate(// #6272
                             y, false, true, false, true
                         );
-                    }
                     segment.push({ // @todo create real point object
                         isNull: true,
                         plotX: xAxis.translate(// #6272
                             x as any, false, false, false, true
                         ),
                         x: x as any,
-                        plotY: y,
-                        yBottom: y
+                        plotY,
+                        yBottom: plotY
                     } as any);
                 }
             });
