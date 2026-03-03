@@ -84,6 +84,7 @@ Highcharts.chart('container', {
                     align: 'center',
                     verticalAlign: 'top',
                     overflow: 'allow',
+                    allowOverlap: false,
                     rotation: 0,
                     style: {
                         color: 'var(--highcharts-neutral-color-100, #000000)',
@@ -123,7 +124,8 @@ Highcharts.chart('container', {
                             pointFormat: `{#if point.node.isLeaf}
                                 {point.custom.iconSVG}{point.name}
                             {/if}`,
-                            rotation: 90
+                            rotation: 90,
+                            allowOverlap: true
                         }
                     ]
                 }]

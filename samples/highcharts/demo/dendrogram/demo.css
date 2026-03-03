@@ -95,7 +95,7 @@ body {
         stroke: #ccc;
     }
 
-    .highcharts-tracker > div:nth-child(6) > span > svg .icon-light {
+    .polarbear .icon-light {
         stroke: #141414;
         stroke-width: 20px;
     }
@@ -113,7 +113,7 @@ body {
             stroke: #ccc;
         }
 
-        .highcharts-tracker > div:nth-child(6) > span > svg .icon-light {
+        .polarbear .icon-light {
             stroke: #141414;
             stroke-width: 20px;
         }
