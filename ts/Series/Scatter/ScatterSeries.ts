@@ -138,6 +138,14 @@ class ScatterSeries extends LineSeries {
         }
     }
 
+    public init(chart: any, options: any): void {
+        super.init(chart, options);
+
+        if (chart.options?.tooltip?.shared) {
+            this.noSharedTooltip = false;
+        }
+    }
+
     /* eslint-enable valid-jsdoc */
 
 }
