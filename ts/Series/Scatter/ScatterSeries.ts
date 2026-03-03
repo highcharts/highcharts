@@ -40,6 +40,7 @@ const {
  *
  * */
 
+/** @internal */
 declare module '../../Core/Series/SeriesBase' {
     interface SeriesBase {
         /**
