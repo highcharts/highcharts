@@ -1083,6 +1083,9 @@ export default PatternFill;
  * using a global pattern grid. This ensures consistent pattern rendering
  * across points of different sizes and improves accessibility for narrow
  * columns. Defaults to false for backward compatibility.
+ *
+ * @sample highcharts/series/pattern-fill-anchor-to-point/
+ *         Compare shared vs anchored pattern positioning
  * @name Highcharts.PatternOptionsObject#anchorToPoint
  * @type {boolean|undefined}
  * @since next

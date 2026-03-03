@@ -33,7 +33,7 @@ Highcharts.chart('container', {
                 color: '#102045',
                 width: 10,
                 height: 10,
-                anchorToPoint: false // Traditional global pattern
+                anchorToPoint: false // Pattern shared across points
             }
         }
     }, {
@@ -45,7 +45,7 @@ Highcharts.chart('container', {
                 color: '#900000',
                 width: 10,
                 height: 10,
-                anchorToPoint: true // NEW: Each column gets its own pattern
+                anchorToPoint: true // Pattern anchored per point
             }
         }
     }, {
