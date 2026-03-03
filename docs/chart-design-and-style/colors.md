@@ -6,6 +6,17 @@ radial gradients. Unless specified below, this applies to all color options in
 the Highcharts API, whether it is called `color`, `backgroundColor`,
 `borderColor`, `lineColor`, `fill`, `stroke` etc.
 
+Palette and CSS variables
+-------------------------
+Although all color options can be set as literal colors, the default design
+system in Highcharts relies on the _palette_ options and CSS variables (since
+v13). The recommended way of styling Highcharts is to define a base palette,
+then optionally deviate from it with more targeted chart options. Read more
+under the [palette API](https://api.highcharts.com/highcharts/palette) and the
+[branding docs
+article](https://www.highcharts.com/docs/chart-design-and-style/branding).
+
+
 Solid colors
 ------------
 

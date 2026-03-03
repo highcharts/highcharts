@@ -16,8 +16,28 @@ import type PaletteOptions from './PaletteOptions';
 /**
  * The palette object specifies colors for the charts and how to apply them.
  *
- * @sample       highcharts/palette/general
- *               General palette options
+ * Each color scheme (`light` and `dark`) has three primary colors:
+ * `backgroundColor`, `neutralColor`, and `highlightColor`. For the neutral and
+ * highlight colors, a series of interpolated color variants are generated, and
+ * accessed as CSS variables in the chart settings in their prefixed and
+ * hyphenated form. For example,
+ *
+ * * `var(--highcharts-neutral-color-80)` is a blend of the `neutralColor` and
+ *   the `backgroundColor`, with a weight of 80% `neutralColor` and 20%
+ *   `backgroundColor`. It is the default for the main title
+ *   (`title.style.color`), axis labels and more.
+ * * `var(--highcharts-highlight-color-80)` is a blend of the `highlightColor`
+ *   and the `backgroundColor`, with a weight of 80% `highlightColor` and 20%
+ *   `backgroundColor`. It is used for the zoom selection marker (with opacity),
+ *   Stock Range Selector date input boxes and more.
+ *
+ * The `colors` array is used for data series and points, and is not blended
+ * with the `backgroundColor`. It is also accessible as CSS variables, and this
+ * is the recommended way to hard-code colors to match series and data.
+ * For example, `var(--highcharts-color-0)` is the first color in the `colors`
+ * array, `var(--highcharts-color-1)` is the second color, and so on.
+ *
+ * @sample       highcharts/palette/general General palette options
  * @type         {*}
  * @since        13.0.0
  * @optionparent palette
@@ -56,6 +76,11 @@ const palette: PaletteOptions = {
         backgroundColor: '#141414',
         neutralColor: '#ffffff',
         highlightColor: '#2caffe',
+        /**
+         * Colors for data series and points in dark mode. This array extends
+         * the colors defined for light mode, item by item. If an item is `null`
+         * or `undefined`, the corresponding color from light mode will be used.
+         */
         colors: ['#2caffe', '#00e272', '#efdf00']
     },
     /**
@@ -78,12 +103,12 @@ const palette: PaletteOptions = {
          */
         highlightColor: '#0022ff',
         /**
-         * Indicators
+         * Positive indicators, in stock charts.
          * @type {Highcharts.ColorType}
          */
         positiveColor: '#06b535',
         /**
-         * Indicators
+         * Negative indicators, in stock charts.
          * @type {Highcharts.ColorType}
          */
         negativeColor: '#f21313',

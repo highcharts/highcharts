@@ -14,7 +14,7 @@ The first two layers are both theme configuration and are typically done with
 The palette layer (light and dark)
 ----------------------------------
 
-The `palette` option (since v13) defines the chart color system. It supports separate
+The `palette` option defines the chart color system (since v13). It supports separate
 light and dark palettes and can switch automatically based on user preference.
 
 ```js
