@@ -1,7 +1,8 @@
 /* *
  *
  *  Authors: Rafal Sebestjanski and Pawel Lysy
- * *
+ *
+ *
  * */
 
 'use strict';
@@ -23,12 +24,7 @@ import CrookedLine from './CrookedLine.js';
 import D from '../../../Core/Defaults.js';
 const { defaultOptions } = D;
 import ControlPoint from '../ControlPoint.js';
-import U from '../../../Core/Utilities.js';
-const {
-    merge,
-    isNumber,
-    defined
-} = U;
+import { defined, isNumber, merge } from '../../../Shared/Utilities.js';
 
 /* *
  *

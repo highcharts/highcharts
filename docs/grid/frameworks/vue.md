@@ -44,11 +44,13 @@ watch(gridContainer, () => {
 import Grid from './components/Grid.vue';
 
 const config: Grid.Options = {
-    dataTable: {
-        columns: {
-            name: ['Alice', 'Bob', 'Charlie', 'David'],
-            age: [23, 34, 45, 56],
-            city: ['New York', 'Oslo', 'Paris', 'Tokyo'],
+    data: {
+        dataTable: {
+            columns: {
+                name: ['Alice', 'Bob', 'Charlie', 'David'],
+                age: [23, 34, 45, 56],
+                city: ['New York', 'Oslo', 'Paris', 'Tokyo'],
+            }
         }
     }
 }

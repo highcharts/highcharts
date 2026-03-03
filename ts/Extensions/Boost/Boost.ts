@@ -35,11 +35,8 @@ const {
     win
 } = H;
 import NamedColors from './NamedColors.js';
-import U from '../../Core/Utilities.js';
-const {
-    addEvent,
-    error
-} = U;
+import { error } from '../../Core/Utilities.js';
+import { addEvent } from '../../Shared/Utilities.js';
 
 /* *
  *

@@ -42,9 +42,7 @@ const { isTouchDevice } = H;
 import NavigatorAxisAdditions from '../../Core/Axis/NavigatorAxisComposition.js';
 import NavigatorComposition from './NavigatorComposition.js';
 import Scrollbar from '../Scrollbar/Scrollbar.js';
-
-import U from '../../Core/Utilities.js';
-const {
+import {
     addEvent,
     clamp,
     correctFloat,
@@ -60,7 +58,7 @@ const {
     pick,
     removeEvent,
     splat
-} = U;
+} from '../../Shared/Utilities.js';
 
 /* *
  *

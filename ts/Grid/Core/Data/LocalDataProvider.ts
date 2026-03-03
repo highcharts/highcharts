@@ -41,15 +41,8 @@ import DataTable from '../../../Data/DataTable.js';
 import ChainModifier from '../../../Data/Modifiers/ChainModifier.js';
 import DataConnector from '../../../Data/Connectors/DataConnector.js';
 import DataProviderRegistry from './DataProviderRegistry.js';
-import U from '../../../Core/Utilities.js';
-
-const {
-    defined,
-    isNumber,
-    isString,
-    uniqueKey
-} = U;
-
+import { uniqueKey } from '../../../Core/Utilities.js';
+import { defined, isNumber, isString } from '../../../Shared/Utilities.js';
 
 /* *
  *

@@ -32,12 +32,7 @@ import H from '../../Core/Globals.js';
 const { doc } = H;
 import HU from './HTMLUtilities.js';
 const { stripHTMLTagsFromString: stripHTMLTags } = HU;
-import U from '../../Core/Utilities.js';
-const {
-    defined,
-    find,
-    fireEvent
-} = U;
+import { defined, find, fireEvent } from '../../Shared/Utilities.js';
 
 /* *
  *

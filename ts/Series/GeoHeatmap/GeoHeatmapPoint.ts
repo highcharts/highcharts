@@ -21,8 +21,8 @@
 import GeoHeatmapPointOptions from '../GeoHeatmap/GeoHeatmapPointOptions.js';
 import GeoHeatmapSeries from '../GeoHeatmap/GeoHeatmapSeries.js';
 import { PointShortOptions } from '../../Core/Series/PointOptions.js';
-import U from '../../Core/Utilities.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+import { isNumber } from '../../Shared/Utilities.js';
 
 const {
     map: {
@@ -32,9 +32,6 @@ const {
     }
 } = SeriesRegistry.seriesTypes;
 
-const {
-    isNumber
-} = U;
 
 /* *
  *
