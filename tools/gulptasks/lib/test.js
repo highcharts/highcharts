@@ -57,14 +57,8 @@ function getProducts(logPaths) {
     paths.forEach(path => {
         const pathParts = path.split('/');
 
-        // Docs: use directory-based matching only (avoid filename matching e.g. docs/grid/accessibility.md)
+        // Docs: skip – don't trigger tests when only docs are modified
         if (pathParts[0] === 'docs' && pathParts.length > 1) {
-            const docsSection = pathParts[1].toLowerCase();
-            if (docsSection === 'grid') {
-                mark('Grid');
-            } else if (docsSection === 'dashboards') {
-                mark('Dashboards');
-            }
             return;
         }
 
