@@ -8,11 +8,11 @@ Highcharts.chart('container', {
     },
 
     colors: [
-        '#1b998b',
-        '#d7bea8',
-        '#776885',
-        '#5f1a37',
-        'var(--highcharts-neutral-color-100, #04030f)'
+        'var(--highcharts-color-0, #544fc5)',
+        'var(--highcharts-neutral-color-60, #666666)',
+        'var(--highcharts-neutral-color-40, #999999)',
+        'var(--highcharts-neutral-color-20, #cccccc)',
+        'var(--highcharts-neutral-color-10, #e6e6e6)'
     ],
 
     tooltip: {
@@ -35,11 +35,11 @@ Highcharts.chart('container', {
             }
         }],
         data: [
-            ['Webform', 34],
-            ['Call', 25],
-            ['Email', 23],
-            ['Webchat', 11],
-            ['Other', 7]
+            ['Webform', 55],
+            ['Call', 17],
+            ['Email', 7],
+            ['Webchat', 5],
+            ['Other', 3]
         ]
     }]
 });
