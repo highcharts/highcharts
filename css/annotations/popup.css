@@ -384,6 +384,12 @@ input.highcharts-input-search-indicators {
     cursor: pointer;
 }
 
+@supports (-moz-appearance: none) {
+    .highcharts-popup-color-wrapper .highcharts-popup-field-color {
+        padding: 4px;
+    }
+}
+
 .highcharts-popup-color-wrapper .highcharts-popup-field-text {
     flex: 0 1 auto;
     min-width: 0;
@@ -395,14 +401,22 @@ input.highcharts-input-search-indicators {
     min-width: 50%;
     margin-left: 8px;
     padding: 0;
+    border: none;
     cursor: pointer;
     display: flex;
     align-items: center;
     --highcharts-slider-rgb: #000000;
 }
 
-/* Opacity track: override browser default (e.g. blue) */
+.highcharts-popup-color-wrapper .highcharts-popup-opacity {
+    -webkit-appearance: none;
+    appearance: none;
+    background: transparent;
+}
+
 .highcharts-popup-color-wrapper .highcharts-popup-opacity::-webkit-slider-runnable-track {
+    -webkit-appearance: none;
+    appearance: none;
     background:
         linear-gradient(
             to right,
@@ -417,13 +431,13 @@ input.highcharts-input-search-indicators {
 .highcharts-popup-color-wrapper .highcharts-popup-opacity::-webkit-slider-thumb {
     -webkit-appearance: none;
     appearance: none;
-    width: 14px;
-    height: 14px;
+    width: 18px;
+    height: 18px;
     border-radius: 50%;
     background: var(--highcharts-slider-rgb, #000000);
-    border: 2px solid var(--highcharts-neutral-color-3, #f7f7f7);
+    border: 3px solid var(--highcharts-neutral-color-3, #f7f7f7);
     cursor: pointer;
-    margin-top: -4px;
+    margin-top: -6px;
 }
 
 .highcharts-popup-color-wrapper .highcharts-popup-opacity::-moz-range-track {
@@ -439,10 +453,12 @@ input.highcharts-input-search-indicators {
 }
 
 .highcharts-popup-color-wrapper .highcharts-popup-opacity::-moz-range-thumb {
-    width: 14px;
-    height: 14px;
+    -moz-appearance: none;
+    appearance: none;
+    width: 18px;
+    height: 18px;
     border-radius: 50%;
     background: var(--highcharts-slider-rgb, #000000);
-    border: 2px solid var(--highcharts-neutral-color-3, #f7f7f7);
+    border: 3px solid var(--highcharts-neutral-color-3, #f7f7f7);
     cursor: pointer;
 }
