@@ -30,14 +30,13 @@ const { defaultOptions } = D;
 import H from '../Core/Globals.js';
 const { noop } = H;
 import Series from '../Core/Series/Series.js';
-import U from '../Core/Utilities.js';
-const {
+import {
     addEvent,
     extend,
     isObject,
     merge,
     relativeLength
-} = U;
+} from '../Shared/Utilities.js';
 
 /* *
  *

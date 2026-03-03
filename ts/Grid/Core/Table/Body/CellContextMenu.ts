@@ -24,11 +24,8 @@ import type TableCell from './TableCell';
 
 import ContextMenu from '../../UI/ContextMenu.js';
 import ContextMenuButton from '../../UI/ContextMenuButton.js';
-import U from '../../../../Core/Utilities.js';
+import { addEvent } from '../../../../Shared/Utilities.js';
 
-const {
-    addEvent
-} = U;
 
 /* *
  *

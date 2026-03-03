@@ -27,12 +27,7 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import AST from '../../Core/Renderer/HTML/AST.js';
 import Chart from '../../Core/Chart/Chart.js';
 import NoDataDefaults from './NoDataDefaults.js';
-import U from '../../Core/Utilities.js';
-const {
-    addEvent,
-    extend,
-    merge
-} = U;
+import { addEvent, extend, merge } from '../../Shared/Utilities.js';
 
 /* *
  *

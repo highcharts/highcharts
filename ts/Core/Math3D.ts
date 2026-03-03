@@ -22,9 +22,8 @@ import type Position3DObject from './Renderer/Position3DObject';
 import type PositionObject from './Renderer/PositionObject';
 
 import H from './Globals.js';
+import { pick } from '../Shared/Utilities.js';
 const { deg2rad } = H;
-import U from './Utilities.js';
-const { pick } = U;
 
 /* *
  *

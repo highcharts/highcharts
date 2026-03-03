@@ -25,14 +25,13 @@ import type TilemapSeries from './TilemapSeries';
 
 import ColorAxisComposition from '../../Core/Axis/Color/ColorAxisComposition.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+import { extend } from '../../Shared/Utilities.js';
 const {
     series: { prototype: { pointClass: Point } },
     seriesTypes: {
         heatmap: { prototype: { pointClass: HeatmapPoint } }
     }
 } = SeriesRegistry;
-import U from '../../Core/Utilities.js';
-const { extend } = U;
 
 /* *
  *
