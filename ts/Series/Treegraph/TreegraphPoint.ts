@@ -37,12 +37,7 @@ const {
     }
 } = SeriesRegistry;
 import TreegraphSeries from './TreegraphSeries';
-import U from '../../Core/Utilities.js';
-const {
-    addEvent,
-    fireEvent,
-    merge
-} = U;
+import { addEvent, fireEvent, merge } from '../../Shared/Utilities.js';
 
 /* *
  *

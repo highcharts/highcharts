@@ -38,13 +38,7 @@ import H from '../Core/Globals.js';
 const { composed } = H;
 import { Palette } from '../Core/Color/Palettes.js';
 import PlotLineOrBand from '../Core/Axis/PlotLineOrBand/PlotLineOrBand.js';
-import U from '../Core/Utilities.js';
-const {
-    addEvent,
-    merge,
-    pushUnique,
-    wrap
-} = U;
+import { addEvent, merge, pushUnique, wrap } from '../Shared/Utilities.js';
 
 /* *
  *

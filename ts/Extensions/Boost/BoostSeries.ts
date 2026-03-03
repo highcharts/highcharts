@@ -49,22 +49,21 @@ const {
     noop,
     win
 } = H;
-import U from '../../Core/Utilities.js';
-const {
+import WGLRenderer from './WGLRenderer.js';
+import DataTableCore from '../../Data/DataTableCore.js';
+import {
     addEvent,
+    defined,
     destroyObjectProperties,
-    error,
     extend,
     fireEvent,
     isArray,
     isNumber,
     pick,
     pushUnique,
-    wrap,
-    defined
-} = U;
-import WGLRenderer from './WGLRenderer.js';
-import DataTableCore from '../../Data/DataTableCore.js';
+    wrap
+} from '../../Shared/Utilities.js';
+import { error } from '../../Core/Utilities.js';
 
 /* *
  *

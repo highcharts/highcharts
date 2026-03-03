@@ -21,11 +21,7 @@
 import type Chart from '../../Core/Chart/Chart';
 import type { EventCallback } from '../../Core/Callback';
 import type PointerEvent from '../../Core/PointerEvent';
-
-import U from '../../Core/Utilities.js';
-const {
-    addEvent
-} = U;
+import { addEvent, type EventOptions } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -57,7 +53,7 @@ function addEvents<T>(
     el: T,
     types: Array<string>,
     fn: (Function|EventCallback<T>),
-    options?: U.EventOptions
+    options?: EventOptions
 ): Function {
     const removeFuncs: Array<Function> = types.map(
         (type: string): Function => addEvent(el, type, fn, options)

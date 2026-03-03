@@ -33,8 +33,7 @@ import type SVGPath from '../../Renderer/SVG/SVGPath';
 import Axis from '../Axis.js';
 import { Palette } from '../../Color/Palettes.js';
 import PlotLineOrBandAxis from './PlotLineOrBandAxis.js';
-import U from '../../Utilities.js';
-const {
+import {
     addEvent,
     arrayMax,
     arrayMin,
@@ -45,7 +44,7 @@ const {
     merge,
     objectEach,
     pick
-} = U;
+} from '../../../Shared/Utilities.js';
 
 /* *
  *

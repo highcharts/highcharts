@@ -17,7 +17,7 @@
  *
  * */
 
-import type SeriesLabelOptions from './SeriesLabelOptions';
+import type { SeriesLabelOptions } from './SeriesLabelOptions';
 
 /* *
  *
@@ -163,4 +163,5 @@ const SeriesLabelDefaults: SeriesLabelOptions = {
  *
  * */
 
+/** @internal */
 export default SeriesLabelDefaults;
