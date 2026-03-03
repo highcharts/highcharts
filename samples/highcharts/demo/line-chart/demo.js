@@ -1,8 +1,4 @@
 Highcharts.chart('container', {
-    chart: {
-        type: 'spline' // Smoothed line
-    },
-
     title: {
         text: 'Application users last 24 hours',
         align: 'left'
@@ -32,6 +28,8 @@ Highcharts.chart('container', {
 
     tooltip: {
         shared: true,
+        fixed: true,
+        shadow: true,
         dateTimeLabelFormats: {
             hour: '%H:%M'
         }
@@ -43,7 +41,10 @@ Highcharts.chart('container', {
             // There are many ways to handle time data in Highcharts.
             // This way we omit the timestamp from each data point, and
             // rely on each data point being one hour apart.
-            pointInterval: 36e5 // one hour
+            pointInterval: 36e5, // one hour
+            marker: {
+                enabled: false
+            }
         }
     },
 
@@ -59,9 +60,6 @@ Highcharts.chart('container', {
         name: 'Average',
         color: '#8791BA',
         dashStyle: 'dot',
-        marker: {
-            enabled: false
-        },
         data: [
             865, 832, 775, 728, 779, 812, 989, 1095, 1623, 2102,
             2289, 2315, 2412, 2662, 3089, 2812, 2427, 2112, 2356, 2305,
