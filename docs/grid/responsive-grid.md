@@ -22,7 +22,7 @@ Grid.grid('container', {
                 maxWidth: 800
             },
             gridOptions: {
-                header: ['lasttName', 'email', 'mobile']
+                header: ['lastName', 'email', 'mobile']
             }
         }]
     }
