@@ -314,9 +314,9 @@ class Pagination {
     }
 
     private getAlignmentClass(): string {
-        const alignment = this.options?.align || '';
+        const align = this.options?.align || '';
 
-        return alignmentClassName(alignment);
+        return alignmentClassName(align);
     }
 
     public updateAlignmentClass(): void {
@@ -411,7 +411,7 @@ class Pagination {
         }
 
         this.pageInfoElement = makeHTMLElement('div', {
-            className: Globals.getClassName('paginationInfo')
+            className: Globals.getClassName('paginationPageInfo')
         }, this.contentWrapper);
 
         this.updatePageInfo();
@@ -475,9 +475,6 @@ class Pagination {
         if (controls.pageButtons) {
             this.renderPageNumbers(navContainer);
         }
-
-        // Render dropdown page selector
-        //this.renderDropdownPageSelector(navContainer);
 
         // Render next button
         if (controls.previousNextButtons) {
@@ -862,8 +859,6 @@ class Pagination {
             });
         }
 
-        // Update dropdown selector if it exists
-        //this.updateDropdownPageSelector();
     }
 
     /**

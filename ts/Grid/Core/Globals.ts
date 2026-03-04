@@ -103,7 +103,7 @@ export const rawClassNames = {
     menuDivider: 'menu-divider',
     clearFilterButton: 'clear-filter-button',
     pagination: 'pagination',
-    paginationInfo: 'pagination-info',
+    paginationPageInfo: 'pagination-info',
     paginationControls: 'pagination-controls',
     paginationPageSize: 'pagination-page-size',
     paginationPages: 'pagination-pages',

@@ -132,7 +132,7 @@ Grid.grid('container', {
                     pageSize: 10,
                     controls: {
                         pageSizeSelector: false,
-                        prevNextButtons: false,
+                        previousNextButtons: false,
                         pageButtons: {
                             count: 5
                         }

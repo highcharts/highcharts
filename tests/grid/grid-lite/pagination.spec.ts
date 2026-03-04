@@ -27,7 +27,7 @@ test.describe('Pagination', () => {
         await expect(page.locator('.hcg-pagination-page-size select.hcg-input')).toBeVisible();
 
         // Check page number buttons
-        const navButtons = page.locator('.hcg-pagination-pagination-pages .hcg-button');
+        const navButtons = page.locator('.hcg-pagination-pages .hcg-button');
         const navButtonCount = await navButtons.count();
         expect(navButtonCount).toBeGreaterThanOrEqual(1);
         await expect(page.locator('.hcg-button-selected')).toContainText('1');
