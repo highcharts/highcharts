@@ -108,6 +108,25 @@ export interface TreeIndexBuildResult {
 }
 
 /**
+ * Tree metadata for a single visible row in projected order.
+ */
+export interface TreeProjectionRowState {
+    id: RowId;
+    depth: number;
+    hasChildren: boolean;
+    isExpanded: boolean;
+}
+
+/**
+ * Tree projection state cache for currently projected rows.
+ */
+export interface TreeProjectionState {
+    rowIds: RowId[];
+    rowIndexes: number[];
+    rowsById: Map<RowId, TreeProjectionRowState>;
+}
+
+/**
  * Adapter contract for tree input formats.
  */
 export interface TreeInputAdapter {

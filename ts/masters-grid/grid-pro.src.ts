@@ -148,7 +148,7 @@ ExportingComposition.compose(G.Grid);
 ValidatorComposition.compose(G.Table);
 CellRenderersComposition.compose(G.Column);
 PaginationComposition.compose(G.Pagination);
-TreeViewComposition.compose(G.Grid);
+TreeViewComposition.compose(G.Grid, G.TableCell);
 ResponsiveComposition.compose(G.Grid);
 
 

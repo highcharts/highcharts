@@ -22,6 +22,7 @@
  * */
 
 import type Grid from '../../Core/Grid';
+import type TableCell from '../../Core/Table/Body/TableCell';
 import type { TreeViewOptions } from './TreeViewTypes';
 
 import Globals from '../../Core/Globals.js';
@@ -40,20 +41,36 @@ import { addEvent, pushUnique } from '../../../Shared/Utilities.js';
  *
  * @param GridClass
  * Grid class to extend.
+ *
+ * @param TableCellClass
+ * TableCell class to extend.
  */
 export function compose(
-    GridClass: typeof Grid
+    GridClass: typeof Grid,
+    TableCellClass: typeof TableCell
 ): void {
     if (!pushUnique(Globals.composed, 'TreeView')) {
         return;
     }
 
+    addEvent(GridClass, 'beforeLoad', onBeforeLoad);
     addEvent(GridClass, 'afterRenderViewport', onAfterRenderViewport);
     addEvent(GridClass, 'beforeDestroy', onBeforeDestroy);
+    addEvent(TableCellClass, 'afterRender', onAfterCellRender);
 }
 
 /**
- * Initializes or refreshes TreeView projection infrastructure after render.
+ * Initializes TreeView projection infrastructure before first data querying.
+ */
+function onBeforeLoad(this: Grid): void {
+    if (!this.treeProjectionController) {
+        this.treeProjectionController =
+            new TreeProjectionController(this);
+    }
+}
+
+/**
+ * Refreshes TreeView projection infrastructure after render.
  */
 function onAfterRenderViewport(this: Grid): void {
     if (!this.treeProjectionController) {
@@ -70,6 +87,104 @@ function onAfterRenderViewport(this: Grid): void {
 function onBeforeDestroy(this: Grid): void {
     this.treeProjectionController?.destroy();
     delete this.treeProjectionController;
+}
+
+/**
+ * Decorates tree column cells with indentation and toggle control.
+ */
+function onAfterCellRender(this: TableCell): void {
+    const grid = this.row.viewport.grid;
+    const controller = grid.treeProjectionController;
+    const options = controller?.getOptions();
+    const projectionState = controller?.getProjectionState();
+
+    if (!options || !projectionState) {
+        return;
+    }
+
+    const treeColumnId = (
+        options.treeColumnId ||
+        this.row.viewport.columns[0]?.id
+    );
+
+    if (!treeColumnId || this.column.id !== treeColumnId) {
+        return;
+    }
+
+    const rendererType = this.column.options.cells?.renderer?.type;
+    if (rendererType && rendererType !== 'text') {
+        return;
+    }
+
+    const rowId = this.row.id;
+    if (rowId === void 0) {
+        return;
+    }
+
+    const rowState = projectionState.rowsById.get(rowId);
+    if (!rowState) {
+        return;
+    }
+
+    const cellElement = this.htmlElement;
+    const wrapper = document.createElement('div');
+    wrapper.className = Globals.classNamePrefix + 'tree-cell-wrapper';
+
+    const toggleContainer = document.createElement('span');
+    toggleContainer.className = (
+        Globals.classNamePrefix + 'tree-toggle-container'
+    );
+    toggleContainer.style.setProperty(
+        '--hcg-tree-depth',
+        String(rowState.depth)
+    );
+
+    if (rowState.hasChildren) {
+        const toggleButton = document.createElement('button');
+        toggleButton.type = 'button';
+        toggleButton.className = (
+            Globals.getClassName('button') +
+            ' ' +
+            Globals.classNamePrefix +
+            'tree-toggle-button'
+        );
+        toggleButton.textContent = rowState.isExpanded ? '▾' : '▸';
+        toggleButton.setAttribute(
+            'aria-label',
+            rowState.isExpanded ? 'Collapse row' : 'Expand row'
+        );
+        toggleButton.setAttribute(
+            'aria-expanded',
+            rowState.isExpanded ? 'true' : 'false'
+        );
+
+        toggleButton.addEventListener('click', (event): void => {
+            event.preventDefault();
+            event.stopPropagation();
+
+            const changed = controller?.toggleRow(rowId);
+            if (!changed) {
+                return;
+            }
+
+            grid.querying.shouldBeUpdated = true;
+            grid.dirtyFlags.add('rows');
+            void grid.redraw();
+        });
+
+        toggleContainer.appendChild(toggleButton);
+    }
+
+    const valueContainer = document.createElement('span');
+    valueContainer.className = Globals.classNamePrefix + 'tree-value-container';
+
+    while (cellElement.firstChild) {
+        valueContainer.appendChild(cellElement.firstChild);
+    }
+
+    wrapper.appendChild(toggleContainer);
+    wrapper.appendChild(valueContainer);
+    cellElement.appendChild(wrapper);
 }
 
 
