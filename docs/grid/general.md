@@ -30,11 +30,9 @@ Let's dive right in with a bare minimum example of a fully functional **Grid Lit
         <script type="text/javascript">
             Grid.grid("container", {
                 data: {
-                    columns: {
-                        product: ["Apple", "Pear", "Plum", "Banana"],
-                        weight: [100, 40, 0.5, 200],
-                        price: [1.5, 2.53, 5, 4.5],
-                    },
+                    product: ["Apple", "Pear", "Plum", "Banana"],
+                    weight: [100, 40, 0.5, 200],
+                    price: [1.5, 2.53, 5, 4.5],
                 },
             });
         </script>

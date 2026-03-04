@@ -28,13 +28,11 @@ This example sets `format` and `className` for one column using `header[]`. The 
 ```js
 {
   data: {
-    dataTable: {
-      columns: {
-        price: [...],
-        product: [...],
-        stock: [...],
-        discount: [...]
-      }
+    columns: {
+      price: [...],
+      product: [...],
+      stock: [...],
+      discount: [...]
     }
   },
   header: [
@@ -55,13 +53,11 @@ This produces the same visual result as Example A, but moves the header configur
 ```js
 {
   data: {
-    dataTable: {
-      columns: {
-        price: [...],
-        product: [...],
-        stock: [...],
-        discount: [...]
-      }
+    columns: {
+      price: [...],
+      product: [...],
+      stock: [...],
+      discount: [...]
     }
   },
   columns: [{

@@ -13,11 +13,9 @@ If you prefer continuous scrolling instead of pages, consider row virtualization
 ```js
 Grid.grid('container', {
     data: {
-        dataTable: {
-            columns: {
-                product: ['Apple', 'Pear', 'Orange', 'Banana', 'Grape', 'Mango'],
-                price: [3.5, 2.5, 3, 2.2, 4.1, 3.8]
-            }
+        columns: {
+            product: ['Apple', 'Pear', 'Orange', 'Banana', 'Grape', 'Mango'],
+            price: [3.5, 2.5, 3, 2.2, 4.1, 3.8]
         }
     },
     pagination: true
@@ -29,11 +27,9 @@ To customize pagination, use the object form:
 ```js
 Grid.grid('container', {
     data: {
-        dataTable: {
-            columns: {
-                product: ['Apple', 'Pear', 'Orange', 'Banana', 'Grape', 'Mango'],
-                price: [3.5, 2.5, 3, 2.2, 4.1, 3.8]
-            }
+        columns: {
+            product: ['Apple', 'Pear', 'Orange', 'Banana', 'Grape', 'Mango'],
+            price: [3.5, 2.5, 3, 2.2, 4.1, 3.8]
         }
     },
     pagination: {
