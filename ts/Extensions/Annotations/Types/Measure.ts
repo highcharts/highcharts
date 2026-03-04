@@ -37,14 +37,13 @@ import Annotation from '../Annotation.js';
 import ControlPoint from '../ControlPoint.js';
 import D from '../../../Core/Defaults.js';
 const { defaultOptions } = D;
-import U from '../../../Core/Utilities.js';
-const {
+import {
     defined,
     extend,
     isNumber,
     merge,
     pick
-} = U;
+} from '../../../Shared/Utilities.js';
 
 if (defaultOptions.annotations?.types) {
     /**

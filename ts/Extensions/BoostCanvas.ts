@@ -55,15 +55,15 @@ const {
     doc,
     noop
 } = H;
-import U from '../Core/Utilities.js';
-const {
+import {
     addEvent,
     fireEvent,
+    internalClearTimeout,
     isNumber,
     merge,
     pick,
     wrap
-} = U;
+} from '../Shared/Utilities.js';
 
 /* *
  *
@@ -580,7 +580,7 @@ namespace BoostCanvas {
                     opacity: 1
                 }
             });
-            U.clearTimeout(destroyLoadingDiv);
+            internalClearTimeout(destroyLoadingDiv);
             chart.showLoading('Drawing...');
             chart.options.loading = loadingOptions; // Reset
         }

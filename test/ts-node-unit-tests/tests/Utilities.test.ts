@@ -1,10 +1,9 @@
 import { describe, it } from 'node:test';
 import { deepStrictEqual, strictEqual, notStrictEqual } from 'node:assert';
 
-import Utils from '../../../ts/Core/Utilities';
+import { merge } from '../../../ts/Shared/Utilities.js';
 
 describe('merge function', () => {
-    const { merge } = Utils;
 
     it('should deep merge multiple objects into a new object', () => {
         const obj1 = { a: 1, b: { c: 2 } };

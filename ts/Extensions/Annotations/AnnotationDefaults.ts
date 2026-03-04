@@ -8,8 +8,7 @@ import type { AnnotationOptions, AnnotationTypeOptions } from './AnnotationOptio
 import type { AnnotationPoint } from './AnnotationSeries';
 import type ControlPointOptions from './ControlPointOptions';
 
-import U from '../../Core/Utilities.js';
-const { defined } = U;
+import { defined } from '../../Shared/Utilities.js';
 
 /* *
  *

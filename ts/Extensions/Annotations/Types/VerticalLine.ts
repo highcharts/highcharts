@@ -27,11 +27,7 @@ import Annotation from '../Annotation.js';
 import D from '../../../Core/Defaults.js';
 const { defaultOptions } = D;
 import MockPoint from '../MockPoint.js';
-import U from '../../../Core/Utilities.js';
-const {
-    merge,
-    pick
-} = U;
+import { merge, pick } from '../../../Shared/Utilities.js';
 
 if (defaultOptions.annotations?.types) {
     /**

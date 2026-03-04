@@ -20,8 +20,7 @@
 import type MapPoint from './MapPoint';
 import type MapSeriesOptions from './MapSeriesOptions';
 
-import U from '../../Core/Utilities.js';
-const { isNumber } = U;
+import { isNumber } from '../../Shared/Utilities.js';
 
 /* *
  *

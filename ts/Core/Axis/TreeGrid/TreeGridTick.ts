@@ -31,17 +31,15 @@ import type { SymbolKey } from '../../Renderer/SVG/SymbolType';
 import type Tick from '../Tick';
 import type { TreeGridAxisComposition } from './TreeGridAxis';
 import type { TreeGridAxisLabelIconOptions } from './TreeGridAxisOptions';
-
-import U from '../../Utilities.js';
-const {
+import {
     addEvent,
     correctFloat,
-    removeEvent,
-    isObject,
     isNumber,
+    isObject,
     pick,
+    removeEvent,
     wrap
-} = U;
+} from '../../../Shared/Utilities.js';
 
 /* *
  *

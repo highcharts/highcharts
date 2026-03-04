@@ -73,26 +73,24 @@ const {
 } = G;
 import HU from '../../Core/HttpUtilities.js';
 import RegexLimits from '../RegexLimits.js';
-import U from '../../Core/Utilities.js';
-const {
+import {
     addEvent,
-    clearTimeout,
     createElement,
     css,
     discardElement,
-    error,
     extend,
     find,
     fireEvent,
+    internalClearTimeout,
     isObject,
     merge,
     objectEach,
     pick,
     pushUnique,
     removeEvent,
-    splat,
-    uniqueKey
-} = U;
+    splat
+} from '../../Shared/Utilities.js';
+import { error, uniqueKey } from '../../Core/Utilities.js';
 
 AST.allowedAttributes.push(
     'data-z-index',
@@ -1137,7 +1135,7 @@ class Exporting {
                 // #10361, #9998
                 css(chart.renderTo, { overflow: 'hidden' });
                 css(chart.container, { overflow: 'hidden' });
-                clearTimeout(menu.hideTimer);
+                internalClearTimeout(menu.hideTimer);
                 fireEvent(chart, 'exportMenuHidden');
             };
 
@@ -1148,7 +1146,7 @@ class Exporting {
                 }),
 
                 addEvent(menu, 'mouseenter', function (): void {
-                    clearTimeout(menu.hideTimer);
+                    internalClearTimeout(menu.hideTimer);
                 }),
 
                 // Hide it on clicking or touching outside the menu (#2258,
@@ -1341,7 +1339,7 @@ class Exporting {
         ): void {
             if (elem) {
                 // Remove the event handler
-                clearTimeout(elem.hideTimer); // #5427
+                internalClearTimeout(elem.hideTimer); // #5427
                 removeEvent(elem, 'mouseleave');
 
                 // Remove inline events

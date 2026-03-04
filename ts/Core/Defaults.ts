@@ -28,12 +28,7 @@ const {
 } = H;
 import PaletteDefaults from './Color/PaletteDefaults.js';
 import Time from './Time.js';
-import U from './Utilities.js';
-const {
-    extend,
-    fireEvent,
-    merge
-} = U;
+import { extend, fireEvent, merge } from '../Shared/Utilities.js';
 
 /* *
  *

@@ -61,8 +61,7 @@ import SVGElement from './SVGElement.js';
 import SVGLabel from './SVGLabel.js';
 import Symbols from './Symbols.js';
 import TextBuilder from './TextBuilder.js';
-import U from '../../Utilities.js';
-const {
+import {
     addEvent,
     attr,
     createElement,
@@ -78,9 +77,9 @@ const {
     merge,
     pick,
     pInt,
-    replaceNested,
-    uniqueKey
-} = U;
+    replaceNested
+} from '../../../Shared/Utilities.js';
+import { uniqueKey } from '../../Utilities.js';
 
 /* *
  *

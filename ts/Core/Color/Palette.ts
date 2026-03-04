@@ -25,14 +25,13 @@ import Color from './Color.js';
 import H from '../Globals.js';
 const { charts } = H;
 import PaletteDefaults from './PaletteDefaults.js';
-import U from '../Utilities.js';
-const {
+import {
     diffObjects,
     extend,
     isString,
     objectEach,
     merge
-} = U;
+} from '../../Shared/Utilities.js';
 
 /* *
  *

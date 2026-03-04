@@ -39,9 +39,8 @@ const {
     composed,
     isTouchDevice
 } = H;
-import U from './Utilities.js';
 import SVGAttributes from './Renderer/SVG/SVGAttributes';
-const {
+import {
     addEvent,
     attr,
     css,
@@ -56,7 +55,7 @@ const {
     pick,
     pushUnique,
     splat
-} = U;
+} from '../Shared/Utilities.js';
 
 /* *
  *
