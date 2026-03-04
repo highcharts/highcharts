@@ -180,6 +180,9 @@ sections at once.
 You can make top/bottom pinned sections scroll independently by setting
 `pinning.top.maxHeight` and/or `pinning.bottom.maxHeight`.
 
+If `maxHeight` is not set, pinned sections do not use internal scrolling by
+default.
+
 ```js
 rendering: {
     rows: {
