@@ -31,17 +31,15 @@ const {
 import VariwideComposition from './VariwideComposition.js';
 import VariwidePoint from './VariwidePoint.js';
 import VariwideSeriesDefaults from './VariwideSeriesDefaults.js';
-import U from '../../Core/Utilities.js';
-const {
+import {
     addEvent,
-    arrayMin,
     arrayMax,
+    arrayMin,
     crisp,
     extend,
     merge,
     pick
-} = U;
-
+} from '../../Shared/Utilities.js';
 
 /* *
  *

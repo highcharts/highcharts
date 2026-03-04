@@ -44,10 +44,12 @@ import Grid from '@highcharts/grid-lite/es-modules/masters/grid-lite.src.js';
 import '@highcharts/grid-lite/css/grid-lite.css';
 
 Grid.grid('container', {
-    dataTable: {
-        columns: {
-            product: ['Apple', 'Pear', 'Plum', 'Banana'],
-            price: [1.5, 2.53, 5, 4.5]
+    data: {
+        dataTable: {
+            columns: {
+                product: ['Apple', 'Pear', 'Plum', 'Banana'],
+                price: [1.5, 2.53, 5, 4.5]
+            }
         }
     }
 });
@@ -72,10 +74,12 @@ Best for quick prototypes, CodePen, JSFiddle, or projects without build tools.
 
     <script>
     Grid.grid('container', {
-        dataTable: {
-            columns: {
-                product: ['Apple', 'Pear', 'Plum', 'Banana'],
-                price: [1.5, 2.53, 5, 4.5]
+        data: {
+            dataTable: {
+                columns: {
+                    product: ['Apple', 'Pear', 'Plum', 'Banana'],
+                    price: [1.5, 2.53, 5, 4.5]
+                }
             }
         }
     });
@@ -129,11 +133,13 @@ import '@highcharts/grid-pro/css/grid-pro.css';
 
 // Create grid with Pro features
 Grid.grid('container', {
-    dataTable: {
-        columns: {
-            product: ['Apple', 'Pear', 'Plum', 'Banana'],
-            price: [1.5, 2.53, 5, 4.5],
-            inStock: [true, true, false, true]
+    data: {
+        dataTable: {
+            columns: {
+                product: ['Apple', 'Pear', 'Plum', 'Banana'],
+                price: [1.5, 2.53, 5, 4.5],
+                inStock: [true, true, false, true]
+            }
         }
     },
     columns: [{
@@ -179,11 +185,13 @@ import { Grid, type GridOptions } from '@highcharts/grid-lite-react';
 
 export default function App() {
     const [options] = useState<GridOptions>({
-        dataTable: {
-            columns: {
-                name: ['Alice', 'Bob', 'Charlie', 'David'],
-                age: [23, 34, 45, 56],
-                city: ['New York', 'Oslo', 'Paris', 'Tokyo'],
+        data: {
+            dataTable: {
+                columns: {
+                    name: ['Alice', 'Bob', 'Charlie', 'David'],
+                    age: [23, 34, 45, 56],
+                    city: ['New York', 'Oslo', 'Paris', 'Tokyo'],
+                }
             }
         }
     });
@@ -195,14 +203,14 @@ export default function App() {
 For Grid Pro, swap the imports to `@highcharts/grid-pro-react` and render
 `<Grid options={options} />`.
 
-**[View complete React guide →](https://www.highcharts.com/docs/grid/frameworks/grid-with-react)**
+**[View complete React guide →](https://www.highcharts.com/docs/grid/frameworks/react)**
 
 ### Other Frameworks
 
 | Framework | Guide |
 | --- | --- |
-| **Vue** | [View Vue Guide →](https://www.highcharts.com/docs/grid/frameworks/grid-with-vue) |
-| **Angular** | [View Angular Guide →](https://www.highcharts.com/docs/grid/frameworks/grid-with-angular) |
+| **Vue** | [View Vue Guide →](https://www.highcharts.com/docs/grid/frameworks/vue) |
+| **Angular** | [View Angular Guide →](https://www.highcharts.com/docs/grid/frameworks/angular) |
 
 ## Next steps
 
@@ -210,7 +218,7 @@ Now that Grid is installed, explore what you can build:
 
 - **[Introduction guide](https://www.highcharts.com/docs/grid/general)** – Build more complex grids with real data
 - **[Understanding Grid](https://www.highcharts.com/docs/grid/understanding-grid)** – Configure columns, data sources, and events
-- **[Theming guide](https://www.highcharts.com/docs/grid/theming/theming)** – Customize the look and feel
+- **[Theming guide](https://www.highcharts.com/docs/grid/theming/index)** – Customize the look and feel
 - **[API Reference](https://api.highcharts.com/grid/)** – Complete options and methods documentation
 
 > **Upgrading from an older version?** See the [Migration Guide](https://www.highcharts.com/docs/dashboards/grid-migration) for detailed upgrade instructions from Grid 1.x or Dashboards 3.x.

@@ -49,14 +49,7 @@ import type {
 import NavigatorSyncs from './NavigatorSyncs/NavigatorSyncs.js';
 import NavigatorSyncUtils from './NavigatorSyncs/NavigatorSyncUtils.js';
 
-import U from '../../../Core/Utilities.js';
-const {
-    diffObjects,
-    isNumber,
-    isString,
-    merge,
-    pick
-} = U;
+import { diffObjects, isNumber, isString, merge, pick } from '../../../Shared/Utilities.js';
 
 
 /* *

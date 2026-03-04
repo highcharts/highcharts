@@ -199,6 +199,19 @@ test.describe('Grid Pro - cell and column events', () => {
         await expect(page.locator('#afterColumnSorting')).toHaveValue('afterSortColumnOption');
     });
 
+    test('Header click event fires when clicking on toolbar icons', async ({ page }) => {
+        // Reset headerClick to verify the event fires
+        await page.locator('#headerClick').fill('');
+
+        // Click on the sort icon (not the header text) - header.events.click should fire
+        const sortIcon = page.locator(
+            'th[data-column-id="product"] .hcg-header-cell-icons button'
+        ).first();
+        await sortIcon.click({ force: true });
+
+        await expect(page.locator('#headerClick')).toHaveValue('headerClick');
+    });
+
     test('Filtering column event', async ({ page }) => {
         // ColumnDefaults
         const productInput = page.locator('th[data-column-id="product"] input').first();

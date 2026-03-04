@@ -33,11 +33,13 @@ import { Grid, type GridOptions } from '@highcharts/grid-lite-react';
 
 export default function App() {
     const [options] = useState<GridOptions>({
-        dataTable: {
-            columns: {
-                name: ['Alice', 'Bob', 'Charlie', 'David'],
-                age: [23, 34, 45, 56],
-                city: ['New York', 'Oslo', 'Paris', 'Tokyo']
+        data: {
+            dataTable: {
+                columns: {
+                    name: ['Alice', 'Bob', 'Charlie', 'David'],
+                    age: [23, 34, 45, 56],
+                    city: ['New York', 'Oslo', 'Paris', 'Tokyo']
+                }
             }
         }
     });
@@ -48,6 +50,9 @@ export default function App() {
 
 For Grid Pro, swap the imports to `@highcharts/grid-pro-react` and render
 `<Grid options={options} />`.
+
+See the live Grid Lite example [here](https://stackblitz.com/edit/highcharts-grid-lite-integration-demo).
+See the live Grid Pro example [here](https://stackblitz.com/edit/highcharts-grid-pro-integration-demo).
 
 ## 3. Access the Grid instance (optional)
 You can access the underlying Grid instance via the `gridRef` prop or a callback:
@@ -63,10 +68,12 @@ import {
 
 export default function App() {
     const [options] = useState<GridOptions>({
-        dataTable: {
-            columns: {
-                name: ['Alice', 'Bob', 'Charlie'],
-                age: [23, 34, 45]
+        data: {
+            dataTable: {
+                columns: {
+                    name: ['Alice', 'Bob', 'Charlie'],
+                    age: [23, 34, 45]
+                }
             }
         }
     });
@@ -90,20 +97,24 @@ import { Grid, type GridOptions } from '@highcharts/grid-lite-react';
 
 export default function App() {
     const [options, setOptions] = useState<GridOptions>({
-        dataTable: {
-            columns: {
-                name: ['Alice', 'Bob'],
-                age: [23, 34]
+        data: {
+            dataTable: {
+                columns: {
+                    name: ['Alice', 'Bob'],
+                    age: [23, 34]
+                }
             }
         }
     });
 
     const loadNewData = () => {
         setOptions({
-            dataTable: {
-                columns: {
-                    name: ['Charlie', 'Diana', 'Eve'],
-                    age: [45, 56, 67]
+            data: {
+                dataTable: {
+                    columns: {
+                        name: ['Charlie', 'Diana', 'Eve'],
+                        age: [45, 56, 67]
+                    }
                 }
             }
         });
@@ -123,4 +134,4 @@ export default function App() {
 > unnecessary re-renders.
 
 ## 5. Next.js
-For Next.js applications, see the dedicated [Next.js integration guide](https://www.highcharts.com/docs/grid/frameworks/grid-with-nextjs).
+For Next.js applications, see the dedicated [Next.js integration guide](https://www.highcharts.com/docs/grid/frameworks/nextjs).

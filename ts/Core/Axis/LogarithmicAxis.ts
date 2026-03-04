@@ -19,12 +19,11 @@
 
 import type Axis from './Axis';
 
-import U from '../Utilities.js';
-const {
+import {
     addEvent,
     normalizeTickInterval,
     pick
-} = U;
+} from '../../Shared/Utilities.js';
 
 /* *
  *

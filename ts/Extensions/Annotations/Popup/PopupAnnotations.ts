@@ -29,18 +29,17 @@ const {
     doc,
     isFirefox
 } = H;
-import U from '../../../Core/Utilities.js';
 import BaseFormIcons from '../../../Shared/BaseFormIcons';
 import getIcon from '../../../Shared/BaseFormUtils';
 
-const {
+import {
     createElement,
     isArray,
     isObject,
     objectEach,
     pick,
     stableSort
-} = U;
+} from '../../../Shared/Utilities.js';
 
 /* *
  *

@@ -39,14 +39,13 @@ import H from '../../Core/Globals.js';
 const { composed } = H;
 import Math3D from '../../Core/Math3D.js';
 const { perspective } = Math3D;
-import U from '../../Core/Utilities.js';
-const {
+import {
     addEvent,
     extend,
     pick,
     pushUnique,
     wrap
-} = U;
+} from '../../Shared/Utilities.js';
 
 /* *
  *
