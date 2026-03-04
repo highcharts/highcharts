@@ -18,14 +18,6 @@ export default {
     }, {
         type: 'separator'
     }, {
-        path: 'palette.light.colors[0]',
-        value: '#2caffe'
-    }, {
-        path: 'palette.light.colors[1]',
-        value: '#544fc5'
-    }, {
-        type: 'separator'
-    }, {
         path: 'palette.dark.backgroundColor'
     }, {
         path: 'palette.dark.neutralColor'
@@ -34,11 +26,16 @@ export default {
     }, {
         type: 'separator'
     }, {
-        path: 'palette.dark.colors[0]',
+        path: 'palette.colors[0]',
         value: '#2caffe'
     }, {
+        path: 'palette.colors[1]',
+        value: '#2e2a69'
+    }, {
+        type: 'separator'
+    }, {
         path: 'palette.dark.colors[1]',
-        value: '#ffff00'
+        value: '#efdf00'
     }],
     controlsDescription: `Text elements use different blends of the neutral
         color and background color`,

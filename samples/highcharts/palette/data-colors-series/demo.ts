@@ -6,12 +6,13 @@ Highcharts.chart('container', {
         type: 'datetime'
     },
     palette: {
+        colors: ['#2caffe', '#2e2a69', '#00e272'],
         colorScheme: 'light dark',
         dark: {
-            colors: ['#2caffe', '#00e272', '#efdf00']
-        },
-        light: {
-            colors: ['#2caffe', '#544fc5', '#00e272']
+            colors: [
+                null,
+                '#efdf00'
+            ]
         }
     },
     plotOptions: {

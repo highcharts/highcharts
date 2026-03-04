@@ -10,27 +10,21 @@ export default {
     }, {
         type: 'separator'
     }, {
-        path: 'palette.light.colors[0]',
+        path: 'palette.colors[0]',
         value: '#2caffe'
     }, {
-        path: 'palette.light.colors[1]',
-        value: '#544fc5'
+        path: 'palette.colors[1]',
+        value: '#2e2a69'
     }, {
-        path: 'palette.light.colors[2]',
+        path: 'palette.colors[2]',
         value: '#00e272'
     }, {
         type: 'separator'
     }, {
-        path: 'palette.dark.colors[0]',
-        value: '#2caffe'
-    }, {
         path: 'palette.dark.colors[1]',
-        value: '#00e272'
-    }, {
-        path: 'palette.dark.colors[2]',
         value: '#efdf00'
     }],
-
+    controlsDescription: 'The second color is overridden in dark mode',
     templates: ['datetime'],
     chartOptionsExtra: {
         series: [{

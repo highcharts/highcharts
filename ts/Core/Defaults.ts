@@ -75,8 +75,8 @@ const defaultOptions: DefaultOptions = {
 
     /**
      * This option has been deprecated, use the
-     * [palette.light.colors](#palette.light.colors) and/or
-     * [palette.dark.colors](#palette.dark.colors) option instead.
+     * [palette.colors](#palette.colors) instead, with optional overrides for
+     * light or dark mode.
      *
      * An array containing the default colors for the chart's series. When
      * all colors are used, new colors are pulled from the start again.
@@ -2993,7 +2993,7 @@ function getOptions(): DefaultOptions {
     return extend(
         // Legacy support: keep colors as CSS variables
         {
-            colors: PaletteDefaults.light?.colors?.map(
+            colors: new Array(PaletteDefaults.colors?.length || 10).fill(0).map(
                 (c, i): string => `var(--highcharts-color-${i})`
             )
         },

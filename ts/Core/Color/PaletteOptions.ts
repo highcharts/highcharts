@@ -22,9 +22,9 @@ import type ColorType from './ColorType';
  *  Declarations
  *
  * */
-export interface PaletteColors {
+export interface PaletteSchemeColors {
     backgroundColor?: ColorType;
-    colors?: Array<ColorType>;
+    colors?: Array<ColorType|null|undefined>;
     neutralColor?: ColorType;
     highlightColor?: ColorType;
     positiveColor?: ColorType;
@@ -32,10 +32,11 @@ export interface PaletteColors {
 }
 
 export interface PaletteOptions {
-    injectCSS?: boolean;
+    colors?: Array<ColorType>;
     colorScheme?: 'light dark' |'light' | 'dark' | 'inherit';
-    dark?: PaletteColors;
-    light?: PaletteColors;
+    dark?: PaletteSchemeColors;
+    injectCSS?: boolean;
+    light?: PaletteSchemeColors;
 }
 
 

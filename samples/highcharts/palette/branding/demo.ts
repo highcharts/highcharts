@@ -7,23 +7,17 @@ Highcharts.setOptions({
 
     // Step 1: Define the general palette for light and dark mode
     palette: {
+        colors: [
+            '#e32412',
+            '#fadb8b',
+            '#2364b9',
+            '#059649'
+        ],
         light: {
-            colors: [
-                '#e32412',
-                '#fadb8b',
-                '#2364b9',
-                '#059649'
-            ],
             backgroundColor: '#f6f5f4',
             highlightColor: '#e32412'
         },
         dark: {
-            colors: [
-                '#e32412',
-                '#fadb8b',
-                '#2364b9',
-                '#059649'
-            ],
             backgroundColor: '#1b1918',
             highlightColor: '#fadb8b'
         }

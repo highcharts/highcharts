@@ -15,13 +15,15 @@ Highcharts.chart('container', {
         categories: ['Apples', 'Bananas', 'Oranges', 'Pears']
     },
     palette: {
+        colors: ['#2caffe', '#2e2a69'],
         colorScheme: 'light dark',
         dark: {
-            colors: ['#2caffe', '#ffff00']
+            colors: [
+                null,
+                '#efdf00'
+            ]
         },
-        light: {
-            colors: ['#2caffe', '#544fc5']
-        }
+        light: {}
     },
     series: [{
         data: [1, 3, 2, 4]

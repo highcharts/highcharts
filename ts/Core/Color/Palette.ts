@@ -51,6 +51,31 @@ type CSSVars = {
 };
 
 /* *
+ *
+ *  Constants
+ *
+ * */
+
+const defaultColors: Array<ColorType> = [
+    '#2caffe',
+    '#544fc5',
+    '#00e272',
+    '#fe6a35',
+    '#6b8abc',
+    '#d568fb',
+    '#2ee0ca',
+    '#fa4b42',
+    '#feb56a',
+    '#91e8e1'
+];
+
+const defaultDarkOverrideColors: Array<ColorType|null> = [
+    null, // Use the same color for the first item in dark mode
+    '#00e272',
+    '#efdf00'
+];
+
+/* *
  * Build the text content for the style tag
  */
 const getStyles = (
@@ -171,6 +196,11 @@ export default class Palette {
             }
         };
 
+        // Data colors
+        (options.colors || defaultColors).forEach((color, i): void => {
+            addKebab(color, `color${i}`);
+        });
+
         for (const cScheme of ['light', 'dark'] as const) {
             const paletteColors = options[cScheme] || {},
                 interpolated: Record<string, ColorType> = {},
@@ -192,9 +222,22 @@ export default class Palette {
                     .tweenTo(highlightColor, fraction / 100);
             });
 
-            // Data colors are stored as an array
-            paletteColors?.colors?.forEach((color, i): void => {
-                addKebab(color, `color${i}`);
+            // Extended data colors per scheme
+            (
+                paletteColors?.colors ||
+                (
+                    // Unless the user has defined their own colors, the dark
+                    // scheme will override some of the default colors to better
+                    // fit a dark background. If the user has defined their own
+                    // colors, we assume they know what they're doing and won't
+                    // override them.
+                    cScheme === 'dark' && !options.colors ?
+                        defaultDarkOverrideColors : []
+                )
+            ).forEach((color, i): void => {
+                if (color) {
+                    addKebab(color, `color${i}`);
+                }
             });
 
             // The rest are stored as named properties
@@ -247,7 +290,8 @@ export default class Palette {
             chart.options.palette = options;
         }
 
-        this.dataColors = options.light?.colors?.map(
+        // The data colors. The legacy chart.options.colors overrides palette.
+        this.dataColors = (options.colors || defaultColors).map(
             (c, i): ColorType => `var(--highcharts-color-${i})`
         );
 

@@ -47,6 +47,31 @@ import type PaletteOptions from './PaletteOptions';
  */
 const palette: PaletteOptions = {
     /**
+     * Colors for data series and points. This setting is generic for both
+     * light and dark mode, and can be overridden for each mode in
+     * `light.colors` and `dark.colors`.
+     *
+     * @sample highcharts/palette/data-colors-points
+     *         Colors for points
+     * @sample highcharts/palette/data-colors-series
+     *         Colors for series
+     * @type   {Array<Highcharts.ColorType>}
+     * @default [
+     *       '#2caffe',
+     *       '#544fc5',
+     *       '#00e272',
+     *       '#fe6a35',
+     *       '#6b8abc',
+     *       '#d568fb',
+     *       '#2ee0ca',
+     *       '#fa4b42',
+     *       '#feb56a',
+     *       '#91e8e1'
+     *      ]
+     * @since 13.0.0
+     * @apioption palette.colors
+     */
+    /**
      * Color scheme to use. When `light dark` is set, the chart will
      * automatically switch between light and dark mode based on the user's
      * system preferences, or whether the `.highcharts-light` or
@@ -84,20 +109,30 @@ const palette: PaletteOptions = {
      * @extends palette.light
      */
     dark: {
+        /**
+         * Colors for data series and points. This array extends the colors
+         * defined for the general `palette.colors` array, item by item. If an
+         * item is `null` or `undefined`, the general color will be used.
+         *
+         * @type   {Array<Highcharts.ColorType|null|undefined>}
+         * @apioption palette.dark.colors
+         */
         backgroundColor: '#141414',
         neutralColor: '#ffffff',
-        highlightColor: '#2caffe',
-        /**
-         * Colors for data series and points in dark mode. This array extends
-         * the colors defined for light mode, item by item. If an item is `null`
-         * or `undefined`, the corresponding color from light mode will be used.
-         */
-        colors: ['#2caffe', '#00e272', '#efdf00']
+        highlightColor: '#2caffe'
     },
     /**
      * Palette options for light mode.
      */
     light: {
+        /**
+         * Colors for data series and points. This array extends the colors
+         * defined for the general `palette.colors` array, item by item. If an
+         * item is `null` or `undefined`, the general color will be used.
+         *
+         * @type   {Array<Highcharts.ColorType|null|undefined>}
+         * @apioption palette.light.colors
+         */
         /**
          * Chart background, point stroke for markers and columns etc. The
          * background is also used as base for interpolated neutral and
@@ -138,29 +173,7 @@ const palette: PaletteOptions = {
          * Negative indicators, in stock charts.
          * @type {Highcharts.ColorType}
          */
-        negativeColor: '#f21313',
-
-        /**
-         * Colors for data series and points
-         *
-         * @sample highcharts/palette/data-colors-points
-         *         Colors for points
-         * @sample highcharts/palette/data-colors-series
-         *         Colors for series
-         * @type   {Array<Highcharts.ColorType>}
-         */
-        colors: [
-            '#2caffe',
-            '#544fc5',
-            '#00e272',
-            '#fe6a35',
-            '#6b8abc',
-            '#d568fb',
-            '#2ee0ca',
-            '#fa4b42',
-            '#feb56a',
-            '#91e8e1'
-        ]
+        negativeColor: '#f21313'
     }
 };
 export default palette;

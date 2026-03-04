@@ -3,7 +3,7 @@ Highcharts.chart('container', {
         type: 'column'
     },
     title: {
-        text: 'Demo of <em>palette.injectCSS</em>'
+        text: 'Demo of <em>palette.injectCSS</em> set to false'
     },
     xAxis: {
         categories: ['Apples', 'Bananas', 'Oranges', 'Pears']
