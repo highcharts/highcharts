@@ -120,6 +120,14 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
         'Initial number of MACD points is correct'
     );
 
+    chart.series[1].update();
+
+    assert.strictEqual(
+        chart.series[1].color,
+        '#544fc5',
+        'MACD series color should not change after update, #22562.'
+    );
+
     const getValues = series => (
         series.getColumn('x').map((x, i) => [
             series.getColumn('y')[i],

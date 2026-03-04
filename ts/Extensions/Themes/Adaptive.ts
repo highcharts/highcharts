@@ -163,6 +163,18 @@ const styleSheet = `
 .highcharts-dark {
     ${darkRules}
 }
+
+.highcharts-container {
+    color-scheme: light dark;
+}
+
+.highcharts-light .highcharts-container {
+    color-scheme: light;
+}
+
+.highcharts-dark .highcharts-container {
+    color-scheme: dark;
+}
 `;
 
 namespace DynamicDefaultTheme {

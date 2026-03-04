@@ -1,4 +1,3 @@
-const request = require('request');
 const logLib = require('../../libs/log');
 const argv = require('yargs').argv;
 
@@ -19,16 +18,9 @@ const DEFAULT_OPTIONS = {
 * @return {Promise<*> | Promise | Promise} Promise to keep
 */
 function doRequest(options = {}) {
-    logLib.message(options.method + ' request to ' + options.url);
-    return new Promise((resolve, reject) => {
-        request(options, (error, response, data) => {
-            if (error || response.statusCode >= 400) {
-                reject(error ? error : `HTTP ${response.statusCode} - ${data.message}`);
-            } else {
-                resolve(data);
-            }
-        });
-    });
+    const { url, ...fetchOptions } = options;
+    logLib.message(options.method + ' request to ' + url);
+    return fetch(url, fetchOptions);
 }
 
 /**

@@ -96,6 +96,16 @@ If you create a theme from scratch or modify color variables in the default, you
 
 Variable inheritance applies here too, so you only need to override variables that differ in dark mode.
 
+*NOTE:* Alernatively you can use the [light-dark CSS function](https://developer.mozilla.org/en-US/docs/Web/CSS/color_value/light-dark). This property has [general support only since March 2024](https://caniuse.com/?search=light-dark), so use with caution if you want to ensure support for all your users.
+
+```css
+.theme-custom {
+    --hcg-border-width: 3px;
+    --hcg-border-style: solid;
+    --hcg-border-color: light-dark(#000, #fff);
+}
+```
+
 By following these practices, you can create flexible, maintainable themes that enhance your grid’s appearance while ensuring proper functionality and backward compatibility.
 
 Now check out the article on [theming variables](https://www.highcharts.com/docs/grid/theming/theming-variables) to get a full overview of all available variables and our [theming demo](https://www.highcharts.com/grid/demo/grid/theming/theming) to see it in practice.

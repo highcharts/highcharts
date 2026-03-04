@@ -83,7 +83,7 @@
     "code/indicators/indicators-all.src.js",
 
     "node_modules/@highcharts/map-collection/countries/gb/gb-all.js",
-    "node_modules/@highcharts/map-collection/custom/british-isles-all.js",
+    "node_modules/@highcharts/map-collection/custom/british-isles.js",
     "samples/data/maps/bn-all.js",
     "samples/data/maps/ad-all.js",
     "samples/data/maps/europe.js",

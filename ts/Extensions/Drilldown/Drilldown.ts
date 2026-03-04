@@ -970,6 +970,7 @@ namespace Drilldown {
 
     export interface EventObject {
         category?: number;
+        defaultPrevented?: boolean;
         originalEvent?: Event;
         point: Point;
         points?: Array<(boolean|Point)>;
