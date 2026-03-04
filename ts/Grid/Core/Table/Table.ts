@@ -484,10 +484,11 @@ class Table {
             return;
         }
 
-        const tableCell = cell as TableCell;
-        if (this.openCellContextMenu(tableCell, e.clientX, e.clientY)) {
-            e.preventDefault();
-        }
+        // Disabled until meaningful functionality is ready.
+        // const tableCell = cell as TableCell;
+        // if (this.openCellContextMenu(tableCell, e.clientX, e.clientY)) {
+        //     e.preventDefault();
+        // }
     };
 
     /**
@@ -533,25 +534,27 @@ class Table {
             return;
         }
 
-        const isContextMenuKey = (
-            e.key === 'ContextMenu' || (e.key === 'F10' && e.shiftKey)
-        );
+        // Disabled until meaningful functionality is ready.
 
-        if (isContextMenuKey && 'column' in cell && 'row' in cell) {
-            const tableCell = cell as TableCell;
-            const rect = tableCell.htmlElement.getBoundingClientRect();
-            const opened = this.openCellContextMenu(
-                tableCell,
-                rect.left + 4,
-                rect.bottom - 2
-            );
 
-            if (opened) {
-                e.preventDefault();
-                e.stopPropagation();
-                return;
-            }
-        }
+        // const isContextMenuKey = (
+        //     e.key === 'ContextMenu' || (e.key === 'F10' && e.shiftKey)
+        // );
+
+        // if (isContextMenuKey && 'column' in cell && 'row' in cell) {
+        //     const tableCell = cell as TableCell;
+        //     const rect = tableCell.htmlElement.getBoundingClientRect();
+        //     const opened = this.openCellContextMenu(
+        //         tableCell,
+        //         rect.left + 4,
+        //         rect.bottom - 2
+        //     );
+        //     if (opened) {
+        //         e.preventDefault();
+        //         e.stopPropagation();
+        //         return;
+        //     }
+        // }
 
         (cell as { onKeyDown(e: KeyboardEvent): void }).onKeyDown(e);
     };

@@ -146,8 +146,7 @@ module.exports = {
             {
                 'Cells': [
                     'grid/cells/index',
-                    'grid/cells/formatting',
-                    'grid/cells/context-menu'
+                    'grid/cells/formatting'
                 ]
             },
             {
