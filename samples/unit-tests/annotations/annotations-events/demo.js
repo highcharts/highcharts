@@ -277,12 +277,19 @@ QUnit.test('Annotations events - general', function (assert) {
     const customButton = chart.exporting.svgElements[3].element;
 
     Highcharts.fireEvent(customButton, 'click');
+
+    // Purge chart position for non-headless testing - QUnit header moved chart.
+    delete chart.pointer.chartPosition;
+
     controller.click(150, 150);
     assert.ok(
         customButtonClicked && chart.annotations[2].options.visible,
         `#16675: Annotation should be added from the custom button, that has a
         custom SVG symbol.`
     );
+
+    // Purge chart position for non-headless testing - QUnit header moved chart.
+    delete chart.pointer.chartPosition;
 
     chart.addAxis({
         height: '50%',
@@ -410,5 +417,43 @@ QUnit.test('Annotations events - general', function (assert) {
         2,
         'Click event should be correctly bound both for HTML annotation ' +
         'label and SVG path (#19926).'
+    );
+
+    annotation = chart.addAnnotation({
+        labels: [{
+            useHTML: true,
+            text: 'test label',
+            point: {
+                x: 300,
+                y: 200
+            }
+        }],
+        events: {
+            click: (e, target, cfg) => {
+                if (e && cfg) {
+                    clicks++;
+                }
+            }
+        },
+        shapes: [{
+            points: [{
+                x: 200,
+                y: 200
+            }, {
+                x: 300,
+                y: 200
+            }],
+            type: 'path',
+            strokeWidth: 10
+        }],
+        draggable: false
+    });
+
+    controller.click(chart.plotLeft + 300, chart.plotTop + 175);
+
+    assert.equal(
+        clicks,
+        3,
+        'Click event should be correctly bound also with arrow function.'
     );
 });
