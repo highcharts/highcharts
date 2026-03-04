@@ -27,10 +27,9 @@ import type ColumnToolbar from '../ColumnToolbar.js';
 import ToolbarButton from '../../../../UI/ToolbarButton.js';
 import GridUtils from '../../../../GridUtils.js';
 import StateHelpers from '../StateHelpers.js';
-import U from '../../../../../../Core/Utilities.js';
+import { addEvent } from '../../../../../../Shared/Utilities.js';
 
 const { formatText } = GridUtils;
-const { addEvent } = U;
 
 
 /* *

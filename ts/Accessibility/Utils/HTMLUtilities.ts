@@ -25,12 +25,11 @@ import type {
 } from '../../Core/Renderer/DOMElementType';
 
 import H from '../../Core/Globals.js';
+import { css } from '../../Shared/Utilities.js';
 const {
     doc,
     win
 } = H;
-import U from '../../Core/Utilities.js';
-const { css } = U;
 
 
 /* *
