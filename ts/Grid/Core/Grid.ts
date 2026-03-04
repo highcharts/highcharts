@@ -47,27 +47,25 @@ import DataProviderRegistry from './Data/DataProviderRegistry.js';
 import { defaultOptions } from './Defaults.js';
 import GridUtils from './GridUtils.js';
 import Table from './Table/Table.js';
-import U from '../../Core/Utilities.js';
 import QueryingController from './Querying/QueryingController.js';
 import Globals from './Globals.js';
 import TimeBase from '../../Shared/TimeBase.js';
 import Pagination from './Pagination/Pagination.js';
-
-const {
-    makeHTMLElement,
-    setHTMLContent,
-    createOptionsProxy
-} = GridUtils;
-
-const {
+import {
     defined,
     diffObjects,
     extend,
     fireEvent,
     merge,
     pick
-} = U;
+} from '../../Shared/Utilities.js';
+import { uniqueKey } from '../../Core/Utilities.js';
 
+const {
+    makeHTMLElement,
+    setHTMLContent,
+    createOptionsProxy
+} = GridUtils;
 
 /* *
  *
@@ -340,7 +338,7 @@ export class Grid {
         this.renderTo = renderTo;
 
         this.loadUserOptions(options);
-        this.id = this.options?.id || U.uniqueKey();
+        this.id = this.options?.id || uniqueKey();
         this.querying = new QueryingController(this);
         this.locale = this.options?.lang?.locale || (
             (this.container?.closest('[lang]') as HTMLElement | null)?.lang

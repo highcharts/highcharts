@@ -21,8 +21,6 @@
 import type ContourSeriesOptions from './ContourSeriesOptions';
 import type { DeepPartial } from '../../Shared/Types';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
-import type SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
-
 import Color from '../../Core/Color/Color.js';
 import ContourPoint from './ContourPoint.js';
 import contourShader from './contourShader.js';
@@ -30,20 +28,20 @@ import ContourSeriesDefaults from './ContourSeriesDefaults.js';
 import CrossSymbol from '../CrossSymbol.js';
 import Delaunay from '../../Core/Delaunay.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-import U from '../../Core/Utilities.js';
+import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
+import {
+    diffObjects,
+    extend,
+    merge,
+    normalizeTickInterval
+} from '../../Shared/Utilities.js';
+import { error } from '../../Core/Utilities.js';
 
 const {
     seriesTypes: {
         scatter: ScatterSeries
     }
 } = SeriesRegistry;
-const {
-    diffObjects,
-    error,
-    extend,
-    merge,
-    normalizeTickInterval
-} = U;
 
 
 /* *

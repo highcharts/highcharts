@@ -31,7 +31,6 @@ import type { NonArrayColumnOptions } from '../Grid';
 import type { Column as DataTableColumn } from '../../../Data/DataTable';
 
 import Table from './Table.js';
-import Utils from '../../../Core/Utilities.js';
 import ColumnSorting from './Actions/ColumnSorting';
 import ColumnFiltering from './Actions/ColumnFiltering/ColumnFiltering.js';
 import Templating from '../../../Core/Templating.js';
@@ -39,10 +38,7 @@ import TextContent from './CellContent/TextContent.js';
 import Globals from '../Globals.js';
 import TableCell from './Body/TableCell';
 import GridUtils from '../GridUtils.js';
-
-const {
-    fireEvent
-} = Utils;
+import { fireEvent } from '../../../Shared/Utilities.js';
 
 const {
     createOptionsProxy

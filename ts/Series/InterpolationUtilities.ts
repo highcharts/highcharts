@@ -22,15 +22,10 @@ import type GeoHeatmapSeries from './GeoHeatmap/GeoHeatmapSeries';
 import type Point from '../Core/Series/Point';
 
 import H from '../Core/Globals.js';
+import { defined, pick } from '../Shared/Utilities.js';
 const {
     doc
 } = H;
-
-import U from '../Core/Utilities.js';
-const {
-    defined,
-    pick
-} = U;
 
 /* *
  *

@@ -30,12 +30,7 @@ import H from '../../../Core/Globals.js';
 const {
     isFirefox
 } = H;
-import U from '../../../Core/Utilities.js';
-const {
-    merge,
-    fireEvent,
-    objectEach
-} = U;
+import { fireEvent, merge, objectEach } from '../../../Shared/Utilities.js';
 
 
 /**

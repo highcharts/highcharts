@@ -25,9 +25,8 @@ import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import type SVGRenderer from '../Core/Renderer/SVG/SVGRenderer';
 
 import H from '../Core/Globals.js';
-import U from '../Core/Utilities.js';
+import { pushUnique } from '../Shared/Utilities.js';
 const { composed } = H;
-const { pushUnique } = U;
 
 /* *
  *
