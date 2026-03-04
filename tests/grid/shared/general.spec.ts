@@ -65,7 +65,7 @@ test.describe('Rendering size', () => {
     });
 
     test.beforeEach(async ({ page }) => {
-        await page.goto('/grid-lite/cypress/rendering-size');
+        await page.goto('/grid-lite/e2e/rendering-size');
     });
 
     test('Fixed height grid', async ({ page }) => {

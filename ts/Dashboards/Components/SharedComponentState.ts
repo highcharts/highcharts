@@ -24,12 +24,7 @@ import type { AnyRecord } from '../../Shared/Types';
 
 import Serializable from '../Serializable.js';
 import type { JSON as SerializableJSON } from '../Serializable';
-import U from '../../Core/Utilities.js';
-const {
-    addEvent,
-    fireEvent,
-    merge
-} = U;
+import { addEvent, fireEvent, merge } from '../../Shared/Utilities.js';
 
 /* *
  *

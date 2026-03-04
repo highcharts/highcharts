@@ -49,7 +49,8 @@ QUnit.test('#13277: Event listener memory leak', assert => {
             !('linkedTo' in Highcharts.defaultOptions.plotOptions[type]) &&
             type !== 'scatter3d' &&
             type !== 'map' &&
-            type !== 'mapline' // Transform error on redraw
+            type !== 'mapline' && // Transform error on redraw
+            type !== 'contour' // WebGPU not available in Playwright?
         ) {
             const chart = Highcharts.chart('container', {
                 chart: {
@@ -61,7 +62,6 @@ QUnit.test('#13277: Event listener memory leak', assert => {
                     }
                 ]
             });
-
             const eventCount = el => {
                 let count = 0;
                 // eslint-disable-next-line

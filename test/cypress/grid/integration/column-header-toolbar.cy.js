@@ -1,7 +1,7 @@
 describe('Column Header Toolbar', () => {
     before(() => {
         cy.viewport(1900, 600);
-        cy.visit('grid-lite/cypress/filtering');
+        cy.visit('grid-lite/e2e/filtering');
     });
 
     it('Inline filtering is rendered correctly.', () => {

@@ -21,13 +21,8 @@ import type TickPositionsArray from './Axis/TickPositionsArray';
 import type TimeTicksInfoObject from './Axis/TimeTicksInfoObject';
 
 import TimeBase from '../Shared/TimeBase.js';
-import U from '../Core/Utilities.js';
-const {
-    defined,
-    extend,
-    timeUnits
-} = U;
-
+import { defined, extend } from '../Shared/Utilities.js';
+import { timeUnits } from './Utilities.js';
 
 /* *
  *

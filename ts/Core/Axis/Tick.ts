@@ -37,20 +37,19 @@ import type TimeTicksInfoObject from './TimeTicksInfoObject';
 import F from '../Templating.js';
 import H from '../Globals.js';
 const { deg2rad } = H;
-import U from '../Utilities.js';
-const {
-    clamp,
+import {
     correctFloat,
+    clamp,
     defined,
-    destroyObjectProperties,
     extend,
-    fireEvent,
-    getAlignFactor,
     isNumber,
     merge,
     objectEach,
-    pick
-} = U;
+    pick,
+    destroyObjectProperties,
+    getAlignFactor,
+    fireEvent
+} from '../../Shared/Utilities.js';
 
 /* *
  *

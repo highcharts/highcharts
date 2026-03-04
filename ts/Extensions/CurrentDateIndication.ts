@@ -38,13 +38,7 @@ import H from '../Core/Globals.js';
 const { composed } = H;
 import { Palette } from '../Core/Color/Palettes.js';
 import PlotLineOrBand from '../Core/Axis/PlotLineOrBand/PlotLineOrBand.js';
-import U from '../Core/Utilities.js';
-const {
-    addEvent,
-    merge,
-    pushUnique,
-    wrap
-} = U;
+import { addEvent, merge, pushUnique, wrap } from '../Shared/Utilities.js';
 
 /* *
  *
@@ -131,6 +125,7 @@ interface CurrentDateIndicatorLabelOptions {
     y?: number;
 
 }
+
 interface CurrentDateIndicatorOptions {
 
     /** @internal */
@@ -316,7 +311,12 @@ function wrapPlotLineOrBandGetLabelText(
 
         (options as any).value = Date.now();
         return (options as any).label.formatter
-            .call(this, (options as any).value, (options as any).label.format);
+            .call(
+                this,
+                (options as any).value,
+                (options as any).label.format,
+                this
+            );
     }
     return defaultMethod.call(this, defaultLabelOptions);
 }

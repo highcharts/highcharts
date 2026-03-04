@@ -28,13 +28,7 @@ import type EditMode from './EditMode.js';
 import type { LangAccessibilityOptions, LangOptions } from './EditGlobals';
 
 import EditGlobals from './EditGlobals.js';
-import U from '../../Core/Utilities.js';
-const {
-    merge,
-    createElement,
-    defined
-} = U;
-
+import { createElement, defined, find, merge } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -296,7 +290,7 @@ function renderSelect(
     );
 
     const iconURL = (
-        U.find(
+        find(
             options.selectOptions,
             (item): boolean => item.name === options.value
         ) || {}

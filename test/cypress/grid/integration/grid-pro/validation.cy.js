@@ -1,6 +1,6 @@
 describe('Grid Pro - validation.', () => {
     beforeEach(() => {
-        cy.visit('grid-pro/cypress/cell-editing');
+        cy.visit('grid-pro/e2e/cell-editing');
     });
 
     it('Notification position.', () => {

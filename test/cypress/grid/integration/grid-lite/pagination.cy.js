@@ -4,7 +4,7 @@ describe('Pagination.', () => {
     });
 
     before(() => {
-        cy.visit('/grid-lite/cypress/pagination');
+        cy.visit('grid-lite/e2e/pagination');
     });
 
     it('Render pagination container.', () => {

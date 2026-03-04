@@ -29,8 +29,7 @@ import type Pointer from '../../Core/Pointer';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
 import Annotation from './Annotation.js';
-import U from '../../Core/Utilities.js';
-const {
+import {
     addEvent,
     erase,
     find,
@@ -39,7 +38,7 @@ const {
     isObject,
     pick,
     wrap
-} = U;
+} from '../../Shared/Utilities.js';
 
 /* *
  *

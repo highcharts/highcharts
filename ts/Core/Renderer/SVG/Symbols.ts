@@ -21,12 +21,7 @@ import type SVGPath from './SVGPath';
 import type SymbolOptions from './SymbolOptions';
 import type { SymbolTypeRegistry } from './SymbolType';
 
-import U from '../../Utilities.js';
-const {
-    defined,
-    isNumber,
-    pick
-} = U;
+import { defined, isNumber, pick } from '../../../Shared/Utilities.js';
 
 /* *
  *
@@ -522,6 +517,7 @@ declare module './SymbolType' {
         square: typeof rect;
         triangle: typeof triangle;
         'triangle-down': typeof triangleDown;
+        cross: SymbolFunction
     }
 }
 

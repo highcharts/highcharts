@@ -672,6 +672,20 @@ QUnit.test('Label formatting(#4291)', function (assert) {
         '79,962.57',
         'Preserved decimals'
     );
+
+    chart.update({
+        yAxis: {
+            labels: {
+                formatter: ctx => (ctx ? '###' : '')
+            }
+        }
+    });
+
+    assert.strictEqual(
+        chart.yAxis[0].ticks['79962.57'].label.textStr,
+        '###',
+        'Es6 formatter works for axis labels.'
+    );
 });
 
 QUnit.test('Label height and ellipsis on update(#4070)', function (assert) {
@@ -2373,3 +2387,53 @@ QUnit.test('connectorWidth updates properly (#23062)', function (assert) {
     assert.notEqual(initialWidth, updatedWidth, 'connectorWidth has changed');
     assert.strictEqual(updatedWidth, 0, 'connectorWidth updated to 0');
 });
+
+QUnit.test(
+    'chart.numberFormatter arrow function should receive ctx argument',
+    function (assert) {
+        let formatterCtx;
+
+        const chart = Highcharts.chart('container', {
+            chart: {
+                numberFormatter: (
+                    number,
+                    decimals,
+                    decimalPoint,
+                    thousandsSep,
+                    ctx
+                ) => {
+                    formatterCtx = ctx;
+                    return ctx ? 'ctx' : 'missing';
+                }
+            },
+
+            yAxis: {
+                min: 10000,
+                max: 20000,
+                tickInterval: 5000
+            },
+
+            series: [{
+                data: [10000, 15000, 20000]
+            }]
+        });
+
+        const labelText = chart.yAxis[0].defaultLabelFormatter.call({
+            axis: chart.yAxis[0],
+            chart: chart,
+            value: 20000
+        });
+
+        assert.strictEqual(
+            formatterCtx,
+            chart,
+            'chart.numberFormatter should receive chart as ctx argument.'
+        );
+
+        assert.strictEqual(
+            labelText.indexOf('ctx') > -1,
+            true,
+            'Arrow-function numberFormatter should use ctx when formatting.'
+        );
+    }
+);
