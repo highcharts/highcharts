@@ -59,7 +59,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      * @sample {highcharts} highcharts/plotoptions/series-linewidth-specific/
      *         On one single series
      *
-     * @product highcharts highstock
+     *     @product highcharts highstock
      */
     lineWidth: 2,
 

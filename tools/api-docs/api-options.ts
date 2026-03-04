@@ -98,6 +98,23 @@ function addDefaultOptions(
                 }
                 break;
 
+            case 'Module':
+                if (_info.flags?.includes('declare') && _info.members) {
+                    for (const _member of _info.members) {
+                        if (_member.kind === 'Interface') {
+                            for (const _child of _member.members || []) {
+                                if (
+                                    _child.kind === 'Doclet' &&
+                                    _child.tags?.apioption
+                                ) {
+                                    addTreeNode(sourceInfo, rootNode, _child, debug);
+                                }
+                            }
+                        }
+                    }
+                }
+                break;
+
             case 'Export':
                 if (
                     sourceInfo.path.endsWith('Defaults.ts') &&
@@ -156,7 +173,11 @@ function addTreeNode(
             _parentNode.meta.fullname
     ); */
 
-    let _fullname: (string|undefined) = TSLib.extractInfoName(info);
+    let _fullname: (string|undefined) = (
+        _infoDoclet.tags.apioption ?
+            TSLib.extractTagText(_infoDoclet, 'apioption', true) :
+            TSLib.extractInfoName(info)
+    );
 
     if (typeof _fullname === 'undefined') {
         return;
@@ -581,20 +602,7 @@ async function saveJSON() {
     } as any;
 
     save('tree-cache.json', TSLib.SOURCE_CACHE);
-    // save('tree-v2.json', TREE);
-    save('tree-v2.json', {
-        _meta: TREE._meta,
-        plotOptions: TREE.plotOptions || {
-            doclet: {},
-            meta: {},
-            children: {}
-        },
-        series: TREE.series || {
-            doclet: {},
-            meta: {},
-            children: {}
-        }
-    });
+    save('tree-v2.json', TREE);
 }
 
 
