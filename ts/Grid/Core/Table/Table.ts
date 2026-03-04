@@ -853,7 +853,7 @@ class Table {
             const rowId = tr.getAttribute('data-row-id');
             if (rowId !== null) {
                 row = this.getRenderedPinnedRowById(rowId, 'top');
-                if (!row && /^-?\\d+(\\.\\d+)?$/.test(rowId)) {
+                if (!row && /^-?\d+(\.\d+)?$/.test(rowId)) {
                     row = this.getRenderedPinnedRowById(Number(rowId), 'top');
                 }
             }
@@ -861,7 +861,7 @@ class Table {
             const rowId = tr.getAttribute('data-row-id');
             if (rowId !== null) {
                 row = this.getRenderedPinnedRowById(rowId, 'bottom');
-                if (!row && /^-?\\d+(\\.\\d+)?$/.test(rowId)) {
+                if (!row && /^-?\d+(\.\d+)?$/.test(rowId)) {
                     row = this.getRenderedPinnedRowById(
                         Number(rowId),
                         'bottom'

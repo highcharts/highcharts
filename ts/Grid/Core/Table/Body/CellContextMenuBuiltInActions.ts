@@ -181,24 +181,6 @@ function isPinningOptionEnabled(cell: TableCell): boolean {
 }
 
 /**
- * Returns whether row pinning was explicitly configured by the user.
- *
- * @param cell
- * Table cell for the context menu.
- *
- * @return
- * True when row pinning exists in user options and is not disabled.
- */
-function isPinningExplicitlyConfigured(cell: TableCell): boolean {
-    const userPinning = cell.row.viewport.grid.userOptions
-        ?.rendering
-        ?.rows
-        ?.pinning;
-
-    return !!(userPinning && userPinning.enabled !== false);
-}
-
-/**
  * Returns whether the context menu should be enabled for a cell.
  *
  * @param cell
@@ -222,7 +204,7 @@ function isContextMenuEnabled(cell: TableCell): boolean {
         return true;
     }
 
-    return isPinningExplicitlyConfigured(cell);
+    return isPinningOptionEnabled(cell);
 }
 
 /**

@@ -44,6 +44,46 @@ test.describe('Grid Lite row pinning', () => {
         await expect(page.locator('#pinnedTop')).toHaveValue('ROW-001');
     });
 
+    test(
+        'Default context menu works in pinned sections with numeric row IDs',
+        async ({ page }) => {
+            await page.evaluate(async () => {
+                const host = document.getElementById('container');
+                if (host) {
+                    host.innerHTML = '';
+                }
+
+                const grid = (window as any).Grid.grid('container', {
+                    dataTable: {
+                        columns: {
+                            id: ['A', 'B', 'C'],
+                            value: [1, 2, 3]
+                        }
+                    }
+                });
+
+                await grid.pinRow(0, 'top');
+                await grid.pinRow(2, 'bottom');
+            });
+
+            await page.locator('tbody.hcg-tbody-pinned-top td').first()
+                .click({ button: 'right' });
+            await expect(page.locator(
+                '.hcg-menu-item',
+                { hasText: 'Unpin row' }
+            )).toBeVisible();
+
+            await page.keyboard.press('Escape');
+
+            await page.locator('tbody.hcg-tbody-pinned-bottom td').first()
+                .click({ button: 'right' });
+            await expect(page.locator(
+                '.hcg-menu-item',
+                { hasText: 'Unpin row' }
+            )).toBeVisible();
+        }
+    );
+
     test('Virtualization threshold is unaffected by pinning count', async ({ page }) => {
         const state = await page.evaluate(async () => {
             const grid = (window as any).grid;
