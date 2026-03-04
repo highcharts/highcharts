@@ -83,6 +83,8 @@
 
 .highcharts-popup-lhs-col,
 .highcharts-popup-rhs-col {
+    container-name: highcharts-popup-col;
+    container-type: inline-size;
     height: 100%;
     float: left;
     overflow-y: auto;
@@ -444,7 +446,7 @@ input.highcharts-input-search-indicators {
     cursor: pointer;
 }
 
-@media (max-width: 600px) {
+@container highcharts-popup-col (max-width: 400px) {
     .highcharts-popup-color-wrapper {
         display: grid;
         grid-template-columns: 40px 1fr 55px;
