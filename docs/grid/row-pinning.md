@@ -7,8 +7,8 @@ sidebar_label: "Pinning"
 Row pinning lets you keep selected rows visible at the top or bottom while the
 main rows scroll normally.
 
-Pinned rows are existing `data.dataTable` rows. They are removed from the
-scrollable area and rendered in dedicated pinned sections.
+Pinned rows are existing `data.dataTable` rows. They remain in the scrollable
+area and are also rendered in dedicated pinned sections.
 
 ## Basic configuration
 
@@ -152,21 +152,11 @@ columnDefaults: {
 
 ## Sorting and filtering behavior
 
-By default, pinned rows are excluded from sorting and filtering changes.
+Pinned sections always render from the original data source and are not affected
+by active sorting, filtering, or pagination.
 
-```js
-rendering: {
-    rows: {
-        pinning: {
-            sorting: 'exclude',
-            filtering: 'exclude'
-        }
-    }
-}
-```
-
-Set `sorting: 'include'` or `filtering: 'include'` when pinned rows should also
-follow active sorting/filtering while still remaining pinned.
+Pinned rows also remain in the scrollable area, so they can appear in both
+sections at once.
 
 ## Pinned section max height
 

@@ -69,15 +69,6 @@ const {
     pick
 } = U;
 
-export interface RowPinningMeta {
-    topCount: number;
-    bottomCount: number;
-    scrollableCount: number;
-    topRowIds: Array<string|number>;
-    bottomRowIds: Array<string|number>;
-}
-
-
 /* *
  *
  *  Class
@@ -268,12 +259,6 @@ export class Grid {
      * @internal
      */
     public querying: QueryingController;
-
-    /**
-     * Row pinning metadata for the current queried dataset.
-     * @internal
-     */
-    public rowPinningMeta?: RowPinningMeta;
 
     /**
      * Row pinning controller.

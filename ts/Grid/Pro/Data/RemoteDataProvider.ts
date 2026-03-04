@@ -29,7 +29,6 @@ import type {
 } from '../../../Data/DataTable';
 import type {
     DataProviderOptions,
-    ProviderPinningViewState,
     ProviderQueryScope,
     RowId
 } from '../../Core/Data/DataProvider';
@@ -140,9 +139,14 @@ export class RemoteDataProvider extends DataProvider {
     };
 
     /**
-     * Pinning-aware active view for row APIs.
+     * Best-effort cache for pinned rows available client-side.
      */
-    private pinningActiveView?: ScopedDataset;
+    private pinnedRowCache: Map<RowId, RowObjectType> = new Map();
+
+    /**
+     * Warn-once tracking for pinned row cache misses.
+     */
+    private warnedPinnedCacheMisses: Set<RowId> = new Set();
 
     /**
      * Abort controllers for in-flight requests (latest-only policy).
@@ -191,7 +195,6 @@ export class RemoteDataProvider extends DataProvider {
         );
         const sortingModifier = (
             scope === 'grouped' ||
-            scope === 'sortingOnly' ||
             scope === 'active' ?
                 this.querying.sorting.modifier :
                 void 0
@@ -253,9 +256,6 @@ export class RemoteDataProvider extends DataProvider {
         scope: ProviderQueryScope
     ): Promise<ScopedDataset> {
         if (scope === 'active') {
-            if (this.pinningActiveView) {
-                return this.pinningActiveView;
-            }
             const rowCount = await this.getRowCount();
             const rowIds: RowId[] = [];
             const rowObjects: RowObjectType[] = [];
@@ -615,10 +615,6 @@ export class RemoteDataProvider extends DataProvider {
     public override async getRowId(
         rowIndex: number
     ): Promise<RowId | undefined> {
-        if (this.pinningActiveView) {
-            return this.pinningActiveView.rowIds[rowIndex];
-        }
-
         const chunk = await this.getChunkForRowIndex(rowIndex);
         const localIndex = this.getLocalIndexInChunk(rowIndex);
 
@@ -632,12 +628,6 @@ export class RemoteDataProvider extends DataProvider {
     public override getRowIndex(
         rowId: RowId
     ): Promise<number | undefined> {
-        if (this.pinningActiveView) {
-            return Promise.resolve(
-                this.pinningActiveView.rowIdToIndex.get(rowId)
-            );
-        }
-
         // Check reverse lookup map (O(1))
         const info = this.rowIdToChunkInfo?.get(rowId);
         if (info) {
@@ -659,10 +649,6 @@ export class RemoteDataProvider extends DataProvider {
     public override async getRowObject(
         rowIndex: number
     ): Promise<RowObjectType | undefined> {
-        if (this.pinningActiveView) {
-            return this.pinningActiveView.rowObjects[rowIndex];
-        }
-
         // Ensure the chunk is fetched and cached
         await this.getChunkForRowIndex(rowIndex);
 
@@ -680,10 +666,6 @@ export class RemoteDataProvider extends DataProvider {
     }
 
     public override async getRowCount(): Promise<number> {
-        if (this.pinningActiveView) {
-            return this.pinningActiveView.rowIds.length;
-        }
-
         if (this.rowCount !== null) {
             return this.rowCount;
         }
@@ -696,11 +678,6 @@ export class RemoteDataProvider extends DataProvider {
         columnId: string,
         rowIndex: number
     ): Promise<DataTableCellType> {
-        if (this.pinningActiveView) {
-            return this.pinningActiveView.rowObjects[rowIndex]?.[columnId] as
-                DataTableCellType;
-        }
-
         // Get the chunk containing this row
         const chunk = await this.getChunkForRowIndex(rowIndex);
 
@@ -716,6 +693,52 @@ export class RemoteDataProvider extends DataProvider {
         }
 
         return column[localIndex];
+    }
+
+    public override getOriginalRowObjectByRowId(
+        rowId: RowId
+    ): Promise<RowObjectType | undefined> {
+        const row = this.pinnedRowCache.get(rowId);
+
+        if (!row && !this.warnedPinnedCacheMisses.has(rowId)) {
+            this.warnedPinnedCacheMisses.add(rowId);
+            // eslint-disable-next-line no-console
+            console.warn(
+                'Grid RemoteDataProvider: pinned row cache miss for rowId ' +
+                `"${String(rowId)}".`
+            );
+        }
+
+        return Promise.resolve(row);
+    }
+
+    public override primePinnedRows(rowIds: RowId[]): Promise<void> {
+        for (const rowId of rowIds) {
+            if (this.pinnedRowCache.has(rowId)) {
+                continue;
+            }
+
+            const info = this.rowIdToChunkInfo?.get(rowId);
+            if (!info) {
+                continue;
+            }
+
+            const rowIndex = this.querying.pagination.enabled ?
+                info.localIndex :
+                info.chunkIndex * this.maxChunkSize + info.localIndex;
+            const row = this.getRowObjectFromCache(rowIndex);
+
+            if (row) {
+                this.pinnedRowCache.set(rowId, row);
+            }
+        }
+
+        return Promise.resolve();
+    }
+
+    public override clearPinnedRowCache(rowId: RowId): void {
+        this.pinnedRowCache.delete(rowId);
+        this.warnedPinnedCacheMisses.delete(rowId);
     }
 
     public override async setValue(
@@ -852,37 +875,6 @@ export class RemoteDataProvider extends DataProvider {
         return rows;
     }
 
-    public override async setPinningView(
-        state?: ProviderPinningViewState
-    ): Promise<void> {
-        if (!state) {
-            this.pinningActiveView = void 0;
-            return;
-        }
-
-        const activeRowIds = state.activeRowIds;
-        const groupedRows = await this.getScopedRowsByIds(
-            activeRowIds,
-            'grouped'
-        );
-        const rawRows = await this.getScopedRowsByIds(activeRowIds, 'raw');
-        const rowObjects: RowObjectType[] = [];
-
-        for (const rowId of activeRowIds) {
-            rowObjects.push(
-                groupedRows.get(rowId) ||
-                rawRows.get(rowId) ||
-                {}
-            );
-        }
-
-        this.pinningActiveView = {
-            rowIds: activeRowIds.slice(),
-            rowObjects,
-            rowIdToIndex: createRowIdIndexMap(activeRowIds)
-        };
-    }
-
     public override async applyQuery(): Promise<void> {
         const fingerprint = createQueryFingerprint(this.querying);
         if (this.lastQueryFingerprint === fingerprint) {
@@ -903,7 +895,8 @@ export class RemoteDataProvider extends DataProvider {
         this.rowCount = null;
         this.scopedDatasets = {};
         this.scopedFingerprints = {};
-        this.pinningActiveView = void 0;
+        this.pinnedRowCache.clear();
+        this.warnedPinnedCacheMisses.clear();
 
         // When pagination is enabled, update the total items count
         // for the pagination controller (used to calculate total pages).
@@ -923,7 +916,8 @@ export class RemoteDataProvider extends DataProvider {
         this.rowCount = null;
         this.scopedDatasets = {};
         this.scopedFingerprints = {};
-        this.pinningActiveView = void 0;
+        this.pinnedRowCache.clear();
+        this.warnedPinnedCacheMisses.clear();
         this.lastQueryFingerprint = null;
         this.requestEpoch++;
     }

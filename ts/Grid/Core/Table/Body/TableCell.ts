@@ -159,10 +159,16 @@ class TableCell extends Cell {
         this.htmlElement.style.opacity = '0.5';
 
         if (!defined(value)) {
-            value = await grid.dataProvider?.getValue(
-                this.column.id,
-                this.row.index
-            );
+            if (this.row.pinnedSection && this.row.id !== void 0) {
+                const rowData = await grid.dataProvider
+                    ?.getOriginalRowObjectByRowId(this.row.id);
+                value = rowData?.[this.column.id] as DataTableCellType;
+            } else {
+                value = await grid.dataProvider?.getValue(
+                    this.column.id,
+                    this.row.index
+                );
+            }
 
             // Discard stale response if cell was reused for a different row
             if (fetchToken !== this.asyncFetchToken) {
@@ -221,10 +227,18 @@ class TableCell extends Cell {
      * content.
      */
     private async updateDataset(): Promise<boolean> {
-        const oldValue = await this.column.viewport.grid.dataProvider?.getValue(
-            this.column.id,
-            this.row.index
-        );
+        const dp = this.column.viewport.grid.dataProvider;
+        let oldValue: DataTableCellType | undefined;
+
+        if (this.row.pinnedSection && this.row.id !== void 0) {
+            const rowData = await dp?.getOriginalRowObjectByRowId(this.row.id);
+            oldValue = rowData?.[this.column.id] as DataTableCellType;
+        } else {
+            oldValue = await dp?.getValue(
+                this.column.id,
+                this.row.index
+            );
+        }
 
         if (oldValue === this.value) {
             // Abort if the value is the same as in the data table.
@@ -232,15 +246,15 @@ class TableCell extends Cell {
         }
 
         const vp = this.column.viewport;
-        const { dataProvider: dp } = vp.grid;
+        const { dataProvider } = vp.grid;
 
         const rowId = this.row.id;
-        if (!dp || rowId === void 0) {
+        if (!dataProvider || rowId === void 0) {
             return false;
         }
 
         this.row.data[this.column.id] = this.value;
-        await dp.setValue(
+        await dataProvider.setValue(
             this.value,
             this.column.id,
             rowId
@@ -277,11 +291,16 @@ class TableCell extends Cell {
         super.onFocus();
 
         const vp = this.row.viewport;
+        const rowId = this.row.id;
+        if (rowId === void 0) {
+            return;
+        }
 
-        vp.focusCursor = [
-            this.row.index,
-            this.column.index
-        ];
+        vp.focusCursor = {
+            section: this.row.pinnedSection || 'scroll',
+            rowId,
+            columnIndex: this.column.index
+        };
     }
 
     /**
@@ -304,12 +323,20 @@ class TableCell extends Cell {
     }
 
     public override onMouseOver(): void {
-        this.row.viewport.grid.hoverRow(this.row.index);
+        if (this.row.pinnedSection) {
+            this.row.setHoveredState(true);
+        } else {
+            this.row.viewport.grid.hoverRow(this.row.index);
+        }
         super.onMouseOver();
     }
 
     public override onMouseOut(): void {
-        this.row.viewport.grid.hoverRow();
+        if (this.row.pinnedSection) {
+            this.row.setHoveredState(false);
+        } else {
+            this.row.viewport.grid.hoverRow();
+        }
         super.onMouseOut();
     }
 

@@ -254,7 +254,9 @@ class RowsVirtualizer {
         }
 
         await this.updateGridMetrics();
-        await this.viewport.renderPinnedRows();
+        await this.viewport.grid.recomputeResolvedFromActiveView?.();
+        const result = await this.viewport.renderPinnedRows('query');
+        await this.viewport.grid.handlePinnedRenderResult?.(result, 'query');
 
         // Load & render rows
         await this.renderRows(this.rowCursor);
@@ -271,7 +273,6 @@ class RowsVirtualizer {
      */
     public async rerender(): Promise<void> {
         await this.updateGridMetrics();
-        await this.viewport.renderPinnedRows();
 
         const tbody = this.viewport.tbodyElement;
         let rows = this.viewport.rows;
@@ -634,14 +635,17 @@ class RowsVirtualizer {
             }
 
             if (vp.focusCursor) {
-                const [focusedRowIndex, columnIndex] = vp.focusCursor;
-                const focusedRow = rows.find((row): boolean =>
-                    row.index === focusedRowIndex
-                );
-                if (focusedRow) {
-                    focusedRow.cells[columnIndex]?.htmlElement.focus({
-                        preventScroll: true
-                    });
+                const focusCursor = vp.focusCursor;
+                if (focusCursor.section === 'scroll') {
+                    const focusedRow = rows.find((row): boolean =>
+                        row.id === focusCursor.rowId
+                    );
+                    if (focusedRow) {
+                        focusedRow.cells[focusCursor.columnIndex]
+                            ?.htmlElement.focus({
+                                preventScroll: true
+                            });
+                    }
                 }
             }
 
@@ -655,6 +659,8 @@ class RowsVirtualizer {
                     vp.setFocusAnchorCell(anchorRow.cells[0]);
                 }
             }
+
+            vp.syncAriaRowIndexes();
         } finally {
             this.isRendering = false;
 
@@ -922,14 +928,11 @@ class RowsVirtualizer {
      * overflow-aware scrolling.
      */
     private async updateGridMetrics(): Promise<void> {
-        const rowPinningMeta = this.viewport.grid.rowPinningMeta;
-        this.rowStartIndex = rowPinningMeta?.topCount || 0;
+        this.rowStartIndex = 0;
 
         const providerRowCount = await this.viewport.grid.dataProvider
             ?.getRowCount();
-        if (defined(rowPinningMeta?.scrollableCount)) {
-            this.rowCount = rowPinningMeta.scrollableCount;
-        } else if (defined(providerRowCount)) {
+        if (defined(providerRowCount)) {
             this.rowCount = providerRowCount;
         } else {
             this.rowCount = 0;

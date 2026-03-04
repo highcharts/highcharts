@@ -256,17 +256,38 @@ export abstract class DataProvider {
     }
 
     /**
-     * Applies row pinning view state.
+     * Returns a row object from the original (unmodified) data source by row
+     * ID. Used by pinned-row rendering.
      *
-     * @param state
-     * Pinning view state.
+     * @param rowId
+     * Row identifier.
      */
-    public setPinningView(
-        state?: ProviderPinningViewState
-    ): Promise<void> {
-        void state;
-        // Overridden in providers that support scoped pinning views.
+    public getOriginalRowObjectByRowId(
+        rowId: RowId
+    ): Promise<RowObjectType | undefined> {
+        void rowId;
+        return Promise.resolve(void 0);
+    }
+
+    /**
+     * Primes provider-side pinned row caches (best-effort).
+     *
+     * @param rowIds
+     * Row identifiers to prime.
+     */
+    public primePinnedRows(rowIds: RowId[]): Promise<void> {
+        void rowIds;
         return Promise.resolve();
+    }
+
+    /**
+     * Clears a single pinned row cache entry.
+     *
+     * @param rowId
+     * Row identifier to clear from cache.
+     */
+    public clearPinnedRowCache(rowId: RowId): void {
+        void rowId;
     }
 
     /**
@@ -358,20 +379,7 @@ export type RowId = number | string;
 /**
  * Query scope used by provider-aware row pinning.
  */
-export type ProviderQueryScope = 'raw' | 'grouped' | 'sortingOnly' | 'active';
-
-/**
- * Provider view state for row pinning.
- */
-export interface ProviderPinningViewState {
-    topRowIds: RowId[];
-    bottomRowIds: RowId[];
-    scrollableRowIds: RowId[];
-    activeRowIds: RowId[];
-    topCount: number;
-    bottomCount: number;
-    scrollableCount: number;
-}
+export type ProviderQueryScope = 'raw' | 'grouped' | 'active';
 
 /**
  * A base interface for the data provider options (`grid.options.data`).

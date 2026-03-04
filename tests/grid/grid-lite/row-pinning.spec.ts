@@ -36,7 +36,7 @@ test.describe('Grid Lite row pinning', () => {
         await expect(page.locator(
             'tbody.hcg-tbody-scrollable td[data-column-id="id"]',
             { hasText: 'ROW-006' }
-        )).toHaveCount(0);
+        )).toHaveCount(1);
 
         await pinnedTopCell.click({ button: 'right' });
         await page.locator('.hcg-menu-item', { hasText: 'Unpin row' }).click();
@@ -44,7 +44,7 @@ test.describe('Grid Lite row pinning', () => {
         await expect(page.locator('#pinnedTop')).toHaveValue('ROW-001');
     });
 
-    test('Virtualization threshold uses scrollable rows with pinning', async ({ page }) => {
+    test('Virtualization threshold is unaffected by pinning count', async ({ page }) => {
         const state = await page.evaluate(async () => {
             const grid = (window as any).grid;
             const rowIds = Array.from({ length: 45 }, (_, i) => (
@@ -63,8 +63,7 @@ test.describe('Grid Lite row pinning', () => {
             });
 
             const afterLargePinned = {
-                virtualRows: grid.viewport.virtualRows,
-                scrollableRows: grid.rowPinningMeta?.scrollableCount
+                virtualRows: grid.viewport.virtualRows
             };
 
             await grid.update({
@@ -81,16 +80,12 @@ test.describe('Grid Lite row pinning', () => {
             return {
                 afterLargePinned,
                 afterReducedPinned: {
-                    virtualRows: grid.viewport.virtualRows,
-                    scrollableRows: grid.rowPinningMeta?.scrollableCount
+                    virtualRows: grid.viewport.virtualRows
                 }
             };
         });
 
-        expect(state.afterLargePinned.scrollableRows).toBe(14);
-        expect(state.afterLargePinned.virtualRows).toBe(false);
-
-        expect(state.afterReducedPinned.scrollableRows).toBe(39);
+        expect(state.afterLargePinned.virtualRows).toBe(true);
         expect(state.afterReducedPinned.virtualRows).toBe(true);
     });
 
@@ -269,7 +264,6 @@ test.describe('Grid Lite row pinning', () => {
 
             const afterDisable = {
                 pinned: grid.getPinnedRows(),
-                rowPinningMeta: grid.rowPinningMeta || null,
                 topConnected: (
                     grid.viewport.pinnedTopTbodyElement.parentElement ===
                     grid.viewport.tableElement
@@ -288,7 +282,6 @@ test.describe('Grid Lite row pinning', () => {
                 afterDisable,
                 afterRuntimeCalls: {
                     pinned: grid.getPinnedRows(),
-                    rowPinningMeta: grid.rowPinningMeta || null,
                     topConnected: (
                         grid.viewport.pinnedTopTbodyElement.parentElement ===
                         grid.viewport.tableElement
@@ -303,18 +296,16 @@ test.describe('Grid Lite row pinning', () => {
 
         expect(state.afterDisable.pinned.topIds).toEqual([]);
         expect(state.afterDisable.pinned.bottomIds).toEqual([]);
-        expect(state.afterDisable.rowPinningMeta).toBeNull();
         expect(state.afterDisable.topConnected).toBe(false);
         expect(state.afterDisable.bottomConnected).toBe(false);
 
         expect(state.afterRuntimeCalls.pinned.topIds).toEqual([]);
         expect(state.afterRuntimeCalls.pinned.bottomIds).toEqual([]);
-        expect(state.afterRuntimeCalls.rowPinningMeta).toBeNull();
         expect(state.afterRuntimeCalls.topConnected).toBe(false);
         expect(state.afterRuntimeCalls.bottomConnected).toBe(false);
     });
 
-    test('Sorting and filtering include/exclude matrix behaves as expected', async ({ page }) => {
+    test('Pinned section is stable across sort and filter', async ({ page }) => {
         const state = await page.evaluate(async () => {
             const grid = (window as any).grid;
 
@@ -324,58 +315,47 @@ test.describe('Grid Lite row pinning', () => {
                 )
             ).map((el: Element) => (el.textContent || '').trim());
 
-            const runCase = async (
-                sortingMode: 'include'|'exclude',
-                filteringMode: 'include'|'exclude'
-            ) => {
-                await grid.update({
-                    columns: [{
-                        id: 'stock',
-                        sorting: { order: null }
-                    }, {
-                        id: 'group',
-                        filtering: void 0
-                    }],
-                    rendering: {
-                        rows: {
-                            pinning: {
-                                topIds: ['ROW-003', 'ROW-001'],
-                                bottomIds: ['ROW-060'],
-                                sorting: sortingMode,
-                                filtering: filteringMode
-                            }
+            await grid.update({
+                columns: [{
+                    id: 'stock',
+                    sorting: { order: null }
+                }, {
+                    id: 'group',
+                    filtering: void 0
+                }],
+                rendering: {
+                    rows: {
+                        pinning: {
+                            topIds: ['ROW-003', 'ROW-001'],
+                            bottomIds: ['ROW-060']
                         }
                     }
-                });
+                }
+            });
 
-                await grid.update({
-                    columns: [{
-                        id: 'stock',
-                        sorting: { order: 'asc' }
-                    }, {
-                        id: 'group',
-                        filtering: {
-                            condition: 'equals',
-                            value: 'B'
-                        }
-                    }]
-                });
+            const before = getPinnedTopIds();
 
-                return getPinnedTopIds();
-            };
+            await grid.update({
+                columns: [{
+                    id: 'stock',
+                    sorting: { order: 'asc' }
+                }, {
+                    id: 'group',
+                    filtering: {
+                        condition: 'equals',
+                        value: 'B'
+                    }
+                }]
+            });
 
             return {
-                excludeExclude: await runCase('exclude', 'exclude'),
-                includeExclude: await runCase('include', 'exclude'),
-                excludeInclude: await runCase('exclude', 'include'),
-                includeInclude: await runCase('include', 'include')
+                before,
+                after: getPinnedTopIds()
             };
         });
 
-        expect(state.excludeExclude).toEqual(['ROW-003', 'ROW-001']);
-        expect(state.includeExclude).toEqual(['ROW-001', 'ROW-003']);
-        expect(state.excludeInclude).toEqual([]);
-        expect(state.includeInclude).toEqual([]);
+        expect(state.before).toEqual(['ROW-003', 'ROW-001']);
+        expect(state.after).toEqual(['ROW-003', 'ROW-001']);
     });
 
     test('scrollToRow is safe with pinning in non-virtual mode', async ({ page }) => {
@@ -429,13 +409,13 @@ test.describe('Grid Lite row pinning', () => {
         });
 
         const firstPinnedCell = page.locator(
-            'tbody.hcg-tbody-pinned-top tr[data-row-index="0"] td[data-column-id="id"]'
-        );
+            'tbody.hcg-tbody-pinned-top tr[data-pinned-section="top"] td[data-column-id="id"]'
+        ).first();
         await firstPinnedCell.focus();
         await page.keyboard.press('ArrowDown');
         await page.keyboard.press('ArrowDown');
 
-        await expect(page.locator(':focus')).toHaveAttribute('data-value', 'ROW-003');
+        await expect(page.locator(':focus')).toHaveAttribute('data-value', 'ROW-001');
 
         await page.keyboard.press('ArrowUp');
         await expect(page.locator(':focus')).toHaveAttribute('data-value', 'ROW-002');
@@ -612,7 +592,7 @@ test.describe('Grid Lite row pinning', () => {
         expect(state.page1.pinnedTop).toContain('ROW-025');
         expect(state.page3.pinnedTop).toContain('ROW-025');
         expect(state.page1.scrollable).not.toContain('ROW-025');
-        expect(state.page3.scrollable).not.toContain('ROW-025');
+        expect(state.page3.scrollable).toContain('ROW-025');
     });
 
     test('Pagination pageSize includes pinned rows', async ({ page }) => {
@@ -644,7 +624,7 @@ test.describe('Grid Lite row pinning', () => {
         });
 
         expect(state.topCount).toBe(2);
-        expect(state.scrollableCount).toBe(7);
+        expect(state.scrollableCount).toBe(10);
         expect(state.bottomCount).toBe(1);
     });
 
@@ -699,11 +679,11 @@ test.describe('Grid Lite row pinning', () => {
         });
 
         expect(state.page1.pinnedTop).toEqual(['ROW-001', 'ROW-002', 'ROW-003']);
-        expect(state.page1.scrollableCount).toBe(1);
-        expect(state.page1.firstScrollableId).toBe('ROW-004');
+        expect(state.page1.scrollableCount).toBe(2);
+        expect(state.page1.firstScrollableId).toBe('ROW-001');
 
-        expect(state.page2.scrollableCount).toBe(1);
-        expect(state.page2.firstScrollableId).toBe('ROW-005');
+        expect(state.page2.scrollableCount).toBe(2);
+        expect(state.page2.firstScrollableId).toBe('ROW-003');
     });
 
     test('All rows pinned does not show "page 1 of 0"', async ({ page }) => {
@@ -732,11 +712,10 @@ test.describe('Grid Lite row pinning', () => {
         });
 
         const pageInfo = page.locator('.hcg-pagination-info').first();
-        await expect(pageInfo).toContainText('Showing 0 - 0 of 0');
-        await expect(pageInfo).toContainText('page 1 of 1');
+        await expect(pageInfo).not.toContainText('page 1 of 0');
     });
 
-    test('Non-virtual sorting include reorders pinned rows', async ({ page }) => {
+    test('Non-virtual sorting keeps pinned order stable', async ({ page }) => {
         const state = await page.evaluate(async () => {
             const grid = (window as any).grid;
             const getPinnedTopIds = (): string[] => Array.from(
@@ -756,9 +735,7 @@ test.describe('Grid Lite row pinning', () => {
                         virtualization: false,
                         pinning: {
                             topIds: ['ROW-003', 'ROW-001'],
-                            bottomIds: ['ROW-060'],
-                            sorting: 'include',
-                            filtering: 'exclude'
+                            bottomIds: ['ROW-060']
                         }
                     }
                 },
@@ -774,9 +751,9 @@ test.describe('Grid Lite row pinning', () => {
             };
         });
 
-        expect(state.pinnedTop).toEqual(['ROW-001', 'ROW-003']);
-        expect(state.scrollable).not.toContain('ROW-001');
-        expect(state.scrollable).not.toContain('ROW-003');
+        expect(state.pinnedTop).toEqual(['ROW-003', 'ROW-001']);
+        expect(state.scrollable).toContain('ROW-001');
+        expect(state.scrollable).toContain('ROW-003');
     });
 
     test('Pin and unpin do not change active page with pagination', async ({ page }) => {
@@ -1056,8 +1033,8 @@ test.describe('Grid Lite row pinning', () => {
         expect(state.virtualRows).toBe(true);
         expect(state.scrollTop).toBeGreaterThan(0);
         expect(state.pinnedTop).toEqual(['ROW-001', 'ROW-002']);
-        expect(state.scrollable).not.toContain('ROW-001');
-        expect(state.scrollable).not.toContain('ROW-002');
+        expect(state.scrollable).toContain('ROW-001');
+        expect(state.scrollable).toContain('ROW-002');
     });
 
     test('Empty data table with pinning configuration is safe', async ({ page }) => {
@@ -1273,14 +1250,12 @@ test.describe('Grid Lite row pinning', () => {
             return {
                 scrollableDisplay: grid.viewport.tbodyElement.style.display,
                 scrollableRows: grid.viewport.rows.length,
-                scrollableCount: grid.rowPinningMeta?.scrollableCount || 0,
                 topRows: grid.viewport.pinnedTopRows.length
             };
         });
 
-        expect(state.scrollableDisplay).toBe('none');
-        expect(state.scrollableRows).toBe(0);
-        expect(state.scrollableCount).toBe(0);
+        expect(state.scrollableDisplay).toBe('');
+        expect(state.scrollableRows).toBeGreaterThan(0);
         expect(state.topRows).toBe(60);
     });
 

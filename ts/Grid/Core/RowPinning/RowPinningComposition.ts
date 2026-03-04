@@ -53,9 +53,7 @@ export const defaultOptions: DeepPartial<Options> = {
                 bottomIds: [],
                 events: {},
                 top: {},
-                bottom: {},
-                sorting: 'exclude',
-                filtering: 'exclude'
+                bottom: {}
             }
         }
     }
@@ -87,6 +85,9 @@ export function compose(
     GridClass.prototype.toggleRow = toggleRow;
     GridClass.prototype.unpinRow = unpinRow;
     GridClass.prototype.getPinnedRows = getPinnedRows;
+    GridClass.prototype.recomputeResolvedFromActiveView =
+        recomputeResolvedFromActiveView;
+    GridClass.prototype.handlePinnedRenderResult = handlePinnedRenderResult;
 }
 
 /**
@@ -179,48 +180,44 @@ function callRowPinningEventCallback(
  *
  * @param b
  * Second row id list.
- *
- * @return
- * Whether both lists have identical ids in the same order.
  */
 function sameIds(a: GridRowId[], b: GridRowId[]): boolean {
     if (a.length !== b.length) {
         return false;
     }
+
     for (let i = 0, iEnd = a.length; i < iEnd; ++i) {
         if (a[i] !== b[i]) {
             return false;
         }
     }
+
     return true;
 }
 
 /**
- * Compute the next pinned state without mutating the controller.
+ * Compute next pinned state without mutating controller.
  *
  * @param previous
- * Current pinned row IDs.
+ * Previous pinned state snapshot.
  *
  * @param previous.topIds
- * Current top-pinned row IDs.
+ * Previous top-pinned row IDs.
  *
  * @param previous.bottomIds
- * Current bottom-pinned row IDs.
+ * Previous bottom-pinned row IDs.
  *
  * @param action
- * Whether to pin or unpin.
+ * Runtime pinning action.
  *
  * @param rowId
- * Row ID being pinned or unpinned.
+ * Row identifier to pin/unpin.
  *
  * @param position
- * Pin position (only used when action is 'pin').
+ * Target pinning position for pin actions.
  *
  * @param index
- * Optional insertion index (only used when action is 'pin').
- *
- * @return
- * Predicted next state of pinned row IDs.
+ * Optional insertion index in target collection.
  */
 function computeNextPinnedIds(
     previous: { topIds: GridRowId[]; bottomIds: GridRowId[] },
@@ -232,11 +229,11 @@ function computeNextPinnedIds(
     const topIds = previous.topIds.slice();
     const bottomIds = previous.bottomIds.slice();
 
-    // Remove from both lists first.
     const topIdx = topIds.indexOf(rowId);
     if (topIdx !== -1) {
         topIds.splice(topIdx, 1);
     }
+
     const bottomIdx = bottomIds.indexOf(rowId);
     if (bottomIdx !== -1) {
         bottomIds.splice(bottomIdx, 1);
@@ -255,16 +252,16 @@ function computeNextPinnedIds(
 }
 
 /**
- * Pin a row in runtime and trigger redraw.
+ * Pin a row in runtime and re-render pinned sections only.
  *
  * @param rowId
- * Row ID to pin.
+ * Row identifier to pin.
  *
  * @param position
- * Pin position.
+ * Pin target section.
  *
  * @param index
- * Optional insertion index in the pinned collection.
+ * Optional insert index for pinned order.
  */
 async function pinRow(
     this: Grid,
@@ -276,10 +273,7 @@ async function pinRow(
         return;
     }
 
-    const previous = this.rowPinning?.getPinnedRows() || {
-        topIds: [],
-        bottomIds: []
-    };
+    const previous = this.rowPinning.getPinnedRows();
     const next = computeNextPinnedIds(previous, 'pin', rowId, position, index);
     const eventPayload = {
         rowId,
@@ -299,24 +293,29 @@ async function pinRow(
     fireEvent(this, 'beforeRowPin', eventPayload);
     callRowPinningEventCallback(this, 'beforeRowPin', eventPayload);
 
-    this.rowPinning?.pinRow(rowId, position, index);
-    this.querying.shouldBeUpdated = true;
-    this.dirtyFlags.add('rows');
-    await this.redraw();
+    this.rowPinning.pinRow(rowId, position, index);
+    await this.dataProvider?.primePinnedRows([rowId]);
+
+    const renderResult = this.viewport ?
+        await this.viewport.renderPinnedRows('runtime') :
+        { missingPinnedRowIds: [] };
+
+    await this.handlePinnedRenderResult(renderResult, 'runtime');
+    this.viewport?.reflow();
+
     fireEvent(this, 'afterRowPin', eventPayload);
     callRowPinningEventCallback(this, 'afterRowPin', eventPayload);
     announceRowPinningChange(this, 'pin', rowId, position);
 }
 
 /**
- * Toggle row pinning for a row. If already pinned, unpin it; otherwise pin to
- * selected position (defaults to top).
+ * Toggle row pinning.
  *
  * @param rowId
- * Row ID to toggle.
+ * Row identifier to toggle.
  *
  * @param position
- * Pin position used when the row is currently unpinned.
+ * Pin target section when toggling into pinned state.
  */
 async function toggleRow(
     this: Grid,
@@ -327,10 +326,7 @@ async function toggleRow(
         return;
     }
 
-    const previous = this.rowPinning?.getPinnedRows() || {
-        topIds: [],
-        bottomIds: []
-    };
+    const previous = this.rowPinning.getPinnedRows();
     const isPinned = (
         previous.topIds.includes(rowId) ||
         previous.bottomIds.includes(rowId)
@@ -359,13 +355,20 @@ async function toggleRow(
     callRowPinningEventCallback(this, 'beforeRowPin', eventPayload);
 
     if (isPinned) {
-        this.rowPinning?.unpinRow(rowId);
+        this.rowPinning.unpinRow(rowId);
+        this.dataProvider?.clearPinnedRowCache(rowId);
     } else {
-        this.rowPinning?.pinRow(rowId, position);
+        this.rowPinning.pinRow(rowId, position);
+        await this.dataProvider?.primePinnedRows([rowId]);
     }
-    this.querying.shouldBeUpdated = true;
-    this.dirtyFlags.add('rows');
-    await this.redraw();
+
+    const renderResult = this.viewport ?
+        await this.viewport.renderPinnedRows('runtime') :
+        { missingPinnedRowIds: [] };
+
+    await this.handlePinnedRenderResult(renderResult, 'runtime');
+    this.viewport?.reflow();
+
     fireEvent(this, 'afterRowPin', eventPayload);
     callRowPinningEventCallback(this, 'afterRowPin', eventPayload);
     announceRowPinningChange(
@@ -377,10 +380,10 @@ async function toggleRow(
 }
 
 /**
- * Unpin a row in runtime and trigger redraw.
+ * Unpin a row in runtime and re-render pinned sections only.
  *
  * @param rowId
- * Row ID to unpin.
+ * Row identifier to unpin.
  */
 async function unpinRow(
     this: Grid,
@@ -390,10 +393,7 @@ async function unpinRow(
         return;
     }
 
-    const previous = this.rowPinning?.getPinnedRows() || {
-        topIds: [],
-        bottomIds: []
-    };
+    const previous = this.rowPinning.getPinnedRows();
     const next = computeNextPinnedIds(previous, 'unpin', rowId);
     const eventPayload = {
         rowId,
@@ -411,13 +411,89 @@ async function unpinRow(
     fireEvent(this, 'beforeRowPin', eventPayload);
     callRowPinningEventCallback(this, 'beforeRowPin', eventPayload);
 
-    this.rowPinning?.unpinRow(rowId);
-    this.querying.shouldBeUpdated = true;
-    this.dirtyFlags.add('rows');
-    await this.redraw();
+    this.rowPinning.unpinRow(rowId);
+    this.dataProvider?.clearPinnedRowCache(rowId);
+
+    const renderResult = this.viewport ?
+        await this.viewport.renderPinnedRows('runtime') :
+        { missingPinnedRowIds: [] };
+
+    await this.handlePinnedRenderResult(renderResult, 'runtime');
+    this.viewport?.reflow();
+
     fireEvent(this, 'afterRowPin', eventPayload);
     callRowPinningEventCallback(this, 'afterRowPin', eventPayload);
     announceRowPinningChange(this, 'unpin', rowId);
+}
+
+/**
+ * Recompute resolve-based pinned rows from active provider view.
+ */
+async function recomputeResolvedFromActiveView(
+    this: Grid
+): Promise<void> {
+    if (!this.rowPinning || !this.rowPinning.isOptionEnabled()) {
+        return;
+    }
+
+    const resolve = this.options?.rendering?.rows?.pinning?.resolve;
+    const dataProvider = this.dataProvider;
+    if (!resolve || !dataProvider) {
+        this.rowPinning.setResolvedIds([], []);
+        return;
+    }
+
+    const rowCount = await dataProvider.getRowCount();
+    const allRows: Array<{ rowId: GridRowId; row: DataTableRowObject }> = [];
+
+    for (let i = 0; i < rowCount; ++i) {
+        const rowId = await dataProvider.getRowId(i);
+        const row = await dataProvider.getRowObject(i);
+        if (rowId === void 0 || !row) {
+            continue;
+        }
+        allRows.push({ rowId, row });
+    }
+
+    const resolved = this.rowPinning.resolveAllPinnedIds(allRows);
+    this.rowPinning.setResolvedIds(resolved.topIds, resolved.bottomIds);
+    await dataProvider.primePinnedRows([
+        ...resolved.topIds,
+        ...resolved.bottomIds
+    ]);
+}
+
+/**
+ * Handle missing pinned row IDs after pinned-row render.
+ *
+ * @param result
+ * Render result payload with missing pinned IDs.
+ *
+ * @param source
+ * Render source that triggered reconciliation.
+ */
+async function handlePinnedRenderResult(
+    this: Grid,
+    result: PinnedRenderResult,
+    source: 'query'|'runtime'
+): Promise<void> {
+    if (!this.rowPinning || !result.missingPinnedRowIds.length) {
+        return;
+    }
+
+    const isRemote = this.options?.data?.providerType === 'remote';
+    if (isRemote) {
+        if (source === 'query') {
+            await this.dataProvider?.primePinnedRows(
+                result.missingPinnedRowIds
+            );
+        }
+        return;
+    }
+
+    if (source === 'query') {
+        this.rowPinning.pruneMissingExplicitIds(result.missingPinnedRowIds);
+    }
 }
 
 /**
@@ -425,7 +501,7 @@ async function unpinRow(
  */
 function getPinnedRows(
     this: Grid
-): { topIds: (string|number)[]; bottomIds: (string|number)[] } {
+): { topIds: GridRowId[]; bottomIds: GridRowId[] } {
     return this.rowPinning?.getPinnedRows() || {
         topIds: [],
         bottomIds: []
@@ -439,7 +515,6 @@ function getPinnedRows(
  * */
 
 export type RowPinningPosition = 'top'|'bottom';
-export type RowPinningMode = 'exclude'|'include';
 export type GridRowId = (string|number);
 export type RowPinningChangeAction = 'pin'|'unpin'|'toggle';
 
@@ -453,6 +528,10 @@ export interface RowPinningChangeEvent {
     previousBottomIds: GridRowId[];
     topIds: GridRowId[];
     bottomIds: GridRowId[];
+}
+
+export interface PinnedRenderResult {
+    missingPinnedRowIds: GridRowId[];
 }
 
 export type RowPinningChangeEventCallback = (
@@ -520,6 +599,19 @@ declare module '../../Core/Grid' {
             topIds: GridRowId[];
             bottomIds: GridRowId[];
         };
+
+        /**
+         * Recompute resolve()-based pinned rows from active provider rows.
+         */
+        recomputeResolvedFromActiveView(): Promise<void>;
+
+        /**
+         * Handle pinned render misses according to provider type and source.
+         */
+        handlePinnedRenderResult(
+            result: PinnedRenderResult,
+            source: 'query'|'runtime'
+        ): Promise<void>;
     }
 }
 
@@ -539,8 +631,6 @@ export interface RowPinningOptions {
     bottom?: RowPinningSectionOptions;
     events?: RowPinningEvents;
     resolve?: (row: DataTableRowObject) => ('top'|'bottom'|null|undefined);
-    sorting?: RowPinningMode;
-    filtering?: RowPinningMode;
 }
 
 export interface RowPinningSectionOptions {

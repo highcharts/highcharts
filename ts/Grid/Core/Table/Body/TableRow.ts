@@ -71,6 +71,11 @@ class TableRow extends Row {
     public id?: RowId;
 
     /**
+     * Section for pinned rendering. Undefined for scrollable rows.
+     */
+    public pinnedSection?: 'top'|'bottom';
+
+    /**
      * The vertical translation of the row.
      */
     public translateY: number = 0;
@@ -103,6 +108,11 @@ class TableRow extends Row {
     * */
 
     public async init(): Promise<void> {
+        if (this.pinnedSection) {
+            this.setRowAttributes();
+            return;
+        }
+
         this.id = await this.viewport.grid.dataProvider?.getRowId(this.index);
         await this.loadData();
         this.setRowAttributes();
@@ -132,6 +142,14 @@ class TableRow extends Row {
      * table.
      */
     public async update(): Promise<void> {
+        if (this.pinnedSection) {
+            this.updateRowAttributes();
+            this.updateParityClass();
+            this.updateStateClasses();
+            this.reflow();
+            return;
+        }
+
         this.id = await this.viewport.grid.dataProvider?.getRowId(this.index);
         this.updateRowAttributes();
 
@@ -165,9 +183,11 @@ class TableRow extends Row {
         }
 
         this.index = index;
+        this.pinnedSection = void 0;
         this.id = await this.viewport.grid.dataProvider?.getRowId(index);
 
-        this.htmlElement.setAttribute('data-row-index', index);
+        this.htmlElement.setAttribute('data-row-index', index + '');
+        this.htmlElement.removeAttribute('data-pinned-section');
         this.updateRowAttributes();
         this.updateParityClass();
         this.updateStateClasses();
@@ -195,7 +215,7 @@ class TableRow extends Row {
             Globals.getClassName('hoveredRow')
         );
 
-        if (hovered) {
+        if (hovered && !this.pinnedSection) {
             this.viewport.grid.hoveredRowIndex = this.index;
         }
     }
@@ -211,7 +231,7 @@ class TableRow extends Row {
             Globals.getClassName('syncedRow')
         );
 
-        if (synced) {
+        if (synced && !this.pinnedSection) {
             this.viewport.grid.syncedRowIndex = this.index;
         }
     }
@@ -225,8 +245,14 @@ class TableRow extends Row {
 
         el.classList.add(Globals.getClassName('rowElement'));
 
-        // Index of the row in the presentation data table
-        el.setAttribute('data-row-index', idx);
+        if (this.pinnedSection) {
+            el.removeAttribute('data-row-index');
+            el.setAttribute('data-pinned-section', this.pinnedSection);
+        } else {
+            // Index of the row in the presentation data table
+            el.setAttribute('data-row-index', idx + '');
+            el.removeAttribute('data-pinned-section');
+        }
 
         this.updateRowAttributes();
 
@@ -250,8 +276,10 @@ class TableRow extends Row {
             el.setAttribute('data-row-id', this.id);
         }
 
-        // Calculate levels of header, 1 to avoid indexing from 0
-        a11y?.setRowIndex(el, idx + (vp.header?.rows.length ?? 0) + 1);
+        if (!this.pinnedSection) {
+            // Calculate levels of header, 1 to avoid indexing from 0
+            a11y?.setRowIndex(el, idx + (vp.header?.rows.length ?? 0) + 1);
+        }
     }
 
     /**
@@ -280,11 +308,17 @@ class TableRow extends Row {
             Globals.getClassName('syncedRow')
         );
 
-        if (this.viewport.grid.hoveredRowIndex === this.index) {
+        if (
+            !this.pinnedSection &&
+            this.viewport.grid.hoveredRowIndex === this.index
+        ) {
             el.classList.add(Globals.getClassName('hoveredRow'));
         }
 
-        if (this.viewport.grid.syncedRowIndex === this.index) {
+        if (
+            !this.pinnedSection &&
+            this.viewport.grid.syncedRowIndex === this.index
+        ) {
             el.classList.add(Globals.getClassName('syncedRow'));
         }
     }

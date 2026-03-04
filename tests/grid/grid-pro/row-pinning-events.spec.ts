@@ -147,7 +147,7 @@ test.describe('Grid Pro row pinning events', () => {
                                 events: {
                                     beforeRowPin(e: any): void {
                                         const pinned =
-                                            (this as any).getPinnedRows();
+                                            this.getPinnedRows();
                                         snapshots.push({
                                             type: 'before',
                                             action: e.action,
@@ -161,7 +161,7 @@ test.describe('Grid Pro row pinning events', () => {
                                     },
                                     afterRowPin(e: any): void {
                                         const pinned =
-                                            (this as any).getPinnedRows();
+                                            this.getPinnedRows();
                                         snapshots.push({
                                             type: 'after',
                                             action: e.action,
@@ -184,14 +184,14 @@ test.describe('Grid Pro row pinning events', () => {
 
             // Test pinRow: use a fresh grid to avoid re-render
             // interaction from previous operations.
-            let { grid: g1, container: c1 } = makeGrid();
+            const { grid: g1, container: c1 } = makeGrid();
             await g1.pinRow('B', 'top');
             g1.destroy();
             c1.remove();
 
             // Test unpinRow: fresh grid with A pre-pinned, then
             // unpin. Discard pinRow events.
-            let { grid: g2, container: c2 } = makeGrid();
+            const { grid: g2, container: c2 } = makeGrid();
             await g2.pinRow('A', 'top');
             snapshots.length = 2; // keep only pinRow snapshots
             await g2.unpinRow('A');
@@ -199,7 +199,7 @@ test.describe('Grid Pro row pinning events', () => {
             c2.remove();
 
             // Test toggleRow: fresh grid.
-            let { grid: g3, container: c3 } = makeGrid();
+            const { grid: g3, container: c3 } = makeGrid();
             await g3.toggleRow('C', 'bottom');
             g3.destroy();
             c3.remove();
@@ -284,21 +284,18 @@ test.describe('Grid Pro row pinning events', () => {
             await grid.unpinRow('A');
 
             const pinned = grid.getPinnedRows();
-            const rowPinningMeta = grid.rowPinningMeta || null;
 
             grid.destroy();
             container.remove();
 
             return {
                 output,
-                pinned,
-                rowPinningMeta
+                pinned
             };
         });
 
         expect(state.output).toEqual([]);
         expect(state.pinned.topIds).toEqual([]);
         expect(state.pinned.bottomIds).toEqual([]);
-        expect(state.rowPinningMeta).toBeNull();
     });
 });

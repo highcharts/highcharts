@@ -24,6 +24,7 @@
 
 import TableRow from './Body/TableRow.js';
 import type DataTable from '../../../Data/DataTable';
+import type { CellType as DataTableCellType } from '../../../Data/DataTable';
 import type { RowId } from '../Data/DataProvider';
 
 import GridUtils from '../GridUtils.js';
@@ -122,6 +123,13 @@ class Table {
     public pinnedBottomRows: TableRow[] = [];
 
     /**
+     * Fast lookup maps for rendered pinned rows.
+     */
+    public pinnedTopRowById: Map<RowId, TableRow> = new Map();
+
+    public pinnedBottomRowById: Map<RowId, TableRow> = new Map();
+
+    /**
      * The resize observer for the table container.
      * @internal
      */
@@ -153,10 +161,9 @@ class Table {
     public rowsWidth?: number;
 
     /**
-     * The focus cursor position: [rowIndex, columnIndex] or `undefined` if the
-     * table cell is not focused.
+     * The focus cursor position or `undefined` if no table cell is focused.
      */
-    public focusCursor?: [number, number];
+    public focusCursor?: FocusCursor;
 
     /**
      * The only cell that is to be focusable using tab key - a table focus
@@ -360,10 +367,10 @@ class Table {
             return;
         }
 
-        const rowPinningMeta = this.grid.rowPinningMeta;
+        const pinned = this.grid.rowPinning?.getPinnedRows();
         const pinnedRowsCount = (
-            (rowPinningMeta?.topCount || 0) +
-            (rowPinningMeta?.bottomCount || 0)
+            (pinned?.topIds.length || 0) +
+            (pinned?.bottomIds.length || 0)
         );
         const minScrollableRows = Math.max(
             0,
@@ -389,10 +396,7 @@ class Table {
             return rows.virtualization;
         }
 
-        const rowCount = (
-            grid.rowPinningMeta?.scrollableCount ??
-            await this.grid.dataProvider?.getRowCount()
-        ) ?? 0;
+        const rowCount = (await this.grid.dataProvider?.getRowCount()) ?? 0;
         const threshold = rows?.virtualizationThreshold ?? 50;
 
         if (grid.pagination) {
@@ -431,13 +435,9 @@ class Table {
         if (!dp) {
             return;
         }
-        const oldPinningMeta = vp.grid.rowPinningMeta;
         const oldPinningMaxHeightSignature =
             this.getPinnedBodyMaxHeightSignature();
-        let focusedRowId: RowId | undefined;
-        if (vp.focusCursor) {
-            focusedRowId = await dp.getRowId(vp.focusCursor[0]);
-        }
+        const focusCursor = vp.focusCursor;
 
         try {
             this.grid.showLoading();
@@ -446,13 +446,10 @@ class Table {
             const oldRowsCount = vp.rows.length > 0 ?
                 (vp.rows[vp.rows.length - 1]?.index ?? -1) + 1 :
                 0;
-            const forceQuerying = !!(vp.grid as {
-                rowPinning?: { isEnabled(): boolean };
-            }).rowPinning?.isEnabled();
-            await vp.grid.querying.proceed(forceQuerying);
+            await vp.grid.querying.proceed();
             vp.grid.querying.pagination.clampPage();
             if (vp.grid.querying.shouldBeUpdated) {
-                await vp.grid.querying.proceed(forceQuerying);
+                await vp.grid.querying.proceed();
             }
             for (const column of vp.columns) {
                 column.loadData();
@@ -469,24 +466,10 @@ class Table {
                 );
                 shouldRerender = true;
             }
-            const newPinningMeta = vp.grid.rowPinningMeta;
-            const pinningMetaChanged = (
-                oldPinningMeta?.topCount !== newPinningMeta?.topCount ||
-                oldPinningMeta?.bottomCount !== newPinningMeta?.bottomCount ||
-                oldPinningMeta?.scrollableCount !==
-                    newPinningMeta?.scrollableCount ||
-                oldPinningMeta?.topRowIds.join('|') !==
-                    newPinningMeta?.topRowIds.join('|') ||
-                oldPinningMeta?.bottomRowIds.join('|') !==
-                    newPinningMeta?.bottomRowIds.join('|')
-            );
             const pinningMaxHeightChanged = (
                 oldPinningMaxHeightSignature !==
                 this.getPinnedBodyMaxHeightSignature()
             );
-            if (pinningMetaChanged) {
-                shouldRerender = true;
-            }
             if (pinningMaxHeightChanged) {
                 shouldRerender = true;
             }
@@ -498,28 +481,37 @@ class Table {
             } else {
                 // Update existing rows - create a snapshot to avoid issues
                 // if array changes during iteration
-                const rowsToUpdate = [...vp.getRenderedRows()];
+                const rowsToUpdate = [...vp.rows];
                 for (let i = 0, iEnd = rowsToUpdate.length; i < iEnd; ++i) {
                     await rowsToUpdate[i].update();
                 }
             }
 
+            await vp.grid.recomputeResolvedFromActiveView?.();
+            const renderResult = await vp.renderPinnedRows('query');
+            await vp.grid.handlePinnedRenderResult?.(renderResult, 'query');
+
             // Update the pagination controls
             vp.grid.pagination?.updateControls();
             vp.reflow();
 
-            if (focusedRowId !== void 0 && vp.focusCursor) {
-                const newRowIndex = await dp.getRowIndex(focusedRowId);
+            if (focusCursor?.section === 'scroll') {
+                const newRowIndex = await dp.getRowIndex(focusCursor.rowId);
                 if (newRowIndex !== void 0) {
                     vp.scrollToRow(newRowIndex);
                     setTimeout((): void => {
-                        if (!defined(vp.focusCursor?.[1])) {
-                            return;
-                        }
                         vp.getRenderedRowByIndex(newRowIndex)
-                            ?.cells[vp.focusCursor[1]].htmlElement.focus();
+                            ?.cells[focusCursor.columnIndex]
+                            .htmlElement.focus();
                     });
                 }
+            } else if (focusCursor) {
+                setTimeout((): void => {
+                    vp.getRenderedPinnedRowById(
+                        focusCursor.rowId,
+                        focusCursor.section
+                    )?.cells[focusCursor.columnIndex].htmlElement.focus();
+                });
             }
         } finally {
             this.grid.hideLoading();
@@ -767,21 +759,19 @@ class Table {
      * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/grid-lite/basic/scroll-to-row | Scroll to row}
      */
     public scrollToRow(index: number): void {
-        const topPinnedCount = this.grid.rowPinningMeta?.topCount || 0;
         if (this.virtualRows) {
             this.tbodyElement.scrollTop = Math.max(
                 0,
-                (index - topPinnedCount) * this.rowsVirtualizer.defaultRowHeight
+                index * this.rowsVirtualizer.defaultRowHeight
             );
             return;
         }
 
         const rowClass = '.' + Globals.getClassName('rowElement');
-        const scrollableIndex = Math.max(0, index - topPinnedCount);
         const rows = this.tbodyElement.querySelectorAll(rowClass);
         const firstRow = rows[0];
         const safeIndex = Math.min(
-            scrollableIndex,
+            Math.max(0, index),
             Math.max(0, rows.length - 1)
         );
         const targetRow = rows[safeIndex];
@@ -852,14 +842,42 @@ class Table {
         if (!tr) {
             return;
         }
-
-        const rowIndexAttr = tr.getAttribute('data-row-index');
-        if (rowIndexAttr === null) {
+        const tbody = tr.parentElement;
+        if (!tbody) {
             return;
         }
 
-        const rowIndex = parseInt(rowIndexAttr, 10);
-        const row = this.getRenderedRowByIndex(rowIndex);
+        let row: TableRow | undefined;
+
+        if (tbody === this.pinnedTopTbodyElement) {
+            const rowId = tr.getAttribute('data-row-id');
+            if (rowId !== null) {
+                row = this.getRenderedPinnedRowById(rowId, 'top');
+                if (!row && /^-?\\d+(\\.\\d+)?$/.test(rowId)) {
+                    row = this.getRenderedPinnedRowById(Number(rowId), 'top');
+                }
+            }
+        } else if (tbody === this.pinnedBottomTbodyElement) {
+            const rowId = tr.getAttribute('data-row-id');
+            if (rowId !== null) {
+                row = this.getRenderedPinnedRowById(rowId, 'bottom');
+                if (!row && /^-?\\d+(\\.\\d+)?$/.test(rowId)) {
+                    row = this.getRenderedPinnedRowById(
+                        Number(rowId),
+                        'bottom'
+                    );
+                }
+            }
+        } else {
+            const rowIndexAttr = tr.getAttribute('data-row-index');
+            if (rowIndexAttr === null) {
+                return;
+            }
+
+            const rowIndex = parseInt(rowIndexAttr, 10);
+            row = this.getRenderedRowByIndex(rowIndex);
+        }
+
         if (!row) {
             return;
         }
@@ -927,9 +945,21 @@ class Table {
         this.syncPinnedHorizontalScroll(meta.scrollLeft);
 
         if (meta.focusCursor) {
-            const [rowIndex, columnIndex] = meta.focusCursor;
-            const row = this.getRenderedRowByIndex(rowIndex);
-            row?.cells[columnIndex]?.htmlElement.focus();
+            const { section, rowId, columnIndex } = meta.focusCursor;
+            if (section === 'scroll') {
+                this.grid.dataProvider?.getRowIndex(rowId).then((
+                    rowIndex
+                ): void => {
+                    if (rowIndex === void 0) {
+                        return;
+                    }
+                    this.getRenderedRowByIndex(rowIndex)
+                        ?.cells[columnIndex]?.htmlElement.focus();
+                });
+            } else {
+                this.getRenderedPinnedRowById(rowId, section)
+                    ?.cells[columnIndex]?.htmlElement.focus();
+            }
         }
     }
 
@@ -997,74 +1027,91 @@ class Table {
      * @internal
      */
     public getRenderedRowByIndex(index: number): TableRow | undefined {
-        return this.getRenderedRows()
-            .find((row): boolean => row.index === index);
+        return this.rows.find((row): boolean => row.index === index);
+    }
+
+    public getRenderedPinnedRowById(
+        rowId: RowId,
+        section: 'top'|'bottom'
+    ): TableRow | undefined {
+        return section === 'top' ?
+            this.pinnedTopRowById.get(rowId) :
+            this.pinnedBottomRowById.get(rowId);
     }
 
     /**
-     * Re-renders top and bottom pinned rows using current row pinning meta.
+     * Re-renders top and bottom pinned rows from row IDs.
+     *
+     * @param source
+     * Trigger source for reconciliation flow.
      *
      * @internal
      */
-    public async renderPinnedRows(): Promise<void> {
+    public async renderPinnedRows(
+        source: 'query'|'runtime'
+    ): Promise<{ missingPinnedRowIds: RowId[] }> {
         // Cancel any active cell editing before destroying/moving rows to
         // prevent orphaned inputs and stale cell references.
         if (this.cellEditing?.editedCell) {
             this.cellEditing.stopEditing(false);
         }
 
-        const meta = this.grid.rowPinningMeta;
-        const hasPinning = !!meta;
+        const pinnedRows = this.grid.rowPinning?.getPinnedRows() || {
+            topIds: [],
+            bottomIds: []
+        };
+        const hasPinning = pinnedRows.topIds.length > 0 ||
+            pinnedRows.bottomIds.length > 0;
         this.ensurePinnedBodiesRendered(hasPinning);
+        void source;
 
         if (!hasPinning) {
             this.pinnedTopRows.forEach((row): void => row.destroy());
             this.pinnedBottomRows.forEach((row): void => row.destroy());
             this.pinnedTopRows.length = 0;
             this.pinnedBottomRows.length = 0;
+            this.pinnedTopRowById.clear();
+            this.pinnedBottomRowById.clear();
             this.tbodyElement.style.display = '';
             this.setTbodyMinHeight();
             this.applyPinnedBodyMaxHeights();
-            return;
+            this.syncAriaRowIndexes();
+            return { missingPinnedRowIds: [] };
         }
 
-        const topCount = meta?.topCount || 0;
-        const bottomCount = meta?.bottomCount || 0;
-        const rowCount = await this.grid.dataProvider?.getRowCount() || 0;
-
-        await this.syncPinnedRows(
+        const topMissing = await this.syncPinnedRowsByIds(
             this.pinnedTopRows,
             this.pinnedTopTbodyElement,
-            0,
-            topCount
+            pinnedRows.topIds as RowId[],
+            'top'
         );
-        await this.syncPinnedRows(
+        const bottomMissing = await this.syncPinnedRowsByIds(
             this.pinnedBottomRows,
             this.pinnedBottomTbodyElement,
-            rowCount - bottomCount,
-            bottomCount
+            pinnedRows.bottomIds as RowId[],
+            'bottom'
         );
+
+        this.rebuildPinnedRowLookupMaps();
+        this.syncAriaRowIndexes();
 
         this.pinnedTopTbodyElement.classList.toggle(
             Globals.getClassName('pinnedTbodyElementActive'),
-            topCount > 0
+            pinnedRows.topIds.length > 0
         );
         this.pinnedBottomTbodyElement.classList.toggle(
             Globals.getClassName('pinnedTbodyElementActive'),
-            bottomCount > 0
+            pinnedRows.bottomIds.length > 0
         );
-        this.tbodyElement.style.display = (
-            meta &&
-            meta.scrollableCount < 1 &&
-            topCount + bottomCount > 0
-        ) ?
-            'none' :
-            '';
+        this.tbodyElement.style.display = '';
         this.setTbodyMinHeight();
         this.applyPinnedBodyMaxHeights();
         this.syncPinnedHorizontalScroll(this.tbodyElement.scrollLeft);
 
         this.applyPinnedScrollbarCompensation();
+        return {
+            missingPinnedRowIds: [...topMissing, ...bottomMissing]
+        };
     }
 
     /**
@@ -1180,44 +1227,100 @@ class Table {
         }
     }
 
-    private async syncPinnedRows(
+    private async syncPinnedRowsByIds(
         targetRows: TableRow[],
         tbody: HTMLElement,
-        startIndex: number,
-        count: number
-    ): Promise<void> {
-        const safeCount = Math.max(0, count);
-        const safeStart = Math.max(0, startIndex);
+        rowIds: RowId[],
+        section: 'top'|'bottom'
+    ): Promise<RowId[]> {
+        const missingPinnedRowIds: RowId[] = [];
+        const nextRows: TableRow[] = [];
 
-        while (targetRows.length > safeCount) {
-            targetRows.pop()?.destroy();
-        }
+        for (let i = 0; i < rowIds.length; ++i) {
+            const rowId = rowIds[i];
+            const rowData = await this.grid.dataProvider
+                ?.getOriginalRowObjectByRowId(rowId);
+            if (!rowData) {
+                missingPinnedRowIds.push(rowId);
+                continue;
+            }
 
-        for (let i = 0; i < safeCount; ++i) {
-            const rowIndex = safeStart + i;
-            let row = targetRows[i];
+            const nextIndex = nextRows.length;
+            let row = targetRows[nextIndex];
 
             if (!row) {
-                row = new TableRow(this, rowIndex);
-                targetRows.push(row);
+                row = new TableRow(this, nextIndex);
+                row.pinnedSection = section;
+                row.id = rowId;
                 await row.init();
+                await row.render();
                 row.htmlElement.setAttribute(
                     'aria-roledescription', 'pinned row'
                 );
                 tbody.appendChild(row.htmlElement);
-                await row.render();
-                row.reflow();
-                continue;
+            } else {
+                row.index = nextIndex;
+                row.id = rowId;
+                row.pinnedSection = section;
+                row.setRowAttributes();
+                row.updateRowAttributes();
+                row.htmlElement.setAttribute(
+                    'aria-roledescription', 'pinned row'
+                );
+                if (!row.htmlElement.isConnected) {
+                    tbody.appendChild(row.htmlElement);
+                }
             }
 
-            await row.reuse(rowIndex, false);
-            row.htmlElement.setAttribute(
-                'aria-roledescription', 'pinned row'
-            );
-            row.reflow();
-            if (!row.htmlElement.isConnected) {
-                tbody.appendChild(row.htmlElement);
+            for (let c = 0, cEnd = row.cells.length; c < cEnd; ++c) {
+                const cell = row.cells[c] as TableCell;
+                const columnId = cell.column.id;
+                await cell.setValue(
+                    rowData[columnId] as DataTableCellType
+                );
             }
+
+            row.reflow();
+            nextRows.push(row);
+        }
+
+        for (let i = nextRows.length; i < targetRows.length; ++i) {
+            targetRows[i].destroy();
+        }
+
+        targetRows.length = 0;
+        for (const row of nextRows) {
+            targetRows.push(row);
+        }
+
+        return missingPinnedRowIds;
+    }
+
+    private rebuildPinnedRowLookupMaps(): void {
+        this.pinnedTopRowById.clear();
+        this.pinnedBottomRowById.clear();
+
+        for (const row of this.pinnedTopRows) {
+            if (row.id !== void 0) {
+                this.pinnedTopRowById.set(row.id, row);
+            }
+        }
+        for (const row of this.pinnedBottomRows) {
+            if (row.id !== void 0) {
+                this.pinnedBottomRowById.set(row.id, row);
+            }
+        }
+    }
+
+    public syncAriaRowIndexes(): void {
+        const headerRowsCount = this.header?.rows.length ?? 0;
+        const rows = this.getRenderedRows();
+
+        for (let i = 0, iEnd = rows.length; i < iEnd; ++i) {
+            this.grid.accessibility?.setRowIndex(
+                rows[i].htmlElement,
+                i + headerRowsCount + 1
+            );
         }
     }
 
@@ -1303,6 +1406,11 @@ class Table {
 
 }
 
+export type FocusCursor =
+    { section: 'scroll'; rowId: RowId; columnIndex: number } |
+    { section: 'top'; rowId: RowId; columnIndex: number } |
+    { section: 'bottom'; rowId: RowId; columnIndex: number };
+
 /**
  * Represents the metadata of the viewport state. It is used to save the
  * state of the viewport and restore it when the data grid is re-rendered.
@@ -1311,7 +1419,7 @@ export interface ViewportStateMetadata {
     scrollTop: number;
     scrollLeft: number;
     columnResizing: ColumnResizingMode;
-    focusCursor?: [number, number];
+    focusCursor?: FocusCursor;
 }
 
 

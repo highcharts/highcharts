@@ -24,7 +24,6 @@
 
 import type {
     DataProviderOptions,
-    ProviderPinningViewState,
     ProviderQueryScope,
     RowId
 } from './DataProvider';
@@ -122,11 +121,6 @@ export class LocalDataProvider extends DataProvider {
     };
 
     /**
-     * Optional pinning state applied after query.
-     */
-    private pinningViewState?: ProviderPinningViewState;
-
-    /**
      * Maps row ID to original row index in raw scope.
      */
     private rowIdToOriginalIndex: Map<RowId, number> = new Map();
@@ -186,7 +180,6 @@ export class LocalDataProvider extends DataProvider {
             rowObjects: [],
             rowIdToIndex: new Map()
         };
-        this.pinningViewState = void 0;
         this.rowIdToOriginalIndex.clear();
 
         for (const eventName of LocalDataProvider.tableChangeEventNames) {
@@ -307,6 +300,22 @@ export class LocalDataProvider extends DataProvider {
         return Promise.resolve(this.activeView.rowObjects[rowIndex]);
     }
 
+    public override getOriginalRowObjectByRowId(
+        rowId: RowId
+    ): Promise<RowObjectType | undefined> {
+        const originalIndex = (
+            typeof rowId === 'number' ?
+                rowId :
+                this.rowIdToOriginalIndex.get(rowId)
+        );
+
+        if (originalIndex === void 0) {
+            return Promise.resolve(void 0);
+        }
+
+        return Promise.resolve(this.dataTable?.getRowObject(originalIndex));
+    }
+
     public override getPrePaginationRowCount(): Promise<number> {
         return Promise.resolve(this.prePaginationRowCount ?? 0);
     }
@@ -370,15 +379,6 @@ export class LocalDataProvider extends DataProvider {
             groupedTable = rawTable;
         }
 
-        let sortingOnlyTable: DataTable = groupedTable;
-        if (controller.sorting.modifier) {
-            const sortingOnlyCopy = originalDataTable.clone();
-            await controller.sorting.modifier.modify(
-                sortingOnlyCopy.getModified()
-            );
-            sortingOnlyTable = sortingOnlyCopy.getModified();
-        }
-
         this.prePaginationRowCount = groupedTable.rowCount;
 
         let activeTable = groupedTable;
@@ -394,7 +394,6 @@ export class LocalDataProvider extends DataProvider {
 
         this.scopedViews.raw = this.createScopedView(rawTable);
         this.scopedViews.grouped = this.createScopedView(groupedTable);
-        this.scopedViews.sortingOnly = this.createScopedView(sortingOnlyTable);
         this.scopedViews.active = this.createScopedView(activeTable);
 
         this.rowIdToOriginalIndex = this.createRowIdToOriginalIndexMap(
@@ -402,7 +401,11 @@ export class LocalDataProvider extends DataProvider {
         );
 
         this.presentationTable = activeTable;
-        await this.setPinningView(this.pinningViewState);
+        this.activeView = this.scopedViews.active || {
+            rowIds: [],
+            rowObjects: [],
+            rowIdToIndex: new Map()
+        };
     }
 
     public override getScopedRowCount(
@@ -457,51 +460,6 @@ export class LocalDataProvider extends DataProvider {
             }
         }
         return Promise.resolve(rows);
-    }
-
-    public override setPinningView(
-        state?: ProviderPinningViewState
-    ): Promise<void> {
-        this.pinningViewState = state;
-
-        if (!state) {
-            this.activeView = this.scopedViews.active || {
-                rowIds: [],
-                rowObjects: [],
-                rowIdToIndex: new Map()
-            };
-            return Promise.resolve();
-        }
-
-        const groupedRows = this.scopedViews.grouped || this.activeView;
-        const rawRows = this.scopedViews.raw || this.activeView;
-        const finalRowIds = state.activeRowIds;
-        const groupedMap = groupedRows.rowIdToIndex;
-        const rawMap = rawRows.rowIdToIndex;
-        const rowObjects: RowObjectType[] = [];
-
-        for (const rowId of finalRowIds) {
-            const groupedIndex = groupedMap.get(rowId);
-            if (groupedIndex !== void 0) {
-                rowObjects.push(groupedRows.rowObjects[groupedIndex] || {});
-                continue;
-            }
-
-            const rawIndex = rawMap.get(rowId);
-            rowObjects.push(
-                rawIndex !== void 0 ?
-                    rawRows.rowObjects[rawIndex] || {} :
-                    {}
-            );
-        }
-
-        this.activeView = {
-            rowIds: finalRowIds.slice(),
-            rowObjects,
-            rowIdToIndex: createRowIdIndexMap(finalRowIds)
-        };
-
-        return Promise.resolve();
     }
 
     private createScopedView(table: DataTable): ScopedRowsView {
@@ -561,7 +519,6 @@ export class LocalDataProvider extends DataProvider {
             rowIdToIndex: new Map()
         };
         this.rowIdToOriginalIndex.clear();
-        this.pinningViewState = void 0;
     }
 
     public override getColumnDataType(

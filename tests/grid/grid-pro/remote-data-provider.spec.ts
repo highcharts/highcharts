@@ -172,7 +172,7 @@ test.describe('RemoteDataProvider', () => {
         expect(result.rowId1).toBe('row-3');
     });
 
-    test('supports sticky rows with remote provider and virtualization', async ({
+    test('supports pinned rows with remote provider and virtualization', async ({
         page
     }) => {
         await page.goto('/grid-pro/cypress/remote-data-provider');
@@ -269,14 +269,12 @@ test.describe('RemoteDataProvider', () => {
                 pinnedRows: grid.getPinnedRows ? grid.getPinnedRows() : {
                     topIds: [],
                     bottomIds: []
-                },
-                pinnedMetaTopIds: grid.rowPinningMeta?.topRowIds || []
+                }
             };
         });
 
         expect(result.target.index).toBeGreaterThan(-1);
         expect(result.pinnedRows.topIds).toContain(result.target.id);
-        expect(result.pinnedMetaTopIds).toContain(result.target.id);
     });
 
     test('supports pinRow/unpinRow for remote data', async ({

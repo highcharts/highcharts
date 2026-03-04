@@ -24,7 +24,6 @@
 
 import type DataModifier from '../../../Data/Modifiers/DataModifier.js';
 import type Grid from '../Grid.js';
-import type RowPinningController from '../RowPinning/RowPinningController.js';
 
 import SortingController from './SortingController.js';
 import FilteringController from './FilteringController.js';
@@ -154,46 +153,7 @@ class QueryingController {
             return;
         }
 
-        const rowPinning = (this.grid as {
-            rowPinning?: RowPinningController;
-        }).rowPinning;
-
-        const sortingActive = !!this.sorting.modifier;
-        const filteringActive = !!this.filtering.modifier;
-
         await dataProvider.applyQuery();
-
-        if (rowPinning?.isEnabled()) {
-            const pinningResult =
-                await rowPinning.computePinnedStateForProvider(
-                    dataProvider,
-                    {
-                        sortingActive,
-                        filteringActive,
-                        paginationEnabled: this.pagination.enabled,
-                        currentPage: this.pagination.currentPage,
-                        currentPageSize: this.pagination.currentPageSize
-                    }
-                );
-            this.pagination.setPinnedRowsContext(
-                pinningResult.topCount + pinningResult.bottomCount,
-                pinningResult.nonPinnedCount
-            );
-            await dataProvider.setPinningView(
-                rowPinning.createProviderPinningViewState(pinningResult)
-            );
-            this.grid.rowPinningMeta = {
-                topCount: pinningResult.topCount,
-                bottomCount: pinningResult.bottomCount,
-                scrollableCount: pinningResult.scrollableCount,
-                topRowIds: pinningResult.topRowIds.slice(),
-                bottomRowIds: pinningResult.bottomRowIds.slice()
-            };
-        } else {
-            this.pagination.setPinnedRowsContext(0);
-            delete this.grid.rowPinningMeta;
-            await dataProvider.setPinningView(void 0);
-        }
 
         this.shouldBeUpdated = false;
     }
