@@ -23,8 +23,8 @@
         --ig-pinned-border-style: var(--hcg-pinned-border-style, var(--ig-row-border-style));
         --ig-pinned-border-color: var(--hcg-pinned-border-color, var(--ig-row-border-color));
         --ig-pinned-border: var(--ig-pinned-border-width) var(--ig-pinned-border-style) var(--ig-pinned-border-color);
-        --ig-pinned-top-shadow: var(--hcg-pinned-top-shadow, var(--hcg-pinned-shadow, 0 3px 5px -2px rgba(0, 0, 0, 0.1)));
-        --ig-pinned-bottom-shadow: var(--hcg-pinned-bottom-shadow, var(--hcg-pinned-shadow, 0 -3px 5px -2px rgba(0, 0, 0, 0.1)));
+        --ig-pinned-top-shadow: var(--hcg-pinned-top-shadow, 0 3px 5px -2px rgba(0, 0, 0, 0.1));
+        --ig-pinned-bottom-shadow: var(--hcg-pinned-bottom-shadow, 0 -3px 5px -2px rgba(0, 0, 0, 0.1));
 
         /* Header column borders */
         --ig-header-column-border-width: var(--hcg-header-column-border-width, var(--ig-column-border-width));
