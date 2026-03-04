@@ -173,11 +173,7 @@ function addTreeNode(
             _parentNode.meta.fullname
     ); */
 
-    let _fullname: (string|undefined) = (
-        _infoDoclet.tags.apioption ?
-            TSLib.extractTagText(_infoDoclet, 'apioption', true) :
-            TSLib.extractInfoName(info)
-    );
+    let _fullname: (string|undefined) = TSLib.extractInfoName(info);
 
     if (typeof _fullname === 'undefined') {
         return;
