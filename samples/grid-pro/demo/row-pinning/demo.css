@@ -1,0 +1,17 @@
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/css/grid-pro.css");
+
+#container {
+    height: 560px;
+}
+
+.panel {
+    margin-top: 10px;
+    padding: 10px;
+    border: 1px solid #d8d8d8;
+    border-radius: 4px;
+    background: #fafafa;
+}
+
+.panel p {
+    margin: 4px 0;
+}

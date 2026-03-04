@@ -182,4 +182,4 @@ rendering: {
 
 ## Demo
 
-<iframe src="https://www.highcharts.com/samples/embed/grid-lite/demo/row-pinning?force-light-theme" allow="fullscreen"></iframe>
+<iframe src="https://www.highcharts.com/samples/embed/grid-pro/demo/row-pinning?force-light-theme" allow="fullscreen"></iframe>

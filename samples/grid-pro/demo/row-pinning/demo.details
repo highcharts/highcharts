@@ -1,5 +1,5 @@
 ---
- name: Highcharts Grid Lite Demo
+ name: Highcharts Grid Pro Demo
  authors:
    - Mikkel Espolin Birkeland
  js_wrap: b
