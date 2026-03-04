@@ -535,12 +535,29 @@ namespace AxisDefaults {
          * }
          * ```
          *
+         * @productdesc {gantt}
+         * For grid axes (like in Gantt charts),
+         * it is possible to declare as a list to provide different
+         * formats depending on available space.
+         *
+         * Defaults to:
+         * ```js
+         * {
+         *     hour: { list: ['%H:%M', '%H'] },
+         *     day: { list: ['%A, %e. %B', '%a, %e. %b', '%E'] },
+         *     week: { list: ['Week %W', 'W%W'] },
+         *     month: { list: ['%B', '%b', '%o'] }
+         * }
+         * ```
+         *
          * @sample {highcharts} highcharts/xaxis/datetimelabelformats-object/
          *         Object day format on X axis
          * @sample {highcharts} highcharts/xaxis/datetimelabelformats/
          *         String day format on X axis
          * @sample {highstock} stock/xaxis/datetimelabelformats/
          *         More information in x axis labels
+         * @sample {gantt} gantt/grid-axis/date-time-label-formats
+         *         Gantt chart with custom axis date format.
          *
          * @declare Highcharts.AxisDateTimeLabelFormatsOptions
          * @product highcharts highstock gantt
