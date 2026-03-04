@@ -80,6 +80,7 @@ Gulp.registry(new GulpForwardReference());
     'scripts-css',
     'scripts-es5',
     'scripts-esx',
+    'scripts-icons',
     'scripts-js',
     'scripts-messages',
     'scripts-ts',
