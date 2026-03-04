@@ -120,6 +120,29 @@ class MyProvider extends DataProvider {
 DataProviderRegistry.registerDataProvider('myProvider', MyProvider);
 ```
 
+### Optional methods for row pinning and scoped queries
+
+For best row pinning behavior with custom providers, you can also implement
+these optional methods from `DataProvider`:
+
+- `getScopedRowCount(scope)`
+- `getScopedRowId(rowIndex, scope)`
+- `getScopedRowIndex(rowId, scope)`
+- `getScopedRowObject(rowIndex, scope)`
+- `getScopedRowsByIds(rowIds, scope)`
+- `getOriginalRowObjectByRowId(rowId)`
+- `primePinnedRows(rowIds)`
+- `clearPinnedRowCache(rowId)`
+
+Scopes are:
+
+- `'raw'`: provider data before sort/filter/pagination query modifiers
+- `'grouped'`: provider data after sort/filter modifiers, before pagination
+- `'active'`: current rendered view (including pagination when enabled)
+
+If scoped methods are not implemented, Grid falls back to active-scope lookups.
+That is supported, but less efficient for large datasets.
+
 Then select it in your Grid options:
 
 ```js

@@ -96,6 +96,24 @@ contextMenu: {
 If `items` is explicitly set to `[]`, Grid does not open its popup and keeps
 the native browser context menu.
 
+## Localize built-in labels
+
+Built-in row pinning actions use these root language keys:
+
+- `lang.pinRowTop`
+- `lang.pinRowBottom`
+- `lang.unpinRow`
+
+```js
+Grid.grid('container', {
+    lang: {
+        pinRowTop: 'Pin to top',
+        pinRowBottom: 'Pin to bottom',
+        unpinRow: 'Remove pin'
+    }
+});
+```
+
 ## Nested submenus
 
 Any action item can define `items` to become a branch item with a submenu.

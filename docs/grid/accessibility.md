@@ -18,7 +18,8 @@ Accessibility features are enabled by default, and we generally recommend keepin
         enabled: false,
         announcements: {
             sorting: true,
-            filtering: true
+            filtering: true,
+            rowPinning: true
         }
     }
 }
@@ -27,6 +28,21 @@ Accessibility features are enabled by default, and we generally recommend keepin
 Setting `accessibility.enabled: false` disables all a11y features, including ARIA attributes and any [ARIA live announcements](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/ARIA_Live_Regions).
 
 All `accessibility` options are optional, and options in `announcements` override the global `enabled` option.
+
+## Row pinning announcements
+
+Row pinning live announcements are enabled by default and can be toggled with
+`accessibility.announcements.rowPinning`.
+
+```js
+{
+    accessibility: {
+        announcements: {
+            rowPinning: false
+        }
+    }
+}
+```
 
 ## Localization
 
@@ -54,11 +70,22 @@ To customize the default language or wording for ARIA attributes and announcers,
                     filterApplied: "Filter applied for {columnId}, {condition} {value}. {rowsCount} results found.",
                     ...
                 }
+            },
+            rowPinning: {
+                announcements: {
+                    pinned: "Row {rowId} pinned to {position}.",
+                    unpinned: "Row {rowId} unpinned."
+                }
             }
         }
     }
 }
 ```
+
+For row pinning announcements, available template variables are:
+
+- `{rowId}`
+- `{position}` (for the `pinned` message)
 
 For a complete list of available options, check out the [API reference](https://api.highcharts.com/dashboards/#interfaces/Grid_Options.LangOptions).
 

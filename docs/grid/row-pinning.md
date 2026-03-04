@@ -56,6 +56,41 @@ Use `pinning.idColumn` to define stable row identity for persistence and
 restore.
 If it is not set, Grid uses a default row id.
 
+## Resolve pinning from row data
+
+You can compute pinned rows dynamically with `pinning.resolve`.
+
+The callback receives a row object and should return:
+
+- `'top'` to pin the row to the top section
+- `'bottom'` to pin the row to the bottom section
+- `null` or `undefined` to keep the row unpinned
+
+```js
+Grid.grid('container', {
+    rendering: {
+        rows: {
+            pinning: {
+                idColumn: 'id',
+                resolve: function (row) {
+                    if (row.priority === 'critical') {
+                        return 'top';
+                    }
+                    if (row.status === 'done') {
+                        return 'bottom';
+                    }
+                    return null;
+                }
+            }
+        }
+    }
+});
+```
+
+`resolve` is recomputed when query state changes. Explicit `topIds` and
+`bottomIds` are applied first, and `resolve` adds additional IDs that are not
+already pinned explicitly.
+
 ## Runtime API
 
 Use runtime methods to update pinning dynamically:
@@ -64,6 +99,7 @@ Use runtime methods to update pinning dynamically:
 await grid.pinRow('row-001'); // defaults to top
 await grid.pinRow('row-010', 'top');
 await grid.pinRow('row-025', 'bottom');
+await grid.pinRow('row-050', 'top', 0); // insert at index 0 in top section
 await grid.toggleRow('row-025'); // defaults to top when currently unpinned
 await grid.toggleRow('row-030', 'bottom');
 await grid.unpinRow('row-010');
@@ -133,6 +169,19 @@ columnDefaults: {
         }
     }
 }
+```
+
+Built-in action labels are localized through root language options:
+`lang.pinRowTop`, `lang.pinRowBottom`, and `lang.unpinRow`.
+
+```js
+Grid.grid('container', {
+    lang: {
+        pinRowTop: 'Pin to top',
+        pinRowBottom: 'Pin to bottom',
+        unpinRow: 'Remove pin'
+    }
+});
 ```
 
 You can also group built-ins in a submenu:
