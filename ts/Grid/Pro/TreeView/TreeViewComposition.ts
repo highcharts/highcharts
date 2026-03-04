@@ -54,8 +54,6 @@ export function compose(
 
 /**
  * Initializes or refreshes TreeView projection infrastructure after render.
- *
- * @this Grid
  */
 function onAfterRenderViewport(this: Grid): void {
     if (!this.treeProjectionController) {
@@ -68,8 +66,6 @@ function onAfterRenderViewport(this: Grid): void {
 
 /**
  * Cleans up TreeView projection infrastructure on Grid destroy.
- *
- * @this Grid
  */
 function onBeforeDestroy(this: Grid): void {
     this.treeProjectionController?.destroy();
