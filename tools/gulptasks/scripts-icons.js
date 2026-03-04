@@ -130,7 +130,9 @@ async function scriptsIcons() {
         const processedIcon = rawIcon.replace(/^\uFEFF/u, '') // UTF-8 BOM
             .replace(/<\?xml[\s\S]*?\?>\s*/iu, '') // <?xml ... ?>
             .replace(/<!DOCTYPE[\s\S]*?>\s*/iu, '') // <!DOCTYPE ...>
-            .replace(/<!--[\s\S]*?-->/gu, '') // all comments
+            .replace(/<!--[\s\S]*?(?:-->|$)/gu, '') // all comments
+            .replace(/<!--/gu, '') // remove any remaining <!--
+            .replace(/-->/gu, '') // remove any remaining -->
             .replace(/<svg\b[^>]*>\s*(\r?\n)?/iu, '') // <svg> tag & whitespace
             .replace(/\s+id="[^"]*"/giu, '') // id attributes
             .replace(/\t/gu, '    ') // replace tabs with spaces
