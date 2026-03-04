@@ -165,6 +165,7 @@ module.exports = {
                     'grid/theming/conditional',
                 ]
             },
+            'grid/responsive-grid',
             'grid/data-providers',
             'grid/events',
             'grid/accessibility',
