@@ -351,7 +351,6 @@ input.highcharts-input-search-indicators {
 }
 
 .highcharts-popup-color-wrapper {
-    clear: both;
     display: flex;
     gap: 8px;
     align-items: center;
@@ -364,22 +363,16 @@ input.highcharts-input-search-indicators {
 .highcharts-popup-color-wrapper .highcharts-popup-field-color,
 .highcharts-popup-color-wrapper .highcharts-popup-opacity,
 .highcharts-popup-color-wrapper .highcharts-popup-opacity-number {
-    float: none;
     margin-bottom: 0;
     height: 32px;
-    box-sizing: border-box;
 }
 
 .highcharts-popup-color-wrapper .highcharts-popup-opacity-number {
-    width: 55px;
-    flex-shrink: 0;
-    padding-left: 4px;
-    padding-right: 4px;
+    flex: 0 0 58px;
 }
 
 .highcharts-popup-color-wrapper .highcharts-popup-field-color {
-    flex-shrink: 0;
-    width: 40px;
+    flex: 0 0 40px;
     padding: 2px;
     cursor: pointer;
 }
@@ -391,32 +384,20 @@ input.highcharts-input-search-indicators {
 }
 
 .highcharts-popup-color-wrapper .highcharts-popup-field-text {
-    flex: 0 1 auto;
-    min-width: 0;
-    max-width: 140px;
+    flex: 1 0 80px;
 }
 
 .highcharts-popup-color-wrapper .highcharts-popup-opacity {
-    flex: 1;
-    min-width: 50%;
-    margin-left: 8px;
+    flex: 1 1 50%;
     padding: 0;
     border: none;
     cursor: pointer;
-    display: flex;
-    align-items: center;
-    --highcharts-slider-rgb: #000000;
-}
-
-.highcharts-popup-color-wrapper .highcharts-popup-opacity {
     -webkit-appearance: none;
     appearance: none;
     background: transparent;
 }
 
 .highcharts-popup-color-wrapper .highcharts-popup-opacity::-webkit-slider-runnable-track {
-    -webkit-appearance: none;
-    appearance: none;
     background:
         linear-gradient(
             to right,
@@ -455,8 +436,8 @@ input.highcharts-input-search-indicators {
 .highcharts-popup-color-wrapper .highcharts-popup-opacity::-moz-range-thumb {
     -moz-appearance: none;
     appearance: none;
-    width: 18px;
-    height: 18px;
+    width: 12px;
+    height: 12px;
     border-radius: 50%;
     background: var(--highcharts-slider-rgb, #000000);
     border: 3px solid var(--highcharts-neutral-color-3, #f7f7f7);
