@@ -86,6 +86,9 @@ const SeriesLabelDefaults: SeriesLabelOptions = {
      * Callback function to format each of the series' labels. The
      * `this` keyword refers to the series object. By default the
      * `formatter` is undefined and the `series.name` is rendered.
+     * Since v12.5.0, the callback also receives `ctx` as the first argument,
+     * so that arrow functions can access the same context as regular
+     * functions using `this`.
      *
      * @type {Highcharts.FormatterCallbackFunction<Series>}
      * @since 8.1.0

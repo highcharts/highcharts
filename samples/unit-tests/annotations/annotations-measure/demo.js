@@ -269,3 +269,50 @@ QUnit.test('Measure annotation border', function (assert) {
         'StrokeWidth should be taken into account when drawing annotation'
     );
 });
+
+QUnit.test(
+    'Measure label formatter arrow function should receive ctx argument',
+    function (assert) {
+        let formatterCtx;
+
+        const chart = Highcharts.chart('container', {
+            annotations: [{
+                type: 'measure',
+                typeOptions: {
+                    point: {
+                        x: 0.5,
+                        y: 6
+                    },
+                    background: {
+                        width: 200 + 'px',
+                        height: 150 + 'px'
+                    },
+                    label: {
+                        formatter: ctx => {
+                            formatterCtx = ctx;
+                            return ctx ? 'CTX' : 'NOCTX';
+                        }
+                    }
+                }
+            }],
+
+            series: [{
+                data: [5, 2, 1.5, 5, 6, 7, 8, 3, 2, 4, 4, 4, 4, 3]
+            }]
+        });
+
+        const measure = chart.annotations[0];
+
+        assert.strictEqual(
+            formatterCtx,
+            measure,
+            'Measure formatter should receive annotation instance as ctx.'
+        );
+
+        assert.strictEqual(
+            measure.labels[0].graphic.text.textStr,
+            'CTX',
+            'Arrow-function measure formatter should return rendered text.'
+        );
+    }
+);

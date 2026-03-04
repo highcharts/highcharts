@@ -533,7 +533,10 @@ function drawSeriesLabels(chart: Chart): void {
                 if (typeof labelOptions.format === 'string') {
                     labelText = format(labelOptions.format, series, chart);
                 } else if (labelOptions.formatter) {
-                    labelText = labelOptions.formatter.call(series);
+                    labelText = labelOptions.formatter.call(
+                        series,
+                        series
+                    );
                 }
 
                 series.labelBySeries = label = chart.renderer
