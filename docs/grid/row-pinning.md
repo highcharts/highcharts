@@ -158,46 +158,14 @@ Event payload fields:
 
 ## Built-in context menu actions
 
-The cell context menu supports built-in row pinning actions:
-`pinRowTop`, `pinRowBottom`, and `unpinRow`.
+Available built-in actions are:
 
-```js
-columnDefaults: {
-    cells: {
-        contextMenu: {
-            items: ['pinRowTop', 'pinRowBottom', 'unpinRow']
-        }
-    }
-}
-```
+- `pinRowTop`
+- `pinRowBottom`
+- `unpinRow`
 
-Built-in action labels are localized through root language options:
-`lang.pinRowTop`, `lang.pinRowBottom`, and `lang.unpinRow`.
-
-```js
-Grid.grid('container', {
-    lang: {
-        pinRowTop: 'Pin to top',
-        pinRowBottom: 'Pin to bottom',
-        unpinRow: 'Remove pin'
-    }
-});
-```
-
-You can also group built-ins in a submenu:
-
-```js
-columnDefaults: {
-    cells: {
-        contextMenu: {
-            items: [{
-                label: 'Pinning',
-                items: ['pinRowTop', 'pinRowBottom', 'unpinRow']
-            }]
-        }
-    }
-}
-```
+For configuration and customization details, see
+[Cell context menu](https://www.highcharts.com/docs/grid/cell-context-menu).
 
 ## Sorting and filtering behavior
 
