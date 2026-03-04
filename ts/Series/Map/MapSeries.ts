@@ -612,7 +612,7 @@ class MapSeries extends ScatterSeries {
      * @private
      */
     public hasData(): boolean {
-        return !!this.dataTable.modified.rowCount;
+        return !!this.dataTable.getModified().rowCount;
     }
 
     /**

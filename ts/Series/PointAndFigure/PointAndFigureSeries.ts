@@ -132,7 +132,7 @@ class PointAndFigureSeries extends ScatterSeries {
     public getProcessedData(): Series.ProcessedDataObject {
         if (!this.pnfDataGroups) {
             return {
-                modified: this.dataTable.modified,
+                modified: this.dataTable.getModified(),
                 cropped: false,
                 cropStart: 0,
                 closestPointRange: 1
@@ -148,10 +148,10 @@ class PointAndFigureSeries extends ScatterSeries {
                 boxSize : relativeLength(boxSize, yData[0]),
             pnfDataGroups = series.pnfDataGroups,
             reversal = calculatedBoxSize * options.reversalAmount,
-            dataTable = this.dataTable.modified,
-            modified = dataTable === dataTable.modified ?
-                new DataTableCore() :
-                dataTable;
+            dataTable = this.dataTable.getModified(),
+            modified = dataTable === this.dataTable ?
+                dataTable :
+                new DataTableCore();
 
         series.calculatedBoxSize = calculatedBoxSize;
 

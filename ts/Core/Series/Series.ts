@@ -1048,19 +1048,19 @@ class Series {
      * @function Highcharts.Series#getColumn
      */
     public getColumn(
-        columnName: string,
+        columnId: string,
         modified?: boolean,
         matchLength?: boolean
     ): Array<number> {
-        const table = modified ? this.dataTable.modified : this.dataTable,
+        const table = modified ? this.dataTable.getModified() : this.dataTable,
             rowCount = table.rowCount,
             usingModified = this.dataTable !== table,
-            column = table.getColumn(columnName, true) as Array<number>;
+            column = table.getColumn(columnId, true) as Array<number>;
 
         // When there is no x column in the data set, generate an internal x
         // column for the series. The `xColumn` array is cached and reused, but
         // cleared on series update.
-        if (columnName === 'x' && !usingModified) {
+        if (columnId === 'x' && !usingModified) {
             // Return cached xColumn if it exists
             if (this.xColumn) {
                 return this.xColumn;
@@ -1502,9 +1502,9 @@ class Series {
                         table.setColumns((
                             autoX ? pointArrayMap : dataColumnKeys
                         ).reduce(
-                            (columns, columnName, i):
+                            (columns, columnId, i):
                             DataTable.ColumnCollection => {
-                                columns[columnName] = colArray[i];
+                                columns[columnId] = colArray[i];
                                 return columns;
                             }, {} as DataTable.ColumnCollection));
 
@@ -2052,7 +2052,7 @@ class Series {
         const series = this,
             options = series.options,
             dataOptions = series.hasProcessedDataTable ? void 0 : options.data,
-            table = series.dataTable.modified,
+            table = series.dataTable.getModified(),
             xData = series.getColumn('x', true),
             PointClass = series.pointClass,
             processedDataLength = table.rowCount,
@@ -2251,7 +2251,7 @@ class Series {
                 this.options.getExtremesFromAll, // #4599, #21003
             table = getExtremesFromAll && this.cropped ?
                 this.dataTable :
-                this.dataTable.modified,
+                this.dataTable.getModified(),
             rowCount = table.rowCount,
             customData = yData || this.stackedYData,
             yAxisData = customData ?

@@ -38,7 +38,7 @@ import Sync from '../Sync/Sync';
  * */
 
 export interface Options extends Component.Options {
-    columnName: string;
+    columnId: string;
 
     /**
      * Connector options
@@ -65,7 +65,7 @@ export interface Options extends Component.Options {
      * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/kpi-component/threshold/ | Set a threshold}
      *
      */
-    threshold?: number|Array<number>;
+    threshold?: number | Array<number>;
 
     /**
      * Array of two colors strings that are applied when threshold is
@@ -83,7 +83,7 @@ export interface Options extends Component.Options {
     /**
      * The value that is displayed in KPI component.
      */
-    value?: number|string;
+    value?: number | string;
 
     /**
      * The minimal value of the font size, that KPI component should have.
@@ -94,7 +94,7 @@ export interface Options extends Component.Options {
      * The KPI's component subtitle. This can be used both to display
      * a subtitle below the main title.
      */
-    subtitle?: string|SubtitleOptions;
+    subtitle?: string | SubtitleOptions;
 
     /**
      * Sync options for the component.
@@ -163,7 +163,7 @@ export interface Options extends Component.Options {
      * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/kpi-component/formula/ | KPI value formula}
      *
      */
-    formula?: KPIComponent.FormulaType|FormulaCallbackFunction;
+    formula?: KPIComponent.FormulaType | FormulaCallbackFunction;
 }
 /**
  * Options for linking KPI value to the chart point.
@@ -205,7 +205,7 @@ export type SubtitleType = 'text' | 'diff' | 'diffpercent';
 export interface ValueFormatterCallbackFunction {
     (
         this: KPIComponent,
-        value: (number|string)
+        value: (number | string)
     ): string;
 }
 
@@ -214,7 +214,7 @@ export interface FormulaCallbackFunction {
     (
         this: KPIComponent,
         values: DataTable.Column
-    ): (string|number);
+    ): (string | number);
 }
 
 /**
@@ -229,7 +229,7 @@ export interface FormulaCallbackFunction {
  */
 export interface SyncOptions extends Sync.RawOptionsRecord {
     /**
-     * Extremes sync is available for Highcharts, KPI, DataGrid and
+     * Extremes sync is available for Highcharts, KPI, Grid and
      * Navigator components. Sets a common range of displayed data. For the
      * KPI Component sets the last value.
      *
@@ -239,7 +239,7 @@ export interface SyncOptions extends Sync.RawOptionsRecord {
      *
      * @default false
      */
-    extremes?: boolean|Sync.OptionsEntry;
+    extremes?: boolean | Sync.OptionsEntry;
 }
 
 /* *

@@ -1,4 +1,4 @@
-describe('Grid events.', () => {
+describe('Grid sorting.', () => {
     before(() => {
         cy.visit('grid-pro/cypress/sorting-options');
     });
@@ -14,7 +14,7 @@ describe('Grid events.', () => {
             ).to.deep.equal([1.5, 2.53, 4.5, 5]);
         })
 
-        cy.get('th[data-column-id="price"]').should('have.class', 'highcharts-datagrid-column-sorted-asc');
+        cy.get('th[data-column-id="price"]').should('have.class', 'hcg-column-sorted-asc');
     });
 
     it('Should be able to turn off sorting.', () => {
@@ -28,7 +28,7 @@ describe('Grid events.', () => {
             ).to.deep.equal([1.5, 2.53, 5, 4.5]);
         })
 
-        cy.get('th[data-column-id="price"]').should('have.not.class', 'highcharts-datagrid-column-sorted-asc');
+        cy.get('th[data-column-id="price"]').should('have.not.class', 'hcg-column-sorted-asc');
     });
 
     it('Clicking on the `icon` column header should do nothing.', () => {
@@ -58,7 +58,7 @@ describe('Grid events.', () => {
             ).to.equal('desc');
         })
 
-        cy.get('th[data-column-id="weight"]').should('have.class', 'highcharts-datagrid-column-sorted-desc');
+        cy.get('th[data-column-id="weight"]').should('have.class', 'hcg-column-sorted-desc');
     });
 
     it('Sorting the `icon` column should be possible by the code.', () => {
@@ -73,7 +73,7 @@ describe('Grid events.', () => {
             ).to.deep.equal(['a', 'd', 'b', 'c']);
         })
 
-        cy.get('th[data-column-id="icon"]').should('have.class', 'highcharts-datagrid-column-sorted-asc');
+        cy.get('th[data-column-id="icon"]').should('have.class', 'hcg-column-sorted-asc');
     });
 
     it ('Editing a cell in sorted column should resort the table.', () => {

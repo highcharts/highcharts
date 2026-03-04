@@ -6,48 +6,70 @@ sidebar_label: "Installation"
 
 Highcharts Grid is available in two versions:
 
-**Highcharts Grid Lite** – A free version with a basic feature set.
+**Highcharts Grid Lite** – A free version with a basic feature set, focused on viewing and interacting with data.
 
-**Highcharts Grid Pro** – A more advanced, commercial version that currently requires a [Highcharts Dashboards](https://www.highcharts.com/docs/dashboards/grid-component) license and includes additional features. Though it is part of the Dashboards package and license, Grid Pro can also be used as a [standalone component](https://www.highcharts.com/docs/dashboards/grid-standalone).
+**Highcharts Grid Pro** – A commercial version that includes everything in Grid Lite plus advanced features such as cell editing, data validation, sparklines and events to expand functionality and tailor the grid to your needs.
 
-## Installing Grid Pro
+## Install via NPM
 
-See the [Dashboards Grid Standalone](https://www.highcharts.com/docs/dashboards/grid-standalone) article for more information on installing **Grid Pro**.
+You can install both **Grid Lite** and **Grid Pro** via NPM and import the package into your project.
 
-## Installing Grid Lite
-
-### Install via NPM
-
-You can install **Grid Lite** via NPM:
+Grid Lite
 
 ```bash
 npm install @highcharts/grid-lite
 ```
 
-Then, import the package into your project:
-
 ```js
 import * as Grid from '@highcharts/grid-lite/grid-lite';
-import '@highcharts/grid-lite/css/grid.css';
+import '@highcharts/grid-lite/css/grid-lite.css';
 ```
 
-### Include Grid Lite via `<script>` tag
+Grid Pro
 
-Load **Grid Lite** from our public CDN by adding the appropriate JavaScript and CSS files to your page's `<head>` section:
+```bash
+npm install @highcharts/grid-pro
+```
+
+```js
+import * as Grid from '@highcharts/grid-pro/grid-pro';
+import '@highcharts/grid-pro/css/grid-pro.css';
+```
+
+## Include Grid via `<script>` tag
+
+Load **Grid** from the jsDelivr CDN by adding the appropriate JavaScript and CSS files to your page's `<head>` section.
+
+Grid Lite:
 
 ```html
 <script src="https://cdn.jsdelivr.net/npm/@highcharts/grid-lite/grid-lite.js"></script>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@highcharts/grid-lite/css/grid.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@highcharts/grid-lite/css/grid-lite.css" />
 ```
 
-Alternatively, you can download the files from [highcharts.com](https://www.highcharts.com/download/) and host it on your own server:
+Grid Pro:
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/grid-pro.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/css/grid-pro.css" />
+```
+
+Alternatively, you can download the files from [highcharts.com](https://www.highcharts.com/download/) and host it on your own server.
+
+Grid Lite:
 
 ```html
 <script src="../code/grid/grid-lite.js"></script>
-<link rel="stylesheet" href="../code/grid/css/grid.css" />
+<link rel="stylesheet" href="../code/grid/css/grid-lite.css" />
+```
+
+Grid Pro:
+
+```html
+<script src="../code/grid/grid-pro.js"></script>
+<link rel="stylesheet" href="../code/grid/css/grid-pro.css" />
 ```
 
 ### Get Started
-Once installed, you are ready to use **Grid Lite**. Check out [Your First Grid](https://www.highcharts.com/docs/grid/general) to learn more.
 
-
+Once installed, you are ready to use **Highcharts Grid**. Check out [Your first Grid](https://www.highcharts.com/docs/grid/general) to learn more.

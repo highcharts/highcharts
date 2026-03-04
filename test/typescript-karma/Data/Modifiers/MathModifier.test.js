@@ -12,7 +12,7 @@ QUnit.test('MathModifier back references', function (assert) {
 
     table.setModifier(new MathModifier());
 
-    const modified = table.modified;
+    const modified = table.getModified();
 
     assert.strictEqual(
         modified.getCell('Integers', 10), // table indexes begin with 0 (=A1)
@@ -67,19 +67,19 @@ QUnit.test('MathModifier column formula', function (assert) {
     }));
 
     assert.strictEqual(
-        table.modified.getCell('Celsius', 1),
+        table.getModified().getCell('Celsius', 1),
         10,
         'Celsius should be calculated.'
     );
 
     assert.deepEqual(
-        table.modified.getColumn('Fahrenheit'),
+        table.getModified().getColumn('Fahrenheit'),
         [32, 50, 68, 86, 104],
         'Fahrenheit should be calculated without endless decimals.'
     );
 
     assert.strictEqual(
-        table.modified.getCell('Celsius_Opposite', 1),
+        table.getModified().getCell('Celsius_Opposite', 1),
         -10,
         'Opposite celsius is a negative value.'
     );
@@ -105,13 +105,13 @@ QUnit.test('MathModifier advanced formulas', function (assert) {
     }));
 
     assert.deepEqual(
-        table.modified.getColumn('ColumnD'),
+        table.getModified().getColumn('ColumnD'),
         [8110, 4920, 16870, 140, 16950],
         'The advanced basic operators formula is properly calculated.'
     );
 
     assert.deepEqual(
-        table.modified.getColumn('ColumnE'),
+        table.getModified().getColumn('ColumnE'),
         [176040, 281000, 3842000, 63625, 161201],
         'The advanced aggregate functions formula is properly calculated.'
     );

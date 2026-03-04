@@ -218,7 +218,15 @@ const initGrid = data => {
                     }
                 }
             }
-        }]
+        }],
+        pagination: {
+            enabled: true,
+            controls: {
+                pageButtons: {
+                    count: 5
+                }
+            }
+        }
     });
 };
 
@@ -241,5 +249,5 @@ const initGrid = data => {
     await dataTable.setModifier(mathModifier);
 
     // Init the grid with the combined data
-    initGrid(dataTable.modified);
+    initGrid(dataTable.getModified());
 })();

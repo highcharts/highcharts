@@ -123,14 +123,8 @@ namespace CellEditingComposition {
             TableCellClass,
             'stoppedEditing',
             function (e: AnyRecord): void {
-                const cellEvents = merge(
-                    // Backward compatibility
-                    this.column.viewport.grid.options?.events?.cell,
-                    this.column.options.cells?.events
-                );
-
                 if (e.submit) {
-                    cellEvents?.afterEdit?.call(this);
+                    this.column.options.cells?.events?.afterEdit?.call(this);
                 }
 
                 announceA11yUserEditedCell(
@@ -195,10 +189,7 @@ namespace CellEditingComposition {
     function afterColumnInit(this: Column): void {
         const { options } = this;
 
-        if (
-            options?.cells?.editMode?.enabled ||
-            options?.cells?.editable
-        ) {
+        if (options?.cells?.editMode?.enabled) {
             this.editModeRenderer = createEditModeRenderer(this);
         }
     }
@@ -244,13 +235,7 @@ namespace CellEditingComposition {
         const editableLang = this.row.viewport.grid.options
             ?.lang?.accessibility?.cellEditing?.editable;
 
-        if (
-            (
-                !this.column.options.cells?.editable &&
-                !this.column.options.cells?.editMode?.enabled
-            ) ||
-            !editableLang
-        ) {
+        if (!this.column.options.cells?.editMode?.enabled || !editableLang) {
             return;
         }
 
@@ -422,13 +407,6 @@ declare module '../../Core/Accessibility/A11yOptions' {
 
 declare module '../../Core/Options' {
     interface ColumnCellOptions {
-        /**
-         * @deprecated
-         * Use `editMode.enabled` instead. This option will be removed in the
-         * next major release.
-         */
-        editable?: boolean;
-
         /**
          * Whether to enabled the cell edit mode functionality. It allows to
          * edit the cell value in a separate input field that is displayed

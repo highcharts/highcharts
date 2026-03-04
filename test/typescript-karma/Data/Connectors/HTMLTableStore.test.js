@@ -3,7 +3,7 @@ import HTMLTableConverter from '/base/code/es-modules/Data/Converters/HTMLTableC
 import U from '/base/code/es-modules/Core/Utilities.js';
 import { registerConnectorEvents } from './utils.js'
 import CSVConnector from '/base/code/es-modules/Data/Connectors/CSVConnector.js';
-const { test, only } = QUnit;
+const { test } = QUnit;
 const { createElement } = U;
 
 const tableHTML = `<table id="data">
@@ -275,21 +275,21 @@ test('HTMLTableConnector from HTML element', function (assert) {
     const tableElement = createElement('div');
     tableElement.innerHTML = tableHTML;
 
-    const connector = new HTMLTableConnector({ table: tableElement });
+    const connector = new HTMLTableConnector({ htmlTable: tableElement });
 
     const doneLoading = assert.async();
 
     registerConnectorEvents(connector, registeredEvents, assert);
 
-    connector.on('afterLoad', (e) => {
-        const eventTable = Object.values(e.tables)[0];
+    connector.on('afterLoad', () => {
+        const table = connector.getTable();
         assert.deepEqual(
             registeredEvents,
             ['load', 'afterLoad'],
             'Events are fired in the correct order'
         )
         assert.strictEqual(
-            eventTable.getRowCount(),
+            table.getRowCount(),
             tableElement.querySelectorAll('tr').length - 1,
             'Connector loaded from HTML element has same amount of rows minus the column names'
         )
@@ -309,7 +309,7 @@ test('HTMLTableConverter', function (assert) {
     const dataconverter = new HTMLTableConverter({ tableElement });
     const done = assert.async();
 
-    dataconverter.on('afterParse', e => {
+    dataconverter.on('afterParse', () => {
         assert.strictEqual(
             dataconverter.tableElementID,
             tableElement.id,
@@ -330,9 +330,9 @@ test('Export as HTML', async (assert) => {
     await csvconnector.load();
 
     const connector = new HTMLTableConnector({
-            dataTable: {
-                columns: csvconnector.table.getColumns()
-            }
+            dataTables: [{
+                columns: csvconnector.getTable().getColumns()
+            }]
         }),
         converter = connector.converter;
 
@@ -347,18 +347,6 @@ test('Export as HTML', async (assert) => {
         2,
         'Table head should have two rows'
     );
-
-    // To be revisited
-    // assert.strictEqual(
-    //     HTMLElement.querySelectorAll('th[colspan="3"]').length,
-    //     1,
-    //     'Exported table should have one header with colspan 3'
-    // );
-    // assert.strictEqual(
-    //     HTMLElement.querySelectorAll('th[rowspan="2"]').length,
-    //     2,
-    //     'Exported table should have 2 headers with rowspan 2'
-    // );
 
     // Multilevel headers disabled
     htmlExport = converter.export(connector, {
@@ -402,7 +390,7 @@ test('Export as HTML', async (assert) => {
     );
 
     // Make sure the exported table is parseable, and returns the same result
-    const connectorWithExport = new HTMLTableConnector({ table: tableElement });
+    const connectorWithExport = new HTMLTableConnector({ htmlTable: tableElement });
     const done = assert.async();
 
     connectorWithExport.on('afterLoad', e => {

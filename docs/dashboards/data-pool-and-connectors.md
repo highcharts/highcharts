@@ -43,8 +43,10 @@ async function run() {
     // ...
   }, true);
   // A component usually performs access to the data pool.
-  const table = await board.dataPool.getConnectorTable('My Currency Data');
-  const modifiedTable = table.modified;
+  const table = await board.dataPool
+    .getConnector('My Currency Data')
+    .then((connector) => connector.getTable());
+  const modifiedTable = table.getModified();
 }
 run();
 ```

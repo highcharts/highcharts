@@ -198,8 +198,8 @@ class ConnectorHandler {
         if (this.presentationModifier) {
             this.presentationTable =
                 this.presentationModifier.modifyTable(
-                    table.modified.clone()
-                ).modified;
+                    table.getModified().clone()
+                ).getModified();
         } else {
             this.presentationTable = table;
         }
@@ -293,12 +293,12 @@ class ConnectorHandler {
         if (connector) {
             tableEvents.push(table.on(
                 'afterSetModifier',
-                (e): void => {
+                (e: DataTable.SetModifierEvent): void => {
                     if (e.type === 'afterSetModifier') {
                         clearTimeout(this.tableEventTimeout);
                         this.tableEventTimeout = Globals.win.setTimeout(
                             (): void => {
-                                connector.emit({
+                                this.component.emit({
                                     ...e,
                                     type: 'tableChanged',
                                     targetConnector: connector

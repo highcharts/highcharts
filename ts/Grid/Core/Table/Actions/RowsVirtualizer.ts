@@ -124,7 +124,7 @@ class RowsVirtualizer {
      */
     public initialRender(): void {
         // Initial reflow to set the viewport height
-        if (this.rowSettings?.virtualization) {
+        if (this.viewport.virtualRows) {
             this.viewport.reflow();
         }
 
@@ -154,7 +154,7 @@ class RowsVirtualizer {
 
         this.renderRows(this.rowCursor);
 
-        if (this.rowSettings?.virtualization) {
+        if (this.viewport.virtualRows) {
 
             if (oldScrollTop !== void 0) {
                 tbody.scrollTop = oldScrollTop;
@@ -259,7 +259,7 @@ class RowsVirtualizer {
             return;
         }
 
-        const isVirtualization = this.rowSettings?.virtualization;
+        const isVirtualization = this.viewport.virtualRows;
         const rowsPerPage = isVirtualization ? Math.ceil(
             (vp.grid.tableElement?.clientHeight || 0) /
             this.defaultRowHeight
@@ -376,7 +376,7 @@ class RowsVirtualizer {
     public adjustRowHeights(): void {
         if (
             this.strictRowHeights ||
-            !this.rowSettings?.virtualization
+            !this.viewport.virtualRows
         ) {
             return;
         }

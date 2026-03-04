@@ -140,6 +140,7 @@ const CODE_FILTER = {
     ),
     'grid-lite': [
         // The main cleanup is done in `scripts-ts` at the `code` level.
+        ['grid', 'css', 'grid-pro.css'],
         ['grid', 'es-modules', 'Grid', 'Pro'],
         ['grid', 'es-modules', 'masters', 'grid-pro.'],
         ['grid', 'grid-pro.']
@@ -148,12 +149,15 @@ const CODE_FILTER = {
     ),
     'grid-pro': [
         // The main cleanup is done in `scripts-ts` at the `code` level.
+        ['grid', 'css', 'grid-lite.css'],
+        ['grid', 'css', 'grid.css'],
         ['grid', 'es-modules', 'Grid', 'Lite'],
         ['grid', 'es-modules', 'masters', 'grid-lite.'],
         ['grid', 'grid-lite.']
     ].map(
         filePath => Path.join(CODE_DIRECTORY, ...filePath)
-    )
+    ),
+    dashboards: []
 };
 
 /**
@@ -197,7 +201,8 @@ const VENDOR_FILTER = [
  */
 const PRODUCTS = {
     Highcharts: ['highcharts', 'highstock', 'highmaps', 'gantt'],
-    Grid: ['grid-lite'/* , 'grid-pro'*/]
+    Grid: ['grid-lite', 'grid-pro'],
+    Dashboards: ['dashboards']
 };
 
 /* *
@@ -228,6 +233,9 @@ function distCopy() {
 
         if (distProduct === 'Grid') {
             sourceDir = Path.join(CODE_DIRECTORY, 'grid');
+            codeExtensions = [...CODE_EXTENSIONS, '.ts']; // copy also d.ts files
+        } else if (distProduct === 'Dashboards') {
+            sourceDir = Path.join(CODE_DIRECTORY, 'dashboards');
             codeExtensions = [...CODE_EXTENSIONS, '.ts']; // copy also d.ts files
         } else {
             sourceDir = CODE_DIRECTORY;
@@ -268,11 +276,20 @@ function distCopy() {
                 // No need to copy CSS, GFX, i18n, and Graphics for Grid from root
                 continue;
             }
+            if (distProduct === 'Dashboards') {
+                const dashGfx = Path.join(CODE_DIRECTORY, product, 'gfx');
+                directory = Path.join(TARGET_DIRECTORY, product, 'code', 'gfx');
+                FsLib.copyAllFiles(dashGfx, directory, true, file => (
+                    file.includes('dashboards')
+                ));
+                LogLib.success('Created', directory);
+                continue;
+            }
 
             directory = Path.join(TARGET_DIRECTORY, product, 'code', 'css');
 
             // Copy all the CSS files to /code
-            FsLib.copyAllFiles(CSS_DIRECTORY, directory, true, fileName => !['dashboards', 'datagrid', 'grid']
+            FsLib.copyAllFiles(CSS_DIRECTORY, directory, true, fileName => !['dashboards', 'grid']
                 .some(name => fileName.includes(`${name}.css`)));
 
             FsLib.copyAllFiles(CODE_DIRECTORY + '/' + CSS_DIRECTORY, directory, true);

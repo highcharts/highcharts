@@ -16,9 +16,29 @@ if (chartArray.length > 1) {
     chartToShow = chartArray[1];
 }
 
+// Convert a cell value to a number.
+function convertToNumber(value, useNaN) {
+    switch (typeof value) {
+    case 'boolean':
+        return value ? 1 : 0;
+    case 'number':
+        return (isNaN(value) && !useNaN ? null : value);
+    default:
+        value = parseFloat(`${value ?? ''}`);
+        return (isNaN(value) && !useNaN ? null : value);
+    }
+}
+
+// Retrieve a connector data table.
+async function getConnectorTable(dataPool, connectorId) {
+    return dataPool
+        .getConnector(connectorId)
+        .then(connector => connector.getTable());
+}
+
 function climate() {
     const MathModifier = Dashboards.DataModifier.types.Math;
-    const RangeModifier = Dashboards.DataModifier.types.Range;
+    const FilterModifier = Dashboards.DataModifier.types.Filter;
 
     // left arrow
     Highcharts.SVGRenderer.prototype.symbols.leftarrow = (x, y, w, h) => [
@@ -66,12 +86,10 @@ function climate() {
                 }, {
                     id: 'Cities',
                     type: 'CSV',
-                    options: {
-                        csvURL: (
-                            'https://www.highcharts.com/samples/data/' +
+                    csvURL: (
+                        'https://www.highcharts.com/samples/data/' +
                             'climate-cities.csv'
-                        )
-                    }
+                    )
                 }]
             },
             editMode: {
@@ -320,16 +338,14 @@ function climate() {
             ]
         }, true);
         const dataPool = board.dataPool;
-        const citiesTable = await dataPool.getConnectorTable('Cities');
+        const citiesTable = await getConnectorTable(dataPool, 'Cities');
 
         // Add city sources
         for (const row of citiesTable.getRowObjects()) {
             dataPool.setConnectorOptions({
                 id: row.city,
                 type: 'CSV',
-                options: {
-                    csvURL: row.csv
-                }
+                csvURL: row.csv
             });
         }
 
@@ -350,8 +366,8 @@ function climate() {
 
     async function setupCity(board, city, column, scale) {
         const dataPool = board.dataPool;
-        const citiesTable = await dataPool.getConnectorTable('Cities');
-        const cityTable = await dataPool.getConnectorTable(city);
+        const citiesTable = await getConnectorTable(dataPool, 'Cities');
+        const cityTable = await getConnectorTable(dataPool, city);
         const time = board.mountedComponents[0].component.chart.axes[0].min;
         const worldMap = board.mountedComponents[1].component.chart.series[1];
 
@@ -374,7 +390,7 @@ function climate() {
                 formula: 'F1*1.8-459.67'
             }]
         }));
-        cityTable.modified.setColumn(
+        cityTable.getModified().setColumn(
             'Date',
             (cityTable.getColumn('time') || []).map(
                 timestamp => new Date(timestamp)
@@ -396,17 +412,16 @@ function climate() {
             lat: cityInfo.lat,
             lon: cityInfo.lon,
             name: cityInfo.city,
-            y: cityTable.modified.getCellAsNumber(
+            y: convertToNumber(cityTable.getModified().getCell(
                 column,
                 cityTable.getRowIndexBy('time', time)
-            ) || Math.round((90 - Math.abs(cityInfo.lat)) / 3)
+            )) || Math.round((90 - Math.abs(cityInfo.lat)) / 3)
         });
 
     }
 
     async function updateBoard(board, city, column, scale, newData) {
         const dataPool = board.dataPool;
-        // const citiesTable = await dataPool.getConnectorTable('Cities');
         const colorMin = (column[0] !== 'T' ? 0 : (scale === 'C' ? -10 : 14));
         const colorMax = (column[0] !== 'T' ? 10 : (scale === 'C' ? 50 : 122));
         const colorStops = (
@@ -414,7 +429,8 @@ function climate() {
                 colorStopsDays :
                 colorStopsTemperature
         );
-        const selectionTable = await dataPool.getConnectorTable(
+        const selectionTable = await getConnectorTable(
+            dataPool,
             'Range ' +
             'Selection'
         );
@@ -425,30 +441,37 @@ function climate() {
 
         column = (column[0] === 'T' ? column + scale : column);
 
-        const cityTable = await dataPool.getConnectorTable(city);
+        const cityTable = await getConnectorTable(dataPool, city);
 
         if (newData) {
             // Update time range selector
             timeRangeSelector.chart.series[0].update({
                 type: column[0] === 'T' ? 'spline' : 'column',
-                data: cityTable.modified
+                data: cityTable.getModified()
                     .getRows(void 0, void 0, ['time', column])
             });
         }
 
         // Update range selection
-        selectionTable.setColumns(cityTable.modified.getColumns(), 0);
+        selectionTable.setColumns(cityTable.getModified().getColumns(), 0);
         const timeRangeMax = timeRangeSelector.chart.axes[0].max;
         const timeRangeMin = timeRangeSelector.chart.axes[0].min;
-        await selectionTable.setModifier(new RangeModifier({
-            modifier: 'Range',
-            ranges: [{
-                column: 'time',
-                maxValue: timeRangeMax,
-                minValue: timeRangeMin
-            }]
+        await selectionTable.setModifier(new FilterModifier({
+            modifier: 'Filter',
+            condition: {
+                operator: 'and',
+                conditions: [{
+                    operator: '>=',
+                    columnId: 'time',
+                    value: timeRangeMin
+                }, {
+                    operator: '<=',
+                    columnId: 'time',
+                    value: timeRangeMax
+                }]
+            }
         }));
-        const rangeTable = selectionTable.modified;
+        const rangeTable = selectionTable.getModified();
 
         // Update world map
         worldMap.chart.update({
@@ -460,20 +483,22 @@ function climate() {
         });
         (async () => {
             const dataPoints = worldMap.chart.series[1].data;
-            const lastTime = rangeTable
-                .getCellAsNumber('time', rangeTable.getRowCount() - 1);
+            const lastTime = convertToNumber(
+                rangeTable.getCell('time', rangeTable.getRowCount() - 1)
+            );
 
             for (const point of dataPoints) {
-                const pointTable = await dataPool.getConnectorTable(point.name);
+                const pointTable =
+                    await getConnectorTable(dataPool, point.name);
 
                 point.update({
                     custom: {
                         yScale: scale
                     },
-                    y: pointTable.modified.getCellAsNumber(
+                    y: convertToNumber(pointTable.getModified().getCell(
                         column,
                         pointTable.getRowIndexBy('time', lastTime)
-                    )
+                    ))
                 });
             }
         })();
@@ -483,7 +508,7 @@ function climate() {
         // const showCelsius = scale === 'C';
         if (newData) {
             // await selectionGrid.update({
-            //     dataGridOptions: {
+            //     gridOptions: {
             //         columns: {
             //             TNC: {
             //                 show: showCelsius
@@ -515,7 +540,7 @@ function climate() {
             // });
         }
 
-        // selectionGrid.dataGrid.scrollToRow(
+        // selectionGrid.grid.scrollToRow(
         //   selectionTable.getRowIndexBy('time', rangeTable.getCell('time', 0))
         // );
 
@@ -556,9 +581,7 @@ function minimal() {
             connectors: [{
                 id: 'Vitamin',
                 type: 'CSV',
-                options: {
-                    csv: csvData
-                }
+                csv: csvData
             }]
         },
         editMode: {
@@ -637,7 +660,7 @@ function minimal() {
             connector: {
                 id: 'Vitamin'
             },
-            type: 'DataGrid',
+            type: 'Grid',
             sync: {
                 highlight: true
             }
@@ -810,10 +833,8 @@ function extremes() {
             connectors: [{
                 id: 'Population',
                 type: 'CSV',
-                options: {
-                    csv,
-                    firstRowAsNames: true
-                }
+                csv,
+                firstRowAsNames: true
             }]
         },
         gui: {
@@ -1013,7 +1034,7 @@ function extremes() {
             connector: {
                 id: 'Population'
             },
-            type: 'DataGrid',
+            type: 'Grid',
             sync: {
                 extremes: true
             }

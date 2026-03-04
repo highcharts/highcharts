@@ -1,12 +1,17 @@
 QUnit.test(
     'Legend should be rendered below the range selector',
     function (assert) {
-        var chart = Highcharts.stockChart('container', {
+        const chart = Highcharts.stockChart('container', {
+            chart: {
+                width: 350
+            },
             rangeSelector: {
-                enabled: true,
-                inputEnabled: false,
-                buttonPosition: {
+                dropdown: 'never',
+                inputPosition: {
                     align: 'right'
+                },
+                buttonPosition: {
+                    align: 'left'
                 }
             },
             legend: {
@@ -20,11 +25,18 @@ QUnit.test(
                 }
             ]
         });
+
         assert.ok(
             chart.legend.group.element.getBoundingClientRect().top >=
                 chart.rangeSelector.group.element.getBoundingClientRect()
                     .bottom,
             'The legend is rendered below the range selector.'
+        );
+
+        assert.ok(
+            chart.plotTop >
+                chart.rangeSelector.getHeight() + chart.legend.legendHeight,
+            'Top aligned legend should not overlap into plotArea, #23058.'
         );
     }
 );
