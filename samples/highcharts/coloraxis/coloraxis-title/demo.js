@@ -5,56 +5,50 @@ Highcharts.chart('container', {
     colorAxis: [
         {
             layout: 'horizontal',
+            width: '33%',
             minColor: '#7cb5ec',
             title: {
-                text: 'Europe',
-                align: 'left',
-                y: -60
+                text: 'Europe'
             }
         },
         {
             layout: 'horizontal',
+            width: '33%',
             minColor: '#434348',
             title: {
-                text: 'South Africa',
-                align: 'left',
-                y: -60
+                text: 'South Africa'
             }
         },
         {
             layout: 'horizontal',
+            width: '33%',
             minColor: '#90ed7d',
             title: {
-                text: 'Australia & Oceania',
-                align: 'left',
-                y: -60
+                text: 'Australia & Oceania'
             }
         },
         {
             layout: 'horizontal',
+            width: '33%',
             minColor: '#f7a35c',
             title: {
-                text: 'North America',
-                align: 'left',
-                y: -60
+                text: 'North America'
             }
         },
         {
             layout: 'horizontal',
+            width: '33%',
             minColor: '#8085e9',
             title: {
-                text: 'South America',
-                align: 'left',
-                y: -60
+                text: 'South America'
             }
         },
         {
             layout: 'horizontal',
+            width: '33%',
             minColor: '#f15c80',
             title: {
-                text: 'Asia',
-                align: 'left',
-                y: -60
+                text: 'Asia'
             }
         }
     ],
@@ -64,8 +58,9 @@ Highcharts.chart('container', {
     legend: {
         layout: 'vertical',
         verticalAlign: 'middle',
+        maxWidth: '35%',
         align: 'right',
-        padding: 30
+        padding: 20
     },
     tooltip: {
         useHTML: true,

@@ -434,12 +434,20 @@ const colorAxisDefaults: DeepPartial<ColorAxisOptions> = {
      * legend is vertical the title is rotated accordingly.
      *
      * @sample highcharts/coloraxis/coloraxis-title/
-     *         Color axis with title
+     * Color axis with title
      *
      * @type      {Highcharts.AxisTitleOptions}
      * @product   highcharts highstock highmaps
      * @apioption colorAxis.title
      */
+    title: {
+        /**
+         * Alignment of the title relative to the axis values. Can be
+         * `'left'`, `'center'` or `'right'`.
+         * * @type {Highcharts.AlignValue}
+         */
+        align: 'low'
+    },
 
     /**
      * The type of interpolation to use for the color axis. Can be
