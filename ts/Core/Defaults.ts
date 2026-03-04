@@ -2882,6 +2882,17 @@ const defaultOptions: DefaultOptions = {
          */
 
         /**
+         * Whether to render the credits as HTML
+         *
+         * @since     next
+         * @sample    highcharts/palette/branding
+         *            Branding with HTML credits
+         * @type      {boolean}
+         * @default   false
+         * @apioption credits.useHTML
+         */
+
+        /**
          * Whether to show the credits text.
          *
          * @sample {highcharts} highcharts/credits/enabled-false/

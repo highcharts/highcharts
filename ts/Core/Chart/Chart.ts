@@ -4786,6 +4786,7 @@ namespace Chart {
          *
          * @since  next
          * @sample highcharts/palette/branding
+         *         Branding with HTML credits
          */
         useHTML?: boolean;
 
