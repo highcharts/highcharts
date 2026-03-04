@@ -24,7 +24,8 @@ import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
 import type Options from '../../Core/Options';
 import type Point from '../../Core/Series/Point';
 import type Series from '../../Core/Series/Series';
-
+import type InfoRegionsComponent from '../Components/InfoRegionsComponent';
+import type NewDataAnnouncer from '../Components/SeriesComponent/NewDataAnnouncer';
 /* *
  *
  *  Declarations
@@ -36,6 +37,7 @@ export interface AccessibilityAnnouncementFormatter {
         updatedSeries: Array<Series>,
         addedSeries?: Series,
         addedPoint?: Point,
+        ctx?: NewDataAnnouncer
     ): false|string;
 }
 
@@ -88,7 +90,7 @@ export interface AccessibilityOptions {
 
 export interface AccessibilityPointOptions {
     dateFormat?: string;
-    dateFormatter?: ScreenReaderFormatterCallbackFunction<Point>;
+    dateFormatter?: ScreenReaderFormatterCallbackFunction<Point, Chart>;
     describeNull: boolean;
     descriptionFormat?: string;
     descriptionFormatter?: ScreenReaderFormatterCallbackFunction<Point>;
@@ -100,10 +102,10 @@ export interface AccessibilityPointOptions {
 
 export interface AccessibilityScreenReaderSectionOptions {
     afterChartFormat: string;
-    afterChartFormatter?: ScreenReaderFormatterCallbackFunction<Chart>;
+    afterChartFormatter?: ScreenReaderFormatterCallbackFunction<Chart, InfoRegionsComponent>;
     axisRangeDateFormat: string;
     beforeChartFormat: string;
-    beforeChartFormatter?: ScreenReaderFormatterCallbackFunction<Chart>;
+    beforeChartFormatter?: ScreenReaderFormatterCallbackFunction<Chart, InfoRegionsComponent>;
     onPlayAsSoundClick?: ScreenReaderClickCallbackFunction;
     onViewDataTableClick?: ScreenReaderClickCallbackFunction;
 }
@@ -156,11 +158,15 @@ export interface PointAccessibilityOptionsObject {
 }
 
 export interface ScreenReaderClickCallbackFunction {
-    (evt: MouseEvent, chart?: Accessibility.ChartComposition): void;
+    (
+        evt: MouseEvent,
+        chart?: Accessibility.ChartComposition,
+        ctx?: GlobalEventHandlers
+    ): void;
 }
 
-export interface ScreenReaderFormatterCallbackFunction<T> {
-    (context: T): string;
+export interface ScreenReaderFormatterCallbackFunction<T, U = void> {
+    (context: T, outerContext?: U): string;
 }
 
 export interface SeriesAccessibilityKeyboardNavigationOptions {
