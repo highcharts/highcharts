@@ -463,7 +463,7 @@ input.highcharts-input-search-indicators {
     cursor: pointer;
 }
 
-@media (max-width: 480px) {
+@media (max-width: 600px) {
     .highcharts-popup-color-wrapper {
         display: grid;
         grid-template-columns: 40px 1fr 55px;
