@@ -29,10 +29,7 @@ import type SVGRenderer3D from './SVGRenderer3D';
 
 import Color from '../../Color/Color.js';
 const { parse: color } = Color;
-import RendererRegistry from '../RendererRegistry.js';
-const {
-    Element: SVGElement
-} = RendererRegistry.getRendererType().prototype;
+import SVGElement from './SVGElement.js';
 import { defined, pick } from '../../../Shared/Utilities.js';
 
 /* *

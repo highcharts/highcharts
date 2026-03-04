@@ -7,7 +7,7 @@
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import type SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer';
 
-import RendererRegistry from '../../Core/Renderer/RendererRegistry.js';
+import { pushUnique } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -36,7 +36,7 @@ namespace PointAndFigureSymbols {
      *
      * */
 
-    const modifiedMembers: Array<unknown> = [];
+    const modifiedMembers: Array<typeof SVGRenderer> = [];
 
     /* *
      *
@@ -52,24 +52,11 @@ namespace PointAndFigureSymbols {
     export function compose(
         SVGRendererClass: typeof SVGRenderer
     ): void {
-
-        if (modifiedMembers.indexOf(SVGRendererClass) === -1) {
-            modifiedMembers.push(SVGRendererClass);
-
+        if (pushUnique(modifiedMembers, SVGRendererClass)) {
             const symbols = SVGRendererClass.prototype.symbols;
 
             symbols.cross = cross;
-
         }
-
-        const RendererClass = RendererRegistry.getRendererType();
-
-        // The symbol callbacks are generated on the SVGRenderer object in all
-        // browsers.
-        if (modifiedMembers.indexOf(RendererClass)) {
-            modifiedMembers.push(RendererClass);
-        }
-
     }
 
     /**
