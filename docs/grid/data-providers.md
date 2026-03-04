@@ -30,13 +30,11 @@ When you provide `data.dataTable`, Grid uses `LocalDataProvider` by default. It 
 Grid.grid('container', {
     data: {
         providerType: 'local', // optional
-        dataTable: {
-            columns: {
-                id: ['a1', 'p1', 'o1', 'b1'],
-                product: ["Apple", "Pear", "Orange", "Banana"],
-                weight: [182, 178, 150, 120],
-                price: [3.5, 2.5, 3, 2.2]
-            }
+        columns: {
+            id: ['a1', 'p1', 'o1', 'b1'],
+            product: ["Apple", "Pear", "Orange", "Banana"],
+            weight: [182, 178, 150, 120],
+            price: [3.5, 2.5, 3, 2.2]
         },
         // Optional: column that contains stable, unique row IDs (string or number).
         // If not set, the original row index is used as the row ID.
