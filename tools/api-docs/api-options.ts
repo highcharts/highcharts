@@ -602,7 +602,19 @@ async function saveJSON() {
     } as any;
 
     save('tree-cache.json', TSLib.SOURCE_CACHE);
-    save('tree-v2.json', TREE);
+    save('tree-v2.json', {
+        _meta: TREE._meta,
+        plotOptions: TREE.plotOptions || {
+            doclet: {},
+            meta: {},
+            children: {}
+        },
+        series: TREE.series || {
+            doclet: {},
+            meta: {},
+            children: {}
+        }
+    });
 }
 
 
