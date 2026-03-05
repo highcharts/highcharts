@@ -22,6 +22,10 @@
  * */
 
 import type DataTable from '../../../Data/DataTable';
+import type {
+    CellType as DataTableCellType,
+    ColumnCollection
+} from '../../../Data/DataTable';
 import type Grid from '../../Core/Grid';
 import type { RowId } from '../../Core/Data/DataProvider';
 import type { LocalDataProviderOptions } from '../../Core/Data/LocalDataProvider';
@@ -513,7 +517,7 @@ class TreeProjectionController {
     ): DataTable {
         const projectedTable = table.clone(true);
         const sourceColumnIds = table.getColumnIds();
-        const projectedColumns: Record<string, Array<unknown>> = {};
+        const projectedColumns: ColumnCollection = {};
 
         for (
             let i = 0,
@@ -523,7 +527,9 @@ class TreeProjectionController {
         ) {
             const columnId = sourceColumnIds[i];
             const sourceColumn = table.columns[columnId];
-            const projectedColumn = new Array<unknown>(rowIndexes.length);
+            const projectedColumn = new Array<DataTableCellType>(
+                rowIndexes.length
+            );
 
             for (let j = 0, jEnd = rowIndexes.length; j < jEnd; ++j) {
                 projectedColumn[j] = sourceColumn?.[rowIndexes[j]];
