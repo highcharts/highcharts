@@ -149,7 +149,6 @@ declare module '../Series/SeriesBase' {
     }
 }
 
-/** @internal */
 declare module '../Series/SeriesOptions' {
     interface SeriesOptions {
         /**
@@ -176,13 +175,12 @@ declare module '../Series/SeriesOptions' {
          *         Setting the gap size to 2 introduces gaps for weekends in
          *         daily datasets.
          *
-         * @type      {number}
          * @default   0
-         * @product   highstock
+         * @product   highcharts highstock
          * @requires  modules/broken-axis
-         * @apioption plotOptions.series.gapSize
          */
         gapSize?: number;
+
         /**
          * Together with [gapSize](plotOptions.series.gapSize), this
          * option defines where to draw gaps in the graph.
@@ -199,15 +197,12 @@ declare module '../Series/SeriesOptions' {
          *
          * @see [gapSize](plotOptions.series.gapSize)
          *
-         * @type       {string}
-         * @default    relative
+         * @default    'relative'
          * @since      5.0.13
-         * @product    highstock
-         * @validvalue ["relative", "value"]
+         * @product    highcharts highstock
          * @requires   modules/broken-axis
-         * @apioption  plotOptions.series.gapUnit
          */
-        gapUnit?: string;
+        gapUnit?: 'relative' | 'value';
     }
 }
 
@@ -478,7 +473,7 @@ namespace BrokenAxis {
          *
          * @type      {number}
          * @default   0
-         * @product   highstock
+         * @product   highcharts highstock
          * @requires  modules/broken-axis
          * @apioption plotOptions.series.gapSize
          */
@@ -502,7 +497,7 @@ namespace BrokenAxis {
          * @type       {string}
          * @default    relative
          * @since      5.0.13
-         * @product    highstock
+         * @product    highcharts highstock
          * @validvalue ["relative", "value"]
          * @requires   modules/broken-axis
          * @apioption  plotOptions.series.gapUnit
