@@ -441,11 +441,6 @@ const colorAxisDefaults: DeepPartial<ColorAxisOptions> = {
      * @apioption colorAxis.title
      */
     title: {
-        /**
-         * Alignment of the title relative to the axis values. Can be
-         * `'left'`, `'center'` or `'right'`.
-         * * @type {Highcharts.AlignValue}
-         */
         align: 'low'
     },
 

@@ -20,7 +20,7 @@ QUnit.test(
 
         chart.update({
             colorAxis: {
-                title: { text: undefined }
+                title: { text: null }
             }
         });
 

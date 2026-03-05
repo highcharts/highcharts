@@ -4,7 +4,6 @@ Highcharts.chart('container', {
     },
     colorAxis: [
         {
-            layout: 'horizontal',
             width: '33%',
             minColor: '#7cb5ec',
             title: {
@@ -12,7 +11,6 @@ Highcharts.chart('container', {
             }
         },
         {
-            layout: 'horizontal',
             width: '33%',
             minColor: '#434348',
             title: {
@@ -20,7 +18,6 @@ Highcharts.chart('container', {
             }
         },
         {
-            layout: 'horizontal',
             width: '33%',
             minColor: '#90ed7d',
             title: {
@@ -28,7 +25,6 @@ Highcharts.chart('container', {
             }
         },
         {
-            layout: 'horizontal',
             width: '33%',
             minColor: '#f7a35c',
             title: {
@@ -36,7 +32,6 @@ Highcharts.chart('container', {
             }
         },
         {
-            layout: 'horizontal',
             width: '33%',
             minColor: '#8085e9',
             title: {
@@ -44,7 +39,6 @@ Highcharts.chart('container', {
             }
         },
         {
-            layout: 'horizontal',
             width: '33%',
             minColor: '#f15c80',
             title: {
@@ -56,11 +50,9 @@ Highcharts.chart('container', {
         text: 'Carbon emissions around the world (2014)'
     },
     legend: {
-        layout: 'vertical',
         verticalAlign: 'middle',
         maxWidth: '35%',
-        align: 'right',
-        padding: 20
+        align: 'right'
     },
     tooltip: {
         useHTML: true,
