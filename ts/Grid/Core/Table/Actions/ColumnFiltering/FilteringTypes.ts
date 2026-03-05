@@ -4,9 +4,9 @@
  *
  *  (c) 2020-2025 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Dawid Dragula
@@ -23,7 +23,7 @@
  *
  * */
 
-import type Column from '../../Column';
+import type { ColumnDataType } from '../../Column';
 
 /* *
  *
@@ -55,7 +55,7 @@ export type BooleanCondition = typeof booleanConditions[number];
  * The event object for the 'afterRender' event.
  */
 export type AfterRenderEvent = Event & {
-    column: Column;
+    column: ColumnDataType;
     filtering: boolean;
 };
 
@@ -131,7 +131,7 @@ export const booleanValueMap: Record<
 /**
  * Conditions map for the condition select options.
  */
-export const conditionsMap: Record<Column.DataType, readonly Condition[]> = {
+export const conditionsMap: Record<ColumnDataType, readonly Condition[]> = {
     string: stringConditions,
     number: numberConditions,
     datetime: dateTimeConditions,

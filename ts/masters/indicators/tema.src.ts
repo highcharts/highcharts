@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LicenseRef-Highcharts
 /**
  * @license Highstock JS v@product.version@ (@product.date@)
  * @module highcharts/indicators/tema
@@ -6,9 +7,11 @@
  *
  * Indicator series type for Highcharts Stock
  *
- * (c) 2010-2025 Rafal Sebestjanski
+ * (c) 2010-2025 Highsoft AS
+ * Author: Rafal Sebestjanski
  *
- * License: www.highcharts.com/license
+ * A commercial license may be required depending on use.
+ * See www.highcharts.com/license
  */
 'use strict';
 import Highcharts from '../../Core/Globals.js';

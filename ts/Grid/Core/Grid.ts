@@ -4,9 +4,9 @@
  *
  *  (c) 2020-2025 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Dawid Dragula
@@ -29,13 +29,13 @@ import type {
     IndividualColumnOptions
 } from './Options';
 import type DataTableOptions from '../../Data/DataTableOptions';
-import type Column from './Table/Column';
+import type { ColumnDataType, NoIdColumnOptions } from './Table/Column';
 import type Popup from './UI/Popup.js';
 import type { DeepPartial } from '../../Shared/Types';
 
 import Accessibility from './Accessibility/Accessibility.js';
 import AST from '../../Core/Renderer/HTML/AST.js';
-import Defaults from './Defaults.js';
+import { defaultOptions } from './Defaults.js';
 import GridUtils from './GridUtils.js';
 import DataTable from '../../Data/DataTable.js';
 import Table from './Table/Table.js';
@@ -51,7 +51,6 @@ const {
     diffObjects,
     extend,
     fireEvent,
-    getStyle,
     merge,
     pick
 } = U;
@@ -66,7 +65,7 @@ const {
 /**
  * A base class for the Grid.
  */
-class Grid {
+export class Grid {
 
     /* *
     *
@@ -91,7 +90,7 @@ class Grid {
      * The new Grid.
      */
     public static grid(
-        renderTo: string|HTMLElement,
+        renderTo: string | HTMLElement,
         options: Options,
         async?: boolean
     ): Grid;
@@ -113,14 +112,14 @@ class Grid {
      * Promise that resolves with the new Grid.
      */
     public static grid(
-        renderTo: string|HTMLElement,
+        renderTo: string | HTMLElement,
         options: Options,
         async: true
     ): Promise<Grid>;
 
     // Implementation
     public static grid(
-        renderTo: string|HTMLElement,
+        renderTo: string | HTMLElement,
         options: Options,
         async?: boolean
     ): (Grid | Promise<Grid>) {
@@ -146,7 +145,7 @@ class Grid {
      * An array containing the current Grid objects in the page.
      * @private
      */
-    public static readonly grids: Array<(Grid|undefined)> = [];
+    public static readonly grids: Array<(Grid | undefined)> = [];
 
     /**
      * The accessibility controller.
@@ -168,7 +167,7 @@ class Grid {
      * column options.
      * @internal
      */
-    public columnOptionsMap: Record<string, Grid.ColumnOptionsMapItem> = {};
+    public columnOptionsMap: Record<string, ColumnOptionsMapItem> = {};
 
     /**
      * The container of the grid.
@@ -296,7 +295,7 @@ class Grid {
     /**
      * The render target (container) of the Grid.
      */
-    private renderTo: string|HTMLElement;
+    private renderTo: string | HTMLElement;
 
     /**
      * Whether the Grid is rendered.
@@ -308,7 +307,7 @@ class Grid {
      * re-rendered.
      * @internal
      */
-    public readonly dirtyFlags: Set<Grid.DirtyFlags> = new Set();
+    public readonly dirtyFlags: Set<GridDirtyFlags> = new Set();
 
 
     /* *
@@ -340,7 +339,7 @@ class Grid {
         this.id = this.options?.id || U.uniqueKey();
         this.querying = new QueryingController(this);
         this.locale = this.options?.lang?.locale || (
-            (this.container?.closest('[lang]') as HTMLElement|null)?.lang
+            (this.container?.closest('[lang]') as HTMLElement | null)?.lang
         );
         this.time = new TimeBase(extend<TimeBase.TimeOptions>(
             this.options?.time,
@@ -350,8 +349,6 @@ class Grid {
         fireEvent(this, 'beforeLoad');
 
         Grid.grids.push(this);
-        this.loadDataTable();
-
         void this.render().then((): void => {
             afterLoadCallback?.(this);
             fireEvent(this, 'afterLoad');
@@ -396,7 +393,7 @@ class Grid {
      * The render target (html element or id) of the Grid.
      *
      */
-    private initContainer(renderTo: string|HTMLElement): void {
+    private initContainer(renderTo: string | HTMLElement): void {
         const container = (typeof renderTo === 'string') ?
             Globals.win.document.getElementById(renderTo) : renderTo;
 
@@ -408,10 +405,10 @@ class Grid {
             );
         }
 
-        this.initialContainerHeight = getStyle(container, 'height', true) || 0;
-
         this.container = container;
+        this.container.style.minHeight = 0 + 'px';
         this.container.innerHTML = AST.emptyHTML;
+
         this.contentWrapper = makeHTMLElement('div', {
             className: Globals.getClassName('container')
         }, this.container);
@@ -435,10 +432,11 @@ class Grid {
     private loadUserOptions(
         newOptions: Partial<Options>,
         oneToOne = false
-    ): DeepPartial<Grid.NonArrayOptions> {
+    ): DeepPartial<NonArrayOptions> {
         // Operate on a copy of the options argument
         newOptions = merge(newOptions);
-        const diff: DeepPartial<Grid.NonArrayOptions> = {};
+
+        const diff: DeepPartial<NonArrayOptions> = {};
 
         if (newOptions.columns) {
             if (oneToOne) {
@@ -460,7 +458,7 @@ class Grid {
 
         this.userOptions = merge(this.userOptions, newOptions);
         this.options = merge(
-            this.options ?? Defaults.defaultOptions,
+            this.options ?? defaultOptions,
             this.userOptions
         );
 
@@ -485,7 +483,7 @@ class Grid {
             return;
         }
 
-        const columnOptionsMap: Record<string, Grid.ColumnOptionsMapItem> = {};
+        const columnOptionsMap: Record<string, ColumnOptionsMapItem> = {};
         for (let i = 0, iEnd = colOptions.length; i < iEnd; ++i) {
             columnOptionsMap[colOptions[i].id] = {
                 index: i,
@@ -515,8 +513,8 @@ class Grid {
     public setColumnOptions(
         newColumnOptions: IndividualColumnOptions[],
         overwrite = false
-    ): DeepPartial<Grid.NonArrayColumnOptions> {
-        const columnDiffOptions: DeepPartial<Grid.NonArrayColumnOptions> = {};
+    ): DeepPartial<NonArrayColumnOptions> {
+        const columnDiffOptions: DeepPartial<NonArrayColumnOptions> = {};
 
         if (!this.userOptions.columns) {
             this.userOptions.columns = this.options?.columns ?? [];
@@ -583,10 +581,10 @@ class Grid {
      */
     private setColumnOptionsOneToOne(
         newColumnOptions: IndividualColumnOptions[]
-    ): DeepPartial<Grid.NonArrayColumnOptions> {
+    ): DeepPartial<NonArrayColumnOptions> {
         const prevColumnOptions = this.userOptions.columns;
         const columnOptions = [];
-        const columnDiffOptions: DeepPartial<Grid.NonArrayColumnOptions> = {};
+        const columnDiffOptions: DeepPartial<NonArrayColumnOptions> = {};
 
         let prevOptions: IndividualColumnOptions | undefined;
         for (let i = 0, iEnd = newColumnOptions.length; i < iEnd; ++i) {
@@ -661,78 +659,76 @@ class Grid {
         const diff = this.loadUserOptions(options, oneToOne);
         const flags = this.dirtyFlags;
 
-        if (!viewport) {
-            flags.add('grid');
-            if (redraw) {
-                await this.redraw();
-            }
-            return;
-        }
+        if (viewport) {
+            if (!this.dataTable || 'dataTable' in diff) {
+                this.userOptions.dataTable = options.dataTable;
+                (this.options ?? {}).dataTable = options.dataTable;
 
-        if (!this.dataTable || 'dataTable' in diff) {
-            this.userOptions.dataTable = options.dataTable;
-            (this.options ?? {}).dataTable = options.dataTable;
+                this.loadDataTable();
 
-            this.loadDataTable();
-            this.querying.shouldBeUpdated = true;
-
-            // TODO: Sometimes it can be too much, so we need to check if the
-            // columns have changed or just their data. If just their data, we
-            // can just mark the grid.table as dirty instead of the whole grid.
-            flags.add('grid');
-        }
-
-        if ('columns' in diff) {
-            const ids = Object.keys(diff.columns ?? {});
-
-            for (const id of ids) {
-                // TODO: Move this to the column update method.
-                this.loadColumnOptionDiffs(viewport, id, diff.columns?.[id]);
-                delete diff.columns?.[id];
-            }
-            delete diff.columns;
-        }
-
-        if ('columnDefaults' in diff) {
-            this.loadColumnOptionDiffs(viewport, null, diff.columnDefaults);
-            delete diff.columnDefaults;
-        }
-
-        if (diff.lang) {
-            const langDiff = diff.lang;
-            if ('locale' in langDiff) {
-                this.locale = langDiff.locale as typeof this.locale;
-                this.time.update({ locale: this.locale });
-            }
-            delete langDiff.locale;
-
-            // TODO: Add more lang diff checks here.
-
-            if (Object.keys(langDiff).length > 0) {
+                // TODO: Sometimes it can be too much, so we need to check if
+                // the columns have changed or just their data. If just their
+                // data, we can just mark the grid.table as dirty instead of the
+                // whole grid.
                 flags.add('grid');
             }
-        }
-        delete diff.lang;
 
-        if ('time' in diff) {
-            this.time.update(diff.time);
-            delete diff.time;
-        }
+            if ('columns' in diff) {
+                const ids = Object.keys(diff.columns ?? {});
 
-        if (diff.pagination) {
-            const paginationDiff = diff.pagination;
-            if ('enabled' in paginationDiff) {
-                if (!this.pagination && paginationDiff.enabled) {
-                    this.pagination = new Pagination(this);
+                for (const id of ids) {
+                    // TODO: Move this to the column update method.
+                    this.loadColumnOptionDiffs(
+                        viewport, id, diff.columns?.[id]
+                    );
+                    delete diff.columns?.[id];
+                }
+                delete diff.columns;
+            }
+
+            if ('columnDefaults' in diff) {
+                this.loadColumnOptionDiffs(viewport, null, diff.columnDefaults);
+                delete diff.columnDefaults;
+            }
+
+            if (diff.lang) {
+                const langDiff = diff.lang;
+                if ('locale' in langDiff) {
+                    this.locale = langDiff.locale as typeof this.locale;
+                    this.time.update({ locale: this.locale });
+                }
+                delete langDiff.locale;
+
+                // TODO: Add more lang diff checks here.
+
+                if (Object.keys(langDiff).length > 0) {
+                    flags.add('grid');
                 }
             }
-            this.pagination?.update(paginationDiff);
-        }
-        delete diff.pagination;
+            delete diff.lang;
 
-        // TODO: Add more options that can be optimized here.
+            if ('time' in diff) {
+                this.time.update(diff.time);
+                delete diff.time;
+            }
 
-        if (Object.keys(diff).length > 0) {
+            if (diff.pagination) {
+                const paginationDiff = diff.pagination;
+                if ('enabled' in paginationDiff) {
+                    if (!this.pagination && paginationDiff.enabled) {
+                        this.pagination = new Pagination(this);
+                    }
+                }
+                this.pagination?.update(paginationDiff);
+            }
+            delete diff.pagination;
+
+            // TODO: Add more options that can be optimized here.
+
+            if (Object.keys(diff).length > 0) {
+                flags.add('grid');
+            }
+        } else {
             flags.add('grid');
         }
 
@@ -926,14 +922,14 @@ class Grid {
 
     public updateColumn(
         columnId: string,
-        options: Column.Options,
+        options: NoIdColumnOptions,
         render?: boolean,
         overwrite?: boolean
     ): Promise<void>;
 
     public updateColumn(
         columnId: string,
-        options: Column.Options,
+        options: NoIdColumnOptions,
         render?: false,
         overwrite?: boolean
     ): void;
@@ -957,7 +953,7 @@ class Grid {
      */
     public async updateColumn(
         columnId: string,
-        options: Column.Options,
+        options: NoIdColumnOptions,
         redraw = true,
         overwrite = false
     ): Promise<void> {
@@ -997,6 +993,8 @@ class Grid {
         if (this.isRendered) {
             this.destroy(true);
         }
+
+        this.loadDataTable();
 
         this.initContainer(this.renderTo);
         this.initAccessibility();
@@ -1223,7 +1221,7 @@ class Grid {
             this.renderNoData();
         }
 
-        this.accessibility?.setA11yOptions();
+        this.renderAccessibility();
 
         // Render bottom pagination, footer pagination,
         // or custom container pagination (after table).
@@ -1236,6 +1234,22 @@ class Grid {
         fireEvent(this, 'afterRenderViewport');
 
         this.viewport?.reflow();
+    }
+
+    /**
+     * Renders the Grid accessibility.
+     * @internal
+     */
+    private renderAccessibility(): void {
+        const accessibility = this.accessibility;
+
+        if (!accessibility) {
+            return;
+        }
+
+        accessibility.setA11yOptions();
+        accessibility.addScreenReaderSection('before');
+        accessibility.addScreenReaderSection('after');
     }
 
     /**
@@ -1302,6 +1316,8 @@ class Grid {
      * reference, it should be used instead of creating a new one.
      */
     private loadDataTable(): void {
+        this.querying.shouldBeUpdated = true;
+
         // Unregister all events attached to the previous data table.
         this.dataTableEventDestructors.forEach((fn): void => fn());
         const tableOptions = this.options?.dataTable;
@@ -1344,7 +1360,7 @@ class Grid {
      * @returns
      */
     public getColumnIds(
-        columnsTree: Array<GroupedHeaderOptions|string>,
+        columnsTree: Array<GroupedHeaderOptions | string>,
         onlyEnabledColumns: boolean = true
     ): string[] {
         let columnIds: string[] = [];
@@ -1479,9 +1495,9 @@ class Grid {
             return '{}';
         }
 
-        const typeParser = (type: Column.DataType) => {
+        const typeParser = (type: ColumnDataType) => {
             const TypeMap: Record<
-                Column.DataType,
+                ColumnDataType,
                 (value: DataTable.CellType) => DataTable.CellType
             > = {
                 number: Number,
@@ -1540,36 +1556,41 @@ class Grid {
 
 /* *
  *
- *  Class Namespace
+ *  Declarations
  *
  * */
-namespace Grid {
-    /**
-     * @internal
-     * An item in the column options map.
-     */
-    export interface ColumnOptionsMapItem {
-        index: number;
-        options: Column.Options
-    }
 
-    /**
-     * Column options as a record of column IDs to column options.
-     */
-    export type NonArrayColumnOptions = {
-        [x: string]: Omit<IndividualColumnOptions, 'id'>;
-    };
+/**
+ * Column options as a record of column IDs to column options.
+ * @internal
+ */
+export type NonArrayColumnOptions = {
+    [x: string]: NoIdColumnOptions;
+};
 
-    /**
-     * Options with columns as a record of column IDs to column options.
-     */
-    export type NonArrayOptions = Omit<Options, 'columns'> & {
-        columns?: NonArrayColumnOptions;
-    };
+/**
+ * Options with columns as a record of column IDs to column options.
+ * @internal
+ */
+export type NonArrayOptions = Omit<Options, 'columns'> & {
+    columns?: NonArrayColumnOptions;
+};
 
-    export type DirtyFlags = (
-        'grid' | 'rows' | 'sorting' | 'filtering' | 'reflow'
-    );
+/**
+ * Dirty flags used to mark the parts of the Grid that need to be updated.
+ * @internal
+ */
+export type GridDirtyFlags = (
+    'grid' | 'rows' | 'sorting' | 'filtering' | 'reflow'
+);
+
+/**
+ * @internal
+ * An item in the column options map.
+ */
+export interface ColumnOptionsMapItem {
+    index: number;
+    options: NoIdColumnOptions
 }
 
 

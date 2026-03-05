@@ -2,9 +2,9 @@
  *
  *  (c) 2009-2025 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Sophie Bremer
@@ -12,8 +12,6 @@
  * */
 
 'use strict';
-
-/* eslint-disable max-len */
 
 
 /* *
@@ -31,21 +29,15 @@ import type * as D from '../../Grid';
  *
  * */
 
-export type Grid = D.Grid;
-
+export {
+    Grid,
+    Column,
+    TableRow,
+    TableCell,
+    TableCellEvent,
+    Options as GridOptions
+} from '../../Grid';
 export type GridNamespace = typeof D;
-
-export type Column = D.Column;
-
-export type TableRow = D.TableRow;
-
-export namespace TableCell {
-    export type TableCellEvent = D.TableCell.TableCellEvent;
-}
-
-export type TableCell = D.TableCell;
-
-export type GridOptions = D.Options;
 
 
 /* *

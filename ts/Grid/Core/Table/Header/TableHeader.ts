@@ -4,9 +4,9 @@
  *
  *  (c) 2020-2025 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Dawid Dragula
@@ -203,17 +203,6 @@ class TableHeader {
             row.destroy();
         }
     }
-}
-
-
-/* *
- *
- *  Class Namespace
- *
- * */
-
-namespace TableHeader {
-
 }
 
 

@@ -20,7 +20,7 @@ describe('Grid filtering.', () => {
             .should('have.length', 3)
             .each(($row) => {
                 cy.wrap($row).find('td[data-column-id="weight"]').invoke('text').then((weightText) => {
-                    const weight = parseFloat(weightText);
+                    const weight = parseFloat(weightText.replace(/[,\s]/g, ''));
                     expect(weight).to.be.greaterThan(1000);
                 });
             });
@@ -64,7 +64,6 @@ describe('Grid filtering.', () => {
             .then(() => {
                 cy.get(gridRows).should('have.length.above', 4);
             });
-            
     });
 
     it('Condition - doesNotContain.', () => {
@@ -85,7 +84,7 @@ describe('Grid filtering.', () => {
                 });
                 cy.get(gridRows).should('have.length', 16);
             });
-            
+
         cy.get(inputProductFilter)
             .clear()
             .should('have.value', '')
@@ -163,7 +162,6 @@ describe('Grid filtering.', () => {
     });
 
     it('Condition - not empty.', () => {
-       
         cy.get(gridRows).then(($rows) => {
             cy.get(selectProductFilter)
                 .select('notEmpty')

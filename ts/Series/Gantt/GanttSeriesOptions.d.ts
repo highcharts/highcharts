@@ -4,9 +4,9 @@
  *
  *  Author: Lars A. V. Cabrera
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -24,7 +24,6 @@ import type {
 } from '../../Gantt/ConnectorsOptions';
 import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
 import type GanttPointOptions from './GanttPointOptions';
-import type GanttSeries from './GanttSeries';
 import type {
     SeriesEventsOptions,
     SeriesStatesOptions
@@ -117,7 +116,7 @@ export interface GanttSeriesOptions extends XRangeSeriesOptions {
 
     grouping?: boolean;
 
-    states?: SeriesStatesOptions<GanttSeries>;
+    states?: SeriesStatesOptions<GanttSeriesOptions>;
 
     tooltip?: Partial<TooltipOptions>;
 

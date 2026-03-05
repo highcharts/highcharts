@@ -2,19 +2,21 @@
  *
  *  (c) 2009-2025 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Gøran Slettemark
  *  - Wojciech Chmiel
  *  - Sebastian Bochan
  *  - Sophie Bremer
+ *  - Dawid Dragula
  *
  * */
 
 'use strict';
+
 
 /* *
  *
@@ -22,11 +24,9 @@
  *
  * */
 
-
 import type Board from '../../Board';
 import type Cell from '../../Layout/Cell';
 import type {
-    AxisOptions,
     Chart,
     Options as ChartOptions,
     Highcharts as H,
@@ -62,6 +62,7 @@ const {
 import DU from '../../Utilities.js';
 const { deepClone } = DU;
 
+
 /* *
  *
  *  Class
@@ -96,6 +97,7 @@ class HighchartsComponent extends Component {
         Component.defaultOptions,
         HighchartsComponentDefaults
     );
+
 
     /* *
      *
@@ -149,6 +151,7 @@ class HighchartsComponent extends Component {
      */
     public seriesFromConnector: Record<string, ConnectorHandler> = {};
 
+
     /* *
      *
      *  Constructor
@@ -201,14 +204,15 @@ class HighchartsComponent extends Component {
     public onTableChanged(): void {
         this.updateSeries();
     }
+
+
     /* *
      *
      *  Functions
      *
      * */
 
-    /** @private */
-    public async load(): Promise<this> {
+    public override async load(): Promise<this> {
         this.emit({ type: 'load' });
 
         await super.load();
@@ -218,7 +222,7 @@ class HighchartsComponent extends Component {
         return this;
     }
 
-    public render(): this {
+    public override render(): this {
         const hcComponent = this;
 
         super.render();
@@ -233,7 +237,7 @@ class HighchartsComponent extends Component {
         return this;
     }
 
-    public resize(
+    public override resize(
         width?: number | string | null,
         height?: number | string | null
     ): this {
@@ -265,9 +269,8 @@ class HighchartsComponent extends Component {
 
     /**
      * Adds call update value in store, when chart's point is updated.
-     *
      * @private
-     * */
+     */
     private setupConnectorUpdate(): void {
         const { connectorHandlers, chart } = this;
 
@@ -303,7 +306,7 @@ class HighchartsComponent extends Component {
         point: Point,
         connectorHandler: HighchartsComponent.HCConnectorHandler
     ): void {
-        const table = connectorHandler.presentationTable;
+        const table = connectorHandler.dataTable;
         const columnAssignment = connectorHandler.columnAssignment;
         const seriesId = point.series.options.id;
         const converter = new DataConverter();
@@ -338,7 +341,6 @@ class HighchartsComponent extends Component {
 
     /**
      * Internal method for handling option updates.
-     *
      * @internal
      */
     private setOptions(): void {
@@ -355,11 +357,11 @@ class HighchartsComponent extends Component {
 
     /**
      * Handles updating via options.
+     *
      * @param options
      * The options to apply.
-     *
      */
-    public async update(
+    public override async update(
         options: Partial<Options>,
         shouldRerender: boolean = true
     ): Promise<void> {
@@ -397,17 +399,10 @@ class HighchartsComponent extends Component {
             const options: ConnectorOptions = connectorHandler.options;
             let columnAssignment = options.columnAssignment;
 
-            // Set the new data table based on the data table key.
-            const connector = connectorHandler.connector;
-            const dataTableKey = connectorHandler.options.dataTableKey;
-            if (connector && dataTableKey) {
-                connectorHandler.setTable(connector.dataTables[dataTableKey]);
-            }
-
-            if (!columnAssignment && connectorHandler.presentationTable) {
+            if (!columnAssignment && connectorHandler.dataTable) {
                 columnAssignment = this.getDefaultColumnAssignment(
-                    connectorHandler.presentationTable.getColumnIds(),
-                    connectorHandler.presentationTable
+                    connectorHandler.dataTable.getColumnIds(),
+                    connectorHandler.dataTable
                 );
             }
 
@@ -460,14 +455,14 @@ class HighchartsComponent extends Component {
         if (
             !connectorHandler.connector ||
             !chart ||
-            !connectorHandler.presentationTable
+            !connectorHandler.dataTable
         ) {
             return;
         }
 
-        const table = connectorHandler.presentationTable.getModified();
+        const table = connectorHandler.dataTable.getModified();
         const modifierOptions =
-            connectorHandler.presentationTable.getModifier()?.options;
+            connectorHandler.dataTable.getModifier()?.options;
 
         const columnAssignment = connectorHandler.columnAssignment ?? [];
 
@@ -565,7 +560,7 @@ class HighchartsComponent extends Component {
     /**
      * Destroys the highcharts component.
      */
-    public destroy(): void {
+    public override destroy(): void {
         // Cleanup references in the global Highcharts scope
         this.chart?.destroy();
         super.destroy();
@@ -648,69 +643,7 @@ class HighchartsComponent extends Component {
         return this.chart;
     }
 
-    /**
-     * Registers events from the chart options to the callback register.
-     *
-     * @private
-     */
-    private registerChartEvents(): void {
-        if (this.chart && this.chart.options) {
-            const options = this.chart.options;
-            const allEvents = [
-                'chart',
-                'series',
-                'yAxis',
-                'xAxis',
-                'colorAxis',
-                'annotations',
-                'navigation'
-            ].map((optionKey: string): Record<string, any> => {
-                let seriesOrAxisOptions = (options as any)[optionKey] || {};
-
-                if (
-                    !Array.isArray(seriesOrAxisOptions) &&
-                    seriesOrAxisOptions.events
-                ) {
-                    seriesOrAxisOptions = [seriesOrAxisOptions];
-                }
-
-                if (
-                    seriesOrAxisOptions &&
-                    typeof seriesOrAxisOptions === 'object' &&
-                    Array.isArray(seriesOrAxisOptions)
-                ) {
-                    return seriesOrAxisOptions.reduce(
-                        (
-                            acc: Record<string, any>,
-                            seriesOrAxis: SeriesOptions | AxisOptions,
-                            i: number
-                        ): Record<string, {}> => {
-                            if (seriesOrAxis && seriesOrAxis.events) {
-                                acc[seriesOrAxis.id || `${optionKey}-${i}`] = seriesOrAxis.events;
-                            }
-                            return acc;
-                        }, {}) || {};
-                }
-
-                return {};
-            });
-
-
-            allEvents.forEach((options): void => {
-                Object.keys(options).forEach((key): void => {
-                    const events = options[key];
-                    Object.keys(events).forEach((callbackKey): void => {
-                        this.callbackRegistry.addCallback(`${key}-${callbackKey}`, {
-                            type: 'seriesEvent',
-                            func: events[callbackKey]
-                        });
-                    });
-                });
-            });
-        }
-    }
-
-    public getOptionsOnDrop(sidebar: SidebarPopup): Partial<Options> {
+    public override getOptionsOnDrop(sidebar: SidebarPopup): Partial<Options> {
         const connectorsIds =
             sidebar.editMode.board.dataPool.getConnectorIds();
 
@@ -746,7 +679,7 @@ class HighchartsComponent extends Component {
      * @internal
      *
      */
-    public getOptions(): Partial<Options> {
+    public override getOptions(): Partial<Options> {
         return {
             ...diffObjects(this.options, HighchartsComponent.defaultOptions),
             type: 'Highcharts'
@@ -759,7 +692,7 @@ class HighchartsComponent extends Component {
      * @returns
      * The editable options for the chart and its values.
      */
-    public getEditableOptions(): Options {
+    public override getEditableOptions(): Options {
         const component = this;
         const componentOptions = component.options;
         const chart = component.chart;
@@ -784,7 +717,7 @@ class HighchartsComponent extends Component {
         ), ['dataTable', 'points', 'series', 'data', 'editableOptions']);
     }
 
-    public getEditableOptionValue(
+    public override getEditableOptionValue(
         propertyPath?: string[]
     ): number | boolean | undefined | string {
         const component = this;

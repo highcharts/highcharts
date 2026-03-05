@@ -171,7 +171,6 @@ async function removeFilesInFolder(folder, exceptions) {
  * To replace with
  * @param {Array<string>} files The files to update.
  * @param {string} [productName] The product name.
- * Files which should be updated.
  */
 function updateJSONFiles(version, files, productName) {
     log.message('Updating bower.json and package.json for ' + productName + '...');
@@ -186,6 +185,25 @@ function updateJSONFiles(version, files, productName) {
                     json.main ?
                         json.main.replace(/\.js$/u, '.d.ts') :
                         'highcharts.d.ts'
+                );
+
+                if (json.dependencies) {
+                    delete json.dependencies.jspdf;
+                    delete json.dependencies['svg2pdf.js'];
+                }
+
+                json.peerDependencies = Object.assign({}, json.peerDependencies, {
+                    jspdf: '^3.0.0',
+                    'svg2pdf.js': '^2.6.0'
+                });
+
+                json.peerDependenciesMeta = Object.assign(
+                    {},
+                    json.peerDependenciesMeta,
+                    {
+                        jspdf: { optional: true },
+                        'svg2pdf.js': { optional: true }
+                    }
                 );
             }
             json.version = version;
@@ -214,10 +232,10 @@ function copyFiles() {
 
     const files = {
         // 'vendor/canvg.js': join(pathToDistRepo, 'lib/canvg.js'),
-        'vendor/jspdf.js': join(pathToDistRepo, 'lib/jspdf.js'),
-        'vendor/jspdf.src.js': join(pathToDistRepo, 'lib/jspdf.src.js'),
-        'vendor/svg2pdf.js': join(pathToDistRepo, 'lib/svg2pdf.js'),
-        'vendor/svg2pdf.src.js': join(pathToDistRepo, 'lib/svg2pdf.src.js')
+        // 'vendor/jspdf.js': join(pathToDistRepo, 'lib/jspdf.js'),
+        // 'vendor/jspdf.src.js': join(pathToDistRepo, 'lib/jspdf.src.js'),
+        // 'vendor/svg2pdf.js': join(pathToDistRepo, 'lib/svg2pdf.js'),
+        // 'vendor/svg2pdf.src.js': join(pathToDistRepo, 'lib/svg2pdf.src.js')
     };
 
     const filesToIgnore = [

@@ -4,9 +4,9 @@
  *
  *  (c) 2020-2025 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Dawid Dragula
@@ -181,17 +181,11 @@ class Table {
         const customClassName = dgOptions?.rendering?.table?.className;
 
         this.columnResizing = ColumnResizing.initMode(this);
-        this.virtualRows = this.shouldVirtualizeRows();
 
         if (dgOptions?.rendering?.header?.enabled) {
             this.theadElement = makeHTMLElement('thead', {}, tableElement);
         }
         this.tbodyElement = makeHTMLElement('tbody', {}, tableElement);
-        if (this.virtualRows) {
-            tableElement.classList.add(
-                Globals.getClassName('virtualization')
-            );
-        }
 
         if (dgOptions?.rendering?.columns?.resizing?.enabled) {
             this.columnsResizer = new ColumnsResizer(this);
@@ -206,6 +200,12 @@ class Table {
         this.loadColumns();
 
         // Virtualization
+        this.virtualRows = this.shouldVirtualizeRows();
+        if (this.virtualRows) {
+            tableElement.classList.add(
+                Globals.getClassName('virtualization')
+            );
+        }
         this.rowsVirtualizer = new RowsVirtualizer(this);
 
         // Init Table
@@ -516,7 +516,7 @@ class Table {
      * @returns
      * The viewport state metadata.
      */
-    public getStateMeta(): Table.ViewportStateMetadata {
+    public getStateMeta(): ViewportStateMetadata {
         return {
             scrollTop: this.tbodyElement.scrollTop,
             scrollLeft: this.tbodyElement.scrollLeft,
@@ -533,7 +533,7 @@ class Table {
      * The viewport state metadata.
      */
     public applyStateMeta(
-        meta: Table.ViewportStateMetadata
+        meta: ViewportStateMetadata
     ): void {
         this.tbodyElement.scrollTop = meta.scrollTop;
         this.tbodyElement.scrollLeft = meta.scrollLeft;
@@ -591,18 +591,15 @@ class Table {
     }
 }
 
-namespace Table {
-
-    /**
-     * Represents the metadata of the viewport state. It is used to save the
-     * state of the viewport and restore it when the data grid is re-rendered.
-     */
-    export interface ViewportStateMetadata {
-        scrollTop: number;
-        scrollLeft: number;
-        columnResizing: ColumnResizingMode;
-        focusCursor?: [number, number];
-    }
+/**
+ * Represents the metadata of the viewport state. It is used to save the
+ * state of the viewport and restore it when the data grid is re-rendered.
+ */
+export interface ViewportStateMetadata {
+    scrollTop: number;
+    scrollLeft: number;
+    columnResizing: ColumnResizingMode;
+    focusCursor?: [number, number];
 }
 
 

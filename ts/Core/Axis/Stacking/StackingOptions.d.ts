@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2025 Highsoft AS
+ *  Author: Torstein Honsi
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -21,7 +22,7 @@ import type {
 import type AnimationOptions from '../../Animation/AnimationOptions';
 import type ColorType from '../../Color/ColorType';
 import type CSSObject from '../../Renderer/CSSObject';
-import type { DataLabelOverflowValue } from '../../Series/DataLabelOptions';
+import type { DataLabelsOverflowValue } from '../../Series/DataLabelOptions';
 import type Templating from '../../Templating';
 import type StackItem from './StackItem';
 import type { SymbolKey } from '../../Renderer/SVG/SymbolType';
@@ -57,7 +58,7 @@ export interface StackLabelOptions {
     enabled?: boolean;
     format?: string;
     formatter?: Templating.FormatterCallback<StackItem>;
-    overflow?: DataLabelOverflowValue;
+    overflow?: DataLabelsOverflowValue;
     padding?: number;
     rotation?: number;
     shape?: SymbolKey;

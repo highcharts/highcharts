@@ -4,9 +4,9 @@
  *
  *  (c) 2020-2025 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Dawid Dragula
@@ -25,7 +25,7 @@
 import type { DeepPartial } from '../../../../Shared/Types';
 import type SparklineRenderer from '../Renderers/SparklineRenderer';
 import type TableCell from '../../../Core/Table/Body/TableCell';
-import * as HighchartsNamespace from '../../highcharts';
+import type * as HighchartsNamespace from '../../highcharts';
 
 import CellContentPro from '../CellContentPro.js';
 import Globals from '../../../Core/Globals.js';
@@ -47,6 +47,16 @@ const {
  */
 class SparklineContent extends CellContentPro {
 
+    /**
+     * Highcharts namespace used by the Sparkline Renderer.
+     * This is set to `undefined` by default, and should be set to the
+     * Highcharts namespace before using the Sparkline Renderer.
+     */
+    public static H: undefined | typeof HighchartsNamespace;
+
+    /**
+     * The default chart options for the sparkline content.
+     */
     public static defaultChartOptions: DeepPartial<
         HighchartsNamespace.Options
     > = {
@@ -225,24 +235,6 @@ class SparklineContent extends CellContentPro {
     private onKeyDown = (): void => {
         this.cell.htmlElement.focus();
     };
-}
-
-
-/* *
- *
- *  Namespace
- *
- * */
-
-namespace SparklineContent {
-
-    /**
-     * Highcharts namespace used by the Sparkline Renderer.
-     * This is set to `undefined` by default, and should be set to the
-     * Highcharts namespace before using the Sparkline Renderer.
-     */
-    export let H: undefined | typeof HighchartsNamespace;
-
 }
 
 

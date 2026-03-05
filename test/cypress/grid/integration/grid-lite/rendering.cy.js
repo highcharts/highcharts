@@ -16,4 +16,9 @@ describe('Rendering types and formatters.', () => {
         cy.get('td[data-column-id="string"]').eq(0).should('have.class', 'highlight_green');
         cy.get('td[data-column-id="string"]').eq(0).should('have.text', '');
     });
+
+    it('Lang options should be used for number formatting', () => {
+        cy.get('td[data-column-id="thousands"]').eq(0).should('have.text', '12_452|4524');
+        cy.get('td[data-column-id="thousands"]').eq(2).should('have.text', '1_234');
+    });
 });

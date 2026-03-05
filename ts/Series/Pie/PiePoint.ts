@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2025 Highsoft AS
+ *  Author: Torstein Honsi
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -36,6 +37,24 @@ const {
     pick,
     relativeLength
 } = U;
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+declare module '../../Core/Series/PointBase' {
+    interface PointBase {
+        /**
+         * Pie series only. Whether to display a slice offset from the center.
+         *
+         * @name Highcharts.Point#sliced
+         * @type {boolean|undefined}
+         */
+        sliced?: boolean;
+    }
+}
 
 /* *
  *
@@ -210,12 +229,6 @@ class PiePoint extends Point {
         // Redraw is true by default
         redraw = pick(redraw, true);
 
-        /**
-         * Pie series only. Whether to display a slice offset from the
-         * center.
-         * @name Highcharts.Point#sliced
-         * @type {boolean|undefined}
-         */
         this.sliced = this.options.sliced = sliced ?? !this.sliced;
 
         // Update options.data
@@ -369,3 +382,18 @@ namespace PiePoint {
  * */
 
 export default PiePoint;
+
+/* *
+ *
+ *  API Options
+ *
+ * */
+
+/**
+ * Pie series only. Whether to display a slice offset from the center.
+ *
+ * @name Highcharts.Point#sliced
+ * @type {boolean|undefined}
+ */
+
+''; // Keeps doclets above in JS file

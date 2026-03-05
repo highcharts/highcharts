@@ -4,9 +4,9 @@
  *
  *  (c) 2020-2025 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Dawid Dragula
@@ -44,66 +44,61 @@ const {
  * */
 
 /**
- * @internal
+ * Extends the grid classes with cell editing functionality.
+ *
+ * @param ColumnClass
+ * The class to extend.
  */
-namespace CellRenderersComposition {
-
-    /**
-     * Extends the grid classes with cell editing functionality.
-     *
-     * @param ColumnClass
-     * The class to extend.
-     */
-    export function compose(
-        ColumnClass: typeof Column
-    ): void {
-        if (!pushUnique(Globals.composed, 'CellRenderers')) {
-            return;
-        }
-
-        addEvent(ColumnClass, 'afterInit', afterColumnInit);
-
-        ColumnClass.prototype.createCellContent = createCellContent;
+export function compose(
+    ColumnClass: typeof Column
+): void {
+    if (!pushUnique(Globals.composed, 'CellRenderers')) {
+        return;
     }
 
-    /**
-     * Init a type of content for a column.
-     * @param this
-     * Current column.
-     */
-    function afterColumnInit(this: Column): void {
-        const rendererType = this.options.cells?.renderer?.type || 'text';
-        let Renderer = CellRendererRegistry.types[rendererType];
+    addEvent(ColumnClass, 'afterInit', afterColumnInit);
 
-        if (!Renderer) {
-            // eslint-disable-next-line no-console
-            console.warn(`The cell renderer of type "${
-                rendererType
-            }" is not registered. Using default text renderer instead.`);
-            Renderer = CellRendererRegistry.types.text;
-        }
-
-        this.cellRenderer = new Renderer(
-            this,
-            this.options.cells?.renderer || {}
-        );
-    }
-
-    /**
-     * Render content of cell.
-     * @param this
-     * Current column.
-     *
-     * @param cell
-     * Current cell.
-     *
-     * @returns
-     * Formatted cell content.
-     */
-    function createCellContent(this: Column, cell: TableCell): CellContent {
-        return this.cellRenderer.render(cell);
-    }
+    ColumnClass.prototype.createCellContent = createCellContent;
 }
+
+/**
+ * Init a type of content for a column.
+ * @param this
+ * Current column.
+ */
+function afterColumnInit(this: Column): void {
+    const rendererType = this.options.cells?.renderer?.type || 'text';
+    let Renderer = CellRendererRegistry.types[rendererType];
+
+    if (!Renderer) {
+        // eslint-disable-next-line no-console
+        console.warn(`The cell renderer of type "${
+            rendererType
+        }" is not registered. Using default text renderer instead.`);
+        Renderer = CellRendererRegistry.types.text;
+    }
+
+    this.cellRenderer = new Renderer(
+        this,
+        this.options.cells?.renderer || {}
+    );
+}
+
+/**
+ * Render content of cell.
+ * @param this
+ * Current column.
+ *
+ * @param cell
+ * Current cell.
+ *
+ * @returns
+ * Formatted cell content.
+ */
+function createCellContent(this: Column, cell: TableCell): CellContent {
+    return this.cellRenderer.render(cell);
+}
+
 
 /* *
  *
@@ -136,4 +131,6 @@ declare module '../../Core/Table/Column' {
  *
  * */
 
-export default CellRenderersComposition;
+export default {
+    compose
+} as const;

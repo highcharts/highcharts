@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2010-2025 Pawel Lysy Grzegorz Blachlinski
+ *  (c) 2010-2025 Highsoft AS
+ *  Author: Pawel Lysy Grzegorz Blachlinski
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -97,7 +98,7 @@ export interface CollapseButtonOptions {
 
 }
 
-export interface TreegraphDataLabelFormatterCallback {
+export interface TreegraphDataLabelsFormatterCallbackFunction {
     (
         this: (TreegraphPoint|Point)
     ): (string|undefined);
@@ -109,7 +110,7 @@ export interface TreegraphDataLabelFormatterContext {
 
 export interface TreegraphDataLabelOptions extends DataLabelOptions {
     linkFormat?: string;
-    linkFormatter: TreegraphDataLabelFormatterCallback;
+    linkFormatter: TreegraphDataLabelsFormatterCallbackFunction;
     linkTextPath?: DataLabelTextPathOptions;
 }
 

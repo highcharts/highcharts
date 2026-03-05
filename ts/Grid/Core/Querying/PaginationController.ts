@@ -4,9 +4,9 @@
  *
  *  (c) 2020-2025 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Sebastian Bochan
@@ -153,12 +153,12 @@ class PaginationController {
             this.querying.shouldBeUpdated = true;
         }
 
-        if (this.currentPage !== options.page) {
-            this.setPage(options.page ?? this.currentPage);
-        }
-
         if (this.currentPageSize !== options.pageSize) {
             this.setPageSize(options.pageSize ?? this.currentPageSize);
+        }
+
+        if (this.currentPage !== options.page) {
+            this.setPage(options.page ?? this.currentPage);
         }
     }
 

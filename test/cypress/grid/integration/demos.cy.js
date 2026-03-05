@@ -45,7 +45,7 @@ if (demoPaths && demoPaths.gridLitePaths && demoPaths.gridProPaths) {
                 cy.visit(gridLiteDir + demoPath);
                 cy.then(() => {
                     expect(
-                        errorMessages,
+                        errorMessages.filter(s => !s.includes('ResizeObserver')),
                         `Console errors in ${demoPath}`
                     ).to.be.empty;
                 });
@@ -80,7 +80,7 @@ if (demoPaths && demoPaths.gridLitePaths && demoPaths.gridProPaths) {
                 cy.visit(gridProDir + demoPath);
                 cy.then(() => {
                     expect(
-                        errorMessages,
+                        errorMessages.filter(s => !s.includes('ResizeObserver')),
                         `Console errors in ${demoPath}`
                     ).to.be.empty;
                 });

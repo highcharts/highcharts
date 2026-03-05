@@ -6,7 +6,7 @@
  *
  * */
 
-import * as Grid from '@highcharts/grid/grid-lite';
+import * as Grid from '@highcharts/grid/es-modules/masters/grid-lite.src';
 
 test_grid();
 

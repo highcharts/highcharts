@@ -320,6 +320,7 @@ body {
 
 #charts .berg-label {
     opacity: 0;
+    font-size: 1em;
     transition: opacity 1s;
 }
 

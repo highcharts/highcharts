@@ -4,9 +4,9 @@
  *
  *  (c) 2020-2025 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Dawid Dragula
@@ -42,7 +42,7 @@ const { fireEvent } = U;
 /**
  * Abstract base class for for Grid popups.
  */
-abstract class Popup {
+export abstract class Popup {
 
     /* *
      *
@@ -88,7 +88,7 @@ abstract class Popup {
     /**
      * Options for the popup.
      */
-    private options: Popup.Options;
+    private options: PopupOptions;
 
 
     /* *
@@ -109,7 +109,7 @@ abstract class Popup {
      * @param options
      * Popup options.
      */
-    constructor(grid: Grid, button?: Button, options?: Popup.Options) {
+    constructor(grid: Grid, button?: Button, options?: PopupOptions) {
         this.grid = grid;
         this.button = button;
         this.options = options || {};
@@ -388,32 +388,30 @@ abstract class Popup {
 
 /* *
  *
- *  Namespace
+ *  Declarations
  *
  * */
 
-namespace Popup {
-    export interface Options {
-        /**
-         * Whether to position the popup next to the anchor element (`true`), or
-         * directly below it (`false`). Defaults to `false`.
-         */
-        nextToAnchor?: boolean;
+export interface PopupOptions {
+    /**
+     * Whether to position the popup next to the anchor element (`true`), or
+     * directly below it (`false`). Defaults to `false`.
+     */
+    nextToAnchor?: boolean;
 
+    /**
+     * The header of the popup.
+     */
+    header?: {
         /**
-         * The header of the popup.
+         * The prefix of the header label, placed before the label.
          */
-        header?: {
-            /**
-             * The prefix of the header label, placed before the label.
-             */
-            category?: string;
-            /**
-             * The label of the header.
-             */
-            label: string;
-        };
-    }
+        category?: string;
+        /**
+         * The label of the header.
+         */
+        label: string;
+    };
 }
 
 

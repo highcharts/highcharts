@@ -4,9 +4,9 @@
  *
  *  (c) 2020-2025 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Dawid Dragula
@@ -24,6 +24,7 @@
  * */
 
 import type { GroupedHeaderOptions } from '../../Options';
+import type { NoIdColumnOptions } from '../Column';
 
 import Cell from '../Cell.js';
 import Column from '../Column';
@@ -78,7 +79,7 @@ class HeaderCell extends Cell {
      * the column options.
      * @internal
      */
-    public readonly superColumnOptions: Partial<Column.Options> = {};
+    public readonly superColumnOptions: Partial<NoIdColumnOptions> = {};
 
     /**
      * List of columns that are subordinated to the header cell.
@@ -174,9 +175,8 @@ class HeaderCell extends Cell {
         );
         const headerCellOptions = options.header || {};
 
-
-        if (headerCellOptions.formatter) {
-            this.value = headerCellOptions.formatter.call(this).toString();
+        if (column && headerCellOptions.formatter) {
+            this.value = headerCellOptions.formatter.call(column).toString();
         } else if (isString(headerCellOptions.format)) {
             this.value = column ?
                 column.format(headerCellOptions.format) :
@@ -289,7 +289,10 @@ class HeaderCell extends Cell {
             return;
         }
 
-        if (column.options.sorting?.sortable) {
+        if ((
+            column.options.sorting?.enabled ??
+            column.options.sorting?.sortable
+        )) {
             column.sorting?.toggle();
         }
 
