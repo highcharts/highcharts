@@ -14,7 +14,7 @@ Grid.grid('container', {
                 parentIdColumn: 'parentId'
             },
             treeColumn: 'name',
-            initiallyExpanded: 'all'
+            initiallyExpanded: true
         }
     },
     header: ['name', 'value', 'id', 'parentId']
