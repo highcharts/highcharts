@@ -136,7 +136,7 @@ export class LocalDataProvider extends DataProvider {
      *
      * */
 
-    public async init(): Promise<void> {
+    public override async init(): Promise<void> {
         if (this.dataTable) {
             return;
         }
@@ -541,7 +541,7 @@ export type GridDataConnectorTypeOptions =
     MakeOptional<DataConnectorTypeOptions, 'id'>;
 
 export interface LocalDataProviderOptions extends DataProviderOptions {
-    providerType: 'local';
+    providerType?: 'local';
 
     /**
      * The data table used by the provider.
