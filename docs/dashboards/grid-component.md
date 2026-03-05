@@ -131,7 +131,7 @@ Dashboards.board('container', {
 ## Grid options
 
 See the [Grid documentation](https://www.highcharts.com/docs/grid/general) to read more about it
-or use [the API documentation](https://api.highcharts.com/grid/#interfaces/Grid_Core_Options.Options-1) to see the available options for the **Grid** component.
+or use [the API documentation](https://api.highcharts.com/grid/#interfaces/Grid_Core_Options.Options) to see the available options for the **Grid** component.
 
 ## Data modifiers
 

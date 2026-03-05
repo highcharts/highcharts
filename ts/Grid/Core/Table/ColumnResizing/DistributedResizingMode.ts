@@ -63,7 +63,7 @@ class DistributedResizingMode extends ResizingMode {
         ) * 10) / 10;
         this.columnWidthUnits[column.id] = 0; // Set to px
 
-        column.update({ width }, false);
+        column.setOptions({ width });
     }
 
 }

@@ -1,13 +1,3 @@
-// theme changer from the main site
-if (window.top.document.children[0].hasAttribute('data-theme')) {
-    const theme = window.top.document.children[0].getAttribute('data-theme');
-    const body = document.getElementsByTagName('body')[0];
-
-    body.classList.remove('highcharts-dark');
-    body.classList.remove('highcharts-light');
-    body.classList.add('highcharts-' + theme);
-}
-
 const params = (new URL(document.location)).search;
 
 const pArray = params.split('&');
@@ -82,7 +72,10 @@ function dependencyWheel() {
             type: 'dependencywheel',
             name: 'Dependency wheel series',
             dataLabels: {
-                color: '#333',
+                color: 'var(--highcharts-neutral-color-100)',
+                style: {
+                    textOutline: 'none'
+                },
                 textPath: {
                     enabled: true
                 },
@@ -169,11 +162,9 @@ function area() {
         plotOptions: {
             area: {
                 stacking: 'percent',
-                lineColor: '#ffffff',
                 lineWidth: 1,
                 marker: {
-                    lineWidth: 1,
-                    lineColor: '#ffffff'
+                    lineWidth: 1
                 }
             }
         },
@@ -425,18 +416,10 @@ function bubble() {
             }
         },
         tooltip: {
-            useHTML: true,
-            pointFormat: '<b>{point.name}:</b> {point.value}m CO<sub>2</sub>'
+            pointFormat: '<b>{point.name}:</b> {point.value}m CO₂'
         },
         legend: {
-            enabled: true,
-            floating: true,
-            itemDistance: 5,
-            symbolPadding: 2,
-            labelFormatter: function () {
-                return this.options.id;
-                // '{point.id}'
-            }
+            enabled: false
         },
         plotOptions: {
             packedbubble: {
@@ -457,7 +440,6 @@ function bubble() {
                         value: 250
                     },
                     style: {
-                        color: 'black',
                         textOutline: 'none',
                         fontWeight: 'normal'
                     }

@@ -53,6 +53,8 @@ import Pagination from '../Grid/Core/Pagination/Pagination.js';
 import CellContentPro from '../Grid/Pro/CellRendering/CellContentPro.js';
 import CellRenderer from '../Grid/Pro/CellRendering/CellRenderer.js';
 
+import Popup from '../Grid/Core/UI/Popup.js';
+
 
 /* *
  *
@@ -103,6 +105,7 @@ declare global {
     interface GridNamespace {
         win: typeof Globals.win;
         product: 'Grid Lite' | 'Grid Pro';
+        version: typeof Globals.version;
         AST: typeof AST;
         classNamePrefix: typeof Globals.classNamePrefix;
         Grid: typeof _Grid;
@@ -129,6 +132,7 @@ declare global {
         CellRendererRegistry: typeof CellRendererRegistry;
         CellRenderer: typeof CellRenderer;
         SvgIcons: typeof SvgIcons;
+        Popup: typeof Popup;
     }
     interface Window {
         Grid: GridNamespace;
@@ -183,6 +187,7 @@ G.CellRendererRegistry = G.CellRendererRegistry || CellRendererRegistry;
 G.CellContentPro = CellContentPro;
 G.CellRenderer = CellRenderer;
 G.SvgIcons = SvgIcons;
+G.Popup = Popup;
 
 
 /* *

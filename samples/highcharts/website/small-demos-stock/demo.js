@@ -1,13 +1,3 @@
-// theme changer from the main site
-if (window.top.document.children[0].hasAttribute('data-theme')) {
-    const theme = window.top.document.children[0].getAttribute('data-theme');
-    const body = document.getElementsByTagName('body')[0];
-
-    body.classList.remove('highcharts-dark');
-    body.classList.remove('highcharts-light');
-    body.classList.add('highcharts-' + theme);
-}
-
 const params = (new URL(document.location)).search;
 // const chartToShow = params.get('chart');
 
@@ -17,6 +7,11 @@ const pArray = params.split('&');
 let chartStr = '';
 
 let chartToShow = 'compare';
+
+const colors = [
+    '#8087E8', '#A3EDBA', '#F19E53', '#6699A1',
+    '#E1D369', '#87B4E7', '#DA6D85', '#BBBAC5'
+];
 
 
 pArray.forEach(function (element) {
@@ -206,6 +201,7 @@ function compare() {
                 chart: {
                     borderWidth: 0
                 },
+                colors: colors,
                 rangeSelector: {
                     selected: 4,
                     verticalAlign: 'top',
@@ -240,22 +236,22 @@ function compare() {
                     enabled: false
                 },
                 xAxis: {
-                    gridLineColor: 'var(--illo-lines)',
+                    gridLineColor: 'var(--highcharts-neutral-color-20)',
                     labels: {
                         style: {
-                            color: 'var(--text-primary)',
+                            color: 'var(--highcharts-neutral-color-100)',
                             fontSize: '12px',
                             textOutline: 'none'
                         }
                     },
-                    lineColor: 'var(--illo-lines)',
-                    minorGridLineColor: 'var(--illo-accent-50)',
-                    tickColor: 'var(--illo-lines)',
+                    lineColor: 'var(--highcharts-neutral-color-20)',
+                    minorGridLineColor: 'var(--highcharts-neutral-color-10)',
+                    tickColor: 'var(--highcharts-neutral-color-20)',
                     min: '2013-05-05',
                     max: '2013-05-10'
                 },
                 yAxis: {
-                    gridLineColor: 'var(--illo-lines)',
+                    gridLineColor: 'var(--highcharts-neutral-color-20)',
                     labels: {
                         formatter: function () {
                             return (this.value > 0 ?
@@ -266,9 +262,9 @@ function compare() {
                             fontSize: '12px'
                         }
                     },
-                    lineColor: 'var(--illo-lines)',
-                    minorGridLineColor: 'var(--illo-accent-50)',
-                    tickColor: 'var(--illo-lines)',
+                    lineColor: 'var(--highcharts-neutral-color-20)',
+                    minorGridLineColor: 'var(--highcharts-neutral-color-10)',
+                    tickColor: 'var(--highcharts-neutral-color-20)',
                     tickWidth: 1,
                     plotLines: [{
                         value: 0,
@@ -286,7 +282,7 @@ function compare() {
                             }
                         },
                         dataLabels: {
-                            color: 'var(--illo-accent-50)',
+                            color: 'var(--highcharts-neutral-color-20)',
                             style: {
                                 fontSize: '14px'
                             }
@@ -413,6 +409,7 @@ function ao() {
                 // backgroundColor: 'brown'
                 height: '100%'
             },
+            colors: colors,
             rangeSelector: {
                 // selected: 0,
                 floating: true,
@@ -470,8 +467,8 @@ function ao() {
                 xAxis: {
                     labels: {
                         style: {
-                            stroke: 'none',
-                            textOutline: 'none'
+                            textOutline: 0,
+                            strokeWidth: 0
                         }
                     }
                 }
@@ -629,6 +626,7 @@ function dynamic() {
             }
             // backgroundColor: 'black'
         },
+        colors: colors,
         title: {
             // text: 'Dynamic stock data'
             text: ''
@@ -862,12 +860,14 @@ function ab() {
             },
             series: [{
                 type: 'ohlc',
+                color: colors[3],
                 id: 'aapl',
                 name: 'AAPL Stock Price',
                 data: data
 
             }, {
                 type: 'abands',
+                color: colors[0],
                 linkedTo: 'aapl'
             }],
             responsive: {

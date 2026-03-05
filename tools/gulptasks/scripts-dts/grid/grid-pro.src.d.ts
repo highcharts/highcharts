@@ -40,6 +40,8 @@ export { default as DataModifier } from './es-modules/Data/Modifiers/DataModifie
 export { default as DataPool } from './es-modules/Data/DataPool';
 export { default as DataTable } from './es-modules/Data/DataTable';
 
+export { default as Popup } from './es-modules/Grid/Core/UI/Popup.js';
+
 export const grid: typeof Grid.grid;
 export const grids: typeof Grid.grids;
 export const product: 'Grid Pro';

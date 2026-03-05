@@ -108,7 +108,7 @@ columns: [{
     cells: {
         editMode: {
             validationRules: ['notEmpty', {
-                validator: function({ value }) {
+                validate: function({ value }) {
                     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
                 },
                 notification: 'Value must be a valid email address.'
@@ -131,7 +131,7 @@ You can also register custom validators globally in the `Validator.rulesRegistry
 
 ```ts
 Validator.rulesRegistry['email'] = {
-    validator: function({ value }) {
+    validate: function({ value }) {
         return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
     },
     notification: 'Value must be a valid email address.'
