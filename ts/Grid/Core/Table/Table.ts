@@ -1135,7 +1135,8 @@ class Table {
                 this.setTbodyMinHeight();
                 this.applyPinnedBodyMaxHeights();
             }
-            this.syncAriaRowIndexes();
+            this.updateScrollableRowAttributes();
+            await this.syncAriaRowIndexes();
             return { missingPinnedRowIds: [] };
         }
 
@@ -1153,7 +1154,8 @@ class Table {
         );
 
         this.rebuildPinnedRowLookupMaps();
-        this.syncAriaRowIndexes();
+        this.updateScrollableRowAttributes();
+        await this.syncAriaRowIndexes();
 
         this.pinnedTopTbodyElement.classList.toggle(
             Globals.getClassName('pinnedTbodyElementActive'),
@@ -1315,9 +1317,6 @@ class Table {
                 row.id = rowId;
                 await row.init();
                 await row.render();
-                row.htmlElement.setAttribute(
-                    'aria-roledescription', 'pinned row'
-                );
                 tbody.appendChild(row.htmlElement);
             } else {
                 row.index = nextIndex;
@@ -1325,9 +1324,6 @@ class Table {
                 row.pinnedSection = section;
                 row.setRowAttributes();
                 row.updateRowAttributes();
-                row.htmlElement.setAttribute(
-                    'aria-roledescription', 'pinned row'
-                );
                 if (!row.htmlElement.isConnected) {
                     tbody.appendChild(row.htmlElement);
                 }
@@ -1373,7 +1369,13 @@ class Table {
         }
     }
 
-    public syncAriaRowIndexes(): void {
+    private updateScrollableRowAttributes(): void {
+        for (let i = 0, iEnd = this.rows.length; i < iEnd; ++i) {
+            this.rows[i].updateRowAttributes();
+        }
+    }
+
+    public async syncAriaRowIndexes(): Promise<void> {
         const headerRowsCount = this.header?.rows.length ?? 0;
         const rows = this.getRenderedRows();
 
@@ -1381,6 +1383,20 @@ class Table {
             this.grid.accessibility?.setRowIndex(
                 rows[i].htmlElement,
                 i + headerRowsCount + 1
+            );
+        }
+
+        const baseRowCount = await this.grid.dataProvider?.getRowCount() || 0;
+        const tableElement = this.grid.tableElement;
+        if (tableElement) {
+            tableElement.setAttribute(
+                'aria-rowcount',
+                (
+                    baseRowCount +
+                    this.pinnedTopRows.length +
+                    this.pinnedBottomRows.length +
+                    headerRowsCount
+                ) + ''
             );
         }
     }

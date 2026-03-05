@@ -175,6 +175,10 @@ by active sorting, filtering, or pagination.
 Pinned rows also remain in the scrollable area, so they can appear in both
 sections at once.
 
+For accessibility, Grid announces both representations and adds context so
+screen readers can distinguish rows rendered in pinned sections from rows in the
+main scrollable section that are also pinned.
+
 ## Pinned section max height
 
 You can make top/bottom pinned sections scroll independently by setting

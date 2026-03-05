@@ -75,6 +75,12 @@ To customize the default language or wording for ARIA attributes and announcers,
                 announcements: {
                     pinned: "Row {rowId} pinned to {position}.",
                     unpinned: "Row {rowId} unpinned."
+                },
+                descriptions: {
+                    pinnedTop: "Pinned row in top section.",
+                    pinnedBottom: "Pinned row in bottom section.",
+                    alsoPinnedTop: "This row is also pinned to top section.",
+                    alsoPinnedBottom: "This row is also pinned to bottom section."
                 }
             }
         }
@@ -86,6 +92,13 @@ For row pinning announcements, available template variables are:
 
 - `{rowId}`
 - `{position}` (for the `pinned` message)
+
+Row pinning descriptions can be customized with:
+
+- `lang.accessibility.rowPinning.descriptions.pinnedTop`
+- `lang.accessibility.rowPinning.descriptions.pinnedBottom`
+- `lang.accessibility.rowPinning.descriptions.alsoPinnedTop`
+- `lang.accessibility.rowPinning.descriptions.alsoPinnedBottom`
 
 For a complete list of available options, check out the [API reference](https://api.highcharts.com/dashboards/#interfaces/Grid_Options.LangOptions).
 

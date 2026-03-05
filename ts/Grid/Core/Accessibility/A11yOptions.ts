@@ -244,7 +244,42 @@ export interface RowPinningLangA11yOptions {
          * @default 'Row {rowId} unpinned.'
          */
         unpinned?: string;
-    }
+    };
+
+    /**
+     * Row description messages for pinned and duplicated scroll rows.
+     */
+    descriptions?: {
+        /**
+         * Description for rows rendered in the top pinned section.
+         *
+         * @default 'Pinned row in top section.'
+         */
+        pinnedTop?: string;
+
+        /**
+         * Description for rows rendered in the bottom pinned section.
+         *
+         * @default 'Pinned row in bottom section.'
+         */
+        pinnedBottom?: string;
+
+        /**
+         * Description for scrollable rows that are also pinned to the top
+         * section.
+         *
+         * @default 'This row is also pinned to top section.'
+         */
+        alsoPinnedTop?: string;
+
+        /**
+         * Description for scrollable rows that are also pinned to the bottom
+         * section.
+         *
+         * @default 'This row is also pinned to bottom section.'
+         */
+        alsoPinnedBottom?: string;
+    };
 }
 
 /**

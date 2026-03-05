@@ -270,6 +270,8 @@ class TableRow extends Row {
         const a11y = vp.grid.accessibility;
         const idx = this.index;
         const el = this.htmlElement;
+        const rowPinningDescriptions = vp.grid.options?.lang?.accessibility
+            ?.rowPinning?.descriptions;
 
         // Index of the row in the original data table (ID)
         if (this.id !== void 0) {
@@ -280,6 +282,50 @@ class TableRow extends Row {
             // Calculate levels of header, 1 to avoid indexing from 0
             a11y?.setRowIndex(el, idx + (vp.header?.rows.length ?? 0) + 1);
         }
+
+        if (this.pinnedSection === 'top') {
+            el.setAttribute(
+                'aria-roledescription',
+                rowPinningDescriptions?.pinnedTop ||
+                'Pinned row in top section.'
+            );
+            return;
+        }
+
+        if (this.pinnedSection === 'bottom') {
+            el.setAttribute(
+                'aria-roledescription',
+                rowPinningDescriptions?.pinnedBottom ||
+                'Pinned row in bottom section.'
+            );
+            return;
+        }
+
+        if (this.id === void 0) {
+            el.removeAttribute('aria-roledescription');
+            return;
+        }
+
+        const pinnedRows = vp.grid.getPinnedRows?.();
+        if (pinnedRows?.topIds.includes(this.id)) {
+            el.setAttribute(
+                'aria-roledescription',
+                rowPinningDescriptions?.alsoPinnedTop ||
+                'This row is also pinned to top section.'
+            );
+            return;
+        }
+
+        if (pinnedRows?.bottomIds.includes(this.id)) {
+            el.setAttribute(
+                'aria-roledescription',
+                rowPinningDescriptions?.alsoPinnedBottom ||
+                'This row is also pinned to bottom section.'
+            );
+            return;
+        }
+
+        el.removeAttribute('aria-roledescription');
     }
 
     /**

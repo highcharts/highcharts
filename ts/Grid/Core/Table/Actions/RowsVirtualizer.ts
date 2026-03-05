@@ -658,7 +658,7 @@ class RowsVirtualizer {
                 }
             }
 
-            vp.syncAriaRowIndexes();
+            await vp.syncAriaRowIndexes();
         } finally {
             this.isRendering = false;
 

@@ -64,6 +64,12 @@ export const defaultLangOptions: DeepPartial<LangOptions> = {
             announcements: {
                 pinned: 'Row {rowId} pinned to {position}.',
                 unpinned: 'Row {rowId} unpinned.'
+            },
+            descriptions: {
+                pinnedTop: 'Pinned row in top section.',
+                pinnedBottom: 'Pinned row in bottom section.',
+                alsoPinnedTop: 'This row is also pinned to top section.',
+                alsoPinnedBottom: 'This row is also pinned to bottom section.'
             }
         },
         screenReaderSection: {

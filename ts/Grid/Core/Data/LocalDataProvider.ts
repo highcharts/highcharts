@@ -105,9 +105,10 @@ export class LocalDataProvider extends DataProvider {
     private prePaginationRowCount?: number;
 
     /**
-     * The active view for rendering.
+     * Pre-computed snapshot of the presentation table rows, built once per
+     * query cycle for O(1) reads. See {@link MaterializedRows}.
      */
-    private activeView: ActiveRowsView = {
+    private materializedRows: MaterializedRows = {
         rowIds: [],
         rowObjects: [],
         rowIdToIndex: new Map()
@@ -167,7 +168,7 @@ export class LocalDataProvider extends DataProvider {
         this.dataTable = table;
         this.presentationTable = table.getModified();
         this.prePaginationRowCount = this.presentationTable?.rowCount ?? 0;
-        this.activeView = {
+        this.materializedRows = {
             rowIds: [],
             rowObjects: [],
             rowIdToIndex: new Map()
@@ -279,17 +280,17 @@ export class LocalDataProvider extends DataProvider {
     }
 
     public override getRowId(rowIndex: number): Promise<RowId | undefined> {
-        return Promise.resolve(this.activeView.rowIds[rowIndex]);
+        return Promise.resolve(this.materializedRows.rowIds[rowIndex]);
     }
 
     public override getRowIndex(rowId: RowId): Promise<number | undefined> {
-        return Promise.resolve(this.activeView.rowIdToIndex.get(rowId));
+        return Promise.resolve(this.materializedRows.rowIdToIndex.get(rowId));
     }
 
     public override getRowObject(
         rowIndex: number
     ): Promise<RowObjectType | undefined> {
-        return Promise.resolve(this.activeView.rowObjects[rowIndex]);
+        return Promise.resolve(this.materializedRows.rowObjects[rowIndex]);
     }
 
     public override getOriginalRowObjectByRowId(
@@ -313,7 +314,7 @@ export class LocalDataProvider extends DataProvider {
     }
 
     public override getRowCount(): Promise<number> {
-        return Promise.resolve(this.activeView.rowIds.length);
+        return Promise.resolve(this.materializedRows.rowIds.length);
     }
 
     public override getValue(
@@ -321,7 +322,7 @@ export class LocalDataProvider extends DataProvider {
         rowIndex: number
     ): Promise<DataTableCellType> {
         return Promise.resolve(
-            this.activeView.rowObjects[rowIndex]?.[columnId] as
+            this.materializedRows.rowObjects[rowIndex]?.[columnId] as
                 DataTableCellType
         );
     }
@@ -384,7 +385,7 @@ export class LocalDataProvider extends DataProvider {
             activeTable = activeTable.getModified();
         }
 
-        this.activeView = this.createActiveView(activeTable);
+        this.materializedRows = this.createMaterializedRows(activeTable);
 
         this.rowIdToOriginalIndex = this.createRowIdToOriginalIndexMap(
             rawTable
@@ -393,7 +394,7 @@ export class LocalDataProvider extends DataProvider {
         this.presentationTable = activeTable;
     }
 
-    private createActiveView(table: DataTable): ActiveRowsView {
+    private createMaterializedRows(table: DataTable): MaterializedRows {
         const rowIds: RowId[] = [];
         const rowObjects: RowObjectType[] = [];
 
@@ -443,7 +444,7 @@ export class LocalDataProvider extends DataProvider {
     public override destroy(): void {
         this.clearDataTableEvents();
         this.clearConnector();
-        this.activeView = {
+        this.materializedRows = {
             rowIds: [],
             rowObjects: [],
             rowIdToIndex: new Map()
@@ -510,7 +511,13 @@ export class LocalDataProvider extends DataProvider {
     }
 }
 
-interface ActiveRowsView {
+/**
+ * Pre-computed snapshot of the presentation table rows (after sort, filter,
+ * and paginate). Built once per query cycle so that all subsequent reads
+ * (`getRowId`, `getRowObject`, `getValue`, etc.) are O(1) array/Map lookups
+ * instead of hitting DataTable methods on every call.
+ */
+interface MaterializedRows {
     rowIds: RowId[];
     rowObjects: RowObjectType[];
     rowIdToIndex: Map<RowId, number>;

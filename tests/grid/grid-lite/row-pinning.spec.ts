@@ -366,6 +366,139 @@ test.describe('Grid Lite row pinning', () => {
         expect(state.pinnedTop[0]).toBe('ROW-020');
     });
 
+    test('Row pinning announcements skip no-op runtime calls', async ({ page }) => {
+        const state = await page.evaluate(async () => {
+            const grid = (window as any).grid;
+            const calls: string[] = [];
+            const announce = grid.accessibility?.announce?.bind(
+                grid.accessibility
+            );
+
+            if (announce) {
+                grid.accessibility.announce = (
+                    message: string,
+                    assertive?: boolean
+                ): void => {
+                    calls.push(message);
+                    announce(message, assertive);
+                };
+            }
+
+            await grid.update({
+                accessibility: {
+                    announcements: {
+                        rowPinning: true
+                    }
+                }
+            });
+
+            await grid.pinRow('ROW-001', 'top');
+            await grid.unpinRow('ROW-020');
+
+            return { calls };
+        });
+
+        expect(state.calls).toEqual([]);
+    });
+
+    test('Pinned rows expose section context in aria-roledescription for pinned and scrollable copies', async ({ page }) => {
+        const state = await page.evaluate(async () => {
+            const grid = (window as any).grid;
+
+            await grid.pinRow('ROW-010', 'top');
+
+            const topRow = grid.viewport.getRenderedPinnedRowById(
+                'ROW-010',
+                'top'
+            );
+            const scrollRow = grid.viewport.getRenderedRows().find((
+                row: { id: string; pinnedSection?: string }
+            ) => (
+                row.id === 'ROW-010' && !row.pinnedSection
+            ));
+
+            return {
+                topDescription: (
+                    topRow?.htmlElement?.getAttribute('aria-roledescription') ||
+                    ''
+                ),
+                scrollDescription: (
+                    scrollRow?.htmlElement?.getAttribute(
+                        'aria-roledescription'
+                    ) || ''
+                )
+            };
+        });
+
+        expect(state.topDescription).toContain('Pinned row in top section.');
+        expect(state.scrollDescription).toContain(
+            'also pinned to top section'
+        );
+    });
+
+    test('Pinned bottom rows expose section context in aria-roledescription', async ({ page }) => {
+        const state = await page.evaluate(async () => {
+            const grid = (window as any).grid;
+
+            await grid.pinRow('ROW-020', 'bottom');
+
+            const bottomRow = grid.viewport.getRenderedPinnedRowById(
+                'ROW-020',
+                'bottom'
+            );
+
+            return {
+                bottomDescription: (
+                    bottomRow?.htmlElement?.getAttribute(
+                        'aria-roledescription'
+                    ) || ''
+                )
+            };
+        });
+
+        expect(state.bottomDescription).toContain(
+            'Pinned row in bottom section.'
+        );
+    });
+
+    test('aria-rowcount stays coherent with pinned rendered row indexes', async ({ page }) => {
+        const state = await page.evaluate(async () => {
+            const grid = (window as any).grid;
+
+            await grid.update({
+                rendering: {
+                    rows: {
+                        pinning: {
+                            topIds: ['ROW-001', 'ROW-002'],
+                            bottomIds: ['ROW-059', 'ROW-060']
+                        }
+                    }
+                }
+            });
+
+            const rowIndexes = Array.from(
+                document.querySelectorAll('tbody tr[aria-rowindex]')
+            ).map((row): number => parseInt(
+                row.getAttribute('aria-rowindex') || '0',
+                10
+            ));
+            const maxRowIndex = rowIndexes.length ?
+                Math.max(...rowIndexes) :
+                0;
+            const rowCount = parseInt(
+                grid.tableElement?.getAttribute('aria-rowcount') || '0',
+                10
+            );
+
+            return {
+                maxRowIndex,
+                rowCount
+            };
+        });
+
+        expect(state.rowCount).toBeGreaterThanOrEqual(state.maxRowIndex);
+    });
+
     test('Disabling pinning ignores config and runtime pinning API', async ({ page }) => {
         const state = await page.evaluate(async () => {
             const grid = (window as any).grid;

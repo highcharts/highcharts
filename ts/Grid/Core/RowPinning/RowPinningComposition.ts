@@ -295,12 +295,14 @@ async function runRuntimePinningChange(
 
     fireEvent(this, 'afterRowPin', eventPayload);
     callRowPinningEventCallback(this, 'afterRowPin', eventPayload);
-    announceRowPinningChange(
-        this,
-        announcementAction,
-        eventPayload.rowId,
-        announcementPosition
-    );
+    if (eventPayload.changed) {
+        announceRowPinningChange(
+            this,
+            announcementAction,
+            eventPayload.rowId,
+            announcementPosition
+        );
+    }
 }
 
 /**
