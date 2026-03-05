@@ -48,18 +48,17 @@ import Templating from '../../../Core/Templating.js';
 const {
     format
 } = Templating;
-
-import U from '../../../Core/Utilities.js';
-const {
+import {
     createElement,
     css,
     defined,
     diffObjects,
     isArray,
+    isFunction,
     isNumber,
-    merge,
-    isFunction
-} = U;
+    merge
+} from '../../../Shared/Utilities.js';
+
 
 /* *
  *

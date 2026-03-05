@@ -48,8 +48,7 @@ import Tree from '../../../Gantt/Tree.js';
 import TreeGridTick from './TreeGridTick.js';
 import TU from '../../../Series/TreeUtilities.js';
 const { getLevelOptions } = TU;
-import U from '../../Utilities.js';
-const {
+import {
     addEvent,
     find,
     fireEvent,
@@ -58,7 +57,7 @@ const {
     merge,
     removeEvent,
     wrap
-} = U;
+} from '../../../Shared/Utilities.js';
 
 /* *
  *

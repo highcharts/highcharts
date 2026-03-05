@@ -86,8 +86,7 @@ const { seriesTypes } = SeriesRegistry;
 import SVGElement from '../Renderer/SVG/SVGElement.js';
 import T from '../Templating.js';
 const { format } = T;
-import U from '../Utilities.js';
-const {
+import {
     addEvent,
     arrayMax,
     arrayMin,
@@ -98,12 +97,12 @@ const {
     destroyObjectProperties,
     diffObjects,
     erase,
-    error,
+    type EventWrapperObject,
     extend,
     fireEvent,
     getClosestDistance,
     getNestedProperty,
-    insertItem,
+    internalClearTimeout,
     isArray,
     isNumber,
     isString,
@@ -113,7 +112,8 @@ const {
     pushUnique,
     removeEvent,
     syncTimeout
-} = U;
+} from '../../Shared/Utilities.js';
+import { error, insertItem } from '../Utilities.js';
 
 /* *
  *
@@ -3488,7 +3488,7 @@ class Series {
 
         // Clear the animation timeout if we are destroying the series
         // during initial animation
-        U.clearTimeout(series.animationTimeout as any);
+        internalClearTimeout(series.animationTimeout as any);
 
         // Destroy all SVGElements associated to the series
         objectEach(series, function (val: any, prop: string): void {
@@ -5437,7 +5437,7 @@ interface Series extends SeriesBase {
     directTouch: boolean;
 
     /** @internal */
-    hcEvents?: Record<string, Array<U.EventWrapperObject<Series>>>;
+    hcEvents?: Record<string, Array<EventWrapperObject<Series>>>;
 
     /** @internal */
     invertible: boolean;

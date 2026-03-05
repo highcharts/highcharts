@@ -53,15 +53,14 @@ import HighchartsSyncs from './HighchartsSyncs/HighchartsSyncs.js';
 import HighchartsComponentDefaults from './HighchartsComponentDefaults.js';
 import ConnectorHandler from '../../Components/ConnectorHandler';
 import DataConverterUtils from '../../../Data/Converters/DataConverterUtils.js';
-import U from '../../../Core/Utilities.js';
-const {
+import DU from '../../Utilities.js';
+import {
     createElement,
     diffObjects,
     isString,
     merge,
     splat
-} = U;
-import DU from '../../Utilities.js';
+} from '../../../Shared/Utilities.js';
 const { deepClone } = DU;
 
 

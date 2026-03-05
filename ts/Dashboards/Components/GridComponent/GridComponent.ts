@@ -30,14 +30,9 @@ import type { EventTypes as ComponentEventTypes } from '../Component';
 import Component from '../Component.js';
 import GridSyncs from './GridSyncs/GridSyncs.js';
 import GridComponentDefaults from './GridComponentDefaults.js';
-import U from '../../../Core/Utilities.js';
 import DU from '../../Utilities.js';
 import SidebarPopup from '../../EditMode/SidebarPopup';
-const {
-    merge,
-    diffObjects,
-    getStyle
-} = U;
+import { diffObjects, getStyle, merge } from '../../../Shared/Utilities.js';
 const { deepClone } = DU;
 
 /* *
@@ -136,10 +131,10 @@ class GridComponent extends Component {
                 grid.update({
                     dataTable: table?.getModified()
                 }, false);
-            } else if ( // #24067 -Update the dataTable in the options if it has changed
+            } else if ( // #24067 -Update dataTable in the options if changed
                 options.gridOptions?.dataTable &&
                 this.options.gridOptions
-            ) { 
+            ) {
                 this.options.gridOptions.dataTable =
                     options.gridOptions.dataTable;
             }

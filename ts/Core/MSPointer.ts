@@ -30,9 +30,8 @@ const {
     win
 } = H;
 import Pointer from './Pointer.js';
-import U from './Utilities.js';
 import DOMElementType from './Renderer/DOMElementType';
-const {
+import {
     addEvent,
     attr,
     css,
@@ -41,7 +40,7 @@ const {
     pick,
     pushUnique,
     removeEvent
-} = U;
+} from '../Shared/Utilities.js';
 
 /* *
  *

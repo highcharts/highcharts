@@ -25,12 +25,7 @@ import type { DeepPartial } from '../../Shared/Types';
 import Axis from './Axis.js';
 import D from '../Defaults.js';
 const { defaultOptions } = D;
-import U from '../Utilities.js';
-const {
-    addEvent,
-    merge,
-    splat
-} = U;
+import { splat, merge, addEvent } from '../../Shared/Utilities.js';
 
 /* *
  *

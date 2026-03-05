@@ -1073,8 +1073,6 @@ export interface SeriesOptions {
      */
     zIndex?: number;
 
-    zoomEnabled?: boolean;
-
     /**
      * Defines the Axis on which the zones are applied.
      *

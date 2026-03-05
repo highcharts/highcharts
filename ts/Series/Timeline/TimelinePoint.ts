@@ -33,14 +33,13 @@ const {
     pie: { prototype: { pointClass: PiePoint } }
 } = SeriesRegistry.seriesTypes;
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
-import U from '../../Core/Utilities.js';
-const {
+import {
     defined,
     isNumber,
     merge,
     objectEach,
     pick
-} = U;
+} from '../../Shared/Utilities.js';
 
 /* *
  *

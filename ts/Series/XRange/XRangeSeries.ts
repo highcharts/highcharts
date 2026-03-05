@@ -42,8 +42,9 @@ import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     column: ColumnSeries
 } = SeriesRegistry.seriesTypes;
-import U from '../../Core/Utilities.js';
-const {
+import XRangeSeriesDefaults from './XRangeSeriesDefaults.js';
+import XRangePoint from './XRangePoint.js';
+import {
     addEvent,
     clamp,
     crisp,
@@ -56,9 +57,7 @@ const {
     pick,
     pushUnique,
     relativeLength
-} = U;
-import XRangeSeriesDefaults from './XRangeSeriesDefaults.js';
-import XRangePoint from './XRangePoint.js';
+} from '../../Shared/Utilities.js';
 
 /* *
  *

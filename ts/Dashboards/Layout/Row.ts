@@ -24,17 +24,15 @@ import type { Options as CellOptions } from './Cell';
 import Globals from '../Globals.js';
 import Cell from './Cell.js';
 import GUIElement from './GUIElement.js';
-import U from '../../Core/Utilities.js';
 import EditGlobals from '../EditMode/EditGlobals.js';
 import { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
-
-const {
-    pick,
+import {
     defined,
+    fireEvent,
     merge,
     objectEach,
-    fireEvent
-} = U;
+    pick
+} from '../../Shared/Utilities.js';
 
 /**
  * @internal

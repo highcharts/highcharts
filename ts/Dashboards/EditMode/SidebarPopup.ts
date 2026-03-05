@@ -32,13 +32,12 @@ import EditGlobals from './EditGlobals.js';
 import EditRenderer from './EditRenderer.js';
 import GUIElement from '../Layout/GUIElement.js';
 import Layout from '../Layout/Layout.js';
-import U from '../../Core/Utilities.js';
-const {
+import {
     addEvent,
     createElement,
     fireEvent,
     merge
-} = U;
+} from '../../Shared/Utilities.js';
 
 /* *
  *
