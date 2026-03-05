@@ -47,20 +47,8 @@ function getNextColumnId(existingIds) {
     return id;
 }
 
-async function getSourceRowIndex(cell) {
-    const grid = cell.row.viewport.grid;
+function getSourceRowIndex(cell) {
     const rowId = cell.row.id;
-
-    if (rowId !== void 0 && grid.dataProvider?.getScopedRowIndex) {
-        const resolvedIndex = await grid.dataProvider.getScopedRowIndex(
-            rowId,
-            'raw'
-        );
-
-        if (typeof resolvedIndex === 'number') {
-            return resolvedIndex;
-        }
-    }
 
     if (typeof rowId === 'number') {
         return rowId;
@@ -79,7 +67,7 @@ async function addRowBelow(cell) {
         return;
     }
 
-    const insertAt = await getSourceRowIndex(cell);
+    const insertAt = getSourceRowIndex(cell);
     if (typeof insertAt !== 'number') {
         return;
     }
@@ -108,7 +96,7 @@ async function addRowAbove(cell) {
         return;
     }
 
-    const insertAt = await getSourceRowIndex(cell);
+    const insertAt = getSourceRowIndex(cell);
     if (typeof insertAt !== 'number') {
         return;
     }
@@ -193,7 +181,7 @@ function addColumnRight(cell) {
     });
 }
 
-async function deleteRow(cell) {
+function deleteRow(cell) {
     const grid = cell.row.viewport.grid;
     const dt = grid.dataTable;
 
@@ -201,7 +189,7 @@ async function deleteRow(cell) {
         return;
     }
 
-    const deleteAt = await getSourceRowIndex(cell);
+    const deleteAt = getSourceRowIndex(cell);
     if (typeof deleteAt !== 'number') {
         return;
     }

@@ -24,7 +24,6 @@
 
 import type {
     DataProviderOptions,
-    ProviderQueryScope,
     RowId
 } from './DataProvider';
 import type DataTableOptions from '../../../Data/DataTableOptions';
@@ -106,12 +105,6 @@ export class LocalDataProvider extends DataProvider {
     private prePaginationRowCount?: number;
 
     /**
-     * Scoped row snapshots keyed by query scope.
-     */
-    private scopedViews: Partial<Record<ProviderQueryScope, ScopedRowsView>> =
-        {};
-
-    /**
      * The active view for rendering.
      */
     private activeView: ScopedRowsView = {
@@ -174,7 +167,6 @@ export class LocalDataProvider extends DataProvider {
         this.dataTable = table;
         this.presentationTable = table.getModified();
         this.prePaginationRowCount = this.presentationTable?.rowCount ?? 0;
-        this.scopedViews = {};
         this.activeView = {
             rowIds: [],
             rowObjects: [],
@@ -392,74 +384,13 @@ export class LocalDataProvider extends DataProvider {
             activeTable = activeTable.getModified();
         }
 
-        this.scopedViews.raw = this.createScopedView(rawTable);
-        this.scopedViews.grouped = this.createScopedView(groupedTable);
-        this.scopedViews.active = this.createScopedView(activeTable);
+        this.activeView = this.createScopedView(activeTable);
 
         this.rowIdToOriginalIndex = this.createRowIdToOriginalIndexMap(
             rawTable
         );
 
         this.presentationTable = activeTable;
-        this.activeView = this.scopedViews.active || {
-            rowIds: [],
-            rowObjects: [],
-            rowIdToIndex: new Map()
-        };
-    }
-
-    public override getScopedRowCount(
-        scope: ProviderQueryScope = 'active'
-    ): Promise<number> {
-        return Promise.resolve(
-            (this.scopedViews[scope] || this.activeView).rowIds.length
-        );
-    }
-
-    public override getScopedRowId(
-        rowIndex: number,
-        scope: ProviderQueryScope = 'active'
-    ): Promise<RowId | undefined> {
-        return Promise.resolve(
-            (this.scopedViews[scope] || this.activeView).rowIds[rowIndex]
-        );
-    }
-
-    public override getScopedRowIndex(
-        rowId: RowId,
-        scope: ProviderQueryScope = 'active'
-    ): Promise<number | undefined> {
-        return Promise.resolve(
-            (this.scopedViews[scope] || this.activeView).rowIdToIndex.get(rowId)
-        );
-    }
-
-    public override getScopedRowObject(
-        rowIndex: number,
-        scope: ProviderQueryScope = 'active'
-    ): Promise<RowObjectType | undefined> {
-        return Promise.resolve(
-            (this.scopedViews[scope] || this.activeView).rowObjects[rowIndex]
-        );
-    }
-
-    public override getScopedRowsByIds(
-        rowIds: RowId[],
-        scope: ProviderQueryScope = 'active'
-    ): Promise<Map<RowId, RowObjectType>> {
-        const scopedView = this.scopedViews[scope] || this.activeView;
-        const rows = new Map<RowId, RowObjectType>();
-        for (const rowId of rowIds) {
-            const index = scopedView.rowIdToIndex.get(rowId);
-            if (index === void 0) {
-                continue;
-            }
-            const row = scopedView.rowObjects[index];
-            if (row) {
-                rows.set(rowId, row);
-            }
-        }
-        return Promise.resolve(rows);
     }
 
     private createScopedView(table: DataTable): ScopedRowsView {
@@ -512,7 +443,6 @@ export class LocalDataProvider extends DataProvider {
     public override destroy(): void {
         this.clearDataTableEvents();
         this.clearConnector();
-        this.scopedViews = {};
         this.activeView = {
             rowIds: [],
             rowObjects: [],

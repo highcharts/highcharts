@@ -29,7 +29,6 @@ import type {
 } from '../../../Data/DataTable';
 import type {
     DataProviderOptions,
-    ProviderQueryScope,
     RowId
 } from '../../Core/Data/DataProvider';
 import type { ColumnDataType } from '../../Core/Table/Column';
@@ -127,18 +126,6 @@ export class RemoteDataProvider extends DataProvider {
     private requestEpoch = 0;
 
     /**
-     * Cached scoped datasets for provider-aware row pinning.
-     */
-    private scopedDatasets:
-    Partial<Record<ProviderQueryScope, ScopedDataset>> = {};
-
-    /**
-     * Fingerprint for each cached scoped dataset.
-     */
-    private scopedFingerprints: Partial<Record<ProviderQueryScope, string>> = {
-    };
-
-    /**
      * Best-effort cache for pinned rows available client-side.
      */
     private pinnedRowCache: Map<RowId, RowObjectType> = new Map();
@@ -185,167 +172,6 @@ export class RemoteDataProvider extends DataProvider {
             controller.abort();
         }
         this.pendingControllers.clear();
-    }
-
-    private createScopedQuery(scope: ProviderQueryScope): QueryingController {
-        const filteringModifier = (
-            scope === 'grouped' || scope === 'active' ?
-                this.querying.filtering.modifier :
-                void 0
-        );
-        const sortingModifier = (
-            scope === 'grouped' ||
-            scope === 'active' ?
-                this.querying.sorting.modifier :
-                void 0
-        );
-
-        return {
-            ...this.querying,
-            filtering: {
-                ...this.querying.filtering,
-                modifier: filteringModifier
-            },
-            sorting: {
-                ...this.querying.sorting,
-                modifier: sortingModifier
-            },
-            pagination: {
-                ...this.querying.pagination,
-                enabled: (
-                    scope === 'active' ?
-                        this.querying.pagination.enabled :
-                        false
-                ),
-                currentPage: 1
-            }
-        } as QueryingController;
-    }
-
-    private getScopeFingerprint(scope: ProviderQueryScope): string {
-        return `${scope}:${createQueryFingerprint(this.createScopedQuery(scope))}`;
-    }
-
-    private async fetchScopedChunk(
-        scope: ProviderQueryScope,
-        chunkIndex: number
-    ): Promise<RemoteFetchCallbackResult> {
-        const offset = chunkIndex * this.maxChunkSize;
-        const limit = this.maxChunkSize;
-        const query = this.createScopedQuery(scope);
-        const { fetchCallback, dataSource } = this.options;
-
-        if (fetchCallback) {
-            return fetchCallback.call(this, query, offset, limit);
-        }
-
-        if (dataSource) {
-            return dataSourceFetch(dataSource, {
-                query,
-                offset,
-                limit
-            });
-        }
-
-        throw new Error(
-            'RemoteDataProvider: Either `dataSource` or `fetchCallback` must be provided in options.'
-        );
-    }
-
-    private async ensureScopedDataset(
-        scope: ProviderQueryScope
-    ): Promise<ScopedDataset> {
-        if (scope === 'active') {
-            const rowCount = await this.getRowCount();
-            const rowIds: RowId[] = [];
-            const rowObjects: RowObjectType[] = [];
-            for (let i = 0; i < rowCount; ++i) {
-                const rowId = await this.getRowId(i);
-                if (rowId === void 0) {
-                    continue;
-                }
-                rowIds.push(rowId);
-                rowObjects.push(await this.getRowObject(i) || {});
-            }
-            return {
-                rowIds,
-                rowObjects,
-                rowIdToIndex: createRowIdIndexMap(rowIds)
-            };
-        }
-
-        const fingerprint = this.getScopeFingerprint(scope);
-        if (this.scopedFingerprints[scope] === fingerprint) {
-            const cached = this.scopedDatasets[scope];
-            if (cached) {
-                return cached;
-            }
-        }
-
-        const first = await this.fetchScopedChunk(scope, 0);
-        const totalCount = first.totalRowCount;
-        const chunkCount = Math.max(
-            1,
-            Math.ceil(totalCount / this.maxChunkSize)
-        );
-
-        const rowIds: RowId[] = [];
-        const rowObjects: RowObjectType[] = [];
-        const appendChunk = (
-            chunk: RemoteFetchCallbackResult,
-            chunkOffset: number
-        ): void => {
-            const columnIds = Object.keys(chunk.columns);
-            const rowLength = columnIds[0] ?
-                (chunk.columns[columnIds[0]]?.length || 0) :
-                0;
-            const fallbackIds = chunk.rowIds || Array.from(
-                { length: rowLength },
-                (_, i): number => i + chunkOffset
-            );
-            const rowSettings = this.querying.grid.options?.rendering?.rows;
-            const idColumn = rowSettings?.pinning?.idColumn;
-            const idColumnValues = (
-                idColumn &&
-                chunk.columns[idColumn] ?
-                    chunk.columns[idColumn] :
-                    void 0
-            );
-
-            for (let i = 0; i < rowLength; ++i) {
-                const idColumnValue = idColumnValues?.[i];
-                const rowId = (
-                    typeof idColumnValue === 'string' ||
-                    typeof idColumnValue === 'number'
-                ) ?
-                    idColumnValue :
-                    fallbackIds[i];
-                rowIds.push(rowId);
-
-                const row: RowObjectType = {};
-                for (const columnId of columnIds) {
-                    row[columnId] = chunk.columns[columnId][i];
-                }
-                rowObjects.push(row);
-            }
-        };
-
-        appendChunk(first, 0);
-
-        for (let chunkIndex = 1; chunkIndex < chunkCount; ++chunkIndex) {
-            const chunk = await this.fetchScopedChunk(scope, chunkIndex);
-            appendChunk(chunk, chunkIndex * this.maxChunkSize);
-        }
-
-        const dataset: ScopedDataset = {
-            rowIds,
-            rowObjects,
-            rowIdToIndex: createRowIdIndexMap(rowIds)
-        };
-
-        this.scopedDatasets[scope] = dataset;
-        this.scopedFingerprints[scope] = fingerprint;
-        return dataset;
     }
 
     private async getChunkForRowIndex(rowIndex: number): Promise<DataChunk> {
@@ -831,50 +657,6 @@ export class RemoteDataProvider extends DataProvider {
         return DataProvider.assumeColumnDataType(column.slice(0, 30), columnId);
     }
 
-    public override async getScopedRowCount(
-        scope: ProviderQueryScope = 'active'
-    ): Promise<number> {
-        return (await this.ensureScopedDataset(scope)).rowIds.length;
-    }
-
-    public override async getScopedRowId(
-        rowIndex: number,
-        scope: ProviderQueryScope = 'active'
-    ): Promise<RowId | undefined> {
-        return (await this.ensureScopedDataset(scope)).rowIds[rowIndex];
-    }
-
-    public override async getScopedRowIndex(
-        rowId: RowId,
-        scope: ProviderQueryScope = 'active'
-    ): Promise<number | undefined> {
-        return (await this.ensureScopedDataset(scope))
-            .rowIdToIndex.get(rowId);
-    }
-
-    public override async getScopedRowObject(
-        rowIndex: number,
-        scope: ProviderQueryScope = 'active'
-    ): Promise<RowObjectType | undefined> {
-        return (await this.ensureScopedDataset(scope)).rowObjects[rowIndex];
-    }
-
-    public override async getScopedRowsByIds(
-        rowIds: RowId[],
-        scope: ProviderQueryScope = 'active'
-    ): Promise<Map<RowId, RowObjectType>> {
-        const scoped = await this.ensureScopedDataset(scope);
-        const rows = new Map<RowId, RowObjectType>();
-        for (const rowId of rowIds) {
-            const index = scoped.rowIdToIndex.get(rowId);
-            if (index === void 0) {
-                continue;
-            }
-            rows.set(rowId, scoped.rowObjects[index]);
-        }
-        return rows;
-    }
-
     public override async applyQuery(): Promise<void> {
         const fingerprint = createQueryFingerprint(this.querying);
         if (this.lastQueryFingerprint === fingerprint) {
@@ -893,8 +675,6 @@ export class RemoteDataProvider extends DataProvider {
         this.columnIds = null;
         this.prePaginationRowCount = null;
         this.rowCount = null;
-        this.scopedDatasets = {};
-        this.scopedFingerprints = {};
         this.pinnedRowCache.clear();
         this.warnedPinnedCacheMisses.clear();
 
@@ -914,8 +694,6 @@ export class RemoteDataProvider extends DataProvider {
         this.columnIds = null;
         this.prePaginationRowCount = null;
         this.rowCount = null;
-        this.scopedDatasets = {};
-        this.scopedFingerprints = {};
         this.pinnedRowCache.clear();
         this.warnedPinnedCacheMisses.clear();
         this.lastQueryFingerprint = null;
@@ -933,26 +711,6 @@ export interface DataChunk {
     index: number;
     data: Record<string, DataTableColumnType>;
     rowIds: RowId[];
-}
-
-interface ScopedDataset {
-    rowIds: RowId[];
-    rowObjects: RowObjectType[];
-    rowIdToIndex: Map<RowId, number>;
-}
-
-/**
- * Create fast lookup map for row IDs.
- *
- * @param rowIds
- * Row IDs to index.
- */
-function createRowIdIndexMap(rowIds: RowId[]): Map<RowId, number> {
-    const map = new Map<RowId, number>();
-    for (let i = 0, iEnd = rowIds.length; i < iEnd; ++i) {
-        map.set(rowIds[i], i);
-    }
-    return map;
 }
 
 export interface RemoteDataProviderOptions extends DataProviderOptions {
