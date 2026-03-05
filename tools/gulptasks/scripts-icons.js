@@ -121,19 +121,27 @@ ${iconString}
  *         Sanitized SVG string.
  */
 function sanitizeIcon(input) {
-    return input
-        .replace(/^\uFEFF/u, '') // UTF-8 BOM
-        .replace(/<\?xml[\s\S]*?\?>\s*/iu, '') // <?xml ... ?>
-        .replace(/<!DOCTYPE[\s\S]*?>\s*/iu, '') // <!DOCTYPE ...>
-        .replace(/<!--[\s\S]*?(?:--!?>|$)/gu, '') // all comments
-        .replace(/<!--/gu, '') // remove any remaining <!--
-        .replace(/-->/gu, '') // remove any remaining -->
-        .replace(/<svg\b[^>]*>\s*(\r?\n)?/iu, '') // <svg> tag & whitespace
-        .replace(/\s+id="[^"]*"/giu, '') // id attributes
-        .replace(/\t/gu, '    ') // replace tabs with spaces
-        .replace(/\s+"/gu, '"') // remove whitespace before closing tags
-        // replaces fill color with variable
-        .replace(/fill="#4B4B4D"/giu, 'fill="${fillColor}"');
+    let previous;
+    let sanitized = input;
+
+    do {
+        previous = sanitized;
+        sanitized = sanitized
+            .replace(/^\uFEFF/u, '') // UTF-8 BOM
+            .replace(/<\?xml[\s\S]*?\?>\s*/iu, '') // <?xml ... ?>
+            .replace(/<!DOCTYPE[\s\S]*?>\s*/iu, '') // <!DOCTYPE ...>
+            .replace(/<!--[\s\S]*?(?:--!?>|$)/gu, '') // all comments
+            .replace(/<!--/gu, '') // remove any remaining <!--
+            .replace(/--!?>/gu, '') // remove any remaining --> or --!>
+            .replace(/<svg\b[^>]*>\s*(\r?\n)?/iu, '') // <svg> tag & whitespace
+            .replace(/\s+id="[^"]*"/giu, '') // id attributes
+            .replace(/\t/gu, '    ') // replace tabs with spaces
+            .replace(/\s+"/gu, '"') // remove whitespace before closing tags
+            // replaces fill color with variable
+            .replace(/fill="#4B4B4D"/giu, 'fill="${fillColor}"');
+    } while (sanitized !== previous);
+
+    return sanitized;
 }
 
 /**
