@@ -580,7 +580,7 @@ class ColumnSeries extends Series {
                         barY - (translatedThreshold as any)
                     ) > minPointLength ?
                         // ...keep position
-                        yBottom - minPointLength :
+                        yBottom - (up ? minPointLength : 0) :
                         // #1485, #4051
                         (translatedThreshold as any) -
                         (up ? minPointLength : 0)
