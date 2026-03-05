@@ -30,13 +30,12 @@ import type SortModifierOptions from './SortModifierOptions';
 import type { SortModifierOrderByOption } from './SortModifierOptions';
 
 import DataModifier from './DataModifier.js';
+import { merge } from '../../Shared/Utilities.js';
 import DataTable, {
     type CellType as DataTableCellType,
     type Column as DataTableColumn,
     type Row as DataTableRow
 } from '../DataTable.js';
-import U from '../../Core/Utilities.js';
-const { merge } = U;
 
 
 /* *

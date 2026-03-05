@@ -18,7 +18,6 @@
  * */
 
 import type Chart from '../../Chart/Chart';
-import type Templating from '../../Templating';
 import type {
     PlotBandLabelOptions,
     PlotBandOptions
@@ -34,8 +33,7 @@ import type SVGPath from '../../Renderer/SVG/SVGPath';
 import Axis from '../Axis.js';
 import { Palette } from '../../Color/Palettes.js';
 import PlotLineOrBandAxis from './PlotLineOrBandAxis.js';
-import U from '../../Utilities.js';
-const {
+import {
     addEvent,
     arrayMax,
     arrayMin,
@@ -46,7 +44,7 @@ const {
     merge,
     objectEach,
     pick
-} = U;
+} from '../../../Shared/Utilities.js';
 
 /* *
  *
@@ -307,7 +305,7 @@ class PlotLineOrBand {
                 svgElem?.on(
                     eventType,
                     (e: any): void => {
-                        events[eventType].apply(this, [e]);
+                        events[eventType].apply(this, [e, this]);
                     }
                 );
             });
@@ -472,9 +470,7 @@ class PlotLineOrBand {
         optionsLabel: (PlotBandLabelOptions|PlotLineLabelOptions)
     ): string | undefined {
         return defined(optionsLabel.formatter) ?
-            (optionsLabel.formatter as
-              Templating.FormatterCallback<PlotLineOrBand>)
-                .call(this) :
+            optionsLabel.formatter.call(this, this) :
             optionsLabel.text;
     }
 
@@ -1082,7 +1078,9 @@ export default PlotLineOrBand;
 /**
  * Callback JavaScript function to format the label. Useful properties like
  * the value of plot line or the range of plot band (`from` & `to`
- * properties) can be found in `this.options` object.
+ * properties) can be found in `this.options` object. Since v12.5.0, the
+ * callback also receives `ctx` as the first argument, so that arrow functions
+ * can access the same context as regular functions using `this`.
  *
  * @sample {highcharts} highcharts/xaxis/plotlines-plotbands-label-formatter
  *         Label formatters for plot line and plot band.

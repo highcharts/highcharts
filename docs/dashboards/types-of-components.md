@@ -180,7 +180,7 @@ Code snippet with data embedded in the `Grid` data table; no data connector used
 }
 ```
 
-The above code snippet is part of a [Grid example](https://www.highcharts.com/samples/embed/grid-lite/demo/your-first-grid) that uses embedded data.
+The above code snippet is part of a [Grid example](https://www.highcharts.com/samples/embed/grid-lite/demo/minimal-grid) that uses embedded data.
 
 Code snippet using a data connector.
 

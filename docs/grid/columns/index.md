@@ -105,8 +105,6 @@ The `columns[].cells` option can configure the cells in individual columns. If n
 
 The end user can edit each cell in a column directly by setting the `editMode.enabled` option to true. Read more in the [Editing overview](https://www.highcharts.com/docs/grid/editing/index) article.
 
-To add a right-click menu for cells, see the [Cell context menu](https://www.highcharts.com/docs/grid/cells/context-menu) article.
-
 Note that `className` and `format` support templating as described in [Templating](https://www.highcharts.com/docs/chart-concepts/templating), and `{value}` references the cell value.
 
 Suppose you need more advanced formatting that is not supported through templating. Use the `formatted` callback function instead. As in **Highcharts Core**, we always recommend `format` if possible. [Read more here...](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting#formatter-callbacks)

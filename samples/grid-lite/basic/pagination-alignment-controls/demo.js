@@ -34,23 +34,36 @@ Grid.grid('container', {
     dataTable: {
         columns: generateRandomData(120)
     },
-    rendering: {
-        rows: {
-            minVisibleRows: 10
-        }
-    },
     pagination: {
         enabled: true,
         pageSize: 10,
-        alignment: 'center',
         controls: {
             pageSizeSelector: true,
             pageInfo: true,
             firstLastButtons: true,
             previousNextButtons: true,
             pageButtons: {
-                enabled: true
+                enabled: true,
+                count: 9
             }
         }
+    },
+    responsive: {
+        rules: [{
+            condition: {
+                maxWidth: 800
+            },
+            gridOptions: {
+                pagination: {
+                    controls: {
+                        firstLastButtons: false,
+                        pageButtons: {
+                            count: 5
+                        }
+                    }
+                }
+            }
+        }
+        ]
     }
 });

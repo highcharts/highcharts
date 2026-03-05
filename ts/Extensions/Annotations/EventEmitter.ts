@@ -38,14 +38,13 @@ const {
     doc,
     isTouchDevice
 } = H;
-import U from '../../Core/Utilities.js';
-const {
+import {
     addEvent,
     fireEvent,
     objectEach,
     pick,
     removeEvent
-} = U;
+} from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -112,7 +111,8 @@ abstract class EventEmitter {
                     (event as any).call(
                         emitter,
                         emitter.chart.pointer?.normalize(e),
-                        emitter.target
+                        emitter.target,
+                        emitter
                     );
                 }
             };

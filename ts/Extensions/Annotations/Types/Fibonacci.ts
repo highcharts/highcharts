@@ -23,8 +23,7 @@ const { defaultOptions } = D;
 import MockPoint from '../MockPoint.js';
 import { Palette } from '../../../Core/Color/Palettes.js';
 import Tunnel from './Tunnel.js';
-import U from '../../../Core/Utilities.js';
-const { merge } = U;
+import { merge } from '../../../Shared/Utilities.js';
 
 if (defaultOptions.annotations?.types) {
     defaultOptions.annotations.types.fibonacci = merge(

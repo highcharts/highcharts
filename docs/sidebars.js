@@ -146,8 +146,7 @@ module.exports = {
             {
                 'Cells': [
                     'grid/cells/index',
-                    'grid/cells/formatting',
-                    'grid/cells/context-menu'
+                    'grid/cells/formatting'
                 ]
             },
             {
@@ -165,6 +164,7 @@ module.exports = {
                     'grid/theming/conditional',
                 ]
             },
+            'grid/responsive-grid',
             'grid/data-providers',
             'grid/events',
             'grid/accessibility',

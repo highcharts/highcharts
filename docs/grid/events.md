@@ -60,7 +60,6 @@ Configured in `columnDefaults.cells.events` or `columns[].cells.events`:
 
 Related topics:
 - [Editing / Overview](https://www.highcharts.com/docs/grid/editing/index)
-- [Cells / Context menu](https://www.highcharts.com/docs/grid/cells/context-menu)
 
 ## Header events
 
