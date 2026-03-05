@@ -34,6 +34,12 @@ const CONFIG_NAMES = {
 };
 
 /**
+ *
+ *  Functions
+ *
+ */
+
+/**
  * Extract the viewBox value from an SVG string.
  *
  * @param {string} svg
@@ -47,7 +53,7 @@ function extractViewBox(svg) {
     if (!m || !m[1]) {
         return DEFAULT_VIEWBOX;
     }
-    const last = m[1].trim().split(/\s+/).pop();
+    const last = m[1].trim().split(/\s+/u).pop();
     return Number(last) ?? DEFAULT_VIEWBOX;
 }
 
@@ -104,6 +110,31 @@ ${iconString}
     log.success(config.message);
 }
 
+/**
+ * Helper function to sanitize SVG content. **Note:** The `<style>` tag
+ * is not optimized here, it should be done in source SVG file instead.
+ *
+ * @param {string} input
+ *                The raw SVG string.
+ *
+ * @return {string}
+ *         Sanitized SVG string.
+ */
+function sanitizeIcon(input) {
+    return input
+        .replace(/^\uFEFF/u, '') // UTF-8 BOM
+        .replace(/<\?xml[\s\S]*?\?>\s*/iu, '') // <?xml ... ?>
+        .replace(/<!DOCTYPE[\s\S]*?>\s*/iu, '') // <!DOCTYPE ...>
+        .replace(/<!--[\s\S]*?(?:--!?>|$)/gu, '') // all comments
+        .replace(/<!--/gu, '') // remove any remaining <!--
+        .replace(/-->/gu, '') // remove any remaining -->
+        .replace(/<svg\b[^>]*>\s*(\r?\n)?/iu, '') // <svg> tag & whitespace
+        .replace(/\s+id="[^"]*"/giu, '') // id attributes
+        .replace(/\t/gu, '    ') // replace tabs with spaces
+        .replace(/\s+"/gu, '"') // remove whitespace before closing tags
+        // replaces fill color with variable
+        .replace(/fill="#4B4B4D"/giu, 'fill="${fillColor}"');
+}
 
 /**
  * Create the stock icons module file based on SVG files in gfx/stock-icons
@@ -126,19 +157,14 @@ async function scriptsIcons() {
         const iconName = path.basename(icon, '.svg');
         const viewBox = extractViewBox(rawIcon);
 
-        // Cleanup SVG icon content
-        const processedIcon = rawIcon.replace(/^\uFEFF/u, '') // UTF-8 BOM
-            .replace(/<\?xml[\s\S]*?\?>\s*/iu, '') // <?xml ... ?>
-            .replace(/<!DOCTYPE[\s\S]*?>\s*/iu, '') // <!DOCTYPE ...>
-            .replace(/<!--[\s\S]*?(?:-->|$)/gu, '') // all comments
-            .replace(/<!--/gu, '') // remove any remaining <!--
-            .replace(/-->/gu, '') // remove any remaining -->
-            .replace(/<svg\b[^>]*>\s*(\r?\n)?/iu, '') // <svg> tag & whitespace
-            .replace(/\s+id="[^"]*"/giu, '') // id attributes
-            .replace(/\t/gu, '    ') // replace tabs with spaces
-            .replace(/\s+"/gu, '"') // remove whitespace before closing tags
-            // replace fill color with variable
-            .replace(/fill="#4B4B4D"/giu, 'fill="${fillColor}"');
+        // Cleanup SVG icon content in a loop until sanitized
+        let processedIcon = rawIcon;
+        let previousIcon;
+        do {
+            previousIcon = processedIcon;
+            processedIcon = sanitizeIcon(processedIcon);
+        } while (processedIcon !== previousIcon);
+
 
         // Categorize icons into stock tools and base form
         if (BASE_FORM_ICONS.includes(iconName)) {
@@ -154,7 +180,6 @@ async function scriptsIcons() {
             `    '${iconName}.svg': \`` +
             `\${stockToolsIconPrefix(${viewBox})}${processedIcon}` +
             '`,\n';
-
     }
 
     // Remove trailing comma/newline from each icon string
