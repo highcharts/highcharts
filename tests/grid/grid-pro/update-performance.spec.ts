@@ -3,7 +3,7 @@ import { test, expect } from '~/fixtures.ts';
 test.describe('Update performance', () => {
     test.beforeEach(async ({ page }) => {
         await page.setViewportSize({ width: 1200, height: 600 });
-        await page.goto('grid-pro/cypress/update-performance', { waitUntil: 'networkidle' });
+        await page.goto('grid-pro/e2e/update-performance', { waitUntil: 'networkidle' });
         
         // Wait for Grid to be fully initialized
         await page.waitForFunction(() => {

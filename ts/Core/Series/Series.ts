@@ -2051,7 +2051,6 @@ class Series {
         }
 
         if (
-            chart.options.chart.allowMutatingData &&
             updatePoints !== false &&
             oldDataLength &&
             !series.cropped &&

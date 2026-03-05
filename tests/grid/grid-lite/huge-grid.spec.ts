@@ -43,7 +43,7 @@ const assertPenultimateRow = async (
 
 test.describe('Huge grid scrolling', () => {
     test.beforeEach(async ({ page }) => {
-        await page.goto('/grid-lite/cypress/huge-grid', {
+        await page.goto('/grid-lite/e2e/huge-grid', {
             waitUntil: 'networkidle'
         });
     });

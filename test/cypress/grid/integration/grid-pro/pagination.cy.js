@@ -4,7 +4,7 @@ describe('Pagination.', () => {
     });
 
     before(() => {
-        cy.visit('/grid-pro/cypress/pagination-events');
+        cy.visit('grid-pro/e2e/pagination-events');
     });
 
     it('beforePageChange / afterPageChange.', () => {

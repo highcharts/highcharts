@@ -3,7 +3,7 @@ import { test, expect } from '~/fixtures.ts';
 test.describe('Pagination', () => {
     test.beforeEach(async ({ page }) => {
         await page.setViewportSize({ width: 1200, height: 800 });
-        await page.goto('/grid-lite/cypress/pagination', { waitUntil: 'networkidle' });
+        await page.goto('/grid-lite/e2e/pagination', { waitUntil: 'networkidle' });
         // Wait for pagination to be rendered
         await expect(page.locator('.hcg-pagination-wrapper')).toBeVisible();
     });
@@ -129,7 +129,7 @@ test.describe('Pagination', () => {
     });
 
     test('Sorted pagination', async ({ page }) => {
-        await page.goto('/grid-lite/cypress/pagination', { waitUntil: 'networkidle' });
+        await page.goto('/grid-lite/e2e/pagination', { waitUntil: 'networkidle' });
 
         // Wait for Grid to be initialized (with timeout)
         await page.waitForFunction(() => {
@@ -155,7 +155,7 @@ test.describe('Pagination', () => {
     });
 
     test('Lang support', async ({ page }) => {
-        await page.goto('/grid-lite/cypress/pagination', { waitUntil: 'networkidle' });
+        await page.goto('/grid-lite/e2e/pagination', { waitUntil: 'networkidle' });
 
         // Wait for Grid to be initialized (with timeout)
         await page.waitForFunction(() => {
@@ -205,7 +205,7 @@ test.describe('Pagination', () => {
     });
 
     test('Position parameter - top/bottom/footer', async ({ page }) => {
-        await page.goto('/grid-lite/cypress/pagination', { waitUntil: 'networkidle' });
+        await page.goto('/grid-lite/e2e/pagination', { waitUntil: 'networkidle' });
 
         // Wait for Grid to be initialized (with timeout)
         await page.waitForFunction(() => {

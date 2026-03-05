@@ -49,20 +49,18 @@ Highcharts.Color.parsers.push({
     }
 });
 
-const colors = [
-    'hsl 0 100 50',
-    'hsl 30 100 50',
-    'hsl 120 60 45',
-    'hsl 210 70 50',
-    'hsl 275 55 45',
-    'hsl 15 45 35'
-].map(color => Highcharts.color(color).get());
-
 Highcharts.chart('container', {
     title: {
         text: 'HSL colors'
     },
-    colors,
+    colors: [
+        'hsl 0 100 50',
+        'hsl 30 100 50',
+        'hsl 120 60 45',
+        'hsl 210 70 50',
+        'hsl 275 55 45',
+        'hsl 15 45 35'
+    ],
     xAxis: {
         categories: [
             'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',

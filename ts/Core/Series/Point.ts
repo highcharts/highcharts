@@ -632,9 +632,17 @@ class Point {
         // Copy options directly to point
         extend(point, options as any);
 
-        point.options = point.options ?
-            extend(point.options, options as any) :
-            options;
+        // If we're updating, extend or merge existing options
+        if (point.options) {
+            // If we're not allowed to mutate, merge new data into existing and
+            // return a copy, because `point.options` is a reference to
+            // `options.data[i]`
+            point.options = series.chart.options.chart.allowMutatingData ?
+                extend(point.options, options) :
+                merge(point.options, options);
+        } else {
+            point.options = options;
+        }
 
         // For higher dimension series types. For instance, for ranges, point.y
         // is mapped to point.low.
