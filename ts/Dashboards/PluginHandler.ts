@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2025 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -27,140 +27,130 @@ import ComponentRegistry from './Components/ComponentRegistry.js';
 
 /* *
  *
- *  Namespace
+ *  Declarations
  *
  * */
 
-namespace PluginHandler {
+export interface DashboardsPlugin<T = (AnyRecord|undefined)> {
+    /**
+     * Custom properties of the plugin
+     */
+    custom: T;
+    /**
+     * Maximal version of plugin that is compatible with dashboard
+     */
+    maxRevision?: number;
+    /**
+     * Minimal version of plugin that is compatible with dashboard
+     */
+    minRevision?: number;
+    /**
+     * Name of plugin
+     */
+    name: string;
+    /** @internal */
+    onRegister: EventCallback;
+    /** @internal */
+    onUnregister: EventCallback;
+}
 
-    /* *
-     *
-     *  Declarations
-     *
-     * */
+/** @internal */
+export interface Event {
+    ComponentRegistry: typeof ComponentRegistry;
+    Board: typeof Board;
+    Sync: typeof Sync;
+    revision: number;
+}
 
-    export interface DashboardsPlugin<T = (AnyRecord|undefined)> {
-        /**
-         * Custom properties of the plugin
-         */
-        custom: T;
-        /**
-         * Maximal version of plugin that is compatible with dashboard
-         */
-        maxRevision?: number;
-        /**
-         * Minimal version of plugin that is compatible with dashboard
-         */
-        minRevision?: number;
-        /**
-         * Name of plugin
-         */
-        name: string;
-        /** @internal */
-        onRegister: PluginHandler.EventCallback;
-        /** @internal */
-        onUnregister: PluginHandler.EventCallback;
+/** @internal */
+export type EventCallback = (e: Event) => void;
+
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+/** @internal */
+export const registry: Record<string, DashboardsPlugin> = {};
+
+/**
+ * Revision of the Dashboard plugin API.
+ *
+ * @internal
+ */
+export const revision: number = 0;
+
+/* *
+ *
+ *  Functions
+ *
+ * */
+
+/**
+ * Adds a dashboard plugin.
+ *
+ * @param {Dashboards.Plugin} plugin
+ * Dashboard plugin to register.
+ *
+ * @param {string} [key]
+ * Plugin key for the registry. (Default: `plugin.name`)
+ */
+export function addPlugin(
+    plugin: DashboardsPlugin,
+    key: string = plugin.name
+): void {
+    const {
+        maxRevision,
+        minRevision,
+        onRegister
+    } = plugin;
+
+    if (registry[key]) {
+        // Only throw error with custom key
+        if (key !== plugin.name) {
+            throw new Error(`Plugin '${key}' already registered.`);
+        }
+        return;
     }
 
-    /** @internal */
-    export interface Event {
-        ComponentRegistry: typeof ComponentRegistry;
-        Board: typeof Board;
-        Sync: typeof Sync;
-        revision: number;
+    if (
+        (typeof minRevision === 'number' && minRevision > revision) ||
+        (typeof maxRevision === 'number' && maxRevision < revision)
+    ) {
+        throw new Error(`Plugin '${key}' does not support revision ${revision}.`);
     }
 
-    /** @internal */
-    export type EventCallback = (e: Event) => void;
+    onRegister({
+        Board,
+        ComponentRegistry,
+        Sync,
+        revision
+    });
 
-    /* *
-     *
-     *  Constants
-     *
-     * */
+    registry[key] = plugin;
+}
 
-    /** @internal */
-    export const registry: Record<string, DashboardsPlugin> = {};
+/**
+ * Removes a dashboard plugin.
+ *
+ * @param {string} key
+ * Plugin key in the registry.
+ */
+export function removePlugin(
+    key: string
+): void {
 
-    /**
-     * Revision of the Dashboard plugin API.
-     *
-     * @internal
-     */
-    export const revision: number = 0;
-
-    /* *
-     *
-     *  Functions
-     *
-     * */
-
-    /**
-     * Adds a dashboard plugin.
-     *
-     * @param {Dashboards.Plugin} plugin
-     * Dashboard plugin to register.
-     *
-     * @param {string} [key]
-     * Plugin key for the registry. (Default: `plugin.name`)
-     */
-    export function addPlugin(
-        plugin: DashboardsPlugin,
-        key: string = plugin.name
-    ): void {
-        const {
-            maxRevision,
-            minRevision,
-            onRegister
-        } = plugin;
-
-        if (registry[key]) {
-            // Only throw error with custom key
-            if (key !== plugin.name) {
-                throw new Error(`Plugin '${key}' already registered.`);
-            }
-            return;
-        }
-
-        if (
-            (typeof minRevision === 'number' && minRevision > revision) ||
-            (typeof maxRevision === 'number' && maxRevision < revision)
-        ) {
-            throw new Error(`Plugin '${key}' does not support revision ${revision}.`);
-        }
-
-        onRegister({
+    if (registry[key]) {
+        registry[key].onUnregister({
+            ComponentRegistry: ComponentRegistry,
             Board,
-            ComponentRegistry,
             Sync,
             revision
         });
 
-        registry[key] = plugin;
+        delete registry[key];
     }
-
-    /**
-     * Removes a dashboard plugin.
-     *
-     * @param {string} key
-     * Plugin key in the registry.
-     */
-    export function removePlugin(
-        key: string
-    ): void {
-
-        if (registry[key]) {
-            registry[key].onUnregister({
-                ComponentRegistry: ComponentRegistry,
-                Board,
-                Sync,
-                revision
-            });
-
-            delete registry[key];
-        }
-    }
-
 }
 
 /* *
@@ -168,5 +158,12 @@ namespace PluginHandler {
  *  Default Export
  *
  * */
+
+const PluginHandler = {
+    addPlugin,
+    removePlugin,
+    registry,
+    revision
+};
 
 export default PluginHandler;

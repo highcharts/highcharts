@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2025 Highsoft AS
+ *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Honsi
  *
  *  A commercial license may be required depending on use.
@@ -34,7 +34,7 @@ import type { ApproximationTypeRegistry } from './ApproximationType';
  *
  * @product highstock
  *
- * @private
+ * @internal
  */
 const ApproximationRegistry = {
     // Approximations added programmatically
@@ -46,4 +46,5 @@ const ApproximationRegistry = {
  *
  * */
 
+/** @internal */
 export default ApproximationRegistry;

@@ -2,7 +2,7 @@
  *
  *  Marker clusters module.
  *
- *  (c) 2010-2025 Highsoft AS
+ *  (c) 2010-2026 Highsoft AS
  *
  *  Author: Wojciech Chmiel
  *
@@ -16,7 +16,7 @@
 
 // **
 //  * Useful for debugging.
-//  * @private
+//  * @internal
 //  */
 // function drawGridLines(
 //     series: Highcharts.Series,

@@ -4,7 +4,7 @@
  * @module highcharts/modules/venn
  * @requires highcharts
  *
- * (c) 2017-2025 Highsoft AS
+ * (c) 2017-2026 Highsoft AS
  * Authors: Jon Arild Nygard
  *
  * A commercial license may be required depending on use.

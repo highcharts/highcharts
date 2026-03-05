@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2025 Highsoft AS
+ *  (c) 2010-2026 Highsoft AS
  *  Author: Pawel Lysy
  *
  *  A commercial license may be required depending on use.
@@ -15,11 +15,13 @@
  *
  * */
 
-import type ColumnSeriesOptions from '../Column/ColumnSeriesOptions';
+import type {
+    ColumnSeriesOptions,
+    ColumnSeriesTooltipOptions
+} from '../Column/ColumnSeriesOptions';
 import type HLCPointOptions from './HLCPointOptions';
 import type { PointShortOptions } from '../../Core/Series/PointOptions';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
-import type TooltipOptions from '../../Core/TooltipOptions';
 
 /* *
  *
@@ -166,8 +168,15 @@ export interface HLCSeriesOptions extends ColumnSeriesOptions {
 
     threshold?: number|null;
 
-    tooltip?: Partial<TooltipOptions>;
+    tooltip?: HLCSeriesTooltipOptions;
 
+}
+
+export interface HLCSeriesTooltipOptions extends ColumnSeriesTooltipOptions {
+    /**
+     * @default '<span style="color:{point.color}">\u25CF</span> <b> {series.name}</b><br/>{series.chart.options.lang.stockHigh}: {point.high}<br/>{series.chart.options.lang.stockLow}: {point.low}<br/>{series.chart.options.lang.stockClose}: {point.close}<br/>'
+     */
+    pointFormat?: ColumnSeriesTooltipOptions['pointFormat'];
 }
 
 /* *

@@ -2,7 +2,7 @@
  *
  *  Checkbox Cell Content class
  *
- *  (c) 2020-2025 Highsoft AS
+ *  (c) 2020-2026 Highsoft AS
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -23,7 +23,7 @@
  * */
 
 import type CheckboxRenderer from '../Renderers/CheckboxRenderer';
-import type DataTable from '../../../../Data/DataTable';
+import type { CellType as DataTableCellType } from '../../../../Data/DataTable';
 import type { EditModeContent } from '../../CellEditing/CellEditMode';
 import type TableCell from '../../../Core/Table/Body/TableCell';
 
@@ -121,7 +121,7 @@ class CheckboxContent extends CellContentPro implements EditModeContent {
         return this.input.checked ? 'true' : 'false';
     }
 
-    public get value(): DataTable.CellType {
+    public get value(): DataTableCellType {
         const val = this.input.checked;
         switch (this.cell.column.dataType) {
             case 'datetime':

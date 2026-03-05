@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2025 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -22,6 +22,10 @@
 
 import type DataModifierOptions from './DataModifierOptions';
 import type DataTable from '../DataTable';
+import type {
+    CellType as DataTableCellType,
+    RowObject as DataTableRowObject
+} from '../DataTable';
 
 
 /* *
@@ -48,7 +52,7 @@ export interface ComparisonCondition {
     /**
      * Value to compare the cell with.
      */
-    value: DataTable.CellType;
+    value: DataTableCellType;
 }
 
 /**
@@ -122,7 +126,7 @@ export interface LogicalSingleCondition {
  * Index of the row in the table.
  */
 export type CallbackCondition = (
-    row: DataTable.RowObject,
+    row: DataTableRowObject,
     table: DataTable,
     rowIndex: number
 ) => boolean;

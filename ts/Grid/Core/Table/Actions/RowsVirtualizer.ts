@@ -2,7 +2,7 @@
  *
  *  Grid Rows Renderer class.
  *
- *  (c) 2020-2025 Highsoft AS
+ *  (c) 2020-2026 Highsoft AS
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -84,6 +84,22 @@ class RowsVirtualizer {
      */
     public rowSettings?: RowsSettings;
 
+    /**
+     * Reuse pool for rows that are currently out of viewport.
+     */
+    private readonly rowPool: TableRow[] = [];
+
+    /**
+     * Maximum number of rows to keep in the reuse pool.
+     */
+    private static readonly MAX_POOL_SIZE = 100;
+
+    /**
+     * Flag indicating if a scroll update is queued for the next animation
+     * frame.
+     */
+    private scrollQueued = false;
+
 
     /* *
     *
@@ -145,6 +161,13 @@ class RowsVirtualizer {
         const oldScrollLeft = tbody.scrollLeft;
         let oldScrollTop: number | undefined;
 
+        if (this.rowPool.length) {
+            for (let i = this.rowPool.length - 1; i >= 0; --i) {
+                this.rowPool[i].destroy();
+            }
+            this.rowPool.length = 0;
+        }
+
         if (rows.length) {
             oldScrollTop = tbody.scrollTop;
             for (let i = 0, iEnd = rows.length; i < iEnd; ++i) {
@@ -179,6 +202,21 @@ class RowsVirtualizer {
      * is enabled.
      */
     public scroll(): void {
+        if (this.scrollQueued) {
+            return;
+        }
+
+        this.scrollQueued = true;
+        requestAnimationFrame((): void => {
+            this.scrollQueued = false;
+            this.applyScroll();
+        });
+    }
+
+    /**
+     * Applies the scroll logic for virtualized rows.
+     */
+    private applyScroll(): void {
         const target = this.viewport.tbodyElement;
         const { defaultRowHeight: rowHeight } = this;
         const lastScrollTop = target.scrollTop;
@@ -300,44 +338,87 @@ class RowsVirtualizer {
         const alwaysLastRow = rows.pop();
         const tempRows: TableRow[] = [];
 
-        // Remove rows that are out of the range except the last row.
-        for (let i = 0, iEnd = rows.length; i < iEnd; ++i) {
-            const row = rows[i];
-            const rowIndex = row.index;
+        const currentFrom = rows[0]?.index;
+        const currentTo = rows[rows.length - 1]?.index;
+        const hasOverlap = (
+            rows.length > 0 &&
+            currentFrom !== void 0 &&
+            currentTo !== void 0 &&
+            !(to < currentFrom || from > currentTo)
+        );
 
-            if (rowIndex < from || rowIndex > to) {
-                row.destroy();
-            } else {
-                tempRows.push(row);
-            }
-        }
+        if (!hasOverlap) {
+            // Remove rows that are out of the range except the last row.
+            for (let i = 0, iEnd = rows.length; i < iEnd; ++i) {
+                const row = rows[i];
+                const rowIndex = row.index;
 
-        rows = tempRows;
-        vp.rows = rows;
-
-        for (let i = from; i <= to; ++i) {
-            const row = rows[i - (rows[0]?.index || 0)];
-
-            // Recreate row when it is destroyed and it is in the range.
-            if (!row) {
-                const newRow = new TableRow(vp, i);
-                rows.push(newRow);
-                newRow.rendered = false;
-                if (isVirtualization) {
-                    newRow.setTranslateY(newRow.getDefaultTopOffset());
+                if (rowIndex < from || rowIndex > to) {
+                    this.poolRow(row);
+                } else {
+                    tempRows.push(row);
                 }
             }
+
+            rows = tempRows;
+            vp.rows = rows;
+
+            for (let i = from; i <= to; ++i) {
+                const row = rows[i - (rows[0]?.index || 0)];
+
+                // Recreate row when it is destroyed and it is in the range.
+                if (!row) {
+                    rows.push(this.getOrCreateRow(i));
+                }
+            }
+
+            rows.sort((a, b): number => a.index - b.index);
+        } else {
+            // Remove rows outside the range from the start.
+            while (rows.length && rows[0].index < from) {
+                this.poolRow(rows.shift() as TableRow);
+            }
+
+            // Remove rows outside the range from the end.
+            while (rows.length && rows[rows.length - 1].index > to) {
+                this.poolRow(rows.pop() as TableRow);
+            }
+
+            if (!rows.length) {
+                for (let i = from; i <= to; ++i) {
+                    rows.push(this.getOrCreateRow(i));
+                }
+            } else {
+                // Add rows before the current range.
+                for (let i = rows[0].index - 1; i >= from; --i) {
+                    rows.unshift(this.getOrCreateRow(i));
+                }
+
+                // Add rows after the current range.
+                for (let i = rows[rows.length - 1].index + 1; i <= to; ++i) {
+                    rows.push(this.getOrCreateRow(i));
+                }
+            }
+
+            vp.rows = rows;
         }
 
-        rows.sort((a, b): number => a.index - b.index);
-
         for (let i = 0, iEnd = rows.length; i < iEnd; ++i) {
-            if (!rows[i].rendered) {
+            const row = rows[i];
+            if (!row.rendered) {
                 vp.tbodyElement.insertBefore(
-                    rows[i].htmlElement,
+                    row.htmlElement,
                     vp.tbodyElement.lastChild
                 );
-                rows[i].render();
+                row.render();
+                continue;
+            }
+
+            if (!row.htmlElement.isConnected) {
+                vp.tbodyElement.insertBefore(
+                    row.htmlElement,
+                    vp.tbodyElement.lastChild
+                );
             }
         }
 
@@ -467,6 +548,51 @@ class RowsVirtualizer {
         }
 
         this.adjustRowHeights();
+    }
+
+    /**
+     * Gets a row from the pool or creates a new one for the given index.
+     *
+     * @param index
+     * The row index in the data table.
+     *
+     * @returns
+     * A TableRow instance ready for use.
+     */
+    private getOrCreateRow(index: number): TableRow {
+        const vp = this.viewport;
+        const isVirtualization = vp.virtualRows;
+        const pooledRow = this.rowPool.pop();
+
+        if (pooledRow) {
+            pooledRow.reuse(index, false);
+            if (isVirtualization) {
+                pooledRow.setTranslateY(pooledRow.getDefaultTopOffset());
+            }
+            return pooledRow;
+        }
+
+        const newRow = new TableRow(vp, index);
+        newRow.rendered = false;
+        if (isVirtualization) {
+            newRow.setTranslateY(newRow.getDefaultTopOffset());
+        }
+        return newRow;
+    }
+
+    /**
+     * Adds a row to the reuse pool, or destroys it if the pool is full.
+     *
+     * @param row
+     * The row to pool.
+     */
+    private poolRow(row: TableRow): void {
+        row.htmlElement.remove();
+        if (this.rowPool.length < RowsVirtualizer.MAX_POOL_SIZE) {
+            this.rowPool.push(row);
+        } else {
+            row.destroy();
+        }
     }
 
     /**

@@ -33,7 +33,7 @@ jobs:
           cache: 'npm'
 
       - name: Install Dependencies
-        run: npm i
+        run: npm ci
 
       - name: Lint (ts)
         run: npx gulp lint
@@ -59,7 +59,7 @@ jobs:
           cache: 'npm'
 
       - name: Install Dependencies
-        run: npm i
+        run: npm ci
 
       - name: Build definitions
         run: npx gulp jsdoc-dts
@@ -84,7 +84,7 @@ jobs:
           cache: 'npm'
 
       - name: Install Dependencies
-        run: npm i
+        run: npm ci
 
       - name: Lint samples TS and JS
         run: npx eslint -c samples/.eslintrc "samples/**/*.{js,ts}"

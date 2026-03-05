@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2025 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -19,6 +19,7 @@
 import type CSSJSONObject from '../CSSJSONObject';
 import type { DeepPartial } from '../../Shared/Types';
 import type Layout from './Layout';
+import type { Options as CellOptions } from './Cell';
 
 import Globals from '../Globals.js';
 import Cell from './Cell.js';
@@ -65,7 +66,7 @@ class Row extends GUIElement {
      * @param {Layout} layout
      * Reference to the layout instance.
      *
-     * @param {Row.Options} options
+     * @param {Options} options
      * Options for the row.
      *
      * @param {HTMLElement} rowElement
@@ -73,7 +74,7 @@ class Row extends GUIElement {
      */
     public constructor(
         layout: Layout,
-        options: Row.Options,
+        options: Options,
         rowElement?: HTMLElement
     ) {
         super();
@@ -130,7 +131,7 @@ class Row extends GUIElement {
     /**
      * The row options.
      */
-    public options: Row.Options;
+    public options: Options;
 
     /**
      * The type of GUI element.
@@ -176,7 +177,7 @@ class Row extends GUIElement {
     /**
      * Add a new Cell instance to the row cells array.
      *
-     * @param {Cell.Options} [options]
+     * @param {CellOptions} [options]
      * Options for the row cell.
      *
      * @param {HTMLElement} [cellElement]
@@ -186,7 +187,7 @@ class Row extends GUIElement {
      * Returns the Cell object.
      */
     public addCell(
-        options: Cell.Options,
+        options: CellOptions,
         cellElement?: HTMLElement,
         index?: number
     ): Cell {
@@ -219,8 +220,8 @@ class Row extends GUIElement {
 
         // Destroy cells.
         if (row.cells) {
-            // Copy to avoid problem with index when shifting array of cells during
-            // the destroy.
+            // Copy to avoid problem with index when shifting array of cells
+            // during the destroy.
             const rowCells = [...row.cells];
             for (let i = 0, iEnd = rowCells.length; i < iEnd; ++i) {
                 if (rowCells[i]) {
@@ -253,7 +254,7 @@ class Row extends GUIElement {
      * @internal
      *
      */
-    public getOptions(): DeepPartial<Row.Options> {
+    public getOptions(): DeepPartial<Options> {
         const row = this,
             cells = [];
 
@@ -379,10 +380,10 @@ class Row extends GUIElement {
 
     // Row can have cells below each others.
     // This method returns cells split into levels.
-    public getRowLevels(): Array<Row.RowLevel> {
+    public getRowLevels(): Array<RowLevel> {
         const row = this,
-            rowLevels: Record<string, Row.RowLevel> = {},
-            rowLevelsArray: Array<Row.RowLevel> = [];
+            rowLevels: Record<string, RowLevel> = {},
+            rowLevelsArray: Array<RowLevel> = [];
 
         let cell, cellOffsets;
 
@@ -419,7 +420,7 @@ class Row extends GUIElement {
     // on a specific Y position.
     public getRowLevelInfo(
         posY: number
-    ): Row.RowLevelInfo|undefined {
+    ): RowLevelInfo|undefined {
         const rowLevels = this.getRowLevels();
 
         let rowLevelInfo;
@@ -438,74 +439,72 @@ class Row extends GUIElement {
     }
 }
 
-namespace Row {
+/**
+ * Options for the row.
+ **/
+export interface Options {
     /**
-     * Options for the row.
+     * A unique id for the row.
      **/
-    export interface Options {
+    id?: string;
+    /**
+     * Options controlling the edit mode for the cell.
+     **/
+    editMode?: {
         /**
-         * A unique id for the row.
+         * Individual options for the toolbar items.
          **/
-        id?: string;
-        /**
-         * Options controlling the edit mode for the cell.
-         **/
-        editMode?: {
+        toolbarItems?: {
             /**
-             * Individual options for the toolbar items.
-             **/
-            toolbarItems?: {
-                /**
-                 * Options for the `destroy` toolbar item.
-                 */
-                destroy: {
-                    enabled?: boolean;
-                };
-                /**
-                 * Options for the `settings` toolbar item.
-                 */
-                drag: {
-                    enabled?: boolean;
-                };
-                /**
-                 * Options for the `settings` toolbar item.
-                 */
-                settings: {
-                    enabled?: boolean;
-                };
-            }
+             * Options for the `destroy` toolbar item.
+             */
+            destroy: {
+                enabled?: boolean;
+            };
+            /**
+             * Options for the `settings` toolbar item.
+             */
+            drag: {
+                enabled?: boolean;
+            };
+            /**
+             * Options for the `settings` toolbar item.
+             */
+            settings: {
+                enabled?: boolean;
+            };
         }
-        /**
-         * The id of the container element.
-         **/
-        parentContainerId?: string;
-        /**
-         * An array of cells to be added to the row.
-         **/
-        cells?: Array<Cell.Options>;
-        /**
-         * CSS styles for the row.
-         **/
-        style?: CSSJSONObject;
     }
-
     /**
-     * @internal
+     * The id of the container element.
      **/
-    export interface RowLevel {
-        top: number;
-        bottom: number;
-        cells: Array<Cell>;
-    }
-
+    parentContainerId?: string;
     /**
-     * @internal
+     * An array of cells to be added to the row.
      **/
-    export interface RowLevelInfo {
-        index: number; // Level position in RowLevels Array
-        rowLevels: Array<RowLevel>;
-        rowLevel: RowLevel;
-    }
+    cells?: Array<CellOptions>;
+    /**
+     * CSS styles for the row.
+     **/
+    style?: CSSJSONObject;
+}
+
+/**
+ * @internal
+ **/
+export interface RowLevel {
+    top: number;
+    bottom: number;
+    cells: Array<Cell>;
+}
+
+/**
+ * @internal
+ **/
+export interface RowLevelInfo {
+    index: number; // Level position in RowLevels Array
+    rowLevels: Array<RowLevel>;
+    rowLevel: RowLevel;
 }
 
 export default Row;

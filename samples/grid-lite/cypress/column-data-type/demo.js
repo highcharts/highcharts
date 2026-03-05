@@ -44,9 +44,19 @@ Grid.grid('container', {
         dataType: 'boolean'
     }, {
         id: 'date',
-        dataType: 'datetime'
+        dataType: 'datetime',
+        header: {
+            formatter: function () {
+                return null;
+            }
+        }
     }, {
         id: 'thousands',
-        dataType: 'number'
+        dataType: 'number',
+        header: {
+            formatter: function () {
+                return '';
+            }
+        }
     }]
 });

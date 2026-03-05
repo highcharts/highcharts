@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2025 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -19,7 +19,7 @@
 
 import type { GoogleSheetsBeforeParseCallbackFunction } from '../Connectors/GoogleSheetsConnectorOptions';
 
-import DataConverter from './DataConverter';
+import type { Options as DataConverterOptions } from './DataConverter';
 
 /* *
  *
@@ -30,7 +30,7 @@ import DataConverter from './DataConverter';
 /**
  * Options of the GoogleSheetsConverter.
  */
-export interface GoogleSheetsConverterOptions extends DataConverter.Options {
+export interface GoogleSheetsConverterOptions extends DataConverterOptions {
     json?: GoogleSpreadsheetJSON;
     beforeParse?: GoogleSheetsBeforeParseCallbackFunction;
 }

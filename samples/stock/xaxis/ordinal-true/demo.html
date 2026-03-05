@@ -1,6 +1,18 @@
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/stock.js"></script>
+<script src="https://code.highcharts.com/modules/accessibility.js"></script>
+<script src="https://code.highcharts.com/themes/adaptive.js"></script>
 
-<script src="https://code.highcharts.com/stock/highstock.js"></script>
-<script src="https://code.highcharts.com/stock/modules/exporting.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@highcharts/controls@0.6.0" type="module"></script>
 
-<div id="container"></div>
-<div class="info">In an ordinal axis, the points are evenly spaced regardless of the actual X distance between them. In this sample, the space between Friday and Monday is the same as that between Monday and Tuesday.</div>
+<figure class="highcharts-figure">
+  <div id="container"></div>
+</figure>
+
+<div class="highcharts-controls-wrapper">
+  <highcharts-controls>
+    <highcharts-group header="Update options">
+      <highcharts-control type="boolean" path="xAxis.ordinal" value="true"></highcharts-control>
+    </highcharts-group>
+  </highcharts-controls>
+</div>

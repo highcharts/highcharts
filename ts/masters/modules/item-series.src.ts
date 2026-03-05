@@ -6,7 +6,7 @@
  *
  * Item series type for Highcharts
  *
- * (c) 2019 Highsoft AS
+ * (c) 2019-2026 Highsoft AS
  * Author: Torstein Honsi
  *
  * A commercial license may be required depending on use.

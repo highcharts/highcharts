@@ -2,7 +2,7 @@
  *
  *  Resizing Mode abstract class
  *
- *  (c) 2020-2025 Highsoft AS
+ *  (c) 2020-2026 Highsoft AS
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -179,7 +179,9 @@ abstract class ResizingMode {
      */
     public loadColumn(column: Column): void {
         const rawWidth = column.options.width;
-        if (!rawWidth) {
+        if (!defined(rawWidth) || rawWidth === 'auto') {
+            delete this.columnWidths[column.id];
+            delete this.columnWidthUnits[column.id];
             return;
         }
 

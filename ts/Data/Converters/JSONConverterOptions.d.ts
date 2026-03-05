@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2025 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -22,7 +22,7 @@ import type {
     JSONBeforeParseCallbackFunction
 } from '../Connectors/JSONConnectorOptions';
 
-import DataConverter from './DataConverter';
+import type { Options as DataConverterOptions } from './DataConverter';
 
 /* *
  *
@@ -33,7 +33,7 @@ import DataConverter from './DataConverter';
 /**
  * Options of the JSONConverter.
  */
-export interface JSONConverterOptions extends DataConverter.Options {
+export interface JSONConverterOptions extends DataConverterOptions {
     orientation: 'columns' | 'rows';
     data?: JSONData;
     columnIds?: string[] | ColumnIdsOptions;

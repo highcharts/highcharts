@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2025 Highsoft AS
+ *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Honsi
  *
  *  A commercial license may be required depending on use.
@@ -15,13 +15,12 @@
  *
  * */
 import type ColorType from '../../Core/Color/ColorType';
-import type {
-    LegendSymbolType,
-    SeriesStatesOptions
-} from '../../Core/Series/SeriesOptions';
+import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 import type PolygonPointOptions from './PolygonPointOptions';
-import type ScatterSeriesOptions from '../Scatter/ScatterSeriesOptions';
-import type TooltipOptions from '../../Core/TooltipOptions';
+import type {
+    ScatterSeriesOptions,
+    ScatterSeriesTooltipOptions
+} from '../Scatter/ScatterSeriesOptions';
 import type {
     PointMarkerOptions,
     PointShortOptions
@@ -140,7 +139,10 @@ interface PolygonSeriesOptions extends ScatterSeriesOptions {
 
     fillColor?: ColorType;
 
-    legendSymbol?: LegendSymbolType;
+    /**
+     * @default 'rectangle'
+     */
+    legendSymbol?: ScatterSeriesOptions['legendSymbol'];
 
     marker?: PointMarkerOptions;
 
@@ -150,8 +152,19 @@ interface PolygonSeriesOptions extends ScatterSeriesOptions {
 
     trackByArea?: boolean;
 
-    tooltip?: Partial<TooltipOptions>;
+    tooltip?: PolygonSeriesTooltipOptions;
+}
 
+export interface PolygonSeriesTooltipOptions extends ScatterSeriesTooltipOptions {
+    /**
+     * @default true
+     */
+    followPointer?: ScatterSeriesTooltipOptions['followPointer'];
+
+    /**
+     * @default ''
+     */
+    pointFormat?: ScatterSeriesTooltipOptions['pointFormat'];
 }
 
 /* *

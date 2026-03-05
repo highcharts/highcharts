@@ -2,7 +2,7 @@
  *
  *  Timeline Series.
  *
- *  (c) 2010-2025 Highsoft AS
+ *  (c) 2010-2026 Highsoft AS
  *
  *  Author: Daniel Studencki
  *
@@ -19,6 +19,7 @@
  * */
 
 import type LinePointOptions from '../Line/LinePointOptions';
+import type { PointDataLabelOptionsModifier } from '../../Core/Series/DataLabel';
 import type TimelineDataLabelOptions from './TimelineDataLabelOptions';
 
 /* *
@@ -29,7 +30,7 @@ import type TimelineDataLabelOptions from './TimelineDataLabelOptions';
 
 export interface TimelinePointOptions extends LinePointOptions {
 
-    dataLabels?: TimelineDataLabelOptions;
+    dataLabels?: TimelinePointDataLabelOptions;
 
     /**
      * The description of event. This description will be shown in tooltip.
@@ -59,6 +60,9 @@ export interface TimelinePointOptions extends LinePointOptions {
     visible?: boolean;
 
 }
+
+export type TimelinePointDataLabelOptions =
+    TimelineDataLabelOptions & PointDataLabelOptionsModifier;
 
 /* *
  *

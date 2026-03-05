@@ -1548,14 +1548,12 @@ function getDocletInfosBetween (
             case TS.SyntaxKind.JSDocLink:
             case TS.SyntaxKind.JSDocLinkCode:
             case TS.SyntaxKind.JSDocLinkPlain:
-                return (
-                    '{@link ' +
-                    ((tag as TS.JSDocLink).name?.getText() || '') +
-                    tag.getText() +
-                    '}'
-                );
+                return tag.getText()
+                    // Fix line breaks
+                    .replace(/(\r\n|\n)\s+\*\s+/g, ' ');
             case TS.SyntaxKind.JSDocText:
-                return tag.getText();
+                // Text is already cleaned. getText keeps comment's '*'.
+                return (tag as TS.JSDocText).text;
             default:
                 return tag
                     .getText()

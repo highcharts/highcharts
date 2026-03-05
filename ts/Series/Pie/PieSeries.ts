@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2025 Highsoft AS
+ *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Honsi
  *
  *  A commercial license may be required depending on use.
@@ -49,7 +49,29 @@ const {
 
 declare module '../../Core/Series/SeriesBase' {
     interface SeriesBase {
+        /* *
+        *
+        *  Properties
+        *
+        * */
+
+        /**
+         * The series center position, read only. This applies only to
+         * circular chart types like pie and sunburst. It is an array of
+         * `[centerX, centerY, diameter, innerDiameter]`.
+         */
+        center?: Array<number>;
+
+        /* *
+        *
+        *  Functions
+        *
+        * */
+
+        /** @internal */
         redrawPoints?(): void;
+
+        /** @internal */
         updateTotals?(): void;
     }
 }

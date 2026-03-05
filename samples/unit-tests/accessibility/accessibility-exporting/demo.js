@@ -118,11 +118,23 @@ QUnit.test(
                 '"screen-reader-after" should be below "highcharts-container"'
             ]
         ]) {
-            assert.strictEqual(
-                renderToChildren[elementIndex].id,
-                candidateId,
-                testMessage
-            );
+            const childId = renderToChildren[elementIndex].id;
+
+            if (candidateId.includes('screen-reader-region-before')) {
+                assert.ok(
+                    childId.startsWith(
+                        'highcharts-screen-reader-region-before'
+                    ),
+                    testMessage
+                );
+            } else if (candidateId.includes('screen-reader-region-after')) {
+                assert.ok(
+                    childId.startsWith('highcharts-screen-reader-region-after'),
+                    testMessage
+                );
+            } else {
+                assert.strictEqual(childId, candidateId, testMessage);
+            }
         }
     }
 );

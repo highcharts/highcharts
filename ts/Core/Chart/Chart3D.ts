@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2025 Highsoft AS
+ *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Honsi
  *
  *  Extension for 3D charts
@@ -52,6 +52,7 @@ const {
  *
  * */
 
+/** @internal */
 declare module '../Animation/FxBase' {
     interface FxBase {
         matrixSetter?(): void;
@@ -60,7 +61,9 @@ declare module '../Animation/FxBase' {
 
 declare module '../Chart/ChartBase'{
     interface ChartBase {
+        /** @internal */
         chart3d?: Chart3D.Additions;
+        /** @internal */
         frameShapes?: Record<string, SVGElement3D>;
         is3d(): boolean;
     }
@@ -68,17 +71,74 @@ declare module '../Chart/ChartBase'{
 
 declare module '../Chart/ChartOptions'{
     interface ChartOptions {
+        /**
+         * Options to render charts in 3 dimensions. This feature requires
+         * `highcharts-3d.js`, found in the download package or online at
+         * [code.highcharts.com/highcharts-3d.js](https://code.highcharts.com/highcharts-3d.js).
+         *
+         * @since    4.0
+         * @product  highcharts
+         * @requires highcharts-3d
+         */
         options3d?: ChartOptions3D;
     }
 }
 
+/**
+ * Options to render charts in 3 dimensions. This feature requires
+ * `highcharts-3d.js`, found in the download package or online at
+ * [code.highcharts.com/highcharts-3d.js](https://code.highcharts.com/highcharts-3d.js).
+ *
+ * @since    4.0
+ * @product  highcharts
+ * @requires highcharts-3d
+ */
 interface ChartOptions3D {
+    /**
+     * One of the two rotation angles for the chart.
+     *
+     * @since   4.0
+     * @product highcharts
+     */
     alpha?: number;
     axisLabelPosition?: ('auto'|null);
+    /**
+     * One of the two rotation angles for the chart.
+     *
+     * @since   4.0
+     * @product highcharts
+     */
     beta?: number;
+    /**
+     * The total depth of the chart.
+     *
+     * @since   4.0
+     * @product highcharts
+     */
     depth?: number;
+    /**
+     * Whether to render the chart using the 3D functionality.
+     *
+     * @since   4.0
+     * @product highcharts
+     */
     enabled?: boolean;
+    /**
+     * Whether the 3d box should automatically adjust to the chart
+     * plot area.
+     *
+     * @since   4.2.4
+     * @product highcharts
+     */
     fitToPlot?: boolean;
+    /**
+     * Provides the option to draw a frame around the charts by
+     * defining a bottom, front and back panel.
+     *
+     * @since    4.0
+     * @product  highcharts
+     * @requires highcharts-3d
+     */
     frame?: Chart3D.FrameOptions;
     viewDistance?: number;
 }
@@ -97,14 +157,17 @@ namespace Chart3D {
      *
      * */
 
+    /** @internal */
     export interface Composition extends Chart {
         chart3d: Additions;
     }
 
+    /** @internal */
     export interface Edge3DObject extends Position3DObject {
         xDir: Position3DObject;
     }
 
+    /** @internal */
     export interface FrameObject extends FrameOptions {
         axes: Record<string, Record<string, (Edge3DObject|null)>>;
         back: FrameSideObject;
@@ -115,32 +178,117 @@ namespace Chart3D {
         top: FrameSideObject;
     }
 
+    /**
+     * Provides the option to draw a frame around the charts by
+     * defining a bottom, front and back panel.
+     *
+     * @since    4.0
+     * @product  highcharts
+     * @requires highcharts-3d
+     */
     export interface FrameOptions {
+
+        /**
+         * The back side of the frame around a 3D chart.
+         */
         back?: FrameSideOptions;
+
+        /**
+         * The bottom of the frame around a 3D chart.
+         */
         bottom?: FrameSideOptions;
+
+        /**
+         * The front of the frame around a 3D chart.
+         */
         front?: FrameSideOptions;
+
+        /**
+         * The left side of the frame around a 3D chart.
+         */
         left?: FrameSideOptions;
+
+        /**
+         * The right of the frame around a 3D chart.
+         */
         right?: FrameSideOptions;
+
+        /**
+         * General pixel thickness for the frame faces.
+         */
         size?: number;
+
+        /**
+         * The top of the frame around a 3D chart.
+         */
         top?: FrameSideOptions;
+
+        /**
+         * Whether the frames are visible.
+         *
+         * @default default
+         */
         visible?: string;
+
     }
 
+    /** @internal */
     export interface FrameSideObject extends FrameSideOptions {
         frontFacing: boolean;
         size: number;
     }
 
+    /**
+     * A side of the frame around a 3D chart.
+     *
+     * @since    4.0
+     * @product  highcharts
+     * @requires highcharts-3d
+     */
     export interface FrameSideOptions {
+
+        /**
+         * The color of the panel.
+         *
+         * @default transparent
+         * @since   4.0
+         * @product highcharts
+         */
         color?: ColorType;
+
+        /**
+         * The thickness of the panel.
+         *
+         * @default 1
+         * @since   4.0
+         * @product highcharts
+         */
         size?: number;
+
+        /**
+         * Whether to display the frame. Possible values are `true`, `false`,
+         * `"auto"` to display only the frames behind the data, and `"default"`
+         * to display faces behind the data based on the axis layout, ignoring
+         * the point of view.
+         *
+         * @sample {highcharts} highcharts/3d/scatter-frame/
+         *         Auto frames
+         *
+         * @default default
+         * @since   5.0.12
+         * @product highcharts
+         */
         visible?: ('auto'|'default'|boolean);
+
     }
 
+    /** @internal */
     export interface Stack3DDictionary {
         [index: number]: Stack3DDictionaryObject;
         totalStacks: number;
     }
+
+    /** @internal */
     export interface Stack3DDictionaryObject {
         position: number;
         series: Array<Series>;
@@ -154,7 +302,7 @@ namespace Chart3D {
 
     /**
      * @optionparent
-     * @private
+     * @internal
      */
     export const defaultOptions = {
 
@@ -348,9 +496,7 @@ namespace Chart3D {
      *
      * */
 
-    /**
-     * @private
-     */
+    /** @internal */
     export function compose(
         ChartClass: typeof Chart,
         FxClass: typeof Fx
@@ -361,7 +507,7 @@ namespace Chart3D {
 
         /**
          * Shorthand to check the is3d flag.
-         * @private
+         * @internal
          * @return {boolean}
          * Whether it is a 3D chart.
          */
@@ -374,7 +520,7 @@ namespace Chart3D {
 
         /**
          * Animation setter for matrix property.
-         * @private
+         * @internal
          */
 
         fxProto.matrixSetter = function (): void {
@@ -427,7 +573,7 @@ namespace Chart3D {
     /**
      * Legacy support for HC < 6 to make 'scatter' series in a 3D chart route to
      * the real 'scatter3d' series type. (#8407)
-     * @private
+     * @internal
      */
     function onAddSeries(
         this: Chart,
@@ -442,9 +588,7 @@ namespace Chart3D {
         }
     }
 
-    /**
-     * @private
-     */
+    /** @internal */
     function onAfterDrawChartBox(this: Chart): void {
 
         if (
@@ -1266,7 +1410,7 @@ namespace Chart3D {
 
     /**
      * Add the required CSS classes for column sides (#6018)
-     * @private
+     * @internal
      */
     function onAfterGetContainer(this: Chart): void {
         if (this.styledMode) {
@@ -1313,7 +1457,7 @@ namespace Chart3D {
     /**
      * Legacy support for HC < 6 to make 'scatter' series in a 3D chart route to
      * the real 'scatter3d' series type. (#8407)
-     * @private
+     * @internal
      */
     function onAfterInit(this: Chart): void {
         const options = this.options;
@@ -1333,9 +1477,7 @@ namespace Chart3D {
         }
     }
 
-    /**
-     * @private
-     */
+    /** @internal */
     function onAfterSetChartSize(this: Chart): void {
         const chart = this,
             options3d = chart.options.chart.options3d as any;
@@ -1383,9 +1525,7 @@ namespace Chart3D {
         }
     }
 
-    /**
-     * @private
-     */
+    /** @internal */
     function onBeforeRedraw(this: Chart): void {
         if (this.is3d()) {
             // Set to force a redraw of all elements
@@ -1393,18 +1533,14 @@ namespace Chart3D {
         }
     }
 
-    /**
-     * @private
-     */
+    /** @internal */
     function onBeforeRender(this: Chart): void {
         if (this.chart3d && this.is3d()) {
             this.chart3d.frame3d = this.chart3d.get3dFrame();
         }
     }
 
-    /**
-     * @private
-     */
+    /** @internal */
     function onInit(this: Chart): void {
 
         if (!this.chart3d) {
@@ -1412,9 +1548,7 @@ namespace Chart3D {
         }
     }
 
-    /**
-     * @private
-     */
+    /** @internal */
     function wrapIsInsidePlot(
         this: Chart,
         proceed: Function
@@ -1424,7 +1558,7 @@ namespace Chart3D {
 
     /**
      * Draw the series in the reverse order (#3803, #3917)
-     * @private
+     * @internal
      */
     function wrapRenderSeries(
         this: Chart,
@@ -1444,9 +1578,7 @@ namespace Chart3D {
         }
     }
 
-    /**
-     * @private
-     */
+    /** @internal */
     function wrapSetClassName(
         this: Chart,
         proceed: Function
@@ -1472,6 +1604,7 @@ namespace Chart3D {
          *
          * */
 
+        /** @internal */
         public constructor(chart: Chart) {
             this.chart = chart as Composition;
         }
@@ -1482,7 +1615,10 @@ namespace Chart3D {
          *
          * */
 
+        /** @internal */
         public chart: Composition;
+
+        /** @internal */
         public frame3d!: FrameObject;
 
         /* *
@@ -1491,6 +1627,7 @@ namespace Chart3D {
          *
          * */
 
+        /** @internal */
         public get3dFrame(): Chart3D.FrameObject {
             const chart = this.chart,
                 options3d = chart.options.chart.options3d as any,
@@ -1903,7 +2040,7 @@ namespace Chart3D {
          * not practical. Possible to make both getScale and perspective more
          * logical and also immutable.
          *
-         * @private
+         * @internal
          * @function getScale
          *
          * @param {number} depth

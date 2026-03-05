@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2025 Highsoft AS
+ *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Honsi
  *
  *  A commercial license may be required depending on use.
@@ -18,14 +18,13 @@
 import type LineSeriesOptions from '../Line/LineSeriesOptions';
 import type ScatterPointOptions from './ScatterPointOptions';
 import type {
-    SeriesStatesOptions,
-    SeriesFindNearestPointByValue
+    SeriesStatesOptions
 } from '../../Core/Series/SeriesOptions';
-import type TooltipOptions from '../../Core/TooltipOptions';
 import type {
     PointMarkerOptions,
     PointShortOptions
 } from '../../Core/Series/PointOptions';
+import { SeriesTooltipOptions } from '../../Core/TooltipOptions';
 
 /* *
  *
@@ -171,7 +170,10 @@ export interface ScatterSeriesOptions extends LineSeriesOptions {
      */
     data?: Array<(ScatterPointOptions|PointShortOptions)>;
 
-    findNearestPointBy?: SeriesFindNearestPointByValue;
+    /**
+     * @default 'xy'
+     */
+    findNearestPointBy?: LineSeriesOptions['findNearestPointBy'];
 
     /**
      * Apply a jitter effect for the rendered markers. When plotting
@@ -247,8 +249,19 @@ export interface ScatterSeriesOptions extends LineSeriesOptions {
      *
      * @product highcharts highstock highmaps
      */
-    tooltip?: Partial<TooltipOptions>;
+    tooltip?: ScatterSeriesTooltipOptions;
+}
 
+export interface ScatterSeriesTooltipOptions extends SeriesTooltipOptions {
+    /**
+     * @default {highcharts|highstock} '<span style="color:{point.color}">\u25CF</span> <span style="font-size: 0.8em"> {series.name}</span><br/>'
+     */
+    headerFormat?: SeriesTooltipOptions['headerFormat'];
+
+    /**
+     * @default {highcharts|highstock} 'x: <b>{point.x}</b><br/>y: <b>{point.y}</b><br/>'
+     */
+    pointFormat?: SeriesTooltipOptions['pointFormat'];
 }
 
 /* *

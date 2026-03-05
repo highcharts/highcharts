@@ -2,7 +2,7 @@
  *
  *  Networkgraph series
  *
- *  (c) 2010-2025 Highsoft AS
+ *  (c) 2010-2026 Highsoft AS
  *  Author: Paweł Fus
  *
  *  A commercial license may be required depending on use.
@@ -26,6 +26,7 @@ import type {
     PointMarkerOptions,
     PointOptions
 } from '../../Core/Series/PointOptions';
+import type { PointDataLabelOptionsModifier } from '../../Core/Series/DataLabel';
 
 /* *
  *
@@ -47,13 +48,19 @@ declare module '../../Core/Series/PointOptions' {
  */
 export interface NetworkgraphDataOptions extends PointOptions {
 
-    dataLabels?: (NetworkgraphDataLabelsOptions|Array<NetworkgraphDataLabelsOptions>);
+    dataLabels?: (
+        NetworkgraphPointDataLabelsOptions |
+        Array<NetworkgraphPointDataLabelsOptions>
+    );
 
     from?: string;
 
     to?: string;
 
 }
+
+export type NetworkgraphPointDataLabelsOptions =
+    NetworkgraphDataLabelsOptions & PointDataLabelOptionsModifier;
 
 /**
  * @product highcharts
@@ -84,7 +91,10 @@ export interface NetworkgraphPointOptions
      *
      * @apioption series.networkgraph.nodes.dataLabels
      */
-    dataLabels?: (NetworkgraphDataLabelsOptions|Array<NetworkgraphDataLabelsOptions>);
+    dataLabels?: (
+        NetworkgraphPointDataLabelsOptions |
+        Array<NetworkgraphPointDataLabelsOptions>
+    );
 
     /**
      * The id of the auto-generated node, referring to the `from` or `to`

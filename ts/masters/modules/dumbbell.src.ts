@@ -4,7 +4,7 @@
  * @module highcharts/modules/dumbbell
  * @requires highcharts
  *
- * (c) 2009-2025 Highsoft AS
+ * (c) 2009-2026 Highsoft AS
  * Author: Sebastian Bochan, Rafal Sebestjanski
  *
  * A commercial license may be required depending on use.

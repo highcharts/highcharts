@@ -164,36 +164,45 @@ Grid works seamlessly with most major JavaScript frameworks.
 
 **Installation:**
 ```bash
-npm install @highcharts/grid-lite
+npm install @highcharts/grid-lite-react
+# or
+npm install @highcharts/grid-pro-react
 ```
 
-**GridComponent.tsx:**
+The React package is self-contained, so a single install is enough to render the grid.
+Requires React 18 or higher.
+
+**App.tsx:**
 ```tsx
-import { useEffect, useRef } from 'react';
-import Grid from '@highcharts/grid-lite/es-modules/masters/grid-lite.src.js';
-import '@highcharts/grid-lite/css/grid-lite.css';
+import { useState } from 'react';
+import { Grid, type GridOptions } from '@highcharts/grid-lite-react';
 
-export function GridComponent({ config }: { config: Grid.Options }) {
-    const containerRef = useRef<HTMLDivElement>(null);
+export default function App() {
+    const [options] = useState<GridOptions>({
+        dataTable: {
+            columns: {
+                name: ['Alice', 'Bob', 'Charlie', 'David'],
+                age: [23, 34, 45, 56],
+                city: ['New York', 'Oslo', 'Paris', 'Tokyo'],
+            }
+        }
+    });
 
-    useEffect(() => {
-        if (!containerRef.current) return;
-        const grid = Grid.grid(containerRef.current, config);
-        return () => grid?.destroy();
-    }, [config]);
-
-    return <div ref={containerRef} />;
+    return <Grid options={options} />;
 }
 ```
 
-**[View complete React guide →](https://www.highcharts.com/docs/grid/wrappers/grid-with-react)**
+For Grid Pro, swap the imports to `@highcharts/grid-pro-react` and render
+`<Grid options={options} />`.
+
+**[View complete React guide →](https://www.highcharts.com/docs/grid/frameworks/grid-with-react)**
 
 ### Other Frameworks
 
 | Framework | Guide |
 | --- | --- |
-| **Vue** | [View Vue Guide →](https://www.highcharts.com/docs/grid/wrappers/grid-with-vue) |
-| **Angular** | [View Angular Guide →](https://www.highcharts.com/docs/grid/wrappers/grid-with-angular) |
+| **Vue** | [View Vue Guide →](https://www.highcharts.com/docs/grid/frameworks/grid-with-vue) |
+| **Angular** | [View Angular Guide →](https://www.highcharts.com/docs/grid/frameworks/grid-with-angular) |
 
 ## Next steps
 

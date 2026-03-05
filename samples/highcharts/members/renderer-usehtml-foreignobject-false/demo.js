@@ -144,7 +144,7 @@
     class HTMLElementLegacy extends HTMLElement {
         constructor(renderer, nodeName) {
             super(renderer, nodeName);
-            this.foreignObject = this.foreignObject.destroy();
+            this.foreignObject = this.foreignObject?.destroy();
             this.css({
                 position: 'absolute',
                 ...(this.renderer.styledMode ? {} : {

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2014-2025 Highsoft AS
+ *  (c) 2014-2026 Highsoft AS
  *
  *  Authors: Jon Arild Nygard / Oystein Moseng
  *
@@ -20,7 +20,6 @@ import type {
     AlignValue,
     VerticalAlignValue
 } from '../../Core/Renderer/AlignObject';
-import type BreadcrumbsOptions from '../../Extensions/Breadcrumbs/BreadcrumbsOptions';
 import type ButtonThemeObject from '../../Core/Renderer/SVG/ButtonThemeObject';
 import type ColorString from '../../Core/Color/ColorString';
 import type ColorType from '../../Core/Color/ColorType';
@@ -29,13 +28,14 @@ import { PatternObject } from '../../Extensions/PatternFill';
 import type DashStyleValue from '../../Core/Renderer/DashStyleValue';
 import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
 import type { PointMarkerOptions } from '../../Core/Series/PointOptions';
-import type ScatterSeriesOptions from '../Scatter/ScatterSeriesOptions';
+import type {
+    ScatterSeriesOptions,
+    ScatterSeriesTooltipOptions
+} from '../Scatter/ScatterSeriesOptions';
 import type {
     SeriesOptions,
-    SeriesStatesOptions,
-    LegendSymbolType
+    SeriesStatesOptions
 } from '../../Core/Series/SeriesOptions';
-import type TooltipOptions from '../../Core/TooltipOptions';
 import type TreemapPointOptions from './TreemapPointOptions';
 import MarkerClusterOptions from '../../Extensions/MarkerClusters/MarkerClusterOptions';
 
@@ -44,12 +44,6 @@ import MarkerClusterOptions from '../../Extensions/MarkerClusters/MarkerClusterO
  *  Declarations
  *
  * */
-
-declare module '../../Core/Series/SeriesOptions' {
-    interface SeriesOptions {
-        cropThreshold?: number;
-    }
-}
 
 export interface TreemapDataLabelOptions extends DataLabelOptions {
     /**
@@ -424,18 +418,6 @@ export interface TreemapSeriesOptions extends ScatterSeriesOptions {
      */
     borderWidth?: number;
 
-    /**
-     * Options for the breadcrumbs, the navigation at the top leading the
-     * way up through the traversed levels.
-     *
-     * @since 10.0.0
-     *
-     * @product highcharts
-     *
-     * @extends navigation.breadcrumbs
-     */
-    breadcrumbs?: BreadcrumbsOptions;
-
     brightness?: number;
 
     /**
@@ -630,7 +612,10 @@ export interface TreemapSeriesOptions extends ScatterSeriesOptions {
      */
     layoutStartingDirection?: TreemapSeriesLayoutStartingDirectionValue;
 
-    legendSymbol?: LegendSymbolType;
+    /**
+     * @default 'rectangle'
+     */
+    legendSymbol?: ScatterSeriesOptions['legendSymbol'];
 
     /**
      * Used together with the levels and allowTraversingTree options. When
@@ -734,7 +719,7 @@ export interface TreemapSeriesOptions extends ScatterSeriesOptions {
      * @apioption series.treemap.states.hover
      */
 
-    tooltip?:Partial<TooltipOptions>;
+    tooltip?: TreemapSeriesTooltipOptions;
 
     /**
      * The HTML of the grouped nodes point's in the tooltip. Works only for
@@ -757,6 +742,24 @@ export interface TreemapSeriesOptions extends ScatterSeriesOptions {
     traverseUpButton?: TreemapSeriesUpButtonOptions;
 
     traverseToLeaf?: boolean;
+}
+
+export interface TreemapSeriesTooltipOptions
+    extends ScatterSeriesTooltipOptions {
+    /**
+     * @default ''
+     */
+    headerFormat?: ScatterSeriesTooltipOptions['headerFormat'];
+
+    /**
+     * @default '<b>{point.name}</b>: {point.value}<br/>'
+     */
+    pointFormat?: ScatterSeriesTooltipOptions['pointFormat'];
+
+    /**
+     * @default '+ {point.groupedPointsAmount} more...<br/>'
+     */
+    clusterFormat?: ScatterSeriesTooltipOptions['clusterFormat'];
 }
 
 /**

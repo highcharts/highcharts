@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2025 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *  Author: Øystein Moseng
  *
  *  Class that can keep track of events added, and clean them up on destroy.
@@ -19,7 +19,7 @@
  *
  * */
 
-import type EventCallback from '../../Core/EventCallback';
+import type { EventCallback } from '../../Core/Callback';
 
 import H from '../../Core/Globals.js';
 import DOMElementType from '../../Core/Renderer/DOMElementType';

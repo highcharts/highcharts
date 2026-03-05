@@ -1,5 +1,5 @@
 ---
- name: Highcharts Stock Demo
+ name: Demo of yAxis.plotBands.label options
  authors:
    - Torstein Hønsi
  js_wrap: b

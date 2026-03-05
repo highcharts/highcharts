@@ -2,7 +2,7 @@
  *
  *  Grid class
  *
- *  (c) 2020-2025 Highsoft AS
+ *  (c) 2020-2026 Highsoft AS
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -22,7 +22,7 @@
  *
  * */
 
-import type DataTable from '../../../../Data/DataTable';
+import type { CellType as DataTableCellType } from '../../../../Data/DataTable';
 import type Column from '../Column';
 import type TableRow from './TableRow';
 
@@ -115,7 +115,7 @@ class TableCell extends Cell {
      * @param value
      * The new value to set.
      */
-    public async editValue(value: DataTable.CellType): Promise<void> {
+    public async editValue(value: DataTableCellType): Promise<void> {
         if (this.value === value) {
             return;
         }
@@ -137,7 +137,7 @@ class TableCell extends Cell {
      * `false`, meaning the table will not be updated.
      */
     public async setValue(
-        value: DataTable.CellType = this.column.data?.[this.row.index],
+        value: DataTableCellType = this.column.data?.[this.row.index],
         updateTable: boolean = false
     ): Promise<void> {
         this.value = value;
@@ -207,15 +207,20 @@ class TableCell extends Cell {
         return true;
     }
 
+    /**
+     * Initialize event listeners for table body cells.
+     *
+     * Most events (click, dblclick, keydown, mousedown, mouseover, mouseout)
+     * are delegated to Table for better performance with virtualization.
+     * Only focus/blur remain on individual cells for focus management.
+     */
     public override initEvents(): void {
-        this.cellEvents.push(['dblclick', (e): void => (
-            this.onDblClick(e as MouseEvent)
-        )]);
-        this.cellEvents.push(['mousedown', (e): void => {
-            this.onMouseDown(e as MouseEvent);
-        }]);
+        this.cellEvents.push(['blur', (): void => this.onBlur()]);
+        this.cellEvents.push(['focus', (): void => this.onFocus()]);
 
-        super.initEvents();
+        this.cellEvents.forEach((pair): void => {
+            this.htmlElement.addEventListener(pair[0], pair[1]);
+        });
     }
 
     /**
@@ -251,12 +256,12 @@ class TableCell extends Cell {
         });
     }
 
-    protected override onMouseOver(): void {
+    public override onMouseOver(): void {
         this.row.viewport.grid.hoverRow(this.row.index);
         super.onMouseOver();
     }
 
-    protected override onMouseOut(): void {
+    public override onMouseOut(): void {
         this.row.viewport.grid.hoverRow();
         super.onMouseOut();
     }

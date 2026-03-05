@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2025 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -21,9 +21,13 @@
  * */
 
 
-import type ConnectorHandler from '../ConnectorHandler.js';
-import type Component from '../Component';
-import type Sync from '../Sync/Sync';
+import type { ConnectorOptions as ConnectorHandlerOptions } from '../ConnectorHandler';
+import type { Options as ComponentOptions } from '../Component';
+import type {
+    OptionsEntry as SyncOptionsEntry,
+    OptionsRecord as SyncOptionsRecord,
+    RawOptionsRecord as SyncRawOptionsRecord
+} from '../Sync/Sync';
 import type {
     Options as HighchartsOptions
 } from '../../Plugins/HighchartsTypes';
@@ -43,7 +47,7 @@ export type ConstructorType = (
 );
 
 
-export interface Options extends Component.Options {
+export interface Options extends ComponentOptions {
     /**
      * Whether to allow the component to edit the store to which it is
      * attached.
@@ -114,13 +118,13 @@ export interface Options extends Component.Options {
     /**
     * Sync options for the component.
     */
-    syncHandlers?: Sync.OptionsRecord;
+    syncHandlers?: SyncOptionsRecord;
 }
 
 /**
  * Highcharts component connector options.
  */
-export interface ConnectorOptions extends ConnectorHandler.ConnectorOptions {
+export interface ConnectorOptions extends ConnectorHandlerOptions {
     /**
      * It allows to assign the data from the connector to specific series in the
      * chart in different ways using series IDs and column names.
@@ -211,7 +215,7 @@ export interface ColumnAssignmentOptions {
  * }
  * ```
  */
-export interface SyncOptions extends Sync.RawOptionsRecord {
+export interface SyncOptions extends SyncRawOptionsRecord {
     /**
      * Extremes sync is available for Highcharts, KPI, Grid and
      * Navigator components. Sets a common range of displayed data. For the
@@ -223,7 +227,7 @@ export interface SyncOptions extends Sync.RawOptionsRecord {
      *
      * @default false
      */
-    extremes?: boolean | Sync.OptionsEntry;
+    extremes?: boolean | SyncOptionsEntry;
     /**
      * Highlight sync is available for Highcharts and Grid components.
      * It allows to highlight hovered corresponding rows in the table and
@@ -246,7 +250,7 @@ export interface SyncOptions extends Sync.RawOptionsRecord {
      *
      * @default false
      */
-    visibility?: boolean | Sync.OptionsEntry;
+    visibility?: boolean | SyncOptionsEntry;
 }
 
 /**
@@ -262,7 +266,7 @@ export interface SyncOptions extends Sync.RawOptionsRecord {
  * }
  * ```
  */
-export interface HighchartsHighlightSyncOptions extends Sync.OptionsEntry {
+export interface HighchartsHighlightSyncOptions extends SyncOptionsEntry {
     /**
      * ID of the series that should be affected by the highlight. If not
      * defined, the appropriate series will be found according to the column

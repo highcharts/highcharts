@@ -18,7 +18,24 @@ Grid.grid('container', {
             country: [
                 'PL', 'NL', 'RO', 'EC', 'ES', 'IT', 'DE', 'PL', 'TR', 'BR'
             ],
-            wrongName: [34, 4, 51, 2, 3]
+            wrongName: [34, 4, 51, 2, 3],
+            csvString: ['1,2,3', '1,2,3', '1,2,3', '1,2,3', '1,2,3'],
+            /* eslint-disable max-len */
+            columnJSON: [
+                '[{ "x": 0, "y": 1, "color": "#91C8E4" }, { "x": 1, "y": 4, "color": "#749BC2" }, { "x": 2, "y": 2, "color": "#4682A9" }]',
+                '[{ "x": 0, "y": 1, "color": "#91C8E4" }, { "x": 1, "y": 1, "color": "#749BC2" }, { "x": 2, "y": 1, "color": "#4682A9" }]',
+                '[{ "x": 0, "y": 2, "color": "#91C8E4" }, { "x": 1, "y": 1, "color": "#749BC2" }, { "x": 2, "y": 5, "color": "#4682A9" }]',
+                '[{ "x": 0, "y": 10, "color": "#91C8E4" }, { "x": 1, "y": 1, "color": "#749BC2" }, { "x": 2, "y": 10, "color": "#4682A9" }]',
+                '[{ "x": 0, "y": 10, "color": "#91C8E4" }, { "x": 1, "y": 1, "color": "#749BC2" }, { "x": 2, "y": 10, "color": "#4682A9" }]'
+            ],
+            /* eslint-enable max-len */
+            defaultValidator: [
+                '[1, 2, 3]',
+                '[1, 2, 3]',
+                '[1, 2, 3]',
+                '[1, 2, 3]',
+                '[1, 2, 3]'
+            ]
         }
     },
     lang: {
@@ -149,6 +166,48 @@ Grid.grid('container', {
         cells: {
             renderer: {
                 type: 'wrong-render-type'
+            }
+        }
+    }, {
+        id: 'csvString',
+        cells: {
+            renderer: {
+                type: 'sparkline'
+            },
+            editMode: {
+                validationRules: ['arrayNumber']
+            }
+        }
+    }, {
+        id: 'csvArray',
+        cells: {
+            renderer: {
+                type: 'sparkline'
+            },
+            editMode: {
+                validationRules: ['arrayNumber']
+            }
+        }
+    }, {
+        id: 'columnJSON',
+        cells: {
+            renderer: {
+                type: 'sparkline',
+                chartOptions: {
+                    chart: {
+                        type: 'column'
+                    }
+                }
+            },
+            editMode: {
+                validationRules: ['json']
+            }
+        }
+    }, {
+        id: 'defaultValidator',
+        cells: {
+            renderer: {
+                type: 'sparkline'
             }
         }
     }]

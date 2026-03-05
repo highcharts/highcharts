@@ -6,7 +6,7 @@
  *
  * Standalone navigator module
  *
- * (c) 2009-2025 Highsoft AS
+ * (c) 2009-2026 Highsoft AS
  * Author: Mateusz Bernacik
  *
  * A commercial license may be required depending on use.

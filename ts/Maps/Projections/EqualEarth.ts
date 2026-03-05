@@ -6,7 +6,7 @@
  *  Invented by Bojan Šavrič, Bernhard Jenny, and Tom Patterson in 2018. It is
  *  inspired by the widely used Robinson projection.
  *
- *  (c) 2020-2025 Highsoft AS
+ *  (c) 2020-2026 Highsoft AS
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license

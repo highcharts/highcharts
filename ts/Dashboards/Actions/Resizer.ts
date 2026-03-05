@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2025 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -16,10 +16,9 @@
 import type {
     HTMLDOMElement
 } from '../../Core/Renderer/DOMElementType';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import type JSON from '../JSON';
+import type { JSONObject } from '../JSON';
 import type Cell from '../Layout/Cell.js';
-import type Serializable from '../Serializable';
+import type { JSON as SerializableJSON } from '../Serializable';
 import EditGlobals from '../EditMode/EditGlobals.js';
 import GUIElement from '../Layout/GUIElement.js';
 
@@ -51,12 +50,12 @@ class Resizer {
      */
     public static fromJSON(
         editMode: EditMode,
-        json: Resizer.JSON
+        json: JSON
     ): Resizer|undefined {
         return new Resizer(editMode, json.options);
     }
 
-    protected static readonly defaultOptions: Resizer.Options = {
+    protected static readonly defaultOptions: Options = {
         enabled: true,
         styles: {
             minWidth: 20,
@@ -81,10 +80,10 @@ class Resizer {
      * @param {EditMode} editMode
      * The parent editMode reference.
      *
-     * @param {Resizer.Options} options
+     * @param {Options} options
      * Options for the Resizer.
      */
-    public constructor(editMode: EditMode, options?: Resizer.Options) {
+    public constructor(editMode: EditMode, options?: Options) {
         this.editMode = editMode;
         this.options = merge(
             {},
@@ -117,7 +116,7 @@ class Resizer {
     /**
      * Resizer options.
      */
-    public options: Resizer.Options;
+    public options: Options;
 
     /**
      * Resized element reference.
@@ -437,7 +436,7 @@ class Resizer {
      *
      */
     public onMouseMove(e: PointerEvent): void {
-        const currentCell = this.currentCell as Resizer.ResizedCell;
+        const currentCell = this.currentCell as ResizedCell;
         const cellContainer = currentCell && currentCell.container;
         const currentDimension = this.currentDimension;
 
@@ -507,10 +506,10 @@ class Resizer {
      * Converts the class instance to a class JSON.
      * @internal
      *
-     * @return {Resizer.JSON}
+     * @return {JSON}
      * Class JSON of this Resizer instance.
      */
-    public toJSON(): Resizer.JSON {
+    public toJSON(): JSON {
         const options = this.options;
 
         return {
@@ -536,123 +535,125 @@ interface Resizer {
     mouseMoveSnap?: Function;
     mouseUpSnap?: Function;
 }
-namespace Resizer {
+/* *
+ *
+ *  Type Declarations
+ *
+ * */
+/**
+ * Resizer options
+ */
+export interface Options {
     /**
-     * Resizer options
+     * Weather the resizer is enabled or not.
+     *
+     * Try it:
+     *
+     * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/edit-mode/resize-disabled/ | Resize disabled}
      */
-    export interface Options {
-        /**
-         * Weather the resizer is enabled or not.
-         *
-         * Try it:
-         *
-         * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/edit-mode/resize-disabled/ | Resize disabled}
-         */
-        enabled: boolean;
-        /**
-         * Resizer type.
-         */
-        type: 'x'|'y'|'xy';
-        /**
-         * Options for the snap mechanism.
-         */
-        snap: SnapOptions;
-        /**
-         * Style of the snap element.
-         */
-        styles: ElementStyles
-    }
-    export interface ResizedCell extends Cell {
-        resizer?: Snap;
-    }
-
-
+    enabled: boolean;
     /**
-     * Style of the snap element.
+     * Resizer type.
      */
-    export interface ElementStyles {
-        /**
-         * Width of the border on the left side of the element in pixels.
-         */
-        borderLeft?: number;
-        /**
-         * Width of the border on the right side of the element in pixels.
-         */
-        borderRight?: number;
-        /**
-         * Width of the border on the top side of the element in pixels.
-         */
-        borderTop?: number;
-        /**
-         * Width of the border on the bottom side of the element in pixels.
-         */
-        borderBottom?: number;
-        /**
-         * Minimum width of the element in pixels.
-         */
-        minWidth?: number;
-        /**
-         * Minimum height of the element in pixels.
-         */
-        minHeight?: number;
-    }
-    export interface Snap {
-        snapX?: HTMLDOMElement|undefined;
-        snapY?: HTMLDOMElement|undefined;
-    }
-
+    type: 'x'|'y'|'xy';
     /**
      * Options for the snap mechanism.
      */
-    export interface SnapOptions {
-
-        /**
-         * Width of the element in pixels.
-         */
-        width?: number;
-        /**
-         * Height of the element in pixels.
-         */
-        height?: number;
-    }
-
-    /** @internal */
-    export interface HTMLDOMElementEvents extends HTMLDOMElement {
-        hcEvents: Record<string, Array<Function>>;
-    }
-
-    export interface JSON extends Serializable.JSON<'Dashboards.Action.Resizer'> {
-        options: JSONOptions;
-    }
-
-    export interface JSONOptions extends JSON.Object {
-        enabled: boolean;
-        styles: ElementStylesJSON;
-        type: 'x'|'y'|'xy';
-        snap: SnapJSON;
-    }
-    export interface SnapJSON extends JSON.Object {
-        width?: number;
-        height?: number;
-    }
-    export interface ElementStylesJSON extends JSON.Object {
-        borderLeft?: number;
-        borderRight?: number;
-        borderTop?: number;
-        borderBottom?: number;
-        minWidth?: number;
-        minHeight?: number;
-    }
-
-    export interface ResizePointer {
-        isVisible: boolean;
-        element: HTMLDOMElement;
-    }
-
-    export interface CellSiblings {
-        prev: Array<Cell>;
-        next: Array<Cell>;
-    }
+    snap: SnapOptions;
+    /**
+     * Style of the snap element.
+     */
+    styles: ElementStyles
+}
+export interface ResizedCell extends Cell {
+    resizer?: Snap;
 }
 
+
+/**
+ * Style of the snap element.
+ */
+export interface ElementStyles {
+    /**
+     * Width of the border on the left side of the element in pixels.
+     */
+    borderLeft?: number;
+    /**
+     * Width of the border on the right side of the element in pixels.
+     */
+    borderRight?: number;
+    /**
+     * Width of the border on the top side of the element in pixels.
+     */
+    borderTop?: number;
+    /**
+     * Width of the border on the bottom side of the element in pixels.
+     */
+    borderBottom?: number;
+    /**
+     * Minimum width of the element in pixels.
+     */
+    minWidth?: number;
+    /**
+     * Minimum height of the element in pixels.
+     */
+    minHeight?: number;
+}
+export interface Snap {
+    snapX?: HTMLDOMElement|undefined;
+    snapY?: HTMLDOMElement|undefined;
+}
+
+/**
+ * Options for the snap mechanism.
+ */
+export interface SnapOptions {
+
+    /**
+     * Width of the element in pixels.
+     */
+    width?: number;
+    /**
+     * Height of the element in pixels.
+     */
+    height?: number;
+}
+
+/** @internal */
+export interface HTMLDOMElementEvents extends HTMLDOMElement {
+    hcEvents: Record<string, Array<Function>>;
+}
+
+export interface JSON extends SerializableJSON<'Dashboards.Action.Resizer'> {
+    options: JSONOptions;
+}
+
+export interface JSONOptions extends JSONObject {
+    enabled: boolean;
+    styles: ElementStylesJSON;
+    type: 'x'|'y'|'xy';
+    snap: SnapJSON;
+}
+export interface SnapJSON extends JSONObject {
+    width?: number;
+    height?: number;
+}
+export interface ElementStylesJSON extends JSONObject {
+    borderLeft?: number;
+    borderRight?: number;
+    borderTop?: number;
+    borderBottom?: number;
+    minWidth?: number;
+    minHeight?: number;
+}
+
+export interface ResizePointer {
+    isVisible: boolean;
+    element: HTMLDOMElement;
+}
+
+export interface CellSiblings {
+    prev: Array<Cell>;
+    next: Array<Cell>;
+}
 export default Resizer;

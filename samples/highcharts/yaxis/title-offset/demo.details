@@ -1,5 +1,5 @@
 ---
- name: Highcharts Demo
+ name: Demo of yAxis.title.offset
  authors:
    - Torstein Hønsi
  js_wrap: b
