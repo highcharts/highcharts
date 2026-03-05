@@ -200,62 +200,43 @@ The following global variables are available for hover states on cells, rows, co
 ### Hover Opacity
 
 The `--hcg-hover-opacity` variable control blending strength of hover layers.
+When you use even/odd row or column backgrounds, opacity can be used if you want those stripes to remain visible in hover states.
+The global `--hcg-hover-opacity` can be overridden per section using the same hover prefixes as in [Hover colors](#hover-colors), such as `--hcg-header-hover-opacity`, `--hcg-column-hover-opacity`, and `--hcg-cell-hover-opacity`.
 
 | Variable          | Default Value   | Valid Values                                                                |
 | ----------------- | --------------- | --------------------------------------------------------------------------- |
 | --hcg-hover-opacity       | 100% | [opacity](https://developer.mozilla.org/en-US/docs/Web/CSS/opacity)           |
 
-
-
 ### Example
 
 ```css
-.theme-opacity-hover {
+.theme-custom {
+    --my-hover-color: red;
+    --hcg-row-even-background: lightgrey;
+    --hcg-cell-hover-background: var(--my-hover-color);
+    --hcg-column-hover-background: var(--my-hover-color);
     --hcg-hover-opacity: 18%;
-    --hcg-column-hover-opacity: 28%;
     --hcg-cell-hover-opacity: 60%;
 }
 ```
 
-In this example, all hover states start at `18%`, columns are stronger at `28%`, and direct cell hover becomes the strongest at `60%`.
+In this example, hover color is set once through `--my-hover-color`, even rows keep their `lightgrey` striping through opacity blending, global hover uses `18%`, and direct cell hover is strengthened to `60%`.
 
-### Focused sync-opacity example
+## Sync colors
+
+When using Highcharts Grid as a component in Highcharts Dashboards, [synchronization highlights cells, rows and columns](https://www.highcharts.com/docs/dashboards/synchronize-components). By default hover states are used for sync as well, but can be overridden by using sync section prefixes instead.
+
+The same section-prefix, fallback, and opacity logic from [Hover colors](#hover-colors) applies, using `-sync-` variables instead of `-hover-`.
 
 ```css
-.theme-opacity-sync {
-    --hcg-sync-opacity: 35%;
-    --hcg-row-sync-opacity: 55%;
-    --hcg-cell-synced-opacity: 75%;
+.theme-custom {
+    --hcg-cell-hover-background: lightred;
+    --hcg-cell-sync-hover-background: red;
+    --hcg-cell-sync-hover-color: white;
 }
 ```
 
-In this example, synced states use `35%` by default, synced rows are stronger at `55%`, and final synced cell overlays are strongest at `75%`.
-
-## Putting It All Together
-
-```css
-.my-theme {
-    --hcg-font-size: 15px;
-    --hcg-color: #1b1b1b;
-    --hcg-background: #ffffff;
-    --hcg-border-width: 1px;
-    --hcg-border-color: #dddddd;
-    --hcg-padding: 10px;
-
-    --hcg-header-background: #0f2747;
-    --hcg-header-color: #ffffff;
-    --hcg-row-even-background: #f6f9ff;
-
-    --hcg-hover-opacity: 12%;
-    --hcg-column-hover-opacity: 20%;
-    --hcg-row-sync-opacity: 38%;
-
-    --hcg-link-color: #0b57d0;
-    --hcg-link-hovered-text-decoration: none;
-    --hcg-popup-border-color: #d6d6d6;
-    --hcg-menu-item-active-background: #e9edff;
-}
-```
+In this example hover uses a light red background, while sync uses a solid red background and white text to draw extra attention when users interacts with a synced chart on the same page.
 
 Check our [theming demo](https://www.highcharts.com/demo/grid/grid-theming) to see these concepts in practice.
 
@@ -264,5 +245,4 @@ Check our [theming demo](https://www.highcharts.com/demo/grid/grid-theming) to s
 1. Define globals first (`font`, `color`, `background`, `border`, `padding`).
 2. Refine table sections with row/column/header/cell variables.
 3. Use hover/sync color variables together with opacity variables for interaction tuning.
-4. Use supporting UI variables (links, popup, menu, focus ring, loader) for a complete theme.
-5. For controls, use [Element variables](https://www.highcharts.com/docs/grid/theming/element-variables).
+4. For other elements, use [Element variables](https://www.highcharts.com/docs/grid/theming/element-variables).
