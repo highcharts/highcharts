@@ -161,7 +161,8 @@ module.exports = {
             {
                 'Theming': [
                     'grid/theming/index',
-                    'grid/theming/variables',
+                    'grid/theming/grid-variables',
+                    'grid/theming/element-variables',
                     'grid/theming/conditional',
                 ]
             },
