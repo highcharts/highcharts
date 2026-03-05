@@ -109,15 +109,11 @@ function chartDrawChartBox(
         // Check bubble legend sizes and correct them if necessary.
         legend.bubbleLegend.correctSizes();
 
-        // Correct items positions with different dimensions in legend.
-        retranslateItems(legend, getLinesHeights(legend));
-
     } else {
         proceed.call(chart, options, callback);
         // Allow color change on static bubble legend after click on legend
         if (legend && legend.options.enabled && legend.bubbleLegend) {
             legend.render();
-            retranslateItems(legend, getLinesHeights(legend));
         }
     }
 }
@@ -148,7 +144,7 @@ function compose(
         wrap(ChartClass.prototype, 'drawChartBox', chartDrawChartBox);
 
         addEvent(LegendClass, 'afterGetAllItems', onLegendAfterGetAllItems);
-
+        addEvent(LegendClass, 'afterRender', onLegendAfterRender);
         addEvent(LegendClass, 'itemClick', onLegendItemClick);
     }
 
@@ -268,6 +264,58 @@ function onLegendAfterGetAllItems(
 }
 
 /**
+ * Retranslate the legend items after render
+ */
+function onLegendAfterRender(this: Legend): void {
+
+    if (this.bubbleLegend) {
+        const items = this.allItems,
+            rtl = this.options.rtl,
+            lines = getLinesHeights(this);
+
+        let orgTranslateX,
+            orgTranslateY,
+            movementX,
+            legendItem,
+            actualLine = 0;
+
+        items.forEach((
+            item: (BubbleLegendItem|Series|Point),
+            index: number
+        ): void => {
+            legendItem = item.legendItem || {};
+
+            if (!legendItem.group) {
+                return;
+            }
+
+            orgTranslateX = legendItem.group.translateX || 0;
+            orgTranslateY = legendItem.y || 0;
+
+            movementX = (item as any).movementX;
+
+            if (movementX || (rtl && (item as any).ranges)) {
+                movementX = rtl ?
+                    orgTranslateX - (item as any).options.maxSize / 2 :
+                    orgTranslateX + movementX;
+
+                legendItem.group.attr({ translateX: movementX });
+            }
+            if (index > lines[actualLine].step) {
+                actualLine++;
+            }
+
+            legendItem.group.attr({
+                translateY: Math.round(
+                    orgTranslateY + lines[actualLine].height / 2
+                )
+            });
+            legendItem.y = orgTranslateY + lines[actualLine].height / 2;
+        });
+    }
+}
+
+/**
  * Toggle bubble legend depending on the visible status of bubble series.
  */
 function onLegendItemClick(this: Legend, e: any): void | boolean {
@@ -301,66 +349,6 @@ function onLegendItemClick(this: Legend, e: any): void | boolean {
         }
         series.visible = visible;
     }
-}
-
-/**
- * Correct legend items translation in case of different elements heights.
- *
- * @private
- * @function Highcharts.Legend#retranslateItems
- *
- * @param {Highcharts.Legend} legend
- * Legend to translate in.
- *
- * @param {Array<Highcharts.Dictionary<number>>} lines
- * Informations about line height and items amount
- */
-function retranslateItems(
-    legend: Legend,
-    lines: Array<Record<string, number>>
-): void {
-    const items = legend.allItems,
-        rtl = legend.options.rtl;
-
-    let orgTranslateX,
-        orgTranslateY,
-        movementX,
-        legendItem,
-        actualLine = 0;
-
-    items.forEach((
-        item: (BubbleLegendItem|Series|Point),
-        index: number
-    ): void => {
-        legendItem = item.legendItem || {};
-
-        if (!legendItem.group) {
-            return;
-        }
-
-        orgTranslateX = legendItem.group.translateX || 0;
-        orgTranslateY = legendItem.y || 0;
-
-        movementX = (item as any).movementX;
-
-        if (movementX || (rtl && (item as any).ranges)) {
-            movementX = rtl ?
-                orgTranslateX - (item as any).options.maxSize / 2 :
-                orgTranslateX + movementX;
-
-            legendItem.group.attr({ translateX: movementX });
-        }
-        if (index > lines[actualLine].step) {
-            actualLine++;
-        }
-
-        legendItem.group.attr({
-            translateY: Math.round(
-                orgTranslateY + lines[actualLine].height / 2
-            )
-        });
-        legendItem.y = orgTranslateY + lines[actualLine].height / 2;
-    });
 }
 
 /* *

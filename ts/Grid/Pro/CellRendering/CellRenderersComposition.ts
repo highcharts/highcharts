@@ -96,6 +96,9 @@ function afterColumnInit(this: Column): void {
  * Formatted cell content.
  */
 function createCellContent(this: Column, cell: TableCell): CellContent {
+    if (!this.cellRenderer) {
+        throw new Error('Called cell renderer on uninitialized column.');
+    }
     return this.cellRenderer.render(cell);
 }
 
@@ -120,7 +123,7 @@ declare module '../../Core/Table/Column' {
         /**
          * The cell view renderer instance for the column.
          */
-        cellRenderer: CellRendererType;
+        cellRenderer?: CellRendererType;
     }
 }
 

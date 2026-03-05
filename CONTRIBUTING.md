@@ -12,9 +12,10 @@ repository, as well as writing good issue reports.
     2. [Writing a Clear Bug Report](#writing-a-clear-bug-report)
 2. [Suggesting Features and/or Enhancements](#suggesting-features-and-enhancements)
 3. [Contributing Code](#contributing-code)
-    1. [Licensing And Legal](#licensing-and-legal)
-    2. [Style Guide](#style-guide)
-    3. [Pull Requests](#pull-requests)
+    1. [Licensing and Legal](#licensing-and-legal)
+    2. [Review and Acceptance Policy](#review-and-acceptance-policy)
+    3. [Style Guide](#style-guide)
+    4. [Pull Requests](#pull-requests)
     5. [Writing content for the changelog](#writing-content-for-the-changelog)
 
 ## Reporting Bugs
@@ -85,6 +86,8 @@ if the issue is already reported.
 
 ## Contributing Code
 
+Note: We strongly encourage contributors to open an issue for discussion before investing significant time in a pull request, especially for non-trivial changes. See details below.
+
 ### Licensing And Legal
 
 Please note that when you contribute code to the Highcharts repository that code 
@@ -115,6 +118,20 @@ function anMITLicensedFunction () {
 <some awesome code in here>
 }
 ```
+
+### Review and Acceptance Policy
+
+We welcome and appreciate contributions from the community. However, please be aware that all submissions are evaluated at the maintainers' discretion, and we reserve the right to decline any pull request, including those that:
+
+- do not follow the guidelines outlined in this document,
+- do not meet the quality standards of the existing codebase,
+- introduce changes that are unnecessarily broad, unfocused, or not aligned with the product direction,
+- show insufficient understanding of the code being modified, or
+- would require more maintainer effort to review, correct, and iterate on than the contribution warrants.
+
+We strongly encourage contributors to open an issue for discussion before investing significant time in a pull request, especially for non-trivial changes. This helps ensure your effort is directed toward something the team is likely to accept, and gives us the opportunity to provide early guidance.
+
+This policy is in no way meant to discourage contributions. By setting clear expectations upfront, we hope to make the process more productive and respectful of everyone's time, both yours and ours.
 
 ### Style Guide
 

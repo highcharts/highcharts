@@ -63,10 +63,10 @@ class FilterCell extends HeaderCell {
      *
      * */
 
-    public override render(): void {
+    public override async render(): Promise<void> {
         const { column } = this;
         if (!column) {
-            return;
+            return Promise.resolve();
         }
 
         // Render content of th element

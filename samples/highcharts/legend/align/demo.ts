@@ -11,7 +11,9 @@ Highcharts.chart('container', {
     legend: {
         align: 'right',
         layout: 'vertical',
-        verticalAlign: 'middle'
+        verticalAlign: 'middle',
+        x: 0,
+        y: 0
     },
     series: [{
         data: [1, 3, 2, 4]

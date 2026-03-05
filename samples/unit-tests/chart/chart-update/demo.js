@@ -184,6 +184,28 @@
             'ProximaNova, Arial, \'Helvetica Neue\', Helvetica, sans-serif',
             '#16153: fontFamily should not reset when updating chart.style'
         );
+
+        // Update collection with empty item
+        Highcharts.addEvent(chart.series[0], 'update', () => {
+            assert.notOk(
+                true,
+                'Update should not be called when updating with empty item'
+            );
+        });
+        chart.update({
+            series: [undefined, { color: 'green' }]
+        });
+
+        assert.strictEqual(
+            chart.series[0].color,
+            '#68266f',
+            'First series color should not be affected by empty item in update'
+        );
+        assert.strictEqual(
+            chart.series[1].color,
+            'green',
+            'Second series color should be updated to green'
+        );
     });
 
     QUnit.test('Loading update', function (assert) {

@@ -1459,6 +1459,11 @@ function seriesRenderCanvas(this: Series): void {
 
     /** @internal */
     const boostOptions = renderer.settings,
+        chunkSize = (
+            isNumber(boostOptions.chunkSize) && boostOptions.chunkSize > 0 ?
+                boostOptions.chunkSize :
+                CHUNK_SIZE
+        ),
         doneProcessing = (): void => {
             fireEvent(this, 'renderedCanvas');
 
@@ -1488,7 +1493,8 @@ function seriesRenderCanvas(this: Series): void {
                 this.data.slice(cropStart) :
                 (xData || rawData),
             processPoint,
-            doneProcessing
+            doneProcessing,
+            chunkSize
         );
     }
 }

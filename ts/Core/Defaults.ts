@@ -1098,6 +1098,9 @@ const defaultOptions: DefaultOptions = {
          * columns. Setting this to `false` makes room for more items, but will
          * look more messy.
          *
+         * @sample highcharts/legend/aligncolumns
+         *         Align columns
+         *
          * @since 6.1.0
          */
         alignColumns: true,
@@ -1237,6 +1240,9 @@ const defaultOptions: DefaultOptions = {
          * A [format string](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting)
          * for each legend label. Available variables relates to properties on
          * the series, or the point in case of pies.
+         *
+         * @sample {highcharts} highcharts/legend/labelformat/
+         *         Add text
          *
          * @type      {string}
          * @default   {name}

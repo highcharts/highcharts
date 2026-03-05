@@ -62,6 +62,11 @@ class ColumnSorting {
      */
     public headerCellElement: HTMLElement;
 
+    /**
+     * Last index used from the configured order sequence.
+     */
+    private lastOrderSequenceIndex?: number;
+
 
     /* *
     *
@@ -202,6 +207,29 @@ class ColumnSorting {
     }
 
     /**
+     * Returns sorting order sequence for this column.
+     */
+    private getOrderSequence(): ColumnSortingOrder[] {
+        return this.column.options.sorting?.orderSequence || [
+            'asc',
+            'desc',
+            null
+        ];
+    }
+
+    /**
+     * Normalizes arbitrary sorting values to valid order states.
+     *
+     * @param order
+     * Value to normalize.
+     */
+    private normalizeOrder(order?: unknown): ColumnSortingOrder {
+        return order === 'asc' || order === 'desc' ?
+            order :
+            null;
+    }
+
+    /**
      * Set sorting order for the column. It will modify the presentation data
      * and rerender the rows.
      *
@@ -291,7 +319,8 @@ class ColumnSorting {
     }
 
     /**
-     * Toggle sorting order for the column in the order: asc -> desc -> none
+     * Toggle sorting order for the column according to the configured
+     * sorting order sequence.
      *
      * @param e
      * Optional mouse or keyboard event.
@@ -302,27 +331,54 @@ class ColumnSorting {
         const sortingController = querying.sorting;
 
         const additive = !!e?.shiftKey;
+        let hasCurrentColumnSorting = false;
 
-        const currentOrder = (
-            additive ?
-                sortingController.currentSortings?.find((sorting): boolean =>
-                    sorting.columnId === this.column.id
-                )?.order :
-                (
-                    sortingController.currentSorting?.columnId ===
-                    this.column.id ?
-                        sortingController.currentSorting.order :
-                        null
-                )
-        ) || 'none';
+        const currentOrder = ((): ColumnSortingOrder => {
+            if (additive) {
+                const currentSorting = sortingController.currentSortings?.find(
+                    (sorting): boolean => sorting.columnId === this.column.id
+                );
 
-        const consequents = {
-            none: 'asc',
-            asc: 'desc',
-            desc: null
-        } as const;
+                hasCurrentColumnSorting = !!currentSorting;
+                return this.normalizeOrder(currentSorting?.order);
+            }
 
-        void this.setOrder(consequents[currentOrder], additive);
+            const currentSorting = sortingController.currentSorting;
+            hasCurrentColumnSorting =
+                currentSorting?.columnId === this.column.id;
+
+            return hasCurrentColumnSorting ?
+                this.normalizeOrder(currentSorting?.order) :
+                null;
+        })();
+
+        const orderSequence = this.getOrderSequence();
+        if (orderSequence.length < 1) {
+            return;
+        }
+
+        let nextOrderIndex = 0;
+        const lastIndex = this.lastOrderSequenceIndex;
+
+        if (
+            hasCurrentColumnSorting &&
+            typeof lastIndex === 'number' &&
+            orderSequence[lastIndex] === currentOrder
+        ) {
+            nextOrderIndex = (lastIndex + 1) % orderSequence.length;
+        } else {
+            const currentOrderIndex = orderSequence.indexOf(currentOrder);
+            nextOrderIndex = (
+                currentOrderIndex === -1 ?
+                    0 :
+                    (currentOrderIndex + 1) % orderSequence.length
+            );
+        }
+
+        this.lastOrderSequenceIndex = nextOrderIndex;
+        const nextOrder = orderSequence[nextOrderIndex];
+
+        void this.setOrder(nextOrder, additive);
     };
 }
 

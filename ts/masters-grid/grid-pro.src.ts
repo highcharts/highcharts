@@ -55,6 +55,8 @@ import CellRenderer from '../Grid/Pro/CellRendering/CellRenderer.js';
 
 import Popup from '../Grid/Core/UI/Popup.js';
 
+import DataProviderRegistry from '../Grid/Core/Data/DataProviderRegistry.js';
+
 
 /* *
  *
@@ -93,6 +95,10 @@ import '../Grid/Pro/CellRendering/Renderers/TimeInputRenderer.js';
 import '../Grid/Pro/CellRendering/Renderers/SparklineRenderer.js';
 import '../Grid/Pro/CellRendering/Renderers/NumberInputRenderer.js';
 
+import '../Grid/Core/Data/LocalDataProvider.js';
+import '../Grid/Pro/Data/RemoteDataProvider.js';
+import '../Grid/Core/Responsive/ResponsiveComposition.js';
+
 
 /* *
  *
@@ -113,6 +119,7 @@ const G = {
     DataCursor,
     DataModifier,
     DataPool,
+    DataProviderRegistry,
     DataTable,
     defaultOptions: Defaults.defaultOptions,
     Grid: _Grid,
@@ -160,6 +167,7 @@ export {
     DataConverter,
     DataCursor,
     DataModifier,
+    DataProviderRegistry,
     DataPool,
     DataTable,
     _Grid as Grid,

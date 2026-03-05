@@ -13,6 +13,8 @@
  *
  * */
 
+import type CSSObject from '../../Core/Renderer/CSSObject';
+
 import AST from '../../Core/Renderer/HTML/AST.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -68,6 +70,11 @@ export interface MakeHTMLElementParameters {
     innerHTML?: string;
     style?: Partial<CSSStyleDeclaration>;
 }
+
+/**
+ * A style object or callback returning one.
+ */
+export type StyleValue<T> = CSSObject | ((this: T, target: T) => CSSObject);
 
 
 /* *
@@ -250,6 +257,65 @@ export function formatText(
     ));
 }
 
+/**
+ * Resolves a style value that can be static or callback based.
+ *
+ * @param style
+ * Style object or callback returning one.
+ *
+ * @param target
+ * Runtime target used as callback context and first argument.
+ *
+ * @returns
+ * A resolved style object or `undefined`.
+ */
+export function resolveStyleValue<T>(
+    style?: StyleValue<T>,
+    target?: T
+): (CSSObject | undefined) {
+    if (!style) {
+        return;
+    }
+
+    if (typeof style === 'function') {
+        if (!target) {
+            return;
+        }
+
+        return style.call(target, target);
+    }
+
+    return style;
+}
+
+/**
+ * Resolves and merges style values in order.
+ *
+ * @param target
+ * Runtime target used as callback context and first argument.
+ *
+ * @param styleValues
+ * Style values to merge in order, where latter entries override former.
+ *
+ * @returns
+ * Merged style object.
+ */
+export function mergeStyleValues<T>(
+    target: T,
+    ...styleValues: Array<(StyleValue<T> | undefined)>
+): CSSObject {
+    const mergedStyle: CSSObject = {};
+
+    for (const styleValue of styleValues) {
+        const resolvedStyle = resolveStyleValue(styleValue, target);
+        if (resolvedStyle) {
+            Object.assign(mergedStyle, resolvedStyle);
+        }
+    }
+
+    return mergedStyle;
+}
+
 
 /* *
  *
@@ -264,5 +330,7 @@ export default {
     sanitizeText,
     setHTMLContent,
     createOptionsProxy,
-    formatText
+    formatText,
+    resolveStyleValue,
+    mergeStyleValues
 } as const;

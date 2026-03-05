@@ -47,7 +47,8 @@ describe('Rendering types.', () => {
             .contains('Gamma');
     });
 
-    it('Text as a input, when renderer is used.', () => {
+    it('Text as an input, when renderer is used.', () => {
+        cy.get('body').click();
         cy.get('tr[data-row-index="2"] td[data-column-id="textInput_textInput"]')
             .eq(0)
             .should('be.visible')
@@ -55,7 +56,7 @@ describe('Rendering types.', () => {
             .should('exist');
     });
 
-    it('Text as a input, when editing.', () => {
+    it('Text as an input, when editing.', () => {
         cy.get('tr[data-row-index="2"] td[data-column-id="text_textInput"]')
             .eq(0)
             .dblclick()
@@ -65,6 +66,7 @@ describe('Rendering types.', () => {
 
     // Datetime
     it('Date for datetime data type.', () => {
+        cy.get('body').click();
         cy.get('tr[data-row-index="2"] td[data-column-id="text_date"]')
             .eq(0)
             .should('be.visible')
@@ -94,6 +96,7 @@ describe('Rendering types.', () => {
 
     // Select
     it('Select, when editing.', () => {
+        cy.get('body').click();
         cy.get('tr[data-row-index="2"] td[data-column-id="text_select"]')
             .eq(0)
             .dblclick()

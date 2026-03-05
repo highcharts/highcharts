@@ -52,7 +52,6 @@ class FilterToolbarButton extends ContextMenuButton {
 
     public override popup?: FilterPopup;
 
-
     /* *
      *
      *  Constructor
