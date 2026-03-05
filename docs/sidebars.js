@@ -340,6 +340,7 @@ module.exports = {
         ],
         'React integration': [
             'react/getting-started',
+            'react/typescript',
             {
                 'Components': [
                     'react/components/chart',

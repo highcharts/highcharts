@@ -32,7 +32,7 @@ export default function ChartComponent() {
 
 | Option           | Type       | Default           | Description                                                                                      |
 | ---------------- | ---------- | ----------------- | ------------------------------------------------------------------------------------------------ |
-| options          | `object`   | -                 | Chart configuration object. See all available [options](https://api.highcharts.com/highcharts/). |
+| options          | `ChartOptions` | -                 | Chart configuration object. See [TypeScript](https://www.highcharts.com/docs/react/typescript) and all available [options](https://api.highcharts.com/highcharts/). |
 | containerProps   | `object`   | -                 | HTML attributes passed to the `<div>` container in which the chart is rendered.                  |
 | ref              | `ref`      | -                 | React ref object providing access to the chart instance.                                         |
 | highcharts       | `object`   | -                 | Highcharts instance.                                                                             |
