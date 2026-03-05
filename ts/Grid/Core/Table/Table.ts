@@ -1038,6 +1038,46 @@ class Table {
     }
 
     /**
+     * Ensures a pinned row is visible within its pinned section viewport.
+     *
+     * @param rowId
+     * Row identifier.
+     *
+     * @param section
+     * The pinned section containing the row.
+     *
+     * @internal
+     */
+    public revealPinnedRowInSection(
+        rowId: RowId,
+        section: 'top'|'bottom'
+    ): void {
+        const tbody = section === 'top' ?
+            this.pinnedTopTbodyElement :
+            this.pinnedBottomTbodyElement;
+        const row = this.getRenderedPinnedRowById(rowId, section);
+        const rowElement = row?.htmlElement;
+
+        if (!rowElement || !tbody.isConnected || tbody.clientHeight <= 0) {
+            return;
+        }
+
+        const viewportTop = tbody.scrollTop;
+        const viewportBottom = viewportTop + tbody.clientHeight;
+        const rowTop = rowElement.offsetTop;
+        const rowBottom = rowTop + rowElement.offsetHeight;
+
+        if (rowTop < viewportTop) {
+            tbody.scrollTop = Math.max(0, rowTop);
+            return;
+        }
+
+        if (rowBottom > viewportBottom) {
+            tbody.scrollTop = Math.max(0, rowBottom - tbody.clientHeight);
+        }
+    }
+
+    /**
      * Recomputes and renders pinned rows after a query cycle.
      *
      * @param deferLayout

@@ -183,6 +183,10 @@ You can make top/bottom pinned sections scroll independently by setting
 If `maxHeight` is not set, pinned sections do not use internal scrolling by
 default.
 
+When rows are pinned at runtime (`pinRow` or `toggleRow` that pins), Grid
+automatically scrolls the affected top/bottom pinned section just enough to keep
+the inserted row visible.
+
 ```js
 rendering: {
     rows: {

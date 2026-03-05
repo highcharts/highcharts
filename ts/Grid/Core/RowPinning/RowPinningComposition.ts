@@ -282,6 +282,16 @@ async function runRuntimePinningChange(
 
     await this.rowPinning?.handlePinnedRenderResult(renderResult, 'runtime');
     this.viewport?.reflow();
+    if (
+        announcementAction === 'pin' &&
+        eventPayload.changed &&
+        eventPayload.position
+    ) {
+        this.viewport?.revealPinnedRowInSection(
+            eventPayload.rowId,
+            eventPayload.position
+        );
+    }
 
     fireEvent(this, 'afterRowPin', eventPayload);
     callRowPinningEventCallback(this, 'afterRowPin', eventPayload);

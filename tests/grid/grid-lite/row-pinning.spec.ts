@@ -285,6 +285,87 @@ test.describe('Grid Lite row pinning', () => {
         expect(state.bottomOverflowX).toBe('hidden');
     });
 
+    test('Runtime pin reveals inserted row in overflowed top pinned section', async ({ page }) => {
+        const state = await page.evaluate(async () => {
+            const grid = (window as any).grid;
+
+            await grid.update({
+                rendering: {
+                    rows: {
+                        pinning: {
+                            topIds: ['ROW-001', 'ROW-002'],
+                            top: {
+                                maxHeight: 40
+                            }
+                        }
+                    }
+                }
+            });
+
+            await grid.pinRow('ROW-020', 'top');
+
+            return {
+                pinnedTop: grid.getPinnedRows().topIds
+            };
+        });
+
+        expect(state.pinnedTop).toContain('ROW-020');
+    });
+
+    test('Runtime pin reveals inserted row in overflowed bottom pinned section', async ({ page }) => {
+        const state = await page.evaluate(async () => {
+            const grid = (window as any).grid;
+
+            await grid.update({
+                rendering: {
+                    rows: {
+                        pinning: {
+                            bottomIds: ['ROW-059', 'ROW-060'],
+                            bottom: {
+                                maxHeight: 40
+                            }
+                        }
+                    }
+                }
+            });
+
+            await grid.pinRow('ROW-030', 'bottom');
+
+            return {
+                pinnedBottom: grid.getPinnedRows().bottomIds
+            };
+        });
+
+        expect(state.pinnedBottom).toContain('ROW-030');
+    });
+
+    test('Runtime pin with insertion index reveals inserted row with minimal scroll', async ({ page }) => {
+        const state = await page.evaluate(async () => {
+            const grid = (window as any).grid;
+
+            await grid.update({
+                rendering: {
+                    rows: {
+                        pinning: {
+                            topIds: ['ROW-001', 'ROW-002', 'ROW-003'],
+                            top: {
+                                maxHeight: 40
+                            }
+                        }
+                    }
+                }
+            });
+
+            await grid.pinRow('ROW-020', 'top', 0);
+
+            return {
+                pinnedTop: grid.getPinnedRows().topIds
+            };
+        });
+
+        expect(state.pinnedTop[0]).toBe('ROW-020');
+    });
+
     test('Disabling pinning ignores config and runtime pinning API', async ({ page }) => {
         const state = await page.evaluate(async () => {
             const grid = (window as any).grid;
