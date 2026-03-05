@@ -150,3 +150,60 @@ QUnit.test(
         );
     }
 );
+
+QUnit.test(
+    'Scatter with boost and series.keys should keep keys after zoom (#23771)',
+    function (assert) {
+        const size = 18;
+        const data = [];
+        let index = 0;
+
+        for (let i = 1; i <= size; ++i) {
+            for (let j = 1; j <= size; ++j) {
+                data.push([i, j, i + j, index]);
+                ++index;
+            }
+        }
+
+        const chart = Highcharts.chart('container', {
+            chart: {
+                type: 'scatter'
+            },
+            xAxis: {
+                min: 0,
+                max: size + 1
+            },
+            yAxis: {
+                min: 0,
+                max: size + 1
+            },
+            series: [{
+                boostThreshold: 200,
+                cropThreshold: 1,
+                data: data,
+                keys: ['y', 'x', 'sum', 'at']
+            }]
+        });
+
+        const series = chart.series[0];
+
+        chart.xAxis[0].setExtremes(10, 12, false);
+        chart.yAxis[0].setExtremes(10, 12);
+
+        const points = series.points.map(point => series.boost.getPoint(point));
+        assert.ok(points.length, 'Points should exist after zoom');
+
+        points.forEach(point => {
+            assert.strictEqual(
+                point.sum,
+                point.x + point.y,
+                'Custom key "sum" should match x + y'
+            );
+            assert.strictEqual(
+                point.at,
+                (point.y - 1) * size + (point.x - 1),
+                'Custom key "at" should match the source data index'
+            );
+        });
+    }
+);
