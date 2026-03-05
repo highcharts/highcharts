@@ -554,8 +554,12 @@ namespace AxisDefaults {
          *         Object day format on X axis
          * @sample {highcharts} highcharts/xaxis/datetimelabelformats/
          *         String day format on X axis
+         * @sample {highcharts} highcharts/xaxis/labels-boundary/
+         *         Month boundary on daily ticks
          * @sample {highstock} stock/xaxis/datetimelabelformats/
          *         More information in x axis labels
+         * @sample {highstock} stock/xaxis/labels-boundary/
+         *         Year boundary on monthly ticks
          * @sample {gantt} gantt/grid-axis/date-time-label-formats
          *         Gantt chart with custom axis date format.
          *
