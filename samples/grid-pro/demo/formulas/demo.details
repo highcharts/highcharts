@@ -1,12 +1,15 @@
 ---
-name: Grid with data from an external source
+name: Formulas
 authors:
   - Sebastian Bochan
 js_wrap: b
+alt_text: >-
+  Spreadsheet-style formulas in a data grid
 tags:
   - Highcharts Grid demo
 categories:
   - General:
-        priority: 80
+        priority: 100
 use_png_thumbnail: true
+is_pro: true
 ...

@@ -1,5 +1,5 @@
 ---
-name: Formulas in Grid
+name: Pagination
 authors:
   - Sebastian Bochan
 js_wrap: b
@@ -7,7 +7,6 @@ tags:
   - Highcharts Grid demo
 categories:
   - General:
-        priority: 100
+        priority: 20
 use_png_thumbnail: true
-is_pro: true
 ...
