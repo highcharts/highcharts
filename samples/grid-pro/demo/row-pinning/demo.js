@@ -26,16 +26,16 @@ function renderEvent(target, event) {
     target.textContent = `${event.action} | row: ${rowId}`;
 }
 
+const columns = {
+    id: ids,
+    product: ids.map((_, i) => 'Product ' + (i + 1)),
+    category: ids.map((_, i) => categories[i % categories.length]),
+    stock: ids.map((_, i) => 15 + ((i * 7) % 90)),
+    price: ids.map((_, i) => Number((1 + (i % 12) * 0.35).toFixed(2)))
+};
+
 const grid = Grid.grid('container', {
-    dataTable: {
-        columns: {
-            id: ids,
-            product: ids.map((_, i) => 'Product ' + (i + 1)),
-            category: ids.map((_, i) => categories[i % categories.length]),
-            stock: ids.map((_, i) => 15 + ((i * 7) % 90)),
-            price: ids.map((_, i) => Number((1 + (i % 12) * 0.35).toFixed(2)))
-        }
-    },
+    dataTable: { columns },
     rendering: {
         rows: {
             pinning: {
