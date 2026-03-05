@@ -1,11 +1,132 @@
 @import url("https://code.highcharts.com/css/highcharts.css");
 
+:root,
+.highcharts-light {
+    --primitives-neutral-0: #fff;
+    --primitives-neutral-25: #f6f6f8;
+    --primitives-neutral-50: #f1f1f3;
+    --primitives-neutral-100: #e3e2e8;
+    --primitives-neutral-200: #c8c7d1;
+    --primitives-neutral-300: #acabba;
+    --primitives-neutral-400: #908ea3;
+    --primitives-neutral-500: #75728c;
+    --primitives-neutral-600: #5d5b70;
+    --primitives-neutral-700: #464553;
+    --primitives-neutral-800: #2f2e37;
+    --primitives-neutral-900: #17171b;
+    --primitives-neutral-950: #0a090d;
+    --primitives-neutral-1000: #000;
+    --primitives-brand-50: #f6f8ff;
+    --primitives-brand-100: #f0f1ff;
+    --primitives-brand-200: #e1e3ff;
+    --primitives-brand-300: #c3c8ff;
+    --primitives-brand-400: #a5acff;
+    --primitives-brand-500: #8791ff;
+    --primitives-brand-600: #6975ff;
+    --primitives-brand-700: #545ecc;
+    --primitives-brand-800: #3f4699;
+    --primitives-brand-900: #2a2f66;
+    --primitives-brand-1000: #151733;
+    --primitives-success-50: #ecfdf5;
+    --primitives-success-100: #d1fae5;
+    --primitives-success-200: #a7f3d0;
+    --primitives-success-300: #6ee7b7;
+    --primitives-success-400: #34d399;
+    --primitives-success-500: #10b981;
+    --primitives-success-600: #059669;
+    --primitives-success-700: #047857;
+    --primitives-success-800: #065f46;
+    --primitives-success-900: #064e3b;
+    --primitives-success-1000: #033427;
+    --primitives-danger-50: #fef2f2;
+    --primitives-danger-100: #fee2e2;
+    --primitives-danger-200: #fecaca;
+    --primitives-danger-300: #fca5a5;
+    --primitives-danger-400: #f87171;
+    --primitives-danger-500: #ef4444;
+    --primitives-danger-600: #dc2626;
+    --primitives-danger-700: #b91c1c;
+    --primitives-danger-800: #991b1b;
+    --primitives-danger-900: #7f1d1d;
+    --primitives-danger-1000: #570d0d;
+    --illo-green: var(--primitives-success-200);
+    --illo-purple: var(--primitives-brand-500);
+    --illo-accent-0: var(--primitives-neutral-0);
+    --illo-accent-50: var(--primitives-neutral-50);
+    --illo-accent-100: var(--primitives-neutral-100);
+    --illo-accent-200: var(--primitives-neutral-200);
+    --illo-accent-800: var(--primitives-neutral-800);
+    --illo-brand-200: var(--primitives-brand-200);
+    --illo-brand-700: var(--primitives-brand-700);
+    --illo-brand-800: var(--primitives-brand-800);
+    --illo-background: var(--primitives-neutral-0);
+    --illo-lines: var(--primitives-neutral-100);
+    --illo-just-white: #fff;
+    --illo-just-black: #000;
+    --illo-accent-teal: #6699a1;
+    --text-primary: var(--primitives-neutral-900);
+    --text-secondary: var(--primitives-neutral-700);
+    --text-tertiary: var(--primitives-neutral-500);
+    --background: var(--primitives-neutral-0);
+    --highcharts-highlight-color-10: rgba(0, 0, 0, 0.2);
+}
+
+.highcharts-dark {
+    --illo-green: var(--primitives-success-300);
+    --illo-purple: var(--primitives-brand-500);
+    --illo-accent-0: var(--primitives-neutral-1000);
+    --illo-accent-50: var(--primitives-neutral-700);
+    --illo-accent-100: var(--primitives-neutral-800);
+    --illo-accent-200: var(--primitives-neutral-200);
+    --illo-accent-800: var(--primitives-neutral-0);
+    --illo-brand-200: var(--primitives-brand-500);
+    --illo-brand-800: var(--primitives-brand-200);
+    --illo-brand-700: var(--primitives-brand-500);
+    --illo-background: var(--primitives-neutral-1000);
+    --illo-lines: var(--primitives-neutral-500);
+    --illo-just-white: #fff;
+    --illo-just-black: #000;
+    --background: var(--primitives-neutral-950);
+    --text-primary: var(--primitives-neutral-25);
+    --text-secondary: var(--primitives-neutral-200);
+    --text-tertiary: var(--primitives-neutral-400);
+    --highcharts-highlight-color-10: rgba(255, 255, 255, 0.5);
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --illo-green: var(--primitives-success-300);
+        --illo-purple: var(--primitives-brand-500);
+        --illo-accent-0: var(--primitives-neutral-1000);
+        --illo-accent-50: var(--primitives-neutral-700);
+        --illo-accent-100: var(--primitives-neutral-800);
+        --illo-accent-200: var(--primitives-neutral-200);
+        --illo-accent-800: var(--primitives-neutral-0);
+        --illo-brand-700: var(--primitives-brand-300);
+        --illo-brand-200: var(--primitives-brand-500);
+        --illo-brand-800: var(--primitives-brand-200);
+        --illo-background: var(--primitives-neutral-1000);
+        --illo-lines: var(--primitives-neutral-500);
+        --illo-just-white: #fff;
+        --illo-just-black: #000;
+        --background: var(--primitives-neutral-950);
+        --text-primary: var(--primitives-neutral-25);
+        --text-secondary: var(--primitives-neutral-200);
+        --text-tertiary: var(--primitives-neutral-400);
+        --highcharts-highlight-color-10: rgba(255, 255, 255, 0.2);
+    }
+}
+
 html {
     overflow: hidden;
 }
 
 body {
     margin: 0;
+}
+
+.highcharts-button {
+    cursor: pointer;
 }
 
 .chart-container .highcharts-container {
@@ -87,12 +208,12 @@ body {
     height: 100%;
     aspect-ratio: 1 / 1;
     border-radius: 4px;
-    background-color: #2f2b38;
+    background-color: var(--illo-background);
     border: none;
 }
 
 #maps .highcharts-background {
-    fill: #1f1836;
+    fill: var(--illo-accent-50);
 }
 
 #maps .highcharts-map-series {
@@ -100,7 +221,7 @@ body {
 }
 
 #maps .highcharts-plot-background {
-    fill: #46445d;
+    fill: var(--illo-accent-100);
     stroke: transparent;
 }
 
@@ -112,7 +233,7 @@ body {
 
 #maps .foreground,
 #maps .map-point-center .highcharts-color-5 {
-    fill: #201836;
+    fill: var(--illo-accent-50);
     stroke: transparent;
 }
 
@@ -142,12 +263,12 @@ body {
 }
 
 #maps .green {
-    fill: #8bf2b6;
-    stroke: #8bf2b6;
+    fill: var(--illo-green);
+    stroke: var(--illo-green);
 }
 
 #maps .highcharts-map-series .highcharts-point {
-    stroke: #f0f0f0;
+    stroke: var(--illo-accent-100);
 }
 
 #maps .highcharts-map-series .highcharts-point-hover {
@@ -215,7 +336,7 @@ body {
 #maps .highcharts-title,
 #maps .highcharts-subtitle {
     opacity: 0;
-    fill: white;
+    fill: var(--text-primary);
 }
 
 #maps .tip-grid {
@@ -229,7 +350,7 @@ body {
 #maps .tip-content {
     position: absolute;
     left: 25px;
-    background-color: #8af2b6;
+    background-color: var(--illo-green);
     border: 0 solid transparent;
     padding: 10px;
     border-radius: 100px;
