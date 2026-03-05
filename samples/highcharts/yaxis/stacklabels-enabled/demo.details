@@ -1,6 +1,4 @@
 ---
- name: Demo of yAxis.stackLabels.enabled
- authors:
-   - Torstein Hønsi
- js_wrap: b
+name: Demo of yAxis.stackLabels.enabled
+js_wrap: b
 ...

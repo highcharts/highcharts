@@ -35,6 +35,7 @@ import Globals from '../Globals.js';
 import GUIElement from './GUIElement.js';
 import U from '../../Core/Utilities.js';
 const {
+    defined,
     merge,
     fireEvent
 } = U;
@@ -88,6 +89,15 @@ class Cell extends GUIElement {
             rowOptions = row.options || {},
             cellClassName = layoutOptions.cellClassName || '';
 
+        const cellStyle = options.style || {};
+        const elementStyle = merge(
+            layoutOptions.style,
+            rowOptions.style,
+            cellStyle
+        );
+
+        this.applySizeOptions(options, cellStyle, elementStyle);
+
         this.container = this.getElementContainer({
             render: row.layout.board.guiEnabled,
             parentContainer: parentContainer,
@@ -98,14 +108,7 @@ class Cell extends GUIElement {
             },
             element: cellElement,
             elementId: options.id,
-            style: merge(
-                layoutOptions.style,
-                rowOptions.style,
-                options.style,
-                {
-                    height: this.height
-                }
-            )
+            style: elementStyle
         });
 
         // Nested layout
@@ -199,6 +202,8 @@ class Cell extends GUIElement {
      * and mounted component.
      */
     public destroy(): void {
+        fireEvent(this, 'outdate');
+
         const cell = this;
         const { row } = cell;
 
@@ -328,26 +333,30 @@ class Cell extends GUIElement {
             editMode = cell.row.layout.board.editMode;
 
         if (cell.container) {
-            if (width) {
+            if (defined(width)) {
                 if (
                     width === 'auto' &&
                     cell.container.style.flex !== '1 1 0%'
                 ) {
                     cell.container.style.flex = '1 1 0%';
+                    cell.options.width = cell.container.style.flex;
                 } else {
                     const cellWidth = cell.convertWidthToValue(width);
 
-                    if (
-                        cellWidth &&
-                        cell.container.style.flex !== '0 0 ' + cellWidth
-                    ) {
+                    if (cellWidth) {
                         cell.container.style.flex = '0 0 ' + cellWidth;
+                        cell.options.width = cell.container.style.flex;
                     }
                 }
             }
 
-            if (height) {
-                cell.height = cell.container.style.height = height + 'px';
+            if (defined(height)) {
+                const heightValue = (typeof height === 'number' ?
+                    height + 'px' :
+                    height);
+
+                cell.height = cell.container.style.height = heightValue;
+                cell.options.height = heightValue;
             }
 
             if (editMode) {
@@ -449,6 +458,57 @@ class Cell extends GUIElement {
         return GUIElement.getPercentageWidth(width) || '';
     }
 
+    private applySizeOptions(
+        options: Options,
+        cellStyle: CSSJSONObject,
+        elementStyle: CSSJSONObject
+    ): void {
+        const heightValue = defined(options.height) ?
+            options.height :
+            cellStyle.height;
+
+        if (defined(heightValue)) {
+            this.height = typeof heightValue === 'number' ?
+                heightValue + 'px' :
+                String(heightValue);
+            elementStyle.height = this.height;
+            options.height = this.height;
+        } else if (defined(elementStyle.height)) {
+            delete elementStyle.height;
+        }
+
+        const widthSource = defined(options.width) ?
+            options.width :
+            cellStyle.flex;
+
+        if (
+            defined(widthSource) &&
+            (typeof widthSource === 'string' ||
+            typeof widthSource === 'number')
+        ) {
+            let flexValue: string | undefined;
+
+            if (
+                typeof widthSource === 'string' &&
+                widthSource.indexOf(' ') !== -1
+            ) {
+                flexValue = widthSource;
+            } else if (widthSource === 'auto') {
+                flexValue = '1 1 0%';
+            } else {
+                const cellWidth = this.convertWidthToValue(widthSource);
+                if (cellWidth) {
+                    flexValue = '0 0 ' + cellWidth;
+                }
+            }
+
+            if (flexValue) {
+                elementStyle.flex = flexValue;
+                options.width = flexValue;
+            }
+        }
+    }
+
 }
 
 /**
@@ -505,6 +565,14 @@ export interface Options {
      * CSS styles for cell container.
      **/
     style?: CSSJSONObject;
+    /**
+     * Set width of the cell.
+     **/
+    width?: (string|number);
+    /**
+     * Set height of the cell.
+     **/
+    height?: (string|number);
     /**
      * Id of the container that holds the cell.
      **/

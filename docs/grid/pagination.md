@@ -79,6 +79,7 @@ pagination: {
     enabled: true,
     pageSize: 25,
     position: 'bottom',
+    alignment: 'center',
     controls: {
         pageSizeSelector: {
             enabled: true,
@@ -129,6 +130,15 @@ Example:
     }
 }
 ```
+
+### Alignment
+
+The `alignment` option controls how the pagination elements are aligned within the pagination wrapper:
+
+- **`'left'`**: Align controls to the left side of the wrapper
+- **`'center'`**: Center the pagination elements within the wrapper
+- **`'right'`**: Align controls to the right side of the wrapper
+- **`'distributed'`**: Distribute the elements across the wrapper
 
 ### Controls
 

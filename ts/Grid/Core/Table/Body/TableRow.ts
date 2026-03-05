@@ -30,6 +30,11 @@ import Row from '../Row.js';
 import Table from '../Table.js';
 import TableCell from './TableCell.js';
 import Globals from '../../Globals.js';
+import U from '../../../../Core/Utilities.js';
+
+const {
+    fireEvent
+} = U;
 
 
 /* *
@@ -144,6 +149,10 @@ class TableRow extends Row {
      * Whether to reflow the row after updating the cells.
      */
     public reuse(index: number, doReflow: boolean = true): void {
+        for (let i = 0, iEnd = this.cells.length; i < iEnd; ++i) {
+            fireEvent(this.cells[i], 'outdate');
+        }
+
         if (this.index === index) {
             this.update();
             return;

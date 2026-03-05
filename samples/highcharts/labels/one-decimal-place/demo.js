@@ -1,8 +1,7 @@
 Highcharts.setOptions({
 
     lang: {
-        decimalPoint: ',',
-        thousandsSep: ' '
+        locale: 'de-DE'
     }
 
 });

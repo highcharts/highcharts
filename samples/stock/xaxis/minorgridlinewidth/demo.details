@@ -1,6 +1,4 @@
 ---
- name: Demo of yAxis.minorGridLineWidth
- authors:
-   - Torstein Hønsi
- js_wrap: b
+name: Demo of yAxis.minorGridLineWidth
+js_wrap: b
 ...
