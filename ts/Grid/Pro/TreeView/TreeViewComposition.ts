@@ -102,12 +102,12 @@ function onAfterCellRender(this: TableCell): void {
         return;
     }
 
-    const treeColumnId = (
-        options.treeColumnId ||
+    const treeColumn = (
+        options.treeColumn ||
         this.row.viewport.columns[0]?.id
     );
 
-    if (!treeColumnId || this.column.id !== treeColumnId) {
+    if (!treeColumn || this.column.id !== treeColumn) {
         return;
     }
 

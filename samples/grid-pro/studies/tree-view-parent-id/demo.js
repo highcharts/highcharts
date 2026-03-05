@@ -13,12 +13,9 @@ Grid.grid('container', {
                 type: 'parentId',
                 parentIdColumn: 'parentId'
             },
+            treeColumn: 'name',
             initiallyExpanded: 'all'
         }
     },
-    columns: [{
-        id: 'name'
-    }, {
-        id: 'value'
-    }]
+    header: ['name', 'value', 'id', 'parentId']
 });

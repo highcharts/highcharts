@@ -49,7 +49,7 @@ export interface TreeViewOptions {
     /**
      * Column ID used as the tree column when rendering expand/collapse UI.
      */
-    treeColumnId?: string;
+    treeColumn?: string;
 
     /**
      * Default expansion mode for initial tree state.

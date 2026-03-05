@@ -51,7 +51,7 @@ type DataOptionsWithTreeView = LocalDataProviderOptions;
 interface NormalizedTreeViewOptions {
     enabled: true;
     input: TreeInputParentIdOptions;
-    treeColumnId?: string;
+    treeColumn?: string;
     initiallyExpanded: boolean;
     expandedRowIds: RowId[];
 }
@@ -292,16 +292,25 @@ class TreeProjectionController {
         this.clearCache();
     }
 
+    /**
+     * Clears cached index, projection state, and source metadata.
+     */
     private clearCache(): void {
         this.indexCache = void 0;
         this.projectionStateCache = void 0;
         this.cacheSource = void 0;
     }
 
+    /**
+     * Returns data options with TreeView extension for local provider.
+     */
     private getDataOptions(): DataOptionsWithTreeView | undefined {
         return this.grid.options?.data as DataOptionsWithTreeView | undefined;
     }
 
+    /**
+     * Validates and normalizes TreeView options from Grid config.
+     */
     private normalizeOptions(): NormalizedTreeViewOptions | undefined {
         const dataOptions = this.getDataOptions();
         const treeView = dataOptions?.treeView;
@@ -322,13 +331,15 @@ class TreeProjectionController {
             );
         }
 
+        const treeColumn = treeView.treeColumn;
+
         return {
             enabled: true,
             input: {
                 type: 'parentId',
                 parentIdColumn: treeView.input.parentIdColumn
             },
-            treeColumnId: treeView.treeColumnId,
+            treeColumn,
             initiallyExpanded: treeView.initiallyExpanded ?? false,
             expandedRowIds: this.normalizeExpandedRowIds(
                 treeView.expandedRowIds
@@ -336,6 +347,15 @@ class TreeProjectionController {
         };
     }
 
+    /**
+     * Normalizes configured expanded row IDs to runtime-safe values.
+     *
+     * @param expandedRowIds
+     * Candidate row IDs from options.
+     *
+     * @returns
+     * Normalized list containing only valid row IDs.
+     */
     private normalizeExpandedRowIds(expandedRowIds?: RowId[]): RowId[] {
         if (!expandedRowIds) {
             return [];
@@ -356,6 +376,18 @@ class TreeProjectionController {
         return normalized;
     }
 
+    /**
+     * Synchronizes expansion state for tree nodes with children.
+     *
+     * Re-initializes state when expansion seed changes, otherwise prunes
+     * entries that are no longer expandable.
+     *
+     * @param options
+     * Normalized TreeView options.
+     *
+     * @param index
+     * Current tree index.
+     */
     private syncExpandedRowIdsState(
         options: NormalizedTreeViewOptions,
         index?: TreeIndexBuildResult
@@ -398,6 +430,21 @@ class TreeProjectionController {
         this.expandedRowIdsState = nextExpandedState;
     }
 
+    /**
+     * Computes projected row order and per-row tree metadata for visible rows.
+     *
+     * @param table
+     * Queried table after sort/filter and before pagination.
+     *
+     * @param idColumn
+     * Column containing row IDs.
+     *
+     * @param index
+     * Canonical tree index built from source data.
+     *
+     * @returns
+     * Projection state describing visible rows in tree order.
+     */
     private projectToVisibleState(
         table: DataTable,
         idColumn: string,
@@ -511,6 +558,18 @@ class TreeProjectionController {
         };
     }
 
+    /**
+     * Builds a projected table by reordering all columns to projected indexes.
+     *
+     * @param table
+     * Input queried table.
+     *
+     * @param rowIndexes
+     * Source row indexes in projected order.
+     *
+     * @returns
+     * Cloned table with projected column values and row index references.
+     */
     private createProjectedTable(
         table: DataTable,
         rowIndexes: number[]
@@ -553,6 +612,18 @@ class TreeProjectionController {
         return projectedTable;
     }
 
+    /**
+     * Checks whether provided row indexes represent identity mapping.
+     *
+     * @param rowIndexes
+     * Row indexes to verify.
+     *
+     * @param rowCount
+     * Expected number of rows in identity mapping.
+     *
+     * @returns
+     * `true` for `[0, 1, 2, ...]`, otherwise `false`.
+     */
     private static areRowIndexesIdentity(
         rowIndexes: number[],
         rowCount: number
@@ -570,6 +641,15 @@ class TreeProjectionController {
         return true;
     }
 
+    /**
+     * Builds a stable key for expansion state seeds from options.
+     *
+     * @param options
+     * Normalized TreeView options.
+     *
+     * @returns
+     * Expansion seed key used to decide whether state should be reinitialized.
+     */
     private static getExpansionSeedKey(
         options: NormalizedTreeViewOptions
     ): string {
@@ -590,6 +670,15 @@ class TreeProjectionController {
         return parts.join('|');
     }
 
+    /**
+     * Runtime type guard for providers exposing `getDataTable`.
+     *
+     * @param provider
+     * Data provider instance to test.
+     *
+     * @returns
+     * `true` when provider exposes `getDataTable`.
+     */
     private static hasGetDataTable(
         provider: unknown
     ): provider is {
@@ -605,6 +694,8 @@ class TreeProjectionController {
         );
     }
 }
+
+
 /* *
  *
  *  Default export

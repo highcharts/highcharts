@@ -10,6 +10,7 @@
 
 .hcg-tree-toggle-container {
     --hcg-tree-indent-size: 16px;
+
     display: inline-flex;
     align-items: center;
     justify-content: center;
