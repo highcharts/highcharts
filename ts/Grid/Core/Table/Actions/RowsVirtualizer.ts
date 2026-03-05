@@ -254,9 +254,7 @@ class RowsVirtualizer {
         }
 
         await this.updateGridMetrics();
-        await this.viewport.grid.recomputeResolvedFromActiveView?.();
-        const result = await this.viewport.renderPinnedRows();
-        await this.viewport.grid.handlePinnedRenderResult?.(result, 'query');
+        await this.viewport.refreshPinnedRowsFromQueryCycle();
 
         // Load & render rows
         await this.renderRows(this.rowCursor);

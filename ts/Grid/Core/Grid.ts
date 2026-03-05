@@ -711,6 +711,16 @@ export class Grid {
         const { viewport } = this;
         const diff = this.loadUserOptions(options, oneToOne);
         const flags = this.dirtyFlags;
+        const renderingDiff = diff.rendering as ({
+            rows?: Record<string, unknown>;
+        } | undefined);
+        const rowsDiff = renderingDiff?.rows;
+        if (
+            rowsDiff &&
+            Object.prototype.hasOwnProperty.call(rowsDiff, 'pinning')
+        ) {
+            this.rowPinning?.markOptionsDirty();
+        }
 
         if (viewport) {
             if (

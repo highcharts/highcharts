@@ -487,9 +487,7 @@ class Table {
                 }
             }
 
-            await vp.grid.recomputeResolvedFromActiveView?.();
-            const renderResult = await vp.renderPinnedRows();
-            await vp.grid.handlePinnedRenderResult?.(renderResult, 'query');
+            await vp.refreshPinnedRowsFromQueryCycle(true);
 
             // Update the pagination controls
             vp.grid.pagination?.updateControls();
@@ -1040,11 +1038,37 @@ class Table {
     }
 
     /**
-     * Re-renders top and bottom pinned rows from row IDs.
+     * Recomputes and renders pinned rows after a query cycle.
+     *
+     * @param deferLayout
+     * Whether pinned layout application should be deferred to a following
+     * reflow.
      *
      * @internal
      */
-    public async renderPinnedRows(): Promise<{ missingPinnedRowIds: RowId[] }> {
+    public async refreshPinnedRowsFromQueryCycle(
+        deferLayout: boolean = false
+    ): Promise<void> {
+        await this.grid.rowPinning?.recomputeResolvedFromActiveView();
+        const renderResult = await this.renderPinnedRows(deferLayout);
+        await this.grid.rowPinning?.handlePinnedRenderResult(
+            renderResult,
+            'query'
+        );
+    }
+
+    /**
+     * Re-renders top and bottom pinned rows from row IDs.
+     *
+     * @param deferLayout
+     * Whether pinned layout application should be deferred to a following
+     * reflow.
+     *
+     * @internal
+     */
+    public async renderPinnedRows(
+        deferLayout: boolean = false
+    ): Promise<{ missingPinnedRowIds: RowId[] }> {
         // Cancel any active cell editing before destroying/moving rows to
         // prevent orphaned inputs and stale cell references.
         if (this.cellEditing?.editedCell) {
@@ -1067,8 +1091,10 @@ class Table {
             this.pinnedTopRowById.clear();
             this.pinnedBottomRowById.clear();
             this.tbodyElement.style.display = '';
-            this.setTbodyMinHeight();
-            this.applyPinnedBodyMaxHeights();
+            if (!deferLayout) {
+                this.setTbodyMinHeight();
+                this.applyPinnedBodyMaxHeights();
+            }
             this.syncAriaRowIndexes();
             return { missingPinnedRowIds: [] };
         }
@@ -1098,11 +1124,12 @@ class Table {
             pinnedRows.bottomIds.length > 0
         );
         this.tbodyElement.style.display = '';
-        this.setTbodyMinHeight();
-        this.applyPinnedBodyMaxHeights();
-        this.syncPinnedHorizontalScroll(this.tbodyElement.scrollLeft);
-
-        this.applyPinnedScrollbarCompensation();
+        if (!deferLayout) {
+            this.setTbodyMinHeight();
+            this.applyPinnedBodyMaxHeights();
+            this.syncPinnedHorizontalScroll(this.tbodyElement.scrollLeft);
+            this.applyPinnedScrollbarCompensation();
+        }
         return {
             missingPinnedRowIds: [...topMissing, ...bottomMissing]
         };

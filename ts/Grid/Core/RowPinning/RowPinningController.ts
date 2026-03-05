@@ -34,11 +34,6 @@ import type { RowId as DataProviderRowId } from '../Data/DataProvider';
 export type RowId = DataProviderRowId;
 export type RowPinningPosition = 'top'|'bottom';
 
-export interface RowResolveEntry {
-    rowId: RowId;
-    row: DataTableRowObject;
-}
-
 /* *
  *
  *  Class
@@ -59,7 +54,7 @@ class RowPinningController {
 
     private explicitUnpinned: Set<RowId> = new Set();
 
-    private optionsHash = '';
+    private optionsDirty = true;
 
     constructor(grid: Grid) {
         this.grid = grid;
@@ -79,22 +74,14 @@ class RowPinningController {
     }
 
     public loadOptions(): void {
-        const pinningOptions = this.getPinningOptions();
-        const top = pinningOptions?.topIds || [];
-        const bottom = pinningOptions?.bottomIds || [];
-        const hash = JSON.stringify({
-            enabled: pinningOptions?.enabled !== false,
-            top,
-            bottom,
-            idColumn: pinningOptions?.idColumn,
-            hasResolve: !!pinningOptions?.resolve
-        });
-
-        if (hash === this.optionsHash) {
+        if (!this.optionsDirty) {
             return;
         }
 
-        this.optionsHash = hash;
+        this.optionsDirty = false;
+        const pinningOptions = this.getPinningOptions();
+        const top = pinningOptions?.topIds || [];
+        const bottom = pinningOptions?.bottomIds || [];
 
         if (!this.isOptionEnabled()) {
             this.topRowIds.length = 0;
@@ -111,6 +98,10 @@ class RowPinningController {
         ): boolean => !this.topRowIds.includes(rowId));
         this.resolvedTopRowIds.length = 0;
         this.resolvedBottomRowIds.length = 0;
+    }
+
+    public markOptionsDirty(): void {
+        this.optionsDirty = true;
     }
 
     public isEnabled(): boolean {
@@ -200,55 +191,6 @@ class RowPinningController {
         ).filter((rowId): boolean => !this.resolvedTopRowIds.includes(rowId));
     }
 
-    public resolveAllPinnedIds(
-        allRows: RowResolveEntry[]
-    ): { topIds: RowId[]; bottomIds: RowId[] } {
-        this.loadOptions();
-
-        const resolve = this.getPinningOptions()?.resolve;
-        if (!resolve || !this.isOptionEnabled()) {
-            return {
-                topIds: this.topRowIds.slice(),
-                bottomIds: this.bottomRowIds.slice()
-            };
-        }
-
-        const explicitTop = this.topRowIds.slice();
-        const explicitBottom = this.bottomRowIds.slice();
-        const used = new Set<RowId>([...explicitTop, ...explicitBottom]);
-        const topResolved: RowId[] = [];
-        const bottomResolved: RowId[] = [];
-
-        for (const { rowId, row } of allRows) {
-            if (
-                used.has(rowId) ||
-                this.explicitUnpinned.has(rowId)
-            ) {
-                continue;
-            }
-
-            let position: ('top'|'bottom'|null|undefined);
-            try {
-                position = resolve(row);
-            } catch {
-                continue;
-            }
-
-            if (position === 'top') {
-                topResolved.push(rowId);
-                used.add(rowId);
-            } else if (position === 'bottom') {
-                bottomResolved.push(rowId);
-                used.add(rowId);
-            }
-        }
-
-        return {
-            topIds: [...explicitTop, ...topResolved],
-            bottomIds: [...explicitBottom, ...bottomResolved]
-        };
-    }
-
     public pruneMissingExplicitIds(rowIds: RowId[]): void {
         if (!rowIds.length) {
             return;
@@ -290,6 +232,99 @@ class RowPinningController {
             topIds,
             bottomIds
         };
+    }
+
+    /**
+     * Recompute resolve()-based pinned IDs from the active provider view.
+     */
+    public async recomputeResolvedFromActiveView(): Promise<void> {
+        if (!this.isOptionEnabled()) {
+            return;
+        }
+
+        const resolve = this.getPinningOptions()?.resolve;
+        const dataProvider = this.grid.dataProvider;
+        if (!resolve || !dataProvider) {
+            this.setResolvedIds([], []);
+            return;
+        }
+
+        const explicitTop = this.topRowIds.slice();
+        const explicitBottom = this.bottomRowIds.slice();
+        const used = new Set<RowId>([...explicitTop, ...explicitBottom]);
+        const topResolved: RowId[] = [];
+        const bottomResolved: RowId[] = [];
+
+        const rowCount = await dataProvider.getRowCount();
+
+        for (let i = 0; i < rowCount; ++i) {
+            const rowId = await dataProvider.getRowId(i);
+            const row = await dataProvider.getRowObject(i);
+            if (rowId === void 0 || !row) {
+                continue;
+            }
+
+            if (used.has(rowId) || this.explicitUnpinned.has(rowId)) {
+                continue;
+            }
+
+            let position: ('top'|'bottom'|null|undefined);
+            try {
+                position = resolve(row);
+            } catch {
+                continue;
+            }
+
+            if (position === 'top') {
+                topResolved.push(rowId);
+                used.add(rowId);
+            } else if (position === 'bottom') {
+                bottomResolved.push(rowId);
+                used.add(rowId);
+            }
+        }
+
+        this.setResolvedIds(topResolved, bottomResolved);
+        const pinned = this.getPinnedRows();
+        await dataProvider.primePinnedRows([
+            ...pinned.topIds,
+            ...pinned.bottomIds
+        ]);
+    }
+
+    /**
+     * Handle missing pinned row IDs after pinned-row render.
+     *
+     * @param result
+     * Render result payload with missing pinned IDs.
+     *
+     * @param result.missingPinnedRowIds
+     * Missing pinned row IDs from the latest render pass.
+     *
+     * @param source
+     * Render source that triggered reconciliation.
+     */
+    public async handlePinnedRenderResult(
+        result: { missingPinnedRowIds: RowId[] },
+        source: 'query'|'runtime'
+    ): Promise<void> {
+        if (!result.missingPinnedRowIds.length) {
+            return;
+        }
+
+        const isRemote = this.grid.options?.data?.providerType === 'remote';
+        if (isRemote) {
+            if (source === 'query') {
+                await this.grid.dataProvider?.primePinnedRows(
+                    result.missingPinnedRowIds
+                );
+            }
+            return;
+        }
+
+        if (source === 'query') {
+            this.pruneMissingExplicitIds(result.missingPinnedRowIds);
+        }
     }
 
     private static uniqueRowIds(values: unknown[]): RowId[] {

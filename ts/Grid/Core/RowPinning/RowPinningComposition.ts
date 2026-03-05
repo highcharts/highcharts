@@ -86,9 +86,6 @@ export function compose(
     GridClass.prototype.toggleRow = toggleRow;
     GridClass.prototype.unpinRow = unpinRow;
     GridClass.prototype.getPinnedRows = getPinnedRows;
-    GridClass.prototype.recomputeResolvedFromActiveView =
-        recomputeResolvedFromActiveView;
-    GridClass.prototype.handlePinnedRenderResult = handlePinnedRenderResult;
 }
 
 /**
@@ -280,10 +277,10 @@ async function runRuntimePinningChange(
     await applyChange();
 
     const renderResult = this.viewport ?
-        await this.viewport.renderPinnedRows() :
+        await this.viewport.renderPinnedRows(true) :
         { missingPinnedRowIds: [] };
 
-    await this.handlePinnedRenderResult(renderResult, 'runtime');
+    await this.rowPinning?.handlePinnedRenderResult(renderResult, 'runtime');
     this.viewport?.reflow();
 
     fireEvent(this, 'afterRowPin', eventPayload);
@@ -448,76 +445,6 @@ async function unpinRow(
 }
 
 /**
- * Recompute resolve-based pinned rows from active provider view.
- */
-async function recomputeResolvedFromActiveView(
-    this: Grid
-): Promise<void> {
-    if (!this.rowPinning || !this.rowPinning.isOptionEnabled()) {
-        return;
-    }
-
-    const resolve = this.options?.rendering?.rows?.pinning?.resolve;
-    const dataProvider = this.dataProvider;
-    if (!resolve || !dataProvider) {
-        this.rowPinning.setResolvedIds([], []);
-        return;
-    }
-
-    const rowCount = await dataProvider.getRowCount();
-    const allRows: Array<{ rowId: GridRowId; row: DataTableRowObject }> = [];
-
-    for (let i = 0; i < rowCount; ++i) {
-        const rowId = await dataProvider.getRowId(i);
-        const row = await dataProvider.getRowObject(i);
-        if (rowId === void 0 || !row) {
-            continue;
-        }
-        allRows.push({ rowId, row });
-    }
-
-    const resolved = this.rowPinning.resolveAllPinnedIds(allRows);
-    this.rowPinning.setResolvedIds(resolved.topIds, resolved.bottomIds);
-    await dataProvider.primePinnedRows([
-        ...resolved.topIds,
-        ...resolved.bottomIds
-    ]);
-}
-
-/**
- * Handle missing pinned row IDs after pinned-row render.
- *
- * @param result
- * Render result payload with missing pinned IDs.
- *
- * @param source
- * Render source that triggered reconciliation.
- */
-async function handlePinnedRenderResult(
-    this: Grid,
-    result: PinnedRenderResult,
-    source: 'query'|'runtime'
-): Promise<void> {
-    if (!this.rowPinning || !result.missingPinnedRowIds.length) {
-        return;
-    }
-
-    const isRemote = this.options?.data?.providerType === 'remote';
-    if (isRemote) {
-        if (source === 'query') {
-            await this.dataProvider?.primePinnedRows(
-                result.missingPinnedRowIds
-            );
-        }
-        return;
-    }
-
-    if (source === 'query') {
-        this.rowPinning.pruneMissingExplicitIds(result.missingPinnedRowIds);
-    }
-}
-
-/**
  * Return a copy of current pinned rows state.
  */
 function getPinnedRows(
@@ -549,10 +476,6 @@ export interface RowPinningChangeEvent {
     previousBottomIds: GridRowId[];
     topIds: GridRowId[];
     bottomIds: GridRowId[];
-}
-
-export interface PinnedRenderResult {
-    missingPinnedRowIds: GridRowId[];
 }
 
 export type RowPinningChangeEventCallback = (
@@ -620,19 +543,6 @@ declare module '../../Core/Grid' {
             topIds: GridRowId[];
             bottomIds: GridRowId[];
         };
-
-        /**
-         * Recompute resolve()-based pinned rows from active provider rows.
-         */
-        recomputeResolvedFromActiveView(): Promise<void>;
-
-        /**
-         * Handle pinned render misses according to provider type and source.
-         */
-        handlePinnedRenderResult(
-            result: PinnedRenderResult,
-            source: 'query'|'runtime'
-        ): Promise<void>;
     }
 }
 

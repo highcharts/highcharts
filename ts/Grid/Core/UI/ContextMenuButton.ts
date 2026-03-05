@@ -232,7 +232,10 @@ export class ContextMenuButton implements Button {
         // Unregister from the context menu
         const cm = this.contextMenu;
         if (cm) {
-            cm.buttons.splice(cm.buttons.indexOf(this), 1);
+            const buttonIndex = cm.buttons.indexOf(this);
+            if (buttonIndex !== -1) {
+                cm.buttons.splice(buttonIndex, 1);
+            }
             delete this.contextMenu;
         }
     }

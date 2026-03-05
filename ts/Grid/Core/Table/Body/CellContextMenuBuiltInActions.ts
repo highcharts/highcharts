@@ -173,11 +173,7 @@ function getCurrentRowId(cell: TableCell): (string|number|undefined) {
  * True when row pinning option is enabled.
  */
 function isPinningOptionEnabled(cell: TableCell): boolean {
-    const rowPinning = (cell.row.viewport.grid as {
-        rowPinning?: { isOptionEnabled?: () => boolean };
-    }).rowPinning;
-
-    return rowPinning?.isOptionEnabled?.() !== false;
+    return cell.row.viewport.grid.rowPinning?.isOptionEnabled() !== false;
 }
 
 /**
@@ -376,9 +372,7 @@ function resolveBuiltInAction(
         disabled,
         onClick: isBranch ?
             void 0 :
-            function (): void {
-                getBuiltInActionClick(actionId, cell)();
-            }
+            getBuiltInActionClick(actionId, cell)
     };
 }
 
