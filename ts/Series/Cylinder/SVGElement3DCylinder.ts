@@ -24,10 +24,7 @@ import type ColorType from '../../Core/Color/ColorType';
 
 import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
-import RendererRegistry from '../../Core/Renderer/RendererRegistry.js';
-const {
-    Element3D: SVGElement3D
-} = RendererRegistry.getRendererType().prototype;
+import SVGElement3D from '../../Core/Renderer/SVG/SVGElement3D.js';
 
 /* *
  *

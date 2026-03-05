@@ -36,7 +36,6 @@ import A from '../Core/Animation/AnimationUtilities.js';
 const { stop } = A;
 import H from '../Core/Globals.js';
 const { composed } = H;
-import RendererRegistry from '../Core/Renderer/RendererRegistry.js';
 import {
     addEvent,
     createElement,
@@ -300,7 +299,9 @@ class ScrollablePlotArea {
 
     public constructor(chart: Chart) {
         const chartOptions = chart.options.chart,
-            Renderer = RendererRegistry.getRendererType(),
+            Renderer = (
+                chart.renderer.constructor as typeof SVGRenderer
+            ),
             scrollableOptions = chartOptions.scrollablePlotArea || {},
             moveFixedElements = this.moveFixedElements.bind(this),
             styles: CSSObject = {

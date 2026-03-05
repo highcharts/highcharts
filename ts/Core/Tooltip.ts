@@ -44,7 +44,6 @@ const {
 import { Palette } from './Color/Palettes.js';
 import R from './Renderer/RendererUtilities.js';
 const { distribute } = R;
-import RendererRegistry from './Renderer/RendererRegistry.js';
 import {
     addEvent,
     clamp,
@@ -535,7 +534,9 @@ class Tooltip {
             if (this.outside) {
                 const chart = this.chart,
                     chartStyle = chart.options.chart.style,
-                    Renderer = RendererRegistry.getRendererType();
+                    Renderer = (
+                        chart.renderer.constructor as typeof SVGRenderer
+                    );
 
                 /**
                  * Reference to the tooltip's container, when

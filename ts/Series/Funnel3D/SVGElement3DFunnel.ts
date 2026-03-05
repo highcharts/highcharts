@@ -30,11 +30,8 @@ import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
 import H from '../../Core/Globals.js';
 const { charts } = H;
-import RendererRegistry from '../../Core/Renderer/RendererRegistry.js';
+import SVGElement3D from '../../Core/Renderer/SVG/SVGElement3D.js';
 import { merge } from '../../Shared/Utilities.js';
-const {
-    Element3D: SVGElement3D
-} = RendererRegistry.getRendererType().prototype;
 
 
 /* *

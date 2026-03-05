@@ -30,8 +30,7 @@ const {
 import NavigatorAxisAdditions from '../../Core/Axis/NavigatorAxisComposition.js';
 import NavigatorDefaults from './NavigatorDefaults.js';
 import NavigatorSymbols from './NavigatorSymbols.js';
-import RendererRegistry from '../../Core/Renderer/RendererRegistry.js';
-const { getRendererType } = RendererRegistry;
+import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 import StockUtilities from '../../Stock/Utilities/StockUtilities.js';
 const { setFixedRange } = StockUtilities;
 import { addEvent, extend, pushUnique } from '../../Shared/Utilities.js';
@@ -81,7 +80,7 @@ function compose(
     if (pushUnique(composed, 'Navigator')) {
         ChartClass.prototype.setFixedRange = setFixedRange;
 
-        extend(getRendererType().prototype.symbols, NavigatorSymbols);
+        extend(SVGRenderer.prototype.symbols, NavigatorSymbols);
         extend(defaultOptions, { navigator: NavigatorDefaults });
 
         addEvent(SeriesClass, 'afterUpdate', onSeriesAfterUpdate);

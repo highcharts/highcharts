@@ -54,7 +54,6 @@ const {
     symbolSizes,
     win
 } = H;
-import RendererRegistry from '../RendererRegistry.js';
 import SVGElement from './SVGElement.js';
 import SVGLabel from './SVGLabel.js';
 import Symbols from './Symbols.js';
@@ -2367,11 +2366,11 @@ namespace SVGRenderer {
 
 /* *
  *
- *  Registry
+ *  Compatibility
  *
  * */
 
-RendererRegistry.registerRendererType('svg', SVGRenderer, true);
+(H as AnyRecord).Renderer = SVGRenderer;
 
 /* *
  *
