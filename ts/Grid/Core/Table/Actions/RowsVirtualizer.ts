@@ -62,11 +62,6 @@ class RowsVirtualizer {
     public rowCursor = 0;
 
     /**
-     * Start index of the scrollable row segment in the presentation table.
-     */
-    public rowStartIndex = 0;
-
-    /**
      * The viewport (table) of the data grid.
      */
     public readonly viewport: Table;
@@ -226,7 +221,7 @@ class RowsVirtualizer {
         this.strictRowHeights = !!rowSettings.strictHeights;
         this.buffer = Math.max((rowSettings.bufferSize || 0), 0);
         this.maxElementHeight = RowsVirtualizer.getMaxElementHeight();
-        this.rowCursor = this.rowStartIndex;
+        this.rowCursor = 0;
 
         if (this.strictRowHeights) {
             viewport.tbodyElement.classList.add(
@@ -358,14 +353,8 @@ class RowsVirtualizer {
             (target.scrollTop / rowHeight) +
             (this.scrollOffset / rowHeight)
         );
-        const maxRowCursor = Math.max(
-            this.rowStartIndex,
-            this.rowStartIndex + this.rowCount - 1
-        );
-        rowCursor = Math.min(
-            this.rowStartIndex + rowCursor,
-            maxRowCursor
-        );
+        const maxRowCursor = Math.max(0, this.rowCount - 1);
+        rowCursor = Math.min(rowCursor, maxRowCursor);
         if (this.rowCursor !== rowCursor) {
             await this.renderRows(rowCursor);
         }
@@ -481,8 +470,7 @@ class RowsVirtualizer {
                 return;
             }
 
-            const rowStart = this.rowStartIndex;
-            const rowEnd = rowStart + rowCount - 1;
+            const rowEnd = rowCount - 1;
             const isVirtualization = this.viewport.virtualRows;
 
             if (isVirtualization && vp.grid.popups.size) {
@@ -528,7 +516,7 @@ class RowsVirtualizer {
             }
 
             const alwaysLastRow = rows.length > 0 ? rows.pop() : void 0;
-            const from = Math.max(rowStart, Math.min(
+            const from = Math.max(0, Math.min(
                 rowCursor - buffer,
                 rowEnd - rowsPerPage + 1
             ));
@@ -735,8 +723,7 @@ class RowsVirtualizer {
                 const newHeight = Math.floor(
                     cellHeight - (cellHeight - defaultH) * (
                         tbodyElement.scrollTop / defaultH - Math.floor(
-                            (cursor - this.rowStartIndex) -
-                            this.scrollOffset / defaultH
+                            cursor - this.scrollOffset / defaultH
                         )
                     )
                 );
@@ -926,15 +913,9 @@ class RowsVirtualizer {
      * overflow-aware scrolling.
      */
     private async updateGridMetrics(): Promise<void> {
-        this.rowStartIndex = 0;
-
         const providerRowCount = await this.viewport.grid.dataProvider
             ?.getRowCount();
-        if (defined(providerRowCount)) {
-            this.rowCount = providerRowCount;
-        } else {
-            this.rowCount = 0;
-        }
+        this.rowCount = defined(providerRowCount) ? providerRowCount : 0;
 
         this.totalGridHeight = this.rowCount * this.defaultRowHeight;
         this.gridHeightOverflow = Math.max(
@@ -942,8 +923,8 @@ class RowsVirtualizer {
             0
         );
         this.rowCursor = Math.min(
-            Math.max(this.rowCursor, this.rowStartIndex),
-            Math.max(this.rowStartIndex, this.rowStartIndex + this.rowCount - 1)
+            Math.max(this.rowCursor, 0),
+            Math.max(0, this.rowCount - 1)
         );
     }
 
