@@ -438,7 +438,6 @@ const colorAxisDefaults: DeepPartial<ColorAxisOptions> = {
      *
      * @type      {Highcharts.AxisTitleOptions}
      * @product   highcharts highstock highmaps
-     * @apioption colorAxis.title
      */
     title: {
         align: 'low'
