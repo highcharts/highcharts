@@ -1089,7 +1089,7 @@ class Table {
     public async refreshPinnedRowsFromQueryCycle(
         deferLayout: boolean = false
     ): Promise<void> {
-        await this.grid.rowPinning?.recomputeResolvedFromActiveView();
+        await this.grid.rowPinning?.recomputeResolvedFromMaterializedRows();
         const renderResult = await this.renderPinnedRows(deferLayout);
         await this.grid.rowPinning?.handlePinnedRenderResult(
             renderResult,

@@ -235,9 +235,9 @@ class RowPinningController {
     }
 
     /**
-     * Recompute resolve()-based pinned IDs from the active provider view.
+     * Recompute resolve()-based pinned IDs from materialized provider rows.
      */
-    public async recomputeResolvedFromActiveView(): Promise<void> {
+    public async recomputeResolvedFromMaterializedRows(): Promise<void> {
         if (!this.isOptionEnabled()) {
             return;
         }

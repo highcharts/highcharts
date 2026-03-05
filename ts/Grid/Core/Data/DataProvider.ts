@@ -250,8 +250,10 @@ export type RowId = number | string;
 export interface DataProviderOptions {
     /**
      * The type of the data provider.
+     *
+     * @default 'local'
      */
-    providerType: string;
+    providerType?: string;
 }
 
 /* *
