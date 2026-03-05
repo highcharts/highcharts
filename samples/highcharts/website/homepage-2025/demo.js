@@ -1,9 +1,33 @@
+const DEBUG_ANIM = false;
+function logAnim(msg) {
+    if (DEBUG_ANIM) {
+        console.log('[DemoAnim]', msg);
+    }
+}
+
 // Set up the image path
 const imagePath = 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@8967ac2dfa99c53005e2aa6221a03f3f6445e376/samples/graphics/homepage/';
 
 // reduced motion
 // eslint-disable-next-line max-len
 const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+let isPaused = false;
+let gridControls = null;
+
+// Track per-chart animation states (true = running)
+const chartAnimationState = {
+    stock: false,
+    maps: false,
+    grid: false
+};
+if (!reducedMotion) {
+    // Start all animations by default for non-reduced-motion users
+    chartAnimationState.stock = true;
+    chartAnimationState.maps = true;
+    chartAnimationState.grid = true;
+}
+
 
 // common data label format for the pie chart
 function pieLabels() {
@@ -126,7 +150,6 @@ const coreChart = {
         }]
     }
 };
-
 
 // Stock live candlestick
 let csInterval;
@@ -1231,23 +1254,6 @@ function cs() {
     // Create the chart
     Highcharts.stockChart('container', options);
 
-    // stop button for candlestick animation
-    // setTimeout(() => {
-    //     document.getElementById('stop-cs').addEventListener('click', () => {
-    //         if (stopped === false) {
-    //             clearInterval(csInterval);
-    //             stopped = true;
-    //             document.getElementById('stop-cs').innerHTML =
-    //             '(Start animation)';
-    //         } else {
-    //             animateCS();
-    //             stopped = false;
-    //             document.getElementById('stop-cs').innerHTML =
-    //             '(Stop animation)';
-    //         }
-    //     });
-    // }, 200);
-
 }
 
 // Maps animated map
@@ -1299,6 +1305,9 @@ function animatedMap() {
         // Initialize the chart
         Highcharts.mapChart('container', {
             accessibility: {
+                point: {
+                    descriptionFormat: '{point.name}: {point.info}'
+                },
                 screenReaderSection: {
                     beforeChartFormat: '',
                     afterChartFormat: ''
@@ -1312,7 +1321,10 @@ function animatedMap() {
             },
 
             title: {
-                text: ''
+                text: 'The history of the coffee bean',
+                align: 'center',
+                verticalAlign: 'bottom',
+                y: -15
             },
             legend: {
                 enabled: false
@@ -1372,7 +1384,9 @@ function animatedMap() {
                                     [55.5325, -21.114444] // La reunion
                                 ]
                             },
-                            className: 'animated-line'
+                            className: 'animated-line',
+                            info: 'Connection from Yemen to La Reunion'
+
                         },
                         {
                             geometry: {
@@ -1382,7 +1396,9 @@ function animatedMap() {
                                     [-43.2, -22.9] // Brazil
                                 ]
                             },
-                            className: 'animated-line'
+                            className: 'animated-line',
+                            info: 'Connection from La Reunion to Brazil'
+
                         },
                         {
                             geometry: {
@@ -1392,17 +1408,20 @@ function animatedMap() {
                                     [78, 21] // India
                                 ]
                             },
-                            className: 'animated-line'
+                            className: 'animated-line',
+                            info: 'Connection from Yemen to India'
                         },
                         {
                             geometry: {
                                 type: 'LineString',
+                                info: 'Connection from India to Amsterdam',
                                 coordinates: [
                                     [110.004444, -7.491667], // Java
                                     [4.9, 52.366667] // Amsterdam
                                 ]
                             },
-                            className: 'animated-line'
+                            className: 'animated-line',
+                            info: 'Connection from Java to Amsterdam'
                         },
                         {
                             geometry: {
@@ -1412,7 +1431,8 @@ function animatedMap() {
                                     [-61.030556, 14.681944] // Antilles
                                 ]
                             },
-                            className: 'animated-line'
+                            className: 'animated-line',
+                            info: 'Connection from UK to Antilles'
                         },
                         {
                             geometry: {
@@ -1422,7 +1442,8 @@ function animatedMap() {
                                     [-53, 4] // Guyane
                                 ]
                             },
-                            className: 'animated-line'
+                            className: 'animated-line',
+                            info: 'Connection from France to Guyane'
                         }
                     ],
                     lineWidth: 2,
@@ -1435,7 +1456,7 @@ function animatedMap() {
                         formatter: function () {
                             return '<div class="map-label">' +
                                 // eslint-disable-next-line max-len
-                                '<span class="map-label-name">' + this.point.name + '</span>' +
+                                '<span class="map-label-name"><span style="font-size:14px">☕</span>' + this.point.name + '</span>' +
                                 '<span class="map-label-arrival">Arrived: ' +
                                 this.point.custom.arrival + '</span></div>';
                         },
@@ -1445,6 +1466,7 @@ function animatedMap() {
                     data: [
                         {
                             name: 'Yemen',
+                            info: 'Yemen is where coffee took off in 1414',
                             geometry: {
                                 type: 'Point',
                                 coordinates: [48.516388, 15.552727] // Yemen
@@ -1458,6 +1480,7 @@ function animatedMap() {
                         },
                         {
                             name: 'Java',
+                            info: 'Coffee came from Yemen in 1696',
                             geometry: {
                                 type: 'Point',
                                 coordinates: [110.004444, -7.491667] // Java
@@ -1472,6 +1495,7 @@ function animatedMap() {
                         },
                         {
                             name: 'La Reunion',
+                            info: 'Coffee came from Yemen in 1708',
                             geometry: {
                                 type: 'Point',
                                 coordinates: [55.5325, -21.114444] // La reunion
@@ -1486,6 +1510,7 @@ function animatedMap() {
                         },
                         {
                             name: 'Brazil',
+                            info: 'Coffee came from La Reunion in 1770',
                             geometry: {
                                 type: 'Point',
                                 coordinates: [-43.2, -22.9] // Brazil
@@ -1499,6 +1524,7 @@ function animatedMap() {
                         },
                         {
                             name: 'India',
+                            info: 'Coffee came from Yemen in 1670',
                             geometry: {
                                 type: 'Point',
                                 coordinates: [78, 21] // India
@@ -1509,6 +1535,7 @@ function animatedMap() {
                         },
                         {
                             name: 'Amsterdam',
+                            info: 'Coffee came from India in 1696',
                             geometry: {
                                 type: 'Point',
                                 coordinates: [4.9, 52.366667] // Amsterdam
@@ -1519,6 +1546,7 @@ function animatedMap() {
                         },
                         {
                             name: 'Antilles',
+                            info: 'Coffee came from the UK in 1714',
                             geometry: {
                                 type: 'Point',
                                 coordinates: [-61.030556, 14.681944] // Antilles
@@ -1532,6 +1560,7 @@ function animatedMap() {
                         },
                         {
                             name: 'Guyane',
+                            info: 'Coffee came from France in 1714',
                             geometry: {
                                 type: 'Point',
                                 coordinates: [-53, 4] // Guyane
@@ -1923,7 +1952,20 @@ function dashboards() {
 // Grid sparklines
 function grid() {
 
-    // let running;
+    let gridUpdateTimeouts = [];
+    let gridIsRunning = true;
+    let manualOverride = false;
+
+
+    // detect global carousel pause state if defined
+    const globallyPaused = typeof isPaused !== 'undefined' ? isPaused : false;
+
+    // If reduced motion or the carousel is paused when grid() initializes,
+    // start with updates disabled.
+    if (reducedMotion || globallyPaused) {
+        gridIsRunning = false;
+    }
+
     // Data preparation
     const data = new Grid.DataTable({
         columns: {
@@ -2295,38 +2337,47 @@ function grid() {
         }
     });
 
+    // --- Utility: fade sparkline visuals when paused ---
+    const gridContainer = document.getElementById('grid-container');
+    function setGridPausedVisual(paused) {
+        gridContainer.classList.toggle('paused-grid', paused);
+    }
+
+    // --- Update scheduler ---
     function scheduleUpdate(rowIndex) {
+    // Never start scheduling if paused, unless manually overridden
+        if (!gridIsRunning) {
+            return;
+        }
+
+        // If reduced motion, skip updates *unless manually overridden*
+        if (reducedMotion && !manualOverride) {
+            return;
+        }
+
         const delay = Math.random() * 1500 + 500;
-        setTimeout(async () => {
+        const timeout = setTimeout(async () => {
+        // Skip during reduced motion unless manually allowed
+            if (!gridIsRunning || (reducedMotion && !manualOverride)) {
+                return;
+            }
             await updateInstanceStatus(rowIndex);
             scheduleUpdate(rowIndex);
         }, delay);
+
+        gridUpdateTimeouts.push(timeout);
     }
 
-    // Schedule updates for all rows in the data table.
-    for (let i = 0, iEnd = data.getRowCount(); i < iEnd; i++) {
-        scheduleUpdate(i);
-    }
 
-    // Function to generate a new dummy sparkline
-    // data array based on the old one.
     function generateArrayFlow(stringArray) {
         const r = Math.random() * 2 - 1;
         const change = Math.floor(r * r * r * 30);
-
         const array = stringArray.split(',').map(Number);
         array.shift();
-        array.push(
-            Highcharts.clamp(array[array.length - 1] + change, 0, 100)
-        );
-
+        array.push(Highcharts.clamp(array[array.length - 1] + change, 0, 100));
         return array.join(', ');
     }
 
-    // Function to update the instance status in the
-    // data table and refresh the
-    // cells. It updates the data even if the
-    // cells are not rendered in the grid.
     async function updateInstanceStatus(rowIndex) {
         const running = data.getCell('running', rowIndex);
         if (!running) {
@@ -2336,64 +2387,74 @@ function grid() {
         const cpuUtilization = data.getCell('cpuUtilization', rowIndex);
         const memoryUtilization = data.getCell('memoryUtilization', rowIndex);
 
-        // Data Table cells can be updated directly, even if the cells are not
-        // rendered in the grid.
-        data.setCell(
-            'cpuUtilization',
-            rowIndex,
-            generateArrayFlow(cpuUtilization)
-        );
-        data.setCell(
-            'memoryUtilization',
-            rowIndex,
-            generateArrayFlow(memoryUtilization)
-        );
-        data.setCell(
-            'diskOperationsIn',
-            rowIndex,
-            Math.round(Math.random() * 100)
-        );
-        data.setCell(
-            'diskOperationsOut',
-            rowIndex,
-            Math.round(Math.random() * 100)
-        );
-        data.setCell(
-            'diskUsage',
-            rowIndex,
-            Math.round(Math.random() * 100)
-        );
+        // eslint-disable-next-line max-len
+        data.setCell('cpuUtilization', rowIndex, generateArrayFlow(cpuUtilization));
+        // eslint-disable-next-line max-len
+        data.setCell('memoryUtilization', rowIndex, generateArrayFlow(memoryUtilization));
+        // eslint-disable-next-line max-len
+        data.setCell('diskOperationsIn', rowIndex, Math.round(Math.random() * 100));
+        // eslint-disable-next-line max-len
+        data.setCell('diskOperationsOut', rowIndex, Math.round(Math.random() * 100));
+        data.setCell('diskUsage', rowIndex, Math.round(Math.random() * 100));
 
         const row = grid?.viewport.getRow(rowIndex);
         if (!row) {
             return;
         }
 
-        // Apply the modifiers to the data table.
         await grid.querying.proceed(true);
-
-        // Matach the data table to the presentation table.
         grid.viewport.dataTable = grid.presentationTable;
-
-        // Load the data into the columns.
         for (const column of grid.viewport.columns) {
             column.loadData();
         }
-
-        // row.loadData() is used to fetch the data from the data table into the
-        // `row.data` object, because unlike the `column.data`, the `row.data`
-        // is not a direct reference to the data table, but a copy of the data
-        // for the row.
         row.loadData();
-
-        row.cells.forEach(cell => {
-        // `cell.setValue()` without arguments will refresh the cell with
-        // the current value from the data table.
-            cell.setValue();
-        });
+        row.cells.forEach(cell => cell.setValue());
     }
 
+    // --- Pause / Resume controls ---
+    function clearGridUpdates() {
+        gridIsRunning = false;
+        gridUpdateTimeouts.forEach(timeout => clearTimeout(timeout));
+        gridUpdateTimeouts = [];
+        setGridPausedVisual(true);
+    }
+
+    function resumeGridUpdates() {
+        if (gridIsRunning && !reducedMotion) {
+            return;
+        }
+        gridIsRunning = true;
+
+        // If reduced motion, treat this as explicit user opt-in
+        if (reducedMotion) {
+            manualOverride = true;
+        }
+
+        for (let i = 0, iEnd = data.getRowCount(); i < iEnd; i++) {
+            scheduleUpdate(i);
+        }
+        setGridPausedVisual(false);
+    }
+
+
+    // --- Initialize ---
+    if (!reducedMotion && !globallyPaused) {
+        for (let i = 0, iEnd = data.getRowCount(); i < iEnd; i++) {
+            scheduleUpdate(i);
+        }
+        gridIsRunning = true;
+    } else {
+        gridIsRunning = false;
+        setGridPausedVisual(true);
+    }
+
+    return {
+        gridInstance: grid,
+        clearGridUpdates,
+        resumeGridUpdates
+    };
 }
+
 
 /* DEMO VIEWER */
 // product info for demo viewer
@@ -2404,6 +2465,7 @@ const products = [
         id: 'coreTitle',
         icon: 'icon-core.svg',
         chart: coreChart,
+        stopLink: null,
         demoTitle: 'Pie Chart',
         demoDesc: `Pie charts 
         show a compact overview of a composition or comparison`,
@@ -2424,6 +2486,9 @@ const products = [
         demoTitle: 'Candlestick chart',
         // eslint-disable-next-line max-len
         demoDesc: 'Candlesticks make it easy to spot trends over time.',
+        // eslint-disable-next-line max-len
+        stopLink: `<button class="stop-link" 
+        id="stop-stock">(Stop chart animation)</button>`,
         description: `<p>Dynamic Candlestick Chart</p>
         <div>A purely decorative candlestick chart that updates with 
         new data every 100 milliseconds.</div>`
@@ -2434,8 +2499,11 @@ const products = [
         id: 'mapsTitle',
         chart: animatedMap,
         icon: 'icon-maps.svg',
-        demoTitle: 'History of the Coffee Bean',
+        demoTitle: 'Animated Map',
         demoDesc: 'Maps can tell stories when connected to data.',
+        // eslint-disable-next-line max-len
+        stopLink: `<button class="stop-link"  
+        id="stop-maps">(Stop chart animation)</button>`,
         description: `<p>Animated line map</p>A purely decorative 
         world map showing the historical 
         spread of coffee cultivation. Animated lines trace the journey of 
@@ -2449,6 +2517,7 @@ const products = [
         tagline: 'Resource and timeline management',
         id: 'ganttTitle',
         chart: gantt,
+        stopLink: null,
         icon: 'icon-gantt.svg',
         demoTitle: 'Gantt chart',
         demoDesc: `Use Gantts to track tasks, dependencies, and 
@@ -2468,6 +2537,7 @@ const products = [
         chart: dashboards,
         icon: 'icon-dashboards.svg',
         demoTitle: 'Personal finance dashboard',
+        stopLink: null,
         demoDesc: 'Use our data sync tools to create dynamic dashboards fast.',
         description: `<p>Personal Finance Dashboard</p>A purely decorative  
         dashboard showing key financial metrics, including total 
@@ -2484,6 +2554,9 @@ const products = [
         id: 'gridTitle',
         chart: grid,
         icon: 'icon-grid.svg',
+        // eslint-disable-next-line max-len
+        stopLink: `<button class="stop-link" 
+         id="stop-grid">(Stop chart animation)</button>`,
         demoTitle: 'Data grid with sparklines',
         demoDesc: `Combine tabular data and inline 
         charts for instant visual context.`,
@@ -2506,7 +2579,7 @@ const titleInner = document.createElement('div');
 titleInner.className = 'demo-title-inner';
 titleContainer.innerHTML = '';
 titleContainer.appendChild(titleInner);
-let isPaused = false;
+
 
 // Add all products + one clone of first
 // so the vertical loop seems infinite
@@ -2526,9 +2599,11 @@ clone.id = 'title-6';
 titleInner.appendChild(clone);
 
 // --- Footer + pagination setup ---
+const demoNameContainer = document.getElementById('demo-name-container');
 const demoTitleEl = document.getElementById('demoName');
 const demoDescEl = document.getElementById('demoDescription');
 const pauseBtn = document.getElementById('pause');
+// const pagination = document.getElementById('pagination');
 
 let currentIndex = 0;
 let carouselInterval;
@@ -2539,10 +2614,13 @@ const dots = document.querySelectorAll('.dot');
 
 dots.forEach((dot, i) => {
     dot.addEventListener('click', function () {
-        pause();
         goTo(i);
+        if (!isPaused) {
+            resetTimer(); // keeps autoplay going after manual navigation
+        }
     });
 });
+
 
 // Initial footer state
 demoTitleEl.innerHTML = products[0].demoTitle;
@@ -2569,19 +2647,16 @@ function updateView() {
     });
 
     if (currentIndex === products.length) {
+        currentIndex = 0;
         isResetting = true;
         titleInner.style.transform = 'translateY(-240px)';
         titleInner.style.opacity = 1;
-        // hide all product headers from screen readers
 
-
-        currentIndex = 0;
         updateFooter(currentIndex);
         updateChart(currentIndex);
         isResetting = false;
 
         setTimeout(() => {
-            console.log('resetting');
             titleInner.style.transition = 'none';
             titleInner.style.transform = 'translateY(0)';
         }, setTimeoutDuration);
@@ -2601,24 +2676,125 @@ function updateView() {
 
 function updateFooter(i) {
     const demoInfo = document.getElementById('demo-info');
-
+    const p = products[i];
     let setTimeoutDuration = 400;
     if (reducedMotion) {
         setTimeoutDuration = 0;
     }
     demoInfo.classList.add('fade-out');
     setTimeout(() => {
-        const p = products[i];
-        demoTitleEl.innerHTML = p.demoTitle;
+
+
+        demoNameContainer.innerHTML = `<h3 id="demoName">${p.demoTitle}</h3>`;
         if (p.stopLink) {
-            demoTitleEl.innerHTML += ' ' + p.stopLink;
+            demoNameContainer.innerHTML += ' ' + p.stopLink;
         }
         demoDescEl.textContent = p.demoDesc;
         dots.forEach(dot => dot.classList.remove('active'));
         dots[i % products.length].classList.add('active');
         demoInfo.classList.remove('fade-out');
+        // Attach event listeners to stop/start links
+        attachStopLinkListeners();
+
     }, setTimeoutDuration);
 }
+
+let stockLink, mapsLink, gridLink;
+
+
+function attachStopLinkListeners() {
+
+    stockLink = document.getElementById('stop-stock');
+    mapsLink = document.getElementById('stop-maps');
+    gridLink = document.getElementById('stop-grid');
+
+    // Stock
+    if (stockLink) {
+        // eslint-disable-next-line max-len
+        stockLink.addEventListener('click', () => toggleChartAnimation('stock', stockLink));
+    }
+
+    // Maps
+    if (mapsLink) {
+        // eslint-disable-next-line max-len
+        mapsLink.addEventListener('click', () => toggleChartAnimation('maps', mapsLink));
+    }
+
+    // Grid
+    if (gridLink) {
+        // eslint-disable-next-line max-len
+        gridLink.addEventListener('click', () => toggleChartAnimation('grid', gridLink));
+    }
+}
+
+function updateAnimationLinkText() {
+
+    if (stockLink) {
+        stockLink.textContent = chartAnimationState.stock ?
+            '(Stop chart animation)' :
+            '(Start chart animation)';
+    }
+    if (mapsLink) {
+        mapsLink.textContent = chartAnimationState.maps ?
+            '(Stop chart animation)' :
+            '(Start chart animation)';
+    }
+    if (gridLink) {
+        gridLink.textContent = chartAnimationState.grid ?
+            '(Stop chart animation)' :
+            '(Start chart animation)';
+    }
+}
+
+
+function toggleChartAnimation(chartType, link) {
+    const isStarting = !chartAnimationState[chartType];
+    chartAnimationState[chartType] = isStarting;
+
+    // Update link text
+    link.textContent = isStarting ?
+        '(Stop chart animation)' :
+        '(Start chart animation)';
+
+    // Handle chart-specific animation
+    if (chartType === 'stock') {
+        if (isStarting) {
+            startStockChartAnimation();
+            announceChange('Stock chart animation started.');
+        } else {
+            stopStockChartAnimation();
+            announceChange('Stock chart animation paused.');
+        }
+    } else if (chartType === 'maps') {
+        if (isStarting) {
+            startMapAnimation();
+            announceChange('Map animation started.');
+        } else {
+            stopMapAnimation();
+            announceChange('Map animation paused.');
+        }
+    } else if (chartType === 'grid') {
+        if (!gridControls) {
+            return;
+        }
+        if (isStarting) {
+            if (typeof gridControls.resumeGridUpdates === 'function') {
+                gridControls.resumeGridUpdates();
+            } else if (typeof gridControls.startGridUpdates === 'function') {
+                gridControls.startGridUpdates();
+            } else {
+                // nothing
+            }
+            announceChange('Grid chart animation started.');
+        } else {
+            if (typeof gridControls.clearGridUpdates === 'function') {
+                gridControls.clearGridUpdates();
+                announceChange('Grid chart animation paused.');
+            }
+        }
+    }
+}
+
 
 function getChartDescription(i) {
 
@@ -2638,40 +2814,81 @@ function getChartDescription(i) {
     announceChange('New Chart: ' + products[i].demoTitle);
 
 }
-
-function toggleStockChartAnimation() {
-    if (isPaused) {
-        clearInterval(csInterval);
-    } else {
-        if (!reducedMotion) {
-            animateCS();
+// --- Stock Chart Animation Control ---
+function startStockChartAnimation() {
+    if (typeof animateCS === 'function') {
+        // Prevent multiple intervals
+        if (typeof csInterval !== 'undefined') {
+            clearInterval(csInterval);
         }
+        animateCS();
     }
 }
 
-function toggleMapAnimation() {
-    if (isPaused) {
-        // eslint-disable-next-line max-len
-        document.querySelectorAll('.animated-line').forEach(line => {
-            line.classList.add('paused');
-        });
-    } else {
-        // reduced motion is handled in the CSS
-        // with a media query
-        // eslint-disable-next-line max-len
-        document.querySelectorAll('.animated-line').forEach(line => {
-            line.classList.remove('paused');
-        });
+function stopStockChartAnimation() {
+    if (typeof csInterval !== 'undefined') {
+        clearInterval(csInterval);
+        logAnim('Stock animation stopped');
     }
 }
 
-function toggleChartAnimations() {
-    if (products[currentIndex].chart === animatedMap) {
-        toggleMapAnimation();
-    }
-    if (products[currentIndex].chart === cs) {
-        toggleStockChartAnimation();
-    }
+// --- Map Animation Control ---
+function startMapAnimation() {
+    document.querySelectorAll('.animated-line').forEach(line => {
+        line.classList.remove('paused');
+    });
+}
+
+function stopMapAnimation() {
+    document.querySelectorAll('.animated-line').forEach(line => {
+        line.classList.add('paused');
+    });
+    logAnim('Map animation stopped');
+}
+// --- Animation Failsafe ---
+function ensureCorrectAnimationState() {
+    // When resuming, respect each chart's individual animation preference
+    Object.keys(chartAnimationState).forEach(key => {
+        const isActive = chartAnimationState[key];
+        // stock chart
+        if (key === 'stock' && currentIndex === 1) {
+            if (isActive) {
+                startStockChartAnimation();
+                logAnim('Stock animation resumed');
+            } else {
+                stopStockChartAnimation();
+                logAnim('Stock animation paused');
+            }
+        }
+        // map chart
+        if (key === 'maps' && currentIndex === 2) {
+            if (isActive) {
+                startMapAnimation();
+                logAnim('Map animation resumed');
+            } else {
+                stopMapAnimation();
+                logAnim('Map animation paused');
+            }
+        }
+        // grid
+        if (key === 'grid' && gridControls && currentIndex === 5) {
+            if (isActive) {
+                if (typeof gridControls.resumeGridUpdates === 'function') {
+                    gridControls.resumeGridUpdates();
+                    logAnim('Grid updates resumed');
+                // eslint-disable-next-line max-len
+                } else if (typeof gridControls.startGridUpdates === 'function') {
+                    gridControls.startGridUpdates();
+                    logAnim('Grid updates resumed (startGridUpdates fallback)');
+                }
+            } else {
+                if (typeof gridControls.clearGridUpdates === 'function') {
+                    gridControls.clearGridUpdates();
+                    logAnim('Grid updates paused');
+                }
+            }
+        }
+    });
 }
 
 function announceChange(announcement) {
@@ -2684,7 +2901,6 @@ function announceChange(announcement) {
         announce.appendChild(newElem);
     }
 }
-
 
 function updateChart(i) {
 
@@ -2723,6 +2939,7 @@ function updateChart(i) {
                     document.getElementById('dash-container').style.display = 'none';
                     // eslint-disable-next-line max-len
                     document.getElementById('grid-container').style.display = 'block';
+                    gridControls = grid();
                 } else {
                     // eslint-disable-next-line max-len
                     document.getElementById('dash-container').style.display = 'none';
@@ -2740,12 +2957,6 @@ function updateChart(i) {
                 document.getElementById('container').style.display = 'block';
                 Highcharts.chart('container', p.chart);
             }
-
-            // stop or start the animated map lines
-            setTimeout(() => {
-                // toggle chart animations
-                toggleChartAnimations();
-            }, 100);
         }
 
         // if the carousel is paused, update the chart description
@@ -2756,7 +2967,38 @@ function updateChart(i) {
 
         // fade back in
         chartWrapper.classList.remove('fade-out');
+
+        if (p.chart === cs && !chartAnimationState.stock) {
+            stopStockChartAnimation();
+        }
+
+        if (p.chart === animatedMap) {
+            if (!chartAnimationState.maps) {
+                // Wait briefly for map DOM to fully render
+                // before stopping animation
+                setTimeout(() => {
+                    stopMapAnimation();
+                }, 200); // give time for .animated-line elements to appear
+            } else {
+                // ensure they’re active if user turned them on
+                setTimeout(() => {
+                    startMapAnimation();
+                }, 200);
+            }
+        }
+
+        if (p.chart === grid && gridControls && !chartAnimationState.grid) {
+            if (typeof gridControls.clearGridUpdates === 'function') {
+                gridControls.clearGridUpdates();
+            }
+        }
+
     }, setTimeoutDuration);
+
+    // final failsafe after chart transition completes
+    setTimeout(() => {
+        ensureCorrectAnimationState();
+    }, 300);
 }
 
 
@@ -2789,11 +3031,11 @@ function pause() {
     // stop the carousel interval
     clearInterval(carouselInterval);
 
-    // stop chart animations
-    setTimeout(() => {
-        toggleChartAnimations();
-    }, 100);
+    ensureCorrectAnimationState();
 
+    // Update the animation control link text
+    updateAnimationLinkText();
+    // }
 
     // update aria label on carousel container
     carousel.setAttribute(
@@ -2804,75 +3046,71 @@ function pause() {
 
     // make charts visible to screen readers
     chartWrapper.removeAttribute('aria-hidden');
-    // chartWrapper.setAttribute('aria-hidden', 'false');
 
+    // change the helper button text
+    document.getElementById('accessibility-helper').innerHTML =
+        'Click to play the carousel';
 
-    // change the screen reader helper button text
-    // eslint-disable-next-line max-len
-    document.getElementById('accessibility-helper').innerHTML = 'Click to play the carousel';
-
-    // add the chart description for screen readers
-    // since the carousel is paused
+    // add the chart description since paused
     getChartDescription(currentIndex);
 
     // update carousel pause button
     pauseBtn.ariaLabel = 'Resume automatic slide show';
-    pauseBtn.innerHTML = '<span class="hc-button_content">' +
-    '<span>Resume</span>' +
-    '<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">' +
-    // eslint-disable-next-line max-len
-    '<path d="M1 5C1 5 2.00249 3.63411 2.81692 2.81912C3.63134 2.00413 4.7568 1.5 6 1.5C8.48528 1.5 10.5 3.51472 10.5 6C10.5 8.48528 8.48528 10.5 6 10.5C3.94845 10.5 2.21756 9.12714 1.67588 7.25M1 5V2M1 5H4" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>' +
-    '</svg>';
+    pauseBtn.innerHTML =
+        '<span class="hc-button_content">' +
+        '<span>Resume</span>' +
+        '<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">' +
+        // eslint-disable-next-line max-len
+        '<path d="M1 5C1 5 2.00249 3.63411 2.81692 2.81912C3.63134 2.00413 4.7568 1.5 6 1.5C8.48528 1.5 10.5 3.51472 10.5 6C10.5 8.48528 8.48528 10.5 6 10.5C3.94845 10.5 2.21756 9.12714 1.67588 7.25M1 5V2M1 5H4" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>' +
+        '</svg>';
 
-    // announce that the carousel is paused
     announceChange('Demo carousel paused');
 }
 
 function resume() {
-
     isPaused = false;
 
     // restart the carousel interval
     startAuto();
 
-    // restart chart animations
-    toggleChartAnimations();
+    // ensure correct animation running for current chart
+    ensureCorrectAnimationState();
+    updateAnimationLinkText();
+
 
     // update the carousel aria label
     carousel.setAttribute(
         'aria-label',
         // eslint-disable-next-line max-len
-        `Highcharts product demos. Pause the carousel to explore demos 
-        individually and use the carousel controls to switch between demos.`
+        'Highcharts product demos. Pause the carousel to explore demos individually and use the carousel controls to switch between demos.'
     );
 
     // update the helper button text
-    // eslint-disable-next-line max-len
-    document.getElementById('accessibility-helper').innerHTML = 'Click to pause the carousel';
+    document.getElementById('accessibility-helper').innerHTML =
+        'Click to pause the carousel';
 
     // hide the charts from screen readers
-    // since the carousel is playing
     chartWrapper.setAttribute('aria-hidden', 'true');
 
     // update carousel pause button
     pauseBtn.ariaLabel = 'Pause automatic slide show';
-    pauseBtn.innerHTML = '<span class="hc-button_content">' +
-    '<span>Pause</span>' +
-    '<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">' +
-    // eslint-disable-next-line max-len
-    '<path d="M3.4 1.5H3.1C2.53995 1.5 2.25992 1.5 2.04601 1.60899C1.85785 1.70487 1.70487 1.85785 1.60899 2.04601C1.5 2.25992 1.5 2.53995 1.5 3.1V8.9C1.5 9.46005 1.5 9.74008 1.60899 9.95399C1.70487 10.1422 1.85785 10.2951 2.04601 10.391C2.25992 10.5 2.53995 10.5 3.1 10.5H3.4C3.96005 10.5 4.24008 10.5 4.45399 10.391C4.64215 10.2951 4.79513 10.1422 4.89101 9.95399C5 9.74008 5 9.46005 5 8.9V3.1C5 2.53995 5 2.25992 4.89101 2.04601C4.79513 1.85785 4.64215 1.70487 4.45399 1.60899C4.24008 1.5 3.96005 1.5 3.4 1.5Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>' +
-    // eslint-disable-next-line max-len
-    '<path d="M8.9 1.5H8.6C8.03995 1.5 7.75992 1.5 7.54601 1.60899C7.35785 1.70487 7.20487 1.85785 7.10899 2.04601C7 2.25992 7 2.53995 7 3.1V8.9C7 9.46005 7 9.74008 7.10899 9.95399C7.20487 10.1422 7.35785 10.2951 7.54601 10.391C7.75992 10.5 8.03995 10.5 8.6 10.5H8.9C9.46005 10.5 9.74008 10.5 9.95399 10.391C10.1422 10.2951 10.2951 10.1422 10.391 9.95399C10.5 9.74008 10.5 9.46005 10.5 8.9V3.1C10.5 2.53995 10.5 2.25992 10.391 2.04601C10.2951 1.85785 10.1422 1.70487 9.95399 1.60899C9.74008 1.5 9.46005 1.5 8.9 1.5Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>' +
-    '</svg>';
+    pauseBtn.innerHTML =
+        '<span class="hc-button_content">' +
+        '<span>Pause</span>' +
+        '<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">' +
+        // eslint-disable-next-line max-len
+        '<path d="M3.4 1.5H3.1C2.53995 1.5 2.25992 1.5 2.04601 1.60899C1.85785 1.70487 1.70487 1.85785 1.60899 2.04601C1.5 2.25992 1.5 2.53995 1.5 3.1V8.9C1.5 9.46005 1.5 9.74008 1.60899 9.95399C1.70487 10.1422 1.85785 10.2951 2.04601 10.391C2.25992 10.5 2.53995 10.5 3.1 10.5H3.4C3.96005 10.5 4.24008 10.5 4.45399 10.391C4.64215 10.2951 4.79513 10.1422 4.89101 9.95399C5 9.74008 5 9.46005 5 8.9V3.1C5 2.53995 5 2.25992 4.89101 2.04601C4.79513 1.85785 4.64215 1.70487 4.45399 1.60899C4.24008 1.5 3.96005 1.5 3.4 1.5Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>' +
+        // eslint-disable-next-line max-len
+        '<path d="M8.9 1.5H8.6C8.03995 1.5 7.75992 1.5 7.54601 1.60899C7.35785 1.70487 7.20487 1.85785 7.10899 2.04601C7 2.25992 7 2.53995 7 3.1V8.9C7 9.46005 7 9.74008 7.10899 9.95399C7.20487 10.1422 7.35785 10.2951 7.54601 10.391C7.75992 10.5 8.03995 10.5 8.6 10.5H8.9C9.46005 10.5 9.74008 10.5 9.95399 10.391C10.1422 10.2951 10.2951 10.1422 10.391 9.95399C10.5 9.74008 10.5 9.46005 10.5 8.9V3.1C10.5 2.53995 10.5 2.25992 10.391 2.04601C10.2951 1.85785 10.1422 1.70487 9.95399 1.60899C9.74008 1.5 9.46005 1.5 8.9 1.5Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>' +
+        '</svg>';
 
-    // remove chart description
-    // since the carousel is playing
+    // remove chart description since carousel is running
     if (document.getElementById('chart-description') !== null) {
         document.getElementById('chart-description').remove();
     }
 
-    // announce that the carousel is playing
     announceChange('Demo carousel playing');
+
 
 }
 
@@ -2889,15 +3127,96 @@ document.getElementById('pause').addEventListener('click', toggleCarousel);
 // eslint-disable-next-line max-len
 document.getElementById('accessibility-helper').addEventListener('click', toggleCarousel);
 
+function initializePauseButtonState() {
+    const helper = document.getElementById('accessibility-helper');
+
+    if (reducedMotion) {
+        // Start paused, so button should show "Resume"
+        isPaused = true;
+
+        pauseBtn.ariaLabel = 'Resume automatic slide show';
+        pauseBtn.innerHTML =
+            '<span class="hc-button_content">' +
+            '<span>Resume</span>' +
+            '<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">' +
+            // eslint-disable-next-line max-len
+            '<path d="M1 5C1 5 2.00249 3.63411 2.81692 2.81912C3.63134 2.00413 4.7568 1.5 6 1.5C8.48528 1.5 10.5 3.51472 10.5 6C10.5 8.48528 8.48528 10.5 6 10.5C3.94845 10.5 2.21756 9.12714 1.67588 7.25M1 5V2M1 5H4" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>' +
+            '</svg>';
+        helper.innerHTML = 'Click to play the carousel';
+    } else {
+        // Normal autoplay state → button shows "Pause"
+        isPaused = false;
+
+        pauseBtn.ariaLabel = 'Pause automatic slide show';
+        pauseBtn.innerHTML =
+            '<span class="hc-button_content">' +
+            '<span>Pause</span>' +
+            '<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">' +
+            // eslint-disable-next-line max-len
+            '<path d="M3.4 1.5H3.1C2.53995 1.5 2.25992 1.5 2.04601 1.60899C1.85785 1.70487 1.70487 1.85785 1.60899 2.04601C1.5 2.25992 1.5 2.53995 1.5 3.1V8.9C1.5 9.46005 1.5 9.74008 1.60899 9.95399C1.70487 10.1422 1.85785 10.2951 2.04601 10.391C2.25992 10.5 2.53995 10.5 3.1 10.5H3.4C3.96005 10.5 4.24008 10.5 4.45399 10.391C4.64215 10.2951 4.79513 10.1422 4.89101 9.95399C5 9.74008 5 9.46005 5 8.9V3.1C5 2.53995 5 2.25992 4.89101 2.04601C4.79513 1.85785 4.64215 1.70487 4.45399 1.60899C4.24008 1.5 3.96005 1.5 3.4 1.5Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>' +
+            // eslint-disable-next-line max-len
+            '<path d="M8.9 1.5H8.6C8.03995 1.5 7.75992 1.5 7.54601 1.60899C7.35785 1.70487 7.20487 1.85785 7.10899 2.04601C7 2.25992 7 2.53995 7 3.1V8.9C7 9.46005 7 9.74008 7.10899 9.95399C7.20487 10.1422 7.35785 10.2951 7.54601 10.391C7.75992 10.5 8.03995 10.5 8.6 10.5H8.9C9.46005 10.5 9.74008 10.5 9.95399 10.391C10.1422 10.2951 10.2951 10.1422 10.391 9.95399C10.5 9.74008 10.5 9.46005 10.5 8.9V3.1C10.5 2.53995 10.5 2.25992 10.391 2.04601C10.2951 1.85785 10.1422 1.70487 9.95399 1.60899C9.74008 1.5 9.46005 1.5 8.9 1.5Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>' +
+            '</svg>';
+        helper.innerHTML = 'Click to pause the carousel';
+    }
+}
+
+
 document.addEventListener('DOMContentLoaded', function () {
-    // --- Start carousel ---
-    // create the dashboard and grid first to prevent errors
+
+    // --- Initialize button states first ---
+    initializePauseButtonState();
+
+    // --- Start carousel setup ---
     dashboards();
-    grid();
+    gridControls = grid();
+
     // create the first chart
     document.querySelector('.demo-title-inner').style.opacity = 1;
     document.getElementById('title-0').setAttribute('aria-hidden', 'false');
     updateChart(0);
-    // start the carousel
-    startAuto();
+
+    if (reducedMotion) {
+        // Start paused for users who prefer reduced motion
+        isPaused = true;
+
+        // Stop any intervals or animations
+        clearInterval(carouselInterval);
+        stopStockChartAnimation();
+        stopMapAnimation();
+
+        Object.keys(chartAnimationState).forEach(function (key) {
+            chartAnimationState[key] = false;
+        });
+
+        // Make charts accessible to screen readers
+        chartWrapper.removeAttribute('aria-hidden');
+        getChartDescription(0);
+
+        // Update accessibility and button states to "resume" mode
+        carousel.setAttribute(
+            'aria-label',
+            `Demo carousel paused by default due to reduced motion preference. 
+            You can explore demos manually or resume automatic playback.`
+        );
+
+        document.getElementById('accessibility-helper').innerHTML =
+            'Click to play the carousel';
+
+        pauseBtn.ariaLabel = 'Resume automatic slide show';
+        pauseBtn.innerHTML =
+            '<span class="hc-button_content">' +
+            '<span>Resume</span>' +
+            '<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">' +
+            // eslint-disable-next-line max-len
+            '<path d="M1 5C1 5 2.00249 3.63411 2.81692 2.81912C3.63134 2.00413 4.7568 1.5 6 1.5C8.48528 1.5 10.5 3.51472 10.5 6C10.5 8.48528 8.48528 10.5 6 10.5C3.94845 10.5 2.21756 9.12714 1.67588 7.25M1 5V2M1 5H4" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>' +
+            '</svg>';
+
+        // eslint-disable-next-line max-len
+        announceChange('Demo carousel paused due to reduced motion preference.');
+    } else {
+        // Normal behavior for non-reduced motion users
+        isPaused = false;
+        startAuto();
+    }
 });

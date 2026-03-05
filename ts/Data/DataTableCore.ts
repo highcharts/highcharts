@@ -391,11 +391,16 @@ class DataTableCore {
         eventDetail?: DataEvent.Detail
     ): void {
         const { columns } = this,
-            indexRowCount = insert ? this.rowCount + 1 : rowIndex + 1;
+            indexRowCount = insert ? this.rowCount + 1 : rowIndex + 1,
+            rowKeys = Object.keys(row);
 
-        objectEach(row, (cellValue, columnId): void => {
-            let column = columns[columnId] ||
-                eventDetail?.addColumns !== false && new Array(indexRowCount);
+        if (eventDetail?.addColumns !== false) {
+            for (let i = 0, iEnd = rowKeys.length; i < iEnd; i++) {
+                columns[rowKeys[i]] ||= new Array(this.rowCount);
+            }
+        }
+
+        objectEach(columns, (column, columnId): void => {
             if (column) {
                 if (insert) {
                     column = splice(
@@ -403,10 +408,16 @@ class DataTableCore {
                         rowIndex,
                         0,
                         true,
-                        [cellValue]
+                        [row[columnId]]
                     ).array;
                 } else {
-                    column[rowIndex] = cellValue;
+                    column[rowIndex] =
+                        // Preserve explicit null and undefined but fall back
+                        // to existing value if the new row does not have the
+                        // key
+                        columnId in row ?
+                            row[columnId] :
+                            column[rowIndex];
                 }
                 columns[columnId] = column;
             }
