@@ -8,11 +8,21 @@ import { Chart, Series, PlotOptions } from "@highcharts/react";
 export default function PlotOptionsChart() {
   return (
     <Chart>
-      <PlotOptions series={{ dataLabels: { enabled: true } }} />
-      <Series data={[3, 4, 1, 5, 2]} />
+      <PlotOptions
+        series={{ dataLabels: { enabled: true } }}
+        line={{ marker: { enabled: false } }}
+        column={{ borderRadius: 5 }}
+      />
+      <Series type="line" data={[3, 4, 1, 5, 2]} />
+      <Series type="column" data={[2, 1, 3, 2, 4]} />
     </Chart>
   );
 }
 ```
 
-At the moment, the `PlotOptions` component accepts only the [series API option](https://api.highcharts.com/highcharts/plotOptions.series).
+The `PlotOptions` component supports both the generic
+[`plotOptions.series`](https://api.highcharts.com/highcharts/plotOptions.series)
+option and specific series keys like
+[`plotOptions.line`](https://api.highcharts.com/highcharts/plotOptions.line)
+and
+[`plotOptions.column`](https://api.highcharts.com/highcharts/plotOptions.column).
