@@ -107,7 +107,7 @@ export class LocalDataProvider extends DataProvider {
     /**
      * The active view for rendering.
      */
-    private activeView: ScopedRowsView = {
+    private activeView: ActiveRowsView = {
         rowIds: [],
         rowObjects: [],
         rowIdToIndex: new Map()
@@ -384,7 +384,7 @@ export class LocalDataProvider extends DataProvider {
             activeTable = activeTable.getModified();
         }
 
-        this.activeView = this.createScopedView(activeTable);
+        this.activeView = this.createActiveView(activeTable);
 
         this.rowIdToOriginalIndex = this.createRowIdToOriginalIndexMap(
             rawTable
@@ -393,7 +393,7 @@ export class LocalDataProvider extends DataProvider {
         this.presentationTable = activeTable;
     }
 
-    private createScopedView(table: DataTable): ScopedRowsView {
+    private createActiveView(table: DataTable): ActiveRowsView {
         const rowIds: RowId[] = [];
         const rowObjects: RowObjectType[] = [];
 
@@ -510,7 +510,7 @@ export class LocalDataProvider extends DataProvider {
     }
 }
 
-interface ScopedRowsView {
+interface ActiveRowsView {
     rowIds: RowId[];
     rowObjects: RowObjectType[];
     rowIdToIndex: Map<RowId, number>;

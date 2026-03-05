@@ -99,18 +99,11 @@ class PaginationController {
     }
 
     /**
-     * Number of scrollable rows available on a page.
-     */
-    public get effectivePageSize(): number {
-        return this.currentPageSize;
-    }
-
-    /**
      * Gets the total number of pages.
      */
     public get totalPages(): number {
-        const computed = this.effectivePageSize > 0 ? Math.ceil(
-            this.totalItems / this.effectivePageSize
+        const computed = this.currentPageSize > 0 ? Math.ceil(
+            this.totalItems / this.currentPageSize
         ) : 1;
 
         return Math.max(1, computed);

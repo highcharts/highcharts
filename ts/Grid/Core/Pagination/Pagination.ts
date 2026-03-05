@@ -423,16 +423,16 @@ class Pagination {
 
         const {
             currentPage,
-            effectivePageSize,
+            currentPageSize,
             totalItems,
             totalPages
         } = this.controller;
 
         const startItem = totalItems > 0 ?
-            (currentPage - 1) * effectivePageSize + 1 :
+            (currentPage - 1) * currentPageSize + 1 :
             0;
         const endItem = totalItems > 0 ?
-            Math.min(currentPage * effectivePageSize, totalItems) :
+            Math.min(currentPage * currentPageSize, totalItems) :
             0;
 
         const pageInfoText = formatText(this.lang?.pageInfo ?? '', {

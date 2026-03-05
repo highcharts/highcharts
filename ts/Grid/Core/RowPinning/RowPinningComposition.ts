@@ -26,6 +26,7 @@ import type { DeepPartial } from '../../../Shared/Types';
 import type Options from '../../Core/Options';
 import type { RowObject as DataTableRowObject } from '../../../Data/DataTable';
 import type { GridEvent } from '../../Core/GridUtils';
+import type { RowId } from '../Data/DataProvider';
 
 import { defaultOptions as gridDefaultOptions } from '../../Core/Defaults.js';
 import Globals from '../../Core/Globals.js';
@@ -252,6 +253,50 @@ function computeNextPinnedIds(
 }
 
 /**
+ * Execute shared runtime pinning sequence.
+ *
+ * @param eventPayload
+ * Event payload passed to before/after row pinning hooks.
+ *
+ * @param applyChange
+ * Callback that mutates pinning state and provider cache hooks.
+ *
+ * @param announcementAction
+ * Announcement action for accessibility.
+ *
+ * @param announcementPosition
+ * Optional pinning position used by pin announcements.
+ */
+async function runRuntimePinningChange(
+    this: Grid,
+    eventPayload: RowPinningChangeEvent,
+    applyChange: () => Promise<void> | void,
+    announcementAction: 'pin'|'unpin',
+    announcementPosition?: RowPinningPosition
+): Promise<void> {
+    fireEvent(this, 'beforeRowPin', eventPayload);
+    callRowPinningEventCallback(this, 'beforeRowPin', eventPayload);
+
+    await applyChange();
+
+    const renderResult = this.viewport ?
+        await this.viewport.renderPinnedRows() :
+        { missingPinnedRowIds: [] };
+
+    await this.handlePinnedRenderResult(renderResult, 'runtime');
+    this.viewport?.reflow();
+
+    fireEvent(this, 'afterRowPin', eventPayload);
+    callRowPinningEventCallback(this, 'afterRowPin', eventPayload);
+    announceRowPinningChange(
+        this,
+        announcementAction,
+        eventPayload.rowId,
+        announcementPosition
+    );
+}
+
+/**
  * Pin a row in runtime and re-render pinned sections only.
  *
  * @param rowId
@@ -290,22 +335,16 @@ async function pinRow(
         bottomIds: next.bottomIds.slice()
     } as RowPinningChangeEvent;
 
-    fireEvent(this, 'beforeRowPin', eventPayload);
-    callRowPinningEventCallback(this, 'beforeRowPin', eventPayload);
-
-    this.rowPinning.pinRow(rowId, position, index);
-    await this.dataProvider?.primePinnedRows([rowId]);
-
-    const renderResult = this.viewport ?
-        await this.viewport.renderPinnedRows('runtime') :
-        { missingPinnedRowIds: [] };
-
-    await this.handlePinnedRenderResult(renderResult, 'runtime');
-    this.viewport?.reflow();
-
-    fireEvent(this, 'afterRowPin', eventPayload);
-    callRowPinningEventCallback(this, 'afterRowPin', eventPayload);
-    announceRowPinningChange(this, 'pin', rowId, position);
+    await runRuntimePinningChange.call(
+        this,
+        eventPayload,
+        async (): Promise<void> => {
+            this.rowPinning?.pinRow(rowId, position, index);
+            await this.dataProvider?.primePinnedRows([rowId]);
+        },
+        'pin',
+        position
+    );
 }
 
 /**
@@ -351,30 +390,19 @@ async function toggleRow(
         bottomIds: next.bottomIds.slice()
     } as RowPinningChangeEvent;
 
-    fireEvent(this, 'beforeRowPin', eventPayload);
-    callRowPinningEventCallback(this, 'beforeRowPin', eventPayload);
-
-    if (isPinned) {
-        this.rowPinning.unpinRow(rowId);
-        this.dataProvider?.clearPinnedRowCache(rowId);
-    } else {
-        this.rowPinning.pinRow(rowId, position);
-        await this.dataProvider?.primePinnedRows([rowId]);
-    }
-
-    const renderResult = this.viewport ?
-        await this.viewport.renderPinnedRows('runtime') :
-        { missingPinnedRowIds: [] };
-
-    await this.handlePinnedRenderResult(renderResult, 'runtime');
-    this.viewport?.reflow();
-
-    fireEvent(this, 'afterRowPin', eventPayload);
-    callRowPinningEventCallback(this, 'afterRowPin', eventPayload);
-    announceRowPinningChange(
+    await runRuntimePinningChange.call(
         this,
+        eventPayload,
+        async (): Promise<void> => {
+            if (isPinned) {
+                this.rowPinning?.unpinRow(rowId);
+                this.dataProvider?.clearPinnedRowCache(rowId);
+            } else {
+                this.rowPinning?.pinRow(rowId, position);
+                await this.dataProvider?.primePinnedRows([rowId]);
+            }
+        },
         isPinned ? 'unpin' : 'pin',
-        rowId,
         isPinned ? void 0 : position
     );
 }
@@ -408,22 +436,15 @@ async function unpinRow(
         bottomIds: next.bottomIds.slice()
     } as RowPinningChangeEvent;
 
-    fireEvent(this, 'beforeRowPin', eventPayload);
-    callRowPinningEventCallback(this, 'beforeRowPin', eventPayload);
-
-    this.rowPinning.unpinRow(rowId);
-    this.dataProvider?.clearPinnedRowCache(rowId);
-
-    const renderResult = this.viewport ?
-        await this.viewport.renderPinnedRows('runtime') :
-        { missingPinnedRowIds: [] };
-
-    await this.handlePinnedRenderResult(renderResult, 'runtime');
-    this.viewport?.reflow();
-
-    fireEvent(this, 'afterRowPin', eventPayload);
-    callRowPinningEventCallback(this, 'afterRowPin', eventPayload);
-    announceRowPinningChange(this, 'unpin', rowId);
+    await runRuntimePinningChange.call(
+        this,
+        eventPayload,
+        (): void => {
+            this.rowPinning?.unpinRow(rowId);
+            this.dataProvider?.clearPinnedRowCache(rowId);
+        },
+        'unpin'
+    );
 }
 
 /**
@@ -515,7 +536,7 @@ function getPinnedRows(
  * */
 
 export type RowPinningPosition = 'top'|'bottom';
-export type GridRowId = (string|number);
+export type GridRowId = RowId;
 export type RowPinningChangeAction = 'pin'|'unpin'|'toggle';
 
 export interface RowPinningChangeEvent {

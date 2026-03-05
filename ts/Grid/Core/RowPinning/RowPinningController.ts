@@ -23,6 +23,7 @@
 
 import type Grid from '../../Core/Grid';
 import type { RowObject as DataTableRowObject } from '../../../Data/DataTable';
+import type { RowId as DataProviderRowId } from '../Data/DataProvider';
 
 /* *
  *
@@ -30,7 +31,7 @@ import type { RowObject as DataTableRowObject } from '../../../Data/DataTable';
  *
  * */
 
-export type RowId = (string|number);
+export type RowId = DataProviderRowId;
 export type RowPinningPosition = 'top'|'bottom';
 
 export interface RowResolveEntry {

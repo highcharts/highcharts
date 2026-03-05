@@ -400,7 +400,7 @@ class Table {
         const threshold = rows?.virtualizationThreshold ?? 50;
 
         if (grid.pagination) {
-            return grid.querying.pagination.effectivePageSize >= threshold;
+            return grid.querying.pagination.currentPageSize >= threshold;
         }
 
         return rowCount >= threshold;
@@ -488,7 +488,7 @@ class Table {
             }
 
             await vp.grid.recomputeResolvedFromActiveView?.();
-            const renderResult = await vp.renderPinnedRows('query');
+            const renderResult = await vp.renderPinnedRows();
             await vp.grid.handlePinnedRenderResult?.(renderResult, 'query');
 
             // Update the pagination controls
@@ -947,7 +947,7 @@ class Table {
         if (meta.focusCursor) {
             const { section, rowId, columnIndex } = meta.focusCursor;
             if (section === 'scroll') {
-                this.grid.dataProvider?.getRowIndex(rowId).then((
+                void this.grid.dataProvider?.getRowIndex(rowId).then((
                     rowIndex
                 ): void => {
                     if (rowIndex === void 0) {
@@ -1042,14 +1042,9 @@ class Table {
     /**
      * Re-renders top and bottom pinned rows from row IDs.
      *
-     * @param source
-     * Trigger source for reconciliation flow.
-     *
      * @internal
      */
-    public async renderPinnedRows(
-        source: 'query'|'runtime'
-    ): Promise<{ missingPinnedRowIds: RowId[] }> {
+    public async renderPinnedRows(): Promise<{ missingPinnedRowIds: RowId[] }> {
         // Cancel any active cell editing before destroying/moving rows to
         // prevent orphaned inputs and stale cell references.
         if (this.cellEditing?.editedCell) {
@@ -1063,7 +1058,6 @@ class Table {
         const hasPinning = pinnedRows.topIds.length > 0 ||
             pinnedRows.bottomIds.length > 0;
         this.ensurePinnedBodiesRendered(hasPinning);
-        void source;
 
         if (!hasPinning) {
             this.pinnedTopRows.forEach((row): void => row.destroy());
@@ -1082,13 +1076,13 @@ class Table {
         const topMissing = await this.syncPinnedRowsByIds(
             this.pinnedTopRows,
             this.pinnedTopTbodyElement,
-            pinnedRows.topIds as RowId[],
+            pinnedRows.topIds,
             'top'
         );
         const bottomMissing = await this.syncPinnedRowsByIds(
             this.pinnedBottomRows,
             this.pinnedBottomTbodyElement,
-            pinnedRows.bottomIds as RowId[],
+            pinnedRows.bottomIds,
             'bottom'
         );
 
