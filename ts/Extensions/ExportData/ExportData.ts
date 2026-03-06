@@ -919,8 +919,8 @@ namespace ExportData {
                     index: series.index
                 };
 
-                // Export directly from options.data because we need the
-                // uncropped data (#7913), and we need to support Boost (#7026).
+                // Export raw data because we need the uncropped data (#7913),
+                // and we need to support Boost (#7026).
                 const data = new Array(series.dataTable.rowCount)
                         .fill(void 0).map((_, i): PointOptions =>
                             series.dataTable.getRowObject(i) as PointOptions
