@@ -77,6 +77,7 @@ declare module '../../Core/Series/SeriesBase' {
     interface SeriesBase extends BoostTargetObject {
         boosted?: boolean;
         boost?: BoostSeriesAdditions;
+        boostDataIndices?: Array<number>;
         fill?: boolean;
         fillOpacity?: boolean;
         processedData?: Array<(PointOptions|PointShortOptions)>;
@@ -939,7 +940,8 @@ function getPoint(
             false
         ),
         pointIndex = boostPoint.i,
-        pointColor = (data?.[pointIndex] as { color?: string } | undefined)
+        dataIndex = series.boostDataIndices?.[pointIndex] ?? pointIndex,
+        pointColor = (data?.[dataIndex] as { color?: string } | undefined)
             ?.color,
         point = new PointClass(
             series as BoostSeriesComposition,
@@ -956,6 +958,7 @@ function getPoint(
         seriesOptions?.keys?.length
     ) {
         const keys = seriesOptions.keys;
+        const pointData = (data as any)?.[dataIndex];
 
         // Don't reassign X and Y properties as they're already handled above
         for (
@@ -963,8 +966,24 @@ function getPoint(
             keysIndex > -1;
             keysIndex--
         ) {
-            (point as any)[keys[keysIndex]] =
-                (data as any)[pointIndex][keysIndex];
+            const key = keys[keysIndex];
+
+            let value = (series.getColumn(key, true) as Array<unknown>|undefined)
+                ?.[pointIndex];
+
+            if (typeof value === 'undefined') {
+                value = (series.getColumn(key) as Array<unknown>|undefined)
+                    ?.[dataIndex];
+            }
+            if (
+                typeof value === 'undefined' &&
+                isArray(pointData)
+            ) {
+                value = pointData[keysIndex];
+            }
+            if (typeof value !== 'undefined') {
+                (point as any)[key] = value;
+            }
         }
     }
 
@@ -1011,12 +1030,15 @@ function scatterProcessData(
         return false;
     }
 
+    series.boostDataIndices = void 0;
+
     // Required to get tick-based zoom ranges that take options into account
     // like `minPadding`, `maxPadding`, `startOnTick`, `endOnTick`.
     series.yAxis.setTickInterval();
 
     const boostThreshold = options.boostThreshold || 0,
         cropThreshold = options.cropThreshold,
+        data = options.data as Array<(PointOptions|PointShortOptions)>,
         xData = series.getColumn('x'),
         xExtremes = xAxis.getExtremes(),
         xMax = xExtremes.max ?? Number.MAX_VALUE,
@@ -1064,9 +1086,10 @@ function scatterProcessData(
     }
 
     // Filter unsorted scatter data for ranges
-    const processedData: Array<PointOptions> = [],
+    const processedData: Array<(PointOptions|PointShortOptions)> = [],
         processedXData: Array<number> = [],
         processedYData: Array<number> = [],
+        processedDataIndices: Array<number> = [],
         xRangeNeeded = !(isNumber(xExtremes.max) || isNumber(xExtremes.min)),
         yRangeNeeded = !(isNumber(yExtremes.max) || isNumber(yExtremes.min));
 
@@ -1086,9 +1109,10 @@ function scatterProcessData(
             x >= xMin && x <= xMax &&
             y >= yMin && y <= yMax
         ) {
-            processedData.push({ x, y });
+            processedData.push(data?.[i] ?? { x, y });
             processedXData.push(x);
             processedYData.push(y);
+            processedDataIndices.push(i);
             if (xRangeNeeded) {
                 xDataMax = Math.max(xDataMax, x);
                 xDataMin = Math.min(xDataMin, x);
@@ -1124,6 +1148,7 @@ function scatterProcessData(
         x: processedXData,
         y: processedYData
     });
+    series.boostDataIndices = cropped ? processedDataIndices : void 0;
 
     if (!getSeriesBoosting(series, processedXData)) {
         series.processedData = processedData; // For un-boosted points rendering
