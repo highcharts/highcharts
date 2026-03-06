@@ -227,7 +227,7 @@ function isChartSeriesBoosting(
 
         if (patientMax(
             series.getColumn('x', true),
-            seriesOptions.data as any,
+            seriesOptions.data || [],
             /// series.xData,
             series.points
         ) >= (seriesOptions.boostThreshold || Number.MAX_VALUE)) {

@@ -79,7 +79,6 @@ declare module '../../Core/Series/SeriesBase' {
         boost?: BoostSeriesAdditions;
         fill?: boolean;
         fillOpacity?: boolean;
-        processedData?: Array<(PointOptions|PointShortOptions)>;
         sampling?: boolean;
     }
 }
@@ -723,7 +722,6 @@ function enterBoost(
         }
         series.data.length = 0;
         series.points.length = 0;
-        delete series.processedData;
     }
 }
 
@@ -1125,10 +1123,6 @@ function scatterProcessData(
         y: processedYData
     });
 
-    if (!getSeriesBoosting(series, processedXData)) {
-        series.processedData = processedData; // For un-boosted points rendering
-    }
-
     return true;
 }
 
@@ -1147,7 +1141,7 @@ function seriesRenderCanvas(this: Series): void {
         yData = options.yData || this.getColumn('y', true),
         lowData = this.getColumn('low', true),
         highData = this.getColumn('high', true),
-        rawData = this.processedData || options.data,
+        rawData = options.data,
         xExtremes = xAxis.getExtremes(),
         // Taking into account the offset of the min point #19497
         xMin = xExtremes.min - (xAxis.minPointOffset || 0),

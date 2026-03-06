@@ -25,7 +25,7 @@ import type { DeepPartial } from '../../Shared/Types';
 import Axis from './Axis.js';
 import D from '../Defaults.js';
 const { defaultOptions } = D;
-import { splat, merge, pick, addEvent } from '../../Shared/Utilities.js';
+import { splat, merge, addEvent } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -203,16 +203,18 @@ class ZAxis extends Axis implements AxisBase {
                     threshold = void 0;
                 }
 
-                const zData = series.getColumn('z');
+                const zData = [...series.getColumn('z', false, true)]
+                    // When z is not defined, render in the 0 plane
+                    .map((z): number => z || 0);
 
                 if (zData.length) {
                     this.dataMin = Math.min(
-                        pick(this.dataMin, zData[0] as any),
-                        Math.min.apply(null, zData as any)
+                        this.dataMin ?? (zData[0] || 0),
+                        Math.min.apply(null, zData)
                     );
                     this.dataMax = Math.max(
-                        pick(this.dataMax, zData[0] as any),
-                        Math.max.apply(null, zData as any)
+                        this.dataMax ?? (zData[0] || 0),
+                        Math.max.apply(null, zData)
                     );
                 }
             }

@@ -613,6 +613,9 @@
         );
         expectedMin = chart.xAxis[0].toValue(-30, true);
 
+        // With no-x column, fails because data is handled differently when
+        // `setData` runs with pure y-values after previously being set with
+        // explicit x. See https://jsfiddle.net/highcharts/j96zm5uy/
         panTo('left', series.points[7].plotX, series.points[7].plotY, 30);
 
         assert.strictEqual(

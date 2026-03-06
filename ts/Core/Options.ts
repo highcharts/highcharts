@@ -18,6 +18,8 @@ import type ButtonThemeObject from './Renderer/SVG/ButtonThemeObject';
 import type Chart from './Chart/Chart';
 import type ColorString from './Color/ColorString';
 import type CSSObject from './Renderer/CSSObject';
+import type DataTableCore from '../Data/DataTableCore';
+import type DataTableOptions from '../Data/DataTableOptions';
 import type { SeriesTypePlotOptions } from './Series/SeriesType';
 import type { SymbolKey } from './Renderer/SVG/SymbolType';
 import type { LangOptionsCore } from '../Shared/LangOptionsCore';
@@ -313,6 +315,10 @@ export interface Options {
      * ]
      */
     colors?: Array<ColorString>;
+    /**
+     * Data table configuration or an instance of a DataTable.
+     */
+    dataTable?: DataTableOptions|DataTableCore;
     /**
      * An object containing language-related strings and settings. A typical
      * setup uses `Highcharts.setOptions` to make the options apply to all

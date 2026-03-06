@@ -1386,6 +1386,7 @@ export interface ColumnEvent extends DataEvent {
     readonly columns?: ColumnCollection;
     readonly columnIds: Array<string>;
     readonly rowIndex?: number;
+    readonly target?: DataTableCore;
 }
 
 /**

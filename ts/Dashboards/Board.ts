@@ -44,7 +44,12 @@ import Defaults from './Defaults.js';
 import Globals from './Globals.js';
 import Layout from './Layout/Layout.js';
 import HTMLComponent from './Components/HTMLComponent/HTMLComponent.js';
-import { addEvent, createElement, merge, objectEach } from '../Shared/Utilities.js';
+import {
+    addEvent,
+    createElement,
+    merge,
+    objectEach
+} from '../Shared/Utilities.js';
 import { error, uniqueKey } from '../Core/Utilities.js';
 
 /* *

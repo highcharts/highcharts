@@ -250,6 +250,61 @@ class DataTableCore {
     }
 
     /**
+     * Retrieves the row at a given index.
+     *
+     * @param {number} rowIndex
+     * Row index to retrieve. First row has index 0.
+     *
+     * @param {Array<string>} [columnNames]
+     * Column names to retrieve.
+     *
+     * @return {Record<string, number|string|undefined>|undefined}
+     * Returns the row values, or `undefined` if not found.
+     */
+    public getRowObject(
+        rowIndex: number,
+        columnNames?: Array<string>
+    ): (DataTableRowObject|undefined) {
+        const row = {} as DataTableRowObject,
+            columns = this.columns;
+
+        columnNames ??= Object.keys(this.columns);
+
+        for (const columnName of columnNames) {
+            row[columnName] = columns[columnName]?.[rowIndex];
+        }
+        return row;
+    }
+
+    /**
+     * Output the table in the console.
+     * @todo remove/comment out this method before production
+     */
+    public log(msg = '', limit = 10, start = 0): void {
+        /* eslint-disable no-console */
+        const extra = (this.rowCount > limit || start > 0) ?
+            `Showing ${limit} rows out of ${this.rowCount}, start at ${start}` :
+            '';
+        if (extra) {
+            msg += ` / ${extra}`;
+        }
+        if (msg) {
+            console.group(msg);
+        }
+        console.table(
+            new Array(Math.min(this.rowCount, limit))
+                .fill(void 0)
+                .map((_, i): DataTableRowObject =>
+                    this.getRowObject(i + start) || {}
+                )
+        );
+        if (msg) {
+            console.groupEnd();
+        }
+        /* eslint-enable no-console */
+    }
+
+    /**
      * Sets cell values for a column. Will insert a new column, if not found.
      *
      * @param {string} columnId
@@ -343,19 +398,11 @@ class DataTableCore {
 
         if (eventDetail?.addColumns !== false) {
             for (let i = 0, iEnd = rowKeys.length; i < iEnd; i++) {
-                const key = rowKeys[i];
-
-                if (!columns[key]) {
-                    columns[key] = [];
-                }
+                columns[rowKeys[i]] ||= new Array(this.rowCount);
             }
         }
 
         objectEach(columns, (column, columnId): void => {
-            if (!column && eventDetail?.addColumns !== false) {
-                column = new Array(indexRowCount);
-            }
-
             if (column) {
                 if (insert) {
                     column = splice(
@@ -363,21 +410,25 @@ class DataTableCore {
                         rowIndex,
                         0,
                         true,
-                        [row[columnId] ?? null]
+                        [row[columnId]]
                     ).array;
                 } else {
-                    column[rowIndex] = row[columnId] ?? null;
+                    column[rowIndex] =
+                        // Preserve explicit null and undefined but fall back
+                        // to existing value if the new row does not have the
+                        // key
+                        columnId in row ?
+                            row[columnId] :
+                            column[rowIndex];
                 }
                 columns[columnId] = column;
             }
         });
 
-        if (indexRowCount > this.rowCount) {
-            this.applyRowCount(indexRowCount);
-        }
+        this.applyRowCount(Math.max(indexRowCount, this.rowCount));
 
         if (!eventDetail?.silent) {
-            fireEvent(this, 'afterSetRows');
+            fireEvent(this, 'afterSetRows', { rowIndex });
             this.versionTag = uniqueKey();
         }
     }

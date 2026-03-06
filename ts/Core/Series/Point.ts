@@ -19,7 +19,6 @@
 
 import type AnimationOptions from '../Animation/AnimationOptions';
 import type ColorType from '../Color/ColorType';
-import type { RowObject } from '../../Data/DataTable';
 import type { EventCallback } from '../Callback';
 import type PointBase from './PointBase';
 import type {
@@ -612,12 +611,17 @@ class Point {
      * @param {number} [x]
      *        Optionally, the x value.
      *
+     * @param {boolean} [isMock]
+     *        If true, the point is not a real instance, but a mock object
+     *        created for handling data. Avoid some logic.
+     *
      * @return {Highcharts.Point}
      *         The Point instance.
      */
     public applyOptions(
         options: (PointOptions|PointShortOptions),
-        x?: number
+        x?: number,
+        isMock?: boolean
     ): Point {
         const point = this,
             series = point.series,
@@ -640,15 +644,6 @@ class Point {
             point.options = options;
         }
 
-        // Since options are copied into the Point instance, some accidental
-        // options must be shielded (#5681)
-        if ((options as any).group) {
-            delete (point as any).group;
-        }
-        if (options.dataLabels) {
-            delete point.dataLabels;
-        }
-
         // For higher dimension series types. For instance, for ranges, point.y
         // is mapped to point.low.
         if (pointValKey) {
@@ -658,38 +653,30 @@ class Point {
             ) as (number|null|undefined);
         }
 
-        // The point is initially selected by options (#5777)
-        if (point.selected) {
-            point.state = 'select';
+        if (isNumber(x)) {
+            point.x = x;
         }
 
-        // If no x is set by now, get auto incremented value. All points must
-        // have an x value, however the y value can be null to create a gap in
-        // the series
-        if (
-            'name' in point &&
-            typeof x === 'undefined' &&
-            series.xAxis &&
-            series.xAxis.hasNames
-        ) {
-            point.x = series.xAxis.nameToX(point);
-        }
-        if (typeof point.x === 'undefined' && series) {
-            point.x = x ?? series.autoIncrement();
-        } else if (isNumber(options.x) && series.options.relativeXValue) {
-            point.x = series.autoIncrement(options.x);
-
-        // If x is a string, try to parse it to a datetime
-        } else if (typeof point.x === 'string') {
-            x ??= series.chart.time.parse(point.x);
-            if (isNumber(x)) {
-                point.x = x;
+        if (!isMock) {
+            // The point is initially selected by options (#5777)
+            if (point.selected) {
+                point.state = 'select';
             }
+
+            // Since options are copied into the Point instance, some accidental
+            // options must be shielded (#5681)
+            if ((options as any).group) {
+                delete (point as any).group;
+            }
+            if (options.dataLabels) {
+                delete point.dataLabels;
+            }
+
+            point.isNull = this.isValid && !this.isValid();
+
+            // #9233, #10874
+            point.formatPrefix = point.isNull ? 'null' : 'point';
         }
-
-        point.isNull = this.isValid && !this.isValid();
-
-        point.formatPrefix = point.isNull ? 'null' : 'point'; // #9233, #10874
 
         return point;
     }
@@ -1032,7 +1019,7 @@ class Point {
                     if (series.xAxis?.dateTime) {
                         ret.x = series.chart.time.parse(options[0]);
                     } else {
-                        ret.name = options[0];
+                        ret[series.tupleKey || 'name'] = options[0];
                     }
                 } else if (firstItemType === 'number') {
                     ret.x = options[0];
@@ -1301,7 +1288,7 @@ class Point {
      */
     public update(
         options: (PointOptions|PointShortOptions),
-        redraw?: boolean,
+        redraw: boolean = true,
         animation?: (boolean|Partial<AnimationOptions>),
         runEvent?: boolean
     ): void {
@@ -1310,9 +1297,7 @@ class Point {
             graphic = point.graphic,
             chart = series.chart,
             seriesOptions = series.options,
-            data = seriesOptions.data;
-        let i: number;
-        redraw = pick(redraw, true);
+            dataOptions = seriesOptions.data;
 
         /**
          * Perform the actual update of the point.
@@ -1325,7 +1310,8 @@ class Point {
 
             // Update visuals, #4146
             // Handle mock graphic elements for a11y, #12718
-            const hasMockGraphic = graphic && point.hasMockGraphic;
+            const hasMockGraphic = graphic && point.hasMockGraphic,
+                index = point.index;
             const shouldDestroyGraphic = point.y === null ?
                 !hasMockGraphic :
                 hasMockGraphic;
@@ -1339,9 +1325,8 @@ class Point {
                 if (graphic?.element) {
                     // "null" is also a valid symbol
                     if (
-                        options &&
-                        (options as any).marker &&
-                        typeof (options as any).marker.symbol !== 'undefined'
+                        options?.marker &&
+                        typeof options.marker.symbol !== 'undefined'
                     ) {
                         point.graphic = graphic.destroy();
                     }
@@ -1352,24 +1337,31 @@ class Point {
             }
 
             // Record changes in the data table
-            i = point.index;
-            const row: RowObject = {};
-            for (const key of series.dataColumnKeys()) {
-                row[key] = (point as any)[key];
-            }
-            series.dataTable.setRow(row, i);
+            const pointOptions = point.optionsToObject(options) as AnyRecord;
+            series.dataTable.setRow(pointOptions, index);
 
             // Record the options to options.data. If the old or the new config
             // is an object, use point options, otherwise use raw options
-            // (#4701, #4916, #24225).
-            if (data) {
-                data[i] = (isObject(data[i], true) || isObject(options, true)) ?
+            // (#4701, #4916).
+            if (dataOptions) {
+                dataOptions[index] = (
+                    isObject(dataOptions[index], true) ||
+                    isObject(options, true)
+                ) ?
                     point.options :
-                    (options ?? data[i]);
+                    options ?? dataOptions[index];
             }
 
             // Redraw
             series.isDirty = series.isDirtyData = true;
+
+            if ('x' in pointOptions) {
+                point.x = series.getX(pointOptions.x);
+                if (series.xColumn) {
+                    series.xColumn[index] = point.x;
+                }
+            }
+
             if (!series.fixedBox && series.hasCartesianSeries) { // #1906, #2320
                 chart.isDirtyBox = true;
             }
@@ -1472,8 +1464,10 @@ class Point {
             { accumulate: accumulate },
             function (): void {
                 point.selected = point.options.selected = selected;
-                (series.options.data as any)[series.data.indexOf(point)] =
-                    point.options;
+                if (series.options.data) {
+                    series.options.data[series.data.indexOf(point)] =
+                        point.options;
+                }
 
                 point.setState((selected as any) && 'select');
 
@@ -1482,21 +1476,24 @@ class Point {
                     chart.getSelectedPoints().forEach(function (
                         loopPoint: Point
                     ): void {
-                        const loopSeries = loopPoint.series;
+                        const loopSeries = loopPoint.series,
+                            loopSeriesOptions = loopSeries.options;
 
                         if (loopPoint.selected && loopPoint !== point) {
                             loopPoint.selected = loopPoint.options.selected =
                                 false;
-                            (loopSeries.options.data as any)[
-                                loopSeries.data.indexOf(loopPoint)
-                            ] = loopPoint.options;
+                            if (loopSeriesOptions.data) {
+                                loopSeriesOptions.data[
+                                    loopSeries.data.indexOf(loopPoint)
+                                ] = loopPoint.options;
+                            }
 
                             // Programmatically selecting a point should restore
                             // normal state, but when click happened on other
                             // point, set inactive state to match other points
                             loopPoint.setState(
                                 chart.hoverPoints &&
-                                    loopSeries.options.inactiveOtherPoints ?
+                                    loopSeriesOptions.inactiveOtherPoints ?
                                     'inactive' : ''
                             );
                             loopPoint.firePointEvent('unselect');

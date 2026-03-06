@@ -19,6 +19,8 @@ import type AnimationOptions from '../Animation/AnimationOptions';
 import type ColorType from '../Color/ColorType';
 import type { CursorValue } from '../Renderer/CSSObject';
 import type DashStyleValue from '../Renderer/DashStyleValue';
+import type DataTableCore from '../../Data/DataTableCore';
+import type DataTableOptions from '../../Data/DataTableOptions';
 import type { DeepPartial } from '../../Shared/Types';
 import type { EventCallback } from '../Callback';
 import type Point from './Point';
@@ -45,6 +47,12 @@ import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
  *  Declarations
  *
  * */
+
+export interface ColumnAssignmentItem {
+    key: string;
+    columnName: string;
+    dataTable: number;
+}
 
 export type NonPlotOptions = (
     'data'|'id'|'index'|'legendIndex'|'mapData'|'name'|'stack'|'treemap'|'type'|
@@ -463,22 +471,7 @@ export interface SeriesOptions {
      */
     colorIndex?: number;
     colors?: Array<ColorType>;
-
-    /**
-     * Whether to connect a graph line across null points, or render a gap
-     * between the two points on either side of the null.
-     *
-     * In stacked area chart, if `connectNulls` is set to true,
-     * null points are interpreted as 0.
-     *
-     * @sample {highcharts} highcharts/plotoptions/series-connectnulls-false/
-     *         False by default
-     * @sample {highcharts} highcharts/plotoptions/series-connectnulls-true/
-     *         True
-     *
-     * @default false
-     * @product highcharts highstock
-     */
+    columnAssignment?: Array<ColumnAssignmentItem>
     connectNulls?: boolean;
 
     /**
@@ -580,19 +573,7 @@ export interface SeriesOptions {
      * @product highcharts highstock
      */
     dataSorting?: SeriesDataSortingOptions;
-
-    /**
-     * Enable or disable the mouse tracking for a specific series. This
-     * includes point tooltips and click events on graphs and points. For
-     * large datasets it improves performance.
-     *
-     * @sample {highcharts} highcharts/plotoptions/series-enablemousetracking-false/
-     *         No mouse tracking
-     * @sample {highmaps} maps/plotoptions/series-enablemousetracking-false/
-     *         No mouse tracking
-     *
-     * @default true
-     */
+    dataTable?: DataTableCore|DataTableOptions;
     enableMouseTracking?: boolean;
 
     /**

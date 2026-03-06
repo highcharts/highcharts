@@ -301,7 +301,6 @@ interface MapBubbleSeries {
     processData: typeof mapProto.processData;
     projectPoint: typeof mapPointProto.projectPoint;
     setOptions: typeof mapProto.setOptions;
-    updateData: typeof mapProto.updateData;
     xyFromShape: boolean;
 }
 extend(MapBubbleSeries.prototype, {
@@ -327,8 +326,6 @@ extend(MapBubbleSeries.prototype, {
     setData: mapProto.setData,
 
     setOptions: mapProto.setOptions,
-
-    updateData: mapProto.updateData,
 
     useMapGeometry: true,
 

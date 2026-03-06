@@ -265,7 +265,7 @@ class FunnelSeries extends PieSeries {
     ): DataLabel.LabelPositionObject {
         const y = point.plotY || 0,
             sign = point.half ? 1 : -1,
-            x = this.getX(y, !!point.half, point);
+            x = this.getXPos(y, !!point.half, point);
 
         return {
             distance,
@@ -379,7 +379,7 @@ class FunnelSeries extends PieSeries {
                     (1 - (y - top) / (height - neckHeight));
         };
 
-        series.getX = function (
+        series.getXPos = function (
             this: FunnelSeries,
             y: number,
             half: boolean,
@@ -680,7 +680,7 @@ class FunnelSeries extends PieSeries {
 interface FunnelSeries {
     pointClass: typeof FunnelPoint;
     getWidthAt(y: number): number; // Added during translate
-    getX(
+    getXPos(
         y: number,
         half: boolean,
         point: FunnelPoint

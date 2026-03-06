@@ -32,7 +32,12 @@ import EditGlobals from './EditGlobals.js';
 import EditRenderer from './EditRenderer.js';
 import GUIElement from '../Layout/GUIElement.js';
 import Layout from '../Layout/Layout.js';
-import { addEvent, createElement, fireEvent, merge } from '../../Shared/Utilities.js';
+import {
+    addEvent,
+    createElement,
+    fireEvent,
+    merge
+} from '../../Shared/Utilities.js';
 
 /* *
  *

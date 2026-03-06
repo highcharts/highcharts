@@ -1297,6 +1297,7 @@ namespace OrdinalAxis {
                         groupPixelWidth: series.groupPixelWidth,
                         destroyGroupedData: H.noop,
                         getColumn: series.getColumn,
+                        getX: H.noop,
                         applyGrouping: series.applyGrouping,
                         getProcessedData: series.getProcessedData,
                         reserveSpace: series.reserveSpace,

@@ -22,7 +22,13 @@ import EditMode from '../EditMode/EditMode.js';
 import { HTMLDOMElement } from '../../Core/Renderer/DOMElementType.js';
 import GUIElement from '../Layout/GUIElement.js';
 import ContextDetection from './ContextDetection.js';
-import { addEvent, createElement, css, fireEvent, merge } from '../../Shared/Utilities.js';
+import {
+    addEvent,
+    createElement,
+    css,
+    fireEvent,
+    merge
+} from '../../Shared/Utilities.js';
 
 
 /**
