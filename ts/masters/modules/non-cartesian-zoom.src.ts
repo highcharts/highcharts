@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LicenseRef-Highcharts
 /**
  * @license Highcharts JS v@product.version@ (@product.date@)
  * @module highcharts/modules/mouse-wheel-zoom
@@ -5,9 +6,11 @@
  *
  * Non-cartesian series zoom module
  *
- * (c) 2024 Hubert Kozik
+ * (c) 2024-2026 Highsoft AS
+ * Author: Hubert Kozik
  *
- * License: www.highcharts.com/license
+ * A commercial license may be required depending on use.
+ * See www.highcharts.com/license
  */
 
 'use strict';

@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Honsi
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -23,7 +24,7 @@ import type Legend from '../../Core/Legend/Legend';
 import type Point from '../../Core/Series/Point';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
-import type KDPointSearchObjectLike from '../../Core/Series/KDPointSearchObjectLike';
+import type KDPointSearchObjectBase from '../../Core/Series/KDPointSearchObjectBase';
 import type PointerEvent from '../../Core/PointerEvent';
 import BubbleLegendComposition from './BubbleLegendComposition.js';
 import BubblePoint from './BubblePoint.js';
@@ -40,18 +41,18 @@ const {
         scatter: ScatterSeries
     }
 } = SeriesRegistry;
-import U from '../../Core/Utilities.js';
-const {
+import {
     addEvent,
     arrayMax,
     arrayMin,
     clamp,
+    defined,
     extend,
     isNumber,
     merge,
     pick,
     pushUnique
-} = U;
+} from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -59,14 +60,14 @@ const {
  *
  * */
 
-declare module '../../Core/Chart/ChartLike'{
-    interface ChartLike {
+declare module '../../Core/Chart/ChartBase'{
+    interface ChartBase {
         bubbleZExtremes?: BubbleZExtremes;
     }
 }
 
-declare module '../../Core/Series/SeriesLike' {
-    interface SeriesLike {
+declare module '../../Core/Series/SeriesBase' {
+    interface SeriesBase {
         bubblePadding?: BubbleSeries['bubblePadding'];
         radii?: BubbleSeries['radii'];
         specialGroup?: BubbleSeries['specialGroup'];
@@ -78,7 +79,7 @@ type BubblePxExtremes = { minPxSize: number; maxPxSize: number };
 
 type BubbleZExtremes = { zMin: number; zMax: number };
 
-interface KDPointSearchObject extends KDPointSearchObjectLike {
+interface KDPointSearchObject extends KDPointSearchObjectBase {
 }
 
 /* *
@@ -779,14 +780,16 @@ class BubbleSeries extends ScatterSeries {
                 point.negative = (point.z || 0) < (options.zThreshold || 0);
             }
 
-            if (isNumber(radius) && radius >= minPxSize / 2) {
-                // Shape arguments
+            // #24138: Always update marker to reflect current calculated radius
+            if (isNumber(radius)) {
                 point.marker = extend(point.marker, {
                     radius,
                     width: 2 * radius,
                     height: 2 * radius
                 });
+            }
 
+            if (isNumber(radius) && radius >= minPxSize / 2) {
                 // Alignment box for the data label
                 point.dlBox = {
                     x: (point.plotX as any) - radius,
@@ -943,6 +946,15 @@ addEvent(BubbleSeries, 'updatedData', (e): void => {
 // After removing series, delete the chart-level Z extremes cache, #17502.
 addEvent(BubbleSeries, 'remove', (e): void => {
     delete e.target.chart.bubbleZExtremes;
+});
+
+// Before updating series, delete the chart-level Z extremes cache if zMin or
+// zMax options are being changed, #24138.
+addEvent(BubbleSeries, 'update', (e): void => {
+    const bubbleOptions = e.target.options as BubbleSeriesOptions;
+    if (defined(bubbleOptions.zMin) || defined(bubbleOptions.zMax)) {
+        delete e.target.chart.bubbleZExtremes;
+    }
 });
 
 /* *

@@ -231,4 +231,55 @@ QUnit.test('alignThresholds', function (assert) {
         point2Box.y + point2Box.height,
         '#17314: alignThresholds and stacking should place columns correctly.'
     );
+
+    // #23787
+    chart.series[0].setData([1, 3, -1]);
+    chart.series[1].setData([2, -2, 2]);
+    chart.setSize(undefined, 300);
+
+    assert.strictEqual(
+        chart.yAxis[0].tickPositions.indexOf(0),
+        1,
+        'Top-heavy data, zero should be the second tick on first axis'
+    );
+
+});
+
+QUnit.test('Align thresholds and zooming', function (assert) {
+    const chart = Highcharts.chart('container', {
+        chart: {
+            type: 'column',
+            alignThresholds: true,
+            width: 600
+        },
+        yAxis: [
+            {},
+            {
+                opposite: true
+            }
+        ],
+        series: [
+            {
+                data: [-18, 11, 7, -13, -6, 1, 0, 17, -1, 10, 14]
+            },
+            {
+                data: [-18, 11, 7, -13, -6, 1, 0, 17, -1, 10, 14],
+                yAxis: 1
+            }
+        ]
+    });
+
+    assert.strictEqual(
+        chart.yAxis[0].tickPositions.indexOf(0),
+        chart.yAxis[1].tickPositions.indexOf(0),
+        'Thresholds should be aligned initially'
+    );
+
+    chart.xAxis[0].setExtremes(7, 10);
+
+    assert.strictEqual(
+        chart.yAxis[0].tickPositions.indexOf(0),
+        chart.yAxis[1].tickPositions.indexOf(0),
+        'Thresholds should be aligned after zooming (setExtremes)'
+    );
 });

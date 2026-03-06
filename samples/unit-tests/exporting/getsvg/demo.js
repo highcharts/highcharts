@@ -151,7 +151,7 @@ QUnit.test('getSVG', function (assert) {
     Element.prototype.remove = remove;
 });
 
-QUnit.test('Hide label with useHTML', function (assert) {
+QUnit.test('Hide label with useHTML', async function (assert) {
     var chart = Highcharts.chart('container', {
         chart: {
             type: 'pie'
@@ -186,7 +186,7 @@ QUnit.test('Hide label with useHTML', function (assert) {
 
     // Replace with exported SVG
     document.getElementById('output').innerHTML =
-        chart.exporting.getSVGForExport(
+        await chart.exporting.getSVGForExport(
             {},
             {
                 plotOptions: {
@@ -211,7 +211,7 @@ QUnit.test('Hide label with useHTML', function (assert) {
     );
 });
 
-QUnit.test('getSVGForExport XHTML', function (assert) {
+QUnit.test('getSVGForExport XHTML', async function (assert) {
     var chart = Highcharts.chart('container', {
         chart: {
             type: 'bar'
@@ -243,7 +243,7 @@ QUnit.test('getSVGForExport XHTML', function (assert) {
         ]
     });
 
-    const svg = chart.exporting.getSVGForExport();
+    const svg = await chart.exporting.getSVGForExport();
 
     assert.strictEqual(
         (svg.match(/<img.*?(?=\/>)/gm) || []).length,

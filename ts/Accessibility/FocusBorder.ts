@@ -1,12 +1,13 @@
 /* *
  *
- *  (c) 2009-2025 Øystein Moseng
+ *  (c) 2009-2026 Highsoft AS
+ *  Author: Øystein Moseng
  *
  *  Extend SVG and Chart classes with focus border capabilities.
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -27,11 +28,7 @@ import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 
 import Chart from '../Core/Chart/Chart.js';
 import SVGElement from '../Core/Renderer/SVG/SVGElement.js';
-import U from '../Core/Utilities.js';
-const {
-    addEvent,
-    pick
-} = U;
+import { addEvent, pick } from '../Shared/Utilities.js';
 
 /* *
  *
@@ -39,8 +36,8 @@ const {
  *
  * */
 
-declare module '../Core/Chart/ChartLike'{
-    interface ChartLike {
+declare module '../Core/Chart/ChartBase'{
+    interface ChartBase {
         focusElement?: SVGElement;
         /** @requires modules/accessibility */
         renderFocusBorder(): void;
@@ -52,8 +49,8 @@ declare module '../Core/Chart/ChartLike'{
     }
 }
 
-declare module '../Core/Renderer/SVG/SVGElementLike' {
-    interface SVGElementLike {
+declare module '../Core/Renderer/SVG/SVGElementBase' {
+    interface SVGElementBase {
         focusBorder?: SVGElement;
         /** @requires modules/accessibility */
         addFocusBorder(margin: number, attribs: SVGAttributes): void;

@@ -6,6 +6,9 @@ const bigData = Array.from({ length: 10000 }, (_, i) => [
 ]);
 
 Highcharts.chart('container', {
+    title: {
+        text: 'Boosted series with point colors'
+    },
     series: [
         {
             type: 'scatter',

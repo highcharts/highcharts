@@ -1,12 +1,13 @@
 /* *
  *
- *  (c) 2009-2025 Øystein Moseng
+ *  (c) 2009-2026 Highsoft AS
+ *  Author: Øystein Moseng
  *
  *  Accessibility component class definition
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -19,12 +20,13 @@
  * */
 
 import type Accessibility from './Accessibility';
-import type EventCallback from '../Core/EventCallback';
+import type { EventCallback } from '../Core/Callback';
 import type { DOMElementType } from '../Core/Renderer/DOMElementType';
 import type HTMLElement from '../Core/Renderer/HTML/HTMLElement';
 import type KeyboardNavigationHandler from './KeyboardNavigationHandler';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type ProxyProvider from './ProxyProvider';
+import type { EventOptions } from '../Shared/Utilities.js';
 
 import CU from './Utils/ChartUtilities.js';
 const { fireEventOnWrappedOrUnwrappedElement } = CU;
@@ -32,7 +34,6 @@ import DOMElementProvider from './Utils/DOMElementProvider.js';
 import EventProvider from './Utils/EventProvider.js';
 import HU from './Utils/HTMLUtilities.js';
 const { getFakeMouseEvent } = HU;
-import U from '../Core/Utilities.js';
 
 /* *
  *
@@ -161,7 +162,7 @@ class AccessibilityComponent {
         el: (T|Class<T>),
         type: string,
         fn: (Function|EventCallback<T>),
-        options?: U.EventOptions
+        options?: EventOptions
     ): Function {
         return this.eventProvider.addEvent<T>(el, type, fn, options);
     }

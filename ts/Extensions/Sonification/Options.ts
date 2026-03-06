@@ -1,21 +1,23 @@
 /* *
  *
- *  (c) 2009-2025 Øystein Moseng
+ *  (c) 2009-2026 Highsoft AS
+ *  Author: Øystein Moseng
  *
  *  Default options for sonification.
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
 'use strict';
 
+import type Chart from '../../Core/Chart/Chart';
+import type { DeepPartial } from '../../Shared/Types';
 import type OptionsType from '../../Core/Options';
 import type Point from '../../Core/Series/Point';
 import type Series from '../../Core/Series/Series';
-import type Chart from '../../Core/Chart/Chart';
 import type SonificationTimeline from './SonificationTimeline';
 import type SynthPatch from './SynthPatch';
 
@@ -1199,7 +1201,7 @@ const Options: DeepPartial<OptionsType> = {
 
     /**
      * @optionparent lang
-     * @private
+     * @internal
      */
     lang: {
         /**

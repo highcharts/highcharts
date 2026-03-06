@@ -2,11 +2,11 @@
  *
  *  Grid Querying Controller class
  *
- *  (c) 2020-2025 Highsoft AS
+ *  (c) 2020-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Dawid Dragula
@@ -22,10 +22,12 @@
  *
  * */
 
-import ChainModifier from '../../../Data/Modifiers/ChainModifier.js';
-import DataModifier from '../../../Data/Modifiers/DataModifier.js';
-import Grid from '../Grid.js';
+import type DataModifier from '../../../Data/Modifiers/DataModifier.js';
+import type Grid from '../Grid.js';
+
 import SortingController from './SortingController.js';
+import FilteringController from './FilteringController.js';
+import PaginationController from './PaginationController.js';
 
 /* *
  *
@@ -51,9 +53,19 @@ class QueryingController {
     public grid: Grid;
 
     /**
-     * Sorting controller instance
+     * Sorting controller instance.
      */
     public sorting: SortingController;
+
+    /**
+     * Filtering controller instance.
+     */
+    public filtering: FilteringController;
+
+    /**
+     * Pagination controller instance
+     */
+    public pagination: PaginationController;
 
     /**
      * This flag should be set to `true` if the modifiers should reapply to the
@@ -70,7 +82,10 @@ class QueryingController {
 
     constructor(grid: Grid) {
         this.grid = grid;
+
+        this.filtering = new FilteringController(this);
         this.sorting = new SortingController(this);
+        this.pagination = new PaginationController(this);
     }
 
 
@@ -97,42 +112,43 @@ class QueryingController {
      * Load all options needed to generate the modifiers.
      */
     public loadOptions(): void {
+        this.filtering.loadOptions();
         this.sorting.loadOptions();
+        this.pagination.loadOptions();
     }
 
     /**
      * Creates a list of modifiers that should be applied to the data table.
      */
-    public getModifiers(): DataModifier[] {
+    public willNotModify(): boolean {
+        return (
+            !this.sorting.modifier &&
+            !this.filtering.modifier
+        );
+    }
+
+    /**
+     * Returns a list of modifiers that should be applied to the data table.
+     */
+    public getGroupedModifiers(): DataModifier[] {
         const modifiers: DataModifier[] = [];
 
         if (this.sorting.modifier) {
             modifiers.push(this.sorting.modifier);
         }
 
+        if (this.filtering.modifier) {
+            modifiers.push(this.filtering.modifier);
+        }
+
         return modifiers;
     }
 
     /**
-     * Apply all modifiers to the data table.
+     * Apply all modifiers to the data provider.
      */
     private async modifyData(): Promise<void> {
-        const originalDataTable = this.grid.dataTable;
-        if (!originalDataTable) {
-            return;
-        }
-
-        const modifiers = this.getModifiers();
-
-        if (modifiers.length > 0) {
-            const chainModifier = new ChainModifier({}, ...modifiers);
-            const dataTableCopy = originalDataTable.clone();
-            await chainModifier.modify(dataTableCopy.modified);
-            this.grid.presentationTable = dataTableCopy.modified;
-        } else {
-            this.grid.presentationTable = originalDataTable.modified;
-        }
-
+        await this.grid.dataProvider?.applyQuery();
         this.shouldBeUpdated = false;
     }
 }

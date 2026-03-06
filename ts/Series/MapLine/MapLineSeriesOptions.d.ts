@@ -6,13 +6,9 @@
 
 import type ColorType from '../../Core/Color/ColorType';
 import type MapLinePointOptions from './MapLinePointOptions';
-import type MapLineSeries from './MapLineSeries';
 import type MapSeriesOptions from '../Map/MapSeriesOptions';
 import type { PointShortOptions } from '../../Core/Series/PointOptions';
-import type {
-    LegendSymbolType,
-    SeriesStatesOptions
-} from '../../Core/Series/SeriesOptions';
+import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 
 /* *
  *
@@ -108,7 +104,10 @@ export interface MapLineSeriesOptions extends MapSeriesOptions {
      */
     fillColor?: ColorType;
 
-    legendSymbol?: LegendSymbolType;
+    /**
+     * @default 'lineMarker'
+     */
+    legendSymbol?: MapSeriesOptions['legendSymbol'];
 
     /**
      * Pixel width of the mapline line.
@@ -144,7 +143,7 @@ export interface MapLineSeriesOptions extends MapSeriesOptions {
      * @apioption plotOptions.mapline.states.hover.lineWidth
      */
 
-    states?: SeriesStatesOptions<MapLineSeries>;
+    states?: SeriesStatesOptions<MapLineSeriesOptions>;
 
 }
 

@@ -1,9 +1,12 @@
+/* SPDX-License-Identifier: LicenseRef-Highcharts */
+
 /**
  * @license Highcharts
  *
- * (c) 2009-2025 Torstein Honsi
+ * (c) 2009-2025 Highsoft AS
  *
- * License: www.highcharts.com/license
+ * A commercial license may be required depending on use.
+ * See www.highcharts.com/license
  */
 
 :root,
@@ -154,6 +157,7 @@
     line-height: normal;
     z-index: 0; /* #1072 */
     -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+    color-scheme: light dark;
     font-family:
         -apple-system,
         BlinkMacSystemFont,
@@ -169,6 +173,14 @@
     user-select: none;
     touch-action: manipulation;
     outline: none;
+}
+
+.highcharts-light .highcharts-container {
+    color-scheme: light;
+}
+
+.highcharts-dark .highcharts-container {
+    color-scheme: dark;
 }
 
 .highcharts-no-touch-action {
@@ -754,6 +766,10 @@ circle.highcharts-legend-nav-inactive { /* tracker */
     stroke-width: 0;
 }
 
+.highcharts-organization-series .highcharts-null-point {
+    fill: transparent;
+}
+
 .highcharts-polygon-series .highcharts-graph {
     fill: inherit;
     stroke-width: 0;
@@ -950,7 +966,7 @@ input.highcharts-range-selector {
 
 .highcharts-crosshair-label text {
     fill: var(--highcharts-background-color);
-    font-size: 1.7em;
+    font-size: 1em;
 }
 
 .highcharts-crosshair-label .highcharts-label-box {

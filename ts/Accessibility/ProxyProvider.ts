@@ -1,6 +1,7 @@
 /* *
  *
- *  (c) 2009-2025 Øystein Moseng
+ *  (c) 2009-2026 Highsoft AS
+ *  Author: Øystein Moseng
  *
  *  Proxy elements are used to shadow SVG elements in HTML for assistive
  *  technology, such as screen readers or voice input software.
@@ -8,9 +9,9 @@
  *  The ProxyProvider keeps track of all proxy elements of the a11y module,
  *  and updating their order and positioning.
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -29,11 +30,6 @@ import type { NullableHTMLAttributes } from './ProxyElement';
 
 import H from '../Core/Globals.js';
 const { doc } = H;
-import U from '../Core/Utilities.js';
-const {
-    attr,
-    css
-} = U;
 
 import CU from './Utils/ChartUtilities.js';
 const { unhideChartElementFromAT } = CU;
@@ -43,6 +39,7 @@ const {
     removeChildNodes
 } = HU;
 import ProxyElement from './ProxyElement.js';
+import { attr, css } from '../Shared/Utilities.js';
 
 
 /**

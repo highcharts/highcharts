@@ -1,12 +1,13 @@
 /* *
  *
- *  (c) 2009-2025 Øystein Moseng
+ *  (c) 2009-2026 Highsoft AS
+ *  Author: Øystein Moseng
  *
  *  Utils for dealing with charts.
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -31,12 +32,7 @@ import H from '../../Core/Globals.js';
 const { doc } = H;
 import HU from './HTMLUtilities.js';
 const { stripHTMLTagsFromString: stripHTMLTags } = HU;
-import U from '../../Core/Utilities.js';
-const {
-    defined,
-    find,
-    fireEvent
-} = U;
+import { defined, find, fireEvent } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -101,9 +97,18 @@ function getAxisDescription(axis: Axis): string {
         axis.options.accessibility?.description ||
         axis.axisTitle?.textStr ||
         axis.options.id ||
-        axis.categories && 'categories' ||
-        axis.dateTime && 'Time' ||
-        'values'
+        axis.categories && axis.chart.langFormat(
+            'accessibility.axis.defaultAxisNames.categories',
+            {}
+        ) ||
+        axis.dateTime && axis.chart.langFormat(
+            'accessibility.axis.defaultAxisNames.time',
+            {}
+        ) ||
+        axis.chart.langFormat(
+            'accessibility.axis.defaultAxisNames.values',
+            {}
+        )
     );
 }
 

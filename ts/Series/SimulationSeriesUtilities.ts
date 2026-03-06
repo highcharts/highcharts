@@ -1,6 +1,5 @@
 /* *
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -15,13 +14,8 @@ import type NetworkgraphSeries from './Networkgraph/NetworkgraphSeries';
 import type PackedBubbleSeries from './PackedBubble/PackedBubbleSeries';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 
-import U from '../Core/Utilities.js';
-const {
-    merge,
-    syncTimeout
-} = U;
-
 import A from '../Core/Animation/AnimationUtilities.js';
+import { syncTimeout } from '../Shared/Utilities.js';
 const { animObject } = A;
 
 type SimulationSeries = (NetworkgraphSeries | PackedBubbleSeries);
@@ -62,7 +56,8 @@ function initDataLabels(this: SimulationSeries): SVGElement {
         dlOptions = series.options.dataLabels;
 
     if (!series.dataLabelsGroup) {
-        const dataLabelsGroup = this.initDataLabelsGroup();
+        // Those series support only one group of data labels (index 0)
+        const dataLabelsGroup = this.initDataLabelsGroup(0, dlOptions);
 
         // Apply the dataLabels.style not only to the
         // individual dataLabels but also to the entire group
@@ -76,7 +71,7 @@ function initDataLabels(this: SimulationSeries): SVGElement {
         if (series.visible) { // #2597, #3023, #3024
             // #19663, initial data labels animation
             if (series.options.animation && dlOptions?.animation) {
-                dataLabelsGroup.animate({ opacity: 1 }, dlOptions?.animation);
+                dataLabelsGroup.animate({ opacity: 1 }, dlOptions.animation);
             } else {
                 dataLabelsGroup.attr({ opacity: 1 });
             }
@@ -88,14 +83,13 @@ function initDataLabels(this: SimulationSeries): SVGElement {
     }
 
     // Place it on first and subsequent (redraw) calls
-    series.dataLabelsGroup.attr(
-        merge(
-            { opacity: 1 },
-            this.getPlotBox('data-labels')
-        )
-    );
+    series.dataLabelsGroup.attr({
+        opacity: 1,
+        ...this.getPlotBox('data-labels')
+    });
     return series.dataLabelsGroup;
 }
+
 
 const DataLabelsDeferUtils = {
     initDataLabels,

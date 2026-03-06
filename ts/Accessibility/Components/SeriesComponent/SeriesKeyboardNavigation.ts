@@ -1,12 +1,13 @@
 /* *
  *
- *  (c) 2009-2025 Øystein Moseng
+ *  (c) 2009-2026 Highsoft AS
+ *  Author: Øystein Moseng
  *
  *  Handle keyboard navigation for series.
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -31,15 +32,11 @@ import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const { seriesTypes } = SeriesRegistry;
 import H from '../../../Core/Globals.js';
 const { doc } = H;
-import U from '../../../Core/Utilities.js';
-const {
-    defined,
-    fireEvent
-} = U;
 
 import KeyboardNavigationHandler from '../../KeyboardNavigationHandler.js';
 import EventProvider from '../../Utils/EventProvider.js';
 import ChartUtilities from '../../Utils/ChartUtilities.js';
+import { defined, fireEvent } from '../../../Shared/Utilities.js';
 const {
     getPointFromXY,
     getSeriesFromName,
@@ -52,14 +49,14 @@ const {
  *
  * */
 
-declare module '../../../Core/Chart/ChartLike'{
-    interface ChartLike {
+declare module '../../../Core/Chart/ChartBase'{
+    interface ChartBase {
         highlightedPoint?: Point;
     }
 }
 
-declare module '../../../Core/Series/SeriesLike' {
-    interface SeriesLike {
+declare module '../../../Core/Series/SeriesBase' {
+    interface SeriesBase {
         /** @requires modules/accessibility */
         keyboardMoveVertical?: boolean;
     }

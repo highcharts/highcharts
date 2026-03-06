@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2010-2025 Kamil Musialowski
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Kamil Musialowski
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -18,7 +19,7 @@
 import PointAndFigurePoint from './PointAndFigurePoint.js';
 import PointAndFigureSeriesDefaults from './PointAndFigureSeriesDefaults.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-import PointAndFigureSymbols from './PointAndFigureSymbols.js';
+import CrossSymbol from '../CrossSymbol.js';
 
 import type Point from '../../Core/Series/Point.js';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes.js';
@@ -26,8 +27,14 @@ import type PointAndFigureSeriesOptions from './PointAndFigureSeriesOptions';
 import type SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 
 import H from '../../Core/Globals.js';
-import U from '../../Core/Utilities.js';
 import Series from '../../Core/Series/Series.js';
+import {
+    extend,
+    isNumber,
+    merge,
+    pushUnique,
+    relativeLength
+} from '../../Shared/Utilities.js';
 const { composed } = H;
 const {
     scatter: ScatterSeries,
@@ -35,13 +42,6 @@ const {
         prototype: columnProto
     }
 } = SeriesRegistry.seriesTypes;
-const {
-    extend,
-    merge,
-    pushUnique,
-    isNumber,
-    relativeLength
-} = U;
 
 
 /* *
@@ -96,7 +96,7 @@ class PointAndFigureSeries extends ScatterSeries {
         SVGRendererClass: typeof SVGRenderer
     ): void {
         if (pushUnique(composed, 'pointandfigure')) {
-            PointAndFigureSymbols.compose(SVGRendererClass);
+            CrossSymbol.compose(SVGRendererClass);
         }
     }
 
@@ -131,7 +131,7 @@ class PointAndFigureSeries extends ScatterSeries {
     public getProcessedData(): Series.ProcessedDataObject {
         if (!this.pnfDataGroups) {
             return {
-                modified: this.dataTable.modified,
+                modified: this.dataTable.getModified(),
                 cropped: false,
                 cropStart: 0,
                 closestPointRange: 1
@@ -139,7 +139,7 @@ class PointAndFigureSeries extends ScatterSeries {
         }
 
         const series = this,
-            modified = this.dataTable.modified,
+            modified = this.dataTable.getModified(),
             options = series.options,
             xData = series.getColumn('x', true),
             yData = series.getColumn('y', true),

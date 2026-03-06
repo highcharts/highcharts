@@ -12,7 +12,14 @@ function createLabel(chart, text, y, color) {
         .add();
 
     setTimeout(function () {
-        label.fadeOut();
+        label.animate(
+            {
+                opacity: 0
+            },
+            {
+                complete: label.destroy
+            }
+        );
     }, 1500);
 }
 

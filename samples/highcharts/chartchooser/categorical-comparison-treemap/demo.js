@@ -53,8 +53,7 @@
                             style: {
                                 textOutline: false,
                                 fontSize: 18
-                            },
-                            zIndex: 9
+                            }
                         },
                         borderWidth: 3
                     },

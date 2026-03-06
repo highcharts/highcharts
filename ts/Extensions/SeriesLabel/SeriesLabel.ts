@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2009-2025 Torstein Honsi
+ *  (c) 2009-2026 Highsoft AS
+ *  Author: Torstein Honsi
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -29,21 +30,21 @@
  *
  * */
 
-import type AnimationOptions from '../../Core/Animation/AnimationOptions';
-import type BBoxObject from '../../Core/Renderer/BBoxObject';
+import type { AnimationOptions } from '../../Core/Animation/AnimationOptions';
+import type { BBoxObject } from '../../Core/Renderer/BBoxObject';
 import type Chart from '../../Core/Chart/Chart.js';
-import type CSSObject from '../../Core/Renderer/CSSObject';
-import type PositionObject from '../../Core/Renderer/PositionObject';
+import type { CSSObject } from '../../Core/Renderer/CSSObject';
+import type { PositionObject } from '../../Core/Renderer/PositionObject';
 import type {
     LabelIntersectBoxObject,
     SeriesLabelOptions
 } from './SeriesLabelOptions';
 import type SplineSeries from '../../Series/Spline/SplineSeries';
-import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+import type { SVGAttributes } from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
-import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+import type { SVGPath } from '../../Core/Renderer/SVG/SVGPath';
 import type SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer';
-import type SymbolOptions from '../../Core/Renderer/SVG/SymbolOptions';
+import type { SymbolOptions } from '../../Core/Renderer/SVG/SymbolOptions';
 
 import A from '../../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
@@ -60,17 +61,17 @@ const {
     boxIntersectLine,
     intersectRect
 } = SLU;
-import U from '../../Core/Utilities.js';
 import { Palette } from '../../Core/Color/Palettes';
-const {
+import {
     addEvent,
     extend,
     fireEvent,
+    internalClearTimeout,
     isNumber,
     pick,
     pushUnique,
     syncTimeout
-} = U;
+} from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -78,8 +79,9 @@ const {
  *
  * */
 
-declare module '../../Core/Chart/ChartLike'{
-    interface ChartLike {
+/** @internal */
+declare module '../../Core/Chart/ChartBase'{
+    interface ChartBase {
         boxesToAvoid?: Array<LabelIntersectBoxObject>;
         labelSeries?: Array<Series>;
         labelSeriesMaxSum?: number;
@@ -87,8 +89,9 @@ declare module '../../Core/Chart/ChartLike'{
     }
 }
 
-declare module '../../Core/Series/SeriesLike' {
-    interface SeriesLike {
+/** @internal */
+declare module '../../Core/Series/SeriesBase' {
+    interface SeriesBase {
         interpolatedPoints?: Array<ControlPoint>;
         labelBySeries?: SVGElement;
         sum?: number;
@@ -97,13 +100,33 @@ declare module '../../Core/Series/SeriesLike' {
 
 declare module '../../Core/Series/SeriesOptions' {
     interface SeriesOptions {
+        /**
+         * Series labels are placed as close to the series as possible in a
+         * natural way, seeking to avoid other series. The goal of this
+         * feature is to make the chart more easily readable, like if a
+         * human designer placed the labels in the optimal position.
+         *
+         * The series labels currently work with series types having a
+         * `graph` or an `area`.
+         *
+         * @sample highcharts/series-label/line-chart
+         *         Line chart
+         * @sample highcharts/demo/streamgraph
+         *         Stream graph
+         * @sample highcharts/series-label/stock-chart
+         *         Stock chart
+         *
+         * @since    6.0.0
+         * @product  highcharts highstock gantt
+         * @requires modules/series-label
+         */
         label?: SeriesLabelOptions;
     }
 }
 
+/** @internal */
 declare module '../../Core/Renderer/SVG/SymbolType' {
     interface SymbolTypeRegistry {
-        /** @requires Extensions/SeriesLabel */
         connector: SymbolFunction;
     }
 }
@@ -139,7 +162,7 @@ const labelDistance = 3;
 
 /**
  * Check whether a proposed label position is clear of other elements.
- * @private
+ * @internal
  */
 function checkClearPoint(
     series: Series,
@@ -169,7 +192,7 @@ function checkClearPoint(
      * Get the weight in order to determine the ideal position. Larger distance
      * to other series gives more weight. Smaller distance to the actual point
      * (connector points only) gives more weight.
-     * @private
+     * @internal
      */
     function getWeight(
         distToOthersSquared: number,
@@ -355,9 +378,7 @@ function checkClearPoint(
 
 }
 
-/**
- * @private
- */
+/** @internal */
 function compose(
     ChartClass: typeof Chart,
     SVGRendererClass: typeof SVGRenderer
@@ -380,7 +401,7 @@ function compose(
  * redraw. It runs in  a timeout to prevent locking, and loops over all series,
  * taking all series and labels into account when placing the labels.
  *
- * @private
+ * @internal
  * @function Highcharts.Chart#drawSeriesLabels
  */
 function drawSeriesLabels(chart: Chart): void {
@@ -473,7 +494,7 @@ function drawSeriesLabels(chart: Chart): void {
         }
 
         /**
-         * @private
+         * @internal
          */
         function insidePane(
             x: number,
@@ -497,7 +518,7 @@ function drawSeriesLabels(chart: Chart): void {
         }
 
         /**
-         * @private
+         * @internal
          */
         function destroyLabel(): void {
             if (label) {
@@ -512,7 +533,10 @@ function drawSeriesLabels(chart: Chart): void {
                 if (typeof labelOptions.format === 'string') {
                     labelText = format(labelOptions.format, series, chart);
                 } else if (labelOptions.formatter) {
-                    labelText = labelOptions.formatter.call(series);
+                    labelText = labelOptions.formatter.call(
+                        series,
+                        series
+                    );
                 }
 
                 series.labelBySeries = label = chart.renderer
@@ -769,7 +793,7 @@ function drawSeriesLabels(chart: Chart): void {
  * Points to avoid. In addition to actual data points, the label should avoid
  * interpolated positions.
  *
- * @private
+ * @internal
  * @function Highcharts.Series#getPointsOnGraph
  */
 function getPointsOnGraph(series: Series): (Array<ControlPoint>|undefined) {
@@ -809,7 +833,7 @@ function getPointsOnGraph(series: Series): (Array<ControlPoint>|undefined) {
      * Push the point to the interpolated points, but only if that position in
      * the grid has not been occupied. As a performance optimization, we divide
      * the plot area into a grid and only add one point per series (#9815).
-     * @private
+     * @internal
      */
     function pushDiscrete(point: ControlPoint): void {
         const cellSize = 8,
@@ -956,7 +980,7 @@ function getPointsOnGraph(series: Series): (Array<ControlPoint>|undefined) {
  * Overridable function to return series-specific font sizes for the labels. By
  * default it returns bigger font sizes for series with the greater sum of y
  * values.
- * @private
+ * @internal
  */
 function labelFontSize(
     series: Series,
@@ -971,7 +995,7 @@ function labelFontSize(
 
 /**
  * Prepare drawing series labels.
- * @private
+ * @internal
  */
 function onChartRedraw(this: Chart, e: Event): void {
 
@@ -984,7 +1008,7 @@ function onChartRedraw(this: Chart, e: Event): void {
         chart.labelSeriesMaxSum = 0;
 
         if (chart.seriesLabelTimer) {
-            U.clearTimeout(chart.seriesLabelTimer);
+            internalClearTimeout(chart.seriesLabelTimer);
         }
 
         // Which series should have labels
@@ -1053,7 +1077,7 @@ function onChartRedraw(this: Chart, e: Event): void {
 
 /**
  * General symbol definition for labels with connector.
- * @private
+ * @internal
  */
 function symbolConnector(
     x: number,
@@ -1108,10 +1132,12 @@ function symbolConnector(
  *
  * */
 
+/** @internal */
 const SeriesLabel = {
     compose
 };
 
+/** @internal */
 export default SeriesLabel;
 
 /* *

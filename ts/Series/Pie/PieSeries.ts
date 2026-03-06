@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Honsi
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -31,14 +32,13 @@ import PieSeriesDefaults from './PieSeriesDefaults.js';
 import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import Symbols from '../../Core/Renderer/SVG/Symbols.js';
-import U from '../../Core/Utilities.js';
-const {
+import {
     clamp,
     extend,
     fireEvent,
     merge,
     pick
-} = U;
+} from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -46,9 +46,31 @@ const {
  *
  * */
 
-declare module '../../Core/Series/SeriesLike' {
-    interface SeriesLike {
+declare module '../../Core/Series/SeriesBase' {
+    interface SeriesBase {
+        /* *
+        *
+        *  Properties
+        *
+        * */
+
+        /**
+         * The series center position, read only. This applies only to
+         * circular chart types like pie and sunburst. It is an array of
+         * `[centerX, centerY, diameter, innerDiameter]`.
+         */
+        center?: Array<number>;
+
+        /* *
+        *
+        *  Functions
+        *
+        * */
+
+        /** @internal */
         redrawPoints?(): void;
+
+        /** @internal */
         updateTotals?(): void;
     }
 }

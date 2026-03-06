@@ -104,7 +104,7 @@
     const chart = Highcharts.mapChart('container', {
         chart: {
             map: topology,
-            backgroundColor: '#000'
+            backgroundColor: '#141414'
         },
 
         title: {

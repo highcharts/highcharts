@@ -2,11 +2,11 @@
  *
  *  Text Input Cell Content class
  *
- *  (c) 2020-2025 Highsoft AS
+ *  (c) 2020-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Sebastian Bochan
@@ -26,11 +26,8 @@ import type TableCell from '../../../Core/Table/Body/TableCell';
 import type NumberInputRenderer from '../Renderers/NumberInputRenderer';
 
 import CellContentPro from '../CellContentPro.js';
-import U from '../../../../Core/Utilities.js';
-
-const {
-    defined
-} = U;
+import Globals from '../../../Core/Globals.js';
+import { defined } from '../../../../Shared/Utilities.js';
 
 
 /* *
@@ -98,6 +95,7 @@ class NumberInputContent extends CellContentPro implements EditModeContent {
         input.type = 'number';
         input.tabIndex = -1;
         input.name = cell.column.id + '-' + cell.row.id;
+        input.classList.add(Globals.getClassName('input'));
 
         if (options.attributes) {
             Object.entries(options.attributes).forEach(([key, value]): void => {
@@ -185,7 +183,7 @@ class NumberInputContent extends CellContentPro implements EditModeContent {
             return;
         }
 
-        void this.cell.setValue(this.value, true);
+        void this.cell.editValue(this.value);
     };
 
     private readonly onKeyDown = (e: KeyboardEvent): void => {

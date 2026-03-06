@@ -2,11 +2,12 @@
  *
  *  Parallel coordinates module
  *
- *  (c) 2010-2025 Pawel Fus
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Pawel Fus
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -27,17 +28,16 @@ import H from '../../Core/Globals.js';
 const { composed } = H;
 import T from '../../Core/Templating.js';
 const { format } = T;
-import U from '../../Core/Utilities.js';
-const {
+import {
     addEvent,
     defined,
     erase,
     extend,
-    insertItem,
     isArray,
     isNumber,
     pushUnique
-} = U;
+} from '../../Shared/Utilities.js';
+import { insertItem } from '../../Core/Utilities.js';
 
 /* *
  *
@@ -45,6 +45,7 @@ const {
  *
  * */
 
+/** @internal */
 namespace ParallelSeries {
 
     /* *
@@ -53,6 +54,7 @@ namespace ParallelSeries {
      *
      * */
 
+    /** @internal */
     export declare class Composition extends Series {
         chart: ParallelCoordinates.ChartComposition;
     }
@@ -63,7 +65,7 @@ namespace ParallelSeries {
      *
      * */
 
-    /** @private */
+    /** @internal */
     export function compose(
         SeriesClass: typeof Series
     ): void {
@@ -90,7 +92,7 @@ namespace ParallelSeries {
 
     /**
      * Translate each point using corresponding yAxis.
-     * @private
+     * @internal
      */
     function onSeriesAfterTranslate(
         this: Composition
@@ -159,7 +161,7 @@ namespace ParallelSeries {
     /**
      * Bind each series to each yAxis. yAxis needs a reference to all series to
      * calculate extremes.
-     * @private
+     * @internal
      */
     function onSeriesBindAxes(
         this: Composition,
@@ -184,7 +186,7 @@ namespace ParallelSeries {
 
     /**
      * On destroy, we need to remove series from each `axis.series`.
-     * @private
+     * @internal
      */
     function onSeriesDestroy(
         this: Composition
@@ -203,7 +205,7 @@ namespace ParallelSeries {
     }
 
     /**
-     * @private
+     * @internal
      */
     function onSeriesAfterGeneratePoints(
         this: Series
@@ -255,4 +257,5 @@ namespace ParallelSeries {
  *
  * */
 
+/** @internal */
 export default ParallelSeries;

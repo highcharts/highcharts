@@ -1,6 +1,5 @@
 /* *
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -101,8 +100,10 @@ const defaultMarkers: Record<string, AST.Node> = {
  *
  * */
 
+/** @internal */
 const ControllableDefaults = {
     defaultMarkers
 };
 
+/** @internal */
 export default ControllableDefaults;

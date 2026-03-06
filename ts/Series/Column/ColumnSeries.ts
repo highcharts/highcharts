@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Honsi
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -38,8 +39,7 @@ import H from '../../Core/Globals.js';
 const { noop } = H;
 import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-import U from '../../Core/Utilities.js';
-const {
+import {
     clamp,
     crisp,
     defined,
@@ -48,9 +48,9 @@ const {
     isArray,
     isNumber,
     merge,
-    pick,
-    objectEach
-} = U;
+    objectEach,
+    pick
+} from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -58,8 +58,8 @@ const {
  *
  * */
 
-declare module '../../Core/Series/SeriesLike' {
-    interface SeriesLike {
+declare module '../../Core/Series/SeriesBase' {
+    interface SeriesBase {
         barW?: number;
         pointXOffset?: number;
     }
@@ -680,6 +680,7 @@ class ColumnSeries extends Series {
             p2o = (this as any).pointAttrToOptions || {},
             strokeOption = p2o.stroke || 'borderColor',
             strokeWidthOption = p2o['stroke-width'] || 'borderWidth';
+
         let stateOptions: SeriesStateHoverOptions,
             zone,
             brightness,
@@ -722,9 +723,7 @@ class ColumnSeries extends Series {
             stateOptions = merge(
                 (options.states as any)[state],
                 // #6401
-                point.options.states &&
-                (point.options.states as any)[state] ||
-                {}
+                point.options.states?.[state] || {}
             );
             brightness = stateOptions.brightness;
             fill =
@@ -906,23 +905,34 @@ class ColumnSeries extends Series {
 
         // Add the event listeners, we need to do this only once
         if (!series._hasTracking) {
-            (series.trackerGroups as any).forEach(function (key: string): void {
-                if ((series as any)[key]) {
-                    // We don't always have dataLabelsGroup
-                    (series as any)[key]
-                        .addClass('highcharts-tracker')
-                        .on('mouseover', onMouseOver)
-                        .on('mouseout', function (e: PointerEvent): void {
-                            pointer?.onTrackerMouseOut(e);
-                        })
-                        .on('touchstart', onMouseOver);
-
-                    if (!chart.styledMode && series.options.cursor) {
-                        (series as any)[key]
-                            .css({ cursor: series.options.cursor });
+            series.trackerGroups?.reduce(
+                (acc, key): (SVGElement|undefined)[] => {
+                    if (key === 'dataLabelsGroup') {
+                        acc.push(...(series.dataLabelsGroups || []));
+                    } else {
+                        acc.push((series as any)[key]);
                     }
+                    return acc;
+                },
+                [] as (SVGElement|undefined)[]
+            ).forEach((group: SVGElement|undefined): void => {
+                if (!group) {
+                    // Skip undefined
+                    return;
+                }
+
+                group.addClass('highcharts-tracker')
+                    .on('mouseover', onMouseOver)
+                    .on('mouseout', function (e: PointerEvent): void {
+                        pointer?.onTrackerMouseOut(e);
+                    })
+                    .on('touchstart', onMouseOver);
+
+                if (!chart.styledMode && series.options.cursor) {
+                    group.css({ cursor: series.options.cursor });
                 }
             });
+
             series._hasTracking = true;
         }
 

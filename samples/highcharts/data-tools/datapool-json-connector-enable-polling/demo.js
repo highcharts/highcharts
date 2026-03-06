@@ -3,17 +3,15 @@ Dashboards.board('container', {
         connectors: [{
             type: 'JSON',
             id: 'fetched-data',
-            options: {
-                firstRowAsNames: false,
-                dataRefreshRate: 2,
-                enablePolling: true,
-                columnNames: ['time', 'value', 'rounded'],
-                dataUrl: 'https://demo-live-data.highcharts.com/time-rows.json',
-                beforeParse: function (data) {
-                    data.map(el => el.push(Math.round(el[1])));
+            firstRowAsNames: false,
+            dataRefreshRate: 2,
+            enablePolling: true,
+            columnIds: ['time', 'value', 'rounded'],
+            dataUrl: 'https://demo-live-data.highcharts.com/time-rows.json',
+            beforeParse: function (data) {
+                data.map(el => el.push(Math.round(el[1])));
 
-                    return data;
-                }
+                return data;
             }
         }]
     },
@@ -25,7 +23,7 @@ Dashboards.board('container', {
         }
     }, {
         renderTo: 'fetched-columns',
-        type: 'DataGrid',
+        type: 'Grid',
         connector: {
             id: 'fetched-data'
         }

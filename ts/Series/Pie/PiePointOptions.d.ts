@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Honsi
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -17,6 +18,7 @@
 import type { LegendItemClickCallback } from '../../Core/Legend/LegendOptions';
 import type LinePointOptions from '../Line/LinePointOptions';
 import type PieDataLabelOptions from './PieDataLabelOptions';
+import type { PointDataLabelOptionsModifier } from '../../Core/Series/DataLabel';
 import type { PointEventsOptions } from '../../Core/Series/PointOptions';
 import type { SeriesPointOptions } from '../../Core/Series/SeriesOptions';
 
@@ -63,7 +65,7 @@ export interface PiePointOptions extends LinePointOptions {
      *
      * @product highcharts highmaps
      */
-    dataLabels?: (PieDataLabelOptions|Array<PieDataLabelOptions>);
+    dataLabels?: (PiePointDataLabelOptions|Array<PiePointDataLabelOptions>);
 
     /**
      * The sequential index of the data point in the legend.
@@ -90,6 +92,9 @@ export interface PiePointOptions extends LinePointOptions {
     visible?: boolean;
 
 }
+
+export type PiePointDataLabelOptions =
+    PieDataLabelOptions & PointDataLabelOptionsModifier;
 
 /**
  * @optionparent plotOptions.pie.point

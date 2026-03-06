@@ -1,10 +1,10 @@
 /* *
  *
- *  (c) 2009-2025 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Sophie Bremer
@@ -22,8 +22,14 @@
  * */
 
 
-import type DataEvent from '../DataEvent';
+import type {
+    DataEventDetail
+} from '../DataEvent';
 import type DataTable from '../DataTable';
+import type {
+    CellType as DataTableCellType,
+    Column as DataTableColumn
+} from '../DataTable';
 import type { Formula } from '../Formula/Formula';
 import type {
     MathModifierColumnFormulaOptions,
@@ -105,10 +111,10 @@ class MathModifier extends DataModifier {
      * */
 
 
-    public modifyTable<T extends DataTable>(
-        table: T,
-        eventDetail?: DataEvent.Detail
-    ): T {
+    public override modifyTable(
+        table: DataTable,
+        eventDetail?: DataEventDetail
+    ): DataTable {
         const modifier = this;
 
         modifier.emit({ type: 'modify', detail: eventDetail, table });
@@ -116,23 +122,23 @@ class MathModifier extends DataModifier {
         const alternativeSeparators = modifier.options.alternativeSeparators,
             formulaColumns = (
                 modifier.options.formulaColumns ||
-                table.getColumnNames()
+                table.getColumnIds()
             ),
-            modified = table.modified;
+            modified = table.getModified();
 
         for (
             let i = 0,
                 iEnd = formulaColumns.length,
-                columnName: string;
+                columnId: string;
             i < iEnd;
             ++i
         ) {
-            columnName = formulaColumns[i];
+            columnId = formulaColumns[i];
 
-            if (formulaColumns.indexOf(columnName) >= 0) {
+            if (formulaColumns.indexOf(columnId) >= 0) {
                 modified.setColumn(
-                    columnName,
-                    modifier.processColumn(table, columnName)
+                    columnId,
+                    modifier.processColumn(table, columnId)
                 );
             }
         }
@@ -177,8 +183,8 @@ class MathModifier extends DataModifier {
      * @param {Highcharts.DataTable} table
      * Table to extract column from and use as reference.
      *
-     * @param {string} columnName
-     * Name of column to process.
+     * @param {string} columnId
+     * Id of column to process.
      *
      * @param {number} rowIndex
      * Row index to start the replacing process from.
@@ -188,11 +194,11 @@ class MathModifier extends DataModifier {
      */
     protected processColumn(
         table: DataTable,
-        columnName: string,
+        columnId: string,
         rowIndex: number = 0
-    ): DataTable.Column {
+    ): DataTableColumn {
         const alternativeSeparators = this.options.alternativeSeparators,
-            column = (table.getColumn(columnName, true) || [])
+            column = (table.getColumn(columnId, true) || [])
                 .slice(rowIndex > 0 ? rowIndex : 0);
 
         for (
@@ -200,7 +206,7 @@ class MathModifier extends DataModifier {
                 iEnd = column.length,
                 cacheFormula: Formula = [],
                 cacheString: string = '',
-                cell: DataTable.CellType;
+                cell: DataTableCellType;
             i < iEnd;
             ++i
         ) {
@@ -259,12 +265,12 @@ class MathModifier extends DataModifier {
         table: DataTable,
         rowStart: number = 0,
         rowEnd: number = table.getRowCount()
-    ): DataTable.Column {
+    ): DataTableColumn {
         rowStart = rowStart >= 0 ? rowStart : 0;
         rowEnd = rowEnd >= 0 ? rowEnd : table.getRowCount() + rowEnd;
 
         const column = [],
-            modified = table.modified;
+            modified = table.getModified();
 
 
         for (let i = 0, iEnd = (rowEnd - rowStart); i < iEnd; ++i) {

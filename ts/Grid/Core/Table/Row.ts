@@ -2,11 +2,11 @@
  *
  *  Grid Row abstract class
  *
- *  (c) 2020-2025 Highsoft AS
+ *  (c) 2020-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Dawid Dragula
@@ -83,6 +83,7 @@ abstract class Row {
     constructor(viewport: Table) {
         this.viewport = viewport;
         this.htmlElement = makeHTMLElement('tr', {});
+        this.htmlElement.setAttribute('role', 'row');
     }
 
 
@@ -104,16 +105,16 @@ abstract class Row {
      * Renders the row's content. It does not attach the row element to the
      * viewport nor pushes the rows to the viewport.rows array.
      */
-    public render(): void {
+    public async render(): Promise<void> {
         const columns = this.viewport.columns;
 
         for (let i = 0, iEnd = columns.length; i < iEnd; i++) {
             const cell = this.createCell(columns[i]);
-            cell.render();
+            await cell.render();
         }
         this.rendered = true;
 
-        if (this.viewport.grid.options?.rendering?.rows?.virtualization) {
+        if (this.viewport.virtualRows) {
             this.reflow();
         }
     }
@@ -183,18 +184,6 @@ abstract class Row {
         }
     }
 }
-
-
-/* *
- *
- *  Class Namespace
- *
- * */
-
-namespace Row {
-
-}
-
 
 /* *
  *

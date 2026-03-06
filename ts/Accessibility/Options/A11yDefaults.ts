@@ -1,12 +1,13 @@
 /* *
  *
- *  (c) 2009-2025 Øystein Moseng
+ *  (c) 2009-2026 Highsoft AS
+ *  Author: Øystein Moseng
  *
  *  Default options for accessibility.
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -19,6 +20,7 @@
  * */
 
 import type A11yOptions from './A11yOptions';
+import type { DeepPartial } from '../../Shared/Types';
 
 import { Palette } from '../../Core/Color/Palettes.js';
 
@@ -84,6 +86,13 @@ import { Palette } from '../../Core/Color/Palettes.js';
  * @param {global.MouseEvent} evt
  *        Mouse click event
  *
+ * @param {Highcharts.Chart} [chart]
+ *        Chart context.
+ *
+ * @param {global.GlobalEventHandlers} [ctx]
+ *        Since v12.5.0, the global event handlers context passed as an extra
+ *        argument for arrow functions.
+ *
  * @return {void}
  */
 
@@ -94,6 +103,10 @@ import { Palette } from '../../Core/Color/Palettes.js';
  *
  * @param {T} context
  *        Context to format
+ *
+ * @param {*} [outerContext]
+ *        Since v12.5.0, the outer context passed as an extra argument for
+ *        arrow functions.
  *
  * @return {string}
  *         Formatted string for the screen reader module.

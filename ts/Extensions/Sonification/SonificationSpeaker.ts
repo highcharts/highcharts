@@ -1,21 +1,19 @@
 /* *
  *
- *  (c) 2009-2025 Øystein Moseng
+ *  (c) 2009-2026 Highsoft AS
+ *  Author: Øystein Moseng
  *
  *  Class representing a speech synthesis voice.
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
 'use strict';
 
-import U from '../../Core/Utilities.js';
-const {
-    pick
-} = U;
+import { pick } from '../../Shared/Utilities.js';
 
 namespace SonificationSpeaker {
     export interface SpeakerOptions {
@@ -123,7 +121,7 @@ class SonificationSpeaker {
 
     /**
      * Stop speech and release any used resources
-     * @private
+     * @internal
      */
     destroy(): void {
         // Ran on TimelineChannel.destroy
@@ -147,7 +145,7 @@ class SonificationSpeaker {
 
     /**
      * Set the active synthesis voice for the speaker.
-     * @private
+     * @internal
      */
     private setVoice(): void {
         if (this.synthesis) {

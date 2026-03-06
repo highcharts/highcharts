@@ -1,12 +1,12 @@
 /* *
  *
- *  (c) 2016-2025 Highsoft AS
+ *  (c) 2016-2026 Highsoft AS
  *
  *  Author: Lars A. V. Cabrera
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -22,6 +22,7 @@ import type {
     AxisOptions,
     YAxisOptions
 } from '../Axis/AxisOptions';
+import type { DeepPartial } from '../../Shared/Types';
 import type { HTMLDOMElement } from '../Renderer/DOMElementType';
 import type Options from '../Options';
 
@@ -29,12 +30,7 @@ import Chart from './Chart.js';
 import D from '../Defaults.js';
 const { defaultOptions } = D;
 import { Palette } from '../Color/Palettes.js';
-import U from '../Utilities.js';
-const {
-    isArray,
-    merge,
-    splat
-} = U;
+import { isArray, merge, splat } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -44,6 +40,8 @@ const {
 
 declare module '../Options' {
     interface Options {
+
+        /** @internal */
         isGantt?: boolean;
     }
 }
@@ -202,6 +200,7 @@ class GanttChart extends Chart {
  *
  * */
 
+/** @internal */
 namespace GanttChart {
 
     /* *

@@ -2,12 +2,12 @@
  *
  *  Module for using patterns or images as point fills.
  *
- *  (c) 2010-2025 Highsoft AS
+ *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi, Øystein Moseng
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -36,18 +36,18 @@ const { animObject } = A;
 import D from '../Core/Defaults.js';
 const { getOptions } = D;
 import MapPoint from '../Series/Map/MapPoint';
-import U from '../Core/Utilities.js';
 import { Palette } from '../Core/Color/Palettes';
-const {
+import {
     addEvent,
     defined,
     erase,
     extend,
+    isObject,
     merge,
     pick,
     removeEvent,
     wrap
-} = U;
+} from '../Shared/Utilities.js';
 
 /* *
  *
@@ -55,8 +55,8 @@ const {
  *
  * */
 
-declare module '../Core/Renderer/SVG/SVGRendererLike' {
-    interface SVGRendererLike {
+declare module '../Core/Renderer/SVG/SVGRendererBase' {
+    interface SVGRendererBase {
         defIds?: Array<string>;
         idCounter?: number;
         patternElements?: Record<string, SVGElement>;
@@ -67,8 +67,8 @@ declare module '../Core/Renderer/SVG/SVGRendererLike' {
     }
 }
 
-declare module '../Core/Series/PointLike' {
-    interface PointLike {
+declare module '../Core/Series/PointBase' {
+    interface PointBase {
         /** @requires modules/pattern-fill */
         calculatePatternDimensions(
             pattern: PatternOptionsObject
@@ -77,36 +77,140 @@ declare module '../Core/Series/PointLike' {
 }
 
 export interface BPatternObject extends BBoxObject {
+
+    /** @internal */
     aspectHeight?: number;
+
+    /** @internal */
     aspectRatio?: number;
+
+    /** @internal */
     aspectWidth?: number;
+
 }
 
 export interface PatternObject {
+
+    /**
+     * Animation options for the image pattern loading.
+     */
     animation?: Partial<AnimationOptions>;
+
+    /**
+     * Pattern options
+     */
     pattern: PatternOptionsObject;
+
+    /**
+     * Optionally an index referencing which pattern to use. Highcharts adds
+     * 10 default patterns to the `Highcharts.patterns` array. Additional
+     * pattern definitions can be pushed to this array if desired. This option
+     * is an index into this array.
+     */
     patternIndex?: number;
+
 }
 
 export interface PatternOptionsObject {
+
+    /** @internal */
     _inverted?: boolean;
+
+    /** @internal */
     _height?: (number|string);
+
+    /** @internal */
     _width?: (number|string);
+
+    /** @internal */
     _x?: number;
+
+    /** @internal */
     _y?: number;
+
+    /**
+     * When true, the pattern is anchored to each individual point rather than
+     * using a global pattern grid. This ensures consistent pattern rendering
+     * across points of different sizes and improves accessibility for narrow
+     * columns. Defaults to false for backward compatibility.
+     */
+    anchorToPoint?: boolean;
+
+    /**
+     * For automatically calculated width and height on images, it is possible
+     * to set an aspect ratio. The image will be zoomed to fill the bounding
+     * box, maintaining the aspect ratio defined.
+     */
     aspectRatio?: number;
+
+    /**
+     * Background color for the pattern if a `path` is set (not images).
+     */
     backgroundColor?: ColorString;
+
+    /**
+     * Pattern color, used as default path stroke.
+     */
     color: ColorString;
+
+    /**
+     * Analogous to pattern.width.
+     */
     height: number;
+
+    /**
+     * ID to assign to the pattern. This is automatically computed if not added,
+     * and identical patterns are reused. To refer to an existing pattern for a
+     * Highcharts color, use `color: "url(#pattern-id)"`.
+     */
     id?: string;
+
+    /**
+     * URL to an image to use as the pattern.
+     */
     image?: string;
+
+    /**
+     * Opacity of the pattern as a float value from 0 to 1.
+     */
     opacity?: number;
+
+    /**
+     * Either an SVG path as string, or an object. As an object, supply the path
+     * string in the `path.d` property. Other supported properties are standard
+     * SVG attributes like `path.stroke` and `path.fill`. If a path is supplied
+     * for the pattern, the `image` property is ignored.
+     */
     path: (string|SVGAttributes);
+
+    /** @internal */
     patternContentUnits?: 'userSpaceOnUse'|'objectBoundingBox';
+
+    /**
+     * SVG `patternTransform` to apply to the entire pattern.
+     * @see [patternTransform demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/series/pattern-fill-transform)
+     */
     patternTransform?: string;
+
+    /**
+     * Width of the pattern. For images this is automatically set to the width
+     * of the element bounding box if not supplied. For non-image patterns the
+     * default is 32px. Note that automatic resizing of image patterns to fill a
+     * bounding box dynamically is only supported for patterns with an
+     * automatically calculated ID.
+     */
     width: number;
+
+    /**
+     * Horizontal offset of the pattern. Defaults to 0.
+     */
     x?: number;
+
+    /**
+     * Vertical offset of the pattern. Defaults to 0.
+     */
     y?: number;
+
 }
 
 /* *
@@ -123,7 +227,7 @@ const patterns = createPatterns();
  *
  * */
 
-/** @private */
+/** @internal */
 function compose(
     ChartClass: typeof Chart,
     SeriesClass: typeof Series,
@@ -158,7 +262,7 @@ function compose(
 
 /**
  * Add the predefined patterns.
- * @private
+ * @internal
  */
 function createPatterns(): Array<PatternOptionsObject> {
     const patterns: Array<PatternOptionsObject> = [],
@@ -199,14 +303,36 @@ function createPatterns(): Array<PatternOptionsObject> {
     ) {
         patterns.push({
             path: pattern,
-            color: colors[i],
+            color: colors[i++],
             width: 10,
             height: 10
         });
-        i = i + 5;
     }
 
     return patterns;
+}
+
+/**
+ * Create an anchored pattern instance for a specific point.
+ * @private
+ */
+function createAnchoredPattern(
+    pattern: PatternOptionsObject,
+    element: SVGDOMElement
+): PatternOptionsObject {
+    const anchoredPattern = merge({}, pattern);
+
+    // Get point's bounding box for anchoring
+    const bbox = (element as any).getBBox ? (element as any).getBBox() : {
+        x: 0, y: 0, width: 32, height: 32
+    };
+
+    // Position pattern at point's origin so each point has its own
+    // pattern instance starting from its top-left corner
+    anchoredPattern._x = bbox.x;
+    anchoredPattern._y = bbox.y;
+
+    return anchoredPattern;
 }
 
 /**
@@ -214,7 +340,7 @@ function createPatterns(): Array<PatternOptionsObject> {
  * String.hashCode implementation in JS. Use the preSeed parameter to add an
  * additional seeding step.
  *
- * @private
+ * @internal
  * @function hashFromObject
  *
  * @param {Object} obj
@@ -254,7 +380,7 @@ function hashFromObject(obj: object, preSeed?: boolean): string {
 /**
  * When animation is used, we have to recalculate pattern dimensions after
  * resize, as the bounding boxes are not available until then.
- * @private
+ * @internal
  */
 function onChartEndResize(
     this: Chart
@@ -297,7 +423,7 @@ function onChartEndResize(
 /**
  * Add a garbage collector to delete old patterns with autogenerated hashes that
  * are no longer being referenced.
- * @private
+ * @internal
  */
 function onChartRedraw(
     this: Chart
@@ -348,35 +474,42 @@ function onChartRedraw(
 
 /**
  * Merge series color options to points.
- * @private
+ * @internal
  */
 function onPointAfterInit(
     this: Point
 ): void {
     const point = this,
         colorOptions: (PatternObject|undefined) =
-            point.options.color as any;
+            (point.color || point.options.color) as any;
 
     // Only do this if we have defined a specific color on this point. Otherwise
     // we will end up trying to re-add the series color for each point.
-    if (colorOptions && colorOptions.pattern) {
+    if (
+        colorOptions &&
+        (
+            colorOptions.pattern ||
+            colorOptions.patternIndex !== void 0
+        )
+    ) {
         // Move path definition to object, allows for merge with series path
         // definition
-        if (typeof colorOptions.pattern.path === 'string') {
+        if (typeof colorOptions.pattern?.path === 'string') {
             colorOptions.pattern.path = {
                 d: colorOptions.pattern.path
             };
         }
         // Merge with series options
         point.color = point.options.color = merge(
-            point.series.options.color as any, colorOptions
+            point.series.options.color as any,
+            colorOptions
         );
     }
 }
 
 /**
  * Add functionality to SVG renderer to handle patterns as complex colors.
- * @private
+ * @internal
  */
 function onRendererComplexColor(
     this: SVGRenderer,
@@ -436,11 +569,20 @@ function onRendererComplexColor(
         // the same pattern definition reuse existing pattern elements by
         // default. We combine two hashes, the second with an additional
         // preSeed algorithm, to minimize collision probability.
-        if (forceHashId || !pattern.id) {
+        if (forceHashId || !pattern.id || pattern.anchorToPoint) {
             // Make a copy so we don't accidentally edit options when setting ID
             pattern = merge({}, pattern);
+
+            // Handle anchored patterns - include the point's
+            // position in the pattern before hashing, so each
+            // point gets a unique ID.
+            if (pattern.anchorToPoint) {
+                pattern = createAnchoredPattern(pattern, element);
+            }
+
             pattern.id = 'highcharts-pattern-' + chartIndex + '-' +
-                hashFromObject(pattern) + hashFromObject(pattern, true);
+                hashFromObject(pattern) + hashFromObject(pattern, true) +
+                (pattern.anchorToPoint ? '-anchored' : '');
         }
 
         // Add it. This function does nothing if an element with this ID
@@ -472,7 +614,7 @@ function onRendererComplexColor(
 
 /**
  * Calculate pattern dimensions on points that have their own pattern.
- * @private
+ * @internal
  */
 function onSeriesRender(
     this: Series
@@ -521,7 +663,7 @@ function onSeriesRender(
  * into account. If only one of width or height are supplied as options, the
  * undefined option is calculated as above.
  *
- * @private
+ * @internal
  * @function Highcharts.Point#calculatePatternDimensions
  *
  * @param {Highcharts.PatternOptionsObject} pattern
@@ -535,7 +677,7 @@ function pointCalculatePatternDimensions(
     this: Point,
     pattern: PatternOptionsObject
 ): void {
-    if (pattern.width && pattern.height) {
+    if (pattern.width && pattern.height && !pattern.anchorToPoint) {
         return;
     }
 
@@ -595,30 +737,45 @@ function pointCalculatePatternDimensions(
             Math.ceil(bBox.aspectHeight || bBox.height);
     }
 
-    // Set x/y accordingly, centering if using aspect ratio, otherwise adjusting
-    // so bounding box corner is 0,0 of pattern.
-    if (!pattern.width) {
-        pattern._x = pattern.x || 0;
-        pattern._x += bBox.x - Math.round(
-            bBox.aspectWidth ?
-                Math.abs(bBox.aspectWidth - bBox.width) / 2 :
-                0
-        );
-    }
-    if (!pattern.height) {
-        pattern._y = pattern.y || 0;
-        pattern._y += bBox.y - Math.round(
-            bBox.aspectHeight ?
-                Math.abs(bBox.aspectHeight - bBox.height) / 2 :
-                0
-        );
+    // Handle anchored patterns
+    if (pattern.anchorToPoint) {
+        // For anchored patterns, always position at origin of the point
+        pattern._x = 0;
+        pattern._y = 0;
+        // Ensure pattern dimensions match the point if not explicitly set
+        if (!pattern.width) {
+            pattern._width = bBox.width;
+        }
+        if (!pattern.height) {
+            pattern._height = bBox.height;
+        }
+    } else {
+        // Original logic for global patterns
+        // Set x/y accordingly, centering if using aspect ratio, otherwise
+        // adjusting so bounding box corner is 0,0 of pattern.
+        if (!pattern.width) {
+            pattern._x = pattern.x || 0;
+            pattern._x += bBox.x - Math.round(
+                bBox.aspectWidth ?
+                    Math.abs(bBox.aspectWidth - bBox.width) / 2 :
+                    0
+            );
+        }
+        if (!pattern.height) {
+            pattern._y = pattern.y || 0;
+            pattern._y += bBox.y - Math.round(
+                bBox.aspectHeight ?
+                    Math.abs(bBox.aspectHeight - bBox.height) / 2 :
+                    0
+            );
+        }
     }
 }
 
 /**
  * Add a pattern to the renderer.
  *
- * @private
+ * @internal
  * @function Highcharts.SVGRenderer#addPattern
  *
  * @param {Highcharts.PatternObject} options
@@ -644,13 +801,17 @@ function rendererAddPattern(
         height = options.height ||
             (typeof options._height === 'number' ? options._height : 0) ||
             defaultSize,
-        rect = (fill: ColorString): SVGElement => this
-            .rect(0, 0, width, height)
-            .attr({ fill })
-            .add(pattern),
         width = options.width ||
             (typeof options._width === 'number' ? options._width : 0) ||
-            defaultSize;
+            defaultSize,
+        patternContentUnits = options.anchorToPoint ?
+            'userSpaceOnUse' :
+            (options.patternContentUnits || 'userSpaceOnUse');
+
+    const rect = (fill: ColorString): SVGElement => this
+        .rect(0, 0, width, height)
+        .attr({ fill })
+        .add(pattern);
 
     let attribs: SVGAttributes,
         id = options.id,
@@ -683,7 +844,7 @@ function rendererAddPattern(
     const attrs: SVGAttributes = {
         id: id,
         patternUnits: 'userSpaceOnUse',
-        patternContentUnits: options.patternContentUnits || 'userSpaceOnUse',
+        patternContentUnits: patternContentUnits,
         width: width,
         height: height,
         x: options._x || options.x || 0,
@@ -708,7 +869,7 @@ function rendererAddPattern(
 
     // Use an SVG path for the pattern
     if (options.path) {
-        path = U.isObject(options.path) ?
+        path = isObject(options.path) ?
             options.path :
             { d: options.path };
 
@@ -729,6 +890,7 @@ function rendererAddPattern(
         if (path.transform) {
             attribs.transform = path.transform;
         }
+
         this.createElement('path').attr(attribs).add(pattern);
         pattern.color = color;
 
@@ -769,7 +931,7 @@ function rendererAddPattern(
 
 /**
  * Make sure we have a series color.
- * @private
+ * @internal
  */
 function wrapSeriesGetColor(
     this: Series,
@@ -799,7 +961,7 @@ function wrapSeriesGetColor(
 /**
  * Scale patterns inversely to the series it's used in.
  * Maintains a visual (1,1) scale regardless of size.
- * @private
+ * @internal
  */
 function onPatternScaleCorrection(
     this: Series
@@ -916,6 +1078,18 @@ export default PatternFill;
  * Pattern options
  *
  * @interface Highcharts.PatternOptionsObject
+ *//**
+ * When true, the pattern is anchored to each individual point rather than
+ * using a global pattern grid. This ensures consistent pattern rendering
+ * across points of different sizes and improves accessibility for narrow
+ * columns. Defaults to false for backward compatibility.
+ *
+ * @sample highcharts/series/pattern-fill-anchor-to-point/
+ *         Compare shared vs anchored pattern positioning
+ * @name Highcharts.PatternOptionsObject#anchorToPoint
+ * @type {boolean|undefined}
+ * @since next
+ * @default false
  *//**
  * Background color for the pattern if a `path` is set (not images).
  * @name Highcharts.PatternOptionsObject#backgroundColor

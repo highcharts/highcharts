@@ -16,7 +16,7 @@
                     if (!window.TestController) {
                         this.setTitle(null, {
                             text:
-                                'Built chart in ' + (new Date() - start) + 'ms'
+                            'Built chart in ' + (new Date() - start) + 'ms'
                         });
                     }
                 }

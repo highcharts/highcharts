@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Honsi
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -24,12 +25,7 @@ import type Series from '../../Core/Series/Series';
 
 import H from '../../Core/Globals.js';
 const { isTouchDevice } = H;
-import U from '../../Core/Utilities.js';
-const {
-    addEvent,
-    merge,
-    pick
-} = U;
+import { addEvent, merge, pick, pushUnique } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -37,8 +33,8 @@ const {
  *
  * */
 
-declare module '../../Core/Chart/ChartLike'{
-    interface ChartLike {
+declare module '../../Core/Chart/ChartBase'{
+    interface ChartBase {
         navigator?: Navigator;
         scrollbar?: Scrollbar;
         scroller?: Navigator;
@@ -51,8 +47,8 @@ declare module '../../Core/Renderer/SVG/SymbolType' {
     }
 }
 
-declare module '../../Core/Series/SeriesLike' {
-    interface SeriesLike {
+declare module '../../Core/Series/SeriesBase' {
+    interface SeriesBase {
         baseSeries?: Series;
         navigatorSeries?: Series;
     }
@@ -88,7 +84,7 @@ function compose(
     NavigatorClass: typeof Navigator
 ): void {
 
-    if (U.pushUnique(composedMembers, ChartClass)) {
+    if (pushUnique(composedMembers, ChartClass)) {
         const chartProto = ChartClass.prototype;
         NavigatorConstructor = NavigatorClass;
 

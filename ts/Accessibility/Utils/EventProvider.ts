@@ -1,12 +1,13 @@
 /* *
  *
- *  (c) 2009-2025 Øystein Moseng
+ *  (c) 2009-2026 Highsoft AS
+ *  Author: Øystein Moseng
  *
  *  Class that can keep track of events added, and clean them up on destroy.
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -18,12 +19,11 @@
  *
  * */
 
-import type EventCallback from '../../Core/EventCallback';
+import { addEvent, type EventOptions } from '../../Shared/Utilities.js';
+import type { EventCallback } from '../../Core/Callback';
 
 import H from '../../Core/Globals.js';
 import DOMElementType from '../../Core/Renderer/DOMElementType';
-import U from '../../Core/Utilities.js';
-const { addEvent } = U;
 
 /* *
  *
@@ -71,7 +71,7 @@ class EventProvider {
         el: (Class<T>|T),
         type: string,
         fn: (EventCallback<T>|Function),
-        options?: U.EventOptions
+        options?: EventOptions
     ): Function;
     /**
      * Add an event to an element and keep track of it for later removal.

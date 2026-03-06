@@ -1,10 +1,10 @@
 /* *
  *
- *  (c) 2009-2025 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Pawel Lysy
@@ -20,21 +20,17 @@
  *
  * */
 
+import type { AnyRecord, DeepPartial } from '../../Shared/Types';
 import type Component from '../Components/Component';
-import type EditableOptions from '../Components/EditableOptions';
-import type Globals from '../Globals';
+import type { Options as ComponentOptions } from '../Components/Component';
+import type { Options as EditableOption } from '../Components/EditableOptions';
 import type { Options as HTMLOptions } from '../Components/HTMLComponent/HTMLComponentOptions';
 
 import EditRenderer from './EditRenderer.js';
-import U from '../../Core/Utilities.js';
 import EditGlobals from './EditGlobals.js';
 import ConfirmationPopup from './ConfirmationPopup.js';
-const {
-    createElement,
-    merge,
-    error,
-    fireEvent
-} = U;
+import { createElement, fireEvent, merge } from '../../Shared/Utilities.js';
+import { error } from '../../Core/Utilities.js';
 
 /* *
  *
@@ -66,10 +62,10 @@ class AccordionMenu {
 
     private iconsURLPrefix: string;
     private closeSidebar: Function;
-    private changedOptions: DeepPartial<Component.Options> = {};
+    private changedOptions: DeepPartial<ComponentOptions> = {};
     private chartOptionsJSON = {};
     private component?: Component;
-    private oldOptionsBuffer: DeepPartial<Component.Options> = {};
+    private oldOptionsBuffer: DeepPartial<ComponentOptions> = {};
     private confirmationPopup?: ConfirmationPopup;
     public waitingForConfirmation = false;
 
@@ -99,7 +95,7 @@ class AccordionMenu {
         const { editMode } = component.board;
         const menu = this;
         const editableOptions = component.editableOptions.getOptions();
-        let options: EditableOptions.Options;
+        let options: EditableOption;
         let content: HTMLElement;
 
         this.component = component;
@@ -194,11 +190,11 @@ class AccordionMenu {
     ): void {
         const pathLength = propertyPath.length - 1;
 
-        let currentLevel = this.changedOptions as Globals.AnyRecord;
+        let currentLevel = this.changedOptions as AnyRecord;
         let currentChartOptionsLevel;
         let currentOldChartOptionsBufferLevel;
-        let currentDataGridOptionsLevel;
-        let currentOldDataGridOptionsBufferLevel;
+        let currentGridOptionsLevel;
+        let currentOldGridOptionsBufferLevel;
 
         if (pathLength === 0 && propertyPath[0] === 'chartOptions') {
             try {
@@ -223,30 +219,30 @@ class AccordionMenu {
 
             if (key === 'gridOptions') {
                 const realGridOptions =
-                    (this.component as any).dataGrid?.options;
+                    (this.component as any).grid?.options;
 
                 if (realGridOptions) {
                     const oldOptionsBuffer =
-                        this.oldOptionsBuffer as Globals.AnyRecord;
+                        this.oldOptionsBuffer as AnyRecord;
                     if (!oldOptionsBuffer.gridOptions) {
                         oldOptionsBuffer.gridOptions = {};
                     }
-                    currentOldDataGridOptionsBufferLevel =
-                        oldOptionsBuffer.gridOptions as Globals.AnyRecord;
-                    currentDataGridOptionsLevel = realGridOptions;
+                    currentOldGridOptionsBufferLevel =
+                        oldOptionsBuffer.gridOptions as AnyRecord;
+                    currentGridOptionsLevel = realGridOptions;
                 }
             } else if (
-                currentDataGridOptionsLevel &&
-                currentOldDataGridOptionsBufferLevel
+                currentGridOptionsLevel &&
+                currentOldGridOptionsBufferLevel
             ) {
-                currentDataGridOptionsLevel = currentDataGridOptionsLevel[key];
+                currentGridOptionsLevel = currentGridOptionsLevel[key];
 
-                if (currentOldDataGridOptionsBufferLevel[key] === void 0) {
-                    currentOldDataGridOptionsBufferLevel[key] = {};
+                if (currentOldGridOptionsBufferLevel[key] === void 0) {
+                    currentOldGridOptionsBufferLevel[key] = {};
                 }
 
-                currentOldDataGridOptionsBufferLevel =
-                    currentOldDataGridOptionsBufferLevel[key];
+                currentOldGridOptionsBufferLevel =
+                    currentOldGridOptionsBufferLevel[key];
             }
 
             if (key === 'chartOptions') {
@@ -254,12 +250,12 @@ class AccordionMenu {
 
                 if (realChartOptions) {
                     const oldOptionsBuffer =
-                        this.oldOptionsBuffer as Globals.AnyRecord;
+                        this.oldOptionsBuffer as AnyRecord;
                     if (!oldOptionsBuffer.chartOptions) {
                         oldOptionsBuffer.chartOptions = {};
                     }
                     currentOldChartOptionsBufferLevel =
-                        oldOptionsBuffer.chartOptions as Globals.AnyRecord;
+                        oldOptionsBuffer.chartOptions as AnyRecord;
                     currentChartOptionsLevel = realChartOptions;
                 }
             } else if (
@@ -289,7 +285,7 @@ class AccordionMenu {
 
         // eslint-disable-next-line @typescript-eslint/no-floating-promises
         this.component?.update(
-            this.changedOptions as Partial<Component.Options>
+            this.changedOptions as Partial<ComponentOptions>
         );
     }
 
@@ -307,7 +303,7 @@ class AccordionMenu {
      * the component for which the menu should be rendered.
      */
     public renderAccordion(
-        options: EditableOptions.Options,
+        options: EditableOption,
         parentNode: HTMLElement,
         component: Component
     ): void {
@@ -317,6 +313,7 @@ class AccordionMenu {
         }
 
         const renderFunction = EditRenderer.getRendererFunction(options.type);
+        const lang = (component.board?.editMode || EditGlobals).lang;
 
         if (!renderFunction) {
             return;
@@ -327,6 +324,7 @@ class AccordionMenu {
             iconsURLPrefix: this.iconsURLPrefix,
             value: component.getEditableOptionValue(options.propertyPath),
             enabledOnOffLabels: options.type === 'toggle',
+            lang,
             onchange: (
                 value: boolean | string | number
             ): void => this.updateOptions(options.propertyPath || [], value)
@@ -348,7 +346,7 @@ class AccordionMenu {
      */
     public renderNested(
         parentElement: HTMLElement,
-        options: EditableOptions.Options,
+        options: EditableOption,
         component: Component
     ): void {
         if (!parentElement || !options.nestedOptions) {
@@ -381,7 +379,7 @@ class AccordionMenu {
             for (let j = 0, jEnd = accordionOptions?.length; j < jEnd; ++j) {
                 this.renderAccordion(
                     merge(
-                        accordionOptions[j] as EditableOptions.Options,
+                        accordionOptions[j] as EditableOption,
                         { lang, isNested: true }
                     ),
                     collapsedHeader.content,
@@ -456,7 +454,7 @@ class AccordionMenu {
         }
 
         await component.update(
-            this.oldOptionsBuffer as Partial<Component.Options>
+            this.oldOptionsBuffer as Partial<ComponentOptions>
         );
 
         fireEvent(

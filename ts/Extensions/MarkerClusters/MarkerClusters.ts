@@ -2,13 +2,13 @@
  *
  *  Marker clusters module.
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
  *
  *  Author: Wojciech Chmiel
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -37,6 +37,7 @@ import type {
 import type PositionObject from '../../Core/Renderer/PositionObject';
 import type Series from '../../Core/Series/Series';
 import type SeriesOptions from '../../Core/Series/SeriesOptions';
+import type ScatterSeriesOptions from '../../Series/Scatter/ScatterSeriesOptions';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
 import A from '../../Core/Animation/AnimationUtilities.js';
@@ -47,16 +48,15 @@ import H from '../../Core/Globals.js';
 const { composed } = H;
 import MarkerClusterDefaults from './MarkerClusterDefaults.js';
 import MarkerClusterScatter from './MarkerClusterScatter.js';
-import U from '../../Core/Utilities.js';
-const {
+import {
     addEvent,
     defined,
-    error,
     isFunction,
     merge,
     pushUnique,
     syncTimeout
-} = U;
+} from '../../Shared/Utilities.js';
+import { error } from '../../Core/Utilities.js';
 
 /* *
  *
@@ -64,16 +64,18 @@ const {
  *
  * */
 
-declare module '../../Core/Series/PointLike' {
-    interface PointLike {
+/** @internal */
+declare module '../../Core/Series/PointBase' {
+    interface PointBase {
         isCluster?: boolean;
         clusteredData?: Array<MarkerClusterSplitDataObject>;
         clusterPointsAmount?: number;
     }
 }
 
-declare module '../../Core/Series/SeriesLike' {
-    interface SeriesLike {
+/** @internal */
+declare module '../../Core/Series/SeriesBase' {
+    interface SeriesBase {
         markerClusterInfo?: MarkerClusterInfoObject;
         markerClusterAlgorithms?: Record<string, MarkerClusterAlgorithmFunction>;
         markerClusterSeriesData?: (Array<Point|null>|null);
@@ -133,11 +135,13 @@ declare module '../../Core/Series/SeriesLike' {
     }
 }
 
+/** @internal */
 interface BaseClustersObject {
     clusters: Array<ClusterAndNoiseObject>;
     noise: Array<ClusterAndNoiseObject>;
 }
 
+/** @internal */
 export interface ClusterAndNoiseObject {
     data: Array<MarkerClusterSplitDataObject>;
     id: string;
@@ -152,10 +156,12 @@ export interface ClusterAndNoiseObject {
     pointsInside?: Array<MarkerClusterSplitDataObject>;
 }
 
+/** @internal */
 export interface GroupMapObject {
     options?: GroupMapOptionsObject;
 }
 
+/** @internal */
 interface GroupMapOptionsObject extends SeriesOptions {
     formatPrefix?: string;
     userOptions?: (PointOptions|PointShortOptions);
@@ -163,6 +169,7 @@ interface GroupMapOptionsObject extends SeriesOptions {
     y?: number;
 }
 
+/** @internal */
 export interface MarkerClusterAlgorithmFunction {
     (
         processedXData: Array<number>,
@@ -172,6 +179,7 @@ export interface MarkerClusterAlgorithmFunction {
     ): Record<string, MarkerClusterSplitDataArray>;
 }
 
+/** @internal */
 export interface MarkerClusterInfoObject {
     clusters: Array<ClusterAndNoiseObject>;
     noise: Array<ClusterAndNoiseObject>;
@@ -185,6 +193,7 @@ export interface MarkerClusterInfoObject {
     pointsState?: MarkerClusterPointsStateObject;
 }
 
+/** @internal */
 export interface KmeansClusterObject {
     posX: number;
     posY: number;
@@ -194,6 +203,7 @@ export interface KmeansClusterObject {
     points: Array<MarkerClusterSplitDataObject>;
 }
 
+/** @internal */
 export interface MarkerClusterPointsState {
     x: number;
     y: number;
@@ -202,11 +212,13 @@ export interface MarkerClusterPointsState {
     point: (Point|undefined);
 }
 
+/** @internal */
 interface MarkerClusterPointsStateObject {
     oldState?: Record<string, MarkerClusterPointsState>;
     newState: Record<string, MarkerClusterPointsState>;
 }
 
+/** @internal */
 export interface MarkerClusterPreventCollisionObject {
     x: number;
     y: number;
@@ -217,12 +229,14 @@ export interface MarkerClusterPreventCollisionObject {
     clusterRadius: number;
 }
 
+/** @internal */
 export interface MarkerClusterSplitDataArray
     extends Array<MarkerClusterSplitDataObject> {
     posX?: number;
     posY?: number;
 }
 
+/** @internal */
 export interface MarkerClusterSplitDataObject {
     dataIndex: number;
     x: number;
@@ -248,7 +262,10 @@ export interface MarkerClusterSplitDataObject {
  *
  * */
 
-/** @private */
+/**
+ * Compose marker cluster module hooks.
+ * @internal
+ */
 function compose(
     AxisClass: typeof Axis,
     ChartClass: typeof Chart,
@@ -279,7 +296,7 @@ function compose(
 
 /**
  * Destroy the old tooltip after zoom.
- * @private
+ * @internal
  */
 function onAxisSetExtremes(
     this: Axis
@@ -290,8 +307,10 @@ function onAxisSetExtremes(
 
     for (const series of chart.series) {
         if (series.markerClusterInfo) {
+            const clusterOptions =
+                (series.options as ScatterSeriesOptions).cluster;
             animationDuration = (
-                animObject((series.options.cluster || {}).animation).duration ||
+                animObject((clusterOptions || {}).animation).duration ||
                 0
             );
         }
@@ -307,7 +326,7 @@ function onAxisSetExtremes(
 
 /**
  * Handle animation.
- * @private
+ * @internal
  */
 function onChartRender(
     this: Chart
@@ -316,12 +335,13 @@ function onChartRender(
 
     for (const series of (chart.series || [])) {
         if (series.markerClusterInfo) {
-            const options = series.options.cluster,
+            const clusterOptions =
+                (series.options as ScatterSeriesOptions).cluster,
                 pointsState = (series.markerClusterInfo || {}).pointsState,
                 oldState = (pointsState || {}).oldState;
 
             if (
-                (options || {}).animation &&
+                (clusterOptions || {}).animation &&
                 series.markerClusterInfo &&
                 (series.chart.pointer?.pinchDown || []).length === 0 &&
                 ((series.xAxis || {}).eventArgs || {}).trigger !== 'pan' &&
@@ -340,14 +360,17 @@ function onChartRender(
 
 }
 
-/** @private */
+/**
+ * Handle drill-to-cluster event.
+ * @internal
+ */
 function onPointDrillToCluster(
     this: Point,
     event: PointClickEvent
 ): void {
     const point = event.point || event.target,
         series = point.series,
-        clusterOptions = series.options.cluster,
+        clusterOptions = (series.options as ScatterSeriesOptions).cluster,
         onDrillToCluster = ((clusterOptions || {}).events || {}).drillToCluster;
 
     if (isFunction(onDrillToCluster)) {
@@ -358,7 +381,7 @@ function onPointDrillToCluster(
 /**
  * Override point prototype to throw a warning when trying to update
  * clustered point.
- * @private
+ * @internal
  */
 function onPointUpdate(
     this: Point
@@ -380,13 +403,15 @@ function onPointUpdate(
 
 /**
  * Add classes, change mouse cursor.
- * @private
+ * @internal
  */
 function onSeriesAfterRender(
     this: Series
 ): void {
     const series = this,
-        clusterZoomEnabled = (series.options.cluster || {}).drillToCluster;
+        clusterZoomEnabled =
+            ((series.options as ScatterSeriesOptions).cluster || {})
+                .drillToCluster;
 
     if (series.markerClusterInfo && series.markerClusterInfo.clusters) {
         for (const cluster of series.markerClusterInfo.clusters) {
@@ -425,10 +450,12 @@ function onSeriesAfterRender(
  *
  * */
 
+/** @internal */
 const MarkerClusters = {
     compose
 };
 
+/** @internal */
 export default MarkerClusters;
 
 /* *

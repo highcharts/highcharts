@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Honsi
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -38,13 +39,14 @@ import { Palette } from '../../Core/Color/Palettes.js';
  * @sample {highcharts} highcharts/series-solidgauge/pane-borderradius
  *         Solid gauge with background settings
  *
- * @type         {Array<*>}
+ * @type         {*|Array<*>}
+ * @requires     highcharts-more
  * @optionparent pane.background
  */
 const background: PaneBackgroundOptions = {
 
     /**
-     * The class name for this background.
+     * An additional class name to apply to the pane background.
      *
      * @sample {highcharts} highcharts/css/pane/
      *         Panes styled by CSS
@@ -54,8 +56,8 @@ const background: PaneBackgroundOptions = {
      *         Panes styled by CSS
      *
      * @type      {string}
-     * @default   highcharts-pane
      * @since     5.0.0
+     * @requires  highcharts-more
      * @apioption pane.background.className
      */
 
@@ -67,6 +69,7 @@ const background: PaneBackgroundOptions = {
      * @type    {Highcharts.PaneBackgroundShapeValue}
      * @since   2.3.0
      * @product highcharts
+     * @requires highcharts-more
      */
     shape: 'arc',
 
@@ -80,6 +83,7 @@ const background: PaneBackgroundOptions = {
      *          and pane with equal border radius
      * @product highcharts
      * @type    {number|string}
+     * @requires highcharts-more
      */
     borderRadius: void 0,
 
@@ -88,6 +92,7 @@ const background: PaneBackgroundOptions = {
      *
      * @since 2.3.0
      * @product highcharts
+     * @requires highcharts-more
      */
     borderWidth: 0,
 
@@ -97,6 +102,7 @@ const background: PaneBackgroundOptions = {
      * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      * @since   2.3.0
      * @product highcharts
+     * @requires highcharts-more
      */
     borderColor: Palette.neutralColor20,
 
@@ -107,6 +113,7 @@ const background: PaneBackgroundOptions = {
      * @default { linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 }, stops: [[0, #ffffff], [1, #e6e6e6]] }
      * @since   2.3.0
      * @product highcharts
+     * @requires highcharts-more
      */
     backgroundColor: Palette.neutralColor5,
 
@@ -120,6 +127,7 @@ const background: PaneBackgroundOptions = {
      * @type    {number|string}
      * @since   2.3.0
      * @product highcharts
+     * @requires highcharts-more
      * @apioption pane.background.innerRadius
      */
 
@@ -133,6 +141,7 @@ const background: PaneBackgroundOptions = {
      * @type     {number|string}
      * @since    2.3.0
      * @product  highcharts
+     * @requires highcharts-more
      */
     outerRadius: '100%'
 
@@ -164,6 +173,7 @@ const pane: PaneOptions|Array<PaneOptions> = {
      * @type      {number}
      * @since     2.3.0
      * @product   highcharts
+     * @requires  highcharts-more
      * @apioption pane.endAngle
      */
 
@@ -195,6 +205,7 @@ const pane: PaneOptions|Array<PaneOptions> = {
      * @default ["50%", undefined]
      * @since   2.3.0
      * @product highcharts
+     * @requires highcharts-more
      * @apioption pane.center
      */
 
@@ -206,7 +217,7 @@ const pane: PaneOptions|Array<PaneOptions> = {
      * @type    {number|Array<number>}
      * @since   next
      */
-    margin: 20,
+    margin: 20
 
     /**
      * The size of the pane, either as a number defining pixels, or a percentage
@@ -237,6 +248,7 @@ const pane: PaneOptions|Array<PaneOptions> = {
      * @since   2.3.0
      * @product highcharts
      * @type      {number}
+     * @requires highcharts-more
      * @apioption pane.startAngle
      */
 
@@ -250,6 +262,7 @@ const pane: PaneOptions|Array<PaneOptions> = {
      *
      * @type    {number|string}
      * @product highcharts
+     * @requires highcharts-more
      * @apioption pane.innerSize
      */
 
@@ -263,9 +276,11 @@ defaultOptions.pane = pane;
  *
  * */
 
+/** @internal */
 const PaneDefaults = {
     pane,
     background
 };
 
+/** @internal */
 export default PaneDefaults;

@@ -1,12 +1,12 @@
 /* *
  *
- *  (c) 2010-2025 Highsoft AS
+ *  (c) 2010-2026 Highsoft AS
  *
  *  Authors: Magdalena Gut, Piotr Madej
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -48,16 +48,15 @@ const {
         map: MapSeries
     }
 } = SeriesRegistry;
-import U from '../../Core/Utilities.js';
-const {
+import {
     addEvent,
-    error,
     extend,
     isNumber,
     isObject,
     merge,
     pick
-} = U;
+} from '../../Shared/Utilities.js';
+import { error } from '../../Core/Utilities.js';
 
 /**
  * Normalize longitute value to -180:180 range.
@@ -467,7 +466,7 @@ class GeoHeatmapSeries extends MapSeries {
 
                     ctx.putImageData(
                         new ImageData(
-                            projectedPixelData,
+                            projectedPixelData as ImageDataArray,
                             projectedWidth,
                             projectedHeight
                         ),

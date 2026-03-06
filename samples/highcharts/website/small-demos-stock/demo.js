@@ -8,6 +8,11 @@ let chartStr = '';
 
 let chartToShow = 'compare';
 
+const colors = [
+    '#8087E8', '#A3EDBA', '#F19E53', '#6699A1',
+    '#E1D369', '#87B4E7', '#DA6D85', '#BBBAC5'
+];
+
 
 pArray.forEach(function (element) {
     if (element.indexOf('charts=') !== -1) {
@@ -194,50 +199,12 @@ function compare() {
 
             Highcharts.stockChart('container', {
                 chart: {
-                    borderWidth: 0,
-                    borderColor: 'white',
-                    backgroundColor: {
-                        linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
-                        stops: [
-                            [0, '#1f1836'],
-                            [1, '#45445d']
-                        ]
-                    }
+                    borderWidth: 0
                 },
+                colors: colors,
                 rangeSelector: {
                     selected: 4,
-                    labelStyle: {
-                        color: '#fff'
-                    },
                     verticalAlign: 'top',
-                    buttonTheme: {
-                        fill: '#46465C',
-                        stroke: '#BBBAC5',
-                        'stroke-width': 1,
-                        height: 30,
-                        y: 5,
-                        style: {
-                            color: '#fff'
-                        },
-                        states: {
-                            hover: {
-                                fill: '#1f1836',
-                                style: {
-                                    color: '#fff'
-                                },
-                                'stroke-width': 1,
-                                stroke: 'white'
-                            },
-                            select: {
-                                fill: '#1f1836',
-                                style: {
-                                    color: '#fff'
-                                },
-                                'stroke-width': 1,
-                                stroke: 'white'
-                            }
-                        }
-                    },
                     dropdown: 'always',
                     inputDateFormat: '%b %e, %y',
                     inputBoxHeight: 30,
@@ -248,7 +215,7 @@ function compare() {
                     xAxis: {
                         labels: {
                             style: {
-                                color: 'transparent'
+                                textOutline: 'none'
                             }
                         }
                     },
@@ -269,34 +236,35 @@ function compare() {
                     enabled: false
                 },
                 xAxis: {
-                    gridLineColor: '#707073',
+                    gridLineColor: 'var(--highcharts-neutral-color-20)',
                     labels: {
                         style: {
-                            color: '#fff',
-                            fontSize: '12px'
+                            color: 'var(--highcharts-neutral-color-100)',
+                            fontSize: '12px',
+                            textOutline: 'none'
                         }
                     },
-                    lineColor: '#707073',
-                    minorGridLineColor: '#505053',
-                    tickColor: '#707073',
+                    lineColor: 'var(--highcharts-neutral-color-20)',
+                    minorGridLineColor: 'var(--highcharts-neutral-color-10)',
+                    tickColor: 'var(--highcharts-neutral-color-20)',
                     min: '2013-05-05',
                     max: '2013-05-10'
                 },
                 yAxis: {
-                    gridLineColor: '#707073',
+                    gridLineColor: 'var(--highcharts-neutral-color-20)',
                     labels: {
                         formatter: function () {
                             return (this.value > 0 ?
                                 ' + ' : '') + this.value + '%';
                         },
                         style: {
-                            color: '#fff',
+                            color: 'var(--text-primary)',
                             fontSize: '12px'
                         }
                     },
-                    lineColor: '#707073',
-                    minorGridLineColor: '#505053',
-                    tickColor: '#707073',
+                    lineColor: 'var(--highcharts-neutral-color-20)',
+                    minorGridLineColor: 'var(--highcharts-neutral-color-10)',
+                    tickColor: 'var(--highcharts-neutral-color-20)',
                     tickWidth: 1,
                     plotLines: [{
                         value: 0,
@@ -314,7 +282,7 @@ function compare() {
                             }
                         },
                         dataLabels: {
-                            color: '#46465C',
+                            color: 'var(--highcharts-neutral-color-20)',
                             style: {
                                 fontSize: '14px'
                             }
@@ -441,6 +409,7 @@ function ao() {
                 // backgroundColor: 'brown'
                 height: '100%'
             },
+            colors: colors,
             rangeSelector: {
                 // selected: 0,
                 floating: true,
@@ -494,7 +463,15 @@ function ao() {
                 inputSpacing: 2
             },
             navigator: {
-                height: 30
+                height: 30,
+                xAxis: {
+                    labels: {
+                        style: {
+                            textOutline: 0,
+                            strokeWidth: 0
+                        }
+                    }
+                }
             },
             title: {
                 text: ''
@@ -649,6 +626,7 @@ function dynamic() {
             }
             // backgroundColor: 'black'
         },
+        colors: colors,
         title: {
             // text: 'Dynamic stock data'
             text: ''
@@ -882,12 +860,14 @@ function ab() {
             },
             series: [{
                 type: 'ohlc',
+                color: colors[3],
                 id: 'aapl',
                 name: 'AAPL Stock Price',
                 data: data
 
             }, {
                 type: 'abands',
+                color: colors[0],
                 linkedTo: 'aapl'
             }],
             responsive: {

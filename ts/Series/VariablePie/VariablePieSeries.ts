@@ -2,11 +2,12 @@
  *
  *  Variable Pie module for Highcharts
  *
- *  (c) 2010-2025 Grzegorz Blachliński
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Grzegorz Blachliński
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -25,8 +26,8 @@ import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     pie: PieSeries
 } = SeriesRegistry.seriesTypes;
-import U from '../../Core/Utilities.js';
-const {
+import VariablePieSeriesDefaults from './VariablePieSeriesDefaults.js';
+import {
     arrayMax,
     arrayMin,
     clamp,
@@ -34,8 +35,7 @@ const {
     fireEvent,
     merge,
     pick
-} = U;
-import VariablePieSeriesDefaults from './VariablePieSeriesDefaults.js';
+} from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -43,8 +43,8 @@ import VariablePieSeriesDefaults from './VariablePieSeriesDefaults.js';
  *
  * */
 
-declare module '../../Core/Series/SeriesLike' {
-    interface SeriesLike {
+declare module '../../Core/Series/SeriesBase' {
+    interface SeriesBase {
         maxPxSize?: number;
         minPxSize?: number;
     }

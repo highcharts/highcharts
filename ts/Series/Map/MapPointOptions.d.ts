@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Honsi
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -19,6 +20,8 @@ import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
 import type ScatterPointOptions from '../Scatter/ScatterPointOptions';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import type { GeoJSONGeometryMultiPoint } from '../../Maps/GeoJSON';
+import type { PointDataLabelOptionsModifier } from '../../Core/Series/DataLabel';
+import type { PointMarkerStatesOptions } from '../../Core/Series/PointOptions';
 
 /* *
  *
@@ -28,7 +31,7 @@ import type { GeoJSONGeometryMultiPoint } from '../../Maps/GeoJSON';
 
 export interface MapPointOptions extends ScatterPointOptions {
     color?: ColorType;
-    dataLabels?: DataLabelOptions;
+    dataLabels?: (MapPointDataLabelOptions | Array<MapPointDataLabelOptions>);
     drilldown?: string;
     geometry?: GeoJSONGeometryMultiPoint;
     id?: string;
@@ -38,8 +41,12 @@ export interface MapPointOptions extends ScatterPointOptions {
     name?: string;
     path?: (string|SVGPath);
     properties?: AnyRecord;
+    states?: PointMarkerStatesOptions<MapPointOptions>;
     value?: (number|null);
 }
+
+export type MapPointDataLabelOptions =
+    DataLabelOptions & PointDataLabelOptionsModifier;
 
 /* *
  *

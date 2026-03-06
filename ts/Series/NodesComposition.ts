@@ -1,6 +1,5 @@
 /* *
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -30,14 +29,8 @@ const {
         }
     }
 } = SeriesRegistry;
-import U from '../Core/Utilities.js';
-const {
-    defined,
-    extend,
-    find,
-    merge,
-    pick
-} = U;
+import { defined, extend, find, merge, pick } from '../Shared/Utilities.js';
+
 
 /* *
  *
@@ -45,14 +38,14 @@ const {
  *
  * */
 
-declare module '../Core/Series/PointLike' {
-    interface PointLike {
+declare module '../Core/Series/PointBase' {
+    interface PointBase {
         name?: string;
     }
 }
 
-declare module '../Core/Series/SeriesLike' {
-    interface SeriesLike {
+declare module '../Core/Series/SeriesBase' {
+    interface SeriesBase {
         nodes?: Array<NodesComposition.PointComposition>;
     }
 }

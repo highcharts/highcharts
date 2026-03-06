@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Honsi
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -31,13 +32,13 @@ const {
         line: LineSeries
     }
 } = SeriesRegistry;
-import U from '../../Core/Utilities.js';
-const {
+import {
+    defined,
     extend,
     merge,
     objectEach,
     pick
-} = U;
+} from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -52,8 +53,8 @@ declare module '../../Core/Renderer/SVG/SVGPath' {
     }
 }
 
-declare module '../../Core/Series/SeriesLike' {
-    interface SeriesLike {
+declare module '../../Core/Series/SeriesBase' {
+    interface SeriesBase {
         areaPath?: SVGPath;
     }
 }
@@ -213,8 +214,9 @@ class AreaSeries extends LineSeries {
                 side: string
             ): void {
                 const point = points[i],
-                    stackedValues = stacking &&
-                        stacks[point.x as any].points[seriesIndex as any],
+                    otherPoint = points[otherI],
+                    stackedValues =
+                        stacking && (stacks[point.x].points[seriesIndex]),
                     nullVal = (point as any)[side + 'Null'] || 0,
                     cliffVal = (point as any)[side + 'Cliff'] || 0;
 
@@ -222,21 +224,20 @@ class AreaSeries extends LineSeries {
                     bottom,
                     isNull = true;
 
-                if (cliffVal || nullVal) {
-
-                    top = (nullVal ?
-                        (stackedValues as any)[0] :
-                        (stackedValues as any)[1]
+                if (stackedValues && (cliffVal || nullVal)) {
+                    top = (
+                        nullVal ? stackedValues[0] : stackedValues[1]
                     ) + cliffVal;
-                    bottom = (stackedValues as any)[0] + cliffVal;
+                    bottom = stackedValues[0] + cliffVal;
                     isNull = !!nullVal;
 
                 } else if (
                     !stacking &&
-                    points[otherI] &&
-                    points[otherI].isNull
+                    otherPoint &&
+                    (otherPoint.isNull ||
+                        !defined(otherPoint.plotY))
                 ) {
-                    top = bottom = threshold as any;
+                    top = bottom = threshold;
                 }
 
                 // Add to the top and bottom line of the area
@@ -279,7 +280,9 @@ class AreaSeries extends LineSeries {
                     points[i].leftNull = points[i].rightNull = void 0;
             }
 
-            isNull = points[i].isNull;
+            // Treat points with undefined plotY as null (e.g. non-positive
+            // values on logarithmic axis, #18422)
+            isNull = points[i].isNull || !defined(points[i].plotY);
             plotX = pick(points[i].rectPlotX, points[i].plotX);
             yBottom = stacking ?
                 pick(points[i].yBottom, translatedThreshold) :
@@ -357,7 +360,10 @@ class AreaSeries extends LineSeries {
             yAxisSeries = yAxis.series,
             seriesLength = yAxisSeries.length,
             upOrDown = yAxis.options.reversedStacks ? 1 : -1,
-            seriesIndex = yAxisSeries.indexOf(series);
+            seriesIndex = yAxisSeries.indexOf(series),
+            translatedThreshold = yAxis.getThreshold(
+                series.options.threshold || 0
+            );
 
 
         points = points || this.points;
@@ -470,18 +476,20 @@ class AreaSeries extends LineSeries {
                         // down
                         i += upOrDown;
                     }
-                    y = pick(y, 0);
-                    y = yAxis.translate(// #6272
-                        y, 0 as any, 1 as any, 0 as any, 1 as any
-                    );
+                    y ||= 0;
+                    const plotY = yAxis.positiveValuesOnly && y <= 0 ?
+                        translatedThreshold :
+                        yAxis.translate(// #6272
+                            y, false, true, false, true
+                        );
                     segment.push({ // @todo create real point object
                         isNull: true,
                         plotX: xAxis.translate(// #6272
-                            x as any, 0 as any, 0 as any, 0 as any, 1 as any
+                            x as any, false, false, false, true
                         ),
                         x: x as any,
-                        plotY: y,
-                        yBottom: y
+                        plotY,
+                        yBottom: plotY
                     } as any);
                 }
             });

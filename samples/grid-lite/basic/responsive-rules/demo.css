@@ -1,0 +1,32 @@
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-lite/css/grid-lite.css");
+
+body {
+    margin: 0;
+}
+
+.demo {
+    padding: 16px;
+}
+
+#wrapper {
+    container-name: wrapper;
+    container-type: inline-size;
+}
+
+#container .hcg-container {
+    height: 400px;
+    margin: 16px 50px;
+}
+
+@container wrapper (width <= 500px) {
+    #container .hcg-container {
+        height: auto;
+        margin: 16px 0;
+    }
+}
+
+.theme-mobile {
+    --hcg-border-radius: 0 !important;
+    --hcg-border-width: 0 !important;
+    --hcg-row-border-width: 1px;
+}

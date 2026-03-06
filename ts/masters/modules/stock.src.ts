@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LicenseRef-Highcharts
 /**
  * @license Highstock JS v@product.version@ (@product.date@)
  * @module highcharts/modules/stock
@@ -5,9 +6,11 @@
  *
  * Highcharts Stock as a plugin for Highcharts
  *
- * (c) 2010-2025 Torstein Honsi
+ * (c) 2010-2026 Highsoft AS
+ * Author: Torstein Honsi
  *
- * License: www.highcharts.com/license
+ * A commercial license may be required depending on use.
+ * See www.highcharts.com/license
  */
 'use strict';
 import Highcharts from '../../Core/Globals.js';
@@ -24,6 +27,7 @@ import FlagsSeries from '../../Series/Flags/FlagsSeries.js';
 import './broken-axis.src.js';
 import './datagrouping.src.js';
 import './mouse-wheel-zoom.src.js';
+import { extend } from '../../Shared/Utilities.js';
 const G: AnyRecord = Highcharts;
 // Classes
 G.Navigator = G.Navigator || Navigator;
@@ -33,7 +37,7 @@ G.Scrollbar = G.Scrollbar || Scrollbar;
 // Functions
 G.stockChart = G.stockChart || StockChart.stockChart;
 G.StockChart = G.StockChart || G.stockChart;
-G.extend(G.StockChart, StockChart);
+extend(G.StockChart, StockChart);
 // Compositions
 DataModifyComposition.compose(G.Series, G.Axis, G.Point);
 FlagsSeries.compose(G.Renderer);

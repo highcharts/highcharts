@@ -2,11 +2,12 @@
  *
  *  Dependency wheel module
  *
- *  (c) 2018-2025 Torstein Honsi
+ *  (c) 2018-2026 Highsoft AS
+ *  Author: Torstein Honsi
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -18,7 +19,6 @@
 
 import { BorderRadiusOptionsObject } from '../../Extensions/BorderRadius';
 import type DependencyWheelPointOptions from './DependencyWheelPointOptions';
-import type DependencyWheelSeries from './DependencyWheelSeries';
 import type {
     SankeySeriesNodeOptions,
     SankeySeriesOptions
@@ -212,7 +212,7 @@ export interface DependencyWheelSeriesOptions extends SankeySeriesOptions {
      */
     startAngle?: number;
 
-    states?: SeriesStatesOptions<DependencyWheelSeries>;
+    states?: SeriesStatesOptions<DependencyWheelSeriesOptions>;
 
 }
 

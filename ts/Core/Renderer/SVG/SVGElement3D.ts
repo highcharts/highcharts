@@ -1,12 +1,13 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Honsi
  *
  *  Extensions to the SVGRenderer class to enable 3D shapes
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -32,11 +33,7 @@ import RendererRegistry from '../RendererRegistry.js';
 const {
     Element: SVGElement
 } = RendererRegistry.getRendererType().prototype;
-import U from '../../Utilities.js';
-const {
-    defined,
-    pick
-} = U;
+import { defined, pick } from '../../../Shared/Utilities.js';
 
 /* *
  *
@@ -44,7 +41,10 @@ const {
  *
  * */
 
+
+/** @internal */
 class SVGElement3D extends SVGElement {
+
 
     /* *
      *
@@ -52,10 +52,12 @@ class SVGElement3D extends SVGElement {
      *
      * */
 
+
     public static types: Record<string, typeof SVGElement3D> = {
         base: SVGElement3D,
         cuboid: SVGElement3D
     };
+
 
     /* *
      *
@@ -63,9 +65,12 @@ class SVGElement3D extends SVGElement {
      *
      * */
 
+
     public parts = ['front', 'top', 'side'];
 
+
     public pathType = 'cuboid';
+
 
     /* *
      *
@@ -73,9 +78,10 @@ class SVGElement3D extends SVGElement {
      *
      * */
 
+
     /**
      * The init is used by base - renderer.Element
-     * @private
+     * @internal
      */
     public initArgs(
         args: SVGAttributes3D
@@ -116,7 +122,7 @@ class SVGElement3D extends SVGElement {
 
     /**
      * Single property setter that applies options to each part
-     * @private
+     * @internal
      */
     public singleSetterForParts(
         prop: string,
@@ -159,7 +165,7 @@ class SVGElement3D extends SVGElement {
 
     /**
      * Calls function for each part. Used for attr, animate and destroy.
-     * @private
+     * @internal
      */
     public processParts(
         props: any,
@@ -186,7 +192,7 @@ class SVGElement3D extends SVGElement {
 
     /**
      * Destroy all parts
-     * @private
+     * @internal
      */
     public destroy(): undefined {
         this.processParts(null, null, 'destroy');
@@ -195,6 +201,7 @@ class SVGElement3D extends SVGElement {
 
     // Following functions are SVGElement3DCuboid (= base)
 
+    /** @internal */
     public attr(
         args: (string|SVGAttributes3D),
         val?: (number|string|ColorType|SVGPath),
@@ -222,6 +229,7 @@ class SVGElement3D extends SVGElement {
         return super.attr(args as any, void 0, complete, continueAnimation);
     }
 
+    /** @internal */
     public animate(
         args: SVGAttributes3D,
         duration?: (boolean|Partial<AnimationOptions>),
@@ -251,6 +259,7 @@ class SVGElement3D extends SVGElement {
         return this;
     }
 
+    /** @internal */
     public fillSetter(
         fill: ColorType
     ): this {
@@ -282,6 +291,7 @@ class SVGElement3D extends SVGElement {
  *
  * */
 
+/** @internal */
 interface SVGElement3D {
     renderer: SVGRenderer3D.Composition;
     add(parent?: SVGElement3D): this;
@@ -300,10 +310,13 @@ interface SVGElement3D {
     ): this;
 }
 
+
 /* *
  *
  *  Default Export
  *
  * */
 
+
+/** @internal */
 export default SVGElement3D;

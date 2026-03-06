@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2010-2025 Askel Eirik Johansson, Piotr Madej
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Askel Eirik Johansson, Piotr Madej
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -38,8 +39,7 @@ const {
         mapline: MapLineSeries
     }
 } = SeriesRegistry;
-import U from '../../Core/Utilities.js';
-const {
+import {
     addEvent,
     arrayMax,
     arrayMin,
@@ -49,7 +49,7 @@ const {
     merge,
     pick,
     relativeLength
-} = U;
+} from '../../Shared/Utilities.js';
 
 /**
  * The flowmap series type

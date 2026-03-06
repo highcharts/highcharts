@@ -18,8 +18,10 @@ In order to fetch the analysis, you can request for example:
 
 ```js
 const goalAnalysisConnector = new HighchartsConnectors.Morningstar.GoalAnalysisConnector({
-    postman: {
-        environmentJSON: postmanJSON
+    api: {
+        access: {
+            token: 'your_access_token'
+        }
     },
     annualInvestment: 4800,
     assetClassWeights: [

@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2010-2025 Pawel Lysy Grzegorz Blachlinski
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Pawel Lysy Grzegorz Blachlinski
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -23,12 +24,12 @@ import type {
 import type Point from '../../Core/Series/Point';
 import type { PointMarkerOptions } from '../../Core/Series/PointOptions';
 import type { SymbolKey } from '../../Core/Renderer/SVG/SymbolType';
-import type TooltipOptions from '../../Core/TooltipOptions';
 import type { TreegraphLinkOptions } from './TreegraphLink';
 import type TreegraphPoint from './TreegraphPoint';
 import type {
     TreemapSeriesLevelOptions,
-    TreemapSeriesOptions
+    TreemapSeriesOptions,
+    TreemapSeriesTooltipOptions
 } from '../Treemap/TreemapSeriesOptions';
 
 /* *
@@ -97,7 +98,7 @@ export interface CollapseButtonOptions {
 
 }
 
-export interface TreegraphDataLabelFormatterCallback {
+export interface TreegraphDataLabelsFormatterCallbackFunction {
     (
         this: (TreegraphPoint|Point)
     ): (string|undefined);
@@ -109,7 +110,7 @@ export interface TreegraphDataLabelFormatterContext {
 
 export interface TreegraphDataLabelOptions extends DataLabelOptions {
     linkFormat?: string;
-    linkFormatter: TreegraphDataLabelFormatterCallback;
+    linkFormatter: TreegraphDataLabelsFormatterCallbackFunction;
     linkTextPath?: DataLabelTextPathOptions;
 }
 
@@ -236,8 +237,17 @@ export interface TreegraphSeriesOptions extends TreemapSeriesOptions {
      */
     reversed?: boolean;
 
-    tooltip?: Partial<TooltipOptions>;
+    tooltip?: TreegraphSeriesTooltipOptions;
+}
 
+export interface TreegraphSeriesTooltipOptions
+    extends TreemapSeriesTooltipOptions {
+    /**
+     * @default '{point.id}'
+     */
+    pointFormat?: TreemapSeriesTooltipOptions['pointFormat']
+
+    // TODO: linkFormat & linkFormatter
 }
 
 /* *

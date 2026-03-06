@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi, Magdalena Gut
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Honsi, Magdalena Gut
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -33,8 +34,14 @@ import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import StackItem from '../../Core/Axis/Stacking/StackItem.js';
 import SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes.js';
 import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
-import U from '../../Core/Utilities.js';
 import { PictorialPathOptions } from './PictorialSeriesOptions';
+import {
+    addEvent,
+    defined,
+    merge,
+    objectEach,
+    pick
+} from '../../Shared/Utilities.js';
 
 const ColumnSeries: typeof ColumnSeriesType = SeriesRegistry.seriesTypes.column;
 
@@ -49,13 +56,6 @@ const {
     rescalePatternFill
 } = PictorialUtilities;
 
-const {
-    addEvent,
-    defined,
-    merge,
-    objectEach,
-    pick
-} = U;
 export interface StackShadowOptions {
     borderColor?: ColorType;
     borderWidth?: number;

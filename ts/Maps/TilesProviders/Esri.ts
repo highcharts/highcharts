@@ -21,6 +21,7 @@ import type {
  *
  * */
 
+/** @internal */
 class Esri implements ProviderDefinition {
 
     /* *
@@ -122,4 +123,5 @@ class Esri implements ProviderDefinition {
  *
  * */
 
+/** @internal */
 export default Esri;

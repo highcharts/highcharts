@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Honsi
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -17,7 +18,6 @@
 import type ColorType from '../../Core/Color/ColorType';
 import type HLCSeriesOptions from '../HLC/HLCSeriesOptions';
 import type OHLCPointOptions from './OHLCPointOptions';
-import type OHLCSeries from './OHLCSeries';
 import type { PointShortOptions } from '../../Core/Series/PointOptions';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 
@@ -140,7 +140,7 @@ export interface OHLCSeriesOptions extends HLCSeriesOptions {
      */
     pointValKey?: string;
 
-    states?: SeriesStatesOptions<OHLCSeries>;
+    states?: SeriesStatesOptions<OHLCSeriesOptions>;
 
     /**
      * Line color for up points.

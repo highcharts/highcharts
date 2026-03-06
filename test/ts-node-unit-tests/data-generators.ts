@@ -94,3 +94,26 @@ export function generateColumnData(rows: number, columns: number){
     }
     return data;
 }
+
+export function generateGridData(rows: number, columns: number) {
+    const columnsData: { [key: string]: any[] } = {};
+    
+    // Generate column names
+    const columnNames = [];
+    for (let i = 0; i < columns; i++) {
+        columnNames.push(`col${i}`);
+    }
+    
+    // Generate data for each column
+    for (let colIndex = 0; colIndex < columns; colIndex++) {
+        const columnData = [];
+        for (let rowIndex = 0; rowIndex < rows; rowIndex++) {
+            columnData.push(Math.random());
+        }
+        columnsData[columnNames[colIndex]] = columnData;
+    }
+    
+    return {
+        columns: columnsData
+    };
+}

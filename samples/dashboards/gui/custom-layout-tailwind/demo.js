@@ -3,13 +3,11 @@ Dashboards.board('container', {
         connectors: [{
             id: 'data',
             type: 'JSON',
-            options: {
-                data: [
-                    ['Product Name', 'Quantity'],
-                    ['Laptop', 100],
-                    ['Smartphone', 150]
-                ]
-            }
+            data: [
+                ['Product Name', 'Quantity'],
+                ['Laptop', 100],
+                ['Smartphone', 150]
+            ]
         }]
     },
     gui: {
@@ -25,7 +23,7 @@ Dashboards.board('container', {
         connector: {
             id: 'data'
         },
-        type: 'DataGrid',
+        type: 'Grid',
         renderTo: 'dashboard-col-1'
     }]
 });

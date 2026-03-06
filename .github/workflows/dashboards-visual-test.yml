@@ -3,10 +3,10 @@ on:
   pull_request:
     branches:
       - 'master'
+      - 'dash/**'
     paths:
       - '.github/workflows/dashboards-visual-test.yml'
       - 'css/dashboards*'
-      - 'css/datagrid*'
       - 'samples/dashboards/**'
       - 'test/cypress/dashboards/**'
       - 'ts/Dashboards/**'
@@ -27,13 +27,13 @@ jobs:
       matrix:
         node-version: [lts/*]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           ref: master
           path: highcharts
 
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
@@ -49,13 +49,18 @@ jobs:
           cd highcharts
           npx gulp scripts
 
+      - name: Build Grid
+        run: |
+          cd highcharts
+          npx gulp scripts --product Grid
+
       - name: Build Dashboards
         run: |
           cd highcharts
-          npx gulp dashboards/scripts
+          npx gulp scripts --product Dashboards
 
       - name: Checkout utils
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           repository: highcharts/highcharts-utils
           path: utils
@@ -67,7 +72,7 @@ jobs:
           npm ci
 
       - name: Create visual test base images
-        uses: cypress-io/github-action@v6
+        uses: cypress-io/github-action@v7
         with:
           start: node ../utils/server --localOnly
           wait-on: 'http://localhost:3031/dashboards.js'
@@ -80,13 +85,13 @@ jobs:
         run: kill $(lsof -t -i:3030)
 
       - name: Checkout current branch
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           clean: false
           path: highcharts
 
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
@@ -102,13 +107,18 @@ jobs:
           cd highcharts
           npx gulp scripts
 
+      - name: Build Grid
+        run: |
+          cd highcharts
+          npx gulp scripts --product Grid
+
       - name: Build Dashboards
         run: |
           cd highcharts
-          npx gulp dashboards/scripts
+          npx gulp scripts --product Dashboards
 
       - name: Run visual test
-        uses: cypress-io/github-action@v6
+        uses: cypress-io/github-action@v7
         with:
           start: node ../utils/server --localOnly
           wait-on: 'http://localhost:3031/dashboards.js'
@@ -118,7 +128,7 @@ jobs:
           install: false
 
       - name: Comment on PR
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           github-token: ${{secrets.PR_COMMENT_TOKEN}}
           script: |
@@ -154,7 +164,7 @@ jobs:
 
 
       - name: Store artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         if: ${{ always() }}
         with:
           name: post-tests

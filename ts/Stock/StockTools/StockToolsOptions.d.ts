@@ -2,11 +2,12 @@
  *
  *  GUI generator for Stock tools
  *
- *  (c) 2009-2025 Sebastian Bochan
+ *  (c) 2009-2026 Highsoft AS
+ *  Author: Sebastian Bochan
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -33,6 +34,8 @@ export interface LangOptions {
 
 export interface LangStockToolsOptions {
     gui?: Record<string, string>;
+    groupLabel?: string;
+    arrowLabel?: string;
 }
 
 export interface StockToolsGuiDefinitionsButtonOptions {

@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Honsi
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -38,17 +39,16 @@ const {
 } = SeriesRegistry;
 import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 const { prototype: { symbols } } = SVGRenderer;
-import U from '../../Core/Utilities.js';
-const {
+
+import IU from '../InterpolationUtilities.js';
+import {
     addEvent,
     extend,
     fireEvent,
     isNumber,
     merge,
     pick
-} = U;
-
-import IU from '../InterpolationUtilities.js';
+} from '../../Shared/Utilities.js';
 const {
     colorFromPoint,
     getContext
@@ -67,8 +67,8 @@ declare module '../../Core/Renderer/SVG/SymbolType' {
     }
 }
 
-declare module '../../Core/Series/SeriesLike' {
-    interface SeriesLike {
+declare module '../../Core/Series/SeriesBase' {
+    interface SeriesBase {
         valueMax?: number;
         valueMin?: number;
     }
@@ -341,6 +341,11 @@ class HeatmapSeries extends ScatterSeries {
         if (options.marker && isNumber(options.borderRadius)) {
             options.marker.r = options.borderRadius;
         }
+
+        const canvas = this.canvas = document.createElement('canvas');
+        if (canvas) {
+            this.context = canvas?.getContext('webgpu') as any;
+        }
     }
 
     /**
@@ -444,7 +449,7 @@ class HeatmapSeries extends ScatterSeries {
             const stateOptions = merge(
                 seriesOptions.states?.[state],
                 seriesOptions.marker?.states?.[state],
-                point?.options.states?.[state] || {}
+                point?.options.marker?.states?.[state] || {}
             );
 
             attr.fill =
@@ -531,6 +536,9 @@ class HeatmapSeries extends ScatterSeries {
 addEvent(HeatmapSeries, 'afterDataClassLegendClick', function (): void {
     this.isDirtyCanvas = true;
     this.drawPoints();
+    if (this.options.enableMouseTracking) {
+        this.drawTracker(); // #23162, set tracker again after points redraw
+    }
 });
 
 /* *

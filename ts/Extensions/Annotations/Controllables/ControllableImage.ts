@@ -1,6 +1,5 @@
 /* *
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -28,9 +27,9 @@ import ControllableLabel from './ControllableLabel.js';
 /**
  * A controllable image class.
  *
+ * @internal
  * @requires modules/annotations
  *
- * @private
  * @class
  * @name Highcharts.AnnotationControllableImage
  *
@@ -137,6 +136,7 @@ class ControllableImage extends Controllable {
  *
  * */
 
+/** @internal */
 interface ControllableImage {
     collections: 'shapes';
     itemType: 'shape';
@@ -149,6 +149,7 @@ interface ControllableImage {
  *
  * */
 
+/** @internal */
 declare module './ControllableType' {
     interface ControllableShapeTypeRegistry {
         image: typeof ControllableImage;
@@ -161,4 +162,5 @@ declare module './ControllableType' {
  *
  * */
 
+/** @internal */
 export default ControllableImage;

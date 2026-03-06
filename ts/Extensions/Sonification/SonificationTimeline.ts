@@ -1,12 +1,13 @@
 /* *
  *
- *  (c) 2009-2025 Øystein Moseng
+ *  (c) 2009-2026 Highsoft AS
+ *  Author: Øystein Moseng
  *
  *  Class representing a Timeline with sonification events to play.
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -18,14 +19,10 @@ import type Point from '../../Core/Series/Point';
 import TimelineChannel from './TimelineChannel.js';
 import SonificationInstrument from './SonificationInstrument.js';
 import toMIDI from './MIDI.js';
-import DU from '../DownloadURL.js';
-const { downloadURL } = DU;
-import U from '../../Core/Utilities.js';
-const {
-    defined,
-    find,
-    merge
-} = U;
+import {
+    downloadURL
+} from '../../Shared/DownloadURL.js';
+import { defined, find, merge } from '../../Shared/Utilities.js';
 
 declare global {
     namespace Sonification {
@@ -50,7 +47,7 @@ interface SonificationTimelineOptions {
 /**
  * Get filtered channels. Timestamps are compensated, so that the first
  * event starts immediately.
- * @private
+ * @internal
  */
 function filterChannels(
     filter: Sonification.TimelineFilterCallback,
@@ -90,7 +87,7 @@ function filterChannels(
  * The SonificationTimeline class. This class represents a timeline of
  * audio events scheduled to play. It provides functionality for manipulating
  * and navigating the timeline.
- * @private
+ * @internal
  */
 class SonificationTimeline {
     isPaused = false;
@@ -653,7 +650,7 @@ class SonificationTimeline {
                 'chart'
             ) + '.mid',
             blob = new Blob(
-                [data],
+                [data as BlobPart],
                 { type: 'application/octet-stream' }
             ),
             url = window.URL.createObjectURL(blob);

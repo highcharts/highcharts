@@ -1,4 +1,7 @@
 Highcharts.chart('container', {
+    title: {
+        text: 'Boosted series with <em>colorByPoint</em>'
+    },
     series: [{
         type: 'scatter',
         colorByPoint: true,

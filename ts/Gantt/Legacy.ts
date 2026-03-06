@@ -1,11 +1,11 @@
 /* *
  *
- *  (c) 2016 Highsoft AS
+ *  (c) 2016-2026 Highsoft AS
  *  Authors: Øystein Moseng, Lars A. V. Cabrera, Jon Arild Nygard
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -18,13 +18,9 @@
  * */
 
 import type Chart from '../Core/Chart/Chart';
+import { error } from '../Core/Utilities.js';
 
-import U from '../Core/Utilities.js';
-const {
-    error,
-    merge,
-    pick
-} = U;
+import { merge, pick } from '../Shared/Utilities.js';
 
 /* *
  *
@@ -46,7 +42,6 @@ const max = Math.max,
  * Returns a minimum of 1 pixel margin.
  *
  * @deprecated
- * @private
  * @function
  *
  * @param {Array<object>} obstacles
@@ -54,6 +49,7 @@ const max = Math.max,
  *
  * @return {number}
  *         The calculated margin in pixels. At least 1.
+ * @internal
  */
 function calculateObstacleMargin(obstacles: Array<any>): number {
     const distances = [],
@@ -92,7 +88,7 @@ function calculateObstacleMargin(obstacles: Array<any>): number {
 /**
  * Compute smallest distance between two rectangles
  * @deprecated
- * @private
+ * @internal
  */
 function distance(
     a: Record<string, number>,
@@ -129,7 +125,7 @@ function distance(
  * Warn if using legacy options. Copy the options over. Note that this will
  * still break if using the legacy options in chart.update, addSeries etc.
  * @deprecated
- * @private
+ * @internal
  */
 function warnLegacy(chart: Chart): void {
     if (
@@ -167,7 +163,9 @@ function warnLegacy(chart: Chart): void {
 
 /**
  * Contains detached legacy code not used anymore after tree shaking.
+ *
  * @deprecated
+ * @internal
  */
 const legacy = {
     calculateObstacleMargin,
@@ -175,4 +173,5 @@ const legacy = {
     warnLegacy
 };
 
+/** @internal */
 export default legacy;

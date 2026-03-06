@@ -1,12 +1,13 @@
 /* *
  *
- *  (c) 2009-2025 Øystein Moseng
+ *  (c) 2009-2026 Highsoft AS
+ *  Author: Øystein Moseng
  *
  *  Default lang/i18n options for accessibility.
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -18,6 +19,7 @@
  *
  * */
 
+import type { DeepPartial } from '../../Shared/Types';
 import type LangOptions from './LangOptions';
 
 /* *
@@ -246,6 +248,16 @@ const langOptions: DeepPartial<LangOptions> = {
         },
 
         /**
+         * Stock tools language options for accessibility.
+         *
+         * @since next
+         */
+        stockTools: {
+            groupLabel: 'Stock chart tools',
+            arrowLabel: 'Toggle submenu'
+        },
+
+        /**
          * Accessibility language options for the data table.
          *
          * @since 8.0.0
@@ -370,7 +382,12 @@ const langOptions: DeepPartial<LangOptions> = {
             timeRangeMinutes: 'Data range: {range} minutes.',
             timeRangeSeconds: 'Data range: {range} seconds.',
             rangeFromTo: 'Data ranges from {rangeFrom} to {rangeTo}.',
-            rangeCategories: 'Data range: {numCategories} categories.'
+            rangeCategories: 'Data range: {numCategories} categories.',
+            defaultAxisNames: {
+                categories: 'categories',
+                time: 'Time',
+                values: 'values'
+            }
         }, /* eslint-enable max-len */
 
         /**

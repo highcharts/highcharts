@@ -1,10 +1,10 @@
 /* *
  *
- *  (c) 2010-2025
+ *  (c) 2010-2026
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -16,7 +16,6 @@
 
 import type MapSeriesOptions from '../Map/MapSeriesOptions';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
-import type TiledWebMapSeries from './TiledWebMapSeries';
 import type { TilesProviderRegistryName } from '../../Maps/TilesProviders/TilesProviderRegistry';
 
 /* *
@@ -82,7 +81,7 @@ interface TiledWebMapSeriesOptions extends MapSeriesOptions {
      */
     provider?: ProviderOptions;
 
-    states?: SeriesStatesOptions<TiledWebMapSeries>;
+    states?: SeriesStatesOptions<TiledWebMapSeriesOptions>;
 
 }
 

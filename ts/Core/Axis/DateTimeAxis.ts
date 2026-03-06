@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Honsi
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -22,13 +23,12 @@ import type TickPositionsArray from './TickPositionsArray';
 import type Time from '../Time';
 import type Types from '../../Shared/Types';
 
-import U from '../Utilities.js';
-const {
+import {
     addEvent,
     getMagnitude,
-    normalizeTickInterval,
-    timeUnits
-} = U;
+    normalizeTickInterval
+} from '../../Shared/Utilities.js';
+import { timeUnits } from '../Utilities.js';
 
 /* *
  *
@@ -36,6 +36,7 @@ const {
  *
  * */
 
+/** @internal */
 declare module './AxisComposition' {
     interface AxisComposition {
         dateTime?: DateTimeAxis.Composition['dateTime'];
@@ -51,6 +52,7 @@ declare module './AxisComposition' {
     }
 }
 
+/** @internal */
 declare module './AxisOptions' {
     interface AxisOptions {
         dateTimeLabelFormats?: Time.DateTimeLabelFormatsOption;
@@ -58,6 +60,7 @@ declare module './AxisOptions' {
     }
 }
 
+/** @internal */
 declare module './AxisType' {
     interface AxisTypeRegistry {
         DateTimeAxis: DateTimeAxis.Composition;
@@ -66,7 +69,56 @@ declare module './AxisType' {
 
 declare module '../Series/SeriesOptions' {
     interface SeriesOptions {
+        /**
+         * If no x values are given for the points in a series, `pointInterval`
+         * defines the interval of the x values. For example, if a series
+         * contains one value every decade starting from year 0, set
+         * `pointInterval` to `10`. In true `datetime` axes, the `pointInterval`
+         * is set in milliseconds.
+         *
+         * It can be also be combined with `pointIntervalUnit` to draw irregular
+         * time intervals.
+         *
+         * If combined with `relativeXValue`, an x value can be set on each
+         * point, and the `pointInterval` is added x times to the `pointStart`
+         * setting.
+         *
+         * Please note that this options applies to the _series data_, not the
+         * interval of the axis ticks, which is independent.
+         *
+         * @sample {highcharts} highcharts/plotoptions/series-pointstart-datetime/
+         *         Datetime X axis
+         * @sample {highcharts} highcharts/plotoptions/series-relativexvalue/
+         *         Relative x value
+         * @sample {highstock} stock/plotoptions/pointinterval-pointstart/
+         *         Using pointStart and pointInterval
+         * @sample {highstock} stock/plotoptions/relativexvalue/
+         *         Relative x value
+         *
+         * @default 1
+         * @product highcharts highstock gantt
+         */
         pointInterval?: number;
+
+        /**
+         * On datetime series, this allows for setting the
+         * [pointInterval](#plotOptions.series.pointInterval) to irregular time
+         * units, `day`, `month` and `year`. A day is usually the same as 24
+         * hours, but `pointIntervalUnit` also takes the DST crossover into
+         * consideration when dealing with local time. Combine this option with
+         * `pointInterval` to draw weeks, quarters, 6 months, 10 years etc.
+         *
+         * Please note that this options applies to the _series data_, not the
+         * interval of the axis ticks, which is independent.
+         *
+         * @sample {highcharts} highcharts/plotoptions/series-pointintervalunit/
+         *         One point a month
+         * @sample {highstock} highcharts/plotoptions/series-pointintervalunit/
+         *         One point a month
+         *
+         * @since   4.1.0
+         * @product highcharts highstock gantt
+         */
         pointIntervalUnit?: DateTimeAxis.PointIntervalUnitValue;
     }
 }
@@ -93,6 +145,7 @@ namespace DateTimeAxis{
      *
      * */
 
+    /** @internal */
     export declare class Composition extends Axis {
         dateTime: Additions;
     }
@@ -107,7 +160,7 @@ namespace DateTimeAxis{
 
     /**
      * Extends axis class with date and time support.
-     * @private
+     * @internal
      */
     export function compose<T extends typeof Axis>(
         AxisClass: T
@@ -132,7 +185,7 @@ namespace DateTimeAxis{
      * the time positions. Used in datetime axes as well as for grouping
      * data on a datetime axis.
      *
-     * @private
+     * @internal
      * @function Highcharts.Axis#getTimeTicks
      * @param {Highcharts.TimeNormalizeObject} normalizedInterval
      * The interval in axis values (ms) and the count.
@@ -149,9 +202,7 @@ namespace DateTimeAxis{
         );
     }
 
-    /**
-     * @private
-     */
+    /** @internal */
     function onAfterSetType(
         this: Axis
     ): void {
@@ -171,6 +222,7 @@ namespace DateTimeAxis{
      *
      * */
 
+    /** @internal */
     export class Additions {
 
         /* *
@@ -205,7 +257,7 @@ namespace DateTimeAxis{
          * charts, the normalizing logic was extracted in order to prevent it
          * for running over again for each segment having the same interval.
          * #662, #697.
-         * @private
+         * @internal
          */
         public normalizeTimeTickInterval(
             tickInterval: number,
@@ -244,7 +296,8 @@ namespace DateTimeAxis{
             let unit = units[units.length - 1], // Default unit is years
                 interval = timeUnits[unit[0]],
                 multiples = unit[1],
-                i;
+                i,
+                match: number|undefined;
 
             // Loop through the units to find the one that best fits the
             // tickInterval
@@ -265,6 +318,7 @@ namespace DateTimeAxis{
 
                     // Break and keep the current unit
                     if (tickInterval <= lessThan) {
+                        match = lessThan / tickInterval;
                         break;
                     }
                 }
@@ -287,7 +341,8 @@ namespace DateTimeAxis{
             return {
                 unitRange: interval,
                 count: count,
-                unitName: unit[0]
+                unitName: unit[0],
+                match
             };
         }
 
@@ -295,7 +350,7 @@ namespace DateTimeAxis{
          * Get the best date format for a specific X value based on the closest
          * point range on the axis.
          *
-         * @private
+         * @internal
          */
         public getXDateFormat(
             x: number,

@@ -1,24 +1,20 @@
 /* *
  *
- *  (c) 2009-2025 Øystein Moseng
+ *  (c) 2009-2026 Highsoft AS
+ *  Author: Øystein Moseng
  *
  *  Class representing a Synth Patch, used by Instruments in the
  *  sonification.js module.
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
 'use strict';
 
-import U from '../../Core/Utilities.js';
-const {
-    clamp,
-    defined,
-    pick
-} = U;
+import { clamp, defined, pick } from '../../Shared/Utilities.js';
 
 type EnvelopePoint = Record<'t'|'vol', number>;
 type Envelope = Array<EnvelopePoint>;
@@ -75,7 +71,7 @@ namespace SynthPatch {
  * Get the multiplier value from a pitch tracked multiplier. The parameter
  * specifies the multiplier at ca 3200Hz. It is 1 at ca 50Hz. In between
  * it is mapped logarithmically.
- * @private
+ * @internal
  * @param {number} multiplier The multiplier to track.
  * @param {number} freq The current frequency.
  */
@@ -90,7 +86,7 @@ function getPitchTrackedMultiplierVal(
 
 /**
  * Schedule a mini ramp to volume at time - avoid clicks/pops.
- * @private
+ * @internal
  * @param {Object} gainNode The gain node to schedule for.
  * @param {number} time The time in seconds to start ramp.
  * @param {number} vol The volume to ramp to.
@@ -110,7 +106,7 @@ function miniRampToVolAtTime(
 
 /**
  * Schedule a gain envelope for a gain node.
- * @private
+ * @internal
  * @param {Array<Object>} envelope The envelope to schedule.
  * @param {string} type Type of envelope, attack or release.
  * @param {number} time At what time (in seconds) to start envelope.
@@ -167,7 +163,7 @@ interface PulseFrequencyFacade {
  * Combines two sawtooth oscillators to create a pulse by phase inverting and
  * delaying one of them.
  * @class
- * @private
+ * @internal
  */
 class PulseOscNode {
     private delayNode: DelayNode;
@@ -262,7 +258,7 @@ class PulseOscNode {
 /**
  * Internal class used by SynthPatch
  * @class
- * @private
+ * @internal
  */
 class Oscillator {
     fmOscillatorIx?: number;
@@ -752,7 +748,7 @@ class SynthPatch {
 
     /**
      * Create nodes for master EQ
-     * @private
+     * @internal
      */
     private createEqChain(outputNode: AudioNode): void {
         this.eqNodes = (this.options.eq || []).map((eqDef): BiquadFilterNode =>
@@ -770,7 +766,7 @@ class SynthPatch {
 
     /**
      * Fade by release envelopes at time
-     * @private
+     * @internal
      */
     private releaseAtTime(time: number): void {
         let maxReleaseDuration = 0;

@@ -8,12 +8,12 @@
     // property by default. See API docs for 'joinBy' for more info on linking
     // data and map.
     const data = [
-        ['hr-5926', 10], ['hr-sb', 11], ['hr-zd', 12], ['hr-pg', 13],
-        ['hr-ka', 14], ['hr-kz', 15], ['hr-zg', 16], ['hr-gz', 17],
-        ['hr-va', 18], ['hr-is', 19], ['hr-2228', 20], ['hr-ob', 21],
-        ['hr-sp', 22], ['hr-vs', 23], ['hr-vp', 24], ['hr-kk', 25],
-        ['hr-me', 26], ['hr-dn', 27], ['hr-sd', 28], ['hr-ls', 29],
-        ['hr-sm', 30], ['hr-bb', 31]
+        ['hr-sb', 10], ['hr-zd', 11], ['hr-pg', 12], ['hr-ka', 13],
+        ['hr-kz', 14], ['hr-zg', 15], ['hr-gz', 16], ['hr-va', 17],
+        ['hr-is', 18], ['hr-2228', 19], ['hr-ob', 20], ['hr-sp', 21],
+        ['hr-vs', 22], ['hr-vp', 23], ['hr-kk', 24], ['hr-me', 25],
+        ['hr-dn', 26], ['hr-sd', 27], ['hr-ls', 28], ['hr-sm', 29],
+        ['hr-bb', 30]
     ];
 
     // Create the chart

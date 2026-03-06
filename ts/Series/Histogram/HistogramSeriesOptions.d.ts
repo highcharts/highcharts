@@ -1,11 +1,11 @@
 /* *
  *
- *  (c) 2010-2025 Highsoft AS
+ *  (c) 2010-2026 Highsoft AS
  *  Author: Sebastian Domas
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -15,12 +15,13 @@
  *
  * */
 
-import type ColumnSeriesOptions from '../Column/ColumnSeriesOptions';
-import type HistogramSeries from './HistogramSeries';
+import type {
+    ColumnSeriesOptions,
+    ColumnSeriesTooltipOptions
+} from '../Column/ColumnSeriesOptions';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
-import type TooltipOptions from '../../Core/TooltipOptions';
-import HistogramPointOptions from './HistogramPointOptions';
-import { PointShortOptions } from '../../Core/Series/PointOptions';
+import type HistogramPointOptions from './HistogramPointOptions';
+import type { PointShortOptions } from '../../Core/Series/PointOptions';
 
 /* *
  *
@@ -114,10 +115,22 @@ export interface HistogramSeriesOptions extends ColumnSeriesOptions {
 
     pointPlacement?: string;
 
-    states?: SeriesStatesOptions<HistogramSeries>;
+    states?: SeriesStatesOptions<HistogramSeriesOptions>;
 
-    tooltip?: Partial<TooltipOptions>;
+    tooltip?: HistogramSeriesTooltipOptions;
+}
 
+export interface HistogramSeriesTooltipOptions
+    extends ColumnSeriesTooltipOptions {
+    /**
+     * @default ''
+     */
+    headerFormat?: ColumnSeriesTooltipOptions['headerFormat'];
+
+    /**
+     * @default '<span style="font-size: 0.8em">{point.x} - {point.x2}</span><br/><span style="color:{point.color}">\u25CF</span> {series.name} <b>{point.y}</b><br/>'
+     */
+    pointFormat?: ColumnSeriesTooltipOptions['pointFormat'];
 }
 
 /* *

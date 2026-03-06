@@ -4,13 +4,11 @@ Dashboards.board('container', {
             {
                 id: 'data-connector',
                 type: 'JSON',
-                options: {
-                    data: {
-                        kpis: { a: 1, b: 2 },
-                        more: {
-                            alpha: [1, 2, 3, 4, 5],
-                            beta: [10, 20, 30, 40, 50]
-                        }
+                data: {
+                    kpis: { a: 1, b: 2 },
+                    more: {
+                        alpha: [1, 2, 3, 4, 5],
+                        beta: [10, 20, 30, 40, 50]
                     }
                 },
                 dataTables: [{
@@ -27,7 +25,7 @@ Dashboards.board('container', {
                 }, {
                     key: 'kpis',
                     firstRowAsNames: false,
-                    columnNames: ['a', 'b'],
+                    columnIds: ['a', 'b'],
                     beforeParse: function ({ kpis }) {
                         return [[kpis.a, kpis.b]];
                     },
@@ -51,6 +49,12 @@ Dashboards.board('container', {
                 }, {
                     id: 'dashboard-col-1'
                 }]
+            }, {
+                cells: [{
+                    id: 'dashboard-col-2'
+                }, {
+                    id: 'dashboard-col-3'
+                }]
             }]
         }]
     },
@@ -60,13 +64,43 @@ Dashboards.board('container', {
         connector: [{
             id: 'data-connector',
             dataTableKey: 'more'
-        }]
+        }],
+        sync: {
+            highlight: true,
+            visibility: true
+        }
     }, {
         renderTo: 'dashboard-col-1',
         type: 'Grid',
         connector: [{
             id: 'data-connector',
             dataTableKey: 'kpis'
-        }]
+        }],
+        sync: {
+            highlight: true,
+            visibility: true
+        }
+    }, {
+        renderTo: 'dashboard-col-2',
+        type: 'Highcharts',
+        connector: [{
+            id: 'data-connector',
+            dataTableKey: 'more'
+        }],
+        sync: {
+            highlight: true,
+            visibility: true
+        }
+    }, {
+        renderTo: 'dashboard-col-3',
+        type: 'Highcharts',
+        connector: [{
+            id: 'data-connector',
+            dataTableKey: 'kpis'
+        }],
+        sync: {
+            highlight: true,
+            visibility: true
+        }
     }]
 });

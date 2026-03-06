@@ -759,6 +759,15 @@
 
         chart.tooltip.refresh([chart.series[0].points[2]]);
 
+        const text = chart.tooltip.label.element.textContent,
+            pos1 = text.indexOf('a121'),
+            pos2 = text.indexOf('a121', pos1 + 1);
+
+        assert.ok(
+            pos2 > -1 && text.indexOf('a121', pos2 + 1) === -1,
+            'Custom name "a121" should be part of the tooltip twice (#9928).'
+        );
+
         assert.strictEqual(
             chart.tooltip.tt.text.textStr.indexOf('a121') > -1,
             true,

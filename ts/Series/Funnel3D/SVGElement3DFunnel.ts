@@ -2,13 +2,13 @@
  *
  *  Highcharts funnel3d series module
  *
- *  (c) 2010-2025 Highsoft AS
+ *  (c) 2010-2026 Highsoft AS
  *
  *  Author: Kacper Madej
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -31,11 +31,11 @@ const { parse: color } = Color;
 import H from '../../Core/Globals.js';
 const { charts } = H;
 import RendererRegistry from '../../Core/Renderer/RendererRegistry.js';
+import { merge } from '../../Shared/Utilities.js';
 const {
     Element3D: SVGElement3D
 } = RendererRegistry.getRendererType().prototype;
-import U from '../../Core/Utilities.js';
-const { merge } = U;
+
 
 /* *
  *

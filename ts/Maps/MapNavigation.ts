@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Honsi
  *
- *  License: www.highcharts.com/license
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -36,15 +37,14 @@ const { composed } = H;
 import MapNavigationDefaults from './MapNavigationDefaults.js';
 import MapPointer from './MapPointer.js';
 import MapSymbols from './MapSymbols.js';
-import U from '../Core/Utilities.js';
-const {
-    addEvent,
+import {
     extend,
-    merge,
     objectEach,
+    merge,
     pick,
-    pushUnique
-} = U;
+    pushUnique,
+    addEvent
+} from '../Shared/Utilities.js';
 
 /* *
  *
@@ -52,8 +52,9 @@ const {
  *
  * */
 
-declare module '../Core/Chart/ChartLike' {
-    interface ChartLike {
+/** @internal */
+declare module '../Core/Chart/ChartBase' {
+    interface ChartBase {
         mapNavigation: MapNavigation;
     }
 }
@@ -64,9 +65,7 @@ declare module '../Core/Chart/ChartLike' {
  *
  * */
 
-/**
- * @private
- */
+/** @internal */
 function stopEvent(e: Event): void {
     if (e) {
         e.preventDefault?.();
@@ -85,7 +84,7 @@ function stopEvent(e: Event): void {
  * The MapNavigation handles buttons for navigation in addition to mousewheel
  * and doubleclick handlers for chart zooming.
  *
- * @private
+ * @internal
  * @class
  * @name MapNavigation
  *
@@ -438,4 +437,5 @@ class MapNavigation {
  *
  * */
 
+/** @internal */
 export default MapNavigation;

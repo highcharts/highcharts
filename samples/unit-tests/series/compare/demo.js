@@ -1,17 +1,21 @@
-QUnit.test('Compare to negative (#4661)', function (assert) {
-    var chart = $('#container')
-        .highcharts('StockChart', {
-            series: [
-                {
-                    data: [-100, -150, -125, -300, -250],
-                    compare: 'percent'
-                }
-            ]
-        })
-        .highcharts();
+QUnit.test('Compare to negative (#4661, #24031)', function (assert) {
+    const chart = Highcharts.stockChart('container', {
+        series: [
+            {
+                data: [-100, -150, -125, -300, -250],
+                compare: 'percent'
+            }
+        ]
+    });
 
     assert.strictEqual(typeof chart.yAxis[0].min, 'number', 'Has a minimum');
     assert.strictEqual(typeof chart.yAxis[0].max, 'number', 'Has a maximum');
+
+    assert.ok(
+        chart.series[0].dataModify.modifyValue(-150, 0) < 0,
+        `If parent series points values are decreasing, the compare percent
+        series modified values should also decrease. (#24031)`
+    );
 });
 
 QUnit.test('Compare in candlesticks', function (assert) {
@@ -219,5 +223,43 @@ QUnit.test('Compare multi line indicators, #15867.', assert => {
         chart.yAxis[0].toPixels(-2) - chart.plotTop,
         chart.series[1].points[0].plotBottom,
         'The first point of the bottom line should be located at -2 on yAxis.'
+    );
+});
+
+QUnit.test('Compare with linked series, #21119.', assert => {
+    const chart = Highcharts.stockChart('container', {
+        series: [{
+            compare: 'percent',
+            id: 's1',
+            data: [1, 2, 3, 4, 5, 4, 3, 2, 1]
+        }, {
+            type: 'sma',
+            linkedTo: 's1',
+            params: {
+                period: 3
+            }
+        }]
+    });
+
+    assert.strictEqual(
+        chart.series[1].dataModify.compareValue,
+        2,
+        'Compare value should be correct.'
+    );
+    assert.strictEqual(
+        chart.series[1].options.compare,
+        'percent',
+        'Linked series should inherit compare option from parent series.'
+    );
+
+    chart.series[1].update({
+        linkedTo: ':previous'
+    });
+
+    assert.strictEqual(
+        chart.series[1].options.compare,
+        'percent',
+        `Linked series should inherit compare option from parent series when
+        linked to :previous series.`
     );
 });
