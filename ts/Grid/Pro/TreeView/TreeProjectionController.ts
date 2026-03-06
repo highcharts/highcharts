@@ -54,7 +54,6 @@ import { isNumber, isString } from '../../../Shared/Utilities.js';
 type DataOptionsWithTreeView = LocalDataProviderOptions;
 
 interface NormalizedTreeViewOptions {
-    enabled: true;
     input: TreeInputOptions;
     treeColumn?: string;
     initiallyExpanded: boolean;
@@ -156,30 +155,29 @@ class TreeProjectionController {
             normalizedOptions.input
         );
 
-        this.syncExpandedRowIdsState(normalizedOptions, this.indexCache);
-
-        if (
+        const isCacheValid = (
             this.cacheSource?.table === table &&
             this.cacheSource.versionTag === versionTag &&
             this.cacheSource.idColumn === idColumn &&
             this.cacheSource.inputCacheKey === inputCacheKey
-        ) {
-            return;
+        );
+
+        if (!isCacheValid) {
+            this.indexCache = this.buildIndexFromInput(
+                table.columns,
+                idColumn,
+                normalizedOptions.input
+            );
+
+            this.cacheSource = {
+                table,
+                versionTag,
+                idColumn,
+                inputCacheKey
+            };
         }
 
-        this.indexCache = this.buildIndexFromInput(
-            table.columns,
-            idColumn,
-            normalizedOptions.input
-        );
         this.syncExpandedRowIdsState(normalizedOptions, this.indexCache);
-
-        this.cacheSource = {
-            table,
-            versionTag,
-            idColumn,
-            inputCacheKey
-        };
     }
 
     /**
@@ -187,13 +185,6 @@ class TreeProjectionController {
      */
     public getOptions(): NormalizedTreeViewOptions | undefined {
         return this.normalizedOptions;
-    }
-
-    /**
-     * Returns canonical tree index cache.
-     */
-    public getIndexCache(): TreeIndexBuildResult | undefined {
-        return this.indexCache;
     }
 
     /**
@@ -350,7 +341,6 @@ class TreeProjectionController {
                 }
 
                 return {
-                    enabled: true,
                     input: {
                         type: 'parentId',
                         parentIdColumn: treeView.input.parentIdColumn
@@ -380,7 +370,6 @@ class TreeProjectionController {
                 }
 
                 return {
-                    enabled: true,
                     input: {
                         type: 'path',
                         pathColumn: treeView.input.pathColumn,
@@ -507,16 +496,12 @@ class TreeProjectionController {
             return;
         }
 
-        const nextExpandedState = new Set<RowId>();
-
         for (const nodeId of this.expandedRowIdsState) {
             const node = index.nodes.get(nodeId);
-            if (node && node.childrenIds.length) {
-                nextExpandedState.add(nodeId);
+            if (!node || !node.childrenIds.length) {
+                this.expandedRowIdsState.delete(nodeId);
             }
         }
-
-        this.expandedRowIdsState = nextExpandedState;
     }
 
     /**

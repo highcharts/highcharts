@@ -54,7 +54,6 @@ export function compose(
     }
 
     addEvent(GridClass, 'beforeLoad', onBeforeLoad);
-    addEvent(GridClass, 'afterRenderViewport', onAfterRenderViewport);
     addEvent(GridClass, 'beforeDestroy', onBeforeDestroy);
     addEvent(TableCellClass, 'afterRender', onAfterCellRender);
 }
@@ -67,18 +66,6 @@ function onBeforeLoad(this: Grid): void {
         this.treeProjectionController =
             new TreeProjectionController(this);
     }
-}
-
-/**
- * Refreshes TreeView projection infrastructure after render.
- */
-function onAfterRenderViewport(this: Grid): void {
-    if (!this.treeProjectionController) {
-        this.treeProjectionController =
-            new TreeProjectionController(this);
-    }
-
-    this.treeProjectionController?.sync();
 }
 
 /**
