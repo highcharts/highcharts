@@ -43,6 +43,7 @@ import CellContextMenu from './Body/CellContextMenu.js';
 
 const { makeHTMLElement } = GridUtils;
 
+
 /* *
  *
  *  Class
@@ -372,7 +373,20 @@ class Table {
             }
 
             const newRowCount = await dp.getRowCount();
-            if (shouldRerender) {
+
+            // TODO: (DD) Make the data table modifiers more general instead of
+            // hardcoding the tree projection controller here. (don't forget to
+            // remove the declarations)
+            const treeProjectionController = (
+                vp.grid as GridWithTreeProjectionLike
+            ).treeProjectionController;
+            const shouldRerenderForTreeProjection = (
+                oldRowsCount !== newRowCount &&
+                !!treeProjectionController?.getOptions()
+            );
+            // --- END OF TODO ----
+
+            if (shouldRerender || shouldRerenderForTreeProjection) {
                 // Rerender all rows
                 await vp.rowsVirtualizer.rerender();
             } else if (oldRowsCount !== newRowCount) {
@@ -820,6 +834,19 @@ class Table {
     public getRow(id: RowId): TableRow | undefined {
         return this.rows.find((row): boolean => row.id === id);
     }
+}
+
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+interface GridWithTreeProjectionLike {
+    treeProjectionController?: {
+        getOptions: () => unknown;
+    };
 }
 
 /**
