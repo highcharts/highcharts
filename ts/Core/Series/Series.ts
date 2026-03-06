@@ -1149,7 +1149,7 @@ class Series {
                 className: 'highcharts-negative'
             } as SeriesZonesOptions;
             if (!styledMode) {
-                zone.color = options.negativeColor;
+                zone.color = options.negativeColor || '';
                 zone.fillColor = options.negativeFillColor;
             }
             zones.push(zone);
