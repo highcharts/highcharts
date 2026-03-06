@@ -4,7 +4,7 @@ You can add the [data module](https://www.highcharts.com/docs/working-with-data/
 
 ```tsx
 import { Chart } from "@highcharts/react";
-import { Data } from "@highcharts/react/options/data";
+import { Data } from "@highcharts/react/modules/data";
 
 const csvData = `Month,Sales,Expenses
 Jan,100,80

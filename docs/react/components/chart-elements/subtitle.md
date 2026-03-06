@@ -3,13 +3,14 @@
 You can add a [subtitle](https://www.highcharts.com/docs/chart-concepts/title-and-subtitle) to your chart using the `Subtitle` component:
 
 ```tsx
-import { Chart, Series, Subtitle } from "@highcharts/react";
+import { Chart, Subtitle } from "@highcharts/react";
+import { LineSeries } from "@highcharts/react/series/Line";
 
 export default function SubtitleChart() {
   return (
     <Chart>
       <Subtitle>Monthly sales data overview</Subtitle>
-      <Series data={[3, 4, 1, 5, 2]} />
+      <LineSeries data={[3, 4, 1, 5, 2]} />
     </Chart>
   );
 }

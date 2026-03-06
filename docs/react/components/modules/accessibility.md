@@ -3,14 +3,15 @@
 You can add the [accessibility module](https://www.highcharts.com/docs/accessibility/accessibility-module) to your chart using the `Accessibility` component:
 
 ```tsx
-import { Chart, Series } from "@highcharts/react";
-import { Accessibility } from "@highcharts/react/options/accessibility";
+import { Chart } from "@highcharts/react";
+import { LineSeries } from "@highcharts/react/series/Line";
+import { Accessibility } from "@highcharts/react/modules/accessibility";
 
 export default function AccessibilityChart() {
   return (
     <Chart>
       <Accessibility series={{ describeSingleSeries: true }} />
-      <Series data={[3, 4, 1, 5, 2]} />
+      <LineSeries data={[3, 4, 1, 5, 2]} />
     </Chart>
   );
 }

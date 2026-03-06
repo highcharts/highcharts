@@ -5,7 +5,7 @@ You can add [drilldown](https://www.highcharts.com/docs/chart-concepts/drilldown
 ```tsx
 import { Chart, XAxis } from "@highcharts/react";
 import { ColumnSeries } from "@highcharts/react/series/Column";
-import { Drilldown } from "@highcharts/react/options/drilldown";
+import { Drilldown } from "@highcharts/react/modules/drilldown";
 
 export default function DrilldownChart() {
   return (
