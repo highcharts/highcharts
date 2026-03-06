@@ -70,13 +70,13 @@ class MenuPopup extends ContextMenu {
 
     protected override renderContent(): void {
         const lang = this.grid.options?.lang || {};
-        const columnOptions = this.button.toolbar?.column.options || {};
-        const filteringEnabled = (
-            columnOptions.filtering?.enabled &&
-            !columnOptions.filtering.inline
-        );
-        const sortingEnabled = columnOptions.sorting?.enabled ??
-            columnOptions.sorting?.sortable;
+        const column = this.button.toolbar?.column;
+        const columnOptions = column?.options || {};
+        const filteringEnabled = !!column &&
+            this.grid.columnPolicy.isColumnFilteringEnabled(column.id) &&
+            !columnOptions.filtering?.inline;
+        const sortingEnabled = !!column &&
+            this.grid.columnPolicy.isColumnSortingEnabled(column.id);
 
         this.addHeader(
             this.button.toolbar?.column.header?.value || '',
