@@ -1,0 +1,99 @@
+/* SPDX-License-Identifier: LicenseRef-Highcharts */
+
+/**
+ * @license Highcharts
+ *
+ * (c) 2009-2026 Highsoft AS
+ *
+ * A commercial license may be required depending on use.
+ * See www.highcharts.com/license
+ *
+ * This file contains CSS color variables for the default Highcharts palette. It
+ * is intended to be used as an import when setting `palette.injectCSS` to
+ * `false`.
+ *
+ * For more information, see:
+ * https://api.highcharts.com/highcharts/palette.injectCSS
+ */
+
+:root {
+    --highcharts-color-0: #2caffe;
+    --highcharts-color-1: #544fc5;
+    --highcharts-color-2: #00e272;
+    --highcharts-color-3: #fe6a35;
+    --highcharts-color-4: #6b8abc;
+    --highcharts-color-5: #d568fb;
+    --highcharts-color-6: #2ee0ca;
+    --highcharts-color-7: #fa4b42;
+    --highcharts-color-8: #feb56a;
+    --highcharts-color-9: #91e8e1;
+    --highcharts-background-color: #ffffff;
+    --highcharts-neutral-color: #000000;
+    --highcharts-neutral-color-3: rgb(247, 247, 247);
+    --highcharts-neutral-color-5: rgb(242, 242, 242);
+    --highcharts-neutral-color-10: rgb(230, 230, 230);
+    --highcharts-neutral-color-20: rgb(204, 204, 204);
+    --highcharts-neutral-color-40: rgb(153, 153, 153);
+    --highcharts-neutral-color-60: rgb(102, 102, 102);
+    --highcharts-neutral-color-80: rgb(51, 51, 51);
+    --highcharts-neutral-color-100: rgb(0, 0, 0);
+    --highcharts-highlight-color: #0022ff;
+    --highcharts-highlight-color-3: rgb(247, 248, 255);
+    --highcharts-highlight-color-5: rgb(242, 244, 255);
+    --highcharts-highlight-color-10: rgb(230, 233, 255);
+    --highcharts-highlight-color-20: rgb(204, 211, 255);
+    --highcharts-highlight-color-40: rgb(153, 167, 255);
+    --highcharts-highlight-color-60: rgb(102, 122, 255);
+    --highcharts-highlight-color-80: rgb(51, 78, 255);
+    --highcharts-highlight-color-100: rgb(0, 34, 255);
+    --highcharts-positive-color: #06b535;
+    --highcharts-negative-color: #f21313;
+}
+
+@supports (color: light-dark(#fff, #000)) {
+    :root {
+        --highcharts-color-0: #2caffe;
+        --highcharts-color-1: light-dark(#544fc5, #00e272);
+        --highcharts-color-2: light-dark(#00e272, #efdf00);
+        --highcharts-color-3: #fe6a35;
+        --highcharts-color-4: #6b8abc;
+        --highcharts-color-5: #d568fb;
+        --highcharts-color-6: #2ee0ca;
+        --highcharts-color-7: #fa4b42;
+        --highcharts-color-8: #feb56a;
+        --highcharts-color-9: #91e8e1;
+        --highcharts-background-color: light-dark(#ffffff, #141414);
+        --highcharts-neutral-color: light-dark(#000000, #ffffff);
+        --highcharts-neutral-color-3: light-dark(rgb(247, 247, 247), rgb(27, 27, 27));
+        --highcharts-neutral-color-5: light-dark(rgb(242, 242, 242), rgb(32, 32, 32));
+        --highcharts-neutral-color-10: light-dark(rgb(230, 230, 230), rgb(44, 44, 44));
+        --highcharts-neutral-color-20: light-dark(rgb(204, 204, 204), rgb(67, 67, 67));
+        --highcharts-neutral-color-40: light-dark(rgb(153, 153, 153), rgb(114, 114, 114));
+        --highcharts-neutral-color-60: light-dark(rgb(102, 102, 102), rgb(161, 161, 161));
+        --highcharts-neutral-color-80: light-dark(rgb(51, 51, 51), rgb(208, 208, 208));
+        --highcharts-neutral-color-100: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));
+        --highcharts-highlight-color: light-dark(#0022ff, #2caffe);
+        --highcharts-highlight-color-3: light-dark(rgb(247, 248, 255), rgb(21, 25, 27));
+        --highcharts-highlight-color-5: light-dark(rgb(242, 244, 255), rgb(21, 28, 32));
+        --highcharts-highlight-color-10: light-dark(rgb(230, 233, 255), rgb(22, 36, 43));
+        --highcharts-highlight-color-20: light-dark(rgb(204, 211, 255), rgb(25, 51, 67));
+        --highcharts-highlight-color-40: light-dark(rgb(153, 167, 255), rgb(30, 82, 114));
+        --highcharts-highlight-color-60: light-dark(rgb(102, 122, 255), rgb(34, 113, 160));
+        --highcharts-highlight-color-80: light-dark(rgb(51, 78, 255), rgb(39, 144, 207));
+        --highcharts-highlight-color-100: light-dark(rgb(0, 34, 255), rgb(44, 175, 254));
+        --highcharts-positive-color: #06b535;
+        --highcharts-negative-color: #f21313;
+    }
+}
+
+.highcharts-container {
+    color-scheme: light dark;
+}
+
+.highcharts-light .highcharts-container {
+    color-scheme: light;
+}
+
+.highcharts-dark .highcharts-container {
+    color-scheme: dark;
+}

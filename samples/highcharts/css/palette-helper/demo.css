@@ -26,6 +26,14 @@ fieldset {
     padding: 0.5em;
 }
 
+.warning {
+    background-color: #fc0;
+    color: #630;
+    border: 1px solid #630;
+    border-radius: 0.25rem;
+    padding: 1rem;
+}
+
 pre {
     border: 1px solid silver;
     border-radius: 0.25rem;

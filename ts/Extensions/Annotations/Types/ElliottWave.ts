@@ -17,7 +17,6 @@ import Annotation from '../Annotation.js';
 import CrookedLine from './CrookedLine.js';
 import D from '../../../Core/Defaults.js';
 const { defaultOptions } = D;
-import { Palette } from '../../../Core/Color/Palettes';
 import { AnnotationLabelOptionsOptions } from '../AnnotationOptions';
 import { merge } from '../../../Shared/Utilities.js';
 
@@ -61,7 +60,7 @@ if (defaultOptions.annotations?.types) {
                 borderWidth: 0,
                 y: -5,
                 style: {
-                    color: Palette.neutralColor80
+                    color: 'var(--highcharts-neutral-color-80)'
                 }
             }
         }

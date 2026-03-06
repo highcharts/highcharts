@@ -24,7 +24,6 @@ import type {
 
 import D from '../../Core/Defaults.js';
 const { defaultOptions } = D;
-import { Palette } from '../../Core/Color/Palettes.js';
 
 /* *
  *
@@ -103,7 +102,7 @@ const background: PaneBackgroundOptions = {
      * @product highcharts
      * @requires highcharts-more
      */
-    borderColor: Palette.neutralColor20,
+    borderColor: 'var(--highcharts-neutral-color-20)',
 
     /**
      * The background color or gradient for the pane.
@@ -121,8 +120,8 @@ const background: PaneBackgroundOptions = {
 
         /** @ignore-option */
         stops: [
-            [0, Palette.backgroundColor],
-            [1, Palette.neutralColor10]
+            [0, 'var(--highcharts-background-color)'],
+            [1, 'var(--highcharts-neutral-color-10)']
         ]
 
     },

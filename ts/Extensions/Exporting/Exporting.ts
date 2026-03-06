@@ -1077,8 +1077,7 @@ class Exporting {
         const exporting = this,
             chart = exporting.chart,
             navOptions = chart.options.navigation,
-            chartWidth = chart.chartWidth,
-            chartHeight = chart.chartHeight,
+            { chartWidth, chartHeight } = chart,
             cacheName = 'cache-' + className,
             // For mouse leave detection
             menuPadding = Math.max(width, height);
@@ -1116,7 +1115,7 @@ class Exporting {
 
             // Presentational CSS
             if (!chart.styledMode) {
-                css(innerMenu, extend<CSSObject>({
+                css(innerMenu, extend({
                     MozBoxShadow: '3px 3px 10px #0008',
                     WebkitBoxShadow: '3px 3px 10px #0008',
                     boxShadow: '3px 3px 10px #0008'
@@ -1237,10 +1236,13 @@ class Exporting {
                                     navOptions?.menuItemStyle || {}
                                 );
                             };
-
-                            css(element, extend({
-                                cursor: 'pointer'
-                            } as CSSObject, navOptions?.menuItemStyle || {}));
+                            css(
+                                element,
+                                extend(
+                                    { cursor: 'pointer' } as CSSObject,
+                                    navOptions?.menuItemStyle || {}
+                                )
+                            );
                         }
                     }
 

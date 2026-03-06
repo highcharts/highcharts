@@ -39,7 +39,6 @@ const {
     composed,
     isTouchDevice
 } = H;
-import { Palette } from '../Core/Color/Palettes.js';
 import SVGAttributes from './Renderer/SVG/SVGAttributes';
 import {
     addEvent,
@@ -445,11 +444,12 @@ class Pointer {
                 mouseDownX = 0,
                 mouseDownY = 0
             } = chart,
+            chartOptions = chart.options,
             {
                 panning,
                 panKey,
                 selectionMarkerFill
-            } = chart.options.chart,
+            } = chartOptions.chart,
             plotLeft = chart.plotLeft,
             plotTop = chart.plotTop,
             plotWidth = chart.plotWidth,
@@ -524,7 +524,7 @@ class Pointer {
                         selectionMarker.attr({
                             fill:
                                 selectionMarkerFill ||
-                                color(Palette.highlightColor80)
+                                color('var(--highcharts-highlight-color-80)')
                                     .setOpacity(0.25).get()
                         });
                     }

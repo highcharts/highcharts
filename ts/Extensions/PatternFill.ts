@@ -36,7 +36,6 @@ const { animObject } = A;
 import D from '../Core/Defaults.js';
 const { getOptions } = D;
 import MapPoint from '../Series/Map/MapPoint';
-import { Palette } from '../Core/Color/Palettes';
 import {
     addEvent,
     defined,
@@ -527,7 +526,7 @@ function onRendererComplexColor(
         chartIndex = (this.chartIndex || 0);
 
     let pattern = color.pattern,
-        value: string = Palette.neutralColor80;
+        value: string = 'var(--highcharts-neutral-color-80)';
 
     // Handle patternIndex
     if (typeof color.patternIndex !== 'undefined' && patterns) {
@@ -796,7 +795,8 @@ function rendererAddPattern(
 ): (SVGElement|undefined) {
     const animate = pick(animation, true),
         animationOptions = animObject(animate),
-        color: ColorString = options.color || Palette.neutralColor80,
+        color: ColorString = options.color ||
+            'var(--highcharts-neutral-color-80)',
         defaultSize = 32,
         height = options.height ||
             (typeof options._height === 'number' ? options._height : 0) ||

@@ -14,7 +14,7 @@
         },
         navigator: {
             series: {
-                color: Highcharts.getOptions().colors[0]
+                color: 'var(--highcharts-color-0)'
             }
         },
         series: [{

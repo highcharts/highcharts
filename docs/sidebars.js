@@ -302,6 +302,7 @@ module.exports = {
             }
         ],
         'Chart design and style': [
+            'chart-design-and-style/branding',
             'chart-design-and-style/design-and-style',
             'chart-design-and-style/colors',
             'chart-design-and-style/pattern-fills',

@@ -22,7 +22,6 @@ import type LineSeries from '../../../Series/Line/LineSeries';
 
 import H from '../../../Core/Globals.js';
 const { noop } = H;
-import { Palette } from '../../../Core/Color/Palettes.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     column: {
@@ -94,7 +93,7 @@ class AOIndicator extends SMAIndicator {
          * @type  {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @since 7.0.0
          */
-        greaterBarColor: Palette.positiveColor,
+        greaterBarColor: 'var(--highcharts-positive-color)',
         /**
          * Color of the Awesome oscillator series bar that is lower than the
          * previous one. Note that if a `color` is defined, the `color`
@@ -106,7 +105,7 @@ class AOIndicator extends SMAIndicator {
          * @type  {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @since 7.0.0
          */
-        lowerBarColor: Palette.negativeColor,
+        lowerBarColor: 'var(--highcharts-negative-color)',
         threshold: 0,
         groupPadding: 0.2,
         pointPadding: 0.2,
