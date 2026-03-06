@@ -4,41 +4,83 @@ sidebar_label: "Element variables"
 
 # Element variables
 
-This article covers theming variables for interactive form elements in Highcharts Grid:
+Highcharts Grid has two theming layers:
 
-1. `.hcg-input`
-2. `.hcg-button`
+1. Grid variables for table surfaces (`thead`, `tbody`, rows, columns, and cells), documented in [Grid variables](https://www.highcharts.com/docs/grid/theming/grid-variables).
+2. Element variables for interactive controls rendered inside and around the table, mainly `.hcg-input` and `.hcg-button`.
 
-These variables are separate from table-surface variables documented in [Grid variables](https://www.highcharts.com/docs/grid/theming/grid-variables).
+This article documents the element layer.
 
-## How element variables inherit
+## Variable naming and fallback
 
-Element variables use a layered fallback model:
+Most element variables follow this pattern:
 
-1. Scope-specific overrides (`header`, `cell`, `pagination` for buttons).
-2. Global element tokens (`--hcg-input-*`, `--hcg-button-*`).
-3. Built-in defaults.
+1. Start from global element tokens (`--hcg-input-*`, `--hcg-button-*`).
+2. Override button tokens with scoped families where needed (`--hcg-header-button-*`, `--hcg-cell-button-*`, `--hcg-pagination-button-*`).
+3. Fall back to built-in defaults.
 
-This lets you define a consistent base style and then adjust specific areas without duplicating every token.
+Example:
+
+```css
+.theme-elements {
+    --hcg-button-border-radius: 6px;
+    --hcg-header-button-border-radius: 0;
+}
+```
+
+In this case, buttons use `6px` radius globally, while header buttons are overridden to `0`.
 
 ## Input variables (`.hcg-input`)
 
-### Variables
+### Globals
 
-| Variable                      | Default Value | Valid Values |
-| ----------------------------- | ------------- | ------------ |
-| --hcg-input-padding           | 5px           | [padding](https://developer.mozilla.org/en-US/docs/Web/CSS/padding) |
-| --hcg-input-font-weight       | normal        | [font-weight](https://developer.mozilla.org/en-US/docs/Web/CSS/font-weight) |
-| --hcg-input-font-size         | 0.9em         | [font-size](https://developer.mozilla.org/en-US/docs/Web/CSS/font-size) |
-| --hcg-input-font-family       | --hcg-font-family | [font-family](https://developer.mozilla.org/en-US/docs/Web/CSS/font-family) |
-| --hcg-input-color             | --hcg-color   | [color](https://developer.mozilla.org/en-US/docs/Web/CSS/color) |
-| --hcg-input-text-align        | --hcg-text-align | [text-align](https://developer.mozilla.org/en-US/docs/Web/CSS/text-align) |
-| --hcg-input-border-radius     | 0             | [border-radius](https://developer.mozilla.org/en-US/docs/Web/CSS/border-radius) |
-| --hcg-input-border-width      | 1px           | [border-width](https://developer.mozilla.org/en-US/docs/Web/CSS/border-width) |
-| --hcg-input-border-style      | solid         | [border-style](https://developer.mozilla.org/en-US/docs/Web/CSS/border-style) |
-| --hcg-input-border-color      | --hcg-color   | [border-color](https://developer.mozilla.org/en-US/docs/Web/CSS/border-color) |
-| --hcg-input-background        | --highcharts-background-color | [background](https://developer.mozilla.org/en-US/docs/Web/CSS/background) |
-| --hcg-input-hover-border-color| --hcg-input-border-color | [border-color](https://developer.mozilla.org/en-US/docs/Web/CSS/border-color) |
+| Variable                       | Default Value                  | Valid Values |
+| ------------------------------ | ------------------------------ | ------------ |
+| --hcg-input-padding            | 5px                            | [padding](https://developer.mozilla.org/en-US/docs/Web/CSS/padding) |
+| --hcg-input-font-weight        | normal                         | [font-weight](https://developer.mozilla.org/en-US/docs/Web/CSS/font-weight) |
+| --hcg-input-font-size          | 0.9em                          | [font-size](https://developer.mozilla.org/en-US/docs/Web/CSS/font-size) |
+| --hcg-input-font-family        | --hcg-font-family              | [font-family](https://developer.mozilla.org/en-US/docs/Web/CSS/font-family) |
+| --hcg-input-color              | --hcg-color                    | [color](https://developer.mozilla.org/en-US/docs/Web/CSS/color) |
+| --hcg-input-text-align         | --hcg-text-align               | [text-align](https://developer.mozilla.org/en-US/docs/Web/CSS/text-align) |
+| --hcg-input-border-radius      | 0                              | [border-radius](https://developer.mozilla.org/en-US/docs/Web/CSS/border-radius) |
+| --hcg-input-border-width       | 1px                            | [border-width](https://developer.mozilla.org/en-US/docs/Web/CSS/border-width) |
+| --hcg-input-border-style       | solid                          | [border-style](https://developer.mozilla.org/en-US/docs/Web/CSS/border-style) |
+| --hcg-input-border-color       | --hcg-color                    | [border-color](https://developer.mozilla.org/en-US/docs/Web/CSS/border-color) |
+| --hcg-input-background         | --highcharts-background-color  | [background](https://developer.mozilla.org/en-US/docs/Web/CSS/background) |
+| --hcg-input-hover-color        | --hcg-input-color              | [color](https://developer.mozilla.org/en-US/docs/Web/CSS/color) |
+| --hcg-input-hover-background   | --hcg-input-background         | [background](https://developer.mozilla.org/en-US/docs/Web/CSS/background) |
+| --hcg-input-hover-border-color | --hcg-input-border-color       | [border-color](https://developer.mozilla.org/en-US/docs/Web/CSS/border-color) |
+
+### Scoped input prefixes
+
+| Variable Prefix             | Applies To                  | Fallback |
+| --------------------------- | --------------------------- | -------- |
+| --hcg-header-input-*        | Inputs inside header cells  | --hcg-input-* |
+| --hcg-cell-input-*          | Inputs inside body cells    | --hcg-input-* |
+| --hcg-pagination-input-*    | Inputs inside pagination UI | --hcg-input-* |
+
+### Hover border fallback precedence
+
+Hover border color changes only when a hover token is defined.
+
+1. Header input hover color:
+`--hcg-header-input-hover-color -> --hcg-input-hover-color -> --hcg-header-input-color -> global/default`
+2. Cell input hover color:
+`--hcg-cell-input-hover-color -> --hcg-input-hover-color -> --hcg-cell-input-color -> global/default`
+3. Pagination input hover color:
+`--hcg-pagination-input-hover-color -> --hcg-input-hover-color -> --hcg-pagination-input-color -> global/default`
+4. Header input hover background:
+`--hcg-header-input-hover-background -> --hcg-input-hover-background -> --hcg-header-input-background -> global/default`
+5. Cell input hover background:
+`--hcg-cell-input-hover-background -> --hcg-input-hover-background -> --hcg-cell-input-background -> global/default`
+6. Pagination input hover background:
+`--hcg-pagination-input-hover-background -> --hcg-input-hover-background -> --hcg-pagination-input-background -> global/default`
+7. Header input hover border:
+`--hcg-header-input-hover-border-color -> --hcg-input-hover-border-color -> --hcg-header-input-border-color -> global/default`
+8. Cell input hover border:
+`--hcg-cell-input-hover-border-color -> --hcg-input-hover-border-color -> --hcg-cell-input-border-color -> global/default`
+9. Pagination input hover border:
+`--hcg-pagination-input-hover-border-color -> --hcg-input-hover-border-color -> --hcg-pagination-input-border-color -> global/default`
 
 ### Example
 
@@ -55,35 +97,33 @@ This lets you define a consistent base style and then adjust specific areas with
 
 ## Button variables (`.hcg-button`)
 
-### Global button variables
+### Globals
 
-| Variable                           | Default Value | Valid Values |
-| ---------------------------------- | ------------- | ------------ |
-| --hcg-button-border-width          | 1px           | [border-width](https://developer.mozilla.org/en-US/docs/Web/CSS/border-width) |
-| --hcg-button-border-style          | solid         | [border-style](https://developer.mozilla.org/en-US/docs/Web/CSS/border-style) |
-| --hcg-button-border-color          | Default color scheme | [border-color](https://developer.mozilla.org/en-US/docs/Web/CSS/border-color) |
-| --hcg-button-border-radius         | 0             | [border-radius](https://developer.mozilla.org/en-US/docs/Web/CSS/border-radius) |
-| --hcg-button-background            | transparent   | [background](https://developer.mozilla.org/en-US/docs/Web/CSS/background) |
-| --hcg-button-padding               | 6px           | [padding](https://developer.mozilla.org/en-US/docs/Web/CSS/padding) |
-| --hcg-button-color                 | Default color scheme | [color](https://developer.mozilla.org/en-US/docs/Web/CSS/color) |
-| --hcg-button-hover-color           | Inverted against default scheme | [color](https://developer.mozilla.org/en-US/docs/Web/CSS/color) |
-| --hcg-button-hover-background      | Inverted against default scheme | [background](https://developer.mozilla.org/en-US/docs/Web/CSS/background) |
-| --hcg-button-hover-border-color    | --hcg-button-border-color | [border-color](https://developer.mozilla.org/en-US/docs/Web/CSS/border-color) |
-| --hcg-button-selected-color        | Inverted against default scheme | [color](https://developer.mozilla.org/en-US/docs/Web/CSS/color) |
-| --hcg-button-selected-background   | Inverted against default scheme | [background](https://developer.mozilla.org/en-US/docs/Web/CSS/background) |
-| --hcg-button-selected-border-color | --hcg-button-border-color | [border-color](https://developer.mozilla.org/en-US/docs/Web/CSS/border-color) |
+| Variable                            | Default Value                  | Valid Values |
+| ----------------------------------- | ------------------------------ | ------------ |
+| --hcg-button-border-width           | 1px                            | [border-width](https://developer.mozilla.org/en-US/docs/Web/CSS/border-width) |
+| --hcg-button-border-style           | solid                          | [border-style](https://developer.mozilla.org/en-US/docs/Web/CSS/border-style) |
+| --hcg-button-border-color           | --ig-default-color             | [border-color](https://developer.mozilla.org/en-US/docs/Web/CSS/border-color) |
+| --hcg-button-border-radius          | 0                              | [border-radius](https://developer.mozilla.org/en-US/docs/Web/CSS/border-radius) |
+| --hcg-button-background             | transparent                    | [background](https://developer.mozilla.org/en-US/docs/Web/CSS/background) |
+| --hcg-button-padding                | 6px                            | [padding](https://developer.mozilla.org/en-US/docs/Web/CSS/padding) |
+| --hcg-button-color                  | --ig-default-color             | [color](https://developer.mozilla.org/en-US/docs/Web/CSS/color) |
+| --hcg-button-hover-color            | --ig-default-background        | [color](https://developer.mozilla.org/en-US/docs/Web/CSS/color) |
+| --hcg-button-hover-background       | --ig-default-color             | [background](https://developer.mozilla.org/en-US/docs/Web/CSS/background) |
+| --hcg-button-hover-border-color     | --hcg-button-border-color      | [border-color](https://developer.mozilla.org/en-US/docs/Web/CSS/border-color) |
+| --hcg-button-selected-color         | --ig-default-background        | [color](https://developer.mozilla.org/en-US/docs/Web/CSS/color) |
+| --hcg-button-selected-background    | --ig-default-color             | [background](https://developer.mozilla.org/en-US/docs/Web/CSS/background) |
+| --hcg-button-selected-border-color  | --hcg-button-border-color      | [border-color](https://developer.mozilla.org/en-US/docs/Web/CSS/border-color) |
 
-### Scoped button variables
+### Section prefixes
 
-Buttons support three scoped families:
+| Variable Prefix               | Applies To                   | Fallback |
+| ----------------------------- | ---------------------------- | -------- |
+| --hcg-header-button-*         | Buttons inside header cells  | --hcg-button-* |
+| --hcg-cell-button-*           | Buttons inside body cells    | --hcg-button-* |
+| --hcg-pagination-button-*     | Buttons inside pagination UI | --hcg-button-* |
 
-| Scope Prefix             | Applies To                   | Fallback |
-| ------------------------ | ---------------------------- | -------- |
-| --hcg-header-button-*    | Buttons inside header cells  | --hcg-button-* |
-| --hcg-cell-button-*      | Buttons inside body cells    | --hcg-button-* |
-| --hcg-pagination-button-*| Buttons inside pagination UI | --hcg-button-* |
-
-Scoped families support the same token endings as global buttons:
+Scoped button families support these suffixes:
 
 1. `background`
 2. `color`
@@ -99,13 +139,17 @@ Scoped families support the same token endings as global buttons:
 12. `selected-background`
 13. `selected-border-color`
 
-Expanded variable names:
+### Header button color behavior
 
-| Family | Variables |
-| ------ | --------- |
-| Header buttons | `--hcg-header-button-background`, `--hcg-header-button-color`, `--hcg-header-button-padding`, `--hcg-header-button-border-width`, `--hcg-header-button-border-style`, `--hcg-header-button-border-color`, `--hcg-header-button-border-radius`, `--hcg-header-button-hover-color`, `--hcg-header-button-hover-background`, `--hcg-header-button-hover-border-color`, `--hcg-header-button-selected-color`, `--hcg-header-button-selected-background`, `--hcg-header-button-selected-border-color` |
-| Cell buttons | `--hcg-cell-button-background`, `--hcg-cell-button-color`, `--hcg-cell-button-padding`, `--hcg-cell-button-border-width`, `--hcg-cell-button-border-style`, `--hcg-cell-button-border-color`, `--hcg-cell-button-border-radius`, `--hcg-cell-button-hover-color`, `--hcg-cell-button-hover-background`, `--hcg-cell-button-hover-border-color`, `--hcg-cell-button-selected-color`, `--hcg-cell-button-selected-background`, `--hcg-cell-button-selected-border-color` |
-| Pagination buttons | `--hcg-pagination-button-background`, `--hcg-pagination-button-color`, `--hcg-pagination-button-padding`, `--hcg-pagination-button-border-width`, `--hcg-pagination-button-border-style`, `--hcg-pagination-button-border-color`, `--hcg-pagination-button-border-radius`, `--hcg-pagination-button-hover-color`, `--hcg-pagination-button-hover-background`, `--hcg-pagination-button-hover-border-color`, `--hcg-pagination-button-selected-color`, `--hcg-pagination-button-selected-background`, `--hcg-pagination-button-selected-border-color` |
+Header buttons have context-aware color fallbacks:
+
+| Variable | Default behavior |
+| -------- | ---------------- |
+| --hcg-header-button-color | Falls back to current header text color |
+| --hcg-header-button-hover-color | Falls back to current header text color |
+| --hcg-header-button-selected-color | Falls back to current header text color |
+| --hcg-header-button-hover-background | Falls back to a color mix based on header hover background |
+| --hcg-header-button-selected-background | Falls back to current header button background |
 
 ### Example
 
