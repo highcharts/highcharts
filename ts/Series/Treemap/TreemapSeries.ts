@@ -1905,6 +1905,8 @@ class TreemapSeries extends ScatterSeries {
  * */
 
 interface TreemapSeries extends ColorMapComposition.SeriesComposition, TU.Series {
+    allowOutsidePlotInteraction:
+        typeof ScatterSeries.prototype.allowOutsidePlotInteraction;
     colorAttribs: ColorMapComposition.SeriesComposition['colorAttribs'];
     colorKey: string;
     directTouch: boolean;

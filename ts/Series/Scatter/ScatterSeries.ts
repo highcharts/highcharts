@@ -19,6 +19,7 @@
 
 import type ScatterPoint from './ScatterPoint';
 import type ScatterSeriesOptions from './ScatterSeriesOptions';
+import type PointerEvent from '../../Core/PointerEvent.js';
 
 import ScatterSeriesDefaults from './ScatterSeriesDefaults.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
@@ -27,6 +28,23 @@ const {
     line: LineSeries
 } = SeriesRegistry.seriesTypes;
 import { addEvent, extend, merge } from '../../Shared/Utilities.js';
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+/** @internal */
+declare module '../../Core/Series/SeriesBase' {
+    interface SeriesBase {
+        /**
+         * Allow points outside the plot area to be interacted with.
+         * Implemented in the scatter series.
+         */
+        allowOutsidePlotInteraction?(e: PointerEvent): boolean;
+    }
+}
 
 /* *
  *
@@ -70,8 +88,26 @@ class ScatterSeries extends LineSeries {
      *
      * */
 
-    /* eslint-disable valid-jsdoc */
+    /**
+     * Allow scatter points on the edge to be interacted with outside the plot
+     * area.
+     *
+     * @internal
+     *
+     * @param {PointerEvent} e
+     * The pointer event.
+     *
+     * @return {boolean}
+     * True if interaction is allowed.
+     */
+    public allowOutsidePlotInteraction(e: PointerEvent): boolean {
+        return !!this.chart.pointer?.inClass(
+            e.target as any,
+            'highcharts-point'
+        );
+    }
 
+    /* eslint-disable valid-jsdoc */
     /**
      * Optionally add the jitter effect.
      * @private
@@ -185,6 +221,7 @@ declare module '../../Core/Series/SeriesType' {
     }
 }
 SeriesRegistry.registerSeriesType('scatter', ScatterSeries);
+
 
 /* *
  *
