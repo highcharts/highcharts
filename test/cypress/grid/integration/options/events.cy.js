@@ -1,6 +1,6 @@
 describe('Grid Pro - grid events.', () => {
     before(() => {
-        cy.visit('grid-pro/cypress/grid-events');
+        cy.visit('grid-pro/e2e/grid-events');
     });
 
     it('Grid beforeLoad event.', () => {
@@ -42,7 +42,7 @@ describe('Grid Pro - grid events.', () => {
 
 describe('Grid Pro - cell and column events.', () => {
     before(() => {
-        cy.visit('grid-pro/cypress/column-cell-events');
+        cy.visit('grid-pro/e2e/column-cell-events');
     });
 
     it('Cell mouseOver / mouseOut event.', () => {
@@ -209,7 +209,7 @@ describe('Grid Pro - cell and column events.', () => {
 
 describe('Grid Pro - virtualization and delegated events.', () => {
     before(() => {
-        cy.visit('grid-pro/cypress/virtualization-events');
+        cy.visit('grid-pro/e2e/virtualization-events');
     });
 
     it('Events work on initially visible rows', () => {

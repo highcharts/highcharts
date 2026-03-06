@@ -25,8 +25,7 @@ import type { Event as DataCursorEvent } from '../../../../Data/DataCursor';
 import type KPIComponent from '../KPIComponent.js';
 
 import Component from '../../Component';
-import U from '../../../../Core/Utilities.js';
-const { defined } = U;
+import { defined } from '../../../../Shared/Utilities.js';
 
 
 /* *

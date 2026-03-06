@@ -24,11 +24,10 @@ import type CylinderPointOptions from './CylinderPointOptions';
 import type CylinderSeries from './CylinderSeries';
 
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+import { extend } from '../../Shared/Utilities.js';
 const {
     column: { prototype: { pointClass: ColumnPoint } }
 } = SeriesRegistry.seriesTypes;
-import U from '../../Core/Utilities.js';
-const { extend } = U;
 
 /* *
  *

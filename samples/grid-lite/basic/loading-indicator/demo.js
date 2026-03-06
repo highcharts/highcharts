@@ -1,5 +1,5 @@
 const grid = Grid.grid('container', {
-    dataTable: {
+    data: {
         columns: {
             product: ['Apples', 'Pears', 'Plums', 'Bananas'],
             weight: [],
@@ -21,7 +21,7 @@ document.getElementById('load').addEventListener('click', () => {
     // Simulate a get request
     setTimeout(() => {
         grid.update({
-            dataTable: {
+            data: {
                 columns: {
                     product: ['Apples', 'Pears', 'Plums', 'Bananas'],
                     weight: Array.from({ length: 4 }, () =>

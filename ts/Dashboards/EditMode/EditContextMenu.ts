@@ -21,16 +21,11 @@ import type {
 import type { Options as MenuOptions } from './Menu/Menu';
 
 import EditGlobals from './EditGlobals.js';
-import U from '../../Core/Utilities.js';
 import MenuItem from './Menu/MenuItem.js';
 import Menu from './Menu/Menu.js';
 import EditMode from './EditMode.js';
 import { HTMLDOMElement } from '../../Core/Renderer/DOMElementType.js';
-
-const {
-    addEvent,
-    merge
-} = U;
+import { addEvent, merge } from '../../Shared/Utilities.js';
 
 /**
  * Class to create context menu.

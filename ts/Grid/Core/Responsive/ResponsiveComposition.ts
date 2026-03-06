@@ -27,17 +27,14 @@ import type { Options } from '../Options';
 import type { ResponsiveOptions, RuleOptions } from './ResponsiveOptions';
 
 import Globals from '../../Core/Globals.js';
-import U from '../../../Core/Utilities.js';
-
-const {
+import {
     addEvent,
-    diffObjects,
     defined,
+    diffObjects,
     merge,
-    pushUnique,
-    uniqueKey
-} = U;
-
+    pushUnique
+} from '../../../Shared/Utilities.js';
+import { uniqueKey } from '../../../Core/Utilities.js';
 
 /* *
  *

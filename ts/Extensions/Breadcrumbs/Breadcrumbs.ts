@@ -32,8 +32,7 @@ import F from '../../Core/Templating.js';
 const { format } = F;
 import H from '../../Core/Globals.js';
 const { composed } = H;
-import U from '../../Core/Utilities.js';
-const {
+import {
     addEvent,
     defined,
     extend,
@@ -43,7 +42,7 @@ const {
     objectEach,
     pick,
     pushUnique
-} = U;
+} from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -574,7 +573,11 @@ class Breadcrumbs {
                         callDefaultEvent = buttonEvents.call(
                             breadcrumbs,
                             e as any,
-                            breadcrumb
+                            breadcrumb,
+                            // Keep `ctx` for callback parity with arrow functions.
+                            // Not documented in public API because Breadcrumbs
+                            // is an internal class.
+                            breadcrumbs
                         );
                     }
 
@@ -894,11 +897,8 @@ export default Breadcrumbs;
  * @param {Highcharts.Event} event
  * Event.
  *
- * @param {Highcharts.BreadcrumbOptions} options
+ * @param {Highcharts.BreadcrumbOptions} breadcrumb
  * Breadcrumb options.
- *
- * @param {global.Event} e
- * Event arguments.
  */
 
 /**

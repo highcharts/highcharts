@@ -3,27 +3,53 @@ Data providers are the bridge between Grid and your data source. A provider is r
 
 Providers are configured under the `data` option. The `providerType` selects which provider to use and the rest of the `data` object is passed as provider-specific options.
 
+## Common loading patterns
+
+- In-memory tables with `providerType: 'local'`
+- Remote paging/filtering/sorting with `providerType: 'remote'`
+- Data connector-backed local tables
+
+```js
+Grid.grid('container', {
+    data: {
+        providerType: 'remote',
+        dataSource: {
+            urlTemplate: '/api/grid?page={page}&pageSize={pageSize}'
+        }
+    },
+    pagination: {
+        enabled: true
+    }
+});
+```
+
 ## LocalDataProvider (default)
-When you provide `data.dataTable`, Grid uses `LocalDataProvider` by default. It works entirely in memory and is a good fit for fully-loaded datasets and [Data Modifiers](https://www.highcharts.com/docs/dashboards/data-modifiers).
+When you provide `data.columns`, `data.connector` or `data.dataTable`, Grid uses `LocalDataProvider` by default. It works entirely in memory and is a good fit for fully-loaded datasets and [Data Modifiers](https://www.highcharts.com/docs/dashboards/data-modifiers).
+
+Use `data.columns` for column data. Use `data.dataTable` only for an existing DataTable instance.
 
 ```js
 Grid.grid('container', {
     data: {
         providerType: 'local', // optional
-        dataTable: {
-            columns: {
-                product: ["Apple", "Pear", "Orange", "Banana"],
-                weight: [182, 178, 150, 120],
-                price: [3.5, 2.5, 3, 2.2]
-            }
+        columns: {
+            id: ['a1', 'p1', 'o1', 'b1'],
+            product: ["Apple", "Pear", "Orange", "Banana"],
+            weight: [182, 178, 150, 120],
+            price: [3.5, 2.5, 3, 2.2]
         },
+        // Optional: column that contains stable, unique row IDs (string or number).
+        // If not set, the original row index is used as the row ID.
+        idColumn: 'id',
         // Optional: auto-refresh when the DataTable changes.
         updateOnChange: true
     }
 });
 ```
 
-You can also pass a `DataTable` instance instead of serialized options.
+You can also pass a `DataTable` instance using `data.dataTable` instead of `data.columns`.
+
+**idColumn** – When you need custom stable row identifiers, set `idColumn` to the ID of a column whose values are unique per row. Row IDs will then be those values instead of original numeric indices. The column must contain only strings or numbers, and all values must be unique.
 
 If you mutate the DataTable outside of Grid, you can set `updateOnChange: true`
 to refresh rows automatically after table change events. For batched updates,
@@ -78,7 +104,10 @@ Grid.grid('container', {
             urlTemplate:
                 '/api/grid?page={page}&pageSize={pageSize}&' +
                 'sortBy={sortBy}&sortOrder={sortOrder}&filter={filter}'
-        }
+        },
+        // ID of the column that contains stable row IDs. If not set, uses
+        // `rowIds` from fetch result body or row indices.
+        idColumn: 'id'
     }
 });
 ```
@@ -103,9 +132,7 @@ dataSource: {
         };
     },
     // Request timeout in ms (use 0 to disable).
-    fetchTimeout: 30000,
-    // Column that contains stable row IDs.
-    rowIdColumn: 'id'
+    fetchTimeout: 30000
 }
 ```
 

@@ -542,6 +542,7 @@ export interface ColumnCellOptions {
     /**
      * Context menu options for table body cells. When configured, a custom
      * context menu will be shown on right-click.
+     * @internal Disabled until meaningful functionality is ready.
      */
     contextMenu?: CellContextMenuOptions;
 

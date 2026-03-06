@@ -17,8 +17,7 @@
 
 import type TimelineChannel from './TimelineChannel';
 import SonificationInstrument from './SonificationInstrument.js';
-import U from '../../Core/Utilities.js';
-const { pick } = U;
+import { pick } from '../../Shared/Utilities.js';
 
 interface MIDIEvent {
     timeMS: number;

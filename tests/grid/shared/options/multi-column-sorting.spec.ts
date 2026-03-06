@@ -2,7 +2,7 @@ import { test, expect } from '~/fixtures.ts';
 
 test.describe('Grid multi-column sorting', () => {
     const expectedOrder = ['c', 'a', 'b', 'g', 'e', 'f', 'h', 'd'];
-    const demoPath = 'grid-lite/cypress/multi-column-sorting';
+    const demoPath = 'grid-lite/e2e/multi-column-sorting';
 
     const openMenu = async (page: any, columnId: string) => {
         await page.evaluate((id: string) => {

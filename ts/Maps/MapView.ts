@@ -52,8 +52,7 @@ const { topo2geo } = GeoJSONComposition;
 import MU from './MapUtilities.js';
 const { boundsFromPath } = MU;
 import Projection from './Projection.js';
-import U from '../Core/Utilities.js';
-const {
+import {
     addEvent,
     clamp,
     crisp,
@@ -66,7 +65,7 @@ const {
     pick,
     pushUnique,
     relativeLength
-} = U;
+} from '../Shared/Utilities.js';
 
 /* *
  *

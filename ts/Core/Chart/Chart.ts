@@ -83,11 +83,10 @@ const { seriesTypes } = SeriesRegistry;
 import SVGElement from '../Renderer/SVG/SVGElement';
 import SVGRenderer from '../Renderer/SVG/SVGRenderer.js';
 import Time from '../Time.js';
-import U from '../Utilities.js';
 import AST from '../Renderer/HTML/AST.js';
 import { AxisCollectionKey } from '../Axis/AxisOptions';
 import Tick from '../Axis/Tick.js';
-const {
+import {
     addEvent,
     attr,
     createElement,
@@ -96,12 +95,12 @@ const {
     diffObjects,
     discardElement,
     erase,
-    error,
     extend,
     find,
     fireEvent,
     getAlignFactor,
     getStyle,
+    internalClearTimeout,
     isArray,
     isNumber,
     isObject,
@@ -113,9 +112,10 @@ const {
     relativeLength,
     removeEvent,
     splat,
-    syncTimeout,
-    uniqueKey
-} = U;
+    syncTimeout
+} from '../../Shared/Utilities.js';
+import { error, uniqueKey } from '../Utilities.js';
+
 
 /* *
  *
@@ -2284,7 +2284,7 @@ class Chart {
                 containerBox.width !== oldBox.width ||
                 containerBox.height !== oldBox.height
             ) {
-                U.clearTimeout(chart.reflowTimeout);
+                internalClearTimeout(chart.reflowTimeout);
                 // When called from window.resize, e is set, else it's called
                 // directly (#2224)
                 chart.reflowTimeout = syncTimeout(function (): void {
@@ -3238,7 +3238,7 @@ class Chart {
         chart.pointer?.getChartPosition(); // #14973
 
         // Fire the load event if there are no external images
-        if (!chart.renderer.imgCount && !chart.hasLoaded) {
+        if (!chart.renderer.asyncCounter && !chart.hasLoaded) {
             chart.onload();
         }
 
@@ -5167,6 +5167,10 @@ export default Chart;
  * @param {string} [thousandsSep]
  *        The thousands separator, defaults to the one given in the lang
  *        options, or a space character.
+ *
+ * @param {Highcharts.Chart} [ctx]
+ *        Since v12.5.0, the chart context passed as an extra argument for
+ *        arrow functions.
  *
  * @return {string} The formatted number.
  */
