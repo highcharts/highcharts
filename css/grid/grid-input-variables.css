@@ -70,7 +70,7 @@
         --ig-input-hover-border-color: var(--hcg-cell-input-hover-border-color, var(--hcg-input-hover-border-color, var(--hcg-cell-input-border-color, var(--ig-input-border-color-base))));
     }
 
-    .hcg-pagination-wrapper {
+    .hcg-pagination {
         --ig-input-padding: var(--hcg-pagination-input-padding, var(--ig-input-padding-base));
         --ig-input-font-weight: var(--hcg-pagination-input-font-weight, var(--ig-input-font-weight-base));
         --ig-input-font-size: var(--hcg-pagination-input-font-size, var(--ig-input-font-size-base));
