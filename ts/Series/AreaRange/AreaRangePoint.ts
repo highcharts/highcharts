@@ -113,7 +113,7 @@ class AreaRangePoint extends AreaPoint {
      * */
 
     /**
-     * @private
+     * @internal
      */
     public setState(): void {
         const prevState = this.state,

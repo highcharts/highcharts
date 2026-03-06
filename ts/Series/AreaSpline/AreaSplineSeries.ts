@@ -37,7 +37,7 @@ import { extend, merge } from '../../Shared/Utilities.js';
 /**
  * AreaSpline series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.areaspline
  *

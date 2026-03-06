@@ -15,9 +15,9 @@
  *
  * */
 
-import type AreaRangePoint from '../AreaRange/AreaRangePoint';
 import type AreaSplineRangePointOptions from './AreaSplineRangePointOptions';
 import type AreaSplineRangeSeries from './AreaSplineRangeSeries';
+import AreaRangePoint from '../AreaRange/AreaRangePoint.js';
 
 /* *
  *
