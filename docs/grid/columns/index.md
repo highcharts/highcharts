@@ -7,6 +7,7 @@ sidebar_label: "Overview"
 Many of the available configuration options in Grid apply to the columns and their corresponding row and header cells.
 
 For focused topics, see:
+- [Styling and Theming](https://www.highcharts.com/docs/grid/columns/styling-and-theming)
 - [Column headers](https://www.highcharts.com/docs/grid/columns/header)
 - [Column grouping](https://www.highcharts.com/docs/grid/columns/grouping)
 - [Column resizing and width](https://www.highcharts.com/docs/grid/columns/resizing-and-width)
