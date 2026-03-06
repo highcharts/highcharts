@@ -97,7 +97,7 @@ class PiePoint extends Point {
     /**
      * Extendable method for getting the path of the connector between the
      * data label and the pie slice.
-     * @private
+     * @internal
      */
     public getConnectorPath(dataLabel: SVGElement): SVGPath {
         const labelPosition = dataLabel.dataLabelPosition,
@@ -114,9 +114,7 @@ class PiePoint extends Point {
         }, labelPosition.connectorPosition, options) || [];
     }
 
-    /**
-     * @private
-     */
+    /** @internal */
     public getTranslate(): PiePoint.TranslationAttributes {
         return this.sliced && this.slicedTranslation || {
             translateX: 0,
@@ -124,9 +122,7 @@ class PiePoint extends Point {
         };
     }
 
-    /**
-     * @private
-     */
+    /** @internal */
     public haloPath(size: number): SVGPath {
         const shapeArgs = this.shapeArgs;
 
@@ -149,7 +145,7 @@ class PiePoint extends Point {
 
     /**
      * Initialize the pie slice.
-     * @private
+     * @internal
      */
     public constructor(
         series: PieSeries,
@@ -168,11 +164,9 @@ class PiePoint extends Point {
         addEvent(this, 'unselect', toggleSlice);
     }
 
-    /**
-     * Negative points are not valid (#1530, #3623, #5322)
-     * @private
-     */
+    /** @internal */
     public isValid(): boolean {
+        // Negative points are not valid (#1530, #3623, #5322)
         return isNumber(this.y) && this.y >= 0;
     }
 
@@ -205,7 +199,8 @@ class PiePoint extends Point {
 
     /**
      * Set or toggle whether the slice is cut out from the pie.
-     * @private
+     *
+     * @internal
      *
      * @param {boolean} sliced
      * When undefined, the slice state is toggled.
