@@ -49,6 +49,23 @@ class MenuToolbarButton extends ToolbarButton {
 
     public override popup?: MenuPopup;
 
+    private updateA11yLabel(): void {
+        const button = this.wrapper?.querySelector('button');
+        const column = this.toolbar?.column;
+        const columnLabel = (
+            column?.header?.headerContent?.textContent ||
+            column?.header?.value ||
+            column?.id ||
+            ''
+        ).trim();
+
+        if (!button || !columnLabel) {
+            return;
+        }
+
+        button.setAttribute('aria-label', `${columnLabel} menu`);
+    }
+
 
     /* *
      *
@@ -95,6 +112,7 @@ class MenuToolbarButton extends ToolbarButton {
             StateHelpers.isSorted(column) ||
             StateHelpers.isFiltered(column)
         );
+        this.updateA11yLabel();
     }
 
     protected override addEventListeners(): void {

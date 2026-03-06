@@ -114,6 +114,7 @@ class TableCell extends Cell {
      */
     public override async render(): Promise<void> {
         await super.render();
+        this.updateA11yAttributes();
         await this.setValue();
     }
 
@@ -193,6 +194,7 @@ class TableCell extends Cell {
         }
 
         this.htmlElement.setAttribute('data-value', this.value + '');
+        this.updateA11yAttributes();
 
         // Set alignment in column cells based on column data type
         this.htmlElement.classList[
@@ -208,6 +210,37 @@ class TableCell extends Cell {
         this.htmlElement.style.opacity = '';
 
         fireEvent(this, 'afterRender', { target: this });
+    }
+
+    /**
+     * Refresh the semantic associations for screen reader table navigation.
+     */
+    private updateA11yAttributes(): void {
+        const { column, row } = this;
+        const { viewport } = column;
+        const { htmlElement } = this;
+        const columnHeaderId = viewport.getColumnHeaderId(column);
+        const rowHeaderId = viewport.getRowHeaderId(row.index);
+
+        htmlElement.setAttribute('aria-colindex', String(column.index + 1));
+
+        if (column.index === 0) {
+            htmlElement.setAttribute('id', rowHeaderId);
+            htmlElement.setAttribute('role', 'rowheader');
+            htmlElement.setAttribute('headers', columnHeaderId);
+            return;
+        }
+
+        htmlElement.removeAttribute('id');
+        htmlElement.removeAttribute('scope');
+        htmlElement.removeAttribute('role');
+        htmlElement.setAttribute(
+            'headers',
+            [
+                rowHeaderId,
+                columnHeaderId
+            ].join(' ')
+        );
     }
 
     /**

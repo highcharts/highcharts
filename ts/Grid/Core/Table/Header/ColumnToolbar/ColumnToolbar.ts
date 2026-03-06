@@ -297,6 +297,8 @@ class HeaderCellToolbar implements Toolbar {
                 this.buttons[(cursor + 1) % len].focus();
                 break;
             case 'Escape':
+                e.preventDefault();
+                e.stopPropagation();
                 this.column.header?.htmlElement.focus();
                 break;
         }

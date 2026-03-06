@@ -176,4 +176,31 @@ test.describe('Column Header Toolbar', () => {
         const parent = focused.locator('..');
         await expect(parent).toHaveAttribute('data-row-id');
     });
+
+    test('Escape from the menu flow should keep focus inside the grid', async ({ page }) => {
+        await page.setViewportSize({ width: 800, height: 600 });
+        await page.evaluate(() => {
+            const before = document.createElement('button');
+            before.id = 'outside-grid';
+            before.textContent = 'Outside grid';
+            document.body.prepend(before);
+
+            document.addEventListener('keydown', e => {
+                if (e.key === 'Escape' && !e.defaultPrevented) {
+                    before.focus();
+                }
+            });
+        });
+
+        const activeButton = page.locator('.hcg-button.hcg-button-selected').first();
+        await activeButton.click();
+        await expect(page.locator('.hcg-popup')).toBeVisible();
+
+        await page.keyboard.press('Escape');
+        await expect(activeButton).toBeFocused();
+
+        await page.keyboard.press('Escape');
+        await expect(page.locator(':focus')).not.toHaveAttribute('id', 'outside-grid');
+        await expect(page.locator(':focus')).toHaveAttribute('role', 'columnheader');
+    });
 });

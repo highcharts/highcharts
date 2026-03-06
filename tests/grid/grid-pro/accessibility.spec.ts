@@ -19,6 +19,11 @@ test.describe('Screen reader sections', () => {
         await page.evaluate(() => {
             const grid = (window as any).Grid.grids[0];
             grid.update({
+                accessibility: {
+                    screenReaderSection: {
+                        beforeGridFormat: 'Before Grid information.'
+                    }
+                },
                 lang: {
                     accessibility: {
                         screenReaderSection: {
@@ -39,6 +44,11 @@ test.describe('Screen reader sections', () => {
         await page.evaluate(() => {
             const grid = (window as any).Grid.grids[0];
             grid.update({
+                accessibility: {
+                    screenReaderSection: {
+                        beforeGridFormat: 'Before Grid information.'
+                    }
+                },
                 lang: {
                     accessibility: {
                         screenReaderSection: {
@@ -56,6 +66,11 @@ test.describe('Screen reader sections', () => {
         await page.evaluate(() => {
             const grid = (window as any).Grid.grids[0];
             grid.update({
+                accessibility: {
+                    screenReaderSection: {
+                        afterGridFormat: 'After Grid information.'
+                    }
+                },
                 lang: {
                     accessibility: {
                         screenReaderSection: {
@@ -76,6 +91,11 @@ test.describe('Screen reader sections', () => {
         await page.evaluate(() => {
             const grid = (window as any).Grid.grids[0];
             grid.update({
+                accessibility: {
+                    screenReaderSection: {
+                        afterGridFormat: 'After Grid information.'
+                    }
+                },
                 lang: {
                     accessibility: {
                         screenReaderSection: {
@@ -118,6 +138,14 @@ test.describe('Screen reader sections', () => {
     test('Screen reader sections should be properly destroyed', async ({ page }) => {
         await page.evaluate(() => {
             const grid = (window as any).Grid.grids[0];
+            grid.update({
+                accessibility: {
+                    screenReaderSection: {
+                        beforeGridFormat: 'Before Grid information.',
+                        afterGridFormat: 'After Grid information.'
+                    }
+                }
+            });
             grid.accessibility.destroy();
         });
 
@@ -125,4 +153,3 @@ test.describe('Screen reader sections', () => {
         await expect(page.locator('[id^="grid-screen-reader-region-after-"]')).toBeHidden();
     });
 });
-

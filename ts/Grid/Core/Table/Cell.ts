@@ -127,11 +127,7 @@ abstract class Cell {
      * @internal
      */
     protected init(): HTMLTableCellElement {
-        const cell = document.createElement('td', {});
-
-        cell.setAttribute('role', 'gridcell');
-
-        return cell;
+        return document.createElement('td', {});
     }
 
     /**

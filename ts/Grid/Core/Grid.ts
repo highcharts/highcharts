@@ -1452,8 +1452,6 @@ export class Grid {
             className: Globals.getClassName('tableElement')
         }, this.contentWrapper);
 
-        this.tableElement.setAttribute('role', 'grid');
-
         const table = new Table(this, this.tableElement);
         await table.init();
         return table;

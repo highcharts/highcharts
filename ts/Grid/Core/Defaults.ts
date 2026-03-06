@@ -114,12 +114,8 @@ export const defaultOptions: DeepPartial<Options> = {
             filtering: true
         },
         screenReaderSection: {
-            beforeGridFormat:
-                '{gridTitle}' +
-                '<div>{gridDescription}</div>' +
-                '<div>Grid with {rowCount} rows and {columnCount}' +
-                ' columns.</div>',
-            afterGridFormat: 'End of Grid.'
+            beforeGridFormat: '',
+            afterGridFormat: ''
         }
     },
     data: {
