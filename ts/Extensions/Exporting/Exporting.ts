@@ -678,7 +678,8 @@ class Exporting {
                 /<svg /,
                 '<svg xmlns:xlink="http://www.w3.org/1999/xlink" '
             )
-            .replace(/ (NS\d+\:)?href=/g, ' xlink:href=') // #3567
+            // #3567, #24102- exclude image elements to preserve boost
+            .replace(/(<(?!image)[^>]*) (NS\d+\:)?href=/g, '$1 xlink:href=')
             .replace(/\n+/g, ' ')
 
             // Replace HTML entities, issue #347
