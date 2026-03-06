@@ -94,6 +94,11 @@ body {
         stroke-width: 20px;
         stroke: #ccc;
     }
+
+    .polarbear .icon-light {
+        stroke: #141414;
+        stroke-width: 20px;
+    }
 }
 
 @media (prefers-color-scheme: dark) {
@@ -106,6 +111,11 @@ body {
             filter: drop-shadow(5px 5px 10px #fff);
             stroke-width: 20px;
             stroke: #ccc;
+        }
+
+        .polarbear .icon-light {
+            stroke: #141414;
+            stroke-width: 20px;
         }
     }
 }
