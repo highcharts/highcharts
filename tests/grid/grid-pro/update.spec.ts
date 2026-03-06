@@ -331,7 +331,7 @@ test('Grid full update: pagination.enabled', async ({ page }) => {
 
         return {
             hasPagination: !!grid.pagination,
-            hasPaginationWrapper: !!parentElement?.querySelector('.hcg-pagination-wrapper')
+            hasPaginationWrapper: !!parentElement?.querySelector('.hcg-pagination')
         };
     });
 
@@ -356,7 +356,7 @@ test('Grid full update: pagination.enabled', async ({ page }) => {
 
         return {
             hasPagination: 'pagination' in grid,
-            hasPaginationWrapper: !!parentElement?.querySelector('.hcg-pagination-wrapper')
+            hasPaginationWrapper: !!parentElement?.querySelector('.hcg-pagination')
         };
     });
 
