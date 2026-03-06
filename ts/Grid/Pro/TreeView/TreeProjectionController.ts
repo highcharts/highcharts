@@ -31,12 +31,17 @@ import type { RowId } from '../../Core/Data/DataProvider';
 import type { LocalDataProviderOptions } from '../../Core/Data/LocalDataProvider';
 import type {
     TreeIndexBuildResult,
-    TreeInputParentIdOptions,
+    TreeInputOptions,
     TreeProjectionRowState,
     TreeProjectionState
 } from './TreeViewTypes';
 
-import { buildIndexFromColumns } from './InputAdapters/ParentIdTreeInputAdapter.js';
+import {
+    buildIndexFromColumns as buildPathIndexFromColumns
+} from './InputAdapters/PathTreeInputAdapter.js';
+import {
+    buildIndexFromColumns as buildParentIdIndexFromColumns
+} from './InputAdapters/ParentIdTreeInputAdapter.js';
 import { isNumber, isString } from '../../../Shared/Utilities.js';
 
 
@@ -50,7 +55,7 @@ type DataOptionsWithTreeView = LocalDataProviderOptions;
 
 interface NormalizedTreeViewOptions {
     enabled: true;
-    input: TreeInputParentIdOptions;
+    input: TreeInputOptions;
     treeColumn?: string;
     initiallyExpanded: boolean;
     expandedRowIds: RowId[];
@@ -93,7 +98,7 @@ class TreeProjectionController {
         table: DataTable;
         versionTag: string;
         idColumn: string;
-        parentIdColumn: string;
+        inputCacheKey: string;
     };
 
 
@@ -144,11 +149,12 @@ class TreeProjectionController {
         const idColumn = dataOptions?.idColumn;
         if (!idColumn) {
             throw new Error(
-                'TreeView: `data.idColumn` is required for `parentId` input.'
+                'TreeView: `data.idColumn` is required for tree input.'
             );
         }
-
-        const parentIdColumn = normalizedOptions.input.parentIdColumn;
+        const inputCacheKey = TreeProjectionController.getInputCacheKey(
+            normalizedOptions.input
+        );
 
         this.syncExpandedRowIdsState(normalizedOptions, this.indexCache);
 
@@ -156,15 +162,15 @@ class TreeProjectionController {
             this.cacheSource?.table === table &&
             this.cacheSource.versionTag === versionTag &&
             this.cacheSource.idColumn === idColumn &&
-            this.cacheSource.parentIdColumn === parentIdColumn
+            this.cacheSource.inputCacheKey === inputCacheKey
         ) {
             return;
         }
 
-        this.indexCache = buildIndexFromColumns(
+        this.indexCache = this.buildIndexFromInput(
             table.columns,
             idColumn,
-            parentIdColumn
+            normalizedOptions.input
         );
         this.syncExpandedRowIdsState(normalizedOptions, this.indexCache);
 
@@ -172,7 +178,7 @@ class TreeProjectionController {
             table,
             versionTag,
             idColumn,
-            parentIdColumn
+            inputCacheKey
         };
     }
 
@@ -259,7 +265,7 @@ class TreeProjectionController {
         const idColumn = this.getDataOptions()?.idColumn;
         if (!idColumn) {
             throw new Error(
-                'TreeView: `data.idColumn` is required for `parentId` input.'
+                'TreeView: `data.idColumn` is required for tree input.'
             );
         }
 
@@ -279,7 +285,14 @@ class TreeProjectionController {
             return table;
         }
 
-        return this.createProjectedTable(table, projectionState.rowIndexes);
+        return this.createProjectedTable(
+            table,
+            projectionState.rowIds,
+            projectionState.rowIndexes,
+            idColumn,
+            index,
+            options.input
+        );
     }
 
     /**
@@ -319,32 +332,72 @@ class TreeProjectionController {
             return;
         }
 
-        if (!treeView.input || treeView.input.type !== 'parentId') {
+        if (!treeView.input) {
             throw new Error(
-                'TreeView: `data.treeView.input.type` must be "parentId".'
-            );
-        }
-
-        if (!treeView.input.parentIdColumn) {
-            throw new Error(
-                'TreeView: `data.treeView.input.parentIdColumn` is required.'
+                'TreeView: `data.treeView.input` is required.'
             );
         }
 
         const treeColumn = treeView.treeColumn;
 
-        return {
-            enabled: true,
-            input: {
-                type: 'parentId',
-                parentIdColumn: treeView.input.parentIdColumn
-            },
-            treeColumn,
-            initiallyExpanded: treeView.initiallyExpanded ?? false,
-            expandedRowIds: this.normalizeExpandedRowIds(
-                treeView.expandedRowIds
-            )
-        };
+        switch (treeView.input.type) {
+            case 'parentId':
+                if (!treeView.input.parentIdColumn) {
+                    throw new Error(
+                        'TreeView: `data.treeView.input.parentIdColumn` is ' +
+                        'required for `parentId` input.'
+                    );
+                }
+
+                return {
+                    enabled: true,
+                    input: {
+                        type: 'parentId',
+                        parentIdColumn: treeView.input.parentIdColumn
+                    },
+                    treeColumn,
+                    initiallyExpanded: treeView.initiallyExpanded ?? false,
+                    expandedRowIds: this.normalizeExpandedRowIds(
+                        treeView.expandedRowIds
+                    )
+                };
+            case 'path':
+                if (!treeView.input.pathColumn) {
+                    throw new Error(
+                        'TreeView: `data.treeView.input.pathColumn` is ' +
+                        'required for `path` input.'
+                    );
+                }
+
+                if (
+                    !isString(treeView.input.separator) ||
+                    !treeView.input.separator.length
+                ) {
+                    throw new Error(
+                        'TreeView: `data.treeView.input.separator` must be a ' +
+                        'non-empty string for `path` input.'
+                    );
+                }
+
+                return {
+                    enabled: true,
+                    input: {
+                        type: 'path',
+                        pathColumn: treeView.input.pathColumn,
+                        separator: treeView.input.separator
+                    },
+                    treeColumn,
+                    initiallyExpanded: treeView.initiallyExpanded ?? false,
+                    expandedRowIds: this.normalizeExpandedRowIds(
+                        treeView.expandedRowIds
+                    )
+                };
+        }
+
+        throw new Error(
+            'TreeView: `data.treeView.input.type` must be "parentId" or ' +
+            '"path".'
+        );
     }
 
     /**
@@ -374,6 +427,42 @@ class TreeProjectionController {
         }
 
         return normalized;
+    }
+
+    /**
+     * Builds canonical tree index for currently selected input type.
+     *
+     * @param columns
+     * Source columns.
+     *
+     * @param idColumn
+     * Column ID containing stable row IDs.
+     *
+     * @param input
+     * Normalized input configuration.
+     *
+     * @returns
+     * Canonical tree index.
+     */
+    private buildIndexFromInput(
+        columns: ColumnCollection,
+        idColumn: string,
+        input: TreeInputOptions
+    ): TreeIndexBuildResult {
+        if (input.type === 'parentId') {
+            return buildParentIdIndexFromColumns(
+                columns,
+                idColumn,
+                input.parentIdColumn
+            );
+        }
+
+        return buildPathIndexFromColumns(
+            columns,
+            idColumn,
+            input.pathColumn,
+            input.separator
+        );
     }
 
     /**
@@ -482,25 +571,69 @@ class TreeProjectionController {
         }
 
         const rootIds: RowId[] = [];
+        const rootIdSet = new Set<RowId>();
         const childrenByParent = new Map<RowId, RowId[]>();
+        const childSetByParent = new Map<RowId, Set<RowId>>();
 
-        for (let i = 0, iEnd = visibleRowIds.length; i < iEnd; ++i) {
-            const nodeId = visibleRowIds[i];
-            const node = index.nodes.get(nodeId);
-            if (!node) {
-                continue;
+        const addRoot = (nodeId: RowId): void => {
+            if (!rootIdSet.has(nodeId)) {
+                rootIdSet.add(nodeId);
+                rootIds.push(nodeId);
+            }
+        };
+
+        const addChild = (parentId: RowId, childId: RowId): void => {
+            let childSet = childSetByParent.get(parentId);
+            if (!childSet) {
+                childSet = new Set<RowId>();
+                childSetByParent.set(parentId, childSet);
             }
 
-            const parentId = node.parentId;
-            if (parentId !== null && visibleSet.has(parentId)) {
-                const children = childrenByParent.get(parentId);
-                if (children) {
-                    children.push(nodeId);
-                } else {
-                    childrenByParent.set(parentId, [nodeId]);
-                }
+            if (childSet.has(childId)) {
+                return;
+            }
+
+            childSet.add(childId);
+
+            const children = childrenByParent.get(parentId);
+            if (children) {
+                children.push(childId);
             } else {
-                rootIds.push(nodeId);
+                childrenByParent.set(parentId, [childId]);
+            }
+        };
+
+        for (let i = 0, iEnd = visibleRowIds.length; i < iEnd; ++i) {
+            let currentId: RowId | null = visibleRowIds[i];
+
+            while (currentId !== null) {
+                const currentNode = index.nodes.get(currentId);
+                if (!currentNode) {
+                    break;
+                }
+
+                const parentId = currentNode.parentId;
+                if (parentId === null) {
+                    addRoot(currentId);
+                    break;
+                }
+
+                const parentNode = index.nodes.get(parentId);
+                if (!parentNode) {
+                    addRoot(currentId);
+                    break;
+                }
+
+                if (
+                    !visibleSet.has(parentId) &&
+                    !parentNode.isGenerated
+                ) {
+                    addRoot(currentId);
+                    break;
+                }
+
+                addChild(parentId, currentId);
+                currentId = parentId;
             }
         }
 
@@ -538,17 +671,26 @@ class TreeProjectionController {
             visitNode(rootIds[i], 0);
         }
 
-        const projectedIndexes = new Array<number>(projectedRowIds.length);
+        const projectedIndexes = new Array<number | undefined>(
+            projectedRowIds.length
+        );
         for (let i = 0, iEnd = projectedRowIds.length; i < iEnd; ++i) {
             const rowIndex = rowIndexById.get(projectedRowIds[i]);
-            if (typeof rowIndex !== 'number') {
+            if (typeof rowIndex === 'number') {
+                projectedIndexes[i] = rowIndex;
+                continue;
+            }
+
+            const node = index.nodes.get(projectedRowIds[i]);
+            if (!node || !node.isGenerated) {
                 throw new Error(
                     'TreeView: Could not resolve row index for id "' +
                     String(projectedRowIds[i]) +
                     '".'
                 );
             }
-            projectedIndexes[i] = rowIndex;
+
+            projectedIndexes[i] = void 0;
         }
 
         return {
@@ -564,15 +706,31 @@ class TreeProjectionController {
      * @param table
      * Input queried table.
      *
+     * @param rowIds
+     * Projected row IDs.
+     *
      * @param rowIndexes
      * Source row indexes in projected order.
+     *
+     * @param idColumn
+     * Column containing stable row IDs.
+     *
+     * @param index
+     * Canonical tree index built from source data.
+     *
+     * @param input
+     * Normalized tree input options.
      *
      * @returns
      * Cloned table with projected column values and row index references.
      */
     private createProjectedTable(
         table: DataTable,
-        rowIndexes: number[]
+        rowIds: RowId[],
+        rowIndexes: Array<number | undefined>,
+        idColumn: string,
+        index: TreeIndexBuildResult,
+        input: TreeInputOptions
     ): DataTable {
         const projectedTable = table.clone(true);
         const sourceColumnIds = table.getColumnIds();
@@ -591,7 +749,19 @@ class TreeProjectionController {
             );
 
             for (let j = 0, jEnd = rowIndexes.length; j < jEnd; ++j) {
-                projectedColumn[j] = sourceColumn?.[rowIndexes[j]];
+                const rowIndex = rowIndexes[j];
+                if (typeof rowIndex === 'number') {
+                    projectedColumn[j] = sourceColumn?.[rowIndex];
+                    continue;
+                }
+
+                projectedColumn[j] = this.getGeneratedCellValue(
+                    columnId,
+                    rowIds[j],
+                    idColumn,
+                    index,
+                    input
+                );
             }
 
             projectedColumns[columnId] = projectedColumn;
@@ -604,12 +774,65 @@ class TreeProjectionController {
         );
 
         for (let i = 0, iEnd = rowIndexes.length; i < iEnd; ++i) {
-            originalRowIndexes[i] = table.getOriginalRowIndex(rowIndexes[i]);
+            const rowIndex = rowIndexes[i];
+            originalRowIndexes[i] = (
+                typeof rowIndex === 'number' ?
+                    table.getOriginalRowIndex(rowIndex) :
+                    void 0
+            );
         }
 
         projectedTable.setOriginalRowIndexes(originalRowIndexes);
 
         return projectedTable;
+    }
+
+    /**
+     * Resolves column value for an auto-generated tree path row.
+     *
+     * @param columnId
+     * Target column ID.
+     *
+     * @param rowId
+     * Generated row ID.
+     *
+     * @param idColumn
+     * Column containing stable row IDs.
+     *
+     * @param index
+     * Canonical tree index built from source data.
+     *
+     * @param input
+     * Normalized tree input options.
+     *
+     * @returns
+     * Cell value for generated row, or `null` for unsupported columns.
+     */
+    private getGeneratedCellValue(
+        columnId: string,
+        rowId: RowId,
+        idColumn: string,
+        index: TreeIndexBuildResult,
+        input: TreeInputOptions
+    ): DataTableCellType {
+        const node = index.nodes.get(rowId);
+        if (!node || !node.isGenerated) {
+            return null;
+        }
+
+        if (columnId === idColumn) {
+            return node.id;
+        }
+
+        if (
+            input.type === 'path' &&
+            columnId === input.pathColumn &&
+            node.path
+        ) {
+            return node.path;
+        }
+
+        return null;
     }
 
     /**
@@ -625,7 +848,7 @@ class TreeProjectionController {
      * `true` for `[0, 1, 2, ...]`, otherwise `false`.
      */
     private static areRowIndexesIdentity(
-        rowIndexes: number[],
+        rowIndexes: Array<number | undefined>,
         rowCount: number
     ): boolean {
         if (rowIndexes.length !== rowCount) {
@@ -668,6 +891,30 @@ class TreeProjectionController {
         }
 
         return parts.join('|');
+    }
+
+    /**
+     * Builds deterministic cache key for normalized input configuration.
+     *
+     * @param input
+     * Normalized input configuration.
+     *
+     * @returns
+     * Cache key representing input identity.
+     */
+    private static getInputCacheKey(input: TreeInputOptions): string {
+        if (input.type === 'parentId') {
+            return JSON.stringify([
+                'parentId',
+                input.parentIdColumn
+            ]);
+        }
+
+        return JSON.stringify([
+            'path',
+            input.pathColumn,
+            input.separator
+        ]);
     }
 
     /**

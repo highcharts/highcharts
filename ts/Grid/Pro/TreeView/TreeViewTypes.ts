@@ -80,7 +80,7 @@ export interface TreeInputParentIdOptions {
 }
 
 /**
- * Parent-child relation input based on a parent ID column.
+ * Parent-child relation input based on full node paths.
  */
 export interface TreeInputPathOptions {
     type: 'path';
@@ -94,7 +94,9 @@ export interface TreeInputPathOptions {
 export interface TreeNodeRecord {
     id: RowId;
     parentId: RowId | null;
-    rowIndex: number;
+    rowIndex: number | null;
+    isGenerated?: boolean;
+    path?: string;
     childrenIds: RowId[];
 }
 
@@ -122,7 +124,7 @@ export interface TreeProjectionRowState {
  */
 export interface TreeProjectionState {
     rowIds: RowId[];
-    rowIndexes: number[];
+    rowIndexes: Array<number | undefined>;
     rowsById: Map<RowId, TreeProjectionRowState>;
 }
 
@@ -133,6 +135,6 @@ export interface TreeInputAdapter {
     buildIndexFromColumns(
         columns: ColumnCollection,
         idColumn: string,
-        sourceColumn: string
+        input: TreeInputOptions
     ): TreeIndexBuildResult;
 }

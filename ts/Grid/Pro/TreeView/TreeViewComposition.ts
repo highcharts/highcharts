@@ -116,7 +116,10 @@ function onAfterCellRender(this: TableCell): void {
         return;
     }
 
-    const rowId = this.row.id;
+    const rowId = (
+        this.row.id ??
+        projectionState.rowIds[this.row.index]
+    );
     if (rowId === void 0) {
         return;
     }
