@@ -44,7 +44,8 @@ import {
     extend,
     isNumber,
     merge,
-    pick
+    pick,
+    splat
 } from '../../Shared/Utilities.js';
 import TextPath from '../../Extensions/TextPath.js';
 TextPath.compose(SVGElement);
@@ -103,10 +104,10 @@ class OrganizationSeries extends SankeySeries {
         const shapeArgs = point.shapeArgs,
             text = dataLabel.text;
         if (options.useHTML && shapeArgs) {
-            const padjust = (
-                (this.options.borderWidth as any) +
-                2 * (this.options.dataLabels as any).padding
-            );
+            const padding = splat(this.options.dataLabels.padding || 0),
+                borderWidth = this.options.borderWidth || 0,
+                padjustX = borderWidth + 2 * padding[3 % padding.length],
+                padjustY = borderWidth + 2 * padding[0 % padding.length];
 
             let width = shapeArgs.width || 0,
                 height = shapeArgs.height || 0;
@@ -116,8 +117,8 @@ class OrganizationSeries extends SankeySeries {
                 height = shapeArgs.width || 0;
             }
 
-            height -= padjust;
-            width -= padjust;
+            width -= padjustX;
+            height -= padjustY;
 
             text.foreignObject?.attr({
                 x: 0,

@@ -1483,25 +1483,24 @@ function wrapPointPos(
     this: PolarPoint,
     proceed: Function,
     chartCoordinates?: boolean,
+    plotX: number|undefined = this.plotX,
     plotY: number|undefined = this.plotY
 ): [number, number]|undefined {
-    if (!this.destroyed) {
-        const { plotX, series } = this,
-            { chart } = series;
+    const { series } = this,
+        { chart } = series || {};
 
-        if (
-            chart.polar &&
-            isNumber(plotX) &&
-            isNumber(plotY)
-        ) {
-            return [
-                plotX + (chartCoordinates ? chart.plotLeft : 0),
-                plotY + (chartCoordinates ? chart.plotTop : 0)
-            ];
-        }
-
-        return proceed.call(this, chartCoordinates, plotY);
+    if (
+        chart?.polar &&
+        isNumber(plotX) &&
+        isNumber(plotY)
+    ) {
+        return [
+            plotX + (chartCoordinates ? chart.plotLeft : 0),
+            plotY + (chartCoordinates ? chart.plotTop : 0)
+        ];
     }
+
+    return proceed.call(this, chartCoordinates, plotX, plotY);
 }
 
 /* *

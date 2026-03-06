@@ -35,6 +35,7 @@ const umdTargetFolder = Path.join('code');
 const namespace = 'Highcharts';
 const productMasters = [
     'highcharts',
+    'highcharts-autoload',
     'highcharts-gantt',
     'highmaps',
     'highstock',

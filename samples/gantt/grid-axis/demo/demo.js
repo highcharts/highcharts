@@ -1,9 +1,7 @@
 // THE CHART
 Highcharts.chart('container', {
     chart: {
-        type: 'scatter',
-        marginLeft: 150,
-        marginRight: 150
+        type: 'scatter'
     },
     title: {
         text: 'Highcharts Grid axis'
