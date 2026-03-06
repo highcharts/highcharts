@@ -4,33 +4,30 @@ sidebar_label: "Element variables"
 
 # Element variables
 
-Highcharts Grid has two theming layers:
+Highcharts Grid includes a set of predefined CSS variables for theming interactive elements such as inputs and buttons used in e.g. headers, body cells, and pagination.
 
-1. Grid variables for table surfaces (`thead`, `tbody`, rows, columns, and cells), documented in [Grid variables](https://www.highcharts.com/docs/grid/theming/grid-variables).
-2. Element variables for interactive controls rendered inside and around the table, mainly `.hcg-input` and `.hcg-button`.
-
-This article documents the element layer.
+For table surfaces such as rows, columns, headers, and cells, see [Grid variables](https://www.highcharts.com/docs/grid/theming/grid-variables).
 
 ## Variable naming and fallback
 
 Most element variables follow this pattern:
 
-1. Start from global element tokens (`--hcg-input-*`, `--hcg-button-*`).
-2. Override button tokens with scoped families where needed (`--hcg-header-button-*`, `--hcg-cell-button-*`, `--hcg-pagination-button-*`).
-3. Fall back to built-in defaults.
+1. Start from global element variables.
+2. Override with section-specific variables where needed.
+3. Fall back to global values when section variables are not defined.
 
 Example:
 
 ```css
 .theme-elements {
-    --hcg-button-border-radius: 6px;
-    --hcg-header-button-border-radius: 0;
+    --hcg-input-border-radius: 6px;
+    --hcg-pagination-input-border-radius: 0;
 }
 ```
 
-In this case, buttons use `6px` radius globally, while header buttons are overridden to `0`.
+In this case, all inputs use `6px` radius globally, while inputs in pagination are overridden to `0`.
 
-## Input variables (`.hcg-input`)
+## Inputs
 
 ### Globals
 
@@ -46,41 +43,18 @@ In this case, buttons use `6px` radius globally, while header buttons are overri
 | --hcg-input-border-width       | 1px                            | [border-width](https://developer.mozilla.org/en-US/docs/Web/CSS/border-width) |
 | --hcg-input-border-style       | solid                          | [border-style](https://developer.mozilla.org/en-US/docs/Web/CSS/border-style) |
 | --hcg-input-border-color       | --hcg-color                    | [border-color](https://developer.mozilla.org/en-US/docs/Web/CSS/border-color) |
-| --hcg-input-background         | --highcharts-background-color  | [background](https://developer.mozilla.org/en-US/docs/Web/CSS/background) |
+| --hcg-input-background         |  #000000/#ffffff             | [background](https://developer.mozilla.org/en-US/docs/Web/CSS/background) |
 | --hcg-input-hover-color        | --hcg-input-color              | [color](https://developer.mozilla.org/en-US/docs/Web/CSS/color) |
 | --hcg-input-hover-background   | --hcg-input-background         | [background](https://developer.mozilla.org/en-US/docs/Web/CSS/background) |
 | --hcg-input-hover-border-color | --hcg-input-border-color       | [border-color](https://developer.mozilla.org/en-US/docs/Web/CSS/border-color) |
 
-### Scoped input prefixes
+### Section prefixes
 
 | Variable Prefix             | Applies To                  | Fallback |
 | --------------------------- | --------------------------- | -------- |
-| --hcg-header-input-*        | Inputs inside header cells  | --hcg-input-* |
-| --hcg-cell-input-*          | Inputs inside body cells    | --hcg-input-* |
-| --hcg-pagination-input-*    | Inputs inside pagination UI | --hcg-input-* |
-
-### Hover border fallback precedence
-
-Hover border color changes only when a hover token is defined.
-
-1. Header input hover color:
-`--hcg-header-input-hover-color -> --hcg-input-hover-color -> --hcg-header-input-color -> global/default`
-2. Cell input hover color:
-`--hcg-cell-input-hover-color -> --hcg-input-hover-color -> --hcg-cell-input-color -> global/default`
-3. Pagination input hover color:
-`--hcg-pagination-input-hover-color -> --hcg-input-hover-color -> --hcg-pagination-input-color -> global/default`
-4. Header input hover background:
-`--hcg-header-input-hover-background -> --hcg-input-hover-background -> --hcg-header-input-background -> global/default`
-5. Cell input hover background:
-`--hcg-cell-input-hover-background -> --hcg-input-hover-background -> --hcg-cell-input-background -> global/default`
-6. Pagination input hover background:
-`--hcg-pagination-input-hover-background -> --hcg-input-hover-background -> --hcg-pagination-input-background -> global/default`
-7. Header input hover border:
-`--hcg-header-input-hover-border-color -> --hcg-input-hover-border-color -> --hcg-header-input-border-color -> global/default`
-8. Cell input hover border:
-`--hcg-cell-input-hover-border-color -> --hcg-input-hover-border-color -> --hcg-cell-input-border-color -> global/default`
-9. Pagination input hover border:
-`--hcg-pagination-input-hover-border-color -> --hcg-input-hover-border-color -> --hcg-pagination-input-border-color -> global/default`
+| --hcg-header-input        | Inputs inside header cells  | Global |
+| --hcg-cell-input          | Inputs inside body cells    | Global |
+| --hcg-pagination-input    | Inputs inside pagination UI | Global |
 
 ### Example
 
@@ -88,14 +62,15 @@ Hover border color changes only when a hover token is defined.
 .theme-inputs {
     --hcg-input-font-size: 13px;
     --hcg-input-padding: 8px;
-    --hcg-input-border-radius: 6px;
+    --hcg-input-border-radius: 2px;
     --hcg-input-border-color: #c9c9c9;
     --hcg-input-hover-border-color: #8e8e8e;
-    --hcg-input-background: #ffffff;
+
+    --hcg-pagination-border-color: #676767;
 }
 ```
 
-## Button variables (`.hcg-button`)
+## Buttons
 
 ### Globals
 
@@ -119,51 +94,19 @@ Hover border color changes only when a hover token is defined.
 
 | Variable Prefix               | Applies To                   | Fallback |
 | ----------------------------- | ---------------------------- | -------- |
-| --hcg-header-button-*         | Buttons inside header cells  | --hcg-button-* |
-| --hcg-cell-button-*           | Buttons inside body cells    | --hcg-button-* |
-| --hcg-pagination-button-*     | Buttons inside pagination UI | --hcg-button-* |
-
-Scoped button families support these suffixes:
-
-1. `background`
-2. `color`
-3. `padding`
-4. `border-width`
-5. `border-style`
-6. `border-color`
-7. `border-radius`
-8. `hover-color`
-9. `hover-background`
-10. `hover-border-color`
-11. `selected-color`
-12. `selected-background`
-13. `selected-border-color`
-
-### Header button color behavior
-
-Header buttons have context-aware color fallbacks:
-
-| Variable | Default behavior |
-| -------- | ---------------- |
-| --hcg-header-button-color | Falls back to current header text color |
-| --hcg-header-button-hover-color | Falls back to current header text color |
-| --hcg-header-button-selected-color | Falls back to current header text color |
-| --hcg-header-button-hover-background | Falls back to a color mix based on header hover background |
-| --hcg-header-button-selected-background | Falls back to current header button background |
+| --hcg-header-button         | Buttons inside header cells  | Global |
+| --hcg-cell-button           | Buttons inside body cells    | Global |
+| --hcg-pagination-button     | Buttons inside pagination UI | Global |
 
 ### Example
 
 ```css
 .theme-buttons {
-    --hcg-button-border-radius: 6px;
+    --hcg-button-border-radius: 2px;
     --hcg-button-padding: 5px;
     --hcg-button-border-color: #d0d0d0;
     --hcg-button-hover-background: #ececec;
 
-    --hcg-header-button-background: transparent;
-    --hcg-header-button-hover-background: #d7e4ff;
-
-    --hcg-cell-button-border-color: #b8d7bf;
     --hcg-cell-button-selected-background: #1a7f37;
     --hcg-cell-button-selected-color: #ffffff;
 
@@ -172,9 +115,9 @@ Header buttons have context-aware color fallbacks:
 }
 ```
 
-## Shared focus ring variables
+## Focus ring
 
-Both inputs and buttons use the shared focus ring tokens:
+### Globals
 
 | Variable               | Default Value | Valid Values |
 | ---------------------- | ------------- | ------------ |
@@ -186,29 +129,13 @@ Both inputs and buttons use the shared focus ring tokens:
 ```css
 .theme-focus {
     --hcg-focus-ring-color: #5b6ee1;
-    --hcg-focus-ring-width: 3px;
+    --hcg-focus-ring-width: 1px;
 }
 ```
 
-## Putting It All Together
+## Summary
 
-```css
-.theme-elements {
-    --hcg-input-padding: 8px;
-    --hcg-input-border-radius: 6px;
-    --hcg-input-border-color: #d2d2d2;
-    --hcg-input-hover-border-color: #8b8b8b;
-
-    --hcg-button-border-radius: 6px;
-    --hcg-button-border-color: #d2d2d2;
-    --hcg-button-hover-background: #ececec;
-
-    --hcg-header-button-hover-background: #dde8ff;
-    --hcg-pagination-button-selected-background: #111111;
-    --hcg-pagination-button-selected-color: #ffffff;
-
-    --hcg-focus-ring-color: #5b6ee1;
-}
-```
-
-Check our [theming demo](https://www.highcharts.com/demo/grid/grid-theming) for a complete setup that combines table and element theming.
+1. Define global input and button variables first.
+2. Override by section using `--hcg-header-*`, `--hcg-cell-*`, and `--hcg-pagination-*`.
+3. Use shared focus ring variables for accessible focus styling.
+4. Combine with [Grid variables](https://www.highcharts.com/docs/grid/theming/grid-variables) for full table and element theming.
