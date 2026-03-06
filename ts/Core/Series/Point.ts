@@ -851,34 +851,23 @@ class Point {
      */
     public getClassName(): string {
         const point = this;
-        const options = point.series.options as Record<string, unknown>;
-
-        const hasNegativeStyling =
-            point.negative &&
-            options.negativeColor !== false &&
+        const seriesOptions = point.series.options as Record<string, unknown>;
+        return 'highcharts-point' +
+            (point.selected ? ' highcharts-point-select' : '') +
             (
-                options.negativeColor ||
-                options.negativeFillColor ||
-                options.displayNegative === true ||
-                // Waterfall series uses zone className for negative color
-                point.zone?.className?.includes('highcharts-negative') ||
-                point.series.chart.styledMode
+                point.negative && seriesOptions.negativeColor !== false ?
+                    ' highcharts-negative' : '') +
+            (point.isNull ? ' highcharts-null-point' : '') +
+            (typeof point.colorIndex !== 'undefined' ?
+                ' highcharts-color-' + point.colorIndex : '') +
+            (point.options.className ? ' ' + point.options.className : '') +
+            (
+                point.zone?.className ?
+                    ' ' + point.zone.className.replace(
+                        'highcharts-negative', ''
+                    ) :
+                    ''
             );
-
-        const zoneClassName = (
-            point.zone?.className?.replace('highcharts-negative', '') ?? ''
-        ).trim();
-
-        return [
-            'highcharts-point',
-            point.selected && 'highcharts-point-select',
-            hasNegativeStyling && 'highcharts-negative',
-            point.isNull && 'highcharts-null-point',
-            typeof point.colorIndex !== 'undefined' &&
-                `highcharts-color-${point.colorIndex}`,
-            point.options.className,
-            zoneClassName
-        ].filter(Boolean).join(' ');
     }
 
     /**
