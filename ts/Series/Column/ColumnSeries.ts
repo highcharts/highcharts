@@ -501,14 +501,12 @@ class ColumnSeries extends Series {
             // This ensures consistent dimensions between null/normal points.
             dense = series.dense =
                 (series.closestPointRange as any) * series.xAxis.transA < 2,
-            borderWidth = series.borderWidth = pick(
-                options.borderWidth,
-                dense ? 0 : 1 // #3635
-            ),
+            borderWidth = series.borderWidth =
+            options.borderWidth ?? (dense ? 0 : 1), // #3635
             xAxis = series.xAxis,
             yAxis = series.yAxis,
             threshold = options.threshold,
-            minPointLength = pick(options.minPointLength, 5),
+            minPointLength = options.minPointLength ?? 5,
             metrics = series.getColumnMetrics(),
             seriesPointWidth = metrics.width,
             seriesXOffset = series.pointXOffset = metrics.offset,
@@ -532,7 +530,7 @@ class ColumnSeries extends Series {
 
         // Record the new values
         series.points.forEach(function (point): void {
-            const yBottom = pick(point.yBottom, translatedThreshold as any),
+            const yBottom = point.yBottom ?? (translatedThreshold as number),
                 safeDistance = 999 + Math.abs(yBottom),
                 plotX = point.plotX || 0,
                 // Don't draw too far outside plot area (#1303, #2241,
@@ -576,12 +574,12 @@ class ColumnSeries extends Series {
                 // If stacked...
                 barY = (
                     Math.abs(
-                        barY - (translatedThreshold as any)
+                        barY - (translatedThreshold as number)
                     ) > minPointLength ?
                         // ...keep position
-                        yBottom - minPointLength :
+                        yBottom - (up ? minPointLength : 0) :
                         // #1485, #4051
-                        (translatedThreshold as any) -
+                        (translatedThreshold as number) -
                         (up ? minPointLength : 0)
                 );
             }
@@ -590,7 +588,7 @@ class ColumnSeries extends Series {
             // @todo Handle grouping/stacking too. Calculate offset properly
             if (defined(point.options.pointWidth)) {
                 pointWidth = barW =
-                    Math.ceil(point.options.pointWidth as any);
+                    Math.ceil(point.options.pointWidth as number);
                 barX -= Math.round((pointWidth - seriesPointWidth) / 2);
             }
 
@@ -624,7 +622,7 @@ class ColumnSeries extends Series {
                 [
                     xAxis.left - chart.plotLeft + barX + barW / 2,
                     clamp(
-                        plotY + (yAxis.pos as any) -
+                        plotY + (yAxis.pos as number) -
                         chart.plotTop,
                         yAxis.pos - chart.plotTop,
                         yAxis.len + yAxis.pos - chart.plotTop
