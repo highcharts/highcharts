@@ -29,7 +29,7 @@ A common pattern is to use JavaScript for *data interpretation* and CSS for *pre
 
 ## Where theming variables can be applied
 
-The grid’s theming variables are designed to be applied **only** to these table elements:
+The table interaction theming variables are designed to be applied **only** to these table elements:
 
 * `tr` (rows)
 * `td` (cells and columns)
@@ -37,7 +37,9 @@ The grid’s theming variables are designed to be applied **only** to these tabl
 
 This is recommended because the built-in interaction model (row hover, column hover, opacity blending, etc.) is implemented around those elements. If you want to style **content inside** those elements (including pseudo-elements like `::before`), use **regular CSS**, not theming variables.
 
-If you need to style elements beyond `color` and `background`your should also use **regular CSS**, not theming variables.
+If you need to style elements beyond `color` and `background`, you should also use **regular CSS**, not theming variables.
+
+For theming form controls (`.hcg-input`, `.hcg-button`), see [Element variables](https://www.highcharts.com/docs/grid/theming/element-variables).
 
 ## Individual cells
 
@@ -134,7 +136,7 @@ This targets the first column structurally and customizes column and cell hover 
 ### Style a specific column by ID (cells)
 
 ```css
-td[data-column-id="Departement"] {
+td[data-column-id="Department"] {
   --hcg-row-hover-opacity: 40%;
   --hcg-cell-background: lightgreen;
   --hcg-cell-hover-color: white;
@@ -143,7 +145,7 @@ td[data-column-id="Departement"] {
 }
 ```
 
-This targets a semantic column (`Position`) rather than relying on column order.
+This targets a semantic column (`Department`) rather than relying on column order.
 
 ### Match the header styling to the column (header cell)
 
