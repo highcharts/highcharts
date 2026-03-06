@@ -43,7 +43,7 @@ module.exports = {
         { from: 'grid/wrappers/grid-with-vue', to: 'grid/frameworks/vue' },
         { from: 'grid/cell-editing', to: 'grid/editing/index' },
         { from: 'grid/cell-renderers', to: 'grid/editing/renderers' },
-        { from: 'grid/cell-context-menu', to: 'grid/cells/context-menu' },
+        // { from: 'grid/cell-context-menu', to: 'grid/cells/index' },
         { from: 'grid/column-filtering', to: 'grid/columns/filtering' },
         { from: 'grid/header', to: 'grid/columns/header' },
         { from: 'grid/pagination', to: 'grid/rows/pagination' },

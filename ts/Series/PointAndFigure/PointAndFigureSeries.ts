@@ -20,7 +20,7 @@ import DataTableCore from '../../Data/DataTableCore.js';
 import PointAndFigurePoint from './PointAndFigurePoint.js';
 import PointAndFigureSeriesDefaults from './PointAndFigureSeriesDefaults.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-import PointAndFigureSymbols from './PointAndFigureSymbols.js';
+import CrossSymbol from '../CrossSymbol.js';
 
 import type Point from '../../Core/Series/Point.js';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes.js';
@@ -97,7 +97,7 @@ class PointAndFigureSeries extends ScatterSeries {
         SVGRendererClass: typeof SVGRenderer
     ): void {
         if (pushUnique(composed, 'pointandfigure')) {
-            PointAndFigureSymbols.compose(SVGRendererClass);
+            CrossSymbol.compose(SVGRendererClass);
         }
     }
 

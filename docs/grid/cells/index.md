@@ -4,7 +4,6 @@ sidebar_label: "Overview"
 
 # Cells overview
 
-Cell-focused features include formatting and context menu.
+Cell-focused features include formatting.
 
 - [Formatting](https://www.highcharts.com/docs/grid/cells/formatting)
-- [Context menu](https://www.highcharts.com/docs/grid/cells/context-menu)
