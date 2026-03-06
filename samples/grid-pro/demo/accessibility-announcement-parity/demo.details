@@ -1,0 +1,16 @@
+---
+name: Accessibility announcement parity
+authors:
+  - Codex
+js_wrap: b
+alt_text: >-
+  Native HTML table and Highcharts Grid shown side by side for accessibility
+  parity inspection.
+tags:
+  - Highcharts Grid demo
+categories:
+  - General:
+        priority: 75
+use_png_thumbnail: true
+is_pro: true
+...

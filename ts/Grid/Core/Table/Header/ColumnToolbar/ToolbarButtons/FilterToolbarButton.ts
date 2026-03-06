@@ -49,6 +49,23 @@ class FilterToolbarButton extends ToolbarButton {
 
     public override popup?: FilterPopup;
 
+    private updateA11yLabel(): void {
+        const button = this.wrapper?.querySelector('button');
+        const column = this.toolbar?.column;
+        const columnLabel = (
+            column?.header?.headerContent?.textContent ||
+            column?.header?.value ||
+            column?.id ||
+            ''
+        ).trim();
+
+        if (!button || !columnLabel) {
+            return;
+        }
+
+        button.setAttribute('aria-label', `${columnLabel} filter`);
+    }
+
     /* *
      *
      *  Constructor
@@ -78,6 +95,7 @@ class FilterToolbarButton extends ToolbarButton {
         const column = this.toolbar?.column;
         if (column) {
             this.setActive(StateHelpers.isFiltered(column));
+            this.updateA11yLabel();
         }
     }
 

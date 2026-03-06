@@ -1,0 +1,92 @@
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/css/grid-pro.css");
+
+body {
+    margin: 0;
+    padding: 16px;
+    font-family: Arial, sans-serif;
+    background: #f5f5f5;
+}
+
+.comparison {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px;
+    align-items: start;
+}
+
+.panel {
+    background: #fff;
+    border: 1px solid #d9d9d9;
+    border-radius: 8px;
+    padding: 16px;
+}
+
+.panel h2 {
+    margin: 0 0 8px;
+    font-size: 18px;
+}
+
+.description,
+.highcharts-description {
+    color: #555;
+    font-size: 14px;
+}
+
+.description {
+    margin: 0 0 12px;
+}
+
+.highcharts-description {
+    margin: 16px 0 0;
+}
+
+.entry-button {
+    margin-bottom: 12px;
+}
+
+#native-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+}
+
+#native-table caption {
+    padding-bottom: 8px;
+    font-weight: 600;
+    text-align: left;
+}
+
+#native-table th,
+#native-table td {
+    border: 1px solid #d0d0d0;
+    padding: 8px 12px;
+    text-align: left;
+    font-weight: 400;
+}
+
+#native-table thead th {
+    background: #f0f0f0;
+    font-weight: 600;
+}
+
+#native-table tbody th[scope="row"] {
+    background: #fafafa;
+    font-weight: 600;
+}
+
+#native-table th:focus,
+#native-table td:focus {
+    outline: 2px solid #2f7ed8;
+    outline-offset: -2px;
+}
+
+#grid-container {
+    background: var(--hcg-background);
+    padding: 8px;
+}
+
+@media (max-width: 900px) {
+    .comparison {
+        grid-template-columns: 1fr;
+    }
+}

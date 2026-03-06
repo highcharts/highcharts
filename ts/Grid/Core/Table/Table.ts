@@ -429,8 +429,11 @@ class Table {
     private onTBodyFocus = (e: FocusEvent): void => {
         e.preventDefault();
 
-        this.rows[this.rowsVirtualizer.rowCursor - this.rows[0].index]
-            ?.cells[0]?.htmlElement.focus();
+        if (e.target !== this.tbodyElement) {
+            return;
+        }
+
+        this.getFocusEntryCell()?.htmlElement.focus();
     };
 
     /**
@@ -533,27 +536,24 @@ class Table {
             return;
         }
 
-        // Disabled until meaningful functionality is ready.
+        const isContextMenuKey = (
+            e.key === 'ContextMenu' || (e.key === 'F10' && e.shiftKey)
+        );
 
-
-        // const isContextMenuKey = (
-        //     e.key === 'ContextMenu' || (e.key === 'F10' && e.shiftKey)
-        // );
-
-        // if (isContextMenuKey && 'column' in cell && 'row' in cell) {
-        //     const tableCell = cell as TableCell;
-        //     const rect = tableCell.htmlElement.getBoundingClientRect();
-        //     const opened = this.openCellContextMenu(
-        //         tableCell,
-        //         rect.left + 4,
-        //         rect.bottom - 2
-        //     );
-        //     if (opened) {
-        //         e.preventDefault();
-        //         e.stopPropagation();
-        //         return;
-        //     }
-        // }
+        if (isContextMenuKey && 'column' in cell && 'row' in cell) {
+            const tableCell = cell as TableCell;
+            const rect = tableCell.htmlElement.getBoundingClientRect();
+            const opened = this.openCellContextMenu(
+                tableCell,
+                rect.left + 4,
+                rect.bottom - 2
+            );
+            if (opened) {
+                e.preventDefault();
+                e.stopPropagation();
+                return;
+            }
+        }
 
         (cell as { onKeyDown(e: KeyboardEvent): void }).onKeyDown(e);
     };
@@ -683,12 +683,12 @@ class Table {
             return;
         }
 
-        const td = element.closest('td');
-        if (!td) {
+        const cellElement = element.closest('td, th');
+        if (!cellElement) {
             return;
         }
 
-        const tr = td.parentElement;
+        const tr = cellElement.parentElement;
         if (!tr) {
             return;
         }
@@ -706,7 +706,8 @@ class Table {
         }
 
         // Find cell index by position in row
-        const cellIndex = Array.prototype.indexOf.call(tr.children, td);
+        const cellIndex =
+            Array.prototype.indexOf.call(tr.children, cellElement);
         return row.cells[cellIndex];
     }
 
@@ -789,6 +790,42 @@ class Table {
         this.focusAnchorCell?.htmlElement.setAttribute('tabindex', '-1');
         this.focusAnchorCell = cell;
         this.focusAnchorCell.htmlElement.setAttribute('tabindex', '0');
+    }
+
+    /**
+     * Returns the preferred tab entry point for the table.
+     */
+    public getFocusEntryCell(): Cell | undefined {
+        const firstRenderedRow = this.rows[0];
+        const rowAtCursor = firstRenderedRow ?
+            this.rows[this.rowsVirtualizer.rowCursor - firstRenderedRow.index] :
+            void 0;
+
+        return (
+            this.columns[0]?.header ||
+            rowAtCursor?.cells[0] ||
+            firstRenderedRow?.cells[0]
+        );
+    }
+
+    /**
+     * Returns a stable DOM id for the header of a visible column.
+     *
+     * @param column
+     * The visible column.
+     */
+    public getColumnHeaderId(column: Column): string {
+        return `${this.grid.id}-columnheader-${column.index + 1}`;
+    }
+
+    /**
+     * Returns a stable DOM id for the first visible cell in a body row.
+     *
+     * @param rowIndex
+     * The absolute row index in the current presentation table.
+     */
+    public getRowHeaderId(rowIndex: number): string {
+        return `${this.grid.id}-rowheader-${rowIndex}`;
     }
 
     /**

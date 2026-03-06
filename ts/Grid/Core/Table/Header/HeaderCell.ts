@@ -197,6 +197,7 @@ class HeaderCell extends Cell {
 
         // Render the header cell element content.
         setHTMLContent(this.headerContent, this.value);
+        this.htmlElement.setAttribute('aria-label', this.value);
 
         this.htmlElement.setAttribute('scope', 'col');
 
@@ -208,7 +209,14 @@ class HeaderCell extends Cell {
 
         if (column) {
             this.htmlElement.setAttribute('data-column-id', column.id);
-            this.htmlElement.setAttribute('aria-label', column.id);
+            this.htmlElement.setAttribute(
+                'id',
+                column.viewport.getColumnHeaderId(column)
+            );
+            this.htmlElement.setAttribute(
+                'aria-colindex',
+                String(column.index + 1)
+            );
 
             // Add user column classname
             if (column.options.className) {

@@ -697,14 +697,9 @@ class RowsVirtualizer {
                 (!vp.focusCursor || !vp.focusAnchorCell?.row.rendered) &&
                 rows.length > 0
             ) {
-                const rowIndex = rowCursor - rows[0].index;
-                const targetRow = rows[rowIndex];
-                if (
-                    targetRow &&
-                    targetRow.cells.length > 0 &&
-                    targetRow.cells[0]
-                ) {
-                    vp.setFocusAnchorCell(targetRow.cells[0]);
+                const focusEntryCell = vp.getFocusEntryCell();
+                if (focusEntryCell) {
+                    vp.setFocusAnchorCell(focusEntryCell);
                 }
             }
         } finally {
