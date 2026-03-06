@@ -31,15 +31,14 @@ const { win } = H;
 import GraphLayout from '../GraphLayoutComposition.js';
 import QuadTree from './QuadTree.js';
 import QuadTreeNode from './QuadTreeNode.js';
-import U from '../../Core/Utilities.js';
-const {
+import VerletIntegration from './VerletIntegration.js';
+import {
     clamp,
     defined,
-    isFunction,
     fireEvent,
+    isFunction,
     pick
-} = U;
-import VerletIntegration from './VerletIntegration.js';
+} from '../../Shared/Utilities.js';
 
 /* *
  *

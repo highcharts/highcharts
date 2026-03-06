@@ -1,6 +1,6 @@
 describe('Grid rows virtualizaion threshold', () => {
     before(() => {
-        cy.visit('grid-pro/cypress/virtualization-threshold');
+        cy.visit('grid-pro/e2e/virtualization-threshold');
     });
 
     it('Should properly set rows virtualizaion based on row count.', () => {

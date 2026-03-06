@@ -1,7 +1,7 @@
 describe('Update performance.', () => {
     beforeEach(() => {
         cy.viewport(1200, 600);
-        cy.visit('grid-pro/cypress/update-performance');
+        cy.visit('grid-pro/e2e/update-performance');
     });
 
     it('Performance update: columns[].sorting.order', () => {

@@ -11,6 +11,7 @@
 
 'use strict';
 
+import { diffObjects, extend, find, merge, pick } from '../Shared/Utilities.js';
 /* *
  *
  *  Imports
@@ -19,16 +20,8 @@
 
 import type Chart from './Chart/Chart.js';
 import type GlobalOptions from './Options';
+import { uniqueKey } from './Utilities.js';
 
-import U from './Utilities.js';
-const {
-    diffObjects,
-    extend,
-    find,
-    merge,
-    pick,
-    uniqueKey
-} = U;
 
 /* *
  *
@@ -82,7 +75,7 @@ namespace Responsive {
      * */
 
     export interface CallbackFunction {
-        (this: Chart): boolean;
+        (this: Chart, ctx?: Chart): boolean;
     }
 
     /** @internal */
@@ -144,7 +137,9 @@ namespace Responsive {
          * A callback function to gain complete control on when the responsive
          * rule applies. Return `true` if it applies. This opens for checking
          * against other metrics than the chart size, for example the document
-         * size or other elements.
+         * size or other elements. Since v12.5.0, the callback also receives
+         * `ctx` as the first argument, so that arrow functions can access the
+         * same context as regular functions using `this`.
          *
          * @since     5.0.0
          * @context   Highcharts.Chart
@@ -272,7 +267,7 @@ namespace Responsive {
                 );
             };
 
-        if (fn.call(this)) {
+        if (fn.call(this, this)) {
             matches.push(rule._id as any);
         }
     }
@@ -387,6 +382,10 @@ export default Responsive;
  * @param {Highcharts.Chart} this
  * Chart context.
  *
+ * @param {Highcharts.Chart} [ctx]
+ * Since v12.5.0, the chart context passed as an extra argument for arrow
+ * functions.
+ *
  * @return {boolean}
  * Return `true` if it applies.
  */
@@ -470,7 +469,9 @@ export default Responsive;
  * A callback function to gain complete control on when the responsive
  * rule applies. Return `true` if it applies. This opens for checking
  * against other metrics than the chart size, for example the document
- * size or other elements.
+ * size or other elements. Since v12.5.0, the callback also receives `ctx`
+ * as the first argument, so that arrow functions can access the same
+ * context as regular functions using `this`.
  *
  * @type      {Highcharts.ResponsiveCallbackFunction}
  * @since     5.0.0

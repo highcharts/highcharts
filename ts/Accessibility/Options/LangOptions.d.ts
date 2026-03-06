@@ -18,6 +18,7 @@
  * */
 
 import type { LangOptions } from '../../Core/Options';
+import type { LangStockToolsOptions } from '../../Stock/StockTools/StockToolsOptions';
 
 /* *
  *
@@ -107,6 +108,7 @@ export interface LangAccessibilityOptions {
         LangAccessibilitySeriesTypeDescriptionsOptions
     );
     sonification: LangAccessibilitySonificationOptions;
+    stockTools: LangStockToolsOptions;
     svgContainerLabel: string;
     svgContainerTitle: string;
     table: LangAccessibilityTableOptions;

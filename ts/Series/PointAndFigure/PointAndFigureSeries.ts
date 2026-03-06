@@ -19,7 +19,7 @@
 import PointAndFigurePoint from './PointAndFigurePoint.js';
 import PointAndFigureSeriesDefaults from './PointAndFigureSeriesDefaults.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-import PointAndFigureSymbols from './PointAndFigureSymbols.js';
+import CrossSymbol from '../CrossSymbol.js';
 
 import type Point from '../../Core/Series/Point.js';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes.js';
@@ -27,8 +27,14 @@ import type PointAndFigureSeriesOptions from './PointAndFigureSeriesOptions';
 import type SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 
 import H from '../../Core/Globals.js';
-import U from '../../Core/Utilities.js';
 import Series from '../../Core/Series/Series.js';
+import {
+    extend,
+    isNumber,
+    merge,
+    pushUnique,
+    relativeLength
+} from '../../Shared/Utilities.js';
 const { composed } = H;
 const {
     scatter: ScatterSeries,
@@ -36,13 +42,6 @@ const {
         prototype: columnProto
     }
 } = SeriesRegistry.seriesTypes;
-const {
-    extend,
-    merge,
-    pushUnique,
-    isNumber,
-    relativeLength
-} = U;
 
 
 /* *
@@ -97,7 +96,7 @@ class PointAndFigureSeries extends ScatterSeries {
         SVGRendererClass: typeof SVGRenderer
     ): void {
         if (pushUnique(composed, 'pointandfigure')) {
-            PointAndFigureSymbols.compose(SVGRendererClass);
+            CrossSymbol.compose(SVGRendererClass);
         }
     }
 

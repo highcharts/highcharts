@@ -13,10 +13,7 @@
 
 'use strict';
 
-import U from '../../Core/Utilities.js';
-const {
-    pick
-} = U;
+import { pick } from '../../Shared/Utilities.js';
 
 namespace SonificationSpeaker {
     export interface SpeakerOptions {

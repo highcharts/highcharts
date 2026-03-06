@@ -30,15 +30,14 @@ import type Series from '../Series/Series';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 
 import StackItem from './Stacking/StackItem.js';
-import U from '../Utilities.js';
-const {
+import {
     addEvent,
     find,
     fireEvent,
     isArray,
     isNumber,
     pick
-} = U;
+} from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -150,11 +149,60 @@ declare module '../Series/SeriesBase' {
     }
 }
 
-/** @internal */
 declare module '../Series/SeriesOptions' {
     interface SeriesOptions {
+        /**
+         * Defines when to display a gap in the graph, together with the
+         * [gapUnit](plotOptions.series.gapUnit) option.
+         *
+         * In case when `dataGrouping` is enabled, points can be grouped
+         * into a larger time span. This can make the grouped points to
+         * have a greater distance than the absolute value of `gapSize`
+         * property, which will result in disappearing graph completely.
+         * To prevent this situation the mentioned distance between
+         * grouped points is used instead of previously defined
+         * `gapSize`.
+         *
+         * In practice, this option is most often used to visualize gaps
+         * in time series. In a stock chart, intraday data is available
+         * for daytime hours, while gaps will appear in nights and
+         * weekends.
+         *
+         * @see [gapUnit](plotOptions.series.gapUnit)
+         * @see [xAxis.breaks](#xAxis.breaks)
+         *
+         * @sample {highstock} stock/plotoptions/series-gapsize/
+         *         Setting the gap size to 2 introduces gaps for weekends in
+         *         daily datasets.
+         *
+         * @default   0
+         * @product   highcharts highstock
+         * @requires  modules/broken-axis
+         */
         gapSize?: number;
-        gapUnit?: string;
+
+        /**
+         * Together with [gapSize](plotOptions.series.gapSize), this
+         * option defines where to draw gaps in the graph.
+         *
+         * When the `gapUnit` is `"relative"` (default), a gap size of 5
+         * means that if the distance between two points is greater than
+         * 5 times that of the two closest points, the graph will be
+         * broken.
+         *
+         * When the `gapUnit` is `"value"`, the gap is based on absolute
+         * axis values, which on a datetime axis is milliseconds. This
+         * also applies to the navigator series that inherits gap
+         * options from the base series.
+         *
+         * @see [gapSize](plotOptions.series.gapSize)
+         *
+         * @default    'relative'
+         * @since      5.0.13
+         * @product    highcharts highstock
+         * @requires   modules/broken-axis
+         */
+        gapUnit?: 'relative' | 'value';
     }
 }
 
@@ -425,7 +473,7 @@ namespace BrokenAxis {
          *
          * @type      {number}
          * @default   0
-         * @product   highstock
+         * @product   highcharts highstock
          * @requires  modules/broken-axis
          * @apioption plotOptions.series.gapSize
          */
@@ -449,7 +497,7 @@ namespace BrokenAxis {
          * @type       {string}
          * @default    relative
          * @since      5.0.13
-         * @product    highstock
+         * @product    highcharts highstock
          * @validvalue ["relative", "value"]
          * @requires   modules/broken-axis
          * @apioption  plotOptions.series.gapUnit

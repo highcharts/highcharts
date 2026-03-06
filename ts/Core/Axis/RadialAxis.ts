@@ -44,8 +44,7 @@ const {
     composed,
     noop
 } = H;
-import U from '../Utilities.js';
-const {
+import {
     addEvent,
     correctFloat,
     defined,
@@ -58,7 +57,7 @@ const {
     relativeLength,
     splat,
     wrap
-} = U;
+} from '../../Shared/Utilities.js';
 
 /* *
  *

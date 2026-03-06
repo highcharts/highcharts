@@ -47,13 +47,8 @@ const {
     win
 } = G;
 import OfflineExportingDefaults from './OfflineExportingDefaults.js';
-import U from '../../Core/Utilities.js';
-const {
-    addEvent,
-    error,
-    extend,
-    pushUnique
-} = U;
+import { error } from '../../Core/Utilities.js';
+import { addEvent, extend, pushUnique } from '../../Shared/Utilities.js';
 
 /* *
  *

@@ -33,13 +33,8 @@ import H from '../Core/Globals.js';
 const { win } = H;
 import T from '../Core/Templating.js';
 const { format } = T;
-import U from '../Core/Utilities.js';
-const {
-    error,
-    extend,
-    merge,
-    wrap
-} = U;
+import { extend, merge, wrap } from '../Shared/Utilities.js';
+import { error } from '../Core/Utilities.js';
 
 /* *
  *

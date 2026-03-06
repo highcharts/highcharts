@@ -26,12 +26,11 @@ import type {
 import type InvertModifierOptions from './InvertModifierOptions';
 
 import DataModifier from './DataModifier.js';
+import { merge } from '../../Shared/Utilities.js';
 import DataTable, {
     type ColumnCollection as DataTableColumnCollection,
     type Row as DataTableRow
 } from '../DataTable.js';
-import U from '../../Core/Utilities.js';
-const { merge } = U;
 
 /* *
  *

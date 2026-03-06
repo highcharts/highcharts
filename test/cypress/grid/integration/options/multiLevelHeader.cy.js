@@ -1,6 +1,6 @@
 describe('Grid events.', () => {
     before(() => {
-        cy.visit('grid-lite/cypress/grouped-headers');
+        cy.visit('grid-lite/e2e/grouped-headers');
     });
 
     it('Renders multilevel header.', () => {

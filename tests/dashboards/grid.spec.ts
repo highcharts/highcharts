@@ -335,7 +335,7 @@ test('Grid credits', async ({ page }) => {
 
     // Check credits position
     expect(
-        await gridHandle.evaluate((grid: any) => 
+        await gridHandle.evaluate((grid: any) =>
             grid?.contentWrapper?.firstChild === grid?.credits?.containerElement
         ),
         'Credits should be positioned at the top if specified so.'
@@ -753,7 +753,7 @@ test('Grid full update: pagination.enabled', async ({ page }) => {
 
         return {
             hasPagination: !!grid.pagination,
-            hasPaginationWrapper: !!parentElement?.querySelector('.hcg-pagination-wrapper')
+            hasPaginationWrapper: !!parentElement?.querySelector('.hcg-pagination')
         };
     });
 
@@ -778,7 +778,7 @@ test('Grid full update: pagination.enabled', async ({ page }) => {
 
         return {
             hasPagination: 'pagination' in grid,
-            hasPaginationWrapper: !!parentElement?.querySelector('.hcg-pagination-wrapper')
+            hasPaginationWrapper: !!parentElement?.querySelector('.hcg-pagination')
         };
     });
 

@@ -29,11 +29,7 @@ import type {
 
 import Column from '../Column.js';
 import Globals from '../../Globals.js';
-import U from '../../../../Core/Utilities.js';
-
-const {
-    fireEvent
-} = U;
+import { fireEvent } from '../../../../Shared/Utilities.js';
 
 /* *
  *

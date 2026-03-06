@@ -33,12 +33,17 @@ import type { DeepPartial } from '../../../Shared/Types';
 import { createGridIcon } from '../UI/SvgIcons.js';
 import Globals from '../Globals.js';
 import GridUtils from '../GridUtils.js';
-import Utilities from '../../../Core/Utilities.js';
 import AST from '../../../Core/Renderer/HTML/AST.js';
 import PaginationController from '../Querying/PaginationController';
+import {
+    defined,
+    fireEvent,
+    isObject,
+    merge
+} from '../../../Shared/Utilities.js';
 
 const { makeHTMLElement, formatText } = GridUtils;
-const { defined, fireEvent, isObject, merge } = Utilities;
+
 const paginationAlignments = [
     'left',
     'center',
@@ -291,8 +296,8 @@ class Pagination {
                 'nav',
                 {
                     className: alignmentClass ?
-                        `${Globals.getClassName('paginationWrapper')} ${alignmentClass}` :
-                        Globals.getClassName('paginationWrapper')
+                        `${Globals.getClassName('pagination')} ${alignmentClass}` :
+                        Globals.getClassName('pagination')
                 },
                 position === 'footer' ?
                     this.paginationContainer : grid.contentWrapper
@@ -314,9 +319,9 @@ class Pagination {
     }
 
     private getAlignmentClass(): string {
-        const alignment = this.options?.alignment || 'distributed';
+        const align = this.options?.align || '';
 
-        return alignmentClassName(alignment);
+        return alignmentClassName(align);
     }
 
     public updateAlignmentClass(): void {
@@ -387,10 +392,14 @@ class Pagination {
         }
 
         this.paginationContainer = customContainer;
+        const alignmentClass = this.getAlignmentClass();
+        const className = alignmentClass ?
+            `${Globals.getClassName('pagination')} ${alignmentClass}` :
+            Globals.getClassName('pagination');
 
         // Set content wrapper to the custom container
         this.contentWrapper = makeHTMLElement('div', {
-            className: Globals.getClassName('paginationContainer')
+            className: className
         }, customContainer);
     }
 
@@ -449,10 +458,13 @@ class Pagination {
      * Render the controls buttons and page numbers.
      */
     public renderControls(): void {
+
         const navContainer = makeHTMLElement('div', {
-            className: Globals.getClassName('paginationControlsContainer')
+            className: Globals.getClassName('paginationControls')
         }, this.contentWrapper);
+
         const controls = this.options?.controls || {};
+
 
         // Render first/previous buttons
         if (controls.firstLastButtons) {
@@ -469,9 +481,6 @@ class Pagination {
             this.renderPageNumbers(navContainer);
         }
 
-        // Render dropdown page selector
-        this.renderDropdownPageSelector(navContainer);
-
         // Render next button
         if (controls.previousNextButtons) {
             this.renderNextButton(navContainer);
@@ -481,6 +490,7 @@ class Pagination {
         if (controls.firstLastButtons) {
             this.renderLastButton(navContainer);
         }
+
     }
 
     /**
@@ -703,7 +713,7 @@ class Pagination {
         }
 
         this.pageNumbersContainer = makeHTMLElement('div', {
-            className: Globals.getClassName('paginationNavButtonsContainer')
+            className: Globals.getClassName('paginationPages')
         }, container);
 
         this.updatePageNumbers();
@@ -854,8 +864,6 @@ class Pagination {
             });
         }
 
-        // Update dropdown selector if it exists
-        this.updateDropdownPageSelector();
     }
 
     /**
