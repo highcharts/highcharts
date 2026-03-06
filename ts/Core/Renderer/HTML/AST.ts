@@ -116,6 +116,7 @@ class AST {
         'aria-readonly',
         'aria-roledescription',
         'aria-selected',
+        'aria-sort',
         'class',
         'clip-path',
         'color',
