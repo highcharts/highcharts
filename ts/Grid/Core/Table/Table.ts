@@ -484,11 +484,10 @@ class Table {
             return;
         }
 
-        // Disabled until meaningful functionality is ready.
-        // const tableCell = cell as TableCell;
-        // if (this.openCellContextMenu(tableCell, e.clientX, e.clientY)) {
-        //     e.preventDefault();
-        // }
+        const tableCell = cell as TableCell;
+        if (this.openCellContextMenu(tableCell, e.clientX, e.clientY)) {
+            e.preventDefault();
+        }
     };
 
     /**

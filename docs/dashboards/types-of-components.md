@@ -160,7 +160,7 @@ The `Grid` module has its own style set, so the CSS file must be imported for co
 @import url("https://code.highcharts.com/dashboards/css/dashboards.css");
 ```
 
-For a grid to be displayed, the type `Grid` must be specified, the `renderTo` option set, and data must be provided as an embedded `dataTable` object or via a `DataConnector`. In addition, the `gridOptions` object allows you to configure `Grid` specific parameters like cell formatting, column assignment, etc.
+For a grid to be displayed, the type `Grid` must be specified, the `renderTo` option set, and data must be provided directly, or via a `DataConnector`. In addition, the `gridOptions` object allows you to configure `Grid` specific parameters like cell formatting, column assignment, etc.
 
 The **Grid** may have the series data directly embedded as part of the `gridOptions`. However, a more common usage is the **Dashboards**' data pool mechanism, which shares data between the dashboard components. In this case, the `id` of the `DataConnector` must be included in the data grid's configuration.
 
@@ -170,7 +170,7 @@ Code snippet with data embedded in the `Grid` data table; no data connector used
 {
     renderTo: 'dashboard-1',
     type: 'Grid',
-    dataTable: {
+    data: {
         columns: {
             product: ['Apples', 'Pears', 'Plums', 'Bananas'],
             weight: [100, 40, 0.5, 200],

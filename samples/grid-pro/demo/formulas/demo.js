@@ -147,7 +147,7 @@ const dataSource = {
 
 const initGrid = data => {
     Grid.grid('container', {
-        dataTable: data,
+        data: { dataTable: data },
         caption: {
             text: '🍔 Big Mac Index 2025'
         },

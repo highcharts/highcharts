@@ -24,7 +24,9 @@ Grid.grid('container', {
 ```
 
 ## LocalDataProvider (default)
-When you provide `data.dataTable`, Grid uses `LocalDataProvider` by default. It works entirely in memory and is a good fit for fully-loaded datasets and [Data Modifiers](https://www.highcharts.com/docs/dashboards/data-modifiers).
+When you provide `data.columns`, `data.connector` or `data.dataTable`, Grid uses `LocalDataProvider` by default. It works entirely in memory and is a good fit for fully-loaded datasets and [Data Modifiers](https://www.highcharts.com/docs/dashboards/data-modifiers).
+
+Use `data.columns` for column data. Use `data.dataTable` only for an existing DataTable instance.
 
 ```js
 Grid.grid('container', {

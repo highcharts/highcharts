@@ -45,12 +45,10 @@ import Grid from './components/Grid.vue';
 
 const config: Grid.Options = {
     data: {
-        dataTable: {
-            columns: {
-                name: ['Alice', 'Bob', 'Charlie', 'David'],
-                age: [23, 34, 45, 56],
-                city: ['New York', 'Oslo', 'Paris', 'Tokyo'],
-            }
+        columns: {
+            name: ['Alice', 'Bob', 'Charlie', 'David'],
+            age: [23, 34, 45, 56],
+            city: ['New York', 'Oslo', 'Paris', 'Tokyo'],
         }
     }
 }

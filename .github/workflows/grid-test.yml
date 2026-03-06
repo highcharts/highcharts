@@ -12,6 +12,7 @@ on:
       - 'samples/grid-pro/**'
       - 'ts/Data/**'
       - 'ts/Grid/**'
+      - 'ts/masters-grid/**'
 
 permissions:
   contents: read
@@ -38,4 +39,4 @@ jobs:
         run: npx playwright install --with-deps chromium
 
       - name: Run Grid Tests
-        run: npx playwright test --project=setup-highcharts --project=setup-dashboards --project=dashboards --grep grid
+        run: npx playwright test --project=setup-highcharts --project=setup-grid-lite --project=setup-grid-pro --project=grid-lite --project=grid-pro --project=grid-shared
