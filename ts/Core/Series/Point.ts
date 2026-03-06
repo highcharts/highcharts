@@ -851,11 +851,10 @@ class Point {
      */
     public getClassName(): string {
         const point = this;
-        const seriesOptions = point.series.options as Record<string, unknown>;
         return 'highcharts-point' +
             (point.selected ? ' highcharts-point-select' : '') +
             (
-                point.negative && seriesOptions.negativeColor !== false ?
+                point.negative && point.series.options.negativeColor !== false ?
                     ' highcharts-negative' : '') +
             (point.isNull ? ' highcharts-null-point' : '') +
             (typeof point.colorIndex !== 'undefined' ?
