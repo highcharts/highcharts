@@ -412,6 +412,26 @@ QUnit.test('Date objects as X values, column', function (assert) {
         changeStackingType();
         changeStackingType();
         changeStackingType();
+
+
+        chart.update({
+            yAxis: {
+                stackLabels: {
+                    formatter: ctx => (ctx && 'STACKED') || ''
+                }
+            }
+        });
+
+        assert.strictEqual(
+            chart
+                .series[0]
+                .yAxis
+                .stacking
+                .stacks['column,Baseline Marty,,']['0']
+                .label.textStr,
+            'STACKED',
+            'Arrow-function formatter should receive arguments.'
+        );
     });
 
     QUnit.test('#6546 - stacking with gapSize', function (assert) {

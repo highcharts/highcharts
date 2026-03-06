@@ -35,8 +35,7 @@ import H from '../../../Core/Globals.js';
 const { doc } = H;
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const { seriesTypes } = SeriesRegistry;
-import U from '../../../Core/Utilities.js';
-const {
+import {
     addEvent,
     createElement,
     defined,
@@ -44,7 +43,7 @@ const {
     isObject,
     objectEach,
     stableSort
-} = U;
+} from '../../../Shared/Utilities.js';
 
 /* *
  *
@@ -859,7 +858,7 @@ function filterSeries(
             lang.navigation &&
             lang.navigation.popup &&
             lang.navigation.popup.indicatorAliases,
-        filteredSeriesArray: Array<FilteredSeries> = [];
+        filteredSeriesMap: Map<string, FilteredSeries> = new Map();
 
     let filteredSeries: FilteredSeries;
 
@@ -895,7 +894,8 @@ function filterSeries(
                         series: series as any
                     };
 
-                    filteredSeriesArray.push(filteredSeries);
+                    filteredSeriesMap
+                        .set(indicatorType.toLowerCase(), filteredSeries);
                 }
             } else {
                 filteredSeries = {
@@ -904,12 +904,13 @@ function filterSeries(
                     series: series as any
                 };
 
-                filteredSeriesArray.push(filteredSeries);
+                filteredSeriesMap
+                    .set(indicatorType.toLowerCase(), filteredSeries);
             }
         }
     });
 
-    return filteredSeriesArray;
+    return Array.from(filteredSeriesMap.values());
 }
 
 /**

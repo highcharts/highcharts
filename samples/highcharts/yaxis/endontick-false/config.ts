@@ -1,0 +1,16 @@
+import type {
+    SampleGeneratorConfig
+} from '../../../../tools/sample-generator/generator-config.d.ts';
+
+export default {
+    controls: [{
+        path: 'yAxis.endOnTick',
+        value: false
+    }],
+    templates: ['categories-12'],
+    chartOptionsExtra: {
+        yAxis: {
+            lineWidth: 1
+        }
+    }
+} satisfies SampleGeneratorConfig;

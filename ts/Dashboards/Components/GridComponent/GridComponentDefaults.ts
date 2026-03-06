@@ -20,15 +20,12 @@
  *
  * */
 
-import type Component from '../Component';
+import type { ConnectorTypes as ComponentConnectorTypes } from '../Component';
 import type { Options } from './GridComponentOptions';
 import type { DeepPartial } from '../../../Shared/Types';
 
 import DataConverter from '../../../Data/Converters/DataConverter.js';
-import U from '../../../Core/Utilities.js';
-const {
-    uniqueKey
-} = U;
+import { uniqueKey } from '../../../Core/Utilities.js';
 
 /* *
  *
@@ -136,7 +133,7 @@ const GridComponentDefaults: DeepPartial<Options> = {
             type: 'input'
         }
     ],
-    onUpdate: (e: KeyboardEvent, connector: Component.ConnectorTypes): void => {
+    onUpdate: (e: KeyboardEvent, connector: ComponentConnectorTypes): void => {
         const inputElement = e.target as HTMLInputElement;
         if (inputElement) {
             const parentRow = inputElement

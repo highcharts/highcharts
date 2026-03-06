@@ -25,7 +25,7 @@ import type { DeepPartial } from '../../Shared/Types';
 import type RangeSelector from '../RangeSelector/RangeSelector';
 import type { SymbolTypeRegistry } from '../../Core/Renderer/SVG/SymbolType';
 import type { SeriesTypeOptions } from '../../Core/Series/SeriesType';
-import type Utilities from '../../Core/Utilities';
+import type { RelativeSize } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -54,7 +54,31 @@ declare module '../../Core/Options'{
 declare module '../../Core/Series/SeriesOptions' {
     interface SeriesOptions {
         fillOpacity?: number;
+
+        /**
+         * Options for the corresponding navigator series if `showInNavigator`
+         * is `true` for this series. Available options are the same as any
+         * series, documented at [plotOptions](#plotOptions.series) and
+         * [series](#series).
+         *
+         * These options are merged with options in [navigator.series](
+         * #navigator.series), and will take precedence if the same option is
+         * defined both places.
+         *
+         * @see [navigator.series](#navigator.series)
+         *
+         * @since   5.0.0
+         * @product highstock
+         */
         navigatorOptions?: SeriesOptions;
+
+        /**
+         * Whether or not to show the series in the navigator. Takes precedence
+         * over [navigator.baseSeries](#navigator.baseSeries) if defined.
+         *
+         * @since     5.0.0
+         * @product   highstock
+         */
         showInNavigator?: boolean;
     }
 }
@@ -62,7 +86,7 @@ declare module '../../Core/Series/SeriesOptions' {
 export interface NavigatorHandlesOptions {
     backgroundColor?: ColorType;
     borderColor?: ColorType;
-    borderRadius?: Utilities.RelativeSize;
+    borderRadius?: RelativeSize;
     enabled?: boolean;
     height?: number;
     inverted?: boolean;

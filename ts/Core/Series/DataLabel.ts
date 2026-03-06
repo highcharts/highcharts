@@ -37,8 +37,7 @@ import F from '../Templating.js';
 const { format } = F;
 import { Palette } from '../Color/Palettes.js';
 import R from '../Renderer/RendererUtilities.js';
-import U from '../Utilities.js';
-const {
+import {
     defined,
     extend,
     fireEvent,
@@ -51,7 +50,7 @@ const {
     pick,
     pInt,
     splat
-} = U;
+} from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -87,13 +86,8 @@ declare module './PointOptions' {
          *
          * @sample highcharts/point/datalabels/
          *         Show a label for the last value
-         *
-         * @declare   Highcharts.DataLabelsOptions
-         * @extends   plotOptions.line.dataLabels
-         * @excluding zIndex
-         * @product   highcharts highstock gantt
          */
-        dataLabels?: (DataLabelOptions | Array<DataLabelOptions>);
+        dataLabels?: (PointDataLabelOptions | Array<PointDataLabelOptions>);
 
         /**
          * The rank for all this point's data labels in case of collision. If
@@ -106,6 +100,19 @@ declare module './PointOptions' {
         labelrank?: number;
     }
 }
+
+export interface PointDataLabelOptionsModifier {
+    /* *
+     *
+     *  Excluded
+     *
+     * */
+
+    zIndex?: undefined;
+}
+
+export type PointDataLabelOptions =
+    DataLabelOptions & PointDataLabelOptionsModifier;
 
 /** @internal */
 declare module './SeriesBase' {
@@ -175,8 +182,6 @@ declare module './SeriesOptions' {
          *         Choropleth map with data labels
          * @sample {highmaps} maps/demo/mappoint-datalabels-mapmarker
          *         Using data labels as map markers
-         *
-         * @product highcharts highstock highmaps gantt
          */
         dataLabels?: (DataLabelOptions|Array<DataLabelOptions>);
     }
@@ -775,7 +780,7 @@ namespace DataLabel {
                                     point.formatPrefix + 'Formatter'
                                 ] ||
                                 labelOptions.formatter
-                            ).call(point, labelOptions);
+                            ).call(point, labelOptions, point);
 
                         rotation = labelOptions.rotation;
 

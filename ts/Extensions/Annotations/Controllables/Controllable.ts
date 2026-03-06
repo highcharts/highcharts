@@ -14,6 +14,7 @@
 import type Annotation from '../Annotation';
 import type AnnotationChart from '../AnnotationChart';
 import type { AnnotationPoint } from '../AnnotationSeries';
+import type Axis from '../../../Core/Axis/Axis';
 import type ControllableBase from './ControllableBase';
 import type ControllableOptions from './ControllableOptions';
 import type { DeepPartial } from '../../../Shared/Types';
@@ -21,8 +22,7 @@ import type SVGAttributes from '../../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
 
 import ControlTarget from '../ControlTarget.js';
-import U from '../../../Core/Utilities.js';
-const { merge } = U;
+import { merge } from '../../../Shared/Utilities.js';
 
 /* *
  *
@@ -172,6 +172,18 @@ abstract class Controllable implements ControlTarget {
         }
 
         this.destroyControlTarget();
+    }
+    /**
+     * Get the pixel value from a start point to an end point on an axis.
+     * @internal
+     */
+    public calculateAnnotationSize(
+        startPoint: number, value: number, axis: Axis
+    ): number {
+        const startPixel = axis.toPixels(startPoint, true),
+            endPixel = axis.toPixels(startPoint + value, true);
+
+        return Math.abs(endPixel - startPixel);
     }
 
     /**

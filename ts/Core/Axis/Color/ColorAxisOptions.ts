@@ -26,6 +26,51 @@ import type LegendOptions from '../../Legend/LegendOptions';
  *
  * */
 
+declare module '../../Series/SeriesOptions' {
+    interface SeriesOptions {
+        /**
+         * When using dual or multiple color axes, this number defines which
+         * colorAxis the particular series is connected to. It refers to
+         * either the
+         * {@link #colorAxis.id|axis id}
+         * or the index of the axis in the colorAxis array, with 0 being the
+         * first. Set this option to false to prevent a series from connecting
+         * to the default color axis.
+         *
+         * Since v7.2.0 the option can also be an axis id or an axis index
+         * instead of a boolean flag.
+         *
+         * @sample highcharts/coloraxis/coloraxis-with-pie/
+         *         Color axis with pie series
+         * @sample highcharts/coloraxis/multiple-coloraxis/
+         *         Multiple color axis
+         *
+         * @default 0
+         * @product highcharts highstock highmaps
+         */
+        colorAxis?: number|string|boolean;
+
+        /**
+         * Determines what data value should be used to calculate point color
+         * if `colorAxis` is used. Requires to set `min` and `max` if some
+         * custom point property is used or if approximation for data grouping
+         * is set to `'sum'`.
+         *
+         * @sample highcharts/coloraxis/custom-color-key/
+         *         Custom color key
+         * @sample highcharts/coloraxis/color-key-with-stops/
+         *         Custom colorKey with color axis stops
+         * @sample highcharts/coloraxis/changed-default-color-key/
+         *         Changed default color key
+         *
+         * @default 'y'
+         * @since   7.2.0
+         * @product highcharts highstock highmaps
+         */
+        colorKey?: string;
+    }
+}
+
 export interface ColorAxisDataClassOptions {
 
     /**
@@ -138,7 +183,7 @@ export interface ColorAxisMarkerOptions {
  * convenient to add each category to a separate series.
  *
  * Color axis does not work with: `sankey`, `sunburst`, `dependencywheel`,
- * `networkgraph`, `wordcloud`, `venn`, `gauge` and `solidgauge` series
+ * `networkgraph`, `venn`, `gauge` and `solidgauge` series
  * types.
  *
  * Since v7.2.0 `colorAxis` can also be an array of options objects.

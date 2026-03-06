@@ -25,10 +25,7 @@ import type Row from '../../Row.js';
 import type Column from '../../Column.js';
 
 import HeaderCell from '../../Header/HeaderCell.js';
-import U from '../../../../../Core/Utilities.js';
-
-const { fireEvent } = U;
-
+import { fireEvent } from '../../../../../Shared/Utilities.js';
 
 /* *
  *
@@ -63,10 +60,10 @@ class FilterCell extends HeaderCell {
      *
      * */
 
-    public override render(): void {
+    public override async render(): Promise<void> {
         const { column } = this;
         if (!column) {
-            return;
+            return Promise.resolve();
         }
 
         // Render content of th element
@@ -87,7 +84,7 @@ class FilterCell extends HeaderCell {
         fireEvent(this, 'afterRender', { column, filtering: true });
     }
 
-    protected override onKeyDown(e: KeyboardEvent): void {
+    public override onKeyDown(e: KeyboardEvent): void {
         this.column.filtering?.onKeyDown(e);
 
         if (e.target === this.htmlElement) {
@@ -103,7 +100,7 @@ class FilterCell extends HeaderCell {
         }
     }
 
-    protected override onClick(e: MouseEvent): void {
+    public override onClick(e: MouseEvent): void {
         if (e.target === this.htmlElement) {
             this.htmlElement.focus();
         }

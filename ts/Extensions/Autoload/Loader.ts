@@ -15,11 +15,10 @@ import type Options from '../../Core/Options';
 
 import G from '../../Core/Globals.js';
 import mapping from './DependencyMapping.js';
-import U from '../../Core/Utilities.js';
-const {
+import {
     pushUnique,
     splat
-} = U;
+} from '../../Shared/Utilities.js';
 
 const H: AnyRecord = G;
 const addedFiles: string[] = [];

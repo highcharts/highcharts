@@ -255,8 +255,8 @@ export interface DataLabelOptions {
      * [overflow](#plotOptions.series.dataLabels.overflow)
      * option.
      *
-     * @default   true
-     * @since     2.3.3
+     * @default true
+     * @since   2.3.3
      */
     crop?: boolean;
 
@@ -266,9 +266,9 @@ export interface DataLabelOptions {
      * data label immediately. If set to `true` inherits the defer
      * time set in [plotOptions.series.animation](#plotOptions.series.animation).
      *
-     * @since     4.0.0
-     * @default   true
-     * @product   highcharts highstock gantt
+     * @since   4.0.0
+     * @default true
+     * @product highcharts highstock gantt
      */
     defer?: boolean;
 
@@ -511,7 +511,7 @@ export interface DataLabelOptions {
      * @sample {highmaps} maps/demo/color-axis/
      *         Bold labels
      *
-     * @since     4.1.0
+     * @since 4.1.0
      */
     style?: CSSObject;
 
@@ -523,8 +523,8 @@ export interface DataLabelOptions {
      * **Note:** Only SVG-based renderer supports this option. Setting
      * `useHTML` to true will disable this option.
      *
-     * @declare   Highcharts.DataLabelsTextPathOptionsObject
-     * @since     7.1.0
+     * @declare Highcharts.DataLabelsTextPathOptionsObject
+     * @since   7.1.0
      */
     textPath?: DataLabelTextPathOptions;
 
@@ -543,7 +543,7 @@ export interface DataLabelOptions {
      * instance in a column chart, the label is above positive values
      * and below negative values.
      *
-     * @default bottom
+     * @default 'bottom'
      * @since 2.3.3
      */
     verticalAlign?: VerticalAlignValue;
@@ -577,8 +577,8 @@ export interface DataLabelOptions {
      * Use a `zIndex` of 6 to display it above the series,
      * or use a `zIndex` of 2 to display it behind the series.
      *
-     * @default   6
-     * @since     2.3.5
+     * @default 6
+     * @since   2.3.5
      */
     zIndex?: number;
 }
@@ -594,7 +594,7 @@ export interface DataLabelTextPathOptions {
     /**
      * Presentation attributes for the text path.
      *
-     * @since     7.1.0
+     * @since 7.1.0
      */
     attributes?: TextPathAttributes;
 
@@ -602,7 +602,7 @@ export interface DataLabelTextPathOptions {
      * Enable or disable `textPath` option for link's or marker's data
      * labels.
      *
-     * @since     7.1.0
+     * @since 7.1.0
      */
     enabled?: boolean;
 }

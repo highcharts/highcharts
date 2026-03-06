@@ -20,15 +20,14 @@
  *
  * */
 
-import type Sync from '../../Sync/Sync';
-import type DataCursor from '../../../../Data/DataCursor';
+import type { SyncPair } from '../../Sync/Sync';
+import type { Event as DataCursorEvent } from '../../../../Data/DataCursor';
 import type GridComponent from '../GridComponent.js';
 import type { GridHighlightSyncOptions } from '../GridComponentOptions';
 import type { TableCellEvent } from '../../../Plugins/GridTypes';
 
 import Component from '../../Component';
-import U from '../../../../Core/Utilities.js';
-const { addEvent, removeEvent } = U;
+import { addEvent, removeEvent } from '../../../../Shared/Utilities.js';
 
 /* *
  *
@@ -40,7 +39,7 @@ const defaultOptions: GridHighlightSyncOptions = {
     autoScroll: false
 };
 
-const syncPair: Sync.SyncPair = {
+const syncPair: SyncPair = {
     emitter: function (this: Component): (() => void) | void {
         if (
             this.type !== 'Grid'
@@ -64,10 +63,14 @@ const syncPair: Sync.SyncPair = {
         const onCellHover = (e: TableCellEvent): void => {
             if (table) {
                 const cell = e.target;
+                const rowId = cell.row.id;
+                if (typeof rowId !== 'number') {
+                    return;
+                }
 
                 cursor.emitCursor(table, {
                     type: 'position',
-                    row: cell.row.id,
+                    row: rowId,
                     column: cell.column.id,
                     state: 'point.mouseOver' + groupKey,
                     sourceId: this.id
@@ -78,10 +81,14 @@ const syncPair: Sync.SyncPair = {
         const onCellMouseOut = (e: TableCellEvent): void => {
             if (table) {
                 const cell = e.target;
+                const rowId = cell.row.id;
+                if (typeof rowId !== 'number') {
+                    return;
+                }
 
                 cursor.emitCursor(table, {
                     type: 'position',
-                    row: cell.row.id,
+                    row: rowId,
                     column: cell.column.id,
                     state: 'point.mouseOut' + groupKey,
                     sourceId: this.id
@@ -126,7 +133,7 @@ const syncPair: Sync.SyncPair = {
 
         const table = component.getDataTable();
 
-        const handleCursor = (e: DataCursor.Event): void => {
+        const handleCursor = (e: DataCursorEvent): void => {
             const cursor = e.cursor;
             if (
                 cursor.sourceId === component.id ||
@@ -143,7 +150,7 @@ const syncPair: Sync.SyncPair = {
                 return;
             }
 
-            const rowIndex = viewport.dataTable.getLocalRowIndex(row);
+            const rowIndex = viewport.dataTable?.getLocalRowIndex(row);
             if (rowIndex === void 0) {
                 return;
             }
@@ -156,7 +163,7 @@ const syncPair: Sync.SyncPair = {
             grid.syncColumn(column);
         };
 
-        const handleCursorOut = (e: DataCursor.Event): void => {
+        const handleCursorOut = (e: DataCursorEvent): void => {
             const { grid } = component;
             if (grid && e.cursor.sourceId !== component.id) {
                 grid.syncColumn();

@@ -25,8 +25,7 @@ const { defaultOptions } = D;
 import H from '../../Core/Globals.js';
 const { composed } = H;
 import RangeSelectorDefaults from './RangeSelectorDefaults.js';
-import U from '../../Core/Utilities.js';
-const {
+import {
     addEvent,
     defined,
     extend,
@@ -34,7 +33,7 @@ const {
     merge,
     pick,
     pushUnique
-} = U;
+} from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -269,7 +268,7 @@ function redrawRangeSelector(this: Chart): void {
 
     // Re-align the legend so that it's below the rangeselector
     if (
-        legend.display &&
+        legend?.display &&
             verticalAlign === 'top' &&
             verticalAlign === legend.options.verticalAlign
     ) {

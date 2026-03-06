@@ -118,17 +118,23 @@ async function npmPublish(push = false, releaseRepo = releaseRepos.Highcharts) {
         const answer = await askUser(
             '\nAbout to publish to npm using \'latest\' tag. To approve, \n' +
             'enter the one time password from your 2FA authentication setup. \n' +
+            'To try without OTP, enter \'Y\'\n' +
             'To abort, enter \'n\': '
         );
         if (answer === 'n') {
             const message = 'Aborted before invoking \'npm publish\'! Command must be run manually to complete the release.';
             throw new Error(message);
         }
-        if (!answer.match(/^\d{6}$/u)) {
+        if (answer !== 'Y' && !answer.match(/^\d{6}$/u)) {
             throw new Error('Invalid OTP. Please enter a 6 digit number.');
         }
+
+        let command = 'npm publish';
+        if (answer !== 'Y') {
+            command += ` --otp=${answer}`;
+        }
         childProcess.execSync(
-            `npm publish --otp=${answer}`,
+            command,
             { cwd: pathToDistRepo }
         );
         log.message('Successfully published to npm!');
@@ -193,8 +199,8 @@ function updateJSONFiles(version, files, productName) {
                 }
 
                 json.peerDependencies = Object.assign({}, json.peerDependencies, {
-                    jspdf: '^3.0.0',
-                    'svg2pdf.js': '^2.6.0'
+                    jspdf: '^4.1.0',
+                    'svg2pdf.js': '^2.7.0'
                 });
 
                 json.peerDependenciesMeta = Object.assign(

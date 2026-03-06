@@ -26,7 +26,7 @@
 import type { AnyRecord } from '../../../../Shared/Types';
 import type Column from '../../../Core/Table/Column';
 import type TableCell from '../../../Core/Table/Body/TableCell';
-import type DataTable from '../../../../Data/DataTable';
+import type { CellType as DataTableCellType } from '../../../../Data/DataTable';
 import type {
     EditModeRendererTypeName
 } from '../../CellEditing/CellEditingComposition';
@@ -34,12 +34,7 @@ import type {
 import { CellRenderer, CellRendererOptions } from '../CellRenderer.js';
 import { registerRenderer } from '../CellRendererRegistry.js';
 import SparklineContent from '../ContentTypes/SparklineContent.js';
-
-import U from '../../../../Core/Utilities.js';
-const {
-    merge
-} = U;
-
+import { merge } from '../../../../Shared/Utilities.js';
 
 /* *
  *
@@ -128,7 +123,7 @@ class SparklineRenderer extends CellRenderer {
 export interface SparklineRendererOptions extends CellRendererOptions {
     type: 'sparkline';
     chartOptions?: (
-        ((this: TableCell, data: DataTable.CellType) => AnyRecord) |
+        ((this: TableCell, data: DataTableCellType) => AnyRecord) |
         AnyRecord
     );
 }

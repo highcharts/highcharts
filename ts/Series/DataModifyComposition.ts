@@ -25,8 +25,7 @@ const {
     tooltipFormatter: pointTooltipFormatter
 } = Point.prototype;
 import Series from '../Core/Series/Series.js';
-import U from '../Core/Utilities.js';
-const {
+import {
     addEvent,
     arrayMax,
     arrayMin,
@@ -36,7 +35,7 @@ const {
     isNumber,
     isString,
     pick
-} = U;
+} from '../Shared/Utilities.js';
 
 /* *
  *
@@ -635,7 +634,7 @@ namespace DataModifyComposition {
                     } else {
                         const compareBase = this.series.options.compareBase;
 
-                        value = 100 * (value / compareValue) -
+                        value = 100 * (value / Math.abs(compareValue)) -
                             (compareBase === 100 ? 0 : 100);
                     }
 

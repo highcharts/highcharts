@@ -14,9 +14,11 @@
  *
  * */
 
+import type { Options as MenuItemOptions } from './MenuItem';
+
 import MenuItem from './MenuItem.js';
 
-const MenuItemBindings: Record<string, MenuItem.Options> = {
+const MenuItemBindings: Record<string, MenuItemOptions> = {
     /* *
     *
     *  Context menu

@@ -1,6 +1,6 @@
 describe('Render and destroy grid', () => {
     before(() => {
-        cy.visit('/grid-lite/cypress/destroy-grid');
+        cy.visit('grid-lite/e2e/destroy-grid');
     });
 
     it('Destroy and re-render grid', () => {

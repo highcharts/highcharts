@@ -26,14 +26,13 @@ import type {
 } from '../../Core/Series/PointOptions.js';
 import type Series from '../../Core/Series/Series';
 
-import U from '../../Core/Utilities.js';
-const {
+import {
     addEvent,
     defined,
     extend,
     getNestedProperty,
     wrap
-} = U;
+} from '../../Shared/Utilities.js';
 
 /* *
  *

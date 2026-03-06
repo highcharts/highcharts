@@ -23,7 +23,9 @@
 
 
 import type DataModifierOptions from './DataModifierOptions';
-import type DataTable from '../DataTable';
+import type {
+    CellType as DataTableCellType
+} from '../DataTable';
 
 
 /* *
@@ -51,7 +53,7 @@ export interface SortModifierOrderByOption {
      * Custom compare function for this level. If not set, the modifier-level
      * `compare` is used.
      */
-    compare?: (a: DataTable.CellType, b: DataTable.CellType) => number;
+    compare?: (a: DataTableCellType, b: DataTableCellType) => number;
 }
 
 
@@ -86,7 +88,7 @@ export interface SortModifierBaseOptions extends DataModifierOptions {
      * A number indicating whether the first value (`a`) is less than (`-1`),
      * equal to (`0`), or greater than (`1`) the second value (`b`).
      */
-    compare?: (a: DataTable.CellType, b: DataTable.CellType) => number;
+    compare?: (a: DataTableCellType, b: DataTableCellType) => number;
 
     /**
      * Column to update with order index instead of change order of rows.

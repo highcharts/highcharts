@@ -55,9 +55,9 @@ const { composed } = H;
 import Series from '../Core/Series/Series.js';
 import Pane from '../Extensions/Pane/Pane.js';
 import RadialAxis from '../Core/Axis/RadialAxis.js';
-import U from '../Core/Utilities.js';
-const {
+import {
     addEvent,
+    clamp,
     defined,
     find,
     isNumber,
@@ -67,9 +67,9 @@ const {
     pushUnique,
     relativeLength,
     splat,
-    uniqueKey,
     wrap
-} = U;
+} from '../Shared/Utilities.js';
+import { uniqueKey } from '../Core/Utilities.js';
 
 /* *
  *
@@ -1065,7 +1065,7 @@ function onAfterColumnTranslate(
                             // If starting point is beyond the
                             // range, set it to 0
                             if (defined(start)) {
-                                start = U.clamp(start, 0, visibleRange);
+                                start = clamp(start, 0, visibleRange);
                             }
                         }
                     }

@@ -15,11 +15,8 @@
  * */
 
 import Board from '../Board.js';
-import U from '../../Core/Utilities.js';
 import Globals from '../Globals.js';
-
-const { addEvent } = U;
-
+import { addEvent } from '../../Shared/Utilities.js';
 class Fullscreen {
 
     /* *
@@ -144,10 +141,6 @@ class Fullscreen {
                 (this.isOpen ? lang.exitFullscreen : lang.viewFullscreen) || '';
         }
     }
-}
-
-namespace Fullscreen {
-
 }
 
 export default Fullscreen;

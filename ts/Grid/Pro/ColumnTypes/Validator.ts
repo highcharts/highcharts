@@ -26,18 +26,18 @@ import type { EditModeContent } from '../CellEditing/CellEditMode';
 import type Table from '../../Core/Table/Table';
 import type TableCell from '../../Core/Table/Body/TableCell';
 import type { CellRendererTypeRegistry } from '../CellRendering/CellRendererType';
+import type { CellType as DataTableCellType } from '../../../Data/DataTable';
 
 import AST from '../../../Core/Renderer/HTML/AST.js';
 import Globals from '../../Core/Globals.js';
 import GridUtils from '../../Core/GridUtils.js';
 import Cell from '../../Core/Table/Cell.js';
-import U from '../../../Core/Utilities.js';
+import { defined } from '../../../Shared/Utilities.js';
 
 const {
     makeDiv,
     setHTMLContent
 } = GridUtils;
-const { defined } = U;
 
 /* *
  *
@@ -86,45 +86,6 @@ class Validator {
             ),
             notification: 'Value has to be a boolean.'
         },
-        ignoreCaseUnique: {
-            validate: function ({ rawValue }): boolean {
-                const oldValue = String(this.value).toLowerCase();
-                const rowValueString = rawValue.toLowerCase();
-
-                if (oldValue === rowValueString) {
-                    return true;
-                }
-
-                const columnData = this.column.data;
-                const isDuplicate = columnData?.some(
-                    (value): boolean => String(value).toLowerCase() ===
-                        rowValueString
-                );
-
-                return !isDuplicate;
-
-            },
-            notification:
-                'Value must be unique within this column (case-insensitive).'
-        },
-        unique: {
-            validate: function ({ rawValue }): boolean {
-                const oldValue = this.value;
-
-                if (oldValue === rawValue) {
-                    return true;
-                }
-
-                const columnData = this.column.data;
-                const isDuplicate = columnData?.some(
-                    (value): boolean => value === rawValue
-                );
-
-                return !isDuplicate;
-            },
-            notification:
-                'Value must be unique within this column (case-sensitive).'
-        },
         arrayNumber: {
             validate: function ({ rawValue }): boolean {
                 return rawValue
@@ -141,8 +102,7 @@ class Validator {
                 try {
                     JSON.parse(rawValue);
                     return true;
-                // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                } catch (e) {
+                } catch {
                     return false;
                 }
             },
@@ -159,8 +119,53 @@ class Validator {
                 return arrayNumberValidate({ rawValue }) ||
                     jsonValidate({ rawValue });
             },
-            // eslint-disable-next-line max-len
-            notification: 'Value should be a valid JSON or a list of numbers separated by commas.'
+            notification: 'Value should be a valid JSON or a list of numbers ' +
+                'separated by commas.'
+        },
+        ignoreCaseUnique: {
+            validate: function ({ rawValue }): boolean {
+                const oldValue = String(this.value).toLowerCase();
+                const rowValueString = rawValue.toLowerCase();
+
+                if (oldValue === rowValueString) {
+                    return true;
+                }
+
+                // Local dataset only
+                // TODO(enhancement): Implement this for remote dataset.
+                const columnData = this.column.data;
+                const isDuplicate = columnData?.some(
+                    (value: DataTableCellType): boolean => (
+                        String(value).toLowerCase() ===
+                        rowValueString
+                    )
+                );
+
+                return !isDuplicate;
+
+            },
+            notification:
+                'Value must be unique within this column (case-insensitive).'
+        },
+        unique: {
+            validate: function ({ rawValue }): boolean {
+                const oldValue = this.value;
+
+                if (oldValue === rawValue) {
+                    return true;
+                }
+
+                // Local dataset only
+                // TODO(enhancement): Implement this for remote dataset.
+                const columnData = this.column.data;
+                const isDuplicate = columnData?.some(
+                    (value: DataTableCellType): boolean => value === rawValue
+                );
+
+                return !isDuplicate;
+            },
+            notification:
+                'Value must be unique within this column (case-sensitive).'
         }
     };
 

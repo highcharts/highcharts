@@ -15,6 +15,7 @@
 'use strict';
 
 
+import { defined } from '../../Shared/Utilities.js';
 /* *
  *
  *  Imports
@@ -23,6 +24,7 @@
 
 
 import type DataTable from '../DataTable';
+import type { CellType as DataTableCellType } from '../DataTable';
 import type {
     Arguments,
     Formula,
@@ -45,11 +47,6 @@ const {
     isReference,
     isValue
 } = FormulaTypes;
-
-import U from '../../Core/Utilities.js';
-const {
-    defined
-} = U;
 
 
 /* *
@@ -370,7 +367,7 @@ function getRangeValues(
     for (
         let i = 0,
             iEnd = columnIds.length,
-            cell: DataTable.CellType;
+            cell: DataTableCellType;
         i < iEnd;
         ++i
     ) {

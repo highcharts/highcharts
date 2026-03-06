@@ -23,8 +23,7 @@ import type TreemapSeriesOptions from './TreemapSeriesOptions';
 
 import { Palette } from '../../Core/Color/Palettes';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-import U from '../../Core/Utilities.js';
-const { isString } = U;
+import { isString } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -227,18 +226,6 @@ const TreemapSeriesDefaults: TreemapSeriesOptions = {
     tooltip: {
         headerFormat: '',
         pointFormat: '<b>{point.name}</b>: {point.value}<br/>',
-        /**
-         * The HTML of the grouped point's nodes in the tooltip. Works only for
-         * Treemap series grouping and analogously to
-         * [pointFormat](#tooltip.pointFormat).
-         *
-         * The grouped nodes point tooltip can be also formatted using
-         * `tooltip.formatter` callback function and `point.isGroupNode` flag.
-         *
-         * @type      {string}
-         * @default   '+ {point.groupedPointsAmount} more...'
-         * @apioption tooltip.clusterFormat
-         */
         clusterFormat: '+ {point.groupedPointsAmount} more...<br/>'
     },
 

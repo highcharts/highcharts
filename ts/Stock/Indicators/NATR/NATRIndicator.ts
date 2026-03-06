@@ -24,11 +24,10 @@ import type {
 import type NATRPoint from './NATRPoint';
 
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
+import { merge } from '../../../Shared/Utilities.js';
 const {
     atr: ATRIndicator
 } = SeriesRegistry.seriesTypes;
-import U from '../../../Core/Utilities.js';
-const { merge } = U;
 
 /* *
  *

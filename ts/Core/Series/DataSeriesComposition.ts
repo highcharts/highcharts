@@ -25,19 +25,24 @@ import type {
     PointShortOptions
 } from './PointOptions';
 import type Series from './Series';
+import type {
+    CellType,
+    Column,
+    ColumnCollection,
+    Event as DataTableEvent
+} from '../../Data/DataTable.js';
 
 import DataTable from '../../Data/DataTable.js';
 import H from '../Globals.js';
 const { composed } = H;
-import U from '../Utilities.js';
-const {
+import {
     addEvent,
     fireEvent,
     isNumber,
     merge,
     pushUnique,
     wrap
-} = U;
+} from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -137,7 +142,7 @@ function wrapSeriesSetData(
             merge(true, data)
     );
 
-    const columns: DataTable.ColumnCollection = {},
+    const columns: ColumnCollection = {},
         keys = (this.options.keys || this.parallelArrays).slice();
 
     if (isNumber(data[0]) || keys.length === 1) {
@@ -162,7 +167,7 @@ function wrapSeriesSetData(
             ++i
         ) {
             if (data[i] instanceof Array) {
-                columns[keys[i]] = data[i] as Array<DataTable.CellType>;
+                columns[keys[i]] = data[i] as Array<CellType>;
             }
         }
     }
@@ -216,7 +221,7 @@ class DataSeriesAdditions {
     public constructor(
         series: DataSeriesComposition
     ) {
-        const columns: DataTable.ColumnCollection = {},
+        const columns: ColumnCollection = {},
             keys = series.parallelArrays;
 
         for (let i = 0, iEnd = keys.length; i < iEnd; ++i) {
@@ -316,7 +321,7 @@ class DataSeriesAdditions {
             }
         }
 
-        let column: (Readonly<DataTable.Column>|undefined),
+        let column: (Readonly<Column>|undefined),
             failure = false,
             indexAsX = false;
 
@@ -340,7 +345,7 @@ class DataSeriesAdditions {
         if (failure) {
             // Fallback to index
             const columnIds = table.getColumnIds(),
-                emptyColumn: DataTable.Column = [];
+                emptyColumn: Column = [];
 
             emptyColumn.length = rowCount;
 
@@ -414,7 +419,7 @@ class DataSeriesAdditions {
         const series = this.series,
             table = this.table,
             anySeries: AnyRecord = series,
-            onChange = (e: DataTable.Event): void => {
+            onChange = (e: DataTableEvent): void => {
                 const type = e.type;
                 if (type === 'afterDeleteColumns') {
                     // Deletion affects all points

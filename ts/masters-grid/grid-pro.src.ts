@@ -31,13 +31,15 @@ import DataTable from '../Data/DataTable.js';
 import Defaults from '../Grid/Core/Defaults.js';
 import Globals from '../Grid/Core/Globals.js';
 import whcm from '../Accessibility/HighContrastMode.js';
-import Utilities from '../Core/Utilities.js';
+import { merge } from '../Shared/Utilities.js';
 
 import Table from '../Grid/Core/Table/Table.js';
 import Column from '../Grid/Core/Table/Column.js';
 import HeaderCell from '../Grid/Core/Table/Header/HeaderCell.js';
 import TableCell from '../Grid/Core/Table/Body/TableCell.js';
 import SvgIcons from '../Grid/Core/UI/SvgIcons.js';
+
+import ResponsiveComposition from '../Grid/Core/Responsive/ResponsiveComposition.js';
 
 import GridEvents from '../Grid/Pro/GridEvents.js';
 import CellEditingComposition from '../Grid/Pro/CellEditing/CellEditingComposition.js';
@@ -52,6 +54,8 @@ import CellContentPro from '../Grid/Pro/CellRendering/CellContentPro.js';
 import CellRenderer from '../Grid/Pro/CellRendering/CellRenderer.js';
 
 import Popup from '../Grid/Core/UI/Popup.js';
+
+import DataProviderRegistry from '../Grid/Core/Data/DataProviderRegistry.js';
 
 
 /* *
@@ -91,6 +95,10 @@ import '../Grid/Pro/CellRendering/Renderers/TimeInputRenderer.js';
 import '../Grid/Pro/CellRendering/Renderers/SparklineRenderer.js';
 import '../Grid/Pro/CellRendering/Renderers/NumberInputRenderer.js';
 
+import '../Grid/Core/Data/LocalDataProvider.js';
+import '../Grid/Pro/Data/RemoteDataProvider.js';
+import '../Grid/Core/Responsive/ResponsiveComposition.js';
+
 
 /* *
  *
@@ -111,6 +119,7 @@ const G = {
     DataCursor,
     DataModifier,
     DataPool,
+    DataProviderRegistry,
     DataTable,
     defaultOptions: Defaults.defaultOptions,
     Grid: _Grid,
@@ -118,7 +127,7 @@ const G = {
     grids: _Grid.grids,
     HeaderCell,
     isHighContrastModeActive: whcm.isHighContrastModeActive,
-    merge: Utilities.merge,
+    merge: merge,
     Pagination,
     Popup,
     product: 'Grid Pro',
@@ -138,6 +147,7 @@ ExportingComposition.compose(G.Grid);
 ValidatorComposition.compose(G.Table);
 CellRenderersComposition.compose(G.Column);
 PaginationComposition.compose(G.Pagination);
+ResponsiveComposition.compose(G.Grid);
 
 
 /* *
@@ -157,6 +167,7 @@ export {
     DataConverter,
     DataCursor,
     DataModifier,
+    DataProviderRegistry,
     DataPool,
     DataTable,
     _Grid as Grid,
@@ -176,7 +187,6 @@ export const {
     grid,
     grids,
     isHighContrastModeActive,
-    merge,
     product,
     setOptions,
     version,

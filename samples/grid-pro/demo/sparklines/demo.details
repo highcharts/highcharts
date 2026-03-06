@@ -1,8 +1,10 @@
 ---
-name: Grid Sparklines
+name: Sparklines
 authors:
   - Dawid Dragula
 js_wrap: b
+alt_text: >-
+  Sparklines inside data grid cells
 tags:
   - Highcharts Grid demo
 categories:

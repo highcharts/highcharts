@@ -48,18 +48,8 @@ import Templating from '../../../Core/Templating.js';
 const {
     format
 } = Templating;
+import { createElement, css, defined, diffObjects, isArray, isFunction, isNumber, merge } from '../../../Shared/Utilities.js';
 
-import U from '../../../Core/Utilities.js';
-const {
-    createElement,
-    css,
-    defined,
-    diffObjects,
-    isArray,
-    isNumber,
-    merge,
-    isFunction
-} = U;
 
 /* *
  *
@@ -698,24 +688,15 @@ class KPIComponent extends Component {
 
 /* *
  *
- *  Class Namespace
+ *  Type Declarations
  *
  * */
 
-namespace KPIComponent {
+/** @internal */
+export type ComponentType = KPIComponent;
 
-    /* *
-    *
-    *  Declarations
-    *
-    * */
-
-    /** @internal */
-    export type ComponentType = KPIComponent;
-
-    /** @internal */
-    export type FormulaType = keyof typeof KPIComponent.formulaFunctions;
-}
+/** @internal */
+export type FormulaType = keyof typeof KPIComponent.formulaFunctions;
 
 /* *
  *

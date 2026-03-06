@@ -36,18 +36,18 @@ const { animObject } = A;
 import D from '../Core/Defaults.js';
 const { getOptions } = D;
 import MapPoint from '../Series/Map/MapPoint';
-import U from '../Core/Utilities.js';
 import { Palette } from '../Core/Color/Palettes';
-const {
+import {
     addEvent,
     defined,
     erase,
     extend,
+    isObject,
     merge,
     pick,
     removeEvent,
     wrap
-} = U;
+} from '../Shared/Utilities.js';
 
 /* *
  *
@@ -127,6 +127,14 @@ export interface PatternOptionsObject {
 
     /** @internal */
     _y?: number;
+
+    /**
+     * When true, the pattern is anchored to each individual point rather than
+     * using a global pattern grid. This ensures consistent pattern rendering
+     * across points of different sizes and improves accessibility for narrow
+     * columns. Defaults to false for backward compatibility.
+     */
+    anchorToPoint?: boolean;
 
     /**
      * For automatically calculated width and height on images, it is possible
@@ -305,6 +313,29 @@ function createPatterns(): Array<PatternOptionsObject> {
 }
 
 /**
+ * Create an anchored pattern instance for a specific point.
+ * @private
+ */
+function createAnchoredPattern(
+    pattern: PatternOptionsObject,
+    element: SVGDOMElement
+): PatternOptionsObject {
+    const anchoredPattern = merge({}, pattern);
+
+    // Get point's bounding box for anchoring
+    const bbox = (element as any).getBBox ? (element as any).getBBox() : {
+        x: 0, y: 0, width: 32, height: 32
+    };
+
+    // Position pattern at point's origin so each point has its own
+    // pattern instance starting from its top-left corner
+    anchoredPattern._x = bbox.x;
+    anchoredPattern._y = bbox.y;
+
+    return anchoredPattern;
+}
+
+/**
  * Utility function to compute a hash value from an object. Modified Java
  * String.hashCode implementation in JS. Use the preSeed parameter to add an
  * additional seeding step.
@@ -450,21 +481,28 @@ function onPointAfterInit(
 ): void {
     const point = this,
         colorOptions: (PatternObject|undefined) =
-            point.options.color as any;
+            (point.color || point.options.color) as any;
 
     // Only do this if we have defined a specific color on this point. Otherwise
     // we will end up trying to re-add the series color for each point.
-    if (colorOptions && colorOptions.pattern) {
+    if (
+        colorOptions &&
+        (
+            colorOptions.pattern ||
+            colorOptions.patternIndex !== void 0
+        )
+    ) {
         // Move path definition to object, allows for merge with series path
         // definition
-        if (typeof colorOptions.pattern.path === 'string') {
+        if (typeof colorOptions.pattern?.path === 'string') {
             colorOptions.pattern.path = {
                 d: colorOptions.pattern.path
             };
         }
         // Merge with series options
         point.color = point.options.color = merge(
-            point.series.options.color as any, colorOptions
+            point.series.options.color as any,
+            colorOptions
         );
     }
 }
@@ -531,11 +569,20 @@ function onRendererComplexColor(
         // the same pattern definition reuse existing pattern elements by
         // default. We combine two hashes, the second with an additional
         // preSeed algorithm, to minimize collision probability.
-        if (forceHashId || !pattern.id) {
+        if (forceHashId || !pattern.id || pattern.anchorToPoint) {
             // Make a copy so we don't accidentally edit options when setting ID
             pattern = merge({}, pattern);
+
+            // Handle anchored patterns - include the point's
+            // position in the pattern before hashing, so each
+            // point gets a unique ID.
+            if (pattern.anchorToPoint) {
+                pattern = createAnchoredPattern(pattern, element);
+            }
+
             pattern.id = 'highcharts-pattern-' + chartIndex + '-' +
-                hashFromObject(pattern) + hashFromObject(pattern, true);
+                hashFromObject(pattern) + hashFromObject(pattern, true) +
+                (pattern.anchorToPoint ? '-anchored' : '');
         }
 
         // Add it. This function does nothing if an element with this ID
@@ -630,7 +677,7 @@ function pointCalculatePatternDimensions(
     this: Point,
     pattern: PatternOptionsObject
 ): void {
-    if (pattern.width && pattern.height) {
+    if (pattern.width && pattern.height && !pattern.anchorToPoint) {
         return;
     }
 
@@ -690,23 +737,38 @@ function pointCalculatePatternDimensions(
             Math.ceil(bBox.aspectHeight || bBox.height);
     }
 
-    // Set x/y accordingly, centering if using aspect ratio, otherwise adjusting
-    // so bounding box corner is 0,0 of pattern.
-    if (!pattern.width) {
-        pattern._x = pattern.x || 0;
-        pattern._x += bBox.x - Math.round(
-            bBox.aspectWidth ?
-                Math.abs(bBox.aspectWidth - bBox.width) / 2 :
-                0
-        );
-    }
-    if (!pattern.height) {
-        pattern._y = pattern.y || 0;
-        pattern._y += bBox.y - Math.round(
-            bBox.aspectHeight ?
-                Math.abs(bBox.aspectHeight - bBox.height) / 2 :
-                0
-        );
+    // Handle anchored patterns
+    if (pattern.anchorToPoint) {
+        // For anchored patterns, always position at origin of the point
+        pattern._x = 0;
+        pattern._y = 0;
+        // Ensure pattern dimensions match the point if not explicitly set
+        if (!pattern.width) {
+            pattern._width = bBox.width;
+        }
+        if (!pattern.height) {
+            pattern._height = bBox.height;
+        }
+    } else {
+        // Original logic for global patterns
+        // Set x/y accordingly, centering if using aspect ratio, otherwise
+        // adjusting so bounding box corner is 0,0 of pattern.
+        if (!pattern.width) {
+            pattern._x = pattern.x || 0;
+            pattern._x += bBox.x - Math.round(
+                bBox.aspectWidth ?
+                    Math.abs(bBox.aspectWidth - bBox.width) / 2 :
+                    0
+            );
+        }
+        if (!pattern.height) {
+            pattern._y = pattern.y || 0;
+            pattern._y += bBox.y - Math.round(
+                bBox.aspectHeight ?
+                    Math.abs(bBox.aspectHeight - bBox.height) / 2 :
+                    0
+            );
+        }
     }
 }
 
@@ -739,13 +801,17 @@ function rendererAddPattern(
         height = options.height ||
             (typeof options._height === 'number' ? options._height : 0) ||
             defaultSize,
-        rect = (fill: ColorString): SVGElement => this
-            .rect(0, 0, width, height)
-            .attr({ fill })
-            .add(pattern),
         width = options.width ||
             (typeof options._width === 'number' ? options._width : 0) ||
-            defaultSize;
+            defaultSize,
+        patternContentUnits = options.anchorToPoint ?
+            'userSpaceOnUse' :
+            (options.patternContentUnits || 'userSpaceOnUse');
+
+    const rect = (fill: ColorString): SVGElement => this
+        .rect(0, 0, width, height)
+        .attr({ fill })
+        .add(pattern);
 
     let attribs: SVGAttributes,
         id = options.id,
@@ -778,7 +844,7 @@ function rendererAddPattern(
     const attrs: SVGAttributes = {
         id: id,
         patternUnits: 'userSpaceOnUse',
-        patternContentUnits: options.patternContentUnits || 'userSpaceOnUse',
+        patternContentUnits: patternContentUnits,
         width: width,
         height: height,
         x: options._x || options.x || 0,
@@ -803,7 +869,7 @@ function rendererAddPattern(
 
     // Use an SVG path for the pattern
     if (options.path) {
-        path = U.isObject(options.path) ?
+        path = isObject(options.path) ?
             options.path :
             { d: options.path };
 
@@ -824,6 +890,7 @@ function rendererAddPattern(
         if (path.transform) {
             attribs.transform = path.transform;
         }
+
         this.createElement('path').attr(attribs).add(pattern);
         pattern.color = color;
 
@@ -1011,6 +1078,18 @@ export default PatternFill;
  * Pattern options
  *
  * @interface Highcharts.PatternOptionsObject
+ *//**
+ * When true, the pattern is anchored to each individual point rather than
+ * using a global pattern grid. This ensures consistent pattern rendering
+ * across points of different sizes and improves accessibility for narrow
+ * columns. Defaults to false for backward compatibility.
+ *
+ * @sample highcharts/series/pattern-fill-anchor-to-point/
+ *         Compare shared vs anchored pattern positioning
+ * @name Highcharts.PatternOptionsObject#anchorToPoint
+ * @type {boolean|undefined}
+ * @since next
+ * @default false
  *//**
  * Background color for the pattern if a `path` is set (not images).
  * @name Highcharts.PatternOptionsObject#backgroundColor

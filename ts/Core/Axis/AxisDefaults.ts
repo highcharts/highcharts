@@ -377,6 +377,9 @@ namespace AxisDefaults {
 
         /**
          * Formatter function for the label text.
+         * Since v12.5.0, the callback also receives `ctx` as the second
+         * argument, so that arrow functions can access the same context as
+         * regular functions using `this`.
          *
          * @type      {Highcharts.XAxisCrosshairLabelFormatterCallbackFunction}
          * @since     2.1
@@ -412,6 +415,18 @@ namespace AxisDefaults {
          * @since     2.1
          * @product   highstock
          * @apioption xAxis.crosshair.label.style
+         */
+
+        /**
+         * The number of milliseconds to wait until the crosshair is shown when
+         * the mouse is over a point. Works on initial hover.
+         *
+         * @sample {highcharts|highstock} highcharts/tooltip/showdelay/
+         *
+         * @type      {number}
+         * @default   0
+         * @since     next
+         * @apioption xAxis.crosshair.showDelay
          */
 
         /**
@@ -966,6 +981,8 @@ namespace AxisDefaults {
              *         Linked category names
              * @sample {highcharts} highcharts/xaxis/labels-format-custom/
              *         Custom number format
+             * @sample {highstock} stock/xaxis/labels-format/
+             *         Added units on Y axis
              *
              * @type      {string}
              * @since     3.0
@@ -976,7 +993,9 @@ namespace AxisDefaults {
              * Callback JavaScript function to format the label. The value
              * is given by `this.value`. Additional properties for `this` are
              * `axis`, `chart`, `isFirst`, `isLast` and `text` which holds the
-             * value of the default formatter.
+             * value of the default formatter. Since v12.5.0, the callback also
+             * receives `ctx` as the first argument, so that arrow functions can
+             * access the same context as regular functions using `this`.
              *
              * Defaults to a built in function returning a formatted string
              * depending on whether the axis is `category`, `datetime`,
@@ -1880,6 +1899,9 @@ namespace AxisDefaults {
          * [tickPixelInterval](#xAxis.tickPixelInterval) and [tickInterval](
          * #xAxis.tickInterval). The automatic tick positions are accessible
          * through `this.tickPositions` and can be modified by the callback.
+         * Since v12.5.0, the callback also receives `ctx` as the third
+         * argument, so that arrow functions can access the same context as
+         * regular functions using `this`.
          *
          * @see [tickPositions](#xAxis.tickPositions)
          *
@@ -3221,7 +3243,9 @@ namespace AxisDefaults {
             /* eslint-disable valid-jsdoc */
             /**
              * Callback JavaScript function to format the label. The value is
-             * given by `this.total`.
+             * given by `this.total`. Since v12.5.0, the callback also receives
+             * `ctx` as the first argument, so that arrow functions can access
+             * the same context as regular functions using `this`.
              *
              * @sample {highcharts} highcharts/yaxis/stacklabels-formatter/
              *         Added units to stack total value

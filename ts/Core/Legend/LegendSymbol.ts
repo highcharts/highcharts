@@ -17,6 +17,7 @@
  *
  * */
 
+import type ColorType from '../Color/ColorType';
 import type Legend from './Legend';
 import type LegendItem from './LegendItem';
 import type Point from '../Series/Point';
@@ -25,12 +26,7 @@ import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 import type SymbolOptions from '../Renderer/SVG/SymbolOptions';
 
-import U from '../Utilities.js';
-const {
-    extend,
-    merge,
-    pick
-} = U;
+import { extend, merge, pick } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -52,6 +48,13 @@ declare module '../Series/PointBase' {
 
 declare module '../Series/SeriesBase' {
     interface SeriesBase extends LegendItem {
+        /**
+         * Legend data for the series.
+         *
+         * @since 10.3.0
+         */
+        legendItem?: LegendItem['legendItem'];
+
         /** @internal */
         drawLegendSymbol: (
             legend: Legend,
@@ -59,6 +62,37 @@ declare module '../Series/SeriesBase' {
         ) => void;
     }
 }
+
+declare module '../Series/SeriesOptions' {
+    interface SeriesOptions {
+        /**
+         * What type of legend symbol to render for this series. Can be one of
+         * `areaMarker`, `lineMarker` or `rectangle`.
+         *
+         * @sample {highcharts} highcharts/series/legend-symbol/
+         *         Change the legend symbol
+         *
+         * @default 'rectangle'
+         * @since   11.0.1
+         */
+        legendSymbol?: LegendSymbolType;
+
+        /**
+         * Defines the color of the legend symbol for this series. Defaults to
+         * undefined, in which case the series color is used. Does not work with
+         * styled mode.
+         *
+         * @sample {highcharts|highstock} highcharts/series/legend-symbol-color/
+         *         Change the legend symbol color
+         *
+         * @since   12.0.0
+         * @product highcharts highstock highmaps
+         */
+        legendSymbolColor?: ColorType;
+    }
+}
+
+export type LegendSymbolType = ('areaMarker' | 'lineMarker' | 'rectangle');
 
 /* *
  *

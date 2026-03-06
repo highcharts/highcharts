@@ -25,12 +25,7 @@ import H from '../Globals.js';
 import D from '../Defaults.js';
 const { defaultOptions } = D;
 import Point from './Point.js';
-import U from '../Utilities.js';
-const {
-    extend,
-    extendClass,
-    merge
-} = U;
+import { extend, extendClass, merge } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -64,7 +59,15 @@ namespace SeriesRegistry {
     /**
      * Registers class pattern of a series.
      *
-     * @internal
+     * @param {string} seriesType
+     * The series type as an identifier string in lower case.
+     *
+     * @param {Function} SeriesClass
+     * The series class as a class pattern or a constructor function with
+     * prototype.
+     *
+     * @return {boolean}
+     * True if series type was added, false if it already exists.
      */
     export function registerSeriesType(
         seriesType: string,

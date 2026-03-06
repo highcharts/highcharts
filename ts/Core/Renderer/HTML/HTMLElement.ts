@@ -28,8 +28,7 @@ import AST from './AST.js';
 import H from '../../Globals.js';
 const { composed, isFirefox } = H;
 import SVGElement from '../SVG/SVGElement.js';
-import U from '../../Utilities.js';
-const {
+import {
     css,
     defined,
     extend,
@@ -37,7 +36,8 @@ const {
     isNumber,
     pInt,
     pushUnique
-} = U;
+} from '../../../Shared/Utilities.js';
+
 
 /* *
  *
@@ -281,13 +281,21 @@ class HTMLElement extends SVGElement {
             ) {
                 const usePxWidth = rotation ||
                     scaleX ||
-                    textPxLength > textWidthNum ||
-                    // Set width to prevent over-wrapping (#22609)
-                    willOverWrap;
+                    textPxLength > textWidthNum;
 
                 css(element, {
+                    // #16261
                     width: usePxWidth && isNumber(textWidth) ?
-                        textWidth + 'px' : 'auto', // #16261
+                        textWidth + 'px' :
+                        // Set width to prevent over-wrapping (#22609)
+                        (willOverWrap ?
+                            Math.min(
+                                // +1 for rounding errors
+                                textPxLength + 1,
+                                textWidthNum
+                            ) + 'px' :
+                            'auto'
+                        ),
                     display,
                     whiteSpace: whiteSpace || 'normal' // #3331
                 });

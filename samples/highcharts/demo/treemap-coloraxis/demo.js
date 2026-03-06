@@ -38,6 +38,6 @@ Highcharts.chart('container', {
         }]
     }],
     title: {
-        text: 'Highcharts Treemap'
+        text: 'Simple Treemap'
     }
 });

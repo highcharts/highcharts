@@ -22,19 +22,15 @@
 
 import type { AnyRecord, DeepPartial } from '../../Shared/Types';
 import type Component from '../Components/Component';
-import type EditableOptions from '../Components/EditableOptions';
+import type { Options as ComponentOptions } from '../Components/Component';
+import type { Options as EditableOption } from '../Components/EditableOptions';
 import type { Options as HTMLOptions } from '../Components/HTMLComponent/HTMLComponentOptions';
 
 import EditRenderer from './EditRenderer.js';
-import U from '../../Core/Utilities.js';
 import EditGlobals from './EditGlobals.js';
 import ConfirmationPopup from './ConfirmationPopup.js';
-const {
-    createElement,
-    merge,
-    error,
-    fireEvent
-} = U;
+import { createElement, fireEvent, merge } from '../../Shared/Utilities.js';
+import { error } from '../../Core/Utilities.js';
 
 /* *
  *
@@ -66,10 +62,10 @@ class AccordionMenu {
 
     private iconsURLPrefix: string;
     private closeSidebar: Function;
-    private changedOptions: DeepPartial<Component.Options> = {};
+    private changedOptions: DeepPartial<ComponentOptions> = {};
     private chartOptionsJSON = {};
     private component?: Component;
-    private oldOptionsBuffer: DeepPartial<Component.Options> = {};
+    private oldOptionsBuffer: DeepPartial<ComponentOptions> = {};
     private confirmationPopup?: ConfirmationPopup;
     public waitingForConfirmation = false;
 
@@ -99,7 +95,7 @@ class AccordionMenu {
         const { editMode } = component.board;
         const menu = this;
         const editableOptions = component.editableOptions.getOptions();
-        let options: EditableOptions.Options;
+        let options: EditableOption;
         let content: HTMLElement;
 
         this.component = component;
@@ -289,7 +285,7 @@ class AccordionMenu {
 
         // eslint-disable-next-line @typescript-eslint/no-floating-promises
         this.component?.update(
-            this.changedOptions as Partial<Component.Options>
+            this.changedOptions as Partial<ComponentOptions>
         );
     }
 
@@ -307,7 +303,7 @@ class AccordionMenu {
      * the component for which the menu should be rendered.
      */
     public renderAccordion(
-        options: EditableOptions.Options,
+        options: EditableOption,
         parentNode: HTMLElement,
         component: Component
     ): void {
@@ -350,7 +346,7 @@ class AccordionMenu {
      */
     public renderNested(
         parentElement: HTMLElement,
-        options: EditableOptions.Options,
+        options: EditableOption,
         component: Component
     ): void {
         if (!parentElement || !options.nestedOptions) {
@@ -383,7 +379,7 @@ class AccordionMenu {
             for (let j = 0, jEnd = accordionOptions?.length; j < jEnd; ++j) {
                 this.renderAccordion(
                     merge(
-                        accordionOptions[j] as EditableOptions.Options,
+                        accordionOptions[j] as EditableOption,
                         { lang, isNested: true }
                     ),
                     collapsedHeader.content,
@@ -458,7 +454,7 @@ class AccordionMenu {
         }
 
         await component.update(
-            this.oldOptionsBuffer as Partial<Component.Options>
+            this.oldOptionsBuffer as Partial<ComponentOptions>
         );
 
         fireEvent(

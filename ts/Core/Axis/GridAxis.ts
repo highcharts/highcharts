@@ -39,19 +39,19 @@ import H from '../Globals.js';
 const { dateFormats } = H;
 import { Palette } from '../Color/Palettes';
 import Tick from './Tick.js';
-import U from '../Utilities.js';
-const {
-    addEvent,
+import {
     defined,
-    erase,
     find,
+    erase,
     isArray,
     isNumber,
+    isObject as isObjectUtils,
     merge,
     pick,
-    timeUnits,
-    wrap
-} = U;
+    wrap,
+    addEvent
+} from '../../Shared/Utilities.js';
+import { timeUnits } from '../Utilities.js';
 
 /* *
  *
@@ -159,6 +159,8 @@ export interface GridAxisOptions {
      *         Left axis as a table
      * @sample gantt/demo/treegrid-columns
      *         Collapsible tree grid with columns
+     * @sample gantt/grid-axis/horizontal-columns
+     *         Horizontal grid axis with columns rendered as rows
      *
      */
     columns?: Array<AxisOptions>;
@@ -203,7 +205,7 @@ function argsToArray(args: IArguments): Array<any> {
 /** @internal */
 function isObject(x: unknown): x is object {
     // Always use strict mode
-    return U.isObject(x, true);
+    return isObjectUtils(x, true);
 }
 
 /** @internal */
@@ -500,7 +502,7 @@ function onAfterInit(this: Axis): void {
             const column = new Axis(
                 axis.chart,
                 columnOptions,
-                'yAxis'
+                axis.coll
             ) as GridAxisComposition;
             column.grid.isColumn = true;
             column.grid.columnIndex = columnIndex;
@@ -1605,6 +1607,8 @@ export default GridAxis;
  *         Left axis as a table
  * @sample gantt/demo/treegrid-columns
  *         Collapsible tree grid with columns
+ * @sample gantt/grid-axis/horizontal-columns
+ *         Horizontal grid axis with columns rendered as rows
  *
  * @type      {Array<Highcharts.XAxisOptions>}
  * @apioption xAxis.grid.columns

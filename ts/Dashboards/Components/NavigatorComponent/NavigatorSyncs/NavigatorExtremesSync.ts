@@ -20,19 +20,17 @@
  *
  * */
 
-import type { Axis } from '../../../Plugins/HighchartsTypes';
-import type Sync from '../../Sync/Sync';
+import type { AxisExtremesObject } from '../../../Plugins/HighchartsTypes';
+import type { OptionsEntry, SyncPair } from '../../Sync/Sync';
+import type { Event as DataCursorEvent } from '../../../../Data/DataCursor';
 
 import Component from '../../Component';
-import DataCursor from '../../../../Data/DataCursor';
 import DataModifier from '../../../../Data/Modifiers/DataModifier.js';
 import NavigatorComponent from '../NavigatorComponent.js';
 import NavigatorSyncUtils from './NavigatorSyncUtils.js';
-import U from '../../../../Core/Utilities.js';
+import { addEvent, defined, pick } from '../../../../Shared/Utilities.js';
 
 const { Filter: FilterModifier } = DataModifier.types;
-const { addEvent, pick, defined } = U;
-
 
 /* *
  *
@@ -40,9 +38,9 @@ const { addEvent, pick, defined } = U;
  *
  * */
 
-const defaultOptions: Sync.OptionsEntry = {};
+const defaultOptions: OptionsEntry = {};
 
-const syncPair: Sync.SyncPair = {
+const syncPair: SyncPair = {
     emitter: function (this: Component): Function | void {
         if (this.type !== 'Navigator') {
             return;
@@ -52,7 +50,7 @@ const syncPair: Sync.SyncPair = {
         const groupKey = syncOptions.group ? ':' + syncOptions.group : '';
 
         const afterSetExtremes = (
-            extremes: Axis.ExtremesObject
+            extremes: AxisExtremesObject
         ): void => {
             if (component.connectorHandlers?.[0]?.connector) {
                 const table =
@@ -90,7 +88,7 @@ const syncPair: Sync.SyncPair = {
         return addEvent(
             component.chart.xAxis[0],
             'afterSetExtremes',
-            function (extremes: Axis.ExtremesObject): void {
+            function (extremes: AxisExtremesObject): void {
                 clearTimeout(delay);
                 delay = setTimeout(afterSetExtremes, 50, this, extremes);
             }
@@ -106,7 +104,7 @@ const syncPair: Sync.SyncPair = {
 
         const dataCursor = component.board.dataCursor;
 
-        const extremesListener = (e: DataCursor.Event): void => {
+        const extremesListener = (e: DataCursorEvent): void => {
             const cursor = e.cursor;
 
             if (!component.connectorHandlers?.[0]?.connector) {

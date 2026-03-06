@@ -20,8 +20,8 @@
  *
  * */
 
-import type { Axis } from '../../../Plugins/HighchartsTypes';
-import type Sync from '../../Sync/Sync';
+import type { AxisExtremesObject } from '../../../Plugins/HighchartsTypes';
+import type { SyncPair } from '../../Sync/Sync';
 import type NavigatorComponent from '../NavigatorComponent.js';
 import type {
     CrossfilterSyncOptions
@@ -30,10 +30,9 @@ import type {
 import Component from '../../Component';
 import DataModifier from '../../../../Data/Modifiers/DataModifier.js';
 import NavigatorSyncUtils from './NavigatorSyncUtils.js';
-import U from '../../../../Core/Utilities.js';
+import { addEvent } from '../../../../Shared/Utilities.js';
 
 const { Filter: FilterModifier } = DataModifier.types;
-const { addEvent } = U;
 
 
 /* *
@@ -46,7 +45,7 @@ const defaultOptions: CrossfilterSyncOptions = {
     affectNavigator: false
 };
 
-const syncPair: Sync.SyncPair = {
+const syncPair: SyncPair = {
     emitter: function (this: Component): Function | void {
         if (this.type !== 'Navigator') {
             return;
@@ -56,7 +55,7 @@ const syncPair: Sync.SyncPair = {
         const groupKey = syncOptions.group ? ':' + syncOptions.group : '';
 
         const afterSetExtremes = async (
-            extremes: Axis.ExtremesObject
+            extremes: AxisExtremesObject
         ): Promise<void> => {
             if (component.connectorHandlers?.[0]?.connector) {
                 const table =
@@ -122,7 +121,7 @@ const syncPair: Sync.SyncPair = {
         return addEvent(
             component.chart.xAxis[0],
             'afterSetExtremes',
-            function (extremes: Axis.ExtremesObject): void {
+            function (extremes: AxisExtremesObject): void {
                 clearTimeout(delay);
                 delay = setTimeout(afterSetExtremes, 50, this, extremes);
             }

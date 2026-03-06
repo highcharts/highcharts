@@ -21,12 +21,7 @@ import type Axis from '../Core/Axis/Axis';
 import type Chart from '../Core/Chart/Chart';
 import type Series from '../Core/Series/Series';
 
-import U from '../Core/Utilities.js';
-const {
-    addEvent,
-    defined,
-    isNumber
-} = U;
+import { addEvent, defined, isNumber } from '../Shared/Utilities.js';
 
 /* *
  *
@@ -44,14 +39,17 @@ declare module '../Core/Axis/AxisOptions' {
          * taking up 24 pixels, and the height of the chart adjusts. Adding or
          * removing items will make the chart resize.
          *
-         * @sample gantt/xrange-series/demo/
+         * @sample {gantt} gantt/xrange-series/demo/
          *         X-range series with static scale
+         * @sample {highcharts} highcharts/xaxis/staticscale
+         *         Static scale on X axis (horizontal bar chart)
          *
+         * @requires  modules/static-scale
          * @type      {number}
          * @default   50
          * @since     6.2.0
-         * @product   gantt
-         * @apioption yAxis.staticScale
+         * @product   highcharts highstock gantt
+         * @apioption xAxis.staticScale
          */
         staticScale?: number;
 
@@ -194,14 +192,17 @@ export default StaticScale;
  * height of the chart adjusts. Adding or removing items will make the chart
  * resize.
  *
- * @sample gantt/xrange-series/demo/
+ * @sample {gantt} gantt/xrange-series/demo/
  *         X-range series with static scale
+ * @sample {highcharts} highcharts/xaxis/staticscale
+ *         Static scale on X axis (horizontal bar chart)
  *
+ * @requires  modules/static-scale
  * @type      {number}
  * @default   50
  * @since     6.2.0
- * @product   gantt
- * @apioption yAxis.staticScale
+ * @product   highcharts highstock gantt
+ * @apioption xAxis.staticScale
  */
 
 ''; // Keeps doclets above in JS file

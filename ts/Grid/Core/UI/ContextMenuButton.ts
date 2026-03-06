@@ -26,7 +26,7 @@ import type ContextMenu from './ContextMenu';
 import type Button from './Button';
 import type Popup from './Popup';
 
-import { GridIconName, createGridIcon } from './SvgIcons.js';
+import { createGridIcon } from './SvgIcons.js';
 import Globals, { ClassNameKey } from '../Globals.js';
 import GridUtils from '../GridUtils.js';
 
@@ -157,7 +157,11 @@ export class ContextMenuButton implements Button {
         this.refreshState();
 
         if (cfg.chevron) {
-            chevronEl.appendChild(createGridIcon('chevronRight'));
+            const grid = this.contextMenu?.grid;
+            chevronEl.appendChild(createGridIcon(
+                'chevronRight',
+                grid?.options?.rendering?.icons
+            ));
         }
 
         if (cfg.icon) {
@@ -188,15 +192,19 @@ export class ContextMenuButton implements Button {
      * Sets the icon for the button.
      *
      * @param icon
-     * The icon to set.
+     * The icon to set (built-in name or custom name from rendering.icons).
      */
-    public setIcon(icon?: GridIconName): void {
+    public setIcon(icon?: string): void {
         this.icon?.remove();
         if (!icon) {
             return;
         }
 
-        this.icon = createGridIcon(icon);
+        const grid = this.contextMenu?.grid;
+        this.icon = createGridIcon(
+            icon,
+            grid?.options?.rendering?.icons
+        );
         this.iconWrapper?.appendChild(this.icon);
     }
 
@@ -285,9 +293,9 @@ export interface ContextMenuButtonOptions {
     label?: string;
 
     /**
-     * The icon for the button.
+     * The icon for the button (built-in name or custom from rendering.icons).
      */
-    icon?: GridIconName;
+    icon?: string;
 
     /**
      * A class name key applied to the `<li>` wrapper of the button.
@@ -297,12 +305,12 @@ export interface ContextMenuButtonOptions {
     /**
      * The icon for the active state of the button.
      */
-    activeIcon?: GridIconName;
+    activeIcon?: string;
 
     /**
      * The icon for the highlighted state of the button.
      */
-    highlightedIcon?: GridIconName;
+    highlightedIcon?: string;
 
     /**
      * The tooltip string for the button.

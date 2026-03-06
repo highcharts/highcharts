@@ -64,15 +64,13 @@ const {
     getLevelOptions,
     updateRootId
 } = TU;
-import U from '../../Core/Utilities.js';
-const {
+import {
     addEvent,
     arrayMax,
     clamp,
     correctFloat,
     crisp,
     defined,
-    error,
     extend,
     fireEvent,
     isArray,
@@ -84,7 +82,8 @@ const {
     pushUnique,
     splat,
     stableSort
-} = U;
+} from '../../Shared/Utilities.js';
+import { error } from '../../Core/Utilities.js';
 
 Series.keepProps.push('simulation', 'hadOutsideDataLabels');
 
@@ -907,12 +906,11 @@ class TreemapSeries extends ScatterSeries {
                     style.lineClamp ??= Math.floor(height / 16);
                     style.visibility = 'inherit';
 
-                    // Make the label box itself fill the width
-                    if (options.headers) {
-                        point.dataLabel?.attr({
-                            width: dataLabelWidth
-                        });
-                    }
+                    // Make the label box itself fill the width. Reset when
+                    // no longer header (#23100).
+                    point.dataLabel?.attr({
+                        width: options.headers ? dataLabelWidth : void 0
+                    });
 
                 // Hide labels for shapes that are too small
                 } else {

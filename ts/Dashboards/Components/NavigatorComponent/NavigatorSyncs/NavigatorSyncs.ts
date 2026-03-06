@@ -20,7 +20,7 @@
  *
  * */
 
-import type Sync from '../../Sync/Sync';
+import type { PredefinedSyncConfig } from '../../Sync/Sync';
 import NavigatorCrossfilterSync from './NavigatorCrossfilterSync.js';
 import NavigatorExtremesSync from './NavigatorExtremesSync.js';
 
@@ -31,7 +31,7 @@ import NavigatorExtremesSync from './NavigatorExtremesSync.js';
 *
 * */
 
-const predefinedSyncConfig: Sync.PredefinedSyncConfig = {
+const predefinedSyncConfig: PredefinedSyncConfig = {
     defaultSyncPairs: {
         crossfilter: NavigatorCrossfilterSync.syncPair,
         extremes: NavigatorExtremesSync.syncPair

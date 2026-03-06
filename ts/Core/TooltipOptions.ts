@@ -38,8 +38,48 @@ declare module './Options' {
 
 declare module './Series/SeriesOptions' {
     interface SeriesOptions {
-        tooltip?: Partial<TooltipOptions>;
+        /**
+         * A configuration object for the tooltip rendering of each single
+         * series. Properties are inherited from [tooltip](#tooltip), but only
+         * the following properties can be defined on a series level.
+         *
+         * @since 2.3
+         */
+        tooltip?: SeriesTooltipOptions;
     }
+}
+
+export interface SeriesTooltipOptions extends Partial<TooltipOptions> {
+    /* *
+     *
+     *  Excluded
+     *
+     * */
+
+    animation?: undefined;
+    backgroundColor?: undefined;
+    borderColor?: undefined;
+    borderRadius?: undefined;
+    borderWidth?: undefined;
+    className?: undefined;
+    crosshairs?: undefined;
+    enabled?: undefined;
+    fixed?: undefined;
+    formatter?: undefined;
+    headerShape?: undefined;
+    hideDelay?: undefined;
+    outside?: undefined;
+    padding?: undefined;
+    positioner?: undefined;
+    shadow?: undefined;
+    shape?: undefined;
+    shared?: undefined;
+    showDelay?: number
+    snap?: undefined;
+    split?: undefined;
+    stickOnContact?: undefined;
+    style?: undefined;
+    useHTML?: undefined;
 }
 
 /**
@@ -557,6 +597,18 @@ export interface TooltipOptions {
      * @product highcharts highstock
      */
     shared: boolean;
+
+    /**
+    * The number of milliseconds to wait until the crosshair is shown when
+    * mouse over a point. Works on initial hover.
+    *
+    * @sample {highcharts|highstock} highcharts/tooltip/showdelay/
+    *
+    * @default 0
+    * @since next
+    */
+    showDelay?: number,
+
     /**
      * Proximity snap for graphs or single points. It defaults to 10 for
      * mouse-powered devices and 25 for touch devices.

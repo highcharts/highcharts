@@ -25,9 +25,8 @@ const { defaultOptions } = D;
 import InfinityLine from './InfinityLine.js';
 import MockPoint from '../MockPoint.js';
 import { Palette } from '../../../Core/Color/Palettes';
-import U from '../../../Core/Utilities.js';
 import { AnnotationMockPointFunction } from '../AnnotationOptions';
-const { merge } = U;
+import { merge } from '../../../Shared/Utilities.js';
 
 if (defaultOptions.annotations?.types) {
     defaultOptions.annotations.types.fibonacciTimeZones = merge(

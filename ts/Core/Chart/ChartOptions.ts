@@ -673,6 +673,10 @@ export interface ChartOptions {
      * requires two fingers. To allow panning with one finger, set
      * `followTouchMove` to `false`.
      *
+     * **Note:** If both zooming and panning are enabled without keys, zooming
+     * will take precedence by default. To prioritize panning, either set
+     * [chart.zooming.key](#chart.zooming.key) or panKey.
+     *
      * @sample  {highcharts} highcharts/chart/pankey/
      *          Zooming and panning
      * @sample  {highstock} stock/chart/panning/
@@ -1272,6 +1276,10 @@ export interface ChartZoomingOptions {
      * Set a key to hold when dragging to zoom the chart. This is useful to
      * avoid zooming while moving points. Should be set different than
      * [chart.panKey](#chart.panKey).
+     *
+     * **Note:** If both zooming and panning are enabled without keys, zooming
+     * will take precedence by default. To prioritize panning, either set
+     * zooming key or [chart.panKey](#chart.panKey).
      *
      * @default    {highcharts} undefined
      * @validvalue ["alt", "ctrl", "meta", "shift"]

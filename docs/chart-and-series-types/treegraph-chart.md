@@ -106,7 +106,7 @@ given in millions years ago, indirectly the similarity of items in terms of time
 since the last common ancestor.
 
 Some techniques to note:
-* We set the `link.radius` to 0 for all nodes, effectively hiding the marker for
+* We set the `marker.radius` to 0 for all nodes, effectively hiding the marker for
 nodes and focusing on the lines encoding the links.
 * We use two separate data label configurations, each with conditional
 formatting to distinguish labels of the leaf nodes from the branching nodes. The

@@ -1,5 +1,5 @@
 ---
-name: Tree map with color axis
+name: Treemap with color axis
 authors:
   - Jon Arild Nygård
 js_wrap: b

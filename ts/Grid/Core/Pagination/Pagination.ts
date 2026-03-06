@@ -30,15 +30,28 @@ import type {
 } from './PaginationOptions';
 import type { DeepPartial } from '../../../Shared/Types';
 
-import Icons from './Icons.js';
+import { createGridIcon } from '../UI/SvgIcons.js';
 import Globals from '../Globals.js';
 import GridUtils from '../GridUtils.js';
-import Utilities from '../../../Core/Utilities.js';
 import AST from '../../../Core/Renderer/HTML/AST.js';
 import PaginationController from '../Querying/PaginationController';
+import {
+    defined,
+    fireEvent,
+    isObject,
+    merge
+} from '../../../Shared/Utilities.js';
 
 const { makeHTMLElement, formatText } = GridUtils;
-const { defined, fireEvent, isObject, merge } = Utilities;
+
+const paginationAlignments = [
+    'left',
+    'center',
+    'right',
+    'distributed'
+] as const;
+const alignmentClassName = (alignment: string): string =>
+    `${Globals.classNamePrefix}pagination-${alignment}`;
 
 /**
  *  Representing the pagination functionalities for the Grid.
@@ -159,6 +172,12 @@ class Pagination {
      */
     public isDirtyQuerying?: boolean;
 
+    /**
+     * Whether the pagination alignment class should be updated.
+     * @internal
+     */
+    public isDirtyAlignment?: boolean;
+
 
     /* *
     *
@@ -232,6 +251,11 @@ class Pagination {
             delete diff.pageSize;
         }
 
+        if ('alignment' in diff) {
+            this.isDirtyAlignment = true;
+            delete diff.alignment;
+        }
+
         // TODO: Optimize more options here.
 
         if (Object.keys(diff).length > 0) {
@@ -252,6 +276,7 @@ class Pagination {
     public render(): void {
         const position = this.options?.position;
         const grid = this.grid;
+        const alignmentClass = this.getAlignmentClass();
 
         this.oldTotalItems = this.controller.totalItems;
 
@@ -270,7 +295,9 @@ class Pagination {
             this.contentWrapper = makeHTMLElement(
                 'nav',
                 {
-                    className: Globals.getClassName('paginationWrapper')
+                    className: alignmentClass ?
+                        `${Globals.getClassName('pagination')} ${alignmentClass}` :
+                        Globals.getClassName('pagination')
                 },
                 position === 'footer' ?
                     this.paginationContainer : grid.contentWrapper
@@ -289,6 +316,40 @@ class Pagination {
 
         // Update button states after rendering
         this.updateButtonStates();
+    }
+
+    private getAlignmentClass(): string {
+        const align = this.options?.align || '';
+
+        return alignmentClassName(align);
+    }
+
+    public updateAlignmentClass(): void {
+        const wrapper = this.contentWrapper;
+
+        if (!wrapper) {
+            return;
+        }
+
+        const alignmentClasses = paginationAlignments.map(alignmentClassName);
+
+        wrapper.classList.remove(...alignmentClasses);
+
+        const alignmentClass = this.getAlignmentClass();
+        wrapper.classList.add(alignmentClass);
+    }
+
+    public redraw(): void {
+        if (this.isDirtyQuerying) {
+            this.updateControls(true);
+        }
+
+        if (this.isDirtyAlignment) {
+            this.updateAlignmentClass();
+        }
+
+        delete this.isDirtyQuerying;
+        delete this.isDirtyAlignment;
     }
 
     /**
@@ -331,10 +392,14 @@ class Pagination {
         }
 
         this.paginationContainer = customContainer;
+        const alignmentClass = this.getAlignmentClass();
+        const className = alignmentClass ?
+            `${Globals.getClassName('pagination')} ${alignmentClass}` :
+            Globals.getClassName('pagination');
 
         // Set content wrapper to the custom container
         this.contentWrapper = makeHTMLElement('div', {
-            className: Globals.getClassName('paginationContainer')
+            className: className
         }, customContainer);
     }
 
@@ -393,10 +458,13 @@ class Pagination {
      * Render the controls buttons and page numbers.
      */
     public renderControls(): void {
+
         const navContainer = makeHTMLElement('div', {
-            className: Globals.getClassName('paginationControlsContainer')
+            className: Globals.getClassName('paginationControls')
         }, this.contentWrapper);
+
         const controls = this.options?.controls || {};
+
 
         // Render first/previous buttons
         if (controls.firstLastButtons) {
@@ -413,9 +481,6 @@ class Pagination {
             this.renderPageNumbers(navContainer);
         }
 
-        // Render dropdown page selector
-        this.renderDropdownPageSelector(navContainer);
-
         // Render next button
         if (controls.previousNextButtons) {
             this.renderNextButton(navContainer);
@@ -425,6 +490,7 @@ class Pagination {
         if (controls.firstLastButtons) {
             this.renderLastButton(navContainer);
         }
+
     }
 
     /**
@@ -469,11 +535,14 @@ class Pagination {
             return;
         }
 
-        // Create first button
+        const firstIconEl = createGridIcon(
+            'doubleChevronLeft',
+            this.grid.options?.rendering?.icons
+        );
         this.firstButton = makeHTMLElement('button', {
-            className: Globals.getClassName('button'),
-            innerHTML: Icons.first
+            className: Globals.getClassName('button')
         }, container);
+        this.firstButton.appendChild(firstIconEl);
         this.firstButton.title = this.lang?.firstPage ?? '';
 
         // Set aria-label for a11y
@@ -511,11 +580,15 @@ class Pagination {
             return;
         }
 
-        // Create previous button
+        const prevIconName = 'chevronLeft';
+        const prevIconEl = createGridIcon(
+            prevIconName,
+            this.grid.options?.rendering?.icons
+        );
         this.prevButton = makeHTMLElement('button', {
-            className: Globals.getClassName('button'),
-            innerHTML: Icons.previous
+            className: Globals.getClassName('button')
         }, container);
+        this.prevButton.appendChild(prevIconEl);
         this.prevButton.title = this.lang?.previousPage ?? '';
 
         // Set aria-label for a11y
@@ -553,11 +626,15 @@ class Pagination {
             return;
         }
 
-        // Create next button
+        const nextIconName = 'chevronRight';
+        const nextIconEl = createGridIcon(
+            nextIconName,
+            this.grid.options?.rendering?.icons
+        );
         this.nextButton = makeHTMLElement('button', {
-            className: Globals.getClassName('button'),
-            innerHTML: Icons.next
+            className: Globals.getClassName('button')
         }, container);
+        this.nextButton.appendChild(nextIconEl);
         this.nextButton.title = this.lang?.nextPage ?? '';
 
         // Set aria-label for a11y
@@ -592,11 +669,15 @@ class Pagination {
             return;
         }
 
-        // Create last button
+        const lastIconName = 'doubleChevronRight';
+        const lastIconEl = createGridIcon(
+            lastIconName,
+            this.grid.options?.rendering?.icons
+        );
         this.lastButton = makeHTMLElement('button', {
-            className: Globals.getClassName('button'),
-            innerHTML: Icons.last
+            className: Globals.getClassName('button')
         }, container);
+        this.lastButton.appendChild(lastIconEl);
         this.lastButton.title = this.lang?.lastPage ?? '';
 
         // Set aria-label for a11y
@@ -632,7 +713,7 @@ class Pagination {
         }
 
         this.pageNumbersContainer = makeHTMLElement('div', {
-            className: Globals.getClassName('paginationNavButtonsContainer')
+            className: Globals.getClassName('paginationPages')
         }, container);
 
         this.updatePageNumbers();
@@ -783,8 +864,6 @@ class Pagination {
             });
         }
 
-        // Update dropdown selector if it exists
-        this.updateDropdownPageSelector();
     }
 
     /**
