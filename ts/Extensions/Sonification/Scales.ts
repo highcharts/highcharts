@@ -13,6 +13,7 @@
 
 'use strict';
 
+/** @internal */
 const Scales = {
     minor: [0, 2, 3, 5, 7, 8, 10],
     dorian: [0, 2, 3, 5, 7, 9, 10],
@@ -32,6 +33,7 @@ const Scales = {
  *
  * */
 
+/** @internal */
 export default Scales;
 
 
