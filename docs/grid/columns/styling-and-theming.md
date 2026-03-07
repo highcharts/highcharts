@@ -62,8 +62,8 @@ Grid.grid('container', {
 ```js
 columns: [{
     id: 'delta',
-    style: function () {
-        return this.dataType === 'number' ?
+    style: function (column) {
+        return column.dataType === 'number' ?
             { fontWeight: '700' } :
             { fontWeight: '200' };
     }
