@@ -126,6 +126,7 @@ module.exports = {
             {
                 'Columns': [
                     'grid/columns/index',
+                    'grid/columns/styling-and-theming',
                     'grid/columns/header',
                     'grid/columns/grouping',
                     'grid/columns/resizing-and-width',
@@ -146,6 +147,7 @@ module.exports = {
             {
                 'Cells': [
                     'grid/cells/index',
+                    'grid/cells/styling-and-theming',
                     'grid/cells/formatting'
                 ]
             },
