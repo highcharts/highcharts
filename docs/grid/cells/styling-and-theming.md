@@ -55,8 +55,8 @@ Grid.grid('container', {
     columns: [{
         id: 'score',
         cells: {
-            style: function () {
-                const value = Number(this.value);
+            style: function (cell) {
+                const value = Number(cell.value);
                 const min = 0;
                 const max = 100;
                 const t = Math.max(0, Math.min(1, (value - min) / (max - min)));
