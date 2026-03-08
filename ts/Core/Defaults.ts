@@ -2464,7 +2464,7 @@ const defaultOptions: DefaultOptions = {
             /** @internal */
             month: '%[BY]',
             /** @internal */
-            year: '%Y'
+            year: '%[Y]'
         },
 
         /**

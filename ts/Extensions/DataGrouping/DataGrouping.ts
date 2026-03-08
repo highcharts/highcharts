@@ -354,7 +354,7 @@ export default DataGroupingComposition;
  *     day: ['%A, %e %b %Y', '%A, %e %b', '-%A, %e %b %Y'],
  *     week: ['%v %A, %e %b %Y', '%A, %e %b', '-%A, %e %b %Y'],
  *     month: ['%B %Y', '%B', '-%B %Y'],
- *     year: ['%Y', '%Y', '-%Y']
+ *     year: ['%[Y]', '%[Y]', '-%[Y]']
  * }
  * ```
  *
