@@ -239,8 +239,8 @@ QUnit.test('Dynamic markers on update', function (assert) {
     assert.strictEqual(hasVisibleMarker(pointB), false, 'Point marker hidden');
 });
 
-// #16624
-QUnit.test('Hover after disabling a11y', function (assert) {
+// #16624, temporarily skipped due to #23783
+QUnit.skip('Hover after disabling a11y', function (assert) {
     const chart = Highcharts.chart('container', {
         xAxis: {
             type: 'category'

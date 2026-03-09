@@ -60,6 +60,14 @@ These files can't run in the same page along with each other or with `highcharts
 <script src="/js/modules/gantt.js"></script>
 ```
 
+## Autoload modules
+Since v13, Highcharts includes an experimental *autoload* script. This script
+dynamically loads the required modules based on the chart configuration alone.
+It is intended for situations where the implementer doesn't control the
+configuration, like when the chart is built by an LLM or other dynamic
+processes. Read more and see examples in the [Loader API
+docs](https://api.highcharts.com/class-reference/Highcharts.Loader).
+
 ## Build your own packages
 
 To reduce file size, or combine modules together to reduce latency, you may want to create your own build of the Highcharts modules. See [Creating custom Highcharts files](https://www.highcharts.com/docs/getting-started/how-to-create-custom-highcharts-packages) for more information.

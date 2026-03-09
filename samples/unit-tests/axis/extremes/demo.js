@@ -526,8 +526,8 @@ QUnit.test(
 // Highcharts 4.0.1, Issue #3075
 // Touch panning on categorized axis alters range
 QUnit.test('Touch pan categories (#3075)', function (assert) {
-    TestTemplate.test(
-        'highcharts/area',
+    const chart = Highcharts.chart(
+        'container',
         {
             chart: {
                 zooming: {
@@ -570,47 +570,44 @@ QUnit.test('Touch pan categories (#3075)', function (assert) {
                     ]
                 }
             ]
-        },
-        function (template) {
-            var chart = template.chart,
-                controller = new TestController(chart),
-                xAxis = chart.xAxis[0];
-
-            try {
-                assert.deepEqual(
-                    [typeof xAxis.userMin, typeof xAxis.userMax],
-                    ['undefined', 'undefined'],
-                    'The user range of x-axis should be undefined.'
-                );
-
-                xAxis.setExtremes(5, 11, true, false);
-
-                assert.deepEqual(
-                    [xAxis.userMin, xAxis.userMax],
-                    [5, 11],
-                    'The user range of x-axis should be set.'
-                );
-
-                controller.touchStart(300, 100, {
-                    preventDefault: function () {}
-                });
-
-                controller.touchMove(100, 100, {
-                    preventDefault: function () {}
-                });
-
-                controller.touchEnd(100, 100);
-
-                assert.deepEqual(
-                    [xAxis.userMin, xAxis.userMax],
-                    [5, 11],
-                    'The user range of x-axis should be unchanged.'
-                );
-            } finally {
-                xAxis.setExtremes();
-            }
         }
     );
+    const controller = new TestController(chart),
+        xAxis = chart.xAxis[0];
+
+    try {
+        assert.deepEqual(
+            [typeof xAxis.userMin, typeof xAxis.userMax],
+            ['undefined', 'undefined'],
+            'The user range of x-axis should be undefined.'
+        );
+
+        xAxis.setExtremes(5, 11, true, false);
+
+        assert.deepEqual(
+            [xAxis.userMin, xAxis.userMax],
+            [5, 11],
+            'The user range of x-axis should be set.'
+        );
+
+        controller.touchStart(300, 100, {
+            preventDefault: function () {}
+        });
+
+        controller.touchMove(100, 100, {
+            preventDefault: function () {}
+        });
+
+        controller.touchEnd(100, 100);
+
+        assert.deepEqual(
+            [xAxis.userMin, xAxis.userMax],
+            [5, 11],
+            'The user range of x-axis should be unchanged.'
+        );
+    } finally {
+        xAxis.setExtremes();
+    }
 });
 
 // Highcharts v4.0.1, Issue #3104

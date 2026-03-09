@@ -16,6 +16,7 @@ const renderChart = data => {
             dataLabels: {
                 enabled: false,
                 allowOverlap: true,
+                borderRadius: 0,
                 style: {
                     fontSize: '0.9em',
                     textOutline: 'none'
