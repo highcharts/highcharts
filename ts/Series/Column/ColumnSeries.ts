@@ -695,7 +695,7 @@ class ColumnSeries extends Series {
                 (point && point.options.dashStyle) || options.dashStyle,
             strokeWidth = (point && (point as any)[strokeWidthOption]) ||
                 (options as any)[strokeWidthOption] ||
-                (this as any)[strokeWidthOption] || 0,
+                (this as any)[strokeWidthOption] || 1,
             opacity = (point?.isNull && options.nullInteraction) ?
                 0 :
                 (point?.opacity ?? options.opacity ?? 1);

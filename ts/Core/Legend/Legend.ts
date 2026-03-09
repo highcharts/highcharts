@@ -508,7 +508,7 @@ class Legend {
         if (!this.chart.styledMode) {
             const { itemHiddenStyle = {} } = this,
                 hiddenColor = itemHiddenStyle.color,
-                { fillColor, fillOpacity, lineColor, marker } =
+                { fillColor, fillOpacity, lineColor } =
                     (item as Series).options,
                 colorizeHidden = (attr: SVGAttributes): SVGAttributes => {
                     if (!visible) {
@@ -525,14 +525,10 @@ class Legend {
 
             line?.attr(colorizeHidden({ stroke: lineColor || item.color }));
 
-            if (symbol) {
-                // Apply marker options
-                symbol.attr(colorizeHidden(
-                    marker && symbol.isMarker ? // #585
-                        (item as Series).pointAttribs() :
-                        { fill: item.color }
-                ));
-            }
+            // Apply marker options
+            symbol?.attr(colorizeHidden(
+                (item as Series).pointAttribs?.() || { fill: item.color }
+            ));
 
             area?.attr(colorizeHidden({
                 fill: fillColor || item.color,
