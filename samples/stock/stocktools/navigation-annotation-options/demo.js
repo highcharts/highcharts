@@ -28,7 +28,7 @@
     Highcharts.stockChart('container', {
         navigation: {
             bindings: {
-                rect: {
+                rectangleAnnotation: {
                     annotationsOptions: {
                         shapeOptions: {
                             fill: 'rgba(255, 0, 0, 0.8)'
