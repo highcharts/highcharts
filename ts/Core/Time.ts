@@ -88,7 +88,7 @@ class Time extends TimeBase {
                     boundaryTicks[t] = 'year';
                 }
                 // Mark first monthly tick as year boundary when scrolling
-                if (unitRange === timeUnits.month && i === 1) {
+                if (unitRange === timeUnits.month && i === 0) {
                     boundaryTicks[t] = 'year';
                 }
             });
@@ -126,7 +126,9 @@ class Time extends TimeBase {
     ): TickPositionsArray {
         const time = this,
             tickPositions = [] as TickPositionsArray,
-            { count = 1, unitRange } = normalizedInterval;
+            { count = 1, unitRange } = normalizedInterval,
+            visibleMin = min,
+            visibleMax = max;
 
         let [
                 year,
@@ -295,11 +297,19 @@ class Time extends TimeBase {
         }
 
 
-        // Record information on the chosen unit - for dynamic label formatter
+        // Record information on the chosen unit - for dynamic label formatter.
+        // Only consider visible ticks for boundary classification.
+        let visibleTicks = tickPositions;
+        if (defined(visibleMin) && defined(visibleMax)) {
+            visibleTicks = tickPositions.filter((t): boolean =>
+                (t >= visibleMin) && (t <= visibleMax)
+            );
+        }
+
         tickPositions.info = extend<Time.TimeNormalizedObject|TimeTicksInfoObject>(
             normalizedInterval,
             {
-                boundaryTicks: this.getBoundaryTicks(tickPositions, unitRange),
+                boundaryTicks: this.getBoundaryTicks(visibleTicks, unitRange),
                 totalRange: unitRange * count
             }
         ) as TimeTicksInfoObject;
