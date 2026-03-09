@@ -165,6 +165,7 @@ module.exports = {
                     'grid/theming/grid-variables',
                     'grid/theming/element-variables',
                     'grid/theming/conditional',
+                    'grid/theming/custom-icons'
                 ]
             },
             'grid/responsive-grid',
