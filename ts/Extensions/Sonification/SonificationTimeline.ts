@@ -688,6 +688,9 @@ class SonificationTimeline {
  *
  * */
 
+/**
+ * @internal
+ */
 export default SonificationTimeline;
 
 

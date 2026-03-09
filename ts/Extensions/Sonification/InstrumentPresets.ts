@@ -15,6 +15,7 @@
 
 import type SynthPatch from './SynthPatch';
 
+/** @internal */
 const InstrumentPresets: Record<string, SynthPatch.SynthPatchOptions> = {
 
     // PIANO ----------------------------
@@ -895,6 +896,7 @@ const InstrumentPresets: Record<string, SynthPatch.SynthPatchOptions> = {
  *
  * */
 
+/** @internal */
 export default InstrumentPresets;
 
 

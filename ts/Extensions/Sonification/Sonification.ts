@@ -123,7 +123,7 @@ declare module '../../Core/Series/PointBase' {
     }
 }
 
-declare module '../../Core/Globals' {
+declare module '../../Core/GlobalsBase' {
     interface GlobalsBase {
         /**
          * Global Sonification classes and objects.
@@ -721,34 +721,34 @@ namespace Sonification {
     export interface GlobalObject {
         /**
          * SynthPatch presets.
-         *
-         * @requires modules/sonification
          */
         InstrumentPresets?: typeof import('./InstrumentPresets').default;
         /**
          * Musical scale presets.
-         *
-         * @requires modules/sonification
          */
         Scales?: typeof import('./Scales').default;
         /**
          * SynthPatch class.
-         *
-         * @requires modules/sonification
          */
         SynthPatch?: typeof SynthPatch;
         /**
          * SonificationInstrument class.
-         *
-         * @requires modules/sonification
          */
         SonificationInstrument?: typeof SonificationInstrument;
         /**
          * SonificationSpeaker class.
-         *
-         * @requires modules/sonification
          */
         SonificationSpeaker?: typeof SonificationSpeaker;
+        /**
+         * SonificationTimeline class.
+         * @internal
+         */
+        SonificationTimeline?: typeof SonificationTimeline;
+        /**
+         * Sonification class.
+         * @internal
+         */
+        Sonification?: typeof Sonification;
     }
 
     /**

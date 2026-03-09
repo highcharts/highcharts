@@ -28,42 +28,32 @@ namespace SonificationSpeaker {
         /**
          * Name of the voice synthesis to use. If not found, reverts to the
          * default voice for the language chosen.
-         *
-         * @requires modules/sonification
-         */
+         *         */
         name?: string;
         /**
          * The language of the voice synthesis.
          *
          * @default "en-US"
-         *
-         * @requires modules/sonification
-         */
+         *         */
         language?: string;
         /**
          * The pitch modifier of the voice. Set higher for a higher
          * voice pitch.
          *
          * @default 1
-         *
-         * @requires modules/sonification
-         */
+         *         */
         pitch?: number;
         /**
          * The speech rate modifier.
          *
          * @default 1
-         *
-         * @requires modules/sonification
-         */
+         *         */
         rate?: number;
         /**
          * The speech volume, from 0 to 1.
          *
          * @default 1
-         *
-         * @requires modules/sonification
-         */
+         *         */
         volume?: number;
     }
 }

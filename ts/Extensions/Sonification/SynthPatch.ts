@@ -87,25 +87,19 @@ namespace SynthPatch {
     export interface EQFilter {
         /**
          * Filter frequency.
-         *
-         * @requires modules/sonification
-         */
+         *         */
         frequency?: number;
         /**
          * Filter gain.
          *
          * @default 0
-         *
-         * @requires modules/sonification
-         */
+         *         */
         gain?: number;
         /**
          * Filter Q.
          *
          * @default 1
-         *
-         * @requires modules/sonification
-         */
+         *         */
         Q?: number;
     }
     /**
@@ -116,90 +110,64 @@ namespace SynthPatch {
     export interface OscillatorOptions {
         /**
          * Volume envelope for note attack, specific to this oscillator.
-         *
-         * @requires modules/sonification
-         */
+         *         */
         attackEnvelope?: SynthEnvelope;
         /**
          * Applies a detuning of all frequencies. Set in cents.
          *
          * @default 0
-         *
-         * @requires modules/sonification
-         */
+         *         */
         detune?: number;
         /**
          * A multiplier for the input frequency of the oscillator.
          *
          * @default 1
-         *
-         * @requires modules/sonification
-         */
+         *         */
         freqMultiplier?: number;
         /**
          * Play a fixed frequency for the oscillator - ignoring input
          * frequency.
-         *
-         * @requires modules/sonification
-         */
+         *         */
         fixedFrequency?: number;
         /**
          * Index of another oscillator to use as a frequency modulator.
-         *
-         * @requires modules/sonification
-         */
+         *         */
         fmOscillator?: number;
         /**
          * Highpass filter options for the oscillator.
-         *
-         * @requires modules/sonification
-         */
+         *         */
         highpass?: PassFilter;
         /**
          * Lowpass filter options for the oscillator.
-         *
-         * @requires modules/sonification
-         */
+         *         */
         lowpass?: PassFilter;
         /**
          * Width of the pulse waveform.
          *
          * @default 0.5
-         *
-         * @requires modules/sonification
-         */
+         *         */
         pulseWidth?: number;
         /**
          * Volume envelope for note release, specific to this oscillator.
-         *
-         * @requires modules/sonification
-         */
+         *         */
         releaseEnvelope?: SynthEnvelope;
         /**
          * The type of oscillator.
-         *
-         * @requires modules/sonification
-         */
+         *         */
         type?: OscillatorType;
         /**
          * Index of another oscillator to use as a volume modulator.
-         *
-         * @requires modules/sonification
-         */
+         *         */
         vmOscillator?: number;
         /**
          * A volume modifier for the oscillator.
          *
          * @default 1
-         *
-         * @requires modules/sonification
-         */
+         *         */
         volume?: number;
         /**
          * A tracking multiplier used for frequency dependent volume behavior.
-         *
-         * @requires modules/sonification
-         */
+         *         */
         volumePitchTrackingMultiplier?: number;
     }
 
@@ -211,24 +179,18 @@ namespace SynthPatch {
     export interface PassFilter {
         /**
          * Filter frequency.
-         *
-         * @requires modules/sonification
-         */
+         *         */
         frequency?: number;
         /**
          * A pitch tracking multiplier similarly to the one for oscillator
          * volume. Affects the filter frequency.
-         *
-         * @requires modules/sonification
-         */
+         *         */
         frequencyPitchTrackingMultiplier?: number;
         /**
          * Filter resonance bump/dip in dB.
          *
          * @default 0
-         *
-         * @requires modules/sonification
-         */
+         *         */
         Q?: number;
     }
 
@@ -240,18 +202,14 @@ namespace SynthPatch {
     export interface SynthPatchOptions {
         /**
          * Master EQ filters for the synth, affecting the overall sound.
-         *
-         * @requires modules/sonification
-         */
+         *         */
         eq?: Array<EQFilter>;
         /**
          * Volume envelope for the overall attack of a note - what happens to
          * the volume when a note first plays. If the volume goes to 0 in the
          * attack envelope, the synth will not be able to play the note
          * continuously/sustained, and the notes will be staccato.
-         *
-         * @requires modules/sonification
-         */
+         *         */
         masterAttackEnvelope?: SynthEnvelope;
         /**
          * Volume envelope for the overall release of a note - what happens to
@@ -261,9 +219,7 @@ namespace SynthPatch {
          * the note is released while the attack envelope is still in effect,
          * the attack envelope is interrupted, and the release envelope plays
          * instead.
-         *
-         * @requires modules/sonification
-         */
+         *         */
         masterReleaseEnvelope?: SynthEnvelope;
         /**
          * Global volume modifier for the synth. Note that if the total volume
@@ -271,22 +227,16 @@ namespace SynthPatch {
          * distort.
          *
          * @default 1
-         *
-         * @requires modules/sonification
-         */
+         *         */
         masterVolume?: number;
         /**
          * Time in milliseconds to glide between notes. Causes a glissando
          * effect.
-         *
-         * @requires modules/sonification
-         */
+         *         */
         noteGlideDuration?: number;
         /**
          * Array of oscillators to add to the synth.
-         *
-         * @requires modules/sonification
-         */
+         *         */
         oscillators?: Array<OscillatorOptions>;
         /**
          * MIDI instrument ID for the synth. Used with MIDI export of Timelines
@@ -294,9 +244,7 @@ namespace SynthPatch {
          * into other applications.
          *
          * @default 1
-         *
-         * @requires modules/sonification
-         */
+         *         */
         midiInstrument?: number;
     }
 }
