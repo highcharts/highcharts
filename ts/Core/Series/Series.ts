@@ -2087,7 +2087,7 @@ class Series {
                 const rowIndex = e.rowIndex;
 
                 if (isNumber(rowIndex)) {
-                    const row = dataTable.getRow.call(
+                    const row = dataTable.getRowObject.call(
                             { columns },
                             rowIndex
                         ) as unknown as PointOptions,

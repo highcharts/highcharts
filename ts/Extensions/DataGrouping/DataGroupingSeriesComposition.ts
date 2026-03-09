@@ -844,7 +844,9 @@ function groupData(
                 point = (data && data[index]) ||
                     series.pointClass.prototype.applyOptions.apply({
                         series: series
-                    }, [topTable.getRow(index) as unknown as PointOptions]);
+                    }, [
+                        topTable.getRowObject(index) as unknown as PointOptions
+                    ]);
 
             let val;
 

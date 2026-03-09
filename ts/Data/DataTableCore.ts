@@ -25,10 +25,8 @@
 
 import type { DataEventDetail } from './DataEvent.js';
 import type {
-    CellType as DataTableCellType,
     Column as DataTableColumn,
     ColumnCollection as DataTableColumnCollection,
-    Row as DataTableRow,
     RowObject as DataTableRowObject
 } from './DataTable.js';
 import type DataTableOptions from './DataTableOptions.js';
@@ -225,27 +223,6 @@ class DataTableCore {
                 return columns;
             },
             {} as DataTableColumnCollection
-        );
-    }
-
-    /**
-     * Retrieves the row at a given index.
-     *
-     * @param {number} rowIndex
-     * Row index to retrieve. First row has index 0.
-     *
-     * @param {Array<string>} [columnIds]
-     * Column names to retrieve.
-     *
-     * @return {Record<string, number|string|undefined>|undefined}
-     * Returns the row values, or `undefined` if not found.
-     */
-    public getRow(
-        rowIndex: number,
-        columnIds?: Array<string>
-    ): (DataTableRow|undefined) {
-        return (columnIds || Object.keys(this.columns)).map(
-            (key): DataTableCellType => this.columns[key]?.[rowIndex]
         );
     }
 
