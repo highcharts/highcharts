@@ -77,6 +77,9 @@ In this case, all inputs use `6px` radius globally, while inputs in pagination a
 | Variable                            | Default Value                  | Valid Values |
 | ----------------------------------- | ------------------------------ | ------------ |
 | --hcg-button-padding                | 6px                            | [padding](https://developer.mozilla.org/en-US/docs/Web/CSS/padding) |
+| --hcg-button-font-weight            | inherit                        | [font-weight](https://developer.mozilla.org/en-US/docs/Web/CSS/font-weight) |
+| --hcg-button-font-size              | inherit                        | [font-size](https://developer.mozilla.org/en-US/docs/Web/CSS/font-size) |
+| --hcg-button-font-family            | inherit                        | [font-family](https://developer.mozilla.org/en-US/docs/Web/CSS/font-family) |
 | --hcg-button-color                  | #000000/#ffffff                | [color](https://developer.mozilla.org/en-US/docs/Web/CSS/color) |
 | --hcg-button-border-radius          | 0                              | [border-radius](https://developer.mozilla.org/en-US/docs/Web/CSS/border-radius) |
 | --hcg-button-border-width           | 1px                            | [border-width](https://developer.mozilla.org/en-US/docs/Web/CSS/border-width) |
@@ -90,6 +93,8 @@ In this case, all inputs use `6px` radius globally, while inputs in pagination a
 | --hcg-button-selected-background    | #000000/#ffffff                | [background](https://developer.mozilla.org/en-US/docs/Web/CSS/background) |
 | --hcg-button-selected-border-color  | --hcg-button-border-color      | [border-color](https://developer.mozilla.org/en-US/docs/Web/CSS/border-color) |
 
+Buttons inherit surrounding typography by default. That means header buttons follow header typography, body-cell buttons follow cell typography, and pagination buttons follow pagination typography unless button-specific font variables are set.
+
 ### Section prefixes
 
 | Variable Prefix               | Applies To                   | Fallback |
@@ -102,6 +107,8 @@ In this case, all inputs use `6px` radius globally, while inputs in pagination a
 
 ```css
 .theme-buttons {
+    --hcg-button-font-weight: 600;
+    --hcg-button-font-size: 13px;
     --hcg-button-border-radius: 2px;
     --hcg-button-padding: 5px;
     --hcg-button-border-color: #d0d0d0;
