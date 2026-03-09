@@ -853,7 +853,9 @@ class Point {
         const point = this;
         return 'highcharts-point' +
             (point.selected ? ' highcharts-point-select' : '') +
-            (point.negative ? ' highcharts-negative' : '') +
+            (
+                point.negative && point.series.options.negativeColor !== false ?
+                    ' highcharts-negative' : '') +
             (point.isNull ? ' highcharts-null-point' : '') +
             (typeof point.colorIndex !== 'undefined' ?
                 ' highcharts-color-' + point.colorIndex : '') +
