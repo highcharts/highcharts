@@ -25,9 +25,11 @@ import LinePoint from '../Line/LinePoint.js';
  *
  * */
 
+/** @internal */
 declare module '../../Core/Series/PointBase' {
     interface PointBase {
-        isCliff?: AreaPoint['isCliff'];
+        /** @internal */
+        isCliff?: boolean;
     }
 }
 
@@ -37,6 +39,7 @@ declare module '../../Core/Series/PointBase' {
  *
  * */
 
+/** @internal */
 declare class AreaPoint extends LinePoint {
     public isCliff?: boolean;
     public leftNull?: boolean;
@@ -51,4 +54,5 @@ declare class AreaPoint extends LinePoint {
  *
  * */
 
+/** @internal */
 export default AreaPoint;

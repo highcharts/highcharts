@@ -316,4 +316,5 @@ const AreaRangeSeriesDefaults: AreaRangeSeriesOptions = {
  *
  * */
 
+/** @internal */
 export default AreaRangeSeriesDefaults;

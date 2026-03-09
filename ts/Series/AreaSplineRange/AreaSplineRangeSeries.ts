@@ -76,6 +76,7 @@ class AreaSplineRangeSeries extends AreaRangeSeries {
  *
  * */
 
+/** @internal */
 interface AreaSplineRangeSeries extends AreaRangeSeries {
     pointClass: typeof AreaSplineRangePoint;
     getPointSpline: typeof splineProto.getPointSpline;
@@ -108,6 +109,7 @@ SeriesRegistry.registerSeriesType('areasplinerange', AreaSplineRangeSeries);
  *
  * */
 
+/** @internal */
 export default AreaSplineRangeSeries;
 
 /* *

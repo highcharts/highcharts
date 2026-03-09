@@ -46,15 +46,20 @@ const {
  *
  * */
 
+/** @internal */
 declare module '../../Core/Renderer/SVG/SVGPath' {
     interface SVGPath {
+        /** @internal */
         isArea?: boolean;
+        /** @internal */
         hasStackedCliffs?: boolean;
     }
 }
 
+/** @internal */
 declare module '../../Core/Series/SeriesBase' {
     interface SeriesBase {
+        /** @internal */
         areaPath?: SVGPath;
     }
 }
@@ -496,6 +501,7 @@ class AreaSeries extends LineSeries {
  *
  * */
 
+/** @internal */
 interface AreaSeries {
     pointClass: typeof AreaPoint;
 }
@@ -509,6 +515,7 @@ extend(AreaSeries.prototype, {
  *
  * */
 
+/** @internal */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         area: typeof AreaSeries;
@@ -522,4 +529,5 @@ SeriesRegistry.registerSeriesType('area', AreaSeries);
  *
  * */
 
+/** @internal */
 export default AreaSeries;
