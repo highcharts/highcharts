@@ -1690,14 +1690,13 @@ class Series {
     }
 
     /**
-     * Apply a new set of data to the series and optionally redraw it. The
-     * new data array is passed by reference (except in case of
-     * `updatePoints`), and may later be mutated when updating the chart
-     * data.
+     * Apply a new set of data to the series and optionally redraw it. The new
+     * data array is passed by reference (except in case of `updatePoints`), and
+     * may later be mutated when updating the chart data.
      *
-     * Note the difference in behavior when setting the same amount of
-     * points, or a different amount of points, as handled by the
-     * `updatePoints` parameter.
+     * Note the difference in behavior when setting the same amount of points,
+     * or a different amount of points, as handled by the `updatePoints`
+     * parameter.
      *
      * @sample highcharts/members/series-setdata/
      *         Set new data from a button
@@ -1710,31 +1709,31 @@ class Series {
      *
      * @function Highcharts.Series#setData
      *
-     * @param {Array<Highcharts.PointOptionsType>} data
+     * @param {Array<Highcharts.PointOptionsType>|Highcharts.DataTableOptions|Highcharts.DataTableCore|undefined} data
      *        Takes an array of data in the same format as described under
-     *        `series.{type}.data` for the given series type, for example a
-     *        line series would take data in the form described under
+     *        `series.{type}.data` for the given series type, for example a line
+     *        series would take data in the form described under
      *        [series.line.data](https://api.highcharts.com/highcharts/series.line.data).
      *
      * @param {boolean} [redraw=true]
-     *        Whether to redraw the chart after the series is altered. If
-     *        doing more operations on the chart, it is a good idea to set
-     *        redraw to false and call {@link Chart#redraw} after.
+     *        Whether to redraw the chart after the series is altered. If doing
+     *        more operations on the chart, it is a good idea to set redraw to
+     *        false and call {@link Chart#redraw} after.
      *
      * @param {boolean|Partial<Highcharts.AnimationOptionsObject>} [animation]
      *        When the updated data is the same length as the existing data,
-     *        points will be updated by default, and animation visualizes
-     *        how the points are changed. Set false to disable animation, or
-     *        a configuration object to set duration or easing.
+     *        points will be updated by default, and animation visualizes how
+     *        the points are changed. Set false to disable animation, or a
+     *        configuration object to set duration or easing.
      *
      * @param {boolean} [updatePoints=true]
      *        When this is true, points will be updated instead of replaced
      *        whenever possible. This occurs a) when the updated data is the
-     *        same length as the existing data, b) when points are matched
-     *        by their id's, or c) when points can be matched by X values.
-     *        This allows updating with animation and performs better. In
-     *        this case, the original array is not passed by reference. Set
-     *        `false` to prevent.
+     *        same length as the existing data, b) when points are matched by
+     *        their id's, or c) when points can be matched by X values. This
+     *        allows updating with animation and performs better. In this case,
+     *        the original array is not passed by reference. Set `false` to
+     *        prevent.
      */
     public setData(
         data: (
@@ -1757,18 +1756,10 @@ class Series {
             options = series.options,
             chart = series.chart,
             dataSorting = options.dataSorting,
-            xAxis = series.xAxis,
-            turboThreshold = options.turboThreshold,
-            dataColumnKeys = this.getDataColumnKeys(),
-            pointValKey = series.pointValKey || 'y',
-            pointArrayMap = series.pointArrayMap || [],
-            valueCount = pointArrayMap.length,
-            keys = options.keys;
+            xAxis = series.xAxis;
 
         let updatedData: boolean|undefined,
             i,
-            indexOfX = 0,
-            indexOfY = 1,
             copiedData;
 
         if (!chart.options.chart.allowMutatingData) { // #4259
@@ -1784,9 +1775,6 @@ class Series {
         }
         data = copiedData || data;
 
-
-        const dataLength = isArray(data) && data.length || 0;
-
         if (dataSorting?.enabled && isArray(data)) {
             data = this.sortData(data);
         }
@@ -1799,255 +1787,13 @@ class Series {
 
         series.colorCounter = 0; // For series with colorByPoint (#1547)
 
+        // Array passed as option
         if (isArray(data)) {
-            // In turbo mode, look for one- or twodimensional arrays of
-            // numbers. The first and the last valid value are tested, and
-            // we assume that all the rest are defined the same way.
-            // Although the 'for' loops are similar, they are repeated
-            // inside each if-else conditional for max performance.
-            let runTurbo = turboThreshold && dataLength > turboThreshold;
-            if (runTurbo) {
+            this.setDataFromArray(data);
 
-                const firstPoint = series.getFirstValidPoint(data),
-                    lastPoint = series.getFirstValidPoint(
-                        data, dataLength - 1, -1
-                    ),
-                    isShortArray = (a: unknown): a is Array<unknown> =>
-                        Boolean(isArray(a) && (keys || isNumber(a[0])));
-
-                // Assume all points are numbers
-                if (isNumber(firstPoint) && isNumber(lastPoint)) {
-                    table.setColumn(
-                        pointValKey,
-                        data as Array<number|null>
-                    );
-
-                // Assume all points are arrays when first point is
-                } else if (
-                    isShortArray(firstPoint) &&
-                    isShortArray(lastPoint)
-                ) {
-                    if (valueCount) { // [x, low, high] or [x, o, h, l, c]
-
-                        // When autoX is 1, the x is skipped: [low, high].
-                        // When autoX is 0, the x is included: [x, low,
-                        // high]
-                        const autoX = firstPoint.length === valueCount,
-                            colArray = new Array(firstPoint.length)
-                                .fill(0).map((): Array<number> => []);
-
-                        for (const pt of data as number[][]) {
-                            for (let j = 0; j <= valueCount; j++) {
-                                colArray[j]?.push(pt[j]);
-                            }
-                        }
-
-                        table.setColumns((
-                            autoX ? pointArrayMap : dataColumnKeys
-                        ).reduce(
-                            (columns, columnId, i):
-                            ColumnCollection => {
-                                columns[columnId] = colArray[i];
-                                return columns;
-                            }, {} as ColumnCollection));
-
-                    } else { // [x, y]
-                        if (keys) {
-                            indexOfX = keys.indexOf('x');
-                            indexOfY = keys.indexOf('y');
-
-                            indexOfX = indexOfX >= 0 ? indexOfX : 0;
-                            indexOfY = indexOfY >= 0 ? indexOfY : 1;
-                        }
-
-                        if (firstPoint.length === 1) {
-                            indexOfY = 0;
-                        }
-
-                        const xData: Array<number> = [],
-                            valueData: Array<number|null> = [];
-
-                        if (indexOfX === indexOfY) {
-                            for (const pt of data) {
-                                valueData.push((pt as any)[indexOfY]);
-                            }
-                            table.setColumn(pointValKey, valueData);
-
-                        } else {
-                            for (const pt of data) {
-                                xData.push((pt as any)[indexOfX]);
-                                valueData.push((pt as any)[indexOfY]);
-                            }
-                            table.setColumns({
-                                x: xData,
-                                [pointValKey]: valueData
-                            });
-                        }
-                    }
-                } else {
-                    // Highcharts expects configs to be numbers or arrays in
-                    // turbo mode
-                    runTurbo = false;
-                }
-            }
-
-            if (!runTurbo) {
-                const columns = {} as ColumnCollection;
-                for (i = 0; i < dataLength; i++) {
-                    const ptOptions = series.pointClass.prototype
-                        .optionsToObject
-                        .call({ series }, data[i]);
-
-                    for (const key of Object.keys(ptOptions)) {
-                        columns[key] ||= new Array(dataLength);
-                        columns[key][i] = (ptOptions as any)[key];
-                    }
-                }
-
-                // Empty data, clear table
-                if (dataLength) {
-                    table.setColumns(columns);
-                } else {
-                    table.deleteRows(0, table.rowCount);
-                }
-            }
-
-        // Data table passed as option
+        // Data table passed as option, either on series or chart
         } else {
-            const seriesDataTable = chart.getDataTable(options),
-                dataTable = data ? [data] : (
-                    // Use either dataTable from series options or from
-                    // the chart
-                    seriesDataTable.length ?
-                        seriesDataTable :
-                        chart.dataTable
-                ),
-                columnAssignment = options.columnAssignment,
-                keys = dataColumnKeys.slice();
-
-            // Extend the data column keys with the keys from the column
-            // assignment
-            if (columnAssignment) {
-                columnAssignment.forEach((assignment): void => {
-                    pushUnique(keys, assignment.key);
-                });
-                this.dataColumnKeys = keys;
-            }
-
-            // Resolve column assignment
-            const getTableSpecificColumns = (
-                dataTable?: DataTableCore|DataTableOptions,
-                index?: number
-            ): ColumnCollection => keys
-                .reduce((acc, key): ColumnCollection => {
-                    const assignment = columnAssignment?.find(
-                            (assignment): boolean => (
-                                (assignment.dataTable ?? index) === index &&
-                                assignment.key === key
-                            )
-                        ),
-                        column = dataTable?.columns?.[
-                            assignment?.columnName || key
-                        ];
-
-                    if (column) {
-                        acc[key] = column;
-                    }
-                    return acc;
-                }, {} as ColumnCollection);
-
-            dataTable.forEach((dtItem, index): void => {
-                // If a DataTable is passed and no column assignment is set,
-                // use it directly
-                if (columnAssignment || dtItem) {
-                    // Set the columns
-                    table.setColumns(
-                        getTableSpecificColumns(dtItem, index)
-                    );
-                }
-
-                // If a DataTable is passed directly by reference, bind
-                // events to keep the series updated
-                if (dtItem instanceof DataTableCore) {
-
-                    if (this.hasBoundDataTableEvents) {
-                        return;
-                    }
-
-                    const eventsToUnbind = this.eventsToUnbind,
-                        queueRedraw = (): void => {
-                            clearTimeout(chart.redrawTimeout);
-                            chart.redrawTimeout = setTimeout(
-                                (): void => chart.renderer && chart.redraw(),
-                                0
-                            );
-                        };
-
-                    eventsToUnbind.push(addEvent(
-                        dtItem,
-                        'afterSetRows',
-                        (e: RowEvent): void => {
-                            const rowIndex = e.rowIndex;
-
-                            if (isNumber(rowIndex)) {
-                                const row = dtItem.getRow.call({
-                                        columns: getTableSpecificColumns(
-                                            dtItem,
-                                            index
-                                        )
-                                    }, rowIndex),
-                                    point = this.points[rowIndex];
-
-                                if (row) {
-                                    if (point) {
-                                        point.update(
-                                            row as unknown as PointOptions,
-                                            false
-                                        );
-                                    } else {
-                                        this.addPoint(
-                                            row as unknown as PointOptions,
-                                            false
-                                        );
-                                    }
-
-                                    queueRedraw();
-                                }
-                            }
-                        }
-                    ));
-
-                    eventsToUnbind.push(addEvent(
-                        dtItem,
-                        'afterDeleteRows',
-                        (e: RowEvent): void => {
-                            const { rowCount, rowIndex } = e;
-
-                            if (isNumber(rowIndex)) {
-                                for (
-                                    let i = rowIndex + rowCount - 1;
-                                    i >= rowIndex;
-                                    i--
-                                ) {
-                                    this.removePoint(i, false);
-                                }
-
-                                queueRedraw();
-                            }
-                        }
-                    ));
-
-                    eventsToUnbind.push(addEvent(
-                        dtItem,
-                        'afterSetColumns',
-                        (e: ColumnEvent): void => {
-                            this.setData(e.target);
-                        }
-                    ));
-
-                    this.hasBoundDataTableEvents = true;
-                }
-            });
+            this.setDataFromTable(data);
         }
 
         if (
@@ -2097,8 +1843,8 @@ class Series {
             series.options.data = series.userOptions.data = data;
         }
 
-        // Typically for pie series, points need to be processed and
-        // generated prior to rendering the legend
+        // Typically for pie series, points need to be processed and generated
+        // prior to rendering the legend
         if (options.legendType === 'point') {
             this.processData();
             this.generatePoints();
@@ -2107,6 +1853,288 @@ class Series {
         if (redraw) {
             chart.redraw(animation);
         }
+    }
+
+    /**
+     * Internal function to set data from an array of point options - objects,
+     * arrays or numbers. This corresponds to the `data` series option. Called
+     * from the official `setData` method.
+     *
+     * @param {Array<Highcharts.PointOptionsType>} data
+     *        The data array
+     * @internal
+     */
+    public setDataFromArray(
+        data: Array<(PointOptions|PointShortOptions)>
+    ): void {
+        const dataLength = data.length,
+            { keys, turboThreshold } = this.options,
+            { pointValKey = 'y', pointArrayMap = [] } = this,
+            valueCount = pointArrayMap.length,
+            table = this.dataTable,
+            dataColumnKeys = this.getDataColumnKeys();
+
+        // In turbo mode, look for one- or twodimensional arrays of numbers. The
+        // first and the last valid value are tested, and we assume that all the
+        // rest are defined the same way. Although the 'for' loops are similar,
+        // they are repeated inside each if-else conditional for max
+        // performance.
+        let runTurbo = turboThreshold && dataLength > turboThreshold,
+            indexOfX = 0,
+            indexOfY = 1;
+
+        if (runTurbo) {
+
+            const firstPoint = this.getFirstValidPoint(data),
+                lastPoint = this.getFirstValidPoint(
+                    data, dataLength - 1, -1
+                ),
+                isShortArray = (a: unknown): a is Array<unknown> =>
+                    Boolean(isArray(a) && (keys || isNumber(a[0])));
+
+            // Assume all points are numbers
+            if (isNumber(firstPoint) && isNumber(lastPoint)) {
+                table.setColumn(
+                    pointValKey,
+                    data as Array<number|null>
+                );
+
+            // Assume all points are arrays when first point is
+            } else if (
+                isShortArray(firstPoint) &&
+                isShortArray(lastPoint)
+            ) {
+                if (valueCount) { // [x, low, high] or [x, o, h, l, c]
+
+                    // When autoX is 1, the x is skipped: [low, high]. When
+                    // autoX is 0, the x is included: [x, low, high]
+                    const autoX = firstPoint.length === valueCount,
+                        colArray = new Array(firstPoint.length)
+                            .fill(0).map((): Array<number> => []);
+
+                    for (const pt of data as number[][]) {
+                        for (let j = 0; j <= valueCount; j++) {
+                            colArray[j]?.push(pt[j]);
+                        }
+                    }
+
+                    table.setColumns((
+                        autoX ? pointArrayMap : dataColumnKeys
+                    ).reduce(
+                        (columns, columnId, i):
+                        ColumnCollection => {
+                            columns[columnId] = colArray[i];
+                            return columns;
+                        }, {} as ColumnCollection));
+
+                } else { // [x, y]
+                    if (keys) {
+                        indexOfX = keys.indexOf('x');
+                        indexOfY = keys.indexOf('y');
+
+                        indexOfX = indexOfX >= 0 ? indexOfX : 0;
+                        indexOfY = indexOfY >= 0 ? indexOfY : 1;
+                    }
+
+                    if (firstPoint.length === 1) {
+                        indexOfY = 0;
+                    }
+
+                    const xData: Array<number> = [],
+                        valueData: Array<number|null> = [];
+
+                    if (indexOfX === indexOfY) {
+                        for (const pt of data) {
+                            valueData.push((pt as any)[indexOfY]);
+                        }
+                        table.setColumn(pointValKey, valueData);
+
+                    } else {
+                        for (const pt of data) {
+                            xData.push((pt as any)[indexOfX]);
+                            valueData.push((pt as any)[indexOfY]);
+                        }
+                        table.setColumns({
+                            x: xData,
+                            [pointValKey]: valueData
+                        });
+                    }
+                }
+            } else {
+                // Highcharts expects configs to be numbers or arrays in turbo
+                // mode
+                runTurbo = false;
+            }
+        }
+
+        if (!runTurbo) {
+            const columns = {} as ColumnCollection;
+            for (let i = 0; i < dataLength; i++) {
+                const ptOptions = this.pointClass.prototype
+                    .optionsToObject
+                    .call({ series: this }, data[i]);
+
+                for (const key of Object.keys(ptOptions)) {
+                    columns[key] ||= new Array(dataLength);
+                    columns[key][i] = (ptOptions as any)[key];
+                }
+            }
+
+            // Empty data, clear table
+            if (dataLength) {
+                table.setColumns(columns);
+            } else {
+                table.deleteRows(0, table.rowCount);
+            }
+        }
+    }
+
+    /**
+     * Internal function to set data from a data table, either an instance or
+     * options object. This corresponds to the `data` series option. Called
+     * from the official `setData` method.
+     *
+     * @param {Highcharts.DataTableOptions|Highcharts.DataTableCore} data
+     *        The data array
+     * @internal
+     */
+    public setDataFromTable(
+        data?: (DataTableOptions|DataTableCore)
+    ): void {
+        const { chart, options, dataTable: table } = this,
+            seriesDataTable = chart.getDataTable(options),
+            dataTable = data ? [data] : (
+                // Use either dataTable from series options or from the chart
+                seriesDataTable.length ?
+                    seriesDataTable :
+                    chart.dataTable
+            ),
+            dataColumnKeys = this.getDataColumnKeys(),
+            columnAssignment = options.columnAssignment,
+            keys = dataColumnKeys.slice();
+
+        // Extend the data column keys with the keys from the column assignment
+        if (columnAssignment) {
+            columnAssignment.forEach((assignment): void => {
+                pushUnique(keys, assignment.key);
+            });
+            this.dataColumnKeys = keys;
+        }
+
+        dataTable.forEach((dtItem, index): void => {
+
+            // Resolve the columnAssignment
+            const columns = keys
+                .reduce((acc, key): ColumnCollection => {
+                    const assignment = columnAssignment?.find(
+                            (assignment): boolean => (
+                                (assignment.dataTable ?? index) === index &&
+                                assignment.key === key
+                            )
+                        ),
+                        column = dtItem?.columns?.[
+                            assignment?.columnName || key
+                        ];
+
+                    if (column) {
+                        acc[key] = column;
+                    }
+                    return acc;
+                }, {} as ColumnCollection);
+
+            // If a DataTable is passed and no column assignment is set, use it
+            // directly
+            if (columnAssignment || dtItem) {
+                // Set the columns
+                table.setColumns(columns);
+            }
+
+            // If a DataTable is passed directly by reference, bind events to
+            // keep the series updated
+            if (dtItem instanceof DataTableCore) {
+                this.bindDataTableEvents(dtItem, columns);
+            }
+        });
+    }
+
+    /**
+     * Bind data table events to keep the series updated when changes occur to
+     * the data table.
+     *
+     * @internal
+     */
+    public bindDataTableEvents(
+        dataTable: DataTableCore,
+        columns: ColumnCollection
+    ): void {
+        if (this.hasBoundDataTableEvents) {
+            return;
+        }
+
+        const { chart, eventsToUnbind } = this,
+            queueRedraw = (): void => {
+                clearTimeout(chart.redrawTimeout);
+                chart.redrawTimeout = setTimeout(
+                    (): void => chart.renderer && chart.redraw(),
+                    0
+                );
+            };
+
+        eventsToUnbind.push(addEvent(
+            dataTable,
+            'afterSetRows',
+            (e: RowEvent): void => {
+                const rowIndex = e.rowIndex;
+
+                if (isNumber(rowIndex)) {
+                    const row = dataTable.getRow.call(
+                            { columns },
+                            rowIndex
+                        ) as unknown as PointOptions,
+                        point = this.points[rowIndex];
+
+                    if (row) {
+                        if (point) {
+                            point.update(row, false);
+                        } else {
+                            this.addPoint(row, false);
+                        }
+
+                        queueRedraw();
+                    }
+                }
+            }
+        ));
+
+        eventsToUnbind.push(addEvent(
+            dataTable,
+            'afterDeleteRows',
+            (e: RowEvent): void => {
+                const { rowCount, rowIndex } = e;
+
+                if (isNumber(rowIndex)) {
+                    for (
+                        let i = rowIndex + rowCount - 1;
+                        i >= rowIndex;
+                        i--
+                    ) {
+                        this.removePoint(i, false);
+                    }
+
+                    queueRedraw();
+                }
+            }
+        ));
+
+        eventsToUnbind.push(addEvent(
+            dataTable,
+            'afterSetColumns',
+            (e: ColumnEvent): void => {
+                this.setData(e.target);
+            }
+        ));
+
+        this.hasBoundDataTableEvents = true;
     }
 
     /**
