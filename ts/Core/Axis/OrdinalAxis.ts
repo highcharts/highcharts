@@ -38,7 +38,7 @@ import {
     css,
     addEvent
 } from '../../Shared/Utilities.js';
-import { error } from '../Utilities.js';
+import { error, timeUnits } from '../Utilities.js';
 
 /* *
  *
@@ -220,6 +220,7 @@ namespace OrdinalAxis {
             segmentStarts = [];
         let end,
             segmentPositions,
+            hasCrossedBoundary,
             info,
             outsideMax,
             start = 0,
@@ -300,8 +301,35 @@ namespace OrdinalAxis {
         // the same for all segments.
         if (segmentPositions) {
             info = (segmentPositions as any).info;
+
+            // Optionally identify ticks with boundary, for example
+            // when the ticks have crossed midnight.
+            if (findBoundaryTicks && info.unitRange <= timeUnits.hour) {
+                end = groupPositions.length - 1;
+
+                // Compare points two by two
+                for (start = 1; start < end; start++) {
+                    if (
+                        time.dateFormat('%d', groupPositions[start]) !==
+                        time.dateFormat('%d', groupPositions[start - 1])
+                    ) {
+                        boundaryTicks[groupPositions[start]] = 'day';
+                        hasCrossedBoundary = true;
+                    }
+                }
+
+                // If the complete array has crossed midnight, we want
+                // to mark the first positions also as boundary
+                if (hasCrossedBoundary) {
+                    boundaryTicks[groupPositions[0]] = 'day';
+                }
+                info.boundaryTicks = boundaryTicks;
+            }
+
+            // Save the info
             info.segmentStarts = segmentStarts;
             groupPositions.info = info;
+
         } else {
             error(12, false, this.chart);
         }
