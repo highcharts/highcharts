@@ -30,9 +30,7 @@ const grid = Grid.grid('container', {
     data: {
         providerType: 'local',
         autogenerateColumns: false,
-        dataTable: {
-            columns: smallDataColumns
-        }
+        columns: smallDataColumns
     },
     columns: [{
         id: 'sum',
@@ -60,11 +58,9 @@ const grid = Grid.grid('container', {
 document.getElementById('useLargeDataset').addEventListener('change', e => {
     grid.update({
         data: {
-            dataTable: {
-                columns: e.target.checked ?
-                    generateLargeDataColumns(1000) :
-                    smallDataColumns
-            }
+            columns: e.target.checked ?
+                generateLargeDataColumns(1000) :
+                smallDataColumns
         }
     });
 });
