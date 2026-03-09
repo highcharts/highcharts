@@ -17,6 +17,7 @@
 
 import type { BubblePointMarkerOptions } from './BubblePointOptions';
 import type ScatterSeriesOptions from '../Scatter/ScatterSeriesOptions';
+import { ScatterSeriesTooltipOptions } from '../Scatter/ScatterSeriesOptions';
 
 /* *
  *
@@ -31,9 +32,20 @@ export interface BubbleSeriesOptions extends ScatterSeriesOptions {
     maxSize?: (number|string);
     sizeBy?: BubbleSizeByValue;
     sizeByAbsoluteValue?: boolean;
+
+    tooltip?: BubbleSeriesTooltipOptions;
+
     zMax?: number;
     zMin?: number;
     zThreshold?: number;
+}
+
+export interface BubbleSeriesTooltipOptions
+    extends ScatterSeriesTooltipOptions {
+    /**
+     * @default '({point.x}, {point.y}), Size: {point.z}'
+     */
+    pointFormat?: ScatterSeriesTooltipOptions['pointFormat'];
 }
 
 export type BubbleSizeByValue = ('area'|'width');

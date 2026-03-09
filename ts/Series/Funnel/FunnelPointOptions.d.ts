@@ -19,6 +19,7 @@
 
 import type FunnelDataLabelOptions from './FunnelDataLabelOptions';
 import type PiePointOptions from '../Pie/PiePointOptions';
+import type { PointDataLabelOptionsModifier } from '../../Core/Series/DataLabel';
 
 /* *
  *
@@ -27,8 +28,14 @@ import type PiePointOptions from '../Pie/PiePointOptions';
  * */
 
 export interface FunnelPointOptions extends PiePointOptions {
-    dataLabels?: FunnelDataLabelOptions;
+    dataLabels?: (
+        FunnelPointDataLabelOptions |
+        Array<FunnelPointDataLabelOptions>
+    );
 }
+
+export type FunnelPointDataLabelOptions =
+    FunnelDataLabelOptions & PointDataLabelOptionsModifier;
 
 /* *
  *

@@ -8,7 +8,11 @@ const gridProDir =  '../../../samples/grid-pro/';
 
 function getDemoFiles(dir) {
     return readdirSync(dir,{ recursive: true })
-        .filter((file) => file.endsWith('.html'))
+        .filter((file) => (
+            file.endsWith('.html') &&
+            !file.includes('studies/') &&
+            !file.includes('e2e/')
+        ))
         .map((file) => file.replace('\/demo.html', ''));
 }
 

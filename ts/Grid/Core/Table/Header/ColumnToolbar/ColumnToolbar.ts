@@ -22,6 +22,7 @@
  *
  * */
 
+import type Grid from '../../../Grid';
 import type Toolbar from '../../../UI/Toolbar';
 import type Column from '../../Column';
 
@@ -31,10 +32,9 @@ import ToolbarButton from '../../../UI/ToolbarButton.js';
 import SortToolbarButton from './ToolbarButtons/SortToolbarButton.js';
 import FilterToolbarButton from './ToolbarButtons/FilterToolbarButton.js';
 import MenuToolbarButton from './ToolbarButtons/MenuToolbarButton.js';
-import U from '../../../../../Core/Utilities.js';
+import { getStyle } from '../../../../../Shared/Utilities.js';
 
 const { makeHTMLElement } = GridUtils;
-const { getStyle } = U;
 
 
 /* *
@@ -60,6 +60,13 @@ class HeaderCellToolbar implements Toolbar {
      * The column that this toolbar belongs to.
      */
     public column: Column;
+
+    /**
+     * Reference to the Grid instance for icon registry and options.
+     */
+    public get grid(): Grid {
+        return this.column.viewport.grid;
+    }
 
     public buttons: ToolbarButton[] = [];
 

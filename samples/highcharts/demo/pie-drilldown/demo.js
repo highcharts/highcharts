@@ -39,7 +39,12 @@ Highcharts.chart('container', {
                     fontSize: '0.9em',
                     textOutline: 'none'
                 }
-            }]
+            }],
+            states: {
+                inactive: {
+                    opacity: 0.8
+                }
+            }
         }
     },
 

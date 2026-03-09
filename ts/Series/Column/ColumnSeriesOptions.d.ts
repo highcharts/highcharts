@@ -19,14 +19,16 @@ import type ColorType from '../../Core/Color/ColorType';
 import type ColumnPointOptions from './ColumnPointOptions';
 import type DashStyleValue from '../../Core/Renderer/DashStyleValue';
 import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
-import type LineSeriesOptions from '../Line/LineSeriesOptions';
 import type { BorderRadiusOptionsObject } from '../../Extensions/BorderRadius';
-import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
+import type {
+    SeriesOptions,
+    SeriesStatesOptions
+} from '../../Core/Series/SeriesOptions';
 import type {
     PointMarkerOptions,
     PointShortOptions
 } from '../../Core/Series/PointOptions';
-import type TooltipOptions from '../../Core/TooltipOptions';
+import type { SeriesTooltipOptions } from '../../Core/TooltipOptions';
 
 /* *
  *
@@ -45,6 +47,16 @@ declare module '../../Core/Series/SeriesOptions' {
         grouping?: boolean;
         groupPadding?: number;
         negativeFillColor?: ColorType;
+
+        /**
+         * The width of each point on the x axis. For example in a column chart
+         * with one value each day, the pointRange would be 1 day (= 24 * 3600
+         * * 1000 milliseconds). This is normally computed automatically, but
+         * this option can be used to override the automatic value.
+         *
+         * @product highstock
+         * @default 0
+         */
         pointRange?: (number|null);
     }
     interface SeriesStateHoverOptions {
@@ -79,15 +91,12 @@ declare module '../../Core/Series/SeriesOptions' {
  *
  * @extends series,plotOptions.column
  *
- * @excluding connectEnds, connectNulls, gapSize, gapUnit, linecap,
- *            lineWidth, marker, step, useOhlcData
- *
- * @excluding connectNulls, dataParser, dataURL, gapSize, gapUnit, linecap,
- *            lineWidth, marker, connectEnds, step
+ * @excluding connectEnds, connectNulls, dataParser, dataURL, gapSize, gapUnit,
+ *            linecap, lineWidth, marker, step, useOhlcData
  *
  * @product highcharts highstock
  */
-export interface ColumnSeriesOptions extends LineSeriesOptions {
+export interface ColumnSeriesOptions extends SeriesOptions {
 
     /**
      * The color of the border surrounding each column or bar.
@@ -454,8 +463,14 @@ export interface ColumnSeriesOptions extends LineSeriesOptions {
      */
     threshold?: (number|null);
 
-    tooltip?: Partial<TooltipOptions>;
+    tooltip?: ColumnSeriesTooltipOptions;
+}
 
+export interface ColumnSeriesTooltipOptions extends SeriesTooltipOptions {
+    /**
+     * @default 6
+     */
+    distance?: SeriesTooltipOptions['distance'];
 }
 
 /* *

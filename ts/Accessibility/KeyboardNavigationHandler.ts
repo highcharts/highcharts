@@ -21,8 +21,8 @@
 
 import type Chart from '../Core/Chart/Chart';
 
-import U from '../Core/Utilities.js';
-const { find } = U;
+import { find } from '../Shared/Utilities.js';
+
 
 /* *
  *

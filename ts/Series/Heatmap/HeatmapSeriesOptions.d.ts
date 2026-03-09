@@ -22,12 +22,11 @@ import type {
     HeatmapPointOptions
 } from './HeatmapPointOptions';
 import type { PointShortOptions } from '../../Core/Series/PointOptions';
-import type ScatterSeriesOptions from '../Scatter/ScatterSeriesOptions';
 import type {
-    SeriesStatesOptions,
-    LegendSymbolType
-} from '../../Core/Series/SeriesOptions';
-import type TooltipOptions from '../../Core/TooltipOptions';
+    ScatterSeriesOptions,
+    ScatterSeriesTooltipOptions
+} from '../Scatter/ScatterSeriesOptions';
+import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 
 /* *
  *
@@ -238,7 +237,10 @@ export interface HeatmapSeriesOptions extends ScatterSeriesOptions {
      */
     interpolation?: boolean;
 
-    legendSymbol?: LegendSymbolType;
+    /**
+     * @default 'rectangle'
+     */
+    legendSymbol?: ScatterSeriesOptions['legendSymbol'];
 
     /**
      * @excluding radius, enabledThreshold
@@ -287,8 +289,15 @@ export interface HeatmapSeriesOptions extends ScatterSeriesOptions {
 
     states?: SeriesStatesOptions<HeatmapSeriesOptions>;
 
-    tooltip?: Partial<TooltipOptions>;
+    tooltip?: HeatmapSeriesTooltipOptions;
+}
 
+export interface HeatmapSeriesTooltipOptions
+    extends ScatterSeriesTooltipOptions {
+    /**
+     * @default '{point.x}, {point.y}: {point.value}<br/>'
+     */
+    pointFormat?: ScatterSeriesTooltipOptions['pointFormat'];
 }
 
 /* *

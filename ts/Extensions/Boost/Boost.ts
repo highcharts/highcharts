@@ -35,11 +35,8 @@ const {
     win
 } = H;
 import NamedColors from './NamedColors.js';
-import U from '../../Core/Utilities.js';
-const {
-    addEvent,
-    error
-} = U;
+import { error } from '../../Core/Utilities.js';
+import { addEvent } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -359,6 +356,16 @@ export default Boost;
  * @type      {boolean}
  * @default   false
  * @apioption boost.debug.timeBufferCopy
+ */
+
+/**
+ * The number of points processed per frame when building the k-d tree for
+ * boosted series. Lower values improve responsiveness but increase the time it
+ * takes to build the tree.
+ *
+ * @type      {number}
+ * @default   3000
+ * @apioption boost.chunkSize
  */
 
 /**

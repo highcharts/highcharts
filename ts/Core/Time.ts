@@ -21,13 +21,8 @@ import type TickPositionsArray from './Axis/TickPositionsArray';
 import type TimeTicksInfoObject from './Axis/TimeTicksInfoObject';
 
 import TimeBase from '../Shared/TimeBase.js';
-import U from '../Core/Utilities.js';
-const {
-    defined,
-    extend,
-    timeUnits
-} = U;
-
+import { defined, extend } from '../Shared/Utilities.js';
+import { timeUnits } from './Utilities.js';
 
 /* *
  *
@@ -328,6 +323,14 @@ namespace Time {
          * The count of the interval.
          */
         count: number;
+        /**
+         * A value for how well the returned tick interval fits the input
+         * interval. Ranges close to but above 1 indicate that the fit is bad,
+         * where 1 is a perfect fit for the _next_ higher interval. For example,
+         * if the algorithm lands on weekly ticks but the match is 1.01, it is
+         * very close to monthly ticks.
+         */
+        match?: number;
         /**
          * The name of the time unit.
          */

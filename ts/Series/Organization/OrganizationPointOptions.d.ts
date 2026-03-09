@@ -21,6 +21,7 @@ import type OrganizationDataLabelOptions from './OrganizationDataLabelOptions';
 import type SankeyPointOptions from '../Sankey/SankeyPointOptions';
 import type ColorString from '../../Core/Color/ColorString';
 import type { OrganizationLinkOptions } from './OrganizationSeriesOptions';
+import type { PointDataLabelOptionsModifier } from '../../Core/Series/DataLabel';
 
 /* *
  *
@@ -34,9 +35,15 @@ export interface OrganizationPointOptions extends SankeyPointOptions {
     linkLineWidth?: number;
     link?: OrganizationLinkOptions;
     borderRadius?: number;
-    dataLabels?: (OrganizationDataLabelOptions|Array<OrganizationDataLabelOptions>);
+    dataLabels?: (
+        OrganizationPointDataLabelOptions |
+        Array<OrganizationPointDataLabelOptions>
+    );
     offset?: (number|string);
 }
+
+export type OrganizationPointDataLabelOptions =
+    OrganizationDataLabelOptions & PointDataLabelOptionsModifier;
 
 /* *
  *

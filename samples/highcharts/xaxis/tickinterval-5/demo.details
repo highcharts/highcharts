@@ -1,6 +1,4 @@
 ---
- name: Demo of xAxis.tickInterval
- authors:
-   - Torstein Hønsi
- js_wrap: b
+name: Demo of xAxis.tickInterval
+js_wrap: b
 ...

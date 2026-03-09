@@ -32,14 +32,13 @@ import PieSeriesDefaults from './PieSeriesDefaults.js';
 import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import Symbols from '../../Core/Renderer/SVG/Symbols.js';
-import U from '../../Core/Utilities.js';
-const {
+import {
     clamp,
     extend,
     fireEvent,
     merge,
     pick
-} = U;
+} from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -49,7 +48,29 @@ const {
 
 declare module '../../Core/Series/SeriesBase' {
     interface SeriesBase {
+        /* *
+        *
+        *  Properties
+        *
+        * */
+
+        /**
+         * The series center position, read only. This applies only to
+         * circular chart types like pie and sunburst. It is an array of
+         * `[centerX, centerY, diameter, innerDiameter]`.
+         */
+        center?: Array<number>;
+
+        /* *
+        *
+        *  Functions
+        *
+        * */
+
+        /** @internal */
         redrawPoints?(): void;
+
+        /** @internal */
         updateTotals?(): void;
     }
 }

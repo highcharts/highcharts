@@ -23,8 +23,7 @@ import type { SymbolTypeRegistry } from '../../Core/Renderer/SVG/SymbolType';
 
 
 import rect from '../../Core/Renderer/SVG/Symbols.js';
-import U from '../../Core/Utilities.js';
-const { relativeLength } = U;
+import { relativeLength } from '../../Shared/Utilities.js';
 /* *
  *
  *  Constants

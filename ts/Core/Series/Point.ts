@@ -28,7 +28,6 @@ import type {
     PointOptions,
     PointShortOptions
 } from './PointOptions';
-import type { PointTypeOptions } from './PointType';
 import type Series from './Series';
 import type { StatesOptionsKey } from './StatesOptions';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
@@ -44,11 +43,11 @@ import D from '../Defaults.js';
 const { defaultOptions } = D;
 import F from '../Templating.js';
 const { format } = F;
-import U from '../Utilities.js';
-const {
+import {
     addEvent,
     crisp,
     erase,
+    type EventWrapperObject,
     extend,
     fireEvent,
     getNestedProperty,
@@ -58,10 +57,10 @@ const {
     isObject,
     merge,
     pick,
-    syncTimeout,
     removeEvent,
-    uniqueKey
-} = U;
+    syncTimeout
+} from '../../Shared/Utilities.js';
+import { uniqueKey } from '../Utilities.js';
 
 /* *
  *
@@ -164,26 +163,17 @@ class Point {
     /**
      * For categorized axes this property holds the category name for the
      * point. For other axes it holds the X value.
-     *
-     * @name Highcharts.Point#category
-     * @type {number|string}
      */
     public category: (number|string);
 
     /**
      * The point's current color.
-     *
-     * @name Highcharts.Point#color
-     * @type {Highcharts.ColorType|undefined}
      */
     public color?: ColorType;
 
     /**
      * The point's current color index, used in styled mode instead of
      * `color`. The color index is inserted in class names used for styling.
-     *
-     * @name Highcharts.Point#colorIndex
-     * @type {number|undefined}
      */
     public colorIndex?: number;
 
@@ -638,9 +628,17 @@ class Point {
         // Copy options directly to point
         extend(point, options as any);
 
-        point.options = point.options ?
-            extend(point.options, options as any) :
-            options;
+        // If we're updating, extend or merge existing options
+        if (point.options) {
+            // If we're not allowed to mutate, merge new data into existing and
+            // return a copy, because `point.options` is a reference to
+            // `options.data[i]`
+            point.options = series.chart.options.chart.allowMutatingData ?
+                extend(point.options, options) :
+                merge(point.options, options);
+        } else {
+            point.options = options;
+        }
 
         // Since options are copied into the Point instance, some accidental
         // options must be shielded (#5681)
@@ -855,7 +853,9 @@ class Point {
         const point = this;
         return 'highcharts-point' +
             (point.selected ? ' highcharts-point-select' : '') +
-            (point.negative ? ' highcharts-negative' : '') +
+            (
+                point.negative && point.series.options.negativeColor !== false ?
+                    ' highcharts-negative' : '') +
             (point.isNull ? ' highcharts-null-point' : '') +
             (typeof point.colorIndex !== 'undefined' ?
                 ' highcharts-color-' + point.colorIndex : '') +
@@ -1311,7 +1311,8 @@ class Point {
             series = point.series,
             graphic = point.graphic,
             chart = series.chart,
-            seriesOptions = series.options;
+            seriesOptions = series.options,
+            data = seriesOptions.data;
         let i: number;
         redraw = pick(redraw, true);
 
@@ -1362,13 +1363,12 @@ class Point {
 
             // Record the options to options.data. If the old or the new config
             // is an object, use point options, otherwise use raw options
-            // (#4701, #4916).
-            (seriesOptions.data as any)[i] = (
-                isObject((seriesOptions.data as any)[i], true) ||
-                    isObject(options, true)
-            ) ?
-                point.options :
-                pick(options, (seriesOptions.data as any)[i]);
+            // (#4701, #4916, #24225).
+            if (data) {
+                data[i] = (isObject(data[i], true) || isObject(options, true)) ?
+                    point.options :
+                    (options ?? data[i]);
+            }
 
             // Redraw
             series.isDirty = series.isDirtyData = true;
@@ -1903,12 +1903,15 @@ class Point {
  *
  * */
 
-/** @internal */
 interface Point extends PointBase {
-    // Merge extensions with point class
+    /**
+     * Merge extensions with point class.
+     *
+     * @internal
+     */
     hcEvents?: Record<
         string,
-        Array<U.EventWrapperObject<Series>> & { userEvent?: boolean }
+        Array<EventWrapperObject<Series>> & { userEvent?: boolean }
     >;
 }
 
@@ -1918,19 +1921,12 @@ interface Point extends PointBase {
  *
  * */
 
+/** @internal */
 namespace Point {
+    /** @internal */
     export interface GraphicalProps {
         singular: Array<string>;
         plural: Array<string>;
-    }
-    export interface SeriesPointsOptions {
-        events?: PointEventsOptions;
-    }
-    export interface UpdateCallbackFunction {
-        (this: Point, event: UpdateEventObject): void;
-    }
-    export interface UpdateEventObject {
-        options?: PointTypeOptions;
     }
 }
 

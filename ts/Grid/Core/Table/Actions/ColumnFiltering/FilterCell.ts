@@ -25,10 +25,7 @@ import type Row from '../../Row.js';
 import type Column from '../../Column.js';
 
 import HeaderCell from '../../Header/HeaderCell.js';
-import U from '../../../../../Core/Utilities.js';
-
-const { fireEvent } = U;
-
+import { fireEvent } from '../../../../../Shared/Utilities.js';
 
 /* *
  *
@@ -63,10 +60,10 @@ class FilterCell extends HeaderCell {
      *
      * */
 
-    public override render(): void {
+    public override async render(): Promise<void> {
         const { column } = this;
         if (!column) {
-            return;
+            return Promise.resolve();
         }
 
         // Render content of th element

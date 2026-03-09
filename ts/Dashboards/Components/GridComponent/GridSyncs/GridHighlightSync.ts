@@ -27,8 +27,7 @@ import type { GridHighlightSyncOptions } from '../GridComponentOptions';
 import type { TableCellEvent } from '../../../Plugins/GridTypes';
 
 import Component from '../../Component';
-import U from '../../../../Core/Utilities.js';
-const { addEvent, removeEvent } = U;
+import { addEvent, removeEvent } from '../../../../Shared/Utilities.js';
 
 /* *
  *
@@ -64,10 +63,16 @@ const syncPair: SyncPair = {
         const onCellHover = (e: TableCellEvent): void => {
             if (table) {
                 const cell = e.target;
+                const localIndex = cell.row.index;
+                const originalIndex =
+                    grid.viewport?.dataTable?.getOriginalRowIndex(localIndex);
+                if (typeof originalIndex !== 'number') {
+                    return;
+                }
 
                 cursor.emitCursor(table, {
                     type: 'position',
-                    row: cell.row.id,
+                    row: originalIndex,
                     column: cell.column.id,
                     state: 'point.mouseOver' + groupKey,
                     sourceId: this.id
@@ -78,10 +83,16 @@ const syncPair: SyncPair = {
         const onCellMouseOut = (e: TableCellEvent): void => {
             if (table) {
                 const cell = e.target;
+                const localIndex = cell.row.index;
+                const originalIndex =
+                    grid.viewport?.dataTable?.getOriginalRowIndex(localIndex);
+                if (typeof originalIndex !== 'number') {
+                    return;
+                }
 
                 cursor.emitCursor(table, {
                     type: 'position',
-                    row: cell.row.id,
+                    row: originalIndex,
                     column: cell.column.id,
                     state: 'point.mouseOut' + groupKey,
                     sourceId: this.id
@@ -143,7 +154,8 @@ const syncPair: SyncPair = {
                 return;
             }
 
-            const rowIndex = viewport.dataTable.getLocalRowIndex(row);
+            const rowIndex = viewport.dataTable?.getLocalRowIndex(row);
+
             if (rowIndex === void 0) {
                 return;
             }

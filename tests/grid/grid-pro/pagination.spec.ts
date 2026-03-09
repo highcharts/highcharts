@@ -10,7 +10,7 @@ test.describe('Pagination', () => {
     });
 
     test('beforePageChange / afterPageChange', async ({ page }) => {
-        await page.goto('/grid-pro/cypress/pagination-events');
+        await page.goto('/grid-pro/e2e/pagination-events');
 
         // Click next page button
         await page.locator('.hcg-button[title="Next page"]').click();
@@ -27,7 +27,7 @@ test.describe('Pagination', () => {
         await expect(page.locator('#afterPageChange')).toHaveValue('1');
 
         // Click on page number
-        await page.locator('.hcg-pagination-nav-buttons-container .hcg-button').filter({ hasText: '3' }).click();
+        await page.locator('.hcg-pagination-pages .hcg-button').filter({ hasText: '3' }).click();
 
         // Check event logging
         await expect(page.locator('#beforePageChange')).toHaveValue('1');
@@ -35,7 +35,7 @@ test.describe('Pagination', () => {
     });
 
     test('beforePageSizeChange / afterPageSizeChange', async ({ page }) => {
-        await page.goto('/grid-pro/cypress/pagination-events');
+        await page.goto('/grid-pro/e2e/pagination-events');
 
         // Change page size to 20
         await page.locator('.hcg-pagination-page-size select.hcg-input').first().selectOption('20');

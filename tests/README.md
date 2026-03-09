@@ -21,6 +21,7 @@ This directory contains the Playwright test suite for Highcharts products.
 - [Route Rewrites](#route-rewrites)
 - [Path Aliases](#path-aliases)
 - [Debugging](#debugging)
+  - [QUnit browser logs](#qunit-browser-logs)
 - [Environment Variables](#environment-variables)
 - [FAQ](#faq)
 - [Common Issues](#common-issues)
@@ -43,10 +44,10 @@ This section walks you through creating and running a simple test.
 
 ### 1. Create the Test File
 
-Create a new file at `tests/highcharts/my-first-test.spec.ts`:
+Create a new file at `tests/highcharts/chart/my-first-test.spec.ts`:
 
 ```typescript
-import { test, expect, createChart } from '../fixtures.ts';
+import { test, expect, createChart } from '~/fixtures.ts';
 
 test('chart renders with correct title', async ({ page }) => {
     // Create a chart with some basic options
@@ -67,7 +68,7 @@ test('chart renders with correct title', async ({ page }) => {
 ### 2. Run the Test
 
 ```sh
-npx playwright test tests/highcharts/my-first-test.spec.ts
+npx playwright test tests/highcharts/chart/my-first-test.spec.ts
 ```
 
 You should see output indicating the test passed.
@@ -87,13 +88,13 @@ You should see output indicating the test passed.
 Run your test with the UI to see what's happening:
 
 ```sh
-npx playwright test tests/highcharts/my-first-test.spec.ts --ui
+npx playwright test tests/highcharts/chart/my-first-test.spec.ts --ui
 ```
 
 Or run in headed mode to watch the browser:
 
 ```sh
-npx playwright test tests/highcharts/my-first-test.spec.ts --headed
+npx playwright test tests/highcharts/chart/my-first-test.spec.ts --headed
 ```
 
 ## Running Tests
@@ -118,7 +119,7 @@ Available projects include browser variants:
 ### By File
 
 ```sh
-npx playwright test tests/highcharts/themes.spec.ts
+npx playwright test tests/highcharts/themes/themes.spec.ts
 ```
 
 ### Interactive Modes
@@ -217,7 +218,7 @@ There are two main approaches:
 Inject HTML directly into the page:
 
 ```typescript
-import { test, expect, setupRoutes } from '../fixtures.ts';
+import { test, expect, setupRoutes } from '~/fixtures.ts';
 
 test('manual page setup', async ({ page }) => {
     // Routes are already set up via the fixture, but you can also call
@@ -259,7 +260,7 @@ test('manual page setup', async ({ page }) => {
 Navigate to an existing HTML file or URL:
 
 ```typescript
-import { test, expect } from '../fixtures.ts';
+import { test, expect } from '~/fixtures.ts';
 
 test('test existing sample', async ({ page }) => {
     // Navigate to a sample page
@@ -284,7 +285,7 @@ This is useful when testing existing demos or samples in the repository.
 ### Using ESM Modules
 
 ```typescript
-import { test, expect } from '../fixtures.ts';
+import { test, expect } from '~/fixtures.ts';
 
 test('ESM module setup', async ({ page }) => {
     await page.setContent(`
@@ -327,7 +328,7 @@ test('ESM module setup', async ({ page }) => {
 You can also pass a pre-loaded Highcharts instance to `createChart`:
 
 ```typescript
-import { test, expect, createChart } from '../fixtures.ts';
+import { test, expect, createChart } from '~/fixtures.ts';
 
 test('createChart with ESM', async ({ page }) => {
     await page.setContent('<div id="container"></div>');
@@ -360,7 +361,7 @@ test('createChart with ESM', async ({ page }) => {
 ### Custom Container Element
 
 ```typescript
-import { test, expect, createChart } from '../fixtures.ts';
+import { test, expect, createChart } from '~/fixtures.ts';
 
 test('custom container element', async ({ page }) => {
     await page.setContent('<div class="my-chart-wrapper"></div>');
@@ -385,7 +386,7 @@ test('custom container element', async ({ page }) => {
 ### Adding Custom CSS
 
 ```typescript
-import { test, expect, createChart } from '../fixtures.ts';
+import { test, expect, createChart } from '~/fixtures.ts';
 
 test('chart with custom CSS', async ({ page }) => {
     const chart = await createChart(
@@ -693,6 +694,16 @@ Add `--reporter=list` for detailed console output:
 npx playwright test --reporter=list
 ```
 
+### QUnit browser logs
+
+When QUnit tests fail, browser logs are written to per-worker files:
+
+```text
+tests/qunit/console-worker-*.log
+```
+
+At the end of a run with failures, a note with this path is printed in the console.
+
 ### Debug interactively
 
 ```sh
@@ -700,27 +711,35 @@ npx playwright test --reporter=list
 npx playwright test --debug
 
 # Run specific test with debugger
-npx playwright test tests/highcharts/my-test.spec.ts --debug
+npx playwright test tests/highcharts/chart/my-test.spec.ts --debug
 ```
 
 ### View trace for failed tests
 
 ```sh
-# Traces are automatically captured on first retry
-npx playwright show-trace playwright-report/data/<trace-id>.zip
+# Default config uses retries=0, so traces are not created automatically.
+# To capture traces, rerun with retries enabled (non-QUnit projects):
+npx playwright test --project=highcharts --retries=1
+
+# Then open a generated trace file from test-results/
+npx playwright show-trace test-results/<test-folder>/trace.zip
 ```
 
 ## Environment Variables
 
 | Variable | Description |
 |----------|-------------|
-| `VISUAL_TEST_PATH` | Run single visual test path (e.g., `samples/highcharts/demo/line-basic`) |
 | `NO_REWRITES` | Skip route rewrites, test against live CDN |
+| `QUNIT_TEST_PATH` | Glob-enabled QUnit test path (e.g., `unit-tests/rangeselector/*`) |
 | `QUNIT_VERBOSE` | Show detailed output for passing QUnit tests |
+| `VISUAL_TEST_PATH` | Run single visual test path (e.g., `samples/highcharts/demo/line-basic`) |
 
 Examples:
 
 ```sh
+# Run single QUnit test
+QUNIT_TEST_PATH=unit-tests/rangeselector/update npx playwright test --project=qunit
+
 # Run single visual test
 VISUAL_TEST_PATH=samples/highcharts/demo/line-basic npx playwright test --project=visual
 
@@ -776,7 +795,13 @@ You can combine reporters:
 npx playwright test --reporter=list,html
 ```
 
-The default configuration uses the HTML reporter with results in `playwright-report/`. View the report with:
+The default configuration uses multiple reporters:
+
+- Line reporter locally (`line`) or dot reporter in CI (`dot`)
+- HTML reporter (`playwright-report/`)
+- Custom QUnit browser-log note reporter
+
+View the HTML report with:
 
 ```sh
 npx playwright show-report

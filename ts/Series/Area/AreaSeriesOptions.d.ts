@@ -19,10 +19,7 @@ import type AreaPointOptions from './AreaPointOptions';
 import type ColorType from '../../Core/Color/ColorType';
 import type LineSeriesOptions from '../Line/LineSeriesOptions';
 import type { PointShortOptions } from '../../Core/Series/PointOptions';
-import type {
-    SeriesStatesOptions,
-    LegendSymbolType
-} from '../../Core/Series/SeriesOptions';
+import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 
 /* *
  *
@@ -210,7 +207,10 @@ export interface AreaSeriesOptions extends LineSeriesOptions {
      */
     data?: Array<(AreaPointOptions|PointShortOptions)>;
 
-    legendSymbol?: LegendSymbolType;
+    /**
+     * @default 'areaMarker'
+     */
+    legendSymbol?: LineSeriesOptions['legendSymbol'];
 
     /**
      * The Y axis value to serve as the base for the area, for

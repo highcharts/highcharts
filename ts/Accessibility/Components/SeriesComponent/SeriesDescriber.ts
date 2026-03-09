@@ -3,7 +3,7 @@
  *  (c) 2009-2026 Highsoft AS
  *  Author: Øystein Moseng
  *
- *  Place desriptions on a series and its points.
+ *  Place descriptions on a series and its points.
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -48,14 +48,13 @@ const {
     reverseChildNodes,
     stripHTMLTagsFromString: stripHTMLTags
 } = HTMLUtilities;
-import U from '../../../Core/Utilities.js';
-const {
+import {
+    defined,
     find,
-    isNumber,
     isString,
-    pick,
-    defined
-} = U;
+    isNumber,
+    pick
+} from '../../../Shared/Utilities.js';
 
 
 /* *
@@ -351,7 +350,7 @@ function getPointA11yTimeDescription(
             ),
             dateFormat = seriesA11yOptions.dateFormatter &&
                 seriesA11yOptions.dateFormatter(point) ||
-                a11yOptions.dateFormatter && a11yOptions.dateFormatter(point) ||
+                a11yOptions.dateFormatter?.(point) ||
                 seriesA11yOptions.dateFormat ||
                 a11yOptions.dateFormat ||
                 tooltipDateFormat;

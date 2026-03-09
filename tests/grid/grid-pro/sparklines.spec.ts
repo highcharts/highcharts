@@ -2,7 +2,7 @@ import { test, expect } from '~/fixtures.ts';
 
 test.describe('Sparklines update for null-cells', () => {
     test.beforeEach(async ({ page }) => {
-        await page.goto('/grid-pro/cypress/cell-update-sparkline/');
+        await page.goto('/grid-pro/e2e/cell-update-sparkline/');
     });
 
     test('Highcharts should be built & loaded', async ({ page }) => {

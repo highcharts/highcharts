@@ -1,6 +1,4 @@
 ---
- name: Demo of axis crosshair options
- authors:
-   - Torstein Hønsi
- js_wrap: b
+name: Demo of axis crosshair options
+js_wrap: b
 ...

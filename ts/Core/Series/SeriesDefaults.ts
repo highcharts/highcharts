@@ -254,14 +254,13 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      * Since v11, CSS variables on the form `--highcharts-color-{n}` make
      * changing the color scheme very convenient.
      *
-     * @sample    {highcharts} highcharts/css/colorindex/ Series and point color
-     *            index
+     * @sample    {highcharts} highcharts/css/colorindex/
+     *            Series and point color index
      *
      * @type      {number}
      * @since     5.0.0
      * @apioption plotOptions.series.colorIndex
      */
-
 
     /**
      * Whether to connect a graph line across null points, or render a gap
@@ -280,7 +279,6 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      * @product   highcharts highstock
      * @apioption plotOptions.series.connectNulls
      */
-
 
     /**
      * You can set the cursor to "pointer" if you have click events attached
@@ -346,9 +344,14 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      */
 
     /**
+     * Deprecated. Use
+     * [plotOptions.series.accessibility.description](#plotOptions.series.accessibility.description)
+     * instead.
+     *
      * A description of the series to add to the screen reader information
      * about the series.
      *
+     * @deprecated 8.0.0
      * @type      {string}
      * @since     5.0.0
      * @requires  modules/accessibility
@@ -568,23 +571,35 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      */
 
     /**
+     * Deprecated. Use
+     * [series.accessibility.point.descriptionFormat](#plotOptions.series.accessibility.point.descriptionFormat)
+     * instead.
+     *
      * Same as
      * [accessibility.point.descriptionFormat](#accessibility.point.descriptionFormat),
      * but for an individual series. Overrides the chart wide configuration.
      *
-     * @type      {Function}
-     * @since 11.1.0
-     * @apioption plotOptions.series.pointDescriptionFormat
+     * @type       {Function}
+     * @requires   modules/accessibility
+     * @since      11.1.0
+     * @deprecated next
+     * @apioption  plotOptions.series.pointDescriptionFormat
      */
 
     /**
+     * Deprecated. Use
+     * [series.accessibility.point.descriptionFormatter](#plotOptions.series.accessibility.point.descriptionFormatter)
+     * instead.
+     *
      * Same as
      * [accessibility.series.descriptionFormatter](#accessibility.series.descriptionFormatter),
      * but for an individual series. Overrides the chart wide configuration.
      *
-     * @type      {Function}
-     * @since     5.0.12
-     * @apioption plotOptions.series.pointDescriptionFormatter
+     * @type       {Function}
+     * @requires   modules/accessibility
+     * @since      5.0.12
+     * @deprecated 8.0.0
+     * @apioption  plotOptions.series.pointDescriptionFormatter
      */
 
     /**
@@ -790,12 +805,17 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      */
 
     /**
+     * Deprecated. Use
+     * [series.accessibility.keyboardNavigation](#plotOptions.series.accessibility.keyboardNavigation)
+     * instead.
+     *
      * If set to `true`, the accessibility module will skip past the points
      * in this series for keyboard navigation.
      *
-     * @type      {boolean}
-     * @since     5.0.12
-     * @apioption plotOptions.series.skipKeyboardNavigation
+     * @type       {boolean}
+     * @since      5.0.12
+     * @deprecated 8.0.0
+     * @apioption  plotOptions.series.skipKeyboardNavigation
      */
 
     /**
@@ -2080,6 +2100,15 @@ const seriesDefaults: PlotOptionsOf<Series> = {
         x: 0,
 
         /**
+         * The y position offset of the label relative to the point in
+         * pixels.
+         *
+         * @sample {highcharts} highcharts/plotoptions/series-datalabels-rotation/
+         *         Vertical and positioned
+         */
+        y: 0
+
+        /**
          * The z index of the data labels group. Does not apply below series
          * level options.
          *
@@ -2091,15 +2120,6 @@ const seriesDefaults: PlotOptionsOf<Series> = {
          * @since     2.3.5
          * @apioption plotOptions.series.dataLabels.zIndex
          */
-
-        /**
-         * The y position offset of the label relative to the point in
-         * pixels.
-         *
-         * @sample {highcharts} highcharts/plotoptions/series-datalabels-rotation/
-         *         Vertical and positioned
-         */
-        y: 0
     },
 
     /**
@@ -2249,7 +2269,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
              * individual point, see
              * [marker.states.hover](#plotOptions.series.marker.states.hover).
              *
-             * @deprecated
+             * @deprecated 2
              *
              * @extends   plotOptions.series.marker
              * @excluding states, symbol

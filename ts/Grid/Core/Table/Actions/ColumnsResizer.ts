@@ -30,11 +30,9 @@ import Column from '../Column.js';
 import GridUtils from '../../GridUtils.js';
 import Cell from '../Cell.js';
 import Globals from '../../Globals.js';
-import Utils from '../../../../Core/Utilities.js';
+import { fireEvent } from '../../../../Shared/Utilities.js';
 
 const { makeHTMLElement } = GridUtils;
-const { fireEvent } = Utils;
-
 
 /* *
  *
@@ -162,7 +160,6 @@ class ColumnsResizer {
         vp.columnResizing.resize(this, diff);
 
         vp.reflow();
-        vp.rowsVirtualizer.adjustRowHeights();
 
         fireEvent(this.draggedColumn, 'afterResize', {
             target: this.draggedColumn,

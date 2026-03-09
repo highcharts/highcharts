@@ -24,12 +24,12 @@ import type {
 import type Point from '../../Core/Series/Point';
 import type { PointMarkerOptions } from '../../Core/Series/PointOptions';
 import type { SymbolKey } from '../../Core/Renderer/SVG/SymbolType';
-import type TooltipOptions from '../../Core/TooltipOptions';
 import type { TreegraphLinkOptions } from './TreegraphLink';
 import type TreegraphPoint from './TreegraphPoint';
 import type {
     TreemapSeriesLevelOptions,
-    TreemapSeriesOptions
+    TreemapSeriesOptions,
+    TreemapSeriesTooltipOptions
 } from '../Treemap/TreemapSeriesOptions';
 
 /* *
@@ -237,8 +237,17 @@ export interface TreegraphSeriesOptions extends TreemapSeriesOptions {
      */
     reversed?: boolean;
 
-    tooltip?: Partial<TooltipOptions>;
+    tooltip?: TreegraphSeriesTooltipOptions;
+}
 
+export interface TreegraphSeriesTooltipOptions
+    extends TreemapSeriesTooltipOptions {
+    /**
+     * @default '{point.id}'
+     */
+    pointFormat?: TreemapSeriesTooltipOptions['pointFormat']
+
+    // TODO: linkFormat & linkFormatter
 }
 
 /* *

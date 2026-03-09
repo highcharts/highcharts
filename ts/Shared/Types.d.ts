@@ -47,3 +47,10 @@ export type TypedArrayConstructor = (
     Int16ArrayConstructor|Uint16ArrayConstructor|Int32ArrayConstructor|
     Uint32ArrayConstructor|Float32ArrayConstructor|Float64ArrayConstructor
 );
+
+/**
+ * Make specified properties optional in a union of object types, without
+ * losing the union.
+ */
+export type MakeOptional<T extends object, K extends keyof T> =
+    T extends unknown ? Omit<T, K> & Partial<Pick<T, K>> : never;
