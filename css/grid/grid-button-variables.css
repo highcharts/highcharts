@@ -11,7 +11,7 @@
     --ig-button-color-base: var(--hcg-button-color, var(--ig-default-color));
     --ig-button-hover-color-base: var(--hcg-button-hover-color, var(--ig-default-background));
     --ig-button-hover-background-base: var(--hcg-button-hover-background, var(--ig-default-color));
-    --ig-button-hover-border-color-base: var(--hcg-button-hover-border-color, var(--ig-button-border-color));
+    --ig-button-hover-border-color-base: var(--hcg-button-hover-border-color, var(--ig-button-border-color-base));
     --ig-button-selected-color-base: var(--hcg-button-selected-color, var(--ig-default-background));
     --ig-button-selected-background-base: var(--hcg-button-selected-background, var(--ig-default-color));
     --ig-button-selected-border-color-base: var(--hcg-button-selected-border-color, var(--ig-button-border-color));
@@ -41,14 +41,14 @@
         --ig-button-border-color: var(--hcg-header-button-border-color, var(--ig-button-border-color-base));
         --ig-button-border-radius: var(--hcg-header-button-border-radius, var(--ig-button-border-radius-base));
         --ig-button-padding: var(--hcg-header-button-padding, var(--ig-button-padding-base));
-        --ig-button-hover-border-color: var(--hcg-header-button-hover-border-color, var(--hcg-header-button-border-color, var(--ig-button-hover-border-color-base)));
+        --ig-button-hover-border-color: var(--hcg-header-button-hover-border-color, var(--hcg-button-hover-border-color, var(--hcg-header-button-border-color, var(--ig-button-hover-border-color-base))));
         --ig-button-selected-border-color: var(--hcg-header-button-selected-border-color, var(--ig-button-selected-border-color-base));
         --ig-button-focus-ring: inset 0 0 0 var(--ig-focus-ring-width) var(--ig-focus-ring-color);
 
         /* Header-specific color logic */
         --ig-button-color: var(--hcg-header-button-color, var(--ig-header-current-color));
-        --ig-button-hover-color: var(--hcg-header-button-hover-color, var(--ig-header-current-color));
-        --ig-button-hover-background: var(--hcg-header-button-hover-background, color-mix(in oklch, var(--ig-header-hover-background) 90%, var(--ig-default-color)));
+        --ig-button-hover-color: var(--hcg-header-button-hover-color, var(--hcg-button-hover-color, var(--hcg-header-button-color, var(--ig-header-current-color))));
+        --ig-button-hover-background: var(--hcg-header-button-hover-background, var(--hcg-button-hover-background, var(--hcg-header-button-background, color-mix(in oklch, var(--ig-header-hover-background) 90%, var(--ig-default-color)))));
         --ig-button-selected-color: var(--hcg-header-button-selected-color, var(--ig-header-current-color));
         --ig-button-selected-background: var(--hcg-header-button-selected-background, var(--ig-button-background));
     }
@@ -61,9 +61,9 @@
         --ig-button-border-color: var(--hcg-cell-button-border-color, var(--ig-button-border-color-base));
         --ig-button-border-radius: var(--hcg-cell-button-border-radius, var(--ig-button-border-radius-base));
         --ig-button-padding: var(--hcg-cell-button-padding, var(--ig-button-padding-base));
-        --ig-button-hover-color: var(--hcg-cell-button-hover-color, var(--ig-button-hover-color-base));
-        --ig-button-hover-background: var(--hcg-cell-button-hover-background, var(--ig-button-hover-background-base));
-        --ig-button-hover-border-color: var(--hcg-cell-button-hover-border-color, var(--ig-button-hover-border-color-base));
+        --ig-button-hover-color: var(--hcg-cell-button-hover-color, var(--hcg-button-hover-color, var(--hcg-cell-button-color, var(--ig-button-hover-color-base))));
+        --ig-button-hover-background: var(--hcg-cell-button-hover-background, var(--hcg-button-hover-background, var(--hcg-cell-button-background, var(--ig-button-hover-background-base))));
+        --ig-button-hover-border-color: var(--hcg-cell-button-hover-border-color, var(--hcg-button-hover-border-color, var(--hcg-cell-button-border-color, var(--ig-button-hover-border-color-base))));
         --ig-button-selected-color: var(--hcg-cell-button-selected-color, var(--ig-button-selected-color-base));
         --ig-button-selected-background: var(--hcg-cell-button-selected-background, var(--ig-button-selected-background-base));
         --ig-button-selected-border-color: var(--hcg-cell-button-selected-border-color, var(--ig-button-selected-border-color-base));
@@ -77,9 +77,9 @@
         --ig-button-border-color: var(--hcg-pagination-button-border-color, var(--ig-button-border-color-base));
         --ig-button-border-radius: var(--hcg-pagination-button-border-radius, var(--ig-button-border-radius-base));
         --ig-button-padding: var(--hcg-pagination-button-padding, var(--ig-button-padding-base));
-        --ig-button-hover-color: var(--hcg-pagination-button-hover-color, var(--ig-button-hover-color-base));
-        --ig-button-hover-background: var(--hcg-pagination-button-hover-background, var(--ig-button-hover-background-base));
-        --ig-button-hover-border-color: var(--hcg-pagination-button-hover-border-color, var(--ig-button-hover-border-color-base));
+        --ig-button-hover-color: var(--hcg-pagination-button-hover-color, var(--hcg-button-hover-color, var(--hcg-pagination-button-color, var(--ig-button-hover-color-base))));
+        --ig-button-hover-background: var(--hcg-pagination-button-hover-background, var(--hcg-button-hover-background, var(--hcg-pagination-button-background, var(--ig-button-hover-background-base))));
+        --ig-button-hover-border-color: var(--hcg-pagination-button-hover-border-color, var(--hcg-button-hover-border-color, var(--hcg-pagination-button-border-color, var(--ig-button-hover-border-color-base))));
         --ig-button-selected-color: var(--hcg-pagination-button-selected-color, var(--ig-button-selected-color-base));
         --ig-button-selected-background: var(--hcg-pagination-button-selected-background, var(--ig-button-selected-background-base));
         --ig-button-selected-border-color: var(--hcg-pagination-button-selected-border-color, var(--ig-button-selected-border-color-base));
