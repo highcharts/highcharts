@@ -83,11 +83,10 @@ const { seriesTypes } = SeriesRegistry;
 import SVGElement from '../Renderer/SVG/SVGElement';
 import SVGRenderer from '../Renderer/SVG/SVGRenderer.js';
 import Time from '../Time.js';
-import U from '../Utilities.js';
 import AST from '../Renderer/HTML/AST.js';
 import { AxisCollectionKey } from '../Axis/AxisOptions';
 import Tick from '../Axis/Tick.js';
-const {
+import {
     addEvent,
     attr,
     createElement,
@@ -96,12 +95,12 @@ const {
     diffObjects,
     discardElement,
     erase,
-    error,
     extend,
     find,
     fireEvent,
     getAlignFactor,
     getStyle,
+    internalClearTimeout,
     isArray,
     isNumber,
     isObject,
@@ -113,9 +112,10 @@ const {
     relativeLength,
     removeEvent,
     splat,
-    syncTimeout,
-    uniqueKey
-} = U;
+    syncTimeout
+} from '../../Shared/Utilities.js';
+import { error, uniqueKey } from '../Utilities.js';
+
 
 /* *
  *
@@ -363,6 +363,12 @@ class Chart {
         c?: Chart.CallbackFunction
         /* eslint-enable @typescript-eslint/no-unused-vars */
     ) {
+        // Return early if there's no browser API (server environment).
+        if (!doc) {
+            error(36, false, this);
+            return;
+        }
+
         const args = [
             // ES5 builds fail unless we cast it to an Array
             ...arguments as unknown as Array<any>
@@ -2278,7 +2284,7 @@ class Chart {
                 containerBox.width !== oldBox.width ||
                 containerBox.height !== oldBox.height
             ) {
-                U.clearTimeout(chart.reflowTimeout);
+                internalClearTimeout(chart.reflowTimeout);
                 // When called from window.resize, e is set, else it's called
                 // directly (#2224)
                 chart.reflowTimeout = syncTimeout(function (): void {
@@ -2953,16 +2959,32 @@ class Chart {
         ) {
 
             const tempWidth = chart.plotWidth,
-                tempHeight = chart.plotHeight;
+                tempHeight = chart.plotHeight,
+                threshold = [1.05, 1.1];
 
             for (const axis of axes) {
+                const horizNum = +(axis.horiz || 0);
                 if (run === 0) {
                     // Get margins by pre-rendering axes
                     axis.setScale();
 
+                    // On datetime axes, consider the tick interval match. A
+                    // match close to 1 means that the current normalized tick
+                    // interval is an insecure match to the requested tick
+                    // interval, on the brink of landing on a higher unit. In
+                    // this case, we should redo the axis to get a more
+                    // appropriate tick interval (#17393).
+                    const tickIntervalMatch = axis.tickPositions?.info?.match;
+                    if (tickIntervalMatch) {
+                        threshold[horizNum] = Math.min(
+                            tickIntervalMatch,
+                            threshold[horizNum]
+                        );
+                    }
+
                 } else if (
-                    (axis.horiz && redoHorizontal) ||
-                    (!axis.horiz && redoVertical)
+                    (horizNum && redoHorizontal) ||
+                    (!horizNum && redoVertical)
                 ) {
                     // Update to reflect the new margins
                     axis.setTickInterval(true);
@@ -2975,8 +2997,10 @@ class Chart {
                 chart.getMargins();
             }
 
-            redoHorizontal = (tempWidth / chart.plotWidth) > (run ? 1 : 1.1);
-            redoVertical = (tempHeight / chart.plotHeight) > (run ? 1 : 1.05);
+            redoHorizontal = (tempWidth / chart.plotWidth) >
+                (run ? 1 : threshold[1]);
+            redoVertical = (tempHeight / chart.plotHeight) >
+                (run ? 1 : threshold[0]);
 
             run++;
         }
@@ -3214,7 +3238,7 @@ class Chart {
         chart.pointer?.getChartPosition(); // #14973
 
         // Fire the load event if there are no external images
-        if (!chart.renderer.imgCount && !chart.hasLoaded) {
+        if (!chart.renderer.asyncCounter && !chart.hasLoaded) {
             chart.onload();
         }
 
@@ -3807,14 +3831,17 @@ class Chart {
         // update the first series in the chart. Setting two series without
         // an id will update the first and the second respectively (#6019)
         // chart.update and responsive.
-        this.collectionsWithUpdate.forEach(function (coll: string): void {
+        this.collectionsWithUpdate.forEach((coll: string): void => {
 
             if ((options as any)[coll]) {
 
-                splat((options as any)[coll]).forEach(function (
+                splat((options as any)[coll]).forEach((
                     newOptions,
                     i
-                ): void {
+                ): void => {
+                    if (!newOptions) {
+                        return;
+                    }
                     const hasId = defined(newOptions.id);
                     let item: (Axis|Series|Point|undefined);
 
@@ -3868,7 +3895,7 @@ class Chart {
 
                 // Add items for removal
                 if (oneToOne) {
-                    (chart as any)[coll].forEach(function (item: any): void {
+                    (chart as any)[coll].forEach((item: any): void => {
                         if (!item.touched && !item.options.isInternal) {
                             itemsForRemoval.push(item);
                         } else {
@@ -3881,7 +3908,7 @@ class Chart {
             }
         });
 
-        itemsForRemoval.forEach(function (item: any): void {
+        itemsForRemoval.forEach((item: any): void => {
             if (item.chart && item.remove) { // #9097, avoid removing twice
                 item.remove(false);
             }
@@ -5140,6 +5167,10 @@ export default Chart;
  * @param {string} [thousandsSep]
  *        The thousands separator, defaults to the one given in the lang
  *        options, or a space character.
+ *
+ * @param {Highcharts.Chart} [ctx]
+ *        Since v12.5.0, the chart context passed as an extra argument for
+ *        arrow functions.
  *
  * @return {string} The formatted number.
  */

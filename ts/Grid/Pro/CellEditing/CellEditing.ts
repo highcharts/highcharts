@@ -28,11 +28,7 @@ import { EditModeContent } from './CellEditMode.js';
 import TableCell from '../../Core/Table/Body/TableCell.js';
 import Table from '../../Core/Table/Table.js';
 import Globals from '../../Core/Globals.js';
-import U from '../../../Core/Utilities.js';
-
-const {
-    fireEvent
-} = U;
+import { fireEvent } from '../../../Shared/Utilities.js';
 
 
 /* *
@@ -139,8 +135,8 @@ class CellEditing {
 
         if (submit) {
             const validationErrors: string[] = [];
-            if (!vp.validator.validate(cell, validationErrors)) {
-                vp.validator.initErrorBox(cell, validationErrors);
+            if (!vp.validator?.validate(cell, validationErrors)) {
+                vp.validator?.initErrorBox(cell, validationErrors);
                 this.setA11yAttributes(false);
 
                 return false;
@@ -153,7 +149,7 @@ class CellEditing {
         }
 
         // Hide notification
-        this.viewport.validator.hide();
+        this.viewport.validator?.hide();
 
         // Hide input
         this.destroy();
@@ -164,16 +160,18 @@ class CellEditing {
         cell.htmlElement.focus();
 
         const isValueChanged = cell.value !== newValue;
+
         void cell.setValue(
             submit ? newValue : cell.value,
             submit && isValueChanged
-        );
+        ).then((): void => {
 
-        if (isValueChanged) {
-            fireEvent(cell, 'stoppedEditing', { submit });
-        }
+            if (isValueChanged) {
+                fireEvent(cell, 'stoppedEditing', { submit });
+            }
 
-        delete this.editedCell;
+            delete this.editedCell;
+        });
 
         return true;
     }

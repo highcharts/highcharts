@@ -1,5 +1,5 @@
 Grid.grid('container', {
-    dataTable: {
+    data: {
         columns: {
             date: [Date.UTC(2022, 0, 1)],
             product: ['Apples']

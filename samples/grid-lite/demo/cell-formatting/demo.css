@@ -1,0 +1,102 @@
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-lite/css/grid-lite.css");
+
+body {
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Helvetica,
+        Arial,
+        "Apple Color Emoji",
+        "Segoe UI Emoji",
+        "Segoe UI Symbol",
+        sans-serif;
+    background: var(--highcharts-background-color);
+    color: var(--highcharts-neutral-color-100);
+}
+
+:root,
+.highcharts-light {
+    --code-background: #f7f7f7;
+    --code-border: #e1e1e1;
+    --highlight-color: #e2e2e2;
+    --highlight-border-color: #cec184;
+    --high-color: #348700;
+    --low-color: #d8003a;
+    --row-highlight-color: #e7ffe7;
+}
+
+.demo {
+    padding: 8px 12px;
+}
+
+.highcharts-description {
+    padding: 0 8px;
+}
+
+code {
+    font-family: Consolas, "courier new", monospace;
+    line-height: 1em;
+    background: var(--code-background);
+    border: 1px solid var(--code-border);
+    color: var(--highcharts-neutral-color-100);
+    padding: 2px 4px;
+    border-radius: 5px;
+    display: inline-block;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --code-background: #2a2a2a;
+        --code-border: #4a4a4a;
+        --highlight-color: #353434;
+        --highlight-border-color: #7d754c;
+        --high-color: #98d76a;
+        --low-color: #ffa8a8;
+        --row-highlight-color: #272a27;
+    }
+}
+
+.highcharts-dark {
+    --code-background: #2a2a2a;
+    --code-border: #4a4a4a;
+    --highlight-color: #353434;
+    --highlight-border-color: #7d754c;
+    --high-color: #98d76a;
+    --low-color: #ffa8a8;
+    --row-highlight-color: #272a27;
+}
+
+.hcg-container .hcg-table {
+    /* It is recommended to use CSS variables when styling table elements such as tr and td */
+    tr:has(.highlight-color) td {
+        --hcg-cell-background: var(--row-highlight-color);
+    }
+
+    td.high-color {
+        --hcg-cell-color: var(--high-color);
+    }
+
+    td.low-color {
+        --hcg-cell-color: var(--low-color);
+    }
+
+    td.bold {
+        font-weight: bold;
+    }
+
+    /* When styling elements inside table elements regular CSS is needed */
+    span.box {
+        font-weight: inherit;
+        display: inline-block;
+        padding: 2px 5px;
+        border: 1px solid transparent;
+        border-radius: 5px;
+    }
+
+    span.highlight {
+        background: var(--highlight-color);
+        border-color: var(--highlight-border-color);
+    }
+}

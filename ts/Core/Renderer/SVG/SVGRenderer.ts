@@ -59,8 +59,7 @@ import SVGElement from './SVGElement.js';
 import SVGLabel from './SVGLabel.js';
 import Symbols from './Symbols.js';
 import TextBuilder from './TextBuilder.js';
-import U from '../../Utilities.js';
-const {
+import {
     addEvent,
     attr,
     createElement,
@@ -76,9 +75,9 @@ const {
     merge,
     pick,
     pInt,
-    replaceNested,
-    uniqueKey
-} = U;
+    replaceNested
+} from '../../../Shared/Utilities.js';
+import { uniqueKey } from '../../Utilities.js';
 
 /* *
  *
@@ -263,7 +262,7 @@ class SVGRenderer implements SVGRendererBase {
         this.gradients = {}; // Object where gradient SvgElements are stored
         this.cache = {}; // Cache for numerical bounding boxes
         this.cacheKeys = [];
-        this.imgCount = 0;
+        this.asyncCounter = 0;
         this.rootFontSize = boxWrapper.getStyle('font-size');
 
         renderer.setSize(width, height, false);
@@ -359,8 +358,15 @@ class SVGRenderer implements SVGRendererBase {
     /** @internal */
     public height!: number;
 
-    /** @internal */
-    public imgCount: number;
+    /**
+     * A counter for async elements, like images or WebGPU-driven canvases. When
+     * the counter is above zero, the chart will wait with finalizing. When
+     * the counter reaches zero, the chart will run its onload functions. The
+     * counter is increased by one for each async element added, and decreased
+     * by one when each element has finished loading.
+     * @internal
+     **/
+    public asyncCounter: number;
 
     /** @internal */
     public rootFontSize: string|undefined;
@@ -1635,7 +1641,6 @@ class SVGRenderer implements SVGRendererBase {
                 });
             }
             img.isImg = true;
-            img.symbolUrl = symbol;
 
             if (defined(img.imgwidth) && defined(img.imgheight)) {
                 centerImage(img);
@@ -1680,14 +1685,14 @@ class SVGRenderer implements SVGRendererBase {
 
                         // Fire the load event when all external images are
                         // loaded
-                        ren.imgCount--;
-                        if (!ren.imgCount && chart && !chart.hasLoaded) {
+                        ren.asyncCounter--;
+                        if (!ren.asyncCounter && chart && !chart.hasLoaded) {
                             chart.onload();
                         }
                     },
                     src: imageSrc
                 });
-                this.imgCount++;
+                this.asyncCounter++;
             }
         }
 

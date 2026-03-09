@@ -63,8 +63,7 @@ import H from '../Globals.js';
 const { deg2rad } = H;
 import { Palette } from '../Color/Palettes.js';
 import Tick from './Tick.js';
-import U from '../Utilities.js';
-const {
+import {
     arrayMax,
     arrayMin,
     clamp,
@@ -72,11 +71,9 @@ const {
     defined,
     destroyObjectProperties,
     erase,
-    error,
     extend,
     fireEvent,
     getClosestDistance,
-    insertItem,
     isArray,
     isNumber,
     isString,
@@ -88,7 +85,8 @@ const {
     removeEvent,
     splat,
     syncTimeout
-} = U;
+} from '../../Shared/Utilities.js';
+import { error, insertItem } from '../Utilities.js';
 
 const getNormalizedTickInterval = (
     axis: Axis,
@@ -318,6 +316,7 @@ class Axis {
      * @type {boolean|Highcharts.AxisCrosshairOptions}
      */
     public crosshair?: AxisCrosshairOptions;
+    public crossShowTimer?: number;
 
     /** @internal */
     public dataMax?: number;
@@ -1029,19 +1028,20 @@ class Axis {
                     value !== 0
                 ) { // #5480
                     ret = numberFormatter(
-                        value / multi, -1
+                        value / multi, -1, void 0, void 0, chart
                     ) + numericSymbols[i];
                 }
             }
         }
 
-        if (typeof ret === 'undefined') {
-            if (Math.abs(value) >= 10000) { // Add thousands separators
-                ret = numberFormatter(value, -1);
-            } else { // Small numbers
-                ret = numberFormatter(value, -1, void 0, ''); // #2466
-            }
-        }
+        ret ??= numberFormatter(
+            value,
+            -1,
+            void 0,
+            // Add thousands separators when 10 000 or more
+            Math.abs(value) < 10000 ? '' : void 0,
+            chart
+        );
 
         return ret;
     }
@@ -2457,7 +2457,7 @@ class Axis {
                 this.tickPositions = tickPositions;
                 tickPositionerResult = tickPositioner.apply(
                     axis,
-                    [this.min, this.max]
+                    [this.min, this.max, axis]
                 );
                 if (tickPositionerResult) {
                     tickPositions = tickPositionerResult;
@@ -2465,6 +2465,16 @@ class Axis {
             }
 
         }
+
+        // Ensure the old ticks are removed and new ones added (#17393)
+        if (
+            !this.isDirty &&
+            tickPositions.length !==
+            this.tickPositions?.length
+        ) {
+            this.isDirty = true;
+        }
+
         this.tickPositions = tickPositions;
 
 
@@ -4483,12 +4493,12 @@ class Axis {
 
         const options = this.crosshair,
             snap = options?.snap ?? true,
-            chart = this.chart;
+            chart = this.chart,
+            graphic = this.cross;
 
-        let path,
+        let path: SVGPath | null | undefined,
             pos,
-            categorized,
-            graphic = this.cross,
+            categorized: boolean | undefined,
             crossOptions: Axis.PlotLinePathOptions;
 
         fireEvent(this, 'drawCrosshair', { e: e, point: point });
@@ -4507,23 +4517,24 @@ class Axis {
         ) {
             this.hideCrosshair();
         } else {
+            clearTimeout(this.crossShowTimer);
 
             // Get the path
             if (!snap) {
                 pos = e &&
                     (
                         this.horiz ?
-                            e.chartX - (this.pos as any) :
-                            this.len - e.chartY + (this.pos as any)
+                            e.chartX - this.pos :
+                            this.len - e.chartY + this.pos
                     );
             } else if (defined(point)) {
                 // #3834
                 pos = pick(
                     this.coll !== 'colorAxis' ?
-                        (point as any).crosshairPos : // 3D axis extension
+                        point.crosshairPos : // 3D axis extension
                         null,
                     this.isXAxis ?
-                        (point as any).plotX :
+                        point.plotX :
                         this.len - (point as any).plotY
                 );
             }
@@ -4533,7 +4544,7 @@ class Axis {
                     // Value, only used on radial
                     value: point && (this.isXAxis ?
                         point.x :
-                        pick(point.stackY, point.y)) as any,
+                        pick(point.stackY, point.y)),
                     translatedValue: pos
                 };
 
@@ -4559,54 +4570,70 @@ class Axis {
 
             categorized = this.categories && !this.isRadial;
 
-            // Draw the cross
-            if (!graphic) {
-                this.cross = graphic = chart.renderer
-                    .path()
-                    .addClass(
-                        'highcharts-crosshair highcharts-crosshair-' +
-                        (categorized ? 'category ' : 'thin ') +
-                        (options.className || '')
-                    )
-                    .attr({
-                        zIndex: pick(options.zIndex, 2)
-                    })
-                    .add();
+            this.crossShowTimer = syncTimeout((): void => {
+                // Get the *current* crosshair, in case it was created by
+                // another call while this one was delayed.
+                let cross = this.cross;
 
-                // Presentational attributes
-                if (!chart.styledMode) {
-                    graphic.attr({
-                        stroke: options.color ||
-                            (
-                                categorized ?
-                                    Color
-                                        .parse(Palette.highlightColor20)
-                                        .setOpacity(0.25)
-                                        .get() :
-                                    Palette.neutralColor20
-                            ),
-                        'stroke-width': pick(options.width, 1)
-                    }).css({
-                        'pointer-events': 'none'
-                    });
-                    if (options.dashStyle) {
-                        graphic.attr({
-                            dashstyle: options.dashStyle
+                // Draw the cross
+                if (!cross) {
+                    this.cross = cross = chart.renderer
+                        .path()
+                        .addClass(
+                            'highcharts-crosshair highcharts-crosshair-' +
+                            (categorized ? 'category ' : 'thin ') +
+                            (options.className || '')
+                        )
+                        .attr({
+                            zIndex: pick(options.zIndex, 2)
+                        })
+                        .add();
+
+                    // Presentational attributes
+                    if (!chart.styledMode) {
+                        cross.attr({
+                            stroke: options.color ||
+                                (
+                                    categorized ?
+                                        Color
+                                            .parse(Palette.highlightColor20)
+                                            .setOpacity(0.25)
+                                            .get() :
+                                        Palette.neutralColor20
+                                ),
+                            'stroke-width': pick(options.width, 1)
+                        }).css({
+                            'pointer-events': 'none'
                         });
+                        if (options.dashStyle) {
+                            cross.attr({
+                                dashstyle: options.dashStyle
+                            });
+                        }
                     }
                 }
-            }
 
-            graphic.show().attr({
-                d: path
-            });
+                cross
+                    .show()
+                    .animate(
+                        { d: path as SVGPath },
+                        animObject(options?.animation)
+                    );
 
-            if (categorized && !(options as any).width) {
-                graphic.attr({
-                    'stroke-width': this.transA
-                });
-            }
-            (this.cross as any).e = e;
+                if (categorized && !options.width) {
+                    cross.attr({
+                        'stroke-width': this.transA
+                    });
+                }
+                if (this.cross) {
+                    this.cross.e = e;
+                }
+            },
+            // Only use delay if the crosshair is currently hidden
+            (!graphic || graphic.attr('visibility') === 'hidden') ?
+                options.showDelay || 0 :
+                0
+            );
         }
 
         fireEvent(this, 'afterDrawCrosshair', { e: e, point: point });
@@ -4618,6 +4645,8 @@ class Axis {
      * @function Highcharts.Axis#hideCrosshair
      */
     public hideCrosshair(): void {
+        clearTimeout(this.crossShowTimer);
+
         if (this.cross) {
             this.cross.hide();
         }
@@ -4951,6 +4980,8 @@ export default Axis;
  * @param {Highcharts.AxisLabelsFormatterContextObject} this
  *
  * @param {Highcharts.AxisLabelsFormatterContextObject} ctx
+ * Since v12.5.0, the formatter context passed as an extra argument for arrow
+ * functions.
  *
  * @return {string}
  */
@@ -5062,7 +5093,17 @@ export default Axis;
  *
  * @param {Highcharts.Axis} this
  *
- * @return {Highcharts.AxisTickPositionsArray}
+ * @param {number} min
+ * Current minimum value.
+ *
+ * @param {number} max
+ * Current maximum value.
+ *
+ * @param {Highcharts.Axis} [ctx]
+ * Since v12.5.0, the axis context passed as an extra argument for arrow
+ * functions.
+ *
+ * @return {Highcharts.AxisTickPositionsArray|undefined}
  */
 
 /**
@@ -5129,6 +5170,10 @@ export default Axis;
  *
  * @param {number} value
  * Y value of the data point
+ *
+ * @param {Highcharts.Axis} [ctx]
+ * Since v12.5.0, the axis context passed as an extra argument for arrow
+ * functions.
  *
  * @return {string}
  */

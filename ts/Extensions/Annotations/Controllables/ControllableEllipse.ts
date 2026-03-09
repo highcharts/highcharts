@@ -23,11 +23,7 @@ import BBoxObject from '../../../Core/Renderer/BBoxObject';
 import Controllable from './Controllable.js';
 import ControllablePath from './ControllablePath.js';
 import MockPointOptions from '../AnnotationMockPointOptionsObject';
-import U from '../../../Core/Utilities.js';
-const {
-    merge,
-    defined
-} = U;
+import { defined, merge } from '../../../Shared/Utilities.js';
 
 /* *
  *
@@ -131,7 +127,9 @@ class ControllableEllipse extends Controllable {
         if (defined(options.yAxis)) {
             (options.points as Array<MockPointOptions>).forEach(
                 (point): void => {
-                    point.yAxis = options.yAxis;
+                    if (point && typeof point !== 'string') {
+                        point.yAxis = options.yAxis;
+                    }
                 }
             );
         }
@@ -139,7 +137,9 @@ class ControllableEllipse extends Controllable {
         if (defined(options.xAxis)) {
             (options.points as Array<MockPointOptions>).forEach(
                 (point): void => {
-                    point.xAxis = options.xAxis;
+                    if (point && typeof point !== 'string') {
+                        point.xAxis = options.xAxis;
+                    }
                 }
             );
         }

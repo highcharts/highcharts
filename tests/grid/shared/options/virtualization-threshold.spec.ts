@@ -6,7 +6,7 @@ test.describe('Grid rows virtualizaion threshold', () => {
     });
 
     test.beforeEach(async ({ page }) => {
-        await page.goto('grid-pro/cypress/virtualization-threshold');
+        await page.goto('grid-pro/e2e/virtualization-threshold');
     });
 
     test('Should properly set rows virtualizaion based on row count', async ({ page }) => {
@@ -18,7 +18,7 @@ test.describe('Grid rows virtualizaion threshold', () => {
             // Update data to lower the row count below the default
             // virtualization threshold.
             await grid.update({
-                dataTable: {
+                data: {
                     columns: {
                         Data: grid.dataTable.columns.Data.slice(0, 40)
                     }

@@ -15,11 +15,8 @@
  * */
 
 import Board from '../Board.js';
-import U from '../../Core/Utilities.js';
 import Globals from '../Globals.js';
-
-const { addEvent } = U;
-
+import { addEvent } from '../../Shared/Utilities.js';
 class Fullscreen {
 
     /* *

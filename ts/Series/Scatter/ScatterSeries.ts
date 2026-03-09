@@ -26,12 +26,7 @@ const {
     column: ColumnSeries,
     line: LineSeries
 } = SeriesRegistry.seriesTypes;
-import U from '../../Core/Utilities.js';
-const {
-    addEvent,
-    extend,
-    merge
-} = U;
+import { addEvent, extend, merge } from '../../Shared/Utilities.js';
 
 /* *
  *

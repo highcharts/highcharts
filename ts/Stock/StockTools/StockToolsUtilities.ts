@@ -41,13 +41,8 @@ const {
     getFieldType
 } = NBU;
 import Series from '../../Core/Series/Series.js';
-import U from '../../Core/Utilities.js';
-const {
-    defined,
-    fireEvent,
-    isNumber,
-    uniqueKey
-} = U;
+import { defined, fireEvent, isNumber } from '../../Shared/Utilities.js';
+import { uniqueKey } from '../../Core/Utilities.js';
 
 /* *
  *
@@ -92,9 +87,9 @@ const indicatorsWithAxes = [
     'disparityindex',
     'dmi',
     'dpo',
-    'linearRegressionAngle',
-    'linearRegressionIntercept',
-    'linearRegressionSlope',
+    'linearregressionangle',
+    'linearregressionintercept',
+    'linearregressionslope',
     'klinger',
     'macd',
     'mfi',

@@ -1,6 +1,6 @@
 describe('Date Input Types', () => {
     before(() => {
-        cy.visit('grid-pro/cypress/date-input-types');
+        cy.visit('grid-pro/e2e/date-input-types');
     });
 
     it('Should parse date input values correctly', () => {
@@ -58,10 +58,14 @@ describe('Date Input Types', () => {
             .find('input[type="date"]')
             .should('exist');
 
+        cy.get('body').click();
+
         cy.get('tr[data-row-index="0"] td[data-column-id="datetimeView"]')
             .dblclick()
             .find('input[type="datetime-local"]')
             .should('exist');
+
+        cy.get('body').click();
 
         cy.get('tr[data-row-index="0"] td[data-column-id="timeView"]')
             .dblclick()

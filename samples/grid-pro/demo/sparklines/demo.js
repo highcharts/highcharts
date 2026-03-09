@@ -126,7 +126,7 @@ const percentageZones = [{
 
 // Create the grid with the data table and configure the columns.
 const grid = Grid.grid('container', {
-    dataTable: data,
+    data: { dataTable: data },
     rendering: {
         rows: {
             strictHeights: true
@@ -304,6 +304,7 @@ const grid = Grid.grid('container', {
                             type: 'pie'
                         },
                         series: [{
+                            innerSize: '50%',
                             data: [{
                                 name: 'Used',
                                 y: data,

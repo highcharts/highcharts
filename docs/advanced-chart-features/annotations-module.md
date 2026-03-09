@@ -51,7 +51,8 @@ annotations: [{
             y: 100,
             xAxis: 0
         }
-    }],
+    }]
+}]
 ```
 
 Both annotation configurations are represented on this chart (see below). Try to zoom in and out to see the differences:
@@ -73,39 +74,97 @@ Common options for all annotations in all charts in the page can otherwise be se
 The shapes option
 -----------------
 
-Similar to the labels option, the shapes option defines a shape object. The object requires the `type` property such as `rect`, `circle` or `path`.
+Similar to the labels option, the shapes option defines a shape object. This object requires the `type` property such as `circle`, `rect`, `ellipse`, or `path`.
 
+The `ellipse` and `path` types require defining points property as an array of points, whereas `rect` and `circle` take only one point to render.
+
+`xAxis` and `yAxis` can be used on point level, to convert `x` and `y` values to axis units, and on `shapes` or `shapeOptions` level, to convert points and size values like `width`, `height`, `ry` and `r`.
+
+Read more about basic shapes annotations at [annotations shapeOptions API](https://api.highcharts.com/highcharts/annotations.shapeOptions).
+
+Examples of shapes created with axis units
+-----------------
+
+Circle configuration:
 ```js
 annotations: [{
+    shapeOptions: {
+        xAxis: 0,
+        yAxis: 0
+    },
     shapes: [{
-        point: '0',
+        point: {
+            x: 1,
+            y: 50
+        },
         type: 'circle',
-        r: 10
-    }, {
-        point: '3',
-        type: 'rect',
-        width: 20,
-        height: 20
+        r: 50
     }]
 }]
 ```
 
-The path type allows to define points property that takes an array of points.
-
+Rect configuration:
 ```js
 annotations: [{
+    shapeOptions: {
+        xAxis: 0,
+        yAxis: 0
+    },
+    shapes: [{
+        point: {
+            x: 3,
+            y: 150
+        },
+        type: 'rect',
+        width: 1,
+        height: 100
+    }]
+}]
+```
+Ellipse configuration:
+```js
+annotations: [{
+    shapeOptions: {
+        xAxis: 0,
+        yAxis: 0
+    },
+    shapes: [{
+        points: [{
+            x: 1,
+            y: 150
+        }, {
+            x: 2.5,
+            y: 150
+        }],
+        type: 'ellipse',
+        ry: 50
+    }]
+}]
+```
+Path configuration:
+```js
+annotations: [{
+    shapeOptions: {
+        xAxis: 0,
+        yAxis: 0
+    },
     shapes: [{
         type: 'path',
-        points: ['0', '3', {
+        points: [{
+            x: 0,
+            y: 300
+        }, {
+            x: 4,
+            y: 180
+        }, {
             x: 6,
             y: 195,
-            xAxis: 0,
-            yAxis: 0
-        }],
-        markerEnd: 'arrow'
+        }]
     }]
 }]
 ```
+
+<iframe style="width: 100%; height: 432px; border: none;" src="https://www.highcharts.com/samples/embed/highcharts/annotations/shapes-axis-units" allow="fullscreen"></iframe>
 
 Defining markers for the path
 -----------------------------

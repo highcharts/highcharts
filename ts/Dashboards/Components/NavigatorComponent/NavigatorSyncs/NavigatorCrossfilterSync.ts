@@ -30,10 +30,9 @@ import type {
 import Component from '../../Component';
 import DataModifier from '../../../../Data/Modifiers/DataModifier.js';
 import NavigatorSyncUtils from './NavigatorSyncUtils.js';
-import U from '../../../../Core/Utilities.js';
+import { addEvent } from '../../../../Shared/Utilities.js';
 
 const { Filter: FilterModifier } = DataModifier.types;
-const { addEvent } = U;
 
 
 /* *

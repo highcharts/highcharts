@@ -3,13 +3,22 @@ import type {
 } from '../../../../tools/sample-generator/generator-config.d.ts';
 
 export default {
-    paths: [
-        'legend.align=right',
-        'legend.verticalAlign=middle',
-        'legend.layout=vertical',
-        'legend.x',
-        'legend.y'
-    ],
+    controls: [{
+        path: 'legend.align',
+        value: 'right'
+    }, {
+        path: 'legend.verticalAlign',
+        value: 'middle'
+    }, {
+        path: 'legend.layout',
+        value: 'vertical'
+    }, {
+        path: 'legend.x',
+        value: 0
+    }, {
+        path: 'legend.y',
+        value: 0
+    }],
     templates: ['categories-12'],
     chartOptionsExtra: {
         series: [{

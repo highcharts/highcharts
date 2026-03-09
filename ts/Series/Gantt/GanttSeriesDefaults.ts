@@ -21,8 +21,7 @@
 import type GanttPoint from './GanttPoint';
 import type GanttSeriesOptions from './GanttSeriesOptions';
 
-import U from '../../Core/Utilities.js';
-const { isNumber } = U;
+import { isNumber } from '../../Shared/Utilities.js';
 
 /* *
  *

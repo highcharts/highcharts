@@ -1,6 +1,4 @@
 ---
- name: Demo of series.data
- authors:
-   - Torstein Hønsi
- js_wrap: b
+name: Demo of series.data
+js_wrap: b
 ...

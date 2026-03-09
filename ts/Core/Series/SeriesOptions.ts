@@ -799,7 +799,7 @@ export interface SeriesOptions {
      *
      * @since 3.0
      */
-    negativeColor?: ColorType;
+    negativeColor?: ColorType | boolean;
 
     /**
      * Whether or not data-points with the value of `null` should be
@@ -1095,8 +1095,6 @@ export interface SeriesOptions {
      * @product highcharts highstock
      */
     zIndex?: number;
-
-    zoomEnabled?: boolean;
 
     /**
      * Defines the Axis on which the zones are applied.
