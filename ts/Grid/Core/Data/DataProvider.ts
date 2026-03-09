@@ -226,6 +226,10 @@ export interface DataProviderOptions {
      * If set to `false`, only columns explicitly configured in `columns[]`
      * (or referenced by `header`) will be rendered.
      *
+     * With `autogenerateColumns: true` and no `header`, source columns are
+     * rendered in provider order, and custom configured columns are appended
+     * at the end in their definition order.
+     *
      * @default true
      */
     autogenerateColumns?: boolean;

@@ -344,8 +344,10 @@ class ColumnPolicyResolver {
             headerColumns.length > 0 ?
                 headerColumns :
                 autogenerateColumns ?
-                    autoColumns :
-                    configuredColumns
+                    ColumnPolicyResolver.getColumnsForAutogeneration(
+                        autoColumns,
+                        configuredColumns
+                    ) : configuredColumns
         );
 
         if (!columnsIncluded?.length) {
@@ -353,6 +355,30 @@ class ColumnPolicyResolver {
         }
 
         return this.filterEnabledColumns(columnsIncluded);
+    }
+
+    /**
+     * Returns column ids for autogeneration mode:
+     * `autoColumns` followed by configured-only columns.
+     *
+     * Relative order from `configuredColumns` is preserved.
+     *
+     * @param autoColumns
+     * Column ids from the data provider.
+     *
+     * @param configuredColumns
+     * Column ids from `options.columns`.
+     */
+    private static getColumnsForAutogeneration(
+        autoColumns: string[],
+        configuredColumns?: string[]
+    ): string[] {
+        const autoColumnIds = new Set(autoColumns);
+        const customConfiguredColumns = (configuredColumns || []).filter(
+            (columnId): boolean => !autoColumnIds.has(columnId)
+        );
+
+        return autoColumns.concat(customConfiguredColumns);
     }
 
     /**
