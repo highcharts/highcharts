@@ -34,9 +34,9 @@ In this case, all inputs use `6px` radius globally, while inputs in pagination a
 | Variable                       | Default Value                  | Valid Values |
 | ------------------------------ | ------------------------------ | ------------ |
 | --hcg-input-padding            | 5px                            | [padding](https://developer.mozilla.org/en-US/docs/Web/CSS/padding) |
-| --hcg-input-font-weight        | normal                         | [font-weight](https://developer.mozilla.org/en-US/docs/Web/CSS/font-weight) |
-| --hcg-input-font-size          | 0.9em                          | [font-size](https://developer.mozilla.org/en-US/docs/Web/CSS/font-size) |
-| --hcg-input-font-family        | --hcg-font-family              | [font-family](https://developer.mozilla.org/en-US/docs/Web/CSS/font-family) |
+| --hcg-input-font-weight        | inherit                        | [font-weight](https://developer.mozilla.org/en-US/docs/Web/CSS/font-weight) |
+| --hcg-input-font-size          | inherit                        | [font-size](https://developer.mozilla.org/en-US/docs/Web/CSS/font-size) |
+| --hcg-input-font-family        | inherit                        | [font-family](https://developer.mozilla.org/en-US/docs/Web/CSS/font-family) |
 | --hcg-input-color              | --hcg-color                    | [color](https://developer.mozilla.org/en-US/docs/Web/CSS/color) |
 | --hcg-input-text-align         | --hcg-text-align               | [text-align](https://developer.mozilla.org/en-US/docs/Web/CSS/text-align) |
 | --hcg-input-border-radius      | 0                              | [border-radius](https://developer.mozilla.org/en-US/docs/Web/CSS/border-radius) |
@@ -47,6 +47,8 @@ In this case, all inputs use `6px` radius globally, while inputs in pagination a
 | --hcg-input-hover-color        | --hcg-input-color              | [color](https://developer.mozilla.org/en-US/docs/Web/CSS/color) |
 | --hcg-input-hover-background   | --hcg-input-background         | [background](https://developer.mozilla.org/en-US/docs/Web/CSS/background) |
 | --hcg-input-hover-border-color | --hcg-input-border-color       | [border-color](https://developer.mozilla.org/en-US/docs/Web/CSS/border-color) |
+
+Inputs inherit surrounding typography by default. That means header inputs follow header typography, body-cell inputs follow cell typography, and pagination inputs follow pagination typography unless input-specific font variables are set.
 
 ### Section prefixes
 
