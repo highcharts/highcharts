@@ -87,9 +87,13 @@ class Time extends TimeBase {
                 ) {
                     boundaryTicks[t] = 'year';
                 }
-                // Mark first monthly tick as year boundary when scrolling
+                // Mark first visible tick as boundary, if timeUnit is month or
+                // hour.
                 if (unitRange === timeUnits.month && i === 0) {
                     boundaryTicks[t] = 'year';
+                }
+                if (unitRange === timeUnits.hour && i === 0) {
+                    boundaryTicks[t] = 'day';
                 }
             });
         }

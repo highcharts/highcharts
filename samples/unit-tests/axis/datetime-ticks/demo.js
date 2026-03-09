@@ -248,8 +248,8 @@ QUnit.test(
 
         assert.strictEqual(
             dayBoundaryCount,
-            2,
-            '2 boundary ticks with value "day" found'
+            3,
+            '3 boundary ticks with value "day" found'
         );
 
         // Reset
