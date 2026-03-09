@@ -668,7 +668,7 @@ class MapSeries extends ScatterSeries {
         // map, but not the map area shape itself. Instead it is rendered like a
         // null point. To fully remove a map area, it should be removed from the
         // mapData.
-        if (!point?.visible) {
+        if (point?.visible === false) {
             attr.fill = this.options.nullColor;
         }
 
