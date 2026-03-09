@@ -145,6 +145,16 @@ class ToolbarButton implements Button {
         this.refreshState();
         this.addEventListeners();
 
+        const revealToolbar = (): void => {
+            this.toolbar?.container?.removeAttribute('aria-hidden');
+        };
+        button.addEventListener('mousedown', revealToolbar);
+        button.addEventListener('focus', revealToolbar);
+        this.eventListenerDestroyers.push((): void => {
+            button.removeEventListener('mousedown', revealToolbar);
+            button.removeEventListener('focus', revealToolbar);
+        });
+
         return this;
     }
 
@@ -170,6 +180,7 @@ class ToolbarButton implements Button {
     }
 
     public focus(): void {
+        this.toolbar?.container?.removeAttribute('aria-hidden');
         this.buttonEl?.focus();
 
         const tb = this.toolbar;

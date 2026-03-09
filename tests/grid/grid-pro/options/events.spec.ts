@@ -52,7 +52,7 @@ test.describe('Grid Pro - cell and column events', () => {
 
     test('Cell mouseOver / mouseOut event', async ({ page }) => {
         // ColumnDefaults
-        const productCell = page.locator('.hcg-row[data-row-index="1"] > td[data-column-id="product"]');
+        const productCell = page.locator('.hcg-row[data-row-index="1"] > [data-column-id="product"]');
         await productCell.hover();
         await expect(page.locator('#cellMouseOver')).toHaveValue('cellMouseOver');
 
@@ -73,7 +73,7 @@ test.describe('Grid Pro - cell and column events', () => {
 
     test('Cell click event', async ({ page }) => {
         // ColumnDefaults
-        const productCell = page.locator('.hcg-row[data-row-index="1"] > td[data-column-id="product"]');
+        const productCell = page.locator('.hcg-row[data-row-index="1"] > [data-column-id="product"]');
         await productCell.click({ force: true });
         await expect(page.locator('#cellClick')).toHaveValue('cellClick');
 
@@ -85,7 +85,7 @@ test.describe('Grid Pro - cell and column events', () => {
 
     test('Cell dblClick event', async ({ page }) => {
         // ColumnDefaults
-        const productCell = page.locator('.hcg-row[data-row-index="1"] > td[data-column-id="product"]');
+        const productCell = page.locator('.hcg-row[data-row-index="1"] > [data-column-id="product"]');
         await productCell.dblclick({ force: true });
         await expect(page.locator('#cellDblClick')).toHaveValue('cellDblClick');
 
@@ -138,7 +138,7 @@ test.describe('Grid Pro - cell and column events', () => {
 
     test('Cell afterEdit event', async ({ page }) => {
         // ColumnDefaults
-        const productCell = page.locator('.hcg-row[data-row-index="1"] > td[data-column-id="product"]');
+        const productCell = page.locator('.hcg-row[data-row-index="1"] > [data-column-id="product"]');
         await productCell.dblclick({ force: true });
         await productCell.locator('input').clear();
         await productCell.locator('input').fill('Strawberries');
@@ -232,4 +232,3 @@ test.describe('Grid Pro - cell and column events', () => {
         await expect(page.locator('#afterColumnFiltering')).toHaveValue('afterFilterColumnOption');
     });
 });
-

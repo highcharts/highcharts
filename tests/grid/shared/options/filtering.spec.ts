@@ -7,7 +7,7 @@ const inputWeightFilter = '.hcg-header-cell[data-column-id="weight"] input';
 const selectWeightFilter = '.hcg-header-cell[data-column-id="weight"] select';
 const selectBooleanFilter = '.hcg-header-cell[data-column-id="active"] select';
 const gridRows = '.hcg-row';
-const productColumn = 'td[data-column-id="product"]';
+const productColumn = '[data-column-id="product"]';
 const weightColumn = 'td[data-column-id="weight"]';
 const booleanColumn = 'td[data-column-id="active"]';
 
@@ -309,4 +309,3 @@ test.describe('Grid filtering', () => {
     });
 
 });
-

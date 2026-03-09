@@ -219,28 +219,23 @@ class TableCell extends Cell {
         const { column, row } = this;
         const { viewport } = column;
         const { htmlElement } = this;
-        const columnHeaderId = viewport.getColumnHeaderId(column);
-        const rowHeaderId = viewport.getRowHeaderId(row.index);
+        const cellId = viewport.getBodyCellId(row.index, column.index);
+        const headerIds = column.headerIds.filter(Boolean);
 
-        htmlElement.setAttribute('aria-colindex', String(column.index + 1));
-
-        if (column.index === 0) {
-            htmlElement.setAttribute('id', rowHeaderId);
-            htmlElement.setAttribute('role', 'rowheader');
-            htmlElement.setAttribute('headers', columnHeaderId);
-            return;
-        }
-
-        htmlElement.removeAttribute('id');
+        htmlElement.setAttribute('id', cellId);
         htmlElement.removeAttribute('scope');
         htmlElement.removeAttribute('role');
-        htmlElement.setAttribute(
-            'headers',
-            [
-                rowHeaderId,
-                columnHeaderId
-            ].join(' ')
-        );
+
+        if (headerIds.length > 0) {
+            htmlElement.setAttribute('headers', headerIds.join(' '));
+            htmlElement.setAttribute(
+                'aria-labelledby',
+                [...headerIds, cellId].join(' ')
+            );
+        } else {
+            htmlElement.removeAttribute('headers');
+            htmlElement.removeAttribute('aria-labelledby');
+        }
     }
 
     /**

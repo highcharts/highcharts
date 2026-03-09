@@ -5,7 +5,7 @@ test.describe('Connector data', () => {
         await page.goto('/grid-lite/e2e/connector-data/');
 
         const productCell = page.locator(
-            '.hcg-row[data-row-index="0"] > td[data-column-id="product"]'
+            '.hcg-row[data-row-index="0"] > [data-column-id="product"]'
         );
         const weightCell = page.locator(
             '.hcg-row[data-row-index="0"] > td[data-column-id="weight"]'

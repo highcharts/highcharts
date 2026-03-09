@@ -22,7 +22,7 @@ test.describe('Grid accessibility semantics', () => {
         await page.keyboard.press('Tab');
 
         const focused = page.locator(':focus');
-        await expect(focused).toHaveAttribute('role', 'columnheader');
+        await expect(focused).toHaveAttribute('scope', 'col');
         await expect(focused).toHaveAttribute('data-column-id', 'id');
     });
 
@@ -39,11 +39,10 @@ test.describe('Grid accessibility semantics', () => {
         );
     });
 
-    test('Grid exposes row and column header associations for body cells', async ({ page }) => {
+    test('Grid exposes column header associations and focus labels for body cells', async ({ page }) => {
         const snapshot = await page.evaluate(() => {
-            const table = document.querySelector('table');
             const row = document.querySelector('tbody tr');
-            const rowHeader = row?.querySelector(
+            const firstCell = row?.querySelector(
                 'td[data-column-id="id"]'
             );
             const secondDataCell = row?.querySelector(
@@ -57,33 +56,32 @@ test.describe('Grid accessibility semantics', () => {
             );
 
             return {
-                ariaColCount: table?.getAttribute('aria-colcount') || null,
-                rowHeaderTag: rowHeader?.tagName || null,
-                rowHeaderRole: rowHeader?.getAttribute('role') || null,
-                rowHeaderId: rowHeader?.id || null,
-                rowHeaderHeaders: rowHeader?.getAttribute('headers') || null,
-                rowHeaderColIndex: rowHeader?.getAttribute('aria-colindex') || null,
-                secondDataCellHeaders: secondDataCell?.getAttribute('headers') || null,
-                secondDataCellColIndex: secondDataCell?.getAttribute('aria-colindex') || null,
+                firstCellTag: firstCell?.tagName || null,
+                firstCellId: firstCell?.id || null,
+                firstCellHeaders: firstCell?.getAttribute('headers') || null,
+                firstCellLabelledBy:
+                    firstCell?.getAttribute('aria-labelledby') || null,
                 idHeaderId: idHeader?.id || null,
+                secondDataCellHeaders: secondDataCell?.getAttribute('headers') || null,
+                secondDataCellId: secondDataCell?.id || null,
+                secondDataCellLabelledBy:
+                    secondDataCell?.getAttribute('aria-labelledby') || null,
                 activeHeaderId: activeHeader?.id || null
             };
         });
 
-        expect(snapshot.ariaColCount).toBeTruthy();
-        expect(snapshot.rowHeaderTag).toBe('TD');
-        expect(snapshot.rowHeaderRole).toBe('rowheader');
-        expect(snapshot.rowHeaderColIndex).toBe('1');
-        expect(snapshot.rowHeaderHeaders).toContain(snapshot.idHeaderId);
-        expect(snapshot.rowHeaderId).toBeTruthy();
-        expect(snapshot.secondDataCellColIndex).toBe('2');
-        expect(snapshot.secondDataCellHeaders)
-            .toContain(snapshot.rowHeaderId);
+        expect(snapshot.firstCellTag).toBe('TD');
+        expect(snapshot.firstCellId).toBeTruthy();
+        expect(snapshot.firstCellHeaders).toContain(snapshot.idHeaderId);
+        expect(snapshot.firstCellLabelledBy)
+            .toBe(`${snapshot.idHeaderId} ${snapshot.firstCellId}`);
         expect(snapshot.secondDataCellHeaders)
             .toContain(snapshot.activeHeaderId);
+        expect(snapshot.secondDataCellLabelledBy)
+            .toBe(`${snapshot.activeHeaderId} ${snapshot.secondDataCellId}`);
     });
 
-    test('Hiding the first visible column reassigns the row header source', async ({ page }) => {
+    test('Hiding the first visible column keeps body cells uniform', async ({ page }) => {
         await page.evaluate(() => {
             const grid = (window as any).Grid.grids[0];
             grid.update({
@@ -100,13 +98,13 @@ test.describe('Grid accessibility semantics', () => {
 
         const snapshot = await page.evaluate(() => {
             const row = document.querySelector('tbody tr');
-            const rowHeader = row?.querySelector(
+            const firstCell = row?.querySelector(
                 'td[data-column-id="active"]'
             );
             const firstDataCell = row?.querySelector(
                 'td[data-column-id="date"]'
             );
-            const nextHeader = document.querySelector(
+            const activeHeader = document.querySelector(
                 'thead th[data-column-id="active"]'
             );
             const dateHeader = document.querySelector(
@@ -114,37 +112,38 @@ test.describe('Grid accessibility semantics', () => {
             );
 
             return {
-                rowHeaderColumnId:
-                    rowHeader?.getAttribute('data-column-id') || null,
-                rowHeaderRole:
-                    rowHeader?.getAttribute('role') || null,
-                rowHeaderId:
-                    rowHeader?.id || null,
-                rowHeaderColIndex:
-                    rowHeader?.getAttribute('aria-colindex') || null,
-                rowHeaderHeaders:
-                    rowHeader?.getAttribute('headers') || null,
+                firstCellColumnId:
+                    firstCell?.getAttribute('data-column-id') || null,
+                firstCellTag:
+                    firstCell?.tagName || null,
+                firstCellId:
+                    firstCell?.id || null,
+                firstCellHeaders:
+                    firstCell?.getAttribute('headers') || null,
+                firstCellLabelledBy:
+                    firstCell?.getAttribute('aria-labelledby') || null,
                 firstDataCellColumnId:
                     firstDataCell?.getAttribute('data-column-id') || null,
-                firstDataCellColIndex:
-                    firstDataCell?.getAttribute('aria-colindex') || null,
+                firstDataCellId:
+                    firstDataCell?.id || null,
                 firstDataCellHeaders:
                     firstDataCell?.getAttribute('headers') || null,
-                nextHeaderId: nextHeader?.id || null,
+                firstDataCellLabelledBy:
+                    firstDataCell?.getAttribute('aria-labelledby') || null,
+                activeHeaderId: activeHeader?.id || null,
                 dateHeaderId: dateHeader?.id || null
             };
         });
 
-        expect(snapshot.rowHeaderColumnId).toBe('active');
-        expect(snapshot.rowHeaderRole).toBe('rowheader');
-        expect(snapshot.rowHeaderColIndex).toBe('1');
-        expect(snapshot.rowHeaderHeaders).toContain(snapshot.nextHeaderId);
-        expect(snapshot.rowHeaderId).toBeTruthy();
+        expect(snapshot.firstCellColumnId).toBe('active');
+        expect(snapshot.firstCellTag).toBe('TD');
+        expect(snapshot.firstCellHeaders).toContain(snapshot.activeHeaderId);
+        expect(snapshot.firstCellLabelledBy)
+            .toBe(`${snapshot.activeHeaderId} ${snapshot.firstCellId}`);
         expect(snapshot.firstDataCellColumnId).toBe('date');
-        expect(snapshot.firstDataCellColIndex).toBe('2');
-        expect(snapshot.firstDataCellHeaders)
-            .toContain(snapshot.rowHeaderId);
         expect(snapshot.firstDataCellHeaders)
             .toContain(snapshot.dateHeaderId);
+        expect(snapshot.firstDataCellLabelledBy)
+            .toBe(`${snapshot.dateHeaderId} ${snapshot.firstDataCellId}`);
     });
 });

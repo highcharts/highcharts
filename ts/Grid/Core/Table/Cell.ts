@@ -108,10 +108,6 @@ abstract class Cell {
         this.htmlElement = this.init();
         this.htmlElement.setAttribute('tabindex', '-1');
 
-        if (!this.column?.options.cells?.editMode?.enabled) {
-            this.htmlElement.setAttribute('aria-readonly', 'true');
-        }
-
         this.initEvents();
     }
 

@@ -317,10 +317,6 @@ class Accessibility {
             'aria-rowcount',
             await grid.dataProvider?.getRowCount() || 0
         );
-        tableEl.setAttribute(
-            'aria-colcount',
-            String(grid.enabledColumns?.length || 0)
-        );
 
         if (grid.captionElement) {
             tableEl.setAttribute(

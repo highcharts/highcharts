@@ -45,7 +45,7 @@ test.describe('Keyboard navigation in Grid', () => {
         await page.locator('#before-grid').focus();
         await page.keyboard.press('Tab');
 
-        await expect(page.locator(':focus')).toHaveAttribute('role', 'columnheader');
+        await expect(page.locator(':focus')).toHaveAttribute('scope', 'col');
         await expect(page.locator(':focus')).toHaveAttribute('data-column-id', 'product');
     });
 

@@ -83,7 +83,6 @@ abstract class Row {
     constructor(viewport: Table) {
         this.viewport = viewport;
         this.htmlElement = makeHTMLElement('tr', {});
-        this.htmlElement.setAttribute('role', 'row');
     }
 
 

@@ -159,7 +159,9 @@ test.describe('Column Header Toolbar', () => {
         // If still not on product, try navigating to it
         if (afterSecondDown !== 'product') {
             // Try to find product cell and navigate to it
-            const productCell = page.locator('td[data-column-id="product"]').first();
+            const productCell = page.locator(
+                'tbody [data-column-id="product"]'
+            ).first();
             await productCell.focus();
         }
         
@@ -201,6 +203,6 @@ test.describe('Column Header Toolbar', () => {
 
         await page.keyboard.press('Escape');
         await expect(page.locator(':focus')).not.toHaveAttribute('id', 'outside-grid');
-        await expect(page.locator(':focus')).toHaveAttribute('role', 'columnheader');
+        await expect(page.locator(':focus')).toHaveAttribute('scope', 'col');
     });
 });

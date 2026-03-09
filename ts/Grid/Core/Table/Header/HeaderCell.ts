@@ -156,7 +156,6 @@ class HeaderCell extends Cell {
     public override init(): HTMLTableCellElement {
         const elem = document.createElement('th', {});
         elem.classList.add(Globals.getClassName('headerCell'));
-        elem.setAttribute('role', 'columnheader');
         return elem;
     }
 
@@ -197,9 +196,7 @@ class HeaderCell extends Cell {
 
         // Render the header cell element content.
         setHTMLContent(this.headerContent, this.value);
-        this.htmlElement.setAttribute('aria-label', this.value);
-
-        this.htmlElement.setAttribute('scope', 'col');
+        this.updateA11yAttributes();
 
         if (this.superColumnOptions.className) {
             this.htmlElement.classList.add(
@@ -209,14 +206,6 @@ class HeaderCell extends Cell {
 
         if (column) {
             this.htmlElement.setAttribute('data-column-id', column.id);
-            this.htmlElement.setAttribute(
-                'id',
-                column.viewport.getColumnHeaderId(column)
-            );
-            this.htmlElement.setAttribute(
-                'aria-colindex',
-                String(column.index + 1)
-            );
 
             // Add user column classname
             if (column.options.className) {
@@ -252,6 +241,37 @@ class HeaderCell extends Cell {
         fireEvent(this, 'afterRender', { column });
 
         return Promise.resolve();
+    }
+
+    /**
+     * Refresh the semantic attributes of the header cell.
+     */
+    private updateA11yAttributes(): void {
+        const text = this.headerContent?.textContent?.replace(/\s+/gu, ' ')
+            .trim() || '';
+        const cellIndex = this.row.cells.indexOf(this) + 1;
+        const rowIndex = (this.row as { level?: number }).level || 1;
+        const headerId = this.column ?
+            this.column.viewport.getColumnHeaderId(this.column) :
+            this.row.viewport.getGroupedHeaderId(rowIndex, cellIndex);
+
+        if (text) {
+            this.htmlElement.setAttribute('aria-label', text);
+        } else {
+            this.htmlElement.removeAttribute('aria-label');
+        }
+
+        this.htmlElement.setAttribute(
+            'scope',
+            this.column ? 'col' : 'colgroup'
+        );
+        this.htmlElement.setAttribute('id', headerId);
+
+        for (const column of this.columns) {
+            if (!column.headerIds.includes(headerId)) {
+                column.headerIds.push(headerId);
+            }
+        }
     }
 
     /**
@@ -307,12 +327,18 @@ class HeaderCell extends Cell {
         }
 
         if (e.key === 'Enter') {
+            this.toolbar?.setScreenReaderVisibility(true);
             this.toolbar?.focus();
             e.preventDefault();
             return;
         }
 
         super.onKeyDown(e);
+    }
+
+    protected override onFocus(): void {
+        this.toolbar?.setScreenReaderVisibility(false);
+        super.onFocus();
     }
 
     public override onClick(e: MouseEvent): void {

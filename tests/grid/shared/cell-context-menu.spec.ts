@@ -21,13 +21,14 @@ test.describe('Cell Context Menu', () => {
                 }, { timeout: 10000 });
 
                 await page.waitForFunction(() => {
-                    return document.querySelectorAll('tbody td').length > 0;
+                    return document.querySelectorAll('tbody td, tbody th')
+                        .length > 0;
                 }, { timeout: 10000 });
             });
 
             test('Right-click shows menu and item callback gets context', async ({ page }) => {
                 const productCell = page.locator(
-                    'tbody tr[data-row-index="1"] td[data-column-id="product"]'
+                    'tbody tr[data-row-index="1"] [data-column-id="product"]'
                 );
 
                 await expect(productCell).toBeVisible();
@@ -91,7 +92,7 @@ test.describe('Cell Context Menu', () => {
             expect(initialState.firstIndex).not.toBeNull();
 
             const productCell = page.locator(
-                'tbody tr[data-row-index="1"] td[data-column-id="product"]'
+                'tbody tr[data-row-index="1"] [data-column-id="product"]'
             );
 
             await productCell.click({ button: 'right' });
@@ -119,7 +120,7 @@ test.describe('Cell Context Menu', () => {
             await expect(popup).toBeHidden();
 
             const productCellAfterScroll = page.locator(
-                'tbody tr:first-child td[data-column-id="product"]'
+                'tbody tr:first-child [data-column-id="product"]'
             );
 
             await expect(productCellAfterScroll).toBeVisible();

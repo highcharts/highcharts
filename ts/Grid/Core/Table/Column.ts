@@ -106,6 +106,11 @@ export class Column {
     public header?: HeaderCell;
 
     /**
+     * The IDs of all header cells associated with this visible column.
+     */
+    public headerIds: string[] = [];
+
+    /**
      * Sorting column module.
      */
     public sorting?: ColumnSorting;

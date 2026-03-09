@@ -171,6 +171,7 @@ class HeaderCellToolbar implements Toolbar {
         const container = this.container = makeHTMLElement('div', {
             className: Globals.getClassName('headerCellIcons')
         });
+        this.setScreenReaderVisibility(false);
 
         headerCell.container.appendChild(container);
 
@@ -274,7 +275,27 @@ class HeaderCellToolbar implements Toolbar {
      * Focuses the first button of the toolbar.
      */
     public focus(): void {
+        this.setScreenReaderVisibility(true);
         this.buttons[0]?.focus();
+    }
+
+    /**
+     * Shows or hides the toolbar subtree from screen readers while the header
+     * cell itself owns focus semantics.
+     *
+     * @param visible
+     * Whether the toolbar should be exposed to assistive technology.
+     */
+    public setScreenReaderVisibility(visible: boolean): void {
+        if (!this.container) {
+            return;
+        }
+
+        if (visible) {
+            this.container.removeAttribute('aria-hidden');
+        } else {
+            this.container.setAttribute('aria-hidden', 'true');
+        }
     }
 
     /**

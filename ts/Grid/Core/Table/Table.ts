@@ -819,13 +819,29 @@ class Table {
     }
 
     /**
-     * Returns a stable DOM id for the first visible cell in a body row.
+     * Returns a stable DOM id for a grouped header cell.
+     *
+     * @param rowIndex
+     * The 1-based header row index.
+     *
+     * @param cellIndex
+     * The 1-based cell index within the header row.
+     */
+    public getGroupedHeaderId(rowIndex: number, cellIndex: number): string {
+        return `${this.grid.id}-headergroup-${rowIndex}-${cellIndex}`;
+    }
+
+    /**
+     * Returns a stable DOM id for a body cell.
      *
      * @param rowIndex
      * The absolute row index in the current presentation table.
+     *
+     * @param columnIndex
+     * The visible column index in the current viewport.
      */
-    public getRowHeaderId(rowIndex: number): string {
-        return `${this.grid.id}-rowheader-${rowIndex}`;
+    public getBodyCellId(rowIndex: number, columnIndex: number): string {
+        return `${this.grid.id}-cell-${rowIndex + 1}-${columnIndex + 1}`;
     }
 
     /**
