@@ -17,9 +17,8 @@
  *
  * */
 
-import type PieSeries from './PieSeries';
-import type { PlotOptionsOf } from '../../Core/Series/SeriesOptions';
 import type Point from '../../Core/Series/Point';
+import type { PieSeriesOptions } from './PieSeriesOptions';
 
 import { Palette } from '../../Core/Color/Palettes.js';
 
@@ -47,7 +46,7 @@ import { Palette } from '../../Core/Color/Palettes.js';
  * @product      highcharts highmaps
  * @optionparent plotOptions.pie
  */
-const PieSeriesDefaults: PlotOptionsOf<PieSeries> = {
+const PieSeriesDefaults: PieSeriesOptions = {
 
     /**
      * The corner radius of the border surrounding each slice. A number
@@ -239,7 +238,7 @@ const PieSeriesDefaults: PlotOptionsOf<PieSeries> = {
          *   `'center'` (data label overlaps the pie).
          *
          * - An object that holds the information about the position of the
-         *   connector. Its `touchingSliceAt`  porperty tells the position of
+         *   connector. Its `touchingSliceAt` property tells the position of
          *   the place where the connector touches the slice.
          *
          * - Data label options
@@ -280,7 +279,7 @@ const PieSeriesDefaults: PlotOptionsOf<PieSeries> = {
 
         /**
          * Works only if `connectorShape` is `'crookedLine'`. It defines how
-         * far from the vertical plot edge the coonnector path should be
+         * far from the vertical plot edge the connector path should be
          * crooked. With the default, `undefined`, the crook is placed so that
          * the horizontal line from the label intersects with the radial line
          * extending through the center of the pie slice.
@@ -552,7 +551,7 @@ const PieSeriesDefaults: PlotOptionsOf<PieSeries> = {
      * The color of the border surrounding each slice. When `null`, the
      * border takes the same color as the slice fill. This can be used
      * together with a `borderWidth` to fill drawing gaps created by
-     * antialiazing artefacts in borderless pies.
+     * antialiasing artifacts in borderless pies.
      *
      * In styled mode, the border stroke is given in the `.highcharts-point`
      * class.

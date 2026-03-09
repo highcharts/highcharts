@@ -70,20 +70,28 @@ class PiePoint extends Point {
      *
      * */
 
+    /** @internal */
     public angle?: number;
 
+    /** @internal */
     public delayedRendering?: boolean;
 
+    /** @internal */
     public half: number = 0;
 
+    /** @internal */
     public options!: PiePointOptions;
 
+    /** @internal */
     public series!: PieSeries;
 
+    /** @internal */
     public sliced?: boolean;
 
+    /** @internal */
     public slicedTranslation?: PiePoint.TranslationAttributes;
 
+    /** @internal */
     public startR?: number;
 
     /* *
@@ -180,7 +188,7 @@ class PiePoint extends Point {
      * True to show the pie slice or other data point, false to hide. If
      * undefined, the visibility is toggled.
      *
-     * @param {boolean} [redraw] Whether to redraw the chart after the point is
+     * @param {boolean} [redraw=true] Whether to redraw the chart after the point is
      * altered. If doing more operations on the chart, it is a good idea to set
      * redraw to false and call {@link Chart#redraw|chart.redraw()} after.
      *
@@ -243,6 +251,7 @@ class PiePoint extends Point {
  *
  * */
 
+/** @internal */
 interface PiePoint {
     connectorShapes: Record<string, DataLabel.ConnectorShapeFunction>;
 }
@@ -357,6 +366,7 @@ extend(PiePoint.prototype, {
  *
  * */
 
+/** @internal */
 namespace PiePoint {
 
     /* *

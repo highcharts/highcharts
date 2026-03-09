@@ -552,6 +552,7 @@ class PieSeries extends Series {
  *
  * */
 
+/** @internal */
 interface PieSeries {
     drawGraph: undefined;
     getCenter: typeof CU['getCenter'];
@@ -580,6 +581,7 @@ extend(PieSeries.prototype, {
  *
  * */
 
+/** @internal */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         pie: typeof PieSeries;
@@ -593,4 +595,5 @@ SeriesRegistry.registerSeriesType('pie', PieSeries);
  *
  * */
 
+/** @internal */
 export default PieSeries;
