@@ -74,6 +74,7 @@ export interface SeriesTooltipOptions extends Partial<TooltipOptions> {
     shadow?: undefined;
     shape?: undefined;
     shared?: undefined;
+    showDelay?: number
     snap?: undefined;
     split?: undefined;
     stickOnContact?: undefined;
@@ -596,6 +597,18 @@ export interface TooltipOptions {
      * @product highcharts highstock
      */
     shared: boolean;
+
+    /**
+    * The number of milliseconds to wait until the crosshair is shown when
+    * mouse over a point. Works on initial hover.
+    *
+    * @sample {highcharts|highstock} highcharts/tooltip/showdelay/
+    *
+    * @default 0
+    * @since next
+    */
+    showDelay?: number,
+
     /**
      * Proximity snap for graphs or single points. It defaults to 10 for
      * mouse-powered devices and 25 for touch devices.

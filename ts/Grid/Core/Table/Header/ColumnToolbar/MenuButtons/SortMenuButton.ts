@@ -28,9 +28,7 @@ import type Column from '../../../Column';
 
 import ContextMenuButton from '../../../../UI/ContextMenuButton.js';
 import StateHelpers from '../StateHelpers.js';
-import U from '../../../../../../Core/Utilities.js';
-
-const { addEvent } = U;
+import { addEvent } from '../../../../../../Shared/Utilities.js';
 
 
 /* *
@@ -53,7 +51,6 @@ class SortMenuButton extends ContextMenuButton {
     private direction: ('asc'|'desc');
 
     private baseLabel: string;
-
 
     /* *
      *

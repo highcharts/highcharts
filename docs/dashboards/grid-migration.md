@@ -425,7 +425,7 @@ const rawData = grid.getData(false); // unmodified
 
 **Migration steps:**
 - Change all occurrences of `.highcharts-datagrid-` to `.hcg-` in any custom styles overrides.
-- Recommended: use [theming variables](https://www.highcharts.com/docs/grid/theming/theming) instead of CSS overrides.
+- Recommended: use [theming variables](https://www.highcharts.com/docs/grid/theming/index) instead of CSS overrides.
 
 **Example:**
 ```css

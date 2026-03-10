@@ -9,22 +9,20 @@ The following provides an introduction to the various root configuration objects
 ```js
 {
     data: {
-        dataTable: {
-            columns: {
-                product: ["Apple", "Pear", "Orange", "Banana"],
-                weight: [182, 178, 150, 120],
-                price: [3.5, 2.5, 3, 2.2],
-                vitamin_a: [54,27,225,64]
-            }
+        columns: {
+            product: ["Apple", "Pear", "Orange", "Banana"],
+            weight: [182, 178, 150, 120],
+            price: [3.5, 2.5, 3, 2.2],
+            vitamin_a: [54,27,225,64]
         }
     }
 }
 ```
 
-The `data` object defines how Grid receives, prepares, and updates data. The only required option for rendering is `data.dataTable`. You can pass either serialized options (from which Grid creates a `DataTable`) or an existing `DataTable` instance. The DataTable class stores key-value pairs: each key becomes a header label, and each value is an array with the corresponding column values. When users edit cells (for example via edit mode), Grid writes changes back through the configured data provider.
+The `data` object defines how Grid receives, prepares, and updates data. For column data, use `data.columns` (an object where each key is a column ID and each value is an array of cell values). Alternatively, pass an existing `DataTable` instance via `data.dataTable`. The DataTable class stores key-value pairs: each key becomes a header label, and each value is an array with the corresponding column values. When users edit cells (for example via edit mode), Grid writes changes back through the configured data provider.
 Read more about [data handling and the DataTable class](https://www.highcharts.com/docs/dashboards/data-table).
 
-Instead of `dataTable`, you can also use data connectors for loading data.
+Instead of `data.columns` or `data.dataTable`, you can also use data connectors for loading data.
 
 ```js
 {
@@ -46,7 +44,7 @@ Grid reads and writes data through a data provider. The default `LocalDataProvid
 
 ### Data modifiers
 
-Alternatively to serializable options, you can pass a reference to the [DataTable](https://www.highcharts.com/docs/dashboards/data-table) you want to use when rendering the Grid. This lets you, for example, apply a [Math Modifier](https://www.highcharts.com/docs/dashboards/mathmodifier-module) from Highcharts Dashboards library to it beforehand to add a new column whose values are the result of a mathematical operation on one or more existing columns.
+When you have an existing [DataTable](https://www.highcharts.com/docs/dashboards/data-table) instance (for example, one created with a [Math Modifier](https://www.highcharts.com/docs/dashboards/mathmodifier-module) from Highcharts Dashboards library to add computed columns), pass it via `data.dataTable`.
 
 You can read more about Data Modifiers [here](https://www.highcharts.com/docs/dashboards/data-modifiers).
 
@@ -85,7 +83,7 @@ You can read more about Data Modifiers [here](https://www.highcharts.com/docs/da
 
 The ' columnDefaults ' object defines default options for all columns in the grid, such as the column sorter, column resizer, value editor, cell format, etc., and the `columns[]` array of objects can be used to override defaults in selected columns if needed. Note that most options in `columnDefaults` are mirrored 1:1 in the `columns[]` array of objects.
 
-Learn more about `columns[]` in our [Columns article](https://www.highcharts.com/docs/grid/columns) or see the API reference for [columnDefaults](https://api.highcharts.com/grid/#interfaces/Grid_Core_Options.Options#columnDefaults) and [columns[]](https://api.highcharts.com/grid/#interfaces/Grid_Core_Options.Options#columns).
+Learn more about `columns[]` in our [Columns article](https://www.highcharts.com/docs/grid/columns/index) or see the API reference for [columnDefaults](https://api.highcharts.com/grid/#interfaces/Grid_Core_Options.Options#columnDefaults) and [columns[]](https://api.highcharts.com/grid/#interfaces/Grid_Core_Options.Options#columns).
 
 ## caption
 ```js
@@ -118,7 +116,7 @@ While the format and visibility of individual columns and their header cells can
 
 In addition, the `header[]` option can change the order of headers and group headers in a hierarchical structure.
 
-The [Header article](https://www.highcharts.com/docs/grid/header) provides more information about `header[]`.
+The [Header article](https://www.highcharts.com/docs/grid/columns/header) provides more information about `header[]`.
 
 ## accessibility
 ```js
@@ -134,7 +132,7 @@ The `accessibility` option object can be used to enable/disable accessibility fe
 For more information on accessibility options read our documentation article on [accessibility](https://www.highcharts.com/docs/grid/accessibility).
 
 ## lang
-To customize the default language or wording for ARIA attributes and announcers, use the `lang.accessibility` option. In the current version of Highcharts Grid the `lang` option is solely related to [accessibility](https://www.highcharts.com/docs/grid/accessibility), but will be extended to other use cases as we add more features. Stay up to date by visiting our [changelog](https://www.highcharts.com/blog/changelog/#highcharts-grid) and [roadmap](https://www.highcharts.com/blog/roadmap/).
+Use `lang` to translate built-in Grid labels, pagination text, and accessibility announcements, and to set `lang.locale` for locale-aware date and number formatting. Read more in the [Internationalization article](https://www.highcharts.com/docs/grid/internationalization).
 
 ## rendering
 The `rendering` option object can be used to configure options related to performance and the rendering of the Grid. Example: [Rendering.rows](https://api.highcharts.com/grid/#interfaces/Grid_Core_Options.RenderingSettings#rows) represents the rows in the Grid.
@@ -150,26 +148,23 @@ The `rendering` option object can be used to configure options related to perfor
 }
 ```
 
-For more information on rendering options, please read our article on [Performance and rendering](https://www.highcharts.com/docs/grid/performance) or see the [API reference](https://api.highcharts.com/grid/#interfaces/Grid_Core_Options.RenderingSettings).
+For more information on rendering options, please read our article on [Performance and rendering](https://www.highcharts.com/docs/grid/rows/performance) or see the [API reference](https://api.highcharts.com/grid/#interfaces/Grid_Core_Options.RenderingSettings).
 
 ## responsive
-Use `responsive.rules` to apply different Grid options at different container sizes. Each rule contains a `condition` (such as `maxWidth` or `minWidth`) and a `gridOptions` object that will be merged into the base options when the rule matches.
+Use `responsive.rules[]` to apply different Grid options at different container sizes. Each rule contains a `condition` (such as `maxWidth` or `minWidth`) and a `gridOptions` object that will be merged into the base options when the rule matches.
 
 ```js
-Grid.grid('container', {
-    data: { dataTable: { columns: data } },
+{
     responsive: {
         rules: [{
             condition: { maxWidth: 800 },
             gridOptions: { header: ['firstName', 'email', 'mobile'] }
         }]
     }
-});
+}
 ```
 
-See a live sample [here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/grid-lite/basic/responsive-rules/).
-
-See the [API reference](https://api.highcharts.com/grid/#interfaces/Grid_Core_Responsive_ResponsiveOptions.ResponsiveOptions) for available rule options.
+Read more in the [Responsive grid article](https://www.highcharts.com/docs/grid/responsive-grid).
 
 ## pagination
 The `pagination` option object enables you to split large datasets into manageable pages, improving performance and user experience. When enabled, pagination displays a subset of data at a time with navigation controls.
@@ -179,33 +174,12 @@ The `pagination` option object enables you to split large datasets into manageab
     pagination: {
         enabled: true,
         pageSize: 25,
-        position: 'bottom',
-        controls: {
-            pageSizeSelector: {
-                enabled: true,
-                options: [10, 25, 50, 100]
-            },
-            pageInfo: {
-                enabled: true
-            },
-            firstLastButtons: {
-                enabled: true
-            },
-            previousNextButtons: {
-                enabled: true
-            },
-            pageButtons: {
-                enabled: true,
-                count: 5
-            }
-        }
+        position: 'footer',
     }
 }
 ```
 
-The pagination controls include page size selection, page information display, first/last page buttons, previous/next buttons, and numbered page buttons. You can also configure pagination events (in the Grid Pro version) to respond to page changes and page size modifications.
-
-For more information on pagination options and events, see the [Pagination article](https://www.highcharts.com/docs/grid/pagination) or the [API reference](https://api.highcharts.com/grid/#interfaces/Grid_Core_Pagination_PaginationOptions.PaginationOptions).
+Read more in the [Pagination article](https://www.highcharts.com/docs/grid/rows/pagination).
 
 ## events __grid_pro__
 Highcharts Grid Pro supports several event listeners that can be added to the header, columns and cells. These provide custom functionality and extendibility of Grid. Read more about events in the [Events article](https://www.highcharts.com/docs/grid/events).

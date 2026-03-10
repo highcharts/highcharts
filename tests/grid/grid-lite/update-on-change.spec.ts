@@ -2,7 +2,7 @@ import { test, expect } from '~/fixtures.ts';
 
 test.describe('LocalDataProvider updateOnChange', () => {
     test('Auto refreshes after external DataTable changes', async ({ page }) => {
-        await page.goto('/grid-lite/cypress/update-on-change/');
+        await page.goto('/grid-lite/e2e/update-on-change/');
 
         const autoCell = page.locator(
             '#container-auto .hcg-row[data-row-index="0"] ' +
@@ -21,7 +21,7 @@ test.describe('LocalDataProvider updateOnChange', () => {
     });
 
     test('Manual refresh required when disabled', async ({ page }) => {
-        await page.goto('/grid-lite/cypress/update-on-change/');
+        await page.goto('/grid-lite/e2e/update-on-change/');
 
         const manualCell = page.locator(
             '#container-manual .hcg-row[data-row-index="0"] ' +
@@ -42,7 +42,7 @@ test.describe('LocalDataProvider updateOnChange', () => {
     });
 
     test('Grid edits do not trigger extra updateRows', async ({ page }) => {
-        await page.goto('/grid-lite/cypress/update-on-change/');
+        await page.goto('/grid-lite/e2e/update-on-change/');
 
         const autoCell = page.locator(
             '#container-auto .hcg-row[data-row-index="0"] ' +
