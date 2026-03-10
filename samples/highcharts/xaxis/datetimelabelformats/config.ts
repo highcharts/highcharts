@@ -7,6 +7,7 @@ export default {
         path: 'xAxis.dateTimeLabelFormats.day',
         value: '%e of %b'
     }],
+    templates: [],
     chartOptionsExtra: {
         xAxis: {
             type: 'datetime'
