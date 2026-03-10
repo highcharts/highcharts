@@ -37,7 +37,7 @@ The default [`rendering.rows.bufferSize`](https://api.highcharts.com/grid/render
 By default, rows adjust their height to fit all content, which can reduce performance and scrolling smoothness. Setting `strictHeights: true` ensures all rows have a uniform height, truncating multiline text with an ellipsis. This skips height calculations and boosts performance.
 
 ### minVisibleRows
-Use [`http://localhost:9005/grid/rendering.rows.minVisibleRows`](https://api.highcharts.com/grid/rendering.rows.minVisibleRows) to set a minimum `tbody` height based on how many rows should remain visible.
+Use [`rendering.rows.minVisibleRows`](https://api.highcharts.com/grid/rendering.rows.minVisibleRows) to set a minimum `tbody` height based on how many rows should remain visible.
 
 ```js
 {
