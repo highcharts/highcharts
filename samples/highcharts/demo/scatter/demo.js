@@ -1,9 +1,3 @@
-Highcharts.setOptions({
-    colors: [
-        'rgba(5,141,199,0.5)', 'rgba(80,180,50,0.5)', 'rgba(237,86,27,0.5)'
-    ]
-});
-
 const series = [{
     name: 'Basketball',
     id: 'basketball',
@@ -39,7 +33,11 @@ getData().then(data => {
     const getData = sportName => {
         const temp = [];
         data.forEach(elm => {
-            if (elm.sport === sportName && elm.weight > 0 && elm.height > 0) {
+            if (
+                elm.sport === sportName &&
+                elm.weight > 0 && elm.height > 0 &&
+                elm.continent === "Europe"
+            ) {
                 temp.push([elm.height, elm.weight]);
             }
         });
@@ -51,28 +49,31 @@ getData().then(data => {
 
     Highcharts.chart('container', {
         chart: {
+            plotBorderWidth: 1,
             type: 'scatter',
             zooming: {
                 type: 'xy'
             }
         },
         title: {
-            text: 'Olympics athletes by height and weight'
+            text: 'European olympic athletes by height and weight',
+            align: 'left'
         },
         subtitle: {
-            text:
-          'Source: <a href="https://www.theguardian.com/sport/datablog/2012/aug/07/olympics-2012-athletes-age-weight-height">The Guardian</a>'
+            text: 'Source: <a href="https://www.theguardian.com/sport/datablo' +
+                'g/2012/aug/07/olympics-2012-athletes-age-weight-height">The ' +
+                'Guardian</a>',
+            align: 'left'
         },
         xAxis: {
-            title: {
-                text: 'Height'
-            },
             labels: {
                 format: '{value} m'
             },
+            lineWidth: 0,
             startOnTick: true,
             endOnTick: true,
-            showLastLabel: true
+            showLastLabel: true,
+            tickColor: 'var(--highcharts-neutral-color-20, #ccc)'
         },
         yAxis: {
             title: {
@@ -83,17 +84,17 @@ getData().then(data => {
             }
         },
         legend: {
-            enabled: true
+            enabled: true,
+            padding: 0
         },
         plotOptions: {
             scatter: {
                 marker: {
-                    radius: 2.5,
-                    symbol: 'circle',
                     states: {
                         hover: {
                             enabled: true,
-                            lineColor: 'rgb(100,100,100)'
+                            lineColor:
+                                'var(--highcharts-neutral-color-60, #666)'
                         }
                     }
                 },
