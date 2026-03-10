@@ -33,7 +33,7 @@ export interface GaugeSeriesDialOptions {
     borderColor: ColorType;
     borderWidth: number;
     path?: SVGPath;
-    radius: string;
+    radius: number | string;
     rearLength: string;
     topWidth: number;
 }
