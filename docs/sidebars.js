@@ -126,6 +126,7 @@ const sidebars = {
             {
                 'Columns': [
                     'grid/columns/index',
+                    'grid/columns/styling-and-theming',
                     'grid/columns/header',
                     'grid/columns/grouping',
                     'grid/columns/resizing-and-width',
@@ -137,7 +138,6 @@ const sidebars = {
                 'Rows': [
                     'grid/rows/index',
                     'grid/rows/data',
-                    'grid/rows/sorting',
                     'grid/rows/pagination',
                     'grid/rows/virtualization',
                     'grid/rows/performance'
@@ -146,6 +146,7 @@ const sidebars = {
             {
                 'Cells': [
                     'grid/cells/index',
+                    'grid/cells/styling-and-theming',
                     'grid/cells/formatting'
                 ]
             },
@@ -160,8 +161,10 @@ const sidebars = {
             {
                 'Theming': [
                     'grid/theming/index',
-                    'grid/theming/variables',
-                    'grid/theming/conditional'
+                    'grid/theming/grid-variables',
+                    'grid/theming/element-variables',
+                    'grid/theming/conditional',
+                    'grid/theming/custom-icons'
                 ]
             },
             'grid/responsive-grid',

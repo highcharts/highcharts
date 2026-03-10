@@ -10,9 +10,7 @@ Pagination splits row data into pages, so the grid renders a manageable subset o
 ```js
 Grid.grid('container', {
     data: {
-        dataTable: {
-            columns: {...}
-        }
+        columns: {...}
     },
     pagination: {
         enabled: true

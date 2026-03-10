@@ -1,6 +1,6 @@
 describe('Remove the dashboard.', () => {
     before(() => {
-        cy.visit('/dashboards/cypress/grid-hidden');
+        cy.visit('/grid-lite/e2e/hidden');
     });
 
     it('Rows should be visible when grid is switched from hidden.', () => {

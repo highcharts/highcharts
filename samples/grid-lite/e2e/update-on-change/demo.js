@@ -2,11 +2,9 @@ async function createGrid(containerId, updateOnChange) {
     return await Grid.grid(containerId, {
         data: {
             providerType: 'local',
-            dataTable: {
-                columns: {
-                    product: ['Apples', 'Pears', 'Plums'],
-                    weight: [100, 40, 0.5]
-                }
+            columns: {
+                product: ['Apples', 'Pears', 'Plums'],
+                weight: [100, 40, 0.5]
             },
             updateOnChange
         }
