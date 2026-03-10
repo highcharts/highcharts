@@ -556,6 +556,8 @@ namespace AxisDefaults {
          *         String day format on X axis
          * @sample {highcharts} highcharts/xaxis/labels-boundary/
          *         Month boundary on daily ticks
+         * @sample {highcharts} highcharts/xaxis/labels-boundary-format/
+         *         Using axis labels format to format boundary labels
          * @sample {highstock} stock/xaxis/datetimelabelformats/
          *         More information in x axis labels
          * @sample {highstock} stock/xaxis/labels-boundary/
