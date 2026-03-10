@@ -3,9 +3,6 @@
      Defaults (internal base tokens)
      ------------------------------------------------------------- */
     --ig-input-padding-base: var(--hcg-input-padding, 5px);
-    --ig-input-font-weight-base: var(--hcg-input-font-weight, normal);
-    --ig-input-font-size-base: var(--hcg-input-font-size, 0.9em);
-    --ig-input-font-family-base: var(--hcg-input-font-family, var(--ig-font-family));
     --ig-input-color-base: var(--hcg-input-color, var(--ig-color));
     --ig-input-text-align-base: var(--hcg-input-text-align, var(--ig-text-align));
     --ig-input-border-radius-base: var(--hcg-input-border-radius, 0);
@@ -21,9 +18,9 @@
      Public theme overrides (external hcg tokens)
      ------------------------------------------------------------- */
     --ig-input-padding: var(--hcg-input-padding, var(--ig-input-padding-base));
-    --ig-input-font-weight: var(--hcg-input-font-weight, var(--ig-input-font-weight-base));
-    --ig-input-font-size: var(--hcg-input-font-size, var(--ig-input-font-size-base));
-    --ig-input-font-family: var(--hcg-input-font-family, var(--ig-input-font-family-base));
+    --ig-input-font-weight: var(--hcg-input-font-weight, inherit);
+    --ig-input-font-size: var(--hcg-input-font-size, inherit);
+    --ig-input-font-family: var(--hcg-input-font-family, inherit);
     --ig-input-color: var(--hcg-input-color, var(--ig-input-color-base));
     --ig-input-text-align: var(--hcg-input-text-align, var(--ig-input-text-align-base));
     --ig-input-border-radius: var(--hcg-input-border-radius, var(--ig-input-border-radius-base));
@@ -38,9 +35,9 @@
 
     thead th {
         --ig-input-padding: var(--hcg-header-input-padding, var(--ig-input-padding-base));
-        --ig-input-font-weight: var(--hcg-header-input-font-weight, var(--ig-input-font-weight-base));
-        --ig-input-font-size: var(--hcg-header-input-font-size, var(--ig-input-font-size-base));
-        --ig-input-font-family: var(--hcg-header-input-font-family, var(--ig-input-font-family-base));
+        --ig-input-font-weight: var(--hcg-header-input-font-weight, var(--hcg-input-font-weight, inherit));
+        --ig-input-font-size: var(--hcg-header-input-font-size, var(--hcg-input-font-size, inherit));
+        --ig-input-font-family: var(--hcg-header-input-font-family, var(--hcg-input-font-family, inherit));
         --ig-input-color: var(--hcg-header-input-color, var(--ig-input-color-base));
         --ig-input-text-align: var(--hcg-header-input-text-align, var(--ig-input-text-align-base));
         --ig-input-border-radius: var(--hcg-header-input-border-radius, var(--ig-input-border-radius-base));
@@ -55,9 +52,9 @@
 
     tbody td {
         --ig-input-padding: var(--hcg-cell-input-padding, var(--ig-input-padding-base));
-        --ig-input-font-weight: var(--hcg-cell-input-font-weight, var(--ig-input-font-weight-base));
-        --ig-input-font-size: var(--hcg-cell-input-font-size, var(--ig-input-font-size-base));
-        --ig-input-font-family: var(--hcg-cell-input-font-family, var(--ig-input-font-family-base));
+        --ig-input-font-weight: var(--hcg-cell-input-font-weight, var(--hcg-input-font-weight, inherit));
+        --ig-input-font-size: var(--hcg-cell-input-font-size, var(--hcg-input-font-size, inherit));
+        --ig-input-font-family: var(--hcg-cell-input-font-family, var(--hcg-input-font-family, inherit));
         --ig-input-color: var(--hcg-cell-input-color, var(--ig-input-color-base));
         --ig-input-text-align: var(--hcg-cell-input-text-align, var(--ig-input-text-align-base));
         --ig-input-border-radius: var(--hcg-cell-input-border-radius, var(--ig-input-border-radius-base));
@@ -72,9 +69,9 @@
 
     .hcg-pagination {
         --ig-input-padding: var(--hcg-pagination-input-padding, var(--ig-input-padding-base));
-        --ig-input-font-weight: var(--hcg-pagination-input-font-weight, var(--ig-input-font-weight-base));
-        --ig-input-font-size: var(--hcg-pagination-input-font-size, var(--ig-input-font-size-base));
-        --ig-input-font-family: var(--hcg-pagination-input-font-family, var(--ig-input-font-family-base));
+        --ig-input-font-weight: var(--hcg-pagination-input-font-weight, var(--hcg-input-font-weight, inherit));
+        --ig-input-font-size: var(--hcg-pagination-input-font-size, var(--hcg-input-font-size, inherit));
+        --ig-input-font-family: var(--hcg-pagination-input-font-family, var(--hcg-input-font-family, inherit));
         --ig-input-color: var(--hcg-pagination-input-color, var(--ig-input-color-base));
         --ig-input-text-align: var(--hcg-pagination-input-text-align, var(--ig-input-text-align-base));
         --ig-input-border-radius: var(--hcg-pagination-input-border-radius, var(--ig-input-border-radius-base));

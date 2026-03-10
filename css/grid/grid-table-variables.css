@@ -50,6 +50,9 @@
         border-bottom: var(--ig-header-row-border);
         background: var(--ig-header-background);
         color: var(--ig-header-current-color);
+        font-weight: var(--ig-header-current-font-weight);
+        font-size: var(--ig-header-current-font-size);
+        font-family: var(--ig-header-current-font-family);
         padding-top: var(--hcg-header-vertical-padding, var(--hcg-header-padding, var(--ig-vertical-padding)));
         padding-right: var(--hcg-header-horizontal-padding, var(--hcg-header-padding, var(--ig-horizontal-padding)));
         padding-bottom: var(--hcg-header-vertical-padding, var(--hcg-header-padding, var(--ig-vertical-padding)));
