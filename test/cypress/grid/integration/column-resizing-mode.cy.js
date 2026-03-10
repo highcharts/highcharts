@@ -1,6 +1,6 @@
 describe('Column distribution strategies.', () => {
     before(() => {
-        cy.visit('/grid-lite/cypress/column-resizing-mode');
+        cy.visit('grid-lite/e2e/column-resizing-mode');
     });
 
     it('Should be adjacent strategy by default.', () => {

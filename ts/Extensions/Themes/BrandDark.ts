@@ -25,9 +25,8 @@ import type { DefaultOptions } from '../../Core/Options';
 import type { SeriesTypePlotOptions } from '../../Core/Series/SeriesType';
 
 import D from '../../Core/Defaults.js';
+import { createElement } from '../../Shared/Utilities.js';
 const { setOptions } = D;
-import U from '../../Core/Utilities.js';
-const { createElement } = U;
 
 /* *
  *

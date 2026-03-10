@@ -1,6 +1,6 @@
 describe('Remove the dashboard.', () => {
     before(() => {
-        cy.visit('/dashboards/cypress/grid-hidden');
+        cy.visit('/grid-lite/e2e/hidden');
     });
 
     it('Rows should be visible when grid is switched from hidden.', () => {
@@ -19,7 +19,7 @@ describe('Remove the dashboard.', () => {
 
 describe('Grid rows removal.', () => {
     before(() => {
-        cy.visit('/grid-lite/basic/destroy-grid');
+        cy.visit('grid-lite/basic/destroy-grid');
     });
 
     it('Remove all grid rows.', () => {
@@ -31,7 +31,7 @@ describe('Grid rows removal.', () => {
 
 describe('Rendering size.', () => {
     before(() => {
-        cy.visit('/grid-lite/cypress/rendering-size');
+        cy.visit('grid-lite/e2e/rendering-size');
     });
 
     it('Fixed height grid.', () => {

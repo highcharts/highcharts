@@ -7,7 +7,7 @@ test.describe('Column Header Toolbar', () => {
 
     test.beforeEach(async ({ page }) => {
         await page.setViewportSize({ width: 1900, height: 600 });
-        await page.goto('grid-lite/cypress/filtering', { waitUntil: 'networkidle' });
+        await page.goto('grid-lite/e2e/filtering', { waitUntil: 'networkidle' });
         // Wait for Grid to be initialized
         await page.waitForFunction(() => {
             return typeof (window as any).Grid !== 'undefined' &&

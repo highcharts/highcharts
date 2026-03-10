@@ -33,12 +33,7 @@ import type {
 import { CellRenderer, CellRendererOptions } from '../CellRenderer.js';
 import { registerRenderer } from '../CellRendererRegistry.js';
 import TimeInputContent from '../ContentTypes/TimeInputContent.js';
-
-import U from '../../../../Core/Utilities.js';
-const {
-    merge
-} = U;
-
+import { merge } from '../../../../Shared/Utilities.js';
 
 /* *
  *

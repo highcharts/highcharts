@@ -1,6 +1,6 @@
 describe('Cell class name formats.', () => {
     before(() => {
-        cy.visit('grid-pro/cypress/custom-class');
+        cy.visit('grid-pro/e2e/custom-class');
     });
 
     it('Table should have custom class name.', () => {

@@ -31,7 +31,6 @@ import type {
     IndividualColumnOptions
 } from './Options';
 import type { DataProviderType } from './Data/DataProviderType';
-import type DataTable from '../../Data/DataTable';
 import type {
     CellType as DataTableCellType,
     Column as DataTableColumn
@@ -44,29 +43,27 @@ import type { DeepPartial } from '../../Shared/Types';
 import Accessibility from './Accessibility/Accessibility.js';
 import AST from '../../Core/Renderer/HTML/AST.js';
 import DataProviderRegistry from './Data/DataProviderRegistry.js';
+import DataTable from '../../Data/DataTable.js';
 import { defaultOptions } from './Defaults.js';
-import GridUtils from './GridUtils.js';
+import {
+    makeHTMLElement,
+    setHTMLContent,
+    createOptionsProxy
+} from './GridUtils.js';
 import Table from './Table/Table.js';
-import U from '../../Core/Utilities.js';
 import QueryingController from './Querying/QueryingController.js';
 import Globals from './Globals.js';
 import TimeBase from '../../Shared/TimeBase.js';
 import Pagination from './Pagination/Pagination.js';
-
-const {
-    makeHTMLElement,
-    setHTMLContent,
-    createOptionsProxy
-} = GridUtils;
-
-const {
+import {
     defined,
     diffObjects,
     extend,
     fireEvent,
     merge,
     pick
-} = U;
+} from '../../Shared/Utilities.js';
+import { uniqueKey } from '../../Core/Utilities.js';
 
 
 /* *
@@ -340,7 +337,7 @@ export class Grid {
         this.renderTo = renderTo;
 
         this.loadUserOptions(options);
-        this.id = this.options?.id || U.uniqueKey();
+        this.id = this.options?.id || uniqueKey();
         this.querying = new QueryingController(this);
         this.locale = this.options?.lang?.locale || (
             (this.container?.closest('[lang]') as HTMLElement | null)?.lang
@@ -708,7 +705,9 @@ export class Grid {
                     this.options?.dataTable &&
                     this.options?.data?.providerType === 'local'
                 ) {
-                    this.options.data.dataTable = this.options.dataTable;
+                    const userDT = this.options.dataTable;
+                    this.options.data.dataTable = 'clone' in userDT ?
+                        userDT : new DataTable(userDT);
                 }
 
                 this.loadDataProvider(); // Rebuild the data provider
@@ -1508,17 +1507,19 @@ export class Grid {
         this.dataProvider?.destroy();
         this.querying.shouldBeUpdated = true;
 
+        const userDT = this.options?.dataTable;
         const dataOptions = this.options?.data ?? {
             providerType: 'local',
-            dataTable: this.options?.dataTable ?? {}
+            dataTable: userDT ?? {}
         };
 
         // Just for the backward compatibility, remove in the future
         if (
             dataOptions.providerType === 'local' &&
-            !dataOptions.dataTable && this.options?.dataTable
+            !dataOptions.dataTable && userDT
         ) {
-            dataOptions.dataTable = this.options?.dataTable;
+            dataOptions.dataTable = 'clone' in userDT ?
+                userDT : new DataTable(userDT);
         }
         // End of backward compatibility snippet
 
@@ -1754,9 +1755,7 @@ export class Grid {
 
         if (options.data?.providerType === 'local') {
             if (options.data?.dataTable && 'clone' in options.data.dataTable) {
-                options.data.dataTable = {
-                    columns: options.data.dataTable.columns
-                };
+                options.data.columns = options.data.dataTable.columns;
             }
 
             if (

@@ -1,6 +1,6 @@
 describe('Grid multi-column sorting.', () => {
     const expectedOrder = ['c', 'a', 'b', 'g', 'e', 'f', 'h', 'd'];
-    const demoPath = 'grid-lite/cypress/multi-column-sorting';
+    const demoPath = 'grid-lite/e2e/multi-column-sorting';
 
     it('Shift-click sorts three columns with custom compare.', () => {
         cy.viewport(1200, 800);

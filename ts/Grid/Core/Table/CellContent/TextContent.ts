@@ -31,12 +31,7 @@ import GridUtils from '../../GridUtils.js';
 const {
     setHTMLContent
 } = GridUtils;
-
-import Utils from '../../../../Core/Utilities.js';
-const {
-    defined,
-    isString
-} = Utils;
+import { defined } from '../../../../Shared/Utilities.js';
 
 
 /* *
@@ -130,11 +125,8 @@ class TextContent extends CellContent {
         } else if (isDefaultFormat) {
             const formattedValue = formatter?.call(cell);
 
-            if (isString(formattedValue)) {
-                cellContent = formattedValue;
-            } else {
-                cellContent = value + '';
-            }
+            cellContent = defined(formattedValue) ?
+                String(formattedValue) : value + '';
 
         } else if (isDefaultFormatter) {
             cellContent = format ? cell.format(format) : value + '';

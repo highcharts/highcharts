@@ -24,7 +24,6 @@
     "MSFT": true,
     "ohlcdata": true,
     "QUnit": true,
-    "RGBColor": true,
     "temperatures": true,
     "TestController": true,
     "TestTemplate": true,

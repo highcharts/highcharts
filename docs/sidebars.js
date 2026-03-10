@@ -123,32 +123,64 @@ module.exports = {
             'grid/general',
             'grid/installation',
             'grid/understanding-grid',
-            'grid/columns',
-            'grid/header',
-            'grid/data-providers',
-            'grid/cell-editing',
-            'grid/cell-renderers',
-            'grid/cell-context-menu',
-            'grid/sparklines',
-            'grid/column-filtering',
-            'grid/events',
-            'grid/exporting',
-            'grid/pagination',
             {
-                'Theming': [
-                    'grid/theming/theming',
-                    'grid/theming/theming-variables',
-                    'grid/theming/conditional-theming',
+                'Columns': [
+                    'grid/columns/index',
+                    'grid/columns/styling-and-theming',
+                    'grid/columns/header',
+                    'grid/columns/grouping',
+                    'grid/columns/resizing-and-width',
+                    'grid/columns/sorting',
+                    'grid/columns/filtering'
                 ]
             },
-            'grid/performance',
+            {
+                'Rows': [
+                    'grid/rows/index',
+                    'grid/rows/data',
+                    'grid/rows/sorting',
+                    'grid/rows/pagination',
+                    'grid/rows/virtualization',
+                    'grid/rows/performance'
+                ]
+            },
+            {
+                'Cells': [
+                    'grid/cells/index',
+                    'grid/cells/styling-and-theming',
+                    'grid/cells/formatting'
+                ]
+            },
+            {
+                'Editing': [
+                    'grid/editing/index',
+                    'grid/editing/renderers',
+                    'grid/editing/validation',
+                    'grid/editing/custom-renderers'
+                ]
+            },
+            {
+                'Theming': [
+                    'grid/theming/index',
+                    'grid/theming/grid-variables',
+                    'grid/theming/element-variables',
+                    'grid/theming/conditional',
+                    'grid/theming/custom-icons'
+                ]
+            },
+            'grid/responsive-grid',
+            'grid/data-providers',
+            'grid/events',
             'grid/accessibility',
+            'grid/exporting',
+            'grid/sparklines',
             {
                 'Frameworks': [
-                    'grid/frameworks/grid-with-angular',
-                    'grid/frameworks/grid-with-nextjs',
-                    'grid/frameworks/grid-with-react',
-                    'grid/frameworks/grid-with-vue'
+                    'grid/frameworks/index',
+                    'grid/frameworks/angular',
+                    'grid/frameworks/nextjs',
+                    'grid/frameworks/react',
+                    'grid/frameworks/vue'
                 ]
             }
         ],

@@ -102,3 +102,36 @@ QUnit.test('Repetetive formats and pointer-events', function (assert) {
         'Timezone should be calculated correctly for templating string, #20816.'
     );
 });
+
+QUnit.test('Tooltip pointFormatter gets ctx in arrow callback', function (
+    assert
+) {
+    var pointFormatterCtx,
+        chart = Highcharts.chart('container', {
+            tooltip: {
+                headerFormat: '',
+                pointFormatter: (pointFormat, ctx) => {
+                    pointFormatterCtx = ctx;
+                    return 'Y=' + ctx.y;
+                }
+            },
+            series: [{
+                data: [1, 2, 3]
+            }]
+        }),
+        point = chart.series[0].points[0];
+
+    chart.tooltip.refresh(point);
+
+    assert.strictEqual(
+        pointFormatterCtx,
+        point,
+        'Tooltip pointFormatter got point ctx as the last argument'
+    );
+
+    assert.strictEqual(
+        chart.tooltip.label.text.textStr,
+        'Y=1',
+        'Tooltip pointFormatter arrow callback returned expected text'
+    );
+});
