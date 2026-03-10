@@ -262,13 +262,6 @@ async function generateChartConfig(
     metaList: MetaList
 ) {
     const { chartOptionsExtra } = config;
-    const paths = metaList
-        .filter(meta => typeof meta.path === 'string')
-        .map(meta => meta.path);
-    if (!metaList.length && paths) {
-        throw new Error(`No nodes found for paths: ${paths.join(', ')}`);
-    }
-
     const chartOptions: any = {};
     for (const optionsTpl of config.templates || ['column', 'categories-4']) {
         const tplModule = await import(`./tpl/chart-options/${optionsTpl}.ts`);
@@ -629,6 +622,7 @@ export async function getDemoTS(
 
     // Replace double quotes with single quotes for strings
     chartOptions = chartOptions.replace(/"([^"]+)":/gu, '$1:') // Keys
+        .replace(/\\"/gu, '[DOUBLE_QUOTE_IN_STRING]') // Escaped quotes
         // eslint-disable-next-line quotes
         .replace(/: "([^"]+)"/gu, ": '$1'") // String values
         // eslint-disable-next-line quotes
@@ -637,7 +631,8 @@ export async function getDemoTS(
             /\[([^\]]*)"([^"]+)"([^\]]*)\]/gu,
             // Array elements - replace all double quotes with single quotes
             match => match.replace(/"/gu, '\'')
-        );
+        )
+        .replace(/\[DOUBLE_QUOTE_IN_STRING\]/gu, '"'); // Restore escaped quotes
 
     // For arrays of objects, put the open brace on the same line and reindent
     // the inner properties. Make no distinction between single lines/objects
