@@ -70,8 +70,18 @@ function onBeforeLoad(this: Grid): void {
 
 /**
  * Cleans up TreeView projection infrastructure on Grid destroy.
+ *
+ * @param e
+ * Grid destroy event metadata.
+ *
+ * @param e.onlyDOM
+ * Whether destroy is limited to DOM teardown before a re-render.
  */
-function onBeforeDestroy(this: Grid): void {
+function onBeforeDestroy(this: Grid, e: { onlyDOM?: boolean }): void {
+    if (e.onlyDOM) {
+        return;
+    }
+
     this.treeProjectionController?.destroy();
     delete this.treeProjectionController;
 }

@@ -1,4 +1,4 @@
-Grid.grid('container', {
+const grid = Grid.grid('container', {
     data: {
         columns: {
             id: [1, 2, 3, 4, 5, 6],
@@ -23,4 +23,14 @@ Grid.grid('container', {
         }
     },
     header: ['name', 'value', 'id', 'path']
+});
+
+document.getElementById('tree-view-enabled').addEventListener('change', e => {
+    grid.update({
+        data: {
+            treeView: {
+                enabled: e.target.checked
+            }
+        }
+    });
 });
