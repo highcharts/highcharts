@@ -46,6 +46,8 @@ jobs:
       - name: Comment on PR with changed docs
         if: github.event_name == 'pull_request'
         uses: actions/github-script@v7
+        env:
+          DOC_BUILDER_URL: ${{ secrets.DOC_BUILDER_URL }}
         with:
           script: |
             const { createOrUpdateComment } = require('./.github/scripts/commentOnPR.js');
@@ -63,7 +65,7 @@ jobs:
             if (docsFiles.length === 0) return;
             
             const branch = context.payload.pull_request.head.ref;
-            const baseUrl = 'https://www.highcharts.com/docs';
+            const baseUrl = process.env.DOC_BUILDER_URL;
             
             const links = docsFiles.map(file => {
               // Convert docs/some-folder/file.md to the URL path
