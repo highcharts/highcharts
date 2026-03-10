@@ -26,14 +26,15 @@ export default function App() {
 Use `SeriesProps` when you need to type data passed to the generic `Series` component:
 
 ```tsx
+import { useState } from "react";
 import { Series, type SeriesProps } from "@highcharts/react";
 
-const lineSeries: SeriesProps = {
-  type: "line",
-  data: [1, 2, 3]
-};
-
 export default function App() {
+  const [lineSeries] = useState<SeriesProps>({
+    type: "line",
+    data: [1, 2, 3]
+  });
+
   return <Series {...lineSeries} />;
 }
 ```
