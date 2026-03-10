@@ -27,6 +27,12 @@ Example:
 
 In this case, the initial global padding for all table cells (`th` and `td`) is set to `10px`, while top/bottom padding for headers (`th`) is overridden using `6px`.
 
+## Background and color fallback chain
+
+For normal body cells, the effective background fallback chain is `--hcg-cell-background` -> `--hcg-row-background` -> `--hcg-column-background` -> `--hcg-background`. Body cell text color follows the same pattern: `--hcg-cell-color` -> `--hcg-row-color` -> `--hcg-column-color` -> `--hcg-color`. In a non-conditional theme, setting every level usually adds little value because the most specific variable for that cell wins.
+
+These options exist mainly for [Conditional theming](https://www.highcharts.com/docs/grid/theming/conditional.md), where you may want to style only selected rows, columns, or cells. There is no required variable for the "base" background color, but if you are not using conditional rules, `--hcg-background` is the recommended starting point because it is the simplest. Headers are a small exception: header backgrounds use `--hcg-header-background` -> `--hcg-cell-background` -> `--hcg-column-background`, while header text color uses `--hcg-header-color` -> `--hcg-column-color` -> `--hcg-cell-color` -> `--hcg-color`.
+
 ## Fonts and text
 
 ### Globals
