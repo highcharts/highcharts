@@ -102,6 +102,11 @@ class FilterRow extends HeaderRow {
         }
 
         this.setLastCellClass();
+        this.rendered = true;
+
+        if (vp.virtualRows) {
+            this.reflow();
+        }
     }
 
 }
