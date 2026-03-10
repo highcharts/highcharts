@@ -3738,7 +3738,7 @@ class Axis {
                 'grid',
                 '-grid',
                 options.gridZIndex
-            );
+            ).clip(chart.plotClipRect);
             this.axisGroup = createGroup(
                 'axis',
                 '',
@@ -3914,7 +3914,8 @@ class Axis {
         // Due to GridAxis.tickSize, tickSize should be calculated after ticks
         // has rendered.
         if (coll !== 'colorAxis' && clipOffset) {
-            const tickSize = this.tickSize('tick');
+            const tickSize = this.tickSize('tick'),
+                gridClip = (options.gridLineWidth || 0) / 2;
 
             axisOffset[side] = Math.max(
                 axisOffset[side],
@@ -3933,6 +3934,19 @@ class Axis {
                 // #4308, #4371
                 axis.axisLine.strokeWidth() / 2;
             clipOffset[invertedSide] = Math.max(clipOffset[invertedSide], clip);
+
+            // Correction for the grid lines is needed for the plotBorderRadius
+            // clipping logic in order to fit along the outer edge of the grid
+            // lines.
+            if (gridClip) {
+                if (side === 0 || side === 2) {
+                    clipOffset[1] = Math.max(clipOffset[1], gridClip);
+                    clipOffset[3] = Math.max(clipOffset[3], gridClip);
+                } else {
+                    clipOffset[0] = Math.max(clipOffset[0], gridClip);
+                    clipOffset[2] = Math.max(clipOffset[2], gridClip);
+                }
+            }
         }
 
         fireEvent(this, 'afterGetOffset');
@@ -3993,19 +4007,16 @@ class Axis {
      * @function Highcharts.Axis#renderLine
      */
     public renderLine(): void {
-        if (!this.axisLine) {
-            this.axisLine = this.chart.renderer.path()
-                .addClass('highcharts-axis-line')
-                .add(this.axisGroup);
-
-            if (!this.chart.styledMode) {
-                this.axisLine.attr({
-                    stroke: this.options.lineColor,
-                    'stroke-width': this.options.lineWidth,
-                    zIndex: 7
-                });
-            }
-        }
+        const { chart, options } = this;
+        this.axisLine ||= chart.renderer.path()
+            .addClass('highcharts-axis-line')
+            .attr(chart.styledMode ? {} : {
+                stroke: options.lineColor,
+                'stroke-width': options.lineWidth,
+                zIndex: 7
+            })
+            .clip(chart.plotClipRect)
+            .add(this.axisGroup);
     }
 
     /**
