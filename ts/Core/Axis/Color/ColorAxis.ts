@@ -442,15 +442,48 @@ class ColorAxis extends Axis implements ColorAxisBase {
         let titleHeight = 0;
         let titleWidth = 0;
 
-        if (axis.axisTitle) {
-            const titleBBox = axis.axisTitle.getBBox();
-            titleHeight = titleBBox.height;
-            titleWidth = titleBBox.width;
+        const titleOptions = axis.options.title || {};
+        const hasTitleText = typeof titleOptions.text !== 'undefined' &&
+                             titleOptions.text !== '';
+
+        if (hasTitleText) {
+            let fontSize: number = 12; // Standard fallback
+
+            if (titleOptions.style?.fontSize) {
+                const fontSizeStr = titleOptions.style.fontSize.toString();
+                const parsed = parseFloat(fontSizeStr);
+
+                if (!isNaN(parsed)) {
+                    fontSize = fontSizeStr.indexOf('em') !== -1 ?
+                        parsed * 12 : parsed;
+                }
+            }
+
+
+            const metrics = axis.chart.renderer.fontMetrics(fontSize);
+
+            if (horiz) {
+
+                titleHeight = metrics.h;
+
+                titleWidth = axis.axisTitle ?
+                    axis.axisTitle.getBBox().width :
+                    String(titleOptions.text).length * (metrics.h * 0.55);
+            } else {
+
+                titleWidth = metrics.h;
+
+                titleHeight = axis.axisTitle ?
+                    (
+                        axis.axisTitle.rotation ?
+                            axis.axisTitle.getBBox().height :
+                            axis.axisTitle.getBBox().width
+                    ) :
+                    String(titleOptions.text).length * (metrics.h * 0.55);
+            }
         }
 
-        const titleMargin = axis.axisTitle ?
-            (axis.options.title?.margin ?? 0) : 0;
-
+        const titleMargin = hasTitleText ? (titleOptions.margin ?? 0) : 0;
         const yShift = horiz ? (titleHeight + titleMargin) : 0;
 
         // Create the gradient
