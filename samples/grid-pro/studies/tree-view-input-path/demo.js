@@ -15,11 +15,8 @@ Grid.grid('container', {
         },
         idColumn: 'id',
         treeView: {
-            enabled: true,
             input: {
-                type: 'path',
-                pathColumn: 'path',
-                separator: '/'
+                type: 'path'
             },
             treeColumn: 'name',
             initiallyExpanded: true

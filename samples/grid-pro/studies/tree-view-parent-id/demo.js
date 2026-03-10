@@ -8,11 +8,6 @@ Grid.grid('container', {
         },
         idColumn: 'id',
         treeView: {
-            enabled: true,
-            input: {
-                type: 'parentId',
-                parentIdColumn: 'parentId'
-            },
             treeColumn: 'name',
             initiallyExpanded: true
         }
