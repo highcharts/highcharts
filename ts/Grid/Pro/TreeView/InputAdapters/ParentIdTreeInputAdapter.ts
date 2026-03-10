@@ -27,6 +27,9 @@ import type {
     TreeIndexBuildResult,
     TreeNodeRecord
 } from '../TreeViewTypes';
+import type {
+    NormalizedTreeInputParentIdOptions
+} from '../TreeViewOptionsNormalizer';
 
 import { isNumber, isString } from '../../../../Shared/Utilities.js';
 
@@ -46,8 +49,8 @@ import { isNumber, isString } from '../../../../Shared/Utilities.js';
  * @param idColumn
  * Column ID containing stable row IDs.
  *
- * @param parentIdColumn
- * Column ID containing parent row IDs.
+ * @param input
+ * Normalized tree input options.
  *
  * @returns
  * Canonical tree index.
@@ -55,8 +58,10 @@ import { isNumber, isString } from '../../../../Shared/Utilities.js';
 export function buildIndexFromColumns(
     columns: ColumnCollection,
     idColumn: string,
-    parentIdColumn: string
+    input: NormalizedTreeInputParentIdOptions
 ): TreeIndexBuildResult {
+    const { parentIdColumn } = input;
+
     const idValues = columns[idColumn];
     if (!idValues) {
         throw new Error(`TreeView: idColumn "${idColumn}" not found.`);

@@ -43,8 +43,10 @@ export interface TreeViewOptions {
 
     /**
      * Input format definition used to build the tree index.
+     *
+     * @default { type: 'parentId' }
      */
-    input: TreeInputOptions;
+    input?: TreeInputOptions;
 
     /**
      * Column ID used as the tree column when rendering expand/collapse UI.
@@ -75,17 +77,38 @@ export type TreeInputOptions = (
  * Parent-child relation input based on a parent ID column.
  */
 export interface TreeInputParentIdOptions {
-    type: 'parentId';
-    parentIdColumn: string;
+    /**
+     * Type of the tree input.
+     */
+    type?: 'parentId';
+
+    /**
+     * Column ID containing parent row IDs.
+     * @default 'parentId'
+     */
+    parentIdColumn?: string;
 }
 
 /**
  * Parent-child relation input based on full node paths.
  */
 export interface TreeInputPathOptions {
+    /**
+     * Type of the tree input.
+     */
     type: 'path';
-    pathColumn: string;
-    separator: string;
+
+    /**
+     * Column ID containing full node paths.
+     * @default 'path'
+     */
+    pathColumn?: string;
+
+    /**
+     * Path segment separator.
+     * @default '/'
+     */
+    separator?: string;
 }
 
 /**
