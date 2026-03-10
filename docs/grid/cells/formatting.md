@@ -4,51 +4,32 @@ sidebar_label: "Formatting"
 
 # Cell formatting
 
-Cell content is configured with `columns[].cells`, or shared across all
-columns through `columnDefaults.cells`.
+Cell formatting is configured in `columnDefaults.cells` or `columns[].cells`.
+Both options apply only to table body cells, not column headers.
 
-Use `cells.format` for template-based formatting and `cells.formatter` for
-callback-based formatting.
+## `format` vs `formatter`
 
-## Basic configuration
+Use `cells.format` when the output can be described with templating. Use
+`cells.formatter` when the output depends on custom logic.
 
-```js
-Grid.grid('container', {
-    columnDefaults: {
-        cells: {
-            format: '{value}'
-        }
-    },
-    columns: [{
-        id: 'price',
-        cells: {
-            className: 'price-cell',
-            format: '${value}',
-            editMode: {
-                enabled: true
-            }
-        }
-    }]
-});
-```
+- `format`: A template string evaluated in the cell context.
+- `formatter`: A callback function called with `this` bound to the cell.
+- If neither option is set, Grid falls back to a default format based on the
+  column `dataType`.
 
-`columnDefaults.cells` defines shared cell options for every column, while
-`columns[].cells` overrides them for individual columns.
+As in Highcharts Core, we recommend `format` when possible. Use `formatter`
+when templating is not enough. Grid uses the same [templating engine as Core](https://www.highcharts.com/docs/chart-concepts/templating).
 
-In addition to formatting, the `cells` object is also where you configure
-options such as `className`, `style`, and `editMode`.
+## Template-based formatting with `format`
 
-## Template formatting
-
-Use `cells.format` when the output can be expressed with templating. This is
-the recommended approach when possible.
+`{value}` references the current cell value.
 
 ```js
 Grid.grid('container', {
     columns: [{
         id: 'price',
         cells: {
-            format: '${value}'
+            format: '${value:,.2f}'
         }
     }, {
         id: 'updatedAt',
@@ -59,50 +40,88 @@ Grid.grid('container', {
 });
 ```
 
-`format` supports the same template syntax used elsewhere in Highcharts. In a
-cell template, `{value}` references the cell value.
+You can also use other row values, expressions, and markup in the template
+string:
+
+```js
+columns: [{
+    id: 'firstName',
+    cells: {
+        format: '<a href="mailto:{row.data.email}">{value} {row.data.lastName}</a>'
+    }
+}, {
+    id: 'salary',
+    cells: {
+        format: '<span class="salary">${(divide value 1000):.0f}k</span>'
+    }
+}]
+```
 
 See [Templating](https://www.highcharts.com/docs/chart-concepts/templating)
-for the available formatting syntax.
+for the available syntax.
 
-## Callback formatting
+## Callback-based formatting with `formatter`
 
-Use `cells.formatter` when you need formatting logic that cannot be expressed
-through templating.
+Use `formatter` for conditional logic, advanced markup, or cases where the
+result depends on more than one cell property.
+
+The callback is called with `this` bound to the cell instance, so you can use
+properties such as `this.value`, `this.column`, `this.row`, and
+`this.row.data`.
 
 ```js
 Grid.grid('container', {
     columns: [{
-        id: 'delta',
+        id: 'price',
         cells: {
-            formatter() {
-                return this.value > 0 ?
-                    '<span class="positive">+' + this.value + '</span>' :
-                    String(this.value);
+            formatter: function () {
+                const price = Number(this.value || 0);
+                const discount = Number(this.row.data.discount || 0);
+                const discountedPrice = price * (1 - discount / 100);
+
+                if (!discount) {
+                    return `$${price.toFixed(2)}`;
+                }
+
+                return (
+                    `<span class="original">$${price.toFixed(2)}</span> ` +
+                    `<strong>$${discountedPrice.toFixed(2)}</strong>`
+                );
             }
         }
     }]
 });
 ```
 
-As in Highcharts Core, `format` is usually preferred when it is sufficient.
+## Defaults and per-column overrides
 
-## Editable cells
-
-Cell formatting and editing are often configured together. Enable direct cell
-editing with `cells.editMode.enabled`.
+Set shared formatting in `columnDefaults.cells`, and override it in
+`columns[].cells` when a specific column needs different output.
 
 ```js
-columns: [{
-    id: 'price',
-    cells: {
-        format: '${value}',
-        editMode: {
-            enabled: true
+Grid.grid('container', {
+    columnDefaults: {
+        cells: {
+            formatter: function () {
+                return typeof this.value === 'number' ?
+                    `<span class="box">${this.value}</span>` :
+                    String(this.value ?? '');
+            }
         }
-    }
-}]
+    },
+    columns: [{
+        id: 'salary',
+        cells: {
+            format: '${(divide value 1000):.0f}k'
+        }
+    }]
+});
 ```
+
+In this example, the shared `formatter` applies to most columns, but the
+`salary` column uses its own `format` instead.
+
+## Related topics
 
 For editable input behavior and built-in renderers, see
 [Editing / Renderers](https://www.highcharts.com/docs/grid/editing/renderers).
