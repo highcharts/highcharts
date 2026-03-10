@@ -429,18 +429,14 @@ export class LocalDataProvider extends DataProvider {
             interTable = originalDataTable.getModified();
         }
 
-        // TODO: (DD) Make the data table modifiers more general instead of
-        // hardcoding the tree projection controller here. (don't forget to
-        // remove the declarations)
-        const treeProjectionController = (
-            this.querying.grid as GridWithTreeProjection
-        ).treeProjectionController;
-
-        if (treeProjectionController) {
-            treeProjectionController.sync();
-            interTable = treeProjectionController.projectTable(interTable);
+        const grid = this.querying.grid;
+        if (
+            'treeProjectionController' in grid &&
+            grid.treeProjectionController
+        ) {
+            grid.treeProjectionController?.sync();
+            interTable = grid.treeProjectionController.projectTable(interTable);
         }
-        // --- END OF TODO ----
 
         this.prePaginationRowCount = interTable.rowCount;
 
@@ -516,15 +512,6 @@ export class LocalDataProvider extends DataProvider {
  *  Declarations
  *
  * */
-
-interface TreeProjectionControllerLike {
-    sync: () => void;
-    projectTable: (table: DataTable) => DataTable;
-}
-
-interface GridWithTreeProjection {
-    treeProjectionController?: TreeProjectionControllerLike;
-}
 
 export type GridDataConnectorTypeOptions =
     MakeOptional<DataConnectorTypeOptions, 'id'>;

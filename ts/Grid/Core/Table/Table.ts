@@ -374,19 +374,15 @@ class Table {
 
             const newRowCount = await dp.getRowCount();
 
-            // TODO: (DD) Make the data table modifiers more general instead of
-            // hardcoding the tree projection controller here. (don't forget to
-            // remove the declarations)
-            const treeProjectionController = (
-                vp.grid as GridWithTreeProjectionLike
-            ).treeProjectionController;
-            const shouldRerenderForTreeProjection = (
-                oldRowsCount !== newRowCount &&
-                !!treeProjectionController?.getOptions()
-            );
-            // --- END OF TODO ----
+            if (
+                'treeProjectionController' in vp.grid &&
+                !!vp.grid.treeProjectionController?.getOptions() &&
+                oldRowsCount !== newRowCount
+            ) {
+                shouldRerender = true;
+            }
 
-            if (shouldRerender || shouldRerenderForTreeProjection) {
+            if (shouldRerender) {
                 // Rerender all rows
                 await vp.rowsVirtualizer.rerender();
             } else if (oldRowsCount !== newRowCount) {
@@ -840,12 +836,6 @@ class Table {
  *  Declarations
  *
  * */
-
-interface GridWithTreeProjectionLike {
-    treeProjectionController?: {
-        getOptions: () => unknown;
-    };
-}
 
 /**
  * Represents the metadata of the viewport state. It is used to save the
