@@ -3,13 +3,14 @@
 You can customize the chart credits using the `Credits` component:
 
 ```tsx
-import { Chart, Series, Credits } from "@highcharts/react";
+import { Chart, Credits } from "@highcharts/react";
+import { LineSeries } from "@highcharts/react/series/Line";
 
 export default function CreditsChart() {
   return (
     <Chart>
       <Credits href="https://www.highcharts.com">Credits text</Credits>
-      <Series data={[3, 4, 1, 5, 2]} />
+      <LineSeries data={[3, 4, 1, 5, 2]} />
     </Chart>
   );
 }
