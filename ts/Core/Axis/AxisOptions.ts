@@ -164,6 +164,10 @@ export interface AxisCrosshairLabelOptions {
     /**
      * Formatter function for the label text.
      *
+     * Since v12.5.0, the callback also receives `ctx` as the second argument,
+     * so that arrow functions can access the same context as regular functions
+     * using `this`.
+     *
      * @since   2.1
      * @product highstock
      */
@@ -566,7 +570,9 @@ export interface AxisLabelOptions {
      * Callback JavaScript function to format the label. The value
      * is given by `this.value`. Additional properties for `this` are
      * `axis`, `chart`, `isFirst`, `isLast` and `text` which holds the
-     * value of the default formatter.
+     * value of the default formatter. Since v12.5.0, the callback also
+     * receives `ctx` as the first argument, so that arrow functions can
+     * access the same context as regular functions using `this`.
      *
      * Defaults to a built in function returning a formatted string
      * depending on whether the axis is `category`, `datetime`,
@@ -1772,7 +1778,10 @@ export interface AxisOptions {
      * laid out on the axis. This overrides the default behaviour of
      * [tickPixelInterval](#xAxis.tickPixelInterval) and [tickInterval](
      * #xAxis.tickInterval). The automatic tick positions are accessible
-     * through `this.tickPositions` and can be modified by the callback.
+     * through `this.tickPositions` and can be modified by the callback. Since
+     * v12.5.0, the callback also receives `ctx` as the third argument, so that
+     * arrow functions can access the same context as regular functions using
+     * `this`.
      *
      * @see [tickPositions](#xAxis.tickPositions)
      *
@@ -1967,7 +1976,8 @@ export interface AxisTickPositionerCallback {
     (
         this: Axis,
         min: number,
-        max: number
+        max: number,
+        ctx?: Axis
     ): (TickPositionsArray|undefined);
 }
 

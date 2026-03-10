@@ -27,10 +27,8 @@ import type { RemoteFetchCallbackResult } from './RemoteDataProvider';
 import type QueryingController from '../../Core/Querying/QueryingController';
 import type { ColumnSortingOrder } from '../../Core/Options';
 
+import { defined } from '../../../Shared/Utilities.js';
 import T from '../../../Core/Templating.js';
-import U from '../../../Core/Utilities.js';
-
-const { defined } = U;
 const { format } = T;
 
 

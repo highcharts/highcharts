@@ -15,7 +15,9 @@
             "ES2015.Promise",
             "ES2016.Array.Include",
             "ES2015.Core",
-            "ES2017",          
+            "ES2015.Collection",
+            "ES2015.Iterable",
+            "ES2017",
             "ES2017.sharedMemory"
         ]
     },
