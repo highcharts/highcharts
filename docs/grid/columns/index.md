@@ -7,6 +7,7 @@ sidebar_label: "Overview"
 Many of the available configuration options in Grid apply to the columns and their corresponding row and header cells.
 
 For focused topics, see:
+- [Styling and Theming](https://www.highcharts.com/docs/grid/columns/styling-and-theming)
 - [Column headers](https://www.highcharts.com/docs/grid/columns/header)
 - [Column grouping](https://www.highcharts.com/docs/grid/columns/grouping)
 - [Column resizing and width](https://www.highcharts.com/docs/grid/columns/resizing-and-width)
@@ -104,8 +105,6 @@ columns: [{
 The `columns[].cells` option can configure the cells in individual columns. If needed, you can set defaults for all columns in `columnDefaults.cells`.
 
 The end user can edit each cell in a column directly by setting the `editMode.enabled` option to true. Read more in the [Editing overview](https://www.highcharts.com/docs/grid/editing/index) article.
-
-To add a right-click menu for cells, see the [Cell context menu](https://www.highcharts.com/docs/grid/cells/context-menu) article.
 
 Note that `className` and `format` support templating as described in [Templating](https://www.highcharts.com/docs/chart-concepts/templating), and `{value}` references the cell value.
 

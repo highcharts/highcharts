@@ -12,7 +12,7 @@ function generateData(rowCount) {
 }
 
 window.grid = Grid.grid('container', {
-    dataTable: {
+    data: {
         columns: generateData(200)
     },
     columnDefaults: {

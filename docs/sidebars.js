@@ -126,6 +126,7 @@ module.exports = {
             {
                 'Columns': [
                     'grid/columns/index',
+                    'grid/columns/styling-and-theming',
                     'grid/columns/header',
                     'grid/columns/grouping',
                     'grid/columns/resizing-and-width',
@@ -146,8 +147,8 @@ module.exports = {
             {
                 'Cells': [
                     'grid/cells/index',
-                    'grid/cells/formatting',
-                    'grid/cells/context-menu'
+                    'grid/cells/styling-and-theming',
+                    'grid/cells/formatting'
                 ]
             },
             {
@@ -161,10 +162,13 @@ module.exports = {
             {
                 'Theming': [
                     'grid/theming/index',
-                    'grid/theming/variables',
+                    'grid/theming/grid-variables',
+                    'grid/theming/element-variables',
                     'grid/theming/conditional',
+                    'grid/theming/custom-icons'
                 ]
             },
+            'grid/responsive-grid',
             'grid/data-providers',
             'grid/events',
             'grid/accessibility',
@@ -346,18 +350,23 @@ module.exports = {
                     'react/components/series-types',
                     {
                         'Chart elements': [
-                            'react/components/chart-elements/accessibility',
+                            'react/components/chart-elements/title',
+                            'react/components/chart-elements/subtitle',
                             'react/components/chart-elements/credits',
-                            'react/components/chart-elements/data',
-                            'react/components/chart-elements/drilldown',
-                            'react/components/chart-elements/exporting',
                             'react/components/chart-elements/legend',
                             'react/components/chart-elements/plot-options',
-                            'react/components/chart-elements/subtitle',
-                            'react/components/chart-elements/title',
                             'react/components/chart-elements/tooltip',
                             'react/components/chart-elements/x-axis',
                             'react/components/chart-elements/y-axis'
+                        ],
+                        'Modules': [
+                            'react/components/modules/accessibility',
+                            'react/components/modules/exporting',
+                            'react/components/modules/data',
+                            'react/components/modules/drilldown',
+                            'react/components/modules/broken-axis',
+                            'react/components/modules/draggable-points',
+                            'react/components/modules/stock-tools',
                         ]
                     },
                     'react/components/technical-indicators'
@@ -366,6 +375,7 @@ module.exports = {
             'react/data-handling',
             'react/chart-instance',
             'react/typescript',
+            'react/highcharts-instance',
             'react/options-component-format',
             'react/nextjs',
             'react/bundling-and-tree-shaking',

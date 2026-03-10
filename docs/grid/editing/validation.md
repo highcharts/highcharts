@@ -11,10 +11,8 @@ Validation rules are configured in `columns[].cells.editMode.validationRules`.
 ```js
 Grid.grid('container', {
     data: {
-        dataTable: {
-            columns: {
-                email: ['anna@example.com', 'john@example.com']
-            }
+        columns: {
+            email: ['anna@example.com', 'john@example.com']
         }
     },
     columns: [{

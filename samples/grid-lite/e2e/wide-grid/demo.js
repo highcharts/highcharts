@@ -33,7 +33,7 @@ months.forEach(m => {
 });
 
 Grid.grid('container', {
-    dataTable: {
+    data: {
         columns
     },
     header: [{

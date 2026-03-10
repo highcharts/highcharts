@@ -7,7 +7,8 @@ Highcharts React integration provides dedicated chart components. Each serves as
 Use the `Chart` component to create Core charts:
 
 ```tsx
-import { Chart, Series } from "@highcharts/react";
+import { Chart } from "@highcharts/react";
+import { LineSeries } from "@highcharts/react/series/Line";
 
 export default function ChartComponent() {
   return (
@@ -22,7 +23,7 @@ export default function ChartComponent() {
         style: { width: "100%", height: "100%" },
       }}
     >
-      <Series data={[3, 4, 1, 5, 2]} />
+      <LineSeries data={[3, 4, 1, 5, 2]} />
     </Chart>
   );
 }
@@ -45,13 +46,13 @@ export default function ChartComponent() {
 Use the `StockChart` component to create Stock charts:
 
 ```tsx
-import { StockChart, StockSeries } from "@highcharts/react/Stock";
+import { StockChart } from "@highcharts/react/Stock";
+import { CandlestickSeries } from "@highcharts/react/series/Candlestick";
 
 export default function StockChartComponent() {
   return (
     <StockChart>
-      <StockSeries
-        type="candlestick"
+      <CandlestickSeries
         data={[
           [1609459200000, 100, 110, 90, 105],
           [1609545600000, 105, 115, 95, 110],
@@ -72,7 +73,8 @@ You can also use **technical indicators** with your Stock charts. See the [Techn
 Use the `MapsChart` component to create Map charts:
 
 ```tsx
-import { MapsChart, MapSeries } from "@highcharts/react/Maps";
+import { MapsChart } from "@highcharts/react/Maps";
+import { MapSeries } from "@highcharts/react/series/Map";
 
 // Fetch map data
 const mapData = await fetch(
@@ -107,7 +109,8 @@ export default function MapsChartComponent() {
 Use the `GanttChart` component to create Gantt charts:
 
 ```tsx
-import { GanttChart, GanttSeries } from "@highcharts/react/Gantt";
+import { GanttChart } from "@highcharts/react/Gantt";
+import { GanttSeries } from "@highcharts/react/series/Gantt";
 
 export default function GanttChartComponent() {
   return (

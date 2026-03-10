@@ -1,0 +1,1 @@
+Verify that a newly created button (the first one) properly adds a threshold to the chart. Click on a button, then on a chart. The threshold should be draggable and should change the series' color below the horizontal line.

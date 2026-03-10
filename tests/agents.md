@@ -54,7 +54,6 @@ The `tests/highcharts/` folder **always uses subfolders** to organize tests by f
 tests/
 ├── dashboards/           # Product folder (flat structure OK)
 │   ├── components.spec.ts
-│   ├── grid.spec.ts
 │   ├── layout.spec.ts
 │   └── ...
 └── highcharts/           # Product folder (ALWAYS use subfolders)
