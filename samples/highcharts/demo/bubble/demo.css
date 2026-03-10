@@ -64,3 +64,17 @@ body {
 .highcharts-description {
     margin: 0.3rem 10px;
 }
+
+.highcharts-tooltip table {
+    padding-left: 5px;
+}
+
+.highcharts-tooltip th:not([colspan]) {
+    font-weight: normal;
+}
+
+.highcharts-tooltip td {
+    min-width: 45px;
+    font-weight: bold;
+    text-align: right;
+}
