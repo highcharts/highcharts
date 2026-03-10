@@ -138,7 +138,6 @@ module.exports = {
                 'Rows': [
                     'grid/rows/index',
                     'grid/rows/data',
-                    'grid/rows/sorting',
                     'grid/rows/pagination',
                     'grid/rows/virtualization',
                     'grid/rows/performance'
