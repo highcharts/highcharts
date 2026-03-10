@@ -1,79 +1,55 @@
-import { test, expect } from '~/fixtures.ts';
+import { test, expect, createChart } from '~/fixtures.ts';
 
 // Equivalent of test/typescript-karma/masters/modules/boost.test.js
 
+const boostModules = { modules: ['modules/boost.src.js'] };
+
 test.describe('Boost Module', () => {
     test('Highcharts boost composition', async ({ page }) => {
-        await page.setContent(`
-            <!DOCTYPE html>
-            <html>
-                <head>
-                    <script src="https://code.highcharts.com/highcharts.src.js"></script>
-                    <script src="https://code.highcharts.com/modules/boost.src.js"></script>
-                </head>
-                <body>
-                    <div id="container"></div>
-                </body>
-            </html>
-        `, { waitUntil: 'networkidle' });
+        await createChart(
+            page,
+            { series: [{ type: 'line', data: [1, 2, 3] }] },
+            boostModules
+        );
 
-        const result = await page.evaluate(() => {
-            const Highcharts = (window as any).Highcharts;
-            return {
-                hasWebGLSupport: typeof Highcharts.hasWebGLSupport === 'function'
-            };
-        });
+        const result = await page.evaluate(() => ({
+            hasWebGLSupport:
+                typeof (window as any).Highcharts?.hasWebGLSupport === 'function'
+        }));
 
-        expect(result.hasWebGLSupport, 'Highcharts should be decorated with boost functions.').toBe(true);
+        expect(
+            result.hasWebGLSupport,
+            'Highcharts should be decorated with boost functions.'
+        ).toBe(true);
     });
 
     test('Boost module creates chart with large data', async ({ page }) => {
-        await page.setContent(`
-            <!DOCTYPE html>
-            <html>
-                <head>
-                    <script src="https://code.highcharts.com/highcharts.src.js"></script>
-                    <script src="https://code.highcharts.com/modules/boost.src.js"></script>
-                </head>
-                <body>
-                    <div id="container" style="width: 600px; height: 400px;"></div>
-                </body>
-            </html>
-        `, { waitUntil: 'networkidle' });
+        const data = Array.from({ length: 10000 }, () => Math.random() * 100);
 
-        const result = await page.evaluate(() => {
-            const Highcharts = (window as any).Highcharts;
-
-            // Generate large dataset
-            const data: number[] = [];
-            for (let i = 0; i < 10000; i++) {
-                data.push(Math.random() * 100);
-            }
-
-            const chart = Highcharts.chart('container', {
+        const chart = await createChart(
+            page,
+            {
                 boost: {
                     useGPUTranslations: true,
                     seriesThreshold: 1
                 },
                 series: [{
                     type: 'line',
-                    data: data,
-                    boostThreshold: 1 // Force boost
+                    data,
+                    boostThreshold: 1
                 }],
-                chart: {
-                    animation: false
-                }
-            });
+                chart: { animation: false }
+            },
+            boostModules
+        );
 
-            const series = chart.series[0];
-
+        const result = await chart.evaluate((c) => {
+            const s = c.series[0];
             return {
-                chartExists: !!chart,
-                seriesExists: !!series,
-                // When boosted, series.data is empty - check options.data instead
-                dataLength: series.options.data?.length ?? 0,
-                // Check if boost was applied (series will have boosted properties)
-                isBoosted: series.boosted === true
+                chartExists: !!c,
+                seriesExists: !!s,
+                dataLength: (s.options as any).data?.length ?? 0,
+                isBoosted: (s as any).boosted === true
             };
         });
 
@@ -86,31 +62,14 @@ test.describe('Boost Module', () => {
     test('Boost with pixelRatio > 1 renders full chart (not just quarter)', async ({
         page
     }) => {
-        await page.setContent(
-            `
-            <!DOCTYPE html>
-            <html>
-                <head>
-                    <script src="https://code.highcharts.com/highcharts.src.js"></script>
-                    <script src="https://code.highcharts.com/modules/boost.src.js"></script>
-                </head>
-                <body>
-                    <div id="container" style="width: 600px; height: 400px;"></div>
-                </body>
-            </html>
-        `,
-            { waitUntil: 'networkidle' }
-        );
+        const data = Array.from({ length: 100000 }, (_, i) => [
+            i,
+            Math.sin(i / 500) * 10 + Math.random() * 5
+        ]);
 
-        const result = await page.evaluate(async () => {
-            const Highcharts = (window as any).Highcharts;
-
-            const data: number[][] = [];
-            for (let i = 0; i < 100000; i++) {
-                data.push([i, Math.sin(i / 500) * 10 + Math.random() * 5]);
-            }
-
-            const chart = Highcharts.chart('container', {
+        const chart = await createChart(
+            page,
+            {
                 boost: {
                     pixelRatio: 2,
                     useGPUTranslations: true,
@@ -122,17 +81,23 @@ test.describe('Boost Module', () => {
                     boostThreshold: 1
                 }],
                 chart: { animation: false }
-            });
+            },
+            {
+                ...boostModules,
+                css: '#container { width: 600px; height: 400px; }'
+            }
+        );
 
-            await new Promise((r) => setTimeout(r, 500));
+        await new Promise((r) => setTimeout(r, 500));
 
-            const canvas = chart.boost?.canvas;
+        const result = await chart.evaluate((c) => {
+            const canvas = (c as any).boost?.canvas;
             if (!canvas) {
                 return { ok: false, reason: 'no boost canvas' };
             }
 
-            const expectedW = chart.chartWidth * 2;
-            const expectedH = chart.chartHeight * 2;
+            const expectedW = c.chartWidth * 2;
+            const expectedH = c.chartHeight * 2;
             const dimsOk =
                 canvas.width === expectedW && canvas.height === expectedH;
 
@@ -146,10 +111,8 @@ test.describe('Boost Module', () => {
             ctx.drawImage(canvas, 0, 0);
 
             const pr = 2;
-            const px =
-                (chart.plotLeft + chart.plotWidth * 0.75) * pr;
-            const py =
-                (chart.plotTop + chart.plotHeight * 0.75) * pr;
+            const px = (c.plotLeft + c.plotWidth * 0.75) * pr;
+            const py = (c.plotTop + c.plotHeight * 0.75) * pr;
             const sample = ctx.getImageData(
                 Math.floor(px),
                 Math.floor(py),
