@@ -3534,11 +3534,12 @@ class Chart {
             loadingOptions = options.loading,
             setLoadingSize = function (): void {
                 if (loadingDiv) {
+                    const loadingStyle = loadingOptions?.style || {};
                     css(loadingDiv, {
-                        left: chart.plotLeft + 'px',
-                        top: chart.plotTop + 'px',
-                        width: chart.plotWidth + 'px',
-                        height: chart.plotHeight + 'px'
+                        left: loadingStyle.left ?? chart.plotLeft + 'px',
+                        top: loadingStyle.top ?? chart.plotTop + 'px',
+                        width: loadingStyle.width ?? chart.plotWidth + 'px',
+                        height: loadingStyle.height ?? chart.plotHeight + 'px'
                     });
                 }
             };
