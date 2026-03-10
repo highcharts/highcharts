@@ -525,9 +525,13 @@ class Legend {
 
             line?.attr(colorizeHidden({ stroke: lineColor || item.color }));
 
-            // Apply marker options
+            // Apply legend symbol attributes
             symbol?.attr(colorizeHidden(
-                (item as Series).pointAttribs?.() || { fill: item.color }
+                (item as Point).series ?
+                    // When `legendType` is `point`, like pie series
+                    (item as Point).series.pointAttribs?.(item as Point) :
+                    // When `legendType` is `series`, like line or column series
+                    (item as Series).pointAttribs?.() || { fill: item.color }
             ));
 
             area?.attr(colorizeHidden({
