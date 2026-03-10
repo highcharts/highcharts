@@ -3944,7 +3944,7 @@ class Axis {
             // Correction for the grid lines is needed for the plotBorderRadius
             // clipping logic in order to fit along the outer edge of the grid
             // lines.
-            if (gridClip) {
+            if (gridClip && this.clippable) {
                 if (side === 0 || side === 2) {
                     clipOffset[1] = Math.max(clipOffset[1], gridClip);
                     clipOffset[3] = Math.max(clipOffset[3], gridClip);
