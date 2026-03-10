@@ -340,7 +340,6 @@ module.exports = {
         ],
         'React integration': [
             'react/getting-started',
-            'react/typescript',
             {
                 'Components': [
                     'react/components/chart',
@@ -366,6 +365,7 @@ module.exports = {
             },
             'react/data-handling',
             'react/chart-instance',
+            'react/typescript',
             'react/options-component-format',
             'react/nextjs',
             'react/bundling-and-tree-shaking',

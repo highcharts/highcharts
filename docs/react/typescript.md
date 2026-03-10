@@ -19,8 +19,6 @@ export default function App() {
 }
 ```
 
-Keeping `options` in state keeps the object reference stable across re-renders and aligns well with React patterns.
-
 ## Other useful exported types
 
 ### `SeriesProps`
