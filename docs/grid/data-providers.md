@@ -56,6 +56,73 @@ to refresh rows automatically after table change events. For batched updates,
 leave it `false` and call `grid.viewport.updateRows()` manually once. Updates
 triggered by Grid edits do not cause a second refresh.
 
+## Column generation (`autogenerateColumns`)
+`data.autogenerateColumns` controls how Grid combines provider columns with
+`columns[]` configuration.
+
+- `true` (default): provider columns are rendered automatically. If `header` is
+  not set, they keep provider order. Columns configured in `columns[]` that are
+  not present in provider data (for example unbound/computed columns) are
+  appended at the end in `columns[]` order.
+- `false`: provider columns are not rendered automatically. Grid renders only
+  columns explicitly defined in `columns[]` (or referenced by `header`).
+
+### Example: append custom column in autogeneration mode
+```js
+Grid.grid('container', {
+    data: {
+        columns: {
+            product: ['Apple', 'Pear', 'Plum', 'Banana'],
+            weight: [100, 40, 0.5, 200],
+            price: [1.5, 2.53, 5, 4.5]
+        }
+    },
+    columns: [{
+        id: 'weight',
+        enabled: false
+    }, {
+        id: 'lineValue',
+        dataId: null,
+        dataType: 'number',
+        cells: {
+            valueGetter: cell => cell.row.data.weight * cell.row.data.price,
+            format: '${value:,.2f}'
+        }
+    }]
+});
+// Rendered order (no header): product, price, lineValue
+```
+
+### Example: manual column set only
+```js
+Grid.grid('container', {
+    data: {
+        autogenerateColumns: false,
+        columns: {
+            product: ['Apple', 'Pear', 'Plum', 'Banana'],
+            price: [3.24, 2.62, 5.99, 4.74],
+            revenue: [120, 85, 200, 150],
+            ignoredByConfig: ['A', 'B', 'C', 'D']
+        }
+    },
+    columns: [{
+        id: 'sum',
+        dataId: null,
+        cells: {
+            valueGetter: cell => cell.row.data.revenue * cell.row.data.price
+        }
+    }, {
+        id: 'sales',
+        dataId: 'revenue'
+    }, {
+        id: 'price'
+    }, {
+        id: 'product'
+    }]
+});
+// Rendered columns: sum, sales, price, product
+```
+
 ## RemoteDataProvider (Grid Pro)
 Grid Pro includes `RemoteDataProvider` for server-backed data. Use it when you want to page, filter, or sort on the server and fetch rows on demand.
 
