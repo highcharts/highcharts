@@ -4,6 +4,7 @@ You can set default options that affect multiple series by using the `PlotOption
 
 ```tsx
 import { Chart, PlotOptions } from "@highcharts/react";
+import { ColumnSeries } from "@highcharts/react/series/Column";
 import { LineSeries } from "@highcharts/react/series/Line";
 
 export default function PlotOptionsChart() {
@@ -14,8 +15,8 @@ export default function PlotOptionsChart() {
         line={{ marker: { enabled: false } }}
         column={{ borderRadius: 5 }}
       />
-      <Series type="line" data={[3, 4, 1, 5, 2]} />
-      <Series type="column" data={[2, 1, 3, 2, 4]} />
+      <LineSeries data={[3, 4, 1, 5, 2]} />
+      <ColumnSeries data={[2, 1, 3, 2, 4]} />
     </Chart>
   );
 }
