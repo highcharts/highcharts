@@ -1,4 +1,6 @@
 QUnit.test('Series label', function (assert) {
+    let formatterCtx;
+
     const chart = Highcharts.chart('container', {
         chart: {
             width: 400
@@ -24,8 +26,9 @@ QUnit.test('Series label', function (assert) {
                 data: [1, 3, 2, 4],
                 label: {
                     enabled: true,
-                    formatter: function () {
-                        return 'Formatter ' + this.name;
+                    formatter: ctx => {
+                        formatterCtx = ctx;
+                        return 'Formatter ' + ctx.name;
                     }
                 }
             }
@@ -48,5 +51,11 @@ QUnit.test('Series label', function (assert) {
         chart.series[2].labelBySeries.text.textStr,
         'Formatter Series 3',
         'Series label with formatter'
+    );
+
+    assert.strictEqual(
+        formatterCtx,
+        chart.series[2],
+        'Series label formatter got series ctx as the last argument'
     );
 });

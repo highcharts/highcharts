@@ -47,7 +47,7 @@ Grid.grid('container', {
 });
 ```
 
-Column data must go in `data.columns`. For an existing `DataTable` instance, use `data.dataTable`. 
+You can also pass a `DataTable` instance using `data.dataTable` instead of `data.columns`.
 
 **idColumn** – When you need custom stable row identifiers, set `idColumn` to the ID of a column whose values are unique per row. Row IDs will then be those values instead of original numeric indices. The column must contain only strings or numbers, and all values must be unique.
 

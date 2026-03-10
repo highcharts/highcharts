@@ -18,11 +18,9 @@ The `grid.exporting` API on a grid instance provides methods for exporting data:
 ```js
 const grid = Grid.grid('container', {
     data: {
-        dataTable: {
-            columns: {
-                product: ['Apple', 'Pear', 'Plum'],
-                price: [1.5, 2.53, 5]
-            }
+        columns: {
+            product: ['Apple', 'Pear', 'Plum'],
+            price: [1.5, 2.53, 5]
         }
     }
 });
