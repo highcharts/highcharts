@@ -512,7 +512,7 @@ class ColorAxis extends Axis implements ColorAxisBase {
             titleHeight + titleMargin;
         } else {
             legendItem.labelWidth = width + padding +
-                (labelOptions.x ?? labelOptions.distance) +
+                (labelOptions.x ?? labelOptions.distance ?? 0) +
                 (this.maxLabelLength || 0) +
                 (titleWidth || 0) + titleMargin;
 
