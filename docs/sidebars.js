@@ -171,6 +171,7 @@ module.exports = {
             'grid/data-providers',
             'grid/events',
             'grid/accessibility',
+            'grid/internationalization',
             'grid/exporting',
             'grid/sparklines',
             {
