@@ -1529,7 +1529,12 @@ class WGLRenderer {
                     getBoostClipRect(chart, s.series);
 
                 gl.enable(gl.SCISSOR_TEST);
-                gl.scissor(cx, height - cy - ch, cw, ch);
+                gl.scissor(
+                    cx * pixelRatio,
+                    height - (cy + ch) * pixelRatio,
+                    cw * pixelRatio,
+                    ch * pixelRatio
+                );
                 for (sindex = 0; sindex < s.segments.length; sindex++) {
                     vbuffer.render(
                         s.segments[sindex].from,

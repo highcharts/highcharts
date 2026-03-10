@@ -231,3 +231,4 @@ slowstochastic
 supertrend
 williamsr
 overscan
+multicolumn
