@@ -216,7 +216,7 @@ class Table {
     public get dataTable(): DataTable | undefined {
         const dp = this.grid.dataProvider;
         if (dp && 'getDataTable' in dp) {
-            return dp.getDataTable();
+            return dp.getDataTable(true);
         }
     }
 
@@ -533,25 +533,27 @@ class Table {
             return;
         }
 
-        const isContextMenuKey = (
-            e.key === 'ContextMenu' || (e.key === 'F10' && e.shiftKey)
-        );
+        // Disabled until meaningful functionality is ready.
 
-        if (isContextMenuKey && 'column' in cell && 'row' in cell) {
-            const tableCell = cell as TableCell;
-            const rect = tableCell.htmlElement.getBoundingClientRect();
-            const opened = this.openCellContextMenu(
-                tableCell,
-                rect.left + 4,
-                rect.bottom - 2
-            );
 
-            if (opened) {
-                e.preventDefault();
-                e.stopPropagation();
-                return;
-            }
-        }
+        // const isContextMenuKey = (
+        //     e.key === 'ContextMenu' || (e.key === 'F10' && e.shiftKey)
+        // );
+
+        // if (isContextMenuKey && 'column' in cell && 'row' in cell) {
+        //     const tableCell = cell as TableCell;
+        //     const rect = tableCell.htmlElement.getBoundingClientRect();
+        //     const opened = this.openCellContextMenu(
+        //         tableCell,
+        //         rect.left + 4,
+        //         rect.bottom - 2
+        //     );
+        //     if (opened) {
+        //         e.preventDefault();
+        //         e.stopPropagation();
+        //         return;
+        //     }
+        // }
 
         (cell as { onKeyDown(e: KeyboardEvent): void }).onKeyDown(e);
     };

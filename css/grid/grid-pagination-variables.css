@@ -1,4 +1,4 @@
-.hcg-container .hcg-pagination-wrapper {
+.hcg-container .hcg-pagination {
     background: var(--hcg-pagination-background, transparent);
     color: var(--hcg-pagination-color, var(--ig-color));
     font-weight: var(--hcg-pagination-font-weight, var(--ig-font-weight));

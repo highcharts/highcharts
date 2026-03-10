@@ -4,7 +4,17 @@ sidebar_label: "Overview"
 
 # Cells overview
 
-Cell-focused features include formatting and context menu.
+Cell options focus on how table body cells are styled and how their content is
+formatted.
 
-- [Formatting](https://www.highcharts.com/docs/grid/cells/formatting)
-- [Context menu](https://www.highcharts.com/docs/grid/cells/context-menu)
+## Styling and Theming
+
+Use classes, inline styles, and theme variables to control the appearance of
+body cells. See
+[Styling and Theming](https://www.highcharts.com/docs/grid/cells/styling-and-theming).
+
+## Formatting
+
+Use `cells.format` for template-based formatting and `cells.formatter` for
+callback-based formatting. See
+[Formatting](https://www.highcharts.com/docs/grid/cells/formatting).

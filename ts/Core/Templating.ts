@@ -189,7 +189,7 @@ function format(
 
     // eslint-disable-next-line prefer-regex-literals
     const regex = new RegExp(
-            '\\{([\\p{L}\\d:\\.,;\\-\\/<>\\[\\]%_@+"\'’= #\\(\\)]+)\\}',
+            '\\{([\\p{L}\\p{M}\\d:\\.,;\\-\\/<>\\[\\]%_@+"\'’= #\\(\\)]+)\\}',
             'gu'
         ),
         // The sub expression regex is the same as the top expression regex,
@@ -197,7 +197,7 @@ function format(
         // instead of curly brackets.
         // eslint-disable-next-line prefer-regex-literals
         subRegex = new RegExp(
-            '\\(([\\p{L}\\d:\\.,;\\-\\/<>\\[\\]%_@+"\'= ]+)\\)',
+            '\\(([\\p{L}\\p{M}\\d:\\.,;\\-\\/<>\\[\\]%_@+"\'= ]+)\\)',
             'gu'
         ),
         matches = [],
