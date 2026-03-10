@@ -293,6 +293,12 @@ class Axis {
      */
     public chart!: Chart;
 
+    /**
+     * Whether this axis is allowed to be clipped to the plot area.
+     * @internal
+     */
+    public clippable = true;
+
     /** @internal */
     public closestPointRange?: number;
 
@@ -3738,7 +3744,7 @@ class Axis {
                 'grid',
                 '-grid',
                 options.gridZIndex
-            ).clip(chart.plotClipRect);
+            ).clip(this.clippable ? chart.plotClipRect : void 0);
             this.axisGroup = createGroup(
                 'axis',
                 '',
@@ -4015,7 +4021,7 @@ class Axis {
                 'stroke-width': options.lineWidth,
                 zIndex: 7
             })
-            .clip(chart.plotClipRect)
+            .clip(this.clippable ? chart.plotClipRect : void 0)
             .add(this.axisGroup);
     }
 

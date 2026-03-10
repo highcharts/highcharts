@@ -189,6 +189,9 @@ class ColorAxis extends Axis implements ColorAxisBase {
     public chart!: Chart;
 
     /** @internal */
+    public clippable = false;
+
+    /** @internal */
     public coll = 'colorAxis' as const;
 
     /** @internal */
