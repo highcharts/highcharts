@@ -161,7 +161,7 @@ class BoxPlotSeries extends ColumnSeries {
 
     /**
      * Draw the data points
-     * @private
+     * @internal
      */
     public drawPoints(): void {
         const series = this,
@@ -394,6 +394,7 @@ class BoxPlotSeries extends ColumnSeries {
  *
  * */
 
+/** @internal */
 interface BoxPlotSeries extends ColumnSeries {
     doQuartiles?: boolean;
     pointArrayMap: Array<string>;
@@ -432,4 +433,5 @@ SeriesRegistry.registerSeriesType('boxplot', BoxPlotSeries);
  *
  * */
 
+/** @internal */
 export default BoxPlotSeries;

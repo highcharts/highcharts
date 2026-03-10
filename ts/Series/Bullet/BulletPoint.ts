@@ -52,7 +52,7 @@ class BulletPoint extends ColumnSeries.prototype.pointClass {
 
     /**
      * Destroys target graphic.
-     * @private
+     * @internal
      */
     public destroy(): undefined {
         const series = this;
