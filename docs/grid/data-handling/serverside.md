@@ -32,10 +32,25 @@ Grid.grid('container', {
     data: {
         providerType: 'remote',
         fetchCallback: async (query, offset, limit, signal) => {
-            const response = await fetch('/api/grid', { signal });
-            const result = await response.json(); // You can parse/transform here.
-            // { columns: { ... }, totalRowCount: 123, rowIds?: [...] }
-            return result;
+            const params = new URLSearchParams({
+                // Request the current slice of rows.
+                offset: String(offset),
+                limit: String(limit),
+                // Forward the current Grid query state.
+                sorting: JSON.stringify(query.sorting.currentSortings || []),
+                filtering: JSON.stringify(
+                    query.filtering.modifier?.options || null
+                )
+            });
+
+            const response = await fetch(`/api/grid?${params}`, { signal });
+            const result = await response.json();
+
+            return {
+                columns: result.columns,
+                totalRowCount: result.totalRowCount,
+                rowIds: result.rowIds
+            };
         },
         setValueCallback: async (columnId, rowId, value) => {
             await fetch('/api/grid/cell', {
@@ -58,7 +73,10 @@ Grid.grid('container', {
 
 Use `fetchCallback` when you want full control over how Grid queries your
 backend. The callback receives the current query state plus `offset`, `limit`,
-and an optional `AbortSignal`, and must return columns and total row count.
+and an optional `AbortSignal`. In the example above, `offset` and `limit` are
+sent as request parameters, `query` is used to forward sorting and filtering
+state, `signal` is passed to `fetch`, and the callback returns the expected
+`columns`, `totalRowCount`, and optional `rowIds`.
 
 ## Data Source helper
 
