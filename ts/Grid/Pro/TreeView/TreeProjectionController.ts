@@ -27,6 +27,7 @@ import type {
     ColumnCollection
 } from '../../../Data/DataTable';
 import type Grid from '../../Core/Grid';
+import type { RowMetaRecord } from '../../Core/Grid';
 import type { RowId } from '../../Core/Data/DataProvider';
 import type { LocalDataProviderOptions } from '../../Core/Data/LocalDataProvider';
 import type {
@@ -61,6 +62,10 @@ interface DataOptionsWithTreeView extends LocalDataProviderOptions {
     treeView?: TreeViewOptions;
 }
 
+interface TreeViewRowMetaFields {
+    expanded?: boolean;
+}
+
 
 /* *
  *
@@ -89,8 +94,6 @@ class TreeProjectionController {
     private indexCache?: TreeIndexBuildResult;
 
     private projectionStateCache?: TreeProjectionState;
-
-    private expandedRowIdsState?: Set<RowId>;
 
     private expansionStateSeedKey?: string;
 
@@ -224,18 +227,10 @@ class TreeProjectionController {
             return false;
         }
 
-        if (!this.expandedRowIdsState) {
-            this.syncExpandedRowIdsState();
-        }
+        const changed = this.setRowMetaExpanded(rowId, !rowState.isExpanded);
 
-        if (!this.expandedRowIdsState) {
+        if (!changed) {
             return false;
-        }
-
-        if (rowState.isExpanded) {
-            this.expandedRowIdsState.delete(rowId);
-        } else {
-            this.expandedRowIdsState.add(rowId);
         }
 
         this.projectionStateCache = void 0;
@@ -261,24 +256,14 @@ class TreeProjectionController {
             return false;
         }
 
-        if (!this.expandedRowIdsState) {
-            this.syncExpandedRowIdsState();
-        }
-
-        const expandedRowIdsState = this.expandedRowIdsState;
-        if (!expandedRowIdsState) {
-            return false;
-        }
-
         let changed = false;
 
         for (const [nodeId, node] of index.nodes) {
-            if (!node.childrenIds.length || expandedRowIdsState.has(nodeId)) {
+            if (!node.childrenIds.length) {
                 continue;
             }
 
-            expandedRowIdsState.add(nodeId);
-            changed = true;
+            changed = this.setRowMetaExpanded(nodeId, true) || changed;
         }
 
         if (changed) {
@@ -305,15 +290,20 @@ class TreeProjectionController {
             return false;
         }
 
-        if (!this.expandedRowIdsState) {
-            this.syncExpandedRowIdsState();
+        let changed = false;
+
+        for (const [nodeId, node] of this.indexCache.nodes) {
+            if (!node.childrenIds.length) {
+                continue;
+            }
+
+            changed = this.setRowMetaExpanded(nodeId, false) || changed;
         }
 
-        if (!this.expandedRowIdsState?.size) {
+        if (!changed) {
             return false;
         }
 
-        this.expandedRowIdsState.clear();
         this.projectionStateCache = void 0;
         await this.requestRowsRedraw(redraw);
 
@@ -369,7 +359,7 @@ class TreeProjectionController {
      */
     public destroy(): void {
         this.options = void 0;
-        this.expandedRowIdsState = void 0;
+        this.clearTreeRowMetaState();
         this.expansionStateSeedKey = void 0;
         this.clearCache();
     }
@@ -395,6 +385,93 @@ class TreeProjectionController {
         if (redraw) {
             await this.grid.redraw();
         }
+    }
+
+    /**
+     * Ensures row metadata record exists for a row.
+     *
+     * @param rowId
+     * Row ID.
+     *
+     * @returns
+     * Row metadata record.
+     */
+    private ensureRowMetaRecord(rowId: RowId): RowMetaRecord {
+        let rowMeta = this.grid.rowMeta.get(rowId);
+
+        if (!rowMeta) {
+            rowMeta = {};
+            this.grid.rowMeta.set(rowId, rowMeta);
+        }
+
+        return rowMeta;
+    }
+
+    /**
+     * Removes empty row metadata records.
+     *
+     * @param rowId
+     * Row ID.
+     */
+    private cleanupRowMeta(rowId: RowId): void {
+        const rowMeta = this.grid.rowMeta.get(rowId);
+        if (!rowMeta) {
+            return;
+        }
+
+        if (!Object.keys(rowMeta).length) {
+            this.grid.rowMeta.delete(rowId);
+        }
+    }
+
+    /**
+     * Clears TreeView metadata state for all rows.
+     */
+    private clearTreeRowMetaState(): void {
+        for (const [rowId, rowMeta] of this.grid.rowMeta) {
+            if (typeof rowMeta.expanded === 'undefined') {
+                continue;
+            }
+
+            delete rowMeta.expanded;
+            if (!Object.keys(rowMeta).length) {
+                this.grid.rowMeta.delete(rowId);
+            }
+        }
+    }
+
+    /**
+     * Sets explicit expanded state for a row.
+     *
+     * @param rowId
+     * Row ID.
+     *
+     * @param expanded
+     * Whether row should be explicitly expanded.
+     *
+     * @returns
+     * `true` when state changed.
+     */
+    private setRowMetaExpanded(rowId: RowId, expanded?: boolean): boolean {
+        const rowMeta = this.grid.rowMeta.get(rowId);
+        if (typeof expanded === 'undefined') {
+            if (typeof rowMeta?.expanded === 'undefined') {
+                return false;
+            }
+
+            delete rowMeta.expanded;
+            this.cleanupRowMeta(rowId);
+
+            return true;
+        }
+
+        if (rowMeta?.expanded === expanded) {
+            return false;
+        }
+
+        this.ensureRowMetaRecord(rowId).expanded = expanded;
+
+        return true;
     }
 
     /**
@@ -456,29 +533,31 @@ class TreeProjectionController {
         const seedKey = TreeProjectionController.getExpansionSeedKey(options);
         const explicitExpanded = new Set<RowId>(options.expandedRowIds);
 
-        if (
-            this.expansionStateSeedKey !== seedKey ||
-            !this.expandedRowIdsState
-        ) {
+        if (this.expansionStateSeedKey !== seedKey) {
             this.expansionStateSeedKey = seedKey;
-            this.expandedRowIdsState = new Set<RowId>();
+            this.clearTreeRowMetaState();
 
             for (const [nodeId, node] of index.nodes) {
                 if (!node.childrenIds.length) {
                     continue;
                 }
+
                 if (options.initiallyExpanded || explicitExpanded.has(nodeId)) {
-                    this.expandedRowIdsState.add(nodeId);
+                    this.setRowMetaExpanded(nodeId, true);
                 }
             }
 
             return;
         }
 
-        for (const nodeId of this.expandedRowIdsState) {
-            const node = index.nodes.get(nodeId);
+        for (const [rowId, meta] of this.grid.rowMeta) {
+            if (typeof meta.expanded === 'undefined') {
+                continue;
+            }
+
+            const node = index.nodes.get(rowId);
             if (!node || !node.childrenIds.length) {
-                this.expandedRowIdsState.delete(nodeId);
+                this.setRowMetaExpanded(rowId, void 0);
             }
         }
     }
@@ -604,16 +683,16 @@ class TreeProjectionController {
 
         const projectedRowIds: RowId[] = [];
         const rowsById = new Map<RowId, TreeProjectionRowState>();
-        const expandedState = this.expandedRowIdsState || new Set<RowId>();
 
         const visitNode = (nodeId: RowId, depth: number): void => {
             projectedRowIds.push(nodeId);
 
             const children = childrenByParent.get(nodeId);
             const hasChildren = !!(children && children.length);
+            const explicitExpanded = this.grid.rowMeta.get(nodeId)?.expanded;
             const isExpanded = (
                 hasChildren &&
-                expandedState.has(nodeId)
+                explicitExpanded === true
             );
 
             rowsById.set(nodeId, {
@@ -892,6 +971,17 @@ class TreeProjectionController {
             ).getDataTable === 'function'
         );
     }
+}
+
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+declare module '../../Core/Grid' {
+    interface RowMetaRecord extends TreeViewRowMetaFields {}
 }
 
 
