@@ -220,7 +220,7 @@ export interface LoadingOptions {
      * @sample highcharts/loading/hideduration/
      *         Fade in and out over a second
      *
-     * @default   100
+     * @default   0
      * @since     1.2.0
      */
     showDuration?: number;
