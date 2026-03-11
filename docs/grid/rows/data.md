@@ -58,7 +58,8 @@ Common row methods include:
 * `getRowIndex(rowId)`
 
 For data-provider configuration details, see the
-[Data providers documentation](https://www.highcharts.com/docs/grid/data-providers).
+[Data handling overview](https://www.highcharts.com/docs/grid/data-handling/overview)
+and [Client-side data handling](https://www.highcharts.com/docs/grid/data-handling/clientside).
 
 ## Updating rows
 

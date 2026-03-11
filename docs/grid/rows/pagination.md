@@ -5,6 +5,10 @@ sidebar_label: "Pagination"
 # Row pagination
 Pagination splits row data into pages, so the grid renders a manageable subset of rows at a time. This is useful for large datasets and helps keep the interface fast and readable.
 
+With the default local data model, pagination is applied client-side after the
+dataset has been loaded. In Grid Pro, `providerType: 'remote'` can instead use
+page changes to fetch rows from the server. Read more in [Server-side data handling](https://www.highcharts.com/docs/grid/data-handling/serverside).
+
 ## Enable pagination with default configuration
 
 ```js

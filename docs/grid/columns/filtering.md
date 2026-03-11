@@ -8,6 +8,10 @@ Column filtering lets end users narrow visible rows by applying filter condition
 
 Each column filter operates independently. When multiple columns have active filters, only rows that satisfy **all** filter conditions are shown (logical **AND** across columns).
 
+With the default local data model, filtering is applied client-side on the
+loaded data. In Grid Pro, you can use `providerType: 'remote'` when filter
+state should be handled by the server instead. Read more in [Server-side data handling](https://www.highcharts.com/docs/grid/data-handling/serverside).
+
 ## Enabling filtering
 
 Filtering is configured per column using the `filtering` option. By default, filtering is disabled.
