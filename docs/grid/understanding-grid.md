@@ -19,34 +19,22 @@ The following provides an introduction to the various root configuration objects
 }
 ```
 
-The `data` object defines how Grid receives, prepares, and updates data. For column data, use `data.columns` (an object where each key is a column ID and each value is an array of cell values). Alternatively, pass an existing `DataTable` instance via `data.dataTable`. The DataTable class stores key-value pairs: each key becomes a header label, and each value is an array with the corresponding column values. When users edit cells (for example via edit mode), Grid writes changes back through the configured data provider.
-Read more about [data handling and the DataTable class](https://www.highcharts.com/docs/dashboards/data-table).
+The `data` object defines how Grid receives, prepares, and updates data. In the
+default client-side model, `data.columns`, `data.dataTable`, and
+`data.connector` all load data into a `DataTable`, and Grid then applies
+sorting, filtering, and pagination in memory.
 
-Instead of `data.columns` or `data.dataTable`, you can also use data connectors for loading data.
+In Grid Pro, you can switch to `providerType: 'remote'` when those operations
+should happen on the server instead.
 
-```js
-{
-    data: {
-        connector: {
-            type: JSON,
-            data: [
-                ['colA', 'colB'],
-                [1, 2],
-                [3, 4]
-            ]
-        }
-    }
-}
-```
+Read more in:
 
-### Data providers
-Grid reads and writes data through a data provider. The default `LocalDataProvider` works with an in-memory `DataTable`, but you can register a custom provider for other data sources. In Grid Pro, the `RemoteDataProvider` is available for server-backed data and on-demand paging. For details and configuration examples, see the [Data providers article](https://www.highcharts.com/docs/grid/data-providers).
+- [Data handling / Overview](https://www.highcharts.com/docs/grid/data-handling/overview)
+- [Data handling / Client-side](https://www.highcharts.com/docs/grid/data-handling/clientside)
+- [Data handling / Server-side](https://www.highcharts.com/docs/grid/data-handling/serverside)
+- [Data handling / Connectors](https://www.highcharts.com/docs/grid/data-handling/connectors)
 
-### Data modifiers
-
-When you have an existing [DataTable](https://www.highcharts.com/docs/dashboards/data-table) instance (for example, one created with a [Math Modifier](https://www.highcharts.com/docs/dashboards/mathmodifier-module) from Highcharts Dashboards library to add computed columns), pass it via `data.dataTable`.
-
-You can read more about Data Modifiers [here](https://www.highcharts.com/docs/dashboards/data-modifiers).
+For more on `DataTable`, see the Dashboards article on [Data Table](https://www.highcharts.com/docs/dashboards/data-table). For Data Modifiers, see [Data Modifiers](https://www.highcharts.com/docs/dashboards/data-modifiers).
 
 ## columnDefaults and columns[]
 ```js
