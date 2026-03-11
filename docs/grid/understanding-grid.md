@@ -20,7 +20,10 @@ Grid.grid('container', {
         }
     },
     columns: [{
-        id: 'price'
+        id: 'price',
+        cells: {
+            format: '${value}'
+        }
     }],
     pagination: {
         enabled: true
