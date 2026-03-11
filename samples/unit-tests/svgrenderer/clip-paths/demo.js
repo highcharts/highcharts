@@ -27,10 +27,8 @@ QUnit.test(
                         load: function () {
                             assert.strictEqual(
                                 getClipPathSet(this).length,
-                                3,
-                                'There are references to three (one ' +
-                                'additional from annotations module) ' +
-                                'different clipPaths'
+                                4,
+                                'Initially there should be 4 clip paths'
                             );
                             done();
                         }
@@ -56,9 +54,8 @@ QUnit.test(
             setTimeout(function () {
                 assert.strictEqual(
                     getClipPathSet(chart).length,
-                    2,
-                    'There are only references to two (one additional from ' +
-                    'annotations module) clipPath after animation'
+                    3,
+                    'After animation there should be 3 clip paths'
                 );
                 done();
             }, 20);

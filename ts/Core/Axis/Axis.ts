@@ -3788,6 +3788,7 @@ class Axis {
             hasCrossing = isNumber(options.crossing),
             axisOffset = chart.axisOffset,
             clipOffset = chart.clipOffset,
+            clipOffsetGL = chart.clipOffsetGL,
             directionFactor = [-1, 1, 1, -1][side];
 
         let showAxis,
@@ -3921,7 +3922,7 @@ class Axis {
         // has rendered.
         if (coll !== 'colorAxis' && clipOffset) {
             const tickSize = this.tickSize('tick'),
-                gridClip = (options.gridLineWidth || 0) / 2;
+                gridLineWidth = options.gridLineWidth || 0;
 
             axisOffset[side] = Math.max(
                 axisOffset[side],
@@ -3944,13 +3945,11 @@ class Axis {
             // Correction for the grid lines is needed for the plotBorderRadius
             // clipping logic in order to fit along the outer edge of the grid
             // lines.
-            if (gridClip && this.clippable) {
+            if (this.clippable && clipOffsetGL) {
                 if (side === 0 || side === 2) {
-                    clipOffset[1] = Math.max(clipOffset[1], gridClip);
-                    clipOffset[3] = Math.max(clipOffset[3], gridClip);
+                    clipOffsetGL[0] = Math.max(clipOffsetGL[0], gridLineWidth);
                 } else {
-                    clipOffset[0] = Math.max(clipOffset[0], gridClip);
-                    clipOffset[2] = Math.max(clipOffset[2], gridClip);
+                    clipOffsetGL[1] = Math.max(clipOffsetGL[1], gridLineWidth);
                 }
             }
         }

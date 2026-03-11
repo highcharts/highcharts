@@ -434,6 +434,9 @@ class Chart {
     public clipOffset?: [number, number, number, number];
 
     /** @internal */
+    public clipOffsetGL?: [number, number];
+
+    /** @internal */
     public clipRect?: SVGElement;
 
     /** @internal */
@@ -2465,6 +2468,7 @@ class Chart {
                 chartHeight,
                 chartWidth,
                 clipOffset,
+                clipOffsetGL,
                 inverted,
                 options,
                 spacing,
@@ -2535,7 +2539,7 @@ class Chart {
         };
 
         // Compute the clipping box
-        if (clipOffset) {
+        if (clipOffset && clipOffsetGL) {
             chart.clipBox = {
                 x: clipRoundFunc(clipOffset[3]),
                 y: clipRoundFunc(clipOffset[0]),
@@ -2548,12 +2552,24 @@ class Chart {
                 r: plotBorderRadius
             };
 
+            // The `clipOffsetOuter` array, unlike `clipOffset`, includes the
+            // width of the grid lines. Because series content is allowed to
+            // overflow the extreme grid lines but not the plot area border, but
+            // the axis clipping must include both.
+            const clipOffsetOuter = [
+                Math.max(clipOffset[0], clipOffsetGL[0]),
+                Math.max(clipOffset[1], clipOffsetGL[1]),
+                Math.max(clipOffset[2], clipOffsetGL[0]),
+                Math.max(clipOffset[3], clipOffsetGL[1])
+            ];
             chart.plotBoxOuter = merge(plotBox, {
-                x: Math.ceil(plotBox.x - clipOffset[3]),
-                y: Math.ceil(plotBox.y - clipOffset[0]),
-                width: Math.ceil(plotBox.width + clipOffset[1] + clipOffset[3]),
+                x: Math.ceil(plotBox.x - clipOffsetOuter[3]),
+                y: Math.ceil(plotBox.y - clipOffsetOuter[0]),
+                width: Math.ceil(
+                    plotBox.width + clipOffsetOuter[1] + clipOffsetOuter[3]
+                ),
                 height: Math.ceil(
-                    plotBox.height + clipOffset[0] + clipOffset[2]
+                    plotBox.height + clipOffsetOuter[0] + clipOffsetOuter[2]
                 ),
                 r: plotBorderRadius ? plotBorderRadius + plotBorderWidth / 2 : 0
             });
@@ -2621,6 +2637,8 @@ class Chart {
             halfWidth,
             halfWidth
         ];
+        chart.clipOffsetGL = [0, 0];
+
         chart.plotBorderWidth = plotBorderWidth;
 
     }
