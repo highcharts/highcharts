@@ -351,6 +351,7 @@
 
     .hcg-pagination-controls {
         justify-content: center;
+        gap: 2px;
 
         .hcg-pagination-pages {
             display: flex;
