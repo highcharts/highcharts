@@ -1100,7 +1100,7 @@ class Chart {
             { xAxis, yAxis } = series || {};
 
         // If no axes on the series, or series undefined, use global clipBox
-        let { x, y, width, height } = merge(this.clipBox);
+        let { x, y, width, height, r } = merge(this.clipBox);
 
         if (series) {
             // Otherwise, use clipBox.width which is corrected for
@@ -1126,7 +1126,7 @@ class Chart {
             y += (inverted ? xAxis : yAxis)?.pos ?? this.plotTop;
         }
 
-        return { x, y, width, height };
+        return { x, y, width, height, r };
     }
 
     /**
@@ -2570,7 +2570,7 @@ class Chart {
                 ),
                 height: Math.ceil(
                     plotBox.height + clipOffsetOuter[0] + clipOffsetOuter[2]
-                ),
+                ) + 0,
                 r: plotBorderRadius ? plotBorderRadius + plotBorderWidth / 2 : 0
             });
         }

@@ -344,20 +344,19 @@ class ColorAxis extends Axis implements ColorAxisBase {
      * @internal
      */
     public getOffset(): void {
-        const axis = this;
-        const group = axis.legendItem?.group;
-        const sideOffset = axis.chart.axisOffset[axis.side];
+        const axis = this,
+            chart = axis.chart,
+            group = axis.legendItem?.group,
+            sideOffset = chart.axisOffset[axis.side],
+            { clipOffset, clipOffsetGL, legend } = chart;
 
         if (group) {
 
-            // Hook for the getOffset method to add groups to this parent
-            // group
+            // Hook for the getOffset method to add groups to this parent group
             axis.axisParent = group;
 
             // Call the base
             super.getOffset();
-
-            const legend = this.chart.legend;
 
             // Adds `maxLabelLength` needed for label padding corrections done
             // by `render()` and `getMargins()` (#15551).
@@ -368,7 +367,7 @@ class ColorAxis extends Axis implements ColorAxisBase {
             });
 
             legend.render();
-            this.chart.getMargins(true);
+            chart.getMargins(true);
 
             // First time only
             if (!axis.added) {
@@ -378,7 +377,9 @@ class ColorAxis extends Axis implements ColorAxisBase {
             axis.labelLeft = 0;
             axis.labelRight = axis.width;
             // Reset it to avoid color axis reserving space
-            axis.chart.axisOffset[axis.side] = sideOffset;
+            chart.axisOffset[axis.side] = sideOffset;
+            chart.clipOffset = clipOffset;
+            chart.clipOffsetGL = clipOffsetGL;
         }
     }
 
