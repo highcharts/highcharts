@@ -208,7 +208,6 @@ class HeaderCell extends Cell {
 
         if (column) {
             this.htmlElement.setAttribute('data-column-id', column.id);
-            this.htmlElement.setAttribute('aria-label', column.id);
 
             // Add user column classname
             if (column.options.className) {

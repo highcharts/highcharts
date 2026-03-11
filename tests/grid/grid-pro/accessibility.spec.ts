@@ -115,6 +115,16 @@ test.describe('Screen reader sections', () => {
         expect(hiddenText).toContain(`Custom text: ${result.rowCount} rows and ${result.columnCount} columns`);
     });
 
+    test('Header cells should not duplicate the column name in a11y labels', async ({ page }) => {
+        await page.goto('/grid-pro/basic/overview');
+
+        const headerCell = page.locator('th[data-column-id="weight"]');
+        const sortButton = headerCell.locator('button');
+
+        await expect(headerCell).not.toHaveAttribute('aria-label', /.+/);
+        await expect(sortButton).toHaveAttribute('aria-label', 'Not sorted.');
+    });
+
     test('Screen reader sections should be properly destroyed', async ({ page }) => {
         await page.evaluate(() => {
             const grid = (window as any).Grid.grids[0];
@@ -125,4 +135,3 @@ test.describe('Screen reader sections', () => {
         await expect(page.locator('[id^="grid-screen-reader-region-after-"]')).toBeHidden();
     });
 });
-

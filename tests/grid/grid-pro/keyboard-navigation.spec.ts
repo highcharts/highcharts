@@ -91,7 +91,7 @@ test.describe('Keyboard navigation in Grid', () => {
 
         await expect(page.locator(':focus')).toHaveAttribute(
             'aria-label',
-            /weight \(kg\)/
+            /^(Not sorted\.|Sorted (ascending|descending)\.)$/
         );
 
         // After Enter, focus moves to toolbar button (sort button)
