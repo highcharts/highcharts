@@ -14,10 +14,11 @@ The local provider is used when you configure any of the following:
 
 - `data.columns`
 - `data.dataTable`
-- `data.connector`
+- [`data.connector`](https://www.highcharts.com/docs/grid/data-handling/connectors)
 
-This means a connector-backed Grid is still client-side after the initial load,
-even if the connector fetched data from a remote URL.
+This means a [connector-backed Grid](https://www.highcharts.com/docs/grid/data-handling/connectors)
+is still client-side after the initial load, even if the connector fetched data
+from a remote URL.
 
 ## How client-side querying works
 
@@ -59,12 +60,38 @@ Grid.grid('container', {
 In this setup, `idColumn` provides stable row IDs and all sorting, filtering,
 and pagination happen in memory.
 
-## Using DataTable and connectors
+## Existing DataTable instance
 
-If you already have a `DataTable`, pass it through `data.dataTable`.
+If you already have a `DataTable`, pass it through `data.dataTable`. This is a
+good fit when the table is created or updated outside Grid and then reused by
+the Grid instance.
 
-If you use `data.connector`, Grid creates or updates a local `DataTable` from
-the connector result:
+```js
+const dataTable = new Grid.DataTable({
+    columns: {
+        id: ['a1', 'p1', 'o1'],
+        product: ['Apple', 'Pear', 'Orange'],
+        price: [3.5, 2.5, 3]
+    }
+});
+
+Grid.grid('container', {
+    data: {
+        // Reuse an existing DataTable created outside Grid.
+        dataTable,
+        // Optional: column that contains stable, unique row IDs.
+        idColumn: 'id'
+    },
+    pagination: {
+        enabled: true
+    }
+});
+```
+
+## Using connectors
+
+If you use [`data.connector`](https://www.highcharts.com/docs/grid/data-handling/connectors),
+Grid creates or updates a local `DataTable` from the connector result:
 
 ```js
 Grid.grid('container', {
@@ -82,15 +109,18 @@ Grid.grid('container', {
 
 This still uses the local provider. For example, a JSON or CSV file loaded from
 your server is fetched first, then Grid handles filtering, sorting, and
-pagination client-side on the loaded data.
+pagination client-side on the loaded data. For connector-specific options, see
+the [Connectors article](https://www.highcharts.com/docs/grid/data-handling/connectors).
 
 ## Stable row IDs and updates
 
 Use `data.idColumn` when rows need stable IDs based on a column value instead of
 their original row index.
 
-Use `updateOnChange` when the underlying `DataTable` or connector data changes
-outside Grid and you want the rendered rows to refresh automatically.
+Use `updateOnChange` when the underlying `DataTable` or
+[connector](https://www.highcharts.com/docs/grid/data-handling/connectors)
+data changes outside Grid and you want the rendered rows to refresh
+automatically.
 
 ## When not to use this model
 
