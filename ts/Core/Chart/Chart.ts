@@ -2624,7 +2624,8 @@ class Chart {
             plotHeight = chart.plotHeight,
             plotBox = chart.plotBox,
             clipRect = chart.clipRect,
-            clipBox = chart.clipBox;
+            clipBox = chart.clipBox,
+            clipOffset = chart.clipOffset;
 
         let chartBackground = chart.chartBackground,
             plotBackground = chart.plotBackground,
@@ -2740,11 +2741,33 @@ class Chart {
             });
         }
 
-        plotBorder[verb](plotBorder.crisp(
-            plotBox,
-            // #3282 plotBorder should be negative
-            -plotBorder.strokeWidth()
-        ));
+        const strokeWidth = plotBorder.strokeWidth(),
+            plotBorderBox = merge(plotBox);
+
+        // If any of the clipOffset sides are larger than half the stroke width,
+        // the plotBorderBox needs to be extended so that the plot border
+        // includes the full stroke of axis lines.
+        if (clipOffset) {
+            const clipOffsetUninverted = chart.inverted ?
+                    [
+                        clipOffset[1],
+                        clipOffset[0],
+                        clipOffset[3],
+                        clipOffset[2]
+                    ] :
+                    clipOffset,
+                extendUp = clipOffsetUninverted[0] - strokeWidth / 2,
+                extendRight = clipOffsetUninverted[1] - strokeWidth / 2,
+                extendDown = clipOffsetUninverted[2] - strokeWidth / 2,
+                extendLeft = clipOffsetUninverted[3] - strokeWidth / 2;
+            plotBorderBox.x -= extendLeft;
+            plotBorderBox.y -= extendUp;
+            plotBorderBox.width += extendLeft + extendRight;
+            plotBorderBox.height += extendDown + extendUp;
+        }
+
+        // #3282 plotBorder should be negative
+        plotBorder[verb](plotBorder.crisp(plotBorderBox, -strokeWidth));
 
         // Reset
         chart.isDirtyBox = false;
