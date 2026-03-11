@@ -2790,7 +2790,16 @@ class Chart {
         // #3282 plotBorder should be negative
         plotBorder.crisp(plotBorderBox, -strokeWidth);
         plotBorder[verb](plotBorderBox);
-        this.plotClipRect?.[verb](plotBorderBox);
+
+        // Plot border clipping along the outside of the plot border, for the
+        // `plotBorderRadius` feature. A half stroke width must be added.
+        this.plotClipRect?.[verb]({
+            x: plotBorderBox.x - strokeWidth / 2,
+            y: plotBorderBox.y - strokeWidth / 2,
+            width: plotBorderBox.width + strokeWidth,
+            height: plotBorderBox.height + strokeWidth,
+            r: plotBox.r ? plotBox.r + strokeWidth / 2 : 0
+        });
 
         // Reset
         chart.isDirtyBox = false;
