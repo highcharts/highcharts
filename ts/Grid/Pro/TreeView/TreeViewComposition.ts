@@ -62,9 +62,8 @@ export function compose(
  * Initializes TreeView projection infrastructure before first data querying.
  */
 function onBeforeLoad(this: Grid): void {
-    if (!this.treeProjectionController) {
-        this.treeProjectionController =
-            new TreeProjectionController(this);
+    if (!this.treeView) {
+        this.treeView = new TreeProjectionController(this);
     }
 }
 
@@ -82,8 +81,8 @@ function onBeforeDestroy(this: Grid, e: { onlyDOM?: boolean }): void {
         return;
     }
 
-    this.treeProjectionController?.destroy();
-    delete this.treeProjectionController;
+    this.treeView?.destroy();
+    delete this.treeView;
 }
 
 /**
@@ -91,7 +90,7 @@ function onBeforeDestroy(this: Grid, e: { onlyDOM?: boolean }): void {
  */
 function onAfterCellRender(this: TableCell): void {
     const grid = this.row.viewport.grid;
-    const controller = grid.treeProjectionController;
+    const controller = grid.treeView;
     const options = controller?.getOptions();
     const projectionState = controller?.getProjectionState();
 
@@ -188,7 +187,7 @@ function onAfterCellRender(this: TableCell): void {
 
 declare module '../../Core/Grid' {
     export default interface Grid {
-        treeProjectionController?: TreeProjectionController;
+        treeView?: TreeProjectionController;
     }
 }
 

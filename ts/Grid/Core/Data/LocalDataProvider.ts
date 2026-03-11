@@ -430,12 +430,9 @@ export class LocalDataProvider extends DataProvider {
         }
 
         const grid = this.querying.grid;
-        if (
-            'treeProjectionController' in grid &&
-            grid.treeProjectionController
-        ) {
-            grid.treeProjectionController?.sync();
-            interTable = grid.treeProjectionController.projectTable(interTable);
+        if ('treeView' in grid && grid.treeView) {
+            grid.treeView.sync();
+            interTable = grid.treeView.projectTable(interTable);
         }
 
         this.prePaginationRowCount = interTable.rowCount;
