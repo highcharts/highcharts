@@ -20,13 +20,11 @@
  * */
 
 import type Accessibility from '../Accessibility';
-import type Exporting from '../../Extensions/Exporting/Exporting';
+import type { Exporting } from '../../Extensions/Exporting/Exporting';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type ProxyElement from '../ProxyElement';
 
 import Chart from '../../Core/Chart/Chart.js';
-import U from '../../Core/Utilities.js';
-const { attr } = U;
 
 import AccessibilityComponent from '../AccessibilityComponent.js';
 import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';
@@ -38,6 +36,7 @@ const {
 } = ChartUtilities;
 
 import HTMLUtilities from '../Utils/HTMLUtilities.js';
+import { attr } from '../../Shared/Utilities.js';
 const {
     getFakeMouseEvent
 } = HTMLUtilities;

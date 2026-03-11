@@ -1,6 +1,4 @@
 ---
- name: Demo of axis opposite options
- authors:
-   - Torstein Hønsi
- js_wrap: b
+name: Demo of axis opposite options
+js_wrap: b
 ...

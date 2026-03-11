@@ -32,13 +32,12 @@ import AST from '../../../Core/Renderer/HTML/AST.js';
 import Globals from '../../Core/Globals.js';
 import GridUtils from '../../Core/GridUtils.js';
 import Cell from '../../Core/Table/Cell.js';
-import U from '../../../Core/Utilities.js';
+import { defined } from '../../../Shared/Utilities.js';
 
 const {
     makeDiv,
     setHTMLContent
 } = GridUtils;
-const { defined } = U;
 
 /* *
  *
@@ -87,6 +86,42 @@ class Validator {
             ),
             notification: 'Value has to be a boolean.'
         },
+        arrayNumber: {
+            validate: function ({ rawValue }): boolean {
+                return rawValue
+                    .split(',')
+                    .every(
+                        (item): boolean => !Number.isNaN(Number(item.trim()))
+                    );
+            },
+            notification:
+                'Value should be a list of numbers separated by commas.'
+        },
+        json: {
+            validate: function ({ rawValue }): boolean {
+                try {
+                    JSON.parse(rawValue);
+                    return true;
+                } catch {
+                    return false;
+                }
+            },
+            notification: 'Value should be a valid JSON.'
+        },
+        sparkline: {
+            validate: function ({ rawValue }): boolean {
+                const arrayNumberValidate =
+                    Validator.rulesRegistry.arrayNumber.validate as
+                    (args: { rawValue: string }) => boolean;
+                const jsonValidate = Validator.rulesRegistry.json.validate as
+                    (args: { rawValue: string }) => boolean;
+
+                return arrayNumberValidate({ rawValue }) ||
+                    jsonValidate({ rawValue });
+            },
+            notification: 'Value should be a valid JSON or a list of numbers ' +
+                'separated by commas.'
+        },
         ignoreCaseUnique: {
             validate: function ({ rawValue }): boolean {
                 const oldValue = String(this.value).toLowerCase();
@@ -96,6 +131,8 @@ class Validator {
                     return true;
                 }
 
+                // Local dataset only
+                // TODO(enhancement): Implement this for remote dataset.
                 const columnData = this.column.data;
                 const isDuplicate = columnData?.some(
                     (value: DataTableCellType): boolean => (
@@ -118,6 +155,8 @@ class Validator {
                     return true;
                 }
 
+                // Local dataset only
+                // TODO(enhancement): Implement this for remote dataset.
                 const columnData = this.column.data;
                 const isDuplicate = columnData?.some(
                     (value: DataTableCellType): boolean => value === rawValue
@@ -127,43 +166,6 @@ class Validator {
             },
             notification:
                 'Value must be unique within this column (case-sensitive).'
-        },
-        arrayNumber: {
-            validate: function ({ rawValue }): boolean {
-                return rawValue
-                    .split(',')
-                    .every(
-                        (item): boolean => !Number.isNaN(Number(item.trim()))
-                    );
-            },
-            notification:
-                'Value should be a list of numbers separated by commas.'
-        },
-        json: {
-            validate: function ({ rawValue }): boolean {
-                try {
-                    JSON.parse(rawValue);
-                    return true;
-                // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                } catch (e) {
-                    return false;
-                }
-            },
-            notification: 'Value should be a valid JSON.'
-        },
-        sparkline: {
-            validate: function ({ rawValue }): boolean {
-                const arrayNumberValidate =
-                    Validator.rulesRegistry.arrayNumber.validate as
-                    (args: { rawValue: string }) => boolean;
-                const jsonValidate = Validator.rulesRegistry.json.validate as
-                    (args: { rawValue: string }) => boolean;
-
-                return arrayNumberValidate({ rawValue }) ||
-                    jsonValidate({ rawValue });
-            },
-            // eslint-disable-next-line max-len
-            notification: 'Value should be a valid JSON or a list of numbers separated by commas.'
         }
     };
 

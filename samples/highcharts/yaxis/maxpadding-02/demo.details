@@ -1,6 +1,4 @@
 ---
- name: Demo of yAxis.maxPadding
- authors:
-   - Torstein Hønsi
- js_wrap: b
+name: Demo of yAxis.maxPadding
+js_wrap: b
 ...

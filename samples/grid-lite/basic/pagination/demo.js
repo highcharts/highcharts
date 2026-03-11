@@ -30,7 +30,7 @@ function generateRandomData(rows) {
 }
 
 Grid.grid('container', {
-    dataTable: {
+    data: {
         columns: generateRandomData(254) // 254 items to match the design
     },
     pagination: {

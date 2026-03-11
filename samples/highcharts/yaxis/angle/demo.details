@@ -1,6 +1,4 @@
 ---
- name: Demo of yAxis.angle
- authors:
-   - Torstein Hønsi
- js_wrap: b
+name: Demo of yAxis.angle
+js_wrap: b
 ...

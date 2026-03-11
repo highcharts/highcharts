@@ -1,0 +1,114 @@
+.hcg-container {
+    /* -------------------------------------------------------------
+     Defaults (internal base tokens)
+     ------------------------------------------------------------- */
+    --ig-input-padding-base: var(--hcg-input-padding, 5px);
+    --ig-input-color-base: var(--hcg-input-color, var(--ig-color));
+    --ig-input-text-align-base: var(--hcg-input-text-align, var(--ig-text-align));
+    --ig-input-border-radius-base: var(--hcg-input-border-radius, 0);
+    --ig-input-border-width-base: var(--hcg-input-border-width, 1px);
+    --ig-input-border-style-base: var(--hcg-input-border-style, solid);
+    --ig-input-border-color-base: var(--hcg-input-border-color, var(--ig-color));
+    --ig-input-background-base: var(--hcg-input-background, var(--highcharts-background-color));
+    --ig-input-hover-color-base: var(--hcg-input-hover-color, var(--ig-input-color-base));
+    --ig-input-hover-background-base: var(--hcg-input-hover-background, var(--ig-input-background-base));
+    --ig-input-hover-border-color-base: var(--hcg-input-hover-border-color, var(--ig-input-border-color-base));
+
+    /* -------------------------------------------------------------
+     Public theme overrides (external hcg tokens)
+     ------------------------------------------------------------- */
+    --ig-input-padding: var(--hcg-input-padding, var(--ig-input-padding-base));
+    --ig-input-font-weight: var(--hcg-input-font-weight, inherit);
+    --ig-input-font-size: var(--hcg-input-font-size, inherit);
+    --ig-input-font-family: var(--hcg-input-font-family, inherit);
+    --ig-input-color: var(--hcg-input-color, var(--ig-input-color-base));
+    --ig-input-text-align: var(--hcg-input-text-align, var(--ig-input-text-align-base));
+    --ig-input-border-radius: var(--hcg-input-border-radius, var(--ig-input-border-radius-base));
+    --ig-input-border-width: var(--hcg-input-border-width, var(--ig-input-border-width-base));
+    --ig-input-border-style: var(--hcg-input-border-style, var(--ig-input-border-style-base));
+    --ig-input-border-color: var(--hcg-input-border-color, var(--ig-input-border-color-base));
+    --ig-input-background: var(--hcg-input-background, var(--ig-input-background-base));
+    --ig-input-hover-color: var(--hcg-input-hover-color, var(--ig-input-hover-color-base));
+    --ig-input-hover-background: var(--hcg-input-hover-background, var(--ig-input-hover-background-base));
+    --ig-input-hover-border-color: var(--hcg-input-hover-border-color, var(--ig-input-hover-border-color-base));
+    --ig-input-focus-ring: 0 0 0 var(--ig-focus-ring-width) var(--ig-focus-ring-color);
+
+    thead th {
+        --ig-input-padding: var(--hcg-header-input-padding, var(--ig-input-padding-base));
+        --ig-input-font-weight: var(--hcg-header-input-font-weight, var(--hcg-input-font-weight, inherit));
+        --ig-input-font-size: var(--hcg-header-input-font-size, var(--hcg-input-font-size, inherit));
+        --ig-input-font-family: var(--hcg-header-input-font-family, var(--hcg-input-font-family, inherit));
+        --ig-input-color: var(--hcg-header-input-color, var(--ig-input-color-base));
+        --ig-input-text-align: var(--hcg-header-input-text-align, var(--ig-input-text-align-base));
+        --ig-input-border-radius: var(--hcg-header-input-border-radius, var(--ig-input-border-radius-base));
+        --ig-input-border-width: var(--hcg-header-input-border-width, var(--ig-input-border-width-base));
+        --ig-input-border-style: var(--hcg-header-input-border-style, var(--ig-input-border-style-base));
+        --ig-input-border-color: var(--hcg-header-input-border-color, var(--ig-input-border-color-base));
+        --ig-input-background: var(--hcg-header-input-background, var(--ig-input-background-base));
+        --ig-input-hover-color: var(--hcg-header-input-hover-color, var(--hcg-input-hover-color, var(--hcg-header-input-color, var(--ig-input-color-base))));
+        --ig-input-hover-background: var(--hcg-header-input-hover-background, var(--hcg-input-hover-background, var(--hcg-header-input-background, var(--ig-input-background-base))));
+        --ig-input-hover-border-color: var(--hcg-header-input-hover-border-color, var(--hcg-input-hover-border-color, var(--hcg-header-input-border-color, var(--ig-input-border-color-base))));
+    }
+
+    tbody td {
+        --ig-input-padding: var(--hcg-cell-input-padding, var(--ig-input-padding-base));
+        --ig-input-font-weight: var(--hcg-cell-input-font-weight, var(--hcg-input-font-weight, inherit));
+        --ig-input-font-size: var(--hcg-cell-input-font-size, var(--hcg-input-font-size, inherit));
+        --ig-input-font-family: var(--hcg-cell-input-font-family, var(--hcg-input-font-family, inherit));
+        --ig-input-color: var(--hcg-cell-input-color, var(--ig-input-color-base));
+        --ig-input-text-align: var(--hcg-cell-input-text-align, var(--ig-input-text-align-base));
+        --ig-input-border-radius: var(--hcg-cell-input-border-radius, var(--ig-input-border-radius-base));
+        --ig-input-border-width: var(--hcg-cell-input-border-width, var(--ig-input-border-width-base));
+        --ig-input-border-style: var(--hcg-cell-input-border-style, var(--ig-input-border-style-base));
+        --ig-input-border-color: var(--hcg-cell-input-border-color, var(--ig-input-border-color-base));
+        --ig-input-background: var(--hcg-cell-input-background, var(--ig-input-background-base));
+        --ig-input-hover-color: var(--hcg-cell-input-hover-color, var(--hcg-input-hover-color, var(--hcg-cell-input-color, var(--ig-input-color-base))));
+        --ig-input-hover-background: var(--hcg-cell-input-hover-background, var(--hcg-input-hover-background, var(--hcg-cell-input-background, var(--ig-input-background-base))));
+        --ig-input-hover-border-color: var(--hcg-cell-input-hover-border-color, var(--hcg-input-hover-border-color, var(--hcg-cell-input-border-color, var(--ig-input-border-color-base))));
+    }
+
+    .hcg-pagination {
+        --ig-input-padding: var(--hcg-pagination-input-padding, var(--ig-input-padding-base));
+        --ig-input-font-weight: var(--hcg-pagination-input-font-weight, var(--hcg-input-font-weight, inherit));
+        --ig-input-font-size: var(--hcg-pagination-input-font-size, var(--hcg-input-font-size, inherit));
+        --ig-input-font-family: var(--hcg-pagination-input-font-family, var(--hcg-input-font-family, inherit));
+        --ig-input-color: var(--hcg-pagination-input-color, var(--ig-input-color-base));
+        --ig-input-text-align: var(--hcg-pagination-input-text-align, var(--ig-input-text-align-base));
+        --ig-input-border-radius: var(--hcg-pagination-input-border-radius, var(--ig-input-border-radius-base));
+        --ig-input-border-width: var(--hcg-pagination-input-border-width, var(--ig-input-border-width-base));
+        --ig-input-border-style: var(--hcg-pagination-input-border-style, var(--ig-input-border-style-base));
+        --ig-input-border-color: var(--hcg-pagination-input-border-color, var(--ig-input-border-color-base));
+        --ig-input-background: var(--hcg-pagination-input-background, var(--ig-input-background-base));
+        --ig-input-hover-color: var(--hcg-pagination-input-hover-color, var(--hcg-input-hover-color, var(--hcg-pagination-input-color, var(--ig-input-color-base))));
+        --ig-input-hover-background: var(--hcg-pagination-input-hover-background, var(--hcg-input-hover-background, var(--hcg-pagination-input-background, var(--ig-input-background-base))));
+        --ig-input-hover-border-color: var(--hcg-pagination-input-hover-border-color, var(--hcg-input-hover-border-color, var(--hcg-pagination-input-border-color, var(--ig-input-border-color-base))));
+    }
+
+    :where(.hcg-input) {
+        font-weight: var(--ig-input-font-weight);
+        font-size: var(--ig-input-font-size);
+        font-family: var(--ig-input-font-family);
+        text-align: var(--ig-input-text-align);
+        background: var(--ig-input-background);
+        color: var(--ig-input-color);
+        border-width: var(--ig-input-border-width);
+        border-style: var(--ig-input-border-style);
+        border-color: var(--ig-input-border-color);
+        border-radius: var(--ig-input-border-radius);
+        padding: var(--ig-input-padding);
+
+        &:hover:not(:disabled) {
+            color: var(--ig-input-hover-color);
+            background: var(--ig-input-hover-background);
+            border-color: var(--ig-input-hover-border-color);
+        }
+
+        &:focus-visible {
+            box-shadow: var(--ig-input-focus-ring);
+        }
+
+        &[type="checkbox"]:checked::before {
+            background-color: var(--ig-input-color);
+        }
+    }
+}

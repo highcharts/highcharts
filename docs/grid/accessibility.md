@@ -24,78 +24,68 @@ Accessibility features are enabled by default, and we generally recommend keepin
 }
 ```
 
-Setting `accessibility.enabled: false` disables all a11y features, including ARIA attributes and any [ARIA live announcements](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/ARIA_Live_Regions).
+Setting `accessibility.enabled: false` disables all Grid accessibility features, including ARIA attributes, screen reader regions, and [ARIA live announcements](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/ARIA_Live_Regions).
 
-All `accessibility` options are optional, and options in `announcements` override the global `enabled` option.
+All `accessibility` options are optional. Use `announcements` to enable or disable specific live announcements while accessibility is enabled.
 
-## Localization
-
-To customize the default language or wording for ARIA attributes and announcers, use the root `lang.accessibility` options:
-
-```js
-{
-    lang: {
-        accessibility: {
-            cellEditing: {
-                editable: "Editable",
-                announcements: {
-                    started: "Entered cell editing mode",
-                    ...
-                }
-            },
-            sorting: {
-                announcements: {
-                    ascending: "Sorted ascending",
-                    ...
-                }
-            },
-            filtering: {
-                announcements: {
-                    filterApplied: "Filter applied for {columnId}, {condition} {value}. {rowsCount} results found.",
-                    ...
-                }
-            }
-        }
-    }
-}
-```
-
-For a complete list of available options, check out the [API reference](https://api.highcharts.com/dashboards/#interfaces/Grid_Options.LangOptions).
-
-When configuring localization, it typically want it to apply to all grids on the same page. In such cases, we recommend using `setOptions()` to apply these changes globally. Read [Understanding Highcharts Grid](https://www.highcharts.com/docs/grid/understanding-grid#setOptions) for the details.
+To translate built-in accessibility text such as sorting and filtering announcements, see the [Internationalization article](https://www.highcharts.com/docs/grid/internationalization).
 
 ## High contrast mode
 
-When developing your own custom theme it's recommended to include a high contrast variant if needed.
+When developing your own custom theme, it is recommended to include a high contrast variant.
 
 ```css
-.my-theme {
-    --hcg-color: #606060;
-    --hcg-border-stye: dashed;
-    ...;
+.my-grid-theme {
+    --hcg-color: #404040;
+    --hcg-border-color: #707070;
+    --hcg-border-style: dashed;
 }
+
 @media (prefers-contrast: more) {
-    .my-theme {
+    .my-grid-theme {
         --hcg-color: #000000;
+        --hcg-border-color: #000000;
         --hcg-border-style: solid;
-        ...;
     }
 }
 ```
 
 ## Header descriptions
 
-You can add an `aria-description` attribute to individual `<th>` table headers by configuring `header[].accessibility.description`. This is especially useful when [grouped headers](https://www.highcharts.com/docs/grid/header) are used, as descriptions of header groups provide additional clarity for users relying on assistive technologies.
+You can add an `aria-description` attribute to individual `<th>` table headers by configuring `header[].accessibility.description`. This is especially useful when [grouped headers](https://www.highcharts.com/docs/grid/columns/header) are used, as descriptions of header groups provide additional clarity for users relying on assistive technologies.
 
-## Caption vs. header
+```js
+header: [
+    'id',
+    {
+        format: 'Product details',
+        accessibility: {
+            description: 'This group contains the product name and weight columns.'
+        },
+        columns: [{
+            format: 'Product',
+            columnId: 'product'
+        }, {
+            format: 'Weight',
+            columnId: 'weight'
+        }]
+    }
+]
+```
+
+## Caption and description
 
 Screen readers often skip table captions (`<caption>`) when users scan a page's headers for structure. To ensure accessibility, Highcharts Grid inserts an element above the `<table>` instead of using `<caption>` inside it. The table references this element by using a proper `aria-labelledby` attribute.
 
-Make sure you use a proper heading level (`<h1>`–`<h6>`) when configuring the `caption` option. This approach ensures that users relying on screen readers can understand the table's context while navigating the page.
+Use `caption.htmlTag` to render the caption as a heading element so the grid fits naturally into the page outline. You can also add supporting context through `description.text`.
 
 ```js
 caption: {
-    text: "<h3>This is the caption</h3>";
+    text: 'Monthly sales report',
+    htmlTag: 'h3'
+},
+description: {
+    text: 'Sales totals for each product category.'
 }
 ```
 
@@ -109,7 +99,8 @@ You can configure the information text that is exposed to screen readers before 
 
 ```js
 caption: {
-    text: '<h2>Sales Data</h2>'
+    text: 'Sales Data',
+    htmlTag: 'h2'
 },
 description: {
     text: 'Monthly sales data for different products.'
@@ -117,16 +108,16 @@ description: {
 accessibility: {
     screenReaderSection: {
         beforeGridFormat:
-            '<div>{gridTitle}</div>' +
+            '{gridTitle}' +
             '<div>{gridDescription}</div>' +
-            '<div>This Grid contains {rowCount} rows and {columnCount} columns.</div>'
+            '<div>This grid contains {rowCount} rows and {columnCount} columns.</div>'
     }
 }
 ```
 
 Available template variables:
-- `{gridTitle}`: The Grid caption/title (stripped of HTML tags).
-- `{gridDescription}`: The Grid description (stripped of HTML tags).
+- `{gridTitle}`: The Grid caption/title.
+- `{gridDescription}`: The Grid description.
 - `{rowCount}`: Number of rows in the Grid.
 - `{columnCount}`: Number of columns in the Grid.
 

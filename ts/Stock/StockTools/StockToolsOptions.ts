@@ -51,6 +51,8 @@ export interface LangStockToolsOptions {
      * @since   7.0.0
      */
     gui?: Record<string, string>;
+    groupLabel?: string;
+    arrowLabel?: string;
 }
 
 /**

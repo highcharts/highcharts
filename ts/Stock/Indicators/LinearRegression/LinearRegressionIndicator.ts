@@ -30,12 +30,7 @@ import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     sma: SMAIndicator
 } = SeriesRegistry.seriesTypes;
-import U from '../../../Core/Utilities.js';
-const {
-    isArray,
-    extend,
-    merge
-} = U;
+import { extend, isArray, merge } from '../../../Shared/Utilities.js';
 
 /* *
  *
@@ -388,10 +383,17 @@ extend(LinearRegressionIndicator.prototype, {
 /** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
+        linearregression: typeof LinearRegressionIndicator;
         linearRegression: typeof LinearRegressionIndicator;
     }
 }
 
+SeriesRegistry.registerSeriesType(
+    'linearregression',
+    LinearRegressionIndicator
+);
+
+// Keep for backwards compatibility
 SeriesRegistry.registerSeriesType(
     'linearRegression',
     LinearRegressionIndicator

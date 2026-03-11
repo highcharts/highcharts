@@ -31,11 +31,13 @@ import Globals from '../Globals.js';
 import ColumnFiltering from '../Table/Actions/ColumnFiltering/ColumnFiltering.js';
 import GridUtils from '../GridUtils.js';
 import AST from '../../../Core/Renderer/HTML/AST.js';
-import U from '../../../Core/Utilities.js';
 import HTMLU from '../../../Accessibility/Utils/HTMLUtilities.js';
+import {
+    internalClearTimeout,
+    replaceNested
+} from '../../../Shared/Utilities.js';
 
 const { formatText } = GridUtils;
-const { replaceNested } = U;
 const { getHeadingTagNameForElement } = HTMLU;
 
 
@@ -140,7 +142,7 @@ class Accessibility {
      */
     public announce(msg: string, assertive = false): void {
         if (this.announcerTimeout) {
-            clearTimeout(this.announcerTimeout);
+            internalClearTimeout(this.announcerTimeout);
         }
 
         this.announcerElement.remove();
@@ -303,7 +305,7 @@ class Accessibility {
     /**
      * Set a11y options for the Grid.
      */
-    public setA11yOptions(): void {
+    public async setA11yOptions(): Promise<void> {
         const grid = this.grid;
         const tableEl = grid.tableElement;
 
@@ -313,7 +315,7 @@ class Accessibility {
 
         tableEl.setAttribute(
             'aria-rowcount',
-            grid.dataTable?.getRowCount() || 0
+            await grid.dataProvider?.getRowCount() || 0
         );
 
         if (grid.captionElement) {
@@ -540,7 +542,7 @@ class Accessibility {
 
         this.element.remove();
         this.announcerElement.remove();
-        clearTimeout(this.announcerTimeout);
+        internalClearTimeout(this.announcerTimeout);
     }
 }
 

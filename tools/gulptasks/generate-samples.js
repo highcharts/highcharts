@@ -68,6 +68,9 @@ async function generateSample(configFile, log) {
  * // Generate specific samples
  * gulp generate-samples --samples "highcharts/xaxis/*"
  *
+ * // Rebuild options lookup (flat-tree.json)
+ * gulp generate-samples --setup
+ *
  * // Watch for changes and regenerate automatically
  * gulp generate-samples --watchfiles
  *
@@ -77,6 +80,41 @@ async function generateSample(configFile, log) {
 async function task() {
     const log = require('../libs/log');
     const argv = require('yargs').argv;
+
+    // Check the setup argument. If set, run `gulp scripts`, `gulp jsdoc-dts`
+    // and the sample-generator/setup.ts script before generating samples.
+    if (argv.setup) {
+        log.message('Running setup tasks...');
+
+        // Run prerequisite tasks
+        await new Promise((resolve, reject) => {
+            gulp.series(
+                // These two tasks can be uncommented if you want to run the
+                // setup (build flat-tree.json) without running the full build
+                'scripts',
+                'jsdoc-dts',
+                async function setupSampleGenerator(done) {
+                    try {
+                        const { setup } = await import(
+                            '../sample-generator/setup.ts'
+                        );
+                        await setup();
+                        done();
+                    } catch (error) {
+                        done(error);
+                    }
+                }
+            )(err => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve();
+                }
+            });
+        });
+
+        return true;
+    }
 
     // Check if watch mode is enabled
     if (argv.watchfiles) {

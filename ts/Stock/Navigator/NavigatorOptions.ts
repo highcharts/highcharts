@@ -22,8 +22,7 @@ import type ColorType from '../../Core/Color/ColorType';
 import type { DeepPartial } from '../../Shared/Types';
 import type { SymbolTypeRegistry } from '../../Core/Renderer/SVG/SymbolType';
 import type { SeriesTypeOptions } from '../../Core/Series/SeriesType';
-import type Utilities from '../../Core/Utilities';
-
+import type { RelativeSize } from '../../Shared/Utilities.js';
 /* *
  *
  *  Declarations
@@ -117,7 +116,7 @@ export interface NavigatorHandlesOptions {
      *
      * @since 11.4.2
      */
-    borderRadius?: Utilities.RelativeSize;
+    borderRadius?: RelativeSize;
 
     /**
      * Allows to enable/disable handles.

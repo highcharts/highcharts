@@ -23,11 +23,8 @@
 
 import type Pagination from '../../Core/Pagination/Pagination';
 
-import Utilities from '../../../Core/Utilities.js';
 import Globals from '../../../Core/Globals.js';
-
-const { addEvent, pushUnique } = Utilities;
-
+import { addEvent, pushUnique } from '../../../Shared/Utilities.js';
 
 /* *
  *
@@ -106,7 +103,6 @@ declare module '../../Core/Pagination/PaginationOptions' {
     interface PaginationOptions {
         /**
          * Pagination events.
-         *
          */
         events?: PaginationEvents;
     }

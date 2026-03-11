@@ -36,18 +36,18 @@ const { ajax } = HU;
 import Point from '../Core/Series/Point.js';
 import SeriesRegistry from '../Core/Series/SeriesRegistry.js';
 const { seriesTypes } = SeriesRegistry;
-import U from '../Core/Utilities.js';
-const {
+import {
     addEvent,
     defined,
     extend,
     fireEvent,
+    internalClearTimeout,
     isNumber,
     merge,
     objectEach,
     pick,
     splat
-} = U;
+} from '../Shared/Utilities.js';
 
 /* *
  *
@@ -75,7 +75,7 @@ interface DataAfterCompleteCallbackFunction {
 }
 
 interface DataBeforeParseCallbackFunction {
-    (csv: string): string;
+    (csv: string, ctx: Data): string;
 }
 
 interface DataColumnsArray extends Array<DataValueType> {
@@ -128,7 +128,7 @@ interface DataParseDateCallbackFunction {
     (dateValue: string): number;
 }
 interface DataParsedCallbackFunction {
-    (columns: Array<DataColumnsArray>): (boolean|undefined);
+    (columns: Array<DataColumnsArray>, ctx: Data): (boolean|undefined);
 }
 interface DataValueCountObject {
     global: number;
@@ -420,7 +420,7 @@ class Data {
 
         // Always stop old polling when we have new options
         if (this.liveDataTimeout !== void 0) {
-            clearTimeout(this.liveDataTimeout);
+            internalClearTimeout(this.liveDataTimeout);
         }
 
         // This is a two-dimensional array holding the raw, trimmed string
@@ -1047,7 +1047,7 @@ class Data {
         }
 
         if (csv && options.beforeParse) {
-            csv = options.beforeParse.call(this, csv);
+            csv = options.beforeParse.call(this, csv, this);
         }
 
         if (csv) {
@@ -1249,7 +1249,7 @@ class Data {
                 }
 
                 if (initialFetch) {
-                    clearTimeout(data.liveDataTimeout);
+                    internalClearTimeout(data.liveDataTimeout);
                     chart.liveDataURL = url;
                 }
 
@@ -1851,7 +1851,7 @@ class Data {
      */
     public parsed(): (boolean|undefined) {
         if (this.options.parsed) {
-            return this.options.parsed.call(this, this.columns as any);
+            return this.options.parsed.call(this, this.columns as any, this);
         }
     }
 
@@ -2897,7 +2897,7 @@ export default Data;
  * An URL to a remote CSV dataset. Will be fetched when the chart is created
  * using Ajax.
  *
- * @sample highcharts/data/livedata-columns
+ * @sample highcharts/demo/livedata-columns
  *         Categorized bar chart with CSV and live polling
  * @sample highcharts/data/livedata-csv
  *         Time based line chart with CSV and live polling
@@ -2921,7 +2921,7 @@ export default Data;
  * A URL to a remote JSON dataset, structured as a column array.
  * Will be fetched when the chart is created using Ajax.
  *
- * @sample highcharts/data/livedata-columns
+ * @sample highcharts/demo/livedata-columns
  *         Columns with live polling
  *
  * @type      {string}
@@ -2958,7 +2958,7 @@ export default Data;
  *
  * @sample highcharts/demo/live-data
  *         Live data
- * @sample highcharts/data/livedata-columns
+ * @sample highcharts/demo/livedata-columns
  *         Categorized bar chart with CSV and live polling
  *
  * @type      {boolean}

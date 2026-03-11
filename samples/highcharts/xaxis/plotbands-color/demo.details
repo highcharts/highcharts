@@ -1,6 +1,4 @@
 ---
- name: Demo of xAxis.plotBands.color
- authors:
-   - Torstein Hønsi
- js_wrap: b
+name: Demo of xAxis.plotBands.color
+js_wrap: b
 ...

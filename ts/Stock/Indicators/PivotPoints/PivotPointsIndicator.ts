@@ -30,13 +30,7 @@ import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     sma: SMAIndicator
 } = SeriesRegistry.seriesTypes;
-import U from '../../../Core/Utilities.js';
-const {
-    merge,
-    extend,
-    defined,
-    isArray
-} = U;
+import { defined, extend, isArray, merge } from '../../../Shared/Utilities.js';
 
 /**
  *

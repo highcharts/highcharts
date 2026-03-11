@@ -1,6 +1,4 @@
 ---
- name: Demo of yAxis.ceiling and floor
- authors:
-   - Torstein Hønsi
- js_wrap: b
+name: Demo of yAxis.ceiling and floor
+js_wrap: b
 ...

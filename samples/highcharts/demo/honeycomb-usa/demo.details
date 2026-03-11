@@ -1,10 +1,10 @@
 ---
-name: 'Tile map, honeycomb'
+name: 'Tilemap, honeycomb'
 authors:
   - Mustapha Mekhatria
 js_wrap: b
 alt_text: >-
-  Highcharts honeycomb tile map JavaScript example graph visualizes US
+  Highcharts honeycomb tilemap JavaScript example graph visualizes US
   population geographically by state with color chart.
 tags:
   - Highcharts demo

@@ -169,7 +169,7 @@ const columnsConfig = [{
 }];
 
 Grid.grid('container', {
-    dataTable: {
+    data: {
         columns: gridData
     },
     columnDefaults: {

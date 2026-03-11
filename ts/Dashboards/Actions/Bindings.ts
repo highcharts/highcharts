@@ -34,11 +34,7 @@ import type { Options as ComponentOptions } from '../Components/Component.js';
 import ComponentRegistry from '../Components/ComponentRegistry.js';
 import CellHTML from '../Layout/CellHTML.js';
 import Globals from '../Globals.js';
-import U from '../../Core/Utilities.js';
-const {
-    addEvent,
-    fireEvent
-} = U;
+import { addEvent, fireEvent } from '../../Shared/Utilities.js';
 
 /* *
  *

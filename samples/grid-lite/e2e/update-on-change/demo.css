@@ -1,0 +1,29 @@
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-lite/css/grid-lite.css");
+
+.grid-wrapper {
+    display: flex;
+    gap: 24px;
+    padding: 8px;
+}
+
+.label {
+    margin: 8px 0;
+    font-weight: 600;
+}
+
+#container-auto,
+#container-manual {
+    width: 360px;
+    height: 220px;
+}
+
+.controls {
+    margin-top: 8px;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.counter {
+    width: 60px;
+}

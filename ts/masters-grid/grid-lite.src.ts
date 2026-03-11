@@ -33,10 +33,11 @@ import Globals from '../Grid/Core/Globals.js';
 import whcm from '../Accessibility/HighContrastMode.js';
 import Table from '../Grid/Core/Table/Table.js';
 import CreditsLiteComposition from '../Grid/Lite/Credits/CreditsLiteComposition.js';
-import Utilities from '../Core/Utilities.js';
 import SvgIcons from '../Grid/Core/UI/SvgIcons.js';
 import Pagination from '../Grid/Core/Pagination/Pagination.js';
+import DataProviderRegistry from '../Grid/Core/Data/DataProviderRegistry.js';
 import ResponsiveComposition from '../Grid/Core/Responsive/ResponsiveComposition.js';
+import { merge } from '../Shared/Utilities.js';
 
 // Fill registries
 import '../Data/Connectors/CSVConnector.js';
@@ -48,6 +49,9 @@ import '../Data/Modifiers/InvertModifier.js';
 import '../Data/Modifiers/RangeModifier.js';
 import '../Data/Modifiers/SortModifier.js';
 import '../Data/Modifiers/FilterModifier.js';
+
+import '../Grid/Core/Data/LocalDataProvider.js';
+import '../Grid/Core/Responsive/ResponsiveComposition.js';
 
 
 /* *
@@ -64,13 +68,14 @@ const G = {
     DataCursor,
     DataModifier,
     DataPool,
+    DataProviderRegistry,
     DataTable,
     defaultOptions: Defaults.defaultOptions,
     Grid: _Grid,
     grid: _Grid.grid,
     grids: _Grid.grids,
     isHighContrastModeActive: whcm.isHighContrastModeActive,
-    merge: Utilities.merge,
+    merge: merge,
     Pagination,
     product: 'Grid Lite',
     setOptions: Defaults.setOptions,
@@ -99,6 +104,7 @@ export {
     DataCursor,
     DataModifier,
     DataPool,
+    DataProviderRegistry,
     DataTable,
     _Grid as Grid,
     _Options as Options,
@@ -113,7 +119,6 @@ export const {
     grid,
     grids,
     isHighContrastModeActive,
-    merge,
     product,
     setOptions,
     version,

@@ -24,21 +24,19 @@ const {
     pageLang,
     win
 } = H;
-import U from '../Core/Utilities.js';
-const {
+import {
     defined,
-    error,
     extend,
-    isNumber,
     isObject,
+    isNumber,
     isString,
     merge,
     objectEach,
     pad,
     splat,
-    timeUnits,
     ucfirst
-} = U;
+} from './Utilities.js';
+import { error, timeUnits } from '../Core/Utilities.js';
 
 /* *
  *
@@ -785,7 +783,7 @@ class TimeBase {
                         format = format.replace(
                             '%' + key,
                             typeof val === 'function' ?
-                                val.call(time, timestamp) :
+                                val.call(time, timestamp, time) :
                                 val
                         );
                     }

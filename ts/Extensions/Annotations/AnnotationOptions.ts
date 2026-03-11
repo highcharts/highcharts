@@ -405,7 +405,10 @@ export interface AnnotationLabelOptionsOptions {
      * Callback JavaScript function to format the annotation's
      * label. Note that if a `format` or `text` are defined,
      * the format or text take precedence and the formatter is
-     * ignored. `This` refers to a point object.
+     * ignored. `This` refers to a point object. The callback also receives
+     * an argument `ctx` so that arrow-functions can access the same
+     * context (the point in this case) as normal functions can using
+     * `this`. Since v12.5.0, the callback receives `ctx`.
      *
      * @sample highcharts/annotations/label-text/
      *         Set labels text
@@ -598,7 +601,9 @@ export interface AnnotationMockPointFunction {
 
 export interface AnnotationShapeOptionsOptions {
     /**
-     * The radius of the shape in y direction. Used for the ellipse.
+     * The radius of the `ellipse` shape in y direction. Can be defined in
+     * pixels or yAxis units, if
+     * [shapes.yAxis](#annotations.shapeOptions.yAxis) index is defined.
      *
      * @sample highcharts/annotations/ellipse/
      *         Ellipse annotation
@@ -606,19 +611,39 @@ export interface AnnotationShapeOptionsOptions {
     ry?: number;
 
     /**
-     * The xAxis index to which the points should be attached.
-     * Used for the ellipse.
+     * The xAxis index which should be used for annotation's sizes and
+     * points coordinates conversion.
+     *
+     * This option is used for `rect` shape
+     * [width](#annotations.shapeOptions.width), and all shape
+     * [point](#annotations.shapes.point) and
+     * [points](#annotations.shapes.points) coordinates.
+     *
+     * @sample highcharts/annotations/shapes-axis-units/
+     *         Shapes created with axis units
      **/
     xAxis?: number;
 
     /**
-     * The yAxis index to which the points should be attached.
-     * Used for the ellipse.
+     * The yAxis index which should be used for annotation's sizes and
+     * points coordinates conversion.
+     *
+     * This option is used for `rect` shape
+     * [height](#annotations.shapeOptions.height), `circle` shape
+     * [radius](#annotations.shapeOptions.r), `ellipse`
+     * [y direction radius](#annotations.shapeOptions.ry), and all shape
+     * [point](#annotations.shapes.point) and
+     * [points](#annotations.shapes.points) coordinates.
+     *
+     * @sample highcharts/annotations/shapes-axis-units/
+     *         Shapes created with axis units
      **/
     yAxis?: number;
 
     /**
-     * The width of the shape.
+     * The width of the `rect` shape. Can be defined in pixels or xAxis
+     * units, if [shapes.xAxis](#annotations.shapeOptions.xAxis) index is
+     * defined.
      *
      * @sample highcharts/annotations/shape/
      *         Basic shape annotation
@@ -626,7 +651,9 @@ export interface AnnotationShapeOptionsOptions {
     width?: number;
 
     /**
-     * The height of the shape.
+     * The height of the `rect` shape. Can be defined in pixels or yAxis
+     * units, if [shapes.yAxis](#annotations.shapeOptions.yAxis) index is
+     * defined.
      *
      * @sample highcharts/annotations/shape/
      *         Basic shape annotation
@@ -635,7 +662,7 @@ export interface AnnotationShapeOptionsOptions {
 
     /**
      * The type of the shape.
-     * Available options are circle, rect and ellipse.
+     * Available options are `circle`, `rect`, `ellipse` and `path`.
      *
      * @sample highcharts/annotations/shape/
      *         Basic shape annotation
@@ -697,7 +724,9 @@ export interface AnnotationShapeOptionsOptions {
     fill?: ColorType;
 
     /**
-     * The radius of the shape.
+     * The radius of the `circle` shape. Can be defined in pixels or yAxis
+     * units, if [shapes.yAxis](#annotations.shapeOptions.yAxis) index is
+     * defined.
      *
      * @sample highcharts/annotations/shape/
      *         Basic shape annotation

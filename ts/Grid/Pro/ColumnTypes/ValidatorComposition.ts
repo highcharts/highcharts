@@ -31,12 +31,7 @@ import type {
 
 import Validator from './Validator.js';
 import Globals from '../../Core/Globals.js';
-import U from '../../../Core/Utilities.js';
-
-const {
-    addEvent,
-    pushUnique
-} = U;
+import { addEvent, pushUnique } from '../../../Shared/Utilities.js';
 
 
 /* *
@@ -59,7 +54,7 @@ export function compose(
         return;
     }
 
-    addEvent(TableClass, 'afterInit', initValidatorComposition);
+    addEvent(TableClass, 'beforeInit', initValidatorComposition);
     addEvent(TableClass, 'afterDestroy', destroy);
 }
 
@@ -74,7 +69,7 @@ function initValidatorComposition(this: Table): void {
  * Callback function called after table destroy.
  */
 function destroy(this: Table): void {
-    this.validator.destroy();
+    this.validator?.destroy();
 }
 
 
@@ -89,7 +84,7 @@ declare module '../../Core/Table/Table' {
         /**
          * The validator object.
          */
-        validator: Validator;
+        validator?: Validator;
     }
 }
 
