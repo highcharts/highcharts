@@ -106,7 +106,7 @@
     }
 
     /* Start header hover & sync */
-    .hcg-table th:hover {
+    .hcg-table thead th:hover {
         --ig-header-hover-background:
             color-mix(
                 in srgb,
