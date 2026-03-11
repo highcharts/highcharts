@@ -3535,12 +3535,12 @@ class Chart {
             loadingStyle = loadingOptions?.style ?? {},
             setLoadingSize = function (): void {
                 if (loadingDiv) {
-                    css(loadingDiv, extend({
-                        left: chart.plotLeft + 'px',
-                        top: chart.plotTop + 'px',
-                        width: chart.plotWidth + 'px',
-                        height: chart.plotHeight + 'px'
-                    } as CSSObject, loadingStyle));
+                    css(loadingDiv, {
+                        left: loadingStyle.left ?? chart.plotLeft + 'px',
+                        top: loadingStyle.top ?? chart.plotTop + 'px',
+                        width: loadingStyle.width ?? chart.plotWidth + 'px',
+                        height: loadingStyle.height ?? chart.plotHeight + 'px'
+                    });
                 }
             };
 
