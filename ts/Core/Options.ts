@@ -220,7 +220,7 @@ export interface LoadingOptions {
      * @sample highcharts/loading/hideduration/
      *         Fade in and out over a second
      *
-     * @default   100
+     * @default   0
      * @since     1.2.0
      */
     showDuration?: number;
@@ -260,6 +260,10 @@ export interface LoadingOptions {
  * The thousands separator, defaults to the one given in the lang options, or a
  * space character.
  *
+ * @param {Highcharts.Chart} [ctx]
+ * Since v12.5.0, the chart context passed as an extra argument for arrow
+ * functions.
+ *
  * @return {string}
  * The formatted number.
  */
@@ -269,7 +273,8 @@ export interface NumberFormatterCallbackFunction {
         number: number,
         decimals: number,
         decimalPoint?: string,
-        thousandsSep?: string
+        thousandsSep?: string,
+        ctx?: Chart
     ): string;
 }
 

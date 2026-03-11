@@ -3532,13 +3532,14 @@ class Chart {
         const chart = this,
             options = chart.options,
             loadingOptions = options.loading,
+            loadingStyle = loadingOptions?.style ?? {},
             setLoadingSize = function (): void {
                 if (loadingDiv) {
                     css(loadingDiv, {
-                        left: chart.plotLeft + 'px',
-                        top: chart.plotTop + 'px',
-                        width: chart.plotWidth + 'px',
-                        height: chart.plotHeight + 'px'
+                        left: loadingStyle.left ?? chart.plotLeft + 'px',
+                        top: loadingStyle.top ?? chart.plotTop + 'px',
+                        width: loadingStyle.width ?? chart.plotWidth + 'px',
+                        height: loadingStyle.height ?? chart.plotHeight + 'px'
                     });
                 }
             };
@@ -3573,10 +3574,8 @@ class Chart {
 
         if (!chart.styledMode) {
             // Update visuals
-            css(loadingDiv, extend((loadingOptions as any).style, {
-                zIndex: 10
-            }));
-            css(loadingSpan, (loadingOptions as any).labelStyle);
+            css(loadingDiv, extend(loadingStyle, { zIndex: 10 }));
+            css(loadingSpan, loadingOptions?.labelStyle ?? {});
 
             // Show it
             if (!chart.loadingShown) {
@@ -3585,9 +3584,9 @@ class Chart {
                     display: ''
                 });
                 animate(loadingDiv, {
-                    opacity: (loadingOptions as any).style.opacity || 0.5
+                    opacity: loadingStyle.opacity ?? 0.5
                 }, {
-                    duration: (loadingOptions as any).showDuration || 0
+                    duration: loadingOptions?.showDuration ?? 0
                 });
             }
         }
@@ -3620,7 +3619,7 @@ class Chart {
                 animate(loadingDiv, {
                     opacity: 0
                 }, {
-                    duration: (options.loading as any).hideDuration || 100,
+                    duration: options.loading?.hideDuration ?? 100,
                     complete: function (): void {
                         css(loadingDiv as any, { display: 'none' });
                     }
@@ -5167,6 +5166,10 @@ export default Chart;
  * @param {string} [thousandsSep]
  *        The thousands separator, defaults to the one given in the lang
  *        options, or a space character.
+ *
+ * @param {Highcharts.Chart} [ctx]
+ *        Since v12.5.0, the chart context passed as an extra argument for
+ *        arrow functions.
  *
  * @return {string} The formatted number.
  */

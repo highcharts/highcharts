@@ -45,11 +45,9 @@ import '@highcharts/grid-lite/css/grid-lite.css';
 
 Grid.grid('container', {
     data: {
-        dataTable: {
-            columns: {
-                product: ['Apple', 'Pear', 'Plum', 'Banana'],
-                price: [1.5, 2.53, 5, 4.5]
-            }
+        columns: {
+            product: ['Apple', 'Pear', 'Plum', 'Banana'],
+            price: [1.5, 2.53, 5, 4.5]
         }
     }
 });
@@ -75,11 +73,9 @@ Best for quick prototypes, CodePen, JSFiddle, or projects without build tools.
     <script>
     Grid.grid('container', {
         data: {
-            dataTable: {
-                columns: {
-                    product: ['Apple', 'Pear', 'Plum', 'Banana'],
-                    price: [1.5, 2.53, 5, 4.5]
-                }
+            columns: {
+                product: ['Apple', 'Pear', 'Plum', 'Banana'],
+                price: [1.5, 2.53, 5, 4.5]
             }
         }
     });
@@ -134,12 +130,10 @@ import '@highcharts/grid-pro/css/grid-pro.css';
 // Create grid with Pro features
 Grid.grid('container', {
     data: {
-        dataTable: {
-            columns: {
-                product: ['Apple', 'Pear', 'Plum', 'Banana'],
-                price: [1.5, 2.53, 5, 4.5],
-                inStock: [true, true, false, true]
-            }
+        columns: {
+            product: ['Apple', 'Pear', 'Plum', 'Banana'],
+            price: [1.5, 2.53, 5, 4.5],
+            inStock: [true, true, false, true]
         }
     },
     columns: [{
@@ -186,12 +180,10 @@ import { Grid, type GridOptions } from '@highcharts/grid-lite-react';
 export default function App() {
     const [options] = useState<GridOptions>({
         data: {
-            dataTable: {
-                columns: {
-                    name: ['Alice', 'Bob', 'Charlie', 'David'],
-                    age: [23, 34, 45, 56],
-                    city: ['New York', 'Oslo', 'Paris', 'Tokyo'],
-                }
+            columns: {
+                name: ['Alice', 'Bob', 'Charlie', 'David'],
+                age: [23, 34, 45, 56],
+                city: ['New York', 'Oslo', 'Paris', 'Tokyo'],
             }
         }
     });

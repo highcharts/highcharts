@@ -34,12 +34,10 @@ import { Grid, type GridOptions } from '@highcharts/grid-lite-react';
 export default function App() {
     const [options] = useState<GridOptions>({
         data: {
-            dataTable: {
-                columns: {
-                    name: ['Alice', 'Bob', 'Charlie', 'David'],
-                    age: [23, 34, 45, 56],
-                    city: ['New York', 'Oslo', 'Paris', 'Tokyo']
-                }
+            columns: {
+                name: ['Alice', 'Bob', 'Charlie', 'David'],
+                age: [23, 34, 45, 56],
+                city: ['New York', 'Oslo', 'Paris', 'Tokyo']
             }
         }
     });
@@ -69,11 +67,9 @@ import {
 export default function App() {
     const [options] = useState<GridOptions>({
         data: {
-            dataTable: {
-                columns: {
-                    name: ['Alice', 'Bob', 'Charlie'],
-                    age: [23, 34, 45]
-                }
+            columns: {
+                name: ['Alice', 'Bob', 'Charlie'],
+                age: [23, 34, 45]
             }
         }
     });
@@ -98,11 +94,9 @@ import { Grid, type GridOptions } from '@highcharts/grid-lite-react';
 export default function App() {
     const [options, setOptions] = useState<GridOptions>({
         data: {
-            dataTable: {
-                columns: {
-                    name: ['Alice', 'Bob'],
-                    age: [23, 34]
-                }
+            columns: {
+                name: ['Alice', 'Bob'],
+                age: [23, 34]
             }
         }
     });
@@ -110,11 +104,9 @@ export default function App() {
     const loadNewData = () => {
         setOptions({
             data: {
-                dataTable: {
-                    columns: {
-                        name: ['Charlie', 'Diana', 'Eve'],
-                        age: [45, 56, 67]
-                    }
+                columns: {
+                    name: ['Charlie', 'Diana', 'Eve'],
+                    age: [45, 56, 67]
                 }
             }
         });

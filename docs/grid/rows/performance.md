@@ -9,10 +9,10 @@ Alternatively, if you prefer to display data in discrete pages rather than conti
 
 ![Illustration showing virtualization of rows](../ill_virtualization.png)
 
-This technique significantly enhances performance, leading to faster load times and efficient updates. Row virtualization reduces memory consumption, allowing the application to handle large datasets smoothly without compromising performance. Users benefit from a smoother experience with fluid scrolling and more responsive interactions such as sorting rows.
+This technique significantly enhances performance, leading to faster load times and efficient updates. Row virtualization reduces memory consumption, allowing the application to handle large datasets smoothly without compromising performance. Users benefit from a smoother experience with fluid scrolling and more responsive updates.
 
-Row virtualization can be set explicitly with the [`virtualization`](https://api.highcharts.com/dashboards/#interfaces/Grid_Options.RowsSettings#virtualization) option, or controlled automatically by `virtualizationThreshold` (default `50`).
-Please note that large datasets also impact resizing and sorting performance. Some animations or interactions might not be smooth.
+Row virtualization can be set explicitly with the [`rendering.rows.virtualization`](https://api.highcharts.com/grid/rendering.rows.virtualization) option, or controlled automatically by `rendering.rows.virtualizationThreshold` (default `50`).
+Please note that large datasets also impact other interactions, including column resizing. Some animations or interactions might not be smooth.
 
 ## Optimizing performance
 ```js
@@ -26,18 +26,18 @@ Please note that large datasets also impact resizing and sorting performance. So
 }
 ```
 
-The [`bufferSize`](https://api.highcharts.com/dashboards/#interfaces/Grid_Options.RowsSettings#bufferSize) and [`strictHeights`](https://api.highcharts.com/dashboards/#interfaces/Grid_Options.RowsSettings#strictHeights) options can be adjusted to optimize performance and smoothness of scrolling based on your specific use case and preferences.
+The [`rendering.rows.bufferSize`](https://api.highcharts.com/grid/rendering.rows.bufferSize) and [`rendering.rows.strictHeights`](https://api.highcharts.com/grid/rendering.rows.strictHeights) options can be adjusted to optimize performance and smoothness of scrolling based on your specific use case and preferences.
 
 ### buffersize
-Defines the number of rows rendered outside the viewport (the buffer) during scrolling. A small buffer leads to faster initial rendering and increased performance on sorting and scrolling. A larger buffer means slower initial rendering but might decrease the flicker effect on fast scrolling.
+Defines the number of rows rendered outside the viewport (the buffer) during scrolling. A small buffer leads to faster initial rendering and better scrolling performance. A larger buffer means slower initial rendering but might decrease the flicker effect on fast scrolling.
 
-The default [`bufferSize`](https://api.highcharts.com/dashboards/#interfaces/Grid_Options.RowsSettings#bufferSize) of 10 should be optimal in most cases.
+The default [`rendering.rows.bufferSize`](https://api.highcharts.com/grid/rendering.rows.bufferSize) of 10 should be optimal in most cases.
 
 ### strictHeights
 By default, rows adjust their height to fit all content, which can reduce performance and scrolling smoothness. Setting `strictHeights: true` ensures all rows have a uniform height, truncating multiline text with an ellipsis. This skips height calculations and boosts performance.
 
 ### minVisibleRows
-Use [`minVisibleRows`](https://api.highcharts.com/grid/#interfaces/Grid_Core_Options.RowsSettings#minVisibleRows) to set a minimum `tbody` height based on how many rows should remain visible.
+Use [`rendering.rows.minVisibleRows`](https://api.highcharts.com/grid/rendering.rows.minVisibleRows) to set a minimum `tbody` height based on how many rows should remain visible.
 
 ```js
 {
@@ -69,13 +69,8 @@ Use [`minVisibleRows`](https://api.highcharts.com/grid/#interfaces/Grid_Core_Opt
 ```
 These options can be used to configure how the table should be rendered.
 
-[`table.className`](https://api.highcharts.com/grid/#interfaces/Grid_Core_Options.TableSettings#className) is appended to the `<table>` element.
+[`rendering.table.className`](https://api.highcharts.com/grid/rendering.table.className) is appended to the `<table>` element.
 
-[`header.enabled: false`](https://api.highcharts.com/grid/#interfaces/Grid_Core_Options.HeaderSettings#enabled) disables all [column headers](https://www.highcharts.com/docs/grid/columns/header) by not rendering the `thead` element.
+[`rendering.header.enabled: false`](https://api.highcharts.com/grid/rendering.header.enabled) disables all [column headers](https://www.highcharts.com/docs/grid/columns/header) by not rendering the `thead` element.
 
-[`columns.resizing.mode`](https://api.highcharts.com/grid/#interfaces/Grid_Core_Options.ResizingOptions#mode) is used to configure initial column widths.
-
-Use [`columns.resizing.mode`](https://api.highcharts.com/grid/#interfaces/Grid_Core_Options.ResizingOptions#mode) to control how widths are redistributed when users resize columns:
-- `adjacent`: resize current column and compensate in the next column.
-- `independent`: resize only the current column and keep following column widths fixed.
-- `distributed`: resize current column and rebalance remaining flexible columns.
+[`rendering.columns.resizing.mode`](https://api.highcharts.com/grid/rendering.columns.resizing.mode) is used to configure column resizing behaviour. Read more about [column resizing and width](https://www.highcharts.com/docs/grid/columns/resizing-and-width).

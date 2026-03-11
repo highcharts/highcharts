@@ -231,7 +231,7 @@ const menuItems = [{
 }];
 
 Grid.grid('container', {
-    dataTable: {
+    data: {
         columns: {
             product: [
                 'Apples',
