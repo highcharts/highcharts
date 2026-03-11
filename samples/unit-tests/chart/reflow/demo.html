@@ -14,3 +14,14 @@
       </div>
     </div>
 </div>
+
+<!-- #23712: flex child with height 100% + min-height causes infinite reflow -->
+<button id="change-height">Change height</button>
+<div style="display: flex;" id="wrapper">
+    <div style="width: 100%;" id="child">
+        <div style="height: 100%; min-height: 500px;">
+            <div style="height: 100%" id="container3"></div>
+        </div>
+        <div id="blue-div" style="height: 5px;"></div>
+    </div>
+</div>

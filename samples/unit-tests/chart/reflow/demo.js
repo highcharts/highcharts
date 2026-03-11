@@ -341,3 +341,36 @@ QUnit.test('Chart reflow using ResizeObserver, #17951.', assert => {
         );
     }
 });
+
+QUnit.test('Infinite reflow in flex container, #23712', assert => {
+    if (!document.getElementById('container3')) {
+        assert.ok(true, 'Skipped: container3 not in DOM');
+        return;
+    }
+
+    const chart = Highcharts.chart('container3', {
+        series: [{ data: [1, 2, 3] }]
+    });
+    assert.strictEqual(
+        chart.chartHeight,
+        500,
+        'Flex + height 100% + min-height uses parent min-height'
+    );
+
+    const changeBtn = document.getElementById('change-height');
+    if (changeBtn) {
+        changeBtn.addEventListener('click', () => {
+            document.getElementById('blue-div').style.height = '10px';
+        });
+        changeBtn.click();
+        const done = assert.async();
+        setTimeout(() => {
+            assert.strictEqual(
+                chart.chartHeight,
+                500,
+                'Chart height stable after sibling change'
+            );
+            done();
+        }, 300);
+    }
+});
