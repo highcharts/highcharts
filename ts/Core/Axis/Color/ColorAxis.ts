@@ -348,7 +348,7 @@ class ColorAxis extends Axis implements ColorAxisBase {
             chart = axis.chart,
             group = axis.legendItem?.group,
             sideOffset = chart.axisOffset[axis.side],
-            { clipOffset, clipOffsetGL, legend } = chart;
+            { clipOffset, legend } = chart;
 
         if (group) {
 
@@ -379,7 +379,6 @@ class ColorAxis extends Axis implements ColorAxisBase {
             // Reset it to avoid color axis reserving space
             chart.axisOffset[axis.side] = sideOffset;
             chart.clipOffset = clipOffset;
-            chart.clipOffsetGL = clipOffsetGL;
         }
     }
 

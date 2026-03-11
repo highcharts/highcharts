@@ -434,9 +434,6 @@ class Chart {
     public clipOffset?: [number, number, number, number];
 
     /** @internal */
-    public clipOffsetGL?: [number, number];
-
-    /** @internal */
     public clipRect?: SVGElement;
 
     /** @internal */
@@ -2468,14 +2465,13 @@ class Chart {
                 chartHeight,
                 chartWidth,
                 clipOffset,
-                clipOffsetGL,
                 inverted,
                 options,
                 spacing,
                 renderer
             } = chart,
             clipRoundFunc = Math[inverted ? 'floor' : 'round'],
-            { plotBorderRadius = 0, plotBorderWidth = 0 } = options.chart;
+            { plotBorderRadius = 0 } = options.chart;
 
         let plotLeft,
             plotTop,
@@ -2530,7 +2526,7 @@ class Chart {
             width: chartWidth - spacing[3] - spacing[1],
             height: chartHeight - spacing[0] - spacing[2]
         };
-        const plotBox = chart.plotBox = renderer.plotBox = {
+        chart.plotBox = renderer.plotBox = {
             x: plotLeft,
             y: plotTop,
             width: plotWidth,
@@ -2539,7 +2535,7 @@ class Chart {
         };
 
         // Compute the clipping box
-        if (clipOffset && clipOffsetGL) {
+        if (clipOffset) {
             chart.clipBox = {
                 x: clipRoundFunc(clipOffset[3]),
                 y: clipRoundFunc(clipOffset[0]),
@@ -2551,31 +2547,9 @@ class Chart {
                 ),
                 r: plotBorderRadius
             };
-
-            // The `clipOffsetOuter` array, unlike `clipOffset`, includes the
-            // width of the grid lines. Because series content is allowed to
-            // overflow the extreme grid lines but not the plot area border, but
-            // the axis clipping must include both.
-            const clipOffsetOuter = [
-                Math.max(clipOffset[0], clipOffsetGL[0]),
-                Math.max(clipOffset[1], clipOffsetGL[1]),
-                Math.max(clipOffset[2], clipOffsetGL[0]),
-                Math.max(clipOffset[3], clipOffsetGL[1])
-            ];
-            chart.plotBoxOuter = merge(plotBox, {
-                x: Math.ceil(plotBox.x - clipOffsetOuter[3]),
-                y: Math.ceil(plotBox.y - clipOffsetOuter[0]),
-                width: Math.ceil(
-                    plotBox.width + clipOffsetOuter[1] + clipOffsetOuter[3]
-                ),
-                height: Math.ceil(
-                    plotBox.height + clipOffsetOuter[0] + clipOffsetOuter[2]
-                ) + 0,
-                r: plotBorderRadius ? plotBorderRadius + plotBorderWidth / 2 : 0
-            });
         }
 
-        chart.plotClipRect ||= renderer.clipRect(plotBox);
+        chart.plotClipRect ||= renderer.clipRect();
 
         if (!skipAxes) {
             for (const axis of chart.axes) {
@@ -2637,7 +2611,6 @@ class Chart {
             halfWidth,
             halfWidth
         ];
-        chart.clipOffsetGL = [0, 0];
 
         chart.plotBorderWidth = plotBorderWidth;
 
@@ -2654,21 +2627,24 @@ class Chart {
     public drawChartBox(): void {
         const chart = this,
             optionsChart = chart.options.chart,
-            renderer = chart.renderer,
-            chartWidth = chart.chartWidth,
-            chartHeight = chart.chartHeight,
-            styledMode = chart.styledMode,
-            plotBGImage = chart.plotBGImage,
             chartBackgroundColor = optionsChart.backgroundColor,
             plotBackgroundColor = optionsChart.plotBackgroundColor,
             plotBackgroundImage = optionsChart.plotBackgroundImage,
-            plotLeft = chart.plotLeft,
-            plotTop = chart.plotTop,
-            plotWidth = chart.plotWidth,
-            plotHeight = chart.plotHeight,
-            plotBox = chart.plotBox,
-            clipRect = chart.clipRect,
-            clipBox = chart.clipBox;
+            {
+                chartWidth,
+                chartHeight,
+                clipBox,
+                clipOffset,
+                clipRect,
+                plotBGImage,
+                plotBox,
+                plotLeft,
+                plotTop,
+                plotWidth,
+                plotHeight,
+                renderer,
+                styledMode
+            } = chart;
 
         let chartBackground = chart.chartBackground,
             plotBackground = chart.plotBackground,
@@ -2785,13 +2761,36 @@ class Chart {
             });
         }
 
-        plotBorder[verb](plotBorder.crisp(
-            plotBox,
-            // #3282 plotBorder should be negative
-            -plotBorder.strokeWidth()
-        ));
+        const strokeWidth = plotBorder.strokeWidth(),
+            plotBorderBox = merge(plotBox);
 
-        chart.plotClipRect?.[verb](chart.plotBoxOuter);
+        // If any of the clipOffset sides are larger than half the stroke width,
+        // the plotBorderBox needs to be extended so that the plot border
+        // includes the full stroke of axis lines.
+        if (clipOffset) {
+            // @todo: Maybe clipOffset should be non-inverted in the first place
+            const clipOffsetUninverted = chart.inverted ?
+                    [
+                        clipOffset[1],
+                        clipOffset[0],
+                        clipOffset[3],
+                        clipOffset[2]
+                    ] :
+                    clipOffset,
+                extendUp = clipOffsetUninverted[0] - strokeWidth / 2,
+                extendRight = clipOffsetUninverted[1] - strokeWidth / 2,
+                extendDown = clipOffsetUninverted[2] - strokeWidth / 2,
+                extendLeft = clipOffsetUninverted[3] - strokeWidth / 2;
+            plotBorderBox.x -= extendLeft;
+            plotBorderBox.y -= extendUp;
+            plotBorderBox.width += extendLeft + extendRight;
+            plotBorderBox.height += extendDown + extendUp;
+        }
+
+        // #3282 plotBorder should be negative
+        plotBorder.crisp(plotBorderBox, -strokeWidth);
+        plotBorder[verb](plotBorderBox);
+        this.plotClipRect?.[verb](plotBorderBox);
 
         // Reset
         chart.isDirtyBox = false;

@@ -5,7 +5,7 @@ import type {
 export default {
     controls: [{
         path: 'chart.plotBorderRadius',
-        value: 5,
+        value: 10,
         max: 20
     }, {
         path: 'chart.plotBorderWidth',
@@ -23,7 +23,8 @@ export default {
         },
         xAxis: {
             gridLineColor: 'var(--highcharts-neutral-color-20)',
-            gridLineWidth: 1
+            gridLineWidth: 1,
+            lineWidth: 3
         },
         yAxis: {
             gridLineColor: 'var(--highcharts-neutral-color-20)'
