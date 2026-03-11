@@ -23,7 +23,6 @@ Highcharts.chart('container', {
         max: 200000,
         tickWidth: 0,
         minorTickInterval: null,
-        lineWidth: 0,
         tickInterval: 50000,
         labels: {
             distance: 20
@@ -48,7 +47,7 @@ Highcharts.chart('container', {
             color: '#00A96B', // green
             thickness: 50
         }]
-    },{
+    }, {
         // 2nd axis for the inner tick marks
         linkedTo: 0,
         offset: -55,

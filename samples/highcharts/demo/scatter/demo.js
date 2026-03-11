@@ -36,7 +36,7 @@ getData().then(data => {
             if (
                 elm.sport === sportName &&
                 elm.weight > 0 && elm.height > 0 &&
-                elm.continent === "Europe"
+                elm.continent === 'Europe'
             ) {
                 temp.push([elm.height, elm.weight]);
             }
