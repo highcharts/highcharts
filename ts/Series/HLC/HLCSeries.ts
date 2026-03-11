@@ -215,7 +215,9 @@ class HLCSeries extends ColumnSeries {
             state
         );
 
-        delete attribs.fill;
+        if (point) {
+            delete attribs.fill;
+        }
 
         return attribs;
     }
