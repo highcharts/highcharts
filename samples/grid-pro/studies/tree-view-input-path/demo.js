@@ -75,3 +75,11 @@ document.getElementById('tree-view-enabled').addEventListener('change', e => {
         }
     });
 });
+
+document.getElementById('expand-all').addEventListener('click', () => {
+    grid.treeProjectionController?.expandAll();
+});
+
+document.getElementById('collapse-all').addEventListener('click', () => {
+    grid.treeProjectionController?.collapseAll();
+});

@@ -202,10 +202,16 @@ class TreeProjectionController {
      * @param rowId
      * Row ID to toggle.
      *
+     * @param redraw
+     * Whether to redraw rows after state change.
+     *
      * @returns
-     * `true` when state changed, otherwise `false`.
+     * Promise resolving to `true` when state changed, otherwise `false`.
      */
-    public toggleRow(rowId: RowId): boolean {
+    public async toggleRow(
+        rowId: RowId,
+        redraw: boolean = true
+    ): Promise<boolean> {
         const options = this.options;
         const projectionState = this.projectionStateCache;
 
@@ -233,6 +239,83 @@ class TreeProjectionController {
         }
 
         this.projectionStateCache = void 0;
+        await this.requestRowsRedraw(redraw);
+
+        return true;
+    }
+
+    /**
+     * Expands all currently expandable tree rows.
+     *
+     * @param redraw
+     * Whether to redraw rows after state change.
+     *
+     * @returns
+     * Promise resolving to `true` when state changed, otherwise `false`.
+     */
+    public async expandAll(redraw: boolean = true): Promise<boolean> {
+        this.sync();
+
+        const index = this.indexCache;
+        if (!index) {
+            return false;
+        }
+
+        if (!this.expandedRowIdsState) {
+            this.syncExpandedRowIdsState();
+        }
+
+        const expandedRowIdsState = this.expandedRowIdsState;
+        if (!expandedRowIdsState) {
+            return false;
+        }
+
+        let changed = false;
+
+        for (const [nodeId, node] of index.nodes) {
+            if (!node.childrenIds.length || expandedRowIdsState.has(nodeId)) {
+                continue;
+            }
+
+            expandedRowIdsState.add(nodeId);
+            changed = true;
+        }
+
+        if (changed) {
+            this.projectionStateCache = void 0;
+            await this.requestRowsRedraw(redraw);
+        }
+
+        return changed;
+    }
+
+    /**
+     * Collapses all currently expandable tree rows.
+     *
+     * @param redraw
+     * Whether to redraw rows after state change.
+     *
+     * @returns
+     * Promise resolving to `true` when state changed, otherwise `false`.
+     */
+    public async collapseAll(redraw: boolean = true): Promise<boolean> {
+        this.sync();
+
+        if (!this.indexCache) {
+            return false;
+        }
+
+        if (!this.expandedRowIdsState) {
+            this.syncExpandedRowIdsState();
+        }
+
+        if (!this.expandedRowIdsState?.size) {
+            return false;
+        }
+
+        this.expandedRowIdsState.clear();
+        this.projectionStateCache = void 0;
+        await this.requestRowsRedraw(redraw);
 
         return true;
     }
@@ -298,6 +381,20 @@ class TreeProjectionController {
         this.indexCache = void 0;
         this.projectionStateCache = void 0;
         this.cacheSource = void 0;
+    }
+
+    /**
+     * Marks rows as dirty and schedules redraw after projection state updates.
+     *
+     * @param redraw
+     * Whether to redraw rows immediately.
+     */
+    private async requestRowsRedraw(redraw: boolean = true): Promise<void> {
+        this.grid.querying.shouldBeUpdated = true;
+        this.grid.dirtyFlags.add('rows');
+        if (redraw) {
+            await this.grid.redraw();
+        }
     }
 
     /**

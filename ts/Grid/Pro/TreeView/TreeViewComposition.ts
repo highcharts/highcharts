@@ -161,15 +161,7 @@ function onAfterCellRender(this: TableCell): void {
         toggleButton.addEventListener('click', (event): void => {
             event.preventDefault();
             event.stopPropagation();
-
-            const changed = controller?.toggleRow(rowId);
-            if (!changed) {
-                return;
-            }
-
-            grid.querying.shouldBeUpdated = true;
-            grid.dirtyFlags.add('rows');
-            void grid.redraw();
+            void controller?.toggleRow(rowId);
         });
 
         toggleContainer.appendChild(toggleButton);
