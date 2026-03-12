@@ -4007,7 +4007,11 @@ class Axis {
                 'stroke-width': options.lineWidth,
                 zIndex: 7
             })
-            .clip(this.clippable ? chart.plotClipRect : void 0)
+            .clip(
+                this.clippable && this.offset <= 0 ?
+                    chart.plotClipRect :
+                    void 0
+            )
             .add(this.axisGroup);
     }
 
