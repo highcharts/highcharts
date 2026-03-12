@@ -16,11 +16,41 @@
 import { pick } from '../../Shared/Utilities.js';
 
 namespace SonificationSpeaker {
+    /**
+     * Configuration for a SonificationSpeaker.
+     *
+     * @requires modules/sonification
+     */
     export interface SpeakerOptions {
+        /**
+         * Name of the voice synthesis to use. If not found, reverts to the
+         * default voice for the language chosen.
+         *         */
         name?: string;
+        /**
+         * The language of the voice synthesis.
+         *
+         * @default "en-US"
+         *         */
         language?: string;
+        /**
+         * The pitch modifier of the voice. Set higher for a higher
+         * voice pitch.
+         *
+         * @default 1
+         *         */
         pitch?: number;
+        /**
+         * The speech rate modifier.
+         *
+         * @default 1
+         *         */
         rate?: number;
+        /**
+         * The speech volume, from 0 to 1.
+         *
+         * @default 1
+         *         */
         volume?: number;
     }
 }
@@ -43,9 +73,13 @@ namespace SonificationSpeaker {
  *        Configuration for the speaker
  */
 class SonificationSpeaker {
+    /** @internal */
     private synthesis: SpeechSynthesis;
+    /** @internal */
     private voice?: SpeechSynthesisVoice;
+    /** @internal */
     private scheduled: number[];
+    /** @internal */
     private masterVolume = 1;
 
     constructor(private options: SonificationSpeaker.SpeakerOptions) {
