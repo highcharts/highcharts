@@ -1235,11 +1235,11 @@ function onTickLabelFormat(ctx: AxisLabelFormatterContextObject): void {
             .reduce<(typeof allSeries)[number]['options']['data']>(
             (acc, series): (typeof allSeries)[number]['options']['data'] => {
                 if (series.is('gantt')) {
-                    return acc?.concat(series.options?.data ?? [])
+                    return acc?.concat(series.options?.data ?? []);
                 }
                 return acc;
             },
-            []
+        []
         ) ?? [];
         const isFirst = value === tickPos[0];
         const isLast = value === tickPos[tickPos.length - 1];

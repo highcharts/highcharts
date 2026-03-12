@@ -231,8 +231,9 @@ const options = {
                     text: 'Duration'
                 },
                 labels: {
-                    format: '{#if point.x2}{(divide (subtract point.x2 point.x) ' +
-                        '86400000)} days{else} - {/if}'
+                    format: '{#if point.x2}' +
+                        '{(divide (subtract point.x2 point.x) 86400000)} days' +
+                        '{else} - {/if}'
                 }
             }]
         },
