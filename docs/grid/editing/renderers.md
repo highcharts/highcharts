@@ -20,7 +20,7 @@ Using specific input types is preferable to relying on complex validation logic 
 
 From a user experience perspective, typed inputs provide clearer intent, better accessibility, and context-appropriate interfaces.
 
-In the [renderer](https://api.highcharts.com/grid/#interfaces/Grid_Core_Options.ColumnOptions#renderer) API option, you can set the cell renderer for view and `editMode`. If not specified, the renderer for `editMode` is determined by `dataType`. When not in editMode it defaults to `text`.
+The renderer API option can be set for both [view](https://api.highcharts.com/grid/columns.cells.renderer) and [`editMode`](https://api.highcharts.com/grid/columns.cells.editMode.renderer). If not specified, the renderer for `editMode` is determined by `dataType`. When not in editMode it defaults to `text`.
 
 Check out the [todo app demo](https://www.highcharts.com/demo/grid/todo-app) for how to implement renderers and read more below.
 
