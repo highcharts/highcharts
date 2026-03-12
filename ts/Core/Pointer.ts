@@ -1889,15 +1889,31 @@ class Pointer {
      * @function Highcharts.Pointer#setDOMEvents
      */
     public setDOMEvents(): void {
-        const container = this.chart.container,
+        const chart = this.chart,
+            container = chart.container,
             ownerDoc = container.ownerDocument,
+            chartOptions = chart.options.chart,
+            zoomType = chart.zooming.type || '',
+            hasZoom = zoomType.includes('x') || zoomType.includes('y'),
+            panning = chartOptions.panning,
+            hasPanning = isObject(panning) ?
+                panning.enabled === true :
+                !!panning,
+            hasSelectionEvent = !!chartOptions.events?.selection,
+            shouldAttachMouseDown = (
+                hasZoom ||
+                hasPanning ||
+                hasSelectionEvent
+            ),
             // Get the parent element, including handling Shadow DOM (#23450)
             getParent = (el: HTMLElement): HTMLElement|null|undefined =>
                 el.parentElement || (
                     el.getRootNode() as ShadowRoot|undefined
                 )?.host?.parentElement;
 
-        container.onmousedown = this.onContainerMouseDown.bind(this);
+        container.onmousedown = shouldAttachMouseDown ?
+            this.onContainerMouseDown.bind(this) :
+            null;
         container.onmousemove = this.onContainerMouseMove.bind(this);
         container.onclick = this.onContainerClick.bind(this);
         this.eventsToUnbind.push(
