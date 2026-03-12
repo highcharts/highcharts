@@ -2761,7 +2761,7 @@ class Chart {
         }
 
         const strokeWidth = plotBorder.strokeWidth(),
-            plotBorderBox = merge(plotBox);
+            plotBorderBox = merge(plotBorder.crisp(plotBox, -strokeWidth));
 
         // If any of the clipOffset sides are larger than half the stroke width,
         // the plotBorderBox needs to be extended so that the plot border
@@ -2786,13 +2786,11 @@ class Chart {
             plotBorderBox.height += extendDown + extendUp;
         }
 
-        // #3282 plotBorder should be negative
-        plotBorder.crisp(plotBorderBox, -strokeWidth);
         plotBorder[verb](plotBorderBox);
 
         // Plot border clipping along the outside of the plot border, for the
         // `plotBorderRadius` feature. A half stroke width must be added.
-        plotClipRect?.[verb]({
+        plotClipRect?.[plotBox.r ? verb : 'attr']({
             x: plotBorderBox.x - strokeWidth / 2,
             y: plotBorderBox.y - strokeWidth / 2,
             width: plotBorderBox.width + strokeWidth,
