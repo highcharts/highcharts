@@ -1,5 +1,5 @@
 ---
-name: Remote data provider
+name: Serverside data
 authors:
   - Dawid Dragula
 js_wrap: b
