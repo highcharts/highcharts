@@ -294,13 +294,7 @@ import { AreaSeries } from "@highcharts/react/series/Area";
 
 const CustomChart = () => {
   return (
-    <Chart
-      options={{
-        chart: {
-          backgroundColor: "#f8f9fa",
-        },
-      }}
-    >
+    <Chart backgroundColor="#f8f9fa">
       <Title>Sales Trend</Title>
       <YAxis>Sales ($)</YAxis>
       <AreaSeries
