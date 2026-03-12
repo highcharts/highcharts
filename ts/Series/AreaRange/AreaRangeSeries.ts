@@ -29,6 +29,7 @@ import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import type { SymbolKey } from '../../Core/Renderer/SVG/SymbolType';
 
 import AreaRangePoint from './AreaRangePoint.js';
+import AreaRangeSeriesDefaults from './AreaRangeSeriesDefaults.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
@@ -53,156 +54,6 @@ import {
 
 /* *
  *
- *  Constants
- *
- * */
-
-/**
- * The area range series is a carteseian series with higher and lower values for
- * each point along an X axis, where the area between the values is shaded.
- *
- * @sample {highcharts} highcharts/demo/arearange/
- *         Area range chart
- * @sample {highstock} stock/demo/arearange/
- *         Area range chart
- *
- * @extends      plotOptions.area
- * @product      highcharts highstock
- * @excluding    stack, stacking
- * @requires     highcharts-more
- * @optionparent plotOptions.arearange
- *
- * @private
- */
-const areaRangeSeriesOptions: AreaRangeSeriesOptions = {
-
-    /**
-     * @see [fillColor](#plotOptions.arearange.fillColor)
-     * @see [fillOpacity](#plotOptions.arearange.fillOpacity)
-     *
-     * @apioption plotOptions.arearange.color
-     */
-
-    /**
-     * @default   low
-     * @apioption plotOptions.arearange.colorKey
-     */
-
-    /**
-     * @see [color](#plotOptions.arearange.color)
-     * @see [fillOpacity](#plotOptions.arearange.fillOpacity)
-     *
-     * @apioption plotOptions.arearange.fillColor
-     */
-
-    /**
-     * @see [color](#plotOptions.arearange.color)
-     * @see [fillColor](#plotOptions.arearange.fillColor)
-     *
-     * @default   {highcharts} 0.75
-     * @default   {highstock} 0.75
-     * @apioption plotOptions.arearange.fillOpacity
-     */
-
-
-    /**
-     * Whether to apply a drop shadow to the graph line. Since 2.3 the
-     * shadow can be an object configuration containing `color`, `offsetX`,
-     * `offsetY`, `opacity` and `width`.
-     *
-     * @type      {boolean|Highcharts.ShadowOptionsObject}
-     * @product   highcharts
-     * @apioption plotOptions.arearange.shadow
-     */
-
-    /**
-     * Pixel width of the arearange graph line.
-     *
-     * @since 2.3.0
-     *
-     * @private
-     */
-    lineWidth: 1,
-
-    /**
-     * @type {number|null}
-     */
-    threshold: null,
-
-    tooltip: {
-        pointFormat: '<span style="color:{series.color}">\u25CF</span> ' +
-            '{series.name}: <b>{point.low}</b> - <b>{point.high}</b><br/>'
-    },
-
-    /**
-     * Whether the whole area or just the line should respond to mouseover
-     * tooltips and other mouse or touch events.
-     *
-     * @since 2.3.0
-     *
-     * @private
-     */
-    trackByArea: true,
-
-    /**
-     * Extended data labels for range series types. Range series data
-     * labels use no `x` and `y` options. Instead, they have `xLow`,
-     * `xHigh`, `yLow` and `yHigh` options to allow the higher and lower
-     * data label sets individually.
-     *
-     * @declare Highcharts.SeriesAreaRangeDataLabelsOptionsObject
-     * @exclude x, y
-     * @since   2.3.0
-     * @product highcharts highstock
-     *
-     * @private
-     */
-    dataLabels: {
-
-        align: void 0,
-
-        verticalAlign: void 0,
-
-        /**
-         * X offset of the lower data labels relative to the point value.
-         *
-         * @sample highcharts/plotoptions/arearange-datalabels/
-         *         Data labels on range series
-         * @sample highcharts/plotoptions/arearange-datalabels/
-         *         Data labels on range series
-         */
-        xLow: 0,
-
-        /**
-         * X offset of the higher data labels relative to the point value.
-         *
-         * @sample highcharts/plotoptions/arearange-datalabels/
-         *         Data labels on range series
-         */
-        xHigh: 0,
-
-        /**
-         * Y offset of the lower data labels relative to the point value.
-         *
-         * @sample highcharts/plotoptions/arearange-datalabels/
-         *         Data labels on range series
-         */
-        yLow: 0,
-
-        /**
-         * Y offset of the higher data labels relative to the point value.
-         *
-         * @sample highcharts/plotoptions/arearange-datalabels/
-         *         Data labels on range series
-         */
-        yHigh: 0
-
-    }
-
-};
-
-/* *
- *
  *  Class
  *
  * */
@@ -210,7 +61,7 @@ const areaRangeSeriesOptions: AreaRangeSeriesOptions = {
 /**
  * The AreaRange series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.arearange
  *
@@ -226,7 +77,7 @@ class AreaRangeSeries extends AreaSeries {
 
     public static defaultOptions: AreaRangeSeriesOptions = merge(
         AreaSeries.defaultOptions,
-        areaRangeSeriesOptions
+        AreaRangeSeriesDefaults
     );
 
     /* *
@@ -257,7 +108,7 @@ class AreaRangeSeries extends AreaSeries {
      * to true plotHigh coordinates. This is an addition of the toXY method
      * found in Polar.js, because it runs too early for arearanges to be
      * considered (#3419).
-     * @private
+     * @internal
      */
     public highToXY(point: AreaRangePoint): void {
         // Find the polar plotX and plotY
@@ -275,7 +126,7 @@ class AreaRangeSeries extends AreaSeries {
     /**
      * Extend the line series' getSegmentPath method by applying the segment
      * path to both lower and higher values of the range.
-     * @private
+     * @internal
      */
     public getGraphPath(points: Array<AreaRangePoint>): SVGPath {
 
@@ -393,7 +244,7 @@ class AreaRangeSeries extends AreaSeries {
     /**
      * Extend the basic drawDataLabels method by running it for both lower and
      * higher values.
-     * @private
+     * @internal
      */
     public drawDataLabels(): void {
 
@@ -758,6 +609,7 @@ addEvent(AreaRangeSeries, 'afterTranslate', function (): void {
  *
  * */
 
+/** @internal */
 interface AreaRangeSeries {
     deferTranslatePolar: boolean;
     pointArrayMap: Array<string>;
@@ -780,6 +632,7 @@ extend(AreaRangeSeries.prototype, {
  *
  * */
 
+/** @internal */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         arearange: typeof AreaRangeSeries;
@@ -795,4 +648,5 @@ SeriesRegistry.registerSeriesType('arearange', AreaRangeSeries);
  *
  * */
 
+/** @internal */
 export default AreaRangeSeries;
