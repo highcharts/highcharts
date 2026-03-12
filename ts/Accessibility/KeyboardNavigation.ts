@@ -138,8 +138,13 @@ class KeyboardNavigation {
         );
 
         ['mousedown', 'touchstart'].forEach((eventName): Function =>
-            ep.addEvent(chart.renderTo, eventName, (): void => {
-                this.isClickingChart = true;
+            ep.addEvent(doc, eventName, (e: Event): void => {
+                if (
+                    e.target &&
+                    chart.renderTo.contains(e.target as HTMLElement)
+                ) {
+                    this.isClickingChart = true;
+                }
             })
         );
     }
