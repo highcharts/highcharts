@@ -42,18 +42,6 @@ function test_grid() {
                 }
             }
         },
-        columnDefaults: {
-            cells: {
-                contextMenu: {
-                    items: [{
-                        label: 'Test',
-                        onClick: function () {
-                            // noop
-                        }
-                    }]
-                }
-            }
-        },
         columns: [{
             id: 'hidden',
             enabled: false
