@@ -18,12 +18,10 @@ export default function DraggablePointsChart() {
           [200, 130, 10],
           [450, 290, 15],
         ]}
-        options={{
-          cursor: "move",
-          dragDrop: {
-            draggableX: true,
-            draggableY: true,
-          },
+        cursor="move"
+        dragDrop={{
+          draggableX: true,
+          draggableY: true,
         }}
       />
     </Chart>

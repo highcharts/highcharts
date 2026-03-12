@@ -58,10 +58,7 @@ export default function ColumnChart() {
   return (
     <Chart options={{ chart: { className: "column-chart" } }}>
       <Legend>{"{index}: {name}"}</Legend>
-      <ColumnSeries
-        options={{ name: "Column series", color: "red" }}
-        data={[3, 4, 1, 5, 2]}
-      />
+      <ColumnSeries data={[3, 4, 1, 5, 2]} name="Column series" color="red" />
     </Chart>
   );
 }
@@ -109,12 +106,10 @@ export default function ModulesChart() {
     <Chart>
       <LineSeries
         data={[3, 4, 1, 5, 2]}
-        options={{
-          cursor: "move",
-          dragDrop: {
-            draggableX: true,
-            draggableY: true,
-          },
+        cursor="move"
+        dragDrop={{
+          draggableX: true,
+          draggableY: true,
         }}
       />
     </Chart>

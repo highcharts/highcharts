@@ -247,8 +247,8 @@ const MultiSeriesChart = () => {
     <Chart>
       <Title>Revenue by Quarter</Title>
       <XAxis categories={["Q1", "Q2", "Q3", "Q4"]} />
-      <ColumnSeries data={[100, 120, 140, 160]} options={{ name: "2023" }} />
-      <ColumnSeries data={[110, 130, 150, 170]} options={{ name: "2024" }} />
+      <ColumnSeries data={[100, 120, 140, 160]} name="2023" />
+      <ColumnSeries data={[110, 130, 150, 170]} name="2024" />
     </Chart>
   );
 };
@@ -297,12 +297,7 @@ const CustomChart = () => {
     <Chart backgroundColor="#f8f9fa">
       <Title>Sales Trend</Title>
       <YAxis>Sales ($)</YAxis>
-      <AreaSeries
-        data={[1000, 1200, 1100, 1300, 1500]}
-        options={{
-          name: "Sales",
-        }}
-      />
+      <AreaSeries data={[1000, 1200, 1100, 1300, 1500]} name="Sales" />
     </Chart>
   );
 };
@@ -524,11 +519,9 @@ import { LineSeries } from "@highcharts/react/series/Line";
 >
   <LineSeries
     data={[1, 2, 3]}
-    options={{
-      events: {
-        click: function (e) {
-          console.log("Series clicked:", e);
-        },
+    events={{
+      click: function (e) {
+        console.log("Series clicked:", e);
       },
     }}
   />

@@ -21,10 +21,7 @@ export default function BrokenAxisChart() {
           },
         ]}
       />
-      <LineSeries
-        data={[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]}
-        options={{ gapSize: 1 }}
-      />
+      <LineSeries data={[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]} gapSize={1} />
     </Chart>
   );
 }
