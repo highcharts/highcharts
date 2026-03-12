@@ -228,9 +228,12 @@ namespace ConnectionComposition {
                 y = 'yMax';
         }
 
+        x = x ? (bb as any)[x] : ((bb as any).xMin + (bb as any).xMax) / 2;
+        y = y ? (bb as any)[y] : ((bb as any).yMin + (bb as any).yMax) / 2;
+
         return {
-            x: x ? (bb as any)[x] : ((bb as any).xMin + (bb as any).xMax) / 2,
-            y: y ? (bb as any)[y] : ((bb as any).yMin + (bb as any).yMax) / 2
+            x: x + (markerOptions.xOffset || 0),
+            y: y + (markerOptions.yOffset || 0)
         };
     }
 

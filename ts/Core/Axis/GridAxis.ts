@@ -1230,23 +1230,34 @@ function onTickLabelFormat(ctx: AxisLabelFormatterContextObject): void {
     } = ctx;
     if (axis.options.grid?.enabled) {
         const tickPos = axis.tickPositions;
-        const series = (
+        const allSeries = (
             axis.linkedParent || axis
-        ).series[0];
+        ).series;
+        const allSeriesData = allSeries
+            .reduce<(typeof allSeries)[number]['options']['data']>(
+                (acc, series) => {
+                    if (series.is('gantt')) {
+                        return acc?.concat(series.options?.data ?? [])
+                    }
+                    return acc;
+                },
+                []
+            ) ?? [];
+        const series = allSeries[0];
         const isFirst = value === tickPos[0];
         const isLast = value === tickPos[tickPos.length - 1];
-        const point: (Point|undefined) =
-            series && find(series.options.data as any, function (
-                p: Point
+        const point =
+            series && find(allSeriesData, function (
+                p
             ): boolean {
-                return p[axis.isXAxis ? 'x' : 'y'] === value;
+                return (p as any)[axis.isXAxis ? 'x' : 'y'] === value;
             });
         let pointCopy;
 
-        if (point && series.is('gantt')) {
+        if (point) {
             // For the Gantt set point aliases to the pointCopy
             // to do not change the original point
-            pointCopy = merge(point);
+            pointCopy = merge(point as any);
             H.seriesTypes.gantt.prototype.pointClass
                 .setGanttPointAliases(pointCopy as any, axis.chart);
         }

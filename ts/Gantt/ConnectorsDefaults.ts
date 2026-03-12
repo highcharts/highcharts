@@ -243,7 +243,23 @@ const connectorsDefaults: ConnectorsDefaults = {
             /**
              * Set the line/border width of the pathfinder markers.
              */
-            lineWidth: 1
+            lineWidth: 1,
+
+            /**
+             * The x offset of the marker.
+             *
+             * @since next
+             * @type number
+             * @apioption connectors.marker.xOffset
+             */
+
+            /**
+             * The y offset of the marker.
+             *
+             * @since next
+             * @type number
+             * @apioption connectors.marker.yOffset
+             */
         },
 
         /**
