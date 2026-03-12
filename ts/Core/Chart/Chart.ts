@@ -2549,8 +2549,6 @@ class Chart {
             };
         }
 
-        chart.plotClipRect ||= renderer.clipRect();
-
         if (!skipAxes) {
             for (const axis of chart.axes) {
                 axis.setAxisSize();
@@ -2638,6 +2636,7 @@ class Chart {
                 clipRect,
                 plotBGImage,
                 plotBox,
+                plotClipRect,
                 plotLeft,
                 plotTop,
                 plotWidth,
@@ -2793,12 +2792,17 @@ class Chart {
 
         // Plot border clipping along the outside of the plot border, for the
         // `plotBorderRadius` feature. A half stroke width must be added.
-        this.plotClipRect?.[verb]({
+        plotClipRect?.[verb]({
             x: plotBorderBox.x - strokeWidth / 2,
             y: plotBorderBox.y - strokeWidth / 2,
             width: plotBorderBox.width + strokeWidth,
             height: plotBorderBox.height + strokeWidth,
             r: plotBox.r ? plotBox.r + strokeWidth / 2 : 0
+        });
+
+        // Apply clipping only when we actually have a plot border radius
+        plotClipRect?.parentGroup?.attr({
+            display: plotBox.r ? '' : 'none'
         });
 
         // Reset
@@ -2950,6 +2954,9 @@ class Chart {
             redoHorizontal = true,
             redoVertical: boolean|undefined,
             run = 0;
+
+        // Create the clip rectangle for plot border radius
+        chart.plotClipRect ||= renderer.clipRect();
 
         // Title
         chart.setTitle();

@@ -27,8 +27,8 @@ QUnit.test(
                         load: function () {
                             assert.strictEqual(
                                 getClipPathSet(this).length,
-                                4,
-                                'Initially there should be 4 clip paths'
+                                3,
+                                'Initially there should be 3 clip paths'
                             );
                             done();
                         }
@@ -54,8 +54,8 @@ QUnit.test(
             setTimeout(function () {
                 assert.strictEqual(
                     getClipPathSet(chart).length,
-                    3,
-                    'After animation there should be 3 clip paths'
+                    2,
+                    'After animation there should be 2 clip paths'
                 );
                 done();
             }, 20);
