@@ -14,7 +14,7 @@ const previewTable = () => {
     html += new Array(dataTable.rowCount)
         .fill(1)
         .reduce((html, _, rowNo) => {
-            const row = dataTable.getRow(rowNo);
+            const row = dataTable.getRowObject(rowNo);
             html += '<tr>';
             Object.keys(row).forEach(key => {
                 html += `<td>${row[key]}</td>`;
