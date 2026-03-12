@@ -207,7 +207,6 @@ declare module '../../Core/Renderer/SVG/SVGElementBase' {
  *
  * */
 
-/** @internal */
 namespace DataLabel {
 
     /* *
@@ -216,6 +215,7 @@ namespace DataLabel {
      *
      * */
 
+    /** @internal */
     export interface PositionersObject {
         alignToConnectors(
             points: Array<Point>,
@@ -252,12 +252,14 @@ namespace DataLabel {
         (...args: Array<any>): SVGPath;
     }
 
+    /** @internal */
     export interface LabelConnectorPositionObject {
         angle?: number;
         breakAt: CorePositionObject;
         touchingSliceAt: CorePositionObject;
     }
 
+    /** @internal */
     export interface LabelPositionObject {
         alignment: AlignValue;
         attribs?: SVGAttributes;
@@ -271,6 +273,7 @@ namespace DataLabel {
         top?: number;
     }
 
+    /** @internal */
     export interface PositionObject extends CorePositionObject {
         alignment: AlignValue;
     }
@@ -1178,7 +1181,6 @@ namespace DataLabel {
  *
  * */
 
-/** @internal */
 export default DataLabel;
 
 /* *

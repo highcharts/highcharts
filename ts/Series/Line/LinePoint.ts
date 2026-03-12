@@ -19,7 +19,6 @@ import type BBoxObject from '../../Core/Renderer/BBoxObject';
 import type LinePointOptions from './LinePointOptions';
 import type LineSeries from './LineSeries';
 import type Point from '../../Core/Series/Point';
-import type PointOptions from '../../Core/Series/PointOptions';
 import type Series from '../../Core/Series/Series';
 
 /* *
@@ -28,17 +27,15 @@ import type Series from '../../Core/Series/Series';
  *
  * */
 
+/** @internal */
 declare module '../../Core/Series/PointBase' {
     interface PointBase {
-        category?: (number|string);
         clientX?: number;
         dist?: number;
         distX?: number;
         hasImage?: boolean;
         isInside?: boolean;
-        low?: number;
         negative?: boolean;
-        options: PointOptions;
         stackBox?: BBoxObject;
         stackTotal?: number;
         stackY?: (number|null);
@@ -47,6 +44,7 @@ declare module '../../Core/Series/PointBase' {
     }
 }
 
+/** @internal */
 declare class LinePoint extends Point {
     options: LinePointOptions;
     series: LineSeries;
@@ -58,4 +56,5 @@ declare class LinePoint extends Point {
  *
  * */
 
+/** @internal */
 export default LinePoint;

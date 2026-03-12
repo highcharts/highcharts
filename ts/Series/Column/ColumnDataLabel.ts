@@ -48,7 +48,7 @@ namespace ColumnDataLabel {
     /**
      * Override the basic data label alignment by adjusting for the position of
      * the column.
-     * @private
+     * @internal
      */
     function alignDataLabel(
         this: ColumnSeries,
@@ -138,7 +138,7 @@ namespace ColumnDataLabel {
         }
     }
 
-    /** @private */
+    /** @internal */
     export function compose(
         ColumnSeriesClass: typeof ColumnSeries
     ): void {
