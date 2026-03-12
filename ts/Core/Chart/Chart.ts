@@ -1886,11 +1886,13 @@ class Chart {
             containerBox = chart.getContainerBox(),
             renderTo = chart.renderTo,
             parent = renderTo.parentElement,
+            // #21510, #23712: percentage height (100%, 99%, etc.) + min-height
+            // or any % height can cause reflow loop in flex layout
             parentHeight = !parent?.style.height ||
-                (parent.style.height === '100%' && parent.style.minHeight),
+                /\d+%$/.test(parent.style.height || ''),
             // #21510, #23712: height:100% + unreliable parent = reflow loop
             useDefaultHeight = containerBox.height <= 1 ||
-                (renderTo.style.height === '100%' && parentHeight);
+                (/\d+%$/.test(renderTo.style.height || '') && parentHeight);
         /**
          * The current pixel width of the chart.
          *
