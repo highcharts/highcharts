@@ -9,7 +9,7 @@ import type SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer';
 import type SymbolOptions from '../../Core/Renderer/SVG/SymbolOptions';
 import type Symbols from '../../Core/Renderer/SVG/Symbols';
 
-import RendererRegistry from '../../Core/Renderer/RendererRegistry.js';
+import { pushUnique } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -42,7 +42,7 @@ namespace FlagsSymbols {
      *
      * */
 
-    const modifiedMembers: Array<unknown> = [];
+    const modifiedMembers: Array<typeof SVGRenderer> = [];
 
     /* *
      *
@@ -58,26 +58,13 @@ namespace FlagsSymbols {
     export function compose(
         SVGRendererClass: typeof SVGRenderer
     ): void {
-
-        if (modifiedMembers.indexOf(SVGRendererClass) === -1) {
-            modifiedMembers.push(SVGRendererClass);
-
+        if (pushUnique(modifiedMembers, SVGRendererClass)) {
             const symbols = SVGRendererClass.prototype.symbols;
 
             symbols.flag = flag;
             createPinSymbol(symbols, 'circle');
             createPinSymbol(symbols, 'square');
-
         }
-
-        const RendererClass = RendererRegistry.getRendererType();
-
-        // The symbol callbacks are generated on the SVGRenderer object in all
-        // browsers.
-        if (modifiedMembers.indexOf(RendererClass)) {
-            modifiedMembers.push(RendererClass);
-        }
-
     }
 
 

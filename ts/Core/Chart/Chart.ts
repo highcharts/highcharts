@@ -72,11 +72,9 @@ const {
     charts,
     doc,
     marginNames,
-    svg,
     win
 } = H;
 import Pointer from '../Pointer.js';
-import RendererRegistry from '../Renderer/RendererRegistry.js';
 import Series from '../Series/Series.js';
 import SeriesRegistry from '../Series/SeriesRegistry.js';
 const { seriesTypes } = SeriesRegistry;
@@ -2113,9 +2111,7 @@ class Chart {
         chart._cursor = container.style.cursor as CursorValue;
 
         // Initialize the renderer
-        const Renderer = optionsChart.renderer || !svg ?
-            RendererRegistry.getRendererType(optionsChart.renderer) :
-            SVGRenderer;
+        const Renderer = SVGRenderer;
 
         /**
          * The renderer instance of the chart. Each chart instance has only one
