@@ -42,7 +42,7 @@ Highcharts.mapChart('container', {
             ' padding-left:5px;"><tr><td style="font-size: 0.9em;">' +
             '{trim series.name 1}</td></tr>',
         pointFormat: '<tr><td style="font-size: 1.1em;">{point.name}</td></tr>',
-        footerFormat: '</table>',
+        footerFormat: '</table>'
     },
 
     legend: {
