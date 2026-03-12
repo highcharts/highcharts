@@ -35,6 +35,7 @@ import PopupIndicators from './PopupIndicators.js';
 import PopupTabs from './PopupTabs.js';
 import {
     addEvent,
+    clamp,
     createElement,
     extend,
     fireEvent,
@@ -116,12 +117,13 @@ function getFields(
             fieldsOutput.seriesId = input.value;
         } else if (param) {
             const wrapper = input.closest('.highcharts-popup-color-wrapper'),
-                slider = wrapper?.querySelector(
-                    '.highcharts-popup-opacity'
+                opacityInput = wrapper?.querySelector(
+                    '.highcharts-popup-opacity-percentage'
                 ) as HTMLInputElement,
-                opacity = slider ? Number(slider.value) / 100 : 1;
+                opacity = opacityInput ?
+                    Number(opacityInput.value) / 100 : 1;
 
-            if (slider) {
+            if (opacityInput) {
                 const rgba = Color.parse(input.value).rgba;
                 fieldsOutput.fields[param] = !Number.isNaN(rgba[0]) ?
                     `rgba(${rgba[0]},${rgba[1]},${rgba[2]},${opacity})` :
@@ -402,68 +404,58 @@ class Popup extends BaseForm {
         ) as HTMLInputElement;
         textInput.setAttribute('highcharts-data-name', option);
 
-        const opacitySlider = createElement(
-            'input',
-            {
-                type: 'range',
-                value: String(opacity * 100),
-                className: (
-                    'highcharts-popup-field highcharts-popup-opacity'
-                ),
-                min: '0',
-                max: '100'
-            },
+        const separator = createElement(
+            'span',
+            { className: 'highcharts-popup-color-separator' },
             void 0,
             wrapper
-        ) as HTMLInputElement;
+        );
 
-        const opacityNumberInput = createElement(
+        const opacityPercentInput = createElement(
             'input',
             {
                 type: 'number',
-                value: String(opacity),
+                value: String(Math.round(opacity * 100)),
                 className: (
-                    'highcharts-popup-field highcharts-popup-opacity-number'
+                    'highcharts-popup-field highcharts-popup-opacity-percentage'
                 ),
                 min: '0',
-                max: '1',
-                step: '0.01'
+                max: '100',
+                step: '1'
             },
             void 0,
             wrapper
         ) as HTMLInputElement;
 
-        const updateOpacityInputsAttribs = (): void => {
+        const opacityPercentSuffix = createElement(
+            'span',
+            { className: 'highcharts-popup-opacity-percent-suffix' },
+            void 0,
+            wrapper
+        );
+        opacityPercentSuffix.appendChild(doc.createTextNode(' %'));
+
+        const updateOpacityVisibility = (): void => {
             const isHex = /^#[0-9A-Fa-f]{6}$/.test(textInput.value);
-            opacitySlider.style.display = isHex ? '' : 'none';
-            opacityNumberInput.style.display = isHex ? '' : 'none';
-            if (isHex) {
-                opacitySlider.style.setProperty(
-                    '--highcharts-slider-rgb',
-                    textInput.value
-                );
-            }
+            separator.style.display = isHex ? '' : 'none';
+            opacityPercentInput.style.display = isHex ? '' : 'none';
+            opacityPercentSuffix.style.display = isHex ? '' : 'none';
         };
 
-        updateOpacityInputsAttribs();
+        updateOpacityVisibility();
 
-        addEvent(opacitySlider, 'input', (): void => {
-            opacityNumberInput.value = String(
-                Number(opacitySlider.value) / 100
-            );
-        });
-        addEvent(opacityNumberInput, 'input', (): void => {
-            opacitySlider.value = String(
-                Number(opacityNumberInput.value) * 100
+        addEvent(opacityPercentInput, 'input', (): void => {
+            opacityPercentInput.value = String(
+                clamp(Number(opacityPercentInput.value), 0, 100)
             );
         });
         addEvent(colorInput, 'input', (): void => {
             textInput.value = colorInput.value.toUpperCase();
-            updateOpacityInputsAttribs();
+            updateOpacityVisibility();
         });
         addEvent(textInput, 'input', (): void => {
             colorInput.value = textInput.value;
-            updateOpacityInputsAttribs();
+            updateOpacityVisibility();
         });
 
         return wrapper;

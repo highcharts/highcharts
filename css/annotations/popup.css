@@ -83,8 +83,6 @@
 
 .highcharts-popup-lhs-col,
 .highcharts-popup-rhs-col {
-    container-name: highcharts-popup-col;
-    container-type: inline-size;
     height: 100%;
     float: left;
     overflow-y: auto;
@@ -354,101 +352,95 @@ input.highcharts-input-search-indicators {
 
 .highcharts-popup-color-wrapper {
     display: flex;
-    gap: 8px;
     align-items: center;
     width: 100%;
-    height: 32px;
     margin-bottom: 10px;
+    padding: 0 0 0 6px;
+    border: 1px solid var(--highcharts-neutral-color-10, #e6e6e6);
+    border-radius: 0.3rem;
+    background: var(--highcharts-neutral-color-3, #f7f7f7);
 }
 
-.highcharts-popup-color-wrapper .highcharts-popup-field-text,
 .highcharts-popup-color-wrapper .highcharts-popup-field-color,
-.highcharts-popup-color-wrapper .highcharts-popup-opacity,
-.highcharts-popup-color-wrapper .highcharts-popup-opacity-number {
+.highcharts-popup-color-wrapper .highcharts-popup-field-text,
+.highcharts-popup-color-wrapper .highcharts-popup-color-separator,
+.highcharts-popup-color-wrapper .highcharts-popup-opacity-percentage,
+.highcharts-popup-color-wrapper .highcharts-popup-opacity-percent-suffix {
     margin-bottom: 0;
-    height: 32px;
-}
-
-.highcharts-popup-color-wrapper .highcharts-popup-opacity-number {
-    flex: 0 0 58px;
 }
 
 .highcharts-popup-color-wrapper .highcharts-popup-field-color {
-    flex: 0 0 40px;
+    flex: 0 0 24px;
+    min-width: 24px;
+    min-height: 24px;
+    width: 24px;
+    height: 24px;
     padding: 2px;
+    border: 1px solid var(--highcharts-neutral-color-20, #c9c9c9);
+    border-radius: 50%;
     cursor: pointer;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
 }
 
-@supports (-moz-appearance: none) {
-    .highcharts-popup-color-wrapper .highcharts-popup-field-color {
-        padding: 4px;
-    }
+.highcharts-popup-color-wrapper .highcharts-popup-field-color::-webkit-color-swatch {
+    border: none;
+    border-radius: 50%;
+    width: 100%;
+    height: 100%;
+}
+
+.highcharts-popup-color-wrapper .highcharts-popup-field-color::-webkit-color-swatch-wrapper {
+    padding: 0;
+}
+
+.highcharts-popup-color-wrapper .highcharts-popup-field-color::-moz-color-swatch {
+    border: none;
+    border-radius: 50%;
+    width: 100%;
+    height: 100%;
 }
 
 .highcharts-popup-color-wrapper .highcharts-popup-field-text {
-    flex: 1 0 80px;
-}
-
-.highcharts-popup-color-wrapper .highcharts-popup-opacity {
-    flex: 1 1 70%;
-    padding: 0;
+    flex: 1 1 auto;
+    min-width: 90px;
+    padding: 5px 8px;
     border: none;
-    cursor: pointer;
-    -webkit-appearance: none;
-    appearance: none;
+    border-radius: 0;
     background: transparent;
+    font-weight: 600;
+    color: var(--highcharts-neutral-color-80, #333333);
 }
 
-.highcharts-popup-color-wrapper .highcharts-popup-opacity::-webkit-slider-runnable-track {
-    background:
-        linear-gradient(
-            to right,
-            var(--highcharts-neutral-color-10, #e6e6e6),
-            var(--highcharts-slider-rgb, #000000)
-        );
-    height: 6px;
-    border-radius: 3px;
-    width: 100%;
+.highcharts-popup-color-wrapper .highcharts-popup-color-separator {
+    width: 1px;
+    height: 20px;
+    margin: 0 8px;
+    background: var(--highcharts-neutral-color-15, #d3d3d3);
+    flex-shrink: 0;
 }
 
-.highcharts-popup-color-wrapper .highcharts-popup-opacity::-webkit-slider-thumb {
+.highcharts-popup-color-wrapper .highcharts-popup-opacity-percentage {
+    width: 48px;
+    padding: 5px 4px 5px 8px;
+    border: none;
+    border-radius: 0;
+    background: transparent;
+    font-weight: 600;
+    color: var(--highcharts-neutral-color-80, #333333);
+    text-align: right;
+}
+
+.highcharts-popup-color-wrapper .highcharts-popup-opacity-percentage::-webkit-outer-spin-button,
+.highcharts-popup-color-wrapper .highcharts-popup-opacity-percentage::-webkit-inner-spin-button {
     -webkit-appearance: none;
-    appearance: none;
-    width: 18px;
-    height: 18px;
-    border-radius: 50%;
-    background: var(--highcharts-slider-rgb, #000000);
-    border: 3px solid var(--highcharts-neutral-color-3, #f7f7f7);
-    cursor: pointer;
-    margin-top: -6px;
+    margin: 0;
 }
 
-.highcharts-popup-color-wrapper .highcharts-popup-opacity::-moz-range-track {
-    background:
-        linear-gradient(
-            to right,
-            var(--highcharts-neutral-color-10, #e6e6e6),
-            var(--highcharts-slider-rgb, #000000)
-        );
-    height: 6px;
-    border-radius: 3px;
-    width: 100%;
-}
-
-.highcharts-popup-color-wrapper .highcharts-popup-opacity::-moz-range-thumb {
-    -moz-appearance: none;
-    appearance: none;
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    background: var(--highcharts-slider-rgb, #000000);
-    border: 3px solid var(--highcharts-neutral-color-3, #f7f7f7);
-    cursor: pointer;
-}
-
-@container highcharts-popup-col (max-width: 400px) {
-    .highcharts-popup-color-wrapper {
-        flex-wrap: wrap;
-        height: auto;
-    }
+.highcharts-popup-color-wrapper .highcharts-popup-opacity-percent-suffix {
+    padding-right: 10px;
+    font-weight: 400;
+    color: var(--highcharts-neutral-color-50, #666666);
+    font-size: inherit;
 }
