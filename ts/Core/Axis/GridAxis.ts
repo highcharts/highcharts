@@ -1230,24 +1230,21 @@ function onTickLabelFormat(ctx: AxisLabelFormatterContextObject): void {
     } = ctx;
     if (axis.options.grid?.enabled) {
         const tickPos = axis.tickPositions;
-        const allSeries = (
-            axis.linkedParent || axis
-        ).series;
+        const allSeries = (axis.linkedParent || axis).series;
         const allSeriesData = allSeries
             .reduce<(typeof allSeries)[number]['options']['data']>(
-                (acc, series) => {
-                    if (series.is('gantt')) {
-                        return acc?.concat(series.options?.data ?? [])
-                    }
-                    return acc;
-                },
-                []
-            ) ?? [];
-        const series = allSeries[0];
+            (acc, series): (typeof allSeries)[number]['options']['data'] => {
+                if (series.is('gantt')) {
+                    return acc?.concat(series.options?.data ?? [])
+                }
+                return acc;
+            },
+            []
+        ) ?? [];
         const isFirst = value === tickPos[0];
         const isLast = value === tickPos[tickPos.length - 1];
         const point =
-            series && find(allSeriesData, function (
+            allSeries[0] && find(allSeriesData, function (
                 p
             ): boolean {
                 return (p as any)[axis.isXAxis ? 'x' : 'y'] === value;
