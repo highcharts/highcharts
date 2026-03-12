@@ -165,67 +165,51 @@ function resolveColorValue(
     value: string,
     contextElement: HTMLDOMElement
 ): { value: string, alpha: number } {
-    // Convert CSS variable to hex value.
-    const varToHex = (value: string): string => window
-        .getComputedStyle(contextElement)
-        .getPropertyValue(value.slice(4, -1))
-        .toUpperCase();
+    const toHex = (n: number): string =>
+        ('0' + Math.round(n).toString(16)).slice(-2).toUpperCase();
 
-    // Convert rgba() value to hex value.
-    const rgbaToHex = (value: string): string => {
-        const [r, g, b] = Color.parse(value).rgba,
-            toHex = (n: number): string =>
-                ('0' + n.toString(16)).slice(-2).toUpperCase();
-        return '#' + toHex(r) + toHex(g) + toHex(b);
+    const rgbaToHex = (value: string): { value: string, alpha: number } => {
+        const [r, g, b, a] = Color.parse(value).rgba;
+        return { value: '#' + toHex(r) + toHex(g) + toHex(b), alpha: a };
     };
 
-    if (value.startsWith('rgba(')) {
-        return { value: rgbaToHex(value), alpha: 1 };
+    // If 'rgb()' or 'rgba()', use built-in parser.
+    if (value.startsWith('rgb') || value.startsWith('rgba')) {
+        return rgbaToHex(value);
     }
 
-    if (value.startsWith('var(')) {
-        return { value: varToHex(value), alpha: 1 };
-    }
+    // If 'color()' or 'var()', use a dummy element and getComputedStyle.
+    if (value.startsWith('color') || value.startsWith('var')) {
+        // Create a dummy span element and get the computed style from it.
+        const dummy = doc.createElement('span');
+        dummy.style.setProperty('color', value);
+        contextElement.appendChild(dummy);
+        const computed = window.getComputedStyle(dummy).color;
+        contextElement.removeChild(dummy);
 
-    if (value.startsWith('color-mix(')) {
-        // Split color-mix into color1, mix ratio, color2.
-        const match = value.match(
-            /color-mix\(in\s+srgb,\s*(.+?)\s+(\d+%),\s*(.+)\)/
-        );
-        if (match) {
-            const color1 = match[1].trim(),
-                mix = parseInt(match[2], 10) / 100,
-                color2 = match[3].trim();
-
-            // Convert both colors to hex, or return raw value if not parsable.
-            const [parsedColor1, parsedColor2] =
-                [color1, color2].map((color: string): string => {
-                    if (color.startsWith('var(')) {
-                        return varToHex(color) || '';
-                    }
-                    if (color.startsWith('rgba(')) {
-                        return rgbaToHex(color) || '';
-                    }
-                    return color;
-                });
-
-            // If both colors are hex, mix them using mix ratio.
-            if (parsedColor1.startsWith('#') && parsedColor2.startsWith('#')) {
-                return ({
-                    value: Color.parse(parsedColor1).tweenTo(
-                        Color.parse(parsedColor2), mix
-                    ).toString(),
-                    alpha: 1
-                });
+        // Parse color(srgb r g b / a) directly to hex and alpha.
+        if (computed.startsWith('color')) {
+            const srgbMatch = computed.match(
+                new RegExp(
+                    'color\\s*\\(\\s*srgb\\s+([\\d.]+)\\s+([\\d.]+)\\s+' +
+                    '([\\d.]+)\\s+(?:\\s*\\/\\s*([\\d.]+))?\\s*\\)'
+                ));
+            if (srgbMatch) {
+                const r = Math.round(parseFloat(srgbMatch[1]) * 255),
+                    g = Math.round(parseFloat(srgbMatch[2]) * 255),
+                    b = Math.round(parseFloat(srgbMatch[3]) * 255),
+                    alpha = srgbMatch[4] ? parseFloat(srgbMatch[4]) : 1;
+                return { value: '#' + toHex(r) + toHex(g) + toHex(b), alpha };
             }
+        }
 
-            // If color2 is transparent, mix ratio becomes opacity for color1.
-            if (parsedColor2 === 'transparent') {
-                return { value: parsedColor1, alpha: mix };
-            }
+        // If 'rgb()' or 'rgba()', use built-in parser.
+        if (computed.startsWith('rgb') || computed.startsWith('rgba')) {
+            return rgbaToHex(computed);
         }
     }
 
+    // Don't parse hex colors and other non-color values like contrast, none.
     return { value, alpha: 1 };
 }
 
