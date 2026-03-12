@@ -65,6 +65,15 @@ The module supports image patterns as well, allowing you to use images as colors
 
 <iframe style="width: 100%; height: 680px" src="https://www.highcharts.com/samples/maps/demo/pattern-fill-map/" frameborder="0"></iframe>
 
+Anchoring patterns to points
+----------------------------
+
+By default, patterns are shared across all points and rendered relative to the series rather than individual points.
+
+Setting `anchorToPoint` to `true` anchors the fill to each individual point, ensuring consistent rendering regardless of the point’s position or size. This improves visual consistency and accessibility, especially for small or narrow points, by keeping fills clearly visible as an alternative to color.
+
+<iframe style="width: 100%; height: 470px" src="https://www.highcharts.com/samples/embed/highcharts/series/pattern-fill-anchor-to-point/" frameborder="0"></iframe>
+
 Pattern IDs
 -----------
 

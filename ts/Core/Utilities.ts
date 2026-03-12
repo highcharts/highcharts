@@ -538,6 +538,11 @@ export interface ErrorMessageEventObject {
  * @param {Highcharts.Dictionary<*>|Event} [eventArguments]
  *        Event arguments.
  *
+ * @param {T} [ctx]
+ *        Since v12.5.0, the callback context is passed as the last argument,
+ *        so arrow functions can access the same context as regular functions
+ *        using `this`.
+ *
  * @return {boolean|void}
  */
 
@@ -567,6 +572,11 @@ export interface ErrorMessageEventObject {
  *
  * @param {T} this
  *        Context to format
+ *
+ * @param {T} [ctx]
+ *        Since v12.5.0, the callback context is passed as an extra argument,
+ *        so arrow functions can access the same context as regular functions
+ *        using `this`.
  *
  * @return {string}
  *         Formatted text

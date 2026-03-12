@@ -1,5 +1,5 @@
 const myGrid = Grid.grid('container', {
-    dataTable: {
+    data: {
         columns: {
             ID: [1, 2, 3],
             Name: ['Alice', 'Bob', 'Charlie'],

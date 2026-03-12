@@ -14,7 +14,7 @@ const data = {
 
 Grid.grid('container', {
     caption: { text: 'Desktop: full data set' },
-    dataTable: { columns: data },
+    data: { columns: data },
     columns: [{
         id: 'firstName',
         header: { format: 'First Name' }

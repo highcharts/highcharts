@@ -146,7 +146,9 @@ declare module '../../Core/Chart/ChartBase' {
         exporting?: Exporting;
 
         /**
-         * Deprecated in favor of [Exporting.exportChart](https://api.highcharts.com/class-reference/Highcharts.Exporting#exportChart).
+         * Deprecated. Use
+         * [Exporting.exportChart](https://api.highcharts.com/class-reference/Highcharts.Exporting#exportChart)
+         * instead.
          *
          * @deprecated 11.4.1
          */
@@ -156,28 +158,36 @@ declare module '../../Core/Chart/ChartBase' {
         ): Promise<void>;
 
         /**
-         * Deprecated in favor of [Exporting.getChartHTML](https://api.highcharts.com/class-reference/Highcharts.Exporting#getChartHTML).
+         * Deprecated. Use
+         * [Exporting.getChartHTML](https://api.highcharts.com/class-reference/Highcharts.Exporting#getChartHTML)
+         * instead.
          *
          * @deprecated 11.4.1
          */
         getChartHTML(applyStyleSheets?: boolean): (string | void);
 
         /**
-         * Deprecated in favor of [Exporting.getFilename](https://api.highcharts.com/class-reference/Highcharts.Exporting#getFilename).
+         * Deprecated. Use
+         * [Exporting.getFilename](https://api.highcharts.com/class-reference/Highcharts.Exporting#getFilename)
+         * instead.
          *
          * @deprecated 11.4.1
          */
         getFilename(): (string | void);
 
         /**
-         * Deprecated in favor of [Exporting.getSVG](https://api.highcharts.com/class-reference/Highcharts.Exporting#getSVG).
+         * Deprecated. Use
+         * [Exporting.getSVG](https://api.highcharts.com/class-reference/Highcharts.Exporting#getSVG)
+         * instead.
          *
          * @deprecated 11.4.1
          */
         getSVG(chartOptions?: Partial<Options>): string | void;
 
         /**
-         * Deprecated in favor of [Exporting.print](https://api.highcharts.com/class-reference/Highcharts.Exporting#print).
+         * Deprecated. Use
+         * [Exporting.print](https://api.highcharts.com/class-reference/Highcharts.Exporting#print)
+         * instead.
          *
          * @deprecated 11.4.1
          */
@@ -194,11 +204,9 @@ declare module '../../Core/Chart/ChartOptions' {
          * @sample highcharts/chart/events-beforeprint-afterprint/
          * Rescale the chart to print
          *
-         * @type {Highcharts.ExportingAfterPrintCallbackFunction}
          * @since 4.1.0
          * @context Highcharts.Chart
          * @requires modules/exporting
-         * @apioption chart.events.afterPrint
          */
         afterPrint?: Exporting.AfterPrintCallbackFunction;
 
@@ -209,11 +217,9 @@ declare module '../../Core/Chart/ChartOptions' {
          * @sample highcharts/chart/events-beforeprint-afterprint/
          * Rescale the chart to print
          *
-         * @type {Highcharts.ExportingBeforePrintCallbackFunction}
          * @since 4.1.0
          * @context Highcharts.Chart
          * @requires modules/exporting
-         * @apioption chart.events.beforePrint
          */
         beforePrint?: Exporting.BeforePrintCallbackFunction;
     }
@@ -221,12 +227,7 @@ declare module '../../Core/Chart/ChartOptions' {
 
 declare module '../../Core/GlobalsBase' {
     interface GlobalsBase {
-        /**
-         * Deprecated in favor of [Exporting.downloadSVG](https://api.highcharts.com/class-reference/Highcharts.Exporting#downloadSVG).
-         *
-         * @deprecated 11.4.4
-         */
-        downloadSVGLocal: Exporting.DownloadSVGFunction
+        Exporting: typeof Exporting;
     }
 }
 
@@ -256,7 +257,7 @@ const domurl = win.URL || win.webkitURL || win;
  * @param {Highcharts.Chart} chart
  * The chart instance.
  */
-class Exporting {
+export class Exporting {
 
     /* *
      *
@@ -345,7 +346,6 @@ class Exporting {
      *  Static Functions
      *
      * */
-
     /**
      * Make hyphenated property names out of camelCase.
      *
@@ -830,7 +830,7 @@ class Exporting {
                 if (e) {
                     e.stopPropagation();
                 }
-                onclick.call(chart, e);
+                onclick.call(chart, e, chart);
             };
         } else if (menuItems) {
             callback = function (
@@ -1375,7 +1375,6 @@ class Exporting {
      * Highcharts options pointing to our server.
      *
      * @async
-     * @internal
      * @function Highcharts.Exporting#downloadSVG
      *
      * @param {string} svg
@@ -2624,7 +2623,7 @@ class Exporting {
  *
  * */
 
-interface Exporting extends ExportingBase {}
+export interface Exporting extends ExportingBase {}
 
 /* *
  *
@@ -2632,7 +2631,7 @@ interface Exporting extends ExportingBase {}
  *
  * */
 
-namespace Exporting {
+export namespace Exporting {
 
     /* *
      *
@@ -3031,14 +3030,6 @@ namespace Exporting {
         }
     }
 }
-
-/* *
- *
- *  Default Export
- *
- * */
-
-export default Exporting;
 
 /* *
  *

@@ -82,4 +82,32 @@ QUnit.test('Breadcrumbs format', function (assert) {
         1,
         'The breadcrumbs separators group should be destroyed.'
     );
+
+    chart.series[0].points[0].doDrilldown();
+
+    // Update with arrow function
+    chart.update({
+        drilldown: {
+            breadcrumbs: {
+                events: {
+                    click: (e, breadcrumb, ctx) => (
+                        // Making sure arguments are passed correctly
+                        e && breadcrumb && ctx
+                    ) || false
+                }
+            }
+        }
+    });
+
+    test.triggerEvent(
+        'click',
+        chart.breadcrumbs.group.translateX + 10,
+        chart.breadcrumbs.group.translateY + 10
+    );
+
+    assert.strictEqual(
+        chart.breadcrumbs.group.element.childNodes.length,
+        0,
+        'There should be no breadcrumbs after clicking with arrow function.'
+    );
 });
