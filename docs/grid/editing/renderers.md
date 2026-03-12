@@ -12,7 +12,7 @@ Cell renderers are also available in [edit mode](https://www.highcharts.com/docs
 
 ## Default renderer
 
-Unless specified the default renderer is [`text`](https://api.highcharts.com/grid/#classes/Grid_Pro_CellRendering_Renderers_TextRenderer.TextRenderer), and [`textInput`](https://api.highcharts.com/grid/#classes/Grid_Pro_CellRendering_Renderers_TextInputRenderer.TextInputRenderer) in `editMode`. This can be plain text, and HTML markup is also supported. If needed the text/markup can be formatted using `formatter` or `format`, and Grid Pro users can also use the built-in renderers as described below.
+Unless specified the default renderer is [`text`](https://api.highcharts.com/grid/typedoc/classes/Grid_Pro_CellRendering_Renderers_TextRenderer.TextRenderer), and [`textInput`](https://api.highcharts.com/grid/typedoc/classes/Grid_Pro_CellRendering_Renderers_TextInputRenderer.TextInputRenderer) in `editMode`. This can be plain text, and HTML markup is also supported. If needed the text/markup can be formatted using `formatter` or `format`, and Grid Pro users can also use the built-in renderers as described below.
 
 ## Input renderers
 
@@ -26,13 +26,13 @@ Check out the [todo app demo](https://www.highcharts.com/demo/grid/todo-app) for
 
 | renderer                                                                                                                                   | Description                                       | dataType        |
 | ------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------- | --------------- |
-| [`textInput`](https://api.highcharts.com/grid/#classes/Grid_Pro_CellRendering_Renderers_TextInputRenderer.TextInputRenderer)             | Text input that supports text/number and HTML     | string / number |
-| [`numberInput`](https://api.highcharts.com/grid/#classes/Grid_Pro_CellRendering_Renderers_NumberInputRenderer.NumberInputRenderer)       | Number input element                              | number          |
-| [`dateInput`](https://api.highcharts.com/grid/#classes/Grid_Pro_CellRendering_Renderers_DateInputRenderer.DateInputRenderer)             | Date input with datepicker                        | datetime        |
-| [`dateTimeInput`](https://api.highcharts.com/grid/#classes/Grid_Pro_CellRendering_Renderers_DateTimeInputRenderer.DateTimeInputRenderer) | Date and time input with date/time picker         | datetime        |
-| [`timeInput`](https://api.highcharts.com/grid/#classes/Grid_Pro_CellRendering_Renderers_TimeInputRenderer.TimeInputRenderer)             | Time input with time picker                       | datetime        |
-| [`checkbox`](https://api.highcharts.com/grid/#classes/Grid_Pro_CellRendering_Renderers_CheckboxRenderer.CheckboxRenderer)                | Checkbox input element                            | boolean         |
-| [`select`](https://api.highcharts.com/grid/#classes/Grid_Pro_CellRendering_Renderers_SelectRenderer.SelectRenderer)                      | Select element. Note that `options` are required. | string          |
+| [`textInput`](https://api.highcharts.com/grid/typedoc/classes/Grid_Pro_CellRendering_Renderers_TextInputRenderer.TextInputRenderer)             | Text input that supports text/number and HTML     | string / number |
+| [`numberInput`](https://api.highcharts.com/grid/typedoc/classes/Grid_Pro_CellRendering_Renderers_NumberInputRenderer.NumberInputRenderer)       | Number input element                              | number          |
+| [`dateInput`](https://api.highcharts.com/grid/typedoc/classes/Grid_Pro_CellRendering_Renderers_DateInputRenderer.DateInputRenderer)             | Date input with datepicker                        | datetime        |
+| [`dateTimeInput`](https://api.highcharts.com/grid/typedoc/classes/Grid_Pro_CellRendering_Renderers_DateTimeInputRenderer.DateTimeInputRenderer) | Date and time input with date/time picker         | datetime        |
+| [`timeInput`](https://api.highcharts.com/grid/typedoc/classes/Grid_Pro_CellRendering_Renderers_TimeInputRenderer.TimeInputRenderer)             | Time input with time picker                       | datetime        |
+| [`checkbox`](https://api.highcharts.com/grid/typedoc/classes/Grid_Pro_CellRendering_Renderers_CheckboxRenderer.CheckboxRenderer)                | Checkbox input element                            | boolean         |
+| [`select`](https://api.highcharts.com/grid/typedoc/classes/Grid_Pro_CellRendering_Renderers_SelectRenderer.SelectRenderer)                      | Select element. Note that `options` are required. | string          |
 
 You can further customize input renderers by using the `attributes` option. This allows you to pass additional HTML attributes to the underlying input element, such as `min`, `max`, `step`, `placeholder`, or any other valid attribute.
 This is especially useful for number and date inputs, where you may want to restrict the allowed range or provide hints to users. For example:
