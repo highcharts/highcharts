@@ -99,7 +99,7 @@ To explore supported modules, see the [Modules components](https://www.highchart
 import { Chart } from "@highcharts/react";
 import { LineSeries } from "@highcharts/react/series/Line";
 
-import "highcharts/esm/modules/draggable-points.src.js";
+import "highcharts/esm/modules/draggable-points.js";
 
 export default function ModulesChart() {
   return (

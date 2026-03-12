@@ -72,7 +72,7 @@ When using the `Series` component, some series types require you to import an ad
 
 ```tsx
 import { Chart, Series } from "@highcharts/react";
-import "highcharts/esm/modules/venn.src.js";
+import "highcharts/esm/modules/venn.js";
 
 export default function VennChart() {
   return (

@@ -452,8 +452,8 @@ const options = {
 import { Chart, Title, setHighcharts } from "@highcharts/react";
 import { LineSeries } from "@highcharts/react/series/Line";
 import Highcharts from "highcharts/highcharts";
-import "highcharts/modules/exporting";
-import "highcharts/modules/accessibility";
+import "highcharts/esm/modules/exporting.js";
+import "highcharts/esm/modules/accessibility.js";
 
 // Set custom Highcharts instance globally
 setHighcharts(Highcharts);

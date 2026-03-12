@@ -24,8 +24,8 @@ import { Exporting } from "@highcharts/react/modules/Exporting";
 If you use additional modules, import only those you need using the `highcharts/esm` path:
 
 ```tsx
-import "highcharts/esm/modules/venn.src.js";
-import "highcharts/esm/modules/draggable-points.src.js";
+import "highcharts/esm/modules/venn.js";
+import "highcharts/esm/modules/draggable-points.js";
 ```
 
 ## Keep Highcharts lean with core + modules
