@@ -14,6 +14,8 @@
  *
  * */
 
+import type { AnyRecord } from '../Shared/Types.js';
+
 /**
  * Generic callback function.
  *
