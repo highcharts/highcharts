@@ -72,6 +72,37 @@ const PackedBubbleSeriesDefaults: PackedBubbleSeriesOptions = {
      * @private
      */
     maxSize: '50%',
+
+    /**
+     * The minimum for the Z value range. Defaults to the lowest Z value
+     * in the data.
+     *
+     * @see [zMax](#plotOptions.packedbubble.zMax)
+     *
+     * @sample {highcharts} highcharts/plotoptions/bubble-zmin-zmax/
+     *         Z has a possible range of 0-100
+     *
+     * @type      {number}
+     * @since     7.0.0
+     * @product   highcharts
+     * @apioption plotOptions.packedbubble.zMin
+     */
+
+    /**
+     * The maximum for the Z value range. Defaults to the highest Z value
+     * in the data.
+     *
+     * @see [zMin](#plotOptions.packedbubble.zMin)
+     *
+     * @sample {highcharts} highcharts/plotoptions/bubble-zmin-zmax/
+     *         Z has a possible range of 0-100
+     *
+     * @type      {number}
+     * @since     7.0.0
+     * @product   highcharts
+     * @apioption plotOptions.packedbubble.zMax
+     */
+
     sizeBy: 'area',
     zoneAxis: 'y',
     crisp: false,
@@ -151,7 +182,7 @@ const PackedBubbleSeriesDefaults: PackedBubbleSeriesOptions = {
          * @since 7.0.0
          */
         formatter: function (
-            this: (Point|PackedBubblePoint)
+            this: (Point | PackedBubblePoint)
         ): string {
             const { numberFormatter } = this.series.chart;
             const { value } = this.point as PackedBubblePoint;
@@ -170,7 +201,7 @@ const PackedBubbleSeriesDefaults: PackedBubbleSeriesOptions = {
          * @since 7.1.0
          */
         parentNodeFormatter: function (
-            this: (Point|PackedBubblePoint)
+            this: (Point | PackedBubblePoint)
         ): string {
             return this.name || '';
         },
