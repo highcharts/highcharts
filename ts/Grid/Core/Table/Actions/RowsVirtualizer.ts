@@ -321,8 +321,15 @@ class RowsVirtualizer {
         await this.renderRows(this.rowCursor);
 
         const rows = this.viewport.rows;
+
+        // For non-virtualized rows, re-order rows to match data order.
+        if (!this.viewport.virtualRows) {
+            for (let i = 0, iEnd = rows.length; i < iEnd; ++i) {
+                tbody.appendChild(rows[i].htmlElement);
+            }
+        }
+
         for (let i = 0, iEnd = rows.length; i < iEnd; ++i) {
-            // Update row data so indices map to fresh provider values.
             await rows[i].update();
         }
 
