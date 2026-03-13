@@ -984,8 +984,8 @@ class Chart {
         return (
             options.dataTable ? splat(options.dataTable) : []
         ).map((dataTableOptions): DataTableCore => (
-            dataTableOptions instanceof DataTableCore ?
-                dataTableOptions :
+            (dataTableOptions as DataTableCore).isDataTable ?
+                dataTableOptions as DataTableCore :
                 new DataTableCore(dataTableOptions)
         ));
     }

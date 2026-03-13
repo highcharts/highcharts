@@ -849,8 +849,11 @@ class Series {
             visible = options.visible !== false;
 
         // Create the data table
-        this.dataTable ??= options.dataTable instanceof DataTableCore ?
-            options.dataTable : new DataTableCore(options.dataTable);
+        this.dataTable ??= (
+            (options.dataTable as DataTableCore)?.isDataTable ?
+                options.dataTable as DataTableCore :
+                new DataTableCore(options.dataTable)
+        );
 
         /**
          * All child series that are linked to the current series through the
@@ -2045,8 +2048,8 @@ class Series {
 
             // If a DataTable is passed directly by reference, bind events to
             // keep the series updated
-            if (dtItem instanceof DataTableCore) {
-                this.bindDataTableEvents(dtItem, columns);
+            if ((dtItem as DataTableCore).isDataTable) {
+                this.bindDataTableEvents(dtItem as DataTableCore, columns);
             }
         });
     }

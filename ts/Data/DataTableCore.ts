@@ -125,6 +125,7 @@ class DataTableCore {
     public readonly id: string;
 
     public modified?: this;
+    public readonly isDataTable = true;
 
     /**
      * Number of rows in the table.
