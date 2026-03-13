@@ -1894,16 +1894,16 @@ class Pointer {
             ownerDoc = container.ownerDocument,
             chartOptions = chart.options.chart,
             zoomType = chart.zooming.type || '',
-            hasZoom = zoomType.includes('x') || zoomType.includes('y'),
+            hasZoom = /x|y/.test(zoomType),
             panning = chartOptions.panning,
             hasPanning = isObject(panning) ?
-                panning.enabled === true :
+                panning.enabled :
                 !!panning,
-            hasSelectionEvent = !!chartOptions.events?.selection,
-            shouldAttachMouseDown = (
+            hasSelection = !!chartOptions.events?.selection,
+            shouldAttachContainerMouseDown = (
                 hasZoom ||
                 hasPanning ||
-                hasSelectionEvent
+                hasSelection
             ),
             // Get the parent element, including handling Shadow DOM (#23450)
             getParent = (el: HTMLElement): HTMLElement|null|undefined =>
@@ -1911,7 +1911,7 @@ class Pointer {
                     el.getRootNode() as ShadowRoot|undefined
                 )?.host?.parentElement;
 
-        container.onmousedown = shouldAttachMouseDown ?
+        container.onmousedown = shouldAttachContainerMouseDown ?
             this.onContainerMouseDown.bind(this) :
             null;
         container.onmousemove = this.onContainerMouseMove.bind(this);
