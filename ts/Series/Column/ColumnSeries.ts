@@ -530,7 +530,7 @@ class ColumnSeries extends Series {
 
         // Record the new values
         series.points.forEach(function (point): void {
-            const yBottom = point.yBottom ?? (translatedThreshold as number),
+            const yBottom = point.yBottom ?? (translatedThreshold as any),
                 safeDistance = 999 + Math.abs(yBottom),
                 plotX = point.plotX || 0,
                 // Don't draw too far outside plot area (#1303, #2241,
@@ -574,12 +574,12 @@ class ColumnSeries extends Series {
                 // If stacked...
                 barY = (
                     Math.abs(
-                        barY - (translatedThreshold as number)
+                        barY - (translatedThreshold as any)
                     ) > minPointLength ?
                         // ...keep position
                         yBottom - (up ? minPointLength : 0) :
                         // #1485, #4051
-                        (translatedThreshold as number) -
+                        (translatedThreshold as any) -
                         (up ? minPointLength : 0)
                 );
             }
@@ -588,7 +588,7 @@ class ColumnSeries extends Series {
             // @todo Handle grouping/stacking too. Calculate offset properly
             if (defined(point.options.pointWidth)) {
                 pointWidth = barW =
-                    Math.ceil(point.options.pointWidth as number);
+                    Math.ceil(point.options.pointWidth as any);
                 barX -= Math.round((pointWidth - seriesPointWidth) / 2);
             }
 
@@ -622,7 +622,7 @@ class ColumnSeries extends Series {
                 [
                     xAxis.left - chart.plotLeft + barX + barW / 2,
                     clamp(
-                        plotY + (yAxis.pos as number) -
+                        plotY + (yAxis.pos as any) -
                         chart.plotTop,
                         yAxis.pos - chart.plotTop,
                         yAxis.len + yAxis.pos - chart.plotTop
