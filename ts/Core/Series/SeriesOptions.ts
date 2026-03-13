@@ -573,6 +573,25 @@ export interface SeriesOptions {
      * @product highcharts highstock
      */
     dataSorting?: SeriesDataSortingOptions;
+
+    /**
+     * Options for a specific series-level data table. The `dataTable` option
+     * can be either a configuration object or an instance of the
+     * `DataTableCore` class. If a `DataTableCore` instance is passed, it will
+     * be used directly. If a configuration object is passed, a new
+     * `DataTableCore` instance will be created based on the provided
+     * configuration.
+     *
+     * The data table is mapped to the series data points based on the
+     * [dataMapping](#dataMapping) option.
+     *
+     * @sample {highcharts} highcharts/datatable/series-datatable/
+     *        Series with a data table
+     * @sample {highcharts} highcharts/datatable/series-datatable-multiple/
+     *        Series with two data tables
+     *
+     * @since next
+     */
     dataTable?: DataTableCore|DataTableOptions;
     enableMouseTracking?: boolean;
 
