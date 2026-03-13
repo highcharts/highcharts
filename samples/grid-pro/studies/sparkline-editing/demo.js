@@ -168,7 +168,7 @@ Grid.CellRendererRegistry.registerRenderer(
  * */
 
 Grid.grid('container', {
-    dataTable: {
+    data: {
         columns: {
             ID: [
                 1, 2, 3, 4, 5, 6, 7, 8, 9, 10

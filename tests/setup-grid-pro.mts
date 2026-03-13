@@ -10,6 +10,15 @@ const rootDir = join(import.meta.dirname, '..');
 
 const builds = [
     {
+        label: 'Highcharts',
+        check: join(rootDir, 'code', 'highcharts.src.js'),
+        inputs: [
+            join(rootDir, 'ts'),
+            join(rootDir, 'tools', 'webpacks', 'highcharts.webpack.mjs')
+        ],
+        command: 'npx gulp scripts --product Highcharts'
+    },
+    {
         label: 'Grid Pro',
         check: join(rootDir, 'code', 'grid', 'grid-pro.src.js'),
         inputs: [

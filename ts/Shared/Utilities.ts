@@ -12,7 +12,7 @@ import type CSSObject from '../Core/Renderer/CSSObject';
 import type { DOMElementType, HTMLDOMElement } from '../Core/Renderer/DOMElementType';
 import type HTMLAttributes from '../Core/Renderer/HTML/HTMLAttributes';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
-import type { DeepPartial, TypedArray } from './Types.js';
+import type { AnyRecord, DeepPartial, TypedArray } from './Types.js';
 
 import H from '../Core/Globals.js';
 import { EventCallback } from '../Core/Callback';
@@ -20,6 +20,18 @@ const {
     doc,
     win
 } = H;
+
+interface Class<T = any> extends Function {
+    new (...args: Array<any>): T;
+}
+
+type ArrowFunction = (...args: Array<any>) => any;
+
+type FunctionsOf<T> = {
+    [K in keyof T as T[K] extends Function ? K : never]: T[K];
+};
+
+type FunctionNamesOf<T> = keyof FunctionsOf<T>;
 
 /* eslint-disable valid-jsdoc */
 /**

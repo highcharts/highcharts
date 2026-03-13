@@ -10,7 +10,7 @@
     }
 
     Grid.grid('container', {
-        dataTable: {
+        data: {
             columns: {
                 product: products,
                 weight: weights

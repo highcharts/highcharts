@@ -1,201 +1,150 @@
 # Understanding Highcharts Grid
-At its core Grid consists of a data source that is rendered in x number of columns and rows. Many of the available configuration options applies to the columns and their corresponding row and header cells.
+
+Highcharts Grid displays structured data in columns and rows, using a standard
+HTML table as its foundation. Most Grid setups start with a data source, then
+define how columns and cells should look and behave, and finally add features
+such as pagination, editing, accessibility, and exporting.
 
 ![table](ill_table.png)
 
-The following provides an introduction to the various root configuration objects in Grid:
+## Overall structure
 
-## data
+Most Grid setups combine a few core options:
+
 ```js
-{
+Grid.grid('container', {
     data: {
-        dataTable: {
-            columns: {
-                product: ["Apple", "Pear", "Orange", "Banana"],
-                weight: [182, 178, 150, 120],
-                price: [3.5, 2.5, 3, 2.2],
-                vitamin_a: [54,27,225,64]
-            }
-        }
-    }
-}
-```
-
-The `data` object defines how Grid receives, prepares, and updates data. The only required option for rendering is `data.dataTable`. You can pass either serialized options (from which Grid creates a `DataTable`) or an existing `DataTable` instance. The DataTable class stores key-value pairs: each key becomes a header label, and each value is an array with the corresponding column values. When users edit cells (for example via edit mode), Grid writes changes back through the configured data provider.
-Read more about [data handling and the DataTable class](https://www.highcharts.com/docs/dashboards/data-table).
-
-Instead of `dataTable`, you can also use data connectors for loading data.
-
-```js
-{
-    data: {
-        connector: {
-            type: JSON,
-            data: [
-                ['colA', 'colB'],
-                [1, 2],
-                [3, 4]
-            ]
-        }
-    }
-}
-```
-
-### Data providers
-Grid reads and writes data through a data provider. The default `LocalDataProvider` works with an in-memory `DataTable`, but you can register a custom provider for other data sources. In Grid Pro, the `RemoteDataProvider` is available for server-backed data and on-demand paging. For details and configuration examples, see the [Data providers article](https://www.highcharts.com/docs/grid/data-providers).
-
-### Data modifiers
-
-Alternatively to serializable options, you can pass a reference to the [DataTable](https://www.highcharts.com/docs/dashboards/data-table) you want to use when rendering the Grid. This lets you, for example, apply a [Math Modifier](https://www.highcharts.com/docs/dashboards/mathmodifier-module) from Highcharts Dashboards library to it beforehand to add a new column whose values are the result of a mathematical operation on one or more existing columns.
-
-You can read more about Data Modifiers [here](https://www.highcharts.com/docs/dashboards/data-modifiers).
-
-## columnDefaults and columns[]
-```js
-{
-    columnDefaults: {
-        cells: {
-            editMode: {
-                enabled: true
-            }
+        columns: {
+            product: ['Apple', 'Pear', 'Orange'],
+            price: [3.5, 2.5, 3]
         }
     },
     columns: [{
-        id: "weight",
-        header: {
-            format: "Weight"
-        },
+        id: 'price',
         cells: {
-            format: "{value}g",
-            editMode: {
-                enabled: false
-            }
+            format: '${value}'
         }
-    }, {
-        id: "price",
-        header: {
-            format: "Price"
-        },
-        cells: {
-            format: "${value}"
-        }
-    }]
-}
-```
-
-The ' columnDefaults ' object defines default options for all columns in the grid, such as the column sorter, column resizer, value editor, cell format, etc., and the `columns[]` array of objects can be used to override defaults in selected columns if needed. Note that most options in `columnDefaults` are mirrored 1:1 in the `columns[]` array of objects.
-
-Learn more about `columns[]` in our [Columns article](https://www.highcharts.com/docs/grid/columns/index) or see the API reference for [columnDefaults](https://api.highcharts.com/grid/#interfaces/Grid_Core_Options.Options#columnDefaults) and [columns[]](https://api.highcharts.com/grid/#interfaces/Grid_Core_Options.Options#columns).
-
-## caption
-```js
-{
-    caption: {
-        text: "Title of the Grid";
-    }
-}
-```
-
-The code snippet above shows how to insert a caption, or title, above the grid.
-
-For more information on the `caption` option, see the [API reference](https://api.highcharts.com/grid/#interfaces/Grid_Core_Options.Options#caption).
-
-## header[]
-```js
-{
-    header: [
-        {
-            columnId: "product"
-            format: "Fruit",
-        },
-        "weight",
-        "price"
-    ]
-}
-```
-
-While the format and visibility of individual columns and their header cells can be set using the `columns[]` option, the same can be achieved using the `header[]` root option. Which option to use depends on your specific use case, and `header[]` will, in some cases, be less verbose than `columns[]`.
-
-In addition, the `header[]` option can change the order of headers and group headers in a hierarchical structure.
-
-The [Header article](https://www.highcharts.com/docs/grid/columns/header) provides more information about `header[]`.
-
-## accessibility
-```js
-{
-  accessibility: {
-    enabled: false,
-    ...
-  }
-}
-```
-The `accessibility` option object can be used to enable/disable accessibility features such as ARIA attributes and ARIA live announcements.
-
-For more information on accessibility options read our documentation article on [accessibility](https://www.highcharts.com/docs/grid/accessibility).
-
-## lang
-To customize the default language or wording for ARIA attributes and announcers, use the `lang.accessibility` option. In the current version of Highcharts Grid the `lang` option is solely related to [accessibility](https://www.highcharts.com/docs/grid/accessibility), but will be extended to other use cases as we add more features. Stay up to date by visiting our [changelog](https://www.highcharts.com/blog/changelog/#highcharts-grid) and [roadmap](https://www.highcharts.com/blog/roadmap/).
-
-## rendering
-The `rendering` option object can be used to configure options related to performance and the rendering of the Grid. Example: [Rendering.rows](https://api.highcharts.com/grid/#interfaces/Grid_Core_Options.RenderingSettings#rows) represents the rows in the Grid.
-
-```js
-{
-    rendering: {
-        rows: {
-            bufferSize: 5,
-            strictHeights: true
-        }
-    }
-}
-```
-
-For more information on rendering options, please read our article on [Performance and rendering](https://www.highcharts.com/docs/grid/rows/performance) or see the [API reference](https://api.highcharts.com/grid/#interfaces/Grid_Core_Options.RenderingSettings).
-
-## responsive
-Use `responsive.rules[]` to apply different Grid options at different container sizes. Each rule contains a `condition` (such as `maxWidth` or `minWidth`) and a `gridOptions` object that will be merged into the base options when the rule matches.
-
-```js
-{
-    responsive: {
-        rules: [{
-            condition: { maxWidth: 800 },
-            gridOptions: { header: ['firstName', 'email', 'mobile'] }
-        }]
-    }
-}
-```
-
-Read more in the [Responsive grid article](https://www.highcharts.com/docs/grid/responsive-grid).
-
-## pagination
-The `pagination` option object enables you to split large datasets into manageable pages, improving performance and user experience. When enabled, pagination displays a subset of data at a time with navigation controls.
-
-```js
-{
+    }],
     pagination: {
-        enabled: true,
-        pageSize: 25,
-        position: 'footer',
+        enabled: true
     }
-}
+});
 ```
 
-Read more in the [Pagination article](https://www.highcharts.com/docs/grid/rows/pagination).
+In practice, you will usually work with a few main topics: how data is loaded,
+how columns are defined, how rows are rendered, and how cell content is
+formatted or edited.
 
-## events __grid_pro__
-Highcharts Grid Pro supports several event listeners that can be added to the header, columns and cells. These provide custom functionality and extendibility of Grid. Read more about events in the [Events article](https://www.highcharts.com/docs/grid/events).
+## Start here
 
-## setOptions()
-When adding multiple grids to the same page, it is recommended to set default options globally using the `setOptions()` method. This approach is more efficient than configuring each Grid individually. For an overview of all default options see the [API reference](https://api.highcharts.com/grid/#interfaces/Grid_Core_Options.Options#columnDefaults).
+If you are new to Grid, begin with:
 
-```js
-Grid.setOptions({
-    columnDefaults: {
-        sorting: {
-            enabled: false
-        }
-    }
-})
-```
-This example disables end user sorting for every Grid on the page.
+- [General](https://www.highcharts.com/docs/grid/general)
+- [Installation](https://www.highcharts.com/docs/grid/installation)
+
+Then continue with the topic area that matches the part of Grid you are working
+on.
+
+## Core topics
+
+### Data handling
+
+Data handling covers how Grid receives data, how it stores it internally, and
+whether sorting, filtering, and pagination happen in the browser or on the
+server.
+
+Start with:
+
+- [Data handling / Overview](https://www.highcharts.com/docs/grid/data-handling/overview)
+- [Data handling / Client-side](https://www.highcharts.com/docs/grid/data-handling/clientside)
+- [Data handling / Server-side](https://www.highcharts.com/docs/grid/data-handling/serverside)
+- [Data handling / Connectors](https://www.highcharts.com/docs/grid/data-handling/connectors)
+
+### Columns
+
+Columns define the structure of the Grid. This includes header labels, grouped
+headers, column sizing, sorting, filtering, and column-level styling.
+
+Start with:
+
+- [Columns](https://www.highcharts.com/docs/grid/columns/index)
+- [Header](https://www.highcharts.com/docs/grid/columns/header)
+- [Grouping](https://www.highcharts.com/docs/grid/columns/grouping)
+- [Resizing and width](https://www.highcharts.com/docs/grid/columns/resizing-and-width)
+- [Sorting](https://www.highcharts.com/docs/grid/columns/sorting)
+- [Filtering](https://www.highcharts.com/docs/grid/columns/filtering)
+- [Styling and theming](https://www.highcharts.com/docs/grid/columns/styling-and-theming)
+
+### Rows
+
+Rows focus on the rendered dataset: row access, pagination, virtualization, and
+performance when displaying large amounts of data.
+
+Start with:
+
+- [Rows](https://www.highcharts.com/docs/grid/rows/index)
+- [Row data](https://www.highcharts.com/docs/grid/rows/data)
+- [Pagination](https://www.highcharts.com/docs/grid/rows/pagination)
+- [Virtualization](https://www.highcharts.com/docs/grid/rows/virtualization)
+- [Performance and rendering](https://www.highcharts.com/docs/grid/rows/performance)
+
+### Cells
+
+Cells control how individual values are presented, styled, and formatted inside
+the Grid.
+
+Start with:
+
+- [Cells](https://www.highcharts.com/docs/grid/cells/index)
+- [Styling and theming](https://www.highcharts.com/docs/grid/cells/styling-and-theming)
+- [Formatting](https://www.highcharts.com/docs/grid/cells/formatting)
+
+### Editing __grid_pro__
+
+Editing covers end-user value editing, built-in renderers, validation rules,
+and custom editing behavior.
+
+Start with:
+
+- [Editing](https://www.highcharts.com/docs/grid/editing/index)
+- [Renderers](https://www.highcharts.com/docs/grid/editing/renderers)
+- [Validation](https://www.highcharts.com/docs/grid/editing/validation)
+- [Custom renderers](https://www.highcharts.com/docs/grid/editing/custom-renderers)
+
+### Theming
+
+Theming covers CSS variables, theme customization, conditional styling, and
+custom icons.
+
+Start with:
+
+- [Theming](https://www.highcharts.com/docs/grid/theming/index)
+- [Grid variables](https://www.highcharts.com/docs/grid/theming/grid-variables)
+- [Element variables](https://www.highcharts.com/docs/grid/theming/element-variables)
+- [Conditional theming](https://www.highcharts.com/docs/grid/theming/conditional)
+- [Custom icons](https://www.highcharts.com/docs/grid/theming/custom-icons)
+
+### Frameworks
+
+Framework articles show how to use Grid with supported frameworks.
+
+Start with:
+
+- [Frameworks](https://www.highcharts.com/docs/grid/frameworks/index)
+- [Angular](https://www.highcharts.com/docs/grid/frameworks/angular)
+- [Next.js](https://www.highcharts.com/docs/grid/frameworks/nextjs)
+- [React](https://www.highcharts.com/docs/grid/frameworks/react)
+- [Vue](https://www.highcharts.com/docs/grid/frameworks/vue)
+
+## Additional topics
+
+- [Responsive grid](https://www.highcharts.com/docs/grid/responsive-grid) for container-based layout changes
+- [Events](https://www.highcharts.com/docs/grid/events) for lifecycle and interaction events
+- [Accessibility](https://www.highcharts.com/docs/grid/accessibility) for screen reader support and accessibility features
+- [Internationalization](https://www.highcharts.com/docs/grid/internationalization) for translated UI text and locale-aware formatting
+- [Exporting data](https://www.highcharts.com/docs/grid/exporting) for CSV and JSON export
+- [Sparklines](https://www.highcharts.com/docs/grid/sparklines)  for inline charts inside cells
+
+Use this page as an overview of the main Grid concepts. Once you know which
+part of the Grid you are working on, the linked topic article should be the
+next step.

@@ -1,12 +1,8 @@
 Highcharts.chart('container', {
-    chart: {
-        type: 'column'
-    },
     title: {
         text: 'Demo of <em>xAxis.dateTimeLabelFormats.day</em>'
     },
     xAxis: {
-        categories: ['Apples', 'Bananas', 'Oranges', 'Pears'],
         dateTimeLabelFormats: {
             day: '%e of %b'
         },

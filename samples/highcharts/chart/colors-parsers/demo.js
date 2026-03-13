@@ -1,5 +1,6 @@
 Highcharts.Color.parsers.push({
-    regex: /^hsl\s+(-?\d+(?:\.\d+)?)\s+(\d+(?:\.\d+)?)\s+(\d+(?:\.\d+)?)$/u,
+    // eslint-disable-next-line max-len
+    regex: /^hsl\(\s*(-?\d+(?:\.\d+)?)\s*,\s*(\d+(?:\.\d+)?)%\s*,\s*(\d+(?:\.\d+)?)%\s*\)$/u,
     parse: result => {
         const hue = ((Number.parseFloat(result[1]) % 360) + 360) % 360;
         const saturation = Math.max(
@@ -54,12 +55,12 @@ Highcharts.chart('container', {
         text: 'HSL colors'
     },
     colors: [
-        'hsl 0 100 50',
-        'hsl 30 100 50',
-        'hsl 120 60 45',
-        'hsl 210 70 50',
-        'hsl 275 55 45',
-        'hsl 15 45 35'
+        'hsl(0, 100%, 50%)',
+        'hsl(30, 100%, 50%)',
+        'hsl(120, 60%, 45%)',
+        'hsl(210, 70%, 50%)',
+        'hsl(275, 55%, 45%)',
+        'hsl(15, 45%, 35%)'
     ],
     xAxis: {
         categories: [
