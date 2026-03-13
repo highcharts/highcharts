@@ -330,3 +330,79 @@ QUnit.test('Tick layout versus setData (#17393)', assert => {
         );
     }
 });
+
+QUnit.test(
+    'XAxis default year format localizes digits (#24266)',
+    function (assert) {
+        const createChart = function (locale) {
+                return Highcharts.chart('container', {
+                    lang: {
+                        locale: locale
+                    },
+                    xAxis: {
+                        type: 'datetime',
+                        tickPositions: [
+                            Date.UTC(2025, 0, 1),
+                            Date.UTC(2026, 0, 1)
+                        ],
+                        min: Date.UTC(2025, 0, 1),
+                        max: Date.UTC(2026, 0, 1)
+                    },
+                    series: [{
+                        data: [
+                            [Date.UTC(2025, 0, 1), 1],
+                            [Date.UTC(2026, 0, 1), 2]
+                        ]
+                    }]
+                });
+            },
+            getFirstYearLabel = function (chart) {
+                const axis = chart.xAxis[0],
+                    tickPosition = axis.tickPositions[0],
+                    tick = axis.ticks[tickPosition];
+
+                return (tick && tick.label && tick.label.textStr) || '';
+            },
+            localizedLocales = [{
+                locale: 'ar-SA',
+                regex: /[\u0660-\u0669]/,
+                name: 'Arabic-Indic digits'
+            }, {
+                locale: 'bn',
+                regex: /[\u09E6-\u09EF]/,
+                name: 'Bengali digits'
+            }],
+            latinDigitLocales = ['en', 'pl'];
+
+        localizedLocales.forEach(testCase => {
+            const chart = createChart(testCase.locale),
+                yearLabel = getFirstYearLabel(chart);
+
+            assert.ok(
+                yearLabel.length > 0,
+                `XAxis should render year label for locale: ${testCase.locale}`
+            );
+
+            assert.ok(
+                testCase.regex.test(yearLabel),
+                'XAxis default year uses ' +
+                `${testCase.name} for ${testCase.locale}`
+            );
+
+            chart.destroy();
+        });
+
+        latinDigitLocales.forEach(locale => {
+            const chart = createChart(locale),
+                yearLabel = getFirstYearLabel(chart);
+
+            assert.strictEqual(
+                yearLabel,
+                '2025',
+                `XAxis default year stays Latin for locale: ${locale}`
+            );
+
+            chart.destroy();
+        });
+    }
+);

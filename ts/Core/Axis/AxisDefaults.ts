@@ -529,7 +529,7 @@ namespace AxisDefaults {
          *     day: '%[eb]',
          *     week: '%[eb]',
          *     month: '%[bY]',
-         *     year: '%Y'
+         *     year: '%[Y]'
          * }
          * ```
          *
@@ -682,7 +682,7 @@ namespace AxisDefaults {
                  * @type {string|Highcharts.DateTimeFormatOptions}
                  * @apioption xAxis.dateTimeLabelFormats.year.main
                  */
-                main: '%Y'
+                main: '%[Y]'
             }
         },
 

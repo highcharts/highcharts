@@ -133,3 +133,67 @@ QUnit.test('Locale-aware tooltip header date formatting', function (assert) {
         );
     });
 });
+
+QUnit.test(
+    'Tooltip default year format localizes digits (#24266)',
+    function (assert) {
+        const createChart = function (locale) {
+                return Highcharts.chart('container', {
+                    lang: {
+                        locale
+                    },
+                    xAxis: {
+                        type: 'datetime'
+                    },
+                    tooltip: {
+                        headerFormat: '{point.key}',
+                        pointFormat: '',
+                        footerFormat: ''
+                    },
+                    series: [{
+                        data: [
+                            [Date.UTC(2025, 0, 1), 1],
+                            [Date.UTC(2026, 0, 1), 2]
+                        ]
+                    }]
+                });
+            },
+            localizedLocales = [{
+                locale: 'ar-SA',
+                regex: /[\u0660-\u0669]/,
+                name: 'Arabic-Indic digits'
+            }, {
+                locale: 'fa-IR',
+                regex: /[\u06F0-\u06F9]/,
+                name: 'Persian digits'
+            }],
+            latinDigitLocales = ['en', 'pl'];
+
+        localizedLocales.forEach(testCase => {
+            const chart = createChart(testCase.locale),
+                point = chart.series[0].points[0],
+                yearLabel = chart.tooltip.headerFooterFormatter(point, false);
+
+            assert.ok(
+                testCase.regex.test(yearLabel),
+                `Default year uses ${testCase.name} for ${testCase.locale}`
+            );
+
+            chart.destroy();
+        });
+
+        latinDigitLocales.forEach(locale => {
+            const chart = createChart(locale),
+                point = chart.series[0].points[0],
+                yearLabel = chart.tooltip.headerFooterFormatter(point, false);
+
+            assert.strictEqual(
+                yearLabel,
+                '2025',
+                `Default year stays Latin for locale: ${locale}`
+            );
+
+            chart.destroy();
+        });
+    }
+);
