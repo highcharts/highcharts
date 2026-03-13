@@ -1884,15 +1884,11 @@ class Chart {
             widthOption = optionsChart.width,
             heightOption = optionsChart.height,
             containerBox = chart.getContainerBox(),
-            renderTo = chart.renderTo,
-            parent = renderTo.parentElement,
-            // #21510, #23712: percentage height (100%, 99%, etc.) + min-height
-            // or any % height can cause reflow loop in flex layout
-            parentHeight = !parent?.style.height ||
-                /\d+%$/.test(parent.style.height || ''),
-            // #21510, #23712: height:100% + unreliable parent = reflow loop
-            useDefaultHeight = containerBox.height <= 1 ||
-                (/\d+%$/.test(renderTo.style.height || '') && parentHeight);
+            enableDefaultHeight = containerBox.height <= 1 ||
+                ( // #21510, prevent infinite reflow
+                    !chart.renderTo.parentElement?.style.height &&
+                    chart.renderTo.style.height === '100%'
+                );
         /**
          * The current pixel width of the chart.
          *
@@ -1915,9 +1911,7 @@ class Chart {
                 heightOption as any,
                 chart.chartWidth
             ) ||
-            (useDefaultHeight ?
-                (parent && getStyle(parent, 'min-height', true) || 400) :
-                containerBox.height)
+            (enableDefaultHeight ? 400 : containerBox.height)
         );
 
         chart.containerBox = containerBox;
@@ -2298,6 +2292,12 @@ class Chart {
                     // (#1257)
                     if (chart.container) {
                         chart.setSize(void 0, void 0, false);
+                        // #23712: sync containerBox with reflowed height to
+                        // break infinite loop
+                        const box = chart.containerBox;
+                        if (box) {
+                            box.height = chart.chartHeight;
+                        }
                     }
                 }, e ? 100 : 0);
             }
