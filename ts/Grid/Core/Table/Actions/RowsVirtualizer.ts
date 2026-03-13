@@ -324,8 +324,18 @@ class RowsVirtualizer {
 
         // For non-virtualized rows, re-order rows to match data order.
         if (!this.viewport.virtualRows) {
+            let node = tbody.firstElementChild;
             for (let i = 0, iEnd = rows.length; i < iEnd; ++i) {
-                tbody.appendChild(rows[i].htmlElement);
+                if (node === rows[i].htmlElement) {
+                    node = node.nextElementSibling;
+                    continue;
+                }
+
+                // Mismatch found, so append the rest in the correct order.
+                for (let j = i; j < iEnd; ++j) {
+                    tbody.appendChild(rows[j].htmlElement);
+                }
+                break;
             }
         }
 
