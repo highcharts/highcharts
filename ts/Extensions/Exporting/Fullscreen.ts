@@ -26,6 +26,7 @@
  * */
 
 import type Chart from '../../Core/Chart/Chart';
+import type { LangOptions } from '../../Core/Options';
 
 import AST from '../../Core/Renderer/HTML/AST.js';
 import H from '../../Core/Globals.js';
@@ -433,13 +434,17 @@ class Fullscreen {
                 menuItems.indexOf('viewFullscreen')
             ];
             if (exportDivElement) {
+                const definition =
+                    exportingOptions.menuItemDefinitions.viewFullscreen;
+                const textKey = definition?.textKey || 'viewFullscreen';
+                const translated = lang[textKey as keyof LangOptions];
                 AST.setElementHTML(
                     exportDivElement,
                     !this.isOpen ?
                         (
-                            exportingOptions.menuItemDefinitions.viewFullscreen
-                                ?.textKey ||
-                            lang.viewFullscreen
+                            typeof translated === 'string' ?
+                                translated :
+                                lang.viewFullscreen
                         ) : lang.exitFullscreen
                 );
             }
