@@ -51,7 +51,7 @@ import { uniqueKey } from '../Core/Utilities.js';
  * from specific cells.
  *
  * @class
- * @name Highcharts.DataTable
+ * @name Highcharts.DataTableCore
  *
  * @param {Highcharts.DataTableOptions} [options]
  * Options to initialize the new DataTable instance.
@@ -59,7 +59,7 @@ import { uniqueKey } from '../Core/Utilities.js';
 class DataTableCore {
 
     /**
-     * Constructs an instance of the DataTable class.
+     * Constructs an instance of the DataTableCore class.
      *
      * @example
      * const dataTable = new Highcharts.DataTableCore({
@@ -77,21 +77,8 @@ class DataTableCore {
     public constructor(
         options: DataTableOptions = {}
     ) {
-        /**
-         * Whether the ID was automatic generated or given in the constructor.
-         *
-         * @name Highcharts.DataTable#autoId
-         * @type {boolean}
-         */
         this.autoId = !options.id;
         this.columns = {};
-
-        /**
-         * ID of the table for identification purposes.
-         *
-         * @name Highcharts.DataTable#id
-         * @type {string}
-         */
         this.id = (options.id || uniqueKey());
         this.rowCount = 0;
         this.versionTag = uniqueKey();
@@ -113,14 +100,38 @@ class DataTableCore {
      *
      * */
 
+    /**
+     * Whether the ID was automatic generated or given in the constructor.
+     *
+     * @name Highcharts.DataTableCore#autoId
+     * @type {boolean}
+     */
     public readonly autoId: boolean;
 
+    /**
+     * Collection of columns in the table.
+     *
+     * @name Highcharts.DataTableCore#columns
+     * @type {Record<string, Highcharts.DataTableColumn>}
+     */
     public readonly columns: Record<string, DataTableColumn>;
 
+    /**
+     * ID of the table for identification purposes.
+     *
+     * @name Highcharts.DataTableCore#id
+     * @type {string}
+     */
     public readonly id: string;
 
     public modified?: this;
 
+    /**
+     * Number of rows in the table.
+     *
+     * @name Highcharts.DataTableCore#rowCount
+     * @type {number}
+     */
     public rowCount: number;
 
     protected versionTag: string;
@@ -155,6 +166,8 @@ class DataTableCore {
      * Delete rows. Simplified version of the full
      * `DataTable.deleteRows` method.
      *
+     * @function Highcharts.DataTableCore#deleteRows
+     *
      * @param {number} rowIndex
      * The start row index
      *
@@ -184,11 +197,13 @@ class DataTableCore {
     }
 
     /**
-     * Fetches the given column by the canonical column name. Simplified version
+     * Fetches the given column by the canonical column ID. Simplified version
      * of the full `DataTable.getRow` method, always returning by reference.
      *
+     * @function Highcharts.DataTableCore#setColumn
+     *
      * @param {string} columnId
-     * Name of the column to get.
+     * ID of the column to get.
      *
      * @return {Highcharts.DataTableColumn|undefined}
      * A copy of the column, or `undefined` if not found.
@@ -204,6 +219,8 @@ class DataTableCore {
     /**
      * Retrieves all or the given columns. Simplified version of the full
      * `DataTable.getColumns` method, always returning by reference.
+     *
+     * @function Highcharts.DataTableCore#getColumns
      *
      * @param {Array<string>} [columnIds]
      * Column ids to retrieve.
@@ -228,6 +245,8 @@ class DataTableCore {
 
     /**
      * Retrieves the row at a given index.
+     *
+     * @function Highcharts.DataTableCore#getRowObject
      *
      * @param {number} rowIndex
      * Row index to retrieve. First row has index 0.
@@ -284,6 +303,8 @@ class DataTableCore {
     /**
      * Sets cell values for a column. Will insert a new column, if not found.
      *
+     * @function Highcharts.DataTableCore#setColumn
+     *
      * @param {string} columnId
      * Column name to set.
      *
@@ -312,6 +333,8 @@ class DataTableCore {
      * Sets cell values for multiple columns. Will insert new columns, if not
      * found. Simplified version of the full `DataTableCore.setColumns`, limited
      * to full replacement of the columns (undefined `rowIndex`).
+     *
+     * @function Highcharts.DataTableCore#setColumns
      *
      * @param {Highcharts.DataTableColumnCollection} columns
      * Columns as a collection, where the keys are the column names.
@@ -348,6 +371,8 @@ class DataTableCore {
      * Sets cell values of a row. Will insert a new row if no index was
      * provided, or if the index is higher than the total number of table rows.
      * A simplified version of the full `DateTable.setRow`, limited to objects.
+     *
+     * @function Highcharts.DataTableCore#setRow
      *
      * @param {Record<string, number|string|undefined>} row
      * Cell values to set.

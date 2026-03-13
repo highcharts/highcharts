@@ -101,6 +101,27 @@ const defaultOptions: DefaultOptions = {
     colors: Palettes.colors,
 
     /**
+     * Options for one or many chart-level data tables. The `dataTable` option,
+     * or its array members, can be either configuration objects or instances of
+     * the `DataTableCore` class. If a `DataTableCore` instance is passed, it
+     * will be used directly. If a configuration object is passed, a new
+     * `DataTableCore` instance will be created based on the provided
+     * configuration.
+     *
+     * The data table is mapped to the series data points based on the
+     * [dataMapping](#dataMapping) option.
+     *
+     * @sample {highcharts} highcharts/datatable/chart-datatable-single/
+     *         Chart with a data table
+     * @sample {highcharts} highcharts/datatable/chart-datatable-multiple/
+     *         Chart with two data tables
+     *
+     * @type {Highcharts.DataTableCore|Highcharts.DataTableOptionsObject|Array<Highcharts.DataTableCore|Highcharts.DataTableOptionsObject>}
+     * @since     next
+     * @apioption dataTable
+     */
+
+    /**
      * Styled mode only. Configuration object for adding SVG definitions for
      * reusable elements. See [gradients, shadows and
      * patterns](https://www.highcharts.com/docs/chart-design-and-style/gradients-shadows-and-patterns)

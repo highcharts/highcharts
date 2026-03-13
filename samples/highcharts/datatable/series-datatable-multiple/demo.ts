@@ -20,14 +20,15 @@ Highcharts.chart('container', {
     series: [{
         name: 'Revenue',
         dataTable: [dataTable1, dataTable2],
-        columnAssignment: [{
-            dataTable: 0,
-            key: 'x',
-            columnName: 'year'
-        }, {
-            dataTable: 1,
-            key: 'y',
-            columnName: 'revenue'
-        }]
+        dataMapping: {
+            x: {
+                dataTable: 0,
+                column: 'year'
+            },
+            y: {
+                dataTable: 1,
+                column: 'revenue'
+            }
+        }
     }]
 });

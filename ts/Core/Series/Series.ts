@@ -2010,41 +2010,35 @@ class Series {
                     chart.dataTable
             ),
             dataColumnKeys = this.getDataColumnKeys(),
-            columnAssignment = options.columnAssignment,
+            mapping = options.dataMapping,
             keys = dataColumnKeys.slice();
 
         // Extend the data column keys with the keys from the column assignment
-        if (columnAssignment) {
-            columnAssignment.forEach((assignment): void => {
-                pushUnique(keys, assignment.key);
+        if (mapping) {
+            Object.keys(mapping).forEach((key): void => {
+                pushUnique(keys, key);
             });
             this.dataColumnKeys = keys;
         }
 
-        dataTable.forEach((dtItem, index): void => {
+        dataTable.forEach((dtItem, dtIndex): void => {
 
-            // Resolve the columnAssignment
+            // Resolve the data mapping
             const columns = keys
-                .reduce((acc, key): ColumnCollection => {
-                    const assignment = columnAssignment?.find(
-                            (assignment): boolean => (
-                                (assignment.dataTable ?? index) === index &&
-                                assignment.key === key
-                            )
-                        ),
-                        column = dtItem?.columns?.[
-                            assignment?.columnName || key
-                        ];
+                .reduce((columns, key): ColumnCollection => {
+                    const source = mapping?.[key],
+                        column = (source?.dataTable || 0) === dtIndex &&
+                            dtItem?.columns?.[source?.column || key];
 
                     if (column) {
-                        acc[key] = column;
+                        columns[key] = column;
                     }
-                    return acc;
+                    return columns;
                 }, {} as ColumnCollection);
 
             // If a DataTable is passed and no column assignment is set, use it
             // directly
-            if (columnAssignment || dtItem) {
+            if (mapping || dtItem) {
                 // Set the columns
                 table.setColumns(columns);
             }

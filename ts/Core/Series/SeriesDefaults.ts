@@ -359,6 +359,26 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      */
 
     /**
+     * The mapping between the data table and the series data points. This is
+     * used in conjunction with the `dataTable` option (on chart or series
+     * level) to map columns from the data table to the properties of the data
+     * points. The keys of the `dataMapping` object correspond to the properties
+     * of the data points (e.g. `x`, `y`, `name`), and the values are objects
+     * that specify which column from which data table to use for that property.
+     *
+     * The keys can also be nested paths, for example `dataLabel.format`, to map
+     * to nested properties of the data points.
+     *
+     * @sample {highcharts} highcharts/datatable/series-datatable-multiple/
+     *        Series with two data tables
+     * @sample {highcharts} highcharts/datatable/chart-datatable-multiple/
+     *        Chart with two data tables
+     *
+     * @since     next
+     * @apioption plotOptions.series.dataMapping
+     */
+
+    /**
      * Options for the series data sorting.
      *
      * @type      {Highcharts.DataSortingOptionsObject}

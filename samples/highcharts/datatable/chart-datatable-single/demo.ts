@@ -7,11 +7,14 @@ const dataTable = new Highcharts.DataTableCore({
 });
 
 const previewTable = () => {
-    let html = '<tr>' + Object.keys(dataTable.columns).reduce((html, key) => {
-        html += `<th>${key}</th>`;
-        return html;
-    }, '') + '</tr>';
-    html += new Array(dataTable.rowCount)
+    const columns = dataTable.getColumns(),
+        keys = Object.keys(columns);
+    let html = '<tr>' + keys
+        .reduce((html, key) => {
+            html += `<th>${key}</th>`;
+            return html;
+        }, '') + '</tr>';
+    html += new Array((columns[keys[0]]).length)
         .fill(1)
         .reduce((html, _, rowNo) => {
             const row = dataTable.getRowObject(rowNo);
@@ -37,22 +40,24 @@ Highcharts.chart('container', {
     },
     series: [{
         name: 'Cost',
-        columnAssignment: [{
-            key: 'x',
-            columnName: 'year'
-        }, {
-            key: 'y',
-            columnName: 'cost'
-        }]
+        dataMapping: {
+            x: {
+                column: 'year'
+            },
+            y: {
+                column: 'cost'
+            }
+        }
     }, {
         name: 'Revenue',
-        columnAssignment: [{
-            key: 'x',
-            columnName: 'year'
-        }, {
-            key: 'y',
-            columnName: 'revenue'
-        }]
+        dataMapping: {
+            x: {
+                column: 'year'
+            },
+            y: {
+                column: 'revenue'
+            }
+        }
     }]
 });
 
@@ -64,7 +69,7 @@ document.getElementById('addrow').addEventListener('click', e => {
         revenue: 20
     });
     previewTable();
-    e.target.disabled = true;
+    (e.target as HTMLButtonElement).disabled = true;
 });
 
 document.getElementById('updaterow').addEventListener('click', () => {
@@ -77,14 +82,14 @@ document.getElementById('updaterow').addEventListener('click', () => {
 
 document.getElementById('deleterow').addEventListener('click', e => {
     dataTable.deleteRows(0);
-    e.target.disabled = true;
+    (e.target as HTMLButtonElement).disabled = true;
     previewTable();
 });
 
 document.getElementById('setcolumn').addEventListener('click', () => {
     dataTable.setColumn(
         'revenue',
-        dataTable.columns.revenue.map(() => Math.round(10 * Math.random()))
+        dataTable.getColumns().revenue.map(() => Math.round(10 * Math.random()))
     );
     previewTable();
 });

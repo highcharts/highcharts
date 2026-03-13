@@ -316,9 +316,22 @@ export interface Options {
      */
     colors?: Array<ColorString>;
     /**
-     * Data table configuration or an instance of a DataTable.
+     * Options for one or many chart-level data tables. The `dataTable` option,
+     * or its array members, can be either configuration objects or instances of
+     * the `DataTableCore` class. If a `DataTableCore` instance is passed, it
+     * will be used directly. If a configuration object is passed, a new
+     * `DataTableCore` instance will be created based on the provided
+     * configuration.
+     *
+     * The data table is mapped to the series data points based on the
+     * [dataMapping](#dataMapping) option.
+     *
+     * @sample {highcharts} highcharts/datatable/chart-datatable-single/
+     *         Chart with a data table
+     * @sample {highcharts} highcharts/datatable/chart-datatable-multiple/
+     *         Chart with two data tables
      */
-    dataTable?: DataTableOptions|DataTableCore;
+    dataTable?: DataTableOptions|DataTableCore|Array<DataTableOptions|DataTableCore>;
     /**
      * An object containing language-related strings and settings. A typical
      * setup uses `Highcharts.setOptions` to make the options apply to all
