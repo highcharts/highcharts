@@ -1,5 +1,5 @@
 ---
- name: Single data table on chart
+ name: Shared data table
  authors:
    - Torstein Hønsi
  js_wrap: b
