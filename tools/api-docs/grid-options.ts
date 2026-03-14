@@ -146,7 +146,7 @@ function addTreeNode(
         return;
     }
 
-    _fullname = getGridOptionName(_fullname);
+    _fullname = getGridTreeNodeName(info, _fullname);
 
     if (_fullname.startsWith('_')) {
         return;
@@ -1428,6 +1428,27 @@ function autoCompleteGridInfos(): void {
                 }
             }
         }
+    }
+}
+
+
+/**
+ * Convert a code entity name to the grid option tree node name.
+ *
+ * Real option keys declared as properties/variables must keep their source
+ * name verbatim, while interface/type-style names still use the Grid
+ * `...Options` normalization.
+ */
+function getGridTreeNodeName(
+    info: TSLib.CodeInfo,
+    name: string
+): string {
+    switch (info.kind) {
+        case 'Property':
+        case 'Variable':
+            return name;
+        default:
+            return getGridOptionName(name);
     }
 }
 
