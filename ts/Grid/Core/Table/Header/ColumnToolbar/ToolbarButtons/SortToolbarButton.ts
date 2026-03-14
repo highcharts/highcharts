@@ -51,17 +51,6 @@ class SortToolbarButton extends ToolbarButton {
 
     private sortPriorityIndicator?: HTMLElement;
 
-    private getColumnLabel(): string {
-        const column = this.toolbar?.column;
-        const label = (
-            column?.header?.headerContent?.textContent ||
-            column?.header?.value ||
-            column?.id ||
-            ''
-        ).trim();
-        return label || column?.id || '';
-    }
-
     private updateA11yLabel(
         order: ('asc' | 'desc' | null),
         priority?: number
@@ -76,11 +65,7 @@ class SortToolbarButton extends ToolbarButton {
         const sortingLang = lang?.accessibility?.sorting;
         const announcements = sortingLang?.announcements;
 
-        const columnLabel = this.getColumnLabel();
         const labelParts: string[] = [];
-        if (columnLabel) {
-            labelParts.push(columnLabel);
-        }
 
         let stateLabel: string | undefined;
         if (order === 'asc') {

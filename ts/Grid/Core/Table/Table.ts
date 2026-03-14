@@ -25,6 +25,7 @@
 import type TableRow from './Body/TableRow';
 import type DataTable from '../../../Data/DataTable';
 import type { RowId } from '../Data/DataProvider';
+import type HeaderCell from './Header/HeaderCell';
 
 import GridUtils from '../GridUtils.js';
 import ColumnResizing from './ColumnResizing/ColumnResizing.js';
@@ -176,6 +177,10 @@ class Table {
             this.theadElement = makeHTMLElement('thead', {}, tableElement);
         }
         this.tbodyElement = makeHTMLElement('tbody', {}, tableElement);
+        // Keep the scrollable tbody out of sequential tab order. Some
+        // browsers tab to scroll containers automatically, which would create
+        // an extra in-grid stop in virtualized tables.
+        this.tbodyElement.setAttribute('tabindex', '-1');
 
         this.rowsVirtualizer = new RowsVirtualizer(this);
 
@@ -258,6 +263,7 @@ class Table {
             if (this.grid.options?.rendering?.header?.enabled) {
                 this.header = new TableHeader(this);
                 await this.header.render();
+                this.setInitialFocusAnchorCell();
             }
 
             // TODO(footer): Load & render footer
@@ -432,6 +438,18 @@ class Table {
         this.rows[this.rowsVirtualizer.rowCursor - this.rows[0].index]
             ?.cells[0]?.htmlElement.focus();
     };
+
+    /**
+     * Sets the default tab entry point for the Grid.
+     */
+    private setInitialFocusAnchorCell(): void {
+        const headerCell = this.header?.rows[0]?.cells[0] as
+            (HeaderCell | undefined);
+
+        if (headerCell) {
+            this.setFocusAnchorCell(headerCell);
+        }
+    }
 
     /**
      * Handles the resize event.

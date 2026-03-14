@@ -711,7 +711,10 @@ class RowsVirtualizer {
 
             // Set the focus anchor cell
             if (
-                (!vp.focusCursor || !vp.focusAnchorCell?.row.rendered) &&
+                (
+                    !vp.focusAnchorCell ||
+                    !vp.focusAnchorCell.row.rendered
+                ) &&
                 rows.length > 0
             ) {
                 const rowIndex = rowCursor - rows[0].index;

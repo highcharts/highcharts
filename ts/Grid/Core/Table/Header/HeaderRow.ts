@@ -178,6 +178,11 @@ class HeaderRow extends Row {
         }
 
         this.setLastCellClass();
+        this.rendered = true;
+
+        if (vp.virtualRows) {
+            this.reflow();
+        }
     }
 
     public override reflow(): void {
