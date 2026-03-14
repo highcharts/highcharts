@@ -1,5 +1,4 @@
-// SPDX-License-Identifier: LicenseRef-Highcharts
-/**
+/* *
  *
  *  (c) 2010-2026 Highsoft AS
  *  Author: Kamil Kulig
@@ -42,7 +41,7 @@ import { extend, isArray, merge } from '../../../Shared/Utilities.js';
 /**
  * Linear regression series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.linearregression
  *
@@ -102,7 +101,7 @@ class LinearRegressionIndicator extends SMAIndicator {
                  *         xAxisUnit set to 1 minute
                  *
                  * @example
-                 * // In Liniear Regression Slope Indicator series `xAxisUnit`is
+                 * // In Linear Regression Slope Indicator series `xAxisUnit` is
                  * // `86400000` (1 day) and period is `3`. There're 3 points in
                  * // the base series:
                  *
@@ -116,7 +115,7 @@ class LinearRegressionIndicator extends SMAIndicator {
                  * // has a `y` value of `2` (slope of the regression line). If
                  * // we change the `xAxisUnit` to `1` (ms) the value of the
                  * // indicator's point will be `2.3148148148148148e-8` which is
-                 * // harder to interpert for a human.
+                 * // harder to interpret for a human.
                  *
                  * @type    {null|number}
                  * @product highstock
@@ -148,7 +147,7 @@ class LinearRegressionIndicator extends SMAIndicator {
     /**
      * Return the slope and intercept of a straight line function.
      *
-     * @private
+     * @internal
      *
      * @param {Array<number>} xData
      * List of all x coordinates in a period.
@@ -212,7 +211,7 @@ class LinearRegressionIndicator extends SMAIndicator {
     /**
      * Return the y value on a straight line.
      *
-     * @private
+     * @internal
      *
      * @param {Highcharts.RegressionLineParametersObject} lineParameters
      * Object that contains the slope and the intercept of a straight line
@@ -235,7 +234,7 @@ class LinearRegressionIndicator extends SMAIndicator {
      * Transform the coordinate system so that x values start at 0 and
      * apply xAxisUnit.
      *
-     * @private
+     * @internal
      *
      * @param {Array<number>} xData
      * List of all x coordinates in a period
@@ -259,7 +258,7 @@ class LinearRegressionIndicator extends SMAIndicator {
 
     /**
      * Find the closest distance between points in the base series.
-     * @private
+     * @internal
      * @param {Array<number>} xData list of all x coordinates in the base series
      * @return {number} - closest distance between points in the base series
      */
@@ -364,6 +363,7 @@ class LinearRegressionIndicator extends SMAIndicator {
  *
  * */
 
+/** @internal */
 interface LinearRegressionIndicator {
     pointClass: typeof LinearRegressionPoint;
     nameBase: string;
@@ -380,6 +380,7 @@ extend(LinearRegressionIndicator.prototype, {
  *
  * */
 
+/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         linearregression: typeof LinearRegressionIndicator;
@@ -404,6 +405,7 @@ SeriesRegistry.registerSeriesType(
  *
  * */
 
+/** @internal */
 export default LinearRegressionIndicator;
 
 /* *

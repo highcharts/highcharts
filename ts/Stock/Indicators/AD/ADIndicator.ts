@@ -38,7 +38,7 @@ import { error } from '../../../Core/Utilities.js';
 /**
  * The AD series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.ad
  *
@@ -56,7 +56,7 @@ class ADIndicator extends SMAIndicator {
      * Accumulation Distribution (AD). This series requires `linkedTo` option to
      * be set.
      *
-     * @sample stock/indicators/accumulation-distribution
+     * @sample {highstock} stock/indicators/accumulation-distribution
      *         Accumulation/Distribution indicator
      *
      * @extends      plotOptions.sma
@@ -196,6 +196,7 @@ class ADIndicator extends SMAIndicator {
  *
  * */
 
+/** @internal */
 interface ADIndicator {
     pointClass: typeof ADPoint;
     nameComponents: Array<string>;
@@ -212,6 +213,7 @@ extend(ADIndicator.prototype, {
  *
  * */
 
+/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         ad: typeof ADIndicator;
@@ -225,6 +227,7 @@ SeriesRegistry.registerSeriesType('ad', ADIndicator);
  *
  * */
 
+/** @internal */
 export default ADIndicator;
 
 /* *

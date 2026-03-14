@@ -40,7 +40,7 @@ import { error } from '../../../Core/Utilities.js';
 /**
  * The OBV series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.obv
  *
@@ -60,11 +60,11 @@ class OBVIndicator extends SMAIndicator {
      * the `stock/indicators/indicators.js` file. Through the `volumeSeriesID`
      * there also should be linked the volume series.
      *
-     * @sample stock/indicators/obv
+     * @sample {highstock} stock/indicators/obv
      *         OBV indicator
      *
      * @extends      plotOptions.sma
-     * @since 9.1.0
+     * @since        9.1.0
      * @product      highstock
      * @requires     stock/indicators/indicators
      * @requires     stock/indicators/obv
@@ -192,6 +192,7 @@ class OBVIndicator extends SMAIndicator {
  *
  * */
 
+/** @internal */
 interface OBVIndicator {
     nameComponents: Array<string>|undefined;
     pointClass: typeof OBVPoint;
@@ -207,6 +208,7 @@ extend(OBVIndicator.prototype, {
  *
  * */
 
+/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         obv: typeof OBVIndicator;
@@ -221,6 +223,7 @@ SeriesRegistry.registerSeriesType('obv', OBVIndicator);
  *
  * */
 
+/** @internal */
 export default OBVIndicator;
 
 /* *
@@ -234,7 +237,7 @@ export default OBVIndicator;
  * specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.obv
- * @since 9.1.0
+ * @since     9.1.0
  * @product   highstock
  * @excluding dataParser, dataURL
  * @requires  stock/indicators/indicators
