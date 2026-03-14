@@ -44,6 +44,63 @@ declare module './Axis/TickPositionsArray'{
  * */
 class Time extends TimeBase {
 
+    public getBoundaryTicks(
+        tickPositions: TickPositionsArray,
+        unitRange: number
+    ): Record<number, Time.TimeUnit> {
+        const boundaryTicks: Record<number, Time.TimeUnit> = {};
+        // Handle boundary ticks. Use a reasonable dropout threshold
+        // to prevent looping over dense data grouping (#6156).
+        if (tickPositions.length < 10000) {
+            tickPositions.forEach((t: number, i: number): void => {
+                const [
+                    , // Unused 'year' var
+                    month,
+                    dayOfMonth,
+                    hours,
+                    minutes,
+                    seconds,
+                    milliseconds
+                ] = this.toParts(t);
+
+                const isMidnight =
+                    !hours && !minutes && !seconds && !milliseconds;
+
+                if (unitRange < timeUnits.hour && minutes === 0) {
+                    boundaryTicks[t] = 'hour';
+                }
+                if (unitRange < timeUnits.day && isMidnight) {
+                    boundaryTicks[t] = 'day';
+                }
+                if (
+                    unitRange < timeUnits.month &&
+                    dayOfMonth === 1 &&
+                    isMidnight
+                ) {
+                    boundaryTicks[t] = 'month';
+                }
+                if (
+                    unitRange < timeUnits.year &&
+                    month === 0 &&
+                    dayOfMonth === 1 &&
+                    isMidnight
+                ) {
+                    boundaryTicks[t] = 'year';
+                }
+                // Mark first visible tick as boundary, if timeUnit is month or
+                // hour.
+                if (unitRange === timeUnits.month && i === 0) {
+                    boundaryTicks[t] = 'year';
+                }
+                if (unitRange === timeUnits.hour && i === 0) {
+                    boundaryTicks[t] = 'day';
+                }
+            });
+        }
+
+        return boundaryTicks;
+    }
+
     /**
      * Return an array with time positions distributed on round time values
      * right and right after min and max. Used in datetime axes as well as for
@@ -73,8 +130,9 @@ class Time extends TimeBase {
     ): TickPositionsArray {
         const time = this,
             tickPositions = [] as TickPositionsArray,
-            higherRanks = {} as Record<string, string>,
-            { count = 1, unitRange } = normalizedInterval;
+            { count = 1, unitRange } = normalizedInterval,
+            visibleMin = min,
+            visibleMax = max;
 
         let [
                 year,
@@ -221,7 +279,7 @@ class Time extends TimeBase {
                     unitRange === timeUnits.hour &&
                     count > 1
                 ) {
-                    // Make sure higher ranks are preserved across DST (#6797,
+                    // Make sure boundary ticks are preserved across DST (#6797,
                     // #7621)
                     t = time.makeTime(
                         year,
@@ -240,32 +298,22 @@ class Time extends TimeBase {
 
             // Push the last time
             tickPositions.push(t);
-
-
-            // Handle higher ranks. Mark new days if the time is on midnight
-            // (#950, #1649, #1760, #3349). Use a reasonable dropout threshold
-            // to prevent looping over dense data grouping (#6156).
-            if (unitRange <= timeUnits.hour && tickPositions.length < 10000) {
-                tickPositions.forEach((t: number): void => {
-                    if (
-                        // Speed optimization, no need to run dateFormat unless
-                        // we're on a full or half hour
-                        t % 1800000 === 0 &&
-                        // Check for local or global midnight
-                        time.dateFormat('%H%M%S%L', t) === '000000000'
-                    ) {
-                        higherRanks[t] = 'day';
-                    }
-                });
-            }
         }
 
 
-        // Record information on the chosen unit - for dynamic label formatter
+        // Record information on the chosen unit - for dynamic label formatter.
+        // Only consider visible ticks for boundary classification.
+        let visibleTicks = tickPositions;
+        if (defined(visibleMin) && defined(visibleMax)) {
+            visibleTicks = tickPositions.filter((t): boolean =>
+                (t >= visibleMin) && (t <= visibleMax)
+            );
+        }
+
         tickPositions.info = extend<Time.TimeNormalizedObject|TimeTicksInfoObject>(
             normalizedInterval,
             {
-                higherRanks,
+                boundaryTicks: this.getBoundaryTicks(visibleTicks, unitRange),
                 totalRange: unitRange * count
             }
         ) as TimeTicksInfoObject;
@@ -296,13 +344,13 @@ namespace Time {
         from?: DateTimeFormat;
         list?: DateTimeFormat[];
         main: DateTimeFormat;
+        boundary?: DateTimeFormat;
         range?: boolean;
         to?: DateTimeFormat;
     }
 
     export type DateTimeLabelFormatOption = (
         DateTimeFormat|
-        Array<string>|
         Time.DateTimeLabelFormatObject
     );
     export type DateTimeLabelFormatsOption = (
