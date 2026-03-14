@@ -23,7 +23,13 @@ import EditGlobals from '../EditMode/EditGlobals.js';
 import GUIElement from '../Layout/GUIElement.js';
 
 import EditMode from '../EditMode/EditMode';
-import { addEvent, createElement, fireEvent, merge, removeEvent } from '../../Shared/Utilities.js';
+import {
+    addEvent,
+    createElement,
+    fireEvent,
+    merge,
+    removeEvent
+} from '../../Shared/Utilities.js';
 
 /**
  * Class providing a resizing functionality.

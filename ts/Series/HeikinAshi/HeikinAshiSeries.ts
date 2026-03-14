@@ -33,6 +33,18 @@ import { addEvent, merge, pushUnique } from '../../Shared/Utilities.js';
 
 /* *
  *
+ *  Declarations
+ *
+ * */
+type OHLCObject = {
+    open: number;
+    high: number;
+    low: number;
+    close: number;
+};
+
+/* *
+ *
  *  Functions
  *
  * */
@@ -188,13 +200,13 @@ class HeikinAshiSeries extends CandlestickSeries {
 
             // Modify the first point.
             this.modifyFirstPointValue(
-                table.getRow(0, this.pointArrayMap) as Array<number>
+                table.getRowObject(0, this.pointArrayMap) as OHLCObject
             );
 
             // Modify other points.
             for (let i = 1; i < dataLength; i++) {
                 this.modifyDataPoint(
-                    table.getRow(i, this.pointArrayMap) as Array<number>,
+                    table.getRowObject(i, this.pointArrayMap) as OHLCObject,
                     heikiashiData[i - 1]
                 );
             }
@@ -214,42 +226,42 @@ class HeikinAshiSeries extends CandlestickSeries {
     /**
      * Calculate and modify the first data point value.
      * @private
-     * @param {Array<(number)>} dataPoint
+     * @param {Object} dataPoint
      *        Current data point.
      */
-    public modifyFirstPointValue(dataPoint: Array<(number)>): void {
-        const open = (
-                dataPoint[0] +
-                dataPoint[1] +
-                dataPoint[2] +
-                dataPoint[3]
+    public modifyFirstPointValue(dataPoint: OHLCObject): void {
+        const avg = (
+                dataPoint.open +
+                dataPoint.high +
+                dataPoint.low +
+                dataPoint.close
             ) / 4,
-            close = (dataPoint[0] + dataPoint[3]) / 2;
+            close = (dataPoint.open + dataPoint.close) / 2;
 
-        this.heikiashiData.push([open, dataPoint[1], dataPoint[2], close]);
+        this.heikiashiData.push([avg, dataPoint.high, dataPoint.low, close]);
     }
 
     /**
      * Calculate and modify the data point's value.
      * @private
-     * @param {Array<(number)>} dataPoint
+     * @param {Object} dataPoint
      *        Current data point.
      * @param {Array<(number)>} previousDataPoint
      *        Previous data point.
      */
     public modifyDataPoint(
-        dataPoint: Array<(number)>,
+        dataPoint: OHLCObject,
         previousDataPoint: Array<(number)>
     ): void {
         const newOpen = (previousDataPoint[0] + previousDataPoint[3]) / 2,
             newClose = (
-                dataPoint[0] +
-                dataPoint[1] +
-                dataPoint[2] +
-                dataPoint[3]
+                dataPoint.open +
+                dataPoint.high +
+                dataPoint.low +
+                dataPoint.close
             ) / 4,
-            newHigh = Math.max(dataPoint[1], newClose, newOpen),
-            newLow = Math.min(dataPoint[2], newClose, newOpen);
+            newHigh = Math.max(dataPoint.high, newClose, newOpen),
+            newLow = Math.min(dataPoint.low, newClose, newOpen);
 
         // Add new points to the array in order to properly calculate extremes.
         this.heikiashiData.push([newOpen, newHigh, newLow, newClose]);

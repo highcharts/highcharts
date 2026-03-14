@@ -63,6 +63,8 @@ import D from '../Defaults.js';
 const {
     defaultOptions
 } = D;
+import DataTableCore from '../../Data/DataTableCore.js';
+import { DataTableOptions } from '../../Data/DataTableOptions';
 import Templating from '../Templating.js';
 const { numberFormat } = Templating;
 import Foundation from '../Foundation.js';
@@ -472,6 +474,11 @@ class Chart {
      */
     public caption?: SVGElement;
 
+    /**
+     * The array of data table instances associated with the chart.
+     */
+    public dataTable!: Array<DataTableCore>;
+
     /** @internal */
     public eventOptions!: Record<string, EventCallback<Series, Event>>;
 
@@ -608,6 +615,9 @@ class Chart {
 
     /** @internal */
     public pointer?: Pointer;
+
+    /** @internal */
+    public redrawTimeout?: number;
 
     /** @internal */
     public reflowTimeout?: number;
@@ -924,6 +934,9 @@ class Chart {
              */
             chart.index = charts.length; // Add the chart to the global lookup
 
+            // The chart.dataTable option
+            chart.dataTable = chart.getDataTable(options);
+
             charts.push(chart);
             H.chartCount++;
 
@@ -959,6 +972,22 @@ class Chart {
 
             chart.firstRender();
         });
+    }
+
+    public getDataTable(options: {
+        dataTable?: (
+            DataTableCore|
+            DataTableOptions|
+            Array<DataTableCore|DataTableOptions>
+        )
+    }): Array<DataTableCore> {
+        return (
+            options.dataTable ? splat(options.dataTable) : []
+        ).map((dataTableOptions): DataTableCore => (
+            (dataTableOptions as DataTableCore).isDataTable ?
+                dataTableOptions as DataTableCore :
+                new DataTableCore(dataTableOptions)
+        ));
     }
 
     /**
@@ -999,7 +1028,7 @@ class Chart {
         this.getSeriesOrderByLinks().forEach(function (series): void {
             // We need to set data for series with sorting after series init
             if (!series.points && !series.data && series.enabledDataSorting) {
-                series.setData(series.options.data as any, false);
+                series.setData(series.options.data, false);
             }
         });
     }
@@ -3388,7 +3417,7 @@ class Chart {
 
                     if (series.enabledDataSorting) {
                         // We need to call `setData` after `linkSeries`
-                        series.setData(options.data as any, false);
+                        series.setData(options.data, false);
                     }
 
                     fireEvent(chart, 'afterAddSeries', { series: series });

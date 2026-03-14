@@ -843,7 +843,7 @@ describe('DataTable', () => {
             await table.setModifier(modifier);
 
             table.getModified().deleteRowIndexReferences();
-            
+
             // Access private properties via any cast for testing internal state
             const modified = table.getModified() as any;
             deepStrictEqual(
@@ -884,7 +884,7 @@ describe('DataTable', () => {
 
             deepStrictEqual(
                 table.getColumn('Name'),
-                [null, 'John', 'Jane', 'Alice'],
+                [void 0, 'John', 'Jane', 'Alice'],
                 'If no value is provided, the new row is filled with `null`.'
             );
         });

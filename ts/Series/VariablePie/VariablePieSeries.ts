@@ -110,7 +110,7 @@ class VariablePieSeries extends PieSeries {
             plotHeight = chart.plotHeight,
             seriesOptions = series.options,
             slicingRoom = 2 * (seriesOptions.slicedOffset || 0),
-            zData = series.getColumn('z'),
+            zData = [...this.getColumn('z', false, true)],
             smallestSize = Math.min(plotWidth, plotHeight) - slicingRoom,
             // Min and max size of pie slice:
             extremes: Record<string, number> = {},
@@ -179,7 +179,7 @@ class VariablePieSeries extends PieSeries {
         minSize: number,
         maxSize: number
     ): void {
-        const zData = this.getColumn('z'),
+        const zData: Array<number> = [...this.getColumn('z', false, true)],
             radii: Array<number> = [],
             options = this.options,
             sizeByArea = options.sizeBy !== 'radius',

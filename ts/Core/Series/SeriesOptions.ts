@@ -19,6 +19,8 @@ import type AnimationOptions from '../Animation/AnimationOptions';
 import type ColorType from '../Color/ColorType';
 import type { CursorValue } from '../Renderer/CSSObject';
 import type DashStyleValue from '../Renderer/DashStyleValue';
+import type DataTableCore from '../../Data/DataTableCore';
+import type DataTableOptions from '../../Data/DataTableOptions';
 import type { DeepPartial } from '../../Shared/Types';
 import type { EventCallback } from '../Callback';
 import type Point from './Point';
@@ -45,6 +47,11 @@ import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
  *  Declarations
  *
  * */
+
+export interface DataMappingItem {
+    column: string;
+    dataTable: number;
+}
 
 export type NonPlotOptions = (
     'data'|'id'|'index'|'legendIndex'|'mapData'|'name'|'stack'|'treemap'|'type'|
@@ -463,22 +470,6 @@ export interface SeriesOptions {
      */
     colorIndex?: number;
     colors?: Array<ColorType>;
-
-    /**
-     * Whether to connect a graph line across null points, or render a gap
-     * between the two points on either side of the null.
-     *
-     * In stacked area chart, if `connectNulls` is set to true,
-     * null points are interpreted as 0.
-     *
-     * @sample {highcharts} highcharts/plotoptions/series-connectnulls-false/
-     *         False by default
-     * @sample {highcharts} highcharts/plotoptions/series-connectnulls-true/
-     *         True
-     *
-     * @default false
-     * @product highcharts highstock
-     */
     connectNulls?: boolean;
 
     /**
@@ -574,6 +565,24 @@ export interface SeriesOptions {
     data?: Array<(PointOptions|PointShortOptions)>;
 
     /**
+     * The mapping between the data table and the series data points. This is
+     * used in conjunction with the `dataTable` option (on chart or series
+     * level) to map columns from the data table to the properties of the data
+     * points. The keys of the `dataMapping` object correspond to the properties
+     * of the data points (e.g. `x`, `y`, `name`), and the values are objects
+     * that specify which column from which data table to use for that property.
+     *
+     * The keys can also be nested paths, for example `dataLabel.format`, to map
+     * to nested properties of the data points.
+     *
+     * @sample {highcharts} highcharts/datatable/series-datatable-multiple/
+     *        Series with two data tables
+     * @sample {highcharts} highcharts/datatable/chart-datatable-multiple/
+     *        Chart with two data tables
+     */
+    dataMapping?: Record<string, DataMappingItem>;
+
+    /**
      * Options for the series data sorting.
      *
      * @since   8.0.0
@@ -582,17 +591,24 @@ export interface SeriesOptions {
     dataSorting?: SeriesDataSortingOptions;
 
     /**
-     * Enable or disable the mouse tracking for a specific series. This
-     * includes point tooltips and click events on graphs and points. For
-     * large datasets it improves performance.
+     * Options for a specific series-level data table. The `dataTable` option
+     * can be either a configuration object or an instance of the
+     * `DataTableCore` class. If a `DataTableCore` instance is passed, it will
+     * be used directly. If a configuration object is passed, a new
+     * `DataTableCore` instance will be created based on the provided
+     * configuration.
      *
-     * @sample {highcharts} highcharts/plotoptions/series-enablemousetracking-false/
-     *         No mouse tracking
-     * @sample {highmaps} maps/plotoptions/series-enablemousetracking-false/
-     *         No mouse tracking
+     * The data table is mapped to the series data points based on the
+     * [dataMapping](#dataMapping) option.
      *
-     * @default true
+     * @sample {highcharts} highcharts/datatable/series-datatable/
+     *        Series with a data table
+     * @sample {highcharts} highcharts/datatable/series-datatable-multiple/
+     *        Series with two data tables
+     *
+     * @since next
      */
+    dataTable?: DataTableCore|DataTableOptions;
     enableMouseTracking?: boolean;
 
     /**

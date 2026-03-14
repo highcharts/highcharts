@@ -38,8 +38,17 @@ interface HollowcandleInfo {
     trendDirection: 'down'|'up';
 }
 
-// Data array type (o, h, l, c) used locally
-type DataArr = Array<number|null|undefined>;
+/* *
+ *
+ *  Declarations
+ *
+ * */
+type OHLCObject = {
+    open: number | null | undefined;
+    high: number | null | undefined;
+    low: number | null | undefined;
+    close: number | null | undefined;
+};
 
 /* *
  *
@@ -175,20 +184,20 @@ class HollowCandlestickSeries extends CandlestickSeries {
 
         hollowCandlestickData.length = 0;
 
-        let previousDataArr: DataArr|undefined;
+        let previousDataPoint: OHLCObject|undefined;
         for (let i = 0; i < dataLength; i++) {
-            const dataArr = table.getRow(
+            const dataPoint = table.getRowObject(
                 i,
                 this.pointArrayMap
-            ) as Array<number>;
+            ) as OHLCObject;
 
             hollowCandlestickData.push(series.isBullish(
-                dataArr,
+                dataPoint,
                 // Determine the first point is bullish based on
                 // its open and close values.(#21683)
-                i ? previousDataArr : dataArr
+                i ? previousDataPoint : dataPoint
             ));
-            previousDataArr = dataArr;
+            previousDataPoint = dataPoint;
         }
     }
 
@@ -253,22 +262,22 @@ class HollowCandlestickSeries extends CandlestickSeries {
      *
      * @function Highcharts.seriesTypes.hollowcandlestick#isBullish
      *
-     * @param {Array<(number)>} dataPoint
+     * @param {Object} dataPoint
      * Current point which we calculate.
      *
-     * @param {Array<(number)>} previousDataPoint
+     * @param {Object} previousDataPoint
      * Previous point.
      */
     public isBullish(
-        dataPoint: DataArr,
-        previousDataPoint?: DataArr
+        dataPoint: OHLCObject,
+        previousDataPoint?: OHLCObject
     ): HollowcandleInfo {
         return {
             // Compare points' open and close value.
-            isBullish: (dataPoint[0] || 0) <= (dataPoint[3] || 0),
+            isBullish: (dataPoint.open || 0) <= (dataPoint.close || 0),
             // For bearish candles.
             trendDirection:
-                (dataPoint[3] || 0) < (previousDataPoint?.[3] || 0) ?
+                (dataPoint.close || 0) < (previousDataPoint?.close || 0) ?
                     'down' : 'up'
         };
     }

@@ -18,6 +18,8 @@ import type ButtonThemeObject from './Renderer/SVG/ButtonThemeObject';
 import type Chart from './Chart/Chart';
 import type ColorString from './Color/ColorString';
 import type CSSObject from './Renderer/CSSObject';
+import type DataTableCore from '../Data/DataTableCore';
+import type DataTableOptions from '../Data/DataTableOptions';
 import type { SeriesTypePlotOptions } from './Series/SeriesType';
 import type { SymbolKey } from './Renderer/SVG/SymbolType';
 import type { LangOptionsCore } from '../Shared/LangOptionsCore';
@@ -313,6 +315,23 @@ export interface Options {
      * ]
      */
     colors?: Array<ColorString>;
+    /**
+     * Options for one or many chart-level data tables. The `dataTable` option,
+     * or its array members, can be either configuration objects or instances of
+     * the `DataTableCore` class. If a `DataTableCore` instance is passed, it
+     * will be used directly. If a configuration object is passed, a new
+     * `DataTableCore` instance will be created based on the provided
+     * configuration.
+     *
+     * The data table is mapped to the series data points based on the
+     * [dataMapping](#dataMapping) option.
+     *
+     * @sample {highcharts} highcharts/datatable/chart-datatable-single/
+     *         Chart with a data table
+     * @sample {highcharts} highcharts/datatable/chart-datatable-multiple/
+     *         Chart with two data tables
+     */
+    dataTable?: DataTableOptions|DataTableCore|Array<DataTableOptions|DataTableCore>;
     /**
      * An object containing language-related strings and settings. A typical
      * setup uses `Highcharts.setOptions` to make the options apply to all

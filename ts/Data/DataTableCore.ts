@@ -25,10 +25,8 @@
 
 import type { DataEventDetail } from './DataEvent.js';
 import type {
-    CellType as DataTableCellType,
     Column as DataTableColumn,
     ColumnCollection as DataTableColumnCollection,
-    Row as DataTableRow,
     RowObject as DataTableRowObject
 } from './DataTable.js';
 import type DataTableOptions from './DataTableOptions.js';
@@ -53,7 +51,7 @@ import { uniqueKey } from '../Core/Utilities.js';
  * from specific cells.
  *
  * @class
- * @name Highcharts.DataTable
+ * @name Highcharts.DataTableCore
  *
  * @param {Highcharts.DataTableOptions} [options]
  * Options to initialize the new DataTable instance.
@@ -61,7 +59,7 @@ import { uniqueKey } from '../Core/Utilities.js';
 class DataTableCore {
 
     /**
-     * Constructs an instance of the DataTable class.
+     * Constructs an instance of the DataTableCore class.
      *
      * @example
      * const dataTable = new Highcharts.DataTableCore({
@@ -79,21 +77,8 @@ class DataTableCore {
     public constructor(
         options: DataTableOptions = {}
     ) {
-        /**
-         * Whether the ID was automatic generated or given in the constructor.
-         *
-         * @name Highcharts.DataTable#autoId
-         * @type {boolean}
-         */
         this.autoId = !options.id;
         this.columns = {};
-
-        /**
-         * ID of the table for identification purposes.
-         *
-         * @name Highcharts.DataTable#id
-         * @type {string}
-         */
         this.id = (options.id || uniqueKey());
         this.rowCount = 0;
         this.versionTag = uniqueKey();
@@ -115,14 +100,39 @@ class DataTableCore {
      *
      * */
 
+    /**
+     * Whether the ID was automatic generated or given in the constructor.
+     *
+     * @name Highcharts.DataTableCore#autoId
+     * @type {boolean}
+     */
     public readonly autoId: boolean;
 
+    /**
+     * Collection of columns in the table.
+     *
+     * @name Highcharts.DataTableCore#columns
+     * @type {Record<string, Highcharts.DataTableColumn>}
+     */
     public readonly columns: Record<string, DataTableColumn>;
 
+    /**
+     * ID of the table for identification purposes.
+     *
+     * @name Highcharts.DataTableCore#id
+     * @type {string}
+     */
     public readonly id: string;
 
     public modified?: this;
+    public readonly isDataTable = true;
 
+    /**
+     * Number of rows in the table.
+     *
+     * @name Highcharts.DataTableCore#rowCount
+     * @type {number}
+     */
     public rowCount: number;
 
     protected versionTag: string;
@@ -157,6 +167,8 @@ class DataTableCore {
      * Delete rows. Simplified version of the full
      * `DataTable.deleteRows` method.
      *
+     * @function Highcharts.DataTableCore#deleteRows
+     *
      * @param {number} rowIndex
      * The start row index
      *
@@ -186,11 +198,13 @@ class DataTableCore {
     }
 
     /**
-     * Fetches the given column by the canonical column name. Simplified version
+     * Fetches the given column by the canonical column ID. Simplified version
      * of the full `DataTable.getRow` method, always returning by reference.
      *
+     * @function Highcharts.DataTableCore#setColumn
+     *
      * @param {string} columnId
-     * Name of the column to get.
+     * ID of the column to get.
      *
      * @return {Highcharts.DataTableColumn|undefined}
      * A copy of the column, or `undefined` if not found.
@@ -206,6 +220,8 @@ class DataTableCore {
     /**
      * Retrieves all or the given columns. Simplified version of the full
      * `DataTable.getColumns` method, always returning by reference.
+     *
+     * @function Highcharts.DataTableCore#getColumns
      *
      * @param {Array<string>} [columnIds]
      * Column ids to retrieve.
@@ -231,26 +247,64 @@ class DataTableCore {
     /**
      * Retrieves the row at a given index.
      *
+     * @function Highcharts.DataTableCore#getRowObject
+     *
      * @param {number} rowIndex
      * Row index to retrieve. First row has index 0.
      *
-     * @param {Array<string>} [columnIds]
+     * @param {Array<string>} [columnNames]
      * Column names to retrieve.
      *
      * @return {Record<string, number|string|undefined>|undefined}
      * Returns the row values, or `undefined` if not found.
      */
-    public getRow(
+    public getRowObject(
         rowIndex: number,
-        columnIds?: Array<string>
-    ): (DataTableRow|undefined) {
-        return (columnIds || Object.keys(this.columns)).map(
-            (key): DataTableCellType => this.columns[key]?.[rowIndex]
+        columnNames?: Array<string>
+    ): (DataTableRowObject|undefined) {
+        const row = {} as DataTableRowObject,
+            columns = this.columns;
+
+        columnNames ??= Object.keys(this.columns);
+
+        for (const columnName of columnNames) {
+            row[columnName] = columns[columnName]?.[rowIndex];
+        }
+        return row;
+    }
+
+    /**
+     * Output the table in the console.
+     * @todo remove/comment out this method before production
+     */
+    public log(msg = '', limit = 10, start = 0): void {
+        /* eslint-disable no-console */
+        const extra = (this.rowCount > limit || start > 0) ?
+            `Showing ${limit} rows out of ${this.rowCount}, start at ${start}` :
+            '';
+        if (extra) {
+            msg += ` / ${extra}`;
+        }
+        if (msg) {
+            console.group(msg);
+        }
+        console.table(
+            new Array(Math.min(this.rowCount, limit))
+                .fill(void 0)
+                .map((_, i): DataTableRowObject =>
+                    this.getRowObject(i + start) || {}
+                )
         );
+        if (msg) {
+            console.groupEnd();
+        }
+        /* eslint-enable no-console */
     }
 
     /**
      * Sets cell values for a column. Will insert a new column, if not found.
+     *
+     * @function Highcharts.DataTableCore#setColumn
      *
      * @param {string} columnId
      * Column name to set.
@@ -280,6 +334,8 @@ class DataTableCore {
      * Sets cell values for multiple columns. Will insert new columns, if not
      * found. Simplified version of the full `DataTableCore.setColumns`, limited
      * to full replacement of the columns (undefined `rowIndex`).
+     *
+     * @function Highcharts.DataTableCore#setColumns
      *
      * @param {Highcharts.DataTableColumnCollection} columns
      * Columns as a collection, where the keys are the column names.
@@ -317,6 +373,8 @@ class DataTableCore {
      * provided, or if the index is higher than the total number of table rows.
      * A simplified version of the full `DateTable.setRow`, limited to objects.
      *
+     * @function Highcharts.DataTableCore#setRow
+     *
      * @param {Record<string, number|string|undefined>} row
      * Cell values to set.
      *
@@ -343,19 +401,11 @@ class DataTableCore {
 
         if (eventDetail?.addColumns !== false) {
             for (let i = 0, iEnd = rowKeys.length; i < iEnd; i++) {
-                const key = rowKeys[i];
-
-                if (!columns[key]) {
-                    columns[key] = [];
-                }
+                columns[rowKeys[i]] ||= new Array(this.rowCount);
             }
         }
 
         objectEach(columns, (column, columnId): void => {
-            if (!column && eventDetail?.addColumns !== false) {
-                column = new Array(indexRowCount);
-            }
-
             if (column) {
                 if (insert) {
                     column = splice(
@@ -363,21 +413,25 @@ class DataTableCore {
                         rowIndex,
                         0,
                         true,
-                        [row[columnId] ?? null]
+                        [row[columnId]]
                     ).array;
                 } else {
-                    column[rowIndex] = row[columnId] ?? null;
+                    column[rowIndex] =
+                        // Preserve explicit null and undefined but fall back
+                        // to existing value if the new row does not have the
+                        // key
+                        columnId in row ?
+                            row[columnId] :
+                            column[rowIndex];
                 }
                 columns[columnId] = column;
             }
         });
 
-        if (indexRowCount > this.rowCount) {
-            this.applyRowCount(indexRowCount);
-        }
+        this.applyRowCount(Math.max(indexRowCount, this.rowCount));
 
         if (!eventDetail?.silent) {
-            fireEvent(this, 'afterSetRows');
+            fireEvent(this, 'afterSetRows', { rowIndex });
             this.versionTag = uniqueKey();
         }
     }
@@ -414,7 +468,7 @@ export default DataTableCore;
 /**
  * A typed array.
  * @typedef {Int8Array|Uint8Array|Uint8ClampedArray|Int16Array|Uint16Array|Int32Array|Uint32Array|Float32Array|Float64Array} Highcharts.TypedArray
- * //**
+ *//**
  * A column of values in a data table.
  * @typedef {Array<boolean|null|number|string|undefined>|Highcharts.TypedArray} Highcharts.DataTableColumn
  *//**

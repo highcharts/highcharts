@@ -54,7 +54,13 @@ import HighchartsComponentDefaults from './HighchartsComponentDefaults.js';
 import ConnectorHandler from '../../Components/ConnectorHandler';
 import DataConverterUtils from '../../../Data/Converters/DataConverterUtils.js';
 import DU from '../../Utilities.js';
-import { createElement, diffObjects, isString, merge, splat } from '../../../Shared/Utilities.js';
+import {
+    createElement,
+    diffObjects,
+    isString,
+    merge,
+    splat
+} from '../../../Shared/Utilities.js';
 const { deepClone } = DU;
 
 

@@ -341,7 +341,25 @@ QUnit.test('loss', function (assert) {
 QUnit.test('processVennData', function (assert) {
     var vennSeries = Highcharts.Series.types.venn,
         vennPrototype = vennSeries.prototype,
-        processVennData = vennPrototype.utils.processVennData,
+        processVennData = function (data, splitter) {
+
+            // Convert to DataTable if data is an array
+            if (Array.isArray(data)) {
+                const columns = {};
+
+                for (const point of data) {
+                    for (const key of Object.keys(point)) {
+                        if (!columns[key]) {
+                            columns[key] = [];
+                        }
+                        columns[key].push(point[key]);
+                    }
+                }
+                data = new Highcharts.DataTableCore({ columns });
+            }
+
+            return vennPrototype.utils.processVennData(data, splitter);
+        },
         defaultSplitter = vennSeries.splitter,
         data;
 
@@ -467,7 +485,7 @@ QUnit.test('processVennData', function (assert) {
                 value: 0
             }
         ],
-        `should remove duplicate sets and just update existing values for the 
+        `should remove duplicate sets and just update existing values for the
         set; everything should work when commas inside strings.`
     );
 
