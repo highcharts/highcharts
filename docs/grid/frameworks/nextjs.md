@@ -154,8 +154,8 @@ export default function Page() {
 }
 ```
 
-See the live Grid Lite example [here](https://stackblitz.com/edit/highcharts-grid-lite-integration-demo-nextjs).
-See the live Grid Pro example [here](https://stackblitz.com/edit/highcharts-grid-pro-integration-demo-nextjs).
+See the [live Grid Lite example](https://stackblitz.com/edit/highcharts-grid-lite-integration-demo-nextjs).
+See the [live Grid Pro example](https://stackblitz.com/edit/highcharts-grid-pro-integration-demo-nextjs).
 
 ## Important notes
 

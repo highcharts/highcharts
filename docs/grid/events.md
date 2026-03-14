@@ -4,13 +4,13 @@ tags: ["grid-pro"]
 
 # Events
 
-**Highcharts Grid Pro** supports event listeners that are triggered when interacting with the grid. Events are configured at different levels depending on their scope:
+Highcharts Grid Pro supports event listeners for grid interactions. Events are configured at different levels depending on their scope:
 
 - **Grid-level events** are configured in the [events](https://api.highcharts.com/grid/events) property at the root of grid options
 - **Column-level events** are configured in [columnDefaults.events](https://api.highcharts.com/grid/columnDefaults.events) or [columns[].events](https://api.highcharts.com/grid/columns.events)
 - **Cell events** are configured in [columnDefaults.cells.events](https://api.highcharts.com/grid/columnDefaults.cells.events) or [columns[].cells.events](https://api.highcharts.com/grid/columns.cells.events)
 - **Header events** are configured in [columnDefaults.header.events](https://api.highcharts.com/grid/columnDefaults.header.events) or [columns[].header.events](https://api.highcharts.com/grid/columns.header.events)
-- **Pagination events** are configured in [pagination.events](https://api.highcharts.com/grid/grid/pagination.events)
+- **Pagination events** are configured in [pagination.events](https://api.highcharts.com/grid/pagination.events)
 
 ## Grid-level events
 
@@ -87,9 +87,9 @@ Configured in `pagination.events`:
 Related topic:
 - [Rows / Pagination](https://www.highcharts.com/docs/grid/rows/pagination)
 
-# Examples
+## Examples
 
-## Grid-level events
+### Grid-level events
 
 Grid-level events are configured at the root `events` property:
 
@@ -118,7 +118,7 @@ Grid-level events are configured at the root `events` property:
 }
 ```
 
-## Column-level events
+### Column-level events
 
 Column-level events can be configured in `columnDefaults.events` (applies to all columns) or in individual column definitions:
 
@@ -154,7 +154,7 @@ Column-level events can be configured in `columnDefaults.events` (applies to all
 }
 ```
 
-## Cell events
+### Cell events
 
 Cell events can be configured in `columnDefaults.cells.events` (applies to all cells in all columns) or in individual column definitions:
 
@@ -197,7 +197,7 @@ Cell events can be configured in `columnDefaults.cells.events` (applies to all c
 }
 ```
 
-## Header events
+### Header events
 
 Header events can be configured in `columnDefaults.header.events` (applies to all headers) or in individual column definitions:
 
@@ -228,7 +228,7 @@ Header events can be configured in `columnDefaults.header.events` (applies to al
 }
 ```
 
-## Pagination events
+### Pagination events
 
 Pagination events are configured in `pagination.events`:
 
