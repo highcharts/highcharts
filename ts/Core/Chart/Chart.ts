@@ -2292,6 +2292,12 @@ class Chart {
                     // (#1257)
                     if (chart.container) {
                         chart.setSize(void 0, void 0, false);
+                        // #23712: sync containerBox with reflowed height to
+                        // break infinite loop
+                        const box = chart.containerBox;
+                        if (box) {
+                            box.height = chart.chartHeight;
+                        }
                     }
                 }, e ? 100 : 0);
             }
