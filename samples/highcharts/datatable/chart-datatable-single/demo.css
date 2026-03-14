@@ -29,24 +29,28 @@
     transition: background 250ms;
 }
 
+#data-table-container {
+    margin: 10px;
+}
+
 #data-table {
     border-collapse: collapse;
-    margin: 10px;
 }
 
 #data-table td,
 #data-table th {
-    border: 1px solid silver;
-    padding: 0.125rem 1em;
+    border: 1px solid #aaa6;
+    padding: 0.5rem 1em;
 }
 
 @media screen and (max-width: 600px) {
     .outer-container {
         display: block;
+        width: 100%;
     }
 
-    #data-table {
-        margin: 10px auto;
+    #container,
+    #data-table-container {
         width: 95%;
     }
 }
