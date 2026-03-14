@@ -6,10 +6,13 @@ js_wrap: b
 alt_text: >-
   Sparklines inside data grid cells
 tags:
+  - Highcharts overview
   - Highcharts Grid demo
 categories:
+  - Basics:
+      priority: 15
   - General:
-        priority: 70
+      priority: 70
 use_png_thumbnail: true
 is_pro: true
 ...

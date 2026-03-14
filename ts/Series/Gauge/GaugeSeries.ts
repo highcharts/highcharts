@@ -253,10 +253,16 @@ class GaugeSeries extends Series {
                  * The radius or length of the dial, in percentages relative to
                  * the radius of the gauge itself.
                  *
+                 * Since v13, negative numbers are supported and are calculated
+                 * as `100% + value`.
+                 *
                  * @sample {highcharts} highcharts/plotoptions/gauge-dial/
                  *         Dial options demonstrated
                  *
-                 * @type      {string}
+                 * @sample {highcharts} highcharts/demo/gauge/
+                 *         Negative dial radius
+                 *
+                 * @type      {number|string}
                  * @default   80%
                  * @since     2.3.0
                  * @product   highcharts
@@ -441,7 +447,8 @@ class GaugeSeries extends Series {
 
             const dialOptions: GaugeSeriesDialOptions =
                     merge(options.dial, point.dial) as any,
-                radius =
+                radius = +dialOptions.radius < 0 ?
+                    (center[2] / 2) + pInt(dialOptions.radius) :
                     (pInt(dialOptions.radius) * center[2]) / 200,
                 baseLength =
                     (pInt(dialOptions.baseLength) * radius) / 100,

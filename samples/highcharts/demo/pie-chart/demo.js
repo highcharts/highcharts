@@ -1,77 +1,45 @@
 Highcharts.chart('container', {
     chart: {
-        type: 'pie',
-        zooming: {
-            type: 'xy'
-        },
-        panning: {
-            enabled: true,
-            type: 'xy'
-        },
-        panKey: 'shift'
+        type: 'pie'
     },
+
     title: {
-        text: 'Egg Yolk Composition'
+        text: 'Support requests'
     },
+
+    colors: [
+        'var(--highcharts-color-0, #544fc5)',
+        'var(--highcharts-neutral-color-60, #666666)',
+        'var(--highcharts-neutral-color-40, #999999)',
+        'var(--highcharts-neutral-color-20, #cccccc)',
+        'var(--highcharts-neutral-color-10, #e6e6e6)'
+    ],
+
     tooltip: {
         valueSuffix: '%'
     },
-    subtitle: {
-        text:
-        'Source:<a href="https://www.mdpi.com/2072-6643/11/3/684/htm" target="_default">MDPI</a>'
-    },
-    plotOptions: {
-        pie: {
-            allowPointSelect: true,
-            cursor: 'pointer',
-            dataLabels: [{
-                enabled: true,
-                distance: 20
-            }, {
-                enabled: true,
-                distance: -40,
-                format: '{point.percentage:.1f}%',
-                style: {
-                    fontSize: '1.2em',
-                    textOutline: 'none',
-                    opacity: 0.7
-                },
-                filter: {
-                    operator: '>',
-                    property: 'percentage',
-                    value: 10
-                }
-            }]
-        }
-    },
-    series: [
-        {
-            name: 'Percentage',
-            colorByPoint: true,
-            data: [
-                {
-                    name: 'Water',
-                    y: 55.02
-                },
-                {
-                    name: 'Fat',
-                    sliced: true,
-                    selected: true,
-                    y: 26.71
-                },
-                {
-                    name: 'Carbohydrates',
-                    y: 1.09
-                },
-                {
-                    name: 'Protein',
-                    y: 15.5
-                },
-                {
-                    name: 'Ash',
-                    y: 1.68
-                }
-            ]
-        }
-    ]
+
+    series: [{
+        name: 'Requests',
+        colorByPoint: true,
+        borderWidth: 3,
+        // We can show multiple data labels per point
+        dataLabels: [{
+            format: '{point.name}'
+        }, {
+            format: '{point.percentage:.0f}%',
+            distance: -30, // Placing the label inside
+            style: {
+                fontSize: '0.9em',
+                textOutline: 'none'
+            }
+        }],
+        data: [
+            ['Webform', 55],
+            ['Call', 17],
+            ['Email', 7],
+            ['Webchat', 5],
+            ['Other', 3]
+        ]
+    }]
 });

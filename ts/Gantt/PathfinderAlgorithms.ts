@@ -421,7 +421,7 @@ const simpleConnect = function (
     });
 
     // Finally add the endSegment
-    segments.push(endSegment);
+    endSegment && segments.push(endSegment);
 
     const path = PathUtilities.applyRadius(
         pathFromSegments(segments),

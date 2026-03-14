@@ -7,37 +7,47 @@ Highcharts.chart('container', {
 
     chart: {
         type: 'heatmap',
-        marginTop: 40,
-        marginBottom: 80,
-        plotBorderWidth: 1
+        plotBorderWidth: 1,
+        plotBorderColor: '#0443E1',
+        marginBottom: 25
     },
-
 
     title: {
         text: 'Simple heatmap',
-        style: {
-            fontSize: '1em'
-        }
+        align: 'left'
     },
 
     subtitle: {
         text: 'Sales per employee per weekday',
-        style: {
-            fontSize: '0.8em'
-        }
+        align: 'left'
     },
 
     xAxis: {
         categories: [
             'Alexander', 'Marie', 'Maximilian', 'Sophia', 'Lukas',
             'Maria', 'Leon', 'Anna', 'Tim', 'Laura'
-        ]
+        ],
+        opposite: true,
+        labels: {
+            autoRotation: [0, -90],
+            style: {
+                fontSize: '0.65em'
+            }
+        },
+        lineWidth: 1,
+        lineColor: '#0443E1'
     },
 
     yAxis: {
         categories: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
         title: null,
-        reversed: true
+        reversed: true,
+        labels: {
+            rotation: -90,
+            style: {
+                fontSize: '0.65em'
+            }
+        }
     },
 
     accessibility: {
@@ -50,27 +60,29 @@ Highcharts.chart('container', {
 
     colorAxis: {
         min: 0,
-        minColor: 'var(--highcharts-background-color, #FFFFFF)',
-        maxColor: Highcharts.getOptions().colors[0]
+        minColor: 'var(--highcharts-background-color, #fff)',
+        maxColor: '#0443E1'
     },
 
     legend: {
         align: 'right',
         layout: 'vertical',
         margin: 0,
-        verticalAlign: 'top',
-        y: 25,
-        symbolHeight: 280
+        verticalAlign: 'bottom',
+        symbolHeight: 270
     },
 
     tooltip: {
-        format: '<b>{series.xAxis.categories.(point.x)}</b> sold<br>' +
-            '<b>{point.value}</b> items on <br>' +
-            '<b>{series.yAxis.categories.(point.y)}</b>'
+        useHTML: true,
+        format: '<div style="border-left: 3px solid {point.color};' +
+            ' padding-left: 5px;"><b>{series.xAxis.categories.(point.x)}</b>' +
+            ' sold <b>{point.value}</b><br>' +
+            'items on <b>{series.yAxis.categories.(point.y)}</b></div>'
     },
 
     series: [{
         name: 'Sales per employee',
+        color: '#0443E1',
         borderWidth: 1,
         data: [
             [0, 0, 10], [0, 1, 19], [0, 2, 8], [0, 3, 24], [0, 4, 67],
@@ -98,6 +110,7 @@ Highcharts.chart('container', {
             chartOptions: {
                 yAxis: {
                     labels: {
+                        rotation: 0,
                         format: '{substr value 0 1}'
                     }
                 }

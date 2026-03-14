@@ -28,7 +28,12 @@
             },
 
             title: {
-                text: 'US Counties unemployment rates, January 2018',
+                text: 'US Counties unemployment rates',
+                align: 'left'
+            },
+
+            subtitle: {
+                text: 'January 2018',
                 align: 'left'
             },
 
@@ -39,6 +44,8 @@
             legend: {
                 layout: 'vertical',
                 align: 'right',
+                verticalAlign: 'top',
+                y: 42,
                 margin: 0,
                 backgroundColor: `color-mix(
                     in srgb,
@@ -55,7 +62,6 @@
                 min: 0,
                 max: 25,
                 tickInterval: 5,
-                stops: [[0, '#F1EEF6'], [0.65, '#900037'], [1, '#500007']],
                 labels: {
                     format: '{value}%'
                 }
@@ -90,7 +96,19 @@
                 accessibility: {
                     enabled: false
                 }
-            }]
+            }],
+
+            tooltip: {
+                useHTML: true,
+                headerFormat: '<b>{series.name}</b><hr/>',
+                // Custom point format for consistent width
+                pointFormat:
+                    '<b style="color:{point.color};">● </b> ' +
+                    '<b style="min-width: 40px; display: inline-block;">' +
+                    '{point.value}</b>' +
+                    '<span style="min-width: 140px; display: inline-block;' +
+                    ' text-align: right;">{point.name}</span>'
+            }
         });
     }, 0);
 
