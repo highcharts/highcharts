@@ -435,28 +435,69 @@ class Popup extends BaseForm {
         );
         opacityPercentSuffix.appendChild(doc.createTextNode(' %'));
 
-        const updateOpacityVisibility = (): void => {
+        const opacitySlider = createElement(
+            'input',
+            {
+                type: 'range',
+                value: String(Math.round(opacity * 100)),
+                className: 'highcharts-popup-opacity-slider',
+                min: '0',
+                max: '100',
+                step: '1'
+            },
+            void 0,
+            parentDiv
+        ) as HTMLInputElement;
+        opacitySlider.style.setProperty(
+            '--highcharts-popup-opacity-track-color',
+            value
+        );
+        opacitySlider.style.setProperty('display', 'none');
+
+        const setOpacityGroupVisibility = (): void => {
             const isHex = /^#[0-9A-Fa-f]{6}$/.test(textInput.value);
             separator.style.display = isHex ? '' : 'none';
             opacityPercentInput.style.display = isHex ? '' : 'none';
             opacityPercentSuffix.style.display = isHex ? '' : 'none';
         };
+        setOpacityGroupVisibility();
 
-        updateOpacityVisibility();
+        const syncOpacityInputs = (e: Event): void => {
+            const target = e.target as HTMLInputElement,
+                val = clamp(Number(target.value), 0, 100);
+            opacitySlider.value = String(val);
+            opacityPercentInput.value = String(Math.round(val));
+        };
 
-        addEvent(opacityPercentInput, 'input', (): void => {
-            opacityPercentInput.value = String(
-                clamp(Number(opacityPercentInput.value), 0, 100)
+        const syncColorInputs = (e: Event): void => {
+            if (e.target === colorInput) {
+                textInput.value = colorInput.value.toUpperCase();
+            } else {
+                colorInput.value = textInput.value;
+            }
+
+            opacitySlider.style.setProperty(
+                '--highcharts-popup-opacity-track-color',
+                colorInput.value
             );
+            setOpacityGroupVisibility();
+        };
+
+        addEvent(parentDiv, 'mousedown', (e: MouseEvent): void => {
+            if (
+                e.target !== opacityPercentInput &&
+                e.target !== opacitySlider
+            ) {
+                opacitySlider.style.display = 'none';
+            }
         });
-        addEvent(colorInput, 'input', (): void => {
-            textInput.value = colorInput.value.toUpperCase();
-            updateOpacityVisibility();
+        addEvent(opacityPercentInput, 'focus', (): void => {
+            opacitySlider.style.display = '';
         });
-        addEvent(textInput, 'input', (): void => {
-            colorInput.value = textInput.value;
-            updateOpacityVisibility();
-        });
+        addEvent(opacityPercentInput, 'input', syncOpacityInputs);
+        addEvent(opacitySlider, 'input', syncOpacityInputs);
+        addEvent(colorInput, 'input', syncColorInputs);
+        addEvent(textInput, 'input', syncColorInputs);
 
         return wrapper;
     }
