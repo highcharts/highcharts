@@ -30,6 +30,7 @@ import type {
     GroupedHeaderOptions,
     IndividualColumnOptions
 } from './Options';
+import type { RowId } from './Data/DataProvider';
 import type { DataProviderType } from './Data/DataProviderType';
 import type {
     CellType as DataTableCellType,
@@ -301,6 +302,11 @@ export class Grid {
     public readonly dirtyFlags: Set<GridDirtyFlags> = new Set();
 
     /**
+     * Per-row metadata shared across Grid modules.
+     */
+    public readonly rowMeta: Map<RowId, RowMetaRecord> = new Map();
+
+    /**
      * Internal redraw queue used to prevent concurrent `redraw()` calls from
      * interleaving async DOM work and corrupting the state (for example
      * rendering duplicate pagination controls when `update()` is called
@@ -308,6 +314,10 @@ export class Grid {
      */
     private redrawQueue: Promise<void> = Promise.resolve();
 
+    /**
+     * The data provider of the Grid. The interface between the Grid renderer
+     * and the data source.
+     */
     public dataProvider?: DataProviderType;
 
 
@@ -1583,7 +1593,7 @@ export class Grid {
      * after destruction by calling the `render` method.
      */
     public destroy(onlyDOM = false): void {
-        fireEvent(this, 'beforeDestroy');
+        fireEvent(this, 'beforeDestroy', { onlyDOM });
 
         this.isRendered = false;
         const dgIndex = Grid.grids.findIndex((dg): boolean => dg === this);
@@ -1821,6 +1831,13 @@ export interface ColumnOptionsMapItem {
     index: number;
     options: NoIdColumnOptions
 }
+
+/**
+ * Per-row metadata object shared across Grid modules.
+ *
+ * Empty before module extensions.
+ */
+export interface RowMetaRecord {}
 
 
 /* *

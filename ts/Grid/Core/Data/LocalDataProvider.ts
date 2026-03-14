@@ -429,6 +429,12 @@ export class LocalDataProvider extends DataProvider {
             interTable = originalDataTable.getModified();
         }
 
+        const grid = this.querying.grid;
+        if ('treeView' in grid && grid.treeView) {
+            grid.treeView.sync();
+            interTable = grid.treeView.projectTable(interTable);
+        }
+
         this.prePaginationRowCount = interTable.rowCount;
 
         // Pagination modifier
@@ -496,6 +502,13 @@ export class LocalDataProvider extends DataProvider {
         return 'getTable' in connector;
     }
 }
+
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
 
 export type GridDataConnectorTypeOptions =
     MakeOptional<DataConnectorTypeOptions, 'id'>;

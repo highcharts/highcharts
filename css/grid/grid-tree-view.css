@@ -1,0 +1,34 @@
+/* SPDX-License-Identifier: LicenseRef-Highcharts */
+
+/* Grid Pro TreeView styles */
+
+.hcg-tree-cell-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.hcg-tree-toggle-container {
+    --hcg-tree-indent-size: 16px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: calc(var(--hcg-tree-depth, 0) * var(--hcg-tree-indent-size));
+    width: 16px;
+    height: 16px;
+    flex: 0 0 auto;
+}
+
+.hcg-tree-toggle-button {
+    width: 16px;
+    height: 16px;
+    line-height: 14px;
+    padding: 0;
+    min-width: 16px;
+}
+
+.hcg-tree-value-container {
+    flex: 1 1 auto;
+    min-width: 0;
+}
