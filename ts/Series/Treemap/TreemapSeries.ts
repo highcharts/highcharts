@@ -1396,11 +1396,11 @@ class TreemapSeries extends ScatterSeries {
                     series.mapOptionsToLevel :
                     {}
             ),
-            level = point && mapOptionsToLevel[point.node.level] || {},
+            level = point?.node && mapOptionsToLevel[point.node.level] || {},
             options = this.options,
             stateOptions =
                 state && options.states && options.states[state] || {},
-            className = point?.getClassName() || '',
+            className = point?.node && point.getClassName() || '',
             // Set attributes by precedence. Point trumps level trumps series.
             // Stroke width uses pick because it can be 0.
             attr: SVGAttributes = {

@@ -621,31 +621,31 @@ class MapSeries extends ScatterSeries {
      * @private
      */
     public pointAttribs(
-        point: MapPoint,
+        point?: MapPoint,
         state?: StatesOptionsKey
     ): SVGAttributes {
-        const { mapView, styledMode } = point.series.chart;
-        const attr: SVGAttributes = styledMode ?
+        const { mapView, styledMode } = (point?.series || this).chart;
+        const attr: SVGAttributes = styledMode && point ?
             this.colorAttribs(point) :
             ColumnSeries.prototype.pointAttribs.call(
                 this, point as unknown as ColumnPoint, state
             );
 
         // Individual stroke width
-        let pointStrokeWidth = this.getStrokeWidth(point.options);
+        let pointStrokeWidth = this.getStrokeWidth(point?.options || {});
 
         // Handle state specific border or line width
         if (state) {
             const stateOptions = merge(
                     this.options.states?.[state] as MapSeriesOptions,
-                    point.options.states?.[state] || {}
+                    point?.options.states?.[state] || {}
                 ),
                 stateStrokeWidth = this.getStrokeWidth(stateOptions);
 
             if (defined(stateStrokeWidth)) {
                 pointStrokeWidth = stateStrokeWidth;
             }
-            attr.stroke = stateOptions.borderColor ?? point.color;
+            attr.stroke = stateOptions.borderColor ?? point?.color;
         }
 
         if (pointStrokeWidth && mapView) {
@@ -668,13 +668,13 @@ class MapSeries extends ScatterSeries {
         // map, but not the map area shape itself. Instead it is rendered like a
         // null point. To fully remove a map area, it should be removed from the
         // mapData.
-        if (!point.visible) {
+        if (point?.visible === false) {
             attr.fill = this.options.nullColor;
         }
 
         // Set opacity: if point is null and nullInteraction is true, force
         // opacity 1. Otherwise use point/series opacity or default 1 (#23019)
-        if (point.isNull && this.options.nullInteraction) {
+        if (point?.isNull && this.options.nullInteraction) {
             attr.opacity = 1;
         }
 

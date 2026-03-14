@@ -180,8 +180,8 @@ class OHLCSeries extends HLCSeries {
      * @private
      */
     public pointAttribs(
-        point: OHLCPoint,
-        state: StatesOptionsKey
+        point?: OHLCPoint,
+        state?: StatesOptionsKey
     ): SVGAttributes {
         const attribs = super.pointAttribs.call(this, point, state),
             options = this.options;
@@ -189,9 +189,9 @@ class OHLCSeries extends HLCSeries {
         delete attribs.fill;
 
         if (
-            !point.options.color &&
+            !point?.options.color &&
             options.upColor &&
-            point.open < point.close
+            (point?.open || 0) < (point?.close || 0)
         ) {
             attribs.stroke = options.upColor;
         }

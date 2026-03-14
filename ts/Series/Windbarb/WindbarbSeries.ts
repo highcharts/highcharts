@@ -136,12 +136,12 @@ class WindbarbSeries extends ColumnSeries {
 
     // Get presentational attributes.
     public pointAttribs(
-        point: WindbarbPoint,
+        point?: WindbarbPoint,
         state?: StatesOptionsKey
     ): SVGAttributes {
         const options = this.options;
 
-        let stroke = point.color || this.color,
+        let stroke = point?.color || this.color,
             strokeWidth = this.options.lineWidth;
 
         if (state) {

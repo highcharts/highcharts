@@ -206,8 +206,8 @@ class HLCSeries extends ColumnSeries {
      * @private
      */
     public pointAttribs(
-        point: HLCPoint,
-        state: StatesOptionsKey
+        point?: HLCPoint,
+        state?: StatesOptionsKey
     ): SVGAttributes {
         const attribs = super.pointAttribs.call(
             this,
@@ -215,7 +215,9 @@ class HLCSeries extends ColumnSeries {
             state
         );
 
-        delete attribs.fill;
+        if (point) {
+            delete attribs.fill;
+        }
 
         return attribs;
     }
