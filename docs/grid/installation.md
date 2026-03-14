@@ -2,7 +2,7 @@
 sidebar_label: "Installation"
 ---
 
-# Grid Installation
+# Highcharts Grid installation
 
 Highcharts Grid ships in two editions that share the same API but differ in feature scope and licensing.
 
@@ -22,9 +22,9 @@ See Grid in action without installing anything:
 
 ## Installation
 
-Get started with Highcharts Grid using a bundler ([Option 1](#option-1-npm--bundlers)), a CDN ([Option 2](#option-2-cdn--static)) or self-hosted ([Option 3](#option-3-download-and-self-host)).
+Get started with Highcharts Grid using a bundler ([Option 1](#option-1-npm--bundlers)), a CDN ([Option 2](#option-2-cdn--static)), or self-hosted files ([Option 3](#option-3-download-and-self-host)).
 
-### Option 1: NPM & Bundlers
+### Option 1: npm and bundlers
 
 Best for projects using Vite, Webpack, Next.js, or other modern build tools.
 
@@ -39,7 +39,7 @@ npm install @highcharts/grid-lite
 ```
 
 **Step 3: Create the grid**
-```javascript
+```js
 import Grid from '@highcharts/grid-lite/es-modules/masters/grid-lite.src.js';
 import '@highcharts/grid-lite/css/grid-lite.css';
 
@@ -53,9 +53,9 @@ Grid.grid('container', {
 });
 ```
 
-> **TIP:** Using TypeScript? Types are included automatically - no `@types` package needed.
+> **TIP:** Types are included automatically. No `@types` package is needed.
 
-### Option 2: CDN & Static
+### Option 2: CDN and static files
 
 Best for quick prototypes, CodePen, JSFiddle, or projects without build tools.
 
@@ -110,7 +110,7 @@ For Grid Pro, swap the filenames:
 
 ---
 
-## Using Grid Pro
+## Use Grid Pro
 
 Switch to Grid Pro for editing, validation, sparklines, and advanced features.
 
@@ -123,7 +123,7 @@ npm install @highcharts/grid-pro
 
 ### Import and configure
 
-```javascript
+```js
 import Grid from '@highcharts/grid-pro/es-modules/masters/grid-pro.src.js';
 import '@highcharts/grid-pro/css/grid-pro.css';
 
@@ -195,7 +195,7 @@ export default function App() {
 For Grid Pro, swap the imports to `@highcharts/grid-pro-react` and render
 `<Grid options={options} />`.
 
-**[View complete React guide →](https://www.highcharts.com/docs/grid/frameworks/react)**
+See [Highcharts Grid with React](https://www.highcharts.com/docs/grid/frameworks/react) for the full guide.
 
 ### Other Frameworks
 
@@ -211,6 +211,6 @@ Now that Grid is installed, explore what you can build:
 - **[Introduction guide](https://www.highcharts.com/docs/grid/general)** – Build more complex grids with real data
 - **[Understanding Grid](https://www.highcharts.com/docs/grid/understanding-grid)** – Configure columns, data sources, and events
 - **[Theming guide](https://www.highcharts.com/docs/grid/theming/index)** – Customize the look and feel
-- **[API Reference](https://api.highcharts.com/grid/)** – Complete options and methods documentation
+- **[API reference](https://api.highcharts.com/grid/)** – Complete options and methods documentation
 
 > **Upgrading from an older version?** See the [Migration Guide](https://www.highcharts.com/docs/dashboards/grid-migration) for detailed upgrade instructions from Grid 1.x or Dashboards 3.x.

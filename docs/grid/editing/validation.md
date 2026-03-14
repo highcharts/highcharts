@@ -31,21 +31,21 @@ Grid.grid('container', {
 });
 ```
 
-## Predefined Validation Rules
+## Predefined validation rules
 
 Each column has a specific `dataType`, which can be set explicitly or inferred from the data. All data types can accept `null` values by default. Each `dataType` comes with its own set of predefined validation rules, and e.g. columns with `dataType: 'number'` will automatically reject `NaN` values.
 
 In addition to `dataType` you can extend a selection of predefined validation rules:
 
-- `notEmpty`- Only accepts non-empty values.
-- `boolean`- Only accepts `true`, `false`, `1` and `0` as valid values.
-- `number`- Only accepts numbers.
-- `datetime`- Only accepts valid timestamps in milliseconds.
-- `ignoreCaseUnique`- Only accepts unique values within the column (case-insensitive).
-- `unique`- Only accepts unique values within the column (case-sensitive).
-- `arrayNumber`- Only accepts an array of numbers (`1, 2, 3`).
-- `json`- Only accepts valid JSON strings.
-- `sparkline`- Only accepts valid JSON or array of numbers- default validator for `sparkline` renderer.
+- `notEmpty`: Only accepts non-empty values.
+- `boolean`: Only accepts `true`, `false`, `1`, and `0` as valid values.
+- `number`: Only accepts numbers.
+- `datetime`: Only accepts valid timestamps in milliseconds.
+- `ignoreCaseUnique`: Only accepts unique values within the column, case-insensitively.
+- `unique`: Only accepts unique values within the column, case-sensitively.
+- `arrayNumber`: Only accepts an array of numbers (`1, 2, 3`).
+- `json`: Only accepts valid JSON strings.
+- `sparkline`: Only accepts valid JSON or an array of numbers. This is the default validator for the `sparkline` renderer.
 
 See how adding the `notEmpty` validation rule prevents users from entering `null` or empty string values in any column:
 
@@ -76,7 +76,7 @@ lang: {
 }
 ```
 
-## Custom Validation Rules
+## Custom validation rules
 
 You can define custom validation rules and error messages directly in the column options:
 
@@ -104,7 +104,7 @@ Note that a validator is a callback function that receives an object as its firs
 
 This distinction allows you to implement validation logic based on either the parsed value or the raw user input, depending on your requirements. For example, you might want to validate the format of the input string (`rawValue`) before parsing, or check the parsed value (`value`) for business logic constraints.
 
-## Registering Custom Validators
+## Registering custom validators
 
 You can also register custom validators globally in the `Validator.rulesRegistry` and then reference them by name in your columns:
 
@@ -131,7 +131,7 @@ This approach allows you to reuse custom validation logic across multiple column
 
 ## The afterEdit event
 
-The `afterEdit` event is called after a cell value is edited using the edit mode, and can be used to e.g. post result to server, generate feedback GUI etc:
+The `afterEdit` event is called after a cell value is edited using edit mode. You can use it to post changes to a server, update other UI, or trigger follow-up logic:
 
 ```js
 columnDefaults: {
@@ -141,6 +141,6 @@ columnDefaults: {
                 console.log(`${this.column.id} for ${this.row.data.firstName} was updated to ${this.value}`);
             }
         }
-    },
+    }
 }
 ```

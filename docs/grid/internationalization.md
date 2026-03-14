@@ -118,3 +118,7 @@ columns: [{
 ```
 
 If you define `lang.decimalPoint` or `lang.thousandsSep`, those values override the locale-specific separators for templated numbers.
+
+## API reference
+
+- [`lang`](https://api.highcharts.com/grid/lang)

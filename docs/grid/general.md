@@ -4,17 +4,17 @@ sidebar_label: "Introduction"
 
 # Introduction to Highcharts Grid
 
-**Highcharts Grid** delivers a fast, modern way to work with tabular data. Start with **Grid Lite** for viewing and interacting with data, or step up to **Grid Pro** for editing and extended functionality, all built to meet today’s web standards.
+Highcharts Grid provides a fast way to work with tabular data in the browser. Start with **Grid Lite** for viewing and interacting with data, or use **Grid Pro** for editing and extended functionality.
 
-**Highcharts Grid Lite** – A free version with a basic feature set, focused on viewing and interacting with data.
+**Highcharts Grid Lite** is the free edition, focused on viewing and interacting with data.
 
-**Highcharts Grid Pro** – A commercial version that includes everything in Grid Lite plus advanced features such as cell editing, data validation, sparklines and events to expand functionality and tailor the grid to your needs.
+**Highcharts Grid Pro** is the commercial edition. It includes everything in Grid Lite plus features such as cell editing, data validation, sparklines, and events.
 
-**Important notice**: In Dashboards versions prior to 4.0.0, Grid Pro was bundled with Dashboards. Learn more about migrating to latest version in our [Migration Guide](https://www.highcharts.com/docs/dashboards/grid-migration).
+In Dashboards versions prior to 4.0.0, Grid Pro was bundled with Dashboards. See the [Migration Guide](https://www.highcharts.com/docs/dashboards/grid-migration) for upgrade details.
 
 ## Your first Grid
 
-Let's dive right in with a bare minimum example of a fully functional **Grid Lite**:
+This minimal example creates a working **Grid Lite** instance:
 
 ```html
 <!DOCTYPE html>
@@ -28,12 +28,14 @@ Let's dive right in with a bare minimum example of a fully functional **Grid Lit
     <body>
         <div id="container"></div>
         <script type="text/javascript">
-            Grid.grid("container", {
+            Grid.grid('container', {
                 data: {
-                    product: ["Apple", "Pear", "Plum", "Banana"],
-                    weight: [100, 40, 0.5, 200],
-                    price: [1.5, 2.53, 5, 4.5],
-                },
+                    columns: {
+                        product: ['Apple', 'Pear', 'Plum', 'Banana'],
+                        weight: [100, 40, 0.5, 200],
+                        price: [1.5, 2.53, 5, 4.5]
+                    }
+                }
             });
         </script>
     </body>
@@ -47,9 +49,9 @@ Let's dive right in with a bare minimum example of a fully functional **Grid Lit
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@highcharts/grid-lite/css/grid-lite.css" />
 ```
 
-Import the required JS and CSS from our public CDN. The [Installation article](https://www.highcharts.com/docs/grid/installation) provides more information and other installation options.
+Load the required JS and CSS from the public CDN. See [Installation](https://www.highcharts.com/docs/grid/installation) for other setup options.
 
-The CSS includes the necessary styles for the grid to function correctly and the default style theme. For more information on custom theming, see [the article on theming](https://www.highcharts.com/docs/grid/theming/index).
+The CSS file includes the styles required for the grid to render correctly, including the default theme. For custom themes, see [Theming](https://www.highcharts.com/docs/grid/theming/index).
 
 ### 2. Configure the grid
 
@@ -60,19 +62,19 @@ Grid.grid('container', {
             product: ['Apple', 'Pear', 'Plum', 'Banana'],
             weight: [100, 40, 0.5, 200],
             price: [1.5, 2.53, 5, 4.5],
-        },
+        }
     }
 });
 ```
 
-Inside the `<script>` tag, create a new instance of Grid by utilizing the `Grid.grid` factory function. This function takes two required arguments:
+Inside the `<script>` tag, create a new Grid instance with the `Grid.grid` factory function. It takes two required arguments:
 
 1. The ID of the HTML element where Grid should be rendered.
 2. The Grid configuration object.
 
-Only the `data.columns` option is required for Grid to be rendered. For more information on the configuration object, read the [Understanding Grid](https://www.highcharts.com/docs/grid/understanding-grid) article.
+Only the `data.columns` option is required to render a Grid. For more on the configuration object, see [Understanding Grid](https://www.highcharts.com/docs/grid/understanding-grid).
 
-### 3. Add the HTML Element
+### 3. Add the HTML element
 
 ```html
 <div id="container"></div>
@@ -80,10 +82,10 @@ Only the `data.columns` option is required for Grid to be rendered. For more inf
 
 Add an HTML element to the `body` with the ID you specified as the first argument in `Grid.grid`.
 
-## View the Result
+## View the result
 
 With the configuration above, your Grid should look like this:
 
 <iframe src="https://www.highcharts.com/samples/embed/grid/demo/minimal-grid?force-light-theme" allow="fullscreen"></iframe>
 
-Go to [Understanding Grid](https://www.highcharts.com/docs/grid/understanding-grid) to read more about Grid structure and configuration options.
+Continue with [Understanding Grid](https://www.highcharts.com/docs/grid/understanding-grid) for more on the Grid structure and configuration options.
