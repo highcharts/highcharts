@@ -132,6 +132,16 @@ export interface PaneOptions {
      */
     background?: PaneBackgroundOptions|Array<PaneBackgroundOptions>;
     /**
+     * The border radius of the elements of the pane. This affects the pane
+     * background, plot bands and solid gauges, unless they have specific
+     * border radius settings.
+     *
+     * @type    {number|string}
+     * @since   next
+     * @requires highcharts-more
+     */
+    borderRadius?: number|string;
+    /**
      * The center of a polar chart or angular gauge, given as an array
      * of [x, y] positions. Positions can be given as integers that
      * transform to pixels, or as percentages of the plot area size.
@@ -168,6 +178,14 @@ export interface PaneOptions {
      * @requires highcharts-more
      */
     innerSize?: (number|string);
+    /**
+     * The margin between the pane and the plot area when auto-fitting the pane.
+     * This does not apply when an explicit `pane.size` is set. An array sets
+     * individual margins for the sides in the order [top, right, bottom, left].
+     *
+     * @since   next
+     */
+    margin?: number|Array<number>;
     /**
      * The size of the pane, either as a number defining pixels, or a
      * percentage defining a percentage of the available plot area (the
