@@ -9,6 +9,45 @@ const path = require('path');
 const fs = require('fs');
 const { glob } = require('glob');
 
+function getOutputModes(argv) {
+    const outputArg = String(
+        argv.outputMode ||
+        argv.output ||
+        (argv.react ? 'react' : 'classic')
+    ).toLowerCase();
+
+    if (outputArg === 'both') {
+        return ['classic', 'react'];
+    }
+
+    if (outputArg === 'classic' || outputArg === 'react') {
+        return [outputArg];
+    }
+
+    throw new Error(
+        `Unknown output mode "${outputArg}". ` +
+        'Use classic, react or both.'
+    );
+}
+
+function getOutputDir(configFile, outputMode) {
+    const sampleDir = path.dirname(configFile)
+        .replace(/^samples\//u, '')
+        .replace(/^samples\\/u, '');
+
+    if (outputMode !== 'react') {
+        return sampleDir;
+    }
+
+    const [product, ...rest] = sampleDir.split(/[\\/]/u);
+    const normalizedRest = rest[0] === 'react' ? rest.slice(1) : rest;
+    const flattenedPath = normalizedRest.join('-');
+
+    return flattenedPath ?
+        `${product}/react/${flattenedPath}` :
+        `${product}/react`;
+}
+
 /* *
  *
  *  Tasks
@@ -25,15 +64,15 @@ const { glob } = require('glob');
  * @return {Promise<void>}
  *         Promise to keep
  */
-async function generateSample(configFile, log) {
+async function generateSample(configFile, log, outputMode = 'classic') {
     const { saveDemoFile } = await import(
         '../sample-generator/index.ts'
     );
 
     const configPath = path.join(__dirname, '../../', configFile);
-    const outputDir = path.dirname(configFile);
+    const outputDir = getOutputDir(configFile, outputMode);
 
-    log.message(`Generating sample from ${configFile}...`);
+    log.message(`Generating ${outputMode} sample from ${configFile}...`);
 
     // Clear the module cache to ensure fresh import
     delete require.cache[configPath];
@@ -44,13 +83,11 @@ async function generateSample(configFile, log) {
     );
     const config = configModule.default;
 
-    // Set the output directory to the same location as the config file
-    config.output = outputDir
-        .replace(/^samples\//u, '')
-        .replace(/^samples\\/u, ''); // samples\\ for Windows
+    // Set the output directory based on selected output mode
+    config.output = outputDir;
 
     // Call saveDemoFile (checksum is calculated and saved inside)
-    await saveDemoFile(config);
+    await saveDemoFile(config, outputMode);
 
     log.success(' ✔︎ Success');
 }
@@ -68,6 +105,9 @@ async function generateSample(configFile, log) {
  * // Generate specific samples
  * gulp generate-samples --samples "highcharts/xaxis/*"
  *
+ * // Generate React variants
+ * gulp generate-samples --outputMode react
+ *
  * // Rebuild options lookup (flat-tree.json)
  * gulp generate-samples --setup
  *
@@ -80,6 +120,9 @@ async function generateSample(configFile, log) {
 async function task() {
     const log = require('../libs/log');
     const argv = require('yargs').argv;
+    const outputModes = getOutputModes(argv);
+
+    log.message(`Output mode(s): ${outputModes.join(', ')}`);
 
     // Check the setup argument. If set, run `gulp scripts`, `gulp jsdoc-dts`
     // and the sample-generator/setup.ts script before generating samples.
@@ -150,7 +193,9 @@ async function task() {
 
                 log.message(`⚡️ Detected change: ${configFile}`);
                 try {
-                    await generateSample(configFile, log);
+                    for (const outputMode of outputModes) {
+                        await generateSample(configFile, log, outputMode);
+                    }
                 } catch (error) {
                     log.failure(`Failed to generate sample: ${error.message}`);
                 }
@@ -212,7 +257,9 @@ async function task() {
 
     // Process each config file
     for (const configFile of configFiles) {
-        await generateSample(configFile, log);
+        for (const outputMode of outputModes) {
+            await generateSample(configFile, log, outputMode);
+        }
     }
 
     log.success('All samples generated successfully');
