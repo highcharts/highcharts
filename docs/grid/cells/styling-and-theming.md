@@ -2,7 +2,7 @@
 sidebar_label: "Styling and Theming"
 ---
 
-# Cell styling and Theming
+# Cell styling and theming
 
 For cells, you can customize appearance in two ways:
 
@@ -75,7 +75,7 @@ Grid.grid('container', {
 
 ## Theming
 
-Use Theming when you want consistent styling for all cells and states through shared variables. You can also use Theming to conditionally theme certain rows, columns etc, but is limited to string comparison.
+Use theming when you want consistent styling for all cells and states through shared variables. You can also use conditional theming for specific rows or columns, but it is limited to string comparison.
 
 1. [Theming overview](https://www.highcharts.com/docs/grid/theming/index)
 2. [Conditional theming](https://www.highcharts.com/docs/grid/theming/conditional)
