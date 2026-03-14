@@ -8,7 +8,8 @@ You should store **dynamic data** that changes over time in state, and keep **st
 
 ```tsx
 import React, { useState } from "react";
-import { Chart, Title, PlotOptions, Series } from "@highcharts/react";
+import { Chart, Title, PlotOptions } from "@highcharts/react";
+import { LineSeries } from "@highcharts/react/series/Line";
 
 export default function MyChart() {
   const [series, setSeries] = useState({
@@ -29,7 +30,7 @@ export default function MyChart() {
           },
         }}
       />
-      <Series data={series.data} options={series.options} />
+      <LineSeries data={series.data} options={series.options} />
     </Chart>
   );
 }
@@ -44,7 +45,8 @@ To update your chart, you should modify the React state:
 ```tsx
 // Pattern: state → props → rerender
 import React, { useRef, useState } from "react";
-import { Chart, Series, Title } from "@highcharts/react";
+import { Chart, Title } from "@highcharts/react";
+import { LineSeries } from "@highcharts/react/series/Line";
 
 export default function MyChart() {
   const [title, setTitle] = useState("Initial title");
@@ -70,7 +72,7 @@ export default function MyChart() {
     <>
       <Chart ref={chartRef}>
         <Title>{title}</Title>
-        <Series data={points} />
+        <LineSeries data={points} />
       </Chart>
 
       <button onClick={updateTitle}>Change title</button>
@@ -161,7 +163,8 @@ By default, Highcharts treats your data as immutable and keeps state read-only. 
 
 ```tsx
 import React, { useState } from "react";
-import { Chart, Series } from "@highcharts/react";
+import { Chart } from "@highcharts/react";
+import { LineSeries } from "@highcharts/react/series/Line";
 
 export default function MyChart() {
   const [data, setData] = useState([1, 2, 3, 4, 5]);
@@ -174,7 +177,7 @@ export default function MyChart() {
         },
       }}
     >
-      <Series data={data} />
+      <LineSeries data={data} />
     </Chart>
   );
 }
