@@ -19,8 +19,6 @@
 
 import type ChartOptions from './ChartOptions';
 
-import { Palette } from '../Color/Palettes.js';
-
 /* *
  *
  *  API Options
@@ -1294,7 +1292,7 @@ const ChartDefaults: ChartOptions = {
      *
      * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      */
-    borderColor: Palette.highlightColor80,
+    borderColor: 'var(--highcharts-highlight-color-80)',
 
     /**
      * The pixel width of the outer chart border.
@@ -1335,7 +1333,7 @@ const ChartDefaults: ChartOptions = {
      *
      * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      */
-    backgroundColor: Palette.backgroundColor,
+    backgroundColor: 'var(--highcharts-background-color)',
 
     /**
      * The background color or gradient for the plot area.
@@ -1394,7 +1392,7 @@ const ChartDefaults: ChartOptions = {
      *
      * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
      */
-    plotBorderColor: Palette.neutralColor20
+    plotBorderColor: 'var(--highcharts-neutral-color-20)'
 
 };
 

@@ -7,7 +7,7 @@ Highcharts.chart('container', {
 
     chart: {
         type: 'heatmap',
-        marginTop: 40,
+        marginTop: 60,
         marginBottom: 80,
         plotBorderWidth: 1
     },
@@ -51,7 +51,7 @@ Highcharts.chart('container', {
     colorAxis: {
         min: 0,
         minColor: 'var(--highcharts-background-color, #FFFFFF)',
-        maxColor: Highcharts.getOptions().colors[0]
+        maxColor: 'var(--highcharts-color-0)'
     },
 
     legend: {

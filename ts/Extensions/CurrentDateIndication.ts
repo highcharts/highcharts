@@ -36,7 +36,6 @@ import type Time from '../Core/Time';
 import Axis from '../Core/Axis/Axis.js';
 import H from '../Core/Globals.js';
 const { composed } = H;
-import { Palette } from '../Core/Color/Palettes.js';
 import PlotLineOrBand from '../Core/Axis/PlotLineOrBand/PlotLineOrBand.js';
 import { addEvent, merge, pushUnique, wrap } from '../Shared/Utilities.js';
 
@@ -201,7 +200,7 @@ interface CurrentDateIndicatorOptions {
  * @apioption xAxis.currentDateIndicator
  */
 const defaultOptions: CurrentDateIndicatorOptions = {
-    color: Palette.highlightColor20,
+    color: 'var(--highcharts-highlight-color-20)',
     width: 2,
     /**
      * @declare Highcharts.AxisCurrentDateIndicatorLabelOptions

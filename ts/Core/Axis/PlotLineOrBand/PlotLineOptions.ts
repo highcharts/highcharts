@@ -212,7 +212,7 @@ export interface PlotLineOptions {
      * @sample {highstock} stock/xaxis/plotlines/
      *         Plot line on Y axis
      *
-     * @default ${palette.neutralColor40}
+     * @default $var(--highcharts-neutral-color-40)
      */
     color?: ColorString;
 

@@ -43,6 +43,7 @@ import { addEvent, pick, pushUnique } from '../../Shared/Utilities.js';
 
 /** @internal */
 interface BoostChartAdditions extends BoostTargetAdditions {
+    cssVars?: Record<string, string>;
     forceChartBoost?: boolean;
     markerGroup?: Series['markerGroup'];
     lineWidthFilter?: SVGElement;

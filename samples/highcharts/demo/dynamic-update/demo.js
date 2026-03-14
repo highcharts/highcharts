@@ -120,7 +120,7 @@ Highcharts.chart('container', {
         {
             name: 'Random data',
             lineWidth: 2,
-            color: Highcharts.getOptions().colors[2],
+            color: 'var(--highcharts-color-2)',
             data
         }
     ]

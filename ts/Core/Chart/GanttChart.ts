@@ -29,7 +29,6 @@ import type Options from '../Options';
 import Chart from './Chart.js';
 import D from '../Defaults.js';
 const { defaultOptions } = D;
-import { Palette } from '../Color/Palettes.js';
 import { isArray, merge, splat } from '../../Shared/Utilities.js';
 
 /* *
@@ -149,7 +148,7 @@ class GanttChart extends Chart {
                 {
                     grid: {
                         borderColor: defaultOptions.xAxis?.grid?.borderColor ||
-                            Palette.neutralColor20,
+                            'var(--highcharts-neutral-color-20)',
                         enabled: true
                     },
                     opposite: defaultOptions.xAxis?.opposite ??
@@ -174,7 +173,7 @@ class GanttChart extends Chart {
             {
                 grid: {
                     borderColor: defaultOptions.yAxis?.grid?.borderColor ||
-                        Palette.neutralColor20,
+                        'var(--highcharts-neutral-color-20)',
                     enabled: true
                 },
 

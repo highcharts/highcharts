@@ -37,7 +37,6 @@ import Annotation from '../Annotation.js';
 import ControlPoint from '../ControlPoint.js';
 import D from '../../../Core/Defaults.js';
 const { defaultOptions } = D;
-import { Palette } from '../../../Core/Color/Palettes.js';
 import {
     defined,
     extend,
@@ -175,7 +174,7 @@ if (defaultOptions.annotations?.types) {
                  */
                 style: {
                     fontSize: '0.7em',
-                    color: Palette.neutralColor80
+                    color: 'var(--highcharts-neutral-color-80)'
                 },
                 /**
                  * Formatter function for the label text.
