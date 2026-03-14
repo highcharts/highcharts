@@ -148,7 +148,7 @@ class ColumnSeries extends Series {
             options = series.options,
             { clipOffset, inverted } = this.chart,
             attr: SVGAttributes = {},
-            translateProp: 'translateX'|'translateY' = inverted ?
+            translateProp: 'translateX' | 'translateY' = inverted ?
                 'translateX' :
                 'translateY';
         let translateStart: number,
@@ -250,7 +250,7 @@ class ColumnSeries extends Series {
             // Keep backward compatibility: reversed xAxis had reversed
             // stacks
             reverseStacks = (xAxis.reversed && !reversedStacks) ||
-            (!xAxis.reversed && reversedStacks),
+                (!xAxis.reversed && reversedStacks),
             stackGroups: Record<string, number> = {};
         let stackKey,
             columnCount = 0;
@@ -268,10 +268,11 @@ class ColumnSeries extends Series {
 
                 if (
                     otherSeries.type === series.type &&
+                    otherSeries.visible &&
                     otherSeries.reserveSpace() &&
                     yAxis.len === otherYAxis.len &&
                     yAxis.pos === otherYAxis.pos
-                ) { // #642, #2086
+                ) { // #642, #2086, #24128
                     if (
                         otherOptions.stacking &&
                         otherOptions.stacking !== 'group'
@@ -295,10 +296,10 @@ class ColumnSeries extends Series {
         const categoryWidth = Math.min(
                 Math.abs(xAxis.transA) * (
                     (!xAxis.brokenAxis?.hasBreaks && xAxis.ordinal?.slope) ||
-                    options.pointRange ||
-                    xAxis.closestPointRange ||
-                    xAxis.tickInterval ||
-                    1
+                options.pointRange ||
+                xAxis.closestPointRange ||
+                xAxis.tickInterval ||
+                1
                 ), // #2610
                 xAxis.len // #1535
             ),
@@ -318,12 +319,12 @@ class ColumnSeries extends Series {
             // #1251, #3737
             colIndex = (series.columnIndex || 0) + (reverseStacks ? 1 : 0),
             pointXOffset =
-            pointPadding +
-            (
-                groupPadding +
-                colIndex * pointOffsetWidth -
-                (categoryWidth / 2)
-            ) * (reverseStacks ? -1 : 1);
+                pointPadding +
+                (
+                    groupPadding +
+                    colIndex * pointOffsetWidth -
+                    (categoryWidth / 2)
+                ) * (reverseStacks ? -1 : 1);
 
         // Save it for reading in linked series (Error bars particularly)
         series.columnMetrics = {
@@ -386,15 +387,21 @@ class ColumnSeries extends Series {
      * @param {Highcharts.ColumnMetricsObject} metrics
      * The series-wide column metrics
      *
-     * @return {number}
-     * The adjusted x position, or the original if not adjusted
+     * @return {Highcharts.ColumnMetricsObject}
+     * The adjusted x position and point width
      */
     public adjustForMissingColumns(
         x: number,
         pointWidth: number,
         point: ColumnPoint,
         metrics: ColumnMetricsObject
-    ): number {
+    ): ColumnMetricsObject {
+        const result = {
+            columnCount: metrics.columnCount,
+            offset: metrics.offset,
+            paddedWidth: metrics.paddedWidth,
+            width: pointWidth
+        } as ColumnMetricsObject;
         if (!point.isNull && metrics.columnCount > 1) {
             const visibleSeries = this.xAxis.series
                 .filter((s): boolean => s.visible)
@@ -470,17 +477,25 @@ class ColumnSeries extends Series {
                 }
             );
 
-            indexInCategory = this.xAxis.reversed ?
-                totalInCategory - 1 - indexInCategory : indexInCategory;
 
-            // Compute the adjusted x position
-            const boxWidth = (totalInCategory - 1) * metrics.paddedWidth +
-                pointWidth;
-            x = (point.plotX || 0) + boxWidth / 2 - pointWidth -
-                indexInCategory * metrics.paddedWidth;
+            if (totalInCategory > 0) {
+                // Calculate new width based on actual series in category
+                const newWidth = pointWidth * (
+                    metrics.columnCount / totalInCategory
+                );
+                result.width = newWidth;
 
+                // Adjust x position for the new width
+                x += (
+                    (indexInCategory - 0.5) * metrics.paddedWidth +
+                    (indexInCategory - (totalInCategory - 1) / 2) *
+                    (metrics.paddedWidth - newWidth)
+                );
+            }
         }
-        return x;
+
+        result.offset = x;
+        return result;
     }
 
     /**
@@ -518,7 +533,7 @@ class ColumnSeries extends Series {
                 yAxis.getThreshold(threshold as any);
         // Postprocessed for border width
         let seriesBarW = series.barW =
-                Math.max(seriesPointWidth, 1 + 2 * borderWidth);
+            Math.max(seriesPointWidth, 1 + 2 * borderWidth);
 
         // When the pointPadding is 0, we want the columns to be packed
         // tightly, so we allow individual columns to have individual sizes.
@@ -553,7 +568,7 @@ class ColumnSeries extends Series {
             if (minPointLength && Math.abs(barH) < minPointLength) {
                 barH = minPointLength;
                 up = (!yAxis.reversed && !point.negative) ||
-                (yAxis.reversed && point.negative);
+                    (yAxis.reversed && point.negative);
 
                 // Reverse zeros if there's no positive value in the series
                 // in visible range (#7046)
@@ -595,13 +610,16 @@ class ColumnSeries extends Series {
             }
 
             // Adjust for null or missing points
+            // #24128: Need to adjust both position and width
             if (options.centerInCategory) {
-                barX = series.adjustForMissingColumns(
+                const newMetrics = series.adjustForMissingColumns(
                     barX,
                     pointWidth,
                     point,
                     metrics
                 );
+                barX = newMetrics.offset;
+                pointWidth = barW = newMetrics.width;
             }
 
 
@@ -865,7 +883,8 @@ class ColumnSeries extends Series {
                     point &&
                     series.options.enableMouseTracking &&
                     (
-                    // Run point events only for points inside plot area, #21136
+                        // Run point events only for points inside plot,
+                        // #21136
                         chart.isInsidePlot(
                             e.chartX - chart.plotLeft,
                             e.chartY - chart.plotTop,
@@ -906,7 +925,7 @@ class ColumnSeries extends Series {
         // Add the event listeners, we need to do this only once
         if (!series._hasTracking) {
             series.trackerGroups?.reduce(
-                (acc, key): (SVGElement|undefined)[] => {
+                (acc, key): (SVGElement | undefined)[] => {
                     if (key === 'dataLabelsGroup') {
                         acc.push(...(series.dataLabelsGroups || []));
                     } else {
@@ -914,8 +933,8 @@ class ColumnSeries extends Series {
                     }
                     return acc;
                 },
-                [] as (SVGElement|undefined)[]
-            ).forEach((group: SVGElement|undefined): void => {
+                [] as (SVGElement | undefined)[]
+            ).forEach((group: SVGElement | undefined): void => {
                 if (!group) {
                     // Skip undefined
                     return;
@@ -1021,13 +1040,13 @@ export default ColumnSeries;
  * @private
  * @interface Highcharts.ColumnMetricsObject
  *//**
- * Width of the columns.
- * @name Highcharts.ColumnMetricsObject#width
- * @type {number}
- *//**
- * Offset of the columns.
- * @name Highcharts.ColumnMetricsObject#offset
- * @type {number}
- */
+* Width of the columns.
+* @name Highcharts.ColumnMetricsObject#width
+* @type {number}
+*//**
+* Offset of the columns.
+* @name Highcharts.ColumnMetricsObject#offset
+* @type {number}
+*/
 
 ''; // Detach doclets above
