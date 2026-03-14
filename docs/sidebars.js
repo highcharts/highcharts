@@ -1,7 +1,7 @@
-module.exports = {
+const sidebars = {
     docs: {
         Highcharts: [
-            'public-index'
+            'index'
         ],
         'Getting started': [
             'getting-started/system-requirements',
@@ -36,7 +36,7 @@ module.exports = {
             'chart-concepts/dataviz-glossary',
             'chart-concepts/common-events'
         ],
-        'Stock': [
+        Stock: [
             'stock/getting-started-stock',
             'stock/understanding-highcharts-stock',
             'stock/stock-tools',
@@ -60,7 +60,7 @@ module.exports = {
             'stock/custom-technical-indicators',
             'stock/standalone-navigator'
         ],
-        'Maps': [
+        Maps: [
             'maps/getting-started',
             'maps/mapview-and-projection',
             'maps/map-navigation',
@@ -80,21 +80,21 @@ module.exports = {
             'maps/tilemap-series',
             'maps/geoheatmap-series'
         ],
-        'Gantt': [
+        Gantt: [
             'gantt/getting-started-gantt',
             'gantt/gantt-grouping-tasks',
             'gantt/gantt-task-dependencies',
             'gantt/gantt-axis-grid',
             'gantt/gantt-task-config'
         ],
-        'Dashboards': [
+        Dashboards: [
             'dashboards/installation',
             'dashboards/your-first-dashboard',
             {
-                'Wrappers': [
+                Wrappers: [
                     'dashboards/wrappers/dashboards-with-angular',
                     'dashboards/wrappers/dashboards-with-react',
-                    'dashboards/wrappers/dashboards-with-vue',
+                    'dashboards/wrappers/dashboards-with-vue'
                 ]
             },
             'dashboards/layout-description',
@@ -117,9 +117,9 @@ module.exports = {
             'dashboards/custom-component',
             'dashboards/installation-with-es-modules',
             'dashboards/get-options',
-            'dashboards/frequently-asked-questions',
+            'dashboards/frequently-asked-questions'
         ],
-        'Grid': [
+        Grid: [
             'grid/general',
             'grid/installation',
             'grid/understanding-grid',
@@ -300,13 +300,13 @@ module.exports = {
                             'morningstar/time-series/ohlcv',
                             'morningstar/time-series/price'
                         ],
-                        'Screeners': [
+                        Screeners: [
                             'morningstar/screeners/screener',
                             'morningstar/screeners/esg-screener',
                             'morningstar/screeners/find-similar-screener',
                             'morningstar/screeners/investment-screener',
                             'morningstar/screeners/investor-preferences',
-                            'morningstar/screeners/regulatory-screener',
+                            'morningstar/screeners/regulatory-screener'
                         ]
                     }
                 ]
@@ -321,7 +321,7 @@ module.exports = {
             'chart-design-and-style/custom-themes-in-styled-mode',
             'chart-design-and-style/gradients-shadows-and-patterns'
         ],
-        'Accessibility': [
+        Accessibility: [
             'accessibility/accessibility-module',
             'accessibility/accessibility-module-feature-overview',
             'accessibility/configure-the-accessibility-module',
@@ -344,7 +344,7 @@ module.exports = {
         'Extending Highcharts': [
             'extending-highcharts/extending-highcharts'
         ],
-        'Flutter': [
+        Flutter: [
             'flutter/getting-started',
             'flutter/your-first-chart',
             'flutter/highcharts-bundling'
@@ -384,3 +384,5 @@ module.exports = {
         ]
     }
 };
+
+module.exports = sidebars;

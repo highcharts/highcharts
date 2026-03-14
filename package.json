@@ -63,7 +63,8 @@
     "reset": "npx gulp reset-clone && npm i",
     "benchmark": "tsx test/ts-node-unit-tests/bench.ts",
     "benchmark-compare": "tsx test/ts-node-unit-tests/benchmark-compare.ts",
-    "preview-docs": "npm run start --workspace=docs-preview"
+    "preview-docs": "npm run start --workspace=docs-preview",
+    "test:pw:docs": "npm run test:pw --workspace=docs-preview --"
   },
   "devDependencies": {
     "@actions/github": "^6.0.1",

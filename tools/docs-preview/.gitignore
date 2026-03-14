@@ -1,5 +1,6 @@
 # Dependencies
 /node_modules
+/tools/docs-preview/node_modules/
 
 # Production
 /build
@@ -18,3 +19,7 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# Playwright
+/playwright-report/
+test-results/
