@@ -936,10 +936,13 @@ function onAfterSetOptions(
                             isNumber(unitIdx) && units[unitIdx + 1]
                         );
                         if (unit) {
-                            unitName = unit[0] || 'year';
+                            if (typeof unit[0] === 'string') {
+                                unitName = unit[0];
+                            }
                             const counts = unit[1];
-                            count = counts?.[0] || 1;
-
+                            if (typeof counts?.[0] === 'number') {
+                                count = counts[0] || 1;
+                            }
                         // In case the base X axis shows years, make the
                         // secondary axis show ten times the years (#11427)
                         } else if (parentInfo.unitName === 'year') {

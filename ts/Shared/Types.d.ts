@@ -28,7 +28,12 @@ export type AnyRecord = Record<string, any>;
  * optional.
  */
 export type DeepPartial<T> = {
-    [K in keyof T]?: (T[K]|DeepPartial<T[K]>);
+    [K in keyof T]?: (
+        T[K] extends Array<infer U>
+            // Arrays stay as-is with DeepPartial elements
+            ? Array<DeepPartial<U>>
+            : T[K]|DeepPartial<T[K]>
+    );
 };
 
 /**
