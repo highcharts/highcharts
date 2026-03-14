@@ -565,6 +565,16 @@ class Chart {
     /** @internal */
     public plotBox!: BBoxObject;
 
+    /** @internal */
+    public plotBoxOuter?: BBoxObject;
+
+    /**
+     * The plot clipping rectangle is fitted along the outside of plot border,
+     * grid lines and axis lines, and applied when a `plotBorderRadius` is set.
+     * @internal
+     */
+    public plotClipRect?: SVGElement;
+
     /**
      * The current height of the plot area in pixels.
      *
@@ -1087,7 +1097,7 @@ class Chart {
             { xAxis, yAxis } = series || {};
 
         // If no axes on the series, or series undefined, use global clipBox
-        let { x, y, width, height } = merge(this.clipBox);
+        let { x, y, width, height, r } = merge(this.clipBox);
 
         if (series) {
             // Otherwise, use clipBox.width which is corrected for
@@ -1113,7 +1123,7 @@ class Chart {
             y += (inverted ? xAxis : yAxis)?.pos ?? this.plotTop;
         }
 
-        return { x, y, width, height };
+        return { x, y, width, height, r };
     }
 
     /**
@@ -2454,12 +2464,14 @@ class Chart {
             {
                 chartHeight,
                 chartWidth,
+                clipOffset,
                 inverted,
+                options,
                 spacing,
                 renderer
             } = chart,
-            clipOffset = chart.clipOffset,
-            clipRoundFunc = Math[inverted ? 'floor' : 'round'];
+            clipRoundFunc = Math[inverted ? 'floor' : 'round'],
+            { plotBorderRadius = 0 } = options.chart;
 
         let plotLeft,
             plotTop,
@@ -2518,7 +2530,8 @@ class Chart {
             x: plotLeft,
             y: plotTop,
             width: plotWidth,
-            height: plotHeight
+            height: plotHeight,
+            r: plotBorderRadius
         };
 
         // Compute the clipping box
@@ -2531,15 +2544,16 @@ class Chart {
                 ),
                 height: clipRoundFunc(
                     chart.plotSizeY - clipOffset[0] - clipOffset[2]
-                )
+                ),
+                r: plotBorderRadius
             };
         }
 
         if (!skipAxes) {
-            chart.axes.forEach(function (axis): void {
+            for (const axis of chart.axes) {
                 axis.setAxisSize();
                 axis.setAxisTranslation();
-            });
+            }
             renderer.alignElements();
         }
 
@@ -2595,6 +2609,7 @@ class Chart {
             halfWidth,
             halfWidth
         ];
+
         chart.plotBorderWidth = plotBorderWidth;
 
     }
@@ -2610,21 +2625,25 @@ class Chart {
     public drawChartBox(): void {
         const chart = this,
             optionsChart = chart.options.chart,
-            renderer = chart.renderer,
-            chartWidth = chart.chartWidth,
-            chartHeight = chart.chartHeight,
-            styledMode = chart.styledMode,
-            plotBGImage = chart.plotBGImage,
             chartBackgroundColor = optionsChart.backgroundColor,
             plotBackgroundColor = optionsChart.plotBackgroundColor,
             plotBackgroundImage = optionsChart.plotBackgroundImage,
-            plotLeft = chart.plotLeft,
-            plotTop = chart.plotTop,
-            plotWidth = chart.plotWidth,
-            plotHeight = chart.plotHeight,
-            plotBox = chart.plotBox,
-            clipRect = chart.clipRect,
-            clipBox = chart.clipBox;
+            {
+                chartWidth,
+                chartHeight,
+                clipBox,
+                clipOffset,
+                clipRect,
+                plotBGImage,
+                plotBox,
+                plotClipRect,
+                plotLeft,
+                plotTop,
+                plotWidth,
+                plotHeight,
+                renderer,
+                styledMode
+            } = chart;
 
         let chartBackground = chart.chartBackground,
             plotBackground = chart.plotBackground,
@@ -2736,15 +2755,53 @@ class Chart {
             plotBorder.attr({
                 stroke: optionsChart.plotBorderColor,
                 'stroke-width': optionsChart.plotBorderWidth || 0,
-                fill: 'none'
+                fill: 'none',
+                r: plotBox.r
             });
         }
 
-        plotBorder[verb](plotBorder.crisp(
-            plotBox,
-            // #3282 plotBorder should be negative
-            -plotBorder.strokeWidth()
-        ));
+        const strokeWidth = plotBorder.strokeWidth(),
+            plotBorderBox = merge(plotBorder.crisp(plotBox, -strokeWidth));
+
+        // If any of the clipOffset sides are larger than half the stroke width,
+        // the plotBorderBox needs to be extended so that the plot border
+        // includes the full stroke of axis lines.
+        if (clipOffset) {
+            // @todo: Maybe clipOffset should be non-inverted in the first place
+            const clipOffsetUninverted = chart.inverted ?
+                    [
+                        clipOffset[1],
+                        clipOffset[0],
+                        clipOffset[3],
+                        clipOffset[2]
+                    ] :
+                    clipOffset,
+                extendUp = clipOffsetUninverted[0] - strokeWidth / 2,
+                extendRight = clipOffsetUninverted[1] - strokeWidth / 2,
+                extendDown = clipOffsetUninverted[2] - strokeWidth / 2,
+                extendLeft = clipOffsetUninverted[3] - strokeWidth / 2;
+            plotBorderBox.x -= extendLeft;
+            plotBorderBox.y -= extendUp;
+            plotBorderBox.width += extendLeft + extendRight;
+            plotBorderBox.height += extendDown + extendUp;
+        }
+
+        plotBorder[verb](plotBorderBox);
+
+        // Plot border clipping along the outside of the plot border, for the
+        // `plotBorderRadius` feature. A half stroke width must be added.
+        plotClipRect?.[plotBox.r ? verb : 'attr']({
+            x: plotBorderBox.x - strokeWidth / 2,
+            y: plotBorderBox.y - strokeWidth / 2,
+            width: plotBorderBox.width + strokeWidth,
+            height: plotBorderBox.height + strokeWidth,
+            r: plotBox.r ? plotBox.r + strokeWidth / 2 : 0
+        });
+
+        // Apply clipping only when we actually have a plot border radius
+        plotClipRect?.parentGroup?.attr({
+            display: plotBox.r ? '' : 'none'
+        });
 
         // Reset
         chart.isDirtyBox = false;
@@ -2895,6 +2952,9 @@ class Chart {
             redoHorizontal = true,
             redoVertical: boolean|undefined,
             run = 0;
+
+        // Create the clip rectangle for plot border radius
+        chart.plotClipRect ||= renderer.clipRect();
 
         // Title
         chart.setTitle();

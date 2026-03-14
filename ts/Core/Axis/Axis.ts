@@ -293,6 +293,12 @@ class Axis {
      */
     public chart!: Chart;
 
+    /**
+     * Whether this axis is allowed to be clipped to the plot area.
+     * @internal
+     */
+    public clippable = true;
+
     /** @internal */
     public closestPointRange?: number;
 
@@ -3738,7 +3744,7 @@ class Axis {
                 'grid',
                 '-grid',
                 options.gridZIndex
-            );
+            ).clip(this.clippable ? chart.plotClipRect : void 0);
             this.axisGroup = createGroup(
                 'axis',
                 '',
@@ -3993,19 +3999,20 @@ class Axis {
      * @function Highcharts.Axis#renderLine
      */
     public renderLine(): void {
-        if (!this.axisLine) {
-            this.axisLine = this.chart.renderer.path()
-                .addClass('highcharts-axis-line')
-                .add(this.axisGroup);
-
-            if (!this.chart.styledMode) {
-                this.axisLine.attr({
-                    stroke: this.options.lineColor,
-                    'stroke-width': this.options.lineWidth,
-                    zIndex: 7
-                });
-            }
-        }
+        const { chart, options } = this;
+        this.axisLine ||= chart.renderer.path()
+            .addClass('highcharts-axis-line')
+            .attr(chart.styledMode ? {} : {
+                stroke: options.lineColor,
+                'stroke-width': options.lineWidth,
+                zIndex: 7
+            })
+            .clip(
+                this.clippable && this.offset <= 0 ?
+                    chart.plotClipRect :
+                    void 0
+            )
+            .add(this.axisGroup);
     }
 
     /**

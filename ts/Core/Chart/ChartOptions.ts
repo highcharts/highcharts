@@ -743,6 +743,15 @@ export interface ChartOptions {
     plotBorderColor?: ColorType;
 
     /**
+     * The corner radius of the plot area border.
+     *
+     * @sample highcharts/chart/plotborderradius/
+     *         5px radius
+     * @since  next
+     */
+    plotBorderRadius?: number;
+
+    /**
      * The pixel width of the plot area border.
      *
      * @sample {highcharts} highcharts/chart/plotborderwidth/

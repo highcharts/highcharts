@@ -49,6 +49,10 @@ export interface BBoxObject extends PositionObject, SizeObject {
      * detection.
      */
     polygon?: Array<[number, number]>;
+    /**
+     * The border radius, used for some clipping rectangles
+     */
+    r?: number;
 }
 
 /* *

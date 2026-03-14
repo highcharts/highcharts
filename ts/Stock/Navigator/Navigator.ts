@@ -1408,6 +1408,9 @@ class Navigator {
                 }
             ), 'yAxis') as NavigatorAxisComposition;
 
+            navigator.xAxis.clippable = false;
+            navigator.yAxis.clippable = false;
+
             // If we have a base series, initialize the navigator series
             if (baseSeries || navigatorOptions.series?.data) {
                 navigator.updateNavigatorSeries(false);
