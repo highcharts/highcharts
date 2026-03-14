@@ -33,6 +33,8 @@ import type Point from '../../Series/Point';
 import type PointerEvent from '../../PointerEvent';
 import type { StatesOptionsKey } from '../../Series/StatesOptions';
 import type SVGPath from '../../Renderer/SVG/SVGPath';
+import type SVGElement from '../../Renderer/SVG/SVGElement';
+import type PositionObject from '../../Renderer/PositionObject';
 
 import Axis from '../Axis.js';
 import ColorAxisBase from './ColorAxisBase.js';
@@ -286,25 +288,32 @@ class ColorAxis extends Axis implements ColorAxisBase {
     }
 
     /**
-     * Extend the setOptions method to process extreme colors and color stops.
+     * Extend the setOptions method to process title, extreme colors and
+     * color stops.
      * @internal
      */
     public setOptions(userOptions: DeepPartial<ColorAxisOptions>): void {
+        const legend = this.chart.options.legend || {},
+            theme = defaultOptions.colorAxis as ColorAxisOptions,
+            layout = userOptions.layout || legend.layout || theme.layout,
+            horiz = layout !== 'vertical';
+
+        const sideSpecific = horiz ? { title: { rotation: 0, margin: 5 } } :
+            { title: { rotation: 270, align: 'middle', margin: 10 } };
 
         const options = merge(
-            defaultOptions.colorAxis as ColorAxisOptions,
+            sideSpecific,
+            theme,
             userOptions,
             // Forced options
             {
                 showEmpty: false,
-                title: null,
                 visible: this.chart.options.legend.enabled &&
                     userOptions.visible !== false
             }
         );
 
         super.setOptions(options);
-
         this.options.crosshair = this.options.marker;
     }
 
@@ -430,6 +439,53 @@ class ColorAxis extends Axis implements ColorAxisBase {
 
         this.setLegendColor();
 
+        let titleHeight = 0;
+        let titleWidth = 0;
+
+        const titleOptions = axis.options.title || {};
+        const hasTitleText = typeof titleOptions.text !== 'undefined' &&
+                             titleOptions.text !== '';
+
+        if (hasTitleText) {
+            let fontSize: number = 12; // Standard fallback
+
+            if (titleOptions.style?.fontSize) {
+                const fontSizeStr = titleOptions.style.fontSize.toString();
+                const parsed = parseFloat(fontSizeStr);
+
+                if (!isNaN(parsed)) {
+                    fontSize = fontSizeStr.indexOf('em') !== -1 ?
+                        parsed * 12 : parsed;
+                }
+            }
+
+
+            const metrics = axis.chart.renderer.fontMetrics(fontSize);
+
+            if (horiz) {
+
+                titleHeight = metrics.h;
+
+                titleWidth = axis.axisTitle ?
+                    axis.axisTitle.getBBox().width :
+                    String(titleOptions.text).length * (metrics.h * 0.55);
+            } else {
+
+                titleWidth = metrics.h;
+
+                titleHeight = axis.axisTitle ?
+                    (
+                        axis.axisTitle.rotation ?
+                            axis.axisTitle.getBBox().height :
+                            axis.axisTitle.getBBox().width
+                    ) :
+                    String(titleOptions.text).length * (metrics.h * 0.55);
+            }
+        }
+
+        const titleMargin = hasTitleText ? (titleOptions.margin ?? 0) : 0;
+        const yShift = horiz ? (titleHeight + titleMargin) : 0;
+
         // Create the gradient
         if (!legendItem.symbol) {
             legendItem.symbol = this.chart.renderer.symbol('roundedRect')
@@ -441,23 +497,47 @@ class ColorAxis extends Axis implements ColorAxisBase {
 
         legendItem.symbol.attr({
             x: 0,
-            y: (legend.baseline || 0) - 11,
+            y: (legend.baseline || 0) - 11 + yShift,
             width: width,
             height: height
         });
 
         // Set how much space this legend item takes up
-        legendItem.labelWidth = (
-            width +
-            padding +
-            (
-                horiz ?
-                    itemDistance :
-                    pick(labelOptions.x, labelOptions.distance) +
-                        (this.maxLabelLength || 0)
-            )
-        );
-        legendItem.labelHeight = height + padding + (horiz ? labelPadding : 0);
+        if (horiz) {
+            legendItem.labelWidth = Math.max(
+                width + padding + itemDistance,
+                titleWidth || 0
+            );
+            legendItem.labelHeight = height + padding + labelPadding +
+            titleHeight + titleMargin;
+        } else {
+            legendItem.labelWidth = width + padding +
+                (labelOptions.x ?? labelOptions.distance ?? 0) +
+                (this.maxLabelLength || 0) +
+                (titleWidth || 0) + titleMargin;
+
+            legendItem.labelHeight = Math.max(
+                height + padding,
+                titleHeight || 0
+            );
+        }
+    }
+
+    /**
+     * Override the title position to place it above the color bar
+     * for horizontal layouts, or outside the labels for vertical layouts.
+     * @internal
+     */
+    public getTitlePosition(axisTitle: SVGElement): PositionObject {
+        // Pass the argument down to the base class
+        const pos = super.getTitlePosition(axisTitle);
+
+        if (this.horiz && axisTitle) {
+            const titleMargin = this.options.title?.margin ?? 0;
+            pos.y = this.top - titleMargin;
+        }
+
+        return pos;
     }
 
     /**
