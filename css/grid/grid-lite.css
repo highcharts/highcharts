@@ -384,10 +384,13 @@
         }
     }
 
-    /* .hcg-pagination-nav-dropdown {
-        display: none;
-        min-width: 200px;
-    } */
+    .hcg-pagination-nav-dropdown {
+        min-width: 120px;
+
+        select.hcg-input {
+            width: 100%;
+        }
+    }
 
     &.hcg-pagination-left,
     &.hcg-pagination-center,

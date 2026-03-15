@@ -106,7 +106,8 @@ Grid.grid('container', {
         enabled: true,
         pageSize: 25,
         controls: {
-            pageButtons: {
+            pageNavigation: {
+                renderer: 'buttons',
                 enabled: true,
                 count: 7
             }
@@ -123,9 +124,10 @@ Grid.grid('container', {
                     controls: {
                         pageSizeSelector: false,
                         firstLastButtons: false,
-                        pageButtons: {
+                        pageNavigation: {
                             enabled: true,
-                            count: 3
+                            renderer: 'select',
+                            count: 'all'
                         }
                     }
                 }

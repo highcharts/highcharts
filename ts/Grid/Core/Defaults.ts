@@ -74,6 +74,7 @@ export const defaultLangOptions: DeepPartial<LangOptions> = {
         pageInfo: 'Showing {start} - {end} of {total} ' +
             '(page {currentPage} of {totalPages})',
         pageSizeLabel: 'rows per page',
+        pageSelectLabel: 'Select page',
         firstPage: 'First page',
         previousPage: 'Previous page',
         nextPage: 'Next page',

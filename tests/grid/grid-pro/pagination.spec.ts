@@ -32,6 +32,26 @@ test.describe('Pagination', () => {
         // Check event logging
         await expect(page.locator('#beforePageChange')).toHaveValue('1');
         await expect(page.locator('#afterPageChange')).toHaveValue('3');
+
+        await page.evaluate(() => {
+            return (window as any).Grid.grids[0].update({
+                pagination: {
+                    page: 1,
+                    controls: {
+                        pageNavigation: {
+                            renderer: 'select',
+                            count: 5
+                        }
+                    }
+                }
+            });
+        });
+
+        await page.locator('.hcg-pagination-nav-dropdown select.hcg-input')
+            .selectOption('12');
+
+        await expect(page.locator('#beforePageChange')).toHaveValue('1');
+        await expect(page.locator('#afterPageChange')).toHaveValue('12');
     });
 
     test('beforePageSizeChange / afterPageSizeChange', async ({ page }) => {
@@ -45,4 +65,3 @@ test.describe('Pagination', () => {
         await expect(page.locator('#afterPageSizeChange')).toHaveValue('20');
     });
 });
-

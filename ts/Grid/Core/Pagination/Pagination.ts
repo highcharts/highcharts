@@ -26,7 +26,8 @@ import type {
     PaginationOptions,
     PaginationLangOptions,
     PageSizeSelectorOptions,
-    PageButtonsOptions
+    PageButtonsOptions,
+    PageNavigationOptions
 } from './PaginationOptions';
 import type { DeepPartial } from '../../../Shared/Types';
 
@@ -52,6 +53,18 @@ const paginationAlignments = [
 ] as const;
 const alignmentClassName = (alignment: string): string =>
     `${Globals.classNamePrefix}pagination-${alignment}`;
+
+interface PageNavigationPageItem {
+    type: 'page';
+    page: number;
+}
+
+interface PageNavigationEllipsisItem {
+    type: 'ellipsis';
+}
+
+type PageNavigationItem = PageNavigationPageItem | PageNavigationEllipsisItem;
+type PageNavigationRenderer = 'buttons' | 'select';
 
 /**
  *  Representing the pagination functionalities for the Grid.
@@ -476,9 +489,9 @@ class Pagination {
             this.renderPrevButton(navContainer);
         }
 
-        // Render page numbers
-        if (controls.pageButtons) {
-            this.renderPageNumbers(navContainer);
+        // Render direct page navigation
+        if (this.isPageNavigationEnabled()) {
+            this.renderPageNavigation(navContainer);
         }
 
         // Render next button
@@ -512,7 +525,7 @@ class Pagination {
         }
 
         this.updatePageInfo();
-        this.updatePageNumbers();
+        this.updatePageNavigation();
         this.updateButtonStates();
         this.updateA11yRowsCount(currentPageSize);
 
@@ -704,14 +717,6 @@ class Pagination {
      * The container element for the page number buttons.
      */
     public renderPageNumbers(container: HTMLElement): void {
-        const pageButtons = this.options?.controls?.pageButtons;
-        if (
-            pageButtons === false ||
-            (isObject(pageButtons) && pageButtons.enabled === false)
-        ) {
-            return;
-        }
-
         this.pageNumbersContainer = makeHTMLElement('div', {
             className: Globals.getClassName('paginationPages')
         }, container);
@@ -729,141 +734,46 @@ class Pagination {
 
         // Clear existing page numbers
         this.pageNumbersContainer.innerHTML = AST.emptyHTML;
+        const { currentPage } = this.controller;
 
-        const pageButtons = this.options?.controls?.pageButtons;
-        const maxPageNumbers = isObject(pageButtons) ?
-            pageButtons.count :
-            (Pagination.defaultOptions.controls?.pageButtons as PageButtonsOptions).count; // eslint-disable-line
+        this.getPageNavigationItems().forEach((item): void => {
+            if (item.type === 'page' && defined(item.page)) {
+                this.createPageButton(
+                    item.page,
+                    item.page === currentPage
+                );
+            } else {
+                this.createEllipsis();
+            }
+        });
 
-        if (!maxPageNumbers) {
+    }
+
+    /**
+     * Render the direct page navigation control.
+     *
+     * @param container
+     * The container element for the page navigation control.
+     */
+    public renderPageNavigation(container: HTMLElement): void {
+        if (this.getPageNavigationRenderer() === 'select') {
+            this.renderDropdownPageSelector(container);
             return;
         }
 
-        const {
-            totalPages,
-            currentPage
-        } = this.controller;
+        this.renderPageNumbers(container);
+    }
 
-        if (totalPages <= maxPageNumbers) {
-            // Show all page numbers if total pages is less than max
-            for (let i = 1; i <= totalPages; i++) {
-                this.createPageButton(i, i === currentPage);
-            }
-        } else {
-            const elements = [];
-
-            // Determine layout based on current page position
-            const isNearStart = currentPage <= 3;
-            const isNearEnd = currentPage >= totalPages - 2;
-
-            if (isNearStart) {
-                // -2 for ellipsis and last page
-                const pagesToShow = maxPageNumbers - 2;
-                const maxPages = Math.min(pagesToShow, totalPages - 1);
-
-                for (let i = 1; i <= maxPages; i++) {
-                    elements.push({ type: 'button', page: i });
-                }
-
-                if (totalPages > pagesToShow + 1) {
-                    elements.push({ type: 'ellipsis' });
-                    elements.push({ type: 'button', page: totalPages });
-                }
-
-            } else if (isNearEnd) {
-                // -2 for first page and ellipsis
-                const pagesToShow = maxPageNumbers - 2;
-                let i = totalPages - pagesToShow + 1;
-
-                elements.push({ type: 'button', page: 1 });
-                elements.push({ type: 'ellipsis' });
-
-                for (i; i <= totalPages; i++) {
-                    elements.push({ type: 'button', page: i });
-                }
-
-            } else {
-                // Always add first page
-                elements.push({ type: 'button', page: 1 });
-
-                // -4 for first, last, and two ellipsis
-                const maxMiddlePages = maxPageNumbers - 4;
-                const halfMiddle = Math.floor(maxMiddlePages / 2);
-
-                let startPage = Math.max(2, currentPage - halfMiddle);
-                let endPage = Math.min(
-                    totalPages - 1,
-                    currentPage + halfMiddle
-                );
-
-                // Adjust to ensure we have exactly maxMiddlePages
-                if (endPage - startPage + 1 > maxMiddlePages) {
-                    if (startPage === 2) {
-                        endPage = startPage + maxMiddlePages - 1;
-                    } else {
-                        startPage = endPage - maxMiddlePages + 1;
-                    }
-                }
-
-                // Check if we actually need ellipsis
-                const needFirstEllipsis = startPage > 2;
-                const needLastEllipsis = endPage < totalPages - 1;
-
-                if (!needFirstEllipsis && !needLastEllipsis) {
-                    // -2 for first and last
-                    const availableSlots = maxPageNumbers - 2;
-                    startPage = 2;
-                    endPage = Math.min(
-                        totalPages - 1,
-                        startPage + availableSlots - 1
-                    );
-                } else if (!needFirstEllipsis) {
-                    // -3 for first, last, and one ellipsis
-                    const availableSlots = maxPageNumbers - 3;
-                    startPage = 2;
-                    endPage = Math.min(
-                        totalPages - 1,
-                        startPage + availableSlots - 1
-                    );
-                } else if (!needLastEllipsis) {
-                    // -3 for first, last, and one ellipsis
-                    const availableSlots = maxPageNumbers - 3;
-                    endPage = totalPages - 1;
-                    startPage = Math.max(2, endPage - availableSlots + 1);
-                }
-
-                // Add first ellipsis
-                if (needFirstEllipsis) {
-                    elements.push({ type: 'ellipsis' });
-                }
-
-                // Add middle pages
-                for (let i = startPage; i <= endPage; i++) {
-                    elements.push({ type: 'button', page: i });
-                }
-
-                // Add last ellipsis
-                if (needLastEllipsis) {
-                    elements.push({ type: 'ellipsis' });
-                }
-
-                // Always add last page
-                elements.push({ type: 'button', page: totalPages });
-            }
-
-            // Render all elements
-            elements.forEach((element): void => {
-                if (element.type === 'button' && defined(element.page)) {
-                    this.createPageButton(
-                        element.page,
-                        element.page === currentPage
-                    );
-                } else if (element.type === 'ellipsis') {
-                    this.createEllipsis();
-                }
-            });
+    /**
+     * Update the active direct page navigation renderer.
+     */
+    public updatePageNavigation(): void {
+        if (this.getPageNavigationRenderer() === 'select') {
+            this.updateDropdownPageSelector();
+            return;
         }
 
+        this.updatePageNumbers();
     }
 
     /**
@@ -1019,7 +929,7 @@ class Pagination {
 
         // Update UI
         this.updatePageInfo();
-        this.updatePageNumbers();
+        this.updatePageNavigation();
         this.updateButtonStates();
 
         // Update row count for a11y
@@ -1084,7 +994,7 @@ class Pagination {
 
         await this.updateGridPagination();
         this.updatePageInfo();
-        this.updatePageNumbers();
+        this.updatePageNavigation();
         this.updateButtonStates();
 
 
@@ -1217,20 +1127,18 @@ class Pagination {
      * The container element for the dropdown page selector.
      */
     public renderDropdownPageSelector(container: HTMLElement): void {
-        if (this.controller.totalPages <= 1) {
-            return;
-        }
-
-        const wrapper: HTMLSelectElement = makeHTMLElement('div', {
+        const wrapper = makeHTMLElement('div', {
             className: Globals.getClassName('paginationNavDropdown')
         }, container);
 
-        const select: HTMLSelectElement = makeHTMLElement('select', {
+        const select = makeHTMLElement('select', {
             className: Globals.getClassName('input'),
             id: Globals.getClassName('paginationNavDropdown')
-        }, wrapper);
+        }, wrapper) as HTMLSelectElement;
 
         this.dropdownPageSelector = select;
+        select.title = this.lang?.pageSelectLabel ?? '';
+        select.setAttribute('aria-label', this.lang?.pageSelectLabel ?? '');
 
         this.updateDropdownPageSelector();
 
@@ -1252,23 +1160,28 @@ class Pagination {
             return;
         }
 
-        const {
-            totalPages,
-            currentPage
-        } = this.controller;
+        const { currentPage } = this.controller;
 
         select.innerHTML = AST.emptyHTML;
 
-        // Add options for each page
-        for (let i = 1; i <= totalPages; i++) {
-            const option: HTMLOptionElement =
-                makeHTMLElement('option', {}, select);
-            option.value = i.toString();
-            option.textContent = `Page ${i} of ${totalPages}`;
-        }
+        this.getPageNavigationItems().forEach((item): void => {
+            const option = makeHTMLElement('option', {}, select) as
+                HTMLOptionElement;
 
-        // Set current page as selected
-        select.value = currentPage.toString();
+            if (item.type === 'page') {
+                option.value = item.page.toString();
+                option.textContent = this.getPageNumberLabel(item.page);
+                option.selected = item.page === currentPage;
+                return;
+            }
+
+            option.disabled = true;
+            option.textContent = '...';
+        });
+
+        if (select.options.length > 0) {
+            select.value = currentPage.toString();
+        }
     }
 
     /**
@@ -1283,6 +1196,339 @@ class Pagination {
             'aria-rowcount',
             currentPageSize || this.controller.totalItems
         );
+    }
+
+    /**
+     * Get the page navigation control options from the active configuration.
+     */
+    private getPageNavigationControl():
+        boolean | PageNavigationOptions | PageButtonsOptions | undefined {
+        return this.options?.controls?.pageNavigation ??
+            this.options?.controls?.pageButtons;
+    }
+
+    /**
+     * Whether direct page navigation is enabled.
+     */
+    private isPageNavigationEnabled(): boolean {
+        const pageNavigation = this.getPageNavigationControl();
+
+        return !(
+            pageNavigation === false ||
+            (isObject(pageNavigation) && pageNavigation.enabled === false)
+        );
+    }
+
+    /**
+     * Get the active page navigation renderer.
+     */
+    private getPageNavigationRenderer(): PageNavigationRenderer {
+        const pageNavigation = this.getPageNavigationControl();
+
+        if (
+            isObject(pageNavigation) &&
+            'renderer' in pageNavigation &&
+            pageNavigation.renderer === 'select'
+        ) {
+            return 'select';
+        }
+
+        return 'buttons';
+    }
+
+    /**
+     * Get the active page navigation count.
+     */
+    private getPageNavigationCount(): number | 'all' | undefined {
+        const pageNavigation = this.getPageNavigationControl();
+        const defaultPageButtons =
+            Pagination.defaultOptions.controls?.pageButtons;
+
+        if (isObject(pageNavigation) && defined(pageNavigation.count)) {
+            return pageNavigation.count;
+        }
+
+        if (isObject(defaultPageButtons) && defined(defaultPageButtons.count)) {
+            return defaultPageButtons.count;
+        }
+    }
+
+    /**
+     * Build the shared page navigation item list used by both renderers.
+     */
+    private getPageNavigationItems(): PageNavigationItem[] {
+        const {
+            currentPage,
+            totalPages
+        } = this.controller;
+        const count = this.getPageNavigationCount();
+
+        if (!count || totalPages < 1) {
+            return [];
+        }
+
+        if (
+            count === 'all' ||
+            (typeof count === 'number' && totalPages <= count)
+        ) {
+            return this.getSequentialPageNavigationItems(totalPages);
+        }
+
+        if (typeof count !== 'number' || count < 1) {
+            return [];
+        }
+
+        if (count >= 5) {
+            return this.getWindowedPageNavigationItems(
+                count,
+                currentPage,
+                totalPages
+            );
+        }
+
+        return this.getCompactPageNavigationItems(
+            count,
+            currentPage,
+            totalPages
+        );
+    }
+
+    /**
+     * Create a simple sequential page navigation list.
+     *
+     * @param totalPages
+     * Total pages to render.
+     */
+    private getSequentialPageNavigationItems(totalPages: number):
+        PageNavigationItem[] {
+        const items: PageNavigationItem[] = [];
+
+        for (let i = 1; i <= totalPages; i++) {
+            items.push({
+                type: 'page',
+                page: i
+            });
+        }
+
+        return items;
+    }
+
+    /**
+     * Create page navigation items for small button counts.
+     *
+     * @param count
+     * Maximum number of page buttons.
+     *
+     * @param currentPage
+     * Current page.
+     *
+     * @param totalPages
+     * Total available pages.
+     */
+    private getCompactPageNavigationItems(
+        count: number,
+        currentPage: number,
+        totalPages: number
+    ): PageNavigationItem[] {
+        const pages = new Set<number>([currentPage]);
+
+        if (count >= 2) {
+            pages.add(1);
+        }
+        if (count >= 3) {
+            pages.add(totalPages);
+        }
+
+        for (
+            let offset = 1;
+            pages.size < count &&
+            (currentPage - offset >= 1 || currentPage + offset <= totalPages);
+            offset++
+        ) {
+            const leftPage = currentPage - offset;
+            const rightPage = currentPage + offset;
+
+            if (leftPage >= 1) {
+                pages.add(leftPage);
+            }
+
+            if (pages.size >= count) {
+                break;
+            }
+
+            if (rightPage <= totalPages) {
+                pages.add(rightPage);
+            }
+        }
+
+        return this.createPageNavigationItemsFromPages(
+            Array.from(pages).sort((a, b): number => a - b)
+        );
+    }
+
+    /**
+     * Create page navigation items using the existing sliding window logic.
+     *
+     * @param maxPageNumbers
+     * Maximum number of page buttons.
+     *
+     * @param currentPage
+     * Current page.
+     *
+     * @param totalPages
+     * Total pages available.
+     */
+    private getWindowedPageNavigationItems(
+        maxPageNumbers: number,
+        currentPage: number,
+        totalPages: number
+    ): PageNavigationItem[] {
+        const items: PageNavigationItem[] = [];
+
+        // Determine layout based on current page position
+        const isNearStart = currentPage <= 3;
+        const isNearEnd = currentPage >= totalPages - 2;
+
+        if (isNearStart) {
+            // -2 for ellipsis and last page
+            const pagesToShow = maxPageNumbers - 2;
+            const maxPages = Math.min(pagesToShow, totalPages - 1);
+
+            for (let i = 1; i <= maxPages; i++) {
+                items.push({ type: 'page', page: i });
+            }
+
+            if (totalPages > pagesToShow + 1) {
+                items.push({ type: 'ellipsis' });
+                items.push({ type: 'page', page: totalPages });
+            }
+
+            return items;
+        }
+
+        if (isNearEnd) {
+            // -2 for first page and ellipsis
+            const pagesToShow = maxPageNumbers - 2;
+            let i = totalPages - pagesToShow + 1;
+
+            items.push({ type: 'page', page: 1 });
+            items.push({ type: 'ellipsis' });
+
+            for (i; i <= totalPages; i++) {
+                items.push({ type: 'page', page: i });
+            }
+
+            return items;
+        }
+
+        // Always add first page
+        items.push({ type: 'page', page: 1 });
+
+        // -4 for first, last, and two ellipsis
+        const maxMiddlePages = maxPageNumbers - 4;
+        const halfMiddle = Math.floor(maxMiddlePages / 2);
+
+        let startPage = Math.max(2, currentPage - halfMiddle);
+        let endPage = Math.min(
+            totalPages - 1,
+            currentPage + halfMiddle
+        );
+
+        // Adjust to ensure we have exactly maxMiddlePages
+        if (endPage - startPage + 1 > maxMiddlePages) {
+            if (startPage === 2) {
+                endPage = startPage + maxMiddlePages - 1;
+            } else {
+                startPage = endPage - maxMiddlePages + 1;
+            }
+        }
+
+        // Check if we actually need ellipsis
+        const needFirstEllipsis = startPage > 2;
+        const needLastEllipsis = endPage < totalPages - 1;
+
+        if (!needFirstEllipsis && !needLastEllipsis) {
+            // -2 for first and last
+            const availableSlots = maxPageNumbers - 2;
+            startPage = 2;
+            endPage = Math.min(
+                totalPages - 1,
+                startPage + availableSlots - 1
+            );
+        } else if (!needFirstEllipsis) {
+            // -3 for first, last, and one ellipsis
+            const availableSlots = maxPageNumbers - 3;
+            startPage = 2;
+            endPage = Math.min(
+                totalPages - 1,
+                startPage + availableSlots - 1
+            );
+        } else if (!needLastEllipsis) {
+            // -3 for first, last, and one ellipsis
+            const availableSlots = maxPageNumbers - 3;
+            endPage = totalPages - 1;
+            startPage = Math.max(2, endPage - availableSlots + 1);
+        }
+
+        // Add first ellipsis
+        if (needFirstEllipsis) {
+            items.push({ type: 'ellipsis' });
+        }
+
+        // Add middle pages
+        for (let i = startPage; i <= endPage; i++) {
+            items.push({ type: 'page', page: i });
+        }
+
+        // Add last ellipsis
+        if (needLastEllipsis) {
+            items.push({ type: 'ellipsis' });
+        }
+
+        // Always add last page
+        items.push({ type: 'page', page: totalPages });
+
+        return items;
+    }
+
+    /**
+     * Create page navigation items from an ordered page list.
+     *
+     * @param pages
+     * Ordered pages to include.
+     */
+    private createPageNavigationItemsFromPages(
+        pages: Array<number>
+    ): PageNavigationItem[] {
+        const items: PageNavigationItem[] = [];
+
+        pages.forEach((page, index): void => {
+            const prevPage = pages[index - 1];
+
+            if (defined(prevPage) && page - prevPage > 1) {
+                items.push({ type: 'ellipsis' });
+            }
+
+            items.push({
+                type: 'page',
+                page
+            });
+        });
+
+        return items;
+    }
+
+    /**
+     * Get the localized label for a page number.
+     *
+     * @param pageNumber
+     * Page to format.
+     */
+    private getPageNumberLabel(pageNumber: number): string {
+        return formatText(
+            this.lang?.pageNumber ?? 'Page {page}',
+            { page: pageNumber }
+        ) || pageNumber.toString();
     }
 }
 

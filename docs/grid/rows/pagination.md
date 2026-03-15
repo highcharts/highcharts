@@ -81,7 +81,9 @@ Available options are:
 - `pageInfo`: page summary text (for example, "Showing 1 - 10 of 42").
 - `firstLastButtons`: first and last page navigation buttons.
 - `previousNextButtons`: previous and next page navigation buttons.
-- `pageButtons`: numbered page buttons.
+- `pageNavigation`: direct page navigation using `renderer: 'buttons'` or `renderer: 'select'`.
+
+`pageNavigation.count` controls how many page entries are shown before using ellipsis. Set `count: 'all'` to render every page without ellipsis. The legacy `pageButtons` option is still supported as a deprecated alias for button-based navigation.
 
 Example with all controls configured:
 
@@ -96,9 +98,24 @@ pagination: {
         pageInfo: true,
         firstLastButtons: false,
         previousNextButtons: true,
-        pageButtons: {
+        pageNavigation: {
             enabled: true,
+            renderer: 'buttons',
             count: 9
+        }
+    }
+}
+```
+
+Example using the select renderer:
+
+```js
+pagination: {
+    enabled: true,
+    controls: {
+        pageNavigation: {
+            renderer: 'select',
+            count: 5
         }
     }
 }
@@ -119,7 +136,8 @@ Grid.grid('container', {
         enabled: true,
         pageSize: 25,
         controls: {
-            pageButtons: {
+            pageNavigation: {
+                renderer: 'buttons',
                 count: 9
             }
         }
@@ -135,8 +153,9 @@ Grid.grid('container', {
                     controls: {
                         pageSizeSelector: false,
                         previousNextButtons: false,
-                        pageButtons: {
-                            count: 5
+                        pageNavigation: {
+                            renderer: 'select',
+                            count: 'all'
                         }
                     }
                 }
