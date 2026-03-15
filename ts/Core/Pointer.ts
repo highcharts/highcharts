@@ -172,6 +172,12 @@ class Pointer {
     public hasPinchMoved?: boolean;
 
     /**
+     * Whether reset zoom should be shown once a touch gesture ends.
+     * @internal
+     */
+    public showResetZoomAfterTouch?: boolean;
+
+    /**
      * Whether the browser is using pointer capture.
      * @internal
      */
@@ -608,6 +614,18 @@ class Pointer {
         }
         if (redraw) {
             chart.redraw();
+        }
+
+        if (
+            e?.type === 'touchend' &&
+            defined(this.showResetZoomAfterTouch)
+        ) {
+            if (this.showResetZoomAfterTouch && !chart.resetZoomButton) {
+                chart.showResetZoom();
+            } else if (!this.showResetZoomAfterTouch && chart.resetZoomButton) {
+                chart.resetZoomButton = chart.resetZoomButton.destroy();
+            }
+            this.showResetZoomAfterTouch = void 0;
         }
 
         if (selectionMarker && e) {
@@ -1402,6 +1420,7 @@ class Pointer {
         if (e.type === 'touchstart') {
             pointer.pinchDown = touches;
             pointer.res = true; // Reset on next move
+            pointer.showResetZoomAfterTouch = void 0;
             chart.mouseDownX = e.chartX;
 
         // Optionally move the tooltip on touchmove
@@ -1430,7 +1449,7 @@ class Pointer {
                     };
                 };
 
-                chart.transform({
+                const transformParams: Chart.ChartTransformParams = {
                     axes: chart.axes
                         .filter((axis): boolean|undefined =>
                             axis.zoomEnabled &&
@@ -1441,8 +1460,16 @@ class Pointer {
                         ),
                     to: boxFromTouches(touches),
                     from: boxFromTouches(lastTouches),
-                    trigger: e.type
-                });
+                    trigger: e.type,
+                    deferResetButton: true
+                };
+
+                chart.transform(transformParams);
+
+                if (defined(transformParams.showResetButton)) {
+                    pointer.showResetZoomAfterTouch =
+                        transformParams.showResetButton;
+                }
 
             });
 

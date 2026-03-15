@@ -4143,7 +4143,8 @@ class Chart {
                 selection,
                 to = {},
                 trigger,
-                allowResetButton = true
+                allowResetButton = true,
+                deferResetButton = false
             } = params,
             { inverted, time } = this;
 
@@ -4393,15 +4394,20 @@ class Chart {
                 );
             } else {
 
-                // Show or hide the Reset zoom button, but not while panning
-                if (
-                    displayButton &&
-                    !isAnyAxisPanning &&
-                    !this.resetZoomButton
-                ) {
-                    this.showResetZoom();
-                } else if (!displayButton && this.resetZoomButton) {
-                    this.resetZoomButton = this.resetZoomButton.destroy();
+                if (deferResetButton) {
+                    params.showResetButton = !!displayButton;
+                } else {
+                    // Show or hide the Reset zoom button, but not while
+                    // panning.
+                    if (
+                        displayButton &&
+                        !isAnyAxisPanning &&
+                        !this.resetZoomButton
+                    ) {
+                        this.showResetZoom();
+                    } else if (!displayButton && this.resetZoomButton) {
+                        this.resetZoomButton = this.resetZoomButton.destroy();
+                    }
                 }
 
                 this.redraw(
@@ -4645,6 +4651,8 @@ namespace Chart {
         from?: Partial<BBoxObject>;
         trigger?: string;
         allowResetButton?: boolean;
+        deferResetButton?: boolean;
+        showResetButton?: boolean;
         hasZoomed?: boolean;
     }
 
