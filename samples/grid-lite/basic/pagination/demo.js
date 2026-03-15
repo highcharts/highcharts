@@ -44,8 +44,9 @@ Grid.grid('container', {
             pageInfo: true,
             firstLastButtons: true,
             previousNextButtons: true,
-            pageButtons: {
-                enabled: true
+            pageNavigation: {
+                enabled: true,
+                renderer: 'buttons'
             }
         }
     }

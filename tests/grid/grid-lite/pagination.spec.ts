@@ -1,6 +1,23 @@
 import { test, expect } from '~/fixtures.ts';
 
 test.describe('Pagination', () => {
+    async function getSelectOptions(page: import('@playwright/test').Page): Promise<Array<{
+        value: string;
+        text: string;
+        disabled: boolean;
+        selected: boolean;
+    }>> {
+        return page.locator('.hcg-pagination-nav-dropdown select.hcg-input')
+            .evaluate((select: HTMLSelectElement) =>
+                Array.from(select.options).map((option) => ({
+                    value: option.value,
+                    text: option.text,
+                    disabled: option.disabled,
+                    selected: option.selected
+                }))
+            );
+    }
+
     test.beforeEach(async ({ page }) => {
         await page.setViewportSize({ width: 1200, height: 800 });
         await page.goto('/grid-lite/e2e/pagination', { waitUntil: 'networkidle' });
@@ -171,6 +188,7 @@ test.describe('Pagination', () => {
                     pagination: {
                         pageInfo: 'Total pages {total}',
                         pageSizeLabel: 'Items per page',
+                        pageSelectLabel: 'Choose page'
                     }
                 }
             });
@@ -178,6 +196,117 @@ test.describe('Pagination', () => {
 
         await expect(page.locator('.hcg-pagination-info').first()).toContainText('Total pages');
         await expect(page.locator('.hcg-pagination-page-size').first()).toContainText('Items per page');
+
+        await page.evaluate(() => {
+            return (window as any).Grid.grids[0].update({
+                pagination: {
+                    controls: {
+                        pageNavigation: {
+                            renderer: 'select',
+                            count: 5
+                        }
+                    }
+                }
+            });
+        });
+
+        await expect(
+            page.locator('.hcg-pagination-nav-dropdown select.hcg-input')
+        ).toHaveAttribute('aria-label', 'Choose page');
+    });
+
+    test('Page navigation select mirrors button items with ellipsis', async ({ page }) => {
+        await page.evaluate(() => {
+            return (window as any).Grid.grids[0].update({
+                pagination: {
+                    page: 6,
+                    controls: {
+                        pageNavigation: {
+                            renderer: 'buttons',
+                            count: 5
+                        }
+                    }
+                }
+            });
+        });
+
+        const buttonItems = await page.locator(
+            '.hcg-pagination-pages > *'
+        ).evaluateAll((elements) =>
+            elements.map((element) => element.textContent?.trim() || '')
+        );
+
+        expect(buttonItems).toEqual(['1', '...', '6', '...', '12']);
+
+        await page.evaluate(() => {
+            return (window as any).Grid.grids[0].update({
+                pagination: {
+                    controls: {
+                        pageNavigation: {
+                            renderer: 'select',
+                            count: 5
+                        }
+                    }
+                }
+            });
+        });
+
+        const options = await getSelectOptions(page);
+
+        expect(options.map((option) => option.text)).toEqual([
+            'Page 1',
+            '...',
+            'Page 6',
+            '...',
+            'Page 12'
+        ]);
+        expect(options.filter((option) => option.disabled)).toHaveLength(2);
+        expect(options.find((option) => option.selected)?.value).toBe('6');
+
+        await page.locator('.hcg-pagination-nav-dropdown select.hcg-input')
+            .selectOption('12');
+
+        await expect(page.locator('.hcg-pagination-info'))
+            .toContainText('Showing 243 - 254 of 254');
+    });
+
+    test('Page navigation count all renders every page without ellipsis', async ({ page }) => {
+        await page.evaluate(() => {
+            return (window as any).Grid.grids[0].update({
+                pagination: {
+                    controls: {
+                        pageNavigation: {
+                            renderer: 'buttons',
+                            count: 'all'
+                        }
+                    }
+                }
+            });
+        });
+
+        await expect(
+            page.locator('.hcg-pagination-pages .hcg-button')
+        ).toHaveCount(12);
+        await expect(
+            page.locator('.hcg-pagination-pages span')
+        ).toHaveCount(0);
+
+        await page.evaluate(() => {
+            return (window as any).Grid.grids[0].update({
+                pagination: {
+                    controls: {
+                        pageNavigation: {
+                            renderer: 'select',
+                            count: 'all'
+                        }
+                    }
+                }
+            });
+        });
+
+        const options = await getSelectOptions(page);
+        expect(options).toHaveLength(12);
+        expect(options.some((option) => option.disabled)).toBe(false);
     });
 
     test('Position parameter - custom container', async ({ page }) => {

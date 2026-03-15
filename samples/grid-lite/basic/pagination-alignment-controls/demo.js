@@ -42,8 +42,9 @@ Grid.grid('container', {
             pageInfo: true,
             firstLastButtons: true,
             previousNextButtons: true,
-            pageButtons: {
+            pageNavigation: {
                 enabled: true,
+                renderer: 'buttons',
                 count: 9
             }
         }
@@ -57,8 +58,9 @@ Grid.grid('container', {
                 pagination: {
                     controls: {
                         firstLastButtons: false,
-                        pageButtons: {
-                            count: 5
+                        pageNavigation: {
+                            renderer: 'select',
+                            count: 'all'
                         }
                     }
                 }

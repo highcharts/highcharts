@@ -70,9 +70,18 @@ export interface PaginationControlsOptions {
     previousNextButtons?: boolean | PreviousNextButtonsOptions;
 
     /**
+     * Direct page navigation configuration.
+     *
+     * @default { enabled: true, renderer: 'buttons', count: 7 }
+     */
+    pageNavigation?: boolean | PageNavigationOptions;
+
+    /**
      * Page number buttons configuration.
      *
-     * @default { enabled: true, count: 5 }
+     * @deprecated Use `pageNavigation` instead.
+     *
+     * @default { enabled: true, count: 7 }
      */
     pageButtons?: boolean | PageButtonsOptions;
 }
@@ -138,6 +147,13 @@ export interface PaginationLangOptions {
      * @default "More pages"
      */
     ellipsis?: string;
+
+    /**
+     * Text for the page selector label (accessibility).
+     *
+     * @default "Select page"
+     */
+    pageSelectLabel?: string;
 }
 
 /**
@@ -199,9 +215,38 @@ export interface PageButtonsOptions {
     /**
      * Maximum number of page number buttons to show before using ellipsis.
      *
-     * @default 5
+     * Use `'all'` to render every page without ellipsis.
+     *
+     * @default 7
      */
-    count?: number;
+    count?: number | 'all';
+}
+
+/**
+ * Direct page navigation configuration options.
+ */
+export interface PageNavigationOptions {
+    /**
+     * Whether to show direct page navigation.
+     *
+     * @default true
+     */
+    enabled?: boolean;
+
+    /**
+     * Direct page navigation renderer.
+     *
+     * @default "buttons"
+     */
+    renderer?: 'buttons' | 'select';
+
+    /**
+     * Maximum number of page entries to show before using ellipsis.
+     * Use `'all'` to render every page without ellipsis.
+     *
+     * @default 7
+     */
+    count?: number | 'all';
 }
 
 /**
