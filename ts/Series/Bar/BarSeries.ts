@@ -33,7 +33,7 @@ import { extend, merge } from '../../Shared/Utilities.js';
 /**
  * Bar series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.bar
  *
@@ -80,6 +80,7 @@ class BarSeries extends ColumnSeries {
  *
  * */
 
+/** @internal */
 interface BarSeries {
     inverted?: boolean;
     pointClass: typeof BarPoint;
@@ -94,6 +95,7 @@ extend(BarSeries.prototype, {
  *
  * */
 
+/** @internal */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         bar: typeof BarSeries;
@@ -107,6 +109,7 @@ SeriesRegistry.registerSeriesType('bar', BarSeries);
  *
  * */
 
+/** @internal */
 export default BarSeries;
 
 /* *

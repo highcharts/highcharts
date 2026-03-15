@@ -26,7 +26,8 @@ import type BellcurveSeries from './BellcurveSeries';
  *
  * */
 
-export class BellcurvePoint extends AreaSplinePoint {
+/** @internal */
+declare class BellcurvePoint extends AreaSplinePoint {
     public option: BellcurvePointOptions;
     public series: BellcurveSeries;
 }
@@ -37,4 +38,5 @@ export class BellcurvePoint extends AreaSplinePoint {
  *
  * */
 
+/** @internal */
 export default BellcurvePoint;

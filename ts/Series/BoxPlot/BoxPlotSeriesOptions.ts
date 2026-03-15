@@ -73,8 +73,6 @@ export interface BoxPlotSeriesOptions extends ColumnSeriesOptions {
      * @sample {highcharts} highcharts/css/boxplot/
      *         Box plot in styled mode
      *
-     * @type {Highcharts.DashStyleValue}
-     *
      * @default Solid
      *
      * @since 8.1.0
@@ -92,8 +90,6 @@ export interface BoxPlotSeriesOptions extends ColumnSeriesOptions {
      * @sample {highcharts} highcharts/plotoptions/box-plot-styling/
      *         Box plot styling
      *
-     * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-     *
      * @default #ffffff
      *
      * @since 3.0
@@ -109,8 +105,6 @@ export interface BoxPlotSeriesOptions extends ColumnSeriesOptions {
      *
      * @sample {highcharts} highcharts/series-boxplot/whisker-length
      *         Configuring whisker length
-     *
-     * @type {number|string}
      *
      * @product highcharts
      */
@@ -132,8 +126,6 @@ export interface BoxPlotSeriesOptions extends ColumnSeriesOptions {
      * @sample {highcharts} highcharts/plotoptions/error-bar-styling/
      *         Error bar styling
      *
-     * @type {Highcharts.ColorString|Highcharts.GradientColorObject}
-     *
      * @since 3.0
      *
      * @product highcharts
@@ -148,8 +140,6 @@ export interface BoxPlotSeriesOptions extends ColumnSeriesOptions {
      *
      * @sample {highcharts} highcharts/css/boxplot/
      *         Box plot in styled mode
-     *
-     * @type {Highcharts.DashStyleValue}
      *
      * @default Solid
      *
@@ -171,8 +161,6 @@ export interface BoxPlotSeriesOptions extends ColumnSeriesOptions {
      *
      * @sample {highcharts} highcharts/css/boxplot/
      *         Box plot in styled mode
-     *
-     * @type {number|null}
      *
      * @since 3.0
      *
@@ -197,8 +185,6 @@ export interface BoxPlotSeriesOptions extends ColumnSeriesOptions {
      * @sample {highcharts} highcharts/plotoptions/error-bar-styling/
      *         Error bar styling
      *
-     * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-     *
      * @since 3.0
      *
      * @product highcharts
@@ -217,8 +203,6 @@ export interface BoxPlotSeriesOptions extends ColumnSeriesOptions {
      *
      * @sample {highcharts} highcharts/plotoptions/error-bar-styling/
      *         Error bar styling
-     *
-     * @type {Highcharts.DashStyleValue}
      *
      * @default Solid
      *
@@ -245,8 +229,6 @@ export interface BoxPlotSeriesOptions extends ColumnSeriesOptions {
      * @sample {highcharts} highcharts/plotoptions/error-bar-styling/
      *         Error bar styling
      *
-     * @type {number}
-     *
      * @since 3.0
      *
      * @product highcharts
@@ -260,8 +242,6 @@ export interface BoxPlotSeriesOptions extends ColumnSeriesOptions {
      *
      * @sample {highcharts} highcharts/series-boxplot/whisker-length
      *         Configuring whisker length
-     *
-     * @type {number|string}
      *
      * @product highcharts
      */
@@ -280,8 +260,6 @@ export interface BoxPlotSeriesOptions extends ColumnSeriesOptions {
      * @sample {highcharts} highcharts/css/boxplot/
      *         Box plot in styled mode
      *
-     * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-     *
      * @since 3.0
      *
      * @product highcharts
@@ -296,8 +274,6 @@ export interface BoxPlotSeriesOptions extends ColumnSeriesOptions {
      *
      * @sample {highcharts} highcharts/css/boxplot/
      *         Box plot in styled mode
-     *
-     * @type {Highcharts.DashStyleValue}
      *
      * @default Solid
      *
@@ -325,8 +301,6 @@ export interface BoxPlotSeriesOptions extends ColumnSeriesOptions {
      *
      * @sample {highcharts} highcharts/series-boxplot/whisker-length
      *         Configuring whisker lengths
-     *
-     * @type {number|string}
      *
      * @since 3.0
      *
@@ -418,8 +392,6 @@ export interface BoxPlotSeriesOptions extends ColumnSeriesOptions {
      * @sample {highcharts} highcharts/series/data-array-of-objects/
      *         Config objects
      *
-     * @type {Array<Array<(number|string),number,number,number,number>|Array<(number|string),number,number,number,number,number>|*>}
-     *
      * @extends series.line.data
      *
      * @excluding marker
@@ -454,8 +426,6 @@ export interface BoxPlotSeriesOptions extends ColumnSeriesOptions {
     lineWidth?: number;
 
     tooltip?: BoxPlotSeriesTooltipOptions;
-
-    threshold?: number|null;
 }
 
 export interface BoxPlotSeriesTooltipOptions

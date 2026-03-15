@@ -25,6 +25,7 @@ import type ColumnPoint from '../Column/ColumnPoint';
  *
  * */
 
+/** @internal */
 declare class BarPoint extends ColumnPoint {
     public options: BarPointOptions;
     public series: BarSeries;
@@ -36,4 +37,5 @@ declare class BarPoint extends ColumnPoint {
  *
  * */
 
+/** @internal */
 export default BarPoint;
