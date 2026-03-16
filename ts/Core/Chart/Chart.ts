@@ -244,6 +244,30 @@ declare module '../Series/SeriesBase' {
     }
 }
 
+/** @internal */
+const chartRendererTypes: Record<string, typeof SVGRenderer> = {
+    SVGRenderer,
+    svg: SVGRenderer
+};
+
+/**
+ * Compatibility resolver for `chart.renderer`.
+ *
+ * @private
+ */
+function getRendererType(rendererType?: string): typeof SVGRenderer {
+    const globalHighcharts = (win as AnyRecord).Highcharts;
+
+    return (
+        rendererType &&
+        (
+            chartRendererTypes[rendererType] ||
+            (H as AnyRecord)[rendererType] ||
+            (globalHighcharts && globalHighcharts[rendererType])
+        )
+    ) || SVGRenderer;
+}
+
 /* *
  *
  *  Class
@@ -2111,7 +2135,7 @@ class Chart {
         chart._cursor = container.style.cursor as CursorValue;
 
         // Initialize the renderer
-        const Renderer = SVGRenderer;
+        const Renderer = getRendererType(optionsChart.renderer);
 
         /**
          * The renderer instance of the chart. Each chart instance has only one
