@@ -1,4 +1,3 @@
-// SPDX-License-Identifier: LicenseRef-Highcharts
 /**
 * @license Highcharts JS v@product.version@ (@product.date@)
 * @module highcharts/i18n/nb-NO
@@ -6,7 +5,7 @@
 *
 * nb-NO language pack
 *
-* (c) 2009-2026 Highsoft AS
+* (c) 2009-2025 Highsoft AS
 *
 * A commercial license may be required depending on use.
 * See www.highcharts.com/license
@@ -183,7 +182,7 @@ const languageOptions = {
         },
         "exporting": {
             "chartMenuLabel": "Diagrammeny",
-            "menuButtonLabel": "Vis diagrammeny, {chartTitle}"
+            "menuButtonLabel": "Diagramkontekstmeny - {chartTitle}"
         },
         "series": {
             "summary": {

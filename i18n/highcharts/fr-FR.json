@@ -163,7 +163,7 @@
         },
         "exporting": {
             "chartMenuLabel": "Menu du graphique",
-            "menuButtonLabel": "Voir le menu du graphique, {chartTitle}"
+            "menuButtonLabel": "Menu contextuel du graphique - {chartTitle}"
         },
         "series": {
             "summary": {

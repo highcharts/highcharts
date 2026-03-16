@@ -163,7 +163,7 @@
         },
         "exporting": {
             "chartMenuLabel": "Diagrammeny",
-            "menuButtonLabel": "Vis diagrammeny, {chartTitle}"
+            "menuButtonLabel": "Diagramkontekstmeny - {chartTitle}"
         },
         "series": {
             "summary": {

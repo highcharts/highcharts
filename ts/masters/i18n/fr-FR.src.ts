@@ -1,4 +1,3 @@
-// SPDX-License-Identifier: LicenseRef-Highcharts
 /**
 * @license Highcharts JS v@product.version@ (@product.date@)
 * @module highcharts/i18n/fr-FR
@@ -6,7 +5,7 @@
 *
 * fr-FR language pack
 *
-* (c) 2009-2026 Highsoft AS
+* (c) 2009-2025 Highsoft AS
 *
 * A commercial license may be required depending on use.
 * See www.highcharts.com/license
@@ -183,7 +182,7 @@ const languageOptions = {
         },
         "exporting": {
             "chartMenuLabel": "Menu du graphique",
-            "menuButtonLabel": "Voir le menu du graphique, {chartTitle}"
+            "menuButtonLabel": "Menu contextuel du graphique - {chartTitle}"
         },
         "series": {
             "summary": {

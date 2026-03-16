@@ -1,4 +1,3 @@
-// SPDX-License-Identifier: LicenseRef-Highcharts
 /**
 * @license Highcharts JS v@product.version@ (@product.date@)
 * @module highcharts/i18n/zh-CN
@@ -6,7 +5,7 @@
 *
 * zh-CN language pack
 *
-* (c) 2009-2026 Highsoft AS
+* (c) 2009-2025 Highsoft AS
 *
 * A commercial license may be required depending on use.
 * See www.highcharts.com/license
@@ -183,7 +182,7 @@ const languageOptions = {
         },
         "exporting": {
             "chartMenuLabel": "图表菜单",
-            "menuButtonLabel": "查看图表菜单, {chartTitle}"
+            "menuButtonLabel": "图表上下文菜单 - {chartTitle}"
         },
         "series": {
             "summary": {
