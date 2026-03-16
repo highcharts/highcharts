@@ -2765,8 +2765,10 @@ class Chart {
 
         // If any of the clipOffset sides are larger than half the stroke width,
         // the plotBorderBox needs to be extended so that the plot border
-        // includes the full stroke of axis lines.
-        if (clipOffset) {
+        // includes the full stroke of axis lines. Not for styled mode because
+        // the stroke-width is (accidentally) not considered in the `clipOffset`
+        // calculation.
+        if (clipOffset && !styledMode) {
             // @todo: Maybe clipOffset should be non-inverted in the first place
             const clipOffsetUninverted = chart.inverted ?
                     [
