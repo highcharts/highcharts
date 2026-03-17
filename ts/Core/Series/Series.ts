@@ -1463,15 +1463,13 @@ class Series {
      *
      * @internal
      */
-    public getX(xOption?: number, name?: string): number {
+    public getX(xOption?: number|string, name?: string): number {
         if (
             this.xAxis?.hasNames &&
-            this.dataTable.getColumn('name', true)
+            this.dataTable.getColumn('name', true) &&
+            defined(name)
         ) {
-            return this.xAxis.nameToX({
-                name: name as any,
-                series: this
-            }, xOption);
+            return this.xAxis.nameToX({ name, series: this }, xOption);
         }
 
         if (

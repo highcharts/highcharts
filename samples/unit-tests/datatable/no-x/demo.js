@@ -217,6 +217,62 @@ QUnit.test('Input data table, uniqueNames', assert => {
     );
 });
 
+QUnit.test('Input data table, uniqueNames and asymmetric data', assert => {
+    const dataTable = new Highcharts.DataTableCore({
+        columns: {
+            yearNike: [2020, 2021, 2022, 2023],
+            revenueNike: [12, 15, 14, 18],
+            // Missing 2021 year:
+            yearAdidas: [2020, 2022, 2023],
+            revenueAdidas: [10, 15, 10]
+        }
+    });
+
+    const chart = Highcharts.chart('container', {
+        dataTable,
+        chart: {
+            type: 'column'
+        },
+        title: {
+            text: 'Missing data'
+        },
+        xAxis: {
+            type: 'category'
+        },
+        series: [{
+            name: 'Cost',
+            dataMapping: {
+                name: 'yearNike',
+                y: 'revenueNike'
+            }
+        }, {
+            name: 'Cost',
+            dataMapping: {
+                name: 'yearAdidas',
+                y: 'revenueAdidas'
+            }
+        }]
+    });
+
+    assert.deepEqual(
+        chart.xAxis[0].names,
+        [2020, 2021, 2022, 2023],
+        'X data should be merged from both series and handle missing values'
+    );
+
+    assert.deepEqual(
+        chart.series[0].getColumn('name'),
+        [2020, 2021, 2022, 2023],
+        'First series names should be retained'
+    );
+
+    assert.deepEqual(
+        chart.series[1].getColumn('name'),
+        [2020, 2022, 2023, undefined],
+        'Second series names should handle missing value'
+    );
+});
+
 QUnit.test('Initialized with data options', assert => {
     const chart = Highcharts.chart('container', {
         chart: {
