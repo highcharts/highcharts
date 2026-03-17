@@ -2030,7 +2030,13 @@ class Series {
             const columns = keys
                 .reduce((columns, key): ColumnCollection => {
                     const source = mapping?.[key],
-                        column = (source?.dataTable || 0) === dtIndex &&
+                        column = isString(source) ?
+                            // String definition points directly to a column id
+                            // on the first data table
+                            (dtIndex === 0 && dtItem.columns?.[source]) :
+                            // Object definition, check for matching data table
+                            // and column id
+                            (source?.dataTable || 0) === dtIndex &&
                             dtItem?.columns?.[source?.column || key];
 
                     if (column) {

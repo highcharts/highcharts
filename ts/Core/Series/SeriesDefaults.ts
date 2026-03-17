@@ -369,6 +369,9 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      * The keys can also be nested paths, for example `dataLabel.format`, to map
      * to nested properties of the data points.
      *
+     * The values can also be strings, in which case they are interpreted as
+     * column id's from the first data table.
+     *
      * @sample {highcharts} highcharts/datatable/series-datatable-multiple/
      *        Series with two data tables
      * @sample {highcharts} highcharts/datatable/chart-datatable-multiple/

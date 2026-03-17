@@ -575,12 +575,17 @@ export interface SeriesOptions {
      * The keys can also be nested paths, for example `dataLabel.format`, to map
      * to nested properties of the data points.
      *
+     * The values can also be strings, in which case they are interpreted as
+     * column id's from the first data table.
+     *
      * @sample {highcharts} highcharts/datatable/series-datatable-multiple/
      *        Series with two data tables
      * @sample {highcharts} highcharts/datatable/chart-datatable-multiple/
      *        Chart with two data tables
+     *
+     * @since next
      */
-    dataMapping?: Record<string, DataMappingItem>;
+    dataMapping?: Record<string, string|DataMappingItem>;
 
     /**
      * Options for the series data sorting.
