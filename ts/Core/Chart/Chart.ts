@@ -251,21 +251,38 @@ const chartRendererTypes: Record<string, typeof SVGRenderer> = {
 };
 
 /**
+ * Validate renderer constructor shape for `chart.renderer` compatibility.
+ *
+ * @private
+ */
+function isRendererType(
+    candidate: unknown
+): candidate is typeof SVGRenderer {
+    const rendererProto = (candidate as AnyRecord)?.prototype;
+
+    return (
+        typeof candidate === 'function' &&
+        !!rendererProto &&
+        typeof rendererProto.init === 'function' &&
+        typeof rendererProto.symbols === 'object'
+    );
+}
+
+/**
  * Compatibility resolver for `chart.renderer`.
  *
  * @private
  */
 function getRendererType(rendererType?: string): typeof SVGRenderer {
     const globalHighcharts = (win as AnyRecord).Highcharts;
-
-    return (
-        rendererType &&
+    const candidate = rendererType &&
         (
             chartRendererTypes[rendererType] ||
             (H as AnyRecord)[rendererType] ||
             (globalHighcharts && globalHighcharts[rendererType])
-        )
-    ) || SVGRenderer;
+        );
+
+    return isRendererType(candidate) ? candidate : SVGRenderer;
 }
 
 /* *
