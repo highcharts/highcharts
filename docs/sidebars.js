@@ -126,6 +126,7 @@ module.exports = {
             {
                 'Columns': [
                     'grid/columns/index',
+                    'grid/columns/styling-and-theming',
                     'grid/columns/header',
                     'grid/columns/grouping',
                     'grid/columns/resizing-and-width',
@@ -137,7 +138,6 @@ module.exports = {
                 'Rows': [
                     'grid/rows/index',
                     'grid/rows/data',
-                    'grid/rows/sorting',
                     'grid/rows/pagination',
                     'grid/rows/virtualization',
                     'grid/rows/performance'
@@ -146,8 +146,8 @@ module.exports = {
             {
                 'Cells': [
                     'grid/cells/index',
-                    'grid/cells/formatting',
-                    'grid/cells/context-menu'
+                    'grid/cells/styling-and-theming',
+                    'grid/cells/formatting'
                 ]
             },
             {
@@ -161,13 +161,24 @@ module.exports = {
             {
                 'Theming': [
                     'grid/theming/index',
-                    'grid/theming/variables',
+                    'grid/theming/grid-variables',
+                    'grid/theming/element-variables',
                     'grid/theming/conditional',
+                    'grid/theming/custom-icons'
                 ]
             },
-            'grid/data-providers',
+            'grid/responsive-grid',
+            {
+                'Data handling': [
+                    'grid/data-handling/overview',
+                    'grid/data-handling/clientside',
+                    'grid/data-handling/serverside',
+                    'grid/data-handling/connectors'
+                ]
+            },
             'grid/events',
             'grid/accessibility',
+            'grid/internationalization',
             'grid/exporting',
             'grid/sparklines',
             {

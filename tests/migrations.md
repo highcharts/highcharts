@@ -82,13 +82,6 @@ These tests were migrated from QUnit/Karma to Playwright:
 - `tests/dashboards/html-table-connector.spec.ts` - HTMLTableConnector and HTMLTableConverter tests
 - `tests/dashboards/google-sheets-connector.spec.ts` - GoogleSheetsConnector tests (with mocked API)
 
-### Grid (3 files - all migrated to `tests/dashboards/grid.spec.ts`)
-- `Grid setOptions function` test
-- `Grid update methods` test
-- `Grid formatter options` test (from columnOptions.test.js)
-- `Grid credits` test (from credits.test.js)
-- `Grid custom sorting` test
-
 ### Dashboards/Component (migrated to `tests/dashboards/components.spec.ts`)
 - `Component helpers` test - getComponentById, getComponentByCellId
 - `Board without data connectors and HighchartsComponent update` test

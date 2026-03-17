@@ -21,14 +21,13 @@
 import type ContourSeriesOptions from './ContourSeriesOptions';
 import type { DeepPartial } from '../../Shared/Types';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
-
 import Color from '../../Core/Color/Color.js';
 import ContourPoint from './ContourPoint.js';
 import contourShader from './contourShader.js';
 import ContourSeriesDefaults from './ContourSeriesDefaults.js';
+import CrossSymbol from '../CrossSymbol.js';
 import Delaunay from '../../Core/Delaunay.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-import SVGPath from '../../Core/Renderer/SVG/SVGPath.js';
 import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 import {
     diffObjects,
@@ -63,6 +62,12 @@ export default class ContourSeries extends ScatterSeries {
         ScatterSeries.defaultOptions,
         ContourSeriesDefaults
     );
+
+    public static compose(
+        SVGRendererClass: typeof SVGRenderer
+    ): void {
+        CrossSymbol.compose(SVGRendererClass);
+    }
 
 
     /* *
@@ -832,23 +837,6 @@ export default class ContourSeries extends ScatterSeries {
         ].map((val): number => val / 255);
     }
 }
-
-function cross(
-    x: number,
-    y: number,
-    w: number,
-    h: number
-): SVGPath {
-    return [
-        ['M', x, y],
-        ['L', x + w, y + h],
-        ['M', x + w, y],
-        ['L', x, y + h],
-        ['z']
-    ];
-}
-
-SVGRenderer.prototype.symbols.cross = cross;
 
 extend(ContourSeries.prototype, {
     pointClass: ContourPoint,

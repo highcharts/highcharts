@@ -1134,35 +1134,50 @@ class Series {
         }
 
         // Handle color zones
-        this.zoneAxis = options.zoneAxis || 'y';
-        const zones = this.zones = // #20440, create deep copy of zones options
-            (options.zones || []).map((z): SeriesZonesOptions => ({ ...z }));
+        const {
+                negativeColor,
+                negativeFillColor,
+                zoneAxis = 'y',
+                zones
+            } = options,
+            // #20440, create deep copy of zones options
+            zonesCopy = this.zones = (zones || []).map(
+                (z): SeriesZonesOptions => ({ ...z })
+            );
+
+        this.zoneAxis = zoneAxis;
         if (
-            (options.negativeColor || options.negativeFillColor) &&
-            !options.zones
+            (negativeColor || negativeFillColor) &&
+            !zones
         ) {
             zone = {
                 value:
-                    (options as any)[this.zoneAxis + 'Threshold'] ||
+                    (options as any)[zoneAxis + 'Threshold'] ||
                     options.threshold ||
                     0,
                 className: 'highcharts-negative'
             } as SeriesZonesOptions;
             if (!styledMode) {
-                zone.color = options.negativeColor;
-                zone.fillColor = options.negativeFillColor;
+                // Styled mode allows boolean
+                if (typeof negativeColor !== 'boolean') {
+                    zone.color = negativeColor;
+                }
+                zone.fillColor = negativeFillColor;
             }
-            zones.push(zone);
+            zonesCopy.push(zone);
         }
         // Push one extra zone for the rest
-        if (zones.length && defined(zones[zones.length - 1].value)) {
-            zones.push(styledMode ? {} : {
+        if (
+            zonesCopy.length &&
+            defined(zonesCopy[zonesCopy.length - 1].value)
+        ) {
+            zonesCopy.push(styledMode ? {} : {
                 color: this.color,
                 fillColor: this.fillColor
             });
         }
 
-        fireEvent(this, 'afterSetOptions', { options: options });
+        fireEvent(this, 'afterSetOptions', { options });
 
         return options;
     }

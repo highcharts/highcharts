@@ -709,7 +709,7 @@ const stockTools: StockToolsOptions = {
                  * A collection of strings pointing to config options for
                  * the items.
                  *
-                 * @type {Array}
+                 * @type {Array<string>}
                  * @default [
                  *   'label',
                  *   'circle',
@@ -766,7 +766,7 @@ const stockTools: StockToolsOptions = {
                  * A collection of strings pointing to config options for
                  * the items.
                  *
-                 * @type {Array}
+                 * @type {Array<string>}
                  * @default [
                  *   'flagCirclepin',
                  *   'flagDiamondpin',
@@ -821,7 +821,7 @@ const stockTools: StockToolsOptions = {
                  * A collection of strings pointing to config options for
                  * the items.
                  *
-                 * @type {Array}
+                 * @type {Array<string>}
                  * @default [
                  *   'segment',
                  *   'arrowSegment',
@@ -913,7 +913,7 @@ const stockTools: StockToolsOptions = {
                  * A collection of strings pointing to config options for
                  * the items.
                  *
-                 * @type {Array}
+                 * @type {Array<string>}
                  * @default [
                  *   'elliott3',
                  *   'elliott5',
@@ -966,7 +966,7 @@ const stockTools: StockToolsOptions = {
                  * A collection of strings pointing to config options for
                  * the items.
                  *
-                 * @type {Array}
+                 * @type {Array<string>}
                  * @default [
                  *   'verticalCounter',
                  *   'verticalLabel',
@@ -1008,7 +1008,7 @@ const stockTools: StockToolsOptions = {
                  * A collection of strings pointing to config options for
                  * the items.
                  *
-                 * @type {Array}
+                 * @type {Array<string>}
                  * @default [
                  *   'fibonacci',
                  *   'fibonacciTimeZones',
@@ -1070,7 +1070,7 @@ const stockTools: StockToolsOptions = {
                  * A collection of strings pointing to config options for
                  * the items.
                  *
-                 * @type {Array}
+                 * @type {Array<string>}
                  * @default [
                  *   'measureXY',
                  *   'measureX',
@@ -1136,7 +1136,7 @@ const stockTools: StockToolsOptions = {
                  * A collection of strings pointing to config options for
                  * the items.
                  *
-                 * @type {Array}
+                 * @type {Array<string>}
                  * @default [
                  *   'zoomX',
                  *   'zoomY',
@@ -1178,7 +1178,7 @@ const stockTools: StockToolsOptions = {
                  * A collection of strings pointing to config options for
                  * the items.
                  *
-                 * @type {Array}
+                 * @type {Array<string>}
                  * @default [
                  *   'typeOHLC',
                  *   'typeLine',

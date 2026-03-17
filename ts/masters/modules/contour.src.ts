@@ -10,5 +10,7 @@
 'use strict';
 import Highcharts from '../../Core/Globals.js';
 import './coloraxis.src.js';
-import '../../Series/Contour/ContourSeries.js';
+import ContourSeries from '../../Series/Contour/ContourSeries.js';
+const G: AnyRecord = Highcharts;
+ContourSeries.compose(G.Renderer);
 export default Highcharts;

@@ -1,8 +1,10 @@
 ---
-name: Todo Grid App
+name: To-do app
 authors:
   - Karol Kolodziej
 js_wrap: b
+alt_text: >-
+  Interactive to-do list built with a data grid
 tags:
   - Highcharts Grid demo
 categories:

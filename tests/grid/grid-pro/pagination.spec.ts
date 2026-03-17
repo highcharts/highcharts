@@ -27,7 +27,7 @@ test.describe('Pagination', () => {
         await expect(page.locator('#afterPageChange')).toHaveValue('1');
 
         // Click on page number
-        await page.locator('.hcg-pagination-nav-buttons-container .hcg-button').filter({ hasText: '3' }).click();
+        await page.locator('.hcg-pagination-pages .hcg-button').filter({ hasText: '3' }).click();
 
         // Check event logging
         await expect(page.locator('#beforePageChange')).toHaveValue('1');

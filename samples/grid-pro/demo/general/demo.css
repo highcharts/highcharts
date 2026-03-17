@@ -28,14 +28,14 @@ body {
     height: 800px;
 }
 
-.hcg-pagination-wrapper {
+.hcg-pagination {
     grid-template-columns: 1fr 1fr auto; /* left info, middle page-size, right controls */
 }
 
-.hcg-pagination-wrapper .hcg-pagination-info { grid-column: 1; }
-.hcg-pagination-wrapper .hcg-pagination-page-size-container { grid-column: 2; }
+.hcg-pagination .hcg-pagination-info { grid-column: 1; }
+.hcg-pagination .hcg-pagination-page-size { grid-column: 2; }
 
-.hcg-pagination-wrapper .hcg-pagination-controls {
+.hcg-pagination .hcg-pagination-controls {
     grid-column: 3;
     justify-self: end; /* align to the right edge */
 }

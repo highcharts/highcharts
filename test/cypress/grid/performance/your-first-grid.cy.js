@@ -19,7 +19,7 @@ const desktopConfig = {
 
 describe('Grid Lighthouse tests', () => {
     it('Your first grid demo', () => {
-        cy.visit('/grid-lite/demo/your-first-grid');
+        cy.visit('/grid-lite/demo/minimal-grid');
         cy.lighthouse(
             {
                 performance: 0
