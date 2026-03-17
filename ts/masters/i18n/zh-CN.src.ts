@@ -182,7 +182,7 @@ const languageOptions = {
         },
         "exporting": {
             "chartMenuLabel": "图表菜单",
-            "menuButtonLabel": "图表上下文菜单 - {chartTitle}"
+            "menuButtonLabel": "图表上下文菜单, {chartTitle}"
         },
         "series": {
             "summary": {

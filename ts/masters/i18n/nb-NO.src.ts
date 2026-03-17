@@ -182,7 +182,7 @@ const languageOptions = {
         },
         "exporting": {
             "chartMenuLabel": "Diagrammeny",
-            "menuButtonLabel": "Diagramkontekstmeny - {chartTitle}"
+            "menuButtonLabel": "Diagramkontekstmeny, {chartTitle}"
         },
         "series": {
             "summary": {

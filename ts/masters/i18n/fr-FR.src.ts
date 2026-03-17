@@ -182,7 +182,7 @@ const languageOptions = {
         },
         "exporting": {
             "chartMenuLabel": "Menu du graphique",
-            "menuButtonLabel": "Menu contextuel du graphique - {chartTitle}"
+            "menuButtonLabel": "Menu contextuel du graphique, {chartTitle}"
         },
         "series": {
             "summary": {
