@@ -21,6 +21,8 @@ import type ColorType from '../../Core/Color/ColorType';
 import type { FlagsShapeValue } from './FlagsPointOptions';
 import type FlagsSeriesOptions from './FlagsSeriesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+import type Legend from '../../Core/Legend/Legend';
 
 import FlagsPoint from './FlagsPoint.js';
 import FlagsSeriesDefaults from './FlagsSeriesDefaults.js';
@@ -427,6 +429,54 @@ class FlagsSeries extends ColumnSeries {
             stroke: lineColor || color,
             'stroke-width': lineWidth || options.lineWidth || 0
         };
+    }
+
+    /**
+     * Draw a small flag shape in the legend.
+     * @private
+     */
+    public drawLegendSymbol(legend: Legend, item: Legend.Item): void {
+        const renderer = this.chart.renderer,
+            w = legend.options.symbolWidth || 12,
+            h = legend.options.symbolHeight || 12,
+            // Flags often have different fill/stroke logic
+            attr = this.pointAttribs(item as FlagsPoint),
+            parentGroup = item.legendItem?.group;
+
+        const path = this.getLegendSymbolPath(w, h);
+
+        // Ensure the pole is visible
+        attr['stroke-width'] = Math.max(Number(attr['stroke-width'] || 0), 1);
+
+        if ((item as any).legendSymbol) {
+            (item as any).legendSymbol.destroy();
+        }
+
+        (item as any).legendSymbol = renderer.path(path)
+            .addClass('highcharts-point')
+            .attr(attr)
+            .add(parentGroup || legend.group);
+
+        (item as any).legendSymbol.attr({
+            translateX: legend.options.symbolPadding || 0,
+            translateY: (legend.baseline || 0) - h + 1
+        });
+    }
+
+    /**
+     * Get a representative path for the flag legend.
+     * @private
+     */
+    protected getLegendSymbolPath(w: number, h: number): SVGPath {
+        const x = Math.round(w / 3); // Pole position
+        return [
+            ['M', x, h],
+            ['L', x, 0],
+            ['L', w, 0],
+            ['L', w, Math.round(h * 0.6)],
+            ['L', x, Math.round(h * 0.6)],
+            ['Z']
+        ];
     }
 
     /**
