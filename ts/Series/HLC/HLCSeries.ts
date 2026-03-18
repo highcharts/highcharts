@@ -185,32 +185,41 @@ class HLCSeries extends ColumnSeries {
     }
 
     /**
-     * Draw a small HLC shape in the legend.
+     * Draw a representative financial/flag shape in the legend.
      * @private
      */
     public drawLegendSymbol(legend: Legend, item: Legend.Item): void {
         const renderer = this.chart.renderer,
-            w = legend.options.symbolWidth || 12,
-            h = legend.options.symbolHeight || 12,
-            attr = this.pointAttribs(),
-            parentGroup = item.legendItem?.group;
+            legendOptions = legend.options,
+            w = legendOptions.symbolWidth || 12,
+            h = legendOptions.symbolHeight || 12,
+            styledMode = this.chart.styledMode === true,
+            parentGroup = item.legendItem?.group || legend.group,
+            path = this.getLegendSymbolPath(w, h),
+            attr = this.pointAttribs() as SVGAttributes;
 
-        const path = this.getLegendSymbolPath(w, h);
-
-        attr['stroke-width'] = Math.max(Number(attr['stroke-width'] || 0), 1.5);
-
-        if ((item as any).legendSymbol) {
-            (item as any).legendSymbol.destroy();
+        if (!styledMode) {
+            attr['stroke-width'] =
+            Math.max(Number(attr['stroke-width'] || 0), 1.5);
+            attr.fill = attr.fill ?? 'none';
         }
 
-        (item as any).legendSymbol = renderer.path(path)
-            .addClass('highcharts-point')
-            .attr(attr)
-            .add(parentGroup || legend.group);
+        let legendSymbol = (item as any).legendSymbol as SVGElement | undefined;
 
-        (item as any).legendSymbol.attr({
-            translateX: legend.options.symbolPadding || 0,
-            translateY: (legend.baseline || 0) - h + 1
+        if (legendSymbol && !legendSymbol.destroyed) {
+            legendSymbol.animate({ d: path });
+            legendSymbol.attr(attr);
+        } else {
+            legendSymbol = (item as any).legendSymbol = renderer
+                .path(path)
+                .addClass('highcharts-point highcharts-legend-symbol')
+                .attr(attr)
+                .add(parentGroup);
+        }
+
+        legendSymbol.attr({
+            translateX: Math.round(legendOptions.symbolPadding || 0),
+            translateY: Math.round((legend.baseline || 0) - h + 1)
         });
     }
 

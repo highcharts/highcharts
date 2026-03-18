@@ -432,49 +432,58 @@ class FlagsSeries extends ColumnSeries {
     }
 
     /**
-     * Draw a small flag shape in the legend.
+     * Draw a representative flag shape in the legend.
      * @private
      */
     public drawLegendSymbol(legend: Legend, item: Legend.Item): void {
         const renderer = this.chart.renderer,
-            w = legend.options.symbolWidth || 12,
-            h = legend.options.symbolHeight || 12,
-            // Flags often have different fill/stroke logic
-            attr = this.pointAttribs(item as FlagsPoint),
-            parentGroup = item.legendItem?.group;
+            legendOptions = legend.options,
+            w = legendOptions.symbolWidth || 12,
+            h = legendOptions.symbolHeight || 12,
+            styledMode = this.chart.styledMode === true,
+            parentGroup = item.legendItem?.group || legend.group;
 
         const path = this.getLegendSymbolPath(w, h);
+        const attr = this.pointAttribs(item as FlagsPoint) as SVGAttributes;
 
-        // Ensure the pole is visible
-        attr['stroke-width'] = Math.max(Number(attr['stroke-width'] || 0), 1);
-
-        if ((item as any).legendSymbol) {
-            (item as any).legendSymbol.destroy();
+        if (!styledMode) {
+            attr['stroke-width'] =
+            Math.max(Number(attr['stroke-width'] || 0), 1);
         }
 
-        (item as any).legendSymbol = renderer.path(path)
-            .addClass('highcharts-point')
-            .attr(attr)
-            .add(parentGroup || legend.group);
+        let legendSymbol = (item as any).legendSymbol as SVGElement | undefined;
 
-        (item as any).legendSymbol.attr({
-            translateX: legend.options.symbolPadding || 0,
-            translateY: (legend.baseline || 0) - h + 1
+        if (legendSymbol && !legendSymbol.destroyed) {
+            legendSymbol.animate({ d: path });
+            legendSymbol.attr(attr);
+        } else {
+            legendSymbol = (item as any).legendSymbol = renderer
+                .path(path)
+                .addClass('highcharts-point highcharts-legend-symbol')
+                .attr(attr)
+                .add(parentGroup);
+        }
+
+        legendSymbol.attr({
+            translateX: Math.round(legendOptions.symbolPadding || 0),
+            translateY: Math.round((legend.baseline || 0) - h + 1)
         });
     }
 
     /**
-     * Get a representative path for the flag legend.
+     * Get the representative pennant path for Flags.
      * @private
      */
     protected getLegendSymbolPath(w: number, h: number): SVGPath {
-        const x = Math.round(w / 3); // Pole position
+        const poleX = Math.round(w / 3);
+        const headHeight = Math.round(h * 0.6);
+
         return [
-            ['M', x, h],
-            ['L', x, 0],
+            ['M', poleX, h],
+            ['L', poleX, 0],
             ['L', w, 0],
-            ['L', w, Math.round(h * 0.6)],
-            ['L', x, Math.round(h * 0.6)],
+            ['L', w, headHeight],
+            ['L', poleX, headHeight],
             ['Z']
         ];
     }
