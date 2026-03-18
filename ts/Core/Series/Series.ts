@@ -1421,8 +1421,8 @@ class Series {
                     if (this.xColumnIsNumbers !== void 0) {
                         return this.xColumnIsNumbers;
                     }
-                    for (let i = 0, n = arr.length; i < n; i++) {
-                        if (typeof arr[i] !== 'number') {
+                    for (const x of arr) {
+                        if (typeof x !== 'number') {
                             return (this.xColumnIsNumbers = false);
                         }
                     }
@@ -1444,14 +1444,22 @@ class Series {
                     !isNumbers(column)
                 )
             ) {
-                return (
-                    this.xColumn = Array(rowCount).fill(0).map((_, i): number =>
-                        this.getX(
-                            column?.[i],
-                            nameColumn?.[i] as string|undefined
-                        )
-                    )
-                );
+                const xColumn: number[] = [];
+                for (let i = 0; i < rowCount; i++) {
+                    const xOption = column?.[i];
+                    if (!defined(xOption)) {
+                        // When x values are missing, make sure we
+                        // auto-increment from the last point, not from zero.
+                        // Otherwise date-axes would be extended from
+                        // 1970-01-01.
+                        this.xIncrement ??= xColumn[xColumn.length - 1] ?? null;
+                    }
+                    xColumn.push(this.getX(
+                        xOption,
+                        nameColumn?.[i] as string|undefined
+                    ));
+                }
+                return (this.xColumn = xColumn);
             }
         }
 

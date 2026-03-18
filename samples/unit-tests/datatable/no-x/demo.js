@@ -273,6 +273,68 @@ QUnit.test('Input data table, uniqueNames and asymmetric data', assert => {
     );
 });
 
+QUnit.test('Input data table, datetime axis and asymmetric data', assert => {
+    const dataTable = new Highcharts.DataTableCore({
+        columns: {
+            yearNike: [
+                '2020-01-01',
+                '2021-01-01',
+                '2022-01-01',
+                '2023-01-01'
+            ],
+            revenueNike: [12, 15, 14, 18],
+
+            // Missing 2021 year:
+            yearAdidas: [
+                '2020-01-01',
+                '2022-01-01',
+                '2023-01-01'
+            ],
+            revenueAdidas: [10, 15, 10]
+        }
+    });
+
+    const chart = Highcharts.chart('container', {
+        dataTable,
+        chart: {
+            type: 'column'
+        },
+        title: {
+            text: 'Multiple data tables'
+        },
+        xAxis: [
+            {
+                type: 'datetime',
+                minPadding: 0,
+                maxPadding: 0
+            }
+        ],
+        series: [
+            {
+                name: 'Nike',
+                dataMapping: {
+                    x: 'yearNike',
+                    y: 'revenueNike'
+                }
+            },
+            {
+                name: 'Adidas',
+                dataMapping: {
+                    x: 'yearAdidas',
+                    y: 'revenueAdidas'
+                }
+            }
+        ]
+    });
+
+    assert.deepEqual(
+        [chart.xAxis[0].min, chart.xAxis[0].max]
+            .map(ts => chart.time.dateFormat('%Y-%m-%d', ts)),
+        ['2020-01-01', '2023-01-01'],
+        'X axis range should reflect the actual data'
+    );
+});
+
 QUnit.test('Initialized with data options', assert => {
     const chart = Highcharts.chart('container', {
         chart: {
