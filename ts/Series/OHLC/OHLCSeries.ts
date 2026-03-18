@@ -199,6 +199,22 @@ class OHLCSeries extends HLCSeries {
         return attribs;
     }
 
+    /**
+     * Defines Legend symbol path for OHLC series.
+     * @private
+     */
+    protected getLegendSymbolPath(w: number, h: number): SVGPath {
+        const x = w / 2;
+        return [
+            ['M', x, 0],
+            ['L', x, h],
+            ['M', 0, h * 0.3],
+            ['L', x, h * 0.3],
+            ['M', x, h * 0.7],
+            ['L', w, h * 0.7]
+        ];
+    }
+
     public toYData(point: OHLCPoint): Array<number> {
         // Return a plain array for speedy calculation
         return [point.open, point.high, point.low, point.close];

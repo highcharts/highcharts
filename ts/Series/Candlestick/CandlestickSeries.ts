@@ -118,6 +118,23 @@ class CandlestickSeries extends OHLCSeries {
     }
 
     /**
+     * Defines Legend symbol path for Candlestick series.
+     * @private
+     */
+    protected getLegendSymbolPath(w: number, h: number): SVGPath {
+        const x = w / 2;
+        return [
+            ['M', x, 0],
+            ['L', x, h],
+            ['M', 2, h * 0.25],
+            ['L', w - 2, h * 0.25],
+            ['L', w - 2, h * 0.75],
+            ['L', 2, h * 0.75],
+            ['Z']
+        ];
+    }
+
+    /**
      * Draw the data points.
      *
      * @private

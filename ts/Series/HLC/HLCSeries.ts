@@ -22,6 +22,7 @@ import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+import type Legend from '../../Core/Legend/Legend';
 
 import HLCPoint from './HLCPoint.js';
 import HLCSeriesDefaults from './HLCSeriesDefaults.js';
@@ -181,6 +182,50 @@ class HLCSeries extends ColumnSeries {
                 .addClass(point.getClassName(), true);
 
         }
+    }
+
+    /**
+     * Draw a small HLC shape in the legend.
+     * @private
+     */
+    public drawLegendSymbol(legend: Legend, item: Legend.Item): void {
+        const renderer = this.chart.renderer,
+            w = legend.options.symbolWidth || 12,
+            h = legend.options.symbolHeight || 12,
+            attr = this.pointAttribs(),
+            parentGroup = item.legendItem && item.legendItem.group;
+
+        const path = this.getLegendSymbolPath(w, h);
+
+        attr['stroke-width'] = Math.max(Number(attr['stroke-width'] || 0), 1.5);
+
+        if ((item as any).legendSymbol) {
+            (item as any).legendSymbol.destroy();
+        }
+
+        (item as any).legendSymbol = renderer.path(path)
+            .addClass('highcharts-point')
+            .attr(attr)
+            .add(parentGroup || legend.group);
+
+        (item as any).legendSymbol.attr({
+            translateX: legend.options.symbolPadding || 0,
+            translateY: (legend.baseline || 0) - h + 1
+        });
+    }
+
+    /**
+     * Defines Legend symbol path for HLC series.
+     * @private
+     */
+    protected getLegendSymbolPath(w: number, h: number): SVGPath {
+        const x = w / 2;
+        return [
+            ['M', x, 0],
+            ['L', x, h],
+            ['M', x, h / 2],
+            ['L', w, h / 2]
+        ];
     }
 
     /**
