@@ -193,7 +193,7 @@ class HLCSeries extends ColumnSeries {
             w = legend.options.symbolWidth || 12,
             h = legend.options.symbolHeight || 12,
             attr = this.pointAttribs(),
-            parentGroup = item.legendItem && item.legendItem.group;
+            parentGroup = item.legendItem?.group;
 
         const path = this.getLegendSymbolPath(w, h);
 
