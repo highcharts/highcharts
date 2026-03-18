@@ -1905,6 +1905,18 @@ class Pointer {
                 hasPanning ||
                 hasSelection
             ),
+            updateContainerClick = (): void => {
+                const shouldAttachContainerClick = (
+                    !chart.accessibility ||
+                    !!chart.navigationBindings ||
+                    !!chart.options.chart.events?.click ||
+                    chart.runTrackerClick
+                );
+
+                container.onclick = shouldAttachContainerClick ?
+                    this.onContainerClick.bind(this) :
+                    null;
+            },
             // Get the parent element, including handling Shadow DOM (#23450)
             getParent = (el: HTMLElement): HTMLElement|null|undefined =>
                 el.parentElement || (
@@ -1915,7 +1927,7 @@ class Pointer {
             this.onContainerMouseDown.bind(this) :
             null;
         container.onmousemove = this.onContainerMouseMove.bind(this);
-        container.onclick = this.onContainerClick.bind(this);
+        updateContainerClick();
         this.eventsToUnbind.push(
             addEvent(
                 container,
@@ -1976,7 +1988,8 @@ class Pointer {
         }
 
         this.setPointerCapture();
-        addEvent(this.chart, 'redraw', this.setPointerCapture.bind(this));
+        addEvent(chart, 'afterA11yUpdate', updateContainerClick);
+        addEvent(chart, 'redraw', this.setPointerCapture.bind(this));
     }
 
     /**
