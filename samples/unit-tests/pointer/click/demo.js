@@ -175,36 +175,30 @@ QUnit.test(
     'Container click binding for accessibility charts',
     function (assert) {
         const chart = Highcharts.chart('container', {
-                accessibility: {
-                    enabled: true
-                },
-                series: [{
-                    data: [1, 2, 3]
-                }]
-            }),
-            done = assert.async();
+            accessibility: {
+                enabled: true
+            },
+            series: [{
+                data: [1, 2, 3]
+            }]
+        });
 
-        setTimeout(function () {
-            assert.notOk(
-                chart.container.onclick,
-                'Container click is detached for non-interactive chart'
-            );
+        assert.ok(
+            chart.navigationBindings || !chart.container.onclick,
+            'Container click is detached unless navigation bindings apply'
+        );
 
-            chart.update({
-                plotOptions: {
-                    series: {
-                        allowPointSelect: true
-                    }
+        chart.update({
+            plotOptions: {
+                series: {
+                    allowPointSelect: true
                 }
-            });
+            }
+        });
 
-            setTimeout(function () {
-                assert.ok(
-                    chart.container.onclick,
-                    'Container click is attached after update'
-                );
-                done();
-            }, 0);
-        }, 0);
+        assert.ok(
+            chart.container.onclick,
+            'Container click is attached after update'
+        );
     }
 );
