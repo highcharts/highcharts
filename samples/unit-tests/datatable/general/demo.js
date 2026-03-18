@@ -42,6 +42,18 @@ QUnit.test('Line chart', assert => {
                     ]
                 }
             }
+        }, {
+            name: 'Line series 2',
+            dataTable: {
+                columns: {
+                    cost: [2, 4, 3, 5],
+                    radius: [0, 0, 10, 0]
+                }
+            },
+            dataMapping: {
+                y: 'cost',
+                'marker.radius': 'radius'
+            }
         }]
     });
 
@@ -49,6 +61,13 @@ QUnit.test('Line chart', assert => {
         chart.series[0].points[2].graphic.getBBox().width.toFixed(0),
         '20',
         'An individual graphic should be created for the third point'
+    );
+
+    assert.strictEqual(
+        chart.series[1].points[2].graphic.getBBox().width.toFixed(0),
+        '20',
+        'Nested data mapping key, an individual graphic should be created ' +
+        'for the third point'
     );
 
     chart.series[0].points[2].update({

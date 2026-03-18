@@ -1029,15 +1029,7 @@ class Point {
             while (j < valueCount) {
                 // Skip undefined positions for keys
                 if (!keys || typeof options[i] !== 'undefined') {
-                    if (pointArrayMap[j].indexOf('.') > 0) {
-                        // Handle nested keys, e.g. ['color.pattern.image']
-                        // Avoid function call unless necessary.
-                        Point.prototype.setNestedProperty(
-                            ret, options[i], pointArrayMap[j]
-                        );
-                    } else {
-                        ret[pointArrayMap[j]] = options[i];
-                    }
+                    ret[pointArrayMap[j]] = options[i];
                 }
                 i++;
                 j++;
@@ -1059,6 +1051,19 @@ class Point {
                 series._hasPointMarkers = true;
             }
         }
+
+        // Handle nested keys, e.g. ['color.pattern.image'], but only if we're
+        // using keys or `dataTable`
+        if (keys || !series.options.data) {
+            Object.keys(ret).forEach((key): void => {
+                if (key.indexOf('.') > 0) {
+                    Point.prototype.setNestedProperty(ret, ret[key], key);
+                    // Delete the literal nested key
+                    delete ret[key];
+                }
+            });
+        }
+
         return ret;
     }
 
