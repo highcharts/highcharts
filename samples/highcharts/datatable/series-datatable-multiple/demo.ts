@@ -1,12 +1,12 @@
 const dataTable1 = new Highcharts.DataTableCore({
     columns: {
-        year: [2020, 2021, 2022, 2023]
+        Year: [2020, 2021, 2022, 2023]
     }
 });
 
 const dataTable2 = new Highcharts.DataTableCore({
     columns: {
-        revenue: [12, 15, 14, 18]
+        Revenue: [12, 15, 14, 18]
     }
 });
 
@@ -18,16 +18,15 @@ Highcharts.chart('container', {
         text: 'Multiple series-level data tables, one series'
     },
     series: [{
-        name: 'Revenue',
         dataTable: [dataTable1, dataTable2],
         dataMapping: {
             x: {
                 dataTable: 0,
-                column: 'year'
+                column: 'Year'
             },
             y: {
                 dataTable: 1,
-                column: 'revenue'
+                column: 'Revenue'
             }
         }
     }]

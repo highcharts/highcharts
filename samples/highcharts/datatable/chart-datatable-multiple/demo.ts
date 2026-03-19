@@ -1,14 +1,14 @@
 const dataTableA = new Highcharts.DataTableCore({
     columns: {
-        year: [2020, 2021, 2022, 2023],
-        cost: [11, 13, 12, 14]
+        Year: [2020, 2021, 2022, 2023],
+        Cost: [11, 13, 12, 14]
     }
 });
 
 const dataTableB = new Highcharts.DataTableCore({
     columns: {
-        year: [2020, 2021, 2022, 2023],
-        revenue: [12, 15, 14, 18]
+        Year: [2020, 2021, 2022, 2023],
+        Revenue: [12, 15, 14, 18]
     }
 });
 
@@ -21,27 +21,25 @@ Highcharts.chart('container', {
         text: 'Multiple data tables'
     },
     series: [{
-        name: 'Cost',
         dataMapping: {
             x: {
                 // dataTable: 0, // Optional, defaults to 0
-                column: 'year'
+                column: 'Year'
             },
             y: {
                 // dataTable: 0, // Optional, defaults to 0
-                column: 'cost'
+                column: 'Cost'
             }
         }
     }, {
-        name: 'Revenue',
         dataMapping: {
             x: {
                 dataTable: 1,
-                column: 'year'
+                column: 'Year'
             },
             y: {
                 dataTable: 1,
-                column: 'revenue'
+                column: 'Revenue'
             }
         }
     }]

@@ -1258,23 +1258,34 @@ class Series {
     }
 
     /**
-     * Return series name in "Series {Number}" format or the one defined by
-     * a user. This method can be simply overridden as series name format
-     * can vary (e.g. technical indicators).
+     * Return the name for the series. Looks for a `name` in the options. If not
+     * found, looks for a column name in the data mapping. If not found, returns
+     * a default name based on the series type and index in `Series {n}`"
+     * format. This method can be simply overridden as series name format can
+     * vary (e.g. technical indicators).
      *
      * @function Highcharts.Series#getName
      *
-     * @return {string}
-     * The series name.
+     * @return {string} The series name.
      */
     public getName(): string {
+
+        const { chart, options } = this,
+            { dataMapping, name } = options,
+            valueMapping = dataMapping?.y || dataMapping?.value,
+            columnKey = isString(valueMapping) ?
+                valueMapping : valueMapping?.column;
+
         // #4119
-        return this.options.name ??
-            format(
-                this.chart.options.lang.seriesName,
-                this,
-                this.chart
-            );
+        return name ?? (
+            isString(columnKey) ?
+                columnKey :
+                format(
+                    chart.options.lang.seriesName,
+                    this,
+                    chart
+                )
+        );
     }
 
     /**
@@ -5843,7 +5854,10 @@ export default Series;
  * @apioption series.legendIndex
  */
 /**
- * The name of the series as shown in the legend, tooltip etc.
+ * The name of the series as shown in the legend, tooltip etc. If a `dataTable`
+ * and `dataMapping` are used, the name defaults to the id of the primary data
+ * table column. Otherwise, it defaults to "Series {n}", where n is the index of
+ * the series, starting at 1.
  *
  * @sample {highcharts} highcharts/series/name/
  *         Series name

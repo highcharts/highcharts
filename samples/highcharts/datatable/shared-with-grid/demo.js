@@ -1,9 +1,9 @@
 // Define the common data table
 const dataTable = new Grid.DataTable({
     columns: {
-        year: [2020, 2021, 2022, 2023],
-        cost: [11, 13, 12, 14],
-        revenue: [12, 15, 14, 18]
+        Year: [2020, 2021, 2022, 2023],
+        Cost: [11, 13, 12, 14],
+        Revenue: [12, 15, 14, 18]
     }
 });
 
@@ -16,25 +16,20 @@ Highcharts.chart('chart-container', {
     title: {
         text: ''
     },
-    series: [{
-        name: 'Cost',
-        dataMapping: {
-            x: {
-                column: 'year'
-            },
-            y: {
-                column: 'cost'
+    plotOptions: {
+        series: {
+            dataMapping: {
+                x: 'Year'
             }
         }
-    }, {
-        name: 'Revenue',
+    },
+    series: [{
         dataMapping: {
-            x: {
-                column: 'year'
-            },
-            y: {
-                column: 'revenue'
-            }
+            y: 'Cost'
+        }
+    }, {
+        dataMapping: {
+            y: 'Revenue'
         }
     }]
 });
@@ -46,7 +41,7 @@ Grid.grid('grid-container', {
         updateOnChange: true
     },
     columns: [{
-        id: 'year',
+        id: 'Year',
         cells: {
             // No thousands separator
             format: '{value}'
@@ -56,17 +51,17 @@ Grid.grid('grid-container', {
 
 document.getElementById('addrow').addEventListener('click', e => {
     dataTable.setRow({
-        year: 2024,
-        cost: 15,
-        revenue: 20
+        Year: 2024,
+        Cost: 15,
+        Revenue: 20
     });
     e.target.disabled = true;
 });
 
 document.getElementById('updaterow').addEventListener('click', () => {
     dataTable.setRow({
-        cost: Math.round(15 * Math.random()),
-        revenue: Math.round(10 * Math.random())
+        Cost: Math.round(15 * Math.random()),
+        Revenue: Math.round(10 * Math.random())
     }, 1);
 });
 
@@ -77,7 +72,7 @@ document.getElementById('deleterow').addEventListener('click', e => {
 
 document.getElementById('setcolumn').addEventListener('click', () => {
     dataTable.setColumn(
-        'revenue',
-        dataTable.getColumns().revenue.map(() => Math.round(10 * Math.random()))
+        'Revenue',
+        dataTable.getColumns().Revenue.map(() => Math.round(10 * Math.random()))
     );
 });
