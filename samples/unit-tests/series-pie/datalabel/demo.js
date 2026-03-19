@@ -612,6 +612,83 @@ QUnit.test('Wide data labels', function (assert) {
     );
 });
 
+QUnit.test(
+    'Hidden labels should not shift donut center (#23143)',
+    function (assert) {
+        var chart = Highcharts.chart('container', {
+                chart: {
+                    type: 'pie',
+                    width: 280,
+                    height: 280
+                },
+                title: {
+                    text: ''
+                },
+                series: [{
+                    type: 'pie',
+                    innerSize: '60%',
+                    dataLabels: {
+                        enabled: true,
+                        style: {
+                            textOutline: 'none'
+                        },
+                        format:
+                            '<b style="font-size: 16px;' +
+                            'letter-spacing: 0.5px;">' +
+                            '{point.name}</b><br>{point.percentage:.1f}%'
+                    },
+                    data: [{
+                        name: 'ABC_098',
+                        y: 142
+                    }, {
+                        name: 'DEF_123',
+                        y: 136
+                    }, {
+                        name: 'ABC_123_EFB_456_098',
+                        y: 127
+                    }, {
+                        name: 'TEXT WITH SPACES',
+                        y: 59
+                    }, {
+                        name: 'MNO_345_03434',
+                        y: 58
+                    }, {
+                        name: 'VERY_LONG_STRING_TESTING_LIMIT',
+                        y: 49
+                    }, {
+                        name: 'TESTING_LONG_STRING',
+                        y: 46
+                    }, {
+                        name: 'ABC',
+                        y: 41
+                    }, {
+                        name: 'TEST_0001',
+                        y: 38
+                    }, {
+                        name: 'TEST_0002',
+                        y: 20
+                    }]
+                }]
+            }),
+            series = chart.series[0],
+            hiddenLabels = series.points.filter(
+                point => point.dataLabel?.attr('visibility') === 'hidden'
+            ),
+            centerOffset = Math.abs(series.center[0] - chart.plotWidth / 2);
+
+        assert.ok(
+            hiddenLabels.length > 0,
+            'The chart has hidden data labels'
+        );
+
+        assert.ok(
+            centerOffset < 12,
+            'Auto-centered donut should stay centered with hidden labels. ' +
+            'Offset: ' + centerOffset
+        );
+    }
+);
+
 // Skipping since refactor. Visually it looks okay. Now it is clipping.
 // Previously the overflow wasn't handled at all.
 QUnit.skip(
