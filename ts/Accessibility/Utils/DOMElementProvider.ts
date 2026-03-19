@@ -62,7 +62,6 @@ class DOMElementProvider {
      *
      * */
 
-    /* eslint-disable valid-jsdoc */
 
     public createElement<K extends keyof HTMLElementTagNameMap>(
         tagName: K,

@@ -145,15 +145,6 @@ namespace OrdinalAxis {
      * Extends the axis with ordinal support.
      *
      * @internal
-     *
-     * @param AxisClass
-     * Axis class to extend.
-     *
-     * @param ChartClass
-     * Chart class to use.
-     *
-     * @param SeriesClass
-     * Series class to use.
      */
     export function compose<T extends typeof Axis>(
         AxisClass: T,

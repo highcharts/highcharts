@@ -385,7 +385,7 @@ class Annotation extends EventEmitter implements ControlTarget {
     public clipYAxis?: AxisType;
 
     /** @internal */
-    public coll: 'annotations' = 'annotations';
+    public coll = 'annotations' as const;
 
     /** @internal */
     public animationConfig!: Partial<AnimationOptions>;

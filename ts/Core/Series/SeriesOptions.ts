@@ -795,7 +795,7 @@ export interface SeriesOptions {
      *
      * @since 3.0
      */
-    negativeColor?: ColorType;
+    negativeColor?: ColorType | boolean;
 
     /**
      * Whether or not data-points with the value of `null` should be

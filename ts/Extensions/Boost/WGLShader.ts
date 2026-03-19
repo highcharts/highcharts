@@ -256,7 +256,6 @@ const vertexShader = [
  *
  * */
 
-/* eslint-disable valid-jsdoc */
 
 /**
  * A static shader mimicking axis translation functions found in Core/Axis.

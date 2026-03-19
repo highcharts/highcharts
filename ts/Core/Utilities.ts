@@ -281,6 +281,7 @@ if ((win as any).jQuery) {
      * @external JQuery
      */
 
+    /* eslint-disable jsdoc/check-param-names */
     /**
      * Helper function to return the chart of the current JQuery selector
      * element.
@@ -329,6 +330,7 @@ if ((win as any).jQuery) {
             return charts[(attr(this[0], 'data-highcharts-chart') as any)];
         }
     };
+    /* eslint-enable jsdoc/check-param-names */
 }
 
 export interface ErrorMessageEventObject {

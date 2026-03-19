@@ -54,7 +54,7 @@ QUnit.test(
             chart.series[0].legendItem.symbol.height,
             void 0,
             `There should be no symbol when legend.symbolHeight is set to 0
-            for column chart (squareSymbol is set to true) (#16514).`
+            for column chart (squareSymbol is set to true) (#16516).`
         );
 
         chart.update({
@@ -96,7 +96,7 @@ QUnit.test(
         assert.strictEqual(
             chart.series[0].legendItem.symbol.attr('fill'),
             chart.options.colors[0],
-            `First symbol should be set to default color when 
+            `First symbol should be set to default color when
             series.legendColor is undefined.`
         );
 
@@ -120,7 +120,7 @@ QUnit.test(
         assert.strictEqual(
             chart.series[2].points[0].legendItem.symbol.attr('fill'),
             newColor,
-            `First symbol of pie series should be red when 
+            `First symbol of pie series should be red when
             series.legendColor is set to red.`
         );
 
@@ -131,7 +131,7 @@ QUnit.test(
         assert.strictEqual(
             chart.series[2].points[0].legendItem.symbol.attr('fill'),
             chart.options.colors[0],
-            `First symbol of pie series should be set to default color when 
+            `First symbol of pie series should be set to default color when
             series.legendColor is undefined.`
         );
     }

@@ -529,7 +529,6 @@ class HeatmapSeries extends ScatterSeries {
         fireEvent(series, 'afterTranslate');
     }
 
-    /* eslint-enable valid-jsdoc */
 
 }
 

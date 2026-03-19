@@ -11,7 +11,7 @@
  *
  * */
 
-import type Exporting from '../Exporting/Exporting.js';
+import type { Exporting } from '../Exporting/Exporting.js';
 
 /* *
  *

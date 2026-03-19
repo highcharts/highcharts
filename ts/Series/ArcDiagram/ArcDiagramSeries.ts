@@ -526,7 +526,6 @@ class ArcDiagramSeries extends SankeySeries {
         }
         return {};
     }
-    /* eslint-enable valid-jsdoc */
 }
 
 /* *

@@ -24,6 +24,7 @@ import type G from '../../Core/Globals';
  *
  * */
 
+/** @internal */
 declare global {
     interface Window {
         jspdf: jspdf;

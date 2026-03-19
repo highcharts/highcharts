@@ -136,7 +136,6 @@ class PictorialSeries extends ColumnSeries {
      *
      * */
 
-    /* eslint-disable valid-jsdoc */
 
     /**
      * Animate in the series. Called internally twice. First with the `init`
@@ -261,7 +260,6 @@ class PictorialSeries extends ColumnSeries {
         return extremes;
     }
 
-    /* eslint-enable valid-jsdoc */
 
 }
 

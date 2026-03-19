@@ -32,7 +32,7 @@ const init = grid => {
 };
 
 Grid.grid('container', {
-    dataTable: {
+    data: {
         columns: {
             Group: ['B', 'A', 'B', 'A', 'A', 'B', 'A', 'B'],
             Score: [5, 3, 3, 5, 3, 5, 5, 3],

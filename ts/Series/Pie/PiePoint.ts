@@ -92,7 +92,6 @@ class PiePoint extends Point {
      *
      * */
 
-    /* eslint-disable valid-jsdoc */
 
     /**
      * Extendable method for getting the path of the connector between the

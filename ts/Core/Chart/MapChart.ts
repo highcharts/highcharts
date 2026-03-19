@@ -256,6 +256,7 @@ namespace MapChart {
      *
      * */
 
+    /* eslint-disable jsdoc/check-param-names */
     /**
      * The factory function for creating new map charts. Creates a new {@link
      * Highcharts.MapChart|MapChart} object with different default options than
@@ -289,6 +290,7 @@ namespace MapChart {
     ): MapChart {
         return new MapChart(a as any, b as any, c);
     }
+    /* eslint-enable jsdoc/check-param-names */
 
     /**
      * Utility for reading SVG paths directly.

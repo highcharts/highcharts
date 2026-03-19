@@ -42,7 +42,6 @@ import {
  *
  * */
 
-/* eslint-disable valid-jsdoc */
 
 /**
  * @private

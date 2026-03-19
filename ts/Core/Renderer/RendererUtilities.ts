@@ -57,7 +57,6 @@ namespace RendererUtilities {
      *
      * */
 
-    /* eslint-disable valid-jsdoc */
 
     /**
      * General distribution algorithm for distributing labels of differing size

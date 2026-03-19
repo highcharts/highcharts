@@ -1008,7 +1008,7 @@ class SVGRenderer implements SVGRendererBase {
      *
      * @function Highcharts.SVGRenderer#path
      *
-     * @param {Highcharts.SVGAttributes} [attribs]
+     * @param {Highcharts.SVGAttributes|Highcharts.SVGPathArray} [path]
      * The initial attributes.
      *
      * @return {Highcharts.SVGElement}
@@ -1027,6 +1027,7 @@ class SVGRenderer implements SVGRendererBase {
         return this.createElement('path').attr(attribs) as any;
     }
 
+    /* eslint-disable jsdoc/check-param-names */
     /**
      * Draw a circle, wraps the SVG `circle` element.
      *
@@ -1080,6 +1081,8 @@ class SVGRenderer implements SVGRendererBase {
 
         return wrapper.attr(attribs);
     }
+    /* eslint-enable jsdoc/check-param-names */
+
 
     /**
      * Draw and return an arc. Overloaded function that takes arguments object.
@@ -1128,6 +1131,8 @@ class SVGRenderer implements SVGRendererBase {
         start?: number,
         end?: number
     ): SVGElement;
+
+    /* eslint-disable jsdoc/check-param-names */
     /**
      * Draw and return an arc.
      *
@@ -1204,7 +1209,9 @@ class SVGRenderer implements SVGRendererBase {
         arc.r = r; // #959
         return arc;
     }
+    /* eslint-enable jsdoc/check-param-names */
 
+    /* eslint-disable jsdoc/check-param-names */
     /**
      * Draw and return a rectangle.
      *
@@ -1295,6 +1302,7 @@ class SVGRenderer implements SVGRendererBase {
 
         return wrapper.attr(attribs);
     }
+    /* eslint-enable jsdoc/check-param-names */
 
     /**
      * Draw and return a rectangle with advanced corner rounding options.

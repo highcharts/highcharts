@@ -444,6 +444,12 @@ class ChartAdditions {
                 // Hide and disable dataLabels
                 series.dataLabelsGroups?.forEach((g): void => g?.destroy());
                 series.dataLabelsGroups = [];
+                // Clear point.dataLabels for drill up (#23850)
+                series.points?.forEach((p): void => {
+                    if (p.dataLabels) {
+                        p.dataLabels = [];
+                    }
+                });
             });
 
             // #18925 map zooming is not working with geoJSON maps
@@ -821,6 +827,10 @@ class ChartAdditions {
                         series.isDirtyData = true;
                     }
                     series.options.inactiveOtherPoints = false;
+                    // Restore opacity for series hidden during map drilldown
+                    if (series.group && series.visible) {
+                        series.group.attr({ opacity: 1 });
+                    }
                 });
                 chart.redraw();
             };
