@@ -49,8 +49,18 @@ import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
  * */
 
 export interface DataMappingItem {
-    column: string;
-    dataTable: number;
+    /**
+     * The column from which to read the value for this data point property.
+     * This can be either a column id (string) or a column index (number) in the
+     * data table.
+     */
+    column: number|string;
+    /**
+     * The data table from which to read the value for this data point property.
+     * This can be either a data table id (string) or a data table index
+     * (number).
+     */
+    dataTable: number|string;
 }
 
 export type NonPlotOptions = (
@@ -578,12 +588,28 @@ export interface SeriesOptions {
      * The values can also be strings, in which case they are interpreted as
      * column id's from the first data table.
      *
+     * @example
+     * // Shorthand mapping with string
+     * dataMapping: {
+     *     y: 'Cost'
+     * }
+     *
+     * // Full mapping with object
+     * dataMapping: {
+     *    y: {
+     *       // Optional, defaults to the first data table. Can be either a data
+     *       // table index or id.
+     *       dataTable: 'dataTable1',
+     *       // Can be either a column index or id.
+     *       column: 'Cost'
+     *    }
+     * }
+     *
      * @sample {highcharts} highcharts/datatable/series-datatable-multiple
      *         Series with two data tables
-     * @sample {highcharts} highcharts/datatable/nested-keys
-     *         Nested keys
-     * @sample {highcharts} highcharts/datatable/chart-datatable-multiple
-     *         Chart with two data tables
+     * @sample {highcharts} highcharts/datatable/nested-keys Nested keys
+     * @sample {highcharts} highcharts/datatable/chart-datatable-multiple Chart
+     *         with two data tables
      *
      * @since next
      */

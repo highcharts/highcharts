@@ -2045,21 +2045,29 @@ class Series {
 
             // Resolve the data mapping
             const columns = keys
-                .reduce((columns, key): ColumnCollection => {
-                    const source = mapping?.[key],
-                        column = isString(source) ?
+                .reduce((targetColumns, key): ColumnCollection => {
+                    const mappingItem = mapping?.[key],
+                        srcColumns = dtItem.columns || {},
+                        dtId = dtItem.id,
+                        column = isString(mappingItem) ?
                             // String definition points directly to a column id
                             // on the first data table
-                            (dtIndex === 0 && dtItem.columns?.[source]) :
+                            (dtIndex === 0 && srcColumns[mappingItem]) :
                             // Object definition, check for matching data table
-                            // and column id
-                            (source?.dataTable || 0) === dtIndex &&
-                            dtItem?.columns?.[source?.column || key];
+                            // and column id/index
+                            (
+                                (mappingItem?.dataTable || 0) === dtIndex ||
+                                (dtId && mappingItem?.dataTable === dtId)
+                            ) &&
+                            (isNumber(mappingItem?.column) ?
+                                Object.values(srcColumns)[mappingItem.column] :
+                                srcColumns[mappingItem?.column || key]
+                            );
 
                     if (column) {
-                        columns[key] = column;
+                        targetColumns[key] = column;
                     }
-                    return columns;
+                    return targetColumns;
                 }, {} as ColumnCollection);
 
             // If a DataTable is passed and no column assignment is set, use it
