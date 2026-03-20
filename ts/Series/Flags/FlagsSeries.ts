@@ -99,7 +99,6 @@ class FlagsSeries extends ColumnSeries {
      * */
 
     public static compose(
-        SeriesClass: typeof Series,
         SVGRendererClass: typeof SVGRenderer
     ): void {
         FlagsSymbols.compose(SVGRendererClass);
