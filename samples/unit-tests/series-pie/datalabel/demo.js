@@ -616,61 +616,64 @@ QUnit.test(
     'Hidden labels should not shift donut center (#23143)',
     function (assert) {
         var chart = Highcharts.chart('container', {
-                chart: {
-                    type: 'pie',
-                    width: 280,
-                    height: 280
-                },
-                title: {
-                    text: ''
-                },
-                series: [{
-                    type: 'pie',
-                    innerSize: '60%',
-                    dataLabels: {
-                        enabled: true,
-                        style: {
-                            textOutline: 'none'
-                        },
-                        format:
+            chart: {
+                type: 'pie',
+                width: 600,
+                height: 400
+            },
+            title: {
+                text: ''
+            },
+            series: [{
+                type: 'pie',
+                innerSize: '0%',
+                dataLabels: {
+                    enabled: true,
+                    style: {
+                        textOutline: 'none'
+                    },
+                    format:
                             '<b style="font-size: 16px;' +
                             'letter-spacing: 0.5px;">' +
                             '{point.name}</b><br>{point.percentage:.1f}%'
-                    },
-                    data: [{
-                        name: 'ABC_098',
-                        y: 142
-                    }, {
-                        name: 'DEF_123',
-                        y: 136
-                    }, {
-                        name: 'ABC_123_EFB_456_098',
-                        y: 127
-                    }, {
-                        name: 'TEXT WITH SPACES',
-                        y: 59
-                    }, {
-                        name: 'MNO_345_03434',
-                        y: 58
-                    }, {
-                        name: 'VERY_LONG_STRING_TESTING_LIMIT',
-                        y: 49
-                    }, {
-                        name: 'TESTING_LONG_STRING',
-                        y: 46
-                    }, {
-                        name: 'ABC',
-                        y: 41
-                    }, {
-                        name: 'TEST_0001',
-                        y: 38
-                    }, {
-                        name: 'TEST_0002',
-                        y: 20
-                    }]
+                },
+                data: [{
+                    name: 'ABC_098',
+                    y: 142
+                }, {
+                    name: 'DEF_123',
+                    y: 136
+                }, {
+                    name: 'ABC_123_EFB_456_098',
+                    y: 127
+                }, {
+                    name: 'TEXT WITH SPACES',
+                    y: 59
+                }, {
+                    name: 'MNO_345_03434',
+                    y: 58
+                }, {
+                    name: 'VERY_LONG_STRING_TESTING_LIMIT',
+                    y: 49
+                }, {
+                    name: 'TESTING_LONG_STRING',
+                    y: 46
+                }, {
+                    name: 'ABC',
+                    y: 41
+                }, {
+                    name: 'TEST_0001',
+                    y: 38
+                }, {
+                    name: 'TEST_0002',
+                    y: 20
                 }]
-            }),
-            series = chart.series[0],
+            }]
+        });
+
+        chart.setSize(400, null, false);
+
+        var series = chart.series[0],
             hiddenLabels = series.points.filter(
                 point => point.dataLabel?.attr('visibility') === 'hidden'
             ),

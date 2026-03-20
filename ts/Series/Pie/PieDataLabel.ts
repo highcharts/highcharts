@@ -314,6 +314,15 @@ namespace ColumnDataLabel {
                         r
                     );
 
+                // Ensure width/height measurements use the final side
+                // alignment for outside labels. Otherwise the parent data label
+                // pass may leave centered textAlign that skews overflow logic.
+                if (!dataLabelOptions?.style?.textAlign && distance > 0) {
+                    dataLabel.attr({
+                        textAlign: point.half ? 'right' : 'left'
+                    });
+                }
+
                 // Arrange points for collision detection
                 if (i === 0) {
                     halves[point.half].push(point);
@@ -747,6 +756,8 @@ namespace ColumnDataLabel {
             minSize = options.minSize || 80;
 
         let newSize = minSize,
+            centerXOffset = 0,
+            centerYOffset = 0,
             // If a size is set, return true and don't try to shrink the pie
             // to fit the labels.
             ret = options.size !== null;
@@ -765,8 +776,7 @@ namespace ColumnDataLabel {
                     center[2] - overflow[1] - overflow[3],
                     minSize as any
                 );
-                // Horizontal center
-                center[0] += (overflow[3] - overflow[1]) / 2;
+                centerXOffset = (overflow[3] - overflow[1]) / 2;
             }
 
             // Handle vertical size and center
@@ -783,8 +793,7 @@ namespace ColumnDataLabel {
                     // Vertical overflow
                     center[2] - overflow[0] - overflow[2]
                 );
-                // Vertical center
-                center[1] += (overflow[0] - overflow[2]) / 2;
+                centerYOffset = (overflow[0] - overflow[2]) / 2;
             }
 
             // If the size must be decreased, we need to run translate and
@@ -806,6 +815,8 @@ namespace ColumnDataLabel {
             // Else, return true to indicate that the pie and its labels is
             // within the plot area
             } else {
+                center[0] += centerXOffset;
+                center[1] += centerYOffset;
                 ret = true;
             }
         }
