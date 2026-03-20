@@ -218,7 +218,7 @@ QUnit.test('Input data table, uniqueNames', assert => {
 });
 
 QUnit.test('Input data table, uniqueNames and asymmetric data', assert => {
-    const dataTable = new Highcharts.DataTableCore({
+    const dataTable = new Highcharts.DataTable({
         columns: {
             yearNike: [2020, 2021, 2022, 2023],
             revenueNike: [12, 15, 14, 18],
@@ -274,7 +274,7 @@ QUnit.test('Input data table, uniqueNames and asymmetric data', assert => {
 });
 
 QUnit.test('Input data table, datetime axis and asymmetric data', assert => {
-    const dataTable = new Highcharts.DataTableCore({
+    const dataTable = new Highcharts.DataTable({
         columns: {
             yearNike: [
                 '2020-01-01',

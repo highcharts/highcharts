@@ -355,7 +355,7 @@ QUnit.test('processVennData', function (assert) {
                         columns[key].push(point[key]);
                     }
                 }
-                data = new Highcharts.DataTableCore({ columns });
+                data = new Highcharts.DataTable({ columns });
             }
 
             return vennPrototype.utils.processVennData(data, splitter);

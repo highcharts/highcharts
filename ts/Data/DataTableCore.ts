@@ -51,7 +51,7 @@ import { uniqueKey } from '../Core/Utilities.js';
  * from specific cells.
  *
  * @class
- * @name Highcharts.DataTableCore
+ * @name Highcharts.DataTable
  *
  * @param {Highcharts.DataTableOptions} [options]
  * Options to initialize the new DataTable instance.
@@ -59,10 +59,10 @@ import { uniqueKey } from '../Core/Utilities.js';
 class DataTableCore {
 
     /**
-     * Constructs an instance of the DataTableCore class.
+     * Constructs an instance of the DataTable class.
      *
      * @example
-     * const dataTable = new Highcharts.DataTableCore({
+     * const dataTable = new Highcharts.DataTable({
      *   columns: {
      *     year: [2020, 2021, 2022, 2023],
      *     cost: [11, 13, 12, 14],
@@ -103,7 +103,7 @@ class DataTableCore {
     /**
      * Whether the ID was automatic generated or given in the constructor.
      *
-     * @name Highcharts.DataTableCore#autoId
+     * @name Highcharts.DataTable#autoId
      * @type {boolean}
      */
     public readonly autoId: boolean;
@@ -111,7 +111,7 @@ class DataTableCore {
     /**
      * Collection of columns in the table.
      *
-     * @name Highcharts.DataTableCore#columns
+     * @name Highcharts.DataTable#columns
      * @type {Record<string, Highcharts.DataTableColumn>}
      */
     public readonly columns: Record<string, DataTableColumn>;
@@ -119,7 +119,7 @@ class DataTableCore {
     /**
      * ID of the table for identification purposes.
      *
-     * @name Highcharts.DataTableCore#id
+     * @name Highcharts.DataTable#id
      * @type {string}
      */
     public readonly id: string;
@@ -130,7 +130,7 @@ class DataTableCore {
     /**
      * Number of rows in the table.
      *
-     * @name Highcharts.DataTableCore#rowCount
+     * @name Highcharts.DataTable#rowCount
      * @type {number}
      */
     public rowCount: number;
@@ -167,7 +167,7 @@ class DataTableCore {
      * Delete rows. Simplified version of the full
      * `DataTable.deleteRows` method.
      *
-     * @function Highcharts.DataTableCore#deleteRows
+     * @function Highcharts.DataTable#deleteRows
      *
      * @param {number} rowIndex
      * The start row index
@@ -201,7 +201,7 @@ class DataTableCore {
      * Fetches the given column by the canonical column ID. Simplified version
      * of the full `DataTable.getRow` method, always returning by reference.
      *
-     * @function Highcharts.DataTableCore#setColumn
+     * @function Highcharts.DataTable#setColumn
      *
      * @param {string} columnId
      * ID of the column to get.
@@ -221,7 +221,7 @@ class DataTableCore {
      * Retrieves all or the given columns. Simplified version of the full
      * `DataTable.getColumns` method, always returning by reference.
      *
-     * @function Highcharts.DataTableCore#getColumns
+     * @function Highcharts.DataTable#getColumns
      *
      * @param {Array<string>} [columnIds]
      * Column ids to retrieve.
@@ -247,7 +247,7 @@ class DataTableCore {
     /**
      * Retrieves the row at a given index.
      *
-     * @function Highcharts.DataTableCore#getRowObject
+     * @function Highcharts.DataTable#getRowObject
      *
      * @param {number} rowIndex
      * Row index to retrieve. First row has index 0.
@@ -276,7 +276,7 @@ class DataTableCore {
     /**
      * Sets cell values for a column. Will insert a new column, if not found.
      *
-     * @function Highcharts.DataTableCore#setColumn
+     * @function Highcharts.DataTable#setColumn
      *
      * @param {string} columnId
      * Column name to set.
@@ -304,17 +304,17 @@ class DataTableCore {
 
     /**
      * Sets cell values for multiple columns. Will insert new columns, if not
-     * found. Simplified version of the full `DataTableCore.setColumns`, limited
+     * found. Simplified version of the full `DataTable.setColumns`, limited
      * to full replacement of the columns (undefined `rowIndex`).
      *
-     * @function Highcharts.DataTableCore#setColumns
+     * @function Highcharts.DataTable#setColumns
      *
      * @param {Highcharts.DataTableColumnCollection} columns
      * Columns as a collection, where the keys are the column names.
      *
      * @param {number} [rowIndex]
-     * Index of the first row to change. Ignored in the `DataTableCore`, as it
-     * always replaces the full column.
+     * Index of the first row to change. Ignored in the simplified `DataTable`,
+     * as it always replaces the full column.
      *
      * @param {Record<string, (boolean|number|string|null|undefined)>} [eventDetail]
      * Custom information for pending events.
@@ -345,7 +345,7 @@ class DataTableCore {
      * provided, or if the index is higher than the total number of table rows.
      * A simplified version of the full `DateTable.setRow`, limited to objects.
      *
-     * @function Highcharts.DataTableCore#setRow
+     * @function Highcharts.DataTable#setRow
      *
      * @param {Record<string, number|string|undefined>} row
      * Cell values to set.
@@ -412,7 +412,7 @@ class DataTableCore {
      * Returns the modified (clone) or the original data table if the modified
      * one does not exist.
      *
-     * @return {Highcharts.DataTableCore}
+     * @return {Highcharts.DataTable}
      * The modified (clone) or the original data table.
      */
     public getModified(): this {

@@ -30,7 +30,7 @@ QUnit.test('Series dataTable option update', assert => {
         'Passing DataTable config to setData, series should be updated'
     );
 
-    chart.series[0].setData(new Highcharts.DataTableCore({
+    chart.series[0].setData(new Highcharts.DataTable({
         columns: {
             x: [0, 1, 2],
             y: [2, 3, 4]
@@ -59,7 +59,7 @@ QUnit.test('Series dataTable option update', assert => {
     );
 
     Highcharts.charts[0].series[0].update({
-        dataTable: new Highcharts.DataTableCore({
+        dataTable: new Highcharts.DataTable({
             columns: {
                 x: [0, 1, 2],
                 y: [4, 5, 6]

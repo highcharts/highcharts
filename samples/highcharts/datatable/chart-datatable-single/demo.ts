@@ -1,4 +1,4 @@
-const dataTable = new Highcharts.DataTableCore({
+const dataTable = new Highcharts.DataTable({
     columns: {
         Year: [2020, 2021, 2022, 2023],
         Cost: [11, 13, 12, 14],

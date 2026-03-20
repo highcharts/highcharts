@@ -209,7 +209,7 @@ export interface DataGroupingInfoObject {
 export interface DataGroupingResultObject {
     /**
      * @name Highcharts.DataGroupingResultObject#modified
-     * @type {Highcharts.DataTableCore}
+     * @type {Highcharts.DataTable}
      */
     modified: DataTableCore;
 

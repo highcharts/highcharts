@@ -110,6 +110,7 @@ G.Axis = Axis;
 G.Chart = Chart;
 G.Color = Color;
 G.DataLabel = DataLabel;
+G.DataTable = DataTableCore;
 G.DataTableCore = DataTableCore;
 G.Fx = Fx;
 G.HTMLElement = HTMLElement;

@@ -411,11 +411,10 @@ const seriesDefaults: PlotOptionsOf<Series> = {
 
     /**
      * Options for a specific series-level data table. The `dataTable` option
-     * can be either a configuration object or an instance of the
-     * `DataTableCore` class. If a `DataTableCore` instance is passed, it will
-     * be used directly. If a configuration object is passed, a new
-     * `DataTableCore` instance will be created based on the provided
-     * configuration.
+     * can be either a configuration object or an instance of the `DataTable`
+     * class. If a `DataTable` instance is passed, it will be used directly. If
+     * a configuration object is passed, a new `DataTable` instance will be
+     * created based on the provided configuration.
      *
      * The data table is mapped to the series data points based on the
      * [dataMapping](#dataMapping) option.
@@ -425,7 +424,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      * @sample {highcharts} highcharts/datatable/series-datatable-multiple/
      *        Series with two data tables
      *
-     * @type      {Highcharts.DataTableCore|Highcharts.DataTableOptionsObject}
+     * @type      {Highcharts.DataTable|Highcharts.DataTableOptionsObject}
      * @since     next
      * @apioption plotOptions.series.dataTable
      */

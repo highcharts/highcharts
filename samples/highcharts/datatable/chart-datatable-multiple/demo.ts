@@ -1,11 +1,11 @@
-const dataTableA = new Highcharts.DataTableCore({
+const dataTableA = new Highcharts.DataTable({
     columns: {
         Year: [2020, 2021, 2022, 2023],
         Cost: [11, 13, 12, 14]
     }
 });
 
-const dataTableB = new Highcharts.DataTableCore({
+const dataTableB = new Highcharts.DataTable({
     columns: {
         Year: [2020, 2021, 2022, 2023],
         Revenue: [12, 15, 14, 18]

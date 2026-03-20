@@ -1729,7 +1729,7 @@ class Series {
      *
      * @function Highcharts.Series#setData
      *
-     * @param {Array<Highcharts.PointOptionsType>|Highcharts.DataTableOptions|Highcharts.DataTableCore|undefined} data
+     * @param {Array<Highcharts.PointOptionsType>|Highcharts.DataTableOptions|Highcharts.DataTable|undefined} data
      *        Takes an array of data in the same format as described under
      *        `series.{type}.data` for the given series type, for example a line
      *        series would take data in the form described under
@@ -2014,7 +2014,7 @@ class Series {
      * options object. This corresponds to the `data` series option. Called
      * from the official `setData` method.
      *
-     * @param {Highcharts.DataTableOptions|Highcharts.DataTableCore} data
+     * @param {Highcharts.DataTableOptions|Highcharts.DataTable} data
      *        The data array
      * @internal
      */

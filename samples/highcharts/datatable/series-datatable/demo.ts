@@ -1,4 +1,4 @@
-const { DataTableCore } = Highcharts;
+const { DataTable } = Highcharts;
 
 Highcharts.chart('container', {
     title: {
@@ -15,7 +15,7 @@ Highcharts.chart('container', {
         }
     }, {
         name: 'Instance + array',
-        dataTable: new DataTableCore({
+        dataTable: new DataTable({
             columns: {
                 x: [0, 1, 3, 4],
                 y: [3, 6, 5, 7]
@@ -31,7 +31,7 @@ Highcharts.chart('container', {
         }
     }, {
         name: 'Instance + typed array',
-        dataTable: new DataTableCore({
+        dataTable: new DataTable({
             columns: {
                 x: new Uint8Array([0, 1, 3, 4]),
                 y: new Uint8Array([9, 5, 9, 4])
