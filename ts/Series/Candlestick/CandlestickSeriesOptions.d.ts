@@ -67,6 +67,16 @@ export interface CandlestickSeriesOptions extends OHLCSeriesOptions {
      */
     lineColor?: ColorType;
 
+    /**
+     * What type of legend symbol to render for this series. For candlestick
+     * series, the default is `candlestick`, a vertical line (wick) with a
+     * rectangular body.
+     *
+     * @default candlestick
+     * @apioption plotOptions.candlestick.legendSymbol
+     */
+    legendSymbol?: string;
+
     states?: SeriesStatesOptions<CandlestickSeriesOptions>;
 
     /**

@@ -22,7 +22,8 @@ import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
-import type Legend from '../../Core/Legend/Legend';
+import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer';
+import type Series from '../../Core/Series/Series';
 
 import HLCPoint from './HLCPoint.js';
 import HLCSeriesDefaults from './HLCSeriesDefaults.js';
@@ -30,6 +31,7 @@ import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     column: ColumnSeries
 } = SeriesRegistry.seriesTypes;
+import FinancialSymbols from '../FinancialSymbols.js';
 
 import D from '../../Core/Defaults.js';
 import { crisp, extend, merge } from '../../Shared/Utilities.js';
@@ -58,8 +60,18 @@ class HLCSeries extends ColumnSeries {
      *
      * */
 
+    public static compose(
+        SeriesClass: typeof Series,
+        SVGRendererClass: typeof SVGRenderer
+    ): void {
+        FinancialSymbols.compose(SVGRendererClass);
+    }
+
     public static defaultOptions: HLCSeriesOptions = merge(
         ColumnSeries.defaultOptions,
+        {
+            legendSymbol: 'hlc'
+        },
         HLCSeriesDefaults
     );
 
@@ -184,58 +196,6 @@ class HLCSeries extends ColumnSeries {
         }
     }
 
-    /**
-     * Draw a representative financial/flag shape in the legend.
-     * @private
-     */
-    public drawLegendSymbol(legend: Legend, item: Legend.Item): void {
-        const renderer = this.chart.renderer,
-            legendOptions = legend.options,
-            w = legendOptions.symbolWidth || 12,
-            h = legendOptions.symbolHeight || 12,
-            styledMode = this.chart.styledMode === true,
-            parentGroup = item.legendItem?.group || legend.group,
-            path = this.getLegendSymbolPath(w, h),
-            attr = this.pointAttribs() as SVGAttributes;
-
-        if (!styledMode) {
-            attr['stroke-width'] =
-            Math.max(Number(attr['stroke-width'] || 0), 1.5);
-            attr.fill = attr.fill ?? 'none';
-        }
-
-        let legendSymbol = (item as any).legendSymbol as SVGElement | undefined;
-
-        if (legendSymbol && !legendSymbol.destroyed) {
-            legendSymbol.animate({ d: path });
-            legendSymbol.attr(attr);
-        } else {
-            legendSymbol = (item as any).legendSymbol = renderer
-                .path(path)
-                .addClass('highcharts-point highcharts-legend-symbol')
-                .attr(attr)
-                .add(parentGroup);
-        }
-
-        legendSymbol.attr({
-            translateX: Math.round(legendOptions.symbolPadding || 0),
-            translateY: Math.round((legend.baseline || 0) - h + 1)
-        });
-    }
-
-    /**
-     * Defines Legend symbol path for HLC series.
-     * @private
-     */
-    protected getLegendSymbolPath(w: number, h: number): SVGPath {
-        const x = w / 2;
-        return [
-            ['M', x, 0],
-            ['L', x, h],
-            ['M', x, h / 2],
-            ['L', w, h / 2]
-        ];
-    }
 
     /**
      * Draw the data points
@@ -380,6 +340,8 @@ declare module '../../Core/Series/SeriesType' {
         hlc: typeof HLCSeries;
     }
 }
+
+HLCSeries.compose(HLCSeries, SVGRenderer);
 SeriesRegistry.registerSeriesType('hlc', HLCSeries);
 
 /* *

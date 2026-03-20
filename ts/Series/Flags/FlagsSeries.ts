@@ -21,12 +21,12 @@ import type ColorType from '../../Core/Color/ColorType';
 import type { FlagsShapeValue } from './FlagsPointOptions';
 import type FlagsSeriesOptions from './FlagsSeriesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
-import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
-import type Legend from '../../Core/Legend/Legend';
+import type SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer';
 
 import FlagsPoint from './FlagsPoint.js';
 import FlagsSeriesDefaults from './FlagsSeriesDefaults.js';
 import FlagsSymbols from './FlagsSymbols.js';
+import FinancialSymbols from '../FinancialSymbols';
 import H from '../../Core/Globals.js';
 const { noop } = H;
 import OnSeriesComposition from '../OnSeriesComposition.js';
@@ -98,11 +98,20 @@ class FlagsSeries extends ColumnSeries {
      *
      * */
 
-    public static compose = FlagsSymbols.compose;
+    public static compose(
+        SeriesClass: typeof Series,
+        SVGRendererClass: typeof SVGRenderer
+    ): void {
+        FlagsSymbols.compose(SVGRendererClass);
+        FinancialSymbols.compose(SVGRendererClass);
+    }
 
     public static defaultOptions: FlagsSeriesOptions = merge(
         ColumnSeries.defaultOptions,
-        FlagsSeriesDefaults
+        FlagsSeriesDefaults,
+        {
+            legendSymbol: 'f-flag'
+        }
     );
 
     /* *
@@ -429,63 +438,6 @@ class FlagsSeries extends ColumnSeries {
             stroke: lineColor || color,
             'stroke-width': lineWidth || options.lineWidth || 0
         };
-    }
-
-    /**
-     * Draw a representative flag shape in the legend.
-     * @private
-     */
-    public drawLegendSymbol(legend: Legend, item: Legend.Item): void {
-        const renderer = this.chart.renderer,
-            legendOptions = legend.options,
-            w = legendOptions.symbolWidth || 12,
-            h = legendOptions.symbolHeight || 12,
-            styledMode = this.chart.styledMode === true,
-            parentGroup = item.legendItem?.group || legend.group;
-
-        const path = this.getLegendSymbolPath(w, h);
-        const attr = this.pointAttribs(item as FlagsPoint) as SVGAttributes;
-
-        if (!styledMode) {
-            attr['stroke-width'] =
-            Math.max(Number(attr['stroke-width'] || 0), 1);
-        }
-
-        let legendSymbol = (item as any).legendSymbol as SVGElement | undefined;
-
-        if (legendSymbol && !legendSymbol.destroyed) {
-            legendSymbol.animate({ d: path });
-            legendSymbol.attr(attr);
-        } else {
-            legendSymbol = (item as any).legendSymbol = renderer
-                .path(path)
-                .addClass('highcharts-point highcharts-legend-symbol')
-                .attr(attr)
-                .add(parentGroup);
-        }
-
-        legendSymbol.attr({
-            translateX: Math.round(legendOptions.symbolPadding || 0),
-            translateY: Math.round((legend.baseline || 0) - h + 1)
-        });
-    }
-
-    /**
-     * Get the representative pennant path for Flags.
-     * @private
-     */
-    protected getLegendSymbolPath(w: number, h: number): SVGPath {
-        const poleX = Math.round(w / 3);
-        const headHeight = Math.round(h * 0.6);
-
-        return [
-            ['M', poleX, h],
-            ['L', poleX, 0],
-            ['L', w, 0],
-            ['L', w, headHeight],
-            ['L', poleX, headHeight],
-            ['Z']
-        ];
     }
 
     /**

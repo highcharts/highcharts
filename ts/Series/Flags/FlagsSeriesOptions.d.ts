@@ -98,6 +98,15 @@ export interface FlagsSeriesOptions extends ColumnSeriesOptions {
     height?: number;
 
     /**
+     * What type of legend symbol to render for this series. For flags
+     * series, the default is `f-flag`, a pole with a pennant.
+     *
+     * @default f-flag
+     * @apioption plotOptions.flags.legendSymbol
+     */
+    legendSymbol?: string;
+
+    /**
      * The color of the line/border of the flag.
      *
      * In styled mode, the stroke is set in the
