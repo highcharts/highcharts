@@ -314,15 +314,6 @@ namespace ColumnDataLabel {
                         r
                     );
 
-                // Ensure width/height measurements use the final side
-                // alignment for outside labels. Otherwise the parent data label
-                // pass may leave centered textAlign that skews overflow logic.
-                if (!dataLabelOptions?.style?.textAlign && distance > 0) {
-                    dataLabel.attr({
-                        textAlign: point.half ? 'right' : 'left'
-                    });
-                }
-
                 // Arrange points for collision detection
                 if (i === 0) {
                     halves[point.half].push(point);
