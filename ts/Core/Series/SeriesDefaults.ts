@@ -360,11 +360,12 @@ const seriesDefaults: PlotOptionsOf<Series> = {
 
     /**
      * The mapping between the data table and the series data points. This is
-     * used in conjunction with the `dataTable` option (on chart or series
-     * level) to map columns from the data table to the properties of the data
-     * points. The keys of the `dataMapping` object correspond to the properties
-     * of the data points (e.g. `x`, `y`, `name`), and the values are objects
-     * that specify which column from which data table to use for that property.
+     * used in conjunction with the `dataTable` option (on [chart](#dataTable)
+     * or [series](#plotOptions.series.dataTable) level) to map columns from the
+     * data table to the properties of the data points. The keys of the
+     * `dataMapping` object correspond to the properties of the data points
+     * (e.g. `x`, `y`, `name`), and the values are objects that specify which
+     * column from which data table to use for that property.
      *
      * The keys can also be nested paths, for example `dataLabel.format`, to map
      * to nested properties of the data points.
@@ -389,6 +390,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      *    }
      * }
      *
+     * @type    {Highcharts.DataMappingOptionsObject}
      * @sample {highcharts} highcharts/datatable/series-datatable-multiple
      *         Series with two data tables
      * @sample {highcharts} highcharts/datatable/nested-keys
@@ -417,14 +419,14 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      * created based on the provided configuration.
      *
      * The data table is mapped to the series data points based on the
-     * [dataMapping](#dataMapping) option.
+     * [series.dataMapping](#plotOptions.series.dataMapping) option.
      *
      * @sample {highcharts} highcharts/datatable/series-datatable/
-     *        Series with a data table
+     *        Series with one data table
      * @sample {highcharts} highcharts/datatable/series-datatable-multiple/
      *        Series with two data tables
      *
-     * @type      {Highcharts.DataTable|Highcharts.DataTableOptionsObject}
+     * @type      {Highcharts.DataTable|Highcharts.DataTableOptions}
      * @since     next
      * @apioption plotOptions.series.dataTable
      */

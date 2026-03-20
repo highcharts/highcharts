@@ -109,14 +109,14 @@ const defaultOptions: DefaultOptions = {
      * configuration.
      *
      * The data table is mapped to the series data points based on the
-     * [dataMapping](#dataMapping) option.
+     * [series.dataMapping](#plotOptions.series.dataMapping) option.
      *
      * @sample {highcharts} highcharts/datatable/chart-datatable-single/
-     *         Chart with a data table
+     *         Chart with one data table
      * @sample {highcharts} highcharts/datatable/chart-datatable-multiple/
      *         Chart with two data tables
      *
-     * @type {Highcharts.DataTable|Highcharts.DataTableOptionsObject|Array<Highcharts.DataTable|Highcharts.DataTableOptionsObject>}
+     * @type {Highcharts.DataTable|Highcharts.DataTableOptions|Array<Highcharts.DataTable|Highcharts.DataTableOptions>}
      * @since     next
      * @apioption dataTable
      */

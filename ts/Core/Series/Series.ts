@@ -5617,6 +5617,20 @@ export default Series;
  */
 
 /**
+ * Options for `dataMapping`. The data mapping options allow you to define
+ * how data from a data table should be mapped to series points. The object
+ * keys refer to the point property that should be mapped, and the values refer
+ * to the `dataTable` and `column` that should be used for the mapping.
+ *
+ * Values can be either a string pointing directly to a column in the first
+ * data table, or an object with `dataTable` and `column` properties to specify
+ * the mapping in more detail.
+ *
+ * @interface Highcharts.DataMappingOptionsObject
+ * @since next
+ */
+
+/**
  * Options for `dataSorting`.
  *
  * @interface Highcharts.DataSortingOptionsObject

@@ -576,11 +576,12 @@ export interface SeriesOptions {
 
     /**
      * The mapping between the data table and the series data points. This is
-     * used in conjunction with the `dataTable` option (on chart or series
-     * level) to map columns from the data table to the properties of the data
-     * points. The keys of the `dataMapping` object correspond to the properties
-     * of the data points (e.g. `x`, `y`, `name`), and the values are objects
-     * that specify which column from which data table to use for that property.
+     * used in conjunction with the `dataTable` option (on [chart](#dataTable)
+     * or [series](#plotOptions.series.dataTable) level) to map columns from the
+     * data table to the properties of the data points. The keys of the
+     * `dataMapping` object correspond to the properties of the data points
+     * (e.g. `x`, `y`, `name`), and the values are objects that specify which
+     * column from which data table to use for that property.
      *
      * The keys can also be nested paths, for example `dataLabel.format`, to map
      * to nested properties of the data points.
@@ -604,7 +605,7 @@ export interface SeriesOptions {
      *       column: 'Cost'
      *    }
      * }
-     *
+     * @type    {Highcharts.DataMappingOptionsObject}
      * @sample {highcharts} highcharts/datatable/series-datatable-multiple
      *         Series with two data tables
      * @sample {highcharts} highcharts/datatable/nested-keys Nested keys
@@ -626,16 +627,16 @@ export interface SeriesOptions {
     /**
      * Options for a specific series-level data table. The `dataTable` option
      * can be either a configuration object or an instance of the
-     * `DataTableCore` class. If a `DataTableCore` instance is passed, it will
+     * `DataTable` class. If a `DataTable` instance is passed, it will
      * be used directly. If a configuration object is passed, a new
-     * `DataTableCore` instance will be created based on the provided
+     * `DataTable` instance will be created based on the provided
      * configuration.
      *
      * The data table is mapped to the series data points based on the
-     * [dataMapping](#dataMapping) option.
+     * [series.dataMapping](#plotOptions.series.dataMapping) option.
      *
      * @sample {highcharts} highcharts/datatable/series-datatable/
-     *        Series with a data table
+     *        Series with one data table
      * @sample {highcharts} highcharts/datatable/series-datatable-multiple/
      *        Series with two data tables
      *
