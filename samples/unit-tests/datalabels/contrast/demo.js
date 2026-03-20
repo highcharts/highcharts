@@ -222,3 +222,58 @@ QUnit.test('Pie dataLabels and contrast', function (assert) {
         '(#11140).'
     );
 });
+
+QUnit.test(
+    'Spline dataLabels should use overlapping column contrast (#23964).',
+    function (assert) {
+        const chart = Highcharts.chart('container', {
+                chart: {
+                    animation: false
+                },
+                plotOptions: {
+                    spline: {
+                        dataLabels: {
+                            allowOverlap: true,
+                            enabled: true,
+                            style: {
+                                textOutline: 'none'
+                            }
+                        }
+                    }
+                },
+                yAxis: {
+                    max: 6
+                },
+                series: [{
+                    type: 'column',
+                    data: [{
+                        color: '#111111',
+                        y: 5
+                    }, {
+                        color: '#f0f0f0',
+                        y: 5
+                    }]
+                }, {
+                    type: 'spline',
+                    data: [2.5, 2.5]
+                }]
+            }),
+            points = chart.series[1].points;
+
+        assert.strictEqual(
+            Highcharts.color(
+                points[0].dataLabel.element.childNodes[0].style.fill
+            ).get(),
+            Highcharts.color(chart.renderer.getContrast('#111111')).get(),
+            'Spline dataLabel over a dark column should be light.'
+        );
+
+        assert.strictEqual(
+            Highcharts.color(
+                points[1].dataLabel.element.childNodes[0].style.fill
+            ).get(),
+            Highcharts.color(chart.renderer.getContrast('#f0f0f0')).get(),
+            'Spline dataLabel over a light column should be dark.'
+        );
+    }
+);

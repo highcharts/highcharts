@@ -674,7 +674,112 @@ namespace DataLabel {
             seriesDlOptions = mergedDataLabelOptions(series);
 
         let pointOptions: Array<DataLabelOptions>,
-            dataLabelsGroup: SVGElement;
+            dataLabelsGroup: SVGElement,
+            contrastCandidatesByX: Map<number, Array<{
+                bottom: number;
+                color: ColorString;
+                left: number;
+                right: number;
+                top: number;
+            }>>|undefined;
+
+        const getOverlappingShapeContrastColor = (
+            point: Point
+        ): (ColorString|undefined) => {
+            const { plotX, plotY, x } = point;
+
+            if (
+                typeof plotX !== 'number' ||
+                typeof plotY !== 'number' ||
+                typeof x !== 'number'
+            ) {
+                return;
+            }
+
+            if (!contrastCandidatesByX) {
+                contrastCandidatesByX = new Map();
+                const contrastLookup = contrastCandidatesByX;
+
+                chart.series.forEach((otherSeries): void => {
+                    if (
+                        otherSeries === series ||
+                        !otherSeries.visible ||
+                        otherSeries.xAxis !== series.xAxis
+                    ) {
+                        return;
+                    }
+
+                    (otherSeries.points || []).forEach((otherPoint): void => {
+                        const { shapeArgs } = otherPoint,
+                            shapeX = shapeArgs?.x,
+                            shapeY = shapeArgs?.y,
+                            shapeWidth = shapeArgs?.width,
+                            shapeHeight = shapeArgs?.height,
+                            fill = pick(
+                                isString(otherPoint.color) ?
+                                    otherPoint.color :
+                                    void 0,
+                                isString(otherSeries.color) ?
+                                    otherSeries.color :
+                                    void 0
+                            );
+
+                        if (
+                            otherPoint.isNull ||
+                            otherPoint.visible === false ||
+                            (
+                                otherPoint.shapeType !== 'rect' &&
+                                otherPoint.shapeType !== 'roundedRect'
+                            ) ||
+                            typeof otherPoint.x !== 'number' ||
+                            typeof shapeX !== 'number' ||
+                            typeof shapeY !== 'number' ||
+                            typeof shapeWidth !== 'number' ||
+                            typeof shapeHeight !== 'number' ||
+                            !fill
+                        ) {
+                            return;
+                        }
+
+                        const candidatesAtX =
+                            contrastLookup.get(otherPoint.x) || [];
+
+                        candidatesAtX.push({
+                            bottom: Math.max(shapeY, shapeY + shapeHeight),
+                            color: fill,
+                            left: Math.min(shapeX, shapeX + shapeWidth),
+                            right: Math.max(shapeX, shapeX + shapeWidth),
+                            top: Math.min(shapeY, shapeY + shapeHeight)
+                        });
+                        contrastLookup.set(
+                            otherPoint.x,
+                            candidatesAtX
+                        );
+                    });
+                });
+            }
+
+            const contrastLookup = contrastCandidatesByX;
+            if (!contrastLookup) {
+                return;
+            }
+            const candidatesAtX = contrastLookup.get(x);
+
+            if (candidatesAtX) {
+                for (let i = candidatesAtX.length - 1; i >= 0; --i) {
+                    const candidate = candidatesAtX[i];
+
+                    if (
+                        plotX >= candidate.left &&
+                        plotX <= candidate.right &&
+                        plotY >= candidate.top &&
+                        plotY <= candidate.bottom
+                    ) {
+                        return candidate.color;
+                    }
+                }
+            }
+        };
 
         // Resolve the animation
         const { animation, defer } = seriesDlOptions[0],
@@ -778,7 +883,7 @@ namespace DataLabel {
                                     (isString(pointColor) ? pointColor : '')
                                 );
 
-                                style.color = (
+                                const usePointContrast = (
                                     labelBgColor || // #20007
                                     (
                                         !defined(distance) &&
@@ -786,9 +891,22 @@ namespace DataLabel {
                                     ) ||
                                     pInt(distance || 0) < 0 ||
                                     seriesOptions.stacking
-                                ) ?
-                                    point.contrastColor :
-                                    contrastColor;
+                                );
+
+                                if (usePointContrast) {
+                                    style.color = point.contrastColor;
+                                } else {
+                                    const overlappingShapeColor =
+                                        getOverlappingShapeContrastColor(
+                                            point
+                                        );
+
+                                    style.color = overlappingShapeColor ?
+                                        renderer.getContrast(
+                                            overlappingShapeColor
+                                        ) :
+                                        contrastColor;
+                                }
                             } else {
                                 delete point.contrastColor;
                             }
