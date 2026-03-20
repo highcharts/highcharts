@@ -274,34 +274,6 @@ class DataTableCore {
     }
 
     /**
-     * Output the table in the console.
-     * @todo remove/comment out this method before production
-     */
-    public log(msg = '', limit = 10, start = 0): void {
-        /* eslint-disable no-console */
-        const extra = (this.rowCount > limit || start > 0) ?
-            `Showing ${limit} rows out of ${this.rowCount}, start at ${start}` :
-            '';
-        if (extra) {
-            msg += ` / ${extra}`;
-        }
-        if (msg) {
-            console.group(msg);
-        }
-        console.table(
-            new Array(Math.min(this.rowCount, limit))
-                .fill(void 0)
-                .map((_, i): DataTableRowObject =>
-                    this.getRowObject(i + start) || {}
-                )
-        );
-        if (msg) {
-            console.groupEnd();
-        }
-        /* eslint-enable no-console */
-    }
-
-    /**
      * Sets cell values for a column. Will insert a new column, if not found.
      *
      * @function Highcharts.DataTableCore#setColumn
