@@ -148,6 +148,26 @@ If a `dataSorting` property is defined in the master series but not in the other
 
 <iframe style="width: 100%; height: 450px; border: none;" src="https://www.highcharts.com/samples/embed/highcharts/datasorting/dependent-sorting" allow="fullscreen"></iframe>
 
+Combining with DataTables
+--------------------------
+
+The `dataSorting` option works seamlessly with [`dataTable`](https://api.highcharts.com/highcharts/series.line.dataTable) and [`dataMapping`](https://api.highcharts.com/highcharts/series.line.dataMapping):
+
+```js
+{
+    series: [{
+        dataTable: myDataTable,
+        dataMapping: { x: 'date', y: 'value' },
+        dataSorting: {
+            enabled: true,
+            sortKey: 'value'
+        }
+    }]
+}
+```
+
+This allows you to combine structured data sources with dynamic sorting, making it easy to display sorted views of your data without creating separate copies. For more information about DataTables, see [Using DataTables with Series](https://highcharts.com/docs/working-with-data/using-datatables-in-series).
+
 API documentation
 -----------------
 
