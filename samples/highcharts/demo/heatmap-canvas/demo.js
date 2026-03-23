@@ -1,7 +1,7 @@
 (async () => {
     const csv = await fetch(
         // Source: https://p.vikjavev.no/ver/highcharts-demos/heatmap.csv.php?year=2025
-        'https://cdn.jsdelivr.net/gh/highcharts/highcharts@35bdee4/samples/data/large-heatmap.csv'
+        'https://cdn.jsdelivr.net/gh/highcharts/highcharts@4cb098f6c3/samples/data/large-heatmap.csv'
     ).then(res => res.text());
 
     Highcharts.chart('container', {
