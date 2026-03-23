@@ -227,23 +227,6 @@ QUnit.test(
     'Spline dataLabels should use overlapping column contrast (#23964).',
     function (assert) {
         const chart = Highcharts.chart('container', {
-                chart: {
-                    animation: false
-                },
-                plotOptions: {
-                    spline: {
-                        dataLabels: {
-                            allowOverlap: true,
-                            enabled: true,
-                            style: {
-                                textOutline: 'none'
-                            }
-                        }
-                    }
-                },
-                yAxis: {
-                    max: 6
-                },
                 series: [{
                     type: 'column',
                     data: [{
@@ -255,7 +238,14 @@ QUnit.test(
                     }]
                 }, {
                     type: 'spline',
-                    data: [2.5, 2.5]
+                    data: [2.5, 2.5],
+                    dataLabels: {
+                        defer: false,
+                        enabled: true,
+                        style: {
+                            textOutline: 'none'
+                        }
+                    }
                 }]
             }),
             points = chart.series[1].points;
