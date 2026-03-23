@@ -82,6 +82,84 @@ export interface BoxPlotSeriesOptions extends ColumnSeriesOptions {
     boxDashStyle?: BoxPlotPoint['boxDashStyle'];
 
     /**
+     *
+     * @default high
+     */
+    colorKey?: string;
+
+    /**
+     * An array of data points for the series. For the `boxplot` series
+     * type, points can be given in the following ways:
+     *
+     * 1. An array of arrays with 6 or 5 values. In this case, the values
+     *  correspond
+     *    to `x,low,q1,median,q3,high`. If the first value is a string, it is
+     *    applied as the name of the point, and the `x` value is inferred. The
+     *  `x`
+     *    value can also be omitted, in which case the inner arrays should be of
+     *    length 5. Then the `x` value is automatically calculated, either
+     *  starting
+     *    at 0 and incremented by 1, or from `pointStart` and `pointInterval`
+     *  given
+     *    in the series options.
+     *    ```js
+     *    data: [
+     *        [0, 3, 0, 10, 3, 5],
+     *        [1, 7, 8, 7, 2, 9],
+     *        [2, 6, 9, 5, 1, 3]
+     *    ]
+     *    ```
+     *
+     * 2. An array of objects with named values. The following snippet shows
+     *  only a
+     *    few settings, see the complete options set below. If the total number
+     *  of
+     *    data points exceeds the series'
+     *    [turboThreshold](#series.boxplot.turboThreshold), this option is not
+     *    available.
+     *    ```js
+     *    data: [{
+     *        x: 1,
+     *        low: 4,
+     *        q1: 9,
+     *        median: 9,
+     *        q3: 1,
+     *        high: 10,
+     *        name: "Point2",
+     *        color: "#00FF00"
+     *    }, {
+     *        x: 1,
+     *        low: 5,
+     *        q1: 7,
+     *        median: 3,
+     *        q3: 6,
+     *        high: 2,
+     *        name: "Point1",
+     *        color: "#FF00FF"
+     *    }]
+     *    ```
+     *
+     * @sample {highcharts} highcharts/series/data-array-of-arrays/
+     *         Arrays of numeric x and y
+     *
+     * @sample {highcharts} highcharts/series/data-array-of-arrays-datetime/
+     *         Arrays of datetime x and y
+     *
+     * @sample {highcharts} highcharts/series/data-array-of-name-value/
+     *         Arrays of point.name and y
+     *
+     * @sample {highcharts} highcharts/series/data-array-of-objects/
+     *         Config objects
+     *
+     * @extends series.line.data
+     *
+     * @excluding marker
+     *
+     * @product highcharts
+     */
+    data?: Array<(BoxPlotPointOptions|PointShortOptions)>;
+
+    /**
      * The fill color of the box.
      *
      * In styled mode, the fill color can be set with the
@@ -99,8 +177,27 @@ export interface BoxPlotSeriesOptions extends ColumnSeriesOptions {
     fillColor?: BoxPlotPoint['fillColor'];
 
     /**
+     * The width of the line surrounding the box. If any of
+     * [stemWidth](#plotOptions.boxplot.stemWidth),
+     * [medianWidth](#plotOptions.boxplot.medianWidth)
+     * or [whiskerWidth](#plotOptions.boxplot.whiskerWidth) are `null`,
+     * the lineWidth also applies to these lines.
+     *
+     * @sample {highcharts} highcharts/plotoptions/box-plot-styling/
+     *         Box plot styling
+     *
+     * @sample {highcharts} highcharts/plotoptions/error-bar-styling/
+     *         Error bar styling
+     *
+     * @since 3.0
+     *
+     * @product highcharts
+     */
+    lineWidth?: number;
+
+    /**
      * The length of a BoxPlot point's lower whisker. Overrides
-     * [whiskerLength](#boxplot.options.whiskerLength), overriden by
+     * [whiskerLength](#boxplot.options.whiskerLength), overridden by
      * [lowerWhiskerLength](#boxplot.point.lowerWhiskerLength).
      *
      * @sample {highcharts} highcharts/series-boxplot/whisker-length
@@ -235,9 +332,13 @@ export interface BoxPlotSeriesOptions extends ColumnSeriesOptions {
      */
     stemWidth?: BoxPlotPoint['stemWidth'];
 
+    threshold?: ColumnSeriesOptions['threshold'];
+
+    tooltip?: BoxPlotSeriesTooltipOptions;
+
     /**
      * The length of a BoxPlot point's upper whisker. Overrides
-     * [whiskerLength](#boxplot.options.whiskerLength), overriden by
+     * [whiskerLength](#boxplot.options.whiskerLength), overridden by
      * [upperWhiskerLength](#boxplot.point.upperWhiskerLength).
      *
      * @sample {highcharts} highcharts/series-boxplot/whisker-length
@@ -252,7 +353,7 @@ export interface BoxPlotSeriesOptions extends ColumnSeriesOptions {
      * values. When `undefined`, the general series color is used.
      *
      * In styled mode, the whisker stroke can be set with the
-     * `.highcharts-boxplot-whisker` class .
+     * `.highcharts-boxplot-whisker` class.
      *
      * @sample {highcharts} highcharts/plotoptions/box-plot-styling/
      *         Box plot styling
@@ -292,9 +393,9 @@ export interface BoxPlotSeriesOptions extends ColumnSeriesOptions {
      * boxplot series and on specific boxplot points. Whisker lengths defined
      * on points override whisker lengths defined on a boxplot series.
      *
-     * Overriden by [whiskerLength](#boxplot.point.whiskerLength),
+     * Overridden by [whiskerLength](#boxplot.point.whiskerLength),
      * [upperWhiskerLength](#boxplot.point.upperWhiskerLength), and
-     * [lowerWhiskerLength](#boxPlot.point.lowerWhiskerLength)
+     * [lowerWhiskerLength](#boxplot.point.lowerWhiskerLength)
      *
      * @sample {highcharts} highcharts/plotoptions/box-plot-styling/
      *         Box plot styling
@@ -327,105 +428,6 @@ export interface BoxPlotSeriesOptions extends ColumnSeriesOptions {
      * @product highcharts
      */
     whiskerWidth?: BoxPlotPoint['whiskerWidth'];
-
-    /**
-     * An array of data points for the series. For the `boxplot` series
-     * type, points can be given in the following ways:
-     *
-     * 1. An array of arrays with 6 or 5 values. In this case, the values
-     *  correspond
-     *    to `x,low,q1,median,q3,high`. If the first value is a string, it is
-     *    applied as the name of the point, and the `x` value is inferred. The
-     *  `x`
-     *    value can also be omitted, in which case the inner arrays should be of
-     *    length 5. Then the `x` value is automatically calculated, either
-     *  starting
-     *    at 0 and incremented by 1, or from `pointStart` and `pointInterval`
-     *  given
-     *    in the series options.
-     *    ```js
-     *    data: [
-     *        [0, 3, 0, 10, 3, 5],
-     *        [1, 7, 8, 7, 2, 9],
-     *        [2, 6, 9, 5, 1, 3]
-     *    ]
-     *    ```
-     *
-     * 2. An array of objects with named values. The following snippet shows
-     *  only a
-     *    few settings, see the complete options set below. If the total number
-     *  of
-     *    data points exceeds the series'
-     *    [turboThreshold](#series.boxplot.turboThreshold), this option is not
-     *    available.
-     *    ```js
-     *    data: [{
-     *        x: 1,
-     *        low: 4,
-     *        q1: 9,
-     *        median: 9,
-     *        q3: 1,
-     *        high: 10,
-     *        name: "Point2",
-     *        color: "#00FF00"
-     *    }, {
-     *        x: 1,
-     *        low: 5,
-     *        q1: 7,
-     *        median: 3,
-     *        q3: 6,
-     *        high: 2,
-     *        name: "Point1",
-     *        color: "#FF00FF"
-     *    }]
-     *    ```
-     *
-     * @sample {highcharts} highcharts/series/data-array-of-arrays/
-     *         Arrays of numeric x and y
-     *
-     * @sample {highcharts} highcharts/series/data-array-of-arrays-datetime/
-     *         Arrays of datetime x and y
-     *
-     * @sample {highcharts} highcharts/series/data-array-of-name-value/
-     *         Arrays of point.name and y
-     *
-     * @sample {highcharts} highcharts/series/data-array-of-objects/
-     *         Config objects
-     *
-     * @extends series.line.data
-     *
-     * @excluding marker
-     *
-     * @product highcharts
-     */
-    data?: Array<(BoxPlotPointOptions|PointShortOptions)>;
-
-    /**
-     *
-     * @default high
-     */
-    colorKey?: string;
-
-    /**
-     * The width of the line surrounding the box. If any of
-     * [stemWidth](#plotOptions.boxplot.stemWidth),
-     * [medianWidth](#plotOptions.boxplot.medianWidth)
-     * or [whiskerWidth](#plotOptions.boxplot.whiskerWidth) are `null`,
-     * the lineWidth also applies to these lines.
-     *
-     * @sample {highcharts} highcharts/plotoptions/box-plot-styling/
-     *         Box plot styling
-     *
-     * @sample {highcharts} highcharts/plotoptions/error-bar-styling/
-     *         Error bar styling
-     *
-     * @since 3.0
-     *
-     * @product highcharts
-     */
-    lineWidth?: number;
-
-    tooltip?: BoxPlotSeriesTooltipOptions;
 }
 
 export interface BoxPlotSeriesTooltipOptions

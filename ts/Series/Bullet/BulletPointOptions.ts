@@ -17,7 +17,6 @@
 
 import type { BulletTargetOptions } from './BulletSeriesOptions';
 import type ColumnPointOptions from '../Column/ColumnPointOptions';
-import type ColorType from '../../Core/Color/ColorType';
 
 /* *
  *
@@ -26,8 +25,6 @@ import type ColorType from '../../Core/Color/ColorType';
  * */
 
 export interface BulletPointOptions extends ColumnPointOptions {
-
-    borderColor?: ColorType;
 
     /**
      * The target value of a point.

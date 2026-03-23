@@ -45,7 +45,6 @@ import {
 /**
  * The boxplot series type.
  *
- * @internal
  * @class
  * @name Highcharts.seriesTypes#boxplot
  *
@@ -433,5 +432,4 @@ SeriesRegistry.registerSeriesType('boxplot', BoxPlotSeries);
  *
  * */
 
-/** @internal */
 export default BoxPlotSeries;

@@ -60,7 +60,7 @@ class BubblePoint extends ScatterPoint {
     /* eslint-disable valid-jsdoc */
 
     /**
-     * @private
+     * @internal
      */
     public haloPath(size: number): SVGPath {
         const computedSize = (

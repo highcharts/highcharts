@@ -46,6 +46,8 @@ import {
 /**
  * If ranges are not specified, determine ranges from rendered bubble series
  * and render legend again.
+ *
+ * @internal
  */
 function chartDrawChartBox(
     this: Chart,
@@ -119,8 +121,8 @@ function chartDrawChartBox(
 
 /**
  * Compose classes for use with Bubble series.
- * @private
  *
+ * @internal
  * @param {Highcharts.Chart} ChartClass
  * Core chart class to use with Bubble series.
  *
@@ -152,7 +154,7 @@ function compose(
 /**
  * Check if there is at least one visible bubble series.
  *
- * @private
+ * @internal
  * @function getVisibleBubbleSeriesIndex
  * @param {Highcharts.Chart} chart
  * Chart to check.
@@ -180,7 +182,7 @@ function getVisibleBubbleSeriesIndex(chart: Chart): number {
 /**
  * Calculate height for each row in legend.
  *
- * @private
+ * @internal
  * @function getLinesHeights
  *
  * @param {Highcharts.Legend} legend
@@ -229,6 +231,8 @@ function getLinesHeights(
 
 /**
  * Start the bubble legend creation process.
+ *
+ * @internal
  */
 function onLegendAfterGetAllItems(
     this: Legend,
@@ -264,6 +268,8 @@ function onLegendAfterGetAllItems(
 
 /**
  * Retranslate the legend items after render
+ *
+ * @internal
  */
 function onLegendAfterRender(this: Legend): void {
 
@@ -316,6 +322,8 @@ function onLegendAfterRender(this: Legend): void {
 
 /**
  * Toggle bubble legend depending on the visible status of bubble series.
+ *
+ * @internal
  */
 function onLegendItemClick(this: Legend, e: any): void | boolean {
     // #14080 don't fire this code if click function is prevented
@@ -356,8 +364,10 @@ function onLegendItemClick(this: Legend, e: any): void | boolean {
  *
  * */
 
+/** @internal */
 const BubbleLegendComposition = {
     compose
 };
 
+/** @internal */
 export default BubbleLegendComposition;
