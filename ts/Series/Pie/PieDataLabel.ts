@@ -544,6 +544,17 @@ namespace ColumnDataLabel {
                                 lineHeight / 2
                         };
 
+                        // Keep width measurements in sync with the side-aligned
+                        // placement for outside labels.
+                        if (
+                            !dataLabelOptions?.style?.textAlign &&
+                            labelPosition.distance > 0
+                        ) {
+                            dataLabel.attr({
+                                textAlign: labelPosition.alignment
+                            });
+                        }
+
                         labelPosition.computed.x = x;
                         labelPosition.computed.y = y - topOffset;
 
