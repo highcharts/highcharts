@@ -6,30 +6,6 @@ const dataTable = new Highcharts.DataTable({
     }
 });
 
-const previewTable = () => {
-    const columns = dataTable.getColumns(),
-        keys = Object.keys(columns);
-    let html = '<tr>' + keys
-        .reduce((html, key) => {
-            html += `<th>${key}</th>`;
-            return html;
-        }, '') + '</tr>';
-    html += new Array((columns[keys[0]]).length)
-        .fill(1)
-        .reduce((html, _, rowNo) => {
-            const row = dataTable.getRowObject(rowNo);
-            html += '<tr>';
-            Object.keys(row).forEach(key => {
-                html += `<td>${row[key]}</td>`;
-            });
-            html += '</tr>';
-            return html;
-        }, '');
-    document.getElementById('data-table').innerHTML = html;
-};
-
-previewTable();
-
 Highcharts.chart('container', {
     dataTable,
     chart: {
@@ -56,6 +32,28 @@ Highcharts.chart('container', {
     }]
 });
 
+const previewTable = () => {
+    const columns = dataTable.getColumns(),
+        keys = Object.keys(columns as Record<string, any>);
+    let html = '<tr>' + keys
+        .reduce((html, key) => {
+            html += `<th>${key}</th>`;
+            return html;
+        }, '') + '</tr>';
+    html += new Array((columns[keys[0]]).length)
+        .fill(1)
+        .reduce((html, _, rowNo) => {
+            const row = dataTable.getRowObject(rowNo);
+            html += '<tr>';
+            Object.keys(row as Record<string, any>).forEach(key => {
+                html += `<td>${row[key]}</td>`;
+            });
+            html += '</tr>';
+            return html;
+        }, '');
+    document.getElementById('data-table').innerHTML = html;
+};
+previewTable();
 
 document.getElementById('addrow').addEventListener('click', e => {
     dataTable.setRow({
