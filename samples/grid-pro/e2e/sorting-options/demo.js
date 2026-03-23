@@ -3,7 +3,7 @@ const orderSelectEl = document.getElementById('select-order');
 const applyBtnEl = document.getElementById('apply-btn');
 
 Grid.grid('container', {
-    dataTable: {
+    data: {
         columns: {
             product: ['Apples', 'Pears', 'Plums', 'Bananas'],
             weight: [100, 40, 0.5, 200],

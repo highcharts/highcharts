@@ -257,7 +257,6 @@ class TreemapSeries extends ScatterSeries {
      *
      * */
 
-    /* eslint-disable valid-jsdoc */
 
     public algorithmCalcPoints(
         directionChange: boolean,
@@ -1894,7 +1893,6 @@ class TreemapSeries extends ScatterSeries {
         }
     }
 
-    /* eslint-enable valid-jsdoc */
 
 }
 

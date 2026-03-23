@@ -320,7 +320,6 @@ class HollowCandlestickSeries extends CandlestickSeries {
         return attribs;
     }
 
-    /* eslint-disable valid-jsdoc */
 }
 
 // Force to recalculate the hollowcandlestick data set after updating data.

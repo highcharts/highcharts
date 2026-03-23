@@ -803,8 +803,7 @@ class Series {
      *
      * */
 
-    /* eslint-disable valid-jsdoc */
-
+    /** @internal */
     public init(
         chart: Chart,
         userOptions: DeepPartial<SeriesTypeOptions>
@@ -1224,35 +1223,50 @@ class Series {
         }
 
         // Handle color zones
-        this.zoneAxis = options.zoneAxis || 'y';
-        const zones = this.zones = // #20440, create deep copy of zones options
-            (options.zones || []).map((z): SeriesZonesOptions => ({ ...z }));
+        const {
+                negativeColor,
+                negativeFillColor,
+                zoneAxis = 'y',
+                zones
+            } = options,
+            // #20440, create deep copy of zones options
+            zonesCopy = this.zones = (zones || []).map(
+                (z): SeriesZonesOptions => ({ ...z })
+            );
+
+        this.zoneAxis = zoneAxis;
         if (
-            (options.negativeColor || options.negativeFillColor) &&
-            !options.zones
+            (negativeColor || negativeFillColor) &&
+            !zones
         ) {
             zone = {
                 value:
-                    (options as any)[this.zoneAxis + 'Threshold'] ||
+                    (options as any)[zoneAxis + 'Threshold'] ||
                     options.threshold ||
                     0,
                 className: 'highcharts-negative'
             } as SeriesZonesOptions;
             if (!styledMode) {
-                zone.color = options.negativeColor;
-                zone.fillColor = options.negativeFillColor;
+                // Styled mode allows boolean
+                if (typeof negativeColor !== 'boolean') {
+                    zone.color = negativeColor;
+                }
+                zone.fillColor = negativeFillColor;
             }
-            zones.push(zone);
+            zonesCopy.push(zone);
         }
         // Push one extra zone for the rest
-        if (zones.length && defined(zones[zones.length - 1].value)) {
-            zones.push(styledMode ? {} : {
+        if (
+            zonesCopy.length &&
+            defined(zonesCopy[zonesCopy.length - 1].value)
+        ) {
+            zonesCopy.push(styledMode ? {} : {
                 color: this.color,
                 fillColor: this.fillColor
             });
         }
 
-        fireEvent(this, 'afterSetOptions', { options: options });
+        fireEvent(this, 'afterSetOptions', { options });
 
         return options;
     }
@@ -5465,8 +5479,50 @@ class Series {
      * @internal
      */
     public drawLegendSymbol(legend: Legend, item: Legend.Item): void {
-        LegendSymbol[this.options.legendSymbol || 'rectangle']
-            ?.call(this, legend, item);
+        const renderer = this.chart.renderer,
+            legendSymbol = this.options.legendSymbol || 'rectangle',
+            legendItem = item.legendItem || {},
+            { options, symbolHeight, symbolWidth } = legend,
+            squareSymbol = options.squareSymbol,
+            adjustedSymbolWidth = squareSymbol ? symbolHeight : symbolWidth,
+            x = squareSymbol ? (symbolWidth - symbolHeight) / 2 : 0,
+            y = (legend.baseline || 0) - symbolHeight + 1,
+            w = adjustedSymbolWidth,
+            h = symbolHeight,
+            r = options.symbolRadius ?? symbolHeight;
+
+        const symbol: SVGElement|undefined = legendSymbol === 'rectangle' ?
+            // For the rectangle, use a true `rect` element because it renders
+            // sharper than a symbol with `path` and arcs
+            renderer.rect(x, y, w, h, r) :
+            (
+                renderer.symbols[
+                    legendSymbol as keyof typeof renderer.symbols
+                ] &&
+                renderer.symbol(
+                    legendSymbol as keyof typeof renderer.symbols,
+                    x,
+                    y,
+                    w,
+                    h,
+                    { r }
+                )
+            );
+
+        // Rectangle or SVGRenderer symbol
+        if (symbol) {
+            legendItem.symbol = symbol
+                .addClass('highcharts-point')
+                .attr({
+                    zIndex: 3
+                })
+                .add(legendItem.group);
+
+        // Symbol function defined in LegendSymbol
+        } else {
+            LegendSymbol[legendSymbol as keyof typeof LegendSymbol]
+                ?.call(this, legend, item);
+        }
     }
 
     // eslint-enable valid-jsdoc

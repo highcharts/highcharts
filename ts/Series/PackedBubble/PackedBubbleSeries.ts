@@ -148,7 +148,6 @@ class PackedBubbleSeries extends BubbleSeries {
      *
      * */
 
-    /* eslint-disable valid-jsdoc */
 
     /**
      * Create a single array of all points from all series
@@ -695,7 +694,6 @@ class PackedBubbleSeries extends BubbleSeries {
     /**
      * Mouse up action, finalizing drag&drop.
      * @private
-     * @param {Highcharts.Point} point The point that event occurred.
      */
     public onMouseUp(
         dnPoint: DragNodesPoint
@@ -1219,7 +1217,6 @@ class PackedBubbleSeries extends BubbleSeries {
         fireEvent(this, 'afterTranslate');
     }
 
-    /* eslint-enable valid-jsdoc */
 
 }
 

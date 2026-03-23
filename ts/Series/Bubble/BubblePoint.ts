@@ -57,7 +57,6 @@ class BubblePoint extends ScatterPoint {
      *
      * */
 
-    /* eslint-disable valid-jsdoc */
 
     /**
      * @private
@@ -90,7 +89,6 @@ class BubblePoint extends ScatterPoint {
         );
     }
 
-    /* eslint-enable valid-jsdoc */
 
 }
 

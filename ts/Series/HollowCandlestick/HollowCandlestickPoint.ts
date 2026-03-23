@@ -48,7 +48,6 @@ class HollowCandlestickPoint extends CandlestickSeries.prototype.pointClass {
      *
      * */
 
-    /* eslint-disable valid-jsdoc */
 
     /**
      * Update class name if needed.
@@ -67,7 +66,6 @@ class HollowCandlestickPoint extends CandlestickSeries.prototype.pointClass {
 
         return className;
     }
-    /* eslint-enable valid-jsdoc */
 }
 
 /* *

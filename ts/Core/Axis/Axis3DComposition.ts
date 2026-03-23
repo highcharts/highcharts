@@ -457,8 +457,6 @@ class Axis3DAdditions {
 
     /**
      * @internal
-     * @param {Highcharts.Axis} axis
-     * Related axis.
      * @param {Highcharts.Position3DObject} pos
      * Position to fix.
      * @param {boolean} [isTitle]

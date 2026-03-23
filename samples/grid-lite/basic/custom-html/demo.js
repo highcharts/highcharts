@@ -1,5 +1,5 @@
 Grid.grid('container', {
-    dataTable: {
+    data: {
         columns: {
             Id: [1, 2, 3],
             Header: ['Title 1', 'Title 2', 'Title 3'],

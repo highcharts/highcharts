@@ -216,7 +216,7 @@ class Table {
     public get dataTable(): DataTable | undefined {
         const dp = this.grid.dataProvider;
         if (dp && 'getDataTable' in dp) {
-            return dp.getDataTable();
+            return dp.getDataTable(true);
         }
     }
 
@@ -484,11 +484,10 @@ class Table {
             return;
         }
 
-        // Disabled until meaningful functionality is ready.
-        // const tableCell = cell as TableCell;
-        // if (this.openCellContextMenu(tableCell, e.clientX, e.clientY)) {
-        //     e.preventDefault();
-        // }
+        const tableCell = cell as TableCell;
+        if (this.openCellContextMenu(tableCell, e.clientX, e.clientY)) {
+            e.preventDefault();
+        }
     };
 
     /**

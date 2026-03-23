@@ -105,7 +105,6 @@ class AreaSeries extends LineSeries {
      *
      * */
 
-    /* eslint-disable valid-jsdoc */
 
     /**
      * Draw the graph and the underlying area. This method calls the Series
@@ -499,7 +498,6 @@ class AreaSeries extends LineSeries {
         return segment;
     }
 
-    /* eslint-enable valid-jsdoc */
 
 }
 

@@ -81,7 +81,6 @@ class GeoHeatmapPoint extends MapPoint {
      *
      * */
 
-    /* eslint-disable valid-jsdoc */
 
     /**
      * @private
@@ -118,7 +117,6 @@ class GeoHeatmapPoint extends MapPoint {
 
         return point;
 
-        /* eslint-enable valid-jsdoc */
 
     }
 }

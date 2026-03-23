@@ -12,7 +12,7 @@ import type CSSObject from '../Core/Renderer/CSSObject';
 import type { DOMElementType, HTMLDOMElement } from '../Core/Renderer/DOMElementType';
 import type HTMLAttributes from '../Core/Renderer/HTML/HTMLAttributes';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
-import type { DeepPartial, TypedArray } from './Types.js';
+import type { AnyRecord, DeepPartial, TypedArray } from './Types.js';
 
 import H from '../Core/Globals.js';
 import { EventCallback } from '../Core/Callback';
@@ -21,7 +21,18 @@ const {
     win
 } = H;
 
-/* eslint-disable valid-jsdoc */
+interface Class<T = any> extends Function {
+    new (...args: Array<any>): T;
+}
+
+type ArrowFunction = (...args: Array<any>) => any;
+
+type FunctionsOf<T> = {
+    [K in keyof T as T[K] extends Function ? K : never]: T[K];
+};
+
+type FunctionNamesOf<T> = keyof FunctionsOf<T>;
+
 /**
  * Add an event listener.
  *
@@ -52,7 +63,6 @@ export function addEvent<T>(
     fn: (EventCallback<T>|Function),
     options: EventOptions = {}
 ): Function {
-    /* eslint-enable valid-jsdoc */
 
     // Add hcEvents to either the prototype (in case we're running addEvent on a
     // class) or the instance. If hasOwnProperty('hcEvents') is false, it is
@@ -573,7 +583,6 @@ export function erase(arr: Array<unknown>, item: unknown): void {
  *         Object a, the original object.
  */
 export function extend<T>(a: (T|undefined), b: Partial<T>): T {
-    /* eslint-enable valid-jsdoc */
     let n;
 
     if (!a) {
@@ -613,7 +622,6 @@ export function extendClass <T, TReturn = T>(
     return obj;
 }
 
-/* eslint-disable valid-jsdoc */
 /**
  * Fire an event that was registered with {@link Highcharts#addEvent}.
  *
@@ -642,7 +650,6 @@ export function fireEvent<T>(
     eventArguments?: (AnyRecord|Event),
     defaultFunction?: (EventCallback<T>|Function)
 ): void {
-    /* eslint-enable valid-jsdoc */
     eventArguments = eventArguments || {};
 
     if (
@@ -813,7 +820,7 @@ export function getMagnitude(num: number): number {
  * @param {string} path
  * Path to the property, for example `custom.myValue`.
  *
- * @param {unknown} obj
+ * @param {unknown} parent
  * Instance containing the property on the specific path.
  *
  * @return {unknown}
@@ -1327,7 +1334,6 @@ export function normalizeTickInterval(
     return retInterval;
 }
 
-/* eslint-disable valid-jsdoc */
 /**
  * Iterate over object key pairs in an object.
  *
@@ -1350,7 +1356,6 @@ export function objectEach<TObject, TContext>(
     fn: ObjectEachCallback<TObject, TContext>,
     ctx?: TContext
 ): void {
-    /* eslint-enable valid-jsdoc */
     for (const key in obj) {
         if (Object.hasOwnProperty.call(obj, key)) {
             fn.call(ctx || obj[key] as unknown as TContext, obj[key], key, obj);
@@ -1434,7 +1439,7 @@ T1 extends NullType ?
 export function pick<T1>(...args: [T1]):
 T1 extends NullType ? undefined : T1;
 export function pick<T>(...args: Array<T|null|undefined>): T|undefined;
-/* eslint-disable valid-jsdoc */
+/* eslint-disable jsdoc/check-param-names */
 /**
  * Return the first value that is not null or undefined.
  *
@@ -1456,6 +1461,7 @@ export function pick<T>(): T|undefined {
         }
     }
 }
+/* eslint-enable jsdoc/check-param-names */
 
 /**
  * Shortcut for parseInt
@@ -1563,7 +1569,6 @@ export function replaceNested(
     return text;
 }
 
-/* eslint-disable valid-jsdoc */
 /**
  * Remove an event that was added with {@link Highcharts#addEvent}.
  *
@@ -1587,7 +1592,6 @@ export function removeEvent<T>(
     type?: string,
     fn?: (EventCallback<T>|Function)
 ): void {
-    /* eslint-enable valid-jsdoc */
 
     /** @internal */
     function removeOneEvent(

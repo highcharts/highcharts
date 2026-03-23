@@ -37,8 +37,10 @@ const exporting: ExportingOptions = {};
  *
  * */
 
+/** @internal */
 const OfflineExportingDefaults = {
     exporting
 };
 
+/** @internal */
 export default OfflineExportingDefaults;

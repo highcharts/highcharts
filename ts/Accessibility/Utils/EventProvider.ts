@@ -65,7 +65,6 @@ class EventProvider {
      *
      * */
 
-    /* eslint-disable valid-jsdoc */
 
     public addEvent<T>(
         el: (Class<T>|T),

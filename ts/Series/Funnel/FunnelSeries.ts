@@ -147,7 +147,6 @@ class FunnelSeries extends PieSeries {
      *
      * */
 
-    /* eslint-disable valid-jsdoc */
 
     /**
      * @private
@@ -667,7 +666,6 @@ class FunnelSeries extends PieSeries {
         points.sort((a, b): number => ((a.plotY as any) - (b.plotY as any)));
     }
 
-    /* eslint-enable valid-jsdoc */
 
 }
 

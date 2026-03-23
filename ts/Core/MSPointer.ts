@@ -85,7 +85,6 @@ const hasPointerEvent = !!win.PointerEvent;
  *
  * */
 
-/* eslint-disable valid-jsdoc */
 
 /** @internal */
 function getWebkitTouches(): void {

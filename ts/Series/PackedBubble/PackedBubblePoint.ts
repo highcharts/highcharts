@@ -103,7 +103,6 @@ class PackedBubblePoint extends BubblePoint implements DragNodesPoint {
      *
      * */
 
-    /* eslint-disable valid-jsdoc */
 
     /**
      * Destroy point.
@@ -158,7 +157,6 @@ class PackedBubblePoint extends BubblePoint implements DragNodesPoint {
         }
     }
 
-    /* eslint-enable valid-jsdoc */
 
 }
 

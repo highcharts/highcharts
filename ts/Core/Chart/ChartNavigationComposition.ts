@@ -69,7 +69,6 @@ namespace ChartNavigationComposition {
      *
      * */
 
-    /* eslint-disable valid-jsdoc */
 
     /** @internal */
     export function compose<T extends Chart>(

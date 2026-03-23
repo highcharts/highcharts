@@ -322,12 +322,12 @@ namespace ColorAxisComposition {
      */
     export function pointSetVisible(
         this: PointComposition,
-        vis?: boolean
+        visible?: boolean
     ): void {
         const point = this,
-            method = vis ? 'show' : 'hide';
+            method = visible ? 'show' : 'hide';
 
-        point.visible = point.options.visible = Boolean(vis);
+        point.visible = point.options.visible = Boolean(visible);
 
         // Show and hide associated elements
         ['graphic', 'dataLabel'].forEach(function (key: string): void {

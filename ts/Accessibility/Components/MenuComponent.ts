@@ -20,7 +20,7 @@
  * */
 
 import type Accessibility from '../Accessibility';
-import type Exporting from '../../Extensions/Exporting/Exporting';
+import type { Exporting } from '../../Extensions/Exporting/Exporting';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type ProxyElement from '../ProxyElement';
 
@@ -108,9 +108,6 @@ class MenuComponent extends AccessibilityComponent {
      *  Functions
      *
      * */
-
-    /* eslint-disable valid-jsdoc */
-
 
     /**
      * Init the component

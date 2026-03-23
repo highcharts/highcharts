@@ -63,7 +63,6 @@ namespace CenteredUtilities {
      *
      * */
 
-    /* eslint-disable valid-jsdoc */
 
     /**
      * Get the center of the pie based on the size and center options relative

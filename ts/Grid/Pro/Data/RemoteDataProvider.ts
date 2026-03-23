@@ -355,13 +355,22 @@ export class RemoteDataProvider extends DataProvider {
                     this.rowCount = result.totalRowCount;
                 }
 
+                const idColId = this.options.idColumn;
+                let idColumn;
+                if (idColId) {
+                    idColumn = result.columns[idColId] as RowId[] | undefined;
+                }
+                if (!idColumn) {
+                    idColumn = result.rowIds ?? Array.from(
+                        { length: chunkRowCount },
+                        (_, i): number => i + offset
+                    );
+                }
+
                 const chunk: DataChunk = {
                     index: chunkIndex,
                     data: result.columns,
-                    rowIds: result.rowIds ?? Array.from(
-                        { length: chunkRowCount },
-                        (_, i): number => i + offset
-                    )
+                    rowIds: idColumn
                 };
 
                 // Evict LRU chunk if limit is reached
@@ -700,6 +709,14 @@ export interface RemoteDataProviderOptions extends DataProviderOptions {
      * @default 'latest'
      */
     requestPolicy?: 'latest' | 'all';
+
+    /**
+     * The column ID that contains the stable, unique row IDs. If not
+     * provided, the row IDs will be extracted from the `result.rowIds` property
+     * if available. If `result.rowIds` is also not defined, the row IDs will
+     * default to the indices of the rows in their display order.
+     */
+    idColumn?: string;
 }
 
 declare module '../../Core/Data/DataProviderType' {

@@ -2,7 +2,7 @@ const viewRenderer = document.getElementById('view-renderer');
 const editModeRenderer = document.getElementById('edit-mode-renderer');
 
 Grid.grid('container', {
-    dataTable: {
+    data: {
         columns: {
             product: ['Apples', 'Pears', 'Plums', 'Bananas'],
             cbx: [true, false, false, true],

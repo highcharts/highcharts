@@ -43,7 +43,7 @@ export default async function benchmarkTest(
 
     // Create and render the Grid
     await Grid.grid(el, {
-        dataTable: {
+        data: {
             columns: data.columns
         }
     }, true);
