@@ -78,19 +78,11 @@ const webpacks = FSLib
                 globalObject: 'this',
                 library: {
                     export: 'default',
-                    name: (
-                        productMasters.includes(masterName) ?
-                            {
-                                amd: `dashboards/${masterName}`,
-                                commonjs: `dashboards/${masterName}`,
-                                root: namespace
-                            } :
-                            {
-                                amd: `dashboards/${masterName}`,
-                                commonjs: `dashboards/${masterName}`,
-                                root: namespace
-                            }
-                    ),
+                    name: {
+                        amd: `dashboards/${masterName}`,
+                        commonjs: `dashboards/${masterName}`,
+                        root: namespace
+                    },
                     type: 'umd',
                     umdNamedDefine: true
                 },
