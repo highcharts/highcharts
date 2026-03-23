@@ -3,6 +3,14 @@
 // - https://www.statista.com/statistics/383679/fa-cup-wins-by-team/
 // - https://www.uefa.com/uefachampionsleague/history/winners/
 Highcharts.chart('container', {
+    dataTable: {
+        columns: {
+            Team: ['Arsenal', 'Chelsea', 'Liverpool', 'Manchester United'],
+            BPL: [3, 5, 1, 13],
+            'FA Cup': [14, 8, 8, 12],
+            CL: [0, 2, 6, 3]
+        }
+    },
     chart: {
         type: 'column'
     },
@@ -11,7 +19,7 @@ Highcharts.chart('container', {
         align: 'left'
     },
     xAxis: {
-        categories: ['Arsenal', 'Chelsea', 'Liverpool', 'Manchester United']
+        type: 'category'
     },
     yAxis: {
         min: 0,
@@ -39,6 +47,9 @@ Highcharts.chart('container', {
     },
     plotOptions: {
         column: {
+            dataMapping: {
+                name: 'Team'
+            },
             stacking: 'normal',
             dataLabels: {
                 enabled: true
@@ -46,13 +57,16 @@ Highcharts.chart('container', {
         }
     },
     series: [{
-        name: 'BPL',
-        data: [3, 5, 1, 13]
+        dataMapping: {
+            y: 'BPL'
+        }
     }, {
-        name: 'FA Cup',
-        data: [14, 8, 8, 12]
+        dataMapping: {
+            y: 'FA Cup'
+        }
     }, {
-        name: 'CL',
-        data: [0, 2, 6, 3]
+        dataMapping: {
+            y: 'CL'
+        }
     }]
 });
