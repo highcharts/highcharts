@@ -272,6 +272,7 @@ class PointAndFigureSeries extends ScatterSeries {
         modified.setColumn('y', processedYData);
         modified.setColumn('upTrend', processedUpTrendData);
         series.pnfDataGroups = pnfDataGroups;
+        series.hasProcessedDataTable = true;
 
         return {
             modified,

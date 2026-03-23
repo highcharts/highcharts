@@ -163,6 +163,8 @@ class RenkoSeries extends ColumnSeries {
             processedUpTrendData.push(point.upTrend);
         }
 
+        this.hasProcessedDataTable = true;
+
         modified.setColumn('x', processedXData);
         modified.setColumn('y', processedYData);
         modified.setColumn('low', processedLowData);
