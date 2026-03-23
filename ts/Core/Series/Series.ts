@@ -74,6 +74,7 @@ const {
     win
 } = H;
 import LegendSymbol from '../Legend/LegendSymbol.js';
+import type { LegendSymbolOptions } from '../Legend/LegendSymbol';
 import { Palette } from '../Color/Palettes.js';
 import Point from './Point.js';
 import SeriesDefaults from './SeriesDefaults.js';
@@ -5138,7 +5139,16 @@ class Series {
      */
     public drawLegendSymbol(legend: Legend, item: Legend.Item): void {
         const renderer = this.chart.renderer,
-            legendSymbol = this.options.legendSymbol || 'rectangle',
+            legendSymbolOption = this.options.legendSymbol,
+            legendSymbolObject: LegendSymbolOptions | undefined =
+                typeof legendSymbolOption === 'object' ?
+                    legendSymbolOption : void 0,
+            legendSymbol = (
+                legendSymbolObject?.symbol ??
+                (typeof legendSymbolOption === 'string' ?
+                    legendSymbolOption : void 0) ??
+                'rectangle'
+            ),
             legendItem = item.legendItem || {},
             { options, symbolHeight, symbolWidth } = legend,
             squareSymbol = options.squareSymbol,
@@ -5181,6 +5191,8 @@ class Series {
             LegendSymbol[legendSymbol as keyof typeof LegendSymbol]
                 ?.call(this, legend, item);
         }
+
+        fireEvent(this, 'drawLegendSymbol', { legend, item });
     }
 
     // eslint-enable valid-jsdoc

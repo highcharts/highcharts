@@ -21,6 +21,7 @@ import type ColorType from '../Color/ColorType';
 import type Legend from './Legend';
 import type LegendItem from './LegendItem';
 import type Point from '../Series/Point';
+import type { PointMarkerOptions } from '../Series/PointOptions';
 import type Series from '../Series/Series';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGPath from '../Renderer/SVG/SVGPath';
@@ -63,11 +64,53 @@ declare module '../Series/SeriesBase' {
     }
 }
 
+/**
+ * Options for the legend symbol.
+ */
+export interface LegendSymbolOptions {
+    /**
+     * The symbol type to use for the legend symbol. Same values as the
+     * string form of `series.legendSymbol`: `'rectangle'`, `'lineMarker'`
+     * or `'areaMarker'`.
+     */
+    symbol?: string;
+
+    /**
+     * The line width to use in the legend symbol. Only applies when
+     * `symbol` is `'lineMarker'` or `'areaMarker'`.
+     */
+    lineWidth?: number;
+
+    /**
+     * A color override for the legend symbol. When not set, the series
+     * color is used.
+     */
+    color?: ColorType;
+
+    /**
+     * Options for the marker part of the legend symbol. Only applies when
+     * `symbol` is `'lineMarker'` or `'areaMarker'`. These options are merged
+     * on top of the series `marker` options, so only the properties set here
+     * will be overridden in the legend. Priority order for each property:
+     * `legendSymbol.marker` → `series.marker` → built-in default.
+     *
+     * For example, setting `marker.symbol` here changes the legend marker
+     * shape without affecting the actual point markers in the chart.
+     * Setting `marker.fillColor` to an `rgba` color is a convenient way to
+     * apply opacity to the legend marker independently of the series color.
+     */
+    marker?: Pick<PointMarkerOptions,
+        'enabled' | 'fillColor' | 'lineColor' | 'lineWidth' | 'radius' |
+        'symbol'
+    >;
+}
+
 declare module '../Series/SeriesOptions' {
     interface SeriesOptions {
         /**
          * What type of legend symbol to render for this series. Can be one of
-         * `areaMarker`, `lineMarker` or `rectangle`.
+         * `areaMarker`, `lineMarker` or `rectangle`, or an object with further
+         * options.
          *
          * @sample {highcharts} highcharts/series/legend-symbol/
          *         Change the legend symbol
@@ -75,7 +118,7 @@ declare module '../Series/SeriesOptions' {
          * @default 'rectangle'
          * @since   11.0.1
          */
-        legendSymbol?: string;
+        legendSymbol?: string | LegendSymbolOptions;
 
         /**
          * Defines the color of the legend symbol for this series. Defaults to
@@ -139,8 +182,13 @@ namespace LegendSymbol {
 
         const legendItem = this.legendItem = this.legendItem || {},
             { chart, options } = this,
+            legendSymbolOption = options.legendSymbol,
+            legendSymbolObject: LegendSymbolOptions | undefined =
+                typeof legendSymbolOption === 'object' ?
+                    legendSymbolOption : void 0,
+            legendMarkerOptions = legendSymbolObject?.marker,
             { baseline = 0, symbolWidth, symbolHeight } = legend,
-            symbol = this.symbol || 'circle',
+            symbol = legendMarkerOptions?.symbol || this.symbol || 'circle',
             generalRadius = symbolHeight / 2,
             renderer = chart.renderer,
             legendItemGroup = legendItem.group,
@@ -150,15 +198,18 @@ namespace LegendSymbol {
                 // area
                 (hasArea ? 0.4 : 0.3)
             ),
-            attr: SVGAttributes = {};
+            attr: SVGAttributes = {},
+            markerOptions = options.marker;
 
         let legendSymbol,
-            markerOptions = options.marker,
             lineSizer = 0;
 
         // Draw the line
         if (!chart.styledMode) {
-            attr['stroke-width'] = Math.min(options.lineWidth || 0, 24);
+            attr['stroke-width'] = Math.min(
+                legendSymbolObject?.lineWidth ?? options.lineWidth ?? 0,
+                24
+            );
 
             if (options.dashStyle) {
                 attr.dashstyle = options.dashStyle;
@@ -204,21 +255,34 @@ namespace LegendSymbol {
             });
         }
 
-        // Draw the marker
-        if (markerOptions && markerOptions.enabled !== false && symbolWidth) {
+        // Merge legendSymbol.marker on top of series marker options. This
+        // allows per-legend overrides without affecting the series itself.
+        const effectiveMarkerOptions = legendMarkerOptions ?
+            merge(markerOptions, legendMarkerOptions) :
+            markerOptions;
 
-            // Do not allow the marker to be larger than the symbolHeight
-            let radius = Math.min(
-                pick(markerOptions.radius, generalRadius),
-                generalRadius
-            );
+        // Draw the marker
+        const markerEnabled = legendMarkerOptions?.enabled ??
+            effectiveMarkerOptions?.enabled;
+
+        if (
+            effectiveMarkerOptions &&
+            markerEnabled !== false &&
+            symbolWidth
+        ) {
+
+            // When the user explicitly sets legendSymbol.marker.radius, use
+            // it as-is. Otherwise cap at generalRadius (symbolHeight / 2) to
+            // avoid overflow outside the legend row.
+            let radius = legendMarkerOptions?.radius !== void 0 ?
+                legendMarkerOptions.radius :
+                Math.min(
+                    pick(effectiveMarkerOptions.radius, generalRadius),
+                    generalRadius
+                );
 
             // Restrict symbol markers size
             if (symbol.indexOf('url') === 0) {
-                markerOptions = merge(markerOptions, {
-                    width: symbolHeight,
-                    height: symbolHeight
-                });
                 radius = 0;
             }
 
@@ -229,7 +293,15 @@ namespace LegendSymbol {
                     verticalCenter - radius,
                     2 * radius,
                     2 * radius,
-                    extend<SymbolOptions>({ context: 'legend' }, markerOptions)
+                    extend<SymbolOptions>(
+                        { context: 'legend' },
+                        symbol.indexOf('url') === 0 ?
+                            merge(effectiveMarkerOptions, {
+                                width: symbolHeight,
+                                height: symbolHeight
+                            }) :
+                            effectiveMarkerOptions
+                    )
                 )
                 .addClass('highcharts-point')
                 .add(legendItemGroup);
