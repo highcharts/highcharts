@@ -62,6 +62,21 @@ QUnit.test('Categories undefined, inferred from names', function (assert) {
         'Second series, first point, lands at 0 because name ' +
             'exists in categories'
     );
+
+    chart.update({
+        xAxis: {
+            categories: ['Cat1', 'Cat2']
+        }
+    });
+    assert.deepEqual(
+        chart.xAxis[0].tickPositions.map(
+            pos => chart.xAxis[0].ticks[pos].label.textStr
+        ),
+        ['Cat1', 'Cat2', '2'],
+        'Explicit categories should take precedence over point names ' +
+        '(Arguably we should use the point.name instead of `2`, but this test' +
+        ' is based on the legacy functionality)'
+    );
 });
 
 QUnit.test(

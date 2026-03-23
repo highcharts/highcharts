@@ -1772,21 +1772,22 @@ class Axis {
         nameX?: number|string
     ): number {
         const explicitCategories = isArray(this.options.categories),
+            { name, series } = point,
             names = explicitCategories ? this.categories : this.names;
 
         let x: (number|undefined);
 
-        point.series.requireSorting = false;
+        series.requireSorting = false;
 
         if (!defined(nameX)) {
             nameX = this.uniqueNames && names ?
                 (
                     explicitCategories ?
-                        names.indexOf(point.name) :
-                        pick((names as any).keys[point.name], -1)
+                        names.indexOf(name) :
+                        ((names as any).keys[name] ?? -1)
 
                 ) :
-                point.series.autoIncrement();
+                series.autoIncrement();
         }
         if (nameX === -1) { // Not found in current categories
             if (!explicitCategories && names) {
@@ -1798,11 +1799,13 @@ class Axis {
 
         // Write the last point's name to the names array
         if (typeof x !== 'undefined') {
-            this.names[x] = point.name;
+            this.names[x] = name;
             // Backwards mapping is much faster than array searching (#7725)
-            (this.names as any).keys[point.name as any] = x;
-        } else if (point.x) {
+            (this.names as any).keys[name] = x;
+        } else if (isNumber(point.x)) {
             x = point.x; // #17438
+        } else {
+            x = series.autoIncrement();
         }
 
         return x as any;
