@@ -314,15 +314,6 @@ namespace ColumnDataLabel {
                         r
                     );
 
-                // Recursive overflow checks can leave auto-aligned outside
-                // labels side-aligned from the previous pass. Reset them
-                // before measuring height and distribution.
-                if (!dataLabelOptions?.style?.textAlign && distance > 0) {
-                    dataLabel.attr({
-                        textAlign: 'center'
-                    });
-                }
-
                 // Arrange points for collision detection
                 if (i === 0) {
                     halves[point.half].push(point);
@@ -552,17 +543,6 @@ namespace ColumnDataLabel {
                                 // Vertically center
                                 lineHeight / 2
                         };
-
-                        // Keep width measurements in sync with the side-aligned
-                        // placement for outside labels.
-                        if (
-                            !dataLabelOptions?.style?.textAlign &&
-                            labelPosition.distance > 0
-                        ) {
-                            dataLabel.attr({
-                                textAlign: labelPosition.alignment
-                            });
-                        }
 
                         labelPosition.computed.x = x;
                         labelPosition.computed.y = y - topOffset;
