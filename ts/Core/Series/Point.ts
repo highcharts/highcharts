@@ -54,6 +54,7 @@ import {
     isFunction,
     isNumber,
     isObject,
+    isString,
     merge,
     pick,
     removeEvent,
@@ -672,7 +673,7 @@ class Point {
                 delete point.dataLabels;
             }
 
-            point.isNull = this.isValid && !this.isValid();
+            point.isNull = point.isValid && !point.isValid();
 
             // #9233, #10874
             point.formatPrefix = point.isNull ? 'null' : 'point';
@@ -1363,7 +1364,12 @@ class Point {
             series.isDirty = series.isDirtyData = true;
 
             if ('x' in pointOptions) {
+                if (isString(pointOptions.x)) {
+                    // Clear cache and force recalc in getColumn
+                    series.xColumnIsNumbers = void 0;
+                }
                 point.x = series.getX(pointOptions.x);
+                point.isNull = point.isValid && !point.isValid();
                 if (series.xColumn) {
                     series.xColumn[index] = point.x;
                 }
