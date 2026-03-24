@@ -39,6 +39,9 @@ const {
  *
  * */
 
+/**
+ * @internal
+ */
 class BubblePoint extends ScatterPoint {
 
     /* *

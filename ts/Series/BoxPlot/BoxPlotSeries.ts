@@ -45,6 +45,7 @@ import {
 /**
  * The boxplot series type.
  *
+ * @internal
  * @class
  * @name Highcharts.seriesTypes#boxplot
  *

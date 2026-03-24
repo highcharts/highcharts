@@ -333,6 +333,15 @@ export interface BoxPlotSeriesOptions extends ColumnSeriesOptions {
      */
     stemWidth?: number;
 
+    /**
+     * The Y axis value to serve as the base for the columns, for
+     * distinguishing between values above and below a threshold. If `null`,
+     * the columns extend from the padding Y axis minimum.
+     *
+     * @default null
+     * @since 2.0
+     * @product highcharts
+     */
     threshold?: ColumnSeriesOptions['threshold'];
 
     tooltip?: BoxPlotSeriesTooltipOptions;

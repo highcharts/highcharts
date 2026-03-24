@@ -222,6 +222,9 @@ function onAxisAfterRender(this: Axis): void {
  *
  * */
 
+/**
+ * @internal
+ */
 class BubbleSeries extends ScatterSeries {
 
     /* *

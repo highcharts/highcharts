@@ -76,8 +76,17 @@ declare module '../../Core/Series/SeriesBase' {
     }
 }
 
-declare module '../../Core/Legend/LegendOptions'{
+declare module '../../Core/Legend/LegendOptions' {
     interface LegendOptions {
+        /**
+         * The bubble legend is an additional element in legend which
+         * presents the scale of the bubble series. Individual bubble ranges
+         * can be defined by user or calculated from series. In the case of
+         * automatically calculated ranges, a 1px margin of error is
+         * permitted.
+         *
+         * @optionparent legend.bubbleLegend
+         */
         bubbleLegend?: BubbleLegendItem.Options;
     }
 }
@@ -91,6 +100,7 @@ declare module '../../Core/Legend/LegendOptions'{
 /**
  * BubbleLegend class.
  *
+ * @internal
  * @class
  * @name Highcharts.BubbleLegend
  * @param {Highcharts.LegendBubbleLegendOptions} options
