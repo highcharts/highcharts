@@ -15,12 +15,13 @@
  *
  * */
 
-import type BoxPlotPoint from './BoxPlotPoint';
 import type BoxPlotPointOptions from './BoxPlotPointOptions';
 import type {
     ColumnSeriesOptions,
     ColumnSeriesTooltipOptions
 } from '../Column/ColumnSeriesOptions';
+import type ColorType from '../../Core/Color/ColorType';
+import type DashStyleValue from '../../Core/Renderer/DashStyleValue';
 import type { PointShortOptions } from '../../Core/Series/PointOptions';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 
@@ -79,7 +80,7 @@ export interface BoxPlotSeriesOptions extends ColumnSeriesOptions {
      *
      * @product highcharts
      */
-    boxDashStyle?: BoxPlotPoint['boxDashStyle'];
+    boxDashStyle?: DashStyleValue;
 
     /**
      *
@@ -174,7 +175,7 @@ export interface BoxPlotSeriesOptions extends ColumnSeriesOptions {
      *
      * @product highcharts
      */
-    fillColor?: BoxPlotPoint['fillColor'];
+    fillColor?: ColorType;
 
     /**
      * The width of the line surrounding the box. If any of
@@ -205,7 +206,7 @@ export interface BoxPlotSeriesOptions extends ColumnSeriesOptions {
      *
      * @product highcharts
      */
-    lowerWhiskerLength?: BoxPlotPoint['lowerWhiskerLength'];
+    lowerWhiskerLength?: (number|string);
 
     /**
      * The color of the median line. If `undefined`, the general series
@@ -227,7 +228,7 @@ export interface BoxPlotSeriesOptions extends ColumnSeriesOptions {
      *
      * @product highcharts
      */
-    medianColor?: BoxPlotPoint['medianColor'];
+    medianColor?: ColorType;
 
     /**
      * The dash style of the median.
@@ -244,7 +245,7 @@ export interface BoxPlotSeriesOptions extends ColumnSeriesOptions {
      *
      * @product highcharts
      */
-    medianDashStyle?: BoxPlotPoint['medianDashStyle'];
+    medianDashStyle?: DashStyleValue;
 
     /**
      * The pixel width of the median line. If `null`, the
@@ -263,7 +264,7 @@ export interface BoxPlotSeriesOptions extends ColumnSeriesOptions {
      *
      * @product highcharts
      */
-    medianWidth?: BoxPlotPoint['medianWidth'];
+    medianWidth?: number;
     states?: SeriesStatesOptions<BoxPlotSeriesOptions>;
 
     /**
@@ -286,7 +287,7 @@ export interface BoxPlotSeriesOptions extends ColumnSeriesOptions {
      *
      * @product highcharts
      */
-    stemColor?: BoxPlotPoint['stemColor'];
+    stemColor?: ColorType;
 
     /**
      * The dash style of the stem, the vertical line extending from the
@@ -307,7 +308,7 @@ export interface BoxPlotSeriesOptions extends ColumnSeriesOptions {
      *
      * @product highcharts
      */
-    stemDashStyle?: BoxPlotPoint['stemDashStyle'];
+    stemDashStyle?: DashStyleValue;
 
     /**
      * The width of the stem, the vertical line extending from the box to
@@ -330,7 +331,7 @@ export interface BoxPlotSeriesOptions extends ColumnSeriesOptions {
      *
      * @product highcharts
      */
-    stemWidth?: BoxPlotPoint['stemWidth'];
+    stemWidth?: number;
 
     threshold?: ColumnSeriesOptions['threshold'];
 
@@ -346,7 +347,7 @@ export interface BoxPlotSeriesOptions extends ColumnSeriesOptions {
      *
      * @product highcharts
      */
-    upperWhiskerLength?: BoxPlotPoint['upperWhiskerLength'];
+    upperWhiskerLength?: (number|string);
 
     /**
      * The color of the whiskers, the horizontal lines marking low and high
@@ -365,7 +366,7 @@ export interface BoxPlotSeriesOptions extends ColumnSeriesOptions {
      *
      * @product highcharts
      */
-    whiskerColor?: BoxPlotPoint['whiskerColor'];
+    whiskerColor?: ColorType;
 
     /**
      * The dash style of the whiskers.
@@ -382,7 +383,7 @@ export interface BoxPlotSeriesOptions extends ColumnSeriesOptions {
      *
      * @product highcharts
      */
-    whiskerDashStyle?: BoxPlotPoint['whiskerDashStyle'];
+    whiskerDashStyle?: DashStyleValue;
 
     /**
      * The length of the whiskers, the horizontal lines marking low and
@@ -407,7 +408,7 @@ export interface BoxPlotSeriesOptions extends ColumnSeriesOptions {
      *
      * @product highcharts
      */
-    whiskerLength?: BoxPlotPoint['whiskerLength'];
+    whiskerLength?: (number|string);
 
     /**
      * The line width of the whiskers, the horizontal lines marking low and
@@ -427,7 +428,7 @@ export interface BoxPlotSeriesOptions extends ColumnSeriesOptions {
      *
      * @product highcharts
      */
-    whiskerWidth?: BoxPlotPoint['whiskerWidth'];
+    whiskerWidth?: number;
 }
 
 export interface BoxPlotSeriesTooltipOptions

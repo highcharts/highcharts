@@ -31,6 +31,7 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
  *
  * */
 
+/** @internal */
 declare class BoxPlotPoint extends ColumnPoint {
     public box: SVGElement;
     public boxDashStyle: DashStyleValue;
@@ -71,4 +72,5 @@ declare class BoxPlotPoint extends ColumnPoint {
  *
  * */
 
+/** @internal */
 export default BoxPlotPoint;

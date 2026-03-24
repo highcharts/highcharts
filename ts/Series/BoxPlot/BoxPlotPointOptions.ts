@@ -15,7 +15,7 @@
  *
  * */
 
-import type BoxPlotPoint from './BoxPlotPoint';
+import type DashStyleValue from '../../Core/Renderer/DashStyleValue';
 import type ColumnPointOptions from '../Column/ColumnPointOptions';
 
 /* *
@@ -41,7 +41,7 @@ export interface BoxPlotPointOptions extends ColumnPointOptions {
      *
      * @product highcharts
      */
-    boxDashStyle?: BoxPlotPoint['boxDashStyle'];
+    boxDashStyle?: DashStyleValue;
 
     /**
      * The `high` value for each data point, signifying the highest value
@@ -49,7 +49,7 @@ export interface BoxPlotPointOptions extends ColumnPointOptions {
      *
      * @product highcharts
      */
-    high?: BoxPlotPoint['high'];
+    high?: number;
 
     /**
      * The `low` value for each data point, signifying the lowest value
@@ -57,7 +57,7 @@ export interface BoxPlotPointOptions extends ColumnPointOptions {
      *
      * @product highcharts
      */
-    low?: BoxPlotPoint['low'];
+    low?: number;
 
     /**
      * The length of a BoxPlot point's lower whisker. Overrides BoxPlot series'
@@ -70,7 +70,7 @@ export interface BoxPlotPointOptions extends ColumnPointOptions {
      *
      * @product highcharts
      */
-    lowerWhiskerLength?: BoxPlotPoint['lowerWhiskerLength'];
+    lowerWhiskerLength?: (number|string);
 
     /**
      * The median for each data point. This is drawn as a line through the
@@ -78,7 +78,7 @@ export interface BoxPlotPointOptions extends ColumnPointOptions {
      *
      * @product highcharts
      */
-    median?: BoxPlotPoint['median'];
+    median?: number;
 
     /**
      * The dash style of the median.
@@ -95,7 +95,7 @@ export interface BoxPlotPointOptions extends ColumnPointOptions {
      *
      * @product highcharts
      */
-    medianDashStyle?: BoxPlotPoint['medianDashStyle'];
+    medianDashStyle?: DashStyleValue;
 
     /**
      * The lower quartile for each data point. This is the bottom of the
@@ -103,14 +103,14 @@ export interface BoxPlotPointOptions extends ColumnPointOptions {
      *
      * @product highcharts
      */
-    q1?: BoxPlotPoint['q1'];
+    q1?: number;
 
     /**
      * The higher quartile for each data point. This is the top of the box.
      *
      * @product highcharts
      */
-    q3?: BoxPlotPoint['q3'];
+    q3?: number;
 
     /**
      * The dash style of the stem.
@@ -127,7 +127,7 @@ export interface BoxPlotPointOptions extends ColumnPointOptions {
      *
      * @product highcharts
      */
-    stemDashStyle?: BoxPlotPoint['stemDashStyle'];
+    stemDashStyle?: DashStyleValue;
 
     /**
      * The length of a BoxPlot point's upper whisker. Overrides BoxPlot series'
@@ -140,7 +140,7 @@ export interface BoxPlotPointOptions extends ColumnPointOptions {
      *
      * @product highcharts
      */
-    upperWhiskerLength?: BoxPlotPoint['upperWhiskerLength'];
+    upperWhiskerLength?: (number|string);
 
     /**
      * The dash style of the whiskers.
@@ -157,7 +157,7 @@ export interface BoxPlotPointOptions extends ColumnPointOptions {
      *
      * @product highcharts
      */
-    whiskerDashStyle?: BoxPlotPoint['whiskerDashStyle'];
+    whiskerDashStyle?: DashStyleValue;
 
     /**
      * The length of the whiskers, the horizontal lines marking low and
@@ -177,7 +177,7 @@ export interface BoxPlotPointOptions extends ColumnPointOptions {
      *
      * @product highcharts
      */
-    whiskerLength?: BoxPlotPoint['whiskerLength'];
+    whiskerLength?: (number|string);
 }
 
 /* *
