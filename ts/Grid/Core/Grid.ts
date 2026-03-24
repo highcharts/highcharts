@@ -1379,19 +1379,20 @@ export class Grid {
      */
     public async renderViewport(): Promise<void> {
         const viewportMeta = this.viewport?.getStateMeta();
-        const pagination = this.pagination;
-        const paginationPosition = pagination?.options?.position;
-
-        this.enabledColumns = await this.getEnabledColumnIDs();
 
         this.credits?.destroy();
 
         this.viewport?.destroy();
         delete this.viewport;
 
+        fireEvent(this, 'beforeRenderViewport');
+
         this.resetContentWrapper();
 
-        fireEvent(this, 'beforeRenderViewport');
+        this.enabledColumns = await this.getEnabledColumnIDs();
+
+        const pagination = this.pagination;
+        const paginationPosition = pagination?.options?.position;
 
         this.renderCaption();
 
