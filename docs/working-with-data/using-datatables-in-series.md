@@ -13,7 +13,6 @@ DataTables are particularly useful when:
 - Displaying **multiple series from the same data source** with different column mappings
 - Wanting to **share data between Grid and Chart components**
 - Implementing **reactive data updates** without manual point management
-- Building **dashboards with synchronized components**
 - Dealing with **large datasets** where performance matters
 
 ## Creating a DataTable
@@ -124,13 +123,14 @@ const chart = Highcharts.chart('container', {
     }]
 });
 
-// Update the data
-dataTable.setColumns({
-    x: [1, 2, 3, 4],
-    y: [10, 20, 30, 40]
+// Adds a row
+dataTable.setRow({
+    x: 5,
+    y: 40
 });
 // Chart updates automatically
 ```
+See an example of [adding and shifting data rows](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/datatable/live-chart/).
 
 ## Combining with data sorting
 
@@ -156,7 +156,6 @@ Highcharts.chart('container', {
 - Large datasets (1000+ points)
 - Multiple series sharing data
 - Frequent data updates
-- Dashboard synchronization needed
 
 ### When direct series.data is fine
 

@@ -373,6 +373,15 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      * The values can also be strings, in which case they are interpreted as
      * column id's from the first data table.
      *
+     * A typical use case is that multiple series share a common column, like
+     * `name` or `x`. In this case, to avoid repetition, the common column can
+     * be applied in `plotOptions.series.dataMapping` and the individual series
+     * can specify only the columns that are unique to them.
+     *
+     * The series name defaults to the column ID of the main data column in the
+     * mapping. In the inline example below, the series name will be `Cost`
+     * unless `series.name` is explicitly defined.
+     *
      * @example
      * // Shorthand mapping with string
      * dataMapping: {
