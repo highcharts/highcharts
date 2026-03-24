@@ -171,6 +171,11 @@ class DataTableCore {
      * Delete rows. Simplified version of the full
      * `DataTable.deleteRows` method.
      *
+     * @sample highcharts/datatable/live-chart/
+     *       Add and delete rows in a live chart
+     * @sample highcharts/datatable/shared-with-grid/
+     *       Chart with data table CRUD operations
+     *
      * @function Highcharts.DataTable#deleteRows
      *
      * @param {number} rowIndex
@@ -311,6 +316,9 @@ class DataTableCore {
      * found. Simplified version of the full `DataTable.setColumns`, limited
      * to full replacement of the columns (undefined `rowIndex`).
      *
+     * @sample highcharts/datatable/shared-with-grid/
+     *       Chart with data table CRUD operations
+     *
      * @function Highcharts.DataTable#setColumns
      *
      * @param {Highcharts.DataTableColumnCollection} columns
@@ -348,6 +356,11 @@ class DataTableCore {
      * Sets cell values of a row. Will insert a new row if no index was
      * provided, or if the index is higher than the total number of table rows.
      * A simplified version of the full `DateTable.setRow`, limited to objects.
+     *
+     * @sample highcharts/datatable/live-chart/
+     *       Add and delete rows in a live chart
+     * @sample highcharts/datatable/shared-with-grid/
+     *       Chart with data table CRUD operations
      *
      * @function Highcharts.DataTable#setRow
      *

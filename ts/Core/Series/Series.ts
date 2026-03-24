@@ -4509,10 +4509,15 @@ class Series {
      * the end, or by giving it an X value, to the start or in the middle of the
      * series.
      *
+     * Alternatively, when the chart is using data table for the data, a point
+     * can be added by running `dataTable.setRow`.
+     *
      * @sample highcharts/members/series-addpoint-append/
      *         Append point
      * @sample highcharts/members/series-addpoint-append-and-shift/
      *         Append and shift
+     * @sample highcharts/datatable/live-chart/
+     *         Append and shift with data table
      * @sample highcharts/members/series-addpoint-x-and-y/
      *         Both X and Y values given
      * @sample highcharts/members/series-addpoint-pie/
