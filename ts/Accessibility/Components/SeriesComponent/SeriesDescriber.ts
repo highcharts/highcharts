@@ -77,9 +77,6 @@ declare module '../../../Core/Series/PointBase' {
  *
  * */
 
-/* eslint-disable valid-jsdoc */
-
-
 /**
  * @private
  */

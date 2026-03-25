@@ -2,7 +2,7 @@
 sidebar_label: "Styling and Theming"
 ---
 
-# Column styling and Theming
+# Column styling and theming
 
 For columns, you can customize appearance in two ways:
 
@@ -72,7 +72,7 @@ columns: [{
 
 ## Theming
 
-Use Theming when you want consistent design across the whole grid (or theme classes), instead of per-column exceptions. Not that you can also use conditional theming, but is limited to string comparison.
+Use theming when you want consistent design across the whole grid or theme classes instead of per-column exceptions. You can also use conditional theming, but it is limited to string comparison.
 
 1. [Theming overview](https://www.highcharts.com/docs/grid/theming/index)
 2. [Conditional theming](https://www.highcharts.com/docs/grid/theming/conditional)

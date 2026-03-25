@@ -143,7 +143,6 @@ const OrganizationSeriesDefaults: OrganizationSeriesOptions = {
      */
     dataLabels: {
 
-        /* eslint-disable valid-jsdoc */
         /**
          * A callback for defining the format for _nodes_ in the
          * organization chart. The `nodeFormat` option takes precedence
@@ -254,7 +253,6 @@ const OrganizationSeriesDefaults: OrganizationSeriesOptions = {
                 '</div>';
             return html;
         },
-        /* eslint-enable valid-jsdoc */
 
         style: {
             /** @internal */

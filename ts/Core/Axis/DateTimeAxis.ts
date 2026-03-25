@@ -135,7 +135,6 @@ declare module './TimeTicksInfoObject' {
  *
  * */
 
-/* eslint-disable valid-jsdoc */
 
 namespace DateTimeAxis{
 
@@ -187,12 +186,6 @@ namespace DateTimeAxis{
      *
      * @internal
      * @function Highcharts.Axis#getTimeTicks
-     * @param {Highcharts.TimeNormalizeObject} normalizedInterval
-     * The interval in axis values (ms) and the count.
-     * @param {number} min
-     * The minimum in axis values.
-     * @param {number} max
-     * The maximum in axis values.
      */
     function getTimeTicks(
         this: Axis

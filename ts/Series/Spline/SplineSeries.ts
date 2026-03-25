@@ -80,7 +80,6 @@ class SplineSeries extends LineSeries {
      *
      * */
 
-    /* eslint-disable valid-jsdoc */
 
     /**
      * Get the spline segment from a given point's previous neighbour to the
@@ -254,7 +253,6 @@ class SplineSeries extends LineSeries {
         return ret;
     }
 
-    /* eslint-enable valid-jsdoc */
 
 }
 

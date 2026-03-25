@@ -40,7 +40,6 @@ import ColorAxisComposition from './ColorAxisComposition.js';
 import ColorAxisDefaults from './ColorAxisDefaults.js';
 import D from '../../Defaults.js';
 const { defaultOptions } = D;
-import LegendSymbol from '../../Legend/LegendSymbol.js';
 import SeriesRegistry from '../../Series/SeriesRegistry.js';
 import SeriesClass from '../../Series/Series';
 const { series: Series } = SeriesRegistry;
@@ -783,7 +782,7 @@ class ColorAxis extends Axis implements ColorAxisBase {
                         chart,
                         name,
                         options: {},
-                        drawLegendSymbol: LegendSymbol.rectangle,
+                        drawLegendSymbol: Series.prototype.drawLegendSymbol,
                         visible: true,
                         isDataClass: true,
 
@@ -896,7 +895,7 @@ namespace ColorAxis {
         chart: Chart;
         name: string;
         options: object;
-        drawLegendSymbol: typeof LegendSymbol['rectangle'];
+        drawLegendSymbol: Function;
         visible: boolean;
         setState: Point['setState'];
         isDataClass: true;

@@ -50,7 +50,6 @@ namespace FlagsSymbols {
      *
      * */
 
-    /* eslint-disable valid-jsdoc */
 
     /**
      * @private

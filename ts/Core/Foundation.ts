@@ -48,7 +48,6 @@ namespace Foundation {
      *
      * */
 
-    /* eslint-disable valid-jsdoc */
 
     /**
      * Register event options. If an event handler is set on the options, it

@@ -71,7 +71,7 @@ declare module '../Core/Chart/ChartBase'{
          *
          * @function Highcharts.Chart#fromLatLonToPoint
          *
-         * @param {Highcharts.MapLonLatObject} lonLat
+         * @param {Highcharts.MapLonLatObject} latLon
          * Coordinates.
          *
          * @return {Highcharts.ProjectedXY}

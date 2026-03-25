@@ -654,7 +654,12 @@ export class Exporting {
 
         if (useForeignObject) {
             // Some tags needs to be closed in xhtml (#13726)
-            svg = svg.replace(/(<(?:img|br).*?(?=\>))>/g, '$1 />');
+            svg = svg
+                .replace(/(<(?:img|br).*?(?=\>))>/g, '$1 />')
+                .replace(
+                    /(<svg(?![^>]*xmlns=)[^>]*)>/g,
+                    '$1 xmlns="http://www.w3.org/2000/svg">'
+                );
 
         // Move HTML into a foreignObject
         } else if (html && options?.exporting?.allowHTML) {
@@ -663,7 +668,9 @@ export class Exporting {
                     'height="' + options.chart.height + '">' +
                 '<body xmlns="http://www.w3.org/1999/xhtml">' +
                 // Some tags needs to be closed in xhtml (#13726)
-                html.replace(/(<(?:img|br).*?(?=\>))>/g, '$1 />') +
+                html
+                    .replace(/(<(?:img|br).*?(?=\>))>/g, '$1 />')
+                    .replace(/(<svg(?![^>]*xmlns=)[^>]*)>/g, '$1 xmlns="http://www.w3.org/2000/svg">') +
                 '</body>' +
                 '</foreignObject>';
             svg = svg.replace('</svg>', html + '</svg>');
@@ -680,6 +687,8 @@ export class Exporting {
                 '<svg xmlns:xlink="http://www.w3.org/1999/xlink" '
             )
             .replace(/ (NS\d+\:)?href=/g, ' xlink:href=') // #3567
+            // #24102- restore href for image elements (boost)
+            .replace(/(<image[^>]*) xlink:href=/g, '$1 href=')
             .replace(/\n+/g, ' ')
 
             // Replace HTML entities, issue #347

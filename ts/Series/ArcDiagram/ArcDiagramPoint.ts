@@ -75,14 +75,12 @@ class ArcDiagramPoint extends SankeyPoint {
      *
      * */
 
-    /* eslint-disable valid-jsdoc */
 
     public isValid(): boolean {
         // No null points here
         return true;
     }
 
-    /* eslint-enable valid-jsdoc */
 
 }
 

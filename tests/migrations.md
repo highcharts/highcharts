@@ -4,7 +4,7 @@ This document provides reference patterns for test migrations and documents the 
 
 ## Current Status
 
-- **Node.js tests**: 324 passing
+- **Node.js tests**: 336 passing
 - **Playwright tests**: 
   - QUnit bridge: 652 passing
   - Native Playwright (highcharts): 78 passing (includes 56 timezone tests across 8 browser timezones)
@@ -74,6 +74,18 @@ These tests were migrated from QUnit/Karma to Node.js native `node:test`:
 - `Dashboards/SerializeHelper/DataCursorHelper.test.ts`
 - `Dashboards/SerializeHelper/DataConverterHelper.test.ts`
 
+### Language Modules Tests (1 file)
+- `lang-modules.test.ts`
+
+### Utilities Tests (2 files)
+- `Delaunay.test.ts`
+- `Utilities.test.ts`
+
+### Global Tests (3 files)
+- `global-dom.test.ts`
+- `global-utils.test.ts`
+- `modules.test.ts`
+
 ## Completed Migrations (Playwright)
 
 These tests were migrated from QUnit/Karma to Playwright:
@@ -109,6 +121,14 @@ These tests were migrated from QUnit/Karma to Playwright:
 - `Custom sync handler & emitter` test
 - `There should be no errors when syncing with chart with different extremes` test
 
+### Core/Chart
+- `tests/highcharts/chart/chart.spec.ts` - Core chart tests
+- `tests/highcharts/chart/reflow.spec.ts` - Chart reflow tests
+
+### Core/Series
+- `tests/highcharts/series/series-marker-clusters.spec.ts` - Series marker clusters tests
+- `tests/highcharts/series/negative-color.spec.ts` - Negative color tests
+
 ### Core/Globals (migrated to `tests/highcharts/globals.spec.ts`)
 - `Highcharts object is available via script tag` test
 - Note: ESM loading test removed (fixture doesn't handle ESM paths correctly)
@@ -116,6 +136,12 @@ These tests were migrated from QUnit/Karma to Playwright:
 ### Masters/Modules (migrated to `tests/highcharts/boost/boost.spec.ts`)
 - `Highcharts boost composition` test
 - `Boost module creates chart with large data` test
+
+### Grid Tests
+Grid tests have been migrated to Playwright and organized into three directories:
+- **Grid Pro** (`tests/grid/grid-pro/`) - 17 test files covering Grid Pro-specific functionality
+- **Grid Lite** (`tests/grid/grid-lite/`) - 11 test files covering Grid Lite-specific functionality
+- **Shared** (`tests/grid/shared/`) - 14 test files covering common functionality between Grid Pro and Lite
 
 ## Migration Patterns
 
@@ -314,7 +340,6 @@ still use Karma.
 
 2. **npm scripts** - Updated to use Playwright:
    - `npm test` - Runs all Playwright tests
-   - `npm run testall` - Runs all Playwright tests
 
 3. **Timezone tests** - Now use Playwright's browser timezone emulation instead
    of changing system timezone. See `tests/qunit/timezone.spec.ts`.
@@ -370,7 +395,8 @@ tests/
 │   ├── boost/
 │   │   └── boost.spec.ts
 │   ├── chart/
-│   │   └── chart.spec.ts
+│   │   ├── chart.spec.ts
+│   │   └── reflow.spec.ts
 │   ├── globals/
 │   │   └── globals.spec.ts
 │   ├── pointer/
@@ -378,6 +404,7 @@ tests/
 │   ├── polar/
 │   │   └── polar.spec.ts
 │   ├── series/
+│   │   ├── negative-color.spec.ts
 │   │   └── series-marker-clusters.spec.ts
 │   ├── sonification/
 │   │   └── sonification.spec.ts

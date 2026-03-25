@@ -258,13 +258,6 @@ namespace SankeyColumnComposition {
         /**
          * Calculate sum of all nodes inside specific column
          * @private
-         * @function Highcharts.SankeyColumn#sum
-         *
-         * @param {ArrayComposition} this
-         * Sankey Column Array
-         *
-         * @return {number} sum
-         * Sum of all nodes inside column
          */
         public sum(): number {
             return this.points.reduce((

@@ -235,9 +235,6 @@ function findAlignments(
 /**
  * #6212 Calculate connectors for spline series in polar chart.
  * @private
- * @param {boolean} calculateNeighbours
- *        Check if connectors should be calculated for neighbour points as
- *        well allows short recurrence
  */
 function getConnectors(
     segment: Array<PolarPoint>,

@@ -1246,7 +1246,6 @@ const defaultOptions: DefaultOptions = {
          * @apioption legend.labelFormat
          */
 
-        /* eslint-disable valid-jsdoc */
         /**
          * Callback function to format each of the series' labels. The `this`
          * keyword refers to the series object, or the point object in case of

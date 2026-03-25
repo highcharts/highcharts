@@ -130,9 +130,12 @@ function addForm(
  * (edit / remove) and text label.
  *
  * @internal
- * @param {Highcharts.Chart} - chart
- * @param {Highcharts.AnnotationsOptions} - options
- * @param {Function} - on click callback
+ * @param {Highcharts.Chart} chart
+ *        The Chart instance
+ * @param {Highcharts.AnnotationsOptions} options
+ *        Annotation options
+ * @param {Function} callback
+ *        On click callback
  */
 function addToolbar(
     this: Popup,

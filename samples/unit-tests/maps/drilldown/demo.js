@@ -521,3 +521,74 @@ QUnit.test(
         }, duration * 1.5);
     }
 );
+
+QUnit.test(
+    'Mappoint dataLabels visible after map drill up',
+    async assert => {
+        const usTopology = await fetch(
+                'https://code.highcharts.com/mapdata/countries/us/us-all.topo.json'
+            ).then(response => response.json()),
+            caTopology = await fetch(
+                'https://code.highcharts.com/mapdata/countries/us/us-ca-all.topo.json'
+            ).then(response => response.json()),
+            mapView = usTopology.objects.default['hc-recommended-mapview'],
+            usData = Highcharts.geojson(usTopology);
+
+        usData.forEach((d, i) => {
+            d.drilldown = d.properties['hc-key'] === 'us-ca' ?
+                'california' : void 0;
+            d.value = i;
+        });
+
+        const caData = Highcharts.geojson(caTopology);
+        caData.forEach((d, i) => {
+            d.value = i;
+        });
+
+        const chart = Highcharts.mapChart('container', {
+            chart: { animation: false },
+            mapView,
+            drilldown: {
+                animation: false,
+                mapZooming: true,
+                series: [{
+                    id: 'california',
+                    name: 'California',
+                    mapData: caTopology,
+                    data: caData,
+                    dataLabels: { enabled: true, format: '{point.name}' }
+                }]
+            },
+            series: [{
+                data: usData,
+                name: 'USA',
+                custom: { mapView }
+            }, {
+                type: 'mappoint',
+                zIndex: 4,
+                dataLabels: { enabled: true },
+                data: [{ lon: -118.24, lat: 34.05, name: 'LA' }]
+            }]
+        });
+
+        assert.ok(
+            chart.series[1].dataLabelsGroup.element.childNodes.length > 0,
+            'LA point should have dataLabel and be placed.'
+        );
+
+        const caPoint = chart.series[0].points.find(
+            p => (
+                p.drilldown === 'california' ||
+                p.options?.drilldown === 'california'
+            )
+        );
+
+        caPoint?.doDrilldown();
+        chart.drillUp();
+
+        assert.ok(
+            chart.series[0].dataLabelsGroup.element.childNodes.length > 0,
+            'LA point should have dataLabel and be placed after drill up.'
+        );
+    }
+);

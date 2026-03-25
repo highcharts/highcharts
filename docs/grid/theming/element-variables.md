@@ -37,18 +37,18 @@ In this case, all inputs use `6px` radius globally, while inputs in pagination a
 | --hcg-input-font-weight        | inherit                        | [font-weight](https://developer.mozilla.org/en-US/docs/Web/CSS/font-weight) |
 | --hcg-input-font-size          | inherit                        | [font-size](https://developer.mozilla.org/en-US/docs/Web/CSS/font-size) |
 | --hcg-input-font-family        | inherit                        | [font-family](https://developer.mozilla.org/en-US/docs/Web/CSS/font-family) |
-| --hcg-input-color              | --hcg-color                    | [color](https://developer.mozilla.org/en-US/docs/Web/CSS/color) |
+| --hcg-input-color              | inherit | [color](https://developer.mozilla.org/en-US/docs/Web/CSS/color) |
 | --hcg-input-text-align         | --hcg-text-align               | [text-align](https://developer.mozilla.org/en-US/docs/Web/CSS/text-align) |
 | --hcg-input-border-radius      | 0                              | [border-radius](https://developer.mozilla.org/en-US/docs/Web/CSS/border-radius) |
 | --hcg-input-border-width       | 1px                            | [border-width](https://developer.mozilla.org/en-US/docs/Web/CSS/border-width) |
 | --hcg-input-border-style       | solid                          | [border-style](https://developer.mozilla.org/en-US/docs/Web/CSS/border-style) |
-| --hcg-input-border-color       | --hcg-color                    | [border-color](https://developer.mozilla.org/en-US/docs/Web/CSS/border-color) |
+| --hcg-input-border-color       | --hcg-input-color                  | [border-color](https://developer.mozilla.org/en-US/docs/Web/CSS/border-color) |
 | --hcg-input-background         | #ffffff/#141414              | [background](https://developer.mozilla.org/en-US/docs/Web/CSS/background) |
 | --hcg-input-hover-color        | --hcg-input-color              | [color](https://developer.mozilla.org/en-US/docs/Web/CSS/color) |
 | --hcg-input-hover-background   | --hcg-input-background         | [background](https://developer.mozilla.org/en-US/docs/Web/CSS/background) |
 | --hcg-input-hover-border-color | --hcg-input-border-color       | [border-color](https://developer.mozilla.org/en-US/docs/Web/CSS/border-color) |
 
-Inputs inherit surrounding typography by default. That means header inputs follow header typography, body-cell inputs follow cell typography, and pagination inputs follow pagination typography unless input-specific font variables are set.
+Inputs inherit surrounding typography by default. That means header inputs follow header typography, body-cell inputs follow cell typography, and pagination inputs follow pagination typography unless input-specific font variables are set. When input-specific color tokens are unset, resting text color inherits the surrounding section color and the resting border follows that same color via `currentColor`.
 
 ### Section prefixes
 
@@ -82,11 +82,11 @@ Inputs inherit surrounding typography by default. That means header inputs follo
 | --hcg-button-font-weight            | inherit                        | [font-weight](https://developer.mozilla.org/en-US/docs/Web/CSS/font-weight) |
 | --hcg-button-font-size              | inherit                        | [font-size](https://developer.mozilla.org/en-US/docs/Web/CSS/font-size) |
 | --hcg-button-font-family            | inherit                        | [font-family](https://developer.mozilla.org/en-US/docs/Web/CSS/font-family) |
-| --hcg-button-color                  | #000000/#ffffff                | [color](https://developer.mozilla.org/en-US/docs/Web/CSS/color) |
+| --hcg-button-color                  | inherit | [color](https://developer.mozilla.org/en-US/docs/Web/CSS/color) |
 | --hcg-button-border-radius          | 0                              | [border-radius](https://developer.mozilla.org/en-US/docs/Web/CSS/border-radius) |
 | --hcg-button-border-width           | 1px                            | [border-width](https://developer.mozilla.org/en-US/docs/Web/CSS/border-width) |
 | --hcg-button-border-style           | solid                          | [border-style](https://developer.mozilla.org/en-US/docs/Web/CSS/border-style) |
-| --hcg-button-border-color           | #000000/#ffffff                | [border-color](https://developer.mozilla.org/en-US/docs/Web/CSS/border-color) |
+| --hcg-button-border-color           | --hcg-button-color                  | [border-color](https://developer.mozilla.org/en-US/docs/Web/CSS/border-color) |
 | --hcg-button-background             | transparent                    | [background](https://developer.mozilla.org/en-US/docs/Web/CSS/background) |
 | --hcg-button-hover-color            | #ffffff/#000000                | [color](https://developer.mozilla.org/en-US/docs/Web/CSS/color) |
 | --hcg-button-hover-background       | #000000/#ffffff                | [background](https://developer.mozilla.org/en-US/docs/Web/CSS/background) |
@@ -95,7 +95,7 @@ Inputs inherit surrounding typography by default. That means header inputs follo
 | --hcg-button-selected-background    | #000000/#ffffff                | [background](https://developer.mozilla.org/en-US/docs/Web/CSS/background) |
 | --hcg-button-selected-border-color  | --hcg-button-border-color      | [border-color](https://developer.mozilla.org/en-US/docs/Web/CSS/border-color) |
 
-Buttons inherit surrounding typography by default. That means header buttons follow header typography, body-cell buttons follow cell typography, and pagination buttons follow pagination typography unless button-specific font variables are set.
+Buttons inherit surrounding typography by default. That means header buttons follow header typography, body-cell buttons follow cell typography, and pagination buttons follow pagination typography unless button-specific font variables are set. When button-specific color tokens are unset, resting text color inherits the surrounding section color and the resting border follows that same color via `currentColor`. Theme classes can still override those defaults.
 
 ### Section prefixes
 

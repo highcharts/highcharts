@@ -281,6 +281,7 @@ if ((win as any).jQuery) {
      * @external JQuery
      */
 
+    /* eslint-disable jsdoc/check-param-names */
     /**
      * Helper function to return the chart of the current JQuery selector
      * element.
@@ -329,6 +330,7 @@ if ((win as any).jQuery) {
             return charts[(attr(this[0], 'data-highcharts-chart') as any)];
         }
     };
+    /* eslint-enable jsdoc/check-param-names */
 }
 
 export interface ErrorMessageEventObject {
@@ -412,7 +414,7 @@ export interface ErrorMessageEventObject {
  *//**
  * Radius of the element border.
  * @name Highcharts.CSSObject#borderRadius
- * @type {number|undefined}
+ * @type {string|undefined}
  *//**
  * Color used in the element. The 'contrast' option is a Highcharts custom
  * property that results in black or white, depending on the background of the
@@ -431,7 +433,7 @@ export interface ErrorMessageEventObject {
  *//**
  * Font size of the element text.
  * @name Highcharts.CSSObject#fontSize
- * @type {string|undefined}
+ * @type {number|string|undefined}
  *//**
  * Font weight of the element text.
  * @name Highcharts.CSSObject#fontWeight

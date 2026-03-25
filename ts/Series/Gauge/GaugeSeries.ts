@@ -422,7 +422,6 @@ class GaugeSeries extends Series {
      *
      * */
 
-    /* eslint-disable valid-jsdoc */
 
     /**
      * Calculate paths etc
@@ -630,7 +629,6 @@ class GaugeSeries extends Series {
         return !!this.points.length; // != 0
     }
 
-    /* eslint-enable valid-jsdoc */
 }
 
 /* *

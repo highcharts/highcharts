@@ -163,7 +163,6 @@ namespace MultipleLinesComposition {
      * Generate the API name of the line
      *
      * @internal
-     * @param propertyName name of the line
      */
     function getLineName(
         propertyName: string
@@ -179,10 +178,6 @@ namespace MultipleLinesComposition {
      * Create translatedLines Collection based on pointArrayMap.
      *
      * @internal
-     * @param {string} [excludedValue]
-     *        Main line id
-     * @return {Array<string>}
-     *         Returns translated lines names without excluded value.
      */
     function getTranslatedLinesNames(
         indicator: SMAIndicator,
@@ -326,7 +321,6 @@ namespace MultipleLinesComposition {
      * If indicator.nextPoints option is defined, create the areaFill.
      *
      * @internal
-     * @param points Points on which the path should be created
      */
     function indicatorGetGraphPath(
         this: IndicatorComposition,

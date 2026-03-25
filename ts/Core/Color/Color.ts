@@ -50,7 +50,6 @@ const isStringColor = (color: ColorType): color is ColorString =>
  *
  * */
 
-/* eslint-disable valid-jsdoc */
 
 /**
  * Handle color operations. Some object methods are chainable.

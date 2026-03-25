@@ -62,7 +62,6 @@ namespace ExportingSymbols {
      *
      * */
 
-    /* eslint-disable valid-jsdoc */
 
     /**
      * @internal

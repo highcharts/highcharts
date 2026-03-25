@@ -2020,8 +2020,6 @@ class RangeSelector {
      * Collapse the buttons and show the select element.
      *
      * @internal
-     * @function Highcharts.RangeSelector#collapseButtons
-     * @param {number} xOffsetForExportButton
      */
     public collapseButtons(): void {
         const {

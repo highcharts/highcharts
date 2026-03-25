@@ -70,7 +70,6 @@ class ScatterSeries extends LineSeries {
      *
      * */
 
-    /* eslint-disable valid-jsdoc */
 
     /**
      * Optionally add the jitter effect.
@@ -138,7 +137,6 @@ class ScatterSeries extends LineSeries {
         }
     }
 
-    /* eslint-enable valid-jsdoc */
 
 }
 
