@@ -21,13 +21,20 @@ import type ChartOptions from '../../Core/Chart/ChartOptions';
 import type ColorType from '../../Core/Color/ColorType';
 import type { DeepPartial } from '../../Shared/Types';
 import type { SymbolTypeRegistry } from '../../Core/Renderer/SVG/SymbolType';
-import type { SeriesTypeOptions } from '../../Core/Series/SeriesType';
+import type {
+    SeriesTypeOptions,
+    SeriesTypePlotOptions
+} from '../../Core/Series/SeriesType';
 import type { RelativeSize } from '../../Shared/Utilities.js';
 /* *
  *
  *  Declarations
  *
  * */
+
+type NavigatorSeriesOptions<
+    T extends keyof SeriesTypePlotOptions = 'areaspline'
+> = SeriesTypeOptions & NonNullable<SeriesTypePlotOptions[T]>;
 
 declare module '../../Core/Axis/AxisOptions' {
     interface XAxisOptions {
@@ -60,8 +67,6 @@ declare module '../../Core/Options'{
 
 declare module '../../Core/Series/SeriesOptions' {
     interface SeriesOptions {
-        fillOpacity?: number;
-
         /**
          * Options for the corresponding navigator series if `showInNavigator`
          * is `true` for this series. Available options are the same as any
@@ -77,7 +82,7 @@ declare module '../../Core/Series/SeriesOptions' {
          * @since     5.0.0
          * @product   highstock
          */
-        navigatorOptions?: SeriesOptions;
+        navigatorOptions?: NavigatorSeriesOptions;
 
         /**
          * Whether or not to show the series in the navigator. Takes precedence
@@ -282,7 +287,7 @@ export interface BaseNavigatorOptions {
      * @sample {highstock} stock/navigator/series/
      *         A green navigator series
      */
-    series?: SeriesTypeOptions;
+    series?: NavigatorSeriesOptions;
 
     /**
      * Options for the navigator X axis. Default series options for the

@@ -16,7 +16,7 @@
  * */
 
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
-import type SplineSeriesOptions from '../Spline/SplineSeriesOptions';
+import type AreaSeriesOptions from '../Area/AreaSeriesOptions';
 
 /* *
  *
@@ -24,7 +24,7 @@ import type SplineSeriesOptions from '../Spline/SplineSeriesOptions';
  *
  * */
 
-export interface AreaSplineSeriesOptions extends SplineSeriesOptions {
+export interface AreaSplineSeriesOptions extends AreaSeriesOptions {
     states?: SeriesStatesOptions<AreaSplineSeriesOptions>;
 }
 

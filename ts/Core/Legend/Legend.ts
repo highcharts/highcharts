@@ -509,7 +509,7 @@ class Legend {
             const { itemHiddenStyle = {} } = this,
                 hiddenColor = itemHiddenStyle.color,
                 { fillColor, fillOpacity, lineColor, marker } =
-                    (item as Series).options,
+                    (item as Series).options as any,
                 colorizeHidden = (attr: SVGAttributes): SVGAttributes => {
                     if (!visible) {
                         if (attr.fill) {
