@@ -2625,9 +2625,12 @@ class Chart {
     public drawChartBox(): void {
         const chart = this,
             optionsChart = chart.options.chart,
-            chartBackgroundColor = optionsChart.backgroundColor,
-            plotBackgroundColor = optionsChart.plotBackgroundColor,
-            plotBackgroundImage = optionsChart.plotBackgroundImage,
+            {
+                backgroundColor,
+                plotBackgroundColor,
+                plotBackgroundImage,
+                shadow
+            } = optionsChart,
             {
                 chartWidth,
                 chartHeight,
@@ -2664,10 +2667,10 @@ class Chart {
         if (!styledMode) {
             // Presentational
             chartBorderWidth = optionsChart.borderWidth || 0;
-            mgn = chartBorderWidth + (optionsChart.shadow ? 8 : 0);
+            mgn = chartBorderWidth + (shadow ? 8 : 0);
 
             bgAttr = {
-                fill: chartBackgroundColor || 'none'
+                fill: backgroundColor || 'none'
             };
 
             if (chartBorderWidth || chartBackground['stroke-width']) { // #980
@@ -2676,7 +2679,7 @@ class Chart {
             }
             chartBackground
                 .attr(bgAttr)
-                .shadow(optionsChart.shadow);
+                .shadow(shadow);
         } else {
             chartBorderWidth = mgn = chartBackground.strokeWidth();
         }
@@ -2685,8 +2688,8 @@ class Chart {
         chartBackground[verb]({
             x: mgn / 2,
             y: mgn / 2,
-            width: (chartWidth as any) - mgn - chartBorderWidth % 2,
-            height: (chartHeight as any) - mgn - chartBorderWidth % 2,
+            width: chartWidth - mgn - chartBorderWidth % 2,
+            height: chartHeight - mgn - chartBorderWidth % 2,
             r: optionsChart.borderRadius
         });
 
