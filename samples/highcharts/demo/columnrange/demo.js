@@ -75,6 +75,7 @@ Highcharts.chart('container', {
     },
 
     series: [{
+        name: 'Temperatures',
         dataMapping: {
             low: 'TempLow',
             high: 'TempHigh'
