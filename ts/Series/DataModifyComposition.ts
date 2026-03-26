@@ -142,15 +142,6 @@ namespace DataModifyComposition {
      * compare and cumulative support.
      *
      * @private
-     *
-     * @param SeriesClass
-     * Series class to use.
-     *
-     * @param AxisClass
-     * Axis class to extend.
-     *
-     * @param PointClass
-     * Point class to use.
      */
     export function compose<T extends typeof Series>(
         SeriesClass: T,

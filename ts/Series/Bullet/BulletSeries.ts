@@ -245,7 +245,6 @@ class BulletSeries extends ColumnSeries {
         return dataExtremes;
     }
 
-    /* eslint-enable valid-jsdoc */
 
 }
 

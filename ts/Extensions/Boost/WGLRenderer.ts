@@ -153,7 +153,6 @@ const contexts = [
  *
  * */
 
-/* eslint-disable valid-jsdoc */
 
 /**
  * Main renderer. Used to render series.

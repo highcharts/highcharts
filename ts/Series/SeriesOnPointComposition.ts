@@ -101,12 +101,6 @@ namespace SeriesOnPointComposition {
      * Extends the series with a small addition.
      *
      * @private
-     *
-     * @param SeriesClass
-     * Series class to use.
-     *
-     * @param ChartClass
-     * Chart class to use.
      */
     export function compose<T extends typeof Series>(
         SeriesClass: T,

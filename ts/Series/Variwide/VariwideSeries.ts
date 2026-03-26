@@ -182,7 +182,6 @@ class VariwideSeries extends ColumnSeries {
             (linearSlotRight - linearSlotLeft);
     }
 
-    /* eslint-enable valid-jsdoc */
 
     public translate(): void {
         // Temporarily disable crisping when computing original shapeArgs

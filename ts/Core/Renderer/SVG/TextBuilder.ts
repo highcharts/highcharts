@@ -62,7 +62,6 @@ class TextBuilder {
     /**
      * Constructs a new TextBuilder instance.
      * @internal
-     * @param svgElement The SVG element to build text for.
      */
     public constructor(svgElement: SVGElement) {
         const textStyles = svgElement.styles;

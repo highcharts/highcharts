@@ -970,9 +970,6 @@ class Axis {
      * @param {Highcharts.AxisLabelsFormatterContextObject} this
      * Formatter context of axis label.
      *
-     * @param {Highcharts.AxisLabelsFormatterContextObject} [ctx]
-     * Formatter context of axis label.
-     *
      * @return {string}
      * The formatted label content.
      */
@@ -3016,10 +3013,10 @@ class Axis {
      *
      * @function Highcharts.Axis#setExtremes
      *
-     * @param {number|string} [newMin]
+     * @param {number|string} [min]
      * The new minimum value. For datetime axes, date strings are accepted.
      *
-     * @param {number|string} [newMax]
+     * @param {number|string} [max]
      * The new maximum value. For datetime axes, date strings are accepted.
      *
      * @param {boolean} [redraw=true]
@@ -3685,12 +3682,6 @@ class Axis {
      *
      * @internal
      * @function Highcharts.Axis#generateTick
-     *
-     * @param {number} pos
-     * The tick position in axis values.
-     *
-     * @param {number} [i]
-     * The index of the tick in {@link Axis.tickPositions}.
      */
     public generateTick(pos: number): void {
         const axis = this,

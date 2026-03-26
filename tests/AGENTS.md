@@ -101,7 +101,7 @@ See the [migrations.md](./migrations.md) file for detailed patterns including:
 1. Update the "Default Rewrites" table in `tests/README.md` to document the new route pattern
 
 ### After completing a major milestone:
-1. Update this file (`tests/agents.md`) if:
+1. Update this file (`tests/AGENTS.md`) if:
    - Decision criteria change
    - New directories are added
    - New commands are needed

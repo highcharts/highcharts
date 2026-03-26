@@ -3240,7 +3240,6 @@ namespace AxisDefaults {
              */
             overflow: 'justify',
 
-            /* eslint-disable valid-jsdoc */
             /**
              * Callback JavaScript function to format the label. The value is
              * given by `this.total`. Since v12.5.0, the callback also receives
@@ -3255,9 +3254,7 @@ namespace AxisDefaults {
              * @product highcharts
              */
             formatter: function (this: StackItem): string {
-                const { numberFormatter } = this.axis.chart;
-                /* eslint-enable valid-jsdoc */
-                return numberFormatter(this.total || 0, -1);
+                return this.axis.chart.numberFormatter(this.total || 0, -1);
             },
 
             /**

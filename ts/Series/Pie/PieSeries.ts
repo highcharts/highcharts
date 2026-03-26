@@ -135,7 +135,6 @@ class PieSeries extends Series {
      *
      * */
 
-    /* eslint-disable valid-jsdoc */
 
     /**
      * Animates the pies in.
@@ -542,7 +541,6 @@ class PieSeries extends Series {
         }
     }
 
-    /* eslint-enable valid-jsdoc */
 
 }
 

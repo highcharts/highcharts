@@ -75,7 +75,7 @@ declare module '../Series/SeriesOptions' {
          * @default 'rectangle'
          * @since   11.0.1
          */
-        legendSymbol?: LegendSymbolType;
+        legendSymbol?: string;
 
         /**
          * Defines the color of the legend symbol for this series. Defaults to
@@ -91,8 +91,6 @@ declare module '../Series/SeriesOptions' {
         legendSymbolColor?: ColorType;
     }
 }
-
-export type LegendSymbolType = ('areaMarker' | 'lineMarker' | 'rectangle');
 
 /* *
  *
@@ -237,47 +235,6 @@ namespace LegendSymbol {
                 .add(legendItemGroup);
             legendSymbol.isMarker = true;
         }
-    }
-
-    /**
-     * Get the series' symbol in the legend.
-     *
-     * This method should be overridable to create custom symbols through
-     * Highcharts.seriesTypes[type].prototype.drawLegendSymbol.
-     *
-     * @function Highcharts.LegendSymbolMixin.rectangle
-     *
-     * @param {Highcharts.Legend} legend
-     * The legend object
-     *
-     * @param {Highcharts.Point|Highcharts.Series} item
-     * The series (this) or point
-     */
-    export function rectangle(
-        this: Series,
-        legend: Legend,
-        item: LegendItem
-    ): void {
-        const legendItem = item.legendItem || {},
-            options = legend.options,
-            symbolHeight = legend.symbolHeight,
-            square = options.squareSymbol,
-            symbolWidth = square ? symbolHeight : legend.symbolWidth;
-
-        legendItem.symbol = this.chart.renderer
-            .rect(
-                square ? (legend.symbolWidth - symbolHeight) / 2 : 0,
-                (legend.baseline as any) - symbolHeight + 1, // #3988
-                symbolWidth,
-                symbolHeight,
-                pick(legend.options.symbolRadius, symbolHeight / 2)
-            )
-            .addClass('highcharts-point')
-            .attr({
-                zIndex: 3
-            })
-            .add(legendItem.group);
-
     }
 
 }

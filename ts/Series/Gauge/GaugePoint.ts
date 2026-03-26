@@ -58,7 +58,6 @@ class GaugePoint extends Point {
      *
      * */
 
-    /* eslint-disable valid-jsdoc */
 
     /**
      * Don't do any hover colors or anything
@@ -68,7 +67,6 @@ class GaugePoint extends Point {
         this.state = state;
     }
 
-    /* eslint-enable valid-jsdoc */
 }
 
 /* *

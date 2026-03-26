@@ -3,10 +3,13 @@ sidebar_label: "Angular"
 ---
 
 # Highcharts Grid with Angular
-To create a Grid with Angular, please follow the steps below:
+
+Use Grid Lite or Grid Pro in Angular by importing the Grid bundle and rendering it into a container element.
 
 ## 1. Install the Grid package
-Install Grid Lite package with:
+
+Install Grid Lite:
+
 ```bash
 npm install @highcharts/grid-lite
 ```
@@ -17,21 +20,27 @@ npm install @highcharts/grid-lite
 import Grid from '@highcharts/grid-lite/es-modules/masters/grid-lite.src.js';
 ```
 
-## 3. Create an HTML container  
-Add a div where you want to render the Grid.
+## 3. Add a container
+
+Add a `div` where the Grid should be rendered:
+
 ```html
 <div id="container"></div>
 ```
 
-## 4. Create a Grid
-Create a Grid using the factory function `Grid.grid`. The function takes two arguments:
-- `container` - the element where the Grid will be rendered, can be the id of the element or the direct reference to the element
-- `options` - the object options for the Grid
+## 4. Render the Grid
+
+Create the Grid with the `Grid.grid` factory function. It takes:
+
+- `container`: the element where the Grid should be rendered, either as an element ID or a direct element reference
+- `options`: the Grid options object
+
 ```ts
 Grid.grid('container', this.options);
 ```
 
-## Final example
+## 5. Full example
+
 ```ts
 import { Component, OnInit } from '@angular/core';
 import Grid from '@highcharts/grid-lite/es-modules/masters/grid-lite.src.js';
@@ -48,15 +57,17 @@ export class AppComponent implements OnInit {
             columns: {
                 name: ['Alice', 'Bob', 'Charlie', 'David'],
                 age: [23, 34, 45, 56],
-                city: ['New York', 'Oslo', 'Paris', 'Tokyo'],
+                city: ['New York', 'Oslo', 'Paris', 'Tokyo']
             }
         }
-    }
+    };
 
-    ngOnInit() {
+    public ngOnInit(): void {
         Grid.grid('container', this.options);
     }
 }
 ```
 
-See the live example [here](https://stackblitz.com/edit/highcharts-grid-angular-nfxuhkpv).
+For Grid Pro, swap the imports to `@highcharts/grid-pro/...` and load the Grid Pro CSS file.
+
+See the [live Angular example](https://stackblitz.com/edit/highcharts-grid-angular-nfxuhkpv).

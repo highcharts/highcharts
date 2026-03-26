@@ -426,9 +426,6 @@ class StackItem {
      * of the dataLabel. This is necessary to make the stackDataLabel work with
      * core methods like `SVGLabel.adjust` and `Series.justifyDataLabel`.
      * @internal
-     * @param AdjustStackPositionProps
-     * @return {{x: number, y: number}}
-     * Adjusted BBox position of the stack.
      */
     public adjustStackPosition({
         labelBox,

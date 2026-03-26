@@ -320,9 +320,6 @@ function addFormFields(
  * @param {Highcharts.AnnotationChart} chart
  *        The chart object.
  *
- * @param {string} [optionName]
- *        Name of the option into which selection is being added.
- *
  * @param {HTMLDOMElement} [parentDiv]
  *        HTML parent element.
  *
@@ -1020,8 +1017,11 @@ function getNameType(
  * @param {Highcharts.AnnotationChart} chart
  *        The chart object.
  *
- * @param {HTMLDOMElement} [parentDiv]
+ * @param {HTMLDOMElement} parentDiv
  *        HTML parent element.
+ *
+ * @param {Highcharts.Series} currentSeries
+ *        The current SMA indicator series
  *
  * @param {string|undefined} selectedOption
  *        Default value in dropdown.

@@ -299,6 +299,8 @@ class Chart {
         options: Partial<Options>,
         callback?: Chart.CallbackFunction
     ): Chart;
+
+    /* eslint-disable jsdoc/check-param-names */
     /**
      * Factory function for basic charts.
      *
@@ -337,6 +339,7 @@ class Chart {
     ): Chart {
         return new Chart(a as any, b as any, c);
     }
+    /* eslint-enable jsdoc/check-param-names */
 
     /* *
      *
@@ -2292,6 +2295,12 @@ class Chart {
                     // (#1257)
                     if (chart.container) {
                         chart.setSize(void 0, void 0, false);
+                        // #23712: sync containerBox with reflowed height to
+                        // break infinite loop
+                        const box = chart.containerBox;
+                        if (box) {
+                            box.height = chart.chartHeight;
+                        }
                     }
                 }, e ? 100 : 0);
             }
@@ -3490,7 +3499,7 @@ class Chart {
      * @param {string} coll
      * An axis type.
      *
-     * @param {...Array<*>} arguments
+     * @param {...Array<*>} options
      * All arguments for the constructor.
      *
      * @return {Highcharts.Axis}
@@ -3532,13 +3541,14 @@ class Chart {
         const chart = this,
             options = chart.options,
             loadingOptions = options.loading,
+            loadingStyle = loadingOptions?.style ?? {},
             setLoadingSize = function (): void {
                 if (loadingDiv) {
                     css(loadingDiv, {
-                        left: chart.plotLeft + 'px',
-                        top: chart.plotTop + 'px',
-                        width: chart.plotWidth + 'px',
-                        height: chart.plotHeight + 'px'
+                        left: loadingStyle.left ?? chart.plotLeft + 'px',
+                        top: loadingStyle.top ?? chart.plotTop + 'px',
+                        width: loadingStyle.width ?? chart.plotWidth + 'px',
+                        height: loadingStyle.height ?? chart.plotHeight + 'px'
                     });
                 }
             };
@@ -3573,10 +3583,8 @@ class Chart {
 
         if (!chart.styledMode) {
             // Update visuals
-            css(loadingDiv, extend((loadingOptions as any).style, {
-                zIndex: 10
-            }));
-            css(loadingSpan, (loadingOptions as any).labelStyle);
+            css(loadingDiv, extend(loadingStyle, { zIndex: 10 }));
+            css(loadingSpan, loadingOptions?.labelStyle ?? {});
 
             // Show it
             if (!chart.loadingShown) {
@@ -3585,9 +3593,9 @@ class Chart {
                     display: ''
                 });
                 animate(loadingDiv, {
-                    opacity: (loadingOptions as any).style.opacity || 0.5
+                    opacity: loadingStyle.opacity ?? 0.5
                 }, {
-                    duration: (loadingOptions as any).showDuration || 0
+                    duration: loadingOptions?.showDuration ?? 0
                 });
             }
         }
@@ -3620,7 +3628,7 @@ class Chart {
                 animate(loadingDiv, {
                     opacity: 0
                 }, {
-                    duration: (options.loading as any).hideDuration || 100,
+                    duration: options.loading?.hideDuration ?? 100,
                     complete: function (): void {
                         css(loadingDiv as any, { display: 'none' });
                     }

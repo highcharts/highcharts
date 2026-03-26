@@ -410,7 +410,6 @@ class VennSeries extends ScatterSeries {
      *
      * */
 
-    /* eslint-disable valid-jsdoc */
 
     public animate(init?: boolean): void {
         if (!init) {
@@ -658,7 +657,6 @@ class VennSeries extends ScatterSeries {
         }
     }
 
-    /* eslint-enable valid-jsdoc */
 }
 
 /* *

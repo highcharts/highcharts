@@ -168,7 +168,7 @@ class ZAxis extends Axis implements AxisBase {
     /** @internal */
     public ignoreMinPadding?: boolean;
 
-    public isZAxis: true = true;
+    public isZAxis = true as const;
 
     /* *
      *

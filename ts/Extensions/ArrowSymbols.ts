@@ -134,9 +134,6 @@ function arrowHalf(
  * Adds the arrow symbols to the SVGRenderer.
  *
  * @internal
- *
- * @param SVGRendererClass
- * The SVGRenderer class to extend.
  */
 function compose(
     SVGRendererClass: typeof SVGRenderer

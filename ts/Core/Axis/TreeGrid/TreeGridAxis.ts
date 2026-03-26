@@ -380,9 +380,6 @@ function getTreeGridFromData(
 /**
  * Builds the tree of categories and calculates its positions.
  * @internal
- * @param {Object} e Event object
- * @param {Object} e.target The chart instance which the event was fired on.
- * @param {object[]} e.target.axes The axes of the chart.
  */
 function onBeforeRender(
     e: {
@@ -954,12 +951,6 @@ class TreeGridAxisAdditions {
      * Set the collapse status.
      *
      * @internal
-     *
-     * @param {Highcharts.Axis} axis
-     * The axis to check against.
-     *
-     * @param {Highcharts.GridNode} node
-     * The node to collapse.
      */
     public setCollapsedStatus(node: GridNode): void {
         const axis = this.axis,
@@ -984,15 +975,6 @@ class TreeGridAxisAdditions {
      *
      * @internal
      *
-     * @param {Highcharts.Axis} axis
-     * The axis to check against.
-     *
-     * @param {Highcharts.GridNode} node
-     * The node to collapse.
-     *
-     * @param {number} pos
-     * The tick position to collapse.
-     *
      * @return {Array<object>}
      * Returns an array of the new breaks for the axis.
      */
@@ -1014,14 +996,8 @@ class TreeGridAxisAdditions {
      *
      * @internal
      *
-     * @param {Highcharts.Axis} axis
-     * The axis to check against.
-     *
      * @param {Highcharts.GridNode} node
      * The node to expand.
-     *
-     * @param {number} pos
-     * The tick position to expand.
      *
      * @return {Array<object>}
      * Returns an array of the new breaks for the axis.
@@ -1107,9 +1083,6 @@ class TreeGridAxisAdditions {
      * expanded it will be collapsed.
      *
      * @internal
-     *
-     * @param {Highcharts.Axis} axis
-     * The axis to check against.
      *
      * @param {Highcharts.GridNode} node
      * The node to toggle.

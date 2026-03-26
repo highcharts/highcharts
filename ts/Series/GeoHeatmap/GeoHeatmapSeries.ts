@@ -252,7 +252,6 @@ class GeoHeatmapSeries extends MapSeries {
      *
      * */
 
-    /* eslint-disable valid-jsdoc */
 
     /**
      * For updated colsize and rowsize options

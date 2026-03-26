@@ -86,7 +86,6 @@ class MapPointSeries extends ScatterSeries {
      *
      * */
 
-    /* eslint-disable valid-jsdoc */
 
     public drawDataLabels(): void {
         super.drawDataLabels();
@@ -203,7 +202,6 @@ class MapPointSeries extends ScatterSeries {
         fireEvent(this, 'afterTranslate');
     }
 
-    /* eslint-enable valid-jsdoc */
 
 }
 

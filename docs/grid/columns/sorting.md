@@ -6,6 +6,10 @@ sidebar_label: "Sorting"
 
 Sorting is configured in `columnDefaults.sorting` or `columns[].sorting`.
 
+With the default local data model, sorting is applied client-side on the loaded
+data. In Grid Pro, use `providerType: 'remote'` when sorting should trigger a
+server request instead. Read more in [Server-side data handling](https://www.highcharts.com/docs/grid/data-handling/serverside).
+
 ```js
 Grid.grid('container', {
     columns: [{
@@ -152,8 +156,12 @@ Related events:
 - `beforeSort`
 - `afterSort`
 
-See [Interaction / Events](https://www.highcharts.com/docs/grid/events) and
-the [API reference](https://api.highcharts.com/grid/columns.sorting).
+See [Interaction / Events](https://www.highcharts.com/docs/grid/events) for event details.
+
+## API reference
+
+- [`columnDefaults.sorting`](https://api.highcharts.com/grid/columnDefaults.sorting)
+- [`columns.sorting`](https://api.highcharts.com/grid/columns.sorting)
 
 ## Demo
 

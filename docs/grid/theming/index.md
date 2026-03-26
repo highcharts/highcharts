@@ -12,7 +12,7 @@ These variables cover most common styling needs, but if you use custom HTML insi
 
 Using the included CSS variables also helps prevent breaking changes in future versions. We take great care to maintain backward compatibility, and relying on these variables ensures your custom styles remain stable across updates. Directly overriding default styles can lead to unexpected issues, whereas CSS variables provide a safe, efficient, and reliable way to customize the grid without compromising performance.
 
-## Variable Inheritance
+## Variable inheritance
 
 CSS variables naturally inherit through the grid’s structure in a logical cascade: from `<table>` to `<tbody>` and finally `<thead>`. For example, the variable `--hcg-border-width` applies to the entire table by default and cascades to rows, columns, and cells unless overridden by more specific variables like `--hcg-row-border-width`.
 
@@ -31,7 +31,7 @@ In the example below, a custom theme renders a 3px solid black border around the
 
 This cascading behavior lets you define high-level styles at the table level and refine them progressively for specific sections, avoiding repetitive declarations. Most variables follow this principle, ensuring consistent and efficient theming across your grid.
 
-## Theme Inheritance
+## Theme inheritance
 
 In addition to variable inheritance, Highcharts Grid supports theme inheritance, allowing you to build on a base theme and refine it for specific use cases. For instance, you can create a `.theme-brand` for your default brand styling and extend it with a `.theme-brand-big` variant for larger displays.
 
@@ -50,14 +50,14 @@ In the example below, a base theme defines a custom font and font size. The exte
 
 Themes can be nested as deeply as needed, allowing you to adapt the grid for various scenarios like accessibility, large screens, or brand variants. This approach keeps your CSS clean and manageable while offering extensive customization options.
 
-## Applying Themes with the API
+## Applying themes with the API
 
 Once you’ve created your custom theme(s) in CSS, you can apply them using the `rendering.theme` option. Highcharts Grid includes a default theme, `.hcg-theme-default`, which is enabled by default. To build on this default theme, include it in your configuration:
 
 ```js
 {
     rendering: {
-        theme: "hcg-theme-default theme-custom";
+        theme: 'hcg-theme-default theme-custom'
     }
 }
 ```
@@ -67,14 +67,14 @@ To create a custom theme from scratch, exclude the default theme:
 ```js
 {
     rendering: {
-        theme: "theme-custom";
+        theme: 'theme-custom'
     }
 }
 ```
 
 The theme class is appended to the `<div class="hcg-container theme-custom">` element, which wraps the `<table>` and other grid components.
 
-## Dark Mode Support
+## Dark mode support
 
 The default theme (`.hcg-theme-default`) supports both light and dark modes.
 
