@@ -1736,6 +1736,7 @@ class Legend {
      * @param {Highcharts.BubbleLegendItem|Point|Highcharts.Series} item
      * @param {Highcharts.SVGElement} legendLabel
      * @param {boolean} [useHTML=false]
+     * @emits Highcharts.Legend#event:setItemEvents
      * @emits Highcharts.Legend#event:itemClick
      */
     public setItemEvents(
@@ -1745,11 +1746,20 @@ class Legend {
     ): void {
         const legend = this,
             legendItem = item.legendItem || {},
-            boxWrapper = legend.chart.renderer.boxWrapper,
-            isPoint = item instanceof Point,
+            boxWrapper = legend.chart.renderer.boxWrapper;
+
+        // State object that can be modified by event listeners
+        const itemState: { activeClass?: string } = {};
+
+        // Set activeClass to point for dataClass items, #22891
+        fireEvent(this, 'onSetItemEvents', { itemState });
+
+        const isPoint = item instanceof Point,
             isSeries = item instanceof Series,
-            activeClass = 'highcharts-legend-' +
-                (isPoint ? 'point' : 'series') + '-active',
+            activeClass = itemState.activeClass || (
+                'highcharts-legend-' +
+                (isPoint ? 'point' : 'series') + '-active'
+            ),
             styledMode = legend.chart.styledMode,
             // When `useHTML`, the symbol is rendered in other group, so
             // we need to apply events listeners to both places

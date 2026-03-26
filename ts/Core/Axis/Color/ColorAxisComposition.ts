@@ -140,6 +140,7 @@ namespace ColorAxisComposition {
                 onLegendAfterColorizeItem
             );
             addEvent(LegendClass, 'afterUpdate', onLegendAfterUpdate);
+            addEvent(LegendClass, 'onSetItemEvents', onLegendSetItemEvents);
 
             extend(
                 seriesProto,
@@ -280,6 +281,19 @@ namespace ColorAxisComposition {
         this.chart.colorAxis?.forEach((colorAxis): void => {
             colorAxis.update({}, e.redraw);
         });
+    }
+
+    /**
+     * Set activeClass to point for legend items using dataClasses (#22891).
+     * @internal
+     */
+    function onLegendSetItemEvents(
+        this: Legend,
+        e: {
+            itemState: Record<string, string>;
+        }
+    ): void {
+        e.itemState.activeClass = 'highcharts-legend-point-active';
     }
 
     /**

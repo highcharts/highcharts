@@ -61,7 +61,7 @@ QUnit.test('Legend.update', function (assert) {
 });
 
 QUnit.test('Color axis', function (assert) {
-    var chart = Highcharts.chart('container', {
+    const chart = Highcharts.chart('container', {
         chart: {
             type: 'heatmap',
             width: 600
@@ -110,7 +110,7 @@ QUnit.test('Color axis', function (assert) {
         'Labels are still there after update (#6888)'
     );
 
-    var controller = new TestController(chart);
+    const controller = new TestController(chart);
 
     controller.mouseOver(
         chart.legend.group.translateX + 10,
@@ -119,7 +119,7 @@ QUnit.test('Color axis', function (assert) {
     assert.notEqual(
         chart.container
             .querySelector('.highcharts-root')
-            .className.baseVal.indexOf('highcharts-legend-series-active'),
+            .className.baseVal.indexOf('highcharts-legend-point-active'),
         -1,
         'Chart should be in series hover mode (#7406)'
     );
