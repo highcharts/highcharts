@@ -115,6 +115,8 @@ const defaultOptions: DefaultOptions = {
      *         Chart with one data table
      * @sample {highcharts} highcharts/datatable/chart-datatable-multiple/
      *         Chart with two data tables
+     * @sample {highcharts} highcharts/data/getdatatable
+     *         Data table from CSV
      *
      * @type {Highcharts.DataTable|Highcharts.DataTableOptions|Array<Highcharts.DataTable|Highcharts.DataTableOptions>}
      * @since     next
