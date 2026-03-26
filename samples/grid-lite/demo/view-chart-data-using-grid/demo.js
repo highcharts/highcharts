@@ -59,6 +59,9 @@ Highcharts.chart('chart', {
 
     plotOptions: {
         series: {
+            dataMapping: {
+                x: 'Year'
+            },
             label: {
                 connectorAllowed: false
             },
@@ -68,49 +71,29 @@ Highcharts.chart('chart', {
 
     series: [{
         name: 'Installation & Developers',
-        columnAssignment: [{
-            key: 'x',
-            columnName: 'Year'
-        }, {
-            key: 'y',
-            columnName: 'Installation & Developers'
-        }]
+        dataMapping: {
+            y: 'Installation & Developers'
+        }
     }, {
         name: 'Manufacturing',
-        columnAssignment: [{
-            key: 'x',
-            columnName: 'Year'
-        }, {
-            key: 'y',
-            columnName: 'Manufacturing'
-        }]
+        dataMapping: {
+            y: 'Manufacturing'
+        }
     }, {
         name: 'Sales & Distribution',
-        columnAssignment: [{
-            key: 'x',
-            columnName: 'Year'
-        }, {
-            key: 'y',
-            columnName: 'Sales & Distribution'
-        }]
+        dataMapping: {
+            y: 'Sales & Distribution'
+        }
     }, {
         name: 'Operations & Maintenance',
-        columnAssignment: [{
-            key: 'x',
-            columnName: 'Year'
-        }, {
-            key: 'y',
-            columnName: 'Operations & Maintenance'
-        }]
+        dataMapping: {
+            y: 'Operations & Maintenance'
+        }
     }, {
         name: 'Other',
-        columnAssignment: [{
-            key: 'x',
-            columnName: 'Year'
-        }, {
-            key: 'y',
-            columnName: 'Other'
-        }]
+        dataMapping: {
+            y: 'Other'
+        }
     }],
     exporting: {
         menuItemDefinitions: {
@@ -122,9 +105,7 @@ Highcharts.chart('chart', {
                         this.grid.container.classList.toggle('hide');
                     }
                     const isGridHidden = this.grid.container
-                        .classList.contains(
-                            'hide'
-                        );
+                        ?.classList.contains('hide');
                     const viewDataElement = this.exporting.divElements[2];
                     viewDataElement.innerText =
                         `${isGridHidden ? 'Show' : 'Hide'} data table`;

@@ -726,8 +726,8 @@ class MapSeries extends ScatterSeries {
     /**
      * Extend processData to join in mapData. If the allAreas option is true,
      * all areas from the mapData are used, and those that don't correspond to a
-     * data value are given null values. The results are stored in
-     * `processedData` in order to avoid mutating `data`.
+     * data value are given null values. The results are stored in a modified
+     * data table in order to avoid mutating `data`.
      * @private
      */
     public processData(): (boolean|undefined) {

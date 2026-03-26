@@ -1,6 +1,6 @@
 # Using DataTables with Series
 
-The [dataTable](https://api.highcharts.com/highcharts/dataTable) and [dataMapping](https://api.highcharts.com/highcharts/series.line.dataMapping) options provide a structured approach to
+The [`dataTable`](https://api.highcharts.com/highcharts/dataTable) and [`dataMapping`](https://api.highcharts.com/highcharts/series.line.dataMapping) options provide a structured approach to
 working with series data. Instead of passing data directly to each series as an array, you can
 use a `DataTable` to store your data in a tabular format and map specific
 columns to series properties.

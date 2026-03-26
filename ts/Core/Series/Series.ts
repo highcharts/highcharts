@@ -323,7 +323,6 @@ class Series {
         'points',
         'dataTable',
 
-        'processedData', // #17057
         'hasProcessedDataTable', // #17057
 
         'xIncrement',
@@ -4609,7 +4608,7 @@ class Series {
 
         if (
             isInTheMiddle ||
-            // When processedData is present we need to splice an empty slot
+            // When hasProcessedData is true we need to splice an empty slot
             // into series.data, otherwise generatePoints won't pick it up.
             series.hasProcessedDataTable
         ) {

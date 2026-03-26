@@ -379,8 +379,9 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      * can specify only the columns that are unique to them.
      *
      * The series name defaults to the column ID of the main data column in the
-     * mapping. In the inline example below, the series name will be `Cost`
-     * unless `series.name` is explicitly defined.
+     * mapping. The main data column is typically the `y` data for cartesian
+     * series, or `value` for map series. For example, if the mapping is
+     * `{ y: 'Cost' }`, the series name will be `Cost`.
      *
      * @example
      * // Shorthand mapping with string
