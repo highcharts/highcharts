@@ -112,7 +112,9 @@ const defaultOptions: DefaultOptions = {
      * [series.dataMapping](#plotOptions.series.dataMapping) option.
      *
      * @sample {highcharts} highcharts/datatable/chart-datatable-single/
-     *         Chart with one data table
+     *         Chart with one data table as option
+     * @sample {highcharts} highcharts/datatable/chart-datatable-single/
+     *         Chart with one data table as instance
      * @sample {highcharts} highcharts/datatable/chart-datatable-multiple/
      *         Chart with two data tables
      * @sample {highcharts} highcharts/data/getdatatable
