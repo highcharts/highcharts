@@ -1,0 +1,6 @@
+{
+  "resources": [
+    "https://code.highcharts.com/highcharts.js",
+    "https://code.highcharts.com/modules/boost.js"
+  ]
+}
