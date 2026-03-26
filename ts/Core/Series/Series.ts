@@ -1816,7 +1816,9 @@ class Series {
         series.xIncrement = null;
         delete series.xColumn;
         delete series.xColumnIsNumbers;
-        delete table.columns.x;
+        if (table !== options.dataTable) {
+            delete table.columns.x;
+        }
 
         series.colorCounter = 0; // For series with colorByPoint (#1547)
 
@@ -2036,7 +2038,7 @@ class Series {
     ): void {
         const { chart, options, dataTable: table } = this,
             seriesDataTable = chart.getDataTable(options),
-            dataTable = data ? [data] : (
+            dataTables = data ? [data] : (
                 // Use either dataTable from series options or from the chart
                 seriesDataTable.length ?
                     seriesDataTable :
@@ -2054,14 +2056,14 @@ class Series {
             this.dataColumnKeys = keys;
         }
 
-        dataTable.forEach((dtItem, dtIndex): void => {
+        dataTables.forEach((dataTable, dtIndex): void => {
 
             // Resolve the data mapping
             const columns = keys
                 .reduce((targetColumns, key): ColumnCollection => {
                     const mappingItem = mapping?.[key],
-                        srcColumns = dtItem.columns || {},
-                        dtId = dtItem.id,
+                        srcColumns = dataTable.columns || {},
+                        dtId = dataTable.id,
                         column = isString(mappingItem) ?
                             // String definition points directly to a column id
                             // on the first data table
@@ -2085,15 +2087,15 @@ class Series {
 
             // If a DataTable is passed and no column assignment is set, use it
             // directly
-            if (mapping || dtItem) {
+            if (mapping || dataTable) {
                 // Set the columns
                 table.setColumns(columns);
             }
 
             // If a DataTable is passed directly by reference, bind events to
             // keep the series updated
-            if ((dtItem as DataTableCore).isDataTable) {
-                this.bindDataTableEvents(dtItem as DataTableCore, columns);
+            if ((dataTable as DataTableCore).isDataTable) {
+                this.bindDataTableEvents(dataTable as DataTableCore, columns);
             }
         });
     }

@@ -8,7 +8,7 @@ Highcharts.chart('container', {
         name: 'Options + array',
         dataTable: {
             columns: {
-                x: [0, 1, 3, 4],
+                x: [2026, 2027, 2028, 2029],
                 y: [4, 2, 5, 1],
                 z: [2, 1, 4, 2]
             }
@@ -17,7 +17,7 @@ Highcharts.chart('container', {
         name: 'Instance + array',
         dataTable: new DataTable({
             columns: {
-                x: [0, 1, 3, 4],
+                x: [2026, 2027, 2028, 2029],
                 y: [3, 6, 5, 7]
             }
         })
@@ -25,7 +25,7 @@ Highcharts.chart('container', {
         name: 'Options + typed array',
         dataTable: {
             columns: {
-                x: new Uint8Array([0, 1, 3, 4]),
+                x: new Uint16Array([2026, 2027, 2028, 2029]),
                 y: new Uint8Array([6, 4, 7, 3])
             }
         }
@@ -33,9 +33,12 @@ Highcharts.chart('container', {
         name: 'Instance + typed array',
         dataTable: new DataTable({
             columns: {
-                x: new Uint8Array([0, 1, 3, 4]),
+                x: new Uint16Array([2026, 2027, 2028, 2029]),
                 y: new Uint8Array([9, 5, 9, 4])
             }
         })
-    }]
+    }],
+    xAxis: {
+        allowDecimals: false
+    }
 });
