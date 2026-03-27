@@ -39,6 +39,15 @@ for more information.
 ## Build and debug
 If you want to do modifications to Highcharts or fix issues, you may build your own files. Highcharts uses Gulp as the build system. After `npm install` in the root folder, run `gulp`, which will set up a watch task for the JavaScript and CSS files. Now any changes in the files of the `/js` or `/css` folders will result in new files being built and saved in the `code` folder. Other tasks are also available, like `gulp lint`.
 
+`npm install` no longer removes generated local folders such as `build`, `code`,
+`js`, or `vendor`. It still runs the `postinstall` setup that prepares
+`vendor/` assets and applies the temporary `ink-docstrap` compatibility patch.
+
+If you need a full local reset, use the manual recovery commands instead:
+
+- `npm run clean` deletes generated folders and recreates `vendor/`
+- `npm run reset` resets the clone state and reinstalls dependencies
+
 ```
 npm install
 gulp
