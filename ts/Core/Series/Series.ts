@@ -1769,11 +1769,10 @@ class Series {
      *        prevent.
      */
     public setData(
-        data: (
+        data?: (
             Array<PointOptions|PointShortOptions>|
             DataTableOptions|
-            DataTableCore|
-            undefined
+            DataTableCore
         ),
         redraw: boolean = true,
         animation?: (boolean|Partial<AnimationOptions>),
@@ -2134,16 +2133,21 @@ class Series {
                             { columns },
                             rowIndex
                         ) as unknown as PointOptions,
-                        point = this.points[rowIndex];
+                        point = this.data[rowIndex];
 
                     if (row) {
-                        if (point) {
-                            point.update(row, false);
+                        if (this.currentDataGrouping) {
+                            // Set data with immediate redraw because it
+                            // destroys points
+                            this.setData();
                         } else {
-                            this.addPoint(row, false);
+                            if (point) {
+                                point.update(row, false);
+                            } else {
+                                this.addPoint(row, false);
+                            }
+                            queueRedraw();
                         }
-
-                        queueRedraw();
                     }
                 }
             }
