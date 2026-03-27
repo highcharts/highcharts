@@ -1,0 +1,6 @@
+---
+ name: Sankey with clickable node disable
+ authors:
+   - Damon4
+ js_wrap: b
+...

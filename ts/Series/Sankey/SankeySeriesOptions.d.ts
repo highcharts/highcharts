@@ -159,6 +159,16 @@ export interface SankeySeriesNodeOptions {
     height?: number;
 
     /**
+     * The minimum height of the node.
+     */
+    minHeight?: number;
+
+    /**
+     * Whether the node is disabled.
+     */
+    disabled?: boolean;
+
+    /**
      * The id of the auto-generated node, referring to the `from` or `to` setting of
      * the link.
      *
@@ -421,6 +431,11 @@ export interface SankeySeriesOptions extends ColumnSeriesOptions, NodesCompositi
     minLinkWidth?: number;
 
     /**
+     * The minimum height of all nodes.
+     */
+    minNodeHeight?: number;
+
+    /**
      * Determines which side of the chart the nodes are to be aligned to. When
      * the chart is inverted, `top` aligns to the left and `bottom` to the
      * right.
@@ -431,6 +446,21 @@ export interface SankeySeriesOptions extends ColumnSeriesOptions, NodesCompositi
      * @type {'top'|'center'|'bottom'}
      */
     nodeAlignment?: ('top'|'center'|'bottom');
+
+    /**
+     * Allow toggling nodes between enabled and disabled states by clicking.
+     */
+    allowNodeToggle?: boolean;
+
+    /**
+     * The height of a disabled node in pixels.
+     */
+    disabledNodeHeight?: number;
+
+    /**
+     * The color of a disabled node and its data label.
+     */
+    disabledNodeColor?: ColorString;
 
     /**
      * The distance between nodes in a sankey diagram in the longitudinal
