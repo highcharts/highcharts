@@ -397,7 +397,7 @@ const langOptions: DeepPartial<LangOptions> = {
          */
         exporting: {
             chartMenuLabel: 'Chart menu',
-            menuButtonLabel: 'Chart context menu, {chartTitle}'
+            menuButtonLabel: 'View chart context menu, {chartTitle}'
         },
 
         /**
