@@ -44,7 +44,8 @@ Highcharts.stockChart('container', {
     navigator: {
         series: {
             dataMapping: {
-                y: 'close'
+                x: 'Time',
+                y: 'Close'
             },
             color: 'var(--highcharts-neutral-color-80)'
         }
@@ -60,6 +61,13 @@ Highcharts.stockChart('container', {
                 enabled: true,
                 backgroundColor: '#FF7F7F'
             }
+        },
+        dataMapping: {
+            x: 'Time',
+            open: 'Open',
+            high: 'High',
+            low: 'Low',
+            close: 'Close'
         }
     }]
 });
@@ -69,22 +77,22 @@ function getNewRow(i, lastRow) {
     // Return new row
     if (i === 0 || i % 10 === 0) {
         return {
-            x: lastRow.x + 60000,
-            open: lastRow.close,
-            high: lastRow.close,
-            low: lastRow.close,
-            close: lastRow.close
+            Time: lastRow.Time + 60000,
+            Open: lastRow.Close,
+            High: lastRow.Close,
+            Low: lastRow.Close,
+            Close: lastRow.Close
         };
     }
     const newClose = Highcharts.correctFloat(
-        lastRow.close + Highcharts.correctFloat(Math.random() - 0.5, 2),
+        lastRow.Close + Highcharts.correctFloat(Math.random() - 0.5, 2),
         4
     );
 
     // Modify last row
-    lastRow.high = newClose >= lastRow.high ? newClose : lastRow.high;
-    lastRow.low = newClose <= lastRow.low ? newClose : lastRow.low;
-    lastRow.close = newClose;
+    lastRow.High = newClose >= lastRow.High ? newClose : lastRow.High;
+    lastRow.Low = newClose <= lastRow.Low ? newClose : lastRow.Low;
+    lastRow.Close = newClose;
 
     return lastRow;
 }
@@ -99,7 +107,7 @@ function getNewRow(i, lastRow) {
 
         dataTable.setRow(
             newRow,
-            lastRow.x !== newRow.x ? lastIndex + 1 : lastIndex
+            lastRow.Time !== newRow.Time ? lastIndex + 1 : lastIndex
         );
         i++;
     }, 100);
