@@ -260,6 +260,7 @@ const TimelineSeriesDefaults: TimelineSeriesOptions = {
  * @sample {highcharts} highcharts/series-timeline/datetime-axis
  *         Real time intervals
  *
+ * @basic
  * @type      {Array<*>}
  * @extends   series.line.data
  * @excluding marker, y

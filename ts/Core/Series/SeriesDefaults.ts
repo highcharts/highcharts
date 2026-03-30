@@ -181,6 +181,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      * @sample {highcharts} highcharts/css/point-series-classname
      *         Series and point class name
      *
+     * @basic
      * @type      {string}
      * @since     5.0.0
      * @apioption plotOptions.series.className
@@ -232,6 +233,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      * @sample {highmaps} maps/demo/category-map/
      *         Category map by multiple series
      *
+     * @basic
      * @type      {Highcharts.ColorType}
      * @apioption plotOptions.series.color
      */
@@ -941,6 +943,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      * also be attached to the series at run time using the
      * `Highcharts.addEvent` function.
      *
+     * @basic
      * @declare Highcharts.SeriesEventsOptionsObject
      */
     events: {},

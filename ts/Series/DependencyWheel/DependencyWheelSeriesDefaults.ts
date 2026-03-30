@@ -196,6 +196,7 @@ const DependencyWheelSeriesDefaults: DependencyWheelSeriesOptions = {
  *     }]
  *  ```
  *
+ * @basic
  * @type      {Array<Array<string,string,number>|*>}
  * @extends   series.sankey.data
  * @product   highcharts

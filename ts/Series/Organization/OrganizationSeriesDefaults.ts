@@ -522,6 +522,7 @@ const OrganizationSeriesDefaults: OrganizationSeriesOptions = {
  *     }]
  *  ```
  *
+ * @basic
  * @type      {Array<*>}
  * @extends   series.sankey.data
  * @product   highcharts

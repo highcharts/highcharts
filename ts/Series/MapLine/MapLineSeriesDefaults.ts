@@ -124,6 +124,7 @@ export default MapLineSeriesDefaults;
  *     }]
  *  ```
  *
+ * @basic
  * @type      {Array<number|Array<string,(number|null)>|null|*>}
  * @extends   series.map.data
  * @excluding drilldown

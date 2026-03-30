@@ -883,6 +883,7 @@ export default TreegraphSeries;
  *     }]
  *  ```
  *
+ * @basic
  * @type      {Array<*>}
  * @extends   series.treemap.data
  * @product   highcharts

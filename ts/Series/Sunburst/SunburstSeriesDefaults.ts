@@ -345,6 +345,7 @@ const SunburstSeriesDefaults: SunburstSeriesOptions = {
  */
 
 /**
+ * @basic
  * @type      {Array<number|null|*>}
  * @extends   series.treemap.data
  * @excluding x, y

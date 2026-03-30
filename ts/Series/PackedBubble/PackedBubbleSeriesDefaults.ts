@@ -405,6 +405,7 @@ export default PackedBubbleSeriesDefaults;
  *     }]
  *  ```
  *
+ * @basic
  * @type      {Array<Object|Array>}
  * @extends   series.line.data
  * @excluding marker, x, y

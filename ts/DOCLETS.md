@@ -30,3 +30,5 @@ The custom implementations have the following requirements:
 
 8. `@since` and `@deprecated` support usage of `next` as the version number
    that is resolved on the next release when the next code version is known.
+
+9. `@basic` flags an option as commonly used within its parent option.

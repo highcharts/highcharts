@@ -81,6 +81,7 @@ const ParetoSeriesDefaults: ParetoSeriesOptions = {
  * An array of data points for the series. For the `pareto` series type,
  * points are calculated dynamically.
  *
+ * @basic
  * @type      {Array<Array<number|string>|*>}
  * @extends   series.column.data
  * @since     6.0.0

@@ -494,6 +494,7 @@ export default NetworkgraphSeriesDefaults;
  *     }]
  *  ```
  *
+ * @basic
  * @type      {Array<Object|Array|number>}
  * @extends   series.line.data
  * @excluding drilldown,marker,x,y,dragDrop

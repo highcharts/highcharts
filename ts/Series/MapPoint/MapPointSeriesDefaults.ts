@@ -136,6 +136,7 @@ export default MapPointSeriesDefaults;
  *        }]
  *    ```
  *
+ * @basic
  * @type      {Array<number|Array<number,(number|null)>|null|*>}
  * @extends   series.map.data
  * @excluding labelrank, middleX, middleY, path, value

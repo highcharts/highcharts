@@ -169,6 +169,7 @@ const VennSeriesDefaults: VennSeriesOptions = {
  */
 
 /**
+ * @basic
  * @type      {Array<*>}
  * @extends   series.scatter.data
  * @excluding marker, x, y
