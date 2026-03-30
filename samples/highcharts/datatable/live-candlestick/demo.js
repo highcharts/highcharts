@@ -1,5 +1,8 @@
-const dataTable = new Highcharts.Data({
-    csv: document.getElementById('csv').innerText
+const { correctFloat, Data } = Highcharts;
+
+const dataTable = new Data({
+    csv: document.getElementById('csv').innerText,
+    parseDate: false
 }).getDataTable();
 
 Highcharts.stockChart('container', {
@@ -73,19 +76,24 @@ Highcharts.stockChart('container', {
 });
 
 // Emulate getting point from backend
+const time = Highcharts.charts[0].time;
 function getNewRow(i, lastRow) {
     // Return new row
     if (i === 0 || i % 10 === 0) {
         return {
-            Time: lastRow.Time + 60000,
+            // Add one minute
+            Time: time.dateFormat(
+                '%Y-%m-%d %H:%M:%S',
+                time.parse(lastRow.Time) + 60000
+            ),
             Open: lastRow.Close,
             High: lastRow.Close,
             Low: lastRow.Close,
             Close: lastRow.Close
         };
     }
-    const newClose = Highcharts.correctFloat(
-        lastRow.Close + Highcharts.correctFloat(Math.random() - 0.5, 2),
+    const newClose = correctFloat(
+        lastRow.Close + correctFloat(Math.random() - 0.5, 2),
         4
     );
 

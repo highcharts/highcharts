@@ -116,7 +116,7 @@ interface DataOptions {
     itemDelimiter?: string;
     lineDelimiter?: string;
     parsed?: DataParsedCallbackFunction;
-    parseDate?: DataParseDateCallbackFunction;
+    parseDate?: DataParseDateCallbackFunction|false;
     rows?: Array<DataColumnsArray>;
     rowsURL?: string;
     seriesMapping?: Array<Record<string, number>>;
@@ -1763,6 +1763,9 @@ class Data {
         if (parseDate) {
             ret = parseDate(val);
 
+        } else if (parseDate === false) {
+            ret = val;
+
         } else if (typeof val === 'string') {
             // Auto-detect the date format the first time
             if (!dateFormat) {
@@ -2816,12 +2819,15 @@ export default Data;
  */
 
 /**
- * A callback function to parse string representations of dates into
- * JavaScript timestamps. Should return an integer timestamp on success.
+ * A callback function to parse string representations of dates into JavaScript
+ * timestamps. Should return an integer timestamp on success.
+ *
+ * Set `false` to disable date parsing. Highcharts supports internal date
+ * parsing as of v12.
  *
  * @see [dateFormat](#data.dateFormat)
  *
- * @type      {Highcharts.DataParseDateCallbackFunction}
+ * @type      {Highcharts.DataParseDateCallbackFunction|false}
  * @since     4.0
  * @apioption data.parseDate
  */
