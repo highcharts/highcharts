@@ -1,5 +1,5 @@
 QUnit.test('Data classes and redundant text labels', function (assert) {
-    var chart = Highcharts.chart('container', {
+    const chart = Highcharts.chart('container', {
         chart: {
             type: 'heatmap'
         },
@@ -55,7 +55,7 @@ QUnit.test('Data classes and redundant text labels', function (assert) {
         'Data class axis has no ticks (#6914)'
     );
 
-    var initialChildLength = chart.container.querySelectorAll(
+    const initialChildLength = chart.container.querySelectorAll(
         '.highcharts-legend .highcharts-legend-item'
     ).length;
 
@@ -74,7 +74,7 @@ QUnit.test('Data classes and redundant text labels', function (assert) {
 });
 
 QUnit.test('Data classes - interactions', function (assert) {
-    var chart = Highcharts.chart('container', {
+    const chart = Highcharts.chart('container', {
             colorAxis: {
                 dataClasses: [
                     {
@@ -116,7 +116,7 @@ QUnit.test('Data classes - interactions', function (assert) {
         legendItemX =
             legend.group.translateX +
             legendItemBBox.x +
-            legendItemBBox.width / 2,
+            legendItemBBox.width,
         legendItemY =
             legend.group.translateY +
             legendItemBBox.y +
@@ -138,5 +138,13 @@ QUnit.test('Data classes - interactions', function (assert) {
         chart.hoverPoint,
         point,
         'The shown point should be hovered.'
+    );
+
+    assert.strictEqual(
+        chart.container
+            .querySelector('.highcharts-root')
+            .className.baseVal.indexOf('highcharts-legend-point-active'),
+        -1,
+        'Chart should be in point hover mode for dataClasses (#22891).'
     );
 });

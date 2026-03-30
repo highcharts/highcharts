@@ -290,10 +290,14 @@ namespace ColorAxisComposition {
     function onLegendSetItemEvents(
         this: Legend,
         e: {
+            item: Legend.Item,
             itemState: Record<string, string>;
         }
     ): void {
-        e.itemState.activeClass = 'highcharts-legend-point-active';
+        const item = e.item as unknown as ColorAxis.LegendItemObject;
+        if (item.isDataClass) {
+            e.itemState.activeClass = 'highcharts-legend-point-active';
+        }
     }
 
     /**
