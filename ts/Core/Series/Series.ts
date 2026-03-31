@@ -5692,6 +5692,34 @@ export default Series;
  * data table, or an object with `dataTable` and `column` properties to specify
  * the mapping in more detail.
  *
+ * @example
+ * Highcharts.chart('container', {
+ *     dataTable: {
+ *         columns: {
+ *             Year: [2020, 2021, 2022, 2023],
+ *             Cost: [11, 13, 12, 14],
+ *             Revenue: [12, 15, 14, 18]
+ *         }
+ *     },
+ *     plotOptions: {
+ *         series: {
+ *             // Mapping to a shared column goes in plotOptions
+ *             dataMapping: {
+ *                 x: 'Year'
+ *             }
+ *         }
+ *     },
+ *     series: [{
+ *         dataMapping: {
+ *             y: 'Cost'
+ *         }
+ *     }, {
+ *         dataMapping: {
+ *             y: 'Revenue'
+ *         }
+ *     }]
+ * });
+ *
  * @interface Highcharts.DataMappingOptionsObject
  * @since next
  */
