@@ -21,6 +21,7 @@ import type Axis from '../../Core/Axis/Axis';
 import type BoostOptions from './BoostOptions';
 import type Chart from '../../Core/Chart/Chart';
 import type ColorMapComposition from '../../Series/ColorMapComposition';
+import type { ColorType } from '../../Core/Color/ColorType';
 import type Point from '../../Core/Series/Point';
 import type PositionObject from '../../Core/Renderer/PositionObject';
 import type Series from '../../Core/Series/Series';
@@ -469,7 +470,8 @@ class WGLRenderer {
             cullYThreshold = 1,
             chartDestroyed = typeof chart.index === 'undefined',
             drawAsBar = asBar[series.type],
-            pixelRatio = this.getPixelRatio();
+            pixelRatio = this.getPixelRatio(),
+            colors = chart.options.colors || chart.palette?.dataColors || [];
 
         let plotWidth = series.chart.plotWidth,
             lastX: number = false as any,
@@ -847,12 +849,11 @@ class WGLRenderer {
                     typeof pointOptions[colorKeyIndex] === 'string'
                 ) {
                     rgba = color(pointOptions[colorKeyIndex]).rgba;
-                } else if (colorByPoint && chart.options.colors) {
-                    colorIndex = colorIndex %
-                        chart.options.colors.length;
+                } else if (colorByPoint) {
+                    colorIndex = colorIndex % colors.length;
 
                     rgba = color(resolveColorExpression(
-                        cssVars, chart.options.colors[colorIndex]
+                        cssVars, colors[colorIndex] as string
                     )).rgba;
                 }
 
@@ -1391,7 +1392,8 @@ class WGLRenderer {
         }
 
         const height = this.height,
-            width = this.width;
+            width = this.width,
+            colors = chart.options.colors || chart.palette?.dataColors || [];
 
         if (!gl || !shader || !width || !height) {
             return false;
@@ -1453,7 +1455,7 @@ class WGLRenderer {
 
             let sindex,
                 cbuffer,
-                fillColor,
+                fillColor: ColorType|undefined,
                 scolor = [];
 
             if (
@@ -1496,21 +1498,27 @@ class WGLRenderer {
                     ) ||
                     s.series.color;
 
-                if (options.colorByPoint) {
-                    fillColor = (s.series.chart.options.colors as any)[si];
+                if (options.colorByPoint && typeof colors[si] === 'string') {
+                    fillColor = colors[si];
                 }
             }
 
-            if (s.series.fillOpacity && (options as any).fillOpacity) {
+            if (
+                s.series.fillOpacity &&
+                (options as any).fillOpacity &&
+                fillColor
+            ) {
                 fillColor = new Color(fillColor).setOpacity(
                     pick((options as any).fillOpacity, 1.0)
                 ).get();
             }
 
-            fillColor = resolveColorExpression(
-                chart.boost?.cssVars || {},
-                fillColor
-            );
+            if (typeof fillColor === 'string') {
+                fillColor = resolveColorExpression(
+                    chart.boost?.cssVars || {},
+                    fillColor
+                );
+            }
 
             scolor = color(fillColor).rgba;
 
