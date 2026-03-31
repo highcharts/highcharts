@@ -3,7 +3,7 @@
  *  Parallel coordinates module
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Pawel Fus
+ *  Author: Paweł Fus
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -56,7 +56,7 @@ const chartDefaults: ParallelCoordinatesOptions = {
      * ```js
      * parallelAxes: {
      *    lineWidth: 1,       // classic mode only
-     *    gridlinesWidth: 0,  // classic mode only
+     *    gridLineWidth: 0,  // classic mode only
      *    title: {
      *        text: '',
      *        reserveSpace: false

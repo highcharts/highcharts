@@ -1,7 +1,7 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -1775,7 +1775,7 @@ export interface AxisOptions {
 
     /**
      * A callback function returning array defining where the ticks are
-     * laid out on the axis. This overrides the default behaviour of
+     * laid out on the axis. This overrides the default behavior of
      * [tickPixelInterval](#xAxis.tickPixelInterval) and [tickInterval](
      * #xAxis.tickInterval). The automatic tick positions are accessible
      * through `this.tickPositions` and can be modified by the callback. Since
@@ -1794,7 +1794,7 @@ export interface AxisOptions {
 
     /**
      * An array defining where the ticks are laid out on the axis. This
-     * overrides the default behaviour of [tickPixelInterval](
+     * overrides the default behavior of [tickPixelInterval](
      * #xAxis.tickPixelInterval) and [tickInterval](#xAxis.tickInterval).
      *
      * Note: When working with date-time axes, be aware of time zone

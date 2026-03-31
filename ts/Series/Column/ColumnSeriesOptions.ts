@@ -1,7 +1,7 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -198,7 +198,7 @@ export interface ColumnSeriesOptions extends SeriesOptions {
 
     /**
      * When the series contains less points than the crop threshold, all
-     * points are drawn, event if the points fall outside the visible plot
+     * points are drawn, even if the points fall outside the visible plot
      * area at the current zoom. The advantage of drawing all points
      * (including markers and columns), is that animation is performed on
      * updates. On the other hand, when the series contains more points than
@@ -432,8 +432,6 @@ export interface ColumnSeriesOptions extends SeriesOptions {
      *
      * @product highcharts highstock gantt
      *
-     * @product highcharts highstock
-     *
      * @apioption series.column.states.hover
      */
 
@@ -446,8 +444,6 @@ export interface ColumnSeriesOptions extends SeriesOptions {
      * @excluding halo, lineWidth, lineWidthPlus, marker
      *
      * @product highcharts highstock gantt
-     *
-     * @product highcharts highstock
      *
      * @apioption series.column.states.select
      */

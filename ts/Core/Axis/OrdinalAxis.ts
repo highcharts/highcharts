@@ -1,7 +1,7 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -381,8 +381,7 @@ namespace OrdinalAxis {
                         !higherRanks[groupPositions[i + 1]]
                     ) {
 
-                        // Yes: remove the lower ranked neighbour to the
-                        // right
+                        // Yes: remove the lower ranked neighbor to the right
                         itemToRemove = i + 1;
                         lastTranslated = translated; // #709
 
@@ -465,7 +464,7 @@ namespace OrdinalAxis {
         // In some cases (especially in early stages of the chart creation) the
         // getExtendedPositions might return undefined.
         if (positions?.length) {
-            // Convert back from modivied value to pixels. // #15970
+            // Convert back from modified value to pixels. // #15970
             const pixelVal = correctFloat(
                     (val - (localMin as number)) * localA +
                     axis.minPixelPadding
@@ -479,9 +478,9 @@ namespace OrdinalAxis {
             // Check if the index is inside position array. If true,
             // read/approximate value for that exact index.
             if (index >= 0 && index <= positions.length - 1) {
-                const leftNeighbour = positions[Math.floor(index)],
-                    rightNeighbour = positions[Math.ceil(index)],
-                    distance = rightNeighbour - leftNeighbour;
+                const leftNeighbor = positions[Math.floor(index)],
+                    rightNeighbor = positions[Math.ceil(index)],
+                    distance = rightNeighbor - leftNeighbor;
 
                 return positions[Math.floor(index)] + mantissa * distance;
             }
@@ -549,7 +548,7 @@ namespace OrdinalAxis {
                     eventArgs?.trigger !== 'pan' ||
                     axis.isInternal
                 ) &&
-                // Scrollbar buttons are the other execption
+                // Scrollbar buttons are the other exception
                 eventArgs?.trigger !== 'navigator'
             ) {
 
@@ -794,7 +793,7 @@ namespace OrdinalAxis {
 
         const ordinalLength = ordinalPositions.length;
         let ordinalIndex;
-        // If the searched value is inside visible plotArea, ivastigate the
+        // If the searched value is inside visible plotArea, investigate the
         // value basing on ordinalPositions.
         if (
             ordinalPositions[0] <= val &&

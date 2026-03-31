@@ -1,7 +1,7 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -81,7 +81,7 @@ export interface FlagsSeriesOptions extends ColumnSeriesOptions {
     /**
      * The fill color for the flags.
      *
-     * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @type {Highcharts.ColorType}
      *
      * @product highstock
      */
@@ -103,7 +103,7 @@ export interface FlagsSeriesOptions extends ColumnSeriesOptions {
      * In styled mode, the stroke is set in the
      * `.highcharts-flag-series.highcharts-point` rule.
      *
-     * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @type {Highcharts.ColorType}
      *
      * @default #000000
      *

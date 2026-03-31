@@ -2,7 +2,7 @@
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
- *  Author: Torstein Honsi, Christer Vasseng
+ *  Author: Torstein Hønsi, Christer Vasseng
  *
  *  This module serves as a fallback for the Boost module in IE9 and IE10. Newer
  *  browsers support WebGL which is faster.

@@ -1,7 +1,7 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -625,7 +625,7 @@ export default PlotLineOrBand;
  * @sample {highstock} stock/xaxis/plotbands/
  *         Plot band on Y axis
  *
- * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+ * @type      {Highcharts.ColorType}
  * @default   ${palette.highlightColor10}
  * @apioption xAxis.plotBands.color
  */

@@ -12,7 +12,7 @@
  *  See www.highcharts.com/license
  *
  *  Authors:
- *  - Torstein Honsi
+ *  - Torstein Hønsi
  *
  * */
 

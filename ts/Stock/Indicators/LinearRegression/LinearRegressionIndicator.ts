@@ -116,7 +116,7 @@ class LinearRegressionIndicator extends SMAIndicator {
                  * // has a `y` value of `2` (slope of the regression line). If
                  * // we change the `xAxisUnit` to `1` (ms) the value of the
                  * // indicator's point will be `2.3148148148148148e-8` which is
-                 * // harder to interpert for a human.
+                 * // harder to interpret for a human.
                  *
                  * @type    {null|number}
                  * @product highstock

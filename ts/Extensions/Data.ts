@@ -3,7 +3,7 @@
  *  Data module
  *
  *  (c) 2012-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -426,7 +426,7 @@ class Data {
         }
 
         // This is a two-dimensional array holding the raw, trimmed string
-        // values with the same organisation as the columns array. It makes it
+        // values with the same organization as the columns array. It makes it
         // possible for example to revert from interpreted timestamps to
         // string-based categories.
         this.rawColumns = [];
@@ -820,7 +820,7 @@ class Data {
                     token = '';
 
 
-                // We should be able to detect dateformats within 13 rows
+                // We should be able to detect dateFormats within 13 rows
                 if (i > 13) {
                     return true;
                 }
@@ -1476,7 +1476,7 @@ class Data {
      *        Remove all spaces between numbers.
      *
      * @return {string}
-     *         Trimed string
+     *         Trimmed string
      */
     public trim(
         str: string,

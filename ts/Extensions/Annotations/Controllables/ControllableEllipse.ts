@@ -1,6 +1,6 @@
 /* *
  *
- * Author: Pawel Lysy
+ * Author: Paweł Lysy
  *
  *
  * */

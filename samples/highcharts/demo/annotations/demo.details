@@ -1,7 +1,7 @@
 ---
 name: Stock data with annotations
 authors:
-  - Pawel Lysy
+  - Paweł Lysy
   - Jedrzej Ruta
 js_wrap: b
 requiresManualTesting: true

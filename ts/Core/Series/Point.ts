@@ -1,7 +1,7 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -1587,7 +1587,7 @@ class Point {
             isFunction(userEvent) &&
             (
                 !point.hcEvents?.[eventType] ||
-                // Some HC modules, like marker-clusters, draggable-poins etc.
+                // Some HC modules, like marker-clusters, draggable-points etc.
                 // use events in their logic, so we need to be sure, that
                 // callback function is different
                 point.hcEvents?.[eventType]?.map((el): Function => el.fn)

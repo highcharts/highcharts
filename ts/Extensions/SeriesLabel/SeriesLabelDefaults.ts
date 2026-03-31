@@ -1,7 +1,7 @@
 /* *
  *
  *  (c) 2009-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -65,7 +65,7 @@ const SeriesLabelDefaults: SeriesLabelOptions = {
     connectorAllowed: false,
 
     /**
-     * If the label is closer than this to a neighbour graph, draw a
+     * If the label is closer than this to a neighbor graph, draw a
      * connector.
      */
     connectorNeighbourDistance: 24,

@@ -1,7 +1,7 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -26,7 +26,7 @@ import type AreaRangeSeriesOptions from './AreaRangeSeriesOptions';
  * */
 
 /**
- * The area range series is a carteseian series with higher and lower values for
+ * The area range series is a cartesian series with higher and lower values for
  * each point along an X axis, where the area between the values is shaded.
  *
  * @sample {highcharts} highcharts/demo/arearange/

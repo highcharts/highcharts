@@ -1,7 +1,7 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -197,7 +197,7 @@ declare module '../Options' {
         caption?: Chart.CaptionOptions;
 
         /**
-         * Highchart by default puts a credits label in the lower right corner
+         * Highcharts by default puts a credits label in the lower right corner
          * of the chart. This can be changed using these options.
          */
         credits?: Chart.CreditsOptions;
@@ -1107,7 +1107,7 @@ class Chart {
     }
 
     /**
-     * Get the clipping for a series. Could be called for a series to initialate
+     * Get the clipping for a series. Could be called for a series to initialize
      * animating the clip or to set the final clip (only width and x).
      *
      * @internal
@@ -1765,14 +1765,6 @@ class Chart {
                                 baseline :
                                 offset + baseline
                         },
-                        {
-                            align: key === 'title' ?
-                                // Title defaults to center for short titles,
-                                // left for word-wrapped titles
-                                (uncappedScale < minScale ? 'left' : 'center') :
-                                // Subtitle defaults to the title.align
-                                this.title?.alignValue
-                        },
                         descOptions
                     ),
                     width = (descOptions.width || (
@@ -1784,6 +1776,14 @@ class Chart {
                                 alignTo.width
                         ) / scale
                     )) + 'px';
+
+                // Handle auto alignment
+                alignAttr.align ??= key === 'title' ?
+                    // Title defaults to center for short titles,
+                    // left for word-wrapped titles
+                    (uncappedScale < minScale ? 'left' : 'center') :
+                    // Subtitle defaults to the title.align
+                    this.title?.alignValue;
 
                 // No animation when switching alignment
                 if (desc.alignValue !== alignAttr.align) {
@@ -1977,7 +1977,7 @@ class Chart {
                 }
                 if (
                     getStyle(node, 'display', false) === 'none' ||
-                    (node as any).hcOricDetached
+                    (node as any).hcOrigDetached
                 ) {
                     (node as any).hcOrigStyle = {
                         display: node.style.display,
@@ -4694,7 +4694,7 @@ namespace Chart {
     }
 
     /**
-     * Highchart by default puts a credits label in the lower right corner
+     * Highcharts by default puts a credits label in the lower right corner
      * of the chart. This can be changed using these options.
      */
     export interface CreditsOptions {

@@ -2,7 +2,7 @@
  *
  *  Highcharts Drilldown module
  *
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -678,7 +678,7 @@ class ChartAdditions {
                                 series.remove(false);
                             }
 
-                        // Deal with asonchrynous removing of map series
+                        // Deal with asynchronous removing of map series
                         // after zooming into
                         } else if (
                             series.options &&
@@ -1048,7 +1048,7 @@ class ChartAdditions {
 
     /**
      * A function to fade in a group. First, the element is being hidden, then,
-     * using `opactiy`, is faded in. Used for example by `dataLabelsGroup` where
+     * using `opacity`, is faded in. Used for example by `dataLabelsGroup` where
      * simple SVGElement.fadeIn() is not enough, because of other features (e.g.
      * InactiveState) using `opacity` to fadeIn/fadeOut.
      *

@@ -1,7 +1,7 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -297,7 +297,7 @@ class MapNavigation {
                 if (!chart.hasLoaded) {
                     // Align it after the plotBox is known (#12776)
                     const unbind = addEvent(chart, 'load', (): void => {
-                        // #15406: Make sure button hasnt been destroyed
+                        // #15406: Make sure button hasn't been destroyed
                         if (button.element) {
                             button.align(
                                 buttonOptions,
@@ -406,7 +406,7 @@ class MapNavigation {
                 'wheel',
                 function (e: PointerEvent): boolean {
                     // Prevent scrolling when the pointer is over the element
-                    // with that class, for example anotation popup #12100.
+                    // with that class, for example annotation popup #12100.
                     if (!chart.pointer.inClass(
                         e.target as any,
                         'highcharts-no-mousewheel'

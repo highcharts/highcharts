@@ -7,8 +7,8 @@
  *
  *
  *  Authors:
- *  - Karol Kolodziej
- *  - Dawid Dragula
+ *  - Karol Kołodziej
+ *  - Dawid Draguła
  *
  * */
 

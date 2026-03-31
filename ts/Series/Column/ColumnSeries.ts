@@ -1,7 +1,7 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -74,7 +74,7 @@ declare module '../../Core/Series/SeriesBase' {
 /**
  * The column series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.column
  *
@@ -133,7 +133,7 @@ class ColumnSeries extends Series {
     /**
      * Animate the column heights one by one from zero.
      *
-     * @private
+     * @internal
      * @function Highcharts.seriesTypes.column#animate
      *
      * @param {boolean} init
@@ -208,7 +208,7 @@ class ColumnSeries extends Series {
      * Initialize the series. Extends the basic Series.init method by
      * marking other series of the same type as dirty.
      *
-     * @private
+     * @internal
      * @function Highcharts.seriesTypes.column#init
      */
     public init(
@@ -237,7 +237,7 @@ class ColumnSeries extends Series {
      * Return the width and x offset of the columns adjusted for grouping,
      * groupPadding, pointPadding, pointWidth etc.
      *
-     * @private
+     * @internal
      * @function Highcharts.seriesTypes.column#getColumnMetrics
      */
     public getColumnMetrics(): ColumnMetricsObject {
@@ -338,7 +338,7 @@ class ColumnSeries extends Series {
      * Make the columns crisp. The edges are rounded to the nearest full
      * pixel.
      *
-     * @private
+     * @internal
      * @function Highcharts.seriesTypes.column#crispCol
      */
     public crispCol(
@@ -371,7 +371,7 @@ class ColumnSeries extends Series {
      * option. Missing columns are either single points or stacks where the
      * point or points are either missing or null.
      *
-     * @private
+     * @internal
      * @function Highcharts.seriesTypes.column#adjustForMissingColumns
      * @param {number} x
      * The x coordinate of the column, left side
@@ -486,17 +486,17 @@ class ColumnSeries extends Series {
      * Translate each point to the plot area coordinate system and find
      * shape positions
      *
-     * @private
+     * @internal
      * @function Highcharts.seriesTypes.column#translate
      */
     public translate(): void {
         const series = this,
             chart = series.chart,
             options = series.options,
-            // For points whithout graphics (null points) this value is used
+            // For points without graphics (null points) this value is used
             // to reserve space around the point such that:
-            //      - normal/null points are spaced similarily,
-            //      - focusborders of null points are like those of "0" points
+            //      - normal/null points are spaced similarly,
+            //      - focus borders of null points are like those of "0" points
             // This ensures consistent dimensions between null/normal points.
             dense = series.dense =
                 (series.closestPointRange as any) * series.xAxis.transA < 2,
@@ -654,7 +654,7 @@ class ColumnSeries extends Series {
     /**
      * Columns have no graph
      *
-     * @private
+     * @internal
      * @function Highcharts.seriesTypes.column#drawGraph
      */
     public drawGraph(): void {
@@ -666,7 +666,7 @@ class ColumnSeries extends Series {
     /**
      * Get presentational attributes
      *
-     * @private
+     * @internal
      * @function Highcharts.seriesTypes.column#pointAttribs
      */
     public pointAttribs(
@@ -756,7 +756,7 @@ class ColumnSeries extends Series {
      * coordinates apply for columns and bars. This method is inherited by
      * scatter series.
      *
-     * @private
+     * @internal
      * @function Highcharts.seriesTypes.column#drawPoints
      */
     public drawPoints(points: Array<ColumnPoint> = this.points): void {
@@ -845,7 +845,7 @@ class ColumnSeries extends Series {
 
     /**
      * Draw the tracker for a point.
-     * @private
+     * @internal
      */
     public drawTracker(points: Array<ColumnPoint> = this.points): void {
         const series = this,
@@ -856,7 +856,7 @@ class ColumnSeries extends Series {
 
                 const point = pointer?.getPointFromEvent(e);
 
-                // Undefined on graph in scatterchart
+                // Undefined on graph in scatter chart
                 if (
                     pointer &&
                     point &&
@@ -939,7 +939,7 @@ class ColumnSeries extends Series {
     /**
      * Remove this series from the chart
      *
-     * @private
+     * @internal
      * @function Highcharts.seriesTypes.column#remove
      */
     public remove(): void {
@@ -1014,7 +1014,7 @@ export default ColumnSeries;
 /**
  * Adjusted width and x offset of the columns for grouping.
  *
- * @private
+ * @internal
  * @interface Highcharts.ColumnMetricsObject
  *//**
  * Width of the columns.

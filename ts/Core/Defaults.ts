@@ -1,7 +1,7 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -84,7 +84,7 @@ const defaultOptions: DefaultOptions = {
      * @sample highcharts/members/theme-v10/
      *         Latest release styled like version 10
      *
-     * @type    {Array<(Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject)>}
+     * @type    {Array<Highcharts.ColorType>}
      * @default [
      *     "#2caffe",
      *     "#544fc5",
@@ -1054,7 +1054,7 @@ const defaultOptions: DefaultOptions = {
          * @sample {highmaps} maps/legend/border-background/
          *         Border and background options
          *
-         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @type      {Highcharts.ColorType}
          * @apioption legend.backgroundColor
          */
 
@@ -1364,7 +1364,7 @@ const defaultOptions: DefaultOptions = {
          * @sample {highmaps} maps/legend/border-background/
          *         Border and background options
          *
-         * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @type {Highcharts.ColorType}
          */
         borderColor: Palette.neutralColor40,
 
@@ -1476,7 +1476,7 @@ const defaultOptions: DefaultOptions = {
              * @sample  {highstock} highcharts/legend/navigation/
              *          Legend page navigation demonstrated
              *
-             * @type  {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+             * @type  {Highcharts.ColorType}
              * @since 2.2.4
              */
             activeColor: Palette.highlightColor100,
@@ -1493,7 +1493,7 @@ const defaultOptions: DefaultOptions = {
              * @sample {highstock} highcharts/legend/navigation/
              *         Legend page navigation demonstrated
              *
-             * @type  {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+             * @type  {Highcharts.ColorType}
              * @since 2.2.4
              */
             inactiveColor: Palette.neutralColor20
@@ -2046,7 +2046,7 @@ const defaultOptions: DefaultOptions = {
          * @sample {highmaps} maps/tooltip/background-border/ Background and
          *         border demo
          *
-         * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @type {Highcharts.ColorType}
          * @apioption tooltip.borderColor
          */
 
@@ -2782,7 +2782,7 @@ const defaultOptions: DefaultOptions = {
          * @sample {highmaps} highcharts/css/tooltip-border-background/
          *         Tooltip in styled mode
          *
-         * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @type {Highcharts.ColorType}
          */
         backgroundColor: Palette.backgroundColor,
 
@@ -2883,7 +2883,7 @@ const defaultOptions: DefaultOptions = {
     },
 
     /**
-     * Highchart by default puts a credits label in the lower right corner
+     * Highcharts by default puts a credits label in the lower right corner
      * of the chart. This can be changed using these options.
      */
     credits: {
@@ -3109,7 +3109,7 @@ export default DefaultOptions;
  * @name Highcharts.ChartAddSeriesEventObject#options
  * @type {Highcharts.SeriesOptionsType}
  *//**
- * Prevents the default behaviour of the event.
+ * Prevents the default behavior of the event.
  * @name Highcharts.ChartAddSeriesEventObject#preventDefault
  * @type {Function}
  *//**
@@ -3218,7 +3218,7 @@ export default DefaultOptions;
  *        The chart on which the event occurred.
  *
  * @param {Highcharts.SelectEventObject} event
- *        Event informations
+ *        Event information
  *
  * @return {boolean|undefined}
  *         Return false to prevent the default action, usually zoom.

@@ -1,7 +1,7 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -43,7 +43,7 @@ export interface ColumnPointOptions extends LinePointOptions {
      * @sample {highcharts} highcharts/plotoptions/column-bordercolor/
      *         Dark gray border
      *
-     * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @type {Highcharts.ColorType}
      *
      * @product highcharts highstock
      *

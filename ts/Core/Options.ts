@@ -1,7 +1,7 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -252,7 +252,7 @@ export interface LoadingOptions {
  * The input number to format.
  *
  * @param {number} decimals
- * The amount of decimals. A value of -1 preserves the amount in the inpu
+ * The amount of decimals. A value of -1 preserves the amount in the input
  * number.
  *
  * @param {string} [decimalPoint]

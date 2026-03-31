@@ -1,7 +1,7 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -1895,7 +1895,7 @@ namespace AxisDefaults {
 
         /**
          * A callback function returning array defining where the ticks are
-         * laid out on the axis. This overrides the default behaviour of
+         * laid out on the axis. This overrides the default behavior of
          * [tickPixelInterval](#xAxis.tickPixelInterval) and [tickInterval](
          * #xAxis.tickInterval). The automatic tick positions are accessible
          * through `this.tickPositions` and can be modified by the callback.
@@ -1916,7 +1916,7 @@ namespace AxisDefaults {
 
         /**
          * An array defining where the ticks are laid out on the axis. This
-         * overrides the default behaviour of [tickPixelInterval](
+         * overrides the default behavior of [tickPixelInterval](
          * #xAxis.tickPixelInterval) and [tickInterval](#xAxis.tickInterval).
          *
          * Note: When working with date-time axes, be aware of time zone
@@ -2956,7 +2956,7 @@ namespace AxisDefaults {
              * The actual text of the axis title. Horizontal texts can contain
              * HTML, but rotated texts are painted using vector techniques and
              * must be clean text. The Y axis title is disabled by setting the
-             * `text` option to `undefined`. The default value is overriden by
+             * `text` option to `undefined`. The default value is overridden by
              * the `lang.yAxisTitle` language option.
              *
              * @sample {highcharts} highcharts/xaxis/title-text/

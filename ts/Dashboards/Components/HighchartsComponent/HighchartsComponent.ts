@@ -11,7 +11,7 @@
  *  - Wojciech Chmiel
  *  - Sebastian Bochan
  *  - Sophie Bremer
- *  - Dawid Dragula
+ *  - Dawid Draguła
  *
  * */
 

@@ -1,7 +1,7 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -17,8 +17,9 @@
 
 import type ColumnSeries from './ColumnSeries';
 import type ColumnPointOptions from './ColumnPointOptions';
-import type Point from '../../Core/Series/Point.js';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+
+import Point from '../../Core/Series/Point.js';
 
 /* *
  *
@@ -34,12 +35,12 @@ declare module '../../Core/Series/PointBase' {
 
 export class ColumnPoint extends Point {
     allowShadow?: boolean;
-    barX: number;
+    barX!: number;
     group?: SVGElement;
     opacity?: number;
-    options: ColumnPointOptions;
-    pointWidth: number;
-    series: ColumnSeries;
+    options!: ColumnPointOptions;
+    pointWidth?: number;
+    series!: ColumnSeries;
 }
 
 /* *

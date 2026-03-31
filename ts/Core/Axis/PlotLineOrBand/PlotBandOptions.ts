@@ -1,7 +1,7 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -55,7 +55,7 @@ export interface PlotBandLabelOptions {
      * Whether or not the label can be hidden if it overlaps with another label.
      *
      * @sample {highcharts} highcharts/xaxis/plotbands-label-allowoverlap/
-     *         A Plotband label overlapping another
+     *         A plot band label overlapping another
      *
      * @default undefined
      * @since   11.4.8

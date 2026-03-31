@@ -24,9 +24,7 @@
 
 import type { AnyRecord } from '../Shared/Types';
 
-import {
-    error as coreError
-} from '../Core/Utilities.js';
+import { error as coreError } from '../Core/Utilities.js';
 
 /* *
  *

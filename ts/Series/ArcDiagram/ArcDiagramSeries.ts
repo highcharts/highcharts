@@ -484,7 +484,7 @@ class ArcDiagramSeries extends SankeySeries {
             };
         }
     }
-    // Networkgraph has two separate collecions of nodes and lines, render
+    // Networkgraph has two separate collections of nodes and lines, render
     // dataLabels for both sets:
     public drawDataLabels(): void {
         if (this.options.dataLabels) {
