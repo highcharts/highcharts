@@ -313,7 +313,7 @@ const MapSeriesDefaults: MapSeriesOptions = {
 
             /**
              * @type      {Highcharts.ColorType}
-             * @default   $var(--highcharts-neutral-color-20)
+             * @default   var(--highcharts-neutral-color-20)
              * @product   highmaps
              * @apioption plotOptions.series.states.select.color
              */

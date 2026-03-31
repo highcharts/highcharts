@@ -132,7 +132,7 @@ const PieSeriesDefaults: PieSeriesOptions = {
      *         Empty pie series
      *
      * @type      {Highcharts.ColorType}
-     * @default   $var(--highcharts-neutral-color-20)
+     * @default   var(--highcharts-neutral-color-20)
      * @apioption plotOptions.pie.color
      */
 

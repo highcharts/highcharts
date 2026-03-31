@@ -925,7 +925,7 @@ export default PlotLineOrBand;
  *         Plot line on Y axis
  *
  * @type      {Highcharts.ColorString}
- * @default   $var(--highcharts-neutral-color-40)
+ * @default   var(--highcharts-neutral-color-40)
  * @apioption xAxis.plotLines.color
  */
 

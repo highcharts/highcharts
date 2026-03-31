@@ -259,7 +259,7 @@ const DumbbellSeriesDefaults: DumbbellSeriesOptions = {
  *
  * @type        {Highcharts.ColorType}
  * @since       8.0.0
- * @default     $var(--highcharts-neutral-color-80)
+ * @default     var(--highcharts-neutral-color-80)
  * @product     highcharts highstock
  * @apioption   series.dumbbell.data.lowColor
  */

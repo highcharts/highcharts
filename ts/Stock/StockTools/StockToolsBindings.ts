@@ -1367,8 +1367,8 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
     /**
      * A vertical arrow annotation bindings. Includes `start` event. On click,
      * finds the closest point and marks it with an arrow.
-     * `$var(--highcharts-positive-color)` is the color of the arrow when
-     * pointing from above and `$var(--highcharts-negative-color)`
+     * `var(--highcharts-positive-color)` is the color of the arrow when
+     * pointing from above and `var(--highcharts-negative-color)`
      * when pointing from below the point.
      *
      * @type    {Highcharts.NavigationBindingsOptionsObject}
