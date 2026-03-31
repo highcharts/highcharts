@@ -1,7 +1,7 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -647,7 +647,7 @@ class Axis {
      * */
 
     /**
-     * Overrideable function to initialize the axis.
+     * Overridable function to initialize the axis.
      *
      * @see {@link Axis}
      *
@@ -791,7 +791,7 @@ class Axis {
         }
 
 
-        // Placeholder for plotlines and plotbands groups
+        // Placeholder for plotLines and plotBands groups
         axis.plotLinesAndBandsGroups = {};
 
         // Shorthand types
@@ -970,9 +970,6 @@ class Axis {
      * @param {Highcharts.AxisLabelsFormatterContextObject} this
      * Formatter context of axis label.
      *
-     * @param {Highcharts.AxisLabelsFormatterContextObject} [ctx]
-     * Formatter context of axis label.
-     *
      * @return {string}
      * The formatted label content.
      */
@@ -1028,19 +1025,20 @@ class Axis {
                     value !== 0
                 ) { // #5480
                     ret = numberFormatter(
-                        value / multi, -1
+                        value / multi, -1, void 0, void 0, chart
                     ) + numericSymbols[i];
                 }
             }
         }
 
-        if (typeof ret === 'undefined') {
-            if (Math.abs(value) >= 10000) { // Add thousands separators
-                ret = numberFormatter(value, -1);
-            } else { // Small numbers
-                ret = numberFormatter(value, -1, void 0, ''); // #2466
-            }
-        }
+        ret ??= numberFormatter(
+            value,
+            -1,
+            void 0,
+            // Add thousands separators when 10 000 or more
+            Math.abs(value) < 10000 ? '' : void 0,
+            chart
+        );
 
         return ret;
     }
@@ -2456,7 +2454,7 @@ class Axis {
                 this.tickPositions = tickPositions;
                 tickPositionerResult = tickPositioner.apply(
                     axis,
-                    [this.min, this.max]
+                    [this.min, this.max, axis]
                 );
                 if (tickPositionerResult) {
                     tickPositions = tickPositionerResult;
@@ -2489,7 +2487,7 @@ class Axis {
         this.trimTicks(tickPositions, startOnTick, endOnTick);
         if (!this.isLinked && isNumber(this.min) && isNumber(this.max)) {
 
-            // Substract half a unit (#2619, #2846, #2515, #3390), but not in
+            // Subtract half a unit (#2619, #2846, #2515, #3390), but not in
             // case of multiple ticks (#6897)
             if (
                 this.single &&
@@ -3015,10 +3013,10 @@ class Axis {
      *
      * @function Highcharts.Axis#setExtremes
      *
-     * @param {number|string} [newMin]
+     * @param {number|string} [min]
      * The new minimum value. For datetime axes, date strings are accepted.
      *
-     * @param {number|string} [newMax]
+     * @param {number|string} [max]
      * The new maximum value. For datetime axes, date strings are accepted.
      *
      * @param {boolean} [redraw=true]
@@ -3041,8 +3039,8 @@ class Axis {
         eventArguments?: Partial<AxisSetExtremesEventObject>
     ): void {
         const chart = this.chart;
-        this.series.forEach((serie): void => {
-            delete serie.kdTree;
+        this.series.forEach((s): void => {
+            delete s.kdTree;
         });
 
         min = chart.time.parse(min);
@@ -3684,12 +3682,6 @@ class Axis {
      *
      * @internal
      * @function Highcharts.Axis#generateTick
-     *
-     * @param {number} pos
-     * The tick position in axis values.
-     *
-     * @param {number} [i]
-     * The index of the tick in {@link Axis.tickPositions}.
      */
     public generateTick(pos: number): void {
         const axis = this,
@@ -4031,7 +4023,7 @@ class Axis {
             fontMetrics = this.chart.renderer.fontMetrics(axisTitle),
             // The part of a multiline text that is below the baseline of the
             // first line. Subtract 1 to preserve pixel-perfectness from the
-            // old behaviour (v5.0.12), where only one line was allowed.
+            // old behavior (v5.0.12), where only one line was allowed.
             textHeightOvershoot = axisTitle ? Math.max(
                 axisTitle.getBBox(false, 0).height - fontMetrics.h - 1,
                 0
@@ -4217,7 +4209,7 @@ class Axis {
             }
 
             // Major ticks. Pull out the first item and render it last so that
-            // we can get the position of the neighbour label. #808.
+            // we can get the position of the neighbor label. #808.
             if (tickPositions.length) { // #1300
                 tickPositions.forEach(function (pos: number, i: number): void {
                     axis.renderTick(pos, i, slideInTicks);
@@ -4458,7 +4450,7 @@ class Axis {
             }
         );
 
-        // Destroy each generated group for plotlines and plotbands
+        // Destroy each generated group for plotLines and plotBands
         for (const plotGroup in axis.plotLinesAndBandsGroups) { // eslint-disable-line guard-for-in
             axis.plotLinesAndBandsGroups[plotGroup] =
                 axis.plotLinesAndBandsGroups[plotGroup].destroy() as any;
@@ -4979,6 +4971,8 @@ export default Axis;
  * @param {Highcharts.AxisLabelsFormatterContextObject} this
  *
  * @param {Highcharts.AxisLabelsFormatterContextObject} ctx
+ * Since v12.5.0, the formatter context passed as an extra argument for arrow
+ * functions.
  *
  * @return {string}
  */
@@ -5090,7 +5084,17 @@ export default Axis;
  *
  * @param {Highcharts.Axis} this
  *
- * @return {Highcharts.AxisTickPositionsArray}
+ * @param {number} min
+ * Current minimum value.
+ *
+ * @param {number} max
+ * Current maximum value.
+ *
+ * @param {Highcharts.Axis} [ctx]
+ * Since v12.5.0, the axis context passed as an extra argument for arrow
+ * functions.
+ *
+ * @return {Highcharts.AxisTickPositionsArray|undefined}
  */
 
 /**
@@ -5157,6 +5161,10 @@ export default Axis;
  *
  * @param {number} value
  * Y value of the data point
+ *
+ * @param {Highcharts.Axis} [ctx]
+ * Since v12.5.0, the axis context passed as an extra argument for arrow
+ * functions.
  *
  * @return {string}
  */

@@ -1,6 +1,6 @@
 /* eslint-disable max-len */
 Grid.grid('container', {
-    dataTable: {
+    data: {
         columns: {
             // Data for the sparkline charts can be provided in various ways.
             // The simplest way is to provide it as a string of comma-separated

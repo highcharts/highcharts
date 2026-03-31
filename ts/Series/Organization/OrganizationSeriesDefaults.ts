@@ -3,7 +3,7 @@
  *  Organization chart module
  *
  *  (c) 2018-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -141,7 +141,6 @@ const OrganizationSeriesDefaults: OrganizationSeriesOptions = {
      */
     dataLabels: {
 
-        /* eslint-disable valid-jsdoc */
         /**
          * A callback for defining the format for _nodes_ in the
          * organization chart. The `nodeFormat` option takes precedence
@@ -252,7 +251,6 @@ const OrganizationSeriesDefaults: OrganizationSeriesOptions = {
                 '</div>';
             return html;
         },
-        /* eslint-enable valid-jsdoc */
 
         style: {
             /** @internal */
@@ -346,7 +344,7 @@ const OrganizationSeriesDefaults: OrganizationSeriesOptions = {
     /**
      * In a horizontal chart, the minimum width of the **hanging** nodes
      * only, in pixels. In a vertical chart, the minimum height of the
-     * **haning** nodes only, in pixels too.
+     * **hanging** nodes only, in pixels too.
      *
      * Note: Used only when
      * [hangingIndentTranslation](#plotOptions.organization.hangingIndentTranslation)

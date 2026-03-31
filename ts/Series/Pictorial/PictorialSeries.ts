@@ -1,7 +1,7 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi, Magdalena Gut
+ *  Author: Torstein Hønsi, Magdalena Gut
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -136,7 +136,6 @@ class PictorialSeries extends ColumnSeries {
      *
      * */
 
-    /* eslint-disable valid-jsdoc */
 
     /**
      * Animate in the series. Called internally twice. First with the `init`
@@ -261,7 +260,6 @@ class PictorialSeries extends ColumnSeries {
         return extremes;
     }
 
-    /* eslint-enable valid-jsdoc */
 
 }
 
@@ -716,7 +714,7 @@ export default PictorialSeries;
  * The color of the `stackShadow` border.
  *
  * @declare   Highcharts.YAxisOptions
- * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+ * @type      {Highcharts.ColorType}
  * @default   transparent
  * @product   highcharts
  * @requires  modules/pictorial
@@ -738,7 +736,7 @@ export default PictorialSeries;
  * The color of the `stackShadow`.
  *
  * @declare   Highcharts.YAxisOptions
- * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+ * @type      {Highcharts.ColorType}
  * @default   #dedede
  * @product   highcharts
  * @requires  modules/pictorial

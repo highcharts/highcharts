@@ -1,7 +1,7 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -563,7 +563,7 @@ namespace StockChart {
         if (formatOption) {
             text = format(formatOption, { value }, chart);
         } else if (options.formatter && isNumber(value)) {
-            text = options.formatter.call(axis, value);
+            text = options.formatter.call(axis, value, axis);
         }
 
         crossLabel.attr({

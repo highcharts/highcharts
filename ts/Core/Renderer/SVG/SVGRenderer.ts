@@ -1,7 +1,7 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -529,7 +529,7 @@ class SVGRenderer implements SVGRendererBase {
                 return replaceNested(
                     win.location.href.split('#')[0], // Remove hash
                     [/<[^>]*>/g, ''], // Wing cut HTML
-                    [/([\('\)])/g, '\\$1'], // Escape parantheses and quotes
+                    [/([\('\)])/g, '\\$1'], // Escape parentheses and quotes
                     [/ /g, '%20'] // Replace spaces (needed for Safari only)
                 );
             }
@@ -970,7 +970,7 @@ class SVGRenderer implements SVGRendererBase {
     }
 
     /**
-     * Make a straight line crisper by not spilling out to neighbour pixels.
+     * Make a straight line crisper by not spilling out to neighbor pixels.
      *
      * @function Highcharts.SVGRenderer#crispLine
      *
@@ -1025,7 +1025,7 @@ class SVGRenderer implements SVGRendererBase {
      *
      * @function Highcharts.SVGRenderer#path
      *
-     * @param {Highcharts.SVGAttributes} [attribs]
+     * @param {Highcharts.SVGAttributes|Highcharts.SVGPathArray} [path]
      * The initial attributes.
      *
      * @return {Highcharts.SVGElement}
@@ -1044,6 +1044,7 @@ class SVGRenderer implements SVGRendererBase {
         return this.createElement('path').attr(attribs) as any;
     }
 
+    /* eslint-disable jsdoc/check-param-names */
     /**
      * Draw a circle, wraps the SVG `circle` element.
      *
@@ -1097,6 +1098,8 @@ class SVGRenderer implements SVGRendererBase {
 
         return wrapper.attr(attribs);
     }
+    /* eslint-enable jsdoc/check-param-names */
+
 
     /**
      * Draw and return an arc. Overloaded function that takes arguments object.
@@ -1145,6 +1148,8 @@ class SVGRenderer implements SVGRendererBase {
         start?: number,
         end?: number
     ): SVGElement;
+
+    /* eslint-disable jsdoc/check-param-names */
     /**
      * Draw and return an arc.
      *
@@ -1221,7 +1226,9 @@ class SVGRenderer implements SVGRendererBase {
         arc.r = r; // #959
         return arc;
     }
+    /* eslint-enable jsdoc/check-param-names */
 
+    /* eslint-disable jsdoc/check-param-names */
     /**
      * Draw and return a rectangle.
      *
@@ -1312,6 +1319,7 @@ class SVGRenderer implements SVGRendererBase {
 
         return wrapper.attr(attribs);
     }
+    /* eslint-enable jsdoc/check-param-names */
 
     /**
      * Draw and return a rectangle with advanced corner rounding options.
@@ -1547,7 +1555,7 @@ class SVGRenderer implements SVGRendererBase {
                 obj.attr('fill', 'none');
             }
 
-            // Expando properties for use in animate and attr
+            // Expand properties for use in animate and attr
             extend(obj, {
                 symbolName: (sym || void 0),
                 x: x,
@@ -2303,7 +2311,14 @@ interface SVGRenderer extends SVGRendererBase {
     escapes: Record<string, string>;
 
     /**
-     * An extendable collection of functions for defining symbol paths.
+     * An extendable collection of functions for defining symbol paths. Each
+     * symbol function takes five parameters: `x`, `y`, `width`, `height` and
+     * `options`, and returns an `SVGPath` array.
+     *
+     * @sample highcharts/members/renderer-symbols
+     *         Renderer symbols overview
+     * @sample highcharts/plotoptions/series-marker-symbol
+     *         Custom marker symbol
      *
      * @name Highcharts.SVGRenderer#symbols
      * @type {Highcharts.SymbolDictionary}
@@ -2354,7 +2369,14 @@ extend(SVGRenderer.prototype, {
     },
 
     /**
-     * An extendable collection of functions for defining symbol paths.
+     * An extendable collection of functions for defining symbol paths. Each
+     * symbol function takes five parameters: `x`, `y`, `width`, `height` and
+     * `options`, and returns an `SVGPath` array.
+     *
+     * @sample highcharts/members/renderer-symbols
+     *         Renderer symbols overview
+     * @sample highcharts/plotoptions/series-marker-symbol
+     *         Custom marker symbol
      *
      * @name Highcharts.SVGRenderer#symbols
      * @type {Highcharts.SymbolDictionary}

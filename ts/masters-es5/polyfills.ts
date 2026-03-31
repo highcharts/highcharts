@@ -4,7 +4,7 @@
  * @module highcharts/polyfills
  *
  * (c) 2009-2026 Highsoft AS
- * Author: Torstein Honsi
+ * Author: Torstein Hønsi
  *
  * A commercial license may be required depending on use.
  * See www.highcharts.com/license
@@ -134,7 +134,7 @@ if (typeof ElementPrototype.closest !== 'function') {
     window.CustomEvent = CustomEvent as any;
 })();
 
-// Replace \p{L} with language ranges and remove 'u' flag, #23462.
+// Replace \p{L} and \p{M} with language ranges and remove 'u' flag, #23462.
 (function (): void {
     const languages =
         'a-zA-Z' + // ASCII
@@ -144,9 +144,17 @@ if (typeof ElementPrototype.closest !== 'function') {
         '\u0590-\u05FF' + // Hebrew
         '\u0600-\u06FF\u0750-\u077F' + // Arabic + Extended
         '\u0900-\u097F' + // Devanagari
+        '\u0980-\u09FF' + // Bengali
         '\u3040-\u30FF' + // Hiragana + Katakana
         '\u3130-\u318F\uAC00-\uD7AF' + // Hangul Jamo + Syllables
         '\u4E00-\u9FFF'; // CJK Unified Ideographs
+
+    const combiningMarks =
+        '\u0300-\u036F' + // Combining Diacritical Marks
+        '\u0483-\u0489' +
+        '\u0591-\u05C7' + // Hebrew
+        '\u0610-\u061A\u064B-\u065F\u0670\u06D6-\u06ED' + // Arabic
+        '\u09BC\u09BE-\u09C4\u09C7-\u09C8\u09CB-\u09CD\u09D7\u09E2-\u09E3'; // Bengali
 
     const OriginalRegExp = RegExp;
 
@@ -164,6 +172,13 @@ if (typeof ElementPrototype.closest !== 'function') {
 
         if (source.indexOf('\\p{L}') !== -1) {
             source = source.replace(/\\p\{L\}/g, languages);
+            if (finalFlags) {
+                finalFlags = finalFlags.replace('u', '');
+            }
+        }
+
+        if (source.indexOf('\\p{M}') !== -1) {
+            source = source.replace(/\\p\{M\}/g, combiningMarks);
             if (finalFlags) {
                 finalFlags = finalFlags.replace('u', '');
             }

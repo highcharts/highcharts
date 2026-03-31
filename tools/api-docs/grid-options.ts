@@ -146,7 +146,7 @@ function addTreeNode(
         return;
     }
 
-    _fullname = getGridOptionName(_fullname);
+    _fullname = getGridTreeNodeName(info, _fullname);
 
     if (_fullname.startsWith('_')) {
         return;
@@ -623,9 +623,8 @@ function expandRendererOptionChildren(
         return;
     }
 
-    // Render renderer type branches as array items in the left sidebar,
-    // analogous to how `series` options are presented in Core docs.
-    nodeDoclet.supportsArray = true;
+    // Renderer is a single object with type discriminator, not an array.
+    // Do not set supportsArray – render as { type: 'text', ... } etc.
 
     for (const spec of specs) {
         const interfaceInfo = findInterfaceInfoByName(spec.interfaceName);
@@ -798,9 +797,8 @@ function expandDataProviderOptionChildren(
         return;
     }
 
-    // Render provider-specific branches as array items in the left sidebar,
-    // analogous to how `series` options are presented in Core docs.
-    nodeDoclet.supportsArray = true;
+    // Data is a single object with providerType discriminator, not an array.
+    // Do not set supportsArray – render as { providerType: 'local', ... } etc.
 
     for (const provider of optionInterfaces) {
         if (provider.interfaceInfo.kind !== 'Interface') {
@@ -1430,6 +1428,27 @@ function autoCompleteGridInfos(): void {
                 }
             }
         }
+    }
+}
+
+
+/**
+ * Convert a code entity name to the grid option tree node name.
+ *
+ * Real option keys declared as properties/variables must keep their source
+ * name verbatim, while interface/type-style names still use the Grid
+ * `...Options` normalization.
+ */
+function getGridTreeNodeName(
+    info: TSLib.CodeInfo,
+    name: string
+): string {
+    switch (info.kind) {
+        case 'Property':
+        case 'Variable':
+            return name;
+        default:
+            return getGridOptionName(name);
     }
 }
 

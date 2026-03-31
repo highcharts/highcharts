@@ -3,7 +3,7 @@
  *  Arc diagram module
  *
  *  (c) 2018-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -75,14 +75,12 @@ class ArcDiagramPoint extends SankeyPoint {
      *
      * */
 
-    /* eslint-disable valid-jsdoc */
 
     public isValid(): boolean {
         // No null points here
         return true;
     }
 
-    /* eslint-enable valid-jsdoc */
 
 }
 

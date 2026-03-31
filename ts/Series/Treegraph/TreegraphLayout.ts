@@ -1,7 +1,7 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Pawel Lysy Grzegorz Blachlinski
+ *  Author: Paweł Lysy Grzegorz Blachliński
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -267,7 +267,7 @@ class TreegraphLayout {
     /**
      * The core of the algorithm. The new subtree is combined with the previous
      * subtrees. Threads are used to traverse the inside and outside contours of
-     * the left and right subtree up to the highest common level. The vertecies
+     * the left and right subtree up to the highest common level. The vertices
      * are left(right)Int(Out)node where Int means internal and Out means
      * outernal. For summing up the modifiers along the contour we use the
      * `left(right)Int(Out)mod` variable. Whenever two nodes of the inside

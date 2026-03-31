@@ -174,13 +174,12 @@ declare module '../../Core/Series/SeriesOptions'{
  *
  * */
 
-/* eslint-disable valid-jsdoc */
 
 /**
  * Set a new option on a root prop, where the option is defined as an array of
  * suboptions.
  * @private
- * @param root
+ * @param {Record<string, *>} root
  * @param {Array<string>} optionAsArray
  * @param {*} val
  * @return {void}

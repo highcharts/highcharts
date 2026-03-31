@@ -3,7 +3,7 @@
  *  Sankey diagram module
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -58,7 +58,7 @@ export interface SankeySeriesLevelOptions {
     /**
      * Can set `color` on all nodes which lay on the same level.
      *
-     * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @type {Highcharts.ColorType}
      *
      * @apioption plotOptions.sankey.levels.color
      */
@@ -105,7 +105,7 @@ export interface SankeySeriesNodeOptions {
     /**
      * The color of the auto generated node.
      *
-     * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @type {Highcharts.ColorType}
      *
      * @product highcharts
      */
@@ -125,7 +125,7 @@ export interface SankeySeriesNodeOptions {
 
     /**
      * An optional column index of where to place the node. The default
-     * behaviour is to place it next to the preceding node. Note that this
+     * behavior is to place it next to the preceding node. Note that this
      * option name is counter intuitive in inverted charts, like for example an
      * organization chart rendered top down. In this case the "columns" are
      * horizontal.
@@ -167,9 +167,9 @@ export interface SankeySeriesNodeOptions {
     id?: string;
 
     /**
-     * An optional level index of where to place the node. The default behaviour
+     * An optional level index of where to place the node. The default behavior
      * is to place it next to the preceding node. Alias of `nodes.column`, but
-     * in inverted sankeys and org charts, the levels are laid out as rows.
+     * in inverted sankey and org chart, the levels are laid out as rows.
      *
      * @since 7.1.0
      *

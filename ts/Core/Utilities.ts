@@ -1,7 +1,7 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -94,7 +94,7 @@ export function error(
         // Else ...
         if (
             win.console &&
-            error.messages.indexOf(message) === -1 // Prevent console flooting
+            error.messages.indexOf(message) === -1 // Prevent console floating
         ) {
             console.warn(message); // eslint-disable-line no-console
         }
@@ -281,6 +281,7 @@ if ((win as any).jQuery) {
      * @external JQuery
      */
 
+    /* eslint-disable jsdoc/check-param-names */
     /**
      * Helper function to return the chart of the current JQuery selector
      * element.
@@ -329,6 +330,7 @@ if ((win as any).jQuery) {
             return charts[(attr(this[0], 'data-highcharts-chart') as any)];
         }
     };
+    /* eslint-enable jsdoc/check-param-names */
 }
 
 export interface ErrorMessageEventObject {
@@ -412,7 +414,7 @@ export interface ErrorMessageEventObject {
  *//**
  * Radius of the element border.
  * @name Highcharts.CSSObject#borderRadius
- * @type {number|undefined}
+ * @type {string|undefined}
  *//**
  * Color used in the element. The 'contrast' option is a Highcharts custom
  * property that results in black or white, depending on the background of the
@@ -431,7 +433,7 @@ export interface ErrorMessageEventObject {
  *//**
  * Font size of the element text.
  * @name Highcharts.CSSObject#fontSize
- * @type {string|undefined}
+ * @type {number|string|undefined}
  *//**
  * Font weight of the element text.
  * @name Highcharts.CSSObject#fontWeight
@@ -458,7 +460,7 @@ export interface ErrorMessageEventObject {
  * @name Highcharts.CSSObject#padding
  * @type {string|undefined}
  *//**
- * Behaviour of the element when the mouse cursor rests over it.
+ * Behavior of the element when the mouse cursor rests over it.
  * @name Highcharts.CSSObject#pointerEvents
  * @type {string|undefined}
  *//**
@@ -538,6 +540,11 @@ export interface ErrorMessageEventObject {
  * @param {Highcharts.Dictionary<*>|Event} [eventArguments]
  *        Event arguments.
  *
+ * @param {T} [ctx]
+ *        Since v12.5.0, the callback context is passed as the last argument,
+ *        so arrow functions can access the same context as regular functions
+ *        using `this`.
+ *
  * @return {boolean|void}
  */
 
@@ -567,6 +574,11 @@ export interface ErrorMessageEventObject {
  *
  * @param {T} this
  *        Context to format
+ *
+ * @param {T} [ctx]
+ *        Since v12.5.0, the callback context is passed as an extra argument,
+ *        so arrow functions can access the same context as regular functions
+ *        using `this`.
  *
  * @return {string}
  *         Formatted text

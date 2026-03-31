@@ -1,7 +1,7 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -270,9 +270,11 @@ class StackItem {
             options = this.options,
             formatOption = options.format,
             // Format the text in the label.
-            str = formatOption ?
-                format(formatOption, this, chart) :
-                (options.formatter as any).call(this);
+            str = (
+                formatOption ?
+                    format(formatOption, this, chart) :
+                    options.formatter?.call(this, this)
+            ) || '';
 
         // Change the text to reflect the new total and set visibility to hidden
         // in case the series is hidden
@@ -295,7 +297,7 @@ class StackItem {
             const attr: SVGAttributes = {
                 r: options.borderRadius || 0,
                 text: str,
-                // Set default padding to 5 as it is in datalabels #12308
+                // Set default padding to 5 as it is in dataLabels #12308
                 padding: pick(options.padding, 5),
                 visibility: 'hidden' // Hidden until setOffset is called
             };
@@ -424,9 +426,6 @@ class StackItem {
      * of the dataLabel. This is necessary to make the stackDataLabel work with
      * core methods like `SVGLabel.adjust` and `Series.justifyDataLabel`.
      * @internal
-     * @param AdjustStackPositionProps
-     * @return {{x: number, y: number}}
-     * Adjusted BBox position of the stack.
      */
     public adjustStackPosition({
         labelBox,

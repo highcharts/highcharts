@@ -1,7 +1,7 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -196,14 +196,14 @@ const NavigatorDefaults: NavigatorOptions = {
         /**
          * The fill for the handle.
          *
-         * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @type    {Highcharts.ColorType}
          */
         backgroundColor: 'var(--highcharts-neutral-color-5)',
 
         /**
          * The stroke for the handle border and the stripes inside.
          *
-         * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @type    {Highcharts.ColorType}
          */
         borderColor: 'var(--highcharts-neutral-color-40)'
     },
@@ -220,7 +220,7 @@ const NavigatorDefaults: NavigatorOptions = {
      * @sample {highstock} stock/navigator/maskfill/
      *         Blue, semi transparent mask
      *
-     * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @type    {Highcharts.ColorType}
      * @default rgba(102,133,194,0.3)
      * @apioption navigator.maskFill
      */
@@ -232,7 +232,7 @@ const NavigatorDefaults: NavigatorOptions = {
      * @sample {highstock} stock/navigator/outline/
      *         2px blue outline
      *
-     * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @type    {Highcharts.ColorType}
      * @default #cccccc
      */
     outlineColor: 'var(--highcharts-neutral-color-40)',
@@ -381,7 +381,7 @@ const NavigatorDefaults: NavigatorOptions = {
         /**
          * Sets the fill color of the navigator series.
          *
-         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @type      {Highcharts.ColorType}
          * @apioption navigator.series.color
          */
 

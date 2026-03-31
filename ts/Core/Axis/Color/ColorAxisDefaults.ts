@@ -1,7 +1,7 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -132,7 +132,7 @@ const colorAxisDefaults: DeepPartial<ColorAxisOptions> = {
      * @sample {highmaps} maps/demo/data-class-two-ranges/
      *         Explicit colors
      *
-     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @type      {Highcharts.ColorType}
      * @product   highcharts highstock highmaps
      * @apioption colorAxis.dataClasses.color
      */
@@ -245,7 +245,7 @@ const colorAxisDefaults: DeepPartial<ColorAxisOptions> = {
      * @sample {highmaps} maps/coloraxis/gridlines/
      *         Grid lines demonstrated
      *
-     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @type      {Highcharts.ColorType}
      * @product   highcharts highstock highmaps
      */
     gridLineColor: 'var(--highcharts-background-color)',
@@ -330,7 +330,7 @@ const colorAxisDefaults: DeepPartial<ColorAxisOptions> = {
         /**
          * The color of the marker.
          *
-         * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @type    {Highcharts.ColorType}
          * @product highcharts highstock highmaps
          */
         color: 'var(--highcharts-neutral-color-40)'
@@ -379,7 +379,7 @@ const colorAxisDefaults: DeepPartial<ColorAxisOptions> = {
      * @sample {highmaps} maps/coloraxis/mincolor-maxcolor-dataclasses/
      *         On data classes
      *
-     * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @type    {Highcharts.ColorType}
      * @product highcharts highstock highmaps
      */
     minColor: 'var(--highcharts-highlight-color-10)',
@@ -399,7 +399,7 @@ const colorAxisDefaults: DeepPartial<ColorAxisOptions> = {
      * @sample {highmaps} maps/coloraxis/mincolor-maxcolor-dataclasses/
      *         On data classes
      *
-     * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @type    {Highcharts.ColorType}
      * @product highcharts highstock highmaps
      */
     maxColor: 'var(--highcharts-highlight-color-100)',

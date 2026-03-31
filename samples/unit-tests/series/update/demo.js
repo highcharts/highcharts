@@ -552,6 +552,27 @@ QUnit.test('Series.update and events', assert => {
         1,
         'The new click event option should take over'
     );
+
+
+    let arrowFunctionWorks = false;
+    chart.series[0].update({
+        events: {
+            mouseOver: (e, ctx) => {
+                arrowFunctionWorks = (
+                    (e && ctx && true) || false
+                );
+            }
+        }
+    });
+
+    const controller3 = new TestController(chart);
+    controller3.moveTo(100, 130);
+
+    assert.strictEqual(
+        arrowFunctionWorks,
+        true,
+        'Arrow-function callbacks should be called with context'
+    );
 });
 
 QUnit.test('Series.update and setData', function (assert) {

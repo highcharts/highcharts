@@ -1,7 +1,7 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -55,7 +55,7 @@ export interface PlotBandLabelOptions {
      * Whether or not the label can be hidden if it overlaps with another label.
      *
      * @sample {highcharts} highcharts/xaxis/plotbands-label-allowoverlap/
-     *         A Plotband label overlapping another
+     *         A plot band label overlapping another
      *
      * @default undefined
      * @since   11.4.8
@@ -83,7 +83,9 @@ export interface PlotBandLabelOptions {
     /**
      * Callback JavaScript function to format the label. Useful properties like
      * the value of plot line or the range of plot band (`from` & `to`
-     * properties) can be found in `this.options` object.
+     * properties) can be found in `this.options` object. Since v12.5.0, the
+     * callback also receives `ctx` as the first argument, so that arrow
+     * functions can access the same context as regular functions using `this`.
      *
      * @sample {highcharts} highcharts/xaxis/plotlines-plotbands-label-formatter
      *         Label formatters for plot line and plot band.

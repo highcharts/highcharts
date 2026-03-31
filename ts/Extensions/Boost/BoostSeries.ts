@@ -1625,7 +1625,7 @@ function wrapSeriesGetExtremes(
 
 /**
  * If the series is a heatmap or treemap, or if the series is not boosting
- * do the default behaviour. Otherwise, process if the series has no
+ * do the default behavior. Otherwise, process if the series has no
  * extremes.
  * @internal
  */
@@ -1647,7 +1647,7 @@ function wrapSeriesProcessData(
                 !series.is('heatmap');
         // If there are no extremes given in the options, we also need to
         // process the data to read the data extremes. If this is a heatmap,
-        // do default behaviour.
+        // do default behavior.
         if (
             // First pass with options.data:
             !getSeriesBoosting(series, dataToMeasure) ||

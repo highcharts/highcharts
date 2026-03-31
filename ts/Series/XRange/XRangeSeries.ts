@@ -3,7 +3,7 @@
  *  X-range series module
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi, Lars A. V. Cabrera
+ *  Author: Torstein Hønsi, Lars A. V. Cabrera
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -311,10 +311,7 @@ class XRangeSeries extends ColumnSeries {
             borderWidth = pick(options.borderWidth, 1);
 
         let widthDifference,
-            partialFill: (
-                XRangePointPartialFillOptions|
-                undefined
-            ),
+            partialFill: number | XRangePointPartialFillOptions,
             yOffset = metrics.offset,
             pointHeight = Math.round(metrics.width),
             dlLeft,
@@ -441,22 +438,22 @@ class XRangeSeries extends ColumnSeries {
         );
 
         // Add a partShapeArgs to the point, based on the shapeArgs property
-        partialFill = point.partialFill;
+        partialFill = point.partialFill ?? 0;
         if (partialFill) {
         // Get the partial fill amount
             if (isObject(partialFill)) {
-                partialFill = partialFill.amount as any;
+                partialFill = partialFill.amount || 0;
             }
             // If it was not a number, assume 0
             if (!isNumber(partialFill)) {
-                partialFill = 0 as any;
+                partialFill = 0;
             }
 
             point.partShapeArgs = merge(shapeArgs);
 
             clipRectWidth = Math.max(
                 Math.round(
-                    length * (partialFill as any) + (point.plotX as any) -
+                    length * partialFill + (point.plotX as any) -
                     plotX
                 ),
                 0

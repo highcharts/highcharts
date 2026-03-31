@@ -4,7 +4,7 @@
  *  This module is included in Highcharts.
  *
  *  (c) 2009-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -186,7 +186,7 @@ function chartHideOverlappingLabels(
                     if (isPolygonOverlap(box1Poly, box2Poly)) {
                         toHide = true;
                     }
-                // If there are no polygons, evaluate rectangles coliding
+                // If there are no polygons, evaluate rectangles colliding
                 } else if (isIntersectRect(box1, box2)) {
                     toHide = true;
                 }

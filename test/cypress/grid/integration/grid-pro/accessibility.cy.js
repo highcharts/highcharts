@@ -1,6 +1,6 @@
 describe('Screen reader sections.', () => {
     before(() => {
-        cy.visit('grid-lite/demo/your-first-grid');
+        cy.visit('grid-lite/demo/minimal-grid');
     });
 
     it('Before-Grid screen reader section should be rendered.', () => {

@@ -1,7 +1,7 @@
 /* *
  *
  *  (c) 2009-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -532,7 +532,10 @@ function drawSeriesLabels(chart: Chart): void {
                 if (typeof labelOptions.format === 'string') {
                     labelText = format(labelOptions.format, series, chart);
                 } else if (labelOptions.formatter) {
-                    labelText = labelOptions.formatter.call(series);
+                    labelText = labelOptions.formatter.call(
+                        series,
+                        series
+                    );
                 }
 
                 series.labelBySeries = label = chart.renderer

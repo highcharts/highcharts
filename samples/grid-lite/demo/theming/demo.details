@@ -1,0 +1,14 @@
+---
+name: Theming
+authors:
+  - Stian Totland
+js_wrap: b
+alt_text: >-
+  Theming and styling a data grid
+tags:
+  - Highcharts Grid demo
+categories:
+  - General:
+        priority: 40
+use_png_thumbnail: true
+...

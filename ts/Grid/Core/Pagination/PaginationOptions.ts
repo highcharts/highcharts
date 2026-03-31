@@ -1,7 +1,7 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -177,7 +177,7 @@ export interface PaginationOptions {
     /**
      * Alignment of the pagination elements within the wrapper.
      */
-    alignment?: 'left' | 'center' | 'right' | 'distributed';
+    align?: 'left' | 'center' | 'right' | 'distributed';
 
     /**
      * Controls options for pagination UI elements.

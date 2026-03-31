@@ -3,7 +3,7 @@
  *  Dependency wheel module
  *
  *  (c) 2018-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -106,7 +106,7 @@ const DependencyWheelSeriesDefaults: DependencyWheelSeriesOptions = {
 
     /**
      * The center of the wheel relative to the plot area. Can be
-     * percentages or pixel values. The default behaviour is to
+     * percentages or pixel values. The default behavior is to
      * center the wheel inside the plot area.
      *
      * @type    {Array<number|string|null>}

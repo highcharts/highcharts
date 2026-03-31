@@ -1,0 +1,1 @@
+Verify drag drag action on the y-axis changes extremes. Verify both panes.

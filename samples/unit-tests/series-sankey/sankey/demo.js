@@ -183,7 +183,8 @@ QUnit.test('Sankey nodeFormat, nodeFormatter', function (assert) {
         ]
     });
 
-    var series = chart.series[0];
+    var nodeFormatterCtx,
+        series = chart.series[0];
 
     // Defaults
     assert.strictEqual(
@@ -213,7 +214,8 @@ QUnit.test('Sankey nodeFormat, nodeFormatter', function (assert) {
             }
         },
         tooltip: {
-            nodeFormatter: function () {
+            nodeFormatter: (pointFormat, ctx) => {
+                nodeFormatterCtx = ctx;
                 return 'Foo';
             }
         }
@@ -235,6 +237,11 @@ QUnit.test('Sankey nodeFormat, nodeFormatter', function (assert) {
         chart.tooltip.label.text.textStr.indexOf('Foo'),
         -1,
         'Tooltip ok'
+    );
+    assert.strictEqual(
+        nodeFormatterCtx,
+        series.nodes[0],
+        'Tooltip nodeFormatter got node ctx as the last argument'
     );
 
     series.update({

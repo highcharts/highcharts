@@ -66,9 +66,6 @@ import { attr, pick, replaceNested } from '../../Shared/Utilities.js';
  *
  * */
 
-/* eslint-disable valid-jsdoc */
-
-
 /**
  * @private
  */
@@ -161,6 +158,7 @@ function buildTypeDescriptionFromSeries(
  *
  * @private
  * @function Highcharts.Chart#getTypeDescription
+ * @param {Highcharts.Chart} chart The associated Chart instance.
  * @param {Array<string>} types The series types in this chart.
  * @return {string} The text description of the chart type.
  */
@@ -245,9 +243,6 @@ class InfoRegionsComponent extends AccessibilityComponent {
      *
      * */
 
-    /* eslint-disable valid-jsdoc */
-
-
     /**
      * Init the component
      * @private
@@ -310,11 +305,11 @@ class InfoRegionsComponent extends AccessibilityComponent {
                     chart: Accessibility.ChartComposition
                 ): string {
                     const formatter: (
-                        ScreenReaderFormatterCallbackFunction<Chart>|undefined
+                        ScreenReaderFormatterCallbackFunction<Chart, InfoRegionsComponent>|undefined
                     ) = accessibilityOptions.screenReaderSection
                         .beforeChartFormatter;
-                    return formatter ? formatter(chart) :
-                        (component.defaultBeforeChartFormatter as any)(chart);
+                    return formatter ? formatter(chart, component) :
+                        component.defaultBeforeChartFormatter();
                 },
                 insertIntoDOM: function (
                     el: HTMLDOMElement,
@@ -343,7 +338,7 @@ class InfoRegionsComponent extends AccessibilityComponent {
                 ): string {
                     const formatter = accessibilityOptions.screenReaderSection
                         .afterChartFormatter;
-                    return formatter ? formatter(chart) :
+                    return formatter ? formatter(chart, component) :
                         component.defaultAfterChartFormatter();
                 },
                 insertIntoDOM: function (
@@ -773,7 +768,7 @@ class InfoRegionsComponent extends AccessibilityComponent {
                 );
 
                 (onPlayAsSoundClick || defaultHandler).call(
-                    this, e, chart as Accessibility.ChartComposition
+                    this, e, chart as Accessibility.ChartComposition, this
                 );
             };
         }

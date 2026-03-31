@@ -48,7 +48,7 @@ const BubbleLegendDefaults: BubbleLegendItem.Options = {
      * @sample highcharts/bubble-legend/bordercolor/
      *         Individual bubble border color
      *
-     * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @type {Highcharts.ColorType}
      */
     borderColor: void 0,
     /**
@@ -76,7 +76,7 @@ const BubbleLegendDefaults: BubbleLegendItem.Options = {
      * @sample highcharts/bubble-legend/color/
      *         Individual bubble color
      *
-     * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @type {Highcharts.ColorType}
      */
     color: void 0,
     /**
@@ -94,7 +94,7 @@ const BubbleLegendDefaults: BubbleLegendItem.Options = {
      * The color of the connector, can be also defined
      * for an individual range.
      *
-     * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @type {Highcharts.ColorType}
      */
     connectorColor: void 0,
     /**
@@ -226,17 +226,17 @@ const BubbleLegendDefaults: BubbleLegendItem.Options = {
         value: void 0,
         /**
          * The color of the border for individual range.
-         * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @type {Highcharts.ColorType}
          */
         borderColor: void 0,
         /**
          * The color of the bubble for individual range.
-         * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @type {Highcharts.ColorType}
          */
         color: void 0,
         /**
          * The color of the connector for individual range.
-         * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @type {Highcharts.ColorType}
          */
         connectorColor: void 0
     } as any,

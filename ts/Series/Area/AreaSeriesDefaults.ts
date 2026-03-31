@@ -1,7 +1,7 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -67,7 +67,7 @@ const AreaSeriesDefaults: AreaSeriesOptions = {
      * @sample {highcharts} highcharts/plotoptions/area-fillcolor-gradient/
      *         Gradient
      *
-     * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @type {Highcharts.ColorType}
      * @product   highcharts highstock
      * @apioption plotOptions.area.fillColor
      */
@@ -106,7 +106,7 @@ const AreaSeriesDefaults: AreaSeriesOptions = {
      * @sample {highcharts} highcharts/plotoptions/area-linecolor/
      *         Dark gray line
      *
-     * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @type {Highcharts.ColorType}
      * @product   highcharts highstock
      * @apioption plotOptions.area.lineColor
      */
@@ -123,7 +123,7 @@ const AreaSeriesDefaults: AreaSeriesOptions = {
      * @sample {highcharts} highcharts/css/series-negative-color/
      *         Negative color in styled mode
      *
-     * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @type {Highcharts.ColorType}
      * @since     3.0
      * @product   highcharts
      * @apioption plotOptions.area.negativeFillColor

@@ -2,7 +2,7 @@
 const { merge } = Grid;
 
 const config = {
-    dataTable: {
+    data: {
         columns: {
             ID: [1, 2, 3, 4, 5],
             Name: ['John', 'Alex', 'Chris', 'Katie', 'Jane'],

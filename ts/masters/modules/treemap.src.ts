@@ -5,7 +5,7 @@
  * @requires highcharts
  *
  * (c) 2014-2026 Highsoft AS
- * Authors: Jon Arild Nygard / Oystein Moseng
+ * Authors: Jon Arild Nygård / Øystein Moseng
  *
  * A commercial license may be required depending on use.
  * See www.highcharts.com/license

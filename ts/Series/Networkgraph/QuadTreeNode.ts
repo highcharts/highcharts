@@ -293,7 +293,7 @@ class QuadTreeNode {
             plotY = 0;
 
         if (this.isInternal) {
-            // Calculate weightened mass of the quad node:
+            // Calculate weighted mass of the quad node:
             for (const pointMass of this.nodes) {
                 if (!pointMass.isEmpty) {
                     mass += (pointMass.mass as any);

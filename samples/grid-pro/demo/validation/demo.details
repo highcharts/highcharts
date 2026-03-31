@@ -1,7 +1,7 @@
 ---
 name: Grid validation
 authors:
-  - Karol Kolodziej
+  - Karol Kołodziej
 js_wrap: b
 tags:
   - Highcharts Grid demo

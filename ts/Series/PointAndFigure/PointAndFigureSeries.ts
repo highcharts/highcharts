@@ -1,7 +1,7 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Kamil Musialowski
+ *  Author: Kamil Musiałowski
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -19,7 +19,7 @@
 import PointAndFigurePoint from './PointAndFigurePoint.js';
 import PointAndFigureSeriesDefaults from './PointAndFigureSeriesDefaults.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-import PointAndFigureSymbols from './PointAndFigureSymbols.js';
+import CrossSymbol from '../CrossSymbol.js';
 
 import type Point from '../../Core/Series/Point.js';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes.js';
@@ -96,7 +96,7 @@ class PointAndFigureSeries extends ScatterSeries {
         SVGRendererClass: typeof SVGRenderer
     ): void {
         if (pushUnique(composed, 'pointandfigure')) {
-            PointAndFigureSymbols.compose(SVGRendererClass);
+            CrossSymbol.compose(SVGRendererClass);
         }
     }
 

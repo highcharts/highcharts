@@ -1,7 +1,7 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -86,7 +86,7 @@ const BoxPlotSeriesDefaults: BoxPlotSeriesOptions = {
      * @sample {highcharts} highcharts/plotoptions/box-plot-styling/
      *         Box plot styling
      *
-     * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @type    {Highcharts.ColorType}
      * @default #ffffff
      * @since   3.0
      * @product highcharts
@@ -124,7 +124,7 @@ const BoxPlotSeriesDefaults: BoxPlotSeriesOptions = {
      * @sample {highcharts} highcharts/plotoptions/error-bar-styling/
      *         Error bar styling
      *
-     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject}
+     * @type      {Highcharts.ColorType}
      * @since     3.0
      * @product   highcharts
      * @apioption plotOptions.boxplot.medianColor
@@ -172,7 +172,7 @@ const BoxPlotSeriesDefaults: BoxPlotSeriesOptions = {
      * @sample {highcharts} highcharts/plotoptions/error-bar-styling/
      *         Error bar styling
      *
-     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @type      {Highcharts.ColorType}
      * @since     3.0
      * @product   highcharts
      * @apioption plotOptions.boxplot.stemColor
@@ -279,7 +279,7 @@ const BoxPlotSeriesDefaults: BoxPlotSeriesOptions = {
      * @sample {highcharts} highcharts/css/boxplot/
      *         Box plot in styled mode
      *
-     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @type      {Highcharts.ColorType}
      * @since     3.0
      * @product   highcharts
      * @apioption plotOptions.boxplot.whiskerColor

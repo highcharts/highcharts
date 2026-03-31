@@ -133,7 +133,7 @@ class SupertrendIndicator extends SMAIndicator {
          * @sample {highstock} stock/indicators/supertrend/
          *         Example with risingTrendColor
          *
-         * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @type {Highcharts.ColorType}
          */
         risingTrendColor: 'var(--highcharts-positive-color)',
         /**
@@ -142,7 +142,7 @@ class SupertrendIndicator extends SMAIndicator {
          * @sample {highstock} stock/indicators/supertrend/
          *         Example with fallingTrendColor
          *
-         * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @type {Highcharts.ColorType}
          */
         fallingTrendColor: 'var(--highcharts-negative-color)',
         /**
@@ -249,7 +249,7 @@ class SupertrendIndicator extends SMAIndicator {
             // Points offset between lines
             tempOffset: number = mainLinePoints.length - indicPoints.length,
             offset: number = tempOffset > 0 ? tempOffset : 0,
-            // @todo: fix when ichi-moku indicator is merged to master.
+            // @todo: fix when ichimoku indicator is merged to master.
             gappedExtend: SupertrendGappedExtensionObject = {
                 options: {
                     gapSize: indicOptions.gapSize

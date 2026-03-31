@@ -7,7 +7,7 @@
  *
  *
  *  Authors:
- *  - Karol Kolodziej
+ *  - Karol Kołodziej
  *  - Kamil Kubik
  *
  * */
