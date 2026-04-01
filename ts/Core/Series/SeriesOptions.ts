@@ -958,6 +958,12 @@ export interface SeriesOptions {
 
     /**
      * A collection of options for different series states.
+     *
+     * Each state object (`hover`, `inactive`, `normal`, `select`) supports the
+     * options documented for that state, and may also include any other option
+     * from this series type except `data` and nested `states`. Those extra
+     * options override the base series options while the series is in that
+     * state.
      */
     states?: SeriesStatesOptions<SeriesOptions>;
 
@@ -1315,6 +1321,12 @@ export interface SeriesStateSelectOptions extends StateSelectOptions {
     enabled?: boolean;
 }
 
+/**
+ * Options for the different series states. In addition to each state's
+ * documented members, every state object accepts a deep partial of the parent
+ * series options (except `data` and nested `states`), so series-level visuals
+ * such as `lineWidth`, `color`, or pie `borderWidth` can be set per state.
+ */
 export interface SeriesStatesOptions<T extends SeriesOptions> extends StatesOptions {
     /**
      * Options for the hovered series. These settings override the

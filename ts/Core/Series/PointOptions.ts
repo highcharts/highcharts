@@ -695,6 +695,11 @@ export interface PointMarkerStateNormalOptions extends StateNormalOptions {
     opacity?: number;
 }
 
+/**
+ * Options for marker hover, inactive, normal, and select states. Each state
+ * object supports the documented state options and may also include any other
+ * marker option except nested `states`.
+ */
 export interface PointMarkerStatesOptions<T extends PointMarkerOptions> extends StatesOptions {
     /**
      * The hover state for a single point marker.
