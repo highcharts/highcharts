@@ -1224,7 +1224,6 @@ const seriesDefaults: PlotOptionsOf<Series> = {
          * @declare Highcharts.PointStatesOptionsObject
          *
          * @product highcharts highstock highmaps gantt
-         * @apioption plotOptions.series.marker.states
          */
         states: {
 
@@ -2191,7 +2190,6 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      * @declare Highcharts.SeriesStatesOptionsObject
      *
      * @product highcharts highstock highmaps gantt
-     * @apioption plotOptions.series.states
      */
     states: {
 

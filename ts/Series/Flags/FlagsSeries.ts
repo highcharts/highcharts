@@ -20,6 +20,7 @@
 import type ColorType from '../../Core/Color/ColorType';
 import type { FlagsShapeValue } from './FlagsPointOptions';
 import type FlagsSeriesOptions from './FlagsSeriesOptions';
+import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 
 import FlagsPoint from './FlagsPoint.js';
@@ -30,6 +31,7 @@ const { noop } = H;
 import OnSeriesComposition from '../OnSeriesComposition.js';
 import R from '../../Core/Renderer/RendererUtilities.js';
 const { distribute } = R;
+import { getSeriesStateOptions } from '../../Core/Series/StatesUtilities.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     series: Series,
@@ -407,7 +409,7 @@ class FlagsSeries extends ColumnSeries {
      */
     public pointAttribs(
         point: FlagsPoint,
-        state?: string
+        state?: StatesOptionsKey
     ): SVGAttributes {
         const options = this.options,
             color = (point && point.color) || this.color;
@@ -417,9 +419,12 @@ class FlagsSeries extends ColumnSeries {
             fill = (point && point.fillColor) || options.fillColor;
 
         if (state) {
-            fill = (options.states as any)[state].fillColor;
-            lineColor = (options.states as any)[state].lineColor;
-            lineWidth = (options.states as any)[state].lineWidth;
+            const resolved = getSeriesStateOptions(options.states, state);
+            if (resolved) {
+                fill = resolved.fillColor;
+                lineColor = resolved.lineColor;
+                lineWidth = resolved.lineWidth;
+            }
         }
 
         return {

@@ -29,6 +29,10 @@ import Color from '../../Core/Color/Color.js';
 import ColorMapComposition from '../ColorMapComposition.js';
 import HeatmapPoint from './HeatmapPoint.js';
 import HeatmapSeriesDefaults from './HeatmapSeriesDefaults.js';
+import {
+    getMarkerStateOptions,
+    getSeriesStateOptions
+} from '../../Core/Series/StatesUtilities.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     series: Series,
@@ -370,11 +374,13 @@ class HeatmapSeries extends ScatterSeries {
             const pointMarkerOptions = point.options.marker || {},
                 seriesMarkerOptions = this.options.marker || {},
                 seriesStateOptions = (
-                    seriesMarkerOptions.states?.[state]
-                ) || {},
+                    getMarkerStateOptions(seriesMarkerOptions.states, state) ||
+                    {}
+                ),
                 pointStateOptions = (
-                    pointMarkerOptions.states?.[state]
-                ) || {};
+                    getMarkerStateOptions(pointMarkerOptions.states, state) ||
+                    {}
+                );
 
             // Set new width and height basing on state options.
             const width = (
@@ -447,9 +453,11 @@ class HeatmapSeries extends ScatterSeries {
 
         if (state && state !== 'normal') {
             const stateOptions = merge(
-                seriesOptions.states?.[state],
-                seriesOptions.marker?.states?.[state],
-                point?.options.marker?.states?.[state] || {}
+                getSeriesStateOptions(seriesOptions.states, state) || {},
+                getMarkerStateOptions(seriesOptions.marker?.states, state) ||
+                    {},
+                getMarkerStateOptions(point?.options.marker?.states, state) ||
+                    {}
             );
 
             attr.fill =

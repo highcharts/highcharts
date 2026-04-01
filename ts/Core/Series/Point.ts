@@ -36,6 +36,10 @@ import type SVGLabel from '../Renderer/SVG/SVGLabel';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 import type { SymbolKey } from '../Renderer/SVG/SymbolType';
 
+import {
+    getMarkerStateOptions,
+    getSeriesStateOptions
+} from './StatesUtilities.js';
 import AST from '../Renderer/HTML/AST.js';
 import A from '../Animation/AnimationUtilities.js';
 const { animObject } = A;
@@ -1631,7 +1635,10 @@ class Point {
             series = point.series,
             previousState = point.state,
             stateOptions = (
-                (series.options.states as any)[state || 'normal'] ||
+                getSeriesStateOptions(
+                    series.options.states,
+                    state || 'normal'
+                ) ||
                 {}
             ),
             markerOptions = (
@@ -1641,9 +1648,14 @@ class Point {
                 series.options.marker
             ),
             normalDisabled = (markerOptions && markerOptions.enabled === false),
-            markerStateOptions = markerOptions?.states?.[state || 'normal'] ||
-                {},
-            stateDisabled = (markerStateOptions as any).enabled === false,
+            markerStateOptions = (
+                getMarkerStateOptions(
+                    markerOptions?.states,
+                    state || 'normal'
+                ) ||
+                {}
+            ),
+            stateDisabled = markerStateOptions.enabled === false,
             pointMarker = point.marker || {},
             chart = series.chart,
             hasMarkers = (markerOptions && series.markerAttribs);
@@ -1670,15 +1682,17 @@ class Point {
             (state && (
                 stateDisabled ||
                 (normalDisabled &&
-                (markerStateOptions as any).enabled === false)
+                markerStateOptions.enabled === false)
             )) ||
 
             // Individual point marker's state options is disabled
             (
                 state &&
                 pointMarker.states &&
-                (pointMarker.states as any)[state] &&
-                (pointMarker.states as any)[state].enabled === false
+                getMarkerStateOptions(
+                    pointMarker.states,
+                    state
+                )?.enabled === false
             ) // #1610
 
         ) {
@@ -1704,10 +1718,10 @@ class Point {
 
             if (!chart.styledMode) {
                 pointAttribs = series.pointAttribs(point, state);
-                pointAttribsAnimation = pick(
+                pointAttribsAnimation = animObject(pick(
                     chart.options.chart.animation,
                     stateOptions.animation
-                );
+                ));
                 const opacity = pointAttribs.opacity;
 
                 // Some inactive points (e.g. slices in pie) should apply
@@ -1744,8 +1758,8 @@ class Point {
                     pick(
                         // Turn off globally:
                         chart.options.chart.animation,
-                        (markerStateOptions as any).animation,
-                        (markerOptions as any).animation
+                        markerStateOptions.animation,
+                        markerOptions?.animation
                     )
                 );
             }
@@ -1818,7 +1832,12 @@ class Point {
         }
 
         // Show me your halo
-        const haloOptions = stateOptions.halo;
+        const haloRaw = stateOptions.halo,
+            haloOptions = (
+                haloRaw && typeof haloRaw === 'object' ?
+                    haloRaw :
+                    void 0
+            );
         const markerGraphic = (point.graphic || stateMarkerGraphic);
         const markerVisibility = markerGraphic?.visibility || 'inherit';
 

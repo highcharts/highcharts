@@ -18,18 +18,24 @@
  * */
 
 import type BBoxObject from '../../Core/Renderer/BBoxObject';
+import type ColorType from '../../Core/Color/ColorType';
 import type Chart from '../../Core/Chart/Chart';
 import type ColumnMetricsObject from './ColumnMetricsObject';
 import type ColumnPoint from './ColumnPoint';
 import type ColumnSeriesOptions from './ColumnSeriesOptions';
 import type DashStyleValue from '../../Core/Renderer/DashStyleValue';
 import type PointerEvent from '../../Core/PointerEvent';
-import type { SeriesStateHoverOptions } from '../../Core/Series/SeriesOptions';
+import type { SeriesAnyStateOptions } from '../../Core/Series/SeriesOptions';
 import type StackItem from '../../Core/Axis/Stacking/StackItem';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
+import {
+    getMarkerStateOptions,
+    getSeriesStateOptions,
+    getSeriesStateVisual
+} from '../../Core/Series/StatesUtilities.js';
 import A from '../../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
 import Color from '../../Core/Color/Color.js';
@@ -678,7 +684,7 @@ class ColumnSeries extends Series {
             strokeOption = p2o.stroke || 'borderColor',
             strokeWidthOption = p2o['stroke-width'] || 'borderWidth';
 
-        let stateOptions: SeriesStateHoverOptions,
+        let stateOptions: SeriesAnyStateOptions<ColumnSeriesOptions>,
             zone,
             brightness,
             fill = (point && point.color) || this.color,
@@ -718,10 +724,10 @@ class ColumnSeries extends Series {
         // Select or hover states
         if (state && point) {
             stateOptions = merge(
-                (options.states as any)[state],
+                getSeriesStateOptions(options.states, state) || {},
                 // #6401
-                point.options.states?.[state] || {}
-            );
+                getMarkerStateOptions(point.options.states, state) || {}
+            ) as SeriesAnyStateOptions<ColumnSeriesOptions>;
             brightness = stateOptions.brightness;
             fill =
                 stateOptions.color || (
@@ -730,9 +736,18 @@ class ColumnSeries extends Series {
                         .brighten(stateOptions.brightness as any)
                         .get()
                 ) || fill;
-            stroke = (stateOptions as any)[strokeOption] || stroke;
-            strokeWidth =
-                (stateOptions as any)[strokeWidthOption] || strokeWidth;
+            stroke = (
+                getSeriesStateVisual(
+                    stateOptions,
+                    strokeOption as keyof ColumnSeriesOptions
+                ) as (ColorType|undefined)
+            ) || stroke;
+            strokeWidth = (
+                getSeriesStateVisual(
+                    stateOptions,
+                    strokeWidthOption as keyof ColumnSeriesOptions
+                ) as (number|undefined)
+            ) || strokeWidth;
             dashstyle = stateOptions.dashStyle || dashstyle;
             opacity = pick(stateOptions.opacity, opacity);
         }

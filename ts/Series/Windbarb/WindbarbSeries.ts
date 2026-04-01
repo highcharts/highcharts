@@ -28,6 +28,7 @@ import type WindbarbSeriesOptions from './WindbarbSeriesOptions';
 
 import A from '../../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
+import { getSeriesStateOptions } from '../../Core/Series/StatesUtilities.js';
 import ApproximationRegistry from '../../Extensions/DataGrouping/ApproximationRegistry.js';
 import H from '../../Core/Globals.js';
 import OnSeriesComposition from '../OnSeriesComposition.js';
@@ -145,10 +146,13 @@ class WindbarbSeries extends ColumnSeries {
             strokeWidth = this.options.lineWidth;
 
         if (state) {
-            stroke = (options.states as any)[state].color || stroke;
-            strokeWidth =
-            ((options.states as any)[state].lineWidth || strokeWidth) +
-            ((options.states as any)[state].lineWidthPlus || 0);
+            const resolved = getSeriesStateOptions(options.states, state);
+            if (resolved) {
+                stroke = resolved.color || stroke;
+                strokeWidth =
+                    (resolved.lineWidth ?? strokeWidth ?? 0) +
+                    (resolved.lineWidthPlus || 0);
+            }
         }
 
         return {

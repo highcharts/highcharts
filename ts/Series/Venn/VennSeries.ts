@@ -56,6 +56,7 @@ const {
 import DPU from '../DrawPointUtilities.js';
 import GU from '../../Core/Geometry/GeometryUtilities.js';
 const { getCenterOfPoints } = GU;
+import { getSeriesStateOptions } from '../../Core/Series/StatesUtilities.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     scatter: ScatterSeries
@@ -513,7 +514,8 @@ class VennSeries extends ScatterSeries {
             seriesOptions = series.options || {},
             pointOptions = point?.options || {},
             stateOptions =
-                (state && (seriesOptions.states as any)[state as any]) || {},
+                (state && getSeriesStateOptions(seriesOptions.states, state)) ||
+                {},
             options = merge(
                 seriesOptions,
                 { color: point?.color },
@@ -695,7 +697,13 @@ addEvent(VennSeries, 'afterSetOptions', function (
             const state of
             Object.keys(states) as unknown as Array<keyof typeof states>
         ) {
-            (states as any)[state].halo = false;
+            const slice = getSeriesStateOptions(
+                states,
+                state as StatesOptionsKey
+            );
+            if (slice) {
+                slice.halo = false;
+            }
         }
     }
 });

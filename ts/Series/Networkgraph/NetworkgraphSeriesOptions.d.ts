@@ -51,6 +51,9 @@ import type {
 
 declare module '../../Core/Series/SeriesOptions' {
     interface SeriesStateInactiveOptions {
+        /** @requires modules/networkgraph */
+        linkColor?: ColorType;
+        linkDashStyle?: DashStyleValue;
         linkOpacity?: number;
     }
 }

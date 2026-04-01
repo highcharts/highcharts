@@ -46,6 +46,7 @@ const {
     composed,
     noop
 } = H;
+import { getSeriesStateOptions } from '../../Core/Series/StatesUtilities.js';
 import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
@@ -1402,7 +1403,7 @@ class TreemapSeries extends ScatterSeries {
             level = point && mapOptionsToLevel[point.node.level] || {},
             options = this.options,
             stateOptions =
-                state && options.states && options.states[state] || {},
+                state && getSeriesStateOptions(options.states, state) || {},
             className = point?.getClassName() || '',
             // Set attributes by precedence. Point trumps level trumps series.
             // Stroke width uses pick because it can be 0.

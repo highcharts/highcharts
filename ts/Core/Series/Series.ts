@@ -58,6 +58,10 @@ import type { SymbolKey } from '../Renderer/SVG/SymbolType';
 import type TooltipOptions from '../TooltipOptions';
 import type Types from '../../Shared/Types';
 
+import {
+    getMarkerStateOptions,
+    getSeriesStateOptions
+} from './StatesUtilities.js';
 import A from '../Animation/AnimationUtilities.js';
 const {
     animObject,
@@ -3027,8 +3031,14 @@ class Series {
 
         // Handle hover and select states
         if (state) {
-            seriesStateOptions = seriesMarkerOptions?.states?.[state];
-            pointStateOptions = pointMarkerOptions.states?.[state];
+            seriesStateOptions = getMarkerStateOptions(
+                seriesMarkerOptions?.states,
+                state
+            );
+            pointStateOptions = getMarkerStateOptions(
+                pointMarkerOptions.states,
+                state
+            );
 
             radius = pick(
                 pointStateOptions?.radius,
@@ -3133,12 +3143,13 @@ class Series {
         state = state || 'normal';
         if (state) {
             seriesStateOptions = (
-                (seriesMarkerOptions as any).states[state] || {}
+                getMarkerStateOptions(seriesMarkerOptions?.states, state) ||
+                {}
             );
             pointStateOptions = (
-                pointMarkerOptions.states &&
-                (pointMarkerOptions.states as any)[state]
-            ) || {};
+                getMarkerStateOptions(pointMarkerOptions.states, state) ||
+                {}
+            );
             strokeWidth = pick(
                 pointStateOptions.lineWidth,
                 seriesStateOptions.lineWidth,
@@ -4888,20 +4899,23 @@ class Series {
 
             if (!series.chart.styledMode) {
 
-                if ((stateOptions as any)[state]?.enabled === false) {
+                const resolvedStateOptions = getSeriesStateOptions(
+                    stateOptions,
+                    state
+                );
+                if (resolvedStateOptions?.enabled === false) {
                     return;
                 }
 
                 if (state) {
                     lineWidth = (
-                        (stateOptions as any)[state].lineWidth ||
-                        lineWidth + (
-                            (stateOptions as any)[state].lineWidthPlus || 0
-                        )
+                        resolvedStateOptions?.lineWidth ||
+                        (lineWidth ?? 0) +
+                        (resolvedStateOptions?.lineWidthPlus || 0)
                     ); // #4035
 
                     opacity = pick(
-                        (stateOptions as any)[state].opacity,
+                        resolvedStateOptions?.opacity,
                         opacity
                     );
                 }

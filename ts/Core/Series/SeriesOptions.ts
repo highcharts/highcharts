@@ -959,11 +959,15 @@ export interface SeriesOptions {
     /**
      * A collection of options for different series states.
      *
-     * Each state object (`hover`, `inactive`, `normal`, `select`) supports the
-     * options documented for that state, and may also include any other option
-     * from this series type except `data` and nested `states`. Those extra
-     * options override the base series options while the series is in that
-     * state.
+     * In addition to the options documented under each state (`hover`,
+     * `inactive`, `normal`, `select`), you can set any option from the parent
+     * series type except `data` and nested `states`. Those values override the
+     * base series options while the series is in that state—for example
+     * `lineWidth` under
+     * [plotOptions.series.states.hover](#plotOptions.series.states.hover), or
+     * `borderColor` and `borderWidth` under
+     * [plotOptions.pie.states.inactive](#plotOptions.pie.states.inactive) for
+     * pie series.
      */
     states?: SeriesStatesOptions<SeriesOptions>;
 
@@ -1322,10 +1326,20 @@ export interface SeriesStateSelectOptions extends StateSelectOptions {
 }
 
 /**
- * Options for the different series states. In addition to each state's
- * documented members, every state object accepts a deep partial of the parent
- * series options (except `data` and nested `states`), so series-level visuals
- * such as `lineWidth`, `color`, or pie `borderWidth` can be set per state.
+ * A collection of options for different series states.
+ *
+ * In addition to the options documented under each state (`hover`,
+ * `inactive`, `normal`, `select`), you can set any option from the parent
+ * series type except `data` and nested `states`. Those values override the
+ * base series options while the series is in that state—for example
+ * `lineWidth` under
+ * [plotOptions.series.states.hover](#plotOptions.series.states.hover), or
+ * `borderColor` and `borderWidth` under
+ * [plotOptions.pie.states.inactive](#plotOptions.pie.states.inactive) for pie
+ * series.
+ *
+ * In TypeScript, each state is typed as the corresponding state interface
+ * intersected with {@link StateGenericOptions} for the series type `T`.
  */
 export interface SeriesStatesOptions<T extends SeriesOptions> extends StatesOptions {
     /**
@@ -1366,6 +1380,23 @@ export interface SeriesStatesOptions<T extends SeriesOptions> extends StatesOpti
      */
     select?: SeriesStateSelectOptions & StateGenericOptions<T>;
 }
+
+/**
+ * Superset type for a resolved series state (one of hover/inactive/normal/
+ * select merged with {@link StateGenericOptions}). Uses partial intersection
+ * so code can read state-specific fields without union narrowing.
+ *
+ * @internal
+ */
+export type SeriesAnyStateOptions<T extends SeriesOptions> = (
+    Partial<
+        SeriesStateHoverOptions &
+        SeriesStateInactiveOptions &
+        SeriesStateNormalOptions &
+        SeriesStateSelectOptions
+    > &
+    StateGenericOptions<T>
+);
 
 export type SeriesStepValue = ('center'|'left'|'right');
 
