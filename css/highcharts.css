@@ -410,6 +410,10 @@ g.highcharts-series,
     opacity: 0.2;
 }
 
+.highcharts-legend-point-active .highcharts-legend-item .highcharts-point {
+    opacity: 1;
+}
+
 /* Series options */
 
 /* Default colors */
@@ -1029,7 +1033,7 @@ input.highcharts-range-selector {
 
 .highcharts-map-series .highcharts-point-hover {
     transition: fill 0ms, fill-opacity 0ms, opacity 0ms;
-    fill-opacity: 0.5;
+    fill-opacity: 1;
 }
 
 .highcharts-mapline-series .highcharts-point {

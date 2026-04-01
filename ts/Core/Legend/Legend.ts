@@ -1757,7 +1757,7 @@ class Legend {
                 [legendItem.group];
 
         // Set activeClass to point for dataClass items, #22891
-        fireEvent(this, 'onSetItemEvents', { item, itemState });
+        fireEvent(this, 'setItemEvents', { item, itemState });
 
         const activeClass = itemState.activeClass || (
             'highcharts-legend-' +

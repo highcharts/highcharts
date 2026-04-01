@@ -140,7 +140,7 @@ namespace ColorAxisComposition {
                 onLegendAfterColorizeItem
             );
             addEvent(LegendClass, 'afterUpdate', onLegendAfterUpdate);
-            addEvent(LegendClass, 'onSetItemEvents', onLegendSetItemEvents);
+            addEvent(LegendClass, 'setItemEvents', onLegendSetItemEvents);
 
             extend(
                 seriesProto,
@@ -289,14 +289,16 @@ namespace ColorAxisComposition {
      */
     function onLegendSetItemEvents(
         this: Legend,
-        e: {
-            item: Legend.Item,
+        {
+            item,
+            itemState
+        }: {
+            item: ColorAxis.LegendItemObject;
             itemState: Record<string, string>;
         }
     ): void {
-        const item = e.item as unknown as ColorAxis.LegendItemObject;
         if (item.isDataClass) {
-            e.itemState.activeClass = 'highcharts-legend-point-active';
+            itemState.activeClass = 'highcharts-legend-point-active';
         }
     }
 

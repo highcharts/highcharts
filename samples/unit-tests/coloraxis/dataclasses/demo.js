@@ -140,7 +140,9 @@ QUnit.test('Data classes - interactions', function (assert) {
         'The shown point should be hovered.'
     );
 
-    assert.strictEqual(
+    test.mouseOver(legendItemX, legendItemY);
+
+    assert.notEqual(
         chart.container
             .querySelector('.highcharts-root')
             .className.baseVal.indexOf('highcharts-legend-point-active'),
