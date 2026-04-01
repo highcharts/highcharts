@@ -372,7 +372,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      * series, or `value` for map series. For example, if the mapping is
      * `{ y: 'Cost' }`, the series name will be `Cost`.
      *
-     * @example
+     * ```js
      * // Shorthand mapping with string
      * dataMapping: {
      *     y: 'Cost'
@@ -388,6 +388,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      *       column: 'Cost'
      *    }
      * }
+     * ```
      *
      * @type    {Highcharts.DataMappingOptionsObject}
      * @sample {highcharts} highcharts/datatable/series-datatable-multiple

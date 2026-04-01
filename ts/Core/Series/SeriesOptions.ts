@@ -598,7 +598,7 @@ export interface SeriesOptions {
      * mapping. In the inline example below, the series name will be `Cost`
      * unless `series.name` is explicitly defined.
      *
-     * @example
+     * ```js
      * // Shorthand mapping with string
      * dataMapping: {
      *     y: 'Cost'
@@ -614,6 +614,8 @@ export interface SeriesOptions {
      *       column: 'Cost'
      *    }
      * }
+     * ```
+     *
      * @type    {Highcharts.DataMappingOptionsObject}
      * @sample {highcharts} highcharts/datatable/series-datatable-multiple
      *         Series with two data tables
