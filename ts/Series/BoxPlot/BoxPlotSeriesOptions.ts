@@ -169,6 +169,8 @@ export interface BoxPlotSeriesOptions extends ColumnSeriesOptions {
      * @sample {highcharts} highcharts/plotoptions/box-plot-styling/
      *         Box plot styling
      *
+     * @type {Highcharts.ColorType}
+     *
      * @default #ffffff
      *
      * @since 3.0
@@ -223,6 +225,8 @@ export interface BoxPlotSeriesOptions extends ColumnSeriesOptions {
      *
      * @sample {highcharts} highcharts/plotoptions/error-bar-styling/
      *         Error bar styling
+     *
+     * @type {Highcharts.ColorType}
      *
      * @since 3.0
      *
@@ -282,6 +286,8 @@ export interface BoxPlotSeriesOptions extends ColumnSeriesOptions {
      *
      * @sample {highcharts} highcharts/plotoptions/error-bar-styling/
      *         Error bar styling
+     *
+     * @type {Highcharts.ColorType}
      *
      * @since 3.0
      *
@@ -370,6 +376,8 @@ export interface BoxPlotSeriesOptions extends ColumnSeriesOptions {
      *
      * @sample {highcharts} highcharts/css/boxplot/
      *         Box plot in styled mode
+     *
+     * @type {Highcharts.ColorType}
      *
      * @since 3.0
      *
