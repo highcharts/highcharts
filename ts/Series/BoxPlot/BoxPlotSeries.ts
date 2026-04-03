@@ -433,4 +433,7 @@ SeriesRegistry.registerSeriesType('boxplot', BoxPlotSeries);
  *
  * */
 
+/**
+ * @internal
+ */
 export default BoxPlotSeries;

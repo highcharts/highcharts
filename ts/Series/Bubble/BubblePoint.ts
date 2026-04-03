@@ -111,4 +111,7 @@ extend(BubblePoint.prototype, {
  *
  * */
 
+/**
+ * @internal
+ */
 export default BubblePoint;
