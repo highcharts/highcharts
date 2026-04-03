@@ -508,8 +508,8 @@ class Legend {
         if (!this.chart.styledMode) {
             const { itemHiddenStyle = {} } = this,
                 hiddenColor = itemHiddenStyle.color,
-                { fillColor, fillOpacity, lineColor, marker } =
-                    (item as Series).options as any,
+                { fillColor, lineColor, marker } =
+                    (item as Series).options,
                 colorizeHidden = (attr: SVGAttributes): SVGAttributes => {
                     if (!visible) {
                         if (attr.fill) {
@@ -536,7 +536,9 @@ class Legend {
 
             area?.attr(colorizeHidden({
                 fill: fillColor || item.color,
-                'fill-opacity': fillColor ? 1 : (fillOpacity ?? 0.75)
+                'fill-opacity': fillColor ?
+                    1 :
+                    (((item as Series).options as any).fillOpacity ?? 0.75)
             }));
         }
 
