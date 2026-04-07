@@ -37,3 +37,5 @@ import "highcharts/esm/modules/boost.src.js";
 // After
 import "highcharts/esm/modules/boost.js";
 ```
+
+> **Note:** We recommend using module components wherever possible. Only import modules directly if the integration does not yet provide a corresponding module component.
