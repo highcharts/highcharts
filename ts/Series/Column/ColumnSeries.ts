@@ -737,6 +737,17 @@ class ColumnSeries extends Series {
             opacity = pick(stateOptions.opacity, opacity);
         }
 
+        // #24382: If the point has a value of 0 and the height is 0,
+        // don't render a border that would be visible.
+        if (
+            point &&
+            point.y === 0 &&
+            point.shapeArgs &&
+            point.shapeArgs.height === 0
+        ) {
+            strokeWidth = 0;
+        }
+
         const ret: SVGAttributes = {
             fill: fill as any,
             stroke: stroke,
