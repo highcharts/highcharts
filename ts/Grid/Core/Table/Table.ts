@@ -443,11 +443,19 @@ class Table {
      * Sets the default tab entry point for the Grid.
      */
     private setInitialFocusAnchorCell(): void {
-        const headerCell = this.header?.rows[0]?.cells[0] as
-            (HeaderCell | undefined);
+        if (!this.header) {
+            return;
+        }
 
-        if (headerCell) {
-            this.setFocusAnchorCell(headerCell);
+        const headerRows = this.header.rows.slice(0, this.header.levels);
+
+        for (const row of headerRows) {
+            for (const cell of row.cells as HeaderCell[]) {
+                if (cell.column) {
+                    this.setFocusAnchorCell(cell);
+                    return;
+                }
+            }
         }
     }
 

@@ -101,4 +101,74 @@ test.describe('Keyboard navigation in virtualized Grid', () => {
         await page.keyboard.press('Tab');
         await expect(focused).toHaveAttribute('data-column-id', 'product');
     });
+
+    test('Body tab anchor follows the visible row window after recycling', async ({ page }) => {
+        await page.locator('#focus-before-grid').focus();
+        await page.keyboard.press('Tab');
+        await page.keyboard.press('ArrowDown');
+
+        await expect(page.locator(':focus')).toHaveAttribute(
+            'data-value',
+            'Item 1'
+        );
+
+        await page.locator('#focus-after-grid').focus();
+        await expect(page.locator('#focus-after-grid')).toBeFocused();
+
+        await page.evaluate(() => {
+            const viewport = (window as any).Grid.grids[0].viewport;
+            const tbody = viewport.tbodyElement;
+
+            tbody.scrollTop = viewport.rowsVirtualizer.defaultRowHeight * 40;
+            tbody.dispatchEvent(new Event('scroll'));
+        });
+
+        await page.waitForFunction(() => {
+            return (
+                (window as any).Grid.grids[0].viewport
+                    .rowsVirtualizer.rowCursor >= 35
+            );
+        });
+
+        const anchorState = await page.evaluate(() => {
+            const viewport = (window as any).Grid.grids[0].viewport;
+            const anchor = viewport.focusAnchorCell;
+            const tabStops = Array.from(
+                viewport.tableElement.querySelectorAll('[tabindex="0"]')
+            );
+            const firstTabStop = tabStops[0];
+            const firstTabStopRow = firstTabStop?.closest('tr');
+
+            return {
+                anchorColumnId: anchor?.column?.id || null,
+                anchorIsConnected: anchor?.htmlElement.isConnected || false,
+                anchorRowIndex: anchor?.row && 'index' in anchor.row ?
+                    anchor.row.index : null,
+                rowCursor: viewport.rowsVirtualizer.rowCursor,
+                tabStopCount: tabStops.length,
+                tabStopColumnId: firstTabStop?.getAttribute('data-column-id'),
+                tabStopRowIndex:
+                    firstTabStopRow?.getAttribute('data-row-index') || null
+            };
+        });
+
+        expect(anchorState.anchorColumnId).toBe('product');
+        expect(anchorState.anchorIsConnected).toBe(true);
+        expect(anchorState.tabStopCount).toBe(1);
+        expect(anchorState.tabStopColumnId).toBe('product');
+        expect(anchorState.anchorRowIndex).toBe(
+            Number(anchorState.tabStopRowIndex)
+        );
+
+        await page.keyboard.press('Shift+Tab');
+        await page.keyboard.press('Shift+Tab');
+        await expect(page.locator(':focus')).toHaveAttribute(
+            'data-column-id',
+            'product'
+        );
+        await expect(page.locator(':focus').locator('..')).toHaveAttribute(
+            'data-row-index',
+            String(anchorState.anchorRowIndex)
+        );
+    });
 });

@@ -32,6 +32,53 @@ test.describe('Keyboard navigation in Grid', () => {
         await expect(page.locator(':focus')).toHaveAttribute('data-column-id', 'product');
     });
 
+    test('Tabbing into grouped headers focuses the first leaf header cell', async ({ page }) => {
+        await page.goto('/grid-lite/demo/minimal-grid', {
+            waitUntil: 'networkidle'
+        });
+
+        await page.evaluate(() => {
+            (window as any).Grid.grids[0]?.destroy();
+
+            (window as any).Grid.grid('container', {
+                data: {
+                    columns: {
+                        product: ['Apples', 'Pears'],
+                        weight: [100, 40]
+                    }
+                },
+                credits: {
+                    enabled: false
+                },
+                header: [{
+                    format: 'Fruit',
+                    columns: [{
+                        columnId: 'product'
+                    }, {
+                        columnId: 'weight'
+                    }]
+                }],
+                columns: [{
+                    id: 'product',
+                    sorting: {
+                        enabled: false
+                    }
+                }, {
+                    id: 'weight',
+                    sorting: {
+                        enabled: false
+                    }
+                }]
+            });
+        });
+
+        await tabIntoGrid(page);
+        await expect(page.locator(':focus')).toHaveAttribute(
+            'data-column-id',
+            'product'
+        );
+    });
+
     test('Arrow key navigation should work for table cells', async ({ page }) => {
         const rows = page.locator('tbody tr');
         const secondRowFirstCell = rows.nth(1).locator('td').nth(0);

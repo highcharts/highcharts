@@ -692,16 +692,28 @@ class RowsVirtualizer {
                 }
             }
 
-            // Set the focus anchor cell
+            const focusAnchorCell = vp.focusAnchorCell;
+            const shouldRefreshBodyAnchor = (
+                !vp.focusCursor &&
+                focusAnchorCell?.row.htmlElement.parentElement ===
+                    vp.tbodyElement
+            );
+            const shouldRefreshDetachedAnchor = !!(
+                focusAnchorCell &&
+                !focusAnchorCell.htmlElement.isConnected
+            );
+
             if (
                 (
-                    !vp.focusAnchorCell ||
-                    !vp.focusAnchorCell.row.rendered
+                    !focusAnchorCell ||
+                    shouldRefreshBodyAnchor ||
+                    shouldRefreshDetachedAnchor
                 ) &&
                 rows.length > 0
             ) {
-                const rowIndex = rowCursor - rows[0].index;
-                const targetRow = rows[rowIndex];
+                const targetRow = rows.find(
+                    (row): boolean => row.index === rowCursor
+                );
                 if (
                     targetRow &&
                     targetRow.cells.length > 0 &&
@@ -880,6 +892,16 @@ class RowsVirtualizer {
      * The row to pool.
      */
     private poolRow(row: TableRow): void {
+        const focusAnchorCell = this.viewport.focusAnchorCell;
+
+        if (
+            focusAnchorCell?.row === row &&
+            !this.viewport.focusCursor
+        ) {
+            focusAnchorCell.htmlElement.setAttribute('tabindex', '-1');
+            delete this.viewport.focusAnchorCell;
+        }
+
         row.htmlElement.remove();
         if (this.rowPool.length < RowsVirtualizer.MAX_POOL_SIZE) {
             this.rowPool.push(row);
