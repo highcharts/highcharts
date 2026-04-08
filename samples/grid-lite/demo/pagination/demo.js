@@ -58,21 +58,37 @@ Grid.grid('container', {
         enabled: true,
         pageSize: 10,
         controls: {
-            pageSizeSelector: {
+            pageNavigation: {
                 enabled: true,
-                options: [10, 20, 50]
-            },
-            pageInfo: true,
-            firstLastButtons: true,
-            previousNextButtons: true,
-            pageButtons: {
-                enabled: true,
-                count: 7
+                renderer: 'buttons',
+                count: 9
             }
         }
     },
     columns: [{
         id: 'ID',
         width: 60
-    }]
+    }],
+    responsive: {
+        rules: [{
+            condition: {
+                maxWidth: 800
+            },
+            gridOptions: {
+                pagination: {
+                    align: 'right',
+                    controls: {
+                        firstLastButtons: false,
+                        previousNextButtons: false,
+                        pageSizeSelector: false,
+                        pageNavigation: {
+                            renderer: 'select',
+                            count: 'all'
+                        }
+                    }
+                }
+            }
+        }
+        ]
+    }
 });
