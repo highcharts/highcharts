@@ -31,8 +31,7 @@ import {
     addEvent,
     fireEvent,
     getAlignFactor,
-    objectEach,
-    pick
+    objectEach
 } from '../../Shared/Utilities.js';
 
 /* *
@@ -341,24 +340,40 @@ function onChartRender(
                         (point.dataLabels || []).forEach((label): void => {
                             const options = label.options || {};
 
-                            label.labelrank = pick(
-                                options.labelrank,
-                                (point as any).labelrank,
-                                point.shapeArgs?.height
-                            ); // #4118
+                            label.labelrank = options.labelrank ??
+                                (point as any).labelrank ??
+                                point.shapeArgs?.height; // #4118
 
-                            // #21725: Sync target positions for generic
-                            // overlap checking. During animations
-                            // (e.g., toggling a point), DOM positions may
-                            // overlap. We force alignAttr to the final target
-                            // coordinates so getAbsoluteBox() evaluates
-                            // the final resting positions.
-                            const pos = label.dataLabelPosition?.posAttribs;
-                            if (pos) {
-                                label.alignAttr = label.alignAttr || {};
-                                label.alignAttr.x = pos.x;
-                                label.alignAttr.y = pos.y;
+                            // #21725: Sync JS opacity with actual DOM state to
+                            // ensure hideOrShow triggers correctly after point
+                            // visibility toggles.
+                            if (
+                                label.hasClass('highcharts-data-label-hidden')
+                            ) {
+                                label.opacity = 0;
                             }
+
+                            // #21725: Pre-calculate target box for the overlap
+                            // engine. During animations, DOM positions are
+                            // clustered at the start. We inject the target
+                            // absoluteBox using posAttribs so the generic
+                            // engine evaluates final resting positions
+                            // accurately.
+                            const pos = label.dataLabelPosition?.posAttribs;
+                            if (
+                                typeof pos !== 'undefined' &&
+                                pos.x !== void 0 &&
+                                pos.y !== void 0
+                            ) {
+                                const bBox = label.getBBox();
+                                label.absoluteBox = {
+                                    x: pos.x + bBox.x,
+                                    y: pos.y + bBox.y,
+                                    width: bBox.width,
+                                    height: bBox.height
+                                };
+                            }
+
                             // Allow overlap if the option is explicitly true
                             if (
                                 // #13449
