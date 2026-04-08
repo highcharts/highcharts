@@ -344,9 +344,6 @@ function onChartRender(
                                 (point as any).labelrank ??
                                 point.shapeArgs?.height; // #4118
 
-                            // #21725: Sync JS opacity with actual DOM state to
-                            // ensure hideOrShow triggers correctly after point
-                            // visibility toggles.
                             if (
                                 label.hasClass('highcharts-data-label-hidden')
                             ) {
@@ -356,9 +353,8 @@ function onChartRender(
                             // #21725: Pre-calculate target box for the overlap
                             // engine. During animations, DOM positions are
                             // clustered at the start. We inject the target
-                            // absoluteBox using posAttribs so the generic
-                            // engine evaluates final resting positions
-                            // accurately.
+                            // absoluteBox so the generic engine evaluates
+                            // final resting positions accurately.
                             const pos = label.dataLabelPosition?.posAttribs;
                             if (
                                 typeof pos !== 'undefined' &&
