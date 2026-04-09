@@ -1889,8 +1889,7 @@ class Pointer {
      * @function Highcharts.Pointer#setDOMEvents
      */
     public setDOMEvents(): void {
-        const chart = this.chart,
-            container = chart.container,
+        const container = this.chart.container,
             ownerDoc = container.ownerDocument,
             // Get the parent element, including handling Shadow DOM (#23450)
             getParent = (el: HTMLElement): HTMLElement|null|undefined =>
@@ -1961,7 +1960,7 @@ class Pointer {
         }
 
         this.setPointerCapture();
-        addEvent(chart, 'redraw', this.setPointerCapture.bind(this));
+        addEvent(this.chart, 'redraw', this.setPointerCapture.bind(this));
     }
 
     /**
