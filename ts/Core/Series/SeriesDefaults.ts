@@ -1215,12 +1215,6 @@ const seriesDefaults: PlotOptionsOf<Series> = {
         /**
          * States for a single point marker.
          *
-         * In addition to the options documented for each marker state, you can
-         * set any option from
-         * [plotOptions.series.marker](#plotOptions.series.marker) except nested
-         * `states`. Those values override the base marker options while the
-         * marker is in that state.
-         *
          * @declare Highcharts.PointStatesOptionsObject
          *
          * @product highcharts highstock highmaps gantt

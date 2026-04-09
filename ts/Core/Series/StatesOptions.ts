@@ -148,9 +148,9 @@ export interface StateOptions {
     halo?: boolean | StateHaloOptions;
 
     /**
-     * Used by hover and select states (marker). The color of the point
-     * marker's outline in this state. When `undefined`, the series' or point's
-     * color is used.
+     * The color of the point marker's outline. When
+     * `undefined`, the series' or point's lineColor for normal
+     * state is used.
      *
      * @sample {highcharts} highcharts/plotoptions/series-marker-states-hover-linecolor/
      * White fill color, black line color
@@ -217,8 +217,8 @@ export interface StateOptions {
     radius?: number;
 
     /**
-     * Used by hover state (marker). The number of pixels to add to the marker
-     * radius on hover.
+     * The number of pixels to increase the radius of the
+     * hovered point.
      *
      * @sample {highcharts} highcharts/plotoptions/series-states-hover-linewidthplus/
      * 5 pixels greater radius on hover
