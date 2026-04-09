@@ -65,8 +65,8 @@
   },
   "devDependencies": {
     "@actions/github": "^6.0.1",
-    "@aws-sdk/client-s3": "^3.592.0",
-    "@aws-sdk/credential-providers": "^3.592.0",
+    "@aws-sdk/client-s3": "^3.1027.0",
+    "@aws-sdk/credential-providers": "^3.1027.0",
     "@babel/core": "^7.26.0",
     "@babel/preset-env": "^7.26.0",
     "@babel/preset-typescript": "^7.26.0",
