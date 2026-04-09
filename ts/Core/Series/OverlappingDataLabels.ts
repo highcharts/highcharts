@@ -102,25 +102,55 @@ function chartHideOverlappingLabels(
      */
     function getAbsoluteBox(label: SVGElement): (BBoxObject|undefined) {
         if (label && (!label.alignAttr || label.placed)) {
-            const padding = label.box ? 0 : (label.padding || 0),
-                pos = label.alignAttr || {
+            const padding = label.box ? 0 : (label.padding || 0);
+
+            // Optional one-tick override set upstream (kept for compatibility)
+            const ovlPos = label._ovlPos as
+            ({ x: number; y: number }|undefined);
+
+            // Current placed position: prefer translateX/Y (SVGLabel),
+            // then alignAttr, then attr x/y
+            const tx = label.translateX,
+                ty = label.translateY,
+                hasTX = Number.isFinite(tx as number),
+                hasTY = Number.isFinite(ty as number);
+
+            const currentPos = (hasTX && hasTY) ?
+                { x: tx as number, y: ty as number } :
+                (label.alignAttr || {
                     x: label.attr('x'),
                     y: label.attr('y')
-                },
-                { height, polygon, width } = label.getBBox(),
-                alignOffset = getAlignFactor(label.alignValue) * width;
+                });
 
+            // Final target position computed by data labels logic
+            const dlPos =
+            label.dataLabelPosition?.posAttribs ||
+            label.point?.dataLabel?.dataLabelPosition?.posAttribs;
+
+            const hasTarget =
+            !!dlPos && Number.isFinite(dlPos.x) && Number.isFinite(dlPos.y);
+            const hasCurrent =
+            !!currentPos &&
+            Number.isFinite(currentPos.x) && Number.isFinite(currentPos.y);
+
+            // If target exists and differs from current placed position,
+            // we are in transition.
+            const targetDiffers = !!(hasTarget && hasCurrent &&
+            (dlPos!.x !== currentPos.x || dlPos!.y !== currentPos.y));
+
+            // Choose which coordinates to use this frame
+            const pos = ovlPos || (targetDiffers ? dlPos! : currentPos);
+
+            const { height, polygon, width } = label.getBBox(),
+                alignOffset = getAlignFactor(label.alignValue) * width;
 
             label.width = width;
             label.height = height;
 
             return {
-                x: pos.x + (
-                    label.parentGroup?.translateX || 0
-                ) + padding - alignOffset,
-                y: pos.y + (
-                    label.parentGroup?.translateY || 0
-                ) + padding,
+                x: pos.x + (label.parentGroup?.translateX || 0) +
+                padding - alignOffset,
+                y: pos.y + (label.parentGroup?.translateY || 0) + padding,
                 width: width - 2 * padding,
                 height: height - 2 * padding,
                 polygon
@@ -214,6 +244,12 @@ function chartHideOverlappingLabels(
     for (const label of labels) {
         if (label && hideOrShow(label, chart)) {
             isLabelAffected = true;
+        }
+    }
+
+    for (const lbl of labels) {
+        if (lbl && lbl._ovlPos) {
+            delete lbl._ovlPos;
         }
     }
 
@@ -344,32 +380,6 @@ function onChartRender(
                                 (point as any).labelrank ??
                                 point.shapeArgs?.height; // #4118
 
-                            if (
-                                label.hasClass('highcharts-data-label-hidden')
-                            ) {
-                                label.opacity = 0;
-                            }
-
-                            // #21725: Pre-calculate target box for the overlap
-                            // engine. During animations, DOM positions are
-                            // clustered at the start. We inject the target
-                            // absoluteBox so the generic engine evaluates
-                            // final resting positions accurately.
-                            const pos = label.dataLabelPosition?.posAttribs;
-                            if (
-                                typeof pos !== 'undefined' &&
-                                pos.x !== void 0 &&
-                                pos.y !== void 0
-                            ) {
-                                const bBox = label.getBBox();
-                                label.absoluteBox = {
-                                    x: pos.x + bBox.x,
-                                    y: pos.y + bBox.y,
-                                    width: bBox.width,
-                                    height: bBox.height
-                                };
-                            }
-
                             // Allow overlap if the option is explicitly true
                             if (
                                 // #13449
@@ -385,6 +395,16 @@ function onChartRender(
 
                             // Do not allow overlap
                             } else {
+                                const wasHidden = label.hasClass &&
+                                label.hasClass('highcharts-data-label-hidden'),
+                                    willShow = point.visible && wasHidden,
+                                    pos = label.dataLabelPosition?.posAttribs;
+                                if (pos && willShow) {
+                                    label._ovlPos = { x: pos.x, y: pos.y };
+                                } else if (label._ovlPos) {
+                                    delete label._ovlPos;
+                                }
+
                                 labels.push(label);
                             }
                         });
