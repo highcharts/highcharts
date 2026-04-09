@@ -97,10 +97,18 @@
         chart: {
             map: topology,
             events: {
-                load: function () {
+                load: async function () {
                     const countries = this.series[0],
                         capitals = this.series[1];
-                    newData.forEach(elem => getTemp(elem, countries, capitals));
+
+                    for (const elem of newData) {
+                        await getTemp(elem, countries, capitals)
+                            .catch(() => {
+                                console.error(
+                                    `Error fetching temperature for ${elem[3]}`
+                                );
+                            });
+                    }
                 }
             }
         },
