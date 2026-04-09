@@ -36,6 +36,15 @@ import type { SeriesTooltipOptions } from '../../Core/TooltipOptions';
  *
  * */
 
+declare module '../../Core/Series/StatesOptions' {
+    interface StateOptions {
+        borderColor?: ColorType;
+        borderDashStyle?: DashStyleValue;
+        borderRadius?: number;
+        borderWidth?: number;
+    }
+}
+
 declare module '../../Core/Series/SeriesOptions' {
     interface SeriesOptions {
         borderColor?: ColorType;
@@ -58,15 +67,6 @@ declare module '../../Core/Series/SeriesOptions' {
          * @default 0
          */
         pointRange?: (number|null);
-    }
-    interface SeriesStateHoverOptions {
-        borderColor?: ColorType;
-        borderDashStyle?: DashStyleValue;
-        borderRadius?: number;
-        borderWidth?: number;
-        brightness?: number;
-        color?: ColorType;
-        dashStyle?: DashStyleValue;
     }
     interface SeriesZonesOptions {
         borderColor?: ColorType;

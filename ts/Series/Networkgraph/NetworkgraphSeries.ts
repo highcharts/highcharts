@@ -387,8 +387,8 @@ class NetworkgraphSeries extends Series {
         state?: StatesOptionsKey
     ): SVGAttributes {
         // By default, only `selected` state is passed on
-        const pointState = state || point && point.state || 'normal',
-            stateOptions = (this.options.states as any)[pointState];
+        const pointState = state || (point && point.state) || 'normal',
+            stateOptions = this.options.states?.[pointState];
 
         let attribs = Series.prototype.pointAttribs.call(
             this,
@@ -409,7 +409,7 @@ class NetworkgraphSeries extends Series {
                     opacity: pick(
                         stateOptions.linkOpacity, attribs.opacity
                     ),
-                    'stroke-width': stateOptions.linkColor ||
+                    'stroke-width': stateOptions.linkWidth ||
                         attribs['stroke-width']
                 };
             }

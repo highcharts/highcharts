@@ -15,19 +15,14 @@
  *
  * */
 
-import type AnimationOptions from '../Animation/AnimationOptions';
 import type ColorType from '../Color/ColorType';
-import type { DeepPartial } from '../../Shared/Types';
 import type { EventCallback } from '../Callback';
 import type Point from './Point';
 import type PointerEvent from '../PointerEvent';
 import type { PointTypeOptions } from './PointType';
 import type {
     StateGenericOptions,
-    StateHoverOptions,
-    StateInactiveOptions,
-    StateNormalOptions,
-    StateSelectOptions,
+    StateOptions,
     StatesOptions
 } from './StatesOptions';
 import type { SymbolKey } from '../Renderer/SVG/SymbolType';
@@ -591,187 +586,27 @@ export type PointShortOptions = (
     null
 );
 
-export interface PointMarkerStateHoverOptions extends StateHoverOptions {
-    /**
-     * Animation when hovering over the marker.
-     *
-     * @default {"duration":150}
-     */
-    animation?: (boolean|DeepPartial<AnimationOptions>);
-
-    /**
-     * Enable or disable the point marker.
-     *
-     * @sample {highcharts} highcharts/plotoptions/series-marker-states-hover-enabled/
-     * Disabled hover state
-     *
-     * @default true
-     */
-    enabled?: boolean;
-
-    /**
-     * The fill color of the marker in hover state. When
-     * `undefined`, the series' or point's fillColor for normal
-     * state is used.
-     */
-    fillColor?: ColorType;
-
-    /**
-     * The color of the point marker's outline. When
-     * `undefined`, the series' or point's lineColor for normal
-     * state is used.
-     *
-     * @sample {highcharts} highcharts/plotoptions/series-marker-states-hover-linecolor/
-     * White fill color, black line color
-     */
-    lineColor?: ColorType;
-
-    /**
-     * The width of the point marker's outline. When
-     * `undefined`, the series' or point's lineWidth for normal
-     * state is used.
-     *
-     * @sample {highcharts} highcharts/plotoptions/series-marker-states-hover-linewidth/
-     * 3px line width
-     */
-    lineWidth?: number;
-
-    /**
-     * The additional line width for a hovered point.
-     *
-     * @sample {highcharts} highcharts/plotoptions/series-states-hover-linewidthplus/
-     * 2 pixels wider on hover
-     *
-     * @sample {highstock} highcharts/plotoptions/series-states-hover-linewidthplus/
-     * 2 pixels wider on hover
-     *
-     * @since 4.0.3
-     * @default 1
-     */
-    lineWidthPlus?: number;
-
-    /** @internal */
-    opacity?: number;
-
-    /**
-     * The radius of the point marker. In hover state, it
-     * defaults to the normal state's radius + 2 as per the
-     * [radiusPlus](#plotOptions.series.marker.states.hover.radiusPlus)
-     * option.
-     *
-     * @sample {highcharts} highcharts/plotoptions/series-marker-states-hover-radius/
-     * 10px radius
-     */
-    radius?: number;
-
-    /**
-     * The number of pixels to increase the radius of the hovered point.
-     *
-     * @sample {highcharts} highcharts/plotoptions/series-states-hover-linewidthplus/
-     * 5 pixels greater radius on hover
-     * @sample {highstock} highcharts/plotoptions/series-states-hover-linewidthplus/
-     * 5 pixels greater radius on hover
-     *
-     * @since 4.0.3
-     * @default 2
-     */
-    radiusPlus?: number;
-}
-
-export interface PointMarkerStateInactiveOptions extends StateInactiveOptions {
-    /** @internal */
-    opacity?: number;
-}
-
-export interface PointMarkerStateNormalOptions extends StateNormalOptions {
-    /**
-     * Animation when returning to normal state after hovering.
-     *
-     * @default true
-     */
-    animation?: (boolean|DeepPartial<AnimationOptions>);
-
-    /** @internal */
-    opacity?: number;
-}
-
 export interface PointMarkerStatesOptions<T extends PointMarkerOptions> extends StatesOptions {
     /**
      * The hover state for a single point marker.
      */
-    hover?: PointMarkerStateHoverOptions & StateGenericOptions<T>;
+    hover?: StateOptions & StateGenericOptions<T>;
 
     // Implemented only for networkgraph.
     /** @internal */
-    inactive?: PointMarkerStateInactiveOptions & StateGenericOptions<T>;
+    inactive?: StateOptions & StateGenericOptions<T>;
 
     /**
-     * The normal state of a single point marker. Currently only
-     * used for setting animation when returning to normal state
-     * from hover.
+     * The normal state of a single point marker. Currently only used for
+     * setting animation when returning to normal state from hover.
      */
-    normal?: PointMarkerStateNormalOptions & StateGenericOptions<T>;
+    normal?: StateOptions & StateGenericOptions<T>;
 
     /**
      * The appearance of the point marker when selected. In order to allow a
      * point to be selected, set the `series.allowPointSelect` option to true.
      */
-    select?: PointMarkerStateSelectOptions & StateGenericOptions<T>;
-}
-
-export interface PointMarkerStateSelectOptions extends StateSelectOptions {
-    /**
-     * Enable or disable visible feedback for selection.
-     *
-     * @sample {highcharts} highcharts/plotoptions/series-marker-states-select-enabled/
-     * Disabled select state
-     *
-     * @default true
-     */
-    enabled?: boolean;
-
-    /**
-     * The fill color of the point marker.
-     *
-     * @sample {highcharts} highcharts/plotoptions/series-marker-states-select-fillcolor/
-     * Solid red discs for selected points
-     *
-     * @default ${palette.neutralColor20}
-     */
-    fillColor?: ColorType;
-
-    /**
-     * The color of the point marker's outline. When
-     * `undefined`, the series' or point's color is used.
-     *
-     * @sample {highcharts} highcharts/plotoptions/series-marker-states-select-linecolor/
-     * Red line color for selected points
-     *
-     * @default ${palette.neutralColor100}
-     */
-    lineColor?: ColorType;
-
-    /**
-     * The width of the point marker's outline.
-     *
-     * @sample {highcharts} highcharts/plotoptions/series-marker-states-select-linewidth/
-     * 3px line width for selected points
-     *
-     * @default 2
-     */
-    lineWidth?: number;
-
-    /** @internal */
-    opacity?: number;
-
-    /**
-     * The radius of the point marker. In hover state, it defaults to the normal
-     * state's radius + 2.
-     *
-     * @sample {highcharts} highcharts/plotoptions/series-marker-states-select-radius/
-     * 10px radius for selected points
-     */
-    radius?: number;
+    select?: StateOptions & StateGenericOptions<T>;
 }
 
 /* *

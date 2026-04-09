@@ -1631,8 +1631,7 @@ class Point {
             series = point.series,
             previousState = point.state,
             stateOptions = (
-                (series.options.states as any)[state || 'normal'] ||
-                {}
+                series.options.states?.[state || 'normal'] || {}
             ),
             markerOptions = (
                 (defaultOptions.plotOptions as any)[
@@ -1676,9 +1675,7 @@ class Point {
             // Individual point marker's state options is disabled
             (
                 state &&
-                pointMarker.states &&
-                (pointMarker.states as any)[state] &&
-                (pointMarker.states as any)[state].enabled === false
+                pointMarker.states?.[state]?.enabled === false
             ) // #1610
 
         ) {
@@ -1707,7 +1704,7 @@ class Point {
                 pointAttribsAnimation = pick(
                     chart.options.chart.animation,
                     stateOptions.animation
-                );
+                ) as AnimationOptions;
                 const opacity = pointAttribs.opacity;
 
                 // Some inactive points (e.g. slices in pie) should apply
@@ -1818,7 +1815,8 @@ class Point {
         }
 
         // Show me your halo
-        const haloOptions = stateOptions.halo;
+        const haloOptions = typeof stateOptions.halo === 'object' ?
+            stateOptions.halo : void 0;
         const markerGraphic = (point.graphic || stateMarkerGraphic);
         const markerVisibility = markerGraphic?.visibility || 'inherit';
 

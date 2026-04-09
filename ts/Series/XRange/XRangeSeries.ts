@@ -23,7 +23,7 @@ import type Axis from '../../Core/Axis/Axis';
 import type ColumnMetricsObject from '../Column/ColumnMetricsObject';
 import type DataTableCore from '../../Data/DataTableCore';
 import type SeriesClass from '../../Core/Series/Series';
-import type { SeriesStateHoverOptions } from '../../Core/Series/SeriesOptions';
+import type { StateOptions } from '../../Core/Series/StatesOptions';
 import type {
     XRangePointOptions,
     XRangePointPartialFillOptions
@@ -511,9 +511,8 @@ class XRangeSeries extends ColumnSeries {
             partShapeArgs = point.partShapeArgs,
             clipRectArgs = point.clipRectArgs,
             pointState = point.state,
-            stateOpts: SeriesStateHoverOptions = (
-                (seriesOpts.states as any)[pointState || 'normal'] ||
-                {}
+            stateOpts: StateOptions = (
+                seriesOpts.states?.[pointState || 'normal'] || {}
             ),
             pointStateVerb = typeof pointState === 'undefined' ?
                 'attr' : verb,

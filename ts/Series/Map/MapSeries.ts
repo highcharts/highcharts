@@ -21,7 +21,6 @@ import type {
     AnimationOptions,
     AnimationStepCallbackFunction
 } from '../../Core/Animation/AnimationOptions';
-import type ColorType from '../../Core/Color/ColorType';
 import type ColumnPoint from '../Column/ColumnPoint';
 import type CSSObject from '../../Core/Renderer/CSSObject';
 import type { MapDataType } from '../../Maps/GeoJSON';
@@ -92,11 +91,6 @@ declare module '../../Core/Series/SeriesOptions' {
     interface SeriesOptions {
         /** @requires modules/map */
         mapData?: MapDataType;
-    }
-    interface SeriesStateHoverOptions
-    {
-        brightness?: number;
-        color?: ColorType;
     }
 }
 

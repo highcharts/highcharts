@@ -24,10 +24,9 @@ import type Point from '../../Core/Series/Point';
 import type {
     PointClickEvent,
     PointMarkerOptions,
-    PointMarkerStateHoverOptions,
     PointMarkerStatesOptions
 } from '../../Core/Series/PointOptions';
-import type { StateGenericOptions } from '../../Core/Series/StatesOptions';
+import type { StateGenericOptions, StateOptions } from '../../Core/Series/StatesOptions';
 
 /* *
  *
@@ -254,7 +253,7 @@ export interface MarkerClusterMarkerOptions extends PointMarkerOptions {
     states?: undefined;
 }
 
-export interface MarkerClusterStateHoverOptions extends PointMarkerStateHoverOptions {
+export interface MarkerClusterStateHoverOptions extends StateOptions {
     /**
      * The fill color of the cluster marker in hover state. When
      * `undefined`, the series' or point's fillColor for normal
@@ -262,7 +261,7 @@ export interface MarkerClusterStateHoverOptions extends PointMarkerStateHoverOpt
      *
      * @requires modules/marker-clusters
      */
-    fillColor?: PointMarkerStateHoverOptions['fillColor'];
+    fillColor?: StateOptions['fillColor'];
 }
 
 export interface MarkerClusterStatesOptions

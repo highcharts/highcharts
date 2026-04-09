@@ -122,9 +122,7 @@ namespace ForcedMarkersComposition {
     function getPointMarkerOpacity(
         pointOptions: PointOptions
     ): number|undefined {
-        return (pointOptions.marker as any).states &&
-            (pointOptions.marker as any).states.normal &&
-            (pointOptions.marker as any).states.normal.opacity;
+        return pointOptions.marker?.states?.normal?.opacity;
     }
 
 

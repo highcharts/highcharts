@@ -35,7 +35,7 @@ import type {
 import type PolygonBoxObject from '../../Core/Renderer/PolygonBoxObject';
 import type PositionObject from '../../Core/Renderer/PositionObject';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
-import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
+import type { StatesOptions, StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
@@ -512,8 +512,9 @@ class VennSeries extends ScatterSeries {
         const series = this,
             seriesOptions = series.options || {},
             pointOptions = point?.options || {},
-            stateOptions =
-                (state && (seriesOptions.states as any)[state as any]) || {},
+            stateOptions = (
+                state && seriesOptions.states?.[state]
+            ) || {},
             options = merge(
                 seriesOptions,
                 { color: point?.color },
@@ -693,9 +694,12 @@ addEvent(VennSeries, 'afterSetOptions', function (
         // Explicitly disable all halo options.
         for (
             const state of
-            Object.keys(states) as unknown as Array<keyof typeof states>
+            Object.keys(states) as Array<keyof StatesOptions>
         ) {
-            (states as any)[state].halo = false;
+            const stateOptions = states[state];
+            if (stateOptions) {
+                stateOptions.halo = false;
+            }
         }
     }
 });

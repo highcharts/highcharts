@@ -49,8 +49,14 @@ import type {
  *
  * */
 
-declare module '../../Core/Series/SeriesOptions' {
-    interface SeriesStateInactiveOptions {
+declare module '../../Core/Series/StatesOptions' {
+    interface StateOptions {
+        /** Applies to hover state of link. */
+        linkColor?: ColorType;
+        /** Applies to hover state of link. */
+        linkDashStyle?: DashStyleValue;
+        /** Applies to hover state of link. */
+        linkWidth?: number;
         linkOpacity?: number;
     }
 }

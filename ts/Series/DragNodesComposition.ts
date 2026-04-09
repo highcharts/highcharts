@@ -25,6 +25,7 @@ import type PointerEvent from '../Core/PointerEvent';
 import type ReingoldFruchtermanLayout from './Networkgraph/ReingoldFruchtermanLayout';
 import type Series from '../Core/Series/Series';
 import type SeriesOptions from '../Core/Series/SeriesOptions';
+import type { StateHaloOptions } from '../Core/Series/StatesOptions';
 
 import H from '../Core/Globals.js';
 const { composed } = H;
@@ -285,7 +286,9 @@ function redrawHalo(
     if (point && this.halo) {
         this.halo.attr({
             d: point.haloPath(
-                (this.options.states as any).hover.halo.size
+                (
+                    this.options.states?.hover?.halo as StateHaloOptions
+                )?.size || 0
             ) as any
         });
     }
