@@ -1,13 +1,16 @@
 ---
-name: Sparklines
+name: Basic Sparklines
 authors:
-  - Dawid Dragula
+  - Stian Totland
 js_wrap: b
 alt_text: >-
-  Sparklines inside data grid cells
+  Sparklines inside grid cells
 tags:
+  - Highcharts overview
   - Highcharts Grid demo
 categories:
+  - Basics:
+      priority: 15
   - General:
       priority: 70
 use_png_thumbnail: true
