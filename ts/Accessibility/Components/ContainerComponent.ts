@@ -34,6 +34,7 @@ import H from '../../Core/Globals.js';
 const { doc } = H;
 import HU from '../Utils/HTMLUtilities.js';
 const { stripHTMLTagsFromString: stripHTMLTags } = HU;
+import { isObject } from '../../Shared/Utilities.js';
 
 
 /**
@@ -66,11 +67,50 @@ class ContainerComponent extends AccessibilityComponent {
      * Called on first render/updates to the chart, including options changes.
      */
     public onChartUpdate(): void {
+        this.updatePointerEventHandlers();
         this.handleSVGTitleElement();
         this.setSVGContainerLabel();
         this.setGraphicContainerAttrs();
         this.setRenderToAttrs();
         this.makeCreditsAccessible();
+    }
+
+    /**
+     * @private
+     */
+    public updatePointerEventHandlers(): void {
+        const chart = this.chart,
+            pointer = chart.pointer,
+            container = chart.container,
+            chartOptions = chart.options.chart,
+            zoomType = chart.zooming.type || '',
+            hasZoom = /x|y/.test(zoomType),
+            panning = chartOptions.panning,
+            hasPanning = isObject(panning) ?
+                !!panning.enabled :
+                !!panning,
+            hasSelection = !!chartOptions.events?.selection,
+            shouldAttachContainerMouseDown = (
+                hasZoom ||
+                hasPanning ||
+                hasSelection
+            ),
+            shouldAttachContainerClick = (
+                !!chart.navigationBindings ||
+                !!chart.options.chart.events?.click ||
+                chart.runTrackerClick
+            );
+
+        if (!pointer || !container) {
+            return;
+        }
+
+        container.onmousedown = shouldAttachContainerMouseDown ?
+            pointer.onContainerMouseDown.bind(pointer) :
+            null;
+        container.onclick = shouldAttachContainerClick ?
+            pointer.onContainerClick.bind(pointer) :
+            null;
     }
 
 

@@ -1892,42 +1892,15 @@ class Pointer {
         const chart = this.chart,
             container = chart.container,
             ownerDoc = container.ownerDocument,
-            chartOptions = chart.options.chart,
-            zoomType = chart.zooming.type || '',
-            hasZoom = /x|y/.test(zoomType),
-            panning = chartOptions.panning,
-            hasPanning = isObject(panning) ?
-                panning.enabled :
-                !!panning,
-            hasSelection = !!chartOptions.events?.selection,
-            shouldAttachContainerMouseDown = (
-                hasZoom ||
-                hasPanning ||
-                hasSelection
-            ),
-            updateContainerClick = (): void => {
-                const shouldAttachContainerClick = (
-                    !chart.accessibility ||
-                    !!chart.navigationBindings ||
-                    !!chart.options.chart.events?.click ||
-                    chart.runTrackerClick
-                );
-
-                container.onclick = shouldAttachContainerClick ?
-                    this.onContainerClick.bind(this) :
-                    null;
-            },
             // Get the parent element, including handling Shadow DOM (#23450)
             getParent = (el: HTMLElement): HTMLElement|null|undefined =>
                 el.parentElement || (
                     el.getRootNode() as ShadowRoot|undefined
                 )?.host?.parentElement;
 
-        container.onmousedown = shouldAttachContainerMouseDown ?
-            this.onContainerMouseDown.bind(this) :
-            null;
+        container.onmousedown = this.onContainerMouseDown.bind(this);
         container.onmousemove = this.onContainerMouseMove.bind(this);
-        updateContainerClick();
+        container.onclick = this.onContainerClick.bind(this);
         this.eventsToUnbind.push(
             addEvent(
                 container,
@@ -1988,7 +1961,6 @@ class Pointer {
         }
 
         this.setPointerCapture();
-        addEvent(chart, 'afterA11yUpdate', updateContainerClick);
         addEvent(chart, 'redraw', this.setPointerCapture.bind(this));
     }
 
