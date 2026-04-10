@@ -122,9 +122,9 @@ function chartHideOverlappingLabels(
                 typeof alignPos.x === 'number' &&
                 typeof alignPos.y === 'number';
 
-            // If target exists and differs from current aligned position,
-            // we are in a positional transition (e.g., Pie toggle animating
-            // from center).
+            // Prefer dlPos when it differs from current placed coords so
+            // overlap is evaluated on the final resting position during
+            // transitions (fixes #21725).
             const targetDiffers = !!(hasTarget && hasAlign &&
                 (dlPos!.x !== alignPos.x || dlPos!.y !== alignPos.y));
 
