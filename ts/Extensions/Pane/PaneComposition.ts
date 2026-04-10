@@ -93,7 +93,26 @@ function onSetClip(
     const { plotWidth, plotHeight } = this.chart,
         smallestSize = Math.min(plotWidth, plotHeight),
         xPane = this.xAxis.pane,
-        yPane = this.yAxis.pane;
+        yPane = this.yAxis.pane,
+        paneAxes = [xPane, yPane]
+            .map((pane): Pane['axis'] => pane && pane.axis)
+            .filter(
+                (axis): axis is NonNullable<Pane['axis']> => Boolean(axis)
+            ),
+        fullCircle = correctFloat(2 * Math.PI);
+
+    // For full-circle panes, keep the default clip box. Offsetting the clip
+    // can cut top/left edges in solid gauge after animation (#24460).
+    if (
+        paneAxes.length &&
+        paneAxes.every((axis): boolean =>
+            correctFloat(
+                (axis.endAngleRad || 0) - (axis.startAngleRad || 0)
+            ) === fullCircle
+        )
+    ) {
+        return;
+    }
 
     if (xPane && xPane.axis) {
         clipBox.x += xPane.center[0] -

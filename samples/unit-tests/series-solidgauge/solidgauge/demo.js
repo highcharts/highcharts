@@ -242,6 +242,55 @@ QUnit.test('Solid gauge null point (#10630)', function (assert) {
     );
 });
 
+QUnit.test('Solid gauge full circle clip offset (#24460)', function (assert) {
+    const chart = Highcharts.chart('container', {
+        chart: {
+            type: 'solidgauge',
+            height: '110%',
+            animation: false
+        },
+        pane: {
+            startAngle: 0,
+            endAngle: 360
+        },
+        yAxis: {
+            min: 0,
+            max: 100,
+            lineWidth: 0,
+            tickPositions: []
+        },
+        plotOptions: {
+            solidgauge: {
+                rounded: true,
+                dataLabels: {
+                    enabled: false
+                }
+            }
+        },
+        series: [{
+            data: [{
+                y: 80,
+                radius: '112%',
+                innerRadius: '88%'
+            }]
+        }]
+    });
+    const clipRect = chart.sharedClips[chart.series[0].sharedClipKey];
+
+    assert.close(
+        clipRect.attr('x'),
+        0,
+        0.5,
+        'Full-circle gauge should not offset clip x.'
+    );
+    assert.close(
+        clipRect.attr('y'),
+        0,
+        0.5,
+        'Full-circle gauge should not offset clip y.'
+    );
+});
+
 QUnit.test('Solid gauge updates', function (assert) {
     const resetTo = Highcharts.defaultOptions.yAxis.labels.style.color,
         tickLength = 0,
