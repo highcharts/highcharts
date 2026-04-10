@@ -534,7 +534,7 @@ class Toolbar {
         );
 
 
-        // Mimic event behaviour of being outside chart.container
+        // Mimic event behavior of being outside chart.container
         [
             'mousedown',
             'mousemove',

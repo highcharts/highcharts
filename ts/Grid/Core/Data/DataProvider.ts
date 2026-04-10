@@ -9,7 +9,7 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
- *  - Dawid Dragula
+ *  - Dawid Draguła
  *
  * */
 
@@ -218,6 +218,21 @@ export interface DataProviderOptions {
      * @default 'local'
      */
     providerType?: string;
+
+    /**
+     * Whether columns should be generated automatically from data source
+     * column ids.
+     *
+     * If set to `false`, only columns explicitly configured in `columns[]`
+     * (or referenced by `header`) will be rendered.
+     *
+     * With `autogenerateColumns: true` and no `header`, source columns are
+     * rendered in provider order, and custom configured columns are appended
+     * at the end in their definition order.
+     *
+     * @default true
+     */
+    autogenerateColumns?: boolean;
 }
 
 

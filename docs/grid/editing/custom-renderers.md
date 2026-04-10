@@ -6,7 +6,7 @@ tags: ["grid-pro"]
 
 You can also write a custom renderer. To do so, define:
 
-1. A class for the specific Cell Content (it should extend the abstract [`CellContent`](https://api.highcharts.com/grid/#classes/Grid_Core_Table_CellContent_CellContent.CellContent) or [`CellContentPro`](https://api.highcharts.com/grid/#classes/Grid_Pro_CellRendering_CellContentPro.CellContentPro) class). It must implement lifecycle methods: `add`, `update`, `delete`.
+1. A class for the specific Cell Content (it should extend the abstract [`CellContent`](https://api.highcharts.com/grid/typedoc/classes/Grid_Core_Table_CellContent_CellContent.CellContent) or [`CellContentPro`](https://api.highcharts.com/grid/typedoc/classes/Grid_Pro_CellRendering_CellContentPro.CellContentPro) class). It must implement lifecycle methods: `add`, `update`, `delete`.
 
    ```ts
    class CustomCellContent extends CellContentPro {
@@ -29,7 +29,7 @@ You can also write a custom renderer. To do so, define:
    }
    ```
 
-2. A class representing your Renderer, which inherits from the abstract [`CellRenderer`](https://api.highcharts.com/grid/#classes/Grid_Pro_CellRendering_CellRenderer.CellRenderer) class. It should implement:
+2. A class representing your Renderer, which inherits from the abstract [`CellRenderer`](https://api.highcharts.com/grid/typedoc/classes/Grid_Pro_CellRendering_CellRenderer.CellRenderer) class. It should implement:
 
    - `options` – an abstract property holding the renderer’s unique configuration options
    - `render` – a method that creates and returns a new instance of CellContent
@@ -54,7 +54,7 @@ You can also write a custom renderer. To do so, define:
    }
    ```
 
-3. Add the renderer type to [`CellRendererRegistry`](https://api.highcharts.com/grid/#modules/Grid_Pro_CellRendering_CellRendererRegistry.CellRendererRegistry) so it can be used in Grid Options.
+3. Add the renderer type to [`CellRendererRegistry`](https://api.highcharts.com/grid/typedoc/modules/Grid_Pro_CellRendering_CellRendererRegistry.html) so it can be used in Grid Options.
 
    ```ts
    declare module 'highcharts/grid/es-modules/Grid/Pro/CellRendering/CellRendererType' {
@@ -68,8 +68,8 @@ You can also write a custom renderer. To do so, define:
 
 If you want your custom renderer to be usable in cell edit mode, you need to implement additionally the following interfaces:
 
-- [`EditModeContent`](https://api.highcharts.com/grid/#interfaces/Grid_Pro_CellEditing_CellEditMode.EditModeContent) - it should extend the custom cell content class.
-- [`EditModeRenderer`](https://api.highcharts.com/grid/#interfaces/Grid_Pro_CellEditing_CellEditMode.EditModeRenderer) - it should extend the custom cell renderer class.
+- [`EditModeContent`](https://api.highcharts.com/grid/typedoc/interfaces/Grid_Pro_CellEditing_CellEditMode.EditModeContent.html) - it should extend the custom cell content class.
+- [`EditModeRenderer`](https://api.highcharts.com/grid/typedoc/interfaces/Grid_Pro_CellEditing_CellEditMode.EditModeRenderer.html) - it should extend the custom cell renderer class.
 
 ## Custom Textarea Renderer
 
@@ -77,7 +77,7 @@ This section demonstrates how to create a custom **Textarea** cell renderer for 
 
 <iframe style="width: 100%; height: 590px; border: none;" src="https://www.highcharts.com/samples/embed/grid/basic/custom-renderer?force-light-theme" allow="fullscreen"></iframe>
 
-1. We start by importing the default [`CellRenderer`](https://api.highcharts.com/grid/#classes/Grid_Pro_CellRendering_CellRenderer.CellRenderer) and `CellContentPro` classes and [`CellRendererRegistry`](https://api.highcharts.com/grid/#modules/Grid_Pro_CellRendering_CellRendererRegistry.CellRendererRegistry) from the `Grid` namespace.
+1. We start by importing the default [`CellRenderer`](https://api.highcharts.com/grid/typedoc/classes/Grid_Pro_CellRendering_CellRenderer.CellRenderer) and `CellContentPro` classes and [`CellRendererRegistry`](https://api.highcharts.com/grid/typedoc/modules/Grid_Pro_CellRendering_CellRendererRegistry.html) from the `Grid` namespace.
 
 ```js
 const {
@@ -118,7 +118,7 @@ class TextareaContent extends CellContentPro {
 }
 ```
 
-3. The **TextareaRenderer** class is responsible for integrating the custom textarea content into the grid. By extending the [`CellRenderer`](https://api.highcharts.com/grid/#classes/Grid_Pro_CellRendering_CellRenderer.CellRenderer) base class, it provides a `render`
+3. The **TextareaRenderer** class is responsible for integrating the custom textarea content into the grid. By extending the [`CellRenderer`](https://api.highcharts.com/grid/typedoc/classes/Grid_Pro_CellRendering_CellRenderer.CellRenderer) base class, it provides a `render`
    method that creates and returns a new instance of `TextareaContent` for each cell.
 
 ```js
@@ -134,7 +134,7 @@ class TextareaRenderer extends CellRenderer {
 }
 ```
 
-4. Register the new renderer type with the [`CellRendererRegistry`](https://api.highcharts.com/grid/#modules/Grid_Pro_CellRendering_CellRendererRegistry.CellRendererRegistry) so it can be used in the Grid configuration.
+4. Register the new renderer type with the [`CellRendererRegistry`](https://api.highcharts.com/grid/typedoc/modules/Grid_Pro_CellRendering_CellRendererRegistry.html) so it can be used in the Grid configuration.
 
 ```js
 CellRendererRegistry.registerRenderer('textarea', TextareaRenderer);

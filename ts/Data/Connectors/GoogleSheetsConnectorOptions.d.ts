@@ -7,7 +7,7 @@
  *
  *
  *  Authors:
- *  - Karol Kolodziej
+ *  - Karol Kołodziej
  *  - Kamil Kubik
  *
  * */
@@ -94,7 +94,7 @@ export interface GoogleSheetsConnectorOptions extends DataConnectorOptions {
      * Allows defining multiple data tables within a single connector to adjust
      * options or data parsing in various ways based on the same data source.
      *
-     * @example
+     * ```js
      * dataPool: {
      *     connectors: [{
      *         id: 'data-connector',
@@ -134,6 +134,7 @@ export interface GoogleSheetsConnectorOptions extends DataConnectorOptions {
      *         }]
      *     }]
      * }
+     * ```
      **/
     dataTables?: GoogleSheetsDataTableConnectorOptions[];
 

@@ -3,7 +3,7 @@
  *  Exporting module
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -617,7 +617,7 @@ export class Exporting {
                 (type === 'image/svg+xml' ? 'svg' : type.split('/')[1])
             ),
             scale: exportingOptions?.scale || 1,
-            // Allow libURL to end with or without fordward slash
+            // Allow libURL to end with or without forward slash
             libURL: libURL?.slice(-1) !== '/' ? libURL + '/' : libURL
         };
     }
@@ -654,7 +654,12 @@ export class Exporting {
 
         if (useForeignObject) {
             // Some tags needs to be closed in xhtml (#13726)
-            svg = svg.replace(/(<(?:img|br).*?(?=\>))>/g, '$1 />');
+            svg = svg
+                .replace(/(<(?:img|br).*?(?=\>))>/g, '$1 />')
+                .replace(
+                    /(<svg(?![^>]*xmlns=)[^>]*)>/g,
+                    '$1 xmlns="http://www.w3.org/2000/svg">'
+                );
 
         // Move HTML into a foreignObject
         } else if (html && options?.exporting?.allowHTML) {
@@ -663,7 +668,9 @@ export class Exporting {
                     'height="' + options.chart.height + '">' +
                 '<body xmlns="http://www.w3.org/1999/xhtml">' +
                 // Some tags needs to be closed in xhtml (#13726)
-                html.replace(/(<(?:img|br).*?(?=\>))>/g, '$1 />') +
+                html
+                    .replace(/(<(?:img|br).*?(?=\>))>/g, '$1 />')
+                    .replace(/(<svg(?![^>]*xmlns=)[^>]*)>/g, '$1 xmlns="http://www.w3.org/2000/svg">') +
                 '</body>' +
                 '</foreignObject>';
             svg = svg.replace('</svg>', html + '</svg>');
@@ -680,6 +687,8 @@ export class Exporting {
                 '<svg xmlns:xlink="http://www.w3.org/1999/xlink" '
             )
             .replace(/ (NS\d+\:)?href=/g, ' xlink:href=') // #3567
+            // #24102- restore href for image elements (boost)
+            .replace(/(<image[^>]*) xlink:href=/g, '$1 href=')
             .replace(/\n+/g, ' ')
 
             // Replace HTML entities, issue #347
@@ -1617,7 +1626,7 @@ export class Exporting {
             // The local must be false to fallback to server for PDF export
             exportingOptions.local = false;
 
-            // Allow fallbacking to server only for PDFs that failed locally
+            // Allow fallback to server only for PDFs that failed locally
             await this.exportChart(exportingOptions);
         }
     }
@@ -1812,12 +1821,12 @@ export class Exporting {
 
         // Prepare for replicating the chart
         options.series = [];
-        chart.series.forEach(function (serie): void {
-            seriesOptions = merge(serie.userOptions, { // #4912
+        chart.series.forEach(function (s): void {
+            seriesOptions = merge(s.userOptions, { // #4912
                 animation: false, // Turn off animation
                 enableMouseTracking: false,
                 showCheckbox: false,
-                visible: serie.visible
+                visible: s.visible
             });
 
             // Used for the navigator series that has its own option set
@@ -1913,8 +1922,15 @@ export class Exporting {
                 }
             });
 
+            const exporting = chartCopy.exporting;
+
+            // Prepare shadow DOM styles
+            if (exporting?.options.applyStyleSheets) {
+                this.applyShadowDOMStyles(chartCopy);
+            }
+
             // Get the SVG from the container's innerHTML
-            svg = chartCopy.exporting?.getChartHTML(
+            svg = exporting?.getChartHTML(
                 chart.styledMode ||
                 options?.exporting?.applyStyleSheets
             ) || '';
@@ -1950,6 +1966,57 @@ export class Exporting {
                 }
             ));
 
+    }
+
+    /**
+     * Apply styles from the shadow DOM.
+     *
+     * @internal
+     * @function Highcharts.Exporting#applyShadowDOMStyles
+     *
+     * @param {Highcharts.Chart} chartCopy
+     * The copy of a chart for the export process.
+     *
+     * @requires modules/exporting
+     */
+    public applyShadowDOMStyles(
+        chartCopy: Chart
+    ): void {
+        // Get the original chart
+        const chart = this.chart,
+            shadowStyles: HTMLStyleElement[] = [];
+
+        // Set the original chart's container as the first node
+        let node = chart.container,
+            rootNode;
+
+        // Find the shadow DOM root node
+        while (node) {
+            rootNode = node.getRootNode() as ShadowRoot;
+            if (rootNode && typeof rootNode.host === 'object') {
+                break;
+            }
+            node = node.parentNode;
+            rootNode = null;
+        }
+
+        // Append shadow DOM styles into copied chart's container so the
+        // getComputedStyle sees them
+        rootNode?.querySelectorAll('style').forEach(
+            (style: HTMLStyleElement): void => {
+                const clonedStyle = style.cloneNode(true) as HTMLStyleElement;
+                chartCopy.container.appendChild(clonedStyle);
+
+                // Store for the later removal
+                shadowStyles.push(clonedStyle);
+            });
+
+        addEvent(chart, 'getSVG', (): void => {
+            // Remove temporary Shadow DOM styles
+            shadowStyles.forEach((style): void => {
+                style.remove();
+            });
+        });
     }
 
     /**
@@ -2057,7 +2124,7 @@ export class Exporting {
              * @internal
              * @function filterStyles
              *
-             * @param {string | number | Highcharts.GradientColor | Highcharts.PatternObject | undefined} val
+             * @param {string|number|Highcharts.GradientColorObject|Highcharts.PatternObject|undefined} val
              * Style value.
              * @param {string} prop
              * Style property name.

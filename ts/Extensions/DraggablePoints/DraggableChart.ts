@@ -476,7 +476,7 @@ function getGroupedPoints(point: Point): Array<Point> {
  * @param {Highcharts.PointerEventObject} newPos
  *        Event with the new position of the mouse (chartX/Y properties).
  *
- * @return {Highchats.Dictionary<object>}
+ * @return {Highcharts.Dictionary<object>}
  *         Hashmap with point.id mapped to an object with the original point
  *         reference, as well as the new data values.
  */

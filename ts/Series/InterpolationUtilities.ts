@@ -87,7 +87,7 @@ function getContext(
         context
     } = series;
 
-    // We can trust that the conext is canvas when clearRect is present.
+    // We can trust that the context is canvas when clearRect is present.
     if (canvas && context?.clearRect) {
         context.clearRect(0, 0, canvas.width, canvas.height);
     } else {

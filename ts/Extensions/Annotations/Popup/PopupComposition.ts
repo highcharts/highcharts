@@ -55,18 +55,18 @@ interface PopupConfigObject {
 
 /** @internal */
 function compose(
-    NagivationBindingsClass: typeof NavigationBindings,
+    NavigationBindingsClass: typeof NavigationBindings,
     PointerClass: typeof Pointer
 ): void {
 
     if (pushUnique(composed, 'Popup')) {
         addEvent(
-            NagivationBindingsClass,
+            NavigationBindingsClass,
             'closePopup',
             onNavigationBindingsClosePopup
         );
         addEvent(
-            NagivationBindingsClass,
+            NavigationBindingsClass,
             'showPopup',
             onNavigationBindingsShowPopup
         );

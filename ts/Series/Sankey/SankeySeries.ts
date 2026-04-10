@@ -3,7 +3,7 @@
  *  Sankey diagram module
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -793,7 +793,7 @@ export default SankeySeries;
  * The color of the auto generated node.
  *
  * @name Highcharts.SankeyNodeObject#color
- * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+ * @type {Highcharts.ColorType}
  *//**
  * The color index of the auto generated node, especially for use in styled
  * mode.
@@ -801,7 +801,7 @@ export default SankeySeries;
  * @name Highcharts.SankeyNodeObject#colorIndex
  * @type {number}
  *//**
- * An optional column index of where to place the node. The default behaviour is
+ * An optional column index of where to place the node. The default behavior is
  * to place it next to the preceding node.
  *
  * @see {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/sankey-node-column/|Highcharts-Demo:}
@@ -811,7 +811,7 @@ export default SankeySeries;
  * @type {number}
  * @since 6.0.5
  *//**
- * The id of the auto-generated node, refering to the `from` or `to` setting of
+ * The id of the auto-generated node, referring to the `from` or `to` setting of
  * the link.
  *
  * @name Highcharts.SankeyNodeObject#id

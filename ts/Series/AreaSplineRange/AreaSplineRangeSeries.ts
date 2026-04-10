@@ -1,7 +1,7 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -36,7 +36,7 @@ import { extend, merge } from '../../Shared/Utilities.js';
 /**
  * The areasplinerange series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.areasplinerange
  *
@@ -72,6 +72,7 @@ class AreaSplineRangeSeries extends AreaRangeSeries {
  *
  * */
 
+/** @internal */
 interface AreaSplineRangeSeries extends AreaRangeSeries {
     pointClass: typeof AreaSplineRangePoint;
     getPointSpline: typeof splineProto.getPointSpline;
@@ -88,7 +89,7 @@ extend(AreaSplineRangeSeries.prototype, {
  * */
 
 /**
- * @private
+ * @internal
  */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
@@ -104,6 +105,7 @@ SeriesRegistry.registerSeriesType('areasplinerange', AreaSplineRangeSeries);
  *
  * */
 
+/** @internal */
 export default AreaSplineRangeSeries;
 
 /* *

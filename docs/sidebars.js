@@ -168,7 +168,14 @@ module.exports = {
                 ]
             },
             'grid/responsive-grid',
-            'grid/data-providers',
+            {
+                'Data handling': [
+                    'grid/data-handling/overview',
+                    'grid/data-handling/clientside',
+                    'grid/data-handling/serverside',
+                    'grid/data-handling/connectors'
+                ]
+            },
             'grid/events',
             'grid/accessibility',
             'grid/internationalization',

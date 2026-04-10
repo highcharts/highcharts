@@ -133,7 +133,7 @@ QUnit.test('Named points', function (assert) {
 });
 
 QUnit.test('Datetime', function (assert) {
-    $('#container').highcharts({
+    const chart = Highcharts.chart('container', {
         title: {
             text: 'Datetime chart'
         },
@@ -164,7 +164,7 @@ QUnit.test('Datetime', function (assert) {
         ]
     });
 
-    var csv =
+    const csv =
         '"DateTime","Series 1"\n' +
         '"2014-01-01 00:00:00",29.9\n' +
         '"2014-01-02 00:00:00",71.5\n' +
@@ -180,11 +180,32 @@ QUnit.test('Datetime', function (assert) {
         '"2014-01-12 00:00:00",54.4';
 
     assert.equal(
-        $('#container').highcharts().exporting.getCSV(),
+        chart.exporting.getCSV(),
         csv,
         'Basic datetime content'
     );
-    $('#container').highcharts().destroy();
+
+    chart.series[0].update({
+        data: [
+            ['2024-01-01T00:00:00Z', 1],
+            ['2024-01-02T00:00:00Z', 2],
+            ['2024-01-03T00:00:00Z', 3],
+            ['2024-01-04T00:00:00Z', 4]
+        ]
+    });
+
+
+    assert.strictEqual(
+        chart.exporting.getCSV(),
+        '"DateTime","Series 1"\n' +
+        '"2024-01-01 00:00:00",1\n' +
+        '"2024-01-02 00:00:00",2\n' +
+        '"2024-01-03 00:00:00",3\n' +
+        '"2024-01-04 00:00:00",4',
+        'Date string should be exported and formatted correctly, #23654.'
+    );
+
+    chart.destroy();
 });
 
 QUnit.test('Datetime multiseries', function (assert) {
@@ -1120,7 +1141,7 @@ QUnit.test('Descending categories', function (assert) {
         csv = chart.exporting.getCSV().split('\n');
 
     assert.strictEqual(
-        csv[2],
+        csv[1],
         '"Category 1",34,66',
         'First point should be in Category 2 (#12767)'
     );

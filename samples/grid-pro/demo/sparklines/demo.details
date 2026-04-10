@@ -1,7 +1,7 @@
 ---
 name: Sparklines
 authors:
-  - Dawid Dragula
+  - Dawid Draguła
 js_wrap: b
 alt_text: >-
   Sparklines inside data grid cells

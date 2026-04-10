@@ -3,7 +3,7 @@
  *  Highcharts funnel module
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -147,7 +147,6 @@ class FunnelSeries extends PieSeries {
      *
      * */
 
-    /* eslint-disable valid-jsdoc */
 
     /**
      * @private
@@ -667,7 +666,6 @@ class FunnelSeries extends PieSeries {
         points.sort((a, b): number => ((a.plotY as any) - (b.plotY as any)));
     }
 
-    /* eslint-enable valid-jsdoc */
 
 }
 

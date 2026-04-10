@@ -7,7 +7,7 @@
  * Series on point module
  *
  * (c) 2010-2026 Highsoft AS
- * Author: Rafal Sebestjanski and Piotr Madej
+ * Author: Rafał Sebestjański and Piotr Madej
  *
  * A commercial license may be required depending on use.
  * See www.highcharts.com/license

@@ -139,9 +139,6 @@ class Connection {
      *
      * @param {Highcharts.SVGAttributes} [attribs]
      *        SVG attributes for the path.
-     *
-     * @param {Partial<Highcharts.AnimationOptionsObject>} [animation]
-     *        Animation options for the rendering.
      */
     public renderPath(
         path: SVGPath,

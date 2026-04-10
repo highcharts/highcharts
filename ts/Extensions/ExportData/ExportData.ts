@@ -3,7 +3,7 @@
  *  Experimental data export module for Highcharts
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -418,6 +418,7 @@ namespace ExportData {
         options: SeriesOptions;
         pointArrayMap?: Array<string>;
         index: number;
+        xAxis: Axis;
     }
 
     /* *
@@ -942,7 +943,9 @@ namespace ExportData {
                     autoIncrement: series.autoIncrement,
                     options: series.options,
                     pointArrayMap: series.pointArrayMap,
-                    index: series.index
+                    index: series.index,
+                    // Allows correct date formatting for string date, #23654.
+                    xAxis: series.xAxis
                 };
 
                 // Export directly from options.data because we need the

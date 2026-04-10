@@ -1,7 +1,7 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -195,7 +195,7 @@ declare module '../Options' {
         caption?: Chart.CaptionOptions;
 
         /**
-         * Highchart by default puts a credits label in the lower right corner
+         * Highcharts by default puts a credits label in the lower right corner
          * of the chart. This can be changed using these options.
          */
         credits?: Chart.CreditsOptions;
@@ -299,6 +299,8 @@ class Chart {
         options: Partial<Options>,
         callback?: Chart.CallbackFunction
     ): Chart;
+
+    /* eslint-disable jsdoc/check-param-names */
     /**
      * Factory function for basic charts.
      *
@@ -337,6 +339,7 @@ class Chart {
     ): Chart {
         return new Chart(a as any, b as any, c);
     }
+    /* eslint-enable jsdoc/check-param-names */
 
     /* *
      *
@@ -1075,7 +1078,7 @@ class Chart {
     }
 
     /**
-     * Get the clipping for a series. Could be called for a series to initialate
+     * Get the clipping for a series. Could be called for a series to initialize
      * animating the clip or to set the final clip (only width and x).
      *
      * @internal
@@ -1733,14 +1736,6 @@ class Chart {
                                 baseline :
                                 offset + baseline
                         },
-                        {
-                            align: key === 'title' ?
-                                // Title defaults to center for short titles,
-                                // left for word-wrapped titles
-                                (uncappedScale < minScale ? 'left' : 'center') :
-                                // Subtitle defaults to the title.align
-                                this.title?.alignValue
-                        },
                         descOptions
                     ),
                     width = (descOptions.width || (
@@ -1752,6 +1747,14 @@ class Chart {
                                 alignTo.width
                         ) / scale
                     )) + 'px';
+
+                // Handle auto alignment
+                alignAttr.align ??= key === 'title' ?
+                    // Title defaults to center for short titles,
+                    // left for word-wrapped titles
+                    (uncappedScale < minScale ? 'left' : 'center') :
+                    // Subtitle defaults to the title.align
+                    this.title?.alignValue;
 
                 // No animation when switching alignment
                 if (desc.alignValue !== alignAttr.align) {
@@ -1945,7 +1948,7 @@ class Chart {
                 }
                 if (
                     getStyle(node, 'display', false) === 'none' ||
-                    (node as any).hcOricDetached
+                    (node as any).hcOrigDetached
                 ) {
                     (node as any).hcOrigStyle = {
                         display: node.style.display,
@@ -2292,6 +2295,12 @@ class Chart {
                     // (#1257)
                     if (chart.container) {
                         chart.setSize(void 0, void 0, false);
+                        // #23712: sync containerBox with reflowed height to
+                        // break infinite loop
+                        const box = chart.containerBox;
+                        if (box) {
+                            box.height = chart.chartHeight;
+                        }
                     }
                 }, e ? 100 : 0);
             }
@@ -3490,7 +3499,7 @@ class Chart {
      * @param {string} coll
      * An axis type.
      *
-     * @param {...Array<*>} arguments
+     * @param {...Array<*>} options
      * All arguments for the constructor.
      *
      * @return {Highcharts.Axis}
@@ -4656,7 +4665,7 @@ namespace Chart {
     }
 
     /**
-     * Highchart by default puts a credits label in the lower right corner
+     * Highcharts by default puts a credits label in the lower right corner
      * of the chart. This can be changed using these options.
      */
     export interface CreditsOptions {
@@ -5168,7 +5177,7 @@ export default Chart;
  *        options, or a space character.
  *
  * @param {Highcharts.Chart} [ctx]
- *        Since v12.5.0, the chart context passed as an extra argument for
+ *        Since v12.6.0, the chart context passed as an extra argument for
  *        arrow functions.
  *
  * @return {string} The formatted number.

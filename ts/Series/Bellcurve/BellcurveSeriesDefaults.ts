@@ -22,7 +22,7 @@ import type BellcurveSeriesOptions from './BellcurveSeriesOptions';
 
 /* *
  *
- *  API Optiions
+ *  API Options
  *
  * */
 

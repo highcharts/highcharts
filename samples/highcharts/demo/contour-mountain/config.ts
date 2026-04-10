@@ -31,7 +31,7 @@ export default {
     factory: 'chart',
     details: {
         name: 'Mountain elevation with contour series',
-        authors: ['Dawid Dragula', 'Markus Knutson Barstad'],
+        authors: ['Dawid Draguła', 'Markus Knutson Barstad'],
         tags: ['Highcharts demo'],
         categories: [{
             key: 'Heat and tree maps',

@@ -2,7 +2,7 @@
 /**
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Pawel Fus & Daniel Studencki
+ *  Author: Paweł Fus & Daniel Studencki
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license

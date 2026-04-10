@@ -1,7 +1,7 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Pawel Lysy Grzegorz Blachlinski
+ *  Author: Paweł Lysy Grzegorz Blachliński
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -150,7 +150,7 @@ const TreegraphSeriesDefaults = {
      * @apioption plotOptions.treegraph.levels.dataLabels
      */
     /**
-     * Options applied to collapse Button. The collape button is the
+     * Options applied to collapse Button. The collapse button is the
      * small button which indicates, that the node is collapsable.
      */
     collapseButton: {
