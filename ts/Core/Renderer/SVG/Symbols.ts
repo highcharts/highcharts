@@ -60,6 +60,17 @@ function arc(
         let start = options.start || 0,
             end = options.end || 0;
 
+        const twoPi = Math.PI * 2,
+            // Rounded start/end values (for example to 3 decimals) can turn a
+            // mathematically full circle into a near-full arc. Normalize these
+            // values before checking the strict full-circle proximity.
+            // This keeps single-slice pies stable when rotated (#24303).
+            fullCircleTolerance = 0.001;
+
+        if (Math.abs(end - start - twoPi) < fullCircleTolerance) {
+            end = start + twoPi;
+        }
+
         const rx = pick(options.r, w),
             ry = pick(options.r, h || w),
             // Subtract a small number to prevent cos and sin of start and end
@@ -67,7 +78,7 @@ function arc(
             // tests at samples/unit-tests/svgrenderer/symbol/demo.js
             proximity = 0.0001,
             fullCircle = (
-                Math.abs(end - start - 2 * Math.PI) <
+                Math.abs(end - start - twoPi) <
                 proximity
             );
 

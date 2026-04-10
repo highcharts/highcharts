@@ -81,6 +81,36 @@ QUnit.test('Arc proximity', assert => {
     });
 });
 
+QUnit.test('Arc full circle with rounded angles (#24303)', assert => {
+    const ren = new Highcharts.Renderer(
+        document.getElementById('container'),
+        400,
+        400
+    );
+
+    [4, 5, 6, 7, 16].forEach(startAngle => {
+        const start = Math.round(
+                (Math.PI / 180 * (startAngle - 90)) * 1000
+            ) / 1000,
+            end = Math.round(
+                (Math.PI / 180 * (startAngle + 270)) * 1000
+            ) / 1000,
+            path = ren.symbols.arc(150, 150, 150, 150, {
+                start,
+                end,
+                innerR: 0,
+                borderRadius: 3
+            });
+
+        assert.close(
+            path[0][1],
+            150,
+            0.01,
+            `MoveTo x should stay centered for startAngle=${startAngle}`
+        );
+    });
+});
+
 QUnit.test('Square/rect', assert => {
     ['square', 'rect'].forEach(shape => {
         const fn = Highcharts.SVGRenderer.prototype.symbols[shape];
