@@ -1278,7 +1278,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
                  *
                  * @apioption plotOptions.series.marker.states.hover.brightness
                  */
-                brightness: void 0,
+                // brightness: void 0,
 
                 /**
                  * Used by hover, inactive, and select states. The color of
@@ -1286,7 +1286,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
                  *
                  * @apioption plotOptions.series.marker.states.hover.color
                  */
-                color: void 0,
+                // color: void 0,
 
                 /**
                  * Used by hover, inactive, and select states. The dash
@@ -1294,8 +1294,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
                  *
                  * @apioption plotOptions.series.marker.states.hover.dashStyle
                  */
-                dashStyle: void 0,
-
+                // dashStyle: void 0,
                 /**
                  * Used by hover and select states (marker). The fill color
                  * of the point marker in this state. When `undefined`, the
@@ -1406,6 +1405,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
                  * @default   true
                  * @apioption plotOptions.series.marker.states.select.enabled
                  */
+                enabled: true,
 
                 /**
                  * The radius of the point marker. In hover state, it
@@ -2289,7 +2289,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
              * @since     1.2
              * @apioption plotOptions.series.states.hover.enabled
              */
-
+            enabled: true,
 
             /**
              * Animation setting for hovering the graph in line-type series.
@@ -2346,83 +2346,77 @@ const seriesDefaults: PlotOptionsOf<Series> = {
              *
              * @apioption plotOptions.series.states.hover.brightness
              */
-            brightness: void 0,
 
             /**
-             * Used by hover, inactive, and select states. The color of the
-             * series or point marker in this state.
-             *
-             * @apioption plotOptions.series.states.hover.color
-             */
-            color: void 0,
+            * Used by hover, inactive, and select states. The color of the
+            * series or point marker in this state.
+            *
+            * @apioption plotOptions.series.states.hover.color
+            */
 
             /**
-             * Used by hover, inactive, and select states. The dash style of
-             * the series line in this state.
-             *
-             * @apioption plotOptions.series.states.hover.dashStyle
-             */
-            dashStyle: void 0,
+            * Used by hover, inactive, and select states. The dash style of
+            * the series line in this state.
+            *
+            * @apioption plotOptions.series.states.hover.dashStyle
+            */
 
             /**
-             * Used by hover and select states (marker). The fill color of the
-             * point marker in this state. When `undefined`, the series' or
-             * point's color is used.
-             *
-             * @sample {highcharts} highcharts/plotoptions/series-marker-states-select-fillcolor/
-             * Solid red discs for selected points
-             *
-             * @apioption plotOptions.series.states.hover.fillColor
-             */
-            fillColor: void 0,
+            * Used by hover and select states (marker). The fill color of the
+            * point marker in this state. When `undefined`, the series' or
+            * point's color is used.
+            *
+            * @sample {highcharts} highcharts/plotoptions/series-marker-states-select-fillcolor/
+            * Solid red discs for selected points
+            *
+            * @apioption plotOptions.series.states.hover.fillColor
+            */
 
             /**
-             * Used by hover and select states (marker). The color of the
-             * point marker's outline in this state. When `undefined`, the
-             * series' or point's color is used.
-             *
-             * @sample {highcharts} highcharts/plotoptions/series-marker-states-hover-linecolor/
-             * White fill color, black line color
-             *
-             * @apioption plotOptions.series.states.hover.lineColor
-             */
-            lineColor: void 0,
+            * Used by hover and select states (marker). The color of the
+            * point marker's outline in this state. When `undefined`, the
+            * series' or point's color is used.
+            *
+            * @sample {highcharts} highcharts/plotoptions/series-marker-states-hover-linecolor/
+            * White fill color, black line color
+            *
+            * @apioption plotOptions.series.states.hover.lineColor
+            */
 
             /**
-             * Used by hover and inactive states (series and marker). The
-             * opacity of the series or marker elements. In the inactive state
-             * this defaults to `0.2` for series.
-             *
-             * @default 0.2 (inactive state)
-             *
-             * @apioption plotOptions.series.states.hover.opacity
-             */
-            opacity: void 0,
+            * Used by hover and inactive states (series and marker). The
+            * opacity of the series or marker elements. In the inactive state
+            * this defaults to `0.2` for series.
+            *
+            * @default 0.2
+            *
+            * @apioption plotOptions.series.states.hover.opacity
+            */
 
             /**
-             * Used by hover and select states (marker). The radius of the
-             * point marker in this state. In hover state, defaults to the
-             * normal state's radius plus `radiusPlus`.
-             *
-             * @sample {highcharts} highcharts/plotoptions/series-marker-states-hover-radius/
-             * 10px radius on hover
-             *
-             * @apioption plotOptions.series.states.hover.radius
-             */
+            * Used by hover and select states (marker). The radius of the
+            * point marker in this state. In hover state, defaults to the
+            * normal state's radius plus `radiusPlus`.
+            *
+            * @sample {highcharts} highcharts/plotoptions/series-marker-states-hover-radius/
+            * 10px radius on hover
+            *
+            * @apioption plotOptions.series.states.hover.radius
+            */
             radius: void 0,
 
             /**
-             * Used by hover state (marker). The number of pixels to add to
-             * the marker radius on hover.
-             *
-             * @sample {highcharts} highcharts/plotoptions/series-states-hover-linewidthplus/
-             * 5 pixels greater radius on hover
-             *
-             * @since   4.0.3
-             * @default 2
-             *
-             * @apioption plotOptions.series.states.hover.radiusPlus
-             */
+            * Used by hover state (marker). The number of pixels to add to
+            * the marker radius on hover.
+            *
+            * @sample {highcharts} highcharts/plotoptions/series-states-hover-linewidthplus/
+            * 5 pixels greater radius on hover
+            *
+            * @since   4.0.3
+            * @default 2
+            *
+            * @apioption plotOptions.series.states.hover.radiusPlus
+            */
             radiusPlus: void 0,
 
             /**
@@ -2546,6 +2540,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
              * @default true
              * @apioption plotOptions.series.states.inactive.enabled
              */
+            enabled: true,
 
             /**
              * The animation for entering the inactive state.

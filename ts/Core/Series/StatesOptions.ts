@@ -202,7 +202,7 @@ export interface StateOptions {
      * the series or marker elements. In the inactive state this defaults to
      * `0.2` for series.
      *
-     * @default 0.2 (inactive state)
+     * @default 0.2
      */
     opacity?: number;
 
