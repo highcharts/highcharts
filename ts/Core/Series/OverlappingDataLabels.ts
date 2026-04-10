@@ -104,42 +104,34 @@ function chartHideOverlappingLabels(
         if (label && (!label.alignAttr || label.placed)) {
             const padding = label.box ? 0 : (label.padding || 0);
 
-            // Optional one-tick override set upstream (kept for compatibility)
-            const ovlPos = label._ovlPos as
-            ({ x: number; y: number }|undefined);
-
-            // Current placed position: prefer translateX/Y (SVGLabel),
-            // then alignAttr, then attr x/y
-            const tx = label.translateX,
-                ty = label.translateY,
-                hasTX = Number.isFinite(tx as number),
-                hasTY = Number.isFinite(ty as number);
-
-            const currentPos = (hasTX && hasTY) ?
-                { x: tx as number, y: ty as number } :
-                (label.alignAttr || {
-                    x: label.attr('x'),
-                    y: label.attr('y')
-                });
+            // Current placed/aligned position (DOM-aligned)
+            const alignPos = label.alignAttr || {
+                x: label.attr('x'),
+                y: label.attr('y')
+            };
 
             // Final target position computed by data labels logic
             const dlPos =
-            label.dataLabelPosition?.posAttribs ||
-            label.point?.dataLabel?.dataLabelPosition?.posAttribs;
+                label.dataLabelPosition?.posAttribs ||
+                label.point?.dataLabel?.dataLabelPosition?.posAttribs;
 
-            const hasTarget =
-            !!dlPos && Number.isFinite(dlPos.x) && Number.isFinite(dlPos.y);
-            const hasCurrent =
-            !!currentPos &&
-            Number.isFinite(currentPos.x) && Number.isFinite(currentPos.y);
+            const hasTarget = !!dlPos &&
+                typeof dlPos.x === 'number' &&
+                typeof dlPos.y === 'number';
+            const hasAlign = !!alignPos &&
+                typeof alignPos.x === 'number' &&
+                typeof alignPos.y === 'number';
 
-            // If target exists and differs from current placed position,
-            // we are in transition.
-            const targetDiffers = !!(hasTarget && hasCurrent &&
-            (dlPos!.x !== currentPos.x || dlPos!.y !== currentPos.y));
+            // If target exists and differs from current aligned position,
+            // we are in a positional transition (e.g., Pie toggle animating
+            // from center).
+            const targetDiffers = !!(hasTarget && hasAlign &&
+                (dlPos!.x !== alignPos.x || dlPos!.y !== alignPos.y));
 
-            // Choose which coordinates to use this frame
-            const pos = ovlPos || (targetDiffers ? dlPos! : currentPos);
+            const hasTextPath =
+            !!(label.textPath || label.element?.querySelector('textPath'));
+
+            const pos = (!hasTextPath && targetDiffers) ? dlPos! : alignPos;
 
             const { height, polygon, width } = label.getBBox(),
                 alignOffset = getAlignFactor(label.alignValue) * width;
@@ -244,12 +236,6 @@ function chartHideOverlappingLabels(
     for (const label of labels) {
         if (label && hideOrShow(label, chart)) {
             isLabelAffected = true;
-        }
-    }
-
-    for (const lbl of labels) {
-        if (lbl && lbl._ovlPos) {
-            delete lbl._ovlPos;
         }
     }
 
@@ -395,16 +381,6 @@ function onChartRender(
 
                             // Do not allow overlap
                             } else {
-                                const wasHidden = label.hasClass &&
-                                label.hasClass('highcharts-data-label-hidden'),
-                                    willShow = point.visible && wasHidden,
-                                    pos = label.dataLabelPosition?.posAttribs;
-                                if (pos && willShow) {
-                                    label._ovlPos = { x: pos.x, y: pos.y };
-                                } else if (label._ovlPos) {
-                                    delete label._ovlPos;
-                                }
-
                                 labels.push(label);
                             }
                         });
