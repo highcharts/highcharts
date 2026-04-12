@@ -64,9 +64,9 @@ body {
 .highcharts-dark .theme-servers,
 .highcharts-light .theme-servers,
 .theme-servers {
-    --hcg-horizontal-padding: 10px;
-    --hcg-vertical-padding: 6px;
-    --hcg-header-vertical-padding: 6px;
+    --hcsg-horizontal-padding: 10px;
+    --hcsg-vertical-padding: 6px;
+    --hcsg-header-vertical-padding: 6px;
     --hcg-header-font-weight: bold;
     --hcg-column-border-width: 0;
     --hcg-row-even-background: light-dark(#f6f6f6, #272727);
