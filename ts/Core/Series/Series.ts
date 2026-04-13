@@ -57,6 +57,7 @@ import type SVGPath from '../Renderer/SVG/SVGPath';
 import type { SymbolKey } from '../Renderer/SVG/SymbolType';
 import type TooltipOptions from '../TooltipOptions';
 import type Types from '../../Shared/Types';
+import type { LegendSymbolOptions } from '../Legend/LegendSymbol';
 
 import A from '../Animation/AnimationUtilities.js';
 const {
@@ -74,7 +75,6 @@ const {
     win
 } = H;
 import LegendSymbol from '../Legend/LegendSymbol.js';
-import type { LegendSymbolOptions } from '../Legend/LegendSymbol';
 import { Palette } from '../Color/Palettes.js';
 import Point from './Point.js';
 import SeriesDefaults from './SeriesDefaults.js';

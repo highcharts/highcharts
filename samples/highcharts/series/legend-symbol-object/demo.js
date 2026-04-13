@@ -66,18 +66,17 @@ Highcharts.chart('container', {
         data: [1, 3, 2, 4, 3, 5, 4, 6, 5, 7],
         events: {
             drawLegendSymbol: function () {
-                console.log(this);
-                const legendItem = this.legendItem || {};
-                const group = legendItem.group;
-                const renderer = this.chart.renderer;
-                const data = this.options.data || [];
-                const first = Number(data[0]) || 0;
-                const last = Number(data[data.length - 1]) || 0;
-                const pct = first !== 0 ?
-                    Math.round((last - first) / first * 100) : 0;
-                const label = (pct >= 0 ? '+' : '') + pct + '%';
-                const badgeColor = pct > 0 ?
-                    '#27ae60' : pct < 0 ? '#e74c3c' : '#888';
+                const legendItem = this.legendItem || {},
+                    group = legendItem.group,
+                    renderer = this.chart.renderer,
+                    data = this.options.data || [],
+                    first = Number(data[0]) || 0,
+                    last = Number(data[data.length - 1]) || 0,
+                    pct = first !== 0 ?
+                        Math.round((last - first) / first * 100) : 0,
+                    label = (pct >= 0 ? '+' : '') + pct + '%',
+                    badgeColor = pct > 0 ?
+                        '#27ae60' : pct < 0 ? '#e74c3c' : '#888';
 
                 // Badge showing percentage change from first to last value.
                 legendItem.customBadge = renderer

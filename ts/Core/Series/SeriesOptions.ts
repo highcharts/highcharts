@@ -183,6 +183,34 @@ export interface SeriesEventsOptions {
      * @since 1.2.0
      */
     show?: SeriesShowCallbackFunction;
+
+    /**
+     * Fires after the legend symbol for the series has been drawn or
+     * redrawn. Use this event to add custom  elements to the legend item group.
+     * Any elements added here should also be cleaned up in the
+     * [destroyLegendSymbol](#plotOptions.series.events.destroyLegendSymbol)
+     * event.
+     *
+     * @sample {highcharts} highcharts/series/legend-symbol-object/
+     *         Custom badge added to the legend via drawLegendSymbol
+     *
+     * @since @next
+     */
+    drawLegendSymbol?: SeriesDrawLegendSymbolCallbackFunction;
+
+    /**
+     * Fires when the legend symbol for the series is about to be
+     * destroyed, for example when the legend is redrawn or the series is
+     * removed. Use this event to clean up any custom elements added in the
+     * [drawLegendSymbol](#plotOptions.series.events.drawLegendSymbol)
+     * event.
+     *
+     * @sample {highcharts} highcharts/series/legend-symbol-object/
+     *         Custom badge cleaned up via destroyLegendSymbol
+     *
+     * @since @next
+     */
+    destroyLegendSymbol?: SeriesDestroyLegendSymbolCallbackFunction;
 }
 
 /**
@@ -290,6 +318,35 @@ export type SeriesMouseOverCallbackFunction =
  *        Event that occurred.
  */
 export type SeriesShowCallbackFunction = EventCallback<Series, Event>;
+
+/**
+ * Gets fired after the legend symbol for the series has been drawn or
+ * redrawn.
+ *
+ * @callback Highcharts.SeriesDrawLegendSymbolCallbackFunction
+ *
+ * @param {Highcharts.Series} this
+ *        Series where the event occurred.
+ *
+ * @param {global.Event} event
+ *        Event that occurred.
+ */
+export type SeriesDrawLegendSymbolCallbackFunction =
+    EventCallback<Series, Event>;
+
+/**
+ * Gets fired when the legend symbol for the series is about to be destroyed.
+ *
+ * @callback Highcharts.SeriesDestroyLegendSymbolCallbackFunction
+ *
+ * @param {Highcharts.Series} this
+ *        Series where the event occurred.
+ *
+ * @param {global.Event} event
+ *        Event that occurred.
+ */
+export type SeriesDestroyLegendSymbolCallbackFunction =
+    EventCallback<Series, Event>;
 
 /**
  * The SVG value used for the `stroke-linecap` and `stroke-linejoin` of a line

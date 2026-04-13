@@ -1072,6 +1072,38 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      */
 
     /**
+     * Fires after the legend symbol for the series has been drawn or
+     * redrawn. Use this event to add custom  elements to the legend item group.
+     * Any elements added here should also be cleaned up in the
+     * [destroyLegendSymbol](#plotOptions.series.events.destroyLegendSymbol)
+     * event.
+     *
+     * @sample {highcharts} highcharts/series/legend-symbol-object/
+     *         Custom badge added to the legend via drawLegendSymbol
+     *
+     * @type      {Highcharts.SeriesDrawLegendSymbolCallbackFunction}
+     * @since     @next
+     * @context   Highcharts.Series
+     * @apioption plotOptions.series.events.drawLegendSymbol
+     */
+
+    /**
+     * Fires when the legend symbol for the series is about to be
+     * destroyed, for example when the legend is redrawn or the series is
+     * removed. Use this event to clean up any custom elements added in the
+     * [drawLegendSymbol](#plotOptions.series.events.drawLegendSymbol)
+     * event.
+     *
+     * @sample {highcharts} highcharts/series/legend-symbol-object/
+     *         Custom badge cleaned up via destroyLegendSymbol
+     *
+     * @type      {Highcharts.SeriesDestroyLegendSymbolCallbackFunction}
+     * @since     @next
+     * @context   Highcharts.Series
+     * @apioption plotOptions.series.events.destroyLegendSymbol
+     */
+
+    /**
      * Options for the point markers of line and scatter-like series. Properties
      * like `fillColor`, `lineColor` and `lineWidth` define the visual
      * appearance of the markers. The `symbol` option defines the shape. Other
