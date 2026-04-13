@@ -34,7 +34,7 @@ import H from '../../Core/Globals.js';
 const { doc } = H;
 import HU from '../Utils/HTMLUtilities.js';
 const { stripHTMLTagsFromString: stripHTMLTags } = HU;
-import { isObject } from '../../Shared/Utilities.js';
+import { isObject, removeEvent } from '../../Shared/Utilities.js';
 
 
 /**
@@ -73,6 +73,10 @@ class ContainerComponent extends AccessibilityComponent {
     }
 
     /**
+     * Attach or remove container pointer event handlers based on chart
+     * interactivity, to avoid screen readers announcing the chart as
+     * "clickable". (#24151)
+     *
      * @private
      */
     public updatePointerEventHandlers(): void {
@@ -87,14 +91,18 @@ class ContainerComponent extends AccessibilityComponent {
                 !!panning.enabled :
                 !!panning,
             hasSelection = !!chartOptions.events?.selection,
+            hasDraggableNodes = chart.series.some(
+                (s): boolean => !!(s as any).hasDraggableNodes
+            ),
             shouldAttachContainerMouseDown = (
                 hasZoom ||
                 hasPanning ||
-                hasSelection
+                hasSelection ||
+                hasDraggableNodes
             ),
             shouldAttachContainerClick = (
                 !!chart.navigationBindings ||
-                !!chart.options.chart.events?.click ||
+                !!chartOptions.events?.click ||
                 chart.runTrackerClick
             );
 
@@ -105,6 +113,13 @@ class ContainerComponent extends AccessibilityComponent {
         container.onmousedown = shouldAttachContainerMouseDown ?
             pointer.onContainerMouseDown.bind(pointer) :
             null;
+
+        // Also remove addEventListener-based handlers from DragNodesComposition
+        // (highcharts-more) for charts without draggable nodes. (#24151)
+        if (!shouldAttachContainerMouseDown) {
+            removeEvent(container, 'mousedown');
+        }
+
         container.onclick = shouldAttachContainerClick ?
             pointer.onContainerClick.bind(pointer) :
             null;
