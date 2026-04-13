@@ -33,15 +33,16 @@ import { defined, isNumber, pick } from '../../Shared/Utilities.js';
  * @internal
  */
 const annotationsFieldsTypes: Record<string, string> = {
-    backgroundColor: 'string',
-    borderColor: 'string',
+    backgroundColor: 'color',
+    backgroundColors: 'color',
+    borderColor: 'color',
     borderRadius: 'string',
-    color: 'string',
-    fill: 'string',
+    color: 'color',
+    fill: 'color',
     fontSize: 'string',
     labels: 'string',
     name: 'string',
-    stroke: 'string',
+    stroke: 'color',
     title: 'string'
 };
 
@@ -87,16 +88,13 @@ function getAssignedAxis(
  *
  * @internal
  *
- * @param {'boolean'|'number'|'string'} value
- * Atomic type (one of: string, number, boolean)
- *
- * @return {'checkbox'|'number'|'text'}
- * Field type (one of: text, number, checkbox)
+ * @return {'checkbox'|'color'|'number'|'text'}
+ * Field type (one of: text, number, checkbox, color)
  */
 function getFieldType(
     key: (0|string),
     value: ('boolean'|'number'|'string')
-): ('checkbox'|'number'|'text') {
+): ('checkbox'|'color'|'number'|'text') {
     const predefinedType = annotationsFieldsTypes[key];
     let fieldType: string = typeof value;
 
@@ -107,8 +105,9 @@ function getFieldType(
     return ({
         'string': 'text',
         'number': 'number',
-        'boolean': 'checkbox'
-    } as Record<string, ('checkbox'|'number'|'text')>)[
+        'boolean': 'checkbox',
+        'color': 'color'
+    } as Record<string, ('checkbox'|'color'|'number'|'text')>)[
         fieldType
     ];
 }

@@ -1,7 +1,7 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -96,7 +96,7 @@ interface DumbbellSeriesOptions extends AreaRangeSeriesOptions {
      * priority over the series color. To avoid this, set `lowColor` to
      * `undefined`.
      *
-     * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @type {Highcharts.ColorType}
      *
      * @since 8.0.0
      *

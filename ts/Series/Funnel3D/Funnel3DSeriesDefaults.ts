@@ -194,7 +194,7 @@ const Funnel3DSeriesDefaults: Funnel3DSeriesOptions = {
  * @apioption series.funnel3d.data.gradientForSides
  */
 
-''; // Detachs doclets above
+''; // Keeps doclets above
 
 /* *
  *

@@ -38,7 +38,7 @@ import '../../Data/Modifiers/MathModifier.js';
 declare global {
     interface Dashboards {
         Formula: typeof Formula;
-        // MathModifier registeres itself in DataModifier.types
+        // MathModifier registers itself in DataModifier.types
     }
 }
 

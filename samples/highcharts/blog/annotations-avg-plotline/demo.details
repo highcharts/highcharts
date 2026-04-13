@@ -1,6 +1,6 @@
 ---
  name: Automated AVG plotLine, min and max labels using annotations
  authors:
-   - Pawel Lysy
+   - Paweł Lysy
  js_wrap: b
 ...

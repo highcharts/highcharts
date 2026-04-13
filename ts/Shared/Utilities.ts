@@ -33,7 +33,6 @@ type FunctionsOf<T> = {
 
 type FunctionNamesOf<T> = keyof FunctionsOf<T>;
 
-/* eslint-disable valid-jsdoc */
 /**
  * Add an event listener.
  *
@@ -64,7 +63,6 @@ export function addEvent<T>(
     fn: (EventCallback<T>|Function),
     options: EventOptions = {}
 ): Function {
-    /* eslint-enable valid-jsdoc */
 
     // Add hcEvents to either the prototype (in case we're running addEvent on a
     // class) or the instance. If hasOwnProperty('hcEvents') is false, it is
@@ -343,8 +341,8 @@ export function createElement(
 }
 
 /**
- * Utility for crisping a line position to the nearest full pixel depening on
- * the line width
+ * Utility for crisping a line position to the nearest full pixel depending on
+ * the line width.
  *
  * @internal
  * @param {number} value       The raw pixel position
@@ -547,7 +545,7 @@ export function diffObjects(
 }
 
 /**
- * Remove the last occurence of an item from an array.
+ * Remove the last occurrence of an item from an array.
  *
  * @function Highcharts.erase
  *
@@ -585,7 +583,6 @@ export function erase(arr: Array<unknown>, item: unknown): void {
  *         Object a, the original object.
  */
 export function extend<T>(a: (T|undefined), b: Partial<T>): T {
-    /* eslint-enable valid-jsdoc */
     let n;
 
     if (!a) {
@@ -625,7 +622,6 @@ export function extendClass <T, TReturn = T>(
     return obj;
 }
 
-/* eslint-disable valid-jsdoc */
 /**
  * Fire an event that was registered with {@link Highcharts#addEvent}.
  *
@@ -654,7 +650,6 @@ export function fireEvent<T>(
     eventArguments?: (AnyRecord|Event),
     defaultFunction?: (EventCallback<T>|Function)
 ): void {
-    /* eslint-enable valid-jsdoc */
     eventArguments = eventArguments || {};
 
     if (
@@ -825,7 +820,7 @@ export function getMagnitude(num: number): number {
  * @param {string} path
  * Path to the property, for example `custom.myValue`.
  *
- * @param {unknown} obj
+ * @param {unknown} parent
  * Instance containing the property on the specific path.
  *
  * @return {unknown}
@@ -1339,7 +1334,6 @@ export function normalizeTickInterval(
     return retInterval;
 }
 
-/* eslint-disable valid-jsdoc */
 /**
  * Iterate over object key pairs in an object.
  *
@@ -1362,7 +1356,6 @@ export function objectEach<TObject, TContext>(
     fn: ObjectEachCallback<TObject, TContext>,
     ctx?: TContext
 ): void {
-    /* eslint-enable valid-jsdoc */
     for (const key in obj) {
         if (Object.hasOwnProperty.call(obj, key)) {
             fn.call(ctx || obj[key] as unknown as TContext, obj[key], key, obj);
@@ -1446,7 +1439,7 @@ T1 extends NullType ?
 export function pick<T1>(...args: [T1]):
 T1 extends NullType ? undefined : T1;
 export function pick<T>(...args: Array<T|null|undefined>): T|undefined;
-/* eslint-disable valid-jsdoc */
+/* eslint-disable jsdoc/check-param-names */
 /**
  * Return the first value that is not null or undefined.
  *
@@ -1468,6 +1461,7 @@ export function pick<T>(): T|undefined {
         }
     }
 }
+/* eslint-enable jsdoc/check-param-names */
 
 /**
  * Shortcut for parseInt
@@ -1575,7 +1569,6 @@ export function replaceNested(
     return text;
 }
 
-/* eslint-disable valid-jsdoc */
 /**
  * Remove an event that was added with {@link Highcharts#addEvent}.
  *
@@ -1599,7 +1592,6 @@ export function removeEvent<T>(
     type?: string,
     fn?: (EventCallback<T>|Function)
 ): void {
-    /* eslint-enable valid-jsdoc */
 
     /** @internal */
     function removeOneEvent(
@@ -1683,7 +1675,7 @@ export function splat<T>(obj: T|Array<T>): Array<T> {
 
 /**
  * Sort an object array and keep the order of equal items. The ECMAScript
- * standard does not specify the behaviour when items are equal.
+ * standard does not specify the behavior when items are equal.
  *
  * @function Highcharts.stableSort
  *

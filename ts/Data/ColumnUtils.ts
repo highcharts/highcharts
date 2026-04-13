@@ -7,7 +7,7 @@
  *
  *
  *  Authors:
- *  - Dawid Dragula
+ *  - Dawid Draguła
  *
  * */
 
@@ -22,7 +22,7 @@ import type {
     CellType as DataTableCellType,
     Column as DataTableColumn
 } from './DataTable';
-import type Types from '../Shared/Types';
+import type { TypedArray, TypedArrayConstructor } from '../Shared/Types';
 
 
 /**
@@ -123,7 +123,7 @@ export function splice(
     start: number,
     deleteCount: number,
     removedAsSubarray?: boolean,
-    items: DataTableCellType[]|Types.TypedArray = []
+    items: DataTableCellType[]|TypedArray = []
 ): SpliceResult<DataTableColumn> {
     if (Array.isArray(column)) {
         if (!Array.isArray(items)) {
@@ -137,7 +137,7 @@ export function splice(
     }
 
     const Constructor = Object.getPrototypeOf(column)
-        .constructor as Types.TypedArrayConstructor;
+        .constructor as TypedArrayConstructor;
 
     const removed = column[
         removedAsSubarray ? 'subarray' : 'slice'
@@ -147,7 +147,7 @@ export function splice(
     const result = new Constructor(newLength);
 
     result.set(column.subarray(0, start), 0);
-    result.set(items as (number[]|Types.TypedArray), start);
+    result.set(items as (number[]|TypedArray), start);
     result.set(column.subarray(start + deleteCount), start + items.length);
 
     return {

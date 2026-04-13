@@ -156,8 +156,12 @@ Related events:
 - `beforeSort`
 - `afterSort`
 
-See [Interaction / Events](https://www.highcharts.com/docs/grid/events) and
-the [API reference](https://api.highcharts.com/grid/columns.sorting).
+See [Interaction / Events](https://www.highcharts.com/docs/grid/events) for event details.
+
+## API reference
+
+- [`columnDefaults.sorting`](https://api.highcharts.com/grid/columnDefaults.sorting)
+- [`columns.sorting`](https://api.highcharts.com/grid/columns.sorting)
 
 ## Demo
 

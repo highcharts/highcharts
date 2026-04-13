@@ -9,7 +9,7 @@
  *
  *
  *  Authors:
- *  - Dawid Dragula
+ *  - Dawid Draguła
  *  - Sebastian Bochan
  *
  * */
@@ -33,6 +33,7 @@ import Globals from '../../Globals.js';
 import { fireEvent } from '../../../../Shared/Utilities.js';
 
 const { makeHTMLElement } = GridUtils;
+type ColumnResizeEvent = MouseEvent | TouchEvent;
 
 /* *
  *
@@ -91,7 +92,7 @@ class ColumnsResizer {
     public nextColumnStartWidth?: number;
 
     /**
-     * The handles and their mouse down event listeners.
+     * The handles and their drag event listeners.
      */
     private handles: Array<[HTMLElement, GridEventListener[]]> = [];
 
@@ -105,8 +106,15 @@ class ColumnsResizer {
     constructor(viewport: Table) {
         this.viewport = viewport;
 
-        document.addEventListener('mousemove', this.onDocumentMouseMove);
-        document.addEventListener('mouseup', this.onDocumentMouseUp);
+        document.addEventListener('mousemove', this.onDocumentDragMove);
+        document.addEventListener('mouseup', this.onDocumentDragEnd);
+        document.addEventListener(
+            'touchmove',
+            this.onDocumentDragMove,
+            { passive: false }
+        );
+        document.addEventListener('touchend', this.onDocumentDragEnd);
+        document.addEventListener('touchcancel', this.onDocumentDragEnd);
     }
 
 
@@ -142,19 +150,62 @@ class ColumnsResizer {
     }
 
     /**
-     * Handles the mouse move event on the document.
+     * Returns the page X coordinate for a mouse or touch event.
      *
      * @param e
-     * The mouse event.
+     * The drag event.
+     */
+    private static getPageX(e: ColumnResizeEvent): (number|undefined) {
+        if ('touches' in e) {
+            return e.touches[0]?.pageX ?? e.changedTouches[0]?.pageX;
+        }
+
+        return e.pageX;
+    }
+
+    /**
+     * Prevents touch scrolling from interrupting column dragging.
+     *
+     * @param e
+     * The drag event.
+     */
+    private static preventTouchDefault(e: ColumnResizeEvent): void {
+        if ('touches' in e && e.cancelable) {
+            e.preventDefault();
+        }
+    }
+
+    /**
+     * Handles the drag move event on the document.
+     *
+     * @param e
+     * The drag event.
      *
      * @internal
      */
-    private onDocumentMouseMove = (e: MouseEvent): void => {
+    private onDocumentDragMove = (e: ColumnResizeEvent): void => {
         if (!this.draggedResizeHandle || !this.draggedColumn) {
             return;
         }
 
-        const diff = e.pageX - (this.dragStartX || 0);
+        /*
+         * In iOS, a touchmove event with e.touches[0].pageX === 0 can fire
+         * while holding the finger in place. Ignore it to avoid collapsing the
+         * column to its minimum width.
+         */
+        if ('touches' in e && e.touches[0]?.pageX === 0) {
+            return;
+        }
+
+        const pageX = ColumnsResizer.getPageX(e);
+
+        if (pageX === void 0) {
+            return;
+        }
+
+        ColumnsResizer.preventTouchDefault(e);
+
+        const diff = pageX - (this.dragStartX || 0);
         const vp = this.viewport;
 
         vp.columnResizing.resize(this, diff);
@@ -168,9 +219,9 @@ class ColumnsResizer {
     };
 
     /**
-     * Handles the mouse up event on the document.
+     * Handles the drag end event on the document.
      */
-    private onDocumentMouseUp = (): void => {
+    private onDocumentDragEnd = (): void => {
         this.draggedColumn?.header?.htmlElement?.classList.remove(
             Globals.getClassName('resizedColumn')
         );
@@ -204,15 +255,23 @@ class ColumnsResizer {
         handle: HTMLElement,
         column: Column
     ): void {
-        const onHandleMouseDown = (e: Event): void => {
+        const onHandleMouseDown: EventListener = (event: Event): void => {
+            const e = event as ColumnResizeEvent;
             const vp = column.viewport;
+            const pageX = ColumnsResizer.getPageX(e);
+
+            if (pageX === void 0) {
+                return;
+            }
+
+            ColumnsResizer.preventTouchDefault(e);
 
             this.isResizing = true;
             handle.classList.add('hovered');
 
             vp.reflow();
 
-            this.dragStartX = (e as MouseEvent).pageX;
+            this.dragStartX = pageX;
             this.draggedColumn = column;
             this.draggedResizeHandle = handle;
             this.columnStartWidth = column.getWidth();
@@ -242,6 +301,9 @@ class ColumnsResizer {
             eventName: 'mousedown',
             listener: onHandleMouseDown
         }, {
+            eventName: 'touchstart',
+            listener: onHandleMouseDown
+        }, {
             eventName: 'mouseover',
             listener: onHandleMouseOver
         }, {
@@ -260,8 +322,11 @@ class ColumnsResizer {
      * should be called on the destroy of the data grid.
      */
     public removeEventListeners(): void {
-        document.removeEventListener('mousemove', this.onDocumentMouseMove);
-        document.removeEventListener('mouseup', this.onDocumentMouseUp);
+        document.removeEventListener('mousemove', this.onDocumentDragMove);
+        document.removeEventListener('mouseup', this.onDocumentDragEnd);
+        document.removeEventListener('touchmove', this.onDocumentDragMove);
+        document.removeEventListener('touchend', this.onDocumentDragEnd);
+        document.removeEventListener('touchcancel', this.onDocumentDragEnd);
 
         for (let i = 0, iEnd = this.handles.length; i < iEnd; i++) {
             const [handle, listeners] = this.handles[i];

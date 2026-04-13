@@ -1,7 +1,7 @@
 /* *
  *
  *  (c) 2023-2026 Highsoft AS
- *  Author: Torstein Honsi, Askel Eirik Johansson
+ *  Author: Torstein Hønsi, Askel Eirik Johansson
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license

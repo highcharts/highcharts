@@ -40,6 +40,8 @@ console.log(csv);
 console.log(json);
 ```
 
-See the [API reference](https://api.highcharts.com/grid/exporting) for more information on the `exporting` options.
+## API reference
 
-Try it - [the exporting sample.](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/grid-pro/basic/exporting/)
+- [`exporting`](https://api.highcharts.com/grid/exporting)
+
+See the [exporting sample](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/grid-pro/basic/exporting/).

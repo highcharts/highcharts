@@ -358,7 +358,7 @@ const lang: LangOptions = {
                  */
                 zigzag: ['Zig Zag'],
 
-                // Oscilators
+                // Oscillators
                 /**
                  *  Absolute price indicator alias.
                  *

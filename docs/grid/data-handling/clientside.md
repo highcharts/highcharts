@@ -8,7 +8,7 @@ Client-side data handling is the default model in Highcharts Grid. Grid loads
 data into a `DataTable`, then applies sorting, filtering, and pagination in
 memory through the local data provider.
 
-## Understand DataTable
+## DataTable
 
 In client-side mode, `DataTable` is the grid's internal "database". Whether you
 start with `data.columns`, an existing `data.dataTable`, or
@@ -100,30 +100,6 @@ Grid.grid('container', {
     }
 });
 ```
-
-## Using connectors
-
-If you use [`data.connector`](https://www.highcharts.com/docs/grid/data-handling/connectors),
-Grid creates or updates a local `DataTable` from the connector result:
-
-```js
-Grid.grid('container', {
-    data: {
-        // Connectors still populate a local `DataTable`.
-        connector: {
-            type: 'CSV',
-            csvURL: 'https://demo-live-data.highcharts.com/time-data.csv'
-        },
-        // Optional: refresh rows when the connector updates the table.
-        updateOnChange: true
-    }
-});
-```
-
-This still uses the local provider. For example, a JSON or CSV file loaded from
-your server is fetched first, then Grid handles filtering, sorting, and
-pagination client-side on the loaded data. For connector-specific options, see
-the [Connectors article](https://www.highcharts.com/docs/grid/data-handling/connectors).
 
 ## Stable row IDs and updates
 

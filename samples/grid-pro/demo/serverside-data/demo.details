@@ -1,7 +1,7 @@
 ---
 name: Serverside data
 authors:
-  - Dawid Dragula
+  - Dawid Draguła
 js_wrap: b
 alt_text: >-
   Data grid loading 100,000 employee records from a remote server using

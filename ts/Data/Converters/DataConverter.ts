@@ -371,7 +371,7 @@ class DataConverter implements DataEventEmitter<Event> {
 
             format = guessedFormat.join('/');
 
-            // If the caculated format is not valid, we need to present an
+            // If the calculated format is not valid, we need to present an
             // error.
         }
 

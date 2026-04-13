@@ -1,7 +1,7 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Sebastian Bochan, Rafal Sebestjanski
+ *  Author: Sebastian Bochan, Rafał Sebestjański
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -73,7 +73,7 @@ class LollipopSeries extends Series {
      * */
 
     /**
-     * The lollipop series is a carteseian series with a line anchored from
+     * The lollipop series is a cartesian series with a line anchored from
      * the x axis and a dot at the end to mark the value.
      * Requires `highcharts-more.js`, `modules/dumbbell.js` and
      * `modules/lollipop.js`.

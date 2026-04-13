@@ -2,7 +2,7 @@
  *
  *  Highcharts Drilldown module
  *
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -444,6 +444,12 @@ class ChartAdditions {
                 // Hide and disable dataLabels
                 series.dataLabelsGroups?.forEach((g): void => g?.destroy());
                 series.dataLabelsGroups = [];
+                // Clear point.dataLabels for drill up (#23850)
+                series.points?.forEach((p): void => {
+                    if (p.dataLabels) {
+                        p.dataLabels = [];
+                    }
+                });
             });
 
             // #18925 map zooming is not working with geoJSON maps
@@ -669,7 +675,7 @@ class ChartAdditions {
                                 series.remove(false);
                             }
 
-                        // Deal with asonchrynous removing of map series
+                        // Deal with asynchronous removing of map series
                         // after zooming into
                         } else if (
                             series.options &&
@@ -821,6 +827,10 @@ class ChartAdditions {
                         series.isDirtyData = true;
                     }
                     series.options.inactiveOtherPoints = false;
+                    // Restore opacity for series hidden during map drilldown
+                    if (series.group && series.visible) {
+                        series.group.attr({ opacity: 1 });
+                    }
                 });
                 chart.redraw();
             };
@@ -1035,7 +1045,7 @@ class ChartAdditions {
 
     /**
      * A function to fade in a group. First, the element is being hidden, then,
-     * using `opactiy`, is faded in. Used for example by `dataLabelsGroup` where
+     * using `opacity`, is faded in. Used for example by `dataLabelsGroup` where
      * simple SVGElement.fadeIn() is not enough, because of other features (e.g.
      * InactiveState) using `opacity` to fadeIn/fadeOut.
      *

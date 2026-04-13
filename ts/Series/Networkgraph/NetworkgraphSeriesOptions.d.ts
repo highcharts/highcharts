@@ -120,7 +120,7 @@ export interface NetworkgraphLinkOptions {
 }
 
 /**
- * A networkgraph is a type of relationship chart, where connnections
+ * A networkgraph is a type of relationship chart, where connections
  * (links) attracts nodes (points) and other nodes repulse each other.
  *
  * A `networkgraph` series. If the [type](#series.networkgraph.type) option is

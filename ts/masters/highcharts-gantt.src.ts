@@ -10,9 +10,9 @@
  *
  * Authors:
  * - Lars Cabrera
- * - Torstein Honsi
- * - Jon Arild Nygard
- * - Oystein Moseng
+ * - Torstein Hønsi
+ * - Jon Arild Nygård
+ * - Øystein Moseng
  */
 'use strict';
 import Highcharts from './highcharts.src.js';

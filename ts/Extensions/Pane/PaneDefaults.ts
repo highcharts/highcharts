@@ -1,7 +1,7 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -98,7 +98,7 @@ const background: PaneBackgroundOptions = {
     /**
      * The pane background border color.
      *
-     * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @type    {Highcharts.ColorType}
      * @since   2.3.0
      * @product highcharts
      * @requires highcharts-more
@@ -108,7 +108,7 @@ const background: PaneBackgroundOptions = {
     /**
      * The background color or gradient for the pane.
      *
-     * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @type    {Highcharts.ColorType}
      * @default { linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 }, stops: [[0, #ffffff], [1, #e6e6e6]] }
      * @since   2.3.0
      * @product highcharts

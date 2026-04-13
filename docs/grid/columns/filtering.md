@@ -234,7 +234,7 @@ The filtering UI will not be rendered for disabled columns.
 Filters can also be controlled programmatically through the API.
 
 ```js
-const grid = Highcharts.Grid('container', options);
+const grid = Grid.grid('container', options);
 const productColumn = grid.getColumn('product');
 
 // Apply a filter
@@ -246,7 +246,7 @@ productColumn.filtering.set();
 
 This makes it easy to integrate column filtering with external UI controls, such as search fields or custom buttons.
 
-## Filter events __grid_pro__
+## Events __grid_pro__
 
 Filtering triggers two lifecycle events:
 
@@ -269,7 +269,7 @@ columnDefaults: {
 }
 ```
 
-These events can be used for logging, analytics, UI feedback etc.
+These events can be used for e.g. logging, analytics, and UI feedback.
 
 ## Summary
 

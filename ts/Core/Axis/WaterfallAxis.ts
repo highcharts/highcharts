@@ -1,7 +1,7 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -167,8 +167,8 @@ namespace WaterfallAxis {
         const axes = this.axes as Array<WaterfallAxis>,
             series = this.series;
 
-        for (const serie of series) {
-            if (serie.options.stacking) {
+        for (const s of series) {
+            if (s.options.stacking) {
                 for (const axis of axes) {
                     if (!axis.isXAxis && axis.waterfall) {
                         axis.waterfall.stacks.changed = true;

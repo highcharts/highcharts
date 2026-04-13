@@ -5,7 +5,7 @@
  * @requires highcharts
  *
  * (c) 2009-2026 Highsoft AS
- * Author: Torstein Honsi
+ * Author: Torstein Hønsi
  *
  * A commercial license may be required depending on use.
  * See www.highcharts.com/license

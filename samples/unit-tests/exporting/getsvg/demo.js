@@ -256,3 +256,23 @@ QUnit.test('getSVGForExport XHTML', async function (assert) {
         'Should export one self-closing <br /> for each point'
     );
 });
+
+QUnit.test('getSVG for boosted chart', async function (assert) {
+    const chart = Highcharts.chart('container', {
+        boost: {
+            useGPUTranslations: true
+        },
+
+        series: [{
+            data: Array.from({ length: 5000 }, (_, i) => i),
+            boostThreshold: 1
+        }]
+
+    });
+
+    assert.strictEqual(
+        chart.exporting.getSVG().indexOf('xlink:href="data:image'),
+        -1,
+        'Boost image href should not be replaced with xlink:href (#24102)'
+    );
+});

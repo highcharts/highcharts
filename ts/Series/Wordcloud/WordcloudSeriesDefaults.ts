@@ -3,7 +3,7 @@
  *  Experimental Highcharts module which enables visualization of a word cloud.
  *
  *  (c) 2016-2026 Highsoft AS
- *  Authors: Jon Arild Nygard
+ *  Authors: Jon Arild Nygård
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -91,14 +91,14 @@ const WordcloudSeriesDefaults: WordcloudSeriesOptions = {
     /**
      * The word with the largest weight will have a font size equal to this
      * value. The font size of a word is the ratio between its weight and
-     * the largest occuring weight, multiplied with the value of
+     * the largest occurring weight, multiplied with the value of
      * maxFontSize.
      */
     maxFontSize: 25,
 
     /**
      * This option decides which algorithm is used for placement, and
-     * rotation of a word. The choice of algorith is therefore a crucial
+     * rotation of a word. The choice of algorithm is therefore a crucial
      * part of the resulting layout of the wordcloud. It is possible for
      * users to add their own custom placement strategies for use in word
      * cloud. Read more about it in our

@@ -9,7 +9,7 @@
  *
  *
  *  Authors:
- *  - Dawid Dragula
+ *  - Dawid Draguła
  *  - Sebastian Bochan
  *
  * */
@@ -108,7 +108,12 @@ abstract class Cell {
         this.htmlElement = this.init();
         this.htmlElement.setAttribute('tabindex', '-1');
 
-        if (!this.column?.options.cells?.editMode?.enabled) {
+        if (
+            !this.column ||
+            !this.column.viewport.grid.columnPolicy.isColumnEditable(
+                this.column.id
+            )
+        ) {
             this.htmlElement.setAttribute('aria-readonly', 'true');
         }
 
@@ -127,9 +132,15 @@ abstract class Cell {
      * @internal
      */
     protected init(): HTMLTableCellElement {
-        const cell = document.createElement('td', {});
+        const isRowHeader = !!this.column?.options.cells?.rowHeader;
+        const cell = document.createElement(isRowHeader ? 'th' : 'td', {});
 
-        cell.setAttribute('role', 'gridcell');
+        if (isRowHeader) {
+            cell.setAttribute('scope', 'row');
+            cell.setAttribute('role', 'rowheader');
+        } else {
+            cell.setAttribute('role', 'gridcell');
+        }
 
         return cell;
     }

@@ -22,7 +22,6 @@ import type { Highcharts as HighchartsNamespace } from '../Dashboards/Plugins/Hi
 import type { GridNamespace } from '../Dashboards/Plugins/GridTypes';
 
 // Fill registries
-import '../Dashboards/Components/HTMLComponent/HTMLComponent.js';
 import '../Data/Connectors/CSVConnector.js';
 import '../Data/Connectors/GoogleSheetsConnector.js';
 import '../Data/Connectors/HTMLTableConnector.js';
@@ -62,6 +61,12 @@ import Utilities from '../Dashboards/Utilities.js';
 import { addEvent, merge, removeEvent } from '../Shared/Utilities.js';
 import { uniqueKey } from '../Core/Utilities.js';
 
+// Import components
+import GridComponent from '../Dashboards/Components/GridComponent/GridComponent.js';
+import HighchartsComponent from '../Dashboards/Components/HighchartsComponent/HighchartsComponent.js';
+import HTMLComponent from '../Dashboards/Components/HTMLComponent/HTMLComponent.js';
+import KPIComponent from '../Dashboards/Components/KPIComponent/KPIComponent.js';
+import NavigatorComponent from '../Dashboards/Components/NavigatorComponent/NavigatorComponent.js';
 
 /* *
  *
@@ -86,6 +91,11 @@ declare global {
         Board: typeof Board;
         Component: typeof Component;
         ComponentRegistry: typeof ComponentRegistry;
+        GridComponent: typeof GridComponent;
+        HighchartsComponent: typeof HighchartsComponent;
+        HTMLComponent: typeof HTMLComponent;
+        KPIComponent: typeof KPIComponent;
+        NavigatorComponent: typeof NavigatorComponent;
         DataConnector: typeof DataConnector;
         DataConverter: typeof DataConverter;
         DataCursor: typeof DataCursor;
@@ -127,6 +137,11 @@ G.AST = AST;
 G.Board = Board;
 G.Component = Component;
 G.ComponentRegistry = ComponentRegistry;
+G.GridComponent = GridComponent;
+G.HighchartsComponent = HighchartsComponent;
+G.HTMLComponent = HTMLComponent;
+G.KPIComponent = KPIComponent;
+G.NavigatorComponent = NavigatorComponent;
 G.DataConnector = DataConnector;
 G.DataConverter = DataConverter;
 G.DataCursor = DataCursor;

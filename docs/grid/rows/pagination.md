@@ -3,6 +3,7 @@ sidebar_label: "Pagination"
 ---
 
 # Row pagination
+
 Pagination splits row data into pages, so the grid renders a manageable subset of rows at a time. This is useful for large datasets and helps keep the interface fast and readable.
 
 With the default local data model, pagination is applied client-side after the
@@ -111,9 +112,7 @@ Pagination is a typical use case for `responsive.rules`. Use it to override pagi
 ```js
 Grid.grid('container', {
     data: {
-        dataTable: {
-            columns: {...}
-        }
+        columns: {...}
     },
     pagination: {
         enabled: true,
@@ -176,4 +175,7 @@ pagination: {
 }
 ```
 
-For a complete list of pagination options, see the [pagination API reference](https://api.highcharts.com/grid/pagination).
+## API reference
+
+- [`pagination`](https://api.highcharts.com/grid/pagination)
+- [`pagination.controls`](https://api.highcharts.com/grid/pagination.controls)

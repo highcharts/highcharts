@@ -4,12 +4,14 @@ sidebar_label: "Connectors"
 
 # Connectors
 
-Grid can use Dashboards `DataConnector` types to load external data into a
-local `DataTable`. After that initial load, Grid works with the data through the
+Grid can use `DataConnector` types to load external data into a
+local [`DataTable`](https://www.highcharts.com/docs/grid/data-handling/clientside#datatable). After that initial load, Grid works with the data through the
 local provider model.
 
-In other words, connectors are for loading and preparing data, not for built-in
-server-side sorting, filtering, or pagination.
+In other words, connectors are for loading and preparing data, not for
+server-side sorting, filtering, or pagination. For example, a JSON or CSV file loaded from
+your server is fetched first, then Grid handles filtering, sorting, and
+pagination client-side on the loaded data.
 
 ## Supported connector types
 
