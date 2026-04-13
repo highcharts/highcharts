@@ -665,6 +665,7 @@ export interface TooltipOptions {
      * @sample highcharts/tooltip/stickoncontact/
      *         Tooltip sticks on pointer contact
      *
+     * @default   true
      * @since     8.0.1
      */
     stickOnContact: boolean;
