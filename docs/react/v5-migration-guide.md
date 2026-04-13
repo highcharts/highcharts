@@ -16,7 +16,7 @@ import { Accessibility } from "@highcharts/react/modules/accessibility";
 
 ## Pure ESM migration
 
-We migrated to the pure ESM paths, replacing the webpack-bundled `/esm/` imports with `/es-modules/masters/` for better compatibility with modern bundlers.
+We migrated to the pure ESM paths, replacing the webpack-bundled `/esm` imports with `/es-modules/masters` for better compatibility with modern bundlers.
 
 ```ts
 // Before
