@@ -31,6 +31,7 @@ import {
     addEvent,
     fireEvent,
     getAlignFactor,
+    isNumber,
     objectEach
 } from '../../Shared/Utilities.js';
 
@@ -111,27 +112,20 @@ function chartHideOverlappingLabels(
             };
 
             // Final target position computed by data labels logic
-            const dlPos =
+            const targetPos =
                 label.dataLabelPosition?.posAttribs ||
                 label.point?.dataLabel?.dataLabelPosition?.posAttribs;
 
-            const hasTarget = !!dlPos &&
-                typeof dlPos.x === 'number' &&
-                typeof dlPos.y === 'number';
-            const hasAlign = !!alignPos &&
-                typeof alignPos.x === 'number' &&
-                typeof alignPos.y === 'number';
-
-            // Prefer dlPos when it differs from current placed coords so
+            // Prefer targetPos when it differs from current placed coords so
             // overlap is evaluated on the final resting position during
             // transitions (fixes #21725).
-            const targetDiffers = !!(hasTarget && hasAlign &&
-                (dlPos!.x !== alignPos.x || dlPos!.y !== alignPos.y));
+            const targetDiffers = (
+                isNumber(targetPos?.x) &&
+                isNumber(alignPos?.x) &&
+                (targetPos!.x !== alignPos.x || targetPos!.y !== alignPos.y)
+            );
 
-            const hasTextPath =
-            !!(label.textPath || label.element?.querySelector('textPath'));
-
-            const pos = (!hasTextPath && targetDiffers) ? dlPos! : alignPos;
+            const pos = targetDiffers && !label.textPath ? targetPos : alignPos;
 
             const { height, polygon, width } = label.getBBox(),
                 alignOffset = getAlignFactor(label.alignValue) * width;
@@ -141,7 +135,7 @@ function chartHideOverlappingLabels(
 
             return {
                 x: pos.x + (label.parentGroup?.translateX || 0) +
-                padding - alignOffset,
+                    padding - alignOffset,
                 y: pos.y + (label.parentGroup?.translateY || 0) + padding,
                 width: width - 2 * padding,
                 height: height - 2 * padding,
