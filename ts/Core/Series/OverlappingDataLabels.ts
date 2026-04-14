@@ -113,8 +113,7 @@ function chartHideOverlappingLabels(
 
             // Final target position computed by data labels logic
             const targetPos =
-                label.dataLabelPosition?.posAttribs ||
-                label.point?.dataLabel?.dataLabelPosition?.posAttribs;
+                label.dataLabelPosition?.posAttribs;
 
             // Prefer targetPos when it differs from current placed coords so
             // overlap is evaluated on the final resting position during
