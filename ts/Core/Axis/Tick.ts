@@ -1129,13 +1129,7 @@ class Tick {
                 show = false;
 
             // Handle label overflow and show or hide accordingly
-            } else if (
-                horiz &&
-                !labelOptions.step &&
-                !labelOptions.rotation &&
-                !old &&
-                opacity !== 0
-            ) {
+            } else if (horiz && !old && opacity !== 0) {
                 tick.handleOverflow(xy);
             }
 

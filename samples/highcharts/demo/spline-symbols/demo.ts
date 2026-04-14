@@ -18,7 +18,8 @@ Highcharts.chart('container', {
         ],
         accessibility: {
             description: 'Months of the year'
-        }
+        },
+        crosshair: true
     },
     yAxis: {
         title: {
@@ -29,7 +30,6 @@ Highcharts.chart('container', {
         }
     },
     tooltip: {
-        crosshairs: true,
         shared: true
     },
     plotOptions: {

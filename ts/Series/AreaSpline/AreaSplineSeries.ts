@@ -37,7 +37,7 @@ import { extend, merge } from '../../Shared/Utilities.js';
 /**
  * AreaSpline series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.areaspline
  *
@@ -72,6 +72,7 @@ class AreaSplineSeries extends SplineSeries {
  *  Class Prototype
  *
  * */
+/** @internal */
 interface AreaSplineSeries extends SplineSeries {
     pointClass: typeof AreaSplinePoint;
     getGraphPath: typeof areaProto.getGraphPath,
@@ -91,6 +92,7 @@ extend(AreaSplineSeries.prototype, {
  *
  * */
 
+/** @internal */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         areaspline: typeof AreaSplineSeries;
@@ -105,6 +107,7 @@ SeriesRegistry.registerSeriesType('areaspline', AreaSplineSeries);
  *
  * */
 
+/** @internal */
 export default AreaSplineSeries;
 
 /* *

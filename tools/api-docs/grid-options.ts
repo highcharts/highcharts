@@ -440,6 +440,7 @@ function addTreeNode(
                             .replace(/\bany\b/gsu, '*')
                         )
                     };
+                    markSupportsArray(_nodeDoclet);
                 }
                 break;
 
@@ -460,6 +461,11 @@ function addTreeNode(
 
     // Expand callback type aliases to show the actual function signature
     expandCallbackTypes(sourceInfo, _nodeDoclet, info);
+
+    // Expand aliases like `RuleKey`, `keyof` aliases, and `Foo[]` to concrete
+    // display types in the API Ref.
+    expandDisplayTypeAliases(sourceInfo, _nodeDoclet, info);
+
     expandRendererOptionChildren(_nodeDoclet, _treeNode, debug);
     expandDataProviderOptionChildren(
         sourceInfo, info, _nodeDoclet, _treeNode, debug
@@ -510,12 +516,88 @@ function addTreeNode(
 function findTypeAlias(
     sourceInfo: TSLib.SourceInfo,
     name: string
-): TSLib.CodeInfo | undefined {
+): TSLib.TypeAliasInfo | undefined {
     for (const code of sourceInfo.code) {
         if (code.kind === 'TypeAlias' && code.name === name) {
-            return code;
+            return code as TSLib.TypeAliasInfo;
         }
     }
+    return void 0;
+}
+
+// BEGIN Grid API Ref alias display expansion helpers.
+// Docs-only helpers for resolving local/imported aliases and expanding
+// literal unions, `keyof` aliases, and array-wrapped aliases for display.
+// Remove this block with the call above to revert to raw alias names.
+
+function resolveImportedSourceInfo(
+    importInfo: TSLib.ImportInfo
+): TSLib.SourceInfo | undefined {
+    const fromPath = Path.join(
+        Path.dirname(importInfo.meta.file),
+        importInfo.from
+    );
+
+    if (/\.jsx?$/u.test(fromPath) && FS.existsSync(
+        fromPath.replace(/\.jsx?$/u, '.ts')
+    )) {
+        return TSLib.getSourceInfo(fromPath.replace(/\.jsx?$/u, '.ts'));
+    }
+
+    if (FS.existsSync(`${fromPath}.ts`)) {
+        return TSLib.getSourceInfo(`${fromPath}.ts`);
+    }
+
+    if (FS.existsSync(`${fromPath}.d.ts`)) {
+        return TSLib.getSourceInfo(`${fromPath}.d.ts`);
+    }
+
+    return void 0;
+}
+
+function resolveTypeAliasInfo(
+    sourceInfo: TSLib.SourceInfo,
+    name: string,
+    info: TSLib.CodeInfo
+): TSLib.TypeAliasInfo | undefined {
+    const sourceInfos = [sourceInfo];
+
+    if (info.meta.file !== sourceInfo.path) {
+        sourceInfos.push(TSLib.getSourceInfo(info.meta.file));
+    }
+
+    for (const candidateSource of sourceInfos) {
+        const localAlias = findTypeAlias(candidateSource, name);
+
+        if (localAlias) {
+            return localAlias;
+        }
+
+        for (const code of candidateSource.code) {
+            if (code.kind !== 'Import') {
+                continue;
+            }
+
+            for (const [originalName, localName] of Object.entries(code.imports)) {
+                if (localName !== name) {
+                    continue;
+                }
+
+                const importedSource = resolveImportedSourceInfo(code);
+
+                if (!importedSource) {
+                    continue;
+                }
+
+                const importedAlias = findTypeAlias(importedSource, originalName);
+
+                if (importedAlias) {
+                    return importedAlias;
+                }
+            }
+        }
+    }
+
     return void 0;
 }
 
@@ -597,6 +679,30 @@ function appendDeprecationToDescription(
 
     if (!existingDescription.includes('Deprecated:')) {
         nodeDoclet.description = existingDescription + deprecatedHTML;
+    }
+}
+
+function markSupportsArray(
+    nodeDoclet: Record<string, any>
+): void {
+    const typeNames = nodeDoclet.type?.names;
+
+    if (!Array.isArray(typeNames)) {
+        return;
+    }
+
+    const hasArrayType = typeNames.some((typeName: string): boolean => {
+        const normalized = typeName.replace(/\s+/gu, '');
+
+        return (
+            /^Array<.+>$/u.test(normalized) ||
+            /^ReadonlyArray<.+>$/u.test(normalized) ||
+            /\[\]$/u.test(normalized)
+        );
+    });
+
+    if (hasArrayType) {
+        nodeDoclet.supportsArray = true;
     }
 }
 
@@ -947,6 +1053,92 @@ function expandCallbackTypes(
             existing + contextParts.join('');
     }
 }
+
+function expandDisplayTypeAliases(
+    sourceInfo: TSLib.SourceInfo,
+    nodeDoclet: Record<string, any>,
+    info: TSLib.CodeInfo
+): void {
+    if (
+        !nodeDoclet.type?.names ||
+        !Array.isArray(nodeDoclet.type.names)
+    ) {
+        return;
+    }
+
+    nodeDoclet.type.names = nodeDoclet.type.names.map(
+        (typeName: string): string => (
+            expandDisplayTypeAlias(sourceInfo, typeName, info) || typeName
+        )
+    );
+}
+
+function expandDisplayTypeAlias(
+    sourceInfo: TSLib.SourceInfo,
+    typeName: string,
+    info: TSLib.CodeInfo
+): string | undefined {
+    const arrayMatch = typeName.match(
+        /^(?:ReadonlyArray|Array)<(.+)>$|^(.+)\[\]$/u
+    );
+
+    if (arrayMatch) {
+        const innerType = arrayMatch[1] || arrayMatch[2];
+        const expandedInnerType = expandDisplayTypeAlias(
+            sourceInfo,
+            innerType,
+            info
+        );
+
+        if (expandedInnerType && expandedInnerType !== innerType) {
+            return `(${expandedInnerType})[]`;
+        }
+
+        return void 0;
+    }
+
+    const alias = resolveTypeAliasInfo(sourceInfo, typeName, info);
+
+    if (!alias?.value?.length) {
+        return void 0;
+    }
+
+    if (alias.value.length > 1) {
+        return alias.value.join(' | ');
+    }
+
+    const aliasValue = alias.value[0];
+    const keyofMatch = aliasValue.match(/^keyof\s+(.+)$/u);
+
+    if (!keyofMatch) {
+        return void 0;
+    }
+
+    const targetName = keyofMatch[1].trim();
+    const resolved = tryResolve(sourceInfo, targetName, info);
+
+    if (
+        !resolved ||
+        !('members' in resolved) ||
+        !Array.isArray(resolved.members)
+    ) {
+        return void 0;
+    }
+
+    const memberNames = resolved.members
+        .map(member => TSLib.extractInfoName(member))
+        .filter((memberName): memberName is string => !!memberName);
+
+    if (!memberNames.length) {
+        return void 0;
+    }
+
+    return memberNames
+        .map(memberName => `'${memberName}'`)
+        .join(' | ');
+}
+
+// END Grid API Ref alias display expansion helpers.
 
 
 /**
@@ -1370,6 +1562,7 @@ function parseInlineObjectType(
             childNode.doclet.type = {
                 names: TSLib.extractTypes(propType, true) || [propType]
             };
+            markSupportsArray(childNode.doclet);
         }
     }
 }

@@ -18,7 +18,7 @@
 import type AreaPoint from '../Area/AreaPoint';
 import type AreaSplinePointOptions from './AreaSplinePointOptions';
 import type AreaSplineSeries from './AreaSplineSeries';
-import type SplinePoint from '../Spline/SplinePoint';
+import SplinePoint from '../Spline/SplinePoint.js';
 
 /* *
  *
@@ -26,6 +26,7 @@ import type SplinePoint from '../Spline/SplinePoint';
  *
  * */
 
+/** @internal */
 declare class AreaSplinePoint extends SplinePoint {
     public isCliff?: AreaPoint['isCliff'];
     public options: AreaSplinePointOptions;
@@ -38,4 +39,5 @@ declare class AreaSplinePoint extends SplinePoint {
  *
  * */
 
+/** @internal */
 export default AreaSplinePoint;

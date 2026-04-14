@@ -29,7 +29,7 @@ import type LinePoint from '../../../Series/Line/LinePoint';
 import type LineSeries from '../../../Series/Line/LineSeries';
 import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../../Core/Renderer/SVG/SVGPath';
-import type Types from '../../../Shared/Types';
+import type { TypedArray } from '../../../Shared/Types';
 
 import ApproximationRegistry from '../../../Extensions/DataGrouping/ApproximationRegistry.js';
 import Axis from '../../../Core/Axis/Axis.js';
@@ -810,7 +810,7 @@ class IKHIndicator extends SMAIndicator {
             yValLen: number = (yVal && yVal.length) || 0,
             closestPointRange: number = getClosestDistance(
                 xAxis.series.map(
-                    (s): number[]|Types.TypedArray => s.getColumn('x')
+                    (s): number[]|TypedArray => s.getColumn('x')
                 )
             ) as any,
             IKH: Array<Array<number | undefined>> = [],

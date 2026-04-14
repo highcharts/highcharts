@@ -528,7 +528,7 @@ class ScrollablePlotArea {
                 scrollablePixelsY
             } = this.chart,
             fixedRenderer = this.fixedRenderer,
-            fixedSelectors = ScrollablePlotArea.fixedSelectors;
+            fixedSelectors = ScrollablePlotArea.fixedSelectors.slice();
 
         let axisClass: (string|undefined);
 

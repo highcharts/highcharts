@@ -17,7 +17,7 @@
 
 import type AreaPointOptions from './AreaPointOptions';
 import type AreaSeries from './AreaSeries';
-import type LinePoint from '../Line/LinePoint';
+import LinePoint from '../Line/LinePoint.js';
 
 /* *
  *
@@ -25,9 +25,13 @@ import type LinePoint from '../Line/LinePoint';
  *
  * */
 
+/** @internal */
 declare module '../../Core/Series/PointBase' {
     interface PointBase {
-        isCliff?: AreaPoint['isCliff'];
+        // Kept in PointBase so non-area point classes used by spline logic
+        // (for example SplinePoint in getPointSpline) can safely read it.
+        /** @internal */
+        isCliff?: boolean;
     }
 }
 
@@ -37,8 +41,8 @@ declare module '../../Core/Series/PointBase' {
  *
  * */
 
+/** @internal */
 declare class AreaPoint extends LinePoint {
-    public isCliff?: boolean;
     public leftNull?: boolean;
     public options: AreaPointOptions;
     public rightNull?: boolean;
@@ -51,4 +55,5 @@ declare class AreaPoint extends LinePoint {
  *
  * */
 
+/** @internal */
 export default AreaPoint;

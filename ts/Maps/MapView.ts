@@ -412,6 +412,9 @@ class MapView {
     public group?: SVGElement;
 
     /** @internal */
+    public groupClipRect?: SVGElement;
+
+    /** @internal */
     public insets: MapViewInset[] = [];
 
     /** @internal */
@@ -1304,12 +1307,17 @@ class MapView {
 
     /** @internal */
     public render(): void {
+        const chart = this.chart;
 
-        // We need a group for the insets
+        // We need a group and clip for the group for the insets
         if (!this.group) {
-            this.group = this.chart.renderer.g('map-view')
+            this.groupClipRect = chart.renderer.clipRect(chart.plotBox);
+            this.group = chart.renderer.g('map-view')
                 .attr({ zIndex: 4 })
+                .clip(this.groupClipRect)
                 .add();
+        } else if (this.groupClipRect) {
+            this.groupClipRect.animate(chart.plotBox);
         }
     }
 

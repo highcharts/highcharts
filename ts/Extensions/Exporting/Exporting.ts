@@ -91,6 +91,7 @@ import {
     splat
 } from '../../Shared/Utilities.js';
 import { error, uniqueKey } from '../../Core/Utilities.js';
+import { Palette } from '../../Core/Color/Palettes';
 
 AST.allowedAttributes.push(
     'data-z-index',
@@ -430,22 +431,51 @@ export class Exporting {
     /** @internal */
     private static async handleStyleSheet(
         sheet: CSSStyleSheet,
-        resultArray: string[]
+        resultArray: string[],
+        visited: Set<string> = new Set()
     ): Promise<void> {
+        const href = sheet.href;
+
+        if (href) {
+            if (visited.has(href)) {
+                return;
+            }
+            visited.add(href);
+
+            try {
+                const sheetOrigin = new URL(href, doc.baseURI).origin;
+                if (sheetOrigin !== win.location.origin) {
+                    // We skip all cross-origin stylesheets on purpose.
+                    // This prevents DOM SecurityErrors and unhandled network
+                    // rejections when the browser blocks cssRules access.
+                    return;
+                }
+            } catch {
+                // URL parsing failed, proceed to try/catch
+            }
+        }
+
         try {
             for (const rule of Array.from(sheet.cssRules)) {
                 if (rule instanceof CSSImportRule) {
-                    const sheet = await Exporting.fetchCSS(rule.href);
-                    if (sheet) {
-                        await Exporting.handleStyleSheet(sheet, resultArray);
+                    try {
+                        const importedSheet =
+                        await Exporting.fetchCSS(rule.href);
+                        if (importedSheet) {
+                            await Exporting.handleStyleSheet(
+                                importedSheet, resultArray, visited
+                            );
+                        }
+                    } catch {
+                        // Silently ignore CORS errors on imported stylesheets
                     }
                 }
 
                 if (rule instanceof CSSFontFaceRule) {
                     let cssText = rule.cssText;
 
-                    if (sheet.href) {
-                        const baseUrl = sheet.href,
+                    if (href) {
+                        const baseUrl = href,
                             regexp =
                         /url\(\s*(['"]?)(?![a-z]+:|\/\/)([^'")]+?)\1\s*\)/gi;
 
@@ -462,11 +492,17 @@ export class Exporting {
                     resultArray.push(cssText);
                 }
             }
-        } catch {
-            if (sheet.href) {
-                const newSheet = await Exporting.fetchCSS(sheet.href);
-                if (newSheet) {
-                    await Exporting.handleStyleSheet(newSheet, resultArray);
+        } catch (e: any) {
+            if (e.name === 'SecurityError' && href) {
+                try {
+                    const newSheet = await Exporting.fetchCSS(href);
+                    if (newSheet) {
+                        await Exporting.handleStyleSheet(
+                            newSheet, resultArray, visited
+                        );
+                    }
+                } catch {
+                    // Silently ignore network failures on fallback
                 }
             }
         }
@@ -1194,11 +1230,27 @@ export class Exporting {
 
                     if (item.separator) {
                         element = createElement(
-                            'hr',
-                            void 0,
+                            'li',
+                            {
+                                className:
+                                'highcharts-menu-item highcharts-separator',
+                                role: 'separator'
+                            },
                             void 0,
                             innerMenu
                         );
+
+                        if (!chart.styledMode) {
+                            css(element, {
+                                border: 'none',
+                                backgroundColor: Palette.neutralColor40,
+                                height: '0.5px',
+                                margin: '10px 0',
+                                padding: 0,
+                                listStyle: 'none',
+                                'pointer-events': 'none'
+                            });
+                        }
                     } else {
                         // When chart initialized with the table, wrong button
                         // text displayed, #14352.
@@ -1922,8 +1974,15 @@ export class Exporting {
                 }
             });
 
+            const exporting = chartCopy.exporting;
+
+            // Prepare shadow DOM styles
+            if (exporting?.options.applyStyleSheets) {
+                this.applyShadowDOMStyles(chartCopy);
+            }
+
             // Get the SVG from the container's innerHTML
-            svg = chartCopy.exporting?.getChartHTML(
+            svg = exporting?.getChartHTML(
                 chart.styledMode ||
                 options?.exporting?.applyStyleSheets
             ) || '';
@@ -1959,6 +2018,57 @@ export class Exporting {
                 }
             ));
 
+    }
+
+    /**
+     * Apply styles from the shadow DOM.
+     *
+     * @internal
+     * @function Highcharts.Exporting#applyShadowDOMStyles
+     *
+     * @param {Highcharts.Chart} chartCopy
+     * The copy of a chart for the export process.
+     *
+     * @requires modules/exporting
+     */
+    public applyShadowDOMStyles(
+        chartCopy: Chart
+    ): void {
+        // Get the original chart
+        const chart = this.chart,
+            shadowStyles: HTMLStyleElement[] = [];
+
+        // Set the original chart's container as the first node
+        let node = chart.container,
+            rootNode;
+
+        // Find the shadow DOM root node
+        while (node) {
+            rootNode = node.getRootNode() as ShadowRoot;
+            if (rootNode && typeof rootNode.host === 'object') {
+                break;
+            }
+            node = node.parentNode;
+            rootNode = null;
+        }
+
+        // Append shadow DOM styles into copied chart's container so the
+        // getComputedStyle sees them
+        rootNode?.querySelectorAll('style').forEach(
+            (style: HTMLStyleElement): void => {
+                const clonedStyle = style.cloneNode(true) as HTMLStyleElement;
+                chartCopy.container.appendChild(clonedStyle);
+
+                // Store for the later removal
+                shadowStyles.push(clonedStyle);
+            });
+
+        addEvent(chart, 'getSVG', (): void => {
+            // Remove temporary Shadow DOM styles
+            shadowStyles.forEach((style): void => {
+                style.remove();
+            });
+        });
     }
 
     /**

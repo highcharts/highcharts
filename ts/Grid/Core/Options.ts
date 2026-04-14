@@ -59,6 +59,16 @@ import type CSSObject from '../../Core/Renderer/CSSObject';
 export type CellFormatterCallback = (this: Cell) => string;
 
 /**
+ * Callback function to resolve the value of an unbound column cell.
+ * For bound columns, overrides only the rendered content - sorting,
+ * filtering, and export remain unaffected.
+ */
+export type CellValueGetterCallback = (
+    this: TableCell,
+    cell: TableCell
+) => (DataTableCellType | Promise<DataTableCellType>);
+
+/**
  * Callback function to be called when a header event is triggered. Returns a
  * formatted header's string.
  */
@@ -210,6 +220,9 @@ export interface Options {
      * Defines the structure of levels in header. Used for grouping columns
      * headers.
      *
+     * An array where each item can be either a string (column ID) or an object
+     * of type {@link https://api.highcharts.com/grid/typedoc/interfaces/Grid_Core_Options.GroupedHeaderOptions.html | GroupedHeaderOptions}.
+     *
      * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/grid-lite/basic/grouped-headers | Grouped headers}
      */
     header?: Array<GroupedHeaderOptions | string>;
@@ -292,19 +305,6 @@ export interface RenderingSettings {
  * Options to control the columns rendering.
  */
 export interface ColumnsSettings {
-
-    /**
-     * Columns included in the grid structure - contains the columns IDs.
-     * If not set, all columns will be included. Useful when many columns needs
-     * to be excluded from the grid.
-     *
-     * Individual column options `enabled` options can be set to `false` to
-     * disable a column.
-     *
-     * @private
-     */
-    included?: Array<string>;
-
     /**
      * Options for the columns resizing.
      */
@@ -487,12 +487,32 @@ export interface ColumnOptions {
      * Can be a static style object or a callback that returns one.
      */
     style?: StyleValue<Column>;
+
+    /**
+     * Whether the column should be included in exports.
+     *
+     * For unbound columns, exporting is always disabled.
+     *
+     * @default true
+     */
+    exportable?: boolean;
 }
 
 /**
  * Options for all cells in the column.
  */
 export interface ColumnCellOptions {
+
+    /**
+     * Whether cells in this column should be rendered as row header cells.
+     *
+     * When enabled, body cells are rendered as `<th scope="row">` instead of
+     * `<td>`. This is useful for accessible data grids where the first column
+     * acts as a row header.
+     *
+     * @default false
+     */
+    rowHeader?: boolean;
 
     /**
      * Allows to define an additional class name to all table cells in the
@@ -528,6 +548,13 @@ export interface ColumnCellOptions {
      * A string to be set as a table cell's content.
      */
     formatter?: CellFormatterCallback;
+
+    /**
+     * Callback function to resolve the value of an unbound column cell.
+     * For bound columns, overrides only the rendered content - sorting,
+     * filtering, and export remain unaffected.
+     */
+    valueGetter?: CellValueGetterCallback;
 
     /**
      * Context menu options for table body cells. When configured, a custom
@@ -673,11 +700,8 @@ export interface IndividualColumnOptions extends ColumnOptions {
     className?: string;
 
     /**
-     * Whether the column is enabled and should be displayed. If `false`, the
-     * column will not be rendered.
-     *
-     * Shorter way to disable multiple columns at once is to use the `included`
-     * array in the `columns` settings.
+     * Whether the column is enabled and should be displayed. If `false`,
+     * the column will not be rendered.
      *
      * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/grid-pro/basic/overview | Disabled meta column}
      *
@@ -686,9 +710,17 @@ export interface IndividualColumnOptions extends ColumnOptions {
     enabled?: boolean;
 
     /**
-     * The id of the column in the data table for which the options are applied.
+     * The column id used by Grid as the column identity.
      */
     id: string;
+
+    /**
+     * The id of the data source column.
+     *
+     * - `undefined`: defaults to `id`.
+     * - `null`: forces the column to be unbound.
+     */
+    dataId?: string | null;
 
     sorting?: IndividualColumnSortingOptions;
 }

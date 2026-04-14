@@ -480,8 +480,7 @@ function onPointAfterInit(
     this: Point
 ): void {
     const point = this,
-        colorOptions: (PatternObject|undefined) =
-            (point.color || point.options.color) as any;
+        colorOptions: (PatternObject|undefined) = (point.options.color) as any;
 
     // Only do this if we have defined a specific color on this point. Otherwise
     // we will end up trying to re-add the series color for each point.

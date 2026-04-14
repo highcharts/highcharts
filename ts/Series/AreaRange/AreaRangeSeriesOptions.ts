@@ -15,10 +15,10 @@
  *
  * */
 
-import type AreaRangeDataLabelOptions from './AreaRangeDataLabelOptions';
 import type AreaRangePointOptions from './AreaRangePointOptions';
 import type AreaSeriesOptions from '../Area/AreaSeriesOptions';
 import type ColorType from '../../Core/Color/ColorType';
+import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 import type {
     PointMarkerOptions,
@@ -38,21 +38,78 @@ declare module '../../Core/Series/SeriesOptions' {
 }
 
 /**
+ * Extended data labels for range series types. Range series data labels use
+ * no `x` and `y` options. Instead, they have `xLow`, `xHigh`, `yLow` and
+ * `yHigh` options to allow the higher and lower data label sets individually.
+ *
+ * TODO: `x` and `y` are still inherited from `DataLabelOptions`, because
+ * `AreaRangeSeries.drawDataLabels` temporarily maps the range-specific offsets
+ * to these base properties while rendering. Tighten this to
+ * `Omit<DataLabelOptions, 'x' | 'y'>` when that flow can be refactored.
+ */
+export interface AreaRangeDataLabelOptions extends DataLabelOptions {
+
+    /**
+     * X offset of the higher data labels relative to the point value.
+     *
+     * @sample highcharts/plotoptions/arearange-datalabels/
+     *         Data labels on range series
+     *
+     * @default 0
+     */
+    xHigh?: number;
+
+    /**
+     * X offset of the lower data labels relative to the point value.
+     *
+     * @sample highcharts/plotoptions/arearange-datalabels/
+     *         Data labels on range series
+     *
+     * @default 0
+     */
+    xLow?: number;
+
+    /**
+     * Y offset of the higher data labels relative to the point value.
+     *
+     * @sample highcharts/plotoptions/arearange-datalabels/
+     *         Data labels on range series
+     *
+     * @default 0
+     */
+    yHigh?: number;
+
+    /**
+     * Y offset of the lower data labels relative to the point value.
+     *
+     * @sample highcharts/plotoptions/arearange-datalabels/
+     *         Data labels on range series
+     *
+     * @default 0
+     */
+    yLow?: number;
+}
+
+/**
  * A `arearange` series. If the [type](#series.arearange.type) option is not
  * specified, it is inherited from [chart.type](#chart.type).
- *
- * @extends series,plotOptions.arearange
- *
- * @excluding dataParser, dataURL, stack, stacking
- *
- * @product highcharts highstock
- *
- * @requires highcharts-more
- *
- * @apioption series.arearange
  */
 export interface AreaRangeSeriesOptions extends AreaSeriesOptions {
 
+    /**
+     * Extended data labels for range series types. Range series data labels
+     * use no `x` and `y` options. Instead, they have `xLow`, `xHigh`, `yLow`
+     * and `yHigh` options to allow the higher and lower data label sets
+     * individually.
+     *
+     * @declare Highcharts.SeriesAreaRangeDataLabelsOptionsObject
+     *
+     * @exclude x, y
+     *
+     * @since 2.3.0
+     *
+     * @product highcharts highstock
+     */
     dataLabels?: (
         AreaRangeDataLabelOptions |
         Array<AreaRangeDataLabelOptions>
@@ -60,38 +117,38 @@ export interface AreaRangeSeriesOptions extends AreaSeriesOptions {
 
     states?: SeriesStatesOptions<AreaRangeSeriesOptions>;
 
+    /**
+     * Whether the whole area or just the line should respond to mouseover
+     * tooltips and other mouse or touch events.
+     *
+     * @sample {highcharts|highstock} highcharts/plotoptions/area-trackbyarea/
+     *         Display the tooltip when the area is hovered
+     *
+     * @default true
+     *
+     * @since 2.3.0
+     *
+     * @product highcharts highstock
+     */
     trackByArea?: boolean;
 
     /**
      * Options for the lower markers of the arearange-like series. When
      *  `lowMarker`
-     * is not defined, options inherit form the marker.
+     * is not defined, options inherit from the marker.
      *
      * @see [marker](#series.arearange.marker)
-     *
-     * @declare Highcharts.PointMarkerOptionsObject
-     *
-     * @extends plotOptions.series.marker
-     *
-     * @default undefined
-     *
-     * @product highcharts highstock
-     */
-    lowMarker?: PointMarkerOptions;
-
-    /**
      *
      * @sample {highcharts} highcharts/series-arearange/lowmarker/
      *         Area range chart with `lowMarker` option
      *
      * @declare Highcharts.PointMarkerOptionsObject
      *
-     * @extends plotOptions.series.marker.symbol
+     * @extends plotOptions.series.marker
      *
      * @product highcharts highstock
-     *
-     * @apioption plotOptions.arearange.lowMarker.symbol
      */
+    lowMarker?: PointMarkerOptions;
 
     /**
      *

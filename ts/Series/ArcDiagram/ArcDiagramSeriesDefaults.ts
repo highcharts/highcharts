@@ -128,7 +128,6 @@ const ArcDiagramSeriesDefaults: ArcDiagramSeriesOptions = {
      *
      * @type    {number}
      * @since 10.0.0
-     * @default undefined
      * @product highcharts
      * @apioption series.arcdiagram.linkRadius
      */
@@ -142,7 +141,6 @@ const ArcDiagramSeriesDefaults: ArcDiagramSeriesOptions = {
      *
      * @type    {number}
      * @since 10.0.0
-     * @default undefined
      * @product highcharts
      * @apioption series.arcdiagram.linkWeight
      */
@@ -213,6 +211,12 @@ const ArcDiagramSeriesDefaults: ArcDiagramSeriesOptions = {
  * @requires  modules/sankey
  * @requires  modules/arc-diagram
  * @apioption series.arcdiagram
+ */
+
+/**
+ * @type      {Highcharts.SeriesArcDiagramDataLabelsOptionsObject|Array<Highcharts.SeriesArcDiagramDataLabelsOptionsObject>}
+ * @product   highcharts
+ * @apioption series.arcdiagram.dataLabels
  */
 
 /**
@@ -287,7 +291,6 @@ const ArcDiagramSeriesDefaults: ArcDiagramSeriesOptions = {
  *
  * @type {number}
  * @since 10.0.0
- * @default undefined
  * @product highcharts
  * @apioption series.arcdiagram.data.linkWeight
  */

@@ -225,7 +225,6 @@ export interface ColorAxisOptions extends AxisOptions {
     // TODO reversedStacks?: undefined;
     scrollbar?: undefined;
     // TODO showEmpty?: undefined;
-    // TODO title?: undefined;
     top?: undefined;
     // TODO zoomEnabled?: undefined;
 
@@ -362,6 +361,17 @@ export interface ColorAxisOptions extends AxisOptions {
      * @product highcharts highstock highmaps
      */
     stops?: GradientColor['stops'];
+
+    /**
+     * The color axis title. Displayed alongside the color axis. When the
+     * legend is vertical the title is rotated accordingly.
+     *
+     * @sample highcharts/coloraxis/coloraxis-title/
+     * Color axis with title
+     *
+     * @product highcharts highstock highmaps
+     */
+    title: AxisOptions['title'];
 
     /**
      * The type of interpolation to use for the color axis. Can be
