@@ -5,6 +5,24 @@ const colors = Highcharts.getOptions().colors.map((c, i) =>
         .get()
 );
 
+Highcharts.setOptions({
+    title: {
+        align: 'left',
+        style: {
+            fontSize: '1em'
+        }
+    },
+    chart: {
+        spacing: 20
+    },
+    credits: {
+        enabled: false
+    },
+    legend: {
+        enabled: false
+    }
+});
+
 Dashboards.board('container', {
     dataPool: {
         connectors: [{
@@ -18,11 +36,9 @@ Dashboards.board('container', {
             data: [
                 ['Email', 'Marketing', 8, 310, 140, 1.4],
                 ['Chat', 'Marketing', 7, 14, 90, 2.3],
-                ['Phone', 'Marketing', 5, 35, 55, 3.2],
+                ['Phone', 'Sales', 5, 35, 55, 3.2],
                 ['In app', 'Sales', 6, 10, 241, 1.3],
-                ['Social', 'Sales', 7, 180, 18, 3.3],
-                ['Helpdesk', 'Marketing', 2, 14, 44, 2.3],
-                ['Other', 'Marketing', 7, 5000, 10, 2.4]
+                ['Other', 'Marketing', 7, 5000, 65, 2.4]
             ]
         }]
     },
@@ -56,54 +72,50 @@ Dashboards.board('container', {
                 }]
             },
             chartOptions: {
+                title: {
+                    text: 'Ticket distribution by channel'
+                },
                 chart: {
-                    type: 'pie',
-                    spacing: 20
-                },
-                credits: {
-                    enabled: false
-                },
-                legend: {
-                    enabled: false
+                    type: 'pie'
                 },
                 plotOptions: {
                     series: {
                         colors: colors,
+                        borderRadius: 4,
+                        dataSorting: {
+                            enabled: true
+                        },
                         dataLabels: [{
-                            enabled: true,
-                            distance: 20
+                            enabled: true
                         }, {
                             enabled: true,
                             distance: -40,
                             format: '{point.percentage:.1f}%',
-                            backgroundColor: '#00000030',
+                            backgroundColor: '#00000025',
                             borderRadius: 5,
                             style: {
-                                fontSize: '0.9em',
+                                fontSize: '0.8em',
                                 textOutline: 'none'
                             }
-                        }]
-                    }
-                },
-                title: {
-                    text: 'Ticket distribution by channel',
-                    align: 'left'
-                },
-                xAxis: {
-                    type: 'category'
-                },
-                yAxis: {
-                    title: {
-                        enabled: false
+                        }],
+                        states: {
+                            hover: {
+                                halo: {
+                                    opacity: 1,
+                                    size: 5
+                                }
+                            },
+                            inactive: {
+                                opacity: 1
+                            }
+                        }
                     }
                 }
             }
         }, {
             renderTo: 'dashboard-col-1',
             sync: {
-                visibility: true,
-                highlight: true,
-                extremes: true
+                highlight: true
             },
             connector: {
                 id: 'support',
@@ -114,6 +126,20 @@ Dashboards.board('container', {
             },
             type: 'Highcharts',
             chartOptions: {
+                title: {
+                    text: 'Average resolution time by channel'
+                },
+                chart: {
+                    type: 'column'
+                },
+                plotOptions: {
+                    series: {
+                        pointWidth: 18,
+                        color: colors[3],
+                        borderColor: colors[2],
+                        borderRadius: 6
+                    }
+                },
                 xAxis: {
                     type: 'category',
                     title: {
@@ -146,48 +172,7 @@ Dashboards.board('container', {
 
                     }],
                     title: {
-                        text: ''
-                    }
-                },
-                credits: {
-                    enabled: false
-                },
-                plotOptions: {
-                    series: {
-                        pointWidth: 18,
-                        color: '#4295f7',
-                        borderColor: '#3477c6',
-                        borderRadius: 6
-                    }
-                },
-                title: {
-                    text: 'Average resolution time by channel',
-                    align: 'left'
-                },
-                legend: {
-                    enabled: false
-                    // verticalAlign: 'top'
-                },
-                chart: {
-                    type: 'column'
-                },
-                tooltip: {
-                    valueSuffix: ' mcg',
-                    stickOnContact: true
-                },
-                lang: {
-                    accessibility: {
-                        chartContainerLabel: 'Iron in food. Highcharts ' +
-                        'Interactive Chart.'
-                    }
-                },
-                accessibility: {
-                    description: `The chart is displaying the Iron amount in
-                micrograms for some groceries. There is a plotLine demonstrating
-                the daily Recommended Dietary Allowance (RDA) of 8
-                micrograms.`,
-                    point: {
-                        valueSuffix: ' mcg'
+                        text: 'Avg. resolution time'
                     }
                 }
             }

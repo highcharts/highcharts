@@ -13,8 +13,17 @@ body {
         "Segoe UI Emoji",
         "Segoe UI Symbol",
         sans-serif;
-    background: var(--highcharts-background-color);
+    background: var(--highcharts-neutral-color-0);
     color: var(--highcharts-neutral-color-100);
+}
+
+.highcharts-description {
+    margin: 0 20px 20px;
+}
+
+#title {
+    font-size: 1.1em;
+    margin: 10px 0 0 20px;
 }
 
 .rating {
@@ -81,13 +90,6 @@ body {
     }
 }
 
-#title {
-    text-align: center;
-    padding: 10px 0;
-    margin: 0;
-    background-color: var(--highcharts-neutral-color-0);
-}
-
 .highcharts-dark .theme-support,
 .highcharts-light .theme-support,
 .theme-support {
@@ -97,58 +99,19 @@ body {
     --hcg-header-font-weight: bold;
     --hcg-border-width: 0;
     --hcg-row-border-width: 1px;
+    --hcg-column-border-width: 1px;
+    --hcg-column-border-color: transparent;
     --hcg-row-even-background: light-dark(#f6f6f6, #272727);
+    --hcg-row-hover-background: light-dark(#5f8ef7, #0443e1);
+    --hcg-row-hover-opacity: 10%;
     --hcg-border-color: light-dark(#e8e8e8, #3b3b3b);
     --hcg-header-background: light-dark(#fff, #272727);
 }
 
-/* LARGE */
-@media (max-width: 1200px) {
-    #dashboard-col-0,
-    #dashboard-col-1 {
-        flex: 1 1 35%;
-    }
-
-    #kpi-wrapper {
-        flex: 1 1 30%;
-    }
-
-    #kpi-vitamin-a,
-    #kpi-iron {
-        flex: 1 1 100%;
-    }
-}
-
-/* MEDIUM */
-@media (max-width: 992px) {
-    #dashboard-col-0,
-    #dashboard-col-1 {
-        flex: 1 1 50%;
-    }
-
-    #kpi-wrapper {
-        flex: 1 1 100%;
-    }
-
-    #kpi-vitamin-a,
-    #kpi-iron {
-        flex: 1 1 50%;
-    }
-}
-
 /* SMALL */
-@media (max-width: 576px) {
+@media (max-width: 750px) {
     #dashboard-col-0,
     #dashboard-col-1 {
         flex: 1 1 100%;
-    }
-
-    #kpi-wrapper {
-        flex: 1 1 100%;
-    }
-
-    #kpi-vitamin-a,
-    #kpi-iron {
-        flex: 1 1 50%;
     }
 }
