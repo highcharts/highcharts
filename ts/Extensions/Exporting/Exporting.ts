@@ -3,7 +3,7 @@
  *  Exporting module
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -91,6 +91,7 @@ import {
     splat
 } from '../../Shared/Utilities.js';
 import { error, uniqueKey } from '../../Core/Utilities.js';
+import { Palette } from '../../Core/Color/Palettes';
 
 AST.allowedAttributes.push(
     'data-z-index',
@@ -146,7 +147,9 @@ declare module '../../Core/Chart/ChartBase' {
         exporting?: Exporting;
 
         /**
-         * Deprecated in favor of [Exporting.exportChart](https://api.highcharts.com/class-reference/Highcharts.Exporting#exportChart).
+         * Deprecated. Use
+         * [Exporting.exportChart](https://api.highcharts.com/class-reference/Highcharts.Exporting#exportChart)
+         * instead.
          *
          * @deprecated 11.4.1
          */
@@ -156,28 +159,36 @@ declare module '../../Core/Chart/ChartBase' {
         ): Promise<void>;
 
         /**
-         * Deprecated in favor of [Exporting.getChartHTML](https://api.highcharts.com/class-reference/Highcharts.Exporting#getChartHTML).
+         * Deprecated. Use
+         * [Exporting.getChartHTML](https://api.highcharts.com/class-reference/Highcharts.Exporting#getChartHTML)
+         * instead.
          *
          * @deprecated 11.4.1
          */
         getChartHTML(applyStyleSheets?: boolean): (string | void);
 
         /**
-         * Deprecated in favor of [Exporting.getFilename](https://api.highcharts.com/class-reference/Highcharts.Exporting#getFilename).
+         * Deprecated. Use
+         * [Exporting.getFilename](https://api.highcharts.com/class-reference/Highcharts.Exporting#getFilename)
+         * instead.
          *
          * @deprecated 11.4.1
          */
         getFilename(): (string | void);
 
         /**
-         * Deprecated in favor of [Exporting.getSVG](https://api.highcharts.com/class-reference/Highcharts.Exporting#getSVG).
+         * Deprecated. Use
+         * [Exporting.getSVG](https://api.highcharts.com/class-reference/Highcharts.Exporting#getSVG)
+         * instead.
          *
          * @deprecated 11.4.1
          */
         getSVG(chartOptions?: Partial<Options>): string | void;
 
         /**
-         * Deprecated in favor of [Exporting.print](https://api.highcharts.com/class-reference/Highcharts.Exporting#print).
+         * Deprecated. Use
+         * [Exporting.print](https://api.highcharts.com/class-reference/Highcharts.Exporting#print)
+         * instead.
          *
          * @deprecated 11.4.1
          */
@@ -194,11 +205,9 @@ declare module '../../Core/Chart/ChartOptions' {
          * @sample highcharts/chart/events-beforeprint-afterprint/
          * Rescale the chart to print
          *
-         * @type {Highcharts.ExportingAfterPrintCallbackFunction}
          * @since 4.1.0
          * @context Highcharts.Chart
          * @requires modules/exporting
-         * @apioption chart.events.afterPrint
          */
         afterPrint?: Exporting.AfterPrintCallbackFunction;
 
@@ -209,11 +218,9 @@ declare module '../../Core/Chart/ChartOptions' {
          * @sample highcharts/chart/events-beforeprint-afterprint/
          * Rescale the chart to print
          *
-         * @type {Highcharts.ExportingBeforePrintCallbackFunction}
          * @since 4.1.0
          * @context Highcharts.Chart
          * @requires modules/exporting
-         * @apioption chart.events.beforePrint
          */
         beforePrint?: Exporting.BeforePrintCallbackFunction;
     }
@@ -221,12 +228,7 @@ declare module '../../Core/Chart/ChartOptions' {
 
 declare module '../../Core/GlobalsBase' {
     interface GlobalsBase {
-        /**
-         * Deprecated in favor of [Exporting.downloadSVG](https://api.highcharts.com/class-reference/Highcharts.Exporting#downloadSVG).
-         *
-         * @deprecated 11.4.4
-         */
-        downloadSVGLocal: Exporting.DownloadSVGFunction
+        Exporting: typeof Exporting;
     }
 }
 
@@ -256,7 +258,7 @@ const domurl = win.URL || win.webkitURL || win;
  * @param {Highcharts.Chart} chart
  * The chart instance.
  */
-class Exporting {
+export class Exporting {
 
     /* *
      *
@@ -429,22 +431,51 @@ class Exporting {
     /** @internal */
     private static async handleStyleSheet(
         sheet: CSSStyleSheet,
-        resultArray: string[]
+        resultArray: string[],
+        visited: Set<string> = new Set()
     ): Promise<void> {
+        const href = sheet.href;
+
+        if (href) {
+            if (visited.has(href)) {
+                return;
+            }
+            visited.add(href);
+
+            try {
+                const sheetOrigin = new URL(href, doc.baseURI).origin;
+                if (sheetOrigin !== win.location.origin) {
+                    // We skip all cross-origin stylesheets on purpose.
+                    // This prevents DOM SecurityErrors and unhandled network
+                    // rejections when the browser blocks cssRules access.
+                    return;
+                }
+            } catch {
+                // URL parsing failed, proceed to try/catch
+            }
+        }
+
         try {
             for (const rule of Array.from(sheet.cssRules)) {
                 if (rule instanceof CSSImportRule) {
-                    const sheet = await Exporting.fetchCSS(rule.href);
-                    if (sheet) {
-                        await Exporting.handleStyleSheet(sheet, resultArray);
+                    try {
+                        const importedSheet =
+                        await Exporting.fetchCSS(rule.href);
+                        if (importedSheet) {
+                            await Exporting.handleStyleSheet(
+                                importedSheet, resultArray, visited
+                            );
+                        }
+                    } catch {
+                        // Silently ignore CORS errors on imported stylesheets
                     }
                 }
 
                 if (rule instanceof CSSFontFaceRule) {
                     let cssText = rule.cssText;
 
-                    if (sheet.href) {
-                        const baseUrl = sheet.href,
+                    if (href) {
+                        const baseUrl = href,
                             regexp =
                         /url\(\s*(['"]?)(?![a-z]+:|\/\/)([^'")]+?)\1\s*\)/gi;
 
@@ -461,11 +492,17 @@ class Exporting {
                     resultArray.push(cssText);
                 }
             }
-        } catch {
-            if (sheet.href) {
-                const newSheet = await Exporting.fetchCSS(sheet.href);
-                if (newSheet) {
-                    await Exporting.handleStyleSheet(newSheet, resultArray);
+        } catch (e: any) {
+            if (e.name === 'SecurityError' && href) {
+                try {
+                    const newSheet = await Exporting.fetchCSS(href);
+                    if (newSheet) {
+                        await Exporting.handleStyleSheet(
+                            newSheet, resultArray, visited
+                        );
+                    }
+                } catch {
+                    // Silently ignore network failures on fallback
                 }
             }
         }
@@ -616,7 +653,7 @@ class Exporting {
                 (type === 'image/svg+xml' ? 'svg' : type.split('/')[1])
             ),
             scale: exportingOptions?.scale || 1,
-            // Allow libURL to end with or without fordward slash
+            // Allow libURL to end with or without forward slash
             libURL: libURL?.slice(-1) !== '/' ? libURL + '/' : libURL
         };
     }
@@ -671,6 +708,10 @@ class Exporting {
         svg = svg
             // Some tags needs to be closed in xhtml (#13726)
             .replace(/(<(?:img|br).*?(?=\>))>/g, '$1 />')
+            .replace(
+                /(<svg(?![^>]*xmlns=)[^>]*)>/g,
+                '$1 xmlns="http://www.w3.org/2000/svg">'
+            )
             .replace(/zIndex="[^"]+"/g, '')
             .replace(/symbolName="[^"]+"/g, '')
             .replace(/jQuery\d+="[^"]+"/g, '')
@@ -681,6 +722,8 @@ class Exporting {
                 '<svg xmlns:xlink="http://www.w3.org/1999/xlink" '
             )
             .replace(/ (NS\d+\:)?href=/g, ' xlink:href=') // #3567
+            // #24102- restore href for image elements (boost)
+            .replace(/(<image[^>]*) xlink:href=/g, '$1 href=')
             .replace(/\n+/g, ' ')
 
             // Replace HTML entities, issue #347
@@ -1186,11 +1229,27 @@ class Exporting {
 
                     if (item.separator) {
                         element = createElement(
-                            'hr',
-                            void 0,
+                            'li',
+                            {
+                                className:
+                                'highcharts-menu-item highcharts-separator',
+                                role: 'separator'
+                            },
                             void 0,
                             innerMenu
                         );
+
+                        if (!chart.styledMode) {
+                            css(element, {
+                                border: 'none',
+                                backgroundColor: Palette.neutralColor40,
+                                height: '0.5px',
+                                margin: '10px 0',
+                                padding: 0,
+                                listStyle: 'none',
+                                'pointer-events': 'none'
+                            });
+                        }
                     } else {
                         // When chart initialized with the table, wrong button
                         // text displayed, #14352.
@@ -1375,7 +1434,6 @@ class Exporting {
      * on demand.
      *
      * @async
-     * @internal
      * @function Highcharts.Exporting#downloadSVG
      *
      * @param {string} svg
@@ -1624,7 +1682,7 @@ class Exporting {
             // The local must be false to fallback to server for PDF export
             exportingOptions.local = false;
 
-            // Allow fallbacking to server only for PDFs that failed locally
+            // Allow fallback to server only for PDFs that failed locally
             await this.exportChart(exportingOptions);
         }
     }
@@ -1820,12 +1878,12 @@ class Exporting {
 
         // Prepare for replicating the chart
         options.series = [];
-        chart.series.forEach(function (serie): void {
-            seriesOptions = merge(serie.userOptions, { // #4912
+        chart.series.forEach(function (s): void {
+            seriesOptions = merge(s.userOptions, { // #4912
                 animation: false, // Turn off animation
                 enableMouseTracking: false,
                 showCheckbox: false,
-                visible: serie.visible
+                visible: s.visible
             });
 
             // Used for the navigator series that has its own option set
@@ -1921,8 +1979,15 @@ class Exporting {
                 }
             });
 
+            const exporting = chartCopy.exporting;
+
+            // Prepare shadow DOM styles
+            if (exporting?.options.applyStyleSheets) {
+                this.applyShadowDOMStyles(chartCopy);
+            }
+
             // Get the SVG from the container's innerHTML
-            svg = chartCopy.exporting?.getChartHTML(
+            svg = exporting?.getChartHTML(
                 chart.styledMode ||
                 options?.exporting?.applyStyleSheets
             ) || '';
@@ -1958,6 +2023,57 @@ class Exporting {
                 }
             ));
 
+    }
+
+    /**
+     * Apply styles from the shadow DOM.
+     *
+     * @internal
+     * @function Highcharts.Exporting#applyShadowDOMStyles
+     *
+     * @param {Highcharts.Chart} chartCopy
+     * The copy of a chart for the export process.
+     *
+     * @requires modules/exporting
+     */
+    public applyShadowDOMStyles(
+        chartCopy: Chart
+    ): void {
+        // Get the original chart
+        const chart = this.chart,
+            shadowStyles: HTMLStyleElement[] = [];
+
+        // Set the original chart's container as the first node
+        let node = chart.container,
+            rootNode;
+
+        // Find the shadow DOM root node
+        while (node) {
+            rootNode = node.getRootNode() as ShadowRoot;
+            if (rootNode && typeof rootNode.host === 'object') {
+                break;
+            }
+            node = node.parentNode;
+            rootNode = null;
+        }
+
+        // Append shadow DOM styles into copied chart's container so the
+        // getComputedStyle sees them
+        rootNode?.querySelectorAll('style').forEach(
+            (style: HTMLStyleElement): void => {
+                const clonedStyle = style.cloneNode(true) as HTMLStyleElement;
+                chartCopy.container.appendChild(clonedStyle);
+
+                // Store for the later removal
+                shadowStyles.push(clonedStyle);
+            });
+
+        addEvent(chart, 'getSVG', (): void => {
+            // Remove temporary Shadow DOM styles
+            shadowStyles.forEach((style): void => {
+                style.remove();
+            });
+        });
     }
 
     /**
@@ -2065,7 +2181,7 @@ class Exporting {
              * @internal
              * @function filterStyles
              *
-             * @param {string | number | Highcharts.GradientColor | Highcharts.PatternObject | undefined} val
+             * @param {string|number|Highcharts.GradientColorObject|Highcharts.PatternObject|undefined} val
              * Style value.
              * @param {string} prop
              * Style property name.
@@ -2631,7 +2747,7 @@ class Exporting {
  *
  * */
 
-interface Exporting extends ExportingBase {}
+export interface Exporting extends ExportingBase {}
 
 /* *
  *
@@ -2639,7 +2755,7 @@ interface Exporting extends ExportingBase {}
  *
  * */
 
-namespace Exporting {
+export namespace Exporting {
 
     /* *
      *
@@ -3038,14 +3154,6 @@ namespace Exporting {
         }
     }
 }
-
-/* *
- *
- *  Default Export
- *
- * */
-
-export default Exporting;
 
 /* *
  *

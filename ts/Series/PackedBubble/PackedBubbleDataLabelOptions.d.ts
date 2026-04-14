@@ -1,7 +1,7 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Grzegorz Blachlinski, Sebastian Bochan
+ *  Author: Grzegorz Blachliński, Sebastian Bochan
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license

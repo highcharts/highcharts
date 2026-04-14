@@ -66,9 +66,6 @@ import { attr, pick, replaceNested } from '../../Shared/Utilities.js';
  *
  * */
 
-/* eslint-disable valid-jsdoc */
-
-
 /**
  * @private
  */
@@ -161,6 +158,7 @@ function buildTypeDescriptionFromSeries(
  *
  * @private
  * @function Highcharts.Chart#getTypeDescription
+ * @param {Highcharts.Chart} chart The associated Chart instance.
  * @param {Array<string>} types The series types in this chart.
  * @return {string} The text description of the chart type.
  */
@@ -244,9 +242,6 @@ class InfoRegionsComponent extends AccessibilityComponent {
      *  Functions
      *
      * */
-
-    /* eslint-disable valid-jsdoc */
-
 
     /**
      * Init the component

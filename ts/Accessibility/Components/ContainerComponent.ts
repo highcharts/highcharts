@@ -59,9 +59,6 @@ class ContainerComponent extends AccessibilityComponent {
      *
      * */
 
-    /* eslint-disable valid-jsdoc */
-
-
     /**
      * Called on first render/updates to the chart, including options changes.
      */

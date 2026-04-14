@@ -154,18 +154,18 @@ function calculateObstacleMargin(obstacles: Array<any>): number {
     const len = obstacles.length,
         distances = [];
 
-    let onstacleDistance: number;
+    let obstacleDistance: number;
 
     // Go over all obstacles and compare them to the others.
     for (let i = 0; i < len; ++i) {
         // Compare to all obstacles ahead. We will already have compared this
         // obstacle to the ones before.
         for (let j = i + 1; j < len; ++j) {
-            onstacleDistance =
+            obstacleDistance =
                 calculateObstacleDistance(obstacles[i], obstacles[j]);
             // TODO: Magic number 80
-            if (onstacleDistance < 80) { // Ignore large distances
-                distances.push(onstacleDistance);
+            if (obstacleDistance < 80) { // Ignore large distances
+                distances.push(obstacleDistance);
             }
         }
     }

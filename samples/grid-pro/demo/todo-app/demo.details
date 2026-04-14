@@ -1,7 +1,7 @@
 ---
 name: To-do app
 authors:
-  - Karol Kolodziej
+  - Karol Kołodziej
 js_wrap: b
 alt_text: >-
   Interactive to-do list built with a data grid

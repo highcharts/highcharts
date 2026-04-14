@@ -1,7 +1,7 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -259,6 +259,7 @@ namespace MapChart {
      *
      * */
 
+    /* eslint-disable jsdoc/check-param-names */
     /**
      * The factory function for creating new map charts. Creates a new {@link
      * Highcharts.MapChart|MapChart} object with different default options than
@@ -293,6 +294,7 @@ namespace MapChart {
         const chart = new MapChart(a as any, b as any, c);
         return chart.promise || chart;
     }
+    /* eslint-enable jsdoc/check-param-names */
 
     /**
      * Utility for reading SVG paths directly.

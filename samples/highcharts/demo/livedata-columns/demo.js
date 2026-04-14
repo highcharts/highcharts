@@ -80,15 +80,15 @@ Highcharts.chart('container', {
         plotBands: [{
             from: 0,
             to: 30,
-            color: '#E8F5E9'
+            color: '#00ff1533'
         }, {
             from: 30,
             to: 70,
-            color: '#FFFDE7'
+            color: '#ffea0033'
         }, {
             from: 70,
             to: 100,
-            color: '#FFEBEE'
+            color: '#ff002633'
         }]
     }
 });

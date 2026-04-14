@@ -1,7 +1,7 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Grzegorz Blachlinski, Sebastian Bochan
+ *  Author: Grzegorz Blachliński, Sebastian Bochan
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -79,7 +79,7 @@ class PackedBubblePoint extends BubblePoint implements DragNodesPoint {
 
     public mass!: number;
 
-    public neighbours?: number;
+    public neighbors?: number;
 
     public prevX?: number;
 
@@ -103,7 +103,6 @@ class PackedBubblePoint extends BubblePoint implements DragNodesPoint {
      *
      * */
 
-    /* eslint-disable valid-jsdoc */
 
     /**
      * Destroy point.
@@ -158,7 +157,6 @@ class PackedBubblePoint extends BubblePoint implements DragNodesPoint {
         }
     }
 
-    /* eslint-enable valid-jsdoc */
 
 }
 

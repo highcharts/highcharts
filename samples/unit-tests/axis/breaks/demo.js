@@ -1004,7 +1004,7 @@ QUnit.test('Axis breaks with scatter series', function (assert) {
 });
 
 QUnit.test('Axis breaks on Y axis', function (assert) {
-    var chart = Highcharts.chart('container', {
+    const chart = Highcharts.chart('container', {
         yAxis: {
             breaks: [
                 {
@@ -1026,6 +1026,27 @@ QUnit.test('Axis breaks on Y axis', function (assert) {
         chart.yAxis[0].toPixels(50),
         chart.yAxis[0].toPixels(100),
         '50 and 100 translate to the same axis position'
+    );
+
+    chart.update({
+        yAxis: {
+            tickInterval: 5,
+            min: 0,
+            max: 90,
+            breaks: [{
+                from: 20,
+                to: 62
+            }]
+        },
+        series: [{
+            data: [2, 6, 3]
+        }]
+    });
+
+    assert.strictEqual(
+        chart.yAxis[0].toPixels(20),
+        chart.yAxis[0].toPixels(62),
+        '20 and 62 translate to the same axis position, #23728.'
     );
 });
 

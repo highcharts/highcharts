@@ -199,13 +199,13 @@ export function guessType(
  * Remove all spaces between numbers.
  *
  * @return {string}
- * Trimed string
+ * Trimmed string
  */
 export function trim(str: string, inside?: boolean): string {
     if (typeof str === 'string') {
         str = str.replace(/^\s+|\s+$/g, '');
 
-        // Clear white space insdie the string, like thousands separators
+        // Clear white space inside the string, like thousands separators
         if (inside && /^[\d\s]+$/.test(str)) {
             str = str.replace(/\s/g, '');
         }

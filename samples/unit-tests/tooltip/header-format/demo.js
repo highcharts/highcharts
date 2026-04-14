@@ -104,6 +104,10 @@ QUnit.test('Locale-aware tooltip header date formatting', function (assert) {
         'he',
         // Arabic + Extended
         'ar',
+        // Urdu (Arabic script)
+        'ur',
+        // Bengali
+        'bn',
         // Devanagari
         'hi',
         // Hiragana + Katakana

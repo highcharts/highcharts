@@ -64,6 +64,19 @@ const createChart = data => Highcharts.chart('container', {
         headerFormat: '',
         pointFormat: 'The population of <b>{point.name}</b> is <b>' +
             '{point.value}</b>'
+    },
+
+    responsive: {
+        rules: [{
+            condition: {
+                maxWidth: 500
+            },
+            chartOptions: {
+                chart: {
+                    height: '125%'
+                }
+            }
+        }]
     }
 });
 

@@ -3,7 +3,7 @@
  *  Dependency wheel module
  *
  *  (c) 2018-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -286,7 +286,7 @@ class DependencyWheelSeries extends SankeySeries {
 
                             // The distance between the from and to node
                             // along the perimeter. This affect how curved
-                            // the link is, so that links between neighbours
+                            // the link is, so that links between neighbors
                             // don't extend too far towards the center.
                             distance = Math.abs(
                                 point.linkBase[3 - i] * factor - angle

@@ -1,7 +1,7 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -57,8 +57,7 @@ import {
     isObject,
     merge,
     pick,
-    removeEvent,
-    syncTimeout
+    removeEvent
 } from '../../Shared/Utilities.js';
 import { uniqueKey } from '../Utilities.js';
 
@@ -886,7 +885,9 @@ class Point {
         const point = this;
         return 'highcharts-point' +
             (point.selected ? ' highcharts-point-select' : '') +
-            (point.negative ? ' highcharts-negative' : '') +
+            (
+                point.negative && point.series.options.negativeColor !== false ?
+                    ' highcharts-negative' : '') +
             (point.isNull ? ' highcharts-null-point' : '') +
             (typeof point.colorIndex !== 'undefined' ?
                 ' highcharts-color-' + point.colorIndex : '') +
@@ -1345,8 +1346,8 @@ class Point {
 
             // Record the options to options.data. If the old or the new config
             // is an object, use point options, otherwise use raw options
-            // (#4701, #4916, #24225).
-            if (data) {
+            // (#4701, #4916, #24225, #24451).
+            if (data && !series.processedData) {
                 data[i] = (isObject(data[i], true) || isObject(options, true)) ?
                     point.options :
                     (options ?? data[i]);
@@ -1561,7 +1562,7 @@ class Point {
             isFunction(userEvent) &&
             (
                 !point.hcEvents?.[eventType] ||
-                // Some HC modules, like marker-clusters, draggable-poins etc.
+                // Some HC modules, like marker-clusters, draggable-points etc.
                 // use events in their logic, so we need to be sure, that
                 // callback function is different
                 point.hcEvents?.[eventType]?.map((el): Function => el.fn)

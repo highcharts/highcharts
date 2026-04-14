@@ -1,7 +1,7 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -21,7 +21,7 @@ import type Axis from './Axis';
 import type AxisOptions from './AxisOptions';
 import type TickPositionsArray from './TickPositionsArray';
 import type Time from '../Time';
-import type Types from '../../Shared/Types';
+import type { TypedArray } from '../../Shared/Types';
 
 import {
     addEvent,
@@ -45,7 +45,7 @@ declare module './AxisComposition' {
             min: number,
             max: number,
             startOfWeek?: number,
-            positions?: Array<number>|Types.TypedArray,
+            positions?: Array<number>|TypedArray,
             closestDistance?: number,
             findHigherRanks?: boolean
         ): TickPositionsArray;
@@ -135,7 +135,6 @@ declare module './TimeTicksInfoObject' {
  *
  * */
 
-/* eslint-disable valid-jsdoc */
 
 namespace DateTimeAxis{
 
@@ -187,12 +186,6 @@ namespace DateTimeAxis{
      *
      * @internal
      * @function Highcharts.Axis#getTimeTicks
-     * @param {Highcharts.TimeNormalizeObject} normalizedInterval
-     * The interval in axis values (ms) and the count.
-     * @param {number} min
-     * The minimum in axis values.
-     * @param {number} max
-     * The maximum in axis values.
      */
     function getTimeTicks(
         this: Axis

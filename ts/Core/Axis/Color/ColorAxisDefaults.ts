@@ -1,7 +1,7 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -76,8 +76,7 @@ import { Palette } from '../../Color/Palettes.js';
  *               categories, crosshair, dateTimeLabelFormats, left,
  *               lineWidth, linkedTo, maxZoom, minRange, minTickInterval,
  *               offset, opposite, pane, plotBands, plotLines,
- *               reversedStacks, scrollbar, showEmpty, title, top,
- *               zoomEnabled
+ *               reversedStacks, scrollbar, showEmpty, top, zoomEnabled
  * @product      highcharts highstock highmaps
  * @requires     modules/coloraxis
  * @type         {*|Array<*>}
@@ -135,7 +134,7 @@ const colorAxisDefaults: DeepPartial<ColorAxisOptions> = {
      * @sample {highmaps} maps/demo/data-class-two-ranges/
      *         Explicit colors
      *
-     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @type      {Highcharts.ColorType}
      * @product   highcharts highstock highmaps
      * @apioption colorAxis.dataClasses.color
      */
@@ -248,7 +247,7 @@ const colorAxisDefaults: DeepPartial<ColorAxisOptions> = {
      * @sample {highmaps} maps/coloraxis/gridlines/
      *         Grid lines demonstrated
      *
-     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @type      {Highcharts.ColorType}
      * @product   highcharts highstock highmaps
      */
     gridLineColor: Palette.backgroundColor,
@@ -333,7 +332,7 @@ const colorAxisDefaults: DeepPartial<ColorAxisOptions> = {
         /**
          * The color of the marker.
          *
-         * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @type    {Highcharts.ColorType}
          * @product highcharts highstock highmaps
          */
         color: Palette.neutralColor40
@@ -382,7 +381,7 @@ const colorAxisDefaults: DeepPartial<ColorAxisOptions> = {
      * @sample {highmaps} maps/coloraxis/mincolor-maxcolor-dataclasses/
      *         On data classes
      *
-     * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @type    {Highcharts.ColorType}
      * @product highcharts highstock highmaps
      */
     minColor: Palette.highlightColor10,
@@ -402,7 +401,7 @@ const colorAxisDefaults: DeepPartial<ColorAxisOptions> = {
      * @sample {highmaps} maps/coloraxis/mincolor-maxcolor-dataclasses/
      *         On data classes
      *
-     * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @type    {Highcharts.ColorType}
      * @product highcharts highstock highmaps
      */
     maxColor: Palette.highlightColor100,
@@ -430,6 +429,20 @@ const colorAxisDefaults: DeepPartial<ColorAxisOptions> = {
      * The pixel length of the main tick marks on the color axis.
      */
     tickLength: 5,
+
+    /**
+     * The color axis title. Displayed alongside the color axis. When the
+     * legend is vertical the title is rotated accordingly.
+     *
+     * @sample highcharts/coloraxis/coloraxis-title/
+     * Color axis with title
+     *
+     * @type      {Highcharts.AxisTitleOptions}
+     * @product   highcharts highstock highmaps
+     */
+    title: {
+        margin: 5
+    },
 
     /**
      * The type of interpolation to use for the color axis. Can be

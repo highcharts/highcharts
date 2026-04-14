@@ -7,12 +7,6 @@ export default {
         path: 'series[0].smoothColoring',
         value: false
     }, {
-        path: 'series[0].lineWidth',
-        value: 1,
-        min: 0,
-        max: 2,
-        step: 1
-    }, {
         path: 'series[0].contourInterval',
         value: 50,
         min: 0,
@@ -24,6 +18,12 @@ export default {
         min: 0,
         max: 50,
         step: 1
+    }, {
+        path: 'series[0].lineWidth',
+        value: 1,
+        min: 0,
+        max: 2,
+        step: 1
     }],
     modules: ['modules/contour'],
     dataFile: 'contour-mountain-data.json',
@@ -31,7 +31,7 @@ export default {
     factory: 'chart',
     details: {
         name: 'Mountain elevation with contour series',
-        authors: ['Dawid Dragula', 'Markus Knutson Barstad'],
+        authors: ['Dawid Draguła', 'Markus Knutson Barstad'],
         tags: ['Highcharts demo'],
         categories: [{
             key: 'Heat and tree maps',

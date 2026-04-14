@@ -204,7 +204,7 @@ class PivotPointsIndicator extends SMAIndicator {
         return path;
     }
 
-    // TODO: Rewrite this logic to use multiple datalabels
+    // TODO: Rewrite this logic to use multiple dataLabels
     public drawDataLabels(this: PivotPointsIndicator): void {
         const indicator = this,
             pointMapping: Array<(string|boolean)> = indicator.pointArrayMap;

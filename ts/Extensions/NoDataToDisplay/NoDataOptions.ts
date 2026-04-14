@@ -4,7 +4,7 @@
  *
  *  (c) 2010-2026 Highsoft AS
  *
- *  Author: Oystein Moseng
+ *  Author: Øystein Moseng
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license

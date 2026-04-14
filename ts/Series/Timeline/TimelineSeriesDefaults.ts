@@ -122,7 +122,7 @@ const TimelineSeriesDefaults: TimelineSeriesOptions = {
          * @sample {highcharts} highcharts/series-timeline/connector-styles
          *         Custom connector width and color
          *
-         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @type      {Highcharts.ColorType}
          * @apioption plotOptions.timeline.dataLabels.connectorColor
          */
 

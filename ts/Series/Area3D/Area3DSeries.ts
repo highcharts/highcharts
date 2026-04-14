@@ -32,7 +32,8 @@ import { pushUnique, wrap } from '../../Shared/Utilities.js';
  * */
 
 /**
- *
+ * Adds 3D behavior to the area series.
+ * @internal
  */
 function compose(
     AreaSeriesClass: typeof AreaSeries
@@ -49,7 +50,8 @@ function compose(
 }
 
 /**
- *
+ * Extends the area path with a projected bottom path in 3D charts.
+ * @internal
  */
 function wrapAreaSeriesGetGraphPath(
     this: AreaSeries,
@@ -136,8 +138,10 @@ function wrapAreaSeriesGetGraphPath(
  *
  * */
 
+/** @internal */
 const Area3DSeries = {
     compose
 };
 
+/** @internal */
 export default Area3DSeries;

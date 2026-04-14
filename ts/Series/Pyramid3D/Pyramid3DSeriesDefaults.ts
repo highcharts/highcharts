@@ -135,7 +135,7 @@ const Pyramid3DSeriesDefaults: Pyramid3DSeriesOptions = {
  * @apioption series.pyramid3d.data
  */
 
-''; // Detachs doclets above
+''; // Keeps doclets above
 
 /* *
  *

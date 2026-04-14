@@ -19,7 +19,7 @@ test('Grid multi-column sorting via querying API', async function (assert) {
     }
 
     const grid = await Grid.grid(parentElement, {
-        dataTable: {
+        data: {
             columns: {
                 x: [1, 2, 1, 2, 1],
                 y: [5, 4, 3, 2, 1],
@@ -48,7 +48,7 @@ test('Grid multi-column sorting with custom compare', async function (assert) {
     }
 
     const grid = await Grid.grid(parentElement, {
-        dataTable: {
+        data: {
             columns: {
                 x: [1, 1, 1, 2, 2],
                 y: [1, 2, 3, 4, 5],
@@ -86,7 +86,7 @@ test('Grid multi-column sorting via shift-click', async function (assert) {
     parentElement.style.height = '300px';
 
     const grid = await Grid.grid(parentElement, {
-        dataTable: {
+        data: {
             columns: {
                 x: [1, 2, 1, 2, 1],
                 y: [3, 4, 5, 2, 1],

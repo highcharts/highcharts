@@ -149,8 +149,8 @@ function init(
  * Set tab as visible.
  *
  * @internal
- * @param {globals.Element} - current tab
- * @param {number} - Index of tab in menu
+ * @param {globals.Element} tab The current tab
+ * @param {number} index Index of the tab in the menu
  */
 function selectTab(
     this: Popup,

@@ -11,8 +11,8 @@
  *  - Wojciech Chmiel
  *  - Gøran Slettemark
  *  - Sophie Bremer
- *  - Pawel Lysy
- *  - Karol Kolodziej
+ *  - Paweł Lysy
+ *  - Karol Kołodziej
  *
  * */
 

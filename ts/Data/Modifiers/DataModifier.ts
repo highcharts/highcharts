@@ -9,7 +9,7 @@
  *  Authors:
  *  - Sophie Bremer
  *  - Gøran Slettemark
- *  - Dawid Dragula
+ *  - Dawid Draguła
  *
  * */
 
@@ -175,7 +175,7 @@ abstract class DataModifier implements DataEventEmitter<DataModifierEvent> {
      * Emits an event on the modifier to all registered callbacks of this event.
      *
      * @param {DataModifierEvent} [e]
-     * Event object containing additonal event information.
+     * Event object containing additional event information.
      */
     public emit<E extends DataModifierEvent>(e: E): void {
         fireEvent(this, e.type, e);

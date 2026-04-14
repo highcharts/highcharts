@@ -602,54 +602,71 @@ QUnit.test('X axis label rotation ignored step(#3971)', function (assert) {
 QUnit.test(
     'Auto label alignment is still working when step is set',
     function (assert) {
-        var chart = $('#container')
-            .highcharts({
-                chart: {
-                    marginBottom: 80
-                },
-                xAxis: {
-                    categories: [
-                        'Loooooong',
-                        'Feb',
-                        'Mar',
-                        'Apr',
-                        'May',
-                        'Jun',
-                        'Jul',
-                        'Aug',
-                        'Sep',
-                        'Oct',
-                        'Nov',
-                        'Dec'
-                    ],
-                    labels: {
-                        step: 1,
-                        rotation: -90
-                    }
-                },
+        const chart = Highcharts.chart('container', {
+            chart: {
+                marginBottom: 80
+            },
+            xAxis: {
+                categories: [
+                    'Looooooooooooong',
+                    'Feb',
+                    'Mar',
+                    'Apr',
+                    'May',
+                    'Jun',
+                    'Jul',
+                    'Aug',
+                    'Sep',
+                    'Oct',
+                    'Nov',
+                    'Dec'
+                ],
+                labels: {
+                    step: 1,
+                    rotation: -90
+                }
+            },
 
-                series: [
-                    {
-                        data: [
-                            29.9,
-                            71.5,
-                            106.4,
-                            129.2,
-                            144.0,
-                            176.0,
-                            135.6,
-                            148.5,
-                            216.4,
-                            194.1,
-                            95.6,
-                            54.4
-                        ]
-                    }
-                ]
-            })
-            .highcharts();
+            series: [
+                {
+                    data: [
+                        29.9,
+                        71.5,
+                        106.4,
+                        129.2,
+                        144.0,
+                        176.0,
+                        135.6,
+                        148.5,
+                        216.4,
+                        194.1,
+                        95.6,
+                        54.4
+                    ]
+                }
+            ]
+        });
 
-        assert.strictEqual(chart.xAxis[0].labelAlign, 'right', 'Rigth aligned');
+        assert.strictEqual(chart.xAxis[0].labelAlign, 'right', 'Right aligned');
+
+        chart.update({
+            xAxis: {
+                labels: {
+                    rotation: -45
+                }
+            },
+            yAxis: {
+                title: {
+                    text: null
+                }
+            }
+        });
+
+        assert.ok(
+            chart.xAxis[0].ticks[0].label.element.getBoundingClientRect().x > 0,
+            'Rotated step labels should not be clipped on the left edge, ' +
+            '#23674.'
+        );
     }
 );
 

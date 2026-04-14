@@ -1,6 +1,6 @@
 /* *
  *
- *  Authors: Rafal Sebestjanski and Pawel Lysy
+ *  Authors: Rafał Sebestjański and Paweł Lysy
  *
  *
  * */

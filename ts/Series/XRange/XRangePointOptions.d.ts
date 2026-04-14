@@ -3,7 +3,7 @@
  *  X-range series module
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi, Lars A. V. Cabrera
+ *  Author: Torstein Hønsi, Lars A. V. Cabrera
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -43,7 +43,7 @@ export interface XRangePointOptions extends ColumnPointOptions {
     /**
      * A partial fill for each point, typically used to visualize how much of
      * a task is performed. The partial fill object can be set either on series
-     * or point level.
+     * or point level. When set as a number, works as `{ amount: number }`.
      *
      * @sample {highcharts} highcharts/demo/x-range
      *         X-range with partial fill
@@ -52,7 +52,7 @@ export interface XRangePointOptions extends ColumnPointOptions {
      *
      * @product highcharts highstock gantt
      */
-    partialFill?: XRangePointPartialFillOptions;
+    partialFill?: number|XRangePointPartialFillOptions;
 
     /**
      * The starting X value of the range point. May be a timestamp or a date
@@ -105,7 +105,7 @@ export interface XRangePointPartialFillOptions {
      * The fill color to be used for partial fills. Defaults to a darker shade
      * of the point color.
      *
-     * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @type {Highcharts.ColorType}
      *
      * @product highcharts highstock gantt
      */

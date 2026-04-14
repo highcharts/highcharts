@@ -21,7 +21,6 @@
  * */
 
 import type AnimationOptions from '../../Core/Animation/AnimationOptions';
-import type MapPointSeries from '../../Series/MapPoint/MapPointSeries';
 import type {
     ClusterAndNoiseObject,
     GroupMapObject,
@@ -126,7 +125,7 @@ const markerClusterAlgorithms: Record<string, MarkerClusterAlgorithmFunction> = 
                 )
             ),
             iterations = options.iterations,
-            // Max pixel difference beetwen new and old cluster position.
+            // Max pixel difference between new and old cluster position.
             maxClusterShift = 1;
 
         let currentIteration = 0,
@@ -460,7 +459,7 @@ function fadeInElement(
  * Util function.
  * @internal
  */
-function fadeInNewPointAndDestoryOld(
+function fadeInNewPointAndDestroyOld(
     newPointObj: MarkerClusterPointsState,
     oldPoints: Array<MarkerClusterPointsState>,
     animation: (boolean|Partial<AnimationOptions>),
@@ -706,7 +705,7 @@ function seriesAnimateClusterPoint(
         offset = 0,
         newX = 0,
         newY = 0,
-        isOldPointGrahic = false,
+        isOldPointGraphic = false,
         isCbHandled = false;
 
     if (oldState && newState) {
@@ -789,7 +788,7 @@ function seriesAnimateClusterPoint(
                     oldPoints.push(oldPointObj);
 
                     if (oldPointObj.point?.graphic) {
-                        isOldPointGrahic = true;
+                        isOldPointGraphic = true;
                         oldPointObj.point.graphic.show();
                         oldPointObj.point.graphic.animate({
                             x: newX - (oldPointObj.point.graphic.radius || 0),
@@ -797,7 +796,7 @@ function seriesAnimateClusterPoint(
                             opacity: 0.4
                         }, animation, function (): void {
                             isCbHandled = true;
-                            fadeInNewPointAndDestoryOld(
+                            fadeInNewPointAndDestroyOld(
                                 newPointObj, oldPoints, animation, 0.7
                             );
                         });
@@ -821,15 +820,15 @@ function seriesAnimateClusterPoint(
             // Make sure point is faded in.
             syncTimeout(function (): void {
                 if (!isCbHandled) {
-                    fadeInNewPointAndDestoryOld(
+                    fadeInNewPointAndDestroyOld(
                         newPointObj, oldPoints, animation, 0.85
                     );
                 }
             }, animDuration);
 
-            if (!isOldPointGrahic) {
+            if (!isOldPointGraphic) {
                 syncTimeout(function (): void {
-                    fadeInNewPointAndDestoryOld(
+                    fadeInNewPointAndDestroyOld(
                         newPointObj, oldPoints, animation, 0.1
                     );
                 }, animDuration / 2);
@@ -893,8 +892,8 @@ function seriesGeneratePoints(
     // series flow, this is not done until the `translate` method because the
     // resulting [x, y] position depends on inset positions in the MapView.
     if (mapView && series.is('mappoint') && xData && yData) {
-        (series as MapPointSeries).options.data?.forEach((p, i): void => {
-            const xy = (series as MapPointSeries).projectPoint(p);
+        series.options.data?.forEach((p, i): void => {
+            const xy = series.projectPoint(p);
             if (xy) {
                 xData[i] = xy.x;
                 yData[i] = xy.y;

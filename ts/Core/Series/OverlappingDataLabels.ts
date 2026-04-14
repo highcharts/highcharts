@@ -4,7 +4,7 @@
  *  This module is included in Highcharts.
  *
  *  (c) 2009-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -186,7 +186,7 @@ function chartHideOverlappingLabels(
                     if (isPolygonOverlap(box1Poly, box2Poly)) {
                         toHide = true;
                     }
-                // If there are no polygons, evaluate rectangles coliding
+                // If there are no polygons, evaluate rectangles colliding
                 } else if (isIntersectRect(box1, box2)) {
                     toHide = true;
                 }
@@ -347,6 +347,22 @@ function onChartRender(
                                 point.shapeArgs?.height
                             ); // #4118
 
+                            // #21725: Sync target positions for generic overlap
+                            // checking. During animations (e.g., toggling a
+                            // point), DOM positions may overlap. We force
+                            // alignAttr to the final target coordinates so
+                            // getAbsoluteBox() evaluates the final resting
+                            // positions.
+                            /*
+                            // Commented out because it caused initial overlap
+                            // in the highcharts/demo/pie-semi-circle sample.
+                            const pos = label.dataLabelPosition?.posAttribs;
+                            if (pos) {
+                                label.alignAttr = label.alignAttr || {};
+                                label.alignAttr.x = pos.x;
+                                label.alignAttr.y = pos.y;
+                            }
+                            */
                             // Allow overlap if the option is explicitly true
                             if (
                                 // #13449

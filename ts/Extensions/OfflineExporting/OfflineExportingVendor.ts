@@ -1,7 +1,7 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -24,6 +24,7 @@ import type G from '../../Core/Globals';
  *
  * */
 
+/** @internal */
 declare global {
     interface Window {
         jspdf: jspdf;
