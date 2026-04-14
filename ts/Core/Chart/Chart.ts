@@ -4199,7 +4199,7 @@ class Chart {
 
             // Adjust offset to ensure selection zoom triggers correctly
             // (#22945)
-            const offset = (axis.chart.polar || axis.isOrdinal) ?
+            const offset = (selection || axis.chart.polar || axis.isOrdinal) ?
                     0 :
                     (minPointOffset * pointRangeDirection || 0),
                 eventMin = axis.toValue(minPx, true),
@@ -4208,14 +4208,6 @@ class Chart {
             let newMin = eventMin + offset,
                 newMax = eventMax - offset,
                 allExtremes = axis.allExtremes;
-
-            if (selection) {
-                selection[axis.coll as 'xAxis' | 'yAxis']!.push({
-                    axis,
-                    min: Math.min(eventMin, eventMax),
-                    max: Math.max(eventMin, eventMax)
-                });
-            }
 
             if (newMin > newMax) {
                 [newMin, newMax] = [newMax, newMin];
@@ -4328,16 +4320,21 @@ class Chart {
                 if (
                     reset || (
                         axis.series.length &&
-                        (newMin !== min || newMax !== max) &&
-                        newMin >= floor &&
-                        newMax <= ceiling
+                        (
+                            selection ||
+                            (
+                                (newMin !== min || newMax !== max) &&
+                                newMin >= floor &&
+                                newMax <= ceiling
+                            )
+                        )
                     )
                 ) {
                     if (selection) {
                         selection[axis.coll as 'xAxis'|'yAxis']!.push({
                             axis,
-                            min: newMin,
-                            max: newMax
+                            min: Math.min(eventMin, eventMax),
+                            max: Math.max(eventMin, eventMax)
                         });
                     } else {
 
