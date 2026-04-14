@@ -1081,8 +1081,8 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      * @sample {highcharts} highcharts/series/legend-symbol-object/
      *         Custom badge added to the legend via drawLegendSymbol
      *
-     * @type      {Highcharts.SeriesDrawLegendSymbolCallbackFunction}
-     * @since     @next
+     * @type      {Function}
+     * @since     next
      * @context   Highcharts.Series
      * @apioption plotOptions.series.events.drawLegendSymbol
      */
@@ -1097,8 +1097,8 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      * @sample {highcharts} highcharts/series/legend-symbol-object/
      *         Custom badge cleaned up via destroyLegendSymbol
      *
-     * @type      {Highcharts.SeriesDestroyLegendSymbolCallbackFunction}
-     * @since     @next
+     * @type      {Function}
+     * @since     next
      * @context   Highcharts.Series
      * @apioption plotOptions.series.events.destroyLegendSymbol
      */

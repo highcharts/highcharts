@@ -194,9 +194,9 @@ export interface SeriesEventsOptions {
      * @sample {highcharts} highcharts/series/legend-symbol-object/
      *         Custom badge added to the legend via drawLegendSymbol
      *
-     * @since @next
+     * @since next
      */
-    drawLegendSymbol?: SeriesDrawLegendSymbolCallbackFunction;
+    drawLegendSymbol?: EventCallback<Series, Event>;
 
     /**
      * Fires when the legend symbol for the series is about to be
@@ -208,9 +208,9 @@ export interface SeriesEventsOptions {
      * @sample {highcharts} highcharts/series/legend-symbol-object/
      *         Custom badge cleaned up via destroyLegendSymbol
      *
-     * @since @next
+     * @since next
      */
-    destroyLegendSymbol?: SeriesDestroyLegendSymbolCallbackFunction;
+    destroyLegendSymbol?: EventCallback<Series, Event>;
 }
 
 /**
@@ -318,35 +318,6 @@ export type SeriesMouseOverCallbackFunction =
  *        Event that occurred.
  */
 export type SeriesShowCallbackFunction = EventCallback<Series, Event>;
-
-/**
- * Gets fired after the legend symbol for the series has been drawn or
- * redrawn.
- *
- * @callback Highcharts.SeriesDrawLegendSymbolCallbackFunction
- *
- * @param {Highcharts.Series} this
- *        Series where the event occurred.
- *
- * @param {global.Event} event
- *        Event that occurred.
- */
-export type SeriesDrawLegendSymbolCallbackFunction =
-    EventCallback<Series, Event>;
-
-/**
- * Gets fired when the legend symbol for the series is about to be destroyed.
- *
- * @callback Highcharts.SeriesDestroyLegendSymbolCallbackFunction
- *
- * @param {Highcharts.Series} this
- *        Series where the event occurred.
- *
- * @param {global.Event} event
- *        Event that occurred.
- */
-export type SeriesDestroyLegendSymbolCallbackFunction =
-    EventCallback<Series, Event>;
 
 /**
  * The SVG value used for the `stroke-linecap` and `stroke-linejoin` of a line
