@@ -296,7 +296,7 @@ function selectableAnnotation(annotationType: typeof Annotation): void {
                             const typeOptions = config.typeOptions;
 
                             if (annotation.options.type === 'measure') {
-                                // Manually disable crooshars according to
+                                // Manually disable crosshairs according to
                                 // stroke width of the shape:
                                 (typeOptions as any).crosshairY.enabled = (
                                     (typeOptions as any).crosshairY

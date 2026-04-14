@@ -18,6 +18,57 @@ Grid.grid('container', {
             product: ['Apple', 'Pear', 'Orange'],
             price: [3.5, 2.5, 3]
         }
+    }
+}
+```
+
+The `data` object defines how Grid receives, prepares, and updates data. For column data, use `data.columns` (an object where each key is a column ID and each value is an array of cell values). Alternatively, pass an existing `DataTable` instance via `data.dataTable`. The DataTable class stores key-value pairs: each key becomes a header label, and each value is an array with the corresponding column values. When users edit cells (for example via edit mode), Grid writes changes back through the configured data provider.
+Read more about [data handling and the DataTable class](https://www.highcharts.com/docs/dashboards/data-table).
+
+Use `data.autogenerateColumns` to control how provider columns are rendered:
+- `true` (default): provider columns are rendered automatically, and custom
+  columns from `columns[]` that are missing in provider data are appended.
+- `false`: Grid renders only columns explicitly configured in `columns[]` (or
+  referenced in `header[]`).
+
+For detailed behavior and examples, see the
+[Columns article](https://www.highcharts.com/docs/grid/columns/index).
+
+Instead of `data.columns` or `data.dataTable`, you can also use data connectors for loading data.
+
+```js
+{
+    data: {
+        connector: {
+            type: JSON,
+            data: [
+                ['colA', 'colB'],
+                [1, 2],
+                [3, 4]
+            ]
+        }
+    }
+}
+```
+
+### Data providers
+Grid reads and writes data through a data provider. The default `LocalDataProvider` works with an in-memory `DataTable`, but you can register a custom provider for other data sources. In Grid Pro, the `RemoteDataProvider` is available for server-backed data and on-demand paging. For details and configuration examples, see the [Data handling article](https://www.highcharts.com/docs/grid/data-handling/overview).
+
+### Data modifiers
+
+When you have an existing [DataTable](https://www.highcharts.com/docs/dashboards/data-table) instance (for example, one created with a [Math Modifier](https://www.highcharts.com/docs/dashboards/mathmodifier-module) from Highcharts Dashboards library to add computed columns), pass it via `data.dataTable`.
+
+You can read more about Data Modifiers [here](https://www.highcharts.com/docs/dashboards/data-modifiers).
+
+## columnDefaults and columns[]
+```js
+{
+    columnDefaults: {
+        cells: {
+            editMode: {
+                enabled: true
+            }
+        }
     },
     columns: [{
         id: 'price',

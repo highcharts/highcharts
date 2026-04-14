@@ -76,7 +76,7 @@ const BulletSeriesDefaults: BulletSeriesOptions = {
          *
          * In styled mode, use class `highcharts-bullet-target` instead.
          *
-         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @type      {Highcharts.ColorType}
          * @since     6.0.0
          * @product   highcharts
          * @apioption plotOptions.bullet.targetOptions.color

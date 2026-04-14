@@ -14,9 +14,31 @@ require(['highcharts/highcharts'], function (Highcharts) {
             'highcharts/modules/solid-gauge'
         ], function () {
             Highcharts.chart('container', {
-                series: [{
-                    data: [1, 2, 3, 4, 5],
+                chart: {
                     type: 'solidgauge'
+                },
+
+                title: {
+                    text: 'Solid gauge with require'
+                },
+
+                pane: {
+                    startAngle: -90,
+                    endAngle: 90,
+                    background: {
+                        innerRadius: '60%',
+                        outerRadius: '100%',
+                        shape: 'arc'
+                    }
+                },
+
+                yAxis: {
+                    min: 0,
+                    max: 100
+                },
+
+                series: [{
+                    data: [38]
                 }]
             });
         });

@@ -135,7 +135,14 @@ class BellcurveSeries extends AreaSplineSeries {
     ): void {
         let alteredData;
         if (typeof data !== 'undefined' && data.length > 0) {
-            data = data.filter(isNumber),
+            // Support data array of objects (#24073).
+            data = data
+                .map(function (
+                    item: number | { y?: number | null } | null | undefined
+                ): number | null | undefined {
+                    return isNumber(item) ? item : item?.y;
+                })
+                .filter(isNumber);
             this.setMean(data);
             this.setStandardDeviation(data);
             alteredData = this.derivedData(

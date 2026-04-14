@@ -51,14 +51,15 @@ async function langBuild() {
         .map(dirent => dirent.name);
 
     // eslint-disable-next-line
-    const template = (jsonContent, lang) => `/**
+    const template = (jsonContent, lang) => `// SPDX-License-Identifier: LicenseRef-Highcharts
+/**
 * @license Highcharts JS v@product.version@ (@product.date@)
 * @module highcharts/i18n/${lang}
 * @requires highcharts
 *
 * ${lang} language pack
 *
-* (c) 2009-2025 Highsoft AS
+* (c) 2009-2026 Highsoft AS
 *
 * A commercial license may be required depending on use.
 * See www.highcharts.com/license

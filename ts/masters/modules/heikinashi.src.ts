@@ -8,7 +8,7 @@
  * HeikinAshi series type for Highcharts Stock
  *
  * (c) 2010-2026 Highsoft AS
- * Author: Karol Kolodziej
+ * Author: Karol Kołodziej
  *
  * A commercial license may be required depending on use.
  * See www.highcharts.com/license

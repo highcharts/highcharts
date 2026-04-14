@@ -170,7 +170,7 @@ class ColumnPyramidSeries extends ColumnSeries {
             stackTotal =
                 (threshold as any) + ((point.total || point.y) as any);
 
-            // Overwrite stacktotal (always 100 / -100)
+            // Overwrite stackTotal (always 100 / -100)
             if (options.stacking === 'percent') {
                 stackTotal =
                     (threshold as any) + ((point.y as any) < 0) ?
@@ -244,7 +244,7 @@ class ColumnPyramidSeries extends ColumnSeries {
 
             // Register shape type and arguments to be used in drawPoints
             point.shapeType = 'path';
-            point.shapeArgs = { // Args for datalabels positioning
+            point.shapeArgs = { // Args for dataLabels positioning
                 x: x1,
                 y: y1,
                 width: x2 - x1,

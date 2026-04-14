@@ -1,7 +1,7 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Grzegorz Blachlinski, Sebastian Bochan
+ *  Author: Grzegorz Blachliński, Sebastian Bochan
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -575,7 +575,7 @@ class PackedBubbleSeries extends BubbleSeries {
         // pointer = chart.pointer,
         // onMouseOver = function (e: PointerEvent): void {
         //     const point = pointer.getPointFromEvent(e);
-        //     // undefined on graph in scatterchart
+        //     // undefined on graph in scatter chart
         //     if (typeof point !== 'undefined') {
         //         pointer.isDirectTouch = true;
         //         point.onMouseOver(e);

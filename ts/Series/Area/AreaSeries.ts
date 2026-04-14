@@ -1,7 +1,7 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -46,15 +46,20 @@ import {
  *
  * */
 
+/** @internal */
 declare module '../../Core/Renderer/SVG/SVGPath' {
     interface SVGPath {
+        /** @internal */
         isArea?: boolean;
+        /** @internal */
         hasStackedCliffs?: boolean;
     }
 }
 
+/** @internal */
 declare module '../../Core/Series/SeriesBase' {
     interface SeriesBase {
+        /** @internal */
         areaPath?: SVGPath;
     }
 }
@@ -68,7 +73,7 @@ declare module '../../Core/Series/SeriesBase' {
 /**
  * Area series type.
  *
- * @private
+ * @internal
  * @class
  * @name AreaSeries
  *
@@ -110,7 +115,7 @@ class AreaSeries extends LineSeries {
      * Draw the graph and the underlying area. This method calls the Series
      * base function and adds the area. The areaPath is calculated in the
      * getSegmentPath method called from Series.prototype.drawGraph.
-     * @private
+     * @internal
      */
     public drawGraph(): void {
 
@@ -185,7 +190,7 @@ class AreaSeries extends LineSeries {
     }
 
     /**
-     * @private
+     * @internal
      */
     public getGraphPath(points: Array<AreaPoint>): SVGPath {
         const getGraphPath = LineSeries.prototype.getGraphPath,
@@ -344,7 +349,7 @@ class AreaSeries extends LineSeries {
      * Return an array of stacked points, where null and missing points are
      * replaced by dummy points in order for gaps to be drawn correctly in
      * stacks.
-     * @private
+     * @internal
      */
     public getStackPoints(
         points: Array<AreaPoint>
@@ -507,6 +512,7 @@ class AreaSeries extends LineSeries {
  *
  * */
 
+/** @internal */
 interface AreaSeries {
     pointClass: typeof AreaPoint;
 }
@@ -520,6 +526,7 @@ extend(AreaSeries.prototype, {
  *
  * */
 
+/** @internal */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         area: typeof AreaSeries;
@@ -533,4 +540,5 @@ SeriesRegistry.registerSeriesType('area', AreaSeries);
  *
  * */
 
+/** @internal */
 export default AreaSeries;

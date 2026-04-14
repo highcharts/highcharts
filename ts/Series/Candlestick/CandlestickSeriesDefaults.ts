@@ -1,7 +1,7 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -47,7 +47,7 @@ const CandlestickSeriesDefaults: CandlestickSeriesOptions = {
      * @sample {highstock} stock/plotoptions/candlestick-linecolor/
      *         Candlestick line colors
      *
-     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @type      {Highcharts.ColorType}
      * @since     1.3.6
      * @product   highstock
      * @apioption plotOptions.candlestick.upLineColor
@@ -78,14 +78,14 @@ const CandlestickSeriesDefaults: CandlestickSeriesOptions = {
      * The color of the line/border of the candlestick.
      *
      * In styled mode, the line stroke can be set with the
-     * `.highcharts-candlestick-series .highcahrts-point` rule.
+     * `.highcharts-candlestick-series .highcharts-point` rule.
      *
      * @see [upLineColor](#plotOptions.candlestick.upLineColor)
      *
      * @sample {highstock} stock/plotoptions/candlestick-linecolor/
      *         Candlestick line colors
      *
-     * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @type    {Highcharts.ColorType}
      * @default #000000
      * @product highstock
      */
@@ -95,7 +95,7 @@ const CandlestickSeriesDefaults: CandlestickSeriesOptions = {
      *
      *
      * In styled mode, the line stroke width can be set with the
-     * `.highcharts-candlestick-series .highcahrts-point` rule.
+     * `.highcharts-candlestick-series .highcharts-point` rule.
      *
      * @product highstock
      */
@@ -111,7 +111,7 @@ const CandlestickSeriesDefaults: CandlestickSeriesOptions = {
      * @sample {highstock} highcharts/css/candlestick/
      *         Colors in styled mode
      *
-     * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @type    {Highcharts.ColorType}
      * @default #ffffff
      * @product highstock
     */

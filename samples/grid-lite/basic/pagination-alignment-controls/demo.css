@@ -11,9 +11,9 @@
     margin-bottom: 20px;
 }
 
+.custom-pagination-theme,
 .highcharts-light .custom-pagination-theme {
     --hcg-pagination-background: #fff7f7;
     --hcg-color: #8c4e4e;
-    --hcg-button-color: #8c4e4e;
     --hcg-pagination-button-selected-background: #8c4e4e;
 }

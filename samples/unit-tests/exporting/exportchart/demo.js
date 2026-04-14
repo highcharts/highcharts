@@ -139,5 +139,50 @@ is set in exporting.chartConfig.`
 
     // Restore original functions
     Highcharts.Exporting.inlineFonts = originalInlineFonts;
+
+    const originalFetch = window.fetch;
+    let fetchAttemptedForCrossOrigin = false;
+
+    window.fetch = function (url) {
+        if (typeof url === 'string') {
+            try {
+                const base = window.location && window.location.href ?
+                    window.location.href :
+                    undefined;
+                const parsedUrl = new URL(url, base);
+                if (parsedUrl.hostname === 'fonts.googleapis.com') {
+                    fetchAttemptedForCrossOrigin = true;
+                }
+            } catch {
+                // Ignore invalid URLs; they are not relevant for this test.
+            }
+        }
+        return originalFetch.apply(this, arguments);
+    };
+
+    try {
+        const dummySvg = document.createElementNS(
+            'http://www.w3.org/2000/svg', 'svg'
+        );
+        await Highcharts.Exporting.inlineFonts(dummySvg);
+
+        assert.notOk(
+            fetchAttemptedForCrossOrigin,
+            'Should not attempt to fetch cross-origin stylesheets ' +
+            '(Origin Gate working).'
+        );
+        assert.ok(
+            true,
+            'inlineFonts completed successfully without a CORS SecurityError ' +
+            ' crash (#23589).'
+        );
+    } catch (e) {
+        assert.notOk(
+            true, 'inlineFonts threw an unexpected error: ' + e.message
+        );
+    } finally {
+        window.fetch = originalFetch;
+    }
+
     linkElement.remove();
 });
