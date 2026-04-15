@@ -2784,13 +2784,11 @@ class Chart {
         // calculation.
         if (clipOffset && !styledMode) {
             const extendUp = clipOffset[0] - strokeWidth / 2,
-                extendRight = clipOffset[1] - strokeWidth / 2,
-                extendDown = clipOffset[2] - strokeWidth / 2,
                 extendLeft = clipOffset[3] - strokeWidth / 2;
             plotBorderBox.x -= extendLeft;
             plotBorderBox.y -= extendUp;
-            plotBorderBox.width += extendLeft + extendRight;
-            plotBorderBox.height += extendDown + extendUp;
+            plotBorderBox.width += extendLeft + clipOffset[1] - strokeWidth / 2;
+            plotBorderBox.height += extendUp + clipOffset[2] - strokeWidth / 2;
         }
 
         plotBorder[verb](plotBorderBox);
