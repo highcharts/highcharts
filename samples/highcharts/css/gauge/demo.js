@@ -12,7 +12,7 @@ Highcharts.chart('container', {
     pane: {
         startAngle: -150,
         endAngle: 150,
-        margin: 0,
+        margin: 10,
         innerSize: 0,
         background: [{
             className: 'outer-pane',

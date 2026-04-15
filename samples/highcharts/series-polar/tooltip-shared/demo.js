@@ -11,7 +11,10 @@ Highcharts.chart('container', {
     xAxis: {
         tickInterval: 45,
         min: 0,
-        max: 360
+        max: 360,
+        crosshair: {
+            color: 'var(--highcharts-neutral-color-100, black)'
+        }
     },
     yAxis: {
         min: 0
