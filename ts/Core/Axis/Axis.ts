@@ -2540,15 +2540,15 @@ class Axis {
             // Grid axis has custom handling of ticks.
             !this.grid
         ) {
-            if (startOnTick && roundedMin !== -Infinity) { // #6502
+            if (startOnTick && isNumber(roundedMin)) { // #6502
                 this.min = roundedMin;
-            } else {
+            } else if (tickPositions.length) {
                 while ((this.min as any) - minPointOffset > tickPositions[0]) {
                     tickPositions.shift();
                 }
             }
 
-            if (endOnTick) {
+            if (endOnTick && isNumber(roundedMax)) { // #6502
                 this.max = roundedMax;
             } else {
                 while (
