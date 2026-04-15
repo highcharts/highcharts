@@ -10,7 +10,7 @@
  *
  *  Authors:
  *  - Mikkel Espolin Birkeland
- *  - Dawid Dragula
+ *  - Dawid Draguła
  *
  * */
 

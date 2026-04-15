@@ -195,10 +195,21 @@ async function scriptsTS(argv) {
                 true
             );
 
-            fsLib.copyFile(
-                codeDashboardsFolder + 'dashboards.src.d.ts',
-                codeDashboardsFolder + 'dashboards.d.ts'
-            );
+            fsLib
+                .getFilePaths(bundleDtsFolder, true)
+                .filter(sourcePath => sourcePath.endsWith('.src.d.ts'))
+                .forEach(sourcePath => {
+                    const relativePath = path.relative(bundleDtsFolder, sourcePath);
+                    const destinationPath = path.join(
+                        codeDashboardsFolder,
+                        relativePath
+                    );
+
+                    fsLib.copyFile(
+                        destinationPath,
+                        destinationPath.replace(/\.src\.d\.ts$/u, '.d.ts')
+                    );
+                });
 
             logLib.success('Copied stand-alone DTS for Dashboards');
         }

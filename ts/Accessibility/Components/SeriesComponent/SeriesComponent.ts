@@ -59,7 +59,6 @@ class SeriesComponent extends AccessibilityComponent {
      *
      * */
 
-    /* eslint-disable valid-jsdoc */
 
     /**
      * @private

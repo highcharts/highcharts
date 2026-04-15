@@ -382,10 +382,10 @@ Supported options for each prop:
     propValidate: Function that takes the prop value and the point as
         arguments, and returns true if the prop value is valid, false if
         not. It is used to prevent e.g. resizing "low" above "high".
-    handlePositioner: For resizeable props, return 0,0 in SVG plot coords of
+    handlePositioner: For resizable props, return 0,0 in SVG plot coords of
         where to place the dragHandle. Gets point as argument. Should return
         object with x and y properties.
-    handleFormatter: For resizeable props, return the path of the drag
+    handleFormatter: For resizable props, return the path of the drag
         handle as an SVG path array. Gets the point as argument. The handle
         is translated according to handlePositioner.
     handleOptions: Options to merge with the default handle options.

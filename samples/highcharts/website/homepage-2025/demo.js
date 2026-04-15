@@ -189,21 +189,28 @@ function getNewPoint(i, data) {
 }
 
 function animateCS() {
+    if (!csSeries || !csSeries.options || !csSeries.options.data) {
+        return;
+    }
+
     let i = 0;
     csInterval = setInterval(() => {
+        if (!csSeries || !csSeries.options || !csSeries.options.data) {
+            clearInterval(csInterval);
+            return;
+        }
+
         const data = csSeries.options.data,
             newPoint = getNewPoint(i, data),
             lastPoint = data[data.length - 1];
 
-        // Different x-value, we need to add a new point
         if (lastPoint[0] !== newPoint[0]) {
             csSeries.addPoint(newPoint);
         } else {
-        // Existing point, update it
             csSeries.options.data[data.length - 1] = newPoint;
-
             csSeries.setData(data);
         }
+
         i++;
     }, 100);
 }
@@ -1258,6 +1265,286 @@ function cs() {
 
 }
 
+// Stock chart with annotations
+function stockWithAnnotations() {
+    const commonOptions = {
+        api: {
+            url: 'https://demo-live-data.highcharts.com',
+            access: {
+                url: 'https://demo-live-data.highcharts.com/token/oauth',
+                token: 'token'
+            }
+        }
+    };
+
+    const TeslaISIN = 'US88160R1014';
+
+    const connector = new HighchartsConnectors.Morningstar.TimeSeriesConnector({
+        ...commonOptions,
+        series: {
+            type: 'Price'
+        },
+        securities: [
+            {
+                id: TeslaISIN,
+                idType: 'ISIN'
+            }
+        ],
+        startDate: '2017-01-01',
+        endDate: '2025-03-17',
+        currencyId: 'USD'
+    });
+
+    (async () => {
+        await connector.load();
+
+        const cols = connector.getTable().getColumns();
+
+        const name = Array.from(Object.keys(cols).filter(k => k !== 'Date'))[0];
+        const data = cols[name].map((value, i) => [cols.Date[i], value]);
+
+        Highcharts.chart('container', {
+            chart: {
+                type: 'area',
+                zooming: {
+                    type: 'x'
+                },
+                panning: true,
+                panKey: 'shift',
+                scrollablePlotArea: {
+                    minWidth: 600,
+                    scrollPositionX: 1
+                }
+            },
+
+            defs: {
+                tslaAreaGradient: {
+                    tagName: 'linearGradient',
+                    id: 'tsla-area-gradient',
+                    x1: 0,
+                    x2: 0,
+                    y1: 0,
+                    y2: 1,
+                    children: [{
+                        tagName: 'stop',
+                        offset: 0
+                    }, {
+                        tagName: 'stop',
+                        offset: 1
+                    }]
+                }
+            },
+
+            title: {
+                text: 'TSLA Stock price 2017 - March 17, 2025',
+                align: 'left'
+            },
+
+            accessibility: {
+                landmarkVerbosity: 'one'
+            },
+
+            credits: {
+                enabled: false
+            },
+
+            annotations: [
+                {
+                    draggable: '',
+                    labelOptions: {
+                        shape: 'connector',
+                        useHTML: true
+                    },
+                    className: 'events-annotations',
+                    labels: [
+                        {
+                            allowOverlap: false,
+                            point: {
+                                xAxis: 0,
+                                yAxis: 0,
+                                x: '2020-08-20',
+                                y: 133.45
+                            },
+                            x: -100,
+                            text: '5 for 1 Stock split announcement'
+                        },
+                        {
+                            point: {
+                                xAxis: 0,
+                                yAxis: 0,
+                                x: '2020-12-21',
+                                y: 216.62
+                            },
+                            text: 'Inclusion to S&P 500 Index',
+                            x: -70,
+                            y: -20
+                        },
+                        {
+                            point: {
+                                xAxis: 0,
+                                yAxis: 0,
+                                x: '2021-04-01',
+                                y: 220.58
+                            },
+                            text: 'Record earnings in Q1 2021',
+                            y: -60,
+                            x: -25
+                        },
+                        {
+                            point: {
+                                xAxis: 0,
+                                yAxis: 0,
+                                x: '2021-11-01',
+                                y: 402.86
+                            },
+                            x: -100,
+                            text: 'Stock Sale by Elon Musk'
+                        },
+                        {
+                            point: {
+                                xAxis: 0,
+                                yAxis: 0,
+                                x: '2022-03-22',
+                                y: 331.33
+                            },
+                            text: 'Berlin\'s giga factory opening',
+                            x: -15,
+                            y: 120
+                        },
+                        {
+                            point: {
+                                xAxis: 0,
+                                yAxis: 0,
+                                x: '2022-04-12',
+                                y: 328.98
+                            },
+                            text: 'Musk\'s Twitter aquisition',
+                            x: 70
+                        },
+                        {
+                            point: {
+                                xAxis: 0,
+                                yAxis: 0,
+                                x: '2023-09-16',
+                                y: 265.28
+                            },
+                            text: '5 million cars produced',
+                            x: -15,
+                            y: -15
+                        },
+                        {
+                            point: {
+                                xAxis: 0,
+                                yAxis: 0,
+                                x: '2024-11-05',
+                                y: 251.44
+                            },
+                            text: 'Trump wins elections',
+                            x: -50,
+                            y: -120
+                        }
+                    ]
+                },
+                {
+                    draggable: '',
+                    labels: [
+                        {
+                            point: {
+                                xAxis: 0,
+                                yAxis: 0,
+                                x: '2019-03-14',
+                                y: 19.33
+                            },
+                            x: -60,
+                            text: 'Tesla Model Y announced'
+                        },
+                        {
+                            point: {
+                                xAxis: 0,
+                                yAxis: 0,
+                                x: '2019-11-21',
+                                y: 23.65
+                            },
+                            text: 'Tesla CyberTruck announced',
+                            x: -80,
+                            y: -40
+                        },
+                        {
+                            point: {
+                                xAxis: 0,
+                                yAxis: 0,
+                                x: '2020-09-22',
+                                y: 141.41
+                            },
+                            x: 100,
+                            y: 50,
+                            text: 'Tesla Model S and X Plaid announced'
+                        }, {
+                            point: {
+                                xAxis: 0,
+                                yAxis: 0,
+                                x: '2024-01-24',
+                                y: 207.83
+                            },
+                            y: 70,
+                            text: 'Tesla Model 2 announced'
+                        }
+                    ]
+                }
+            ],
+
+            xAxis: {
+                type: 'datetime'
+            },
+
+            yAxis: {
+                startOnTick: true,
+                endOnTick: false,
+                title: {
+                    text: null
+                },
+                labels: {
+                    format: '{value} USD'
+                },
+                accessibility: {
+                    description: 'Price',
+                    rangeDescription: 'Price ranges from 0 to 480 USD.'
+                }
+            },
+
+            tooltip: {
+                pointFormat: '{point.y:.2f} USD',
+                shared: true
+            },
+
+            legend: {
+                enabled: false
+            },
+
+            series: [
+                {
+                    data,
+                    className: 'stock-annotations',
+                    color: '#cc0000',
+                    fillColor: {
+                        linearGradient: { x1: 0, x2: 0, y1: 0, y2: 1 },
+                        stops: [
+                            [0, 'var(--highcharts-neutral-color-40, #999999)'],
+                            [1, 'var(--highcharts-neutral-color-3, #f7f7f7)']
+                        ]
+                    },
+                    fillOpacity: 0.5,
+                    name: 'TSLA Stock Price',
+                    marker: {
+                        enabled: false
+                    },
+                    threshold: null
+                }
+            ]
+        });
+    })();
+}
+
 // Maps animated map
 function animatedMap() {
     (async () => {
@@ -2059,20 +2346,20 @@ function grid() {
                 '75, 73, 71, 69, 67, 65, 63, 61, 60, 59, 58, 57, 56, 55, 54',
                 '48, 50, 53, 56, 59, 62, 65, 68, 70, 72, 73, 74, 74, 74, 73'
             ],
-            publicIP: [
-                '54.123.456.78', '152.234.567.89', '203.123.456.90',
-                '198.123.456.91', '172.123.456.92', '192.123.456.93',
-                '10.123.456.94', '203.123.456.95', '198.123.456.96',
-                '172.123.456.97',
-                '54.234.567.100', '152.123.456.101', '203.234.567.102',
-                '198.234.567.103', '172.234.567.104', '192.234.567.105',
-                '10.234.567.106', '203.123.456.107', '198.123.456.108',
-                '172.123.456.109',
-                '54.123.789.110', '152.234.890.111', '203.123.789.112',
-                '198.234.890.113', '172.123.789.114', '192.234.890.115',
-                '10.123.789.116', '203.234.890.117', '198.123.789.118',
-                '172.234.890.119'
-            ],
+            // publicIP: [
+            //     '54.123.456.78', '152.234.567.89', '203.123.456.90',
+            //     '198.123.456.91', '172.123.456.92', '192.123.456.93',
+            //     '10.123.456.94', '203.123.456.95', '198.123.456.96',
+            //     '172.123.456.97',
+            //     '54.234.567.100', '152.123.456.101', '203.234.567.102',
+            //     '198.234.567.103', '172.234.567.104', '192.234.567.105',
+            //     '10.234.567.106', '203.123.456.107', '198.123.456.108',
+            //     '172.123.456.109',
+            //     '54.123.789.110', '152.234.890.111', '203.123.789.112',
+            //     '198.234.890.113', '172.123.789.114', '192.234.890.115',
+            //     '10.123.789.116', '203.234.890.117', '198.123.789.118',
+            //     '172.234.890.119'
+            // ],
             // diskOperationsIn: [
             //     10, 20, 1, 30, 40, 0, 25, 60, 0, 70,
             //     15, 0, 35, 45, 50, 55, 0, 40, 65, 0,
@@ -2475,16 +2762,32 @@ const products = [
         tagline: 'Financial visualization and analysis tools',
         id: 'stockTitle',
         icon: 'icon-stock.svg',
+        chart: stockWithAnnotations,
+        // eslint-disable-next-line max-len
+        demoTitle: 'Stock data with annotations',
+        // eslint-disable-next-line max-len
+        demoDesc: 'Use Highcharts Annotations feature to place labels at various points of interest',
+        // eslint-disable-next-line max-len
+        stopLink: '',
+        description: `<p>Stock data with annotations</p>
+        <div>A purely decorative stock chart that demonstrates the 
+        use of annotations to highlight key points.</div>`
+    },
+    {
+        name: 'Highcharts Stock',
+        tagline: 'Financial visualization and analysis tools',
+        id: 'stockTitle',
+        icon: 'icon-stock.svg',
         chart: cs,
         // eslint-disable-next-line max-len
         demoTitle: 'Candlestick chart',
         // eslint-disable-next-line max-len
         demoDesc: 'Candlesticks make it easy to spot trends over time.',
         // eslint-disable-next-line max-len
-        stopLink: `<button class="stop-link" 
+        stopLink: `<button class="stop-link"
         id="stop-stock">(Stop chart animation)</button>`,
         description: `<p>Dynamic Candlestick Chart</p>
-        <div>A purely decorative candlestick chart that updates with 
+        <div>A purely decorative candlestick chart that updates with
         new data every 100 milliseconds.</div>`
     },
     {

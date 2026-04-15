@@ -369,3 +369,51 @@ QUnit.test('Tooltip position for inverted polar chart.', assert => {
         'Tooltip y position should be valid.'
     );
 });
+
+QUnit.test(
+    'Tooltip with large padding should stay within chart bounds (#24104)',
+    function (assert) {
+        const chart = Highcharts.chart('container', {
+            chart: {
+                type: 'line',
+                width: 300,
+                height: 300
+            },
+            tooltip: {
+                animation: false,
+                padding: 12,
+                useHTML: true,
+                pointFormatter: function () {
+                    return (
+                        '<div>' + this.category +
+                        ' and some extra long text to simulate what happens' +
+                        ' when the text is very very long and wraps onto a' +
+                        ' second line</div>'
+                    );
+                }
+            },
+            xAxis: {
+                categories: ['Apples', 'Bananas', 'Oranges', 'Pears', 'Grapes']
+            },
+            series: [{
+                data: [1, 0, 4, 3, 2]
+            }]
+        });
+        const rightPoint =
+            chart.series[0].points[chart.series[0].points.length - 1];
+
+        chart.tooltip.refresh(rightPoint);
+
+        const label = chart.tooltip.label;
+
+        assert.ok(
+            label.translateX >= 0,
+            'Tooltip left edge should not overflow the chart.'
+        );
+
+        assert.ok(
+            label.translateX + (label.width || 0) <= chart.chartWidth + 1,
+            'Tooltip right edge should not overflow the chart width.'
+        );
+    }
+);

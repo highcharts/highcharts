@@ -1,7 +1,7 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -84,7 +84,7 @@ const defaultOptions: DefaultOptions = {
      * @sample highcharts/members/theme-v10/
      *         Latest release styled like version 10
      *
-     * @type    {Array<(Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject)>}
+     * @type    {Array<Highcharts.ColorType>}
      * @default [
      *     "#2caffe",
      *     "#544fc5",
@@ -1029,7 +1029,7 @@ const defaultOptions: DefaultOptions = {
          * @sample {highmaps} maps/legend/border-background/
          *         Border and background options
          *
-         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @type      {Highcharts.ColorType}
          * @apioption legend.backgroundColor
          */
 
@@ -1246,7 +1246,6 @@ const defaultOptions: DefaultOptions = {
          * @apioption legend.labelFormat
          */
 
-        /* eslint-disable valid-jsdoc */
         /**
          * Callback function to format each of the series' labels. The `this`
          * keyword refers to the series object, or the point object in case of
@@ -1264,7 +1263,7 @@ const defaultOptions: DefaultOptions = {
          * @sample {highmaps} maps/legend/labelformatter/
          *         Data classes with label formatter
          *
-         * @type {Highcharts.FormatterCallbackFunction<Point|Series>}
+         * @type {Highcharts.FormatterCallbackFunction<Highcharts.Point|Highcharts.Series>}
          */
         labelFormatter: function (
             this: Legend.Item
@@ -1340,7 +1339,7 @@ const defaultOptions: DefaultOptions = {
          * @sample {highmaps} maps/legend/border-background/
          *         Border and background options
          *
-         * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @type {Highcharts.ColorType}
          */
         borderColor: Palette.neutralColor40,
 
@@ -1452,7 +1451,7 @@ const defaultOptions: DefaultOptions = {
              * @sample  {highstock} highcharts/legend/navigation/
              *          Legend page navigation demonstrated
              *
-             * @type  {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+             * @type  {Highcharts.ColorType}
              * @since 2.2.4
              */
             activeColor: Palette.highlightColor100,
@@ -1469,7 +1468,7 @@ const defaultOptions: DefaultOptions = {
              * @sample {highstock} highcharts/legend/navigation/
              *         Legend page navigation demonstrated
              *
-             * @type  {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+             * @type  {Highcharts.ColorType}
              * @since 2.2.4
              */
             inactiveColor: Palette.neutralColor20
@@ -2022,7 +2021,7 @@ const defaultOptions: DefaultOptions = {
          * @sample {highmaps} maps/tooltip/background-border/ Background and
          *         border demo
          *
-         * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @type {Highcharts.ColorType}
          * @apioption tooltip.borderColor
          */
 
@@ -2203,7 +2202,7 @@ const defaultOptions: DefaultOptions = {
          * @sample {highmaps} maps/tooltip/formatter/
          *         String formatting
          *
-         * Since v12.5.0, the callback also receives `ctx` as the second
+         * Since v12.6.0, the callback also receives `ctx` as the second
          * argument, so that arrow functions can access the same context as
          * regular functions using `this`.
          *
@@ -2251,7 +2250,7 @@ const defaultOptions: DefaultOptions = {
         /**
          * A callback function for formatting the HTML output for a single point
          * in the tooltip. Like the `pointFormat` string, but with more
-         * flexibility. Since v12.5.0, the callback also receives `ctx` as the
+         * flexibility. Since v12.6.0, the callback also receives `ctx` as the
          * first argument, so that arrow functions can access the same context
          * as regular functions using `this`.
          *
@@ -2269,7 +2268,7 @@ const defaultOptions: DefaultOptions = {
          * `ctx` is the tooltip context (so that arrow-functions can access the
          * same context as a normal function using `this`). Add
          * `chart.plotLeft` and `chart.plotTop` to get the full coordinates.
-         * Since v12.5.0, the callback receives `ctx`.
+         * Since v12.6.0, the callback receives `ctx`.
          *
          * To find the actual hovered `Point` instance, use
          * `this.chart.hoverPoint`. For shared or split tooltips, all the hover
@@ -2758,7 +2757,7 @@ const defaultOptions: DefaultOptions = {
          * @sample {highmaps} highcharts/css/tooltip-border-background/
          *         Tooltip in styled mode
          *
-         * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @type {Highcharts.ColorType}
          */
         backgroundColor: Palette.backgroundColor,
 
@@ -2810,6 +2809,8 @@ const defaultOptions: DefaultOptions = {
          *
          * @sample highcharts/tooltip/stickoncontact/
          *         Tooltip sticks on pointer contact
+         * @sample highcharts/tooltip/stickoncontact-anchor-link/
+         *         Tooltip with clickable links
          *
          * @type      {boolean}
          * @since     8.0.1
@@ -2859,7 +2860,7 @@ const defaultOptions: DefaultOptions = {
     },
 
     /**
-     * Highchart by default puts a credits label in the lower right corner
+     * Highcharts by default puts a credits label in the lower right corner
      * of the chart. This can be changed using these options.
      */
     credits: {
@@ -3085,7 +3086,7 @@ export default DefaultOptions;
  * @name Highcharts.ChartAddSeriesEventObject#options
  * @type {Highcharts.SeriesOptionsType}
  *//**
- * Prevents the default behaviour of the event.
+ * Prevents the default behavior of the event.
  * @name Highcharts.ChartAddSeriesEventObject#preventDefault
  * @type {Function}
  *//**
@@ -3194,7 +3195,7 @@ export default DefaultOptions;
  *        The chart on which the event occurred.
  *
  * @param {Highcharts.SelectEventObject} event
- *        Event informations
+ *        Event information
  *
  * @return {boolean|undefined}
  *         Return false to prevent the default action, usually zoom.

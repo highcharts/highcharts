@@ -68,7 +68,6 @@ declare module '../../../Core/Series/SeriesBase' {
  *
  * */
 
-/* eslint-disable valid-jsdoc */
 
 /**
  * Get the index of a point in a series. This is needed when using e.g. data
@@ -291,7 +290,6 @@ class SeriesKeyboardNavigation {
      *
      * */
 
-    /* eslint-disable valid-jsdoc */
 
     /**
      * Init the keyboard navigation

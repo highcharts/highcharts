@@ -1,7 +1,7 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -91,7 +91,7 @@ const HeatmapSeriesDefaults: HeatmapSeriesOptions = {
      * options are set in the [colorAxis](#colorAxis), the default value
      * is pulled from the [options.colors](#colors) array.
      *
-     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @type      {Highcharts.ColorType}
      * @since     4.0
      * @product   highcharts
      * @apioption plotOptions.heatmap.color
@@ -143,7 +143,7 @@ const HeatmapSeriesDefaults: HeatmapSeriesOptions = {
      * The color applied to null points. In styled mode, a general CSS class
      * is applied instead.
      *
-     * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @type {Highcharts.ColorType}
      */
     nullColor: Palette.neutralColor3,
 
@@ -421,7 +421,7 @@ const HeatmapSeriesDefaults: HeatmapSeriesOptions = {
  * explicitly, as we use the color to denote the `value`. Options for
  * this are set in the [colorAxis](#colorAxis) configuration.
  *
- * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+ * @type      {Highcharts.ColorType}
  * @product   highcharts highmaps
  * @apioption series.heatmap.data.color
  */

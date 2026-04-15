@@ -49,7 +49,7 @@ class CMOIndicator extends SMAIndicator {
      * */
 
     /**
-     * Chande Momentum Oscilator (CMO) technical indicator. This series
+     * Chande Momentum Oscillator (CMO) technical indicator. This series
      * requires the `linkedTo` option to be set and should be loaded after
      * the `stock/indicators/indicators.js` file.
      *

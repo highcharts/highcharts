@@ -1,7 +1,7 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -207,7 +207,6 @@ declare module '../../Core/Renderer/SVG/SVGElementBase' {
  *
  * */
 
-/** @internal */
 namespace DataLabel {
 
     /* *
@@ -216,6 +215,7 @@ namespace DataLabel {
      *
      * */
 
+    /** @internal */
     export interface PositionersObject {
         alignToConnectors(
             points: Array<Point>,
@@ -252,12 +252,14 @@ namespace DataLabel {
         (...args: Array<any>): SVGPath;
     }
 
+    /** @internal */
     export interface LabelConnectorPositionObject {
         angle?: number;
         breakAt: CorePositionObject;
         touchingSliceAt: CorePositionObject;
     }
 
+    /** @internal */
     export interface LabelPositionObject {
         alignment: AlignValue;
         attribs?: SVGAttributes;
@@ -271,6 +273,7 @@ namespace DataLabel {
         top?: number;
     }
 
+    /** @internal */
     export interface PositionObject extends CorePositionObject {
         alignment: AlignValue;
     }
@@ -698,7 +701,7 @@ namespace DataLabel {
                 pointOptions = splat(
                     mergeArrays(
                         seriesDlOptions,
-                        // The dlOptions prop is used in treemaps
+                        // The dlOptions prop is used in treemap
                         point.dlOptions || point.options?.dataLabels
                     )
                 );
@@ -710,7 +713,7 @@ namespace DataLabel {
                     dataLabelsGroup =
                         this.initDataLabels(i, animationConfig, labelOptions);
 
-                    // Options for one datalabel
+                    // Options for one dataLabel
                     const labelEnabled = (
                             labelOptions.enabled &&
                             (point.visible || point.dataLabelOnHidden) &&
@@ -1178,7 +1181,6 @@ namespace DataLabel {
  *
  * */
 
-/** @internal */
 export default DataLabel;
 
 /* *

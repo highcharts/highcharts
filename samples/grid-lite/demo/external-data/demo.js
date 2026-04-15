@@ -1,6 +1,6 @@
 const initGrid = data => {
     Grid.grid('container', {
-        dataTable: {
+        data: {
             columns: data
         },
         rendering: {

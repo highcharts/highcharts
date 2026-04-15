@@ -49,7 +49,8 @@ QUnit.test(
                     text: 'Highcharts Treemap'
                 }
             }),
-            xAxis = chart.xAxis[0];
+            xAxis = chart.xAxis[0],
+            points = chart.series[0].points;
         let extremes;
 
         // Zoom should work when enabled
@@ -65,6 +66,24 @@ QUnit.test(
             extremes.max,
             100,
             'xAxis.max is correct according to zoom'
+        );
+
+        assert.ok(
+            points[1].dataLabel.visibility === 'hidden' &&
+            points[1].dataLabel.getStyle('visibility') === 'hidden',
+            'Data label outside of zoomed range should not be visible, #24220.'
+        );
+
+        assert.strictEqual(
+            points[2].dataLabel.visibility,
+            'inherit',
+            'Data label inside of zoomed range should be visible, #24220.'
+        );
+
+        assert.strictEqual(
+            points[2].dataLabel.getStyle('visibility'),
+            'visible',
+            'Data label inside of zoomed range should be visible, #24220.'
         );
 
         // When allowDrillToNode the extremes should be the same as the point

@@ -6,7 +6,7 @@ const result = document.querySelector('#result');
 const modifiedDataToggle = document.querySelector('#modifiedDataToggle');
 
 const grid = Grid.grid('container', {
-    dataTable: {
+    data: {
         columns: {
             product: [
                 'Apples', 'Pears', 'Plums', 'Bananas', 'Oranges', 'Grapes',

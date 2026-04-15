@@ -1,7 +1,7 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -2023,8 +2023,6 @@ class RangeSelector {
      * Collapse the buttons and show the select element.
      *
      * @private
-     * @function Highcharts.RangeSelector#collapseButtons
-     * @param {number} xOffsetForExportButton
      */
     public collapseButtons(): void {
         const {

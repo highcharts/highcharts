@@ -170,7 +170,7 @@ class VariablePieSeries extends PieSeries {
      * @param {number} minSize
      * Minimal pixel size possible for radius.
      *
-     * @param {numbner} maxSize
+     * @param {number} maxSize
      * Minimal pixel size possible for radius.
      */
     public getRadii(

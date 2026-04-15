@@ -40,7 +40,7 @@ export interface DragDropGuideBoxDefaultOptions extends DragDropGuideBoxOptions 
     /**
      * Guide box fill color.
      *
-     * @type  {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @type  {Highcharts.ColorType}
      * @default 'rgba(0, 0, 0, 0.1)'
      * @since 6.2.0
      */
@@ -261,7 +261,7 @@ export interface DragDropHandleOptions {
     /**
      * The fill color of the drag handles.
      *
-     * @type  {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @type  {Highcharts.ColorType}
      * @since 6.2.0
      */
     color?: ColorType;

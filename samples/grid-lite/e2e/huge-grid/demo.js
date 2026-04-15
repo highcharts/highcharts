@@ -7,7 +7,7 @@ const columnsOneMillion = {
 };
 
 Grid.grid('grid-1', {
-    dataTable: {
+    data: {
         columns: columnsTenMillion
     },
     columnDefaults: {
@@ -22,7 +22,7 @@ Grid.grid('grid-1', {
     }
 });
 Grid.grid('grid-2', {
-    dataTable: {
+    data: {
         columns: columnsOneMillion
     },
     columnDefaults: {

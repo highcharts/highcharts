@@ -2,7 +2,7 @@
  *
  *  (c) 2014-2026 Highsoft AS
  *
- *  Authors: Jon Arild Nygard / Oystein Moseng
+ *  Authors: Jon Arild Nygård / Øystein Moseng
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -96,7 +96,7 @@ const TreemapSeriesDefaults: TreemapSeriesOptions = {
 
     /**
      * When the series contains less points than the crop threshold, all
-     * points are drawn, event if the points fall outside the visible plot
+     * points are drawn, even if the points fall outside the visible plot
      * area at the current zoom. The advantage of drawing all points
      * (including markers and columns), is that animation is performed on
      * updates. On the other hand, when the series contains more points than
@@ -161,7 +161,7 @@ const TreemapSeriesDefaults: TreemapSeriesOptions = {
      * of the global [colors](#colors) when
      * [colorByPoint](#plotOptions.treemap.colorByPoint) is true.
      *
-     * @type      {Array<Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject>}
+     * @type      {Array<Highcharts.ColorType>}
      * @since     3.0
      * @product   highcharts
      * @apioption plotOptions.treemap.colors
@@ -405,7 +405,7 @@ const TreemapSeriesDefaults: TreemapSeriesOptions = {
     /**
      * Can set a color on all points which lies on the same level.
      *
-     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @type      {Highcharts.ColorType}
      * @since     4.1.0
      * @product   highcharts
      * @apioption plotOptions.treemap.levels.color
@@ -624,7 +624,7 @@ const TreemapSeriesDefaults: TreemapSeriesOptions = {
          * Individual color for the grouped point. By default the color is
          * pulled from the parent color.
          *
-         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @type      {Highcharts.ColorType}
          * @product   highcharts
          */
         color: void 0,

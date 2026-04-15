@@ -92,7 +92,7 @@
         "@typescript-eslint/no-empty-interface": 0,
         "@typescript-eslint/no-empty-object-type": 0,
         "@typescript-eslint/no-explicit-any": 0,
-        "@typescript-eslint/no-floating-promises": 1, // @todo
+        "@typescript-eslint/no-floating-promises": 2, // @todo
         "@typescript-eslint/no-inferrable-types": 0, // @todo ?
         "@typescript-eslint/no-namespace": 0,
         "@typescript-eslint/no-object-literal-type-assertion": 0,
@@ -110,13 +110,13 @@
         "@typescript-eslint/no-unused-vars": ["error", { "vars": "all", "args": "after-used" }],
         "@typescript-eslint/no-use-before-define": 0,
         "@typescript-eslint/no-useless-constructor": 2,
-        "@typescript-eslint/prefer-as-const": 1, // @todo
+        "@typescript-eslint/prefer-as-const": 2, // @todo
         "@typescript-eslint/prefer-includes": 0, // @todo
         "@typescript-eslint/prefer-optional-chain": 0, // @todo
         "@typescript-eslint/prefer-regexp-exec": 0, // @todo
         "@typescript-eslint/prefer-string-starts-ends-with": 0, // @todo
         "@typescript-eslint/restrict-plus-operands": 0,
-        "@typescript-eslint/restrict-template-expressions": 1, // @todo
+        "@typescript-eslint/restrict-template-expressions": 2,
         "@typescript-eslint/unbound-method": 0, // @todo
         "@stylistic/indent": [
             "error",
@@ -128,14 +128,14 @@
         ],
         "@stylistic/semi": 2,
         "@highcharts/highcharts/doclet-apioption-last": 2,
-        "@highcharts/highcharts/no-highcharts-namespace": 1, // @todo
+        "@highcharts/highcharts/no-highcharts-namespace": 2,
         "@highcharts/highcharts/no-highcharts-object": 2,
-        "@highcharts/highcharts/no-mixin": 1, // @todo
+        "@highcharts/highcharts/no-mixin": 2,
         "@highcharts/highcharts/no-private-constructor-doclet": 0,
-        "@highcharts/highcharts/no-wrap": 1, // @todo
+        "@highcharts/highcharts/no-wrap": 0, // @todo
         "@highcharts/highcharts/quote-members": 2,
         "jsdoc/check-alignment": 0,
-        "jsdoc/check-param-names": 1,
+        "jsdoc/check-param-names": 2,
         "jsdoc/check-tag-names": [
             "error",
             {
@@ -157,11 +157,11 @@
             }
         ],
         "jsdoc/check-types": 0,
-        "jsdoc/require-description": 1,
-        "jsdoc/require-jsdoc": 1, // @todo
+        "jsdoc/require-description": 0,
+        "jsdoc/require-jsdoc": 0, // @todo
         "jsdoc/require-param": 0, // @todo
-        "jsdoc/require-param-description": 1, // @todo
-        "jsdoc/require-param-type": 1, // @todo
+        "jsdoc/require-param-description": 0, // @todo
+        "jsdoc/require-param-type": 2, // @todo
         "node/no-missing-import": 0, // @todo
         "node/no-unsupported-features/es-builtins": 0, // @todo
         "node/no-unsupported-features/es-syntax": 0 // @todo

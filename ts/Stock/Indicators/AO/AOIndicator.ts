@@ -91,7 +91,7 @@ class AOIndicator extends SMAIndicator {
          * @sample {highstock} stock/indicators/ao/
          *         greaterBarColor
          *
-         * @type  {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @type  {Highcharts.ColorType}
          * @since 7.0.0
          */
         greaterBarColor: Palette.positiveColor,
@@ -103,7 +103,7 @@ class AOIndicator extends SMAIndicator {
          * @sample {highstock} stock/indicators/ao/
          *         lowerBarColor
          *
-         * @type  {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @type  {Highcharts.ColorType}
          * @since 7.0.0
          */
         lowerBarColor: Palette.negativeColor,

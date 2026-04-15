@@ -8,7 +8,7 @@
  *
  *  Authors:
  *  - Sophie Bremer
- *  - Dawid Dragula
+ *  - Dawid Draguła
  *
  * */
 

@@ -223,7 +223,7 @@ QUnit.test('Annotations events - general', function (assert) {
 
     assert.strictEqual(
         popupShape?.fill?.[1],
-        'text',
+        'color',
         'Popup should describe fill field type as text (#11716)'
     );
     assert.strictEqual(
@@ -234,7 +234,7 @@ QUnit.test('Annotations events - general', function (assert) {
 
     assert.strictEqual(
         popupShape?.stroke?.[1],
-        'text',
+        'color',
         'Popup should describe stroke field type as text (#11716)'
     );
     assert.strictEqual(

@@ -1,7 +1,7 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Grzegorz Blachlinski, Sebastian Bochan
+ *  Author: Grzegorz Blachliński, Sebastian Bochan
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -223,7 +223,7 @@ class PackedBubbleLayout extends ReingoldFruchtermanLayout {
                 );
 
             node.degree = node.mass;
-            node.neighbours = 0;
+            node.neighbors = 0;
 
             for (const repNode of nodes) {
                 const repNodeSeries = repNode.series;
@@ -256,7 +256,7 @@ class PackedBubbleLayout extends ReingoldFruchtermanLayout {
                         (node.degree as any) += 0.01;
                         forceTimesMass = (
                             layout.repulsiveForce(
-                                -distanceR / Math.sqrt(++(node.neighbours)),
+                                -distanceR / Math.sqrt(++(node.neighbors)),
                                 k,
                                 node,
                                 repNode

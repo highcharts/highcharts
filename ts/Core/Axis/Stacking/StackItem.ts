@@ -1,7 +1,7 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -297,7 +297,7 @@ class StackItem {
             const attr: SVGAttributes = {
                 r: options.borderRadius || 0,
                 text: str,
-                // Set default padding to 5 as it is in datalabels #12308
+                // Set default padding to 5 as it is in dataLabels #12308
                 padding: pick(options.padding, 5),
                 visibility: 'hidden' // Hidden until setOffset is called
             };
@@ -426,9 +426,6 @@ class StackItem {
      * of the dataLabel. This is necessary to make the stackDataLabel work with
      * core methods like `SVGLabel.adjust` and `Series.justifyDataLabel`.
      * @internal
-     * @param AdjustStackPositionProps
-     * @return {{x: number, y: number}}
-     * Adjusted BBox position of the stack.
      */
     public adjustStackPosition({
         labelBox,

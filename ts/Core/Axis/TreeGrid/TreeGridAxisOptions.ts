@@ -1,6 +1,6 @@
 /* *
  *  (c) 2016-2026 Highsoft AS
- *  Authors: Jon Arild Nygard
+ *  Authors: Jon Arild Nygård
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
