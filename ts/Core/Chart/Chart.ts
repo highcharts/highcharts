@@ -2546,13 +2546,15 @@ class Chart {
         // Compute the clipping box
         if (clipOffset) {
             chart.clipBox = {
-                x: clipRoundFunc(clipOffset[3]),
-                y: clipRoundFunc(clipOffset[0]),
+                x: clipRoundFunc(clipOffset[inverted ? 2 : 3]),
+                y: clipRoundFunc(clipOffset[inverted ? 1 : 0]),
                 width: clipRoundFunc(
-                    chart.plotSizeX - clipOffset[1] - clipOffset[3]
+                    chart.plotSizeX - clipOffset[inverted ? 0 : 1] -
+                    clipOffset[inverted ? 2 : 3]
                 ),
                 height: clipRoundFunc(
-                    chart.plotSizeY - clipOffset[0] - clipOffset[2]
+                    chart.plotSizeY - clipOffset[inverted ? 1 : 0] -
+                    clipOffset[inverted ? 3 : 2]
                 ),
                 r: plotBorderRadius
             };
@@ -2781,19 +2783,10 @@ class Chart {
         // the stroke-width is (accidentally) not considered in the `clipOffset`
         // calculation.
         if (clipOffset && !styledMode) {
-            // @todo: Maybe clipOffset should be non-inverted in the first place
-            const clipOffsetUninverted = chart.inverted ?
-                    [
-                        clipOffset[1],
-                        clipOffset[0],
-                        clipOffset[3],
-                        clipOffset[2]
-                    ] :
-                    clipOffset,
-                extendUp = clipOffsetUninverted[0] - strokeWidth / 2,
-                extendRight = clipOffsetUninverted[1] - strokeWidth / 2,
-                extendDown = clipOffsetUninverted[2] - strokeWidth / 2,
-                extendLeft = clipOffsetUninverted[3] - strokeWidth / 2;
+            const extendUp = clipOffset[0] - strokeWidth / 2,
+                extendRight = clipOffset[1] - strokeWidth / 2,
+                extendDown = clipOffset[2] - strokeWidth / 2,
+                extendLeft = clipOffset[3] - strokeWidth / 2;
             plotBorderBox.x -= extendLeft;
             plotBorderBox.y -= extendUp;
             plotBorderBox.width += extendLeft + extendRight;
