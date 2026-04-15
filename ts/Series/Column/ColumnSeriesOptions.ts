@@ -274,6 +274,8 @@ export interface ColumnSeriesOptions extends SeriesOptions {
      * @sample {highcharts} highcharts/series/data-array-of-objects/
      *         Config objects
      *
+     * @basic
+     *
      * @extends series.line.data
      *
      * @excluding marker
