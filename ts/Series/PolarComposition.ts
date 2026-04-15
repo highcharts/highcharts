@@ -1752,7 +1752,7 @@ class PolarAdditions {
         // in two dimensions.
         if (series.kdByAngle) {
             clientX = (
-                (plotX / Math.PI * 180) + (xAxis.pane.options.startAngle as any)
+                (plotX / Math.PI * 180) + (xAxis.pane.options.startAngle || 0)
             ) % 360;
             if (clientX < 0) { // #2665
                 clientX += 360;
