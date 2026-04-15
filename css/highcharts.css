@@ -1123,6 +1123,16 @@ input.highcharts-range-selector {
     background: var(--highcharts-neutral-color-5);
 }
 
+.highcharts-separator {
+    border: none;
+    background-color: var(--highcharts-neutral-color-40);
+    height: 0.5px;
+    margin: 10px 0;
+    padding: 0;
+    list-style-type: none;
+    pointer-events: none;
+}
+
 /* Breadcrumbs */
 .highcharts-breadcrumbs-button {
     fill: none;

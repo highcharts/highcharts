@@ -1,7 +1,7 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -239,7 +239,7 @@ export interface StackLabelOptions {
 
     /**
      * Callback JavaScript function to format the label. The value is
-     * given by `this.total`. Since v12.5.0, the callback also receives `ctx`
+     * given by `this.total`. Since v12.6.0, the callback also receives `ctx`
      * as the first argument, so that arrow functions can access the same
      * context as regular functions using `this`.
      *

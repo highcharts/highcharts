@@ -1,7 +1,7 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -693,6 +693,9 @@ export interface SeriesOptions {
     keys?: Array<string>;
 
     /**
+     * The line cap used for line ends and line joins on the graph.
+     *
+     * @productdesc {highcharts|highstock}
      * The SVG value used for the `stroke-linecap` and `stroke-linejoin`
      * of a line graph. Round means that lines are rounded in the ends and
      * bends.
@@ -701,9 +704,10 @@ export interface SeriesOptions {
      *         Line cap comparison
      *
      * @default 'round'
-     * @since 3.0.7
+     * @since   3.0.7
      */
     linecap?: SeriesLinecapValue;
+
     lineColor?: ColorType;
 
     /**
@@ -803,8 +807,9 @@ export interface SeriesOptions {
      * points, and this option also enables keyboard navigation for such points.
      * Format options for such points include
      * [`nullFormat`](#tooltip.nullFormat) and
-     * [`nullFormater`](#tooltip.nullFormatter). Works for these series: `line`,
-     * `spline`, `area`, `area-spline`, `column`, `bar`, and* `timeline`.
+     * [`nullFormatter`](#tooltip.nullFormatter). Works for these series:
+     * `line`, `spline`, `area`, `area-spline`, `column`, `bar`, and
+     * `timeline`.
      *
      * @sample {highcharts} highcharts/series/null-interaction/
      *         Chart with interactive `null` points
@@ -837,7 +842,7 @@ export interface SeriesOptions {
      * create any padding of the X axis. In a polar column chart this means
      * that the first column points directly north. If the pointPlacement is
      * `"between"`, the columns will be laid out between ticks. This is
-     * useful for example for visualising an amount between two points in
+     * useful for example for visualizing an amount between two points in
      * time or in a certain sector of a polar chart.
      *
      * Since Highcharts 3.0.2, the point placement can also be numeric,

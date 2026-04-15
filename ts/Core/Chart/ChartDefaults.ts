@@ -1,7 +1,7 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -419,7 +419,7 @@ const ChartDefaults: ChartOptions = {
     /**
      * Callback function to override the default function that formats all
      * the numbers in the chart. Returns a string with the formatted number.
-     * Since v12.5.0, the callback also receives `ctx` as the last argument,
+     * Since v12.6.0, the callback also receives `ctx` as the last argument,
      * so that arrow functions can access the same context as regular
      * functions using `this`.
      *
@@ -845,7 +845,7 @@ const ChartDefaults: ChartOptions = {
      * @see In styled mode, the selection marker fill is set with the
      *      `.highcharts-selection-marker` class.
      *
-     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @type      {Highcharts.ColorType}
      * @default   rgba(51,92,173,0.25)
      * @since     2.1.7
      * @apioption chart.selectionMarkerFill
@@ -1292,7 +1292,7 @@ const ChartDefaults: ChartOptions = {
      * @sample {highmaps} maps/chart/border/
      *         Border options
      *
-     * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @type {Highcharts.ColorType}
      */
     borderColor: Palette.highlightColor80,
 
@@ -1333,7 +1333,7 @@ const ChartDefaults: ChartOptions = {
      * @sample {highmaps} maps/chart/backgroundcolor-gradient/
      *         Gradient
      *
-     * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @type {Highcharts.ColorType}
      */
     backgroundColor: Palette.backgroundColor,
 
@@ -1356,7 +1356,7 @@ const ChartDefaults: ChartOptions = {
      * @sample {highmaps} maps/chart/plotbackgroundcolor-gradient/
      *         Gradient
      *
-     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @type      {Highcharts.ColorType}
      * @apioption chart.plotBackgroundColor
      */
 
@@ -1392,7 +1392,7 @@ const ChartDefaults: ChartOptions = {
      * @sample {highmaps} maps/chart/plotborder/
      *         Plot border options
      *
-     * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @type {Highcharts.ColorType}
      */
     plotBorderColor: Palette.neutralColor20
 

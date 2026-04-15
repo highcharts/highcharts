@@ -404,3 +404,41 @@ QUnit.test('Null points', function (assert) {
         'The name should be updated.'
     );
 });
+
+QUnit.test('Point update', function (assert) {
+    var chart = Highcharts.mapChart('container', {
+        chart: {
+            map: Highcharts.maps['custom/europe']
+        },
+        colorAxis: {
+            min: 0,
+            max: 100
+        },
+
+        series: [{
+            allAreas: true
+        }]
+    });
+
+    assert.deepEqual(
+        chart.series[0].points.map(p => {
+            const elementCount = document.querySelectorAll(
+                `.highcharts-key-${p['hc-key']}`).length;
+            return `${p['hc-key']}: ${elementCount}`;
+        }),
+        chart.series[0].points.map(p => `${p['hc-key']}: 1`),
+        'There should be only one element for each point initially'
+    );
+
+    chart.series[0].points.find(p => p['hc-key'] === 'no').update(50);
+
+    assert.deepEqual(
+        chart.series[0].points.map(p => {
+            const elementCount = document.querySelectorAll(
+                `.highcharts-key-${p['hc-key']}`).length;
+            return `${p['hc-key']}: ${elementCount}`;
+        }),
+        chart.series[0].points.map(p => `${p['hc-key']}: 1`),
+        'There should be only one element for each point after update'
+    );
+});

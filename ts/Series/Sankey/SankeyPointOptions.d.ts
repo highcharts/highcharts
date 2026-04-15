@@ -3,7 +3,7 @@
  *  Sankey diagram module
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -37,7 +37,7 @@ export interface SankeyPointOptions extends ColumnPointOptions, NodesComposition
      * applies to the points, so when setting a specific link color, consider
      * setting the `fillOpacity` to 1.
      *
-     * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @type {Highcharts.ColorType}
      *
      * @product highcharts
      */

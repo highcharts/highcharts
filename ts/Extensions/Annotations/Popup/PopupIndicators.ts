@@ -950,10 +950,10 @@ function filterSeriesArray(
 function getAmount(this: Chart): number {
     let counter = 0;
 
-    this.series.forEach((serie): void => {
+    this.series.forEach((s): void => {
         if (
-            (serie as any).params ||
-            (serie.options as any).params
+            (s as any).params ||
+            (s.options as any).params
         ) {
             counter++;
         }

@@ -199,7 +199,7 @@ const vertexShader = [
         'return translate(value, 0.0, xAxisTrans, xAxisMin, xAxisMinPad, xAxisPointRange, xAxisLen, xAxisCVSCoord, xAxisIsLog, xAxisReversed);// + xAxisPos;',
     '}',
 
-    'float yToPixels(float value, float checkTreshold) {',
+    'float yToPixels(float value, float checkThreshold) {',
         'float v;',
         'if (skipTranslation){',
             'v = value;// + yAxisPos;',
@@ -210,7 +210,7 @@ const vertexShader = [
                 'v = yAxisLen;',
             '}',
         '}',
-        'if (checkTreshold > 0.0 && hasThreshold) {',
+        'if (checkThreshold > 0.0 && hasThreshold) {',
             'v = min(v, translatedThreshold);',
         '}',
         'return v;',
@@ -308,7 +308,7 @@ class WGLShader {
     // Set to 1 if circle
     private isCircleUniform: (WebGLUniformLocation|null|undefined);
 
-    // Uniform for invertion
+    // Uniform for inversion
     private isInverted: (WebGLUniformLocation|null|undefined);
 
     // Uniform for point size

@@ -108,6 +108,21 @@ test.describe('Column Header Toolbar', () => {
         await expect(activeButton.locator('..')).toHaveClass(/hcg-header-cell-menu-icon/);
     });
 
+    test('Minimized menu button has a contextual aria-label', async ({
+        page
+    }) => {
+        await page.setViewportSize({ width: 800, height: 600 });
+
+        const weightMenuButton = page.locator(
+            'th[data-column-id="weight"] .hcg-header-cell-menu-icon .hcg-button'
+        );
+
+        await expect(weightMenuButton).toHaveAttribute(
+            'aria-label',
+            /menu.*weight/i
+        );
+    });
+
     test('Clicking menu icon opens menu', async ({ page }) => {
         await page.setViewportSize({ width: 800, height: 600 });
         await page.locator('.hcg-button.hcg-button-selected').click();

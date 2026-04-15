@@ -3,7 +3,7 @@
  *  Vector plot series module
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -71,7 +71,7 @@ const VectorSeriesDefaults: VectorSeriesOptions = {
         hover: {
 
             /**
-             * Additonal line width for the vector errors when they are
+             * Additional line width for the vector errors when they are
              * hovered.
              */
             lineWidthPlus: 1

@@ -1,7 +1,7 @@
 /* *
  *
  *  (c) 2016-2026 Highsoft AS
- *  Authors: Jon Arild Nygard
+ *  Authors: Jon Arild Nygård
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -624,7 +624,7 @@ function wrapInit(
         addEvent(chart, 'beforeRender', onBeforeRender);
         addEvent(chart, 'beforeRedraw', onBeforeRender);
 
-        // Add new collapsed nodes on addseries
+        // Add new collapsed nodes on addSeries
         addEvent(chart, 'addSeries', function (
             e: ChartAddSeriesEventObject
         ): void {
@@ -641,7 +641,7 @@ function wrapInit(
             }
         });
 
-        // Collapse all nodes in axis.treegrid.collapsednodes
+        // Collapse all nodes in axis.treegrid.collapsedNodes
         // where collapsed equals true.
         addEvent(axis, 'foundExtremes', function (): void {
             axis.treeGrid.collapsedNodes?.forEach(function (

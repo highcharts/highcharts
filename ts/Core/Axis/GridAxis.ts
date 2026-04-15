@@ -146,7 +146,7 @@ export interface GridAxisOptions {
      * axes, check the [#yAxis.staticScale](yAxis.staticScale) option.
      *
      * @sample gantt/grid-axis/cellheight
-     *         Gant chart with custom cell height
+     *         Gantt chart with custom cell height
      */
     cellHeight?: number;
     /**
@@ -1632,7 +1632,7 @@ export default GridAxis;
  * the [#yAxis.staticScale](yAxis.staticScale) option.
  *
  * @sample gantt/grid-axis/cellheight
- *         Gant chart with custom cell height
+ *         Gantt chart with custom cell height
  * @type      {number}
  * @apioption xAxis.grid.cellHeight
  */

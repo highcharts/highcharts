@@ -1,6 +1,6 @@
 /* *
  *
- *  Tilemaps module
+ *  Tilemap module
  *
  *  (c) 2010-2026 Highsoft AS
  *  Author: Øystein Moseng

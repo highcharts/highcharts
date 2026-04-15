@@ -1,7 +1,7 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -1749,7 +1749,7 @@ class Navigator {
 
                 // Once nav series type is resolved, pick correct pointRange
                 mergedNavSeriesOptions.pointRange = pick(
-                    // Stricte set pointRange in options
+                    // Strictly set pointRange in options
                     userNavOptions.pointRange,
                     baseNavigatorOptions.pointRange,
                     // Fallback to default values, e.g. `null` for column

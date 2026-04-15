@@ -1,7 +1,7 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -664,6 +664,8 @@ export interface TooltipOptions {
      *
      * @sample highcharts/tooltip/stickoncontact/
      *         Tooltip sticks on pointer contact
+     * @sample highcharts/tooltip/stickoncontact-anchor-link/
+     *         Tooltip with clickable links
      *
      * @since     8.0.1
      */

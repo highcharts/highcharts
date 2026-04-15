@@ -1,7 +1,7 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -329,9 +329,7 @@ addEvent(Axis, 'postProcessData', function (): void {
 
     series.forEach(function (series): void {
         if (series.is('hollowcandlestick')) {
-            const hollowcandlestickSeries = series as HollowCandlestickSeries;
-
-            hollowcandlestickSeries.getPriceMovement();
+            series.getPriceMovement();
         }
     });
 });

@@ -1001,7 +1001,7 @@ function objectToYml(value: unknown): string {
                             // keep the "key: value" structure on the same line,
                             // and put the rest of the object on the next line
                             const { key, ...rest } = item as any;
-                            const inner = render(rest, indent + 1);
+                            const inner = render(rest, indent + 2);
                             return `${indentStr(indent)}- ${key}:\n${inner}`;
                         }
                         const inner = render(item, indent + 1);

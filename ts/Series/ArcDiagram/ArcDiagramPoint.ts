@@ -3,7 +3,7 @@
  *  Arc diagram module
  *
  *  (c) 2018-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -20,8 +20,8 @@
  * */
 
 import type ArcDiagramPointOptions from './ArcDiagramPointOptions';
+import type ArcDiagramSeries from './ArcDiagramSeries';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
-import ArcDiagramSeries from './ArcDiagramSeries';
 import NodesComposition from '../NodesComposition.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import { extend } from '../../Shared/Utilities.js';
