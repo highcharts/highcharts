@@ -115,9 +115,13 @@ class SolidGaugeSeries extends GaugeSeries {
             options = series.options,
             renderer = series.chart.renderer,
             overshoot = options.overshoot,
-            borderRadiusOption = options.borderRadius ??
-                yAxis.pane.options.borderRadius,
-            rounded = options.rounded && borderRadiusOption === void 0,
+            rounded = options.rounded,
+            borderRadius = BorderRadius.optionsToObject(
+                rounded ? '50%' : (
+                    options.borderRadius ??
+                    yAxis.pane.options.borderRadius
+                )
+            ).radius,
             overshootVal = isNumber(overshoot) ?
                 overshoot / 180 * Math.PI :
                 0;
@@ -212,13 +216,6 @@ class SolidGaugeSeries extends GaugeSeries {
 
                 if (end - start > 2 * Math.PI) {
                     end = start + 2 * Math.PI;
-                }
-
-                let borderRadius = rounded ? '50%' : 0;
-                if (borderRadiusOption) {
-                    borderRadius = BorderRadius.optionsToObject(
-                        borderRadiusOption
-                    ).radius;
                 }
 
                 point.shapeArgs = shapeArgs = {
