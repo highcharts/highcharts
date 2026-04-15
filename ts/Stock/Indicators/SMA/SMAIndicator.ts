@@ -477,7 +477,7 @@ class SMAIndicator extends LineSeries {
         const pointArrayMap = indicator.pointArrayMap || ['y'],
             valueColumns: Record<string, Array<number|null>> = {};
 
-        // Split legacy twodimensional values into value columns
+        // Split legacy two-dimensional values into value columns
         (processedData.yData as any)
             .forEach((values: number|null|Array<number|null>): void => {
                 pointArrayMap.forEach((key, index): void => {
@@ -500,7 +500,7 @@ class SMAIndicator extends LineSeries {
             indicator.visible &&
             indicator.points
         ) {
-            // When data is cropped update only avaliable points (#9493)
+            // When data is cropped update only available points (#9493)
             if (indicator.cropped) {
                 if (indicator.xAxis) {
                     min = indicator.xAxis.min;

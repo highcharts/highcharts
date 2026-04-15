@@ -4,7 +4,7 @@ const heightSlider = document.getElementById('height-slider');
 const heightSliderLabel = document.getElementById('height-slider-label');
 
 Grid.grid(container, {
-    dataTable: {
+    data: {
         columns: {
             product: ['Apples', 'Pears', 'Plums', 'Bananas'],
             weight: [100, 40, 0.5, 200],

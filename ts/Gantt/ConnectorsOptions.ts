@@ -62,7 +62,7 @@ export interface ConnectorsEndMarkerOptions {
      * Set the color of the connector markers. By default this is the
      * same as the connector color.
      *
-     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @type      {Highcharts.ColorType}
      * @since     6.2.0
      * @apioption connectors.marker.color
      */
@@ -160,7 +160,7 @@ export interface ConnectorsMarkerOptions {
      * Set the color of the connector markers. By default this is the
      * same as the connector color.
      *
-     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @type      {Highcharts.ColorType}
      * @since     6.2.0
      * @apioption connectors.marker.color
      */
@@ -405,7 +405,7 @@ export interface ConnectorsStartMarkerOptions {
      * Set the color of the connector markers. By default this is the
      * same as the connector color.
      *
-     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @type      {Highcharts.ColorType}
      * @since     6.2.0
      * @apioption connectors.marker.color
      */

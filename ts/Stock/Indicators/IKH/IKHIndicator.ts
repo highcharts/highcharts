@@ -29,7 +29,7 @@ import type LinePoint from '../../../Series/Line/LinePoint';
 import type LineSeries from '../../../Series/Line/LineSeries';
 import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../../Core/Renderer/SVG/SVGPath';
-import type Types from '../../../Shared/Types';
+import type { TypedArray } from '../../../Shared/Types';
 
 import ApproximationRegistry from '../../../Extensions/DataGrouping/ApproximationRegistry.js';
 import Axis from '../../../Core/Axis/Axis.js';
@@ -341,7 +341,7 @@ class IKHIndicator extends SMAIndicator {
                  * @sample stock/indicators/ichimoku-kinko-hyo
                  *         Ichimoku Kinko Hyo color
                  *
-                 * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+                 * @type      {Highcharts.ColorType}
                  * @since     7.0.0
                  * @apioption plotOptions.ikh.senkouSpan.color
                  */
@@ -353,7 +353,7 @@ class IKHIndicator extends SMAIndicator {
                  * @sample stock/indicators/ikh-negative-color
                  *         Ichimoku Kinko Hyo negativeColor
                  *
-                 * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+                 * @type      {Highcharts.ColorType}
                  * @since     7.0.0
                  * @apioption plotOptions.ikh.senkouSpan.negativeColor
                  */
@@ -363,7 +363,7 @@ class IKHIndicator extends SMAIndicator {
                      * Color of the area between Senkou Span A and B.
                      *
                      * @deprecated
-                     * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+                     * @type {Highcharts.ColorType}
                      */
                     fill: 'rgba(255, 0, 0, 0.5)'
                 }
@@ -810,7 +810,7 @@ class IKHIndicator extends SMAIndicator {
             yValLen: number = (yVal && yVal.length) || 0,
             closestPointRange: number = getClosestDistance(
                 xAxis.series.map(
-                    (s): number[]|Types.TypedArray => s.getColumn('x')
+                    (s): number[]|TypedArray => s.getColumn('x')
                 )
             ) as any,
             IKH: Array<Array<number | undefined>> = [],

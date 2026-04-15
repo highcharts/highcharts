@@ -1,0 +1,161 @@
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/highcharts-more.js"></script>
+<script src="https://code.highcharts.com/modules/treemap.js"></script>
+<script src="https://code.highcharts.com/modules/annotations.js"></script>
+<script src="https://code.highcharts.com/modules/data.js"></script>
+<script src="https://code.highcharts.com/modules/exporting.js"></script>
+<script src="https://code.highcharts.com/modules/series-label.js"></script>
+<script src="https://code.highcharts.com/modules/offline-exporting.js"></script>
+<script src="https://code.highcharts.com/modules/accessibility.js"></script>
+<script src="https://code.highcharts.com/modules/coloraxis.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/grid-pro.js"></script>
+<script src="https://code.highcharts.com/dashboards/dashboards.js"></script>
+<script src="https://code.highcharts.com/dashboards/modules/layout.js"></script>
+<script src="https://code.highcharts.com/themes/adaptive.js"></script>
+
+<div id="demoCard" class="demo-card"  aria-label="">
+    <div class="demo-header">
+        <div class="demo-title">
+                <p id="demoName" class="demo-name"></p>
+                <p id="demoDescription" class="demo-description"></p>
+        </div>
+        <div id="made-with">
+            <span class="made-label">MADE WITH:</span>
+            <div id="productButtons">
+              
+            </div>
+           
+        </div>
+      
+    </div>
+    <div id="chart-wrapper">
+        <div class="chart-description" id="chartDescription">
+            
+        </div>
+        <div id="play-controls">
+            <button id="play-pause-button" class="fa fa-play" title="play"></button>
+            <input id="play-range" type="range" value="1973" min="1973" max="2025" />
+        </div>
+        <div id="ld-form">
+            <div class="ld-left">
+                <div class="ld-row">
+                    <label class="ld-label">
+                        Enable Polling
+                    </label>
+                    <input type="checkbox" checked="checked" id="enablePolling"/>
+                </div>
+                <div class="ld-row">
+                    <label class="ld-label">
+                        Polling Time (Seconds)
+                    </label>
+                    <input class="ld-time-input" type="number" value="2" id="pollingTime"/>
+                </div>
+            </div>
+            <div class="ld-right">
+                <div class="ld-row">
+                    <label class="ld-label">
+                        CSV URL
+                    </label>
+                    <input class="ld-url-input" type="text" id="fetchURL"/>
+                </div>
+            </div>  
+        </div>
+        <div class="demo-body" id="container"></div>
+        <div id="code-container">
+            <div class="hc-code">
+                <table>
+                    <tr><td class="ln">1</td><td><span class="k">import</span> React <span class="k">from</span> <span class="s">'react'</span>;</td></tr>
+                    <tr><td class="ln">2</td><td><span class="k">import</span> { createRoot } <span class="k">from</span> <span class="s">'react-dom/client'</span>;</td></tr>
+                    <tr><td class="ln">3</td><td><span class="k">import</span> { Chart, Title } <span class="k">from</span> <span class="s">'@highcharts/react'</span>;</td></tr>
+                    <tr><td class="ln">4</td><td><span class="k">import</span> { Accessibility } <span class="k">from</span> <span class="s">'@highcharts/react/options/Accessibility'</span>;</td></tr>
+                    <tr><td class="ln">5</td><td><span class="k">import</span> { BubbleSeries } <span class="k">from</span> <span class="s">'@highcharts/react/series/Bubble'</span>;</td></tr>
+                    <tr><td class="ln">6</td><td></td></tr>
+                    <tr><td class="ln">7</td><td><span class="k">export default function</span> <span class="fn">ChartComponent</span>() {</td></tr>
+                    <tr><td class="ln">8</td><td>&nbsp;&nbsp;<span class="k">const</span> series1 = [</td></tr>
+                    <tr><td class="ln">9</td><td>&nbsp;&nbsp;&nbsp;&nbsp;[<span class="nu">9</span>, <span class="nu">81</span>, <span class="nu">63</span>], [<span class="nu">98</span>, <span class="nu">5</span>, <span class="nu">89</span>], [<span class="nu">51</span>, <span class="nu">50</span>, <span class="nu">73</span>], [<span class="nu">41</span>, <span class="nu">22</span>, <span class="nu">14</span>],</td></tr>
+                    <tr><td class="ln">10</td><td>&nbsp;&nbsp;&nbsp;&nbsp;[<span class="nu">58</span>, <span class="nu">24</span>, <span class="nu">20</span>], [<span class="nu">78</span>, <span class="nu">37</span>, <span class="nu">34</span>], [<span class="nu">55</span>, <span class="nu">56</span>, <span class="nu">53</span>], [<span class="nu">18</span>, <span class="nu">45</span>, <span class="nu">70</span>],</td></tr>
+                    <tr><td class="ln">11</td><td>&nbsp;&nbsp;&nbsp;&nbsp;[<span class="nu">42</span>, <span class="nu">44</span>, <span class="nu">28</span>], [<span class="nu">3</span>, <span class="nu">52</span>, <span class="nu">59</span>], [<span class="nu">31</span>, <span class="nu">18</span>, <span class="nu">97</span>], [<span class="nu">79</span>, <span class="nu">91</span>, <span class="nu">63</span>],</td></tr>
+                    <tr><td class="ln">12</td><td>&nbsp;&nbsp;&nbsp;&nbsp;[<span class="nu">93</span>, <span class="nu">23</span>, <span class="nu">23</span>], [<span class="nu">44</span>, <span class="nu">83</span>, <span class="nu">22</span>]</td></tr>
+                    <tr><td class="ln">13</td><td>&nbsp;&nbsp;];</td></tr>
+                     <tr><td class="ln">14</td><td></td></tr>
+                    <tr><td class="ln">15</td><td>&nbsp;&nbsp;<span class="k">const</span> series2 = [</td></tr>
+                    <tr><td class="ln">16</td><td>&nbsp;&nbsp;&nbsp;&nbsp;[<span class="nu">42</span>, <span class="nu">38</span>, <span class="nu">20</span>], [<span class="nu">6</span>, <span class="nu">18</span>, <span class="nu">1</span>], [<span class="nu">1</span>, <span class="nu">93</span>, <span class="nu">55</span>], [<span class="nu">57</span>, <span class="nu">2</span>, <span class="nu">90</span>],</td></tr>
+                    <tr><td class="ln">17</td><td>&nbsp;&nbsp;&nbsp;&nbsp;[<span class="nu">80</span>, <span class="nu">76</span>, <span class="nu">22</span>], [<span class="nu">11</span>, <span class="nu">74</span>, <span class="nu">96</span>], [<span class="nu">88</span>, <span class="nu">56</span>, <span class="nu">10</span>], [<span class="nu">30</span>, <span class="nu">47</span>, <span class="nu">49</span>],</td></tr>
+                    <tr><td class="ln">18</td><td>&nbsp;&nbsp;&nbsp;&nbsp;[<span class="nu">57</span>, <span class="nu">62</span>, <span class="nu">98</span>], [<span class="nu">4</span>, <span class="nu">16</span>, <span class="nu">16</span>], [<span class="nu">46</span>, <span class="nu">10</span>, <span class="nu">11</span>], [<span class="nu">22</span>, <span class="nu">87</span>, <span class="nu">89</span>],</td></tr>
+                    <tr><td class="ln">19</td><td>&nbsp;&nbsp;&nbsp;&nbsp;[<span class="nu">57</span>, <span class="nu">91</span>, <span class="nu">82</span>], [<span class="nu">45</span>, <span class="nu">15</span>, <span class="nu">98</span>]</td></tr>
+                    <tr><td class="ln">20</td><td>&nbsp;&nbsp;];</td></tr>
+                    <tr><td class="ln">21</td><td></td></tr>
+                    <tr><td class="ln">22</td><td>&nbsp;&nbsp;<span class="k">return</span> (</td></tr>
+                    <tr><td class="ln">23</td><td>&nbsp;&nbsp;&nbsp;&nbsp;&lt;<span class="cm">Chart</span>&gt;</td></tr>
+                    <tr><td class="ln">24</td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;<span class="cm">Title</span>&gt;Simple Bubble Chart&lt;/<span class="cm">Title</span>&gt;</td></tr>
+                    <tr><td class="ln">25</td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;<span class="cm">Accessibility</span> /&gt;</td></tr>
+                    <tr><td class="ln">26</td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;<span class="cm">BubbleSeries</span> <span class="at">data</span>={series1} /&gt;</td></tr>
+                    <tr><td class="ln">27</td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;<span class="cm">BubbleSeries</span> <span class="at">data</span>={series2} /&gt;</td></tr>
+                    <tr><td class="ln">28</td><td>&nbsp;&nbsp;&nbsp;&nbsp;&lt;/<span class="cm">Chart</span>&gt;</td></tr>
+                    <tr><td class="ln">29</td><td>&nbsp;&nbsp;);</td></tr>
+                    <tr><td class="ln">30</td><td>}</td></tr>
+                    <tr><td class="ln">31</td><td></td></tr>
+                    <tr><td class="ln">32</td><td>createRoot(document.<span class="fn">querySelector</span>(<span class="s">'#container'</span>)).<span class="fn">render</span>(&lt;<span class="cm">ChartComponent</span> /&gt;);</td></tr>
+                </table>
+            </div>
+        </div>
+   
+    </div>
+</div>
+
+<pre id="csv" style="display:none">
+# Data from RIAA
+year	LpEp	Vinyl	Cassette	CD	Downloads	Streams
+1973	1.200	0.190	0.076
+1974	1.400	0.194	0.087
+1975	1.500	0.212	0.099
+1976	1.700	0.245	0.146
+1977	2.200	0.245	0.250
+1978	2.500	0.260	0.450
+1979	2.100	0.354	0.581
+1980	2.200	0.250	0.705
+1981	2.300	0.256	1.100
+1982	1.900	0.283	1.400	0
+1983	1.700	0.269	1.800	0.017
+1984	1.500	0.299	2.400	0.103
+1985	1.300	0.281	2.400	0.390
+1986	0.983	0.228	2.500	0.930
+1987	0.793	0.203	3.000	1.600
+1988	0.532	0.180	3.400	2.100
+1989	0.220	0.116	3.300	2.600
+1990	0.086	0.094	3.500	3.500
+1991	0.029	0.064	3.000	4.300
+1992	0.014	0.066	3.100	5.300
+1993	0.011	0.051	2.900	6.500
+1994	0.018	0.047	3.000	8.500
+1995	0.025	0.047	2.300	9.400
+1996	0.036	0.048	1.900	9.900
+1997	0.033	0	1.500	9.900
+1998	0.034		1.400	11.400
+1999	0.032		1.100	12.800
+2000	0.028		0.626	13.200
+2001	0.027		0.363	12.900
+2002	0.021		0.210	12.000
+2003	0.022		0.108	11.200	0
+2004	0.019		0.023	11.400	0.138	0
+2005	0.014		0	10.500	0.921	0.149
+2006	0.016			9.400	1.631	0.206
+2007	0.023			7.500	2.408	0.234
+2008	0.057			5.500	2.612	0.321
+2009	0.064			4.300	2.647	0.362
+2010	0.089			3.400	2.620	0.461
+2011	0.119			3.100	2.876	0.654
+2012	0.161			2.500	2.946	1.033
+2013	0.211			2.100	2.898	1.454
+2014	0.244			1.800	2.500	1.827
+2015	0.333			1.400	2.300	2.375
+2016	0.355			1.100	1.769	3.818
+2017	0.389			1.000	1.318	5.459
+2018	0.419			0.696	0.945	7.255
+2019	0.480			0.931	0.775	8.853
+2020	0.644			0.483	0.622	10.078
+2021	1.000			0.584	0.538	12.509
+2022	1.200			0.489	0.457	13.285
+2023	1.400			0.537	0.396	14.358
+2024	1.400			0.541	0.329	14.900
+</pre>

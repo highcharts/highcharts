@@ -458,7 +458,7 @@ function postProcessSitemap(gridDir) {
  * Path to the Grid API docs output directory.
  *
  * @param {string|undefined} gridVersion
- * Grid version string (e.g. "v2.2.0") for the navbar.
+ * Grid version string (e.g. "v2.2.0").
  */
 function postProcessHTML(gridDir, gridVersion) {
     const fs = require('fs');
@@ -552,7 +552,7 @@ function postProcessHTML(gridDir, gridVersion) {
         ],
         [
             /Highcharts Core (v[\d.]+)/gu,
-            'Highcharts Grid $1'
+            `Highcharts Grid ${gridVersion || '$1'}`
         ],
 
         // Fix og:url to use /grid/ instead of /highcharts/
@@ -728,7 +728,7 @@ async function apiDocs() {
     log.message('Post-processing HTML for Grid branding...');
     const gridVersion = await fetchGridVersion();
     if (gridVersion) {
-        log.message('Using Grid version', gridVersion, 'for navbar.');
+        log.message('Using Grid version', gridVersion, 'for navbar and footer.');
     } else {
         log.warn(
             'Could not read Grid version from build-properties.json. ' +

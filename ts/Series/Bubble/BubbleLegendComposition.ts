@@ -187,7 +187,7 @@ function getVisibleBubbleSeriesIndex(chart: Chart): number {
  * Legend to calculate from.
  *
  * @return {Array<Highcharts.Dictionary<number>>}
- * Informations about line height and items amount
+ * Information about line height and items amount
  */
 function getLinesHeights(
     legend: Legend

@@ -3,7 +3,7 @@
  *  Arc diagram module
  *
  *  (c) 2018-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -34,7 +34,6 @@ export interface ArcDiagramPointOptions extends SankeyPointOptions {
      *         Link weight set on series
      *
      * @since 10.0.0
-     * @default undefined
      * @product highcharts
      */
     linkWeight?: number;

@@ -10,7 +10,7 @@ Row virtualization (also called *windowing*) is a performance technique used in 
 
 This dramatically reduces DOM size, memory usage, and rendering time, making scrolling smooth even with tens or hundreds of thousands of rows.
 
-## How It Works
+## How it works
 
 1. **Fixed scroll container**
    The grid uses a scrollable container with a total height that represents all rows.

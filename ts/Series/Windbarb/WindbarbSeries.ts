@@ -3,7 +3,7 @@
  *  Wind barb series module
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -202,7 +202,7 @@ class WindbarbSeries extends ColumnSeries {
                     ['L', 0, pos * u + 4]
                 );
 
-                // Substract from the rest and move position for next
+                // Subtract from the rest and move position for next
                 knots -= 50;
                 pos += 7;
             }

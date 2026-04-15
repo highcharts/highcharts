@@ -305,7 +305,7 @@ class NetworkgraphSeries extends Series {
 
     /**
      * Set index for each node. Required for proper `node.update()`.
-     * Note that links are indexated out of the box in `generatePoints()`.
+     * Note that links are indexed out of the box in `generatePoints()`.
      *
      * @private
      */
@@ -484,7 +484,7 @@ class NetworkgraphSeries extends Series {
     }
 
     /**
-     * Run pre-translation and register nodes&links to the deffered layout.
+     * Run pre-translation and register nodes&links to the deferred layout.
      * @private
      */
     public translate(): void {

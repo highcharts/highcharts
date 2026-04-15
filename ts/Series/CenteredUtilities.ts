@@ -1,7 +1,7 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -63,7 +63,6 @@ namespace CenteredUtilities {
      *
      * */
 
-    /* eslint-disable valid-jsdoc */
 
     /**
      * Get the center of the pie based on the size and center options relative

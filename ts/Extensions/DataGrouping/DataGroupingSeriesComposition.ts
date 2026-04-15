@@ -1,7 +1,7 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -33,7 +33,7 @@ import type {
 import type Series from '../../Core/Series/Series';
 import type TimeTicksInfoObject from '../../Core/Axis/TimeTicksInfoObject';
 import type { SeriesTypeOptions } from '../../Core/Series/SeriesType';
-import type Types from '../../Shared/Types';
+import type { TypedArray } from '../../Shared/Types';
 
 import ApproximationRegistry from './ApproximationRegistry.js';
 import DataGroupingDefaults from './DataGroupingDefaults.js';
@@ -237,7 +237,7 @@ const baseGeneratePoints = seriesProto.generatePoints;
 /** @internal */
 function adjustExtremes(
     xAxis: Axis,
-    groupedXData: Array<number>|Types.TypedArray
+    groupedXData: Array<number>|TypedArray
 ): void {
     // Make sure the X axis extends to show the first group (#2533)
     // But only for visible series (#5493, #6393)
@@ -294,7 +294,7 @@ function adjustExtremes(
 /** @internal */
 function anchorPoints(
     series: Series,
-    groupedXData: Array<number>|Types.TypedArray,
+    groupedXData: Array<number>|TypedArray,
     xMax: number
 ): void {
     const options = series.options,
@@ -490,7 +490,7 @@ function applyGrouping(
 
         let modified = groupedData.modified,
             groupedXData = modified.getColumn('x', true) as
-                Array<number>|Types.TypedArray,
+                Array<number>|TypedArray,
             gapSize = 0;
 
         // The smoothed option is deprecated, instead, there is a fallback

@@ -50,7 +50,6 @@ namespace FlagsSymbols {
      *
      * */
 
-    /* eslint-disable valid-jsdoc */
 
     /**
      * @private
@@ -96,9 +95,7 @@ namespace FlagsSymbols {
         const anchorX = (options && options.anchorX) || x,
             anchorY = (options && options.anchorY) || y;
 
-        // To do: unwanted any cast because symbols.circle has wrong type, it
-        // actually returns an SVGPathArray
-        const path = this.circle(anchorX - 1, anchorY - 1, 2, 2) as any;
+        const path = this.circle(anchorX - 1, anchorY - 1, 2, 2);
         path.push(
             ['M', anchorX, anchorY],
             ['L', x, y + h],

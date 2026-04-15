@@ -1,7 +1,7 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -47,18 +47,18 @@ declare module '../../Core/Series/PointBase' {
         /**
          * Range series only. The high or maximum value for each data point.
          */
-        high?: AreaRangePoint['high'];
+        high?: number;
 
         /**
          * Range series only. The low or minimum value for each data point.
          */
-        low?: AreaRangePoint['low'];
+        low?: number;
 
         /** @internal */
-        plotHigh?: AreaRangePoint['plotHigh'];
+        plotHigh?: number;
 
         /** @internal */
-        plotLow?: AreaRangePoint['plotLow'];
+        plotLow?: number;
     }
 }
 
@@ -68,6 +68,7 @@ declare module '../../Core/Series/PointBase' {
  *
  * */
 
+/** @internal */
 class AreaRangePoint extends AreaPoint {
 
     /* *
@@ -113,7 +114,7 @@ class AreaRangePoint extends AreaPoint {
      * */
 
     /**
-     * @private
+     * @internal
      */
     public setState(): void {
         const prevState = this.state,
@@ -211,6 +212,7 @@ class AreaRangePoint extends AreaPoint {
  *
  * */
 
+/** @internal */
 export default AreaRangePoint;
 
 /* *

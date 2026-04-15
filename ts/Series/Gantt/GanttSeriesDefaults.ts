@@ -40,6 +40,18 @@ import { isNumber } from '../../Shared/Utilities.js';
  */
 const GanttSeriesDefaults: GanttSeriesOptions = {
 
+    /**
+     * A partial fill for each point, typically used to visualize how much
+     * of a task is performed.
+     *
+     * @see [completed](#series.gantt.data.completed)
+     *
+     * @sample gantt/demo/progress-indicator
+     *         Gantt with progress indicator
+     *
+     * @apioption plotOptions.gantt.partialFill
+     */
+
     // Options - default options merged with parent
 
     grouping: false,
@@ -124,7 +136,6 @@ const GanttSeriesDefaults: GanttSeriesOptions = {
             enabled: true,
             symbol: 'arrow-filled',
             radius: 4,
-            fill: '#fa0',
             align: 'left' as const
         },
 
@@ -158,8 +169,7 @@ const GanttSeriesDefaults: GanttSeriesOptions = {
  * @declare   Highcharts.GanttPointOptionsObject
  * @type      {Array<*>}
  * @extends   series.xrange.data
- * @excluding className, connect, dataLabels, events,
- *            partialFill, selected, x, x2
+ * @excluding className, connect, dataLabels, events, selected, x, x2
  * @product   gantt
  * @apioption series.gantt.data
  */
@@ -211,8 +221,8 @@ const GanttSeriesDefaults: GanttSeriesOptions = {
  */
 
 /**
- * Progress indicator, how much of the task completed. If it is a number, the
- * `fill` will be applied automatically.
+ * Progress indicator, how much of the task completed. When set as a number,
+ * works as `{ amount: number }`.
  *
  * @sample {gantt} gantt/demo/progress-indicator
  *         Progress indicator
@@ -236,7 +246,7 @@ const GanttSeriesDefaults: GanttSeriesOptions = {
  * The fill of the progress indicator. Defaults to a darkened variety of the
  * main color.
  *
- * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+ * @type      {Highcharts.ColorType}
  * @apioption series.gantt.data.completed.fill
  */
 
@@ -283,12 +293,7 @@ const GanttSeriesDefaults: GanttSeriesOptions = {
  * @apioption series.gantt.data.parent
  */
 
-/**
- * @excluding afterAnimate
- * @apioption series.gantt.events
- */
-
-''; // Detachs doclets above
+''; // Keep above doclets in JS file
 
 /* *
  *

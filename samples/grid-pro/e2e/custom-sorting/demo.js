@@ -23,7 +23,7 @@ const sorter = (a, b) => {
 };
 
 Grid.grid('container', {
-    dataTable: {
+    data: {
         columns: {
             weight: [100, 40, 0.5, 200]
         }

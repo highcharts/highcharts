@@ -1,7 +1,7 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -228,7 +228,7 @@ const mapNavigation: MapNavigationOptions = {
      * Whether to enable map navigation. The default is not to enable
      * navigation, as many choropleth maps are simple and don't need it.
      * Additionally, when touch zoom and mouse wheel zoom is enabled, it breaks
-     * the default behaviour of these interactions in the website, and the
+     * the default behavior of these interactions in the website, and the
      * implementer should be aware of this.
      *
      * Individual interactions can be enabled separately, namely buttons,

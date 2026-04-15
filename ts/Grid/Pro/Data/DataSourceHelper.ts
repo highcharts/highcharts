@@ -9,7 +9,7 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
- *  - Dawid Dragula
+ *  - Dawid Draguła
  *
  * */
 
@@ -22,7 +22,6 @@
  *
  * */
 
-import type { RowId } from '../../Core/Data/DataProvider';
 import type { RemoteFetchCallbackResult } from './RemoteDataProvider';
 import type QueryingController from '../../Core/Querying/QueryingController';
 import type { ColumnSortingOrder } from '../../Core/Options';
@@ -51,9 +50,11 @@ const filterOperatorMap: Record<string, string> = {
     '<': 'lessThan',
     '<=': 'lessThanOrEqualTo',
     contains: 'contains',
+    notContains: 'doesNotContain',
     startsWith: 'beginsWith',
     endsWith: 'endsWith',
-    empty: 'empty'
+    empty: 'empty',
+    notEmpty: 'notEmpty'
 };
 
 /**
@@ -78,21 +79,31 @@ function extractFilterConditions(
     }
 
     if (condition.operator === 'and' || condition.operator === 'or') {
-        // Logical condition - extract from nested conditions
         if (condition.conditions) {
             for (const subCondition of condition.conditions) {
                 extractFilterConditions(subCondition, filterColumns);
             }
         }
-    } else if (condition.columnId) {
-        // Single condition
-        const mappedOperator =
-            filterOperatorMap[condition.operator] || condition.operator;
-        filterColumns.push({
-            id: condition.columnId,
-            condition: mappedOperator,
-            value: condition.value
-        });
+    } else if (condition.columnId || condition.condition?.columnId) {
+        const conditionToUse = condition.columnId ?
+            condition : (condition.condition as FilterConditionLike);
+        let key = conditionToUse.operator;
+
+        if (condition.operator === 'not') {
+            key = condition.operator +
+                conditionToUse.operator.charAt(0).toUpperCase() +
+                conditionToUse.operator.slice(1);
+        }
+
+        const mapped = filterOperatorMap[key] || conditionToUse.operator;
+
+        if (conditionToUse.columnId) {
+            filterColumns.push({
+                id: conditionToUse.columnId,
+                condition: mapped,
+                value: conditionToUse.value
+            });
+        }
     }
 
     return filterColumns;
@@ -290,17 +301,6 @@ export async function dataSourceFetch(
                 await fetch(url);
 
             const data = await parseResponse(res);
-            if (options.rowIdColumn) {
-                const rowIdsColumn = data.columns[options.rowIdColumn];
-                if (!rowIdsColumn) {
-                    // eslint-disable-next-line no-console
-                    console.warn(`DataSourceHelper: rowIdColumn "${
-                        options.rowIdColumn
-                    }" not found in response.`);
-                    return data;
-                }
-                data.rowIds = rowIdsColumn as RowId[];
-            }
 
             return data;
         } finally {
@@ -376,15 +376,6 @@ export interface DataSourceOptions {
      * @default 30000
      */
     fetchTimeout?: number;
-
-    /**
-     * ID of a column that contains stable row IDs.
-     *
-     * If not defined, the row IDs will be extracted from the `meta.rowIds`
-     * property if available. If `meta.rowIds` is also not defined, the row IDs
-     * will default to the indices of the rows in their display order.
-     */
-    rowIdColumn?: string;
 }
 
 export interface QueryState {
@@ -410,6 +401,7 @@ interface FilterConditionLike {
     operator: string;
     columnId?: string;
     value?: unknown;
+    condition?: FilterConditionLike;
     conditions?: FilterConditionLike[];
 }
 

@@ -1,0 +1,40 @@
+body {
+    font-family: sans-serif;
+}
+
+#chart-container {
+    display: flex;
+    flex-wrap: wrap;
+    border: 1px solid #e3e3e8;
+    border-radius: 7px;
+    background-color: #ebecf1;
+}
+
+#map-container {
+    flex: 2;
+    height: 50vh;
+    min-height: 600px;
+    min-width: 300px;
+}
+
+#bar-container {
+    flex: 1;
+    height: 50vh;
+    min-height: 600px;
+    min-width: 250px;
+    border: 1px solid #e3e3e8;
+    border-radius: 7px;
+    padding: 0 20px;
+    margin: 12px 12px 12px 0;
+    background-color: #fff;
+}
+
+#hc-tooltip {
+    border-radius: 7px;
+}
+
+@media screen and (max-width: 940px) {
+    #bar-container {
+        margin: 0;
+    }
+}
