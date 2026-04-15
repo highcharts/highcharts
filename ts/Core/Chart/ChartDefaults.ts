@@ -745,6 +745,20 @@ const ChartDefaults: ChartOptions = {
     },
 
     /**
+     * The corner radius of the plot area border in pixels. Also applies clip
+     * to the plot area background and data inside, like columns in a column
+     * series or fill in an area series.
+     *
+     * @sample highcharts/chart/plotborderradius/
+     *         Plot border radius
+     *
+     * @type      {number}
+     * @default   0
+     * @since     next
+     * @apioption chart.plotBorderRadius
+     */
+
+    /**
      * The pixel width of the plot area border.
      *
      * @sample {highcharts} highcharts/chart/plotborderwidth/
