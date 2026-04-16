@@ -286,6 +286,7 @@ class Pane {
     public updateCenter(): void {
 
         const { axis, chart, options } = this,
+            { plotHeight, plotWidth } = chart,
             centerY = options.center?.[1],
             m = options.margin || 0,
             margin = isArray(m) ? m : [m, m, m, m];
@@ -315,8 +316,7 @@ class Pane {
             axis &&
             (size === void 0 || centerY === void 0)
         ) {
-            const { plotHeight, plotWidth } = chart,
-                { endAngleRad, startAngleRad } = axis,
+            const { endAngleRad, startAngleRad } = axis,
                 deg2rad = Math.PI * 2 / 360,
                 crossingBottom = (
                     startAngleRad < Math.PI / 2 && endAngleRad > Math.PI / 2
@@ -370,12 +370,17 @@ class Pane {
                 relativeLength(options.innerSize || 0, size)
             );
         }
-        if (!isNumber(centerY) && isNumber(sizeFromAngle)) {
-            this.center[1] = (
-                sizeFromAngle +
-                this.center[2] -
-                appliedCenterMargin
-            ) / 4 + margin[0];
+
+        if (!isNumber(centerY)) {
+            if (options.size) {
+                this.center[1] = plotHeight / 2;
+            } else if (isNumber(sizeFromAngle)) {
+                this.center[1] = (
+                    sizeFromAngle +
+                    this.center[2] -
+                    appliedCenterMargin
+                ) / 4 + margin[0];
+            }
         }
     }
 
