@@ -144,9 +144,9 @@ QUnit.test('Data classes - interactions', function (assert) {
 
     assert.notEqual(
         chart.container
-            .querySelector('.highcharts-root')
-            .className.baseVal.indexOf('highcharts-legend-point-active'),
+            .querySelector('.highcharts-series')
+            .className.baseVal.indexOf('highcharts-series-data-class-active'),
         -1,
-        'Chart should be in point hover mode for dataClasses (#22891).'
+        'Series should have an active class for dataClass hover (#22891).'
     );
 });

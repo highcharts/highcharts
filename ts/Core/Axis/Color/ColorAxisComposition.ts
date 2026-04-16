@@ -140,7 +140,7 @@ namespace ColorAxisComposition {
                 onLegendAfterColorizeItem
             );
             addEvent(LegendClass, 'afterUpdate', onLegendAfterUpdate);
-            addEvent(LegendClass, 'setItemEvents', onLegendSetItemEvents);
+            addEvent(LegendClass, 'afterRender', onLegendAfterRender);
 
             extend(
                 seriesProto,
@@ -284,22 +284,35 @@ namespace ColorAxisComposition {
     }
 
     /**
-     * Set activeClass to point for legend items using dataClasses (#22891).
+     * Toggle active series class when hovering dataClass legend items.
      * @internal
      */
-    function onLegendSetItemEvents(
-        this: Legend,
-        {
-            item,
-            itemState
-        }: {
-            item: ColorAxis.LegendItemObject;
-            itemState: Record<string, string>;
-        }
-    ): void {
-        if (item.isDataClass) {
-            itemState.activeClass = 'highcharts-legend-point-active';
-        }
+    function onLegendAfterRender(this: Legend): void {
+        this.allItems.forEach((item): void => {
+            const legendItem = item.legendItem;
+
+            if (
+                legendItem?.group
+            ) {
+                const element = legendItem.group.element;
+
+                element.addEventListener('mouseover', (): void => {
+                    this.chart.series.forEach((series): void => {
+                        series.group?.addClass(
+                            'highcharts-series-data-class-active'
+                        );
+                    });
+                });
+
+                element.addEventListener('mouseout', (): void => {
+                    this.chart.series.forEach((series): void => {
+                        series.group?.removeClass(
+                            'highcharts-series-data-class-active'
+                        );
+                    });
+                });
+            }
+        });
     }
 
     /**

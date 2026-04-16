@@ -1748,21 +1748,14 @@ class Legend {
             boxWrapper = legend.chart.renderer.boxWrapper,
             isPoint = item instanceof Point,
             isSeries = item instanceof Series,
-            itemState: { activeClass?: string } = {},
+            activeClass = 'highcharts-legend-' +
+                (isPoint ? 'point' : 'series') + '-active',
             styledMode = legend.chart.styledMode,
             // When `useHTML`, the symbol is rendered in other group, so
             // we need to apply events listeners to both places
             legendElements = useHTML ?
                 [legendLabel, legendItem.symbol] :
                 [legendItem.group];
-
-        // Set activeClass to point for dataClass items, #22891
-        fireEvent(this, 'setItemEvents', { item, itemState });
-
-        const activeClass = itemState.activeClass || (
-            'highcharts-legend-' +
-            (isPoint ? 'point' : 'series') + '-active'
-        );
 
         const setOtherItemsState = (state: StatesOptionsKey): void => {
             legend.allItems.forEach((otherItem): void => {
