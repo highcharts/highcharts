@@ -57,9 +57,18 @@ function arc(
     const arc: SVGPath = [];
 
     if (options) {
-        const padding = options.padding || 0;
+        const padding = options.padding || 0,
+            minArcRange = 0.05;
+
         let start = options.start ? options.start + padding : 0,
             end = options.end ? options.end - padding : 0;
+
+        // Check if pading can be applied to the arc
+        if (padding > 0 && Math.abs(end - start) <= minArcRange) {
+            const middleAngleWithPadding = (start + end) / 2;
+            start = middleAngleWithPadding - minArcRange / 2;
+            end = middleAngleWithPadding + minArcRange / 2;
+        }
 
         const rx = pick(options.r, w),
             ry = pick(options.r, h || w),
@@ -119,7 +128,6 @@ function arc(
                 cCosEnd = cosEnd,
                 cSinEnd = sinEnd;
 
-            // Handle padding around the arc
             if (padding > 0 && options.end && options.start) {
                 const radius = options.r || 0,
                     rangeRadians = Math.abs(options.end - options.start),
@@ -157,8 +165,8 @@ function arc(
             arcSegment.params = {
                 start: end,
                 end: start,
-                cx: ccx,
-                cy: ccy
+                cx,
+                cy
             };
             arc.push(
                 open ?
