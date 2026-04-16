@@ -483,6 +483,11 @@ namespace RadialAxis {
             );
             addEvent(
                 AxisClass as (T&typeof AxisComposition),
+                'afterTickSize',
+                onAxisAfterTickSize
+            );
+            addEvent(
+                AxisClass as (T&typeof AxisComposition),
                 'autoLabelAlign',
                 onAxisAutoLabelAlign
             );
@@ -1161,6 +1166,37 @@ namespace RadialAxis {
 
             this.normalizedStartAngleRad = normalizedStart;
             this.normalizedEndAngleRad = normalizedEnd;
+        }
+    }
+
+    /**
+     * Finalize modification of axis instance with radial logic.
+     */
+    function onAxisAfterTickSize(
+        this: AxisComposition,
+        e: { tickSize?: [number, number], prefix: 'tick' | 'minorTick' }
+    ): void {
+        if (this.chart.angular) {
+            const { pane } = this,
+                options = this.options,
+                tickLength = options[`${e.prefix}Length`],
+                tickWidth = options[`${e.prefix}Width`];
+
+            if (pane.hasSeriesType('gauge')) {
+                e.tickSize = [
+                    (
+                        defined(tickLength) ?
+                            relativeLength(tickLength, pane.center[2] / 2) :
+                            void 0
+                    ) ?? (pane.center[2] - pane.center[3]) / 2,
+                    tickWidth ?? 1
+                ];
+
+                // Negate the length
+                if (options.tickPosition === 'inside') {
+                    e.tickSize[0] *= -1;
+                }
+            }
         }
     }
 

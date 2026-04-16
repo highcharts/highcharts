@@ -141,6 +141,17 @@ class Pane {
     }
 
     /**
+     * Check if the chart has a series of a specific type
+     * @internal
+     */
+    public hasSeriesType(type: string): boolean {
+        return Boolean(
+            this.chart.options?.chart?.type === type ||
+            this.chart.options?.series?.some((s): boolean => s.type === type)
+        );
+    }
+
+    /**
      * @internal
      * @function Highcharts.Pane#setOptions
      *
@@ -148,11 +159,14 @@ class Pane {
      */
     public setOptions(options: PaneOptions): void {
 
-        const conditionalDefaults: PaneOptions = {};
+        const { chart } = this,
+            conditionalDefaults: PaneOptions = {};
 
-        if (this.chart.angular) {
+        if (chart.angular) {
             conditionalDefaults.background = {};
-            conditionalDefaults.innerSize = '60%';
+            conditionalDefaults.innerSize = this.hasSeriesType('gauge') ?
+                '85%' :
+                '60%';
         }
 
         // Set options. Angular charts have a default background (#3318)

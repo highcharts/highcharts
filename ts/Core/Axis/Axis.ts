@@ -3255,7 +3255,7 @@ class Axis {
             tickSize = [tickLength, tickWidth];
         }
 
-        const e = { tickSize };
+        const e = { tickSize, prefix };
         fireEvent(this, 'afterTickSize', e);
 
         return e.tickSize;
