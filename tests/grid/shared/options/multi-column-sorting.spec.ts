@@ -7,7 +7,7 @@ test.describe('Grid multi-column sorting', () => {
     const openMenu = async (page: any, columnId: string) => {
         await page.evaluate((id: string) => {
             const button = document.querySelector(
-                `th[data-column-id="${id}"] .hcg-header-cell-menu-icon .hcg-button`
+                `th[data-column-id="${id}"] .hcg-header-cell-menu-icon .hcg-icon`
             );
             if (button) {
                 (button as HTMLElement).click();

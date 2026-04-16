@@ -362,7 +362,6 @@ class ColumnFiltering {
         } else {
             this.filterInput.type = 'text';
             this.filterInput.classList.add(
-                Globals.getClassName('icon'),
                 Globals.getClassName('iconSearch')
             );
         }

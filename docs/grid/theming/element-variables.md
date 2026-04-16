@@ -4,7 +4,7 @@ sidebar_label: "Element variables"
 
 # Element variables
 
-Highcharts Grid includes a set of predefined CSS variables for theming interactive elements such as inputs and buttons used in e.g. headers, body cells, and pagination.
+Highcharts Grid includes a set of predefined CSS variables for theming interactive elements such as inputs, icon controls, and buttons used in headers, body cells, and pagination.
 
 For table surfaces such as rows, columns, headers, and cells, see [Grid variables](https://www.highcharts.com/docs/grid/theming/grid-variables).
 
@@ -95,13 +95,12 @@ Inputs inherit surrounding typography by default. That means header inputs follo
 | --hcg-button-selected-background    | #000000/#ffffff                | [background](https://developer.mozilla.org/en-US/docs/Web/CSS/background) |
 | --hcg-button-selected-border-color  | --hcg-button-border-color      | [border-color](https://developer.mozilla.org/en-US/docs/Web/CSS/border-color) |
 
-Buttons inherit surrounding typography by default. That means header buttons follow header typography, body-cell buttons follow cell typography, and pagination buttons follow pagination typography unless button-specific font variables are set. When button-specific color tokens are unset, resting text color inherits the surrounding section color and the resting border follows that same color via `currentColor`. Theme classes can still override those defaults.
+Buttons inherit surrounding typography by default. That means body-cell buttons follow cell typography and pagination buttons follow pagination typography unless button-specific font variables are set. When button-specific color tokens are unset, resting text color inherits the surrounding section color and the resting border follows that same color via `currentColor`. Theme classes can still override those defaults.
 
 ### Section prefixes
 
 | Variable Prefix               | Applies To                   | Fallback |
 | ----------------------------- | ---------------------------- | -------- |
-| --hcg-header-button         | Buttons inside header cells  | Global |
 | --hcg-cell-button           | Buttons inside body cells    | Global |
 | --hcg-pagination-button     | Buttons inside pagination UI | Global |
 
@@ -121,6 +120,48 @@ Buttons inherit surrounding typography by default. That means header buttons fol
 
     --hcg-pagination-button-selected-background: #000000;
     --hcg-pagination-button-selected-color: #ffffff;
+}
+```
+
+Header toolbar controls use the dedicated `--hcg-icon-*` variables described below, not the button token family.
+
+## Icons
+
+### Globals
+
+| Variable                          | Default Value                                    | Valid Values |
+| --------------------------------- | ------------------------------------------------ | ------------ |
+| --hcg-icon-padding                | 6px                                              | [padding](https://developer.mozilla.org/en-US/docs/Web/CSS/padding) |
+| --hcg-icon-font-weight            | inherit                                          | [font-weight](https://developer.mozilla.org/en-US/docs/Web/CSS/font-weight) |
+| --hcg-icon-font-size              | inherit                                          | [font-size](https://developer.mozilla.org/en-US/docs/Web/CSS/font-size) |
+| --hcg-icon-font-family            | inherit                                          | [font-family](https://developer.mozilla.org/en-US/docs/Web/CSS/font-family) |
+| --hcg-icon-color                  | inherit                                          | [color](https://developer.mozilla.org/en-US/docs/Web/CSS/color) |
+| --hcg-icon-border-radius          | 0                                                | [border-radius](https://developer.mozilla.org/en-US/docs/Web/CSS/border-radius) |
+| --hcg-icon-border-width           | 1px                                              | [border-width](https://developer.mozilla.org/en-US/docs/Web/CSS/border-width) |
+| --hcg-icon-border-style           | solid                                            | [border-style](https://developer.mozilla.org/en-US/docs/Web/CSS/border-style) |
+| --hcg-icon-border-color           | transparent                                      | [border-color](https://developer.mozilla.org/en-US/docs/Web/CSS/border-color) |
+| --hcg-icon-background             | transparent                                      | [background](https://developer.mozilla.org/en-US/docs/Web/CSS/background) |
+| --hcg-icon-hover-color            | --hcg-icon-color                                 | [color](https://developer.mozilla.org/en-US/docs/Web/CSS/color) |
+| --hcg-icon-hover-background       | black/white tint source color                    | [color](https://developer.mozilla.org/en-US/docs/Web/CSS/color) |
+| --hcg-icon-hover-border-color     | --hcg-icon-border-color                          | [border-color](https://developer.mozilla.org/en-US/docs/Web/CSS/border-color) |
+
+ Resting background is transparent by default. The hover background token expects a source color, not a pre-mixed translucent background. Grid applies its own transparent mix to that source, so `--hcg-icon-hover-background: green` produces a translucent green hover surface rather than a solid fill. Hovered and highlighted icon controls reuse that hover tint, while selected icon controls keep the resting surface styling unless they are also hovered.
+
+### Section prefixes
+
+| Variable Prefix               | Applies To                    | Fallback |
+| ----------------------------- | ----------------------------- | -------- |
+| --hcg-header-icon           | Icons inside header cells | Global |
+| --hcg-cell-icon             | Icons inside body cells   | Global |
+
+### Example
+
+```css
+.theme-icons {
+    --hcg-icon-padding: 3px;
+    --hcg-icon-font-size: 15px;
+    --hcg-header-icon-color: red;
+    --hcg-cell-icon-background: gray;
 }
 ```
 
@@ -144,7 +185,7 @@ Buttons inherit surrounding typography by default. That means header buttons fol
 
 ## Summary
 
-1. Define global input and button variables first.
+1. Define global input, icon, and button variables first.
 2. Override by section using `--hcg-header-*`, `--hcg-cell-*`, and `--hcg-pagination-*`.
 3. Use shared focus ring variables for accessible focus styling.
 4. Combine with [Grid variables](https://www.highcharts.com/docs/grid/theming/grid-variables) for full table and element theming.
