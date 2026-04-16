@@ -268,7 +268,6 @@ class Pane {
      *
      * @internal
      * @function Highcharts.Pane#updateCenter
-     * @param {Highcharts.Axis} [axis]
      */
     public updateCenter(): void {
 
@@ -349,22 +348,20 @@ class Pane {
             ({} as Record<string, Array<number>>)
         ).center = CU.getCenter.call(this as any);
 
-        if (!options.size) {
-            // Apply the auto-positioning
-            if (isNumber(size) && size >= 0) {
-                this.center[2] = size;
-                this.center[3] = Math.min(
-                    size,
-                    relativeLength(options.innerSize || 0, size)
-                );
-            }
-            if (!isNumber(centerY) && isNumber(sizeFromAngle)) {
-                this.center[1] = (
-                    sizeFromAngle +
-                    this.center[2] -
-                    appliedCenterMargin
-                ) / 4 + margin[0];
-            }
+        // Apply the auto-positioning
+        if (isNumber(size) && size >= 0) {
+            this.center[2] = size;
+            this.center[3] = Math.min(
+                size,
+                relativeLength(options.innerSize || 0, size)
+            );
+        }
+        if (!isNumber(centerY) && isNumber(sizeFromAngle)) {
+            this.center[1] = (
+                sizeFromAngle +
+                this.center[2] -
+                appliedCenterMargin
+            ) / 4 + margin[0];
         }
     }
 
