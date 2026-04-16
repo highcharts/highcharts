@@ -299,7 +299,7 @@ namespace ColorAxisComposition {
                 element.addEventListener('mouseover', (): void => {
                     this.chart.series.forEach((series): void => {
                         series.group?.addClass(
-                            'highcharts-series-data-class-active'
+                            'highcharts-series-data-class-hover'
                         );
                     });
                 });
@@ -307,7 +307,7 @@ namespace ColorAxisComposition {
                 element.addEventListener('mouseout', (): void => {
                     this.chart.series.forEach((series): void => {
                         series.group?.removeClass(
-                            'highcharts-series-data-class-active'
+                            'highcharts-series-data-class-hover'
                         );
                     });
                 });

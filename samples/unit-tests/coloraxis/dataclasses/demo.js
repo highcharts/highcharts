@@ -145,8 +145,8 @@ QUnit.test('Data classes - interactions', function (assert) {
     assert.notEqual(
         chart.container
             .querySelector('.highcharts-series')
-            .className.baseVal.indexOf('highcharts-series-data-class-active'),
+            .className.baseVal.indexOf('highcharts-series-data-class-hover'),
         -1,
-        'Series should have an active class for dataClass hover (#22891).'
+        'Series should have appropriate class for dataClass hover (#22891).'
     );
 });
