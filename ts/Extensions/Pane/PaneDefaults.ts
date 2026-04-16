@@ -110,12 +110,11 @@ const background: PaneBackgroundOptions = {
      * The background color or gradient for the pane.
      *
      * @type    {Highcharts.ColorType}
-     * @default { linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 }, stops: [[0, #ffffff], [1, #e6e6e6]] }
      * @since   2.3.0
      * @product highcharts
      * @requires highcharts-more
      */
-    backgroundColor: Palette.neutralColor5,
+    backgroundColor: Palette.neutralColor3,
 
     /** @ignore-option */
     from: -Number.MAX_VALUE, // Corrected to axis min
