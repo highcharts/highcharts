@@ -57,8 +57,9 @@ function arc(
     const arc: SVGPath = [];
 
     if (options) {
-        let start = options.start || 0,
-            end = options.end || 0;
+        const padding = options.padding || 0;
+        let start = options.start ? options.start + padding : 0,
+            end = options.end ? options.end - padding : 0;
 
         const rx = pick(options.r, w),
             ry = pick(options.r, h || w),
@@ -110,6 +111,37 @@ function arc(
         );
 
         if (defined(innerRadius)) {
+            let ccx = cx,
+                ccy = cy,
+                cInnerRadius = innerRadius,
+                cCosStart = cosStart,
+                cSinStart = sinStart,
+                cCosEnd = cosEnd,
+                cSinEnd = sinEnd;
+
+            // Handle padding around the arc
+            if (padding > 0 && options.end && options.start) {
+                const radius = options.r || 0,
+                    rangeRadians = Math.abs(options.end - options.start),
+                    reducedRange = Math.abs(start - end),
+                    reducedRadius = radius * (reducedRange / rangeRadians),
+                    deltaRadius = Math.max(0, radius - reducedRadius),
+                    middleAngle = (start + end) / 2,
+                    deltaX = Math.cos(middleAngle) * deltaRadius,
+                    deltaY = Math.sin(middleAngle) * deltaRadius;
+
+                ccx += deltaX;
+                ccy += deltaY;
+
+                cCosStart = fullCircle ? 0 : Math.cos(options.start),
+                cSinStart = fullCircle ? 1 : Math.sin(options.start),
+                cCosEnd = fullCircle ? 0 : Math.cos(options.end),
+                cSinEnd = fullCircle ? 1 : Math.sin(options.end);
+
+                // Calculate reduced innerRadius
+                cInnerRadius = Math.max(0, innerRadius - deltaRadius);
+            }
+
             arcSegment = [
                 'A', // ArcTo
                 innerRadius, // X radius
@@ -118,15 +150,15 @@ function arc(
                 longArc, // Long or short arc
                 // Clockwise - opposite to the outer arc clockwise
                 defined(options.clockwise) ? 1 - options.clockwise : 0,
-                cx + (fullCircle ? -0.001 : innerRadius * cosStart),
-                cy + innerRadius * sinStart
+                ccx + (fullCircle ? -0.001 : cInnerRadius * cCosStart),
+                ccy + cInnerRadius * cSinStart
             ];
             // Memo for border radius
             arcSegment.params = {
                 start: end,
                 end: start,
-                cx,
-                cy
+                cx: ccx,
+                cy: ccy
             };
             arc.push(
                 open ?
@@ -136,8 +168,8 @@ function arc(
                         cy + innerRadius * sinEnd
                     ] : [
                         'L',
-                        cx + innerRadius * cosEnd,
-                        cy + innerRadius * sinEnd
+                        ccx + cInnerRadius * cCosEnd,
+                        ccy + cInnerRadius * cSinEnd
                     ],
                 arcSegment
             );
