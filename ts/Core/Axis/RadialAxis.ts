@@ -522,6 +522,11 @@ namespace RadialAxis {
                 'setOptions',
                 onGlobalSetOptions
             );
+            wrap(
+                AxisClass.prototype,
+                'getMinorTickInterval',
+                wrapAxisGetMinorTickInterval
+            );
             wrap(TickClass.prototype, 'getMarkPath', wrapTickGetMarkPath);
         }
 
@@ -1699,6 +1704,28 @@ namespace RadialAxis {
         }
 
         fireEvent(this, 'afterSetOptions');
+    }
+
+    /**
+     * Wrap the `getMinorTickInterval` method to return 'auto' for gauge axes by
+     * default, when `minorTicks` are not explicitly enabled or disabled.
+     */
+    function wrapAxisGetMinorTickInterval(
+        this: AxisComposition,
+        proceed: Function
+    ): ('auto'|number|undefined) {
+
+        if (
+            !defined(this.options.minorTicks) &&
+            this.pane.hasSeriesType('gauge')
+        ) {
+            return 'auto';
+        }
+
+        return proceed.apply(
+            this,
+            Array.prototype.slice.call(arguments, 1)
+        );
     }
 
     /**
