@@ -1513,7 +1513,7 @@ namespace AxisDefaults {
 
         /**
          * The distance in pixels from the plot area to the axis line.
-         * A positive offset moves the axis with it's line, labels and ticks
+         * A positive offset moves the axis with its line, labels and ticks
          * away from the plot area. This is typically used when two or more
          * axes are displayed on the same side of the plot. With multiple
          * axes the offset is dynamically adjusted to avoid collision, this
@@ -2010,17 +2010,25 @@ namespace AxisDefaults {
              */
 
             /**
-             * The distance of the axis title from the axis line. By default,
-             * this distance is computed from the offset width of the labels,
-             * the labels' distance from the axis and the title's margin.
-             * However when the offset option is set, it overrides all this.
+             * The distance from the plot area to the axis line. A positive
+             * offset moves the axis with its line, labels and ticks away from
+             * the plot area. With multiple axes the offset is dynamically
+             * adjusted to avoid collision, this can be overridden by setting
+             * offset explicitly.
              *
-             * @sample {highcharts} highcharts/yaxis/title-offset/
-             *         Place the axis title on top of the axis
-             * @sample {highstock} highcharts/yaxis/title-offset/
-             *         Place the axis title on top of the Y axis
+             * For radial axes in gauges, the offset can be a percentage string,
+             * and defaults to render the line and ticks on the inside of the
+             * pane and plot bands (since v13). Labels are not affected by the
+             * offset in radial axes.
              *
-             * @type      {number}
+             * @sample highcharts/yaxis/offset/
+             *         Axis offfset
+             * @sample {highcharts} highcharts/yaxis/offset-centered/
+             *         Axes positioned in the center of the plot
+             * @sample {highstock} stock/xaxis/offset/
+             *         Y axis offset in stock chart
+             *
+             * @type      {number|string}
              * @since     2.2.0
              * @apioption xAxis.title.offset
              */

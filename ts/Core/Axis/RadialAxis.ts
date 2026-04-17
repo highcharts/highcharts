@@ -705,6 +705,17 @@ namespace RadialAxis {
         // instance)
         axisProto.getOffset.call(this);
 
+        const offset = this.options.offset ?? (
+            this.pane.hasSeriesType('gauge') ?
+                '-20%' : void 0
+        );
+        if (defined(offset)) {
+            this.offset = relativeLength(
+                offset,
+                this.center[2] / 2
+            ) * -1;
+        }
+
         // Title or label offsets are not counted
         this.chart.axisOffset[this.side] = 0;
     }
@@ -1146,7 +1157,6 @@ namespace RadialAxis {
             // Gauges
             this.startAngleRad = start;
             this.endAngleRad = end;
-            this.offset = options.offset || 0;
 
             // Normalize Start and End to <0, 2*PI> range
             // (in degrees: <0,360>)
@@ -1328,7 +1338,7 @@ namespace RadialAxis {
 
         const axis = this.axis,
             labelBBox = label.getBBox(),
-            labelOptions = axis.options.labels as any,
+            labelOptions = axis.options.labels,
             angle = (
                 (
                     axis.translate(this.pos) + axis.startAngleRad +
@@ -1355,7 +1365,7 @@ namespace RadialAxis {
                 this.pos,
                 (axis.center[2] / 2) +
                     relativeLength(
-                        pick(labelOptions.distance, -25),
+                        (labelOptions.distance ?? -25) + axis.offset,
                         axis.center[2] / 2,
                         -axis.center[2] / 2
                     )

@@ -1397,21 +1397,23 @@ export interface AxisOptions {
     minTickInterval?: number;
 
     /**
-     * The distance in pixels from the plot area to the axis line.
-     * A positive offset moves the axis with it's line, labels and ticks
-     * away from the plot area. This is typically used when two or more
-     * axes are displayed on the same side of the plot. With multiple
-     * axes the offset is dynamically adjusted to avoid collision, this
+     * The distance from the plot area to the axis line. A positive offset moves
+     * the axis with its line, labels and ticks away from the plot area. With
+     * multiple axes the offset is dynamically adjusted to avoid collision, this
      * can be overridden by setting offset explicitly.
      *
-     * @sample {highcharts} highcharts/yaxis/offset/
-     *         Y axis offset of 70
+     * For radial axes in gauges, the offset can be a percentage string, and
+     * defaults to render the line and ticks on the inside of the pane and plot
+     * bands (since v13). Labels are not affected by the offset in radial axes.
+     *
+     * @sample highcharts/yaxis/offset/
+     *         Axis offfset
      * @sample {highcharts} highcharts/yaxis/offset-centered/
      *         Axes positioned in the center of the plot
      * @sample {highstock} stock/xaxis/offset/
-     *         Y axis offset by 70 px
+     *         Y axis offset in stock chart
      */
-    offset?: number;
+    offset?: number|string;
 
     /** @internal */
     offsets?: [number, number, number, number];
