@@ -93,35 +93,69 @@ function onSetClip(
     const { plotWidth, plotHeight } = this.chart,
         smallestSize = Math.min(plotWidth, plotHeight),
         xPane = this.xAxis.pane,
-        yPane = this.yAxis.pane,
-        paneAxes = [xPane, yPane]
-            .map((pane): Pane['axis'] => pane && pane.axis)
-            .filter(
-                (axis): axis is NonNullable<Pane['axis']> => Boolean(axis)
-            ),
-        fullCircle = correctFloat(2 * Math.PI);
+        yPane = this.yAxis.pane;
+    const solidGaugeClipRatioByPane = new Map<Pane, number>();
 
-    // For full-circle panes, keep the default clip box. Offsetting the clip
-    // can cut top/left edges in solid gauge after animation (#24460).
-    if (
-        paneAxes.length &&
-        paneAxes.every((axis): boolean =>
-            correctFloat(
-                (axis.endAngleRad || 0) - (axis.startAngleRad || 0)
-            ) === fullCircle
-        )
-    ) {
-        return;
-    }
+    const getSolidGaugeClipRatio = (pane: Pane): number => {
+        const cachedRatio = solidGaugeClipRatioByPane.get(pane);
+        if (cachedRatio) {
+            return cachedRatio;
+        }
+
+        let maxRadiusRatio = 1;
+
+        this.chart.series.forEach((series): void => {
+            const options = series.options as Record<string, any>;
+
+            if (
+                series.type !== 'solidgauge' ||
+                series.yAxis?.pane !== pane
+            ) {
+                return;
+            }
+
+            const seriesRadius = parseFloat(options.radius);
+            if (Number.isFinite(seriesRadius)) {
+                maxRadiusRatio = Math.max(maxRadiusRatio, seriesRadius / 100);
+            }
+
+            if (!Array.isArray(options.data)) {
+                return;
+            }
+
+            for (const dataPointOptions of options.data) {
+                const dataRadius = parseFloat(dataPointOptions?.radius);
+
+                if (Number.isFinite(dataRadius)) {
+                    maxRadiusRatio = Math.max(
+                        maxRadiusRatio,
+                        dataRadius / 100
+                    );
+                }
+            }
+        });
+
+        solidGaugeClipRatioByPane.set(pane, maxRadiusRatio);
+
+        return maxRadiusRatio;
+    };
 
     if (xPane && xPane.axis) {
-        clipBox.x += xPane.center[0] -
-            (xPane.center[2] / smallestSize) * plotWidth / 2;
+        const paneClipRatio = (
+            (xPane.center[2] / smallestSize) * getSolidGaugeClipRatio(xPane)
+        );
+
+        clipBox.x += xPane.center[0] - paneClipRatio * plotWidth / 2;
+        clipBox.width = Math.max(clipBox.width, paneClipRatio * plotWidth);
     }
 
     if (yPane && yPane.axis) {
-        clipBox.y += yPane.center[1] -
-            (yPane.center[2] / smallestSize) * plotHeight / 2;
+        const paneClipRatio = (
+            (yPane.center[2] / smallestSize) * getSolidGaugeClipRatio(yPane)
+        );
+
+        clipBox.y += yPane.center[1] - paneClipRatio * plotHeight / 2;
+        clipBox.height = Math.max(clipBox.height, paneClipRatio * plotHeight);
     }
 }
 
