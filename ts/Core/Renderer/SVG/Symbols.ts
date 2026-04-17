@@ -62,13 +62,18 @@ function arc(
             radianRange = Math.abs(rawEnd - rawStart),
             padding = options.padding || 0,
             radius = options.r || 0,
-            paddingInRadiansRaw =
-                radius > 0 && padding > 0 ? padding / radius : 0,
+            innerRadius = options.innerR,
             minArcRange = 0.05,
             // Subtract a small number to prevent cos and sin of start and end
             // from becoming equal on 360 arcs (#1561). See "Arc proximity"
             // tests at samples/unit-tests/svgrenderer/symbol/demo.js
             proximity = 0.0001;
+
+        let paddingInRadiansRaw = radius > 0 ? (padding / radius) : 0;
+
+        if (!paddingInRadiansRaw && !radius && innerRadius && innerRadius > 0) {
+            paddingInRadiansRaw = padding / innerRadius;
+        }
 
         const paddingInRadians = Math.min(
             paddingInRadiansRaw,
@@ -97,8 +102,7 @@ function arc(
             end = Math.PI * 2.5 - proximity;
         }
 
-        const innerRadius = options.innerR,
-            open = pick(options.open, fullCircle),
+        const open = pick(options.open, fullCircle),
             cosStart = fullCircle ? 0 : Math.cos(start),
             sinStart = fullCircle ? 1 : Math.sin(start),
             cosEnd = fullCircle ? 0 : Math.cos(end),

@@ -145,7 +145,8 @@ class PiePoint extends Point {
                     innerR: (shapeArgs as any).r - 1,
                     start: (shapeArgs as any).start,
                     end: (shapeArgs as any).end,
-                    borderRadius: (shapeArgs as any).borderRadius
+                    borderRadius: (shapeArgs as any).borderRadius,
+                    padding: (shapeArgs as any).padding
                 }
             );
     }
