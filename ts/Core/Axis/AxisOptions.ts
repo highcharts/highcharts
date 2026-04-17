@@ -1265,7 +1265,7 @@ export interface AxisOptions {
      * The pixel length of the minor tick marks.
      *
      * @sample {highcharts} highcharts/yaxis/minorticklength/
-     *         10px on Y axis
+     *         Minor ticks on Y axis
      * @sample {highstock} stock/xaxis/minorticks/
      *         10px on Y axis
      *
@@ -1316,6 +1316,8 @@ export interface AxisOptions {
     /**
      * The number of minor ticks per major tick. Works for `linear`,
      * `logarithmic` and `datetime` axes.
+     *
+     * For radial axes in gauges, the default value is 10.
      *
      * @sample {highcharts} highcharts/yaxis/minortickspermajor/
      *         2 minor ticks per major tick on Y axis
