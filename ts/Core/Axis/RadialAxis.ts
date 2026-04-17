@@ -1192,19 +1192,16 @@ namespace RadialAxis {
         e: { tickSize?: [number, number], prefix: 'tick' | 'minorTick' }
     ): void {
         if (this.chart.angular) {
-            const { pane } = this,
-                options = this.options,
-                tickLength = options[`${e.prefix}Length`],
-                tickWidth = options[`${e.prefix}Width`];
+            const { options, pane } = this;
 
             if (pane.hasSeriesType('gauge')) {
                 e.tickSize = [
-                    tickLength ?? 10,
-                    tickWidth ?? 1
+                    options[`${e.prefix}Length`] ?? 10,
+                    options[`${e.prefix}Width`] ?? 1
                 ];
 
                 // Negate the length
-                if (options.tickPosition === 'inside') {
+                if (options[`${e.prefix}Position`] === 'inside') {
                     e.tickSize[0] *= -1;
                 }
             }
