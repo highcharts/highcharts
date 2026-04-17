@@ -53,7 +53,7 @@ const defaultRadialGaugeOptions: DeepPartial<RadialAxisOptions> = {
     },
     minorGridLineWidth: 0,
     tickLength: void 0,
-    tickWidth: 1,
+    tickWidth: 2,
     tickPixelInterval: 100,
     tickPosition: 'inside',
     title: {

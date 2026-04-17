@@ -1180,7 +1180,7 @@ namespace RadialAxis {
     }
 
     /**
-     * Finalize modification of axis instance with radial logic.
+     * Gauge-specific tick length
      */
     function onAxisAfterTickSize(
         this: AxisComposition,
@@ -1194,11 +1194,7 @@ namespace RadialAxis {
 
             if (pane.hasSeriesType('gauge')) {
                 e.tickSize = [
-                    (
-                        defined(tickLength) ?
-                            relativeLength(tickLength, pane.center[2] / 2) :
-                            void 0
-                    ) ?? (pane.center[2] - pane.center[3]) / 2,
+                    tickLength ?? 10,
                     tickWidth ?? 1
                 ];
 
