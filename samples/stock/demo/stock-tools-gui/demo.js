@@ -65,7 +65,8 @@ const NVIDIAPriceConnector =
                 open: `${NVIDIACorpId}_Open`,
                 high: `${NVIDIACorpId}_High`,
                 low: `${NVIDIACorpId}_Low`,
-                close: `${NVIDIACorpId}_Close`
+                close: `${NVIDIACorpId}_Close`,
+                y: `${NVIDIACorpId}_Close` // #22506, issue no. 6
             },
             dataGrouping: {
                 groupPixelWidth: 20
