@@ -510,47 +510,15 @@ class PieSeries extends Series {
             point.angle = angle;
         }
 
-        const applyPointPaddingInPixels = (
-            point: PiePoint,
-            paddingInPixels: number
-        ): void => {
-            const shapeArgs = point.shapeArgs;
-
-            if (
-                !shapeArgs ||
-                typeof shapeArgs.start !== 'number' ||
-                typeof shapeArgs.end !== 'number'
-            ) {
-                return;
-            }
-
-            const radius = shapeArgs.r || 0;
-            const rangeRadians = Math.abs(shapeArgs.end - shapeArgs.start);
-
-            if (!radius || !rangeRadians || paddingInPixels <= 0) {
-                return;
-            }
-
-            const rawPaddingInRadians = paddingInPixels / radius;
-            const paddingInRadians = Math.min(
-                rawPaddingInRadians,
-                rangeRadians - 1e-6
-            );
-
-            if (paddingInRadians <= 0) {
-                return;
-            }
-
-            shapeArgs.padding = paddingInRadians / 2;
-        };
-
-        // TODO remove as any and fix the type
+        // TODO remove as any and fix the type, optimze code below
         const pointPadding = (series.options as any).pointPadding;
 
         // Point padding number => pixels.
         if (typeof pointPadding === 'number') {
             series.points.forEach((point): void => {
-                applyPointPaddingInPixels(point, pointPadding);
+                if (point.shapeArgs) {
+                    point.shapeArgs.padding = pointPadding / 2;
+                }
             });
         }
 
@@ -565,10 +533,10 @@ class PieSeries extends Series {
                     const shapeArgs = point.shapeArgs,
                         radius = shapeArgs?.r || 0;
 
-                    applyPointPaddingInPixels(
-                        point,
-                        (percentage / 100) * radius
-                    );
+                    if (point.shapeArgs) {
+                        point.shapeArgs.padding =
+                            ((percentage / 100) * radius) / 2;
+                    }
                 });
             }
         }

@@ -57,25 +57,36 @@ function arc(
     const arc: SVGPath = [];
 
     if (options) {
-        const padding = options.padding || 0,
-            minArcRange = 0.05;
+        const rawStart = options.start || 0,
+            rawEnd = options.end || 0,
+            radianRange = Math.abs(rawEnd - rawStart),
+            padding = options.padding || 0,
+            radius = options.r || 0,
+            paddingInRadiansRaw =
+                radius > 0 && padding > 0 ? padding / radius : 0,
+            minArcRange = 0.05,
+            // Subtract a small number to prevent cos and sin of start and end
+            // from becoming equal on 360 arcs (#1561). See "Arc proximity"
+            // tests at samples/unit-tests/svgrenderer/symbol/demo.js
+            proximity = 0.0001;
 
-        let start = options.start ? options.start + padding : 0,
-            end = options.end ? options.end - padding : 0;
+        const paddingInRadians = Math.min(
+            paddingInRadiansRaw,
+            Math.abs(rawEnd - rawStart) - proximity
+        );
 
-        // Check if pading can be applied to the arc
+        let start = rawStart ? rawStart + paddingInRadians : 0,
+            end = rawEnd ? rawEnd - paddingInRadians : 0;
+
+        // Check if padding can be applied to the arc
         if (padding > 0 && Math.abs(end - start) <= minArcRange) {
-            const middleAngleWithPadding = (start + end) / 2;
-            start = middleAngleWithPadding - minArcRange / 2;
-            end = middleAngleWithPadding + minArcRange / 2;
+            const middleAngle = (start + end) / 2;
+            start = middleAngle - minArcRange / 2;
+            end = middleAngle + minArcRange / 2;
         }
 
         const rx = pick(options.r, w),
             ry = pick(options.r, h || w),
-            // Subtract a small number to prevent cos and sin of start and end
-            // from becoming equal on 360 arcs (#1561). See "Arc proximity"
-            // tests at samples/unit-tests/svgrenderer/symbol/demo.js
-            proximity = 0.0001,
             fullCircle = (
                 Math.abs(end - start - 2 * Math.PI) <
                 proximity
@@ -120,34 +131,51 @@ function arc(
         );
 
         if (defined(innerRadius)) {
-            let ccx = cx,
-                ccy = cy,
-                cInnerRadius = innerRadius,
-                cCosStart = cosStart,
-                cSinStart = sinStart,
-                cCosEnd = cosEnd,
-                cSinEnd = sinEnd;
+            // Check minimal inner radius value
+            const minInnerRadius = (padding * 2) / radianRange;
+            let cInnerRadius = innerRadius;
 
-            if (padding > 0 && options.end && options.start) {
-                const radius = options.r || 0,
-                    rangeRadians = Math.abs(options.end - options.start),
-                    reducedRange = Math.abs(start - end),
-                    reducedRadius = radius * (reducedRange / rangeRadians),
-                    deltaRadius = Math.max(0, radius - reducedRadius),
-                    middleAngle = (start + end) / 2,
-                    deltaX = Math.cos(middleAngle) * deltaRadius,
-                    deltaY = Math.sin(middleAngle) * deltaRadius;
+            if (padding > 0 && minInnerRadius > innerRadius) {
+                const minAcceptableInnerRadius =
+                    radius * 0.5 < innerRadius ? innerRadius : radius * 0.5;
 
-                ccx += deltaX;
-                ccy += deltaY;
+                cInnerRadius = minInnerRadius > minAcceptableInnerRadius ?
+                    minAcceptableInnerRadius : minInnerRadius;
+            }
 
-                cCosStart = fullCircle ? 0 : Math.cos(options.start),
-                cSinStart = fullCircle ? 1 : Math.sin(options.start),
-                cCosEnd = fullCircle ? 0 : Math.cos(options.end),
-                cSinEnd = fullCircle ? 1 : Math.sin(options.end);
+            let innerArcStartDeltaX = cInnerRadius * cosEnd;
+            let innerArcStartDeltaY = cInnerRadius * sinEnd;
+            let innerArcEndDeltaX =
+                fullCircle ? -0.001 : cInnerRadius * cosStart;
+            let innerArcEndDeltaY = cInnerRadius * sinStart;
 
-                // Calculate reduced innerRadius
-                cInnerRadius = Math.max(0, innerRadius - deltaRadius);
+            if (padding > 0) {
+                const innerPaddingInRadiansRaw = padding / cInnerRadius;
+                const innerPaddingInRadians = Math.min(
+                    innerPaddingInRadiansRaw,
+                    Math.abs(rawEnd - rawStart) - proximity
+                );
+
+                let innerStart =
+                    rawStart ? rawStart + innerPaddingInRadians : 0;
+                let innerEnd =
+                    rawEnd ? rawEnd - innerPaddingInRadians : 0;
+
+                // Check if pading can be applied to the inner arc
+                if (innerEnd < innerStart) {
+                    innerStart = innerEnd = (innerStart + innerEnd) / 2;
+                }
+
+                const innerCosStart = fullCircle ? 0 : Math.cos(innerStart),
+                    innerSinStart = fullCircle ? 1 : Math.sin(innerStart),
+                    innerCosEnd = fullCircle ? 0 : Math.cos(innerEnd),
+                    innerSinEnd = fullCircle ? 1 : Math.sin(innerEnd);
+
+                innerArcStartDeltaX = cInnerRadius * innerCosEnd;
+                innerArcStartDeltaY = cInnerRadius * innerSinEnd;
+                innerArcEndDeltaX =
+                    fullCircle ? -0.001 : cInnerRadius * innerCosStart;
+                innerArcEndDeltaY = cInnerRadius * innerSinStart;
             }
 
             arcSegment = [
@@ -158,8 +186,8 @@ function arc(
                 longArc, // Long or short arc
                 // Clockwise - opposite to the outer arc clockwise
                 defined(options.clockwise) ? 1 - options.clockwise : 0,
-                ccx + (fullCircle ? -0.001 : cInnerRadius * cCosStart),
-                ccy + cInnerRadius * cSinStart
+                cx + innerArcEndDeltaX,
+                cy + innerArcEndDeltaY
             ];
             // Memo for border radius
             arcSegment.params = {
@@ -176,8 +204,8 @@ function arc(
                         cy + innerRadius * sinEnd
                     ] : [
                         'L',
-                        ccx + cInnerRadius * cCosEnd,
-                        ccy + cInnerRadius * cSinEnd
+                        cx + innerArcStartDeltaX,
+                        cy + innerArcStartDeltaY
                     ],
                 arcSegment
             );
