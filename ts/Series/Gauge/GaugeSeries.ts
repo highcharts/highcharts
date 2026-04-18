@@ -207,13 +207,13 @@ class GaugeSeries extends Series {
                  * @sample {highcharts} highcharts/plotoptions/gauge-dial/
                  *         Dial options demonstrated
                  *
-                 * @type      {number}
-                 * @default   16
+                 * @type      {number|string}
+                 * @default   18%
                  * @since     2.3.0
                  * @product   highcharts
                  * @apioption plotOptions.gauge.dial.baseWidth
                  */
-                baseWidth: 18,
+                baseWidth: '18%',
 
                 /**
                  * The border color or stroke of the gauge's dial. By default,
@@ -235,12 +235,12 @@ class GaugeSeries extends Series {
                  * The border radius of the gauge dial
                  *
                  * @type      {number|string}
-                 * @default   8
+                 * @default   9%
                  * @since     next
                  * @product   highcharts
                  * @apioption plotOptions.gauge.dial.borderRadius
                  */
-                borderRadius: 9,
+                borderRadius: '9%',
 
                 /**
                  * The width of the gauge dial border in pixels.
@@ -294,12 +294,12 @@ class GaugeSeries extends Series {
                  *         Dial options demonstrated
                  *
                  * @type      {number|string}
-                 * @default   8
+                 * @default   9%
                  * @since     2.3.0
                  * @product   highcharts
                  * @apioption plotOptions.gauge.dial.rearLength
                  */
-                rearLength: 9,
+                rearLength: '9%',
 
                 /**
                  * The width of the top of the dial, closest to the perimeter.
@@ -310,13 +310,13 @@ class GaugeSeries extends Series {
                  * @sample {highcharts} highcharts/plotoptions/gauge-dial/
                  *         Dial options demonstrated
                  *
-                 * @type      {number}
-                 * @default   4
+                 * @type      {number|string}
+                 * @default   4%
                  * @since     2.3.0
                  * @product   highcharts
                  * @apioption plotOptions.gauge.dial.topWidth
                  */
-                topWidth: 4
+                topWidth: '4%'
             },
 
             /**
@@ -359,13 +359,13 @@ class GaugeSeries extends Series {
                  * @sample {highcharts} highcharts/plotoptions/gauge-pivot/
                  *         Pivot options demonstrated
                  *
-                 * @type      {number}
-                 * @default   5
+                 * @type      {number|string}
+                 * @default   4%
                  * @since     2.3.0
                  * @product   highcharts
                  * @apioption plotOptions.gauge.pivot.radius
                  */
-                radius: 5,
+                radius: '4%',
 
                 /**
                  * The border or stroke width of the pivot.
@@ -566,7 +566,11 @@ class GaugeSeries extends Series {
             pivot = series.pivot,
             options = series.options,
             pivotOptions = options.pivot,
-            renderer = chart.renderer;
+            renderer = chart.renderer,
+            pivotRadius = relativeLength(
+                pivotOptions?.radius || 0,
+                center[2] / 2
+            );
 
         series.points.forEach((point): void => {
 
@@ -588,8 +592,8 @@ class GaugeSeries extends Series {
                 }
 
                 // Presentational attributes
-                if (!chart.styledMode) {
-                    (point.graphic as any)[graphic ? 'animate' : 'attr']({
+                if (!chart.styledMode && point.graphic) {
+                    point.graphic[graphic ? 'animate' : 'attr']({
                         stroke: dialOptions.borderColor,
                         'stroke-width': dialOptions.borderWidth,
                         fill: dialOptions.backgroundColor
@@ -599,10 +603,12 @@ class GaugeSeries extends Series {
         });
 
         // Add or move the pivot
+
         if (pivot) {
             pivot.animate({ // #1235
                 translateX: center[0],
-                translateY: center[1]
+                translateY: center[1],
+                r: pivotRadius
             });
         } else if (pivotOptions) {
             series.pivot =
@@ -610,7 +616,7 @@ class GaugeSeries extends Series {
                     .circle(
                         0,
                         0,
-                        relativeLength(pivotOptions.radius, center[2] / 2)
+                        pivotRadius
                     )
                     .attr({
                         zIndex: 2
