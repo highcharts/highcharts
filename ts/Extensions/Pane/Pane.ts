@@ -297,19 +297,22 @@ class Pane {
 
         // Get the required margin in order to display the data label in or
         // below the center
-        const centerMargin = chart.series
-            .filter((s): boolean => s.is('gauge') && s.yAxis?.pane === this)
-            .reduce((max, s): number => {
-                const dl = splat(s.options.dataLabels)[0];
-                let margin = 0;
-                if (dl) {
-                    // 30 is an approximation of the default data label height.
-                    // It is not yet rendered.
-                    margin = (1 - getAlignFactor(dl.verticalAlign)) * 30 +
-                        (dl.y || 0);
-                }
-                return Math.max(max, margin);
-            }, 0) + margin[2];
+        const centerMargin = Math.min(
+            chart.series
+                .filter((s): boolean => s.is('gauge') && s.yAxis?.pane === this)
+                .reduce((max, s): number => {
+                    const dl = splat(s.options.dataLabels)[0];
+                    let margin = 0;
+                    if (dl && dl.enabled !== false) {
+                        // 30 is an approximation of the default data label
+                        // height. It is not yet rendered.
+                        margin = (1 - getAlignFactor(dl.verticalAlign)) * 30 +
+                            (dl.y || 0);
+                    }
+                    return Math.max(max, margin);
+                }, 0), // + margin[2],
+            plotHeight * 0.3
+        );
 
         // Handle auto-positioning when size and center are undefined
         if (
@@ -351,7 +354,7 @@ class Pane {
                     2 * (centerMargin - plotHeight);
                 if (overflow > 0) {
                     appliedCenterMargin = overflow;
-                    size -= appliedCenterMargin;
+                    size = Math.max(1, size - appliedCenterMargin);
                 }
             }
         }

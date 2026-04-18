@@ -474,8 +474,14 @@ class GaugeSeries extends Series {
                 ),
                 radius = relativeLength(dialOptions.radius, center[2] / 2),
                 baseLength = relativeLength(dialOptions.baseLength, radius),
-                rearLength = relativeLength(dialOptions.rearLength, radius),
-                baseWidth = relativeLength(dialOptions.baseWidth, radius),
+                rearLength = Math.min(
+                    relativeLength(dialOptions.rearLength, radius),
+                    radius
+                ),
+                baseWidth = Math.min(
+                    relativeLength(dialOptions.baseWidth, radius),
+                    radius
+                ),
                 topWidth = relativeLength(dialOptions.topWidth, radius),
                 borderRadius = relativeLength(dialOptions.borderRadius, radius),
                 // Border radius at the base
