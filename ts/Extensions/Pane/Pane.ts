@@ -152,27 +152,20 @@ class Pane {
     }
 
     /**
-     * @internal
-     * @function Highcharts.Pane#setOptions
+     * Set options override. Angular charts have a default background (#3318)
+     * and an inner size.
      *
-     * @param {Highcharts.PaneOptions} options
+     * @internal
      */
     public setOptions(options: PaneOptions): void {
-
-        const { chart } = this,
-            conditionalDefaults: PaneOptions = {};
-
-        if (chart.angular) {
-            conditionalDefaults.background = {};
-            conditionalDefaults.innerSize = this.hasSeriesType('gauge') ?
-                '85%' :
-                '60%';
-        }
-
-        // Set options. Angular charts have a default background (#3318)
-        this.options = options = merge(
+        this.options = merge(
             PaneDefaults.pane,
-            conditionalDefaults,
+            this.chart.angular ? {
+                // Add a single background element with default properties
+                background: {},
+                // An inner size for plot bands and axis layout
+                innerSize: '85%'
+            } : {},
             options
         );
     }
