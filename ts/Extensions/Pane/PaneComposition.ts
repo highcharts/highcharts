@@ -91,7 +91,7 @@ function onSetClip(
     }
 
     const { plotWidth, plotHeight } = this.chart,
-        smallestSize = Math.min(plotWidth, plotHeight),
+        smallestSize = Math.max(1, Math.min(plotWidth, plotHeight)),
         xPane = this.xAxis.pane,
         yPane = this.yAxis.pane;
 

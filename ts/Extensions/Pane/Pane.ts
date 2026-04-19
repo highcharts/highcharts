@@ -337,10 +337,10 @@ class Pane {
             sizeFromAngle = (plotHeight - margin[0] - margin[2]) /
                 sizeRatio;
             if (size === void 0) {
-                size = Math.min(
+                size = Math.max(Math.min(
                     sizeFromAngle,
                     plotWidth - margin[1] - margin[3]
-                );
+                ), 1);
 
                 // Make sure there is space for the data label (centerMargin)
                 const overflow = size + margin[0] + margin[2] +
