@@ -291,9 +291,7 @@ namespace ColorAxisComposition {
         this.allItems.forEach((item): void => {
             const legendItem = item.legendItem;
 
-            if (
-                legendItem?.group
-            ) {
+            if (legendItem?.group) {
                 const element = legendItem.group.element;
 
                 element.addEventListener('mouseover', (): void => {
