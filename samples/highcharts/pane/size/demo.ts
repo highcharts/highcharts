@@ -23,15 +23,13 @@ const chart = Highcharts.chart('container', {
             endAngle: ${getPane().endAngle}`
     },
     pane: {
-        ...getPane()
+        ...getPane(),
+        margin: 100
     },
 
     yAxis: {
         min: 0,
-        max: 200,
-        labels: {
-            distance: 15
-        }
+        max: 200
     },
 
     series: [{

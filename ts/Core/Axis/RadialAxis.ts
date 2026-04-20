@@ -522,6 +522,11 @@ namespace RadialAxis {
                 'setOptions',
                 onGlobalSetOptions
             );
+            wrap(
+                AxisClass.prototype,
+                'getMinorTickInterval',
+                wrapAxisGetMinorTickInterval
+            );
             wrap(TickClass.prototype, 'getMarkPath', wrapTickGetMarkPath);
         }
 
@@ -704,6 +709,17 @@ namespace RadialAxis {
         // Call the Axis prototype method (the method we're in now is on the
         // instance)
         axisProto.getOffset.call(this);
+
+        const offset = this.options.offset ?? (
+            this.pane.hasSeriesType('gauge') ?
+                '-20%' : void 0
+        );
+        if (defined(offset)) {
+            this.offset = relativeLength(
+                offset,
+                this.center[2] / 2
+            ) * -1;
+        }
 
         // Title or label offsets are not counted
         this.chart.axisOffset[this.side] = 0;
@@ -899,8 +915,7 @@ namespace RadialAxis {
             isCrosshair = options.isCrosshair,
             paneInnerR = center[3] / 2;
 
-
-        let value = options.value,
+        let value = chart.time.parse(options.value) || 0,
             innerRatio,
             distance,
             a,
@@ -911,7 +926,10 @@ namespace RadialAxis {
             crossPos,
             path: SVGPath;
 
-        const end = this.getPosition(value as any);
+        const end = this.getPosition(
+            value,
+            center[2] / 2 + (this.isCircular ? this.offset : 0)
+        );
 
         let x2 = end.x,
             y2 = end.y;
@@ -921,7 +939,7 @@ namespace RadialAxis {
             // Find crosshair's position and perform destructuring
             // assignment
             crossPos = this.getCrosshairPosition(options, x1, y1);
-            value = crossPos[0];
+            value = crossPos[0] || 0;
             x2 = crossPos[1];
             y2 = crossPos[2];
         }
@@ -954,19 +972,19 @@ namespace RadialAxis {
                 ['M', x1 + a * (x2 - x1), y1 - a * (y1 - y2)],
                 ['L', x2 - (1 - b) * (x2 - x1), y2 + (1 - b) * (y1 - y2)]
             ];
-            // Concentric circles
+
+        // Concentric circles
         } else {
-            // Pick the right values depending if it is grid line or
-            // crosshair
-            value = this.translate(value as any);
+            // Pick the right values depending if it is grid line or crosshair
+            let transValue = this.translate(value);
 
             // This is required in case when xAxis is non-circular to
             // prevent grid lines (or crosshairs, if enabled) from
             // rendering above the center after they supposed to be
             // displayed below the center point
-            if (value) {
-                if (value < 0 || value > height) {
-                    value = 0;
+            if (transValue) {
+                if (transValue < 0 || transValue > height) {
+                    transValue = 0;
                 }
             }
 
@@ -974,7 +992,7 @@ namespace RadialAxis {
                 // A value of 0 is in the center, so it won't be
                 // visible, but draw it anyway for update and animation
                 // (#2366)
-                path = this.getLinePath(0, value, paneInnerR);
+                path = this.getLinePath(0, transValue, paneInnerR);
                 // Concentric polygons
             } else {
                 path = [];
@@ -1000,12 +1018,15 @@ namespace RadialAxis {
                         tickPositions = tickPositions.slice().reverse();
                     }
 
-                    if (value) {
-                        value += paneInnerR;
+                    if (transValue) {
+                        transValue += paneInnerR;
                     }
 
                     for (let i = 0; i < tickPositions.length; i++) {
-                        xy = otherAxis.getPosition(tickPositions[i], value);
+                        xy = otherAxis.getPosition(
+                            tickPositions[i],
+                            transValue
+                        );
                         path.push(
                             i ? ['L', xy.x, xy.y] : ['M', xy.x, xy.y]
                         );
@@ -1146,7 +1167,6 @@ namespace RadialAxis {
             // Gauges
             this.startAngleRad = start;
             this.endAngleRad = end;
-            this.offset = options.offset || 0;
 
             // Normalize Start and End to <0, 2*PI> range
             // (in degrees: <0,360>)
@@ -1170,30 +1190,23 @@ namespace RadialAxis {
     }
 
     /**
-     * Finalize modification of axis instance with radial logic.
+     * Gauge-specific tick length
      */
     function onAxisAfterTickSize(
         this: AxisComposition,
         e: { tickSize?: [number, number], prefix: 'tick' | 'minorTick' }
     ): void {
         if (this.chart.angular) {
-            const { pane } = this,
-                options = this.options,
-                tickLength = options[`${e.prefix}Length`],
-                tickWidth = options[`${e.prefix}Width`];
+            const { options, pane } = this;
 
             if (pane.hasSeriesType('gauge')) {
                 e.tickSize = [
-                    (
-                        defined(tickLength) ?
-                            relativeLength(tickLength, pane.center[2] / 2) :
-                            void 0
-                    ) ?? (pane.center[2] - pane.center[3]) / 2,
-                    tickWidth ?? 1
+                    options[`${e.prefix}Length`] ?? 10,
+                    options[`${e.prefix}Width`] ?? 1
                 ];
 
                 // Negate the length
-                if (options.tickPosition === 'inside') {
+                if (options[`${e.prefix}Position`] === 'inside') {
                     e.tickSize[0] *= -1;
                 }
             }
@@ -1328,7 +1341,7 @@ namespace RadialAxis {
 
         const axis = this.axis,
             labelBBox = label.getBBox(),
-            labelOptions = axis.options.labels as any,
+            labelOptions = axis.options.labels,
             angle = (
                 (
                     axis.translate(this.pos) + axis.startAngleRad +
@@ -1355,7 +1368,7 @@ namespace RadialAxis {
                 this.pos,
                 (axis.center[2] / 2) +
                     relativeLength(
-                        pick(labelOptions.distance, -25),
+                        (labelOptions.distance ?? -25) + axis.offset,
                         axis.center[2] / 2,
                         -axis.center[2] / 2
                     )
@@ -1693,6 +1706,28 @@ namespace RadialAxis {
         }
 
         fireEvent(this, 'afterSetOptions');
+    }
+
+    /**
+     * Wrap the `getMinorTickInterval` method to return 'auto' for gauge axes by
+     * default, when `minorTicks` are not explicitly enabled or disabled.
+     */
+    function wrapAxisGetMinorTickInterval(
+        this: AxisComposition,
+        proceed: Function
+    ): ('auto'|number|undefined) {
+
+        if (
+            !defined(this.options.minorTicks) &&
+            this.pane.hasSeriesType('gauge')
+        ) {
+            return 'auto';
+        }
+
+        return proceed.apply(
+            this,
+            Array.prototype.slice.call(arguments, 1)
+        );
     }
 
     /**

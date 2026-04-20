@@ -4,7 +4,7 @@ Highcharts.chart('container', {
         type: 'gauge'
     },
     title: {
-        text: 'Demo of <em>pane.size</em>'
+        text: 'Demo of <em>pane.margin</em>'
     },
     yAxis: {
         max: 100,
@@ -20,9 +20,7 @@ Highcharts.chart('container', {
         }]
     },
     pane: {
-        endAngle: 360,
-        size: '85%',
-        startAngle: 0
+        margin: 30
     },
     series: [{
         data: [80]

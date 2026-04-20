@@ -183,7 +183,11 @@ export interface PaneOptions {
      * This does not apply when an explicit `pane.size` is set. An array sets
      * individual margins for the sides in the order [top, right, bottom, left].
      *
+     * By default, the margin is approximated to make room for the radial axis
+     * labels of a gauge chart.
+     *
      * @since   next
+     * @sample  {highcharts} highcharts/pane/margin
      */
     margin?: number|Array<number>;
     /**

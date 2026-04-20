@@ -4,8 +4,8 @@ import type {
 
 export default {
     controls: [{
-        path: 'pane.size',
-        value: '85%'
+        path: 'pane.margin',
+        value: 30
     }],
     modules: ['highcharts-more'],
     templates: ['gauge'],
@@ -14,9 +14,7 @@ export default {
             plotBorderWidth: 1
         },
         pane: {
-            size: '85%',
-            startAngle: 0,
-            endAngle: 360
+            margin: 30
         }
     }
 } satisfies SampleGeneratorConfig;

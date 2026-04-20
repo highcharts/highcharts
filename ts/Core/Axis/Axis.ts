@@ -834,7 +834,6 @@ class Axis {
         axis.len ??= 0;
         axis.minRange = axis.userMinRange = options.minRange || options.maxZoom;
         axis.range = options.range;
-        axis.offset = options.offset || 0;
 
 
         /**
@@ -3859,9 +3858,12 @@ class Axis {
         axis.renderLine();
 
         // Handle automatic or user set offset
-        axis.offset = directionFactor * pick(
-            options.offset,
-            axisOffset[side] ? axisOffset[side] + (options.margin || 0) : 0
+        axis.offset = directionFactor * (
+            isNumber(options.offset) ?
+                options.offset :
+                axisOffset[side] ?
+                    axisOffset[side] + (options.margin || 0) :
+                    0
         );
 
         axis.tickRotCorr = axis.tickRotCorr || { x: 0, y: 0 }; // Polar

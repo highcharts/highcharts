@@ -4,19 +4,14 @@ import type {
 
 export default {
     controls: [{
-        path: 'pane.size',
-        value: '85%'
+        path: 'yAxis.gridLineWidth',
+        value: 1
     }],
     modules: ['highcharts-more'],
     templates: ['gauge'],
     chartOptionsExtra: {
-        chart: {
-            plotBorderWidth: 1
-        },
-        pane: {
-            size: '85%',
-            startAngle: 0,
-            endAngle: 360
+        yAxis: {
+            gridLineColor: 'var(--highcharts-background-color)'
         }
     }
 } satisfies SampleGeneratorConfig;

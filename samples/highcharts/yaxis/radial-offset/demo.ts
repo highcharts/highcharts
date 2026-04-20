@@ -1,14 +1,15 @@
 Highcharts.chart('container', {
     chart: {
-        plotBorderWidth: 1,
         type: 'gauge'
     },
     title: {
-        text: 'Demo of <em>pane.size</em>'
+        text: 'Demo of <em>yAxis.offset</em>'
     },
     yAxis: {
+        lineWidth: 1,
         max: 100,
         min: 0,
+        offset: '-20%',
         plotBands: [{
             color: '#ffbf00',
             from: 50,
@@ -18,11 +19,6 @@ Highcharts.chart('container', {
             from: 70,
             to: 100
         }]
-    },
-    pane: {
-        endAngle: 360,
-        size: '85%',
-        startAngle: 0
     },
     series: [{
         data: [80]

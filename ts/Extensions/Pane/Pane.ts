@@ -30,9 +30,9 @@ import CU from '../../Series/CenteredUtilities.js';
 import PaneComposition from './PaneComposition.js';
 import PaneDefaults from './PaneDefaults.js';
 import {
+    defined,
     extend,
     getAlignFactor,
-    isArray,
     isNumber,
     merge,
     relativeLength,
@@ -152,27 +152,20 @@ class Pane {
     }
 
     /**
-     * @internal
-     * @function Highcharts.Pane#setOptions
+     * Set options override. Angular charts have a default background (#3318)
+     * and an inner size.
      *
-     * @param {Highcharts.PaneOptions} options
+     * @internal
      */
     public setOptions(options: PaneOptions): void {
-
-        const { chart } = this,
-            conditionalDefaults: PaneOptions = {};
-
-        if (chart.angular) {
-            conditionalDefaults.background = {};
-            conditionalDefaults.innerSize = this.hasSeriesType('gauge') ?
-                '85%' :
-                '60%';
-        }
-
-        // Set options. Angular charts have a default background (#3318)
-        this.options = options = merge(
+        this.options = merge(
             PaneDefaults.pane,
-            conditionalDefaults,
+            this.chart.angular ? {
+                // Add a single background element with default properties
+                background: {},
+                // An inner size for plot bands and axis layout
+                innerSize: '85%'
+            } : {},
             options
         );
     }
@@ -288,8 +281,14 @@ class Pane {
         const { axis, chart, options } = this,
             { plotHeight, plotWidth } = chart,
             centerY = options.center?.[1],
-            m = options.margin || 0,
-            margin = isArray(m) ? m : [m, m, m, m];
+            m = options.margin,
+            marginLoose: Array<number|undefined> = Array.isArray(m) ?
+                m :
+                [m, m, m, m],
+            margin: Array<number> = [],
+            gaugeSeries = chart.series.filter(
+                (s): boolean => s.is('gauge') && s.yAxis?.pane === this
+            );
 
         let size = options.size,
             sizeFromAngle: number|undefined,
@@ -297,19 +296,46 @@ class Pane {
 
         // Get the required margin in order to display the data label in or
         // below the center
-        const centerMargin = chart.series
-            .filter((s): boolean => s.is('gauge') && s.yAxis?.pane === this)
+        const dataLabelMargin = Math.min(
+            gaugeSeries
+                .reduce((max, s): number => {
+                    const dl = splat(s.options.dataLabels)[0];
+                    let dlMargin = 0;
+                    if (dl && dl.enabled !== false) {
+                        // 30 is an approximation of the default data label
+                        // height. It is not yet rendered.
+                        dlMargin = (1 - getAlignFactor(dl.verticalAlign)) * 30 +
+                            (dl.y || 0);
+                    }
+                    return Math.max(max, dlMargin);
+                }, 0), // + margin[2],
+            plotHeight * 0.3
+        );
+
+        // Get the required margin to make room for the radial axis labels.
+        const axisLabelMargin = gaugeSeries
             .reduce((max, s): number => {
-                const dl = splat(s.options.dataLabels)[0];
-                let margin = 0;
-                if (dl) {
-                    // 30 is an approximation of the default data label height.
-                    // It is not yet rendered.
-                    margin = (1 - getAlignFactor(dl.verticalAlign)) * 30 +
-                        (dl.y || 0);
+                const labels = s.yAxis?.options.labels;
+                if (labels?.enabled) {
+                    const fontSize = String(labels.style?.fontSize || ''),
+                        // Approximate the line height because we don't have the
+                        // actual label to measure
+                        lineHeightGuess = (/px$/.test(fontSize) ?
+                            parseFloat(fontSize) :
+                            /em$/.test(fontSize) ?
+                                parseFloat(fontSize) * 12 :
+                                12
+                        ) * 1.2, // 1.2 is a line height approximation
+                        m = (labels.distance || 0) + lineHeightGuess / 2;
+
+                    return Math.max(max, m);
                 }
-                return Math.max(max, margin);
-            }, 0) + margin[2];
+                return max;
+            }, 0);
+
+        marginLoose.forEach((m, i): void => {
+            margin[i] = m ?? Math.max(axisLabelMargin || 0);
+        });
 
         // Handle auto-positioning when size and center are undefined
         if (
@@ -341,17 +367,17 @@ class Pane {
             sizeFromAngle = (plotHeight - margin[0] - margin[2]) /
                 sizeRatio;
             if (size === void 0) {
-                size = Math.min(
+                size = Math.max(Math.min(
                     sizeFromAngle,
                     plotWidth - margin[1] - margin[3]
-                );
+                ), 1);
 
                 // Make sure there is space for the data label (centerMargin)
                 const overflow = size + margin[0] + margin[2] +
-                    2 * (centerMargin - plotHeight);
+                    2 * (dataLabelMargin - plotHeight);
                 if (overflow > 0) {
                     appliedCenterMargin = overflow;
-                    size -= appliedCenterMargin;
+                    size = Math.max(1, size - appliedCenterMargin);
                 }
             }
         }
@@ -371,7 +397,7 @@ class Pane {
             );
         }
 
-        if (!isNumber(centerY)) {
+        if (!defined(centerY)) {
             if (options.size) {
                 this.center[1] = plotHeight / 2;
             } else if (isNumber(sizeFromAngle)) {

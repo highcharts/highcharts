@@ -2921,7 +2921,7 @@ class Chart {
 
         for (const axis of axes) {
             const { options } = axis,
-                { labels } = options;
+                { labels, offset } = options;
 
             if (
                 chart.hasCartesianSeries && // #20948
@@ -2949,7 +2949,7 @@ class Chart {
                 ) {
                     expectedSpace = label.getBBox().height +
                         labels.distance +
-                        Math.max(options.offset || 0, 0);
+                        Math.max(isNumber(offset) ? offset : 0, 0);
                 }
 
                 if (expectedSpace) {
