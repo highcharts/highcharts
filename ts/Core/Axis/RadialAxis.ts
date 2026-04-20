@@ -915,8 +915,7 @@ namespace RadialAxis {
             isCrosshair = options.isCrosshair,
             paneInnerR = center[3] / 2;
 
-
-        let value = options.value,
+        let value = chart.time.parse(options.value) || 0,
             innerRatio,
             distance,
             a,
@@ -927,7 +926,10 @@ namespace RadialAxis {
             crossPos,
             path: SVGPath;
 
-        const end = this.getPosition(value as any);
+        const end = this.getPosition(
+            value,
+            center[2] / 2 + (this.isCircular ? this.offset : 0)
+        );
 
         let x2 = end.x,
             y2 = end.y;
@@ -937,7 +939,7 @@ namespace RadialAxis {
             // Find crosshair's position and perform destructuring
             // assignment
             crossPos = this.getCrosshairPosition(options, x1, y1);
-            value = crossPos[0];
+            value = crossPos[0] || 0;
             x2 = crossPos[1];
             y2 = crossPos[2];
         }
@@ -970,19 +972,19 @@ namespace RadialAxis {
                 ['M', x1 + a * (x2 - x1), y1 - a * (y1 - y2)],
                 ['L', x2 - (1 - b) * (x2 - x1), y2 + (1 - b) * (y1 - y2)]
             ];
-            // Concentric circles
+
+        // Concentric circles
         } else {
-            // Pick the right values depending if it is grid line or
-            // crosshair
-            value = this.translate(value as any);
+            // Pick the right values depending if it is grid line or crosshair
+            let transValue = this.translate(value);
 
             // This is required in case when xAxis is non-circular to
             // prevent grid lines (or crosshairs, if enabled) from
             // rendering above the center after they supposed to be
             // displayed below the center point
-            if (value) {
-                if (value < 0 || value > height) {
-                    value = 0;
+            if (transValue) {
+                if (transValue < 0 || transValue > height) {
+                    transValue = 0;
                 }
             }
 
@@ -990,7 +992,7 @@ namespace RadialAxis {
                 // A value of 0 is in the center, so it won't be
                 // visible, but draw it anyway for update and animation
                 // (#2366)
-                path = this.getLinePath(0, value, paneInnerR);
+                path = this.getLinePath(0, transValue, paneInnerR);
                 // Concentric polygons
             } else {
                 path = [];
@@ -1016,12 +1018,15 @@ namespace RadialAxis {
                         tickPositions = tickPositions.slice().reverse();
                     }
 
-                    if (value) {
-                        value += paneInnerR;
+                    if (transValue) {
+                        transValue += paneInnerR;
                     }
 
                     for (let i = 0; i < tickPositions.length; i++) {
-                        xy = otherAxis.getPosition(tickPositions[i], value);
+                        xy = otherAxis.getPosition(
+                            tickPositions[i],
+                            transValue
+                        );
                         path.push(
                             i ? ['L', xy.x, xy.y] : ['M', xy.x, xy.y]
                         );

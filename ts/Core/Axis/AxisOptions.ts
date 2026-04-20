@@ -954,7 +954,10 @@ export interface AxisOptions {
     /**
      * The width of the grid lines extending the ticks across the plot area.
      * Defaults to 1 on the Y axis and 0 on the X axis, except for 3d
-     * charts.
+     * charts and gauges.
+     *
+     * In gauges, the grid lines are limited to the pane's `size` and
+     * `innerSize`.
      *
      * In styled mode, the stroke width is given in the
      * `.highcharts-grid-line` class.
@@ -963,6 +966,8 @@ export interface AxisOptions {
      *         2px lines
      * @sample {highcharts|highstock} highcharts/css/axis-grid/
      *         Styled mode
+     * @sample {highcharts} highcharts/yaxis/radial-gridline
+     *         Grid lines on gauge
      * @sample {highstock} stock/xaxis/gridlinewidth/
      *         2px lines
      */
