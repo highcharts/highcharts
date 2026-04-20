@@ -461,8 +461,8 @@ namespace DynamicDefaultTheme {
                     borderColor: 'var(--highcharts-neutral-color-20)'
                 },
                 pivot: {
-                    borderColor: 'var(--highcharts-neutral-color-20)',
-                    backgroundColor: 'var(--highcharts-neutral-color-100)'
+                    borderColor: 'var(--highcharts-background-color)',
+                    backgroundColor: 'var(--highcharts-background-color)'
                 }
             },
             packedbubble: {

@@ -213,10 +213,14 @@ const pane: PaneOptions|Array<PaneOptions> = {
      * This does not apply when an explicit `pane.size` is set. An array sets
      * individual margins for the sides in the order [top, right, bottom, left].
      *
+     * By default, the margin is approximated to make room for the radial axis
+     * labels of a gauge chart.
+     *
      * @type    {number|Array<number>}
      * @since   next
+     * @sample  {highcharts} highcharts/pane/margin
      */
-    margin: 20
+    margin: void 0
 
     /**
      * The size of the pane, either as a number defining pixels, or a percentage

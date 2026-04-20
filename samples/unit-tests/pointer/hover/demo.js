@@ -108,10 +108,12 @@ QUnit.test('Testing hovering over panes.', function (assert) {
 
             pane: [
                 {
-                    center: ['25%', '50%']
+                    center: ['25%', '50%'],
+                    margin: 20
                 },
                 {
-                    center: ['75%', '50%']
+                    center: ['75%', '50%'],
+                    margin: 20
                 }
             ],
 
