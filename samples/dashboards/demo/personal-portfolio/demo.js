@@ -184,7 +184,6 @@ const getCurrentTotal = arrOfArr => {
             id: 'invested',
             className: 'dotted-line'
         }],
-
         responsive: {
             rules: [{
                 condition: {
@@ -266,6 +265,7 @@ const getCurrentTotal = arrOfArr => {
             zIndex: 10
         }
     };
+
     const goalAnalysisKPIOptions = {
         chart: {
             height: 186,
