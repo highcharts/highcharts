@@ -39,13 +39,9 @@ Grid.grid('container', {
         }
     },
     lang: {
-        validationErrors: {
-            notEmpty: {
-                notification: 'New value cannot be empty.'
-            },
-            number: {
-                notification: 'New value has to be a number.'
-            }
+        validationNotifications: {
+            notEmpty: 'New value cannot be empty.',
+            number: 'New value has to be a number.'
         }
     },
     rendering: {
@@ -74,7 +70,7 @@ Grid.grid('container', {
         dataType: 'string',
         cells: {
             editMode: {
-                // Gets default error message text or from lang (if defined)
+                // Gets default notification text or from lang (if defined)
                 validationRules: ['notEmpty', 'ignoreCaseUnique']
             }
         }

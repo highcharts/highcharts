@@ -35,7 +35,7 @@ import type AxisBase from './AxisBase';
 import type { AxisType, AxisTypeOptions } from './AxisType';
 import type Chart from '../Chart/Chart';
 import type CSSObject from '../Renderer/CSSObject';
-import type { DeepPartial } from '../../Shared/Types';
+import type { DeepPartial, TypedArray } from '../../Shared/Types';
 import type { EventCallback } from '../Callback';
 import type FontMetricsObject from '../Renderer/FontMetricsObject';
 import type PlotLineOrBand from './PlotLineOrBand/PlotLineOrBand';
@@ -48,7 +48,6 @@ import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 import type TickPositionsArray from './TickPositionsArray';
-import type Types from '../../Shared/Types';
 
 import A from '../Animation/AnimationUtilities.js';
 const { animObject } = A;
@@ -1634,12 +1633,11 @@ class Axis {
                 minRange = null;
 
             } else {
-
                 // Find the closest distance between raw data points, as opposed
                 // to closestPointRange that applies to processed points
                 // (cropped and grouped)
                 closestDataRange = getClosestDistance(
-                    axis.series.map((s): number[]|Types.TypedArray => {
+                    axis.series.map((s): number[]|TypedArray => {
                         const xData = s.getColumn('x');
                         // If xIncrement, we only need to measure the two first
                         // points to get the distance. Saves processing time.
@@ -4971,7 +4969,7 @@ export default Axis;
  * @param {Highcharts.AxisLabelsFormatterContextObject} this
  *
  * @param {Highcharts.AxisLabelsFormatterContextObject} ctx
- * Since v12.5.0, the formatter context passed as an extra argument for arrow
+ * Since v12.6.0, the formatter context passed as an extra argument for arrow
  * functions.
  *
  * @return {string}
@@ -5091,7 +5089,7 @@ export default Axis;
  * Current maximum value.
  *
  * @param {Highcharts.Axis} [ctx]
- * Since v12.5.0, the axis context passed as an extra argument for arrow
+ * Since v12.6.0, the axis context passed as an extra argument for arrow
  * functions.
  *
  * @return {Highcharts.AxisTickPositionsArray|undefined}
@@ -5163,7 +5161,7 @@ export default Axis;
  * Y value of the data point
  *
  * @param {Highcharts.Axis} [ctx]
- * Since v12.5.0, the axis context passed as an extra argument for arrow
+ * Since v12.6.0, the axis context passed as an extra argument for arrow
  * functions.
  *
  * @return {string}

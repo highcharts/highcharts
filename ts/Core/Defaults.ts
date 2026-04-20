@@ -1263,7 +1263,7 @@ const defaultOptions: DefaultOptions = {
          * @sample {highmaps} maps/legend/labelformatter/
          *         Data classes with label formatter
          *
-         * @type {Highcharts.FormatterCallbackFunction<Point|Series>}
+         * @type {Highcharts.FormatterCallbackFunction<Highcharts.Point|Highcharts.Series>}
          */
         labelFormatter: function (
             this: Legend.Item
@@ -2202,7 +2202,7 @@ const defaultOptions: DefaultOptions = {
          * @sample {highmaps} maps/tooltip/formatter/
          *         String formatting
          *
-         * Since v12.5.0, the callback also receives `ctx` as the second
+         * Since v12.6.0, the callback also receives `ctx` as the second
          * argument, so that arrow functions can access the same context as
          * regular functions using `this`.
          *
@@ -2250,7 +2250,7 @@ const defaultOptions: DefaultOptions = {
         /**
          * A callback function for formatting the HTML output for a single point
          * in the tooltip. Like the `pointFormat` string, but with more
-         * flexibility. Since v12.5.0, the callback also receives `ctx` as the
+         * flexibility. Since v12.6.0, the callback also receives `ctx` as the
          * first argument, so that arrow functions can access the same context
          * as regular functions using `this`.
          *
@@ -2268,7 +2268,7 @@ const defaultOptions: DefaultOptions = {
          * `ctx` is the tooltip context (so that arrow-functions can access the
          * same context as a normal function using `this`). Add
          * `chart.plotLeft` and `chart.plotTop` to get the full coordinates.
-         * Since v12.5.0, the callback receives `ctx`.
+         * Since v12.6.0, the callback receives `ctx`.
          *
          * To find the actual hovered `Point` instance, use
          * `this.chart.hoverPoint`. For shared or split tooltips, all the hover
@@ -2809,6 +2809,8 @@ const defaultOptions: DefaultOptions = {
          *
          * @sample highcharts/tooltip/stickoncontact/
          *         Tooltip sticks on pointer contact
+         * @sample highcharts/tooltip/stickoncontact-anchor-link/
+         *         Tooltip with clickable links
          *
          * @type      {boolean}
          * @since     8.0.1
@@ -2894,6 +2896,32 @@ const defaultOptions: DefaultOptions = {
          */
 
         /**
+         * Events for the credits label.
+         *
+         * @type     {object}
+         * @since    12.6.0
+         * @apioption credits.events
+         */
+
+        /**
+         * Callback function to handle click events on the credits label.
+         * The callback can call `event.preventDefault()` to prevent the
+         * default navigation behavior. Alternatively, you can add a general
+         * event handler using `Highcharts.addEvent(Chart, 'creditsClick',
+         * callback)` instead of providing it in the options tree.
+         *
+         * @sample {highcharts} highcharts/credits/events-click/
+         *         Custom click handler
+         *
+         * @param {Event} event
+         *        The click event object.
+         *
+         * @type  {Function}
+         * @since 12.6.0
+         * @apioption credits.events.click
+         */
+
+        /**
          * Whether to show the credits text.
          *
          * @sample {highcharts} highcharts/credits/enabled-false/
@@ -2918,8 +2946,6 @@ const defaultOptions: DefaultOptions = {
         /**
          * Position configuration for the credits label.
          *
-         * @sample {highcharts} highcharts/credits/position-left/
-         *         Left aligned
          * @sample {highcharts} highcharts/credits/position-left/
          *         Left aligned
          * @sample {highmaps} maps/credits/customized/

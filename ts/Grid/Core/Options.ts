@@ -210,6 +210,9 @@ export interface Options {
      * Defines the structure of levels in header. Used for grouping columns
      * headers.
      *
+     * An array where each item can be either a string (column ID) or an object
+     * of type {@link https://api.highcharts.com/grid/typedoc/interfaces/Grid_Core_Options.GroupedHeaderOptions.html | GroupedHeaderOptions}.
+     *
      * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/grid-lite/basic/grouped-headers | Grouped headers}
      */
     header?: Array<GroupedHeaderOptions | string>;
@@ -493,6 +496,17 @@ export interface ColumnOptions {
  * Options for all cells in the column.
  */
 export interface ColumnCellOptions {
+
+    /**
+     * Whether cells in this column should be rendered as row header cells.
+     *
+     * When enabled, body cells are rendered as `<th scope="row">` instead of
+     * `<td>`. This is useful for accessible data grids where the first column
+     * acts as a row header.
+     *
+     * @default false
+     */
+    rowHeader?: boolean;
 
     /**
      * Allows to define an additional class name to all table cells in the

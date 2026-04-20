@@ -329,9 +329,7 @@ addEvent(Axis, 'postProcessData', function (): void {
 
     series.forEach(function (series): void {
         if (series.is('hollowcandlestick')) {
-            const hollowcandlestickSeries = series as HollowCandlestickSeries;
-
-            hollowcandlestickSeries.getPriceMovement();
+            series.getPriceMovement();
         }
     });
 });

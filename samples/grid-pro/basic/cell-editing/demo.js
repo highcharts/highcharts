@@ -21,19 +21,12 @@ Grid.grid('container', {
         }
     },
     lang: {
-        validationErrors: {
-            notEmpty: {
-                notification: 'New value cannot be empty.'
-            },
-            number: {
-                notification: 'New value has to be a number.'
-            },
-            boolean: {
-                notification: 'New value has to be a boolean.'
-            },
-            ignoreCaseUnique: {
-                notification: 'New value has to be unique (case-sensitive).'
-            }
+        validationNotifications: {
+            notEmpty: 'New value cannot be empty.',
+            number: 'New value has to be a number.',
+            boolean: 'New value has to be a boolean.',
+            ignoreCaseUnique:
+                'New value has to be unique (case-sensitive).'
         }
     },
     rendering: {
@@ -56,7 +49,7 @@ Grid.grid('container', {
         dataType: 'string',
         cells: {
             editMode: {
-                // Gets default error message text or from lang (if defined)
+                // Gets default notification text or from lang (if defined)
                 validationRules: ['notEmpty', 'ignoreCaseUnique']
             }
         }

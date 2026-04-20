@@ -30,7 +30,7 @@ import type {
     PointShortOptions
 } from '../../Core/Series/PointOptions';
 import type Series from '../../Core/Series/Series';
-import type Types from '../../Shared/Types';
+import type * as Types from '../../Shared/Types';
 import type SeriesRegistry from '../../Core/Series/SeriesRegistry';
 import type { SeriesTypePlotOptions } from '../../Core/Series/SeriesType';
 import BoostableMap from './BoostableMap.js';

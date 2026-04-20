@@ -244,8 +244,8 @@ class Validator {
         errors: string[] = []
     ): boolean {
         const { options, dataType } = cell.column;
-        const validationErrors =
-            cell.row.viewport.grid.options?.lang?.validationErrors;
+        const validationNotifications =
+            cell.row.viewport.grid.options?.lang?.validationNotifications;
         const rendererType = cell.column.options?.cells?.renderer?.type;
         let rules = Array.from(options?.cells?.editMode?.validationRules || []);
 
@@ -281,11 +281,11 @@ class Validator {
 
         for (const rule of rules) {
             let ruleDef: RuleDefinition;
-            let err;
+            let err: ValidationNotification|undefined;
 
             if (typeof rule === 'string') {
                 ruleDef = Validator.rulesRegistry[rule];
-                err = validationErrors?.[rule]?.notification;
+                err = validationNotifications?.[rule];
             } else {
                 ruleDef = rule;
             }
@@ -309,7 +309,9 @@ class Validator {
                 editModeContent &&
                 !validateFn.call(cell, editModeContent)
             ) {
-                if (typeof ruleDef.notification === 'function') {
+                if (typeof err === 'function') {
+                    err = err.call(cell, editModeContent);
+                } else if (typeof ruleDef.notification === 'function') {
                     err = ruleDef.notification.call(cell, editModeContent);
                 }
                 errors.push((err || ruleDef.notification) as string);
@@ -452,20 +454,45 @@ export type ValidateFunction = (
 ) => boolean;
 
 /**
- * Callback function that returns a error message.
+ * Callback function that returns a validation notification.
  */
-export type ValidationErrorFunction = (
+export type ValidationNotificationFunction = (
     this: TableCell,
     content?: EditModeContent
 ) => string;
 
 /**
- * Definition of the validation rule that should container validate method
- * and error message displayed in notification.
+ * Validation notification content.
+ */
+export type ValidationNotification =
+    string|ValidationNotificationFunction;
+
+/**
+ * Definition of the validation rule that should contain validate method
+ * and validation notification.
  */
 export interface RuleDefinition {
-    validate: RulesRegistryType|ValidateFunction;
-    notification: string|ValidationErrorFunction;
+    /**
+     * Validation logic for the rule.
+     *
+     * Use a built-in rule key to reuse one of the predefined validators, or
+     * provide a custom callback function.
+     */
+    validate: RuleKey|ValidateFunction;
+
+    /**
+     * Notification displayed when the validation fails.
+     *
+     * Can be defined as a static string or a callback function returning a
+     * string.
+     *
+     * When `validate` references one of the predefined rule keys, this
+     * property overrides that rule's built-in notification.
+     *
+     * Localized notifications for predefined rules configured directly by key
+     * can be customized through `lang.validationNotifications`.
+     */
+    notification: ValidationNotification;
 }
 
 /**
@@ -481,6 +508,80 @@ export interface RulesRegistryType {
     arrayNumber: RuleDefinition;
     json: RuleDefinition;
     sparkline: RuleDefinition;
+}
+
+/**
+ * Definition of localized validation notifications keyed by validator name.
+ *
+ * Built-in validator names are listed below, and custom validators can be
+ * addressed by their registry key as well.
+ */
+export interface ValidationNotificationsType
+    extends Record<string, ValidationNotification|undefined> {
+
+    // Built-in validator names listed here to be included in the api docs.
+    /**
+     * Notification text for the `boolean` validator.
+     *
+     * @default 'Value has to be a boolean.'
+     */
+    boolean?: ValidationNotification;
+
+    /**
+     * Notification text for the `datetime` validator.
+     *
+     * @default 'Value has to be parsed to a valid timestamp.'
+     */
+    datetime?: ValidationNotification;
+
+    /**
+     * Notification text for the `notEmpty` validator.
+     *
+     * @default 'Value cannot be empty.'
+     */
+    notEmpty?: ValidationNotification;
+
+    /**
+     * Notification text for the `number` validator.
+     *
+     * @default 'Value has to be a number.'
+     */
+    number?: ValidationNotification;
+
+    /**
+     * Notification text for the `ignoreCaseUnique` validator.
+     *
+     * @default 'Value must be unique within this column (case-insensitive).'
+     */
+    ignoreCaseUnique?: ValidationNotification;
+
+    /**
+     * Notification text for the `unique` validator.
+     *
+     * @default 'Value must be unique within this column (case-sensitive).'
+     */
+    unique?: ValidationNotification;
+
+    /**
+     * Notification text for the `arrayNumber` validator.
+     *
+     * @default 'Value should be a list of numbers separated by commas.'
+     */
+    arrayNumber?: ValidationNotification;
+
+    /**
+     * Notification text for the `json` validator.
+     *
+     * @default 'Value should be a valid JSON.'
+     */
+    json?: ValidationNotification;
+
+    /**
+     * Notification text for the `sparkline` validator.
+     *
+     * @default 'Value should be a valid JSON or a list of numbers separated by commas.'
+     */
+    sparkline?: ValidationNotification;
 }
 
 /**

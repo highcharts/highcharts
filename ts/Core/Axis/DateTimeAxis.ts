@@ -21,7 +21,7 @@ import type Axis from './Axis';
 import type AxisOptions from './AxisOptions';
 import type TickPositionsArray from './TickPositionsArray';
 import type Time from '../Time';
-import type Types from '../../Shared/Types';
+import type { TypedArray } from '../../Shared/Types';
 
 import {
     addEvent,
@@ -45,7 +45,7 @@ declare module './AxisComposition' {
             min: number,
             max: number,
             startOfWeek?: number,
-            positions?: Array<number>|Types.TypedArray,
+            positions?: Array<number>|TypedArray,
             closestDistance?: number,
             findHigherRanks?: boolean
         ): TickPositionsArray;

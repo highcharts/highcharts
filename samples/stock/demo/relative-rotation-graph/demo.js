@@ -13,7 +13,6 @@ Highcharts.chart('container', {
         type: 'scatter',
         height: '90%',
         backgroundColor: 'var(--highcharts-neutral-color-3, #f7f7f8)',
-        plotBackgroundColor: '#f7f7f8',
         plotBorderWidth: 10,
         plotBorderColor: 'var(--highcharts-background-color, #fff)',
         spacing: [10, 85, 15, 20],
@@ -39,7 +38,7 @@ Highcharts.chart('container', {
                     r: 1.1
                 },
                 stops: [
-                    [0, 'rgba(255, 0, 0, 0.2)'],
+                    [0, 'rgba(255, 0, 0, 0.3)'],
                     [1, 'rgba(255,255,255, 0.1)']
                 ]
             },
@@ -72,7 +71,7 @@ Highcharts.chart('container', {
                     r: 1.1
                 },
                 stops: [
-                    [0, 'rgba(0, 0, 255, 0.1)'],
+                    [0, 'rgba(0, 0, 255, 0.2)'],
                     [1, 'rgba(255,255,255, 0.1)']
                 ]
             },
@@ -105,7 +104,7 @@ Highcharts.chart('container', {
                     r: 1.1
                 },
                 stops: [
-                    [0, 'rgba(0, 255, 0, 0.1)'],
+                    [0, 'rgba(0, 255, 0, 0.2)'],
                     [1, 'rgba(255,255,255, 0.1)']
                 ]
             },
@@ -138,7 +137,7 @@ Highcharts.chart('container', {
                     r: 1.1
                 },
                 stops: [
-                    [0, 'rgba(255, 255, 0, 0.2)'],
+                    [0, 'rgba(255, 255, 0, 0.3)'],
                     [1, 'rgba(255,255,255, 0.1)']
                 ]
             },
@@ -172,7 +171,7 @@ Highcharts.chart('container', {
             style: {
                 fontSize: '12px',
                 fontWeight: 700,
-                textOutline: '3px #ffffff80'
+                textOutline: '3px light-dark(#ffffff80, #00000080)'
             }
         },
         labels: [{
@@ -189,7 +188,7 @@ Highcharts.chart('container', {
         }, {
             text: 'IMPROVING',
             style: {
-                color: '#004bb3'
+                color: '#2e6fcb'
             },
             point: {
                 x: 96,
@@ -222,7 +221,7 @@ Highcharts.chart('container', {
         }]
     }],
     title: {
-        text: 'Relative Rotation Graph®️'
+        text: 'Relative Rotation Graph®'
     },
     plotOptions: {
         series: {
@@ -235,8 +234,8 @@ Highcharts.chart('container', {
         }
     },
     tooltip: {
-        pointFormat: 'RS-Ratio®️: <b>{point.x}</b></br>' +
-            'RS-Momentum®️: <b>{point.y}</b>'
+        pointFormat: 'RS-Ratio®: <b>{point.x}</b></br>' +
+            'RS-Momentum®: <b>{point.y}</b>'
     },
     xAxis: {
         min: 96,
@@ -244,11 +243,11 @@ Highcharts.chart('container', {
         plotLines: [{
             value: 100,
             width: 1,
-            color: '#000000',
+            color: 'var(--highcharts-neutral-color-80)',
             zIndex: 1
         }],
         title: {
-            text: 'JdK RS-Ratio®️',
+            text: 'JdK RS-Ratio®',
             style: {
                 fontWeight: 'bold'
             }
@@ -263,11 +262,11 @@ Highcharts.chart('container', {
         plotLines: [{
             value: 100,
             width: 1,
-            color: '#000000',
+            color: 'var(--highcharts-neutral-color-80)',
             zIndex: 1
         }],
         title: {
-            text: 'JdK RS-Momentum®️',
+            text: 'JdK RS-Momentum®',
             style: {
                 fontWeight: 'bold'
             }
@@ -276,7 +275,7 @@ Highcharts.chart('container', {
     },
     series: [{
         name: 'Stock 1',
-        color: '#9a5c00',
+        color: 'light-dark(#9a5c00, #eaff00)',
         data: [
             [102, 102],
             [102.25, 101.5],
@@ -289,7 +288,7 @@ Highcharts.chart('container', {
         ]
     }, {
         name: 'Stock 2',
-        color: '#004bb3',
+        color: 'light-dark(#004bb3, #2caffe)',
         data: [
             [101.8, 98.3],
             [101.4, 97.5],
@@ -303,7 +302,7 @@ Highcharts.chart('container', {
         ]
     }, {
         name: 'Stock 3',
-        color: '#008224',
+        color: 'light-dark(#008224, #00e676)',
         data: [
             [98, 96.5],
             [97.2, 97],

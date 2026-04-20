@@ -40,7 +40,7 @@ import type AreaRangeSeriesOptions from './AreaRangeSeriesOptions';
  * @requires     highcharts-more
  * @optionparent plotOptions.arearange
  *
- * @private
+ * @internal
  */
 const AreaRangeSeriesDefaults: AreaRangeSeriesOptions = {
 
@@ -48,6 +48,7 @@ const AreaRangeSeriesDefaults: AreaRangeSeriesOptions = {
      * @see [fillColor](#plotOptions.arearange.fillColor)
      * @see [fillOpacity](#plotOptions.arearange.fillOpacity)
      *
+     * @type      {Highcharts.ColorType}
      * @apioption plotOptions.arearange.color
      */
 
@@ -60,6 +61,7 @@ const AreaRangeSeriesDefaults: AreaRangeSeriesOptions = {
      * @see [color](#plotOptions.arearange.color)
      * @see [fillOpacity](#plotOptions.arearange.fillOpacity)
      *
+     * @type      {Highcharts.ColorType}
      * @apioption plotOptions.arearange.fillColor
      */
 
@@ -88,7 +90,7 @@ const AreaRangeSeriesDefaults: AreaRangeSeriesOptions = {
      *
      * @since 2.3.0
      *
-     * @private
+     * @internal
      */
     lineWidth: 1,
 
@@ -108,7 +110,7 @@ const AreaRangeSeriesDefaults: AreaRangeSeriesOptions = {
      *
      * @since 2.3.0
      *
-     * @private
+     * @internal
      */
     trackByArea: true,
 
@@ -122,8 +124,7 @@ const AreaRangeSeriesDefaults: AreaRangeSeriesOptions = {
      * @exclude x, y
      * @since   2.3.0
      * @product highcharts highstock
-     *
-     * @private
+     * @apioption plotOptions.arearange.dataLabels
      */
     dataLabels: {
 
@@ -185,6 +186,7 @@ const AreaRangeSeriesDefaults: AreaRangeSeriesOptions = {
  * @see [fillColor](#series.arearange.fillColor)
  * @see [fillOpacity](#series.arearange.fillOpacity)
  *
+ * @type      {Highcharts.ColorType}
  * @apioption series.arearange.color
  */
 
@@ -261,6 +263,7 @@ const AreaRangeSeriesDefaults: AreaRangeSeriesOptions = {
  * @see [color](#series.arearange.color)
  * @see [fillColor](#series.arearange.fillColor)
  *
+ * @type      {number}
  * @default   {highcharts} 0.75
  * @default   {highstock} 0.75
  * @apioption series.arearange.fillOpacity
@@ -268,22 +271,20 @@ const AreaRangeSeriesDefaults: AreaRangeSeriesOptions = {
 
 /**
  * Options for the lower markers of the arearange-like series. When `lowMarker`
- * is not defined, options inherit form the marker.
+ * is not defined, options inherit from the marker.
  *
  * @see [marker](#series.arearange.marker)
  *
+ * @sample {highcharts} highcharts/series-arearange/lowmarker/
+ *         Area range chart with `lowMarker` option
+ *
  * @declare   Highcharts.PointMarkerOptionsObject
  * @extends   plotOptions.series.marker
- * @default   undefined
  * @product   highcharts highstock
  * @apioption plotOptions.arearange.lowMarker
  */
 
 /**
- *
- * @sample {highcharts} highcharts/series-arearange/lowmarker/
- *         Area range chart with `lowMarker` option
- *
  * @declare   Highcharts.PointMarkerOptionsObject
  * @extends   plotOptions.series.marker.symbol
  * @product   highcharts highstock
@@ -314,4 +315,5 @@ const AreaRangeSeriesDefaults: AreaRangeSeriesOptions = {
  *
  * */
 
+/** @internal */
 export default AreaRangeSeriesDefaults;

@@ -1363,8 +1363,8 @@ class Point {
 
             // Record the options to options.data. If the old or the new config
             // is an object, use point options, otherwise use raw options
-            // (#4701, #4916, #24225).
-            if (data) {
+            // (#4701, #4916, #24225, #24451).
+            if (data && !series.processedData) {
                 data[i] = (isObject(data[i], true) || isObject(options, true)) ?
                     point.options :
                     (options ?? data[i]);

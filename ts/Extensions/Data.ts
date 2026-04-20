@@ -2738,9 +2738,10 @@ export default Data;
  * If given, it takes precedence over `startColumn`, `endColumn`, `startRow` and
  * `endRow`.
  *
- * @example
+ * ```js
  * googleSpreadsheetRange: 'Fruit Consumption' // Load a named worksheet
  * googleSpreadsheetRange: 'A:Z' // Load columns A to Z
+ * ```
  *
  * @sample {highcharts} highcharts/data/google-spreadsheet/
  *         Load a Google Spreadsheet

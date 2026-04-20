@@ -1,0 +1,34 @@
+/* *
+ *
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
+ *
+ *
+ * */
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type {
+    SMAOptions,
+    SMAParamsOptions
+} from '../SMA/SMAOptions';
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+export interface DisparityIndexOptions extends SMAOptions {
+    params?: DisparityIndexParamsOptions;
+}
+
+export interface DisparityIndexParamsOptions extends SMAParamsOptions {
+    average: 'sma'|'ema'|'dema'|'tema'|'wma';
+}
+
+export default DisparityIndexOptions;

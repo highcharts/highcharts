@@ -1,0 +1,40 @@
+/* *
+ *
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
+ *
+ * */
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type {
+    AroonOptions,
+    AroonParamsOptions
+} from '../Aroon/AroonOptions';
+
+/* *
+*
+*  Declarations
+*
+* */
+
+export interface AroonOscillatorOptions
+    extends AroonOptions {
+    params?: AroonOscillatorParamsOptions;
+}
+
+export interface AroonOscillatorParamsOptions extends AroonParamsOptions {
+    // For inheritance
+}
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+export default AroonOscillatorOptions;

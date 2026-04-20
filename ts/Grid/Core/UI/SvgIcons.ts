@@ -24,7 +24,6 @@
  *
  * */
 
-import Globals from '../Globals.js';
 import { setHTMLContent } from '../GridUtils.js';
 import { defined } from '../../../Shared/Utilities.js';
 
@@ -272,16 +271,14 @@ export type IconRegistryValue = SVGDefinition | string;
 * */
 
 /**
- * Parses a raw SVG markup string into an SVG element and applies a class.
+ * Parses a raw SVG markup string into an SVG element.
  *
  * @param svgString
  * Raw SVG markup
- * @param className
- * CSS class name for the SVG element
  * @returns
  * SVG element, or a fallback empty SVG if parsing fails
  */
-function parseSvgString(svgString: string, className: string): SVGElement {
+function parseSvgString(svgString: string): SVGElement {
     const div = document.createElement('div');
     setHTMLContent(div, svgString);
     const svg = div.firstElementChild;
@@ -292,12 +289,10 @@ function parseSvgString(svgString: string, className: string): SVGElement {
         );
         fallback.setAttribute('width', '16');
         fallback.setAttribute('height', '16');
-        fallback.classList.add(className);
         return fallback;
     }
-    const clone = svg.cloneNode(true) as SVGElement;
-    clone.classList.add(className);
-    return clone;
+
+    return svg.cloneNode(true) as SVGElement;
 }
 
 /**
@@ -305,14 +300,11 @@ function parseSvgString(svgString: string, className: string): SVGElement {
  *
  * @param def
  * SVG definition from the registry
- * @param className
- * CSS class name for the SVG element
  * @returns
  * SVG element
  */
 function createSvgFromDefinition(
-    def: SVGDefinition,
-    className: string
+    def: SVGDefinition
 ): SVGElement {
     const createElement = (type: string): SVGElement =>
         document.createElementNS('http://www.w3.org/2000/svg', type);
@@ -343,7 +335,7 @@ function createSvgFromDefinition(
 
         svg.appendChild(path);
     }
-    svg.classList.add(className);
+
     return svg;
 }
 
@@ -376,8 +368,7 @@ export function getIconFromRegistry(
  * Creates an SVG icon element from the SvgIcons registry or a custom
  * registry. When `customIcons` is provided, `name` can be any registered
  * name (built-in or custom). When omitted, only built-in `GridIconName`
- * values are allowed. The SVG element always receives the default icon
- * class name from `Globals`.
+ * values are allowed.
  *
  * @param name
  * The name of the icon (built-in or from registry)
@@ -393,18 +384,17 @@ export function createGridIcon(
     name: string,
     customIcons?: Record<string, IconRegistryValue>
 ): SVGElement {
-    const className = Globals.getClassName('icon');
     const value = getIconFromRegistry(name, customIcons);
 
     if (!defined(value)) {
-        return createSvgFromDefinition(icons.filter, className);
+        return createSvgFromDefinition(icons.filter);
     }
 
     if (typeof value === 'string') {
-        return parseSvgString(value, className);
+        return parseSvgString(value);
     }
 
-    return createSvgFromDefinition(value, className);
+    return createSvgFromDefinition(value);
 }
 
 

@@ -290,12 +290,13 @@ export interface DataLabelOptions {
      * programmatic control, use the `formatter` instead, and return
      * `undefined` to disable a single data label.
      *
-     * @example
+     * ```js
      * filter: {
      *     property: 'percentage',
      *     operator: '>',
      *     value: 4
      * }
+     * ```
      *
      * @sample {highcharts} highcharts/demo/pie-monochrome
      *         Data labels filtered by percentage

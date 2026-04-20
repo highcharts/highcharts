@@ -225,6 +225,9 @@ namespace AxisDefaults {
          * Configure a crosshair that follows either the mouse pointer or the
          * hovered point.
          *
+         * Support boolean or object definition. If `true`, a crosshair with
+         * default settings will be displayed.
+         *
          * In styled mode, the crosshairs are styled in the
          * `.highcharts-crosshair`, `.highcharts-crosshair-thin` or
          * `.highcharts-xaxis-category` classes.
@@ -377,7 +380,7 @@ namespace AxisDefaults {
 
         /**
          * Formatter function for the label text.
-         * Since v12.5.0, the callback also receives `ctx` as the second
+         * Since v12.6.0, the callback also receives `ctx` as the second
          * argument, so that arrow functions can access the same context as
          * regular functions using `this`.
          *
@@ -993,7 +996,7 @@ namespace AxisDefaults {
              * Callback JavaScript function to format the label. The value
              * is given by `this.value`. Additional properties for `this` are
              * `axis`, `chart`, `isFirst`, `isLast` and `text` which holds the
-             * value of the default formatter. Since v12.5.0, the callback also
+             * value of the default formatter. Since v12.6.0, the callback also
              * receives `ctx` as the first argument, so that arrow functions can
              * access the same context as regular functions using `this`.
              *
@@ -1899,7 +1902,7 @@ namespace AxisDefaults {
          * [tickPixelInterval](#xAxis.tickPixelInterval) and [tickInterval](
          * #xAxis.tickInterval). The automatic tick positions are accessible
          * through `this.tickPositions` and can be modified by the callback.
-         * Since v12.5.0, the callback also receives `ctx` as the third
+         * Since v12.6.0, the callback also receives `ctx` as the third
          * argument, so that arrow functions can access the same context as
          * regular functions using `this`.
          *
@@ -3242,7 +3245,7 @@ namespace AxisDefaults {
 
             /**
              * Callback JavaScript function to format the label. The value is
-             * given by `this.total`. Since v12.5.0, the callback also receives
+             * given by `this.total`. Since v12.6.0, the callback also receives
              * `ctx` as the first argument, so that arrow functions can access
              * the same context as regular functions using `this`.
              *

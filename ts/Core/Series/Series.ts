@@ -28,7 +28,7 @@ import type {
     Column,
     ColumnCollection
 } from '../../Data/DataTable';
-import type { DeepPartial } from '../../Shared/Types';
+import type { DeepPartial, TypedArray } from '../../Shared/Types';
 import type { EventCallback } from '../Callback';
 import type KDPointSearchObjectBase from './KDPointSearchObjectBase';
 import type Legend from '../Legend/Legend';
@@ -47,6 +47,7 @@ import type {
     SeriesZonesOptions
 } from './SeriesOptions';
 import type {
+    SeriesTypeRegistry,
     SeriesTypeOptions,
     SeriesTypePlotOptions
 } from './SeriesType';
@@ -56,7 +57,6 @@ import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 import type { SymbolKey } from '../Renderer/SVG/SymbolType';
 import type TooltipOptions from '../TooltipOptions';
-import type Types from '../../Shared/Types';
 
 import A from '../Animation/AnimationUtilities.js';
 const {
@@ -861,7 +861,12 @@ class Series {
      * @return {boolean}
      *        True if this item is or inherits from the given type.
      */
-    public is(type: string): boolean {
+    // TODO: Runtime checks `instanceof`, so this also confirms inheritance.
+    // The type guard currently narrows to the requested type only. Aligning
+    // typing 1:1 with runtime should be easier after pending TS cleanups.
+    public is<K extends keyof SeriesTypeRegistry>(
+        type: K
+    ): this is InstanceType<typeof seriesTypes[K]> {
         return seriesTypes[type] && this instanceof seriesTypes[type];
     }
 
@@ -1960,7 +1965,7 @@ class Series {
             xExtremes,
             min,
             max,
-            xData: Array<number>|Types.TypedArray = series.getColumn('x'),
+            xData: Array<number>|TypedArray = series.getColumn('x'),
             modified = table,
             updatingNames = false;
 
@@ -2267,7 +2272,7 @@ class Series {
      * The data to inspect. Defaults to the current data within the visible
      * range.
      */
-    public getXExtremes(xData: Array<number>|Types.TypedArray): RangeSelector.RangeObject {
+    public getXExtremes(xData: Array<number>|TypedArray): RangeSelector.RangeObject {
         return {
             min: arrayMin(xData),
             max: arrayMax(xData)
@@ -2290,7 +2295,7 @@ class Series {
         yData?: (
             Array<(number|null)>|
             Array<Array<(number|null)>>|
-            Types.TypedArray
+            TypedArray
         ),
         forceExtremesFromAll?: boolean
     ): DataExtremesObject {
@@ -5528,7 +5533,7 @@ export default Series;
  * have to cast the series options to specific series types, to get all
  * possible options for a series.
  *
- * @example
+ * ```ts
  * // TypeScript example
  * Highcharts.chart('container', {
  *     series: [{
@@ -5536,6 +5541,7 @@ export default Series;
  *         data: [[0, 1], [2, 3]]
  *     } as Highcharts.SeriesLineOptions ]
  * });
+ * ```
  *
  * @type      {Array<*>}
  * @apioption series

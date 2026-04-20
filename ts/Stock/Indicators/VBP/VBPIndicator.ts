@@ -34,7 +34,7 @@ import type {
     VBPOptions,
     VBPParamsOptions
 } from './VBPOptions';
-import type Types from '../../../Shared/Types';
+import type { TypedArray } from '../../../Shared/Types';
 import VBPPoint from './VBPPoint.js';
 
 import A from '../../../Core/Animation/AnimationUtilities.js';
@@ -654,7 +654,7 @@ class VBPIndicator extends SMAIndicator {
     // Specifying where each zone should start ans end
     public specifyZones(
         isOHLC: boolean,
-        xValues: Array<number>|Types.TypedArray,
+        xValues: Array<number>|TypedArray,
         yValues: Array<Array<number>>,
         ranges: number,
         volumeSeries: LineSeries
@@ -733,7 +733,7 @@ class VBPIndicator extends SMAIndicator {
         isOHLC: boolean,
         priceZones: Array<VBPIndicator.VBPIndicatorPriceZoneObject>,
         volumeSeries: LineSeries,
-        xValues: Array<number>|Types.TypedArray,
+        xValues: Array<number>|TypedArray,
         yValues: Array<Array<number>>
     ): Array<VBPIndicator.VBPIndicatorPriceZoneObject> {
         const indicator = this,

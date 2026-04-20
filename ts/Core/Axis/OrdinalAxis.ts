@@ -23,7 +23,7 @@ import type FlagSeries from '../../Series/Flags/FlagsSeries';
 import type Point from '../Series/Point.js';
 import type TickPositionsArray from './TickPositionsArray';
 import type Time from '../Time';
-import type Types from '../../Shared/Types';
+import type { TypedArray } from '../../Shared/Types';
 
 import Axis from './Axis.js';
 import DataTableCore from '../../Data/DataTableCore.js';
@@ -116,7 +116,7 @@ namespace OrdinalAxis {
             min: number,
             max: number,
             startOfWeek: number,
-            positions?: Array<number>|Types.TypedArray,
+            positions?: Array<number>|TypedArray,
             closestDistance?: number,
             findHigherRanks?: boolean
         ): TickPositionsArray;

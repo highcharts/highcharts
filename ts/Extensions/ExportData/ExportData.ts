@@ -418,6 +418,7 @@ namespace ExportData {
         options: SeriesOptions;
         pointArrayMap?: Array<string>;
         index: number;
+        xAxis: Axis;
     }
 
     /* *
@@ -942,7 +943,9 @@ namespace ExportData {
                     autoIncrement: series.autoIncrement,
                     options: series.options,
                     pointArrayMap: series.pointArrayMap,
-                    index: series.index
+                    index: series.index,
+                    // Allows correct date formatting for string date, #23654.
+                    xAxis: series.xAxis
                 };
 
                 // Export directly from options.data because we need the

@@ -1278,7 +1278,7 @@ namespace Measure {
         /**
          * Formatter function for the label text.
          *
-         * Since v12.5.0, the callback also receives `ctx` as the first
+         * Since v12.6.0, the callback also receives `ctx` as the first
          * argument, so that arrow functions can access the same context as
          * regular functions using `this`.
          *

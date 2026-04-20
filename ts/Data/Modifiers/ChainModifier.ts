@@ -31,7 +31,7 @@ import type {
     DataModifierType,
     DataModifierTypeOptions
 } from './DataModifierType';
-import type Types from '../../Shared/Types';
+import type { AnyRecord } from '../../Shared/Types';
 
 import DataModifier from './DataModifier.js';
 import DataTable from '../DataTable.js';
@@ -106,7 +106,7 @@ class ChainModifier extends DataModifier {
 
             if (ModifierClass) {
                 chain.push(new ModifierClass(
-                    modifierOptions as Types.AnyRecord
+                    modifierOptions as AnyRecord
                 ));
             }
         }
