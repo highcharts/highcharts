@@ -84,7 +84,7 @@ function arc(
             end = rawEnd ? rawEnd - paddingInRadians : 0;
 
         // Check if padding can be applied to the arc
-        if (padding > 0 && Math.abs(end - start) <= minArcRange) {
+        if (paddingInRadians > 0 && Math.abs(end - start) <= minArcRange) {
             const middleAngle = (start + end) / 2;
             start = middleAngle - minArcRange / 2;
             end = middleAngle + minArcRange / 2;
@@ -139,7 +139,7 @@ function arc(
             const minInnerRadius = (padding * 2) / radianRange;
             let cInnerRadius = innerRadius;
 
-            if (padding > 0 && minInnerRadius > innerRadius) {
+            if (paddingInRadians > 0 && minInnerRadius > innerRadius) {
                 const minAcceptableInnerRadius =
                     radius * 0.5 < innerRadius ? innerRadius : radius * 0.5;
 
@@ -153,7 +153,7 @@ function arc(
                 fullCircle ? -0.001 : cInnerRadius * cosStart;
             let innerArcEndDeltaY = cInnerRadius * sinStart;
 
-            if (padding > 0) {
+            if (paddingInRadians > 0) {
                 const innerPaddingInRadiansRaw = padding / cInnerRadius;
                 const innerPaddingInRadians = Math.min(
                     innerPaddingInRadiansRaw,
@@ -204,8 +204,8 @@ function arc(
                 open ?
                     [
                         'M',
-                        cx + innerRadius * cosEnd,
-                        cy + innerRadius * sinEnd
+                        cx + innerArcStartDeltaX,
+                        cy + innerArcStartDeltaY
                     ] : [
                         'L',
                         cx + innerArcStartDeltaX,

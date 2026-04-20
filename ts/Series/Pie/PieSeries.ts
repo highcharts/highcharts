@@ -236,7 +236,7 @@ class PieSeries extends Series {
         this.points.forEach(function (point): void {
             // When updating a series between 2d and 3d or cartesian and
             // polar, the shape type changes.
-            // TODO is this the correct way to update padding?
+            // TODO @@ is this the correct way to update padding?
             if (
                 point.graphic &&
                 (
@@ -510,35 +510,31 @@ class PieSeries extends Series {
             point.angle = angle;
         }
 
-        // TODO remove as any and fix the type, optimze code below
-        const pointPadding = (series.options as any).pointPadding;
+        const pointPaddingOption = series.options.pointPadding;
+        let pointPaddingInPixels: number | undefined;
 
         // Point padding number => pixels.
-        if (typeof pointPadding === 'number') {
-            series.points.forEach((point): void => {
-                if (point.shapeArgs) {
-                    point.shapeArgs.padding = pointPadding / 2;
-                }
-            });
+        if (typeof pointPaddingOption === 'number') {
+            pointPaddingInPixels = pointPaddingOption / 2;
         }
 
-        // Point padding string => percentage of each point radius, e.g. "10%".
-        if (typeof pointPadding === 'string') {
-            const match = pointPadding.trim().match(/^(\d+(?:\.\d+)?)%$/);
+        // Point padding string => percentage of first point radius, e.g. "10%".
+        if (typeof pointPaddingOption === 'string') {
+            const radius = series.points[0]?.shapeArgs?.r || 0;
+            const match = pointPaddingOption.trim().match(/^(\d+(?:\.\d+)?)%$/);
 
-            if (match) {
+            if (match && radius > 0) {
                 const percentage = parseFloat(match[1]);
-
-                series.points.forEach((point): void => {
-                    const shapeArgs = point.shapeArgs,
-                        radius = shapeArgs?.r || 0;
-
-                    if (point.shapeArgs) {
-                        point.shapeArgs.padding =
-                            ((percentage / 100) * radius) / 2;
-                    }
-                });
+                pointPaddingInPixels = ((percentage / 100) * radius) / 2;
             }
+        }
+
+        if (pointPaddingInPixels) {
+            series.points.forEach((point): void => {
+                if (point.shapeArgs) {
+                    point.shapeArgs.padding = pointPaddingInPixels;
+                }
+            });
         }
 
         fireEvent(series, 'afterTranslate');
