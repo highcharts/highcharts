@@ -28,8 +28,8 @@ const AMDPriceConnector =
 (async () => {
     await AMDPriceConnector.load();
 
-    const dataTable = AMDPriceConnector.getTable();
-    const cols = dataTable.getColumns();
+    const dataTable = AMDPriceConnector.getTable(),
+        cols = dataTable.getColumns();
 
     const name = Array.from(Object.keys(cols).filter(k => k !== 'Date'))[0];
     const price = cols[name].map((value, i) => [cols.Date[i], value]);
