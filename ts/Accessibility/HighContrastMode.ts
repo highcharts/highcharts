@@ -29,6 +29,7 @@ const {
     isMS,
     win
 } = H;
+import { merge, pick } from '../Shared/Utilities.js';
 
 /* *
  *
@@ -109,22 +110,40 @@ function setHighContrastTheme(
 
     chart.update(theme, false);
 
-    const hasCustomColors = theme.colors?.length > 1;
+    const customColors = theme.colors,
+        hasCustomColors = customColors?.length > 1,
+        defaultPlotOpts = theme.plotOptions?.series || {};
 
     // Force series colors (plotOptions is not enough)
     chart.series.forEach(function (s): void {
-        const plotOpts = theme.plotOptions[s.type] || {};
-
-        const fillColor = hasCustomColors && s.colorIndex !== void 0 ?
-            theme.colors[s.colorIndex] :
-            plotOpts.color || 'window';
+        const plotOpts = merge(defaultPlotOpts, theme.plotOptions?.[s.type]),
+            colorIndex = pick(s.colorIndex, 0),
+            seriesColor = hasCustomColors ?
+                customColors[colorIndex % customColors.length] :
+                pick(plotOpts.color, plotOpts.lineColor, 'windowText'),
+            fillColor = hasCustomColors ?
+                customColors[colorIndex % customColors.length] :
+                pick(plotOpts.fillColor, plotOpts.color, 'window'),
+            borderColor = pick(plotOpts.borderColor, 'windowText');
 
         const seriesOptions: Partial<SeriesOptions> = {
-            color: plotOpts.color || 'windowText',
+            color: seriesColor,
             colors: hasCustomColors ?
-                theme.colors : [plotOpts.color || 'windowText'],
-            borderColor: plotOpts.borderColor || 'window',
-            fillColor
+                customColors :
+                (plotOpts.colors || [seriesColor]),
+            borderColor,
+            fillColor,
+            lineColor: hasCustomColors ?
+                seriesColor :
+                pick(plotOpts.lineColor, seriesColor),
+            marker: plotOpts.marker && {
+                fillColor: hasCustomColors ?
+                    seriesColor :
+                    pick(plotOpts.marker.fillColor, seriesColor),
+                lineColor: hasCustomColors ?
+                    seriesColor :
+                    pick(plotOpts.marker.lineColor, seriesColor)
+            }
         };
 
         s.update(seriesOptions, false);
@@ -133,9 +152,16 @@ function setHighContrastTheme(
             // Force point colors if existing
             s.points.forEach(function (p): void {
                 if (p.options && p.options.color) {
+                    const pointColor = hasCustomColors ?
+                        customColors[
+                            pick(p.colorIndex, p.index, 0) %
+                            customColors.length
+                        ] :
+                        seriesColor;
+
                     p.update({
-                        color: plotOpts.color || 'windowText',
-                        borderColor: plotOpts.borderColor || 'window'
+                        color: pointColor,
+                        borderColor
                     }, false);
                 }
             });

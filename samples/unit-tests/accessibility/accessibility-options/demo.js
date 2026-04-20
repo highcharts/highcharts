@@ -253,6 +253,75 @@ QUnit.test('Keyboard navigation', function (assert) {
     );
 });
 
+QUnit.test('HCM colors override series colors', function (assert) {
+    var colors = ['#f00', '#0f0', '#00f'],
+        chart = Highcharts.chart('container', {
+            accessibility: {
+                highContrastMode: true,
+                highContrastTheme: {
+                    colors: colors
+                }
+            },
+            series: [{
+                type: 'area',
+                data: [1, 2, 3]
+            }, {
+                type: 'line',
+                data: [3, 2, 1]
+            }, {
+                type: 'column',
+                data: [2, 2, 2]
+            }]
+        });
+
+    assert.strictEqual(
+        chart.series[0].area && chart.series[0].area.attr('fill'),
+        colors[0],
+        'Area series should use the configured high contrast fill.'
+    );
+
+    assert.strictEqual(
+        chart.series[1].graph && chart.series[1].graph.attr('stroke'),
+        colors[1],
+        'Line series should use the configured high contrast stroke.'
+    );
+
+    assert.strictEqual(
+        chart.series[2].points[0].graphic &&
+        chart.series[2].points[0].graphic.attr('fill'),
+        colors[2],
+        'Column series should use the configured high contrast fill.'
+    );
+
+    chart = Highcharts.chart('container', {
+        accessibility: {
+            highContrastMode: true,
+            highContrastTheme: {
+                colors: colors
+            }
+        },
+        series: [{
+            type: 'column',
+            data: [5, 4, 3]
+        }, {
+            type: 'pareto',
+            baseSeries: 0
+        }]
+    });
+
+    assert.strictEqual(
+        chart.series[1].graph && chart.series[1].graph.attr('stroke'),
+        colors[1],
+        'Pareto series should use the configured high contrast stroke.'
+    );
+
+    assert.strictEqual(
+        chart.series[1].color,
+        colors[1],
+        'Pareto series color should be updated for tooltip and legend state.'
+    );
+});
+
 QUnit.test('No data', function (assert) {
     var chart = Highcharts.chart('container', {
         series: [{}]
