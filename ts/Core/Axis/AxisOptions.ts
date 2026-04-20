@@ -1412,6 +1412,8 @@ export interface AxisOptions {
      *         Axis offfset
      * @sample {highcharts} highcharts/yaxis/offset-centered/
      *         Axes positioned in the center of the plot
+     * @sample {highcharts} highcharts/yaxis/radial-offset
+     *         Radial axis offset in gauge
      * @sample {highstock} stock/xaxis/offset/
      *         Y axis offset in stock chart
      */

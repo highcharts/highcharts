@@ -1520,11 +1520,18 @@ namespace AxisDefaults {
          * axes are displayed on the same side of the plot. With multiple
          * axes the offset is dynamically adjusted to avoid collision, this
          * can be overridden by setting offset explicitly.
+        *
+        * For radial axes in gauges, the offset can be a percentage string, and
+        * defaults to render the line and ticks on the inside of the pane and
+        * plot bands (since v13). Labels are not affected by the offset in
+        * radial axes.
          *
          * @sample {highcharts} highcharts/yaxis/offset/
          *         Y axis offset of 70
          * @sample {highcharts} highcharts/yaxis/offset-centered/
          *         Axes positioned in the center of the plot
+         * @sample {highcharts} highcharts/yaxis/radial-offset
+         *         Radial axis offset in gauge
          * @sample {highstock} stock/xaxis/offset/
          *         Y axis offset by 70 px
          *

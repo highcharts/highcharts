@@ -4,19 +4,15 @@ import type {
 
 export default {
     controls: [{
-        path: 'pane.size',
-        value: '85%'
+        path: 'yAxis.offset',
+        max: 50
     }],
     modules: ['highcharts-more'],
     templates: ['gauge'],
     chartOptionsExtra: {
-        chart: {
-            plotBorderWidth: 1
-        },
-        pane: {
-            size: '85%',
-            startAngle: 0,
-            endAngle: 360
+        yAxis: {
+            lineWidth: 1,
+            offset: '-20%'
         }
     }
 } satisfies SampleGeneratorConfig;

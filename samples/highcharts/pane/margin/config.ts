@@ -8,30 +8,13 @@ export default {
         value: 30
     }],
     modules: ['highcharts-more'],
-    templates: [],
+    templates: ['gauge'],
     chartOptionsExtra: {
         chart: {
-            type: 'gauge',
             plotBorderWidth: 1
         },
         pane: {
             margin: 30
-        },
-        yAxis: {
-            min: 0,
-            max: 100,
-            plotBands: [{
-                from: 50,
-                to: 70,
-                color: '#ffbf00'
-            }, {
-                from: 70,
-                to: 100,
-                color: '#00a96b'
-            }]
-        },
-        series: [{
-            data: [80]
-        }]
+        }
     }
 } satisfies SampleGeneratorConfig;
