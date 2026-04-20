@@ -109,7 +109,7 @@ class FlagsSeries extends ColumnSeries {
         ColumnSeries.defaultOptions,
         FlagsSeriesDefaults,
         {
-            legendSymbol: 'f-flag'
+            legendSymbol: 'flag-icon'
         }
     );
 

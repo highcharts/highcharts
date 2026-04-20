@@ -71,11 +71,11 @@ const FlagsSeriesDefaults: FlagsSeriesOptions = {
     * What type of legend symbol to render for this series. For flags
     * series, the default is `f-flag`, a pole with a pennant.
     *
-     * @default   f-flag
+     * @default   flag-icon
      * @product   highstock
      * @apioption plotOptions.flags.legendSymbol
      */
-    legendSymbol: 'f-flag',
+    legendSymbol: 'flag-icon',
 
     /**
      * The id of the series that the flags should be drawn on. If no id
