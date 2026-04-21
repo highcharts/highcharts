@@ -282,6 +282,7 @@ class Pane {
             { plotHeight, plotWidth } = chart,
             centerY = options.center?.[1],
             m = options.margin,
+            thickness = options.thickness,
             marginLoose: Array<number|undefined> = Array.isArray(m) ?
                 m :
                 [m, m, m, m],
@@ -391,10 +392,14 @@ class Pane {
         // Apply the auto-positioning
         if (isNumber(size) && size >= 0) {
             this.center[2] = size;
-            this.center[3] = Math.min(
-                size,
-                relativeLength(options.innerSize || 0, size)
-            );
+            if (isNumber(thickness)) {
+                this.center[3] = this.center[2] - thickness * 2;
+            } else {
+                this.center[3] = Math.min(
+                    size,
+                    relativeLength(options.innerSize || 0, size)
+                );
+            }
         }
 
         if (!defined(centerY)) {

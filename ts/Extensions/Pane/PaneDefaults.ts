@@ -209,6 +209,20 @@ const pane: PaneOptions|Array<PaneOptions> = {
      */
 
     /**
+     * The inner size of the pane, either as a number defining pixels, or a
+     * percentage defining a percentage of the pane's size. Defaults to 0 on
+     * polar charts, 60% on gauges.
+     *
+     * @sample {highcharts} highcharts/series-polar/column-inverted-inner
+     *         The inner size set to 20%
+     *
+     * @type    {number|string}
+     * @product highcharts
+     * @requires highcharts-more
+     * @apioption pane.innerSize
+     */
+
+    /**
      * The margin between the pane and the plot area when auto-fitting the pane.
      * This does not apply when an explicit `pane.size` is set. An array sets
      * individual margins for the sides in the order [top, right, bottom, left].
@@ -256,17 +270,19 @@ const pane: PaneOptions|Array<PaneOptions> = {
      */
 
     /**
-     * The inner size of the pane, either as a number defining pixels, or a
-     * percentage defining a percentage of the pane's size. Defaults to 0 on
-     * polar charts, 60% on gauges.
+     * The thickness of the plot band in terms of pixels. This applies to the
+     * pane background, plot bands and solid gauges. Use this for a fixed width
+     * pane across different sizes, where `size` and `innerSize` are not
+     * practical.
      *
-     * @sample {highcharts} highcharts/series-polar/column-inverted-inner
-     *         The inner size set to 20%
+     * @sample   {highcharts} highcharts/pane/thickness
+     *           Pane thickness
      *
-     * @type    {number|string}
-     * @product highcharts
+     * @since    next
+     * @product  highcharts
+     * @type     {number}
      * @requires highcharts-more
-     * @apioption pane.innerSize
+     * @apioption pane.thickness
      */
 
 };
