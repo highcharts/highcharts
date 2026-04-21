@@ -31,7 +31,8 @@ Highcharts.chart('container', {
     yAxis: {
         visible: false,
         stackShadow: {
-            enabled: true
+            enabled: true,
+            color: '#8885'
         },
         max: 100
     },

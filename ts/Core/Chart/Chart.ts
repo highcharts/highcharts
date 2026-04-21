@@ -4019,9 +4019,8 @@ class Chart {
      * @emits Highcharts.Chart#event:beforeShowResetZoom
      */
     public showResetZoom(): void {
-
         const chart = this,
-            lang = defaultOptions.lang,
+            lang = chart.options.lang,
             btnOptions = chart.zooming.resetButton as any,
             theme = btnOptions.theme,
             alignTo = (
