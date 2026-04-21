@@ -497,6 +497,12 @@ class GaugeSeries extends Series {
                     point.y, void 0, void 0, void 0, true
                 );
 
+            // Positions for the tooltip
+            point.tooltipPos = [
+                center[0] + Math.cos(rotation) * radius,
+                center[1] + Math.sin(rotation) * radius
+            ];
+
             // Handle the wrap and overshoot options
             if (isNumber(overshoot) || !wrap) {
                 overshoot = isNumber(overshoot) ?

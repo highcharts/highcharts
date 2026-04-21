@@ -264,6 +264,13 @@ class SolidGaugeSeries extends GaugeSeries {
                 if (graphic) {
                     graphic.addClass(className);
                 }
+
+                // Positions for the tooltip
+                const midRadius = innerRadius + (radius - innerRadius) * 0.5;
+                point.tooltipPos = [
+                    center[0] + Math.cos(rotation) * midRadius,
+                    center[1] + Math.sin(rotation) * midRadius
+                ];
             }
         }
     }
