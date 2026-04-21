@@ -1765,7 +1765,7 @@ class Tooltip {
             tooltip.tracker.attr({ d });
         } else {
             tooltip.tracker = label.renderer
-                .path() // Changed from .rect() to .path()
+                .path()
                 .attr({
                     d,
                     'stroke-width': 10 // Creates a 10px invisible buffer zone
