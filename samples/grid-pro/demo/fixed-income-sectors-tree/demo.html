@@ -1,29 +1,4 @@
 <link rel="stylesheet" href="demo.css" />
-<style>
-    /* Sparkline column (body only): vertical rhythm + chart fills cell width */
-    #container tbody td.hcg-cell[data-column-id="weight"] {
-        vertical-align: middle;
-    }
-
-    #container tbody td.hcg-cell[data-column-id="weight"] > div {
-        display: flex;
-        align-items: center;
-        justify-content: flex-start;
-        width: 100%;
-        min-height: 28px;
-        box-sizing: border-box;
-    }
-
-    #container tbody td.hcg-cell[data-column-id="weight"] .highcharts-container,
-    #container tbody td.hcg-cell[data-column-id="weight"] .highcharts-root {
-        width: 100% !important;
-        max-width: 100%;
-    }
-
-    #container tbody td.hcg-cell[data-column-id="weight"] .highcharts-data-labels text {
-        dominant-baseline: central;
-    }
-</style>
 <script src="https://code.highcharts.com/highcharts.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/grid-pro.js"></script>
 
