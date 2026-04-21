@@ -29,6 +29,7 @@ import type HeaderRow from './Header/HeaderRow';
 
 import Column from './Column';
 import Row from './Row';
+import Globals from '../Globals.js';
 import Templating from '../../../Core/Templating.js';
 import { fireEvent } from '../../../Shared/Utilities.js';
 
@@ -134,6 +135,8 @@ abstract class Cell {
     protected init(): HTMLTableCellElement {
         const isRowHeader = !!this.column?.options.cells?.rowHeader;
         const cell = document.createElement(isRowHeader ? 'th' : 'td', {});
+
+        cell.classList.add(Globals.getClassName('cell'));
 
         if (isRowHeader) {
             cell.setAttribute('scope', 'row');

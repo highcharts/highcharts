@@ -1,7 +1,7 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Hønsi
+ *  Author: Torstein Honsi
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -15,12 +15,13 @@
  *
  * */
 
-import type BoxPlotPoint from './BoxPlotPoint';
 import type BoxPlotPointOptions from './BoxPlotPointOptions';
 import type {
     ColumnSeriesOptions,
     ColumnSeriesTooltipOptions
 } from '../Column/ColumnSeriesOptions';
+import type ColorType from '../../Core/Color/ColorType';
+import type DashStyleValue from '../../Core/Renderer/DashStyleValue';
 import type { PointShortOptions } from '../../Core/Series/PointOptions';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 
@@ -73,286 +74,19 @@ export interface BoxPlotSeriesOptions extends ColumnSeriesOptions {
      * @sample {highcharts} highcharts/css/boxplot/
      *         Box plot in styled mode
      *
-     * @type {Highcharts.DashStyleValue}
-     *
      * @default Solid
      *
      * @since 8.1.0
      *
      * @product highcharts
      */
-    boxDashStyle?: BoxPlotPoint['boxDashStyle'];
+    boxDashStyle?: DashStyleValue;
 
     /**
-     * The fill color of the box.
      *
-     * In styled mode, the fill color can be set with the
-     * `.highcharts-boxplot-box` class.
-     *
-     * @sample {highcharts} highcharts/plotoptions/box-plot-styling/
-     *         Box plot styling
-     *
-     * @type {Highcharts.ColorType}
-     *
-     * @default #ffffff
-     *
-     * @since 3.0
-     *
-     * @product highcharts
+     * @default high
      */
-    fillColor?: BoxPlotPoint['fillColor'];
-
-    /**
-     * The length of a BoxPlot point's lower whisker. Overrides
-     * [whiskerLength](#boxplot.options.whiskerLength), overridden by
-     * [lowerWhiskerLength](#boxplot.point.lowerWhiskerLength).
-     *
-     * @sample {highcharts} highcharts/series-boxplot/whisker-length
-     *         Configuring whisker length
-     *
-     * @type {number|string}
-     *
-     * @product highcharts
-     */
-    lowerWhiskerLength?: BoxPlotPoint['lowerWhiskerLength'];
-
-    /**
-     * The color of the median line. If `undefined`, the general series
-     * color applies.
-     *
-     * In styled mode, the median stroke width can be set with the
-     * `.highcharts-boxplot-median` class.
-     *
-     * @sample {highcharts} highcharts/plotoptions/box-plot-styling/
-     *         Box plot styling
-     *
-     * @sample {highcharts} highcharts/css/boxplot/
-     *         Box plot in styled mode
-     *
-     * @sample {highcharts} highcharts/plotoptions/error-bar-styling/
-     *         Error bar styling
-     *
-     * @type {Highcharts.ColorType}
-     *
-     * @since 3.0
-     *
-     * @product highcharts
-     */
-    medianColor?: BoxPlotPoint['medianColor'];
-
-    /**
-     * The dash style of the median.
-     *
-     * @sample {highcharts} highcharts/plotoptions/box-plot-styling/
-     *         Box plot styling
-     *
-     * @sample {highcharts} highcharts/css/boxplot/
-     *         Box plot in styled mode
-     *
-     * @type {Highcharts.DashStyleValue}
-     *
-     * @default Solid
-     *
-     * @since 8.1.0
-     *
-     * @product highcharts
-     */
-    medianDashStyle?: BoxPlotPoint['medianDashStyle'];
-
-    /**
-     * The pixel width of the median line. If `null`, the
-     * [lineWidth](#plotOptions.boxplot.lineWidth) is used.
-     *
-     * In styled mode, the median stroke width can be set with the
-     * `.highcharts-boxplot-median` class.
-     *
-     * @sample {highcharts} highcharts/plotoptions/box-plot-styling/
-     *         Box plot styling
-     *
-     * @sample {highcharts} highcharts/css/boxplot/
-     *         Box plot in styled mode
-     *
-     * @type {number|null}
-     *
-     * @since 3.0
-     *
-     * @product highcharts
-     */
-    medianWidth?: BoxPlotPoint['medianWidth'];
-    states?: SeriesStatesOptions<BoxPlotSeriesOptions>;
-
-    /**
-     * The color of the stem, the vertical line extending from the box to
-     * the whiskers. If `undefined`, the series color is used.
-     *
-     * In styled mode, the stem stroke can be set with the
-     * `.highcharts-boxplot-stem` class.
-     *
-     * @sample {highcharts} highcharts/plotoptions/box-plot-styling/
-     *         Box plot styling
-     *
-     * @sample {highcharts} highcharts/css/boxplot/
-     *         Box plot in styled mode
-     *
-     * @sample {highcharts} highcharts/plotoptions/error-bar-styling/
-     *         Error bar styling
-     *
-     * @type {Highcharts.ColorType}
-     *
-     * @since 3.0
-     *
-     * @product highcharts
-     */
-    stemColor?: BoxPlotPoint['stemColor'];
-
-    /**
-     * The dash style of the stem, the vertical line extending from the
-     * box to the whiskers.
-     *
-     * @sample {highcharts} highcharts/plotoptions/box-plot-styling/
-     *         Box plot styling
-     *
-     * @sample {highcharts} highcharts/css/boxplot/
-     *         Box plot in styled mode
-     *
-     * @sample {highcharts} highcharts/plotoptions/error-bar-styling/
-     *         Error bar styling
-     *
-     * @type {Highcharts.DashStyleValue}
-     *
-     * @default Solid
-     *
-     * @since 3.0
-     *
-     * @product highcharts
-     */
-    stemDashStyle?: BoxPlotPoint['stemDashStyle'];
-
-    /**
-     * The width of the stem, the vertical line extending from the box to
-     * the whiskers. If `undefined`, the width is inherited from the
-     * [lineWidth](#plotOptions.boxplot.lineWidth) option.
-     *
-     * In styled mode, the stem stroke width can be set with the
-     * `.highcharts-boxplot-stem` class.
-     *
-     * @sample {highcharts} highcharts/plotoptions/box-plot-styling/
-     *         Box plot styling
-     *
-     * @sample {highcharts} highcharts/css/boxplot/
-     *         Box plot in styled mode
-     *
-     * @sample {highcharts} highcharts/plotoptions/error-bar-styling/
-     *         Error bar styling
-     *
-     * @type {number}
-     *
-     * @since 3.0
-     *
-     * @product highcharts
-     */
-    stemWidth?: BoxPlotPoint['stemWidth'];
-
-    /**
-     * The length of a BoxPlot point's upper whisker. Overrides
-     * [whiskerLength](#boxplot.options.whiskerLength), overridden by
-     * [upperWhiskerLength](#boxplot.point.upperWhiskerLength).
-     *
-     * @sample {highcharts} highcharts/series-boxplot/whisker-length
-     *         Configuring whisker length
-     *
-     * @type {number|string}
-     *
-     * @product highcharts
-     */
-    upperWhiskerLength?: BoxPlotPoint['upperWhiskerLength'];
-
-    /**
-     * The color of the whiskers, the horizontal lines marking low and high
-     * values. When `undefined`, the general series color is used.
-     *
-     * In styled mode, the whisker stroke can be set with the
-     * `.highcharts-boxplot-whisker` class .
-     *
-     * @sample {highcharts} highcharts/plotoptions/box-plot-styling/
-     *         Box plot styling
-     *
-     * @sample {highcharts} highcharts/css/boxplot/
-     *         Box plot in styled mode
-     *
-     * @type {Highcharts.ColorType}
-     *
-     * @since 3.0
-     *
-     * @product highcharts
-     */
-    whiskerColor?: BoxPlotPoint['whiskerColor'];
-
-    /**
-     * The dash style of the whiskers.
-     *
-     * @sample {highcharts} highcharts/plotoptions/box-plot-styling/
-     *         Box plot styling
-     *
-     * @sample {highcharts} highcharts/css/boxplot/
-     *         Box plot in styled mode
-     *
-     * @type {Highcharts.DashStyleValue}
-     *
-     * @default Solid
-     *
-     * @since 8.1.0
-     *
-     * @product highcharts
-     */
-    whiskerDashStyle?: BoxPlotPoint['whiskerDashStyle'];
-
-    /**
-     * The length of the whiskers, the horizontal lines marking low and
-     * high values. It can be a numerical pixel value, or a percentage
-     * value of the box width. Set `0` to disable whiskers.
-     *
-     * Individual lengths for upper and lower whiskers can be defined on the
-     * boxplot series and on specific boxplot points. Whisker lengths defined
-     * on points override whisker lengths defined on a boxplot series.
-     *
-     * Overridden by [whiskerLength](#boxplot.point.whiskerLength),
-     * [upperWhiskerLength](#boxplot.point.upperWhiskerLength), and
-     * [lowerWhiskerLength](#boxPlot.point.lowerWhiskerLength)
-     *
-     * @sample {highcharts} highcharts/plotoptions/box-plot-styling/
-     *         Box plot styling
-     *
-     * @sample {highcharts} highcharts/series-boxplot/whisker-length
-     *         Configuring whisker lengths
-     *
-     * @type {number|string}
-     *
-     * @since 3.0
-     *
-     * @product highcharts
-     */
-    whiskerLength?: BoxPlotPoint['whiskerLength'];
-
-    /**
-     * The line width of the whiskers, the horizontal lines marking low and
-     * high values. When `undefined`, the general
-     * [lineWidth](#plotOptions.boxplot.lineWidth) applies.
-     *
-     * In styled mode, the whisker stroke width can be set with the
-     * `.highcharts-boxplot-whisker` class.
-     *
-     * @sample {highcharts} highcharts/plotoptions/box-plot-styling/
-     *         Box plot styling
-     *
-     * @sample {highcharts} highcharts/css/boxplot/
-     *         Box plot in styled mode
-     *
-     * @since 3.0
-     *
-     * @product highcharts
-     */
-    whiskerWidth?: BoxPlotPoint['whiskerWidth'];
+    colorKey?: string;
 
     /**
      * An array of data points for the series. For the `boxplot` series
@@ -418,8 +152,6 @@ export interface BoxPlotSeriesOptions extends ColumnSeriesOptions {
      * @sample {highcharts} highcharts/series/data-array-of-objects/
      *         Config objects
      *
-     * @type {Array<Array<(number|string),number,number,number,number>|Array<(number|string),number,number,number,number,number>|*>}
-     *
      * @extends series.line.data
      *
      * @excluding marker
@@ -429,10 +161,23 @@ export interface BoxPlotSeriesOptions extends ColumnSeriesOptions {
     data?: Array<(BoxPlotPointOptions|PointShortOptions)>;
 
     /**
+     * The fill color of the box.
      *
-     * @default high
+     * In styled mode, the fill color can be set with the
+     * `.highcharts-boxplot-box` class.
+     *
+     * @sample {highcharts} highcharts/plotoptions/box-plot-styling/
+     *         Box plot styling
+     *
+     * @type {Highcharts.ColorType}
+     *
+     * @default #ffffff
+     *
+     * @since 3.0
+     *
+     * @product highcharts
      */
-    colorKey?: string;
+    fillColor?: ColorType;
 
     /**
      * The width of the line surrounding the box. If any of
@@ -453,9 +198,254 @@ export interface BoxPlotSeriesOptions extends ColumnSeriesOptions {
      */
     lineWidth?: number;
 
+    /**
+     * The length of a BoxPlot point's lower whisker. Overrides
+     * [whiskerLength](#boxplot.options.whiskerLength), overridden by
+     * [lowerWhiskerLength](#boxplot.point.lowerWhiskerLength).
+     *
+     * @sample {highcharts} highcharts/series-boxplot/whisker-length
+     *         Configuring whisker length
+     *
+     * @product highcharts
+     */
+    lowerWhiskerLength?: (number|string);
+
+    /**
+     * The color of the median line. If `undefined`, the general series
+     * color applies.
+     *
+     * In styled mode, the median stroke width can be set with the
+     * `.highcharts-boxplot-median` class.
+     *
+     * @sample {highcharts} highcharts/plotoptions/box-plot-styling/
+     *         Box plot styling
+     *
+     * @sample {highcharts} highcharts/css/boxplot/
+     *         Box plot in styled mode
+     *
+     * @sample {highcharts} highcharts/plotoptions/error-bar-styling/
+     *         Error bar styling
+     *
+     * @type {Highcharts.ColorType}
+     *
+     * @since 3.0
+     *
+     * @product highcharts
+     */
+    medianColor?: ColorType;
+
+    /**
+     * The dash style of the median.
+     *
+     * @sample {highcharts} highcharts/plotoptions/box-plot-styling/
+     *         Box plot styling
+     *
+     * @sample {highcharts} highcharts/css/boxplot/
+     *         Box plot in styled mode
+     *
+     * @default Solid
+     *
+     * @since 8.1.0
+     *
+     * @product highcharts
+     */
+    medianDashStyle?: DashStyleValue;
+
+    /**
+     * The pixel width of the median line. If `null`, the
+     * [lineWidth](#plotOptions.boxplot.lineWidth) is used.
+     *
+     * In styled mode, the median stroke width can be set with the
+     * `.highcharts-boxplot-median` class.
+     *
+     * @sample {highcharts} highcharts/plotoptions/box-plot-styling/
+     *         Box plot styling
+     *
+     * @sample {highcharts} highcharts/css/boxplot/
+     *         Box plot in styled mode
+     *
+     * @since 3.0
+     *
+     * @product highcharts
+     */
+    medianWidth?: number;
+    states?: SeriesStatesOptions<BoxPlotSeriesOptions>;
+
+    /**
+     * The color of the stem, the vertical line extending from the box to
+     * the whiskers. If `undefined`, the series color is used.
+     *
+     * In styled mode, the stem stroke can be set with the
+     * `.highcharts-boxplot-stem` class.
+     *
+     * @sample {highcharts} highcharts/plotoptions/box-plot-styling/
+     *         Box plot styling
+     *
+     * @sample {highcharts} highcharts/css/boxplot/
+     *         Box plot in styled mode
+     *
+     * @sample {highcharts} highcharts/plotoptions/error-bar-styling/
+     *         Error bar styling
+     *
+     * @type {Highcharts.ColorType}
+     *
+     * @since 3.0
+     *
+     * @product highcharts
+     */
+    stemColor?: ColorType;
+
+    /**
+     * The dash style of the stem, the vertical line extending from the
+     * box to the whiskers.
+     *
+     * @sample {highcharts} highcharts/plotoptions/box-plot-styling/
+     *         Box plot styling
+     *
+     * @sample {highcharts} highcharts/css/boxplot/
+     *         Box plot in styled mode
+     *
+     * @sample {highcharts} highcharts/plotoptions/error-bar-styling/
+     *         Error bar styling
+     *
+     * @default Solid
+     *
+     * @since 3.0
+     *
+     * @product highcharts
+     */
+    stemDashStyle?: DashStyleValue;
+
+    /**
+     * The width of the stem, the vertical line extending from the box to
+     * the whiskers. If `undefined`, the width is inherited from the
+     * [lineWidth](#plotOptions.boxplot.lineWidth) option.
+     *
+     * In styled mode, the stem stroke width can be set with the
+     * `.highcharts-boxplot-stem` class.
+     *
+     * @sample {highcharts} highcharts/plotoptions/box-plot-styling/
+     *         Box plot styling
+     *
+     * @sample {highcharts} highcharts/css/boxplot/
+     *         Box plot in styled mode
+     *
+     * @sample {highcharts} highcharts/plotoptions/error-bar-styling/
+     *         Error bar styling
+     *
+     * @since 3.0
+     *
+     * @product highcharts
+     */
+    stemWidth?: number;
+
+    /**
+     * The Y axis value to serve as the base for the columns, for
+     * distinguishing between values above and below a threshold. If `null`,
+     * the columns extend from the padding Y axis minimum.
+     *
+     * @default null
+     * @since 2.0
+     * @product highcharts
+     */
+    threshold?: ColumnSeriesOptions['threshold'];
+
     tooltip?: BoxPlotSeriesTooltipOptions;
 
-    threshold?: number|null;
+    /**
+     * The length of a BoxPlot point's upper whisker. Overrides
+     * [whiskerLength](#boxplot.options.whiskerLength), overridden by
+     * [upperWhiskerLength](#boxplot.point.upperWhiskerLength).
+     *
+     * @sample {highcharts} highcharts/series-boxplot/whisker-length
+     *         Configuring whisker length
+     *
+     * @product highcharts
+     */
+    upperWhiskerLength?: (number|string);
+
+    /**
+     * The color of the whiskers, the horizontal lines marking low and high
+     * values. When `undefined`, the general series color is used.
+     *
+     * In styled mode, the whisker stroke can be set with the
+     * `.highcharts-boxplot-whisker` class.
+     *
+     * @sample {highcharts} highcharts/plotoptions/box-plot-styling/
+     *         Box plot styling
+     *
+     * @sample {highcharts} highcharts/css/boxplot/
+     *         Box plot in styled mode
+     *
+     * @type {Highcharts.ColorType}
+     *
+     * @since 3.0
+     *
+     * @product highcharts
+     */
+    whiskerColor?: ColorType;
+
+    /**
+     * The dash style of the whiskers.
+     *
+     * @sample {highcharts} highcharts/plotoptions/box-plot-styling/
+     *         Box plot styling
+     *
+     * @sample {highcharts} highcharts/css/boxplot/
+     *         Box plot in styled mode
+     *
+     * @default Solid
+     *
+     * @since 8.1.0
+     *
+     * @product highcharts
+     */
+    whiskerDashStyle?: DashStyleValue;
+
+    /**
+     * The length of the whiskers, the horizontal lines marking low and
+     * high values. It can be a numerical pixel value, or a percentage
+     * value of the box width. Set `0` to disable whiskers.
+     *
+     * Individual lengths for upper and lower whiskers can be defined on the
+     * boxplot series and on specific boxplot points. Whisker lengths defined
+     * on points override whisker lengths defined on a boxplot series.
+     *
+     * Overridden by [whiskerLength](#boxplot.point.whiskerLength),
+     * [upperWhiskerLength](#boxplot.point.upperWhiskerLength), and
+     * [lowerWhiskerLength](#boxplot.point.lowerWhiskerLength)
+     *
+     * @sample {highcharts} highcharts/plotoptions/box-plot-styling/
+     *         Box plot styling
+     *
+     * @sample {highcharts} highcharts/series-boxplot/whisker-length
+     *         Configuring whisker lengths
+     *
+     * @since 3.0
+     *
+     * @product highcharts
+     */
+    whiskerLength?: (number|string);
+
+    /**
+     * The line width of the whiskers, the horizontal lines marking low and
+     * high values. When `undefined`, the general
+     * [lineWidth](#plotOptions.boxplot.lineWidth) applies.
+     *
+     * In styled mode, the whisker stroke width can be set with the
+     * `.highcharts-boxplot-whisker` class.
+     *
+     * @sample {highcharts} highcharts/plotoptions/box-plot-styling/
+     *         Box plot styling
+     *
+     * @sample {highcharts} highcharts/css/boxplot/
+     *         Box plot in styled mode
+     *
+     * @since 3.0
+     *
+     * @product highcharts
+     */
+    whiskerWidth?: number;
 }
 
 export interface BoxPlotSeriesTooltipOptions
