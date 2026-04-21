@@ -12,9 +12,7 @@ Highcharts.chart('container', {
         startAngle: -90,
         endAngle: 90,
         background: {
-            innerRadius: '60%',
-            outerRadius: '100%',
-            shape: 'arc'
+            innerRadius: '60%'
         }
     },
 

@@ -57,9 +57,9 @@ const SolidGaugeSeriesDefaults: SolidGaugeSeriesOptions = {
      */
 
     /**
-     * The inner radius for points in a solid gauge. Can be given only in
-     * percentage, either as a number or a string like `50%`. Defaults to match
-     * the `pane.innerSize`.
+     * The inner radius for points in a solid gauge. Can be given either as a
+     * pixel value (number), or as a percentage string, like `"50%"`. Defaults
+     * to match the `pane.innerSize`.
      *
      * @sample {highcharts} highcharts/plotoptions/solidgauge-radius/
      *         Individual radius and innerRadius
@@ -98,8 +98,9 @@ const SolidGaugeSeriesDefaults: SolidGaugeSeriesOptions = {
      */
 
     /**
-     * The outer radius for points in a solid gauge. Can be given only in
-     * percentage, either as a number or a string like `"100%"`.
+     * The outer radius for points in a solid gauge. Can be given either as a
+     * pixel value (number), or as a percentage string, like `"100%"`. Defaults
+     * to match the `pane.size`.
      *
      * @sample {highcharts} highcharts/plotoptions/solidgauge-radius/
      *         Individual radius and innerRadius
@@ -209,9 +210,9 @@ const SolidGaugeSeriesDefaults: SolidGaugeSeriesOptions = {
  */
 
 /**
- * The inner radius of an individual point in a solid gauge. Can be given only
- * in percentage, either as a number or a string like `50%`. Defaults to match
- * the `pane.innerSize`.
+ * The inner radius of an individual point in a solid gauge. Can be given either
+ * as a pixel value (number), or as a percentage string, like `"50%"`. Defaults
+ * to match the `pane.innerSize` or the series-level `innerRadius` if set.
  *
  * @sample {highcharts} highcharts/plotoptions/solidgauge-radius/
  *         Individual radius and innerRadius
@@ -223,8 +224,9 @@ const SolidGaugeSeriesDefaults: SolidGaugeSeriesOptions = {
  */
 
 /**
- * The outer radius of an individual point in a solid gauge. Can be
- * given only in percentage, either as a number or a string like `"100%"`.
+ * The outer radius of an individual point in a solid gauge. Can be given either
+ * as a pixel value (number), or as a percentage string, like `"100%"`. Defaults
+ * to match the `pane.size` or the series-level `radius` if set.
  *
  * @sample {highcharts} highcharts/plotoptions/solidgauge-radius/
  *         Individual radius and innerRadius

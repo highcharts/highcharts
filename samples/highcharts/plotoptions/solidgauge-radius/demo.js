@@ -18,15 +18,10 @@ Highcharts.chart('container', {
     },
 
     pane: {
-        center: ['50%', '85%'],
-        size: '140%',
         startAngle: -90,
         endAngle: 90,
         background: {
-            backgroundColor: '#EEE',
-            innerRadius: '60%',
-            outerRadius: '100%',
-            shape: 'arc'
+            innerRadius: '60%'
         }
     },
 
@@ -37,12 +32,9 @@ Highcharts.chart('container', {
             [0.5, '#DDDF0D'], // yellow
             [0.9, '#DF5353'] // red
         ],
-        lineWidth: 0,
-        minorTickInterval: null,
         min: 0,
         max: 200,
-        tickInterval: 200,
-        tickWidth: 0,
+        tickAmount: 2,
         labels: {
             y: 16,
             distance: -45
@@ -53,13 +45,13 @@ Highcharts.chart('container', {
         name: 'Speed',
         data: [{
             name: 'First car',
-            radius: 98,
-            innerRadius: 82,
+            radius: '98%',
+            innerRadius: '82%',
             y: 80
         }, {
             name: 'Second car',
-            radius: 78,
-            innerRadius: 62,
+            radius: '78%',
+            innerRadius: '62%',
             y: 120
         }],
         dataLabels: {

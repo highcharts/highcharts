@@ -7,14 +7,15 @@ Highcharts.chart('container', {
     },
     pane: {
         startAngle: -130,
-        endAngle: 130
+        endAngle: 130,
+        size: '85%'
     },
     yAxis: {
         min: 0,
         max: 100,
         tickAmount: 2,
         labels: {
-            distance: '75%',
+            distance: '15%',
             align: 'auto',
             style: {
                 fontSize: '20px'

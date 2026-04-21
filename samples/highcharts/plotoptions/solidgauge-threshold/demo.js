@@ -9,13 +9,8 @@ const chart = Highcharts.chart('container', {
     },
 
     pane: {
-        startAngle: -140,
-        endAngle: 140,
         background: {
-            backgroundColor: '#EEE',
-            innerRadius: '80%',
-            outerRadius: '100%',
-            shape: 'arc'
+            innerRadius: '80%'
         }
     },
 
@@ -40,10 +35,6 @@ const chart = Highcharts.chart('container', {
         },
         tickAmount: 2,
         zIndex: 4,
-        labels: {
-            y: 20,
-            distance: 0.5
-        },
         stops: [
             [0.4999, '#55BF3B'], // green
             [0.5, '#DF5353'] // red
@@ -61,16 +52,6 @@ const chart = Highcharts.chart('container', {
             outerRadius: '78%',
             innerRadius: '70%'
         }]
-    },
-
-    plotOptions: {
-        solidgauge: {
-            dataLabels: {
-                y: 5,
-                borderWidth: 0
-            },
-            innerRadius: '80%'
-        }
     },
 
     credits: {
