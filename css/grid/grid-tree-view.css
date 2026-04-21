@@ -7,36 +7,20 @@
     --ig-tree-toggle-gap: 5px;
     --ig-tree-toggle-slot-size: 20px;
 
-    position: relative;
     display: flex;
     align-items: center;
     min-width: 0;
-    padding-left:
-        calc(
-            (var(--ig-tree-depth, 0) * var(--ig-tree-indent-size)) +
-            var(--ig-tree-toggle-slot-size) +
-            var(--ig-tree-toggle-gap)
-        );
-}
+    padding-left: calc(var(--ig-tree-depth, 0) * var(--ig-tree-indent-size));
 
-.hcg-tree {
     .hcg-tree-toggle {
-        position: absolute;
-        top: 50%;
-        left: calc(var(--ig-tree-depth, 0) * var(--ig-tree-indent-size));
+        flex: 0 0 var(--ig-tree-toggle-slot-size);
         display: flex;
         align-items: center;
         justify-content: center;
-        width: var(--ig-tree-toggle-slot-size);
         height: var(--ig-tree-toggle-slot-size);
-        transform: translateY(calc(-50% + 1px));
+        margin-right: var(--ig-tree-toggle-gap);
 
-        .hcg-tree-toggle-icon {
-            transition: transform 120ms ease;
-            transform-origin: center;
-        }
-
-        .hcg-icon[aria-expanded="true"] > .hcg-tree-toggle-icon {
+        button[aria-expanded="true"] > svg {
             transform: rotate(90deg);
         }
     }

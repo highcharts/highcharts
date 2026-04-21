@@ -34,7 +34,7 @@ import type DataConnectorType from '../../../Data/Connectors/DataConnectorType';
 import type {
     DataConnectorTypeOptions
 } from '../../../Data/Connectors/DataConnectorType';
-import type { MakeOptional, TypedArray } from '../../../Shared/Types';
+import type { MakeOptional, TypedArray, AnyRecord } from '../../../Shared/Types';
 
 import { DataProvider } from './DataProvider.js';
 import DataTable from '../../../Data/DataTable.js';
@@ -438,8 +438,13 @@ export class LocalDataProvider extends DataProvider {
 
         const grid = this.querying.grid;
         if ('treeView' in grid && grid.treeView) {
-            grid.treeView.sync();
-            interTable = grid.treeView.projectTable(interTable);
+            try {
+                grid.treeView.sync();
+                interTable = grid.treeView.projectTable(interTable);
+            } catch (error) {
+                // eslint-disable-next-line no-console
+                console.error((error as AnyRecord).message);
+            }
         }
 
         this.prePaginationRowCount = interTable.rowCount;
