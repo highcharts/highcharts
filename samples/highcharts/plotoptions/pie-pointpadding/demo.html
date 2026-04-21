@@ -1,31 +1,14 @@
 <script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/themes/adaptive.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/@highcharts/controls@0.7.0" type="module"></script>
 
 <div id="container"></div>
-<div class="controls">
-    <label for="padding-slider">
-        pointPadding:
-        <span id="padding-value">10</span>px
-    </label>
-    <input
-        id="padding-slider"
-        type="range"
-        min="0"
-        max="30"
-        step="0.1"
-        value="10"
-    >
-</div>
-<div class="controls">
-    <label for="inner-slider">
-        innerSize:
-        <span id="inner-value">50</span>%
-    </label>
-    <input
-        id="inner-slider"
-        type="range"
-        min="0"
-        max="90"
-        step="1"
-        value="50"
-    >
+<div class="highcharts-controls-wrapper">
+  <highcharts-controls>
+    <highcharts-group header="Update options">
+      <highcharts-control type="number" path="series.pointPadding" value="10" min="1" max="40"></highcharts-control>
+      <highcharts-control type="number" path="series.innerSize" value="30%" min="0" max="90" step="1"></highcharts-control>
+    </highcharts-group>
+  </highcharts-controls>
 </div>

@@ -13,3 +13,13 @@
 .controls input {
     width: 100%;
 }
+
+.highcharts-controls-wrapper {
+    max-width: 800px;
+    margin: 1em auto;
+    padding: 0 10px;
+}
+
+highcharts-controls {
+    display: inline-block;
+}

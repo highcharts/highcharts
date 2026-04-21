@@ -37,7 +37,8 @@ import {
     extend,
     fireEvent,
     merge,
-    pick
+    pick,
+    relativeLength
 } from '../../Shared/Utilities.js';
 
 /* *
@@ -236,14 +237,7 @@ class PieSeries extends Series {
         this.points.forEach(function (point): void {
             // When updating a series between 2d and 3d or cartesian and
             // polar, the shape type changes.
-            // TODO @@ is this the correct way to update padding?
-            if (
-                point.graphic &&
-                (
-                    point.hasNewShapeType() ||
-                    point.shapeArgs?.padding !== point.graphic.padding
-                )
-            ) {
+            if (point.graphic && point.hasNewShapeType()) {
                 point.graphic = point.graphic.destroy();
             }
 
@@ -451,6 +445,10 @@ class PieSeries extends Series {
             series.center = positions = series.getCenter();
         }
 
+        const radius = positions[2] / 2;
+        const pointPadding =
+            relativeLength(series.options.pointPadding || 0, radius) / 2;
+
         // Calculate the geometry for each point
         for (i = 0; i < len; i++) {
 
@@ -470,10 +468,11 @@ class PieSeries extends Series {
             const shapeArgs = {
                 x: positions[0],
                 y: positions[1],
-                r: positions[2] / 2,
+                r: radius,
                 innerR: positions[3] / 2,
                 start,
-                end
+                end,
+                padding: pointPadding
             };
             point.shapeType = 'arc';
             point.shapeArgs = shapeArgs;
@@ -497,8 +496,8 @@ class PieSeries extends Series {
             };
 
             // Set the anchor point for tooltips
-            radiusX = Math.cos(angle) * positions[2] / 2;
-            radiusY = Math.sin(angle) * positions[2] / 2;
+            radiusX = Math.cos(angle) * radius;
+            radiusY = Math.sin(angle) * radius;
             point.tooltipPos = [
                 positions[0] + radiusX * 0.7,
                 positions[1] + radiusY * 0.7
@@ -508,33 +507,6 @@ class PieSeries extends Series {
                 1 :
                 0;
             point.angle = angle;
-        }
-
-        const pointPaddingOption = series.options.pointPadding;
-        let pointPaddingInPixels: number | undefined;
-
-        // Point padding number => pixels.
-        if (typeof pointPaddingOption === 'number') {
-            pointPaddingInPixels = pointPaddingOption / 2;
-        }
-
-        // Point padding string => percentage of first point radius, e.g. "10%".
-        if (typeof pointPaddingOption === 'string') {
-            const radius = series.points[0]?.shapeArgs?.r || 0;
-            const match = pointPaddingOption.trim().match(/^(\d+(?:\.\d+)?)%$/);
-
-            if (match && radius > 0) {
-                const percentage = parseFloat(match[1]);
-                pointPaddingInPixels = ((percentage / 100) * radius) / 2;
-            }
-        }
-
-        if (pointPaddingInPixels) {
-            series.points.forEach((point): void => {
-                if (point.shapeArgs) {
-                    point.shapeArgs.padding = pointPaddingInPixels;
-                }
-            });
         }
 
         fireEvent(series, 'afterTranslate');
