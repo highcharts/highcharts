@@ -6,6 +6,9 @@ export default {
     controls: [{
         path: 'pane.size',
         value: '85%'
+    }, {
+        path: 'pane.innerSize',
+        value: '90%'
     }],
     modules: ['highcharts-more'],
     templates: ['gauge'],

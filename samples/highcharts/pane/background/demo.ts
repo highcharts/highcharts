@@ -1,10 +1,9 @@
 Highcharts.chart('container', {
     chart: {
-        plotBorderWidth: 1,
         type: 'gauge'
     },
     title: {
-        text: 'Demo of <em>pane.size</em> and <em>innerSize</em>'
+        text: 'Demo of <em>pane.background</em> options'
     },
     yAxis: {
         max: 100,
@@ -20,10 +19,11 @@ Highcharts.chart('container', {
         }]
     },
     pane: {
-        endAngle: 360,
-        innerSize: '90%',
-        size: '85%',
-        startAngle: 0
+        background: {
+            backgroundColor: '#f7f7f7',
+            borderColor: '#cccccc',
+            borderWidth: 1
+        }
     },
     series: [{
         data: [80]

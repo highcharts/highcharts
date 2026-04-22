@@ -22,10 +22,7 @@ const chart = Highcharts.chart('container', {
         text: `startAngle: ${getPane().startAngle},
             endAngle: ${getPane().endAngle}`
     },
-    pane: {
-        ...getPane(),
-        margin: 100
-    },
+    pane: getPane(),
 
     yAxis: {
         min: 0,

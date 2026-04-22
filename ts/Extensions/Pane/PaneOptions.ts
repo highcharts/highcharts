@@ -44,6 +44,8 @@ export interface PaneBackgroundOptions {
     /**
      * The background color or gradient for the pane.
      *
+     * @sample   highcharts/pane/background
+     *           Pane background options
      * @default { linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 }, stops: [[0, #ffffff], [1, #e6e6e6]] }
      * @since    2.3.0
      * @requires highcharts-more
@@ -52,6 +54,8 @@ export interface PaneBackgroundOptions {
     /**
      * The pane background border color.
      *
+     * @sample   highcharts/pane/background
+     *           Pane background options
      * @since    2.3.0
      * @requires highcharts-more
      */
@@ -69,6 +73,8 @@ export interface PaneBackgroundOptions {
     /**
      * The pixel border width of the pane background.
      *
+     * @sample   highcharts/pane/background
+     *           Pane background options
      * @since    2.3.0
      * @requires highcharts-more
      */
@@ -126,6 +132,8 @@ export interface PaneOptions {
      * `Highcharts.setOptions` for theming, the background must be a single
      * item.
      *
+     * @sample   highcharts/pane/background
+     *           Pane background options
      * @sample   {highcharts} highcharts/demo/gauge-speedometer/
      *           Speedometer gauge with multiple backgrounds
      * @requires highcharts-more
@@ -136,6 +144,8 @@ export interface PaneOptions {
      * background, plot bands and solid gauges, unless they have specific
      * border radius settings.
      *
+     * @sample  highcharts/pane/borderradius
+     *          Border radius
      * @type    {number|string}
      * @since   next
      * @requires highcharts-more
@@ -157,6 +167,8 @@ export interface PaneOptions {
      * degrees where 0 is north. Defaults to
      * [startAngle](#pane.startAngle) plus 360.
      *
+     * @sample   {highcharts} highcharts/pane/size
+     *           Responsive pane size and center
      * @sample   {highcharts} highcharts/demo/gauge-vu-meter/
      *           VU-meter with custom start and end angle
      * @since    2.3.0
@@ -173,6 +185,8 @@ export interface PaneOptions {
      * The inner size of the pane, either as a number defining pixels, or a
      * percentage defining a percentage of the pane's size.
      *
+     * @sample   {highcharts} highcharts/pane/size-percent
+     *           Gauge with pane sizing
      * @sample   {highcharts} highcharts/series-polar/column-inverted-inner
      *           The inner size set to 20%
      * @requires highcharts-more
@@ -195,6 +209,10 @@ export interface PaneOptions {
      * percentage defining a percentage of the available plot area (the
      * smallest of the plot height or plot width).
      *
+     * @sample   {highcharts} highcharts/pane/size-percent
+     *           Gauge with pane sizing
+     * @sample {highcharts} highcharts/pane/size
+     *         Responsive pane size and center
      * @sample   {highcharts} highcharts/demo/gauge-vu-meter/
      *           Smaller size
      * @requires highcharts-more
@@ -204,6 +222,8 @@ export interface PaneOptions {
      * The start angle of the polar X axis or gauge axis, given in degrees
      * where 0 is north.
      *
+     * @sample {highcharts} highcharts/pane/size
+     *         Responsive pane size and center
      * @sample   {highcharts} highcharts/demo/gauge-vu-meter/
      *           VU-meter with custom start and end angle
      * @since    2.3.0
