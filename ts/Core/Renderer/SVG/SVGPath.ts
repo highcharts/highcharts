@@ -39,7 +39,8 @@ export namespace SVGPath {
         cx: number,
         cy: number,
         start: number,
-        end: number
+        end: number,
+        innerRadius?: number
     };
     type ArcArray = [
         'A'|'a',

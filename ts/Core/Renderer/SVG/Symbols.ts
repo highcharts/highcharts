@@ -147,6 +147,8 @@ function arc(
                     minAcceptableInnerRadius : minInnerRadius;
             }
 
+            let innerStart = rawStart;
+            let innerEnd = rawEnd;
             let innerArcStartDeltaX = cInnerRadius * cosEnd;
             let innerArcStartDeltaY = cInnerRadius * sinEnd;
             let innerArcEndDeltaX =
@@ -160,10 +162,8 @@ function arc(
                     Math.abs(rawEnd - rawStart) - proximity
                 );
 
-                let innerStart =
-                    rawStart ? rawStart + innerPaddingInRadians : 0;
-                let innerEnd =
-                    rawEnd ? rawEnd - innerPaddingInRadians : 0;
+                innerStart = rawStart ? rawStart + innerPaddingInRadians : 0;
+                innerEnd = rawEnd ? rawEnd - innerPaddingInRadians : 0;
 
                 // Check if pading can be applied to the inner arc
                 if (innerEnd < innerStart) {
@@ -195,10 +195,11 @@ function arc(
             ];
             // Memo for border radius
             arcSegment.params = {
-                start: end,
-                end: start,
+                start: rawEnd,
+                end: rawStart,
                 cx,
-                cy
+                cy,
+                innerRadius: cInnerRadius
             };
             arc.push(
                 open ?
