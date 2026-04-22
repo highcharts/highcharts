@@ -1029,7 +1029,7 @@ input.highcharts-range-selector {
 
 .highcharts-map-series .highcharts-point-hover {
     transition: fill 0ms, fill-opacity 0ms, opacity 0ms;
-    fill-opacity: 1;
+    fill-opacity: 0.5;
 }
 
 .highcharts-mapline-series .highcharts-point {
