@@ -127,6 +127,7 @@ namespace ColorAxisComposition {
             ];
 
             addEvent(ChartClass, 'afterCreateAxes', onChartAfterCreateAxes);
+            addEvent(ChartClass, 'load', onChartLoad);
 
             wrapChartCreateAxis(ChartClass);
 
@@ -140,7 +141,6 @@ namespace ColorAxisComposition {
                 onLegendAfterColorizeItem
             );
             addEvent(LegendClass, 'afterUpdate', onLegendAfterUpdate);
-            addEvent(LegendClass, 'afterRender', onLegendAfterRender);
 
             extend(
                 seriesProto,
@@ -165,6 +165,36 @@ namespace ColorAxisComposition {
             addEvent(SeriesClass, 'bindAxes', onSeriesBindAxes);
         }
 
+    }
+
+    /**
+     * Toggle series state when hovering dataClass legend items.
+     * @internal
+     */
+    function onChartLoad(this: Chart): void {
+        this.legend?.allItems.forEach((item): void => {
+            if (!(item as unknown as ColorAxis.LegendItemObject).isDataClass) {
+                return;
+            }
+
+            const legendItem = item.legendItem;
+
+            if (legendItem?.group) {
+                const element = legendItem.group.element;
+
+                addEvent(element, 'mouseover', (): void => {
+                    this.series.forEach((series): void => {
+                        series.setState('hover');
+                    });
+                });
+
+                addEvent(element, 'mouseout', (): void => {
+                    this.series.forEach((series): void => {
+                        series.setState('');
+                    });
+                });
+            }
+        });
     }
 
     /**
@@ -280,36 +310,6 @@ namespace ColorAxisComposition {
     ): void {
         this.chart.colorAxis?.forEach((colorAxis): void => {
             colorAxis.update({}, e.redraw);
-        });
-    }
-
-    /**
-     * Toggle active series class when hovering dataClass legend items.
-     * @internal
-     */
-    function onLegendAfterRender(this: Legend): void {
-        this.allItems.forEach((item): void => {
-            const legendItem = item.legendItem;
-
-            if (legendItem?.group) {
-                const element = legendItem.group.element;
-
-                element.addEventListener('mouseover', (): void => {
-                    this.chart.series.forEach((series): void => {
-                        series.group?.addClass(
-                            'highcharts-series-data-class-hover'
-                        );
-                    });
-                });
-
-                element.addEventListener('mouseout', (): void => {
-                    this.chart.series.forEach((series): void => {
-                        series.group?.removeClass(
-                            'highcharts-series-data-class-hover'
-                        );
-                    });
-                });
-            }
         });
     }
 
