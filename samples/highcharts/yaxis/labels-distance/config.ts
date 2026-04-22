@@ -5,38 +5,35 @@ import type {
 export default {
     controls: [{
         path: 'yAxis.labels.distance',
-        value: '-50%',
-        min: -50,
+        value: '-20%',
+        min: -100,
         max: 50
     }],
     modules: ['highcharts-more', 'modules/solid-gauge'],
+    templates: ['gauge'],
     chartOptionsExtra: {
+        chart: {
+            type: 'solidgauge',
+            marginBottom: 50
+        },
+        subtitle: {
+            text: 'Initially placed in the middle of the solid gauge band'
+        },
         pane: {
-            center: ['50%', '80%'],
-            size: '130%',
             startAngle: -90,
             endAngle: 90,
-            background: {
-                innerRadius: '50%',
-                outerRadius: '100%',
-                shape: 'arc'
-            }
+            innerSize: '60%'
         },
         yAxis: {
+            plotBands: [],
             min: 0,
             max: 100,
-            lineWidth: 0,
-            tickWidth: 0,
-            minorTickWidth: 0,
             tickAmount: 2,
             labels: {
                 y: 25
             }
         },
         series: [{
-            type: 'solidgauge',
-            innerRadius: '50%',
-            radius: '100%',
             data: [54.4]
         }]
     }

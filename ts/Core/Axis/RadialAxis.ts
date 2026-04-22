@@ -1368,10 +1368,10 @@ namespace RadialAxis {
                 this.pos,
                 (axis.center[2] / 2) +
                     relativeLength(
-                        (labelOptions.distance ?? -25) + axis.offset,
-                        axis.center[2] / 2,
-                        -axis.center[2] / 2
-                    )
+                        labelOptions.distance ?? -25,
+                        axis.center[2] / 2
+                    ) +
+                    axis.offset
             );
 
             // Automatically rotated
