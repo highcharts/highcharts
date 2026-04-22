@@ -10,7 +10,7 @@ Highcharts.chart('container', {
     },
     yAxis: {
         labels: {
-            distance: '75%',
+            distance: '-50%',
             y: 25
         },
         lineWidth: 0,

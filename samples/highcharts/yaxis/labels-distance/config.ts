@@ -5,7 +5,9 @@ import type {
 export default {
     controls: [{
         path: 'yAxis.labels.distance',
-        value: '75%'
+        value: '-50%',
+        min: -50,
+        max: 50
     }],
     modules: ['highcharts-more', 'modules/solid-gauge'],
     chartOptionsExtra: {

@@ -8,8 +8,7 @@ Highcharts.chart('container', {
     },
     pane: {
         startAngle: -150,
-        endAngle: 150,
-        innerSize: '85%'
+        endAngle: 150
     },
 
     // the value axis
@@ -44,7 +43,8 @@ Highcharts.chart('container', {
             }
         }],
         labels: {
-            distance: -30
+            // Move them inside to avoid collision with plot band labels
+            distance: '-30%'
         }
     },
 

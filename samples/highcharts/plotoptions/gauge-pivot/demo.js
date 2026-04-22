@@ -26,7 +26,9 @@ Highcharts.chart('container', {
             from: 60,
             to: 100,
             color: 'lightcoral'
-        }]
+        }],
+        tickWidth: 0,
+        minorTickWidth: 0
     },
 
     plotOptions: {
@@ -34,16 +36,19 @@ Highcharts.chart('container', {
             dataLabels: {
                 // Render inside the pivot
                 verticalAlign: 'middle',
-                y: 0
+                y: 0,
+                zIndex: 3
             },
             dial: {
-                radius: 60,
-                baseLength: 50,
-                baseWidth: 40,
-                backgroundColor: 'green'
+                radius: '60%',
+                baseLength: '70%',
+                baseWidth: '60%',
+                backgroundColor: 'green',
+                borderRadius: 0,
+                topWidth: 0
             },
             pivot: {
-                radius: 50,
+                radius: '50%',
                 borderWidth: 5,
                 borderColor: 'green',
                 backgroundColor: 'white'

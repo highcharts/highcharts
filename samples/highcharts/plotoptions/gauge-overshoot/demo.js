@@ -1,100 +1,37 @@
 Highcharts.chart('container', {
 
     chart: {
-        type: 'gauge',
-        plotBackgroundColor: null,
-        plotBackgroundImage: null,
-        plotBorderWidth: 0,
-        plotShadow: false
+        type: 'gauge'
     },
 
     title: {
-        text: ''
-    },
-
-    pane: {
-        startAngle: -110,
-        endAngle: 110,
-        borderWidth: 1,
-        background: null
+        text: 'Demo of gauge with overshoot'
     },
 
     // the value axis
     yAxis: {
         min: -50,
         max: 50,
-        lineColor: '#3A3A3A',
-        tickColor: '#3A3A3A',
-        minorTickColor: '#c0c0bc',
-        minorTickPosition: 'outside',
-        tickPosition: 'outside',
-        tickLength: 12,
-        minorTickInterval: 'auto',
-        tickWidth: 4,
-        minorTickLength: 8,
-        minorTickWidth: 0,
-        offset: -13,
-        lineWidth: 1,
-        labels: {
-            distance: 27,
-            step: 0,
-            rotation: 0,
-            style: {
-                color: '#3A3A3A',
-                fontWeigth: 'normal'
-            }
-        },
-        title: {
-            text: '%'
-        },
+        startOnTick: false,
+        endOnTick: false,
         plotBands: [{
             from: -50,
             to: 50,
-            outerRadius: '100%',
-            thickness: 12,
             color: '#d3e9f7' // light blue
         }, {
             from: 20,
             to: 50,
-            thickness: 12,
-            outerRadius: '100%',
             color: '#6fbe6b' // green
         }, {
             from: -50,
             to: -20,
-            thickness: 12,
-            outerRadius: '100%',
             color: '#e7797d' // yellow
         }]
-    },
-
-    plotOptions: {
-        gauge: {
-            dial: {
-                baseWidth: 8,
-                backgroundColor: '#1f9fd9',
-                borderColor: '#1f9fd9',
-                borderWidth: 1,
-                rearLength: 0,
-                baseLength: 95,
-                radius: 92
-            },
-            pivot: {
-                radius: 4,
-                borderWidth: 0,
-                borderColor: '#1f9fd9',
-                backgroundColor: '#1f9fd9'
-            },
-            wrap: false
-        }
     },
 
     series: [{
         name: 'Speed',
         data: [60],
-        tooltip: {
-            valueSuffix: ' %'
-        },
         overshoot: 5
     }]
 

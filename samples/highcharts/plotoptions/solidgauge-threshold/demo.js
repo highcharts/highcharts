@@ -34,6 +34,7 @@ const chart = Highcharts.chart('container', {
             y: 30
         },
         tickAmount: 2,
+        minorTicks: true,
         zIndex: 4,
         stops: [
             [0.4999, '#55BF3B'], // green

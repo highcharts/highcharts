@@ -15,6 +15,7 @@ Highcharts.chart('container', {
     pane: {
         startAngle: -150,
         endAngle: 150,
+        size: '90%',
         innerSize: 0,
         background: [{
             backgroundColor: {
@@ -54,7 +55,8 @@ Highcharts.chart('container', {
         min: 0,
         max: 200,
 
-        minorTickInterval: 'auto',
+        minorTicks: true,
+        minorTicksPerMajor: 5,
         minorTickWidth: 1,
         minorTickLength: 10,
         minorTickPosition: 'inside',
@@ -65,6 +67,8 @@ Highcharts.chart('container', {
         tickPosition: 'inside',
         tickLength: 10,
         tickColor: '#666',
+
+        offset: 0,
         labels: {
             step: 2,
             rotation: 'auto',

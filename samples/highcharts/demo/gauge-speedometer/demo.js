@@ -2,10 +2,6 @@ Highcharts.chart('container', {
 
     chart: {
         type: 'gauge',
-        plotBackgroundColor: null,
-        plotBackgroundImage: null,
-        plotBorderWidth: 0,
-        plotShadow: false,
         height: '80%'
     },
 
@@ -16,10 +12,6 @@ Highcharts.chart('container', {
     pane: {
         startAngle: -90,
         endAngle: 89.9,
-        background: null,
-        center: ['50%', '75%'],
-        size: '110%',
-        innerSize: '90%',
         borderRadius: '50%'
     },
 
@@ -36,7 +28,6 @@ Highcharts.chart('container', {
                 fontSize: '14px'
             }
         },
-        lineWidth: 0,
         plotBands: [{
             from: 0,
             to: 120,
@@ -69,19 +60,7 @@ Highcharts.chart('container', {
             style: {
                 fontSize: '16px'
             }
-        },
-        dial: {
-            radius: '80%',
-            backgroundColor: 'gray',
-            baseWidth: 12,
-            baseLength: '0%',
-            rearLength: '0%'
-        },
-        pivot: {
-            backgroundColor: 'gray',
-            radius: 6
         }
-
     }]
 
 });

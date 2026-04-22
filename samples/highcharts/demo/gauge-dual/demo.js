@@ -36,7 +36,7 @@ Highcharts.chart('container', {
         offset: -25,
         lineWidth: 2,
         labels: {
-            distance: -20,
+            distance: -45,
             rotation: 'auto'
         },
         tickLength: 5,
@@ -56,7 +56,7 @@ Highcharts.chart('container', {
         tickWidth: 2,
         tickLength: 5,
         labels: {
-            distance: 12,
+            distance: -8,
             rotation: 'auto'
         },
         offset: -20,

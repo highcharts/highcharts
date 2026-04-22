@@ -20,7 +20,9 @@ Highcharts.chart('container', {
 
     yAxis: {
         min: 0,
-        max: 100
+        max: 100,
+        tickWidth: 0,
+        minorTickWidth: 0
     },
 
     series: [{

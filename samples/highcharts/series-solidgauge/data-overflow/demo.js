@@ -11,9 +11,7 @@ Highcharts.chart('container', {
     pane: {
         startAngle: -90,
         endAngle: 90,
-        background: {
-            innerRadius: '60%'
-        }
+        size: '85%'
     },
 
     yAxis: {
