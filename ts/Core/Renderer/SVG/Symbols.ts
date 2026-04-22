@@ -84,7 +84,7 @@ function arc(
             end = rawEnd ? rawEnd - paddingInRadians : 0;
 
         // Check if padding can be applied to the arc
-        if (paddingInRadians > 0 && Math.abs(end - start) <= minArcRange) {
+        if (paddingInRadians > 0 && end - start <= minArcRange) {
             const middleAngle = (start + end) / 2;
             start = middleAngle - minArcRange / 2;
             end = middleAngle + minArcRange / 2;

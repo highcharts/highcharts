@@ -231,60 +231,61 @@ function applyBorderRadius(
                 relativeR
             );
 
-        // From line to arc
-        if (fromLineToArc) {
+        if (innerRadius === void 0 || (innerRadius > 0 && innerAlpha > 0)) {
+            // From line to arc
+            if (fromLineToArc) {
 
-            // Update the cache
-            const rStart = start - relativeRPadding;
-            params.start = rStart + angleOffset;
+                // Update the cache
+                const rStart = start - relativeRPadding;
+                params.start = rStart + angleOffset;
 
-            // First move to the start position at the radial line. We want to
-            // start one borderRadius closer to the center.
-            line[1] = cx + distanceBigCenterToStartArc * Math.cos(rStart);
-            line[2] = cy + distanceBigCenterToStartArc * Math.sin(rStart);
+                // First move to the start position at the radial line. We
+                // want to start one borderRadius closer to the center.
+                line[1] = cx + distanceBigCenterToStartArc * Math.cos(rStart);
+                line[2] = cy + distanceBigCenterToStartArc * Math.sin(rStart);
 
-            // Now draw an arc towards the point where the small circle touches
-            // the great circle.
-            path.splice(i + 1, 0, [
-                'A',
-                br,
-                br,
-                0, // Slanting,
-                0, // Long arc
-                1, // Clockwise
-                cx + bigR * Math.cos(params.start),
-                cy + bigR * Math.sin(params.start)
-            ]);
+                // Now draw an arc towards the point where the small circle
+                // touches the great circle.
+                path.splice(i + 1, 0, [
+                    'A',
+                    br,
+                    br,
+                    0, // Slanting,
+                    0, // Long arc
+                    1, // Clockwise
+                    cx + bigR * Math.cos(params.start),
+                    cy + bigR * Math.sin(params.start)
+                ]);
 
-        // From arc to line
-        } else {
+            // From arc to line
+            } else {
 
-            // Update the cache
-            const rEnd = end + relativeRPadding;
-            params.end = rEnd - angleOffset;
+                // Update the cache
+                const rEnd = end + relativeRPadding;
+                params.end = rEnd - angleOffset;
 
-            // End the big arc a bit earlier
-            arc[6] = cx + bigR * Math.cos(params.end);
-            arc[7] = cy + bigR * Math.sin(params.end);
+                // End the big arc a bit earlier
+                arc[6] = cx + bigR * Math.cos(params.end);
+                arc[7] = cy + bigR * Math.sin(params.end);
 
-            // Draw a small arc towards a point on the end angle, but one
-            // borderRadius closer to the center relative to the perimeter.
-            path.splice(i + 1, 0, [
-                'A',
-                br,
-                br,
-                0,
-                0,
-                1,
-                cx + distanceBigCenterToStartArc * Math.cos(rEnd),
-                cy + distanceBigCenterToStartArc * Math.sin(rEnd)
-            ]);
+                // Draw a small arc towards a point on the end angle, but one
+                // borderRadius closer to the center relative to the perimeter.
+                path.splice(i + 1, 0, [
+                    'A',
+                    br,
+                    br,
+                    0,
+                    0,
+                    1,
+                    cx + distanceBigCenterToStartArc * Math.cos(rEnd),
+                    cy + distanceBigCenterToStartArc * Math.sin(rEnd)
+                ]);
+            }
+
+            // Long or short arc must be reconsidered because we have modified
+            // the start and end points
+            arc[4] = Math.abs(params.end - params.start) < Math.PI ? 0 : 1;
         }
-
-        // Long or short arc must be reconsidered because we have modified the
-        // start and end points
-        arc[4] = Math.abs(params.end - params.start) < Math.PI ? 0 : 1;
-
     }
 }
 
