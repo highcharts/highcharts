@@ -169,7 +169,8 @@ class SolidGaugeSeries extends GaugeSeries {
                     axisMaxAngle = Math.max(
                         yAxis.startAngleRad,
                         yAxis.endAngleRad
-                    );
+                    ),
+                    attribs: SVGAttributes = {};
 
                 let graphic = point.graphic,
                     rotation = (yAxis.startAngleRad +
@@ -227,22 +228,24 @@ class SolidGaugeSeries extends GaugeSeries {
                 };
                 point.startR = radius; // For PieSeries.animate
 
+                if (toColor !== 'none') {
+                    attribs.fill = toColor;
+                }
+
                 if (graphic) {
                     d = shapeArgs.d;
-                    graphic.animate(extend({ fill: toColor }, shapeArgs));
+                    graphic.animate(extend(attribs, shapeArgs));
                     if (d) {
                         shapeArgs.d = d; // Animate alters it
                     }
                 } else {
+                    attribs['sweep-flag'] = 0;
                     point.graphic = graphic = renderer.arc(shapeArgs)
-                        .attr({
-                            fill: toColor,
-                            'sweep-flag': 0
-                        })
+                        .attr(attribs)
                         .add(series.group);
                 }
 
-                if (!series.chart.styledMode) {
+                if (!renderer.styledMode) {
                     if (options.linecap !== 'square') {
                         graphic.attr({
                             'stroke-linecap': 'round',
