@@ -121,10 +121,10 @@ integration.
 
 For native iOS apps, the historical Highcharts iOS wrapper is
 community-supported:
-<https://github.com/highcharts/highcharts-ios>
+[highcharts/highcharts-ios](https://github.com/highcharts/highcharts-ios)
 
 For the issue reported on iOS 26.4 (white screen), see:
-<https://github.com/highcharts/highcharts-ios/issues/465>
+[highcharts/highcharts-ios#465](https://github.com/highcharts/highcharts-ios/issues/465)
 
 The reported working setup is:
 
