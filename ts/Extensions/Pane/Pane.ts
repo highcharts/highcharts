@@ -282,23 +282,23 @@ class Pane {
             { plotHeight, plotWidth } = chart,
             centerY = options.center?.[1],
             m = options.margin,
+            labels = this.axis?.options.labels,
             thickness = options.thickness,
             marginLoose: Array<number|undefined> = Array.isArray(m) ?
                 m :
                 [m, m, m, m],
-            margin: Array<number> = [],
-            gaugeSeries = chart.series.filter(
-                (s): boolean => s.is('gauge') && s.yAxis?.pane === this
-            );
+            margin: Array<number> = [];
 
         let size = options.size,
             sizeFromAngle: number|undefined,
-            appliedCenterMargin = 0;
+            appliedCenterMargin = 0,
+            axisLabelMargin = 0;
 
         // Get the required margin in order to display the data label in or
         // below the center
         const dataLabelMargin = Math.min(
-            gaugeSeries
+            chart.series
+                .filter((s): boolean => s.is('gauge') && s.yAxis?.pane === this)
                 .reduce((max, s): number => {
                     const dl = splat(s.options.dataLabels)[0];
                     let dlMargin = 0;
@@ -314,25 +314,20 @@ class Pane {
         );
 
         // Get the required margin to make room for the radial axis labels.
-        const axisLabelMargin = gaugeSeries
-            .reduce((max, s): number => {
-                const labels = s.yAxis?.options.labels;
-                if (labels?.enabled) {
-                    const fontSize = String(labels.style?.fontSize || ''),
-                        // Approximate the line height because we don't have the
-                        // actual label to measure
-                        lineHeightGuess = (/px$/.test(fontSize) ?
-                            parseFloat(fontSize) :
-                            /em$/.test(fontSize) ?
-                                parseFloat(fontSize) * 12 :
-                                12
-                        ) * 1.2, // 1.2 is a line height approximation
-                        m = (labels.distance || 0) + lineHeightGuess / 2;
+        if (labels?.enabled) {
+            const fontSize = String(labels.style?.fontSize || ''),
+                // Approximate the line height because we don't have the
+                // actual label to measure
+                lineHeightGuess = (/px$/.test(fontSize) ?
+                    parseFloat(fontSize) :
+                    /em$/.test(fontSize) ?
+                        parseFloat(fontSize) * 12 :
+                        12
+                ) * 1.2, // 1.2 is a line height approximation
+                m = (labels.distance || 0) + lineHeightGuess / 2;
 
-                    return Math.max(max, m);
-                }
-                return max;
-            }, 0);
+            axisLabelMargin = m;
+        }
 
         marginLoose.forEach((m, i): void => {
             margin[i] = m ?? Math.max(axisLabelMargin || 0);
