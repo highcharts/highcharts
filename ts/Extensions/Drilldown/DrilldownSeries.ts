@@ -107,6 +107,12 @@ declare module '../../Core/Series/SeriesBase' {
 declare module '../../Core/Series/SeriesOptions' {
     interface SeriesOptions {
         _ddSeriesId?: number;
+        /**
+         * Drilldown depth index for this series (`0` is top level).
+         * Used internally to match series during drilldown and drill-up.
+         *
+         * @internal
+         */
         _levelNumber?: number;
         drilldown?: string;
     }

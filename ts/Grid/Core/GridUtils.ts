@@ -313,6 +313,15 @@ export function mergeStyleValues<T>(
     return mergedStyle;
 }
 
+/**
+ * Waits for the next animation frame.
+ */
+export function waitForAnimationFrame(): Promise<void> {
+    return new Promise((resolve): void => {
+        requestAnimationFrame((): void => resolve());
+    });
+}
+
 
 /* *
  *
@@ -329,5 +338,6 @@ export default {
     createOptionsProxy,
     formatText,
     resolveStyleValue,
-    mergeStyleValues
+    mergeStyleValues,
+    waitForAnimationFrame
 } as const;

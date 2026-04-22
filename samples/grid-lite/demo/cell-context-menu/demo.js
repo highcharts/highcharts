@@ -47,7 +47,19 @@ function getNextColumnId(existingIds) {
     return id;
 }
 
-function addRowBelow(cell) {
+function getSourceRowIndex(cell) {
+    const rowId = cell.row.id;
+
+    if (typeof rowId === 'number') {
+        return rowId;
+    }
+
+    if (typeof cell.row.index === 'number') {
+        return cell.row.index;
+    }
+}
+
+async function addRowBelow(cell) {
     const grid = cell.row.viewport.grid;
     const dt = grid.dataTable;
 
@@ -55,7 +67,7 @@ function addRowBelow(cell) {
         return;
     }
 
-    const insertAt = cell.row.id;
+    const insertAt = getSourceRowIndex(cell);
     if (typeof insertAt !== 'number') {
         return;
     }
@@ -76,7 +88,7 @@ function addRowBelow(cell) {
     void grid.viewport.updateRows();
 }
 
-function addRowAbove(cell) {
+async function addRowAbove(cell) {
     const grid = cell.row.viewport.grid;
     const dt = grid.dataTable;
 
@@ -84,7 +96,7 @@ function addRowAbove(cell) {
         return;
     }
 
-    const insertAt = cell.row.id;
+    const insertAt = getSourceRowIndex(cell);
     if (typeof insertAt !== 'number') {
         return;
     }
@@ -177,7 +189,7 @@ function deleteRow(cell) {
         return;
     }
 
-    const deleteAt = cell.row.id;
+    const deleteAt = getSourceRowIndex(cell);
     if (typeof deleteAt !== 'number') {
         return;
     }
@@ -192,42 +204,52 @@ function deleteRow(cell) {
     void grid.viewport.updateRows();
 }
 
+function clipboardOnClick(cell) {
+    const value = String(cell.value);
+    copyToClipboard(value)
+        .then(function () {
+            logEvent('Copied "' + value + '" to clipboard!');
+        })
+        .catch(function () {
+            logEvent('Could not copy "' + value + '" to clipboard.');
+        });
+}
+
 const menuItems = [{
     label: 'Copy cell content',
     icon: 'clipboard',
-    onClick: function (cell) {
-        const value = String(cell.value);
-
-        copyToClipboard(value)
-            .then(function () {
-                logEvent('Copied "' + value + '" to clipboard!');
-            })
-            .catch(function () {
-                logEvent('Could not copy "' + value + '" to clipboard.');
-            });
-    }
+    onClick: clipboardOnClick
 }, {
     separator: true
 }, {
-    label: 'Add row above',
-    icon: 'addRowAbove',
-    onClick: addRowAbove
-}, {
-    label: 'Add row below',
-    icon: 'addRowBelow',
-    onClick: addRowBelow
-}, {
-    label: 'Add column left',
-    icon: 'addColumnLeft',
-    onClick: addColumnLeft
-}, {
-    label: 'Add column right',
-    icon: 'addColumnRight',
-    onClick: addColumnRight
-}, {
-    label: 'Delete row',
-    icon: 'trash',
-    onClick: deleteRow
+    label: 'Edit',
+    items: [{
+        label: 'Rows',
+        items: [{
+            label: 'Add row above',
+            icon: 'addRowAbove',
+            onClick: addRowAbove
+        }, {
+            label: 'Add row below',
+            icon: 'addRowBelow',
+            onClick: addRowBelow
+        }, {
+            label: 'Delete row',
+            icon: 'trash',
+            onClick: deleteRow
+        }]
+    }, {
+        label: 'Columns',
+        items: [{
+            label: 'Add column left',
+            icon: 'addColumnLeft',
+            onClick: addColumnLeft
+        }, {
+            label: 'Add column right',
+            icon: 'addColumnRight',
+            onClick: addColumnRight
+        }]
+    }]
 }];
 
 Grid.grid('container', {
@@ -253,4 +275,6 @@ Grid.grid('container', {
     }
 });
 
-logEvent('Ready. Right-click a cell to open the menu.');
+logEvent(
+    'Ready. Right-click a cell to open the menu with nested items.'
+);

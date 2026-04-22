@@ -2896,6 +2896,32 @@ const defaultOptions: DefaultOptions = {
          */
 
         /**
+         * Events for the credits label.
+         *
+         * @type     {object}
+         * @since    12.6.0
+         * @apioption credits.events
+         */
+
+        /**
+         * Callback function to handle click events on the credits label.
+         * The callback can call `event.preventDefault()` to prevent the
+         * default navigation behavior. Alternatively, you can add a general
+         * event handler using `Highcharts.addEvent(Chart, 'creditsClick',
+         * callback)` instead of providing it in the options tree.
+         *
+         * @sample {highcharts} highcharts/credits/events-click/
+         *         Custom click handler
+         *
+         * @param {Event} event
+         *        The click event object.
+         *
+         * @type  {Function}
+         * @since 12.6.0
+         * @apioption credits.events.click
+         */
+
+        /**
          * Whether to show the credits text.
          *
          * @sample {highcharts} highcharts/credits/enabled-false/
@@ -2920,8 +2946,6 @@ const defaultOptions: DefaultOptions = {
         /**
          * Position configuration for the credits label.
          *
-         * @sample {highcharts} highcharts/credits/position-left/
-         *         Left aligned
          * @sample {highcharts} highcharts/credits/position-left/
          *         Left aligned
          * @sample {highmaps} maps/credits/customized/

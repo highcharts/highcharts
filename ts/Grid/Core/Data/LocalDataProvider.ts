@@ -34,7 +34,7 @@ import type DataConnectorType from '../../../Data/Connectors/DataConnectorType';
 import type {
     DataConnectorTypeOptions
 } from '../../../Data/Connectors/DataConnectorType';
-import type { MakeOptional, TypedArray } from '../../../Shared/Types';
+import type { MakeOptional, TypedArray, AnyRecord } from '../../../Shared/Types';
 
 import { DataProvider } from './DataProvider.js';
 import DataTable from '../../../Data/DataTable.js';
@@ -42,7 +42,11 @@ import ChainModifier from '../../../Data/Modifiers/ChainModifier.js';
 import DataConnector from '../../../Data/Connectors/DataConnector.js';
 import DataProviderRegistry from './DataProviderRegistry.js';
 import { uniqueKey } from '../../../Core/Utilities.js';
-import { defined, isNumber, isString } from '../../../Shared/Utilities.js';
+import {
+    defined,
+    isNumber,
+    isString
+} from '../../../Shared/Utilities.js';
 
 
 /* *
@@ -161,28 +165,7 @@ export class LocalDataProvider extends DataProvider {
             this.dataTableEventDestructors.push(fn);
         }
 
-        const idColId = this.options.idColumn;
-        if (idColId) {
-            const idColumn = table.getColumn(idColId, true);
-            if (!idColumn) {
-                throw new Error(`Column "${idColId}" not found in table.`);
-            }
-
-            const map = new Map<RowId, number>();
-            for (let i = 0, len = idColumn.length; i < len; ++i) {
-                const value = idColumn[i];
-                if (!isString(value) && !isNumber(value)) {
-                    throw new Error(
-                        'idColumn must contain only string or number values.'
-                    );
-                }
-                map.set(value, i);
-            }
-            if (map.size !== idColumn.length) {
-                throw new Error('idColumn must contain unique values.');
-            }
-            this.originalRowIndexesMap = map;
-        }
+        this.originalRowIndexesMap = this.createOriginalRowIndexesMap();
     }
 
     private async handleTableChange(e: DataEvent): Promise<void> {
@@ -292,14 +275,23 @@ export class LocalDataProvider extends DataProvider {
      * @param rowIndex
      * The local (presentation table) row index to get the row ID for.
      */
-    public override async getRowId(rowIndex: number): Promise<RowId | undefined> {
+    public override async getRowId(
+        rowIndex: number
+    ): Promise<RowId | undefined> {
+        const idColId = this.options.idColumn;
+        if (idColId) {
+            const rawId = this.presentationTable?.getCell(idColId, rowIndex);
+            if (isString(rawId) || isNumber(rawId)) {
+                return Promise.resolve(rawId);
+            }
+        }
+
         const originalRowIndex =
             await this.getOriginalRowIndexFromLocal(rowIndex);
         if (!defined(originalRowIndex) || !this.dataTable) {
             return Promise.resolve(void 0);
         }
 
-        const idColId = this.options.idColumn;
         if (!idColId) {
             return Promise.resolve(originalRowIndex);
         }
@@ -319,7 +311,9 @@ export class LocalDataProvider extends DataProvider {
      * set, the row ID is the value of the row in the column with the given ID.
      * Otherwise, the row ID is the original row index.
      */
-    public override getRowIndex(rowId: RowId): Promise<number | undefined> {
+    public override getRowIndex(
+        rowId: RowId
+    ): Promise<number | undefined> {
         if (!this.originalRowIndexesMap && isNumber(rowId)) {
             return this.getLocalRowIndexFromOriginal(rowId);
         }
@@ -346,12 +340,10 @@ export class LocalDataProvider extends DataProvider {
     }
 
     /**
-     * Returns the local (presentation table) row index for a given original
-     * data table row index.
+     * Returns the local row index for a given original row index.
      *
      * @param originalRowIndex
-     * The original data table row index to get the presentation table row index
-     * for.
+     * The original row index to get the local row index for.
      */
     public getLocalRowIndexFromOriginal(
         originalRowIndex: number
@@ -384,26 +376,24 @@ export class LocalDataProvider extends DataProvider {
         );
     }
 
-    public override async setValue(
+    public override setValue(
         value: DataTableCellType,
         columnId: string,
         rowId: RowId
     ): Promise<void> {
-        const localRowIndex = await this.getRowIndex(rowId);
-        if (!defined(localRowIndex)) {
+        const originalIndex = this.resolveOriginalRowIndex(rowId);
+
+        if (originalIndex === void 0) {
             // eslint-disable-next-line no-console
             console.error('[setValue] Wrong row ID:', rowId);
-            return;
-        }
-        const rowIndex = await this.getOriginalRowIndexFromLocal(localRowIndex);
-        if (!defined(rowIndex)) {
-            // eslint-disable-next-line no-console
-            console.error('[setValue] Wrong local row index:', localRowIndex);
-            return;
+            return Promise.resolve();
         }
 
-        this.dataTable?.setCell(columnId, rowIndex, value, { fromGrid: true });
-        return;
+        this.dataTable?.setCell(columnId, originalIndex, value, {
+            fromGrid: true
+        });
+
+        return Promise.resolve();
     }
 
     /**
@@ -429,6 +419,17 @@ export class LocalDataProvider extends DataProvider {
             interTable = originalDataTable.getModified();
         }
 
+        const grid = this.querying.grid;
+        if ('treeView' in grid && grid.treeView) {
+            try {
+                grid.treeView.sync();
+                interTable = grid.treeView.projectTable(interTable);
+            } catch (error) {
+                // eslint-disable-next-line no-console
+                console.error((error as AnyRecord).message);
+            }
+        }
+
         this.prePaginationRowCount = interTable.rowCount;
 
         // Pagination modifier
@@ -441,6 +442,46 @@ export class LocalDataProvider extends DataProvider {
         }
 
         this.presentationTable = interTable;
+    }
+
+    private createOriginalRowIndexesMap(): Map<RowId, number> | undefined {
+        const idColId = this.options.idColumn;
+        const table = this.dataTable;
+        if (!idColId || !table) {
+            return;
+        }
+
+        const idColumn = table.getColumn(idColId, true);
+        if (!idColumn) {
+            throw new Error(`Column "${idColId}" not found in table.`);
+        }
+
+        const map = new Map<RowId, number>();
+        for (let i = 0, len = idColumn.length; i < len; ++i) {
+            const value = idColumn[i];
+            if (!isString(value) && !isNumber(value)) {
+                throw new Error(
+                    'idColumn must contain only string or number values.'
+                );
+            }
+            map.set(value, i);
+        }
+
+        if (map.size !== idColumn.length) {
+            throw new Error('idColumn must contain unique values.');
+        }
+
+        return map;
+    }
+
+    private resolveOriginalRowIndex(rowId: RowId): number | undefined {
+        if (this.originalRowIndexesMap) {
+            return this.originalRowIndexesMap.get(rowId);
+        }
+
+        if (isNumber(rowId)) {
+            return rowId;
+        }
     }
 
     public override destroy(): void {
@@ -496,6 +537,13 @@ export class LocalDataProvider extends DataProvider {
         return 'getTable' in connector;
     }
 }
+
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
 
 export type GridDataConnectorTypeOptions =
     MakeOptional<DataConnectorTypeOptions, 'id'>;

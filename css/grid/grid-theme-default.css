@@ -19,7 +19,7 @@
     --hcg-button-border-color: transparent;
     --hcg-cell-button-border-color: #d1d1d1;
     --hcg-button-color: #141414;
-    --hcg-header-button-background: transparent;
+    --hcg-icon-border-radius: 6px;
     --hcg-pagination-button-selected-background: #000000;
     --hcg-pagination-button-selected-color: #ffffff;
 }

@@ -45,7 +45,7 @@ import type SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer';
 import type Tick from '../../Core/Axis/Tick';
 
 import A from '../../Core/Animation/AnimationUtilities.js';
-const { animObject } = A;
+const { animObject, stop } = A;
 import Breadcrumbs from '../Breadcrumbs/Breadcrumbs.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
@@ -532,14 +532,15 @@ class ChartAdditions {
             colorProp: SeriesOptions = chart.styledMode ?
                 { colorIndex: point.colorIndex ?? oldSeries.colorIndex } :
                 { color: point.color || oldSeries.color },
-            levelNumber = oldSeries.options._levelNumber || 0;
+            levelNumber = oldSeries.options._levelNumber ?? 0;
 
         if (!chart.drilldownLevels) {
             chart.drilldownLevels = [];
         }
 
         ddOptions = extend(extend<SeriesOptions>({
-            _ddSeriesId: ddSeriesId++
+            _ddSeriesId: ddSeriesId++,
+            _levelNumber: levelNumber + 1
         }, colorProp), ddOptions);
 
         let levelSeries: Array<Series> = [],
@@ -555,11 +556,9 @@ class ChartAdditions {
         // Record options for all current series
         oldSeries.chart.series.forEach((series): void => {
             if (series.xAxis === xAxis) {
-                series.options._ddSeriesId =
-                    series.options._ddSeriesId || ddSeriesId++;
+                series.options._ddSeriesId ||= ddSeriesId++;
                 series.options.colorIndex = series.colorIndex;
-                series.options._levelNumber =
-                    series.options._levelNumber || levelNumber; // #3182
+                series.options._levelNumber ??= levelNumber; // #3182
 
                 if (last) {
                     levelSeries = last.levelSeries;
@@ -665,12 +664,13 @@ class ChartAdditions {
 
                 if (level.levelNumber === levelToRemove) {
                     level.levelSeries.forEach((series): void => {
+                        const levelNumber = series.options?._levelNumber;
                         // Not removed, not added as part of a multi-series
                         // drilldown
                         if (!chart.mapView) {
                             if (
                                 series.options &&
-                                series.options._levelNumber === levelToRemove
+                                levelNumber === levelToRemove
                             ) {
                                 series.remove(false);
                             }
@@ -679,8 +679,7 @@ class ChartAdditions {
                         // after zooming into
                         } else if (
                             series.options &&
-                            series.options._levelNumber === levelToRemove &&
-                            series.group
+                            levelNumber === levelToRemove
                         ) {
                             let animOptions: (
                                 boolean|Partial<AnimationOptions>|undefined
@@ -689,13 +688,50 @@ class ChartAdditions {
                             if (drilldownOptions) {
                                 animOptions = drilldownOptions.animation;
                             }
+                            const drillAnimOptions =
+                                animObject(animOptions);
+                            const hideDataLabels = (): void => {
+                                const hideGroup = (
+                                    group?: SVGElement
+                                ): void => {
+                                    const element = group?.element;
+                                    if (group && element) {
+                                        stop(group);
+                                        element.setAttribute('opacity', '0');
+                                        element.setAttribute(
+                                            'visibility',
+                                            'hidden'
+                                        );
+                                    }
+                                };
 
-                            series.group.animate({
-                                opacity: 0
-                            },
-                            animOptions,
-                            (): void => {
-                                series.remove(false);
+                                hideGroup(series.dataLabelsGroup);
+                                series.dataLabelsGroups?.forEach(hideGroup);
+                            };
+
+                            let seriesRemoved = false;
+                            const removeSeries = (): void => {
+                                if (seriesRemoved) {
+                                    return;
+                                }
+                                seriesRemoved = true;
+
+                                if (series.chart) {
+                                    if (series.group) {
+                                        stop(series.group);
+                                    }
+                                    if (series.dataLabelsGroup) {
+                                        stop(series.dataLabelsGroup);
+                                    }
+                                    series.dataLabelsGroups?.forEach(
+                                        (group): void => {
+                                            if (group) {
+                                                stop(group);
+                                            }
+                                        }
+                                    );
+                                    series.remove(false);
+                                }
                                 // If it is the last series
                                 if (
                                     !(level.levelSeries.filter(
@@ -726,7 +762,31 @@ class ChartAdditions {
                                     }
                                     fireEvent(chart, 'afterApplyDrilldown');
                                 }
-                            });
+                            };
+
+                            if (series.group?.element) {
+                                // Hide labels immediately to avoid stale
+                                // labels flashing during map transform.
+                                hideDataLabels();
+
+                                series.group.animate(
+                                    {
+                                        opacity: 0
+                                    },
+                                    animOptions,
+                                    removeSeries
+                                );
+
+                                // If another redraw interrupts the animation,
+                                // ensure the old series is still removed.
+                                syncTimeout(
+                                    removeSeries,
+                                    drillAnimOptions.defer +
+                                    drillAnimOptions.duration
+                                );
+                            } else {
+                                removeSeries();
+                            }
                         }
                     });
                 }
@@ -1329,6 +1389,7 @@ namespace Drilldown {
             addEvent(DrilldownChart, 'drillupall', onChartDrillupall);
             addEvent(DrilldownChart, 'render', onChartRender);
             addEvent(DrilldownChart, 'update', onChartUpdate);
+            addEvent(SeriesClass, 'update', onSeriesUpdate);
 
             highchartsDefaultOptions.drilldown = DrilldownDefaults;
 
@@ -1476,6 +1537,22 @@ namespace Drilldown {
 
         if (breadcrumbs && breadcrumbOptions) {
             breadcrumbs.update(breadcrumbOptions);
+        }
+    }
+
+    /** @internal */
+    function onSeriesUpdate(
+        this: Series,
+        e: { options: AnyRecord }
+    ): void {
+        const updateOptions = e.options;
+
+        if (
+            updateOptions &&
+            updateOptions._levelNumber === void 0 &&
+            this.options._levelNumber !== void 0
+        ) {
+            updateOptions._levelNumber = this.options._levelNumber;
         }
     }
 

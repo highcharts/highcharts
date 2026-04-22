@@ -38,7 +38,7 @@ import type DataTableOptions from '../../Data/DataTableOptions';
 import type Cell from './Table/Cell';
 import type Column from './Table/Column';
 import type TableCell from './Table/Body/TableCell';
-import type { IconRegistryValue } from './UI/SvgIcons';
+import type { GridIconName, IconRegistryValue } from './UI/SvgIcons';
 import type { LangOptionsCore } from '../../Shared/LangOptionsCore';
 import type {
     Condition as ColumnFilteringCondition
@@ -90,6 +90,18 @@ export type StyleValue<T> = CSSObject | StyleCallback<T>;
 export type ColumnSortingOrder = 'asc' | 'desc' | null;
 
 /**
+ * Registry of built-in action IDs for the cell context menu.
+ * Composed features can extend this via module augmentation.
+ */
+export interface CellContextMenuBuiltInActionIdRegistry {}
+
+/**
+ * Built-in action ID for the cell context menu.
+ */
+export type CellContextMenuActionId =
+    keyof CellContextMenuBuiltInActionIdRegistry | (string & {});
+
+/**
  * Options for a single cell context menu item.
  */
 export interface CellContextMenuActionItemOptions {
@@ -124,6 +136,11 @@ export interface CellContextMenuActionItemOptions {
         this: TableCell,
         cell: TableCell
     ) => void;
+
+    /**
+     * Nested submenu items.
+     */
+    items?: Array<CellContextMenuItemOptions>;
 }
 
 /**
@@ -143,20 +160,52 @@ export interface CellContextMenuDividerItemOptions {
 }
 
 /**
+ * Options for a built-in item in the cell context menu.
+ */
+export interface CellContextMenuBuiltInItemOptions {
+    /**
+     * Built-in action ID.
+     */
+    actionId: CellContextMenuActionId;
+
+    /**
+     * Optional custom label for this built-in action.
+     */
+    label?: string;
+
+    /**
+     * Optional icon override for this built-in action.
+     */
+    icon?: GridIconName;
+
+    /**
+     * Whether this built-in action should be disabled.
+     */
+    disabled?: boolean;
+
+    /**
+     * Nested submenu items.
+     */
+    items?: Array<CellContextMenuItemOptions>;
+}
+
+/**
  * Options for a single cell context menu item.
  */
 export type CellContextMenuItemOptions =
     CellContextMenuDividerItemOptions |
-    CellContextMenuActionItemOptions;
+    CellContextMenuActionItemOptions |
+    CellContextMenuBuiltInItemOptions |
+    CellContextMenuActionId;
 
 /**
  * Cell context menu options.
  */
 export interface CellContextMenuOptions {
     /**
-     * Whether the cell context menu is enabled.
-     *
-     * @default true
+     * Whether the cell context menu is enabled. When omitted, the menu is
+     * enabled when `items` are provided, or when a composed feature registers
+     * visible built-in actions for the current cell.
      */
     enabled?: boolean;
 
@@ -409,6 +458,7 @@ export interface RowsSettings {
      * @default 50
      */
     virtualizationThreshold?: number;
+
 }
 
 /**
@@ -559,7 +609,6 @@ export interface ColumnCellOptions {
     /**
      * Context menu options for table body cells. When configured, a custom
      * context menu will be shown on right-click.
-     * @internal Disabled until meaningful functionality is ready.
      */
     contextMenu?: CellContextMenuOptions;
 
@@ -904,6 +953,7 @@ export interface LangOptions extends LangOptionsCore {
      * Language options for pagination text values.
      */
     pagination?: PaginationLangOptions;
+
 }
 
 
