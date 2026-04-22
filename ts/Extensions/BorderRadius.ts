@@ -202,7 +202,7 @@ function applyBorderRadius(
 
         // Inner padding in radians
         const innerPadding = padding && bigR > 0 ? 2 * (padding / bigR) : 0;
-        const innerAlpha = start - end - innerPadding;
+        const innerAlpha = Math.max(start - end - innerPadding, 0);
 
         // For the inner radius, we need an extra cap because the inner arc
         // is shorter than the outer arc
@@ -213,7 +213,8 @@ function applyBorderRadius(
         const br = i > 1 ? innerBorderRadius : r;
 
         // Some geometric constants
-        const relativeR = clockwise ? (bigR - br) : (bigR + br),
+        const relativeR =
+            Math.max(clockwise ? (bigR - br) : (bigR + br), 0.0001),
             // Padding for calculated relativeR value in radians
             relativeRPadding =
                 innerRadius && innerRadius > 0 && relativeR > 0 ?
