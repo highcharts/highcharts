@@ -223,20 +223,6 @@ const pane: PaneOptions|Array<PaneOptions> = {
      */
 
     /**
-     * The margin between the pane and the plot area when auto-fitting the pane.
-     * This does not apply when an explicit `pane.size` is set. An array sets
-     * individual margins for the sides in the order [top, right, bottom, left].
-     *
-     * By default, the margin is approximated to make room for the radial axis
-     * labels of a gauge chart.
-     *
-     * @type    {number|Array<number>}
-     * @since   next
-     * @sample  {highcharts} highcharts/pane/margin
-     */
-    margin: void 0
-
-    /**
      * The size of the pane, either as a number defining pixels, or a percentage
      * defining a percentage of the available plot area (the smallest of the
      * plot height or plot width).
@@ -270,10 +256,9 @@ const pane: PaneOptions|Array<PaneOptions> = {
      */
 
     /**
-     * The thickness of the plot band in terms of pixels. This applies to the
-     * pane background, plot bands and solid gauges. Use this for a fixed width
-     * pane across different sizes, where `size` and `innerSize` are not
-     * practical.
+     * The thickness of the pane in terms of pixels. This applies to the pane
+     * background, plot bands and solid gauges. Use this for a fixed width pane
+     * across different sizes, where `size` and `innerSize` are not practical.
      *
      * @sample   {highcharts} highcharts/pane/thickness
      *           Pane thickness
@@ -284,6 +269,20 @@ const pane: PaneOptions|Array<PaneOptions> = {
      * @requires highcharts-more
      * @apioption pane.thickness
      */
+
+    /**
+     * The margin between the pane and the plot area when auto-fitting the pane.
+     * This does not apply when an explicit `pane.size` is set. An array sets
+     * individual margins for the sides in the order [top, right, bottom, left].
+     *
+     * By default, the margin is approximated to make room for the radial axis
+     * labels of a gauge chart.
+     *
+     * @type    {number|Array<number>}
+     * @since   next
+     * @sample  {highcharts} highcharts/pane/margin
+     */
+    margin: void 0
 
 };
 

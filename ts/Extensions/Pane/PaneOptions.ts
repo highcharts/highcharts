@@ -211,10 +211,9 @@ export interface PaneOptions {
      */
     startAngle?: number;
     /**
-     * The thickness of the plot band in terms of pixels. This applies to the
-     * pane background, plot bands and solid gauges. Use this for a fixed width
-     * pane across different sizes, where `size` and `innerSize` are not
-     * practical.
+     * The thickness of the pane in terms of pixels. This applies to the pane
+     * background, plot bands and solid gauges. Use this for a fixed width pane
+     * across different sizes, where `size` and `innerSize` are not practical.
      *
      * @since    next
      * @sample   {highcharts} highcharts/pane/thickness
