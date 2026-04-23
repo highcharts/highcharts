@@ -69,16 +69,12 @@ function arc(
             // tests at samples/unit-tests/svgrenderer/symbol/demo.js
             proximity = 0.0001;
 
-        let paddingInRadiansRaw = radius > 0 ? (padding / radius) : 0;
-
-        if (!paddingInRadiansRaw && !radius && innerRadius && innerRadius > 0) {
-            paddingInRadiansRaw = padding / innerRadius;
-        }
-
-        const paddingInRadians = Math.min(
-            paddingInRadiansRaw,
-            Math.abs(rawEnd - rawStart) - proximity
-        );
+        const paddingRadius = radius > 0 ?
+            radius : (innerRadius && innerRadius > 0 ? innerRadius : 0);
+        const paddingInRadiansRaw =
+            paddingRadius > 0 ? (padding / paddingRadius) : 0;
+        const paddingInRadians =
+            Math.min(paddingInRadiansRaw, radianRange - proximity);
 
         let start = rawStart ? rawStart + paddingInRadians : 0,
             end = rawEnd ? rawEnd - paddingInRadians : 0;
