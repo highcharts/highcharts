@@ -37,9 +37,9 @@ Highcharts.chart('gauge-02', {
         min: 0,
         max: 100,
         plotBands: [
-            { from: 0,  to: 60,  color: '#55BF3B' },
-            { from: 60, to: 80,  color: '#DDDF0D' },
-            { from: 80, to: 100, color: '#DF5353' }
+            { from: 0,  to: 60,  color: '#85c1e9' }, // light blue
+            { from: 60, to: 80,  color: '#2980b9' }, // blue
+            { from: 80, to: 100, color: '#1a5276' }  // dark blue
         ]
     },
     series: [{
@@ -66,9 +66,8 @@ Highcharts.chart('gauge-03', {
         min: 0,
         max: 100,
         plotBands: [
-            { from: 0,  to: 60,  color: '#55BF3B' },
-            { from: 60, to: 80,  color: '#DDDF0D' },
-            { from: 80, to: 100, color: '#DF5353' }
+            { from: 0,  to: 70,  color: '#d2b4de' }, // light purple
+            { from: 70, to: 100, color: '#8e44ad' }  // deep purple
         ]
     },
     series: [{
@@ -97,9 +96,9 @@ Highcharts.chart('gauge-04', {
         max: 200,
         labels: { distance: 20 },
         plotBands: [
-            { from: 0,   to: 120, color: '#55BF3B' },
-            { from: 120, to: 160, color: '#DDDF0D' },
-            { from: 160, to: 200, color: '#DF5353' }
+            { from: 0,   to: 120, color: '#f0b429' }, // amber
+            { from: 120, to: 160, color: '#e07b39' }, // orange
+            { from: 160, to: 200, color: '#c0392b' }  // deep red
         ]
     },
     series: [{
@@ -130,8 +129,8 @@ Highcharts.chart('gauge-05', {
         tickWidth: 0,
         minorTickWidth: 0,
         plotBands: [
-            { from: 0,  to: 60,  color: '#55BF3B' },
-            { from: 60, to: 100, color: '#DF5353' }
+            { from: 0,  to: 60,  color: '#76d7c4' }, // light teal
+            { from: 60, to: 100, color: '#148f77' }  // deep teal
         ]
     },
     plotOptions: {
@@ -179,9 +178,9 @@ Highcharts.chart('gauge-06', {
         min: 0,
         max: 100,
         stops: [
-            [0.3, '#55BF3B'],
-            [0.7, '#DDDF0D'],
-            [0.9, '#DF5353']
+            [0.3, '#1abc9c'], // teal
+            [0.6, '#2980b9'], // blue
+            [0.9, '#8e44ad']  // purple
         ]
     },
     series: [{
@@ -254,13 +253,6 @@ Highcharts.chart('gauge-08', {
     },
     tooltip: { enabled: false },
     yAxis: { min: 0, max: 100, lineWidth: 0, tickPositions: [] },
-    plotOptions: {
-        solidgauge: {
-            dataLabels: { enabled: false },
-            linecap: 'round',
-            rounded: true
-        }
-    },
     series: [{
         name: 'Steps',
         data: [{
@@ -272,15 +264,13 @@ Highcharts.chart('gauge-08', {
                 ]
             },
             y: 79
-        }]
+        }],
+        dataLabels: {
+            format: '{y}%<br><span style="font-size:0.8em;color:#888">' +
+                'steps</span>'
+        },
+        rounded: true
     }],
-    subtitle: {
-        text: '79%<br><span style="font-size:0.8em;color:#888">steps</span>',
-        useHTML: true,
-        floating: true,
-        verticalAlign: 'middle',
-        y: 15
-    },
     credits: { enabled: false }
 });
 
@@ -382,9 +372,9 @@ Highcharts.chart('gauge-10', {
         gridLineWidth: 1,
         labels: { distance: 15 },
         plotBands: [
-            { from: 0,  to: 50,  color: '#55BF3B' },
-            { from: 50, to: 75,  color: '#DDDF0D' },
-            { from: 75, to: 100, color: '#DF5353' }
+            { from: 0,  to: 50,  color: '#a9cce3' }, // pale blue
+            { from: 50, to: 75,  color: '#5dade2' }, // sky blue
+            { from: 75, to: 100, color: '#8e44ad' }  // violet
         ]
     },
     series: [{
@@ -445,9 +435,6 @@ Highcharts.chart('gauge-12', {
         endAngle: 120,
         innerSize: 160,
         borderRadius: '50%',
-        background: {
-            backgroundColor: 'var(--highcharts-color-0)'
-        },
         size: 180
     },
     yAxis: {
@@ -476,9 +463,12 @@ Highcharts.chart('gauge-12', {
         pivot: { radius: 0 },
         dataLabels: {
             verticalAlign: 'middle',
-            y: 0,
-            style: { color: '#fff' }
+            y: 0
         }
+    }, {
+        type: 'solidgauge',
+        data: [75],
+        enableMouseTracking: false
     }],
     credits: { enabled: false }
 });
