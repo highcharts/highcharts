@@ -381,23 +381,21 @@ class GaugeSeries extends Series {
                  * @product   highcharts
                  * @apioption plotOptions.gauge.pivot.borderWidth
                  */
-                borderWidth: 0,
+                borderWidth: 2,
 
                 /**
-                 * The border or stroke color of the pivot. In able to change
-                 * this, the borderWidth must also be set to something other
-                 * than the default 0.
+                 * The border or stroke color of the pivot.
                  *
                  * @sample {highcharts} highcharts/plotoptions/gauge-pivot/
                  *         Pivot options demonstrated
                  *
                  * @type      {Highcharts.ColorType}
-                 * @default   #cccccc
+                 * @default   #000000
                  * @since     2.3.0
                  * @product   highcharts
                  * @apioption plotOptions.gauge.pivot.borderColor
                  */
-                borderColor: Palette.neutralColor20,
+                borderColor: Palette.neutralColor100,
 
                 /**
                  * The background color or fill of the pivot.

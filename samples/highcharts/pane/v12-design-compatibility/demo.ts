@@ -36,6 +36,7 @@ Highcharts.setOptions({
             pivot: {
                 // or var(--highcharts-neutral-color-100)
                 backgroundColor: '#000000',
+                borderWidth: 0,
                 radius: 5
             },
             dataLabels: {

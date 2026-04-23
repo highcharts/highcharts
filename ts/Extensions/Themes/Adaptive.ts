@@ -461,7 +461,7 @@ namespace DynamicDefaultTheme {
                     borderColor: 'var(--highcharts-neutral-color-20)'
                 },
                 pivot: {
-                    borderColor: 'var(--highcharts-background-color)',
+                    borderColor: 'var(--highcharts-neutral-color-100)',
                     backgroundColor: 'var(--highcharts-background-color)'
                 }
             },
