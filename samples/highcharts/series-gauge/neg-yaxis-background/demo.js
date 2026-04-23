@@ -1,4 +1,4 @@
-Highcharts.chart('container-rpm', {
+Highcharts.chart('container', {
 
     chart: {
         type: 'gauge'

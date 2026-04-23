@@ -35,7 +35,8 @@ Highcharts.chart('container', {
             ],
             backgroundColor: 'white',
             borderColor: 'green',
-            borderWidth: 5
+            borderWidth: 5,
+            radius: '100%' // For the tooltip position
         },
         pivot: {
             radius: 0
