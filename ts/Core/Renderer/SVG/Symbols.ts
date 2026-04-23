@@ -160,17 +160,23 @@ function arc(
                     innerEnd = middleAngle;
                 }
             }
+
             const innerCosStart = fullCircle ? 0 : Math.cos(innerStart),
                 innerSinStart = fullCircle ? 1 : Math.sin(innerStart),
                 innerCosEnd = fullCircle ? 0 : Math.cos(innerEnd),
-                innerSinEnd = fullCircle ? 1 : Math.sin(innerEnd);
+                innerSinEnd = fullCircle ? 1 : Math.sin(innerEnd),
+                // Proximity takes care of rounding errors around PI (#6971)
+                innerlongArc = pick(
+                    options.longArc,
+                    innerEnd - innerStart - Math.PI < proximity ? 0 : 1
+                );
 
             arcSegment = [
                 'A', // ArcTo
                 innerRadius, // X radius
                 innerRadius, // Y radius
                 0, // Slanting
-                longArc, // Long or short arc
+                innerlongArc, // Long or short arc
                 // Clockwise - opposite to the outer arc clockwise
                 defined(options.clockwise) ? 1 - options.clockwise : 0,
                 cx + (fullCircle ? -0.001 : cInnerRadius * innerCosStart),
