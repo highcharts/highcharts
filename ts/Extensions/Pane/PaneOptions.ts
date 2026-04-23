@@ -156,6 +156,10 @@ export interface PaneOptions {
      * of [x, y] positions. Positions can be given as integers that
      * transform to pixels, or as percentages of the plot area size.
      *
+     * By default, the center is calculated to fit the plot area, depending on
+     * the `startAngle` and `endAngle`, `margin`, background shape, axis labels,
+     * and gauge data labels.
+     *
      * @sample   {highcharts} highcharts/demo/gauge-vu-meter/
      *           Two gauges with different center
      * @since    2.3.0
@@ -208,6 +212,10 @@ export interface PaneOptions {
      * The size of the pane, either as a number defining pixels, or a
      * percentage defining a percentage of the available plot area (the
      * smallest of the plot height or plot width).
+     *
+     * By default, the size is calculated to fit the plot area, depending on the
+     * `startAngle` and `endAngle`, `margin`, background shape, axis labels,
+     * and gauge data labels.
      *
      * @sample   {highcharts} highcharts/pane/size-percent
      *           Gauge with pane sizing

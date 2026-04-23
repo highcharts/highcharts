@@ -200,12 +200,13 @@ const pane: PaneOptions|Array<PaneOptions> = {
     borderRadius: 3,
 
     /**
-     * The center of a polar chart or angular gauge, given as an array
-     * of [x, y] positions. Positions can be given as integers that
-     * transform to pixels, or as percentages of the plot area size.
+     * The center of a polar chart or angular gauge, given as an array of [x, y]
+     * positions. Positions can be given as integers that transform to pixels,
+     * or as percentages of the plot area size.
      *
-     * By default, the vertical center is calculated based on the start and end
-     * angle of the pane, to fit the plot area.
+     * By default, the center is calculated to fit the plot area, depending on
+     * the `startAngle` and `endAngle`, `margin`, background shape, axis labels,
+     * and gauge data labels.
      *
      * @sample {highcharts} highcharts/pane/size
      *         Responsive pane size and center
@@ -242,7 +243,8 @@ const pane: PaneOptions|Array<PaneOptions> = {
      * plot height or plot width).
      *
      * By default, the size is calculated to fit the plot area, depending on the
-     * `startAngle` and `endAngle`, `margin` and background shape.
+     * `startAngle` and `endAngle`, `margin`, background shape, axis labels,
+     * and gauge data labels.
      *
      * @sample   {highcharts} highcharts/pane/size-percent
      *           Gauge with pane sizing
