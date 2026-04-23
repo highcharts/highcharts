@@ -36,6 +36,9 @@ Highcharts.chart('gauge-02', {
     yAxis: {
         min: 0,
         max: 100,
+        gridLineWidth: 1,
+        tickWidth: 0,
+        minorTickWidth: 0,
         plotBands: [
             { from: 0,  to: 60,  color: '#85c1e9' }, // light blue
             { from: 60, to: 80,  color: '#2980b9' }, // blue
@@ -52,23 +55,51 @@ Highcharts.chart('gauge-02', {
 
 
 // ============================================================
-// 3. Thin ring via pane.thickness — a fixed pixel width that
-//    stays consistent regardless of chart size.
+// 3. Thin ring of plot bands inside the pane
 // ============================================================
 Highcharts.chart('gauge-03', {
     chart: { type: 'gauge' },
     title: { text: 'Thin ring' },
     pane: {
         borderRadius: '50%',
-        thickness: 8
+        background: null,
+        margin: 20
     },
     yAxis: {
+        labels: {
+            distance: '20%'
+        },
+        lineWidth: 1,
         min: 0,
         max: 100,
+        minorTicks: false,
+        offset: 0,
+        tickPosition: 'outside',
         plotBands: [
-            { from: 0,  to: 70,  color: '#d2b4de' }, // light purple
-            { from: 70, to: 100, color: '#8e44ad' }  // deep purple
+            // light purple
+            {
+                from: 0,
+                to: 70,
+                color: '#d2b4de',
+                outerRadius: '90%',
+                innerRadius: '80%'
+            },
+            // deep purple
+            {
+                from: 70,
+                to: 100,
+                color: '#8e44ad',
+                outerRadius: '90%',
+                innerRadius: '80%'
+            }
         ]
+    },
+    plotOptions: {
+        gauge: {
+            dial: {
+                baseWidth: 6
+            }
+        }
     },
     series: [{
         name: 'Score',
@@ -142,6 +173,7 @@ Highcharts.chart('gauge-05', {
             },
             dial: {
                 radius: '60%',
+                backgroundColor: 'var(--highcharts-color-0)',
                 baseLength: '70%',
                 baseWidth: '60%',
                 borderRadius: 0,
@@ -355,25 +387,23 @@ Highcharts.chart('gauge-09', {
 
 
 // ============================================================
-// 10. Wide arc, no background — full 300° pane.
-//     Colored grid lines replace the background arc.
+// 10. Wide arc, individual corner radius for plot bands
 // ============================================================
 Highcharts.chart('gauge-10', {
     chart: { type: 'gauge' },
-    title: { text: 'Without background' },
+    title: { text: 'Rounded bands' },
     pane: {
         startAngle: -150,
         endAngle: 150,
-        background: null
+        background: null,
+        borderRadius: '25%'
     },
     yAxis: {
         min: 0,
         max: 100,
-        gridLineWidth: 1,
-        labels: { distance: 15 },
         plotBands: [
-            { from: 0,  to: 50,  color: '#a9cce3' }, // pale blue
-            { from: 50, to: 75,  color: '#5dade2' }, // sky blue
+            { from: 0,  to: 49.8,  color: '#a9cce3' }, // pale blue
+            { from: 50, to: 74.8,  color: '#5dade2' }, // sky blue
             { from: 75, to: 100, color: '#8e44ad' }  // violet
         ]
     },
