@@ -31,6 +31,7 @@ Highcharts.chart('gauge-02', {
     chart: { type: 'gauge' },
     title: { text: 'Rounded ends' },
     pane: {
+        innerSize: '75%',
         borderRadius: '50%'
     },
     yAxis: {
@@ -520,6 +521,13 @@ Highcharts.chart('gauge-12', {
         labels: { style: { color: '#fff', fontWeight: 'bold' } }
     },
     series: [{
+        type: 'solidgauge',
+        data: [{
+            className: 'pair-controller',
+            y: 75
+        }],
+        enableMouseTracking: false
+    }, {
         name: 'Value',
         data: [75],
         tooltip: { valueSuffix: ' / 100' },
@@ -530,7 +538,7 @@ Highcharts.chart('gauge-12', {
                 ['a', 6, 6, 0, 1, 1, 12, 12],
                 ['a', 6, 6, 0, 1, 1, -12, -12]
             ],
-            backgroundColor: '#fff',
+            backgroundColor: 'var(--highcharts-background-color)',
             borderColor: 'var(--highcharts-color-0)',
             borderWidth: 5,
             radius: '100%'
@@ -540,10 +548,26 @@ Highcharts.chart('gauge-12', {
             verticalAlign: 'middle',
             y: 0
         }
-    }, {
-        type: 'solidgauge',
-        data: [75],
-        enableMouseTracking: false
     }],
     credits: { enabled: false }
 });
+
+// Add some life to all gauges
+setInterval(() => {
+    Highcharts.charts.forEach(chart => {
+        if (chart) {
+            const point = chart.series[0].points[0];
+            const newVal = Math.round(point.y + (Math.random() - 0.5) * 20);
+            point.update(
+                Math.max(
+                    point.series.yAxis.min,
+                    Math.min(point.series.yAxis.max, newVal)
+                )
+            );
+
+            if (point.className === 'pair-controller') {
+                chart.series[1].points[0].update(point.y);
+            }
+        }
+    });
+}, 2000);
