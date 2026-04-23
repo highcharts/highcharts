@@ -4,3 +4,7 @@
     height: 400px;
     margin: 0 auto;
 }
+
+#csv {
+    display: none;
+}
