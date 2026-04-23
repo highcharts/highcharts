@@ -83,7 +83,8 @@ function arc(
         let start = rawStart ? rawStart + paddingInRadians : 0,
             end = rawEnd ? rawEnd - paddingInRadians : 0;
 
-        // Check if padding can be applied to the arc
+        // Check if padding can be applied to the arc, prevents small arcs
+        // from disappearing
         if (paddingInRadians > 0 && end - start <= minArcRange) {
             const middleAngle = (start + end) / 2;
             start = middleAngle - minArcRange / 2;
@@ -137,28 +138,19 @@ function arc(
         if (defined(innerRadius)) {
             // Check minimal inner radius value
             const minInnerRadius = (padding * 2) / radianRange;
-            let cInnerRadius = innerRadius;
-
-            if (paddingInRadians > 0 && minInnerRadius > innerRadius) {
-                const minAcceptableInnerRadius =
-                    radius * 0.5 < innerRadius ? innerRadius : radius * 0.5;
-
-                cInnerRadius = minInnerRadius > minAcceptableInnerRadius ?
-                    minAcceptableInnerRadius : minInnerRadius;
-            }
-
+            const minAcceptableInnerRadius =
+                Math.max(innerRadius, radius * 0.5);
+            const cInnerRadius = (
+                paddingInRadians > 0 && minInnerRadius > innerRadius
+            ) ?
+                Math.min(minInnerRadius, minAcceptableInnerRadius) :
+                innerRadius;
             let innerStart = rawStart;
             let innerEnd = rawEnd;
-            let innerArcStartDeltaX = cInnerRadius * cosEnd;
-            let innerArcStartDeltaY = cInnerRadius * sinEnd;
-            let innerArcEndDeltaX =
-                fullCircle ? -0.001 : cInnerRadius * cosStart;
-            let innerArcEndDeltaY = cInnerRadius * sinStart;
 
             if (paddingInRadians > 0) {
-                const innerPaddingInRadiansRaw = padding / cInnerRadius;
                 const innerPaddingInRadians = Math.min(
-                    innerPaddingInRadiansRaw,
+                    padding / cInnerRadius,
                     Math.abs(rawEnd - rawStart) - proximity
                 );
 
@@ -167,20 +159,15 @@ function arc(
 
                 // Check if pading can be applied to the inner arc
                 if (innerEnd < innerStart) {
-                    innerStart = innerEnd = (innerStart + innerEnd) / 2;
+                    const middleAngle = (innerStart + innerEnd) / 2;
+                    innerStart = middleAngle;
+                    innerEnd = middleAngle;
                 }
-
-                const innerCosStart = fullCircle ? 0 : Math.cos(innerStart),
-                    innerSinStart = fullCircle ? 1 : Math.sin(innerStart),
-                    innerCosEnd = fullCircle ? 0 : Math.cos(innerEnd),
-                    innerSinEnd = fullCircle ? 1 : Math.sin(innerEnd);
-
-                innerArcStartDeltaX = cInnerRadius * innerCosEnd;
-                innerArcStartDeltaY = cInnerRadius * innerSinEnd;
-                innerArcEndDeltaX =
-                    fullCircle ? -0.001 : cInnerRadius * innerCosStart;
-                innerArcEndDeltaY = cInnerRadius * innerSinStart;
             }
+            const innerCosStart = fullCircle ? 0 : Math.cos(innerStart),
+                innerSinStart = fullCircle ? 1 : Math.sin(innerStart),
+                innerCosEnd = fullCircle ? 0 : Math.cos(innerEnd),
+                innerSinEnd = fullCircle ? 1 : Math.sin(innerEnd);
 
             arcSegment = [
                 'A', // ArcTo
@@ -190,8 +177,8 @@ function arc(
                 longArc, // Long or short arc
                 // Clockwise - opposite to the outer arc clockwise
                 defined(options.clockwise) ? 1 - options.clockwise : 0,
-                cx + innerArcEndDeltaX,
-                cy + innerArcEndDeltaY
+                cx + (fullCircle ? -0.001 : cInnerRadius * innerCosStart),
+                cy + cInnerRadius * innerSinStart
             ];
             // Memo for border radius
             arcSegment.params = {
@@ -205,12 +192,12 @@ function arc(
                 open ?
                     [
                         'M',
-                        cx + innerArcStartDeltaX,
-                        cy + innerArcStartDeltaY
+                        cx + cInnerRadius * innerCosEnd,
+                        cy + cInnerRadius * innerSinEnd
                     ] : [
                         'L',
-                        cx + innerArcStartDeltaX,
-                        cy + innerArcStartDeltaY
+                        cx + cInnerRadius * innerCosEnd,
+                        cy + cInnerRadius * innerSinEnd
                     ],
                 arcSegment
             );
