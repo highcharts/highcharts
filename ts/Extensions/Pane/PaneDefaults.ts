@@ -224,7 +224,7 @@ const pane: PaneOptions|Array<PaneOptions> = {
     /**
      * The inner size of the pane, either as a number defining pixels, or a
      * percentage defining a percentage of the pane's size. Defaults to 0 on
-     * polar charts, 60% on gauges.
+     * polar charts, 80% on gauges.
      *
      * @sample   {highcharts} highcharts/pane/size-percent
      *           Gauge with pane sizing

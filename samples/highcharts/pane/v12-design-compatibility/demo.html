@@ -2,11 +2,60 @@
 <script src="https://code.highcharts.com/highcharts-more.js"></script>
 <script src="https://code.highcharts.com/modules/solid-gauge.js"></script>
 
-
-<h1>Highcharts v12 design pack</h1>
-<p>Compatibility snippet for styling Gauge and Solid Gauge charts in v13 with v12 design</p>
-
 <div class="outer-container">
+    <h1>Gauge Facelift for Highcharts v13 - What's Changed?</h1>
+    <p>With Highcharts v13, we have updated the default design and smart
+    defaults for gauge and solid gauge charts. The general look and feel of the
+    gauges has been refreshed, in addition to smarter defaults for pane and
+    axes. The goal is to reduce the amount for configuration needed to make
+    something that looks good, especially since configurations are often created
+    by AI agents.</p>
+
+    <p>As a consequence, there are some changes to be aware of when upgrading
+    to v13:</p>
+
+    <h3>Changes in behavior</h3>
+    <ul>
+        <li>The y-axis now does a best guess of the min and max values when none
+            are provided. This means you can create a gauge without specifying
+            an y-axis at all, however it doesn't necessarily provide the range
+            that you expect.
+        </li>
+        <li>The pane's start and end angles are now -120 and 120 degrees instead
+            of a full circle.</li>
+        <li>The pane size is now automatically calculated to fit within the plot
+        area. Previously it was painful to set the right <code>pane.size</code>
+            and <code>pane.center</code> to manually fit it, especially if the
+            start and end values were non-default.</li>
+        <li>The pane now has <code>size</code> and <code>innerSize</code>
+        options, which are inherited by the pane background, axis plot bands, solid gauge series
+        and grid lines. Previously these elements had to be fitted individually.
+        </li>
+    </ul>
+
+    <h3>Changes in visual design</h3>
+    <ul>
+        <li>Circular panes now have a single, solid background</li>
+        <li>For gauges, the radial axis offset is now <code>-20%</code>, to
+        avoid the tick markers from interfering with the pane background and
+        plot bands.</li>
+        <li>Gauges and Solid Gauges now inherit the same <code>innerSize</code>
+        from the pane, 80%.</li>
+    </ul>
+
+    <h2>Highcharts v13 styled as v12</h2>
+    <p>The demos below showcase the compatibility of v13 charts with the v12
+    design. View this sample's source in jsFiddle or CodePen to inspect the required configuration.</p>
+
     <div id="container-1" class="container"></div>
     <div id="container-2" class="container"></div>
+
+    <h2>API reference</h2>
+    <p>For more details and live samples, check out the API docs for:</p>
+    <ul>
+        <li><a href="https://api.highcharts.com/highcharts/pane">Pane</a></li>
+        <li><a href="https://api.highcharts.com/highcharts/plotOptions.gauge">Gauge</a></li>
+        <li><a href="https://api.highcharts.com/highcharts/plotOptions.solidgauge">Solid Gauge</a></li>
+    </ul>
+
 </div>

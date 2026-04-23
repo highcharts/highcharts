@@ -187,7 +187,8 @@ export interface PaneOptions {
     id?: string;
     /**
      * The inner size of the pane, either as a number defining pixels, or a
-     * percentage defining a percentage of the pane's size.
+     * percentage defining a percentage of the pane's size. Defaults to 0 on
+     * polar charts, 80% on gauges.
      *
      * @sample   {highcharts} highcharts/pane/size-percent
      *           Gauge with pane sizing
