@@ -15,14 +15,14 @@ Highcharts.chart('container', {
         text: 'Split adjusted, from Jan 2021 to Apr 2026.'
     },
     xAxis: {
-      type: 'datetime',
-      crosshair: true,
-      labels: { format: '{value:%Y}' }
+        type: 'datetime',
+        crosshair: true,
+        labels: { format: '{value:%Y}' }
     },
     yAxis: {
-      min: 0,
-      title: { text: 'Close Price (USD)' },
-      labels: { format: '${value:,.0f}' }
+        min: 0,
+        title: { text: 'Close Price (USD)' },
+        labels: { format: '${value:,.0f}' }
     },
     plotOptions: {
         spline: {
