@@ -102,9 +102,8 @@ pane: {
 ```
 
 Angles are measured clockwise from the top (12 o'clock = 0°). A compact
-three-quarter arc — popular for dashboard KPIs — uses `-135` to `135`. For a
-small adjustment indicator you might use `-30` to `30`. The Highcharts default
-are `-120` to `120`.
+three-quarter arc — popular for dashboard KPIs — uses `-135` to `135`. These are
+the default angles for a pane containing a gauge. For a small adjustment indicator you might use `-30` to `30`.
 
 Placing ticks and grid lines
 ----------------------------

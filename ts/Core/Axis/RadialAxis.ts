@@ -1151,15 +1151,15 @@ namespace RadialAxis {
 
             const fullCircle = Math.PI * 2,
                 startAngle = paneOptions.startAngle ??
-                    // Gauges start at -120 by default
-                    (chart.angular ? -120 : 0),
+                    // Gauges start at -135 by default
+                    (chart.angular ? -135 : 0),
                 // Start and end angle options are given in degrees relative to
                 // top, while internal computations are in radians relative to
                 // right (like SVG).
                 start = (startAngle - 90) * Math.PI / 180,
                 end = (pick(
                     paneOptions.endAngle,
-                    startAngle + (chart.angular ? 240 : 360)
+                    startAngle + (chart.angular ? 270 : 360)
                 ) - 90) * Math.PI / 180;
 
             // Y axis in polar charts

@@ -169,7 +169,8 @@ export interface PaneOptions {
     /**
      * The end angle of the polar X axis or gauge value axis, given in
      * degrees where 0 is north. Defaults to
-     * [startAngle](#pane.startAngle) plus 360.
+     * [startAngle](#pane.startAngle) plus 360 for polar charts, `startAngle` +
+     * 270 for gauges.
      *
      * @sample   {highcharts} highcharts/pane/size
      *           Responsive pane size and center
@@ -229,7 +230,7 @@ export interface PaneOptions {
     size?: (number|string);
     /**
      * The start angle of the polar X axis or gauge axis, given in degrees
-     * where 0 is north.
+     * where 0 is north. Defaults to 0 for polar charts, -135 for gauges.
      *
      * @sample {highcharts} highcharts/pane/size
      *         Responsive pane size and center

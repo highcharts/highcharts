@@ -261,7 +261,7 @@ const pane: PaneOptions|Array<PaneOptions> = {
 
     /**
      * The start angle of the polar X axis or gauge axis, given in degrees
-     * where 0 is north. Defaults to 0 for polar charts, -120 for gauges.
+     * where 0 is north. Defaults to 0 for polar charts, -135 for gauges.
      *
      * @sample {highcharts} highcharts/pane/size
      *         Responsive pane size and center
