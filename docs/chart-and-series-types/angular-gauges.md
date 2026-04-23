@@ -278,5 +278,6 @@ reference](https://api.highcharts.com/highcharts/plotOptions.gauge) and the
 reference](https://api.highcharts.com/highcharts/plotOptions.solidgauge).
 
 Worth checking out:
+*   [Inspiration dashboard with 12 gauge designs](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/demo/gauge-inspiration)
 *   [Speedometer with dual axes](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/demo/gauge-dual)
 *   [Simple gauge with rounded plot bands](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/xaxis/plotbands-gauge-borderradius)
