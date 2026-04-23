@@ -48,7 +48,22 @@ Highcharts.chart('gauge-02', {
     series: [{
         name: 'Score',
         data: [72],
-        tooltip: { valueSuffix: ' / 100' }
+        tooltip: { valueSuffix: ' / 100' },
+        // Slim elongated needle — long reach, barely any width,
+        // large flat disc pivot that anchors it visually.
+        dial: {
+            radius: '80%',
+            backgroundColor: '#2980b9',
+            baseWidth: '5%',
+            topWidth: '1%',
+            rearLength: '0%',
+            borderRadius: '50%'
+        },
+        pivot: {
+            radius: '5%',
+            backgroundColor: '#2980b9',
+            borderWidth: 0
+        }
     }],
     credits: { enabled: false }
 });
@@ -136,7 +151,23 @@ Highcharts.chart('gauge-04', {
         name: 'Speed',
         data: [110],
         tooltip: { valueSuffix: ' km/h' },
-        dataLabels: { format: '{y} km/h' }
+        dataLabels: { format: '{y} km/h' },
+        // Broad spade — wide base that narrows sharply to a fine
+        // tip; sits low for a classic speedometer look.
+        dial: {
+            radius: '80%',
+            baseWidth: '12%',
+            topWidth: '1%',
+            baseLength: '15%',
+            rearLength: '0%',
+            borderRadius: '4%',
+            backgroundColor: '#c0392b'
+        },
+        pivot: {
+            radius: '5%',
+            backgroundColor: '#c0392b',
+            borderWidth: 0
+        }
     }],
     credits: { enabled: false }
 });
@@ -214,6 +245,20 @@ Highcharts.chart('gauge-06', {
             [0.6, '#2980b9'], // blue
             [0.9, '#8e44ad']  // purple
         ]
+    },
+    plotOptions: {
+        gauge: {
+            // Hair-line needle: zero base width, pointed tip,
+            // full length — the solid fill does all the visual work.
+            dial: {
+                radius: '80%',
+                baseWidth: '1%',
+                topWidth: '1%',
+                rearLength: 0,
+                borderRadius: 0,
+                backgroundColor: 'var(--highcharts-neutral-color-100)'
+            }
+        }
     },
     series: [{
         type: 'solidgauge',
