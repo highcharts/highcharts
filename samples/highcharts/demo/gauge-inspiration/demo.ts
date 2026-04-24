@@ -25,7 +25,7 @@ Highcharts.chart('gauge-01', {
 
 // ============================================================
 // 2. Rounded pane — pane.borderRadius: '50%' rounds the arc
-//    ends, matching the rounded dial introduced in v12.
+//    ends. Grid lines splits up the arc into segments.
 // ============================================================
 Highcharts.chart('gauge-02', {
     chart: { type: 'gauge' },
@@ -71,7 +71,8 @@ Highcharts.chart('gauge-02', {
 
 
 // ============================================================
-// 3. Thin ring of plot bands inside the pane
+// 3. Thin ring of plot bands inside the pane. Visible axis
+//    line and ticks on the outside.
 // ============================================================
 Highcharts.chart('gauge-03', {
     chart: { type: 'gauge' },
@@ -88,9 +89,9 @@ Highcharts.chart('gauge-03', {
         lineWidth: 1,
         min: 0,
         max: 100,
-        minorTicks: false,
         offset: 0,
         tickPosition: 'outside',
+        minorTickPosition: 'outside',
         plotBands: [
             // light purple
             {
@@ -184,7 +185,8 @@ Highcharts.chart('gauge-05', {
     pane: {
         startAngle: -150,
         endAngle: 150,
-        innerSize: '70%'
+        innerSize: '70%',
+        borderRadius: 0
     },
     yAxis: {
         min: 0,
@@ -201,11 +203,15 @@ Highcharts.chart('gauge-05', {
             dataLabels: {
                 verticalAlign: 'middle',
                 y: 0,
-                zIndex: 3
+                zIndex: 3,
+                style: {
+                    color: 'light-dark(#148f77, #76d7c4)',
+                    textOutline: 'none'
+                }
             },
             dial: {
                 radius: '60%',
-                backgroundColor: 'var(--highcharts-color-0)',
+                backgroundColor: 'light-dark(#148f77, #76d7c4)',
                 baseLength: '70%',
                 baseWidth: '60%',
                 borderRadius: 0,
@@ -214,7 +220,7 @@ Highcharts.chart('gauge-05', {
             pivot: {
                 radius: '50%',
                 borderWidth: 5,
-                borderColor: 'var(--highcharts-color-0)',
+                borderColor: 'light-dark(#148f77, #76d7c4)',
                 backgroundColor: 'var(--highcharts-background-color)'
             }
         }
@@ -318,7 +324,7 @@ Highcharts.chart('gauge-07', {
 
 // ============================================================
 // 8. Full-circle ring — single ring activity gauge.
-//    pane.startAngle 0 → 360; linecap: 'round'; subtitle label.
+//    pane.startAngle 0 → 360; rounded ends; subtitle label.
 // ============================================================
 Highcharts.chart('gauge-08', {
     chart: { type: 'solidgauge', height: '100%' },
@@ -365,7 +371,8 @@ Highcharts.chart('gauge-09', {
         backgroundColor: 'none',
         borderWidth: 0,
         shadow: false,
-        pointFormat: '<span style="color:{point.color};font-weight:bold">' +
+        pointFormat:
+            '<span style="color:{point.color};font-weight:bold">' +
             '{series.name}: {point.y}%</span>'
     },
     pane: {
@@ -375,23 +382,29 @@ Highcharts.chart('gauge-09', {
         background: [{
             outerRadius: '100%',
             innerRadius: '78%',
-            backgroundColor: Highcharts.getOptions().colors.map(
-                c => `color-mix(in srgb, ${c} 25%, transparent)`
-            )[0],
+            backgroundColor: `color-mix(
+                in srgb,
+                var(--highcharts-color-0) 25%,
+                transparent
+            )`,
             borderWidth: 0
         }, {
             outerRadius: '77%',
             innerRadius: '56%',
-            backgroundColor: Highcharts.getOptions().colors.map(
-                c => `color-mix(in srgb, ${c} 25%, transparent)`
-            )[1],
+            backgroundColor: `color-mix(
+                in srgb,
+                var(--highcharts-color-1) 25%,
+                transparent
+            )`,
             borderWidth: 0
         }, {
             outerRadius: '55%',
             innerRadius: '34%',
-            backgroundColor: Highcharts.getOptions().colors.map(
-                c => `color-mix(in srgb, ${c} 25%, transparent)`
-            )[2],
+            backgroundColor: `color-mix(
+                in srgb,
+                var(--highcharts-color-2) 25%,
+                transparent
+            )`,
             borderWidth: 0
         }]
     },
@@ -406,7 +419,7 @@ Highcharts.chart('gauge-09', {
     series: [{
         name: 'Conversion',
         data: [{
-            color: Highcharts.getOptions().colors[0],
+            color: 'var(--highcharts-color-0)',
             radius: '100%',
             innerRadius: '78%',
             y: 82
@@ -414,7 +427,7 @@ Highcharts.chart('gauge-09', {
     }, {
         name: 'Engagement',
         data: [{
-            color: Highcharts.getOptions().colors[1],
+            color: 'var(--highcharts-color-1)',
             radius: '77%',
             innerRadius: '56%',
             y: 59
@@ -422,7 +435,7 @@ Highcharts.chart('gauge-09', {
     }, {
         name: 'Retention',
         data: [{
-            color: Highcharts.getOptions().colors[2],
+            color: 'var(--highcharts-color-2)',
             radius: '55%',
             innerRadius: '34%',
             y: 71
@@ -470,10 +483,8 @@ Highcharts.chart('gauge-11', {
     chart: { type: 'solidgauge' },
     title: { text: 'Threshold' },
     pane: {
-        borderRadius: '50%',
-        background: {
-            innerRadius: '80%'
-        }
+        borderRadius: 0,
+        innerSize: '80%'
     },
     tooltip: { enabled: false },
     yAxis: {
@@ -484,14 +495,23 @@ Highcharts.chart('gauge-11', {
             [0.4999, '#55BF3B'],
             [0.5,    '#DF5353']
         ],
-        title: { text: 'Loss', y: 30 }
+        title: { text: 'Loss', y: 20 },
+        plotLines: [{
+            value: 0,
+            color: 'var(--highcharts-neutral-color-100)',
+            width: 2,
+            zIndex: 5
+        }]
     },
     series: [{
         name: 'Loss',
         data: [-1.2],
         threshold: 0,
         dataLabels: {
-            format: '<span style="font-size:1.2em;font-weight:bold">{y}</span>'
+            style: {
+                fontSize: '1.2em',
+                fontWeight: 'bold'
+            }
         },
         tooltip: { valueSuffix: ' %' }
     }],
@@ -522,14 +542,14 @@ Highcharts.chart('gauge-12', {
     },
     series: [{
         type: 'solidgauge',
-        data: [{
-            className: 'pair-controller',
-            y: 75
-        }],
+        data: [75],
         enableMouseTracking: false
     }, {
         name: 'Value',
-        data: [75],
+        data: [{
+            className: 'linked-to-primary',
+            y: 75
+        }],
         tooltip: { valueSuffix: ' / 100' },
         dial: {
             // A small dot that travels along the ring
@@ -555,19 +575,22 @@ Highcharts.chart('gauge-12', {
 // Add some life to all gauges
 setInterval(() => {
     Highcharts.charts.forEach(chart => {
-        if (chart) {
-            const point = chart.series[0].points[0];
-            const newVal = Math.round(point.y + (Math.random() - 0.5) * 20);
-            point.update(
-                Math.max(
-                    point.series.yAxis.min,
-                    Math.min(point.series.yAxis.max, newVal)
-                )
-            );
+        chart?.series.forEach(series => {
+            series.points.forEach(point => {
+                const { max, min } = point.series.yAxis;
+                const newVal = Math.round(
+                    point.y + (Math.random() - 0.5) * (max - min) * 0.2
+                );
+                point.update(
+                    Math.max(min, Math.min(max, newVal)),
+                    false
+                );
 
-            if (point.className === 'pair-controller') {
-                chart.series[1].points[0].update(point.y);
-            }
-        }
+                if (point.options.className === 'linked-to-primary') {
+                    point.update(chart.series[0].points[0].y, false);
+                }
+            });
+        });
+        chart?.redraw();
     });
 }, 2000);
