@@ -208,7 +208,7 @@ class PlotLineOrBand {
         fireEvent(this, 'render');
 
         const { axis, options } = this,
-            { horiz, logarithmic } = axis,
+            { chart, horiz, logarithmic } = axis,
             { color, events, zIndex = 0 } = options,
             { renderer, time } = axis.chart,
             groupAttribs: SVGAttributes = {},
@@ -235,7 +235,7 @@ class PlotLineOrBand {
         let groupName = isBand ? 'bands' : 'lines';
 
         // Set the presentational attributes
-        if (!axis.chart.styledMode) {
+        if (!chart.styledMode) {
             if (isLine) {
                 attribs.stroke = color || Palette.neutralColor40;
                 attribs['stroke-width'] = pick(
@@ -263,6 +263,7 @@ class PlotLineOrBand {
         if (!group) {
             axis.plotLinesAndBandsGroups[groupName] = group =
                 renderer.g('plot-' + groupName)
+                    .clip(chart.plotClipRect)
                     .attr(groupAttribs).add();
         }
 
