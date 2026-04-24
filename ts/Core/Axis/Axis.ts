@@ -4578,6 +4578,7 @@ class Axis {
                         .attr({
                             zIndex: pick(options.zIndex, 2)
                         })
+                        .clip(chart.plotClipRect)
                         .add();
 
                     // Presentational attributes
