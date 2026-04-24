@@ -460,11 +460,40 @@ Highcharts.chart('gauge-10', {
     yAxis: {
         min: 0,
         max: 100,
-        plotBands: [
-            { from: 0,  to: 49.8,  color: '#a9cce3' }, // pale blue
-            { from: 50, to: 74.8,  color: '#5dade2' }, // sky blue
-            { from: 75, to: 100, color: '#8e44ad' }  // violet
-        ]
+        plotBands: [{
+            from: 0,
+            to: 50,
+            color: '#a9cce3', // pale blue
+            borderWidth: 1,
+            borderColor: 'var(--highcharts-background-color)',
+            borderRadius: {
+                radius: 4,
+                scope: 'individual',
+                where: 'all'
+            }
+        }, {
+            from: 50,
+            to: 75,
+            color: '#5dade2', // sky blue
+            borderWidth: 1,
+            borderColor: 'var(--highcharts-background-color)',
+            borderRadius: {
+                radius: 4,
+                scope: 'individual',
+                where: 'all'
+            }
+        }, {
+            from: 75,
+            to: 100,
+            color: '#8e44ad', // violet
+            borderWidth: 1,
+            borderColor: 'var(--highcharts-background-color)',
+            borderRadius: {
+                radius: 4,
+                scope: 'individual',
+                where: 'all'
+            }
+        }]
     },
     series: [{
         name: 'Value',

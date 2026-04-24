@@ -37,6 +37,7 @@ import type Tick from './Tick';
 import type RadialAxisOptions from './RadialAxisOptions';
 import RadialAxisDefaults from './RadialAxisDefaults.js';
 
+import BorderRadius from '../../Extensions/BorderRadius.js';
 import D from '../Defaults.js';
 const { defaultOptions } = D;
 import H from '../Globals.js';
@@ -752,8 +753,10 @@ namespace RadialAxis {
             },
             center = this.center,
             { endAngleRad, startAngleRad } = this,
-            borderRadius = options.borderRadius ??
-                this.pane.options.borderRadius,
+            borderRadius = BorderRadius.optionsToObject(
+                options.borderRadius ??
+                this.pane.options.borderRadius
+            ),
             fullRadius = center[2] / 2,
             offset = Math.min(this.offset, 0),
             left = this.left || 0,
@@ -779,7 +782,11 @@ namespace RadialAxis {
             brEnd = true;
 
         // Apply conditional border radius, only for ends of band stacks
-        if (borderRadius && index > -1) {
+        if (
+            borderRadius.radius &&
+            borderRadius.scope === 'stack' &&
+            index > -1
+        ) {
             if (trueBands[index - 1] && trueBands[index - 1].to === from) {
                 brStart = false;
             }
@@ -856,7 +863,7 @@ namespace RadialAxis {
                         this.center[3] / 2
                     ),
                     open,
-                    borderRadius,
+                    borderRadius: borderRadius.radius,
                     brStart,
                     brEnd
                 }

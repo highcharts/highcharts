@@ -593,7 +593,7 @@ export default PlotLineOrBand;
  * Border radius for the plot band. Applies only to gauges. Can be a pixel
  * value or a percentage, for example `50%`.
  *
- * @type      {number|string}
+ * @type      {number|string|Highcharts.BorderRadiusOptionsObject}
  * @since 11.4.2
  * @sample    {highcharts} highcharts/xaxis/plotbands-gauge-borderradius
  *            Angular gauge with rounded plot bands
