@@ -76,7 +76,7 @@ namespace FinancialSymbols {
                     w,
                     Math.round(h * 0.6),
                     {
-                        anchorX: Math.round(x + w / 3),
+                        anchorX: Math.round(x),
                         anchorY: Math.round(y + h)
                     }
                 ) : [];
