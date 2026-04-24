@@ -201,15 +201,13 @@ function applyBorderRadius(
             clockwise = arc[5];
 
         // Inner padding in radians
-        const innerPadding = padding && bigR > 0 ? 2 * (padding / bigR) : 0;
-        const innerAlpha = Math.max(start - end - innerPadding, 0);
+        const innerPadding = padding && bigR > 0 ? padding / bigR : 0;
+        const innerAlpha = Math.max(start - end - 2 * innerPadding, 0);
 
         // For the inner radius, we need an extra cap because the inner arc
         // is shorter than the outer arc
-        const innerBorderRadius = Math.min(
-            r,
-            2 * (innerAlpha / Math.PI) * (innerRadius || arc[1])
-        );
+        const innerBorderRadius =
+            Math.min(r, 2 * (innerAlpha / Math.PI) * bigR);
         const br = i > 1 ? innerBorderRadius : r;
 
         // Some geometric constants
@@ -226,10 +224,8 @@ function applyBorderRadius(
                 -angleOfBorderRadius,
             // The distance along the radius of the big arc to the starting
             // point of the small border radius arc
-            distanceBigCenterToStartArc = (
-                Math.cos(angleOfBorderRadius) *
-                relativeR
-            );
+            distanceBigCenterToStartArc =
+                Math.cos(angleOfBorderRadius) * relativeR;
 
         if (innerRadius === void 0 || (innerRadius > 0 && innerAlpha > 0)) {
             // From line to arc
