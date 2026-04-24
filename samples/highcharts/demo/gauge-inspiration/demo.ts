@@ -577,9 +577,9 @@ setInterval(() => {
     Highcharts.charts.forEach(chart => {
         chart?.series.forEach(series => {
             series.points.forEach(point => {
-                const { max, min } = point.series.yAxis;
+                const { max = 0, min = 0 } = point.series.yAxis;
                 const newVal = Math.round(
-                    point.y + (Math.random() - 0.5) * (max - min) * 0.2
+                    (point.y || 0) + (Math.random() - 0.5) * (max - min) * 0.2
                 );
                 point.update(
                     Math.max(min, Math.min(max, newVal)),
