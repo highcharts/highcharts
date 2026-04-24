@@ -99,8 +99,7 @@ class TableRow extends Row {
     * */
 
     public async init(): Promise<void> {
-        const dp = this.viewport.grid.dataProvider;
-        this.id = await dp?.getRowId(this.index);
+        this.id = await this.viewport.grid.dataProvider?.getRowId(this.index);
         await this.loadData();
         this.setRowAttributes();
     }
@@ -122,6 +121,9 @@ class TableRow extends Row {
         }
 
         this.data = data;
+        fireEvent(this, 'afterLoadData', {
+            data
+        });
     }
 
     /**
@@ -148,9 +150,10 @@ class TableRow extends Row {
      * @param index
      * The index of the row in the data table.
      *
-     * @internal
+     * @param doReflow
+     * Whether to reflow the row after updating the cells.
      */
-    public async reuse(index: number): Promise<void> {
+    public async reuse(index: number, doReflow: boolean = true): Promise<void> {
         for (let i = 0, iEnd = this.cells.length; i < iEnd; ++i) {
             fireEvent(this.cells[i], 'outdate');
         }
@@ -161,8 +164,9 @@ class TableRow extends Row {
         }
 
         this.index = index;
-        this.id = await this.viewport.grid.dataProvider?.getRowId(this.index);
-        this.htmlElement.setAttribute('data-row-index', index);
+        this.id = await this.viewport.grid.dataProvider?.getRowId(index);
+
+        this.htmlElement.setAttribute('data-row-index', index + '');
         this.updateRowAttributes();
         this.updateParityClass();
         this.updateStateClasses();
@@ -174,7 +178,9 @@ class TableRow extends Row {
             await cell.setValue();
         }
 
-        this.reflow();
+        if (doReflow) {
+            this.reflow();
+        }
     }
 
     /**
@@ -217,9 +223,7 @@ class TableRow extends Row {
         const el = this.htmlElement;
 
         el.classList.add(Globals.getClassName('rowElement'));
-
-        // Index of the row in the presentation data table
-        el.setAttribute('data-row-index', idx);
+        el.setAttribute('data-row-index', idx + '');
 
         this.updateRowAttributes();
 
@@ -245,12 +249,14 @@ class TableRow extends Row {
 
         // Calculate levels of header, 1 to avoid indexing from 0
         a11y?.setRowIndex(el, idx + (vp.header?.rows.length ?? 0) + 1);
+
+        fireEvent(this, 'afterUpdateAttributes');
     }
 
     /**
      * Updates the row parity class based on index.
      */
-    private updateParityClass(): void {
+    protected updateParityClass(): void {
         const el = this.htmlElement;
         el.classList.remove(
             Globals.getClassName('rowEven'),
@@ -266,7 +272,7 @@ class TableRow extends Row {
     /**
      * Updates the hovered and synced classes based on grid state.
      */
-    private updateStateClasses(): void {
+    protected updateStateClasses(): void {
         const el = this.htmlElement;
         el.classList.remove(
             Globals.getClassName('hoveredRow'),

@@ -179,3 +179,45 @@ export default function MyChart() {
   );
 }
 ```
+
+## External State Management (Redux)
+
+For large-scale applications, you may prefer to manage your data in an external store like **Redux**. Because `@highcharts/react` components are reactive by design, they synchronize seamlessly with global state via hooks like `useSelector`.
+
+When an action is dispatched to the Redux store, the component re-renders with new props, and the chart performs an optimized update automatically.
+
+```tsx
+import React from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { Chart, Series, Title } from '@highcharts/react';
+import { randomizeData } from './store';
+
+export default function ReduxChart() {
+  // Connect chart data to the global Redux state
+  const points = useSelector((state) => state.chart.points);
+  const dispatch = useDispatch();
+
+  return (
+    <div className="redux-chart-container">
+      <Chart>
+        <Title>Redux-Powered Chart</Title>
+        <Series type="column" data={points} name="Global State Data" />
+      </Chart>
+
+      <button onClick={() => dispatch(randomizeData())}>
+        Randomize Global State
+      </button>
+    </div>
+  );
+}
+```
+
+### Why use Redux with Highcharts React?
+
+Centralized Logic: Keep data fetching and transformation logic (like calculating averages or normalizing time series) in your Reducers/Thunks.
+
+Predictable Reactivity: Highcharts handles the complex DOM and SVG updates, while Redux handles the data integrity.
+
+Performance: By mapping only the necessary slices of state to your chart components, you ensure the chart only re-renders when its specific data changes.
+
+See [the full example here](https://www.highcharts.com/samples/embed/highcharts/react/redux).

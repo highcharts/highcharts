@@ -565,7 +565,7 @@ class BubbleSeries extends ScatterSeries {
             !init &&
             this.points.length < (this.options.animationLimit as any) // #8099
         ) {
-            this.points.forEach(function (point): void {
+            this.points.forEach(function (this: BubbleSeries, point): void {
                 const { graphic, plotX = 0, plotY = 0 } = point;
 
                 if (graphic && graphic.width) { // URL symbols don't have width

@@ -676,7 +676,7 @@ class Legend {
 
         if (alignAttr) {
             translateY = alignAttr.translateY;
-            this.allItems.forEach(function (item): void {
+            this.allItems.forEach(function (this: Legend, item): void {
                 const checkbox = item.checkbox;
                 let top;
 
@@ -1145,7 +1145,7 @@ class Legend {
             boxes: Array<BoxObject> = [],
             alignLeft = this.options.align === 'left';
 
-        this.allItems.forEach(function (item): void {
+        this.allItems.forEach(function (this: Legend, item): void {
             let lastPoint: (Point|undefined),
                 height: number,
                 useFirstPoint = alignLeft,
@@ -1675,6 +1675,7 @@ class Legend {
                 text: currentPage + '/' + pageCount
             });
             [this.down, this.downTracker].forEach(function (
+                this: Legend,
                 elem: (SVGElement|undefined)
             ): void {
                 (elem as any).attr({
@@ -2003,6 +2004,10 @@ export default Legend;
  *
  * @param {Highcharts.LegendItemClickEventObject} event
  * The event that occurred.
+ *
+ * @param {Highcharts.Legend} [ctx]
+ * Since v12.6.0, the legend context passed as an extra argument for arrow
+ * functions.
  */
 
 /**
@@ -2048,6 +2053,10 @@ export default Legend;
  *
  * @param {Highcharts.PointLegendItemClickEventObject} event
  * The event that occurred.
+ *
+ * @param {Highcharts.Point} [ctx]
+ * Since v12.6.0, the point context passed as an extra argument for arrow
+ * functions.
  */
 
 /**
@@ -2103,6 +2112,10 @@ export default Legend;
  *
  * @param {Highcharts.SeriesLegendItemClickEventObject} event
  * The event that occurred.
+ *
+ * @param {Highcharts.Series} [ctx]
+ * Since v12.6.0, the series context passed as an extra argument for arrow
+ * functions.
  */
 
 /**

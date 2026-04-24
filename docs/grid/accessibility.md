@@ -18,7 +18,8 @@ Accessibility features are enabled by default, and we generally recommend keepin
         enabled: false,
         announcements: {
             sorting: true,
-            filtering: true
+            filtering: true,
+            rowPinning: true
         }
     }
 }
@@ -28,7 +29,58 @@ Setting `accessibility.enabled: false` disables all Grid accessibility features,
 
 All `accessibility` options are optional. Use `announcements` to enable or disable specific live announcements while accessibility is enabled.
 
-To translate built-in accessibility text such as sorting and filtering announcements, see the [Internationalization article](https://www.highcharts.com/docs/grid/internationalization).
+## Row pinning announcements
+
+In Grid Pro, row pinning live announcements are enabled by default and can be
+toggled with `accessibility.announcements.rowPinning`.
+
+```js
+{
+    accessibility: {
+        announcements: {
+            rowPinning: false
+        }
+    }
+}
+```
+
+## Row pinning localization
+
+To customize Grid Pro row pinning announcements and ARIA descriptions, use
+`lang.accessibility.rowPinning`:
+
+```js
+{
+    lang: {
+        accessibility: {
+            rowPinning: {
+                announcements: {
+                    pinned: "Row {rowId} pinned to {position}.",
+                    unpinned: "Row {rowId} unpinned."
+                },
+                descriptions: {
+                    pinnedTop: "Pinned row in top section.",
+                    pinnedBottom: "Pinned row in bottom section.",
+                    alsoPinnedTop: "This row is also pinned to top section.",
+                    alsoPinnedBottom: "This row is also pinned to bottom section."
+                }
+            }
+        }
+    }
+}
+```
+
+For row pinning announcements, available template variables are:
+
+- `{rowId}`
+- `{position}` (for the `pinned` message)
+
+Row pinning descriptions can be customized with:
+
+- `lang.accessibility.rowPinning.descriptions.pinnedTop`
+- `lang.accessibility.rowPinning.descriptions.pinnedBottom`
+- `lang.accessibility.rowPinning.descriptions.alsoPinnedTop`
+- `lang.accessibility.rowPinning.descriptions.alsoPinnedBottom`
 
 ## High contrast mode
 

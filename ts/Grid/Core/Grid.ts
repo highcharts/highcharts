@@ -30,6 +30,7 @@ import type {
     GroupedHeaderOptions,
     IndividualColumnOptions
 } from './Options';
+import type { RowId } from './Data/DataProvider';
 import type { DataProviderType } from './Data/DataProviderType';
 import type {
     CellType as DataTableCellType,
@@ -67,7 +68,6 @@ import {
     pick
 } from '../../Shared/Utilities.js';
 import { uniqueKey } from '../../Core/Utilities.js';
-
 
 /* *
  *
@@ -313,6 +313,11 @@ export class Grid {
     public readonly dirtyFlags: Set<GridDirtyFlags> = new Set();
 
     /**
+     * Per-row metadata shared across Grid modules.
+     */
+    public readonly rowMeta: Map<RowId, RowMetaRecord> = new Map();
+
+    /**
      * Internal redraw queue used to prevent concurrent `redraw()` calls from
      * interleaving async DOM work and corrupting the state (for example
      * rendering duplicate pagination controls when `update()` is called
@@ -320,6 +325,10 @@ export class Grid {
      */
     private redrawQueue: Promise<void> = Promise.resolve();
 
+    /**
+     * The data provider of the Grid. The interface between the Grid renderer
+     * and the data source.
+     */
     public dataProvider?: DataProviderType;
 
 
@@ -740,7 +749,6 @@ export class Grid {
         const { viewport } = this;
         const diff = this.loadUserOptions(options, oneToOne);
         const flags = this.dirtyFlags;
-
         if (viewport) {
             if (
                 !this.dataProvider ||
@@ -909,7 +917,6 @@ export class Grid {
 
         if ('sorting' in columnDiff) {
             const sortingDiff = columnDiff.sorting ?? {};
-
             if (
                 'compare' in sortingDiff ||
                 'order' in sortingDiff
@@ -930,7 +937,6 @@ export class Grid {
 
         if ('filtering' in columnDiff) {
             const filteringDiff = columnDiff.filtering ?? {};
-
             if (
                 'condition' in filteringDiff ||
                 'value' in filteringDiff
@@ -1261,19 +1267,18 @@ export class Grid {
      * The index of the row.
      */
     public hoverRow(rowIndex?: number): void {
-        const rows = this.viewport?.rows;
-        if (!rows) {
+        const viewport = this.viewport;
+        if (!viewport) {
             return;
         }
 
-        const firstRowIndex = this.viewport?.rows[0]?.index ?? 0;
-
         if (this.hoveredRowIndex !== void 0) {
-            rows[this.hoveredRowIndex - firstRowIndex]?.setHoveredState(false);
+            viewport.getRenderedRowByIndex(this.hoveredRowIndex)
+                ?.setHoveredState(false);
         }
 
         if (rowIndex !== void 0) {
-            rows[rowIndex - firstRowIndex]?.setHoveredState(true);
+            viewport.getRenderedRowByIndex(rowIndex)?.setHoveredState(true);
         }
 
         this.hoveredRowIndex = rowIndex;
@@ -1312,19 +1317,18 @@ export class Grid {
      * The index of the row.
      */
     public syncRow(rowIndex?: number): void {
-        const rows = this.viewport?.rows;
-        if (!rows) {
+        const viewport = this.viewport;
+        if (!viewport) {
             return;
         }
 
-        const firstRowIndex = this.viewport?.rows[0]?.index ?? 0;
-
         if (this.syncedRowIndex !== void 0) {
-            rows[this.syncedRowIndex - firstRowIndex]?.setSyncedState(false);
+            viewport.getRenderedRowByIndex(this.syncedRowIndex)
+                ?.setSyncedState(false);
         }
 
         if (rowIndex !== void 0) {
-            rows[rowIndex - firstRowIndex]?.setSyncedState(true);
+            viewport.getRenderedRowByIndex(rowIndex)?.setSyncedState(true);
         }
 
         this.syncedRowIndex = rowIndex;
@@ -1627,7 +1631,7 @@ export class Grid {
      * after destruction by calling the `render` method.
      */
     public destroy(onlyDOM = false): void {
-        fireEvent(this, 'beforeDestroy');
+        fireEvent(this, 'beforeDestroy', { onlyDOM });
 
         this.isRendered = false;
         const dgIndex = Grid.grids.findIndex((dg): boolean => dg === this);
@@ -1874,6 +1878,19 @@ export type GridDirtyFlags = (
 /**
  * Resolved data binding for a Grid column.
  */
+export interface ColumnOptionsMapItem {
+    index: number;
+    options: NoIdColumnOptions
+}
+
+/**
+ * Per-row metadata object shared across Grid modules.
+ *
+ * Empty before module extensions.
+ */
+export interface RowMetaRecord {}
+
+
 /* *
  *
  *  Default Export

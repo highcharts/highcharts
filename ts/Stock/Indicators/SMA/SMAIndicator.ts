@@ -244,7 +244,11 @@ class SMAIndicator extends LineSeries {
         if (!name) {
 
             (this.nameComponents || []).forEach(
-                function (component: string, index: number): void {
+                function (
+                    this: SMAIndicator,
+                    component: string,
+                    index: number
+                ): void {
                     params.push(
                         (this.options.params as any)[component] +
                         pick(this.nameSuffixes[index], '')

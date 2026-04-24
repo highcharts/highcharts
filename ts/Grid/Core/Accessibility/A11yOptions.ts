@@ -78,6 +78,7 @@ export interface A11yAnnouncementsOptions {
      * @default true
      */
     filtering?: boolean;
+
 }
 
 /**

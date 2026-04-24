@@ -185,30 +185,31 @@
         position: relative;
     }
 
-    &.hcg-scrollable-content tbody {
+    /* <tbody> */
+    &.hcg-scrollable-content > tbody {
         height: 100%;
         overflow: auto;
         min-height: 0;
         flex: 1;
     }
 
-    &.hcg-virtualization tbody {
+    &.hcg-virtualization > tbody {
         display: block;
         position: relative;
     }
 
-    tbody tr {
+    > tbody > tr {
         overflow: hidden;
         width: 100%;
     }
 
-    tbody tr > :where(.hcg-cell) {
+    > tbody > tr > :where(.hcg-cell) {
         position: relative;
         line-height: 1em;
         overflow: hidden;
     }
 
-    tbody tr.hcg-mocked-row > :where(.hcg-cell) {
+    > tbody > tr.hcg-mocked-row > :where(.hcg-cell) {
         white-space: nowrap;
         text-overflow: ellipsis;
     }
@@ -222,20 +223,20 @@
         border-bottom: none;
     }
 
-    &.hcg-scrollable-content tbody tr {
+    &.hcg-scrollable-content > tbody > tr {
         display: block;
     }
 
-    &.hcg-virtualization tbody tr {
+    &.hcg-virtualization > tbody > tr {
         position: absolute;
     }
 
-    tbody.hcg-rows-content-nowrap :where(.hcg-cell) {
+    > tbody.hcg-rows-content-nowrap > tr > :where(.hcg-cell) {
         white-space: nowrap;
         text-overflow: ellipsis;
     }
 
-    tbody :where(.hcg-cell):focus {
+    > tbody > tr > :where(.hcg-cell):focus {
         outline: none;
     }
 }

@@ -1284,7 +1284,7 @@ class Navigator {
 
         if (this.navigatorEnabled && baseSeries[0]) {
             if (this.navigatorOptions.adaptToUpdatedData !== false) {
-                baseSeries.forEach(function (series): void {
+                baseSeries.forEach(function (this: Navigator, series): void {
                     removeEvent(series, 'updatedData', this.updatedDataHandler);
                 }, this);
             }

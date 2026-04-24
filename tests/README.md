@@ -537,6 +537,7 @@ The following URL patterns are automatically rewritten:
 | Pattern | Local Path | Description |
 |---------|------------|-------------|
 | `**/code.highcharts.com/**` | `code/` | Highcharts library files |
+| `**/code.highcharts.com/connectors/morningstar/**` | `node_modules/@highcharts/connectors-morningstar/` | Morningstar connector |
 | `**/**/mapdata/**` | `node_modules/@highcharts/map-collection/` | Map data files |
 | `**/{samples/data}/**` | `samples/data/` | Sample data files |
 | `https://demo-live-data.highcharts.com/**` | `samples/data/` | Demo live data |
