@@ -751,6 +751,8 @@ const ChartDefaults: ChartOptions = {
      *
      * @sample highcharts/chart/plotborderradius/
      *         Plot border radius
+     * @sample {highmaps} maps/chart/plotborder/
+     *         Map with plot border options
      *
      * @type      {number}
      * @default   0

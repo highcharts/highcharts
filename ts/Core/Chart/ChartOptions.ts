@@ -749,6 +749,8 @@ export interface ChartOptions {
      *
      * @sample highcharts/chart/plotborderradius/
      *         Plot border radius
+     * @sample {highmaps} maps/chart/plotborder/
+     *         Map with plot border options
      *
      * @default   0
      * @since     next
