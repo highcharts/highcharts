@@ -132,7 +132,7 @@ Highcharts.chart('gauge-03', {
 //    Explicit startAngle / endAngle; labels outside by default.
 // ============================================================
 Highcharts.chart('gauge-04', {
-    chart: { type: 'gauge' },
+    chart: { type: 'gauge', height: '100%' },
     title: { text: 'Semicircle' },
     pane: {
         startAngle: -90,
