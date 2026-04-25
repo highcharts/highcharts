@@ -1,4 +1,3 @@
-// SPDX-License-Identifier: LicenseRef-Highcharts
 /**
  * (c) 2009-2026 Highsoft AS
  * Author: Sebastian Bochann

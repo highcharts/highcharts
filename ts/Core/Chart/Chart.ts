@@ -2058,9 +2058,12 @@ class Chart {
         const chartHeight = chart.chartHeight;
         let chartWidth = chart.chartWidth;
 
-        // Allow table cells and flex-boxes to shrink without the chart blocking
-        // them out (#6427)
-        css(renderTo, { overflow: 'hidden' });
+        // Allow table cells and flex-boxes to shrink without the chart
+        // blocking them out (#6427) but skip in styled mode so inline styles
+        // don't override user CSS on renderTo
+        if (!chart.styledMode) {
+            css(renderTo, { overflow: 'hidden' });
+        }
 
         // Create the inner container
         if (!chart.styledMode) {
@@ -2110,7 +2113,6 @@ class Chart {
                 });
             }
         }
-        chart.containerBox = chart.getContainerBox();
 
         // Cache the cursor (#1650)
         chart._cursor = container.style.cursor as CursorValue;
@@ -2137,9 +2139,13 @@ class Chart {
             chart.styledMode
         );
 
+        // Measure after the SVG is appended. In styled mode the inner
+        // container's CSS `height: 100%` otherwise yields 0 and causes a false
+        // first ResizeObserver reflow
+        chart.containerBox = chart.getContainerBox();
+
         // Set the initial animation from the options
         setAnimation(void 0, chart);
-
 
         chart.setClassName(optionsChart.className);
         if (!chart.styledMode) {
@@ -2930,7 +2936,7 @@ class Chart {
                 labels.enabled &&
                 axis.series.length &&
                 axis.coll !== 'colorAxis' &&
-                !chart.polar
+                !axis.isRadial // Gauges and polar chart (#24526)
             ) {
 
                 expectedSpace = options.tickLength;

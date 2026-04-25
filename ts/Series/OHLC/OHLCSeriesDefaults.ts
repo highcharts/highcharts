@@ -87,7 +87,7 @@ const OHLCSeriesDefaults: OHLCSeriesOptions = {
  *
  * @type      {boolean}
  * @product   highstock
- * @apioption plotOptions.line.useOhlcData
+ * @apioption plotOptions.series.useOhlcData
  */
 
 /**

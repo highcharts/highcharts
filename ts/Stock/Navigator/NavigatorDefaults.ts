@@ -588,6 +588,7 @@ const NavigatorDefaults: NavigatorOptions = {
  *
  * */
 
+/** @internal */
 export default NavigatorDefaults;
 
 /* *

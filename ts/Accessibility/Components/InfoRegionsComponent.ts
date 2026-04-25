@@ -444,10 +444,11 @@ class InfoRegionsComponent extends AccessibilityComponent {
             sectionDiv.appendChild(hiddenDiv);
             region.insertIntoDOM(sectionDiv, chart);
 
+            // Apply inline hidden styles too as the class alone depends on
+            // `highcharts.css` being loaded
+            visuallyHideElement(hiddenDiv);
             if (chart.styledMode) {
                 addClass(hiddenDiv, 'highcharts-visually-hidden');
-            } else {
-                visuallyHideElement(hiddenDiv);
             }
             unhideChartElementFromAT(chart, hiddenDiv);
             if (region.afterInserted) {

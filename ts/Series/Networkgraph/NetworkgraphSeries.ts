@@ -257,6 +257,7 @@ class NetworkgraphSeries extends Series {
         if (this.options.nodes) {
             this.options.nodes.forEach(
                 function (
+                    this: NetworkgraphSeries,
                     nodeOptions: NodesComposition.PointCompositionOptions
                 ): void {
                     if (!this.nodeLookup[nodeOptions.id as any]) {

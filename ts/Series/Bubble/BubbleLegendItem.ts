@@ -261,6 +261,7 @@ class BubbleLegendItem {
 
         // Allow to parts of styles be used individually for range
         ranges.forEach(function (
+            this: BubbleLegendItem,
             range: BubbleLegendItem.RangesOptions,
             i: number
         ): void {
