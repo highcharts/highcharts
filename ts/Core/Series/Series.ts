@@ -2707,15 +2707,11 @@ class Series {
             clipRect.animate(clipBox);
         }
 
-        if (group) {
-            // When clip is false, reset to no clip after animation
-            group.clip(this.options.clip === false ? void 0 : clipRect);
-        }
+        // When clip is false, reset to no clip after animation
+        group?.clip(this.options.clip === false ? void 0 : clipRect);
 
         // Unclip temporary animation clip
-        if (markerGroup) {
-            markerGroup.clip();
-        }
+        markerGroup?.clip();
     }
 
     /**
