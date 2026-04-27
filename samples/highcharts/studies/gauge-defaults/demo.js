@@ -32,7 +32,7 @@ Highcharts.chart('container-1', {
     },
 
     title: {
-        text: 'Highcharts gauge defauls'
+        text: 'Highcharts gauge defaults'
     }
 
 });
@@ -44,7 +44,7 @@ Highcharts.chart('container-2', {
     },
 
     title: {
-        text: 'Highcharts solid gauge defauls'
+        text: 'Highcharts solid gauge defaults'
     }
 
 });
