@@ -3733,7 +3733,7 @@ class Axis {
                 'grid',
                 '-grid',
                 options.gridZIndex
-            ).clip(this.clippable ? chart.plotClipRect : void 0);
+            ).clip(this.clippable ? chart.plotClipOuter : void 0);
             this.axisGroup = createGroup(
                 'axis',
                 '',
@@ -3993,7 +3993,7 @@ class Axis {
             })
             .clip(
                 this.clippable && this.offset <= 0 ?
-                    chart.plotClipRect :
+                    chart.plotClipOuter :
                     void 0
             )
             .add(this.axisGroup);
@@ -4578,7 +4578,7 @@ class Axis {
                         .attr({
                             zIndex: pick(options.zIndex, 2)
                         })
-                        .clip(chart.plotClipRect)
+                        .clip(chart.plotClipOuter)
                         .add();
 
                     // Presentational attributes

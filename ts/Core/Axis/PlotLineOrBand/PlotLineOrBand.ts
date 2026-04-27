@@ -263,7 +263,7 @@ class PlotLineOrBand {
         if (!group) {
             axis.plotLinesAndBandsGroups[groupName] = group =
                 renderer.g('plot-' + groupName)
-                    .clip(chart.plotClipRect)
+                    .clip(chart.plotClipOuter)
                     .attr(groupAttribs).add();
         }
 
