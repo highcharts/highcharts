@@ -1,7 +1,7 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -32,7 +32,7 @@ import { relativeLength } from '../../Shared/Utilities.js';
 
 /**
  * Draw one of the handles on the side of the zoomed range in the navigator.
- * @private
+ * @internal
  */
 function navigatorHandle(
     _x: number,
@@ -64,8 +64,10 @@ function navigatorHandle(
  *
  * */
 
+/** @internal */
 const NavigatorSymbols: Partial<SymbolTypeRegistry> = {
     'navigator-handle': navigatorHandle
 };
 
+/** @internal */
 export default NavigatorSymbols;

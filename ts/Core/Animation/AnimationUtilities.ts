@@ -1,7 +1,7 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -84,7 +84,7 @@ function setAnimation(
  * @return {Highcharts.AnimationOptionsObject}
  *         An object with at least a duration property.
  */
-function animObject(
+export function animObject(
     animation?: (boolean|DeepPartial<AnimationOptions>)
 ): AnimationOptions {
     return isObject(animation) ?

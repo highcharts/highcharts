@@ -1,7 +1,7 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Pawel Lysy
+ *  Author: Paweł Lysy
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -191,6 +191,7 @@ const HLCSeriesDefaults: HLCSeriesOptions = {
  *    }]
  *    ```
  *
+ * @basic
  * @type      {Array<Array<(number|string),number,number>|Array<(number|string),number,number,number>|*>}
  * @extends   series.arearange.data
  * @excluding y, marker

@@ -1,0 +1,8 @@
+---
+name: React with Redux
+authors:
+  - Andrzej Bułeczka
+js_wrap: b
+alt_text: >-
+  Highcharts React sample showing Redux state management.
+...

@@ -7,7 +7,7 @@
  * Support for parallel coordinates in Highcharts
  *
  * (c) 2010-2026 Highsoft AS
- * Author: Pawel Fus
+ * Author: Paweł Fus
  *
  * A commercial license may be required depending on use.
  * See www.highcharts.com/license

@@ -92,7 +92,6 @@ namespace DerivedComposition {
      *
      * */
 
-    /* eslint-disable valid-jsdoc */
 
     /**
      * @private

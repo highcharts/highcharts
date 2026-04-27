@@ -1,7 +1,7 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -209,7 +209,7 @@ class HTMLElement extends SVGElement {
         SVGRendererClass: T
     ): void {
 
-        if (pushUnique(composed, this.compose)) {
+        if (pushUnique(composed, 'HTMLElement')) {
             /**
              * Create a HTML text node. This is used by the SVG renderer `text`
              * and `label` functions through the `useHTML` parameter.
@@ -574,7 +574,7 @@ class HTMLElement extends SVGElement {
 
     /**
      * Add the element to a group wrapper. For HTML elements, a parallel div
-     * will be created for each ancenstor SVG `g` element.
+     * will be created for each ancestor SVG `g` element.
      *
      * @internal
      */

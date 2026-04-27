@@ -45,6 +45,8 @@ The tooltip's content is rendered from a subset of HTML that can be altered in a
 
 By default the tooltip only allows a subset of HTML because the HTML is parsed and rendered using SVG. By setting the [useHTML](https://api.highcharts.com/highcharts/tooltip.useHTML) option to true, the renderer switches to full HTML, which allows for instance table layouts or images inside the tooltip.
 
+For clickable links inside the tooltip, use [tooltip.stickOnContact](https://api.highcharts.com/highcharts/tooltip.stickOnContact). This keeps the tooltip visible when moving the pointer from the point to the tooltip content. See [an example](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/tooltip/stickoncontact-anchor-link/).
+
 ```js
 tooltip: {
     format: 'The value for <b>{x}</b> is <b>{y}</b>, in series {series.name}'

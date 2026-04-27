@@ -36,9 +36,14 @@ const {
  *
  * */
 
+interface HighContrastState {
+    active?: boolean;
+    applying?: boolean;
+}
+
 declare module '../Core/Chart/ChartBase'{
     interface ChartBase {
-        highContrastModeActive?: boolean;
+        highContrastState?: HighContrastState;
     }
 }
 
@@ -100,51 +105,60 @@ function setHighContrastTheme(
     // storing the old state so that we can reset the theme if HC mode is
     // disabled. For now, the user will have to reload the page.
 
-    chart.highContrastModeActive = true;
-
-    // Apply theme to chart
-    const theme: AnyRecord = (
-        chart.options.accessibility.highContrastTheme
+    const highContrastState = chart.highContrastState || (
+        chart.highContrastState = {}
     );
 
-    chart.update(theme, false);
+    highContrastState.active = true;
+    highContrastState.applying = true;
 
-    const hasCustomColors = theme.colors?.length > 1;
+    try {
+        // Apply theme to chart
+        const theme: AnyRecord = (
+            chart.options.accessibility.highContrastTheme
+        );
 
-    // Force series colors (plotOptions is not enough)
-    chart.series.forEach(function (s): void {
-        const plotOpts = theme.plotOptions[s.type] || {};
+        chart.update(theme, false);
 
-        const fillColor = hasCustomColors && s.colorIndex !== void 0 ?
-            theme.colors[s.colorIndex] :
-            plotOpts.color || 'window';
+        const hasCustomColors = theme.colors?.length > 1;
 
-        const seriesOptions: Partial<SeriesOptions> = {
-            color: plotOpts.color || 'windowText',
-            colors: hasCustomColors ?
-                theme.colors : [plotOpts.color || 'windowText'],
-            borderColor: plotOpts.borderColor || 'window',
-            fillColor
-        };
+        // Force series colors (plotOptions is not enough)
+        chart.series.forEach(function (s): void {
+            const plotOpts = theme.plotOptions[s.type] || {};
 
-        s.update(seriesOptions, false);
+            const fillColor = hasCustomColors && s.colorIndex !== void 0 ?
+                theme.colors[s.colorIndex] :
+                plotOpts.color || 'window';
 
-        if (s.points) {
-            // Force point colors if existing
-            s.points.forEach(function (p): void {
-                if (p.options && p.options.color) {
-                    p.update({
-                        color: plotOpts.color || 'windowText',
-                        borderColor: plotOpts.borderColor || 'window'
-                    }, false);
-                }
-            });
-        }
-    });
+            const seriesOptions: Partial<SeriesOptions> = {
+                color: plotOpts.color || 'windowText',
+                colors: hasCustomColors ?
+                    theme.colors : [plotOpts.color || 'windowText'],
+                borderColor: plotOpts.borderColor || 'window',
+                fillColor
+            };
 
-    // The redraw for each series and after is required for 3D pie
-    // (workaround)
-    chart.redraw();
+            s.update(seriesOptions, false);
+
+            if (s.points) {
+                // Force point colors if existing
+                s.points.forEach(function (p): void {
+                    if (p.options && p.options.color) {
+                        p.update({
+                            color: plotOpts.color || 'windowText',
+                            borderColor: plotOpts.borderColor || 'window'
+                        }, false);
+                    }
+                });
+            }
+        });
+
+        // The redraw for each series and after is required for 3D pie
+        // (workaround)
+        chart.redraw();
+    } finally {
+        delete highContrastState.applying;
+    }
 }
 
 /* *

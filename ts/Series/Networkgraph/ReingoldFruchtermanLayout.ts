@@ -406,7 +406,7 @@ class ReingoldFruchtermanLayout {
 
         // Start with identified root nodes an sort the nodes by their
         // hierarchy. In trees, this ensures that branches don't cross
-        // eachother.
+        // each other.
         for (const rootNode of rootNodes) {
             sortedNodes.push(rootNode);
             addToNodes(rootNode);
@@ -821,7 +821,7 @@ namespace ReingoldFruchtermanLayout {
         approximation?: ('barnes-hut'|'none');
 
         /**
-         * Attraction force applied on a node which is conected to another
+         * Attraction force applied on a node which is connected to another
          * node by a link. Passed are two arguments:
          * - `d` - which is current distance between two nodes
          * - `k` - which is desired distance between two nodes
@@ -970,7 +970,7 @@ namespace ReingoldFruchtermanLayout {
 
         /**
          * Barnes-Hut approximation only.
-         * Deteremines when distance between cell and node is small enough
+         * Determines when distance between cell and node is small enough
          * to calculate forces. Value of `theta` is compared directly with
          * quotient `s / d`, where `s` is the size of the cell, and `d` is
          * distance between center of cell's mass and currently compared

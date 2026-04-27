@@ -122,6 +122,7 @@ module.exports = {
         'Grid': [
             'grid/general',
             'grid/installation',
+            'grid/grid-key',
             'grid/understanding-grid',
             {
                 'Columns': [
@@ -138,6 +139,7 @@ module.exports = {
                 'Rows': [
                     'grid/rows/index',
                     'grid/rows/data',
+                    'grid/rows/pinning',
                     'grid/rows/pagination',
                     'grid/rows/virtualization',
                     'grid/rows/performance'
@@ -147,7 +149,8 @@ module.exports = {
                 'Cells': [
                     'grid/cells/index',
                     'grid/cells/styling-and-theming',
-                    'grid/cells/formatting'
+                    'grid/cells/formatting',
+                    'grid/cell-context-menu'
                 ]
             },
             {
@@ -168,7 +171,14 @@ module.exports = {
                 ]
             },
             'grid/responsive-grid',
-            'grid/data-providers',
+            {
+                'Data handling': [
+                    'grid/data-handling/overview',
+                    'grid/data-handling/clientside',
+                    'grid/data-handling/serverside',
+                    'grid/data-handling/connectors'
+                ]
+            },
             'grid/events',
             'grid/accessibility',
             'grid/internationalization',

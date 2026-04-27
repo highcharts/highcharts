@@ -1,7 +1,7 @@
 ---
 name: Annotations GUI for cypress test
 authors:
-  - Pawel Lysy
+  - Paweł Lysy
 skipTest: true
 js_wrap: b
 ...

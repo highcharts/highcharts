@@ -126,13 +126,14 @@ const Pyramid3DSeriesDefaults: Pyramid3DSeriesOptions = {
  * @sample {highcharts} highcharts/series/data-array-of-objects/
  *         Config objects
  *
+ * @basic
  * @type      {Array<number|Array<number>|*>}
  * @extends   series.funnel3d.data
  * @product   highcharts
  * @apioption series.pyramid3d.data
  */
 
-''; // Detachs doclets above
+''; // Keeps doclets above
 
 /* *
  *

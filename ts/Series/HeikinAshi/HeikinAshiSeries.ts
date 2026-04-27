@@ -1,7 +1,7 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -38,7 +38,7 @@ import { addEvent, merge, pushUnique } from '../../Shared/Utilities.js';
  * */
 
 /**
- * After processing and grouping the data, calculate how the heikeinashi data
+ * After processing and grouping the data, calculate how the heikinashi data
  * set should look like.
  * @private
  */
@@ -50,7 +50,7 @@ function onAxisPostProcessData(
     series.forEach((series): void => {
         if (series.is('heikinashi')) {
             const heikinashiSeries = series as HeikinAshiSeries;
-            heikinashiSeries.heikiashiData.length = 0;
+            heikinashiSeries.heikinashiData.length = 0;
             heikinashiSeries.getHeikinashiData();
         }
     });
@@ -66,18 +66,18 @@ function onHeikinAshiSeriesAfterTranslate(
 ): void {
     const series = this,
         points = series.points,
-        heikiashiData = series.heikiashiData,
+        heikinashiData = series.heikinashiData,
         cropStart = series.cropStart || 0;
 
     // Modify points.
     for (let i = 0; i < points.length; i++) {
         const point = points[i],
-            heikiashiDataPoint = heikiashiData[i + cropStart];
+            heikinashiDataPoint = heikinashiData[i + cropStart];
 
-        point.open = heikiashiDataPoint[0];
-        point.high = heikiashiDataPoint[1];
-        point.low = heikiashiDataPoint[2];
-        point.close = heikiashiDataPoint[3];
+        point.open = heikinashiDataPoint[0];
+        point.high = heikinashiDataPoint[1];
+        point.low = heikinashiDataPoint[2];
+        point.close = heikinashiDataPoint[3];
     }
 
 }
@@ -89,8 +89,8 @@ function onHeikinAshiSeriesAfterTranslate(
 function onHeikinAshiSeriesUpdatedData(
     this: HeikinAshiSeries
 ): void {
-    if (this.heikiashiData.length) {
-        this.heikiashiData.length = 0;
+    if (this.heikinashiData.length) {
+        this.heikinashiData.length = 0;
     }
 }
 /* *
@@ -158,7 +158,7 @@ class HeikinAshiSeries extends CandlestickSeries {
 
     public data!: Array<HeikinAshiPoint>;
 
-    public heikiashiData: Array<Array<number>> = [];
+    public heikinashiData: Array<Array<number>> = [];
 
     public options!: HeikinAshiSeriesOptions;
 
@@ -182,9 +182,9 @@ class HeikinAshiSeries extends CandlestickSeries {
         const series = this,
             table = series.allGroupedTable || series.dataTable,
             dataLength = table.rowCount,
-            heikiashiData = series.heikiashiData;
+            heikinashiData = series.heikinashiData;
 
-        if (!heikiashiData.length && dataLength) {
+        if (!heikinashiData.length && dataLength) {
 
             // Modify the first point.
             this.modifyFirstPointValue(
@@ -195,11 +195,11 @@ class HeikinAshiSeries extends CandlestickSeries {
             for (let i = 1; i < dataLength; i++) {
                 this.modifyDataPoint(
                     table.getRow(i, this.pointArrayMap) as Array<number>,
-                    heikiashiData[i - 1]
+                    heikinashiData[i - 1]
                 );
             }
         }
-        series.heikiashiData = heikiashiData;
+        series.heikinashiData = heikinashiData;
     }
 
     /**
@@ -208,7 +208,7 @@ class HeikinAshiSeries extends CandlestickSeries {
     public init(): void {
         super.init.apply(this, arguments as any);
 
-        this.heikiashiData = [];
+        this.heikinashiData = [];
     }
 
     /**
@@ -226,7 +226,7 @@ class HeikinAshiSeries extends CandlestickSeries {
             ) / 4,
             close = (dataPoint[0] + dataPoint[3]) / 2;
 
-        this.heikiashiData.push([open, dataPoint[1], dataPoint[2], close]);
+        this.heikinashiData.push([open, dataPoint[1], dataPoint[2], close]);
     }
 
     /**
@@ -252,7 +252,7 @@ class HeikinAshiSeries extends CandlestickSeries {
             newLow = Math.min(dataPoint[2], newClose, newOpen);
 
         // Add new points to the array in order to properly calculate extremes.
-        this.heikiashiData.push([newOpen, newHigh, newLow, newClose]);
+        this.heikinashiData.push([newOpen, newHigh, newLow, newClose]);
     }
 
 }

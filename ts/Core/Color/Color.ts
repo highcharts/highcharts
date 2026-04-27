@@ -1,7 +1,7 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -50,7 +50,6 @@ const isStringColor = (color: ColorType): color is ColorString =>
  *
  * */
 
-/* eslint-disable valid-jsdoc */
 
 /**
  * Handle color operations. Some object methods are chainable.

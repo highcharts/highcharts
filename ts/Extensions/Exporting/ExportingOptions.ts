@@ -1,7 +1,7 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -636,6 +636,7 @@ export interface ExportingButtonOptions {
      * @sample highcharts/navigation/buttonoptions-symbolfill/
      *         Blue symbol stroke for one of the buttons
      *
+     * @default ${palette.neutralColor60}
      * @since 2.0
      */
     symbolFill?: ColorString;

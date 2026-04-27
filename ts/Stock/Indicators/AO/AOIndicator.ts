@@ -3,7 +3,6 @@
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
  *
- *
  * */
 
 'use strict';
@@ -46,7 +45,7 @@ import {
 /**
  * The AO series type
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.ao
  *
@@ -91,7 +90,7 @@ class AOIndicator extends SMAIndicator {
          * @sample {highstock} stock/indicators/ao/
          *         greaterBarColor
          *
-         * @type  {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @type  {Highcharts.ColorType}
          * @since 7.0.0
          */
         greaterBarColor: Palette.positiveColor,
@@ -103,7 +102,7 @@ class AOIndicator extends SMAIndicator {
          * @sample {highstock} stock/indicators/ao/
          *         lowerBarColor
          *
-         * @type  {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @type  {Highcharts.ColorType}
          * @since 7.0.0
          */
         lowerBarColor: Palette.negativeColor,
@@ -252,6 +251,7 @@ class AOIndicator extends SMAIndicator {
  *
  * */
 
+/** @internal */
 interface AOIndicator {
     nameBase: string;
     nameComponents: Array<string>|undefined;
@@ -280,6 +280,7 @@ extend(AOIndicator.prototype, {
  *
  * */
 
+/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         ao: typeof AOIndicator;
@@ -294,6 +295,7 @@ SeriesRegistry.registerSeriesType('ao', AOIndicator);
  *
  * */
 
+/** @internal */
 export default AOIndicator;
 
 /* *

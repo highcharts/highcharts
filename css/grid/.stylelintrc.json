@@ -3,7 +3,8 @@
         "files": ["grid/**/*.css", "../grid/**/*.css"],
         "rules": {
             "length-zero-no-unit": [true, { "ignore": ["custom-properties"] }],
-            "max-line-length": null
+            "max-line-length": null,
+            "value-keyword-case": ["lower", { "ignoreKeywords": ["currentColor"] }]
         }
     }, {
         "files": ["grid/grid.css", "../grid/grid.css"],

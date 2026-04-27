@@ -51,7 +51,6 @@ const {
  *
  * */
 
-/* eslint-disable valid-jsdoc */
 
 /**
  * @private
@@ -147,9 +146,6 @@ class NewDataAnnouncer {
      *  Functions
      *
      * */
-
-    /* eslint-disable valid-jsdoc */
-
 
     /**
      * Initialize the new data announcer.
@@ -476,7 +472,6 @@ namespace NewDataAnnouncer {
     /**
      * On new data in the series, make sure we add it to the dirty list.
      * @private
-     * @param {Highcharts.Series} series
      */
     function seriesOnUpdatedData(
         this: Accessibility.SeriesComposition

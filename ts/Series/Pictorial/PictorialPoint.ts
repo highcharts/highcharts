@@ -1,7 +1,7 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi, Magdalena Gut
+ *  Author: Torstein Hønsi, Magdalena Gut
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license

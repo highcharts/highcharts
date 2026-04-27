@@ -3,7 +3,7 @@
  *  Organization chart module
  *
  *  (c) 2018-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -42,6 +42,17 @@ export interface OrganizationDataLabelOptions extends SankeyDataLabelOptions {
     nodeFormatter?: OrganizationDataLabelsFormatterCallbackFunction;
     linkFormat?: string;
     linkFormatter?: OrganizationDataLabelsFormatterCallbackFunction;
+
+    style?: SankeyDataLabelOptions['style'] & {
+        /** @default '0.9em' */
+        fontSize?: Required<SankeyDataLabelOptions>['style']['fontSize'];
+
+        /** @default 'normal' */
+        fontWeight?: Required<SankeyDataLabelOptions>['style']['fontWeight'];
+
+        /** @default 'left' */
+        textAlign?: Required<SankeyDataLabelOptions>['style']['textAlign'];
+    };
 }
 
 /* *

@@ -7,7 +7,7 @@
  *
  *
  *  Authors:
- *  - Pawel Lysy
+ *  - Paweł Lysy
  *  - Sebastian Bochan
  *
  * */

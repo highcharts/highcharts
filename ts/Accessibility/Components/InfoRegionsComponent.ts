@@ -66,9 +66,6 @@ import { attr, pick, replaceNested } from '../../Shared/Utilities.js';
  *
  * */
 
-/* eslint-disable valid-jsdoc */
-
-
 /**
  * @private
  */
@@ -161,6 +158,7 @@ function buildTypeDescriptionFromSeries(
  *
  * @private
  * @function Highcharts.Chart#getTypeDescription
+ * @param {Highcharts.Chart} chart The associated Chart instance.
  * @param {Array<string>} types The series types in this chart.
  * @return {string} The text description of the chart type.
  */
@@ -244,9 +242,6 @@ class InfoRegionsComponent extends AccessibilityComponent {
      *  Functions
      *
      * */
-
-    /* eslint-disable valid-jsdoc */
-
 
     /**
      * Init the component
@@ -449,10 +444,11 @@ class InfoRegionsComponent extends AccessibilityComponent {
             sectionDiv.appendChild(hiddenDiv);
             region.insertIntoDOM(sectionDiv, chart);
 
+            // Apply inline hidden styles too as the class alone depends on
+            // `highcharts.css` being loaded
+            visuallyHideElement(hiddenDiv);
             if (chart.styledMode) {
                 addClass(hiddenDiv, 'highcharts-visually-hidden');
-            } else {
-                visuallyHideElement(hiddenDiv);
             }
             unhideChartElementFromAT(chart, hiddenDiv);
             if (region.afterInserted) {

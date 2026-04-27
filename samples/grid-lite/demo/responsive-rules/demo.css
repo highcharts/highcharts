@@ -1,0 +1,57 @@
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-lite/css/grid-lite.css");
+
+body {
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Helvetica,
+        Arial,
+        "Apple Color Emoji",
+        "Segoe UI Emoji",
+        "Segoe UI Symbol",
+        sans-serif;
+    background: var(--highcharts-background-color);
+    color: var(--highcharts-neutral-color-100);
+    margin: 0;
+}
+
+.demo {
+    padding: 16px;
+}
+
+.highcharts-description {
+    padding: 0 8px;
+}
+
+.hcg-container a {
+    color: var(--link-color);
+    text-decoration: none;
+}
+
+.hcg-container a:hover {
+    text-decoration: underline;
+}
+
+.highcharts-light .theme-mobile,
+.theme-mobile {
+    --hcg-border-radius: 0;
+    --hcg-border-width: 0;
+    --hcg-row-border-width: 1px;
+}
+
+:root,
+.highcharts-light {
+    --link-color: #007bff;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --link-color: #8ec3fc;
+    }
+}
+
+.highcharts-dark {
+    --link-color: #8ec3fc;
+}

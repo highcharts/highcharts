@@ -318,7 +318,8 @@ class CellEditToolbar extends EditToolbar {
                 fireEvent(row, 'cellChange', { cell: row.cells[0], row });
             }
 
-            fireEvent(editMode, 'cellDestroyed', {
+            fireEvent(editMode, 'layoutChanged', {
+                type: 'cellDestroyed',
                 target: cellId,
                 board: board
             });

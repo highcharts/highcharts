@@ -8,7 +8,7 @@
  * Indicator series type for Highcharts Stock
  *
  * (c) 2010-2026 Highsoft AS
- * Author: Rafal Sebestjanski
+ * Author: Rafał Sebestjański
  *
  * A commercial license may be required depending on use.
  * See www.highcharts.com/license

@@ -150,6 +150,13 @@ class HistogramSeries extends ColumnSeries {
     ): void {
         let alteredData;
         if (typeof data !== 'undefined' && data.length > 0) {
+            // Support data array of objects (#24073).
+            data = data.map(function (
+                item: number | { y?: number | null } | null | undefined
+            ): number {
+                return isNumber(item) ? item : item?.y ?? 0;
+            });
+
             alteredData = this.derivedData(
                 data.filter(isNumber),
                 this.binsNumber(data),
