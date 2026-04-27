@@ -150,18 +150,18 @@ class SolidGaugeSeries extends GaugeSeries {
                             point.options.radius ??
                                 options.radius ??
                                 '100%',
-                            center[2]
+                            center[2] / 2
                         )
-                    ) / 2),
+                    )),
                     innerRadius = Math.min((
                         relativeLength(
                             point.options.innerRadius ??
                                 options.innerRadius ??
                                 yAxis.pane.options.innerSize ??
                             0,
-                            center[2]
+                            center[2] / 2
                         )
-                    ) / 2, radius),
+                    ), radius),
                     axisMinAngle = Math.min(
                         yAxis.startAngleRad,
                         yAxis.endAngleRad
