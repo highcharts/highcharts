@@ -580,7 +580,7 @@ const ChartDefaults: ChartOptions = {
      * [...] `highcharts-color-9`. The equivalent in non-styled mode
      * is to set colors using the [colors](#colors) setting.
      *
-     * @since      5.0.0
+     * @since 5.0.0
      */
     colorCount: 10,
 
@@ -1308,7 +1308,7 @@ const ChartDefaults: ChartOptions = {
      */
 
     /**
-     * The background color or gradient for the outer chart area.
+     * The background color of the outer chart area.
      *
      * @see In styled mode, the background is set with the
      *      `.highcharts-background` class.

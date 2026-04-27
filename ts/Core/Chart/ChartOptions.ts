@@ -281,6 +281,18 @@ export interface ChartOptions {
     alignTicks?: boolean;
 
     /**
+     * By default, (because of memory and performance reasons) the chart does
+     * not copy the data but keeps it as a reference. In some cases, this might
+     * result in mutating the original data source. In order to prevent that,
+     * set that property to false. Please note that changing that might decrease
+     * performance, especially with bigger sets of data.
+     *
+     * @since 10.1.0
+     * @default true
+     */
+    allowMutatingData?: boolean;
+
+    /**
      * Set the overall animation for all chart updating. Animation can be
      * disabled throughout the chart by setting it to false here. It can
      * be overridden for each individual API method as a function parameter.
@@ -339,8 +351,8 @@ export interface ChartOptions {
      * **Note:** Changing that option to higher than the default might decrease
      * performance significantly, especially with bigger sets of data.
      *
-     * @default   2
-     * @since     11.3.0
+     * @default 2
+     * @since   11.3.0
      */
     axisLayoutRuns?: number;
 
@@ -362,6 +374,8 @@ export interface ChartOptions {
      *         Color
      * @sample {highmaps} maps/chart/backgroundcolor-gradient/
      *         Gradient
+     *
+     * @default ${palette.backgroundColor}
      */
     backgroundColor?: ColorType;
 
@@ -377,6 +391,8 @@ export interface ChartOptions {
      *         Brown border
      * @sample {highmaps} maps/chart/border/
      *         Border options
+     *
+     * @default ${palette.highlightColor80}
      */
     borderColor?: ColorType;
 
@@ -389,6 +405,8 @@ export interface ChartOptions {
      *         10px radius
      * @sample {highmaps} maps/chart/border/
      *         Border options
+     *
+     * @default 0
      */
     borderRadius?: number;
 
@@ -396,7 +414,7 @@ export interface ChartOptions {
      * The pixel width of the outer chart border.
      *
      * @see In styled mode, the stroke is set with the
-     *      `.highcharts-background` class.
+     *       `.highcharts-background` class.
      *
      * @sample {highcharts} highcharts/chart/borderwidth/
      *         5px border
@@ -405,7 +423,7 @@ export interface ChartOptions {
      * @sample {highmaps} maps/chart/border/
      *         Border options
      *
-     * @default   0
+     * @default 0
      */
     borderWidth?: number;
 
@@ -422,21 +440,10 @@ export interface ChartOptions {
      * [...] `highcharts-color-9`. The equivalent in non-styled mode
      * is to set colors using the [colors](#colors) setting.
      *
-     * @since      5.0.0
+     * @since 5.0.0
+     * @default 10
      */
     colorCount?: number;
-
-    /**
-     * By default, (because of memory and performance reasons) the chart does
-     * not copy the data but keeps it as a reference. In some cases, this might
-     * result in mutating the original data source. In order to prevent that,
-     * set that property to false. Please note that changing that might decrease
-     * performance, especially with bigger sets of data.
-     *
-     * @since 10.1.0
-     * @default true
-     */
-    allowMutatingData?: boolean;
 
     /**
      * Event listeners for the chart.
