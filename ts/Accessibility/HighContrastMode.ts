@@ -31,6 +31,43 @@ const {
 } = H;
 import { merge, pick } from '../Shared/Utilities.js';
 
+const systemColorKeywords = new Set([
+    'accentcolor',
+    'accentcolortext',
+    'activetext',
+    'buttonborder',
+    'buttonface',
+    'buttontext',
+    'canvas',
+    'canvastext',
+    'currentcolor',
+    'field',
+    'fieldtext',
+    'graytext',
+    'highlight',
+    'highlighttext',
+    'inherit',
+    'initial',
+    'linktext',
+    'mark',
+    'marktext',
+    'none',
+    'selecteditem',
+    'selecteditemtext',
+    'transparent',
+    'unset',
+    'visitedtext',
+    'window',
+    'windowtext'
+]);
+
+function isAuthorColor(color?: unknown): boolean {
+    return (
+        typeof color === 'string' &&
+        !systemColorKeywords.has(color.toLowerCase())
+    );
+}
+
 /* *
  *
  *  Declarations
@@ -85,6 +122,27 @@ function isHighContrastModeActive(): boolean {
     return win.matchMedia && win.matchMedia('(forced-colors: active)').matches;
 }
 
+function hasAuthorDefinedSeriesColors(theme: AnyRecord): boolean {
+    if (theme.colors?.some(isAuthorColor)) {
+        return true;
+    }
+
+    const plotOptions = theme.plotOptions || {};
+
+    return Object.keys(plotOptions).some((seriesType): boolean => {
+        const seriesOptions = plotOptions[seriesType] || {};
+
+        return (
+            isAuthorColor(seriesOptions.color) ||
+            isAuthorColor(seriesOptions.fillColor) ||
+            isAuthorColor(seriesOptions.lineColor) ||
+            isAuthorColor(seriesOptions.borderColor) ||
+            isAuthorColor(seriesOptions.marker?.fillColor) ||
+            isAuthorColor(seriesOptions.marker?.lineColor)
+        );
+    });
+}
+
 /**
  * Force high contrast theme for the chart. The default theme is defined in
  * a separate file.
@@ -104,45 +162,90 @@ function setHighContrastTheme(
     chart.highContrastModeActive = true;
 
     // Apply theme to chart
-    const theme: AnyRecord = (
-        chart.options.accessibility.highContrastTheme
-    );
+    const theme: AnyRecord = chart.options.accessibility.highContrastTheme,
+        userTheme: AnyRecord =
+            chart.userOptions.accessibility?.highContrastTheme || {},
+        preserveAuthorColors = hasAuthorDefinedSeriesColors(userTheme);
 
     chart.update(theme, false);
 
-    const customColors = theme.colors,
-        hasCustomColors = customColors?.length > 1,
-        defaultPlotOpts = theme.plotOptions?.series || {};
+    if (preserveAuthorColors) {
+        chart.renderer.box.style.setProperty('forced-color-adjust', 'none');
+    }
+
+    const customColors = userTheme.colors,
+        hasCustomColors = !!customColors?.length,
+        defaultPlotOpts = theme.plotOptions?.series || {},
+        userDefaultPlotOpts = userTheme.plotOptions?.series || {};
 
     // Force series colors (plotOptions is not enough)
     chart.series.forEach(function (s): void {
         const plotOpts = merge(defaultPlotOpts, theme.plotOptions?.[s.type]),
+            userPlotOpts = merge(
+                userDefaultPlotOpts,
+                userTheme.plotOptions?.[s.type]
+            ),
             colorIndex = pick(s.colorIndex, 0),
             seriesColor = hasCustomColors ?
                 customColors[colorIndex % customColors.length] :
-                pick(plotOpts.color, plotOpts.lineColor, 'windowText'),
+                pick(
+                    userPlotOpts.color,
+                    userPlotOpts.lineColor,
+                    plotOpts.color,
+                    plotOpts.lineColor,
+                    'windowText'
+                ),
             fillColor = hasCustomColors ?
                 customColors[colorIndex % customColors.length] :
-                pick(plotOpts.fillColor, plotOpts.color, 'window'),
-            borderColor = pick(plotOpts.borderColor, 'windowText');
+                pick(
+                    userPlotOpts.fillColor,
+                    userPlotOpts.color,
+                    plotOpts.fillColor,
+                    plotOpts.color,
+                    'window'
+                ),
+            borderColor = pick(
+                userPlotOpts.borderColor,
+                plotOpts.borderColor,
+                'windowText'
+            );
 
         const seriesOptions: Partial<SeriesOptions> = {
             color: seriesColor,
             colors: hasCustomColors ?
                 customColors :
-                (plotOpts.colors || [seriesColor]),
+                (pick(userPlotOpts.colors, plotOpts.colors) || [seriesColor]),
             borderColor,
             fillColor,
             lineColor: hasCustomColors ?
                 seriesColor :
-                pick(plotOpts.lineColor, seriesColor),
-            marker: plotOpts.marker && {
+                pick(
+                    userPlotOpts.lineColor,
+                    userPlotOpts.color,
+                    plotOpts.lineColor,
+                    seriesColor
+                ),
+            marker: (plotOpts.marker || userPlotOpts.marker) && {
                 fillColor: hasCustomColors ?
                     seriesColor :
-                    pick(plotOpts.marker.fillColor, seriesColor),
+                    pick(
+                        userPlotOpts.marker?.fillColor,
+                        userPlotOpts.marker?.lineColor,
+                        userPlotOpts.lineColor,
+                        userPlotOpts.color,
+                        plotOpts.marker?.fillColor,
+                        seriesColor
+                    ),
                 lineColor: hasCustomColors ?
                     seriesColor :
-                    pick(plotOpts.marker.lineColor, seriesColor)
+                    pick(
+                        userPlotOpts.marker?.lineColor,
+                        userPlotOpts.marker?.fillColor,
+                        userPlotOpts.lineColor,
+                        userPlotOpts.color,
+                        plotOpts.marker?.lineColor,
+                        seriesColor
+                    )
             }
         };
 

@@ -293,6 +293,12 @@ QUnit.test('HCM colors override series colors', function (assert) {
         'Column series should use the configured high contrast fill.'
     );
 
+    assert.strictEqual(
+        chart.renderer.box.style.forcedColorAdjust,
+        'none',
+        'Custom high contrast colors should be preserved in forced colors mode.'
+    );
+
     chart = Highcharts.chart('container', {
         accessibility: {
             highContrastMode: true,
@@ -319,6 +325,60 @@ QUnit.test('HCM colors override series colors', function (assert) {
         chart.series[1].color,
         colors[1],
         'Pareto series color should be updated for tooltip and legend state.'
+    );
+
+    chart = Highcharts.chart('container', {
+        accessibility: {
+            highContrastMode: true,
+            highContrastTheme: {
+                plotOptions: {
+                    series: {
+                        color: '#0f0'
+                    }
+                }
+            }
+        },
+        series: [{
+            type: 'line',
+            data: [1, 2, 3]
+        }]
+    });
+
+    assert.strictEqual(
+        chart.renderer.box.style.forcedColorAdjust,
+        'none',
+        'Single custom high contrast series colors should also be preserved.'
+    );
+
+    assert.strictEqual(
+        chart.series[0].graph && chart.series[0].graph.attr('stroke'),
+        '#0f0',
+        'Single custom high contrast series colors should drive the ' +
+        'line stroke.'
+    );
+
+    assert.strictEqual(
+        chart.series[0].points[0].graphic &&
+        chart.series[0].points[0].graphic.attr('fill'),
+        '#0f0',
+        'Single custom high contrast series colors should drive marker colors.'
+    );
+
+    chart = Highcharts.chart('container', {
+        accessibility: {
+            highContrastMode: true,
+            highContrastTheme: {
+                colors: ['windowText']
+            }
+        },
+        series: [{
+            data: [1, 2, 3]
+        }]
+    });
+
+    assert.notOk(
+        chart.renderer.box.style.forcedColorAdjust,
+        'System color high contrast themes should keep browser adjustments.'
     );
 });
 
