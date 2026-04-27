@@ -153,7 +153,7 @@ function arc(
                 innerStart = rawStart ? rawStart + innerPaddingInRadians : 0;
                 innerEnd = rawEnd ? rawEnd - innerPaddingInRadians : 0;
 
-                // Check if pading can be applied to the inner arc
+                // Check if padding can be applied to the inner arc
                 if (innerEnd < innerStart) {
                     const middleAngle = (innerStart + innerEnd) / 2;
                     innerStart = middleAngle;

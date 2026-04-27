@@ -406,9 +406,10 @@ export interface PieSeriesOptions extends LineSeriesOptions {
     /**
      * The padding between points in the pie.
      *
-     * A numeric value is interpreted as pixels. A string value must be
-     * given as a percentage, for example `"10%"`, and is interpreted as
-     * a percentage of the first point's slice radius.
+     * A numeric value is interpreted as pixels. A pixel string like `"10px"`
+     * is also interpreted as pixels. A percentage string, for example
+     * `"10%"`, is interpreted as a percentage of the first point's slice
+     * radius.
      *
      * @type {number|string}
      *

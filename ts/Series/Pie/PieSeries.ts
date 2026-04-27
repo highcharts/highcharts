@@ -423,9 +423,6 @@ class PieSeries extends Series {
         let start,
             end,
             angle,
-            // The x component of the radius vector for a given point
-            radiusX,
-            radiusY,
             i,
             point,
             cumulative = 0;
@@ -496,11 +493,9 @@ class PieSeries extends Series {
             };
 
             // Set the anchor point for tooltips
-            radiusX = Math.cos(angle) * radius;
-            radiusY = Math.sin(angle) * radius;
             point.tooltipPos = [
-                positions[0] + radiusX * 0.7,
-                positions[1] + radiusY * 0.7
+                positions[0] + Math.cos(angle) * radius * 0.7,
+                positions[1] + Math.sin(angle) * radius * 0.7
             ];
 
             point.half = angle < -Math.PI / 2 || angle > Math.PI / 2 ?
