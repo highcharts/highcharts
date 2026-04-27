@@ -317,6 +317,7 @@ export default LollipopSeries;
  * @sample {highcharts} highcharts/series/data-array-of-objects/
  *         Config objects
  *
+ * @basic
  * @type      {Array<number|Array<(number|string),(number|null)>|null|*>}
  * @extends   series.dumbbell.data
  * @excluding high, low, lowColor

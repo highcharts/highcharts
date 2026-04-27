@@ -179,6 +179,7 @@ const CandlestickSeriesDefaults: CandlestickSeriesOptions = {
  *    }]
  *    ```
  *
+ * @basic
  * @type      {Array<Array<(number|string),number,number,number>|Array<(number|string),number,number,number,number>|*>}
  * @extends   series.ohlc.data
  * @excluding y

@@ -296,7 +296,19 @@ export interface StackLabelOptions {
      * @since   2.1.5
      * @product highcharts
      */
-    style?: CSSObject;
+    style?: CSSObject & {
+        /** @default ${palette.neutralColor100} */
+        color?: CSSObject['color'];
+
+        /** @default '0.7em' */
+        fontSize?: CSSObject['fontSize'];
+
+        /** @default 'bold' */
+        fontWeight?: CSSObject['fontWeight'];
+
+        /** @default '1px contrast' */
+        textOutline?: CSSObject['textOutline'];
+    };
 
     /**
      * The text alignment for the label. While `align` determines where the

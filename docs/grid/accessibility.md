@@ -179,8 +179,9 @@ If more detailed control is required, the `accessibility.screenReaderSection.bef
 accessibility: {
     screenReaderSection: {
         beforeGridFormatter: function (grid) {
-            const rowCount = grid.dataTable?.rowCount || 0;
-            const colCount = grid.dataTable?.getColumnIds().length || 0;
+            const dataTable = grid.dataProvider?.getDataTable?.();
+            const rowCount = dataTable?.rowCount || 0;
+            const colCount = dataTable?.getColumnIds().length || 0;
             return `<div>Custom Grid information: ${rowCount} rows, ${colCount} columns</div>`;
         }
     }

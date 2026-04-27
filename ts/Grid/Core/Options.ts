@@ -673,12 +673,6 @@ export interface ColumnSortingOptions {
     enabled?: boolean;
 
     /**
-     * @deprecated
-     * Use `enabled` instead
-     */
-    sortable?: boolean;
-
-    /**
      * Sequence of sorting orders used when toggling sorting from the user
      * interface (for example by clicking the column header).
      *

@@ -1,4 +1,4 @@
-const dataset = [
+const columns = [
     ['Root', 24000],
     ['Root/Sales', 6200],
     ['Root/Sales/EMEA', 2400],
@@ -82,36 +82,23 @@ const dataset = [
     ['Root/Finance/RevOps', 540],
     ['Root/Finance/RevOps/Billing Ops', 220],
     ['Root/Finance/RevOps/Renewals', 200]
-];
-
-const columns = {
-    id: [],
-    path: [],
-    name: [],
-    budget: []
-};
-
-for (const [index, [path, budget]] of dataset.entries()) {
-    columns.id.push(index + 1);
-    columns.path.push(path);
-    columns.name.push(path.split('/').pop());
-    columns.budget.push(budget);
-}
+].reduce((prev, acc) => {
+    prev.path.push(acc[0]);
+    prev.budget.push(acc[1]);
+    return prev;
+}, { path: [], budget: [] });
 
 Grid.grid('container', {
     data: {
         columns,
-        idColumn: 'id',
+        idColumn: 'path',
         treeView: {
             input: {
                 type: 'path'
             },
-            expandedRowIds: 'all',
-            stickyParents: true,
-            treeColumn: 'name'
+            expandedRowIds: 'all'
         }
     },
-    header: ['name', 'budget'],
     rendering: {
         rows: {
             virtualization: true

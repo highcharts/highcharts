@@ -558,9 +558,6 @@ class Axis {
     public staggerLines?: number;
 
     /** @internal */
-    public staticScale?: number;
-
-    /** @internal */
     public threshold?: number;
 
     /** @internal */

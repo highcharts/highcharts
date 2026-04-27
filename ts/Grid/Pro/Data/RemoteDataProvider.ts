@@ -100,16 +100,28 @@ export class RemoteDataProvider extends DataProvider {
      * Pending chunks are used to deduplicate concurrent requests for the same
      * chunk.
      */
-    private pendingChunks: Map<number, Promise<DataChunk>> | null = null;
+    private pendingChunks: Map<number, PendingChunkRequest> | null = null;
 
     /**
-     * Reverse lookup map from rowId to { chunkIndex, localIndex } for O(1)
+     * Reverse lookup map from rowId to { offset, localIndex } for O(1)
      * lookup in getRowIndex.
      */
     private rowIdToChunkInfo: Map<RowId, {
-        chunkIndex: number;
+        offset: number;
         localIndex: number;
     }> | null = null;
+
+    /**
+     * Effective chunk size reported by the backend for the current query.
+     * When defined, it takes precedence over the configured chunk size.
+     */
+    private effectiveChunkSize: number | null = null;
+
+    /**
+     * Epoch used to invalidate stale in-flight requests when the chunk layout
+     * changes (for example when the backend clamps the requested page size).
+     */
+    private chunkLayoutEpoch = 0;
 
     /**
      * Fingerprint of the last applied query; used to avoid clearing caches
@@ -128,11 +140,10 @@ export class RemoteDataProvider extends DataProvider {
     private pendingControllers: Set<AbortController> = new Set();
 
     /**
-     * Returns the effective chunk size.
-     * When pagination is enabled, uses the page size as chunk size,
-     * so that one chunk = one page.
+     * Returns the configured chunk size for the current query.
+     * When pagination is enabled, one chunk always equals one page.
      */
-    private get maxChunkSize(): number {
+    private get configuredChunkSize(): number {
         const pagination = this.querying.pagination;
 
         // When pagination is enabled, chunk size = page size
@@ -141,6 +152,17 @@ export class RemoteDataProvider extends DataProvider {
         }
 
         return this.options.chunkSize ?? RemoteDataProvider.DEFAULT_CHUNK_SIZE;
+    }
+
+    /**
+     * Returns the effective chunk size used for index calculations.
+     */
+    private get activeChunkSize(): number {
+        if (this.querying.pagination.enabled) {
+            return this.querying.pagination.currentPageSize;
+        }
+
+        return this.effectiveChunkSize ?? this.configuredChunkSize;
     }
 
 
@@ -168,7 +190,7 @@ export class RemoteDataProvider extends DataProvider {
             return await this.fetchChunk(0);
         }
 
-        const chunkIndex = Math.floor(rowIndex / this.maxChunkSize);
+        const chunkIndex = Math.floor(rowIndex / this.activeChunkSize);
         return await this.fetchChunk(chunkIndex);
     }
 
@@ -186,7 +208,7 @@ export class RemoteDataProvider extends DataProvider {
         if (this.querying.pagination.enabled) {
             return 0;
         }
-        return Math.floor(rowIndex / this.maxChunkSize);
+        return Math.floor(rowIndex / this.activeChunkSize);
     }
 
     /**
@@ -197,18 +219,60 @@ export class RemoteDataProvider extends DataProvider {
      * @param rowIndex
      * The row index passed from the grid.
      *
+     * @param chunk
+     * The data chunk containing the row. Optional, used to optimize index
+     *
      * @returns
      * The local index within the chunk.
      */
-    private getLocalIndexInChunk(rowIndex: number): number {
+    private getLocalIndexInChunk(
+        rowIndex: number,
+        chunk?: DataChunk
+    ): number {
         // When pagination enabled, rowIndex is already page-relative
         if (this.querying.pagination.enabled) {
             return rowIndex;
         }
 
-        // Standard chunking: calculate local offset within chunk
-        const chunkIndex = Math.floor(rowIndex / this.maxChunkSize);
-        return rowIndex - (chunkIndex * this.maxChunkSize);
+        return rowIndex - (
+            chunk?.offset ??
+            this.getChunkIndexForRow(rowIndex) * this.activeChunkSize
+        );
+    }
+
+    /**
+     * Clears cached chunk data and reverse lookup maps.
+     */
+    private clearChunkCache(): void {
+        this.dataChunks = null;
+        this.pendingChunks = null;
+        this.rowIdToChunkInfo = null;
+    }
+
+    /**
+     * Adopts the effective chunk size reported by the backend for the current
+     * query and invalidates chunk caches that were built with the previous
+     * layout.
+     *
+     * @param chunkSize
+     * The chunk size confirmed by the backend.
+     */
+    private adoptEffectiveChunkSize(chunkSize: number): void {
+        if (
+            this.querying.pagination.enabled ||
+            this.effectiveChunkSize === chunkSize
+        ) {
+            return;
+        }
+
+        this.effectiveChunkSize = chunkSize;
+        this.chunkLayoutEpoch++;
+
+        if (this.requestPolicy === 'latest') {
+            this.abortPendingRequests();
+        }
+
+        this.clearChunkCache();
     }
 
     /**
@@ -273,35 +337,46 @@ export class RemoteDataProvider extends DataProvider {
             this.pendingChunks = new Map();
         }
 
-        if (this.pendingChunks.has(chunkIndex)) {
-            // Return the existing pending request to avoid duplicate fetches
-            const pendingRequest = this.pendingChunks.get(chunkIndex);
-            return pendingRequest!;
+        const pendingRequest = this.pendingChunks.get(chunkIndex);
+        if (pendingRequest) {
+            if (
+                pendingRequest.requestEpoch === this.requestEpoch &&
+                pendingRequest.chunkLayoutEpoch === this.chunkLayoutEpoch
+            ) {
+                // Return the existing pending request to avoid
+                // duplicate fetches
+                return pendingRequest.promise;
+            }
+
+            this.pendingChunks.delete(chunkIndex);
         }
 
         // Start a new fetch
         const requestEpoch = this.requestEpoch;
+        const chunkLayoutEpoch = this.chunkLayoutEpoch;
         const controller = this.requestPolicy === 'latest' ?
             new AbortController() :
             null;
         if (controller) {
             this.pendingControllers.add(controller);
         }
+        let requestOffset = 0;
+        // eslint-disable-next-line prefer-const
+        let pendingChunkRequest: PendingChunkRequest | undefined;
         const fetchPromise = (async (): Promise<DataChunk> => {
             try {
                 const pagination = this.querying.pagination;
-                let offset: number;
                 let limit: number;
 
                 if (pagination.enabled) {
                     // When pagination is enabled, fetch the current page
-                    offset = (pagination.currentPage - 1) *
+                    requestOffset = (pagination.currentPage - 1) *
                         pagination.currentPageSize;
                     limit = pagination.currentPageSize;
                 } else {
                     // Standard chunking
-                    offset = chunkIndex * this.maxChunkSize;
-                    limit = this.maxChunkSize;
+                    requestOffset = chunkIndex * this.activeChunkSize;
+                    limit = this.activeChunkSize;
                 }
 
                 let result: RemoteFetchCallbackResult;
@@ -311,14 +386,14 @@ export class RemoteDataProvider extends DataProvider {
                     result = await fetchCallback.call(
                         this,
                         this.querying,
-                        offset,
+                        requestOffset,
                         limit,
                         controller?.signal
                     );
                 } else if (dataSource) {
                     result = await dataSourceFetch(dataSource, {
                         query: this.querying,
-                        offset,
+                        offset: requestOffset,
                         limit,
                         signal: controller?.signal
                     });
@@ -331,13 +406,32 @@ export class RemoteDataProvider extends DataProvider {
 
                 if (
                     requestEpoch !== this.requestEpoch ||
+                    chunkLayoutEpoch !== this.chunkLayoutEpoch ||
                     controller?.signal.aborted
                 ) {
                     return {
                         index: chunkIndex,
+                        offset: requestOffset,
                         data: {},
                         rowIds: []
                     };
+                }
+
+                if (
+                    !pagination.enabled &&
+                    typeof result.pageSize === 'number' &&
+                    isFinite(result.pageSize) &&
+                    result.pageSize > 0 &&
+                    result.pageSize !== this.activeChunkSize
+                ) {
+                    const effectiveChunkSize = Math.floor(result.pageSize);
+                    const expectedOffset = chunkIndex * effectiveChunkSize;
+
+                    this.adoptEffectiveChunkSize(effectiveChunkSize);
+
+                    if (requestOffset !== expectedOffset) {
+                        return await this.fetchChunk(chunkIndex);
+                    }
                 }
 
                 this.columnIds = Object.keys(result.columns);
@@ -363,15 +457,20 @@ export class RemoteDataProvider extends DataProvider {
                 if (!idColumn) {
                     idColumn = result.rowIds ?? Array.from(
                         { length: chunkRowCount },
-                        (_, i): number => i + offset
+                        (_, i): number => i + requestOffset
                     );
                 }
 
                 const chunk: DataChunk = {
                     index: chunkIndex,
+                    offset: requestOffset,
                     data: result.columns,
                     rowIds: idColumn
                 };
+
+                if (!this.dataChunks) {
+                    this.dataChunks = new Map();
+                }
 
                 // Evict LRU chunk if limit is reached
                 this.evictLRUChunkIfNeeded();
@@ -385,7 +484,7 @@ export class RemoteDataProvider extends DataProvider {
                 }
                 for (let i = 0; i < chunk.rowIds.length; i++) {
                     this.rowIdToChunkInfo.set(chunk.rowIds[i], {
-                        chunkIndex,
+                        offset: chunk.offset,
                         localIndex: i
                     });
                 }
@@ -398,6 +497,7 @@ export class RemoteDataProvider extends DataProvider {
                 ) {
                     return {
                         index: chunkIndex,
+                        offset: requestOffset,
                         data: {},
                         rowIds: []
                     };
@@ -406,12 +506,18 @@ export class RemoteDataProvider extends DataProvider {
                 console.error('Error fetching data from remote server.\n', err);
                 return {
                     index: chunkIndex,
+                    offset: requestOffset,
                     data: {},
                     rowIds: []
                 };
             } finally {
                 // Remove from pending requests when done (success or error)
-                this.pendingChunks?.delete(chunkIndex);
+                if (
+                    pendingChunkRequest &&
+                    this.pendingChunks?.get(chunkIndex) === pendingChunkRequest
+                ) {
+                    this.pendingChunks.delete(chunkIndex);
+                }
                 if (controller) {
                     this.pendingControllers.delete(controller);
                 }
@@ -419,7 +525,12 @@ export class RemoteDataProvider extends DataProvider {
         })();
 
         // Store the pending request
-        this.pendingChunks.set(chunkIndex, fetchPromise);
+        pendingChunkRequest = {
+            requestEpoch,
+            chunkLayoutEpoch,
+            promise: fetchPromise
+        };
+        this.pendingChunks.set(chunkIndex, pendingChunkRequest);
 
         return fetchPromise;
     }
@@ -438,7 +549,7 @@ export class RemoteDataProvider extends DataProvider {
         rowIndex: number
     ): Promise<RowId | undefined> {
         const chunk = await this.getChunkForRowIndex(rowIndex);
-        const localIndex = this.getLocalIndexInChunk(rowIndex);
+        const localIndex = this.getLocalIndexInChunk(rowIndex, chunk);
 
         if (localIndex < chunk.rowIds.length) {
             return chunk.rowIds[localIndex];
@@ -457,10 +568,7 @@ export class RemoteDataProvider extends DataProvider {
                 // When pagination is enabled, return page-relative index
                 return Promise.resolve(info.localIndex);
             }
-            // Global index: chunk offset + local index
-            return Promise.resolve(
-                info.chunkIndex * this.maxChunkSize + info.localIndex
-            );
+            return Promise.resolve(info.offset + info.localIndex);
         }
 
         // Not found in cached chunks - return undefined
@@ -506,7 +614,7 @@ export class RemoteDataProvider extends DataProvider {
         // Calculate local index within the chunk.
         // When pagination is enabled, rowIndex is already page-relative.
         // When disabled, need to calculate from global index.
-        const localIndex = this.getLocalIndexInChunk(rowIndex);
+        const localIndex = this.getLocalIndexInChunk(rowIndex, chunk);
 
         // Get the column from chunk data
         const column = chunk.data[columnId];
@@ -578,7 +686,7 @@ export class RemoteDataProvider extends DataProvider {
             return;
         }
 
-        const localIndex = this.getLocalIndexInChunk(rowIndex);
+        const localIndex = this.getLocalIndexInChunk(rowIndex, chunk);
         const rowObject: RowObjectType = {};
 
         for (const columnId of this.columnIds) {
@@ -619,12 +727,12 @@ export class RemoteDataProvider extends DataProvider {
         }
 
         // Clear cached chunks when query changes.
-        this.dataChunks = null;
-        this.pendingChunks = null;
-        this.rowIdToChunkInfo = null;
+        this.clearChunkCache();
         this.columnIds = null;
         this.prePaginationRowCount = null;
         this.rowCount = null;
+        this.effectiveChunkSize = null;
+        this.chunkLayoutEpoch++;
 
         // When pagination is enabled, update the total items count
         // for the pagination controller (used to calculate total pages).
@@ -636,27 +744,55 @@ export class RemoteDataProvider extends DataProvider {
 
     public override destroy(): void {
         this.abortPendingRequests();
-        this.dataChunks = null;
-        this.pendingChunks = null;
-        this.rowIdToChunkInfo = null;
+        this.clearChunkCache();
         this.columnIds = null;
         this.prePaginationRowCount = null;
         this.rowCount = null;
         this.lastQueryFingerprint = null;
         this.requestEpoch++;
+        this.effectiveChunkSize = null;
+        this.chunkLayoutEpoch++;
     }
 }
 
 export interface RemoteFetchCallbackResult {
+    /**
+     * Column data keyed by column ID, where each value is an array of cell
+     * values for the fetched rows.
+     */
     columns: Record<string, DataTableColumnType>;
+
+    /**
+     * Total number of rows available on the server for the current query.
+     * Used to calculate page count and scrollbar size.
+     */
     totalRowCount: number;
+
+    /**
+     * Stable identifiers for the fetched rows. When omitted, the Grid assigns
+     * sequential numeric IDs starting from `offset`.
+     */
     rowIds?: RowId[];
+
+    /**
+     * Effective page size used by the backend for the returned chunk.
+     * Return this when the server can clamp or otherwise adjust the requested
+     * page size so the Grid can keep chunk indexing aligned.
+     */
+    pageSize?: number;
 }
 
 export interface DataChunk {
     index: number;
+    offset: number;
     data: Record<string, DataTableColumnType>;
     rowIds: RowId[];
+}
+
+interface PendingChunkRequest {
+    requestEpoch: number;
+    chunkLayoutEpoch: number;
+    promise: Promise<DataChunk>;
 }
 
 export interface RemoteDataProviderOptions extends DataProviderOptions {
@@ -670,6 +806,23 @@ export interface RemoteDataProviderOptions extends DataProviderOptions {
     /**
      * Custom callback to fetch data from the remote server. Has higher priority
      * than `dataSource`.
+     *
+     * @param query
+     * The current query state (sorting, filtering, pagination).
+     *
+     * @param offset
+     * Zero-based index of the first row to fetch.
+     *
+     * @param limit
+     * Number of rows to fetch.
+     *
+     * @param signal
+     * Abort signal that fires when the request is superseded by a newer one.
+     *
+     * @returns
+     * A `RemoteFetchCallbackResult` with `columns`, `totalRowCount`, and
+     * optionally `rowIds` and `pageSize`. See `RemoteFetchCallbackResult` for
+     * field descriptions.
      */
     fetchCallback?: (
         this: RemoteDataProvider,

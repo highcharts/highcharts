@@ -27,7 +27,13 @@ import type Table from '../../Core/Table/Table';
 import type { RestoreCellFocusEvent } from '../../Core/Table/Table';
 import type TableRow from '../../Core/Table/Body/TableRow';
 import type TableCell from '../../Core/Table/Body/TableCell';
-import type { TreeViewOptions } from './TreeViewTypes';
+import type {
+    TreeInputPathSeparator,
+    TreeViewOptions
+} from './TreeViewTypes';
+import type {
+    NormalizedTreeViewOptions
+} from './TreeViewOptionsNormalizer';
 import type {
     AfterTreeRowToggleEvent,
     BeforeTreeRowToggleEvent,
@@ -39,7 +45,7 @@ import TreeProjectionController from './TreeProjectionController.js';
 import TreeStickyRowController from './TreeStickyRowController.js';
 import TreeViewGlobals from './TreeViewGlobals.js';
 import { createGridIcon } from '../../Core/UI/SvgIcons.js';
-import { addEvent, pushUnique } from '../../../Shared/Utilities.js';
+import { addEvent, defined, pushUnique } from '../../../Shared/Utilities.js';
 import { waitForAnimationFrame } from '../../Core/GridUtils.js';
 
 
@@ -373,6 +379,92 @@ function getTreeToggleContext(
         isExpanded: rowState.isExpanded,
         rowId
     };
+}
+
+/**
+ * Returns the last path segment rendered for a path-based tree node.
+ *
+ * @param value
+ * Raw path value.
+ *
+ * @param separator
+ * Path separator definition.
+ */
+function getLastPathSegment(
+    value: string,
+    separator: TreeInputPathSeparator
+): string {
+    if (typeof separator === 'function') {
+        const segments = separator(value);
+        const lastSegment = Array.isArray(segments) ?
+            segments[segments.length - 1] :
+            void 0;
+
+        return typeof lastSegment === 'string' && lastSegment.length ?
+            lastSegment :
+            value;
+    }
+
+    if (separator instanceof RegExp) {
+        const regex = new RegExp(
+            separator.source,
+            separator.flags.includes('g') ?
+                separator.flags :
+                separator.flags + 'g'
+        );
+        let lastMatch: string | undefined;
+        let match: RegExpExecArray | null;
+
+        while ((match = regex.exec(value)) !== null) {
+            if (match[0]) {
+                lastMatch = match[0];
+            } else {
+                ++regex.lastIndex;
+            }
+        }
+
+        return lastMatch || value;
+    }
+
+    const separatorIndex = value.lastIndexOf(separator);
+
+    if (separatorIndex < 0) {
+        return value;
+    }
+
+    return value.slice(separatorIndex + separator.length);
+}
+
+/**
+ * Returns the path segment that should be rendered in the tree column.
+ *
+ * @param value
+ * Raw cell value.
+ *
+ * @param columnId
+ * Rendered column ID.
+ *
+ * @param options
+ * Normalized Tree View options.
+ */
+function getPathSegmentDisplayValue(
+    value: unknown,
+    columnId: string,
+    options: NormalizedTreeViewOptions
+): string | undefined {
+    const input = options.input;
+
+    if (
+        !input ||
+        input.type !== 'path' ||
+        input.showFullPath ||
+        columnId !== input.pathColumn ||
+        typeof value !== 'string'
+    ) {
+        return;
+    }
+
+    return getLastPathSegment(value, input.separator);
 }
 
 /**
@@ -929,8 +1021,23 @@ function onAfterCellRender(this: TableCell): void {
     const valueContainer = document.createElement('span');
     valueContainer.className = TreeViewGlobals.classNames.value;
 
-    while (cellElement.firstChild) {
-        valueContainer.appendChild(cellElement.firstChild);
+    const pathDisplayValue = getPathSegmentDisplayValue(
+        this.value,
+        this.column.id,
+        options
+    );
+
+    if (
+        !defined(this.column.options.cells?.format) &&
+        !defined(this.column.options.cells?.formatter) &&
+        defined(pathDisplayValue)
+    ) {
+        cellElement.textContent = '';
+        valueContainer.textContent = pathDisplayValue;
+    } else {
+        while (cellElement.firstChild) {
+            valueContainer.appendChild(cellElement.firstChild);
+        }
     }
 
     wrapper.appendChild(toggleContainer);

@@ -24,6 +24,7 @@
 import type { ColumnCollection } from '../../../../Data/DataTable';
 import type { RowId } from '../../../Core/Data/DataProvider';
 import type {
+    TreeInputPathSeparator,
     TreeIndexBuildResult,
     TreeNodeRecord
 } from '../TreeViewTypes';
@@ -31,7 +32,13 @@ import type {
     NormalizedTreeInputPathOptions
 } from '../TreeViewOptionsNormalizer';
 
-import { defined, isNumber, isString } from '../../../../Shared/Utilities.js';
+import {
+    defined,
+    isArray,
+    isFunction,
+    isNumber,
+    isString
+} from '../../../../Shared/Utilities.js';
 
 
 /* *
@@ -39,6 +46,11 @@ import { defined, isNumber, isString } from '../../../../Shared/Utilities.js';
  *  Functions
  *
  * */
+
+interface NormalizedPathValue {
+    hierarchy: string[];
+    path: string;
+}
 
 /**
  * Builds a canonical tree index from full path definitions.
@@ -83,16 +95,19 @@ export function buildIndexFromColumns(
     const rowOrder: RowId[] = [];
     const pathToId = new Map<string, RowId>();
     const pathById = new Map<RowId, string>();
+    const hierarchyById = new Map<RowId, string[]>();
+    const parentPathByPath = new Map<string, string | null>();
     const rootIds: RowId[] = [];
 
     for (let rowIndex = 0; rowIndex < rowCount; ++rowIndex) {
         const id = normalizeRowIdValue(idValues[rowIndex], idColumn, rowIndex);
-        const path = normalizePathValue(
+        const normalizedPath = normalizePathValue(
             pathValues[rowIndex],
             pathColumn,
             rowIndex,
             separator
         );
+        const { hierarchy, path } = normalizedPath;
 
         if (nodes.has(id)) {
             throw new Error(
@@ -118,6 +133,20 @@ export function buildIndexFromColumns(
         rowOrder.push(id);
         pathToId.set(path, id);
         pathById.set(id, path);
+        hierarchyById.set(id, hierarchy);
+
+        for (let i = 0, iEnd = hierarchy.length; i < iEnd; ++i) {
+            const hierarchyPath = hierarchy[i];
+
+            if (parentPathByPath.has(hierarchyPath)) {
+                continue;
+            }
+
+            parentPathByPath.set(
+                hierarchyPath,
+                i === 0 ? null : hierarchy[i - 1]
+            );
+        }
     }
 
     const sourceRowOrder = rowOrder.slice();
@@ -137,7 +166,7 @@ export function buildIndexFromColumns(
             return existingId;
         }
 
-        const parentPath = getParentPath(path, separator);
+        const parentPath = parentPathByPath.get(path) ?? null;
         const parentId = (
             parentPath === null ?
                 null :
@@ -170,12 +199,13 @@ export function buildIndexFromColumns(
     for (let i = 0, iEnd = sourceRowOrder.length; i < iEnd; ++i) {
         const nodeId = sourceRowOrder[i];
         const node = nodes.get(nodeId);
+        const hierarchy = hierarchyById.get(nodeId);
         const path = pathById.get(nodeId);
-        if (!node || !defined(path)) {
+        if (!node || !defined(path) || !hierarchy) {
             continue;
         }
 
-        const parentPath = getParentPath(path, separator);
+        const parentPath = parentPathByPath.get(path) ?? null;
         if (parentPath === null) {
             rootIds.push(node.id);
             continue;
@@ -252,8 +282,8 @@ function normalizePathValue(
     value: unknown,
     columnId: string,
     rowIndex: number,
-    separator: string
-): string {
+    separator: TreeInputPathSeparator
+): NormalizedPathValue {
     if (!isString(value)) {
         throw new Error(
             `TreeView: "${columnId}" must contain only string values. ` +
@@ -267,41 +297,130 @@ function normalizePathValue(
         );
     }
 
-    const segments = value.split(separator);
+    const segments = getPathSegments(value, separator);
+
+    return {
+        hierarchy: buildPathHierarchy(
+            value,
+            columnId,
+            rowIndex,
+            segments,
+            separator
+        ),
+        path: value
+    };
+}
+
+/**
+ * Resolves ordered path segments from a raw path value.
+ *
+ * @param value
+ * Raw path value.
+ *
+ * @param separator
+ * Path separator definition.
+ *
+ * @returns
+ * Ordered path segments.
+ */
+function getPathSegments(
+    value: string,
+    separator: TreeInputPathSeparator
+): string[] {
+    if (isFunction(separator)) {
+        const segments = separator(value);
+
+        if (!isArray(segments)) {
+            throw new Error(
+                'TreeView: `data.treeView.input.separator` callback must ' +
+                'return an array.'
+            );
+        }
+
+        return segments as string[];
+    }
+
+    if (separator instanceof RegExp) {
+        const regex = new RegExp(
+            separator.source,
+            separator.flags.includes('g') ?
+                separator.flags :
+                separator.flags + 'g'
+        );
+        const segments: string[] = [];
+        let match: RegExpExecArray | null;
+
+        while ((match = regex.exec(value)) !== null) {
+            segments.push(match[0]);
+
+            if (match[0] === '') {
+                ++regex.lastIndex;
+            }
+        }
+
+        return segments;
+    }
+
+    if (!separator) {
+        throw new Error(
+            'TreeView: `data.treeView.input.separator` must not be empty.'
+        );
+    }
+
+    return value.split(separator);
+}
+
+/**
+ * Builds cumulative path hierarchy from ordered path segments.
+ *
+ * @param value
+ * Raw path value.
+ *
+ * @param columnId
+ * Source column ID.
+ *
+ * @param rowIndex
+ * Row index of the value.
+ *
+ * @param segments
+ * Ordered path segments.
+ *
+ * @param separator
+ * Path separator definition.
+ *
+ * @returns
+ * Cumulative path hierarchy from root to leaf.
+ */
+function buildPathHierarchy(
+    value: string,
+    columnId: string,
+    rowIndex: number,
+    segments: string[],
+    separator: TreeInputPathSeparator
+): string[] {
+    const hierarchy: string[] = [];
+    let path = '';
+    const joinWithSeparator = isString(separator);
+
     for (let i = 0, iEnd = segments.length; i < iEnd; ++i) {
-        if (!segments[i].length) {
+        const segment = segments[i];
+
+        if (!isString(segment) || !segment.length) {
             throw new Error(
                 `TreeView: Invalid path "${value}" in "${columnId}" at row ` +
                 `${rowIndex}. Empty path segments are not allowed.`
             );
         }
+
+        if (joinWithSeparator && path.length) {
+            path += separator as string;
+        }
+
+        path += segment;
+        hierarchy.push(path);
     }
 
-    return value;
-}
-
-/**
- * Resolves parent path from a full node path.
- *
- * @param path
- * Full node path.
- *
- * @param separator
- * Path segment separator.
- *
- * @returns
- * Parent path, or `null` for root nodes.
- */
-function getParentPath(
-    path: string,
-    separator: string
-): string | null {
-    const separatorIndex = path.lastIndexOf(separator);
-    if (separatorIndex < 0) {
-        return null;
-    }
-
-    return path.slice(0, separatorIndex);
+    return hierarchy;
 }
 
 /**

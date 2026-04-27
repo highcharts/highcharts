@@ -31,6 +31,9 @@ import type {
 } from '../../../Data/DataTable';
 import type { RowId as DataProviderRowId } from '../../Core/Data/DataProvider';
 
+import {
+    hasDataTableProvider
+} from '../../Core/Data/DataProvider.js';
 import { formatText } from '../../Core/GridUtils.js';
 import {
     erase,
@@ -613,7 +616,10 @@ class RowPinningController {
             });
         }
 
-        const dataTable = this.grid.dataTable;
+        const dataProvider = this.grid.dataProvider;
+        const dataTable = hasDataTableProvider(dataProvider) ?
+            dataProvider.getDataTable() :
+            void 0;
         const dataOptions = this.grid.options?.data as (
             { idColumn?: string } | undefined
         );

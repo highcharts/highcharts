@@ -44,6 +44,14 @@ import {
  *
  * */
 
+/**
+ * Detailed options for border radius.
+ *
+ * @sample {highcharts} highcharts/plotoptions/column-borderradius/
+ *         Rounded columns
+ * @sample highcharts/plotoptions/series-border-radius
+ *         Column and pie with rounded border
+ */
 export interface BorderRadiusOptionsObject {
 
     /**
@@ -51,6 +59,11 @@ export interface BorderRadiusOptionsObject {
      * for example `50%`, signifies a relative size. For columns this is
      * relative to the column width, for pies it is relative to the radius and
      * the inner radius.
+     *
+     * @sample {highcharts} highcharts/plotoptions/column-borderradius/
+     *         Rounded columns
+     * @sample highcharts/plotoptions/series-border-radius
+     *         Column and pie with rounded border
      */
     radius: number|string;
 
@@ -63,6 +76,9 @@ export interface BorderRadiusOptionsObject {
      *
      * Similarly, for plot bands, the `individual` value means each plot band
      * will get rounded corners.
+     *
+     * @sample {highcharts} highcharts/plotoptions/column-borderradius/
+     *         Rounded columns
      */
     scope: 'individual'|'point'|'stack';
 
@@ -70,8 +86,12 @@ export interface BorderRadiusOptionsObject {
      * For column charts, where in the point or stack to apply rounding. The
      * `end` value means only those corners at the point value will be rounded,
      * leaving the corners at the base or threshold unrounded. This is the most
-     * intuitive behavior. The `all` value means also the base will be
-     * rounded.
+     * intuitive behavior. The `all` value means also the base will be rounded.
+     *
+     * @sample {highcharts} highcharts/plotoptions/column-borderradius-where-all
+     *         Rounding on all corners
+     *
+     * @default 'end'
      */
     where?: 'end'|'all';
 
@@ -451,7 +471,7 @@ function seriesOnAfterColumnTranslate(
 }
 
 /** @internal */
-function compose(
+export function composeBorderRadius(
     SeriesClass: typeof Series,
     SVGElementClass: typeof SVGElement,
     SVGRendererClass: typeof SVGRenderer
@@ -491,7 +511,7 @@ function compose(
 }
 
 /** @internal */
-function optionsToObject(
+export function optionsToObject(
     options?: number|string|Partial<BorderRadiusOptionsObject>,
     seriesBROptions?: Partial<BorderRadiusOptionsObject>
 ): BorderRadiusOptionsObject {
@@ -641,19 +661,6 @@ function roundedRect(
 
     return path;
 }
-
-/* *
- *
- *  Default Export
- *
- * */
-
-const BorderRadius = {
-    compose,
-    optionsToObject
-};
-
-export default BorderRadius;
 
 /* *
  *

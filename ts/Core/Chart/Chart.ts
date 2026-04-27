@@ -4741,16 +4741,24 @@ namespace Chart {
          *
          * @sample {highcharts} highcharts/credits/position-left/
          *         Left aligned
-         * @sample {highcharts} highcharts/credits/position-left/
-         *         Left aligned
-         * @sample {highmaps} maps/credits/customized/
-         *         Left aligned
          * @sample {highmaps} maps/credits/customized/
          *         Left aligned
          *
          * @since 2.1
          */
-        position?: AlignObject;
+        position?: AlignObject & {
+            /** @default 'right' */
+            align?: AlignObject['align'];
+
+            /** @default 'bottom' */
+            verticalAlign?: AlignObject['verticalAlign'];
+
+            /** @default -10 */
+            x?: AlignObject['x'];
+
+            /** @default -5 */
+            y?: AlignObject['y'];
+        };
 
         /**
          * CSS styles for the credits label.
@@ -4758,7 +4766,16 @@ namespace Chart {
          * @see In styled mode, credits styles can be set with the
          *      `.highcharts-credits` class.
          */
-        style: CSSObject;
+        style: CSSObject & {
+            /** @default ${palette.neutralColor40} */
+            color?: CSSObject['color'];
+
+            /** @default 'pointer' */
+            cursor?: CSSObject['cursor'];
+
+            /** @default '0.6em' */
+            fontSize?: CSSObject['fontSize'];
+        };
 
         /**
          * The text for the credits label.

@@ -129,6 +129,7 @@ const RenkoDefaults: RenkoSeriesOptions = {
  *    }]
  *    ```
  *
+ * @basic
  * @type      {Array<Array<number,number>|*>}
  * @extends series.column.data
  * @product highstock

@@ -24,12 +24,14 @@ import type Board from '../../Board';
 import type Cell from '../../Layout/Cell';
 import type { Grid, GridNamespace } from '../../Plugins/GridTypes';
 import type { Options } from './GridComponentOptions';
+import type DataTable from '../../../Data/DataTable';
 
 import type { EventTypes as ComponentEventTypes } from '../Component';
 
 import Component from '../Component.js';
 import GridSyncs from './GridSyncs/GridSyncs.js';
 import GridComponentDefaults from './GridComponentDefaults.js';
+import { hasDataTableProvider } from './GridDataProvider.js';
 import DU from '../../Utilities.js';
 import SidebarPopup from '../../EditMode/SidebarPopup';
 import { diffObjects, getStyle, merge } from '../../../Shared/Utilities.js';
@@ -127,7 +129,7 @@ class GridComponent extends Component {
 
             const table = this.getDataTable();
 
-            if (table && grid.viewport?.dataTable?.id !== table.id) {
+            if (table && this.getGridDataTable(true)?.id !== table.id) {
                 grid.update({
                     dataTable: table?.getModified()
                 }, false);
@@ -202,7 +204,7 @@ class GridComponent extends Component {
 
         if (
             !grid?.dataProvider ||
-            !('getDataTable' in grid.dataProvider) ||
+            !hasDataTableProvider(grid.dataProvider) ||
             !this.connectorHandlers?.length
         ) {
             return;
@@ -223,11 +225,14 @@ class GridComponent extends Component {
             // have not changed, we can just update the rows (more efficient).
 
             const newColumnIds = dataTable.getColumnIds();
-            const { columnOptionsMap, enabledColumns } = grid;
+            const { enabledColumns, columnPolicy } = grid;
 
             let index = 0;
             for (const newColumn of newColumnIds) {
-                if (columnOptionsMap[newColumn]?.options?.enabled === false) {
+                if (
+                    columnPolicy.getIndividualColumnOptions(newColumn)
+                        ?.enabled === false
+                ) {
                     continue;
                 }
 
@@ -247,7 +252,7 @@ class GridComponent extends Component {
             }
         }
 
-        if (grid.dataProvider.getDataTable() !== dataTable) {
+        if (this.getGridDataTable() !== dataTable) {
             void grid.update({
                 data: {
                     providerType: 'local',
@@ -286,11 +291,14 @@ class GridComponent extends Component {
             // have not changed, we can just update the rows (more efficient).
 
             const newColumnIds = dataTable.getColumnIds();
-            const { columnOptionsMap, enabledColumns } = grid;
+            const { enabledColumns, columnPolicy } = grid;
 
             let index = 0;
             for (const newColumn of newColumnIds) {
-                if (columnOptionsMap[newColumn]?.options?.enabled === false) {
+                if (
+                    columnPolicy.getIndividualColumnOptions(newColumn)
+                        ?.enabled === false
+                ) {
                     continue;
                 }
 
@@ -306,7 +314,8 @@ class GridComponent extends Component {
         }
 
         // Workaround for legacy Grid component.
-        (grid as { dataTable: typeof dataTable }).dataTable = dataTable;
+        (grid as unknown as { dataTable: typeof dataTable }).dataTable =
+            dataTable;
 
         // Data has changed and the whole grid is not re-rendered, so mark in
         // the querying that data table was modified.
@@ -402,6 +411,14 @@ class GridComponent extends Component {
         if (gridID) {
             this.contentElement.id = gridID;
         }
+    }
+
+    private getGridDataTable(presentation = false): DataTable | undefined {
+        const dataProvider = this.grid?.dataProvider;
+
+        return hasDataTableProvider(dataProvider) ?
+            dataProvider.getDataTable(presentation) :
+            void 0;
     }
 
     /**

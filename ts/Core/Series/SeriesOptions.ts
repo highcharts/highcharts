@@ -427,6 +427,7 @@ export interface SeriesOptions {
      * @sample {highcharts} highcharts/css/point-series-classname
      *         Series and point class name
      *
+     * @basic
      * @since 5.0.0
      */
     className?: string;
@@ -475,6 +476,8 @@ export interface SeriesOptions {
      *         Pattern fill
      * @sample {highmaps} maps/demo/category-map/
      *         Category map by multiple series
+     *
+     * @basic
      */
     color?: ColorType;
     colorByPoint?: boolean;
@@ -601,6 +604,9 @@ export interface SeriesOptions {
      */
     dashStyle?: DashStyleValue;
 
+    /**
+     * @basic
+     */
     data?: Array<(PointOptions|PointShortOptions)>;
 
     /**
@@ -629,6 +635,8 @@ export interface SeriesOptions {
      * General event handlers for the series items. These event hooks can
      * also be attached to the series at run time using the
      * `Highcharts.addEvent` function.
+     *
+     * @basic
      */
     events?: SeriesEventsOptions;
 
@@ -673,6 +681,7 @@ export interface SeriesOptions {
      * @sample {highcharts} highcharts/plotoptions/series-id/
      *         Get series by id
      *
+     * @basic
      * @since 1.2.0
      */
     id?: string;
@@ -682,6 +691,7 @@ export interface SeriesOptions {
      * `chart.series` array, the visible Z index as well as the order in the
      * legend.
      *
+     * @basic
      * @since 2.3.0
      */
     index?: number;
@@ -800,6 +810,8 @@ export interface SeriesOptions {
      *
      * @sample {highmaps} maps/demo/category-map/
      *         Series name
+     *
+     * @basic
      */
     name?: string;
 
@@ -1068,6 +1080,8 @@ export interface SeriesOptions {
      *
      * @sample {highmaps} maps/demo/mapline-mappoint/
      * Multiple types in the same map
+     *
+     * @basic
      */
     type?: string;
 

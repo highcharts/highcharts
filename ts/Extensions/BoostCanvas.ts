@@ -72,6 +72,11 @@ import {
  *
  * */
 
+/**
+ * The options below are working, but not documented. In case they are
+ * made public, refactor to match BoostDebugOptions interface.
+ * @internal
+ */
 declare module './Boost/BoostOptions' {
     interface BoostOptions {
         timeRendering?: boolean;
@@ -80,6 +85,7 @@ declare module './Boost/BoostOptions' {
     }
 }
 
+/** @internal */
 declare module '../Core/Series/SeriesBase' {
     interface SeriesBase extends BoostTargetObject {
         /** @internal */
@@ -128,6 +134,7 @@ declare module '../Core/Series/SeriesBase' {
  *
  * */
 
+/** @internal */
 namespace BoostCanvas {
 
     /* *
@@ -1024,4 +1031,5 @@ namespace BoostCanvas {
  *
  * */
 
+/** @internal */
 export default BoostCanvas;

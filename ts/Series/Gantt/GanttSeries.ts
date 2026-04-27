@@ -35,7 +35,7 @@ const {
         xrange: XRangeSeries
     }
 } = SeriesRegistry;
-import StaticScale from '../../Extensions/StaticScale.js';
+import { composeStaticScale } from '../../Extensions/StaticScale.js';
 import TreeGridAxis from '../../Core/Axis/TreeGrid/TreeGridAxis.js';
 import { extend, isNumber, merge } from '../../Shared/Utilities.js';
 
@@ -84,7 +84,7 @@ class GanttSeries extends XRangeSeries {
             return;
         }
 
-        StaticScale.compose(AxisClass, ChartClass);
+        composeStaticScale(AxisClass, ChartClass);
 
         if (!SeriesClass) {
             return;

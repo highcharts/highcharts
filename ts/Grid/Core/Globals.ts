@@ -36,7 +36,7 @@ export type ClassNameKey = keyof typeof rawClassNames;
 
 export const classNamePrefix: string = 'hcg-';
 export const version = '@product.version@';
-
+export const buildDate = '@product.date@';
 export const rawClassNames = {
     container: 'container',
     tableElement: 'table',
@@ -120,7 +120,11 @@ export const rawClassNames = {
     leftAlign: 'left'
 } as const;
 
-export const win = window;
+export const win = (
+    typeof window !== 'undefined' ?
+        window :
+        {}
+) as (Window&typeof globalThis);
 export const composed: Array<string> = [];
 export const userAgent = (win.navigator && win.navigator.userAgent) || '';
 export const isChrome = userAgent.indexOf('Chrome') !== -1;
@@ -138,6 +142,7 @@ export const getClassName = (classNameKey: ClassNameKey): string =>
 export default {
     classNamePrefix,
     version,
+    buildDate,
     rawClassNames,
     win,
     composed,

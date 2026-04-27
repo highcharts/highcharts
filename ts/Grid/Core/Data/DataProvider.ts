@@ -22,6 +22,7 @@
  *
  * */
 
+import type DataTable from '../../../Data/DataTable';
 import type {
     RowObject as RowObjectType,
     CellType as DataTableCellType,
@@ -207,6 +208,35 @@ export abstract class DataProvider {
  * A type for the row ID.
  */
 export type RowId = number | string;
+
+/**
+ * A data provider that can expose the underlying data table.
+ */
+export interface DataTableProvider extends DataProvider {
+    getDataTable(presentation?: boolean): DataTable | undefined;
+}
+
+/**
+ * Returns whether the provider exposes `getDataTable`.
+ *
+ * @param provider
+ * Data provider instance to test.
+ *
+ * @returns
+ * `true` when provider exposes `getDataTable`.
+ */
+export function hasDataTableProvider(
+    provider: unknown
+): provider is DataTableProvider {
+    return !!(
+        provider &&
+        typeof (
+            provider as {
+                getDataTable?: unknown;
+            }
+        ).getDataTable === 'function'
+    );
+}
 
 /**
  * A base interface for the data provider options (`grid.options.data`).

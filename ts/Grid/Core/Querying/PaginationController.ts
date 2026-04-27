@@ -21,6 +21,9 @@
  *
  * */
 
+import {
+    hasDataTableProvider
+} from '../Data/DataProvider.js';
 import QueryingController from './QueryingController.js';
 import RangeModifier from '../../../Data/Modifiers/RangeModifier.js';
 
@@ -181,7 +184,9 @@ class PaginationController {
      */
     public createModifier(
         rowsCountBeforePagination: number = (
-            this.querying.grid.dataTable?.rowCount || 0
+            hasDataTableProvider(this.querying.grid.dataProvider) ?
+                this.querying.grid.dataProvider.getDataTable()?.rowCount || 0 :
+                0
         )
     ): RangeModifier | undefined {
         if (!this.enabled) {

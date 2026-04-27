@@ -32,12 +32,8 @@ import type {
 } from './Options';
 import type { RowId } from './Data/DataProvider';
 import type { DataProviderType } from './Data/DataProviderType';
-import type {
-    CellType as DataTableCellType,
-    Column as DataTableColumn
-} from '../../Data/DataTable';
 import type Column from './Table/Column';
-import type { ColumnDataType, NoIdColumnOptions } from './Table/Column';
+import type { NoIdColumnOptions } from './Table/Column';
 import type Popup from './UI/Popup.js';
 import type { DeepPartial } from '../../Shared/Types';
 
@@ -60,7 +56,6 @@ import Globals from './Globals.js';
 import TimeBase from '../../Shared/TimeBase.js';
 import Pagination from './Pagination/Pagination.js';
 import {
-    defined,
     diffObjects,
     extend,
     fireEvent,
@@ -180,16 +175,6 @@ export class Grid {
      */
     public readonly columnPolicy: ColumnPolicyResolver =
         new ColumnPolicyResolver();
-
-    /**
-     * Backward-compatible access to column options map.
-     *
-     * @deprecated
-     * Use `columnPolicy` methods instead.
-     */
-    public get columnOptionsMap(): Record<string, ColumnOptionsMapItemLike> {
-        return this.columnPolicy.columnOptionsMap;
-    }
 
     /**
      * The container of the grid.
@@ -384,33 +369,6 @@ export class Grid {
      *
      * */
 
-    /**
-     * The data source of the Grid. It contains the original data table
-     * that was passed to the Grid.
-     *
-     * @deprecated Use `dataProvider` instead.
-     */
-    public get dataTable(): DataTable | undefined {
-        const dp = this.dataProvider;
-        if (dp && 'getDataTable' in dp) {
-            return dp.getDataTable();
-        }
-    }
-
-    /**
-     * The presentation table of the Grid. It contains a modified version
-     * of the data table that is used for rendering the Grid content. If
-     * not modified, just a reference to the original data table.
-     *
-     * @deprecated Use `dataProvider` instead.
-     */
-    public get presentationTable(): DataTable | undefined {
-        const dp = this.dataProvider;
-        if (dp && 'getDataTable' in dp) {
-            return dp.getDataTable(true);
-        }
-    }
-
     /*
      * Initializes the accessibility controller.
      */
@@ -465,7 +423,7 @@ export class Grid {
 
     /**
      * Loads the new user options to all the important fields (`userOptions`,
-     * `options` and `columnOptionsMap`).
+     * `options` and column policy state).
      *
      * @param newOptions
      * The options that were declared by the user.
@@ -755,7 +713,7 @@ export class Grid {
                 ('data' in diff) ||
                 ('dataTable' in diff)
             ) {
-                if ( // Handle backward compatibility
+                if ( // Preserve legacy root-level `dataTable` option
                     diff.dataTable &&
                     this.options?.dataTable &&
                     this.options?.data?.providerType === 'local'
@@ -1561,7 +1519,7 @@ export class Grid {
             dataTable: userDT ?? {}
         };
 
-        // Just for the backward compatibility, remove in the future
+        // Preserve legacy root-level `dataTable` option for now.
         if (
             dataOptions.providerType === 'local' &&
             !dataOptions.dataTable && userDT
@@ -1569,7 +1527,6 @@ export class Grid {
             dataOptions.dataTable = 'clone' in userDT ?
                 userDT : new DataTable(userDT);
         }
-        // End of backward compatibility snippet
 
         const DataProviderConstructor =
             DataProviderRegistry.types[dataOptions.providerType ?? 'local'] ??
@@ -1711,85 +1668,6 @@ export class Grid {
     public hideLoading(): void {
         this.loadingWrapper?.remove();
         delete this.loadingWrapper;
-    }
-
-    /**
-     * Returns the grid data as a JSON string.
-     *
-     * **Note:** This method only works with `LocalDataProvider`.
-     * For other data providers, use your data source directly.
-     *
-     * @deprecated
-     *
-     * @param modified
-     * Whether to return the modified data table (after filtering/sorting/etc.)
-     * or the unmodified, original one. Default value is set to `true`.
-     *
-     * @return
-     * JSON representation of the data
-     */
-    public getData(modified: boolean = true): string {
-        if (!this.dataProvider || !('getDataTable' in this.dataProvider)) {
-            // eslint-disable-next-line no-console
-            console.warn('getData() works only with LocalDataProvider.');
-            return JSON.stringify({
-                error: 'getData() works only with LocalDataProvider.'
-            }, null, 2);
-        }
-
-        const dataTable = this.dataProvider.getDataTable(modified);
-        const tableColumns = dataTable?.columns;
-        const outputColumns: Record<string, DataTableColumn> = {};
-
-        if (!this.enabledColumns || !tableColumns) {
-            return '{}';
-        }
-
-        const typeParser = (type: ColumnDataType) => {
-            const TypeMap: Record<
-                ColumnDataType,
-                (value: DataTableCellType) => DataTableCellType
-            > = {
-                number: Number,
-                datetime: Number,
-                string: String,
-                'boolean': Boolean
-            };
-
-            return (value: DataTableCellType): DataTableCellType | null => (
-                defined(value) ? TypeMap[type](value) : null
-            );
-        };
-
-        for (const columnId of this.enabledColumns) {
-            const column = this.viewport?.getColumn(columnId);
-            const sourceColumnId =
-                this.columnPolicy.getColumnSourceId(columnId);
-
-            if (
-                !column ||
-                !sourceColumnId ||
-                !this.columnPolicy.isColumnExportable(columnId)
-            ) {
-                continue;
-            }
-
-            const columnData = tableColumns[sourceColumnId];
-            if (!columnData) {
-                continue;
-            }
-
-            const parser = typeParser(column.dataType);
-            outputColumns[columnId] = ((): DataTableColumn => {
-                const result = [];
-                for (let i = 0, iEnd = columnData.length; i < iEnd; ++i) {
-                    result.push(parser(columnData[i]));
-                }
-                return result;
-            })();
-        }
-
-        return JSON.stringify(outputColumns, null, 2);
     }
 
     /**

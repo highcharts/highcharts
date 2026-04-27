@@ -5,17 +5,17 @@
  * @requires highcharts
  * @requires highcharts/modules/stock
  *
- * Advanced Highcharts Stock tools
+ * (c) 2018-2026 Highsoft AS
+ * Author: Sebastian Bochan
  *
- * (c) 2010-2026 Highsoft AS
- * Author: Torstein Hønsi
+ * Price indicator for Highcharts Stock
  *
  * A commercial license may be required depending on use.
  * See www.highcharts.com/license
  */
 'use strict';
 import Highcharts from '../../Core/Globals.js';
-import PriceIndication from '../../Extensions/PriceIndication.js';
+import { composePriceIndication } from '../../Extensions/PriceIndication.js';
 const G: AnyRecord = Highcharts;
-PriceIndication.compose(G.Series);
+composePriceIndication(G.Series);
 export default Highcharts;

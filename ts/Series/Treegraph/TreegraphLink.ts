@@ -1,7 +1,7 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Paweł Lysy Grzegorz Blachliński
+ *  Authors: Paweł Lysy, Grzegorz Blachliński
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -57,15 +57,13 @@ export interface TreegraphLinkOptions extends OrganizationLinkOptions {
     bendAt?: number|string;
 
     /**
-     * Radius for the rounded corners of the links between nodes. Works for
-     * `orthogonal` link type.
-     */
-    radius?: number;
-
-    /**
      * The color of the links between nodes.
+     *
+     * @default ${palette.neutralColor60}
      */
     color?: ColorString;
+
+    // TODO: cursor
 
     /**
      * Modifier of the shape of the curved link. Works best for values between 0
@@ -82,8 +80,18 @@ export interface TreegraphLinkOptions extends OrganizationLinkOptions {
 
     /**
      * The line width of the links connecting nodes, in pixels.
+     *
+     * @default 1
      */
     lineWidth?: number;
+
+    /**
+     * Radius for the rounded corners of the links between nodes. Works for
+     * `orthogonal` link type.
+     *
+     * @default 10
+     */
+    radius?: number;
 
     /**
      * Type of the link shape.
@@ -92,6 +100,7 @@ export interface TreegraphLinkOptions extends OrganizationLinkOptions {
      *         Different link types
      *
      * @product highcharts
+     * @default 'curved'
      */
     type?: 'curved' | 'orthogonal' | 'straight';
 

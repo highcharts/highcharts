@@ -192,10 +192,11 @@ export interface TooltipOptions {
      * @sample {highcharts} highcharts/tooltip/crosshairs-x/
      *         Enable a crosshair for the x value
      *
-     * @deprecated
-     * @default   true
+     * @deprecated 4.1.0
+     * @default true
      */
     crosshairs?: any;
+
     /**
      * For series on datetime axes, the date format in the tooltip's
      * header will by default be guessed based on the closest data points.
@@ -207,11 +208,36 @@ export interface TooltipOptions {
      *
      * @product highcharts highstock gantt
      */
-    dateTimeLabelFormats: Time.DateTimeLabelFormatsOption;
+    dateTimeLabelFormats: Time.DateTimeLabelFormatsOption & {
+        /** @default '%[AebHMSL]' */
+        millisecond: Time.DateTimeLabelFormatsOption['millisecond'];
+
+        /** @default '%[AebHMS]' */
+        second: Time.DateTimeLabelFormatsOption['second'];
+
+        /** @default '%[AebHM]' */
+        minute: Time.DateTimeLabelFormatsOption['minute'];
+
+        /** @default '%[AebHM]' */
+        hour: Time.DateTimeLabelFormatsOption['hour'];
+
+        /** @default '%[AebY]' */
+        day: Time.DateTimeLabelFormatsOption['day'];
+
+        /** @default '%v %[AebY]' */
+        week: Time.DateTimeLabelFormatsOption['week'];
+
+        /** @default '%[BY]' */
+        month: Time.DateTimeLabelFormatsOption['month'];
+
+        /** @default '%Y' */
+        year: Time.DateTimeLabelFormatsOption['year'];
+    };
+
     /**
      * Distance from point to tooltip in pixels.
      *
-     * @default   16
+     * @default 16
      */
     distance?: number;
     /**
@@ -681,7 +707,16 @@ export interface TooltipOptions {
      * @sample {highcharts} highcharts/tooltip/style/
      *         Greater padding, bold text
      */
-    style: CSSObject;
+    style: CSSObject & {
+        /** @default ${palette.neutralColor80} */
+        color?: CSSObject['color'];
+
+        /** @default 'default' */
+        cursor?: CSSObject['cursor'];
+
+        /** @default '0.8em' */
+        fontSize?: CSSObject['fontSize'];
+    };
     /**
      * Use HTML to render the contents of the tooltip instead of SVG. Using
      * HTML allows advanced formatting like tables and images in the

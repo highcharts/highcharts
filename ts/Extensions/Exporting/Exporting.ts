@@ -72,7 +72,6 @@ const {
     win
 } = G;
 import HU from '../../Core/HttpUtilities.js';
-import RegexLimits from '../RegexLimits.js';
 import {
     addEvent,
     createElement,
@@ -88,7 +87,8 @@ import {
     pick,
     pushUnique,
     removeEvent,
-    splat
+    splat,
+    RegexLimits
 } from '../../Shared/Utilities.js';
 import { error, uniqueKey } from '../../Core/Utilities.js';
 import { Palette } from '../../Core/Color/Palettes';

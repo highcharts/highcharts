@@ -47,8 +47,8 @@ import {
     pick,
     splat
 } from '../../Shared/Utilities.js';
-import TextPath from '../../Extensions/TextPath.js';
-TextPath.compose(SVGElement);
+import { composeTextPath } from '../../Extensions/TextPath.js';
+composeTextPath(SVGElement);
 
 /* *
  *

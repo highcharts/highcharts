@@ -54,7 +54,7 @@ const {
     initDataLabelsDefer
 } = D;
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
-import TextPath from '../../Extensions/TextPath.js';
+import { composeTextPath } from '../../Extensions/TextPath.js';
 import {
     addEvent,
     clamp,
@@ -66,7 +66,7 @@ import {
     merge,
     pick
 } from '../../Shared/Utilities.js';
-TextPath.compose(SVGElement);
+composeTextPath(SVGElement);
 
 /* *
  *

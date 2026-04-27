@@ -111,10 +111,14 @@ export interface SeriesLabelOptions {
     /**
      * Styles for the series label. The color defaults to the series
      * color, or a contrast color if `onArea`.
-     *
-     * @default  {"fontSize": "0.8em", "fontWeight": "bold"}
      */
-    style?: CSSObject;
+    style?: CSSObject & {
+        /** @default '0.8em' */
+        fontSize?: CSSObject['fontSize'];
+
+        /** @default 'bold' */
+        fontWeight?: CSSObject['fontWeight'];
+    };
 
     /**
      * Whether to use HTML to render the series label.
