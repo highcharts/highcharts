@@ -298,8 +298,10 @@ class Pane {
         // below the center
         const dataLabelMargin = Math.min(
             chart.series
-                .filter((s): boolean => s.is('gauge') && s.yAxis?.pane === this)
                 .reduce((max, s): number => {
+                    if (!s.is('gauge') || s.yAxis?.pane !== this) {
+                        return max;
+                    }
                     const dl = splat(s.options.dataLabels)[0];
                     let dlMargin = 0;
                     if (dl && dl.enabled !== false) {
@@ -309,7 +311,7 @@ class Pane {
                             (dl.y || 0);
                     }
                     return Math.max(max, dlMargin);
-                }, 0), // + margin[2],
+                }, 0),
             plotHeight * 0.3
         );
 
