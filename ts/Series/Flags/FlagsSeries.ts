@@ -21,12 +21,10 @@ import type ColorType from '../../Core/Color/ColorType';
 import type { FlagsShapeValue } from './FlagsPointOptions';
 import type FlagsSeriesOptions from './FlagsSeriesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
-import type SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer';
 
 import FlagsPoint from './FlagsPoint.js';
 import FlagsSeriesDefaults from './FlagsSeriesDefaults.js';
 import FlagsSymbols from './FlagsSymbols.js';
-import FinancialSymbols from '../FinancialSymbols';
 import H from '../../Core/Globals.js';
 const { noop } = H;
 import OnSeriesComposition from '../OnSeriesComposition.js';
@@ -98,12 +96,7 @@ class FlagsSeries extends ColumnSeries {
      *
      * */
 
-    public static compose(
-        SVGRendererClass: typeof SVGRenderer
-    ): void {
-        FlagsSymbols.compose(SVGRendererClass);
-        FinancialSymbols.compose(SVGRendererClass);
-    }
+    public static compose = FlagsSymbols.compose;
 
     public static defaultOptions: FlagsSeriesOptions = merge(
         ColumnSeries.defaultOptions,
