@@ -147,7 +147,9 @@ class GaugeSeries extends Series {
             dataLabels: {
                 crop: false,
                 defer: false,
+                distance: 0,
                 enabled: true,
+                padding: 5,
                 verticalAlign: 'top',
                 style: {
                     fontSize: '1.4em'

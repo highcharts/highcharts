@@ -596,7 +596,7 @@ class SVGRenderer implements SVGRendererBase {
             renderer.unSubPixelFix();
         }
 
-        renderer.alignedObjects = null as any;
+        renderer.alignedObjects.length = 0;
 
         return null;
     }

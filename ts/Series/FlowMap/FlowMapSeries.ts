@@ -894,6 +894,7 @@ export default FlowMapSeries;
  * boostThreshold, borderColor, borderWidth, dashStyle, dataLabels, dragDrop,
  * joinBy, mapData, negativeColor, onPoint, shadow, showCheckbox
  * @product   highmaps
+ * @requires     modules/flowmap
  * @apioption series.flowmap
  */
 

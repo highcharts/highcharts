@@ -78,6 +78,7 @@ import { Palette } from '../../Color/Palettes.js';
  *               offset, opposite, pane, plotBands, plotLines,
  *               reversedStacks, scrollbar, showEmpty, top, zoomEnabled
  * @product      highcharts highstock highmaps
+ * @requires     modules/coloraxis
  * @type         {*|Array<*>}
  * @optionparent colorAxis
  */
