@@ -1766,23 +1766,20 @@ class Navigator {
                 // navigator options from base series (#4923).
                 const navigatorSeriesData =
                     baseNavigatorOptions.data || userNavOptions.data,
-                    navigatorSeriesDataTable = (
+                    navigatorSeriesDataTable =
                         baseNavigatorOptions.dataTable ||
-                        userNavOptions.dataTable
-                    );
+                        userNavOptions.dataTable;
 
                 navigator.hasNavigatorData =
                     navigator.hasNavigatorData ||
                     !!navigatorSeriesData ||
                     !!navigatorSeriesDataTable;
-                mergedNavSeriesOptions.data = (
+                mergedNavSeriesOptions.data =
                     navigatorSeriesData ||
-                    baseOptions.data?.slice(0)
-                );
-                mergedNavSeriesOptions.dataTable = (
+                    baseOptions.data?.slice(0);
+                mergedNavSeriesOptions.dataTable =
                     navigatorSeriesDataTable ||
-                    baseOptions.dataTable
-                );
+                    baseOptions.dataTable;
 
                 // Update or add the series
                 if (linkedNavSeries && linkedNavSeries.options) {
