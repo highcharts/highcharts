@@ -44,7 +44,7 @@ const { parse: color } = Color;
 import TU from '../TreeUtilities.js';
 const { getLevelOptions, getNodeWidth } = TU;
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
-import TextPath from '../../Extensions/TextPath.js';
+import { composeTextPath } from '../../Extensions/TextPath.js';
 import {
     clamp,
     crisp,
@@ -55,7 +55,7 @@ import {
     relativeLength,
     stableSort
 } from '../../Shared/Utilities.js';
-TextPath.compose(SVGElement);
+composeTextPath(SVGElement);
 
 /* *
  *
@@ -685,6 +685,8 @@ class SankeySeries extends ColumnSeries {
                 }),
                 zIndex: void 0
             };
+            // Delete so it doesn't override anything on merge.
+            delete node.dlOptions.zIndex;
 
             // Pass test in drawPoints
             node.plotX = 1;

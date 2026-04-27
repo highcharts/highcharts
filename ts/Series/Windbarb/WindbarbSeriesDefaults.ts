@@ -208,6 +208,7 @@ const WindbarbSeriesDefaults: WindbarbSeriesOptions = {
  * @sample {highcharts} highcharts/series/data-array-of-objects/
  *         Config objects
  *
+ * @basic
  * @type      {Array<Array<(number|string),number,number>|*>}
  * @extends   series.line.data
  * @product   highcharts highstock

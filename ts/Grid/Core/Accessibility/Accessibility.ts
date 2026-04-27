@@ -27,6 +27,9 @@ import type Grid from '../Grid';
 import type { ColumnSortingOrder, FilteringCondition } from '../Options';
 import whcm from '../../../Accessibility/HighContrastMode.js';
 
+import {
+    hasDataTableProvider
+} from '../Data/DataProvider.js';
 import Globals from '../Globals.js';
 import ColumnFiltering from '../Table/Actions/ColumnFiltering/ColumnFiltering.js';
 import GridUtils from '../GridUtils.js';
@@ -431,7 +434,7 @@ class Accessibility {
      */
     private defaultBeforeFormatter(): string {
         const grid = this.grid;
-        const { container, dataTable, options } = grid;
+        const { container, options } = grid;
         const format =
             options?.accessibility?.screenReaderSection?.beforeGridFormat;
 
@@ -452,6 +455,9 @@ class Accessibility {
             }
         }
 
+        const dataTable = hasDataTableProvider(grid.dataProvider) ?
+            grid.dataProvider.getDataTable() :
+            void 0;
         const context = {
             gridTitle: formattedGridTitle,
             gridDescription: options?.description?.text || '',

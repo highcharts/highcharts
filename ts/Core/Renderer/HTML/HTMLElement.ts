@@ -209,7 +209,7 @@ class HTMLElement extends SVGElement {
         SVGRendererClass: T
     ): void {
 
-        if (pushUnique(composed, this.compose)) {
+        if (pushUnique(composed, 'HTMLElement')) {
             /**
              * Create a HTML text node. This is used by the SVG renderer `text`
              * and `label` functions through the `useHTML` parameter.

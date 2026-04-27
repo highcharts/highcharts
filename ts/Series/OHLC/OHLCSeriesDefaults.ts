@@ -98,7 +98,7 @@ const OHLCSeriesDefaults: OHLCSeriesOptions = {
  *
  * @type      {boolean}
  * @product   highstock
- * @apioption plotOptions.line.useOhlcData
+ * @apioption plotOptions.series.useOhlcData
  */
 
 /**
@@ -155,6 +155,7 @@ const OHLCSeriesDefaults: OHLCSeriesOptions = {
  *    }]
  *    ```
  *
+ * @basic
  * @type      {Array<Array<(number|string),number,number,number>|Array<(number|string),number,number,number,number>|*>}
  * @extends   series.arearange.data
  * @excluding y, marker

@@ -201,6 +201,7 @@ const SolidGaugeSeriesDefaults: SolidGaugeSeriesOptions = {
  * @sample {highcharts} highcharts/series/data-array-of-objects/
  *         Config objects
  *
+ * @basic
  * @type      {Array<number|null|*>}
  * @extends   series.gauge.data
  * @product   highcharts

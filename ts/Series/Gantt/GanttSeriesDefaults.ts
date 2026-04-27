@@ -166,6 +166,7 @@ const GanttSeriesDefaults: GanttSeriesOptions = {
 /**
  * Data for a Gantt series.
  *
+ * @basic
  * @declare   Highcharts.GanttPointOptionsObject
  * @type      {Array<*>}
  * @extends   series.xrange.data

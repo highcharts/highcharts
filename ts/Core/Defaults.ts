@@ -386,6 +386,9 @@ const defaultOptions: DefaultOptions = {
              * CSS styling for the buttons' text
              */
             style: {
+                /**
+                 * @type {Highcharts.ColorType}
+                 */
                 color: Palette.neutralColor80,
                 cursor: 'pointer',
                 fontSize: '0.8em',
@@ -407,8 +410,14 @@ const defaultOptions: DefaultOptions = {
                  * addition to the normal state options
                  */
                 select: {
+                    /**
+                     * @type {Highcharts.ColorType}
+                     */
                     fill: Palette.highlightColor10,
                     style: {
+                        /**
+                         * @type {Highcharts.ColorType}
+                         */
                         color: Palette.neutralColor100,
                         fontWeight: 'bold'
                     }
@@ -671,6 +680,9 @@ const defaultOptions: DefaultOptions = {
          * @default   {highstock} { "color": "#333333", "fontSize": "16px" }
          */
         style: {
+            /**
+             * @type {Highcharts.ColorType}
+             */
             color: Palette.neutralColor80,
             fontWeight: 'bold'
         },
@@ -870,6 +882,9 @@ const defaultOptions: DefaultOptions = {
          * @default   {"color": "#666666"}
          */
         style: {
+            /**
+             * @type {Highcharts.ColorType}
+             */
             color: Palette.neutralColor60,
             /**
              * @type {number|string}
@@ -953,6 +968,9 @@ const defaultOptions: DefaultOptions = {
          * @default   {"color": "#666666"}
          */
         style: {
+            /**
+             * @type {Highcharts.ColorType}
+             */
             color: Palette.neutralColor60,
             /**
              * @type {number|string}
@@ -1112,27 +1130,25 @@ const defaultOptions: DefaultOptions = {
          * `Highcharts.addEvent` function.
          *
          * @declare Highcharts.LegendEventsOptionsObject
-         *
-         * @internal
          */
-        events: {},
-
-        /**
-         * Fires when the legend item belonging to the series is clicked. One
-         * parameter, `event`, is passed to the function. The default action
-         * is to toggle the visibility of the series, point or data class. This
-         * can be prevented by returning `false` or calling
-         * `event.preventDefault()`.
-         *
-         * @sample {highcharts} highcharts/legend/itemclick/
-         *         Confirm hiding and showing
-         * @sample {highcharts} highcharts/legend/pie-legend-itemclick/
-         *         Confirm toggle visibility of pie slices
-         *
-         * @type      {Highcharts.LegendItemClickCallbackFunction}
-         * @context   Highcharts.Legend
-         * @apioption legend.events.itemClick
-         */
+        events: {
+            /**
+             * Fires when the legend item belonging to the series is clicked.
+             * One parameter, `event`, is passed to the function. The default
+             * action is to toggle the visibility of the series, point or data
+             * class. This can be prevented by returning `false` or calling
+             * `event.preventDefault()`.
+             *
+             * @sample {highcharts} highcharts/legend/itemclick/
+             *         Confirm hiding and showing
+             * @sample {highcharts} highcharts/legend/pie-legend-itemclick/
+             *         Confirm toggle visibility of pie slices
+             *
+             * @type      {Highcharts.LegendItemClickCallbackFunction}
+             * @context   Highcharts.Legend
+             * @apioption legend.events.itemClick
+             */
+        },
 
         /**
          * When the legend is floating, the plot area ignores it and is allowed
@@ -2448,21 +2464,13 @@ const defaultOptions: DefaultOptions = {
          * @product highcharts highstock gantt
          */
         dateTimeLabelFormats: {
-            /** @internal */
             millisecond: '%[AebHMSL]',
-            /** @internal */
             second: '%[AebHMS]',
-            /** @internal */
             minute: '%[AebHM]',
-            /** @internal */
             hour: '%[AebHM]',
-            /** @internal */
             day: '%[AebY]',
-            /** @internal */
             week: '%v %[AebY]',
-            /** @internal */
             month: '%[BY]',
-            /** @internal */
             year: '%Y'
         },
 
@@ -2831,13 +2839,12 @@ const defaultOptions: DefaultOptions = {
          * @type {Highcharts.CSSObject}
          */
         style: {
-            /** @internal */
+            /** @type {Highcharts.ColorType} */
             color: Palette.neutralColor80,
-            /** @internal */
+
             cursor: 'default',
-            /**
-             * @type {number|string}
-             */
+
+            /** @type {number|string} */
             fontSize: '0.8em'
         },
 
@@ -2896,6 +2903,32 @@ const defaultOptions: DefaultOptions = {
          */
 
         /**
+         * Events for the credits label.
+         *
+         * @type     {object}
+         * @since    12.6.0
+         * @apioption credits.events
+         */
+
+        /**
+         * Callback function to handle click events on the credits label.
+         * The callback can call `event.preventDefault()` to prevent the
+         * default navigation behavior. Alternatively, you can add a general
+         * event handler using `Highcharts.addEvent(Chart, 'creditsClick',
+         * callback)` instead of providing it in the options tree.
+         *
+         * @sample {highcharts} highcharts/credits/events-click/
+         *         Custom click handler
+         *
+         * @param {Event} event
+         *        The click event object.
+         *
+         * @type  {Function}
+         * @since 12.6.0
+         * @apioption credits.events.click
+         */
+
+        /**
          * Whether to show the credits text.
          *
          * @sample {highcharts} highcharts/credits/enabled-false/
@@ -2922,24 +2955,16 @@ const defaultOptions: DefaultOptions = {
          *
          * @sample {highcharts} highcharts/credits/position-left/
          *         Left aligned
-         * @sample {highcharts} highcharts/credits/position-left/
-         *         Left aligned
-         * @sample {highmaps} maps/credits/customized/
-         *         Left aligned
          * @sample {highmaps} maps/credits/customized/
          *         Left aligned
          *
-         * @type    {Highcharts.AlignObject}
-         * @since   2.1
+         * @type  {Highcharts.AlignObject}
+         * @since 2.1
          */
         position: {
-            /** @internal */
             align: 'right',
-            /** @internal */
-            x: -10,
-            /** @internal */
             verticalAlign: 'bottom',
-            /** @internal */
+            x: -10,
             y: -5
         },
 
@@ -2952,10 +2977,13 @@ const defaultOptions: DefaultOptions = {
          * @type {Highcharts.CSSObject}
          */
         style: {
-            /** @internal */
             cursor: 'pointer',
-            /** @internal */
+
+            /**
+             * @type {Highcharts.ColorType}
+             */
             color: Palette.neutralColor40,
+
             /**
              * @type {number|string}
              */
@@ -2992,7 +3020,7 @@ const defaultTime = new Time(defaultOptions.time, defaultOptions.lang);
  * @return {Highcharts.Options}
  * Default options.
  */
-function getOptions(): DefaultOptions {
+export function getOptions(): DefaultOptions {
     return defaultOptions;
 }
 

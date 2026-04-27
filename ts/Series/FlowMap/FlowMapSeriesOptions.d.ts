@@ -34,6 +34,7 @@ interface FlowMapSeriesOptions extends MapLineSeriesOptions {
     curveFactor?: number;
     width?: number;
     lineWidth?: number;
+    fillOpacity?: number;
 }
 
 /* *

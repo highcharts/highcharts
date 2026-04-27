@@ -809,6 +809,7 @@ export default GeoHeatmapSeries;
  * @sample maps/series-geoheatmap/geoheatmap-equalearth/
  *         GeoHeatmap Chart on the Equal Earth Projection
  *
+ * @basic
  * @type      {Array<Array<number>|*>}
  * @extends   series.map.data
  * @product   highmaps

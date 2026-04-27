@@ -85,15 +85,19 @@ class FilterCell extends HeaderCell {
     }
 
     public override onKeyDown(e: KeyboardEvent): void {
-        this.column.filtering?.onKeyDown(e);
-
         if (e.target === this.htmlElement) {
-            if (e.key === 'Enter') {
+            if (
+                e.key === 'Enter' &&
+                this.column.viewport.grid.columnPolicy
+                    .isColumnInlineFilteringEnabled(this.column.id)
+            ) {
                 this.column.filtering?.filterSelect?.focus();
             } else {
                 super.onKeyDown(e);
             }
         } else {
+            this.column.filtering?.onKeyDown(e);
+
             if (e.key === 'Escape') {
                 this.htmlElement.focus();
             }

@@ -924,6 +924,8 @@ class TreemapSeries extends ScatterSeries {
             point.dlOptions = merge(options, point.options.dataLabels, {
                 zIndex: void 0
             });
+            // Delete so it doesn't override anything on merge.
+            delete point.dlOptions.zIndex;
         }
         super.drawDataLabels(points);
     }

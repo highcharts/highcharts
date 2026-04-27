@@ -12,11 +12,13 @@ const options = {
 const grid = Grid.grid('container', options);
 
 document.getElementById('delete-rows-btn').addEventListener('click', () => {
-    if (grid.dataTable) {
-        grid.dataTable.deleteRows(0, 4);
+    const dataTable = grid.dataProvider.getDataTable();
+
+    if (dataTable) {
+        dataTable.deleteRows(0, 4);
         grid.viewport.updateRows();
     }
-    console.log('deleted rows:', grid.dataTable);
+    console.log('deleted rows:', dataTable);
 });
 
 document.getElementById('destroy-grid-btn').addEventListener('click', () => {

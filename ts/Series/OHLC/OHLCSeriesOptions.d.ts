@@ -27,8 +27,8 @@ import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
  *
  * */
 
-declare module '../Line/LineSeriesOptions' {
-    interface LineSeriesOptions {
+declare module '../../Core/Series/SeriesOptions' {
+    interface SeriesOptions {
 
         /**
          * The parameter allows setting line series type and use OHLC

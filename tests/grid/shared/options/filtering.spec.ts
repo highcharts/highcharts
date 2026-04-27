@@ -97,6 +97,42 @@ test.describe('Grid filtering', () => {
         }
     });
 
+    test('Arrow key navigation works across header, filter row, and body', async ({
+        page
+    }) => {
+        const productHeaderCell = page.locator(
+            'th[data-column-id="product"]'
+        ).first();
+        const weightHeaderCell = page.locator(
+            'th[data-column-id="weight"]'
+        );
+        const productFilterCell = page.locator(
+            'th[data-column-id="product"]'
+        ).nth(1);
+        const firstProductBodyCell = page.locator(productColumn).first();
+
+        await productHeaderCell.focus();
+        await expect(productHeaderCell).toBeFocused();
+
+        await page.keyboard.press('ArrowRight');
+        await expect(weightHeaderCell.first()).toBeFocused();
+
+        await page.keyboard.press('ArrowLeft');
+        await expect(productHeaderCell).toBeFocused();
+
+        await page.keyboard.press('ArrowDown');
+        await expect(productFilterCell).toBeFocused();
+
+        await page.keyboard.press('ArrowDown');
+        await expect(firstProductBodyCell).toBeFocused();
+
+        await page.keyboard.press('ArrowUp');
+        await expect(productFilterCell).toBeFocused();
+
+        await page.keyboard.press('ArrowUp');
+        await expect(productHeaderCell).toBeFocused();
+    });
+
     // Update filtering
     test('Update filtering', async ({ page }) => {
         await page.evaluate(() => {
@@ -309,4 +345,3 @@ test.describe('Grid filtering', () => {
     });
 
 });
-

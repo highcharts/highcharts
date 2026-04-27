@@ -148,7 +148,13 @@ class QueryingController {
      * Apply all modifiers to the data provider.
      */
     private async modifyData(): Promise<void> {
-        await this.grid.dataProvider?.applyQuery();
+        const dataProvider = this.grid.dataProvider;
+        if (!dataProvider) {
+            return;
+        }
+
+        await dataProvider.applyQuery();
+
         this.shouldBeUpdated = false;
     }
 }

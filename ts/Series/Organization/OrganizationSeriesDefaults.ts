@@ -255,19 +255,25 @@ const OrganizationSeriesDefaults: OrganizationSeriesOptions = {
         },
 
         style: {
-            /** @internal */
             fontWeight: 'normal',
-            /** @internal */
             fontSize: '0.9em',
-            /** @internal */
             textAlign: 'left'
         },
 
         useHTML: true,
 
+        /**
+         * @extends plotOptions.series.dataLabels.textPath
+         */
         linkTextPath: {
+            /**
+             * @default { startOffset: '95%', textAnchor: 'end' }
+             */
             attributes: {
+                /** @ignore */
                 startOffset: '95%',
+
+                /** @ignore */
                 textAnchor: 'end'
             }
         }
@@ -522,6 +528,7 @@ const OrganizationSeriesDefaults: OrganizationSeriesOptions = {
  *     }]
  *  ```
  *
+ * @basic
  * @type      {Array<*>}
  * @extends   series.sankey.data
  * @product   highcharts
