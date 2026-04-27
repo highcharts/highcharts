@@ -337,7 +337,7 @@ function arc(
             i,
             i > 1 ? innerBorderRadius : borderRadius,
             padding,
-            innerAlpha <= 0.1
+            innerAlpha <= 0
         );
     }
 
