@@ -167,7 +167,8 @@ function applyBorderRadius(
     path: SVGPath,
     i: number,
     r: number,
-    padding: number // Padding in pixels
+    padding: number, // Padding in pixels
+    skipInnerRadius?: boolean
 ): void {
     const a = path[i];
 
@@ -200,25 +201,15 @@ function applyBorderRadius(
             // arcs (donut/sunburst etc) are anti-clockwise
             clockwise = arc[5];
 
-        // Inner padding in radians
-        const innerPadding = padding && bigR > 0 ? padding / bigR : 0;
-        const innerAlpha = Math.max(start - end - 2 * innerPadding, 0);
-
-        // For the inner radius, we need an extra cap because the inner arc
-        // is shorter than the outer arc
-        const innerBorderRadius =
-            Math.min(r, 2 * (innerAlpha / Math.PI) * bigR);
-        const br = i > 1 ? innerBorderRadius : r;
-
         // Some geometric constants
         const relativeR =
-            Math.max(clockwise ? (bigR - br) : (bigR + br), 0.0001),
+            Math.max(clockwise ? (bigR - r) : (bigR + r), 0.0001),
             // Padding for calculated relativeR value in radians
             relativeRPadding =
                 innerRadius && innerRadius > 0 && relativeR > 0 ?
                     (padding / relativeR) : 0,
             // The angle, on the big arc, that the border radius arc takes up
-            angleOfBorderRadius = relativeR ? Math.asin(br / relativeR) : 0,
+            angleOfBorderRadius = relativeR ? Math.asin(r / relativeR) : 0,
             angleOffset = clockwise ?
                 angleOfBorderRadius :
                 -angleOfBorderRadius,
@@ -227,7 +218,7 @@ function applyBorderRadius(
             distanceBigCenterToStartArc =
                 Math.cos(angleOfBorderRadius) * relativeR;
 
-        if (innerRadius === void 0 || (innerRadius > 0 && innerAlpha > 0)) {
+        if (innerRadius === void 0 || (innerRadius > 0 && !skipInnerRadius)) {
             // From line to arc
             if (fromLineToArc) {
 
@@ -244,8 +235,8 @@ function applyBorderRadius(
                 // touches the great circle.
                 path.splice(i + 1, 0, [
                     'A',
-                    br,
-                    br,
+                    r,
+                    r,
                     0, // Slanting,
                     0, // Long arc
                     1, // Clockwise
@@ -268,8 +259,8 @@ function applyBorderRadius(
                 // borderRadius closer to the center relative to the perimeter.
                 path.splice(i + 1, 0, [
                     'A',
-                    br,
-                    br,
+                    r,
+                    r,
                     0,
                     0,
                     1,
@@ -320,7 +311,15 @@ function arc(
             // For smaller pie slices, cap to the largest small circle that
             // can be fitted within the sector
             (r * sinHalfAlpha) / (1 + sinHalfAlpha)
-        ), 0);
+        ), 0),
+        // For the inner radius, we need an extra cap because the inner arc
+        // is shorter than the outer arc
+        innerBorderRadius = Math.min(
+            borderRadius,
+            2 * (alpha / Math.PI) * innerR
+        ),
+        // When inner alpha is too small, we skip the inner radius
+        innerAlpha = alpha - 2 * padding / innerR;
 
     // Apply turn-by-turn border radius. Start at the end since we're
     // splicing in arc segments.
@@ -333,7 +332,13 @@ function arc(
             continue;
         }
 
-        applyBorderRadius(path, i, borderRadius, padding);
+        applyBorderRadius(
+            path,
+            i,
+            i > 1 ? innerBorderRadius : borderRadius,
+            padding,
+            innerAlpha <= 0.1
+        );
     }
 
     return path;
