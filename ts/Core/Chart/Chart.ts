@@ -1107,10 +1107,12 @@ class Chart {
             // plotBorderWidth and clipOffset
             if (xAxis && xAxis.len !== this.plotSizeX) {
                 width = xAxis.len;
+                r = 0; // Rounded corner clip not supported for panes
             }
 
             if (yAxis && yAxis.len !== this.plotSizeY) {
                 height = yAxis.len;
+                r = 0; // Rounded corner clip not supported for panes
             }
 
             // If the chart is inverted and the series is not invertible, the
