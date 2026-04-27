@@ -69,9 +69,6 @@ class HLCSeries extends ColumnSeries {
 
     public static defaultOptions: HLCSeriesOptions = merge(
         ColumnSeries.defaultOptions,
-        {
-            legendSymbol: 'hlc'
-        },
         HLCSeriesDefaults
     );
 
@@ -341,7 +338,6 @@ declare module '../../Core/Series/SeriesType' {
     }
 }
 
-HLCSeries.compose(HLCSeries, SVGRenderer);
 SeriesRegistry.registerSeriesType('hlc', HLCSeries);
 
 /* *

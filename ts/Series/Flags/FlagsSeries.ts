@@ -107,10 +107,7 @@ class FlagsSeries extends ColumnSeries {
 
     public static defaultOptions: FlagsSeriesOptions = merge(
         ColumnSeries.defaultOptions,
-        FlagsSeriesDefaults,
-        {
-            legendSymbol: 'flag-icon'
-        }
+        FlagsSeriesDefaults
     );
 
     /* *
