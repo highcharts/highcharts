@@ -1770,7 +1770,7 @@ class Tooltip {
                     d,
                     'stroke-width': 10 // Creates a 10px invisible buffer zone
                 })
-                .addClass('highcharts-tracker')
+                .addClass('highcharts-tracker highcharts-tooltip-tracker')
                 .add(label);
 
             // For a rapid move going outside of the elements keeping the
@@ -1784,8 +1784,8 @@ class Tooltip {
             if (!chart.styledMode) {
                 tooltip.tracker.attr({
                     fill: 'rgba(0,0,0,0)',
-                    stroke: 'rgba(0,0,0,0)' // Ensure the 10px stroke buffer
-                    // is also transparent
+                    stroke: 'rgba(0,0,0,0)',
+                    'stroke-width': 10
                 });
             }
         }

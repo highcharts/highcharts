@@ -667,7 +667,6 @@ export interface TooltipOptions {
      * @sample highcharts/tooltip/stickoncontact-anchor-link/
      *         Tooltip with clickable links
      *
-     * @default   true
      * @since     8.0.1
      */
     stickOnContact: boolean;
