@@ -344,6 +344,8 @@ QUnit.test('HCM colors override series colors', function (assert) {
         }]
     });
 
+    const series = chart.series[0];
+
     assert.strictEqual(
         chart.renderer.box.style.forcedColorAdjust,
         'none',
@@ -351,15 +353,14 @@ QUnit.test('HCM colors override series colors', function (assert) {
     );
 
     assert.strictEqual(
-        chart.series[0].graph && chart.series[0].graph.attr('stroke'),
+        series.graph && series.graph.attr('stroke'),
         '#0f0',
         'Single custom high contrast series colors should drive the ' +
         'line stroke.'
     );
 
     assert.strictEqual(
-        chart.series[0].points[0].graphic &&
-        chart.series[0].points[0].graphic.attr('fill'),
+        series.points[0].graphic && series.points[0].graphic.attr('fill'),
         '#0f0',
         'Single custom high contrast series colors should drive marker colors.'
     );
