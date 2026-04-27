@@ -246,8 +246,9 @@ export interface ChartOptions {
      *
      * @sample {highcharts} highcharts/chart/alignthresholds/ Set to true
      *
-     * @since    10.0.0
-     * @product  highcharts highstock gantt
+     * @since   10.0.0
+     * @product highcharts highstock gantt
+     * @default false
      */
     alignThresholds?: boolean;
 
@@ -455,6 +456,7 @@ export interface ChartOptions {
      * performance, especially with bigger sets of data.
      *
      * @since 10.1.0
+     * @default true
      */
     allowMutatingData?: boolean;
 
