@@ -99,7 +99,7 @@ export interface FlagsSeriesOptions extends ColumnSeriesOptions {
 
     /**
      * What type of legend symbol to render for this series. For flags
-     * series, the default is `f-flag`, a pole with a pennant.
+     * series, the default is `flag-icon`, a pole with a pennant.
      *
      * @default flag-icon
      * @apioption plotOptions.flags.legendSymbol
