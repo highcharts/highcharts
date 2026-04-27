@@ -45,6 +45,7 @@ import type ArcDiagramSeriesOptions from './ArcDiagramSeriesOptions';
  * @extends      plotOptions.sankey
  * @since 10.0.0
  * @product      highcharts
+ * @requires     modules/sankey
  * @requires     modules/arc-diagram
  * @exclude      curveFactor, connectEnds, connectNulls, colorAxis, colorKey,
  *               dataSorting, dragDrop, getExtremesFromAll, legendSymbolColor,
