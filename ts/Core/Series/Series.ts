@@ -530,6 +530,9 @@ class Series {
     public options!: SeriesOptions;
 
     /** @internal */
+    public plotClipGroup?: SVGElement;
+
+    /** @internal */
     public pointInterval?: number;
 
     /**
@@ -2591,10 +2594,11 @@ class Series {
      * @function Highcharts.Series#setClip
      */
     public setClip(): void {
-        const { chart, group, markerGroup } = this,
+        const { chart, group, markerGroup, options, plotClipGroup } = this,
             sharedClips = chart.sharedClips,
             renderer = chart.renderer,
             clipBox = chart.getClipBox(this),
+            clip = options.clip ?? true,
             sharedClipKey = this.getSharedClipKey(); // #4526
 
         let clipRect = sharedClips[sharedClipKey];
@@ -2612,15 +2616,19 @@ class Series {
             clipRect.animate(clipBox);
         }
 
-        if (group) {
-            // When clip is false, reset to no clip after animation
-            group.clip(this.options.clip === false ? void 0 : clipRect);
-        }
+        // When clip is false, reset to no clip after animation
+        group?.clip(clip ? clipRect : void 0);
 
         // Unclip temporary animation clip
-        if (markerGroup) {
-            markerGroup.clip();
-        }
+        markerGroup?.clip();
+
+        // Apply plotBorderRadius clipping
+        plotClipGroup?.clip(
+            // Navigator y-axis is not clippable
+            clip && this.yAxis.clippable ?
+                chart.plotClipInner :
+                void 0
+        );
     }
 
     /**
@@ -3545,13 +3553,20 @@ class Series {
 
         fireEvent(this, 'render');
 
+        // If we have a plot border radius, create a separate parent group where
+        // the clip is later applied. This is necessary to handle multi-pane
+        // layouts and entrance animation.
+        if (chart.plotClipInner) {
+            series.plotClipGroup = chart.renderer.g().add(chartSeriesGroup);
+        }
+
         // The group
         series.plotGroup(
             'group',
             'series',
             visibility,
             zIndex,
-            chartSeriesGroup
+            series.plotClipGroup || chartSeriesGroup
         );
 
         series.markerGroup = series.plotGroup(

@@ -1,20 +1,19 @@
-Highcharts.setOptions({
-    colors: [
-        '#331E36',
-        '#41337A',
-        '#6EA4BF',
-        '#98CAD5',
-        '#C2EFEB',
-        '#ECFEE8',
-        '#ECFEE8'
-    ]
-});
-
 Highcharts.chart('container', {
     chart: {
         type: 'areaspline',
-        inverted: true
+        inverted: true,
+        plotBorderRadius: 8,
+        plotBorderWidth: 1
     },
+    colors: [
+        '#4D0066',
+        '#5533DD',
+        '#2FA5DA',
+        '#4FE8F7',
+        '#9FFFFF',
+        '#D9FFCC',
+        '#D9FFCC'
+    ],
     title: {
         text: 'MSIS atmospheric composition by height',
         align: 'left'
@@ -26,12 +25,16 @@ Highcharts.chart('container', {
         align: 'left'
     },
     xAxis: {
-        tickmarkPlacement: 'on',
         title: {
             text: 'Height (km)'
         },
-        opposite: 'true',
+        minPadding: 0,
+        maxPadding: 0,
+        opposite: true,
         reversed: false,
+        tickWidth: 0,
+        lineWidth: 0,
+        gridLineWidth: 1,
         crosshair: {
             width: 2,
             zIndex: 3
