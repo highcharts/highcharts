@@ -1463,13 +1463,7 @@ namespace Chart3D {
 
         if (this.is3d()) {
             (options.series || []).forEach(function (s): void {
-                const type = (
-                    s.type ||
-                    options.chart.type ||
-                    options.chart.defaultSeriesType
-                );
-
-                if (type === 'scatter') {
+                if ((s.type || options.chart.type) === 'scatter') {
                     s.type = 'scatter3d';
                 }
             });

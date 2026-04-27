@@ -30,7 +30,7 @@ Janet,3,16,13,15
 ```js
 var options = {
     chart: {
-        defaultSeriesType: 'column'
+        type: 'column'
     },
     title: {
         text: 'Fruit Consumption'

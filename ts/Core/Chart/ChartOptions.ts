@@ -427,28 +427,6 @@ export interface ChartOptions {
     colorCount?: number;
 
     /**
-     * The default series type for the chart. Can be any of the chart types
-     * listed under [plotOptions](#plotOptions) and [series](#series) or can
-     * be a series provided by an additional module.
-     *
-     * In TypeScript this option has no effect in sense of typing and
-     * instead the `type` option must always be set in the series.
-     *
-     * @sample {highcharts} highcharts/chart/type-bar/
-     *         Bar
-     * @sample {highstock} stock/chart/type/
-     *         Areaspline
-     * @sample {highmaps} maps/chart/type-mapline/
-     *         Mapline
-     *
-     * @default    {highcharts} line
-     * @default    {highstock} line
-     * @default    {highmaps} map
-     * @since      2.1.0
-     */
-    defaultSeriesType?: string;
-
-    /**
      * By default, (because of memory and performance reasons) the chart does
      * not copy the data but keeps it as a reference. In some cases, this might
      * result in mutating the original data source. In order to prevent that,
