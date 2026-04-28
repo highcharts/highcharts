@@ -205,9 +205,8 @@ function applyBorderRadius(
         const relativeR =
             Math.max(clockwise ? (bigR - r) : (bigR + r), 0.0001),
             // Padding for calculated relativeR value in radians
-            relativeRPadding =
-                innerRadius && innerRadius > 0 && relativeR > 0 ?
-                    (padding / relativeR) : 0,
+            relativeRPadding = relativeR > 0 ? padding / relativeR : 0,
+            padDir = innerRadius && innerRadius > 0 ? -1 : 1,
             // The angle, on the big arc, that the border radius arc takes up
             angleOfBorderRadius = relativeR ? Math.asin(r / relativeR) : 0,
             angleOffset = clockwise ?
@@ -223,7 +222,7 @@ function applyBorderRadius(
             if (fromLineToArc) {
 
                 // Update the cache
-                const rStart = start - relativeRPadding;
+                const rStart = start + padDir * relativeRPadding;
                 params.start = rStart + angleOffset;
 
                 // First move to the start position at the radial line. We
@@ -248,7 +247,7 @@ function applyBorderRadius(
             } else {
 
                 // Update the cache
-                const rEnd = end + relativeRPadding;
+                const rEnd = end - padDir * relativeRPadding;
                 params.end = rEnd - angleOffset;
 
                 // End the big arc a bit earlier
@@ -332,13 +331,18 @@ function arc(
             continue;
         }
 
-        applyBorderRadius(
-            path,
-            i,
-            i > 1 ? innerBorderRadius : borderRadius,
-            padding,
-            innerAlpha <= 0
-        );
+        if (
+            (i > 1 && innerBorderRadius > 0.001) ||
+            (i <= 1 && borderRadius > 0.001)
+        ) {
+            applyBorderRadius(
+                path,
+                i,
+                i > 1 ? innerBorderRadius : borderRadius,
+                padding,
+                innerAlpha <= 0
+            );
+        }
     }
 
     return path;

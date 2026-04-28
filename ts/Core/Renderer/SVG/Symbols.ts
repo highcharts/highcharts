@@ -121,7 +121,8 @@ function arc(
             cx + (fullCircle ? 0.001 : rx * cosEnd),
             cy + ry * sinEnd
         ];
-        arcSegment.params = { start, end, cx, cy }; // Memo for border radius
+        // Memo for border radius
+        arcSegment.params = { start: rawStart, end: rawEnd, cx, cy };
         arc.push(
             [
                 'M',
