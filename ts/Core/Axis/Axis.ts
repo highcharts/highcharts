@@ -292,6 +292,12 @@ class Axis {
      */
     public chart!: Chart;
 
+    /**
+     * Whether this axis is allowed to be clipped to the plot area.
+     * @internal
+     */
+    public clippable = true;
+
     /** @internal */
     public closestPointRange?: number;
 
@@ -3720,7 +3726,7 @@ class Axis {
                 'grid',
                 '-grid',
                 options.gridZIndex
-            );
+            ).clip(this.clippable ? chart.plotClipInner : void 0);
             this.axisGroup = createGroup(
                 'axis',
                 '',
@@ -3795,11 +3801,6 @@ class Axis {
                 tickPositions,
                 coll
             } = axis,
-            invertedSide = (
-                chart.inverted && !axis.isZAxis ?
-                    [1, 0, 3, 2][side] :
-                    side
-            ),
             hasData = axis.hasData(),
             axisTitleOptions = options.title,
             labelOptions = options.labels,
@@ -3975,7 +3976,7 @@ class Axis {
                 0 :
                 // #4308, #4371
                 axis.axisLine.strokeWidth() / 2;
-            clipOffset[invertedSide] = Math.max(clipOffset[invertedSide], clip);
+            clipOffset[side] = Math.max(clipOffset[side], clip);
         }
 
         fireEvent(this, 'afterGetOffset');
@@ -4036,19 +4037,20 @@ class Axis {
      * @function Highcharts.Axis#renderLine
      */
     public renderLine(): void {
-        if (!this.axisLine) {
-            this.axisLine = this.chart.renderer.path()
-                .addClass('highcharts-axis-line')
-                .add(this.axisGroup);
-
-            if (!this.chart.styledMode) {
-                this.axisLine.attr({
-                    stroke: this.options.lineColor,
-                    'stroke-width': this.options.lineWidth,
-                    zIndex: 7
-                });
-            }
-        }
+        const { chart, options } = this;
+        this.axisLine ||= chart.renderer.path()
+            .addClass('highcharts-axis-line')
+            .attr(chart.styledMode ? {} : {
+                stroke: options.lineColor,
+                'stroke-width': options.lineWidth,
+                zIndex: 7
+            })
+            .clip(
+                this.clippable && this.offset <= 0 ?
+                    chart.plotClipOuter :
+                    void 0
+            )
+            .add(this.axisGroup);
     }
 
     /**
@@ -4640,6 +4642,7 @@ class Axis {
                         .attr({
                             zIndex: pick(options.zIndex, 2)
                         })
+                        .clip(chart.plotClipInner)
                         .add();
 
                     // Presentational attributes
