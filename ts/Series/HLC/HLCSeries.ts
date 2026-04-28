@@ -338,7 +338,6 @@ declare module '../../Core/Series/SeriesType' {
     }
 }
 
-HLCSeries.compose(HLCSeries, SVGRenderer);
 SeriesRegistry.registerSeriesType('hlc', HLCSeries);
 
 /* *
