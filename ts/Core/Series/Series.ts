@@ -848,8 +848,8 @@ class Series {
 
         // Create the data table
         this.dataTable ??= (
-            (options.dataTable as DataTableCore)?.isDataTable ?
-                options.dataTable as DataTableCore :
+            options.dataTable?.isDataTable ?
+                options.dataTable :
                 new DataTableCore(options.dataTable)
         );
 
