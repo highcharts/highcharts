@@ -25,6 +25,7 @@ import type { Event as DataCursorEvent } from '../../../../Data/DataCursor';
 import type GridComponent from '../GridComponent.js';
 
 import Component from '../../Component';
+import { hasDataTableProvider } from '../GridDataProvider.js';
 
 /* *
  *
@@ -57,8 +58,10 @@ const syncPair: SyncPair = {
                 typeof cursor?.row === 'number'
             ) {
                 const { row } = cursor;
-                const { viewport } = component.grid;
-                const rowIndex = viewport?.dataTable?.getLocalRowIndex(row);
+                const dataProvider = component.grid.dataProvider;
+                const rowIndex = hasDataTableProvider(dataProvider) ?
+                    dataProvider.getDataTable(true)?.getLocalRowIndex(row) :
+                    void 0;
 
                 if (rowIndex !== void 0) {
                     component.grid.viewport?.scrollToRow(rowIndex);

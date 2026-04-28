@@ -70,5 +70,5 @@ QUnit.test('Chart with newDataAnnouncer', function (assert) {
             'while'
         );
         done();
-    }, 3100); // make sure clearAnnouncementTimerRegion is done
+    }, 3200); // make sure clearAnnouncementTimerRegion is done
 });

@@ -45,7 +45,7 @@ import {
 /**
  * The boxplot series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes#boxplot
  *
@@ -161,7 +161,7 @@ class BoxPlotSeries extends ColumnSeries {
 
     /**
      * Draw the data points
-     * @private
+     * @internal
      */
     public drawPoints(): void {
         const series = this,
@@ -394,6 +394,7 @@ class BoxPlotSeries extends ColumnSeries {
  *
  * */
 
+/** @internal */
 interface BoxPlotSeries extends ColumnSeries {
     doQuartiles?: boolean;
     pointArrayMap: Array<string>;
@@ -417,6 +418,7 @@ extend(BoxPlotSeries.prototype, {
  *
  * */
 
+/** @internal */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         boxplot: typeof BoxPlotSeries;
@@ -431,4 +433,7 @@ SeriesRegistry.registerSeriesType('boxplot', BoxPlotSeries);
  *
  * */
 
+/**
+ * @internal
+ */
 export default BoxPlotSeries;

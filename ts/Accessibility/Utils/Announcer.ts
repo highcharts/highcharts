@@ -117,10 +117,11 @@ class Announcer {
             'aria-atomic': true
         });
 
+        // Apply inline hidden styles too as the class alone depends on
+        // `highcharts.css` being loaded
+        visuallyHideElement(div);
         if (this.chart.styledMode) {
             addClass(div, 'highcharts-visually-hidden');
-        } else {
-            visuallyHideElement(div);
         }
 
         chartContainer.appendChild(div);
@@ -135,7 +136,10 @@ class Announcer {
             'aria-hidden': false,
             'class': 'highcharts-announcer-container'
         });
-        container.style.position = 'relative';
+
+        // Hide inline so the container stays out of flow even when
+        // `highcharts.css` is missing in styled mode
+        visuallyHideElement(container);
 
         chart.renderTo.insertBefore(container, chart.renderTo.firstChild);
         chart.announcerContainer = container;

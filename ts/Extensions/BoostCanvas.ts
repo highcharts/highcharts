@@ -31,7 +31,7 @@ import type Chart from '../Core/Chart/Chart';
 import type ColumnSeries from '../Series/Column/ColumnSeries';
 import type HeatmapSeries from '../Series/Heatmap/HeatmapSeries';
 import type HTMLElement from '../Core/Renderer/HTML/HTMLElement';
-import type Types from '../Shared/Types';
+import type { TypedArray } from '../Shared/Types';
 import type ScatterSeries from '../Series/Scatter/ScatterSeries';
 import type Series from '../Core/Series/Series';
 import type SeriesRegistry from '../Core/Series/SeriesRegistry';
@@ -68,6 +68,11 @@ import {
  *
  * */
 
+/**
+ * The options below are working, but not documented. In case they are
+ * made public, refactor to match BoostDebugOptions interface.
+ * @internal
+ */
 declare module './Boost/BoostOptions' {
     interface BoostOptions {
         timeRendering?: boolean;
@@ -76,6 +81,7 @@ declare module './Boost/BoostOptions' {
     }
 }
 
+/** @internal */
 declare module '../Core/Series/SeriesBase' {
     interface SeriesBase extends BoostTargetObject {
         /** @internal */
@@ -124,6 +130,7 @@ declare module '../Core/Series/SeriesBase' {
  *
  * */
 
+/** @internal */
 namespace BoostCanvas {
 
     /* *
@@ -496,7 +503,7 @@ namespace BoostCanvas {
             requireSorting = series.requireSorting,
             connectNulls = options.connectNulls,
             useRaw = !xData,
-            sdata: Array<any>|Types.TypedArray = (
+            sdata: Array<any>|TypedArray = (
                 isStacked ?
                     series.data :
                     (xData || rawData)
@@ -1020,4 +1027,5 @@ namespace BoostCanvas {
  *
  * */
 
+/** @internal */
 export default BoostCanvas;

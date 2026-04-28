@@ -63,10 +63,7 @@ const WordcloudSeriesDefaults: WordcloudSeriesOptions = {
     allowExtendPlayingField: true,
 
     animation: {
-
-        /** @internal */
         duration: 500
-
     },
 
     borderWidth: 0,
@@ -216,6 +213,7 @@ const WordcloudSeriesDefaults: WordcloudSeriesOptions = {
  *    }]
  *    ```
  *
+ * @basic
  * @type      {Array<Array<string,number>|*>}
  * @extends   series.line.data
  * @excluding drilldown, marker, x, y

@@ -738,8 +738,6 @@ function wrapInit(
                  *
                  * @product      gantt
                  * @optionparent yAxis.labels.symbol
-                 *
-                 * @internal
                  */
                 symbol: {
                     /**
@@ -747,8 +745,6 @@ function wrapInit(
                      * the `Highcharts.Renderer.symbols` collection.
                      *
                      * @type {Highcharts.SymbolKeyValue}
-                     *
-                     * @internal
                      */
                     type: 'triangle',
                     x: -5,

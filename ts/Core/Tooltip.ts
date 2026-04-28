@@ -1215,11 +1215,13 @@ class Tooltip {
                         // (#6659)
                         if (!options.style.width || styledMode) {
                             label.css({
+                                // Subtract padding on both sides so the box
+                                // stays within the available space (#24104)
                                 width: (
                                     this.outside ?
                                         this.getPlayingField() :
                                         chart.spacingBox
-                                ).width + 'px'
+                                ).width - 2 * options.padding + 'px'
                             });
                         }
 
@@ -2121,7 +2123,7 @@ export default Tooltip;
  * The tooltip instance
  *
  * @param {Highcharts.Point} [ctx]
- * Since v12.5.0, the point context passed as an extra argument for arrow
+ * Since v12.6.0, the point context passed as an extra argument for arrow
  * functions.
  *
  * @return {false|string|Array<(string|null|undefined)>|null|undefined}
@@ -2146,7 +2148,7 @@ export default Tooltip;
  * Point information for positioning a tooltip.
  *
  * @param {Highcharts.Tooltip} [ctx]
- * Since v12.5.0, the tooltip context passed as an extra argument for arrow
+ * Since v12.6.0, the tooltip context passed as an extra argument for arrow
  * functions.
  *
  * @return {Highcharts.PositionObject}

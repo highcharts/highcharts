@@ -31,7 +31,7 @@ import { correctFloat, merge } from '../../../Shared/Utilities.js';
 /**
  * The TRIX series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.trix
  *
@@ -107,6 +107,7 @@ class TRIXIndicator extends TEMAIndicator {
  *
  * */
 
+/** @internal */
 interface TRIXIndicator {
     pointClass: typeof TRIXPoint;
 }
@@ -117,6 +118,7 @@ interface TRIXIndicator {
  *
  * */
 
+/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         trix: typeof TRIXIndicator;
@@ -131,6 +133,7 @@ SeriesRegistry.registerSeriesType('trix', TRIXIndicator);
  *
  * */
 
+/** @internal */
 export default TRIXIndicator;
 
 /* *

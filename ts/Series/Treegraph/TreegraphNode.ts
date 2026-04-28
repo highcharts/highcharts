@@ -1,7 +1,7 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Paweł Lysy Grzegorz Blachliński
+ *  Authors: Paweł Lysy, Grzegorz Blachliński
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license

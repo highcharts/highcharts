@@ -1420,7 +1420,7 @@ namespace Chart3D {
             }, {
                 name: 'brighter',
                 slope: 1.4
-            }].forEach(function (cfg): void {
+            }].forEach(function (this: Chart, cfg): void {
                 this.renderer.definition({
                     tagName: 'filter',
                     attributes: {

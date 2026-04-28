@@ -30,6 +30,23 @@ import { addEvent, extend, merge } from '../../Shared/Utilities.js';
 
 /* *
  *
+ *  Declarations
+ *
+ * */
+
+/** @internal */
+declare module '../../Core/Series/SeriesBase' {
+    interface SeriesBase {
+        /**
+         * Allow scatter points on the edge to be interacted
+         * with outside the plot.
+         */
+        allowOutsidePlotInteraction?: boolean;
+    }
+}
+
+/* *
+ *
  *  Class
  *
  * */
@@ -70,7 +87,7 @@ class ScatterSeries extends LineSeries {
      *
      * */
 
-
+    /* eslint-disable valid-jsdoc */
     /**
      * Optionally add the jitter effect.
      * @private
@@ -150,6 +167,7 @@ interface ScatterSeries {
     pointClass: typeof ScatterPoint;
 }
 extend(ScatterSeries.prototype, {
+    allowOutsidePlotInteraction: true,
     drawTracker: ColumnSeries.prototype.drawTracker,
     sorted: false,
     requireSorting: false,
@@ -183,6 +201,7 @@ declare module '../../Core/Series/SeriesType' {
     }
 }
 SeriesRegistry.registerSeriesType('scatter', ScatterSeries);
+
 
 /* *
  *
