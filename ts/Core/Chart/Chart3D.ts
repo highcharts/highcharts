@@ -68,12 +68,10 @@ declare module '../Chart/ChartBase'{
     }
 }
 
-declare module '../Chart/ChartOptions'{
+declare module '../Chart/ChartOptions' {
     interface ChartOptions {
         /**
-         * Options to render charts in 3 dimensions. This feature requires
-         * `highcharts-3d.js`, found in the download package or online at
-         * [code.highcharts.com/highcharts-3d.js](https://code.highcharts.com/highcharts-3d.js).
+         * Options to render chart in 3 dimensions.
          *
          * @since    4.0
          * @product  highcharts
@@ -301,7 +299,6 @@ namespace Chart3D {
 
     /**
      * @optionparent
-     * @internal
      */
     export const defaultOptions = {
 
