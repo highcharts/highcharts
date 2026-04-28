@@ -2137,7 +2137,7 @@ class Series {
                     const row = DataTableCore.prototype.getRowObject.call(
                             { columns },
                             rowIndex
-                        ) as unknown as PointOptions,
+                        ),
                         point = this.data[rowIndex];
 
                     if (row) {
