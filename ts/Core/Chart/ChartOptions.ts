@@ -451,15 +451,28 @@ export interface ChartOptions {
     events?: ChartEventsOptions;
 
     /**
-     * An explicit width for the chart. By default (when `null`) the width
-     * is calculated from the offset width of the containing element.
+     * An explicit height for the chart. If a _number_, the height is
+     * given in pixels. If given a _percentage string_ (for example
+     * `'56%'`), the height is given as the percentage of the actual chart
+     * width. This allows for preserving the aspect ratio across responsive
+     * sizes.
      *
-     * @sample {highcharts} highcharts/chart/width/
-     *         800px wide
-     * @sample {highstock} stock/chart/width/
-     *         800px wide
+     * By default (when `null`) the height is calculated from the offset
+     * height of the containing element, or 400 pixels if the containing
+     * element's height is 0.
+     *
+     * @sample {highcharts} highcharts/chart/height/
+     *         Forced 200px height
+     * @sample {highstock} stock/chart/height/
+     *         300px height
      * @sample {highmaps} maps/chart/size/
      *         Chart with explicit size
+     * @sample highcharts/chart/height-percent/
+     *         Highcharts with percentage height
+     * @sample highcharts/chart/height-inherited/
+     *         Chart with inherited height
+     *
+     * @default null
      */
     height?: (null|number|string);
 
@@ -1029,26 +1042,17 @@ export interface ChartOptions {
     type?: string;
 
     /**
-     * An explicit height for the chart. If a _number_, the height is
-     * given in pixels. If given a _percentage string_ (for example
-     * `'56%'`), the height is given as the percentage of the actual chart
-     * width. This allows for preserving the aspect ratio across responsive
-     * sizes.
+     * An explicit width for the chart. By default (when `null`) the width
+     * is calculated from the offset width of the containing element.
      *
-     * By default (when `null`) the height is calculated from the offset
-     * height of the containing element, or 400 pixels if the containing
-     * element's height is 0.
-     *
-     * @sample {highcharts} highcharts/chart/height/
-     *         Forced 200px height
-     * @sample {highstock} stock/chart/height/
-     *         300px height
+     * @sample {highcharts} highcharts/chart/width/
+     *         800px wide
+     * @sample {highstock} stock/chart/width/
+     *         800px wide
      * @sample {highmaps} maps/chart/size/
      *         Chart with explicit size
-     * @sample highcharts/chart/height-percent/
-     *         Highcharts with percentage height
-     * @sample highcharts/chart/height-inherited/
-     *         Chart with inherited height
+     *
+     * @default null
      */
     width?: (null|number); // @todo Add support for string (percent)
 
