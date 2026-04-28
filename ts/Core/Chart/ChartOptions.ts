@@ -496,6 +496,7 @@ export interface ChartOptions {
      *
      * @since   1.2.0
      * @product highcharts highstock gantt
+     * @default true
      */
     ignoreHiddenSeries?: boolean;
 
@@ -567,7 +568,9 @@ export interface ChartOptions {
     /**
      * The margin between the bottom outer edge of the chart and the plot
      * area. Use this to set a fixed pixel value for the margin as opposed
-     * to the default dynamic margin. See also `spacingBottom`.
+     * to the default dynamic margin.
+     *
+     * @see [spacingBottom](#chart.spacingBottom)
      *
      * @sample {highcharts} highcharts/chart/marginbottom/
      *         100px bottom margin
@@ -576,14 +579,16 @@ export interface ChartOptions {
      * @sample {highmaps} maps/chart/margin/
      *         100px margins
      *
-     * @since     2.0
+     * @since  2.0
      */
     marginBottom?: number;
 
     /**
      * The margin between the left outer edge of the chart and the plot
      * area. Use this to set a fixed pixel value for the margin as opposed
-     * to the default dynamic margin. See also `spacingLeft`.
+     * to the default dynamic margin.
+     *
+     * @see [spacingLeft](#chart.spacingLeft)
      *
      * @sample {highcharts} highcharts/chart/marginleft/
      *         150px left margin
@@ -592,14 +597,16 @@ export interface ChartOptions {
      * @sample {highmaps} maps/chart/margin/
      *         100px margins
      *
-     * @since     2.0
+     * @since  2.0
      */
     marginLeft?: number;
 
     /**
      * The margin between the right outer edge of the chart and the plot
      * area. Use this to set a fixed pixel value for the margin as opposed
-     * to the default dynamic margin. See also `spacingRight`.
+     * to the default dynamic margin.
+     *
+     * @see [spacingRight](#chart.spacingRight)
      *
      * @sample {highcharts} highcharts/chart/marginright/
      *         100px right margin
@@ -608,14 +615,16 @@ export interface ChartOptions {
      * @sample {highmaps} maps/chart/margin/
      *         100px margins
      *
-     * @since     22.0
+     * @since  2.0
      */
     marginRight?: number;
 
     /**
      * The margin between the top outer edge of the chart and the plot area.
      * Use this to set a fixed pixel value for the margin as opposed to
-     * the default dynamic margin. See also `spacingTop`.
+     * the default dynamic margin.
+     *
+     * @see [spacingTop](#chart.spacingTop)
      *
      * @sample {highcharts} highcharts/chart/margintop/
      *         100px top margin
@@ -624,7 +633,7 @@ export interface ChartOptions {
      * @sample {highmaps} maps/chart/margin/
      *         100px margins
      *
-     * @since     2.0
+     * @since  2.0
      */
     marginTop?: number;
 
