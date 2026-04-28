@@ -479,6 +479,9 @@ class Chart {
 
     /**
      * The array of data table instances associated with the chart.
+     *
+     * @name Highcharts.Chart#dataTable
+     * @type {Array<Highcharts.DataTable>}
      */
     public dataTable!: Array<DataTableCore>;
 
