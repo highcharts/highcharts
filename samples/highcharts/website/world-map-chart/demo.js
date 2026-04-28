@@ -414,7 +414,7 @@ async function renderChart() {
 
         // Apply new style for single bar point
         point.update({
-            color: '#014ce5'
+            color: '#DC2626'
         }, true, false);
 
         // Update the bar chart outline position
@@ -476,8 +476,9 @@ async function renderChart() {
                     dataLabels: {
                         enabled: true,
                         style: {
-                            color: '#000000',
-                            fontSize: '14px'
+                            color: 'var(--highcharts-neutral-color-100)',
+                            fontSize: '14px',
+                            textOutline: 'none'
                         },
                         crop: false,
                         overflow: 'allow'
@@ -488,12 +489,12 @@ async function renderChart() {
                 // Add a series with value of 100, that acts as a background
                 // for the progress bar chart
                 data: [100],
-                color: '#e3e3e8',
+                color: 'var(--highcharts-neutral-color-10)',
                 dataLabels: {
                     enabled: false
                 }
             }, {
-                color: '#014ce5',
+                color: '#DC2626',
                 data: [{
                     name: point.name,
                     y: point.y
@@ -550,10 +551,10 @@ async function renderChart() {
         barSeries.customOutline = renderer
             .rect()
             .attr({
-                fill: '#f8f9f9',
-                stroke: '#e5e7e9',
+                fill: 'var(--highcharts-neutral-color-20)',
+                stroke: 'transparent',
                 r: 9,
-                strokeWidth: 1,
+                strokeWidth: 0,
                 zIndex: 1
             })
             .add();
@@ -598,7 +599,7 @@ async function renderChart() {
                                         series.points[0];
 
                                 series.update({
-                                    color: '#2f2e38'
+                                    color: 'var(--highcharts-neutral-color-100)'
                                 }, false);
 
                                 if (customZoomLevels[series.name]) {
@@ -653,8 +654,8 @@ async function renderChart() {
         colorAxis: {
             min: 0,
             max: 100,
-            minColor: '#abbbed',
-            maxColor: '#0243d2',
+            minColor: '#DC2626',
+            maxColor: '#7F1D1D',
             labels: {
                 format: '{value}%',
                 overflow: 'allow'
@@ -672,13 +673,20 @@ async function renderChart() {
         plotOptions: {
             map: {
                 showInLegend: false,
+                borderColor: 'var(--highcharts-neutral-color-10)',
+                borderWidth: 1,
                 allAreas: false,
                 joinBy: ['iso-a2', 'code'],
-                nullColor: '#acabba',
+                nullColor: 'var(--highcharts-neutral-color-20)',
+                states: {
+                    hover: {
+                        borderColor: 'var(--highcharts-neutral-color-3)'
+                    }
+                },
                 events: {
                     mouseOver() {
                         this.update({
-                            color: '#2f2e38'
+                            color: 'var(--highcharts-neutral-color-100)'
                         });
 
                         const barSeries = Highcharts.charts[1].series[1];
@@ -765,6 +773,7 @@ async function renderChart() {
                 enableMouseTracking: false,
                 pointWidth: 10,
                 grouping: false,
+                borderWidth: 0,
                 borderRadius: {
                     radius: 80,
                     where: 'all'
@@ -772,8 +781,9 @@ async function renderChart() {
                 dataLabels: {
                     enabled: true,
                     style: {
-                        color: '#000',
-                        fontSize: '14px'
+                        color: 'var(--highcharts-neutral-color-100)',
+                        fontSize: '14px',
+                        textOutline: 'none'
                     }
                 }
             }
@@ -785,7 +795,7 @@ async function renderChart() {
                 enabled: false
             },
             data: Array.from({ length: barSeries.length }, () => 100),
-            color: '#e3e3e8'
+            color: 'var(--highcharts-neutral-color-10)'
         }, {
             dataLabels: [{
                 align: 'left',
@@ -802,7 +812,7 @@ async function renderChart() {
                 y: -10,
                 alignTo: 'plotEdges'
             }],
-            color: '#2f2e38',
+            color: 'var(--highcharts-neutral-color-100)',
             data: barSeries
         }]
     });

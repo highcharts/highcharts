@@ -221,6 +221,7 @@ const FunnelSeriesDefaults: FunnelSeriesOptions = {
  * @sample {highcharts} highcharts/series/data-array-of-objects/
  *         Config objects
  *
+ * @basic
  * @type      {Array<number|null|*>}
  * @extends   series.pie.data
  * @excluding sliced

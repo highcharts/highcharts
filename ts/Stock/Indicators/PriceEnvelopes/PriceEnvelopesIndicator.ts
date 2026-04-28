@@ -37,7 +37,7 @@ import { extend, isArray, merge } from '../../../Shared/Utilities.js';
 /**
  * The Price Envelopes series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.priceenvelopes
  *
@@ -56,7 +56,7 @@ class PriceEnvelopesIndicator extends SMAIndicator {
      * This series requires the `linkedTo` option to be set and should be loaded
      * after the `stock/indicators/indicators.js` file.
      *
-     * @sample stock/indicators/price-envelopes
+     * @sample {highstock} stock/indicators/price-envelopes
      *         Price envelopes
      *
      * @extends      plotOptions.sma
@@ -235,6 +235,7 @@ class PriceEnvelopesIndicator extends SMAIndicator {
  *
  * */
 
+/** @internal */
 interface PriceEnvelopesIndicator extends MultipleLinesComposition.IndicatorComposition {
     linesApiNames: Array<string>;
     nameComponents: Array<string>;
@@ -263,6 +264,7 @@ MultipleLinesComposition.compose(PriceEnvelopesIndicator);
  *
  * */
 
+/** @internal */
 namespace PriceEnvelopesIndicator {
     export interface GappedExtensionObject {
         options?: GappedExtensionOptions;
@@ -278,6 +280,7 @@ namespace PriceEnvelopesIndicator {
  *
  * */
 
+/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         priceenvelopes: typeof PriceEnvelopesIndicator;
@@ -292,6 +295,7 @@ SeriesRegistry.registerSeriesType('priceenvelopes', PriceEnvelopesIndicator);
  *
  * */
 
+/** @internal */
 export default PriceEnvelopesIndicator;
 
 /* *

@@ -1,5 +1,4 @@
-// SPDX-License-Identifier: LicenseRef-Highcharts
-/**
+/* *
  *
  *  Events generator for Stock tools
  *
@@ -58,6 +57,7 @@ import { fireEvent, merge } from '../../Shared/Utilities.js';
  *
  * */
 
+/** @internal */
 declare module '../../Extensions/Annotations/NavigationBindingsBase' {
     interface NavigationBindingsBase {
         toggledAnnotations?: boolean;
@@ -72,6 +72,7 @@ declare module '../../Extensions/Annotations/NavigationBindingsBase' {
  * */
 
 /**
+ * @internal
  * @sample {highstock} stock/stocktools/custom-stock-tools-bindings
  *         Custom stock tools bindings
  *
@@ -2055,4 +2056,5 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
  *
  * */
 
+/** @internal */
 export default StockToolsBindings;

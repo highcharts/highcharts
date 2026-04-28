@@ -243,7 +243,6 @@ const SunburstSeriesDefaults: SunburstSeriesOptions = {
         rotationMode: 'circular',
 
         style: {
-            /** @internal */
             textOverflow: 'ellipsis'
         }
 
@@ -345,6 +344,7 @@ const SunburstSeriesDefaults: SunburstSeriesOptions = {
  */
 
 /**
+ * @basic
  * @type      {Array<number|null|*>}
  * @extends   series.treemap.data
  * @excluding x, y

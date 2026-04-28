@@ -248,9 +248,25 @@ export interface MarkerClusterLayoutAlgorithmOptions {
 }
 
 export interface MarkerClusterMarkerOptions extends PointMarkerOptions {
+    /** @default 0 */
+    lineWidth?: PointMarkerOptions['lineWidth'];
+
+    /** @default ${palette.backgroundColor} */
+    lineColor?: PointMarkerOptions['lineColor'];
+
+    /** @default 15 */
+    radius?: PointMarkerOptions['radius'];
+
+    /** @default 'cluster' */
+    symbol?: PointMarkerOptions['symbol'];
+
+    /* *
+     *
+     *  Excluded
+     *
+     * */
+
     enabledThreshold?: undefined;
-    lineWidth?: number;
-    radius?: number;
     states?: undefined;
 }
 
@@ -294,10 +310,27 @@ export interface MarkerClusterOptions {
     /**
      * Options for the cluster data labels.
      *
-     * @default {"enabled": true, "format": "{point.clusterPointsAmount}", "verticalAlign": "middle", "align": "center", "style": { "color": "contrast" }, "inside": true}
      * @requires modules/marker-clusters
      */
-    dataLabels?: DataLabelOptions;
+    dataLabels?: DataLabelOptions & {
+        /** @default true */
+        enabled?: DataLabelOptions['enabled'];
+
+        /** @default { color: 'contrast' } */
+        style?: DataLabelOptions['style'];
+
+        /** @default true */
+        inside?: DataLabelOptions['inside'];
+
+        /** @default '{point.clusterPointsAmount}' */
+        format?: DataLabelOptions['format'];
+
+        /** @default 'middle' */
+        verticalAlign?: DataLabelOptions['verticalAlign'];
+
+        /** @default 'center' */
+        align?: DataLabelOptions['align'];
+    };
 
     /**
      * Zoom the plot area to the cluster points range when a cluster is clicked.
@@ -342,7 +375,6 @@ export interface MarkerClusterOptions {
      *
      * Defaults to a cluster symbol with radius 15, no line, and a line color
      * matching the chart background.
-     * @extends   plotOptions.series.marker
      *
      * @requires modules/marker-clusters
      */

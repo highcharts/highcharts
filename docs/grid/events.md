@@ -11,6 +11,7 @@ Highcharts Grid Pro supports event listeners for grid interactions. Events are c
 - **Cell events** are configured in [columnDefaults.cells.events](https://api.highcharts.com/grid/columnDefaults.cells.events) or [columns[].cells.events](https://api.highcharts.com/grid/columns.cells.events)
 - **Header events** are configured in [columnDefaults.header.events](https://api.highcharts.com/grid/columnDefaults.header.events) or [columns[].header.events](https://api.highcharts.com/grid/columns.header.events)
 - **Pagination events** are configured in [pagination.events](https://api.highcharts.com/grid/pagination.events)
+- **Row pinning events** are configured in `rendering.rows.pinning.events`
 
 ## Grid-level events
 
@@ -113,6 +114,39 @@ Grid-level events are configured at the root `events` property:
         },
         afterRedraw: function () {
             console.log('Grid DOM redraw finished.');
+        },
+    }
+}
+```
+
+## Row pinning events
+
+Row pinning events are configured in `rendering.rows.pinning.events`:
+
+```js
+{
+    rendering: {
+        rows: {
+            pinning: {
+                events: {
+                    beforeRowPin: function (event) {
+                        console.log(
+                            'Before row pinning change:',
+                            this,
+                            event.action,
+                            event.rowId
+                        );
+                    },
+                    afterRowPin: function (event) {
+                        console.log(
+                            'After row pinning change:',
+                            this,
+                            event.action,
+                            event.rowId
+                        );
+                    }
+                }
+            }
         }
     }
 }

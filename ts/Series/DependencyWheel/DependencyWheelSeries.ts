@@ -34,9 +34,9 @@ const {
     sankey: SankeySeries
 } = SeriesRegistry.seriesTypes;
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
-import TextPath from '../../Extensions/TextPath.js';
+import { composeTextPath } from '../../Extensions/TextPath.js';
 import { extend, merge, relativeLength } from '../../Shared/Utilities.js';
-TextPath.compose(SVGElement);
+composeTextPath(SVGElement);
 
 /* *
  *
@@ -226,7 +226,7 @@ class DependencyWheelSeries extends SankeySeries {
             factor = 2 * Math.PI /
                 (series.chart.plotHeight + series.getNodePadding()),
             center = series.getCenter(),
-            startAngle = ((options.startAngle as any) - 90) * deg2rad,
+            startAngle = ((options.startAngle || 0) - 90) * deg2rad,
             brOption = options.borderRadius,
             borderRadius = typeof brOption === 'object' ?
                 brOption.radius : brOption;

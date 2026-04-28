@@ -183,13 +183,9 @@ const TimelineSeriesDefaults: TimelineSeriesOptions = {
         padding: 5,
 
         style: {
-            /** @internal */
             textOutline: 'none',
-            /** @internal */
             fontWeight: 'normal',
-            /** @internal */
             fontSize: '0.8em',
-            /** @internal */
             textAlign: 'left'
         },
 
@@ -262,6 +258,7 @@ const TimelineSeriesDefaults: TimelineSeriesOptions = {
  * @sample {highcharts} highcharts/series-timeline/datetime-axis
  *         Real time intervals
  *
+ * @basic
  * @type      {Array<*>}
  * @extends   series.line.data
  * @excluding marker, y

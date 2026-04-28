@@ -36,7 +36,7 @@ import { correctFloat, isArray, merge } from '../../../Shared/Utilities.js';
 /**
  * The TEMA series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.tema
  *
@@ -267,6 +267,7 @@ class TEMAIndicator extends EMAIndicator {
  *
  * */
 
+/** @internal */
 interface TEMAIndicator {
     pointClass: typeof TEMAPoint;
 }
@@ -277,6 +278,7 @@ interface TEMAIndicator {
  *
  * */
 
+/** @internal */
 namespace TEMAIndicator {
 
     /* *
@@ -296,15 +298,28 @@ namespace TEMAIndicator {
 
 /* *
  *
+ *  Class Prototype
+ *
+ * */
+
+/** @internal */
+interface TEMAIndicator {
+    pointClass: typeof TEMAPoint;
+}
+
+/* *
+ *
  *  Registry
  *
  * */
 
+/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         tema: typeof TEMAIndicator;
     }
 }
+
 SeriesRegistry.registerSeriesType('tema', TEMAIndicator);
 
 /* *
@@ -313,6 +328,7 @@ SeriesRegistry.registerSeriesType('tema', TEMAIndicator);
  *
  * */
 
+/** @internal */
 export default TEMAIndicator;
 
 /* *

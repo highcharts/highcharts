@@ -42,9 +42,7 @@ import { error } from '../../../Core/Utilities.js';
  * */
 
 // Utils:
-/**
- *
- */
+/** @internal */
 function sumArray(array: Array<number>): number {
 
     return array.reduce(function (prev: number, cur: number): number {
@@ -52,23 +50,17 @@ function sumArray(array: Array<number>): number {
     });
 }
 
-/**
- *
- */
+/** @internal */
 function toFixed(a: number, n: number): number {
     return parseFloat(a.toFixed(n));
 }
 
-/**
- *
- */
+/** @internal */
 function calculateTypicalPrice(point: Array<number>): number {
     return (point[1] + point[2] + point[3]) / 3;
 }
 
-/**
- *
- */
+/** @internal */
 function calculateRawMoneyFlow(typicalPrice: number, volume: number): number {
     return typicalPrice * volume;
 }
@@ -82,7 +74,7 @@ function calculateRawMoneyFlow(typicalPrice: number, volume: number): number {
 /**
  * The MFI series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.mfi
  *
@@ -100,7 +92,7 @@ class MFIIndicator extends SMAIndicator {
      * Money Flow Index. This series requires `linkedTo` option to be set and
      * should be loaded after the `stock/indicators/indicators.js` file.
      *
-     * @sample stock/indicators/mfi
+     * @sample {highstock} stock/indicators/mfi
      *         Money Flow Index Indicator
      *
      * @extends      plotOptions.sma
@@ -264,6 +256,7 @@ class MFIIndicator extends SMAIndicator {
  *
  * */
 
+/** @internal */
 interface MFIIndicator {
     nameBase: string;
     pointClass: typeof MFIPoint;
@@ -279,6 +272,7 @@ extend(MFIIndicator.prototype, {
  *
  * */
 
+/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         mfi: typeof MFIIndicator;
@@ -293,6 +287,7 @@ SeriesRegistry.registerSeriesType('mfi', MFIIndicator);
  *
  * */
 
+/** @internal */
 export default MFIIndicator;
 
 /* *

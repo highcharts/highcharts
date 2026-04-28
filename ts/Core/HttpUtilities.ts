@@ -111,7 +111,7 @@ export interface AjaxSuccessCallbackFunction {
  * @return {false | undefined}
  * Returns false, if error occurred.
  */
-function ajax(
+export function ajax(
     settings: AjaxSettingsObject
 ): (false | undefined) {
     const headers: Record<string, string> = {

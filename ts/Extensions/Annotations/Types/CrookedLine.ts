@@ -206,6 +206,7 @@ class CrookedLine extends Annotation {
     public addControlPoints(): void {
         this.getControlPointsOptions().forEach(
             function (
+                this: CrookedLine,
                 pointOptions: AnnotationMockPointOptionsObject,
                 i: number
             ): void {

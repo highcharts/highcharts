@@ -106,7 +106,7 @@ const ArcDiagramSeriesDefaults: ArcDiagramSeriesOptions = {
 
             /**
              * @type    {Highcharts.SVGAttributes}
-             * @default {"startOffset":"25%"}
+             * @default { startOffset: '25%' }
              */
             attributes: {
 
@@ -269,6 +269,7 @@ const ArcDiagramSeriesDefaults: ArcDiagramSeriesOptions = {
  *     }]
  *  ```
  *
+ * @basic
  * @type      {Array<*>}
  * @extends   series.sankey.data
  * @product   highcharts

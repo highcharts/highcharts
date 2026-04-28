@@ -42,6 +42,17 @@ export interface OrganizationDataLabelOptions extends SankeyDataLabelOptions {
     nodeFormatter?: OrganizationDataLabelsFormatterCallbackFunction;
     linkFormat?: string;
     linkFormatter?: OrganizationDataLabelsFormatterCallbackFunction;
+
+    style?: SankeyDataLabelOptions['style'] & {
+        /** @default '0.9em' */
+        fontSize?: Required<SankeyDataLabelOptions>['style']['fontSize'];
+
+        /** @default 'normal' */
+        fontWeight?: Required<SankeyDataLabelOptions>['style']['fontWeight'];
+
+        /** @default 'left' */
+        textAlign?: Required<SankeyDataLabelOptions>['style']['textAlign'];
+    };
 }
 
 /* *

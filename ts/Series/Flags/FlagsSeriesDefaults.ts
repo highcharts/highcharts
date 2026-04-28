@@ -307,6 +307,7 @@ const FlagsSeriesDefaults: FlagsSeriesOptions = {
  *    }]
  *    ```
  *
+ * @basic
  * @type      {Array<*>}
  * @extends   series.line.data
  * @excluding dataLabels, marker, name, y

@@ -401,6 +401,7 @@ export default MapBubbleSeries;
  *        }]
  *    ```
  *
+ * @basic
  * @type      {Array<number|null|*>}
  * @extends   series.mappoint.data
  * @excluding labelrank, middleX, middleY, path, value, x, y, lat, lon

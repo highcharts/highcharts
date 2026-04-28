@@ -124,14 +124,79 @@ export abstract class ContextMenu extends Popup {
     }
 
     protected override onClickOutside(event: MouseEvent): void {
-        const buttons = this.buttons;
-        for (let i = 0, iEnd = buttons.length; i < iEnd; ++i) {
-            if (buttons[i].popup?.container?.contains(event.target as Node)) {
-                return;
-            }
+        const target = event.target as Node;
+        if (this.isInDescendantPopup(target)) {
+            return;
         }
 
         super.onClickOutside(event);
+    }
+
+    /**
+     * Checks whether an element is contained in any descendant popup.
+     *
+     * @param target
+     * Target node from click event.
+     *
+     * @returns
+     * True when the target is inside any descendant popup container.
+     */
+    private isInDescendantPopup(target: Node): boolean {
+        const queue: Popup[] = [];
+
+        for (const button of this.buttons) {
+            if (button.popup?.container) {
+                queue.push(button.popup);
+            }
+        }
+
+        while (queue.length) {
+            const popup = queue.shift();
+            if (!popup?.container) {
+                continue;
+            }
+
+            if (popup.container.contains(target)) {
+                return true;
+            }
+
+            const popupButtons = (popup as {
+                buttons?: ContextMenuButton[];
+            }).buttons;
+
+            if (!popupButtons) {
+                continue;
+            }
+
+            for (const button of popupButtons) {
+                if (button.popup?.container) {
+                    queue.push(button.popup);
+                }
+            }
+        }
+
+        return false;
+    }
+
+    protected override addEventListeners(): void {
+        super.addEventListeners();
+
+        const container = this.container;
+        if (!container) {
+            return;
+        }
+
+        const insideMouseDownListener = (event: MouseEvent): void => {
+            event.stopPropagation();
+        };
+
+        container.addEventListener('mousedown', insideMouseDownListener);
+        this.eventListenerDestroyers.push((): void => {
+            container.removeEventListener(
+                'mousedown',
+                insideMouseDownListener
+            );
+        });
     }
 
     protected override onKeyDown(e: KeyboardEvent): void {

@@ -66,10 +66,7 @@ declare module '../../Core/Series/SeriesBase' {
 /**
  * Internal function to sort series data
  *
- * @private
- * @function Highcharts.Series#sortData
- * @param {Array<Highcharts.PointOptionsType>} data
- * Force data grouping.
+ * @internal
  */
 function sortData(
     series: Series,

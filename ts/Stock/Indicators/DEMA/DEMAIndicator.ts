@@ -38,7 +38,7 @@ import { correctFloat, isArray, merge } from '../../../Shared/Utilities.js';
 /**
  * The DEMA series Type
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.dema
  *
@@ -214,6 +214,7 @@ class DEMAIndicator extends EMAIndicator {
  *
  * */
 
+/** @internal */
 interface DEMAIndicator {
     pointClass: typeof DEMAPoint;
 }
@@ -224,6 +225,7 @@ interface DEMAIndicator {
  *
  * */
 
+/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         dema: typeof DEMAIndicator;
@@ -237,6 +239,7 @@ SeriesRegistry.registerSeriesType('dema', DEMAIndicator);
  *
  * */
 
+/** @internal */
 export default DEMAIndicator;
 
 /* *
