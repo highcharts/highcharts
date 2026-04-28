@@ -768,10 +768,10 @@ namespace AxisDefaults {
                  * tick, e.g. start of day, start of year, etc.
                  *
                  * @type {string|Highcharts.DateTimeFormatOptions}
-                 * @default undefined
+                 * @default '%Y'
                  * @apioption xAxis.dateTimeLabelFormats.month.boundary
                  */
-                boundary: void 0
+                boundary: '%Y'
             },
             /**
              * @declare Highcharts.AxisDateTimeLabelFormatsOptionsObject
