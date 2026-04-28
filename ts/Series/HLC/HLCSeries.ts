@@ -61,7 +61,7 @@ class HLCSeries extends ColumnSeries {
      * */
 
     public static compose(
-        SeriesClass: typeof Series,
+        _SeriesClass: typeof Series,
         SVGRendererClass: typeof SVGRenderer
     ): void {
         FinancialSymbols.compose(SVGRendererClass);
@@ -338,6 +338,7 @@ declare module '../../Core/Series/SeriesType' {
     }
 }
 
+HLCSeries.compose(HLCSeries, SVGRenderer);
 SeriesRegistry.registerSeriesType('hlc', HLCSeries);
 
 /* *
