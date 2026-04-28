@@ -521,10 +521,10 @@ Highcharts.chart('gauge-11', {
         max: 4,
         tickAmount: 2,
         stops: [
-            [0.4999, '#55BF3B'],
-            [0.5,    '#DF5353']
+            [0.4999, '#DF5353'],
+            [0.5,    '#55BF3B']
         ],
-        title: { text: 'Loss', y: 20 },
+        title: { text: 'Loss/Gain', y: 20 },
         plotLines: [{
             value: 0,
             color: 'var(--highcharts-neutral-color-100)',
@@ -533,7 +533,7 @@ Highcharts.chart('gauge-11', {
         }]
     },
     series: [{
-        name: 'Loss',
+        name: 'Loss/Gain',
         data: [-1.2],
         threshold: 0,
         dataLabels: {
