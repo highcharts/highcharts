@@ -655,11 +655,10 @@ export interface ChartOptions {
      * properties of the click event argument (`event.altKey`,
      * `event.ctrlKey`, `event.metaKey` and `event.shiftKey`).
      *
-     * @since      4.0.3
-     * @product    highcharts gantt
-     * @validvalue ["alt", "ctrl", "meta", "shift"]
+     * @since   4.0.3
+     * @product highcharts gantt
      */
-    panKey?: 'ctrl'|'shift';
+    panKey?: 'alt'|'ctrl'|'meta'|'shift';
 
     /**
      * Allow panning in a chart. Best used with [panKey](#chart.panKey)
@@ -1125,28 +1124,15 @@ export interface ChartOptions {
     zoomType?: ('x'|'xy'|'y');
 }
 
-/**
- * Allow panning in a chart. Best used with [panKey](#chart.panKey)
- * to combine zooming and panning.
- *
- * On touch devices, when the [tooltip.followTouchMove](
- * #tooltip.followTouchMove) option is `true` (default), panning
- * requires two fingers. To allow panning with one finger, set
- * `followTouchMove` to `false`.
- *
- * @sample  {highcharts} highcharts/chart/pankey/
- *          Zooming and panning
- * @sample  {highstock} stock/chart/panning/
- *          Zooming and xy panning
- */
 export interface ChartPanningOptions {
     /**
      * Enable or disable chart panning.
      *
-     * @default   {highcharts} false
-     * @default   {highstock|highmaps} true
+     * @default {highcharts} false
+     * @default {highstock|highmaps} true
      */
     enabled: boolean;
+
     /**
      * Decides in what dimensions the user can pan the chart. Can be
      * one of `x`, `y`, or `xy`.
@@ -1164,12 +1150,10 @@ export interface ChartPanningOptions {
      * @sample {highcharts} highcharts/chart/panning-type
      *         Zooming and xy panning
      *
-     * @product    highcharts highstock gantt
+     * @product highcharts highstock gantt
      */
-    type: ChartPanningTypeValue;
+    type: 'x' | 'y' | 'xy';
 }
-
-export type ChartPanningTypeValue = ('x'|'y'|'xy');
 
 export type ChartPinchTypeValue = ('x'|'y'|'xy');
 
