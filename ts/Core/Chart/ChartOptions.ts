@@ -1151,6 +1151,7 @@ export interface ChartPanningOptions {
      *         Zooming and xy panning
      *
      * @product highcharts highstock gantt
+     * @default 'x'
      */
     type: 'x' | 'y' | 'xy';
 }
