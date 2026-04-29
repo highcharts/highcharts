@@ -212,5 +212,3 @@ Now that Grid is installed, explore what you can build:
 - **[Understanding Grid](https://www.highcharts.com/docs/grid/understanding-grid)** – Configure columns, data sources, and events
 - **[Theming guide](https://www.highcharts.com/docs/grid/theming/index)** – Customize the look and feel
 - **[API reference](https://api.highcharts.com/grid/)** – Complete options and methods documentation
-
-> **Upgrading from an older version?** Use the standalone Grid Lite or Grid Pro packages shown above instead of the legacy Dashboards bundle.
