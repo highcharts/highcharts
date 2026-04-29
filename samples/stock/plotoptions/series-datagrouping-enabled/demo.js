@@ -1,5 +1,4 @@
 const data = Array.from({ length: 800 }, (_, i) => [
-    i * 1000,
     Math.round((2 * Math.sin(i / 50) + Math.random() - 0.5) * 100)
 ]);
 
@@ -10,23 +9,23 @@ Highcharts.stockChart('container', {
     plotOptions: {
         series: {
             pointStart: '2025-01-01',
-            pointInterval: 24 * 36e5
+            pointInterval: 60 * 1000
         }
     },
     series: [
         {
             data,
-            name: 'Data Grouping enabled',
+            name: 'Data Grouping disabled',
             dataGrouping: {
                 enabled: false
             }
         },
         {
-            name: 'Data Grouping disabled',
+            name: 'Data Grouping enabled',
             data,
             dataGrouping: {
                 forced: true,
-                units: [['second', [10]]]
+                units: [['minute', [15]]]
             }
         }
     ]
