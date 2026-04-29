@@ -246,6 +246,71 @@ QUnit.test('Pointer.getHoverData', function (assert) {
         'the same index as the hoverPoint'
     );
 
+    // Bubble series should also participate in shared tooltips.
+    var bubbleChart = Highcharts.chart('container', {
+        chart: {
+            animation: false,
+            width: 1000
+        },
+        tooltip: {
+            shared: true
+        },
+        series: [
+            {
+                type: 'bubble',
+                data: [
+                    [0, 1, 1],
+                    [1, 1, 2]
+                ]
+            },
+            {
+                type: 'bubble',
+                data: [
+                    [0, 2, 1],
+                    [1, 2, 2]
+                ]
+            }
+        ]
+    });
+    point = bubbleChart.series[0].points[1];
+    data = bubbleChart.pointer.getHoverData(
+        point,
+        bubbleChart.series[0],
+        bubbleChart.series,
+        true,
+        true,
+        {
+            chartX: point.plotX || 0,
+            chartY: point.plotY || 0
+        }
+    );
+    assert.strictEqual(
+        bubbleChart.series[0].noSharedTooltip,
+        false,
+        'Bubble series should opt into shared tooltip mode'
+    );
+    assert.strictEqual(
+        data.hoverPoints.length,
+        2,
+        'Bubble series should contribute one point per series in shared ' +
+        'tooltips'
+    );
+    assert.strictEqual(
+        !!find(data.hoverPoints, function (p) {
+            return p.series === bubbleChart.series[1];
+        }),
+        true,
+        'Bubble series should include the matching series in shared tooltip'
+    );
+    assert.strictEqual(
+        !!find(data.hoverPoints, function (p) {
+            return p.x !== data.hoverPoint.x;
+        }),
+        false,
+        'Bubble series shared tooltip points should align on the same x value'
+    );
+    bubbleChart.destroy();
+
     // Reset, avoid breaking tests downstream
     Highcharts.Series.types.scatter.prototype.noSharedTooltip = true;
 
