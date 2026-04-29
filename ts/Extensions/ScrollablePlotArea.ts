@@ -481,8 +481,6 @@ export class ScrollablePlotArea {
             height: `${chartHeight + scrollbarHeight}px`
         });
 
-        delete chart.pointer?.chartPosition;
-
         // Keep the fixed renderer at the chart size. We reserve space by
         // expanding the scrolling container, not by shrinking fixed elements.
         fixedRenderer.setSize(chartWidth, chartHeight);
