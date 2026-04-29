@@ -259,23 +259,24 @@ QUnit.test('Pointer.getHoverData', function (assert) {
             {
                 type: 'bubble',
                 data: [
-                    [0, 1, 1],
-                    [1, 1, 2]
+                    ['A', 21709, 2201],
+                    ['B', 4932, 500]
                 ]
             },
             {
                 type: 'bubble',
                 data: [
-                    [0, 2, 1],
-                    [1, 2, 2]
+                    ['C', 5602, 500],
+                    ['D', 43499, 4258],
+                    ['B', 26773, 2260]
                 ]
             }
         ]
     });
-    point = bubbleChart.series[0].points[1];
+    point = bubbleChart.series[1].points[2];
     data = bubbleChart.pointer.getHoverData(
         point,
-        bubbleChart.series[0],
+        bubbleChart.series[1],
         bubbleChart.series,
         true,
         true,
@@ -292,15 +293,16 @@ QUnit.test('Pointer.getHoverData', function (assert) {
     assert.strictEqual(
         data.hoverPoints.length,
         2,
-        'Bubble series should contribute one point per series in shared ' +
-        'tooltips'
+        'Bubble series should contribute one point per matching series in ' +
+        'shared tooltips'
     );
     assert.strictEqual(
         !!find(data.hoverPoints, function (p) {
-            return p.series === bubbleChart.series[1];
+            return p.series === bubbleChart.series[0];
         }),
         true,
-        'Bubble series should include the matching series in shared tooltip'
+        'Bubble series should include the matching point from the other ' +
+        'series in shared tooltip'
     );
     assert.strictEqual(
         !!find(data.hoverPoints, function (p) {

@@ -562,7 +562,10 @@ class BubbleSeries extends ScatterSeries {
     ): void {
         super.init(chart, options);
 
-        this.noSharedTooltip = !chart.tooltip?.shared;
+        this.noSharedTooltip = !(
+            this.tooltipOptions.shared ||
+            this.tooltipOptions.split
+        );
     }
 
     /**
