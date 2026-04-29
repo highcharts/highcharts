@@ -27,7 +27,8 @@ import { DataTableValue } from '../../../Data/DataTableOptions';
 import type { ColumnDataType } from '../Table/Column';
 import type {
     RowObject as RowObjectType,
-    CellType as DataTableCellType
+    CellType as DataTableCellType,
+    Column as DataTableColumnType
 } from '../../../Data/DataTable';
 import type { DataEvent } from '../../../Data/DataEvent';
 import type DataConnectorType from '../../../Data/Connectors/DataConnectorType';
@@ -394,6 +395,97 @@ export class LocalDataProvider extends DataProvider {
         });
 
         return Promise.resolve();
+    }
+
+    public override supportsRowMutation(): boolean {
+        return true;
+    }
+
+    public override supportsColumnMutation(): boolean {
+        return true;
+    }
+
+    public override getOriginalRowIndex(
+        rowId: RowId
+    ): Promise<number | undefined> {
+        return Promise.resolve(this.resolveOriginalRowIndex(rowId));
+    }
+
+    public override async insertRow(
+        row: RowObjectType,
+        atOriginalIndex: number
+    ): Promise<RowId | undefined> {
+        const table = this.dataTable;
+        if (!table) {
+            return;
+        }
+
+        const clampedIndex = Math.max(
+            0,
+            Math.min(atOriginalIndex, table.rowCount)
+        );
+
+        table.setRow(row, clampedIndex, true, { fromGrid: true });
+
+        this.originalRowIndexesMap = this.createOriginalRowIndexesMap();
+        this.querying.shouldBeUpdated = true;
+        await this.applyQuery();
+
+        const idColumn = this.options.idColumn;
+        if (idColumn) {
+            const candidate = row[idColumn];
+            if (isString(candidate) || isNumber(candidate)) {
+                return candidate;
+            }
+        }
+        return void 0;
+    }
+
+    public override async deleteRow(rowId: RowId): Promise<void> {
+        const table = this.dataTable;
+        if (!table) {
+            return;
+        }
+
+        const originalIndex = this.resolveOriginalRowIndex(rowId);
+        if (originalIndex === void 0) {
+            // eslint-disable-next-line no-console
+            console.warn('[deleteRow] Unknown row id:', rowId);
+            return;
+        }
+
+        table.deleteRows(originalIndex, 1, { fromGrid: true });
+
+        this.originalRowIndexesMap = this.createOriginalRowIndexesMap();
+        this.querying.shouldBeUpdated = true;
+        await this.applyQuery();
+    }
+
+    public override async insertColumn(
+        columnId: string,
+        column: DataTableColumnType
+    ): Promise<void> {
+        const table = this.dataTable;
+        if (!table) {
+            return;
+        }
+
+        table.setColumns({ [columnId]: column }, void 0, { fromGrid: true });
+
+        this.querying.shouldBeUpdated = true;
+        await this.applyQuery();
+    }
+
+    public override async deleteColumn(columnId: string): Promise<void> {
+        const table = this.dataTable;
+        if (!table) {
+            return;
+        }
+
+        table.deleteColumns([columnId], { fromGrid: true });
+
+        this.querying.shouldBeUpdated = true;
+        await this.applyQuery();
     }
 
     /**

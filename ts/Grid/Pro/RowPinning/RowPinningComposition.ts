@@ -44,7 +44,10 @@ import RowPinningController, {
 } from './RowPinningController.js';
 import RowPinningView, { classNames } from './RowPinningView.js';
 import PinnedTableCell from './PinnedTableCell.js';
-import { registerBuiltInAction } from '../../Core/Table/Body/CellContextMenuBuiltInActions.js';
+import {
+    registerBuiltInAction,
+    registerBuiltInGroup
+} from '../../Core/Table/Body/CellContextMenuBuiltInActions.js';
 import {
     addEvent,
     merge,
@@ -64,6 +67,7 @@ export const defaultOptions: DeepPartial<Options> = {
         pinRowTop: 'Pin row to top',
         pinRowBottom: 'Pin row to bottom',
         unpinRow: 'Unpin row',
+        pinningGroup: 'Pinning',
         accessibility: {
             rowPinning: {
                 announcements: {
@@ -147,7 +151,8 @@ export function compose(
 }
 
 /**
- * Registers row pinning built-in context menu actions.
+ * Registers row pinning built-in context menu actions and the `pinning`
+ * group that bundles them in the default menu.
  */
 function registerBuiltInActions(): void {
     registerBuiltInAction(
@@ -163,8 +168,7 @@ function registerBuiltInActions(): void {
             onClick: (cell, rowId): void => {
                 void cell.row.viewport.grid.rowPinning?.pin(rowId, 'top');
             }
-        },
-        true
+        }
     );
 
     registerBuiltInAction(
@@ -180,8 +184,7 @@ function registerBuiltInActions(): void {
             onClick: (cell, rowId): void => {
                 void cell.row.viewport.grid.rowPinning?.pin(rowId, 'bottom');
             }
-        },
-        true
+        }
     );
 
     registerBuiltInAction(
@@ -197,9 +200,17 @@ function registerBuiltInActions(): void {
             onClick: (cell, rowId): void => {
                 void cell.row.viewport.grid.rowPinning?.unpin(rowId);
             }
-        },
-        true
+        }
     );
+
+    registerBuiltInGroup('pinning', {
+        getLabel: (cell): string =>
+            cell.row.viewport.grid.options?.lang?.pinningGroup || 'Pinning',
+        icon: 'pin',
+        items: ['pinRowTop', 'pinRowBottom', 'unpinRow'],
+        isActive: (cell, rowId): boolean =>
+            isRowPinningActionVisible(cell, rowId)
+    });
 }
 
 /**

@@ -26,6 +26,7 @@ import type {
     CellContextMenuActionItemOptions,
     CellContextMenuBuiltInItemOptions,
     CellContextMenuDividerItemOptions,
+    CellContextMenuGroupId,
     CellContextMenuItemOptions
 } from '../../Options';
 import type { GridIconName } from '../../UI/SvgIcons';
@@ -45,6 +46,13 @@ import {
 
 const warnedUnknownActionIds = new Set<string>();
 
+/**
+ * @deprecated
+ * Kept for backwards compatibility. Built-in defaults are now driven by
+ * registered groups (see `registerBuiltInGroup`). The `useByDefault` flag
+ * on `registerBuiltInAction` still pushes into this array, but the array
+ * is no longer consulted by the default resolver.
+ */
 export const defaultBuiltInCellContextMenuActions: CellContextMenuActionId[] =
     [];
 
@@ -52,6 +60,13 @@ const builtInActionDefinitions: Partial<Record<
     CellContextMenuActionId,
     BuiltInActionDefinition
 >> = {};
+
+const builtInGroupDefinitions: Partial<Record<
+    CellContextMenuGroupId,
+    BuiltInGroupDefinition
+>> = {};
+
+const builtInGroupOrder: CellContextMenuGroupId[] = [];
 
 export interface ResolvedCellContextMenuActionItemOptions {
     label: string;
@@ -90,6 +105,43 @@ export interface BuiltInActionDefinition {
 }
 
 /**
+ * Definition of a built-in context menu group. A group bundles a set of
+ * built-in action ids under a single key and activation predicate, so
+ * features can contribute a cohesive section to the default menu.
+ */
+export interface BuiltInGroupDefinition {
+    /**
+     * Resolves the group's submenu header label at render time.
+     * Used when the group renders as a submenu section in the default menu.
+     */
+    getLabel: (cell: TableCell) => string;
+
+    /**
+     * Optional icon shown on the submenu header.
+     */
+    icon?: GridIconName;
+
+    /**
+     * Ordered built-in action ids that make up this group. The order
+     * determines the rendering order of items inside the group submenu
+     * (or inline when the group is the only active group or when a user
+     * references the group id in a custom `items` array).
+     */
+    items: CellContextMenuActionId[];
+
+    /**
+     * Predicate that gates whether the group is active for the given cell.
+     * Only active groups participate in the default menu, and a group
+     * referenced by id in a user-provided `items` array only expands when
+     * this predicate returns true.
+     */
+    isActive: (
+        cell: TableCell,
+        rowId: string|number|undefined
+    ) => boolean;
+}
+
+/**
  * Registers one built-in context menu action.
  *
  * @param actionId
@@ -99,7 +151,13 @@ export interface BuiltInActionDefinition {
  * Action behavior definition.
  *
  * @param useByDefault
- * Whether the action should be added to the default menu set.
+ * Legacy flag. When `true`, pushes the action id onto the deprecated
+ * `defaultBuiltInCellContextMenuActions` array.
+ *
+ * @deprecated Kept for backwards compatibility only. The default menu is
+ * now driven by groups registered via `registerBuiltInGroup` — setting
+ * this flag no longer surfaces the action in the default menu.
+ * Contribute via a group instead.
  */
 export function registerBuiltInAction(
     actionId: CellContextMenuActionId,
@@ -114,6 +172,36 @@ export function registerBuiltInAction(
     ) {
         defaultBuiltInCellContextMenuActions.push(actionId);
     }
+}
+
+/**
+ * Registers a built-in context menu group.
+ *
+ * Groups are activated per-cell via their `isActive` predicate. When the
+ * user has not provided a custom `items` array, every active group
+ * contributes to the default menu:
+ *  - when exactly one group is active, its items render inline (flat);
+ *  - when two or more groups are active, each group renders as a submenu
+ *    section with the group's label and icon.
+ *
+ * Groups can also be referenced by id inside a user-provided `items`
+ * array; in that case they are always expanded inline and are filtered
+ * by the same `isActive` predicate.
+ *
+ * @param groupId
+ * Built-in group identifier.
+ *
+ * @param definition
+ * Group definition (label, icon, items, activation predicate).
+ */
+export function registerBuiltInGroup(
+    groupId: CellContextMenuGroupId,
+    definition: BuiltInGroupDefinition
+): void {
+    if (!builtInGroupDefinitions[groupId]) {
+        builtInGroupOrder.push(groupId);
+    }
+    builtInGroupDefinitions[groupId] = definition;
 }
 
 /* *
@@ -181,20 +269,20 @@ function hasNestedItems(
 }
 
 /**
- * Logs unknown built-in action ids once per id.
+ * Logs unknown built-in action or group ids once per id.
  *
- * @param actionId
- * Unknown action id.
+ * @param id
+ * Unknown action or group id.
  */
-function warnUnknownBuiltInAction(actionId: string): void {
-    if (warnedUnknownActionIds.has(actionId)) {
+function warnUnknownBuiltInAction(id: string): void {
+    if (warnedUnknownActionIds.has(id)) {
         return;
     }
-    warnedUnknownActionIds.add(actionId);
+    warnedUnknownActionIds.add(id);
 
     // eslint-disable-next-line no-console
     console.warn(
-        `Grid cell context menu: Unknown built-in actionId "${actionId}".`
+        `Grid cell context menu: Unknown built-in action or group id "${id}".`
     );
 }
 
@@ -291,6 +379,150 @@ function resolveBuiltInAction(
 }
 
 /**
+ * Whether the given id has a registered built-in group.
+ *
+ * @param id
+ * Candidate group id.
+ *
+ * @return
+ * True when a group with this id is registered.
+ */
+function isRegisteredGroup(id: string): boolean {
+    return builtInGroupDefinitions[id as CellContextMenuGroupId] !== void 0;
+}
+
+/**
+ * Resolves an active group's items into resolved action items for inline
+ * rendering. Returns `undefined` when the group is unknown or its
+ * activation predicate returns false for the given cell.
+ *
+ * @param groupId
+ * Built-in group id.
+ *
+ * @param cell
+ * Table cell for the context menu.
+ *
+ * @return
+ * Resolved action items for an active group, otherwise `undefined`.
+ */
+function resolveActiveGroupItems(
+    groupId: string,
+    cell: TableCell
+): ResolvedCellContextMenuActionItemOptions[] | undefined {
+    const group =
+        builtInGroupDefinitions[groupId as CellContextMenuGroupId];
+
+    if (!group) {
+        return;
+    }
+
+    const rowId = getCurrentRowId(cell);
+    if (!group.isActive(cell, rowId)) {
+        return;
+    }
+
+    const items: ResolvedCellContextMenuActionItemOptions[] = [];
+    for (const actionId of group.items) {
+        const resolved = resolveBuiltInAction(actionId, cell);
+        if (resolved) {
+            items.push(resolved);
+        }
+    }
+    return items;
+}
+
+/**
+ * Enumerates groups whose activation predicate passes for the given cell,
+ * preserving registration order.
+ *
+ * @param cell
+ * Table cell for the context menu.
+ *
+ * @return
+ * Array of active group descriptors in registration order.
+ */
+function getActiveGroupsForCell(
+    cell: TableCell
+): Array<{ id: CellContextMenuGroupId; def: BuiltInGroupDefinition; }> {
+    const rowId = getCurrentRowId(cell);
+    const active: Array<{
+        id: CellContextMenuGroupId;
+        def: BuiltInGroupDefinition;
+    }> = [];
+
+    for (const id of builtInGroupOrder) {
+        const def = builtInGroupDefinitions[id];
+        if (def && def.isActive(cell, rowId)) {
+            active.push({ id, def });
+        }
+    }
+
+    return active;
+}
+
+/**
+ * Builds the default context menu items from active groups.
+ *
+ * When no groups are active, returns an empty array.
+ * When exactly one group is active, returns its items inline (flat).
+ * When two or more groups are active, each group becomes a submenu
+ * branch whose label and icon come from the group registration.
+ *
+ * @param cell
+ * Table cell for the context menu.
+ *
+ * @return
+ * Default resolved context menu items.
+ */
+function buildDefaultCellContextMenuItems(
+    cell: TableCell
+): ResolvedCellContextMenuItemOptions[] {
+    const active = getActiveGroupsForCell(cell);
+
+    if (active.length === 0) {
+        return [];
+    }
+
+    if (active.length === 1) {
+        const items: ResolvedCellContextMenuItemOptions[] = [];
+        for (const actionId of active[0].def.items) {
+            const resolved = resolveBuiltInAction(actionId, cell);
+            if (resolved) {
+                items.push(resolved);
+            }
+        }
+        return items;
+    }
+
+    const branches: ResolvedCellContextMenuItemOptions[] = [];
+    for (const { def } of active) {
+        const groupItems: ResolvedCellContextMenuActionItemOptions[] = [];
+        for (const actionId of def.items) {
+            const resolved = resolveBuiltInAction(actionId, cell);
+            if (resolved) {
+                groupItems.push(resolved);
+            }
+        }
+
+        if (!groupItems.length) {
+            continue;
+        }
+
+        const allDisabled = groupItems.every((i): boolean => !!i.disabled);
+
+        branches.push({
+            label: def.getLabel(cell),
+            icon: def.icon,
+            disabled: allDisabled,
+            onClick: void 0,
+            items: groupItems
+        });
+    }
+
+    return branches;
+}
+
+/**
  * Resolves raw item declarations recursively.
  *
  * @param cell
@@ -310,17 +542,17 @@ function resolveCellContextMenuItemsAtLevel(
     rawItems: CellContextMenuItemOptions[] | undefined,
     useDefaults: boolean
 ): ResolvedCellContextMenuItemOptions[] {
-    const sourceItems = rawItems === void 0 ?
-        (useDefaults ? defaultBuiltInCellContextMenuActions : []) :
-        rawItems;
+    if (rawItems === void 0) {
+        return useDefaults ? buildDefaultCellContextMenuItems(cell) : [];
+    }
 
-    if (!sourceItems.length) {
+    if (!rawItems.length) {
         return [];
     }
 
     const resolved: ResolvedCellContextMenuItemOptions[] = [];
 
-    for (const rawItem of sourceItems) {
+    for (const rawItem of rawItems) {
         if (isDivider(rawItem)) {
             resolved.push(rawItem);
             continue;
@@ -333,6 +565,20 @@ function resolveCellContextMenuItemsAtLevel(
         const isBranch = childItems.length > 0;
 
         if (typeof rawItem === 'string') {
+            // Group ids take precedence over action ids. A registered
+            // group that is currently inactive contributes nothing and
+            // does NOT fall through to action-id resolution (which would
+            // otherwise produce a misleading "unknown id" warning).
+            if (isRegisteredGroup(rawItem)) {
+                const groupItems = resolveActiveGroupItems(rawItem, cell);
+                if (groupItems) {
+                    for (const groupItem of groupItems) {
+                        resolved.push(groupItem);
+                    }
+                }
+                continue;
+            }
+
             const builtInItem = resolveBuiltInAction(rawItem, cell);
             if (builtInItem) {
                 resolved.push(builtInItem);
@@ -419,5 +665,6 @@ export function resolveCellContextMenuItems(
 export default {
     defaultBuiltInCellContextMenuActions,
     registerBuiltInAction,
+    registerBuiltInGroup,
     resolveCellContextMenuItems
 } as const;

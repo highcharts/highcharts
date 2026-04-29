@@ -120,10 +120,15 @@ declare module '../../Core/Options' {
         unpinRow: never;
     }
 
+    interface CellContextMenuBuiltInGroupIdRegistry {
+        pinning: never;
+    }
+
     interface LangOptions {
         pinRowTop?: string;
         pinRowBottom?: string;
         unpinRow?: string;
+        pinningGroup?: string;
     }
 
     interface RowsSettings {

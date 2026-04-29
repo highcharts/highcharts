@@ -36,16 +36,53 @@ The context menu is enabled/disabled per column using `contextMenu.enabled`.
 When `enabled` is omitted, Grid enables the context menu when:
 
 - `contextMenu.items` is provided (explicit opt-in), or
-- built-in actions are registered by a composed feature and at least one of
-  those actions is enabled for the clicked cell.
-
-In Grid Pro, row pinning registers built-in actions by default:
-`pinRowTop`, `pinRowBottom`, `unpinRow`.
+- one or more built-in groups is active for the clicked cell (see below).
 
 If `items` is empty, the browser's native context menu is kept.
 
 Use `contextMenu: { enabled: false }` to disable Grid context menu for a
 column (or globally via `columnDefaults`).
+
+## Default menu and built-in groups
+
+In Grid Pro, common feature actions are grouped into built-in groups that
+activate automatically when the matching feature is enabled. Each group has a
+stable key and an ordered list of built-in actions:
+
+| Group id    | Actions                                        | Activated by  |
+|-------------|------------------------------------------------|---------------|
+| `pinning`   | `pinRowTop`, `pinRowBottom`, `unpinRow`        | Row pinning   |
+| `rows`      | `addRowAbove`, `addRowBelow`, `deleteRow`      | Cell editing  |
+| `columns`   | `addColumnBefore`, `addColumnAfter`, `deleteColumn` | Cell editing |
+
+When `contextMenu.items` is not provided, Grid assembles a default menu from
+the currently active groups:
+
+- **One active group** — the group's actions render flat at the top level,
+  without a submenu wrapper. (Example: row pinning only.)
+- **Two or more active groups** — each group renders as its own submenu
+  section with the group's label and icon. (Example: editing enabled, which
+  activates both `rows` and `columns`.)
+
+## Overriding the default menu
+
+Custom `items` arrays may contain:
+
+- Individual **built-in action** keys (strings), e.g. `'pinRowTop'`.
+- Built-in **group** keys (strings), e.g. `'pinning'` — the group is expanded
+  inline at that position (not wrapped in a submenu). A group is only
+  expanded when its activation predicate is true.
+- Custom action items (`{ label, onClick, icon? }`).
+- Built-in overrides (`{ actionId, label?, icon?, disabled? }`).
+- Dividers (`{ separator: true }`).
+
+A flat "editing only" menu:
+
+```js
+contextMenu: {
+    items: ['rows', { separator: true }, 'columns']
+}
+```
 
 ## Keyboard access
 
@@ -62,11 +99,12 @@ Each item supports:
 - `disabled: true`: Disables the item
 - `onClick(cell)`: Callback invoked when the item is clicked
 
-Grid Pro exposes these built-in row pinning action IDs:
+Grid Pro exposes these built-in action IDs:
 
-- `'pinRowTop'`
-- `'pinRowBottom'`
-- `'unpinRow'`
+- Row pinning: `'pinRowTop'`, `'pinRowBottom'`, `'unpinRow'` (group `'pinning'`)
+- Row mutations: `'addRowAbove'`, `'addRowBelow'`, `'deleteRow'` (group `'rows'`)
+- Column mutations: `'addColumnBefore'`, `'addColumnAfter'`, `'deleteColumn'`
+  (group `'columns'`)
 
 These built-in actions are not available in Grid Lite.
 
@@ -97,18 +135,25 @@ the native browser context menu.
 
 ## Localize built-in labels
 
-Built-in row pinning actions use these root language keys in Grid Pro:
+Built-in actions use root language keys:
 
-- `lang.pinRowTop`
-- `lang.pinRowBottom`
-- `lang.unpinRow`
+- `lang.pinRowTop`, `lang.pinRowBottom`, `lang.unpinRow`
+- `lang.addRowAbove`, `lang.addRowBelow`, `lang.deleteRow`
+- `lang.addColumnBefore`, `lang.addColumnAfter`, `lang.deleteColumn`
+
+Built-in group labels (used as submenu section headers in the default menu):
+
+- `lang.pinningGroup`
+- `lang.rowsGroup`
+- `lang.columnsGroup`
 
 ```js
 Grid.grid('container', {
     lang: {
         pinRowTop: 'Pin to top',
         pinRowBottom: 'Pin to bottom',
-        unpinRow: 'Remove pin'
+        unpinRow: 'Remove pin',
+        pinningGroup: 'Pinning actions'
     }
 });
 ```
@@ -172,4 +217,4 @@ onClick: function (cell) {
 
 ## Demo
 
-<iframe src="https://www.highcharts.com/samples/embed/grid/demo/cell-context-menu?force-light-theme" allow="fullscreen"></iframe>
+<iframe src="https://www.highcharts.com/samples/embed/grid-pro/demo/cell-context-menu?force-light-theme" allow="fullscreen"></iframe>
