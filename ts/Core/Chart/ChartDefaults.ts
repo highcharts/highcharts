@@ -818,7 +818,7 @@ const ChartDefaults: ChartOptions = {
      * @sample {highmaps} maps/chart/reflow-false/
      *         False
      *
-     * @since     2.1
+     * @since 2.1
      */
     reflow: true,
 
@@ -1351,6 +1351,7 @@ const ChartDefaults: ChartOptions = {
      *         Gradient
      *
      * @type      {Highcharts.ColorType}
+     * @default   'none'
      * @apioption chart.plotBackgroundColor
      */
 

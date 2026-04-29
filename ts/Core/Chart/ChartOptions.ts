@@ -718,6 +718,8 @@ export interface ChartOptions {
      *         Color
      * @sample {highmaps} maps/chart/plotbackgroundcolor-gradient/
      *         Gradient
+     *
+     * @default 'none'
      */
     plotBackgroundColor?: ColorType;
 
@@ -750,6 +752,8 @@ export interface ChartOptions {
      *         Blue border
      * @sample {highmaps} maps/chart/plotborder/
      *         Plot border options
+     *
+     * @default ${palette.neutralColor20}
      */
     plotBorderColor?: ColorType;
 
@@ -763,13 +767,13 @@ export interface ChartOptions {
      * @sample {highmaps} maps/chart/plotborder/
      *         Plot border options
      *
-     * @default   0
+     * @default 0
      */
     plotBorderWidth?: number;
 
     /**
      * Whether to apply a drop shadow to the plot area. Requires that
-     * plotBackgroundColor be set. The shadow can be an object configuration
+     * `plotBackgroundColor` be set. The shadow can be an object configuration
      * containing `color`, `offsetX`, `offsetY`, `opacity` and `width`.
      *
      * @sample {highcharts} highcharts/chart/plotshadow/
@@ -779,7 +783,7 @@ export interface ChartOptions {
      * @sample {highmaps} maps/chart/plotborder/
      *         Plot border options
      *
-     * @default   false
+     * @default false
      */
     plotShadow?: (boolean|Partial<ShadowOptionsObject>);
 
@@ -800,7 +804,8 @@ export interface ChartOptions {
      * @sample {highmaps} maps/chart/reflow-false/
      *         False
      *
-     * @since     2.1
+     * @since   2.1
+     * @default true
      */
     reflow?: boolean;
 
