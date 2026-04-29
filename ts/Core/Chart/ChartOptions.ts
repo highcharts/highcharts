@@ -228,6 +228,7 @@ export interface ChartEventsOptions {
 export interface ChartLoadCallbackFunction {
     (this: Chart, event: Event): void;
 }
+
 /**
  * General options for the chart.
  */
@@ -528,13 +529,13 @@ export interface ChartOptions {
      * For picking out individual shapes and geometries to use for each series
      * of the map, see [series.mapData](#series.map.mapData).
      *
-     * @sample    maps/demo/geojson
-     *            Loading GeoJSON data
-     * @sample    maps/chart/topojson
-     *            Loading TopoJSON data
+     * @sample  maps/demo/geojson
+     *          Loading GeoJSON data
+     * @sample  maps/chart/topojson
+     *          Loading TopoJSON data
      *
-     * @since     5.0.0
-     * @product   highmaps
+     * @since   5.0.0
+     * @product highmaps
      */
     map?: string|GeoJSON|TopoJSON;
 
@@ -542,8 +543,8 @@ export interface ChartOptions {
      * Set lat/lon transformation definitions for the chart. If not defined,
      * these are extracted from the map data.
      *
-     * @since     5.0.0
-     * @product   highmaps
+     * @since   5.0.0
+     * @product highmaps
      */
     mapTransforms?: any; // @todo migrate to unknown
 
@@ -681,6 +682,10 @@ export interface ChartOptions {
     panning?: ChartPanningOptions;
 
     /**
+     * Deprecated. Use
+     * [chart.zooming.pinchType](#chart.zooming.pinchType)
+     * instead.
+     *
      * Equivalent to [zoomType](#chart.zoomType), but for multitouch
      * gestures only. By default, the `pinchType` is the same as the
      * `zoomType` setting. However, pinching can be enabled separately in
@@ -689,13 +694,11 @@ export interface ChartOptions {
      * #tooltip.followTouchMove) is true, pinchType only applies to
      * two-finger touches.
      *
-     * @default    {highcharts} undefined
-     * @default    {highstock} undefined
      * @since      3.0
      * @product    highcharts highstock gantt
-     * @deprecated
+     * @deprecated 10.2.1
      */
-    pinchType?: ChartPinchTypeValue;
+    pinchType?: 'x' | 'y' | 'xy';
 
     /**
      * The background color or gradient for the plot area.
@@ -1065,33 +1068,44 @@ export interface ChartOptions {
     width?: (null|number); // @todo Add support for string (percent)
 
     /**
+     * Deprecated. Use
+     * [chart.zooming.singleTouch](#chart.zooming.singleTouch)
+     * instead.
+     *
      * Enables zooming by a single touch, in combination with
      * [chart.zoomType](#chart.zoomType). When enabled, two-finger pinch
      * will still work as set up by [chart.pinchType](#chart.pinchType).
      * However, `zoomBySingleTouch` will interfere with touch-dragging the
      * chart to read the tooltip. And especially when vertical zooming is
      * enabled, it will make it hard to scroll vertically on the page.
-     * @since      9.0.0
+     *
      * @sample     highcharts/chart/zoombysingletouch
      *             Zoom by single touch enabled, with buttons to toggle
+     *
      * @product    highcharts highstock gantt
-     * @deprecated
+     * @since      9.0.0
+     * @default    false
+     * @deprecated 10.2.1
      */
     zoomBySingleTouch?: boolean;
 
     /**
      * Chart zooming options.
      *
-     * @sample     highcharts/plotoptions/sankey-node-color
-     *             Zooming in sankey series
-     * @sample     highcharts/series-treegraph/link-types
-     *             Zooming in treegraph series
+     * @sample highcharts/plotoptions/sankey-node-color
+     *         Zooming in sankey series
+     * @sample highcharts/series-treegraph/link-types
+     *         Zooming in treegraph series
      *
      * @since 10.2.1
      */
     zooming: Partial<ChartZoomingOptions>;
 
     /**
+     * Deprecated. Use
+     * [chart.zooming.type](#chart.zooming.type)
+     * instead.
+     *
      * Decides in what dimensions the user can zoom by dragging the mouse.
      * Can be one of `x`, `y` or `xy`.
      *
@@ -1118,10 +1132,9 @@ export interface ChartOptions {
      * @sample {highstock} stock/chart/zoomtype-xy/
      *         Map with selection zoom
      *
-     * @validvalue ["x", "y", "xy"]
-     * @deprecated
+     * @deprecated 10.2.1
      */
-    zoomType?: ('x'|'xy'|'y');
+    zoomType?: 'x' | 'xy' | 'y';
 }
 
 export interface ChartPanningOptions {
@@ -1155,8 +1168,6 @@ export interface ChartPanningOptions {
      */
     type: 'x' | 'y' | 'xy';
 }
-
-export type ChartPinchTypeValue = ('x'|'y'|'xy');
 
 export interface ChartRedrawCallbackFunction {
     (this: Chart, event: Event): void;
@@ -1252,30 +1263,7 @@ export interface ChartSelectionContextObject {
     yAxis: Array<ChartSelectionAxisContextObject>;
 }
 
-/**
- * Chart zooming options.
- * @since 10.2.1
- *
- * @sample     highcharts/plotoptions/sankey-node-color
- *             Zooming in sankey series
- * @sample     highcharts/series-treegraph/link-types
- *             Zooming in treegraph series
- */
 export interface ChartZoomingOptions {
-    /**
-     * Set a key to hold when dragging to zoom the chart. This is useful to
-     * avoid zooming while moving points. Should be set different than
-     * [chart.panKey](#chart.panKey).
-     *
-     * **Note:** If both zooming and panning are enabled without keys, zooming
-     * will take precedence by default. To prioritize panning, either set
-     * zooming key or [chart.panKey](#chart.panKey).
-     *
-     * @default    {highcharts} undefined
-     * @validvalue ["alt", "ctrl", "meta", "shift"]
-     * @requires   modules/draggable-points
-     */
-    key?: string;
     /**
      * Equivalent to [type](#chart.zooming.type), but for multitouch
      * gestures only. By default, the `pinchType` is the same as the
@@ -1291,6 +1279,7 @@ export interface ChartZoomingOptions {
      * @validvalue ["x", "y", "xy"]
      */
     pinchType?: string;
+
     /**
      * The button that appears after a selection zoom, allowing the user
      * to reset zoom.
@@ -1322,10 +1311,8 @@ export interface ChartZoomingOptions {
      * @default    {highcharts} undefined
      * @product    highcharts highstock gantt
      */
-    type?: ChartZoomingTypeValue;
+    type?: 'x' | 'xy' | 'y';
 }
-
-export type ChartZoomingTypeValue = ('x'|'xy'|'y');
 
 /* *
  *
