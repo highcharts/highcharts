@@ -16,6 +16,13 @@ Highcharts.stockChart('container', {
         valueSuffix: '°C'
     },
 
+    plotOptions: {
+        series: {
+            pointStart: '2025-01-01',
+            pointInterval: 24 * 36e5
+        }
+    },
+
     series: [{
         id: 'a',
         name: 'Temperatures',

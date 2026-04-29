@@ -7,6 +7,12 @@ Highcharts.stockChart('container', {
     legend: {
         enabled: true
     },
+    plotOptions: {
+        series: {
+            pointStart: '2025-01-01',
+            pointInterval: 24 * 36e5
+        }
+    },
     series: [
         {
             data,

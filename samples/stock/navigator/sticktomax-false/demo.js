@@ -14,6 +14,8 @@ const chart = Highcharts.stockChart('container', {
     },
 
     series: [{
+        pointStart: '2025-01-01',
+        pointInterval: 24 * 36e5,
         data: (function () {
             const data = [];
 

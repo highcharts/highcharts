@@ -514,12 +514,23 @@ namespace AxisDefaults {
         /**
          * For a datetime axis, the scale will automatically adjust to the
          * appropriate unit. This member gives the default representations used
-         * for each unit. For boundary values, time units from one level higher
-         * unit can be used, for example the `day` unit can be used on midnight,
-         * and the `month` unit can be used on the first day of the week.
+         * for each unit. For easier data interpretation, `hour`, `day`, `month`
+         * and `year` units can be used and formatted as boundary tick values.
+         * Check boundaries map below to see where to format boundary ticks on
+         * given main time units.
          *
-         * For easier data interpretation, `hour`, `day`, `month` and
-         * `year` units can be used and formatted as boundary tick values.
+         * ```js
+         *     baseUnit: boundaryUnit
+         *     ----------------------
+         *     millisecond: 'hour',
+         *     second: 'hour',
+         *     minute: 'hour',
+         *     hour: 'day',
+         *     day: 'month',
+         *     week: 'month',
+         *     month: 'year',
+         *     year: 'year'
+         * ```
          *
          * For an overview of the date time label formats configuration, see
          * [dateFormat](/class-reference/Highcharts.Time#dateFormat).
@@ -533,7 +544,7 @@ namespace AxisDefaults {
          *     hour: { main: '%[HM]', boundary: undefined },
          *     day: { main: '%[eb]', boundary: '%[eb]' },
          *     week: { main: '%[eb]' },
-         *     month: { main: '%[bY]', boundary: undefined },
+         *     month: { main: '%[bY]', boundary: '%Y' },
          *     year: { main: '%Y', boundary: undefined }
          * }
          * ```
