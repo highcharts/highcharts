@@ -659,6 +659,10 @@ const ChartDefaults: ChartOptions = {
     spacing: [10, 10, 15, 10],
 
     /**
+     * Deprecated. Use
+     * [chart.zooming.resetButton](#chart.zooming.resetButton)
+     * instead.
+     *
      * The button that appears after a selection zoom, allowing the user
      * to reset zoom. This option is deprecated in favor of
      * [zooming](#chart.zooming).
@@ -1173,7 +1177,7 @@ const ChartDefaults: ChartOptions = {
              *         Relative to the chart
              *
              * @type      {Highcharts.ButtonRelativeToValue}
-             * @default   plot
+             * @default   plotBox
              * @apioption chart.zooming.resetButton.relativeTo
              */
 

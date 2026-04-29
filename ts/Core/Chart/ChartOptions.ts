@@ -827,6 +827,10 @@ export interface ChartOptions {
     renderTo?: (string|HTMLDOMElement);
 
     /**
+     * Deprecated. Use
+     * [chart.zooming.resetButton](#chart.zooming.resetButton)
+     * instead.
+     *
      * The button that appears after a selection zoom, allowing the user
      * to reset zoom. This option is deprecated in favor of
      * [zooming](#chart.zooming).
@@ -1182,10 +1186,6 @@ export interface ChartRenderCallbackFunction {
     (this: Chart, event: Event): void;
 }
 
-/**
- * The button that appears after a selection zoom, allowing the user
- * to reset zoom.
- */
 export interface ChartResetZoomButtonOptions {
     /**
      * The position of the button.
@@ -1221,12 +1221,11 @@ export interface ChartResetZoomButtonOptions {
      * What frame the button placement should be related to. Can be
      * either `plotBox` or `spacingBox`.
      *
-     * @sample {highcharts} highcharts/chart/resetzoombutton-relativeto/
-     *         Relative to the chart
-     * @sample {highstock} highcharts/chart/resetzoombutton-relativeto/
+     * @sample {highcharts|highstock}
+     *         highcharts/chart/resetzoombutton-relativeto/
      *         Relative to the chart
      *
-     * @default   plot
+     * @default 'plotBox'
      */
     relativeTo?: ButtonRelativeToValue;
 
@@ -1242,12 +1241,10 @@ export interface ChartResetZoomButtonOptions {
      * @sample {highstock} highcharts/chart/resetzoombutton-theme/
      *         Theming the button
      *
-     * @since 10.2.1
+     * @since   10.2.1
+     * @default { zIndex: 6 }
      */
-    theme?: SVGAttributes & {
-        /** @default 6 */
-        zIndex?: SVGAttributes['zIndex'];
-    };
+    theme?: SVGAttributes;
 }
 
 export interface ChartSelectionAxisContextObject {
