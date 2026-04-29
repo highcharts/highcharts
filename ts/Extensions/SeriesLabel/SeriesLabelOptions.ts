@@ -1,7 +1,7 @@
 /* *
  *
  *  (c) 2009-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -45,7 +45,7 @@ export interface SeriesLabelOptions {
     connectorAllowed?: boolean;
 
     /**
-     * If the label is closer than this to a neighbour graph, draw a connector.
+     * If the label is closer than this to a neighbor graph, draw a connector.
      *
      * @default  24
      */
@@ -111,10 +111,14 @@ export interface SeriesLabelOptions {
     /**
      * Styles for the series label. The color defaults to the series
      * color, or a contrast color if `onArea`.
-     *
-     * @default  {"fontSize": "0.8em", "fontWeight": "bold"}
      */
-    style?: CSSObject;
+    style?: CSSObject & {
+        /** @default '0.8em' */
+        fontSize?: CSSObject['fontSize'];
+
+        /** @default 'bold' */
+        fontWeight?: CSSObject['fontWeight'];
+    };
 
     /**
      * Whether to use HTML to render the series label.

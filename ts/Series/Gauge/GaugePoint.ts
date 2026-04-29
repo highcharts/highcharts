@@ -1,7 +1,7 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -58,7 +58,6 @@ class GaugePoint extends Point {
      *
      * */
 
-    /* eslint-disable valid-jsdoc */
 
     /**
      * Don't do any hover colors or anything
@@ -68,7 +67,6 @@ class GaugePoint extends Point {
         this.state = state;
     }
 
-    /* eslint-enable valid-jsdoc */
 }
 
 /* *

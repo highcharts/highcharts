@@ -976,6 +976,10 @@
     "mainType": "boolean"
   },
   {
+    "name": "boost.chunkSize",
+    "mainType": "number"
+  },
+  {
     "name": "boost.debug.showSkipSummary",
     "mainType": "boolean"
   },
@@ -1099,12 +1103,12 @@
   },
   {
     "name": "chart.backgroundColor",
-    "mainType": "ColorString",
+    "mainType": "ColorType",
     "default": "#ffffff"
   },
   {
     "name": "chart.borderColor",
-    "mainType": "ColorString",
+    "mainType": "ColorType",
     "default": "#334eff"
   },
   {
@@ -1266,7 +1270,7 @@
   },
   {
     "name": "chart.options3d.frame.bottom.color",
-    "mainType": "ColorString"
+    "mainType": "ColorType"
   },
   {
     "name": "chart.options3d.frame.bottom.size",
@@ -1293,7 +1297,7 @@
   },
   {
     "name": "chart.options3d.frame.side.color",
-    "mainType": "ColorString"
+    "mainType": "ColorType"
   },
   {
     "name": "chart.options3d.frame.side.size",
@@ -1400,7 +1404,7 @@
   },
   {
     "name": "chart.plotBackgroundColor",
-    "mainType": "ColorString"
+    "mainType": "ColorType"
   },
   {
     "name": "chart.plotBackgroundImage",
@@ -1408,7 +1412,7 @@
   },
   {
     "name": "chart.plotBorderColor",
-    "mainType": "ColorString",
+    "mainType": "ColorType",
     "default": "#cccccc"
   },
   {
@@ -1491,7 +1495,7 @@
   },
   {
     "name": "chart.selectionMarkerFill",
-    "mainType": "ColorString"
+    "mainType": "ColorType"
   },
   {
     "name": "chart.seriesGroupShadow",
@@ -1645,7 +1649,7 @@
   },
   {
     "name": "colorAxis.dataClasses.color",
-    "mainType": "ColorString"
+    "mainType": "ColorType"
   },
   {
     "name": "colorAxis.dataClasses.from",
@@ -1670,7 +1674,7 @@
   },
   {
     "name": "colorAxis.gridLineColor",
-    "mainType": "ColorString",
+    "mainType": "ColorType",
     "default": "#ffffff"
   },
   {
@@ -1715,7 +1719,7 @@
   },
   {
     "name": "colorAxis.marker.color",
-    "mainType": "ColorString",
+    "mainType": "ColorType",
     "default": "#999999"
   },
   {
@@ -1724,7 +1728,7 @@
   },
   {
     "name": "colorAxis.maxColor",
-    "mainType": "ColorString",
+    "mainType": "ColorType",
     "default": "#0022ff"
   },
   {
@@ -1738,7 +1742,7 @@
   },
   {
     "name": "colorAxis.minColor",
-    "mainType": "ColorString",
+    "mainType": "ColorType",
     "default": "#e6e9ff"
   },
   {
@@ -1779,6 +1783,11 @@
     "default": 72
   },
   {
+    "name": "colorAxis.title.margin",
+    "mainType": "number",
+    "default": 5
+  },
+  {
     "name": "colorAxis.type",
     "mainType": "ColorAxisTypeValue",
     "options": [
@@ -1796,7 +1805,7 @@
   },
   {
     "name": "colors",
-    "mainType": "Array.<(ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject)>"
+    "mainType": "Array.<ColorType>"
   },
   {
     "name": "connectors.algorithmMargin",
@@ -1840,7 +1849,7 @@
   },
   {
     "name": "connectors.marker.color",
-    "mainType": "ColorString"
+    "mainType": "ColorType"
   },
   {
     "name": "connectors.marker.enabled",
@@ -3052,6 +3061,16 @@
     "default": "Play"
   },
   {
+    "name": "lang.accessibility.stockTools.arrowLabel",
+    "mainType": "string",
+    "default": "Toggle submenu"
+  },
+  {
+    "name": "lang.accessibility.stockTools.groupLabel",
+    "mainType": "string",
+    "default": "Stock chart tools"
+  },
+  {
     "name": "lang.accessibility.svgContainerLabel",
     "mainType": "string",
     "default": "Interactive chart"
@@ -3114,11 +3133,6 @@
     "name": "lang.downloadJPEG",
     "mainType": "string",
     "default": "Download JPEG image"
-  },
-  {
-    "name": "lang.downloadMIDI",
-    "mainType": "string",
-    "default": "Download MIDI"
   },
   {
     "name": "lang.downloadPDF",
@@ -3884,11 +3898,6 @@
     "default": "Slice"
   },
   {
-    "name": "lang.playAsSound",
-    "mainType": "string",
-    "default": "Play as sound"
-  },
-  {
     "name": "lang.printChart",
     "mainType": "string",
     "default": "Print chart"
@@ -4311,11 +4320,11 @@
   },
   {
     "name": "legend.backgroundColor",
-    "mainType": "ColorString"
+    "mainType": "ColorType"
   },
   {
     "name": "legend.borderColor",
-    "mainType": "ColorString",
+    "mainType": "ColorType",
     "default": "#999999"
   },
   {
@@ -4329,7 +4338,7 @@
   },
   {
     "name": "legend.bubbleLegend.borderColor",
-    "mainType": "ColorString"
+    "mainType": "ColorType"
   },
   {
     "name": "legend.bubbleLegend.borderWidth",
@@ -4342,7 +4351,7 @@
   },
   {
     "name": "legend.bubbleLegend.color",
-    "mainType": "ColorString"
+    "mainType": "ColorType"
   },
   {
     "name": "legend.bubbleLegend.connectorClassName",
@@ -4350,7 +4359,7 @@
   },
   {
     "name": "legend.bubbleLegend.connectorColor",
-    "mainType": "ColorString"
+    "mainType": "ColorType"
   },
   {
     "name": "legend.bubbleLegend.connectorDistance",
@@ -4426,15 +4435,15 @@
   },
   {
     "name": "legend.bubbleLegend.ranges.borderColor",
-    "mainType": "ColorString"
+    "mainType": "ColorType"
   },
   {
     "name": "legend.bubbleLegend.ranges.color",
-    "mainType": "ColorString"
+    "mainType": "ColorType"
   },
   {
     "name": "legend.bubbleLegend.ranges.connectorColor",
-    "mainType": "ColorString"
+    "mainType": "ColorType"
   },
   {
     "name": "legend.bubbleLegend.ranges.value",
@@ -4522,7 +4531,7 @@
   },
   {
     "name": "legend.labelFormatter",
-    "mainType": "FormatterCallbackFunction.<(Point|Series)>"
+    "mainType": "FormatterCallbackFunction.<(Highcharts.Point|Highcharts.Series)>"
   },
   {
     "name": "legend.layout",
@@ -4552,7 +4561,7 @@
   },
   {
     "name": "legend.navigation.activeColor",
-    "mainType": "ColorString",
+    "mainType": "ColorType",
     "default": "#0022ff"
   },
   {
@@ -4569,7 +4578,7 @@
   },
   {
     "name": "legend.navigation.inactiveColor",
-    "mainType": "ColorString",
+    "mainType": "ColorType",
     "default": "#cccccc"
   },
   {
@@ -5258,7 +5267,7 @@
   },
   {
     "name": "navigation.buttonOptions.symbolFill",
-    "mainType": "ColorString",
+    "mainType": "ColorType",
     "default": "#666666"
   },
   {
@@ -5292,7 +5301,7 @@
   },
   {
     "name": "navigation.buttonOptions.theme.fill",
-    "mainType": "ColorString",
+    "mainType": "ColorType",
     "default": "#ffffff"
   },
   {
@@ -5385,12 +5394,12 @@
   },
   {
     "name": "navigator.handles.backgroundColor",
-    "mainType": "ColorString",
+    "mainType": "ColorType",
     "default": "#f2f2f2"
   },
   {
     "name": "navigator.handles.borderColor",
-    "mainType": "ColorString",
+    "mainType": "ColorType",
     "default": "#999999"
   },
   {
@@ -5434,7 +5443,7 @@
   },
   {
     "name": "navigator.maskFill",
-    "mainType": "ColorString",
+    "mainType": "ColorType",
     "default": "rgba(102,122,255,0.3)"
   },
   {
@@ -5448,7 +5457,7 @@
   },
   {
     "name": "navigator.outlineColor",
-    "mainType": "ColorString",
+    "mainType": "ColorType",
     "default": "#999999"
   },
   {
@@ -5463,7 +5472,7 @@
   },
   {
     "name": "navigator.series.color",
-    "mainType": "ColorString"
+    "mainType": "ColorType"
   },
   {
     "name": "navigator.series.data",
@@ -5724,16 +5733,12 @@
     "mainType": "CSSObject"
   },
   {
-    "name": "noData.useHTML",
-    "mainType": "boolean"
-  },
-  {
     "name": "pane.background.backgroundColor",
-    "mainType": "ColorString"
+    "mainType": "ColorType"
   },
   {
     "name": "pane.background.borderColor",
-    "mainType": "ColorString",
+    "mainType": "ColorType",
     "default": "#cccccc"
   },
   {
@@ -5841,7 +5846,7 @@
   },
   {
     "name": "plotOptions.ao.greaterBarColor",
-    "mainType": "ColorString",
+    "mainType": "ColorType",
     "default": "#06b535"
   },
   {
@@ -5851,7 +5856,7 @@
   },
   {
     "name": "plotOptions.ao.lowerBarColor",
-    "mainType": "ColorString",
+    "mainType": "ColorType",
     "default": "#f21313"
   },
   {
@@ -5941,7 +5946,7 @@
   },
   {
     "name": "plotOptions.area.fillColor",
-    "mainType": "ColorString"
+    "mainType": "ColorType"
   },
   {
     "name": "plotOptions.area.fillOpacity",
@@ -5954,11 +5959,11 @@
   },
   {
     "name": "plotOptions.area.lineColor",
-    "mainType": "ColorString"
+    "mainType": "ColorType"
   },
   {
     "name": "plotOptions.area.negativeFillColor",
-    "mainType": "ColorString"
+    "mainType": "ColorType"
   },
   {
     "name": "plotOptions.area.threshold",
@@ -5972,6 +5977,10 @@
   {
     "name": "plotOptions.area",
     "extendsPath": "plotOptions.line"
+  },
+  {
+    "name": "plotOptions.arearange.color",
+    "mainType": "ColorType"
   },
   {
     "name": "plotOptions.arearange.colorKey",
@@ -6014,9 +6023,8 @@
     "mainType": "boolean"
   },
   {
-    "name": "plotOptions.arearange.lineWidth",
-    "mainType": "number",
-    "default": 1
+    "name": "plotOptions.arearange.fillColor",
+    "mainType": "ColorType"
   },
   {
     "name": "plotOptions.arearange.lowMarker.symbol",
@@ -6039,11 +6047,6 @@
     "name": "plotOptions.arearange.tooltip.pointFormat",
     "mainType": "string",
     "default": "<span style=\"color:{series.color}\">●</span> {series.name}: <b>{point.low}</b> - <b>{point.high}</b><br/>"
-  },
-  {
-    "name": "plotOptions.arearange.trackByArea",
-    "mainType": "boolean",
-    "default": true
   },
   {
     "name": "plotOptions.arearange",
@@ -6228,7 +6231,7 @@
   },
   {
     "name": "plotOptions.boxplot.fillColor",
-    "mainType": "ColorString",
+    "mainType": "ColorType",
     "default": "#ffffff"
   },
   {
@@ -6238,7 +6241,7 @@
   },
   {
     "name": "plotOptions.boxplot.medianColor",
-    "mainType": "ColorString"
+    "mainType": "ColorType"
   },
   {
     "name": "plotOptions.boxplot.medianDashStyle",
@@ -6251,7 +6254,7 @@
   },
   {
     "name": "plotOptions.boxplot.stemColor",
-    "mainType": "ColorString"
+    "mainType": "ColorType"
   },
   {
     "name": "plotOptions.boxplot.stemDashStyle",
@@ -6273,7 +6276,7 @@
   },
   {
     "name": "plotOptions.boxplot.whiskerColor",
-    "mainType": "ColorString"
+    "mainType": "ColorType"
   },
   {
     "name": "plotOptions.boxplot.whiskerDashStyle",
@@ -6352,7 +6355,7 @@
   },
   {
     "name": "plotOptions.bubble.negativeColor",
-    "mainType": "ColorString"
+    "mainType": "ColorType"
   },
   {
     "name": "plotOptions.bubble.sizeBy",
@@ -6428,7 +6431,7 @@
   },
   {
     "name": "plotOptions.bullet.targetOptions.color",
-    "mainType": "ColorString"
+    "mainType": "ColorType"
   },
   {
     "name": "plotOptions.bullet.targetOptions.height",
@@ -6451,7 +6454,7 @@
   },
   {
     "name": "plotOptions.candlestick.lineColor",
-    "mainType": "ColorString",
+    "mainType": "ColorType",
     "default": "#000000"
   },
   {
@@ -6471,12 +6474,12 @@
   },
   {
     "name": "plotOptions.candlestick.upColor",
-    "mainType": "ColorString",
+    "mainType": "ColorType",
     "default": "#ffffff"
   },
   {
     "name": "plotOptions.candlestick.upLineColor",
-    "mainType": "ColorString"
+    "mainType": "ColorType"
   },
   {
     "name": "plotOptions.candlestick",
@@ -6541,7 +6544,7 @@
   },
   {
     "name": "plotOptions.column.borderColor",
-    "mainType": "ColorString",
+    "mainType": "ColorType",
     "default": "#ffffff"
   },
   {
@@ -6564,7 +6567,7 @@
   },
   {
     "name": "plotOptions.column.colors",
-    "mainType": "Array.<(ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject)>"
+    "mainType": "Array.<ColorType>"
   },
   {
     "name": "plotOptions.column.cropThreshold",
@@ -6645,7 +6648,7 @@
   },
   {
     "name": "plotOptions.column.states.hover.borderColor",
-    "mainType": "ColorString"
+    "mainType": "ColorType"
   },
   {
     "name": "plotOptions.column.states.hover.brightness",
@@ -6654,7 +6657,7 @@
   },
   {
     "name": "plotOptions.column.states.hover.color",
-    "mainType": "ColorString"
+    "mainType": "ColorType"
   },
   {
     "name": "plotOptions.column.states.hover",
@@ -6662,12 +6665,12 @@
   },
   {
     "name": "plotOptions.column.states.select.borderColor",
-    "mainType": "ColorString",
+    "mainType": "ColorType",
     "default": "#000000"
   },
   {
     "name": "plotOptions.column.states.select.color",
-    "mainType": "ColorString",
+    "mainType": "ColorType",
     "default": "#cccccc"
   },
   {
@@ -6722,6 +6725,50 @@
   {
     "name": "plotOptions.columnrange",
     "extendsPath": "plotOptions.column"
+  },
+  {
+    "name": "plotOptions.contour.clip",
+    "mainType": "boolean",
+    "default": false
+  },
+  {
+    "name": "plotOptions.contour.colorKey",
+    "mainType": "string",
+    "default": "value"
+  },
+  {
+    "name": "plotOptions.contour.contourInterval",
+    "mainType": "number"
+  },
+  {
+    "name": "plotOptions.contour.contourOffset",
+    "mainType": "number"
+  },
+  {
+    "name": "plotOptions.contour.lineWidth",
+    "mainType": "number"
+  },
+  {
+    "name": "plotOptions.contour.marker.states.hover.lineColor",
+    "mainType": "string"
+  },
+  {
+    "name": "plotOptions.contour.marker.symbol",
+    "mainType": "string",
+    "default": "cross"
+  },
+  {
+    "name": "plotOptions.contour.smoothColoring",
+    "mainType": "boolean"
+  },
+  {
+    "name": "plotOptions.contour.zIndex",
+    "mainType": "number",
+    "default": 0
+  },
+  {
+    "name": "plotOptions.contour",
+    "extendsPath": "plotOptions.scatter"
   },
   {
     "name": "plotOptions.cylinder",
@@ -6872,7 +6919,7 @@
   },
   {
     "name": "plotOptions.dumbbell.lowColor",
-    "mainType": "ColorString",
+    "mainType": "ColorType",
     "default": "#333333"
   },
   {
@@ -6918,7 +6965,7 @@
   },
   {
     "name": "plotOptions.errorbar.color",
-    "mainType": "ColorString",
+    "mainType": "ColorType",
     "default": "#000000"
   },
   {
@@ -6957,7 +7004,7 @@
   },
   {
     "name": "plotOptions.flags.fillColor",
-    "mainType": "ColorString",
+    "mainType": "ColorType",
     "default": "#ffffff"
   },
   {
@@ -6966,7 +7013,7 @@
   },
   {
     "name": "plotOptions.flags.lineColor",
-    "mainType": "ColorString"
+    "mainType": "ColorType"
   },
   {
     "name": "plotOptions.flags.lineWidth",
@@ -7004,12 +7051,12 @@
   },
   {
     "name": "plotOptions.flags.states.hover.fillColor",
-    "mainType": "ColorString",
+    "mainType": "ColorType",
     "default": "#ccd3ff"
   },
   {
     "name": "plotOptions.flags.states.hover.lineColor",
-    "mainType": "ColorString",
+    "mainType": "ColorType",
     "default": "#000000"
   },
   {
@@ -7076,7 +7123,7 @@
   },
   {
     "name": "plotOptions.flowmap.fillColor",
-    "mainType": "ColorString"
+    "mainType": "ColorType"
   },
   {
     "name": "plotOptions.flowmap.fillOpacity",
@@ -7185,7 +7232,7 @@
   },
   {
     "name": "plotOptions.funnel.states.select.color",
-    "mainType": "ColorString",
+    "mainType": "ColorType",
     "default": "#cccccc"
   },
   {
@@ -7302,11 +7349,6 @@
     "default": true
   },
   {
-    "name": "plotOptions.gantt.connectors.startMarker.fill",
-    "mainType": "string",
-    "default": "#fa0"
-  },
-  {
     "name": "plotOptions.gantt.connectors.startMarker.radius",
     "mainType": "number",
     "default": 4
@@ -7395,7 +7437,7 @@
   },
   {
     "name": "plotOptions.gauge.dial.backgroundColor",
-    "mainType": "ColorString",
+    "mainType": "ColorType",
     "default": "#000000"
   },
   {
@@ -7410,7 +7452,7 @@
   },
   {
     "name": "plotOptions.gauge.dial.borderColor",
-    "mainType": "ColorString",
+    "mainType": "ColorType",
     "default": "#cccccc"
   },
   {
@@ -7443,12 +7485,12 @@
   },
   {
     "name": "plotOptions.gauge.pivot.backgroundColor",
-    "mainType": "ColorString",
+    "mainType": "ColorType",
     "default": "#000000"
   },
   {
     "name": "plotOptions.gauge.pivot.borderColor",
-    "mainType": "ColorString",
+    "mainType": "ColorType",
     "default": "#cccccc"
   },
   {
@@ -7485,7 +7527,7 @@
   },
   {
     "name": "plotOptions.geoheatmap.color",
-    "mainType": "ColorString"
+    "mainType": "ColorType"
   },
   {
     "name": "plotOptions.geoheatmap.colsize",
@@ -7548,7 +7590,7 @@
   },
   {
     "name": "plotOptions.heatmap.color",
-    "mainType": "ColorString"
+    "mainType": "ColorType"
   },
   {
     "name": "plotOptions.heatmap.colorKey",
@@ -7636,7 +7678,7 @@
   },
   {
     "name": "plotOptions.heatmap.nullColor",
-    "mainType": "ColorString",
+    "mainType": "ColorType",
     "default": "#f7f7f7"
   },
   {
@@ -7853,11 +7895,11 @@
   },
   {
     "name": "plotOptions.ikh.senkouSpan.color",
-    "mainType": "ColorString"
+    "mainType": "ColorType"
   },
   {
     "name": "plotOptions.ikh.senkouSpan.negativeColor",
-    "mainType": "ColorString"
+    "mainType": "ColorType"
   },
   {
     "name": "plotOptions.ikh.senkouSpanA.styles.lineColor",
@@ -8035,8 +8077,9 @@
     "extendsPath": "plotOptions.sma"
   },
   {
-    "name": "plotOptions.line.linecap",
-    "mainType": "SeriesLinecapValue"
+    "name": "plotOptions.line.legendSymbol",
+    "mainType": "string",
+    "default": "lineMarker"
   },
   {
     "name": "plotOptions.line.useOhlcData",
@@ -8194,6 +8237,11 @@
     "default": true
   },
   {
+    "name": "plotOptions.map.allAreas",
+    "mainType": "boolean",
+    "default": true
+  },
+  {
     "name": "plotOptions.map.animation",
     "mainType": "boolean",
     "default": false
@@ -8208,7 +8256,7 @@
   },
   {
     "name": "plotOptions.map.colors",
-    "mainType": "Array.<(ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject)>"
+    "mainType": "Array.<ColorType>"
   },
   {
     "name": "plotOptions.map.dataLabels.crop",
@@ -8242,12 +8290,12 @@
   },
   {
     "name": "plotOptions.map.linecap",
-    "mainType": "SeriesLinecapValue",
+    "mainType": "string",
     "default": "round"
   },
   {
     "name": "plotOptions.map.nullColor",
-    "mainType": "ColorString",
+    "mainType": "ColorType",
     "default": "#f7f7f7"
   },
   {
@@ -8280,7 +8328,7 @@
   },
   {
     "name": "plotOptions.mapbubble.color",
-    "mainType": "ColorString"
+    "mainType": "ColorType"
   },
   {
     "name": "plotOptions.mapbubble.displayNegative",
@@ -8293,7 +8341,7 @@
   },
   {
     "name": "plotOptions.mapbubble.lineColor",
-    "mainType": "ColorString"
+    "mainType": "ColorType"
   },
   {
     "name": "plotOptions.mapbubble.lineWidth",
@@ -8310,7 +8358,7 @@
   },
   {
     "name": "plotOptions.mapbubble.negativeColor",
-    "mainType": "ColorString"
+    "mainType": "ColorType"
   },
   {
     "name": "plotOptions.mapbubble.sizeBy",
@@ -8353,7 +8401,7 @@
   },
   {
     "name": "plotOptions.mapline.fillColor",
-    "mainType": "ColorString",
+    "mainType": "ColorType",
     "default": "none"
   },
   {
@@ -8687,7 +8735,7 @@
   },
   {
     "name": "plotOptions.ohlc.upColor",
-    "mainType": "ColorString"
+    "mainType": "ColorType"
   },
   {
     "name": "plotOptions.ohlc",
@@ -9052,7 +9100,7 @@
   },
   {
     "name": "plotOptions.pie.borderColor",
-    "mainType": "ColorString",
+    "mainType": "ColorType",
     "default": "#ffffff"
   },
   {
@@ -9076,11 +9124,11 @@
   },
   {
     "name": "plotOptions.pie.color",
-    "mainType": "ColorString"
+    "mainType": "ColorType"
   },
   {
     "name": "plotOptions.pie.colors",
-    "mainType": "Array.<(ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject)>"
+    "mainType": "Array.<ColorType>"
   },
   {
     "name": "plotOptions.pie.dataLabels.alignTo",
@@ -9088,7 +9136,7 @@
   },
   {
     "name": "plotOptions.pie.dataLabels.connectorColor",
-    "mainType": "ColorString"
+    "mainType": "ColorType"
   },
   {
     "name": "plotOptions.pie.dataLabels.connectorPadding",
@@ -9153,7 +9201,7 @@
   },
   {
     "name": "plotOptions.pie.fillColor",
-    "mainType": "ColorString"
+    "mainType": "ColorType"
   },
   {
     "name": "plotOptions.pie.ignoreHiddenPoint",
@@ -9686,7 +9734,7 @@
   },
   {
     "name": "plotOptions.sankey.levels.color",
-    "mainType": "ColorString"
+    "mainType": "ColorType"
   },
   {
     "name": "plotOptions.sankey.levels.colorByPoint",
@@ -9957,10 +10005,6 @@
     "extendsPath": "accessibility.point"
   },
   {
-    "name": "plotOptions.series.allAreas",
-    "mainType": "boolean"
-  },
-  {
     "name": "plotOptions.series.allowPointSelect",
     "mainType": "boolean",
     "default": false
@@ -9987,7 +10031,7 @@
   },
   {
     "name": "plotOptions.series.borderColor",
-    "mainType": "ColorString"
+    "mainType": "ColorType"
   },
   {
     "name": "plotOptions.series.borderWidth",
@@ -10003,7 +10047,7 @@
   },
   {
     "name": "plotOptions.series.color",
-    "mainType": "ColorString"
+    "mainType": "ColorType"
   },
   {
     "name": "plotOptions.series.colorAxis",
@@ -10151,11 +10195,11 @@
   },
   {
     "name": "plotOptions.series.dataLabels.backgroundColor",
-    "mainType": "ColorString"
+    "mainType": "ColorType"
   },
   {
     "name": "plotOptions.series.dataLabels.borderColor",
-    "mainType": "ColorString"
+    "mainType": "ColorType"
   },
   {
     "name": "plotOptions.series.dataLabels.borderRadius",
@@ -10324,7 +10368,7 @@
   },
   {
     "name": "plotOptions.series.dragDrop.dragHandle.color",
-    "mainType": "ColorString",
+    "mainType": "ColorType",
     "default": "#fff"
   },
   {
@@ -10390,7 +10434,7 @@
   },
   {
     "name": "plotOptions.series.dragDrop.guideBox.default.color",
-    "mainType": "ColorString",
+    "mainType": "ColorType",
     "default": "rgba(0, 0, 0, 0.1)"
   },
   {
@@ -10636,12 +10680,11 @@
       "areaMarker",
       "lineMarker",
       "rectangle"
-    ],
-    "default": "lineMarker"
+    ]
   },
   {
     "name": "plotOptions.series.legendSymbolColor",
-    "mainType": "ColorString"
+    "mainType": "ColorType"
   },
   {
     "name": "plotOptions.series.lineWidth",
@@ -10667,7 +10710,7 @@
   },
   {
     "name": "plotOptions.series.marker.fillColor",
-    "mainType": "ColorString"
+    "mainType": "ColorType"
   },
   {
     "name": "plotOptions.series.marker.height",
@@ -10675,7 +10718,7 @@
   },
   {
     "name": "plotOptions.series.marker.lineColor",
-    "mainType": "ColorString",
+    "mainType": "ColorType",
     "default": "#ffffff"
   },
   {
@@ -10700,11 +10743,11 @@
   },
   {
     "name": "plotOptions.series.marker.states.hover.fillColor",
-    "mainType": "ColorString"
+    "mainType": "ColorType"
   },
   {
     "name": "plotOptions.series.marker.states.hover.lineColor",
-    "mainType": "ColorString"
+    "mainType": "ColorType"
   },
   {
     "name": "plotOptions.series.marker.states.hover.lineWidth",
@@ -10735,12 +10778,12 @@
   },
   {
     "name": "plotOptions.series.marker.states.select.fillColor",
-    "mainType": "ColorString",
+    "mainType": "ColorType",
     "default": "#cccccc"
   },
   {
     "name": "plotOptions.series.marker.states.select.lineColor",
-    "mainType": "ColorString",
+    "mainType": "ColorType",
     "default": "#000000"
   },
   {
@@ -10766,7 +10809,7 @@
   },
   {
     "name": "plotOptions.series.negativeColor",
-    "mainType": "ColorString"
+    "mainType": "ColorType"
   },
   {
     "name": "plotOptions.series.nullInteraction",
@@ -10959,7 +11002,7 @@
   },
   {
     "name": "plotOptions.series.states.hover.borderColor",
-    "mainType": "ColorString"
+    "mainType": "ColorType"
   },
   {
     "name": "plotOptions.series.states.hover.borderWidth",
@@ -10967,7 +11010,7 @@
   },
   {
     "name": "plotOptions.series.states.hover.color",
-    "mainType": "ColorString"
+    "mainType": "ColorType"
   },
   {
     "name": "plotOptions.series.states.hover.enabled",
@@ -11026,7 +11069,7 @@
   },
   {
     "name": "plotOptions.series.states.select.color",
-    "mainType": "ColorString"
+    "mainType": "ColorType"
   },
   {
     "name": "plotOptions.series.states.select",
@@ -11076,7 +11119,7 @@
   },
   {
     "name": "plotOptions.series.zones.color",
-    "mainType": "ColorString"
+    "mainType": "ColorType"
   },
   {
     "name": "plotOptions.series.zones.dashStyle",
@@ -11084,7 +11127,7 @@
   },
   {
     "name": "plotOptions.series.zones.fillColor",
-    "mainType": "ColorString"
+    "mainType": "ColorType"
   },
   {
     "name": "plotOptions.series.zones.value",
@@ -11327,7 +11370,7 @@
   },
   {
     "name": "plotOptions.sunburst.levels.color",
-    "mainType": "ColorString"
+    "mainType": "ColorType"
   },
   {
     "name": "plotOptions.sunburst.levels.colorByPoint",
@@ -11387,7 +11430,7 @@
   },
   {
     "name": "plotOptions.supertrend.fallingTrendColor",
-    "mainType": "ColorString",
+    "mainType": "ColorType",
     "default": "#f21313"
   },
   {
@@ -11406,7 +11449,7 @@
   },
   {
     "name": "plotOptions.supertrend.risingTrendColor",
-    "mainType": "ColorString",
+    "mainType": "ColorType",
     "default": "#06b535"
   },
   {
@@ -11535,7 +11578,7 @@
   },
   {
     "name": "plotOptions.timeline.dataLabels.connectorColor",
-    "mainType": "ColorString"
+    "mainType": "ColorType"
   },
   {
     "name": "plotOptions.timeline.dataLabels.connectorWidth",
@@ -11859,7 +11902,7 @@
   },
   {
     "name": "plotOptions.treemap.cluster.color",
-    "mainType": "ColorString"
+    "mainType": "ColorType"
   },
   {
     "name": "plotOptions.treemap.cluster.enabled",
@@ -11924,7 +11967,7 @@
   },
   {
     "name": "plotOptions.treemap.colors",
-    "mainType": "Array.<(ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject)>"
+    "mainType": "Array.<ColorType>"
   },
   {
     "name": "plotOptions.treemap.cropThreshold",
@@ -12021,7 +12064,7 @@
   },
   {
     "name": "plotOptions.treemap.levels.color",
-    "mainType": "ColorString"
+    "mainType": "ColorType"
   },
   {
     "name": "plotOptions.treemap.levels.colorVariation.key",
@@ -12491,12 +12534,12 @@
   },
   {
     "name": "plotOptions.waterfall.borderColor",
-    "mainType": "ColorString",
+    "mainType": "ColorType",
     "default": "#333333"
   },
   {
     "name": "plotOptions.waterfall.color",
-    "mainType": "ColorString"
+    "mainType": "ColorType"
   },
   {
     "name": "plotOptions.waterfall.dashStyle",
@@ -12505,7 +12548,7 @@
   },
   {
     "name": "plotOptions.waterfall.lineColor",
-    "mainType": "ColorString",
+    "mainType": "ColorType",
     "default": "#333333"
   },
   {
@@ -12520,7 +12563,7 @@
   },
   {
     "name": "plotOptions.waterfall.upColor",
-    "mainType": "ColorString"
+    "mainType": "ColorType"
   },
   {
     "name": "plotOptions.waterfall",
@@ -12729,7 +12772,7 @@
   },
   {
     "name": "plotOptions.xrange.partialFill.fill",
-    "mainType": "ColorString"
+    "mainType": "ColorType"
   },
   {
     "name": "plotOptions.xrange.pointRange",
@@ -12986,12 +13029,12 @@
   },
   {
     "name": "scrollbar.barBackgroundColor",
-    "mainType": "ColorString",
+    "mainType": "ColorType",
     "default": "#cccccc"
   },
   {
     "name": "scrollbar.barBorderColor",
-    "mainType": "ColorString",
+    "mainType": "ColorType",
     "default": "#cccccc"
   },
   {
@@ -13006,17 +13049,17 @@
   },
   {
     "name": "scrollbar.buttonArrowColor",
-    "mainType": "ColorString",
+    "mainType": "ColorType",
     "default": "#333333"
   },
   {
     "name": "scrollbar.buttonBackgroundColor",
-    "mainType": "ColorString",
+    "mainType": "ColorType",
     "default": "#e6e6e6"
   },
   {
     "name": "scrollbar.buttonBorderColor",
-    "mainType": "ColorString",
+    "mainType": "ColorType",
     "default": "#cccccc"
   },
   {
@@ -13058,7 +13101,7 @@
   },
   {
     "name": "scrollbar.rifleColor",
-    "mainType": "ColorString",
+    "mainType": "ColorType",
     "default": "none"
   },
   {
@@ -13067,12 +13110,12 @@
   },
   {
     "name": "scrollbar.trackBackgroundColor",
-    "mainType": "ColorString",
+    "mainType": "ColorType",
     "default": "rgba(255, 255, 255, 0.001)"
   },
   {
     "name": "scrollbar.trackBorderColor",
-    "mainType": "ColorString",
+    "mainType": "ColorType",
     "default": "#cccccc"
   },
   {
@@ -13120,6 +13163,10 @@
     "extendsPath": "series.sankey.data"
   },
   {
+    "name": "series.arcdiagram.dataLabels",
+    "mainType": "SeriesArcDiagramDataLabelsOptionsObject"
+  },
+  {
     "name": "series.arcdiagram.linkRadius",
     "mainType": "number"
   },
@@ -13158,6 +13205,10 @@
     "extendsPath": "series,plotOptions.area"
   },
   {
+    "name": "series.arearange.color",
+    "mainType": "ColorType"
+  },
+  {
     "name": "series.arearange.data.dataLabels",
     "extendsPath": "series.arearange.dataLabels"
   },
@@ -13173,6 +13224,10 @@
     "name": "series.arearange.data",
     "mainType": "Array.<(Array.<(number|string), number>|Array.<(number|string), number, number>|*)>",
     "extendsPath": "series.line.data"
+  },
+  {
+    "name": "series.arearange.fillOpacity",
+    "mainType": "number"
   },
   {
     "name": "series.arearange",
@@ -13343,7 +13398,7 @@
   },
   {
     "name": "series.column.data.borderColor",
-    "mainType": "ColorString"
+    "mainType": "ColorType"
   },
   {
     "name": "series.column.data.borderWidth",
@@ -13391,6 +13446,27 @@
   {
     "name": "series.columnrange",
     "extendsPath": "series,plotOptions.columnrange"
+  },
+  {
+    "name": "series.contour.data.value",
+    "mainType": "number"
+  },
+  {
+    "name": "series.contour.data.x",
+    "mainType": "number"
+  },
+  {
+    "name": "series.contour.data.y",
+    "mainType": "number"
+  },
+  {
+    "name": "series.contour.data",
+    "mainType": "Array.<(Array.<number>|*)>",
+    "extendsPath": "series.line.data"
+  },
+  {
+    "name": "series.contour",
+    "extendsPath": "series,plotOptions.contour"
   },
   {
     "name": "series.cylinder.data",
@@ -13441,7 +13517,7 @@
   },
   {
     "name": "series.dumbbell.data.lowColor",
-    "mainType": "ColorString"
+    "mainType": "ColorType"
   },
   {
     "name": "series.dumbbell.data",
@@ -13450,7 +13526,7 @@
   },
   {
     "name": "series.dumbbell.lowColor",
-    "mainType": "ColorString"
+    "mainType": "ColorType"
   },
   {
     "name": "series.dumbbell",
@@ -13471,7 +13547,7 @@
   },
   {
     "name": "series.flags.data.fillColor",
-    "mainType": "ColorString"
+    "mainType": "ColorType"
   },
   {
     "name": "series.flags.data.text",
@@ -13496,7 +13572,7 @@
   },
   {
     "name": "series.flowmap.data.fillColor",
-    "mainType": "ColorString"
+    "mainType": "ColorType"
   },
   {
     "name": "series.flowmap.data.fillOpacity",
@@ -13578,7 +13654,7 @@
   },
   {
     "name": "series.gantt.data.completed.fill",
-    "mainType": "ColorString"
+    "mainType": "ColorType"
   },
   {
     "name": "series.gantt.data.completed",
@@ -13634,7 +13710,7 @@
   },
   {
     "name": "series.geoheatmap.data.color",
-    "mainType": "ColorString"
+    "mainType": "ColorType"
   },
   {
     "name": "series.geoheatmap.data.value",
@@ -13651,7 +13727,7 @@
   },
   {
     "name": "series.heatmap.data.color",
-    "mainType": "ColorString"
+    "mainType": "ColorType"
   },
   {
     "name": "series.heatmap.data.marker.states.hover.height",
@@ -13828,7 +13904,7 @@
   },
   {
     "name": "series.line.data.color",
-    "mainType": "ColorString"
+    "mainType": "ColorType"
   },
   {
     "name": "series.line.data.colorIndex",
@@ -13841,10 +13917,6 @@
   {
     "name": "series.line.data.dataLabels",
     "extendsPath": "plotOptions.line.dataLabels"
-  },
-  {
-    "name": "series.line.data.description",
-    "mainType": "string"
   },
   {
     "name": "series.line.data.dragDrop",
@@ -13921,7 +13993,7 @@
   },
   {
     "name": "series.map.data.color",
-    "mainType": "ColorString"
+    "mainType": "ColorType"
   },
   {
     "name": "series.map.data.dataLabels",
@@ -14343,7 +14415,7 @@
   },
   {
     "name": "series.sankey.data.color",
-    "mainType": "ColorString"
+    "mainType": "ColorType"
   },
   {
     "name": "series.sankey.data.dataLabels",
@@ -14372,7 +14444,7 @@
   },
   {
     "name": "series.sankey.nodes.color",
-    "mainType": "ColorString"
+    "mainType": "ColorType"
   },
   {
     "name": "series.sankey.nodes.colorIndex",
@@ -14534,7 +14606,7 @@
   },
   {
     "name": "series.tilemap.data.color",
-    "mainType": "ColorString"
+    "mainType": "ColorType"
   },
   {
     "name": "series.tilemap.data.x",
@@ -14786,7 +14858,7 @@
   },
   {
     "name": "series.xrange.data.partialFill.fill",
-    "mainType": "ColorString"
+    "mainType": "ColorType"
   },
   {
     "name": "series.xrange.data.x",
@@ -14820,10 +14892,6 @@
   {
     "name": "series.zigzag",
     "extendsPath": "series,plotOptions.zigzag"
-  },
-  {
-    "name": "series.zoomEnabled",
-    "mainType": "boolean"
   },
   {
     "name": "sonification.afterSeriesWait",
@@ -15218,7 +15286,7 @@
   },
   {
     "name": "stockTools.gui.definitions.advanced.items",
-    "mainType": "Array"
+    "mainType": "Array.<string>"
   },
   {
     "name": "stockTools.gui.definitions.advanced.parallelChannel.symbol",
@@ -15257,7 +15325,7 @@
   },
   {
     "name": "stockTools.gui.definitions.crookedLines.items",
-    "mainType": "Array"
+    "mainType": "Array.<string>"
   },
   {
     "name": "stockTools.gui.definitions.currentPriceIndicator.symbol",
@@ -15286,7 +15354,7 @@
   },
   {
     "name": "stockTools.gui.definitions.flags.items",
-    "mainType": "Array"
+    "mainType": "Array.<string>"
   },
   {
     "name": "stockTools.gui.definitions.fullScreen.symbol",
@@ -15320,7 +15388,7 @@
   },
   {
     "name": "stockTools.gui.definitions.lines.items",
-    "mainType": "Array"
+    "mainType": "Array.<string>"
   },
   {
     "name": "stockTools.gui.definitions.lines.line.symbol",
@@ -15344,7 +15412,7 @@
   },
   {
     "name": "stockTools.gui.definitions.measure.items",
-    "mainType": "Array"
+    "mainType": "Array.<string>"
   },
   {
     "name": "stockTools.gui.definitions.measure.measureX.symbol",
@@ -15388,7 +15456,7 @@
   },
   {
     "name": "stockTools.gui.definitions.simpleShapes.items",
-    "mainType": "Array"
+    "mainType": "Array.<string>"
   },
   {
     "name": "stockTools.gui.definitions.simpleShapes.label.symbol",
@@ -15407,7 +15475,7 @@
   },
   {
     "name": "stockTools.gui.definitions.typeChange.items",
-    "mainType": "Array"
+    "mainType": "Array.<string>"
   },
   {
     "name": "stockTools.gui.definitions.typeChange.typeCandlestick.symbol",
@@ -15441,7 +15509,7 @@
   },
   {
     "name": "stockTools.gui.definitions.verticalLabels.items",
-    "mainType": "Array"
+    "mainType": "Array.<string>"
   },
   {
     "name": "stockTools.gui.definitions.verticalLabels.verticalArrow.symbol",
@@ -15460,7 +15528,7 @@
   },
   {
     "name": "stockTools.gui.definitions.zoomChange.items",
-    "mainType": "Array"
+    "mainType": "Array.<string>"
   },
   {
     "name": "stockTools.gui.definitions.zoomChange.zoomX.symbol",
@@ -15621,12 +15689,12 @@
   },
   {
     "name": "tooltip.backgroundColor",
-    "mainType": "ColorString",
+    "mainType": "ColorType",
     "default": "#ffffff"
   },
   {
     "name": "tooltip.borderColor",
-    "mainType": "ColorString"
+    "mainType": "ColorType"
   },
   {
     "name": "tooltip.borderRadius",
@@ -15792,6 +15860,11 @@
     "default": false
   },
   {
+    "name": "tooltip.showDelay",
+    "mainType": "number",
+    "default": 0
+  },
+  {
     "name": "tooltip.snap",
     "mainType": "number",
     "default": 10
@@ -15948,6 +16021,10 @@
   {
     "name": "xAxis.crosshair.label.style",
     "mainType": "CSSObject"
+  },
+  {
+    "name": "xAxis.crosshair.showDelay",
+    "mainType": "number"
   },
   {
     "name": "xAxis.crosshair.snap",
@@ -16422,7 +16499,7 @@
   },
   {
     "name": "xAxis.plotBands.color",
-    "mainType": "ColorString"
+    "mainType": "ColorType"
   },
   {
     "name": "xAxis.plotBands.events.click",
@@ -17166,7 +17243,7 @@
   },
   {
     "name": "yAxis.stackShadow.borderColor",
-    "mainType": "ColorString"
+    "mainType": "ColorType"
   },
   {
     "name": "yAxis.stackShadow.borderWidth",
@@ -17174,7 +17251,7 @@
   },
   {
     "name": "yAxis.stackShadow.color",
-    "mainType": "ColorString"
+    "mainType": "ColorType"
   },
   {
     "name": "yAxis.stackShadow.enabled",

@@ -45,7 +45,9 @@ Grid.grid('grid', {
                     }
 
                     // We get the x axis from the Year column
-                    const years = grid.dataTable.getColumn(yearColumnId);
+                    const years = grid.dataProvider
+                        .getDataTable()
+                        .getColumn(yearColumnId);
 
                     // Create chart if it doesn't exist
                     if (!chart) {

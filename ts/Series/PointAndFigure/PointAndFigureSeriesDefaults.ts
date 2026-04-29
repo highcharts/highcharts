@@ -1,7 +1,7 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Kamil Musialowski
+ *  Author: Kamil Musiałowski
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -117,6 +117,7 @@ const PointAndFigureSeriesDefaults: PointAndFigureSeriesOptions = {
  *    ]
  *    ```
  *
+ * @basic
  * @type      {Array<Array<number,number>|*>}
  * @extends   series.scatter.data
  * @product   highstock

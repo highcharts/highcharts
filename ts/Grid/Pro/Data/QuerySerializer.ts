@@ -8,7 +8,7 @@
  *  See www.highcharts.com/license
  *
  *  Authors:
- *  - Dawid Dragula
+ *  - Dawid Draguła
  *
  * */
 

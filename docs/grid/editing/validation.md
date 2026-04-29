@@ -61,24 +61,22 @@ columns: [{
 }]
 ```
 
-Custom error messages for each validation rule can be set using the root `lang` API option:
+Custom notifications for each validation rule can be set using the root `lang` API option:
 
 ```js
 lang: {
-    validationErrors: {
-        notEmpty: {
-            notification: 'Custom error message for empty cells'
-        },
-        number: {
-            notification: 'Custom error message for NaN'
-        }
+    validationNotifications: {
+        notEmpty: 'Custom notification for empty cells',
+        number: 'Custom notification for NaN'
     }
 }
 ```
 
+Each value can be a string or a callback function returning a string.
+
 ## Custom validation rules
 
-You can define custom validation rules and error messages directly in the column options:
+You can define custom validation rules and notifications directly in the column options:
 
 ```ts
 columns: [{

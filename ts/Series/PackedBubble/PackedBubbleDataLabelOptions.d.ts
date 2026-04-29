@@ -1,7 +1,7 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Grzegorz Blachlinski, Sebastian Bochan
+ *  Author: Grzegorz Blachliński, Sebastian Bochan
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -15,10 +15,7 @@
  *
  * */
 
-import type {
-    DataLabelOptions,
-    DataLabelTextPathOptions
-} from '../../Core/Series/DataLabelOptions';
+import type { DataLabelOptions } from '../../Core/Series/DataLabelOptions';
 import type PackedBubblePoint from './PackedBubblePoint';
 import type Point from '../../Core/Series/Point';
 
@@ -42,8 +39,7 @@ export interface PackedBubbleDataLabelOptions extends DataLabelOptions {
     parentNodeFormatter?: (
         PackedBubbleDataLabelsFormatterCallbackFunction
     );
-    parentNodeTextPath?: DataLabelTextPathOptions;
-    textPath?: DataLabelTextPathOptions;
+    parentNodeTextPath?: DataLabelOptions['textPath'];
 }
 
 /* *

@@ -1203,11 +1203,10 @@ class Pagination {
      * Destroy the pagination instance.
      */
     public destroy(): void {
-        const position = this.options?.position;
-
-        if (position === 'footer') {
-            // For footer position, remove the entire tfoot element.
-            this.paginationContainer?.parentElement?.parentElement?.remove();
+        // Fixed container removal when switching from custom to footer.
+        const tfoot = this.paginationContainer?.closest('tfoot');
+        if (tfoot) {
+            tfoot.remove();
         } else {
             this.contentWrapper?.remove();
         }

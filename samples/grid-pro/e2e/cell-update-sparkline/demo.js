@@ -26,14 +26,14 @@ const myGrid = Grid.grid('container', {
 });
 
 function getNextId() {
-    const ids = myGrid.dataTable.getColumn('ID');
+    const ids = myGrid.dataProvider.getDataTable().getColumn('ID');
     const nextId = Math.max(...ids) + 1;
     return nextId;
 }
 
 function addRow() {
     const nextId = getNextId();
-    myGrid.dataTable.setRow({ ID: nextId });
+    myGrid.dataProvider.getDataTable().setRow({ ID: nextId });
     myGrid.viewport.updateRows();
 }
 

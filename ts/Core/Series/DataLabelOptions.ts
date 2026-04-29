@@ -1,7 +1,7 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -25,7 +25,6 @@ import type ColorType from '../Color/ColorType';
 import type CSSObject from '../Renderer/CSSObject';
 import type Point from './Point';
 import type ShadowOptionsObject from '../Renderer/ShadowOptionsObject';
-import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type { SymbolTypeRegistry } from '../Renderer/SVG/SymbolType';
 
 /* *
@@ -37,12 +36,6 @@ import type { SymbolTypeRegistry } from '../Renderer/SVG/SymbolType';
 export type DataLabelsFilterOperatorValue = (
     '>'|'<'|'>='|'<='|'=='|'==='|'!='|'!=='
 );
-
-export interface TextPathAttributes extends SVGAttributes {
-    startOffset?: string;
-    textAnchor?: 'start'|'middle'|'end';
-    dy?: number;
-}
 
 export interface DataLabelsFilterOptionsObject {
     /**
@@ -144,8 +137,8 @@ export interface DataLabelOptions {
      * @sample {highcharts} highcharts/plotoptions/series-datalabels-allowoverlap-false/
      *         Don't allow overlap
      *
-     * @default   false
-     * @since     4.1.0
+     * @default false
+     * @since   4.1.0
      */
     allowOverlap?: boolean;
 
@@ -290,12 +283,13 @@ export interface DataLabelOptions {
      * programmatic control, use the `formatter` instead, and return
      * `undefined` to disable a single data label.
      *
-     * @example
+     * ```js
      * filter: {
      *     property: 'percentage',
      *     operator: '>',
      *     value: 4
      * }
+     * ```
      *
      * @sample {highcharts} highcharts/demo/pie-monochrome
      *         Data labels filtered by percentage
@@ -490,22 +484,22 @@ export interface DataLabelOptions {
      * @sample {highmaps} maps/demo/color-axis/
      *         Bold labels
      *
+     * @default { color: 'contrast', fontSize: '0.7em', fontWeight: 'bold', textOutline: '1px contrast' }
      * @since 4.1.0
      */
-    style?: CSSObject;
+    style?: CSSObject & {
+        /** @default 'contrast' */
+        color?: CSSObject['color'];
 
-    /**
-     * Options for a label text which should follow marker's shape.
-     * Border and background are disabled for a label that follows a
-     * path.
-     *
-     * **Note:** Only SVG-based renderer supports this option. Setting
-     * `useHTML` to true will disable this option.
-     *
-     * @declare Highcharts.DataLabelsTextPathOptionsObject
-     * @since   7.1.0
-     */
-    textPath?: DataLabelTextPathOptions;
+        /** @default '0.7em' */
+        fontSize?: CSSObject['fontSize'];
+
+        /** @default 'bold' */
+        fontWeight?: CSSObject['fontWeight'];
+
+        /** @default '1px contrast' */
+        textOutline?: CSSObject['textOutline'];
+    };
 
     /**
      * Whether to
@@ -568,23 +562,6 @@ export interface DataLabelOptions {
  * @typedef {"allow"|"justify"} Highcharts.DataLabelsOverflowValue
  */
 export type DataLabelsOverflowValue = ('allow'|'justify');
-
-export interface DataLabelTextPathOptions {
-    /**
-     * Presentation attributes for the text path.
-     *
-     * @since 7.1.0
-     */
-    attributes?: TextPathAttributes;
-
-    /**
-     * Enable or disable `textPath` option for link's or marker's data
-     * labels.
-     *
-     * @since 7.1.0
-     */
-    enabled?: boolean;
-}
 
 /* *
  *

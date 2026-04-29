@@ -422,7 +422,7 @@ class CSVConverter extends DataConverter {
                 cl,
                 token = '';
 
-            // We should be able to detect dateformats within 13 rows
+            // We should be able to detect dateFormats within 13 rows
             if (i > 13) {
                 break;
             }

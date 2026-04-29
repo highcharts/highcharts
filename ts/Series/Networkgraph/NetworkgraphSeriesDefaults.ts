@@ -32,7 +32,7 @@ import type Point from '../../Core/Series/Point';
  * */
 
 /**
- * A networkgraph is a type of relationship chart, where connnections
+ * A networkgraph is a type of relationship chart, where connections
  * (links) attracts nodes (points) and other nodes repulse each other.
  *
  * @extends      plotOptions.line
@@ -81,6 +81,7 @@ const NetworkgraphSeriesDefaults: NetworkgraphSeriesOptions = {
                 /**
                  * Animation when not hovering over the node.
                  *
+                 * @default { duration: 50 }
                  * @type {boolean|Partial<Highcharts.AnimationOptionsObject>}
                  */
                 animation: {
@@ -106,6 +107,7 @@ const NetworkgraphSeriesDefaults: NetworkgraphSeriesOptions = {
             /**
              * Animation when not hovering over the node.
              *
+             * @default { duration: 50 }
              * @type {boolean|Partial<Highcharts.AnimationOptionsObject>}
              */
             animation: {
@@ -193,7 +195,7 @@ const NetworkgraphSeriesDefaults: NetworkgraphSeriesOptions = {
          * **Note:** Only SVG-based renderer supports this option. Setting
          * `useHTML` to true will disable this option.
          *
-         * @extends plotOptions.networkgraph.dataLabels.textPath
+         * @extends plotOptions.series.dataLabels.textPath
          * @since   7.1.0
          */
         linkTextPath: {
@@ -270,7 +272,7 @@ const NetworkgraphSeriesDefaults: NetworkgraphSeriesOptions = {
          */
 
         /**
-         * Attraction force applied on a node which is conected to another
+         * Attraction force applied on a node which is connected to another
          * node by a link. Passed are two arguments:
          * - `d` - which is current distance between two nodes
          * - `k` - which is desired distance between two nodes
@@ -338,7 +340,7 @@ const NetworkgraphSeriesDefaults: NetworkgraphSeriesOptions = {
         enableSimulation: false,
         /**
          * Barnes-Hut approximation only.
-         * Deteremines when distance between cell and node is small enough
+         * Determines when distance between cell and node is small enough
          * to calculate forces. Value of `theta` is compared directly with
          * quotient `s / d`, where `s` is the size of the cell, and `d` is
          * distance between center of cell's mass and currently compared
@@ -494,6 +496,7 @@ export default NetworkgraphSeriesDefaults;
  *     }]
  *  ```
  *
+ * @basic
  * @type      {Array<Object|Array|number>}
  * @extends   series.line.data
  * @excluding drilldown,marker,x,y,dragDrop

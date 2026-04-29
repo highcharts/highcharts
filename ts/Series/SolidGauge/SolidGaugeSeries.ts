@@ -3,7 +3,7 @@
  *  Solid angular gauge module
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -24,7 +24,9 @@ import type SolidGaugeSeriesOptions from './SolidGaugeSeriesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 
-import BorderRadius from '../../Extensions/BorderRadius.js';
+import {
+    optionsToObject as borderRadiusOptionsToObject
+} from '../../Extensions/BorderRadius.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     gauge: GaugeSeries,
@@ -54,7 +56,7 @@ import {
  * @class
  * @name Highcharts.seriesTypes.solidgauge
  *
- * @augments Highcarts.Series
+ * @augments Highcharts.Series
  */
 class SolidGaugeSeries extends GaugeSeries {
 
@@ -213,7 +215,7 @@ class SolidGaugeSeries extends GaugeSeries {
 
                 let borderRadius = rounded ? '50%' : 0;
                 if (options.borderRadius) {
-                    borderRadius = BorderRadius.optionsToObject(
+                    borderRadius = borderRadiusOptionsToObject(
                         options.borderRadius
                     ).radius;
                 }

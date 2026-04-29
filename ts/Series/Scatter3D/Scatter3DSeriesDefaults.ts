@@ -1,7 +1,7 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
  *  Scatter 3D series.
  *
@@ -113,6 +113,7 @@ const Scatter3DSeriesDefaults: Scatter3DSeriesOptions = {
  * @sample {highcharts} highcharts/series/data-array-of-objects/
  *         Config objects
  *
+ * @basic
  * @type      {Array<Array<number>|*>}
  * @extends   series.scatter.data
  * @product   highcharts
@@ -127,7 +128,7 @@ const Scatter3DSeriesDefaults: Scatter3DSeriesOptions = {
  * @apioption series.scatter3d.data.z
  */
 
-''; // Detachs doclets above
+''; // Keeps doclets above
 
 /* *
  *

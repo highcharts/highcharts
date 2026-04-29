@@ -1,5 +1,5 @@
 QUnit.test('General waterfall tests', function (assert) {
-    var chart = Highcharts.chart('container', {
+    const chart = Highcharts.chart('container', {
         chart: {
             type: 'waterfall'
         },
@@ -99,5 +99,73 @@ QUnit.test('General waterfall tests', function (assert) {
         chart.series[0].getGraphPath().length,
         2,
         'Graph path should not be drawn for points outside of the extremes.'
+    );
+
+    // Waterfall with broken axis
+    chart.update({
+        yAxis: {
+            breaks: [{
+                from: -10,
+                to: -5,
+                breakSize: 1
+            }],
+            max: 0
+        },
+        series: [{
+            data: [{
+                y: -12
+            }, {
+                y: -5
+            }]
+        }]
+    }, false);
+
+    chart.xAxis[0].setExtremes(null, null);
+
+    assert.close(
+        chart.series[0].points[0].graphic.attr('height'),
+        chart.yAxis[0].toPixels(-12, true),
+        1,
+        `First point that is crossing the axis break should have correct height,
+        #22330.`
+    );
+
+    assert.close(
+        chart.series[0].points[1].graphic.attr('y'),
+        chart.series[0].points[0].graphic.attr('height'),
+        1,
+        'Second point should start where the first point ends, #22330.'
+    );
+
+    // Stacked waterfall with broken axis
+    chart.addSeries({
+        stacking: 'normal',
+        data: [
+            {
+                y: -4
+            }, {
+                y: -2
+            }
+        ]
+    });
+
+    const s1Points = chart.series[0].points,
+        s2Points = chart.series[1].points;
+
+    assert.close(
+        s1Points[0].graphic.attr('height') +
+        s2Points[0].graphic.attr('height'),
+        chart.yAxis[0].toPixels(s1Points[0].y + s2Points[0].y, true),
+        1,
+        'First point of the second stack should have correct height, #22330.'
+    );
+
+    assert.close(
+        s2Points[1].graphic.attr('y'),
+        s1Points[0].graphic.attr('height') +
+        s2Points[0].graphic.attr('height'),
+        1,
+        `Second point of the second stack should start where the first stack
+        ends, #22330.`
     );
 });

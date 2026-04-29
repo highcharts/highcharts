@@ -1,7 +1,7 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Pawel Lysy
+ *  Author: Paweł Lysy
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -129,6 +129,7 @@ const RenkoDefaults: RenkoSeriesOptions = {
  *    }]
  *    ```
  *
+ * @basic
  * @type      {Array<Array<number,number>|*>}
  * @extends series.column.data
  * @product highstock

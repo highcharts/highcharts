@@ -10,7 +10,7 @@ Highcharts Grid provides a fast way to work with tabular data in the browser. St
 
 **Highcharts Grid Pro** is the commercial edition. It includes everything in Grid Lite plus features such as cell editing, data validation, sparklines, and events.
 
-In Dashboards versions prior to 4.0.0, Grid Pro was bundled with Dashboards. See the [Migration Guide](https://www.highcharts.com/docs/dashboards/grid-migration) for upgrade details.
+In Dashboards versions prior to 4.0.0, Grid Pro was bundled with Dashboards. See the [installation guide](https://www.highcharts.com/docs/grid/installation) for the standalone Grid packages.
 
 ## Your first Grid
 

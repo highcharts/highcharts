@@ -8,8 +8,8 @@
  *
  *  Authors:
  *  - Sophie Bremer
- *  - Karol Kolodziej
- *  - Dawid Dragula
+ *  - Karol Kołodziej
+ *  - Dawid Draguła
  *  - Kamil Kubik
  *
  * */

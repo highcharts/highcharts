@@ -1,7 +1,7 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -47,8 +47,12 @@ export interface GlobalsBase {
      * a chart is destroyed, the array item becomes `undefined`.
      */
     readonly charts: Array<(Chart|undefined)>;
-    /** @internal */
-    readonly composed: Array<unknown>;
+    /**
+     * A shared registry between all bundles to keep track of applied
+     * compositions.
+     * @internal
+     */
+    readonly composed: Array<string>;
     /**
      * A hook for defining additional date format specifiers. New
      * specifiers are defined as key-value pairs by using the

@@ -1,7 +1,7 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -165,6 +165,10 @@ export interface PointEventsOptions {
  *
  * @param {Highcharts.PointClickEvent} event
  *        Event arguments.
+ *
+ * @param {Highcharts.Point} [ctx]
+ *        Since v12.6.0, the point context passed as an extra argument for
+ *        arrow functions.
  */
 export type PointClickCallbackFunction = EventCallback<Point, PointClickEvent>;
 
@@ -178,6 +182,10 @@ export type PointClickCallbackFunction = EventCallback<Point, PointClickEvent>;
  *
  * @param {global.PointerEvent} event
  *        Event that occurred.
+ *
+ * @param {Highcharts.Point} [ctx]
+ *        Since v12.6.0, the point context passed as an extra argument for
+ *        arrow functions.
  */
 export type PointMouseOutCallbackFunction = EventCallback<Point, PointerEvent>;
 
@@ -191,6 +199,10 @@ export type PointMouseOutCallbackFunction = EventCallback<Point, PointerEvent>;
  *
  * @param {global.Event} event
  *        Event that occurred.
+ *
+ * @param {Highcharts.Point} [ctx]
+ *        Since v12.6.0, the point context passed as an extra argument for
+ *        arrow functions.
  */
 export type PointMouseOverCallbackFunction = EventCallback<Point, PointerEvent>;
 
@@ -204,6 +216,10 @@ export type PointMouseOverCallbackFunction = EventCallback<Point, PointerEvent>;
  *
  * @param {global.Event} event
  *        Event that occurred.
+ *
+ * @param {Highcharts.Point} [ctx]
+ *        Since v12.6.0, the point context passed as an extra argument for
+ *        arrow functions.
  */
 export type PointRemoveCallbackFunction = EventCallback<Point, Event>;
 
@@ -218,6 +234,10 @@ export type PointRemoveCallbackFunction = EventCallback<Point, Event>;
  *
  * @param {Highcharts.PointInteractionEventObject} event
  *        Event that occurred.
+ *
+ * @param {Highcharts.Point} [ctx]
+ *        Since v12.6.0, the point context passed as an extra argument for
+ *        arrow functions.
  */
 export type PointSelectCallbackFunction =
     EventCallback<Point, PointInteractionEventObject>;
@@ -233,6 +253,10 @@ export type PointSelectCallbackFunction =
  *
  * @param {Highcharts.PointInteractionEventObject} event
  *        Event that occurred.
+ *
+ * @param {Highcharts.Point} [ctx]
+ *        Since v12.6.0, the point context passed as an extra argument for
+ *        arrow functions.
  */
 export type PointUnselectCallbackFunction =
     EventCallback<Point, PointInteractionEventObject>;
@@ -248,6 +272,10 @@ export type PointUnselectCallbackFunction =
  *
  * @param {Highcharts.PointUpdateEventObject} event
  *        Event that occurred.
+ *
+ * @param {Highcharts.Point} [ctx]
+ *        Since v12.6.0, the point context passed as an extra argument for
+ *        arrow functions.
  */
 export type PointUpdateCallbackFunction =
     EventCallback<Point, PointUpdateEvent>;
@@ -652,6 +680,30 @@ export interface PointMarkerStateHoverOptions extends StateHoverOptions {
 
     /** @internal */
     opacity?: number;
+
+    /**
+     * The radius of the point marker. In hover state, it
+     * defaults to the normal state's radius + 2 as per the
+     * [radiusPlus](#plotOptions.series.marker.states.hover.radiusPlus)
+     * option.
+     *
+     * @sample {highcharts} highcharts/plotoptions/series-marker-states-hover-radius/
+     * 10px radius
+     */
+    radius?: number;
+
+    /**
+     * The number of pixels to increase the radius of the hovered point.
+     *
+     * @sample {highcharts} highcharts/plotoptions/series-states-hover-linewidthplus/
+     * 5 pixels greater radius on hover
+     * @sample {highstock} highcharts/plotoptions/series-states-hover-linewidthplus/
+     * 5 pixels greater radius on hover
+     *
+     * @since 4.0.3
+     * @default 2
+     */
+    radiusPlus?: number;
 }
 
 export interface PointMarkerStateInactiveOptions extends StateInactiveOptions {

@@ -1,9 +1,6 @@
-const enabledOption = document.getElementById('enabled-option');
-const textOption = document.getElementById('text-option');
-const hrefOption = document.getElementById('href-option');
-const positionOption = document.getElementById('position-option');
+const noDataToggle = document.getElementById('no-data-toggle');
 
-const dataTable = new Grid.DataTable({
+const populatedDataTable = new Grid.DataTable({
     columns: {
         product: ['Apples', 'Pears', 'Plums', 'Bananas', 'Oranges', 'Grapes'],
         weight: [100, 40, 0.5, 200, 150, 75],
@@ -12,45 +9,28 @@ const dataTable = new Grid.DataTable({
     }
 });
 
-Grid.grid('container', {
-    data: { dataTable: dataTable }
-}, true).then(grid => {
-    const credits = grid.options.credits;
+const emptyDataTable = new Grid.DataTable({
+    columns: {}
+});
 
-    enabledOption.checked = credits.enabled;
-    textOption.value = credits.text;
-    hrefOption.value = credits.href;
-    positionOption.value = credits.position;
+const grid = Grid.grid('container', {
+    data: {
+        dataTable: populatedDataTable
+    },
+    credits: {
+        enabled: true,
+        text: '',
+        href: 'https://www.highcharts.com',
+        position: 'bottom'
+    }
+});
 
-    document.getElementById('no-data-cbx').addEventListener('change', e => {
-        grid.update({
-            data: e.target.checked ? { columns: {} } : { dataTable: dataTable }
-        });
-    });
-
-    document.getElementById('credits-update').addEventListener('change', () => {
-
-        if (grid.credits) {
-            grid.credits.update({
-                enabled: enabledOption.checked,
-                text: textOption.value,
-                href: hrefOption.value,
-                position: positionOption.value
-            });
-        } else {
-            grid.update({
-                credits: {
-                    enabled: enabledOption.checked,
-                    text: textOption.value,
-                    href: hrefOption.value,
-                    position: positionOption.value
-                }
-            });
+noDataToggle.addEventListener('change', event => {
+    grid.update({
+        data: {
+            dataTable: event.target.checked ?
+                emptyDataTable :
+                populatedDataTable
         }
     });
-
-    document.getElementById('credits-update').addEventListener('submit', e => {
-        e.preventDefault();
-    });
-
 });

@@ -15,7 +15,7 @@ test_grid();
  */
 function test_grid() {
 
-    Grid.grid('container', {
+    const grid = Grid.grid('container', {
         data: {
             providerType: 'remote',
             fetchCallback: async () => {
@@ -41,6 +41,18 @@ function test_grid() {
             columns: {
                 resizing: {
                     mode: 'distributed'
+                }
+            },
+            rows: {
+                pinning: {
+                    events: {
+                        beforeRowPin: function (e): void {
+                            e.target;
+                        },
+                        afterRowPin: function (e): void {
+                            e.target;
+                        }
+                    }
                 }
             }
         },
@@ -75,4 +87,11 @@ function test_grid() {
             }]
         }
     });
+
+    grid.rowPinning?.pin('A');
+    grid.rowPinning?.pin('A', 'top');
+    grid.rowPinning?.toggle('A');
+    grid.rowPinning?.toggle('A', 'bottom');
+    grid.rowPinning?.unpin('A');
+    grid.rowPinning?.getPinnedRows();
 }

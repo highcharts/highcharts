@@ -105,7 +105,7 @@ const ArcDiagramSeriesDefaults: ArcDiagramSeriesOptions = {
 
             /**
              * @type    {Highcharts.SVGAttributes}
-             * @default {"startOffset":"25%"}
+             * @default { startOffset: '25%' }
              */
             attributes: {
 
@@ -128,7 +128,6 @@ const ArcDiagramSeriesDefaults: ArcDiagramSeriesOptions = {
      *
      * @type    {number}
      * @since 10.0.0
-     * @default undefined
      * @product highcharts
      * @apioption series.arcdiagram.linkRadius
      */
@@ -142,7 +141,6 @@ const ArcDiagramSeriesDefaults: ArcDiagramSeriesOptions = {
      *
      * @type    {number}
      * @since 10.0.0
-     * @default undefined
      * @product highcharts
      * @apioption series.arcdiagram.linkWeight
      */
@@ -216,6 +214,12 @@ const ArcDiagramSeriesDefaults: ArcDiagramSeriesOptions = {
  */
 
 /**
+ * @type      {Highcharts.SeriesArcDiagramDataLabelsOptionsObject|Array<Highcharts.SeriesArcDiagramDataLabelsOptionsObject>}
+ * @product   highcharts
+ * @apioption series.arcdiagram.dataLabels
+ */
+
+/**
  * @extends   plotOptions.series.marker
  * @excluding enabled, enabledThreshold, height, radius, width
  * @apioption series.arcdiagram.marker
@@ -264,6 +268,7 @@ const ArcDiagramSeriesDefaults: ArcDiagramSeriesOptions = {
  *     }]
  *  ```
  *
+ * @basic
  * @type      {Array<*>}
  * @extends   series.sankey.data
  * @product   highcharts
@@ -286,7 +291,6 @@ const ArcDiagramSeriesDefaults: ArcDiagramSeriesOptions = {
  *
  * @type {number}
  * @since 10.0.0
- * @default undefined
  * @product highcharts
  * @apioption series.arcdiagram.data.linkWeight
  */

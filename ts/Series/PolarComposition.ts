@@ -1,7 +1,7 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -46,8 +46,7 @@ import type Tick from '../Core/Axis/Tick';
 
 import A from '../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
-import BorderRadius from '../Extensions/BorderRadius.js';
-const { optionsToObject } = BorderRadius;
+import { optionsToObject } from '../Extensions/BorderRadius.js';
 import D from '../Core/Defaults.js';
 const { defaultOptions } = D;
 import H from '../Core/Globals.js';
@@ -113,6 +112,16 @@ declare module '../Core/Series/SeriesBase' {
 
 declare module '../Core/Series/SeriesOptions' {
     interface SeriesOptions {
+        /**
+         * Polar charts only. Whether to connect the ends of a line series
+         * plot across the extremes.
+         *
+         * @sample {highcharts} highcharts/plotoptions/line-connectends-false/
+         *         Do not connect
+         *
+         * @since   2.3.0
+         * @product highcharts
+         */
         connectEnds?: boolean;
     }
 }
@@ -235,9 +244,6 @@ function findAlignments(
 /**
  * #6212 Calculate connectors for spline series in polar chart.
  * @private
- * @param {boolean} calculateNeighbours
- *        Check if connectors should be calculated for neighbour points as
- *        well allows short recurrence
  */
 function getConnectors(
     segment: Array<PolarPoint>,
@@ -257,7 +263,7 @@ function getConnectors(
         jointAngle: number;
 
     // Calculate final index of points depending on the initial index value.
-    // Because of calculating neighbours, index may be outside segment
+    // Because of calculating neighbors, index may be outside segment
     // array.
     if (index >= 0 && index <= segment.length - 1) {
         i = index;
@@ -931,7 +937,7 @@ function wrapColumnSeriesAlignDataLabel(
                             .xAxis.startAngleRad,
                         // Radius
                         (point as ColumnPoint).barX +
-                        (point as ColumnPoint).pointWidth / 2
+                        ((point as ColumnPoint).pointWidth || 0) / 2
                     );
 
                 alignTo = merge(alignTo, {
@@ -1114,7 +1120,7 @@ function onAfterColumnTranslate(
                 // In case when radius, inner radius or both are negative, a
                 // point is rendered but partially or as a center point
                 innerR = Math.max(barX, 0);
-                r = Math.max(barX + point.pointWidth, 0);
+                r = Math.max(barX + (point.pointWidth || 0), 0);
 
                 // Handle border radius
                 const brOption = options.borderRadius,
@@ -1149,7 +1155,7 @@ function onAfterColumnTranslate(
                     point.yBottom,
                     point.plotY,
                     start,
-                    start + point.pointWidth
+                    start + (point.pointWidth || 0)
                 );
 
                 // Disallow border radius on polar columns for now. It would
@@ -1169,7 +1175,7 @@ function onAfterColumnTranslate(
             if (chart.inverted) {
                 tooltipPos = yAxis.postTranslate(
                     point.rectPlotY,
-                    barX + point.pointWidth / 2
+                    barX + (point.pointWidth || 0) / 2
                 );
 
                 point.tooltipPos = [
@@ -1535,7 +1541,7 @@ class PolarAdditions {
         LineSeriesClass: typeof LineSeries,
         SplineSeriesClass: typeof SplineSeries
     ): void {
-        Pane.compose(ChartClass, PointerClass, SeriesClass);
+        Pane.compose(ChartClass, PointerClass);
         RadialAxis.compose(AxisClass, TickClass);
 
         if (pushUnique(composed, 'Polar')) {

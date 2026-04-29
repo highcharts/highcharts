@@ -862,6 +862,26 @@ button.dot {
     font-size: 1em;
 }
 
+/* stock annotations */
+
+#tsla-area-gradient stop[offset="0"] {
+    stop-color: var(--highcharts-neutral-color-40, #999);
+}
+
+#tsla-area-gradient stop[offset="1"] {
+    stop-color: var(--highcharts-neutral-color-3, #f7f7f7);
+}
+
+.stock-annotations.highcharts-color-0 {
+    fill: url(#tsla-area-gradient);
+    stroke: #c00;
+}
+
+.events-annotations .highcharts-annotation-label span {
+    background-color: light-dark(#fffc, transparent);
+    font-size: 0.9em;
+}
+
 /* map chart */
 
 .highcharts-mapline-series .highcharts-point.animated-line {
@@ -1206,6 +1226,13 @@ button.dot {
 
 .stopped {
     background-color: #f4433680;
+}
+
+.hcg-container .hcg-table td[data-column-id="running"],
+.hcg-container .hcg-table th[data-column-id="running"],
+.hcg-container .hcg-table td[data-column-id="stopped"] {
+    max-width: 115px !important;
+    width: 115px !important;
 }
 
 .running {

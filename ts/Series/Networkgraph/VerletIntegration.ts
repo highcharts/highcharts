@@ -90,7 +90,7 @@ function attractiveForceFunction(
 }
 
 /**
- * Barycenter force. Calculate and applys barycenter forces on the
+ * Barycenter force. Calculate and applies barycenter forces on the
  * nodes. Making them closer to the center of their barycenter point.
  *
  * In Verlet integration, force is applied on a node immediately to it's
@@ -119,7 +119,7 @@ function barycenter(
 }
 
 /**
- * Estiamte the best possible distance between two nodes, making graph
+ * Estimate the best possible distance between two nodes, making graph
  * readable.
  * @private
  */

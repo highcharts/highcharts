@@ -1,7 +1,7 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -41,12 +41,14 @@ import { addEvent, extend, pushUnique } from '../../Shared/Utilities.js';
  *
  * */
 
+/** @internal */
 declare module '../../Core/Renderer/SVG/SymbolType' {
     interface SymbolTypeRegistry {
         'navigator-handle': SymbolFunction;
     }
 }
 
+/** @internal */
 declare module '../../Core/Series/SeriesBase' {
     interface SeriesBase {
         baseSeries?: Series;
@@ -67,9 +69,7 @@ declare module '../../Core/Series/SeriesBase' {
  *
  * */
 
-/**
- * @private
- */
+/** @internal */
 function compose(
     ChartClass: typeof Chart,
     AxisClass: typeof Axis,
@@ -90,7 +90,7 @@ function compose(
 
 /**
  * Handle updating series
- * @private
+ * @internal
  */
 function onSeriesAfterUpdate(
     this: Series
@@ -106,8 +106,10 @@ function onSeriesAfterUpdate(
  *
  * */
 
+/** @internal */
 const NavigatorComposition = {
     compose
 };
 
+/** @internal */
 export default NavigatorComposition;

@@ -31,7 +31,7 @@ import type {
 } from '../../Plugins/HighchartsTypes';
 import type Options from './KPIComponentOptions';
 import type SidebarPopup from '../../EditMode/SidebarPopup';
-import type Types from '../../../Shared/Types';
+import type { DeepPartial } from '../../../Shared/Types';
 
 import AST from '../../../Core/Renderer/HTML/AST.js';
 import Component from '../Component.js';
@@ -44,11 +44,20 @@ import MAX from '../../../Data/Formula/Functions/MAX.js';
 import MIN from '../../../Data/Formula/Functions/MIN.js';
 import COUNT from '../../../Data/Formula/Functions/COUNT.js';
 import PRODUCT from '../../../Data/Formula/Functions/PRODUCT.js';
+import {
+    createElement,
+    css,
+    defined,
+    diffObjects,
+    isArray,
+    isFunction,
+    isNumber,
+    merge
+} from '../../../Shared/Utilities.js';
 import Templating from '../../../Core/Templating.js';
 const {
     format
 } = Templating;
-import { createElement, css, defined, diffObjects, isArray, isFunction, isNumber, merge } from '../../../Shared/Utilities.js';
 
 
 /* *
@@ -127,7 +136,7 @@ class KPIComponent extends Component {
         }
     }
      */
-    public static defaultChartOptions: Types.DeepPartial<ChartOptions> = {
+    public static defaultChartOptions: DeepPartial<ChartOptions> = {
         chart: {
             type: 'spline',
             zooming: {
@@ -141,13 +150,13 @@ class KPIComponent extends Component {
         },
         xAxis: {
             visible: false
-        } as Types.DeepPartial<ChartOptions['xAxis']>,
+        } as DeepPartial<ChartOptions['xAxis']>,
         yAxis: {
             visible: false,
             title: {
                 text: null
             }
-        } as Types.DeepPartial<ChartOptions['yAxis']>,
+        } as DeepPartial<ChartOptions['yAxis']>,
         legend: {
             enabled: false
         },

@@ -29,7 +29,7 @@ import type LinePoint from '../../../Series/Line/LinePoint';
 import type LineSeries from '../../../Series/Line/LineSeries';
 import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../../Core/Renderer/SVG/SVGPath';
-import type Types from '../../../Shared/Types';
+import type { TypedArray } from '../../../Shared/Types';
 
 import ApproximationRegistry from '../../../Extensions/DataGrouping/ApproximationRegistry.js';
 import Axis from '../../../Core/Axis/Axis.js';
@@ -53,6 +53,7 @@ import {
  *
  * */
 
+/** @internal */
 declare module '../../../Core/Series/SeriesBase' {
     interface SeriesBase {
         fillGraph?: boolean;
@@ -65,27 +66,21 @@ declare module '../../../Core/Series/SeriesBase' {
  *
  * */
 
-/**
- * @private
- */
+/** @internal */
 function maxHigh(arr: Array<Array<number>>): number {
     return arr.reduce(function (max: number, res: Array<number>): number {
         return Math.max(max, res[1]);
     }, -Infinity);
 }
 
-/**
- * @private
- */
+/** @internal */
 function minLow(arr: Array<Array<number>>): number {
     return arr.reduce(function (min: number, res: Array<number>): number {
         return Math.min(min, res[2]);
     }, Infinity);
 }
 
-/**
- * @private
- */
+/** @internal */
 function highlowLevel(
     arr: Array<Array<number>>
 ): Record<string, number> {
@@ -98,7 +93,7 @@ function highlowLevel(
 /**
  * Check two lines intersection (line a1-a2 and b1-b2)
  * Source: https://en.wikipedia.org/wiki/Line%E2%80%93line_intersection
- * @private
+ * @internal
  */
 function checkLineIntersection(
     a1: IKHPoint | undefined,
@@ -129,7 +124,7 @@ function checkLineIntersection(
 /**
  * Parameter opt (indicator options object) include indicator, points,
  * nextPoints, color, options, gappedExtend and graph properties
- * @private
+ * @internal
  */
 function drawSenkouSpan(
     opt: IKHDrawSenkouSpanObject
@@ -152,7 +147,7 @@ function drawSenkouSpan(
  * Data integrity in Ichimoku is different than default 'averages':
  * Point: [undefined, value, value, ...] is correct
  * Point: [undefined, undefined, undefined, ...] is incorrect
- * @private
+ * @internal
  */
 function ichimokuAverages(): Array<(number|null|undefined)> | undefined {
     const ret: Array<(number|null|undefined)> = [];
@@ -178,7 +173,7 @@ function ichimokuAverages(): Array<(number|null|undefined)> | undefined {
 /**
  * The IKH series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.ikh
  *
@@ -196,7 +191,7 @@ class IKHIndicator extends SMAIndicator {
      * Ichimoku Kinko Hyo (IKH). This series requires `linkedTo` option to be
      * set.
      *
-     * @sample stock/indicators/ichimoku-kinko-hyo
+     * @sample {highstock} stock/indicators/ichimoku-kinko-hyo
      *         Ichimoku Kinko Hyo indicator
      *
      * @extends      plotOptions.sma
@@ -338,10 +333,10 @@ class IKHIndicator extends SMAIndicator {
                  *
                  * @see [senkouSpan.styles.fill](#series.ikh.senkouSpan.styles.fill)
                  *
-                 * @sample stock/indicators/ichimoku-kinko-hyo
+                 * @sample {highstock} stock/indicators/ichimoku-kinko-hyo
                  *         Ichimoku Kinko Hyo color
                  *
-                 * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+                 * @type      {Highcharts.ColorType}
                  * @since     7.0.0
                  * @apioption plotOptions.ikh.senkouSpan.color
                  */
@@ -350,10 +345,10 @@ class IKHIndicator extends SMAIndicator {
                  * Color of the area between Senkou Span A and B,
                  * when Senkou Span A is under Senkou Span B.
                  *
-                 * @sample stock/indicators/ikh-negative-color
+                 * @sample {highstock} stock/indicators/ikh-negative-color
                  *         Ichimoku Kinko Hyo negativeColor
                  *
-                 * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+                 * @type      {Highcharts.ColorType}
                  * @since     7.0.0
                  * @apioption plotOptions.ikh.senkouSpan.negativeColor
                  */
@@ -363,7 +358,7 @@ class IKHIndicator extends SMAIndicator {
                      * Color of the area between Senkou Span A and B.
                      *
                      * @deprecated
-                     * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+                     * @type {Highcharts.ColorType}
                      */
                     fill: 'rgba(255, 0, 0, 0.5)'
                 }
@@ -810,7 +805,7 @@ class IKHIndicator extends SMAIndicator {
             yValLen: number = (yVal && yVal.length) || 0,
             closestPointRange: number = getClosestDistance(
                 xAxis.series.map(
-                    (s): number[]|Types.TypedArray => s.getColumn('x')
+                    (s): number[]|TypedArray => s.getColumn('x')
                 )
             ) as any,
             IKH: Array<Array<number | undefined>> = [],
@@ -930,6 +925,7 @@ class IKHIndicator extends SMAIndicator {
  *
  * */
 
+/** @internal */
 interface IKHIndicator {
     pointClass: typeof IKHPoint;
     nameComponents: Array<string>;
@@ -957,6 +953,7 @@ extend(IKHIndicator.prototype, {
 
 ApproximationRegistry['ichimoku-averages'] = ichimokuAverages;
 
+/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         ikh: typeof IKHIndicator;
@@ -970,6 +967,7 @@ SeriesRegistry.registerSeriesType('ikh', IKHIndicator);
  *
  * */
 
+/** @internal */
 export default IKHIndicator;
 
 /* *

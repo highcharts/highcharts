@@ -358,7 +358,7 @@ const lang: LangOptions = {
                  */
                 zigzag: ['Zig Zag'],
 
-                // Oscilators
+                // Oscillators
                 /**
                  *  Absolute price indicator alias.
                  *
@@ -1275,9 +1275,11 @@ const stockTools: StockToolsOptions = {
  *
  * */
 
+/** @internal */
 const StockToolsDefaults = {
     lang,
     stockTools
 };
 
+/** @internal */
 export default StockToolsDefaults;

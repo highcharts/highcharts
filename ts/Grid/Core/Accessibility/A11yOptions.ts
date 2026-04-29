@@ -9,7 +9,7 @@
  *
  *
  *  Authors:
- *  - Dawid Dragula
+ *  - Dawid Draguła
  *  - Sebastian Bochan
  *  - Kamil Kubik
  *
@@ -78,6 +78,7 @@ export interface A11yAnnouncementsOptions {
      * @default true
      */
     filtering?: boolean;
+
 }
 
 /**
@@ -98,6 +99,14 @@ export interface LangAccessibilityOptions {
      * Language options for the accessibility descriptions in filtering.
      */
     filtering?: FilteringLangA11yOptions;
+
+    /**
+     * Accessible label for the minimized column header menu button. Use
+     * `{column}` to insert the current column label.
+     *
+     * @default 'Open menu for {column}.'
+     */
+    columnMenu?: string;
 
     /**
      * Language options for screen reader sections before and after the Grid.

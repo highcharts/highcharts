@@ -1,7 +1,7 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
@@ -62,7 +62,6 @@ class TextBuilder {
     /**
      * Constructs a new TextBuilder instance.
      * @internal
-     * @param svgElement The SVG element to build text for.
      */
     public constructor(svgElement: SVGElement) {
         const textStyles = svgElement.styles;
