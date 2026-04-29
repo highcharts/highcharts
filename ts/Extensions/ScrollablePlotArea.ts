@@ -443,14 +443,6 @@ export class ScrollablePlotArea {
             scrollableWidth = chartWidth + scrollablePixelsX,
             scrollableHeight = chartHeight + scrollablePixelsY;
 
-        // Set the size of the fixed renderer to the visible width
-        fixedRenderer.setSize(chartWidth, chartHeight);
-
-        if (isDirty ?? true) {
-            this.isDirty = false;
-            this.moveFixedElements();
-        }
-
         // Increase the size of the scrollable renderer and background
         stop(chart.container);
         css(container, {
@@ -467,10 +459,38 @@ export class ScrollablePlotArea {
             height: scrollableHeight
         });
 
+        // First set the scrolling container to the chart size so native
+        // scrollbar thickness can be measured.
         css(scrollingContainer, {
             width: `${chartWidth}px`,
             height: `${chartHeight}px`
         });
+
+        const scrollbarWidth = scrollablePixelsY ?
+                scrollingContainer.offsetWidth -
+                scrollingContainer.clientWidth :
+                0,
+            scrollbarHeight = scrollablePixelsX ?
+                scrollingContainer.offsetHeight -
+                scrollingContainer.clientHeight :
+                0;
+
+        // Add space for native scrollbars so they do not cover chart UI.
+        css(scrollingContainer, {
+            width: `${chartWidth + scrollbarWidth}px`,
+            height: `${chartHeight + scrollbarHeight}px`
+        });
+
+        delete chart.pointer?.chartPosition;
+
+        // Keep the fixed renderer at the chart size. We reserve space by
+        // expanding the scrolling container, not by shrinking fixed elements.
+        fixedRenderer.setSize(chartWidth, chartHeight);
+
+        if (isDirty ?? true) {
+            this.isDirty = false;
+            this.moveFixedElements();
+        }
 
         // Set scroll position the first time (this.isDirty was undefined at
         // the top of this function)
