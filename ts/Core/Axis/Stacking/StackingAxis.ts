@@ -460,6 +460,7 @@ function seriesSetStackedPoints(
         } else {
             total = correctFloat(total + yNumber);
         }
+        stack.tip = pointKey;
 
         if (type === 'group') {
             // This point's index within the stack, pushed to stack.points[1]
