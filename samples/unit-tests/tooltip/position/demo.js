@@ -111,10 +111,9 @@ QUnit.test(
     }
 );
 
-// Regression: getPosition ignored scroll offset in scrollablePlotArea
 QUnit.test(
-    'Tooltip getPosition should respect scrollablePlotArea scroll offset' +
-    '(PR #24555)',
+    'Tooltip getPosition should respect scrollablePlotArea scroll offset, ' +
+    '(#24548)',
     function (assert) {
         const chart = Highcharts.chart('container', {
             chart: {
