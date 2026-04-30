@@ -76,8 +76,8 @@ function arc(
         const paddingInRadians =
             Math.min(paddingInRadiansRaw, radianRange - proximity);
 
-        let start = rawStart ? rawStart + paddingInRadians : 0,
-            end = rawEnd ? rawEnd - paddingInRadians : 0;
+        let start = rawStart + paddingInRadians,
+            end = rawEnd - paddingInRadians;
 
         // Check if padding can be applied to the arc, prevents small arcs
         // from disappearing
@@ -99,7 +99,7 @@ function arc(
             end = Math.PI * 2.5 - proximity;
         }
 
-        const open = pick(options.open, fullCircle),
+        const open = options.open ?? fullCircle,
             cosStart = fullCircle ? 0 : Math.cos(start),
             sinStart = fullCircle ? 1 : Math.sin(start),
             cosEnd = fullCircle ? 0 : Math.cos(end),
@@ -151,8 +151,8 @@ function arc(
                     Math.abs(rawEnd - rawStart) - proximity
                 );
 
-                innerStart = rawStart ? rawStart + innerPaddingInRadians : 0;
-                innerEnd = rawEnd ? rawEnd - innerPaddingInRadians : 0;
+                innerStart = rawStart + innerPaddingInRadians;
+                innerEnd = rawEnd - innerPaddingInRadians;
 
                 // Check if padding can be applied to the inner arc
                 if (innerEnd < innerStart) {
