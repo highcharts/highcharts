@@ -789,9 +789,18 @@ class ColorAxis extends Axis implements ColorAxisBase {
                         // Override setState to set either normal or inactive
                         // state to all points in this data class
                         setState: (state?: (StatesOptionsKey|'')): void => {
+                            const affectedSeries = new Set<SeriesClass>();
+
                             for (const point of getPointsInDataClass(i)) {
                                 point.setState(state);
+                                affectedSeries.add(point.series);
                             }
+
+                            // Set series state for dataClass items, #22891
+                            affectedSeries.forEach((series): void => {
+                                series.setState(state);
+                            });
+
                         },
 
                         // Override setState to show or hide all points in this

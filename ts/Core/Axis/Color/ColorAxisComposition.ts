@@ -127,7 +127,6 @@ namespace ColorAxisComposition {
             ];
 
             addEvent(ChartClass, 'afterCreateAxes', onChartAfterCreateAxes);
-            addEvent(ChartClass, 'load', onChartLoad);
 
             wrapChartCreateAxis(ChartClass);
 
@@ -165,36 +164,6 @@ namespace ColorAxisComposition {
             addEvent(SeriesClass, 'bindAxes', onSeriesBindAxes);
         }
 
-    }
-
-    /**
-     * Toggle series state when hovering dataClass legend items.
-     * @internal
-     */
-    function onChartLoad(this: Chart): void {
-        this.legend?.allItems.forEach((item): void => {
-            if (!(item as unknown as ColorAxis.LegendItemObject).isDataClass) {
-                return;
-            }
-
-            const legendItem = item.legendItem;
-
-            if (legendItem?.group) {
-                const element = legendItem.group.element;
-
-                addEvent(element, 'mouseover', (): void => {
-                    this.series.forEach((series): void => {
-                        series.setState('hover');
-                    });
-                });
-
-                addEvent(element, 'mouseout', (): void => {
-                    this.series.forEach((series): void => {
-                        series.setState('');
-                    });
-                });
-            }
-        });
     }
 
     /**
