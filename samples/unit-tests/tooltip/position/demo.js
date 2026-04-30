@@ -110,6 +110,55 @@ QUnit.test(
         );
     }
 );
+
+// Regression: getPosition ignored scroll offset in scrollablePlotArea
+QUnit.test(
+    'Tooltip getPosition should respect scrollablePlotArea scroll offset',
+    function (assert) {
+        const chart = Highcharts.chart('container', {
+            chart: {
+                width: 300,
+                height: 300,
+                scrollablePlotArea: {
+                    minHeight: 600
+                }
+            },
+            tooltip: {
+                outside: true
+            },
+            series: [{
+                data: [1, 2, 3, 4, 5, 6, 7, 8]
+            }]
+        });
+
+        const tooltip = chart.tooltip,
+            point = chart.series[0].points[6],
+            scrollingContainer =
+                chart.scrollablePlotArea.scrollingContainer;
+
+        scrollingContainer.scrollTop = 0;
+        delete chart.pointer.chartPosition;
+
+        const posBefore = tooltip.getPosition(80, 40, point);
+
+        scrollingContainer.scrollTop = 100;
+        delete chart.pointer.chartPosition;
+
+        const posAfter = tooltip.getPosition(80, 40, point);
+
+        assert.notEqual(
+            posBefore.y,
+            posAfter.y,
+            'Tooltip position should change after scrolling.'
+        );
+
+        assert.ok(
+            posAfter.y < posBefore.y,
+            'Tooltip should be positioned higher after scrolling down.'
+        );
+    }
+);
+
 // Highcharts v4.0.3, Issue #424
 // Tooltip is positioned on the top series if multiple y axis is used.
 QUnit.test('Wrong tooltip pos for column (#424)', function (assert) {
