@@ -196,12 +196,7 @@
         text-align: var(--ig-cell-text-align);
     }
 
-    .hcg-table tbody tr > :where(.hcg-cell):empty::after {
-        content: "\00a0";
-        visibility: hidden;
-    }
-
-    .hcg-table tbody tr > :where(.hcg-cell):has(> .hcg-visually-hidden:only-child)::before {
+    .hcg-table tbody tr > :where(.hcg-cell).hcg-empty-cell-content:not(.hcg-edited-cell)::before {
         content: "\00a0";
         visibility: hidden;
     }

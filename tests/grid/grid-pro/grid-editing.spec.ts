@@ -145,6 +145,53 @@ test.describe('Grid Pro row/column mutations', () => {
         expect(Math.abs(heights[2] - heights[3])).toBeLessThanOrEqual(1);
     });
 
+    test('empty cell height class is removed after editing', async ({ page }) => {
+        await page.evaluate(() => {
+            document.getElementById('ge-edit-empty-cell')?.remove();
+            const container = document.createElement('div');
+            container.id = 'ge-edit-empty-cell';
+            document.body.appendChild(container);
+
+            (window as any).editEmptyCellGrid = (window as any).Grid.grid(
+                container,
+                {
+                    dataTable: {
+                        columns: {
+                            product: ['Apples', 'Pears'],
+                            weight: [100, 40]
+                        }
+                    },
+                    columnDefaults: {
+                        cells: { editMode: { enabled: true } }
+                    }
+                }
+            );
+        });
+
+        const result = await page.evaluate(async () => {
+            const grid = (window as any).editEmptyCellGrid;
+            await grid.gridEditing.addRowBelow(1);
+
+            const row = grid.viewport.getRenderedRowByIndex(2);
+            const cell = row.cells[0];
+            const className = 'hcg-empty-cell-content';
+            const hadEmptyClass = cell.htmlElement.classList
+                .contains(className);
+
+            await cell.editValue('Kiwi');
+
+            return {
+                hadEmptyClass,
+                hasEmptyClass: cell.htmlElement.classList.contains(className),
+                text: cell.htmlElement.textContent
+            };
+        });
+
+        expect(result.hadEmptyClass).toBe(true);
+        expect(result.hasEmptyClass).toBe(false);
+        expect(result.text).toContain('Kiwi');
+    });
+
     test('deleteRow removes row from table and refuses unknown id', async ({ page }) => {
         await page.evaluate(() => {
             document.getElementById('ge-delete-row')?.remove();
