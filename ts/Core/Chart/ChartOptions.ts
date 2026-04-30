@@ -899,19 +899,16 @@ export interface ChartOptions {
     showAxes?: boolean;
 
     /**
-     * The space between the bottom edge of the chart and the content (plot
-     * area, axis title and labels, title, subtitle or legend in top
-     * position).
+     * The distance between the outer edge of the chart and the content,
+     * like title or legend, or axis title and labels if present. The
+     * numbers in the array designate top, right, bottom and left
+     * respectively. Use the options `spacingTop`, `spacingRight`,
+     * `spacingBottom` and `spacingLeft` options for shorthand setting of one
+     * option.
      *
-     * @sample {highcharts} highcharts/chart/spacingbottom/
-     *         Spacing bottom set to 100
-     * @sample {highstock} stock/chart/spacingbottom/
-     *         Spacing bottom set to 100
-     * @sample {highmaps} maps/chart/spacing/
-     *         Spacing 100 all around
-     *
-     * @default   15
-     * @since     2.1
+     * @see     [chart.margin](#chart.margin)
+     * @default [10, 10, 15, 10]
+     * @since   3.0.6
      */
     spacing?: Array<number>;
 

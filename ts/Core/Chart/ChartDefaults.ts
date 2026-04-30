@@ -651,8 +651,8 @@ const ChartDefaults: ChartOptions = {
      * respectively. Use the options spacingTop, spacingRight, spacingBottom
      * and spacingLeft options for shorthand setting of one option.
      *
-     * @type    {Array<number>}
      * @see     [chart.margin](#chart.margin)
+     * @type    {Array<number>}
      * @default [10, 10, 15, 10]
      * @since   3.0.6
      */
