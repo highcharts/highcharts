@@ -73,4 +73,29 @@ QUnit.test('fixedRenderer options', function (assert) {
         chart.options.chart.style.fontFamily,
         'fixedRenderer should inherit style from options'
     );
+
+    // Verify that scrollbar space is reserved and fixed UI does not overlap it
+    // #24416
+    const spa = chart.scrollablePlotArea,
+        scrollingContainer = spa.scrollingContainer,
+        fixedRenderer = spa.fixedRenderer;
+
+    const scrollbarHeight =
+    scrollingContainer.offsetHeight - scrollingContainer.clientHeight;
+
+    assert.ok(
+        scrollbarHeight >= 0,
+        'Scrollbar height should be measurable'
+    );
+
+    assert.ok(
+        scrollingContainer.offsetHeight >= chart.chartHeight,
+        'Scrolling container height should include scrollbar space'
+    );
+
+    assert.strictEqual(
+        fixedRenderer.height,
+        chart.chartHeight,
+        'Fixed renderer should not include scrollbar space'
+    );
 });
