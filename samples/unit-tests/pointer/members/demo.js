@@ -247,7 +247,7 @@ QUnit.test('Pointer.getHoverData', function (assert) {
     );
 
     // Bubble series should also participate in shared tooltips.
-    var bubbleChart = Highcharts.chart('container', {
+    const bubbleChart = Highcharts.chart('container', {
         chart: {
             animation: false,
             width: 1000
