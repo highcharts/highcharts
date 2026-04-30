@@ -715,6 +715,9 @@ class Tooltip {
 
         const { distance, chart, outside, pointer } = this,
             { inverted, plotLeft, plotTop, polar } = chart,
+            scrollingContainer = chart.scrollablePlotArea?.scrollingContainer,
+            scrollLeft = scrollingContainer?.scrollLeft || 0,
+            scrollTop = scrollingContainer?.scrollTop || 0,
             { plotX = 0, plotY = 0 } = point,
             ret = {} as PositionObject,
             // Don't use h if chart isn't inverted (#7242) ???
@@ -742,9 +745,9 @@ class Tooltip {
                     // is a transform/zoom on the container. #11329
                     isX ? scaleX(boxWidth) : scaleY(boxHeight),
                     isX ? chartPosition.left - distance +
-                            scaleX(plotX + plotLeft) :
+                        scaleX(plotX + plotLeft - scrollLeft) :
                         chartPosition.top - distance +
-                            scaleY(plotY + plotTop),
+                        scaleY(plotY + plotTop - scrollTop),
                     0,
                     isX ? outerWidth : outerHeight
                 ] : [
