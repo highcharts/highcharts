@@ -105,6 +105,46 @@ test.describe('Grid Pro row/column mutations', () => {
         expect(result.values).toEqual([10, null, 20]);
     });
 
+    test('addRowBelow keeps blank default row height stable', async ({ page }) => {
+        await page.evaluate(() => {
+            document.getElementById('ge-add-row-height')?.remove();
+            const container = document.createElement('div');
+            container.id = 'ge-add-row-height';
+            document.body.appendChild(container);
+
+            (window as any).addRowHeightGrid = (window as any).Grid.grid(
+                container,
+                {
+                    dataTable: {
+                        columns: {
+                            product: ['Apples', 'Pears', 'Plums'],
+                            weight: [100, 40, 0.5],
+                            price: [1.5, 2.53, 5]
+                        }
+                    },
+                    columnDefaults: {
+                        cells: { editMode: { enabled: true } }
+                    }
+                }
+            );
+        });
+
+        const heights = await page.evaluate(async () => {
+            const grid = (window as any).addRowHeightGrid;
+            await grid.gridEditing.addRowBelow(1);
+
+            return Array
+                .from(document.querySelectorAll(
+                    '#ge-add-row-height tbody tr'
+                ))
+                .map((row: Element) => row.getBoundingClientRect().height);
+        });
+
+        expect(heights).toHaveLength(4);
+        expect(Math.abs(heights[2] - heights[1])).toBeLessThanOrEqual(1);
+        expect(Math.abs(heights[2] - heights[3])).toBeLessThanOrEqual(1);
+    });
+
     test('deleteRow removes row from table and refuses unknown id', async ({ page }) => {
         await page.evaluate(() => {
             document.getElementById('ge-delete-row')?.remove();
@@ -223,6 +263,66 @@ test.describe('Grid Pro row/column mutations', () => {
         expect(columnIds.gridOptionColumns).toEqual([
             'id', 'extra', 'value'
         ]);
+    });
+
+    test('addColumnAfter can insert multiple default columns', async ({ page }) => {
+        await page.evaluate(() => {
+            document.getElementById('ge-add-default-columns')?.remove();
+            const container = document.createElement('div');
+            container.id = 'ge-add-default-columns';
+            document.body.appendChild(container);
+
+            (window as any).addDefaultColumnsGrid = (window as any).Grid.grid(
+                container,
+                {
+                    dataTable: {
+                        columns: {
+                            product: ['Apples', 'Pears'],
+                            weight: [100, 40],
+                            price: [1.5, 2.53]
+                        }
+                    },
+                    columnDefaults: {
+                        cells: { editMode: { enabled: true } }
+                    }
+                }
+            );
+        });
+
+        const result = await page.evaluate(async () => {
+            const grid = (window as any).addDefaultColumnsGrid;
+            const first = await grid.gridEditing.addColumnAfter('price');
+            const second = await grid.gridEditing.addColumnAfter('price');
+
+            return {
+                first,
+                second,
+                dataColumns: Object.keys(
+                    grid.dataProvider.getDataTable(false).columns
+                ),
+                optionColumns: (grid.options.columns || [])
+                    .map((c: any) => c.id),
+                renderedColumns: grid.viewport.columns.map((c: any) => c.id),
+                renderedCells: document.querySelectorAll(
+                    '#ge-add-default-columns tbody tr:first-child td'
+                ).length
+            };
+        });
+
+        expect(result.first).toBeTruthy();
+        expect(result.second).toBeTruthy();
+        expect(result.first).not.toBe(result.second);
+        expect(result.dataColumns).toContain(result.first);
+        expect(result.dataColumns).toContain(result.second);
+        expect(result.optionColumns).toEqual([
+            'product',
+            'weight',
+            'price',
+            result.second,
+            result.first
+        ]);
+        expect(result.renderedColumns).toEqual(result.optionColumns);
+        expect(result.renderedCells).toBe(5);
     });
 
     test('beforeRowChange cancel aborts the mutation', async ({ page }) => {

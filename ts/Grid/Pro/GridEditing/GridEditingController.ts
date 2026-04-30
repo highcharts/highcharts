@@ -379,6 +379,7 @@ export class GridEditingController {
         if (needsAutogenOff) {
             updatePayload.data = { autogenerateColumns: false };
         }
+        grid.dirtyFlags.add('grid');
         await grid.update(updatePayload, true, true);
 
         this.fireColumnEvent('afterColumnChange', event);
@@ -516,6 +517,7 @@ export class GridEditingController {
         if (needsAutogenOff) {
             updatePayload.data = { autogenerateColumns: false };
         }
+        grid.dirtyFlags.add('grid');
         await grid.update(updatePayload, true, true);
 
         this.fireColumnEvent('afterColumnChange', event);
