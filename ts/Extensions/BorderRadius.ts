@@ -391,6 +391,8 @@ function seriesOnAfterColumnTranslate(
                     point.stackTotal
                 ) {
                     // Get the StackItem
+                    // @todo: Refactor into stack item getter, share with
+                    // Series.ts
                     const stacks = options.stacking && yAxis.stacking?.stacks[(
                             this.negStacks &&
                             (point.y || 0) < (options.threshold || 0) ?
@@ -400,14 +402,18 @@ function seriesOnAfterColumnTranslate(
 
                     if (stackItem) {
 
+                        // @todo Refactor to get real points from
+                        // `StackItem.points`
                         const [
                                 seriesIndex,
-                                pointIndex
+                                x
                             ] = stackItem.tip?.split(',').map(Number) || [],
                             { height = 0, y = 0 } = this.chart
                                 .series[seriesIndex]
-                                ?.points?.[pointIndex]?.shapeArgs || {},
-
+                                ?.points
+                                // @todo Get rid of the expensive `find`
+                                ?.find((p): boolean => p.x === x)
+                                ?.shapeArgs || {},
                             // Use the pre-translated position (#24454)
                             stackTip = stackItem.isNegative ?
                                 y + height :
