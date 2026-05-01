@@ -877,7 +877,8 @@ class NavigationBindings {
             if (
                 isNumber(parsedValue) &&
                 !value.match(/px|em/g) &&
-                !field.match(/format/g)
+                !field.match(/format/g) &&
+                !field.match(/title/g)
             ) {
                 value = parsedValue as any;
             }

@@ -142,3 +142,23 @@ QUnit.test('Touch event test on popup', function (assert) {
     // REMOVE CSS STYLES
     style.parentNode.removeChild(style);
 });
+
+QUnit.test('Stock Tools popup general tests.', function (assert) {
+    const chart = Highcharts.stockChart('container', {
+        series: [{
+            data: [1, 2, 3]
+        }]
+    });
+
+    const flag = chart.navigationBindings.fieldsToOptions({
+        'typeOptions.title.text': '10/21',
+        'typeOptions.shape': 'circlepin',
+        'typeOptions.width': '10'
+    }, {});
+
+    assert.strictEqual(
+        flag.typeOptions.title.text,
+        '10/21',
+        'Title containing "/" should remain a full string, #24125.'
+    );
+});
