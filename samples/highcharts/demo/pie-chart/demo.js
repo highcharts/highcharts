@@ -22,7 +22,6 @@ Highcharts.chart('container', {
     series: [{
         name: 'Requests',
         colorByPoint: true,
-        borderWidth: 3,
         // We can show multiple data labels per point
         dataLabels: [{
             format: '{point.name}'

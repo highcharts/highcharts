@@ -14,6 +14,7 @@ Highcharts.chart('container', {
     series: [{
         name: 'Allocation',
         borderRadius: 8, // Rounded slice corners
+        borderWidth: 3,
         innerSize: '60%', // Turning the pie into a donut
         // We can show multiple data labels per point
         dataLabels: [{
