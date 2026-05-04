@@ -203,6 +203,7 @@ function setHighContrastTheme(
                     userTheme.plotOptions?.[s.type]
                 ),
                 colorIndex = pick(s.colorIndex, 0),
+                isFilledLineSeries = !!(s.graph && (s as AnyRecord).area),
                 seriesColor = hasCustomColors ?
                     customColors[colorIndex % customColors.length] :
                     pick(
@@ -225,7 +226,37 @@ function setHighContrastTheme(
                     userPlotOpts.borderColor,
                     plotOpts.borderColor,
                     'windowText'
-                );
+                ),
+                lineColor = hasCustomColors ?
+                    (
+                        isFilledLineSeries ?
+                            pick(
+                                userPlotOpts.lineColor,
+                                plotOpts.lineColor,
+                                borderColor
+                            ) :
+                            seriesColor
+                    ) :
+                    pick(
+                        userPlotOpts.lineColor,
+                        userPlotOpts.color,
+                        plotOpts.lineColor,
+                        seriesColor
+                    ),
+                markerLineColor = hasCustomColors ?
+                    (
+                        isFilledLineSeries ?
+                            lineColor :
+                            seriesColor
+                    ) :
+                    pick(
+                        userPlotOpts.marker?.lineColor,
+                        userPlotOpts.marker?.fillColor,
+                        userPlotOpts.lineColor,
+                        userPlotOpts.color,
+                        plotOpts.marker?.lineColor,
+                        seriesColor
+                    );
 
             const seriesOptions: Partial<SeriesOptions> = {
                 color: seriesColor,
@@ -236,14 +267,7 @@ function setHighContrastTheme(
                     ]),
                 borderColor,
                 fillColor,
-                lineColor: hasCustomColors ?
-                    seriesColor :
-                    pick(
-                        userPlotOpts.lineColor,
-                        userPlotOpts.color,
-                        plotOpts.lineColor,
-                        seriesColor
-                    ),
+                lineColor,
                 marker: (plotOpts.marker || userPlotOpts.marker) && {
                     fillColor: hasCustomColors ?
                         seriesColor :
@@ -255,16 +279,7 @@ function setHighContrastTheme(
                             plotOpts.marker?.fillColor,
                             seriesColor
                         ),
-                    lineColor: hasCustomColors ?
-                        seriesColor :
-                        pick(
-                            userPlotOpts.marker?.lineColor,
-                            userPlotOpts.marker?.fillColor,
-                            userPlotOpts.lineColor,
-                            userPlotOpts.color,
-                            plotOpts.marker?.lineColor,
-                            seriesColor
-                        )
+                    lineColor: markerLineColor
                 }
             };
 
