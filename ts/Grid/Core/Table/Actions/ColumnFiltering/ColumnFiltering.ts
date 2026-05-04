@@ -31,7 +31,7 @@ import type {
     FilteringCondition
 } from '../../../Options';
 
-import GU from '../../../GridUtils.js';
+import { makeHTMLElement } from '../../../GridUtils.js';
 import FilteringController from '../../../Querying/FilteringController.js';
 import Globals from '../../../Globals.js';
 import { conditionsMap } from './FilteringTypes.js';
@@ -39,10 +39,6 @@ import {
     defined,
     fireEvent
 } from '../../../../../Shared/Utilities.js';
-
-const {
-    makeHTMLElement
-} = GU;
 
 /* *
  *
@@ -551,16 +547,22 @@ class ColumnFiltering {
      */
     private getAllowedConditions(): readonly Condition[] {
         const column = this.column;
+        const grid = column.viewport.grid;
         const defaultTypeConditions = conditionsMap[column.dataType];
+        const columnConditions =
+            grid.columnPolicy.getIndividualColumnOptions(column.id)
+                ?.filtering?.conditions ??
+            grid.options?.columnDefaults?.filtering?.conditions;
 
-        const configured = [
-            ...(column.viewport.grid.options?.columnDefaults?.filtering?.conditions || []), // eslint-disable-line max-len
-            ...(column.options.filtering?.conditions || [])
-        ];
+        if (!columnConditions?.length) {
+            return defaultTypeConditions;
+        }
 
-        const allowedSet = new Set(configured as readonly Condition[]);
-        const allowed =
-            defaultTypeConditions.filter((c): boolean => allowedSet.has(c));
+        // Filter configured conditions by default data type conditions.
+        const allowedSet = new Set(columnConditions as readonly Condition[]);
+        const allowed = defaultTypeConditions.filter((c): boolean =>
+            allowedSet.has(c)
+        );
 
         return allowed.length ? allowed : defaultTypeConditions;
     }

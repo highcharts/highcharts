@@ -369,15 +369,19 @@ test.describe('Grid filtering conditions allowlist', () => {
         }, { timeout: 10000 });
     });
 
-    test('Scenario 1: product column shows only column conditions', async ({
+    test('Product column shows only column conditions', async ({
         page
     }) => {
         await page.evaluate(() => {
-            const grid = (window as any).Grid.grids[0];
-            grid.update({
+            const base = (window as any).grid.userOptions;
+            (window as any).grid.destroy();
+            (window as any).grid = (window as any).Grid.grid('container', {
+                data: base.data,
+                header: base.header,
                 columnDefaults: {
                     filtering: {
-                        // No default allowlist
+                        enabled: true,
+                        inline: true,
                         conditions: []
                     }
                 },
@@ -393,17 +397,29 @@ test.describe('Grid filtering conditions allowlist', () => {
 
         const values = await getSelectOptionValues(page, selectProductFilter);
         expect(values.sort()).toEqual(['beginsWith', 'contains']);
+
+        const activeValues = await getSelectOptionValues(
+            page,
+            selectBooleanFilter
+        );
+        expect(activeValues.filter(Boolean).sort()).toEqual(
+            ['all', 'empty', 'false', 'true']
+        );
     });
 
-    test('Scenario 2: defaults apply per type and merge with column conditions', async ({
+    test('Defaults apply per type and defined column conditions', async ({
         page
     }) => {
-        const defaultConditions = await page.evaluate(async () => {
-            const grid = (window as any).Grid.grids[0];
-            await grid.update({
+        await page.evaluate(() => {
+            const base = (window as any).grid.userOptions;
+            (window as any).grid.destroy();
+            (window as any).grid = (window as any).Grid.grid('container', {
+                data: base.data,
+                header: base.header,
                 columnDefaults: {
                     filtering: {
                         enabled: true,
+                        inline: true,
                         conditions: ['equals', 'doesNotEqual', 'lessThan']
                     }
                 },
@@ -415,26 +431,22 @@ test.describe('Grid filtering conditions allowlist', () => {
                     }
                 }]
             });
-            await grid.render(false);
-            return grid.options.columnDefaults?.filtering?.conditions || null;
         });
-        expect(defaultConditions).toEqual(['equals', 'doesNotEqual', 'lessThan']);
 
-        const weightValues = await getSelectOptionValues(
-            page,
-            selectWeightFilter
-        );
+        const weightValues = (
+            await getSelectOptionValues(page, selectWeightFilter)
+        ).filter(Boolean);
         expect(weightValues).toEqual(['equals', 'doesNotEqual', 'lessThan']);
 
-        const productValues = await getSelectOptionValues(
-            page,
-            selectProductFilter
-        );
-        expect(productValues.sort()).toEqual([
-            'beginsWith',
-            'contains',
-            'doesNotEqual',
-            'equals'
-        ]);
+        const booleanValues = (
+            await getSelectOptionValues(page, selectBooleanFilter)
+        ).filter(Boolean);
+        expect(booleanValues.sort()).toEqual(['all', 'empty', 'false', 'true']);
+
+        const productValues = (
+            await getSelectOptionValues(page, selectProductFilter)
+        ).filter(Boolean);
+
+        expect(productValues.sort()).toEqual(['beginsWith', 'contains']);
     });
 });
