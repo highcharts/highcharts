@@ -981,6 +981,26 @@ export interface FilteringCondition {
 
 export interface ColumnFilteringOptions extends FilteringCondition {
     /**
+     * Restricts the list of available filtering conditions for the column.
+     *
+     * If set, the UI will only display the provided conditions that are valid
+     * for the column's `dataType`. Invalid conditions are ignored.
+     *
+     * @example
+     * ```js
+     * columns: [{
+     *   id: 'name',
+     *   dataType: 'string',
+     *   filtering: {
+     *     enabled: true,
+     *     conditions: ['contains', 'beginsWith']
+     *   }
+     * }]
+     * ```
+     */
+    conditions?: Array<ColumnFilteringCondition>;
+
+    /**
      * Whether the filtering is enabled or not.
      */
     enabled?: boolean;

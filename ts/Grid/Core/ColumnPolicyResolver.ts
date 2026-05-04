@@ -23,8 +23,6 @@
  * */
 
 import type { NoIdColumnOptions } from './Table/Column';
-
-
 /* *
  *
  *  Declarations

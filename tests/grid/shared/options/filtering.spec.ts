@@ -73,6 +73,17 @@ async function verifyRowsContent(
     }
 }
 
+async function getSelectOptionValues(
+    page: Page,
+    selectLocator: string
+): Promise<string[]> {
+    const select = page.locator(selectLocator);
+    await expect(select).toBeVisible();
+    return await select.locator('option').evaluateAll((options) =>
+        options.map((o) => (o as HTMLOptionElement).value)
+    );
+}
+
 test.describe('Grid filtering', () => {
     test.beforeEach(async ({ page }) => {
         // Note: filtering tests use grid-lite demo as filtering works the same in both versions
@@ -344,4 +355,86 @@ test.describe('Grid filtering', () => {
         );
     });
 
+});
+
+test.describe('Grid filtering conditions allowlist', () => {
+    test.beforeEach(async ({ page }) => {
+        await page.goto('/grid-lite/e2e/inline-filtering', {
+            waitUntil: 'networkidle'
+        });
+        await page.waitForFunction(() => {
+            return typeof (window as any).Grid !== 'undefined' &&
+                   (window as any).Grid.grids &&
+                   (window as any).Grid.grids.length > 0;
+        }, { timeout: 10000 });
+    });
+
+    test('Scenario 1: product column shows only column conditions', async ({
+        page
+    }) => {
+        await page.evaluate(() => {
+            const grid = (window as any).Grid.grids[0];
+            grid.update({
+                columnDefaults: {
+                    filtering: {
+                        // No default allowlist
+                        conditions: []
+                    }
+                },
+                columns: [{
+                    id: 'product',
+                    filtering: {
+                        enabled: true,
+                        conditions: ['contains', 'beginsWith']
+                    }
+                }]
+            });
+        });
+
+        const values = await getSelectOptionValues(page, selectProductFilter);
+        expect(values.sort()).toEqual(['beginsWith', 'contains']);
+    });
+
+    test('Scenario 2: defaults apply per type and merge with column conditions', async ({
+        page
+    }) => {
+        const defaultConditions = await page.evaluate(async () => {
+            const grid = (window as any).Grid.grids[0];
+            await grid.update({
+                columnDefaults: {
+                    filtering: {
+                        enabled: true,
+                        conditions: ['equals', 'doesNotEqual', 'lessThan']
+                    }
+                },
+                columns: [{
+                    id: 'product',
+                    filtering: {
+                        enabled: true,
+                        conditions: ['contains', 'beginsWith']
+                    }
+                }]
+            });
+            await grid.render(false);
+            return grid.options.columnDefaults?.filtering?.conditions || null;
+        });
+        expect(defaultConditions).toEqual(['equals', 'doesNotEqual', 'lessThan']);
+
+        const weightValues = await getSelectOptionValues(
+            page,
+            selectWeightFilter
+        );
+        expect(weightValues).toEqual(['equals', 'doesNotEqual', 'lessThan']);
+
+        const productValues = await getSelectOptionValues(
+            page,
+            selectProductFilter
+        );
+        expect(productValues.sort()).toEqual([
+            'beginsWith',
+            'contains',
+            'doesNotEqual',
+            'equals'
+        ]);
+    });
 });
