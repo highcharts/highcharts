@@ -56,7 +56,9 @@ Highcharts.chart('container', {
 
 ### Property from column
 
-The `dataMapping` object keys reference point properties, and values reference column IDs:
+The `dataMapping` object keys reference point properties, and values reference
+column IDs:
+
 
 ```js
 dataMapping: {
@@ -65,6 +67,19 @@ dataMapping: {
     name: 'product',       // Column 'product' → point.name
     color: 'status_color'  // Column 'status_color' → point.color
 }
+```
+
+If the columns of the DataTable have keys matching the series keys, the data
+mapping is not necessary. For example, this DataTable will connect directly to
+the series' `x` and `y` keys:
+
+```js
+const dataTable = new Highcharts.DataTable({
+    columns: {
+        x: ['2026-05-04', '2026-05-05', '2026-05-06'],
+        y: [1, 4, 2]
+    }
+});
 ```
 
 ## Multiple series from one DataTable

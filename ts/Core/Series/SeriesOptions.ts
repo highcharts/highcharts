@@ -652,6 +652,19 @@ export interface SeriesOptions {
      * }
      * ```
      *
+     * If the columns of the DataTable have keys matching the series keys, the
+     * data mapping is not necessary. For example, this DataTable will connect
+     * directly to the series' `x` and `y` keys:
+     *
+     * ```js
+     * const dataTable = new Highcharts.DataTable({
+     *     columns: {
+     *         x: ['2026-05-04', '2026-05-05', '2026-05-06'],
+     *         y: [1, 4, 2]
+     *     }
+     *  });
+     * ```
+     *
      * @type    {Highcharts.DataMappingOptionsObject}
      * @sample {highcharts} highcharts/datatable/series-datatable-multiple
      *         Series with two data tables
