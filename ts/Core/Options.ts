@@ -324,7 +324,9 @@ export interface Options {
      * configuration.
      *
      * The data table is mapped to the series data points based on the
-     * [series.dataMapping](#plotOptions.series.dataMapping) option.
+     * [series.dataMapping](#plotOptions.series.dataMapping) option, unless the
+     * column keys match the point property names (`x`, `y` etc.), in which case
+     * the mapping is automatic.
      *
      * @sample {highcharts} highcharts/datatable/chart-datatable-single/
      *         Chart with one data table as option
