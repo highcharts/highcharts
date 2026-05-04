@@ -437,9 +437,15 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      * [series.dataMapping](#plotOptions.series.dataMapping) option.
      *
      * @sample {highcharts} highcharts/datatable/series-datatable/
-     *        Series with one data table
+     *        Series with one data table each
      * @sample {highcharts} highcharts/datatable/series-datatable-multiple/
      *        Series with two data tables
+     * @sample {highstock} stock/datatable/series-datatable/
+     *        Series with one data table each
+     * @sample {highstock} stock/datatable/series-datatable-multiple/
+     *        Series with two data tables
+     * @sample {highmaps} maps/datatable/series-datatable
+     *        Series-level data table
      *
      * @type      {Highcharts.DataTable|Highcharts.DataTableOptions}
      * @since     next

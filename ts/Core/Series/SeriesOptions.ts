@@ -692,13 +692,16 @@ export interface SeriesOptions {
      * `DataTable` instance will be created based on the provided
      * configuration.
      *
-     * The data table is mapped to the series data points based on the
-     * [series.dataMapping](#plotOptions.series.dataMapping) option.
-     *
      * @sample {highcharts} highcharts/datatable/series-datatable/
-     *        Series with one data table
+     *        Series with one data table each
      * @sample {highcharts} highcharts/datatable/series-datatable-multiple/
      *        Series with two data tables
+     * @sample {highstock} stock/datatable/series-datatable/
+     *        Series with one data table each
+     * @sample {highstock} stock/datatable/series-datatable-multiple/
+     *        Series with two data tables
+     * @sample {highmaps} maps/datatable/series-datatable
+     *        Series-level data table
      *
      * @since next
      */
