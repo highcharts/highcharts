@@ -844,10 +844,9 @@ const ChartDefaults: ChartOptions = {
      *      `.highcharts-selection-marker` class.
      *
      * @type      {Highcharts.ColorType}
-     * @default   rgba(51,92,173,0.25)
      * @since     2.1.7
-     * @apioption chart.selectionMarkerFill
      */
+    selectionMarkerFill: 'color-mix(var(--highcharts-highlight-color-80) 25%, transparent)', // eslint-disable-line max-len
 
     /**
      * Whether to apply a drop shadow to the global series group. This causes

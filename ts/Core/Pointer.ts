@@ -31,8 +31,6 @@ import type {
 import type Series from './Series/Series';
 import type SVGElement from './Renderer/SVG/SVGElement';
 
-import Color from './Color/Color.js';
-const { parse: color } = Color;
 import H from './Globals.js';
 const {
     charts,
@@ -522,10 +520,7 @@ class Pointer {
 
                     if (!chart.styledMode) {
                         selectionMarker.attr({
-                            fill:
-                                selectionMarkerFill ||
-                                color('var(--highcharts-highlight-color-80)')
-                                    .setOpacity(0.25).get()
+                            fill: selectionMarkerFill
                         });
                     }
                 }
