@@ -1489,25 +1489,24 @@ function wrapPointPos(
     this: PolarPoint,
     proceed: Function,
     chartCoordinates?: boolean,
+    plotX: number|undefined = this.plotX,
     plotY: number|undefined = this.plotY
 ): [number, number]|undefined {
-    if (!this.destroyed) {
-        const { plotX, series } = this,
-            { chart } = series;
+    const { series } = this,
+        { chart } = series || {};
 
-        if (
-            chart.polar &&
-            isNumber(plotX) &&
-            isNumber(plotY)
-        ) {
-            return [
-                plotX + (chartCoordinates ? chart.plotLeft : 0),
-                plotY + (chartCoordinates ? chart.plotTop : 0)
-            ];
-        }
-
-        return proceed.call(this, chartCoordinates, plotY);
+    if (
+        chart?.polar &&
+        isNumber(plotX) &&
+        isNumber(plotY)
+    ) {
+        return [
+            plotX + (chartCoordinates ? chart.plotLeft : 0),
+            plotY + (chartCoordinates ? chart.plotTop : 0)
+        ];
     }
+
+    return proceed.call(this, chartCoordinates, plotX, plotY);
 }
 
 /* *
@@ -1751,7 +1750,7 @@ class PolarAdditions {
         // in two dimensions.
         if (series.kdByAngle) {
             clientX = (
-                (plotX / Math.PI * 180) + (xAxis.pane.options.startAngle as any)
+                (plotX / Math.PI * 180) + (xAxis.pane.options.startAngle || 0)
             ) % 360;
             if (clientX < 0) { // #2665
                 clientX += 360;
