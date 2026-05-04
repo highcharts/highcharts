@@ -30,6 +30,7 @@ import VBPIndicator from './VBPIndicator';
  *
  * */
 
+/** @internal */
 class VBPPoint extends SMAPoint {
 
     // Required for destroying negative part of volume
@@ -48,6 +49,7 @@ class VBPPoint extends SMAPoint {
  *
  * */
 
+/** @internal */
 interface VBPPoint {
     barX: number;
     negativeGraphic: unknown;
@@ -64,4 +66,5 @@ interface VBPPoint {
  *
  * */
 
+/** @internal */
 export default VBPPoint;

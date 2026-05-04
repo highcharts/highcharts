@@ -101,6 +101,11 @@ class DateInputRenderer extends CellRenderer implements EditModeRenderer {
  * Options to control the date input renderer content.
  */
 export interface DateInputRendererOptions extends DateInputRendererBaseOptions {
+    /**
+     * Use the built-in date input renderer.
+     *
+     * @default 'dateInput'
+     */
     type: 'dateInput';
 }
 

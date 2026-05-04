@@ -610,6 +610,7 @@ function destroyGroupedData(
     // Clear previous groups
     if (this.groupedData) {
         this.groupedData.forEach(function (
+            this: Series,
             point: Point,
             i: number
         ): void {

@@ -98,6 +98,8 @@ declare module '../../Pro/CellEditing/CellEditingComposition' {
          *
          * Can be an array where each item can be
          * either a rule key (string) or a rule definition (object).
+         *
+         * @sample grid-pro/demo/validation Validation rules
          */
         validationRules?: (RuleKey|RuleDefinition)[];
     }

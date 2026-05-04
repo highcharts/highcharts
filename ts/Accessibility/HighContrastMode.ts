@@ -74,9 +74,14 @@ function isAuthorColor(color?: unknown): boolean {
  *
  * */
 
+interface HighContrastState {
+    active?: boolean;
+    applying?: boolean;
+}
+
 declare module '../Core/Chart/ChartBase'{
     interface ChartBase {
-        highContrastModeActive?: boolean;
+        highContrastState?: HighContrastState;
     }
 }
 
@@ -159,121 +164,138 @@ function setHighContrastTheme(
     // storing the old state so that we can reset the theme if HC mode is
     // disabled. For now, the user will have to reload the page.
 
-    chart.highContrastModeActive = true;
+    const highContrastState = chart.highContrastState || (
+        chart.highContrastState = {}
+    );
 
-    // Apply theme to chart
-    const theme: AnyRecord = chart.options.accessibility.highContrastTheme,
-        userTheme: AnyRecord =
-            chart.userOptions.accessibility?.highContrastTheme || {},
-        preserveAuthorColors = hasAuthorDefinedSeriesColors(userTheme);
+    highContrastState.active = true;
+    highContrastState.applying = true;
 
-    chart.update(theme, false);
+    try {
+        // Apply theme to chart
+        const theme: AnyRecord = chart.options.accessibility.highContrastTheme,
+            userTheme: AnyRecord =
+                chart.userOptions.accessibility?.highContrastTheme || {},
+            preserveAuthorColors = hasAuthorDefinedSeriesColors(userTheme);
 
-    if (preserveAuthorColors) {
-        chart.renderer.box.style.setProperty('forced-color-adjust', 'none');
-    }
+        chart.update(theme, false);
 
-    const customColors = userTheme.colors,
-        hasCustomColors = !!customColors?.length,
-        defaultPlotOpts = theme.plotOptions?.series || {},
-        userDefaultPlotOpts = userTheme.plotOptions?.series || {};
-
-    // Force series colors (plotOptions is not enough)
-    chart.series.forEach(function (s): void {
-        const plotOpts = merge(defaultPlotOpts, theme.plotOptions?.[s.type]),
-            userPlotOpts = merge(
-                userDefaultPlotOpts,
-                userTheme.plotOptions?.[s.type]
-            ),
-            colorIndex = pick(s.colorIndex, 0),
-            seriesColor = hasCustomColors ?
-                customColors[colorIndex % customColors.length] :
-                pick(
-                    userPlotOpts.color,
-                    userPlotOpts.lineColor,
-                    plotOpts.color,
-                    plotOpts.lineColor,
-                    'windowText'
-                ),
-            fillColor = hasCustomColors ?
-                customColors[colorIndex % customColors.length] :
-                pick(
-                    userPlotOpts.fillColor,
-                    userPlotOpts.color,
-                    plotOpts.fillColor,
-                    plotOpts.color,
-                    'window'
-                ),
-            borderColor = pick(
-                userPlotOpts.borderColor,
-                plotOpts.borderColor,
-                'windowText'
+        if (preserveAuthorColors) {
+            chart.renderer.box.style.setProperty(
+                'forced-color-adjust',
+                'none'
             );
+        }
 
-        const seriesOptions: Partial<SeriesOptions> = {
-            color: seriesColor,
-            colors: hasCustomColors ?
-                customColors :
-                (pick(userPlotOpts.colors, plotOpts.colors) || [seriesColor]),
-            borderColor,
-            fillColor,
-            lineColor: hasCustomColors ?
-                seriesColor :
-                pick(
-                    userPlotOpts.lineColor,
-                    userPlotOpts.color,
-                    plotOpts.lineColor,
-                    seriesColor
+        const customColors = userTheme.colors,
+            hasCustomColors = !!customColors?.length,
+            defaultPlotOpts = theme.plotOptions?.series || {},
+            userDefaultPlotOpts = userTheme.plotOptions?.series || {};
+
+        // Force series colors (plotOptions is not enough)
+        chart.series.forEach(function (s): void {
+            const plotOpts = merge(
+                    defaultPlotOpts,
+                    theme.plotOptions?.[s.type]
                 ),
-            marker: (plotOpts.marker || userPlotOpts.marker) && {
-                fillColor: hasCustomColors ?
-                    seriesColor :
+                userPlotOpts = merge(
+                    userDefaultPlotOpts,
+                    userTheme.plotOptions?.[s.type]
+                ),
+                colorIndex = pick(s.colorIndex, 0),
+                seriesColor = hasCustomColors ?
+                    customColors[colorIndex % customColors.length] :
                     pick(
-                        userPlotOpts.marker?.fillColor,
-                        userPlotOpts.marker?.lineColor,
-                        userPlotOpts.lineColor,
                         userPlotOpts.color,
-                        plotOpts.marker?.fillColor,
-                        seriesColor
+                        userPlotOpts.lineColor,
+                        plotOpts.color,
+                        plotOpts.lineColor,
+                        'windowText'
                     ),
+                fillColor = hasCustomColors ?
+                    customColors[colorIndex % customColors.length] :
+                    pick(
+                        userPlotOpts.fillColor,
+                        userPlotOpts.color,
+                        plotOpts.fillColor,
+                        plotOpts.color,
+                        'window'
+                    ),
+                borderColor = pick(
+                    userPlotOpts.borderColor,
+                    plotOpts.borderColor,
+                    'windowText'
+                );
+
+            const seriesOptions: Partial<SeriesOptions> = {
+                color: seriesColor,
+                colors: hasCustomColors ?
+                    customColors :
+                    (pick(userPlotOpts.colors, plotOpts.colors) || [
+                        seriesColor
+                    ]),
+                borderColor,
+                fillColor,
                 lineColor: hasCustomColors ?
                     seriesColor :
                     pick(
-                        userPlotOpts.marker?.lineColor,
-                        userPlotOpts.marker?.fillColor,
                         userPlotOpts.lineColor,
                         userPlotOpts.color,
-                        plotOpts.marker?.lineColor,
+                        plotOpts.lineColor,
                         seriesColor
-                    )
-            }
-        };
-
-        s.update(seriesOptions, false);
-
-        if (s.points) {
-            // Force point colors if existing
-            s.points.forEach(function (p): void {
-                if (p.options && p.options.color) {
-                    const pointColor = hasCustomColors ?
-                        customColors[
-                            pick(p.colorIndex, p.index, 0) %
-                            customColors.length
-                        ] :
-                        seriesColor;
-
-                    p.update({
-                        color: pointColor,
-                        borderColor
-                    }, false);
+                    ),
+                marker: (plotOpts.marker || userPlotOpts.marker) && {
+                    fillColor: hasCustomColors ?
+                        seriesColor :
+                        pick(
+                            userPlotOpts.marker?.fillColor,
+                            userPlotOpts.marker?.lineColor,
+                            userPlotOpts.lineColor,
+                            userPlotOpts.color,
+                            plotOpts.marker?.fillColor,
+                            seriesColor
+                        ),
+                    lineColor: hasCustomColors ?
+                        seriesColor :
+                        pick(
+                            userPlotOpts.marker?.lineColor,
+                            userPlotOpts.marker?.fillColor,
+                            userPlotOpts.lineColor,
+                            userPlotOpts.color,
+                            plotOpts.marker?.lineColor,
+                            seriesColor
+                        )
                 }
-            });
-        }
-    });
+            };
 
-    // The redraw for each series and after is required for 3D pie
-    // (workaround)
-    chart.redraw();
+            s.update(seriesOptions, false);
+
+            if (s.points) {
+                // Force point colors if existing
+                s.points.forEach(function (p): void {
+                    if (p.options && p.options.color) {
+                        const pointColor = hasCustomColors ?
+                            customColors[
+                                pick(p.colorIndex, p.index, 0) %
+                                customColors.length
+                            ] :
+                            seriesColor;
+
+                        p.update({
+                            color: pointColor,
+                            borderColor
+                        }, false);
+                    }
+                });
+            }
+        });
+
+        // The redraw for each series and after is required for 3D pie
+        // (workaround)
+        chart.redraw();
+    } finally {
+        delete highContrastState.applying;
+    }
 }
 
 /* *

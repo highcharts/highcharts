@@ -2694,8 +2694,6 @@ class Series {
 
         let clipRect = sharedClips[sharedClipKey];
 
-        fireEvent(this, 'setClip', { clipBox });
-
         // If a clipping rectangle for the same set of axes does not exist,
         // create it
         if (!clipRect) {
@@ -5364,6 +5362,10 @@ export default Series;
  *
  * @param {Highcharts.SeriesAfterAnimateEventObject} event
  *        Event arguments.
+ *
+ * @param {Highcharts.Series} [ctx]
+ *        Since v12.6.0, the series context passed as an extra argument for
+ *        arrow functions.
  */
 
 /**
@@ -5426,6 +5428,10 @@ export default Series;
  *
  * @param {Highcharts.SeriesClickEventObject} event
  *        Event arguments.
+ *
+ * @param {Highcharts.Series} [ctx]
+ *        Since v12.6.0, the series context passed as an extra argument for
+ *        arrow functions.
  */
 
 /**
@@ -5450,6 +5456,10 @@ export default Series;
  *
  * @param {global.Event} event
  *        The event that occurred.
+ *
+ * @param {Highcharts.Series} [ctx]
+ *        Since v12.6.0, the series context passed as an extra argument for
+ *        arrow functions.
  */
 
 /**
@@ -5469,6 +5479,10 @@ export default Series;
  *
  * @param {global.PointerEvent} event
  *        Event that occurred.
+ *
+ * @param {Highcharts.Series} [ctx]
+ *        Since v12.6.0, the series context passed as an extra argument for
+ *        arrow functions.
  */
 
 /**
@@ -5481,6 +5495,10 @@ export default Series;
  *
  * @param {global.PointerEvent} event
  *        Event that occurred.
+ *
+ * @param {Highcharts.Series} [ctx]
+ *        Since v12.6.0, the series context passed as an extra argument for
+ *        arrow functions.
  */
 
 /**
@@ -5512,6 +5530,10 @@ export default Series;
  *
  * @param {global.Event} event
  *        Event that occurred.
+ *
+ * @param {Highcharts.Series} [ctx]
+ *        Since v12.6.0, the series context passed as an extra argument for
+ *        arrow functions.
  */
 
 /**
@@ -5554,6 +5576,7 @@ export default Series;
  * @sample {highcharts} highcharts/plotoptions/series-id/
  *         Get series by id
  *
+ * @basic
  * @type      {string}
  * @since     1.2.0
  * @apioption series.id
@@ -5564,6 +5587,7 @@ export default Series;
  * `chart.series` array, the visible Z index as well as the order in the
  * legend.
  *
+ * @basic
  * @type      {number}
  * @since     2.3.0
  * @apioption series.index
@@ -5589,6 +5613,7 @@ export default Series;
  * @sample {highmaps} maps/demo/category-map/
  *         Series name
  *
+ * @basic
  * @type      {string}
  * @apioption series.name
  */
@@ -5606,6 +5631,7 @@ export default Series;
  * @sample {highmaps} maps/demo/mapline-mappoint/
  *         Multiple types in the same map
  *
+ * @basic
  * @type      {string}
  * @apioption series.type
  */

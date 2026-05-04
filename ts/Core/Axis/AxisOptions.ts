@@ -269,9 +269,10 @@ export interface AxisCrosshairOptions {
     * mouse over a point. Works on initial hover.
     *
     * @sample {highcharts|highstock} highcharts/tooltip/showdelay/
+    *         Show crosshair after 2 seconds
     *
     * @default 0
-    * @since next
+    * @since 12.6.0
     */
     showDelay?: number,
 
@@ -293,11 +294,7 @@ export interface AxisCrosshairOptions {
      * The pixel width of the crosshair. Defaults to 1 for numeric or
      * datetime axes, and for one category width for category axes.
      *
-     * @sample {highcharts} highcharts/xaxis/crosshair-customized/
-     *         Customized crosshairs
-     * @sample {highstock} highcharts/xaxis/crosshair-customized/
-     *         Customized crosshairs
-     * @sample {highmaps} highcharts/xaxis/crosshair-customized/
+     * @sample {highcharts|highstock|highmaps} highcharts/xaxis/crosshair-customized/
      *         Customized crosshairs
      *
      * @default 1
@@ -703,7 +700,19 @@ export interface AxisLabelOptions {
      * @sample {highcharts} highcharts/xaxis/labels-style/
      *         Red X axis labels
      */
-    style: CSSObject;
+    style: CSSObject & {
+        /** @default ${palette.neutralColor80} */
+        color?: CSSObject['color'];
+
+        /** @default 'default' */
+        cursor?: CSSObject['cursor'];
+
+        /** @default '0.8em' */
+        fontSize?: CSSObject['fontSize'];
+
+        /** @default 'ellipsis' */
+        textOverflow?: CSSObject['textOverflow'];
+    };
 
     /**
      * Whether to [use HTML](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting#html)
@@ -2072,7 +2081,13 @@ export interface AxisTitleOptions {
      * @sample {highcharts} highcharts/css/axis/
      *         Styled mode
      */
-    style: CSSObject;
+    style: CSSObject & {
+        /** @default ${palette.neutralColor60} */
+        color?: CSSObject['color'];
+
+        /** @default '0.8em' */
+        fontSize?: CSSObject['fontSize'];
+    };
 
     /**
      * The actual text of the axis title. It can contain basic HTML tags

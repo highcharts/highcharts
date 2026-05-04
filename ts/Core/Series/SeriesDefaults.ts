@@ -181,6 +181,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      * @sample {highcharts} highcharts/css/point-series-classname
      *         Series and point class name
      *
+     * @basic
      * @type      {string}
      * @since     5.0.0
      * @apioption plotOptions.series.className
@@ -232,6 +233,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      * @sample {highmaps} maps/demo/category-map/
      *         Category map by multiple series
      *
+     * @basic
      * @type      {Highcharts.ColorType}
      * @apioption plotOptions.series.color
      */
@@ -941,6 +943,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      * also be attached to the series at run time using the
      * `Highcharts.addEvent` function.
      *
+     * @basic
      * @declare Highcharts.SeriesEventsOptionsObject
      */
     events: {},
@@ -2034,36 +2037,6 @@ const seriesDefaults: PlotOptionsOf<Series> = {
         },
 
         /**
-         * Options for a label text which should follow marker's shape.
-         * Border and background are disabled for a label that follows a
-         * path.
-         *
-         * **Note:** Only SVG-based renderer supports this option. Setting
-         * `useHTML` to true will disable this option.
-         *
-         * @declare   Highcharts.DataLabelsTextPathOptionsObject
-         * @since     7.1.0
-         * @apioption plotOptions.series.dataLabels.textPath
-         */
-
-        /**
-         * Presentation attributes for the text path.
-         *
-         * @type      {Highcharts.SVGAttributes}
-         * @since     7.1.0
-         * @apioption plotOptions.series.dataLabels.textPath.attributes
-         */
-
-        /**
-         * Enable or disable `textPath` option for link's or marker's data
-         * labels.
-         *
-         * @type      {boolean}
-         * @since     7.1.0
-         * @apioption plotOptions.series.dataLabels.textPath.enabled
-         */
-
-        /**
          * Whether to
          * [use HTML](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting#html)
          * to render the labels.
@@ -2084,6 +2057,20 @@ const seriesDefaults: PlotOptionsOf<Series> = {
          */
         verticalAlign: 'bottom',
 
+        // Loose JSDoc doclet placed last are ignored, so placed unsorted here.
+        /**
+         * The z index of the data labels group. Does not apply below series
+         * level options.
+         *
+         * Use a `zIndex` of 6 to display it above the series,
+         * or use a `zIndex` of 2 to display it behind the series.
+         *
+         * @type      {number}
+         * @default   6
+         * @since     2.3.5
+         * @apioption plotOptions.series.dataLabels.zIndex
+         */
+
         /**
          * The x position offset of the label relative to the point in
          * pixels.
@@ -2103,19 +2090,6 @@ const seriesDefaults: PlotOptionsOf<Series> = {
          *         Vertical and positioned
          */
         y: 0
-
-        /**
-         * The z index of the data labels group. Does not apply below series
-         * level options.
-         *
-         * Use a `zIndex` of 6 to display it above the series,
-         * or use a `zIndex` of 2 to display it behind the series.
-         *
-         * @type      {number}
-         * @default   6
-         * @since     2.3.5
-         * @apioption plotOptions.series.dataLabels.zIndex
-         */
     },
 
     /**

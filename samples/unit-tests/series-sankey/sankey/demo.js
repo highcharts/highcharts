@@ -765,6 +765,18 @@ QUnit.test(
             'This node id(position) should not been have changed ' +
                 'after the update (#12453)'
         );
+
+        chart.series[0].update({
+            dataLabels: {
+                enabled: false
+            }
+        });
+
+        assert.strictEqual(
+            !!chart.series[0].nodes[0].dataLabel,
+            false,
+            'Node should not have the dataLabel after the update (#23385).'
+        );
     }
 );
 

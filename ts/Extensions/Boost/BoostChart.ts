@@ -197,6 +197,7 @@ function isChartSeriesBoosting(
     // If there are more than five series currently boosting,
     // we should boost the whole chart to avoid running out of webgl contexts.
     let canBoostCount = 0,
+        eligibleCount = 0,
         needBoostCount = 0,
         seriesOptions: SeriesOptions;
 
@@ -221,6 +222,8 @@ function isChartSeriesBoosting(
             continue;
         }
 
+        ++eligibleCount;
+
         if (BoostableMap[series.type]) {
             ++canBoostCount;
         }
@@ -241,6 +244,15 @@ function isChartSeriesBoosting(
             // to 5, force a chart boost when all series are to be boosted.
             // See #18815
             canBoostCount === allSeries.length &&
+            needBoostCount === canBoostCount
+        ) ||
+        // Preserve chart-level boost when it was already active (markerGroup
+        // exists) and all remaining visible eligible series still need boost,
+        // so that hiding a series does not drop out of chart-boost mode
+        // and break the shared halo (#23338).
+        (
+            !!boost.markerGroup &&
+            canBoostCount === eligibleCount &&
             needBoostCount === canBoostCount
         ) ||
         needBoostCount > 5

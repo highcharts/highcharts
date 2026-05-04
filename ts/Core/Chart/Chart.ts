@@ -1095,11 +1095,11 @@ class Chart {
         if (series) {
             // Otherwise, use clipBox.width which is corrected for
             // plotBorderWidth and clipOffset
-            if (xAxis && xAxis.len !== this.plotSizeX) {
+            if (xAxis && xAxis.len !== this.plotSizeX && !xAxis.isRadial) {
                 width = xAxis.len;
             }
 
-            if (yAxis && yAxis.len !== this.plotSizeY) {
+            if (yAxis && yAxis.len !== this.plotSizeY && !yAxis.isRadial) {
                 height = yAxis.len;
             }
 
@@ -2058,9 +2058,12 @@ class Chart {
         const chartHeight = chart.chartHeight;
         let chartWidth = chart.chartWidth;
 
-        // Allow table cells and flex-boxes to shrink without the chart blocking
-        // them out (#6427)
-        css(renderTo, { overflow: 'hidden' });
+        // Allow table cells and flex-boxes to shrink without the chart
+        // blocking them out (#6427) but skip in styled mode so inline styles
+        // don't override user CSS on renderTo
+        if (!chart.styledMode) {
+            css(renderTo, { overflow: 'hidden' });
+        }
 
         // Create the inner container
         if (!chart.styledMode) {
@@ -2110,7 +2113,6 @@ class Chart {
                 });
             }
         }
-        chart.containerBox = chart.getContainerBox();
 
         // Cache the cursor (#1650)
         chart._cursor = container.style.cursor as CursorValue;
@@ -2137,9 +2139,13 @@ class Chart {
             chart.styledMode
         );
 
+        // Measure after the SVG is appended. In styled mode the inner
+        // container's CSS `height: 100%` otherwise yields 0 and causes a false
+        // first ResizeObserver reflow
+        chart.containerBox = chart.getContainerBox();
+
         // Set the initial animation from the options
         setAnimation(void 0, chart);
-
 
         chart.setClassName(optionsChart.className);
         if (!chart.styledMode) {
@@ -2930,7 +2936,7 @@ class Chart {
                 labels.enabled &&
                 axis.series.length &&
                 axis.coll !== 'colorAxis' &&
-                !chart.polar
+                !axis.isRadial // Gauges and polar chart (#24526)
             ) {
 
                 expectedSpace = options.tickLength;
@@ -4748,16 +4754,24 @@ namespace Chart {
          *
          * @sample {highcharts} highcharts/credits/position-left/
          *         Left aligned
-         * @sample {highcharts} highcharts/credits/position-left/
-         *         Left aligned
-         * @sample {highmaps} maps/credits/customized/
-         *         Left aligned
          * @sample {highmaps} maps/credits/customized/
          *         Left aligned
          *
          * @since 2.1
          */
-        position?: AlignObject;
+        position?: AlignObject & {
+            /** @default 'right' */
+            align?: AlignObject['align'];
+
+            /** @default 'bottom' */
+            verticalAlign?: AlignObject['verticalAlign'];
+
+            /** @default -10 */
+            x?: AlignObject['x'];
+
+            /** @default -5 */
+            y?: AlignObject['y'];
+        };
 
         /**
          * CSS styles for the credits label.
@@ -4765,7 +4779,16 @@ namespace Chart {
          * @see In styled mode, credits styles can be set with the
          *      `.highcharts-credits` class.
          */
-        style: CSSObject;
+        style: CSSObject & {
+            /** @default ${palette.neutralColor40} */
+            color?: CSSObject['color'];
+
+            /** @default 'pointer' */
+            cursor?: CSSObject['cursor'];
+
+            /** @default '0.6em' */
+            fontSize?: CSSObject['fontSize'];
+        };
 
         /**
          * The text for the credits label.

@@ -113,6 +113,7 @@ const Scatter3DSeriesDefaults: Scatter3DSeriesOptions = {
  * @sample {highcharts} highcharts/series/data-array-of-objects/
  *         Config objects
  *
+ * @basic
  * @type      {Array<Array<number>|*>}
  * @extends   series.scatter.data
  * @product   highcharts

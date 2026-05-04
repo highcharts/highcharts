@@ -166,6 +166,7 @@ export default XRangeSeriesDefaults;
  * @sample {highcharts} highcharts/series/data-array-of-objects/
  *         Config objects
  *
+ * @basic
  * @declare   Highcharts.XrangePointOptionsObject
  * @type      {Array<*>}
  * @extends   series.line.data

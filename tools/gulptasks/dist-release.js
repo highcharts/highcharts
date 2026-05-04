@@ -520,7 +520,7 @@ async function release() {
             cwd: pathToDistRepo
         });
 
-        const keepFiles = ['.git', 'bower.json', 'package.json', 'README.md', 'LICENSE.txt'];
+        const keepFiles = ['^[.]git/', 'bower.json', 'package.json', 'README.md', 'LICENSE.txt'];
         await removeFilesInFolder(pathToDistRepo, keepFiles);
         log.message('Successfully removed content of ' + pathToDistRepo);
     }

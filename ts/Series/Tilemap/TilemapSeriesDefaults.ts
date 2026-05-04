@@ -197,6 +197,7 @@ const TilemapSeriesDefaults: TilemapSeriesOptions = {
  * @sample {highcharts} highcharts/series/data-array-of-objects/
  *         Config objects
  *
+ * @basic
  * @type      {Array<Array<(number|string),number>|Array<(number|string),number,number>|*>}
  * @extends   series.heatmap.data
  * @excluding marker

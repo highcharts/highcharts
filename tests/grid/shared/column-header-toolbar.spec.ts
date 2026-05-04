@@ -123,6 +123,32 @@ test.describe('Column Header Toolbar', () => {
         );
     });
 
+    test('Blank filter row cells support ArrowUp and ArrowDown navigation', async ({
+        page
+    }) => {
+        const productHeaderCell = page.locator(
+            'th[data-column-id="product"]'
+        ).first();
+        const blankProductFilterCell = page.locator(
+            'th[data-column-id="product"]'
+        ).nth(1);
+        const firstProductBodyCell = page.locator(
+            'td[data-column-id="product"]'
+        ).first();
+
+        await blankProductFilterCell.focus();
+        await expect(blankProductFilterCell).toBeFocused();
+
+        await page.keyboard.press('ArrowDown');
+        await expect(firstProductBodyCell).toBeFocused();
+
+        await page.keyboard.press('ArrowUp');
+        await expect(blankProductFilterCell).toBeFocused();
+
+        await page.keyboard.press('ArrowUp');
+        await expect(productHeaderCell).toBeFocused();
+    });
+
     test('Clicking menu icon opens menu', async ({ page }) => {
         await page.setViewportSize({ width: 800, height: 600 });
         await page.locator('.hcg-icon.hcg-icon-selected').click();

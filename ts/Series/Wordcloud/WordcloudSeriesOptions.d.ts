@@ -78,7 +78,8 @@ export interface WordcloudSeriesOptions extends ColumnSeriesOptions {
      */
     allowExtendPlayingField?: boolean;
 
-    animation?: WordcloudSeriesAnimationOptions;
+    /** @default { duration: 500 } */
+    animation?: ColumnSeriesOptions['animation'];
 
     borderWidth?: number;
 
@@ -200,11 +201,6 @@ export interface WordcloudSeriesTooltipOptions
      */
     pointFormat?: ColumnSeriesTooltipOptions['pointFormat'];
 }
-
-interface WordcloudSeriesAnimationOptions {
-    duration?: number;
-}
-
 
 /**
  * Rotation options for the words in the wordcloud.

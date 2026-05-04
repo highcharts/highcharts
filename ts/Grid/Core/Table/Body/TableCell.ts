@@ -54,12 +54,12 @@ class TableCell extends Cell {
     /**
      * The row of the cell.
      */
-    public readonly row: TableRow;
+    public declare readonly row: TableRow;
 
     /**
      * The column of the cell.
      */
-    public override column: Column;
+    public declare column: Column;
 
     /**
      * The cell's content.
@@ -238,7 +238,7 @@ class TableCell extends Cell {
      * viewport rows to be updated, or `false` if the only change was the cell's
      * content.
      */
-    private async updateDataset(): Promise<boolean> {
+    protected async updateDataset(): Promise<boolean> {
         const sourceColumnId = this.column.viewport.grid.columnPolicy
             .getColumnSourceId(this.column.id);
         if (!sourceColumnId) {
@@ -257,7 +257,6 @@ class TableCell extends Cell {
 
         const vp = this.column.viewport;
         const { dataProvider: dp } = vp.grid;
-
         const rowId = this.row.id;
         if (!dp || rowId === void 0) {
             return false;
@@ -276,7 +275,6 @@ class TableCell extends Cell {
         if (vp.grid.querying.willNotModify()) {
             return false;
         }
-
         await vp.updateRows();
         return true;
     }
@@ -289,7 +287,9 @@ class TableCell extends Cell {
      * Only focus/blur remain on individual cells for focus management.
      */
     public override initEvents(): void {
-        this.cellEvents.push(['blur', (): void => this.onBlur()]);
+        this.cellEvents.push(['blur', (e): void => {
+            this.onBlur(e as FocusEvent);
+        }]);
         this.cellEvents.push(['focus', (): void => this.onFocus()]);
 
         this.cellEvents.forEach((pair): void => {
@@ -304,11 +304,37 @@ class TableCell extends Cell {
         super.onFocus();
 
         const vp = this.row.viewport;
+        const rowId = this.row.id;
+        if (rowId === void 0) {
+            return;
+        }
 
-        vp.focusCursor = [
-            this.row.index,
-            this.column.index
-        ];
+        delete vp.pendingFocusCursor;
+        vp.clearDetachedFocus();
+        vp.focusCursor = {
+            rowId,
+            columnIndex: this.column.index
+        };
+    }
+
+    /**
+     * Handles the blur event on the cell.
+     *
+     * @param e
+     * The focus event object.
+     */
+    protected override onBlur(e?: FocusEvent): void {
+        if (
+            e &&
+            this.row.viewport.hasDetachedFocusAt(
+                this.row.id,
+                this.column.index
+            )
+        ) {
+            return;
+        }
+
+        super.onBlur();
     }
 
     /**

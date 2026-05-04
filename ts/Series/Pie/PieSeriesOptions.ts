@@ -182,6 +182,8 @@ export interface PieSeriesOptions extends LineSeriesOptions {
      * `.highcharts-series-{n}` class, or individual classes given by the
      * `className` option.
      *
+     * @basic
+     *
      * @sample {highcharts} highcharts/plotoptions/pie-emptyseries/
      *         Empty pie series
      *
@@ -254,6 +256,8 @@ export interface PieSeriesOptions extends LineSeriesOptions {
      * @sample {highcharts} highcharts/series/data-array-of-objects/
      *         Config objects
      *
+     * @basic
+     *
      * @type {Array<number|Array<string,(number|null)>|null|*>}
      *
      * @extends series.line.data
@@ -294,6 +298,8 @@ export interface PieSeriesOptions extends LineSeriesOptions {
     endAngle?: number;
 
     /**
+     * @basic
+     *
      * @excluding legendItemClick
      *
      * @product highcharts highmaps
