@@ -102,7 +102,6 @@ module.exports = {
             'dashboards/edit-mode',
             'dashboards/types-of-components',
             'dashboards/grid-component',
-            'dashboards/grid-migration',
             'dashboards/kpi-component',
             'dashboards/highcharts-component',
             'dashboards/html-component',
@@ -122,6 +121,7 @@ module.exports = {
         'Grid': [
             'grid/general',
             'grid/installation',
+            'grid/grid-key',
             'grid/understanding-grid',
             {
                 'Columns': [
@@ -138,6 +138,7 @@ module.exports = {
                 'Rows': [
                     'grid/rows/index',
                     'grid/rows/data',
+                    'grid/rows/pinning',
                     'grid/rows/pagination',
                     'grid/rows/virtualization',
                     'grid/rows/performance'
@@ -147,7 +148,8 @@ module.exports = {
                 'Cells': [
                     'grid/cells/index',
                     'grid/cells/styling-and-theming',
-                    'grid/cells/formatting'
+                    'grid/cells/formatting',
+                    'grid/cell-context-menu'
                 ]
             },
             {

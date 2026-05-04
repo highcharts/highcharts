@@ -21,7 +21,14 @@ import type Axis from '../Core/Axis/Axis';
 import type Chart from '../Core/Chart/Chart';
 import type Series from '../Core/Series/Series';
 
-import { addEvent, defined, isNumber } from '../Shared/Utilities.js';
+import {
+    addEvent,
+    defined,
+    isNumber,
+    pushUnique
+} from '../Shared/Utilities.js';
+import H from '../Core/Globals.js';
+const { composed } = H;
 
 /* *
  *
@@ -31,7 +38,6 @@ import { addEvent, defined, isNumber } from '../Shared/Utilities.js';
 
 declare module '../Core/Axis/AxisOptions' {
     interface AxisOptions {
-
         /**
          * For vertical axes only. Setting the static scale ensures that each
          * tick unit is translated into a fixed pixel height. For example,
@@ -44,30 +50,30 @@ declare module '../Core/Axis/AxisOptions' {
          * @sample {highcharts} highcharts/xaxis/staticscale
          *         Static scale on X axis (horizontal bar chart)
          *
-         * @requires  modules/static-scale
-         * @type      {number}
-         * @default   50
-         * @since     6.2.0
-         * @product   highcharts highstock gantt
-         * @apioption xAxis.staticScale
+         * @requires modules/static-scale
+         * @default  50
+         * @since    6.2.0
+         * @product  highcharts highstock gantt
          */
         staticScale?: number;
-
     }
 }
 
+/** @internal */
+declare module '../Core/Axis/AxisBase' {
+    interface AxisBase {
+        staticScale?: number;
+    }
+}
+
+/** @internal */
 declare module '../Core/Chart/ChartBase'{
     interface ChartBase {
-
-        /** @internal */
         redrawTrigger?: string;
-
-        /** @internal */
         initiatedScale?: boolean;
 
         /** @requires modules/static-scale */
         adjustHeight(): void;
-
     }
 }
 
@@ -78,13 +84,13 @@ declare module '../Core/Chart/ChartBase'{
  * */
 
 /** @internal */
-function compose(
+export function composeStaticScale(
     AxisClass: typeof Axis,
     ChartClass: typeof Chart
 ): void {
-    const chartProto = ChartClass.prototype;
+    if (pushUnique(composed, 'StaticScale')) {
+        const chartProto = ChartClass.prototype;
 
-    if (!chartProto.adjustHeight) {
         addEvent(AxisClass, 'afterSetOptions', onAxisAfterSetOptions);
 
         chartProto.adjustHeight = chartAdjustHeight;
@@ -129,7 +135,7 @@ function chartAdjustHeight(
                 defined(axis.max)
             ) {
                 let height = (axis.brokenAxis?.unitLength ??
-                    (axis.max + axis.tickInterval - axis.min)) * (staticScale);
+                    (axis.max + axis.tickInterval - axis.min)) * staticScale;
 
                 // Minimum height is 1 x staticScale.
                 height = Math.max(height, staticScale);
@@ -166,18 +172,6 @@ function chartAdjustHeight(
     }
     this.redrawTrigger = void 0;
 }
-
-/* *
- *
- *  Default Export
- *
- * */
-
-const StaticScale = {
-    compose
-};
-
-export default StaticScale;
 
 /* *
  *

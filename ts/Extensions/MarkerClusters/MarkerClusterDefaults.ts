@@ -242,19 +242,19 @@ const cluster: MarkerClusterOptions = {
 
     /**
      * Options for the cluster marker.
+     *
      * @type      {Highcharts.PointMarkerOptionsObject}
      * @extends   plotOptions.series.marker
      * @excluding enabledThreshold, states
      * @requires  modules/marker-clusters
      */
     marker: {
-        /** @internal */
         symbol: 'cluster',
-        /** @internal */
         radius: 15,
-        /** @internal */
         lineWidth: 0,
-        /** @internal */
+        /**
+         * @type {Highcharts.ColorType}
+         */
         lineColor: 'var(--highcharts-background-color)'
     },
 
@@ -341,23 +341,19 @@ const cluster: MarkerClusterOptions = {
 
     /**
      * Options for the cluster data labels.
-     * @type    {Highcharts.DataLabelsOptions}
+     *
+     * @type     {Highcharts.DataLabelsOptions}
+     * @extends  plotOptions.line.dataLabels
      * @requires modules/marker-clusters
      */
     dataLabels: {
-        /** @internal */
         enabled: true,
-        /** @internal */
         format: '{point.clusterPointsAmount}',
-        /** @internal */
         verticalAlign: 'middle',
-        /** @internal */
         align: 'center',
-        /** @internal */
         style: {
             color: 'contrast'
         },
-        /** @internal */
         inside: true
     }
 

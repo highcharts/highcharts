@@ -53,7 +53,6 @@ const MapPointSeriesDefaults: MapPointSeriesOptions = {
         },
         overflow: false as any,
         style: {
-            /** @internal */
             color: 'var(--highcharts-neutral-color-100)'
         }
     },
@@ -134,6 +133,7 @@ export default MapPointSeriesDefaults;
  *        }]
  *    ```
  *
+ * @basic
  * @type      {Array<number|Array<number,(number|null)>|null|*>}
  * @extends   series.map.data
  * @excluding labelrank, middleX, middleY, path, value

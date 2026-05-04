@@ -223,6 +223,9 @@ namespace AxisDefaults {
          * Configure a crosshair that follows either the mouse pointer or the
          * hovered point.
          *
+         * Support boolean or object definition. If `true`, a crosshair with
+         * default settings will be displayed.
+         *
          * In styled mode, the crosshairs are styled in the
          * `.highcharts-crosshair`, `.highcharts-crosshair-thin` or
          * `.highcharts-xaxis-category` classes.
@@ -375,7 +378,7 @@ namespace AxisDefaults {
 
         /**
          * Formatter function for the label text.
-         * Since v12.5.0, the callback also receives `ctx` as the second
+         * Since v12.6.0, the callback also receives `ctx` as the second
          * argument, so that arrow functions can access the same context as
          * regular functions using `this`.
          *
@@ -420,10 +423,11 @@ namespace AxisDefaults {
          * the mouse is over a point. Works on initial hover.
          *
          * @sample {highcharts|highstock} highcharts/tooltip/showdelay/
+         *         Show crosshair after 2 seconds
          *
          * @type      {number}
          * @default   0
-         * @since     next
+         * @since     12.6.0
          * @apioption xAxis.crosshair.showDelay
          */
 
@@ -991,7 +995,7 @@ namespace AxisDefaults {
              * Callback JavaScript function to format the label. The value
              * is given by `this.value`. Additional properties for `this` are
              * `axis`, `chart`, `isFirst`, `isLast` and `text` which holds the
-             * value of the default formatter. Since v12.5.0, the callback also
+             * value of the default formatter. Since v12.6.0, the callback also
              * receives `ctx` as the first argument, so that arrow functions can
              * access the same context as regular functions using `this`.
              *
@@ -1179,15 +1183,12 @@ namespace AxisDefaults {
              * @type      {Highcharts.CSSObject}
              */
             style: {
-                /** @internal */
-                color: 'var(--highcharts-neutral-color-80)',
-                /** @internal */
-                cursor: 'default',
                 /**
-                 * @type {number|string}
+                 * @type {Highcharts.ColorType}
                  */
+                color: 'var(--highcharts-neutral-color-80)',
+                cursor: 'default',
                 fontSize: '0.8em',
-                /** @internal */
                 textOverflow: 'ellipsis'
             }
         },
@@ -1897,7 +1898,7 @@ namespace AxisDefaults {
          * [tickPixelInterval](#xAxis.tickPixelInterval) and [tickInterval](
          * #xAxis.tickInterval). The automatic tick positions are accessible
          * through `this.tickPositions` and can be modified by the callback.
-         * Since v12.5.0, the callback also receives `ctx` as the third
+         * Since v12.6.0, the callback also receives `ctx` as the third
          * argument, so that arrow functions can access the same context as
          * regular functions using `this`.
          *
@@ -2121,7 +2122,9 @@ namespace AxisDefaults {
              * @type    {Highcharts.CSSObject}
              */
             style: {
-                /** @internal */
+                /**
+                 * @type {Highcharts.ColorType}
+                 */
                 color: 'var(--highcharts-neutral-color-60)',
                 /**
                  * @type {number|string}
@@ -2253,7 +2256,6 @@ namespace AxisDefaults {
          *         Bright grey lines from Y axis
          *
          * @type    {Highcharts.ColorType}
-         * @default #f2f2f2
          */
         minorGridLineColor: 'var(--highcharts-neutral-color-5)',
 
@@ -2281,7 +2283,6 @@ namespace AxisDefaults {
          *         Black tick marks on Y axis
          *
          * @type    {Highcharts.ColorType}
-         * @default #999999
          */
         minorTickColor: 'var(--highcharts-neutral-color-40)',
 
@@ -2337,7 +2338,6 @@ namespace AxisDefaults {
          *         Green lines
          *
          * @type    {Highcharts.ColorType}
-         * @default #e6e6e6
          */
         gridLineColor: 'var(--highcharts-neutral-color-10)',
 
@@ -3240,7 +3240,7 @@ namespace AxisDefaults {
 
             /**
              * Callback JavaScript function to format the label. The value is
-             * given by `this.total`. Since v12.5.0, the callback also receives
+             * given by `this.total`. Since v12.6.0, the callback also receives
              * `ctx` as the first argument, so that arrow functions can access
              * the same context as regular functions using `this`.
              *
@@ -3269,15 +3269,15 @@ namespace AxisDefaults {
              * @product highcharts
              */
             style: {
-                /** @internal */
+                /** @type {Highcharts.ColorType} */
                 color: 'var(--highcharts-neutral-color-100)',
+
                 /**
                  * @type {number|string}
                  */
                 fontSize: '0.7em',
-                /** @internal */
+
                 fontWeight: 'bold',
-                /** @internal */
                 textOutline: '1px contrast'
             }
         },

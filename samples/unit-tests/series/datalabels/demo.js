@@ -275,46 +275,67 @@ QUnit.test('Top 90', function (assert) {
     );
 });
 
-QUnit.test(
-    'Connect ends and data label still visible (#6465)',
-    function (assert) {
-        var chart = Highcharts.chart('container', {
-            chart: {
-                polar: true,
-                type: 'line'
-            },
+QUnit.test('Various data labels edge cases', function (assert) {
+    const chart = Highcharts.chart('container', {
+        chart: {
+            polar: true,
+            type: 'line'
+        },
 
-            plotOptions: {
-                series: {
-                    dataLabels: {
-                        allowOverlap: true,
-                        enabled: true,
-                        padding: 0,
-                        defer: false
-                    }
+        plotOptions: {
+            series: {
+                dataLabels: {
+                    allowOverlap: true,
+                    enabled: true,
+                    padding: 0,
+                    defer: false,
+                    zIndex: 4
                 }
-            },
-            yAxis: {
-                max: 60000
-            },
+            }
+        },
+        yAxis: {
+            max: 60000
+        },
 
-            series: [
-                {
-                    name: 'Actual Spending',
-                    data: [45000, 39000, 42000, 31000, 26000, 14000],
-                    pointPlacement: 'on',
-                    animation: false
+        series: [{
+            name: 'Actual Spending',
+            data: [45000, 39000, 42000, 14000],
+            pointPlacement: 'on',
+            animation: false
+        }, {
+            type: 'venn',
+            data: [{
+                name: 'A',
+                sets: ['A'],
+                value: 20,
+                dataLabels: {
+                    zIndex: 5
                 }
-            ]
-        });
+            }, {
+                sets: ['B'],
+                value: 2
+            }, {
+                sets: ['A', 'B'],
+                value: 1
+            }]
+        }]
+    });
 
+    // Connect ends and data label still visible (#6465)
+    assert.strictEqual(
+        chart.series[0].points[0].dataLabel.opacity,
+        1,
+        'First data label is visible'
+    );
+
+    chart.series.forEach(s => {
         assert.strictEqual(
-            chart.series[0].points[0].dataLabel.opacity,
-            1,
-            'First data label is visible'
+            s.dataLabelsGroup.element.getAttribute('data-z-index'),
+            '4',
+            `Data label group has correct z-index (${s.type})`
         );
-    }
-);
+    });
+});
 
 // Highcharts 4.1.1, Issue #3866
 // Data Labels are not rendering for column charts when series are shown/hidden

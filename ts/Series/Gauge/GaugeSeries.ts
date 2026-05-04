@@ -114,6 +114,8 @@ class GaugeSeries extends Series {
     public static defaultOptions: GaugeSeriesOptions = merge(
         Series.defaultOptions,
         {
+            clip: false,
+
             /**
              * When this option is `true`, the dial will wrap around the axes.
              * For instance, in a full-range gauge going from 0 to 360, a value
@@ -589,20 +591,6 @@ class GaugeSeries extends Series {
     }
 
     /**
-     * @private
-     */
-    public render(): void {
-        this.group = this.plotGroup(
-            'group',
-            'series',
-            this.visible ? 'inherit' : 'hidden',
-            this.options.zIndex,
-            this.chart.seriesGroup
-        );
-        Series.prototype.render.call(this);
-        this.group.clip(this.chart.clipRect);
-    }
-    /**
      * Extend the basic setData method by running processData and generatePoints
      * immediately, in order to access the points from the legend.
      * @private
@@ -739,6 +727,7 @@ export default GaugeSeries;
  * @sample {highcharts} highcharts/series/data-array-of-objects/
  *         Config objects
  *
+ * @basic
  * @type      {Array<number|null|*>}
  * @extends   series.line.data
  * @excluding drilldown, marker, x

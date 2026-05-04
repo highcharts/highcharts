@@ -3,7 +3,6 @@
  *  A commercial license may be required depending on use.
  *  See www.highcharts.com/license
  *
- *
  * */
 
 'use strict';
@@ -45,7 +44,7 @@ import {
 /**
  * The AO series type
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.ao
  *
@@ -251,6 +250,7 @@ class AOIndicator extends SMAIndicator {
  *
  * */
 
+/** @internal */
 interface AOIndicator {
     nameBase: string;
     nameComponents: Array<string>|undefined;
@@ -279,6 +279,7 @@ extend(AOIndicator.prototype, {
  *
  * */
 
+/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         ao: typeof AOIndicator;
@@ -293,6 +294,7 @@ SeriesRegistry.registerSeriesType('ao', AOIndicator);
  *
  * */
 
+/** @internal */
 export default AOIndicator;
 
 /* *

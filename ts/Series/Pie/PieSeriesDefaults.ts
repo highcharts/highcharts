@@ -558,7 +558,6 @@ const PieSeriesDefaults: PieSeriesOptions = {
      *         Black border
      *
      * @type    {Highcharts.ColorType}
-     * @default ${palette.backgroundColor}
      * @product highcharts highmaps
      */
     borderColor: 'var(--highcharts-background-color)',
@@ -662,6 +661,7 @@ const PieSeriesDefaults: PieSeriesOptions = {
  * @sample {highcharts} highcharts/series/data-array-of-objects/
  *         Config objects
  *
+ * @basic
  * @type      {Array<number|Array<string,(number|null)>|null|*>}
  * @extends   series.line.data
  * @excluding marker, x

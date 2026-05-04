@@ -88,7 +88,7 @@ import type { DeepPartial } from '../../Shared/Types';
  *        Chart context.
  *
  * @param {global.GlobalEventHandlers} [ctx]
- *        Since v12.5.0, the global event handlers context passed as an extra
+ *        Since v12.6.0, the global event handlers context passed as an extra
  *        argument for arrow functions.
  *
  * @return {void}
@@ -103,7 +103,7 @@ import type { DeepPartial } from '../../Shared/Types';
  *        Context to format
  *
  * @param {*} [outerContext]
- *        Since v12.5.0, the outer context passed as an extra argument for
+ *        Since v12.6.0, the outer context passed as an extra argument for
  *        arrow functions.
  *
  * @return {string}
@@ -651,11 +651,11 @@ const Options: DeepPartial<A11yOptions> = {
                  * @since   6.0.3
                  */
                 style: {
-                    /** @internal */
+                    /**
+                     * @type {Highcharts.ColorType}
+                     */
                     color: 'var(--highcharts-highlight-color-80)',
-                    /** @internal */
                     lineWidth: 2,
-                    /** @internal */
                     borderRadius: 3
                 },
 

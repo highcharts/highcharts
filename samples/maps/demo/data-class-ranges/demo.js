@@ -10,12 +10,6 @@
                 map: topology
             },
 
-            colors: [
-                'rgba(255,0,0,1)', 'rgba(255,0,0,1)', 'rgba(19,64,117,0.4)',
-                'rgba(19,64,117,0.5)', 'rgba(19,64,117,0.6)',
-                'rgba(19,64,117,0.8)', 'rgba(19,64,117,1)'
-            ],
-
             title: {
                 text: 'Population density by country (/km²)',
                 align: 'left'
@@ -70,34 +64,33 @@
                 symbolRadius: 0,
                 symbolHeight: 14
             },
-
             colorAxis: {
                 dataClasses: [{
                     to: 3,
-                    color: '#0000ee'
+                    color: '#440154'
                 }, {
                     from: 3,
                     to: 10,
-                    color: '#00eeee'
+                    color: '#443983'
                 }, {
                     from: 10,
                     to: 30,
-                    color: '#00ee00'
+                    color: '#31688e'
                 }, {
                     from: 30,
                     to: 100,
-                    color: '#bbee00'
+                    color: '#21918c'
                 }, {
                     from: 100,
                     to: 300,
-                    color: '#eeee00'
+                    color: '#35b779'
                 }, {
                     from: 300,
                     to: 1000,
-                    color: '#ee6600'
+                    color: '#90d743'
                 }, {
                     from: 1000,
-                    color: '#bb0000'
+                    color: '#fde725'
                 }]
             },
 

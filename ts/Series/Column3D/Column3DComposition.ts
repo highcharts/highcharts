@@ -609,7 +609,7 @@ function wrapSeriesAlignDataLabel(
         chart.is3d() &&
         this.is('column')
     ) {
-        const series = this as ColumnSeries,
+        const series = this,
             seriesOptions: ColumnSeriesOptions = series.options,
             inside = pick(options.inside, !!series.options.stacking),
             options3d = chart.options.chart.options3d as any,

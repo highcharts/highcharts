@@ -187,10 +187,10 @@ function createEditModeRenderer(column: Column): EditModeRendererType {
  * Callback function called after column initialization.
  */
 function afterColumnInit(this: Column): void {
-    const { options } = this;
-
-    if (options?.cells?.editMode?.enabled) {
+    if (this.viewport.grid.columnPolicy.isColumnEditable(this.id)) {
         this.editModeRenderer = createEditModeRenderer(this);
+    } else {
+        delete this.editModeRenderer;
     }
 }
 
@@ -235,7 +235,12 @@ function addEditableCellA11yHint(this: TableCell): void {
     const editableLang = this.row.viewport.grid.options
         ?.lang?.accessibility?.cellEditing?.editable;
 
-    if (!this.column.options.cells?.editMode?.enabled || !editableLang) {
+    if (
+        !this.column.viewport.grid.columnPolicy.isColumnEditable(
+            this.column.id
+        ) ||
+        !editableLang
+    ) {
         return;
     }
 
@@ -411,6 +416,8 @@ declare module '../../Core/Options' {
          * Whether to enabled the cell edit mode functionality. It allows to
          * edit the cell value in a separate input field that is displayed
          * after double-clicking the cell or pressing the Enter key.
+         *
+         * @sample grid-pro/basic/cell-editing Cell editing
          */
         editMode?: ColumnEditModeOptions;
     }

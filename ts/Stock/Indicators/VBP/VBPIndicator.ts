@@ -34,7 +34,7 @@ import type {
     VBPOptions,
     VBPParamsOptions
 } from './VBPOptions';
-import type Types from '../../../Shared/Types';
+import type { TypedArray } from '../../../Shared/Types';
 import VBPPoint from './VBPPoint.js';
 
 import A from '../../../Core/Animation/AnimationUtilities.js';
@@ -76,7 +76,9 @@ const abs = Math.abs;
 
 // Utils
 /**
- * @private
+ * Calculate extremes for OHLC data.
+ *
+ * @internal
  */
 function arrayExtremesOHLC(
     data: Array<Array<number>>
@@ -114,7 +116,7 @@ function arrayExtremesOHLC(
 /**
  * The Volume By Price (VBP) series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.vbp
  *
@@ -133,7 +135,7 @@ class VBPIndicator extends SMAIndicator {
      *
      * This series requires `linkedTo` option to be set.
      *
-     * @sample stock/indicators/volume-by-price
+     * @sample {highstock} stock/indicators/volume-by-price
      *         Volume By Price indicator
      *
      * @extends      plotOptions.sma
@@ -224,7 +226,6 @@ class VBPIndicator extends SMAIndicator {
             format: 'P: {point.volumePos:.2f} | N: {point.volumeNeg:.2f}',
             padding: 0,
             style: {
-                /** @internal */
                 fontSize: '0.5em'
             },
             verticalAlign: 'top'
@@ -652,7 +653,7 @@ class VBPIndicator extends SMAIndicator {
     // Specifying where each zone should start ans end
     public specifyZones(
         isOHLC: boolean,
-        xValues: Array<number>|Types.TypedArray,
+        xValues: Array<number>|TypedArray,
         yValues: Array<Array<number>>,
         ranges: number,
         volumeSeries: LineSeries
@@ -731,7 +732,7 @@ class VBPIndicator extends SMAIndicator {
         isOHLC: boolean,
         priceZones: Array<VBPIndicator.VBPIndicatorPriceZoneObject>,
         volumeSeries: LineSeries,
-        xValues: Array<number>|Types.TypedArray,
+        xValues: Array<number>|TypedArray,
         yValues: Array<Array<number>>
     ): Array<VBPIndicator.VBPIndicatorPriceZoneObject> {
         const indicator = this,
@@ -885,6 +886,7 @@ class VBPIndicator extends SMAIndicator {
  *
  * */
 
+/** @internal */
 interface VBPIndicator {
     nameBase: string;
     nameComponents: Array<string>;
@@ -916,6 +918,7 @@ extend(VBPIndicator.prototype, {
 
 namespace VBPIndicator {
 
+    /** @internal */
     export interface VBPIndicatorPriceZoneObject {
         end: number;
         index: number;
@@ -939,6 +942,7 @@ namespace VBPIndicator {
  *
  * */
 
+/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         vbp: typeof VBPIndicator;

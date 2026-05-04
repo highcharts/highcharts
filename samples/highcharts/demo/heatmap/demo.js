@@ -59,8 +59,8 @@ Highcharts.chart('container', {
         layout: 'vertical',
         margin: 0,
         verticalAlign: 'top',
-        y: 25,
-        symbolHeight: 280
+        y: 40,
+        symbolHeight: 260
     },
 
     tooltip: {

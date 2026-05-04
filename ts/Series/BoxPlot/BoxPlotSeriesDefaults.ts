@@ -48,7 +48,14 @@ import type BoxPlotSeriesOptions from './BoxPlotSeriesOptions';
 const BoxPlotSeriesDefaults: BoxPlotSeriesOptions = {
 
     /**
-     * @type {number|null}
+     * The Y axis value to serve as the base for the columns, for
+     * distinguishing between values above and below a threshold. If `null`,
+     * the columns extend from the padding Y axis minimum.
+     *
+     * @type    {number|null}
+     * @default null
+     * @since   2.0
+     * @product highcharts
      */
     threshold: null,
 
@@ -272,7 +279,7 @@ const BoxPlotSeriesDefaults: BoxPlotSeriesOptions = {
      * values. When `undefined`, the general series color is used.
      *
      * In styled mode, the whisker stroke can be set with the
-     * `.highcharts-boxplot-whisker` class .
+     * `.highcharts-boxplot-whisker` class.
      *
      * @sample {highcharts} highcharts/plotoptions/box-plot-styling/
      *         Box plot styling
@@ -372,6 +379,7 @@ const BoxPlotSeriesDefaults: BoxPlotSeriesOptions = {
  * @sample {highcharts} highcharts/series/data-array-of-objects/
  *         Config objects
  *
+ * @basic
  * @type      {Array<Array<(number|string),number,number,number,number>|Array<(number|string),number,number,number,number,number>|*>}
  * @extends   series.line.data
  * @excluding marker

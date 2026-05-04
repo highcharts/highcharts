@@ -124,6 +124,7 @@ export interface ArcDiagramSeriesOptions extends SankeySeriesOptions {
      *     }]
      *  ```
      *
+     * @basic
      * @product highcharts
      */
     data?: Array<ArcDiagramPointOptions>;

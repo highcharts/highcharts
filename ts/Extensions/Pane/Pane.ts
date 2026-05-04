@@ -293,7 +293,7 @@ class Pane {
 
         this.setOptions(this.options);
         this.render();
-        this.chart.axes.forEach(function (axis): void {
+        this.chart.axes.forEach(function (this: Pane, axis): void {
             if (axis.pane === this) {
                 axis.pane = null as any;
                 axis.update({}, redraw);

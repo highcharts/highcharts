@@ -15,6 +15,49 @@ describe('Remove the dashboard.', () => {
         cy.get('tbody tr').eq(0).should('have.class', 'hcg-row-odd');
         cy.get('tbody tr').eq(1).should('have.class', 'hcg-row-even');
     });
+
+    it('Body cells should have a common class.', () => {
+        cy.get('tbody tr').eq(0).children().each(cell => {
+            cy.wrap(cell).should('have.class', 'hcg-cell');
+        });
+    });
+
+    it('Row header cells should have the common cell class.', () => {
+        cy.window().then(win => {
+            const container = win.document.createElement('div');
+            container.id = 'row-header-grid';
+            win.document.body.appendChild(container);
+
+            return win.Grid.grid('row-header-grid', {
+                data: {
+                    columns: {
+                        name: ['Ada'],
+                        value: [1]
+                    }
+                },
+                columns: [{
+                    id: 'name',
+                    cells: {
+                        rowHeader: true
+                    }
+                }]
+            }, true);
+        });
+
+        cy.get('#row-header-grid tbody tr')
+            .eq(0)
+            .children('[data-column-id="name"]')
+            .should('have.prop', 'tagName', 'TH')
+            .and('have.class', 'hcg-cell')
+            .and('have.attr', 'scope', 'row')
+            .and('have.attr', 'role', 'rowheader');
+
+        cy.get('#row-header-grid tbody tr')
+            .eq(0)
+            .children('[data-column-id="value"]')
+            .should('have.prop', 'tagName', 'TD')
+            .and('have.class', 'hcg-cell');
+    });
 });
 
 describe('Grid rows removal.', () => {

@@ -477,6 +477,7 @@ export default LineSeries;
  * @sample {highcharts} highcharts/series/data-array-of-objects/
  *         Config objects
  *
+ * @basic
  * @declare   Highcharts.PointOptionsObject
  * @type      {Array<number|Array<(number|string),(number|null)>|null|*>}
  * @apioption series.line.data

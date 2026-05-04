@@ -196,14 +196,14 @@ const NavigatorDefaults: NavigatorOptions = {
         /**
          * The fill for the handle.
          *
-         * @type    {Highcharts.ColorType}
+         * @type {Highcharts.ColorType}
          */
         backgroundColor: 'var(--highcharts-neutral-color-5)',
 
         /**
          * The stroke for the handle border and the stripes inside.
          *
-         * @type    {Highcharts.ColorType}
+         * @type {Highcharts.ColorType}
          */
         borderColor: 'var(--highcharts-neutral-color-40)'
     },
@@ -232,8 +232,7 @@ const NavigatorDefaults: NavigatorOptions = {
      * @sample {highstock} stock/navigator/outline/
      *         2px blue outline
      *
-     * @type    {Highcharts.ColorType}
-     * @default #cccccc
+     * @type {Highcharts.ColorType}
      */
     outlineColor: 'var(--highcharts-neutral-color-40)',
 
@@ -585,6 +584,7 @@ const NavigatorDefaults: NavigatorOptions = {
  *
  * */
 
+/** @internal */
 export default NavigatorDefaults;
 
 /* *

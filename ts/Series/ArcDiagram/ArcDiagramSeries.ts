@@ -30,7 +30,7 @@ import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
-import TextPath from '../../Extensions/TextPath.js';
+import { composeTextPath } from '../../Extensions/TextPath.js';
 import {
     crisp,
     extend,
@@ -38,7 +38,7 @@ import {
     pick,
     relativeLength
 } from '../../Shared/Utilities.js';
-TextPath.compose(SVGElement);
+composeTextPath(SVGElement);
 
 const { prototype: { symbols } } = SVGRenderer;
 const {
@@ -445,6 +445,8 @@ class ArcDiagramSeries extends SankeySeries {
                     }),
                     zIndex: void 0
                 };
+                // Delete so it doesn't override anything on merge.
+                delete node.dlOptions.zIndex;
             }
 
             // Pass test in drawPoints

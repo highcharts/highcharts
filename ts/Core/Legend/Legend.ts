@@ -18,6 +18,7 @@
  * */
 
 import type AnimationOptions from '../Animation/AnimationOptions';
+import type AreaSeries from '../../Series/Area/AreaSeries';
 import type Axis from '../Axis/Axis';
 import type BBoxObject from '../Renderer/BBoxObject';
 import type BubbleLegendItem from '../../Series/Bubble/BubbleLegendItem';
@@ -508,7 +509,7 @@ class Legend {
         if (!this.chart.styledMode) {
             const { itemHiddenStyle = {} } = this,
                 hiddenColor = itemHiddenStyle.color,
-                { fillColor, fillOpacity, lineColor, marker } =
+                { fillColor, lineColor, marker } =
                     (item as Series).options,
                 colorizeHidden = (attr: SVGAttributes): SVGAttributes => {
                     if (!visible) {
@@ -536,7 +537,9 @@ class Legend {
 
             area?.attr(colorizeHidden({
                 fill: fillColor || item.color,
-                'fill-opacity': fillColor ? 1 : (fillOpacity ?? 0.75)
+                'fill-opacity': fillColor ?
+                    1 :
+                    ((item as AreaSeries).options.fillOpacity ?? 0.75)
             }));
         }
 
@@ -676,7 +679,7 @@ class Legend {
 
         if (alignAttr) {
             translateY = alignAttr.translateY;
-            this.allItems.forEach(function (item): void {
+            this.allItems.forEach(function (this: Legend, item): void {
                 const checkbox = item.checkbox;
                 let top;
 
@@ -1145,7 +1148,7 @@ class Legend {
             boxes: Array<BoxObject> = [],
             alignLeft = this.options.align === 'left';
 
-        this.allItems.forEach(function (item): void {
+        this.allItems.forEach(function (this: Legend, item): void {
             let lastPoint: (Point|undefined),
                 height: number,
                 useFirstPoint = alignLeft,
@@ -1675,6 +1678,7 @@ class Legend {
                 text: currentPage + '/' + pageCount
             });
             [this.down, this.downTracker].forEach(function (
+                this: Legend,
                 elem: (SVGElement|undefined)
             ): void {
                 (elem as any).attr({
@@ -2003,6 +2007,10 @@ export default Legend;
  *
  * @param {Highcharts.LegendItemClickEventObject} event
  * The event that occurred.
+ *
+ * @param {Highcharts.Legend} [ctx]
+ * Since v12.6.0, the legend context passed as an extra argument for arrow
+ * functions.
  */
 
 /**
@@ -2048,6 +2056,10 @@ export default Legend;
  *
  * @param {Highcharts.PointLegendItemClickEventObject} event
  * The event that occurred.
+ *
+ * @param {Highcharts.Point} [ctx]
+ * Since v12.6.0, the point context passed as an extra argument for arrow
+ * functions.
  */
 
 /**
@@ -2103,6 +2115,10 @@ export default Legend;
  *
  * @param {Highcharts.SeriesLegendItemClickEventObject} event
  * The event that occurred.
+ *
+ * @param {Highcharts.Series} [ctx]
+ * Since v12.6.0, the series context passed as an extra argument for arrow
+ * functions.
  */
 
 /**

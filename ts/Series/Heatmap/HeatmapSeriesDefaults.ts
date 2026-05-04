@@ -409,6 +409,7 @@ const HeatmapSeriesDefaults: HeatmapSeriesOptions = {
  * @sample {highcharts} highcharts/series/data-array-of-objects/
  *         Config objects
  *
+ * @basic
  * @type      {Array<Array<number>|*>}
  * @extends   series.line.data
  * @product   highcharts highmaps

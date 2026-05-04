@@ -388,6 +388,7 @@ const MapSeriesDefaults: MapSeriesOptions = {
  *        }]
  *    ```
  *
+ * @basic
  * @type      {Array<number|Array<string,(number|null)>|null|*>}
  * @product   highmaps
  * @apioption series.map.data

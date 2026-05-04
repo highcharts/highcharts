@@ -26,7 +26,7 @@ import type Table from '../../Core/Table/Table';
 import type {
     RuleKey,
     RuleDefinition,
-    RulesRegistryType
+    ValidationNotificationsType
 } from './Validator';
 
 import Validator from './Validator.js';
@@ -95,6 +95,11 @@ declare module '../../Pro/CellEditing/CellEditingComposition' {
          *
          * If not set, the validation rules are applied according to the data
          * type.
+         *
+         * Can be an array where each item can be
+         * either a rule key (string) or a rule definition (object).
+         *
+         * @sample grid-pro/demo/validation Validation rules
          */
         validationRules?: (RuleKey|RuleDefinition)[];
     }
@@ -103,12 +108,10 @@ declare module '../../Pro/CellEditing/CellEditingComposition' {
 declare module '../../Core/Options' {
     interface LangOptions {
         /**
-         * Validation options for the column.
-         *
-         * If not set, the validation rules are applied according to the data
-         * type.
+         * Localized validation notifications for predefined rules or custom
+         * validators.
          */
-        validationErrors?: RulesRegistryType;
+        validationNotifications?: ValidationNotificationsType;
     }
 }
 

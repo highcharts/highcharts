@@ -636,6 +636,7 @@ export interface ExportingButtonOptions {
      * @sample highcharts/navigation/buttonoptions-symbolfill/
      *         Blue symbol stroke for one of the buttons
      *
+     * @default ${palette.neutralColor60}
      * @since 2.0
      */
     symbolFill?: ColorString;

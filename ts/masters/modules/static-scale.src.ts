@@ -14,7 +14,7 @@
  */
 'use strict';
 import Highcharts from '../../Core/Globals.js';
-import StaticScale from '../../Extensions/StaticScale.js';
+import { composeStaticScale } from '../../Extensions/StaticScale.js';
 const G: AnyRecord = Highcharts;
-StaticScale.compose(G.Axis, G.Chart);
+composeStaticScale(G.Axis, G.Chart);
 export default Highcharts;

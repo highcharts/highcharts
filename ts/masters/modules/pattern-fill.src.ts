@@ -14,8 +14,8 @@
  */
 'use strict';
 import Highcharts from '../../Core/Globals.js';
-import PatternFill from '../../Extensions/PatternFill.js';
+import { composePatternFill, patterns } from '../../Extensions/PatternFill.js';
 const G: AnyRecord = Highcharts;
-G.patterns = PatternFill.patterns;
-PatternFill.compose(G.Chart, G.Series, G.SVGRenderer);
+G.patterns = patterns;
+composePatternFill(G.Chart, G.Series, G.SVGRenderer);
 export default Highcharts;

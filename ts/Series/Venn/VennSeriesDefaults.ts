@@ -124,9 +124,14 @@ const VennSeriesDefaults: VennSeriesOptions = {
          * @excluding halo
          */
         select: {
-
+            /**
+             * @type {Highcharts.ColorType}
+             */
             color: 'var(--highcharts-neutral-color-20)',
 
+            /**
+             * @type {Highcharts.ColorType}
+             */
             borderColor: 'var(--highcharts-neutral-color-100)',
 
             animation: false
@@ -167,6 +172,7 @@ const VennSeriesDefaults: VennSeriesOptions = {
  */
 
 /**
+ * @basic
  * @type      {Array<*>}
  * @extends   series.scatter.data
  * @excluding marker, x, y
