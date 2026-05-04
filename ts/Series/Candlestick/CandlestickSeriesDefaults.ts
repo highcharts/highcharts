@@ -75,6 +75,17 @@ const CandlestickSeriesDefaults: CandlestickSeriesOptions = {
     threshold: null,
 
     /**
+     * What type of legend symbol to render for this series. For candlestick
+     * series, the default is `candlestick`, a vertical line (wick) with a
+     * rectangular body.
+     *
+     * @default   candlestick
+     * @product   highstock
+     * @apioption plotOptions.candlestick.legendSymbol
+     */
+    legendSymbol: 'candlestick',
+
+    /**
      * The color of the line/border of the candlestick.
      *
      * In styled mode, the line stroke can be set with the

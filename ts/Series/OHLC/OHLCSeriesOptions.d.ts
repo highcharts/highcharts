@@ -128,6 +128,15 @@ export interface OHLCSeriesOptions extends HLCSeriesOptions {
     data?: Array<(OHLCPointOptions|PointShortOptions)>;
 
     /**
+     * What type of legend symbol to render for this series. For OHLC series
+     * this defaults to `ohlc`, a stem with open and close ticks.
+     *
+     * @default ohlc
+     * @apioption plotOptions.ohlc.legendSymbol
+     */
+    legendSymbol?: string;
+
+    /**
      * Determines which one of  `open`, `high`, `low`, `close` values should
      * be represented as `point.y`, which is later used to set dataLabel
      * position and [compare](#plotOptions.series.compare).
