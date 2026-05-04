@@ -1409,7 +1409,11 @@ class Navigator {
             ), 'yAxis') as NavigatorAxisComposition;
 
             // If we have a base series, initialize the navigator series
-            if (baseSeries || navigatorOptions.series?.data) {
+            if (
+                baseSeries ||
+                navigatorOptions.series?.data ||
+                navigatorOptions.series?.dataTable
+            ) {
                 navigator.updateNavigatorSeries(false);
 
             // If not, set up an event to listen for added series
@@ -1761,14 +1765,21 @@ class Navigator {
                 // Merge data separately. Do a slice to avoid mutating the
                 // navigator options from base series (#4923).
                 const navigatorSeriesData =
-                    baseNavigatorOptions.data || userNavOptions.data;
+                    baseNavigatorOptions.data || userNavOptions.data,
+                    navigatorSeriesDataTable =
+                        baseNavigatorOptions.dataTable ||
+                        userNavOptions.dataTable;
 
                 navigator.hasNavigatorData =
-                    navigator.hasNavigatorData || !!navigatorSeriesData;
-                mergedNavSeriesOptions.data = (
+                    navigator.hasNavigatorData ||
+                    !!navigatorSeriesData ||
+                    !!navigatorSeriesDataTable;
+                mergedNavSeriesOptions.data =
                     navigatorSeriesData ||
-                    baseOptions.data?.slice(0)
-                );
+                    baseOptions.data?.slice(0);
+                mergedNavSeriesOptions.dataTable =
+                    navigatorSeriesDataTable ||
+                    baseOptions.dataTable;
 
                 // Update or add the series
                 if (linkedNavSeries && linkedNavSeries.options) {
@@ -1789,7 +1800,10 @@ class Navigator {
         // navigator.series as an array, we create these series on top of any
         // base series.
         if (
-            chartNavigatorSeriesOptions?.data &&
+            (
+                chartNavigatorSeriesOptions?.data ||
+                chartNavigatorSeriesOptions?.dataTable
+            ) &&
             !(baseSeries && baseSeries.length) ||
             isArray(chartNavigatorSeriesOptions)
         ) {
@@ -1822,7 +1836,11 @@ class Navigator {
                     userSeriesOptions
                 );
                 mergedNavSeriesOptions.data = userSeriesOptions.data;
-                if (mergedNavSeriesOptions.data) {
+                mergedNavSeriesOptions.dataTable = userSeriesOptions.dataTable;
+                if (
+                    mergedNavSeriesOptions.data ||
+                    mergedNavSeriesOptions.dataTable
+                ) {
                     navigator.hasNavigatorData = true;
                     navigatorSeries.push(
                         chart.initSeries(mergedNavSeriesOptions)
