@@ -83,10 +83,8 @@ const getStyles = (
 ): string => {
 
     const reduceToCSS = (
-        /**
-         * For browsers that don't support color-scheme and light-dark, we need
-         * to first set the CSS variables as the light scheme.
-         */
+        // For browsers that don't support color-scheme and light-dark, we need
+        // to first set the CSS variables as the light scheme.
         supportsColorScheme?: boolean
     ): string => {
         let css = '';

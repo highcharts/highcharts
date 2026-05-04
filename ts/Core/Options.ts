@@ -305,7 +305,7 @@ export interface Options {
      *         Latest release styled like version 10
      *
      * @default undefined
-     * @deprecated
+     * @deprecated 13.0.0
      */
     colors?: Array<ColorString>;
     /**

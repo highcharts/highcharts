@@ -91,7 +91,7 @@ const defaultOptions: DefaultOptions = {
      *
      * @type    {Array<Highcharts.ColorType>}
      * @default undefined
-     * @deprecated
+     * @deprecated 13.0.0
      * @apioption colors
      */
 
