@@ -947,6 +947,7 @@ extend(BubbleSeries.prototype, {
     applyZones: noop,
     bubblePadding: true,
     isBubble: true,
+    noSharedTooltip: false,
     keysAffectYAxis: ['y'],
     pointArrayMap: ['y', 'z'],
     pointClass: BubblePoint,
