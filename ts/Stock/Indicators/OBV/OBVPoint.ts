@@ -1,0 +1,36 @@
+/* *
+ *
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
+ *
+ *
+ * */
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type OBVIndicator from './OBVIndicator';
+import type SMAPoint from '../SMA/SMAPoint';
+
+/* *
+ *
+ *  Class
+ *
+ * */
+
+/** @internal */
+declare class OBVPoint extends SMAPoint {
+    public series: OBVIndicator;
+}
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+/** @internal */
+export default OBVPoint;

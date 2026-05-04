@@ -19,10 +19,7 @@
 
 import type ColorType from '../../Core/Color/ColorType';
 import type DashStyleValue from '../../Core/Renderer/DashStyleValue';
-import type {
-    DataLabelOptions,
-    DataLabelTextPathOptions
-} from '../../Core/Series/DataLabelOptions';
+import type { DataLabelOptions } from '../../Core/Series/DataLabelOptions';
 import type { EventCallback } from '../../Core/Callback';
 import type {
     NetworkgraphDataOptions,
@@ -69,7 +66,7 @@ export interface NetworkgraphDataLabelsOptions
     formatter?: NetworkgraphDataLabelsFormatterCallbackFunction;
     linkFormat?: string;
     linkFormatter?: NetworkgraphDataLabelsFormatterCallbackFunction;
-    linkTextPath?: DataLabelTextPathOptions;
+    linkTextPath?: DataLabelOptions['textPath'];
 }
 
 /**
@@ -237,7 +234,29 @@ export interface NetworkgraphSeriesOptions
      */
     link?: NetworkgraphLinkOptions;
 
-    marker?: PointMarkerOptions;
+    marker?: PointMarkerOptions & {
+        states?: PointMarkerOptions['states'] & {
+            /**
+             * The opposite state of a hover for a single point node.
+             * Applied to all not connected nodes to the hovered one.
+             */
+            inactive?: Required<PointMarkerOptions>['states']['inactive'] & {
+                /**
+                 * Animation when not hovering over the node.
+                 *
+                 * @default { duration: 50 }
+                 */
+                animation?: Required<Required<PointMarkerOptions>['states']>['inactive']['animation'];
+
+                /**
+                 * Opacity of inactive markers.
+                 *
+                 * @default 0.3
+                 */
+                opacity?: Required<Required<PointMarkerOptions>['states']>['inactive']['opacity'];
+            };
+        };
+    };
 
     /**
      * A collection of options for the individual nodes. The nodes in a

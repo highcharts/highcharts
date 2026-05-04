@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: LicenseRef-Highcharts
 /**
  * @license Highcharts JS v@product.version@ (@product.date@)
- * @module highcharts/modules/textpath-support
+ * @module highcharts/modules/textpath
  * @requires highcharts
  *
  * (c) 2009-2026 Highsoft AS
@@ -12,8 +12,7 @@
  */
 'use strict';
 import Highcharts from '../../Core/Globals.js';
-import TextPath from '../../Extensions/TextPath.js';
+import { composeTextPath } from '../../Extensions/TextPath.js';
 const G: AnyRecord = Highcharts;
-G.TextPath = TextPath;
-G.TextPath.compose(G.SVGElement);
+composeTextPath(G.SVGElement);
 export default Highcharts;

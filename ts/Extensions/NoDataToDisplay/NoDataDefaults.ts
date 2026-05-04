@@ -83,6 +83,8 @@ const noData: NoDataOptions = {
      * Whether to insert the label as HTML, or as pseudo-HTML rendered with
      * SVG.
      *
+     * @type      {boolean}
+     * @default   false
      * @since     4.1.10
      * @product   highcharts highstock gantt
      * @requires  modules/no-data-to-display

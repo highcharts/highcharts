@@ -205,11 +205,17 @@ export interface SeriesEventsOptions {
 /**
  * Function callback when a series has been animated.
  *
+ * @callback Highcharts.SeriesAfterAnimateCallbackFunction
+ *
  * @param {Highcharts.Series} this
  *        The series where the event occurred.
  *
  * @param {Highcharts.SeriesAfterAnimateEventObject} event
  *        Event arguments.
+ *
+ * @param {Highcharts.Series} [ctx]
+ *        Since v12.6.0, the series context passed as an extra argument for
+ *        arrow functions.
  */
 export type SeriesAfterAnimateCallbackFunction =
     EventCallback<Series, SeriesAfterAnimateEventObject>;
@@ -233,11 +239,17 @@ export interface SeriesAfterAnimateEventObject {
  * Function callback when a series is clicked. Return false to cancel toggle
  * actions.
  *
+ * @callback Highcharts.SeriesClickCallbackFunction
+ *
  * @param {Highcharts.Series} this
  *        The series where the event occurred.
  *
  * @param {Highcharts.SeriesClickEventObject} event
  *        Event arguments.
+ *
+ * @param {Highcharts.Series} [ctx]
+ *        Since v12.6.0, the series context passed as an extra argument for
+ *        arrow functions.
  */
 export type SeriesClickCallbackFunction =
     EventCallback<Series, SeriesClickEventObject>;
@@ -258,11 +270,17 @@ export interface SeriesClickEventObject {
  * Gets fired when the series is hidden after chart generation time, either by
  * clicking the legend item or by calling `.hide()`.
  *
+ * @callback Highcharts.SeriesHideCallbackFunction
+ *
  * @param {Highcharts.Series} this
  *        The series where the event occurred.
  *
  * @param {global.Event} event
  *        The event that occurred.
+ *
+ * @param {Highcharts.Series} [ctx]
+ *        Since v12.6.0, the series context passed as an extra argument for
+ *        arrow functions.
  */
 export type SeriesHideCallbackFunction = EventCallback<Series, Event>;
 
@@ -276,6 +294,10 @@ export type SeriesHideCallbackFunction = EventCallback<Series, Event>;
  *
  * @param {global.PointerEvent} event
  *        Event that occurred.
+ *
+ * @param {Highcharts.Series} [ctx]
+ *        Since v12.6.0, the series context passed as an extra argument for
+ *        arrow functions.
  */
 export type SeriesMouseOutCallbackFunction =
     EventCallback<Series, PointerEvent>;
@@ -290,6 +312,10 @@ export type SeriesMouseOutCallbackFunction =
  *
  * @param {global.PointerEvent} event
  *        Event that occurred.
+ *
+ * @param {Highcharts.Series} [ctx]
+ *        Since v12.6.0, the series context passed as an extra argument for
+ *        arrow functions.
  */
 export type SeriesMouseOverCallbackFunction =
     EventCallback<Series, PointerEvent>;
@@ -305,6 +331,10 @@ export type SeriesMouseOverCallbackFunction =
  *
  * @param {global.Event} event
  *        Event that occurred.
+ *
+ * @param {Highcharts.Series} [ctx]
+ *        Since v12.6.0, the series context passed as an extra argument for
+ *        arrow functions.
  */
 export type SeriesShowCallbackFunction = EventCallback<Series, Event>;
 
@@ -414,6 +444,7 @@ export interface SeriesOptions {
      * @sample {highcharts} highcharts/css/point-series-classname
      *         Series and point class name
      *
+     * @basic
      * @since 5.0.0
      */
     className?: string;
@@ -462,6 +493,8 @@ export interface SeriesOptions {
      *         Pattern fill
      * @sample {highmaps} maps/demo/category-map/
      *         Category map by multiple series
+     *
+     * @basic
      */
     color?: ColorType;
     colorByPoint?: boolean;
@@ -572,6 +605,9 @@ export interface SeriesOptions {
      */
     dashStyle?: DashStyleValue;
 
+    /**
+     * @basic
+     */
     data?: Array<(PointOptions|PointShortOptions)>;
 
     /**
@@ -616,6 +652,19 @@ export interface SeriesOptions {
      * }
      * ```
      *
+     * If the columns of the DataTable have keys matching the series keys, the
+     * data mapping is not necessary. For example, this DataTable will connect
+     * directly to the series' `x` and `y` keys:
+     *
+     * ```js
+     * const dataTable = new Highcharts.DataTable({
+     *     columns: {
+     *         x: ['2026-05-04', '2026-05-05', '2026-05-06'],
+     *         y: [1, 4, 2]
+     *     }
+     *  });
+     * ```
+     *
      * @type    {Highcharts.DataMappingOptionsObject}
      * @sample {highcharts} highcharts/datatable/series-datatable-multiple
      *         Series with two data tables
@@ -643,13 +692,16 @@ export interface SeriesOptions {
      * `DataTable` instance will be created based on the provided
      * configuration.
      *
-     * The data table is mapped to the series data points based on the
-     * [series.dataMapping](#plotOptions.series.dataMapping) option.
-     *
      * @sample {highcharts} highcharts/datatable/series-datatable/
-     *        Series with one data table
+     *        Series with one data table each
      * @sample {highcharts} highcharts/datatable/series-datatable-multiple/
      *        Series with two data tables
+     * @sample {highstock} stock/datatable/series-datatable/
+     *        Series with one data table each
+     * @sample {highstock} stock/datatable/series-datatable-multiple/
+     *        Series with two data tables
+     * @sample {highmaps} maps/datatable/series-datatable
+     *        Series-level data table
      *
      * @since next
      */
@@ -660,6 +712,8 @@ export interface SeriesOptions {
      * General event handlers for the series items. These event hooks can
      * also be attached to the series at run time using the
      * `Highcharts.addEvent` function.
+     *
+     * @basic
      */
     events?: SeriesEventsOptions;
 
@@ -704,6 +758,7 @@ export interface SeriesOptions {
      * @sample {highcharts} highcharts/plotoptions/series-id/
      *         Get series by id
      *
+     * @basic
      * @since 1.2.0
      */
     id?: string;
@@ -713,6 +768,7 @@ export interface SeriesOptions {
      * `chart.series` array, the visible Z index as well as the order in the
      * legend.
      *
+     * @basic
      * @since 2.3.0
      */
     index?: number;
@@ -831,7 +887,10 @@ export interface SeriesOptions {
      *
      * @sample {highcharts} highcharts/series/name/ Series name
      *
-     * @sample {highmaps} maps/demo/category-map/ Series name
+     * @sample {highmaps} maps/demo/category-map/
+     *         Series name
+     *
+     * @basic
      */
     name?: string;
 
@@ -1100,6 +1159,8 @@ export interface SeriesOptions {
      *
      * @sample {highmaps} maps/demo/mapline-mappoint/
      * Multiple types in the same map
+     *
+     * @basic
      */
     type?: string;
 

@@ -359,7 +359,7 @@ class DataTableCore {
      *
      * @sample highcharts/datatable/live-chart/
      *       Add and delete rows in a live chart
-     * @sample highcharts/datatable/live-candlestick/
+     * @sample stock/datatable/live-candlestick/
      *       Live candlestick
      * @sample highcharts/datatable/shared-with-grid/
      *       Chart with data table CRUD operations
@@ -455,6 +455,20 @@ export default DataTableCore;
  *  API Declarations
  *
  * */
+/**
+ * A collection of data table columns defined by a object where the key is the
+ * column ID and the value is an array of the column values. Typed arrays are
+ * supported.
+ *
+ * @type {Highcharts.DataTableColumnCollection|undefined}
+ * @apioption dataTable.columns
+ */
+/**
+ * Custom ID to identify the new DataTable instance.
+ *
+ * @type {string|undefined}
+ * @apioption dataTable.id
+ */
 
 /**
  * A typed array.
@@ -464,7 +478,8 @@ export default DataTableCore;
  * @typedef {Array<boolean|null|number|string|undefined>|Highcharts.TypedArray} Highcharts.DataTableColumn
  *//**
  * A collection of data table columns defined by a object where the key is the
- * column name and the value is an array of the column values.
+ * column ID and the value is an array of the column values. Typed arrays are
+ * supported.
  * @typedef {Record<string, Highcharts.DataTableColumn>} Highcharts.DataTableColumnCollection
  */
 

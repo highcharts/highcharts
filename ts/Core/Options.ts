@@ -263,7 +263,7 @@ export interface LoadingOptions {
  * space character.
  *
  * @param {Highcharts.Chart} [ctx]
- * Since v12.5.0, the chart context passed as an extra argument for arrow
+ * Since v12.6.0, the chart context passed as an extra argument for arrow
  * functions.
  *
  * @return {string}
@@ -324,15 +324,28 @@ export interface Options {
      * configuration.
      *
      * The data table is mapped to the series data points based on the
-     * [series.dataMapping](#plotOptions.series.dataMapping) option.
+     * [series.dataMapping](#plotOptions.series.dataMapping) option, unless the
+     * column keys match the point property names (`x`, `y` etc.), in which case
+     * the mapping is automatic.
      *
-     * @sample {highcharts} highcharts/datatable/chart-datatable-single/
+     * @sample {highstock} stock/datatable/candlestick
+     *         Candlestick chart with data table
+     * @sample {highstock} stock/datatable/live-candlestick
+     *         Live candlestick
+     * @sample {highmaps} maps/datatable/chart-datatable
+     *         Map with data table and data mapping
+     * @sample {highmaps} maps/demo/basic-map
+     *         World map
+     * @sample {gantt} gantt/datatable/chart-datatable
+     *         Gantt chart with data table
+     *
+     * @sample highcharts/datatable/chart-datatable-single/
      *         Chart with one data table as option
-     * @sample {highcharts} highcharts/datatable/chart-datatable-single/
+     * @sample highcharts/datatable/chart-datatable-single/
      *         Chart with one data table as instance
-     * @sample {highcharts} highcharts/datatable/chart-datatable-multiple/
+     * @sample highcharts/datatable/chart-datatable-multiple/
      *         Chart with two data tables
-     * @sample {highcharts} highcharts/data/getdatatable
+     * @sample highcharts/data/getdatatable
      *         Data table from CSV
      */
     dataTable?: DataTableOptions|DataTableCore|Array<DataTableOptions|DataTableCore>;

@@ -31,11 +31,20 @@ declare module '../AxisOptions' {
         maxOffset?: number;
     }
     interface AxisLabelOptions {
+        // TODO: type mismatch with JSDoc
         levels?: number;
+
+        /**
+         * The symbol for the collapse and expand icon in a
+         * treegrid.
+         *
+         * @product gantt
+         */
         symbol?: TreeGridAxisLabelIconOptions;
     }
 }
 
+// TODO: simplify type based on actual usage in code (this should resolve docs)
 export interface TreeGridAxisLabelIconOptions {
     height?: number;
     lineColor?: ColorType;

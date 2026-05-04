@@ -91,6 +91,8 @@ export interface LineSeriesOptions extends SeriesOptions {
      * }
      * ```
      *
+     * @basic
+     *
      * @sample {highcharts} highcharts/chart/reflow-true/
      *         Numerical values
      * @sample {highcharts} highcharts/series/data-array-of-arrays/

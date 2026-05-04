@@ -937,6 +937,7 @@ export default FlowMapSeries;
  *      }]
  *      ```
  *
+ * @basic
  * @type      {Array<number|null|*>}
  * @apioption series.flowmap.data
  */

@@ -23,7 +23,7 @@ import type FlagSeries from '../../Series/Flags/FlagsSeries';
 import type Point from '../Series/Point.js';
 import type TickPositionsArray from './TickPositionsArray';
 import type Time from '../Time';
-import type Types from '../../Shared/Types';
+import type { TypedArray } from '../../Shared/Types';
 
 import Axis from './Axis.js';
 import DataTableCore from '../../Data/DataTableCore.js';
@@ -116,7 +116,7 @@ namespace OrdinalAxis {
             min: number,
             max: number,
             startOfWeek: number,
-            positions?: Array<number>|Types.TypedArray,
+            positions?: Array<number>|TypedArray,
             closestDistance?: number,
             findHigherRanks?: boolean
         ): TickPositionsArray;
@@ -1294,11 +1294,17 @@ namespace OrdinalAxis {
                         visible: series.visible
                     } as any;
 
-                    const xData = series.getColumn('x').concat(
-                        withOverscroll ?
-                            ordinal.getOverscrollPositions() :
-                            []
-                    );
+                    const xColumn = series.getColumn('x'),
+                        xData = (
+                            // No concat on TypedArrays, use Array.from
+                            Array.isArray(xColumn) ?
+                                xColumn :
+                                Array.from(xColumn) as number[]
+                        ).concat(
+                            withOverscroll ?
+                                ordinal.getOverscrollPositions() :
+                                []
+                        );
                     fakeSeries.dataTable = new DataTableCore({
                         columns: {
                             x: xData

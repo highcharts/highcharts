@@ -30,7 +30,7 @@ import type {
     PointShortOptions
 } from '../../Core/Series/PointOptions';
 import type Series from '../../Core/Series/Series';
-import type Types from '../../Shared/Types';
+import type * as Types from '../../Shared/Types';
 import type SeriesRegistry from '../../Core/Series/SeriesRegistry';
 import type { SeriesTypePlotOptions } from '../../Core/Series/SeriesType';
 import BoostableMap from './BoostableMap.js';
@@ -865,7 +865,9 @@ function onSeriesDestroy(
 function onSeriesHide(
     this: Series
 ): void {
-    const boost = this.boost;
+    const boost = this.boost,
+        chartBoost = this.chart.boost,
+        sharedMarkerGroup = chartBoost?.markerGroup;
 
     if (boost && boost.canvas && boost.target) {
         if (boost.wgl) {
@@ -874,6 +876,17 @@ function onSeriesHide(
         if (boost.clear) {
             boost.clear();
         }
+    }
+
+    if (
+        sharedMarkerGroup &&
+        this.markerGroup === sharedMarkerGroup &&
+        this.chart.series.some((series): boolean =>
+            series.visible &&
+            series.markerGroup === sharedMarkerGroup
+        )
+    ) {
+        sharedMarkerGroup.show();
     }
 }
 
