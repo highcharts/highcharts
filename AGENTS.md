@@ -4,7 +4,7 @@ Scope: instructions for coding/review agents working in this repository.
 
 ## Setup
 
-- Install deps with `pnpm install`.
+- Install deps with the package manager matching the existing lockfile (typically `npm install` in this repo).
 - If the repo still uses `package-lock.json`, do not migrate lockfiles unless explicitly requested.
 - Run commands from repo root unless a task says otherwise.
 
