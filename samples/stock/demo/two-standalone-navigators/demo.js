@@ -28,21 +28,28 @@ const AMDPriceConnector =
 (async () => {
     await AMDPriceConnector.load();
 
-    const dataTable = AMDPriceConnector.getTable(),
-        cols = dataTable.getColumns();
+    const dataTable = AMDPriceConnector.getTable();
 
-    const name = Array.from(Object.keys(cols).filter(k => k !== 'Date'))[0];
-    const price = cols[name].map((value, i) => [cols.Date[i], value]);
+    Highcharts.setOptions({
+        plotOptions: {
+            series: {
+                dataMapping: {
+                    x: 'Date',
+                    y: '0P0000006A'
+                }
+            }
+        }
+    });
 
     const firstNav = Highcharts.navigator('navigator-container', {
         series: [{
-            data: price
+            dataTable
         }]
     });
 
     const secondNav = Highcharts.navigator('second-navigator-container', {
         series: [{
-            data: price
+            dataTable
         }]
     });
 
@@ -64,11 +71,7 @@ const AMDPriceConnector =
         },
         series: [{
             name: 'AMD',
-            dataTable,
-            dataMapping: {
-                x: 'Date',
-                y: '0P0000006A'
-            }
+            dataTable
         }]
     });
 
