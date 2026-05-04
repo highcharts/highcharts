@@ -1,4 +1,4 @@
-QUnit.test('Touch event test on popup', function (assert) {
+QUnit.test('General Popup tests.', function (assert) {
     // ADD CSS STYLES
     var css =
             '.highcharts-popup.highcharts-annotation-toolbar {right: ' +
@@ -141,15 +141,8 @@ QUnit.test('Touch event test on popup', function (assert) {
     );
     // REMOVE CSS STYLES
     style.parentNode.removeChild(style);
-});
 
-QUnit.test('Stock Tools popup general tests.', function (assert) {
-    const chart = Highcharts.stockChart('container', {
-        series: [{
-            data: [1, 2, 3]
-        }]
-    });
-
+    // #24125
     const flag = chart.navigationBindings.fieldsToOptions({
         'typeOptions.title.text': '10/21',
         'typeOptions.shape': 'circlepin',
