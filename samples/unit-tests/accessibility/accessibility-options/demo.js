@@ -287,6 +287,20 @@ QUnit.test('HCM colors override series colors', function (assert) {
     );
 
     assert.strictEqual(
+        chart.series[0].points[0].graphic &&
+        chart.series[0].points[0].graphic.attr('stroke'),
+        'windowText',
+        'Area series markers should keep a visible high contrast outline.'
+    );
+
+    assert.strictEqual(
+        chart.series[0].points[0].graphic &&
+        chart.series[0].points[0].graphic.element.getAttribute('stroke-width'),
+        '1',
+        'Area series markers should render a visible outline width.'
+    );
+
+    assert.strictEqual(
         chart.series[1].graph && chart.series[1].graph.attr('stroke'),
         colors[1],
         'Line series should use the configured high contrast stroke.'

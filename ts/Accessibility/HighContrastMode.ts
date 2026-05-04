@@ -256,7 +256,32 @@ function setHighContrastTheme(
                         userPlotOpts.color,
                         plotOpts.marker?.lineColor,
                         seriesColor
-                    );
+                    ),
+                markerLineWidth = (
+                    hasCustomColors &&
+                    isFilledLineSeries &&
+                    userPlotOpts.marker?.lineWidth === void 0
+                ) ? 1 : userPlotOpts.marker?.lineWidth;
+
+            const markerOptions: AnyRecord = (
+                plotOpts.marker || userPlotOpts.marker
+            ) && {
+                fillColor: hasCustomColors ?
+                    seriesColor :
+                    pick(
+                        userPlotOpts.marker?.fillColor,
+                        userPlotOpts.marker?.lineColor,
+                        userPlotOpts.lineColor,
+                        userPlotOpts.color,
+                        plotOpts.marker?.fillColor,
+                        seriesColor
+                    ),
+                lineColor: markerLineColor
+            };
+
+            if (markerOptions && markerLineWidth !== void 0) {
+                markerOptions.lineWidth = markerLineWidth;
+            }
 
             const seriesOptions: Partial<SeriesOptions> = {
                 color: seriesColor,
@@ -268,19 +293,7 @@ function setHighContrastTheme(
                 borderColor,
                 fillColor,
                 lineColor,
-                marker: (plotOpts.marker || userPlotOpts.marker) && {
-                    fillColor: hasCustomColors ?
-                        seriesColor :
-                        pick(
-                            userPlotOpts.marker?.fillColor,
-                            userPlotOpts.marker?.lineColor,
-                            userPlotOpts.lineColor,
-                            userPlotOpts.color,
-                            plotOpts.marker?.fillColor,
-                            seriesColor
-                        ),
-                    lineColor: markerLineColor
-                }
+                marker: markerOptions
             };
 
             s.update(seriesOptions, false);
