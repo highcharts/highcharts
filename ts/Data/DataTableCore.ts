@@ -359,7 +359,7 @@ class DataTableCore {
      *
      * @sample highcharts/datatable/live-chart/
      *       Add and delete rows in a live chart
-     * @sample highcharts/datatable/live-candlestick/
+     * @sample stock/datatable/live-candlestick/
      *       Live candlestick
      * @sample highcharts/datatable/shared-with-grid/
      *       Chart with data table CRUD operations

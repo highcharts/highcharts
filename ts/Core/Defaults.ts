@@ -121,6 +121,16 @@ const defaultOptions: DefaultOptions = {
      *         Chart with two data tables
      * @sample {highcharts} highcharts/data/getdatatable
      *         Data table from CSV
+     * @sample {highstock} stock/datatable/candlestick
+     *         Candlestick chart with data table
+     * @sample {highstock} stock/datatable/live-candlestick
+     *         Live candlestick
+     * @sample {highmaps} maps/datatable/chart-datatable
+     *         Map with data table and data mapping
+     * @sample {highmaps} maps/demo/basic-map
+     *         World map
+     * @sample {gantt} gantt/datatable/chart-datatable
+     *         Gantt chart with data table
      *
      * @type {Highcharts.DataTable|Highcharts.DataTableOptions|Array<Highcharts.DataTable|Highcharts.DataTableOptions>}
      * @since     next
