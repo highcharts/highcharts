@@ -117,8 +117,17 @@ const palette: PaletteOptions = {
          * @type   {Array<Highcharts.ColorType|null|undefined>}
          * @apioption palette.dark.colors
          */
+        /**
+         * @type {Highcharts.ColorType}
+         */
         backgroundColor: '#141414',
+        /**
+         * @type {Highcharts.ColorType}
+         */
         neutralColor: '#ffffff',
+        /**
+         * @type {Highcharts.ColorType}
+         */
         highlightColor: '#2caffe'
     },
     /**
@@ -165,12 +174,14 @@ const palette: PaletteOptions = {
          */
         highlightColor: '#0022ff',
         /**
-         * Positive indicators, in stock charts.
+         * Positive color used in stock charts, such as for technical
+         * indicators, annotations or hollow candlestick series.
          * @type {Highcharts.ColorType}
          */
         positiveColor: '#06b535',
         /**
-         * Negative indicators, in stock charts.
+         * Negative color used in stock charts, such as for technical
+         * indicators, annotations or hollow candlestick series.
          * @type {Highcharts.ColorType}
          */
         negativeColor: '#f21313'
