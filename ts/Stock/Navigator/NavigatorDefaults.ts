@@ -221,9 +221,9 @@ const NavigatorDefaults: NavigatorOptions = {
      *         Blue, semi transparent mask
      *
      * @type    {Highcharts.ColorType}
-     * @default rgba(102,133,194,0.3)
-     * @apioption navigator.maskFill
      */
+    maskFill:
+        'color-mix(var(--highcharts-highlight-color-60) 30%, transparent)',
 
     /**
      * The color of the line marking the currently zoomed area in the
