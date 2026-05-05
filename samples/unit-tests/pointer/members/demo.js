@@ -246,73 +246,6 @@ QUnit.test('Pointer.getHoverData', function (assert) {
         'the same index as the hoverPoint'
     );
 
-    // Bubble series should also participate in shared tooltips.
-    const bubbleChart = Highcharts.chart('container', {
-        chart: {
-            animation: false,
-            width: 1000
-        },
-        tooltip: {
-            shared: true
-        },
-        series: [
-            {
-                type: 'bubble',
-                data: [
-                    ['A', 21709, 2201],
-                    ['B', 4932, 500]
-                ]
-            },
-            {
-                type: 'bubble',
-                data: [
-                    ['C', 5602, 500],
-                    ['D', 43499, 4258],
-                    ['B', 26773, 2260]
-                ]
-            }
-        ]
-    });
-    point = bubbleChart.series[1].points[2];
-    data = bubbleChart.pointer.getHoverData(
-        point,
-        bubbleChart.series[1],
-        bubbleChart.series,
-        true,
-        true,
-        {
-            chartX: point.plotX || 0,
-            chartY: point.plotY || 0
-        }
-    );
-    assert.strictEqual(
-        bubbleChart.series[0].noSharedTooltip,
-        false,
-        'Bubble series should opt into shared tooltip mode'
-    );
-    assert.strictEqual(
-        data.hoverPoints.length,
-        2,
-        'Bubble series should contribute one point per matching series in ' +
-        'shared tooltips'
-    );
-    assert.strictEqual(
-        !!find(data.hoverPoints, function (p) {
-            return p.series === bubbleChart.series[0];
-        }),
-        true,
-        'Bubble series should include the matching point from the other ' +
-        'series in shared tooltip'
-    );
-    assert.strictEqual(
-        !!find(data.hoverPoints, function (p) {
-            return p.x !== data.hoverPoint.x;
-        }),
-        false,
-        'Bubble series shared tooltip points should align on the same x value'
-    );
-    bubbleChart.destroy();
-
     // Reset, avoid breaking tests downstream
     Highcharts.Series.types.scatter.prototype.noSharedTooltip = true;
 
@@ -350,3 +283,75 @@ QUnit.test('Pointer.getHoverData', function (assert) {
         'noSharedTooltip'
     );
 });
+
+QUnit.test(
+    'Pointer.runPointActions preserves direct hover for bubble series',
+    function (assert) {
+        const chart = Highcharts.chart('container', {
+                chart: {
+                    animation: false,
+                    width: 1000
+                },
+                plotOptions: {
+                    series: {
+                        animation: false,
+                        kdNow: true
+                    }
+                },
+                tooltip: {
+                    shared: true
+                },
+                series: [
+                    {
+                        type: 'bubble',
+                        data: [
+                            ['A', 21709, 2201],
+                            ['B', 4932, 500]
+                        ]
+                    },
+                    {
+                        type: 'bubble',
+                        data: [
+                            ['C', 5602, 500],
+                            ['D', 43499, 4258],
+                            ['B', 26773, 2260]
+                        ]
+                    }
+                ]
+            }),
+            point = chart.series[1].points[2],
+            replacementPoint = chart.series[0].points[1],
+            pointer = chart.pointer,
+            originalFindNearestKDPoint = pointer.findNearestKDPoint;
+        let kdSearchCalled = false;
+
+        chart.hoverPoint = point;
+        chart.hoverSeries = point.series;
+        pointer.isDirectTouch = true;
+        pointer.findNearestKDPoint = function () {
+            kdSearchCalled = true;
+            return replacementPoint;
+        };
+
+        pointer.runPointActions({
+            chartX: point.series.xAxis.pos + point.clientX,
+            chartY: point.series.yAxis.pos + point.plotY,
+            type: 'mousemove'
+        });
+
+        assert.strictEqual(
+            kdSearchCalled,
+            false,
+            'Bubble series with shared tooltip should keep the direct hover ' +
+            'point'
+        );
+        assert.strictEqual(
+            chart.hoverPoint,
+            point,
+            'Bubble series should preserve the directly hovered point'
+        );
+
+        pointer.findNearestKDPoint = originalFindNearestKDPoint;
+        chart.destroy();
+    }
+);

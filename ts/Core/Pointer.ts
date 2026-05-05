@@ -1729,10 +1729,13 @@ class Pointer {
         let hoverPoint = p || chart.hoverPoint,
             hoverSeries = hoverPoint?.series || chart.hoverSeries;
 
-        const // `onMouseOver` or already hovering a series with directTouch
+        const // `onMouseOver`, or keep directly hovered non-shared points.
             isDirectTouch = (!e || e.type !== 'touchmove') && (
                 !!p || (
-                    (hoverSeries?.directTouch) &&
+                    (
+                        hoverSeries?.directTouch ||
+                        (shared && hoverSeries?.noSharedTooltip)
+                    ) &&
                     pointer.isDirectTouch
                 )
             ),
