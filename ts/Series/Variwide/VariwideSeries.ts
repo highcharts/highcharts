@@ -19,7 +19,6 @@
  *
  * */
 
-import type StackingAxis from '../../Core/Axis/Stacking/StackingAxis';
 import type { TypedArray } from '../../Shared/Types';
 import type RangeSelector from '../../Stock/RangeSelector/RangeSelector';
 import type VariwideSeriesOptions from './VariwideSeriesOptions';
@@ -199,41 +198,19 @@ class VariwideSeries extends ColumnSeries {
      * @private
      */
     public correctStackLabels(): void {
-        const series = this,
-            options = series.options,
-            yAxis = series.yAxis as StackingAxis;
+        for (const point of this.points) {
+            const pointWidth = point.shapeArgs?.width || 0,
+                stackItem = this.getStackItem(point);
 
-        let pointStack,
-            pointWidth,
-            stack,
-            xValue;
-
-        for (const point of series.points) {
-            xValue = point.x;
-            pointWidth = (point.shapeArgs as any).width;
-            stack = yAxis.stacking.stacks[(
-                series.negStacks &&
-                (point.y as any) < (
-                    options.startFromThreshold ?
-                        0 :
-                        (options.threshold as any)
-                ) ?
-                    '-' :
-                    ''
-            ) + series.stackKey];
-
-            if (stack) {
-                pointStack = stack[xValue as any];
-                if (pointStack && !point.isNull) {
-                    pointStack.setOffset(
-                        -(pointWidth / 2) || 0,
-                        pointWidth || 0,
-                        void 0,
-                        void 0,
-                        point.plotX,
-                        series.xAxis
-                    );
-                }
+            if (stackItem && !point.isNull) {
+                stackItem.setOffset(
+                    -(pointWidth / 2) || 0,
+                    pointWidth || 0,
+                    void 0,
+                    void 0,
+                    point.plotX,
+                    this.xAxis
+                );
             }
         }
     }
