@@ -124,7 +124,7 @@ QUnit.test(
                 }
             },
             tooltip: {
-                outside: true
+                animation: false
             },
             series: [{
                 data: [1, 2, 3, 4, 5, 6, 7, 8]
@@ -138,23 +138,21 @@ QUnit.test(
 
         scrollingContainer.scrollTop = 0;
         delete chart.pointer.chartPosition;
+        tooltip.refresh(point);
 
-        const posBefore = tooltip.getPosition(80, 40, point);
+        const yBefore = tooltip.label.translateY;
 
         scrollingContainer.scrollTop = 100;
         delete chart.pointer.chartPosition;
+        tooltip.refresh(point);
 
-        const posAfter = tooltip.getPosition(80, 40, point);
+        const yAfter = tooltip.label.translateY;
 
-        assert.notEqual(
-            posBefore.y,
-            posAfter.y,
-            'Tooltip position should change after scrolling.'
-        );
-
-        assert.ok(
-            posAfter.y < posBefore.y,
-            'Tooltip should be positioned higher after scrolling down.'
+        assert.strictEqual(
+            yBefore,
+            yAfter,
+            'Tooltip position should be stable when updatePosition handles ' +
+            'default tooltip scroll coordinates.'
         );
     }
 );
