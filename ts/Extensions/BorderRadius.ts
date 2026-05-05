@@ -390,16 +390,7 @@ function seriesOnAfterColumnTranslate(
                     borderRadius.scope === 'stack' &&
                     point.stackTotal
                 ) {
-                    // Get the StackItem
-                    // @todo: Refactor into stack item getter, share with
-                    // Series.ts
-                    const stacks = options.stacking && yAxis.stacking?.stacks[(
-                            this.negStacks &&
-                            (point.y || 0) < (options.threshold || 0) ?
-                                '-' : ''
-                        ) + this.stackKey],
-                        stackItem = stacks?.[point.x];
-
+                    const stackItem = this.getStackItem(point);
                     if (stackItem) {
 
                         // @todo Refactor to get real points from
