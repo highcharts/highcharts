@@ -22,6 +22,7 @@
  * */
 
 import type { RowId } from '../../Core/Data/DataProvider';
+import type { CellType as DataTableCellType } from '../../../Data/DataTable';
 import type { ColumnCollection } from '../../../Data/DataTable';
 
 
@@ -74,6 +75,74 @@ export interface TreeViewOptions {
      * @default true
      */
     stickyParents?: boolean;
+}
+
+/**
+ * Context passed to tree aggregation callbacks for a specific row/column.
+ */
+export interface TreeViewColumnAggregateContext {
+    /**
+     * Grid column / source column id that is being aggregated.
+     */
+    columnId: string;
+
+    /**
+     * Ordered direct children currently participating in the projected tree.
+     */
+    childrenIds: RowId[];
+
+    /**
+     * Number of direct children currently participating in the projected tree.
+     */
+    childCount: number;
+
+    /**
+     * Tree depth of the current row in the projected tree.
+     */
+    depth: number;
+
+    /**
+     * Whether the current row has direct children in the projected tree.
+     */
+    hasChildren: boolean;
+
+    /**
+     * Row id of the current row.
+     */
+    rowId: RowId;
+
+    /**
+     * Source cell value before aggregation is considered.
+     */
+    sourceValue: DataTableCellType;
+}
+
+/**
+ * Callback deciding which aggregation function should be applied for a row.
+ *
+ * Return a registered Formula processor function name (for example `SUM`),
+ * or a falsy value to skip aggregation for the current row.
+ */
+export type TreeViewColumnAggregateCallback = (
+    context: TreeViewColumnAggregateContext
+) => (false|null|string|undefined);
+
+/**
+ * TreeView column options.
+ */
+export interface TreeViewColumnOptions {
+    /**
+     * Aggregation function used for parent rows with missing source values.
+     *
+     * When provided as a string, the function is applied to every row that
+     * has children in the projected tree and whose source value is `null` or
+     * `undefined`.
+     *
+     * When provided as a callback, it is invoked for matching parent rows and
+     * should return a registered Formula processor function name, or a falsy
+     * value to skip aggregation for the current row.
+     */
+    aggregate?: string | TreeViewColumnAggregateCallback;
 }
 
 /**
@@ -180,6 +249,7 @@ export interface TreeIndexBuildResult {
  * Tree metadata for a single visible row in projected order.
  */
 export interface TreeProjectionRowState {
+    childrenIds: RowId[];
     id: RowId;
     parentId: RowId | null;
     depth: number;
@@ -193,8 +263,10 @@ export interface TreeProjectionRowState {
  * Tree projection state cache for currently projected rows.
  */
 export interface TreeProjectionState {
+    derivedCellColumnIdsByRowId: Map<RowId, Set<string>>;
     rowIds: RowId[];
     rowIndexes: Array<number | undefined>;
+    sourceRowIndexesById: Map<RowId, number>;
     rowsById: Map<RowId, TreeProjectionRowState>;
 }
 

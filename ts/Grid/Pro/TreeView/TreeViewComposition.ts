@@ -21,6 +21,7 @@
  *
  * */
 
+import type DataTable from '../../../Data/DataTable';
 import type Grid from '../../Core/Grid';
 import type { RowId } from '../../Core/Data/DataProvider';
 import type Table from '../../Core/Table/Table';
@@ -28,7 +29,12 @@ import type { RestoreCellFocusEvent } from '../../Core/Table/Table';
 import type TableRow from '../../Core/Table/Body/TableRow';
 import type TableCell from '../../Core/Table/Body/TableCell';
 import type {
+    TableCellAfterDataMutationEvent,
+    TableCellGetEditabilityEvent
+} from '../../Core/Table/Body/TableCell';
+import type {
     TreeInputPathSeparator,
+    TreeViewColumnOptions,
     TreeViewOptions
 } from './TreeViewTypes';
 import type {
@@ -111,6 +117,11 @@ export function compose(
     addEvent(GridClass, 'afterRedraw', onAfterRedraw);
     addEvent(GridClass, 'beforeTreeRowToggle', onBeforeTreeRowToggle);
     addEvent(GridClass, 'afterTreeRowToggle', onAfterTreeRowToggle);
+    addEvent(
+        GridClass,
+        'projectPresentationTable',
+        onProjectPresentationTable
+    );
     addEvent(TableClass, 'beforeInit', onTableBeforeInit);
     addEvent(TableClass, 'afterInit', onTableAfterInit);
     addEvent(TableClass, 'afterReflow', onTableAfterReflow);
@@ -121,6 +132,8 @@ export function compose(
     );
     addEvent(TableClass, 'getViewportTopInset', onTableGetViewportTopInset);
     addEvent(TableClass, 'afterDestroy', onTableAfterDestroy);
+    addEvent(TableCellClass, 'getEditability', onCellGetEditability);
+    addEvent(TableCellClass, 'afterDataMutation', onCellAfterDataMutation);
     addEvent(TableCellClass, 'afterRender', onAfterCellRender);
 }
 
@@ -327,6 +340,70 @@ function onAfterTreeRowToggle(
  */
 function onAfterRedraw(this: Grid): void {
     this.viewport?.treeStickyRowController?.scheduleRefresh(true, true);
+}
+
+/**
+ * Projects the queried table through TreeView before pagination.
+ *
+ * @param e
+ * Presentation table event fired after sort/filter and before pagination.
+ *
+ * @param e.table
+ * Queried table after filter/sort and before pagination.
+ */
+function onProjectPresentationTable(
+    this: Grid,
+    e: {
+        table: DataTable;
+    }
+): void {
+    const controller = this.treeView;
+    if (!controller) {
+        return;
+    }
+
+    try {
+        controller.sync();
+        e.table = controller.projectTable(e.table);
+    } catch (error) {
+        // eslint-disable-next-line no-console
+        console.error((error as { message?: string }).message || error);
+    }
+}
+
+/**
+ * Vetoes editing for cells currently derived by TreeView aggregation.
+ *
+ * @param e
+ * Editability event fired by the body cell.
+ */
+function onCellGetEditability(
+    this: TableCell,
+    e: TableCellGetEditabilityEvent
+): void {
+    if (this.row.viewport.grid.treeView?.isCellDerived(
+        this.row.id,
+        this.column.id
+    )) {
+        e.editable = false;
+    }
+}
+
+/**
+ * Requests a full row refresh when a TreeView aggregate source changes.
+ *
+ * @param e
+ * Data mutation event fired after a cell writes to the data provider.
+ */
+function onCellAfterDataMutation(
+    this: TableCell,
+    e: TableCellAfterDataMutationEvent
+): void {
+    if (this.row.viewport.grid.treeView?.hasColumnAggregation(
+        e.sourceColumnId
+    )) {
+        e.requiresFullRowsUpdate = true;
+    }
 }
 
 /**
@@ -1096,6 +1173,15 @@ declare module '../../Core/Data/LocalDataProvider' {
          * @sample grid-pro/tree-view/input-path Path tree input
          */
         treeView?: TreeViewOptions;
+    }
+}
+
+declare module '../../Core/Options' {
+    interface ColumnOptions {
+        /**
+         * TreeView options for a single column.
+         */
+        treeView?: TreeViewColumnOptions;
     }
 }
 

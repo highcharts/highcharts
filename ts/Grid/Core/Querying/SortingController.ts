@@ -26,6 +26,7 @@ import type { SortModifierOrderByOption } from '../../../Data/Modifiers/SortModi
 
 import QueryingController from './QueryingController.js';
 import SortModifier from '../../../Data/Modifiers/SortModifier.js';
+import { resolveActiveGridSortings } from './SortingUtils.js';
 
 /* *
  *
@@ -257,55 +258,26 @@ class SortingController {
      * Returns the sorting modifier based on the loaded sorting options.
      */
     private createModifier(): SortModifier | undefined {
-        const sortings = (
-            this.currentSortings ||
-            (this.currentSorting ? [this.currentSorting] : [])
-        ).filter((
-            sorting
-        ): sorting is SortingState & { columnId: string } => !!(
-            sorting.columnId &&
-            sorting.order &&
-            !this.querying.grid.columnPolicy.isColumnUnbound(sorting.columnId)
-        ));
-
-        if (!sortings.length) {
-            return;
-        }
-
         const grid = this.querying.grid;
-        const sourceSortings = sortings
-            .map((sorting): (SortingState & {
-                columnId: string;
-                sourceColumnId?: string;
-            }) => ({
-                ...sorting,
-                sourceColumnId: grid.columnPolicy.getColumnSourceId(
-                    sorting.columnId
-                )
-            }))
-            .filter((sorting): sorting is SortingState & {
-                columnId: string;
-                sourceColumnId: string;
-            } => !!sorting.sourceColumnId);
+        const sourceSortings = resolveActiveGridSortings(
+            grid,
+            this.currentSortings,
+            this.currentSorting
+        );
 
         if (!sourceSortings.length) {
             return;
         }
 
-        const defaultCompare =
-            grid.options?.columnDefaults?.sorting?.compare;
-
         return new SortModifier({
             direction: sourceSortings[0].order as ('asc'|'desc'),
-            columns: sourceSortings.map((
-                sorting
-            ): SortModifierOrderByOption => ({
-                column: sorting.sourceColumnId,
-                direction: sorting.order as ('asc'|'desc'),
-                compare: grid.columnPolicy
-                    .getIndividualColumnOptions(sorting.columnId)
-                    ?.sorting?.compare || defaultCompare
-            }))
+            columns: sourceSortings.map(
+                (sorting): SortModifierOrderByOption => ({
+                    column: sorting.sourceColumnId,
+                    direction: sorting.order as ('asc'|'desc'),
+                    compare: sorting.customCompare
+                })
+            )
         });
     }
 }

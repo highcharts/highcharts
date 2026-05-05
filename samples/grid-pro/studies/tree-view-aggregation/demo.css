@@ -1,0 +1,44 @@
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/css/grid-pro.css");
+
+body {
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Helvetica,
+        Arial,
+        sans-serif;
+}
+
+#container {
+    min-height: 480px;
+    padding: 8px;
+}
+
+.status {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 56px;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+}
+
+.status.over {
+    color: #8d1d12;
+    background: #fde5df;
+}
+
+.status.under {
+    color: #0e5d49;
+    background: #def6ee;
+}
+
+.status.ok {
+    color: #73510b;
+    background: #fff1c7;
+}

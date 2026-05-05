@@ -33,9 +33,14 @@ import type { DataProviderOptionsType } from '../../Core/Data/DataProviderType';
 import type { LocalDataProviderOptions } from '../../Core/Data/LocalDataProvider';
 import type {
     TreeIndexBuildResult,
+    TreeViewColumnAggregateCallback,
+    TreeViewColumnOptions,
     TreeProjectionRowState,
     TreeProjectionState
 } from './TreeViewTypes';
+import type {
+    Arguments as FormulaArguments
+} from '../../../Data/Formula/Formula';
 import type {
     NormalizedTreeInputOptions,
     ResolvedTreeViewOptions
@@ -45,11 +50,15 @@ import {
     buildIndexFromColumns as buildPathIndexFromColumns
 } from './InputAdapters/PathTreeInputAdapter.js';
 import {
+    resolveActiveGridSortings
+} from '../../Core/Querying/SortingUtils.js';
+import {
     buildIndexFromColumns as buildParentIdIndexFromColumns
 } from './InputAdapters/ParentIdTreeInputAdapter.js';
 import {
     hasDataTableProvider
 } from '../../Core/Data/DataProvider.js';
+import Formula from '../../../Data/Formula/Formula.js';
 import { normalizeTreeViewOptions } from './TreeViewOptionsNormalizer.js';
 import { isDeepEqual } from '../../Core/GridUtils.js';
 import { defined, fireEvent } from '../../../Shared/Utilities.js';
@@ -205,6 +214,42 @@ class TreeProjectionController {
      */
     public getProjectionState(): TreeProjectionState | undefined {
         return this.projectionStateCache;
+    }
+
+    /**
+     * Returns whether a source column participates in TreeView aggregation.
+     *
+     * @param columnId
+     * Source column id.
+     */
+    public hasColumnAggregation(columnId: string): boolean {
+        return !!this.getColumnAggregateOption(columnId);
+    }
+
+    /**
+     * Returns whether a projected cell is currently derived from aggregation.
+     *
+     * @param rowId
+     * Row id of the projected row.
+     *
+     * @param columnId
+     * Grid / source column id.
+     */
+    public isCellDerived(
+        rowId: RowId | undefined,
+        columnId: string
+    ): boolean {
+        if (!defined(rowId)) {
+            return false;
+        }
+
+        const sourceColumnId = this.grid.columnPolicy
+            .getColumnSourceId(columnId) || columnId;
+
+        return !!this.projectionStateCache
+            ?.derivedCellColumnIdsByRowId
+            .get(rowId)
+            ?.has(sourceColumnId);
     }
 
     /**
@@ -367,8 +412,12 @@ class TreeProjectionController {
 
         const projectionState = this.projectToVisibleState(table, idColumn);
         this.projectionStateCache = projectionState;
+        const aggregateColumnIds = this.getAggregateColumnIds(
+            table.getColumnIds()
+        );
 
         if (
+            !aggregateColumnIds.length &&
             TreeProjectionController.areRowIndexesIdentity(
                 projectionState.rowIndexes,
                 table.getRowCount()
@@ -380,7 +429,8 @@ class TreeProjectionController {
         return this.createProjectedTable(
             table,
             projectionState,
-            idColumn
+            idColumn,
+            aggregateColumnIds
         );
     }
 
@@ -787,16 +837,13 @@ class TreeProjectionController {
             children.sort(compareNodeOrder);
         }
 
-        const projectedRowIds: RowId[] = [];
         const rowsById = new Map<RowId, TreeProjectionRowState>();
 
-        const visitNode = (
+        const buildRowState = (
             nodeId: RowId,
             depth: number,
             parentId: RowId | null
         ): void => {
-            projectedRowIds.push(nodeId);
-
             const children = childrenByParent.get(nodeId);
             const hasChildren = !!(children && children.length);
             const explicitExpanded = this.grid.rowMeta.get(nodeId)?.expanded;
@@ -813,6 +860,7 @@ class TreeProjectionController {
             );
 
             const rowState: TreeProjectionRowState = {
+                childrenIds: children ? children.slice() : [],
                 id: nodeId,
                 parentId,
                 depth,
@@ -826,17 +874,53 @@ class TreeProjectionController {
 
             rowsById.set(nodeId, rowState);
 
-            if (!children || !isExpanded) {
+            if (!children) {
                 return;
             }
 
             for (let i = 0, iEnd = children.length; i < iEnd; ++i) {
-                visitNode(children[i], depth + 1, nodeId);
+                buildRowState(children[i], depth + 1, nodeId);
             }
         };
 
         for (let i = 0, iEnd = rootIds.length; i < iEnd; ++i) {
-            visitNode(rootIds[i], 0, null);
+            buildRowState(rootIds[i], 0, null);
+        }
+
+        this.sortProjectedTreeNodes(
+            table,
+            idColumn,
+            rootIds,
+            childrenByParent,
+            rowIndexById,
+            rowsById
+        );
+
+        const projectedRowIds: RowId[] = [];
+
+        const visitVisibleNode = (nodeId: RowId): void => {
+            const rowState = rowsById.get(nodeId);
+            if (!rowState) {
+                return;
+            }
+
+            projectedRowIds.push(nodeId);
+
+            if (!rowState.childrenIds.length || !rowState.isExpanded) {
+                return;
+            }
+
+            for (
+                let i = 0, iEnd = rowState.childrenIds.length;
+                i < iEnd;
+                ++i
+            ) {
+                visitVisibleNode(rowState.childrenIds[i]);
+            }
+        };
+
+        for (let i = 0, iEnd = rootIds.length; i < iEnd; ++i) {
+            visitVisibleNode(rootIds[i]);
         }
 
         const rowStateStack: TreeProjectionRowState[] = [];
@@ -901,10 +985,130 @@ class TreeProjectionController {
         }
 
         return {
+            derivedCellColumnIdsByRowId: new Map(),
             rowIds: projectedRowIds,
             rowIndexes: projectedIndexes,
+            sourceRowIndexesById: rowIndexById,
             rowsById
         };
+    }
+
+    /**
+     * Applies tree-local sorting when active sort columns depend on
+     * aggregation, which becomes available only during TreeView projection.
+     *
+     * @param table
+     * Queried table after filtering/sorting and before pagination.
+     *
+     * @param idColumn
+     * Column containing stable row IDs.
+     *
+     * @param rootIds
+     * Root ids in the projected logical tree.
+     *
+     * @param childrenByParent
+     * Direct children ids keyed by parent id.
+     *
+     * @param rowIndexById
+     * Source row indexes keyed by row id.
+     *
+     * @param rowsById
+     * Logical projected tree row states.
+     */
+    private sortProjectedTreeNodes(
+        table: DataTable,
+        idColumn: string,
+        rootIds: RowId[],
+        childrenByParent: Map<RowId, RowId[]>,
+        rowIndexById: Map<RowId, number>,
+        rowsById: Map<RowId, TreeProjectionRowState>
+    ): void {
+        const activeSortings = resolveActiveGridSortings(
+            this.grid,
+            this.grid.querying.sorting.currentSortings,
+            this.grid.querying.sorting.currentSorting
+        );
+        if (
+            !activeSortings.length ||
+            !activeSortings.some((sorting): boolean =>
+                this.hasColumnAggregation(sorting.sourceColumnId)
+            )
+        ) {
+            return;
+        }
+
+        const sortProjectionState: TreeProjectionState = {
+            derivedCellColumnIdsByRowId: new Map(),
+            rowIds: Array.from(rowsById.keys()),
+            rowIndexes: [],
+            sourceRowIndexesById: rowIndexById,
+            rowsById
+        };
+        const valueMapByColumnId = new Map<string, Map<RowId, DataTableCellType>>();
+
+        for (let i = 0, iEnd = activeSortings.length; i < iEnd; ++i) {
+            const sorting = activeSortings[i];
+            if (valueMapByColumnId.has(sorting.sourceColumnId)) {
+                continue;
+            }
+
+            valueMapByColumnId.set(
+                sorting.sourceColumnId,
+                this.resolveAggregatedColumnValues(
+                    sorting.sourceColumnId,
+                    table,
+                    sortProjectionState,
+                    idColumn,
+                    new Map()
+                )
+            );
+        }
+
+        const compareSortedNodes = (a: RowId, b: RowId): number => {
+            for (let i = 0, iEnd = activeSortings.length; i < iEnd; ++i) {
+                const sorting = activeSortings[i];
+                const valueMap = valueMapByColumnId.get(sorting.sourceColumnId);
+                const result = sorting.compare(
+                    valueMap?.get(a),
+                    valueMap?.get(b)
+                );
+
+                if (result) {
+                    return result;
+                }
+            }
+
+            const aIndex = rowIndexById.get(a);
+            const bIndex = rowIndexById.get(b);
+
+            if (
+                typeof aIndex === 'number' &&
+                typeof bIndex === 'number' &&
+                aIndex !== bIndex
+            ) {
+                return aIndex - bIndex;
+            }
+
+            const aId = String(a);
+            const bId = String(b);
+
+            return (
+                aId < bId ? -1 :
+                    aId > bId ? 1 :
+                        0
+            );
+        };
+
+        rootIds.sort(compareSortedNodes);
+
+        for (const children of childrenByParent.values()) {
+            children.sort(compareSortedNodes);
+        }
+
+        for (const [rowId, rowState] of rowsById) {
+            const children = childrenByParent.get(rowId);
+            rowState.childrenIds = children ? children.slice() : [];
+        }
     }
 
     /**
@@ -919,19 +1123,25 @@ class TreeProjectionController {
      * @param idColumn
      * Column containing stable row IDs.
      *
+     * @param aggregateColumnIds
+     * Source column ids that should be aggregated in the projected table.
+     *
      * @returns
      * Cloned table with projected column values and row index references.
      */
     private createProjectedTable(
         table: DataTable,
-        projectionState: Pick<TreeProjectionState, 'rowIds' | 'rowIndexes'>,
-        idColumn: string
+        projectionState: TreeProjectionState,
+        idColumn: string,
+        aggregateColumnIds: string[]
     ): DataTable {
         const { rowIds, rowIndexes } = projectionState;
 
         const projectedTable = table.clone(true);
         const sourceColumnIds = table.getColumnIds();
         const projectedColumns: ColumnCollection = {};
+        const aggregateColumnIdSet = new Set(aggregateColumnIds);
+        const derivedCellColumnIdsByRowId = new Map<RowId, Set<string>>();
 
         for (
             let i = 0,
@@ -944,31 +1154,43 @@ class TreeProjectionController {
             const projectedColumn = new Array<DataTableCellType>(
                 rowIndexes.length
             );
+            const aggregateValuesByRowId = aggregateColumnIdSet.has(columnId) ?
+                this.resolveAggregatedColumnValues(
+                    columnId,
+                    table,
+                    projectionState,
+                    idColumn,
+                    derivedCellColumnIdsByRowId
+                ) :
+                void 0;
 
             for (let j = 0, jEnd = rowIndexes.length; j < jEnd; ++j) {
-                const rowIndex = rowIndexes[j];
-                if (typeof rowIndex === 'number') {
-                    projectedColumn[j] = sourceColumn?.[rowIndex];
+                const rowId = rowIds[j];
+                if (aggregateValuesByRowId) {
+                    projectedColumn[j] = (
+                        aggregateValuesByRowId.get(rowId) as
+                        DataTableCellType
+                    );
                     continue;
                 }
 
-                if (this.injectedAncestorIds?.has(rowIds[j])) {
-                    projectedColumn[j] = this.getSourceTableCellValue(
+                const rowIndex = rowIndexes[j];
+                projectedColumn[j] = typeof rowIndex === 'number' ?
+                    sourceColumn?.[rowIndex] :
+                    this.resolveProjectedCellValue(
                         columnId,
-                        rowIds[j]
-                    );
-                } else {
-                    projectedColumn[j] = this.getGeneratedCellValue(
-                        columnId,
-                        rowIds[j],
+                        rowId,
+                        table,
+                        projectionState,
                         idColumn
                     );
-                }
             }
 
             projectedColumns[columnId] = projectedColumn;
         }
 
+        projectionState.derivedCellColumnIdsByRowId =
+            derivedCellColumnIdsByRowId;
         projectedTable.setColumns(projectedColumns);
 
         const originalRowIndexes = new Array<number | undefined>(
@@ -990,6 +1212,340 @@ class TreeProjectionController {
         projectedTable.setOriginalRowIndexes(originalRowIndexes);
 
         return projectedTable;
+    }
+
+    /**
+     * Returns source column ids configured for TreeView aggregation.
+     *
+     * @param columnIds
+     * Source column ids available in the queried table.
+     */
+    private getAggregateColumnIds(columnIds: string[]): string[] {
+        const aggregateColumnIds: string[] = [];
+
+        for (let i = 0, iEnd = columnIds.length; i < iEnd; ++i) {
+            const columnId = columnIds[i];
+            if (this.hasColumnAggregation(columnId)) {
+                aggregateColumnIds.push(columnId);
+            }
+        }
+
+        return aggregateColumnIds;
+    }
+
+    /**
+     * Resolves projected values for a single aggregated column.
+     *
+     * Aggregation is evaluated on the projected tree after filtering/sorting,
+     * but before pagination and independently of expand/collapse visibility.
+     *
+     * @param columnId
+     * Aggregated source column id.
+     *
+     * @param table
+     * Queried table after filtering/sorting and before pagination.
+     *
+     * @param projectionState
+     * Current projected tree state.
+     *
+     * @param idColumn
+     * Column containing stable row IDs.
+     *
+     * @param derivedCellColumnIdsByRowId
+     * Mutable map collecting derived cells for the projected state.
+     */
+    private resolveAggregatedColumnValues(
+        columnId: string,
+        table: DataTable,
+        projectionState: TreeProjectionState,
+        idColumn: string,
+        derivedCellColumnIdsByRowId: Map<RowId, Set<string>>
+    ): Map<RowId, DataTableCellType> {
+        const resolvedValuesByRowId = new Map<RowId, DataTableCellType>();
+        const resolvingRowIds = new Set<RowId>();
+
+        const resolveValue = (rowId: RowId): DataTableCellType => {
+            if (resolvedValuesByRowId.has(rowId)) {
+                return resolvedValuesByRowId.get(rowId);
+            }
+
+            if (resolvingRowIds.has(rowId)) {
+                return null;
+            }
+
+            resolvingRowIds.add(rowId);
+
+            const rowState = projectionState.rowsById.get(rowId);
+            const sourceValue = this.resolveProjectedCellValue(
+                columnId,
+                rowId,
+                table,
+                projectionState,
+                idColumn
+            );
+
+            let resolvedValue = sourceValue;
+
+            if (
+                rowState?.childrenIds.length &&
+                this.isAggregateSourceValueMissing(sourceValue)
+            ) {
+                const aggregateFunctionName = this.resolveAggregateFunctionName(
+                    columnId,
+                    rowState,
+                    sourceValue
+                );
+
+                if (aggregateFunctionName) {
+                    const childValues = rowState.childrenIds
+                        .map(resolveValue)
+                        .filter((
+                            value
+                        ): value is Exclude<
+                            DataTableCellType,
+                            null | undefined
+                        > => !this.isAggregateSourceValueMissing(
+                            value
+                        ));
+
+                    resolvedValue = this.executeAggregateFunction(
+                        aggregateFunctionName,
+                        childValues
+                    );
+
+                    this.markDerivedCell(
+                        derivedCellColumnIdsByRowId,
+                        rowId,
+                        columnId
+                    );
+                }
+            }
+
+            resolvingRowIds.delete(rowId);
+            resolvedValuesByRowId.set(rowId, resolvedValue);
+
+            return resolvedValue;
+        };
+
+        for (let i = 0, iEnd = projectionState.rowIds.length; i < iEnd; ++i) {
+            const rowId = projectionState.rowIds[i];
+            resolveValue(rowId);
+        }
+
+        return resolvedValuesByRowId;
+    }
+
+    /**
+     * Resolves a cell value for the projected logical tree before aggregation.
+     *
+     * @param columnId
+     * Source column id.
+     *
+     * @param rowId
+     * Row id in the projected logical tree.
+     *
+     * @param table
+     * Queried table after filtering/sorting and before pagination.
+     *
+     * @param projectionState
+     * Current projected tree state.
+     *
+     * @param idColumn
+     * Column containing stable row IDs.
+     */
+    private resolveProjectedCellValue(
+        columnId: string,
+        rowId: RowId,
+        table: DataTable,
+        projectionState: TreeProjectionState,
+        idColumn: string
+    ): DataTableCellType {
+        const rowIndex = projectionState.sourceRowIndexesById.get(rowId);
+        if (typeof rowIndex === 'number') {
+            return table.columns[columnId]?.[rowIndex] as DataTableCellType;
+        }
+
+        if (this.injectedAncestorIds?.has(rowId)) {
+            return this.getSourceTableCellValue(columnId, rowId);
+        }
+
+        return this.getGeneratedCellValue(columnId, rowId, idColumn);
+    }
+
+    /**
+     * Marks a projected cell as derived from TreeView aggregation.
+     *
+     * @param derivedCellColumnIdsByRowId
+     * Mutable map collecting derived cells for the projected state.
+     *
+     * @param rowId
+     * Derived row id.
+     *
+     * @param columnId
+     * Derived source column id.
+     */
+    private markDerivedCell(
+        derivedCellColumnIdsByRowId: Map<RowId, Set<string>>,
+        rowId: RowId,
+        columnId: string
+    ): void {
+        let derivedColumns = derivedCellColumnIdsByRowId.get(rowId);
+
+        if (!derivedColumns) {
+            derivedColumns = new Set<string>();
+            derivedCellColumnIdsByRowId.set(rowId, derivedColumns);
+        }
+
+        derivedColumns.add(columnId);
+    }
+
+    /**
+     * Returns whether the source value should be replaced by aggregation.
+     *
+     * @param value
+     * Candidate source value.
+     */
+    private isAggregateSourceValueMissing(
+        value: DataTableCellType
+    ): value is (null | undefined) {
+        return value === null || typeof value === 'undefined';
+    }
+
+    /**
+     * Resolves aggregation function name for a row/column combination.
+     *
+     * @param columnId
+     * Aggregated source column id.
+     *
+     * @param rowState
+     * Projected row state for the current row.
+     *
+     * @param sourceValue
+     * Source cell value before aggregation.
+     */
+    private resolveAggregateFunctionName(
+        columnId: string,
+        rowState: TreeProjectionRowState,
+        sourceValue: DataTableCellType
+    ): string | undefined {
+        const aggregate = this.getColumnAggregateOption(columnId);
+        if (!aggregate || !rowState.childrenIds.length) {
+            return;
+        }
+
+        const aggregateResult = (
+            typeof aggregate === 'function' ?
+                aggregate({
+                    childCount: rowState.childrenIds.length,
+                    childrenIds: rowState.childrenIds.slice(),
+                    columnId,
+                    depth: rowState.depth,
+                    hasChildren: rowState.hasChildren,
+                    rowId: rowState.id,
+                    sourceValue
+                }) :
+                aggregate
+        );
+
+        if (typeof aggregateResult !== 'string') {
+            return;
+        }
+
+        const normalizedName = aggregateResult.trim().toUpperCase();
+        return normalizedName || void 0;
+    }
+
+    /**
+     * Executes a registered Formula processor function on direct child values.
+     *
+     * @param functionName
+     * Registered Formula processor function name.
+     *
+     * @param childValues
+     * Direct child values after their own aggregation has been resolved.
+     */
+    private executeAggregateFunction(
+        functionName: string,
+        childValues: Array<Exclude<DataTableCellType, null | undefined>>
+    ): DataTableCellType {
+        const processor = Formula.processorFunctions[functionName];
+        if (!processor) {
+            return null;
+        }
+
+        try {
+            const result = processor(
+                childValues as unknown as FormulaArguments
+            );
+            return TreeProjectionController.isDataTableCellValue(result) ?
+                result :
+                null;
+        } catch {
+            return null;
+        }
+    }
+
+    /**
+     * Resolves TreeView column options for a source column id.
+     *
+     * @param sourceColumnId
+     * Source column id.
+     */
+    private getColumnTreeViewOptions(
+        sourceColumnId: string
+    ): TreeViewColumnOptions | undefined {
+        const columnPolicy = this.grid.columnPolicy;
+        const defaultOptions = this.grid.options?.columnDefaults?.treeView;
+        const directOptions = columnPolicy
+            .getIndividualColumnOptions(sourceColumnId)
+            ?.treeView;
+
+        if (directOptions) {
+            return {
+                ...defaultOptions,
+                ...directOptions
+            };
+        }
+
+        const configuredColumnIds = columnPolicy.getColumnIds();
+        for (
+            let i = 0, iEnd = configuredColumnIds.length;
+            i < iEnd;
+            ++i
+        ) {
+            const configuredColumnId = configuredColumnIds[i];
+            if (
+                columnPolicy.getColumnSourceId(configuredColumnId) !==
+                sourceColumnId
+            ) {
+                continue;
+            }
+
+            const mappedOptions = columnPolicy
+                .getIndividualColumnOptions(configuredColumnId)
+                ?.treeView;
+
+            if (mappedOptions) {
+                return {
+                    ...defaultOptions,
+                    ...mappedOptions
+                };
+            }
+        }
+
+        return defaultOptions;
+    }
+
+    /**
+     * Resolves aggregation option for a source column id.
+     *
+     * @param sourceColumnId
+     * Source column id.
+     */
+    private getColumnAggregateOption(
+        sourceColumnId: string
+    ): (TreeViewColumnAggregateCallback | string | undefined) {
+        return this.getColumnTreeViewOptions(sourceColumnId)?.aggregate;
     }
 
     /**
@@ -1056,7 +1612,7 @@ class TreeProjectionController {
         rowId: RowId
     ): DataTableCellType {
         const index = this.indexCache;
-        const sourceTable = this.cacheSource?.table;
+        const sourceTable = this.cacheSource?.table?.getModified();
 
         if (!index || !sourceTable) {
             return null;
@@ -1067,8 +1623,8 @@ class TreeProjectionController {
             return null;
         }
 
-        const column = sourceTable.columns[columnId];
-        return (column?.[node.rowIndex] as DataTableCellType) ?? null;
+        return sourceTable.getCell(columnId, node.rowIndex) as
+            DataTableCellType;
     }
 
     /**
@@ -1098,6 +1654,24 @@ class TreeProjectionController {
         }
 
         return true;
+    }
+
+    /**
+     * Narrows arbitrary processor results to DataTable-compatible cell values.
+     *
+     * @param value
+     * Candidate processor result.
+     */
+    private static isDataTableCellValue(
+        value: unknown
+    ): value is DataTableCellType {
+        return (
+            value === null ||
+            typeof value === 'undefined' ||
+            typeof value === 'boolean' ||
+            typeof value === 'number' ||
+            typeof value === 'string'
+        );
     }
 
     /**
