@@ -220,7 +220,7 @@ class AreaSeries extends LineSeries {
                 const point = points[i],
                     otherPoint = points[otherI],
                     stackedValues =
-                        stacking && (stacks[point.x].points[seriesIndex]),
+                        stacking && (stacks[point.x].values[seriesIndex]),
                     nullVal = (point as any)[side + 'Null'] || 0,
                     cliffVal = (point as any)[side + 'Cliff'] || 0;
 
@@ -429,7 +429,7 @@ class AreaSeries extends LineSeries {
                             // depending on reversedStacks
                             while (i >= 0 && i < seriesLength) {
                                 const si = yAxisSeries[i].index;
-                                stackPoint = otherStack.points[si];
+                                stackPoint = otherStack.values[si];
                                 if (!stackPoint) {
                                     // If the next point in this series is
                                     // missing, mark the point with
@@ -443,7 +443,7 @@ class AreaSeries extends LineSeries {
                                     // values and add a hiatus to the left or
                                     // right.
                                     } else if (visibleSeries[i]) {
-                                        stackedValues = stack[x].points[si];
+                                        stackedValues = stack[x].values[si];
                                         if (stackedValues) {
                                             cliff -= (
                                                 stackedValues[1] -
@@ -471,7 +471,7 @@ class AreaSeries extends LineSeries {
                     let i = seriesIndex;
                     while (i >= 0 && i < seriesLength) {
                         const si = yAxisSeries[i].index;
-                        stackPoint = stack[x].points[si];
+                        stackPoint = stack[x].values[si];
                         if (stackPoint) {
                             y = stackPoint[1];
                             break;

@@ -2491,7 +2491,7 @@ class Series {
                 );
 
                 if (!point.isNull && stackIndicator.key) {
-                    stackValues = stackItem.points[stackIndicator.key];
+                    stackValues = stackItem.values[stackIndicator.key];
                 }
 
                 if (stackItem && isArray(stackValues)) {

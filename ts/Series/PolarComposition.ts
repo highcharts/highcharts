@@ -1057,7 +1057,7 @@ function onAfterColumnTranslate(
 
                     if (series.visible && stack && stack[pointX]) {
                         if (!point.isNull) {
-                            stackValues = stack[pointX].points[
+                            stackValues = stack[pointX].values[
                                 series.getStackIndicator(
                                     void 0,
                                     pointX,

@@ -124,7 +124,7 @@ class StackItem {
 
         // This will keep each points' extremes stored by series.index and point
         // index
-        this.points = {};
+        this.values = {};
         this.hasValidPoints = false;
 
         // Save the stack option on the series configuration object,
@@ -213,9 +213,6 @@ class StackItem {
     public padding?: number;
 
     /** @internal */
-    public points: Record<string, Array<number>>;
-
-    /** @internal */
     public rightCliff: number;
 
     /** @internal */
@@ -245,6 +242,9 @@ class StackItem {
 
     /** @internal */
     public touched?: number;
+
+    /** @internal */
+    public values: Record<string, Array<number>>;
 
     /**
      * Shared x value of the stack
