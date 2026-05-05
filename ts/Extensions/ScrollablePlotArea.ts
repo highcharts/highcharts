@@ -485,7 +485,7 @@ export class ScrollablePlotArea {
         // expanding the scrolling container, not by shrinking fixed elements.
         fixedRenderer.setSize(chartWidth, chartHeight);
 
-        if (isDirty ?? true) {
+        if (isDirty !== false) {
             this.isDirty = false;
             this.moveFixedElements();
         }
