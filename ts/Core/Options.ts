@@ -284,10 +284,6 @@ export interface NumberFormatterCallbackFunction {
  */
 export interface Options {
     /**
-     * This option has been deprecated, use the
-     * [palette.light.colors](#palette.light.colors) and/or
-     * [palette.dark.colors](#palette.dark.colors) option instead.
-     *
      * An array containing the default colors for the chart's series. When
      * all colors are used, new colors are pulled from the start again.
      *
@@ -299,13 +295,26 @@ export interface Options {
      * are defined in CSS and applied either through series or point class
      * names, or through the [chart.colorCount](#chart.colorCount) option.
      *
+     * The defaults from v13 invoke CSS variables that are set by the `palette`
+     * option's light and dark themes.
+     *
      * @sample {highcharts} highcharts/chart/colors/
      *         Assign a global color theme
      * @sample highcharts/members/theme-v10/
      *         Latest release styled like version 10
      *
-     * @default undefined
-     * @deprecated 13.0.0
+     * @default [
+     *     'var(--highcharts-color-0)',
+     *     'var(--highcharts-color-1)',
+     *     'var(--highcharts-color-2)',
+     *     'var(--highcharts-color-3)',
+     *     'var(--highcharts-color-4)',
+     *     'var(--highcharts-color-5)',
+     *     'var(--highcharts-color-6)',
+     *     'var(--highcharts-color-7)',
+     *     'var(--highcharts-color-8)',
+     *     'var(--highcharts-color-9)'
+     * ]
      */
     colors?: Array<ColorString>;
     /**

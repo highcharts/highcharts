@@ -86,8 +86,7 @@ class XRangePoint extends ColumnPoint {
     ): AnyRecord {
         const chart = series.chart,
             colors = series.options.colors ||
-                chart.options.colors ||
-                chart.palette?.dataColors,
+                chart.options.colors,
             colorCount = colors ?
                 colors.length :
                 (chart.options.chart.colorCount || 1),

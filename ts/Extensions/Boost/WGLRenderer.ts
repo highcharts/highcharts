@@ -471,7 +471,7 @@ class WGLRenderer {
             chartDestroyed = typeof chart.index === 'undefined',
             drawAsBar = asBar[series.type],
             pixelRatio = this.getPixelRatio(),
-            colors = chart.options.colors || chart.palette?.dataColors || [];
+            colors = chart.options.colors || [];
 
         let plotWidth = series.chart.plotWidth,
             lastX: number = false as any,
@@ -1393,7 +1393,7 @@ class WGLRenderer {
 
         const height = this.height,
             width = this.width,
-            colors = chart.options.colors || chart.palette?.dataColors || [];
+            colors = chart.options.colors || [];
 
         if (!gl || !shader || !width || !height) {
             return false;

@@ -28,7 +28,7 @@ const {
 } = H;
 import PaletteDefaults from './Color/PaletteDefaults.js';
 import Time from './Time.js';
-import { extend, fireEvent, merge } from '../Shared/Utilities.js';
+import { fireEvent, merge } from '../Shared/Utilities.js';
 
 /* *
  *
@@ -69,10 +69,6 @@ const defaultOptions: DefaultOptions = {
     palette: PaletteDefaults,
 
     /**
-     * This option has been deprecated, use the
-     * [palette.colors](#palette.colors) instead, with optional overrides for
-     * light or dark mode.
-     *
      * An array containing the default colors for the chart's series. When
      * all colors are used, new colors are pulled from the start again.
      *
@@ -84,16 +80,31 @@ const defaultOptions: DefaultOptions = {
      * are defined in CSS and applied either through series or point class
      * names, or through the [chart.colorCount](#chart.colorCount) option.
      *
+     * The defaults from v13 invoke CSS variables that are set by the
+     * `palette` option's light and dark themes.
+     *
      * @sample {highcharts} highcharts/chart/colors/
      *         Assign a global color theme
      * @sample highcharts/members/theme-v10/
      *         Latest release styled like version 10
      *
      * @type    {Array<Highcharts.ColorType>}
-     * @default undefined
-     * @deprecated 13.0.0
-     * @apioption colors
+     * @default [
+     *     'var(--highcharts-color-0)',
+     *     'var(--highcharts-color-1)',
+     *     'var(--highcharts-color-2)',
+     *     'var(--highcharts-color-3)',
+     *     'var(--highcharts-color-4)',
+     *     'var(--highcharts-color-5)',
+     *     'var(--highcharts-color-6)',
+     *     'var(--highcharts-color-7)',
+     *     'var(--highcharts-color-8)',
+     *     'var(--highcharts-color-9)'
+     * ]
      */
+    colors: new Array(10).fill(1).map(
+        (_, i): string => `var(--highcharts-color-${i})`
+    ),
 
     /**
      * Styled mode only. Configuration object for adding SVG definitions for
@@ -3028,15 +3039,7 @@ const defaultTime = new Time(defaultOptions.time, defaultOptions.lang);
  * Default options.
  */
 export function getOptions(): DefaultOptions {
-    return extend(
-        // Legacy support: keep colors as CSS variables
-        {
-            colors: new Array(PaletteDefaults.colors?.length || 10).fill(0).map(
-                (c, i): string => `var(--highcharts-color-${i})`
-            )
-        },
-        defaultOptions
-    ) as DefaultOptions;
+    return defaultOptions;
 }
 
 /**

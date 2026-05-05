@@ -30,7 +30,7 @@ QUnit.test(
 
         assert.strictEqual(
             chart.series[0].color,
-            chart.palette.dataColors[0],
+            Highcharts.getOptions().colors[0],
             'Color of new series is same as first color in colors array'
         );
 

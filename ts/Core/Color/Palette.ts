@@ -144,7 +144,6 @@ export default class Palette {
     public options: PaletteOptions = merge(PaletteDefaults);
     public renderer: SVGRenderer;
     public cssVars: CSSVars = { light: {}, dark: {} };
-    public dataColors?: Array<ColorType>;
 
     /* *
      *
@@ -175,7 +174,11 @@ export default class Palette {
         const { cssVars, renderer } = this,
             hasSpecificPalette = Object.keys(
                 diffObjects(options, this.defaultOptions)
-            ).length > 0;
+            ).length > 0,
+            colorCount = Math.max(
+                options.colors?.length || 0,
+                defaultColors.length
+            );
 
         let colorScheme: 'light' | 'dark' = 'light';
 
@@ -192,11 +195,6 @@ export default class Palette {
                 cssVars[colorScheme][`--highcharts-${key}`] = color;
             }
         };
-
-        // Data colors
-        (options.colors || defaultColors).forEach((color, i): void => {
-            addKebab(color, `color${i}`);
-        });
 
         for (const cScheme of ['light', 'dark'] as const) {
             const paletteColors = options[cScheme] || {},
@@ -220,22 +218,20 @@ export default class Palette {
             });
 
             // Extended data colors per scheme
-            (
-                paletteColors?.colors ||
-                (
-                    // Unless the user has defined their own colors, the dark
-                    // scheme will override some of the default colors to better
-                    // fit a dark background. If the user has defined their own
-                    // colors, we assume they know what they're doing and won't
-                    // override them.
-                    cScheme === 'dark' && !options.colors ?
-                        defaultDarkOverrideColors : []
-                )
-            ).forEach((color, i): void => {
-                if (color) {
-                    addKebab(color, `color${i}`);
-                }
-            });
+            for (let i = 0; i < colorCount; i++) {
+                const color =
+                    // 1. priority to scheme-specific colors
+                    paletteColors?.colors?.[i] ||
+                    // 2. then fall back to palette-level colors
+                    options.colors?.[i] ||
+                    // 3. then fall back to dark default colors
+                    (
+                        cScheme === 'dark' ? defaultDarkOverrideColors : []
+                    )?.[i] ||
+                    // 4. finally, use default colors
+                    defaultColors[i];
+                addKebab(color || '#888a', `color${i}`);
+            }
 
             // The rest are stored as named properties
             objectEach(paletteColors, addKebab);
@@ -286,11 +282,6 @@ export default class Palette {
         if (chart) {
             chart.options.palette = options;
         }
-
-        // The data colors. The legacy chart.options.colors overrides palette.
-        this.dataColors = (options.colors || defaultColors).map(
-            (c, i): ColorType => `var(--highcharts-color-${i})`
-        );
 
         if (options.injectCSS !== false) {
             this.injectCSS(options);

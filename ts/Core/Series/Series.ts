@@ -1284,8 +1284,7 @@ class Series {
                 'color',
                 this.options.color ||
                 defaultOptions.plotOptions[this.type]?.color,
-                chart.options.colors ||
-                chart.palette?.dataColors
+                chart.options.colors
             );
         }
     }

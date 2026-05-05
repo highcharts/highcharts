@@ -1143,8 +1143,7 @@ class Point {
         if (series.options.colorByPoint) {
             if (!styledMode) {
                 const colors = series.options.colors ||
-                    chart.options.colors ||
-                    chart.palette?.dataColors;
+                    chart.options.colors;
 
                 color = colors?.[series.colorCounter];
                 colorCount = colors?.length;

@@ -220,8 +220,7 @@ class MACDIndicator extends SMAIndicator {
                     this.getCyclic(
                         'color',
                         void 0,
-                        this.chart.options.colors ||
-                        this.chart.palette?.dataColors
+                        this.chart.options.colors
                     );
                     this.options.signalLine.styles.lineColor =
                         this.color as ColorString;
@@ -235,8 +234,7 @@ class MACDIndicator extends SMAIndicator {
                     this.getCyclic(
                         'color',
                         void 0,
-                        this.chart.options.colors ||
-                        this.chart.palette?.dataColors
+                        this.chart.options.colors
                     );
                     this.options.macdLine.styles.lineColor =
                         this.color as ColorString;
