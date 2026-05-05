@@ -18,6 +18,7 @@
  * */
 
 import type Chart from '../../Chart/Chart';
+import type Point from '../../Series/Point';
 import type Series from '../../Series/Series';
 import type { StackOverflowValue } from './StackingOptions';
 import type SVGElement from '../../Renderer/SVG/SVGElement';
@@ -83,6 +84,7 @@ declare module '../../Series/SeriesBase' {
             index: number,
             key?: string
         ): StackItemIndicatorObject;
+        getStackItem(point: Point): StackItem | undefined;
         modifyStacks(): void;
         percentStacker(
             pointExtremes: Array<number>,
@@ -218,6 +220,32 @@ function seriesGetStackIndicator(
     stackIndicator.key = [index, x, stackIndicator.index].join(',');
 
     return stackIndicator;
+}
+
+/**
+ * Get stack indicator, according to it's x-value, to determine points with the
+ * same x-value
+ *
+ * @internal
+ * @function Highcharts.Series#getStackIndicator
+ */
+function seriesGetStackItem(
+    this: Series,
+    point: Point
+): StackItem|undefined {
+    const { options, stackKey = '' } = this,
+        stacks = options.stacking && this.yAxis?.stacking?.stacks;
+
+    if (stacks) {
+        const negKey = '-' + stackKey,
+            x = point.x,
+            isNegative = this.negStacks &&
+                (point.y || 0) < (options.threshold || 0),
+            key = isNegative ? negKey : stackKey;
+
+        return stacks[key]?.[x];
+    }
+
 }
 
 /**
@@ -703,6 +731,7 @@ namespace StackingAxis {
             chartProto.getStacks = chartGetStacks;
 
             seriesProto.getStackIndicator = seriesGetStackIndicator;
+            seriesProto.getStackItem = seriesGetStackItem;
             seriesProto.modifyStacks = seriesModifyStacks;
             seriesProto.percentStacker = seriesPercentStacker;
             seriesProto.setGroupedPoints = seriesSetGroupedPoints;
