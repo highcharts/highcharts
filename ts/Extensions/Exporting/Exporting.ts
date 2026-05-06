@@ -2148,7 +2148,18 @@ export class Exporting {
                 options || {},
                 function (e): void {
                     chart.callback?.call(this, e);
-                    resolve(postprocessAndGetSVG(this));
+
+                    // `chart.events.render` is triggered after the callback in
+                    // `Chart.onload`, so wait for it before serializing the
+                    // chart copy.
+                    const unbindRender = addEvent(
+                        this,
+                        'render',
+                        function (): void {
+                            unbindRender();
+                            resolve(postprocessAndGetSVG(this));
+                        }
+                    );
                 }
             ));
 
