@@ -47,8 +47,8 @@ class Time extends TimeBase {
     public getBoundaryTicks(
         tickPositions: TickPositionsArray,
         unitRange: number,
-        visibleMin: number,
-        visibleMax: number
+        visibleMin?: number,
+        visibleMax?: number
     ): Record<number, Time.TimeUnit> {
         const boundaryTicks: Record<number, Time.TimeUnit> = {};
         // Handle boundary ticks. Use a reasonable dropout threshold
@@ -58,7 +58,11 @@ class Time extends TimeBase {
             for (let i = 0; i < tickPositions.length; i++) {
                 const t = tickPositions[i];
 
-                if ((t < visibleMin || t > visibleMax)) {
+                if (
+                    defined(visibleMin) &&
+                    defined(visibleMax) &&
+                    (t < visibleMin || t > visibleMax)
+                ) {
                     continue;
                 }
 
