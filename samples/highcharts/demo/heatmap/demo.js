@@ -59,14 +59,24 @@ Highcharts.chart('container', {
     },
 
     colorAxis: {
-        min: 0,
-        minColor: 'var(--highcharts-background-color, #fff)',
-        maxColor: '#0443E1'
+        min: -4,
+        max: 154,
+        startOnTick: false,
+        endOnTick: false,
+        tickPixelInterval: 50,
+        minColor: '#0443E111',
+        maxColor: '#0443E1',
+        // Dots for ticks, extended also by custom CSS
+        tickColor: '#ffffff',
+        tickLength: 0.1,
+        tickWidth: 6,
+        gridLineWidth: 0
     },
 
     legend: {
         align: 'right',
         layout: 'vertical',
+        symbolRadius: 6,
         margin: 0,
         verticalAlign: 'bottom',
         symbolHeight: 270
@@ -117,5 +127,4 @@ Highcharts.chart('container', {
             }
         }]
     }
-
 });
