@@ -46,13 +46,22 @@ class Time extends TimeBase {
 
     public getBoundaryTicks(
         tickPositions: TickPositionsArray,
-        unitRange: number
+        unitRange: number,
+        visibleMin: number,
+        visibleMax: number
     ): Record<number, Time.TimeUnit> {
         const boundaryTicks: Record<number, Time.TimeUnit> = {};
         // Handle boundary ticks. Use a reasonable dropout threshold
         // to prevent looping over dense data grouping (#6156).
         if (tickPositions.length < 10000) {
-            tickPositions.forEach((t: number, i: number): void => {
+            let isFirstVisibleTick = true;
+            for (let i = 0; i < tickPositions.length; i++) {
+                const t = tickPositions[i];
+
+                if ((t < visibleMin || t > visibleMax)) {
+                    continue;
+                }
+
                 const [
                     , // Unused 'year' var
                     month,
@@ -89,13 +98,14 @@ class Time extends TimeBase {
                 }
                 // Mark first visible tick as boundary, if timeUnit is month or
                 // hour.
-                if (unitRange === timeUnits.month && i === 0) {
+                if (isFirstVisibleTick && unitRange === timeUnits.month) {
                     boundaryTicks[t] = 'year';
                 }
-                if (unitRange === timeUnits.hour && i === 0) {
+                if (isFirstVisibleTick && unitRange === timeUnits.hour) {
                     boundaryTicks[t] = 'day';
                 }
-            });
+                isFirstVisibleTick = false;
+            }
         }
 
         return boundaryTicks;
@@ -301,19 +311,15 @@ class Time extends TimeBase {
         }
 
 
-        // Record information on the chosen unit - for dynamic label formatter.
-        // Only consider visible ticks for boundary classification.
-        let visibleTicks = tickPositions;
-        if (defined(visibleMin) && defined(visibleMax)) {
-            visibleTicks = tickPositions.filter((t): boolean =>
-                (t >= visibleMin) && (t <= visibleMax)
-            );
-        }
-
         tickPositions.info = extend<Time.TimeNormalizedObject|TimeTicksInfoObject>(
             normalizedInterval,
             {
-                boundaryTicks: this.getBoundaryTicks(visibleTicks, unitRange),
+                boundaryTicks: this.getBoundaryTicks(
+                    tickPositions,
+                    unitRange,
+                    visibleMin,
+                    visibleMax
+                ),
                 totalRange: unitRange * count
             }
         ) as TimeTicksInfoObject;
