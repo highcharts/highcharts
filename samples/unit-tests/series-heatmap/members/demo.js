@@ -336,7 +336,7 @@ QUnit.test(
 );
 
 QUnit.test(
-    'Y panning should preserve heatmap row clipping',
+    'Y panning should preserve heatmap row clipping, (#15368)',
     function (assert) {
         const chart = Highcharts.chart('container', {
                 chart: {
