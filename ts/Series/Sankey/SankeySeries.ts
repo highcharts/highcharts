@@ -189,16 +189,29 @@ class SankeySeries extends ColumnSeries {
      * Order the nodes, starting with the root node(s). (#9818)
      * @private
      */
-    public order(node: SankeyPoint, level: number): void {
+    public order(
+        node: SankeyPoint,
+        level: number,
+        visited?: Set<SankeyPoint>
+    ): void {
         const series = this;
-        // Prevents circular recursion:
-        if (typeof node.level === 'undefined') {
+
+        // Watch the visited nodes
+        if (!visited) {
+            visited = new Set();
+        }
+
+        // Prevents circular recursion, but updates level if a longer
+        // path is found from a different branch
+        if (typeof node.level === 'undefined' || node.level < level) {
             node.level = level;
+            visited.add(node);
             for (const link of node.linksFrom) {
-                if (link.toNode) {
-                    series.order(link.toNode, level + 1);
+                if (link.toNode && !visited.has(link.toNode)) {
+                    series.order(link.toNode, level + 1, visited);
                 }
             }
+            visited.delete(node);
         }
     }
     /**

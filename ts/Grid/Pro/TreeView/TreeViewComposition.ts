@@ -32,7 +32,7 @@ import type {
     TreeViewOptions
 } from './TreeViewTypes';
 import type {
-    NormalizedTreeViewOptions
+    ResolvedTreeViewOptions
 } from './TreeViewOptionsNormalizer';
 import type {
     AfterTreeRowToggleEvent,
@@ -450,7 +450,7 @@ function getLastPathSegment(
 function getPathSegmentDisplayValue(
     value: unknown,
     columnId: string,
-    options: NormalizedTreeViewOptions
+    options: ResolvedTreeViewOptions
 ): string | undefined {
     const input = options.input;
 
@@ -1091,6 +1091,9 @@ declare module '../../Core/Data/LocalDataProvider' {
     interface LocalDataProviderOptions {
         /**
          * Tree view options for local provider (Grid Pro module).
+         *
+         * @sample grid-pro/tree-view/parent-id Parent ID tree input
+         * @sample grid-pro/tree-view/input-path Path tree input
          */
         treeView?: TreeViewOptions;
     }

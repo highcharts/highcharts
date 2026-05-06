@@ -2519,8 +2519,9 @@ const defaultOptions: DefaultOptions = {
          * mouse over a point. Works on initial hover.
          *
          * @sample {highcharts|highstock} highcharts/tooltip/showdelay/
+         *         Show tooltip after 2 seconds
          *
-         * @since next
+         * @since 12.6.0
          */
         showDelay: 0,
 

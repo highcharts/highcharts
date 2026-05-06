@@ -3565,9 +3565,17 @@ class Axis {
                         lineClamp
                     }));
 
-                // Reset previously shortened label (#8210)
-                } else if (label.styles.width && !css.width && !widthOption) {
-                    label.css({ width: 'auto' });
+                // Reset previously shortened label (#8210, #22961)
+                } else {
+                    const wasSquished = label.styles.width ||
+                    label.textWidth || label.styles.lineClamp;
+
+                    if (wasSquished && !css.width && !widthOption) {
+                        label.css({
+                            width: 'auto',
+                            lineClamp: 0
+                        });
+                    }
                 }
 
                 tick.rotation = attr.rotation;

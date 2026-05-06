@@ -269,9 +269,10 @@ export interface AxisCrosshairOptions {
     * mouse over a point. Works on initial hover.
     *
     * @sample {highcharts|highstock} highcharts/tooltip/showdelay/
+    *         Show crosshair after 2 seconds
     *
     * @default 0
-    * @since next
+    * @since 12.6.0
     */
     showDelay?: number,
 

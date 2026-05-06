@@ -30,13 +30,12 @@ import type {
 import type Series from '../Core/Series/Series';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
-import type SVGRenderer from '../Core/Renderer/SVG/SVGRenderer';
 
 import A from '../Core/Animation/AnimationUtilities.js';
 const { stop } = A;
 import H from '../Core/Globals.js';
 const { composed } = H;
-import RendererRegistry from '../Core/Renderer/RendererRegistry.js';
+import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import {
     addEvent,
     createElement,
@@ -308,7 +307,6 @@ export class ScrollablePlotArea {
 
     public constructor(chart: Chart) {
         const chartOptions = chart.options.chart,
-            Renderer = RendererRegistry.getRendererType(),
             scrollableOptions = chartOptions.scrollablePlotArea || {},
             moveFixedElements = this.moveFixedElements.bind(this),
             styles: CSSObject = {
@@ -365,7 +363,7 @@ export class ScrollablePlotArea {
                 void 0,
                 true
             ),
-            fixedRenderer = this.fixedRenderer = new Renderer(
+            fixedRenderer = this.fixedRenderer = new SVGRenderer(
                 fixedDiv,
                 chart.chartWidth,
                 chart.chartHeight,

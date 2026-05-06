@@ -1114,6 +1114,12 @@ class DataTable extends DataTableCore implements DataEventEmitter<Event> {
     ): Promise<DataTable> {
         const table = this;
 
+        // Avoid emitting modifier events when unchanged. This prevents extra
+        // rerenders when polling calls `applyTableModifiers()`.
+        if (modifier === table.modifier) {
+            return Promise.resolve(table);
+        }
+
         let promise: Promise<DataTable>;
 
         table.emit({

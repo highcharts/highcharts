@@ -72,11 +72,9 @@ const {
     charts,
     doc,
     marginNames,
-    svg,
     win
 } = H;
 import Pointer from '../Pointer.js';
-import RendererRegistry from '../Renderer/RendererRegistry.js';
 import Series from '../Series/Series.js';
 import SeriesRegistry from '../Series/SeriesRegistry.js';
 const { seriesTypes } = SeriesRegistry;
@@ -2132,11 +2130,6 @@ class Chart {
         // Cache the cursor (#1650)
         chart._cursor = container.style.cursor as CursorValue;
 
-        // Initialize the renderer
-        const Renderer = optionsChart.renderer || !svg ?
-            RendererRegistry.getRendererType(optionsChart.renderer) :
-            SVGRenderer;
-
         /**
          * The renderer instance of the chart. Each chart instance has only one
          * associated renderer.
@@ -2144,7 +2137,7 @@ class Chart {
          * @name Highcharts.Chart#renderer
          * @type {Highcharts.SVGRenderer}
          */
-        chart.renderer = new Renderer(
+        chart.renderer = new SVGRenderer(
             container,
             chartWidth,
             chartHeight,

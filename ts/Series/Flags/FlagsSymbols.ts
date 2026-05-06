@@ -9,7 +9,9 @@ import type SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer';
 import type SymbolOptions from '../../Core/Renderer/SVG/SymbolOptions';
 import type Symbols from '../../Core/Renderer/SVG/Symbols';
 
-import RendererRegistry from '../../Core/Renderer/RendererRegistry.js';
+import H from '../../Core/Globals.js';
+import { pushUnique } from '../../Shared/Utilities.js';
+const { composed } = H;
 
 /* *
  *
@@ -37,15 +39,6 @@ declare module '../../Core/Renderer/SVG/SymbolType' {
  * */
 
 namespace FlagsSymbols {
-
-    /* *
-     *
-     *  Constants
-     *
-     * */
-
-    const modifiedMembers: Array<unknown> = [];
-
     /* *
      *
      *  Functions
@@ -59,10 +52,7 @@ namespace FlagsSymbols {
     export function compose(
         SVGRendererClass: typeof SVGRenderer
     ): void {
-
-        if (modifiedMembers.indexOf(SVGRendererClass) === -1) {
-            modifiedMembers.push(SVGRendererClass);
-
+        if (pushUnique(composed, 'Series.Flags')) {
             const symbols = SVGRendererClass.prototype.symbols;
 
             symbols.flag = flag;
@@ -90,15 +80,6 @@ namespace FlagsSymbols {
             };
 
         }
-
-        const RendererClass = RendererRegistry.getRendererType();
-
-        // The symbol callbacks are generated on the SVGRenderer object in all
-        // browsers.
-        if (modifiedMembers.indexOf(RendererClass)) {
-            modifiedMembers.push(RendererClass);
-        }
-
     }
 
 

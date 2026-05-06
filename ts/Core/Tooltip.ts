@@ -27,7 +27,6 @@ import type Series from './Series/Series';
 import type SizeObject from './Renderer/SizeObject';
 import type SVGAttributes from './Renderer/SVG/SVGAttributes';
 import type SVGElement from './Renderer/SVG/SVGElement';
-import type SVGRenderer from './Renderer/SVG/SVGRenderer';
 import type TooltipOptions from './TooltipOptions';
 
 import A from './Animation/AnimationUtilities.js';
@@ -44,7 +43,7 @@ const {
 import { Palette } from './Color/Palettes.js';
 import R from './Renderer/RendererUtilities.js';
 const { distribute } = R;
-import RendererRegistry from './Renderer/RendererRegistry.js';
+import SVGRenderer from './Renderer/SVG/SVGRenderer.js';
 import {
     addEvent,
     clamp,
@@ -534,8 +533,7 @@ class Tooltip {
 
             if (this.outside) {
                 const chart = this.chart,
-                    chartStyle = chart.options.chart.style,
-                    Renderer = RendererRegistry.getRendererType();
+                    chartStyle = chart.options.chart.style;
 
                 /**
                  * Reference to the tooltip's container, when
@@ -576,7 +574,7 @@ class Tooltip {
                  * @name Highcharts.Tooltip#renderer
                  * @type {Highcharts.SVGRenderer|undefined}
                  */
-                this.renderer = renderer = new Renderer(
+                this.renderer = renderer = new SVGRenderer(
                     container,
                     0,
                     0,

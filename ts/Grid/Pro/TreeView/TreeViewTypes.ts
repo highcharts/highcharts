@@ -48,6 +48,9 @@ export interface TreeViewOptions {
      * columns and prefers `path` when both exist. For custom input
      * definitions, set
      * `data.treeView.input.type` explicitly.
+     *
+     * @sample grid-pro/tree-view/parent-id Parent ID tree input
+     * @sample grid-pro/tree-view/input-path Path tree input
      */
     input?: TreeInputOptions;
 
@@ -66,6 +69,8 @@ export interface TreeViewOptions {
 
     /**
      * Enables sticky parent rows.
+     *
+     * @sample grid-pro/tree-view/sticky-parents Sticky parents
      * @default true
      */
     stickyParents?: boolean;
@@ -132,6 +137,8 @@ export interface TreeInputPathOptions {
     /**
      * Path segment separator, a RegExp extracting ordered path segments,
      * or a callback returning ordered path segments.
+     *
+     * @sample grid-pro/tree-view/separator-callback Separator callback
      * @default '/'
      */
     separator?: TreeInputPathSeparator;
