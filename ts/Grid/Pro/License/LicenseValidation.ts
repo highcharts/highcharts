@@ -265,7 +265,12 @@ function getPageHostname(): string | undefined {
     if (!defined(win.location)) {
         return void 0;
     }
-    const hostname = win.location.hostname.toLowerCase();
+    const normalize = (host: string): string => host
+        .toLowerCase()
+        // Defensive: strip trailing dot(s) (rare, but possible).
+        .replace(/\.+$/, '');
+
+    const hostname = normalize(win.location.hostname);
 
     // Some sandboxes run code inside an `about:srcdoc`/`about:blank` iframe
     // where `location.hostname` is empty. When available, fall back to the
@@ -276,7 +281,7 @@ function getPageHostname(): string | undefined {
         isString(win.document.referrer) &&
         win.document.referrer
     ) {
-        return new URL(win.document.referrer).hostname.toLowerCase();
+        return normalize(new URL(win.document.referrer).hostname);
     }
 
     return hostname;
