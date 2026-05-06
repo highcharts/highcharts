@@ -148,7 +148,7 @@ const contexts = [
     'webkit-3d'
 ];
 
-const colorCache: Record<string, string> = {};
+let colorCache: Record<string, string> = {};
 
 /*
  * Resolve CSS color expressions like color-mix
@@ -1382,6 +1382,8 @@ class WGLRenderer {
             settings = this.settings,
             shader = this.shader,
             vbuffer = this.vbuffer;
+
+        colorCache = {};
 
         const pixelRatio = this.getPixelRatio();
         if (chart) {
