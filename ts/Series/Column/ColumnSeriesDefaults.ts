@@ -302,7 +302,7 @@ const ColumnSeriesDefaults: PlotOptionsOf<ColumnSeries> = {
              *
              * @product highcharts highstock gantt
              */
-            brightness: 0.1
+            brightness: 0.2
         },
 
         /**
