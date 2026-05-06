@@ -37,10 +37,16 @@ import type PaletteOptions from './PaletteOptions';
  * For example, `var(--highcharts-color-0)` is the first color in the `colors`
  * array, `var(--highcharts-color-1)` is the second color, and so on.
  *
+ * The palette only accepts plain color strings in the options. Gradients and
+ * patterns are only supported in other color settings, such as `series.color`
+ * or `point.color`, but they can use CSS variables from the palette.
+ *
  * @sample       highcharts/palette/general
  *               General palette options
  * @sample       highcharts/palette/branding
  *               Branded chart
+ * @sample       highcharts/demo/pie-gradient
+ *               Using palette colors in gradients
  * @type         {*}
  * @since        13.0.0
  * @optionparent palette
@@ -55,7 +61,7 @@ const palette: PaletteOptions = {
      *         Colors for points
      * @sample highcharts/palette/data-colors-series
      *         Colors for series
-     * @type   {Array<Highcharts.ColorType>}
+     * @type   {Array<Highcharts.ColorString>}
      * @default [
      *       '#2caffe',
      *       '#544fc5',
@@ -114,19 +120,19 @@ const palette: PaletteOptions = {
          * defined for the general `palette.colors` array, item by item. If an
          * item is `null` or `undefined`, the general color will be used.
          *
-         * @type   {Array<Highcharts.ColorType|null|undefined>}
+         * @type   {Array<Highcharts.ColorString|null|undefined>}
          * @apioption palette.dark.colors
          */
         /**
-         * @type {Highcharts.ColorType}
+         * @type {Highcharts.ColorString}
          */
         backgroundColor: '#141414',
         /**
-         * @type {Highcharts.ColorType}
+         * @type {Highcharts.ColorString}
          */
         neutralColor: '#ffffff',
         /**
-         * @type {Highcharts.ColorType}
+         * @type {Highcharts.ColorString}
          */
         highlightColor: '#2caffe'
     },
@@ -139,14 +145,14 @@ const palette: PaletteOptions = {
          * defined for the general `palette.colors` array, item by item. If an
          * item is `null` or `undefined`, the general color will be used.
          *
-         * @type   {Array<Highcharts.ColorType|null|undefined>}
+         * @type   {Array<Highcharts.ColorString|null|undefined>}
          * @apioption palette.light.colors
          */
         /**
          * Chart background, point stroke for markers and columns etc. The
          * background is also used as base for interpolated neutral and
          * highlight colors.
-         * @type {Highcharts.ColorType}
+         * @type {Highcharts.ColorString}
          */
         backgroundColor: '#ffffff',
         /**
@@ -158,7 +164,7 @@ const palette: PaletteOptions = {
          * Neutral colors are by default used for basic text, lines, borders,
          * basically most elements except the data itself, and highlighted
          * elements.
-         * @type {Highcharts.ColorType}
+         * @type {Highcharts.ColorString}
          */
         neutralColor: '#000000',
         /**
@@ -170,19 +176,19 @@ const palette: PaletteOptions = {
          * Highlight colors are by default used for highlighted or active
          * elements, like the zoom selection marker, clickable Stock Range
          * Selector date input boxes, clickable drilldown labels and more.
-         * @type {Highcharts.ColorType}
+         * @type {Highcharts.ColorString}
          */
         highlightColor: '#0022ff',
         /**
          * Positive color used in stock charts, such as for technical
          * indicators, annotations or hollow candlestick series.
-         * @type {Highcharts.ColorType}
+         * @type {Highcharts.ColorString}
          */
         positiveColor: '#06b535',
         /**
          * Negative color used in stock charts, such as for technical
          * indicators, annotations or hollow candlestick series.
-         * @type {Highcharts.ColorType}
+         * @type {Highcharts.ColorString}
          */
         negativeColor: '#f21313'
     }

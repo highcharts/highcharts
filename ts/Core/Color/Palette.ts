@@ -17,7 +17,7 @@
  *
  * */
 
-import type ColorType from './ColorType';
+import type ColorString from './ColorString';
 import type { PaletteOptions } from './PaletteOptions';
 import type SVGRenderer from '../Renderer/SVG/SVGRenderer';
 
@@ -55,7 +55,7 @@ type CSSVars = {
  *
  * */
 
-const defaultColors: Array<ColorType> = [
+const defaultColors: Array<ColorString> = [
     '#2caffe',
     '#544fc5',
     '#00e272',
@@ -68,7 +68,7 @@ const defaultColors: Array<ColorType> = [
     '#91e8e1'
 ];
 
-const defaultDarkOverrideColors: Array<ColorType|null> = [
+const defaultDarkOverrideColors: Array<ColorString|null> = [
     null, // Use the same color for the first item in dark mode
     '#00e272',
     '#efdf00'
@@ -198,7 +198,7 @@ export default class Palette {
 
         for (const cScheme of ['light', 'dark'] as const) {
             const paletteColors = options[cScheme] || {},
-                interpolated: Record<string, ColorType> = {},
+                interpolated: Record<string, ColorString> = {},
                 neutralColor = new Color(paletteColors?.neutralColor || ''),
                 backgroundColor = new Color(
                     paletteColors?.backgroundColor || ''
@@ -212,9 +212,9 @@ export default class Palette {
             // Interpolate keys
             [3, 5, 10, 20, 40, 60, 80, 100].forEach((fraction): void => {
                 interpolated[`neutralColor${fraction}`] = backgroundColor
-                    .tweenTo(neutralColor, fraction / 100);
+                    .tweenTo(neutralColor, fraction / 100) as string;
                 interpolated[`highlightColor${fraction}`] = backgroundColor
-                    .tweenTo(highlightColor, fraction / 100);
+                    .tweenTo(highlightColor, fraction / 100) as string;
             });
 
             // Extended data colors per scheme

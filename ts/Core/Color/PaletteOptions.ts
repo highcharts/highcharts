@@ -15,7 +15,7 @@
  *
  * */
 
-import type ColorType from './ColorType';
+import type ColorString from './ColorString';
 
 /* *
  *
@@ -23,16 +23,16 @@ import type ColorType from './ColorType';
  *
  * */
 export interface PaletteSchemeColors {
-    backgroundColor?: ColorType;
-    colors?: Array<ColorType|null|undefined>;
-    neutralColor?: ColorType;
-    highlightColor?: ColorType;
-    positiveColor?: ColorType;
-    negativeColor?: ColorType;
+    backgroundColor?: ColorString;
+    colors?: Array<ColorString|null|undefined>;
+    neutralColor?: ColorString;
+    highlightColor?: ColorString;
+    positiveColor?: ColorString;
+    negativeColor?: ColorString;
 }
 
 export interface PaletteOptions {
-    colors?: Array<ColorType>;
+    colors?: Array<ColorString>;
     colorScheme?: 'light dark' |'light' | 'dark' | 'inherit';
     dark?: PaletteSchemeColors;
     injectCSS?: boolean;

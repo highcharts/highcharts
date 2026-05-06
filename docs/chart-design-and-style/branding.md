@@ -46,7 +46,9 @@ palette options](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/
 
 Notes:
 
-* `palette.light.colors` and `palette.dark.colors` are the primary data series colors.
+* The `palette.colors` option defines an array of the primary data series
+  colors. This can be overridden item-by-item by `palette.light.colors` and
+  `palette.dark.colors`.
 * `neutralColor` and `highlightColor` are used by labels and interactive UI elements.
 * Use `colorScheme: 'light'` or `colorScheme: 'dark'` to force one mode. See
   [colorScheme example](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/palette/colorscheme).
@@ -55,6 +57,10 @@ Notes:
   `body` or `html`). In a typical website setup, the end user is allowed to
   switch between System, Light and Dark modes. This can be linked to body class
   names in order to make the charts adhere.
+* The palette only accepts primary color strings. Gradients and patterns however
+  should be set in the non-palette color options, but they an refer to CSS
+  variables that are defined in the palette.
+
 
 Specific color options as a theme layer
 ---------------------------------------
