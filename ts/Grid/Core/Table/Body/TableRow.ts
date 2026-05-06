@@ -149,11 +149,8 @@ class TableRow extends Row {
      *
      * @param index
      * The index of the row in the data table.
-     *
-     * @param doReflow
-     * Whether to reflow the row after updating the cells.
      */
-    public async reuse(index: number, doReflow: boolean = true): Promise<void> {
+    public async reuse(index: number): Promise<void> {
         for (let i = 0, iEnd = this.cells.length; i < iEnd; ++i) {
             fireEvent(this.cells[i], 'outdate');
         }
@@ -178,9 +175,7 @@ class TableRow extends Row {
             await cell.setValue();
         }
 
-        if (doReflow) {
-            this.reflow();
-        }
+        this.reflow();
     }
 
     /**

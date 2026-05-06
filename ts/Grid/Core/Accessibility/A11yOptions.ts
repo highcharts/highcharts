@@ -57,6 +57,9 @@ export interface A11yOptions {
 
     /**
      * Options for screen reader sections before and after the Grid.
+     *
+     * @sample grid-lite/options/screen-reader-section
+     *         Screen reader sections
      */
     screenReaderSection?: ScreenReaderSectionOptions;
 }

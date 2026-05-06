@@ -416,6 +416,8 @@ declare module '../../Core/Options' {
          * Whether to enabled the cell edit mode functionality. It allows to
          * edit the cell value in a separate input field that is displayed
          * after double-clicking the cell or pressing the Enter key.
+         *
+         * @sample grid-pro/basic/cell-editing Cell editing
          */
         editMode?: ColumnEditModeOptions;
     }

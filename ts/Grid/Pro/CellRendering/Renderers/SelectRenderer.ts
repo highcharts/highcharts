@@ -121,6 +121,11 @@ export interface SelectOption {
  * Options to control the select renderer content.
  */
 export interface SelectRendererOptions extends CellRendererOptions {
+    /**
+     * Use the built-in select renderer.
+     *
+     * @default 'select'
+     */
     type: 'select';
 
     /**
@@ -143,8 +148,20 @@ export interface SelectRendererOptions extends CellRendererOptions {
  * Attributes to control the select input.
  */
 export interface SelectAttributes {
+    /**
+     * Whether multiple options can be selected at the same time.
+     */
     multiple?: boolean;
+
+    /**
+     * Whether the select should receive focus automatically when editing
+     * starts.
+     */
     autofocus?: boolean;
+
+    /**
+     * Number of visible options shown without scrolling.
+     */
     size?: number;
 }
 
