@@ -276,11 +276,7 @@ function getPageHostname(): string | undefined {
         isString(win.document.referrer) &&
         win.document.referrer
     ) {
-        try {
-            return new URL(win.document.referrer).hostname.toLowerCase();
-        } catch {
-            // ignored
-        }
+        return new URL(win.document.referrer).hostname.toLowerCase();
     }
 
     return hostname;
