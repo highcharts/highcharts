@@ -130,16 +130,18 @@ class DependencyWheelSeries extends SankeySeries {
          * Return the sum of incoming and outgoing links.
          * @private
          */
-        node.getSum = (): number => (
-            node.linksFrom
-                .concat(node.linksTo)
-                .reduce((
-                    acc: number,
-                    link: DependencyWheelPoint
-                ): number => (
-                    acc + (link.weight as any)
-                ), 0)
-        );
+        node.getSum = (): number => {
+            let sum = 0;
+
+            for (const link of node.linksFrom) {
+                sum += link.weight || 0;
+            }
+            for (const link of node.linksTo) {
+                sum += link.weightTo || link.weight || 0;
+            }
+
+            return sum;
+        };
 
         /**
          * Get the offset in weight values of a point/link.
@@ -184,7 +186,11 @@ class DependencyWheelSeries extends SankeySeries {
                 if (links[i] === point) {
                     return offset;
                 }
-                offset += links[i].weight as any;
+
+                const baseWeight = links[i].weight || 0;
+                offset += links[i].to === node.id ?
+                    links[i].weightTo || baseWeight :
+                    baseWeight;
             }
         };
 
@@ -358,6 +364,7 @@ interface DependencyWheelSeries {
 }
 extend(DependencyWheelSeries.prototype, {
     orderNodes: false,
+    pointArrayMap: ['from', 'to', 'weight', 'weightTo'],
     getCenter: PieSeries.prototype.getCenter
 });
 

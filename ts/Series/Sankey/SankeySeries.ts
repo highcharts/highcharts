@@ -448,7 +448,7 @@ class SankeySeries extends ColumnSeries {
                 // Prevent links from spilling below the node (#12014)
                 node.nodeY + (
                     node.shapeArgs && node.shapeArgs.height || 0
-                ) - linkHeight
+                ) - (fromOrTo === 'linksFrom' ? linkHeight : linkToHeight)
             );
             return y;
         };
@@ -473,6 +473,12 @@ class SankeySeries extends ColumnSeries {
                 (this.options.minLinkWidth as any
                 )
             ),
+            linkToHeight = Math.max(
+                ((point as any).weightTo || point.weight || 0) *
+                    translationFactor,
+                (this.options.minLinkWidth as any
+                )
+            ),
             fromY = getY(fromNode, 'linksFrom'),
             toY = getY(toNode, 'linksTo'),
             nodeW = this.nodeWidth,
@@ -483,6 +489,7 @@ class SankeySeries extends ColumnSeries {
             toY = (chart.plotSizeY || 0) - toY;
             nodeW = -nodeW;
             linkHeight = -linkHeight;
+            linkToHeight = -linkToHeight;
             straight = nodeLeft > right;
         }
 
@@ -491,7 +498,7 @@ class SankeySeries extends ColumnSeries {
             fromY,
             fromY + linkHeight,
             toY,
-            toY + linkHeight
+            toY + linkToHeight
         ];
 
         // Links going from left to right
