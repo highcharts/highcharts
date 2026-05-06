@@ -133,8 +133,14 @@ const DependencyWheelSeriesDefaults: DependencyWheelSeriesOptions = {
                 dy: 5
             }
         }
-    }
+    },
 
+    tooltip: {
+        pointFormat: '{point.fromNode.name} \u2192 ' +
+            '{point.toNode.name}: <b>{point.weight}</b><br/>' +
+            '{#if point.weightTo}{point.toNode.name} \u2192 ' +
+            '{point.fromNode.name}: <b>{point.weightTo}</b><br/>{/if}'
+    }
 };
 
 /**
