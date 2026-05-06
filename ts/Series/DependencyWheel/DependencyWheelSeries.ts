@@ -349,6 +349,23 @@ class DependencyWheelSeries extends SankeySeries {
         }
     }
 
+    /**
+     * Run translation operations for one link.
+     * @private
+     */
+    public translateLink(point: DependencyWheelPoint): void {
+        const linkToHeight = Math.max(
+            (point.weightTo || point.weight || 0) * this.translationFactor,
+            this.options.minLinkWidth || 0
+        );
+        const linkToY = this.getY(point, point.toNode, 'linksTo', linkToHeight);
+
+        // Translate the link
+        super.translateLink(point, linkToY);
+
+        // Override the last linkBase value
+        point.linkBase[3] = linkToY + linkToHeight;
+    }
 }
 
 /* *
