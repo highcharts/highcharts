@@ -132,6 +132,7 @@ export interface SampleGeneratorConfig {
         'categories-12' |
         'column' |
         'datetime' |
+        'gauge' |
         'linear-12'
     )[];
 }

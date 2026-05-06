@@ -84,8 +84,9 @@ class BoxPlotSeries extends ColumnSeries {
 
     // Get presentational attributes
     public pointAttribs(): SVGAttributes {
-        // No attributes should be set on point.graphic which is the group
-        return {};
+        // No attributes should be set on point.graphic which is the group. The
+        // returned fill is for legend symbols.
+        return { fill: this.color };
     }
 
 

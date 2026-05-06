@@ -3,6 +3,7 @@ Highcharts.chart('container', {
     chart: {
         type: 'bubble',
         plotBorderWidth: 1,
+        plotBorderRadius: 5,
         zooming: {
             type: 'xy'
         }
@@ -29,6 +30,7 @@ Highcharts.chart('container', {
 
     xAxis: {
         gridLineWidth: 1,
+        lineWidth: 3,
         title: {
             text: 'Daily fat intake'
         },

@@ -93,6 +93,7 @@ function onAxisAfterSetOptions(
         options = axis.options;
 
     if (chart.is3d?.() && axis.coll !== 'colorAxis') {
+        this.clippable = false;
         options.tickWidth = pick(options.tickWidth, 0);
         options.gridLineWidth = pick(options.gridLineWidth, 1);
     }

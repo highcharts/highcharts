@@ -1408,6 +1408,9 @@ class Navigator {
                 }
             ), 'yAxis') as NavigatorAxisComposition;
 
+            navigator.xAxis.clippable = false;
+            navigator.yAxis.clippable = false;
+
             // If we have a base series, initialize the navigator series
             if (baseSeries || navigatorOptions.series?.data) {
                 navigator.updateNavigatorSeries(false);
@@ -1777,8 +1780,10 @@ class Navigator {
                     base.navigatorSeries = chart.initSeries(
                         mergedNavSeriesOptions
                     );
-                    // Set data on initial run with dataSorting enabled (#20318)
-                    chart.setSortedData();
+
+                    // Trigger setSortedData with dataSorting enabled (#20318)
+                    fireEvent(base.navigatorSeries, 'afterUpdate');
+
                     base.navigatorSeries.baseSeries = base; // Store ref
                     navigatorSeries.push(base.navigatorSeries);
                 }

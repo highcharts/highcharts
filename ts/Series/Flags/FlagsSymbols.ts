@@ -26,6 +26,8 @@ declare module '../../Core/Renderer/SVG/SymbolType' {
         /** @requires Series/Flags */
         flag: SymbolFunction;
         /** @requires Series/Flags */
+        'flag-icon': SymbolFunction;
+        /** @requires Series/Flags */
         squarepin: SymbolFunction;
     }
 }
@@ -56,6 +58,27 @@ namespace FlagsSymbols {
             symbols.flag = flag;
             createPinSymbol(symbols, 'circle');
             createPinSymbol(symbols, 'square');
+
+            symbols['flag-icon'] = function (
+                this: typeof Symbols,
+                x: number,
+                y: number,
+                w: number,
+                h: number
+            ): SVGPath {
+                return flag.call(
+                    this,
+                    x,
+                    y,
+                    w,
+                    Math.round(h * 0.6),
+                    {
+                        anchorX: Math.round(x),
+                        anchorY: Math.round(y + h)
+                    }
+                );
+            };
+
         }
     }
 

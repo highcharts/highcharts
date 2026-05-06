@@ -24,9 +24,7 @@ import type SolidGaugeSeriesOptions from './SolidGaugeSeriesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 
-import {
-    optionsToObject as borderRadiusOptionsToObject
-} from '../../Extensions/BorderRadius.js';
+import { optionsToObject } from '../../Extensions/BorderRadius.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     gauge: GaugeSeries,
@@ -39,8 +37,8 @@ import {
     extend,
     isNumber,
     merge,
-    pInt,
-    pick
+    pick,
+    relativeLength
 } from '../../Shared/Utilities.js';
 
 /* *
@@ -117,7 +115,13 @@ class SolidGaugeSeries extends GaugeSeries {
             options = series.options,
             renderer = series.chart.renderer,
             overshoot = options.overshoot,
-            rounded = options.rounded && options.borderRadius === void 0,
+            rounded = options.rounded,
+            borderRadius = optionsToObject(
+                rounded ? '50%' : (
+                    options.borderRadius ??
+                    yAxis.pane.options.borderRadius
+                )
+            ).radius,
             overshootVal = isNumber(overshoot) ?
                 overshoot / 180 * Math.PI :
                 0;
@@ -142,23 +146,22 @@ class SolidGaugeSeries extends GaugeSeries {
             // #10630 null point should not be draw
             if (!point.isNull) { // Condition like in pie chart
                 const radius = ((
-                        pInt(
-                            pick(
-                                point.options.radius,
-                                options.radius,
-                                100 // %
-                            )
-                        ) * center[2]
-                    ) / 200),
-                    innerRadius = ((
-                        pInt(
-                            pick(
-                                point.options.innerRadius,
-                                options.innerRadius,
-                                60 // %
-                            )
-                        ) * center[2]
-                    ) / 200),
+                        relativeLength(
+                            point.options.radius ??
+                                options.radius ??
+                                '100%',
+                            center[2] / 2
+                        )
+                    )),
+                    innerRadius = Math.min((
+                        relativeLength(
+                            point.options.innerRadius ??
+                                options.innerRadius ??
+                                yAxis.pane.options.innerSize ??
+                            0,
+                            center[2] / 2
+                        )
+                    ), radius),
                     axisMinAngle = Math.min(
                         yAxis.startAngleRad,
                         yAxis.endAngleRad
@@ -166,7 +169,8 @@ class SolidGaugeSeries extends GaugeSeries {
                     axisMaxAngle = Math.max(
                         yAxis.startAngleRad,
                         yAxis.endAngleRad
-                    );
+                    ),
+                    attribs: SVGAttributes = {};
 
                 let graphic = point.graphic,
                     rotation = (yAxis.startAngleRad +
@@ -212,14 +216,6 @@ class SolidGaugeSeries extends GaugeSeries {
                 if (end - start > 2 * Math.PI) {
                     end = start + 2 * Math.PI;
                 }
-
-                let borderRadius = rounded ? '50%' : 0;
-                if (options.borderRadius) {
-                    borderRadius = borderRadiusOptionsToObject(
-                        options.borderRadius
-                    ).radius;
-                }
-
                 point.shapeArgs = shapeArgs = {
                     x: center[0],
                     y: center[1],
@@ -231,22 +227,24 @@ class SolidGaugeSeries extends GaugeSeries {
                 };
                 point.startR = radius; // For PieSeries.animate
 
+                if (toColor !== 'none') {
+                    attribs.fill = toColor;
+                }
+
                 if (graphic) {
                     d = shapeArgs.d;
-                    graphic.animate(extend({ fill: toColor }, shapeArgs));
+                    graphic.animate(extend(attribs, shapeArgs));
                     if (d) {
                         shapeArgs.d = d; // Animate alters it
                     }
                 } else {
+                    attribs['sweep-flag'] = 0;
                     point.graphic = graphic = renderer.arc(shapeArgs)
-                        .attr({
-                            fill: toColor,
-                            'sweep-flag': 0
-                        })
+                        .attr(attribs)
                         .add(series.group);
                 }
 
-                if (!series.chart.styledMode) {
+                if (!renderer.styledMode) {
                     if (options.linecap !== 'square') {
                         graphic.attr({
                             'stroke-linecap': 'round',
@@ -266,6 +264,13 @@ class SolidGaugeSeries extends GaugeSeries {
                 if (graphic) {
                     graphic.addClass(className);
                 }
+
+                // Positions for the tooltip
+                const midRadius = innerRadius + (radius - innerRadius) * 0.5;
+                point.tooltipPos = [
+                    center[0] + Math.cos(rotation) * midRadius,
+                    center[1] + Math.sin(rotation) * midRadius
+                ];
             }
         }
     }
