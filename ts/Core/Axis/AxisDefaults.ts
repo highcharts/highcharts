@@ -544,7 +544,7 @@ namespace AxisDefaults {
          *     hour: { main: '%[HM]', boundary: undefined },
          *     day: { main: '%[eb]', boundary: '%[eb]' },
          *     week: { main: '%[eb]' },
-         *     month: { main: '%[bY]', boundary: '%Y' },
+         *     month: { main: '%[bY]', boundary: undefined },
          *     year: { main: '%Y', boundary: undefined }
          * }
          * ```
@@ -779,10 +779,10 @@ namespace AxisDefaults {
                  * tick, e.g. start of day, start of year, etc.
                  *
                  * @type {string|Highcharts.DateTimeFormatOptions}
-                 * @default '%Y'
+                 * @default undefined
                  * @apioption xAxis.dateTimeLabelFormats.month.boundary
                  */
-                boundary: '%Y'
+                boundary: void 0
             },
             /**
              * @declare Highcharts.AxisDateTimeLabelFormatsOptionsObject
