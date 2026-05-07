@@ -743,9 +743,9 @@ class Tooltip {
                     // is a transform/zoom on the container. #11329
                     isX ? scaleX(boxWidth) : scaleY(boxHeight),
                     isX ? chartPosition.left - distance +
-                            scaleX(plotX + plotLeft) :
+                        scaleX(plotX + plotLeft) :
                         chartPosition.top - distance +
-                            scaleY(plotY + plotTop),
+                        scaleY(plotY + plotTop),
                     0,
                     isX ? outerWidth : outerHeight
                 ] : [
@@ -1960,10 +1960,19 @@ class Tooltip {
         // Set the renderer size dynamically to prevent document size to change.
         // Renderer only exists when tooltip is outside.
         if (renderer && container) {
-            const { scrollLeft = 0, scrollTop = 0 } = chart
-                .scrollablePlotArea?.scrollingContainer || {};
-            pos.x += scrollLeft + left;
-            pos.y += scrollTop + top;
+            pos.x += left;
+            pos.y += top;
+
+            // Scroll offset is only needed for custom/fixed positions.
+            // Default getPosition already returns coordinates in the tooltip's
+            // expected coordinate space.
+            if (positioner || fixed) {
+                const { scrollLeft = 0, scrollTop = 0 } = chart
+                    .scrollablePlotArea?.scrollingContainer || {};
+
+                pos.x += scrollLeft;
+                pos.y += scrollTop;
+            }
 
             // Pad it by the border width and distance. Add 2 to make room for
             // the default shadow (#19314).
