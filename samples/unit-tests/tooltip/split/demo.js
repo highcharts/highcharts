@@ -433,7 +433,8 @@ QUnit.test(
                 }
             ],
             tooltip: {
-                split: true
+                split: true,
+                borderColor: undefined
             }
         });
         const firstPointColor = chart.series[0].points[0].color,

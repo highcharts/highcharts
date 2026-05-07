@@ -613,7 +613,7 @@ class Tooltip {
                     this.label
                         .attr({
                             fill: options.backgroundColor,
-                            'stroke-width': options.borderWidth || 0
+                            'stroke-width': options.borderWidth ?? 1
                         })
                         // #2301, #2657
                         .css(options.style)
