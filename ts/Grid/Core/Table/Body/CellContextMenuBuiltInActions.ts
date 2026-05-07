@@ -47,11 +47,11 @@ import {
 const warnedUnknownActionIds = new Set<string>();
 
 /**
- * @deprecated
- * Kept for backwards compatibility. Built-in defaults are now driven by
- * registered groups (see `registerBuiltInGroup`). The `useByDefault` flag
- * on `registerBuiltInAction` still pushes into this array, but the array
- * is no longer consulted by the default resolver.
+ * Legacy ungrouped default action ids.
+ *
+ * Built-in feature defaults should use `registerBuiltInGroup`; actions
+ * registered with `registerBuiltInAction(..., true)` are still resolved as
+ * top-level defaults for compatibility.
  */
 export const defaultBuiltInCellContextMenuActions: CellContextMenuActionId[] =
     [];
@@ -89,6 +89,11 @@ type CellContextMenuBranchItemOptions = (
 ) & {
     items: CellContextMenuItemOptions[];
 };
+
+interface ResolvedBuiltInGroup {
+    def: BuiltInGroupDefinition;
+    items: ResolvedCellContextMenuActionItemOptions[];
+}
 
 export interface BuiltInActionDefinition {
     getLabel: (cell: TableCell) => string;
@@ -151,13 +156,8 @@ export interface BuiltInGroupDefinition {
  * Action behavior definition.
  *
  * @param useByDefault
- * Legacy flag. When `true`, pushes the action id onto the deprecated
- * `defaultBuiltInCellContextMenuActions` array.
- *
- * @deprecated Kept for backwards compatibility only. The default menu is
- * now driven by groups registered via `registerBuiltInGroup` — setting
- * this flag no longer surfaces the action in the default menu.
- * Contribute via a group instead.
+ * Whether the action should be added to the legacy ungrouped default menu
+ * set. Feature-driven defaults should prefer `registerBuiltInGroup`.
  */
 export function registerBuiltInAction(
     actionId: CellContextMenuActionId,
@@ -379,6 +379,42 @@ function resolveBuiltInAction(
 }
 
 /**
+ * Resolves ordered built-in action ids into regular action items.
+ *
+ * @param actionIds
+ * Built-in action ids to resolve.
+ *
+ * @param cell
+ * Table cell for the context menu.
+ *
+ * @param skipIds
+ * Optional action ids that should not be resolved.
+ *
+ * @return
+ * Resolved action items.
+ */
+function resolveBuiltInActions(
+    actionIds: CellContextMenuActionId[],
+    cell: TableCell,
+    skipIds?: Set<CellContextMenuActionId>
+): ResolvedCellContextMenuActionItemOptions[] {
+    const items: ResolvedCellContextMenuActionItemOptions[] = [];
+
+    for (const actionId of actionIds) {
+        if (skipIds?.has(actionId)) {
+            continue;
+        }
+
+        const resolved = resolveBuiltInAction(actionId, cell);
+        if (resolved) {
+            items.push(resolved);
+        }
+    }
+
+    return items;
+}
+
+/**
  * Whether the given id has a registered built-in group.
  *
  * @param id
@@ -421,14 +457,7 @@ function resolveActiveGroupItems(
         return;
     }
 
-    const items: ResolvedCellContextMenuActionItemOptions[] = [];
-    for (const actionId of group.items) {
-        const resolved = resolveBuiltInAction(actionId, cell);
-        if (resolved) {
-            items.push(resolved);
-        }
-    }
-    return items;
+    return resolveBuiltInActions(group.items, cell);
 }
 
 /**
@@ -461,12 +490,39 @@ function getActiveGroupsForCell(
 }
 
 /**
+ * Resolves active built-in groups, preserving registration order and
+ * filtering groups with no visible items.
+ *
+ * @param cell
+ * Table cell for the context menu.
+ *
+ * @return
+ * Active groups with their resolved items.
+ */
+function getResolvedActiveGroupsForCell(
+    cell: TableCell
+): ResolvedBuiltInGroup[] {
+    const active = getActiveGroupsForCell(cell);
+    const resolvedGroups: ResolvedBuiltInGroup[] = [];
+
+    for (const { def } of active) {
+        const items = resolveBuiltInActions(def.items, cell);
+        if (items.length) {
+            resolvedGroups.push({ def, items });
+        }
+    }
+
+    return resolvedGroups;
+}
+
+/**
  * Builds the default context menu items from active groups.
  *
- * When no groups are active, returns an empty array.
+ * When no groups are active, returns legacy ungrouped default actions.
  * When exactly one group is active, returns its items inline (flat).
  * When two or more groups are active, each group becomes a submenu
  * branch whose label and icon come from the group registration.
+ * Legacy ungrouped defaults are appended after group-driven items.
  *
  * @param cell
  * Table cell for the context menu.
@@ -477,49 +533,49 @@ function getActiveGroupsForCell(
 function buildDefaultCellContextMenuItems(
     cell: TableCell
 ): ResolvedCellContextMenuItemOptions[] {
-    const active = getActiveGroupsForCell(cell);
+    const active = getResolvedActiveGroupsForCell(cell);
+    const groupedActionIds = new Set<CellContextMenuActionId>();
+
+    for (const { def } of active) {
+        for (const actionId of def.items) {
+            groupedActionIds.add(actionId);
+        }
+    }
+
+    const legacyItems = resolveBuiltInActions(
+        defaultBuiltInCellContextMenuActions,
+        cell,
+        groupedActionIds
+    );
 
     if (active.length === 0) {
-        return [];
+        return legacyItems;
     }
 
     if (active.length === 1) {
-        const items: ResolvedCellContextMenuItemOptions[] = [];
-        for (const actionId of active[0].def.items) {
-            const resolved = resolveBuiltInAction(actionId, cell);
-            if (resolved) {
-                items.push(resolved);
-            }
-        }
-        return items;
+        return [
+            ...active[0].items,
+            ...legacyItems
+        ];
     }
 
     const branches: ResolvedCellContextMenuItemOptions[] = [];
-    for (const { def } of active) {
-        const groupItems: ResolvedCellContextMenuActionItemOptions[] = [];
-        for (const actionId of def.items) {
-            const resolved = resolveBuiltInAction(actionId, cell);
-            if (resolved) {
-                groupItems.push(resolved);
-            }
-        }
-
-        if (!groupItems.length) {
-            continue;
-        }
-
-        const allDisabled = groupItems.every((i): boolean => !!i.disabled);
+    for (const { def, items } of active) {
+        const allDisabled = items.every((i): boolean => !!i.disabled);
 
         branches.push({
             label: def.getLabel(cell),
             icon: def.icon,
             disabled: allDisabled,
             onClick: void 0,
-            items: groupItems
+            items
         });
     }
 
-    return branches;
+    return [
+        ...branches,
+        ...legacyItems
+    ];
 }
 
 /**

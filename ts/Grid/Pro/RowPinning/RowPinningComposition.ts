@@ -105,6 +105,9 @@ const defaultPinnedRowsState = {
     bottomIds: []
 };
 
+type RowPinningContextMenuActionId =
+    'pinRowTop' | 'pinRowBottom' | 'unpinRow';
+
 /**
  * Compose row pinning APIs into Grid Pro.
  *
@@ -155,51 +158,33 @@ export function compose(
  * group that bundles them in the default menu.
  */
 function registerBuiltInActions(): void {
-    registerBuiltInAction(
+    registerRowPinningAction(
         'pinRowTop',
-        {
-            getLabel: (cell): string =>
-                cell.row.viewport.grid.options?.lang?.pinRowTop || '',
-            icon: 'pin',
-            isVisible: (cell, rowId): boolean =>
-                isRowPinningActionVisible(cell, rowId),
-            isDisabled: (cell, rowId): boolean =>
-                isRowPinningActionDisabled('pinRowTop', cell, rowId),
-            onClick: (cell, rowId): void => {
-                void cell.row.viewport.grid.rowPinning?.pin(rowId, 'top');
-            }
+        'pin',
+        (cell): string =>
+            cell.row.viewport.grid.options?.lang?.pinRowTop || '',
+        (cell, rowId): void => {
+            void cell.row.viewport.grid.rowPinning?.pin(rowId, 'top');
         }
     );
 
-    registerBuiltInAction(
+    registerRowPinningAction(
         'pinRowBottom',
-        {
-            getLabel: (cell): string =>
-                cell.row.viewport.grid.options?.lang?.pinRowBottom || '',
-            icon: 'pin',
-            isVisible: (cell, rowId): boolean =>
-                isRowPinningActionVisible(cell, rowId),
-            isDisabled: (cell, rowId): boolean =>
-                isRowPinningActionDisabled('pinRowBottom', cell, rowId),
-            onClick: (cell, rowId): void => {
-                void cell.row.viewport.grid.rowPinning?.pin(rowId, 'bottom');
-            }
+        'pin',
+        (cell): string =>
+            cell.row.viewport.grid.options?.lang?.pinRowBottom || '',
+        (cell, rowId): void => {
+            void cell.row.viewport.grid.rowPinning?.pin(rowId, 'bottom');
         }
     );
 
-    registerBuiltInAction(
+    registerRowPinningAction(
         'unpinRow',
-        {
-            getLabel: (cell): string =>
-                cell.row.viewport.grid.options?.lang?.unpinRow || '',
-            icon: 'unpin',
-            isVisible: (cell, rowId): boolean =>
-                isRowPinningActionVisible(cell, rowId),
-            isDisabled: (cell, rowId): boolean =>
-                isRowPinningActionDisabled('unpinRow', cell, rowId),
-            onClick: (cell, rowId): void => {
-                void cell.row.viewport.grid.rowPinning?.unpin(rowId);
-            }
+        'unpin',
+        (cell): string =>
+            cell.row.viewport.grid.options?.lang?.unpinRow || '',
+        (cell, rowId): void => {
+            void cell.row.viewport.grid.rowPinning?.unpin(rowId);
         }
     );
 
@@ -211,6 +196,41 @@ function registerBuiltInActions(): void {
         isActive: (cell, rowId): boolean =>
             isRowPinningActionVisible(cell, rowId)
     });
+}
+
+/**
+ * Registers one row pinning context menu action.
+ *
+ * @param actionId
+ * Row pinning built-in action id.
+ *
+ * @param icon
+ * Icon for the menu item.
+ *
+ * @param getLabel
+ * Label resolver.
+ *
+ * @param onClick
+ * Action callback.
+ */
+function registerRowPinningAction(
+    actionId: RowPinningContextMenuActionId,
+    icon: 'pin' | 'unpin',
+    getLabel: (cell: TableCell) => string,
+    onClick: (cell: TableCell, rowId: GridRowId) => void
+): void {
+    registerBuiltInAction(
+        actionId,
+        {
+            getLabel,
+            icon,
+            isVisible: (cell, rowId): boolean =>
+                isRowPinningActionVisible(cell, rowId),
+            isDisabled: (cell, rowId): boolean =>
+                isRowPinningActionDisabled(actionId, cell, rowId),
+            onClick
+        }
+    );
 }
 
 /**

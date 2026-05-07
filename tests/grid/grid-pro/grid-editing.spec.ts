@@ -312,6 +312,120 @@ test.describe('Grid Pro row/column mutations', () => {
         ]);
     });
 
+    test('addColumnAfter preserves inserted rows for local data columns', async ({ page }) => {
+        await page.evaluate(() => {
+            document.getElementById('ge-local-row-column-order')?.remove();
+            const container = document.createElement('div');
+            container.id = 'ge-local-row-column-order';
+            document.body.appendChild(container);
+
+            (window as any).localRowColumnOrderGrid = (window as any)
+                .Grid.grid(container, {
+                    data: {
+                        columns: {
+                            product: ['Apples', 'Pears'],
+                            value: [10, 20]
+                        }
+                    },
+                    columnDefaults: {
+                        cells: { editMode: { enabled: true } }
+                    }
+                });
+        });
+
+        const state = await page.evaluate(async () => {
+            const grid = (window as any).localRowColumnOrderGrid;
+            await grid.gridEditing.addRowBelow(1);
+            const firstColumnId = await grid.gridEditing
+                .addColumnAfter('value');
+            await grid.gridEditing.addRowBelow(2);
+            const secondColumnId = await grid.gridEditing
+                .addColumnAfter(firstColumnId);
+
+            const table = grid.dataProvider.getDataTable(false);
+            return {
+                product: Array.from(table.getColumn('product', true)),
+                firstColumn: Array.from(table.getColumn(firstColumnId, true)),
+                secondColumn: Array.from(table.getColumn(secondColumnId, true)),
+                renderedRowCount: grid.viewport.dataTable.rowCount,
+                renderedColumns: grid.viewport.columns.map((c: any) => c.id)
+            };
+        });
+
+        expect(state.product).toEqual(['Apples', 'Pears', null, null]);
+        expect(state.firstColumn).toEqual([null, null, null, null]);
+        expect(state.secondColumn).toEqual([null, null, null, null]);
+        expect(state.renderedRowCount).toBe(4);
+        expect(state.renderedColumns).toHaveLength(4);
+    });
+
+    test('context menu add row then add column keeps inserted row without idColumn', async ({ page }) => {
+        await page.evaluate(() => {
+            document.getElementById('ge-menu-index-row-then-column')?.remove();
+            const container = document.createElement('div');
+            container.id = 'ge-menu-index-row-then-column';
+            document.body.appendChild(container);
+
+            (window as any).menuIndexRowThenColumnGrid = (window as any)
+                .Grid.grid(container, {
+                    data: {
+                        columns: {
+                            product: ['Apples', 'Pears'],
+                            value: [10, 20]
+                        }
+                    },
+                    columnDefaults: {
+                        cells: { editMode: { enabled: true } }
+                    }
+                });
+        });
+
+        const valueCell = page.locator(
+            '#ge-menu-index-row-then-column tbody tr[data-row-index="1"] ' +
+            'td[data-column-id="value"]'
+        );
+        await valueCell.click({ button: 'right' });
+
+        await page.locator('.hcg-popup').last()
+            .locator('.hcg-menu-item', { hasText: 'Rows' })
+            .click();
+        await page.locator('.hcg-popup').last()
+            .locator('.hcg-menu-item', { hasText: 'Add row below' })
+            .click();
+
+        await expect(page.locator(
+            '#ge-menu-index-row-then-column tbody tr'
+        )).toHaveCount(3);
+
+        await valueCell.click({ button: 'right' });
+        await page.locator('.hcg-popup').last()
+            .locator('.hcg-menu-item', { hasText: 'Columns' })
+            .click();
+        await page.locator('.hcg-popup').last()
+            .locator('.hcg-menu-item', { hasText: 'Add column after' })
+            .click();
+
+        await expect(page.locator(
+            '#ge-menu-index-row-then-column tbody tr'
+        )).toHaveCount(3);
+
+        const state = await page.evaluate(() => {
+            const grid = (window as any).menuIndexRowThenColumnGrid;
+            return {
+                products: Array.from(
+                    grid.dataProvider.getDataTable(false)
+                        .getColumn('product', true)
+                ),
+                renderedRowCount: grid.viewport.dataTable.rowCount,
+                renderedColumns: grid.viewport.columns.map((c: any) => c.id)
+            };
+        });
+
+        expect(state.products).toEqual(['Apples', 'Pears', null]);
+        expect(state.renderedRowCount).toBe(3);
+        expect(state.renderedColumns).toHaveLength(3);
+    });
+
     test('addColumnAfter can insert multiple default columns', async ({ page }) => {
         await page.evaluate(() => {
             document.getElementById('ge-add-default-columns')?.remove();

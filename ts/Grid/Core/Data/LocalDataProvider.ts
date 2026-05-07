@@ -470,7 +470,18 @@ export class LocalDataProvider extends DataProvider {
             return;
         }
 
-        table.setColumns({ [columnId]: column }, void 0, { fromGrid: true });
+        let normalizedColumn = column;
+        if (column.length < table.rowCount) {
+            normalizedColumn = Array.from(column);
+            normalizedColumn.length = table.rowCount;
+            normalizedColumn.fill(null, column.length);
+        }
+
+        table.setColumns(
+            { [columnId]: normalizedColumn },
+            void 0,
+            { fromGrid: true }
+        );
 
         this.querying.shouldBeUpdated = true;
         await this.applyQuery();
