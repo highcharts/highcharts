@@ -354,7 +354,9 @@ Example configuration should look like:
     { label: 'React', value: 'react' }
   ]}>
   <TabItem value="js" label="JavaScript">
-  *   A live demo of the example (vanilla JS) [here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/indicators/custom-column-indicator/).
+  <p>
+    A live demo of the example (vanilla JS) <a href="https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/indicators/custom-column-indicator/">here</a>.
+  </p>
 
   ```js
   Highcharts.seriesType(
@@ -381,7 +383,9 @@ Example configuration should look like:
 
   </TabItem>
   <TabItem value="react" label="React">
-  *   A live demo of the example (React) [here](https://stackblitz.com/edit/dko9xclf-vrvwtmpt?file=package.json).
+  <p>
+    A live demo of the example (React) <a href="https://stackblitz.com/edit/dko9xclf-vrvwtmpt?file=package.json">here</a>.
+  </p>
 
   ```tsx
   import React from 'react';
