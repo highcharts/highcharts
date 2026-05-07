@@ -47,7 +47,7 @@ function attachUpdateRowsCounter(grid, inputEl) {
     };
 
     document.getElementById('auto-set-cell').addEventListener('click', () => {
-        gridAuto.dataTable.setCell('weight', 0, 123);
+        gridAuto.dataProvider.getDataTable().setCell('weight', 0, 123);
     });
 
     document
@@ -63,7 +63,7 @@ function attachUpdateRowsCounter(grid, inputEl) {
         });
 
     document.getElementById('manual-set-cell').addEventListener('click', () => {
-        gridManual.dataTable.setCell('weight', 0, 321);
+        gridManual.dataProvider.getDataTable().setCell('weight', 0, 321);
     });
 
     document

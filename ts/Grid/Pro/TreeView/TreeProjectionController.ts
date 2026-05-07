@@ -38,7 +38,7 @@ import type {
 } from './TreeViewTypes';
 import type {
     NormalizedTreeInputOptions,
-    NormalizedTreeViewOptions
+    ResolvedTreeViewOptions
 } from './TreeViewOptionsNormalizer';
 
 import {
@@ -48,8 +48,10 @@ import {
     buildIndexFromColumns as buildParentIdIndexFromColumns
 } from './InputAdapters/ParentIdTreeInputAdapter.js';
 import {
-    normalizeTreeViewOptions
-} from './TreeViewOptionsNormalizer.js';
+    hasDataTableProvider
+} from '../../Core/Data/DataProvider.js';
+import { normalizeTreeViewOptions } from './TreeViewOptionsNormalizer.js';
+import { isDeepEqual } from '../../Core/GridUtils.js';
 import { defined, fireEvent } from '../../../Shared/Utilities.js';
 
 
@@ -83,11 +85,13 @@ class TreeProjectionController {
 
     private expansionStateSeedKey?: string;
 
+    private resolvedOptions?: ResolvedTreeViewOptions;
+
     private cacheSource?: {
         table: DataTable;
         versionTag: string;
         idColumn: string;
-        inputCacheKey: string;
+        input: NormalizedTreeInputOptions;
     };
 
 
@@ -113,26 +117,27 @@ class TreeProjectionController {
      */
     public sync(): void {
         const dataOptions = this.getDataOptions();
-        const options = normalizeTreeViewOptions(dataOptions?.treeView);
+        const normalizedOptions = normalizeTreeViewOptions(
+            dataOptions?.treeView
+        );
 
-        if (dataOptions) {
-            dataOptions.treeView = options;
-        }
-
-        if (!options) {
+        if (!normalizedOptions) {
+            this.resolvedOptions = void 0;
             this.clearCache();
             return;
         }
 
         const dataProvider = this.grid.dataProvider;
-        if (!TreeProjectionController.hasGetDataTable(dataProvider)) {
+        if (!hasDataTableProvider(dataProvider)) {
             // Remote provider runtime support is intentionally deferred.
+            this.resolvedOptions = void 0;
             this.clearCache();
             return;
         }
 
         const table = dataProvider.getDataTable(false);
         if (!table) {
+            this.resolvedOptions = void 0;
             this.clearCache();
             return;
         }
@@ -144,15 +149,30 @@ class TreeProjectionController {
                 'TreeView: `data.idColumn` is required for tree input.'
             );
         }
-        const inputCacheKey = TreeProjectionController.getInputCacheKey(
-            options.input
-        );
+        let resolvedInput: NormalizedTreeInputOptions;
 
+        try {
+            resolvedInput = TreeProjectionController.resolveInputOptions(
+                table.columns,
+                normalizedOptions.input
+            );
+        } catch (error) {
+            this.resolvedOptions = void 0;
+            this.clearCache();
+            throw error;
+        }
+
+        const options: ResolvedTreeViewOptions = {
+            ...normalizedOptions,
+            input: resolvedInput
+        };
+
+        this.resolvedOptions = options;
         const isCacheValid = (
             this.cacheSource?.table === table &&
-            this.cacheSource.versionTag === versionTag &&
-            this.cacheSource.idColumn === idColumn &&
-            this.cacheSource.inputCacheKey === inputCacheKey
+            this.cacheSource?.versionTag === versionTag &&
+            this.cacheSource?.idColumn === idColumn &&
+            isDeepEqual(this.cacheSource?.input, options.input)
         );
 
         if (!isCacheValid) {
@@ -166,7 +186,7 @@ class TreeProjectionController {
                 table,
                 versionTag,
                 idColumn,
-                inputCacheKey
+                input: options.input
             };
         }
 
@@ -174,12 +194,10 @@ class TreeProjectionController {
     }
 
     /**
-     * Returns normalized TreeView options from the Grid options.
+     * Returns resolved TreeView options for the current source table.
      */
-    public get options(): NormalizedTreeViewOptions | undefined {
-        return this.getDataOptions()?.treeView as (
-            NormalizedTreeViewOptions | undefined
-        );
+    public get options(): ResolvedTreeViewOptions | undefined {
+        return this.resolvedOptions;
     }
 
     /**
@@ -1086,13 +1104,13 @@ class TreeProjectionController {
      * Builds a stable key for expansion state seeds from options.
      *
      * @param options
-     * Normalized TreeView options.
+     * Resolved TreeView options.
      *
      * @returns
      * Expansion seed key used to decide whether state should be reinitialized.
      */
     private static getExpansionSeedKey(
-        options: NormalizedTreeViewOptions
+        options: ResolvedTreeViewOptions
     ): string {
         if (options.expandedRowIds === 'all') {
             return 'all';
@@ -1114,27 +1132,53 @@ class TreeProjectionController {
     }
 
     /**
-     * Builds deterministic cache key for normalized input configuration.
+     * Resolves effective tree input configuration for source columns.
+     *
+     * @param columns
+     * Source columns.
      *
      * @param input
-     * Normalized input configuration.
+     * Normalized input configuration. When omitted, the controller
+     * auto-detects the standard `parentId` or `path` columns.
      *
      * @returns
-     * Cache key representing input identity.
+     * Resolved normalized input configuration.
      */
-    private static getInputCacheKey(input: NormalizedTreeInputOptions): string {
-        if (input.type === 'parentId') {
-            return JSON.stringify([
-                'parentId',
-                input.parentIdColumn
-            ]);
+    private static resolveInputOptions(
+        columns: ColumnCollection,
+        input?: NormalizedTreeInputOptions
+    ): NormalizedTreeInputOptions {
+        if (input) {
+            return input;
         }
 
-        return JSON.stringify([
-            'path',
-            input.pathColumn,
-            input.separator
-        ]);
+        const parentIdColumn = 'parentId';
+        const pathColumn = 'path';
+        const separator = '/';
+        const hasParentIdColumn = !!columns[parentIdColumn];
+        const hasPathColumn = !!columns[pathColumn];
+
+        if (hasPathColumn) {
+            return {
+                type: 'path',
+                pathColumn,
+                separator,
+                showFullPath: false
+            };
+        }
+
+        if (hasParentIdColumn) {
+            return {
+                type: 'parentId',
+                parentIdColumn
+            };
+        }
+
+        throw new Error(
+            'TreeView: Could not autodetect input type. Expected either ' +
+            `"${parentIdColumn}" or "${pathColumn}" column, ` +
+            'or set `data.treeView.input.type` explicitly.'
+        );
     }
 
     /**
@@ -1158,29 +1202,6 @@ class TreeProjectionController {
         );
     }
 
-    /**
-     * Runtime type guard for providers exposing `getDataTable`.
-     *
-     * @param provider
-     * Data provider instance to test.
-     *
-     * @returns
-     * `true` when provider exposes `getDataTable`.
-     */
-    private static hasGetDataTable(
-        provider: unknown
-    ): provider is {
-        getDataTable: (presentation?: boolean) => DataTable | undefined;
-    } {
-        return !!(
-            provider &&
-            typeof (
-                provider as {
-                    getDataTable?: unknown;
-                }
-            ).getDataTable === 'function'
-        );
-    }
 }
 
 

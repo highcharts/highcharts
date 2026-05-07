@@ -265,9 +265,7 @@ class ColumnPolicyResolver {
         const defaultSortingOptions = this.columnDefaults.sorting;
         const sortingEnabled = (
             sortingOptions?.enabled ??
-            sortingOptions?.sortable ??
-            defaultSortingOptions?.enabled ??
-            defaultSortingOptions?.sortable
+            defaultSortingOptions?.enabled
         );
         return !this.isColumnUnbound(columnId) &&
             !!sortingEnabled;

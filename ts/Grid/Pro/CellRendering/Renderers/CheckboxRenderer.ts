@@ -98,6 +98,11 @@ class CheckboxRenderer extends CellRenderer implements EditModeRenderer {
  * Options to control the checkbox renderer content.
  */
 export interface CheckboxRendererOptions extends CellRendererOptions {
+    /**
+     * Use the built-in checkbox renderer.
+     *
+     * @default 'checkbox'
+     */
     type: 'checkbox';
 
     /**
@@ -115,6 +120,9 @@ export interface CheckboxRendererOptions extends CellRendererOptions {
  * Attributes to control the checkbox.
  */
 export interface CheckboxAttributes {
+    /**
+     * Initial checked state of the checkbox renderer.
+     */
     checked?: boolean;
 }
 

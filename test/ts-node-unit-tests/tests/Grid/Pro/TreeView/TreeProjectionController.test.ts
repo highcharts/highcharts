@@ -63,7 +63,7 @@ describe('TreeProjectionController', () => {
         );
 
         deepStrictEqual(
-            grid.presentationTable.columns.id,
+            (grid.dataProvider as any).getDataTable(true).columns.id,
             [3, 1, 2],
             'Tree projection should order roots by the default descending sort.'
         );
@@ -92,7 +92,7 @@ describe('TreeProjectionController', () => {
         );
 
         deepStrictEqual(
-            grid.presentationTable.columns.id,
+            (grid.dataProvider as any).getDataTable(true).columns.id,
             [1, 2, 3],
             'Tree projection should preserve root order defined by custom compare.'
         );

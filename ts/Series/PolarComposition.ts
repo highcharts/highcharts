@@ -46,8 +46,7 @@ import type Tick from '../Core/Axis/Tick';
 
 import A from '../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
-import BorderRadius from '../Extensions/BorderRadius.js';
-const { optionsToObject } = BorderRadius;
+import { optionsToObject } from '../Extensions/BorderRadius.js';
 import D from '../Core/Defaults.js';
 const { defaultOptions } = D;
 import H from '../Core/Globals.js';

@@ -35,6 +35,9 @@ import type { CellRendererOptions } from '../CellRenderer.js';
  * Options to control the date input renderer content.
  */
 export interface DateInputRendererBaseOptions extends CellRendererOptions {
+    /**
+     * Type of the built-in date-based input renderer.
+     */
     type: 'dateInput' | 'dateTimeInput' | 'timeInput';
 
     /**
@@ -52,7 +55,18 @@ export interface DateInputRendererBaseOptions extends CellRendererOptions {
  * Attributes to control the date input.
  */
 export interface DateInputAttributes {
+    /**
+     * Minimum accepted value in the native input format.
+     */
     min?: string;
+
+    /**
+     * Maximum accepted value in the native input format.
+     */
     max?: string;
+
+    /**
+     * Step interval passed to the native input element.
+     */
     step?: string;
 }

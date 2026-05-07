@@ -41,6 +41,11 @@ import type {
 export interface SunburstDataLabelOptions extends DataLabelOptions {
     allowOverlap?: boolean;
     rotationMode?: SunburstDataLabelRotationValue;
+
+    style?: DataLabelOptions['style'] & {
+        /** @default 'ellipsis' */
+        textOverflow?: Required<DataLabelOptions>['style']['textOverflow'];
+    };
 }
 
 export type SunburstDataLabelRotationValue = (

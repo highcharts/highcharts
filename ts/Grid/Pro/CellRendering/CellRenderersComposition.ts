@@ -109,6 +109,9 @@ declare module '../../Core/Options' {
     interface ColumnCellOptions {
         /**
          * Options to control the cell content rendering.
+         *
+         * @sample grid-pro/basic/cell-renderers Cell renderers
+         * @sample grid-pro/basic/sparklines Sparklines
          */
         renderer?: CellRendererType['options'];
     }

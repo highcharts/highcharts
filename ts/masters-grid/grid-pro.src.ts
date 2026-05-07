@@ -50,6 +50,7 @@ import ValidatorComposition from '../Grid/Pro/ColumnTypes/ValidatorComposition.j
 import CellRenderersComposition from '../Grid/Pro/CellRendering/CellRenderersComposition.js';
 import CellRendererRegistry from '../Grid/Pro/CellRendering/CellRendererRegistry.js';
 import PaginationComposition from '../Grid/Pro/Pagination/PaginationComposition.js';
+import LicenseValidationComposition from '../Grid/Pro/License/LicenseValidationComposition.js';
 import RowPinningComposition from '../Grid/Pro/RowPinning/RowPinningComposition.js';
 import TreeViewComposition from '../Grid/Pro/TreeView/TreeViewComposition.js';
 import GridEditingComposition from '../Grid/Pro/GridEditing/GridEditingComposition.js';
@@ -60,7 +61,6 @@ import CellRenderer from '../Grid/Pro/CellRendering/CellRenderer.js';
 import Popup from '../Grid/Core/UI/Popup.js';
 
 import DataProviderRegistry from '../Grid/Core/Data/DataProviderRegistry.js';
-
 
 /* *
  *
@@ -154,6 +154,7 @@ ExportingComposition.compose(G.Grid);
 ValidatorComposition.compose(G.Table);
 CellRenderersComposition.compose(G.Column);
 PaginationComposition.compose(G.Pagination);
+LicenseValidationComposition.compose(G.Grid);
 RowPinningComposition.compose(
     G.Grid, G.Table, G.Column,
     G.TableRow, G.TableCell

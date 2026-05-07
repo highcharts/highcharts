@@ -133,10 +133,11 @@ export interface ColorAxisDataClassOptions {
 export interface ColorAxisMarkerOptions {
 
     /**
-     * Animation for the marker as it moves between values. Set to
-     * `false` to disable animation. Defaults to `{ duration: 50 }`.
+     * Animation for the marker as it moves between values. Set to `false` to
+     * disable animation.
      *
      * @product highcharts highstock highmaps
+     * @default { duration: 50 }
      */
     animation?: (boolean|Partial<AnimationOptions>);
 
@@ -148,8 +149,9 @@ export interface ColorAxisMarkerOptions {
     color?: ColorType;
 
     /**
-     * The width of the marker.
+     * Maps to stroke-width because marker options are passed as crosshair.
      *
+     * @internal
      * @default 0.01
      * @product highcharts highstock highmaps
      */

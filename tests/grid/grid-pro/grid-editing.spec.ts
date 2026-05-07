@@ -347,7 +347,7 @@ test.describe('Grid Pro row/column mutations', () => {
                 product: Array.from(table.getColumn('product', true)),
                 firstColumn: Array.from(table.getColumn(firstColumnId, true)),
                 secondColumn: Array.from(table.getColumn(secondColumnId, true)),
-                renderedRowCount: grid.viewport.dataTable.rowCount,
+                renderedRowCount: await grid.dataProvider.getRowCount(),
                 renderedColumns: grid.viewport.columns.map((c: any) => c.id)
             };
         });
@@ -409,14 +409,14 @@ test.describe('Grid Pro row/column mutations', () => {
             '#ge-menu-index-row-then-column tbody tr'
         )).toHaveCount(3);
 
-        const state = await page.evaluate(() => {
+        const state = await page.evaluate(async () => {
             const grid = (window as any).menuIndexRowThenColumnGrid;
             return {
                 products: Array.from(
                     grid.dataProvider.getDataTable(false)
                         .getColumn('product', true)
                 ),
-                renderedRowCount: grid.viewport.dataTable.rowCount,
+                renderedRowCount: await grid.dataProvider.getRowCount(),
                 renderedColumns: grid.viewport.columns.map((c: any) => c.id)
             };
         });

@@ -134,11 +134,7 @@ const SeriesLabelDefaults: SeriesLabelOptions = {
      * @type {Highcharts.CSSObject}
      */
     style: {
-        /**
-         * @type {number|string}
-         */
         fontSize: '0.8em',
-        /** @internal */
         fontWeight: 'bold'
     },
 

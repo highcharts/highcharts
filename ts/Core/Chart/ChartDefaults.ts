@@ -1188,6 +1188,7 @@ const ChartDefaults: ChartOptions = {
              * @sample {highstock} highcharts/chart/resetzoombutton-theme/
              *         Theming the button
              *
+             * @default { zIndex: 6 }
              * @type  {Highcharts.SVGAttributes}
              * @since 10.2.1
              */
@@ -1214,25 +1215,17 @@ const ChartDefaults: ChartOptions = {
              * @since 10.2.1
              */
             position: {
-
-
-                /** @internal */
                 align: 'right',
-
-
-                /** @internal */
-                x: -10,
 
                 /**
                  * The vertical alignment of the button.
                  *
-                 * @type       {Highcharts.VerticalAlignValue}
-                 * @default    top
-                 * @apioption  chart.zooming.resetButton.position.verticalAlign
+                 * @type      {Highcharts.VerticalAlignValue}
+                 * @default   top
+                 * @apioption chart.zooming.resetButton.position.verticalAlign
                  */
 
-
-                /** @internal */
+                x: -10,
                 y: 10
             }
         }

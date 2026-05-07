@@ -117,6 +117,7 @@ const PointAndFigureSeriesDefaults: PointAndFigureSeriesOptions = {
  *    ]
  *    ```
  *
+ * @basic
  * @type      {Array<Array<number,number>|*>}
  * @extends   series.scatter.data
  * @product   highstock

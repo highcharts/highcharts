@@ -126,6 +126,7 @@ const Pyramid3DSeriesDefaults: Pyramid3DSeriesOptions = {
  * @sample {highcharts} highcharts/series/data-array-of-objects/
  *         Config objects
  *
+ * @basic
  * @type      {Array<number|Array<number>|*>}
  * @extends   series.funnel3d.data
  * @product   highcharts

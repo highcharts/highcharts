@@ -1798,6 +1798,21 @@ export function wrap<T, K extends FunctionNamesOf<T>>(
 
 /* *
  *
+ *  Enums
+ *
+ * */
+
+/**
+ * Limits for regex check to prevent overload of regex engine.
+ * @internal
+ */
+export const enum RegexLimits {
+    shortLimit = 1000,
+    svgLimit = 1e8
+}
+
+/* *
+ *
  *  Declarations
  *
  * */

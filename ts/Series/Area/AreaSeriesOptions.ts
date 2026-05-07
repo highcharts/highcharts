@@ -199,6 +199,8 @@ export interface AreaSeriesOptions extends LineSeriesOptions {
      * @sample {highcharts} highcharts/series/data-array-of-objects/
      *         Config objects
      *
+     * @basic
+     *
      * @type {Array<number|Array<(number|string),(number|null)>|null|*>}
      *
      * @extends series.line.data
@@ -272,6 +274,8 @@ export interface AreaSeriesOptions extends LineSeriesOptions {
     lineColor?: ColorType;
 
     /**
+     * @basic
+     *
      * @see [fillColor](#plotOptions.area.fillColor)
      *
      * @see [fillOpacity](#plotOptions.area.fillOpacity)

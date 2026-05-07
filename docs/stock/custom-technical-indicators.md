@@ -1,3 +1,6 @@
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 Custom technical indicators
 ===
 
@@ -338,27 +341,140 @@ Additionally, to correctly render that indicator, the `threshold`, `groupPadding
 properties need to be defined.
 
 Example configuration should look like:
-``` JS
-Highcharts.seriesType(
-    'customIndicator',
-    'sma', {
-        name: 'Sum of previous 2 points',
-        threshold: 0,
-        groupPadding: 0.2,
-        pointPadding: 0.2
-    }, {
-        getValues: function(series) {
-            return this.getSum(series.xData, series.yData);
-        },
-        getSum: getSum,
-        markerAttribs: Highcharts.noop,
-        drawGraph: Highcharts.noop,
-        crispCol: Highcharts.seriesTypes.column.prototype.crispCol,
-        drawPoints: Highcharts.seriesTypes.column.prototype.drawPoints,
-        getColumnMetrics: Highcharts.seriesTypes.column.prototype.getColumnMetrics,
-        translate: Highcharts.seriesTypes.column.prototype.translate
-    }
-);
-```
 
-A live demo of the example above can be found [here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/indicators/custom-column-indicator/).
+<Tabs groupId="custom-column-indicator-snippet">
+  <TabItem value="js" label="JavaScript">
+  *   A live demo of the example (vanilla JS) [here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/indicators/custom-column-indicator/).
+
+  ```js
+  Highcharts.seriesType(
+      'customIndicator',
+      'sma', {
+          name: 'Sum of previous 2 points',
+          threshold: 0,
+          groupPadding: 0.2,
+          pointPadding: 0.2
+      }, {
+          getValues: function(series) {
+              return this.getSum(series.xData, series.yData);
+          },
+          getSum: getSum,
+          markerAttribs: Highcharts.noop,
+          drawGraph: Highcharts.noop,
+          crispCol: Highcharts.seriesTypes.column.prototype.crispCol,
+          drawPoints: Highcharts.seriesTypes.column.prototype.drawPoints,
+          getColumnMetrics: Highcharts.seriesTypes.column.prototype.getColumnMetrics,
+          translate: Highcharts.seriesTypes.column.prototype.translate
+      }
+  );
+  ```
+
+  </TabItem>
+  <TabItem value="react" label="React">
+  *   A live demo of the example (React) [here](https://stackblitz.com/edit/dko9xclf-vrvwtmpt?file=package.json).
+
+  ```tsx
+  import React from 'react';
+  import { useMemo } from 'react';
+  import { StockChart, setHighcharts } from '@highcharts/react/Stock';
+  import { Accessibility } from "@highcharts/react/options/Accessibility";
+  import Highcharts from 'highcharts/esm/highstock.src.js';
+  import 'highcharts/esm/indicators/indicators.src.js';
+  import ColumnSeries from 'highcharts/es-modules/Series/Column/ColumnSeries.js';
+
+  type ColumnSeriesConstructor = typeof ColumnSeries;
+  type PointTuple = [number, number];
+
+  function getSum(xData: number[], yData: number[]) {
+    const data: PointTuple[] = [],
+        xDataSum: number[] = [],
+        yDataSum: number[] = [],
+        dataLength = xData.length;
+
+    // Iterate over points and calculate the sum.
+    for (let i = 0; i < dataLength; i++) {
+        const x = xData[i];
+        let y;
+
+        // Special case for the first point.
+        if (i === 0) {
+            y = yData[i];
+        } else {
+            y = yData[i] + yData[i - 1];
+
+        }
+
+        data[i] = [x, y];
+        xDataSum[i] = x;
+        yDataSum[i] = y;
+    }
+
+    return {
+        xData: xDataSum,
+        yData: yDataSum,
+        values: data
+    };
+  }
+
+  const ColumnSeriesClass = Highcharts.Series.types.column as ColumnSeriesConstructor;
+
+  Highcharts.seriesType(
+    'customindicator',
+    'sma',
+    {
+      name: 'Sum of previous 2 points',
+      params: {},
+      threshold: 0,
+      groupPadding: 0.2,
+      pointPadding: 0.2
+    },
+    {
+      getValues: function (series: { xData: number[]; yData: number[] }) {
+        return this.getSum(series.xData, series.yData);
+      },
+      getSum: getSum,
+      markerAttribs: (() => {}),
+      drawGraph: (() => {}),
+      crispCol: ColumnSeriesClass.prototype.crispCol,
+      drawPoints: ColumnSeriesClass.prototype.drawPoints,
+      getColumnMetrics: ColumnSeriesClass.prototype.getColumnMetrics,
+      translate: ColumnSeriesClass.prototype.translate
+    }
+  );
+
+  setHighcharts(Highcharts);
+
+  function App() {
+    const options = useMemo(() => ({
+      yAxis: [{
+        height: '60%'
+      }, {
+        top: '65%',
+        height: '25%'
+      }],
+      series: [
+        {
+          id: 'main',
+          name: 'Data',
+          data: [1, 2, 3, 1, 2, 3, 1, 2, 3, 1, 2, 3, 1, 2, 3]
+        },
+        {
+          type: 'customindicator',
+          linkedTo: 'main',
+          name: 'Custom Indicator',
+          yAxis: 1
+        }
+      ]
+    }), []);
+
+    return (
+      <StockChart options={options}>
+        <Accessibility series={{ describeSingleSeries: true }} />
+      </StockChart>
+    )
+  }
+
+  export default App
+  ```
+  </TabItem>
+</Tabs>

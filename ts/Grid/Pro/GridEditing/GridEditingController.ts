@@ -207,7 +207,9 @@ export class GridEditingController {
             return false;
         }
         const presentationRowCount =
-            grid.viewport?.dataTable?.rowCount ?? 0;
+            grid.viewport?.rowsVirtualizer.rowCount ??
+            grid.viewport?.rows.length ??
+            0;
         return presentationRowCount > 1;
     }
 
@@ -581,9 +583,7 @@ export class GridEditingController {
         }
 
         const grid = this.grid;
-        const rowCount = await grid.dataProvider?.getRowCount() ??
-            grid.viewport?.dataTable?.rowCount ??
-            0;
+        const rowCount = await grid.dataProvider?.getRowCount() ?? 0;
         const columnId = spec?.columnId ?? `column-${uniqueKey()}`;
         const column: DataTableColumnType =
             spec?.column ?? new Array(rowCount).fill(null);

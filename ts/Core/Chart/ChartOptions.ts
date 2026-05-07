@@ -1202,7 +1202,20 @@ export interface ChartResetZoomButtonOptions {
      *
      * @since 10.2.1
      */
-    position?: AlignObject;
+    position?: AlignObject & {
+        /** @default 'right' */
+        align?: AlignObject['align'];
+
+        /** @default 'top' */
+        verticalAlign?: AlignObject['verticalAlign'];
+
+        /** @default -10 */
+        x?: AlignObject['x'];
+
+        /** @default 10 */
+        y?: AlignObject['y'];
+    };
+
     /**
      * What frame the button placement should be related to. Can be
      * either `plotBox` or `spacingBox`.
@@ -1215,6 +1228,7 @@ export interface ChartResetZoomButtonOptions {
      * @default   plot
      */
     relativeTo?: ButtonRelativeToValue;
+
     /**
      * A collection of attributes for the button. The object takes SVG
      * attributes like `fill`, `stroke`, `stroke-width` or `r`, the
@@ -1229,7 +1243,10 @@ export interface ChartResetZoomButtonOptions {
      *
      * @since 10.2.1
      */
-    theme?: SVGAttributes;
+    theme?: SVGAttributes & {
+        /** @default 6 */
+        zIndex?: SVGAttributes['zIndex'];
+    };
 }
 
 export interface ChartSelectionAxisContextObject {

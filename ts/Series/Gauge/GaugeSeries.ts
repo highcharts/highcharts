@@ -728,6 +728,7 @@ export default GaugeSeries;
  * @sample {highcharts} highcharts/series/data-array-of-objects/
  *         Config objects
  *
+ * @basic
  * @type      {Array<number|null|*>}
  * @extends   series.line.data
  * @excluding drilldown, marker, x

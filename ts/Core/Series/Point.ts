@@ -1543,8 +1543,13 @@ class Point {
      * @emits Highcharts.Point#event:mouseOut
      */
     public onMouseOut(): void {
-        const point = this,
-            chart = point.series.chart;
+        const point = this;
+
+        if (!point.series) {
+            return;
+        }
+
+        const chart = point.series.chart;
 
         point.firePointEvent('mouseOut');
 
@@ -1955,6 +1960,10 @@ export default Point;
  *
  * @param {Highcharts.PointClickEventObject} event
  *        Event arguments.
+ *
+ * @param {Highcharts.Point} [ctx]
+ *        Since v12.6.0, the point context passed as an extra argument for
+ *        arrow functions.
  */
 
 /**
@@ -1978,6 +1987,10 @@ export default Point;
  *
  * @param {global.PointerEvent} event
  *        Event that occurred.
+ *
+ * @param {Highcharts.Point} [ctx]
+ *        Since v12.6.0, the point context passed as an extra argument for
+ *        arrow functions.
  */
 
 /**
@@ -1990,6 +2003,10 @@ export default Point;
  *
  * @param {global.Event} event
  *        Event that occurred.
+ *
+ * @param {Highcharts.Point} [ctx]
+ *        Since v12.6.0, the point context passed as an extra argument for
+ *        arrow functions.
  */
 
 /**
@@ -2023,6 +2040,10 @@ export default Point;
  *
  * @param {global.Event} event
  *        Event that occurred.
+ *
+ * @param {Highcharts.Point} [ctx]
+ *        Since v12.6.0, the point context passed as an extra argument for
+ *        arrow functions.
  */
 
 /**
@@ -2042,6 +2063,10 @@ export default Point;
  *
  * @param {Highcharts.PointUpdateEventObject} event
  *        Event that occurred.
+ *
+ * @param {Highcharts.Point} [ctx]
+ *        Since v12.6.0, the point context passed as an extra argument for
+ *        arrow functions.
  */
 
 /**
@@ -2092,6 +2117,10 @@ export default Point;
  *
  * @param {Highcharts.PointInteractionEventObject} event
  *        Event that occurred.
+ *
+ * @param {Highcharts.Point} [ctx]
+ *        Since v12.6.0, the point context passed as an extra argument for
+ *        arrow functions.
  */
 
 /**
@@ -2105,6 +2134,10 @@ export default Point;
  *
  * @param {Highcharts.PointInteractionEventObject} event
  *        Event that occurred.
+ *
+ * @param {Highcharts.Point} [ctx]
+ *        Since v12.6.0, the point context passed as an extra argument for
+ *        arrow functions.
  */
 
 ''; // Keeps doclets above in JS file.
