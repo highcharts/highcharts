@@ -3,8 +3,8 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Rafał Sebestjański, Piotr Madej
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  A commercial license may be required depending on use,
+ *  see www.highcharts.com/license
  *
  *
  * */

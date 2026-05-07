@@ -5,8 +5,8 @@
  *
  *  Scatter 3D series.
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  A commercial license may be required depending on use,
+ *  see www.highcharts.com/license
  *
  *
  * */

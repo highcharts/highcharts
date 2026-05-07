@@ -4,8 +4,8 @@
  *
  *  (c) 2021-2026 Highsoft AS
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  A commercial license may be required depending on use,
+ *  see www.highcharts.com/license
  *
  *  Authors:
  *  - Torstein Hønsi

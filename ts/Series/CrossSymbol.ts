@@ -7,8 +7,8 @@
  *  This keeps `cross` out of Core SVG symbols while allowing modules
  *  like PointAndFigure and Contour to compose it when needed.
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  A commercial license may be required depending on use,
+ *  see www.highcharts.com/license
  *
  *
  * */
