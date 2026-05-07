@@ -8,10 +8,10 @@ We moved all [module-related components](https://www.highcharts.com/docs/react/c
 
 ```ts
 // Before
-import { Accessibility } from "@highcharts/react/options/accessibility";
+import { Accessibility } from "@highcharts/react/options/Accessibility";
 
 // After
-import { Accessibility } from "@highcharts/react/modules/accessibility";
+import { Accessibility } from "@highcharts/react/modules/Accessibility";
 ```
 
 ## Pure ESM migration
