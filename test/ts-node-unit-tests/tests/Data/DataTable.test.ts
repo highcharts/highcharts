@@ -828,6 +828,47 @@ describe('DataTable', () => {
             );
         });
 
+        it('should reapply the same modifier instance when forced', async () => {
+            const modifier = new SortModifier({
+                direction: 'desc',
+                orderByColumn: 'y'
+            });
+            const table = new DataTable({
+                columns: {
+                    x: [0, 1, 2],
+                    y: [3, 1, 2]
+                }
+            });
+
+            await table.setModifier(modifier);
+
+            modifier.options.direction = 'asc';
+
+            await table.setModifier(modifier);
+
+            deepStrictEqual(
+                table.getModified().getColumns(),
+                {
+                    x: [0, 2, 1],
+                    y: [3, 2, 1]
+                },
+                'Reusing the same modifier instance without force should ' +
+                'keep the previous modified table.'
+            );
+
+            await table.setModifier(modifier, void 0, true);
+
+            deepStrictEqual(
+                table.getModified().getColumns(),
+                {
+                    x: [1, 2, 0],
+                    y: [1, 2, 3]
+                },
+                'Forcing the same modifier instance should reapply it with ' +
+                'updated options.'
+            );
+        });
+
         it('should remove row index references with deleteRowIndexReferences', async () => {
             const modifier = new SortModifier({
                 direction: 'desc',

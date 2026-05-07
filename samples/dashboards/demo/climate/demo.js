@@ -793,14 +793,13 @@ async function updateBoard(board, city, column, scale, newData) {
     const timeRangeMax = timeRangeSelector.chart.axes[0].max;
     const timeRangeMin = timeRangeSelector.chart.axes[0].min;
     const selectionModifier = selectionTable.getModifier();
+    const selectionCondition = selectionModifier?.options.condition;
 
     if (
         newData ||
-        !selectionModifier.options.condition?.operator !== 'and' ||
-        selectionModifier.options.condition
-            ?.conditions[0].value !== timeRangeMax ||
-        selectionModifier.options.condition
-            ?.conditions[1].value !== timeRangeMin
+        selectionCondition?.operator !== 'and' ||
+        selectionCondition.conditions?.[0]?.value !== timeRangeMin ||
+        selectionCondition.conditions?.[1]?.value !== timeRangeMax
     ) {
         selectionModifier.options.condition = {
             operator: 'and',
@@ -814,7 +813,7 @@ async function updateBoard(board, city, column, scale, newData) {
                 value: timeRangeMax
             }]
         };
-        await selectionTable.setModifier(selectionModifier);
+        await selectionTable.setModifier(selectionModifier, void 0, true);
     }
 
     const rangeTable = selectionTable.getModified();

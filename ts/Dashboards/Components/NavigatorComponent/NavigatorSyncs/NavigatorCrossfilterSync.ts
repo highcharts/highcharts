@@ -90,7 +90,7 @@ const syncPair: SyncPair = {
                     });
                 }
 
-                await table.setModifier(modifier);
+                await table.setModifier(modifier, void 0, true);
 
                 dataCursor.emitCursor(
                     table,
@@ -123,7 +123,9 @@ const syncPair: SyncPair = {
             'afterSetExtremes',
             function (extremes: AxisExtremesObject): void {
                 clearTimeout(delay);
-                delay = setTimeout(afterSetExtremes, 50, this, extremes);
+                delay = setTimeout((): void => {
+                    void afterSetExtremes(extremes);
+                }, 50);
             }
         );
     },

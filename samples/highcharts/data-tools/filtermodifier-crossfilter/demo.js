@@ -67,7 +67,7 @@ async function updateRange(table, input) {
     const v = input.value;
     modifier.options.condition.conditions[inputIndex].value = isNaN(v) ? v : +v;
 
-    await table.setModifier(modifier);
+    await table.setModifier(modifier, void 0, true);
 
     renderTable(container, table.getModified());
 }

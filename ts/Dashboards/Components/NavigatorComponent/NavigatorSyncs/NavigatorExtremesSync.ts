@@ -28,7 +28,11 @@ import Component from '../../Component';
 import DataModifier from '../../../../Data/Modifiers/DataModifier.js';
 import NavigatorComponent from '../NavigatorComponent.js';
 import NavigatorSyncUtils from './NavigatorSyncUtils.js';
-import { addEvent, defined, pick } from '../../../../Shared/Utilities.js';
+import {
+    addEvent,
+    defined,
+    pick
+} from '../../../../Shared/Utilities.js';
 
 const { Filter: FilterModifier } = DataModifier.types;
 
@@ -150,7 +154,7 @@ const syncPair: SyncPair = {
                         max
                     );
 
-                    void table.setModifier(modifier);
+                    void table.setModifier(modifier, void 0, true);
                 }
             }
         };

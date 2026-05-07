@@ -1102,6 +1102,10 @@ class DataTable extends DataTableCore implements DataEventEmitter<Event> {
      * @param {Highcharts.DataTableEventDetail} [eventDetail]
      * Custom information for pending events.
      *
+     * @param {boolean} [force]
+     * Whether to reapply the modifier even if it is the same instance as the
+     * current one.
+     *
      * @return {Promise<Highcharts.DataTable>}
      * Resolves to this table if successful, or rejects on failure.
      *
@@ -1110,13 +1114,14 @@ class DataTable extends DataTableCore implements DataEventEmitter<Event> {
      */
     public setModifier(
         modifier?: DataModifier,
-        eventDetail?: DataEventDetail
+        eventDetail?: DataEventDetail,
+        force?: boolean
     ): Promise<DataTable> {
         const table = this;
 
         // Avoid emitting modifier events when unchanged. This prevents extra
         // rerenders when polling calls `applyTableModifiers()`.
-        if (modifier === table.modifier) {
+        if (!force && modifier === table.modifier) {
             return Promise.resolve(table);
         }
 
