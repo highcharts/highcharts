@@ -24,6 +24,10 @@ body {
     padding: 0 8px;
 }
 
+#container {
+    height: 600px;
+}
+
 #container tbody td.hcg-cell[data-column-id="weight"] {
     vertical-align: middle;
 }
