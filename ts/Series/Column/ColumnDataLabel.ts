@@ -37,6 +37,12 @@ import { merge, pushUnique } from '../../Shared/Utilities.js';
  *
  * */
 
+declare module '../../Core/Series/SeriesBase' {
+    interface SeriesBase {
+        staticDataLabelsBetween?: boolean;
+    }
+}
+
 namespace ColumnDataLabel {
 
     /* *
@@ -62,6 +68,10 @@ namespace ColumnDataLabel {
             inverted = chart.inverted,
             xLen = this.xAxis?.len || chart.plotSizeX || 0,
             yLen = this.yAxis?.len || chart.plotSizeY || 0,
+            isStaticDataLabelsInLivePanning =
+                !!this.staticDataLabelsBetween &&
+                !!this.yAxis?.isPanning &&
+                !!chart.mouseIsDown,
             // Data label box for alignment
             dlBox = point.dlBox || point.shapeArgs,
             below = (point as AreaRangePoint).below ?? // Range series
@@ -79,16 +89,18 @@ namespace ColumnDataLabel {
                 dlOptions.crop !== false ||
                 options.clip !== false
             ) {
-                if (alignTo.y < 0) {
-                    alignTo.height += alignTo.y;
-                    alignTo.y = 0;
-                }
+                if (!isStaticDataLabelsInLivePanning) {
+                    if (alignTo.y < 0) {
+                        alignTo.height += alignTo.y;
+                        alignTo.y = 0;
+                    }
 
-                // If parts of the box overshoots outside the plot area, modify
-                // the box to center the label inside
-                const overshoot = alignTo.y + alignTo.height - yLen;
-                if (overshoot > 0 && overshoot < alignTo.height - 1) {
-                    alignTo.height -= overshoot;
+                    // If parts of the box overshoots outside the plot area,
+                    // modify the box to center the label inside.
+                    const overshoot = alignTo.y + alignTo.height - yLen;
+                    if (overshoot > 0 && overshoot < alignTo.height - 1) {
+                        alignTo.height -= overshoot;
+                    }
                 }
             }
 
@@ -119,6 +131,12 @@ namespace ColumnDataLabel {
             'center' : below ? 'right' : 'left';
         dlOptions.verticalAlign ??= inverted || inside ?
             'middle' : below ? 'top' : 'bottom';
+
+        if (isStaticDataLabelsInLivePanning) {
+            dlOptions.crop = true;
+            dataLabel.placed = false;
+            isNew = true;
+        }
 
         // Call the parent method
         Series.prototype.alignDataLabel.call(

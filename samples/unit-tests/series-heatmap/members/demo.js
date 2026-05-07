@@ -336,7 +336,7 @@ QUnit.test(
 );
 
 QUnit.test(
-    'Y panning should preserve heatmap row clipping, (#15368)',
+    'Y panning should preserve heatmap row clipping and dataLabels, (#15368)',
     function (assert) {
         const chart = Highcharts.chart('container', {
                 chart: {
@@ -410,5 +410,89 @@ QUnit.test(
             'Y panning should preserve fractional extremes for clipped rows, ' +
             '(#15368).'
         );
+
+        const data = [];
+
+        for (let x = 0; x < 4; x++) {
+            for (let y = 0; y < 8; y++) {
+                data.push([x, y, y]);
+            }
+        }
+
+        chart.update({
+            xAxis: {
+                categories: ['A', 'B', 'C', 'D']
+            },
+            yAxis: {
+                categories: void 0
+            },
+            series: [{
+                dataLabels: {
+                    enabled: true
+                }
+            }]
+        }, false, true);
+        chart.series[0].setData(data, false);
+        chart.yAxis[0].setExtremes(1, 4, false, false);
+        chart.redraw(false);
+
+        const series = chart.series[0],
+            labels = series.points
+                .map(point => point.dataLabel)
+                .filter(Boolean);
+
+        const getPoint = () => series.points.find(point =>
+                point.x === 0 && point.y === 1
+            ),
+            initialPoint = getPoint(),
+            initialLabelOffset = (
+                initialPoint.dataLabel.alignAttr.y - initialPoint.plotY
+            );
+
+        let animateCalls = 0;
+
+        labels.forEach(label => {
+            const animate = label.animate;
+
+            label.animate = function () {
+                animateCalls++;
+                return animate.apply(this, arguments);
+            };
+        });
+
+        controller.mouseDown(200, 160, { shiftKey: true });
+        controller.mouseMove(200, 150, { shiftKey: true });
+        controller.mouseMove(200, 130, { shiftKey: true });
+        controller.mouseMove(200, 110, { shiftKey: true });
+
+        const pannedPoint = getPoint(),
+            pannedLabelOffset = (
+                pannedPoint.dataLabel.alignAttr.y - pannedPoint.plotY
+            );
+
+        assert.strictEqual(
+            animateCalls,
+            0,
+            'Live y-axis panning should not animate heatmap dataLabels.'
+        );
+
+        assert.close(
+            pannedLabelOffset,
+            initialLabelOffset,
+            0.5,
+            'Live y-axis panning should keep labels tied to the cell center.'
+        );
+
+        assert.strictEqual(
+            labels.some(label =>
+                label.visibility !== 'hidden' &&
+                label.alignAttr &&
+                label.alignAttr.y < 0
+            ),
+            false,
+            'Live y-axis panning should hide labels once they leave the plot.'
+        );
+
+        controller.mouseUp();
     }
 );
