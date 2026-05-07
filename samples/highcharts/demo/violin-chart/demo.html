@@ -3,1813 +3,459 @@
 <script src="https://code.highcharts.com/modules/exporting.js"></script>
 <script src="https://code.highcharts.com/modules/accessibility.js"></script>
 <script src="https://code.highcharts.com/themes/adaptive.js"></script>
-<script id="athlete-data" type="application/json">
-  [
-    {
-      "weight": 90,
-      "sport": "rowing"
-    },
-    {
-      "weight": 90,
-      "sport": "rowing"
-    },
-    {
-      "weight": 88,
-      "sport": "taekwondo"
-    },
-    {
-      "weight": 87,
-      "sport": "rowing"
-    },
-    {
-      "weight": 86,
-      "sport": "rowing"
-    },
-    {
-      "weight": 86,
-      "sport": "rowing"
-    },
-    {
-      "weight": 86,
-      "sport": "rowing"
-    },
-    {
-      "weight": 85,
-      "sport": "rowing"
-    },
-    {
-      "weight": 85,
-      "sport": "rowing"
-    },
-    {
-      "weight": 84,
-      "sport": "rowing"
-    },
-    {
-      "weight": 84,
-      "sport": "rowing"
-    },
-    {
-      "weight": 83,
-      "sport": "rowing"
-    },
-    {
-      "weight": 83,
-      "sport": "rowing"
-    },
-    {
-      "weight": 83,
-      "sport": "rowing"
-    },
-    {
-      "weight": 81,
-      "sport": "rowing"
-    },
-    {
-      "weight": 81,
-      "sport": "rowing"
-    },
-    {
-      "weight": 81,
-      "sport": "rowing"
-    },
-    {
-      "weight": 81,
-      "sport": "rowing"
-    },
-    {
-      "weight": 81,
-      "sport": "fencing"
-    },
-    {
-      "weight": 80,
-      "sport": "rowing"
-    },
-    {
-      "weight": 80,
-      "sport": "rowing"
-    },
-    {
-      "weight": 80,
-      "sport": "rowing"
-    },
-    {
-      "weight": 80,
-      "sport": "fencing"
-    },
-    {
-      "weight": 80,
-      "sport": "rowing"
-    },
-    {
-      "weight": 79,
-      "sport": "rowing"
-    },
-    {
-      "weight": 79,
-      "sport": "rowing"
-    },
-    {
-      "weight": 79,
-      "sport": "rowing"
-    },
-    {
-      "weight": 79,
-      "sport": "rowing"
-    },
-    {
-      "weight": 79,
-      "sport": "fencing"
-    },
-    {
-      "weight": 79,
-      "sport": "taekwondo"
-    },
-    {
-      "weight": 79,
-      "sport": "fencing"
-    },
-    {
-      "weight": 78,
-      "sport": "rowing"
-    },
-    {
-      "weight": 78,
-      "sport": "fencing"
-    },
-    {
-      "weight": 78,
-      "sport": "rowing"
-    },
-    {
-      "weight": 78,
-      "sport": "rowing"
-    },
-    {
-      "weight": 77,
-      "sport": "rowing"
-    },
-    {
-      "weight": 77,
-      "sport": "rowing"
-    },
-    {
-      "weight": 77,
-      "sport": "rowing"
-    },
-    {
-      "weight": 77,
-      "sport": "rowing"
-    },
-    {
-      "weight": 77,
-      "sport": "rowing"
-    },
-    {
-      "weight": 77,
-      "sport": "rowing"
-    },
-    {
-      "weight": 77,
-      "sport": "fencing"
-    },
-    {
-      "weight": 77,
-      "sport": "rowing"
-    },
-    {
-      "weight": 76,
-      "sport": "rowing"
-    },
-    {
-      "weight": 76,
-      "sport": "rowing"
-    },
-    {
-      "weight": 76,
-      "sport": "rowing"
-    },
-    {
-      "weight": 76,
-      "sport": "fencing"
-    },
-    {
-      "weight": 76,
-      "sport": "rowing"
-    },
-    {
-      "weight": 76,
-      "sport": "rowing"
-    },
-    {
-      "weight": 76,
-      "sport": "rowing"
-    },
-    {
-      "weight": 76,
-      "sport": "rowing"
-    },
-    {
-      "weight": 76,
-      "sport": "rowing"
-    },
-    {
-      "weight": 76,
-      "sport": "rowing"
-    },
-    {
-      "weight": 76,
-      "sport": "rowing"
-    },
-    {
-      "weight": 76,
-      "sport": "rowing"
-    },
-    {
-      "weight": 76,
-      "sport": "rowing"
-    },
-    {
-      "weight": 76,
-      "sport": "rowing"
-    },
-    {
-      "weight": 76,
-      "sport": "rowing"
-    },
-    {
-      "weight": 76,
-      "sport": "rowing"
-    },
-    {
-      "weight": 76,
-      "sport": "rowing"
-    },
-    {
-      "weight": 75,
-      "sport": "taekwondo"
-    },
-    {
-      "weight": 75,
-      "sport": "taekwondo"
-    },
-    {
-      "weight": 75,
-      "sport": "rowing"
-    },
-    {
-      "weight": 75,
-      "sport": "rowing"
-    },
-    {
-      "weight": 75,
-      "sport": "rowing"
-    },
-    {
-      "weight": 75,
-      "sport": "rowing"
-    },
-    {
-      "weight": 75,
-      "sport": "rowing"
-    },
-    {
-      "weight": 75,
-      "sport": "rowing"
-    },
-    {
-      "weight": 75,
-      "sport": "rowing"
-    },
-    {
-      "weight": 75,
-      "sport": "rowing"
-    },
-    {
-      "weight": 75,
-      "sport": "rowing"
-    },
-    {
-      "weight": 75,
-      "sport": "rowing"
-    },
-    {
-      "weight": 75,
-      "sport": "rowing"
-    },
-    {
-      "weight": 75,
-      "sport": "rowing"
-    },
-    {
-      "weight": 75,
-      "sport": "rowing"
-    },
-    {
-      "weight": 75,
-      "sport": "rowing"
-    },
-    {
-      "weight": 75,
-      "sport": "rowing"
-    },
-    {
-      "weight": 75,
-      "sport": "rowing"
-    },
-    {
-      "weight": 75,
-      "sport": "rowing"
-    },
-    {
-      "weight": 75,
-      "sport": "rowing"
-    },
-    {
-      "weight": 75,
-      "sport": "fencing"
-    },
-    {
-      "weight": 75,
-      "sport": "fencing"
-    },
-    {
-      "weight": 74,
-      "sport": "rowing"
-    },
-    {
-      "weight": 74,
-      "sport": "rowing"
-    },
-    {
-      "weight": 74,
-      "sport": "rowing"
-    },
-    {
-      "weight": 74,
-      "sport": "fencing"
-    },
-    {
-      "weight": 74,
-      "sport": "rowing"
-    },
-    {
-      "weight": 74,
-      "sport": "rowing"
-    },
-    {
-      "weight": 74,
-      "sport": "rowing"
-    },
-    {
-      "weight": 74,
-      "sport": "fencing"
-    },
-    {
-      "weight": 74,
-      "sport": "rowing"
-    },
-    {
-      "weight": 74,
-      "sport": "taekwondo"
-    },
-    {
-      "weight": 74,
-      "sport": "rowing"
-    },
-    {
-      "weight": 74,
-      "sport": "rowing"
-    },
-    {
-      "weight": 74,
-      "sport": "rowing"
-    },
-    {
-      "weight": 74,
-      "sport": "fencing"
-    },
-    {
-      "weight": 74,
-      "sport": "fencing"
-    },
-    {
-      "weight": 74,
-      "sport": "rowing"
-    },
-    {
-      "weight": 74,
-      "sport": "fencing"
-    },
-    {
-      "weight": 74,
-      "sport": "fencing"
-    },
-    {
-      "weight": 73,
-      "sport": "taekwondo"
-    },
-    {
-      "weight": 73,
-      "sport": "rowing"
-    },
-    {
-      "weight": 73,
-      "sport": "rowing"
-    },
-    {
-      "weight": 73,
-      "sport": "rowing"
-    },
-    {
-      "weight": 73,
-      "sport": "rowing"
-    },
-    {
-      "weight": 73,
-      "sport": "rowing"
-    },
-    {
-      "weight": 73,
-      "sport": "rowing"
-    },
-    {
-      "weight": 73,
-      "sport": "rowing"
-    },
-    {
-      "weight": 73,
-      "sport": "taekwondo"
-    },
-    {
-      "weight": 73,
-      "sport": "rowing"
-    },
-    {
-      "weight": 73,
-      "sport": "fencing"
-    },
-    {
-      "weight": 73,
-      "sport": "rowing"
-    },
-    {
-      "weight": 73,
-      "sport": "taekwondo"
-    },
-    {
-      "weight": 72,
-      "sport": "rowing"
-    },
-    {
-      "weight": 72,
-      "sport": "rowing"
-    },
-    {
-      "weight": 72,
-      "sport": "rowing"
-    },
-    {
-      "weight": 72,
-      "sport": "rowing"
-    },
-    {
-      "weight": 72,
-      "sport": "rowing"
-    },
-    {
-      "weight": 72,
-      "sport": "rowing"
-    },
-    {
-      "weight": 72,
-      "sport": "rowing"
-    },
-    {
-      "weight": 72,
-      "sport": "rowing"
-    },
-    {
-      "weight": 72,
-      "sport": "rowing"
-    },
-    {
-      "weight": 72,
-      "sport": "rowing"
-    },
-    {
-      "weight": 72,
-      "sport": "taekwondo"
-    },
-    {
-      "weight": 72,
-      "sport": "rowing"
-    },
-    {
-      "weight": 72,
-      "sport": "taekwondo"
-    },
-    {
-      "weight": 72,
-      "sport": "rowing"
-    },
-    {
-      "weight": 72,
-      "sport": "rowing"
-    },
-    {
-      "weight": 72,
-      "sport": "rowing"
-    },
-    {
-      "weight": 72,
-      "sport": "rowing"
-    },
-    {
-      "weight": 72,
-      "sport": "rowing"
-    },
-    {
-      "weight": 72,
-      "sport": "rowing"
-    },
-    {
-      "weight": 72,
-      "sport": "fencing"
-    },
-    {
-      "weight": 72,
-      "sport": "rowing"
-    },
-    {
-      "weight": 72,
-      "sport": "rowing"
-    },
-    {
-      "weight": 71,
-      "sport": "rowing"
-    },
-    {
-      "weight": 71,
-      "sport": "rowing"
-    },
-    {
-      "weight": 71,
-      "sport": "rowing"
-    },
-    {
-      "weight": 71,
-      "sport": "rowing"
-    },
-    {
-      "weight": 71,
-      "sport": "rowing"
-    },
-    {
-      "weight": 71,
-      "sport": "fencing"
-    },
-    {
-      "weight": 71,
-      "sport": "rowing"
-    },
-    {
-      "weight": 71,
-      "sport": "fencing"
-    },
-    {
-      "weight": 70,
-      "sport": "rowing"
-    },
-    {
-      "weight": 70,
-      "sport": "fencing"
-    },
-    {
-      "weight": 70,
-      "sport": "rowing"
-    },
-    {
-      "weight": 70,
-      "sport": "rowing"
-    },
-    {
-      "weight": 70,
-      "sport": "fencing"
-    },
-    {
-      "weight": 70,
-      "sport": "rowing"
-    },
-    {
-      "weight": 70,
-      "sport": "rowing"
-    },
-    {
-      "weight": 70,
-      "sport": "rowing"
-    },
-    {
-      "weight": 70,
-      "sport": "rowing"
-    },
-    {
-      "weight": 70,
-      "sport": "fencing"
-    },
-    {
-      "weight": 70,
-      "sport": "rowing"
-    },
-    {
-      "weight": 70,
-      "sport": "rowing"
-    },
-    {
-      "weight": 70,
-      "sport": "rowing"
-    },
-    {
-      "weight": 70,
-      "sport": "rowing"
-    },
-    {
-      "weight": 70,
-      "sport": "fencing"
-    },
-    {
-      "weight": 70,
-      "sport": "rowing"
-    },
-    {
-      "weight": 70,
-      "sport": "fencing"
-    },
-    {
-      "weight": 70,
-      "sport": "rowing"
-    },
-    {
-      "weight": 70,
-      "sport": "rowing"
-    },
-    {
-      "weight": 70,
-      "sport": "taekwondo"
-    },
-    {
-      "weight": 70,
-      "sport": "rowing"
-    },
-    {
-      "weight": 70,
-      "sport": "rowing"
-    },
-    {
-      "weight": 69,
-      "sport": "rowing"
-    },
-    {
-      "weight": 69,
-      "sport": "taekwondo"
-    },
-    {
-      "weight": 69,
-      "sport": "taekwondo"
-    },
-    {
-      "weight": 69,
-      "sport": "rowing"
-    },
-    {
-      "weight": 69,
-      "sport": "rowing"
-    },
-    {
-      "weight": 69,
-      "sport": "fencing"
-    },
-    {
-      "weight": 69,
-      "sport": "rowing"
-    },
-    {
-      "weight": 69,
-      "sport": "rowing"
-    },
-    {
-      "weight": 68,
-      "sport": "rowing"
-    },
-    {
-      "weight": 68,
-      "sport": "fencing"
-    },
-    {
-      "weight": 68,
-      "sport": "fencing"
-    },
-    {
-      "weight": 68,
-      "sport": "rowing"
-    },
-    {
-      "weight": 68,
-      "sport": "rowing"
-    },
-    {
-      "weight": 68,
-      "sport": "rowing"
-    },
-    {
-      "weight": 68,
-      "sport": "fencing"
-    },
-    {
-      "weight": 68,
-      "sport": "rowing"
-    },
-    {
-      "weight": 68,
-      "sport": "rowing"
-    },
-    {
-      "weight": 68,
-      "sport": "rowing"
-    },
-    {
-      "weight": 68,
-      "sport": "rowing"
-    },
-    {
-      "weight": 68,
-      "sport": "rowing"
-    },
-    {
-      "weight": 68,
-      "sport": "fencing"
-    },
-    {
-      "weight": 68,
-      "sport": "fencing"
-    },
-    {
-      "weight": 68,
-      "sport": "fencing"
-    },
-    {
-      "weight": 68,
-      "sport": "taekwondo"
-    },
-    {
-      "weight": 67,
-      "sport": "taekwondo"
-    },
-    {
-      "weight": 67,
-      "sport": "rowing"
-    },
-    {
-      "weight": 67,
-      "sport": "taekwondo"
-    },
-    {
-      "weight": 67,
-      "sport": "rowing"
-    },
-    {
-      "weight": 67,
-      "sport": "rowing"
-    },
-    {
-      "weight": 67,
-      "sport": "taekwondo"
-    },
-    {
-      "weight": 67,
-      "sport": "taekwondo"
-    },
-    {
-      "weight": 67,
-      "sport": "rowing"
-    },
-    {
-      "weight": 67,
-      "sport": "taekwondo"
-    },
-    {
-      "weight": 67,
-      "sport": "taekwondo"
-    },
-    {
-      "weight": 67,
-      "sport": "taekwondo"
-    },
-    {
-      "weight": 67,
-      "sport": "taekwondo"
-    },
-    {
-      "weight": 67,
-      "sport": "taekwondo"
-    },
-    {
-      "weight": 67,
-      "sport": "fencing"
-    },
-    {
-      "weight": 67,
-      "sport": "rowing"
-    },
-    {
-      "weight": 66,
-      "sport": "fencing"
-    },
-    {
-      "weight": 66,
-      "sport": "fencing"
-    },
-    {
-      "weight": 66,
-      "sport": "taekwondo"
-    },
-    {
-      "weight": 66,
-      "sport": "rowing"
-    },
-    {
-      "weight": 66,
-      "sport": "fencing"
-    },
-    {
-      "weight": 66,
-      "sport": "fencing"
-    },
-    {
-      "weight": 66,
-      "sport": "fencing"
-    },
-    {
-      "weight": 66,
-      "sport": "rowing"
-    },
-    {
-      "weight": 66,
-      "sport": "rowing"
-    },
-    {
-      "weight": 66,
-      "sport": "fencing"
-    },
-    {
-      "weight": 65,
-      "sport": "rowing"
-    },
-    {
-      "weight": 65,
-      "sport": "taekwondo"
-    },
-    {
-      "weight": 65,
-      "sport": "fencing"
-    },
-    {
-      "weight": 65,
-      "sport": "taekwondo"
-    },
-    {
-      "weight": 65,
-      "sport": "taekwondo"
-    },
-    {
-      "weight": 65,
-      "sport": "fencing"
-    },
-    {
-      "weight": 65,
-      "sport": "taekwondo"
-    },
-    {
-      "weight": 65,
-      "sport": "triathlon"
-    },
-    {
-      "weight": 65,
-      "sport": "rowing"
-    },
-    {
-      "weight": 65,
-      "sport": "rowing"
-    },
-    {
-      "weight": 65,
-      "sport": "fencing"
-    },
-    {
-      "weight": 64,
-      "sport": "taekwondo"
-    },
-    {
-      "weight": 64,
-      "sport": "fencing"
-    },
-    {
-      "weight": 64,
-      "sport": "fencing"
-    },
-    {
-      "weight": 64,
-      "sport": "fencing"
-    },
-    {
-      "weight": 64,
-      "sport": "fencing"
-    },
-    {
-      "weight": 64,
-      "sport": "fencing"
-    },
-    {
-      "weight": 64,
-      "sport": "fencing"
-    },
-    {
-      "weight": 64,
-      "sport": "rowing"
-    },
-    {
-      "weight": 64,
-      "sport": "fencing"
-    },
-    {
-      "weight": 63,
-      "sport": "fencing"
-    },
-    {
-      "weight": 63,
-      "sport": "rowing"
-    },
-    {
-      "weight": 63,
-      "sport": "fencing"
-    },
-    {
-      "weight": 63,
-      "sport": "fencing"
-    },
-    {
-      "weight": 63,
-      "sport": "fencing"
-    },
-    {
-      "weight": 63,
-      "sport": "fencing"
-    },
-    {
-      "weight": 63,
-      "sport": "fencing"
-    },
-    {
-      "weight": 63,
-      "sport": "fencing"
-    },
-    {
-      "weight": 62,
-      "sport": "taekwondo"
-    },
-    {
-      "weight": 62,
-      "sport": "fencing"
-    },
-    {
-      "weight": 62,
-      "sport": "fencing"
-    },
-    {
-      "weight": 62,
-      "sport": "taekwondo"
-    },
-    {
-      "weight": 62,
-      "sport": "fencing"
-    },
-    {
-      "weight": 62,
-      "sport": "fencing"
-    },
-    {
-      "weight": 62,
-      "sport": "fencing"
-    },
-    {
-      "weight": 62,
-      "sport": "fencing"
-    },
-    {
-      "weight": 62,
-      "sport": "rowing"
-    },
-    {
-      "weight": 62,
-      "sport": "fencing"
-    },
-    {
-      "weight": 62,
-      "sport": "fencing"
-    },
-    {
-      "weight": 62,
-      "sport": "fencing"
-    },
-    {
-      "weight": 62,
-      "sport": "rowing"
-    },
-    {
-      "weight": 62,
-      "sport": "rowing"
-    },
-    {
-      "weight": 62,
-      "sport": "fencing"
-    },
-    {
-      "weight": 62,
-      "sport": "fencing"
-    },
-    {
-      "weight": 62,
-      "sport": "fencing"
-    },
-    {
-      "weight": 62,
-      "sport": "fencing"
-    },
-    {
-      "weight": 61,
-      "sport": "triathlon"
-    },
-    {
-      "weight": 61,
-      "sport": "fencing"
-    },
-    {
-      "weight": 61,
-      "sport": "rowing"
-    },
-    {
-      "weight": 61,
-      "sport": "fencing"
-    },
-    {
-      "weight": 61,
-      "sport": "fencing"
-    },
-    {
-      "weight": 61,
-      "sport": "triathlon"
-    },
-    {
-      "weight": 61,
-      "sport": "fencing"
-    },
-    {
-      "weight": 60,
-      "sport": "fencing"
-    },
-    {
-      "weight": 60,
-      "sport": "triathlon"
-    },
-    {
-      "weight": 60,
-      "sport": "rowing"
-    },
-    {
-      "weight": 60,
-      "sport": "rowing"
-    },
-    {
-      "weight": 60,
-      "sport": "fencing"
-    },
-    {
-      "weight": 60,
-      "sport": "triathlon"
-    },
-    {
-      "weight": 60,
-      "sport": "rowing"
-    },
-    {
-      "weight": 60,
-      "sport": "triathlon"
-    },
-    {
-      "weight": 60,
-      "sport": "rowing"
-    },
-    {
-      "weight": 60,
-      "sport": "triathlon"
-    },
-    {
-      "weight": 60,
-      "sport": "triathlon"
-    },
-    {
-      "weight": 60,
-      "sport": "rowing"
-    },
-    {
-      "weight": 60,
-      "sport": "fencing"
-    },
-    {
-      "weight": 60,
-      "sport": "fencing"
-    },
-    {
-      "weight": 60,
-      "sport": "fencing"
-    },
-    {
-      "weight": 60,
-      "sport": "rowing"
-    },
-    {
-      "weight": 60,
-      "sport": "fencing"
-    },
-    {
-      "weight": 60,
-      "sport": "fencing"
-    },
-    {
-      "weight": 60,
-      "sport": "fencing"
-    },
-    {
-      "weight": 60,
-      "sport": "fencing"
-    },
-    {
-      "weight": 60,
-      "sport": "triathlon"
-    },
-    {
-      "weight": 60,
-      "sport": "fencing"
-    },
-    {
-      "weight": 60,
-      "sport": "triathlon"
-    },
-    {
-      "weight": 60,
-      "sport": "rowing"
-    },
-    {
-      "weight": 60,
-      "sport": "rowing"
-    },
-    {
-      "weight": 60,
-      "sport": "fencing"
-    },
-    {
-      "weight": 60,
-      "sport": "rowing"
-    },
-    {
-      "weight": 60,
-      "sport": "rowing"
-    },
-    {
-      "weight": 59,
-      "sport": "fencing"
-    },
-    {
-      "weight": 59,
-      "sport": "fencing"
-    },
-    {
-      "weight": 59,
-      "sport": "fencing"
-    },
-    {
-      "weight": 59,
-      "sport": "rowing"
-    },
-    {
-      "weight": 59,
-      "sport": "rowing"
-    },
-    {
-      "weight": 59,
-      "sport": "fencing"
-    },
-    {
-      "weight": 59,
-      "sport": "taekwondo"
-    },
-    {
-      "weight": 59,
-      "sport": "rowing"
-    },
-    {
-      "weight": 59,
-      "sport": "triathlon"
-    },
-    {
-      "weight": 59,
-      "sport": "fencing"
-    },
-    {
-      "weight": 59,
-      "sport": "rowing"
-    },
-    {
-      "weight": 59,
-      "sport": "rowing"
-    },
-    {
-      "weight": 59,
-      "sport": "rowing"
-    },
-    {
-      "weight": 59,
-      "sport": "fencing"
-    },
-    {
-      "weight": 58,
-      "sport": "triathlon"
-    },
-    {
-      "weight": 58,
-      "sport": "triathlon"
-    },
-    {
-      "weight": 58,
-      "sport": "triathlon"
-    },
-    {
-      "weight": 58,
-      "sport": "rowing"
-    },
-    {
-      "weight": 58,
-      "sport": "rowing"
-    },
-    {
-      "weight": 58,
-      "sport": "triathlon"
-    },
-    {
-      "weight": 58,
-      "sport": "rowing"
-    },
-    {
-      "weight": 58,
-      "sport": "rowing"
-    },
-    {
-      "weight": 58,
-      "sport": "fencing"
-    },
-    {
-      "weight": 58,
-      "sport": "rowing"
-    },
-    {
-      "weight": 58,
-      "sport": "triathlon"
-    },
-    {
-      "weight": 58,
-      "sport": "fencing"
-    },
-    {
-      "weight": 58,
-      "sport": "fencing"
-    },
-    {
-      "weight": 58,
-      "sport": "fencing"
-    },
-    {
-      "weight": 58,
-      "sport": "fencing"
-    },
-    {
-      "weight": 58,
-      "sport": "fencing"
-    },
-    {
-      "weight": 58,
-      "sport": "fencing"
-    },
-    {
-      "weight": 58,
-      "sport": "rowing"
-    },
-    {
-      "weight": 58,
-      "sport": "fencing"
-    },
-    {
-      "weight": 58,
-      "sport": "fencing"
-    },
-    {
-      "weight": 58,
-      "sport": "rowing"
-    },
-    {
-      "weight": 57,
-      "sport": "rowing"
-    },
-    {
-      "weight": 57,
-      "sport": "rowing"
-    },
-    {
-      "weight": 57,
-      "sport": "rowing"
-    },
-    {
-      "weight": 57,
-      "sport": "taekwondo"
-    },
-    {
-      "weight": 57,
-      "sport": "taekwondo"
-    },
-    {
-      "weight": 57,
-      "sport": "taekwondo"
-    },
-    {
-      "weight": 57,
-      "sport": "taekwondo"
-    },
-    {
-      "weight": 57,
-      "sport": "rowing"
-    },
-    {
-      "weight": 57,
-      "sport": "rowing"
-    },
-    {
-      "weight": 57,
-      "sport": "rowing"
-    },
-    {
-      "weight": 57,
-      "sport": "rowing"
-    },
-    {
-      "weight": 57,
-      "sport": "taekwondo"
-    },
-    {
-      "weight": 57,
-      "sport": "triathlon"
-    },
-    {
-      "weight": 57,
-      "sport": "rowing"
-    },
-    {
-      "weight": 57,
-      "sport": "taekwondo"
-    },
-    {
-      "weight": 57,
-      "sport": "rowing"
-    },
-    {
-      "weight": 57,
-      "sport": "taekwondo"
-    },
-    {
-      "weight": 57,
-      "sport": "rowing"
-    },
-    {
-      "weight": 57,
-      "sport": "rowing"
-    },
-    {
-      "weight": 57,
-      "sport": "rowing"
-    },
-    {
-      "weight": 57,
-      "sport": "rowing"
-    },
-    {
-      "weight": 57,
-      "sport": "rowing"
-    },
-    {
-      "weight": 57,
-      "sport": "triathlon"
-    },
-    {
-      "weight": 57,
-      "sport": "rowing"
-    },
-    {
-      "weight": 57,
-      "sport": "taekwondo"
-    },
-    {
-      "weight": 57,
-      "sport": "rowing"
-    },
-    {
-      "weight": 57,
-      "sport": "taekwondo"
-    },
-    {
-      "weight": 57,
-      "sport": "fencing"
-    },
-    {
-      "weight": 57,
-      "sport": "rowing"
-    },
-    {
-      "weight": 57,
-      "sport": "rowing"
-    },
-    {
-      "weight": 57,
-      "sport": "taekwondo"
-    },
-    {
-      "weight": 57,
-      "sport": "fencing"
-    },
-    {
-      "weight": 57,
-      "sport": "triathlon"
-    },
-    {
-      "weight": 56,
-      "sport": "fencing"
-    },
-    {
-      "weight": 56,
-      "sport": "triathlon"
-    },
-    {
-      "weight": 56,
-      "sport": "triathlon"
-    },
-    {
-      "weight": 56,
-      "sport": "fencing"
-    },
-    {
-      "weight": 56,
-      "sport": "triathlon"
-    },
-    {
-      "weight": 56,
-      "sport": "fencing"
-    },
-    {
-      "weight": 56,
-      "sport": "taekwondo"
-    },
-    {
-      "weight": 56,
-      "sport": "triathlon"
-    },
-    {
-      "weight": 56,
-      "sport": "fencing"
-    },
-    {
-      "weight": 56,
-      "sport": "fencing"
-    },
-    {
-      "weight": 56,
-      "sport": "triathlon"
-    },
-    {
-      "weight": 56,
-      "sport": "fencing"
-    },
-    {
-      "weight": 56,
-      "sport": "triathlon"
-    },
-    {
-      "weight": 56,
-      "sport": "taekwondo"
-    },
-    {
-      "weight": 56,
-      "sport": "fencing"
-    },
-    {
-      "weight": 55,
-      "sport": "taekwondo"
-    },
-    {
-      "weight": 55,
-      "sport": "triathlon"
-    },
-    {
-      "weight": 55,
-      "sport": "triathlon"
-    },
-    {
-      "weight": 55,
-      "sport": "triathlon"
-    },
-    {
-      "weight": 55,
-      "sport": "triathlon"
-    },
-    {
-      "weight": 55,
-      "sport": "fencing"
-    },
-    {
-      "weight": 55,
-      "sport": "triathlon"
-    },
-    {
-      "weight": 55,
-      "sport": "fencing"
-    },
-    {
-      "weight": 55,
-      "sport": "rowing"
-    },
-    {
-      "weight": 55,
-      "sport": "fencing"
-    },
-    {
-      "weight": 55,
-      "sport": "rowing"
-    },
-    {
-      "weight": 55,
-      "sport": "fencing"
-    },
-    {
-      "weight": 55,
-      "sport": "taekwondo"
-    },
-    {
-      "weight": 54,
-      "sport": "triathlon"
-    },
-    {
-      "weight": 54,
-      "sport": "fencing"
-    },
-    {
-      "weight": 54,
-      "sport": "triathlon"
-    },
-    {
-      "weight": 54,
-      "sport": "rowing"
-    },
-    {
-      "weight": 54,
-      "sport": "triathlon"
-    },
-    {
-      "weight": 54,
-      "sport": "fencing"
-    },
-    {
-      "weight": 53,
-      "sport": "triathlon"
-    },
-    {
-      "weight": 53,
-      "sport": "triathlon"
-    },
-    {
-      "weight": 53,
-      "sport": "triathlon"
-    },
-    {
-      "weight": 53,
-      "sport": "taekwondo"
-    },
-    {
-      "weight": 53,
-      "sport": "fencing"
-    },
-    {
-      "weight": 53,
-      "sport": "fencing"
-    },
-    {
-      "weight": 53,
-      "sport": "triathlon"
-    },
-    {
-      "weight": 53,
-      "sport": "triathlon"
-    },
-    {
-      "weight": 53,
-      "sport": "fencing"
-    },
-    {
-      "weight": 52,
-      "sport": "taekwondo"
-    },
-    {
-      "weight": 52,
-      "sport": "taekwondo"
-    },
-    {
-      "weight": 52,
-      "sport": "triathlon"
-    },
-    {
-      "weight": 52,
-      "sport": "taekwondo"
-    },
-    {
-      "weight": 52,
-      "sport": "triathlon"
-    },
-    {
-      "weight": 52,
-      "sport": "fencing"
-    },
-    {
-      "weight": 52,
-      "sport": "triathlon"
-    },
-    {
-      "weight": 52,
-      "sport": "fencing"
-    },
-    {
-      "weight": 51,
-      "sport": "fencing"
-    },
-    {
-      "weight": 51,
-      "sport": "fencing"
-    },
-    {
-      "weight": 51,
-      "sport": "taekwondo"
-    },
-    {
-      "weight": 51,
-      "sport": "taekwondo"
-    },
-    {
-      "weight": 51,
-      "sport": "triathlon"
-    },
-    {
-      "weight": 51,
-      "sport": "triathlon"
-    },
-    {
-      "weight": 51,
-      "sport": "triathlon"
-    },
-    {
-      "weight": 50,
-      "sport": "triathlon"
-    },
-    {
-      "weight": 50,
-      "sport": "fencing"
-    },
-    {
-      "weight": 50,
-      "sport": "taekwondo"
-    },
-    {
-      "weight": 50,
-      "sport": "triathlon"
-    },
-    {
-      "weight": 50,
-      "sport": "rowing"
-    },
-    {
-      "weight": 50,
-      "sport": "triathlon"
-    },
-    {
-      "weight": 50,
-      "sport": "rowing"
-    },
-    {
-      "weight": 50,
-      "sport": "rowing"
-    },
-    {
-      "weight": 49,
-      "sport": "taekwondo"
-    },
-    {
-      "weight": 49,
-      "sport": "taekwondo"
-    },
-    {
-      "weight": 49,
-      "sport": "taekwondo"
-    },
-    {
-      "weight": 49,
-      "sport": "taekwondo"
-    },
-    {
-      "weight": 49,
-      "sport": "taekwondo"
-    },
-    {
-      "weight": 49,
-      "sport": "taekwondo"
-    },
-    {
-      "weight": 49,
-      "sport": "taekwondo"
-    },
-    {
-      "weight": 49,
-      "sport": "triathlon"
-    },
-    {
-      "weight": 49,
-      "sport": "rowing"
-    },
-    {
-      "weight": 49,
-      "sport": "triathlon"
-    },
-    {
-      "weight": 49,
-      "sport": "rowing"
-    },
-    {
-      "weight": 48,
-      "sport": "triathlon"
-    },
-    {
-      "weight": 48,
-      "sport": "taekwondo"
-    },
-    {
-      "weight": 48,
-      "sport": "fencing"
-    },
-    {
-      "weight": 48,
-      "sport": "triathlon"
-    },
-    {
-      "weight": 48,
-      "sport": "taekwondo"
-    },
-    {
-      "weight": 48,
-      "sport": "triathlon"
-    },
-    {
-      "weight": 46,
-      "sport": "triathlon"
-    },
-    {
-      "weight": 46,
-      "sport": "fencing"
-    },
-    {
-      "weight": 45,
-      "sport": "triathlon"
-    },
-    {
-      "weight": 45,
-      "sport": "fencing"
-    },
-    {
-      "weight": 44,
-      "sport": "triathlon"
-    }
-  ]
+<script id="athlete-data" type="text/csv">
+sport,weight
+rowing,90
+rowing,90
+taekwondo,88
+rowing,87
+rowing,86
+rowing,86
+rowing,86
+rowing,85
+rowing,85
+rowing,84
+rowing,84
+rowing,83
+rowing,83
+rowing,83
+rowing,81
+rowing,81
+rowing,81
+rowing,81
+fencing,81
+rowing,80
+rowing,80
+rowing,80
+fencing,80
+rowing,80
+rowing,79
+rowing,79
+rowing,79
+rowing,79
+fencing,79
+taekwondo,79
+fencing,79
+rowing,78
+fencing,78
+rowing,78
+rowing,78
+rowing,77
+rowing,77
+rowing,77
+rowing,77
+rowing,77
+rowing,77
+fencing,77
+rowing,77
+rowing,76
+rowing,76
+rowing,76
+fencing,76
+rowing,76
+rowing,76
+rowing,76
+rowing,76
+rowing,76
+rowing,76
+rowing,76
+rowing,76
+rowing,76
+rowing,76
+rowing,76
+rowing,76
+rowing,76
+taekwondo,75
+taekwondo,75
+rowing,75
+rowing,75
+rowing,75
+rowing,75
+rowing,75
+rowing,75
+rowing,75
+rowing,75
+rowing,75
+rowing,75
+rowing,75
+rowing,75
+rowing,75
+rowing,75
+rowing,75
+rowing,75
+rowing,75
+rowing,75
+fencing,75
+fencing,75
+rowing,74
+rowing,74
+rowing,74
+fencing,74
+rowing,74
+rowing,74
+rowing,74
+fencing,74
+rowing,74
+taekwondo,74
+rowing,74
+rowing,74
+rowing,74
+fencing,74
+fencing,74
+rowing,74
+fencing,74
+fencing,74
+taekwondo,73
+rowing,73
+rowing,73
+rowing,73
+rowing,73
+rowing,73
+rowing,73
+rowing,73
+taekwondo,73
+rowing,73
+fencing,73
+rowing,73
+taekwondo,73
+rowing,72
+rowing,72
+rowing,72
+rowing,72
+rowing,72
+rowing,72
+rowing,72
+rowing,72
+rowing,72
+rowing,72
+taekwondo,72
+rowing,72
+taekwondo,72
+rowing,72
+rowing,72
+rowing,72
+rowing,72
+rowing,72
+rowing,72
+fencing,72
+rowing,72
+rowing,72
+rowing,71
+rowing,71
+rowing,71
+rowing,71
+rowing,71
+fencing,71
+rowing,71
+fencing,71
+rowing,70
+fencing,70
+rowing,70
+rowing,70
+fencing,70
+rowing,70
+rowing,70
+rowing,70
+rowing,70
+fencing,70
+rowing,70
+rowing,70
+rowing,70
+rowing,70
+fencing,70
+rowing,70
+fencing,70
+rowing,70
+rowing,70
+taekwondo,70
+rowing,70
+rowing,70
+rowing,69
+taekwondo,69
+taekwondo,69
+rowing,69
+rowing,69
+fencing,69
+rowing,69
+rowing,69
+rowing,68
+fencing,68
+fencing,68
+rowing,68
+rowing,68
+rowing,68
+fencing,68
+rowing,68
+rowing,68
+rowing,68
+rowing,68
+rowing,68
+fencing,68
+fencing,68
+fencing,68
+taekwondo,68
+taekwondo,67
+rowing,67
+taekwondo,67
+rowing,67
+rowing,67
+taekwondo,67
+taekwondo,67
+rowing,67
+taekwondo,67
+taekwondo,67
+taekwondo,67
+taekwondo,67
+taekwondo,67
+fencing,67
+rowing,67
+fencing,66
+fencing,66
+taekwondo,66
+rowing,66
+fencing,66
+fencing,66
+fencing,66
+rowing,66
+rowing,66
+fencing,66
+rowing,65
+taekwondo,65
+fencing,65
+taekwondo,65
+taekwondo,65
+fencing,65
+taekwondo,65
+triathlon,65
+rowing,65
+rowing,65
+fencing,65
+taekwondo,64
+fencing,64
+fencing,64
+fencing,64
+fencing,64
+fencing,64
+fencing,64
+rowing,64
+fencing,64
+fencing,63
+rowing,63
+fencing,63
+fencing,63
+fencing,63
+fencing,63
+fencing,63
+fencing,63
+taekwondo,62
+fencing,62
+fencing,62
+taekwondo,62
+fencing,62
+fencing,62
+fencing,62
+fencing,62
+rowing,62
+fencing,62
+fencing,62
+fencing,62
+rowing,62
+rowing,62
+fencing,62
+fencing,62
+fencing,62
+fencing,62
+triathlon,61
+fencing,61
+rowing,61
+fencing,61
+fencing,61
+triathlon,61
+fencing,61
+fencing,60
+triathlon,60
+rowing,60
+rowing,60
+fencing,60
+triathlon,60
+rowing,60
+triathlon,60
+rowing,60
+triathlon,60
+triathlon,60
+rowing,60
+fencing,60
+fencing,60
+fencing,60
+rowing,60
+fencing,60
+fencing,60
+fencing,60
+fencing,60
+triathlon,60
+fencing,60
+triathlon,60
+rowing,60
+rowing,60
+fencing,60
+rowing,60
+rowing,60
+fencing,59
+fencing,59
+fencing,59
+rowing,59
+rowing,59
+fencing,59
+taekwondo,59
+rowing,59
+triathlon,59
+fencing,59
+rowing,59
+rowing,59
+rowing,59
+fencing,59
+triathlon,58
+triathlon,58
+triathlon,58
+rowing,58
+rowing,58
+triathlon,58
+rowing,58
+rowing,58
+fencing,58
+rowing,58
+triathlon,58
+fencing,58
+fencing,58
+fencing,58
+fencing,58
+fencing,58
+fencing,58
+rowing,58
+fencing,58
+fencing,58
+rowing,58
+rowing,57
+rowing,57
+rowing,57
+taekwondo,57
+taekwondo,57
+taekwondo,57
+taekwondo,57
+rowing,57
+rowing,57
+rowing,57
+rowing,57
+taekwondo,57
+triathlon,57
+rowing,57
+taekwondo,57
+rowing,57
+taekwondo,57
+rowing,57
+rowing,57
+rowing,57
+rowing,57
+rowing,57
+triathlon,57
+rowing,57
+taekwondo,57
+rowing,57
+taekwondo,57
+fencing,57
+rowing,57
+rowing,57
+taekwondo,57
+fencing,57
+triathlon,57
+fencing,56
+triathlon,56
+triathlon,56
+fencing,56
+triathlon,56
+fencing,56
+taekwondo,56
+triathlon,56
+fencing,56
+fencing,56
+triathlon,56
+fencing,56
+triathlon,56
+taekwondo,56
+fencing,56
+taekwondo,55
+triathlon,55
+triathlon,55
+triathlon,55
+triathlon,55
+fencing,55
+triathlon,55
+fencing,55
+rowing,55
+fencing,55
+rowing,55
+fencing,55
+taekwondo,55
+triathlon,54
+fencing,54
+triathlon,54
+rowing,54
+triathlon,54
+fencing,54
+triathlon,53
+triathlon,53
+triathlon,53
+taekwondo,53
+fencing,53
+fencing,53
+triathlon,53
+triathlon,53
+fencing,53
+taekwondo,52
+taekwondo,52
+triathlon,52
+taekwondo,52
+triathlon,52
+fencing,52
+triathlon,52
+fencing,52
+fencing,51
+fencing,51
+taekwondo,51
+taekwondo,51
+triathlon,51
+triathlon,51
+triathlon,51
+triathlon,50
+fencing,50
+taekwondo,50
+triathlon,50
+rowing,50
+triathlon,50
+rowing,50
+rowing,50
+taekwondo,49
+taekwondo,49
+taekwondo,49
+taekwondo,49
+taekwondo,49
+taekwondo,49
+taekwondo,49
+triathlon,49
+rowing,49
+triathlon,49
+rowing,49
+triathlon,48
+taekwondo,48
+fencing,48
+triathlon,48
+taekwondo,48
+triathlon,48
+triathlon,46
+fencing,46
+triathlon,45
+fencing,45
+triathlon,44
 </script>
 
 <figure class="highcharts-figure">
