@@ -6,8 +6,9 @@
  *  Class representing a Synth Patch, used by Instruments in the
  *  sonification.js module.
  *
- *  A commercial license may be required depending on use,
- *  see www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */

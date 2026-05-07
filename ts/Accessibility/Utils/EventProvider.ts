@@ -5,8 +5,9 @@
  *
  *  Class that can keep track of events added, and clean them up on destroy.
  *
- *  A commercial license may be required depending on use,
- *  see www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */

@@ -1,11 +1,13 @@
-/**
- * (c) 2018-2026 Highsoft AS
- * Author: Sebastian Bochan
+/* *
  *
- * Price indicator for Highcharts Stock
+ *  (c) 2018-2026 Highsoft AS
+ *  Author: Sebastian Bochan
  *
- * A commercial license may be required depending on use,
- * see www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
+ *
+ *  Price indicator for Highcharts Stock
  *
  */
 
