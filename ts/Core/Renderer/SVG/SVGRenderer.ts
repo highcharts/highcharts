@@ -663,7 +663,7 @@ class SVGRenderer implements SVGRendererBase {
                 color: '#000000',
                 offsetX: 1,
                 offsetY: 1,
-                opacity: 0.15,
+                opacity: 0.1,
                 width: 5
             }, shadowOptions);
 

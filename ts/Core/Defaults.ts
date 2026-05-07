@@ -2449,7 +2449,7 @@ const defaultOptions: DefaultOptions = {
          * @sample {highmaps} maps/tooltip/background-border/
          *         Background and border demo
          */
-        borderRadius: 3,
+        borderRadius: 5,
 
         /**
          * For series on datetime axes, the date format in the tooltip's
