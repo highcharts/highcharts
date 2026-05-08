@@ -351,7 +351,8 @@ Example configuration should look like:
   groupId="custom-column-indicator-snippet"
   values={[
     { label: 'JavaScript', value: 'js' },
-    { label: 'React', value: 'react' }
+    { label: 'React', value: 'react' },
+    { label: 'Next', value: 'next' }
   ]}>
   <TabItem value="js" label="JavaScript">
   <p>
@@ -489,6 +490,113 @@ Example configuration should look like:
   }
 
   export default App
+  ```
+  </TabItem>
+  <TabItem value="next" label="Next">
+  <p>
+    A live demo of the example (Next) <a href="https://stackblitz.com/edit/nextjs-9uzqhofx?file=app%2Fpage.tsx">here</a>.
+  </p>
+
+  ```tsx
+  'use client';
+
+  import { StockChart } from '@highcharts/react/Stock';
+  import { Accessibility } from '@highcharts/react/modules/Accessibility';
+  import { useMemo } from 'react';
+
+  import Highcharts from 'highcharts/es-modules/masters/highstock.src.js';
+  import 'highcharts/es-modules/masters/indicators/indicators.src.js';
+  import ColumnSeries from 'highcharts/es-modules/Series/Column/ColumnSeries.js';
+
+  type ColumnSeriesConstructor = typeof ColumnSeries;
+  type PointTuple = [number, number];
+
+  const getSum = (xData: number[], yData: number[]) => {
+    const data: PointTuple[] = [];
+    const xDataSum: number[] = [];
+    const yDataSum: number[] = [];
+    const dataLength = xData.length;
+
+    for (let i = 0; i < dataLength; i++) {
+      const x = xData[i];
+      const y = i === 0 ? yData[i] : yData[i] + yData[i - 1];
+
+      data[i] = [x, y];
+      xDataSum[i] = x;
+      yDataSum[i] = y;
+    }
+
+    return {
+      xData: xDataSum,
+      yData: yDataSum,
+      values: data,
+    };
+  };
+
+  const ColumnSeriesClass = Highcharts.Series.types
+    .column as ColumnSeriesConstructor;
+
+  Highcharts.seriesType(
+    'customindicator',
+    'sma',
+    {
+      name: 'Sum of previous 2 points',
+      params: {},
+      threshold: 0,
+      groupPadding: 0.2,
+      pointPadding: 0.2,
+    },
+    {
+      getValues: function (series: { xData: number[]; yData: number[] }) {
+        return this.getSum(series.xData, series.yData);
+      },
+      getSum,
+      markerAttribs: () => {},
+      drawGraph: () => {},
+      crispCol: ColumnSeriesClass.prototype.crispCol,
+      drawPoints: ColumnSeriesClass.prototype.drawPoints,
+      getColumnMetrics: ColumnSeriesClass.prototype.getColumnMetrics,
+      translate: ColumnSeriesClass.prototype.translate,
+    }
+  );
+
+  export default function Home() {
+    const options = useMemo(
+      () => ({
+        yAxis: [
+          {
+            height: '60%',
+          },
+          {
+            top: '65%',
+            height: '25%',
+          },
+        ],
+        series: [
+          {
+            id: 'main',
+            name: 'Data',
+            data: [1, 2, 3, 1, 2, 3, 1, 2, 3, 1, 2, 3, 1, 2, 3],
+          },
+          {
+            type: 'customindicator',
+            linkedTo: 'main',
+            name: 'Custom Indicator',
+            yAxis: 1,
+          },
+        ],
+      }),
+      []
+    );
+
+    return (
+      <div>
+        <StockChart options={options}>
+          <Accessibility series={{ describeSingleSeries: true }} />
+        </StockChart>
+      </div>
+    );
+  }
   ```
   </TabItem>
 </Tabs>
