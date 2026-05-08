@@ -21,47 +21,182 @@
  *
  * */
 
-import type DataTable from '../../../Data/DataTable';
+import type DataTable from '../../../../Data/DataTable';
 import type {
     CellType as DataTableCellType,
     ColumnCollection
-} from '../../../Data/DataTable';
-import type Grid from '../../Core/Grid';
-import type { RowMetaRecord } from '../../Core/Grid';
-import type { RowId } from '../../Core/Data/DataProvider';
-import type { DataProviderOptionsType } from '../../Core/Data/DataProviderType';
-import type { LocalDataProviderOptions } from '../../Core/Data/LocalDataProvider';
+} from '../../../../Data/DataTable';
+import type Grid from '../../../Core/Grid';
+import type { RowMetaRecord } from '../../../Core/Grid';
+import type { RowId } from '../../../Core/Data/DataProvider';
+import type { DataProviderOptionsType } from '../../../Core/Data/DataProviderType';
+import type { LocalDataProviderOptions } from '../../../Core/Data/LocalDataProvider';
 import type {
     TreeIndexBuildResult,
     TreeViewColumnAggregateCallback,
     TreeViewColumnOptions,
     TreeProjectionRowState,
     TreeProjectionState
-} from './TreeViewTypes';
-import type {
-    Arguments as FormulaArguments
-} from '../../../Data/Formula/Formula';
+} from '../TreeViewTypes';
 import type {
     NormalizedTreeInputOptions,
     ResolvedTreeViewOptions
-} from './TreeViewOptionsNormalizer';
+} from '../TreeViewOptionsNormalizer';
 
 import {
     buildIndexFromColumns as buildPathIndexFromColumns
-} from './InputAdapters/PathTreeInputAdapter.js';
+} from '../InputAdapters/PathTreeInputAdapter.js';
+import TreeAggregationResolver from './TreeAggregationResolver.js';
 import {
     resolveActiveGridSortings
-} from '../../Core/Querying/SortingUtils.js';
+} from '../../../Core/Querying/SortingUtils.js';
 import {
     buildIndexFromColumns as buildParentIdIndexFromColumns
-} from './InputAdapters/ParentIdTreeInputAdapter.js';
+} from '../InputAdapters/ParentIdTreeInputAdapter.js';
 import {
     hasDataTableProvider
-} from '../../Core/Data/DataProvider.js';
-import Formula from '../../../Data/Formula/Formula.js';
-import { normalizeTreeViewOptions } from './TreeViewOptionsNormalizer.js';
-import { isDeepEqual } from '../../Core/GridUtils.js';
-import { defined, fireEvent } from '../../../Shared/Utilities.js';
+} from '../../../Core/Data/DataProvider.js';
+import { normalizeTreeViewOptions } from '../TreeViewOptionsNormalizer.js';
+import { isDeepEqual } from '../../../Core/GridUtils.js';
+import { defined, fireEvent } from '../../../../Shared/Utilities.js';
+
+
+/* *
+ *
+ *  Functions
+ *
+ * */
+
+/**
+ * Checks whether provided row indexes represent identity mapping.
+ *
+ * @param rowIndexes
+ * Row indexes to verify.
+ *
+ * @param rowCount
+ * Expected number of rows in identity mapping.
+ *
+ * @returns
+ * `true` for `[0, 1, 2, ...]`, otherwise `false`.
+ */
+function areRowIndexesIdentity(
+    rowIndexes: Array<number | undefined>,
+    rowCount: number
+): boolean {
+    if (rowIndexes.length !== rowCount) {
+        return false;
+    }
+
+    for (let i = 0; i < rowCount; ++i) {
+        if (rowIndexes[i] !== i) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+/**
+ * Builds a stable key for expansion state seeds from options.
+ *
+ * @param options
+ * Resolved TreeView options.
+ *
+ * @returns
+ * Expansion seed key used to decide whether state should be reinitialized.
+ */
+function getExpansionSeedKey(
+    options: ResolvedTreeViewOptions
+): string {
+    if (options.expandedRowIds === 'all') {
+        return 'all';
+    }
+
+    const parts: string[] = [];
+
+    for (
+        let i = 0,
+            iEnd = options.expandedRowIds.length;
+        i < iEnd;
+        ++i
+    ) {
+        const id = options.expandedRowIds[i];
+        parts.push(typeof id + ':' + String(id));
+    }
+
+    return parts.join('|');
+}
+
+/**
+ * Resolves effective tree input configuration for source columns.
+ *
+ * @param columns
+ * Source columns.
+ *
+ * @param input
+ * Normalized input configuration. When omitted, the controller auto-detects
+ * the standard `parentId` or `path` columns.
+ *
+ * @returns
+ * Resolved normalized input configuration.
+ */
+function resolveInputOptions(
+    columns: ColumnCollection,
+    input?: NormalizedTreeInputOptions
+): NormalizedTreeInputOptions {
+    if (input) {
+        return input;
+    }
+
+    const parentIdColumn = 'parentId';
+    const pathColumn = 'path';
+    const separator = '/';
+    const hasParentIdColumn = !!columns[parentIdColumn];
+    const hasPathColumn = !!columns[pathColumn];
+
+    if (hasPathColumn) {
+        return {
+            type: 'path',
+            pathColumn,
+            separator,
+            showFullPath: false
+        };
+    }
+
+    if (hasParentIdColumn) {
+        return {
+            type: 'parentId',
+            parentIdColumn
+        };
+    }
+
+    throw new Error(
+        'TreeView: Could not autodetect input type. Expected either ' +
+        `"${parentIdColumn}" or "${pathColumn}" column, ` +
+        'or set `data.treeView.input.type` explicitly.'
+    );
+}
+
+/**
+ * Runtime type guard for local data provider options.
+ *
+ * @param dataOptions
+ * Data provider options to test.
+ *
+ * @returns
+ * `true` when options belong to the local data provider.
+ */
+function isLocalDataOptions(
+    dataOptions?: DataProviderOptionsType
+): dataOptions is LocalDataProviderOptions {
+    return !!(
+        dataOptions &&
+        (
+            typeof dataOptions.providerType === 'undefined' ||
+            dataOptions.providerType === 'local'
+        )
+    );
+}
 
 
 /* *
@@ -85,6 +220,8 @@ class TreeProjectionController {
      * */
 
     private readonly grid: Grid;
+
+    private readonly aggregationResolver: TreeAggregationResolver;
 
     private indexCache?: TreeIndexBuildResult;
 
@@ -112,6 +249,24 @@ class TreeProjectionController {
 
     constructor(grid: Grid) {
         this.grid = grid;
+        this.aggregationResolver = new TreeAggregationResolver({
+            getColumnAggregateOption: (sourceColumnId): (
+                TreeViewColumnAggregateCallback | string | undefined
+            ) => this.getColumnAggregateOption(sourceColumnId),
+            resolveProjectedCellValue: (
+                columnId,
+                rowId,
+                table,
+                projectionState,
+                idColumn
+            ): DataTableCellType => this.resolveProjectedCellValue(
+                columnId,
+                rowId,
+                table,
+                projectionState,
+                idColumn
+            )
+        });
     }
 
 
@@ -161,7 +316,7 @@ class TreeProjectionController {
         let resolvedInput: NormalizedTreeInputOptions;
 
         try {
-            resolvedInput = TreeProjectionController.resolveInputOptions(
+            resolvedInput = resolveInputOptions(
                 table.columns,
                 normalizedOptions.input
             );
@@ -223,7 +378,7 @@ class TreeProjectionController {
      * Source column id.
      */
     public hasColumnAggregation(columnId: string): boolean {
-        return !!this.getColumnAggregateOption(columnId);
+        return this.aggregationResolver.hasColumnAggregation(columnId);
     }
 
     /**
@@ -418,10 +573,10 @@ class TreeProjectionController {
 
         if (
             !aggregateColumnIds.length &&
-            TreeProjectionController.areRowIndexesIdentity(
-                projectionState.rowIndexes,
-                table.getRowCount()
-            )
+                areRowIndexesIdentity(
+                    projectionState.rowIndexes,
+                    table.getRowCount()
+                )
         ) {
             return table;
         }
@@ -560,7 +715,7 @@ class TreeProjectionController {
     private getDataOptions(): LocalDataProviderOptions | undefined {
         const dataOptions = this.grid.options?.data;
 
-        if (!TreeProjectionController.isLocalDataOptions(dataOptions)) {
+        if (!isLocalDataOptions(dataOptions)) {
             return;
         }
 
@@ -616,7 +771,7 @@ class TreeProjectionController {
             return;
         }
 
-        const seedKey = TreeProjectionController.getExpansionSeedKey(options);
+        const seedKey = getExpansionSeedKey(options);
         const expandAll = options.expandedRowIds === 'all';
         const explicitExpanded = expandAll ?
             void 0 :
@@ -1054,7 +1209,7 @@ class TreeProjectionController {
 
             valueMapByColumnId.set(
                 sorting.sourceColumnId,
-                this.resolveAggregatedColumnValues(
+                this.aggregationResolver.resolveColumnValues(
                     sorting.sourceColumnId,
                     table,
                     sortProjectionState,
@@ -1155,7 +1310,7 @@ class TreeProjectionController {
                 rowIndexes.length
             );
             const aggregateValuesByRowId = aggregateColumnIdSet.has(columnId) ?
-                this.resolveAggregatedColumnValues(
+                this.aggregationResolver.resolveColumnValues(
                     columnId,
                     table,
                     projectionState,
@@ -1234,108 +1389,6 @@ class TreeProjectionController {
     }
 
     /**
-     * Resolves projected values for a single aggregated column.
-     *
-     * Aggregation is evaluated on the projected tree after filtering/sorting,
-     * but before pagination and independently of expand/collapse visibility.
-     *
-     * @param columnId
-     * Aggregated source column id.
-     *
-     * @param table
-     * Queried table after filtering/sorting and before pagination.
-     *
-     * @param projectionState
-     * Current projected tree state.
-     *
-     * @param idColumn
-     * Column containing stable row IDs.
-     *
-     * @param derivedCellColumnIdsByRowId
-     * Mutable map collecting derived cells for the projected state.
-     */
-    private resolveAggregatedColumnValues(
-        columnId: string,
-        table: DataTable,
-        projectionState: TreeProjectionState,
-        idColumn: string,
-        derivedCellColumnIdsByRowId: Map<RowId, Set<string>>
-    ): Map<RowId, DataTableCellType> {
-        const resolvedValuesByRowId = new Map<RowId, DataTableCellType>();
-        const resolvingRowIds = new Set<RowId>();
-
-        const resolveValue = (rowId: RowId): DataTableCellType => {
-            if (resolvedValuesByRowId.has(rowId)) {
-                return resolvedValuesByRowId.get(rowId);
-            }
-
-            if (resolvingRowIds.has(rowId)) {
-                return null;
-            }
-
-            resolvingRowIds.add(rowId);
-
-            const rowState = projectionState.rowsById.get(rowId);
-            const sourceValue = this.resolveProjectedCellValue(
-                columnId,
-                rowId,
-                table,
-                projectionState,
-                idColumn
-            );
-
-            let resolvedValue = sourceValue;
-
-            if (
-                rowState?.childrenIds.length &&
-                this.isAggregateSourceValueMissing(sourceValue)
-            ) {
-                const aggregateFunctionName = this.resolveAggregateFunctionName(
-                    columnId,
-                    rowState,
-                    sourceValue
-                );
-
-                if (aggregateFunctionName) {
-                    const childValues = rowState.childrenIds
-                        .map(resolveValue)
-                        .filter((
-                            value
-                        ): value is Exclude<
-                            DataTableCellType,
-                            null | undefined
-                        > => !this.isAggregateSourceValueMissing(
-                            value
-                        ));
-
-                    resolvedValue = this.executeAggregateFunction(
-                        aggregateFunctionName,
-                        childValues
-                    );
-
-                    this.markDerivedCell(
-                        derivedCellColumnIdsByRowId,
-                        rowId,
-                        columnId
-                    );
-                }
-            }
-
-            resolvingRowIds.delete(rowId);
-            resolvedValuesByRowId.set(rowId, resolvedValue);
-
-            return resolvedValue;
-        };
-
-        for (let i = 0, iEnd = projectionState.rowIds.length; i < iEnd; ++i) {
-            const rowId = projectionState.rowIds[i];
-            resolveValue(rowId);
-        }
-
-        return resolvedValuesByRowId;
-    }
-
-    /**
      * Resolves a cell value for the projected logical tree before aggregation.
      *
      * @param columnId
@@ -1370,119 +1423,6 @@ class TreeProjectionController {
         }
 
         return this.getGeneratedCellValue(columnId, rowId, idColumn);
-    }
-
-    /**
-     * Marks a projected cell as derived from TreeView aggregation.
-     *
-     * @param derivedCellColumnIdsByRowId
-     * Mutable map collecting derived cells for the projected state.
-     *
-     * @param rowId
-     * Derived row id.
-     *
-     * @param columnId
-     * Derived source column id.
-     */
-    private markDerivedCell(
-        derivedCellColumnIdsByRowId: Map<RowId, Set<string>>,
-        rowId: RowId,
-        columnId: string
-    ): void {
-        let derivedColumns = derivedCellColumnIdsByRowId.get(rowId);
-
-        if (!derivedColumns) {
-            derivedColumns = new Set<string>();
-            derivedCellColumnIdsByRowId.set(rowId, derivedColumns);
-        }
-
-        derivedColumns.add(columnId);
-    }
-
-    /**
-     * Returns whether the source value should be replaced by aggregation.
-     *
-     * @param value
-     * Candidate source value.
-     */
-    private isAggregateSourceValueMissing(
-        value: DataTableCellType
-    ): value is (null | undefined) {
-        return value === null || typeof value === 'undefined';
-    }
-
-    /**
-     * Resolves aggregation function name for a row/column combination.
-     *
-     * @param columnId
-     * Aggregated source column id.
-     *
-     * @param rowState
-     * Projected row state for the current row.
-     *
-     * @param sourceValue
-     * Source cell value before aggregation.
-     */
-    private resolveAggregateFunctionName(
-        columnId: string,
-        rowState: TreeProjectionRowState,
-        sourceValue: DataTableCellType
-    ): string | undefined {
-        const aggregate = this.getColumnAggregateOption(columnId);
-        if (!aggregate || !rowState.childrenIds.length) {
-            return;
-        }
-
-        const aggregateResult = (
-            typeof aggregate === 'function' ?
-                aggregate({
-                    childCount: rowState.childrenIds.length,
-                    childrenIds: rowState.childrenIds.slice(),
-                    columnId,
-                    depth: rowState.depth,
-                    hasChildren: rowState.hasChildren,
-                    rowId: rowState.id,
-                    sourceValue
-                }) :
-                aggregate
-        );
-
-        if (typeof aggregateResult !== 'string') {
-            return;
-        }
-
-        const normalizedName = aggregateResult.trim().toUpperCase();
-        return normalizedName || void 0;
-    }
-
-    /**
-     * Executes a registered Formula processor function on direct child values.
-     *
-     * @param functionName
-     * Registered Formula processor function name.
-     *
-     * @param childValues
-     * Direct child values after their own aggregation has been resolved.
-     */
-    private executeAggregateFunction(
-        functionName: string,
-        childValues: Array<Exclude<DataTableCellType, null | undefined>>
-    ): DataTableCellType {
-        const processor = Formula.processorFunctions[functionName];
-        if (!processor) {
-            return null;
-        }
-
-        try {
-            const result = processor(
-                childValues as unknown as FormulaArguments
-            );
-            return TreeProjectionController.isDataTableCellValue(result) ?
-                result :
-                null;
-        } catch {
-            return null;
-        }
     }
 
     /**
@@ -1625,155 +1565,6 @@ class TreeProjectionController {
 
         return sourceTable.getCell(columnId, node.rowIndex) as
             DataTableCellType;
-    }
-
-    /**
-     * Checks whether provided row indexes represent identity mapping.
-     *
-     * @param rowIndexes
-     * Row indexes to verify.
-     *
-     * @param rowCount
-     * Expected number of rows in identity mapping.
-     *
-     * @returns
-     * `true` for `[0, 1, 2, ...]`, otherwise `false`.
-     */
-    private static areRowIndexesIdentity(
-        rowIndexes: Array<number | undefined>,
-        rowCount: number
-    ): boolean {
-        if (rowIndexes.length !== rowCount) {
-            return false;
-        }
-
-        for (let i = 0; i < rowCount; ++i) {
-            if (rowIndexes[i] !== i) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    /**
-     * Narrows arbitrary processor results to DataTable-compatible cell values.
-     *
-     * @param value
-     * Candidate processor result.
-     */
-    private static isDataTableCellValue(
-        value: unknown
-    ): value is DataTableCellType {
-        return (
-            value === null ||
-            typeof value === 'undefined' ||
-            typeof value === 'boolean' ||
-            typeof value === 'number' ||
-            typeof value === 'string'
-        );
-    }
-
-    /**
-     * Builds a stable key for expansion state seeds from options.
-     *
-     * @param options
-     * Resolved TreeView options.
-     *
-     * @returns
-     * Expansion seed key used to decide whether state should be reinitialized.
-     */
-    private static getExpansionSeedKey(
-        options: ResolvedTreeViewOptions
-    ): string {
-        if (options.expandedRowIds === 'all') {
-            return 'all';
-        }
-
-        const parts: string[] = [];
-
-        for (
-            let i = 0,
-                iEnd = options.expandedRowIds.length;
-            i < iEnd;
-            ++i
-        ) {
-            const id = options.expandedRowIds[i];
-            parts.push(typeof id + ':' + String(id));
-        }
-
-        return parts.join('|');
-    }
-
-    /**
-     * Resolves effective tree input configuration for source columns.
-     *
-     * @param columns
-     * Source columns.
-     *
-     * @param input
-     * Normalized input configuration. When omitted, the controller
-     * auto-detects the standard `parentId` or `path` columns.
-     *
-     * @returns
-     * Resolved normalized input configuration.
-     */
-    private static resolveInputOptions(
-        columns: ColumnCollection,
-        input?: NormalizedTreeInputOptions
-    ): NormalizedTreeInputOptions {
-        if (input) {
-            return input;
-        }
-
-        const parentIdColumn = 'parentId';
-        const pathColumn = 'path';
-        const separator = '/';
-        const hasParentIdColumn = !!columns[parentIdColumn];
-        const hasPathColumn = !!columns[pathColumn];
-
-        if (hasPathColumn) {
-            return {
-                type: 'path',
-                pathColumn,
-                separator,
-                showFullPath: false
-            };
-        }
-
-        if (hasParentIdColumn) {
-            return {
-                type: 'parentId',
-                parentIdColumn
-            };
-        }
-
-        throw new Error(
-            'TreeView: Could not autodetect input type. Expected either ' +
-            `"${parentIdColumn}" or "${pathColumn}" column, ` +
-            'or set `data.treeView.input.type` explicitly.'
-        );
-    }
-
-    /**
-     * Runtime type guard for local data provider options.
-     *
-     * @param dataOptions
-     * Data provider options to test.
-     *
-     * @returns
-     * `true` when options belong to the local data provider.
-     */
-    private static isLocalDataOptions(
-        dataOptions?: DataProviderOptionsType
-    ): dataOptions is LocalDataProviderOptions {
-        return !!(
-            dataOptions &&
-            (
-                typeof dataOptions.providerType === 'undefined' ||
-                dataOptions.providerType === 'local'
-            )
-        );
     }
 
 }
