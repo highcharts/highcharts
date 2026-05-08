@@ -35,11 +35,13 @@ jobs:
 
       - name: Trigger doc build for this branch
         continue-on-error: true
+        env:
+          TOKEN: ${{ secrets.DOC_BUILDER_BUILD_TRIGGER_TOKEN }}
         run: |
           BRANCH="${{ github.event_name == 'pull_request' && github.head_ref || github.ref_name }}"
           curl --fail --show-error --silent \
             -X POST "${{ secrets.DOC_BUILDER_URL }}/build/trigger" \
-            -H "Authorization: Bearer ${{ secrets.DOC_BUILDER_BUILD_TRIGGER_TOKEN }}" \
+            -H "Authorization: Bearer ${TOKEN}" \
             -H "Content-Type: application/json" \
             -d "{\"ref\":\"refs/heads/${BRANCH}\"}"
 
@@ -51,28 +53,28 @@ jobs:
         with:
           script: |
             const { createOrUpdateComment } = require('./.github/scripts/commentOnPR.js');
-            
+
             const { data: files } = await github.rest.pulls.listFiles({
               owner: context.repo.owner,
               repo: context.repo.repo,
               pull_number: context.issue.number
             });
-            
+
             const docsFiles = files
               .filter(f => f.filename.startsWith('docs/') && f.filename.endsWith('.md'))
               .map(f => f.filename);
-            
+
             if (docsFiles.length === 0) return;
-            
+
             const branch = context.payload.pull_request.head.ref;
             const baseUrl = process.env.DOC_BUILDER_URL;
-            
+
             const links = docsFiles.map(file => {
               // Convert docs/some-folder/file.md to the URL path
               const urlPath = file.replace(/^docs\//, '').replace(/\.md$/, '');
-              return `- [${file}](${baseUrl}/${urlPath}?branch=${branch})`;
+              return `- [${file}](${baseUrl}/docs/${urlPath}?branch=${encodeURIComponent(branch)})`;
             }).join('\n');
-            
+
             const body = `The following documentation files were changed in this PR:\n\n${links}`;
-            
+
             await createOrUpdateComment(github, context, '📚 Docs Preview', body);
