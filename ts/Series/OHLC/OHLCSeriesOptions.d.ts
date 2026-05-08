@@ -1,10 +1,11 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -27,8 +28,8 @@ import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
  *
  * */
 
-declare module '../Line/LineSeriesOptions' {
-    interface LineSeriesOptions {
+declare module '../../Core/Series/SeriesOptions' {
+    interface SeriesOptions {
 
         /**
          * The parameter allows setting line series type and use OHLC
@@ -145,7 +146,7 @@ export interface OHLCSeriesOptions extends HLCSeriesOptions {
     /**
      * Line color for up points.
      *
-     * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @type {Highcharts.ColorType}
      *
      * @product highstock
      */

@@ -3,10 +3,11 @@
  *  Highcharts variwide module
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -20,7 +21,7 @@
  * */
 
 import type StackingAxis from '../../Core/Axis/Stacking/StackingAxis';
-import type Types from '../../Shared/Types';
+import type { TypedArray } from '../../Shared/Types';
 import type RangeSelector from '../../Stock/RangeSelector/RangeSelector';
 import type VariwideSeriesOptions from './VariwideSeriesOptions';
 
@@ -182,7 +183,6 @@ class VariwideSeries extends ColumnSeries {
             (linearSlotRight - linearSlotLeft);
     }
 
-    /* eslint-enable valid-jsdoc */
 
     public translate(): void {
         // Temporarily disable crisping when computing original shapeArgs
@@ -240,7 +240,7 @@ class VariwideSeries extends ColumnSeries {
     }
 
     public getXExtremes(
-        xData: Array<number>|Types.TypedArray
+        xData: Array<number>|TypedArray
     ): RangeSelector.RangeObject {
         const max = arrayMax(xData),
             maxZ = this.getColumn('z')[xData.indexOf(max)];

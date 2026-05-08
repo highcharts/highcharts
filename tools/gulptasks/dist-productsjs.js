@@ -48,7 +48,17 @@ function getZipLocation(productName, version) {
 function fetchCurrentProducts() {
     return global.fetch('https://code.highcharts.com/products.js')
         .then(response => response.text())
-        .then(content => JSON.parse(content.substring(JS_PREFIX.length)));
+        .then(content => {
+            try {
+                return JSON.parse(content.substring(JS_PREFIX.length));
+            } catch (err) {
+                throw new Error(
+                    'Failed to parse https://code.highcharts.com/products.js content.\n' +
+                    'Are you connected to the Highsoft VPN?\n' +
+                    'Error message: ' + err.message
+                );
+            }
+        });
 }
 
 function withZipURL(products) {

@@ -2,15 +2,16 @@
  *
  *  (c) 2009-2026 Highsoft AS
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  *  Authors:
  *  - Sophie Bremer
  *  - Gøran Slettemark
  *  - Jomar Hønsi
- *  - Dawid Dragula
+ *  - Dawid Draguła
  *
  * */
 
@@ -1113,6 +1114,12 @@ class DataTable extends DataTableCore implements DataEventEmitter<Event> {
         eventDetail?: DataEventDetail
     ): Promise<DataTable> {
         const table = this;
+
+        // Avoid emitting modifier events when unchanged. This prevents extra
+        // rerenders when polling calls `applyTableModifiers()`.
+        if (modifier === table.modifier) {
+            return Promise.resolve(table);
+        }
 
         let promise: Promise<DataTable>;
 

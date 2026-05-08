@@ -1,10 +1,11 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -188,11 +189,17 @@ export interface SeriesEventsOptions {
 /**
  * Function callback when a series has been animated.
  *
+ * @callback Highcharts.SeriesAfterAnimateCallbackFunction
+ *
  * @param {Highcharts.Series} this
  *        The series where the event occurred.
  *
  * @param {Highcharts.SeriesAfterAnimateEventObject} event
  *        Event arguments.
+ *
+ * @param {Highcharts.Series} [ctx]
+ *        Since v12.6.0, the series context passed as an extra argument for
+ *        arrow functions.
  */
 export type SeriesAfterAnimateCallbackFunction =
     EventCallback<Series, SeriesAfterAnimateEventObject>;
@@ -216,11 +223,17 @@ export interface SeriesAfterAnimateEventObject {
  * Function callback when a series is clicked. Return false to cancel toggle
  * actions.
  *
+ * @callback Highcharts.SeriesClickCallbackFunction
+ *
  * @param {Highcharts.Series} this
  *        The series where the event occurred.
  *
  * @param {Highcharts.SeriesClickEventObject} event
  *        Event arguments.
+ *
+ * @param {Highcharts.Series} [ctx]
+ *        Since v12.6.0, the series context passed as an extra argument for
+ *        arrow functions.
  */
 export type SeriesClickCallbackFunction =
     EventCallback<Series, SeriesClickEventObject>;
@@ -241,11 +254,17 @@ export interface SeriesClickEventObject {
  * Gets fired when the series is hidden after chart generation time, either by
  * clicking the legend item or by calling `.hide()`.
  *
+ * @callback Highcharts.SeriesHideCallbackFunction
+ *
  * @param {Highcharts.Series} this
  *        The series where the event occurred.
  *
  * @param {global.Event} event
  *        The event that occurred.
+ *
+ * @param {Highcharts.Series} [ctx]
+ *        Since v12.6.0, the series context passed as an extra argument for
+ *        arrow functions.
  */
 export type SeriesHideCallbackFunction = EventCallback<Series, Event>;
 
@@ -259,6 +278,10 @@ export type SeriesHideCallbackFunction = EventCallback<Series, Event>;
  *
  * @param {global.PointerEvent} event
  *        Event that occurred.
+ *
+ * @param {Highcharts.Series} [ctx]
+ *        Since v12.6.0, the series context passed as an extra argument for
+ *        arrow functions.
  */
 export type SeriesMouseOutCallbackFunction =
     EventCallback<Series, PointerEvent>;
@@ -273,6 +296,10 @@ export type SeriesMouseOutCallbackFunction =
  *
  * @param {global.PointerEvent} event
  *        Event that occurred.
+ *
+ * @param {Highcharts.Series} [ctx]
+ *        Since v12.6.0, the series context passed as an extra argument for
+ *        arrow functions.
  */
 export type SeriesMouseOverCallbackFunction =
     EventCallback<Series, PointerEvent>;
@@ -288,6 +315,10 @@ export type SeriesMouseOverCallbackFunction =
  *
  * @param {global.Event} event
  *        Event that occurred.
+ *
+ * @param {Highcharts.Series} [ctx]
+ *        Since v12.6.0, the series context passed as an extra argument for
+ *        arrow functions.
  */
 export type SeriesShowCallbackFunction = EventCallback<Series, Event>;
 
@@ -397,6 +428,7 @@ export interface SeriesOptions {
      * @sample {highcharts} highcharts/css/point-series-classname
      *         Series and point class name
      *
+     * @basic
      * @since 5.0.0
      */
     className?: string;
@@ -445,6 +477,8 @@ export interface SeriesOptions {
      *         Pattern fill
      * @sample {highmaps} maps/demo/category-map/
      *         Category map by multiple series
+     *
+     * @basic
      */
     color?: ColorType;
     colorByPoint?: boolean;
@@ -571,6 +605,9 @@ export interface SeriesOptions {
      */
     dashStyle?: DashStyleValue;
 
+    /**
+     * @basic
+     */
     data?: Array<(PointOptions|PointShortOptions)>;
 
     /**
@@ -599,6 +636,8 @@ export interface SeriesOptions {
      * General event handlers for the series items. These event hooks can
      * also be attached to the series at run time using the
      * `Highcharts.addEvent` function.
+     *
+     * @basic
      */
     events?: SeriesEventsOptions;
 
@@ -643,6 +682,7 @@ export interface SeriesOptions {
      * @sample {highcharts} highcharts/plotoptions/series-id/
      *         Get series by id
      *
+     * @basic
      * @since 1.2.0
      */
     id?: string;
@@ -652,6 +692,7 @@ export interface SeriesOptions {
      * `chart.series` array, the visible Z index as well as the order in the
      * legend.
      *
+     * @basic
      * @since 2.3.0
      */
     index?: number;
@@ -693,6 +734,9 @@ export interface SeriesOptions {
     keys?: Array<string>;
 
     /**
+     * The line cap used for line ends and line joins on the graph.
+     *
+     * @productdesc {highcharts|highstock}
      * The SVG value used for the `stroke-linecap` and `stroke-linejoin`
      * of a line graph. Round means that lines are rounded in the ends and
      * bends.
@@ -701,9 +745,10 @@ export interface SeriesOptions {
      *         Line cap comparison
      *
      * @default 'round'
-     * @since 3.0.7
+     * @since   3.0.7
      */
     linecap?: SeriesLinecapValue;
+
     lineColor?: ColorType;
 
     /**
@@ -766,6 +811,8 @@ export interface SeriesOptions {
      *
      * @sample {highmaps} maps/demo/category-map/
      *         Series name
+     *
+     * @basic
      */
     name?: string;
 
@@ -803,8 +850,9 @@ export interface SeriesOptions {
      * points, and this option also enables keyboard navigation for such points.
      * Format options for such points include
      * [`nullFormat`](#tooltip.nullFormat) and
-     * [`nullFormater`](#tooltip.nullFormatter). Works for these series: `line`,
-     * `spline`, `area`, `area-spline`, `column`, `bar`, and* `timeline`.
+     * [`nullFormatter`](#tooltip.nullFormatter). Works for these series:
+     * `line`, `spline`, `area`, `area-spline`, `column`, `bar`, and
+     * `timeline`.
      *
      * @sample {highcharts} highcharts/series/null-interaction/
      *         Chart with interactive `null` points
@@ -837,7 +885,7 @@ export interface SeriesOptions {
      * create any padding of the X axis. In a polar column chart this means
      * that the first column points directly north. If the pointPlacement is
      * `"between"`, the columns will be laid out between ticks. This is
-     * useful for example for visualising an amount between two points in
+     * useful for example for visualizing an amount between two points in
      * time or in a certain sector of a polar chart.
      *
      * Since Highcharts 3.0.2, the point placement can also be numeric,
@@ -1033,6 +1081,8 @@ export interface SeriesOptions {
      *
      * @sample {highmaps} maps/demo/mapline-mappoint/
      * Multiple types in the same map
+     *
+     * @basic
      */
     type?: string;
 

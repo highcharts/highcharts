@@ -1,12 +1,13 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
  *  Extension for 3d axes
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -130,7 +131,7 @@ function onAxisInit(this: Axis): void {
 }
 
 /**
- * Do not draw axislines in 3D.
+ * Do not draw axis lines in 3D.
  * @internal
  */
 function wrapAxisGetLinePath(
@@ -457,8 +458,6 @@ class Axis3DAdditions {
 
     /**
      * @internal
-     * @param {Highcharts.Axis} axis
-     * Related axis.
      * @param {Highcharts.Position3DObject} pos
      * Position to fix.
      * @param {boolean} [isTitle]

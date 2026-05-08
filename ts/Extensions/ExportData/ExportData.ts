@@ -3,10 +3,11 @@
  *  Experimental data export module for Highcharts
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -418,6 +419,7 @@ namespace ExportData {
         options: SeriesOptions;
         pointArrayMap?: Array<string>;
         index: number;
+        xAxis: Axis;
     }
 
     /* *
@@ -942,7 +944,9 @@ namespace ExportData {
                     autoIncrement: series.autoIncrement,
                     options: series.options,
                     pointArrayMap: series.pointArrayMap,
-                    index: series.index
+                    index: series.index,
+                    // Allows correct date formatting for string date, #23654.
+                    xAxis: series.xAxis
                 };
 
                 // Export directly from options.data because we need the
@@ -1249,6 +1253,8 @@ namespace ExportData {
                 attributes: HTMLAttributes,
                 value: (number | string)
             ): AST.Node {
+                const children: Array<AST.Node> = [];
+
                 let textContent = pick(value, ''),
                     className =
                         'highcharts-text' + (classes ? ' ' + classes : '');
@@ -1267,17 +1273,39 @@ namespace ExportData {
                     className = 'highcharts-empty';
                 }
 
+                if (tagName === 'th' && attributes.scope === 'col') {
+                    children.push({
+                        tagName: 'button',
+                        textContent,
+                        style: {
+                            color: 'inherit',
+                            borderWidth: 0,
+                            backgroundColor: 'transparent',
+                            cursor: 'pointer',
+                            padding: 0,
+                            fontSize: 'inherit',
+                            fontWeight: 'inherit'
+                        }
+                    });
+                }
+
                 attributes = extend(
                     { 'class': className },
                     attributes
                 );
 
-                return {
+                const result: AST.Node = {
                     tagName,
-                    attributes,
-                    textContent
+                    attributes
                 };
 
+                if (children.length > 0) {
+                    result.children = children;
+                } else {
+                    result.textContent = textContent;
+                }
+
+                return result;
             },
             // Get table header markup from row data
             getTableHeaderHTML = function (
@@ -1369,7 +1397,12 @@ namespace ExportData {
                         if (typeof subheaders[i] !== 'undefined') {
                             trChildren.push(
                                 getCellHTMLFromValue(
-                                    'th', null, { scope: 'col' }, subheaders[i]
+                                    'th',
+                                    null,
+                                    {
+                                        scope: 'col'
+                                    },
+                                    subheaders[i]
                                 )
                             );
                         }
@@ -1611,21 +1644,38 @@ namespace ExportData {
     ): void {
         const exporting = this.exporting,
             dataTableDiv = exporting?.dataTableDiv,
-            getCellValue =
-                (tr: HTMLDOMElement, index: number): (string | null) =>
-                    tr.children[index].textContent,
+            langOptions = this.options.lang,
+            decimalPoint = langOptions?.decimalPoint || '.',
+            thousandsSep = langOptions?.thousandsSep || ',',
+
+            getCellValue = (tr: HTMLDOMElement, index: number): string =>
+                tr.children[index].textContent || '',
+
+            parseNumber = (value: string): number | null => {
+                if (!value) {
+                    return null;
+                }
+
+                let normalized = value;
+                if (thousandsSep) {
+                    normalized = normalized.split(thousandsSep).join('');
+                }
+                normalized = normalized.replace(decimalPoint, '.');
+
+                const number = Number(normalized);
+                return isNumber(number) ? number : null;
+            },
+
             comparer = (index: number, ascending: boolean) =>
                 (a: HTMLDOMElement, b: HTMLDOMElement): number => {
-                    const sort = (v1: any, v2: any): number => (
-                        v1 !== '' && v2 !== '' && !isNaN(v1) && !isNaN(v2) ?
-                            v1 - v2 :
-                            v1.toString().localeCompare(v2)
-                    );
+                    const valA = getCellValue(ascending ? a : b, index),
+                        valB = getCellValue(ascending ? b : a, index),
+                        numA = parseNumber(valA),
+                        numB = parseNumber(valB);
 
-                    return sort(
-                        getCellValue(ascending ? a : b, index),
-                        getCellValue(ascending ? b : a, index)
-                    );
+                    return numA !== null && numB !== null ?
+                        numA - numB :
+                        valA.localeCompare(valB);
                 };
 
         if (dataTableDiv && exporting.options.allowTableSorting) {
@@ -1651,21 +1701,32 @@ namespace ExportData {
                                 tableBody?.appendChild(tr);
                             });
 
-                            headers.forEach((th): void => {
+                            headers.forEach((header): void => {
                                 [
                                     'highcharts-sort-ascending',
                                     'highcharts-sort-descending'
                                 ].forEach((className): void => {
-                                    if (th.classList.contains(className)) {
-                                        th.classList.remove(className);
+                                    if (header.classList.contains(className)) {
+                                        header.classList.remove(className);
                                     }
                                 });
+
+                                if (header !== th) {
+                                    header.removeAttribute('aria-sort');
+                                }
                             });
 
                             th.classList.add(
                                 exporting.ascendingOrderInTable ?
                                     'highcharts-sort-ascending' :
                                     'highcharts-sort-descending'
+                            );
+
+                            th.setAttribute(
+                                'aria-sort',
+                                exporting.ascendingOrderInTable ?
+                                    'ascending' :
+                                    'descending'
                             );
                         }
                     });

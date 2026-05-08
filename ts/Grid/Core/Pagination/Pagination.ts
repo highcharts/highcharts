@@ -4,8 +4,9 @@
  *
  *  (c) 2020-2026 Highsoft AS
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  *  Authors:
@@ -437,7 +438,10 @@ class Pagination {
             totalPages
         } = this.controller;
 
-        const startItem = (currentPage - 1) * currentPageSize + 1;
+        const startItem = Math.min(
+            Math.max(0, (currentPage - 1) * currentPageSize + 1),
+            totalItems
+        );
         const endItem = Math.min(
             currentPage * currentPageSize,
             totalItems
@@ -1200,11 +1204,10 @@ class Pagination {
      * Destroy the pagination instance.
      */
     public destroy(): void {
-        const position = this.options?.position;
-
-        if (position === 'footer') {
-            // For footer position, remove the entire tfoot element.
-            this.paginationContainer?.parentElement?.parentElement?.remove();
+        // Fixed container removal when switching from custom to footer.
+        const tfoot = this.paginationContainer?.closest('tfoot');
+        if (tfoot) {
+            tfoot.remove();
         } else {
             this.contentWrapper?.remove();
         }

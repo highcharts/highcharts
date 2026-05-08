@@ -102,7 +102,6 @@ const sidebars = {
             'dashboards/edit-mode',
             'dashboards/types-of-components',
             'dashboards/grid-component',
-            'dashboards/grid-migration',
             'dashboards/kpi-component',
             'dashboards/highcharts-component',
             'dashboards/html-component',
@@ -122,6 +121,7 @@ const sidebars = {
         Grid: [
             'grid/general',
             'grid/installation',
+            'grid/grid-key',
             'grid/understanding-grid',
             {
                 'Columns': [
@@ -138,6 +138,8 @@ const sidebars = {
                 'Rows': [
                     'grid/rows/index',
                     'grid/rows/data',
+                    'grid/rows/tree-view',
+                    'grid/rows/pinning',
                     'grid/rows/pagination',
                     'grid/rows/virtualization',
                     'grid/rows/performance'
@@ -147,7 +149,8 @@ const sidebars = {
                 'Cells': [
                     'grid/cells/index',
                     'grid/cells/styling-and-theming',
-                    'grid/cells/formatting'
+                    'grid/cells/formatting',
+                    'grid/cell-context-menu'
                 ]
             },
             {
@@ -168,9 +171,17 @@ const sidebars = {
                 ]
             },
             'grid/responsive-grid',
-            'grid/data-providers',
+            {
+                'Data handling': [
+                    'grid/data-handling/overview',
+                    'grid/data-handling/clientside',
+                    'grid/data-handling/serverside',
+                    'grid/data-handling/connectors'
+                ]
+            },
             'grid/events',
             'grid/accessibility',
+            'grid/internationalization',
             'grid/exporting',
             'grid/sparklines',
             {
@@ -349,18 +360,24 @@ const sidebars = {
                     'react/components/series-types',
                     {
                         'Chart elements': [
-                            'react/components/chart-elements/accessibility',
+                            'react/components/chart-elements/title',
+                            'react/components/chart-elements/subtitle',
                             'react/components/chart-elements/credits',
-                            'react/components/chart-elements/data',
-                            'react/components/chart-elements/drilldown',
-                            'react/components/chart-elements/exporting',
                             'react/components/chart-elements/legend',
                             'react/components/chart-elements/plot-options',
-                            'react/components/chart-elements/subtitle',
-                            'react/components/chart-elements/title',
                             'react/components/chart-elements/tooltip',
                             'react/components/chart-elements/x-axis',
                             'react/components/chart-elements/y-axis'
+                        ],
+                        'Modules': [
+                            'react/components/modules/accessibility',
+                            'react/components/modules/exporting',
+                            'react/components/modules/data',
+                            'react/components/modules/boost',
+                            'react/components/modules/drilldown',
+                            'react/components/modules/broken-axis',
+                            'react/components/modules/draggable-points',
+                            'react/components/modules/stock-tools',
                         ]
                     },
                     'react/components/technical-indicators'
@@ -368,11 +385,15 @@ const sidebars = {
             },
             'react/data-handling',
             'react/chart-instance',
+            'react/typescript',
+            'react/component-wrapping',
+            'react/highcharts-instance',
             'react/options-component-format',
             'react/nextjs',
             'react/bundling-and-tree-shaking',
             'react/component-children',
-            'react/v4-migration-guide'
+            'react/v4-migration-guide',
+            'react/v5-migration-guide'
         ]
     }
 };

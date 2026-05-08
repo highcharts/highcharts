@@ -3,10 +3,11 @@
  *  Highcharts funnel module
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -35,7 +36,9 @@ const {
     composed,
     noop
 } = H;
-import BorderRadius from '../../Extensions/BorderRadius.js';
+import {
+    optionsToObject as borderRadiusOptionsToObject
+} from '../../Extensions/BorderRadius.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     column: ColumnSeries,
@@ -147,7 +150,6 @@ class FunnelSeries extends PieSeries {
      *
      * */
 
-    /* eslint-disable valid-jsdoc */
 
     /**
      * @private
@@ -305,7 +307,7 @@ class FunnelSeries extends PieSeries {
             options = series.options,
             reversed = options.reversed,
             ignoreHiddenPoint = options.ignoreHiddenPoint,
-            borderRadiusObject = BorderRadius.optionsToObject(
+            borderRadiusObject = borderRadiusOptionsToObject(
                 options.borderRadius
             ),
             plotWidth = chart.plotWidth,
@@ -667,7 +669,6 @@ class FunnelSeries extends PieSeries {
         points.sort((a, b): number => ((a.plotY as any) - (b.plotY as any)));
     }
 
-    /* eslint-enable valid-jsdoc */
 
 }
 

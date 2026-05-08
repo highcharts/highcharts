@@ -3,10 +3,11 @@
  *  Client side exporting module
  *
  *  (c) 2015-2026 Highsoft AS
- *  Author: Torstein Honsi / Oystein Moseng
+ *  Author: Torstein Hønsi / Øystein Moseng
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */

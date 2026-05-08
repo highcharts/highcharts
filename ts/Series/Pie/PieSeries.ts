@@ -1,10 +1,11 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -90,7 +91,7 @@ declare module '../../Core/Series/SeriesOptions' {
 /**
  * Pie series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.pie
  *
@@ -135,11 +136,10 @@ class PieSeries extends Series {
      *
      * */
 
-    /* eslint-disable valid-jsdoc */
 
     /**
      * Animates the pies in.
-     * @private
+     * @internal
      */
     public animate(init?: boolean): void {
         const series = this,
@@ -176,10 +176,10 @@ class PieSeries extends Series {
 
     /**
      * Called internally to draw auxiliary graph in pie-like series in
-     * situtation when the default graph is not sufficient enough to present
+     * situation when the default graph is not sufficient enough to present
      * the data well. Auxiliary graph is saved in the same object as
      * regular graph.
-     * @private
+     * @internal
      */
     public drawEmpty(): void {
         const start = this.startAngleRad,
@@ -229,7 +229,7 @@ class PieSeries extends Series {
     /**
      * Slices in pie chart are initialized in DOM, but it's shapes and
      * animations are normally run in `drawPoints()`.
-     * @private
+     * @internal
      */
     public drawPoints(): void {
         const renderer = this.chart.renderer;
@@ -254,7 +254,7 @@ class PieSeries extends Series {
     /**
      * Extend the generatePoints method by adding total and percentage
      * properties to each point
-     * @private
+     * @internal
      */
     public generatePoints(): void {
         super.generatePoints();
@@ -262,9 +262,9 @@ class PieSeries extends Series {
     }
 
     /**
-     * Utility for getting the x value from a given y, used for anticollision
+     * Utility for getting the x value from a given y, used for anti-collision
      * logic in data labels.
-     * @private
+     * @internal
      */
     public getX(
         y: number,
@@ -297,7 +297,7 @@ class PieSeries extends Series {
     /**
      * Define hasData function for non-cartesian series. Returns true if the
      * series has at least one visible point (#23235)
-     * @private
+     * @internal
      */
     public hasData(): boolean {
         return this.points.some((point): boolean => point.visible);
@@ -305,7 +305,7 @@ class PieSeries extends Series {
 
     /**
      * Draw the data points
-     * @private
+     * @internal
      */
     public redrawPoints(): void {
         const series = this,
@@ -384,7 +384,7 @@ class PieSeries extends Series {
 
     /**
      * Utility for sorting data labels.
-     * @private
+     * @internal
      */
     public sortByAngle(
         points: Array<PiePoint>,
@@ -400,7 +400,7 @@ class PieSeries extends Series {
 
     /**
      * Do translation for pie slices
-     * @private
+     * @internal
      */
     public translate(positions?: Array<number>): void {
         fireEvent(this, 'translate');
@@ -408,7 +408,6 @@ class PieSeries extends Series {
         this.generatePoints();
 
         const series = this,
-            precision = 1000, // Issue #172
             options = series.options,
             slicedOffset = options.slicedOffset,
             radians = getStartAndEndRadians(
@@ -467,8 +466,8 @@ class PieSeries extends Series {
                 y: positions[1],
                 r: positions[2] / 2,
                 innerR: positions[3] / 2,
-                start: Math.round(start * precision) / precision,
-                end: Math.round(end * precision) / precision
+                start,
+                end
             };
             point.shapeType = 'arc';
             point.shapeArgs = shapeArgs;
@@ -509,7 +508,7 @@ class PieSeries extends Series {
 
     /**
      * Recompute total chart sum and update percentages of points.
-     * @private
+     * @internal
      */
     public updateTotals(): void {
         const points = this.points,
@@ -542,7 +541,6 @@ class PieSeries extends Series {
         }
     }
 
-    /* eslint-enable valid-jsdoc */
 
 }
 
@@ -552,6 +550,7 @@ class PieSeries extends Series {
  *
  * */
 
+/** @internal */
 interface PieSeries {
     drawGraph: undefined;
     getCenter: typeof CU['getCenter'];
@@ -580,6 +579,7 @@ extend(PieSeries.prototype, {
  *
  * */
 
+/** @internal */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         pie: typeof PieSeries;
@@ -593,4 +593,5 @@ SeriesRegistry.registerSeriesType('pie', PieSeries);
  *
  * */
 
+/** @internal */
 export default PieSeries;

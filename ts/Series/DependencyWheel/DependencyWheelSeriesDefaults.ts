@@ -3,10 +3,11 @@
  *  Dependency wheel module
  *
  *  (c) 2018-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -106,7 +107,7 @@ const DependencyWheelSeriesDefaults: DependencyWheelSeriesOptions = {
 
     /**
      * The center of the wheel relative to the plot area. Can be
-     * percentages or pixel values. The default behaviour is to
+     * percentages or pixel values. The default behavior is to
      * center the wheel inside the plot area.
      *
      * @type    {Array<number|string|null>}
@@ -124,26 +125,12 @@ const DependencyWheelSeriesDefaults: DependencyWheelSeriesOptions = {
 
     dataLabels: {
         textPath: {
-            /**
-             * Enable or disable `textPath` option for link's or marker's data
-             * labels.
-             *
-             * @type      {boolean}
-             * @default   false
-             * @since     7.1.0
-             * @apioption plotOptions.series.dataLabels.textPath.enabled
-             */
             enabled: false,
-
+            /**
+             * @default { dy: 5 }
+            */
             attributes: {
-                /**
-                * Text path shift along its y-axis.
-                *
-                * @type      {Highcharts.SVGAttributes}
-                * @default   5
-                * @since     7.1.0
-                * @apioption plotOptions.dependencywheel.dataLabels.textPath.attributes.dy
-                */
+                /** @ignore */
                 dy: 5
             }
         }
@@ -196,6 +183,7 @@ const DependencyWheelSeriesDefaults: DependencyWheelSeriesOptions = {
  *     }]
  *  ```
  *
+ * @basic
  * @type      {Array<Array<string,string,number>|*>}
  * @extends   series.sankey.data
  * @product   highcharts

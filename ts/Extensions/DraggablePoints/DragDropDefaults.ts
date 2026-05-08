@@ -4,8 +4,9 @@
  *
  *  Authors: Øystein Moseng, Torstein Hønsi, Jon A. Nygård
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -309,7 +310,7 @@ const DragDropDefaults: DragDropOptions = {
         /**
          * The fill color of the drag handles.
          *
-         * @type  {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @type  {Highcharts.ColorType}
          * @since 6.2.0
          */
         color: '#fff',
@@ -381,7 +382,7 @@ const DragDropDefaults: DragDropOptions = {
             /**
              * Guide box fill color.
              *
-             * @type  {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+             * @type  {Highcharts.ColorType}
              * @since 6.2.0
              */
             color: 'rgba(0, 0, 0, 0.1)',

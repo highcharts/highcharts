@@ -1,10 +1,11 @@
 /* *
  *
  *  (c) 2021-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -452,7 +453,7 @@ class Projection {
     }
 
     /**
-     * Project a lonlat coordinate position to xy. Dynamically overridden when
+     * Project a lon-lat coordinate position to xy. Dynamically overridden when
      * projection is set.
      */
     public forward(
@@ -462,7 +463,7 @@ class Projection {
     }
 
     /**
-     * Unproject an xy chart coordinate position to lonlat. Dynamically
+     * Unproject an xy chart coordinate position to lon-lat. Dynamically
      * overridden when projection is set.
      */
     public inverse(

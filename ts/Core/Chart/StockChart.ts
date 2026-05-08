@@ -1,10 +1,11 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -710,6 +711,7 @@ namespace StockChart {
         e: (Event&Axis.PlotLinePathOptions)
     ): void {
         const axis = this,
+            axisOptions = axis.options,
             series = (
                 axis.isLinked && !axis.series && axis.linkedParent ?
                     axis.linkedParent.series :
@@ -722,6 +724,10 @@ namespace StockChart {
             allPerpendicularAxes = (
                 axis.isXAxis ? chart.yAxis : chart.xAxis
             ) || [],
+            crossingPosName = horiz ? 'top' : 'left',
+            crossingLenName = horiz ? 'height' : 'width',
+            hasCrossingBounds = defined(axisOptions[crossingPosName]) ||
+                defined(axisOptions[crossingLenName]),
             /**
              * Return the other axis based on either the axis option or on
              * related series.
@@ -729,9 +735,9 @@ namespace StockChart {
              */
             getAxis = (coll: string): Array<Axis> => {
                 const otherColl = coll === 'xAxis' ? 'yAxis' : 'xAxis',
-                    opt = (axis.options as AnyRecord)[otherColl];
+                    opt = (axisOptions as AnyRecord)[otherColl];
 
-                if (acrossPanes && !axis.options.isInternal) {
+                if (acrossPanes && !axisOptions.isInternal) {
                     return allPerpendicularAxes.filter((a): boolean =>
                         !a.options.isInternal
                     );
@@ -770,7 +776,7 @@ namespace StockChart {
             transVal: number;
 
         if (
-            chart.options.isStock &&
+            (chart.options.isStock || hasCrossingBounds) &&
             // Ignore in case of colorAxis or zAxis. #3360, #3524, #6720
             (axis.coll === 'xAxis' || axis.coll === 'yAxis')
         ) {
@@ -843,18 +849,16 @@ namespace StockChart {
                 }
 
                 if (!skip) {
-                    const crossingPosName = horiz ? 'top' : 'left',
-                        crossingLenName = horiz ? 'height' : 'width';
                     if (
-                        !acrossPanes &&
                         // If the perpendicular position is set explicitly on
                         // the axis, use it. For example, if `top` and `height`
                         // options are set on a horizontal x-axis, the grid
                         // lines should conform to that position.
-                        (
-                            axis.options[crossingPosName] ||
-                            axis.options[crossingLenName]
-                        )
+                        hasCrossingBounds &&
+                        // In parallel coordinates, the axis height/width is 0,
+                        // so we need to skip that, #24442.
+                        axis[crossingLenName] > 0 &&
+                        !acrossPanes
                     ) {
                         pushSegment(
                             pos,

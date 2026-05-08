@@ -62,7 +62,7 @@ describe('Screen reader sections.', () => {
                 }
             });
 
-            const dataTable = grid.dataTable;
+            const dataTable = grid.dataProvider.getDataTable();
             const expectedRowCount = dataTable.rowCount;
             const expectedColumnCount = dataTable.getColumnIds().length;
 

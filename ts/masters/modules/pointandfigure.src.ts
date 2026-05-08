@@ -8,10 +8,11 @@
  * Point and figure series type for Highcharts Stock
  *
  * (c) 2010-2026 Highsoft AS
- * Author: Kamil Musialowski
  *
- * A commercial license may be required depending on use.
- * See www.highcharts.com/license
+ * Author: Kamil Musiałowski
+ *
+ * A commercial license may be required depending on use,
+ * see www.highcharts.com/license
  */
 'use strict';
 import Highcharts from '../../Core/Globals.js';

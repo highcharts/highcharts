@@ -4,8 +4,9 @@
  *
  *  Authors: Øystein Moseng, Torstein Hønsi, Jon A. Nygård
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -476,7 +477,7 @@ function getGroupedPoints(point: Point): Array<Point> {
  * @param {Highcharts.PointerEventObject} newPos
  *        Event with the new position of the mouse (chartX/Y properties).
  *
- * @return {Highchats.Dictionary<object>}
+ * @return {Highcharts.Dictionary<object>}
  *         Hashmap with point.id mapped to an object with the original point
  *         reference, as well as the new data values.
  */

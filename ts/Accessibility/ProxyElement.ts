@@ -9,8 +9,9 @@
  *  The ProxyElement class represents such an element, and deals with
  *  overlay positioning and mirroring events for the target.
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -148,8 +149,8 @@ class ProxyElement {
     /**
      * Update the target to be proxied. The position and events are updated to
      * match the new target.
-     * @param target The new target definition
-     * @param attributes New HTML attributes to apply to the proxy. Set an
+     * @param {object} target The new target definition
+     * @param {object} attributes New HTML attributes to apply to the proxy. Set an
      * attribute to null to remove.
      */
     public updateTarget(

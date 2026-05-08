@@ -1,4 +1,60 @@
+import type { Page } from '@playwright/test';
+
 import { test, expect, createChart } from '~/fixtures.ts';
+
+async function getClusterStateAfterDatetimeMsGridClustering(
+    page: Page,
+    xAxisReversed: boolean
+): Promise<{
+    hasClustersArray: boolean;
+    clustersLength: number | null;
+}> {
+    const options: Highcharts.Options = {
+        chart: {
+            width: 800
+        },
+        title: {
+            text: ''
+        },
+        xAxis: {
+            type: 'datetime',
+            reversed: xAxisReversed
+        },
+        series: [{
+            type: 'scatter',
+            data: [
+                { x: 1694561823000, y: 1 },
+                { x: 1694561823000 + 1, y: 1 }
+            ],
+            cluster: {
+                enabled: true,
+                animation: false
+            }
+        }]
+    };
+
+    const chart = await createChart(page, options, {
+        modules: ['modules/marker-clusters.js']
+    });
+
+    // Ensure the page event loop is responsive right after chart creation.
+    // A blocked main thread would prevent the timer from firing.
+    await page.evaluate(() => new Promise<void>(resolve => {
+        window.setTimeout(() => resolve(), 0);
+    }));
+
+    return chart.evaluate(c => {
+        const series = c.series[0];
+        const markerClusterInfo = series.markerClusterInfo;
+        const clusters =
+            markerClusterInfo && markerClusterInfo.clusters;
+
+        return {
+            hasClustersArray: Array.isArray(clusters),
+            clustersLength: clusters ? clusters.length : null
+        };
+    });
+}
 
 test.describe('series/marker-clusters', {
     annotation: [
@@ -215,5 +271,31 @@ test.describe('series/marker-clusters', {
         ).toEqual(
             '18.00'
         );
+    });
+
+    test('Grid algorithm should not hang on datetime data', async ({ page }) => {
+        // Related to #19740
+        // If the grid clustering algorithm regresses into an infinite loop,
+        // this test should fail quickly by hitting the timeout below.
+        test.setTimeout(15000);
+        expect(
+            await getClusterStateAfterDatetimeMsGridClustering(page, false),
+            'Clustering should complete and keep browser responsive.'
+        ).toEqual({
+            hasClustersArray: true,
+            clustersLength: 0
+        });
+    });
+
+    test('Grid algorithm should not hang on datetime data with reversed xAxis', async ({ page }) => {
+        // Related to #19740 — reversed axis can change grid math paths.
+        test.setTimeout(15000);
+        expect(
+            await getClusterStateAfterDatetimeMsGridClustering(page, true),
+            'Clustering should complete and keep browser responsive.'
+        ).toEqual({
+            hasClustersArray: true,
+            clustersLength: 0
+        });
     });
 });

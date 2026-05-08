@@ -5,8 +5,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Paweł Fus
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -106,7 +107,7 @@ function attractiveForceFunction(
 }
 
 /**
- * Barycenter force. Calculate and applys barycenter forces on the
+ * Barycenter force. Calculate and apply barycenter forces on the
  * nodes. Making them closer to the center of their barycenter point.
  *
  * In Euler integration, force is stored in a node, not changing it's
@@ -165,7 +166,7 @@ function getK(
  *
  * Basic form: `x(n+1) = x(n) + v(n)`
  *
- * With Rengoild-Fruchterman we get:
+ * With Reingold-Fruchterman we get:
  * `x(n+1) = x(n) + v(n) / length(v(n)) * min(v(n), temperature(n))`
  * where:
  * - `x(n+1)`: next position

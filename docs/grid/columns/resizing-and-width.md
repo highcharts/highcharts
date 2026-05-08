@@ -75,8 +75,13 @@ rendering: {
 Relevant column events:
 - `afterResize`
 
-See [Interaction / Events](https://www.highcharts.com/docs/grid/events) and
-the [API reference](https://api.highcharts.com/grid/rendering.columns.resizing).
+See [Interaction / Events](https://www.highcharts.com/docs/grid/events) for event details.
+
+## API reference
+
+- [`columnDefaults.width`](https://api.highcharts.com/grid/columnDefaults.width)
+- [`columns.width`](https://api.highcharts.com/grid/columns.width)
+- [`rendering.columns.resizing`](https://api.highcharts.com/grid/rendering.columns.resizing)
 
 ## Demo
 

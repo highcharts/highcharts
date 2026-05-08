@@ -8,6 +8,10 @@ Column filtering lets end users narrow visible rows by applying filter condition
 
 Each column filter operates independently. When multiple columns have active filters, only rows that satisfy **all** filter conditions are shown (logical **AND** across columns).
 
+With the default local data model, filtering is applied client-side on the
+loaded data. In Grid Pro, you can use `providerType: 'remote'` when filter
+state should be handled by the server instead. Read more in [Server-side data handling](https://www.highcharts.com/docs/grid/data-handling/serverside).
+
 ## Enabling filtering
 
 Filtering is configured per column using the `filtering` option. By default, filtering is disabled.
@@ -230,7 +234,7 @@ The filtering UI will not be rendered for disabled columns.
 Filters can also be controlled programmatically through the API.
 
 ```js
-const grid = Highcharts.Grid('container', options);
+const grid = Grid.grid('container', options);
 const productColumn = grid.getColumn('product');
 
 // Apply a filter
@@ -242,7 +246,7 @@ productColumn.filtering.set();
 
 This makes it easy to integrate column filtering with external UI controls, such as search fields or custom buttons.
 
-## Filter events __grid_pro__
+## Events __grid_pro__
 
 Filtering triggers two lifecycle events:
 
@@ -265,7 +269,7 @@ columnDefaults: {
 }
 ```
 
-These events can be used for logging, analytics, UI feedback etc.
+These events can be used for e.g. logging, analytics, and UI feedback.
 
 ## Summary
 
