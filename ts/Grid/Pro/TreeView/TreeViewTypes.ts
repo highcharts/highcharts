@@ -141,6 +141,8 @@ export interface TreeViewColumnOptions {
      * When provided as a callback, it is invoked for matching parent rows and
      * should return a registered Formula processor function name, or a falsy
      * value to skip aggregation for the current row.
+     *
+     * @sample grid-pro/tree-view/data-aggregation TreeView data aggregation
      */
     aggregate?: string | TreeViewColumnAggregateCallback;
 }

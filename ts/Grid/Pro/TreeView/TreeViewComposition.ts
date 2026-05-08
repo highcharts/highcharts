@@ -1019,13 +1019,28 @@ function onTableAfterDestroy(this: Table): void {
 }
 
 /**
- * Decorates tree column cells with indentation and toggle control.
+ * Flags aggregated TreeView cells and decorates tree column cells.
  */
 function onAfterCellRender(this: TableCell): void {
     const grid = this.row.viewport.grid;
     const controller = grid.treeView;
     const options = controller?.options;
     const projectionState = controller?.getProjectionState();
+    const rowId = (
+        this.row.id ??
+        projectionState?.rowIds[this.row.index]
+    );
+
+    this.htmlElement.classList.toggle(
+        TreeViewGlobals.classNames.cellAggregated,
+        !!(
+            controller &&
+            options &&
+            projectionState &&
+            rowId !== void 0 &&
+            controller.isCellDerived(rowId, this.column.id)
+        )
+    );
 
     if (!options || !projectionState) {
         return;
@@ -1045,10 +1060,6 @@ function onAfterCellRender(this: TableCell): void {
         return;
     }
 
-    const rowId = (
-        this.row.id ??
-        projectionState.rowIds[this.row.index]
-    );
     if (rowId === void 0) {
         return;
     }

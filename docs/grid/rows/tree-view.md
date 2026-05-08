@@ -174,6 +174,42 @@ treeView: {
 Sticky parents are enabled by default. This pairs especially well with deep
 hierarchies and [row virtualization](https://www.highcharts.com/docs/grid/rows/virtualization).
 
+## Aggregation
+
+Use `columns[].treeView.aggregate` to derive missing parent values from their
+direct children during TreeView projection.
+
+```js
+columns: [{
+    id: 'budget',
+    treeView: {
+        aggregate: 'SUM'
+    }
+}, {
+    id: 'utilization',
+    treeView: {
+        aggregate: 'AVERAGE'
+    }
+}, {
+    id: 'risk',
+    treeView: {
+        aggregate: function (context) {
+            return context.depth === 0 ? false : 'MAX';
+        }
+    }
+}]
+```
+
+Aggregation rules:
+
+- It runs after filtering and sorting, but before pagination.
+- It uses direct children after their own aggregation has been resolved.
+- It only replaces parent values that are `null` or `undefined`.
+- With `path` input, parent rows do not need to be defined unless they carry
+  their own source values.
+- Generated ancestors from `path` input can also receive aggregated values.
+- Derived cells are rendered with the `hcg-tree-cell-aggregated` CSS class.
+
 ## Runtime API
 
 The Tree view controller is available on `grid.treeView`.
