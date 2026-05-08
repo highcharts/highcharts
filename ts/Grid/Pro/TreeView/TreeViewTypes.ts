@@ -4,8 +4,9 @@
  *
  *  (c) 2020-2026 Highsoft AS
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *  Authors:
  *  - Dawid Dragula
@@ -48,6 +49,9 @@ export interface TreeViewOptions {
      * columns and prefers `path` when both exist. For custom input
      * definitions, set
      * `data.treeView.input.type` explicitly.
+     *
+     * @sample grid-pro/tree-view/parent-id Parent ID tree input
+     * @sample grid-pro/tree-view/input-path Path tree input
      */
     input?: TreeInputOptions;
 
@@ -66,6 +70,8 @@ export interface TreeViewOptions {
 
     /**
      * Enables sticky parent rows.
+     *
+     * @sample grid-pro/tree-view/sticky-parents Sticky parents
      * @default true
      */
     stickyParents?: boolean;
@@ -132,6 +138,8 @@ export interface TreeInputPathOptions {
     /**
      * Path segment separator, a RegExp extracting ordered path segments,
      * or a callback returning ordered path segments.
+     *
+     * @sample grid-pro/tree-view/separator-callback Separator callback
      * @default '/'
      */
     separator?: TreeInputPathSeparator;

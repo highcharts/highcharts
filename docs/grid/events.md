@@ -25,9 +25,12 @@ Configured in `events` at the root of grid options:
 | `afterUpdate`          | Triggered after grid options are updated via `update()`. | `this: Grid`          |
 | `beforeRedraw`         | Triggered before the grid DOM is redrawn. Fired by default when `update()` is called, unless `redraw` is set to `false`. | `this: Grid`          |
 | `afterRedraw`          | Triggered after the grid DOM is redrawn. Fired by default when `update()` is called, unless `redraw` is set to `false`. | `this: Grid`          |
+| `beforeTreeRowToggle`  | Triggered before a Tree view row is expanded or collapsed. Call `event.preventDefault()` to cancel the toggle. | `this: Grid`          |
+| `afterTreeRowToggle`   | Triggered after a Tree view row is expanded or collapsed. | `this: Grid`          |
 
 Related topic:
 - [Overview / Understanding](https://www.highcharts.com/docs/grid/understanding-grid)
+- [Rows / Tree view](https://www.highcharts.com/docs/grid/rows/tree-view)
 
 ## Column-level events
 
