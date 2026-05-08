@@ -2704,7 +2704,7 @@ const defaultOptions: DefaultOptions = {
          * @type      {string}
          * @apioption tooltip.headerFormat
          */
-        headerFormat: '<span style="font-size: 0.8em">{ucfirst point.key}</span><br/>',
+        headerFormat: '<span style="font-size: 0.8em">{ucfirst point.key}</span><br><table>',
 
         /**
          * The HTML of the null point's line in the tooltip. Works analogously
@@ -2743,7 +2743,9 @@ const defaultOptions: DefaultOptions = {
          * @since      2.2
          * @apioption  tooltip.pointFormat
          */
-        pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.y}</b><br/>',
+        pointFormat: '<tr><td style="color:{point.color}">\u25CF </td>' +
+            '<td>{series.name}: </td>' +
+            '<td style="text-align: right"><b>{point.y}</b></td></tr>',
 
         /**
          * The background color or gradient for the tooltip.

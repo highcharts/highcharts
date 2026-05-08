@@ -1825,6 +1825,10 @@ class Tooltip {
                 'class="highcharts-header"'
             )
             .replace(
+                'style="text-align: right"',
+                'class="highcharts-align-right"'
+            )
+            .replace(
                 /style="color:{(point|series)\.color}"/g,
                 'class="highcharts-color-{$1.colorIndex} ' +
                 '{series.options.className} ' +
