@@ -612,6 +612,56 @@ QUnit.test('Wide data labels', function (assert) {
     );
 });
 
+QUnit.test(
+    'Hidden labels should not shift donut center (#23143)',
+    function (assert) {
+        const chart = Highcharts.chart('container', {
+            chart: {
+                type: 'pie',
+                width: 600
+            },
+            series: [{
+                dataLabels: {
+                    format:
+                        '<b style="font-size: 16px;">' +
+                        '{point.name}</b><br>{point.percentage:.1f}%'
+                },
+                data: [
+                    ['ABC_098', 142],
+                    ['DEF_123', 136],
+                    ['ABC_123_EFB_456_098', 127],
+                    ['TEXT WITH SPACES', 59],
+                    ['MNO_345_03434', 58],
+                    ['VERY_LONG_STRING_TESTING_LIMIT', 49],
+                    ['TESTING_LONG_STRING', 46],
+                    ['ABC', 41],
+                    ['TEST_0001', 38],
+                    ['TEST_0002', 20]
+                ]
+            }]
+        });
+
+        chart.setSize(400, null, false);
+
+        const series = chart.series[0];
+        const hiddenLabels = series.points.filter(
+            point => point.dataLabel?.attr('visibility') === 'hidden'
+        );
+        const centerOffset = Math.abs(series.center[0] - chart.plotWidth / 2);
+
+        assert.ok(
+            hiddenLabels.length > 0,
+            'The chart has hidden data labels'
+        );
+
+        assert.ok(
+            centerOffset < 12,
+            'Auto-centered donut should stay centered with hidden labels. ' +
+            'Offset: ' + centerOffset
+        );
+    }
+);
+
 // Skipping since refactor. Visually it looks okay. Now it is clipping.
 // Previously the overflow wasn't handled at all.
 QUnit.skip(
