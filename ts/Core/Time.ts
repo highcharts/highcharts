@@ -51,7 +51,19 @@ class Time extends TimeBase {
         visibleMin?: number,
         visibleMax?: number
     ): Record<number, Time.TimeUnit> {
-        const boundaryTicks: Record<number, Time.TimeUnit> = {};
+        const boundaryTicks: Record<number, Time.TimeUnit> = {},
+            hasVisibleRange = defined(visibleMin) && defined(visibleMax),
+            // Micro-optimization: Pre-check if we need to call toParts.
+            needsHourBoundary = unitRange < timeUnits.hour,
+            needsDayBoundary = unitRange < timeUnits.day,
+            needsMonthBoundary = unitRange < timeUnits.month,
+            needsYearBoundary = unitRange < timeUnits.year,
+            needsToParts = (
+                needsHourBoundary ||
+                needsDayBoundary ||
+                needsMonthBoundary ||
+                needsYearBoundary
+            );
         // Handle boundary ticks. Use a reasonable dropout threshold
         // to prevent looping over dense data grouping (#6156).
         if (tickPositions.length < 10000) {
@@ -59,55 +71,60 @@ class Time extends TimeBase {
             for (let i = 0; i < tickPositions.length; i++) {
                 const t = tickPositions[i];
 
-                if (
-                    defined(visibleMin) &&
-                    defined(visibleMax) &&
-                    (t < visibleMin || t > visibleMax)
-                ) {
+                if (hasVisibleRange && (t < visibleMin || t > visibleMax)) {
                     continue;
                 }
 
-                const [
-                    , // Unused 'year' var
-                    month,
-                    dayOfMonth,
-                    hours,
-                    minutes,
-                    seconds,
-                    milliseconds
-                ] = this.toParts(t);
-
-                const isMidnight =
-                    !hours && !minutes && !seconds && !milliseconds;
-
-                if (unitRange < timeUnits.hour && minutes === 0) {
-                    boundaryTicks[t] = 'hour';
-                }
-                if (unitRange < timeUnits.day && isMidnight) {
-                    boundaryTicks[t] = 'day';
-                }
-                if (
-                    unitRange < timeUnits.month &&
-                    dayOfMonth === 1 &&
-                    isMidnight
-                ) {
-                    boundaryTicks[t] = 'month';
-                }
-                if (
-                    unitRange < timeUnits.year &&
-                    month === 0 &&
-                    dayOfMonth === 1 &&
-                    isMidnight
-                ) {
-                    boundaryTicks[t] = 'year';
-                }
                 // Mark first visible tick as boundary, if timeUnit is month or
                 // hour.
-                if (isFirstVisibleTick && unitRange === timeUnits.month) {
-                    boundaryTicks[t] = 'year';
+                if (isFirstVisibleTick) {
+                    if (unitRange === timeUnits.month) {
+                        boundaryTicks[t] = 'year';
+                        isFirstVisibleTick = false;
+                        continue;
+                    }
+                    if (unitRange === timeUnits.hour) {
+                        boundaryTicks[t] = 'day';
+                        isFirstVisibleTick = false;
+                        continue;
+                    }
                 }
-                if (isFirstVisibleTick && unitRange === timeUnits.hour) {
-                    boundaryTicks[t] = 'day';
+
+                if (needsToParts) {
+                    const [
+                        , // Unused 'year' var
+                        month,
+                        dayOfMonth,
+                        hours,
+                        minutes,
+                        seconds,
+                        milliseconds
+                    ] = this.toParts(t);
+
+                    const isMidnight =
+                        !hours && !minutes && !seconds && !milliseconds;
+
+                    if (needsHourBoundary && minutes === 0) {
+                        boundaryTicks[t] = 'hour';
+                    }
+                    if (needsDayBoundary && isMidnight) {
+                        boundaryTicks[t] = 'day';
+                    }
+                    if (
+                        needsMonthBoundary &&
+                        dayOfMonth === 1 &&
+                        isMidnight
+                    ) {
+                        boundaryTicks[t] = 'month';
+                    }
+                    if (
+                        needsYearBoundary &&
+                        month === 0 &&
+                        dayOfMonth === 1 &&
+                        isMidnight
+                    ) {
+                        boundaryTicks[t] = 'year';
+                    }
                 }
                 isFirstVisibleTick = false;
             }
