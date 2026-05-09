@@ -88,5 +88,29 @@ Grid.grid('container', {
                 options: [5, 10, 20, 50]
             }
         }
+    },
+    responsive: {
+        rules: [{
+            condition: {
+                maxWidth: 800
+            },
+            gridOptions: {
+                header: ['employeeId', 'firstName', 'hireDate', 'city'],
+                columns: [{
+                    id: 'firstName',
+                    cells: {
+                        format: `
+                            {value} {row.data.lastName}<br/>
+                            {row.data.role} ({row.data.department})
+                        `
+                    }
+                }, {
+                    id: 'city',
+                    cells: {
+                        format: '{value} ({row.data.state})'
+                    }
+                }]
+            }
+        }]
     }
 });
