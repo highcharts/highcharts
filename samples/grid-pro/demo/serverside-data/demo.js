@@ -91,6 +91,9 @@ Grid.grid('container', {
                 header: ['employeeId', 'firstName', 'hireDate', 'city'],
                 columns: [{
                     id: 'firstName',
+                    header: {
+                        format: 'Employee'
+                    },
                     cells: {
                         format: `
                             {value} {row.data.lastName}<br/>
@@ -100,7 +103,7 @@ Grid.grid('container', {
                 }, {
                     id: 'city',
                     cells: {
-                        format: '{value} ({row.data.state})'
+                        format: '{value}, {row.data.state}'
                     }
                 }]
             }
