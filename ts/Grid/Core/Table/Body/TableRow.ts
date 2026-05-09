@@ -137,10 +137,9 @@ class TableRow extends Row {
 
         await this.loadData();
 
-        for (let i = 0, iEnd = this.cells.length; i < iEnd; ++i) {
-            const cell = this.cells[i] as TableCell;
-            await cell.setValue();
-        }
+        await Promise.all(this.cells.map((cell): Promise<void> =>
+            (cell as TableCell).setValue()
+        ));
 
         this.reflow();
     }
@@ -171,10 +170,9 @@ class TableRow extends Row {
 
         await this.loadData();
 
-        for (let i = 0, iEnd = this.cells.length; i < iEnd; ++i) {
-            const cell = this.cells[i] as TableCell;
-            await cell.setValue();
-        }
+        await Promise.all(this.cells.map((cell): Promise<void> =>
+            (cell as TableCell).setValue()
+        ));
 
         this.reflow();
     }
