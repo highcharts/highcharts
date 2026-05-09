@@ -236,6 +236,15 @@ export class Column {
             return void 0;
         }
 
+        if (
+            Object.prototype.hasOwnProperty.call(
+                cell.row.data,
+                sourceColumnId
+            )
+        ) {
+            return cell.row.data[sourceColumnId];
+        }
+
         return this.viewport.grid.dataProvider?.getValue(
             sourceColumnId,
             cell.row.index

@@ -164,6 +164,7 @@ class TableCell extends Cell {
 
         const oldValue = this.value;
         this.value = value;
+        const valueChanged = oldValue !== value;
 
         if (updateDataset) {
             try {
@@ -180,13 +181,21 @@ class TableCell extends Cell {
             }
         }
 
-        if (this.content) {
+        const cellsOptions = this.column.options.cells;
+        const isValueOnlyText = (
+            !cellsOptions?.format && !cellsOptions?.formatter
+        );
+
+        if (this.content && (valueChanged || !isValueOnlyText)) {
             this.content.update();
-        } else {
+        } else if (!this.content) {
             this.content = this.column.createCellContent(this);
         }
 
-        this.htmlElement.setAttribute('data-value', this.value + '');
+        const valueAttribute = this.value + '';
+        if (this.htmlElement.getAttribute('data-value') !== valueAttribute) {
+            this.htmlElement.setAttribute('data-value', valueAttribute);
+        }
 
         // Set alignment in column cells based on column data type
         this.htmlElement.classList[
@@ -194,7 +203,7 @@ class TableCell extends Cell {
         ](Globals.getClassName('rightAlign'));
 
         // Add custom class name from column options
-        this.setCustomClassName(this.column.options.cells?.className);
+        this.setCustomClassName(cellsOptions?.className);
 
         this.setCustomStyles(this.getCellStyles());
 

@@ -784,22 +784,25 @@ class RowsVirtualizer {
             return;
         }
 
-        let translateBuffer = rows[0].getDefaultTopOffset();
+        const firstVisibleProgress = (
+            tbodyElement.scrollTop / defaultH -
+            Math.floor(cursor - this.scrollOffset / defaultH)
+        );
 
+        // First reset heights/transforms, then measure. Keeping reads grouped
+        // before writes avoids repeated forced layout work during scroll.
         for (let i = 0; i < rowsLn; ++i) {
             const row = rows[i];
+            row.measuredHeight = void 0;
 
-            // Skip if row is not fully rendered or has no cells
             if (
                 !row.rendered ||
                 !row.cells.length ||
                 !row.cells[0]?.htmlElement
             ) {
-                row.htmlElement.style.height = defaultH + 'px';
                 continue;
             }
 
-            // Reset row height and cell transforms
             row.htmlElement.style.height = '';
             if (row.cells[0].htmlElement.style.transform) {
                 for (let j = 0, jEnd = row.cells.length; j < jEnd; ++j) {
@@ -809,47 +812,69 @@ class RowsVirtualizer {
                     }
                 }
             }
+        }
 
-            // Rows above the first visible row
+        for (let i = 0; i < rowsLn; ++i) {
+            const row = rows[i];
+
+            if (
+                !row.rendered ||
+                !row.cells.length ||
+                !row.cells[0]?.htmlElement
+            ) {
+                row.measuredHeight = defaultH;
+                continue;
+            }
+
+            if (row.index < cursor) {
+                row.measuredHeight = defaultH;
+                continue;
+            }
+
+            row.measuredHeight = row.cells[0].htmlElement.offsetHeight;
+        }
+
+        for (let i = 0; i < rowsLn; ++i) {
+            const row = rows[i];
+            const measuredHeight = row.measuredHeight ?? defaultH;
+
             if (row.index < cursor) {
                 row.htmlElement.style.height = defaultH + 'px';
                 continue;
             }
 
-            const cellHeight = row.cells[0].htmlElement.offsetHeight;
-            row.htmlElement.style.height = cellHeight + 'px';
-
-            // Rows below the first visible row
             if (row.index > cursor) {
+                row.htmlElement.style.height = measuredHeight + 'px';
                 continue;
             }
 
-            // First visible row
-            if (row.htmlElement.offsetHeight > defaultH) {
+            if (measuredHeight > defaultH) {
                 const newHeight = Math.floor(
-                    cellHeight - (cellHeight - defaultH) * (
-                        tbodyElement.scrollTop / defaultH - Math.floor(
-                            cursor - this.scrollOffset / defaultH
-                        )
-                    )
+                    measuredHeight -
+                    (measuredHeight - defaultH) * firstVisibleProgress
                 );
 
                 row.htmlElement.style.height = newHeight + 'px';
+                row.measuredHeight = newHeight;
 
                 for (let j = 0, jEnd = row.cells.length; j < jEnd; ++j) {
                     const cell = row.cells[j];
                     if (cell?.htmlElement) {
                         cell.htmlElement.style.transform = `translateY(${
-                            newHeight - cellHeight
+                            newHeight - measuredHeight
                         }px)`;
                     }
                 }
+                continue;
             }
+
+            row.htmlElement.style.height = measuredHeight + 'px';
         }
 
+        let translateBuffer = rows[0].getDefaultTopOffset();
         rows[0].setTranslateY(translateBuffer);
         for (let i = 1, iEnd = rowsLn - 1; i < iEnd; ++i) {
-            translateBuffer += rows[i - 1].htmlElement.offsetHeight;
+            translateBuffer += rows[i - 1].getMeasuredHeight();
             rows[i].setTranslateY(translateBuffer);
         }
 
@@ -858,7 +883,7 @@ class RowsVirtualizer {
         const preLastRow = rows[rowsLn - 2];
         if (preLastRow && preLastRow.index === lastRow.index - 1) {
             lastRow.setTranslateY(
-                preLastRow.htmlElement.offsetHeight + translateBuffer
+                preLastRow.getMeasuredHeight() + translateBuffer
             );
         }
     }
@@ -1115,14 +1140,14 @@ class RowsVirtualizer {
         if (isSecondToLastRowVisible && this.gridHeightOverflow > 0) {
             lastRow.setTranslateY(
                 this.maxElementHeight -
-                lastRow.htmlElement.offsetHeight
+                lastRow.getMeasuredHeight()
             );
 
             let bottomOffset = this.maxElementHeight -
-                lastRow.htmlElement.offsetHeight;
+                lastRow.getMeasuredHeight();
 
             for (let i = rowsLn - 2; i >= 0; i--) {
-                bottomOffset -= rows[i].htmlElement.offsetHeight;
+                bottomOffset -= rows[i].getMeasuredHeight();
                 rows[i].setTranslateY(bottomOffset);
             }
 
@@ -1131,7 +1156,7 @@ class RowsVirtualizer {
 
         rows[0].setTranslateY(translateBuffer);
         for (let i = 1, iEnd = rowsLn - 1; i < iEnd; ++i) {
-            translateBuffer += rows[i - 1].htmlElement.offsetHeight;
+            translateBuffer += rows[i - 1].getMeasuredHeight();
             rows[i].setTranslateY(translateBuffer);
         }
         if (this.gridHeightOverflow > 0) {
@@ -1143,7 +1168,7 @@ class RowsVirtualizer {
 
         if (preLastRow && preLastRow.index === lastRow.index - 1) {
             lastRow.setTranslateY(
-                preLastRow.htmlElement.offsetHeight + translateBuffer
+                preLastRow.getMeasuredHeight() + translateBuffer
             );
         }
     }

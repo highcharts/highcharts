@@ -72,6 +72,12 @@ class TableRow extends Row {
      */
     public translateY: number = 0;
 
+    /**
+     * Cached measured height from the current virtualizer layout pass.
+     * @internal
+     */
+    public measuredHeight?: number;
+
 
     /* *
     *
@@ -291,6 +297,15 @@ class TableRow extends Row {
     public setTranslateY(value: number): void {
         this.translateY = value;
         this.htmlElement.style.transform = `translateY(${value}px)`;
+    }
+
+    /**
+     * Returns the current row height without forcing a layout read when a
+     * measured height is already cached for the active layout pass.
+     * @internal
+     */
+    public getMeasuredHeight(): number {
+        return this.measuredHeight ?? this.htmlElement.offsetHeight;
     }
 
     /**
