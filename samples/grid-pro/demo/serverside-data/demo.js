@@ -80,14 +80,7 @@ Grid.grid('container', {
         width: 80
     }],
     pagination: {
-        enabled: true,
-        pageSize: 10,
-        controls: {
-            pageSizeSelector: {
-                enabled: true,
-                options: [5, 10, 20, 50]
-            }
-        }
+        enabled: true
     },
     responsive: {
         rules: [{
