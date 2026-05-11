@@ -1319,7 +1319,7 @@ function heatmap() {
 
                     yAxis: [
                         {
-                            categories: countries,
+                            categories: states,
                             visible: true,
                             title: {
                                 text: null
