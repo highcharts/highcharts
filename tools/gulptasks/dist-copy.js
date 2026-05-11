@@ -261,6 +261,13 @@ function distCopy() {
 
             LogLib.success('Created', directory);
 
+            if (distProduct === 'Highcharts') {
+                FsLib.copyFile(
+                    'SECURITY.md',
+                    Path.join(TARGET_DIRECTORY, product, 'SECURITY.md')
+                );
+            }
+
             if (distProduct === 'Grid') {
                 // No need to copy CSS, GFX, i18n, and Graphics for Grid from root
                 continue;
