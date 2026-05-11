@@ -1236,7 +1236,7 @@ function heatmap() {
 
                     subtitle: {
                         useHTML: true,
-                        text: 'Source: <a href="https://ourworldindata.org/vaccination" target="_blank">Our World in Data</a>',
+                        text: 'Source: <a href="https://ourworldindata.org/vaccination" target="_blank" rel="noopener noreferrer">Our World in Data</a>',
                         align: 'left',
                         y: 15,
                         style: {
@@ -1347,7 +1347,7 @@ function heatmap() {
 
                     colorAxis: {
                         min: 0,
-                        max: 3,
+                        max: Math.log10(1001),
                         title: {
                             rotation: 90,
                             text: 'Cases per 100,000 (log scale)',
