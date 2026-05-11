@@ -20,7 +20,7 @@ import type ColorType from '../Color/ColorType';
 import type { CursorValue } from '../Renderer/CSSObject';
 import type DashStyleValue from '../Renderer/DashStyleValue';
 import type DataTableCore from '../../Data/DataTableCore';
-import type DataTableOptions from '../../Data/DataTableOptions';
+import type { DataTableOptionsObject } from '../../Data/DataTableOptions';
 import type { DeepPartial } from '../../Shared/Types';
 import type { EventCallback } from '../Callback';
 import type Point from './Point';
@@ -705,7 +705,7 @@ export interface SeriesOptions {
      *
      * @since next
      */
-    dataTable?: DataTableCore|DataTableOptions;
+    dataTable?: DataTableCore|DataTableOptionsObject;
     enableMouseTracking?: boolean;
 
     /**

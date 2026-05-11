@@ -31,7 +31,7 @@ import type {
     RowEvent,
     RowObject
 } from '../../Data/DataTable';
-import type DataTableOptions from '../../Data/DataTableOptions';
+import type { DataTableOptionsObject } from '../../Data/DataTableOptions';
 import type { DeepPartial, TypedArray } from '../../Shared/Types';
 import type { EventCallback } from '../Callback';
 import type KDPointSearchObjectBase from './KDPointSearchObjectBase';
@@ -418,7 +418,7 @@ class Series {
     public dataTable!: DataTableCore;
 
     /** @internal */
-    public dataTableOptions?: DataTableOptions;
+    public dataTableOptions?: DataTableOptionsObject;
 
     /** @internal */
     public dataTableColumns?: Array<Column>;
@@ -1747,7 +1747,7 @@ class Series {
      *
      * @function Highcharts.Series#setData
      *
-     * @param {Array<Highcharts.PointOptionsType>|Highcharts.DataTableOptions|Highcharts.DataTable|undefined} data
+     * @param {Array<Highcharts.PointOptionsType>|Highcharts.DataTableOptionsObject|Highcharts.DataTable|undefined} data
      *        Takes an array of data in the same format as described under
      *        `series.{type}.data` for the given series type, for example a line
      *        series would take data in the form described under
@@ -1776,7 +1776,7 @@ class Series {
     public setData(
         data?: (
             Array<PointOptions|PointShortOptions>|
-            DataTableOptions|
+            DataTableOptionsObject|
             DataTableCore
         ),
         redraw: boolean = true,
@@ -2033,12 +2033,12 @@ class Series {
      * options object. This corresponds to the `data` series option. Called
      * from the official `setData` method.
      *
-     * @param {Highcharts.DataTableOptions|Highcharts.DataTable} data
+     * @param {Highcharts.DataTableOptionsObject|Highcharts.DataTable} data
      *        The data array
      * @internal
      */
     public setDataFromTable(
-        data?: (DataTableOptions|DataTableCore)
+        data?: (DataTableOptionsObject|DataTableCore)
     ): void {
         const { chart, options, dataTable: table } = this,
             seriesDataTable = chart.getDataTable(options),

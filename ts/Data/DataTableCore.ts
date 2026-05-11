@@ -29,7 +29,7 @@ import type {
     ColumnCollection as DataTableColumnCollection,
     RowObject as DataTableRowObject
 } from './DataTable.js';
-import type DataTableOptions from './DataTableOptions.js';
+import type { DataTableOptionsObject } from './DataTableOptions.js';
 
 import ColumnUtils from './ColumnUtils.js';
 const { setLength, splice } = ColumnUtils;
@@ -73,13 +73,13 @@ import { uniqueKey } from '../Core/Utilities.js';
  * @class
  * @name Highcharts.DataTable
  *
- * @param {Highcharts.DataTableOptions} [options]
+ * @param {Highcharts.DataTableOptionsObject} [options]
  * Options to initialize the new DataTable instance.
  */
 class DataTableCore {
 
     public constructor(
-        options: DataTableOptions = {}
+        options: DataTableOptionsObject = {}
     ) {
         this.autoId = !options.id;
         this.columns = {};
@@ -485,18 +485,18 @@ export default DataTableCore;
 
 /**
  * Options for the `DataTable` or `DataTableCore` classes.
- * @interface Highcharts.DataTableOptions
+ * @interface Highcharts.DataTableOptionsObject
  *//**
  * The column options for the data table. The columns are defined by an object
  * where the key is the column ID and the value is an array of the column
  * values.
  *
- * @name Highcharts.DataTableOptions.columns
+ * @name Highcharts.DataTableOptionsObject.columns
  * @type {Highcharts.DataTableColumnCollection|undefined}
  *//**
  * Custom ID to identify the new DataTable instance.
  *
- * @name Highcharts.DataTableOptions.id
+ * @name Highcharts.DataTableOptionsObject.id
  * @type {string|undefined}
  */
 

@@ -447,7 +447,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      * @sample {highmaps} maps/datatable/series-datatable
      *        Series-level data table
      *
-     * @type      {Highcharts.DataTable|Highcharts.DataTableOptions}
+     * @type      {Highcharts.DataTable|Highcharts.DataTableOptionsObject}
      * @since     next
      * @apioption plotOptions.series.dataTable
      */
