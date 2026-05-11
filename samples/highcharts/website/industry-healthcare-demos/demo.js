@@ -1188,9 +1188,13 @@ function heatmap() {
             csv: csv,
 
             parsed: function (columns) {
-                const countries = [...new Set(columns[0].slice(1))];
+                const states = [...new Set(columns[0].slice(1))];
 
-                const data = columns[0].slice(1).map((country, i) => {
+                const stateIndex = new Map(
+                    states.map((state, index) => [state, index])
+                );
+
+                const data = columns[0].slice(1).map((state, i) => {
                     const year = Number(columns[1][i + 1]);
                     const rawRate = columns[4][i + 1] === '' ?
                         null :
@@ -1206,7 +1210,7 @@ function heatmap() {
 
                     return {
                         x: year,
-                        y: countries.indexOf(country),
+                        y: stateIndex.get(state),
                         // Log-style color value so smaller outbreaks still show
                         value: Math.log10(rawRate + 1),
                         rawRate: rawRate
@@ -1384,7 +1388,7 @@ function heatmap() {
                         outside: true,
                         formatter: function () {
                             return (
-                                '<b>' + countries[this.point.y] + '</b><br/>' +
+                                '<b>' + states[this.point.y] + '</b><br/>' +
                                 'Year: ' + this.point.x + '<br/>' +
                                 'Case rate: <b>' +
                                 Highcharts.numberFormat(this.point.rawRate, 2) +
