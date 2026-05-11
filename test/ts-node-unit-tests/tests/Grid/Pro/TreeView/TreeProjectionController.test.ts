@@ -7,13 +7,20 @@ function installGridDOMGlobals(
     win: any,
     doc: Document
 ): void {
-    global.window = win;
-    global.document = doc;
-    global.ResizeObserver = win.ResizeObserver;
-    global.requestAnimationFrame = (callback: FrameRequestCallback): number => {
+    const requestAnimationFrame = (
+        callback: FrameRequestCallback
+    ): number => {
         callback(0);
         return 0;
     };
+
+    global.window = win;
+    global.document = doc;
+    global.ResizeObserver = win.ResizeObserver;
+    global.requestAnimationFrame = requestAnimationFrame;
+    global.cancelAnimationFrame = (): void => {};
+    win.requestAnimationFrame = requestAnimationFrame;
+    win.cancelAnimationFrame = (): void => {};
 }
 
 describe('TreeProjectionController', () => {
@@ -56,7 +63,7 @@ describe('TreeProjectionController', () => {
         );
 
         deepStrictEqual(
-            grid.presentationTable.columns.id,
+            (grid.dataProvider as any).getDataTable(true).columns.id,
             [3, 1, 2],
             'Tree projection should order roots by the default descending sort.'
         );
@@ -85,7 +92,7 @@ describe('TreeProjectionController', () => {
         );
 
         deepStrictEqual(
-            grid.presentationTable.columns.id,
+            (grid.dataProvider as any).getDataTable(true).columns.id,
             [1, 2, 3],
             'Tree projection should preserve root order defined by custom compare.'
         );

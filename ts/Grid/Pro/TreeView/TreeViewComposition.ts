@@ -4,8 +4,9 @@
  *
  *  (c) 2020-2026 Highsoft AS
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *  Authors:
  *  - Dawid Dragula
@@ -24,8 +25,16 @@
 import type Grid from '../../Core/Grid';
 import type { RowId } from '../../Core/Data/DataProvider';
 import type Table from '../../Core/Table/Table';
+import type { RestoreCellFocusEvent } from '../../Core/Table/Table';
+import type TableRow from '../../Core/Table/Body/TableRow';
 import type TableCell from '../../Core/Table/Body/TableCell';
-import type { TreeViewOptions } from './TreeViewTypes';
+import type {
+    TreeInputPathSeparator,
+    TreeViewOptions
+} from './TreeViewTypes';
+import type {
+    ResolvedTreeViewOptions
+} from './TreeViewOptionsNormalizer';
 import type {
     AfterTreeRowToggleEvent,
     BeforeTreeRowToggleEvent,
@@ -34,9 +43,11 @@ import type {
 
 import Globals from '../../Core/Globals.js';
 import TreeProjectionController from './TreeProjectionController.js';
+import TreeStickyRowController from './TreeStickyRowController.js';
 import TreeViewGlobals from './TreeViewGlobals.js';
 import { createGridIcon } from '../../Core/UI/SvgIcons.js';
-import { addEvent, pushUnique } from '../../../Shared/Utilities.js';
+import { addEvent, defined, pushUnique } from '../../../Shared/Utilities.js';
+import { waitForAnimationFrame } from '../../Core/GridUtils.js';
 
 
 /* *
@@ -49,16 +60,25 @@ type TreeToggleClickListener = (event: MouseEvent) => void;
 type TreeToggleDblClickListener = (event: MouseEvent) => void;
 type TreeToggleMouseDownListener = (event: MouseEvent) => void;
 type TreeToggleKeyDownListener = (event: KeyboardEvent) => void;
+type TreeToggleWheelListener = (event: WheelEvent) => void;
+type TreeToggleScrollListener = () => void;
 type TreeToggleContext = {
     cell: TableCell;
     controller: TreeProjectionController;
+    isExpanded: boolean;
     rowId: RowId;
+};
+type TreeToggleAnchor = {
+    top: number;
 };
 type TreeToggleListeners = {
     click: TreeToggleClickListener;
     dblClick: TreeToggleDblClickListener;
     mouseDown: TreeToggleMouseDownListener;
     keyDown: TreeToggleKeyDownListener;
+    wheel?: TreeToggleWheelListener;
+    scroll?: TreeToggleScrollListener;
+    stickyBody?: HTMLElement;
 };
 
 const treeToggleAttribute = 'data-hcg-tree-toggle';
@@ -87,12 +107,160 @@ export function compose(
     }
 
     addEvent(GridClass, 'beforeLoad', onBeforeLoad);
+    addEvent(GridClass, 'afterLoad', onAfterLoad);
     addEvent(GridClass, 'beforeDestroy', onBeforeDestroy);
+    addEvent(GridClass, 'afterRedraw', onAfterRedraw);
     addEvent(GridClass, 'beforeTreeRowToggle', onBeforeTreeRowToggle);
     addEvent(GridClass, 'afterTreeRowToggle', onAfterTreeRowToggle);
     addEvent(TableClass, 'beforeInit', onTableBeforeInit);
+    addEvent(TableClass, 'afterInit', onTableAfterInit);
+    addEvent(TableClass, 'afterReflow', onTableAfterReflow);
+    addEvent(
+        TableClass,
+        'beforeRestoreCellFocus',
+        onTableBeforeRestoreCellFocus
+    );
+    addEvent(TableClass, 'getViewportTopInset', onTableGetViewportTopInset);
     addEvent(TableClass, 'afterDestroy', onTableAfterDestroy);
     addEvent(TableCellClass, 'afterRender', onAfterCellRender);
+}
+
+/**
+ * Focuses a rendered row in a way that preserves viewport scroll behavior.
+ *
+ * @param table
+ * Table viewport handling the event.
+ *
+ * @param row
+ * Target row.
+ *
+ * @param columnIndex
+ * Target column index.
+ */
+function focusRenderedRow(
+    table: Table,
+    row: TableRow | undefined,
+    columnIndex: number
+): boolean {
+    if (!row) {
+        return false;
+    }
+
+    if (row.htmlElement.parentElement === table.tbodyElement) {
+        table.focusCellByRowIndex(row.index, columnIndex);
+    } else {
+        row.cells[columnIndex]?.htmlElement.focus({
+            preventScroll: true
+        });
+    }
+
+    return true;
+}
+
+/**
+ * Handles tree-aware keyboard navigation for body and sticky rows.
+ *
+ * @param table
+ * Table viewport handling the event.
+ *
+ * @param cell
+ * Focused cell.
+ *
+ * @param event
+ * Keyboard event to handle.
+ */
+function handleTreeBodyNavigation(
+    table: Table,
+    cell: TableCell,
+    event: KeyboardEvent
+): boolean {
+    const { column, row } = cell;
+    const { header } = table;
+    const changeFocusKeys: Record<string, [number, number]> = {
+        ArrowDown: [1, 0],
+        ArrowUp: [-1, 0],
+        ArrowLeft: [0, -1],
+        ArrowRight: [0, 1]
+    };
+    const dir = changeFocusKeys[event.key];
+
+    if (!dir) {
+        return false;
+    }
+
+    event.preventDefault();
+    event.stopImmediatePropagation();
+
+    const nextColumnIndex = column.index + dir[1];
+
+    if (!dir[0]) {
+        row.cells[nextColumnIndex]?.htmlElement.focus({
+            preventScroll: true
+        });
+        return true;
+    }
+
+    const renderedRows = table.getRenderedRows();
+    const renderedRowIndex = renderedRows.indexOf(row);
+    const nextRenderedRow = renderedRows[renderedRowIndex + dir[0]];
+    const isViewportBodyRow = row.htmlElement.parentElement ===
+        table.tbodyElement;
+    const nextRowIndex = row.index + dir[0];
+
+    if (renderedRowIndex > -1) {
+        if (
+            !isViewportBodyRow ||
+            nextRowIndex < 0 ||
+            nextRowIndex >= table.rowsVirtualizer.rowCount
+        ) {
+            if (focusRenderedRow(table, nextRenderedRow, nextColumnIndex)) {
+                return true;
+            }
+        }
+    }
+
+    if (nextRowIndex < 0 && header) {
+        const extraRowIdx = header.rows.length + nextRowIndex;
+
+        if (extraRowIdx + 1 > header.levels) {
+            header.rows[extraRowIdx]
+                .cells[nextColumnIndex]?.htmlElement.focus();
+        } else {
+            table.columns[nextColumnIndex]
+                ?.header?.htmlElement.focus();
+        }
+
+        return true;
+    }
+
+    const stickyRowController = table.treeStickyRowController;
+    if (stickyRowController) {
+        stickyRowController.focusCellByRowIndex(nextRowIndex, nextColumnIndex);
+    } else {
+        table.focusCellByRowIndex(nextRowIndex, nextColumnIndex);
+    }
+    return true;
+}
+
+/**
+ * Prevents viewport body focus restoration when the target cell is already
+ * focused in the sticky overlay.
+ *
+ * @param event
+ * Focus restoration event emitted by the viewport.
+ */
+function onTableBeforeRestoreCellFocus(
+    this: Table,
+    event: RestoreCellFocusEvent
+): void {
+    const stickyCell = this.treeStickyRowController?.getRenderedStickyCell(
+        event.rowIndex,
+        event.columnIndex
+    );
+
+    if (stickyCell?.htmlElement === document.activeElement) {
+        event.preventDefault?.();
+    }
 }
 
 /**
@@ -102,6 +270,13 @@ function onBeforeLoad(this: Grid): void {
     if (!this.treeView) {
         this.treeView = new TreeProjectionController(this);
     }
+}
+
+/**
+ * Schedules sticky parent row refresh after initial render.
+ */
+function onAfterLoad(this: Grid): void {
+    this.viewport?.treeStickyRowController?.scheduleRefresh(false, true);
 }
 
 /**
@@ -149,6 +324,13 @@ function onAfterTreeRowToggle(
 }
 
 /**
+ * Schedules sticky parent row refresh after grid redraws.
+ */
+function onAfterRedraw(this: Grid): void {
+    this.viewport?.treeStickyRowController?.scheduleRefresh(true, true);
+}
+
+/**
  * Returns tree-toggle context for an element within a tree cell.
  *
  * @param table
@@ -161,13 +343,14 @@ function getTreeToggleContext(
     table: Table,
     element: Element
 ): TreeToggleContext | undefined {
-    const cell = table.getCellFromElement(element) as TableCell | undefined;
+    const cell = table.treeStickyRowController?.getCellFromElement(element) ||
+        (table.getCellFromElement(element) as TableCell | undefined);
     if (!cell) {
         return;
     }
 
     const controller = cell.row.viewport.grid.treeView;
-    const options = controller?.getOptions();
+    const options = controller?.options;
     const projectionState = controller?.getProjectionState();
     const treeColumn = (
         options?.treeColumn ||
@@ -191,7 +374,98 @@ function getTreeToggleContext(
         return;
     }
 
-    return { cell, controller, rowId };
+    return {
+        cell,
+        controller,
+        isExpanded: rowState.isExpanded,
+        rowId
+    };
+}
+
+/**
+ * Returns the last path segment rendered for a path-based tree node.
+ *
+ * @param value
+ * Raw path value.
+ *
+ * @param separator
+ * Path separator definition.
+ */
+function getLastPathSegment(
+    value: string,
+    separator: TreeInputPathSeparator
+): string {
+    if (typeof separator === 'function') {
+        const segments = separator(value);
+        const lastSegment = Array.isArray(segments) ?
+            segments[segments.length - 1] :
+            void 0;
+
+        return typeof lastSegment === 'string' && lastSegment.length ?
+            lastSegment :
+            value;
+    }
+
+    if (separator instanceof RegExp) {
+        const regex = new RegExp(
+            separator.source,
+            separator.flags.includes('g') ?
+                separator.flags :
+                separator.flags + 'g'
+        );
+        let lastMatch: string | undefined;
+        let match: RegExpExecArray | null;
+
+        while ((match = regex.exec(value)) !== null) {
+            if (match[0]) {
+                lastMatch = match[0];
+            } else {
+                ++regex.lastIndex;
+            }
+        }
+
+        return lastMatch || value;
+    }
+
+    const separatorIndex = value.lastIndexOf(separator);
+
+    if (separatorIndex < 0) {
+        return value;
+    }
+
+    return value.slice(separatorIndex + separator.length);
+}
+
+/**
+ * Returns the path segment that should be rendered in the tree column.
+ *
+ * @param value
+ * Raw cell value.
+ *
+ * @param columnId
+ * Rendered column ID.
+ *
+ * @param options
+ * Normalized Tree View options.
+ */
+function getPathSegmentDisplayValue(
+    value: unknown,
+    columnId: string,
+    options: ResolvedTreeViewOptions
+): string | undefined {
+    const input = options.input;
+
+    if (
+        !input ||
+        input.type !== 'path' ||
+        input.showFullPath ||
+        columnId !== input.pathColumn ||
+        typeof value !== 'string'
+    ) {
+        return;
+    }
+
+    return getLastPathSegment(value, input.separator);
 }
 
 /**
@@ -225,13 +499,146 @@ function restoreTreeCellFocus(
     context: TreeToggleContext
 ): void {
     const columnIndex = context.cell.column.index;
-    const restoredCell = context.cell.row.viewport
-        .getRow(context.rowId)
-        ?.cells[columnIndex];
+    const viewport = context.cell.row.viewport;
+    const restoredCell = (
+        viewport.treeStickyRowController?.getRenderedRow(context.rowId) ||
+        viewport.getRow(context.rowId)
+    )?.cells[columnIndex];
 
-    restoredCell?.htmlElement.focus({
-        preventScroll: true
-    });
+    if (restoredCell) {
+        restoredCell.htmlElement.focus({
+            preventScroll: true
+        });
+        return;
+    }
+
+    const rowIndex = context.controller
+        .getProjectionState()
+        ?.rowIds.indexOf(context.rowId);
+
+    if (typeof rowIndex === 'number' && rowIndex > -1) {
+        const stickyRowController = viewport.treeStickyRowController;
+        if (stickyRowController) {
+            stickyRowController.focusCellByRowIndex(rowIndex, columnIndex);
+        } else {
+            viewport.focusCellByRowIndex(rowIndex, columnIndex);
+        }
+    }
+}
+
+/**
+ * Captures the current visual anchor for a collapsing tree row.
+ *
+ * @param context
+ * Tree-toggle context captured from the current DOM cell.
+ */
+function captureTreeToggleAnchor(
+    context: TreeToggleContext
+): TreeToggleAnchor | undefined {
+    if (!context.isExpanded) {
+        return;
+    }
+
+    const rowElement = context.cell.htmlElement.parentElement;
+
+    if (!(rowElement instanceof HTMLTableRowElement)) {
+        return;
+    }
+
+    return {
+        top: rowElement.getBoundingClientRect().top
+    };
+}
+
+/**
+ * Restores the collapsed tree row to its previous visual anchor position.
+ *
+ * @param context
+ * Tree-toggle context captured from the current DOM cell.
+ *
+ * @param anchor
+ * Previously captured anchor position.
+ */
+async function restoreTreeToggleAnchor(
+    context: TreeToggleContext,
+    anchor?: TreeToggleAnchor
+): Promise<void> {
+    if (!anchor) {
+        return;
+    }
+
+    const viewport = context.cell.row.viewport;
+    const renderedRow = (
+        viewport.treeStickyRowController?.getRenderedRow(context.rowId) ||
+        viewport.getRow(context.rowId)
+    );
+
+    if (!renderedRow?.htmlElement.isConnected) {
+        return;
+    }
+
+    const tbody = viewport.tbodyElement;
+    const delta = renderedRow.htmlElement.getBoundingClientRect().top -
+        anchor.top;
+
+    if (Math.abs(delta) < 1) {
+        return;
+    }
+
+    const nextScrollTop = Math.max(
+        0,
+        Math.min(
+            tbody.scrollTop + delta,
+            Math.max(tbody.scrollHeight - tbody.clientHeight, 0)
+        )
+    );
+
+    if (nextScrollTop === tbody.scrollTop) {
+        return;
+    }
+
+    tbody.scrollTop = nextScrollTop;
+
+    if (viewport.virtualRows) {
+        viewport.rowsVirtualizer.scroll();
+    }
+
+    viewport.treeStickyRowController?.handleScroll();
+    await waitForAnimationFrame();
+}
+
+/**
+ * Converts wheel delta to CSS pixels.
+ *
+ * @param event
+ * Wheel event raised over the sticky overlay.
+ *
+ * @param viewportSize
+ * The relevant viewport size for page-based deltas.
+ *
+ * @param lineSize
+ * Pixel size used for line-based deltas.
+ */
+function normalizeWheelDelta(
+    event: WheelEvent,
+    viewportSize: number,
+    lineSize: number
+): [number, number] {
+    if (event.deltaMode === WheelEvent.DOM_DELTA_LINE) {
+        return [
+            event.deltaX * lineSize,
+            event.deltaY * lineSize
+        ];
+    }
+
+    if (event.deltaMode === WheelEvent.DOM_DELTA_PAGE) {
+        return [
+            event.deltaX * viewportSize,
+            event.deltaY * viewportSize
+        ];
+    }
+
+    return [event.deltaX, event.deltaY];
 }
 
 /**
@@ -247,6 +654,7 @@ async function toggleTreeRow(
     context: TreeToggleContext,
     originalEvent?: TreeRowToggleTriggerEvent
 ): Promise<void> {
+    const anchor = captureTreeToggleAnchor(context);
     const changed = await context.controller.toggleRow(
         context.rowId,
         true,
@@ -254,6 +662,8 @@ async function toggleTreeRow(
     );
 
     if (changed) {
+        await waitForAnimationFrame();
+        await restoreTreeToggleAnchor(context, anchor);
         restoreTreeCellFocus(context);
     }
 }
@@ -262,25 +672,35 @@ async function toggleTreeRow(
  * Adds delegated listeners for tree toggle buttons and keyboard shortcuts.
  */
 function onTableBeforeInit(this: Table): void {
+    const stickyRowController = new TreeStickyRowController(this);
+    this.treeStickyRowController = stickyRowController;
+    const stickyBody = stickyRowController.getStickyBodyElement();
+
     const clickListener = (event: MouseEvent): void => {
         if (!(event.target instanceof Element)) {
             return;
         }
 
         const toggleButton = event.target.closest(treeToggleSelector);
-        if (!toggleButton || !this.tbodyElement.contains(toggleButton)) {
+        if (
+            toggleButton &&
+            stickyRowController.containsElement(toggleButton)
+        ) {
+            event.preventDefault();
+            event.stopImmediatePropagation();
+
+            const context = getTreeToggleContext(this, toggleButton);
+            if (!context) {
+                return;
+            }
+
+            void toggleTreeRow(context, event);
             return;
         }
 
-        event.preventDefault();
-        event.stopImmediatePropagation();
-
-        const context = getTreeToggleContext(this, toggleButton);
-        if (!context) {
-            return;
+        if (event.currentTarget === stickyBody) {
+            stickyRowController.getCellFromElement(event.target)?.onClick();
         }
-
-        void toggleTreeRow(context, event);
     };
 
     const dblClickListener = (event: MouseEvent): void => {
@@ -294,6 +714,16 @@ function onTableBeforeInit(this: Table): void {
 
         const context = getTreeToggleContext(this, event.target);
         if (!context) {
+            if (event.currentTarget === stickyBody) {
+                const cell = stickyRowController.getCellFromElement(
+                    event.target
+                );
+                if (cell && 'onDblClick' in cell) {
+                    (
+                        cell as unknown as { onDblClick(e: MouseEvent): void }
+                    ).onDblClick(event);
+                }
+            }
             return;
         }
 
@@ -310,49 +740,174 @@ function onTableBeforeInit(this: Table): void {
         }
 
         const toggleButton = event.target.closest(treeToggleSelector);
-        if (!toggleButton || !this.tbodyElement.contains(toggleButton)) {
+        if (
+            toggleButton &&
+            stickyRowController.containsElement(toggleButton)
+        ) {
+            const context = getTreeToggleContext(this, toggleButton);
+            if (!context) {
+                return;
+            }
+
+            event.preventDefault();
+            context.cell.htmlElement.focus();
             return;
         }
 
-        const context = getTreeToggleContext(this, toggleButton);
-        if (!context) {
-            return;
+        if (event.currentTarget === stickyBody) {
+            const cell = stickyRowController.getCellFromElement(event.target);
+            if (cell && 'onMouseDown' in cell) {
+                (
+                    cell as unknown as { onMouseDown(e: MouseEvent): void }
+                ).onMouseDown(event);
+            }
         }
-
-        event.preventDefault();
-        context.cell.htmlElement.focus();
     };
 
     const keyDownListener = (event: KeyboardEvent): void => {
+        const cell = stickyRowController.getCellFromElement(event.target);
+
         if (
-            event.key !== 'Enter' &&
-            event.key !== ' ' &&
-            event.key !== 'Spacebar'
+            (
+                event.key === 'Enter' ||
+                event.key === ' ' ||
+                event.key === 'Spacebar'
+            ) &&
+            cell
+        ) {
+            const context = getTreeToggleContextFromKeyboardEvent(this, event);
+            if (context) {
+                event.preventDefault();
+                event.stopImmediatePropagation();
+
+                void toggleTreeRow(context, event);
+                return;
+            }
+        }
+
+        if (!cell) {
+            return;
+        }
+
+        if (handleTreeBodyNavigation(this, cell, event)) {
+            return;
+        }
+
+        if (
+            event.currentTarget === stickyBody &&
+            event.key === 'Enter'
+        ) {
+            event.preventDefault();
+            event.stopImmediatePropagation();
+            cell.onClick();
+        }
+    };
+
+    const wheelListener = (event: WheelEvent): void => {
+        if (event.ctrlKey) {
+            return;
+        }
+
+        const tbody = this.tbodyElement;
+        const [deltaX, deltaY] = normalizeWheelDelta(
+            event,
+            tbody.clientHeight,
+            this.rowsVirtualizer.defaultRowHeight
+        );
+        const maxScrollTop = Math.max(
+            tbody.scrollHeight - tbody.clientHeight,
+            0
+        );
+        const maxScrollLeft = Math.max(
+            tbody.scrollWidth - tbody.clientWidth,
+            0
+        );
+        const nextScrollTop = Math.max(
+            0,
+            Math.min(tbody.scrollTop + deltaY, maxScrollTop)
+        );
+        const nextScrollLeft = Math.max(
+            0,
+            Math.min(tbody.scrollLeft + deltaX, maxScrollLeft)
+        );
+
+        if (
+            nextScrollTop === tbody.scrollTop &&
+            nextScrollLeft === tbody.scrollLeft
         ) {
             return;
         }
 
-        const context = getTreeToggleContextFromKeyboardEvent(this, event);
-        if (!context) {
-            return;
-        }
-
         event.preventDefault();
-        event.stopImmediatePropagation();
-
-        void toggleTreeRow(context, event);
+        tbody.scrollTop = nextScrollTop;
+        tbody.scrollLeft = nextScrollLeft;
     };
 
     this.tbodyElement.addEventListener('click', clickListener);
     this.tbodyElement.addEventListener('dblclick', dblClickListener);
     this.tbodyElement.addEventListener('mousedown', mouseDownListener);
     this.tbodyElement.addEventListener('keydown', keyDownListener);
+    stickyBody.addEventListener('click', clickListener);
+    stickyBody.addEventListener('dblclick', dblClickListener);
+    stickyBody.addEventListener('mousedown', mouseDownListener);
+    stickyBody.addEventListener('keydown', keyDownListener);
+    stickyBody.addEventListener('wheel', wheelListener, {
+        passive: false
+    });
     treeToggleListeners.set(this, {
         click: clickListener,
         dblClick: dblClickListener,
         mouseDown: mouseDownListener,
-        keyDown: keyDownListener
+        keyDown: keyDownListener,
+        wheel: wheelListener,
+        stickyBody
     });
+}
+
+/**
+ * Adds scroll listener for sticky parent row positioning after the table is
+ * fully initialized.
+ */
+function onTableAfterInit(this: Table): void {
+    const listeners = treeToggleListeners.get(this);
+    if (!listeners) {
+        return;
+    }
+
+    const scrollListener = (): void => {
+        this.treeStickyRowController?.handleScroll();
+    };
+
+    this.tbodyElement.addEventListener('scroll', scrollListener);
+    listeners.scroll = scrollListener;
+
+    this.treeStickyRowController?.scheduleRefresh(false, true);
+}
+
+/**
+ * Repositions sticky parent rows after table reflow.
+ */
+function onTableAfterReflow(this: Table): void {
+    this.treeStickyRowController?.scheduleRefresh(false, true);
+}
+
+/**
+ * Extends the visible viewport inset by the current sticky tree stack height.
+ *
+ * @param e
+ * Event payload with the current top inset.
+ *
+ * @param e.top
+ * Current top inset reserved by composed table features.
+ */
+function onTableGetViewportTopInset(
+    this: Table,
+    e: { top: number }
+): void {
+    e.top = Math.max(
+        e.top,
+        this.treeStickyRowController?.getStickyRowsHeight() || 0
+    );
 }
 
 /**
@@ -368,7 +923,23 @@ function onTableAfterDestroy(this: Table): void {
     this.tbodyElement.removeEventListener('dblclick', listeners.dblClick);
     this.tbodyElement.removeEventListener('mousedown', listeners.mouseDown);
     this.tbodyElement.removeEventListener('keydown', listeners.keyDown);
+    listeners.stickyBody?.removeEventListener('click', listeners.click);
+    listeners.stickyBody?.removeEventListener('dblclick', listeners.dblClick);
+    listeners.stickyBody?.removeEventListener(
+        'mousedown',
+        listeners.mouseDown
+    );
+    listeners.stickyBody?.removeEventListener('keydown', listeners.keyDown);
+    if (listeners.wheel) {
+        listeners.stickyBody?.removeEventListener('wheel', listeners.wheel);
+    }
+    if (listeners.scroll) {
+        this.tbodyElement.removeEventListener('scroll', listeners.scroll);
+    }
     treeToggleListeners.delete(this);
+
+    this.treeStickyRowController?.destroy();
+    delete this.treeStickyRowController;
 }
 
 /**
@@ -377,7 +948,7 @@ function onTableAfterDestroy(this: Table): void {
 function onAfterCellRender(this: TableCell): void {
     const grid = this.row.viewport.grid;
     const controller = grid.treeView;
-    const options = controller?.getOptions();
+    const options = controller?.options;
     const projectionState = controller?.getProjectionState();
 
     if (!options || !projectionState) {
@@ -451,8 +1022,23 @@ function onAfterCellRender(this: TableCell): void {
     const valueContainer = document.createElement('span');
     valueContainer.className = TreeViewGlobals.classNames.value;
 
-    while (cellElement.firstChild) {
-        valueContainer.appendChild(cellElement.firstChild);
+    const pathDisplayValue = getPathSegmentDisplayValue(
+        this.value,
+        this.column.id,
+        options
+    );
+
+    if (
+        !defined(this.column.options.cells?.format) &&
+        !defined(this.column.options.cells?.formatter) &&
+        defined(pathDisplayValue)
+    ) {
+        cellElement.textContent = '';
+        valueContainer.textContent = pathDisplayValue;
+    } else {
+        while (cellElement.firstChild) {
+            valueContainer.appendChild(cellElement.firstChild);
+        }
     }
 
     wrapper.appendChild(toggleContainer);
@@ -480,6 +1066,12 @@ declare module '../../Core/Grid' {
     }
 }
 
+declare module '../../Core/Table/Table' {
+    export default interface Table {
+        treeStickyRowController?: TreeStickyRowController;
+    }
+}
+
 declare module '../GridEvents' {
     interface GridEvents {
         /**
@@ -500,6 +1092,9 @@ declare module '../../Core/Data/LocalDataProvider' {
     interface LocalDataProviderOptions {
         /**
          * Tree view options for local provider (Grid Pro module).
+         *
+         * @sample grid-pro/tree-view/parent-id Parent ID tree input
+         * @sample grid-pro/tree-view/input-path Path tree input
          */
         treeView?: TreeViewOptions;
     }

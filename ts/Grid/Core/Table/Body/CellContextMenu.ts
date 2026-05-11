@@ -4,8 +4,9 @@
  *
  *  (c) 2020-2026 Highsoft AS
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *  Authors:
  *  - Mikkel Espolin Birkeland
@@ -23,9 +24,12 @@
 import type TableCell from './TableCell';
 
 import ContextMenu from '../../UI/ContextMenu.js';
-import ContextMenuButton from '../../UI/ContextMenuButton.js';
+import CellContextMenuBuiltInActions from './CellContextMenuBuiltInActions.js';
+import {
+    openFocusedSubMenu,
+    renderResolvedCellContextMenuItems
+} from './CellContextSubMenu.js';
 import { addEvent } from '../../../../Shared/Utilities.js';
-
 
 /* *
  *
@@ -82,37 +86,26 @@ class CellContextMenu extends ContextMenu {
             return;
         }
 
-        const items = cell.column?.options.cells?.contextMenu?.items || [];
+        const items = CellContextMenuBuiltInActions.resolveCellContextMenuItems(
+            cell
+        );
 
-        for (const item of items) {
-            if (item.separator) {
-                this.addDivider();
-                continue;
-            }
+        renderResolvedCellContextMenuItems(this, cell, items);
+    }
 
-            const btn = new ContextMenuButton({
-                label: item.label,
-                icon: item.icon,
-                onClick: (): void => {
-                    if (item.disabled) {
-                        return;
-                    }
-
-                    item.onClick?.call(cell, cell);
-                    this.hide();
-                }
-            }).add(this);
-
-            if (btn && item.disabled) {
-                // Minimal disable support for v1. We don't currently have a
-                // dedicated ContextMenuButton API for disabled state.
-                // This keeps behavior consistent without introducing new CSS.
-                btn.wrapper?.querySelector('button')?.setAttribute(
-                    'disabled',
-                    ''
-                );
-            }
+    protected override onKeyDown(event: KeyboardEvent): void {
+        if (event.key === 'ArrowRight') {
+            event.preventDefault();
+            openFocusedSubMenu(this);
+            return;
         }
+
+        if (event.key === 'ArrowLeft') {
+            event.preventDefault();
+            return;
+        }
+
+        super.onKeyDown(event);
     }
 }
 

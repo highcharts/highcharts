@@ -5,9 +5,9 @@ body {
 #chart-container {
     display: flex;
     flex-wrap: wrap;
-    border: 1px solid #e3e3e8;
+    border: 1px solid var(--highcharts-neutral-color-5);
     border-radius: 7px;
-    background-color: #ebecf1;
+    background-color: var(--highcharts-neutral-color-3);
 }
 
 #map-container {
@@ -22,11 +22,11 @@ body {
     height: 50vh;
     min-height: 600px;
     min-width: 250px;
-    border: 1px solid #e3e3e8;
+    border: 1px solid var(--highcharts-neutral-color-3);
     border-radius: 7px;
     padding: 0 20px;
     margin: 12px 12px 12px 0;
-    background-color: #fff;
+    background-color: var(--highcharts-background-color);
 }
 
 #hc-tooltip {

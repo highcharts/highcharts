@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -553,9 +554,6 @@ class Axis {
 
     /** @internal */
     public staggerLines?: number;
-
-    /** @internal */
-    public staticScale?: number;
 
     /** @internal */
     public threshold?: number;
@@ -3566,9 +3564,17 @@ class Axis {
                         lineClamp
                     }));
 
-                // Reset previously shortened label (#8210)
-                } else if (label.styles.width && !css.width && !widthOption) {
-                    label.css({ width: 'auto' });
+                // Reset previously shortened label (#8210, #22961)
+                } else {
+                    const wasSquished = label.styles.width ||
+                    label.textWidth || label.styles.lineClamp;
+
+                    if (wasSquished && !css.width && !widthOption) {
+                        label.css({
+                            width: 'auto',
+                            lineClamp: 0
+                        });
+                    }
                 }
 
                 tick.rotation = attr.rotation;
@@ -3773,7 +3779,9 @@ class Axis {
             clipOffset = chart.clipOffset,
             directionFactor = [-1, 1, 1, -1][side];
 
-        let showAxis,
+        let tickRotCorr = axis.tickRotCorr || { x: 0, y: 0 },
+            absTickRotCorrX = 0,
+            showAxis,
             titleOffset = 0,
             titleOffsetOption,
             titleMargin = 0,
@@ -3797,6 +3805,8 @@ class Axis {
             });
 
             axis.renderUnsquish();
+            tickRotCorr = axis.tickRotCorr;
+            absTickRotCorrX = Math.abs(tickRotCorr.x);
 
             // Left side must be align: right and right side must
             // have align: left for labels
@@ -3823,6 +3833,9 @@ class Axis {
 
             if (axis.staggerLines) {
                 labelOffset *= axis.staggerLines;
+            }
+            if (!horiz && isNumber(axis.labelRotation)) {
+                labelOffset -= absTickRotCorrX;
             }
             axis.labelOffset = labelOffset * (axis.opposite ? -1 : 1);
 
@@ -3864,11 +3877,10 @@ class Axis {
             axisOffset[side] ? axisOffset[side] + (options.margin || 0) : 0
         );
 
-        axis.tickRotCorr = axis.tickRotCorr || { x: 0, y: 0 }; // Polar
         if (side === 0) {
             lineHeightCorrection = -axis.labelMetrics().h;
         } else if (side === 2) {
-            lineHeightCorrection = axis.tickRotCorr.y;
+            lineHeightCorrection = tickRotCorr.y;
         } else {
             lineHeightCorrection = 0;
         }
@@ -3881,14 +3893,23 @@ class Axis {
                 horiz ?
                     pick(
                         labelOptions.y,
-                        axis.tickRotCorr.y +
-                            directionFactor * labelOptions.distance
+                        tickRotCorr.y + directionFactor * labelOptions.distance
                     ) :
                     pick(
                         labelOptions.x,
-                        directionFactor * labelOptions.distance
+                        directionFactor * (
+                            labelOptions.distance - absTickRotCorrX
+                        )
                     )
             );
+
+            if (
+                !horiz &&
+                axis.labelAlign === 'center' &&
+                isNumber(axis.labelRotation)
+            ) {
+                labelOffsetPadded += absTickRotCorrX;
+            }
         }
 
         axis.axisTitleMargin = pick(titleOffsetOption, labelOffsetPadded);

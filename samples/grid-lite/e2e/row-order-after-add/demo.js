@@ -17,5 +17,5 @@ const grid = Grid.grid('container', {
 
 document.getElementById('add-row').addEventListener('click', () => {
     const dt = grid.dataProvider.getDataTable();
-    grid.dataTable.setRow([dt.rowCount + 1, 'Oranges', 150, 3.5]);
+    dt.setRow([dt.rowCount + 1, 'Oranges', 150, 3.5]);
 });

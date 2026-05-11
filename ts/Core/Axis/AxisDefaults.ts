@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -425,10 +426,11 @@ namespace AxisDefaults {
          * the mouse is over a point. Works on initial hover.
          *
          * @sample {highcharts|highstock} highcharts/tooltip/showdelay/
+         *         Show crosshair after 2 seconds
          *
          * @type      {number}
          * @default   0
-         * @since     next
+         * @since     12.6.0
          * @apioption xAxis.crosshair.showDelay
          */
 
@@ -1184,15 +1186,12 @@ namespace AxisDefaults {
              * @type      {Highcharts.CSSObject}
              */
             style: {
-                /** @internal */
-                color: Palette.neutralColor80,
-                /** @internal */
-                cursor: 'default',
                 /**
-                 * @type {number|string}
+                 * @type {Highcharts.ColorType}
                  */
+                color: Palette.neutralColor80,
+                cursor: 'default',
                 fontSize: '0.8em',
-                /** @internal */
                 textOverflow: 'ellipsis'
             }
         },
@@ -2126,7 +2125,9 @@ namespace AxisDefaults {
              * @type    {Highcharts.CSSObject}
              */
             style: {
-                /** @internal */
+                /**
+                 * @type {Highcharts.ColorType}
+                 */
                 color: Palette.neutralColor60,
                 /**
                  * @type {number|string}
@@ -2258,7 +2259,6 @@ namespace AxisDefaults {
          *         Bright grey lines from Y axis
          *
          * @type    {Highcharts.ColorType}
-         * @default #f2f2f2
          */
         minorGridLineColor: Palette.neutralColor5,
 
@@ -2286,7 +2286,6 @@ namespace AxisDefaults {
          *         Black tick marks on Y axis
          *
          * @type    {Highcharts.ColorType}
-         * @default #999999
          */
         minorTickColor: Palette.neutralColor40,
 
@@ -2342,7 +2341,6 @@ namespace AxisDefaults {
          *         Green lines
          *
          * @type    {Highcharts.ColorType}
-         * @default #e6e6e6
          */
         gridLineColor: Palette.neutralColor10,
 
@@ -3274,15 +3272,15 @@ namespace AxisDefaults {
              * @product highcharts
              */
             style: {
-                /** @internal */
+                /** @type {Highcharts.ColorType} */
                 color: Palette.neutralColor100,
+
                 /**
                  * @type {number|string}
                  */
                 fontSize: '0.7em',
-                /** @internal */
+
                 fontWeight: 'bold',
-                /** @internal */
                 textOutline: '1px contrast'
             }
         },

@@ -8,8 +8,8 @@ Rows in Highcharts Grid are served by the configured `grid.dataProvider`. Each
 column contributes one value per row, and the row index defines which values
 are grouped together in the current presentation dataset.
 
-For backward compatibility, `grid.dataTable` may still be available with
-`LocalDataProvider`, but new integrations should use `grid.dataProvider`.
+With the default `LocalDataProvider`, access the underlying `DataTable`
+through `grid.dataProvider.getDataTable()` when you need direct table access.
 
 ## Row data in configuration
 

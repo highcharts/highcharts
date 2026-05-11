@@ -4,8 +4,9 @@
  *
  *  Authors: Jon Arild Nygård / Øystein Moseng
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -23,8 +24,6 @@ import type {
 import type ButtonThemeObject from '../../Core/Renderer/SVG/ButtonThemeObject';
 import type ColorString from '../../Core/Color/ColorString';
 import type ColorType from '../../Core/Color/ColorType';
-import type GradientColor from '../../Core/Color/GradientColor';
-import { PatternObject } from '../../Extensions/PatternFill';
 import type DashStyleValue from '../../Core/Renderer/DashStyleValue';
 import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
 import type { PointMarkerOptions } from '../../Core/Series/PointOptions';
@@ -85,7 +84,6 @@ export type TreemapSeriesLayoutStartingDirectionValue = (
  *         Treegraph nodes with color variation
  *
  * @since 6.0.0
- *
  * @product highcharts
  */
 export interface TreemapSeriesLevelColorVariationOptions {
@@ -93,12 +91,8 @@ export interface TreemapSeriesLevelColorVariationOptions {
     /**
      * The key of a color variation. Currently supports `brightness` only.
      *
-     * @type {string}
-     *
      * @since 6.0.0
-     *
      * @product highcharts
-     *
      * @validvalue ["brightness"]
      */
     key?: string;
@@ -107,10 +101,7 @@ export interface TreemapSeriesLevelColorVariationOptions {
      * The ending value of a color variation. The last sibling will receive
      * this value.
      *
-     * @type {number}
-     *
      * @since 6.0.0
-     *
      * @product highcharts
      */
     to?: number;
@@ -133,7 +124,7 @@ export interface TreemapSeriesClusterOptions extends MarkerClusterOptions {
      * @type      {Highcharts.ColorType}
      * @product   highcharts
      */
-    color?: ColorString|GradientColor|PatternObject;
+    color?: ColorType;
 
     /**
      * Enable or disable Treemap grouping.

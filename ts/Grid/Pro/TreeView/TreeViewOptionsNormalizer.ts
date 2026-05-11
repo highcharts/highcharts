@@ -4,8 +4,9 @@
  *
  *  (c) 2020-2026 Highsoft AS
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *  Authors:
  *  - Dawid Dragula
@@ -22,6 +23,7 @@
  * */
 
 import type {
+    TreeInputPathSeparator,
     TreeExpandedRowIds,
     TreeViewOptions
 } from './TreeViewTypes';
@@ -42,7 +44,8 @@ export interface NormalizedTreeInputParentIdOptions {
 export interface NormalizedTreeInputPathOptions {
     type: 'path';
     pathColumn: string;
-    separator: string;
+    separator: TreeInputPathSeparator;
+    showFullPath: boolean;
 }
 
 export type NormalizedTreeInputOptions = (
@@ -51,9 +54,17 @@ export type NormalizedTreeInputOptions = (
 );
 
 export interface NormalizedTreeViewOptions {
+    input?: NormalizedTreeInputOptions;
+    treeColumn?: string;
+    expandedRowIds: TreeExpandedRowIds;
+    stickyParents: boolean;
+}
+
+export interface ResolvedTreeViewOptions {
     input: NormalizedTreeInputOptions;
     treeColumn?: string;
     expandedRowIds: TreeExpandedRowIds;
+    stickyParents: boolean;
 }
 
 const defaultParentIdInput: NormalizedTreeInputParentIdOptions = {
@@ -64,7 +75,8 @@ const defaultParentIdInput: NormalizedTreeInputParentIdOptions = {
 const defaultPathInput: NormalizedTreeInputPathOptions = {
     type: 'path',
     pathColumn: 'path',
-    separator: '/'
+    separator: '/',
+    showFullPath: false
 };
 
 
@@ -91,10 +103,12 @@ export function normalizeTreeViewOptions(
     }
 
     const expandedRowIds: TreeExpandedRowIds = treeView.expandedRowIds ?? [];
-    const normalizedInput: NormalizedTreeInputOptions = (
-        treeView.input?.type === 'path' ?
-            merge(defaultPathInput, treeView.input) :
-            merge(defaultParentIdInput, treeView.input)
+    const normalizedInput: (NormalizedTreeInputOptions|undefined) = (
+        !treeView.input ?
+            void 0 :
+            treeView.input.type === 'path' ?
+                merge(defaultPathInput, treeView.input) :
+                merge(defaultParentIdInput, treeView.input)
     );
 
     return {
@@ -104,6 +118,7 @@ export function normalizeTreeViewOptions(
             expandedRowIds === 'all' ?
                 expandedRowIds :
                 expandedRowIds.slice()
-        )
+        ),
+        stickyParents: treeView.stickyParents !== false
     };
 }
