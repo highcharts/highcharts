@@ -1336,7 +1336,8 @@ const ChartDefaults: ChartOptions = {
     backgroundColor: Palette.backgroundColor,
 
     /**
-     * The background color or gradient for the plot area.
+     * The background color or gradient for the plot area. If not set, the
+     * plot area will have the background color set to `'none'`.
      *
      * @see In styled mode, the plot background is set with the
      *      `.highcharts-plot-background` class.
@@ -1355,7 +1356,6 @@ const ChartDefaults: ChartOptions = {
      *         Gradient
      *
      * @type      {Highcharts.ColorType}
-     * @default   'none'
      * @apioption chart.plotBackgroundColor
      */
 

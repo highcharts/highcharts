@@ -701,7 +701,8 @@ export interface ChartOptions {
     pinchType?: 'x' | 'y' | 'xy';
 
     /**
-     * The background color or gradient for the plot area.
+     * The background color or gradient for the plot area. If not set, the
+     * plot area will have the background color set to `'none'`.
      *
      * @see In styled mode, the plot background is set with the
      *      `.highcharts-plot-background` class.
@@ -718,8 +719,6 @@ export interface ChartOptions {
      *         Color
      * @sample {highmaps} maps/chart/plotbackgroundcolor-gradient/
      *         Gradient
-     *
-     * @default 'none'
      */
     plotBackgroundColor?: ColorType;
 
