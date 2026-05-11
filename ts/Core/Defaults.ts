@@ -133,7 +133,7 @@ const defaultOptions: DefaultOptions = {
      * @sample highcharts/data/getdatatable
      *         Data table from CSV
      *
-     * @type {Highcharts.DataTable|Highcharts.DataTableOptions|Array<Highcharts.DataTable|Highcharts.DataTableOptions>}
+     * @type {Highcharts.DataTable|Highcharts.DataTableOptionsObject|Array<Highcharts.DataTable|Highcharts.DataTableOptionsObject>}
      * @since     next
      * @apioption dataTable
      */

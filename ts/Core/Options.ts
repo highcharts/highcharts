@@ -19,7 +19,7 @@ import type Chart from './Chart/Chart';
 import type ColorString from './Color/ColorString';
 import type CSSObject from './Renderer/CSSObject';
 import type DataTableCore from '../Data/DataTableCore';
-import type DataTableOptions from '../Data/DataTableOptions';
+import type { DataTableOptionsObject } from '../Data/DataTableOptions';
 import type { SeriesTypePlotOptions } from './Series/SeriesType';
 import type { SymbolKey } from './Renderer/SVG/SymbolType';
 import type { LangOptionsCore } from '../Shared/LangOptionsCore';
@@ -348,7 +348,7 @@ export interface Options {
      * @sample highcharts/data/getdatatable
      *         Data table from CSV
      */
-    dataTable?: DataTableOptions|DataTableCore|Array<DataTableOptions|DataTableCore>;
+    dataTable?: DataTableOptionsObject|DataTableCore|Array<DataTableOptionsObject|DataTableCore>;
     /**
      * An object containing language-related strings and settings. A typical
      * setup uses `Highcharts.setOptions` to make the options apply to all

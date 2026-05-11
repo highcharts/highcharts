@@ -64,7 +64,7 @@ const {
     defaultOptions
 } = D;
 import DataTableCore from '../../Data/DataTableCore.js';
-import { DataTableOptions } from '../../Data/DataTableOptions';
+import { DataTableOptionsObject } from '../../Data/DataTableOptions';
 import Templating from '../Templating.js';
 const { numberFormat } = Templating;
 import Foundation from '../Foundation.js';
@@ -983,8 +983,8 @@ class Chart {
     public getDataTable(options: {
         dataTable?: (
             DataTableCore|
-            DataTableOptions|
-            Array<DataTableCore|DataTableOptions>
+            DataTableOptionsObject|
+            Array<DataTableCore|DataTableOptionsObject>
         )
     }): Array<DataTableCore> {
         return (
