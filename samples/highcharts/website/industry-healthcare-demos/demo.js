@@ -1181,98 +1181,230 @@ function scatter() {
 function heatmap() {
     (async () => {
         const csv = await fetch(
-            'https://cdn.jsdelivr.net/gh/highcharts/highcharts@35bdee4/samples/data/large-heatmap.csv'
+            'https://cdn.jsdelivr.net/gh/highcharts/highcharts@b61efc3e897e9ea3c0e6a268d44b70f3ea004d7b/samples/data/measles.csv'
         ).then(res => res.text());
 
-        Highcharts.chart('container', {
+        Highcharts.data({
+            csv: csv,
 
-            data: {
-                csv: csv
-            },
+            parsed: function (columns) {
+                const countries = [...new Set(columns[0].slice(1))];
 
-            chart: {
-                type: 'heatmap'
-            },
+                const data = columns[0].slice(1).map((country, i) => {
+                    const year = Number(columns[1][i + 1]);
+                    const rawRate = columns[4][i + 1] === '' ?
+                        null :
+                        Number(columns[4][i + 1]);
 
-            boost: {
-                useGPUTranslations: true
-            },
+                    if (
+                        Number.isNaN(year) ||
+                        rawRate === null ||
+                        Number.isNaN(rawRate)
+                    ) {
+                        return null;
+                    }
 
-            title: {
-                text: 'Large heatmap',
-                align: 'left',
-                x: 40
-            },
+                    return {
+                        x: year,
+                        y: countries.indexOf(country),
+                        // Log-style color value so smaller outbreaks still show
+                        value: Math.log10(rawRate + 1),
+                        rawRate: rawRate
+                    };
+                }).filter(Boolean);
 
-            subtitle: {
-                text: 'Temperature variation by day and hour through 2023',
-                align: 'left',
-                x: 40
-            },
+                Highcharts.chart('container', {
+                    chart: {
+                        type: 'heatmap',
+                        margin: [70, 100, 40, 80],
+                        className: 'heatmap'
+                    },
 
-            xAxis: {
-                type: 'datetime',
-                min: '2023-01-01',
-                max: '2023-12-31 23:59:59',
-                labels: {
-                    align: 'left',
-                    x: 5,
-                    y: 14,
-                    format: '{value:%B}' // long month
-                },
-                showLastLabel: false,
-                tickLength: 16
-            },
+                    title: {
+                        // eslint-disable-next-line max-len
+                        text: 'The effectiveness of the measles vaccines across US states',
+                        align: 'left',
+                        y: 0,
+                        style: {
+                            fontSize: '14px'
+                        }
+                    },
 
-            yAxis: {
-                title: {
-                    text: null
-                },
-                labels: {
-                    format: '{value}:00'
-                },
-                minPadding: 0,
-                maxPadding: 0,
-                startOnTick: false,
-                endOnTick: false,
-                tickPositions: [0, 6, 12, 18, 24],
-                tickWidth: 1,
-                min: 0,
-                max: 23,
-                reversed: true
-            },
+                    subtitle: {
+                        useHTML: true,
+                        text: 'Source: <a href="https://ourworldindata.org/vaccination" target="_blank">Our World in Data</a>',
+                        align: 'left',
+                        y: 15,
+                        style: {
+                            fontSize: '10px'
+                        }
+                    },
 
-            colorAxis: {
-                stops: [
-                    [0, '#3060cf'],
-                    [0.5, '#fffbbc'],
-                    [0.9, '#c4463a'],
-                    [1, '#c4463a']
-                ],
-                min: -15,
-                max: 25,
-                startOnTick: false,
-                endOnTick: false,
-                labels: {
-                    format: '{value}℃'
-                }
-            },
+                    xAxis: [
+                        {
+                            min: 1929,
+                            title: {
+                                text: ''
+                            },
+                            tickInterval: 10,
+                            plotLines: [{
+                                color: '#000',
+                                dashStyle: 'dash',
+                                width: 2,
+                                value: 1963,
+                                zIndex: 5,
+                                label: {
+                                    useHTML: true,
+                                    rotation: -15,
+                                    text:
+                                    'First vaccine',
+                                    align: 'left',
+                                    y: -6,
+                                    x: 0,
+                                    style: {
+                                        // eslint-disable-next-line max-len
+                                        color: 'var(--highcharts-neutral-color-80)',
+                                        fontSize: '11px'
+                                    }
+                                }
+                            }, {
+                                color: '#000',
+                                dashStyle: 'dash',
+                                width: 2,
+                                value: 1971,
+                                zIndex: 5,
+                                label: {
+                                    useHTML: true,
+                                    text:
+                                    'First MMR vaccine',
+                                    rotation: -15,
+                                    align: 'left',
+                                    y: -2,
+                                    x: 0,
+                                    style: {
+                                        // eslint-disable-next-line max-len
+                                        color: 'var(--highcharts-neutral-color-80)',
+                                        fontSize: '11px'
+                                    }
+                                }
+                            },
+                            {
+                                color: '#000',
+                                dashStyle: 'dash',
+                                width: 2,
+                                value: 1980,
+                                zIndex: 5,
+                                label: {
+                                    useHTML: true,
+                                    // eslint-disable-next-line max-len
+                                    text: 'Required for kindergarten',
+                                    align: 'left',
+                                    rotation: -15,
+                                    y: -2,
+                                    x: 5,
+                                    style: {
+                                        // eslint-disable-next-line max-len
+                                        color: 'var(--highcharts-neutral-color-80)',
+                                        fontSize: '11px'
+                                    }
+                                }
+                            }
+                            ]
+                        }
+                    ],
 
-            series: [{
-                boostThreshold: 100,
-                borderWidth: 0,
-                nullColor: '#EFEFEF',
-                colsize: 24 * 36e5, // one day
-                tooltip: {
-                    headerFormat: 'Temperature<br/>',
-                    // eslint-disable-next-line max-len
-                    pointFormat: '{point.x:%e %b, %Y} {point.y}:00: <b>{point.value} ' +
-                '℃</b>'
-                }
-            }]
+                    yAxis: [
+                        {
+                            categories: countries,
+                            visible: true,
+                            title: {
+                                text: null
+                            },
+                            labels: {
+                                step: 2,
+                                style: {
+                                    color: 'var(--highcharts-neutral-color-40)'
+                                }
 
+                            },
+                            reversed: true,
+                            startOnTick: false,
+                            endOnTick: false
+                        }
+                    ],
+
+                    legend: {
+                        enabled: true,
+                        align: 'right',
+                        layout: 'vertical',
+                        verticalAlign: 'top',
+                        y: 60
+                    },
+
+                    colorAxis: {
+                        min: 0,
+                        max: 3,
+                        title: {
+                            rotation: 90,
+                            text: 'Cases per 100,000 (log scale)',
+                            style: {
+                                fontSize: '10px'
+                            }
+                        },
+                        tickPositions: [
+                            Math.log10(1),
+                            Math.log10(2),
+                            Math.log10(4),
+                            Math.log10(11),
+                            Math.log10(31),
+                            Math.log10(101),
+                            Math.log10(301),
+                            Math.log10(1001)
+
+                        ],
+                        height: '70%',
+                        stops: [
+                            [0, '#FEF3C7'],
+                            [0.25, '#FDE68A'],
+                            [0.5, '#A7F3D0'],
+                            [0.75, '#34D399'],
+                            [1, '#10B981']
+                        ],
+                        labels: {
+                            formatter: function () {
+                                return Highcharts.numberFormat(
+                                    Math.pow(10, this.value) - 1,
+                                    0
+                                );
+                            }
+                        }
+                    },
+                    tooltip: {
+                        useHTML: true,
+                        outside: true,
+                        formatter: function () {
+                            return (
+                                '<b>' + countries[this.point.y] + '</b><br/>' +
+                                'Year: ' + this.point.x + '<br/>' +
+                                'Case rate: <b>' +
+                                Highcharts.numberFormat(this.point.rawRate, 2) +
+                                '</b> per 100,000'
+                            );
+                        }
+                    },
+
+                    series: [
+                        {
+                            name: 'Measles rate',
+                            data: data,
+                            borderWidth: 0,
+                            nullColor: '#ffffff',
+                            colsize: 1
+                        }
+                    ]
+                });
+            }
         });
-
     })();
 }
 
@@ -1778,9 +1910,9 @@ const charts = {
     heatmap: {
         run: heatmap,
         demoCardLabel: 'Highcharts Heatmap demo',
-        demoName: 'Large Heatmap',
+        demoName: 'Heatmap',
         // eslint-disable-next-line max-len
-        demoDescription: 'The demo uses 8,000 points to visualize the temperature over a year.',
+        demoDescription: 'Heatmaps visualize hot spots within data sets, and to show patterns or correlations.',
         chartDescription: `A purely decorative chart demonstrating 
        the use of the heatmap series type.`,
         madeWith: ['core']
