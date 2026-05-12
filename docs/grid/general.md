@@ -84,6 +84,6 @@ Add an HTML element to the `body` with the ID you specified as the first argumen
 
 With the configuration above, your Grid should look like this:
 
-<iframe src="https://www.highcharts.com/samples/embed/grid/demo/minimal-grid?force-light-theme" allow="fullscreen"></iframe>
+<iframe src="https://www.highcharts.com/samples/embed/grid/demo/minimal?force-light-theme" allow="fullscreen"></iframe>
 
 Continue with [Understanding Grid](https://www.highcharts.com/docs/grid/understanding-grid) for more on the Grid structure and configuration options.
