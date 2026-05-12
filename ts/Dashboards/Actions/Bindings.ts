@@ -165,7 +165,7 @@ export async function addComponent(
     const promise = component.load()['catch']((e): void => {
         // eslint-disable-next-line no-console
         console.error(e);
-        component.update({
+        void component.update({
             connector: {
                 id: ''
             },

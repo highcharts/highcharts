@@ -46,7 +46,7 @@ export const types = {} as ComponentTypeRegistry;
  * @param {string} key
  * Registry key of the component class.
  *
- * @param {ComponentType} DataConnectorClass
+ * @param {ComponentType} ComponentClass
  * Component class (aka class constructor) to register.
  */
 export function registerComponent<T extends keyof ComponentTypeRegistry>(
