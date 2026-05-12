@@ -30,6 +30,9 @@ const {
     doc,
     isFirefox
 } = H;
+import BaseFormIcons from '../../../Shared/BaseFormIcons';
+import getIcon from '../../../Shared/BaseFormUtils';
+
 import {
     createElement,
     isArray,
@@ -203,7 +206,7 @@ function addToolbar(
     createElement('span', {
         className: 'highcharts-icon'
     }, {
-        backgroundImage: `url(${this.iconsURL}edit.svg)`
+        backgroundImage: getIcon('edit.svg', this.iconsURL, BaseFormIcons)
     }, button);
 
     button = this.addButton(
@@ -218,7 +221,7 @@ function addToolbar(
     createElement('span', {
         className: 'highcharts-icon'
     }, {
-        backgroundImage: `url(${this.iconsURL}destroy.svg)`
+        backgroundImage: getIcon('destroy.svg', this.iconsURL, BaseFormIcons)
     }, button);
 }
 

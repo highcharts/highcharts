@@ -350,6 +350,34 @@ QUnit.test('Lower case constructors, no new', function (assert) {
     assert.strictEqual(chart.series[0].type, 'map', 'Is map chart');
 });
 
+QUnit.test('Async factories', async function (assert) {
+
+    const factories = [
+        ['chart', 'Chart'],
+        ['stockChart', 'Chart'], // Some special stuff going on in stock.src.ts
+        ['mapChart', 'MapChart'],
+        ['ganttChart', 'GanttChart']
+    ];
+
+    for (const [factory, className] of factories) {
+
+        const promise = Highcharts[factory]('container', {}, true);
+
+        assert.ok(
+            promise instanceof Promise,
+            `Highcharts.${factory} should return a promise when async`
+        );
+
+        // Fulfill the promise and check the chart. Use await syntax.
+        const chart = await promise;
+        assert.ok(
+            chart instanceof Highcharts[className],
+            `Promise should resolve with a ${className}`
+        );
+    }
+
+});
+
 QUnit.test('renderTo as first argument', function (assert) {
     var chart, calledBack;
 

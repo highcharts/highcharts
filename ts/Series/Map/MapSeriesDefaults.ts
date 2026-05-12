@@ -63,6 +63,7 @@ const MapSeriesDefaults: MapSeriesOptions = {
 
     dataLabels: {
         crop: false,
+        distance: 0,
         formatter: function (): string { // #2945
             const { numberFormatter } = this.series.chart;
             const { value } = this.point as MapPoint;
@@ -72,7 +73,7 @@ const MapSeriesDefaults: MapSeriesOptions = {
         },
         inside: true, // For the color
         overflow: false as any,
-        padding: 0,
+        padding: [0, 2],
         verticalAlign: 'middle'
     },
 

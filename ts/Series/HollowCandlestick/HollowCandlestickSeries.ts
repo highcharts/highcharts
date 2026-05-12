@@ -297,14 +297,14 @@ class HollowCandlestickSeries extends CandlestickSeries {
      * Current point state.
      */
     public pointAttribs(
-        point: HollowCandlestickPoint,
+        point?: HollowCandlestickPoint,
         state?: StatesOptionsKey
     ): SVGAttributes {
         const attribs = super.pointAttribs.call(this, point, state);
         let stateOptions;
 
-        const index = point.index,
-            hollowcandleInfo = this.hollowCandlestickData[index];
+        const index = point?.index,
+            hollowcandleInfo = this.hollowCandlestickData[index || 0] || {};
 
         attribs.fill = this.getPointFill(hollowcandleInfo) || attribs.fill;
         attribs.stroke = this.getLineColor(hollowcandleInfo.trendDirection) ||
@@ -387,6 +387,7 @@ export default HollowCandlestickSeries;
  * @extends   series,plotOptions.hollowcandlestick
  * @excluding dataParser, dataURL, marker
  * @product   highstock
+ * @requires  modules/hollowcandlestick
  * @apioption series.hollowcandlestick
  */
 

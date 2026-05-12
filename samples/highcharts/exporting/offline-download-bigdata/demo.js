@@ -36,6 +36,7 @@ Highcharts.chart('container', {
         sourceWidth: 400,
         sourceHeight: 300,
         scale: 1,
+        libURL: 'https://code.highcharts.com/lib/',
         error: fallbackHandler,
         buttons: {
             contextButton: {
