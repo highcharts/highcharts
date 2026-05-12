@@ -205,7 +205,7 @@ class AccordionMenu {
                 // TODO: Handle the wrong config passed from the user.
                 error(
                     'Dashboards Error: Wrong JSON config structure passed ' +
-                    'as a chart options. \n____________\n' +
+                    'as chart options. \n____________\n' +
                     String(e)
                 );
             }
