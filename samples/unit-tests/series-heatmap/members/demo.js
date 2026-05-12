@@ -468,7 +468,14 @@ QUnit.test(
         const pannedPoint = getPoint(),
             pannedLabelOffset = (
                 pannedPoint.dataLabel.alignAttr.y - pannedPoint.plotY
+            ),
+            hasVisibleLabelOutsidePlot = labels.some(label =>
+                label.visibility !== 'hidden' &&
+                label.alignAttr &&
+                label.alignAttr.y < 0
             );
+
+        controller.mouseUp();
 
         assert.strictEqual(
             animateCalls,
@@ -484,15 +491,9 @@ QUnit.test(
         );
 
         assert.strictEqual(
-            labels.some(label =>
-                label.visibility !== 'hidden' &&
-                label.alignAttr &&
-                label.alignAttr.y < 0
-            ),
+            hasVisibleLabelOutsidePlot,
             false,
             'Live y-axis panning should hide labels once they leave the plot.'
         );
-
-        controller.mouseUp();
     }
 );

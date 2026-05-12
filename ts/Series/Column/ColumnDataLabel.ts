@@ -68,7 +68,7 @@ namespace ColumnDataLabel {
             inverted = chart.inverted,
             xLen = this.xAxis?.len || chart.plotSizeX || 0,
             yLen = this.yAxis?.len || chart.plotSizeY || 0,
-            isStaticDataLabelsInLivePanning =
+            isDataLabelsPanning =
                 !!this.staticDataLabelsBetween &&
                 !!this.yAxis?.isPanning &&
                 !!chart.mouseIsDown,
@@ -89,7 +89,7 @@ namespace ColumnDataLabel {
                 dlOptions.crop !== false ||
                 options.clip !== false
             ) {
-                if (!isStaticDataLabelsInLivePanning) {
+                if (!isDataLabelsPanning) {
                     if (alignTo.y < 0) {
                         alignTo.height += alignTo.y;
                         alignTo.y = 0;
@@ -132,7 +132,9 @@ namespace ColumnDataLabel {
         dlOptions.verticalAlign ??= inverted || inside ?
             'middle' : below ? 'top' : 'bottom';
 
-        if (isStaticDataLabelsInLivePanning) {
+        // Live panning can move labels outside the plot, so crop and place
+        // them again.
+        if (isDataLabelsPanning) {
             dlOptions.crop = true;
             dataLabel.placed = false;
             isNew = true;
