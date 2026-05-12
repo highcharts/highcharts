@@ -162,10 +162,10 @@ export async function addComponent(
     }
 
     const component = new ComponentClass(cell, options, board);
-    const promise = component.load()['catch']((e): void => {
+    const promise = component.load()['catch']((e): Promise<void> => {
         // eslint-disable-next-line no-console
         console.error(e);
-        void component.update({
+        return component.update({
             connector: {
                 id: ''
             },
