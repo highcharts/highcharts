@@ -549,20 +549,34 @@ export type GridDataConnectorTypeOptions =
     MakeOptional<DataConnectorTypeOptions, 'id'>;
 
 export interface LocalDataProviderOptions extends DataProviderOptions {
+    /**
+     * The local data provider type.
+     *
+     * @default 'local'
+     */
     providerType?: 'local';
 
     /**
      * Data table as a source of data for the grid.
+     *
+     * @sample grid-lite/options/data-table-instance
+     *         Data from a DataTable instance
      */
     dataTable?: DataTable;
 
     /**
      * Connector instance or options used to populate the data table.
+     *
+     * @sample grid-lite/basic/data-connector
+     *         Data from connector
      */
     connector?: GridDataConnectorTypeOptions | DataConnectorType;
 
     /**
      * Columns data to initialize the Grid with.
+     *
+     * @sample grid-lite/options/data-columns
+     *         Data from column arrays
      */
     columns?: Record<string, Array<DataTableValue> | TypedArray>;
 

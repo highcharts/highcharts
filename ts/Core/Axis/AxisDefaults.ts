@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -425,10 +426,11 @@ namespace AxisDefaults {
          * the mouse is over a point. Works on initial hover.
          *
          * @sample {highcharts|highstock} highcharts/tooltip/showdelay/
+         *         Show crosshair after 2 seconds
          *
          * @type      {number}
          * @default   0
-         * @since     next
+         * @since     12.6.0
          * @apioption xAxis.crosshair.showDelay
          */
 

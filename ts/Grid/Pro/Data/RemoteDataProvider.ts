@@ -796,10 +796,18 @@ interface PendingChunkRequest {
 }
 
 export interface RemoteDataProviderOptions extends DataProviderOptions {
+    /**
+     * The remote data provider type.
+     *
+     * @default 'remote'
+     */
     providerType: 'remote';
 
     /**
      * Serialized data source configuration, alternatively to `fetchCallback`.
+     *
+     * @sample grid-pro/demo/serverside-data
+     *         Server-side data source
      */
     dataSource?: DataSourceOptions;
 
@@ -823,6 +831,9 @@ export interface RemoteDataProviderOptions extends DataProviderOptions {
      * A `RemoteFetchCallbackResult` with `columns`, `totalRowCount`, and
      * optionally `rowIds` and `pageSize`. See `RemoteFetchCallbackResult` for
      * field descriptions.
+     *
+     * @sample grid-pro/options/remote-fetch-callback
+     *         Remote fetch callback
      */
     fetchCallback?: (
         this: RemoteDataProvider,
