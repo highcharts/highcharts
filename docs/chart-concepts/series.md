@@ -54,6 +54,57 @@ data: [{
 
 [Online example](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/series/data-array-of-objects/)
 
+Using a DataTable with data mapping
+------------------------------------
+
+For a more structured approach to working with tabular data, you can use the [`dataTable`](https://api.highcharts.com/highcharts/series.line.dataTable) and [`dataMapping`](https://api.highcharts.com/highcharts/series.line.dataMapping) options. Instead of passing data as an array, you reference a `DataTable` and map its columns to point properties.
+
+This approach is useful when:
+
+- Working with **structured data** from databases, CSV files, or APIs
+- Displaying **multiple series from the same source** with different column mappings
+- Implementing **reactive data updates** without manual point management
+- Sharing data between **Grid and Chart components**
+
+**Basic example:**
+
+```js
+const dataTable = new Highcharts.DataTable({
+    columns: {
+        month: ['Jan', 'Feb', 'Mar'],
+        sales: [100, 120, 110]
+    }
+});
+
+series: [{
+    name: 'Sales',
+    dataTable,
+    dataMapping: {
+        name: 'month',
+        y: 'sales'
+    }
+}]
+```
+
+**Multiple series from one DataTable:**
+
+```js
+series: [
+    {
+        name: 'John',
+        dataTable: dataTable,
+        dataMapping: { name: 'month', y: 'john_sales' }
+    },
+    {
+        name: 'Jane',
+        dataTable: dataTable,
+        dataMapping: { name: 'month', y: 'jane_sales' }
+    }
+]
+```
+
+When the `DataTable` is updated, all series using it are automatically updated. For a comprehensive guide, see [Using DataTables with Series](https://highcharts.com/docs/working-with-data/using-datatables-in-series).
+
 Point and marker
 ----------------
 

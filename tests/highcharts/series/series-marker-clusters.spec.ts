@@ -6,9 +6,9 @@ async function getClusterStateAfterDatetimeMsGridClustering(
     page: Page,
     xAxisReversed: boolean
 ): Promise<{
-        hasClustersArray: boolean;
-        clustersLength: number | null;
-    }> {
+    hasClustersArray: boolean;
+    clustersLength: number | null;
+}> {
     const options: Highcharts.Options = {
         chart: {
             width: 800

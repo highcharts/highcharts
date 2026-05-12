@@ -64,6 +64,8 @@ import D from '../Defaults.js';
 const {
     defaultOptions
 } = D;
+import DataTableCore from '../../Data/DataTableCore.js';
+import { DataTableOptionsObject } from '../../Data/DataTableOptions';
 import Templating from '../Templating.js';
 const { numberFormat } = Templating;
 import Foundation from '../Foundation.js';
@@ -485,6 +487,14 @@ class Chart {
      */
     public caption?: SVGElement;
 
+    /**
+     * The array of data table instances associated with the chart.
+     *
+     * @name Highcharts.Chart#dataTable
+     * @type {Array<Highcharts.DataTable>}
+     */
+    public dataTable!: Array<DataTableCore>;
+
     /** @internal */
     public eventOptions!: Record<string, EventCallback<Series, Event>>;
 
@@ -639,6 +649,9 @@ class Chart {
 
     /** @internal */
     public pointer?: Pointer;
+
+    /** @internal */
+    public redrawTimeout?: number;
 
     /** @internal */
     public promise?: Promise<Chart>;
@@ -967,6 +980,9 @@ class Chart {
              */
             chart.index = charts.length; // Add the chart to the global lookup
 
+            // The chart.dataTable option
+            chart.dataTable = chart.getDataTable(options);
+
             charts.push(chart);
             H.chartCount++;
 
@@ -1002,6 +1018,22 @@ class Chart {
 
             chart.firstRender();
         });
+    }
+
+    public getDataTable(options: {
+        dataTable?: (
+            DataTableCore|
+            DataTableOptionsObject|
+            Array<DataTableCore|DataTableOptionsObject>
+        )
+    }): Array<DataTableCore> {
+        return (
+            options.dataTable ? splat(options.dataTable) : []
+        ).map((dataTableOptions): DataTableCore => (
+            dataTableOptions.isDataTable ?
+                dataTableOptions :
+                new DataTableCore(dataTableOptions)
+        ));
     }
 
     /**

@@ -1769,25 +1769,28 @@ class Axis {
      * @return {number}
      * The X value that the point is given.
      */
-    public nameToX(point: Point): number {
+    public nameToX(
+        point: { name: string, series: Series, x?: number },
+        nameX?: number|string
+    ): number {
         const explicitCategories = isArray(this.options.categories),
+            { name, series } = point,
             names = explicitCategories ? this.categories : this.names,
             namesMap = this.namesMap;
 
-        let nameX = point.options.x,
-            x: (number|undefined);
+        let x: (number|undefined);
 
-        point.series.requireSorting = false;
+        series.requireSorting = false;
 
         if (!defined(nameX)) {
             nameX = this.uniqueNames && names ?
                 (
                     explicitCategories ?
-                        names.indexOf(point.name) :
-                        (namesMap[point.name] ?? -1)
+                        names.indexOf(name) :
+                        (namesMap[name] ?? -1)
 
                 ) :
-                point.series.autoIncrement();
+                series.autoIncrement();
         }
         if (nameX === -1) { // Not found in current categories
             if (!explicitCategories && names) {
@@ -1801,9 +1804,10 @@ class Axis {
         if (typeof x !== 'undefined') {
             this.names[x] = point.name;
             namesMap[point.name] = x;
-
-        } else if (point.x) {
+        } else if (isNumber(point.x)) {
             x = point.x; // #17438
+        } else {
+            x = series.autoIncrement();
         }
 
         return x as any;
@@ -1833,6 +1837,7 @@ class Axis {
 
                 // Reset incrementer (#5928)
                 series.xIncrement = null;
+                delete series.xColumn;
 
                 // When adding a series, points are not yet generated
                 if (!series.points || series.isDirtyData) {
@@ -1848,26 +1853,12 @@ class Axis {
 
                     series.processData();
                     series.generatePoints();
+                } else {
+                    const xData = series.getColumn('x');
+                    series.points?.forEach((point): void => {
+                        point.x = xData[point.index];
+                    });
                 }
-
-                const xData = series.getColumn('x').slice();
-                series.data.forEach((
-                    point,
-                    i: number
-                ): void => { // #9487
-                    let x = xData[i];
-
-                    if (
-                        point?.options &&
-                        typeof point.name !== 'undefined' // #9562
-                    ) {
-                        x = axis.nameToX(point);
-                        if (typeof x !== 'undefined' && x !== point.x) {
-                            xData[i] = point.x = x;
-                        }
-                    }
-                });
-                series.dataTable.setColumn('x', xData);
             });
         }
     }

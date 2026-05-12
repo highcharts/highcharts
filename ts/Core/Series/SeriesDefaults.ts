@@ -351,6 +351,74 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      */
 
     /**
+     * The mapping between the data table and the series data points. This is
+     * used in conjunction with the `dataTable` option (on [chart](#dataTable)
+     * or [series](#plotOptions.series.dataTable) level) to map columns from the
+     * data table to the properties of the data points. The keys of the
+     * `dataMapping` object correspond to the properties of the data points
+     * (e.g. `x`, `y`, `name`), and the values are objects that specify which
+     * column from which data table to use for that property.
+     *
+     * The keys can also be nested paths, for example `dataLabel.format`, to map
+     * to nested properties of the data points.
+     *
+     * The values can also be strings, in which case they are interpreted as
+     * column id's from the first data table.
+     *
+     * A typical use case is that multiple series share a common column, like
+     * `name` or `x`. In this case, to avoid repetition, the common column can
+     * be applied in `plotOptions.series.dataMapping` and the individual series
+     * can specify only the columns that are unique to them.
+     *
+     * The series name defaults to the column ID of the main data column in the
+     * mapping. The main data column is typically the `y` data for cartesian
+     * series, or `value` for map series. For example, if the mapping is
+     * `{ y: 'Cost' }`, the series name will be `Cost`.
+     *
+     * ```js
+     * // Shorthand mapping with string
+     * dataMapping: {
+     *     y: 'Cost'
+     * }
+     *
+     * // Full mapping with object
+     * dataMapping: {
+     *    y: {
+     *       // Optional, defaults to the first data table. Can be either a data
+     *       // table index or id.
+     *       dataTable: 'dataTable1',
+     *       // Can be either a column index or id.
+     *       column: 'Cost'
+     *    }
+     * }
+     * ```
+     *
+     * If the columns of the DataTable have keys matching the series keys, the
+     * data mapping is not necessary. For example, this DataTable will connect
+     * directly to the series' `x` and `y` keys:
+     *
+     * ```js
+     * const dataTable = new Highcharts.DataTable({
+     *     columns: {
+     *         x: ['2026-05-04', '2026-05-05', '2026-05-06'],
+     *         y: [1, 4, 2]
+     *     }
+     *  });
+     * ```
+     *
+     * @type    {Highcharts.DataMappingOptionsObject}
+     * @sample {highcharts} highcharts/datatable/series-datatable-multiple
+     *         Series with two data tables
+     * @sample {highcharts} highcharts/datatable/nested-keys
+     *         Nested keys
+     * @sample {highcharts} highcharts/datatable/chart-datatable-multiple
+     *         Chart with two data tables
+     *
+     * @since     next
+     * @apioption plotOptions.series.dataMapping
+     */
+
+    /**
      * Enable or disable the mouse tracking for a specific series. This
      * includes point tooltips and click events on graphs and points. For
      * large datasets it improves performance.

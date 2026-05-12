@@ -266,7 +266,7 @@ class PieSeries extends Series {
      * logic in data labels.
      * @internal
      */
-    public getX(
+    public getXPos(
         y: number,
         left: boolean,
         point: PiePoint,
