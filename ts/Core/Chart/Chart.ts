@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -4207,7 +4208,10 @@ class Chart {
 
             // Adjust offset to ensure selection zoom triggers correctly
             // (#22945)
-            const offset = (axis.chart.polar || axis.isOrdinal) ?
+            // Set offset to 0 for ordinal axis only when zooming out, (#24545).
+            const offset = (
+                    axis.chart.polar || (axis.isOrdinal && scale <= 1)
+                ) ?
                     0 :
                     (minPointOffset * pointRangeDirection || 0),
                 eventMin = axis.toValue(minPx, true),

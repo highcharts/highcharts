@@ -16283,6 +16283,55 @@ import &#39;highcharts/modules/accessibility&#39;;
           </div>
           <div class="changelog-container">
             <h3 class="release-header">
+              <a id="highcharts-grid-v3.0.0"></a>
+              <span>Highcharts Grid v3.0.0 (2026-05-06)</span>
+              <a class="release-header-hashtag" href="#highcharts-grid-v3.0.0">#</a>
+              <span class="download-link" ><a href="https://code.highcharts.com/grid/zips/Highcharts-Grid-3.0.0.zip" title="Download the zip archive for Highcharts Grid v3.0.0"><i class="fas fa-download"></i></a></span>
+            </h3>
+            <ul>
+              <li><strong>Grid Pro:</strong> Added support for hierarchical data using <code>data.treeView</code>.</li>
+              <li><strong>Grid Pro:</strong> Added support for row pinning using <code>rendering.rows.pinning</code>.</li>
+              <li><strong>Grid Pro:</strong> Added <code>pageSize</code> field to Remote Data Provider callback, so it can automatically realign chunk indexing when the backend clamps or adjusts the requested page size.</li>
+              <li><strong>Grid:</strong> Cleaned up deprecated methods and options (details in the upgrade note).</li>
+              <li><strong>Grid:</strong> Added support for row headers (<code>th</code>) in <code>tbody</code>.</li>
+              <li><strong>Grid:</strong> Added support for touch devices on column resizing.</li>
+              <li><strong>Grid:</strong> Added <code>data.autogenerateColumns</code> (default <code>true</code>) with support for unbound columns via <code>columns[].dataId = null</code> and <code>cells.valueGetter</code>, so column generation can be fully controlled from <code>columns[]</code> and do not have to have a direct column source in the data source.</li>
+            </ul>
+            <div class="accordion card-group">
+              <div class="card">
+                <div id="hGrid-heading-3-0-0-upgrade-notes" class="card-header">
+                  <h4 class="card-title">
+                    <button aria-label="Upgrade Notes Highcharts-grid v3.0.0" aria-expanded="false" class="btn btn-link collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#upgrade-notes-hGrid-3-0-0"><span> Upgrade notes </span></button>
+                  </h4>
+                </div>
+                <div id="upgrade-notes-hGrid-3-0-0" class="collapse" aria-labelledby="hGrid-heading-3-0-0-bug-fixes" data-parent=".accordion">
+                  <div class="card-body">
+                    <ul>
+                      <li><strong>Grid Pro:</strong> Introduced required Grid Key. <a href="https://www.highcharts.com/docs/grid/grid-key">Read more...</a></li>
+                      <li><strong>Grid:</strong> Replaced uses of <code>grid.dataTable</code> and <code>grid.presentationTable</code> with <code>grid.dataProvider.getDataTable()</code>.</li>
+                      <li><strong>Grid:</strong> Replaced uses of <code>grid.columnOptionsMap</code> with <code>grid.columnPolicy</code> methods.</li>
+                      <li><strong>Grid:</strong> Replaced <code>sorting.sortable</code> with <code>sorting.enabled</code>.</li>
+                    </ul>
+
+                  </div>
+                </div>
+                <div id="hGrid-heading-3-0-0-bug-fixes" class="card-header">
+                  <h4 class="card-title" aria-label="Bug Fixes Highcharts-grid v3.0.0">
+                    <button aria-label="Bug Fixes Highcharts-grid v3.0.0" aria-expanded="false" class="btn btn-link collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#bug-fixes-hGrid-3-0-0"><span> Bug fixes </span></button>
+                  </h4>
+                </div>
+                <div id="bug-fixes-hGrid-3-0-0" class="collapse" aria-labelledby="hGrid-heading-3-0-0-bug-fixes" data-parent=".accordion">
+                  <div class="card-body">
+                    <ul>
+                      <li><strong>Grid Pro:</strong> Prevented <code>grid-lite.css</code> module removal from Grid Pro dist package.</li>
+                      <li><strong>Grid:</strong> Added label to header context menu button.</li>
+                    </ul>
+
+                  </div>
+                </div>
+              </div>
+            </div>
+            <h3 class="release-header">
               <a id="highcharts-grid-v2.3.1"></a>
               <span>Highcharts Grid v2.3.1 (2026-03-24)</span>
               <a class="release-header-hashtag" href="#highcharts-grid-v2.3.1">#</a>
