@@ -839,7 +839,7 @@ function groupData(
         }
 
         // For each raw data point, push it to an array that contains all values
-        // for this specific
+        // for this specific group
         if (pointArrayMap) {
             const index = groupAll ? i : (series.cropStart as any) + i,
                 point = (data && data[index]) ||

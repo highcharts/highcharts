@@ -885,7 +885,7 @@ describe('DataTable', () => {
             deepStrictEqual(
                 table.getColumn('Name'),
                 [void 0, 'John', 'Jane', 'Alice'],
-                'If no value is provided, the new row is filled with `null`.'
+                'If no value is provided, the new row is filled with `undefined`.'
             );
         });
     });

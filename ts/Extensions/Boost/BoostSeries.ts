@@ -1075,8 +1075,7 @@ function scatterProcessData(
     }
 
     // Filter unsorted scatter data for ranges
-    const processedData: Array<PointOptions> = [],
-        processedXData: Array<number> = [],
+    const processedXData: Array<number> = [],
         processedYData: Array<number> = [],
         xRangeNeeded = !(isNumber(xExtremes.max) || isNumber(xExtremes.min)),
         yRangeNeeded = !(isNumber(yExtremes.max) || isNumber(yExtremes.min));
@@ -1097,7 +1096,6 @@ function scatterProcessData(
             x >= xMin && x <= xMax &&
             y >= yMin && y <= yMax
         ) {
-            processedData.push({ x, y });
             processedXData.push(x);
             processedYData.push(y);
             if (xRangeNeeded) {
