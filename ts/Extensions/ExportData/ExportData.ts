@@ -5,8 +5,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -948,9 +949,15 @@ namespace ExportData {
                     xAxis: series.xAxis
                 };
 
-                // Export directly from options.data because we need the
-                // uncropped data (#7913), and we need to support Boost (#7026).
-                series.options.data?.forEach(function eachData(
+                // Export raw data because we need the uncropped data (#7913),
+                // and we need to support Boost (#7026).
+                const data = new Array(series.dataTable.rowCount)
+                        .fill(void 0).map((_, i): PointOptions =>
+                            series.dataTable.getRowObject(i) as PointOptions
+                        ),
+                    xColumn = series.getColumn('x');
+
+                (data || []).forEach(function eachData(
                     options: (PointOptions | PointShortOptions),
                     pIdx: number
                 ): void {
@@ -970,9 +977,10 @@ namespace ExportData {
                         );
                     }
 
-                    series.pointClass.prototype.applyOptions.apply(
+                    series.pointClass.prototype.applyOptions.call(
                         mockPoint,
-                        [options]
+                        options,
+                        xColumn[pIdx]
                     );
 
                     const name = series.data[pIdx] && series.data[pIdx].name;

@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Sebastian Bochan, Rafał Sebestjański
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -18,8 +19,6 @@
  * */
 
 import type DumbbellSeriesOptions from './DumbbellSeriesOptions';
-
-import { Palette } from '../../Core/Color/Palettes.js';
 
 /* *
  *
@@ -89,7 +88,7 @@ const DumbbellSeriesDefaults: DumbbellSeriesOptions = {
      * @since 8.0.0
      * @product   highcharts highstock
      */
-    lowColor: Palette.neutralColor80,
+    lowColor: 'var(--highcharts-neutral-color-80)',
 
     /**
      * Color of the line that connects the dumbbell point's values.
@@ -262,7 +261,7 @@ const DumbbellSeriesDefaults: DumbbellSeriesOptions = {
  *
  * @type        {Highcharts.ColorType}
  * @since       8.0.0
- * @default     ${palette.neutralColor80}
+ * @default     var(--highcharts-neutral-color-80)
  * @product     highcharts highstock
  * @apioption   series.dumbbell.data.lowColor
  */

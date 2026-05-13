@@ -1,7 +1,8 @@
 /* *
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -217,7 +218,11 @@ class MACDIndicator extends SMAIndicator {
                     !this.options.signalLine.styles.lineColor
                 ) {
                     this.options.colorIndex = this.colorIndex + 1;
-                    this.getCyclic('color', void 0, this.chart.options.colors);
+                    this.getCyclic(
+                        'color',
+                        void 0,
+                        this.chart.options.colors
+                    );
                     this.options.signalLine.styles.lineColor =
                         this.color as ColorString;
                 }
@@ -227,7 +232,11 @@ class MACDIndicator extends SMAIndicator {
                     !this.options.macdLine.styles.lineColor
                 ) {
                     this.options.colorIndex = this.colorIndex + 1;
-                    this.getCyclic('color', void 0, this.chart.options.colors);
+                    this.getCyclic(
+                        'color',
+                        void 0,
+                        this.chart.options.colors
+                    );
                     this.options.macdLine.styles.lineColor =
                         this.color as ColorString;
                 }

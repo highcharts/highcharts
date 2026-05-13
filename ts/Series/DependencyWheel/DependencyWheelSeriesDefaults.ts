@@ -5,8 +5,9 @@
  *  (c) 2018-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -38,6 +39,7 @@ import type DependencyWheelSeriesOptions from './DependencyWheelSeriesOptions';
  * @exclude      dataSorting, nodeAlignment, nodeDistance
  * @since        7.1.0
  * @product      highcharts
+ * @requires     modules/sankey
  * @requires     modules/dependency-wheel
  * @optionparent plotOptions.dependencywheel
  */
@@ -123,6 +125,7 @@ const DependencyWheelSeriesDefaults: DependencyWheelSeriesOptions = {
     startAngle: 0,
 
     dataLabels: {
+        allowOverlap: true,
         textPath: {
             enabled: false,
             /**

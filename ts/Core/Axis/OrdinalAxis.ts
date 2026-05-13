@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -1287,17 +1288,24 @@ namespace OrdinalAxis {
                         groupPixelWidth: series.groupPixelWidth,
                         destroyGroupedData: H.noop,
                         getColumn: series.getColumn,
+                        getX: H.noop,
                         applyGrouping: series.applyGrouping,
                         getProcessedData: series.getProcessedData,
                         reserveSpace: series.reserveSpace,
                         visible: series.visible
                     } as any;
 
-                    const xData = series.getColumn('x').concat(
-                        withOverscroll ?
-                            ordinal.getOverscrollPositions() :
-                            []
-                    );
+                    const xColumn = series.getColumn('x'),
+                        xData = (
+                            // No concat on TypedArrays, use Array.from
+                            Array.isArray(xColumn) ?
+                                xColumn :
+                                Array.from(xColumn) as number[]
+                        ).concat(
+                            withOverscroll ?
+                                ordinal.getOverscrollPositions() :
+                                []
+                        );
                     fakeSeries.dataTable = new DataTableCore({
                         columns: {
                             x: xData

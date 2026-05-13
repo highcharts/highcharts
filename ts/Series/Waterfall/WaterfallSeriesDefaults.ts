@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -18,8 +19,6 @@
  * */
 
 import type WaterfallSeriesOptions from './WaterfallSeriesOptions';
-
-import { Palette } from '../../Core/Color/Palettes.js';
 
 /* *
  *
@@ -90,7 +89,7 @@ const WaterfallSeriesDefaults: WaterfallSeriesOptions = {
      * @since   3.0
      * @product highcharts
      */
-    lineColor: Palette.neutralColor80,
+    lineColor: 'var(--highcharts-neutral-color-80)',
 
     /**
      * A name for the dash style to use for the line connecting the columns
@@ -117,7 +116,7 @@ const WaterfallSeriesDefaults: WaterfallSeriesOptions = {
      * @since   3.0
      * @product highcharts
      */
-    borderColor: Palette.neutralColor80,
+    borderColor: 'var(--highcharts-neutral-color-80)',
 
     states: {
 

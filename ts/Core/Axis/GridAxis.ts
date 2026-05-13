@@ -3,8 +3,9 @@
  *  (c) 2016-2026 Highsoft AS
  *  Authors: Lars A. V. Cabrera
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -1080,7 +1081,10 @@ function onInit(
 ): void {
     const axis = this;
     const userOptions = e.userOptions || {};
-    const gridOptions = userOptions.grid || {};
+    const gridOptions = merge(
+        { borderColor: 'var(--highcharts-neutral-color-20)' },
+        userOptions.grid || {}
+    );
 
     if (gridOptions.enabled && defined(gridOptions.borderColor)) {
         userOptions.tickColor = userOptions.lineColor = (
@@ -1094,6 +1098,7 @@ function onInit(
 
     axis.hiddenLabels = [];
     axis.hiddenMarks = [];
+    axis.clippable = false;
 }
 
 /**
@@ -1236,7 +1241,7 @@ function onTickLabelFormat(ctx: AxisLabelFormatterContextObject): void {
         const isFirst = value === tickPos[0];
         const isLast = value === tickPos[tickPos.length - 1];
         const point: (Point|undefined) =
-            series && find(series.options.data as any, function (
+            series && find((series.options.data || [] as any), function (
                 p: Point
             ): boolean {
                 return p[axis.isXAxis ? 'x' : 'y'] === value;
@@ -1614,7 +1619,7 @@ export default GridAxis;
  * Set border color for the label grid lines.
  *
  * @type      {Highcharts.ColorString}
- * @default   #e6e6e6
+ * @default   #cccccc
  * @apioption xAxis.grid.borderColor
  */
 

@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  * */
 
@@ -1408,8 +1409,15 @@ class Navigator {
                 }
             ), 'yAxis') as NavigatorAxisComposition;
 
+            navigator.xAxis.clippable = false;
+            navigator.yAxis.clippable = false;
+
             // If we have a base series, initialize the navigator series
-            if (baseSeries || navigatorOptions.series?.data) {
+            if (
+                baseSeries ||
+                navigatorOptions.series?.data ||
+                navigatorOptions.series?.dataTable
+            ) {
                 navigator.updateNavigatorSeries(false);
 
             // If not, set up an event to listen for added series
@@ -1761,14 +1769,21 @@ class Navigator {
                 // Merge data separately. Do a slice to avoid mutating the
                 // navigator options from base series (#4923).
                 const navigatorSeriesData =
-                    baseNavigatorOptions.data || userNavOptions.data;
+                    baseNavigatorOptions.data || userNavOptions.data,
+                    navigatorSeriesDataTable =
+                        baseNavigatorOptions.dataTable ||
+                        userNavOptions.dataTable;
 
                 navigator.hasNavigatorData =
-                    navigator.hasNavigatorData || !!navigatorSeriesData;
-                mergedNavSeriesOptions.data = (
+                    navigator.hasNavigatorData ||
+                    !!navigatorSeriesData ||
+                    !!navigatorSeriesDataTable;
+                mergedNavSeriesOptions.data =
                     navigatorSeriesData ||
-                    baseOptions.data?.slice(0)
-                );
+                    baseOptions.data?.slice(0);
+                mergedNavSeriesOptions.dataTable =
+                    navigatorSeriesDataTable ||
+                    baseOptions.dataTable;
 
                 // Update or add the series
                 if (linkedNavSeries && linkedNavSeries.options) {
@@ -1777,8 +1792,10 @@ class Navigator {
                     base.navigatorSeries = chart.initSeries(
                         mergedNavSeriesOptions
                     );
-                    // Set data on initial run with dataSorting enabled (#20318)
-                    chart.setSortedData();
+
+                    // Trigger setSortedData with dataSorting enabled (#20318)
+                    fireEvent(base.navigatorSeries, 'afterUpdate');
+
                     base.navigatorSeries.baseSeries = base; // Store ref
                     navigatorSeries.push(base.navigatorSeries);
                 }
@@ -1789,10 +1806,14 @@ class Navigator {
         // navigator.series as an array, we create these series on top of any
         // base series.
         if (
-            chartNavigatorSeriesOptions?.data &&
+            (
+                chartNavigatorSeriesOptions?.data ||
+                chartNavigatorSeriesOptions?.dataTable
+            ) &&
             !(baseSeries && baseSeries.length) ||
             isArray(chartNavigatorSeriesOptions)
         ) {
+            const colors = chart.options.colors || [];
             navigator.hasNavigatorData = false;
             // Allow navigator.series to be an array
             chartNavigatorSeriesOptions =
@@ -1812,17 +1833,23 @@ class Navigator {
                         // an explicit color as otherwise updates will increment
                         // color counter and we'll get a new color for each
                         // update of the nav series.
-                        color: chart.series[i] &&
-                        !chart.series[i].options.isInternal &&
-                        chart.series[i].color ||
-                        chart.options.colors?.[i] ||
-                        chart.options.colors?.[0]
+                        color: (
+                            chart.series[i] &&
+                            !chart.series[i].options.isInternal &&
+                            chart.series[i].color
+                        ) ||
+                        colors[i] ||
+                        colors[0]
                     },
                     navSeriesMixin,
                     userSeriesOptions
                 );
                 mergedNavSeriesOptions.data = userSeriesOptions.data;
-                if (mergedNavSeriesOptions.data) {
+                mergedNavSeriesOptions.dataTable = userSeriesOptions.dataTable;
+                if (
+                    mergedNavSeriesOptions.data ||
+                    mergedNavSeriesOptions.dataTable
+                ) {
                     navigator.hasNavigatorData = true;
                     navigatorSeries.push(
                         chart.initSeries(mergedNavSeriesOptions)
@@ -2058,7 +2085,7 @@ class Navigator {
         if (navigatorSeries && !navigator.hasNavigatorData) {
             navigatorSeries.options.pointStart = baseSeries.getColumn('x')[0];
             navigatorSeries.setData(
-                baseSeries.options.data,
+                baseSeries.options.data || baseSeries.options.dataTable,
                 false,
                 void 0,
                 false

@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -45,6 +46,17 @@ const OHLCSeriesDefaults: OHLCSeriesOptions = {
      * @product   highstock
      * @apioption plotOptions.ohlc.dataGrouping.approximation
      */
+
+    /**
+     * What type of legend symbol to render for this series. For OHLC series,
+     * the default is `ohlc`, a vertical stem with an open tick on the left
+     * and a close tick on the right.
+     *
+     * @default   ohlc
+     * @product   highstock
+     * @apioption plotOptions.ohlc.legendSymbol
+     */
+    legendSymbol: 'ohlc',
 
     /**
      * Determines which one of  `open`, `high`, `low`, `close` values should

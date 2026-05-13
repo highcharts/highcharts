@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -19,6 +20,8 @@ import type AnimationOptions from '../Animation/AnimationOptions';
 import type ColorType from '../Color/ColorType';
 import type { CursorValue } from '../Renderer/CSSObject';
 import type DashStyleValue from '../Renderer/DashStyleValue';
+import type DataTableCore from '../../Data/DataTableCore';
+import type { DataTableOptionsObject } from '../../Data/DataTableOptions';
 import type { DeepPartial } from '../../Shared/Types';
 import type { EventCallback } from '../Callback';
 import type Point from './Point';
@@ -45,6 +48,21 @@ import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
  *  Declarations
  *
  * */
+
+export interface DataMappingItem {
+    /**
+     * The column from which to read the value for this data point property.
+     * This can be either a column id (string) or a column index (number) in the
+     * data table.
+     */
+    column: number|string;
+    /**
+     * The data table from which to read the value for this data point property.
+     * This can be either a data table id (string) or a data table index
+     * (number).
+     */
+    dataTable: number|string;
+}
 
 export type NonPlotOptions = (
     'data'|'id'|'index'|'legendIndex'|'mapData'|'name'|'stack'|'treemap'|'type'|
@@ -496,22 +514,6 @@ export interface SeriesOptions {
      */
     colorIndex?: number;
     colors?: Array<ColorType>;
-
-    /**
-     * Whether to connect a graph line across null points, or render a gap
-     * between the two points on either side of the null.
-     *
-     * In stacked area chart, if `connectNulls` is set to true,
-     * null points are interpreted as 0.
-     *
-     * @sample {highcharts} highcharts/plotoptions/series-connectnulls-false/
-     *         False by default
-     * @sample {highcharts} highcharts/plotoptions/series-connectnulls-true/
-     *         True
-     *
-     * @default false
-     * @product highcharts highstock
-     */
     connectNulls?: boolean;
 
     /**
@@ -610,6 +612,72 @@ export interface SeriesOptions {
     data?: Array<(PointOptions|PointShortOptions)>;
 
     /**
+     * The mapping between the data table and the series data points. This is
+     * used in conjunction with the `dataTable` option (on [chart](#dataTable)
+     * or [series](#plotOptions.series.dataTable) level) to map columns from the
+     * data table to the properties of the data points. The keys of the
+     * `dataMapping` object correspond to the properties of the data points
+     * (e.g. `x`, `y`, `name`), and the values are objects that specify which
+     * column from which data table to use for that property.
+     *
+     * The keys can also be nested paths, for example `dataLabel.format`, to map
+     * to nested properties of the data points.
+     *
+     * The values can also be strings, in which case they are interpreted as
+     * column id's from the first data table.
+     *
+     * A typical use case is that multiple series share a common column, like
+     * `name` or `x`. In this case, to avoid repetition, the common column can
+     * be applied in `plotOptions.series.dataMapping` and the individual series
+     * can specify only the columns that are unique to them.
+     *
+     * The series name defaults to the column ID of the main data column in the
+     * mapping. In the inline example below, the series name will be `Cost`
+     * unless `series.name` is explicitly defined.
+     *
+     * ```js
+     * // Shorthand mapping with string
+     * dataMapping: {
+     *     y: 'Cost'
+     * }
+     *
+     * // Full mapping with object
+     * dataMapping: {
+     *    y: {
+     *       // Optional, defaults to the first data table. Can be either a data
+     *       // table index or id.
+     *       dataTable: 'dataTable1',
+     *       // Can be either a column index or id.
+     *       column: 'Cost'
+     *    }
+     * }
+     * ```
+     *
+     * If the columns of the DataTable have keys matching the series keys, the
+     * data mapping is not necessary. For example, this DataTable will connect
+     * directly to the series' `x` and `y` keys:
+     *
+     * ```js
+     * const dataTable = new Highcharts.DataTable({
+     *     columns: {
+     *         x: ['2026-05-04', '2026-05-05', '2026-05-06'],
+     *         y: [1, 4, 2]
+     *     }
+     *  });
+     * ```
+     *
+     * @type    {Highcharts.DataMappingOptionsObject}
+     * @sample {highcharts} highcharts/datatable/series-datatable-multiple
+     *         Series with two data tables
+     * @sample {highcharts} highcharts/datatable/nested-keys Nested keys
+     * @sample {highcharts} highcharts/datatable/chart-datatable-multiple Chart
+     *         with two data tables
+     *
+     * @since next
+     */
+    dataMapping?: Record<string, string|DataMappingItem>;
+
+    /**
      * Options for the series data sorting.
      *
      * @since   8.0.0
@@ -618,17 +686,27 @@ export interface SeriesOptions {
     dataSorting?: SeriesDataSortingOptions;
 
     /**
-     * Enable or disable the mouse tracking for a specific series. This
-     * includes point tooltips and click events on graphs and points. For
-     * large datasets it improves performance.
+     * Options for a specific series-level data table. The `dataTable` option
+     * can be either a configuration object or an instance of the
+     * `DataTable` class. If a `DataTable` instance is passed, it will
+     * be used directly. If a configuration object is passed, a new
+     * `DataTable` instance will be created based on the provided
+     * configuration.
      *
-     * @sample {highcharts} highcharts/plotoptions/series-enablemousetracking-false/
-     *         No mouse tracking
-     * @sample {highmaps} maps/plotoptions/series-enablemousetracking-false/
-     *         No mouse tracking
+     * @sample {highcharts} highcharts/datatable/series-datatable/
+     *        Series with one data table each
+     * @sample {highcharts} highcharts/datatable/series-datatable-multiple/
+     *        Series with two data tables
+     * @sample {highstock} stock/datatable/series-datatable/
+     *        Series with one data table each
+     * @sample {highstock} stock/datatable/series-datatable-multiple/
+     *        Series with two data tables
+     * @sample {highmaps} maps/datatable/series-datatable
+     *        Series-level data table
      *
-     * @default true
+     * @since next
      */
+    dataTable?: DataTableCore|DataTableOptionsObject;
     enableMouseTracking?: boolean;
 
     /**
@@ -803,10 +881,12 @@ export interface SeriesOptions {
     marker?: PointMarkerOptions;
 
     /**
-     * The name of the series as shown in the legend, tooltip etc.
+     * The name of the series as shown in the legend, tooltip etc. If a
+     * `dataTable` and `dataMapping` are used, the name defaults to the id of
+     * the primary data table column. Otherwise, it defaults to "Series {n}",
+     * where n is the index of the series, starting at 1.
      *
-     * @sample {highcharts} highcharts/series/name/
-     *         Series name
+     * @sample {highcharts} highcharts/series/name/ Series name
      *
      * @sample {highmaps} maps/demo/category-map/
      *         Series name

@@ -5,8 +5,9 @@
  *  (c) 2009-2026 Highsoft AS
  *  Author: Sebastian Bochan
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -33,6 +34,8 @@ import D from '../../Core/Defaults.js';
 const { setOptions } = D;
 import StockToolsDefaults from './StockToolsDefaults.js';
 import Toolbar from './StockToolbar.js';
+import getIcon from '../../Shared/BaseFormUtils';
+import StockToolsIcons from './StockToolsIcons';
 import { addEvent, getStyle, merge, pick } from '../../Shared/Utilities.js';
 
 /* *
@@ -228,15 +231,16 @@ function onChartRender(
         this.options.series &&
         button
     ) {
+        const { iconsURL } = stockTools;
         if (
             this.navigationBindings.utils
                 ?.isPriceIndicatorEnabled?.(this.series)
         ) {
             button.firstChild.style['background-image'] =
-            'url("' + stockTools.getIconsURL() + 'current-price-hide.svg")';
+                getIcon('current-price-hide.svg', iconsURL, StockToolsIcons);
         } else {
             button.firstChild.style['background-image'] =
-            'url("' + stockTools.getIconsURL() + 'current-price-show.svg")';
+                getIcon('current-price-show.svg', iconsURL, StockToolsIcons);
         }
     }
 }

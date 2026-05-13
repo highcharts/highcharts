@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -18,8 +19,6 @@
  * */
 
 import type CandlestickSeriesOptions from './CandlestickSeriesOptions';
-
-import { Palette } from '../../Core/Color/Palettes.js';
 
 /* *
  *
@@ -75,6 +74,17 @@ const CandlestickSeriesDefaults: CandlestickSeriesOptions = {
     threshold: null,
 
     /**
+     * What type of legend symbol to render for this series. For candlestick
+     * series, the default is `candlestick`, a vertical line (wick) with a
+     * rectangular body.
+     *
+     * @default   candlestick
+     * @product   highstock
+     * @apioption plotOptions.candlestick.legendSymbol
+     */
+    legendSymbol: 'candlestick',
+
+    /**
      * The color of the line/border of the candlestick.
      *
      * In styled mode, the line stroke can be set with the
@@ -89,7 +99,7 @@ const CandlestickSeriesDefaults: CandlestickSeriesOptions = {
      * @default #000000
      * @product highstock
      */
-    lineColor: Palette.neutralColor100,
+    lineColor: 'var(--highcharts-neutral-color-100)',
     /**
      * The pixel width of the candlestick line/border. Defaults to `1`.
      *
@@ -116,7 +126,7 @@ const CandlestickSeriesDefaults: CandlestickSeriesOptions = {
      * @product highstock
     */
 
-    upColor: Palette.backgroundColor,
+    upColor: 'var(--highcharts-background-color)',
     /**
      * @product highstock
      */

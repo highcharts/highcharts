@@ -44,9 +44,9 @@ function createChart(ranges, averages) {
             data: averages,
             zIndex: 1,
             marker: {
-                fillColor: 'white',
+                fillColor: 'var(--highcharts-background-color)',
                 lineWidth: 2,
-                lineColor: Highcharts.getOptions().colors[0]
+                lineColor: null
             }
         }, {
             name: 'Range',
@@ -54,7 +54,7 @@ function createChart(ranges, averages) {
             type: 'arearange',
             lineWidth: 0,
             linkedTo: ':previous',
-            color: Highcharts.getOptions().colors[0],
+            color: 'var(--highcharts-color-0)',
             fillOpacity: 0.3,
             zIndex: 0,
             marker: {

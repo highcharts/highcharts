@@ -5,8 +5,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi, Øystein Moseng
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -35,7 +36,6 @@ import { animObject } from '../Core/Animation/AnimationUtilities.js';
 import D from '../Core/Defaults.js';
 const { getOptions } = D;
 import MapPoint from '../Series/Map/MapPoint';
-import { Palette } from '../Core/Color/Palettes';
 import {
     addEvent,
     defined,
@@ -560,7 +560,7 @@ function onRendererComplexColor(
         chartIndex = (this.chartIndex || 0);
 
     let pattern = color.pattern,
-        value: string = Palette.neutralColor80;
+        value: string = 'var(--highcharts-neutral-color-80)';
 
     // Handle patternIndex
     if (typeof color.patternIndex !== 'undefined' && patterns) {
@@ -829,7 +829,8 @@ function rendererAddPattern(
 ): (SVGElement|undefined) {
     const animate = pick(animation, true),
         animationOptions = animObject(animate),
-        color: ColorString = options.color || Palette.neutralColor80,
+        color: ColorString = options.color ||
+            'var(--highcharts-neutral-color-80)',
         defaultSize = 32,
         height = options.height ||
             (typeof options._height === 'number' ? options._height : 0) ||

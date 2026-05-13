@@ -471,6 +471,11 @@ highcharts-tooltip-box {
     display: none;
 }
 
+.heatmap .highcharts-title,
+.heatmap .highcharts-subtitle {
+    display: block;
+}
+
 @media (min-width: 400px) {
     #made-with {
         justify-content: start;

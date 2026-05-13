@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -596,7 +597,7 @@ class BubbleSeries extends ScatterSeries {
      * @internal
      */
     public getRadii(): void {
-        const zData = this.getColumn('z'),
+        const zData = [...this.getColumn('z', false, true)],
             yData = this.getColumn('y'),
             radii = [] as Array<(number|null)>;
 
@@ -771,15 +772,16 @@ class BubbleSeries extends ScatterSeries {
     }
 
     public translateBubble(): void {
-        const { data, options, radii } = this,
+        const { options, radii } = this,
             { minPxSize } = this.getPxExtremes();
 
-        // Set the shape type and arguments to be picked up in drawPoints
-        let i = data.length;
-
-        while (i--) {
-            const point = data[i],
-                radius = radii ? radii[i] : 0; // #1737
+        this.data.concat(
+            this.condemnedPoints as BubblePoint[]
+        ).forEach((point, i): void => {
+            const { plotX = 0, plotY = 0 } = point,
+                radius = point.condemned ?
+                    (point.marker?.radius || 0) :
+                    (radii ? radii[i] : 0); // #1737
 
             // Negative points means negative z values (#9728)
             if (this.zoneAxis === 'z') {
@@ -798,18 +800,18 @@ class BubbleSeries extends ScatterSeries {
             if (isNumber(radius) && radius >= minPxSize / 2) {
                 // Alignment box for the data label
                 point.dlBox = {
-                    x: (point.plotX as any) - radius,
-                    y: (point.plotY as any) - radius,
+                    x: plotX - radius,
+                    y: plotY - radius,
                     width: 2 * radius,
                     height: 2 * radius
                 };
-            } else { // Below zThreshold
-                // #1691
+
+            } else {
+                // Below zThreshold, #1691
                 point.shapeArgs = point.plotY = point.dlBox = void 0;
                 point.isInside = false; // #17281
             }
-        }
-
+        });
     }
 
     public getPxExtremes(): BubblePxExtremes {

@@ -5,8 +5,9 @@
  *  (c) 2009-2026 Highsoft AS
  *  Author: Paweł Fus
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -34,7 +35,6 @@ import type { YAxisOptions } from '../../Core/Axis/AxisOptions';
 
 import H from '../../Core/Globals.js';
 import NavigationBindings from '../../Extensions/Annotations/NavigationBindings.js';
-import { Palette } from '../../Core/Color/Palettes.js';
 import STU from './StockToolsUtilities.js';
 const {
     addFlagFromForm,
@@ -47,6 +47,8 @@ const {
     updateRectSize
 } = STU;
 import FibonacciTimeZones from '../../Extensions/Annotations/Types/FibonacciTimeZones';
+import getIcon from '../../Shared/BaseFormUtils';
+import StockToolsIcons from './StockToolsIcons';
 import { fireEvent, merge } from '../../Shared/Utilities.js';
 
 /* *
@@ -720,6 +722,11 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
                                 { x, y },
                                 { x, y }
                             ]
+                        },
+                        labelOptions: {
+                            style: {
+                                color: 'var(--highcharts-neutral-color-60)'
+                            }
                         }
                     },
                     navigation.annotationsOptions,
@@ -1171,7 +1178,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
                                 y: coordsY.value,
                                 controlPoint: {
                                     style: {
-                                        fill: Palette.negativeColor
+                                        fill: 'var(--highcharts-negative-color)'
                                     }
                                 }
                             },
@@ -1364,8 +1371,8 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
     /**
      * A vertical arrow annotation bindings. Includes `start` event. On click,
      * finds the closest point and marks it with an arrow.
-     * `${palette.positiveColor}` is the color of the arrow when
-     * pointing from above and `${palette.negativeColor}`
+     * `var(--highcharts-positive-color)` is the color of the arrow when
+     * pointing from above and `var(--highcharts-negative-color)`
      * when pointing from below the point.
      *
      * @type    {Highcharts.NavigationBindingsOptionsObject}
@@ -1414,8 +1421,8 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
                             connector: {
                                 fill: 'none',
                                 stroke: closestPoint.below ?
-                                    Palette.negativeColor :
-                                    Palette.positiveColor
+                                    'var(--highcharts-negative-color)' :
+                                    'var(--highcharts-positive-color)'
                             }
                         }
                     },
@@ -1944,8 +1951,7 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
             button: HTMLDOMElement
         ): void {
             const chart = this.chart,
-                gui: Toolbar = chart.stockTools as any,
-                iconsURL = gui.getIconsURL();
+                gui: Toolbar = chart.stockTools as any;
 
             this.toggledAnnotations = !this.toggledAnnotations;
 
@@ -1959,12 +1965,18 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
             if (gui && gui.guiEnabled) {
                 if (this.toggledAnnotations) {
                     (button.firstChild as any).style['background-image'] =
-                        'url("' + iconsURL +
-                            'annotations-hidden.svg")';
+                        getIcon(
+                            'annotations-hidden.svg',
+                            gui.iconsURL,
+                            StockToolsIcons
+                        );
                 } else {
                     (button.firstChild as any).style['background-image'] =
-                        'url("' + iconsURL +
-                            'annotations-visible.svg")';
+                        getIcon(
+                            'annotations-visible.svg',
+                            gui.iconsURL,
+                            StockToolsIcons
+                        );
                 }
             }
 

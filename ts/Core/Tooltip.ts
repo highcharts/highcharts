@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -27,7 +28,6 @@ import type Series from './Series/Series';
 import type SizeObject from './Renderer/SizeObject';
 import type SVGAttributes from './Renderer/SVG/SVGAttributes';
 import type SVGElement from './Renderer/SVG/SVGElement';
-import type SVGRenderer from './Renderer/SVG/SVGRenderer';
 import type TooltipOptions from './TooltipOptions';
 
 import A from './Animation/AnimationUtilities.js';
@@ -41,10 +41,9 @@ const {
     doc,
     isSafari
 } = H;
-import { Palette } from './Color/Palettes.js';
 import R from './Renderer/RendererUtilities.js';
 const { distribute } = R;
-import RendererRegistry from './Renderer/RendererRegistry.js';
+import SVGRenderer from './Renderer/SVG/SVGRenderer.js';
 import {
     addEvent,
     clamp,
@@ -534,8 +533,7 @@ class Tooltip {
 
             if (this.outside) {
                 const chart = this.chart,
-                    chartStyle = chart.options.chart.style,
-                    Renderer = RendererRegistry.getRendererType();
+                    chartStyle = chart.options.chart.style;
 
                 /**
                  * Reference to the tooltip's container, when
@@ -548,6 +546,7 @@ class Tooltip {
                 this.container = container = H.doc.createElement('div');
 
                 container.className = (
+                    'highcharts-container ' +
                     'highcharts-tooltip-container ' +
                     (
                         chart.renderTo.className.match(
@@ -555,6 +554,10 @@ class Tooltip {
                         ) || [].join(' ')
                     )
                 );
+
+                // For picking up the specific palette
+                container.dataset['highchartsChart'] = chart.index.toString();
+
                 // We need to set pointerEvents = 'none' as otherwise it makes
                 // the area under the tooltip non-hoverable even after the
                 // tooltip disappears, #19035.
@@ -563,7 +566,7 @@ class Tooltip {
                     top: '1px',
                     pointerEvents: 'none',
                     zIndex: Math.max(
-                        this.options.style.zIndex || 0,
+                        options.style.zIndex || 0,
                         (chartStyle?.zIndex || 0) + 3
                     )
                 });
@@ -576,7 +579,7 @@ class Tooltip {
                  * @name Highcharts.Tooltip#renderer
                  * @type {Highcharts.SVGRenderer|undefined}
                  */
-                this.renderer = renderer = new Renderer(
+                this.renderer = renderer = new SVGRenderer(
                     container,
                     0,
                     0,
@@ -742,9 +745,9 @@ class Tooltip {
                     // is a transform/zoom on the container. #11329
                     isX ? scaleX(boxWidth) : scaleY(boxHeight),
                     isX ? chartPosition.left - distance +
-                            scaleX(plotX + plotLeft) :
+                        scaleX(plotX + plotLeft) :
                         chartPosition.top - distance +
-                            scaleY(plotY + plotTop),
+                        scaleY(plotY + plotTop),
                     0,
                     isX ? outerWidth : outerHeight
                 ] : [
@@ -1256,7 +1259,7 @@ class Tooltip {
                                     options.borderColor ||
                                     point.color ||
                                     currentSeries.color ||
-                                    Palette.neutralColor60
+                                    'var(--highcharts-neutral-color-60)'
                                 )
                             });
                         }
@@ -1505,7 +1508,7 @@ class Tooltip {
                             ttOptions.borderColor ||
                             point.color ||
                             series.color ||
-                            Palette.neutralColor80
+                            'var(--highcharts-neutral-color-80)'
                         )
                     });
             }
@@ -1957,10 +1960,19 @@ class Tooltip {
         // Set the renderer size dynamically to prevent document size to change.
         // Renderer only exists when tooltip is outside.
         if (renderer && container) {
-            const { scrollLeft = 0, scrollTop = 0 } = chart
-                .scrollablePlotArea?.scrollingContainer || {};
-            pos.x += scrollLeft + left;
-            pos.y += scrollTop + top;
+            pos.x += left;
+            pos.y += top;
+
+            // Scroll offset is only needed for custom/fixed positions.
+            // Default getPosition already returns coordinates in the tooltip's
+            // expected coordinate space.
+            if (positioner || fixed) {
+                const { scrollLeft = 0, scrollTop = 0 } = chart
+                    .scrollablePlotArea?.scrollingContainer || {};
+
+                pos.x += scrollLeft;
+                pos.y += scrollTop;
+            }
 
             // Pad it by the border width and distance. Add 2 to make room for
             // the default shadow (#19314).

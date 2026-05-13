@@ -6,8 +6,9 @@
  *
  *  Author: Daniel Studencki
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -23,8 +24,6 @@
 import type Point from '../../Core/Series/Point';
 import type TimelinePoint from './TimelinePoint';
 import type TimelineSeriesOptions from './TimelineSeriesOptions';
-
-import { Palette } from '../../Core/Color/Palettes.js';
 
 /* *
  *
@@ -102,15 +101,15 @@ const TimelineSeriesDefaults: TimelineSeriesOptions = {
          */
         alternate: true,
 
-        backgroundColor: Palette.backgroundColor,
+        backgroundColor: 'var(--highcharts-background-color)',
 
         borderWidth: 1,
 
-        borderColor: Palette.neutralColor40,
+        borderColor: 'var(--highcharts-neutral-color-40)',
 
         borderRadius: 3,
 
-        color: Palette.neutralColor80,
+        color: 'var(--highcharts-neutral-color-80)',
 
         /**
          * The color of the line connecting the data label to the point.
@@ -179,6 +178,8 @@ const TimelineSeriesDefaults: TimelineSeriesOptions = {
                 ((this as TimelinePoint).label || '');
             return format;
         },
+
+        padding: 5,
 
         style: {
             textOutline: 'none',

@@ -4,8 +4,9 @@
  *
  *  Author: Lars A. V. Cabrera
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -117,6 +118,19 @@ class GanttSeries extends XRangeSeries {
      *  Functions
      *
      * */
+
+    public getColumn(columnName: string): Array<number> {
+        const time = this.chart.time;
+        if (columnName === 'x') {
+            const startColumn = super.getColumn('start');
+            if (startColumn.length) {
+                return startColumn.map((val: number|string): number =>
+                    time.parse(val) || 0
+                );
+            }
+        }
+        return super.getColumn.apply(this, arguments);
+    }
 
     /**
      * Draws a single point in the series.

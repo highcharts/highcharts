@@ -5,8 +5,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi, Lars A. V. Cabrera
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -72,6 +73,9 @@ import {
 function onAxisAfterGetSeriesExtremes(
     this: Axis
 ): void {
+
+    const time = this.chart.time;
+
     let dataMax: (number|undefined),
         modMax: (boolean|undefined);
 
@@ -80,15 +84,17 @@ function onAxisAfterGetSeriesExtremes(
         for (const series of this.series as Array<XRangeSeries>) {
             const column = (
                 series.dataTable.getColumn('x2', true) ||
-                series.dataTable.getColumn('end', true)
+                series.dataTable.getColumn('end', true) ||
+                []
             );
 
-            if (column) {
-                for (const val of (column as any)) {
-                    if (isNumber(val) && val > dataMax) {
-                        dataMax = val;
-                        modMax = true;
-                    }
+            for (let val of (column as any)) {
+                if (typeof val === 'string') {
+                    val = time.parse(val);
+                }
+                if (isNumber(val) && val > dataMax) {
+                    dataMax = val;
+                    modMax = true;
                 }
             }
         }

@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -19,8 +20,6 @@
 
 import type ColorAxisOptions from './ColorAxisOptions';
 import type { DeepPartial } from '../../../Shared/Types';
-
-import { Palette } from '../../Color/Palettes.js';
 
 /* *
  *
@@ -78,6 +77,7 @@ import { Palette } from '../../Color/Palettes.js';
  *               offset, opposite, pane, plotBands, plotLines,
  *               reversedStacks, scrollbar, showEmpty, top, zoomEnabled
  * @product      highcharts highstock highmaps
+ * @requires     modules/coloraxis
  * @type         {*|Array<*>}
  * @optionparent colorAxis
  */
@@ -249,7 +249,7 @@ const colorAxisDefaults: DeepPartial<ColorAxisOptions> = {
      * @type      {Highcharts.ColorType}
      * @product   highcharts highstock highmaps
      */
-    gridLineColor: Palette.backgroundColor,
+    gridLineColor: 'var(--highcharts-background-color)',
 
     /**
      * The width of the grid lines extending from the axis across the
@@ -338,7 +338,7 @@ const colorAxisDefaults: DeepPartial<ColorAxisOptions> = {
          * @type    {Highcharts.ColorType}
          * @product highcharts highstock highmaps
          */
-        color: Palette.neutralColor40
+        color: 'var(--highcharts-neutral-color-40)'
     },
 
     /**
@@ -387,7 +387,7 @@ const colorAxisDefaults: DeepPartial<ColorAxisOptions> = {
      * @type    {Highcharts.ColorType}
      * @product highcharts highstock highmaps
      */
-    minColor: Palette.highlightColor10,
+    minColor: 'var(--highcharts-highlight-color-10)',
 
     /**
      * The color to represent the maximum of the color axis. Unless
@@ -407,7 +407,7 @@ const colorAxisDefaults: DeepPartial<ColorAxisOptions> = {
      * @type    {Highcharts.ColorType}
      * @product highcharts highstock highmaps
      */
-    maxColor: Palette.highlightColor100,
+    maxColor: 'var(--highcharts-highlight-color-100)',
 
     /**
      * Color stops for the gradient of a scalar color axis. Use this in

@@ -4,7 +4,7 @@
 
 The release has been tested with:
 
-- The [Highcharts npm package](https://www.npmjs.com/package/highcharts) version 11.4.8 and newer
+- The [Highcharts npm package](https://www.npmjs.com/package/highcharts) version 12.0.0 and newer
 - [Vite](https://vite.dev/) with [plugin-react](https://www.npmjs.com/package/@vitejs/plugin-react) version 4.3.3 and newer
 - React and react-dom version 18.3.1 and newer
 

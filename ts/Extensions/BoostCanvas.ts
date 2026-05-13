@@ -1,7 +1,8 @@
 /* *
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *  Author: Torstein Hønsi, Christer Vasseng
  *
  *  This module serves as a fallback for the Boost module in IE9 and IE10. Newer
@@ -31,10 +32,6 @@ import type Chart from '../Core/Chart/Chart';
 import type ColumnSeries from '../Series/Column/ColumnSeries';
 import type HeatmapSeries from '../Series/Heatmap/HeatmapSeries';
 import type HTMLElement from '../Core/Renderer/HTML/HTMLElement';
-import type {
-    PointOptions,
-    PointShortOptions
-} from '../Core/Series/PointOptions';
 import type { TypedArray } from '../Shared/Types';
 import type ScatterSeries from '../Series/Scatter/ScatterSeries';
 import type Series from '../Core/Series/Series';
@@ -55,7 +52,6 @@ const {
     doc,
     noop
 } = H;
-import { Palette } from '../Core/Color/Palettes.js';
 import {
     addEvent,
     fireEvent,
@@ -481,7 +477,7 @@ namespace BoostCanvas {
             },
             xData = series.getColumn('x', true),
             yData = series.getColumn('y', true),
-            rawData: Array<(PointOptions|PointShortOptions)> = options.data as any,
+            rawData = options.data || [],
             xExtremes = xAxis.getExtremes(),
             xMin = xExtremes.min,
             xMax = xExtremes.max,
@@ -578,9 +574,8 @@ namespace BoostCanvas {
         if (rawData.length > 99999) {
             chart.options.loading = merge(loadingOptions, {
                 labelStyle: {
-                    backgroundColor: color(
-                        Palette.backgroundColor
-                    ).setOpacity(0.75).get(),
+                    backgroundColor: color('var(--highcharts-background-color)')
+                        .setOpacity(0.75).get(),
                     padding: '1em',
                     borderRadius: '0.5em'
                 },
