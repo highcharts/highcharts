@@ -2466,8 +2466,8 @@ const defaultOptions: DefaultOptions = {
         },
 
         /**
-         * The color of the tooltip border. When `undefined`, the border takes
-         * the color of the corresponding series or point.
+         * The color of the tooltip border. When `undefined` or `null`, the
+         * border takes the color of the corresponding series or point.
          *
          * By default, in light mode the border color matches the background
          * color because the shadow makes the tooltip stand out. In dark mode, a
@@ -2475,7 +2475,7 @@ const defaultOptions: DefaultOptions = {
          * visible on a dark background.
          *
          * @sample {highcharts} highcharts/tooltip/bordercolor-default/
-         *         Follow series by default
+         *         Default border color
          * @sample {highcharts} highcharts/tooltip/bordercolor-black/
          *         Black border
          * @sample {highstock} stock/tooltip/general/

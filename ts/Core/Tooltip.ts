@@ -1303,7 +1303,10 @@ class Tooltip {
      *
      * @param {Array<Highcharts.Point>} points
      */
-    public renderSplit(labels: (string|Array<(boolean|string)>), points: Array<Point>): void {
+    public renderSplit(
+        labels: (string|Array<(boolean|string)>),
+        points: Array<Point>
+    ): void {
         const tooltip = this;
         const {
             chart,
@@ -1644,7 +1647,6 @@ class Tooltip {
                     boxExtremes.left = chartLeft + x;
                 }
                 if (
-                    !isHeader &&
                     tooltip.outside &&
                     boxExtremes.left + boxWidth > boxExtremes.right
                 ) {
@@ -1681,16 +1683,10 @@ class Tooltip {
                 const offset = chartLeft - boxExtremes.left;
                 // Skip this if there is no overflow
                 if (offset > 0) {
-                    if (!isHeader) {
-                        attributes.x = x + offset;
-                        attributes.anchorX = anchorX + offset;
-                    }
-                    if (isHeader) {
-                        attributes.x = (
-                            boxExtremes.right - boxExtremes.left
-                        ) / 2;
-                        attributes.anchorX = anchorX + offset;
-                    }
+                    attributes.x = isHeader ?
+                        (boxExtremes.right - boxExtremes.left) / 2 :
+                        x + offset;
+                    attributes.anchorX = anchorX + offset;
                 }
             }
 
