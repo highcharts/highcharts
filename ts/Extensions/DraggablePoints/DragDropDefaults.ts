@@ -190,7 +190,7 @@ const DragDropDefaults: DragDropOptions = {
      * @type       {string}
      * @since      6.2.0
      * @validvalue ["alt", "ctrl", "meta", "shift"]
-     * @deprecated
+     * @deprecated 10.2.1
      * @requires  modules/draggable-points
      * @apioption  chart.zoomKey
      */

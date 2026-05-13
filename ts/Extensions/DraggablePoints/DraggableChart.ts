@@ -92,14 +92,12 @@ declare module '../../Core/Chart/ChartOptions'{
          * avoid zooming while moving points. Should be set different than
          * [chart.panKey](#chart.panKey).
          *
-         * @type       {string}
          * @since      6.2.0
-         * @validvalue ["alt", "ctrl", "meta", "shift"]
-         * @deprecated
-         * @requires  modules/draggable-points
+         * @deprecated 10.2.1
+         * @requires   modules/draggable-points
          * @apioption  chart.zoomKey
          */
-        zoomKey?: string;
+        zoomKey?: ('alt'|'ctrl'|'meta'|'shift');
     }
 }
 
