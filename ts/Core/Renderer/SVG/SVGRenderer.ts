@@ -57,7 +57,6 @@ const {
     win
 } = H;
 import Palette from '../../Color/Palette';
-import RendererRegistry from '../RendererRegistry.js';
 import SVGElement from './SVGElement.js';
 import SVGLabel from './SVGLabel.js';
 import Symbols from './Symbols.js';
@@ -613,7 +612,7 @@ class SVGRenderer implements SVGRendererBase {
             renderer.unSubPixelFix();
         }
 
-        renderer.alignedObjects = null as any;
+        renderer.alignedObjects.length = 0;
 
         return null;
     }
@@ -2407,11 +2406,11 @@ namespace SVGRenderer {
 
 /* *
  *
- *  Registry
+ *  Compatibility
  *
  * */
 
-RendererRegistry.registerRendererType('svg', SVGRenderer, true);
+(H as AnyRecord).Renderer = SVGRenderer;
 
 /* *
  *

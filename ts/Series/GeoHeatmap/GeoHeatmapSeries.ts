@@ -768,6 +768,7 @@ export default GeoHeatmapSeries;
  *            joinBy, marker, mapData, negativeColor, onPoint, shadow,
  *            stickyTracking
  * @product   highmaps
+ * @requires  modules/geoheatmap
  * @apioption series.geoheatmap
  */
 

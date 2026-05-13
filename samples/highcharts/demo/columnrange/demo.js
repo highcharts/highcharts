@@ -1,5 +1,20 @@
 Highcharts.chart('container', {
-
+    dataTable: {
+        columns: {
+            Month: [
+                'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+                'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+            ],
+            TempLow: [
+                -9.5, -7.8, -13.1, -4.4, -1.0, 3.1, 8.9, 9.6,
+                4.9, -5.2, -10.5, -12.1
+            ],
+            TempHigh: [
+                8.0, 8.3, 9.2, 15.7, 20.8, 28.4, 27.0,
+                23.0, 19.3, 11.6, 12.0, 8.5
+            ]
+        }
+    },
     chart: {
         type: 'columnrange',
         inverted: true
@@ -29,10 +44,7 @@ Highcharts.chart('container', {
     },
 
     xAxis: {
-        categories: [
-            'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-            'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
-        ]
+        type: 'category'
     },
 
     yAxis: {
@@ -51,6 +63,9 @@ Highcharts.chart('container', {
             dataLabels: {
                 enabled: true,
                 format: '{y}°C'
+            },
+            dataMapping: {
+                name: 'Month'
             }
         }
     },
@@ -61,20 +76,10 @@ Highcharts.chart('container', {
 
     series: [{
         name: 'Temperatures',
-        data: [
-            [-9.5, 8.0],
-            [-7.8, 8.3],
-            [-13.1, 9.2],
-            [-4.4, 15.7],
-            [-1.0, 20.8],
-            [3.1, 28.4],
-            [8.9, 27.0],
-            [9.6, 23.0],
-            [4.9, 19.3],
-            [-5.2, 11.6],
-            [-10.5, 12.0],
-            [-12.1, 8.5]
-        ]
+        dataMapping: {
+            low: 'TempLow',
+            high: 'TempHigh'
+        }
     }]
 
 });

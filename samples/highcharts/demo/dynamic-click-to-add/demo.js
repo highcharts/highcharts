@@ -1,17 +1,16 @@
 // Plugin to add a pulsating marker on add point
 Highcharts.addEvent(Highcharts.Series, 'addPoint', e => {
-    const point = e.point,
-        series = e.target;
+    const series = e.target,
+        x = e.point.x;
 
     if (!series.pulse) {
         series.pulse = series.chart.renderer.circle()
             .add(series.markerGroup);
     }
+
     setTimeout(() => {
         series.pulse
             .attr({
-                x: series.xAxis.toPixels(point.x, true),
-                y: series.yAxis.toPixels(point.y, true),
                 r: series.options.marker.radius,
                 opacity: 1,
                 fill: series.color
@@ -20,7 +19,17 @@ Highcharts.addEvent(Highcharts.Series, 'addPoint', e => {
                 r: 20,
                 opacity: 0
             }, {
-                duration: 1000
+                duration: 1000,
+                step: () => {
+                    const point = series.points.at(-1),
+                        graphic = point?.graphic;
+                    if (point.x === x && graphic) {
+                        series.pulse.attr({
+                            x: graphic.attr('x') + graphic.attr('width') / 2,
+                            y: graphic.attr('y') + graphic.attr('height') / 2
+                        });
+                    }
+                }
             });
     }, 1);
 });

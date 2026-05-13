@@ -1,5 +1,6 @@
-function getData(n) {
-    const arr = [];
+function getDataTableOptions(n) {
+    const xColumn = new Float64Array(n),
+        yColumn = new Float64Array(n);
     let a,
         b,
         c,
@@ -19,17 +20,22 @@ function getData(n) {
         } else {
             spike = 0;
         }
-        arr.push([
-            i,
-            2 * Math.sin(i / 100) + a + b + c + spike + Math.random()
-        ]);
+        xColumn[i] = i;
+        yColumn[i] = 2 * Math.sin(i / 100) + a + b + c + spike + Math.random();
     }
-    return arr;
+    return {
+        columns: {
+            x: xColumn,
+            y: yColumn
+        }
+    };
 }
-const data = getData(500000);
+const dataTable = getDataTableOptions(500000);
 
 console.time('area');
 Highcharts.chart('container', {
+
+    dataTable,
 
     chart: {
         type: 'area',
@@ -45,7 +51,7 @@ Highcharts.chart('container', {
     },
 
     title: {
-        text: 'Highcharts drawing ' + data.length + ' points'
+        text: 'Highcharts drawing 500000 points'
     },
 
     subtitle: {
@@ -56,10 +62,7 @@ Highcharts.chart('container', {
         valueDecimals: 2
     },
 
-    series: [{
-        data: data,
-        colorIndex: 1
-    }]
+    series: [{ colorIndex: 1 }]
 
 });
 

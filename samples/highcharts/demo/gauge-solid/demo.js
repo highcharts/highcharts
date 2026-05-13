@@ -6,18 +6,9 @@ const gaugeOptions = {
     title: null,
 
     pane: {
-        center: ['50%', '85%'],
-        size: '140%',
         startAngle: -90,
         endAngle: 90,
-        background: {
-            backgroundColor: 'var(--highcharts-neutral-color-3, #fafafa)',
-            borderColor: 'var(--highcharts-neutral-color-20, #ccc)',
-            borderRadius: 5,
-            innerRadius: '60%',
-            outerRadius: '100%',
-            shape: 'arc'
-        }
+        innerSize: '60%'
     },
 
     exporting: {
@@ -35,24 +26,16 @@ const gaugeOptions = {
             [0.5, '#DDDF0D'], // yellow
             [0.9, '#DF5353'] // red
         ],
-        lineWidth: 0,
-        tickWidth: 0,
-        minorTickInterval: null,
         tickAmount: 2,
         title: {
             y: -70
-        },
-        labels: {
-            y: 16
         }
     },
 
     plotOptions: {
         solidgauge: {
-            borderRadius: 3,
             dataLabels: {
-                y: 5,
-                borderWidth: 0
+                y: -15
             }
         }
     }

@@ -15,8 +15,9 @@ QUnit.test(
                             enabled: true,
                             inside: false,
                             style: {
-                                textOutline: null
-                            }
+                                _textOutline: null
+                            },
+                            backgroundColor: 'contrast'
                         }
                     }
                 },
@@ -27,17 +28,46 @@ QUnit.test(
                 ],
                 yAxis: {
                     endOnTick: false,
-                    max: 15.3
+                    max: 15
                 }
             }),
             point = chart.series[0].points[1];
 
+
+        const contrastColor = Highcharts.color(
+                chart.renderer.getContrast(point.color)
+            ).get(),
+            contrastBackgroundColor = Highcharts.color(
+                chart.renderer.getContrast(contrastColor)
+            ).get();
         assert.strictEqual(
             Highcharts.color(
-                point.dataLabel.element.childNodes[0].style.fill
+                point.dataLabel.element.querySelector('text').style.fill
             ).get(),
-            Highcharts.color(chart.renderer.getContrast(point.color)).get(),
+            contrastColor,
             'Contrast color should be used for a justified label on a column.'
+        );
+
+        assert.strictEqual(
+            Highcharts.color(
+                point.dataLabel.element.querySelector(
+                    '.highcharts-text-outline'
+                ).getAttribute('fill')
+            ).get(),
+            contrastBackgroundColor,
+            'Text outline should be updated for justified label on a column.'
+        );
+
+        assert.strictEqual(
+            Highcharts.color(
+                point.dataLabel.element.querySelector(
+                    'rect'
+                ).getAttribute('fill')
+            )
+                .setOpacity(1)
+                .get(),
+            contrastBackgroundColor,
+            'Contrast background should be updated for justified label'
         );
 
         chart.yAxis[0].setExtremes(null, 20000000, false, false);
@@ -47,9 +77,9 @@ QUnit.test(
 
         assert.strictEqual(
             window.getComputedStyle(
-                point.dataLabel.element.childNodes[0]
-            ).color,
-            'rgb(0, 0, 0)',
+                point.dataLabel.element.querySelector('text')
+            ).fill,
+            'color(srgb 0 0 0)',
             `Contrast color should not be used when dataLabel does not collide
             with column (#6657).`
         );
@@ -61,7 +91,8 @@ QUnit.test(
             }
         });
         assert.strictEqual(
-            chart.series[1].points[11].dataLabel.element.childNodes[0].style
+            chart.series[1].points[11].dataLabel.element.querySelector('text')
+                .style
                 .fill,
             'red',
             `After updating from contrast color,
@@ -88,7 +119,7 @@ QUnit.test(
 
         assert.strictEqual(
             Highcharts.color(
-                points[0].dataLabel.element.childNodes[0].style.fill
+                points[0].dataLabel.element.querySelector('text').style.fill
             ).get(),
             Highcharts.color(
                 'rgb(255,255,255)'
@@ -105,7 +136,7 @@ QUnit.test(
 
         assert.strictEqual(
             Highcharts.color(
-                points[0].dataLabel.element.childNodes[0].style.fill
+                points[0].dataLabel.element.querySelector('text').style.fill
             ).get(),
             Highcharts.color(
                 'rgb(0,0,0)'
@@ -124,7 +155,7 @@ QUnit.test(
 
         assert.strictEqual(
             Highcharts.color(
-                points[0].dataLabel.element.childNodes[0].style.fill
+                points[0].dataLabel.element.querySelector('text').style.fill
             ).get(),
             Highcharts.color(
                 'rgb(255,255,255)'
@@ -214,10 +245,10 @@ QUnit.test('Pie dataLabels and contrast', function (assert) {
 
     assert.strictEqual(
         Highcharts.color(
-            points[1].dataLabel.element.childNodes[0].style.color
+            points[1].dataLabel.element.querySelector('text').style.color
         ).get(),
         Highcharts.color(
-            points[0].dataLabel.element.childNodes[0].style.color
+            points[0].dataLabel.element.querySelector('text').style.color
         ).get(),
         'DataLabels outside the pie chart should not get contrast color ' +
         '(#11140).'

@@ -35,6 +35,7 @@ if (defaultOptions.annotations?.types) {
          *
          * @extends      annotations.types.crookedLine
          * @product      highstock
+         * @requires     modules/annotations-advanced
          * @optionparent annotations.types.fibonacci
          */
         {

@@ -179,6 +179,8 @@ const TimelineSeriesDefaults: TimelineSeriesOptions = {
             return format;
         },
 
+        padding: 5,
+
         style: {
             textOutline: 'none',
             fontWeight: 'normal',

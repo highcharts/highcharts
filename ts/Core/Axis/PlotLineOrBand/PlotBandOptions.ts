@@ -24,6 +24,7 @@ import type ColorType from '../../Color/ColorType';
 import type CSSObject from '../../Renderer/CSSObject';
 import type Templating from '../../Templating';
 import type PlotLineOrBand from './PlotLineOrBand';
+import type { BorderRadiusOptionsObject } from '../../../Extensions/BorderRadius';
 
 /* *
  *
@@ -236,7 +237,7 @@ export interface PlotBandOptions {
      *
      * @since 11.4.2
      */
-    borderRadius?: number|string;
+    borderRadius?: number|string|BorderRadiusOptionsObject;
 
     /**
      * Border width for the plot band. Also requires `borderColor` to be set.
