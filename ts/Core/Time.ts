@@ -61,7 +61,14 @@ class Time extends TimeBase {
         const hasVisibleRange = defined(visibleMin) && defined(visibleMax),
             needsHourBoundary = unitRange < timeUnits.hour,
             needsDayBoundary = unitRange < timeUnits.day,
-            needsMonthBoundary = unitRange < timeUnits.month;
+            needsMonthBoundary = unitRange < timeUnits.month,
+            tickAlignment = (
+                unitRange >= timeUnits.hour ?
+                    1800000 : unitRange >= timeUnits.minute ?
+                        60000 : unitRange >= timeUnits.second ?
+                            1000 : false
+            );
+
         // Handle boundary ticks. Use a reasonable dropout threshold
         // to prevent looping over dense data grouping (#6156).
         if (tickPositions.length < 10000) {
@@ -95,15 +102,8 @@ class Time extends TimeBase {
                     }
                 }
 
-                // If daily/hourly ticks are not full/half hours, skip checking
-                // them.
-                if (
-                    (
-                        unitRange === timeUnits.day ||
-                        unitRange === timeUnits.hour
-                    ) &&
-                    t % 1800000 !== 0
-                ) {
+                // Skip misaligned ticks to save performance.
+                if (tickAlignment && t % tickAlignment !== 0) {
                     isFirstVisibleTick = false;
                     continue;
                 }
@@ -127,20 +127,13 @@ class Time extends TimeBase {
                 if (needsDayBoundary && isMidnight) {
                     boundaryTicks[t] = 'day';
                 }
-                if (
-                    needsMonthBoundary &&
-                    day === 1 &&
-                    isMidnight
-                ) {
+                if (needsMonthBoundary && day === 1 && isMidnight) {
                     boundaryTicks[t] = 'month';
                 }
-                if (
-                    month === 0 &&
-                    day === 1 &&
-                    isMidnight
-                ) {
+                if (month === 0 && day === 1 && isMidnight) {
                     boundaryTicks[t] = 'year';
                 }
+
                 isFirstVisibleTick = false;
             }
         }
