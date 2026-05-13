@@ -476,6 +476,7 @@ export class Grid {
 
         this.userOptions = merge(this.userOptions, newOptions);
         this.options = merge(
+            // TODO: Investigate if it should be always only `defaultOptions`
             this.options ?? defaultOptions,
             this.userOptions
         );

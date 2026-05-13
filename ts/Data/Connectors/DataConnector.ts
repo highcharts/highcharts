@@ -355,6 +355,10 @@ abstract class DataConnector implements DataEventEmitter<Event> {
                 (dataTable): boolean => dataTable.key === key
             )?.dataModifier ?? this.options?.dataModifier;
 
+            if (!dataModifierOptions) {
+                continue;
+            }
+
             const ModifierClass = (
                 dataModifierOptions &&
                 DataModifier.types[dataModifierOptions.type]
