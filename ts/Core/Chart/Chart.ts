@@ -2762,6 +2762,24 @@ class Chart {
             -plotBorder.strokeWidth()
         ));
 
+        // Preserve same-zIndex paint order after axis updates recreate grids.
+        // #24521
+        const plotBorderElement = plotBorder.element,
+            plotBorderParent = plotBorderElement.parentNode;
+
+        chart.axes.forEach(({ gridGroup, options }): void => {
+            const gridElement = gridGroup?.element;
+            if (
+                gridElement &&
+                plotBorderParent &&
+                options.gridZIndex <= 1 &&
+                gridElement.parentNode === plotBorderParent &&
+                (plotBorderElement.compareDocumentPosition(gridElement) & 4)
+            ) {
+                plotBorderParent.insertBefore(gridElement, plotBorderElement);
+            }
+        });
+
         // Reset
         chart.isDirtyBox = false;
 
