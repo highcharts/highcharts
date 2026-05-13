@@ -128,7 +128,7 @@ class DependencyWheelSeries extends SankeySeries {
 
         /**
          * Return the sum of incoming and outgoing links.
-         * @private
+         * @internal
          */
         node.getSum = (): number => {
             let sum = 0;
@@ -351,7 +351,7 @@ class DependencyWheelSeries extends SankeySeries {
 
     /**
      * Run translation operations for one link.
-     * @private
+     * @internal
      */
     public translateLink(point: DependencyWheelPoint): void {
         const linkToHeight = Math.max(

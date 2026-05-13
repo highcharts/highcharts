@@ -429,6 +429,10 @@ class SankeySeries extends ColumnSeries {
         }
     }
 
+    /**
+     * Get the Y position of a link.
+     * @internal
+     */
     public getY(
         point: SankeyPoint,
         node: SankeyPoint,
@@ -450,7 +454,7 @@ class SankeySeries extends ColumnSeries {
 
     /**
      * Run translation operations for one link.
-     * @private
+     * @internal
      */
     public translateLink(
         point: SankeyPoint,
@@ -627,7 +631,7 @@ class SankeySeries extends ColumnSeries {
 
     /**
      * Run translation operations for one node.
-     * @private
+     * @internal
      */
     public translateNode(
         node: SankeyPoint,
