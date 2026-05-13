@@ -2472,7 +2472,6 @@ const defaultOptions: DefaultOptions = {
             day: '%[AebY]',
             week: '%v %[AebY]',
             month: '%[BY]',
-            /** @internal */
             year: '%[Y]'
         },
 
