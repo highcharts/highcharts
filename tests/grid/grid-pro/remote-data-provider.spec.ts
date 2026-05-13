@@ -183,6 +183,81 @@ test.describe('RemoteDataProvider', () => {
         expect(result.rowId1).toBe('row-3');
     });
 
+    test('row mutation callbacks receive cached remote row indexes', async ({
+        page
+    }) => {
+        await openRemoteProviderFixture(page);
+
+        const result = await page.evaluate(async () => {
+            const api = (window as any).remoteDataProviderTest;
+            const calls: Array<{
+                type: string;
+                rowId?: string | number;
+                atOriginalIndex?: number;
+                row?: Record<string, unknown>;
+            }> = [];
+
+            await api.createGrid({
+                totalRowCount: 5,
+                data: {
+                    chunkSize: 2,
+                    idColumn: 'id',
+                    insertRowCallback: (
+                        row: Record<string, unknown>,
+                        atOriginalIndex: number
+                    ): Promise<void> => {
+                        calls.push({
+                            type: 'insert',
+                            row,
+                            atOriginalIndex
+                        });
+                        return Promise.resolve();
+                    },
+                    deleteRowCallback: (
+                        rowId: string | number
+                    ): Promise<void> => {
+                        calls.push({
+                            type: 'delete',
+                            rowId
+                        });
+                        return Promise.resolve();
+                    }
+                },
+                columns: [{
+                    id: 'id',
+                    cells: { editMode: { enabled: true } }
+                }, {
+                    id: 'name',
+                    cells: { editMode: { enabled: true } }
+                }]
+            });
+
+            const grid = api.getGrid();
+            const rowIdForDelete = await grid.dataProvider.getRowId(1);
+            await grid.gridEditing.deleteRow(rowIdForDelete);
+
+            const rowIdForInsert = await grid.dataProvider.getRowId(1);
+            await grid.gridEditing.addRowAbove(rowIdForInsert, {
+                id: 99,
+                name: 'inserted'
+            });
+
+            return calls;
+        });
+
+        expect(result).toEqual([{
+            type: 'delete',
+            rowId: 1
+        }, {
+            type: 'insert',
+            row: {
+                id: 99,
+                name: 'inserted'
+            },
+            atOriginalIndex: 1
+        }]);
+    });
+
     test('pins unfetched remote rows once their chunks are scrolled into cache', async ({
         page
     }) => {

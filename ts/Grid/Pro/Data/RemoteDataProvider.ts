@@ -576,6 +576,17 @@ export class RemoteDataProvider extends DataProvider {
         return Promise.resolve(void 0);
     }
 
+    public override getOriginalRowIndex(
+        rowId: RowId
+    ): Promise<number | undefined> {
+        const info = this.rowIdToChunkInfo?.get(rowId);
+        if (!info) {
+            return Promise.resolve(void 0);
+        }
+
+        return Promise.resolve(info.offset + info.localIndex);
+    }
+
     public override async getRowObject(
         rowIndex: number
     ): Promise<RowObjectType | undefined> {
@@ -713,6 +724,96 @@ export class RemoteDataProvider extends DataProvider {
         }
 
         return DataProvider.assumeColumnDataType(column.slice(0, 30), columnId);
+    }
+
+    public override supportsRowMutation(): boolean {
+        return !!(
+            this.options.insertRowCallback &&
+            this.options.deleteRowCallback
+        );
+    }
+
+    public override supportsColumnMutation(): boolean {
+        return !!(
+            this.options.insertColumnCallback &&
+            this.options.deleteColumnCallback
+        );
+    }
+
+    public override async insertRow(
+        row: RowObjectType,
+        atOriginalIndex: number
+    ): Promise<RowId | undefined> {
+        const { insertRowCallback, idColumn } = this.options;
+        if (!insertRowCallback) {
+            throw new Error(
+                'The `insertRowCallback` option is not defined.'
+            );
+        }
+
+        const result = await insertRowCallback.call(
+            this,
+            row,
+            atOriginalIndex
+        );
+        this.lastQueryFingerprint = null;
+        await this.applyQuery();
+
+        if (result !== void 0) {
+            return result;
+        }
+        if (idColumn) {
+            const candidate = row[idColumn];
+            if (
+                typeof candidate === 'string' ||
+                typeof candidate === 'number'
+            ) {
+                return candidate;
+            }
+        }
+        return void 0;
+    }
+
+    public override async deleteRow(rowId: RowId): Promise<void> {
+        const { deleteRowCallback } = this.options;
+        if (!deleteRowCallback) {
+            throw new Error(
+                'The `deleteRowCallback` option is not defined.'
+            );
+        }
+
+        await deleteRowCallback.call(this, rowId);
+        this.lastQueryFingerprint = null;
+        await this.applyQuery();
+    }
+
+    public override async insertColumn(
+        columnId: string,
+        column: DataTableColumnType
+    ): Promise<void> {
+        const { insertColumnCallback } = this.options;
+        if (!insertColumnCallback) {
+            throw new Error(
+                'The `insertColumnCallback` option is not defined.'
+            );
+        }
+
+        await insertColumnCallback.call(this, columnId, column);
+        this.lastQueryFingerprint = null;
+        await this.applyQuery();
+    }
+
+    public override async deleteColumn(columnId: string): Promise<void> {
+        const { deleteColumnCallback } = this.options;
+        if (!deleteColumnCallback) {
+            throw new Error(
+                'The `deleteColumnCallback` option is not defined.'
+            );
+        }
+
+        await deleteColumnCallback.call(this, columnId);
+        this.lastQueryFingerprint = null;
+        await this.applyQuery();
     }
 
     public override async applyQuery(): Promise<void> {
@@ -854,6 +955,45 @@ export interface RemoteDataProviderOptions extends DataProviderOptions {
         columnId: string,
         rowId: RowId,
         value: DataTableCellType
+    ) => Promise<void>;
+
+    /**
+     * Callback to persist a row insertion to the remote server. If not
+     * provided together with `deleteRowCallback`, row mutation actions will
+     * be unavailable.
+     *
+     * May return the id of the inserted row when not derivable from
+     * `idColumn`.
+     */
+    insertRowCallback?: (
+        this: RemoteDataProvider,
+        row: RowObjectType,
+        atOriginalIndex: number
+    ) => Promise<RowId | undefined | void>;
+
+    /**
+     * Callback to persist a row deletion to the remote server.
+     */
+    deleteRowCallback?: (
+        this: RemoteDataProvider,
+        rowId: RowId
+    ) => Promise<void>;
+
+    /**
+     * Callback to persist a column insertion to the remote server.
+     */
+    insertColumnCallback?: (
+        this: RemoteDataProvider,
+        columnId: string,
+        column: DataTableColumnType
+    ) => Promise<void>;
+
+    /**
+     * Callback to persist a column deletion to the remote server.
+     */
+    deleteColumnCallback?: (
+        this: RemoteDataProvider,
+        columnId: string
     ) => Promise<void>;
 
     /**

@@ -196,6 +196,11 @@
         text-align: var(--ig-cell-text-align);
     }
 
+    .hcg-table tbody tr > :where(.hcg-cell).hcg-empty-cell-content:not(.hcg-edited-cell)::before {
+        content: "\00a0";
+        visibility: hidden;
+    }
+
     .hcg-table tbody tr > :where(.hcg-cell):nth-child(even) {
         --ig-cell-column-background: var(--hcg-column-even-background, var(--hcg-column-background));
         --ig-cell-column-color: var(--hcg-column-even-color, var(--hcg-column-color));
