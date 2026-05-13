@@ -590,6 +590,9 @@ namespace AxisDefaults {
              */
             millisecond: {
                 /**
+                 * List of possible format strings used for this unit.
+                 *
+                 * @type {Array<string>}
                  * @apioption xAxis.dateTimeLabelFormats.millisecond.list
                  */
 
@@ -613,6 +616,9 @@ namespace AxisDefaults {
              */
             second: {
                 /**
+                 * List of possible format strings used for this unit.
+                 *
+                 * @type {Array<string>}
                  * @apioption xAxis.dateTimeLabelFormats.second.list
                  */
 
@@ -636,6 +642,9 @@ namespace AxisDefaults {
              */
             minute: {
                 /**
+                 * List of possible format strings used for this unit.
+                 *
+                 * @type {Array<string>}
                  * @apioption xAxis.dateTimeLabelFormats.minute.list
                  */
 
@@ -659,6 +668,9 @@ namespace AxisDefaults {
              */
             hour: {
                 /**
+                 * List of possible format strings used for this unit.
+                 *
+                 * @type {Array<string>}
                  * @apioption xAxis.dateTimeLabelFormats.hour.list
                  */
 
@@ -689,6 +701,9 @@ namespace AxisDefaults {
              */
             day: {
                 /**
+                 * List of possible format strings used for this unit.
+                 *
+                 * @type {Array<string>}
                  * @apioption xAxis.dateTimeLabelFormats.day.list
                  */
 
@@ -709,6 +724,9 @@ namespace AxisDefaults {
              */
             week: {
                 /**
+                 * List of possible format strings used for this unit.
+                 *
+                 * @type {Array<string>}
                  * @apioption xAxis.dateTimeLabelFormats.week.list
                  */
 
@@ -722,6 +740,9 @@ namespace AxisDefaults {
              */
             month: {
                 /**
+                 * List of possible format strings used for this unit.
+                 *
+                 * @type {Array<string>}
                  * @apioption xAxis.dateTimeLabelFormats.month.list
                  */
 
@@ -742,6 +763,9 @@ namespace AxisDefaults {
              */
             year: {
                 /**
+                 * List of possible format strings used for this unit.
+                 *
+                 * @type {Array<string>}
                  * @apioption xAxis.dateTimeLabelFormats.year.list
                  */
 
