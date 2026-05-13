@@ -2,7 +2,7 @@ const msgMouse = document.getElementById('msg-mouse');
 const msgTable = document.getElementById('msg-table');
 
 Grid.grid('container', {
-    dataTable: {
+    data: {
         columns: {
             product: ['Apples', 'Pears', 'Plums', 'Bananas'],
             weight: [100, 40, 0.5, 200],

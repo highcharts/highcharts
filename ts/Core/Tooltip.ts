@@ -1,10 +1,11 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -428,7 +429,7 @@ class Tooltip {
                 mouseEvent.chartY - plotTop
             ];
 
-        // Some series types use a specificly calculated tooltip position for
+        // Some series types use a specifically calculated tooltip position for
         // each point
         } else if (points[0].tooltipPos) {
             ret = points[0].tooltipPos;
@@ -742,9 +743,9 @@ class Tooltip {
                     // is a transform/zoom on the container. #11329
                     isX ? scaleX(boxWidth) : scaleY(boxHeight),
                     isX ? chartPosition.left - distance +
-                            scaleX(plotX + plotLeft) :
+                        scaleX(plotX + plotLeft) :
                         chartPosition.top - distance +
-                            scaleY(plotY + plotTop),
+                        scaleY(plotY + plotTop),
                     0,
                     isX ? outerWidth : outerHeight
                 ] : [
@@ -883,6 +884,10 @@ class Tooltip {
             swap();
         }
         run();
+        if (outside) {
+            ret.x -= chartPosition.left;
+            ret.y -= chartPosition.top;
+        }
         return ret;
 
     }
@@ -1211,11 +1216,13 @@ class Tooltip {
                         // (#6659)
                         if (!options.style.width || styledMode) {
                             label.css({
+                                // Subtract padding on both sides so the box
+                                // stays within the available space (#24104)
                                 width: (
                                     this.outside ?
                                         this.getPlayingField() :
                                         chart.spacingBox
-                                ).width + 'px'
+                                ).width - 2 * options.padding + 'px'
                             });
                         }
 
@@ -1953,12 +1960,18 @@ class Tooltip {
         // Set the renderer size dynamically to prevent document size to change.
         // Renderer only exists when tooltip is outside.
         if (renderer && container) {
-            // Corrects positions, occurs with tooltip positioner (#16944)
+            pos.x += left;
+            pos.y += top;
+
+            // Scroll offset is only needed for custom/fixed positions.
+            // Default getPosition already returns coordinates in the tooltip's
+            // expected coordinate space.
             if (positioner || fixed) {
                 const { scrollLeft = 0, scrollTop = 0 } = chart
                     .scrollablePlotArea?.scrollingContainer || {};
-                pos.x += scrollLeft + left - distance;
-                pos.y += scrollTop + top - distance;
+
+                pos.x += scrollLeft;
+                pos.y += scrollTop;
             }
 
             // Pad it by the border width and distance. Add 2 to make room for
@@ -2120,7 +2133,7 @@ export default Tooltip;
  * The tooltip instance
  *
  * @param {Highcharts.Point} [ctx]
- * Since v12.5.0, the point context passed as an extra argument for arrow
+ * Since v12.6.0, the point context passed as an extra argument for arrow
  * functions.
  *
  * @return {false|string|Array<(string|null|undefined)>|null|undefined}
@@ -2145,7 +2158,7 @@ export default Tooltip;
  * Point information for positioning a tooltip.
  *
  * @param {Highcharts.Tooltip} [ctx]
- * Since v12.5.0, the tooltip context passed as an extra argument for arrow
+ * Since v12.6.0, the tooltip context passed as an extra argument for arrow
  * functions.
  *
  * @return {Highcharts.PositionObject}

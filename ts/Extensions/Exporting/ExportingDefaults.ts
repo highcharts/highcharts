@@ -1,10 +1,11 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -832,7 +833,7 @@ const navigation: NavigationOptions = {
          * @sample highcharts/navigation/buttonoptions-symbolfill/
          *         Blue symbol stroke for one of the buttons
          *
-         * @type  {Highcharts.ColorString | Highcharts.GradientColorObject | Highcharts.PatternObject}
+         * @type  {Highcharts.ColorType}
          * @since 2.0
          */
         symbolFill: Palette.neutralColor60,
@@ -876,7 +877,7 @@ const navigation: NavigationOptions = {
             /**
              * The default fill exists only to capture hover events.
              *
-             * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+             * @type {Highcharts.ColorType}
              */
             fill: Palette.backgroundColor,
 

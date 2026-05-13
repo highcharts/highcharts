@@ -22,7 +22,7 @@ test('Grid credits', async ({ page }) => {
         }
 
         const grid = await (window as any).Grid.grid(parentElement, {
-            dataTable: {
+            data: {
                 columns: {
                     product: ['Apples', 'Pears', 'Plums', 'Bananas'],
                     weight: [100, 40, 0.5, 200],

@@ -4,12 +4,13 @@
  *
  *  (c) 2020-2026 Highsoft AS
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  *  Authors:
- *  - Dawid Dragula
+ *  - Dawid Draguła
  *  - Sebastian Bochan
  *
  * */
@@ -62,7 +63,7 @@ class TableRow extends Row {
     public index: number;
 
     /**
-     * The index of the row in the original data table (ID).
+     * The unique ID of the row.
      */
     public id?: RowId;
 
@@ -121,6 +122,9 @@ class TableRow extends Row {
         }
 
         this.data = data;
+        fireEvent(this, 'afterLoadData', {
+            data
+        });
     }
 
     /**
@@ -146,8 +150,6 @@ class TableRow extends Row {
      *
      * @param index
      * The index of the row in the data table.
-     *
-     * @internal
      */
     public async reuse(index: number): Promise<void> {
         for (let i = 0, iEnd = this.cells.length; i < iEnd; ++i) {
@@ -162,7 +164,7 @@ class TableRow extends Row {
         this.index = index;
         this.id = await this.viewport.grid.dataProvider?.getRowId(index);
 
-        this.htmlElement.setAttribute('data-row-index', index);
+        this.htmlElement.setAttribute('data-row-index', index + '');
         this.updateRowAttributes();
         this.updateParityClass();
         this.updateStateClasses();
@@ -217,9 +219,7 @@ class TableRow extends Row {
         const el = this.htmlElement;
 
         el.classList.add(Globals.getClassName('rowElement'));
-
-        // Index of the row in the presentation data table
-        el.setAttribute('data-row-index', idx);
+        el.setAttribute('data-row-index', idx + '');
 
         this.updateRowAttributes();
 
@@ -245,12 +245,14 @@ class TableRow extends Row {
 
         // Calculate levels of header, 1 to avoid indexing from 0
         a11y?.setRowIndex(el, idx + (vp.header?.rows.length ?? 0) + 1);
+
+        fireEvent(this, 'afterUpdateAttributes');
     }
 
     /**
      * Updates the row parity class based on index.
      */
-    private updateParityClass(): void {
+    protected updateParityClass(): void {
         const el = this.htmlElement;
         el.classList.remove(
             Globals.getClassName('rowEven'),
@@ -266,7 +268,7 @@ class TableRow extends Row {
     /**
      * Updates the hovered and synced classes based on grid state.
      */
-    private updateStateClasses(): void {
+    protected updateStateClasses(): void {
         const el = this.htmlElement;
         el.classList.remove(
             Globals.getClassName('hoveredRow'),

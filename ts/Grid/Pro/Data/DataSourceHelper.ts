@@ -9,7 +9,7 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
- *  - Dawid Dragula
+ *  - Dawid Draguła
  *
  * */
 
@@ -22,7 +22,6 @@
  *
  * */
 
-import type { RowId } from '../../Core/Data/DataProvider';
 import type { RemoteFetchCallbackResult } from './RemoteDataProvider';
 import type QueryingController from '../../Core/Querying/QueryingController';
 import type { ColumnSortingOrder } from '../../Core/Options';
@@ -51,9 +50,11 @@ const filterOperatorMap: Record<string, string> = {
     '<': 'lessThan',
     '<=': 'lessThanOrEqualTo',
     contains: 'contains',
+    notContains: 'doesNotContain',
     startsWith: 'beginsWith',
     endsWith: 'endsWith',
-    empty: 'empty'
+    empty: 'empty',
+    notEmpty: 'notEmpty'
 };
 
 /**
@@ -78,21 +79,31 @@ function extractFilterConditions(
     }
 
     if (condition.operator === 'and' || condition.operator === 'or') {
-        // Logical condition - extract from nested conditions
         if (condition.conditions) {
             for (const subCondition of condition.conditions) {
                 extractFilterConditions(subCondition, filterColumns);
             }
         }
-    } else if (condition.columnId) {
-        // Single condition
-        const mappedOperator =
-            filterOperatorMap[condition.operator] || condition.operator;
-        filterColumns.push({
-            id: condition.columnId,
-            condition: mappedOperator,
-            value: condition.value
-        });
+    } else if (condition.columnId || condition.condition?.columnId) {
+        const conditionToUse = condition.columnId ?
+            condition : (condition.condition as FilterConditionLike);
+        let key = conditionToUse.operator;
+
+        if (condition.operator === 'not') {
+            key = condition.operator +
+                conditionToUse.operator.charAt(0).toUpperCase() +
+                conditionToUse.operator.slice(1);
+        }
+
+        const mapped = filterOperatorMap[key] || conditionToUse.operator;
+
+        if (conditionToUse.columnId) {
+            filterColumns.push({
+                id: conditionToUse.columnId,
+                condition: mapped,
+                value: conditionToUse.value
+            });
+        }
     }
 
     return filterColumns;
@@ -188,7 +199,8 @@ const defaultParseResponse = async (
     return {
         columns: data || {},
         totalRowCount: meta?.totalRowCount || 0,
-        rowIds: meta?.rowIds
+        rowIds: meta?.rowIds,
+        pageSize: meta?.pageSize
     };
 };
 
@@ -290,17 +302,6 @@ export async function dataSourceFetch(
                 await fetch(url);
 
             const data = await parseResponse(res);
-            if (options.rowIdColumn) {
-                const rowIdsColumn = data.columns[options.rowIdColumn];
-                if (!rowIdsColumn) {
-                    // eslint-disable-next-line no-console
-                    console.warn(`DataSourceHelper: rowIdColumn "${
-                        options.rowIdColumn
-                    }" not found in response.`);
-                    return data;
-                }
-                data.rowIds = rowIdsColumn as RowId[];
-            }
 
             return data;
         } finally {
@@ -356,7 +357,10 @@ export interface DataSourceOptions {
     urlTemplate: string;
 
     /**
-     * Template variables to be replaced in the urlTemplate.
+     * Custom template variables to be replaced in the `urlTemplate`, extending
+     * or overriding the built-in set (`page`, `pageSize`, `offset`, `limit`,
+     * `filter`, `sortBy`, `sortOrder`). Each entry is a function that receives
+     * the current `QueryState` and returns the string value to substitute.
      */
     templateVariables?: Record<string, (state: QueryState) => string>;
 
@@ -367,7 +371,24 @@ export interface DataSourceOptions {
     omitEmpty?: boolean;
 
     /**
-     * Callback to parse the response from the remote server.
+     * Callback to parse the response from the remote server into a
+     * `RemoteFetchCallbackResult` object with the following fields:
+     *
+     * - `columns` *(required)* — column data keyed by column ID, where each
+     *   value is an array of cell values for the fetched rows.
+     *
+     * - `totalRowCount` *(required)* — total number of rows available on the
+     *   server for the current query (used to calculate page count and
+     *   scrollbar size).
+     *
+     * - `rowIds` *(optional)* — stable identifiers for the fetched rows.
+     *   When omitted, the Grid assigns sequential numeric IDs starting from
+     *   `offset`.
+     *
+     * - `pageSize` *(optional)* — effective page size used by the backend for
+     *   this response. Return this when the server can clamp or otherwise
+     *   adjust the requested page size so the Grid can keep chunk indexing
+     *   aligned with the actual response.
      */
     parseResponse?: (res: Response) => Promise<RemoteFetchCallbackResult>;
 
@@ -376,15 +397,6 @@ export interface DataSourceOptions {
      * @default 30000
      */
     fetchTimeout?: number;
-
-    /**
-     * ID of a column that contains stable row IDs.
-     *
-     * If not defined, the row IDs will be extracted from the `meta.rowIds`
-     * property if available. If `meta.rowIds` is also not defined, the row IDs
-     * will default to the indices of the rows in their display order.
-     */
-    rowIdColumn?: string;
 }
 
 export interface QueryState {
@@ -410,6 +422,7 @@ interface FilterConditionLike {
     operator: string;
     columnId?: string;
     value?: unknown;
+    condition?: FilterConditionLike;
     conditions?: FilterConditionLike[];
 }
 

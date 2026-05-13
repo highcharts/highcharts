@@ -2,11 +2,9 @@ async function createGrid(containerId, updateOnChange) {
     return await Grid.grid(containerId, {
         data: {
             providerType: 'local',
-            dataTable: {
-                columns: {
-                    product: ['Apples', 'Pears', 'Plums'],
-                    weight: [100, 40, 0.5]
-                }
+            columns: {
+                product: ['Apples', 'Pears', 'Plums'],
+                weight: [100, 40, 0.5]
             },
             updateOnChange
         }
@@ -49,7 +47,7 @@ function attachUpdateRowsCounter(grid, inputEl) {
     };
 
     document.getElementById('auto-set-cell').addEventListener('click', () => {
-        gridAuto.dataTable.setCell('weight', 0, 123);
+        gridAuto.dataProvider.getDataTable().setCell('weight', 0, 123);
     });
 
     document
@@ -65,7 +63,7 @@ function attachUpdateRowsCounter(grid, inputEl) {
         });
 
     document.getElementById('manual-set-cell').addEventListener('click', () => {
-        gridManual.dataTable.setCell('weight', 0, 321);
+        gridManual.dataProvider.getDataTable().setCell('weight', 0, 321);
     });
 
     document

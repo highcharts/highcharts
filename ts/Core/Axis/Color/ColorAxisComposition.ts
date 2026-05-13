@@ -1,10 +1,11 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -65,7 +66,7 @@ declare module '../../Series/SeriesBase' {
  *
  * */
 
-namespace ColorAxisComposition {
+export namespace ColorAxisComposition {
 
     /* *
      *
@@ -178,7 +179,7 @@ namespace ColorAxisComposition {
         this.colorAxis = [];
 
         // If a `colorAxis` config is present in the user options (not in a
-        // theme), instanciate it.
+        // theme), instantiate it.
         if (userOptions.colorAxis) {
             userOptions.colorAxis = splat(userOptions.colorAxis);
             userOptions.colorAxis.map((axisOptions): ColorAxis => (
@@ -322,12 +323,12 @@ namespace ColorAxisComposition {
      */
     export function pointSetVisible(
         this: PointComposition,
-        vis?: boolean
+        visible?: boolean
     ): void {
         const point = this,
-            method = vis ? 'show' : 'hide';
+            method = visible ? 'show' : 'hide';
 
-        point.visible = point.options.visible = Boolean(vis);
+        point.visible = point.options.visible = Boolean(visible);
 
         // Show and hide associated elements
         ['graphic', 'dataLabel'].forEach(function (key: string): void {

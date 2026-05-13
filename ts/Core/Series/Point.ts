@@ -1,10 +1,11 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -853,7 +854,9 @@ class Point {
         const point = this;
         return 'highcharts-point' +
             (point.selected ? ' highcharts-point-select' : '') +
-            (point.negative ? ' highcharts-negative' : '') +
+            (
+                point.negative && point.series.options.negativeColor !== false ?
+                    ' highcharts-negative' : '') +
             (point.isNull ? ' highcharts-null-point' : '') +
             (typeof point.colorIndex !== 'undefined' ?
                 ' highcharts-color-' + point.colorIndex : '') +
@@ -1361,8 +1364,8 @@ class Point {
 
             // Record the options to options.data. If the old or the new config
             // is an object, use point options, otherwise use raw options
-            // (#4701, #4916, #24225).
-            if (data) {
+            // (#4701, #4916, #24225, #24451).
+            if (data && !series.processedData) {
                 data[i] = (isObject(data[i], true) || isObject(options, true)) ?
                     point.options :
                     (options ?? data[i]);
@@ -1541,8 +1544,13 @@ class Point {
      * @emits Highcharts.Point#event:mouseOut
      */
     public onMouseOut(): void {
-        const point = this,
-            chart = point.series.chart;
+        const point = this;
+
+        if (!point.series) {
+            return;
+        }
+
+        const chart = point.series.chart;
 
         point.firePointEvent('mouseOut');
 
@@ -1577,7 +1585,7 @@ class Point {
             isFunction(userEvent) &&
             (
                 !point.hcEvents?.[eventType] ||
-                // Some HC modules, like marker-clusters, draggable-poins etc.
+                // Some HC modules, like marker-clusters, draggable-points etc.
                 // use events in their logic, so we need to be sure, that
                 // callback function is different
                 point.hcEvents?.[eventType]?.map((el): Function => el.fn)
@@ -1953,6 +1961,10 @@ export default Point;
  *
  * @param {Highcharts.PointClickEventObject} event
  *        Event arguments.
+ *
+ * @param {Highcharts.Point} [ctx]
+ *        Since v12.6.0, the point context passed as an extra argument for
+ *        arrow functions.
  */
 
 /**
@@ -1976,6 +1988,10 @@ export default Point;
  *
  * @param {global.PointerEvent} event
  *        Event that occurred.
+ *
+ * @param {Highcharts.Point} [ctx]
+ *        Since v12.6.0, the point context passed as an extra argument for
+ *        arrow functions.
  */
 
 /**
@@ -1988,6 +2004,10 @@ export default Point;
  *
  * @param {global.Event} event
  *        Event that occurred.
+ *
+ * @param {Highcharts.Point} [ctx]
+ *        Since v12.6.0, the point context passed as an extra argument for
+ *        arrow functions.
  */
 
 /**
@@ -2021,6 +2041,10 @@ export default Point;
  *
  * @param {global.Event} event
  *        Event that occurred.
+ *
+ * @param {Highcharts.Point} [ctx]
+ *        Since v12.6.0, the point context passed as an extra argument for
+ *        arrow functions.
  */
 
 /**
@@ -2040,6 +2064,10 @@ export default Point;
  *
  * @param {Highcharts.PointUpdateEventObject} event
  *        Event that occurred.
+ *
+ * @param {Highcharts.Point} [ctx]
+ *        Since v12.6.0, the point context passed as an extra argument for
+ *        arrow functions.
  */
 
 /**
@@ -2090,6 +2118,10 @@ export default Point;
  *
  * @param {Highcharts.PointInteractionEventObject} event
  *        Event that occurred.
+ *
+ * @param {Highcharts.Point} [ctx]
+ *        Since v12.6.0, the point context passed as an extra argument for
+ *        arrow functions.
  */
 
 /**
@@ -2103,6 +2135,10 @@ export default Point;
  *
  * @param {Highcharts.PointInteractionEventObject} event
  *        Event that occurred.
+ *
+ * @param {Highcharts.Point} [ctx]
+ *        Since v12.6.0, the point context passed as an extra argument for
+ *        arrow functions.
  */
 
 ''; // Keeps doclets above in JS file.

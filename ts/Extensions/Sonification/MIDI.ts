@@ -5,8 +5,9 @@
  *
  *  Small MIDI file writer for sonification export.
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -19,6 +20,7 @@ import type TimelineChannel from './TimelineChannel';
 import SonificationInstrument from './SonificationInstrument.js';
 import { pick } from '../../Shared/Utilities.js';
 
+/** @internal */
 interface MIDIEvent {
     timeMS: number;
     type: 'NON'|'NOF'|'CTRL_CHG';
@@ -202,4 +204,5 @@ function toMIDI(channels: TimelineChannel[]): Uint8Array {
             }, [] as number[])));
 }
 
+/** @internal */
 export default toMIDI;

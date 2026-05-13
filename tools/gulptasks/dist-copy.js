@@ -136,8 +136,8 @@ const CODE_FILTER = {
     ),
     'grid-pro': [
         // The main cleanup is done in `scripts-ts` at the `code` level.
+        // Keep css/modules/grid-lite.css because raw grid-pro.css imports it.
         ['grid', 'css', 'grid-lite.css'],
-        ['grid', 'css', 'modules', 'grid-lite.css'],
         ['grid', 'css', 'grid.css'],
         ['grid', 'css', 'modules', 'grid.css'],
         ['grid', 'es-modules', 'Grid', 'Lite'],

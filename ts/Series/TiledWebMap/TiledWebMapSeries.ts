@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Hubert Kozik, Kamil Musiałowski
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -214,12 +215,6 @@ class TiledWebMapSeries extends MapSeries {
     /**
      * Convert tile to map coordinates in longitude/latitude
      * @private
-     * @param  xTile
-     *         Position x of the tile
-     * @param  yTile
-     *         Position y of the tile
-     * @param  zTile
-     *         Zoom of the tile
      * @return {Highcharts.MapLonLatObject}
      *         The map coordinates
      */

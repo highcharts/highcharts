@@ -1,0 +1,17 @@
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/css/grid-pro.css");
+
+.demo {
+    padding: 8px 12px;
+}
+
+#container {
+    height: 550px;
+}
+
+.highcharts-controls-wrapper {
+    padding: 0 12px 12px;
+}
+
+highcharts-controls {
+    display: inline-block;
+}

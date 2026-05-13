@@ -1,10 +1,11 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -418,7 +419,6 @@ namespace RadialAxis {
      *
      * */
 
-    /* eslint-disable valid-jsdoc */
 
     /**
      * In case of auto connect, add one closestPointRange to the max value
@@ -915,7 +915,7 @@ namespace RadialAxis {
                 relativeLength(outerRadius, 1) :
                 (outerRadius / distance);
 
-            // To ensure that gridlines won't be displayed in area
+            // To ensure that gridLines won't be displayed in area
             // defined by innerSize in case of custom radiuses of pane's
             // background
             if (center && paneInnerR) {
@@ -1058,9 +1058,6 @@ namespace RadialAxis {
     /**
      * Modify radial axis.
      * @internal
-     *
-     * @param {Highcharts.Axis} radialAxis
-     * Radial axis to modify.
      */
     function modify(axis: RadialAxis.AxisComposition): void {
         axis.beforeSetTickPositions = beforeSetTickPositions;
@@ -1683,7 +1680,6 @@ namespace RadialAxis {
         return ret;
     }
 
-    /* eslint-enable valid-jsdoc */
 
 }
 

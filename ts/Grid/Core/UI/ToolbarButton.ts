@@ -4,12 +4,13 @@
  *
  *  (c) 2020-2026 Highsoft AS
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  *  Authors:
- *  - Dawid Dragula
+ *  - Dawid Draguła
  *
  * */
 
@@ -127,9 +128,9 @@ class ToolbarButton implements Button {
             'button',
             {
                 className: (
-                    Globals.getClassName('button') +
+                    Globals.getClassName('icon') +
                     (this.isActive ?
-                        ' ' + Globals.getClassName('buttonSelected') :
+                        ' ' + Globals.getClassName('iconSelected') :
                         ''
                     )
                 )
@@ -197,13 +198,13 @@ class ToolbarButton implements Button {
     public setActive(active: boolean): void {
         this.isActive = active;
         this.buttonEl?.classList.toggle(
-            Globals.getClassName('buttonSelected'), active
+            Globals.getClassName('iconSelected'), active
         );
     }
 
     public setHighlighted(highlighted: boolean): void {
         this.buttonEl?.classList.toggle(
-            Globals.getClassName('buttonHighlighted'), highlighted
+            Globals.getClassName('iconHighlighted'), highlighted
         );
 
         const ariaExpanded = this.options.accessibility?.ariaExpanded;

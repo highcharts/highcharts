@@ -1,13 +1,13 @@
-// SPDX-License-Identifier: LicenseRef-Highcharts
-/**
+/* *
  *
  *  Events generator for Stock tools
  *
  *  (c) 2009-2026 Highsoft AS
  *  Author: Paweł Fus
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -56,6 +56,7 @@ import { fireEvent, merge } from '../../Shared/Utilities.js';
  *
  * */
 
+/** @internal */
 declare module '../../Extensions/Annotations/NavigationBindingsBase' {
     interface NavigationBindingsBase {
         toggledAnnotations?: boolean;
@@ -70,6 +71,7 @@ declare module '../../Extensions/Annotations/NavigationBindingsBase' {
  * */
 
 /**
+ * @internal
  * @sample {highstock} stock/stocktools/custom-stock-tools-bindings
  *         Custom stock tools bindings
  *
@@ -2048,4 +2050,5 @@ const StockToolsBindings: Record<string, NavigationBindingsOptions> = {
  *
  * */
 
+/** @internal */
 export default StockToolsBindings;

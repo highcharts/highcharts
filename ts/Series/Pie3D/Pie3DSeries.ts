@@ -1,12 +1,13 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
  *  3D pie series
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -167,7 +168,7 @@ class Pie3DSeries extends PieSeries {
             const options3d = this.chart.options.chart.options3d,
                 shapeArgs = point.shapeArgs,
                 r = (shapeArgs as any).r,
-                // #3240 issue with datalabels for 0 and null values
+                // #3240 issue with dataLabels for 0 and null values
                 a1 = (
                     ((shapeArgs as any).alpha || options3d?.alpha) *
                     deg2rad
@@ -332,4 +333,4 @@ export default Pie3DSeries;
  * @apioption plotOptions.pie.depth
  */
 
-''; // Keeps doclets above after transpiledion
+''; // Keeps doclets above after transpilation

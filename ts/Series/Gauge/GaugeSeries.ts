@@ -1,10 +1,11 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -115,6 +116,8 @@ class GaugeSeries extends Series {
     public static defaultOptions: GaugeSeriesOptions = merge(
         Series.defaultOptions,
         {
+            clip: false,
+
             /**
              * When this option is `true`, the dial will wrap around the axes.
              * For instance, in a full-range gauge going from 0 to 360, a value
@@ -169,7 +172,7 @@ class GaugeSeries extends Series {
                  * @sample {highcharts} highcharts/plotoptions/gauge-dial/
                  *         Dial options demonstrated
                  *
-                 * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+                 * @type      {Highcharts.ColorType}
                  * @default   #000000
                  * @since     2.3.0
                  * @product   highcharts
@@ -215,7 +218,7 @@ class GaugeSeries extends Series {
                  * @sample {highcharts} highcharts/plotoptions/gauge-dial/
                  *         Dial options demonstrated
                  *
-                 * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+                 * @type      {Highcharts.ColorType}
                  * @default   #cccccc
                  * @since     2.3.0
                  * @product   highcharts
@@ -364,7 +367,7 @@ class GaugeSeries extends Series {
                  * @sample {highcharts} highcharts/plotoptions/gauge-pivot/
                  *         Pivot options demonstrated
                  *
-                 * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+                 * @type      {Highcharts.ColorType}
                  * @default   #cccccc
                  * @since     2.3.0
                  * @product   highcharts
@@ -378,7 +381,7 @@ class GaugeSeries extends Series {
                  * @sample {highcharts} highcharts/plotoptions/gauge-pivot/
                  *         Pivot options demonstrated
                  *
-                 * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+                 * @type      {Highcharts.ColorType}
                  * @default   #000000
                  * @since     2.3.0
                  * @product   highcharts
@@ -422,7 +425,6 @@ class GaugeSeries extends Series {
      *
      * */
 
-    /* eslint-disable valid-jsdoc */
 
     /**
      * Calculate paths etc
@@ -591,20 +593,6 @@ class GaugeSeries extends Series {
     }
 
     /**
-     * @private
-     */
-    public render(): void {
-        this.group = this.plotGroup(
-            'group',
-            'series',
-            this.visible ? 'inherit' : 'hidden',
-            this.options.zIndex,
-            this.chart.seriesGroup
-        );
-        Series.prototype.render.call(this);
-        this.group.clip(this.chart.clipRect);
-    }
-    /**
      * Extend the basic setData method by running processData and generatePoints
      * immediately, in order to access the points from the legend.
      * @private
@@ -630,7 +618,6 @@ class GaugeSeries extends Series {
         return !!this.points.length; // != 0
     }
 
-    /* eslint-enable valid-jsdoc */
 }
 
 /* *
@@ -742,6 +729,7 @@ export default GaugeSeries;
  * @sample {highcharts} highcharts/series/data-array-of-objects/
  *         Config objects
  *
+ * @basic
  * @type      {Array<number|null|*>}
  * @extends   series.line.data
  * @excluding drilldown, marker, x

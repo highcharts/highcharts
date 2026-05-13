@@ -2,12 +2,13 @@
  *
  *  (c) 2009-2026 Highsoft AS
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  *  Authors:
- *  - Dawid Dragula
+ *  - Dawid Draguła
  *
  * */
 
@@ -27,6 +28,7 @@ import type { GridHighlightSyncOptions } from '../GridComponentOptions';
 import type { TableCellEvent } from '../../../Plugins/GridTypes';
 
 import Component from '../../Component';
+import { hasDataTableProvider } from '../GridDataProvider.js';
 import { addEvent, removeEvent } from '../../../../Shared/Utilities.js';
 
 /* *
@@ -59,18 +61,24 @@ const syncPair: SyncPair = {
 
         const { dataCursor: cursor } = board;
         const table = this.getDataTable();
+        const dataProvider = grid.dataProvider;
+        const presentationTable = hasDataTableProvider(dataProvider) ?
+            dataProvider.getDataTable(true) :
+            void 0;
 
         const onCellHover = (e: TableCellEvent): void => {
             if (table) {
                 const cell = e.target;
-                const rowId = cell.row.id;
-                if (typeof rowId !== 'number') {
+                const localIndex = cell.row.index;
+                const originalIndex =
+                    presentationTable?.getOriginalRowIndex(localIndex);
+                if (typeof originalIndex !== 'number') {
                     return;
                 }
 
                 cursor.emitCursor(table, {
                     type: 'position',
-                    row: rowId,
+                    row: originalIndex,
                     column: cell.column.id,
                     state: 'point.mouseOver' + groupKey,
                     sourceId: this.id
@@ -81,14 +89,16 @@ const syncPair: SyncPair = {
         const onCellMouseOut = (e: TableCellEvent): void => {
             if (table) {
                 const cell = e.target;
-                const rowId = cell.row.id;
-                if (typeof rowId !== 'number') {
+                const localIndex = cell.row.index;
+                const originalIndex =
+                    presentationTable?.getOriginalRowIndex(localIndex);
+                if (typeof originalIndex !== 'number') {
                     return;
                 }
 
                 cursor.emitCursor(table, {
                     type: 'position',
-                    row: rowId,
+                    row: originalIndex,
                     column: cell.column.id,
                     state: 'point.mouseOut' + groupKey,
                     sourceId: this.id
@@ -145,12 +155,17 @@ const syncPair: SyncPair = {
             const { row, column } = cursor;
             const { grid } = component;
             const viewport = grid?.viewport;
+            const dataProvider = grid?.dataProvider;
+            const presentationTable = hasDataTableProvider(dataProvider) ?
+                dataProvider.getDataTable(true) :
+                void 0;
 
             if (row === void 0 || !viewport) {
                 return;
             }
 
-            const rowIndex = viewport.dataTable?.getLocalRowIndex(row);
+            const rowIndex = presentationTable?.getLocalRowIndex(row);
+
             if (rowIndex === void 0) {
                 return;
             }

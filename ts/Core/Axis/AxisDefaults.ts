@@ -1,10 +1,11 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -225,6 +226,9 @@ namespace AxisDefaults {
          * Configure a crosshair that follows either the mouse pointer or the
          * hovered point.
          *
+         * Support boolean or object definition. If `true`, a crosshair with
+         * default settings will be displayed.
+         *
          * In styled mode, the crosshairs are styled in the
          * `.highcharts-crosshair`, `.highcharts-crosshair-thin` or
          * `.highcharts-xaxis-category` classes.
@@ -377,7 +381,7 @@ namespace AxisDefaults {
 
         /**
          * Formatter function for the label text.
-         * Since v12.5.0, the callback also receives `ctx` as the second
+         * Since v12.6.0, the callback also receives `ctx` as the second
          * argument, so that arrow functions can access the same context as
          * regular functions using `this`.
          *
@@ -422,10 +426,11 @@ namespace AxisDefaults {
          * the mouse is over a point. Works on initial hover.
          *
          * @sample {highcharts|highstock} highcharts/tooltip/showdelay/
+         *         Show crosshair after 2 seconds
          *
          * @type      {number}
          * @default   0
-         * @since     next
+         * @since     12.6.0
          * @apioption xAxis.crosshair.showDelay
          */
 
@@ -993,7 +998,7 @@ namespace AxisDefaults {
              * Callback JavaScript function to format the label. The value
              * is given by `this.value`. Additional properties for `this` are
              * `axis`, `chart`, `isFirst`, `isLast` and `text` which holds the
-             * value of the default formatter. Since v12.5.0, the callback also
+             * value of the default formatter. Since v12.6.0, the callback also
              * receives `ctx` as the first argument, so that arrow functions can
              * access the same context as regular functions using `this`.
              *
@@ -1181,15 +1186,12 @@ namespace AxisDefaults {
              * @type      {Highcharts.CSSObject}
              */
             style: {
-                /** @internal */
-                color: Palette.neutralColor80,
-                /** @internal */
-                cursor: 'default',
                 /**
-                 * @type {number|string}
+                 * @type {Highcharts.ColorType}
                  */
+                color: Palette.neutralColor80,
+                cursor: 'default',
                 fontSize: '0.8em',
-                /** @internal */
                 textOverflow: 'ellipsis'
             }
         },
@@ -1895,11 +1897,11 @@ namespace AxisDefaults {
 
         /**
          * A callback function returning array defining where the ticks are
-         * laid out on the axis. This overrides the default behaviour of
+         * laid out on the axis. This overrides the default behavior of
          * [tickPixelInterval](#xAxis.tickPixelInterval) and [tickInterval](
          * #xAxis.tickInterval). The automatic tick positions are accessible
          * through `this.tickPositions` and can be modified by the callback.
-         * Since v12.5.0, the callback also receives `ctx` as the third
+         * Since v12.6.0, the callback also receives `ctx` as the third
          * argument, so that arrow functions can access the same context as
          * regular functions using `this`.
          *
@@ -1916,7 +1918,7 @@ namespace AxisDefaults {
 
         /**
          * An array defining where the ticks are laid out on the axis. This
-         * overrides the default behaviour of [tickPixelInterval](
+         * overrides the default behavior of [tickPixelInterval](
          * #xAxis.tickPixelInterval) and [tickInterval](#xAxis.tickInterval).
          *
          * Note: When working with date-time axes, be aware of time zone
@@ -2123,7 +2125,9 @@ namespace AxisDefaults {
              * @type    {Highcharts.CSSObject}
              */
             style: {
-                /** @internal */
+                /**
+                 * @type {Highcharts.ColorType}
+                 */
                 color: Palette.neutralColor60,
                 /**
                  * @type {number|string}
@@ -2255,7 +2259,6 @@ namespace AxisDefaults {
          *         Bright grey lines from Y axis
          *
          * @type    {Highcharts.ColorType}
-         * @default #f2f2f2
          */
         minorGridLineColor: Palette.neutralColor5,
 
@@ -2283,7 +2286,6 @@ namespace AxisDefaults {
          *         Black tick marks on Y axis
          *
          * @type    {Highcharts.ColorType}
-         * @default #999999
          */
         minorTickColor: Palette.neutralColor40,
 
@@ -2339,7 +2341,6 @@ namespace AxisDefaults {
          *         Green lines
          *
          * @type    {Highcharts.ColorType}
-         * @default #e6e6e6
          */
         gridLineColor: Palette.neutralColor10,
 
@@ -2956,7 +2957,7 @@ namespace AxisDefaults {
              * The actual text of the axis title. Horizontal texts can contain
              * HTML, but rotated texts are painted using vector techniques and
              * must be clean text. The Y axis title is disabled by setting the
-             * `text` option to `undefined`. The default value is overriden by
+             * `text` option to `undefined`. The default value is overridden by
              * the `lang.yAxisTitle` language option.
              *
              * @sample {highcharts} highcharts/xaxis/title-text/
@@ -3240,10 +3241,9 @@ namespace AxisDefaults {
              */
             overflow: 'justify',
 
-            /* eslint-disable valid-jsdoc */
             /**
              * Callback JavaScript function to format the label. The value is
-             * given by `this.total`. Since v12.5.0, the callback also receives
+             * given by `this.total`. Since v12.6.0, the callback also receives
              * `ctx` as the first argument, so that arrow functions can access
              * the same context as regular functions using `this`.
              *
@@ -3255,9 +3255,7 @@ namespace AxisDefaults {
              * @product highcharts
              */
             formatter: function (this: StackItem): string {
-                const { numberFormatter } = this.axis.chart;
-                /* eslint-enable valid-jsdoc */
-                return numberFormatter(this.total || 0, -1);
+                return this.axis.chart.numberFormatter(this.total || 0, -1);
             },
 
             /**
@@ -3274,15 +3272,15 @@ namespace AxisDefaults {
              * @product highcharts
              */
             style: {
-                /** @internal */
+                /** @type {Highcharts.ColorType} */
                 color: Palette.neutralColor100,
+
                 /**
                  * @type {number|string}
                  */
                 fontSize: '0.7em',
-                /** @internal */
+
                 fontWeight: 'bold',
-                /** @internal */
                 textOutline: '1px contrast'
             }
         },

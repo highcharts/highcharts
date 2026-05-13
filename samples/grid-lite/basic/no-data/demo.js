@@ -1,3 +1,3 @@
 Grid.grid('container', {
-    dataTable: {}
+    data: { columns: {} }
 });

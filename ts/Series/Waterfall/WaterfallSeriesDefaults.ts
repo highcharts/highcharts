@@ -1,10 +1,11 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -47,7 +48,7 @@ import { Palette } from '../../Core/Color/Palettes.js';
 const WaterfallSeriesDefaults: WaterfallSeriesOptions = {
 
     /**
-     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @type      {Highcharts.ColorType}
      * @apioption plotOptions.waterfall.color
      */
 
@@ -62,7 +63,7 @@ const WaterfallSeriesDefaults: WaterfallSeriesOptions = {
      * @sample {highcharts} highcharts/demo/waterfall/
      *         Waterfall
      *
-     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @type      {Highcharts.ColorType}
      * @product   highcharts
      * @apioption plotOptions.waterfall.upColor
      */
@@ -86,7 +87,7 @@ const WaterfallSeriesDefaults: WaterfallSeriesOptions = {
      * In styled mode, the stroke can be set with the `.highcharts-graph`
      * class.
      *
-     * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @type    {Highcharts.ColorType}
      * @since   3.0
      * @product highcharts
      */
@@ -113,7 +114,7 @@ const WaterfallSeriesDefaults: WaterfallSeriesOptions = {
      * In styled mode, the border stroke can be set with the
      * `.highcharts-point` class.
      *
-     * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @type    {Highcharts.ColorType}
      * @since   3.0
      * @product highcharts
      */
@@ -196,6 +197,7 @@ const WaterfallSeriesDefaults: WaterfallSeriesOptions = {
  * @sample {highcharts} highcharts/series/data-array-of-objects/
  *         Config objects
  *
+ * @basic
  * @type      {Array<number|Array<(number|string),(number|null)>|null|*>}
  * @extends   series.line.data
  * @excluding marker

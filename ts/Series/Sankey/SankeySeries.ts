@@ -3,10 +3,11 @@
  *  Sankey diagram module
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -44,7 +45,7 @@ const { parse: color } = Color;
 import TU from '../TreeUtilities.js';
 const { getLevelOptions, getNodeWidth } = TU;
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
-import TextPath from '../../Extensions/TextPath.js';
+import { composeTextPath } from '../../Extensions/TextPath.js';
 import {
     clamp,
     crisp,
@@ -55,7 +56,7 @@ import {
     relativeLength,
     stableSort
 } from '../../Shared/Utilities.js';
-TextPath.compose(SVGElement);
+composeTextPath(SVGElement);
 
 /* *
  *
@@ -189,16 +190,29 @@ class SankeySeries extends ColumnSeries {
      * Order the nodes, starting with the root node(s). (#9818)
      * @private
      */
-    public order(node: SankeyPoint, level: number): void {
+    public order(
+        node: SankeyPoint,
+        level: number,
+        visited?: Set<SankeyPoint>
+    ): void {
         const series = this;
-        // Prevents circular recursion:
-        if (typeof node.level === 'undefined') {
+
+        // Watch the visited nodes
+        if (!visited) {
+            visited = new Set();
+        }
+
+        // Prevents circular recursion, but updates level if a longer
+        // path is found from a different branch
+        if (typeof node.level === 'undefined' || node.level < level) {
             node.level = level;
+            visited.add(node);
             for (const link of node.linksFrom) {
-                if (link.toNode) {
-                    series.order(link.toNode, level + 1);
+                if (link.toNode && !visited.has(link.toNode)) {
+                    series.order(link.toNode, level + 1, visited);
                 }
             }
+            visited.delete(node);
         }
     }
     /**
@@ -685,6 +699,8 @@ class SankeySeries extends ColumnSeries {
                 }),
                 zIndex: void 0
             };
+            // Delete so it doesn't override anything on merge.
+            delete node.dlOptions.zIndex;
 
             // Pass test in drawPoints
             node.plotX = 1;
@@ -793,7 +809,7 @@ export default SankeySeries;
  * The color of the auto generated node.
  *
  * @name Highcharts.SankeyNodeObject#color
- * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+ * @type {Highcharts.ColorType}
  *//**
  * The color index of the auto generated node, especially for use in styled
  * mode.
@@ -801,7 +817,7 @@ export default SankeySeries;
  * @name Highcharts.SankeyNodeObject#colorIndex
  * @type {number}
  *//**
- * An optional column index of where to place the node. The default behaviour is
+ * An optional column index of where to place the node. The default behavior is
  * to place it next to the preceding node.
  *
  * @see {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/sankey-node-column/|Highcharts-Demo:}
@@ -811,7 +827,7 @@ export default SankeySeries;
  * @type {number}
  * @since 6.0.5
  *//**
- * The id of the auto-generated node, refering to the `from` or `to` setting of
+ * The id of the auto-generated node, referring to the `from` or `to` setting of
  * the link.
  *
  * @name Highcharts.SankeyNodeObject#id

@@ -54,7 +54,7 @@ test('Grid update methods', async ({ page }) => {
         }
 
         const grid = await Grid.grid(parentElement, {
-            dataTable: {
+            data: {
                 columns: {
                     product: ['Apples', 'Pears', 'Plums', 'Bananas'],
                     weight: [100, 40, 0.5, 200],
@@ -209,7 +209,7 @@ test('Grid update methods', async ({ page }) => {
         'The getOptions method should return the correct JSON string.'
     ).toBe(
         '{"columns":[{"id":"product","header":{"format":"Column 1"},"cells":{"format":"after update"},"enabled":false},' +
-        '{"id":"imaginary-column","header":{"format":"New One!"}}],"dataTable":{"columns":{"product":["Apples","P' +
+        '{"id":"imaginary-column","header":{"format":"New One!"}}],"data":{"columns":{"product":["Apples","P' +
         'ears","Plums","Bananas"],"weight":[100,40,0.5,200],"price":[1.5,2.53,5,4.5]}}}'
     );
 });
@@ -236,7 +236,7 @@ test('Grid formatter options', async ({ page }) => {
         }
 
         const grid = await (window as any).Grid.grid(parentElement, {
-            dataTable: {
+            data: {
                 columns: {
                     product: ['Apples', 'Pears', 'Plums', 'Bananas'],
                     weight: [100, 40, 0.5, 200],
@@ -286,7 +286,7 @@ test('Grid custom sorting', async ({ page }) => {
         }
 
         const grid = await (window as any).Grid.grid(parentElement, {
-            dataTable: {
+            data: {
                 columns: {
                     label: ['A', 'B', 'C', 'D'],
                     weight: ['100 g', '40 kg', '0.5 kg', '800 g']
@@ -356,7 +356,7 @@ test('Grid delegates cell events to tbody', async ({ page }) => {
             grid = await (window as any).Grid.grid(
                 parentElement,
                 {
-                    dataTable: {
+                    data: {
                         columns: {
                             product: ['Apples', 'Pears', 'Plums', 'Bananas'],
                             weight: [100, 40, 0.5, 200],

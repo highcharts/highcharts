@@ -1,10 +1,11 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -189,7 +190,7 @@ function format(
 
     // eslint-disable-next-line prefer-regex-literals
     const regex = new RegExp(
-            '\\{([\\p{L}\\d:\\.,;\\-\\/<>\\[\\]%_@+"\'’= #\\(\\)]+)\\}',
+            '\\{([\\p{L}\\p{M}\\d:\\.,;\\-\\/<>\\[\\]%_@+"\'’= #\\(\\)]+)\\}',
             'gu'
         ),
         // The sub expression regex is the same as the top expression regex,
@@ -197,7 +198,7 @@ function format(
         // instead of curly brackets.
         // eslint-disable-next-line prefer-regex-literals
         subRegex = new RegExp(
-            '\\(([\\p{L}\\d:\\.,;\\-\\/<>\\[\\]%_@+"\'= ]+)\\)',
+            '\\(([\\p{L}\\p{M}\\d:\\.,;\\-\\/<>\\[\\]%_@+"\'= ]+)\\)',
             'gu'
         ),
         matches = [],

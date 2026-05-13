@@ -5,8 +5,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Paweł Fus
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -123,7 +124,7 @@ class QuadTree {
     }
 
     /**
-     * Depth first treversal (DFS). Using `before` and `after` callbacks,
+     * Depth first traversal (DFS). Using `before` and `after` callbacks,
      * we can get two results: preorder and postorder traversals, reminder:
      *
      * ```

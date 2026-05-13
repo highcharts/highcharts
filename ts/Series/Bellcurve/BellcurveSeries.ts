@@ -4,8 +4,9 @@
  *
  *  Author: Sebastian Domas
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -37,7 +38,7 @@ import { correctFloat, isNumber, merge } from '../../Shared/Utilities.js';
 /**
  * Bell curve class
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.bellcurve
  *
@@ -62,7 +63,7 @@ class BellcurveSeries extends AreaSplineSeries {
      *
      * */
 
-    /** @private */
+    /** @internal */
     private static mean(data: Array<number>): (number|false) {
         const length = data.length,
             sum = data.reduce(function (sum: number, value: number): number {
@@ -72,7 +73,7 @@ class BellcurveSeries extends AreaSplineSeries {
         return length > 0 && sum / length;
     }
 
-    /** @private */
+    /** @internal */
     private static standardDeviation(
         data: Array<number>,
         average?: number
@@ -91,7 +92,7 @@ class BellcurveSeries extends AreaSplineSeries {
         return len > 1 && Math.sqrt(sum / (len - 1));
     }
 
-    /** @private */
+    /** @internal */
     private static normalDensity(
         x: number,
         mean: number,
@@ -135,7 +136,14 @@ class BellcurveSeries extends AreaSplineSeries {
     ): void {
         let alteredData;
         if (typeof data !== 'undefined' && data.length > 0) {
-            data = data.filter(isNumber),
+            // Support data array of objects (#24073).
+            data = data
+                .map(function (
+                    item: number | { y?: number | null } | null | undefined
+                ): number | null | undefined {
+                    return isNumber(item) ? item : item?.y;
+                })
+                .filter(isNumber);
             this.setMean(data);
             this.setStandardDeviation(data);
             alteredData = this.derivedData(
@@ -218,6 +226,7 @@ class BellcurveSeries extends AreaSplineSeries {
  *
  * */
 
+/** @internal */
 interface BellcurveSeries extends DerivedComposition.SeriesComposition {
     pointClass: typeof BellcurvePoint;
 }
@@ -230,6 +239,7 @@ DerivedComposition.compose(BellcurveSeries);
  *
  * */
 
+/** @internal */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         bellcurve: typeof BellcurveSeries;
@@ -243,4 +253,5 @@ SeriesRegistry.registerSeriesType('bellcurve', BellcurveSeries);
  *
  * */
 
+/** @internal */
 export default BellcurveSeries;

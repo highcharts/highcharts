@@ -5,8 +5,9 @@
  *  (c) 2021-2026 Highsoft AS
  *  Author: Piotr Madej, Grzegorz Blachliński
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -30,7 +31,7 @@ import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
-import TextPath from '../../Extensions/TextPath.js';
+import { composeTextPath } from '../../Extensions/TextPath.js';
 import {
     crisp,
     extend,
@@ -38,7 +39,7 @@ import {
     pick,
     relativeLength
 } from '../../Shared/Utilities.js';
-TextPath.compose(SVGElement);
+composeTextPath(SVGElement);
 
 const { prototype: { symbols } } = SVGRenderer;
 const {
@@ -445,6 +446,8 @@ class ArcDiagramSeries extends SankeySeries {
                     }),
                     zIndex: void 0
                 };
+                // Delete so it doesn't override anything on merge.
+                delete node.dlOptions.zIndex;
             }
 
             // Pass test in drawPoints
@@ -484,7 +487,7 @@ class ArcDiagramSeries extends SankeySeries {
             };
         }
     }
-    // Networkgraph has two separate collecions of nodes and lines, render
+    // Networkgraph has two separate collections of nodes and lines, render
     // dataLabels for both sets:
     public drawDataLabels(): void {
         if (this.options.dataLabels) {
@@ -526,7 +529,6 @@ class ArcDiagramSeries extends SankeySeries {
         }
         return {};
     }
-    /* eslint-enable valid-jsdoc */
 }
 
 /* *

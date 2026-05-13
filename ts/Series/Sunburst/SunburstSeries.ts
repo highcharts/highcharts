@@ -4,10 +4,11 @@
  *
  *  (c) 2016-2026 Highsoft AS
  *
- *  Authors: Jon Arild Nygard
+ *  Authors: Jon Arild Nygård
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -55,7 +56,7 @@ const {
 import SunburstNode from './SunburstNode.js';
 import SunburstSeriesDefaults from './SunburstSeriesDefaults.js';
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
-import TextPath from '../../Extensions/TextPath.js';
+import { composeTextPath } from '../../Extensions/TextPath.js';
 import {
     defined,
     extend,
@@ -67,7 +68,7 @@ import {
     splat
 } from '../../Shared/Utilities.js';
 import { error } from '../../Core/Utilities.js';
-TextPath.compose(SVGElement);
+composeTextPath(SVGElement);
 
 /* *
  *
@@ -665,6 +666,9 @@ class SunburstSeries extends TreemapSeries {
                 }),
                 zIndex: void 0
             };
+            // Delete so it doesn't override anything on merge.
+            delete point.dlOptions.zIndex;
+
             if (!addedHack && visible) {
                 addedHack = true;
                 onComplete = animateLabels;

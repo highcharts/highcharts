@@ -3,8 +3,9 @@
  *  (c) 2016-2026 Highsoft AS
  *  Authors: Øystein Moseng, Lars A. V. Cabrera
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -139,9 +140,6 @@ class Connection {
      *
      * @param {Highcharts.SVGAttributes} [attribs]
      *        SVG attributes for the path.
-     *
-     * @param {Partial<Highcharts.AnimationOptionsObject>} [animation]
-     *        Animation options for the rendering.
      */
     public renderPath(
         path: SVGPath,

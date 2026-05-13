@@ -4,12 +4,13 @@
  *
  *  (c) 2020-2026 Highsoft AS
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  *  Authors:
- *  - Dawid Dragula
+ *  - Dawid Draguła
  *  - Sebastian Bochan
  *
  * */
@@ -113,16 +114,13 @@ class TableHeader {
         // Render regular, multiple level rows.
         for (let i = 0, iEnd = this.levels; i < iEnd; i++) {
             const row = new HeaderRow(vp, i + 1); // Avoid indexing from 0
-            await row.renderContent(i);
+            await Promise.resolve(row.renderContent(i));
             this.rows.push(row);
         }
 
         // Render an extra row for inline filtering.
         if (vp.columns.some((column): boolean =>
-            (
-                column.options.filtering?.enabled &&
-                column.options.filtering.inline
-            ) || false
+            vp.grid.columnPolicy.isColumnInlineFilteringEnabled(column.id)
         )) {
             const row = new FilterRow(vp);
             await row.renderContent();
