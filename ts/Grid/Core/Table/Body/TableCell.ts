@@ -153,11 +153,15 @@ class TableCell extends Cell {
         const fetchToken = ++this.asyncFetchToken;
         const { grid } = this.column.viewport;
 
+        // TODO(design): Design a better way to show the cell val being updated.
+        this.htmlElement.style.opacity = '0.5';
+
         if (!defined(value)) {
             value = await this.column.getCellValue(this);
 
             // Discard stale response if cell was reused for a different row
             if (fetchToken !== this.asyncFetchToken) {
+                this.htmlElement.style.opacity = '';
                 return;
             }
         }
@@ -186,6 +190,9 @@ class TableCell extends Cell {
             !cellsOptions?.format && !cellsOptions?.formatter
         );
 
+        // Skip content.update() when no format/formatter and the value did
+        // not change: in that case the rendered output is a pure function of
+        // `cell.value` for all current CellContent implementations.
         if (this.content && (valueChanged || !isValueOnlyText)) {
             this.content.update();
         } else if (!this.content) {
@@ -206,6 +213,9 @@ class TableCell extends Cell {
         this.setCustomClassName(cellsOptions?.className);
 
         this.setCustomStyles(this.getCellStyles());
+
+        // TODO(design): Remove this after the first part was implemented.
+        this.htmlElement.style.opacity = '';
 
         fireEvent(this, 'afterRender', { target: this });
     }

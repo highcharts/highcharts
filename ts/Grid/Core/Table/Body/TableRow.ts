@@ -73,10 +73,12 @@ class TableRow extends Row {
     public translateY: number = 0;
 
     /**
-     * Cached measured height from the current virtualizer layout pass.
+     * Effective row height used by the current virtualizer layout pass — may
+     * be the raw measured height or, for the cursor row scrolling into view,
+     * the interpolated value used for translate buffer math.
      * @internal
      */
-    public measuredHeight?: number;
+    public effectiveHeight?: number;
 
 
     /* *
@@ -300,12 +302,12 @@ class TableRow extends Row {
     }
 
     /**
-     * Returns the current row height without forcing a layout read when a
-     * measured height is already cached for the active layout pass.
+     * Returns the current row height without forcing a layout read when an
+     * effective height is already cached for the active layout pass.
      * @internal
      */
-    public getMeasuredHeight(): number {
-        return this.measuredHeight ?? this.htmlElement.offsetHeight;
+    public getEffectiveHeight(): number {
+        return this.effectiveHeight ?? this.htmlElement.offsetHeight;
     }
 
     /**

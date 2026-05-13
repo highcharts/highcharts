@@ -424,13 +424,17 @@ class RowsVirtualizer {
         const maxRowCursor = Math.max(0, this.rowCount - 1);
         rowCursor = Math.min(rowCursor, maxRowCursor);
         if (this.rowCursor !== rowCursor) {
+            // The renderRows method is responsible for calling
+            // adjustRowHeights and adjustRowOffsets on success — including
+            // the queued pass that runs after this one returns false.
             if (!await this.renderRows(rowCursor)) {
                 return;
             }
+        } else {
+            this.adjustRowHeights();
+            this.adjustRowOffsets();
         }
 
-        this.adjustRowHeights();
-        this.adjustRowOffsets();
         if (
             !this.strictRowHeights &&
             lastScrollTop > target.scrollTop &&
@@ -660,11 +664,16 @@ class RowsVirtualizer {
             ));
 
             if (isVirtualization) {
+                // Batch reads before writes so we force layout once for the
+                // whole set instead of once per row.
+                const heights = rowsToRender.map(
+                    (row): number => row.htmlElement.offsetHeight
+                );
                 for (let i = 0, iEnd = rowsToRender.length; i < iEnd; ++i) {
                     const row = rowsToRender[i];
                     const topOffset = Math.min(
                         row.getDefaultTopOffset(),
-                        this.maxElementHeight - row.htmlElement.offsetHeight
+                        this.maxElementHeight - heights[i]
                     );
                     row.setTranslateY(topOffset);
                 }
@@ -751,6 +760,9 @@ class RowsVirtualizer {
 
             await vp.syncAriaRowIndexes();
             await this.afterRenderRows?.();
+
+            this.adjustRowHeights();
+            this.adjustRowOffsets();
             return true;
         } finally {
             this.isRendering = false;
@@ -793,7 +805,7 @@ class RowsVirtualizer {
         // before writes avoids repeated forced layout work during scroll.
         for (let i = 0; i < rowsLn; ++i) {
             const row = rows[i];
-            row.measuredHeight = void 0;
+            row.effectiveHeight = void 0;
 
             if (
                 !row.rendered ||
@@ -822,21 +834,21 @@ class RowsVirtualizer {
                 !row.cells.length ||
                 !row.cells[0]?.htmlElement
             ) {
-                row.measuredHeight = defaultH;
+                row.effectiveHeight = defaultH;
                 continue;
             }
 
             if (row.index < cursor) {
-                row.measuredHeight = defaultH;
+                row.effectiveHeight = defaultH;
                 continue;
             }
 
-            row.measuredHeight = row.cells[0].htmlElement.offsetHeight;
+            row.effectiveHeight = row.cells[0].htmlElement.offsetHeight;
         }
 
         for (let i = 0; i < rowsLn; ++i) {
             const row = rows[i];
-            const measuredHeight = row.measuredHeight ?? defaultH;
+            const measuredHeight = row.effectiveHeight ?? defaultH;
 
             if (row.index < cursor) {
                 row.htmlElement.style.height = defaultH + 'px';
@@ -855,7 +867,10 @@ class RowsVirtualizer {
                 );
 
                 row.htmlElement.style.height = newHeight + 'px';
-                row.measuredHeight = newHeight;
+                // After scroll interpolation the row no longer occupies its
+                // raw measured height; remember the value used for layout so
+                // adjustRowOffsets places the next row correctly.
+                row.effectiveHeight = newHeight;
 
                 for (let j = 0, jEnd = row.cells.length; j < jEnd; ++j) {
                     const cell = row.cells[j];
@@ -874,7 +889,7 @@ class RowsVirtualizer {
         let translateBuffer = rows[0].getDefaultTopOffset();
         rows[0].setTranslateY(translateBuffer);
         for (let i = 1, iEnd = rowsLn - 1; i < iEnd; ++i) {
-            translateBuffer += rows[i - 1].getMeasuredHeight();
+            translateBuffer += rows[i - 1].getEffectiveHeight();
             rows[i].setTranslateY(translateBuffer);
         }
 
@@ -883,7 +898,7 @@ class RowsVirtualizer {
         const preLastRow = rows[rowsLn - 2];
         if (preLastRow && preLastRow.index === lastRow.index - 1) {
             lastRow.setTranslateY(
-                preLastRow.getMeasuredHeight() + translateBuffer
+                preLastRow.getEffectiveHeight() + translateBuffer
             );
         }
     }
@@ -1064,6 +1079,10 @@ class RowsVirtualizer {
             this.viewport.preserveFocusDuringDetach();
         }
 
+        // The pooled row's previous layout pass is irrelevant once it is
+        // detached; clearing the cache prevents stale heights leaking into
+        // the next reuse before adjustRowHeights runs.
+        row.effectiveHeight = void 0;
         row.htmlElement.remove();
         if (this.rowPool.length < RowsVirtualizer.MAX_POOL_SIZE) {
             this.rowPool.push(row);
@@ -1138,16 +1157,13 @@ class RowsVirtualizer {
         translateBuffer = Math.floor(translateBuffer - this.scrollOffset);
 
         if (isSecondToLastRowVisible && this.gridHeightOverflow > 0) {
-            lastRow.setTranslateY(
-                this.maxElementHeight -
-                lastRow.getMeasuredHeight()
-            );
+            const lastRowBottom =
+                this.maxElementHeight - lastRow.getEffectiveHeight();
+            lastRow.setTranslateY(lastRowBottom);
 
-            let bottomOffset = this.maxElementHeight -
-                lastRow.getMeasuredHeight();
-
+            let bottomOffset = lastRowBottom;
             for (let i = rowsLn - 2; i >= 0; i--) {
-                bottomOffset -= rows[i].getMeasuredHeight();
+                bottomOffset -= rows[i].getEffectiveHeight();
                 rows[i].setTranslateY(bottomOffset);
             }
 
@@ -1156,7 +1172,7 @@ class RowsVirtualizer {
 
         rows[0].setTranslateY(translateBuffer);
         for (let i = 1, iEnd = rowsLn - 1; i < iEnd; ++i) {
-            translateBuffer += rows[i - 1].getMeasuredHeight();
+            translateBuffer += rows[i - 1].getEffectiveHeight();
             rows[i].setTranslateY(translateBuffer);
         }
         if (this.gridHeightOverflow > 0) {
@@ -1168,7 +1184,7 @@ class RowsVirtualizer {
 
         if (preLastRow && preLastRow.index === lastRow.index - 1) {
             lastRow.setTranslateY(
-                preLastRow.getMeasuredHeight() + translateBuffer
+                preLastRow.getEffectiveHeight() + translateBuffer
             );
         }
     }
