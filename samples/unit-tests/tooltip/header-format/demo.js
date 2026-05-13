@@ -178,8 +178,6 @@ QUnit.test(
                 testCase.regex.test(yearLabel),
                 `Default year uses ${testCase.name} for ${testCase.locale}`
             );
-
-            chart.destroy();
         });
 
         latinDigitLocales.forEach(locale => {
@@ -192,8 +190,6 @@ QUnit.test(
                 '2025',
                 `Default year stays Latin for locale: ${locale}`
             );
-
-            chart.destroy();
         });
     }
 );

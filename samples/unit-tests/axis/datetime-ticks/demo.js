@@ -340,13 +340,7 @@ QUnit.test(
                         locale: locale
                     },
                     xAxis: {
-                        type: 'datetime',
-                        tickPositions: [
-                            Date.UTC(2025, 0, 1),
-                            Date.UTC(2026, 0, 1)
-                        ],
-                        min: Date.UTC(2025, 0, 1),
-                        max: Date.UTC(2026, 0, 1)
+                        type: 'datetime'
                     },
                     series: [{
                         data: [
@@ -355,6 +349,13 @@ QUnit.test(
                         ]
                     }]
                 });
+            },
+            setLocale = function (chart, locale) {
+                chart.update({
+                    lang: {
+                        locale: locale
+                    }
+                }, true);
             },
             getFirstYearLabel = function (chart) {
                 const axis = chart.xAxis[0],
@@ -372,11 +373,12 @@ QUnit.test(
                 regex: /[\u09E6-\u09EF]/,
                 name: 'Bengali digits'
             }],
-            latinDigitLocales = ['en', 'pl'];
+            latinDigitLocales = ['en', 'pl'],
+            chart = createChart('en');
 
         localizedLocales.forEach(testCase => {
-            const chart = createChart(testCase.locale),
-                yearLabel = getFirstYearLabel(chart);
+            setLocale(chart, testCase.locale);
+            const yearLabel = getFirstYearLabel(chart);
 
             assert.ok(
                 yearLabel.length > 0,
@@ -388,21 +390,17 @@ QUnit.test(
                 'XAxis default year uses ' +
                 `${testCase.name} for ${testCase.locale}`
             );
-
-            chart.destroy();
         });
 
         latinDigitLocales.forEach(locale => {
-            const chart = createChart(locale),
-                yearLabel = getFirstYearLabel(chart);
+            setLocale(chart, locale);
+            const yearLabel = getFirstYearLabel(chart);
 
             assert.strictEqual(
                 yearLabel,
                 '2025',
                 `XAxis default year stays Latin for locale: ${locale}`
             );
-
-            chart.destroy();
         });
     }
 );
