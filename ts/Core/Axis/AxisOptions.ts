@@ -411,7 +411,8 @@ export interface AxisLabelFormatterContextObject {
     dateTimeLabelFormat?: Time.DateTimeFormat;
 
     /**
-     * The boundary value of the label.
+     * Boundary time unit for the label (e.g `day`, `month`, `year`), used for
+     * date/time formatting.
      */
     boundary?: string;
 

@@ -168,11 +168,6 @@ class Tick {
     /** @internal */
     public isActive?: boolean;
 
-    /**
-     * The boundary value of the tick.
-     * @name Highcharts.Tick#boundary
-     * @type {string|undefined}
-     */
     public boundary?: string;
 
     /**
@@ -352,7 +347,8 @@ class Tick {
          */
         tick.isLast = isLast;
         /**
-         * The boundary value of the tick.
+         * Boundary time unit for the label (e.g `day`, `month`, `year`), used
+         * for date/time formatting.
          * @name Highcharts.Tick#boundary
          * @type {string|undefined}
          */

@@ -587,18 +587,13 @@ namespace AxisDefaults {
         dateTimeLabelFormats: {
             /**
              * @declare Highcharts.AxisDateTimeLabelFormatsOptionsObject
-             * @type {string|*}
              */
             millisecond: {
                 /**
-                 * @type {Array<string|Highcharts.DateTimeFormatOptions>}
-                 * @default undefined
                  * @apioption xAxis.dateTimeLabelFormats.millisecond.list
                  */
 
                 /**
-                 * @type {string|Highcharts.DateTimeFormatOptions}
-                 * @default '%[HMSL]'
                  * @apioption xAxis.dateTimeLabelFormats.millisecond.main
                  */
                 main: '%[HMSL]',
@@ -608,8 +603,6 @@ namespace AxisDefaults {
                  * enabled, point-in-time ticks get left-aligned in the grid
                  * cell by default.
                  *
-                 * @type  {boolean}
-                 * @default false
                  * @product gantt
                  * @apioption xAxis.dateTimeLabelFormats.millisecond.range
                  */
@@ -617,18 +610,13 @@ namespace AxisDefaults {
             },
             /**
              * @declare Highcharts.AxisDateTimeLabelFormatsOptionsObject
-             * @type {string|*}
              */
             second: {
                 /**
-                 * @type {Array<string|Highcharts.DateTimeFormatOptions>}
-                 * @default undefined
                  * @apioption xAxis.dateTimeLabelFormats.second.list
                  */
 
                 /**
-                 * @type {string|Highcharts.DateTimeFormatOptions}
-                 * @default '%[HMS]'
                  * @apioption xAxis.dateTimeLabelFormats.second.main
                  */
                 main: '%[HMS]',
@@ -638,8 +626,6 @@ namespace AxisDefaults {
                  * enabled, point-in-time ticks get left-aligned in the grid
                  * cell by default.
                  *
-                 * @type  {boolean}
-                 * @default false
                  * @product gantt
                  * @apioption xAxis.dateTimeLabelFormats.second.range
                  */
@@ -647,18 +633,13 @@ namespace AxisDefaults {
             },
             /**
              * @declare Highcharts.AxisDateTimeLabelFormatsOptionsObject
-             * @type {string|*}
              */
             minute: {
                 /**
-                 * @type {Array<string|Highcharts.DateTimeFormatOptions>}
-                 * @default undefined
                  * @apioption xAxis.dateTimeLabelFormats.minute.list
                  */
 
                 /**
-                 * @type {string|Highcharts.DateTimeFormatOptions}
-                 * @default '%[HM]'
                  * @apioption xAxis.dateTimeLabelFormats.minute.main
                  */
                 main: '%[HM]',
@@ -668,8 +649,6 @@ namespace AxisDefaults {
                  * enabled, point-in-time ticks get left-aligned in the grid
                  * cell by default.
                  *
-                 * @type  {boolean}
-                 * @default false
                  * @product gantt
                  * @apioption xAxis.dateTimeLabelFormats.minute.range
                  */
@@ -677,18 +656,13 @@ namespace AxisDefaults {
             },
             /**
              * @declare Highcharts.AxisDateTimeLabelFormatsOptionsObject
-             * @type {string|*}
              */
             hour: {
                 /**
-                 * @type {Array<string|Highcharts.DateTimeFormatOptions>}
-                 * @default undefined
                  * @apioption xAxis.dateTimeLabelFormats.hour.list
                  */
 
                 /**
-                 * @type {string|Highcharts.DateTimeFormatOptions}
-                 * @default '%[HM]'
                  * @apioption xAxis.dateTimeLabelFormats.hour.main
                  */
                 main: '%[HM]',
@@ -696,8 +670,6 @@ namespace AxisDefaults {
                  * Label format that should be used when a tick is a boundary
                  * tick, e.g. start of day, start of year, etc.
                  *
-                 * @type {string|Highcharts.DateTimeFormatOptions}
-                 * @default undefined
                  * @apioption xAxis.dateTimeLabelFormats.hour.boundary
                  */
                 boundary: void 0,
@@ -707,8 +679,6 @@ namespace AxisDefaults {
                  * enabled, point-in-time ticks get left-aligned in the grid
                  * cell by default.
                  *
-                 * @type  {boolean}
-                 * @default false
                  * @product gantt
                  * @apioption xAxis.dateTimeLabelFormats.hour.range
                  */
@@ -716,18 +686,13 @@ namespace AxisDefaults {
             },
             /**
              * @declare Highcharts.AxisDateTimeLabelFormatsOptionsObject
-             * @type {string|*}
              */
             day: {
                 /**
-                 * @type {Array<string|Highcharts.DateTimeFormatOptions>}
-                 * @default undefined
                  * @apioption xAxis.dateTimeLabelFormats.day.list
                  */
 
                 /**
-                 * @type {string|Highcharts.DateTimeFormatOptions}
-                 * @default '%[eb]'
                  * @apioption xAxis.dateTimeLabelFormats.day.main
                  */
                 main: '%[eb]',
@@ -735,44 +700,32 @@ namespace AxisDefaults {
                  * Label format that should be used when a tick is a boundary
                  * tick, e.g. start of day, start of year, etc.
                  *
-                 * @type {string|Highcharts.DateTimeFormatOptions}
-                 * @default '%[eb]'
                  * @apioption xAxis.dateTimeLabelFormats.day.boundary
                  */
                 boundary: '%[eb]'
             },
             /**
              * @declare Highcharts.AxisDateTimeLabelFormatsOptionsObject
-             * @type {string|*}
              */
             week: {
                 /**
-                 * @type {Array<string|Highcharts.DateTimeFormatOptions>}
-                 * @default undefined
                  * @apioption xAxis.dateTimeLabelFormats.week.list
                  */
 
                 /**
-                 * @type {string|Highcharts.DateTimeFormatOptions}
-                 * @default '%[eb]'
                  * @apioption xAxis.dateTimeLabelFormats.week.main
                  */
                 main: '%[eb]'
             },
             /**
              * @declare Highcharts.AxisDateTimeLabelFormatsOptionsObject
-             * @type {string|*}
              */
             month: {
                 /**
-                 * @type {Array<string|Highcharts.DateTimeFormatOptions>}
-                 * @default undefined
                  * @apioption xAxis.dateTimeLabelFormats.month.list
                  */
 
                 /**
-                 * @type {string|Highcharts.DateTimeFormatOptions}
-                 * @default '%[bY]'
                  * @apioption xAxis.dateTimeLabelFormats.month.main
                  */
                 main: '%[bY]',
@@ -780,26 +733,19 @@ namespace AxisDefaults {
                  * Label format that should be used when a tick is a boundary
                  * tick, e.g. start of day, start of year, etc.
                  *
-                 * @type {string|Highcharts.DateTimeFormatOptions}
-                 * @default undefined
                  * @apioption xAxis.dateTimeLabelFormats.month.boundary
                  */
                 boundary: void 0
             },
             /**
              * @declare Highcharts.AxisDateTimeLabelFormatsOptionsObject
-             * @type {string|*}
              */
             year: {
                 /**
-                 * @type {Array<string|Highcharts.DateTimeFormatOptions>}
-                 * @default undefined
                  * @apioption xAxis.dateTimeLabelFormats.year.list
                  */
 
                 /**
-                 * @type {string|Highcharts.DateTimeFormatOptions}
-                 * @default '%Y'
                  * @apioption xAxis.dateTimeLabelFormats.year.main
                  */
                 main: '%Y',
@@ -807,8 +753,6 @@ namespace AxisDefaults {
                  * Label format that should be used when a tick is a boundary
                  * tick, e.g. start of day, start of year, etc.
                  *
-                 * @type {string|Highcharts.DateTimeFormatOptions}
-                 * @default undefined
                  * @apioption xAxis.dateTimeLabelFormats.year.boundary
                  */
                 boundary: void 0
