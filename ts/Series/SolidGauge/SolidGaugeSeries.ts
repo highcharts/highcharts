@@ -146,7 +146,8 @@ class SolidGaugeSeries extends GaugeSeries {
         for (const point of series.points) {
             // #10630 null point should not be draw
             if (!point.isNull) { // Condition like in pie chart
-                const radius = ((
+                const paneInnerSize = yAxis.pane.options.innerSize,
+                    radius = ((
                         relativeLength(
                             point.options.radius ??
                                 options.radius ??
@@ -158,8 +159,12 @@ class SolidGaugeSeries extends GaugeSeries {
                         relativeLength(
                             point.options.innerRadius ??
                                 options.innerRadius ??
-                                yAxis.pane.options.innerSize ??
-                            0,
+                                (
+                                    isNumber(paneInnerSize) ?
+                                        paneInnerSize / 2 :
+                                        paneInnerSize
+                                ) ??
+                                0,
                             center[2] / 2
                         )
                     ), radius),
