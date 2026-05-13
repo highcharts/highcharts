@@ -8,32 +8,25 @@ const YAML = require('js-yaml');
 
 const PRODUCT_CONFIG = {
     highcharts: {
-        demoConfigKey: 'Highcharts',
-        sourcePathParts: ['highcharts', 'demo']
+        demoConfigKey: 'Highcharts'
     },
     stock: {
-        demoConfigKey: 'Highcharts Stock',
-        sourcePathParts: ['stock', 'demo']
+        demoConfigKey: 'Highcharts Stock'
     },
     maps: {
-        demoConfigKey: 'Highcharts Maps',
-        sourcePathParts: ['maps', 'demo']
+        demoConfigKey: 'Highcharts Maps'
     },
     gantt: {
-        demoConfigKey: 'Highcharts Gantt',
-        sourcePathParts: ['gantt', 'demo']
+        demoConfigKey: 'Highcharts Gantt'
     },
     dashboards: {
-        demoConfigKey: 'Highcharts Dashboards',
-        sourcePathParts: ['dashboards', 'demo']
+        demoConfigKey: 'Highcharts Dashboards'
     },
     'grid-lite': {
-        demoConfigKey: 'Highcharts Grid',
-        sourcePathParts: ['grid-lite', 'demo']
+        demoConfigKey: 'Highcharts Grid'
     },
     'grid-pro': {
-        demoConfigKey: 'Highcharts Grid',
-        sourcePathParts: ['grid-pro', 'demo']
+        demoConfigKey: 'Highcharts Grid'
     }
 };
 
@@ -155,7 +148,16 @@ function collectDemosForConfig(sourcePath, config) {
                 return;
             }
 
-            const details = parseDemoDetails(FS.readFileSync(detailsPath, 'utf8'));
+            let details;
+
+            try {
+                details = parseDemoDetails(FS.readFileSync(detailsPath, 'utf8'));
+            } catch (error) {
+                throw new Error(
+                    `Failed to parse demo details ${detailsPath}: ${error.message}`
+                );
+            }
+
             const demoName = typeof details.name === 'string' ? details.name.trim() : '';
             const demoTags = Array.isArray(details.tags) ? details.tags : [];
             const demoCategories = Array.isArray(details.categories) ? details.categories : [];

@@ -169,6 +169,29 @@ categories:
             await rm(root, { recursive: true, force: true });
         }
     });
+
+    it('includes the demo.details path in parse errors', async () => {
+        const root = await mkdtemp(join(tmpdir(), 'hc-demo-index-'));
+
+        try {
+            await writeDemo(root, 'broken-demo', `---
+name: [
+...
+`);
+
+            throws(
+                () => collectDemosForConfig(root, {
+                    categories: ['Line charts'],
+                    filter: {
+                        tags: ['Highcharts demo']
+                    }
+                }),
+                error => /broken-demo[\\/]demo\.details/u.test(error.message)
+            );
+        } finally {
+            await rm(root, { recursive: true, force: true });
+        }
+    });
 });
 
 describe('demoIndex HTML rendering', () => {

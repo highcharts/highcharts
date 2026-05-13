@@ -192,7 +192,6 @@ async function createExamples(title, sourcePath, targetPath, template, demoIndex
         );
     });
 
-    LogLib.success('Created', targetPath);
     const indexContent = createDemoIndexContent({
         productPath: demoIndexProductPath,
         sourcePath
@@ -202,7 +201,7 @@ async function createExamples(title, sourcePath, targetPath, template, demoIndex
     return FS.promises.writeFile(
         Path.join(targetPath, '..', 'index.html'),
         indexTemplate({ title, content: indexContent })
-    );
+    ).then(() => LogLib.success('Created', targetPath));
 }
 
 /**
