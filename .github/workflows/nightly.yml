@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
     inputs:
       pushToDist:
-        description: 'Whether to update the nightly branch on highcharts-dist'
+        description: 'Whether to update dist repositories from the nightly build'
         required: false
         default: true
         type: boolean
@@ -294,6 +294,33 @@ jobs:
           ref: 'nightly'
           fetch-depth: 0
 
+      - name: Checkout grid-lite-dist
+        uses: actions/checkout@v6
+        with:
+          repository: highcharts/grid-lite-dist
+          token: ${{ secrets.PR_COMMENT_TOKEN }}
+          path: grid-lite-dist
+          ref: 'main'
+          fetch-depth: 0
+
+      - name: Checkout grid-pro-dist
+        uses: actions/checkout@v6
+        with:
+          repository: highcharts/grid-pro-dist
+          token: ${{ secrets.PR_COMMENT_TOKEN }}
+          path: grid-pro-dist
+          ref: 'main'
+          fetch-depth: 0
+
+      - name: Checkout dashboards-dist
+        uses: actions/checkout@v6
+        with:
+          repository: highcharts/dashboards-dist
+          token: ${{ secrets.PR_COMMENT_TOKEN }}
+          path: dashboards-dist
+          ref: 'main'
+          fetch-depth: 0
+
       - name: Use Node.js
         uses: actions/setup-node@v6
         with:
@@ -301,35 +328,66 @@ jobs:
           cache: 'npm'
           cache-dependency-path: ./highcharts/package-lock.json
 
-      - name: Set git config
-        working-directory: ./highcharts-dist
+      - name: Set git config for dist repositories
         if: ${{ github.event_name == 'schedule' || inputs.pushToDist }}
         run: |
-          git config --global user.name "CircleCI"
-          git config --global user.email "technical+circleci_mu@highsoft.com"
-          git config --global core.editor vi
+          for repo in highcharts-dist grid-lite-dist grid-pro-dist dashboards-dist; do
+            git -C "$repo" config user.name "CircleCI"
+            git -C "$repo" config user.email "technical+circleci_mu@highsoft.com"
+            git -C "$repo" config core.editor vi
+          done
 
-      - name: Reset nightly branch to master
-        working-directory: ./highcharts-dist
+      - name: Reset dist repositories
         if: ${{ github.event_name == 'schedule' || inputs.pushToDist }}
-        run: git reset --hard origin/master
+        run: |
+          git -C highcharts-dist reset --hard origin/master
+          git -C grid-lite-dist reset --hard origin/main
+          git -C grid-pro-dist reset --hard origin/main
+          git -C dashboards-dist reset --hard origin/main
 
-      - name: Install and build
+      - name: Install Highcharts dependencies
+        working-directory: ./highcharts
+        run: npm ci
+
+      - name: Build and release Highcharts dist
         working-directory: ./highcharts
         run: |
-          npm ci
           npm run build -- --CI true
           npx gulp scripts-es5
           npx gulp dist-verify
-          npx gulp dist-release --force-yes
+          npx gulp dist-release --force-yes --product Highcharts
+
+      - name: Build and release Grid dist
+        working-directory: ./highcharts
+        run: |
+          npx gulp dist --product Grid
+          npx gulp dist-release --force-yes --product Grid
+
+      - name: Build and release Dashboards dist
+        working-directory: ./highcharts
+        run: |
+          npx gulp dist --with-deps
+          npx gulp dist-verify --dashboards
+          npx gulp dist-release --force-yes --product Dashboards
+
+      - name: Show dist repository changes
+        run: |
+          for repo in highcharts-dist grid-lite-dist grid-pro-dist dashboards-dist; do
+            echo "=== $repo ==="
+            git -C "$repo" status --short
+          done
 
       - name: Upload to github
         working-directory: ./highcharts-dist
         if: ${{ github.event_name == 'schedule' || inputs.pushToDist }}
         run: |
           git add .
-          git commit -m "Nightly build - ${{github.run_id}}"
-          git push --force-with-lease -u origin nightly
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "Nightly build - ${{github.run_id}}"
+            git push --force-with-lease -u origin nightly
+          fi
 
   nightly_changelog:
     runs-on: ubuntu-latest
@@ -378,4 +436,3 @@ jobs:
           payload-file-path: "24hoursofhighcharts.json"
           webhook: ${{ secrets.SLACK_NIGHTLY_CHANGES_WEBHOOK }}
           webhook-type: webhook-trigger
-
