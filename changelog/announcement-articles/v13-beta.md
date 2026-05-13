@@ -71,16 +71,18 @@ The new palette layer replaces the former Adaptive theme.
 
 Relevant links:
 
-- [Palette API](https://api.highcharts.com/highcharts/palette)
-- [Branding Highcharts](https://www.highcharts.com/docs/chart-design-and-style/branding)
-- [Colors documentation](https://www.highcharts.com/docs/chart-design-and-style/colors)
+- [Palette options](https://github.com/highcharts/highcharts/blob/trettan/ts/Core/Color/PaletteDefaults.ts)
+- [Branding Highcharts](https://github.com/highcharts/highcharts/blob/trettan/docs/chart-design-and-style/branding.md)
 - [Palette options demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/palette/general)
 - [Color scheme
   demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/palette/colorscheme)
 
 ## DataTable
 
-Highcharts v13 makes tabular data a first-class way to feed charts. Until now, most charts started with `series.data`: convenient for small examples, but less ideal when your real source is a database table, CSV, API response, or shared dashboard dataset.
+Highcharts v13 makes tabular data a first-class way to feed charts. Until now,
+most charts were configured with `series.data`: convenient for small examples, but less
+ideal when your real source is a database table, CSV, API response, or shared
+dashboard dataset.
 
 The new `dataTable`, `series.dataTable` and `series.dataMapping` options let you keep the data in columns, then map those columns into chart points.
 
@@ -124,16 +126,16 @@ typed arrays for heavier datasets. If your columns are already named `x`, `y`,
 `name` and so on, Highcharts can map them automatically. If not, `dataMapping`
 gives you the translator.
 
-For high-volume charts, there is a performance angle too. When used with the Boost module, configuring data through a DataTable with TypedArray columns is about 20% faster than using regular series.data in a 500k point chart. Tiny syntax change, very real payoff when dashboards start moving serious amounts of data.
+For high-volume charts, there is a performance angle too. When used with the Boost module, configuring data through a DataTable with TypedArray columns is about 20% faster than using regular `series.data` in a 500k point chart. Tiny syntax change, very real payoff when dashboards start moving serious amounts of data.
 
 This makes Highcharts fit better into modern data pipelines. Less reshaping, less duplicated data, and cleaner sharing between Charts, Stock, Maps, Gantt and Grid. And when the table changes, the chart can follow the table, which is a much nicer mental model for live dashboards.
 
 Relevant links:
 
-- [Using DataTables with Series](https://www.highcharts.com/docs/working-with-data/using-datatables-in-series)
-- [Chart-level `dataTable`](https://api.highcharts.com/highcharts/dataTable)
-- [Series-level `dataTable`](https://api.highcharts.com/highcharts/series.line.dataTable)
-- [`series.dataMapping`](https://api.highcharts.com/highcharts/series.line.dataMapping)
+- [Using DataTables with Series](https://github.com/highcharts/highcharts/blob/trettan/docs/working-with-data/using-datatables-in-series.md)
+- [Chart-level `dataTable`](https://github.com/highcharts/highcharts/blob/370ef95f78341e0eedaed694b3bd184da7b3d49f/ts/Core/Options.ts#L323-L356)
+- [Series-level `dataTable`](https://github.com/highcharts/highcharts/blob/370ef95f78341e0eedaed694b3bd184da7b3d49f/ts/Core/Series/SeriesOptions.ts#L688-L709)
+- [`series.dataMapping`](https://github.com/highcharts/highcharts/blob/370ef95f78341e0eedaed694b3bd184da7b3d49f/ts/Core/Series/SeriesOptions.ts#L614-L678)
 - [Single chart-level DataTable demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/datatable/chart-datatable-single/)
 - [Series-level DataTable demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/datatable/series-datatable/)
 
@@ -192,9 +194,9 @@ series type missing?" confusion.
 
 Relevant links:
 
-- [Highcharts Loader API](https://api.highcharts.com/class-reference/Highcharts.Loader)
-- [Installation docs: Autoload modules](https://www.highcharts.com/docs/getting-started/installation#autoload-modules)
-- [ESM installation docs: Autoload](https://www.highcharts.com/docs/getting-started/installation-with-esm)
+- [Highcharts Loader API](https://github.com/highcharts/highcharts/blob/370ef95f78341e0eedaed694b3bd184da7b3d49f/ts/Extensions/Autoload/Loader.ts#L151-L181)
+- [Installation docs: Autoload modules](https://github.com/highcharts/highcharts/blob/trettan/docs/getting-started/installation.md#autoload-modules)
+- [ESM installation docs: Autoload](https://github.com/highcharts/highcharts/blob/trettan/docs/getting-started/installation-with-esm.md#dynamic-imports-from-cdn)
 - [UMD autoload demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/global/autoload/)
 - [ESM autoload demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/global/autoload-esm/)
 
@@ -275,12 +277,9 @@ dial path. It is basically a mood board, but with runnable chart options.
 Relevant links:
 
 - [Gauge inspiration demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/demo/gauge-inspiration)
-- [Angular gauges documentation](https://www.highcharts.com/docs/chart-and-series-types/angular-gauges)
-- [Pane API](https://api.highcharts.com/highcharts/pane)
-- [`plotOptions.gauge`](https://api.highcharts.com/highcharts/plotOptions.gauge)
-- [`plotOptions.gauge.dial`](https://api.highcharts.com/highcharts/plotOptions.gauge.dial)
-- [`plotOptions.gauge.pivot`](https://api.highcharts.com/highcharts/plotOptions.gauge.pivot)
-- [`plotOptions.solidgauge`](https://api.highcharts.com/highcharts/plotOptions.solidgauge)
+- [Pane options](https://github.com/highcharts/highcharts/blob/trettan/ts/Extensions/Pane/PaneOptions.ts)
+- [Gauge options](https://github.com/highcharts/highcharts/blob/370ef95f78341e0eedaed694b3bd184da7b3d49f/ts/Series/Gauge/GaugeSeries.ts#L115-L435)
+- [Solid gauge options](https://github.com/highcharts/highcharts/blob/trettan/ts/Series/SolidGauge/SolidGaugeSeriesOptions.d.ts)
 
 ## Boundaries on Datetime Axes
 
@@ -409,9 +408,6 @@ Small feature, big day-to-day payoff: readable labels with less fiddling.
 
 Relevant links:
 
-- [`plotOptions.series.dataLabels.backgroundColor`](https://api.highcharts.com/highcharts/plotOptions.series.dataLabels.backgroundColor)
-- [`plotOptions.series.dataLabels.distance`](https://api.highcharts.com/highcharts/plotOptions.series.dataLabels.distance)
-- [`plotOptions.series.dataLabels.style`](https://api.highcharts.com/highcharts/plotOptions.series.dataLabels.style)
 - [Contrast background in stacked columns](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/series-datalabels-background-contrast/)
 - [Contrast background in pie](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/series-pie/datalabels-background-contrast/)
 - [Data label background strategies
