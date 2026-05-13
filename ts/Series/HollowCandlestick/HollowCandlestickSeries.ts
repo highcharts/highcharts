@@ -23,7 +23,6 @@ import type HollowCandlestickSeriesOptions from './HollowCandlestickSeriesOption
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import { StatesOptionsKey } from '../../Core/Series/StatesOptions.js';
 import SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes.js';
-import { Palette } from '../../Core/Color/Palettes.js';
 import Axis from '../../Core/Axis/Axis.js';
 import ColorType from '../../Core/Color/ColorType.js';
 import { addEvent, merge } from '../../Shared/Utilities.js';
@@ -99,7 +98,7 @@ class HollowCandlestickSeries extends CandlestickSeries {
          * @type    {ColorType}
          * @product highstock
          */
-        color: Palette.negativeColor,
+        color: 'var(--highcharts-negative-color)',
 
         dataGrouping: {
             groupAll: true,
@@ -118,7 +117,7 @@ class HollowCandlestickSeries extends CandlestickSeries {
          * @type    {ColorType}
          * @product highstock
          */
-        lineColor: Palette.negativeColor,
+        lineColor: 'var(--highcharts-negative-color)',
 
         /**
          * The fill color of the candlestick when the current
@@ -132,7 +131,7 @@ class HollowCandlestickSeries extends CandlestickSeries {
          * @type    {ColorType}
          * @product highstock
          */
-        upColor: Palette.positiveColor,
+        upColor: 'var(--highcharts-positive-color)',
 
         /**
          * The color of the line/border of the hollow candlestick when
@@ -146,7 +145,7 @@ class HollowCandlestickSeries extends CandlestickSeries {
          * @type    {ColorType}
          * @product highstock
          */
-        upLineColor: Palette.positiveColor
+        upLineColor: 'var(--highcharts-positive-color)'
 
     } as HollowCandlestickSeriesOptions);
 
@@ -219,8 +218,8 @@ class HollowCandlestickSeries extends CandlestickSeries {
 
         // Return line color based on trend direction
         return trendDirection === 'up' ?
-            series.options.upColor || Palette.positiveColor :
-            series.options.color || Palette.negativeColor;
+            series.options.upColor || 'var(--highcharts-positive-color)' :
+            series.options.color || 'var(--highcharts-negative-color)';
     }
 
     /**
@@ -243,8 +242,8 @@ class HollowCandlestickSeries extends CandlestickSeries {
             return 'transparent';
         }
         return hollowcandleInfo.trendDirection === 'up' ?
-            series.options.upColor || Palette.positiveColor :
-            series.options.color || Palette.negativeColor;
+            series.options.upColor || 'var(--highcharts-positive-color)' :
+            series.options.color || 'var(--highcharts-negative-color)';
     }
 
     /**

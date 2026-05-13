@@ -1813,6 +1813,7 @@ class Navigator {
             !(baseSeries && baseSeries.length) ||
             isArray(chartNavigatorSeriesOptions)
         ) {
+            const colors = chart.options.colors || [];
             navigator.hasNavigatorData = false;
             // Allow navigator.series to be an array
             chartNavigatorSeriesOptions =
@@ -1832,11 +1833,13 @@ class Navigator {
                         // an explicit color as otherwise updates will increment
                         // color counter and we'll get a new color for each
                         // update of the nav series.
-                        color: chart.series[i] &&
-                        !chart.series[i].options.isInternal &&
-                        chart.series[i].color ||
-                        chart.options.colors?.[i] ||
-                        chart.options.colors?.[0]
+                        color: (
+                            chart.series[i] &&
+                            !chart.series[i].options.isInternal &&
+                            chart.series[i].color
+                        ) ||
+                        colors[i] ||
+                        colors[0]
                     },
                     navSeriesMixin,
                     userSeriesOptions

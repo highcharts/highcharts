@@ -92,7 +92,6 @@ import {
     RegexLimits
 } from '../../Shared/Utilities.js';
 import { error, uniqueKey } from '../../Core/Utilities.js';
-import { Palette } from '../../Core/Color/Palettes';
 
 AST.allowedAttributes.push(
     'data-z-index',
@@ -1257,8 +1256,7 @@ export class Exporting {
         const exporting = this,
             chart = exporting.chart,
             navOptions = chart.options.navigation,
-            chartWidth = chart.chartWidth,
-            chartHeight = chart.chartHeight,
+            { chartWidth, chartHeight } = chart,
             cacheName = 'cache-' + className,
             // For mouse leave detection
             menuPadding = Math.max(width, height);
@@ -1296,7 +1294,7 @@ export class Exporting {
 
             // Presentational CSS
             if (!chart.styledMode) {
-                css(innerMenu, extend<CSSObject>({
+                css(innerMenu, extend({
                     MozBoxShadow: '3px 3px 10px #0008',
                     WebkitBoxShadow: '3px 3px 10px #0008',
                     boxShadow: '3px 3px 10px #0008'
@@ -1377,7 +1375,8 @@ export class Exporting {
                         if (!chart.styledMode) {
                             css(element, {
                                 border: 'none',
-                                backgroundColor: Palette.neutralColor40,
+                                backgroundColor:
+                                    'var(--highcharts-neutral-color-40)',
                                 height: '0.5px',
                                 margin: '10px 0',
                                 padding: 0,
@@ -1433,10 +1432,13 @@ export class Exporting {
                                     navOptions?.menuItemStyle || {}
                                 );
                             };
-
-                            css(element, extend({
-                                cursor: 'pointer'
-                            } as CSSObject, navOptions?.menuItemStyle || {}));
+                            css(
+                                element,
+                                extend(
+                                    { cursor: 'pointer' } as CSSObject,
+                                    navOptions?.menuItemStyle || {}
+                                )
+                            );
                         }
                     }
 

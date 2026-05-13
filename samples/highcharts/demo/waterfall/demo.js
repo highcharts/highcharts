@@ -26,8 +26,8 @@ Highcharts.chart('container', {
     },
 
     series: [{
-        upColor: Highcharts.getOptions().colors[2],
-        color: Highcharts.getOptions().colors[3],
+        upColor: 'var(--highcharts-color-2)',
+        color: 'var(--highcharts-color-3)',
         data: [{
             name: 'Start',
             y: 120000
@@ -40,7 +40,7 @@ Highcharts.chart('container', {
         }, {
             name: 'Positive Balance',
             isIntermediateSum: true,
-            color: Highcharts.getOptions().colors[1]
+            color: 'var(--highcharts-color-1)'
         }, {
             name: 'Fixed Costs',
             y: -342000
@@ -50,7 +50,7 @@ Highcharts.chart('container', {
         }, {
             name: 'Balance',
             isSum: true,
-            color: Highcharts.getOptions().colors[1]
+            color: 'var(--highcharts-color-1)'
         }],
         dataLabels: {
             enabled: true,

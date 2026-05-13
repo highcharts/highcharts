@@ -20,8 +20,6 @@
 
 import type ChartOptions from './ChartOptions';
 
-import { Palette } from '../Color/Palettes.js';
-
 /* *
  *
  *  API Options
@@ -863,10 +861,9 @@ const ChartDefaults: ChartOptions = {
      *      `.highcharts-selection-marker` class.
      *
      * @type      {Highcharts.ColorType}
-     * @default   rgba(51,92,173,0.25)
      * @since     2.1.7
-     * @apioption chart.selectionMarkerFill
      */
+    selectionMarkerFill: 'color-mix(var(--highcharts-highlight-color-80) 25%, transparent)', // eslint-disable-line max-len
 
     /**
      * Whether to apply a drop shadow to the global series group. This causes
@@ -1304,7 +1301,7 @@ const ChartDefaults: ChartOptions = {
      *
      * @type {Highcharts.ColorType}
      */
-    borderColor: Palette.highlightColor80,
+    borderColor: 'var(--highcharts-highlight-color-80)',
 
     /**
      * The pixel width of the outer chart border.
@@ -1345,7 +1342,7 @@ const ChartDefaults: ChartOptions = {
      *
      * @type {Highcharts.ColorType}
      */
-    backgroundColor: Palette.backgroundColor,
+    backgroundColor: 'var(--highcharts-background-color)',
 
     /**
      * The background color or gradient for the plot area.
@@ -1404,7 +1401,7 @@ const ChartDefaults: ChartOptions = {
      *
      * @type {Highcharts.ColorType}
      */
-    plotBorderColor: Palette.neutralColor20
+    plotBorderColor: 'var(--highcharts-neutral-color-20)'
 
 };
 

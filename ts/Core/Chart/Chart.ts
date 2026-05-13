@@ -843,7 +843,7 @@ class Chart {
         // Fire the event with a default function
         fireEvent(this, 'init', { args: arguments }, function (): void {
 
-            const options = merge(defaultOptions, userOptions), // Do the merge
+            const options = merge(defaultOptions, userOptions),
                 optionsChart = options.chart,
                 renderTo = this.renderTo || optionsChart.renderTo;
 
@@ -2177,7 +2177,9 @@ class Chart {
             void 0,
             optionsChart.forExport,
             options.exporting?.allowHTML,
-            chart.styledMode
+            chart.styledMode,
+            options.palette,
+            chart.index
         );
 
         // Measure after the SVG is appended. In styled mode the inner
@@ -2191,15 +2193,14 @@ class Chart {
         chart.setClassName(optionsChart.className);
         if (!chart.styledMode) {
             chart.renderer.setStyle(optionsChart.style as any);
+            this.palette = chart.renderer.palette;
+
         } else {
             // Initialize definitions
             for (const key in options.defs) { // eslint-disable-line guard-for-in
                 this.renderer.definition((options.defs as any)[key]);
             }
         }
-
-        // Add a reference to the charts index
-        chart.renderer.chartIndex = chart.index;
 
         fireEvent(this, 'afterGetContainer');
     }
@@ -3170,7 +3171,8 @@ class Chart {
             this.credits = this.renderer.text(
                 creds.text + (this.mapCredits || ''),
                 0,
-                0
+                0,
+                creds.useHTML
             )
                 .addClass('highcharts-credits')
                 .on('click', function (e: PointerEvent): void {
@@ -4891,6 +4893,15 @@ namespace Chart {
          *         Custom URL and text
          */
         text?: string;
+
+        /**
+         * Whether to render the credits as HTML
+         *
+         * @since  next
+         * @sample highcharts/palette/branding
+         *         Branding with HTML credits
+         */
+        useHTML?: boolean;
 
     }
 

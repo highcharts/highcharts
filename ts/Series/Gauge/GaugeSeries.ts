@@ -33,7 +33,6 @@ import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import GaugePoint from './GaugePoint.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
-import { Palette } from '../../Core/Color/Palettes.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     series: Series,
@@ -118,7 +117,7 @@ class GaugeSeries extends Series {
         {
             clip: false,
 
-            color: Palette.neutralColor20,
+            color: 'var(--highcharts-neutral-color-20)',
 
             /**
              * When this option is `true`, the dial will wrap around the axes.
@@ -185,7 +184,7 @@ class GaugeSeries extends Series {
                  * @product   highcharts
                  * @apioption plotOptions.gauge.dial.backgroundColor
                  */
-                backgroundColor: Palette.neutralColor100,
+                backgroundColor: 'var(--highcharts-neutral-color-100)',
 
                 /**
                  * The length of the dial's base part, relative to the total
@@ -236,7 +235,7 @@ class GaugeSeries extends Series {
                  * @product   highcharts
                  * @apioption plotOptions.gauge.dial.borderColor
                  */
-                borderColor: Palette.neutralColor20,
+                borderColor: 'var(--highcharts-neutral-color-20)',
 
                 /**
                  * The border radius of the gauge dial
@@ -395,12 +394,12 @@ class GaugeSeries extends Series {
                  *         Pivot options demonstrated
                  *
                  * @type      {Highcharts.ColorType}
-                 * @default   #000000
+                 * @default   var(--highcharts-neutral-color-100)
                  * @since     2.3.0
                  * @product   highcharts
                  * @apioption plotOptions.gauge.pivot.borderColor
                  */
-                borderColor: Palette.neutralColor100,
+                borderColor: 'var(--highcharts-neutral-color-100)',
 
                 /**
                  * The background color or fill of the pivot.
@@ -409,12 +408,12 @@ class GaugeSeries extends Series {
                  *         Pivot options demonstrated
                  *
                  * @type      {Highcharts.ColorType}
-                 * @default   var(--highcharts-palette-background)
+                 * @default   var(--highcharts-background-color)
                  * @since     2.3.0
                  * @product   highcharts
                  * @apioption plotOptions.gauge.pivot.backgroundColor
                  */
-                backgroundColor: Palette.backgroundColor
+                backgroundColor: 'var(--highcharts-background-color)'
             },
 
             threshold: 0,

@@ -644,7 +644,9 @@ class HighchartsComponent extends Component {
                 return new Factory(this.chartContainer, this.chartOptions);
             } catch (e) {
                 throw new Error(
-                    `The Highcharts component in cell '${this.cell.id}' is misconfigured. \n____________\n${e}`
+                    `The Highcharts component in cell '${this.cell.id}' ` +
+                    'is misconfigured. \n____________\n' +
+                    String(e)
                 );
             }
         }

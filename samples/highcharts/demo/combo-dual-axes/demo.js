@@ -40,7 +40,7 @@ Highcharts.chart('container', {
         title: {
             text: 'Temperature'
         },
-        lineColor: Highcharts.getOptions().colors[1],
+        lineColor: 'var(--highcharts-color-1)',
         lineWidth: 2
     }, { // Secondary yAxis
         title: {
@@ -49,7 +49,7 @@ Highcharts.chart('container', {
         labels: {
             format: '{value} mm'
         },
-        lineColor: Highcharts.getOptions().colors[0],
+        lineColor: 'var(--highcharts-color-0)',
         lineWidth: 2,
         opposite: true
     }],

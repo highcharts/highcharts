@@ -27,7 +27,7 @@ body {
 #pdf {
     border: 1px solid silver;
     border-radius: 3px;
-    background: #a4edba;
+    background: light-dark(#a4edba, #244d3a);
     padding: 0.5em 1em;
     cursor: pointer;
     transition: background 0.3s;

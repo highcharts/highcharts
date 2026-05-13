@@ -52,7 +52,6 @@ const {
     doc,
     noop
 } = H;
-import { Palette } from '../Core/Color/Palettes.js';
 import {
     addEvent,
     fireEvent,
@@ -575,9 +574,8 @@ namespace BoostCanvas {
         if (rawData.length > 99999) {
             chart.options.loading = merge(loadingOptions, {
                 labelStyle: {
-                    backgroundColor: color(
-                        Palette.backgroundColor
-                    ).setOpacity(0.75).get(),
+                    backgroundColor: color('var(--highcharts-background-color)')
+                        .setOpacity(0.75).get(),
                     padding: '1em',
                     borderRadius: '0.5em'
                 },

@@ -26,8 +26,6 @@
 
 import type VennSeriesOptions from './VennSeriesOptions';
 
-import { Palette } from '../../Core/Color/Palettes.js';
-
 /* *
  *
  *  API Options
@@ -62,7 +60,7 @@ import { Palette } from '../../Core/Color/Palettes.js';
  */
 const VennSeriesDefaults: VennSeriesOptions = {
 
-    borderColor: Palette.neutralColor20,
+    borderColor: 'var(--highcharts-neutral-color-20)',
 
     borderDashStyle: 'solid' as any,
 
@@ -119,7 +117,7 @@ const VennSeriesDefaults: VennSeriesOptions = {
 
             opacity: 1,
 
-            borderColor: Palette.neutralColor80
+            borderColor: 'var(--highcharts-neutral-color-80)'
 
         },
 
@@ -130,12 +128,12 @@ const VennSeriesDefaults: VennSeriesOptions = {
             /**
              * @type {Highcharts.ColorType}
              */
-            color: Palette.neutralColor20,
+            color: 'var(--highcharts-neutral-color-20)',
 
             /**
              * @type {Highcharts.ColorType}
              */
-            borderColor: Palette.neutralColor100,
+            borderColor: 'var(--highcharts-neutral-color-100)',
 
             animation: false
 

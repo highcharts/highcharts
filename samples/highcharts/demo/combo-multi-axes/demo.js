@@ -38,13 +38,13 @@ Highcharts.chart('container', {
         labels: {
             format: '{value}°C',
             style: {
-                color: Highcharts.getOptions().colors[2]
+                color: 'var(--highcharts-color-2)'
             }
         },
         title: {
             text: 'Temperature',
             style: {
-                color: Highcharts.getOptions().colors[2]
+                color: 'var(--highcharts-color-2)'
             }
         },
         opposite: true
@@ -54,13 +54,13 @@ Highcharts.chart('container', {
         title: {
             text: 'Rainfall',
             style: {
-                color: Highcharts.getOptions().colors[0]
+                color: 'var(--highcharts-color-0)'
             }
         },
         labels: {
             format: '{value} mm',
             style: {
-                color: Highcharts.getOptions().colors[0]
+                color: 'var(--highcharts-color-0)'
             }
         }
 
@@ -69,13 +69,13 @@ Highcharts.chart('container', {
         title: {
             text: 'Sea-Level Pressure',
             style: {
-                color: Highcharts.getOptions().colors[1]
+                color: 'var(--highcharts-color-1)'
             }
         },
         labels: {
             format: '{value} mb',
             style: {
-                color: Highcharts.getOptions().colors[1]
+                color: 'var(--highcharts-color-1)'
             }
         },
         opposite: true
@@ -90,9 +90,10 @@ Highcharts.chart('container', {
         verticalAlign: 'top',
         y: 55,
         floating: true,
-        backgroundColor:
-            Highcharts.defaultOptions.legend.backgroundColor || // theme
-            'rgba(255,255,255,0.25)'
+        backgroundColor: `color-mix(
+            var(--highcharts-neutral-color-40) 25%,
+            transparent
+        )`
     },
     plotOptions: {
         series: {

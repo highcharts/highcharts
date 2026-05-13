@@ -27,8 +27,7 @@ import H from './Globals.js';
 const {
     isTouchDevice
 } = H;
-import { Palette } from './Color/Palettes.js';
-import Palettes from './Color/Palettes.js';
+import PaletteDefaults from './Color/PaletteDefaults.js';
 import Time from './Time.js';
 import { fireEvent, merge } from '../Shared/Utilities.js';
 
@@ -68,6 +67,8 @@ declare module './GlobalsBase' {
  */
 const defaultOptions: DefaultOptions = {
 
+    palette: PaletteDefaults,
+
     /**
      * An array containing the default colors for the chart's series. When
      * all colors are used, new colors are pulled from the start again.
@@ -80,6 +81,9 @@ const defaultOptions: DefaultOptions = {
      * are defined in CSS and applied either through series or point class
      * names, or through the [chart.colorCount](#chart.colorCount) option.
      *
+     * The defaults from v13 invoke CSS variables that are set by the
+     * `palette` option's light and dark themes.
+     *
      * @sample {highcharts} highcharts/chart/colors/
      *         Assign a global color theme
      * @sample highcharts/members/theme-v10/
@@ -87,19 +91,21 @@ const defaultOptions: DefaultOptions = {
      *
      * @type    {Array<Highcharts.ColorType>}
      * @default [
-     *     "#2caffe",
-     *     "#544fc5",
-     *     "#00e272",
-     *     "#fe6a35",
-     *     "#6b8abc",
-     *     "#d568fb",
-     *     "#2ee0ca",
-     *     "#fa4b42",
-     *     "#feb56a",
-     *     "#91e8e1"
+     *     'var(--highcharts-color-0)',
+     *     'var(--highcharts-color-1)',
+     *     'var(--highcharts-color-2)',
+     *     'var(--highcharts-color-3)',
+     *     'var(--highcharts-color-4)',
+     *     'var(--highcharts-color-5)',
+     *     'var(--highcharts-color-6)',
+     *     'var(--highcharts-color-7)',
+     *     'var(--highcharts-color-8)',
+     *     'var(--highcharts-color-9)'
      * ]
      */
-    colors: Palettes.colors,
+    colors: new Array(10).fill(1).map(
+        (_, i): string => `var(--highcharts-color-${i})`
+    ),
 
     /**
      * Options for one or many chart-level data tables. The `dataTable` option,
@@ -404,7 +410,7 @@ const defaultOptions: DefaultOptions = {
             /**
              * The fill color for buttons
              */
-            fill: Palette.neutralColor3,
+            fill: 'var(--highcharts-neutral-color-3)',
             /**
              * The padding of buttons
              */
@@ -416,7 +422,7 @@ const defaultOptions: DefaultOptions = {
             /**
              * The stroke color for buttons
              */
-            stroke: Palette.neutralColor20,
+            stroke: 'var(--highcharts-neutral-color-20)',
             /**
              * The stroke width for buttons
              */
@@ -428,7 +434,7 @@ const defaultOptions: DefaultOptions = {
                 /**
                  * @type {Highcharts.ColorType}
                  */
-                color: Palette.neutralColor80,
+                color: 'var(--highcharts-neutral-color-80)',
                 cursor: 'pointer',
                 fontSize: '0.8em',
                 fontWeight: 'normal'
@@ -442,7 +448,7 @@ const defaultOptions: DefaultOptions = {
                  * to the normal state options
                  */
                 hover: {
-                    fill: Palette.neutralColor10
+                    fill: 'var(--highcharts-neutral-color-10)'
                 },
                 /**
                  * Select state overrides for the buttons are applied in
@@ -452,12 +458,12 @@ const defaultOptions: DefaultOptions = {
                     /**
                      * @type {Highcharts.ColorType}
                      */
-                    fill: Palette.highlightColor10,
+                    fill: 'var(--highcharts-highlight-color-10)',
                     style: {
                         /**
                          * @type {Highcharts.ColorType}
                          */
-                        color: Palette.neutralColor100,
+                        color: 'var(--highcharts-neutral-color-100)',
                         fontWeight: 'bold'
                     }
                 },
@@ -470,7 +476,7 @@ const defaultOptions: DefaultOptions = {
                      * Disabled state CSS style overrides for the buttons' text
                      */
                     style: {
-                        color: Palette.neutralColor20
+                        color: 'var(--highcharts-neutral-color-20)'
                     }
                 }
             }
@@ -722,7 +728,7 @@ const defaultOptions: DefaultOptions = {
             /**
              * @type {Highcharts.ColorType}
              */
-            color: Palette.neutralColor80,
+            color: 'var(--highcharts-neutral-color-80)',
             fontWeight: 'bold'
         },
 
@@ -924,7 +930,7 @@ const defaultOptions: DefaultOptions = {
             /**
              * @type {Highcharts.ColorType}
              */
-            color: Palette.neutralColor60,
+            color: 'var(--highcharts-neutral-color-60)',
             /**
              * @type {number|string}
              */
@@ -1010,7 +1016,7 @@ const defaultOptions: DefaultOptions = {
             /**
              * @type {Highcharts.ColorType}
              */
-            color: Palette.neutralColor60,
+            color: 'var(--highcharts-neutral-color-60)',
             /**
              * @type {number|string}
              */
@@ -1396,7 +1402,7 @@ const defaultOptions: DefaultOptions = {
          *
          * @type {Highcharts.ColorType}
          */
-        borderColor: Palette.neutralColor40,
+        borderColor: 'var(--highcharts-neutral-color-40)',
 
         /**
          * The border corner radius of the legend.
@@ -1509,7 +1515,7 @@ const defaultOptions: DefaultOptions = {
              * @type  {Highcharts.ColorType}
              * @since 2.2.4
              */
-            activeColor: Palette.highlightColor100,
+            activeColor: 'var(--highcharts-highlight-color-100)',
 
             /**
              * The color of the inactive up or down arrow in the legend page
@@ -1526,7 +1532,7 @@ const defaultOptions: DefaultOptions = {
              * @type  {Highcharts.ColorType}
              * @since 2.2.4
              */
-            inactiveColor: Palette.neutralColor20
+            inactiveColor: 'var(--highcharts-neutral-color-20)'
         },
 
         /**
@@ -1607,7 +1613,7 @@ const defaultOptions: DefaultOptions = {
             /**
              * @ignore
              */
-            color: Palette.neutralColor80,
+            color: 'var(--highcharts-neutral-color-80)',
             /**
              * @ignore
              */
@@ -1646,7 +1652,7 @@ const defaultOptions: DefaultOptions = {
             /**
              * @ignore
              */
-            color: Palette.neutralColor100
+            color: 'var(--highcharts-neutral-color-100)'
         },
 
         /**
@@ -1668,7 +1674,7 @@ const defaultOptions: DefaultOptions = {
             /**
              * @ignore
              */
-            color: Palette.neutralColor60,
+            color: 'var(--highcharts-neutral-color-60)',
             /**
              * @ignore
              */
@@ -1939,7 +1945,7 @@ const defaultOptions: DefaultOptions = {
                 /**
                  * @ignore
                  */
-                color: Palette.neutralColor80,
+                color: 'var(--highcharts-neutral-color-80)',
                 /**
                  * @ignore
                  */
@@ -2041,7 +2047,7 @@ const defaultOptions: DefaultOptions = {
             /**
              * @ignore
              */
-            backgroundColor: Palette.backgroundColor,
+            backgroundColor: 'var(--highcharts-background-color)',
             /**
              * @ignore
              */
@@ -2807,7 +2813,7 @@ const defaultOptions: DefaultOptions = {
          *
          * @type {Highcharts.ColorType}
          */
-        backgroundColor: Palette.backgroundColor,
+        backgroundColor: 'var(--highcharts-background-color)',
 
         /**
          * The pixel width of the tooltip border. Defaults to 0 for single
@@ -2880,7 +2886,7 @@ const defaultOptions: DefaultOptions = {
          */
         style: {
             /** @type {Highcharts.ColorType} */
-            color: Palette.neutralColor80,
+            color: 'var(--highcharts-neutral-color-80)',
 
             cursor: 'default',
 
@@ -2969,6 +2975,17 @@ const defaultOptions: DefaultOptions = {
          */
 
         /**
+         * Whether to render the credits as HTML
+         *
+         * @since     next
+         * @sample    highcharts/palette/branding
+         *            Branding with HTML credits
+         * @type      {boolean}
+         * @default   false
+         * @apioption credits.useHTML
+         */
+
+        /**
          * Whether to show the credits text.
          *
          * @sample {highcharts} highcharts/credits/enabled-false/
@@ -3022,7 +3039,7 @@ const defaultOptions: DefaultOptions = {
             /**
              * @type {Highcharts.ColorType}
              */
-            color: Palette.neutralColor40,
+            color: 'var(--highcharts-neutral-color-40)',
 
             /**
              * @type {number|string}

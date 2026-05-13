@@ -208,21 +208,22 @@ QUnit.test('Defaults', assert => {
         '1',
         'A default stroke width should be applied to the plot line'
     );
+
+    const stroke = chart.xAxis[0].plotLinesAndBands[0].svgElem.element
+        .getAttribute('stroke');
+    const colorRegex = /^(#[0-9a-f]{6}|var\(--highcharts-[a-z0-9\-]+\))$/;
     assert.ok(
-        /^#[0-9a-f]{6}$/.test(
-            chart.xAxis[0].plotLinesAndBands[0].svgElem.element.getAttribute(
-                'stroke'
-            )
-        ),
-        'A default stroke color should be applied to the plot line'
+        colorRegex.test(stroke),
+        'A default stroke color should be applied to the plot line. ' +
+        `Actual: ${stroke}`
     );
 
+    const fill = chart.yAxis[0].plotLinesAndBands[0].svgElem.element
+        .getAttribute('fill');
     assert.ok(
-        /^#[0-9a-f]{6}$/.test(
-            chart.yAxis[0].plotLinesAndBands[0].svgElem.element.getAttribute(
-                'fill'
-            )
-        ),
+        colorRegex.test(fill),
+        'A default fill color should be applied to the plot band. ' +
+        `Actual: ${fill}`,
         'A default fill color should be applied to the plot band'
     );
 });

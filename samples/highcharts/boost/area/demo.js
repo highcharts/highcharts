@@ -62,7 +62,8 @@ Highcharts.chart('container', {
         valueDecimals: 2
     },
 
-    series: [{}]
+    series: [{ colorIndex: 1 }]
 
 });
+
 console.timeEnd('area');

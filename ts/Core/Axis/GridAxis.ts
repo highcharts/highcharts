@@ -38,7 +38,6 @@ import Axis from './Axis.js';
 import Chart from '../Chart/Chart.js';
 import H from '../Globals.js';
 const { dateFormats } = H;
-import { Palette } from '../Color/Palettes';
 import Tick from './Tick.js';
 import {
     defined,
@@ -1083,7 +1082,7 @@ function onInit(
     const axis = this;
     const userOptions = e.userOptions || {};
     const gridOptions = merge(
-        { borderColor: Palette.neutralColor20 },
+        { borderColor: 'var(--highcharts-neutral-color-20)' },
         userOptions.grid || {}
     );
 
