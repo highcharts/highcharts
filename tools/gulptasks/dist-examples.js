@@ -7,9 +7,7 @@
 const Babel = require('@babel/core');
 const Gulp = require('gulp');
 const Path = require('path');
-const { readFileSync } = require('node:fs');
-
-const { getGitIgnoreMeProperties } = require('./lib/uploadS3.js');
+const { createDemoIndexContent } = require('./lib/demoIndex.js');
 
 /* *
  *
@@ -24,21 +22,6 @@ const TARGET_DIRECTORY = Path.join('build', 'dist');
 const TEMPLATE_FILE = Path.join(SOURCE_DIRECTORY, 'template-example.htm');
 
 const URL_REPLACEMENT = 'src="../../code/';
-const logLib = require('../libs/log');
-
-function getDemoBuildPath() {
-    const config = getGitIgnoreMeProperties();
-    let value;
-    if (config) {
-        value = config['demos.path'];
-    }
-
-    if (!value || !value.length) {
-        logLib.message('git-ignore-me-properties is missing demos.path, trying default ./tmp/demo');
-        value = 'tmp/demo';
-    }
-    return value;
-}
 
 /**
  * Creates an index page from the supplied options
@@ -60,34 +43,35 @@ function indexTemplate(options) {
             * {
                 font-family: sans-serif;
             }
-            ul.nav > li > div {
+            body {
+                margin: 1rem 1.5rem;
+            }
+            .sidebar-category-list,
+            .sidebar-demo-list {
+                list-style: none;
+                padding-left: 0;
+                margin-left: 0;
+            }
+            .sidebar-category-group {
+                margin: 0 0 1rem 0;
+            }
+            .sidebar-category {
                 font-size: 1.5em;
                 font-weight: bold;
                 margin: 1em 0 0.3em 0;
             }
-            ul.nav > li {
-                list-style: none;
-            }
-            div > ul > li {
-                padding-bottom: 0.5em;
-            }
-            ul ul {
-                list-style-type: initial;
+            .sidebar-demo-list {
                 padding-left: 1.25em;
                 font-size: 1.15em;
             }
-            li button.sidebar-category {
-                border: none;
-                background: none;
-                padding: 0;
-                margin: 1rem 0 0.5rem 0;
-                font-size: 1.4rem;
+            .sidebar-demo-list > li {
+                padding-bottom: 0.5em;
             }
-            li a {
+            a {
                 text-decoration: none;
                 color: #6065c8;
             }
-            li a:hover {
+            a:hover {
                 text-decoration: underline;
             }
             @media (prefers-color-scheme: dark) {
@@ -95,11 +79,8 @@ function indexTemplate(options) {
                     background-color: #141414;
                     color: #ddd;
                 }
-                li a {
+                a {
                     color: #2caffe;
-                }
-                button span {
-                    color: #fff
                 }
             }
         </style>
@@ -154,10 +135,13 @@ function assembleSample(template, variables) {
  * @param {string} template
  *        Template string
  *
+ * @param {string} demoIndexProductPath
+ *        Demo index product path
+ *
  * @return {Promise<void>}
  *         Promise to keep
  */
-async function createExamples(title, sourcePath, targetPath, template) {
+async function createExamples(title, sourcePath, targetPath, template, demoIndexProductPath) {
 
     const FS = require('fs');
     const FSLib = require('../libs/fs');
@@ -208,39 +192,11 @@ async function createExamples(title, sourcePath, targetPath, template) {
         );
     });
 
-    function getLocalSidebar(path) {
-        const sidebarPath =
-            Path.join(getDemoBuildPath(), `${path === 'highcharts' ? '' : `/${path}`}/sidebar.html`);
-        try {
-            const file = readFileSync(sidebarPath,
-                'utf-8');
-            return file;
-
-        } catch {
-            throw new Error(`Could not find ${sidebarPath}
-  If demos are built elsewhere, the path can be specified in git-ignore-me.properties by the demos.path property.`);
-        }
-    }
-
     LogLib.success('Created', targetPath);
-
-    let localsidebar;
-    try {
-        localsidebar = getLocalSidebar(
-            sourcePath
-                .replaceAll('samples/', '')
-                .replaceAll('/demo', '')
-        );
-    } catch (e) {
-        LogLib.warn(e);
-        LogLib.warn('Missing sidebar.html, using empty file');
-        localsidebar = '';
-    }
-
-    LogLib.success('Created', targetPath);
-    const indexContent = localsidebar
-        .replaceAll('style="display:none;"', '') // remove hidden style
-        .replace(/(?!href= ")(\.\/.+?)(?=")/gu, 'examples\/$1\/index.html'); // replace links
+    const indexContent = createDemoIndexContent({
+        productPath: demoIndexProductPath,
+        sourcePath
+    });
 
     // eslint-disable-next-line node/no-unsupported-features/node-builtins
     return FS.promises.writeFile(
@@ -307,37 +263,44 @@ function distExamples() {
             samplesSubfolder = {
                 highcharts: {
                     path: ['highcharts', 'demo'],
-                    title: 'Highcharts'
+                    title: 'Highcharts',
+                    demoIndexProductPath: 'highcharts'
                 },
                 highstock: {
                     path: ['stock', 'demo'],
-                    title: 'Highstock'
+                    title: 'Highstock',
+                    demoIndexProductPath: 'stock'
                 },
                 highmaps: {
                     path: ['maps', 'demo'],
-                    title: 'Highmaps'
+                    title: 'Highmaps',
+                    demoIndexProductPath: 'maps'
                 },
                 gantt: {
                     path: ['gantt', 'demo'],
-                    title: 'Highcharts Gantt'
+                    title: 'Highcharts Gantt',
+                    demoIndexProductPath: 'gantt'
                 }
             };
         } else if (distProduct === 'Grid') {
             samplesSubfolder = {
                 'grid-lite': {
-                    path: ['grid', 'demo'],
-                    title: 'Highcharts Grid Lite'
+                    path: ['grid-lite', 'demo'],
+                    title: 'Highcharts Grid Lite',
+                    demoIndexProductPath: 'grid-lite'
                 },
                 'grid-pro': {
-                    path: ['grid', 'demo'],
-                    title: 'Highcharts Grid Pro'
+                    path: ['grid-pro', 'demo'],
+                    title: 'Highcharts Grid Pro',
+                    demoIndexProductPath: 'grid-pro'
                 }
             };
         } else if (distProduct === 'Dashboards') {
             samplesSubfolder = {
                 dashboards: {
                     path: ['dashboards', 'demo'],
-                    title: 'Highcharts Dashboards'
+                    title: 'Highcharts Dashboards',
+                    demoIndexProductPath: 'dashboards'
                 }
             };
         }
@@ -355,7 +318,8 @@ function distExamples() {
                         SOURCE_DIRECTORY, ...samplesSubfolder[product].path
                     ),
                     Path.join(TARGET_DIRECTORY, product, 'examples'),
-                    template
+                    template,
+                    samplesSubfolder[product].demoIndexProductPath
                 ));
             });
 
@@ -367,7 +331,3 @@ function distExamples() {
 }
 
 Gulp.task('dist-examples', distExamples);
-
-module.exports = {
-    getDemoBuildPath
-};
