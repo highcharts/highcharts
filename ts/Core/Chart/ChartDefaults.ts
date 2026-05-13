@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -419,7 +420,7 @@ const ChartDefaults: ChartOptions = {
     /**
      * Callback function to override the default function that formats all
      * the numbers in the chart. Returns a string with the formatted number.
-     * Since v12.5.0, the callback also receives `ctx` as the last argument,
+     * Since v12.6.0, the callback also receives `ctx` as the last argument,
      * so that arrow functions can access the same context as regular
      * functions using `this`.
      *
@@ -1188,6 +1189,7 @@ const ChartDefaults: ChartOptions = {
              * @sample {highstock} highcharts/chart/resetzoombutton-theme/
              *         Theming the button
              *
+             * @default { zIndex: 6 }
              * @type  {Highcharts.SVGAttributes}
              * @since 10.2.1
              */
@@ -1214,25 +1216,17 @@ const ChartDefaults: ChartOptions = {
              * @since 10.2.1
              */
             position: {
-
-
-                /** @internal */
                 align: 'right',
-
-
-                /** @internal */
-                x: -10,
 
                 /**
                  * The vertical alignment of the button.
                  *
-                 * @type       {Highcharts.VerticalAlignValue}
-                 * @default    top
-                 * @apioption  chart.zooming.resetButton.position.verticalAlign
+                 * @type      {Highcharts.VerticalAlignValue}
+                 * @default   top
+                 * @apioption chart.zooming.resetButton.position.verticalAlign
                  */
 
-
-                /** @internal */
+                x: -10,
                 y: 10
             }
         }

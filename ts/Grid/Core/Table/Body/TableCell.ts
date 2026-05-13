@@ -4,8 +4,9 @@
  *
  *  (c) 2020-2026 Highsoft AS
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  *  Authors:
@@ -54,12 +55,12 @@ class TableCell extends Cell {
     /**
      * The row of the cell.
      */
-    public readonly row: TableRow;
+    public declare readonly row: TableRow;
 
     /**
      * The column of the cell.
      */
-    public override column: Column;
+    public declare column: Column;
 
     /**
      * The cell's content.
@@ -156,10 +157,7 @@ class TableCell extends Cell {
         this.htmlElement.style.opacity = '0.5';
 
         if (!defined(value)) {
-            value = await grid.dataProvider?.getValue(
-                this.column.id,
-                this.row.index
-            );
+            value = await this.column.getCellValue(this);
 
             // Discard stale response if cell was reused for a different row
             if (fetchToken !== this.asyncFetchToken) {
@@ -216,7 +214,7 @@ class TableCell extends Cell {
     private getCellStyles(): CSSObject {
         const { grid } = this.column.viewport;
         const rawColumnOptions =
-            grid.columnOptionsMap?.[this.column.id]?.options;
+            grid.columnPolicy.getIndividualColumnOptions(this.column.id);
 
         return {
             ...mergeStyleValues(
@@ -241,9 +239,15 @@ class TableCell extends Cell {
      * viewport rows to be updated, or `false` if the only change was the cell's
      * content.
      */
-    private async updateDataset(): Promise<boolean> {
+    protected async updateDataset(): Promise<boolean> {
+        const sourceColumnId = this.column.viewport.grid.columnPolicy
+            .getColumnSourceId(this.column.id);
+        if (!sourceColumnId) {
+            return false;
+        }
+
         const oldValue = await this.column.viewport.grid.dataProvider?.getValue(
-            this.column.id,
+            sourceColumnId,
             this.row.index
         );
 
@@ -254,23 +258,24 @@ class TableCell extends Cell {
 
         const vp = this.column.viewport;
         const { dataProvider: dp } = vp.grid;
-
         const rowId = this.row.id;
         if (!dp || rowId === void 0) {
             return false;
         }
 
         this.row.data[this.column.id] = this.value;
+        if (sourceColumnId !== this.column.id) {
+            this.row.data[sourceColumnId] = this.value;
+        }
         await dp.setValue(
             this.value,
-            this.column.id,
+            sourceColumnId,
             rowId
         );
 
         if (vp.grid.querying.willNotModify()) {
             return false;
         }
-
         await vp.updateRows();
         return true;
     }
@@ -283,7 +288,9 @@ class TableCell extends Cell {
      * Only focus/blur remain on individual cells for focus management.
      */
     public override initEvents(): void {
-        this.cellEvents.push(['blur', (): void => this.onBlur()]);
+        this.cellEvents.push(['blur', (e): void => {
+            this.onBlur(e as FocusEvent);
+        }]);
         this.cellEvents.push(['focus', (): void => this.onFocus()]);
 
         this.cellEvents.forEach((pair): void => {
@@ -298,11 +305,37 @@ class TableCell extends Cell {
         super.onFocus();
 
         const vp = this.row.viewport;
+        const rowId = this.row.id;
+        if (rowId === void 0) {
+            return;
+        }
 
-        vp.focusCursor = [
-            this.row.index,
-            this.column.index
-        ];
+        delete vp.pendingFocusCursor;
+        vp.clearDetachedFocus();
+        vp.focusCursor = {
+            rowId,
+            columnIndex: this.column.index
+        };
+    }
+
+    /**
+     * Handles the blur event on the cell.
+     *
+     * @param e
+     * The focus event object.
+     */
+    protected override onBlur(e?: FocusEvent): void {
+        if (
+            e &&
+            this.row.viewport.hasDetachedFocusAt(
+                this.row.id,
+                this.column.index
+            )
+        ) {
+            return;
+        }
+
+        super.onBlur();
     }
 
     /**

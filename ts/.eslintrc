@@ -141,6 +141,7 @@
             {
                 "definedTags": [
                     "apioption",
+                    "basic",
                     "context",
                     "declare",
                     "exclude",

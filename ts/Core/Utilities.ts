@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -541,7 +542,7 @@ export interface ErrorMessageEventObject {
  *        Event arguments.
  *
  * @param {T} [ctx]
- *        Since v12.5.0, the callback context is passed as the last argument,
+ *        Since v12.6.0, the callback context is passed as the last argument,
  *        so arrow functions can access the same context as regular functions
  *        using `this`.
  *
@@ -576,7 +577,7 @@ export interface ErrorMessageEventObject {
  *        Context to format
  *
  * @param {T} [ctx]
- *        Since v12.5.0, the callback context is passed as an extra argument,
+ *        Since v12.6.0, the callback context is passed as an extra argument,
  *        so arrow functions can access the same context as regular functions
  *        using `this`.
  *

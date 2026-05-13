@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -209,7 +210,7 @@ class HTMLElement extends SVGElement {
         SVGRendererClass: T
     ): void {
 
-        if (pushUnique(composed, this.compose)) {
+        if (pushUnique(composed, 'HTMLElement')) {
             /**
              * Create a HTML text node. This is used by the SVG renderer `text`
              * and `label` functions through the `useHTML` parameter.
@@ -316,11 +317,16 @@ class HTMLElement extends SVGElement {
             styles.overflow = 'hidden';
             styles.whiteSpace = 'nowrap';
         }
+
+        // Apply line clamp
         if (styles?.lineClamp) {
             styles.display = '-webkit-box';
             styles.WebkitLineClamp = styles.lineClamp;
             styles.WebkitBoxOrient = 'vertical';
             styles.overflow = 'hidden';
+        } else if (styles?.lineClamp === 0) {
+            // Disable the clamp by breaking the -webkit-box context (#22961)
+            styles.display = 'inline-block';
         }
 
         // SVG natively supports setting font size as numbers. With HTML, the

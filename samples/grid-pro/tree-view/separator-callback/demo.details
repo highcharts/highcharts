@@ -1,0 +1,5 @@
+name: TreeView separator regexp
+authors:
+  - Dawid Dragula
+js_wrap: b
+...

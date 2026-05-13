@@ -5,8 +5,9 @@
  *
  *  Default options for accessibility.
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -97,13 +98,6 @@ declare module '../../Core/Axis/AxisOptions' {
     }
 }
 
-declare module '../../Core/Options'{
-    interface Options {
-        /** @deprecated */
-        exposeElementToA11y?: SeriesAccessibilityOptions['exposeAsGroupOnly'];
-    }
-}
-
 declare module '../../Core/Series/SeriesOptions'{
     interface SeriesOptions {
         /**
@@ -122,6 +116,19 @@ declare module '../../Core/Series/SeriesOptions'{
 
         /**
          * Deprecated. Use
+         * [plotOptions.series.accessibility.exposeAsGroupOnly](#plotOptions.series.accessibility.exposeAsGroupOnly)
+         * instead.
+         *
+         * Expose only the series element to screen readers, not its points.
+         *
+         * @since      5.0.0
+         * @requires   modules/accessibility
+         * @deprecated 8.0.0
+         */
+        exposeElementToA11y?: SeriesAccessibilityOptions['exposeAsGroupOnly'];
+
+        /**
+         * Deprecated. Use
          * [plotOptions.series.accessibility.point.descriptionFormatter](#plotOptions.series.accessibility.point.descriptionFormatter)
          * instead.
          *
@@ -133,8 +140,9 @@ declare module '../../Core/Series/SeriesOptions'{
          * @since      5.0.12
          * @deprecated 8.0.0
          */
-        pointDescriptionFormatter?:
-        SeriesAccessibilityOptions['point']['descriptionFormatter'];
+        pointDescriptionFormatter?: SeriesAccessibilityOptions['point'][
+            'descriptionFormatter'
+        ];
 
         /**
          * Deprecated. Use

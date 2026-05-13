@@ -4,8 +4,9 @@
  *
  *  (c) 2020-2026 Highsoft AS
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  *  Authors:
@@ -23,9 +24,16 @@
 
 import type Grid from '../../Core/Grid';
 import type { ExportingOptions } from '../../Core/Options';
-import type { CellType as DataTableCellType } from '../../../Data/DataTable';
+import type DataTable from '../../../Data/DataTable';
+import type {
+    CellType as DataTableCellType,
+    Column as DataTableColumn
+} from '../../../Data/DataTable';
 import type { ColumnDataType } from '../../Core/Table/Column';
 
+import {
+    hasDataTableProvider
+} from '../../Core/Data/DataProvider.js';
 import {
     downloadURL,
     getBlobFromContent
@@ -137,7 +145,7 @@ class Exporting {
      */
     public getCSV(modified: boolean = true): string {
         const { grid } = this;
-        const dataTable = modified ? grid.presentationTable : grid.dataTable;
+        const dataTable = this.getDataTable(modified);
 
         if (!dataTable) {
             return '';
@@ -162,7 +170,11 @@ class Exporting {
             itemDelimiter = (decimalPoint === ',' ? ';' : ',');
         }
 
-        const columnIds = grid.enabledColumns ?? [];
+        const columnIds = (grid.enabledColumns ?? []).filter(
+            (columnId): boolean => grid.columnPolicy.isColumnExportable(
+                columnId
+            )
+        );
         const columnsCount = columnIds?.length;
         const csvRows: string[] = [];
         const rowArray: DataTableCellType[][] = [];
@@ -204,7 +216,10 @@ class Exporting {
             const columnId = columnIds[columnIndex],
                 column = grid.viewport?.getColumn(columnId),
                 colType = column?.dataType,
-                columnArray = dataTable.getColumn(columnId) ?? [],
+                sourceColumnId = grid.columnPolicy.getColumnSourceId(columnId),
+                columnArray = sourceColumnId ?
+                    (dataTable.getColumn(sourceColumnId) ?? []) :
+                    [],
                 columnLength = columnArray?.length,
                 parser = typeParser(colType ?? 'string');
 
@@ -250,7 +265,67 @@ class Exporting {
      * JSON representation of the data
      */
     public getJSON(modified: boolean = true): string {
-        return this.grid.getData(modified);
+        const dataTable = this.getDataTable(modified);
+        const tableColumns = dataTable?.columns;
+        const outputColumns: Record<string, DataTableColumn> = {};
+
+        if (!dataTable) {
+            // eslint-disable-next-line no-console
+            console.warn('getJSON() works only with LocalDataProvider.');
+            return JSON.stringify({
+                error: 'getJSON() works only with LocalDataProvider.'
+            }, null, 2);
+        }
+
+        if (!this.grid.enabledColumns || !tableColumns) {
+            return '{}';
+        }
+
+        const typeParser = (type: ColumnDataType) => {
+            const TypeMap: Record<
+                ColumnDataType,
+                (value: DataTableCellType) => DataTableCellType
+            > = {
+                number: Number,
+                datetime: Number,
+                string: String,
+                'boolean': Boolean
+            };
+
+            return (value: DataTableCellType): DataTableCellType | null => (
+                defined(value) ? TypeMap[type](value) : null
+            );
+        };
+
+        for (const columnId of this.grid.enabledColumns) {
+            const column = this.grid.viewport?.getColumn(columnId);
+            const sourceColumnId =
+                this.grid.columnPolicy.getColumnSourceId(columnId);
+
+            if (
+                !column ||
+                !sourceColumnId ||
+                !this.grid.columnPolicy.isColumnExportable(columnId)
+            ) {
+                continue;
+            }
+
+            const columnData = tableColumns[sourceColumnId];
+            if (!columnData) {
+                continue;
+            }
+
+            const parser = typeParser(column.dataType);
+            outputColumns[columnId] = ((): DataTableColumn => {
+                const result = [];
+                for (let i = 0, iEnd = columnData.length; i < iEnd; ++i) {
+                    result.push(parser(columnData[i]));
+                }
+                return result;
+            })();
+        }
+
+        return JSON.stringify(outputColumns, null, 2);
     }
 
     /**
@@ -279,6 +354,14 @@ class Exporting {
         }
 
         return filename;
+    }
+
+    private getDataTable(modified: boolean): DataTable | undefined {
+        const { dataProvider } = this.grid;
+
+        return hasDataTableProvider(dataProvider) ?
+            dataProvider.getDataTable(modified) :
+            void 0;
     }
 }
 

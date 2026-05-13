@@ -1,7 +1,8 @@
 /* *
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -53,9 +54,7 @@ import {
  * */
 
 // Utils:
-/**
- * @private
- */
+/** @internal */
 function createPointObj(
     mainSeries: SupertrendLinkedParentObject,
     index: number
@@ -76,7 +75,7 @@ function createPointObj(
 /**
  * The Supertrend series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.supertrend
  *
@@ -661,6 +660,7 @@ class SupertrendIndicator extends SMAIndicator {
  *
  * */
 
+/** @internal */
 interface SupertrendIndicator {
     nameBase: string;
     nameComponents: Array<string>;
@@ -678,6 +678,7 @@ extend(SupertrendIndicator.prototype, {
  *
  * */
 
+/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         supertrend: typeof SupertrendIndicator;
@@ -692,6 +693,7 @@ SeriesRegistry.registerSeriesType('supertrend', SupertrendIndicator);
  *
  * */
 
+/** @internal */
 export default SupertrendIndicator;
 
 /* *

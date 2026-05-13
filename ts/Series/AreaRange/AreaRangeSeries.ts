@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -18,8 +19,8 @@
  * */
 
 import type Axis from '../../Core/Axis/Axis';
-import type AreaRangeDataLabelOptions from './AreaRangeDataLabelOptions';
 import type AreaRangeSeriesOptions from './AreaRangeSeriesOptions';
+import type { AreaRangeDataLabelOptions } from './AreaRangeSeriesOptions';
 import type AreaPoint from '../Area/AreaPoint';
 import type { DeepPartial } from '../../Shared/Types';
 import type { PointMarkerOptions } from '../../Core/Series/PointOptions';
@@ -72,7 +73,7 @@ import {
  * @requires     highcharts-more
  * @optionparent plotOptions.arearange
  *
- * @private
+ * @internal
  */
 const areaRangeSeriesOptions: AreaRangeSeriesOptions = {
 
@@ -120,7 +121,7 @@ const areaRangeSeriesOptions: AreaRangeSeriesOptions = {
      *
      * @since 2.3.0
      *
-     * @private
+     * @internal
      */
     lineWidth: 1,
 
@@ -140,7 +141,7 @@ const areaRangeSeriesOptions: AreaRangeSeriesOptions = {
      *
      * @since 2.3.0
      *
-     * @private
+     * @internal
      */
     trackByArea: true,
 
@@ -155,7 +156,7 @@ const areaRangeSeriesOptions: AreaRangeSeriesOptions = {
      * @since   2.3.0
      * @product highcharts highstock
      *
-     * @private
+     * @internal
      */
     dataLabels: {
 
@@ -210,7 +211,7 @@ const areaRangeSeriesOptions: AreaRangeSeriesOptions = {
 /**
  * The AreaRange series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.arearange
  *
@@ -257,7 +258,7 @@ class AreaRangeSeries extends AreaSeries {
      * to true plotHigh coordinates. This is an addition of the toXY method
      * found in Polar.js, because it runs too early for arearange to be
      * considered (#3419).
-     * @private
+     * @internal
      */
     public highToXY(point: AreaRangePoint): void {
         // Find the polar plotX and plotY
@@ -275,7 +276,7 @@ class AreaRangeSeries extends AreaSeries {
     /**
      * Extend the line series' getSegmentPath method by applying the segment
      * path to both lower and higher values of the range.
-     * @private
+     * @internal
      */
     public getGraphPath(points: Array<AreaRangePoint>): SVGPath {
 
@@ -393,7 +394,7 @@ class AreaRangeSeries extends AreaSeries {
     /**
      * Extend the basic drawDataLabels method by running it for both lower and
      * higher values.
-     * @private
+     * @internal
      */
     public drawDataLabels(): void {
 
@@ -758,6 +759,7 @@ addEvent(AreaRangeSeries, 'afterTranslate', function (): void {
  *
  * */
 
+/** @internal */
 interface AreaRangeSeries {
     deferTranslatePolar: boolean;
     pointArrayMap: Array<string>;
@@ -780,6 +782,7 @@ extend(AreaRangeSeries.prototype, {
  *
  * */
 
+/** @internal */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         arearange: typeof AreaRangeSeries;
@@ -795,4 +798,5 @@ SeriesRegistry.registerSeriesType('arearange', AreaRangeSeries);
  *
  * */
 
+/** @internal */
 export default AreaRangeSeries;

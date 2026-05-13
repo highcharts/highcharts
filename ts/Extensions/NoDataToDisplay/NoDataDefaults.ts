@@ -6,8 +6,9 @@
  *
  *  Author: Øystein Moseng
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -83,6 +84,8 @@ const noData: NoDataOptions = {
      * Whether to insert the label as HTML, or as pseudo-HTML rendered with
      * SVG.
      *
+     * @type      {boolean}
+     * @default   false
      * @since     4.1.10
      * @product   highcharts highstock gantt
      * @requires  modules/no-data-to-display

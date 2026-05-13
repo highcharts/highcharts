@@ -3,13 +3,14 @@
 You can customize the [chart legend](https://www.highcharts.com/docs/chart-concepts/legend) using the `Legend` component:
 
 ```tsx
-import { Chart, Series, Legend } from "@highcharts/react";
+import { Chart, Legend } from "@highcharts/react";
+import { LineSeries } from "@highcharts/react/series/Line";
 
 export default function LegendChart() {
   return (
     <Chart>
       <Legend>{"{index}: {name}"}</Legend>
-      <Series data={[3, 4, 1, 5, 2]} />
+      <LineSeries data={[3, 4, 1, 5, 2]} />
     </Chart>
   );
 }

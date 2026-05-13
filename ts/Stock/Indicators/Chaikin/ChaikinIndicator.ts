@@ -1,7 +1,8 @@
 /* *
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -39,7 +40,7 @@ import { error } from '../../../Core/Utilities.js';
 /**
  * The Chaikin series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.chaikin
  *
@@ -194,6 +195,7 @@ class ChaikinIndicator extends EMAIndicator {
  *
  * */
 
+/** @internal */
 interface ChaikinIndicator {
     nameBase: string;
     nameComponents: Array<string>;
@@ -210,6 +212,7 @@ extend(ChaikinIndicator.prototype, {
  *
  * */
 
+/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         chaikin: typeof ChaikinIndicator;
@@ -222,6 +225,7 @@ SeriesRegistry.registerSeriesType('chaikin', ChaikinIndicator);
  *  Default Export
  *
  * */
+/** @internal */
 export default ChaikinIndicator;
 
 /* *

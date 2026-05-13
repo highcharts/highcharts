@@ -5,8 +5,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -510,7 +511,7 @@ export interface SankeySeriesOptions extends ColumnSeriesOptions, NodesCompositi
 
     showInLegend?: boolean;
 
-    states?: SeriesStatesOptions<SankeySeriesOptions>;
+    states?: SankeySeriesStatesOptions;
 
     /**
      * The opposite state of a hover for a single point node/link.
@@ -524,6 +525,51 @@ export interface SankeySeriesOptions extends ColumnSeriesOptions, NodesCompositi
 
     width?: number;
 
+}
+
+export interface SankeySeriesStatesOptions extends SeriesStatesOptions<SankeySeriesOptions> {
+    hover?: SeriesStatesOptions<SankeySeriesOptions>['hover'] & {
+        /**
+         * Opacity for the links between nodes in the sankey diagram in
+         * hover mode.
+         *
+         * @default 1
+         */
+        linkOpacity?: Required<SeriesStatesOptions<SankeySeriesOptions>>['hover']['linkOpacity'];
+
+        /**
+         * Opacity for the nodes in the sankey diagram in hover mode.
+         *
+         * @default 1
+         */
+        opacity?: Required<SeriesStatesOptions<SankeySeriesOptions>>['hover']['opacity'];
+    };
+    /**
+     * The opposite state of a hover for a single point node/link.
+     */
+    inactive?: SeriesStatesOptions<SankeySeriesOptions>['inactive'] & {
+        /**
+         * Opacity for the links between nodes in the sankey diagram in
+         * inactive mode.
+         *
+         * @default 0.1
+         */
+        linkOpacity?: Required<SeriesStatesOptions<SankeySeriesOptions>>['inactive']['linkOpacity'];
+
+        /**
+         * Opacity of the nodes in the sankey diagram in inactive mode.
+         *
+         * @default 0.1
+         */
+        opacity?: Required<SeriesStatesOptions<SankeySeriesOptions>>['inactive']['opacity'];
+
+        /**
+         * Animation when not hovering over the marker.
+         *
+         * @default { duration: 50 }
+         */
+        animation?: Required<SeriesStatesOptions<SankeySeriesOptions>>['inactive']['animation'];
+    };
 }
 
 export interface SankeySeriesTooltipOptions extends ColumnSeriesTooltipOptions {
