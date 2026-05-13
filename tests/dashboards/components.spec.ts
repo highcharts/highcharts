@@ -1019,6 +1019,68 @@ test.describe('Highcharts Component', () => {
         expect(result.comp5Series2PointsLength, 'Points are created in implicited series.').toBeGreaterThan(0);
     });
 
+    test('ColumnAssignment object and array form map same column twice (x and y)', async ({
+        page
+    }) => {
+        await page.setContent(dashboardsWithHighchartsHTML, {
+            waitUntil: 'networkidle'
+        });
+
+        const result = await page.evaluate(async () => {
+            const Highcharts = (window as any).Highcharts;
+            const Dashboards = (window as any).Dashboards;
+
+            Dashboards.HighchartsPlugin.custom.connectHighcharts(Highcharts);
+            Dashboards.PluginHandler.addPlugin(Dashboards.HighchartsPlugin);
+
+            const dashboard = await Dashboards.board('container', {
+                dataPool: {
+                    connectors: [{
+                        id: 'data',
+                        type: 'JSON',
+                        data: [
+                            ['Value', 'Value 1'],
+                            [7, 70],
+                            [8, 80],
+                            [9, 90]
+                        ]
+                    }]
+                },
+                gui: {
+                    layouts: [{
+                        rows: [{
+                            cells: [{ id: 'cell-1' }]
+                        }]
+                    }]
+                },
+                components: [{
+                    renderTo: 'cell-1',
+                    type: 'Highcharts',
+                    connector: {
+                        id: 'data',
+                        columnAssignment: [{
+                            seriesId: 's1',
+                            data: { x: 'Value', y: 'Value' }
+                        }, {
+                            seriesId: 's2',
+                            data: ['Value', 'Value']
+                        }]
+                    }
+                }]
+            }, true);
+
+            const chart = dashboard.mountedComponents[0].component.chart;
+
+            return {
+                series0: chart?.series[0]?.graph,
+                series1: chart?.series[1]?.graph
+            };
+        });
+
+        expect(result.series0).toBeDefined();
+        expect(result.series1).toBeDefined();
+    });
+
     test('JSON data with columnIds and columnAssignment', async ({ page }) => {
         await page.setContent(dashboardsWithHighchartsHTML, { waitUntil: 'networkidle' });
 
