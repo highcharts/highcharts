@@ -1474,9 +1474,7 @@ class Tooltip {
 
                 if (!styledMode) {
                     attribs.fill = ttOptions.backgroundColor;
-                    attribs['stroke-width'] = ttOptions.borderWidth ?? (
-                        fixed && !isHeader ? 0 : 1
-                    );
+                    attribs['stroke-width'] = ttOptions.borderWidth ?? 1;
                 }
                 tt = ren
                     .label(

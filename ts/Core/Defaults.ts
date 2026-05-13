@@ -2774,8 +2774,9 @@ const defaultOptions: DefaultOptions = {
         backgroundColor: Palette.backgroundColor,
 
         /**
-         * The pixel width of the tooltip border. Defaults to 0 for single
-         * tooltips and fixed tooltips, otherwise 1 for split tooltips.
+         * The pixel width of the tooltip border. Defaults to 1, but with a
+         * `borderColor` to match the background in light mode, and a visible
+         * lighter border in dark mode.
          *
          * In styled mode, the stroke width is set in the
          * `.highcharts-tooltip-box` class.
