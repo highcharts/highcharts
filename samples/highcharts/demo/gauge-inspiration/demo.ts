@@ -38,6 +38,7 @@ Highcharts.chart('gauge-02', {
         min: 0,
         max: 100,
         gridLineWidth: 1,
+        gridLineColor: 'var(--highcharts-background-color)',
         tickWidth: 0,
         minorTickWidth: 0,
         plotBands: [
