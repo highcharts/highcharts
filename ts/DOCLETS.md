@@ -30,6 +30,9 @@ The custom implementations have the following requirements:
 
 8. `@since` and `@deprecated` support usage of `next` as the version number
    that is resolved on the next release when the next code version is known.
+   When used in a public doclet, **must have a value** - a version number or
+   `next`. (Guarded by `@highcharts/highcharts/doclet-versioned-tags` eslint
+   rule.)
 
 9. `@basic` flags an option as commonly used within its parent option, referring
    to the option itself, not to its type. Currently applied to `id`, `index`,
