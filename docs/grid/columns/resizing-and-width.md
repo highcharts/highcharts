@@ -15,6 +15,11 @@ automatic distribution.
 
 Percentage values are calculated relative to the table width.
 
+Use `columns[].minWidth` and `columns[].maxWidth` (or their
+`columnDefaults` equivalents) to constrain the final column width. Both
+options accept pixels and percentages, and the limits apply during initial
+layout as well as manual resizing.
+
 ## Width behavior
 
 - No widths defined (or all set to `'auto'`): columns are distributed evenly.
