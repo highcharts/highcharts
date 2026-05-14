@@ -385,7 +385,7 @@ Example configuration should look like:
   </TabItem>
   <TabItem value="react" label="React">
   <p>
-    A live demo of the example (React) <a href="https://stackblitz.com/edit/dko9xclf-vrvwtmpt?file=package.json">here</a>.
+    A live demo of the example (React) <a href="https://stackblitz.com/edit/highcharts-stock-react">here</a>.
   </p>
 
   ```tsx
@@ -494,7 +494,7 @@ Example configuration should look like:
   </TabItem>
   <TabItem value="next" label="Next">
   <p>
-    A live demo of the example (Next) <a href="https://stackblitz.com/edit/nextjs-9uzqhofx?file=app%2Fpage.tsx">here</a>.
+    A live demo of the example (Next) <a href="https://stackblitz.com/edit/highcharts-stock-nextjs">here</a>.
   </p>
 
   ```tsx
