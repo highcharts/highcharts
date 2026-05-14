@@ -176,8 +176,8 @@ hierarchies and [row virtualization](https://www.highcharts.com/docs/grid/rows/v
 
 ## Aggregation
 
-Use `columns[].treeView.aggregate` to derive missing parent values from their
-direct children during TreeView projection.
+Use `columns[].treeView.aggregate` to derive parent values from their direct
+children during TreeView projection.
 
 ```js
 columns: [{
@@ -204,7 +204,8 @@ Aggregation rules:
 
 - It runs after filtering and sorting, but before pagination.
 - It uses direct children after their own aggregation has been resolved.
-- It only replaces parent values that are `null` or `undefined`.
+- It overrides parent values whenever aggregation is configured for that
+  parent row and column.
 - With `path` input, parent rows do not need to be defined unless they carry
   their own source values.
 - Generated ancestors from `path` input can also receive aggregated values.

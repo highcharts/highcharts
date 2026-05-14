@@ -123,20 +123,32 @@ export interface TreeViewColumnAggregateContext {
  * Return a registered Formula processor function name (for example `SUM`),
  * or a falsy value to skip aggregation for the current row.
  */
-export type TreeViewColumnAggregateCallback = (
-    context: TreeViewColumnAggregateContext
-) => (false|null|string|undefined);
+export type TreeViewColumnAggregateResult = (false|null|string|undefined);
+
+/**
+ * Callback deciding which aggregation function should be applied for a row.
+ */
+export interface TreeViewColumnAggregateCallback {
+    (context: TreeViewColumnAggregateContext): TreeViewColumnAggregateResult;
+}
+
+/**
+ * Aggregation option accepted by a TreeView column.
+ */
+export type TreeViewColumnAggregateOption = (
+    string |
+    TreeViewColumnAggregateCallback
+);
 
 /**
  * TreeView column options.
  */
 export interface TreeViewColumnOptions {
     /**
-     * Aggregation function used for parent rows with missing source values.
+     * Aggregation function used for parent rows in the projected tree.
      *
      * When provided as a string, the function is applied to every row that
-     * has children in the projected tree and whose source value is `null` or
-     * `undefined`.
+     * has children in the projected tree, overriding the row's source value.
      *
      * When provided as a callback, it is invoked for matching parent rows and
      * should return a registered Formula processor function name, or a falsy
@@ -144,7 +156,7 @@ export interface TreeViewColumnOptions {
      *
      * @sample grid-pro/tree-view/data-aggregation TreeView data aggregation
      */
-    aggregate?: string | TreeViewColumnAggregateCallback;
+    aggregate?: TreeViewColumnAggregateOption;
 }
 
 /**

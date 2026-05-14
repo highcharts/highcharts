@@ -33,7 +33,7 @@ import type { DataProviderOptionsType } from '../../../Core/Data/DataProviderTyp
 import type { LocalDataProviderOptions } from '../../../Core/Data/LocalDataProvider';
 import type {
     TreeIndexBuildResult,
-    TreeViewColumnAggregateCallback,
+    TreeViewColumnAggregateOption,
     TreeViewColumnOptions,
     TreeProjectionRowState,
     TreeProjectionState
@@ -251,7 +251,7 @@ class TreeProjectionController {
         this.grid = grid;
         this.aggregationResolver = new TreeAggregationResolver({
             getColumnAggregateOption: (sourceColumnId): (
-                TreeViewColumnAggregateCallback | string | undefined
+                TreeViewColumnAggregateOption | undefined
             ) => this.getColumnAggregateOption(sourceColumnId),
             resolveProjectedCellValue: (
                 columnId,
@@ -1484,7 +1484,7 @@ class TreeProjectionController {
      */
     private getColumnAggregateOption(
         sourceColumnId: string
-    ): (TreeViewColumnAggregateCallback | string | undefined) {
+    ): (TreeViewColumnAggregateOption | undefined) {
         return this.getColumnTreeViewOptions(sourceColumnId)?.aggregate;
     }
 

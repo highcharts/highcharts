@@ -215,7 +215,7 @@ describe('TreeProjectionController', () => {
         grid.destroy();
     });
 
-    it('should preserve explicit parent values instead of aggregating them', async () => {
+    it('should aggregate explicit parent values and mark them readonly', async () => {
         const { win, doc, el } = setupDOM();
         mockObservers(win);
         installGridDOMGlobals(win, doc);
@@ -253,8 +253,8 @@ describe('TreeProjectionController', () => {
 
         deepStrictEqual(
             (grid.dataProvider as any).getDataTable(true).columns.value,
-            [99, 10, 20],
-            'Existing parent values should take precedence over aggregation.'
+            [30, 10, 20],
+            'Configured parent aggregation should override existing values.'
         );
 
         const valueColumnIndex = grid.viewport.columns.findIndex(
@@ -268,8 +268,16 @@ describe('TreeProjectionController', () => {
 
         strictEqual(
             parentRow.cells[valueColumnIndex].isEditable(),
-            true,
-            'Existing parent cell with explicit value should remain editable.'
+            false,
+            'Aggregated parent cell should become readonly even if it had a source value.'
+        );
+
+        strictEqual(
+            parentRow.cells[valueColumnIndex].htmlElement.getAttribute(
+                'aria-readonly'
+            ),
+            'true',
+            'Aggregated explicit parent cell should expose readonly state.'
         );
 
         grid.destroy();

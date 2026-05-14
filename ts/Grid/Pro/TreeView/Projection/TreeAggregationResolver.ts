@@ -29,7 +29,7 @@ import type { RowId } from '../../../Core/Data/DataProvider';
 import type {
     TreeProjectionRowState,
     TreeProjectionState,
-    TreeViewColumnAggregateCallback
+    TreeViewColumnAggregateOption
 } from '../TreeViewTypes';
 import type {
     Arguments as FormulaArguments
@@ -47,7 +47,7 @@ import Formula from '../../../../Data/Formula/Formula.js';
 interface TreeAggregationResolverDependencies {
     getColumnAggregateOption: (
         sourceColumnId: string
-    ) => (TreeViewColumnAggregateCallback | string | undefined);
+    ) => (TreeViewColumnAggregateOption | undefined);
     resolveProjectedCellValue: (
         columnId: string,
         rowId: RowId,
@@ -58,10 +58,10 @@ interface TreeAggregationResolverDependencies {
 }
 
 /**
- * Returns whether the source value should be replaced by aggregation.
+ * Returns whether a value should be excluded from aggregate child inputs.
  *
  * @param value
- * Candidate source value.
+ * Candidate child value.
  */
 function isAggregateSourceValueMissing(
     value: DataTableCellType
@@ -185,10 +185,7 @@ class TreeAggregationResolver {
 
             let resolvedValue = sourceValue;
 
-            if (
-                rowState?.childrenIds.length &&
-                isAggregateSourceValueMissing(sourceValue)
-            ) {
+            if (rowState?.childrenIds.length) {
                 const aggregateFunctionName = this.resolveAggregateFunctionName(
                     columnId,
                     rowState,
