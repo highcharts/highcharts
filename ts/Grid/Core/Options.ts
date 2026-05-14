@@ -550,14 +550,16 @@ export interface ColumnOptions {
     width?: number | string;
 
     /**
-     * The minimum width of the column in pixels.
+     * The minimum width of the column. It can be set in pixels or as a
+     * percentage of the table width.
      */
-    minWidth?: number;
+    minWidth?: number | string;
 
     /**
-     * The maximum width of the column in pixels.
+     * The maximum width of the column. It can be set in pixels or as a
+     * percentage of the table width.
      */
-    maxWidth?: number;
+    maxWidth?: number | string;
 
     /**
      * Filtering options for the column.

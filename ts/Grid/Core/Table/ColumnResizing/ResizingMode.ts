@@ -28,7 +28,7 @@ import type Table from '../Table';
 import type Column from '../Column.js';
 import type ColumnsResizer from '../Actions/ColumnsResizer';
 
-import { defined, getStyle } from '../../../../Shared/Utilities.js';
+import { clamp, defined, getStyle } from '../../../../Shared/Utilities.js';
 
 
 /* *
@@ -242,7 +242,10 @@ abstract class ResizingMode {
     protected static getMinWidth(column: Column): number {
         const tableColumnEl = column.cells[0]?.htmlElement;
         const headerColumnEl = column.header?.htmlElement;
-        const minWidth = column.options.minWidth;
+        const minWidth = ResizingMode.getOptionWidth(
+            column,
+            column.options.minWidth
+        );
 
         const getElPaddings = (el: HTMLElement): number => (
             (getStyle(el, 'padding-left', true) || 0) +
@@ -262,6 +265,39 @@ abstract class ResizingMode {
     }
 
     /**
+     * Returns the configured width option in pixels.
+     *
+     * @param column
+     * The column to resolve the width for.
+     *
+     * @param width
+     * The width option to resolve.
+     *
+     * @returns
+     * The width in pixels.
+     */
+    protected static getOptionWidth(
+        column: Column,
+        width?: number | string
+    ): number | undefined {
+        if (!defined(width)) {
+            return;
+        }
+
+        if (typeof width === 'number') {
+            return width;
+        }
+
+        const value = parseFloat(width);
+
+        if (width.charAt(width.length - 1) === '%') {
+            return column.viewport.getWidthFromRatio(value / 100);
+        }
+
+        return value;
+    }
+
+    /**
      * Returns the maximum width of the column.
      *
      * @param column
@@ -271,7 +307,10 @@ abstract class ResizingMode {
      * The maximum width in pixels.
      */
     protected static getMaxWidth(column: Column): number | undefined {
-        const maxWidth = column.options.maxWidth;
+        const maxWidth = ResizingMode.getOptionWidth(
+            column,
+            column.options.maxWidth
+        );
 
         if (!defined(maxWidth)) {
             return;
@@ -296,10 +335,7 @@ abstract class ResizingMode {
         const minWidth = ResizingMode.getMinWidth(column);
         const maxWidth = ResizingMode.getMaxWidth(column);
 
-        return Math.min(
-            Math.max(width, minWidth),
-            maxWidth ?? Number.POSITIVE_INFINITY
-        );
+        return clamp(width, minWidth, maxWidth ?? Number.POSITIVE_INFINITY);
     }
 
     /**
