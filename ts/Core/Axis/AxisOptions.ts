@@ -210,7 +210,7 @@ export interface AxisCrosshairOptions {
      * `false` to disable animation. Used by the color axis marker.
      *
      * @product highcharts highstock highmaps
-     * @since next
+     * @since 12.6.0
      */
     animation?: (boolean|Partial<AnimationOptions>);
 
