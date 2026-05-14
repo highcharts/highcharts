@@ -168,7 +168,6 @@ class TableCell extends Cell {
 
         const oldValue = this.value;
         this.value = value;
-        const valueChanged = oldValue !== value;
 
         if (updateDataset) {
             try {
@@ -186,16 +185,14 @@ class TableCell extends Cell {
         }
 
         const cellsOptions = this.column.options.cells;
-        const isValueOnlyText = (
-            !cellsOptions?.format && !cellsOptions?.formatter
-        );
 
-        // Skip content.update() when no format/formatter and the value did
-        // not change: in that case the rendered output is a pure function of
-        // `cell.value` for all current CellContent implementations.
-        if (this.content && (valueChanged || !isValueOnlyText)) {
+        // Always run content.update() — `afterRender` listeners (e.g.
+        // tree-view's decoration hook) rely on a freshly-rendered cell
+        // body, so skipping the update would let stale wrappers nest into
+        // the next pass.
+        if (this.content) {
             this.content.update();
-        } else if (!this.content) {
+        } else {
             this.content = this.column.createCellContent(this);
         }
 

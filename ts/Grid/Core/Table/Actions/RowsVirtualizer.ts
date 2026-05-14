@@ -762,7 +762,11 @@ class RowsVirtualizer {
             await this.afterRenderRows?.();
 
             this.adjustRowHeights();
-            this.adjustRowOffsets();
+            // Only virtualized rows use translateY positioning; running this
+            // for static layout would offset rows out of the viewport.
+            if (isVirtualization) {
+                this.adjustRowOffsets();
+            }
             return true;
         } finally {
             this.isRendering = false;
