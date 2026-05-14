@@ -530,7 +530,7 @@ const SankeySeriesDefaults: PlotOptionsOf<SankeySeries> = {
  * If a percentage string is given, the node is offset by the percentage of the
  * node size plus `nodePadding`.
  *
- * @deprecated
+ * @deprecated 9.3.0
  * @type      {number|string}
  * @default   0
  * @since     6.0.5

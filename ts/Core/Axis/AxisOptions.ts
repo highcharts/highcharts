@@ -1159,7 +1159,7 @@ export interface AxisOptions {
     /**
      * Deprecated. Use `minRange` instead.
      *
-     * @deprecated
+     * @deprecated 6.0.0
      * @product highcharts highstock
      */
     maxZoom?: number;
@@ -2020,7 +2020,7 @@ export interface AxisTitleOptions {
     /**
      * Deprecated. Set the `text` to `undefined` to disable the title.
      *
-     * @deprecated
+     * @deprecated 3.0.0
      * @product highcharts
      */
     enabled?: boolean;
