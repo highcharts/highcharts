@@ -550,6 +550,16 @@ export interface ColumnOptions {
     width?: number | string;
 
     /**
+     * The minimum width of the column in pixels.
+     */
+    minWidth?: number;
+
+    /**
+     * The maximum width of the column in pixels.
+     */
+    maxWidth?: number;
+
+    /**
      * Filtering options for the column.
      *
      * @sample grid-lite/basic/column-filtering Column filtering
