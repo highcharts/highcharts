@@ -1,0 +1,189 @@
+/* *
+ *
+ *  Grid Tree View Cell Decorator
+ *
+ *  (c) 2020-2026 Highsoft AS
+ *
+ *  A commercial license may be required depending on use.
+ *  See www.highcharts.com/license
+ *
+ *  Authors:
+ *  - Dawid Dragula
+ *
+ * */
+
+'use strict';
+
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type TableCell from '../../../Core/Table/Body/TableCell';
+import type { ResolvedTreeViewOptions } from '../TreeViewOptionsNormalizer';
+
+import Globals from '../../../Core/Globals.js';
+import TreeViewGlobals from '../TreeViewGlobals.js';
+import { createGridIcon } from '../../../Core/UI/SvgIcons.js';
+import { getLastPathSegment } from '../TreeViewCommons.js';
+import { defined } from '../../../../Shared/Utilities.js';
+
+
+/* *
+ *
+ *  Functions
+ *
+ * */
+
+/**
+ * Resolves the display value for a path-based tree column cell.
+ *
+ * @param value
+ * Raw cell value.
+ *
+ * @param columnId
+ * Rendered column ID.
+ *
+ * @param options
+ * Resolved TreeView options.
+ *
+ * @returns
+ * Display value override for the path column.
+ */
+function getPathSegmentDisplayValue(
+    value: unknown,
+    columnId: string,
+    options: ResolvedTreeViewOptions
+): string | undefined {
+    const input = options.input;
+
+    if (
+        input.type !== 'path' ||
+        input.showFullPath ||
+        columnId !== input.pathColumn ||
+        typeof value !== 'string'
+    ) {
+        return;
+    }
+
+    return getLastPathSegment(value, input.separator);
+}
+
+/**
+ * Flags aggregated cells and decorates rendered tree cells.
+ *
+ * @param cell
+ * Rendered table cell.
+ *
+ * @param toggleAttribute
+ * Attribute used to mark the toggle button for delegated listeners.
+ */
+export function decorateTreeViewCell(
+    cell: TableCell,
+    toggleAttribute: string
+): void {
+    const grid = cell.row.viewport.grid;
+    const controller = grid.treeView;
+    const options = controller?.options;
+    const projectionState = controller?.getProjectionState();
+    const rowId = (
+        cell.row.id ??
+        projectionState?.rowIds[cell.row.index]
+    );
+
+    cell.htmlElement.classList.toggle(
+        TreeViewGlobals.classNames.cellAggregated,
+        !!(
+            controller &&
+            options &&
+            projectionState &&
+            rowId !== void 0 &&
+            controller.isCellDerived(rowId, cell.column.id)
+        )
+    );
+
+    if (!options || !projectionState) {
+        return;
+    }
+
+    const treeColumn = options.treeColumn || cell.row.viewport.columns[0]?.id;
+
+    if (!treeColumn || cell.column.id !== treeColumn || rowId === void 0) {
+        return;
+    }
+
+    const rendererType = cell.column.options.cells?.renderer?.type;
+    if (rendererType && rendererType !== 'text') {
+        return;
+    }
+
+    const rowState = projectionState.rowsById.get(rowId);
+    if (!rowState) {
+        return;
+    }
+
+    const cellElement = cell.htmlElement;
+    const wrapper = document.createElement('div');
+    wrapper.className = TreeViewGlobals.classNames.tree;
+    wrapper.style.setProperty(
+        TreeViewGlobals.cssVariables.depth,
+        String(rowState.depth)
+    );
+
+    const toggleContainer = document.createElement('span');
+    toggleContainer.className = TreeViewGlobals.classNames.toggle;
+
+    if (rowState.hasChildren) {
+        const toggleButton = document.createElement('button');
+        toggleButton.type = 'button';
+        toggleButton.className = Globals.getClassName('icon');
+        toggleButton.setAttribute(
+            'aria-label',
+            rowState.isExpanded ? 'Collapse row' : 'Expand row'
+        );
+        toggleButton.setAttribute(
+            'aria-expanded',
+            rowState.isExpanded ? 'true' : 'false'
+        );
+        toggleButton.setAttribute('tabindex', '-1');
+        toggleButton.setAttribute(toggleAttribute, '');
+
+        const toggleIcon = createGridIcon(
+            'chevronRight',
+            grid.options?.rendering?.icons
+        );
+        toggleIcon.classList.add(TreeViewGlobals.classNames.toggleIcon);
+        toggleIcon.setAttribute('aria-hidden', 'true');
+        toggleButton.appendChild(toggleIcon);
+
+        toggleContainer.appendChild(toggleButton);
+    }
+
+    const valueContainer = document.createElement('span');
+    valueContainer.className = TreeViewGlobals.classNames.value;
+
+    const pathDisplayValue = getPathSegmentDisplayValue(
+        cell.value,
+        cell.column.id,
+        options
+    );
+
+    if (
+        !defined(cell.column.options.cells?.format) &&
+        !defined(cell.column.options.cells?.formatter) &&
+        defined(pathDisplayValue)
+    ) {
+        cellElement.textContent = '';
+        valueContainer.textContent = pathDisplayValue;
+    } else {
+        while (cellElement.firstChild) {
+            valueContainer.appendChild(cellElement.firstChild);
+        }
+    }
+
+    wrapper.appendChild(toggleContainer);
+    wrapper.appendChild(valueContainer);
+    cellElement.appendChild(wrapper);
+}

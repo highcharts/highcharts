@@ -32,7 +32,8 @@ import type {
     NormalizedTreeInputParentIdOptions
 } from '../TreeViewOptionsNormalizer';
 
-import { defined, isNumber, isString } from '../../../../Shared/Utilities.js';
+import { normalizeRowIdValue } from '../TreeViewCommons.js';
+import { defined } from '../../../../Shared/Utilities.js';
 
 
 /* *
@@ -85,7 +86,7 @@ export function buildIndexFromColumns(
             idColumn,
             rowIndex,
             false
-        ) as RowId;
+        );
         const parentId = normalizeRowIdValue(
             parentValues[rowIndex],
             parentIdColumn,
@@ -141,47 +142,6 @@ export function buildIndexFromColumns(
         rowOrder,
         rootIds
     };
-}
-
-/**
- * Normalizes row ID values to `RowId` or `null`.
- *
- * @param value
- * Raw cell value.
- *
- * @param columnId
- * Source column ID.
- *
- * @param rowIndex
- * Row index of the value.
- *
- * @param allowNull
- * Whether null-like values are allowed.
- */
-function normalizeRowIdValue(
-    value: unknown,
-    columnId: string,
-    rowIndex: number,
-    allowNull: boolean
-): RowId | null {
-    if (!defined(value)) {
-        if (allowNull) {
-            return null;
-        }
-        throw new Error(
-            `TreeView: Missing value in "${columnId}" at row ${rowIndex}.`
-        );
-    }
-
-    if (isString(value) || isNumber(value)) {
-        return value;
-    }
-
-    throw new Error(
-        `TreeView: "${columnId}" must contain only string, number${
-            allowNull ? ', null, or undefined' : ''
-        } values. Invalid value at row ${rowIndex}.`
-    );
 }
 
 /**
