@@ -2172,8 +2172,7 @@ Grid.grid('container', {
                                 type: 'bar',
                                 height: 30,
                                 margin: [2, 6, 2, 6],
-                                animation: false,
-                                width: 300
+                                animation: false
                             },
                             yAxis: {
                                 visible: false,
@@ -2207,24 +2206,45 @@ Grid.grid('container', {
                         };
                     }
                 }
+            },
+            treeView: {
+                aggregate: 'SUM'
             }
         },
         {
             id: 'long',
             header: {
                 format: 'Long'
+            },
+            treeView: {
+                aggregate: 'SUM'
+            },
+            cells: {
+                format: '{value:,.2f}'
             }
         },
         {
             id: 'short',
             header: {
                 format: 'Short'
+            },
+            treeView: {
+                aggregate: 'SUM'
+            },
+            cells: {
+                format: '{value:,.2f}'
             }
         },
         {
             id: 'net',
             header: {
                 format: 'Net'
+            },
+            treeView: {
+                aggregate: 'SUM'
+            },
+            cells: {
+                format: '{value:,.2f}'
             }
         }
     ]
