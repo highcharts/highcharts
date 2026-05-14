@@ -1036,7 +1036,7 @@ namespace AxisDefaults {
              * add to automatically avoid overlapping X labels. Set to `1` to
              * disable overlap detection.
              *
-             * @deprecated
+             * @deprecated 6.0.0
              * @type      {number}
              * @default   5
              * @since     1.3.3
@@ -1298,7 +1298,7 @@ namespace AxisDefaults {
         /**
          * Deprecated. Use `minRange` instead.
          *
-         * @deprecated
+         * @deprecated 6.0.0
          * @type      {number}
          * @product   highcharts highstock
          * @apioption xAxis.maxZoom
@@ -1991,7 +1991,7 @@ namespace AxisDefaults {
             /**
              * Deprecated. Set the `text` to `undefined` to disable the title.
              *
-             * @deprecated
+             * @deprecated 3.0.0
              * @type      {boolean}
              * @product   highcharts
              * @apioption xAxis.title.enabled

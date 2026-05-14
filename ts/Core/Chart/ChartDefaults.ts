@@ -535,7 +535,7 @@ const ChartDefaults: ChartOptions = {
      * @default    {highstock} undefined
      * @since      3.0
      * @product    highcharts highstock gantt
-     * @deprecated
+     * @deprecated 10.2.1
      * @validvalue ["x", "y", "xy"]
      * @apioption  chart.pinchType
      */
@@ -1064,7 +1064,7 @@ const ChartDefaults: ChartOptions = {
      *
      * @type       {string}
      * @validvalue ["x", "y", "xy"]
-     * @deprecated
+     * @deprecated 10.2.1
      * @apioption  chart.zoomType
      */
 
@@ -1079,7 +1079,7 @@ const ChartDefaults: ChartOptions = {
      * @sample     highcharts/chart/zoombysingletouch
      *             Zoom by single touch enabled, with buttons to toggle
      * @product    highcharts highstock gantt
-     * @deprecated
+     * @deprecated 10.2.1
      */
 
     /**

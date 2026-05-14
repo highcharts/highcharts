@@ -686,7 +686,7 @@ export interface ChartOptions {
      * @default    {highstock} undefined
      * @since      3.0
      * @product    highcharts highstock gantt
-     * @deprecated
+     * @deprecated 10.2.1
      */
     pinchType?: ChartPinchTypeValue;
 
@@ -1073,11 +1073,12 @@ export interface ChartOptions {
      * However, `zoomBySingleTouch` will interfere with touch-dragging the
      * chart to read the tooltip. And especially when vertical zooming is
      * enabled, it will make it hard to scroll vertically on the page.
+     *
      * @since      9.0.0
      * @sample     highcharts/chart/zoombysingletouch
      *             Zoom by single touch enabled, with buttons to toggle
      * @product    highcharts highstock gantt
-     * @deprecated
+     * @deprecated 10.2.1
      */
     zoomBySingleTouch?: boolean;
 
@@ -1121,7 +1122,7 @@ export interface ChartOptions {
      *         Map with selection zoom
      *
      * @validvalue ["x", "y", "xy"]
-     * @deprecated
+     * @deprecated 10.2.1
      */
     zoomType?: ('x'|'xy'|'y');
 }
