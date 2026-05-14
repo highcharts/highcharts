@@ -210,6 +210,39 @@ QUnit.test(
             4,
             '4 higher ranks found'
         );
+
+        const locale = 'ar-SA';
+
+        chart.update({
+            lang: {
+                locale
+            },
+            time: {
+                locale
+            },
+            xAxis: {
+                min: null
+            },
+            series: [{
+                data: [523, 633, 467, 742, 634, 255, 135],
+                pointStart: '2016',
+                pointInterval: 1,
+                pointIntervalUnit: 'year'
+            }]
+        });
+
+        const firstTick = chart.xAxis[0].ticks[chart.xAxis[0].tickPositions[0]],
+            firstTickText = firstTick.label.element.textContent,
+            expectedText = new Intl.DateTimeFormat(locale, {
+                year: 'numeric',
+                timeZone: 'UTC'
+            }).format(new Date(chart.xAxis[0].tickPositions[0]));
+
+        assert.strictEqual(
+            firstTickText,
+            expectedText,
+            'Year tick labels should use the configured locale.'
+        );
     }
 );
 

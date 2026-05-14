@@ -687,7 +687,7 @@ namespace AxisDefaults {
                  * @type {string|Highcharts.DateTimeFormatOptions}
                  * @apioption xAxis.dateTimeLabelFormats.year.main
                  */
-                main: '%Y'
+                main: '%[Y]'
             }
         },
 
