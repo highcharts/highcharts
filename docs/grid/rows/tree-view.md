@@ -206,6 +206,8 @@ Aggregation rules:
 - It uses direct children after their own aggregation has been resolved.
 - It overrides parent values whenever aggregation is configured for that
   parent row and column.
+- It is ignored for structural TreeView columns such as `data.idColumn`,
+  `input.pathColumn`, and `input.parentIdColumn`.
 - With `path` input, parent rows do not need to be defined unless they carry
   their own source values.
 - Generated ancestors from `path` input can also receive aggregated values.

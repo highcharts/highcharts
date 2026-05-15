@@ -150,6 +150,9 @@ export interface TreeViewColumnOptions {
      *
      * When provided as a string, the function is applied to every row that
      * has children in the projected tree, overriding the row's source value.
+     * Structural TreeView columns such as `data.idColumn`,
+     * `treeView.input.pathColumn`, and `treeView.input.parentIdColumn`
+     * never aggregate, even if configured.
      *
      * When provided as a callback, it is invoked for matching parent rows and
      * should return a registered Formula processor function name, or a falsy

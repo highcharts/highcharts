@@ -1486,7 +1486,41 @@ class TreeProjectionController {
     private getColumnAggregateOption(
         sourceColumnId: string
     ): (TreeViewColumnAggregateOption | undefined) {
+        if (this.isTreeSpecialColumn(sourceColumnId)) {
+            return;
+        }
+
         return this.getColumnTreeViewOptions(sourceColumnId)?.aggregate;
+    }
+
+    /**
+     * Returns whether a source column is reserved for TreeView structure.
+     *
+     * @param sourceColumnId
+     * Source column id.
+     */
+    private isTreeSpecialColumn(sourceColumnId: string): boolean {
+        const idColumn = this.getDataOptions()?.idColumn;
+        if (sourceColumnId === idColumn) {
+            return true;
+        }
+
+        const input = this.options?.input;
+        if (!input) {
+            return false;
+        }
+
+        if (
+            input.type === 'path' &&
+            sourceColumnId === input.pathColumn
+        ) {
+            return true;
+        }
+
+        return (
+            input.type === 'parentId' &&
+            sourceColumnId === input.parentIdColumn
+        );
     }
 
     /**

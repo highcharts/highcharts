@@ -215,6 +215,86 @@ describe('TreeProjectionController', () => {
         grid.destroy();
     });
 
+    it('should ignore aggregation for special TreeView columns in path input', async () => {
+        const { win, doc, el } = setupDOM();
+        mockObservers(win);
+        installGridDOMGlobals(win, doc);
+
+        const Grid = loadGridPro();
+
+        const grid = await Grid.grid(el, {
+            data: {
+                columns: {
+                    id: [10, 20],
+                    path: [
+                        'World/Europe',
+                        'World/Asia'
+                    ],
+                    value: [5, 7]
+                },
+                idColumn: 'id',
+                treeView: {
+                    expandedRowIds: 'all',
+                    treeColumn: 'path'
+                }
+            },
+            columns: [{
+                id: 'id',
+                treeView: {
+                    aggregate: 'SUM'
+                }
+            }, {
+                id: 'path',
+                treeView: {
+                    aggregate: 'SUM'
+                }
+            }, {
+                id: 'value',
+                treeView: {
+                    aggregate: 'SUM'
+                }
+            }]
+        }, true);
+
+        grid.viewport?.resizeObserver?.disconnect();
+
+        const presentationTable = (grid.dataProvider as any).getDataTable(true);
+
+        deepStrictEqual(
+            presentationTable.columns.id,
+            ['__hcg_tree_path__:World', 10, 20],
+            'Generated path parents should keep structural generated ids instead of aggregating.'
+        );
+        deepStrictEqual(
+            presentationTable.columns.path,
+            ['World', 'World/Europe', 'World/Asia'],
+            'Path column should keep structural values instead of aggregating.'
+        );
+        deepStrictEqual(
+            presentationTable.columns.value,
+            [12, 5, 7],
+            'Non-structural columns should still aggregate normally.'
+        );
+
+        strictEqual(
+            grid.treeView?.hasColumnAggregation('id'),
+            false,
+            'The id column should be excluded from aggregation.'
+        );
+        strictEqual(
+            grid.treeView?.hasColumnAggregation('path'),
+            false,
+            'The path column should be excluded from aggregation.'
+        );
+        strictEqual(
+            grid.treeView?.hasColumnAggregation('value'),
+            true,
+            'A regular data column should still participate in aggregation.'
+        );
+
+        grid.destroy();
+    });
+
     it('should aggregate explicit parent values and mark them readonly', async () => {
         const { win, doc, el } = setupDOM();
         mockObservers(win);
@@ -278,6 +358,88 @@ describe('TreeProjectionController', () => {
             ),
             'true',
             'Aggregated explicit parent cell should expose readonly state.'
+        );
+
+        grid.destroy();
+    });
+
+    it('should ignore aggregation for special TreeView columns in parentId input', async () => {
+        const { win, doc, el } = setupDOM();
+        mockObservers(win);
+        installGridDOMGlobals(win, doc);
+
+        const Grid = loadGridPro();
+
+        const grid = await Grid.grid(el, {
+            data: {
+                columns: {
+                    id: [1, 2, 3],
+                    parentId: [null, 1, 1],
+                    name: ['Parent', 'A', 'B'],
+                    value: [100, 10, 20]
+                },
+                idColumn: 'id',
+                treeView: {
+                    input: {
+                        type: 'parentId',
+                        parentIdColumn: 'parentId'
+                    },
+                    expandedRowIds: 'all',
+                    treeColumn: 'name'
+                }
+            },
+            columns: [{
+                id: 'id',
+                treeView: {
+                    aggregate: 'SUM'
+                }
+            }, {
+                id: 'parentId',
+                treeView: {
+                    aggregate: 'SUM'
+                }
+            }, {
+                id: 'value',
+                treeView: {
+                    aggregate: 'SUM'
+                }
+            }]
+        }, true);
+
+        grid.viewport?.resizeObserver?.disconnect();
+
+        const presentationTable = (grid.dataProvider as any).getDataTable(true);
+
+        deepStrictEqual(
+            presentationTable.columns.id,
+            [1, 2, 3],
+            'The id column should keep its original structural values.'
+        );
+        deepStrictEqual(
+            presentationTable.columns.parentId,
+            [null, 1, 1],
+            'The parentId column should keep its original structural values.'
+        );
+        deepStrictEqual(
+            presentationTable.columns.value,
+            [30, 10, 20],
+            'Regular columns should still aggregate in parentId trees.'
+        );
+
+        strictEqual(
+            grid.treeView?.hasColumnAggregation('id'),
+            false,
+            'The id column should be excluded from aggregation.'
+        );
+        strictEqual(
+            grid.treeView?.hasColumnAggregation('parentId'),
+            false,
+            'The parentId column should be excluded from aggregation.'
+        );
+        strictEqual(
+            grid.treeView?.hasColumnAggregation('value'),
+            true,
+            'A regular data column should still participate in aggregation.'
         );
 
         grid.destroy();
