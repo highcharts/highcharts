@@ -1114,6 +1114,54 @@ QUnit.test('Label reserve space', function (assert) {
         unrotatedPlotLeft >= chart.plotLeft,
         'Long rotated label should not increase the plot left margin (#23527).'
     );
+
+    chart.update({
+        yAxis: {
+            lineWidth: 1,
+            labels: {
+                align: 'left',
+                rotation: 0,
+                format: 'Label'
+            }
+        }
+    });
+
+    const plotLeft = chart.plotLeft;
+    chart.update({
+        yAxis: {
+            labels: {
+                rotation: 45
+            }
+        }
+    });
+    assert.strictEqual(
+        chart.plotLeft,
+        plotLeft,
+        'chart.plotLeft should not change when rotating labels with align left.'
+    );
+    chart.update({
+        yAxis: {
+            opposite: true,
+            labels: {
+                rotation: 0,
+                align: 'right'
+            }
+        }
+    });
+    const plotWidth = chart.plotWidth;
+    chart.update({
+        yAxis: {
+            labels: {
+                rotation: 45
+            }
+        }
+    });
+    assert.strictEqual(
+        chart.plotWidth,
+        plotWidth,
+        `chart.plotWidth should not change when rotating labels with align right
+        on opposite y-axis.`
+    );
 });
 
 QUnit.test('Label ellipsis', function (assert) {
