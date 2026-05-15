@@ -233,7 +233,9 @@ In Highcharts Stock the x-axis is always a datetime axis.
 
 On datetime axes, Highcharts can mark specific ticks as boundaries (for example transitions to a new day, month or year). You can format the appearance of those labels in two ways:
 
-1. **Use boundary-specific date format options** See boundary map in [xAxis.dateTimeLabelFormats](https://api.highcharts.com/highcharts/xAxis.dateTimeLabelFormats) API to check, where you can format a boundary tick for a given base time unit.
+1. **Use boundary-specific date format options** See the boundary map in
+   [xAxis.dateTimeLabelFormats](https://api.highcharts.com/highcharts/xAxis.dateTimeLabelFormats)
+   API for how to format a boundary tick for a given base time unit.
 2. **Use axis label format strings** via [xAxis.labels.format](https://api.highcharts.com/highcharts/xAxis.labels.format), where `{boundary}` is available in the label context for boundary ticks.
 
 Example using `dateTimeLabelFormats`:
