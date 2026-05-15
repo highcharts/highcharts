@@ -151,7 +151,7 @@ class SankeyPoint extends ColumnSeries.prototype.pointClass {
             let straightLinksTo = node.linksTo;
 
             // Filter out circular links
-            if (node.series.isCircular) {
+            if (node.series.isDataCircular) {
                 straightLinksTo = node.linksTo.filter((link): boolean => (
                     !defined(link.toNode.nodeX) ||
                     !defined(link.fromNode.nodeX) ||

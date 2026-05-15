@@ -49,6 +49,7 @@ import { composeTextPath } from '../../Extensions/TextPath.js';
 import {
     clamp,
     crisp,
+    defined,
     extend,
     isObject,
     merge,
@@ -147,6 +148,26 @@ class SankeySeries extends ColumnSeries {
     public points!: Array<SankeyPoint>;
 
     public translationFactor!: number;
+
+    /**
+     * Whether the data has circular dependencies.
+     */
+    public isDataCircular!: boolean;
+
+    /**
+     * The maximum height of the circular link in the first column.
+     */
+    public firstColCircLinkMaxH = 0;
+
+    /**
+     * The maximum height of the circular link in the last column.
+     */
+    public lastColCircLinkMaxH = 0;
+
+    /**
+     * The bend of the circular link.
+     */
+    public circularLinkBend = 0;
 
     /* *
      *
@@ -347,6 +368,108 @@ class SankeySeries extends ColumnSeries {
     }
 
     /**
+     * Whether link points form a directed cycle in from/to topology.
+     * @param {Array<SankeyPoint>} points The points to check.
+     * @return {boolean} Whether the link points form a directed cycle
+     * in from/to topology.
+     *
+     * @internal
+     */
+    public checkGraphHasCycle(points: Array<SankeyPoint>): boolean {
+        // Nodes map to their outgoing links
+        const adjacency: Record<string, Array<string>> = {};
+
+        for (const point of points) {
+            if (point.isNode) {
+                continue;
+            }
+            const fromNode = point.fromNode,
+                toNode = point.toNode;
+            if (!fromNode || !toNode) {
+                continue;
+            }
+            const fromId = fromNode.id,
+                toId = toNode.id;
+            if (!defined(fromId) || !defined(toId)) {
+                continue;
+            }
+            const fromKey = '' + fromId,
+                toKey = '' + toId;
+
+            if (!adjacency[fromKey]) {
+                adjacency[fromKey] = [];
+            }
+            adjacency[fromKey].push(toKey);
+        }
+
+        const checkedNodes = new Set<string>(),
+            nodesInStack = new Set<string>();
+
+        const checkNodeHasCycle = (node: string): boolean => {
+            checkedNodes.add(node);
+            nodesInStack.add(node);
+
+            for (const neighbor of adjacency[node] || []) {
+                if (!checkedNodes.has(neighbor)) {
+                    if (checkNodeHasCycle(neighbor)) {
+                        return true;
+                    }
+                } else if (nodesInStack.has(neighbor)) {
+                    return true;
+                }
+            }
+
+            nodesInStack.delete(node);
+            return false;
+        };
+
+        for (const node of Object.keys(adjacency)) {
+            if (!checkedNodes.has(node)) {
+                if (checkNodeHasCycle(node)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Get the maximum height of the circular link in the last or first column.
+     * @param {boolean} last Whether to get the maximum height of
+     * the circular link in the last column. Default is false.
+     * @return {number} The maximum height of the circular
+     * link in the last or first column.
+     */
+    public getCircularLinkMaxHeight(last?: boolean): number {
+        const nodeColumns = this.nodeColumns;
+
+        if (!nodeColumns) {
+            return 0;
+        }
+
+        const column = last ?
+            nodeColumns[nodeColumns.length - 1] : nodeColumns[0];
+
+        let weight = 0;
+
+        for (const node of column) {
+            const links = last ? node.linksFrom : node.linksTo;
+            const nodeLinksMaxWeight = links.reduce(
+                (maxHeight, link): number =>
+                    Math.max(maxHeight, link.weight || 0),
+                0
+            );
+            weight = Math.max(weight, nodeLinksMaxWeight);
+        }
+
+        return Math.max(
+            weight * this.translationFactor,
+            this.options.minLinkWidth || 0
+        );
+    }
+
+    /**
      * Run pre-translation by generating the nodeColumns.
      * @private
      */
@@ -379,6 +502,15 @@ class SankeySeries extends ColumnSeries {
             Infinity
         );
 
+        // Check if data has circular dependencies
+        this.isDataCircular = this.checkGraphHasCycle(this.points);
+
+        if (this.isDataCircular) {
+            this.translationFactor = this.translationFactor / 2;
+            this.firstColCircLinkMaxH = this.getCircularLinkMaxHeight();
+            this.lastColCircLinkMaxH = this.getCircularLinkMaxHeight(true);
+            this.circularLinkBend = 20;
+        }
 
         this.colDistance =
             (
@@ -465,7 +597,9 @@ class SankeySeries extends ColumnSeries {
                 (chart.inverted ? -this.colDistance : this.colDistance) *
                 (options.curveFactor as any)
             ),
-            nodeLeft = fromNode.nodeX,
+            nodeLeft = fromNode.nodeX +
+                (fromNode.column === 0 ?
+                    this.firstColCircLinkMaxH + this.circularLinkBend : 0),
             right = toNode.nodeX,
             outgoing = point.outgoing;
 
@@ -497,6 +631,11 @@ class SankeySeries extends ColumnSeries {
 
         // Links going from left to right
         if (straight && typeof toY === 'number') {
+            const isLast = this.nodeColumns &&
+                toNode.column === (this.nodeColumns.length - 1);
+            const circularLinkCorrection = isLast && this.lastColCircLinkMaxH ?
+                -this.lastColCircLinkMaxH - this.circularLinkBend : 0;
+
             point.shapeArgs = {
                 d: [
                     ['M', nodeLeft + nodeW, fromY],
@@ -506,11 +645,19 @@ class SankeySeries extends ColumnSeries {
                         fromY,
                         right - curvy,
                         toY,
-                        right,
+                        right + circularLinkCorrection,
                         toY
                     ],
-                    ['L', right + (outgoing ? nodeW : 0), toY + linkHeight / 2],
-                    ['L', right, toY + linkHeight],
+                    [
+                        'L',
+                        right + (outgoing ? nodeW : 0) + circularLinkCorrection,
+                        toY + linkHeight / 2
+                    ],
+                    [
+                        'L',
+                        right + circularLinkCorrection,
+                        toY + linkHeight
+                    ],
                     [
                         'C',
                         right - curvy,
@@ -531,12 +678,19 @@ class SankeySeries extends ColumnSeries {
         // - Automatically determine if the link should go up or
         //   down.
         } else if (typeof toY === 'number') {
-            const bend = 20,
-                vDist = chart.plotHeight - fromY - linkHeight,
-                x1 = right - bend - linkHeight,
-                x2 = right - bend,
-                x3 = right,
-                x4 = nodeLeft + nodeW,
+            const bend = this.circularLinkBend,
+                vDist = chart.plotHeight - fromY - 2 * linkHeight - 2 * bend,
+                x1 = right - bend - linkHeight +
+                    (toNode.index === 0 ? this.firstColCircLinkMaxH + bend : 0),
+                x2 = right - bend +
+                    (toNode.index === 0 ? this.firstColCircLinkMaxH + bend : 0),
+                x3 = right +
+                    (toNode.index === 0 ? this.firstColCircLinkMaxH + bend : 0),
+                x4 = nodeLeft + nodeW - (
+                    this.nodeColumns &&
+                    fromNode.column === (this.nodeColumns.length - 1) ?
+                        this.lastColCircLinkMaxH + bend : 0
+                ),
                 x5 = x4 + bend,
                 x6 = x5 + linkHeight,
                 fy1 = fromY,
@@ -716,8 +870,17 @@ class SankeySeries extends ColumnSeries {
             ];
 
             node.shapeArgs = {
-                x,
-                y,
+                x: x +
+                    (node.column === 0 && this.firstColCircLinkMaxH ?
+                        this.firstColCircLinkMaxH + this.circularLinkBend : 0) +
+                    (
+                        this.nodeColumns &&
+                        node.column === (this.nodeColumns.length - 1) &&
+                        this.lastColCircLinkMaxH ?
+                            -this.lastColCircLinkMaxH -
+                            this.circularLinkBend : 0
+                    ),
+                y: y,
                 width,
                 height,
                 r,
