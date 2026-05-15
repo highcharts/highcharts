@@ -64,7 +64,7 @@ class Time extends TimeBase {
             needsMonthBoundary = unitRange < timeUnits.month,
             tickAlignment = (
                 unitRange >= timeUnits.hour ?
-                    1800000 : unitRange >= timeUnits.minute ?
+                    900000 : unitRange >= timeUnits.minute ?
                         60000 : unitRange >= timeUnits.second ?
                             1000 : false
             );
