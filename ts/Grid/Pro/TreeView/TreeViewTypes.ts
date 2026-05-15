@@ -217,6 +217,8 @@ export interface TreeInputPathOptions {
 
     /**
      * Column ID containing full node paths.
+     *
+     * Path values must be unique within the source table.
      * @default 'path'
      */
     pathColumn?: string;

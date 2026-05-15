@@ -240,10 +240,14 @@ function onCellGetEditability(
     this: TableCell,
     e: TableCellGetEditabilityEvent
 ): void {
-    if (this.row.viewport.grid.treeView?.isCellDerived(
-        this.row.id,
-        this.column.id
-    )) {
+    const controller = this.row.viewport.grid.treeView;
+    const rowId = this.row.id ?? controller?.getProjectionState()
+        ?.rowIds[this.row.index];
+
+    if (
+        controller?.isCellDerived(rowId, this.column.id) ||
+        controller?.isGeneratedRow(rowId)
+    ) {
         e.editable = false;
     }
 }
@@ -258,9 +262,25 @@ function onCellAfterDataMutation(
     this: TableCell,
     e: TableCellAfterDataMutationEvent
 ): void {
-    if (this.row.viewport.grid.treeView?.hasColumnAggregation(
-        e.sourceColumnId
-    )) {
+    const controller = this.row.viewport.grid.treeView;
+    const input = controller?.options?.input;
+    const mutatesTreeStructure = !!(
+        input && (
+            (
+                input.type === 'path' &&
+                e.sourceColumnId === input.pathColumn
+            ) || (
+                input.type === 'parentId' &&
+                e.sourceColumnId === input.parentIdColumn
+            )
+        )
+    );
+
+    if (
+        controller?.hasColumnAggregation(e.sourceColumnId) ||
+        mutatesTreeStructure
+    ) {
+        this.row.viewport.grid.querying.shouldBeUpdated = true;
         e.requiresFullRowsUpdate = true;
     }
 }

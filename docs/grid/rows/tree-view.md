@@ -114,6 +114,9 @@ Grid.grid('container', {
 `pathColumn` defaults to `path`, `separator` defaults to `'/'`, and
 `showFullPath` defaults to `false`.
 
+Path values must stay unique within the source table. When the path column is
+editable, Grid applies case-sensitive unique validation before saving.
+
 ### Generated ancestors for path input
 
 With `path` input, intermediate nodes do not need to exist as source rows. If

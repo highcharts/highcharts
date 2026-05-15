@@ -545,6 +545,19 @@ export function createTreeToggleListeners(
         event.preventDefault();
         event.stopImmediatePropagation();
 
+        const editedCell = context.cell.row.viewport.cellEditing?.editedCell;
+        if (
+            editedCell &&
+            editedCell.column.id === context.cell.column.id &&
+            (
+                editedCell.row.id ??
+                context.controller.getProjectionState()
+                    ?.rowIds[editedCell.row.index]
+            ) === context.rowId
+        ) {
+            return;
+        }
+
         if (shouldStartTreeCellEditing(context)) {
             startTreeCellEditing(context);
             return;

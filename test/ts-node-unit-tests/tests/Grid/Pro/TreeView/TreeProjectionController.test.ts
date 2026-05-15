@@ -224,6 +224,162 @@ describe('TreeProjectionController', () => {
         grid.destroy();
     });
 
+    it('should rebuild the projected tree after editing a path cell', async () => {
+        const { win, doc, el } = setupDOM();
+        mockObservers(win);
+        installGridDOMGlobals(win, doc);
+
+        const Grid = loadGridPro();
+
+        const grid = await Grid.grid(el, {
+            data: {
+                columns: {
+                    id: [1, 2],
+                    path: [
+                        'World/Europe/Poland',
+                        'World/Asia/Japan'
+                    ],
+                    value: [10, 20]
+                },
+                idColumn: 'id',
+                treeView: {
+                    expandedRowIds: 'all',
+                    treeColumn: 'path'
+                }
+            },
+            columns: [{
+                id: 'path',
+                cells: {
+                    editMode: {
+                        enabled: true
+                    }
+                }
+            }]
+        }, true);
+
+        grid.viewport?.resizeObserver?.disconnect();
+
+        const pathColumnIndex = grid.viewport.columns.findIndex(
+            (column: AnyRecord): boolean => column.id === 'path'
+        );
+        const polandRow = grid.viewport.rows.find(
+            (row: AnyRecord): boolean =>
+                row.data.path === 'World/Europe/Poland'
+        );
+
+        ok(polandRow, 'Poland leaf row should be rendered before editing.');
+
+        await polandRow.cells[pathColumnIndex].editValue('World/Americas/USA');
+
+        deepStrictEqual(
+            (grid.dataProvider as any).getDataTable(true).columns.path,
+            [
+                'World',
+                'World/Americas',
+                'World/Americas/USA',
+                'World/Asia',
+                'World/Asia/Japan'
+            ],
+            'Editing a path cell should rebuild generated ancestors and projected row order.'
+        );
+
+        strictEqual(
+            grid.viewport.rows.some(
+                (row: AnyRecord): boolean =>
+                    row.data.path === 'World/Europe'
+            ),
+            false,
+            'Old generated path ancestors should disappear after editing the path.'
+        );
+        strictEqual(
+            grid.viewport.rows.some(
+                (row: AnyRecord): boolean =>
+                    row.data.path === 'World/Americas'
+            ),
+            true,
+            'New generated path ancestors should appear after editing the path.'
+        );
+
+        grid.destroy();
+    });
+
+    it('should keep generated path parents readonly when path editing is enabled', async () => {
+        const { win, doc, el } = setupDOM();
+        mockObservers(win);
+        installGridDOMGlobals(win, doc);
+
+        const Grid = loadGridPro();
+
+        const grid = await Grid.grid(el, {
+            data: {
+                columns: {
+                    id: [1, 2],
+                    path: [
+                        'Company/Sales',
+                        'Company/Marketing'
+                    ]
+                },
+                idColumn: 'id',
+                treeView: {
+                    expandedRowIds: 'all',
+                    treeColumn: 'path'
+                }
+            },
+            columns: [{
+                id: 'path',
+                cells: {
+                    editMode: {
+                        enabled: true
+                    }
+                }
+            }]
+        }, true);
+
+        grid.viewport?.resizeObserver?.disconnect();
+
+        const pathColumnIndex = grid.viewport.columns.findIndex(
+            (column: AnyRecord): boolean => column.id === 'path'
+        );
+        const companyRow = grid.viewport.rows.find(
+            (row: AnyRecord): boolean => row.data.path === 'Company'
+        );
+        const salesRow = grid.viewport.rows.find(
+            (row: AnyRecord): boolean => row.data.path === 'Company/Sales'
+        );
+
+        ok(companyRow, 'Generated Company row should be rendered.');
+        ok(salesRow, 'Sales source row should be rendered.');
+
+        const companyPathCell = companyRow.cells[pathColumnIndex];
+        const salesPathCell = salesRow.cells[pathColumnIndex];
+
+        strictEqual(
+            companyPathCell.isEditable(),
+            false,
+            'Generated path parent should be readonly.'
+        );
+        strictEqual(
+            companyPathCell.htmlElement.getAttribute('aria-readonly'),
+            'true',
+            'Generated path parent should expose readonly state.'
+        );
+
+        grid.viewport.cellEditing?.startEditing(companyPathCell);
+        strictEqual(
+            grid.viewport.cellEditing?.editedCell,
+            void 0,
+            'Generated path parent should not enter edit mode.'
+        );
+
+        strictEqual(
+            salesPathCell.isEditable(),
+            true,
+            'Source path rows should remain editable.'
+        );
+
+        grid.destroy();
+    });
+
     it('should ignore aggregation for special TreeView columns in path input', async () => {
         const { win, doc, el } = setupDOM();
         mockObservers(win);
@@ -641,6 +797,29 @@ describe('TreeProjectionController', () => {
             'Double click should not collapse the edited tree row.'
         );
 
+        const parentNameEditor = parentNameCell.htmlElement.querySelector(
+            'input'
+        );
+        ok(
+            parentNameEditor,
+            'Editing a tree cell should render an input element.'
+        );
+
+        parentNameEditor.dispatchEvent(new win.MouseEvent('dblclick', {
+            bubbles: true
+        }));
+
+        strictEqual(
+            grid.viewport.cellEditing?.editedCell,
+            parentNameCell,
+            'Double click on the active editor should keep the cell editing.'
+        );
+        deepStrictEqual(
+            (grid.dataProvider as any).getDataTable(true).columns.name,
+            ['Parent', 'A', 'B'],
+            'Double click on the active editor should not collapse the row.'
+        );
+
         grid.viewport.cellEditing?.stopEditing(false);
         await flushAsync();
 
@@ -689,5 +868,118 @@ describe('TreeProjectionController', () => {
         );
 
         grid.destroy();
+    });
+
+    it('should block duplicate path edits before rebuilding TreeView', async () => {
+        const { win, doc, el } = setupDOM();
+        mockObservers(win);
+        installGridDOMGlobals(win, doc);
+
+        const Grid = loadGridPro();
+        const originalConsoleError = console.error;
+        const consoleErrors: unknown[][] = [];
+
+        console.error = (...args: unknown[]): void => {
+            consoleErrors.push(args);
+        };
+
+        try {
+            const grid = await Grid.grid(el, {
+                data: {
+                    columns: {
+                        id: [1, 2, 3],
+                        path: [
+                            'World/Europe/Poland',
+                            'World/Europe/Germany',
+                            'World/Americas/USA'
+                        ],
+                        value: [1, 2, 3]
+                    },
+                    idColumn: 'id',
+                    treeView: {
+                        input: {
+                            type: 'path'
+                        },
+                        expandedRowIds: 'all',
+                        treeColumn: 'path'
+                    }
+                },
+                columns: [{
+                    id: 'path',
+                    cells: {
+                        editMode: {
+                            enabled: true
+                        }
+                    }
+                }]
+            }, true);
+
+            grid.viewport?.resizeObserver?.disconnect();
+
+            const pathColumnIndex = grid.viewport.columns.findIndex(
+                (column: AnyRecord): boolean => column.id === 'path'
+            );
+            const germanyRow = grid.viewport.rows.find(
+                (row: AnyRecord): boolean =>
+                    row.data.path === 'World/Europe/Germany'
+            );
+
+            ok(germanyRow, 'Germany source row should be rendered.');
+
+            const germanyPathCell = germanyRow.cells[pathColumnIndex];
+            grid.viewport.cellEditing?.startEditing(germanyPathCell);
+
+            strictEqual(
+                grid.viewport.cellEditing?.editedCell,
+                germanyPathCell,
+                'Germany path cell should enter edit mode.'
+            );
+
+            const germanyPathEditor = germanyPathCell.htmlElement.querySelector(
+                'input'
+            ) as HTMLInputElement | null;
+            ok(
+                germanyPathEditor,
+                'Path cell editor should render an input element.'
+            );
+
+            germanyPathEditor.value = 'World/Europe/Poland';
+
+            strictEqual(
+                grid.viewport.cellEditing?.stopEditing(),
+                false,
+                'Duplicate path edits should be rejected by validation.'
+            );
+            strictEqual(
+                grid.viewport.cellEditing?.editedCell,
+                germanyPathCell,
+                'Rejected path edits should keep the cell in edit mode.'
+            );
+            strictEqual(
+                grid.viewport.validator?.errorCell,
+                germanyPathCell,
+                'Rejected path edits should mark the edited cell as invalid.'
+            );
+            deepStrictEqual(
+                (grid.dataProvider as any).getDataTable(false).columns.path,
+                [
+                    'World/Europe/Poland',
+                    'World/Europe/Germany',
+                    'World/Americas/USA'
+                ],
+                'Rejected path edits should not mutate source data.'
+            );
+            deepStrictEqual(
+                consoleErrors,
+                [],
+                'Rejected path edits should not log rebuild errors.'
+            );
+
+            grid.viewport.cellEditing?.stopEditing(false);
+            await flushAsync();
+            grid.destroy();
+        } finally {
+            console.error = originalConsoleError;
+        }
     });
 });

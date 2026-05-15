@@ -33,6 +33,7 @@ import AST from '../../../Core/Renderer/HTML/AST.js';
 import Globals from '../../Core/Globals.js';
 import GridUtils from '../../Core/GridUtils.js';
 import Cell from '../../Core/Table/Cell.js';
+import { hasDataTableProvider } from '../../Core/Data/DataProvider.js';
 import { defined } from '../../../Shared/Utilities.js';
 
 const {
@@ -151,6 +152,12 @@ class Validator {
         unique: {
             validate: function ({ rawValue }): boolean {
                 const oldValue = this.value;
+                const grid = this.row.viewport.grid;
+                const sourceColumnId = (
+                    grid.columnPolicy.getColumnSourceId(this.column.id) ||
+                    this.column.id
+                );
+                const treeInput = grid.treeView?.options?.input;
 
                 if (oldValue === rawValue) {
                     return true;
@@ -158,7 +165,16 @@ class Validator {
 
                 // Local dataset only
                 // TODO(enhancement): Implement this for remote dataset.
-                const columnData = this.column.data;
+                const columnData = (
+                    treeInput?.type === 'path' &&
+                    hasDataTableProvider(grid.dataProvider) &&
+                    sourceColumnId === treeInput.pathColumn ?
+                        grid.dataProvider?.getDataTable(false)?.getColumn(
+                            sourceColumnId,
+                            true
+                        ) :
+                        this.column.data
+                );
                 const isDuplicate = columnData?.some(
                     (value: DataTableCellType): boolean => value === rawValue
                 );
@@ -249,6 +265,26 @@ class Validator {
             cell.row.viewport.grid.options?.lang?.validationNotifications;
         const rendererType = cell.column.options?.cells?.renderer?.type;
         let rules = Array.from(options?.cells?.editMode?.validationRules || []);
+        const sourceColumnId = (
+            cell.row.viewport.grid.columnPolicy.getColumnSourceId(
+                cell.column.id
+            ) || cell.column.id
+        );
+        const treeInput = cell.row.viewport.grid.treeView?.options?.input;
+
+        if (
+            treeInput?.type === 'path' &&
+            sourceColumnId === treeInput.pathColumn &&
+            !rules.some((rule): boolean => (
+                rule === 'unique' ||
+                (
+                    typeof rule !== 'string' &&
+                    rule.validate === 'unique'
+                )
+            ))
+        ) {
+            rules.push('unique');
+        }
 
         // Remove duplicates in validationRules
         const isArrayString = rules.every(
