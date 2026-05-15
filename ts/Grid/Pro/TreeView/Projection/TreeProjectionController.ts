@@ -1528,7 +1528,7 @@ class TreeProjectionController {
      * @param sourceColumnId
      * Source column id.
      */
-    private isTreeSpecialColumn(sourceColumnId: string): boolean {
+    public isTreeSpecialColumn(sourceColumnId: string): boolean {
         const idColumn = this.getDataOptions()?.idColumn;
         if (sourceColumnId === idColumn) {
             return true;

@@ -77,7 +77,8 @@ Grid.grid('container', {
 });
 ```
 
-`parentIdColumn` defaults to `parentId`.
+`parentIdColumn` defaults to `parentId`. Structural TreeView columns such as
+`data.idColumn` and `parentIdColumn` are rendered readonly.
 
 ### `path` input
 
@@ -115,7 +116,9 @@ Grid.grid('container', {
 `showFullPath` defaults to `false`.
 
 Path values must stay unique within the source table. When the path column is
-editable, Grid applies case-sensitive unique validation before saving.
+editable, Grid applies case-sensitive unique validation and rejects invalid
+path syntax such as empty segments before saving, using the configured
+separator.
 
 ### Generated ancestors for path input
 

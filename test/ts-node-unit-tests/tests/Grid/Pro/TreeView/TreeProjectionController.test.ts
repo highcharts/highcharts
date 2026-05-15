@@ -303,7 +303,7 @@ describe('TreeProjectionController', () => {
         grid.destroy();
     });
 
-    it('should keep generated path parents readonly when path editing is enabled', async () => {
+    it('should keep generated path parents and id column readonly when path editing is enabled', async () => {
         const { win, doc, el } = setupDOM();
         mockObservers(win);
         installGridDOMGlobals(win, doc);
@@ -326,6 +326,13 @@ describe('TreeProjectionController', () => {
                 }
             },
             columns: [{
+                id: 'id',
+                cells: {
+                    editMode: {
+                        enabled: true
+                    }
+                }
+            }, {
                 id: 'path',
                 cells: {
                     editMode: {
@@ -337,6 +344,9 @@ describe('TreeProjectionController', () => {
 
         grid.viewport?.resizeObserver?.disconnect();
 
+        const idColumnIndex = grid.viewport.columns.findIndex(
+            (column: AnyRecord): boolean => column.id === 'id'
+        );
         const pathColumnIndex = grid.viewport.columns.findIndex(
             (column: AnyRecord): boolean => column.id === 'path'
         );
@@ -351,6 +361,7 @@ describe('TreeProjectionController', () => {
         ok(salesRow, 'Sales source row should be rendered.');
 
         const companyPathCell = companyRow.cells[pathColumnIndex];
+        const salesIdCell = salesRow.cells[idColumnIndex];
         const salesPathCell = salesRow.cells[pathColumnIndex];
 
         strictEqual(
@@ -363,6 +374,16 @@ describe('TreeProjectionController', () => {
             'true',
             'Generated path parent should expose readonly state.'
         );
+        strictEqual(
+            salesIdCell.isEditable(),
+            false,
+            'The id column should be readonly in path trees.'
+        );
+        strictEqual(
+            salesIdCell.htmlElement.getAttribute('aria-readonly'),
+            'true',
+            'The id column should expose readonly state.'
+        );
 
         grid.viewport.cellEditing?.startEditing(companyPathCell);
         strictEqual(
@@ -371,12 +392,27 @@ describe('TreeProjectionController', () => {
             'Generated path parent should not enter edit mode.'
         );
 
+        grid.viewport.cellEditing?.startEditing(salesIdCell);
+        strictEqual(
+            grid.viewport.cellEditing?.editedCell,
+            void 0,
+            'The id column should not enter edit mode.'
+        );
+
         strictEqual(
             salesPathCell.isEditable(),
             true,
             'Source path rows should remain editable.'
         );
+        grid.viewport.cellEditing?.startEditing(salesPathCell);
+        strictEqual(
+            grid.viewport.cellEditing?.editedCell,
+            salesPathCell,
+            'The path column should still enter edit mode for source rows.'
+        );
 
+        grid.viewport.cellEditing?.stopEditing(false);
+        await flushAsync();
         grid.destroy();
     });
 
@@ -870,6 +906,126 @@ describe('TreeProjectionController', () => {
         grid.destroy();
     });
 
+    it('should keep structural TreeView columns readonly in parentId input', async () => {
+        const { win, doc, el } = setupDOM();
+        mockObservers(win);
+        installGridDOMGlobals(win, doc);
+
+        const Grid = loadGridPro();
+        const grid = await Grid.grid(el, {
+            data: {
+                columns: {
+                    id: [1, 2, 3],
+                    parentId: [null, 1, 1],
+                    name: ['Parent', 'A', 'B']
+                },
+                idColumn: 'id',
+                treeView: {
+                    input: {
+                        type: 'parentId',
+                        parentIdColumn: 'parentId'
+                    },
+                    expandedRowIds: 'all',
+                    treeColumn: 'name'
+                }
+            },
+            columns: [{
+                id: 'id',
+                cells: {
+                    editMode: {
+                        enabled: true
+                    }
+                }
+            }, {
+                id: 'parentId',
+                cells: {
+                    editMode: {
+                        enabled: true
+                    }
+                }
+            }, {
+                id: 'name',
+                cells: {
+                    editMode: {
+                        enabled: true
+                    }
+                }
+            }]
+        }, true);
+
+        grid.viewport?.resizeObserver?.disconnect();
+
+        const idColumnIndex = grid.viewport.columns.findIndex(
+            (column: AnyRecord): boolean => column.id === 'id'
+        );
+        const parentIdColumnIndex = grid.viewport.columns.findIndex(
+            (column: AnyRecord): boolean => column.id === 'parentId'
+        );
+        const nameColumnIndex = grid.viewport.columns.findIndex(
+            (column: AnyRecord): boolean => column.id === 'name'
+        );
+        const childRow = grid.viewport.rows.find(
+            (row: AnyRecord): boolean => row.data.name === 'A'
+        );
+
+        ok(childRow, 'Child source row should be rendered.');
+
+        const childIdCell = childRow.cells[idColumnIndex];
+        const childParentIdCell = childRow.cells[parentIdColumnIndex];
+        const childNameCell = childRow.cells[nameColumnIndex];
+
+        strictEqual(
+            childIdCell.isEditable(),
+            false,
+            'The id column should be readonly in parentId trees.'
+        );
+        strictEqual(
+            childParentIdCell.isEditable(),
+            false,
+            'The parentId column should be readonly in parentId trees.'
+        );
+        strictEqual(
+            childIdCell.htmlElement.getAttribute('aria-readonly'),
+            'true',
+            'The id column should expose readonly state.'
+        );
+        strictEqual(
+            childParentIdCell.htmlElement.getAttribute('aria-readonly'),
+            'true',
+            'The parentId column should expose readonly state.'
+        );
+
+        grid.viewport.cellEditing?.startEditing(childIdCell);
+        strictEqual(
+            grid.viewport.cellEditing?.editedCell,
+            void 0,
+            'The id column should not enter edit mode.'
+        );
+
+        grid.viewport.cellEditing?.startEditing(childParentIdCell);
+        strictEqual(
+            grid.viewport.cellEditing?.editedCell,
+            void 0,
+            'The parentId column should not enter edit mode.'
+        );
+
+        strictEqual(
+            childNameCell.isEditable(),
+            true,
+            'Regular data columns should remain editable in parentId trees.'
+        );
+        grid.viewport.cellEditing?.startEditing(childNameCell);
+        strictEqual(
+            grid.viewport.cellEditing?.editedCell,
+            childNameCell,
+            'A regular data column should still enter edit mode.'
+        );
+
+        grid.viewport.cellEditing?.stopEditing(false);
+        await flushAsync();
+        grid.destroy();
+    });
+
     it('should block duplicate path edits before rebuilding TreeView', async () => {
         const { win, doc, el } = setupDOM();
         mockObservers(win);
@@ -973,6 +1129,134 @@ describe('TreeProjectionController', () => {
                 consoleErrors,
                 [],
                 'Rejected path edits should not log rebuild errors.'
+            );
+
+            grid.viewport.cellEditing?.stopEditing(false);
+            await flushAsync();
+            grid.destroy();
+        } finally {
+            console.error = originalConsoleError;
+        }
+    });
+
+    it('should block invalid path edits before rebuilding TreeView', async () => {
+        const { win, doc, el } = setupDOM();
+        mockObservers(win);
+        installGridDOMGlobals(win, doc);
+
+        const Grid = loadGridPro();
+        const originalConsoleError = console.error;
+        const consoleErrors: unknown[][] = [];
+
+        console.error = (...args: unknown[]): void => {
+            consoleErrors.push(args);
+        };
+
+        try {
+            const grid = await Grid.grid(el, {
+                data: {
+                    columns: {
+                        id: [1, 2],
+                        path: [
+                            'Company > Sales',
+                            'Company > Marketing'
+                        ],
+                        value: [1, 2]
+                    },
+                    idColumn: 'id',
+                    treeView: {
+                        input: {
+                            type: 'path',
+                            separator: ' > '
+                        },
+                        expandedRowIds: 'all',
+                        treeColumn: 'path'
+                    }
+                },
+                columns: [{
+                    id: 'path',
+                    cells: {
+                        editMode: {
+                            enabled: true
+                        }
+                    }
+                }]
+            }, true);
+
+            grid.viewport?.resizeObserver?.disconnect();
+
+            const pathColumnIndex = grid.viewport.columns.findIndex(
+                (column: AnyRecord): boolean => column.id === 'path'
+            );
+            const salesRow = grid.viewport.rows.find(
+                (row: AnyRecord): boolean =>
+                    row.data.path === 'Company > Sales'
+            );
+
+            ok(salesRow, 'Sales source row should be rendered.');
+
+            const salesPathCell = salesRow.cells[pathColumnIndex];
+            grid.viewport.cellEditing?.startEditing(salesPathCell);
+
+            strictEqual(
+                grid.viewport.cellEditing?.editedCell,
+                salesPathCell,
+                'Sales path cell should enter edit mode.'
+            );
+
+            const salesPathEditor = salesPathCell.htmlElement.querySelector(
+                'input'
+            ) as HTMLInputElement | null;
+            ok(
+                salesPathEditor,
+                'Path cell editor should render an input element.'
+            );
+
+            salesPathEditor.value = 'Company > Sales > Americas > qwe > qwq > ';
+
+            strictEqual(
+                grid.viewport.cellEditing?.stopEditing(),
+                false,
+                'Invalid path edits should be rejected by validation.'
+            );
+            strictEqual(
+                grid.viewport.cellEditing?.editedCell,
+                salesPathCell,
+                'Rejected invalid path edits should keep the cell in edit mode.'
+            );
+            strictEqual(
+                grid.viewport.validator?.errorCell,
+                salesPathCell,
+                'Rejected invalid path edits should mark the edited cell as invalid.'
+            );
+            const validationErrors: string[] = [];
+            strictEqual(
+                grid.viewport.validator?.validate(
+                    salesPathCell,
+                    validationErrors
+                ),
+                false,
+                'Rejected invalid path edits should still fail direct validation.'
+            );
+            strictEqual(
+                validationErrors[0]?.includes(
+                    'Empty path segments are not allowed.'
+                ),
+                true,
+                'Rejected invalid path edits should explain the path format error.'
+            );
+            deepStrictEqual(
+                (grid.dataProvider as any).getDataTable(false).columns.path,
+                [
+                    'Company > Sales',
+                    'Company > Marketing'
+                ],
+                'Rejected invalid path edits should not mutate source data.'
+            );
+            deepStrictEqual(
+                consoleErrors,
+                [],
+                'Rejected invalid path edits should not log rebuild errors.'
             );
 
             grid.viewport.cellEditing?.stopEditing(false);

@@ -43,6 +43,7 @@ import type TreeStickyRowController from './UI/TreeStickyRowController';
 
 import Globals from '../../Core/Globals.js';
 import TreeProjectionController from './Projection/TreeProjectionController.js';
+import TreeViewValidation from './TreeViewValidation.js';
 import { decorateTreeViewCell } from './UI/TreeViewCellDecorator.js';
 import {
     createTreeToggleListeners,
@@ -86,6 +87,8 @@ export function compose(
     if (!pushUnique(Globals.composed, 'TreeView')) {
         return;
     }
+
+    TreeViewValidation.registerTreeViewValidationRules();
 
     addEvent(GridClass, 'beforeLoad', onBeforeLoad);
     addEvent(GridClass, 'afterLoad', onAfterLoad);
@@ -223,6 +226,7 @@ function onProjectPresentationTable(
 
     try {
         controller.sync();
+        TreeViewValidation.syncTreePathValidationRules(this);
         e.table = controller.projectTable(e.table);
     } catch (error) {
         // eslint-disable-next-line no-console
@@ -231,7 +235,8 @@ function onProjectPresentationTable(
 }
 
 /**
- * Vetoes editing for cells currently derived by TreeView aggregation.
+ * Vetoes editing for structural TreeView cells and cells currently derived
+ * by TreeView aggregation.
  *
  * @param e
  * Editability event fired by the body cell.
@@ -241,10 +246,21 @@ function onCellGetEditability(
     e: TableCellGetEditabilityEvent
 ): void {
     const controller = this.row.viewport.grid.treeView;
+    const sourceColumnId = this.row.viewport.grid.columnPolicy
+        .getColumnSourceId(this.column.id) || this.column.id;
+    const input = controller?.options?.input;
     const rowId = this.row.id ?? controller?.getProjectionState()
         ?.rowIds[this.row.index];
+    const isStructurallyReadonly = !!(
+        controller?.isTreeSpecialColumn(sourceColumnId) &&
+        !(
+            input?.type === 'path' &&
+            sourceColumnId === input.pathColumn
+        )
+    );
 
     if (
+        isStructurallyReadonly ||
         controller?.isCellDerived(rowId, this.column.id) ||
         controller?.isGeneratedRow(rowId)
     ) {

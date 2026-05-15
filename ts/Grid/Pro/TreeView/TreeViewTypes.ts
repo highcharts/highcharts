@@ -201,6 +201,8 @@ export interface TreeInputParentIdOptions {
 
     /**
      * Column ID containing parent row IDs.
+     *
+     * Structural TreeView columns are reserved and rendered readonly.
      * @default 'parentId'
      */
     parentIdColumn?: string;
