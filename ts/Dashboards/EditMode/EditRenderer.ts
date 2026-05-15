@@ -41,7 +41,7 @@ import { createElement, defined, find, merge } from '../../Shared/Utilities.js';
  * Function to create a context button.
  * @internal
  *
- * @param parentElement
+ * @param parentNode
  * The element to which the new element should be appended.
  *
  * @param editMode
@@ -543,11 +543,8 @@ function renderToggle(
  * @param parentElement
  * The element to which the new element should be appended
  *
- * @param text
- * Text to be displayed
- *
- * @param callback
- * Callback function to be fired on the click
+ * @param options
+ * Text options.
  *
  * @returns text Element
  */
@@ -582,11 +579,8 @@ function renderText(
  * @param parentElement
  * The element to which the new element should be appended.
  *
- * @param icon
- * Icon URL
- *
- * @param callback
- * Callback function
+ * @param options
+ * Icon options.
  *
  * @returns
  * Icon Element
