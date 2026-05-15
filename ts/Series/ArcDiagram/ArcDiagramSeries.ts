@@ -231,6 +231,16 @@ class ArcDiagramSeries extends SankeySeries {
     }
 
     /**
+     * Whether the data has circular dependencies.
+     * We dont need to check for cycles in arc diagram so
+     * always return false.
+     * @return {boolean} Always false.
+     */
+    public checkGraphHasCycle(): boolean {
+        return false;
+    }
+
+    /**
      * Run translation operations for one link.
      * @internal
      */

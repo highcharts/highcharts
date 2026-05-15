@@ -506,7 +506,8 @@ class SankeySeries extends ColumnSeries {
         this.isDataCircular = this.checkGraphHasCycle(this.points);
 
         if (this.isDataCircular) {
-            this.translationFactor = this.translationFactor / 2;
+            // Make some room for the circular links
+            this.translationFactor = this.translationFactor / 1.5;
             this.firstColCircLinkMaxH = this.getCircularLinkMaxHeight();
             this.lastColCircLinkMaxH = this.getCircularLinkMaxHeight(true);
             this.circularLinkBend = 20;
@@ -670,22 +671,24 @@ class SankeySeries extends ColumnSeries {
                 ]
             };
 
-        // Experimental: Circular links pointing backwards. In
-        // v6.1.0 this breaks the rendering completely, so even
-        // this experimental rendering is an improvement. #8218.
-        // @todo
-        // - Make room for the link in the layout
-        // - Automatically determine if the link should go up or
-        //   down.
+        // Handle circular links pointing backwards. #8218.
         } else if (typeof toY === 'number') {
-            const bend = this.circularLinkBend,
-                vDist = chart.plotHeight - fromY - 2 * linkHeight - 2 * bend,
+            const circularLinkUp =
+                    fromY + toY + linkHeight < chart.plotHeight,
+                sign = circularLinkUp ? -1 : 1,
+                bend = this.circularLinkBend,
+                vDist = circularLinkUp ?
+                    fromY - linkHeight - 2 * bend :
+                    chart.plotHeight - fromY - 2 * linkHeight - 2 * bend,
                 x1 = right - bend - linkHeight +
-                    (toNode.index === 0 ? this.firstColCircLinkMaxH + bend : 0),
+                    (toNode.index === 0 ?
+                        this.firstColCircLinkMaxH + bend : 0),
                 x2 = right - bend +
-                    (toNode.index === 0 ? this.firstColCircLinkMaxH + bend : 0),
+                    (toNode.index === 0 ?
+                        this.firstColCircLinkMaxH + bend : 0),
                 x3 = right +
-                    (toNode.index === 0 ? this.firstColCircLinkMaxH + bend : 0),
+                    (toNode.index === 0 ?
+                        this.firstColCircLinkMaxH + bend : 0),
                 x4 = nodeLeft + nodeW - (
                     this.nodeColumns &&
                     fromNode.column === (this.nodeColumns.length - 1) ?
@@ -693,18 +696,18 @@ class SankeySeries extends ColumnSeries {
                 ),
                 x5 = x4 + bend,
                 x6 = x5 + linkHeight,
-                fy1 = fromY,
-                fy2 = fromY + linkHeight,
-                fy3 = fy2 + bend,
-                y4 = fy3 + vDist,
-                y5 = y4 + bend,
-                y6 = y5 + linkHeight,
-                ty1 = toY,
-                ty2 = ty1 + linkHeight,
-                ty3 = ty2 + bend,
-                cfy1 = fy2 - linkHeight * 0.7,
-                cy2 = y5 + linkHeight * 0.7,
-                cty1 = ty2 - linkHeight * 0.7,
+                fy1 = fromY + (circularLinkUp ? linkHeight : 0),
+                fy2 = fromY + (circularLinkUp ? 0 : linkHeight),
+                fy3 = fy2 + sign * bend,
+                y4 = fy3 + sign * vDist,
+                y5 = y4 + sign * bend,
+                y6 = y5 + sign * linkHeight,
+                ty1 = toY + (circularLinkUp ? linkHeight : 0),
+                ty2 = toY + (circularLinkUp ? 0 : linkHeight),
+                ty3 = ty2 + sign * bend,
+                cfy1 = fy2 - sign * linkHeight * 0.7,
+                cy2 = y5 + sign * linkHeight * 0.7,
+                cty1 = ty2 - sign * linkHeight * 0.7,
                 cx1 = x3 - linkHeight * 0.7,
                 cx2 = x4 + linkHeight * 0.7;
 
@@ -729,7 +732,6 @@ class SankeySeries extends ColumnSeries {
                     ['Z']
                 ]
             };
-
         }
 
         // Place data labels in the middle
