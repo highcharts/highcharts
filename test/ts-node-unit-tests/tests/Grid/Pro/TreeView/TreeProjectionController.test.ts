@@ -17,6 +17,9 @@ function installGridDOMGlobals(
 
     global.window = win;
     global.document = doc;
+    global.Element = win.Element;
+    global.HTMLTableCellElement = win.HTMLTableCellElement;
+    global.HTMLTableRowElement = win.HTMLTableRowElement;
     global.ResizeObserver = win.ResizeObserver;
     global.requestAnimationFrame = requestAnimationFrame;
     global.cancelAnimationFrame = (): void => {};
@@ -26,6 +29,12 @@ function installGridDOMGlobals(
 
 function loadGridPro(): AnyRecord {
     return require('../../../../../../code/grid/grid-pro.src.js');
+}
+
+async function flushAsync(): Promise<void> {
+    await new Promise<void>((resolve): void => {
+        setTimeout(resolve, 0);
+    });
 }
 
 describe('TreeProjectionController', () => {
@@ -567,6 +576,116 @@ describe('TreeProjectionController', () => {
             ],
             'Projected tree should honor custom compare for aggregated ' +
             'parent values.'
+        );
+
+        grid.destroy();
+    });
+
+    it('should start editing on double click and Enter, but keep Space for toggling editable tree cells', async () => {
+        const { win, doc, el } = setupDOM();
+        mockObservers(win);
+        installGridDOMGlobals(win, doc);
+
+        const Grid = loadGridPro();
+
+        const grid = await Grid.grid(el, {
+            data: {
+                columns: {
+                    id: [1, 2, 3],
+                    parentId: [null, 1, 1],
+                    name: ['Parent', 'A', 'B']
+                },
+                idColumn: 'id',
+                treeView: {
+                    expandedRowIds: 'all',
+                    treeColumn: 'name'
+                }
+            },
+            columns: [{
+                id: 'name',
+                cells: {
+                    editMode: {
+                        enabled: true
+                    }
+                }
+            }]
+        }, true);
+
+        grid.viewport?.resizeObserver?.disconnect();
+
+        const nameColumnIndex = grid.viewport.columns.findIndex(
+            (column: AnyRecord): boolean => column.id === 'name'
+        );
+        const getParentCell = (): AnyRecord => {
+            const parentRow = grid.viewport.rows.find(
+                (row: AnyRecord): boolean => row.data.name === 'Parent'
+            );
+
+            ok(parentRow, 'Parent row should be rendered.');
+            return parentRow.cells[nameColumnIndex];
+        };
+
+        const parentNameCell = getParentCell();
+        parentNameCell.htmlElement.dispatchEvent(new win.MouseEvent('dblclick', {
+            bubbles: true
+        }));
+
+        strictEqual(
+            grid.viewport.cellEditing?.editedCell,
+            parentNameCell,
+            'Double click on an editable tree cell should start editing.'
+        );
+        deepStrictEqual(
+            (grid.dataProvider as any).getDataTable(true).columns.name,
+            ['Parent', 'A', 'B'],
+            'Double click should not collapse the edited tree row.'
+        );
+
+        grid.viewport.cellEditing?.stopEditing(false);
+        await flushAsync();
+
+        const reloadedParentNameCell = getParentCell();
+        reloadedParentNameCell.htmlElement.focus();
+        reloadedParentNameCell.htmlElement.dispatchEvent(
+            new win.KeyboardEvent('keydown', {
+                bubbles: true,
+                key: 'Enter'
+            })
+        );
+
+        strictEqual(
+            grid.viewport.cellEditing?.editedCell,
+            reloadedParentNameCell,
+            'Enter on an editable tree cell should start editing.'
+        );
+        deepStrictEqual(
+            (grid.dataProvider as any).getDataTable(true).columns.name,
+            ['Parent', 'A', 'B'],
+            'Enter should not collapse the edited tree row.'
+        );
+
+        grid.viewport.cellEditing?.stopEditing(false);
+        await flushAsync();
+
+        const toggledParentNameCell = getParentCell();
+        toggledParentNameCell.htmlElement.focus();
+        toggledParentNameCell.htmlElement.dispatchEvent(
+            new win.KeyboardEvent('keydown', {
+                bubbles: true,
+                key: ' '
+            })
+        );
+        await flushAsync();
+
+        strictEqual(
+            grid.viewport.cellEditing?.editedCell,
+            void 0,
+            'Space should not start editing on an editable tree cell.'
+        );
+        deepStrictEqual(
+            (grid.dataProvider as any).getDataTable(true).columns.name,
+            ['Parent'],
+            'Space should still toggle the tree row.'
         );
 
         grid.destroy();
