@@ -3300,7 +3300,7 @@ class Series {
                     'L',
                     plotX,
                     Math.abs(distance) < halfWidth ?
-                        plotY - halfWidth * (distance <= 0 ? -1 : 1) :
+                        plotY - halfWidth * (distance < 0 ? -1 : 1) :
                         translated
                 ]);
             };
