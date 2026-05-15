@@ -55,7 +55,13 @@ import HighchartsComponentDefaults from './HighchartsComponentDefaults.js';
 import ConnectorHandler from '../../Components/ConnectorHandler';
 import DataConverterUtils from '../../../Data/Converters/DataConverterUtils.js';
 import DU from '../../Utilities.js';
-import { createElement, diffObjects, isString, merge, splat } from '../../../Shared/Utilities.js';
+import {
+    createElement,
+    diffObjects,
+    isString,
+    merge,
+    splat
+} from '../../../Shared/Utilities.js';
 const { deepClone } = DU;
 
 
@@ -499,10 +505,11 @@ class HighchartsComponent extends Component {
                     columnId === dataStructure
                 ));
             } else if (Array.isArray(dataStructure)) {
-                const seriesTable = new DataTable({
-                    columns: table.getColumns(dataStructure)
-                });
-                seriesOptions.data = seriesTable.getRows() as [][];
+                seriesOptions.data = table.getRows(
+                    0,
+                    table.rowCount,
+                    dataStructure
+                ) as [][];
 
                 adjustDraggableOptions((columnId): boolean => (
                     dataStructure.some((name): boolean => name === columnId)
@@ -514,12 +521,12 @@ class HighchartsComponent extends Component {
                     columnIds.push(dataStructure[keys[j]]);
                 }
 
-                const seriesTable = new DataTable({
-                    columns: table.getColumns(columnIds)
-                });
-
                 seriesOptions.keys = keys;
-                seriesOptions.data = seriesTable.getRows() as [][];
+                seriesOptions.data = table.getRows(
+                    0,
+                    table.rowCount,
+                    columnIds
+                ) as [][];
 
                 adjustDraggableOptions((columnId): boolean => (
                     columnIds.some((name): boolean => name === columnId)
@@ -638,7 +645,9 @@ class HighchartsComponent extends Component {
                 return new Factory(this.chartContainer, this.chartOptions);
             } catch (e) {
                 throw new Error(
-                    `The Highcharts component in cell '${this.cell.id}' is misconfigured. \n____________\n${e}`
+                    `The Highcharts component in cell '${this.cell.id}' ` +
+                    'is misconfigured. \n____________\n' +
+                    String(e)
                 );
             }
         }

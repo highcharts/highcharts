@@ -85,22 +85,6 @@ declare module '../../Core/Chart/ChartBase'{
     }
 }
 
-declare module '../../Core/Chart/ChartOptions'{
-    interface ChartOptions {
-        /**
-         * Set a key to hold when dragging to zoom the chart. This is useful to
-         * avoid zooming while moving points. Should be set different than
-         * [chart.panKey](#chart.panKey).
-         *
-         * @since      6.2.0
-         * @deprecated 10.2.1
-         * @requires   modules/draggable-points
-         * @apioption  chart.zoomKey
-         */
-        zoomKey?: ('alt'|'ctrl'|'meta'|'shift');
-    }
-}
-
 /** @internal */
 interface DragDropDataObject {
     draggedPastSensitivity?: boolean;

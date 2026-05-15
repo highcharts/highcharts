@@ -183,6 +183,10 @@ const DragDropDefaults: DragDropOptions = {
      */
 
     /**
+     * Deprecated. Use
+     * [chart.zooming.key](#chart.zooming.key)
+     * instead.
+     *
      * Set a key to hold when dragging to zoom the chart. This is useful to
      * avoid zooming while moving points. Should be set different than
      * [chart.panKey](#chart.panKey).
@@ -191,8 +195,24 @@ const DragDropDefaults: DragDropOptions = {
      * @since      6.2.0
      * @validvalue ["alt", "ctrl", "meta", "shift"]
      * @deprecated 10.2.1
-     * @requires  modules/draggable-points
+     * @requires   modules/draggable-points
      * @apioption  chart.zoomKey
+     */
+
+    /**
+     * Set a key to hold when dragging to zoom the chart. This is useful to
+     * avoid zooming while moving points. Should be set different than
+     * [chart.panKey](#chart.panKey).
+     *
+     * **Note:** If both zooming and panning are enabled without keys,
+     * zooming will take precedence by default. To prioritize panning,
+     * either set zooming key or [chart.panKey](#chart.panKey).
+     *
+     * @type       {string}
+     * @default    {highcharts} undefined
+     * @validvalue ["alt", "ctrl", "meta", "shift"]
+     * @requires   modules/draggable-points
+     * @apioption  chart.zooming.key
      */
 
     /**
