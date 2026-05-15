@@ -264,7 +264,7 @@ QUnit.test(
 QUnit.test(
     'Preserve point config initial array type in options.data',
     function (assert) {
-        var chart = $('#container')
+        const chart = $('#container')
             .highcharts({
                 accessibility: {
                     enabled: false // Forces markers
@@ -368,6 +368,15 @@ QUnit.test(
             [2, 4, 6],
             '#15117: pointStart/pointInterval should work with turboed ' +
                 'pointArrayMap series'
+        );
+
+        chart.series[0].setData([3, null, 1]);
+
+        assert.deepEqual(
+            chart.series[0].getColumn('y'),
+            chart.options.series[0].data,
+            'Values of null should be reflected correctly in' +
+            'options.series.data after setData call (#20412).'
         );
 
         Highcharts.Series.types.line.prototype.pointArrayMap = map;
