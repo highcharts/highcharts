@@ -170,3 +170,35 @@ QUnit.test('Click to add', function (assert) {
         'Four points should be added'
     );
 });
+
+QUnit.test(
+    'Container click binding for accessibility charts',
+    function (assert) {
+        const chart = Highcharts.chart('container', {
+            accessibility: {
+                enabled: true
+            },
+            series: [{
+                data: [1, 2, 3]
+            }]
+        });
+
+        assert.ok(
+            chart.navigationBindings || !chart.container.onclick,
+            'Container click is detached unless navigation bindings apply'
+        );
+
+        chart.update({
+            plotOptions: {
+                series: {
+                    allowPointSelect: true
+                }
+            }
+        });
+
+        assert.ok(
+            chart.container.onclick,
+            'Container click is attached after update'
+        );
+    }
+);
