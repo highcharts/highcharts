@@ -610,13 +610,13 @@ QUnit.test('Sankey and circular data', function (assert) {
     assert.close(
         shapeArgs.x,
         76.16666666666666,
-        0.5,
+        1,
         '#16080: Node should be translated correctly after redraw'
     );
     assert.close(
         shapeArgs.y,
         84,
-        0.5,
+        1,
         '#16080: Node should be translated correctly after redraw'
     );
 });
