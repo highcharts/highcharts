@@ -809,15 +809,11 @@ class ColorAxis extends Axis implements ColorAxisBase {
                             this: ColorAxis.LegendItemObject
                         ): void {
                             this.visible = vis = axis.visible = !vis;
-                            const affectedSeries: SeriesClass[] = [];
+                            const affectedSeries = new Set<SeriesClass>();
                             for (const point of getPointsInDataClass(i)) {
                                 point.setVisible(vis);
                                 point.hiddenInDataClass = !vis; // #20441
-                                if (
-                                    affectedSeries.indexOf(point.series) === -1
-                                ) {
-                                    affectedSeries.push(point.series);
-                                }
+                                affectedSeries.add(point.series);
                             }
                             chart.legend.colorizeItem(this as any, vis);
                             affectedSeries.forEach((series): void => {
