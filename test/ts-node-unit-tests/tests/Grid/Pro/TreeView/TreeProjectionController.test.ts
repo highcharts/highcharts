@@ -27,8 +27,8 @@ function installGridDOMGlobals(
     win.cancelAnimationFrame = (): void => {};
 }
 
-function loadGridPro(): AnyRecord {
-    return require('../../../../../../code/grid/grid-pro.src.js');
+function loadGridPro() {
+    return import('../../../../../../ts/masters-grid/grid-pro.src.js');
 }
 
 async function flushAsync(): Promise<void> {
@@ -43,7 +43,7 @@ describe('TreeProjectionController', () => {
         mockObservers(win);
         installGridDOMGlobals(win, doc);
 
-        const Grid = loadGridPro();
+        const Grid = await loadGridPro();
 
         const grid = await Grid.grid(el, {
             data: {
@@ -119,7 +119,7 @@ describe('TreeProjectionController', () => {
         mockObservers(win);
         installGridDOMGlobals(win, doc);
 
-        const Grid = loadGridPro();
+        const Grid = await loadGridPro();
 
         const grid = await Grid.grid(el, {
             data: {
@@ -229,7 +229,7 @@ describe('TreeProjectionController', () => {
         mockObservers(win);
         installGridDOMGlobals(win, doc);
 
-        const Grid = loadGridPro();
+        const Grid = await loadGridPro();
 
         const grid = await Grid.grid(el, {
             data: {
@@ -308,7 +308,7 @@ describe('TreeProjectionController', () => {
         mockObservers(win);
         installGridDOMGlobals(win, doc);
 
-        const Grid = loadGridPro();
+        const Grid = await loadGridPro();
 
         const grid = await Grid.grid(el, {
             data: {
@@ -421,7 +421,7 @@ describe('TreeProjectionController', () => {
         mockObservers(win);
         installGridDOMGlobals(win, doc);
 
-        const Grid = loadGridPro();
+        const Grid = await loadGridPro();
 
         const grid = await Grid.grid(el, {
             data: {
@@ -501,7 +501,7 @@ describe('TreeProjectionController', () => {
         mockObservers(win);
         installGridDOMGlobals(win, doc);
 
-        const Grid = loadGridPro();
+        const Grid = await loadGridPro();
 
         const grid = await Grid.grid(el, {
             data: {
@@ -569,7 +569,7 @@ describe('TreeProjectionController', () => {
         mockObservers(win);
         installGridDOMGlobals(win, doc);
 
-        const Grid = loadGridPro();
+        const Grid = await loadGridPro();
 
         const grid = await Grid.grid(el, {
             data: {
@@ -651,7 +651,7 @@ describe('TreeProjectionController', () => {
         mockObservers(win);
         installGridDOMGlobals(win, doc);
 
-        const Grid = loadGridPro();
+        const Grid = await loadGridPro();
 
         const grid = await Grid.grid(el, {
             data: {
@@ -715,7 +715,7 @@ describe('TreeProjectionController', () => {
         mockObservers(win);
         installGridDOMGlobals(win, doc);
 
-        const Grid = loadGridPro();
+        const Grid = await loadGridPro();
 
         const grid = await Grid.grid(el, {
             data: {
@@ -778,7 +778,7 @@ describe('TreeProjectionController', () => {
         mockObservers(win);
         installGridDOMGlobals(win, doc);
 
-        const Grid = loadGridPro();
+        const Grid = await loadGridPro();
 
         const grid = await Grid.grid(el, {
             data: {
@@ -911,7 +911,7 @@ describe('TreeProjectionController', () => {
         mockObservers(win);
         installGridDOMGlobals(win, doc);
 
-        const Grid = loadGridPro();
+        const Grid = await loadGridPro();
         const grid = await Grid.grid(el, {
             data: {
                 columns: {
@@ -1031,7 +1031,7 @@ describe('TreeProjectionController', () => {
         mockObservers(win);
         installGridDOMGlobals(win, doc);
 
-        const Grid = loadGridPro();
+        const Grid = await loadGridPro();
         const originalConsoleError = console.error;
         const consoleErrors: unknown[][] = [];
 
@@ -1144,7 +1144,7 @@ describe('TreeProjectionController', () => {
         mockObservers(win);
         installGridDOMGlobals(win, doc);
 
-        const Grid = loadGridPro();
+        const Grid = await loadGridPro();
         const originalConsoleError = console.error;
         const consoleErrors: unknown[][] = [];
 
