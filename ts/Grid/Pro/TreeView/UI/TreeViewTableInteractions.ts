@@ -44,6 +44,7 @@ type TreeToggleDblClickListener = (event: MouseEvent) => void;
 type TreeToggleMouseDownListener = (event: MouseEvent) => void;
 type TreeToggleKeyDownListener = (event: KeyboardEvent) => void;
 type TreeToggleWheelListener = (event: WheelEvent) => void;
+type StickyCellMouseHandlerName = 'onDblClick' | 'onMouseDown';
 
 type TreeToggleContext = {
     cell: TableCell;
@@ -417,6 +418,50 @@ function normalizeWheelDelta(
 }
 
 /**
+ * Forwards a sticky overlay mouse event to the rendered sticky cell when the
+ * event target is not handled as a tree toggle.
+ *
+ * @param stickyRowController
+ * Sticky row controller owning the overlay.
+ *
+ * @param stickyBody
+ * Sticky overlay body element.
+ *
+ * @param event
+ * Mouse event raised from the table body or sticky overlay.
+ *
+ * @param handlerName
+ * Sticky cell mouse handler to invoke.
+ *
+ * @returns
+ * `true` when a sticky cell handler was invoked.
+ */
+function invokeStickyCellMouseHandler(
+    stickyRowController: TreeStickyRowController,
+    stickyBody: HTMLElement,
+    event: MouseEvent,
+    handlerName: StickyCellMouseHandlerName
+): boolean {
+    if (event.currentTarget !== stickyBody) {
+        return false;
+    }
+
+    const cell = stickyRowController.getCellFromElement(event.target);
+    if (!cell || !(handlerName in cell)) {
+        return false;
+    }
+
+    (
+        cell as unknown as Record<
+            StickyCellMouseHandlerName,
+            (e: MouseEvent) => void
+        >
+    )[handlerName](event);
+
+    return true;
+}
+
+/**
  * Toggles tree row and restores focus when redraw replaces the DOM cell.
  *
  * @param context
@@ -502,16 +547,12 @@ export function createTreeToggleListeners(
 
         const context = getTreeToggleContext(table, event.target);
         if (!context) {
-            if (event.currentTarget === stickyBody) {
-                const cell = stickyRowController.getCellFromElement(
-                    event.target
-                );
-                if (cell && 'onDblClick' in cell) {
-                    (
-                        cell as unknown as { onDblClick(e: MouseEvent): void }
-                    ).onDblClick(event);
-                }
-            }
+            invokeStickyCellMouseHandler(
+                stickyRowController,
+                stickyBody,
+                event,
+                'onDblClick'
+            );
             return;
         }
 
@@ -561,14 +602,12 @@ export function createTreeToggleListeners(
             return;
         }
 
-        if (event.currentTarget === stickyBody) {
-            const cell = stickyRowController.getCellFromElement(event.target);
-            if (cell && 'onMouseDown' in cell) {
-                (
-                    cell as unknown as { onMouseDown(e: MouseEvent): void }
-                ).onMouseDown(event);
-            }
-        }
+        invokeStickyCellMouseHandler(
+            stickyRowController,
+            stickyBody,
+            event,
+            'onMouseDown'
+        );
     };
 
     const keyDownListener = (event: KeyboardEvent): void => {
