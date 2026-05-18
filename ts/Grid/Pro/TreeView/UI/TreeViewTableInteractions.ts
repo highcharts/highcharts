@@ -29,6 +29,7 @@ import type TreeProjectionController from '../Projection/TreeProjectionControlle
 import type { TreeRowToggleTriggerEvent } from '../Projection/TreeProjectionController';
 
 import TreeStickyRowController from './TreeStickyRowController.js';
+import { getTreeViewCellContext } from './TreeViewCellContext.js';
 import { waitForAnimationFrame } from '../../../Core/GridUtils.js';
 
 
@@ -204,37 +205,17 @@ function getTreeToggleContext(
 ): TreeToggleContext | undefined {
     const cell = table.treeStickyRowController?.getCellFromElement(element) ||
         (table.getCellFromElement(element) as TableCell | undefined);
-    if (!cell) {
-        return;
-    }
+    const context = cell && getTreeViewCellContext(cell);
 
-    const controller = cell.row.viewport.grid.treeView;
-    const options = controller?.options;
-    const projectionState = controller?.getProjectionState();
-    const treeColumn = options?.treeColumn || cell.row.viewport.columns[0]?.id;
-
-    if (!controller || !projectionState || !treeColumn) {
-        return;
-    }
-
-    if (cell.column.id !== treeColumn) {
-        return;
-    }
-
-    const rowId = cell.row.id ?? projectionState.rowIds[cell.row.index];
-    const rowState = rowId !== void 0 ?
-        projectionState.rowsById.get(rowId) :
-        void 0;
-
-    if (rowId === void 0 || !rowState?.hasChildren) {
+    if (!context?.isTreeColumnCell || !context.rowState.hasChildren) {
         return;
     }
 
     return {
-        cell,
-        controller,
-        isExpanded: rowState.isExpanded,
-        rowId
+        cell: context.cell,
+        controller: context.controller,
+        isExpanded: context.rowState.isExpanded,
+        rowId: context.rowId
     };
 }
 
