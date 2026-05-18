@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
     inputs:
       pushToDist:
-        description: 'Whether to update dist repositories from the nightly build'
+        description: 'Whether to update the highcharts-dist repository from the nightly build'
         required: false
         default: true
         type: boolean
