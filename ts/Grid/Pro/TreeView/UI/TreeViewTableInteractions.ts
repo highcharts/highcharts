@@ -561,8 +561,7 @@ export function createTreeToggleListeners(
 
         const editedCell = context.cell.row.viewport.cellEditing?.editedCell;
         if (
-            editedCell &&
-            editedCell.column.id === context.cell.column.id &&
+            editedCell?.column.id === context.cell.column.id &&
             (
                 editedCell.row.id ??
                 context.controller.getProjectionState()
