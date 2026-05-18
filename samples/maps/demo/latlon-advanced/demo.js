@@ -82,7 +82,7 @@
                     zIndex: 5
                 })
                 .css({
-                    color: '#505050'
+                    color: 'var(--highcharts-neutral-color-60)'
                 })
                 .add();
         }

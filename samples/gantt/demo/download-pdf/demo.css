@@ -25,7 +25,7 @@ body {
 }
 
 #pdf {
-    border: 1px solid silver;
+    border: 1px solid var(--highcharts-neutral-color-20);
     border-radius: 3px;
     background: light-dark(#a4edba, #244d3a);
     padding: 0.5em 1em;

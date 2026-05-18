@@ -162,13 +162,12 @@ const MapSeriesDefaults: MapSeriesOptions = {
      *         Borders demo
      *
      * @type      {Highcharts.ColorType}
-     * @default   #cccccc
      * @product   highmaps
      * @apioption plotOptions.series.borderColor
      *
      * @private
      */
-    borderColor: 'var(--highcharts-neutral-color-10)',
+    borderColor: 'var(--highcharts-neutral-color-20)',
 
     /**
      * The border width of each map area.
