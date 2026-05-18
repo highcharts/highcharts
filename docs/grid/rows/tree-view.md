@@ -77,7 +77,8 @@ Grid.grid('container', {
 });
 ```
 
-`parentIdColumn` defaults to `parentId`.
+`parentIdColumn` defaults to `parentId`. Structural TreeView columns such as
+`data.idColumn` and `parentIdColumn` are rendered readonly.
 
 ### `path` input
 
@@ -113,6 +114,11 @@ Grid.grid('container', {
 
 `pathColumn` defaults to `path`, `separator` defaults to `'/'`, and
 `showFullPath` defaults to `false`.
+
+Path values must stay unique within the source table. When the path column is
+editable, Grid applies case-sensitive unique validation and rejects invalid
+path syntax such as empty segments before saving, using the configured
+separator.
 
 ### Generated ancestors for path input
 
@@ -173,6 +179,45 @@ treeView: {
 
 Sticky parents are enabled by default. This pairs especially well with deep
 hierarchies and [row virtualization](https://www.highcharts.com/docs/grid/rows/virtualization).
+
+## Aggregation
+
+Use `columns[].treeView.aggregate` to derive parent values from their direct
+children during TreeView projection.
+
+```js
+columns: [{
+    id: 'budget',
+    treeView: {
+        aggregate: 'SUM'
+    }
+}, {
+    id: 'utilization',
+    treeView: {
+        aggregate: 'AVERAGE'
+    }
+}, {
+    id: 'risk',
+    treeView: {
+        aggregate: function (context) {
+            return context.depth === 0 ? false : 'MAX';
+        }
+    }
+}]
+```
+
+Aggregation rules:
+
+- It runs after filtering and sorting, but before pagination.
+- It uses direct children after their own aggregation has been resolved.
+- It overrides parent values whenever aggregation is configured for that
+  parent row and column.
+- It is ignored for structural TreeView columns such as `data.idColumn`,
+  `input.pathColumn`, and `input.parentIdColumn`.
+- With `path` input, parent rows do not need to be defined unless they carry
+  their own source values.
+- Generated ancestors from `path` input can also receive aggregated values.
+- Derived cells are rendered with the `hcg-tree-cell-aggregated` CSS class.
 
 ## Runtime API
 

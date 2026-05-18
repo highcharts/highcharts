@@ -34,10 +34,12 @@ import type {
 } from '../TreeViewOptionsNormalizer';
 
 import {
+    buildPathHierarchy,
+    getPathSegments,
+    normalizeRowIdValue
+} from '../TreeViewCommons.js';
+import {
     defined,
-    isArray,
-    isFunction,
-    isNumber,
     isString
 } from '../../../../Shared/Utilities.js';
 
@@ -226,42 +228,6 @@ export function buildIndexFromColumns(
 }
 
 /**
- * Normalizes row ID values to valid `RowId`.
- *
- * @param value
- * Raw cell value.
- *
- * @param columnId
- * Source column ID.
- *
- * @param rowIndex
- * Row index of the value.
- *
- * @returns
- * Normalized row ID.
- */
-function normalizeRowIdValue(
-    value: unknown,
-    columnId: string,
-    rowIndex: number
-): RowId {
-    if (!defined(value)) {
-        throw new Error(
-            `TreeView: Missing value in "${columnId}" at row ${rowIndex}.`
-        );
-    }
-
-    if (isString(value) || isNumber(value)) {
-        return value;
-    }
-
-    throw new Error(
-        `TreeView: "${columnId}" must contain only string or number values. ` +
-        `Invalid value at row ${rowIndex}.`
-    );
-}
-
-/**
  * Normalizes and validates path values.
  *
  * @param value
@@ -310,118 +276,6 @@ function normalizePathValue(
         ),
         path: value
     };
-}
-
-/**
- * Resolves ordered path segments from a raw path value.
- *
- * @param value
- * Raw path value.
- *
- * @param separator
- * Path separator definition.
- *
- * @returns
- * Ordered path segments.
- */
-function getPathSegments(
-    value: string,
-    separator: TreeInputPathSeparator
-): string[] {
-    if (isFunction(separator)) {
-        const segments = separator(value);
-
-        if (!isArray(segments)) {
-            throw new Error(
-                'TreeView: `data.treeView.input.separator` callback must ' +
-                'return an array.'
-            );
-        }
-
-        return segments as string[];
-    }
-
-    if (separator instanceof RegExp) {
-        const regex = new RegExp(
-            separator.source,
-            separator.flags.includes('g') ?
-                separator.flags :
-                separator.flags + 'g'
-        );
-        const segments: string[] = [];
-        let match: RegExpExecArray | null;
-
-        while ((match = regex.exec(value)) !== null) {
-            segments.push(match[0]);
-
-            if (match[0] === '') {
-                ++regex.lastIndex;
-            }
-        }
-
-        return segments;
-    }
-
-    if (!separator) {
-        throw new Error(
-            'TreeView: `data.treeView.input.separator` must not be empty.'
-        );
-    }
-
-    return value.split(separator);
-}
-
-/**
- * Builds cumulative path hierarchy from ordered path segments.
- *
- * @param value
- * Raw path value.
- *
- * @param columnId
- * Source column ID.
- *
- * @param rowIndex
- * Row index of the value.
- *
- * @param segments
- * Ordered path segments.
- *
- * @param separator
- * Path separator definition.
- *
- * @returns
- * Cumulative path hierarchy from root to leaf.
- */
-function buildPathHierarchy(
-    value: string,
-    columnId: string,
-    rowIndex: number,
-    segments: string[],
-    separator: TreeInputPathSeparator
-): string[] {
-    const hierarchy: string[] = [];
-    let path = '';
-    const joinWithSeparator = isString(separator);
-
-    for (let i = 0, iEnd = segments.length; i < iEnd; ++i) {
-        const segment = segments[i];
-
-        if (!isString(segment) || !segment.length) {
-            throw new Error(
-                `TreeView: Invalid path "${value}" in "${columnId}" at row ` +
-                `${rowIndex}. Empty path segments are not allowed.`
-            );
-        }
-
-        if (joinWithSeparator && path.length) {
-            path += separator as string;
-        }
-
-        path += segment;
-        hierarchy.push(path);
-    }
-
-    return hierarchy;
 }
 
 /**
