@@ -27,8 +27,13 @@ function installGridDOMGlobals(
     win.cancelAnimationFrame = (): void => {};
 }
 
-function loadGridPro(): AnyRecord {
-    return require('../../../../../../code/grid/grid-pro.src.js');
+/**
+ * Loads the Grid Pro master from TS via dynamic `import()` **after** DOM globals
+ * exist (a static import would freeze Core `Globals.win` before jsdom).
+ * Returns the module namespace; `grid` is a named export (same fn as `default.grid`).
+ */
+function loadGridPro() {
+    return import('../../../../../../ts/masters-grid/grid-pro.src.js');
 }
 
 async function flushAsync(): Promise<void> {
@@ -43,7 +48,7 @@ describe('TreeProjectionController', () => {
         mockObservers(win);
         installGridDOMGlobals(win, doc);
 
-        const Grid = loadGridPro();
+        const Grid = await loadGridPro();
 
         const grid = await Grid.grid(el, {
             data: {
@@ -119,7 +124,7 @@ describe('TreeProjectionController', () => {
         mockObservers(win);
         installGridDOMGlobals(win, doc);
 
-        const Grid = loadGridPro();
+        const Grid = await loadGridPro();
 
         const grid = await Grid.grid(el, {
             data: {
@@ -229,7 +234,7 @@ describe('TreeProjectionController', () => {
         mockObservers(win);
         installGridDOMGlobals(win, doc);
 
-        const Grid = loadGridPro();
+        const Grid = await loadGridPro();
 
         const grid = await Grid.grid(el, {
             data: {
@@ -308,7 +313,7 @@ describe('TreeProjectionController', () => {
         mockObservers(win);
         installGridDOMGlobals(win, doc);
 
-        const Grid = loadGridPro();
+        const Grid = await loadGridPro();
 
         const grid = await Grid.grid(el, {
             data: {
@@ -421,7 +426,7 @@ describe('TreeProjectionController', () => {
         mockObservers(win);
         installGridDOMGlobals(win, doc);
 
-        const Grid = loadGridPro();
+        const Grid = await loadGridPro();
 
         const grid = await Grid.grid(el, {
             data: {
@@ -501,7 +506,7 @@ describe('TreeProjectionController', () => {
         mockObservers(win);
         installGridDOMGlobals(win, doc);
 
-        const Grid = loadGridPro();
+        const Grid = await loadGridPro();
 
         const grid = await Grid.grid(el, {
             data: {
@@ -569,7 +574,7 @@ describe('TreeProjectionController', () => {
         mockObservers(win);
         installGridDOMGlobals(win, doc);
 
-        const Grid = loadGridPro();
+        const Grid = await loadGridPro();
 
         const grid = await Grid.grid(el, {
             data: {
@@ -651,7 +656,7 @@ describe('TreeProjectionController', () => {
         mockObservers(win);
         installGridDOMGlobals(win, doc);
 
-        const Grid = loadGridPro();
+        const Grid = await loadGridPro();
 
         const grid = await Grid.grid(el, {
             data: {
@@ -715,7 +720,7 @@ describe('TreeProjectionController', () => {
         mockObservers(win);
         installGridDOMGlobals(win, doc);
 
-        const Grid = loadGridPro();
+        const Grid = await loadGridPro();
 
         const grid = await Grid.grid(el, {
             data: {
@@ -778,7 +783,7 @@ describe('TreeProjectionController', () => {
         mockObservers(win);
         installGridDOMGlobals(win, doc);
 
-        const Grid = loadGridPro();
+        const Grid = await loadGridPro();
 
         const grid = await Grid.grid(el, {
             data: {
@@ -911,7 +916,7 @@ describe('TreeProjectionController', () => {
         mockObservers(win);
         installGridDOMGlobals(win, doc);
 
-        const Grid = loadGridPro();
+        const Grid = await loadGridPro();
         const grid = await Grid.grid(el, {
             data: {
                 columns: {
@@ -1031,7 +1036,7 @@ describe('TreeProjectionController', () => {
         mockObservers(win);
         installGridDOMGlobals(win, doc);
 
-        const Grid = loadGridPro();
+        const Grid = await loadGridPro();
         const originalConsoleError = console.error;
         const consoleErrors: unknown[][] = [];
 
@@ -1144,7 +1149,7 @@ describe('TreeProjectionController', () => {
         mockObservers(win);
         installGridDOMGlobals(win, doc);
 
-        const Grid = loadGridPro();
+        const Grid = await loadGridPro();
         const originalConsoleError = console.error;
         const consoleErrors: unknown[][] = [];
 
