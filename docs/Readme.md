@@ -1,6 +1,11 @@
 # Highcharts Documentation
 
-In this folder of the Highcharts repository we will gradually add Highcharts documentation. This will open up for having a version based documentation. Beside that, we also gladly receive suggestions on improving our documentation as well. 
+This folder contains the source files for the Highcharts documentation. We welcome suggestions and improvements.
+
+Contributing
+------------
+
+For guidance on writing documentation articles, MDX syntax, code examples, sidebars, accessibility and local preview commands, see `docs/AUTHORING.md`.
 
 Topics
 ------

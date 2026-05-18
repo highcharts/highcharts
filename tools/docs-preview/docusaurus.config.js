@@ -58,7 +58,7 @@ const config = {
                     path: '../../docs',
                     sidebarPath: '../../docs/sidebars.js',
                     routeBasePath: '/docs/',
-                    exclude: ['**/Readme.md'],
+                    exclude: ['**/Readme.md', '**/AGENTS.md', '**/AUTHORING.md'],
                     remarkPlugins: [
                         removeIframeStyle,
                         iframePlugin,
@@ -80,6 +80,7 @@ const config = {
                 generateLLMsTxt: true,
                 generateLLMsFullTxt: true,
                 docsDir: '../../docs',
+                ignoreFiles: ['Readme.md', 'AGENTS.md', 'AUTHORING.md'],
                 pathTransformation: {
                     ignorePaths: ['../../docs']
                 }
