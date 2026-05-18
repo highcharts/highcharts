@@ -52,10 +52,6 @@ type TreeToggleContext = {
     rowId: RowId;
 };
 
-type TreeToggleAnchor = {
-    top: number;
-};
-
 export type TreeToggleListeners = {
     click: TreeToggleClickListener;
     dblClick: TreeToggleDblClickListener;
@@ -277,14 +273,14 @@ function restoreTreeCellFocus(
 }
 
 /**
- * Captures the current visual anchor for a collapsing tree row.
+ * Captures the current visual top offset for a collapsing tree row.
  *
  * @param context
  * Tree-toggle context captured from the current DOM cell.
  */
-function captureTreeToggleAnchor(
+function captureTreeToggleAnchorTop(
     context: TreeToggleContext
-): TreeToggleAnchor | undefined {
+): number | undefined {
     if (!context.isExpanded) {
         return;
     }
@@ -295,9 +291,7 @@ function captureTreeToggleAnchor(
         return;
     }
 
-    return {
-        top: rowElement.getBoundingClientRect().top
-    };
+    return rowElement.getBoundingClientRect().top;
 }
 
 /**
@@ -337,14 +331,14 @@ function startTreeCellEditing(
  * @param context
  * Tree-toggle context captured from the current DOM cell.
  *
- * @param anchor
- * Previously captured anchor position.
+ * @param anchorTop
+ * Previously captured row top offset.
  */
-async function restoreTreeToggleAnchor(
+async function restoreTreeToggleAnchorTop(
     context: TreeToggleContext,
-    anchor?: TreeToggleAnchor
+    anchorTop?: number
 ): Promise<void> {
-    if (!anchor) {
+    if (typeof anchorTop !== 'number') {
         return;
     }
 
@@ -360,7 +354,7 @@ async function restoreTreeToggleAnchor(
 
     const tbody = viewport.tbodyElement;
     const delta = renderedRow.htmlElement.getBoundingClientRect().top -
-        anchor.top;
+        anchorTop;
 
     if (Math.abs(delta) < 1) {
         return;
@@ -435,7 +429,7 @@ async function toggleTreeRow(
     context: TreeToggleContext,
     originalEvent?: TreeRowToggleTriggerEvent
 ): Promise<void> {
-    const anchor = captureTreeToggleAnchor(context);
+    const anchorTop = captureTreeToggleAnchorTop(context);
     const changed = await context.controller.toggleRow(
         context.rowId,
         true,
@@ -444,7 +438,7 @@ async function toggleTreeRow(
 
     if (changed) {
         await waitForAnimationFrame();
-        await restoreTreeToggleAnchor(context, anchor);
+        await restoreTreeToggleAnchorTop(context, anchorTop);
         restoreTreeCellFocus(context);
     }
 }
