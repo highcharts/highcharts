@@ -505,10 +505,11 @@ class HighchartsComponent extends Component {
                     columnId === dataStructure
                 ));
             } else if (Array.isArray(dataStructure)) {
-                const seriesTable = new DataTable({
-                    columns: table.getColumns(dataStructure)
-                });
-                seriesOptions.data = seriesTable.getRows() as [][];
+                seriesOptions.data = table.getRows(
+                    0,
+                    table.rowCount,
+                    dataStructure
+                ) as [][];
 
                 adjustDraggableOptions((columnId): boolean => (
                     dataStructure.some((name): boolean => name === columnId)
@@ -520,12 +521,12 @@ class HighchartsComponent extends Component {
                     columnIds.push(dataStructure[keys[j]]);
                 }
 
-                const seriesTable = new DataTable({
-                    columns: table.getColumns(columnIds)
-                });
-
                 seriesOptions.keys = keys;
-                seriesOptions.data = seriesTable.getRows() as [][];
+                seriesOptions.data = table.getRows(
+                    0,
+                    table.rowCount,
+                    columnIds
+                ) as [][];
 
                 adjustDraggableOptions((columnId): boolean => (
                     columnIds.some((name): boolean => name === columnId)

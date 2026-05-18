@@ -433,7 +433,7 @@ function onAfterSetChartSize(
  */
 function onInitDataLabelsGroup(
     this: Series,
-    { index, zIndex }: { index: number, zIndex: number }
+    { index, zIndex = 6 }: { index: number, zIndex?: number }
 ): void {
     if (this.hasDataLabels?.()) {
         this.dataLabelsParentGroups ||= [];

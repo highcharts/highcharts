@@ -613,7 +613,7 @@ namespace DataLabel {
             'initDataLabelsGroup',
             {
                 index,
-                zIndex: dataLabelsOptions?.zIndex ?? 6
+                zIndex: dataLabelsOptions?.zIndex
             }
         );
 
@@ -700,10 +700,8 @@ namespace DataLabel {
                 (isString(backgroundColor) && backgroundColor) ||
                 'var(--highcharts-background-color)'
             ),
+            groupByIndex: SVGElement[] = [],
             seriesDlOptions = mergedDataLabelOptions(series);
-
-        let pointOptions: Array<DataLabelOptions>,
-            dataLabelsGroup: SVGElement;
 
         // Resolve the animation
         const { animation, defer } = seriesDlOptions[0],
@@ -719,25 +717,22 @@ namespace DataLabel {
             points.concat(series.condemnedPoints).forEach((point): void => {
 
                 const dataLabels = point.dataLabels || [],
-                    pointColor = point.color || series.color;
+                    pointColor = point.color || series.color,
 
-                // Merge in series options for the point.
-                // @note dataLabelAttribs (like pointAttribs) would eradicate
-                // the need for dlOptions, and simplify the section below.
-                pointOptions = splat(
-                    mergeArrays(
-                        seriesDlOptions,
-                        // The dlOptions prop is used in treemap
-                        point.dlOptions || point.options?.dataLabels
-                    )
-                );
+                    // Merge in series options for the point.
+                    // @note
+                    // dataLabelAttribs (like pointAttribs) would eradicate the
+                    // need for dlOptions, and simplify the section below.
+                    pointOptions = splat(
+                        mergeArrays(
+                            seriesDlOptions,
+                            // The dlOptions prop is used in treemap
+                            point.dlOptions || point.options?.dataLabels
+                        )
+                    );
 
                 // Handle each individual data label for this point
                 pointOptions.forEach((labelOptions, i): void => {
-                    // Create dataLabelsGroup for each data labels config
-                    // (can be multiple)
-                    dataLabelsGroup =
-                        this.initDataLabels(i, animationConfig, labelOptions);
 
                     // Options for one dataLabel
                     const labelEnabled = (
@@ -950,6 +945,16 @@ namespace DataLabel {
                                 dataLabel,
                                 'beforeAddingDataLabel',
                                 { labelOptions, point }
+                            );
+
+                            // On the first occurrence, create a dataLabelsGroup
+                            // for each data labels config (#24626)
+                            const dataLabelsGroup = groupByIndex[i] = (
+                                groupByIndex[i] || this.initDataLabels(
+                                    i,
+                                    animationConfig,
+                                    labelOptions
+                                )
                             );
 
                             if (!dataLabel.added) {

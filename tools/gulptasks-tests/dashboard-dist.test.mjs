@@ -1,7 +1,7 @@
 import { describe, it, before } from 'node:test';
 import { ok } from 'node:assert';
 
-import { stat } from 'node:fs/promises';
+import { readFile, stat } from 'node:fs/promises';
 
 import { exec } from '../libs/process.js';
 
@@ -15,5 +15,10 @@ describe('dist --product Dashboards', async () => {
 
         ok(await stat('build/dist/dashboards/index.html'));
         ok(await stat('build/dist/dashboards/examples/minimal/index.html'));
+
+        const html = await readFile('build/dist/dashboards/index.html', 'utf8');
+        ok(html.includes('href="examples/'));
+        ok(html.includes('href="examples/minimal/index.html"'));
+        ok(html.includes('Basic'));
     });
 });
