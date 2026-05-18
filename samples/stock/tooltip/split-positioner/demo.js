@@ -12,7 +12,7 @@
             header: {
                 borderColor: 'var(--highcharts-neutral-color-40)',
                 borderWidth: 1,
-                headerShape: 'callout'
+                shape: 'callout'
             },
             borderWidth: 0,
             shadow: false,
