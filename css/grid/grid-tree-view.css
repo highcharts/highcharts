@@ -2,7 +2,7 @@
 
 /* Grid Pro TreeView styles */
 
-.hcg-tree {
+.hcg-cell-tree .hcg-tree {
     --ig-tree-indent-size: 16px;
     --ig-tree-toggle-gap: 5px;
     --ig-tree-toggle-slot-size: 20px;

@@ -32,7 +32,9 @@ import Globals from '../../Core/Globals.js';
  * */
 
 export const classNames = {
-    cellAggregated: Globals.classNamePrefix + 'tree-cell-aggregated',
+    cellAggregated: Globals.classNamePrefix + 'cell-aggregated',
+    cellTree: Globals.classNamePrefix + 'cell-tree',
+    rowTree: Globals.classNamePrefix + 'row-tree',
     tbodySticky: Globals.classNamePrefix + 'tbody-sticky',
     tbodyStickyActive: Globals.classNamePrefix + 'tbody-sticky-active',
     tree: Globals.classNamePrefix + 'tree',

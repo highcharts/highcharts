@@ -86,6 +86,26 @@ export function decorateTreeViewCell(
     toggleAttribute: string
 ): void {
     const context = getTreeViewCellContext(cell);
+    const rowElement = cell.row.htmlElement;
+
+    rowElement.classList.toggle(
+        TreeViewGlobals.classNames.rowTree,
+        !!context
+    );
+
+    cell.htmlElement.classList.toggle(
+        TreeViewGlobals.classNames.cellTree,
+        !!context?.isTreeColumnCell
+    );
+
+    if (context) {
+        rowElement.style.setProperty(
+            TreeViewGlobals.cssVariables.depth,
+            context.rowState.depth.toFixed()
+        );
+    } else {
+        rowElement.style.removeProperty(TreeViewGlobals.cssVariables.depth);
+    }
 
     cell.htmlElement.classList.toggle(
         TreeViewGlobals.classNames.cellAggregated,
@@ -107,10 +127,6 @@ export function decorateTreeViewCell(
     const cellElement = cell.htmlElement;
     const wrapper = document.createElement('div');
     wrapper.className = TreeViewGlobals.classNames.tree;
-    wrapper.style.setProperty(
-        TreeViewGlobals.cssVariables.depth,
-        String(rowState.depth)
-    );
 
     const toggleContainer = document.createElement('span');
     toggleContainer.className = TreeViewGlobals.classNames.toggle;
