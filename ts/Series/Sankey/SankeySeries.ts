@@ -507,7 +507,7 @@ class SankeySeries extends ColumnSeries {
 
         if (this.isDataCircular) {
             // Make some room for the circular links
-            this.translationFactor = this.translationFactor / 1.5;
+            this.translationFactor = this.translationFactor / 2;
             this.firstColCircLinkMaxH = this.getCircularLinkMaxHeight();
             this.lastColCircLinkMaxH = this.getCircularLinkMaxHeight(true);
             this.circularLinkBend = 20;

@@ -561,7 +561,8 @@ QUnit.test('Sankey and inactive state', function (assert) {
 QUnit.test('Sankey and circular data', function (assert) {
     const chart = Highcharts.chart('container', {
         chart: {
-            width: 489
+            width: 489,
+            height: 400
         },
         title: {
             text: 'Highcharts Sankey Diagram'
@@ -600,15 +601,23 @@ QUnit.test('Sankey and circular data', function (assert) {
     );
 
     chart.series[0].setData([
-        ['a', 'a', 1]
+        ['a', 'a', 1],
+        ['a', 'b', 2]
     ]);
     chart.series[0].redraw();
 
     const shapeArgs = chart.series[0].nodes[0].shapeArgs;
-    assert.deepEqual(
-        [shapeArgs.x, shapeArgs.y],
-        [0, 0],
-        '#16080: Node should still be in top left corner after redraw'
+    assert.close(
+        shapeArgs.x,
+        76.16666666666666,
+        0.5,
+        '#16080: Node should be translated correctly after redraw'
+    );
+    assert.close(
+        shapeArgs.y,
+        84,
+        0.5,
+        '#16080: Node should be translated correctly after redraw'
     );
 });
 
