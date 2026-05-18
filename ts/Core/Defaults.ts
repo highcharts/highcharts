@@ -2485,7 +2485,7 @@ const defaultOptions: DefaultOptions = {
          *
          * @type {Highcharts.ColorType}
          */
-        borderColor: 'light-dark(var(--highcharts-background-color), var(--highcharts-neutral-color-20))', // eslint-disable-line max-len
+        borderColor: 'light-dark(var(--highcharts-neutral-color-5), var(--highcharts-neutral-color-20))', // eslint-disable-line max-len
 
         /**
          * The radius of the rounded border corners.

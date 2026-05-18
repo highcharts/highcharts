@@ -677,10 +677,10 @@ class SVGRenderer implements SVGRendererBase {
             ].join('-').toLowerCase().replace(/[^a-z\d\-]/g, ''),
             options: ShadowOptionsObject = merge({
                 color: '#000000',
-                offsetX: 1,
-                offsetY: 1,
-                opacity: 0.1,
-                width: 5
+                offsetX: 0,
+                offsetY: 2,
+                opacity: 0.05,
+                width: 6
             }, shadowOptions);
 
         if (!this.defs.element.querySelector(`#${id}`)) {
