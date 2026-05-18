@@ -493,11 +493,10 @@ export function createTreeToggleListeners(
     };
 
     const dblClickListener = (event: MouseEvent): void => {
-        if (!(event.target instanceof Element)) {
-            return;
-        }
-
-        if (event.target.closest(treeToggleSelector)) {
+        if (
+            !(event.target instanceof Element) ||
+            event.target.closest(treeToggleSelector)
+        ) {
             return;
         }
 
