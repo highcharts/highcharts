@@ -57,7 +57,7 @@ const chart = Highcharts.chart('container', {
         complete: function (options) {
             for (let i = 0; i < options.series.length; i++) {
                 formatRevenue[i] = arrToAssociative(options.series[i].data);
-                options.series[i].data = null;
+                options.series[i].data = [];
             }
         }
     },
