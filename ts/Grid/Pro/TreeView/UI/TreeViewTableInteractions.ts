@@ -481,11 +481,13 @@ async function toggleTreeRow(
         originalEvent
     );
 
-    if (changed) {
-        await waitForAnimationFrame();
-        await restoreTreeToggleAnchorTop(context, anchorTop);
-        restoreTreeCellFocus(context);
+    if (!changed) {
+        return;
     }
+
+    await waitForAnimationFrame();
+    await restoreTreeToggleAnchorTop(context, anchorTop);
+    restoreTreeCellFocus(context);
 }
 
 /**
