@@ -321,6 +321,37 @@ function captureTreeToggleAnchor(
 }
 
 /**
+ * Returns whether tree interaction should start cell editing instead of
+ * toggling the branch.
+ *
+ * @param context
+ * Tree-toggle context captured from the current DOM cell.
+ */
+function shouldStartTreeCellEditing(
+    context: TreeToggleContext
+): boolean {
+    return !!(
+        context.cell.column.editModeRenderer &&
+        context.cell.isEditable()
+    );
+}
+
+/**
+ * Starts editing for the tree cell targeted by the interaction.
+ *
+ * @param context
+ * Tree-toggle context captured from the current DOM cell.
+ */
+function startTreeCellEditing(
+    context: TreeToggleContext
+): void {
+    context.cell.htmlElement.focus({
+        preventScroll: true
+    });
+    context.cell.row.viewport.cellEditing?.startEditing(context.cell);
+}
+
+/**
  * Restores the collapsed tree row to its previous visual anchor position.
  *
  * @param context
@@ -513,6 +544,25 @@ export function createTreeToggleListeners(
 
         event.preventDefault();
         event.stopImmediatePropagation();
+
+        const editedCell = context.cell.row.viewport.cellEditing?.editedCell;
+        if (
+            editedCell &&
+            editedCell.column.id === context.cell.column.id &&
+            (
+                editedCell.row.id ??
+                context.controller.getProjectionState()
+                    ?.rowIds[editedCell.row.index]
+            ) === context.rowId
+        ) {
+            return;
+        }
+
+        if (shouldStartTreeCellEditing(context)) {
+            startTreeCellEditing(context);
+            return;
+        }
+
         context.cell.htmlElement.focus();
 
         void toggleTreeRow(context, event);
@@ -563,6 +613,14 @@ export function createTreeToggleListeners(
             if (context) {
                 event.preventDefault();
                 event.stopImmediatePropagation();
+
+                if (
+                    event.key === 'Enter' &&
+                    shouldStartTreeCellEditing(context)
+                ) {
+                    startTreeCellEditing(context);
+                    return;
+                }
 
                 void toggleTreeRow(context, event);
                 return;

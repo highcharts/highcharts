@@ -77,7 +77,8 @@ Grid.grid('container', {
 });
 ```
 
-`parentIdColumn` defaults to `parentId`.
+`parentIdColumn` defaults to `parentId`. Structural TreeView columns such as
+`data.idColumn` and `parentIdColumn` are rendered readonly.
 
 ### `path` input
 
@@ -113,6 +114,11 @@ Grid.grid('container', {
 
 `pathColumn` defaults to `path`, `separator` defaults to `'/'`, and
 `showFullPath` defaults to `false`.
+
+Path values must stay unique within the source table. When the path column is
+editable, Grid applies case-sensitive unique validation and rejects invalid
+path syntax such as empty segments before saving, using the configured
+separator.
 
 ### Generated ancestors for path input
 
@@ -206,6 +212,8 @@ Aggregation rules:
 - It uses direct children after their own aggregation has been resolved.
 - It overrides parent values whenever aggregation is configured for that
   parent row and column.
+- It is ignored for structural TreeView columns such as `data.idColumn`,
+  `input.pathColumn`, and `input.parentIdColumn`.
 - With `path` input, parent rows do not need to be defined unless they carry
   their own source values.
 - Generated ancestors from `path` input can also receive aggregated values.
