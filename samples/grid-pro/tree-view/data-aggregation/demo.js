@@ -1,10 +1,4 @@
-const riskLabels = {
-    1: 'Low',
-    2: 'Guarded',
-    3: 'Elevated',
-    4: 'High',
-    5: 'Critical'
-};
+const riskLabels = ['Low', 'Guarded', 'Elevated', 'High', 'Critical'];
 
 const columns = {
     path: [
@@ -35,8 +29,8 @@ const columns = {
         0.68, 0.79, 0.76, 0.84
     ],
     risk: [
-        1, 2, 1, 4, 1,
-        1, 2, 3, 5
+        0, 1, 0, 3, 0,
+        0, 1, 2, 4
     ],
     id: [
         'amw', 'ame', 'ger', 'fra', 'bra',
@@ -124,9 +118,7 @@ Grid.grid('container', {
                     return '';
                 }
 
-                const level = Math.max(1, Math.min(5, Math.round(Number(
-                    value
-                ))));
+                const level = Math.max(0, Math.min(4, Math.round(+value)));
 
                 return (
                     level +
