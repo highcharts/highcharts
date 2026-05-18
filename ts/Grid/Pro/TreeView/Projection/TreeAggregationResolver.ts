@@ -36,6 +36,7 @@ import type {
 } from '../../../../Data/Formula/Formula';
 
 import Formula from '../../../../Data/Formula/Formula.js';
+import { defined } from '../../../../Shared/Utilities.js';
 
 
 /* *
@@ -55,18 +56,6 @@ interface TreeAggregationResolverDependencies {
         projectionState: TreeProjectionState,
         idColumn: string
     ) => DataTableCellType;
-}
-
-/**
- * Returns whether a value should be excluded from aggregate child inputs.
- *
- * @param value
- * Candidate child value.
- */
-function isAggregateSourceValueMissing(
-    value: DataTableCellType
-): value is (null | undefined) {
-    return value === null || typeof value === 'undefined';
 }
 
 /**
@@ -195,14 +184,7 @@ class TreeAggregationResolver {
                 if (aggregateFunctionName) {
                     const childValues = rowState.childrenIds
                         .map(resolveValue)
-                        .filter((
-                            value
-                        ): value is Exclude<
-                            DataTableCellType,
-                            null | undefined
-                        > => !isAggregateSourceValueMissing(
-                            value
-                        ));
+                        .filter(defined);
 
                     resolvedValue = this.executeAggregateFunction(
                         aggregateFunctionName,
