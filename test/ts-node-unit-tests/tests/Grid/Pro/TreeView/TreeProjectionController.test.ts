@@ -27,11 +27,6 @@ function installGridDOMGlobals(
     win.cancelAnimationFrame = (): void => {};
 }
 
-/**
- * Loads the Grid Pro master from TS via dynamic `import()` **after** DOM globals
- * exist (a static import would freeze Core `Globals.win` before jsdom).
- * Returns the module namespace; `grid` is a named export (same fn as `default.grid`).
- */
 function loadGridPro() {
     return import('../../../../../../ts/masters-grid/grid-pro.src.js');
 }
