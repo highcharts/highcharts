@@ -212,6 +212,19 @@ Aggregation rules:
 - It uses direct children after their own aggregation has been resolved.
 - It overrides parent values whenever aggregation is configured for that
   parent row and column.
+  To keep the original source value for one specific parent row, return
+  `false` from the callback for that row:
+
+  ```js
+  columns: [{
+      id: 'budget',
+      treeView: {
+          aggregate: function (context) {
+              return context.rowId === 'europe' ? false : 'SUM';
+          }
+      }
+  }]
+  ```
 - It is ignored for structural TreeView columns such as `data.idColumn`,
   `input.pathColumn`, and `input.parentIdColumn`.
 - With `path` input, parent rows do not need to be defined unless they carry
