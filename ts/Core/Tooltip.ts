@@ -616,7 +616,8 @@ class Tooltip {
                     this.label
                         .attr({
                             fill: options.backgroundColor,
-                            'stroke-width': options.borderWidth ?? 1
+                            'stroke-width': options.borderWidth ??
+                                +!options.fixed
                         })
                         // #2301, #2657
                         .css(options.style)
@@ -1480,7 +1481,8 @@ class Tooltip {
 
                 if (!styledMode) {
                     attribs.fill = ttOptions.backgroundColor;
-                    attribs['stroke-width'] = ttOptions.borderWidth ?? 1;
+                    attribs['stroke-width'] = ttOptions.borderWidth ??
+                        +!ttOptions.fixed;
                 }
                 tt = ren
                     .label(
@@ -1972,7 +1974,7 @@ class Tooltip {
 
             // Pad it by the border width and distance. Add 2 to make room for
             // the default shadow (#19314).
-            pad = (options.borderWidth || 0) + 2 * distance + 2;
+            pad = (options.borderWidth ?? 1) + 2 * distance + 2;
 
             renderer.setSize(
                 // Clamp width to keep tooltip in viewport (#21698)
