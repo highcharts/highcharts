@@ -61,7 +61,7 @@ class IndependentResizingMode extends ResizingMode {
         const width = this.columnWidths[column.id] = Math.round(
             ResizingMode.fitWidth(
                 column,
-                (resizer.columnStartWidth || 0) + diff
+                (resizer.columnStartWidth ?? 0) + diff
             ) * 10
         ) / 10;
         this.columnWidthUnits[column.id] = 0; // Set to px

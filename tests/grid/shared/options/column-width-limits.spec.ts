@@ -85,7 +85,7 @@ async function renderGrid(
             grid?.viewport?.columns?.length &&
             grid.viewport.tbodyElement?.clientWidth
         );
-    }, { timeout: 10000 });
+    });
 }
 
 async function getColumnWidth(
@@ -143,8 +143,7 @@ async function dragColumnResizer(
         {
             id: targetColumnId,
             previousWidth: initialWidth
-        },
-        { timeout: 5000 }
+        }
     );
 }
 

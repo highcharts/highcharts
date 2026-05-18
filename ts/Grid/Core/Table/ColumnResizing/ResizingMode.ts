@@ -290,7 +290,7 @@ abstract class ResizingMode {
 
         const value = parseFloat(width);
 
-        if (width.charAt(width.length - 1) === '%') {
+        if (width.endsWith('%')) {
             return column.viewport.getWidthFromRatio(value / 100);
         }
 
