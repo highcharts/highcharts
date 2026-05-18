@@ -352,7 +352,7 @@ const sidebars = {
             'flutter/your-first-chart',
             'flutter/highcharts-bundling'
         ],
-        'React integration': [
+        'React': [
             'react/getting-started',
             {
                 'Components': [

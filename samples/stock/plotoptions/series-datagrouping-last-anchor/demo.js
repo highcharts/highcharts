@@ -34,6 +34,12 @@ Highcharts.stockChart('container', {
             text: 'Last anchor set to last point'
         }
     }],
+    plotOptions: {
+        series: {
+            pointStart: '2025-01-01',
+            pointInterval: 24 * 36e5
+        }
+    },
     series: [{
         data: [5, 4, 4, 3, 5, 3, 2, 1, 2, 3, 1, 2, 2, 1, 3],
         dataGrouping: {
