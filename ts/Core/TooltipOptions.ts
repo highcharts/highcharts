@@ -83,6 +83,77 @@ export interface SeriesTooltipOptions extends Partial<TooltipOptions> {
     useHTML?: undefined;
 }
 
+interface TooltipHeaderOptions {
+
+    /**
+     * Background color for the tooltip header when
+     * [tooltip.split](#tooltip.split) is enabled.
+     *
+     * @sample {highcharts} highcharts/tooltip/header
+     *         Header options for split tooltip
+     * @sample {highstock} stock/tooltip/header
+     *         Header options for split tooltip
+     */
+    backgroundColor?: ColorType;
+    /**
+     * Border color for the tooltip header when
+     * [tooltip.split](#tooltip.split) is enabled.
+     *
+     * @sample {highcharts} highcharts/tooltip/header
+     *         Header options for split tooltip
+     * @sample {highstock} stock/tooltip/header
+     *         Header options for split tooltip
+     */
+    borderColor?: ColorType;
+    /**
+     * The width of the border for the tooltip header when
+     * [tooltip.split](#tooltip.split) is enabled.
+     *
+     * @sample {highcharts} highcharts/tooltip/header
+     *         Header options for split tooltip
+     * @sample {highstock} stock/tooltip/header
+     *         Header options for split tooltip
+     */
+    borderWidth?: number;
+    /**
+     * Distance between the plot area and the header (except the chevron) in a
+     * split tooltip, in pixels. The default value makes the header text align
+     * with the axis labels.
+     *
+     * @sample {highcharts} highcharts/tooltip/header
+     *         Header options for split tooltip
+     * @sample {highstock} stock/tooltip/header
+     *         Header options for split tooltip
+     */
+    distance: number;
+    /**
+     * The name of a symbol to use for the border around the tooltip
+     * header. Applies only when [tooltip.split](#tooltip.split) is
+     * enabled.
+     *
+     * Custom callbacks for symbol path generation can also be added to
+     * `Highcharts.SVGRenderer.prototype.symbols` the same way as for
+     * [series.marker.symbol](plotOptions.line.marker.symbol).
+     *
+     * @see [tooltip.shape](#tooltip.shape)
+     *
+     * @sample {highstock} stock/tooltip/split-positioner/
+     *         Different shapes for header and split boxes
+     */
+    shape?: Tooltip.ShapeValue
+
+    /**
+     * CSS styles for the tooltip header. The default is `{ fontSize: '1em' }`,
+     * ensuring that the header text is the same size as the axis labels.
+     *
+     * @sample {highcharts} highcharts/tooltip/header
+     *         Header options for split tooltip
+     * @sample {highstock} stock/tooltip/header
+     *         Header options for split tooltip
+     */
+    style?: CSSObject;
+}
+
 /**
  * Options for the tooltip that appears when the user hovers over a
  * series or point.
@@ -413,22 +484,23 @@ export interface TooltipOptions {
      */
     headerFormat: string;
     /**
-     * The name of a symbol to use for the border around the tooltip
-     * header. Applies only when [tooltip.split](#tooltip.split) is
-     * enabled.
-     *
-     * Custom callbacks for symbol path generation can also be added to
-     * `Highcharts.SVGRenderer.prototype.symbols` the same way as for
-     * [series.marker.symbol](plotOptions.line.marker.symbol).
-     *
-     * @see [tooltip.shape](#tooltip.shape)
-     *
-     * @sample {highstock} stock/tooltip/split-positioner/
-     *         Different shapes for header and split boxes
+     * Deprecated since v13.0. Use `tooltip.header.shape` instead.
      *
      * @since   7.0
+     * @deprecated 13.0.0
      */
-    headerShape: Tooltip.ShapeValue;
+    headerShape?: Tooltip.ShapeValue;
+    /**
+     * Options for the tooltip header when [tooltip.split](#tooltip.split) is
+     * enabled. The header is the box containing the X value in a split tooltip.
+     *
+     * @sample {highcharts} highcharts/tooltip/header
+     *         Header options for split tooltip
+     * @sample {highstock} stock/tooltip/header
+     *         Header options for split tooltip
+     * @since v13.0.0
+     */
+    header: TooltipHeaderOptions;
     /**
      * The number of milliseconds to wait until the tooltip is hidden when
      * mouse out from a point or chart.
