@@ -1978,7 +1978,7 @@ class Tooltip {
 
             // Pad it by the border width and distance. Add 2 to make room for
             // the default shadow (#19314).
-            pad = (options.borderWidth ?? 1) + 2 * distance + 2;
+            pad = (options.borderWidth ?? +!fixed) + 2 * distance + 2;
 
             renderer.setSize(
                 // Clamp width to keep tooltip in viewport (#21698)
