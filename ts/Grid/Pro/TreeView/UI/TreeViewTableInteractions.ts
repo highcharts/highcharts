@@ -154,16 +154,15 @@ function handleTreeBodyNavigation(
         table.tbodyElement;
     const nextRowIndex = row.index + dir[0];
 
-    if (renderedRowIndex > -1) {
-        if (
+    if (
+        renderedRowIndex > -1 && (
             !isViewportBodyRow ||
             nextRowIndex < 0 ||
             nextRowIndex >= table.rowsVirtualizer.rowCount
-        ) {
-            if (focusRenderedRow(table, nextRenderedRow, nextColumnIndex)) {
-                return true;
-            }
-        }
+        ) &&
+        focusRenderedRow(table, nextRenderedRow, nextColumnIndex)
+    ) {
+        return true;
     }
 
     if (nextRowIndex < 0 && header) {
