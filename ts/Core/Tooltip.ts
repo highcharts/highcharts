@@ -1470,7 +1470,10 @@ class Tooltip {
         ): SVGElement {
             let tt = partialTooltip;
             const { isHeader, series } = point,
-                ttOptions = series.tooltipOptions || options;
+                ttOptions = series.tooltipOptions || options,
+                specificOptions = isHeader ?
+                    merge(ttOptions, ttOptions.header) :
+                    ttOptions;
 
             if (!tt) {
 
@@ -1480,8 +1483,8 @@ class Tooltip {
                 };
 
                 if (!styledMode) {
-                    attribs.fill = ttOptions.backgroundColor;
-                    attribs['stroke-width'] = ttOptions.borderWidth ??
+                    attribs.fill = specificOptions.backgroundColor;
+                    attribs['stroke-width'] = specificOptions.borderWidth ??
                         +!ttOptions.fixed;
                 }
                 tt = ren
@@ -1489,8 +1492,9 @@ class Tooltip {
                         '',
                         0,
                         0,
-                        (ttOptions[isHeader ? 'headerShape' : 'shape']) ||
-                            (fixed && !isHeader ? 'rect' : 'callout'),
+                        specificOptions.shape || (
+                            fixed && !isHeader ? 'rect' : 'callout'
+                        ),
                         void 0,
                         void 0,
                         ttOptions.useHTML
@@ -1507,10 +1511,10 @@ class Tooltip {
                 text: str
             });
             if (!styledMode) {
-                tt.css(ttOptions.style)
+                tt.css(specificOptions.style)
                     .attr({
                         stroke: (
-                            ttOptions.borderColor ||
+                            specificOptions.borderColor ||
                             point.color ||
                             series.color ||
                             'var(--highcharts-neutral-color-80)'
@@ -1555,7 +1559,7 @@ class Tooltip {
                 const bBox = tt.getBBox();
                 const boxWidth = bBox.width + tt.strokeWidth();
                 if (isHeader) {
-                    headerHeight = bBox.height;
+                    headerHeight = bBox.height + options.header.distance;
                     adjustedPlotHeight += headerHeight;
                     if (headerTop) {
                         distributionBoxTop -= headerHeight;

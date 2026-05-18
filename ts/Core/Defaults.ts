@@ -2551,8 +2551,97 @@ const defaultOptions: DefaultOptions = {
          * @type       {Highcharts.TooltipShapeValue}
          * @validvalue ["callout", "rect"]
          * @since      7.0
+         * @deprecated 13.0
+         * @apioption tooltip.headerShape
          */
-        headerShape: 'callout',
+
+        /**
+         * Options for the tooltip header when [tooltip.split](#tooltip.split)
+         * is enabled. The header is the box containing the X value in a split
+         * tooltip.
+         *
+         * @sample {highcharts} highcharts/tooltip/header
+         *         Header options for split tooltip
+         * @sample {highstock} stock/tooltip/header
+         *         Header options for split tooltip
+         * @since v13.0.0
+         */
+        header: {
+            /**
+             * Background color for the tooltip header when
+             * [tooltip.split](#tooltip.split) is enabled.
+             *
+             * @sample {highcharts} highcharts/tooltip/header
+             *         Header options for split tooltip
+             * @sample {highstock} stock/tooltip/header
+             *         Header options for split tooltip
+             *
+             * @type {Highcharts.ColorType}
+             * @apioption tooltip.header.backgroundColor
+             */
+            /**
+             * Border color for the tooltip header when
+             * [tooltip.split](#tooltip.split) is enabled.
+             *
+             * @sample {highcharts} highcharts/tooltip/header
+             *         Header options for split tooltip
+             * @sample {highstock} stock/tooltip/header
+             *         Header options for split tooltip
+             * @type {Highcharts.ColorType}
+             * @apioption tooltip.header.borderColor
+             */
+            /**
+             * The width of the border for the tooltip header when
+             * [tooltip.split](#tooltip.split) is enabled.
+             *
+             * @sample {highcharts} highcharts/tooltip/header
+             *         Header options for split tooltip
+             * @sample {highstock} stock/tooltip/header
+             *         Header options for split tooltip
+             * @type {number}
+             * @apioption tooltip.header.borderWidth
+             */
+            /**
+             * Distance between the plot area and the header (except the
+             * chevron) in a split tooltip, in pixels. The default value makes
+             * the header text align with the axis labels.
+             *
+             * @sample {highcharts} highcharts/tooltip/header
+             *         Header options for split tooltip
+             * @sample {highstock} stock/tooltip/header
+             *         Header options for split tooltip
+             */
+            distance: 5,
+            /**
+             * The name of a symbol to use for the border around the tooltip
+             * header. Applies only when [tooltip.split](#tooltip.split) is
+             * enabled.
+             *
+             * Custom callbacks for symbol path generation can also be added to
+             * `Highcharts.SVGRenderer.prototype.symbols` the same way as for
+             * [series.marker.symbol](plotOptions.line.marker.symbol).
+             *
+             * @see [tooltip.shape](#tooltip.shape)
+             *
+             * @sample {highstock} stock/tooltip/split-positioner/
+             *         Different shapes for header and split boxes
+             */
+            shape: 'callout',
+            /**
+             * CSS styles for the tooltip header. The default is `{ fontSize:
+             * '1em' }`, ensuring that the header text is the same size as the
+             * axis labels.
+             *
+             * @sample {highcharts} highcharts/tooltip/header
+             *         Header options for split tooltip
+             * @sample {highstock} stock/tooltip/header
+             *         Header options for split tooltip
+             */
+            style: {
+                /** @internal */
+                fontSize: '1em'
+            }
+        },
 
         /**
          * The number of milliseconds to wait until the tooltip is hidden when
