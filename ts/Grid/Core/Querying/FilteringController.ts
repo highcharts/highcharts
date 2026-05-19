@@ -321,7 +321,10 @@ class FilteringController {
                 .getIndividualColumnOptions(columnId)
                 ?.filtering;
 
-            if (!filteringOptions || !sourceColumnId) {
+            if (
+                !filteringOptions ||
+                !sourceColumnId
+            ) {
                 continue;
             }
 

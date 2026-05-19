@@ -27,16 +27,19 @@
 
 import type { Column, ColumnDataType } from '../../Column';
 import type { Condition } from './FilteringTypes';
-import type FilterCell from './FilterCell.js';
-import type { FilteringCondition } from '../../../Options';
+import type FilterCell from './FilterCell';
+import type {
+    FilteringCondition
+} from '../../../Options';
 
-import GU from '../../../GridUtils.js';
+import { makeHTMLElement } from '../../../GridUtils.js';
 import FilteringController from '../../../Querying/FilteringController.js';
 import Globals from '../../../Globals.js';
 import { conditionsMap } from './FilteringTypes.js';
-import { defined, fireEvent } from '../../../../../Shared/Utilities.js';
-
-const { makeHTMLElement } = GU;
+import {
+    defined,
+    fireEvent
+} from '../../../../../Shared/Utilities.js';
 
 /* *
  *
@@ -145,9 +148,9 @@ class ColumnFiltering {
             this.filterInput.value = value ?? '';
         }
 
+        const conditions = this.getAllowedConditions();
         if (this.filterSelect) {
-            this.filterSelect.value =
-                condition ?? conditionsMap[this.column.dataType][0];
+            this.filterSelect.value = condition ?? conditions[0];
         }
 
         await this.applyFilter({ value, condition });
@@ -161,13 +164,17 @@ class ColumnFiltering {
     public refreshState(): void {
         const colFilteringOptions = this.column.options.filtering;
         if (this.filterSelect) {
+            const conditions = this.getAllowedConditions();
             this.filterSelect.value =
                 colFilteringOptions?.condition ??
-                conditionsMap[this.column.dataType][0];
+                conditions[0];
         }
 
         if (this.filterInput) {
-            this.filterInput.value = '' + (colFilteringOptions?.value ?? '');
+            this.filterInput.value =
+                '' + (
+                    colFilteringOptions?.value ?? ''
+                );
         }
 
         if (this.clearButton) {
@@ -264,7 +271,7 @@ class ColumnFiltering {
 
         if (
             result.condition &&
-            conditionsMap[this.column.dataType].includes(result.condition)
+            this.getAllowedConditions().includes(result.condition)
         ) {
             void this.applyFilter(result);
         }
@@ -448,9 +455,9 @@ class ColumnFiltering {
             'filter-select-' + column.viewport.grid.id + '-' + column.id
         );
 
-        const conditions = conditionsMap[column.dataType];
-        const langConditions = this.column.viewport.grid.options
-            ?.lang?.columnFilteringConditions ?? {};
+        const conditions = this.getAllowedConditions();
+        const langConditions = column.viewport.grid.options?.lang
+            ?.columnFilteringConditions ?? {};
 
         // Render the options.
         for (const condition of conditions) {
@@ -462,7 +469,7 @@ class ColumnFiltering {
         }
 
         // Use condition from options or first available condition as default.
-        const filteringCondition = this.column.options.filtering?.condition;
+        const filteringCondition = column.options.filtering?.condition;
         if (filteringCondition && conditions.includes(filteringCondition)) {
             this.filterSelect.value = filteringCondition;
         } else {
@@ -533,6 +540,32 @@ class ColumnFiltering {
         } else if (input?.disabled) {
             input.disabled = false;
         }
+    }
+
+    /**
+     * Returns the list of filtering conditions available for the current
+     * column, optionally restricted by column filtering options.
+     */
+    private getAllowedConditions(): readonly Condition[] {
+        const column = this.column;
+        const grid = column.viewport.grid;
+        const defaultTypeConditions = conditionsMap[column.dataType];
+        const columnConditions =
+            grid.columnPolicy.getIndividualColumnOptions(column.id)
+                ?.filtering?.conditions ??
+            grid.options?.columnDefaults?.filtering?.conditions;
+
+        if (!columnConditions?.length) {
+            return defaultTypeConditions;
+        }
+
+        // Filter configured conditions by default data type conditions.
+        const allowedSet = new Set(columnConditions as readonly Condition[]);
+        const allowed = defaultTypeConditions.filter((c): boolean =>
+            allowedSet.has(c)
+        );
+
+        return allowed.length ? allowed : defaultTypeConditions;
     }
 }
 

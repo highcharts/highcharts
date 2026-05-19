@@ -563,6 +563,9 @@ export class Grid {
 
         for (let i = 0, iEnd = newColumnOptions.length; i < iEnd; ++i) {
             const newOptions = newColumnOptions[i];
+            if (!newOptions) {
+                continue;
+            }
             const colOptionsIndex =
                 this.columnPolicy.getColumnOptionIndex(newOptions.id) ?? -1;
 
