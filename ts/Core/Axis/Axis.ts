@@ -4440,7 +4440,7 @@ class Axis {
      * @private
      */
     public saveOld(): void {
-        this.old = {
+        this.old = isNumber(this.min) ? {
             len: this.len,
             max: this.max,
             min: this.min,
@@ -4448,7 +4448,7 @@ class Axis {
             transA: this.transA,
             userMax: this.userMax,
             userMin: this.userMin
-        };
+        } : void 0;
     }
 
     /**
