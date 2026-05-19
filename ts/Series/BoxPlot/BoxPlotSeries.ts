@@ -20,6 +20,10 @@
 
 import type BoxPlotPoint from './BoxPlotPoint';
 import type BoxPlotSeriesOptions from './BoxPlotSeriesOptions';
+import type {
+    BoxPlotDataLabelOptions,
+    BoxPlotPointValKey
+} from './BoxPlotSeriesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
@@ -34,7 +38,8 @@ import {
     extend,
     merge,
     pick,
-    relativeLength
+    relativeLength,
+    splat
 } from '../../Shared/Utilities.js';
 
 /* *
@@ -82,6 +87,146 @@ class BoxPlotSeries extends ColumnSeries {
      *  Functions
      *
      * */
+
+    /**
+     * Draw the data labels
+     * @internal
+     */
+    public drawDataLabels(): void {
+        const series = this,
+            points = series.points,
+            originalOptions = series.options.dataLabels,
+            pointArrayMap = series.pointArrayMap,
+            typePlotOptions = (series.chart.options.plotOptions as Record<string,
+                { dataLabels?: BoxPlotDataLabelOptions |
+                    Array<BoxPlotDataLabelOptions> } |
+                undefined>)[series.type],
+            savedTypePlotDL = typePlotOptions?.dataLabels;
+
+        if (!series.hasDataLabels?.()) {
+            return;
+        }
+
+        const dataLabelOptions = splat(
+                originalOptions || {}
+            ) as Array<BoxPlotDataLabelOptions>,
+            dlDefaults = splat(
+                BoxPlotSeries.defaultOptions.dataLabels || {}
+            )[0] as BoxPlotDataLabelOptions,
+            resolvedKeys: Array<BoxPlotPointValKey> = [],
+            pointCount = points.length,
+            plotYs: Array<BoxPlotPoint['plotY']> = [],
+            ys: Array<BoxPlotPoint['y']> = [],
+            belows: Array<BoxPlotPoint['below']> = [],
+            dlBoxes: Array<BoxPlotPoint['dlBox']> = [],
+            labelDlBoxes: Array<BoxPlotPoint['dlBox']> = [];
+
+        for (let i = 0; i < pointCount; ++i) {
+            const point = points[i],
+                shapeArgs = point.shapeArgs;
+
+            plotYs[i] = point.plotY;
+            ys[i] = point.y;
+            belows[i] = point.below;
+            dlBoxes[i] = point.dlBox;
+            if (shapeArgs) {
+                labelDlBoxes[i] = {
+                    x: shapeArgs.x,
+                    y: 0,
+                    width: shapeArgs.width,
+                    height: 0
+                };
+            }
+        }
+
+        if (typePlotOptions) {
+            typePlotOptions.dataLabels = void 0;
+        }
+
+        for (const userLabelOptions of dataLabelOptions) {
+            const rawKey = userLabelOptions.pointValKey,
+                pointValKey: BoxPlotPointValKey = (
+                    rawKey && pointArrayMap.indexOf(rawKey) > -1
+                ) ?
+                    rawKey :
+                    (series.pointValKey as BoxPlotPointValKey),
+                plotKey = (pointValKey + 'Plot') as
+                    `${BoxPlotPointValKey}Plot`,
+                labelOptions: BoxPlotDataLabelOptions = merge(
+                    dlDefaults,
+                    userLabelOptions
+                );
+
+            labelOptions.align = userLabelOptions.align ?? 'center';
+            labelOptions.verticalAlign = userLabelOptions.verticalAlign ?? (
+                pointValKey === 'low' ? 'top' : 'bottom'
+            );
+            resolvedKeys.push(pointValKey);
+            series.options.dataLabels = labelOptions;
+
+            for (let i = 0; i < pointCount; ++i) {
+                const point = points[i],
+                    plotY = point[plotKey],
+                    dlBox = labelDlBoxes[i];
+
+                point.y = point[pointValKey];
+                point.plotY = plotY;
+                point.below = pointValKey === 'low';
+                if (typeof plotY === 'number' && dlBox) {
+                    dlBox.y = plotY;
+                    point.dlBox = dlBox;
+                }
+
+                point.dataLabel = point.boxPlotLabels?.[pointValKey];
+                point.dataLabels = point.dataLabel ? [point.dataLabel] : [];
+            }
+
+            ColumnSeries.prototype.drawDataLabels.call(series, points);
+
+            for (let i = 0; i < pointCount; ++i) {
+                const point = points[i],
+                    labels = point.boxPlotLabels || {};
+                if (point.dataLabel) {
+                    labels[pointValKey] = point.dataLabel;
+                } else {
+                    delete labels[pointValKey];
+                }
+                point.boxPlotLabels = labels;
+            }
+        }
+
+        series.options.dataLabels = originalOptions;
+        if (typePlotOptions) {
+            typePlotOptions.dataLabels = savedTypePlotDL;
+        }
+
+        for (let i = 0; i < pointCount; ++i) {
+            const point = points[i];
+
+            point.plotY = plotYs[i];
+            point.y = ys[i];
+            point.below = belows[i];
+            point.dlBox = dlBoxes[i];
+
+            const labels = point.boxPlotLabels || {};
+            for (const key of pointArrayMap as Array<BoxPlotPointValKey>) {
+                if (resolvedKeys.indexOf(key) === -1) {
+                    labels[key]?.destroy();
+                    delete labels[key];
+                }
+            }
+
+            const finalLabels: Array<SVGElement> = [];
+            for (const key of resolvedKeys) {
+                const label = labels[key];
+                if (label) {
+                    finalLabels.push(label);
+                }
+            }
+            point.dataLabels = finalLabels;
+            point.dataLabel = finalLabels[0];
+        }
+    }
 
     // Get presentational attributes
     public pointAttribs(): SVGAttributes {
@@ -408,8 +553,6 @@ extend(BoxPlotSeries.prototype, {
     pointArrayMap: ['low', 'q1', 'median', 'q3', 'high'],
     // Defines the top of the tracker
     pointValKey: 'high',
-    // Disable data labels for box plot
-    drawDataLabels: noop,
     setStackedPoints: noop // #3890
 });
 
