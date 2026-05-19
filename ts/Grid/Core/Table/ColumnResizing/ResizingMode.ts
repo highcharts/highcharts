@@ -28,7 +28,7 @@ import type Table from '../Table';
 import type Column from '../Column.js';
 import type ColumnsResizer from '../Actions/ColumnsResizer';
 
-import { defined, getStyle } from '../../../../Shared/Utilities.js';
+import { clamp, defined, getStyle } from '../../../../Shared/Utilities.js';
 
 
 /* *
@@ -143,7 +143,6 @@ abstract class ResizingMode {
     public getColumnWidth(column: Column): number {
         const vp = this.viewport;
         const widthValue = this.columnWidths[column.id];
-        const minWidth = ResizingMode.getMinWidth(column);
 
         if (!defined(widthValue)) {
             const tbody = vp.tbodyElement;
@@ -156,16 +155,19 @@ abstract class ResizingMode {
                 Object.keys(this.columnWidths).length;
 
             // If undefined width:
-            return Math.max(freeWidth / freeColumns, minWidth);
+            return ResizingMode.fitWidth(column, freeWidth / freeColumns);
         }
 
         if (this.columnWidthUnits[column.id] === 0) {
             // If px:
-            return widthValue;
+            return ResizingMode.fitWidth(column, widthValue);
         }
 
         // If %:
-        return Math.max(vp.getWidthFromRatio(widthValue / 100), minWidth);
+        return ResizingMode.fitWidth(
+            column,
+            vp.getWidthFromRatio(widthValue / 100)
+        );
     }
 
     /**
@@ -240,6 +242,10 @@ abstract class ResizingMode {
     protected static getMinWidth(column: Column): number {
         const tableColumnEl = column.cells[0]?.htmlElement;
         const headerColumnEl = column.header?.htmlElement;
+        const minWidth = ResizingMode.getOptionWidth(
+            column,
+            column.options.minWidth
+        );
 
         const getElPaddings = (el: HTMLElement): number => (
             (getStyle(el, 'padding-left', true) || 0) +
@@ -248,7 +254,7 @@ abstract class ResizingMode {
             (getStyle(el, 'border-right', true) || 0)
         );
 
-        let result = ResizingMode.MIN_COLUMN_WIDTH;
+        let result = Math.max(ResizingMode.MIN_COLUMN_WIDTH, minWidth ?? 0);
         if (tableColumnEl) {
             result = Math.max(result, getElPaddings(tableColumnEl));
         }
@@ -259,27 +265,107 @@ abstract class ResizingMode {
     }
 
     /**
+     * Returns the configured width option in pixels.
+     *
+     * @param column
+     * The column to resolve the width for.
+     *
+     * @param width
+     * The width option to resolve.
+     *
+     * @returns
+     * The width in pixels.
+     */
+    protected static getOptionWidth(
+        column: Column,
+        width?: number | string
+    ): number | undefined {
+        if (!defined(width)) {
+            return;
+        }
+
+        if (typeof width === 'number') {
+            return width;
+        }
+
+        const value = parseFloat(width);
+
+        if (width.endsWith('%')) {
+            return column.viewport.getWidthFromRatio(value / 100);
+        }
+
+        return value;
+    }
+
+    /**
+     * Returns the maximum width of the column.
+     *
+     * @param column
+     * The column to get the maximum width for.
+     *
+     * @returns
+     * The maximum width in pixels.
+     */
+    protected static getMaxWidth(column: Column): number | undefined {
+        const maxWidth = ResizingMode.getOptionWidth(
+            column,
+            column.options.maxWidth
+        );
+
+        if (!defined(maxWidth)) {
+            return;
+        }
+
+        return Math.max(maxWidth, ResizingMode.getMinWidth(column));
+    }
+
+    /**
+     * Clamps the width to the column width constraints.
+     *
+     * @param column
+     * The column to clamp the width for.
+     *
+     * @param width
+     * The width in pixels.
+     *
+     * @returns
+     * The clamped width in pixels.
+     */
+    protected static fitWidth(column: Column, width: number): number {
+        const minWidth = ResizingMode.getMinWidth(column);
+        const maxWidth = ResizingMode.getMaxWidth(column);
+
+        return clamp(width, minWidth, maxWidth ?? Number.POSITIVE_INFINITY);
+    }
+
+    /**
      * Calculates defined (px and %) widths of all columns with non-undefined
      * widths in the grid. Total in px.
      */
     private calculateOccupiedWidth(): number {
         const vp = this.viewport;
         let occupiedWidth = 0;
-        let unit: number, width: number;
+        let unit: number, width: number | undefined;
 
-        const columnIds = Object.keys(this.columnWidths);
-        let columnId: string;
-        for (let i = 0, iEnd = columnIds.length; i < iEnd; ++i) {
-            columnId = columnIds[i];
-            unit = this.columnWidthUnits[columnId];
+        for (let i = 0, iEnd = vp.columns.length; i < iEnd; ++i) {
+            const column = vp.columns[i];
+            width = this.columnWidths[column.id];
 
-            if (unit === 0) {
-                occupiedWidth += this.columnWidths[columnId];
+            if (!defined(width)) {
                 continue;
             }
 
-            width = this.columnWidths[columnId];
-            occupiedWidth += vp.getWidthFromRatio(width / 100);
+            unit = this.columnWidthUnits[column.id];
+
+            if (unit === 0) {
+                occupiedWidth += ResizingMode.fitWidth(column, width);
+                continue;
+            }
+
+            occupiedWidth += ResizingMode.fitWidth(
+                column,
+                vp.getWidthFromRatio(width / 100)
+            );
         }
 
         return occupiedWidth;

@@ -539,15 +539,29 @@ export interface ColumnOptions {
 
     /**
      * The width of the column. It can be set in pixels, as a percentage of the
-     * table width, or `'auto'`. If unset or `'auto'`, the width is distributed
-     * evenly between columns without a fixed width.
+     * table width, or `'auto'`. If unset or `'auto'`, the remaining table
+     * width is distributed between columns without an explicit width.
      *
-     * This option does not work with the `resizing` option set to `full`.
-     *
-     * If the `resizing` option is undefined, it is set to `mixed` and the
-     * `width` option is used to set the width of the column.
+     * The final width is also constrained by `minWidth` and `maxWidth`, if
+     * they are set.
      */
     width?: number | string;
+
+    /**
+     * The minimum width of the column. It can be set in pixels or as a
+     * percentage of the table width.
+     *
+     * @sample grid-lite/options/column-width-limits Column width limits
+     */
+    minWidth?: number | string;
+
+    /**
+     * The maximum width of the column. It can be set in pixels or as a
+     * percentage of the table width.
+     *
+     * @sample grid-lite/options/column-width-limits Column width limits
+     */
+    maxWidth?: number | string;
 
     /**
      * Filtering options for the column.
