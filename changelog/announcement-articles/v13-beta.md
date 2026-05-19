@@ -426,7 +426,6 @@ A few smaller changes in v13 are the kind users may not name, but they will feel
 * **Rounded corners for the plot area**. The new rounded plot area option gives
   cartesian charts, maps and other rectangular visualizations a softer frame.
   Elements inside the plot area, including axes, plot bands and grid lines, are
-  clipped to match the rounding. Enable it by setting
-  [`chart.plotBorderRadius`](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/trettan/samples/highcharts/chart/plotborderradius/).
+  clipped to match the rounding. Enable it by setting `chart.plotBorderRadius`.
 
 * **Treegrid facelift for Gantt**. The Gantt treegrid has been brought closer to the rest of the grid-axis styling, with updated default colors and a cleaner visual fit.

@@ -4037,7 +4037,7 @@ class Axis {
      * @function Highcharts.Axis#renderLine
      */
     public renderLine(): void {
-        const { chart, options } = this;
+        const { chart, offset = 0, options } = this;
         this.axisLine ||= chart.renderer.path()
             .addClass('highcharts-axis-line')
             .attr(chart.styledMode ? {} : {
@@ -4046,7 +4046,7 @@ class Axis {
                 zIndex: 7
             })
             .clip(
-                this.clippable && this.offset <= 0 ?
+                this.clippable && offset <= 0 ?
                     chart.plotClipOuter :
                     void 0
             )
