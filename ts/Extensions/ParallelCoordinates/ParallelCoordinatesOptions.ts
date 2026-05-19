@@ -48,6 +48,7 @@ interface ParallelCoordinatesOptions {
      * @since    6.0.0
      * @product  highcharts
      * @requires modules/parallel-coordinates
+     * @default  false
      */
     parallelCoordinates?: boolean;
 
