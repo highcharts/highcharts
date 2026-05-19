@@ -2,7 +2,7 @@
 
 /* Grid Pro TreeView styles */
 
-.hcg-cell-tree .hcg-tree {
+.hcg-cell-tree .hcg-disclosure {
     --ig-tree-indent-size: 16px;
     --ig-tree-toggle-gap: 5px;
     --ig-tree-toggle-slot-size: 20px;
@@ -12,7 +12,7 @@
     min-width: 0;
     padding-left: calc(var(--ig-tree-depth, 0) * var(--ig-tree-indent-size));
 
-    .hcg-tree-toggle {
+    .hcg-disclosure-toggle {
         flex: 0 0 var(--ig-tree-toggle-slot-size);
         display: flex;
         align-items: center;
@@ -20,12 +20,12 @@
         height: var(--ig-tree-toggle-slot-size);
         margin-right: var(--ig-tree-toggle-gap);
 
-        button[aria-expanded="true"] > svg {
+        button[aria-expanded="true"] > .hcg-disclosure-icon {
             transform: rotate(90deg);
         }
     }
 
-    .hcg-tree-value {
+    .hcg-disclosure-value {
         flex: 1 1 auto;
         min-width: 0;
     }

@@ -30,7 +30,7 @@ async function getTreeColumnValues(
     return page
         .locator(
             `tbody .hcg-row td[data-column-id="${columnId}"] ` +
-            '.hcg-tree-value'
+            '.hcg-disclosure-value'
         )
         .evaluateAll((elements): string[] =>
             elements.map((element): string => element.textContent || '')

@@ -92,6 +92,20 @@ export function decorateTreeViewCell(
         TreeViewGlobals.classNames.rowTree,
         !!context
     );
+    rowElement.classList.toggle(
+        TreeViewGlobals.classNames.rowExpanded,
+        !!(
+            context?.rowState.hasChildren &&
+            context.rowState.isExpanded
+        )
+    );
+    rowElement.classList.toggle(
+        TreeViewGlobals.classNames.rowCollapsed,
+        !!(
+            context?.rowState.hasChildren &&
+            !context.rowState.isExpanded
+        )
+    );
 
     cell.htmlElement.classList.toggle(
         TreeViewGlobals.classNames.cellTree,
@@ -126,10 +140,10 @@ export function decorateTreeViewCell(
 
     const cellElement = cell.htmlElement;
     const wrapper = document.createElement('div');
-    wrapper.className = TreeViewGlobals.classNames.tree;
+    wrapper.className = TreeViewGlobals.classNames.disclosure;
 
     const toggleContainer = document.createElement('span');
-    toggleContainer.className = TreeViewGlobals.classNames.toggle;
+    toggleContainer.className = TreeViewGlobals.classNames.disclosureToggle;
 
     if (rowState.hasChildren) {
         const toggleButton = document.createElement('button');
@@ -150,7 +164,7 @@ export function decorateTreeViewCell(
             'chevronRight',
             grid.options?.rendering?.icons
         );
-        toggleIcon.classList.add(TreeViewGlobals.classNames.toggleIcon);
+        toggleIcon.classList.add(TreeViewGlobals.classNames.disclosureIcon);
         toggleIcon.setAttribute('aria-hidden', 'true');
         toggleButton.appendChild(toggleIcon);
 
@@ -158,7 +172,7 @@ export function decorateTreeViewCell(
     }
 
     const valueContainer = document.createElement('span');
-    valueContainer.className = TreeViewGlobals.classNames.value;
+    valueContainer.className = TreeViewGlobals.classNames.disclosureValue;
 
     const pathDisplayValue = getPathSegmentDisplayValue(
         cell.value,
