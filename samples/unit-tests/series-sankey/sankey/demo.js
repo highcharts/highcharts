@@ -607,17 +607,16 @@ QUnit.test('Sankey and circular data', function (assert) {
     chart.series[0].redraw();
 
     const shapeArgs = chart.series[0].nodes[0].shapeArgs;
-    assert.close(
+    assert.strictEqual(
         shapeArgs.x,
-        76.16666666666666,
-        1,
-        '#16080: Node should be translated correctly after redraw'
+        chart.series[0].firstColCircLinkMaxH + chart.series[0].circularLinkBend,
+        '#16080: Node should be translated correctly after redraw (x)'
     );
     assert.close(
         shapeArgs.y,
-        84,
-        1,
-        '#16080: Node should be translated correctly after redraw'
+        (chart.plotHeight - chart.series[0].nodes[0].shapeArgs.height) / 2,
+        0.5,
+        '#16080: Node should be translated correctly after redraw (y)'
     );
 
     // Circular data links
