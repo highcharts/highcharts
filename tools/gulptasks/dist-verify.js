@@ -18,8 +18,7 @@ const HIGHCHARTS_PATHS = [
 ];
 const DASHBOARDS_PATHS = [
     'dashboards/code/css/dashboards.css',
-    'dashboards/code/gfx/dashboards-icons',
-    'datagrid/js-gzip/css/datagrid.css'
+    'dashboards/code/gfx/dashboards-icons'
 ];
 
 /**
@@ -47,7 +46,6 @@ async function distVerify(argv) {
 
     const pathsThatShouldBeIgnored = [
         'highcharts/code/css/dashboards.css',
-        'highcharts/code/css/datagrid.css',
         'highcharts/gfx/dashboards-icons'
     ];
 

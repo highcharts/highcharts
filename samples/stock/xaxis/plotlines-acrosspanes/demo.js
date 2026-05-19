@@ -1,16 +1,24 @@
 Highcharts.stockChart('container', {
+    plotOptions: {
+        series: {
+            pointStart: '2025-07-30',
+            pointIntervalUnit: 'day'
+        }
+    },
     series: [{
-        data: [1, 2, 3, 4]
+        data: [1, 3, 2, 4, 3]
     }, {
-        data: [1, 2, 3, 4],
+        data: [4, 2, 3, 1, 3],
         yAxis: 1,
         xAxis: 1
     }],
     yAxis: [{
-        height: '50%'
+        height: '48%',
+        lineWidth: 1
     }, {
-        height: '50%',
-        top: '50%'
+        height: '48%',
+        lineWidth: 1,
+        top: '52%'
     }],
     xAxis: [{
         tickLength: 0,
@@ -19,7 +27,7 @@ Highcharts.stockChart('container', {
             enabled: false
         },
         plotLines: [{
-            value: 0.75,
+            value: '2025-07-31',
             width: 1,
             color: '#000000',
             acrossPanes: false,
@@ -27,19 +35,19 @@ Highcharts.stockChart('container', {
                 text: 'Top pane'
             }
         }, {
-            value: 1.5,
+            value: '2025-08-01',
             width: 1,
             color: '#000000',
             label: {
                 text: 'Both panes'
             }
         }],
-        height: '50%'
+        height: '48%'
     }, {
-        top: '50%',
-        height: '50%',
+        top: '52%',
+        height: '48%',
         plotLines: [{
-            value: 2.25,
+            value: '2025-08-02',
             width: 1,
             color: '#000000',
             acrossPanes: false,

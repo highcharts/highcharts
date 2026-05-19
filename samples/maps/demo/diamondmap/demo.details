@@ -1,5 +1,5 @@
 ---
-name: 'Tile map, diamonds'
+name: 'Tilemap, diamonds'
 authors:
   - Øystein Moseng
 js_wrap: b

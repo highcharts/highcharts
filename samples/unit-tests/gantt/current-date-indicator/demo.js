@@ -196,17 +196,16 @@
             customFormat,
             chart,
             axis,
-            cdi;
+            cdi,
+            formatterCtx;
 
         // Custom formatter
         defaultConfig.xAxis[0].currentDateIndicator = {
             label: {
-                formatter: function () {
+                formatter: (value, _format, ctx) => {
                     var dateFormat = '%a, %b %d %Y',
-                        date = Highcharts.dateFormat(
-                            dateFormat,
-                            this.options.value
-                        );
+                        date = Highcharts.dateFormat(dateFormat, value);
+                    formatterCtx = ctx;
                     return 'Today: ' + date;
                 }
             }
@@ -219,6 +218,12 @@
         assert.ok(
             formatRegex.test(cdi.label.textStr),
             'Custom formatter is applied when no custom format is defined'
+        );
+        assert.strictEqual(
+            formatterCtx,
+            cdi,
+            'Current date indicator formatter got plot line ctx ' +
+            'as last argument'
         );
 
         // Custom format

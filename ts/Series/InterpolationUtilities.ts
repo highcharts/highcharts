@@ -1,10 +1,12 @@
 /* *
  *
- *  (c) 2010-2025 Hubert Kozik
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Hubert Kozik
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -21,15 +23,10 @@ import type GeoHeatmapSeries from './GeoHeatmap/GeoHeatmapSeries';
 import type Point from '../Core/Series/Point';
 
 import H from '../Core/Globals.js';
+import { defined, pick } from '../Shared/Utilities.js';
 const {
     doc
 } = H;
-
-import U from '../Core/Utilities.js';
-const {
-    defined,
-    pick
-} = U;
 
 /* *
  *
@@ -90,7 +87,9 @@ function getContext(
         canvas,
         context
     } = series;
-    if (canvas && context) {
+
+    // We can trust that the context is canvas when clearRect is present.
+    if (canvas && context?.clearRect) {
         context.clearRect(0, 0, canvas.width, canvas.height);
     } else {
         series.canvas = doc.createElement('canvas');

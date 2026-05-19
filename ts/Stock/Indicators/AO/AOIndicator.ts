@@ -1,8 +1,8 @@
 /* *
  *
- *  License: www.highcharts.com/license
- *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  * */
 
@@ -16,7 +16,7 @@
 
 import type AOOptions from './AOOptions';
 import type AOPoint from './AOPoint';
-import type { IndicatorLinkedSeriesLike } from '../IndicatorLike';
+import type { IndicatorLinkedSeriesBase } from '../IndicatorBase';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 
@@ -30,13 +30,12 @@ const {
     },
     sma: SMAIndicator
 } = SeriesRegistry.seriesTypes;
-import U from '../../../Core/Utilities.js';
-const {
-    extend,
-    merge,
+import {
     correctFloat,
-    isArray
-} = U;
+    extend,
+    isArray,
+    merge
+} from '../../../Shared/Utilities.js';
 
 /* *
  *
@@ -47,7 +46,7 @@ const {
 /**
  * The AO series type
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.ao
  *
@@ -92,7 +91,7 @@ class AOIndicator extends SMAIndicator {
          * @sample {highstock} stock/indicators/ao/
          *         greaterBarColor
          *
-         * @type  {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @type  {Highcharts.ColorType}
          * @since 7.0.0
          */
         greaterBarColor: Palette.positiveColor,
@@ -104,7 +103,7 @@ class AOIndicator extends SMAIndicator {
          * @sample {highstock} stock/indicators/ao/
          *         lowerBarColor
          *
-         * @type  {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @type  {Highcharts.ColorType}
          * @since 7.0.0
          */
         lowerBarColor: Palette.negativeColor,
@@ -165,7 +164,7 @@ class AOIndicator extends SMAIndicator {
     }
 
     public getValues<TLinkedSeries extends LineSeries>(
-        series: TLinkedSeries&IndicatorLinkedSeriesLike
+        series: TLinkedSeries&IndicatorLinkedSeriesBase
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
         const shortPeriod = 5,
             longPeriod = 34,
@@ -253,6 +252,7 @@ class AOIndicator extends SMAIndicator {
  *
  * */
 
+/** @internal */
 interface AOIndicator {
     nameBase: string;
     nameComponents: Array<string>|undefined;
@@ -281,6 +281,7 @@ extend(AOIndicator.prototype, {
  *
  * */
 
+/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         ao: typeof AOIndicator;
@@ -295,6 +296,7 @@ SeriesRegistry.registerSeriesType('ao', AOIndicator);
  *
  * */
 
+/** @internal */
 export default AOIndicator;
 
 /* *

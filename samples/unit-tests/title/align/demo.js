@@ -37,6 +37,30 @@ QUnit.test(
             'The subtitle should initially be centered'
         );
 
+        chart.update({
+            subtitle: {
+                align: 'right'
+            }
+        });
+
+        assert.strictEqual(
+            chart.subtitle.alignOptions.align,
+            'right',
+            'The subtitle should be right-aligned after explicit update'
+        );
+
+        chart.update({
+            subtitle: {
+                align: void 0
+            }
+        });
+
+        assert.strictEqual(
+            chart.subtitle.alignOptions.align,
+            'center',
+            'The subtitle should be centered after resetting alignment (#24323)'
+        );
+
         chart.setSize(400);
 
         assert.ok(

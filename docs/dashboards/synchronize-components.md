@@ -15,7 +15,7 @@ Not every component supports all synchronization types. This is an overview of w
 |---|---|---|---|---|
 |[HTML](https://www.highcharts.com/docs/dashboards/html-component)|no|no|no|no|
 |[Highcharts](https://www.highcharts.com/docs/dashboards/highcharts-component)|[yes](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_HighchartsComponent_HighchartsComponentOptions.SyncOptions#highlight)|[yes](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_HighchartsComponent_HighchartsComponentOptions.SyncOptions#extremes)|[yes](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_HighchartsComponent_HighchartsComponentOptions.SyncOptions#visibility)|no|
-|[Grid](https://www.highcharts.com/docs/dashboards/grid-component)|[yes](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_DataGridComponent_DataGridComponentOptions.SyncOptions#highlight)|[yes](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_DataGridComponent_DataGridComponentOptions.SyncOptions#extremes)|[yes](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_DataGridComponent_DataGridComponentOptions.SyncOptions#visibility)|no|
+|[Grid](https://www.highcharts.com/docs/dashboards/grid-component)|[yes](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_GridComponent_GridComponentOptions.SyncOptions#highlight)|[yes](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_GridComponent_GridComponentOptions.SyncOptions#extremes)|[yes](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_GridComponent_GridComponentOptions.SyncOptions#visibility)|no|
 |[KPI](https://www.highcharts.com/docs/dashboards/kpi-component)|no|[yes](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_KPIComponent_KPIComponentOptions.SyncOptions#extremes)|no|no|
 |[Navigator](https://www.highcharts.com/docs/dashboards/navigator-component)|no|[yes](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_NavigatorComponent_NavigatorComponentOptions.SyncOptions#extremes)|no|[yes](https://api.highcharts.com/dashboards/#interfaces/Dashboards_Components_NavigatorComponent_NavigatorComponentOptions.SyncOptions#crossfilter)|
 
@@ -55,14 +55,12 @@ Dashboards.board('container', {
       connectors: [{
           id: 'Vitamin',
           type: 'CSV',
-          options: {
-              csv: `Food,Vitamin A,Iron
-              Beef Liver,6421,6.5
-              Lamb Liver,2122,6.5
-              Cod Liver Oil,1350,0.9
-              Mackerel,388,1
-              Tuna,214,0.6`,
-          },
+          csv: `Food,Vitamin A,Iron
+          Beef Liver,6421,6.5
+          Lamb Liver,2122,6.5
+          Cod Liver Oil,1350,0.9
+          Mackerel,388,1
+          Tuna,214,0.6`,
       }]
   },
   components: [{

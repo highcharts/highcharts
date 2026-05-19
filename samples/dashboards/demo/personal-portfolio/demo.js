@@ -95,7 +95,7 @@ const getCurrentTotal = arrOfArr => {
 
 
     const { Date: dates, ...companies } =
-        timeSeriesConnector.table.getColumns();
+        timeSeriesConnector.getTable().getColumns();
 
     const processedData = Object.fromEntries(
         Object.entries(companies).map(([key, values]) => [
@@ -106,7 +106,7 @@ const getCurrentTotal = arrOfArr => {
 
     const holdings = [],
         investedAmounts = [],
-        dataGridData = [];
+        gridData = [];
 
     stockCollection.forEach(stock => {
         const { holding, investedAmount } = generatePortfolio(
@@ -123,14 +123,14 @@ const getCurrentTotal = arrOfArr => {
         lastHoldingTotal = getCurrentTotal(holdings),
         annualInvestment = 200 * 12 * holdings.length;
 
-    // Generate columns for the datagrid
+    // Generate columns for the grid
     stockCollection.forEach((stock, i) => {
         const len = holdings[i].length,
             lastHolding = holdings[i][len - 1],
             ISIN = stock.ISIN,
             tradingSymbol = stock.tradingSymbol;
 
-        dataGridData.push([
+        gridData.push([
             tradingSymbol,
             ISIN,
             Math.round(lastHolding / lastHoldingTotal * 100)
@@ -207,7 +207,6 @@ const getCurrentTotal = arrOfArr => {
                 }
             }]
         }
-
     };
 
     const riskScoreKPIOptions = {
@@ -342,64 +341,54 @@ const getCurrentTotal = arrOfArr => {
             connectors: [{
                 id: 'investment-data',
                 type: 'JSON',
-                options: {
-                    data: [dates, ...investedAmounts],
-                    orientation: 'columns',
-                    firstRowAsNames: false,
-                    dataModifier: {
-                        type: 'Math',
-                        columnFormulas: [{
-                            column: 'investmentAccumulation',
-                            formula: '=SUM(B1:ZZ1)'
-                        }]
-                    }
+                data: [dates, ...investedAmounts],
+                orientation: 'columns',
+                firstRowAsNames: false,
+                dataModifier: {
+                    type: 'Math',
+                    columnFormulas: [{
+                        column: 'investmentAccumulation',
+                        formula: '=SUM(B1:ZZ1)'
+                    }]
                 }
             }, {
                 id: 'holding-data',
                 type: 'JSON',
-                options: {
-                    data: [dates, ...holdings],
-                    orientation: 'columns',
-                    firstRowAsNames: false,
-                    dataModifier: {
-                        type: 'Math',
-                        columnFormulas: [{
-                            column: 'holdingAccumulation',
-                            formula: '=SUM(B1:ZZ1)'
-                        }]
-                    }
+                data: [dates, ...holdings],
+                orientation: 'columns',
+                firstRowAsNames: false,
+                dataModifier: {
+                    type: 'Math',
+                    columnFormulas: [{
+                        column: 'holdingAccumulation',
+                        formula: '=SUM(B1:ZZ1)'
+                    }]
                 }
             }, {
                 id: 'stock-grid',
                 type: 'JSON',
-                options: {
-                    columnNames: ['Name', 'ISIN', 'Percentage'],
-                    firstRowAsNames: false,
-                    data: dataGridData
-                }
+                columnIds: ['Name', 'ISIN', 'Percentage'],
+                firstRowAsNames: false,
+                data: gridData
             }, {
                 id: 'risk-score',
                 type: 'MorningstarRiskScore',
-                options: {
-                    ...commonMSOptions,
-                    portfolios: [
-                        portfolio
-                    ]
-                }
+                ...commonMSOptions,
+                portfolios: [
+                    portfolio
+                ]
             }, {
                 id: 'goal-analysis',
                 type: 'MorningstarGoalAnalysis',
-                options: {
-                    ...commonMSOptions,
-                    annualInvestment,
-                    assetClassWeights: [
-                        1
-                    ],
-                    currentSavings: lastHoldingTotal,
-                    includeDetailedInvestmentGrowthGraph: true,
-                    target: 100000,
-                    timeHorizon: 5
-                }
+                ...commonMSOptions,
+                annualInvestment,
+                assetClassWeights: [
+                    1
+                ],
+                currentSavings: lastHoldingTotal,
+                includeDetailedInvestmentGrowthGraph: true,
+                target: 100000,
+                timeHorizon: 5
             }]
         },
         gui: {
@@ -423,7 +412,7 @@ const getCurrentTotal = arrOfArr => {
                     }]
                 }, {
                     cells: [{
-                        id: 'data-grid'
+                        id: 'grid'
                     }, {
                         id: 'kpi-gauge-risk'
                     }]
@@ -478,12 +467,12 @@ const getCurrentTotal = arrOfArr => {
             }],
             chartOptions: walletChartOptions
         }, {
-            type: 'DataGrid',
+            type: 'Grid',
             connector: {
                 id: 'stock-grid'
             },
-            renderTo: 'data-grid',
-            dataGridOptions: {
+            renderTo: 'grid',
+            gridOptions: {
                 rendering: {
                     rows: {
                         strictHeights: true
@@ -508,7 +497,7 @@ const getCurrentTotal = arrOfArr => {
             connector: {
                 id: 'risk-score'
             },
-            columnName: 'PersonalPortfolio_RiskScore',
+            columnId: 'PersonalPortfolio_RiskScore',
             chartOptions: riskScoreKPIOptions
         }, {
             type: 'KPI',

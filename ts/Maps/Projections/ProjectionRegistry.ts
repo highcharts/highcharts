@@ -1,6 +1,15 @@
 /* *
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *  Projection registry
+ *
+ *  (c) 2021-2026 Highsoft AS
+ *
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
+ *
+ *  Authors:
+ *  - Torstein Hønsi
  *
  * */
 
@@ -24,6 +33,9 @@ import WebMercator from './WebMercator.js';
  *
  * */
 
+/**
+ * @interface Highcharts.ProjectionRegistry
+ */
 export interface ProjectionRegistry {
     EqualEarth: typeof EqualEarth;
     LambertConformalConic: typeof LambertConformalConic;
@@ -32,6 +44,9 @@ export interface ProjectionRegistry {
     WebMercator: typeof WebMercator;
 }
 
+/**
+ * @typedef {keyof Highcharts.ProjectionRegistry} Highcharts.ProjectionRegistryName
+ */
 export type ProjectionRegistryName = keyof ProjectionRegistry;
 
 /* *

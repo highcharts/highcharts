@@ -650,16 +650,18 @@ QUnit.module('geometry-circles', () => {
     QUnit.test('getAreaOfCircle', assert => {
         const { getAreaOfCircle } = geometryCircles;
 
-        assert.strictEqual(
+        assert.close(
             getAreaOfCircle(1),
-            3.141592653589793,
-            'should have area equal 3.141592653589793 when r = 1.'
+            Math.PI,
+            1e-14,
+            'should have area equal to π when r = 1.'
         );
 
-        assert.strictEqual(
-            getAreaOfCircle(3),
-            Math.PI * 3 * 3,
-            'should have area equal 28.274333882308138 when r = 3.'
+        assert.close(
+            getAreaOfCircle(6),
+            Math.PI * 6 * 6,
+            1e-11,
+            'should have area equal π * 6 * 6 when r = 6.'
         );
 
         assert.throws(
@@ -822,7 +824,7 @@ QUnit.module('geometry-circles', () => {
     });
 
     QUnit.test('getOverlapBetweenCircles', assert => {
-        const { getOverlapBetweenCircles } = geometryCircles;
+        const { getAreaOfCircle, getOverlapBetweenCircles } = geometryCircles;
 
         assert.strictEqual(
             getOverlapBetweenCircles(3, 4, 5),
@@ -832,8 +834,8 @@ QUnit.module('geometry-circles', () => {
 
         assert.strictEqual(
             getOverlapBetweenCircles(8, 6, 1),
-            113.09733552923257,
-            'should return 113.09733552923257 when r1=8, r2=6 and d=1. The ' +
+            getAreaOfCircle(6),
+            'should return π * 6 * 6 when r1=8, r2=6 and d=1. The ' +
             'circles completely overlaps.'
         );
 

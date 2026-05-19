@@ -1,10 +1,12 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Hønsi
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -28,15 +30,32 @@ import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import A from '../../Core/Animation/AnimationUtilities.js';
 const { setAnimation } = A;
 import Point from '../../Core/Series/Point.js';
-import U from '../../Core/Utilities.js';
-const {
+import {
     addEvent,
     defined,
     extend,
     isNumber,
     pick,
     relativeLength
-} = U;
+} from '../../Shared/Utilities.js';
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+declare module '../../Core/Series/PointBase' {
+    interface PointBase {
+        /**
+         * Pie series only. Whether to display a slice offset from the center.
+         *
+         * @name Highcharts.Point#sliced
+         * @type {boolean|undefined}
+         */
+        sliced?: boolean;
+    }
+}
 
 /* *
  *
@@ -52,20 +71,28 @@ class PiePoint extends Point {
      *
      * */
 
+    /** @internal */
     public angle?: number;
 
+    /** @internal */
     public delayedRendering?: boolean;
 
+    /** @internal */
     public half: number = 0;
 
+    /** @internal */
     public options!: PiePointOptions;
 
+    /** @internal */
     public series!: PieSeries;
 
+    /** @internal */
     public sliced?: boolean;
 
+    /** @internal */
     public slicedTranslation?: PiePoint.TranslationAttributes;
 
+    /** @internal */
     public startR?: number;
 
     /* *
@@ -74,12 +101,11 @@ class PiePoint extends Point {
      *
      * */
 
-    /* eslint-disable valid-jsdoc */
 
     /**
      * Extendable method for getting the path of the connector between the
      * data label and the pie slice.
-     * @private
+     * @internal
      */
     public getConnectorPath(dataLabel: SVGElement): SVGPath {
         const labelPosition = dataLabel.dataLabelPosition,
@@ -96,9 +122,7 @@ class PiePoint extends Point {
         }, labelPosition.connectorPosition, options) || [];
     }
 
-    /**
-     * @private
-     */
+    /** @internal */
     public getTranslate(): PiePoint.TranslationAttributes {
         return this.sliced && this.slicedTranslation || {
             translateX: 0,
@@ -106,9 +130,7 @@ class PiePoint extends Point {
         };
     }
 
-    /**
-     * @private
-     */
+    /** @internal */
     public haloPath(size: number): SVGPath {
         const shapeArgs = this.shapeArgs;
 
@@ -119,7 +141,7 @@ class PiePoint extends Point {
                 (shapeArgs as any).y,
                 (shapeArgs as any).r + size,
                 (shapeArgs as any).r + size, {
-                // Substract 1px to ensure the background is not bleeding
+                // Subtract 1px to ensure the background is not bleeding
                 // through between the halo and the slice (#7495).
                     innerR: (shapeArgs as any).r - 1,
                     start: (shapeArgs as any).start,
@@ -131,7 +153,7 @@ class PiePoint extends Point {
 
     /**
      * Initialize the pie slice.
-     * @private
+     * @internal
      */
     public constructor(
         series: PieSeries,
@@ -150,11 +172,9 @@ class PiePoint extends Point {
         addEvent(this, 'unselect', toggleSlice);
     }
 
-    /**
-     * Negative points are not valid (#1530, #3623, #5322)
-     * @private
-     */
+    /** @internal */
     public isValid(): boolean {
+        // Negative points are not valid (#1530, #3623, #5322)
         return isNumber(this.y) && this.y >= 0;
     }
 
@@ -168,7 +188,7 @@ class PiePoint extends Point {
      * True to show the pie slice or other data point, false to hide. If
      * undefined, the visibility is toggled.
      *
-     * @param {boolean} [redraw] Whether to redraw the chart after the point is
+     * @param {boolean} [redraw=true] Whether to redraw the chart after the point is
      * altered. If doing more operations on the chart, it is a good idea to set
      * redraw to false and call {@link Chart#redraw|chart.redraw()} after.
      *
@@ -187,7 +207,8 @@ class PiePoint extends Point {
 
     /**
      * Set or toggle whether the slice is cut out from the pie.
-     * @private
+     *
+     * @internal
      *
      * @param {boolean} sliced
      * When undefined, the slice state is toggled.
@@ -211,13 +232,7 @@ class PiePoint extends Point {
         // Redraw is true by default
         redraw = pick(redraw, true);
 
-        /**
-         * Pie series only. Whether to display a slice offset from the
-         * center.
-         * @name Highcharts.Point#sliced
-         * @type {boolean|undefined}
-         */
-        // if called without an argument, toggle
+        // If called without an argument, toggle
         this.sliced = this.options.sliced = sliced =
             defined(sliced) ? sliced : !this.sliced;
         // Update userOptions.data
@@ -236,6 +251,7 @@ class PiePoint extends Point {
  *
  * */
 
+/** @internal */
 interface PiePoint {
     connectorShapes: Record<string, DataLabel.ConnectorShapeFunction>;
 }
@@ -350,6 +366,7 @@ extend(PiePoint.prototype, {
  *
  * */
 
+/** @internal */
 namespace PiePoint {
 
     /* *
@@ -372,3 +389,18 @@ namespace PiePoint {
  * */
 
 export default PiePoint;
+
+/* *
+ *
+ *  API Options
+ *
+ * */
+
+/**
+ * Pie series only. Whether to display a slice offset from the center.
+ *
+ * @name Highcharts.Point#sliced
+ * @type {boolean|undefined}
+ */
+
+''; // Keeps doclets above in JS file

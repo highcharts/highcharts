@@ -39,53 +39,51 @@ Dashboards.board('container', {
         connectors: [{
             id: 'climate-data',
             type: 'JSON',
-            options: {
-                firstRowAsNames: false,
-                orientation: 'columns',
-                columnNames: [
-                    'Decade',
-                    'Global Avg Temperature Increase',
-                    'CO2 Concentration',
-                    'Sea Level Rise',
-                    'Extreme Weather Events',
-                    'Mapped events'
+            firstRowAsNames: false,
+            orientation: 'columns',
+            columnIds: [
+                'Decade',
+                'Global Avg Temperature Increase',
+                'CO2 Concentration',
+                'Sea Level Rise',
+                'Extreme Weather Events',
+                'Mapped events'
+            ],
+            data: [
+                [
+                    '1920-1929',
+                    '1930-1939',
+                    '1940-1949',
+                    '1950-1959',
+                    '1960-1969',
+                    '1970-1979',
+                    '1980-1989',
+                    '1990-1999',
+                    '2000-2009',
+                    '2010-2019'
                 ],
-                data: [
-                    [
-                        '1920-1929',
-                        '1930-1939',
-                        '1940-1949',
-                        '1950-1959',
-                        '1960-1969',
-                        '1970-1979',
-                        '1980-1989',
-                        '1990-1999',
-                        '2000-2009',
-                        '2010-2019'
-                    ],
-                    [0.0, 0.1, 0.1, 0.2, 0.2, 0.3, 0.4, 0.5, 0.6, 0.8],
-                    [305, 310, 312, 315, 320, 327, 340, 355, 375, 400],
-                    [0.0, 0.2, 0.4, 0.8, 1.0, 2.0, 3.0, 4.5, 6.0, 8.0],
-                    [
-                        'Rare',
-                        'Uncommon',
-                        'Uncommon',
-                        'Increasing',
-                        'More frequent',
-                        'Frequent',
-                        'Much more frequent',
-                        'Common',
-                        'Common, intense',
-                        'Extreme'
-                    ]
-                ],
-                beforeParse: function (data) {
-                    data.push(data[4].map(function (event) {
-                        return weatherEventsMap.indexOf(event);
-                    }));
-                    return data;
+                [0.0, 0.1, 0.1, 0.2, 0.2, 0.3, 0.4, 0.5, 0.6, 0.8],
+                [305, 310, 312, 315, 320, 327, 340, 355, 375, 400],
+                [0.0, 0.2, 0.4, 0.8, 1.0, 2.0, 3.0, 4.5, 6.0, 8.0],
+                [
+                    'Rare',
+                    'Uncommon',
+                    'Uncommon',
+                    'Increasing',
+                    'More frequent',
+                    'Frequent',
+                    'Much more frequent',
+                    'Common',
+                    'Common, intense',
+                    'Extreme'
+                ]
+            ],
+            beforeParse: function (data) {
+                data.push(data[4].map(function (event) {
+                    return weatherEventsMap.indexOf(event);
+                }));
+                return data;
 
-                }
             }
         }]
     },
@@ -96,12 +94,12 @@ Dashboards.board('container', {
         }
     },
     components: [{
-        renderTo: 'data-grid',
+        renderTo: 'grid',
         connector: {
             id: 'climate-data'
         },
-        type: 'DataGrid',
-        dataGridOptions: {
+        type: 'Grid',
+        gridOptions: {
             credits: {
                 enabled: false
             },

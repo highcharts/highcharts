@@ -102,7 +102,7 @@ QUnit.test('Panning inverted chart(#4077)', function (assert) {
 });
 
 QUnit.test('Zoom and pan key', function (assert) {
-    var chart = Highcharts.chart('container', {
+    const chart = Highcharts.chart('container', {
             chart: {
                 type: 'line',
                 zoomType: 'xy',
@@ -164,36 +164,38 @@ QUnit.test('Zoom and pan key', function (assert) {
                 }
             ]
         }),
+        xAxis = chart.xAxis[0],
+        yAxis = chart.yAxis[0],
         controller = new TestController(chart);
 
     chart.setSize(600, 300);
 
-    assert.strictEqual(chart.xAxis[0].min, 0, 'Initial min');
-    assert.strictEqual(chart.xAxis[0].max, 11, 'Initial max');
+    assert.strictEqual(xAxis.min, 0, 'Initial min');
+    assert.strictEqual(xAxis.max, 11, 'Initial max');
 
     // Zoom
     controller.pan([200, 150], [250, 150]);
 
-    assert.strictEqual(chart.xAxis[0].min > 0, true, 'Zoomed min');
-    assert.strictEqual(chart.xAxis[0].max < 11, true, 'Zoomed max');
+    assert.strictEqual(xAxis.min > 0, true, 'Zoomed min');
+    assert.strictEqual(xAxis.max < 11, true, 'Zoomed max');
 
-    var xExtremes = chart.xAxis[0].getExtremes();
-    var yExtremes = chart.yAxis[0].getExtremes();
+    let xExtremes = xAxis.getExtremes(),
+        yExtremes = yAxis.getExtremes();
 
     // Pan
     controller.pan([200, 100], [150, 50], { shiftKey: true });
     assert.strictEqual(
-        chart.xAxis[0].min < xExtremes.min,
+        xAxis.min < xExtremes.min,
         true,
         'Has panned horizontally'
     );
     assert.strictEqual(
-        chart.yAxis[0].min < yExtremes.min,
+        yAxis.min < yExtremes.min,
         true,
         'Has panned vertically'
     );
     assert.close(
-        chart.xAxis[0].max - chart.xAxis[0].min,
+        xAxis.max - xAxis.min,
         xExtremes.max - xExtremes.min,
         0.00001, // Roundoff error in Firefox
         'Has preserved range'
@@ -203,32 +205,88 @@ QUnit.test('Zoom and pan key', function (assert) {
     // delete cache, QUnit header is moving chart
     delete chart.pointer.chartPosition;
     controller.mouseDown(100, 200, { shiftKey: true });
-    for (var x = 110; x < 400; x += 10) {
+    for (let x = 110; x < 400; x += 10) {
         controller.mouseMove(x, 100, { shiftKey: true });
     }
     controller.mouseUp();
 
     assert.strictEqual(
-        chart.xAxis[0].max,
+        xAxis.max,
         11,
         'Chart should not pan out of data bounds (#7451)'
     );
     assert.close(
-        chart.xAxis[0].max - chart.xAxis[0].min,
+        xAxis.max - xAxis.min,
         xExtremes.max - xExtremes.min,
         0.00001, // Roundoff error in Firefox
         'Has preserved range'
     );
 
     assert.strictEqual(
-        chart.yAxis[0].allExtremes.dataMin,
+        yAxis.allExtremes.dataMin,
         20,
         '#15022: allExtremes should have the correct dataMin'
     );
     assert.strictEqual(
-        chart.yAxis[0].allExtremes.dataMax,
+        yAxis.allExtremes.dataMax,
         300,
         '#15022: allExtremes should have the correct dataMax'
+    );
+
+    chart.update({
+        chart: {
+            zooming: {
+                key: 'alt'
+            }
+        },
+        xAxis: {
+            reversed: false
+        }
+    }, false, false);
+
+    chart.zoomOut();
+
+    xExtremes = xAxis.getExtremes();
+    yExtremes = yAxis.getExtremes();
+
+    controller.pan([150, 100], [250, 150]);
+
+    assert.ok(
+        xAxis.min === xExtremes.dataMin &&
+        yAxis.max === yExtremes.max,
+        'Chart should not zoom in without zoomKey pressed, #16583.'
+    );
+
+    controller.pan([150, 100], [250, 150], { altKey: true });
+
+    assert.ok(
+        xAxis.max < xExtremes.dataMax,
+        'Has zoomed horizontally with zoomKey pressed, #16583.'
+    );
+
+    assert.ok(
+        yAxis.max < yExtremes.dataMax,
+        'Haz zoomed vertically with zoomKey pressed, #16583.'
+    );
+
+    xExtremes = xAxis.getExtremes();
+
+    controller.pan([350, 100], [150, 100], { shiftKey: true }, true);
+
+    assert.ok(
+        xAxis.min > xExtremes.min &&
+        xAxis.max > xExtremes.max,
+        'Panning should be working with panKey pressed, #16583.'
+    );
+
+    xExtremes = xAxis.getExtremes();
+
+    controller.pan([350, 100], [150, 100]);
+
+    assert.ok(
+        xAxis.min === xExtremes.min &&
+        xAxis.max === xExtremes.max,
+        'Panning should not be working when panKey is not pressed, #16583.'
     );
 });
 
@@ -352,6 +410,58 @@ QUnit.test('Stock panning (#6276, #21319)', function (assert) {
         undefined,
         `resetZoomButton should not be rendered while panning on non-ordinal
         axes. (#21319)`
+    );
+
+    chart.update({
+        chart: {
+            panning: {
+                type: 'xy'
+            }
+        },
+        xAxis: {
+            ordinal: true,
+            minRange: 36e5 * 24 * 2
+        },
+        series: [{
+            type: 'candlestick',
+            data: [
+                [1723680000000, 108.121, 112.2, 106.947, 111.854],
+                [1723766400000, 110.946, 113.73, 110.254, 113.348],
+                [1724025600000, 112.318, 117.488, 111.541, 117.488],
+                [1724112000000, 115.556, 116.888, 113.297, 114.521],
+                [1724198400000, 114.426, 116.255, 113.837, 115.491],
+                [1724284800000, 116.971, 117.628, 110.746, 111.321],
+                [1724371200000, 112.591, 115.936, 112.018, 115.731],
+                [1724630400000, 115.935, 117.448, 111.283, 113.153],
+                [1724716800000, 111.987, 115.704, 110.939, 114.898],
+                [1724803200000, 115.112, 115.301, 110.188, 112.857],
+                [1724889600000, 109.62, 112.398, 105.424, 106.219],
+                [1724976000000, 107.986, 109.991, 105.899, 107.841],
+                [1725321600000, 105.057, 105.239, 97.161, 97.804],
+                [1725408000000, 95.041, 102.128, 93.878, 95.762],
+                [1725494400000, 94.761, 98.971, 94.557, 96.769],
+                [1725580800000, 97.154, 97.253, 90.778, 92.469],
+                [1725840000000, 94.974, 96.486, 93.896, 96.414],
+                [1725926400000, 97.849, 99.293, 95.254, 98.113],
+                [1726012800000, 99.356, 106.44, 97.566, 106.186],
+                [1726099200000, 105.834, 109.412, 104.511, 107.917],
+                [1726185600000, 107.385, 108.174, 106.051, 107.403],
+                [1726444800000, 104.99, 106.239, 102.805, 104.981],
+                [1726531200000, 106.225, 106.792, 103.223, 103.906],
+                [1726617600000, 104.236, 105.864, 101.835, 101.97],
+                [1726704000000, 105.445, 107.52, 105.355, 105.912]
+            ]
+        }]
+    });
+
+    chart.xAxis[0].setExtremes(1726617600000, 1726704000000);
+    const { max } = chart.yAxis[0].getExtremes();
+    controller.pan([100, 100], [200, 200]);
+
+    assert.strictEqual(
+        chart.yAxis[0].max > max,
+        true,
+        'Panning vertically should work for candlestick series, #23430.'
     );
 });
 

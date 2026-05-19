@@ -2,11 +2,13 @@
  *
  *  Networkgraph series
  *
- *  (c) 2010-2025 Paweł Fus
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Paweł Fus
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -53,17 +55,15 @@ const {
     initDataLabelsDefer
 } = D;
 
-import U from '../../Core/Utilities.js';
-const {
+import { composeTextPath } from '../../Extensions/TextPath.js';
+import {
     addEvent,
     defined,
     extend,
     merge,
     pick
-} = U;
-
-import TextPath from '../../Extensions/TextPath.js';
-TextPath.compose(SVGElement);
+} from '../../Shared/Utilities.js';
+composeTextPath(SVGElement);
 
 /* *
  *
@@ -71,8 +71,8 @@ TextPath.compose(SVGElement);
  *
  * */
 
-declare module '../../Core/Series/SeriesLike' {
-    interface SeriesLike {
+declare module '../../Core/Series/SeriesBase' {
+    interface SeriesBase {
         layout?: ReingoldFruchtermanLayout;
     }
 }
@@ -258,6 +258,7 @@ class NetworkgraphSeries extends Series {
         if (this.options.nodes) {
             this.options.nodes.forEach(
                 function (
+                    this: NetworkgraphSeries,
                     nodeOptions: NodesComposition.PointCompositionOptions
                 ): void {
                     if (!this.nodeLookup[nodeOptions.id as any]) {
@@ -306,7 +307,7 @@ class NetworkgraphSeries extends Series {
 
     /**
      * Set index for each node. Required for proper `node.update()`.
-     * Note that links are indexated out of the box in `generatePoints()`.
+     * Note that links are indexed out of the box in `generatePoints()`.
      *
      * @private
      */
@@ -485,7 +486,7 @@ class NetworkgraphSeries extends Series {
     }
 
     /**
-     * Run pre-translation and register nodes&links to the deffered layout.
+     * Run pre-translation and register nodes&links to the deferred layout.
      * @private
      */
     public translate(): void {

@@ -1,10 +1,19 @@
 /* *
  *
- * Equal Earth projection, an equal-area projection designed to minimize
- * distortion and remain pleasing to the eye.
+ *  Equal Earth projection, an equal-area projection designed to minimize
+ *  distortion and remain pleasing to the eye.
  *
- * Invented by Bojan Šavrič, Bernhard Jenny, and Tom Patterson in 2018. It is
- * inspired by the widely used Robinson projection.
+ *  Invented by Bojan Šavrič, Bernhard Jenny, and Tom Patterson in 2018. It is
+ *  inspired by the widely used Robinson projection.
+ *
+ *  (c) 2020-2026 Highsoft AS
+ *
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
+ *
+ *  Authors:
+ *  - Torstein Hønsi
  *
  * */
 
@@ -42,6 +51,21 @@ const A1 = 1.340264,
  *
  * */
 
+/**
+ * The Equal Earth map projection is an equal-area pseudocylindrical projection
+ * for world maps, invented by Bojan Šavrič, Bernhard Jenny, and Tom Patterson
+ * in 2018. It is inspired by the widely used Robinson projection, but unlike
+ * the Robinson projection, retains the relative size of areas. The projection
+ * equations are simple to implement and fast to evaluate.
+ *
+ * We chose this as the default world map projection for Highcharts because it
+ * is visually pleasing like Robinson, but avoids the political problem of
+ * rendering high-latitude regions like Europe and North America larger than
+ * tropical regions.
+ *
+ * @class
+ * @name Highcharts.EqualEarth
+ */
 class EqualEarth implements ProjectionDefinition {
 
     /* *
@@ -50,6 +74,7 @@ class EqualEarth implements ProjectionDefinition {
      *
      * */
 
+    /** @internal */
     public bounds: MapBounds = {
         x1: -200.37508342789243,
         x2: 200.37508342789243,
@@ -133,7 +158,6 @@ class EqualEarth implements ProjectionDefinition {
 
         return [lon, lat];
     }
-
 }
 
 /* *

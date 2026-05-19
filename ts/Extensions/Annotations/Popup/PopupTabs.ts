@@ -2,11 +2,13 @@
  *
  *  Popup generator for Stock tools
  *
- *  (c) 2009-2025 Sebastian Bochan
+ *  (c) 2009-2026 Highsoft AS
+ *  Author: Sebastian Bochan
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -24,11 +26,7 @@ import type Popup from './Popup';
 
 import H from '../../../Core/Globals.js';
 const { doc } = H;
-import U from '../../../Core/Utilities.js';
-const {
-    addEvent,
-    createElement
-} = U;
+import { addEvent, createElement } from '../../../Shared/Utilities.js';
 
 /* *
  *
@@ -37,8 +35,9 @@ const {
  * */
 
 /**
- * Create tab content
- * @private
+ * Create tab content.
+ *
+ * @internal
  * @return {HTMLDOMElement} - created HTML tab-content element
  */
 function addContentItem(this: Popup): HTMLDOMElement {
@@ -56,8 +55,9 @@ function addContentItem(this: Popup): HTMLDOMElement {
 }
 
 /**
- * Create tab menu item
- * @private
+ * Create tab menu item.
+ *
+ * @internal
  * @param {string} tabName
  * `add` or `edit`
  * @param {number} [disableTab]
@@ -99,7 +99,7 @@ function addMenuItem(
 
 /**
  * Set all tabs as invisible.
- * @private
+ * @internal
  */
 function deselectAll(this: Popup): void {
     const popupDiv = this.container,
@@ -115,8 +115,9 @@ function deselectAll(this: Popup): void {
 }
 
 /**
- * Init tabs. Create tab menu items, tabs containers
- * @private
+ * Init tabs. Create tab menu items, tabs containers.
+ *
+ * @internal
  * @param {Highcharts.Chart} chart
  * Reference to current chart
  */
@@ -146,10 +147,11 @@ function init(
 }
 
 /**
- * Set tab as visible
- * @private
- * @param {globals.Element} - current tab
- * @param {number} - Index of tab in menu
+ * Set tab as visible.
+ *
+ * @internal
+ * @param {globals.Element} tab The current tab
+ * @param {number} index Index of the tab in the menu
  */
 function selectTab(
     this: Popup,
@@ -164,8 +166,9 @@ function selectTab(
 }
 
 /**
- * Add click event to each tab
- * @private
+ * Add click event to each tab.
+ *
+ * @internal
  * @param {number} disableTab
  * Disable tab when 0
  */
@@ -205,8 +208,10 @@ function switchTabs(
  *
  * */
 
+/** @internal */
 const PopupTabs = {
     init
 };
 
+/** @internal */
 export default PopupTabs;

@@ -6,7 +6,6 @@
 
 import type ColumnSeriesOptions from '../Column/ColumnSeriesOptions';
 import type Funnel3DPointOptions from './Funnel3DPointOptions';
-import type Funnel3DSeries from './Funnel3DSeries';
 import type { PointShortOptions } from '../../Core/Series/PointOptions';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
@@ -182,7 +181,7 @@ export interface Funnel3DSeriesOptions extends ColumnSeriesOptions {
 
     showInLegend?: boolean;
 
-    states?: SeriesStatesOptions<Funnel3DSeries>;
+    states?: SeriesStatesOptions<Funnel3DSeriesOptions>;
 
     /**
      * The max width of the series compared to the width of the plot area,

@@ -2,11 +2,13 @@
  *
  *  Dependency wheel module
  *
- *  (c) 2018-2025 Torstein Honsi
+ *  (c) 2018-2026 Highsoft AS
+ *  Author: Torstein Hønsi
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -18,7 +20,6 @@
 
 import { BorderRadiusOptionsObject } from '../../Extensions/BorderRadius';
 import type DependencyWheelPointOptions from './DependencyWheelPointOptions';
-import type DependencyWheelSeries from './DependencyWheelSeries';
 import type {
     SankeySeriesNodeOptions,
     SankeySeriesOptions
@@ -80,7 +81,7 @@ export interface DependencyWheelSeriesOptions extends SankeySeriesOptions {
 
     /**
      * The center of the wheel relative to the plot area. Can be
-     * percentages or pixel values. The default behaviour is to
+     * percentages or pixel values. The default behavior is to
      * center the wheel inside the plot area.
      *
      * @type {Array<number|string|null>}
@@ -212,7 +213,7 @@ export interface DependencyWheelSeriesOptions extends SankeySeriesOptions {
      */
     startAngle?: number;
 
-    states?: SeriesStatesOptions<DependencyWheelSeries>;
+    states?: SeriesStatesOptions<DependencyWheelSeriesOptions>;
 
 }
 

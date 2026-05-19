@@ -1,6 +1,6 @@
-describe('Grid events.', () => {
+describe('Grid sorting.', () => {
     before(() => {
-        cy.visit('grid-pro/cypress/sorting-options');
+        cy.visit('grid-pro/e2e/sorting-options');
     });
 
     it('Grid should be sorted initially by price in ascending order.', () => {
@@ -9,12 +9,12 @@ describe('Grid events.', () => {
 
         cy.window().its('grid').then(grid => {
             expect(
-                grid.presentationTable.columns.price,
+                grid.dataProvider.getDataTable(true).columns.price,
                 'Price column should be sorted.',
             ).to.deep.equal([1.5, 2.53, 4.5, 5]);
         })
 
-        cy.get('th[data-column-id="price"]').should('have.class', 'highcharts-datagrid-column-sorted-asc');
+        cy.get('th[data-column-id="price"]').should('have.class', 'hcg-column-sorted-asc');
     });
 
     it('Should be able to turn off sorting.', () => {
@@ -23,12 +23,12 @@ describe('Grid events.', () => {
 
         cy.window().its('grid').then(grid => {
             expect(
-                grid.presentationTable.columns.price,
+                grid.dataProvider.getDataTable(true).columns.price,
                 'Weight column should be sorted.',
             ).to.deep.equal([1.5, 2.53, 5, 4.5]);
         })
 
-        cy.get('th[data-column-id="price"]').should('have.not.class', 'highcharts-datagrid-column-sorted-asc');
+        cy.get('th[data-column-id="price"]').should('have.not.class', 'hcg-column-sorted-asc');
     });
 
     it('Clicking on the `icon` column header should do nothing.', () => {
@@ -36,7 +36,7 @@ describe('Grid events.', () => {
 
         cy.window().its('grid').then(grid => {
             expect(
-                grid.presentationTable.columns.price,
+                grid.dataProvider.getDataTable(true).columns.price,
                 'Weight column should be sorted.',
             ).to.deep.equal([1.5, 2.53, 5, 4.5]);
         })
@@ -48,12 +48,20 @@ describe('Grid events.', () => {
 
         cy.window().its('grid').then(grid => {
             expect(
-                grid.presentationTable.columns.weight,
+                grid.dataProvider.getDataTable(true).columns.weight,
                 'Weight column should be sorted.',
             ).to.deep.equal([200, 100, 40, 0.5]);
+
+            expect(
+                grid.columnPolicy
+                    .getIndividualColumnOptions('weight')
+                    .sorting
+                    .order,
+                'Weight column sorting options should be updated.'
+            ).to.equal('desc');
         })
 
-        cy.get('th[data-column-id="weight"]').should('have.class', 'highcharts-datagrid-column-sorted-desc');
+        cy.get('th[data-column-id="weight"]').should('have.class', 'hcg-column-sorted-desc');
     });
 
     it('Sorting the `icon` column should be possible by the code.', () => {
@@ -63,15 +71,15 @@ describe('Grid events.', () => {
 
         cy.window().its('grid').then(grid => {
             expect(
-                grid.presentationTable.columns.metaData,
+                grid.dataProvider.getDataTable(true).columns.metaData,
                 'Icon column should be sorted.',
             ).to.deep.equal(['a', 'd', 'b', 'c']);
         })
 
-        cy.get('th[data-column-id="icon"]').should('have.class', 'highcharts-datagrid-column-sorted-asc');
+        cy.get('th[data-column-id="icon"]').should('have.class', 'hcg-column-sorted-asc');
     });
 
-    it ('Editing a cell in sorted column should resort the table.', () => {
+    it('Editing a cell in sorted column should resort the table.', () => {
         cy.get('th[data-column-id="weight"]').click();
         cy.get('tr[data-row-index="1"] td[data-column-id="weight"]')
             .dblclick()
@@ -88,7 +96,7 @@ describe('Grid events.', () => {
             ).to.equal('Pears');
 
             expect(
-                grid.presentationTable.columns.weight,
+                grid.dataProvider.getDataTable(true).columns.weight,
                 'Weight column should be sorted.',
             ).to.deep.equal([0.5, 100, 200, 40000]);
         });

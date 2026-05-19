@@ -67,6 +67,7 @@ const chart = Highcharts.chart('container', {
         },
         dataLabels: {
             enabled: false,
+            useHTML: true,
             style: {
                 textOutline: '0px contrast',
                 fontSize: '14px'

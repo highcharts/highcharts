@@ -224,10 +224,6 @@ QUnit.test('csv-deduce-format-ddmmyyyy', function (assert) {
 });
 
 QUnit.test('csv-deduce-format-iso', function (assert) {
-    // Don't log the error 'Could not deduce date format'
-    const error = Highcharts.error;
-    Highcharts.error = function () {};
-
     const data = 'Date,Value\n2016-01-29,1\n2016-01-30,2\n2016-01-31,3\n201' +
             '6-02-01,3\n2016-02-02,3',
         chart = Highcharts.chart('container', {
@@ -272,9 +268,6 @@ QUnit.test('csv-deduce-format-iso', function (assert) {
         1454025600000,
         'Format is DD/MM/YYYY'
     );
-
-    // Reset
-    Highcharts.error = error;
 });
 
 QUnit.test('csv-deduce-format-mmddyyyy', function (assert) {

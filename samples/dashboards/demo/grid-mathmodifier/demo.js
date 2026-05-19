@@ -18,16 +18,14 @@ Dashboards.board('container', {
         connectors: [{
             id: 'EUR-USD',
             type: 'JSON',
-            options: {
-                data,
-                // Add MathModifier to create USD column with exchange valuta
-                dataModifier: {
-                    type: 'Math',
-                    columnFormulas: [{
-                        column: 'USD',
-                        formula: 'B1*C1' // Multiply EUR (B1) with the rate (C1)
-                    }]
-                }
+            data,
+            // Add MathModifier to create USD column with exchange valuta
+            dataModifier: {
+                type: 'Math',
+                columnFormulas: [{
+                    column: 'USD',
+                    formula: 'B1*C1' // Multiply EUR (B1) with the rate (C1)
+                }]
             }
         }]
     },

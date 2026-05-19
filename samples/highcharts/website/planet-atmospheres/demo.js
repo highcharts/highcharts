@@ -18,9 +18,9 @@ const animate = true;
 
 // planet data/info
 const gasLabels = [
-    'C0<sub>2</sub>',
+    'C0₂',
     'N',
-    'CH<sub>4</sub>',
+    'CH₄',
     'Ar',
     'O',
     'Na',

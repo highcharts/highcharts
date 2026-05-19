@@ -2,14 +2,15 @@
  *
  *  Checkbox Cell Renderer class
  *
- *  (c) 2020-2025 Highsoft AS
+ *  (c) 2020-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
- *  - Dawid Dragula
+ *  - Dawid Draguła
  *  - Sebastian Bochan
  *
  * */
@@ -30,15 +31,10 @@ import type {
     EditModeRendererTypeName
 } from '../../CellEditing/CellEditingComposition';
 
-import CellRenderer from '../CellRenderer.js';
-import CellRendererRegistry from '../CellRendererRegistry.js';
+import { CellRenderer, CellRendererOptions } from '../CellRenderer.js';
+import { registerRenderer } from '../CellRendererRegistry.js';
 import CheckboxContent from '../ContentTypes/CheckboxContent.js';
-
-import U from '../../../../Core/Utilities.js';
-const {
-    merge
-} = U;
-
+import { merge } from '../../../../Shared/Utilities.js';
 
 /* *
  *
@@ -59,11 +55,11 @@ class CheckboxRenderer extends CellRenderer implements EditModeRenderer {
     /**
      * Default options for the checkbox renderer.
      */
-    public static defaultOptions: CheckboxRenderer.Options = {
+    public static defaultOptions: CheckboxRendererOptions = {
         type: 'checkbox'
     };
 
-    public override options: CheckboxRenderer.Options;
+    public override options: CheckboxRendererOptions;
 
 
     /* *
@@ -72,7 +68,7 @@ class CheckboxRenderer extends CellRenderer implements EditModeRenderer {
      *
      * */
 
-    public constructor(column: Column, options: Partial<CellRenderer.Options>) {
+    public constructor(column: Column, options: Partial<CellRendererOptions>) {
         super(column);
         this.options = merge(CheckboxRenderer.defaultOptions, options);
     }
@@ -95,35 +91,40 @@ class CheckboxRenderer extends CellRenderer implements EditModeRenderer {
 
 /* *
  *
- *  Namespace
+ *  Declarations
  *
  * */
 
-namespace CheckboxRenderer {
+/**
+ * Options to control the checkbox renderer content.
+ */
+export interface CheckboxRendererOptions extends CellRendererOptions {
+    /**
+     * Use the built-in checkbox renderer.
+     *
+     * @default 'checkbox'
+     */
+    type: 'checkbox';
 
     /**
-     * Options to control the checkbox renderer content.
+     * Whether the checkbox is disabled.
      */
-    export interface Options extends CellRenderer.Options {
-        type: 'checkbox';
-
-        /**
-         * Whether the checkbox is disabled.
-         */
-        disabled?: boolean;
-
-        /**
-         * Attributes to control the checkbox.
-         */
-        attributes?: CheckboxAttributes;
-    }
+    disabled?: boolean;
 
     /**
      * Attributes to control the checkbox.
      */
-    export interface CheckboxAttributes {
-        checked?: boolean;
-    }
+    attributes?: CheckboxAttributes;
+}
+
+/**
+ * Attributes to control the checkbox.
+ */
+export interface CheckboxAttributes {
+    /**
+     * Initial checked state of the checkbox renderer.
+     */
+    checked?: boolean;
 }
 
 
@@ -139,7 +140,7 @@ declare module '../CellRendererType' {
     }
 }
 
-CellRendererRegistry.registerRenderer('checkbox', CheckboxRenderer);
+registerRenderer('checkbox', CheckboxRenderer);
 
 
 /* *

@@ -151,7 +151,7 @@ QUnit.test('getSVG', function (assert) {
     Element.prototype.remove = remove;
 });
 
-QUnit.test('Hide label with useHTML', function (assert) {
+QUnit.test('Hide label with useHTML', async function (assert) {
     var chart = Highcharts.chart('container', {
         chart: {
             type: 'pie'
@@ -186,7 +186,7 @@ QUnit.test('Hide label with useHTML', function (assert) {
 
     // Replace with exported SVG
     document.getElementById('output').innerHTML =
-        chart.exporting.getSVGForExport(
+        await chart.exporting.getSVGForExport(
             {},
             {
                 plotOptions: {
@@ -211,7 +211,7 @@ QUnit.test('Hide label with useHTML', function (assert) {
     );
 });
 
-QUnit.test('getSVGForExport XHTML', function (assert) {
+QUnit.test('getSVGForExport XHTML', async function (assert) {
     var chart = Highcharts.chart('container', {
         chart: {
             type: 'bar'
@@ -243,7 +243,7 @@ QUnit.test('getSVGForExport XHTML', function (assert) {
         ]
     });
 
-    const svg = chart.exporting.getSVGForExport();
+    const svg = await chart.exporting.getSVGForExport();
 
     assert.strictEqual(
         (svg.match(/<img.*?(?=\/>)/gm) || []).length,
@@ -254,5 +254,25 @@ QUnit.test('getSVGForExport XHTML', function (assert) {
         (svg.match(/<br \/>/gm) || []).length,
         chart.series[0].data.length,
         'Should export one self-closing <br /> for each point'
+    );
+});
+
+QUnit.test('getSVG for boosted chart', async function (assert) {
+    const chart = Highcharts.chart('container', {
+        boost: {
+            useGPUTranslations: true
+        },
+
+        series: [{
+            data: Array.from({ length: 5000 }, (_, i) => i),
+            boostThreshold: 1
+        }]
+
+    });
+
+    assert.strictEqual(
+        chart.exporting.getSVG().indexOf('xlink:href="data:image'),
+        -1,
+        'Boost image href should not be replaced with xlink:href (#24102)'
     );
 });

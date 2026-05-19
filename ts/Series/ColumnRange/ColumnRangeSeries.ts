@@ -1,10 +1,12 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Hønsi
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -17,6 +19,7 @@
  * */
 
 import type ColumnRangeSeriesOptions from './ColumnRangeSeriesOptions';
+import type { DeepPartial } from '../../Shared/Types';
 import type RadialAxis from '../../Core/Axis/RadialAxis';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 
@@ -33,15 +36,14 @@ const {
         }
     }
 } = SeriesRegistry;
-import U from '../../Core/Utilities.js';
-const {
+import {
     addEvent,
     clamp,
     extend,
     isNumber,
     merge,
     pick
-} = U;
+} from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -242,7 +244,7 @@ class ColumnRangeSeries extends AreaRangeSeries {
                         y + height,
                         y,
                         start,
-                        start + point.pointWidth
+                        start + (point.pointWidth || 0)
                     );
                 } else {
 
@@ -400,6 +402,7 @@ export default ColumnRangeSeries;
  * @sample {highcharts} highcharts/series/data-array-of-objects/
  *         Config objects
  *
+ * @basic
  * @type      {Array<Array<(number|string),number>|Array<(number|string),number,number>|*>}
  * @extends   series.arearange.data
  * @excluding marker

@@ -1,6 +1,4 @@
 ---
- name: Highcharts Demo
- authors:
-   - Dawid Dragula
- js_wrap: b
+name: Demo of yAxis.minorTicksPerMajor
+js_wrap: b
 ...

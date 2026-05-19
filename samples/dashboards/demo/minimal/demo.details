@@ -1,7 +1,7 @@
 ---
 name: Minimal
 authors:
-  - Pawel Lysy, Karol Kolodziej
+  - Paweł Lysy, Karol Kołodziej
 js_wrap: b
 tags:
   - Highcharts Dashboards demo

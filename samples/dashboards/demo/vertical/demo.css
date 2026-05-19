@@ -1,5 +1,5 @@
 @import url("https://code.highcharts.com/css/highcharts.css");
-@import url("https://code.highcharts.com/dashboards/css/datagrid.css");
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/css/grid-pro.css");
 @import url("https://code.highcharts.com/dashboards/css/dashboards.css");
 
 :root {
@@ -8,20 +8,6 @@
     @media (prefers-color-scheme: dark) {
         --text-color: #fff;
     }
-}
-
-* {
-    font-family:
-        -apple-system,
-        BlinkMacSystemFont,
-        "Segoe UI",
-        Roboto,
-        Helvetica,
-        Arial,
-        "Apple Color Emoji",
-        "Segoe UI Emoji",
-        "Segoe UI Symbol",
-        sans-serif;
 }
 
 body {
@@ -36,6 +22,7 @@ body {
         "Segoe UI Emoji",
         "Segoe UI Symbol",
         sans-serif;
+    background: var(--highcharts-background-color);
     color: var(--text-color);
 }
 
@@ -78,7 +65,7 @@ h2 {
     font-size: 3em;
 }
 
-.highcharts-datagrid-container {
+.highcharts-grid-container {
     height: 402px;
 }
 

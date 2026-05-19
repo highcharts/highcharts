@@ -1,5 +1,23 @@
 QUnit.test('Histogram', function (assert) {
-    var chart = Highcharts.chart('container', {
+    let chart = Highcharts.chart('container', {
+        series: [
+            {
+                type: 'histogram',
+                data: [
+                    { y: 1 },
+                    { y: 2 },
+                    { y: 3 }
+                ]
+            }
+        ]
+    });
+
+    assert.ok(
+        chart.series[0],
+        'Histogram should work with object data without baseseries (#24073).'
+    );
+
+    chart = Highcharts.chart('container', {
         series: [
             {
                 type: 'histogram',
@@ -452,8 +470,8 @@ QUnit.test('Histogram', function (assert) {
         ]
     });
 
-    var histogram = chart.series[0];
-    var baseSeries = chart.series[1];
+    const histogram = chart.series[0],
+        baseSeries = chart.series[1];
 
     assert.ok(histogram, 'Histogram series initialised');
     assert.ok(
@@ -535,7 +553,7 @@ QUnit.test('Histogram', function (assert) {
         // when number of bins is correct change this test to check len of yData
     );
 
-    var addedHistogram = chart.addSeries({
+    const addedHistogram = chart.addSeries({
         type: 'histogram',
         id: 'h2',
         baseSeries: 's2',
@@ -548,7 +566,7 @@ QUnit.test('Histogram', function (assert) {
         'Added histogram dynamically is calculated correctly'
     );
 
-    var h3 = chart.addSeries({
+    const h3 = chart.addSeries({
         type: 'histogram',
         id: 'h3',
         baseSeries: 's3'
@@ -562,7 +580,7 @@ QUnit.test('Histogram', function (assert) {
         'The base series for the histogram has equaled values, #7825'
     );
 
-    var h4 = chart.addSeries({
+    const h4 = chart.addSeries({
         type: 'histogram',
         id: 'h4',
         baseSeries: 's4'
@@ -657,7 +675,7 @@ QUnit.test('Histogram', function (assert) {
         ]
     });
 
-    var h5 = chart.addSeries({
+    const h5 = chart.addSeries({
         baseSeries: 'floatData',
         type: 'histogram'
     });
@@ -797,13 +815,13 @@ QUnit.test('Histogram', function (assert) {
 
     assert.strictEqual(
         chart.get('histo-s1').data.length,
-        chart.get('histo-s1').binsNumber(),
+        chart.get('histo-s1').binsNumber(chart.series[1].baseSeries.data),
         'Histogram produces correctnumber of bins on negative point values.'
     );
 });
 
 QUnit.test('#12077 - Histogram long digits.', function (assert) {
-    var chart = Highcharts.chart('container', {
+    const chart = Highcharts.chart('container', {
         xAxis: [
             {},
             {

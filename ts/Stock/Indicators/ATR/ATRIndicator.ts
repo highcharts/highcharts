@@ -1,8 +1,9 @@
 /* *
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -19,7 +20,7 @@ import type {
     ATRParamsOptions
 } from './ATROptions';
 import type ATRPoint from './ATRPoint';
-import type { IndicatorLinkedSeriesLike } from '../IndicatorLike';
+import type { IndicatorLinkedSeriesBase } from '../IndicatorBase';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 
@@ -27,11 +28,7 @@ import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     sma: SMAIndicator
 } = SeriesRegistry.seriesTypes;
-import U from '../../../Core/Utilities.js';
-const {
-    isArray,
-    merge
-} = U;
+import { isArray, merge } from '../../../Shared/Utilities.js';
 
 /* *
  *
@@ -41,9 +38,7 @@ const {
 
 // Utils:
 
-/**
- * @private
- */
+/** @internal */
 function accumulateAverage(
     points: Array<[number, Array<number>]>,
     xVal: Array<number>,
@@ -56,9 +51,7 @@ function accumulateAverage(
     points.push([xValue, yValue]);
 }
 
-/**
- * @private
- */
+/** @internal */
 function getTR(
     currentPoint: Array<number>,
     prevPoint: Array<number>
@@ -73,9 +66,7 @@ function getTR(
     return TR;
 }
 
-/**
- * @private
- */
+/** @internal */
 function populateAverage(
     points: Array<[number, Array<number>]>,
     xVal: Array<number>,
@@ -100,7 +91,7 @@ function populateAverage(
 /**
  * The ATR series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.atr
  *
@@ -118,7 +109,7 @@ class ATRIndicator extends SMAIndicator {
      * Average true range indicator (ATR). This series requires `linkedTo`
      * option to be set.
      *
-     * @sample stock/indicators/atr
+     * @sample {highstock} stock/indicators/atr
      *         ATR indicator
      *
      * @extends      plotOptions.sma
@@ -154,7 +145,7 @@ class ATRIndicator extends SMAIndicator {
      * */
 
     public getValues<TLinkedSeries extends LineSeries>(
-        series: TLinkedSeries&IndicatorLinkedSeriesLike,
+        series: TLinkedSeries&IndicatorLinkedSeriesBase,
         params: ATRParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
         const period: number = (params.period as any),
@@ -226,6 +217,7 @@ class ATRIndicator extends SMAIndicator {
  *
  * */
 
+/** @internal */
 interface ATRIndicator {
     pointClass: typeof ATRPoint;
 }
@@ -235,6 +227,8 @@ interface ATRIndicator {
  *  Registry
  *
  * */
+
+/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         atr: typeof ATRIndicator;
@@ -249,6 +243,7 @@ SeriesRegistry.registerSeriesType('atr', ATRIndicator);
  *
  * */
 
+/** @internal */
 export default ATRIndicator;
 
 /* *

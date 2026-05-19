@@ -1,0 +1,38 @@
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/css/grid-pro.css");
+
+#container {
+    padding: 8px;
+}
+
+.sparkline-editor-editing-container {
+    opacity: 0.5;
+}
+
+.sparkline-editor-editing-container::before {
+    content: "Editing...";
+}
+
+.popup-footer {
+    padding-top: 4px;
+    margin-top: 4px;
+    border-top: 1px solid #6662;
+}
+
+.popup-footer .hcg-button {
+    margin-right: 4px;
+    display: block;
+}
+
+.sparkline-editor-popup-item {
+    margin: 4px 0;
+}
+
+.sparkline-editor-popup-item .hcg-button {
+    height: 24px;
+}
+
+.sparkline-editor-popup-item .hcg-input {
+    margin-right: 4px;
+    width: auto;
+    height: 24px;
+}

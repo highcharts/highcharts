@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2009-2025 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Sebastian Bochan
@@ -14,19 +15,18 @@
  *
  * */
 
+import type { Options as EditModeOptions } from '../EditMode';
+
 import EditMode from '../EditMode.js';
-import U from '../../../Core/Utilities.js';
 import Row from '../../Layout/Row.js';
 import EditGlobals from '../EditGlobals.js';
 import MenuItem from '../Menu/MenuItem.js';
+import type { Options as EditToolbarOptions } from './EditToolbar';
+import type { Options as MenuItemOptions } from '../Menu/MenuItem';
+
 import EditToolbar from './EditToolbar.js';
 import GUIElement from '../../Layout/GUIElement.js';
-
-const {
-    fireEvent,
-    merge,
-    objectEach
-} = U;
+import { fireEvent, merge, objectEach } from '../../../Shared/Utilities.js';
 
 /**
  * @internal
@@ -38,7 +38,7 @@ class RowEditToolbar extends EditToolbar {
      *
      * */
 
-    protected static readonly defaultOptions: RowEditToolbar.Options = {
+    protected static readonly defaultOptions: Options = {
         enabled: true,
         className: EditGlobals.classNames.editToolbar,
         outline: true,
@@ -51,10 +51,10 @@ class RowEditToolbar extends EditToolbar {
     };
 
     public static getMenuItemsConfig(
-        options: EditMode.Options,
+        options: EditModeOptions,
         iconURLPrefix: string
-    ): MenuItem.Options[] {
-        const items: MenuItem.Options[] = [];
+    ): MenuItemOptions[] {
+        const items: MenuItemOptions[] = [];
 
         if (options.dragDrop?.enabled) {
             items.push({
@@ -247,8 +247,6 @@ class RowEditToolbar extends EditToolbar {
     }
 }
 
-namespace RowEditToolbar {
-    export interface Options extends EditToolbar.Options {}
-}
+export interface Options extends EditToolbarOptions {}
 
 export default RowEditToolbar;

@@ -48,6 +48,7 @@ export function setupDOM(
         const event = new window.Event(e.type, e);
         return originalDispatchEvent.call(this, event);
     };
+    
     // Do some modifications to the jsdom document in order to get the SVG bounding
     // boxes right.
     let el = document.createElement('div');
@@ -148,6 +149,7 @@ export function getHighchartsJSDOM(hc = 'highcharts', modules: string[] = []) {
 
     return { Highcharts, el };
 }
+
 export function loadHCWithModules(
     hc = 'highcharts',
     modules: string[] = []
@@ -193,6 +195,26 @@ export function wrapRequire() {
         }
         return originalRequire.call(this, id);
     };
+}
+
+export function mockObservers(win: any): void {
+
+    if (!win.ResizeObserver) {
+        win.ResizeObserver = class ResizeObserver {
+            observe() {}
+            unobserve() {}
+            disconnect() {}
+        };
+    }
+
+    if (!win.MutationObserver) {
+        win.MutationObserver = class MutationObserver {
+            constructor(callback: any) {}
+            observe() {}
+            disconnect() {}
+            takeRecords() { return []; }
+        };
+    }
 }
 
 wrapRequire();

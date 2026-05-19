@@ -2,13 +2,14 @@
  *
  *  This module implements sunburst charts in Highcharts.
  *
- *  (c) 2016-2025 Highsoft AS
+ *  (c) 2016-2026 Highsoft AS
  *
- *  Authors: Jon Arild Nygard
+ *  Authors: Jon Arild Nygård
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -96,7 +97,7 @@ const SunburstSeriesDefaults: SunburstSeriesOptions = {
     /**
      * Can set a `color` on all points which lies on the same level.
      *
-     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @type      {Highcharts.ColorType}
      * @apioption plotOptions.sunburst.levels.color
      */
 
@@ -243,7 +244,6 @@ const SunburstSeriesDefaults: SunburstSeriesOptions = {
         rotationMode: 'circular',
 
         style: {
-            /** @internal */
             textOverflow: 'ellipsis'
         }
 
@@ -345,6 +345,7 @@ const SunburstSeriesDefaults: SunburstSeriesOptions = {
  */
 
 /**
+ * @basic
  * @type      {Array<number|null|*>}
  * @extends   series.treemap.data
  * @excluding x, y

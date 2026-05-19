@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2009-2025 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Sophie Bremer
@@ -31,8 +32,7 @@ export type Arguments = Array<(Range|Term)>;
 /**
  * Formula array with terms and operators.
  */
-export type Formula = Array<(Operator|Term)>;
-
+export type Formula = Array<(Operator|Term)>; // eslint-disable-line @typescript-eslint/no-redundant-type-constituents
 
 /**
  * Formula function with an arguments array.
@@ -47,7 +47,7 @@ export interface Function {
 /**
  * Item in arguments and formulas.
  */
-export type Item = (Operator|Range|Term);
+export type Item = (Operator|Range|Term); // eslint-disable-line @typescript-eslint/no-redundant-type-constituents
 
 
 /**
@@ -133,7 +133,7 @@ const operators: Array<string> =
 function isFormula(
     item: Item
 ): item is Formula {
-    return item instanceof Array;
+    return Array.isArray(item);
 }
 
 
@@ -153,7 +153,7 @@ function isFunction(
 ): item is Function {
     return (
         typeof item === 'object' &&
-        !(item instanceof Array) &&
+        !(Array.isArray(item)) &&
         item.type === 'function'
     );
 }
@@ -196,7 +196,7 @@ function isRange(
 ): item is Range {
     return (
         typeof item === 'object' &&
-        !(item instanceof Array) &&
+        !(Array.isArray(item)) &&
         item.type === 'range'
     );
 }
@@ -218,7 +218,7 @@ function isReference(
 ): item is Reference {
     return (
         typeof item === 'object' &&
-        !(item instanceof Array) &&
+        !(Array.isArray(item)) &&
         item.type === 'reference'
     );
 }

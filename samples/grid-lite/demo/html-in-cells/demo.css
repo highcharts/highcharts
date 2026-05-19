@@ -1,0 +1,79 @@
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-lite/css/grid-lite.css");
+
+body {
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Helvetica,
+        Arial,
+        "Apple Color Emoji",
+        "Segoe UI Emoji",
+        "Segoe UI Symbol",
+        sans-serif;
+    background: var(--highcharts-background-color);
+    color: var(--highcharts-neutral-color-100);
+}
+
+:root,
+.highcharts-light {
+    --anchor-color: #007bff;
+}
+
+.hcg-theme-default,
+.highcharts-light .hcg-theme-default {
+    --hcg-link-color: #007bff;
+}
+
+.highcharts-description {
+    padding: 0 8px;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --anchor-color: #8ec3fc;
+    }
+
+    .hcg-theme-default {
+        --hcg-link-color: #8ec3fc;
+    }
+}
+
+.highcharts-dark {
+    --anchor-color: #8ec3fc;
+}
+
+.highcharts-dark .hcg-theme-default {
+    --hcg-link-color: #8ec3fc;
+}
+
+.demo {
+    padding: 8px 12px;
+}
+
+.column-description {
+    font-size: 0.8em;
+}
+
+.hcg-container h2 {
+    font-size: 1.5em;
+    font-weight: bold;
+}
+
+td {
+    align-items: center;
+    text-align: center;
+}
+
+.highcharts-description a {
+    color: var(--anchor-color);
+}
+
+td button {
+    background: #007bff;
+    color: #fff;
+    padding: 10px;
+    border: none;
+    border-radius: 8px;
+}

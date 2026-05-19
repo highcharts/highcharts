@@ -1,10 +1,12 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Hønsi
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -18,11 +20,7 @@ import type AreaRangeSeriesOptions from '../AreaRange/AreaRangeSeriesOptions';
 import type ColorString from '../../Core/Color/ColorString';
 import type ColorType from '../../Core/Color/ColorType';
 import type DumbbellPointOptions from './DumbbellPointOptions';
-import type DumbbellSeries from './DumbbellSeries';
-import type {
-    LegendSymbolType,
-    SeriesStatesOptions
-} from '../../Core/Series/SeriesOptions';
+import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 import type {
     PointMarkerOptions,
     PointShortOptions
@@ -68,7 +66,7 @@ import type {
  * @requires modules/dumbbell
  */
 interface DumbbellSeriesOptions extends AreaRangeSeriesOptions {
-    states?: SeriesStatesOptions<DumbbellSeries>;
+    states?: SeriesStatesOptions<DumbbellSeriesOptions>;
 
     /**
      * Color of the line that connects the dumbbell point's values.
@@ -99,7 +97,7 @@ interface DumbbellSeriesOptions extends AreaRangeSeriesOptions {
      * priority over the series color. To avoid this, set `lowColor` to
      * `undefined`.
      *
-     * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @type {Highcharts.ColorType}
      *
      * @since 8.0.0
      *
@@ -197,7 +195,10 @@ interface DumbbellSeriesOptions extends AreaRangeSeriesOptions {
      */
     data?: Array<(DumbbellPointOptions|PointShortOptions)>;
 
-    legendSymbol?: LegendSymbolType;
+    /**
+     * @default 'rectangle'
+     */
+    legendSymbol?: AreaRangeSeriesOptions['legendSymbol'];
 
     crisp?: boolean;
 

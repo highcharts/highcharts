@@ -72,15 +72,11 @@ Dashboards.board('container', {
         connectors: [{
             id: 'connector-1',
             type: 'JSON',
-            options: {
-                data
-            }
+            data
         }, {
             id: 'connector-2',
             type: 'JSON',
-            options: {
-                data
-            }
+            data
         }]
     },
     gui: {

@@ -1,6 +1,7 @@
 // Skipped, this test pollutes the output and is probably not needed for
 // day-to-day testing. Overall Highcharts performance can be monitored through
 // the total test time.
+/* eslint-disable no-loop-func */
 QUnit.skip(
     'performance/test-template',
     (assert: Assert) => {
@@ -14,12 +15,12 @@ QUnit.skip(
 
         totalTime = (new Date()).getTime();
 
-        for (var i = 0, ie = ROUNDS; i < ie; ++i) {
+        for (let i = 0, ie = ROUNDS; i < ie; ++i) {
             TestTemplate.test(
                 'highcharts/line',
                 {
                     series: [{
-                        type: "column",
+                        type: 'column',
                         data: [5, 6, 7]
                     }]
 
@@ -36,8 +37,7 @@ QUnit.skip(
                         totalTime = ((new Date()).getTime() - totalTime);
                         console.log(
                             'performance/test-template: ' +
-                            totalCount + ' tests, ' +
-                            totalTime + 'ms'
+                            `${totalCount} tests, ${totalTime} ms`
                         );
                     }
                 }

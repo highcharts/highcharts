@@ -1,10 +1,12 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Hønsi
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -28,18 +30,18 @@ import AST from './AST.js';
 import H from '../../Globals.js';
 const { composed, isFirefox } = H;
 import SVGElement from '../SVG/SVGElement.js';
-import U from '../../Utilities.js';
-const {
+import {
     attr,
-    css,
     createElement,
+    css,
     defined,
     extend,
     getAlignFactor,
     isNumber,
     pInt,
     pushUnique
-} = U;
+} from '../../../Shared/Utilities.js';
+
 
 /* *
  *
@@ -47,8 +49,8 @@ const {
  *
  * */
 
-declare module '../SVG/SVGRendererLike' {
-    interface SVGRendererLike {
+declare module '../SVG/SVGRendererBase' {
+    interface SVGRendererBase {
         /** @requires Core/Renderer/HTML/HTMLElement */
         html(str: string, x: number, y: number): HTMLElement;
     }
@@ -59,7 +61,7 @@ declare module '../SVG/SVGRendererLike' {
  * element and SVG groups, and as identical CSS properties on the HTML element
  * and the ancestry divs. (#3542)
  *
- * @private
+ * @internal
  */
 function commonSetter(
     this: SVGElement,
@@ -80,7 +82,7 @@ function commonSetter(
  * contain the HTML span. These div elements are translated and styled like
  * original `g` counterparts.
  *
- * @private
+ * @internal
  */
 const decorateSVGGroup = (
     g: SVGElement,
@@ -126,7 +128,7 @@ const decorateSVGGroup = (
          *
          * Reverted the fix for #6957 due to positioning problems and offline
          * export (#7254, #7280, #7529)
-         * @private
+         * @internal
          */
         g.translateXSetter = g.translateYSetter = (
             value: number|string|null,
@@ -202,18 +204,18 @@ class HTMLElement extends SVGElement {
 
     /**
      * Compose
-     * @private
+     * @internal
      */
     public static compose<T extends typeof SVGRenderer>(
         SVGRendererClass: T
     ): void {
 
-        if (pushUnique(composed, this.compose)) {
+        if (pushUnique(composed, 'HTMLElement')) {
             /**
              * Create a HTML text node. This is used by the SVG renderer `text`
              * and `label` functions through the `useHTML` parameter.
              *
-             * @private
+             * @internal
              */
             SVGRendererClass.prototype.html = function (
                 str: string,
@@ -276,7 +278,7 @@ class HTMLElement extends SVGElement {
 
     /**
      * Get the correction in X and Y positioning as the element is rotated.
-     * @private
+     * @internal
      */
     private getSpanCorrection(
         width: number,
@@ -289,7 +291,7 @@ class HTMLElement extends SVGElement {
 
     /**
      * Apply CSS to HTML elements. This is used in text within SVG rendering.
-     * @private
+     * @internal
      */
     public css(styles: CSSObject): this {
         const { element } = this,
@@ -315,11 +317,16 @@ class HTMLElement extends SVGElement {
             styles.overflow = 'hidden';
             styles.whiteSpace = 'nowrap';
         }
+
+        // Apply line clamp
         if (styles?.lineClamp) {
             styles.display = '-webkit-box';
             styles.WebkitLineClamp = styles.lineClamp;
             styles.WebkitBoxOrient = 'vertical';
             styles.overflow = 'hidden';
+        } else if (styles?.lineClamp === 0) {
+            // Disable the clamp by breaking the -webkit-box context (#22961)
+            styles.display = 'inline-block';
         }
 
         // SVG natively supports setting font size as numbers. With HTML, the
@@ -344,7 +351,7 @@ class HTMLElement extends SVGElement {
      * Called internally from the `SVGElement.getBBox` function and subsequently
      * rotated.
      *
-     * @private
+     * @internal
      */
     public htmlGetBBox(): BBoxObject {
         const { element } = this;
@@ -360,7 +367,7 @@ class HTMLElement extends SVGElement {
     /**
      * Batch update styles and attributes related to transform
      *
-     * @private
+     * @internal
      */
     public updateTransform(): void {
         // Aligning non added elements is expensive
@@ -393,8 +400,7 @@ class HTMLElement extends SVGElement {
             if (this.textPxLength) {
                 return this.textPxLength;
             }
-            // Reset multiline/ellipsis in order to read width (#4928,
-            // #5417)
+            // Reset multiline/ellipsis in order to read width (#4928, #5417)
             css(element, {
                 width: '',
                 whiteSpace: whiteSpace || 'nowrap'
@@ -447,13 +453,21 @@ class HTMLElement extends SVGElement {
                     )
                 ) {
                     const usePxWidth = rotation || scaleX ||
-                        textPxLength > textWidthNum ||
-                        // Set width to prevent over-wrapping (#22609)
-                        willOverWrap;
+                        textPxLength > textWidthNum;
 
                     css(element, {
+                        // #16261
                         width: usePxWidth && isNumber(textWidth) ?
-                            textWidth + 'px' : 'auto', // #16261
+                            textWidth + 'px' :
+                            // Set width to prevent over-wrapping (#22609)
+                            (willOverWrap ?
+                                Math.min(
+                                    // +1 for rounding errors
+                                    textPxLength + 1,
+                                    textWidthNum
+                                ) + 'px' :
+                                'auto'
+                            ),
                         display,
                         whiteSpace: whiteSpace || 'normal' // #3331
                     });
@@ -566,9 +580,9 @@ class HTMLElement extends SVGElement {
 
     /**
      * Add the element to a group wrapper. For HTML elements, a parallel div
-     * will be created for each ancenstor SVG `g` element.
+     * will be created for each ancestor SVG `g` element.
      *
-     * @private
+     * @internal
      */
     public add(parentGroup?: SVGElement): this {
         const { foreignObject, renderer } = this,
@@ -633,7 +647,7 @@ class HTMLElement extends SVGElement {
 
     /**
      * Text setter
-     * @private
+     * @internal
      */
     public textSetter(value: string): void {
         if (value !== this.textStr) {
@@ -650,7 +664,7 @@ class HTMLElement extends SVGElement {
     /**
      * Align setter
      *
-     * @private
+     * @internal
      */
     public alignSetter(value: 'left'|'center'|'right'): void {
         this.alignValue = this.textAlign = value;
@@ -658,7 +672,7 @@ class HTMLElement extends SVGElement {
     }
     /**
      * Various setters which rely on update transform
-     * @private
+     * @internal
      */
     public xSetter(value: number, key: string): void {
         this[key] = value;

@@ -18,7 +18,7 @@ document.querySelector('#load-button').addEventListener('click', () => {
 
     connector
         .load()
-        .then(connector => renderTable(container, connector.table))
+        .then(connector => renderTable(container, connector.getTable()))
         .catch(alert);
 });
 
@@ -31,7 +31,7 @@ function renderTable(container, table) {
     html.push('<table>');
     html.push('<thead>');
     html.push('<tr>');
-    for (const column of table.getColumnNames()) {
+    for (const column of table.getColumnIds()) {
         html.push('<th>', escapeStringForHTML(column), '</th>');
     }
     html.push('</tr>');

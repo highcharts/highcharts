@@ -1,6 +1,7 @@
 {
     "extends": "../tsconfig.json",
     "compilerOptions": {
+        "lib": ["ES2020", "DOM"],
         "paths": {
             "@highcharts/grid": ["code/grid"],
             "@highcharts/grid/*": ["code/grid/*"]

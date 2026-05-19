@@ -1,10 +1,12 @@
 /* *
  *
- *  (c) 2010-2025 Grzegorz Blachlinski, Sebastian Bochan
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Grzegorz Blachliński, Sebastian Bochan
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -26,12 +28,7 @@ import type Series from '../../Core/Series/Series';
 import GraphLayout from '../GraphLayoutComposition.js';
 import PackedBubbleIntegration from './PackedBubbleIntegration.js';
 import ReingoldFruchtermanLayout from '../Networkgraph/ReingoldFruchtermanLayout.js';
-import U from '../../Core/Utilities.js';
-const {
-    addEvent,
-    defined,
-    pick
-} = U;
+import { addEvent, defined, pick } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -39,8 +36,8 @@ const {
  *
  * */
 
-declare module '../../Core/Chart/ChartLike' {
-    interface ChartLike {
+declare module '../../Core/Chart/ChartBase' {
+    interface ChartBase {
         allDataPoints?: Array<PackedBubbleSeries.Data>;
         allParentNodes: Array<PackedBubblePoint>;
         getSelectedParentNodes(): Array<PackedBubblePoint>;
@@ -227,7 +224,7 @@ class PackedBubbleLayout extends ReingoldFruchtermanLayout {
                 );
 
             node.degree = node.mass;
-            node.neighbours = 0;
+            node.neighbors = 0;
 
             for (const repNode of nodes) {
                 const repNodeSeries = repNode.series;
@@ -260,7 +257,7 @@ class PackedBubbleLayout extends ReingoldFruchtermanLayout {
                         (node.degree as any) += 0.01;
                         forceTimesMass = (
                             layout.repulsiveForce(
-                                -distanceR / Math.sqrt(++(node.neighbours)),
+                                -distanceR / Math.sqrt(++(node.neighbors)),
                                 k,
                                 node,
                                 repNode

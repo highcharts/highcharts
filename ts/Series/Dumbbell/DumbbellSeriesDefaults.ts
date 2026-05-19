@@ -1,10 +1,12 @@
 /* *
  *
- *  (c) 2010-2025 Sebastian Bochan, Rafal Sebestjanski
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Sebastian Bochan, Rafał Sebestjański
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -41,9 +43,8 @@ import { Palette } from '../../Core/Color/Palettes.js';
  *
  * @extends      plotOptions.arearange
  * @product      highcharts highstock
- * @excluding    boostThreshold, boostBlendingfillColor, fillOpacity,
- *               legendSymbolColor, lineWidth, stack, stacking, stickyTracking,
- *               trackByArea
+ * @excluding    boostThreshold, fillOpacity, legendSymbolColor, lineWidth,
+ *               stack, stacking, stickyTracking, trackByArea
  * @since 8.0.0
  * @optionparent plotOptions.dumbbell
  */
@@ -85,7 +86,7 @@ const DumbbellSeriesDefaults: DumbbellSeriesOptions = {
      * priority over the series color. To avoid this, set `lowColor` to
      * `undefined`.
      *
-     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @type      {Highcharts.ColorType}
      * @since 8.0.0
      * @product   highcharts highstock
      */
@@ -193,6 +194,7 @@ const DumbbellSeriesDefaults: DumbbellSeriesOptions = {
  * @sample {highcharts} highcharts/series/data-array-of-objects/
  *         Config objects
  *
+ * @basic
  * @type      {Array<Array<(number|string),number>|Array<(number|string),number,number>|*>}
  * @extends   series.arearange.data
  * @product   highcharts highstock
@@ -204,7 +206,7 @@ const DumbbellSeriesDefaults: DumbbellSeriesOptions = {
  * priority over the series color. To avoid this, set `lowColor` to
  * `undefined`.
  *
- * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+ * @type      {Highcharts.ColorType}
  * @since     8.0.0
  * @product   highcharts highstock
  * @apioption  series.dumbbell.lowColor
@@ -259,7 +261,7 @@ const DumbbellSeriesDefaults: DumbbellSeriesOptions = {
  * priority over the series color. To avoid this, set `lowColor` to
  * `undefined`.
  *
- * @type        {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+ * @type        {Highcharts.ColorType}
  * @since       8.0.0
  * @default     ${palette.neutralColor80}
  * @product     highcharts highstock

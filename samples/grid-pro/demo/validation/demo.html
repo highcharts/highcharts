@@ -1,0 +1,30 @@
+<script src="https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/grid-pro.js"></script>
+<script src="https://code.highcharts.com/dashboards/dashboards.js"></script>
+<script src="https://code.highcharts.com/dashboards/modules/math-modifier.js"></script>
+
+<div class="demo">
+    <div id="container"></div>
+    <p class="highcharts-description">
+        This demo showcases editable cells with custom validation rules. Double click cells to edit the content and to see
+        the validation in action.<br /><br />To learn more read our documentation article on
+        <a href="https://www.highcharts.com/docs/grid/cell-editing#validation" target="_blank"
+            >predefined and custom validation rules</a
+        >. <br /><br />
+
+        <strong>String Validation</strong><br />
+        • <strong>Product Name</strong>: Must contain only letters, numbers, and spaces — special characters are not
+        allowed.<br />
+        • <strong>SKU</strong>: Must be unique and follow the format <code>AAA-123</code> (3 uppercase letters, a hyphen,
+        and 3 digits).<br /><br />
+
+        <strong>Number Validation</strong><br />
+        • <strong>Price</strong>: Must be at least 10.<br />
+        • <strong>Discount</strong>: Must be within valid ranges depending on the selected category.<br /><br />
+
+        <strong>Cross-Field Validation</strong><br />
+        • <strong>Category & Discount</strong>: If the category is <em>Electronics</em>, the discount must be between 1% and
+        30%. For other categories, the discount must be between 1% and 60%.<br />
+        • <strong>Discount & Category</strong>: When editing the category to <em>Electronics</em>, ensure the current
+        discount is not above 30%, or validation will fail.
+    </p>
+</div>

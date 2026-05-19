@@ -847,7 +847,7 @@ QUnit.test('Map set data with updated data (#3894)', function (assert) {
 
     const series = chart.series[0],
         mapView = chart.mapView,
-        columnNames = Object.keys(series.dataTable.columns);
+        columnIds = Object.keys(series.dataTable.columns);
 
     let centerBeforeUpdate,
         zoomBeforeUpdate;
@@ -981,7 +981,7 @@ QUnit.test('Map set data with updated data (#3894)', function (assert) {
 
     assert.deepEqual(
         Object.keys(series.dataTable.columns),
-        columnNames,
+        columnIds,
         'The column names should not change after addPoint'
     );
 

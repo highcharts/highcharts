@@ -2,13 +2,14 @@
  *
  *  Highcharts cylinder - a 3D series
  *
- *  (c) 2010-2025 Highsoft AS
+ *  (c) 2010-2026 Highsoft AS
  *
  *  Author: Kacper Madej
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -38,11 +39,7 @@ const {
 import Math3D from '../../Core/Math3D.js';
 const { perspective } = Math3D;
 import SVGElement3DCylinder from './SVGElement3DCylinder.js';
-import U from '../../Core/Utilities.js';
-const {
-    extend,
-    pick
-} = U;
+import { extend, pick } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -50,8 +47,8 @@ const {
  *
  * */
 
-declare module '../../Core/Renderer/SVG/SVGRendererLike' {
-    interface SVGRendererLike {
+declare module '../../Core/Renderer/SVG/SVGRendererBase' {
+    interface SVGRendererBase {
         /** @requires CylinderComposition */
         cylinder(shapeArgs: SVGAttributes): SVGElement;
         /** @requires CylinderComposition */
@@ -147,7 +144,7 @@ function rendererCylinderPath(
         // Decide zIndexes of parts based on cuboid logic, for consistency.
         cuboidData = this.cuboidPath(shapeArgs),
         isTopFirst = !cuboidData.isTop,
-        isFronFirst = !cuboidData.isFront,
+        isFrontFirst = !cuboidData.isFront,
 
         top = renderer.getCylinderEnd(chart as any, shapeArgs),
         bottom = renderer.getCylinderEnd(chart as any, shapeArgs, true);
@@ -161,8 +158,8 @@ function rendererCylinderPath(
             top: isTopFirst ? 3 : 0,
             bottom: isTopFirst ? 0 : 3,
 
-            front: isFronFirst ? 2 : 1,
-            back: isFronFirst ? 1 : 2,
+            front: isFrontFirst ? 2 : 1,
+            back: isFrontFirst ? 1 : 2,
 
             group: cuboidData.zIndexes.group
         }

@@ -1,8 +1,9 @@
 /* *
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -19,7 +20,7 @@ import type {
     KlingerParamsOptions
 } from './KlingerOptions';
 import type KlingerPoint from './KlingerPoint';
-import type { IndicatorLinkedSeriesLike } from '../IndicatorLike';
+import type { IndicatorLinkedSeriesBase } from '../IndicatorBase';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 
@@ -29,14 +30,13 @@ const {
     ema: EMAIndicator,
     sma: SMAIndicator
 } = SeriesRegistry.seriesTypes;
-import U from '../../../Core/Utilities.js';
-const {
+import {
     correctFloat,
-    error,
     extend,
     isArray,
     merge
-} = U;
+} from '../../../Shared/Utilities.js';
+import { error } from '../../../Core/Utilities.js';
 
 /* *
  *
@@ -47,7 +47,7 @@ const {
 /**
  * The Klinger oscillator series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.klinger
  *
@@ -65,7 +65,7 @@ class KlingerIndicator extends SMAIndicator {
      * Klinger oscillator. This series requires the `linkedTo` option to be set
      * and should be loaded after the `stock/indicators/indicators.js` file.
      *
-     * @sample stock/indicators/klinger
+     * @sample {highstock} stock/indicators/klinger
      *         Klinger oscillator
      *
      * @extends      plotOptions.sma
@@ -204,10 +204,10 @@ class KlingerIndicator extends SMAIndicator {
         DM: number,
         trend: number,
         previousTrend: number,
-        prevoiusDM: number
+        previousDM: number
     ): number {
         return correctFloat(
-            DM + (trend === previousTrend ? previousCM : prevoiusDM)
+            DM + (trend === previousTrend ? previousCM : previousDM)
         );
     }
 
@@ -234,9 +234,9 @@ class KlingerIndicator extends SMAIndicator {
             trend = this.calculateTrend(yVal, i);
             DM = this.getDM(yVal[i][1], yVal[i][2]);
             // For the first iteration when the previousTrend doesn't exist,
-            // previousCM doesn't exist either, but it doesn't matter becouse
-            // it's filltered out in the getCM method in else statement,
-            // (in this iteration, previousCM can be raplaced with the DM).
+            // previousCM doesn't exist either, but it doesn't matter because
+            // it's filtered out in the getCM method in else statement,
+            // (in this iteration, previousCM can be replaced with the DM).
             CM = this.getCM(previousCM, DM, trend, previousTrend, previousDM);
 
             force = this.volumeSeries.getColumn('y')[i] *
@@ -283,7 +283,7 @@ class KlingerIndicator extends SMAIndicator {
     }
 
     public getValues<TLinkedSeries extends LineSeries>(
-        series: TLinkedSeries&IndicatorLinkedSeriesLike,
+        series: TLinkedSeries&IndicatorLinkedSeriesBase,
         params: KlingerParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
         const Klinger: Array<Array<number>> = [],
@@ -291,7 +291,7 @@ class KlingerIndicator extends SMAIndicator {
             yVal: Array<Array<number>> = (series.yData as any),
             xData: Array<number> = [],
             yData: Array<Array<number>> = [],
-            calcSingal: Array<number> = [];
+            calcSignal: Array<number> = [];
 
         let KO: number,
             i: number = 0,
@@ -347,11 +347,11 @@ class KlingerIndicator extends SMAIndicator {
                 )[1];
                 previousSlowEMA = slowEMA;
                 KO = correctFloat(fastEMA - slowEMA);
-                calcSingal.push(KO);
+                calcSignal.push(KO);
 
                 // Calculate signal SMA
-                if (calcSingal.length >= params.signalPeriod) {
-                    signal = calcSingal.slice(-params.signalPeriod)
+                if (calcSignal.length >= params.signalPeriod) {
+                    signal = calcSignal.slice(-params.signalPeriod)
                         .reduce((prev, curr): number =>
                             prev + curr
                         ) / params.signalPeriod;
@@ -377,6 +377,7 @@ class KlingerIndicator extends SMAIndicator {
  *
  * */
 
+/** @internal */
 interface KlingerIndicator extends MultipleLinesComposition.IndicatorComposition {
     linesApiNames: Array<string>;
     nameBase: string;
@@ -403,6 +404,7 @@ MultipleLinesComposition.compose(KlingerIndicator);
  *
  * */
 
+/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         klinger: typeof KlingerIndicator;
@@ -416,6 +418,7 @@ SeriesRegistry.registerSeriesType('klinger', KlingerIndicator);
  *
  * */
 
+/** @internal */
 export default KlingerIndicator;
 
 /* *

@@ -1,5 +1,10 @@
 @import url("https://netdna.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css");
 
+body {
+    background: var(--highcharts-background-color);
+    color: var(--highcharts-neutral-color-100);
+}
+
 .highcharts-figure {
     margin: 0;
 }

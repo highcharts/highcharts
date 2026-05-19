@@ -5,11 +5,12 @@
  * */
 
 import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
-import type MapPointSeries from './MapPointSeries';
 import type MapPointPointOptions from './MapPointPointOptions';
-import type ScatterSeriesOptions from '../Scatter/ScatterSeriesOptions';
 import type {
-    LegendSymbolType,
+    ScatterSeriesOptions,
+    ScatterSeriesTooltipOptions
+} from '../Scatter/ScatterSeriesOptions';
+import type {
     SeriesStatesOptions
 } from '../../Core/Series/SeriesOptions';
 
@@ -107,12 +108,30 @@ export interface MapPointSeriesOptions extends ScatterSeriesOptions {
      */
     data?: Array<MapPointPointOptions>;
 
-    dataLabels?: (DataLabelOptions|Array<DataLabelOptions>);
+    dataLabels?: (
+        MapPointSeriesDataLabelsOptions|Array<MapPointSeriesDataLabelsOptions>
+    );
 
-    legendSymbol?: LegendSymbolType;
+    legendSymbol?: ScatterSeriesOptions['legendSymbol'];
 
-    states?: SeriesStatesOptions<MapPointSeries>;
+    states?: SeriesStatesOptions<MapPointSeriesOptions>;
 
+    tooltip?: MapPointSeriesTooltipOptions;
+}
+
+export interface MapPointSeriesDataLabelsOptions extends DataLabelOptions {
+    style?: DataLabelOptions['style'] & {
+        /** @default ${palette.neutralColor100} */
+        color?: Required<DataLabelOptions>['style']['color'];
+    };
+}
+
+export interface MapPointSeriesTooltipOptions
+    extends ScatterSeriesTooltipOptions {
+    /**
+     * @default '{#if point.name}{point.name}{else}Lat: {point.lat}, Lon: {point.lon}{/if}'
+     */
+    pointFormat?: ScatterSeriesTooltipOptions['pointFormat'];
 }
 
 /* *

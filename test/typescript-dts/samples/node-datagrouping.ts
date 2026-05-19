@@ -48,13 +48,13 @@ const groupPositions = time.getTimeTicks(
 // Next, group the data by the groupPositions.
 const approximation = 'average'; // See https://api.highcharts.com/highstock/series.line.dataGrouping.approximation
 const {
-    groupedXData,
-    groupedYData
+    modified
 } = Highcharts.Series.prototype.groupData.call({
     options: {}
 }, xData, yData, groupPositions, approximation) as Highcharts.DataGroupingResultObject;
 
 // Optionally, transform it to a Highcharts-compatible two-dimensional array.
-const data = groupedXData.map((x, i) => [x, groupedYData[i]]);
+// TODO: remove any when DataTableCore is properly typed
+const data = (modified as any).getColumns();
 
 console.log(data);

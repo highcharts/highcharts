@@ -4,8 +4,8 @@ Grid.setOptions({
     }
 });
 
-Grid.dataGrid('container', {
-    dataTable: {
+Grid.grid('container', {
+    data: {
         columns: {
             date: [1640995200000, 1641081600000, 1641168000000, 1641254400000],
             product: ['Apples', 'Pears', 'Plums', 'Bananas'],
@@ -42,6 +42,7 @@ Grid.dataGrid('container', {
     }, {
         id: 'weight',
         className: 'custom-column-class-name',
+        width: '40%',
         cells: {
             format: '{value:,.1f} kg'
         }

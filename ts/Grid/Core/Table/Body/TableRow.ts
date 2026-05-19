@@ -2,14 +2,15 @@
  *
  *  Grid TableRow class
  *
- *  (c) 2020-2025 Highsoft AS
+ *  (c) 2020-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
- *  - Dawid Dragula
+ *  - Dawid Draguła
  *  - Sebastian Bochan
  *
  * */
@@ -24,12 +25,14 @@
 
 import type Cell from '../Cell';
 import type Column from '../Column';
-import type DataTable from '../../../../Data/DataTable';
+import type { RowObject as DataTableRowObject } from '../../../../Data/DataTable';
+import type { RowId } from '../../Data/DataProvider';
 
 import Row from '../Row.js';
 import Table from '../Table.js';
 import TableCell from './TableCell.js';
 import Globals from '../../Globals.js';
+import { fireEvent } from '../../../../Shared/Utilities.js';
 
 
 /* *
@@ -52,7 +55,7 @@ class TableRow extends Row {
     /**
      * The row values from the data table in the original column order.
      */
-    public data: DataTable.RowObject = {};
+    public data: DataTableRowObject = {};
 
     /**
      * The local index of the row in the presentation data table.
@@ -60,9 +63,9 @@ class TableRow extends Row {
     public index: number;
 
     /**
-     * The index of the row in the original data table (ID).
+     * The unique ID of the row.
      */
-    public id?: number;
+    public id?: RowId;
 
     /**
      * The vertical translation of the row.
@@ -88,10 +91,6 @@ class TableRow extends Row {
     constructor(viewport: Table, index: number) {
         super(viewport);
         this.index = index;
-        this.id = viewport.dataTable.getOriginalRowIndex(index);
-
-        this.loadData();
-        this.setRowAttributes();
     }
 
     /* *
@@ -100,6 +99,12 @@ class TableRow extends Row {
     *
     * */
 
+    public async init(): Promise<void> {
+        this.id = await this.viewport.grid.dataProvider?.getRowId(this.index);
+        await this.loadData();
+        this.setRowAttributes();
+    }
+
     public override createCell(column: Column): Cell {
         return new TableCell(this, column);
     }
@@ -107,28 +112,68 @@ class TableRow extends Row {
     /**
      * Loads the row data from the data table.
      */
-    private loadData(): void {
-        const data = this.viewport.dataTable.getRowObject(this.index);
+    private async loadData(): Promise<void> {
+        const data = await this.viewport.grid.dataProvider?.getRowObject(
+            this.index
+        );
         if (!data) {
+            this.data = {};
             return;
         }
 
         this.data = data;
+        fireEvent(this, 'afterLoadData', {
+            data
+        });
     }
 
     /**
      * Updates the row data and its cells with the latest values from the data
      * table.
      */
-    public update(): void {
-        this.id = this.viewport.dataTable.getOriginalRowIndex(this.index);
+    public async update(): Promise<void> {
+        this.id = await this.viewport.grid.dataProvider?.getRowId(this.index);
         this.updateRowAttributes();
 
-        this.loadData();
+        await this.loadData();
 
         for (let i = 0, iEnd = this.cells.length; i < iEnd; ++i) {
             const cell = this.cells[i] as TableCell;
-            void cell.setValue();
+            await cell.setValue();
+        }
+
+        this.reflow();
+    }
+
+    /**
+     * Reuses the row instance for a new index.
+     *
+     * @param index
+     * The index of the row in the data table.
+     */
+    public async reuse(index: number): Promise<void> {
+        for (let i = 0, iEnd = this.cells.length; i < iEnd; ++i) {
+            fireEvent(this.cells[i], 'outdate');
+        }
+
+        if (this.index === index) {
+            await this.update();
+            return;
+        }
+
+        this.index = index;
+        this.id = await this.viewport.grid.dataProvider?.getRowId(index);
+
+        this.htmlElement.setAttribute('data-row-index', index + '');
+        this.updateRowAttributes();
+        this.updateParityClass();
+        this.updateStateClasses();
+
+        await this.loadData();
+
+        for (let i = 0, iEnd = this.cells.length; i < iEnd; ++i) {
+            const cell = this.cells[i] as TableCell;
+            await cell.setValue();
         }
 
         this.reflow();
@@ -174,22 +219,13 @@ class TableRow extends Row {
         const el = this.htmlElement;
 
         el.classList.add(Globals.getClassName('rowElement'));
-
-        // Index of the row in the presentation data table
-        el.setAttribute('data-row-index', idx);
+        el.setAttribute('data-row-index', idx + '');
 
         this.updateRowAttributes();
 
         // Indexing from 0, so rows with even index are odd.
-        el.classList.add(Globals.getClassName(idx % 2 ? 'rowEven' : 'rowOdd'));
-
-        if (this.viewport.grid.hoveredRowIndex === idx) {
-            el.classList.add(Globals.getClassName('hoveredRow'));
-        }
-
-        if (this.viewport.grid.syncedRowIndex === idx) {
-            el.classList.add(Globals.getClassName('syncedRow'));
-        }
+        this.updateParityClass();
+        this.updateStateClasses();
     }
 
     /**
@@ -197,7 +233,8 @@ class TableRow extends Row {
      * lifecycle.
      */
     public updateRowAttributes(): void {
-        const a11y = this.viewport.grid.accessibility;
+        const vp = this.viewport;
+        const a11y = vp.grid.accessibility;
         const idx = this.index;
         const el = this.htmlElement;
 
@@ -207,7 +244,44 @@ class TableRow extends Row {
         }
 
         // Calculate levels of header, 1 to avoid indexing from 0
-        a11y?.setRowIndex(el, idx + (this.viewport.header?.levels ?? 1) + 1);
+        a11y?.setRowIndex(el, idx + (vp.header?.rows.length ?? 0) + 1);
+
+        fireEvent(this, 'afterUpdateAttributes');
+    }
+
+    /**
+     * Updates the row parity class based on index.
+     */
+    protected updateParityClass(): void {
+        const el = this.htmlElement;
+        el.classList.remove(
+            Globals.getClassName('rowEven'),
+            Globals.getClassName('rowOdd')
+        );
+
+        // Indexing from 0, so rows with even index are odd.
+        el.classList.add(
+            Globals.getClassName(this.index % 2 ? 'rowEven' : 'rowOdd')
+        );
+    }
+
+    /**
+     * Updates the hovered and synced classes based on grid state.
+     */
+    protected updateStateClasses(): void {
+        const el = this.htmlElement;
+        el.classList.remove(
+            Globals.getClassName('hoveredRow'),
+            Globals.getClassName('syncedRow')
+        );
+
+        if (this.viewport.grid.hoveredRowIndex === this.index) {
+            el.classList.add(Globals.getClassName('hoveredRow'));
+        }
+
+        if (this.viewport.grid.syncedRowIndex === this.index) {
+            el.classList.add(Globals.getClassName('syncedRow'));
+        }
     }
 
     /**
@@ -228,17 +302,6 @@ class TableRow extends Row {
     public getDefaultTopOffset(): number {
         return this.index * this.viewport.rowsVirtualizer.defaultRowHeight;
     }
-}
-
-
-/* *
- *
- *  Class Namespace
- *
- * */
-
-namespace TableRow {
-
 }
 
 

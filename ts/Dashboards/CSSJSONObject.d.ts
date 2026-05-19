@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2009-2025 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Sebastian Bochan
@@ -22,7 +23,7 @@
 
 import type CSSObject from '../Core/Renderer/CSSObject';
 import type ColorString from '../Core/Color/ColorString';
-import type JSON from './JSON';
+import type { JSONObject } from './JSON';
 
 /* *
  *
@@ -30,7 +31,7 @@ import type JSON from './JSON';
  *
  * */
 
-export interface CSSJSONObject extends CSSObject, JSON.Object {
+export interface CSSJSONObject extends CSSObject, JSONObject {
     fill?: ColorString;
     stroke?: string;
 }

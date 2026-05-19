@@ -21,6 +21,7 @@ import type {
  *
  * */
 
+/** @internal */
 class LimaLabs implements ProviderDefinition {
 
     /* *
@@ -56,4 +57,5 @@ class LimaLabs implements ProviderDefinition {
  *
  * */
 
+/** @internal */
 export default LimaLabs;

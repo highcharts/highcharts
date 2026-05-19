@@ -1,10 +1,12 @@
 /* *
  *
- *  (c) 2010-2025 Kacper Madej
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Kacper Madej
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -16,7 +18,7 @@
  *
  * */
 
-import type { IndicatorLinkedSeriesLike } from '../IndicatorLike';
+import type { IndicatorLinkedSeriesBase } from '../IndicatorBase';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 import type {
@@ -27,11 +29,7 @@ import type WMAPoint from './WMAPoint';
 
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const { sma: SMAIndicator } = SeriesRegistry.seriesTypes;
-import U from '../../../Core/Utilities.js';
-const {
-    isArray,
-    merge
-} = U;
+import { isArray, merge } from '../../../Shared/Utilities.js';
 
 /* *
  *
@@ -40,9 +38,7 @@ const {
  * */
 
 // Utils:
-/**
- * @private
- */
+/** @internal */
 function accumulateAverage(
     points: Array<[number, (number|Array<number>)]>,
     xVal: Array<number>,
@@ -56,9 +52,7 @@ function accumulateAverage(
     points.push([xValue, yValue]);
 }
 
-/**
- * @private
- */
+/** @internal */
 function weightedSumArray(
     array: Array<[(number|null), (number|Array<number>)]>,
     pLen: number
@@ -79,9 +73,7 @@ function weightedSumArray(
         })[1] as any) / denominator;
 }
 
-/**
- * @private
- */
+/** @internal */
 function populateAverage(
     points: Array<[number, (number|Array<number>)]>,
     xVal: Array<number>,
@@ -106,7 +98,7 @@ function populateAverage(
 /**
  * The SMA series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.wma
  *
@@ -124,7 +116,7 @@ class WMAIndicator extends SMAIndicator {
      * Weighted moving average indicator (WMA). This series requires `linkedTo`
      * option to be set.
      *
-     * @sample stock/indicators/wma
+     * @sample {highstock} stock/indicators/wma
      *         Weighted moving average indicator
      *
      * @extends      plotOptions.sma
@@ -158,7 +150,7 @@ class WMAIndicator extends SMAIndicator {
      * */
 
     public getValues <TLinkedSeries extends LineSeries>(
-        series: TLinkedSeries&IndicatorLinkedSeriesLike,
+        series: TLinkedSeries&IndicatorLinkedSeriesBase,
         params: WMAParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
         const period: number = params.period as any,
@@ -226,6 +218,7 @@ class WMAIndicator extends SMAIndicator {
  *
  * */
 
+/** @internal */
 interface WMAIndicator {
     pointClass: typeof WMAPoint;
 }
@@ -236,6 +229,7 @@ interface WMAIndicator {
  *
  * */
 
+/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         wma: typeof WMAIndicator;
@@ -250,6 +244,7 @@ SeriesRegistry.registerSeriesType('wma', WMAIndicator);
  *
  * */
 
+/** @internal */
 export default WMAIndicator;
 
 /* *

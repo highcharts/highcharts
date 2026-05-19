@@ -1,8 +1,9 @@
 /* *
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -14,7 +15,7 @@
  *
  * */
 
-import type { IndicatorLinkedSeriesLike } from '../IndicatorLike';
+import type { IndicatorLinkedSeriesBase } from '../IndicatorBase';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 import type {
@@ -24,11 +25,10 @@ import type {
 import type NATRPoint from './NATRPoint';
 
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
+import { merge } from '../../../Shared/Utilities.js';
 const {
     atr: ATRIndicator
 } = SeriesRegistry.seriesTypes;
-import U from '../../../Core/Utilities.js';
-const { merge } = U;
 
 /* *
  *
@@ -39,7 +39,7 @@ const { merge } = U;
 /**
  * The NATR series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.natr
  *
@@ -74,10 +74,6 @@ class NATRIndicator extends ATRIndicator {
         }
     } as NATROptions);
 
-    /**
-     * @lends Highcharts.Series#
-     */
-
     /* *
      *
      *  Properties
@@ -95,7 +91,7 @@ class NATRIndicator extends ATRIndicator {
      * */
 
     public getValues<TLinkedSeries extends LineSeries>(
-        series: TLinkedSeries&IndicatorLinkedSeriesLike,
+        series: TLinkedSeries&IndicatorLinkedSeriesBase,
         params: NATRParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
         const atrData: (
@@ -131,6 +127,7 @@ class NATRIndicator extends ATRIndicator {
  *
  * */
 
+/** @internal */
 interface NATRIndicator {
     pointClass: typeof NATRPoint;
 }
@@ -141,6 +138,7 @@ interface NATRIndicator {
  *
  * */
 
+/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         natr: typeof NATRIndicator;
@@ -155,6 +153,7 @@ SeriesRegistry.registerSeriesType('natr', NATRIndicator);
  *
  * */
 
+/** @internal */
 export default NATRIndicator;
 
 /* *
@@ -177,4 +176,4 @@ export default NATRIndicator;
  * @apioption series.natr
  */
 
-''; // To include the above in the js output'
+''; // To include the above in the js output

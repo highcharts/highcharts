@@ -2,12 +2,13 @@
  *
  *  Experimental Highcharts module which enables visualization of a word cloud.
  *
- *  (c) 2016-2025 Highsoft AS
- *  Authors: Jon Arild Nygard
+ *  (c) 2016-2026 Highsoft AS
+ *  Authors: Jon Arild Nygård
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  * */
 
 'use strict';
@@ -27,9 +28,8 @@ import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     column: { prototype: { pointClass: ColumnPoint } }
 } = SeriesRegistry.seriesTypes;
-import U from '../../Core/Utilities.js';
-const { extend } = U;
 import WordcloudSeries from './WordcloudSeries';
+import { extend } from '../../Shared/Utilities.js';
 
 /* *
  *

@@ -1,5 +1,133 @@
 @import url("https://code.highcharts.com/css/highcharts.css");
 
+:root,
+.highcharts-light {
+    --primitives-neutral-0: #fff;
+    --primitives-neutral-25: #f6f6f8;
+    --primitives-neutral-50: #f1f1f3;
+    --primitives-neutral-100: #e3e2e8;
+    --primitives-neutral-200: #c8c7d1;
+    --primitives-neutral-300: #acabba;
+    --primitives-neutral-400: #908ea3;
+    --primitives-neutral-500: #75728c;
+    --primitives-neutral-600: #5d5b70;
+    --primitives-neutral-700: #464553;
+    --primitives-neutral-800: #2f2e37;
+    --primitives-neutral-900: #17171b;
+    --primitives-neutral-950: #0a090d;
+    --primitives-neutral-1000: #000;
+    --primitives-brand-50: #f6f8ff;
+    --primitives-brand-100: #f0f1ff;
+    --primitives-brand-200: #e1e3ff;
+    --primitives-brand-300: #c3c8ff;
+    --primitives-brand-400: #a5acff;
+    --primitives-brand-500: #8791ff;
+    --primitives-brand-600: #6975ff;
+    --primitives-brand-700: #545ecc;
+    --primitives-brand-800: #3f4699;
+    --primitives-brand-900: #2a2f66;
+    --primitives-brand-1000: #151733;
+    --primitives-success-50: #ecfdf5;
+    --primitives-success-100: #d1fae5;
+    --primitives-success-200: #a7f3d0;
+    --primitives-success-300: #6ee7b7;
+    --primitives-success-400: #34d399;
+    --primitives-success-500: #10b981;
+    --primitives-success-600: #059669;
+    --primitives-success-700: #047857;
+    --primitives-success-800: #065f46;
+    --primitives-success-900: #064e3b;
+    --primitives-success-1000: #033427;
+    --primitives-danger-50: #fef2f2;
+    --primitives-danger-100: #fee2e2;
+    --primitives-danger-200: #fecaca;
+    --primitives-danger-300: #fca5a5;
+    --primitives-danger-400: #f87171;
+    --primitives-danger-500: #ef4444;
+    --primitives-danger-600: #dc2626;
+    --primitives-danger-700: #b91c1c;
+    --primitives-danger-800: #991b1b;
+    --primitives-danger-900: #7f1d1d;
+    --primitives-danger-1000: #570d0d;
+    --illo-green: var(--primitives-success-200);
+    --illo-purple: var(--primitives-brand-500);
+    --illo-accent-0: var(--primitives-neutral-0);
+    --illo-accent-50: var(--primitives-neutral-50);
+    --illo-accent-200: var(--primitives-neutral-200);
+    --illo-accent-800: var(--primitives-neutral-800);
+    --illo-brand-200: var(--primitives-brand-200);
+    --illo-brand-800: var(--primitives-brand-800);
+    --illo-background: var(--primitives-neutral-0);
+    --illo-lines: var(--primitives-neutral-100);
+    --illo-just-white: #fff;
+    --illo-just-black: #000;
+    --illo-accent-teal: #6699a1;
+    --timeline-brand-50: var(--primitives-brand-50);
+    --timeline-brand-100: var(--primitives-brand-100);
+    --timeline-neutral-50: var(--primitives-neutral-50);
+    --timeline-success-50: var(--primitives-success-50);
+    --timeline-people-stroke: var(--primitives-brand-500);
+    --timeline-people-fill: var(--primitives-brand-500);
+    --timeline-revenue-stroke: var(--illo-accent-teal);
+    --timeline-revenue-fill: var(--illo-accent-teal);
+    --timeline-award-fill: var(--primitives-brand-700);
+    --timeline-product-fill: var(--primitives-neutral-700);
+    --timeline-release-fill: var(--primitives-neutral-500);
+    --timeline-axes-lines: var(--primitives-neutral-100);
+    --text-primary: var(--primitives-neutral-900);
+    --text-secondary: var(--primitives-neutral-700);
+    --text-tertiary: var(--primitives-neutral-500);
+    --background: var(--primitives-neutral-0);
+}
+
+.highcharts-dark {
+    --illo-green: var(--primitives-success-300);
+    --illo-purple: var(--primitives-brand-500);
+    --illo-accent-0: var(--primitives-neutral-1000);
+    --illo-accent-50: var(--primitives-neutral-700);
+    --illo-accent-200: var(--primitives-neutral-200);
+    --illo-accent-800: var(--primitives-neutral-0);
+    --illo-brand-200: var(--primitives-brand-500);
+    --illo-brand-800: var(--primitives-brand-200);
+    --illo-background: var(--primitives-neutral-1000);
+    --illo-lines: var(--primitives-neutral-500);
+    --illo-just-white: #fff;
+    --illo-just-black: #000;
+    --timeline-brand-50: var(--primitives-brand-700);
+    --timeline-brand-100: var(--primitives-brand-900);
+    --timeline-neutral-50: var(--primitives-neutral-600);
+    --timeline-success-50: var(--primitives-success-700);
+    --timeline-people-stroke: var(--primitives-brand-300);
+    --timeline-people-fill: var(--primitives-brand-50);
+    --timeline-revenue-stroke: var(--primitives-success-300);
+    --timeline-revenue-fill: var(--primitives-success-50);
+    --timeline-award-fill: var(--primitives-brand-600);
+    --timeline-product-fill: var(--primitives-neutral-700);
+    --timeline-release-fill: var(--primitives-neutral-900);
+    --timeline-axes-lines: var(--primitives-neutral-800);
+    --background: var(--primitives-neutral-950);
+    --text-primary: var(--primitives-neutral-25);
+    --text-secondary: var(--primitives-neutral-200);
+    --text-tertiary: var(--primitives-neutral-400);
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --illo-green: var(--primitives-success-300);
+        --illo-purple: var(--primitives-brand-500);
+        --illo-accent-0: var(--primitives-neutral-1000);
+        --illo-accent-50: var(--primitives-neutral-700);
+        --illo-accent-200: var(--primitives-neutral-200);
+        --illo-accent-800: var(--primitives-neutral-0);
+        --illo-brand-200: var(--primitives-brand-500);
+        --illo-brand-800: var(--primitives-brand-200);
+        --illo-background: var(--primitives-neutral-1000);
+        --illo-lines: var(--primitives-neutral-500);
+        --illo-just-white: #fff;
+        --illo-just-black: #000;
+    }
+}
+
 #timeline {
     font-family: Helvetica, Arial, sans-serif;
 }
@@ -36,26 +164,26 @@ table th {
 }
 
 #timeline .highcharts-axis-labels {
-    color: #46465c;
+    color: var(--text-secondary);
     font-size: 14px;
 }
 
 #timeline .highcharts-color-0 {
-    fill: #6699a1;
-    stroke: #6699a1;
+    fill: var(--timeline-revenue-fill);
+    stroke: var(--timeline-revenue-stroke);
 }
 
 #timeline .highcharts-color-3,
 #timeline .highcharts-color-2,
 #timeline .highcharts-color-5 {
-    fill: #46465c;
-    stroke: #46465c;
+    fill: var(--timeline-product-fill);
+    stroke: var(--timeline-product-fill);
 }
 
 #timeline .highcharts-color-6,
 #timeline .highcharts-color-1 {
-    fill: #5749ad;
-    stroke: #5749ad;
+    fill: var(--timeline-award-fill);
+    stroke: var(--timeline-award-fill);
 }
 
 #timeline .highcharts-yaxis {
@@ -67,7 +195,7 @@ table th {
 }
 
 #timeline .time-1 {
-    fill: rgb(102 153 161 / 20%);
+    fill: var(--timeline-brand-50);
     fill-opacity: 1;
 }
 
@@ -75,37 +203,37 @@ table th {
     overflow: hidden;
     text-overflow: ellipsis;
     display: block;
-    border: 0 solid #000;
+    border: 0 solid var(--timeline-axes-lines);
     width: 20px;
 }
 
 #timeline .time-2 {
-    fill: #d9dbf8;
+    fill: var(--timeline-brand-100);
     fill-opacity: 1;
 }
 
 #timeline .time-3 {
-    fill: #fffaf0;
+    fill: var(--timeline-neutral-50);
     fill-opacity: 1;
 }
 
 #timeline .time-4 {
-    fill: #dff9e7;
+    fill: var(--timeline-success-50);
     fill-opacity: 1;
 }
 
 #timeline .revenue,
 #timeline .revenue .highcharts-area {
-    fill: rgb(102 153 161);
-    stroke: rgb(102 153 161);
+    fill: var(--timeline-revenue-fill);
+    stroke: var(--timeline-revenue-stroke);
     fill-opacity: 0.2;
     stroke-width: 1px;
 }
 
 #timeline .employees,
 #timeline .employees .highcharts-area {
-    fill: #5749ad;
-    stroke: #5749ad;
+    fill: var(--timeline-people-fill);
+    stroke: var(--timeline-people-stroke);
     fill-opacity: 0.2;
     stroke-width: 1px;
 }
@@ -116,22 +244,24 @@ table th {
 }
 
 #timeline .award .highcharts-point .highcharts-label-box {
-    fill: #534daa;
+    fill: var(--timeline-award-fill);
     stroke-width: 0;
 }
 
 #timeline .award .highcharts-label text {
     fill: white;
+    font-size: 0.8em;
+    font-weight: normal;
 }
 
 #timeline .product .highcharts-point .highcharts-label-box {
-    fill: #2f2b38;
-    stroke: #2f2b38;
+    fill: var(--timeline-product-fill);
+    stroke: var(--timeline-product-fill);
 }
 
 #timeline .release .highcharts-point .highcharts-label-box {
-    fill: #78768b;
-    stroke: #78768b;
+    fill: var(--timeline-release-fill);
+    stroke: var(--timeline-release-fill);
 }
 
 #timeline .highcharts-flags-series.cloud .highcharts-point text,
@@ -185,6 +315,40 @@ table th {
 .highcharts-tooltip text {
     fill: #f0f0f0 !important;
     white-space: normal;
+}
+
+.highcharts-flags-series .highcharts-label span {
+    /* white-space: normal !important; */
+    color: #fff;
+    font-size: 12px;
+}
+
+.highcharts-plot-band-label {
+    fill: var(--text-secondary);
+    font-size: 12px;
+    font-weight: 300;
+}
+
+/* .highcharts-plot-band-label:nth-of-type(1) {
+    fill: black;
+} */
+
+/* GPT FLAG */
+.highcharts-flags-series.highcharts-markers.highcharts-series-2 .highcharts-label:nth-of-type(3) span {
+    transform: translateY(-20px);
+}
+
+.highcharts-flags-series.highcharts-markers.highcharts-series-2 .highcharts-label:nth-of-type(4) .highcharts-label-box {
+    transform: scaleY(115%) translateY(-20px);
+}
+
+/* GRID FLAG */
+.highcharts-flags-series.highcharts-markers.highcharts-series-2 .highcharts-label:nth-of-type(1) span {
+    transform: translateY(-20px);
+}
+
+.highcharts-flags-series.highcharts-markers.highcharts-series-2 .highcharts-label:nth-of-type(6) .highcharts-label-box {
+    transform: scaleY(130%) translateY(-20px);
 }
 
 @media screen  and (min-width: 530px) {

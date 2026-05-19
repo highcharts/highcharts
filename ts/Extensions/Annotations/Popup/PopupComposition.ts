@@ -2,11 +2,13 @@
  *
  *  Popup generator for Stock tools
  *
- *  (c) 2009-2025 Sebastian Bochan
+ *  (c) 2009-2026 Highsoft AS
+ *  Author: Sebastian Bochan
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -30,12 +32,7 @@ import type Pointer from '../../../Core/Pointer';
 import H from '../../../Core/Globals.js';
 const { composed } = H;
 import Popup from './Popup.js';
-import U from '../../../Core/Utilities.js';
-const {
-    addEvent,
-    pushUnique,
-    wrap
-} = U;
+import { addEvent, pushUnique, wrap } from '../../../Shared/Utilities.js';
 
 /* *
  *
@@ -43,6 +40,7 @@ const {
  *
  * */
 
+/** @internal */
 interface PopupConfigObject {
     annotation: Annotation;
     formType: string;
@@ -56,22 +54,20 @@ interface PopupConfigObject {
  *
  * */
 
-/**
- * @private
- */
+/** @internal */
 function compose(
-    NagivationBindingsClass: typeof NavigationBindings,
+    NavigationBindingsClass: typeof NavigationBindings,
     PointerClass: typeof Pointer
 ): void {
 
     if (pushUnique(composed, 'Popup')) {
         addEvent(
-            NagivationBindingsClass,
+            NavigationBindingsClass,
             'closePopup',
             onNavigationBindingsClosePopup
         );
         addEvent(
-            NagivationBindingsClass,
+            NavigationBindingsClass,
             'showPopup',
             onNavigationBindingsShowPopup
         );
@@ -85,18 +81,14 @@ function compose(
 
 }
 
-/**
- * @private
- */
+/** @internal */
 function onNavigationBindingsClosePopup(this: NavigationBindings): void {
     if (this.popup) {
         this.popup.closePopup();
     }
 }
 
-/**
- * @private
- */
+/** @internal */
 function onNavigationBindingsShowPopup(
     this: NavigationBindings,
     config: PopupConfigObject
@@ -126,7 +118,7 @@ function onNavigationBindingsShowPopup(
 /**
  * `onContainerMouseDown` blocks internal popup events, due to e.preventDefault.
  * Related issue #4606
- * @private
+ * @internal
  */
 function wrapPointerOnContainerMouserDown(
     this: Pointer,
@@ -148,8 +140,10 @@ function wrapPointerOnContainerMouserDown(
  *
  * */
 
+/** @internal */
 const PopupComposition = {
     compose
 };
 
+/** @internal */
 export default PopupComposition;

@@ -12,6 +12,19 @@
     }
 }
 
+html {
+    overflow: hidden;
+}
+
+/* #editor {
+    width: 100%;
+    height: 100%;
+    aspect-ratio: 1 / 1;
+    border-radius: 4px;
+    background-color: #2f2b38;
+    border: none;
+} */
+
 .highed-box-size {
     box-sizing: border-box !important;
     -moz-box-sizing: border-box !important;
@@ -4672,8 +4685,9 @@ highed-vsplitter,
 .highed-vsplitter .panel.bottom.highed-scrollbar,
 .highed-vsplitter,
 .highed-box-size.highed-toolbox-inner-body {
-    width: 500px !important;
-    height: 500px !important;
+    width: 100%;
+    height: 100%;
+    aspect-ratio: 1 / 1;
 }
 
 .highed-box-size.highed-toolbox-inner-body {

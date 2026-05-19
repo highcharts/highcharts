@@ -1,8 +1,9 @@
 /* *
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -14,7 +15,7 @@
  *
  * */
 
-import type { IndicatorLinkedSeriesLike } from '../IndicatorLike';
+import type { IndicatorLinkedSeriesBase } from '../IndicatorBase';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 import type {
@@ -27,11 +28,7 @@ import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     sma: SMAIndicator
 } = SeriesRegistry.seriesTypes;
-import U from '../../../Core/Utilities.js';
-const {
-    isNumber,
-    merge
-} = U;
+import { isNumber, merge } from '../../../Shared/Utilities.js';
 
 /* *
  *
@@ -40,9 +37,7 @@ const {
  * */
 
 // Utils:
-/**
- *
- */
+/** @internal */
 function toFixed(a: number, n: number): number {
     return parseFloat(a.toFixed(n));
 }
@@ -56,7 +51,7 @@ function toFixed(a: number, n: number): number {
 /**
  * The RSI series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.rsi
  *
@@ -75,7 +70,7 @@ class RSIIndicator extends SMAIndicator {
      * requires the `linkedTo` option to be set and should be loaded after
      * the `stock/indicators/indicators.js` file.
      *
-     * @sample stock/indicators/rsi
+     * @sample {highstock} stock/indicators/rsi
      *         RSI indicator
      *
      * @extends      plotOptions.sma
@@ -109,7 +104,7 @@ class RSIIndicator extends SMAIndicator {
      * */
 
     public getValues<TLinkedSeries extends LineSeries>(
-        series: TLinkedSeries&IndicatorLinkedSeriesLike,
+        series: TLinkedSeries&IndicatorLinkedSeriesBase,
         params: RSIParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
         const period = (params.period as any),
@@ -222,6 +217,7 @@ class RSIIndicator extends SMAIndicator {
  *
  * */
 
+/** @internal */
 interface RSIIndicator {
     pointClass: typeof RSIPoint;
 }
@@ -232,6 +228,7 @@ interface RSIIndicator {
  *
  * */
 
+/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         rsi: typeof RSIIndicator;
@@ -246,6 +243,7 @@ SeriesRegistry.registerSeriesType('rsi', RSIIndicator);
  *
  * */
 
+/** @internal */
 export default RSIIndicator;
 
 /* *

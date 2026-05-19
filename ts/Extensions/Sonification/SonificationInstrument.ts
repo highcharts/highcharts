@@ -1,12 +1,14 @@
 /* *
  *
- *  (c) 2009-2025 Øystein Moseng
+ *  (c) 2009-2026 Highsoft AS
+ *  Author: Øystein Moseng
  *
  *  Class representing an Instrument with mappable parameters for sonification.
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -14,11 +16,7 @@
 
 import SynthPatch from './SynthPatch.js';
 import InstrumentPresets from './InstrumentPresets.js';
-import U from '../../Core/Utilities.js';
-const {
-    defined,
-    extend
-} = U;
+import { defined, extend } from '../../Shared/Utilities.js';
 
 interface SonificationInstrumentCapabilitiesOptions {
     filters?: boolean;
@@ -71,17 +69,29 @@ namespace SonificationInstrument {
  *        Configuration for the instrument.
  */
 class SonificationInstrument {
+    /** @internal */
     readonly midiTrackName?: string;
+    /** @internal */
     readonly midiInstrument: number;
+    /** @internal */
     private static rampTime = SynthPatch.stopRampTime / 4;
+    /** @internal */
     private masterVolNode: GainNode;
+    /** @internal */
     private volumeNode: GainNode;
+    /** @internal */
     private synthPatch: SynthPatch;
+    /** @internal */
     private panNode?: StereoPannerNode;
+    /** @internal */
     private lowpassNode?: BiquadFilterNode;
+    /** @internal */
     private highpassNode?: BiquadFilterNode;
+    /** @internal */
     private tremoloOsc?: OscillatorNode;
+    /** @internal */
     private tremoloDepth?: GainNode;
+    /** @internal */
     private curParams: SonificationInstrument.ScheduledEventOptions = {};
 
     constructor(
@@ -235,7 +245,7 @@ class SonificationInstrument {
 
     /**
      * Schedule a pan value at a given time offset.
-     * @private
+     * @internal
      */
     private setPanAtTime(time: number, pan: number): void {
         if (this.panNode) {
@@ -249,7 +259,7 @@ class SonificationInstrument {
 
     /**
      * Schedule a filter configuration at a given time offset.
-     * @private
+     * @internal
      */
     private setFilterAtTime(
         filter: 'lowpass'|'highpass',
@@ -276,7 +286,7 @@ class SonificationInstrument {
 
     /**
      * Schedule a volume value at a given time offset.
-     * @private
+     * @internal
      */
     private setVolumeAtTime(time: number, volume: number): void {
         if (this.volumeNode) {
@@ -290,7 +300,7 @@ class SonificationInstrument {
 
     /**
      * Schedule a tremolo configuration at a given time offset.
-     * @private
+     * @internal
      */
     private setTremoloAtTime(
         time: number, depth?: number, speed?: number
@@ -311,7 +321,7 @@ class SonificationInstrument {
 
     /**
      * Create audio nodes according to instrument capabilities
-     * @private
+     * @internal
      */
     private createNodesFromCapabilities(
         capabilities: SonificationInstrumentCapabilitiesOptions
@@ -346,7 +356,7 @@ class SonificationInstrument {
     /**
      * Connect audio node chain from output down to input, depending on which
      * nodes exist.
-     * @private
+     * @internal
      */
     private connectCapabilityNodes(input: AudioNode, output: AudioNode): void {
         [
@@ -365,7 +375,7 @@ class SonificationInstrument {
     /**
      * Get number of notes from C0 from a string like "F#4"
      * @static
-     * @private
+     * @internal
      */
     static noteStringToC0Distance(note: string): number {
         const match = note.match(/^([a-g][#b]?)([0-8])$/i),

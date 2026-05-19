@@ -1,12 +1,14 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Hønsi
  *
  *  Scatter 3D series.
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -55,8 +57,6 @@ const Scatter3DSeriesDefaults: Scatter3DSeriesOptions = {
 /**
  * A `scatter3d` series. If the [type](#series.scatter3d.type) option is
  * not specified, it is inherited from [chart.type](#chart.type).
- *
- * scatter3d](#plotOptions.scatter3d).
  *
  * @extends   series,plotOptions.scatter3d
  * @excluding boostThreshold, boostBlending
@@ -114,6 +114,7 @@ const Scatter3DSeriesDefaults: Scatter3DSeriesOptions = {
  * @sample {highcharts} highcharts/series/data-array-of-objects/
  *         Config objects
  *
+ * @basic
  * @type      {Array<Array<number>|*>}
  * @extends   series.scatter.data
  * @product   highcharts
@@ -128,7 +129,7 @@ const Scatter3DSeriesDefaults: Scatter3DSeriesOptions = {
  * @apioption series.scatter3d.data.z
  */
 
-''; // Detachs doclets above
+''; // Keeps doclets above
 
 /* *
  *

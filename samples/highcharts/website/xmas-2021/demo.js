@@ -851,8 +851,7 @@ const snowglobe = function () {
             text: ''
         },
         tooltip: {
-            useHTML: true,
-            pointFormat: '<b>{point.name}:</b> {point.y}m CO<sub>2</sub>'
+            pointFormat: '<b>{point.name}:</b> {point.y}m CO₂'
         },
         legend: {
             enabled: false

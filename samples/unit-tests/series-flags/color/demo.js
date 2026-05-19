@@ -29,3 +29,34 @@ QUnit.test(
         );
     }
 );
+
+
+QUnit.test(
+    'Custom className should be correctly added to the flag (#21263).',
+    assert => {
+        const chart = Highcharts.stockChart('container', {
+            series: [
+                {
+                    data: [10, 20, 30]
+                },
+                {
+                    type: 'flags',
+                    data: [
+                        {
+                            x: 1,
+                            title: 'F',
+                            text: 'FlagText',
+                            className: 'custom-flag'
+                        }
+                    ]
+                }
+            ]
+        });
+
+        assert.strictEqual(
+            chart.series[1].points[0].getClassName().split(' ')[2],
+            'custom-flag',
+            'Correct className is applied to the flag point.'
+        );
+    }
+);

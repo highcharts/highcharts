@@ -1,10 +1,12 @@
-/**
+/* *
  *
- *  (c) 2010-2025 Kamil Kulig
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Kamil Kulig
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -25,13 +27,9 @@ import type LinearRegressionInterceptPoint from
 
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
-    linearRegression: LinearRegressionIndicator
+    linearregression: LinearRegressionIndicator
 } = SeriesRegistry.seriesTypes;
-import U from '../../../Core/Utilities.js';
-const {
-    extend,
-    merge
-} = U;
+import { extend, merge } from '../../../Shared/Utilities.js';
 
 /* *
  *
@@ -42,7 +40,7 @@ const {
 /**
  * The Linear Regression Intercept series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.linearRegressionIntercept
  *
@@ -61,13 +59,13 @@ class LinearRegressionInterceptIndicator extends LinearRegressionIndicator {
      * option to be set.
      *
      * @sample {highstock} stock/indicators/linear-regression-intercept
-     *         Linear intercept slope indicator
+     *         Linear regression intercept indicator
      *
      * @extends      plotOptions.linearregression
      * @since        7.0.0
      * @product      highstock
      * @requires     stock/indicators/indicators
-     * @requires  stock/indicators/regressions
+     * @requires     stock/indicators/regressions
      * @optionparent plotOptions.linearregressionintercept
      */
     public static defaultOptions: LinearRegressionOptions = merge(
@@ -103,6 +101,7 @@ class LinearRegressionInterceptIndicator extends LinearRegressionIndicator {
  *
  * */
 
+/** @internal */
 interface LinearRegressionInterceptIndicator {
     pointClass: typeof LinearRegressionInterceptPoint;
     nameBase: string;
@@ -118,12 +117,20 @@ extend(LinearRegressionInterceptIndicator.prototype, {
  *
  * */
 
+/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
+        linearregressionintercept: typeof LinearRegressionInterceptIndicator;
         linearRegressionIntercept: typeof LinearRegressionInterceptIndicator;
     }
 }
 
+SeriesRegistry.registerSeriesType(
+    'linearregressionintercept',
+    LinearRegressionInterceptIndicator
+);
+
+// Keep for backwards compatibility
 SeriesRegistry.registerSeriesType(
     'linearRegressionIntercept',
     LinearRegressionInterceptIndicator
@@ -135,6 +142,7 @@ SeriesRegistry.registerSeriesType(
  *
  * */
 
+/** @internal */
 export default LinearRegressionInterceptIndicator;
 
 /* *

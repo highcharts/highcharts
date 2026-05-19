@@ -1,0 +1,6 @@
+{
+    "files": [
+        "../tsglobal.d.ts",
+        "tsstock.d.ts"
+    ]
+}

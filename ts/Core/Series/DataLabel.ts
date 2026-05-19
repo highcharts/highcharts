@@ -1,10 +1,12 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Hønsi
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -37,8 +39,7 @@ import F from '../Templating.js';
 const { format } = F;
 import { Palette } from '../Color/Palettes.js';
 import R from '../Renderer/RendererUtilities.js';
-import U from '../Utilities.js';
-const {
+import {
     defined,
     extend,
     fireEvent,
@@ -50,7 +51,7 @@ const {
     pick,
     pInt,
     splat
-} = U;
+} from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -58,8 +59,9 @@ const {
  *
  * */
 
-declare module './PointLike' {
-    interface PointLike {
+/** @internal */
+declare module './PointBase' {
+    interface PointBase {
         bottom?: number;
         contrastColor?: ColorString;
         dataLabel?: SVGElement|SVGLabel;
@@ -69,7 +71,7 @@ declare module './PointLike' {
         dataLabels?: Array<SVGElement>;
         distributeBox?: R.BoxObject;
         dlBox?: BBoxObject;
-        dlOptions?: DataLabelOptions;
+        dlOptions?: DataLabelOptions & { zIndex?: undefined };
         top?: number;
         getDataLabelPath(dataLabel: SVGElement): SVGElement;
     }
@@ -77,19 +79,57 @@ declare module './PointLike' {
 
 declare module './PointOptions' {
     interface PointOptions {
-        dataLabels?: (DataLabelOptions|Array<DataLabelOptions>);
+        /**
+         * Individual data label for each point. The options are the same as
+         * the ones for [plotOptions.series.dataLabels](#plotOptions.series.dataLabels)
+         * with exception of `zIndex` which is applied on the data label's
+         * parent group.
+         *
+         * @sample highcharts/point/datalabels/
+         *         Show a label for the last value
+         */
+        dataLabels?: (PointDataLabelOptions | Array<PointDataLabelOptions>);
+
+        /**
+         * The rank for all this point's data labels in case of collision. If
+         * two data labels are about to overlap, only the one with the highest
+         * `labelrank` will be drawn.
+         *
+         * The `labelrank` set on `series.dataLabels` takes precedence over
+         * this.
+         */
         labelrank?: number;
     }
 }
 
-declare module './SeriesLike' {
-    interface SeriesLike {
+export interface PointDataLabelOptionsModifier {
+    /* *
+     *
+     *  Excluded
+     *
+     * */
+
+    zIndex?: undefined;
+}
+
+export type PointDataLabelOptions =
+    DataLabelOptions & PointDataLabelOptionsModifier;
+
+/** @internal */
+declare module './SeriesBase' {
+    interface SeriesBase {
         dataLabelPositioners?: DataLabel.PositionersObject;
         dataLabelsGroup?: SVGElement;
+        dataLabelsGroups?: Array<SVGElement|undefined>;
         hasDataLabels?(): boolean;
-        initDataLabelsGroup(): SVGElement;
+        initDataLabelsGroup(
+            index: number,
+            dataLabelsOptions?: DataLabelOptions
+        ): SVGElement;
         initDataLabels(
-            animationConfig?: Partial<AnimationOptions>
+            index: number,
+            animationConfig?: Partial<AnimationOptions>,
+            dataLabelsOptions?: DataLabelOptions
         ): SVGElement;
         alignDataLabel(
             point: Point,
@@ -129,12 +169,35 @@ declare module './SeriesLike' {
 
 declare module './SeriesOptions' {
     interface SeriesOptions {
+        /**
+         * Options for the series data labels, appearing next to each data
+         * point.
+         *
+         * Since v6.2.0, multiple data labels can be applied to each single
+         * point by defining them as an array of configs.
+         *
+         * In styled mode, the data labels can be styled with the
+         * `.highcharts-data-label-box` and `.highcharts-data-label` class names
+         * ([see example](https://www.highcharts.com/samples/highcharts/css/series-datalabels)).
+         *
+         * @sample {highcharts} highcharts/plotoptions/series-datalabels-enabled
+         *         Data labels enabled
+         * @sample {highcharts} highcharts/plotoptions/series-datalabels-multiple
+         *         Multiple data labels on a bar series
+         * @sample {highcharts} highcharts/css/series-datalabels
+         *         Styled mode example
+         * @sample {highmaps} maps/demo/color-axis
+         *         Choropleth map with data labels
+         * @sample {highmaps} maps/demo/mappoint-datalabels-mapmarker
+         *         Using data labels as map markers
+         */
         dataLabels?: (DataLabelOptions|Array<DataLabelOptions>);
     }
 }
 
-declare module '../../Core/Renderer/SVG/SVGElementLike' {
-    interface SVGElementLike {
+/** @internal */
+declare module '../../Core/Renderer/SVG/SVGElementBase' {
+    interface SVGElementBase {
         options?: DataLabelOptions;
     }
 }
@@ -153,6 +216,7 @@ namespace DataLabel {
      *
      * */
 
+    /** @internal */
     export interface PositionersObject {
         alignToConnectors(
             points: Array<Point>,
@@ -189,12 +253,14 @@ namespace DataLabel {
         (...args: Array<any>): SVGPath;
     }
 
+    /** @internal */
     export interface LabelConnectorPositionObject {
         angle?: number;
         breakAt: CorePositionObject;
         touchingSliceAt: CorePositionObject;
     }
 
+    /** @internal */
     export interface LabelPositionObject {
         alignment: AlignValue;
         attribs?: SVGAttributes;
@@ -208,6 +274,7 @@ namespace DataLabel {
         top?: number;
     }
 
+    /** @internal */
     export interface PositionObject extends CorePositionObject {
         alignment: AlignValue;
     }
@@ -222,7 +289,7 @@ namespace DataLabel {
      * Check if this series has data labels, either a series-level setting, or
      * individual. In case of individual point labels, this method is overridden
      * to always return true.
-     * @private
+     * @internal
      */
     function hasDataLabels(this: Series): boolean {
         return mergedDataLabelOptions(this)
@@ -233,7 +300,7 @@ namespace DataLabel {
 
     /**
      * Align each individual data label.
-     * @private
+     * @internal
      */
     function alignDataLabel(
         this: Series,
@@ -438,7 +505,7 @@ namespace DataLabel {
 
     /**
      * Handle the dataLabels.filter option.
-     * @private
+     * @internal
      */
     function applyFilter(
         point: Point,
@@ -467,8 +534,17 @@ namespace DataLabel {
         return true;
     }
 
+
     /**
-     * @private
+     * Compose the data label composition onto a series class.
+     *
+     * @internal
+     * @function compose
+     *
+     * @param {Highcharts.Series} SeriesClass
+     * The series class to compose onto.
+     *
+     * @return {void}
      */
     export function compose(
         SeriesClass: typeof Series
@@ -489,33 +565,82 @@ namespace DataLabel {
     }
 
     /**
-     * Create the SVGElement group for dataLabels
-     * @private
+     * Create the SVGElement group for dataLabels.
+     *
+     * @internal
+     * @function initDataLabelsGroup
+     *
+     * @param {number} index
+     * The index of the data labels group.
+     * @param {Highcharts.DataLabelOptions} [dataLabelsOptions]
+     * Data label options for the group.
+     *
+     * @return {Highcharts.SVGElement}
+     * The SVGElement group.
      */
-    function initDataLabelsGroup(this: Series): SVGElement {
-        return this.plotGroup(
+    function initDataLabelsGroup(
+        this: Series,
+        index: number,
+        dataLabelsOptions?: DataLabelOptions
+    ): SVGElement {
+        fireEvent(
+            this,
+            'initDataLabelsGroup',
+            {
+                index,
+                zIndex: dataLabelsOptions?.zIndex
+            }
+        );
+
+        // Existing group or first time
+        this.dataLabelsGroup = this.dataLabelsGroups?.[index];
+
+        const group = this.plotGroup(
             'dataLabelsGroup',
             'data-labels',
             this.hasRendered ? 'inherit' : 'hidden', // #5133, #10220
-            (this.options.dataLabels as any).zIndex || 6,
-            this.chart.dataLabelsGroup
+            dataLabelsOptions?.zIndex ?? 6,
+            this.dataLabelsParentGroups?.[index]
         );
+
+        this.dataLabelsGroups ||= [];
+        this.dataLabelsGroups[index] = group;
+
+        // Keep reference to the 1st group
+        this.dataLabelsGroup = this.dataLabelsGroups[0];
+
+        return group;
     }
 
     /**
-     * Init the data labels with the correct animation
-     * @private
+     * Init the data labels with the correct animation.
+     *
+     * @internal
+     * @function initDataLabels
+     *
+     * @param {number} index
+     * The index of the data labels group.
+     * @param {Highcharts.AnimationOptions} animationConfig
+     * The animation options.
+     * @param {Highcharts.DataLabelOptions} [dataLabelsOptions]
+     * Data label options for the group.
+     *
+     * @return {Highcharts.SVGElement}
+     * The SVGElement group.
      */
     function initDataLabels(
         this: Series,
-        animationConfig: Partial<AnimationOptions>
+        index: number,
+        animationConfig: Partial<AnimationOptions>,
+        dataLabelsOptions?: DataLabelOptions
     ): SVGElement {
         const series = this,
-            hasRendered = series.hasRendered || 0;
+            hasRendered = !!series.hasRendered;
 
         // Create a separate group for the data labels to avoid rotation
-        const dataLabelsGroup = this.initDataLabelsGroup()
-            .attr({ opacity: +hasRendered }); // #3300
+        const dataLabelsGroup =
+            this.initDataLabelsGroup(index, dataLabelsOptions)
+                .attr({ opacity: +hasRendered }); // #3300
 
         if (!hasRendered && dataLabelsGroup) {
             if (series.visible) { // #2597, #3023, #3024
@@ -532,8 +657,8 @@ namespace DataLabel {
     }
 
     /**
-     * Draw the data labels
-     * @private
+     * Draw the data labels.
+     * @internal
      */
     function drawDataLabels(
         this: Series,
@@ -550,10 +675,8 @@ namespace DataLabel {
                 (isString(backgroundColor) && backgroundColor) ||
                 Palette.neutralColor100
             ),
+            groupByIndex: SVGElement[] = [],
             seriesDlOptions = mergedDataLabelOptions(series);
-
-        let pointOptions: Array<DataLabelOptions>,
-            dataLabelsGroup: SVGElement;
 
         // Resolve the animation
         const { animation, defer } = seriesDlOptions[0],
@@ -565,28 +688,28 @@ namespace DataLabel {
         fireEvent(this, 'drawDataLabels');
 
         if (series.hasDataLabels?.()) {
-            dataLabelsGroup = this.initDataLabels(animationConfig);
-
             // Make the labels for each point
             points.forEach((point): void => {
 
                 const dataLabels = point.dataLabels || [],
-                    pointColor = point.color || series.color;
+                    pointColor = point.color || series.color,
 
-                // Merge in series options for the point.
-                // @note dataLabelAttribs (like pointAttribs) would eradicate
-                // the need for dlOptions, and simplify the section below.
-                pointOptions = splat(
-                    mergeArrays(
-                        seriesDlOptions,
-                        // The dlOptions prop is used in treemaps
-                        point.dlOptions || point.options?.dataLabels
-                    )
-                );
+                    // Merge in series options for the point.
+                    // @note
+                    // dataLabelAttribs (like pointAttribs) would eradicate the
+                    // need for dlOptions, and simplify the section below.
+                    pointOptions = splat(
+                        mergeArrays(
+                            seriesDlOptions,
+                            // The dlOptions prop is used in treemap
+                            point.dlOptions || point.options?.dataLabels
+                        )
+                    );
 
                 // Handle each individual data label for this point
                 pointOptions.forEach((labelOptions, i): void => {
-                    // Options for one datalabel
+
+                    // Options for one dataLabel
                     const labelEnabled = (
                             labelOptions.enabled &&
                             (point.visible || point.dataLabelOnHidden) &&
@@ -627,7 +750,7 @@ namespace DataLabel {
                                     point.formatPrefix + 'Formatter'
                                 ] ||
                                 labelOptions.formatter
-                            ).call(point, labelOptions);
+                            ).call(point, labelOptions, point);
 
                         rotation = labelOptions.rotation;
 
@@ -793,6 +916,16 @@ namespace DataLabel {
                                 { labelOptions, point }
                             );
 
+                            // On the first occurrence, create a dataLabelsGroup
+                            // for each data labels config (#24626)
+                            const dataLabelsGroup = groupByIndex[i] = (
+                                groupByIndex[i] || this.initDataLabels(
+                                    i,
+                                    animationConfig,
+                                    labelOptions
+                                )
+                            );
+
                             if (!dataLabel.added) {
                                 dataLabel.add(dataLabelsGroup);
                             }
@@ -842,7 +975,7 @@ namespace DataLabel {
     /**
      * If data labels fall partly outside the plot area, align them back in, in
      * a way that doesn't hide the point.
-     * @private
+     * @internal
      */
     function justifyDataLabel(
         this: Series,
@@ -930,7 +1063,7 @@ namespace DataLabel {
      * Merge two objects that can be arrays. If one of them is an array, the
      * other is merged into each element. If both are arrays, each element is
      * merged by index. If neither are arrays, we use normal merge.
-     * @private
+     * @internal
      */
     function mergeArrays(
         one: (DataLabelOptions|Array<DataLabelOptions>|undefined),
@@ -965,7 +1098,7 @@ namespace DataLabel {
 
     /**
      * Merge plotOptions and series options for dataLabels.
-     * @private
+     * @internal
      */
     function mergedDataLabelOptions(
         series: Series
@@ -985,7 +1118,7 @@ namespace DataLabel {
 
     /**
      * Set starting position for data label sorting animation.
-     * @private
+     * @internal
      */
     function setDataLabelStartPos(
         this: Series,

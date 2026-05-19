@@ -2,11 +2,13 @@
  *
  *  Networkgraph series
  *
- *  (c) 2010-2025 Paweł Fus
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Paweł Fus
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -26,11 +28,7 @@ import A from '../Core/Animation/AnimationUtilities.js';
 const { setAnimation } = A;
 import H from '../Core/Globals.js';
 const { composed } = H;
-import U from '../Core/Utilities.js';
-const {
-    addEvent,
-    pushUnique
-} = U;
+import { addEvent, pushUnique } from '../Shared/Utilities.js';
 
 /* *
  *
@@ -38,14 +36,14 @@ const {
  *
  * */
 
-declare module '../Core/Chart/ChartLike' {
-    interface ChartLike {
+declare module '../Core/Chart/ChartBase' {
+    interface ChartBase {
         graphLayoutsLookup?: Array<GraphLayoutType>;
     }
 }
 
-declare module '../Core/Series/PointLike' {
-    interface PointLike {
+declare module '../Core/Series/PointBase' {
+    interface PointBase {
         dispX?: number;
         dispY?: number;
         fromNode?: Point;
@@ -58,8 +56,8 @@ declare module '../Core/Series/PointLike' {
     }
 }
 
-declare module '../Core/Series/SeriesLike' {
-    interface SeriesLike {
+declare module '../Core/Series/SeriesBase' {
+    interface SeriesBase {
         forces?: Array<string>;
     }
 }

@@ -1,0 +1,11 @@
+---
+name: Line chart with HTML legend
+authors:
+  - Hubert Kozik
+js_wrap: b
+tags:
+  - Highcharts demo
+new_until: 2025-12-01
+categories:
+  - More chart types
+...

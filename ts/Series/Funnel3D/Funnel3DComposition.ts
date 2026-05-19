@@ -2,13 +2,14 @@
  *
  *  Highcharts funnel3d series module
  *
- *  (c) 2010-2025 Highsoft AS
+ *  (c) 2010-2026 Highsoft AS
  *
  *  Author: Kacper Madej
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -32,12 +33,8 @@ import type SVGRenderer3D from '../../Core/Renderer/SVG/SVGRenderer3D';
 import SVGElement3DFunnel from './SVGElement3DFunnel.js';
 import H from '../../Core/Globals.js';
 const { charts } = H;
-import U from '../../Core/Utilities.js';
-const {
-    error,
-    extend,
-    merge
-} = U;
+import { extend, merge } from '../../Shared/Utilities.js';
+import { error } from '../../Core/Utilities.js';
 
 /* *
  *
@@ -45,8 +42,8 @@ const {
  *
  * */
 
-declare module '../../Core/Renderer/SVG/SVGElementLike' {
-    interface SVGElementLike {
+declare module '../../Core/Renderer/SVG/SVGElementBase' {
+    interface SVGElementBase {
         finishedOnAdd?: boolean;
         lowerGroup?: SVGElement;
         upperGroup?: SVGElement;
@@ -56,8 +53,8 @@ declare module '../../Core/Renderer/SVG/SVGElementLike' {
     }
 }
 
-declare module '../../Core/Renderer/SVG/SVGRendererLike' {
-    interface SVGRendererLike {
+declare module '../../Core/Renderer/SVG/SVGRendererBase' {
+    interface SVGRendererBase {
         funnel3d(shapeArgs: SVGAttributes): SVGElement;
         funnel3dPath(shapeArgs: SVGAttributes): Funnel3DPathsObject;
     }

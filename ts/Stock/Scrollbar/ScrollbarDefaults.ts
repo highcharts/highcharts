@@ -1,10 +1,12 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Hønsi
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -45,8 +47,6 @@ import { Palette } from '../../Core/Color/Palettes.js';
  *
  * @product highstock gantt
  * @optionparent scrollbar
- *
- * @private
  */
 const ScrollbarDefaults: ScrollbarOptions = {
 
@@ -99,7 +99,8 @@ const ScrollbarDefaults: ScrollbarOptions = {
     /**
      * Whether to redraw the main chart as the scrollbar or the navigator
      * zoomed window is moved. Defaults to `true` for modern browsers and
-     * `false` for legacy IE browsers as well as mobile devices.
+     * `false` for legacy IE browsers as well as mobile devices. This option
+     * works regardless of whether the scrollbar is enabled or not.
      *
      * @sample stock/scrollbar/liveredraw
      *         Setting live redraw to false
@@ -150,7 +151,7 @@ const ScrollbarDefaults: ScrollbarOptions = {
      * @sample stock/scrollbar/style/
      *         Scrollbar styling
      *
-     * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @type {Highcharts.ColorType}
      */
     barBackgroundColor: Palette.neutralColor20,
 
@@ -165,7 +166,7 @@ const ScrollbarDefaults: ScrollbarOptions = {
     /**
      * The color of the scrollbar's border.
      *
-     * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @type {Highcharts.ColorType}
      */
     barBorderColor: Palette.neutralColor20,
 
@@ -175,7 +176,7 @@ const ScrollbarDefaults: ScrollbarOptions = {
      * @sample stock/scrollbar/style/
      *         Scrollbar styling
      *
-     * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @type {Highcharts.ColorType}
      */
     buttonArrowColor: Palette.neutralColor80,
 
@@ -185,7 +186,7 @@ const ScrollbarDefaults: ScrollbarOptions = {
      * @sample stock/scrollbar/style/
      *         Scrollbar styling
      *
-     * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @type {Highcharts.ColorType}
      */
     buttonBackgroundColor: Palette.neutralColor10,
 
@@ -195,7 +196,7 @@ const ScrollbarDefaults: ScrollbarOptions = {
      * @sample stock/scrollbar/style/
      *         Scrollbar styling
      *
-     * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @type {Highcharts.ColorType}
      */
     buttonBorderColor: Palette.neutralColor20,
 
@@ -210,7 +211,7 @@ const ScrollbarDefaults: ScrollbarOptions = {
     /**
      * The color of the small rifles in the middle of the scrollbar.
      *
-     * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @type {Highcharts.ColorType}
      */
     rifleColor: 'none',
 
@@ -220,7 +221,7 @@ const ScrollbarDefaults: ScrollbarOptions = {
      * @sample stock/scrollbar/style/
      *         Scrollbar styling
      *
-     * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @type {Highcharts.ColorType}
      */
     trackBackgroundColor: 'rgba(255, 255, 255, 0.001)', // #18922
 
@@ -230,7 +231,7 @@ const ScrollbarDefaults: ScrollbarOptions = {
      * @sample stock/scrollbar/style/
      *         Scrollbar styling
      *
-     * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @type {Highcharts.ColorType}
      */
     trackBorderColor: Palette.neutralColor20,
 
@@ -257,4 +258,5 @@ const ScrollbarDefaults: ScrollbarOptions = {
  *
  * */
 
+/** @internal */
 export default ScrollbarDefaults;

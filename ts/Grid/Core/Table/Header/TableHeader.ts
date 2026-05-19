@@ -2,14 +2,15 @@
  *
  *  Grid TableHeader class
  *
- *  (c) 2020-2025 Highsoft AS
+ *  (c) 2020-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
- *  - Dawid Dragula
+ *  - Dawid Draguła
  *  - Sebastian Bochan
  *
  * */
@@ -27,6 +28,7 @@ import type { GroupedHeaderOptions } from '../../Options';
 import Column from '../Column.js';
 import Table from '../Table.js';
 import HeaderRow from './HeaderRow.js';
+import FilterRow from '../Actions/ColumnFiltering/FilterRow.js';
 
 
 /* *
@@ -64,6 +66,7 @@ class TableHeader {
 
     /**
      * Amount of levels in the header, that is used in creating correct rows.
+     * Excludes any extra levels, like filtering row.
      */
     public levels: number = 1;
 
@@ -91,6 +94,7 @@ class TableHeader {
         }
     }
 
+
     /* *
     *
     *  Methods
@@ -100,16 +104,26 @@ class TableHeader {
     /**
      * Renders the table head content.
      */
-    public render(): void {
+    public async render(): Promise<void> {
         const vp = this.viewport;
 
         if (!vp.grid.enabledColumns) {
             return;
         }
 
+        // Render regular, multiple level rows.
         for (let i = 0, iEnd = this.levels; i < iEnd; i++) {
             const row = new HeaderRow(vp, i + 1); // Avoid indexing from 0
-            row.renderMultipleLevel(i);
+            await Promise.resolve(row.renderContent(i));
+            this.rows.push(row);
+        }
+
+        // Render an extra row for inline filtering.
+        if (vp.columns.some((column): boolean =>
+            vp.grid.columnPolicy.isColumnInlineFilteringEnabled(column.id)
+        )) {
+            const row = new FilterRow(vp);
+            await row.renderContent();
             this.rows.push(row);
         }
     }
@@ -125,7 +139,6 @@ class TableHeader {
         }
 
         const { clientWidth, offsetWidth } = vp.tbodyElement;
-        const header = vp.header;
         const rows = this.rows;
         const bordersWidth = offsetWidth - clientWidth;
 
@@ -136,20 +149,6 @@ class TableHeader {
         if (vp.rowsWidth) {
             vp.theadElement.style.width =
                 Math.max(vp.rowsWidth, clientWidth) + bordersWidth + 'px';
-        }
-
-        if (
-            header &&
-            bordersWidth > 0 &&
-            this.viewport.columnDistribution.type === 'full'
-        ) {
-            const row = this.columns[this.columns.length - 1].header?.row;
-            const lastCellEl = row?.cells[row.cells.length - 1]?.htmlElement;
-
-            if (lastCellEl) {
-                lastCellEl.style.width = lastCellEl.style.maxWidth =
-                lastCellEl.offsetWidth + bordersWidth + 'px';
-            }
         }
     }
 
@@ -193,17 +192,15 @@ class TableHeader {
 
         el.style.transform = `translateX(${-scrollLeft}px)`;
     }
-}
 
-
-/* *
- *
- *  Class Namespace
- *
- * */
-
-namespace TableHeader {
-
+    /**
+     * Destroys the table header and all its associated components.
+     */
+    public destroy(): void {
+        for (const row of this.rows) {
+            row.destroy();
+        }
+    }
 }
 
 

@@ -1,11 +1,12 @@
 /* *
  *
- *  (c) 2016 Highsoft AS
+ *  (c) 2016-2026 Highsoft AS
  *  Authors: Øystein Moseng, Lars A. V. Cabrera
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -29,13 +30,7 @@ import Chart from '../Core/Chart/Chart.js';
 import PathfinderAlgorithms from './PathfinderAlgorithms.js';
 import PathfinderComposition, { PointConnectOptionsObject } from './PathfinderComposition.js';
 import Point from '../Core/Series/Point.js';
-import U from '../Core/Utilities.js';
-const {
-    addEvent,
-    defined,
-    pick,
-    splat
-} = U;
+import { addEvent, defined, pick, splat } from '../Shared/Utilities.js';
 
 /* *
  *
@@ -43,14 +38,16 @@ const {
  *
  * */
 
-declare module '../Core/Chart/ChartLike'{
-    interface ChartLike {
+/** @internal */
+declare module '../Core/Chart/ChartBase'{
+    interface ChartBase {
         pathfinder?: Pathfinder;
     }
 }
 
-declare module '../Core/Series/SeriesLike' {
-    interface SeriesLike {
+/** @internal */
+declare module '../Core/Series/SeriesBase' {
+    interface SeriesBase {
         pathfinderRemoveRenderEvent?: Function;
     }
 }
@@ -74,7 +71,7 @@ const max = Math.max,
  * Get point bounding box using plotX/plotY and shapeArgs. If using
  * graphic.getBBox() directly, the bbox will be affected by animation.
  *
- * @private
+ * @internal
  * @function
  *
  * @param {Highcharts.Point} point
@@ -108,7 +105,7 @@ function getPointBB(point: Point): (Record<string, number>|null) {
 
 /**
  * Compute smallest distance between two rectangles.
- * @private
+ * @internal
  */
 function calculateObstacleDistance(
     a: Record<string, number>,
@@ -145,7 +142,7 @@ function calculateObstacleDistance(
  * Calculate margin to place around obstacles for the pathfinder in pixels.
  * Returns a minimum of 1 pixel margin.
  *
- * @private
+ * @internal
  * @function
  *
  * @param {Array<object>} obstacles
@@ -158,18 +155,18 @@ function calculateObstacleMargin(obstacles: Array<any>): number {
     const len = obstacles.length,
         distances = [];
 
-    let onstacleDistance: number;
+    let obstacleDistance: number;
 
     // Go over all obstacles and compare them to the others.
     for (let i = 0; i < len; ++i) {
         // Compare to all obstacles ahead. We will already have compared this
         // obstacle to the ones before.
         for (let j = i + 1; j < len; ++j) {
-            onstacleDistance =
+            obstacleDistance =
                 calculateObstacleDistance(obstacles[i], obstacles[j]);
             // TODO: Magic number 80
-            if (onstacleDistance < 80) { // Ignore large distances
-                distances.push(onstacleDistance);
+            if (obstacleDistance < 80) { // Ignore large distances
+                distances.push(obstacleDistance);
             }
         }
     }
@@ -199,7 +196,7 @@ function calculateObstacleMargin(obstacles: Array<any>): number {
 /**
  * The Pathfinder class.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.Pathfinder
  *
@@ -439,15 +436,14 @@ class Pathfinder {
      * @function Highcharts.Pathfinder#getChartObstacles
      *
      * @param {Object} options
-     *        Options for the calculation. Currently only
-     *        `options.algorithmMargin`.
+     * Options for the calculation. Currently only `options.algorithmMargin`.
      *
      * @param {number} options.algorithmMargin
-     *        The algorithm margin to use for the obstacles.
-
-    * @return {Array<object>}
-     *         An array of calculated obstacles. Each obstacle is defined as an
-     *         object with xMin, xMax, yMin and yMax properties.
+     * The algorithm margin to use for the obstacles.
+     *
+     * @return {Array<object>}
+     * An array of calculated obstacles. Each obstacle is defined as an object
+     * with xMin, xMax, yMin and yMax properties.
      */
     public getChartObstacles(
         options: { algorithmMargin?: number }
@@ -535,8 +531,8 @@ class Pathfinder {
         }
 
         return {
-            maxHeight: maxHeight,
-            maxWidth: maxWidth
+            maxHeight,
+            maxWidth
         };
     }
 
@@ -572,6 +568,7 @@ class Pathfinder {
  *
  * */
 
+/** @internal */
 interface Pathfinder {
     algorithms: Record<string, PathfinderAlgorithmFunction>;
 }
@@ -579,6 +576,7 @@ interface Pathfinder {
 /**
  * @name Highcharts.Pathfinder#algorithms
  * @type {Highcharts.Dictionary<Function>}
+ * @internal
  */
 Pathfinder.prototype.algorithms = PathfinderAlgorithms;
 
@@ -588,6 +586,7 @@ Pathfinder.prototype.algorithms = PathfinderAlgorithms;
  *
  * */
 
+/** @internal */
 export default Pathfinder;
 
 /* *

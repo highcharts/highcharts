@@ -1,11 +1,13 @@
 /* *
- *  (c) 2010-2025 Rafal Sebestjanski
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Rafał Sebestjański
  *
  *  Disparity Index technical indicator for Highcharts Stock
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -22,7 +24,7 @@ import type {
     DisparityIndexParamsOptions
 } from './DisparityIndexOptions';
 import type DisparityIndexPoint from './DisparityIndexPoint';
-import type { IndicatorLinkedSeriesLike } from '../IndicatorLike';
+import type { IndicatorLinkedSeriesBase } from '../IndicatorBase';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 
@@ -30,14 +32,13 @@ import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     sma: SMAIndicator
 } = SeriesRegistry.seriesTypes;
-import U from '../../../Core/Utilities.js';
-const {
+import {
     correctFloat,
     defined,
     extend,
     isArray,
     merge
-} = U;
+} from '../../../Shared/Utilities.js';
 
 /* *
  *
@@ -48,7 +49,7 @@ const {
 /**
  * The Disparity Index series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.disparityindex
  *
@@ -67,7 +68,7 @@ class DisparityIndexIndicator extends SMAIndicator {
      * This series requires the `linkedTo` option to be set and should
      * be loaded after the `stock/indicators/indicators.js` file.
      *
-     * @sample stock/indicators/disparity-index
+     * @sample {highstock} stock/indicators/disparity-index
      *         Disparity Index indicator
      *
      * @extends      plotOptions.sma
@@ -138,7 +139,7 @@ class DisparityIndexIndicator extends SMAIndicator {
     }
 
     public getValues<TLinkedSeries extends LineSeries>(
-        series: TLinkedSeries&IndicatorLinkedSeriesLike,
+        series: TLinkedSeries&IndicatorLinkedSeriesBase,
         params: DisparityIndexParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
         const index = params.index,
@@ -195,6 +196,7 @@ class DisparityIndexIndicator extends SMAIndicator {
  *
  * */
 
+/** @internal */
 interface DisparityIndexIndicator {
     nameBase: string;
     nameComponents: Array<string>;
@@ -212,6 +214,7 @@ extend(DisparityIndexIndicator.prototype, {
  *
  * */
 
+/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         disparityindex: typeof DisparityIndexIndicator;
@@ -226,6 +229,7 @@ SeriesRegistry.registerSeriesType('disparityindex', DisparityIndexIndicator);
  *
  * */
 
+/** @internal */
 export default DisparityIndexIndicator;
 
 /* *

@@ -1,8 +1,9 @@
 /* *
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  * */
 
 'use strict';
@@ -18,7 +19,7 @@ import type {
     CCIParamsOptions
 } from './CCIOptions';
 import type CCIPoint from './CCIPoint';
-import type { IndicatorLinkedSeriesLike } from '../IndicatorLike';
+import type { IndicatorLinkedSeriesBase } from '../IndicatorBase';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 
@@ -26,11 +27,7 @@ import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     sma: SMAIndicator
 } = SeriesRegistry.seriesTypes;
-import U from '../../../Core/Utilities.js';
-const {
-    isArray,
-    merge
-} = U;
+import { isArray, merge } from '../../../Shared/Utilities.js';
 
 /* *
  *
@@ -39,18 +36,14 @@ const {
  * */
 
 // Utils:
-/**
- * @private
- */
+/** @internal */
 function sumArray(array: Array<number>): number {
     return array.reduce(function (prev, cur): number {
         return prev + cur;
     }, 0);
 }
 
-/**
- * @private
- */
+/** @internal */
 function meanDeviation(arr: Array<number>, sma: number): number {
     const len = arr.length;
     let sum = 0,
@@ -72,7 +65,7 @@ function meanDeviation(arr: Array<number>, sma: number): number {
 /**
  * The CCI series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.cci
  *
@@ -90,7 +83,7 @@ class CCIIndicator extends SMAIndicator {
      * Commodity Channel Index (CCI). This series requires `linkedTo` option to
      * be set.
      *
-     * @sample stock/indicators/cci
+     * @sample {highstock} stock/indicators/cci
      *         CCI indicator
      *
      * @extends      plotOptions.sma
@@ -126,7 +119,7 @@ class CCIIndicator extends SMAIndicator {
      * */
 
     public getValues<TLinkedSeries extends LineSeries>(
-        series: TLinkedSeries&IndicatorLinkedSeriesLike,
+        series: TLinkedSeries&IndicatorLinkedSeriesBase,
         params: CCIParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
         const period: number = (params.period as any),
@@ -194,6 +187,7 @@ class CCIIndicator extends SMAIndicator {
  *
  * */
 
+/** @internal */
 interface CCIIndicator {
     pointClass: typeof CCIPoint;
 }
@@ -204,6 +198,7 @@ interface CCIIndicator {
  *
  * */
 
+/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         cci: typeof CCIIndicator;
@@ -218,6 +213,7 @@ SeriesRegistry.registerSeriesType('cci', CCIIndicator);
  *
  * */
 
+/** @internal */
 export default CCIIndicator;
 
 /* *

@@ -3,7 +3,7 @@ const orderSelectEl = document.getElementById('select-order');
 const applyBtnEl = document.getElementById('apply-btn');
 
 Grid.grid('container', {
-    dataTable: {
+    data: {
         columns: {
             product: ['Apples', 'Pears', 'Plums', 'Bananas'],
             weight: [100, 40, 0.5, 200],
@@ -15,7 +15,12 @@ Grid.grid('container', {
     columns: [{
         id: 'product',
         sorting: {
-            sortable: false
+            enabled: false
+        }
+    }, {
+        id: 'weight',
+        sorting: {
+            orderSequence: ['asc', null, 'desc', null]
         }
     }, {
         id: 'price',
@@ -25,7 +30,7 @@ Grid.grid('container', {
     }],
     events: {
         column: {
-            afterSorting: function () {
+            afterSort: function () {
                 const { sorting } = this.viewport.grid.querying;
 
                 columnSelectEl.value = this.id;

@@ -1,7 +1,7 @@
 /**
  * Faster scatter charts mod for Highcharts
  *
- * Author: Torstein Honsi
+ * Author: Torstein Hønsi
  * Last updated: 2016-09-23
  */
 (function (H) {

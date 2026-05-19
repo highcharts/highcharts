@@ -2,11 +2,13 @@
  *
  *  Networkgraph series
  *
- *  (c) 2010-2025 Paweł Fus
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Paweł Fus
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -89,7 +91,7 @@ function attractiveForceFunction(
 }
 
 /**
- * Barycenter force. Calculate and applys barycenter forces on the
+ * Barycenter force. Calculate and applies barycenter forces on the
  * nodes. Making them closer to the center of their barycenter point.
  *
  * In Verlet integration, force is applied on a node immediately to it's
@@ -118,7 +120,7 @@ function barycenter(
 }
 
 /**
- * Estiamte the best possible distance between two nodes, making graph
+ * Estimate the best possible distance between two nodes, making graph
  * readable.
  * @private
  */

@@ -58,17 +58,15 @@ board = Dashboards.board('container', {
         connectors: [{
             id: 'micro-element',
             type: 'JSON',
-            options: {
-                firstRowAsNames: false,
-                columnNames: ['Food', 'Vitamin A',  'Iron'],
-                data: [
-                    ['Beef Liver', 6421, 6.5],
-                    ['Lamb Liver', 2122, 6.5],
-                    ['Cod Liver Oil', 1350, 0.9],
-                    ['Mackerel', 388, 1],
-                    ['Tuna', 214, 0.6]
-                ]
-            }
+            firstRowAsNames: false,
+            columnIds: ['Food', 'Vitamin A',  'Iron'],
+            data: [
+                ['Beef Liver', 6421, 6.5],
+                ['Lamb Liver', 2122, 6.5],
+                ['Cod Liver Oil', 1350, 0.9],
+                ['Mackerel', 388, 1],
+                ['Tuna', 214, 0.6]
+            ]
         }]
     },
     editMode: {

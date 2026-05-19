@@ -35,7 +35,7 @@ const NVIDIAPriceConnector =
         [`${NVIDIACorpId}_Close`]: close,
         [`${NVIDIACorpId}_Volume`]: volume,
         Date: date
-    } = NVIDIAPriceConnector.table.getColumns();
+    } = NVIDIAPriceConnector.getTable().getColumns();
 
     const ohlc = [],
         volumeSeriesData = [],

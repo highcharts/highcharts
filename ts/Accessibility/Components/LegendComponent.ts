@@ -1,12 +1,14 @@
 /* *
  *
- *  (c) 2009-2025 Øystein Moseng
+ *  (c) 2009-2026 Highsoft AS
+ *  Author: Øystein Moseng
  *
  *  Accessibility component for chart legend.
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -22,6 +24,7 @@
 
 import type Accessibility from '../Accessibility';
 import type Chart from '../../Core/Chart/Chart.js';
+import type { DeepPartial } from '../../Shared/Types';
 import type { LegendAccessibilityOptions } from '../Options/A11yOptions';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type ProxyElement from '../ProxyElement';
@@ -31,14 +34,6 @@ const { animObject } = A;
 import H from '../../Core/Globals.js';
 const { doc } = H;
 import Legend from '../../Core/Legend/Legend.js';
-import U from '../../Core/Utilities.js';
-const {
-    addEvent,
-    fireEvent,
-    isNumber,
-    pick,
-    syncTimeout
-} = U;
 
 import AccessibilityComponent from '../AccessibilityComponent.js';
 import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';
@@ -46,6 +41,13 @@ import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';
 import CU from '../Utils/ChartUtilities.js';
 const { getChartTitle } = CU;
 import HU from '../Utils/HTMLUtilities.js';
+import {
+    addEvent,
+    fireEvent,
+    isNumber,
+    pick,
+    syncTimeout
+} from '../../Shared/Utilities.js';
 const {
     stripHTMLTagsFromString: stripHTMLTags,
     addClass,
@@ -66,14 +68,14 @@ declare module '../../Core/Legend/LegendItem' {
     }
 }
 
-declare module '../../Core/Series/PointLike' {
-    interface PointLike {
+declare module '../../Core/Series/PointBase' {
+    interface PointBase {
         a11yProxyElement?: ProxyElement;
     }
 }
 
-declare module '../../Core/Series/SeriesLike' {
-    interface SeriesLike {
+declare module '../../Core/Series/SeriesBase' {
+    interface SeriesBase {
         a11yProxyElement?: ProxyElement;
     }
 }
@@ -520,7 +522,7 @@ class LegendComponent extends AccessibilityComponent {
                 ]
             ],
 
-            validate: function (): (boolean) {
+            validate: function (): boolean {
                 return component.shouldHaveLegendNavigation();
             },
 
@@ -591,7 +593,7 @@ class LegendComponent extends AccessibilityComponent {
     /**
      * @private
      */
-    public shouldHaveLegendNavigation(): (boolean) {
+    public shouldHaveLegendNavigation(): boolean {
         if (!shouldDoLegendA11y(this.chart)) {
             return false;
         }

@@ -1,5 +1,6 @@
 QUnit.test('Export buttons', function (assert) {
     var chartClickEventRan = false,
+        done = assert.async(),
         chart = Highcharts.chart('container', {
             chart: {
                 events: {
@@ -66,6 +67,9 @@ QUnit.test('Export buttons', function (assert) {
                                 }
                             },
                             {
+                                separator: true
+                            },
+                            {
                                 text: 'Export to PNG (large)',
                                 onclick: async function () {
                                     await this.exporting.exportChart();
@@ -90,11 +94,31 @@ QUnit.test('Export buttons', function (assert) {
 
     controller.click(alignAttr.translateX + 5, alignAttr.translateY + 5);
 
+    var menuNodes = document.querySelector('.highcharts-contextmenu')
+        .firstChild.childNodes;
+
     assert.strictEqual(
-        document.querySelector('.highcharts-contextmenu').firstChild.childNodes
-            .length,
-        2,
-        'Two menu items'
+        menuNodes.length,
+        3,
+        'Three menu items'
+    );
+
+    var separatorNode = menuNodes[1];
+
+    assert.strictEqual(
+        separatorNode.nodeName,
+        'LI',
+        'Separator should be an LI element to maintain valid HTML.'
+    );
+    assert.strictEqual(
+        separatorNode.getAttribute('role'),
+        'separator',
+        'Separator should have role="separator" for accessibility.'
+    );
+    assert.strictEqual(
+        separatorNode.style.listStyle,
+        'none',
+        'Separator should have list-style: none in classic mode.'
     );
 
     // but don't run chart click event
@@ -128,21 +152,23 @@ QUnit.test('Export buttons', function (assert) {
 
     var originalPost = Highcharts.HttpUtilities.post;
 
-    try {
-        var postData;
+    var postData;
 
-        Highcharts.HttpUtilities.post = function (url, data) {
-            postData = data;
-        };
+    Highcharts.HttpUtilities.post = function (url, data) {
+        postData = data;
+    };
 
-        // Click it
-        Highcharts.fireEvent(button, 'click');
+    // Click it
+    Highcharts.fireEvent(button, 'click');
 
+    setTimeout(function () {
         assert.strictEqual(postData.type, 'application/pdf', 'Posting for PNG');
         assert.strictEqual(typeof postData.svg, 'string', 'SVG is posted');
-    } finally {
+
+
         Highcharts.HttpUtilities.post = originalPost;
-    }
+        done();
+    }, 10);
 });
 
 QUnit.test('View/hide data table button, #14338.', function (assert) {

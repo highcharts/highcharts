@@ -1,10 +1,12 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Hønsi
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -35,17 +37,6 @@ import { Palette } from '../Color/Palettes.js';
  */
 const seriesDefaults: PlotOptionsOf<Series> = {
     // Base series options
-
-    /**
-     * The SVG value used for the `stroke-linecap` and `stroke-linejoin`
-     * of a line graph. Round means that lines are rounded in the ends and
-     * bends.
-     *
-     * @type       {Highcharts.SeriesLinecapValue}
-     * @default    round
-     * @since      3.0.7
-     * @apioption  plotOptions.line.linecap
-     */
 
     /**
      * Pixel width of the graph line.
@@ -102,8 +93,6 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      *         Map bubble
      *
      * @since 1.2.0
-     *
-     * @private
      */
     allowPointSelect: false,
 
@@ -120,8 +109,6 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      *
      * @since   5.0.10
      * @product highcharts highstock gantt
-     *
-     * @private
      */
     crisp: true,
 
@@ -138,8 +125,6 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      *         Show select box
      *
      * @since 1.2.0
-     *
-     * @private
      */
     showCheckbox: false,
 
@@ -182,8 +167,6 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      * @default {highcharts} true
      * @default {highstock} true
      * @default {highmaps} false
-     *
-     * @private
      */
     animation: {
         /** @ignore-option */
@@ -199,6 +182,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      * @sample {highcharts} highcharts/css/point-series-classname
      *         Series and point class name
      *
+     * @basic
      * @type      {string}
      * @since     5.0.0
      * @apioption plotOptions.series.className
@@ -250,7 +234,8 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      * @sample {highmaps} maps/demo/category-map/
      *         Category map by multiple series
      *
-     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @basic
+     * @type      {Highcharts.ColorType}
      * @apioption plotOptions.series.color
      */
 
@@ -261,14 +246,13 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      * Since v11, CSS variables on the form `--highcharts-color-{n}` make
      * changing the color scheme very convenient.
      *
-     * @sample    {highcharts} highcharts/css/colorindex/ Series and point color
-     *            index
+     * @sample    {highcharts} highcharts/css/colorindex/
+     *            Series and point color index
      *
      * @type      {number}
      * @since     5.0.0
      * @apioption plotOptions.series.colorIndex
      */
-
 
     /**
      * Whether to connect a graph line across null points, or render a gap
@@ -287,7 +271,6 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      * @product   highcharts highstock
      * @apioption plotOptions.series.connectNulls
      */
-
 
     /**
      * You can set the cursor to "pointer" if you have click events attached
@@ -353,9 +336,14 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      */
 
     /**
+     * Deprecated. Use
+     * [plotOptions.series.accessibility.description](#plotOptions.series.accessibility.description)
+     * instead.
+     *
      * A description of the series to add to the screen reader information
      * about the series.
      *
+     * @deprecated 8.0.0
      * @type      {string}
      * @since     5.0.0
      * @requires  modules/accessibility
@@ -477,12 +465,17 @@ const seriesDefaults: PlotOptionsOf<Series> = {
     /**
      * The line cap used for line ends and line joins on the graph.
      *
+     * @productdesc {highcharts|highstock}
+     * The SVG value used for the `stroke-linecap` and `stroke-linejoin`
+     * of a line graph. Round means that lines are rounded in the ends and
+     * bends.
+     *
      * @sample highcharts/series-line/linecap/
      *         Line cap comparison
      *
      * @type       {Highcharts.SeriesLinecapValue}
      * @default    round
-     * @product    highcharts highstock
+     * @since      3.0.7
      * @apioption  plotOptions.series.linecap
      */
 
@@ -495,6 +488,9 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      * If master series uses data sorting and linked series does not have
      * its own sorting definition, the linked series will be sorted in the
      * same order as the master one.
+     *
+     * If a `compare` value is not set on a linked series, it will be inherited
+     * from the parent series.
      *
      * @sample {highcharts|highstock} highcharts/demo/arearange-line/
      *         Linked series
@@ -547,7 +543,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      * @sample {highmaps} highcharts/plotoptions/arearange-negativecolor/
      *         Arearange
      *
-     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @type      {Highcharts.ColorType}
      * @since     3.0
      * @apioption plotOptions.series.negativeColor
      */
@@ -556,9 +552,10 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      * Whether or not data-points with the value of `null` should be interactive.
      * When this is set to `true`, tooltips may highlight these points, and this
      * option also enables keyboard navigation for such points. Format options
-     * for such points include [`nullFormat`](#tooltip.nullFormat) and [`nullFormater`](#tooltip.nullFormatter).
-     * Works for these series: `line`, `spline`, `area`, `area-spline`,
-     * `column`, `bar`, and* `timeline`.
+     * for such points include [`nullFormat`](#tooltip.nullFormat) and
+     * [`nullFormatter`](#tooltip.nullFormatter). Works for these series:
+     * `line`, `spline`, `area`, `area-spline`, `column`, `bar`, and
+     * `timeline`.
      *
      * @sample {highcharts} highcharts/series/null-interaction/
      *         Chart with interactive `null` points
@@ -572,23 +569,35 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      */
 
     /**
+     * Deprecated. Use
+     * [series.accessibility.point.descriptionFormat](#plotOptions.series.accessibility.point.descriptionFormat)
+     * instead.
+     *
      * Same as
      * [accessibility.point.descriptionFormat](#accessibility.point.descriptionFormat),
      * but for an individual series. Overrides the chart wide configuration.
      *
-     * @type      {Function}
-     * @since 11.1.0
-     * @apioption plotOptions.series.pointDescriptionFormat
+     * @type       {Function}
+     * @requires   modules/accessibility
+     * @since      11.1.0
+     * @deprecated next
+     * @apioption  plotOptions.series.pointDescriptionFormat
      */
 
     /**
+     * Deprecated. Use
+     * [series.accessibility.point.descriptionFormatter](#plotOptions.series.accessibility.point.descriptionFormatter)
+     * instead.
+     *
      * Same as
      * [accessibility.series.descriptionFormatter](#accessibility.series.descriptionFormatter),
      * but for an individual series. Overrides the chart wide configuration.
      *
-     * @type      {Function}
-     * @since     5.0.12
-     * @apioption plotOptions.series.pointDescriptionFormatter
+     * @type       {Function}
+     * @requires   modules/accessibility
+     * @since      5.0.12
+     * @deprecated 8.0.0
+     * @apioption  plotOptions.series.pointDescriptionFormatter
      */
 
     /**
@@ -653,7 +662,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      * create any padding of the X axis. In a polar column chart this means
      * that the first column points directly north. If the pointPlacement is
      * `"between"`, the columns will be laid out between ticks. This is
-     * useful for example for visualising an amount between two points in
+     * useful for example for visualizing an amount between two points in
      * time or in a certain sector of a polar chart.
      *
      * Since Highcharts 3.0.2, the point placement can also be numeric,
@@ -794,17 +803,38 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      */
 
     /**
+     * Deprecated. Use
+     * [series.accessibility.keyboardNavigation](#plotOptions.series.accessibility.keyboardNavigation)
+     * instead.
+     *
      * If set to `true`, the accessibility module will skip past the points
      * in this series for keyboard navigation.
      *
-     * @type      {boolean}
-     * @since     5.0.12
-     * @apioption plotOptions.series.skipKeyboardNavigation
+     * @type       {boolean}
+     * @since      5.0.12
+     * @deprecated 8.0.0
+     * @apioption  plotOptions.series.skipKeyboardNavigation
+     */
+
+    /**
+     * This option allows grouping series in a stacked chart. The stack option
+     * can be a string or anything else, as long as the grouped series' stack
+     * options match each other after conversion into a string.
+     *
+     * @sample {highcharts} highcharts/series/stack/
+     *         Stacked and grouped columns
+     * @sample {highcharts} highcharts/series/stack-centerincategory/
+     *         Stacked and grouped, centered in category
+     *
+     * @type      {number|string}
+     * @since     2.1
+     * @product   highcharts highstock
+     * @apioption series.stack
      */
 
     /**
      * Whether to stack the values of each series on top of each other.
-     * Possible values are `undefined` to disable, `"normal"` to stack by
+     * Possible values are null to disable, `"normal"` to stack by
      * value or `"percent"`.
      *
      * When stacking is enabled, data must be sorted
@@ -841,8 +871,9 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      *         Area
      *
      * @type       {string}
+     * @default    null
      * @product    highcharts highstock
-     * @validvalue ["normal", "overlap", "percent", "stream"]
+     * @validvalue ["normal", "overlap", "percent", "stream", null]
      * @apioption  plotOptions.series.stacking
      */
 
@@ -913,9 +944,8 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      * also be attached to the series at run time using the
      * `Highcharts.addEvent` function.
      *
+     * @basic
      * @declare Highcharts.SeriesEventsOptionsObject
-     *
-     * @private
      */
     events: {},
 
@@ -1054,8 +1084,6 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      *
      * @sample {highmaps} maps/demo/mappoint-mapmarker
      *         Using the mapmarker symbol for points
-     *
-     * @private
      */
     marker: {
 
@@ -1099,7 +1127,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
          * @sample {highcharts} highcharts/plotoptions/series-marker-fillcolor/
          *         White fill
          *
-         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @type      {Highcharts.ColorType}
          * @apioption plotOptions.series.marker.fillColor
          */
 
@@ -1124,7 +1152,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
          * @sample {highcharts} highcharts/plotoptions/series-marker-fillcolor/
          *         Inherit from series color (undefined)
          *
-         * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @type {Highcharts.ColorType}
          */
         lineColor: Palette.backgroundColor,
 
@@ -1224,7 +1252,6 @@ const seriesDefaults: PlotOptionsOf<Series> = {
                  * @type {boolean|Partial<Highcharts.AnimationOptionsObject>}
                  */
                 animation: {
-                    /** @internal */
                     duration: 150
                 },
 
@@ -1241,7 +1268,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
                  * `undefined`, the series' or point's fillColor for normal
                  * state is used.
                  *
-                 * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+                 * @type      {Highcharts.ColorType}
                  * @apioption plotOptions.series.marker.states.hover.fillColor
                  */
 
@@ -1253,7 +1280,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
                  * @sample {highcharts} highcharts/plotoptions/series-marker-states-hover-linecolor/
                  *         White fill color, black line color
                  *
-                 * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+                 * @type      {Highcharts.ColorType}
                  * @apioption plotOptions.series.marker.states.hover.lineColor
                  */
 
@@ -1345,7 +1372,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
                  * @sample {highcharts} highcharts/plotoptions/series-marker-states-select-fillcolor/
                  *         Solid red discs for selected points
                  *
-                 * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+                 * @type {Highcharts.ColorType}
                  */
                 fillColor: Palette.neutralColor20,
 
@@ -1356,7 +1383,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
                  * @sample {highcharts} highcharts/plotoptions/series-marker-states-select-linecolor/
                  *         Red line color for selected points
                  *
-                 * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+                 * @type {Highcharts.ColorType}
                  */
                 lineColor: Palette.neutralColor100,
 
@@ -1375,8 +1402,6 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      * Properties for each single point.
      *
      * @declare Highcharts.PlotSeriesPointOptions
-     *
-     * @private
      */
     point: {
 
@@ -1527,8 +1552,6 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      *
      * @type    {*|Array<*>}
      * @product highcharts highstock highmaps gantt
-     *
-     * @private
      */
     dataLabels: {
         /**
@@ -1622,7 +1645,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
          * @sample {highmaps} maps/demo/mappoint-datalabels-mapmarker
          *         Data labels as map markers
          *
-         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @type      {Highcharts.ColorType}
          * @since     2.2.1
          * @apioption plotOptions.series.dataLabels.backgroundColor
          */
@@ -1634,7 +1657,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
          * @sample {highcharts} highcharts/plotoptions/series-datalabels-box/
          *         Data labels box options
          *
-         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @type      {Highcharts.ColorType}
          * @since     2.2.1
          * @apioption plotOptions.series.dataLabels.borderColor
          */
@@ -1753,12 +1776,13 @@ const seriesDefaults: PlotOptionsOf<Series> = {
          * programmatic control, use the `formatter` instead, and return
          * `undefined` to disable a single data label.
          *
-         * @example
+         * ```js
          * filter: {
          *     property: 'percentage',
          *     operator: '>',
          *     value: 4
          * }
+         * ```
          *
          * @sample {highcharts} highcharts/demo/pie-monochrome
          *         Data labels filtered by percentage
@@ -1814,7 +1838,6 @@ const seriesDefaults: PlotOptionsOf<Series> = {
          * @apioption plotOptions.series.dataLabels.format
          */
 
-        // eslint-disable-next-line valid-jsdoc
         /**
          * Callback JavaScript function to format the data label. Note that if a
          * `format` is defined, the format takes precedence and the formatter is
@@ -1842,6 +1865,15 @@ const seriesDefaults: PlotOptionsOf<Series> = {
          */
 
         /**
+         * The rank for this point's data label in case of collision. If two
+         * data labels are about to overlap, only the one with the highest
+         * `labelrank` will be drawn.
+         *
+         * @type      {number}
+         * @apioption plotOptions.series.dataLabels.labelrank
+         */
+
+        /**
          * Format for points with the value of null. Works analogously to
          * [format](#plotOptions.series.dataLabels.format). `nullFormat` can
          * be applied only to series which support displaying null points.
@@ -1863,14 +1895,16 @@ const seriesDefaults: PlotOptionsOf<Series> = {
 
         /**
          * Callback JavaScript function that defines formatting for points
-         * with the value of null. Works analogously to [formatter](#plotOptions.series.dataLabels.formatter).
+         * with the value of null. Works analogously to
+         * [formatter](#plotOptions.series.dataLabels.formatter).
          * `nullFormatter` can be applied only to series which support
          * displaying null points. `heatmap` and `tilemap` supports
-         * `nullFormatter` by default while the following series requires [#series.nullInteraction]
+         * `nullFormatter` by default while the following series requires
+         * (series.nullInteraction)[#series.nullInteraction]
          * set to `true`: `line`, `spline`, `area`, `area-spline`, `column`,
          * `bar`, and `timeline`. Does not work with series that don't display
          * null points, like `pie`.
-
+         *
          * @sample {highcharts} highcharts/plotoptions/series-datalabels-nullformat/
          *         Format data label for null points in heat map
          *
@@ -1969,7 +2003,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
          * text outline doesn't work well, in which cases it can be disabled
          * by setting it to `"none"`. When `useHTML` is true, the
          * `textOutline` will not be picked up. In this, case, the same
-         * effect can be acheived through the `text-shadow` CSS property.
+         * effect can be achieved through the `text-shadow` CSS property.
          *
          * For some series types, where each point has an extent, like for
          * example tree maps, the data label may overflow the point. There
@@ -1989,6 +2023,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
          *
          * @type      {Highcharts.CSSObject}
          * @since     4.1.0
+         * @default   { fontSize: '0.7em', fontWeight: 'bold', color: 'contrast', textOutline: '1px contrast' }
          * @apioption plotOptions.series.dataLabels.style
          */
         style: {
@@ -2001,36 +2036,6 @@ const seriesDefaults: PlotOptionsOf<Series> = {
             /** @internal */
             textOutline: '1px contrast'
         },
-
-        /**
-         * Options for a label text which should follow marker's shape.
-         * Border and background are disabled for a label that follows a
-         * path.
-         *
-         * **Note:** Only SVG-based renderer supports this option. Setting
-         * `useHTML` to true will disable this option.
-         *
-         * @declare   Highcharts.DataLabelsTextPathOptionsObject
-         * @since     7.1.0
-         * @apioption plotOptions.series.dataLabels.textPath
-         */
-
-        /**
-         * Presentation attributes for the text path.
-         *
-         * @type      {Highcharts.SVGAttributes}
-         * @since     7.1.0
-         * @apioption plotOptions.series.dataLabels.textPath.attributes
-         */
-
-        /**
-         * Enable or disable `textPath` option for link's or marker's data
-         * labels.
-         *
-         * @type      {boolean}
-         * @since     7.1.0
-         * @apioption plotOptions.series.dataLabels.textPath.enabled
-         */
 
         /**
          * Whether to
@@ -2053,6 +2058,20 @@ const seriesDefaults: PlotOptionsOf<Series> = {
          */
         verticalAlign: 'bottom',
 
+        // Loose JSDoc doclet placed last are ignored, so placed unsorted here.
+        /**
+         * The z index of the data labels group. Does not apply below series
+         * level options.
+         *
+         * Use a `zIndex` of 6 to display it above the series,
+         * or use a `zIndex` of 2 to display it behind the series.
+         *
+         * @type      {number}
+         * @default   6
+         * @since     2.3.5
+         * @apioption plotOptions.series.dataLabels.zIndex
+         */
+
         /**
          * The x position offset of the label relative to the point in
          * pixels.
@@ -2063,16 +2082,6 @@ const seriesDefaults: PlotOptionsOf<Series> = {
          *         Data labels inside the bar
          */
         x: 0,
-
-        /**
-         * The z index of the data labels. Use a `zIndex` of 6 to display it above
-         * the series, or use a `zIndex` of 2 to display it behind the series.
-         *
-         * @type      {number}
-         * @default   6
-         * @since     2.3.5
-         * @apioption plotOptions.series.dataLabels.zIndex
-         */
 
         /**
          * The y position offset of the label relative to the point in
@@ -2096,8 +2105,6 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      *
      * @since   2.2
      * @product highcharts highstock
-     *
-     * @private
      */
     cropThreshold: 300,
 
@@ -2107,8 +2114,6 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      * @see [states.inactive.opacity](#plotOptions.series.states.inactive.opacity)
      *
      * @since 7.1.0
-     *
-     * @private
      */
     opacity: 1,
 
@@ -2119,8 +2124,6 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      * this option can be used to override the automatic value.
      *
      * @product highstock
-     *
-     * @private
      */
     pointRange: 0,
 
@@ -2136,15 +2139,13 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      *
      * @since   4.1.9
      * @product highcharts highstock
-     *
-     * @private
      */
     softThreshold: true,
 
     /**
-     * @declare Highcharts.SeriesStatesOptionsObject
+     * A collection of options for different series states.
      *
-     * @private
+     * @declare Highcharts.SeriesStatesOptionsObject
      */
     states: {
 
@@ -2159,7 +2160,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
             /**
              * Animation when returning to normal state after hovering.
              *
-                 * @type {boolean|Partial<Highcharts.AnimationOptionsObject>}
+             * @type {boolean|Partial<Highcharts.AnimationOptionsObject>}
              */
             animation: true
         },
@@ -2203,8 +2204,6 @@ const seriesDefaults: PlotOptionsOf<Series> = {
                  * The duration of the hover animation in milliseconds. By
                  * default the hover state animates quickly in, and slowly
                  * back to normal.
-                 *
-                 * @internal
                  */
                 duration: 150
             },
@@ -2241,7 +2240,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
              * individual point, see
              * [marker.states.hover](#plotOptions.series.marker.states.hover).
              *
-             * @deprecated
+             * @deprecated 2
              *
              * @extends   plotOptions.series.marker
              * @excluding states, symbol
@@ -2325,7 +2324,6 @@ const seriesDefaults: PlotOptionsOf<Series> = {
          */
         select: {
             animation: {
-                /** @internal */
                 duration: 0
             }
         },
@@ -2356,7 +2354,6 @@ const seriesDefaults: PlotOptionsOf<Series> = {
              * @type {boolean|Partial<Highcharts.AnimationOptionsObject>}
              */
             animation: {
-                /** @internal */
                 duration: 150
             },
             /**
@@ -2390,8 +2387,6 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      * @default {highstock} true
      * @default {highmaps} false
      * @since   2.0
-     *
-     * @private
      */
     stickyTracking: true,
 
@@ -2429,8 +2424,6 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      *
      * @since   2.2
      * @product highcharts highstock gantt
-     *
-     * @private
      */
     turboThreshold: 1000,
 
@@ -2475,7 +2468,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      *
      * @see [series color](#plotOptions.series.color)
      *
-     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @type      {Highcharts.ColorType}
      * @since     4.1.0
      * @product   highcharts highstock
      * @apioption plotOptions.series.zones.color
@@ -2500,7 +2493,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      *
      * @see [fillColor](#plotOptions.area.fillColor)
      *
-     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @type      {Highcharts.ColorType}
      * @since     4.1.0
      * @product   highcharts highstock
      * @apioption plotOptions.series.zones.fillColor
@@ -2582,7 +2575,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      * @sample {highcharts|highstock} highcharts/series/legend-symbol-color/
      *         Change the legend symbol color
      *
-     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @type      {Highcharts.ColorType}
      * @default   undefined
      * @since 12.0.0
      * @product   highcharts highstock highmaps
@@ -2608,8 +2601,6 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      *
      * @since      5.0.10
      * @validvalue ["x", "xy"]
-     *
-     * @private
      */
     findNearestPointBy: 'x'
 

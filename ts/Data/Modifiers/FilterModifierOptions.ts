@@ -1,13 +1,14 @@
 /* *
  *
- *  (c) 2009-2025 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
- *  - Dawid Dragula
+ *  - Dawid Draguła
  *
  * */
 
@@ -22,6 +23,10 @@
 
 import type DataModifierOptions from './DataModifierOptions';
 import type DataTable from '../DataTable';
+import type {
+    CellType as DataTableCellType,
+    RowObject as DataTableRowObject
+} from '../DataTable';
 
 
 /* *
@@ -38,17 +43,17 @@ export interface ComparisonCondition {
      * Type of the operator used in the condition, comparing the value of the
      * cell with the provided value.
      */
-    operator: '==' | '!=' | '===' | '!==' | '>' | '>=' | '<' | '<=';
+    operator: '==' | '!=' | '===' | '!==' | '>' | '>=' | '<' | '<=' | 'empty';
 
     /**
      * Name of the column to compare the value of the cell with.
      */
-    columnName: string;
+    columnId: string;
 
     /**
      * Value to compare the cell with.
      */
-    value: DataTable.CellType;
+    value: DataTableCellType;
 }
 
 /**
@@ -65,7 +70,7 @@ export interface StringCondition {
     /**
      * Name of the column to compare the value of the cell with.
      */
-    columnName: string;
+    columnId: string;
 
     /**
      * Whether the comparison should ignore case.
@@ -122,7 +127,7 @@ export interface LogicalSingleCondition {
  * Index of the row in the table.
  */
 export type CallbackCondition = (
-    row: DataTable.RowObject,
+    row: DataTableRowObject,
     table: DataTable,
     rowIndex: number
 ) => boolean;

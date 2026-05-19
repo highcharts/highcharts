@@ -1,0 +1,271 @@
+:root,
+.highcharts-light {
+    --font-color-1: rgba(0, 0, 0, 1);
+    --font-color-2: rgba(111, 111, 111, 1);
+    --font-color-3: rgba(20, 20, 20, 1);
+    --font-color-4: rgba(79, 79, 79, 1);
+    --font-color-5: rgba(1, 76, 229, 0.8);
+    --font-color-6: rgba(71, 69, 84, 1);
+    --font-color-7: rgba(117, 115, 140, 1);
+    --font-color-8: rgba(1, 76, 229, 1);
+    --background-color-1: rgba(246, 246, 246, 1);
+    --border-color-1: rgba(209, 209, 209, 1);
+    --border-color-2: rgba(244, 244, 244, 1);
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --font-color-1: rgba(255, 255, 255, 0.95);
+        --font-color-2: rgba(180, 180, 180, 1);
+        --font-color-3: rgba(230, 230, 230, 1);
+        --font-color-4: rgba(160, 160, 160, 1);
+        --font-color-5: rgba(100, 150, 255, 0.8);
+        --font-color-6: rgba(200, 200, 200, 1);
+        --font-color-7: rgba(150, 150, 170, 1);
+        --font-color-8: rgba(100, 150, 255, 1);
+        --background-color-1: rgba(18, 18, 18, 1);
+        --border-color-1: rgba(60, 60, 60, 1);
+        --border-color-2: rgba(40, 40, 40, 1);
+    }
+}
+
+.highcharts-dark {
+    --font-color-1: rgba(255, 255, 255, 0.95);
+    --font-color-2: rgba(180, 180, 180, 1);
+    --font-color-3: rgba(230, 230, 230, 1);
+    --font-color-4: rgba(160, 160, 160, 1);
+    --font-color-5: rgba(100, 150, 255, 0.8);
+    --font-color-6: rgba(200, 200, 200, 1);
+    --font-color-7: rgba(150, 150, 170, 1);
+    --font-color-8: rgba(100, 150, 255, 1);
+    --background-color-1: rgba(18, 18, 18, 1);
+    --border-color-1: rgba(60, 60, 60, 1);
+    --border-color-2: rgba(40, 40, 40, 1);
+}
+
+body {
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Helvetica,
+        Arial,
+        "Apple Color Emoji",
+        "Segoe UI Emoji",
+        "Segoe UI Symbol",
+        sans-serif;
+    background: var(--highcharts-background-color);
+    color: var(--highcharts-neutral-color-100);
+}
+
+#custom-title {
+    color: var(--font-color-1);
+    font-weight: 700;
+    font-style: bold;
+    font-size: 22px;
+    margin: 5px 10px;
+}
+
+#custom-subtitle {
+    color: var(--font-color-2);
+    font-weight: 400;
+    font-size: 14px;
+    margin: 5px 10px;
+
+    a {
+        color: inherit;
+        text-decoration: none;
+    }
+}
+
+.highcharts-figure,
+.highcharts-data-table table {
+    min-width: 360px;
+    max-width: 800px;
+    margin: 1em auto;
+}
+
+.highcharts-wrapper {
+    display: flex;
+}
+
+#container {
+    width: 100%;
+}
+
+#custom-tooltip {
+    background-color: var(--background-color-1);
+    border: 1px solid var(--border-color-1);
+    border-radius: 6px;
+    width: 334px;
+    margin: 0 10px 29px;
+    padding: 1em;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+#custom-tooltip .tooltip-value {
+    white-space: nowrap;
+}
+
+#tooltip-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#tooltip-header-label {
+    color: var(--font-color-3);
+    font-weight: 700;
+    font-style: bold;
+}
+
+#tooltip-header-value {
+    color: white;
+    padding: 6px 12px;
+    border-radius: 6px;
+    display: flex;
+    flex-direction: row;
+    gap: 4px;
+    align-items: center;
+    min-height: 1.5rem;
+}
+
+#tooltip-values {
+    display: flex;
+    flex-direction: column;
+}
+
+#tooltip-series-name {
+    color: var(--font-color-4);
+    font-weight: 400;
+    font-size: 14px;
+}
+
+#tooltip-value {
+    color: var(--font-color-3);
+    font-weight: 500;
+    font-style: medium;
+    font-size: 30px;
+}
+
+.tooltip-stat-row {
+    display: flex;
+    flex-direction: row;
+    gap: 1em;
+
+    span {
+        color: var(--font-color-4);
+        font-weight: 400;
+        font-size: 14px;
+    }
+}
+
+#tooltip-btn {
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--font-color-8);
+    cursor: pointer;
+    text-align: left;
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    align-items: center;
+
+    i {
+        font-size: 20px;
+    }
+
+    &:hover {
+        color: var(--font-color-5);
+    }
+}
+
+#table-wrapper {
+    overflow-x: auto;
+    margin: 2em 10px;
+    border: 1px solid var(--border-color-2);
+    border-radius: 6px;
+}
+
+#custom-legend {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#custom-legend tr {
+    transition: background-color 250ms;
+}
+
+#custom-legend tr.active {
+    background-color: var(--border-color-2);
+}
+
+#custom-legend th:first-child,
+#custom-legend td:first-child {
+    text-align: left;
+}
+
+#custom-legend td,
+#custom-legend th {
+    text-align: right;
+    padding: 8px;
+}
+
+#custom-legend tr.header-row th {
+    font-weight: 400;
+    font-size: 14px;
+    font-style: normal;
+    color: var(--font-color-6);
+}
+
+#custom-legend tr:first-child {
+    border-top: none;
+}
+
+#custom-legend tr {
+    border-top: 1px solid var(--border-color-2);
+}
+
+#custom-legend td {
+    font-weight: 500;
+    white-space: nowrap;
+
+    span {
+        color: var(--font-color-7);
+        font-weight: 400;
+        font-size: 14px;
+    }
+}
+
+#custom-legend td.series-name {
+    display: flex;
+    place-items: center;
+    gap: 8px;
+}
+
+.highcharts-description {
+    margin: 0.3rem 10px;
+}
+
+#csv {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .highcharts-wrapper {
+        flex-direction: column;
+        place-items: center;
+    }
+
+    #custom-tooltip {
+        margin: 2em 10px 1em;
+        box-sizing: border-box;
+        width: calc(100% - 20px);
+        height: 14em;
+    }
+}

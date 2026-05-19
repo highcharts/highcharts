@@ -163,5 +163,30 @@ QUnit.test(
             `Last visible price label value should be equal to last inside point
             value, #18528.`
         );
+
+        chart.series[0].hide();
+        assert.strictEqual(
+            lvpLabel.visibility && lpLabel.visibility === 'hidden',
+            true,
+            'Both labels should be hidden after series hide, #22658.'
+        );
+        chart.series[0].show();
+
+        chart.addSeries({
+            data: [100],
+            visible: false,
+            lastPrice: {
+                enabled: true,
+                label: {
+                    enabled: true
+                }
+            }
+        });
+        assert.strictEqual(
+            chart.series[1].lastPriceLabel && chart.series[1].lastPrice,
+            undefined,
+            `Last price label should be hidden when series is not visible on
+            first render, #22658.`
+        );
     }
 );

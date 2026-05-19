@@ -1,5 +1,5 @@
 const grid = Grid.grid('container', {
-    dataTable: {
+    data: {
         columns: {
             a: Array.from({ length: 1000 }, (_, i) => `A${i} lorem ipsum`),
             b: Array.from({ length: 1000 }, (_, i) =>
@@ -36,6 +36,12 @@ const grid = Grid.grid('container', {
         cells: {
             format: '{row.index}%'
         }
+    }, {
+        id: 'b',
+        width: '30%'
+    }, {
+        id: 'c',
+        width: '10%'
     }]
 });
 

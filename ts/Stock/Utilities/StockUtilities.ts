@@ -1,10 +1,12 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Hønsi
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -17,10 +19,7 @@
  * */
 
 import type Chart from '../../Core/Chart/Chart';
-import U from '../../Core/Utilities.js';
-const {
-    defined
-} = U;
+import { defined } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -32,7 +31,7 @@ const {
  * Sets the chart.fixedRange to the specified value. If the value is larger
  * than actual range, sets it to the maximum possible range. (#20327)
  *
- * @private
+ * @internal
  * @function Highcharts.StockChart#setFixedRange
  * @param {number|undefined} range
  *        Range to set in axis units.
@@ -50,8 +49,10 @@ function setFixedRange(this: Chart, range: number | undefined): void {
     }
 }
 
+/** @internal */
 const StockUtilities = {
     setFixedRange
 };
 
+/** @internal */
 export default StockUtilities;

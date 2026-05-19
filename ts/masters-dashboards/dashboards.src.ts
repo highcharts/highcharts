@@ -1,12 +1,13 @@
+// SPDX-License-Identifier: LicenseRef-Highcharts
 /**
  * @license Highcharts Dashboards v@product.version@ (@product.date@)
  * @module dashboards/dashboards
  *
- * (c) 2009-2025 Highsoft AS
+ * (c) 2009-2026 Highsoft AS
  *
- * License: www.highcharts.com/license
+ * A commercial license may be required depending on use,
+ * see www.highcharts.com/license
  */
-
 
 'use strict';
 
@@ -17,11 +18,10 @@
  *
  * */
 
-import type { Highcharts as H } from '../Dashboards/Plugins/HighchartsTypes';
-import type { GridNamespace as D } from '../Dashboards/Plugins/DataGridTypes';
+import type { Highcharts as HighchartsNamespace } from '../Dashboards/Plugins/HighchartsTypes';
+import type { GridNamespace } from '../Dashboards/Plugins/GridTypes';
 
 // Fill registries
-import '../Dashboards/Components/HTMLComponent/HTMLComponent.js';
 import '../Data/Connectors/CSVConnector.js';
 import '../Data/Connectors/GoogleSheetsConnector.js';
 import '../Data/Connectors/HTMLTableConnector.js';
@@ -31,6 +31,15 @@ import '../Data/Modifiers/InvertModifier.js';
 import '../Data/Modifiers/RangeModifier.js';
 import '../Data/Modifiers/SortModifier.js';
 import '../Data/Modifiers/FilterModifier.js';
+
+// Import SerializeHelper modules to register them
+import '../Dashboards/SerializeHelper/CSVConnectorHelper.js';
+import '../Dashboards/SerializeHelper/DataConverterHelper.js';
+import '../Dashboards/SerializeHelper/DataCursorHelper.js';
+import '../Dashboards/SerializeHelper/DataTableHelper.js';
+import '../Dashboards/SerializeHelper/GoogleSheetsConnectorHelper.js';
+import '../Dashboards/SerializeHelper/HTMLTableConnectorHelper.js';
+import '../Dashboards/SerializeHelper/JSONConnectorHelper.js';
 
 import AST from '../Core/Renderer/HTML/AST.js';
 import DataConnector from '../Data/Connectors/DataConnector.js';
@@ -42,13 +51,22 @@ import DataCursor from '../Data/DataCursor.js';
 import DataConverter from '../Data/Converters/DataConverter.js';
 import DataModifier from '../Data/Modifiers/DataModifier.js';
 import DataTable from '../Data/DataTable.js';
+import Defaults from '../Dashboards/Defaults.js';
 import Globals from '../Dashboards/Globals.js';
-import GridPlugin from '../Dashboards/Plugins/DataGridPlugin.js';
+import GridPlugin from '../Dashboards/Plugins/GridPlugin.js';
 import HighchartsPlugin from '../Dashboards/Plugins/HighchartsPlugin.js';
 import PluginHandler from '../Dashboards/PluginHandler.js';
 import Sync from '../Dashboards/Components/Sync/Sync.js';
 import Utilities from '../Dashboards/Utilities.js';
+import { addEvent, merge, removeEvent } from '../Shared/Utilities.js';
+import { uniqueKey } from '../Core/Utilities.js';
 
+// Import components
+import GridComponent from '../Dashboards/Components/GridComponent/GridComponent.js';
+import HighchartsComponent from '../Dashboards/Components/HighchartsComponent/HighchartsComponent.js';
+import HTMLComponent from '../Dashboards/Components/HTMLComponent/HTMLComponent.js';
+import KPIComponent from '../Dashboards/Components/KPIComponent/KPIComponent.js';
+import NavigatorComponent from '../Dashboards/Components/NavigatorComponent/NavigatorComponent.js';
 
 /* *
  *
@@ -59,26 +77,32 @@ import Utilities from '../Dashboards/Utilities.js';
 
 declare global {
     interface Dashboards {
-        addEvent: typeof Utilities.addEvent;
+        addEvent: typeof addEvent;
         board: typeof Board.board;
         boards: typeof Globals.boards;
         error: typeof Utilities.error;
-        merge: typeof Utilities.merge;
-        removeEvent: typeof Utilities.removeEvent;
-        uniqueKey: typeof Utilities.uniqueKey;
+        merge: typeof merge;
+        removeEvent: typeof removeEvent;
+        setOptions: typeof Defaults.setOptions;
+        uniqueKey: typeof uniqueKey;
+        version: typeof Globals.version;
         win: typeof Globals.win;
         AST: typeof AST;
         Board: typeof Board;
         Component: typeof Component;
         ComponentRegistry: typeof ComponentRegistry;
+        GridComponent: typeof GridComponent;
+        HighchartsComponent: typeof HighchartsComponent;
+        HTMLComponent: typeof HTMLComponent;
+        KPIComponent: typeof KPIComponent;
+        NavigatorComponent: typeof NavigatorComponent;
         DataConnector: typeof DataConnector;
         DataConverter: typeof DataConverter;
         DataCursor: typeof DataCursor;
         DataModifier: typeof DataModifier;
         DataPool: typeof DataPool;
         DataTable: typeof DataTable;
-        /** @deprecated DataGrid will be removed in behalf of Grid in the next major version. */
-        DataGridPlugin: typeof GridPlugin;
+        defaultOptions: typeof Defaults.defaultOptions;
         GridPlugin: typeof GridPlugin;
         HighchartsPlugin: typeof HighchartsPlugin;
         PluginHandler: typeof PluginHandler;
@@ -86,10 +110,8 @@ declare global {
     }
     interface Window {
         Dashboards: Dashboards;
-        Highcharts?: H;
-        /** @deprecated DataGrid will be removed in behalf of Grid in the next major version. */
-        DataGrid?: D;
-        Grid?: D;
+        Highcharts?: HighchartsNamespace;
+        Grid?: GridNamespace;
     }
     let Dashboards: Dashboards;
 }
@@ -105,22 +127,28 @@ declare global {
 const G = Globals as unknown as Dashboards;
 
 G.board = Board.board;
-G.addEvent = Utilities.addEvent;
+G.addEvent = addEvent;
 G.error = Utilities.error;
-G.merge = Utilities.merge;
-G.removeEvent = Utilities.removeEvent;
-G.uniqueKey = Utilities.uniqueKey;
+G.merge = merge;
+G.removeEvent = removeEvent;
+G.setOptions = Defaults.setOptions;
+G.uniqueKey = uniqueKey;
 G.AST = AST;
 G.Board = Board;
 G.Component = Component;
 G.ComponentRegistry = ComponentRegistry;
+G.GridComponent = GridComponent;
+G.HighchartsComponent = HighchartsComponent;
+G.HTMLComponent = HTMLComponent;
+G.KPIComponent = KPIComponent;
+G.NavigatorComponent = NavigatorComponent;
 G.DataConnector = DataConnector;
 G.DataConverter = DataConverter;
 G.DataCursor = DataCursor;
 G.DataModifier = DataModifier;
 G.DataPool = DataPool;
 G.DataTable = DataTable;
-G.DataGridPlugin = GridPlugin;
+G.defaultOptions = Defaults.defaultOptions;
 G.GridPlugin = GridPlugin;
 G.HighchartsPlugin = HighchartsPlugin;
 G.PluginHandler = PluginHandler;

@@ -48,6 +48,7 @@ const SOURCE_GLOBS = [
     'Extensions/Annotations/ControlPoint.js',
     'Extensions/Annotations/NavigationBindings.js',
     'Extensions/Sonification/*.js',
+    'Extensions/Boost/Boost.js',
     'Extensions/BorderRadius.js',
     'Extensions/Breadcrumbs/Breadcrumbs.js',
     'Extensions/Data.js',
@@ -55,6 +56,7 @@ const SOURCE_GLOBS = [
     'Extensions/DataGrouping/DataGroupingSeriesComposition.js',
     'Extensions/DraggablePoints/DraggablePoints.js',
     'Extensions/Drilldown/Drilldown.js',
+    'Extensions/Drilldown/DrilldownSeries.js',
     'Extensions/ExportData/ExportData.js',
     'Extensions/Exporting/Exporting.js',
     'Extensions/Exporting/Fullscreen.js',
@@ -62,9 +64,12 @@ const SOURCE_GLOBS = [
     'Extensions/OfflineExporting/OfflineExporting.js',
     'Extensions/PatternFill.js',
     'Extensions/SeriesLabel/SeriesLabel.js',
+    'Extensions/StaticScale.js',
     'Maps/GeoJSONComposition.js',
     'Maps/MapNavigation.js',
     'Maps/MapView.js',
+    'Maps/ProjectionOptions.js',
+    'Maps/Projections/*.js',
     'Series/AreaRange/AreaRangePoint.js',
     'Series/AreaRange/AreaRangeSeries.js',
     'Series/Column/ColumnSeries.js',
@@ -72,10 +77,12 @@ const SOURCE_GLOBS = [
     'Series/Organization/OrganizationSeries.js',
     'Series/PackedBubble/PackedBubbleSeries.js',
     'Series/Pie/PieSeries.js',
+    'Series/Pie/PiePoint.js',
     'Series/Sankey/SankeySeries.js',
     'Series/Timeline/TimelineSeries.js',
     'Series/GeoHeatmap/GeoHeatmapSeries.js',
-    'Stock/Navigator/StandaloneNavigator.js'
+    'Stock/Navigator/StandaloneNavigator.js',
+    'Shared/Utilities.js'
 ].map(path => `code/es-modules/${path}`));
 
 const TARGET_DIRECTORY = Path.join('build', 'api', 'class-reference');
@@ -116,6 +123,7 @@ function jsDocClasses() {
             plugins: [
                 ['plugins', 'add-namespace'],
                 ['plugins', 'markdown'],
+                ['plugins', 'internaltag'],
                 ['plugins', 'sampletag']
             ].map(
                 filePath => Path.join(TEMPLATE_DIRECTORY, ...filePath)

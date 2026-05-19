@@ -1,10 +1,12 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Hønsi
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -20,12 +22,7 @@ import type SVGPath from './SVGPath';
 import type SymbolOptions from './SymbolOptions';
 import type { SymbolTypeRegistry } from './SymbolType';
 
-import U from '../../Utilities.js';
-const {
-    defined,
-    isNumber,
-    pick
-} = U;
+import { defined, isNumber, pick } from '../../../Shared/Utilities.js';
 
 /* *
  *
@@ -36,7 +33,20 @@ const {
 /* eslint-disable require-jsdoc, valid-jsdoc */
 
 /**
+ * Arc symbol path.
  *
+ * @param {number} cx
+ * Center X
+ * @param {number} cy
+ * Center Y
+ * @param {number} w
+ * Width
+ * @param {number} h
+ * Height
+ * @param {Highcharts.SymbolOptions} [options]
+ * Options
+ * @return {Highcharts.SVGPathArray}
+ * Path
  */
 function arc(
     cx: number,
@@ -54,12 +64,9 @@ function arc(
         const rx = pick(options.r, w),
             ry = pick(options.r, h || w),
             // Subtract a small number to prevent cos and sin of start and end
-            // from becoming equal on 360 arcs (#1561). The size of the circle
-            // affects the constant, therefore the division by `rx`. If the
-            // proximity is too small, the arc disappears. If it is too great, a
-            // gap appears. This can be seen in the animation of the official
-            // bubble demo (#20585).
-            proximity = 0.0002 / (options.borderRadius ? 1 : Math.max(rx, 1)),
+            // from becoming equal on 360 arcs (#1561). See "Arc proximity"
+            // tests at samples/unit-tests/svgrenderer/symbol/demo.js
+            proximity = 0.0001,
             fullCircle = (
                 Math.abs(end - start - 2 * Math.PI) <
                 proximity
@@ -72,10 +79,10 @@ function arc(
 
         const innerRadius = options.innerR,
             open = pick(options.open, fullCircle),
-            cosStart = Math.cos(start),
-            sinStart = Math.sin(start),
-            cosEnd = Math.cos(end),
-            sinEnd = Math.sin(end),
+            cosStart = fullCircle ? 0 : Math.cos(start),
+            sinStart = fullCircle ? 1 : Math.sin(start),
+            cosEnd = fullCircle ? 0 : Math.cos(end),
+            sinEnd = fullCircle ? 1 : Math.sin(end),
             // Proximity takes care of rounding errors around PI (#6971)
             longArc = pick(
                 options.longArc,
@@ -89,7 +96,8 @@ function arc(
             0, // Slanting
             longArc, // Long or short arc
             pick(options.clockwise, 1), // Clockwise
-            cx + rx * cosEnd,
+            // Use a static pixel offset for full circle (#21701)
+            cx + (fullCircle ? 0.001 : rx * cosEnd),
             cy + ry * sinEnd
         ];
         arcSegment.params = { start, end, cx, cy }; // Memo for border radius
@@ -111,7 +119,7 @@ function arc(
                 longArc, // Long or short arc
                 // Clockwise - opposite to the outer arc clockwise
                 defined(options.clockwise) ? 1 - options.clockwise : 0,
-                cx + innerRadius * cosStart,
+                cx + (fullCircle ? -0.001 : innerRadius * cosStart),
                 cy + innerRadius * sinStart
             ];
             // Memo for border radius
@@ -145,6 +153,19 @@ function arc(
 
 /**
  * Callout shape used for default tooltips.
+ *
+ * @param {number} x
+ * Center X
+ * @param {number} y
+ * Center Y
+ * @param {number} w
+ * Width
+ * @param {number} h
+ * Height
+ * @param {Highcharts.SymbolOptions} [options]
+ * Options
+ * @return {Highcharts.SVGPathArray}
+ * Path
  */
 function callout(
     x: number,
@@ -285,8 +306,20 @@ function callout(
     return path;
 }
 
+
 /**
+ * Circle symbol path.
  *
+ * @param {number} x
+ * X coordinate
+ * @param {number} y
+ * Y coordinate
+ * @param {number} w
+ * Width
+ * @param {number} h
+ * Height
+ * @return {Highcharts.SVGPathArray}
+ * Path
  */
 function circle(
     x: number,
@@ -303,7 +336,18 @@ function circle(
 }
 
 /**
+ * Diamond symbol path.
  *
+ * @param {number} x
+ * X coordinate
+ * @param {number} y
+ * Y coordinate
+ * @param {number} w
+ * Width
+ * @param {number} h
+ * Height
+ * @return {Highcharts.SVGPathArray}
+ * Path
  */
 function diamond(
     x: number,
@@ -321,8 +365,22 @@ function diamond(
 }
 
 // #15291
+
 /**
+ * Rect symbol path.
  *
+ * @param {number} x
+ * X coordinate
+ * @param {number} y
+ * Y coordinate
+ * @param {number} w
+ * Width
+ * @param {number} h
+ * Height
+ * @param {Highcharts.SymbolOptions} [options]
+ * Options
+ * @return {Highcharts.SVGPathArray}
+ * Path
  */
 function rect(
     x: number,
@@ -343,8 +401,22 @@ function rect(
     ];
 }
 
+
 /**
+ * Rounded rectangle symbol path.
  *
+ * @param {number} x
+ * X coordinate
+ * @param {number} y
+ * Y coordinate
+ * @param {number} w
+ * Width
+ * @param {number} h
+ * Height
+ * @param {Highcharts.SymbolOptions} [options]
+ * Options
+ * @return {Highcharts.SVGPathArray}
+ * Path
  */
 function roundedRect(
     x: number,
@@ -368,8 +440,20 @@ function roundedRect(
     ];
 }
 
+
 /**
+ * Triangle symbol path.
  *
+ * @param {number} x
+ * X coordinate
+ * @param {number} y
+ * Y coordinate
+ * @param {number} w
+ * Width
+ * @param {number} h
+ * Height
+ * @return {Highcharts.SVGPathArray}
+ * Path
  */
 function triangle(
     x: number,
@@ -385,8 +469,20 @@ function triangle(
     ];
 }
 
+
 /**
+ * Inverted triangle symbol path.
  *
+ * @param {number} x
+ * X coordinate
+ * @param {number} y
+ * Y coordinate
+ * @param {number} w
+ * Width
+ * @param {number} h
+ * Height
+ * @return {Highcharts.SVGPathArray}
+ * Path
  */
 function triangleDown(
     x: number,
@@ -423,14 +519,159 @@ declare module './SymbolType' {
 }
 
 const Symbols: SymbolTypeRegistry = {
+
+    /**
+     * Arc symbol path.
+     *
+     * @param {number} cx
+     * Center X
+     * @param {number} cy
+     * Center Y
+     * @param {number} w
+     * Width
+     * @param {number} h
+     * Height
+     * @param {Highcharts.SymbolOptions} [options]
+     * Options
+     * @return {Highcharts.SVGPathArray}
+     * Path
+     */
     arc,
+
+    /**
+     * Callout shape used for default tooltips.
+     *
+     * @param {number} cx
+     * Center X
+     * @param {number} cy
+     * Center Y
+     * @param {number} w
+     * Width
+     * @param {number} h
+     * Height
+     * @param {Highcharts.SymbolOptions} [options]
+     * Options
+     * @return {Highcharts.SVGPathArray}
+     * Path
+     */
     callout,
+
+    /**
+     * Circle symbol path.
+     *
+     * @param {number} x
+     * X coordinate
+     * @param {number} y
+     * Y coordinate
+     * @param {number} w
+     * Width
+     * @param {number} h
+     * Height
+     * @return {Highcharts.SVGPathArray}
+     * Path
+     */
     circle,
+
+    /**
+     * Diamond symbol path.
+     *
+     * @param {number} x
+     * X coordinate
+     * @param {number} y
+     * Y coordinate
+     * @param {number} w
+     * Width
+     * @param {number} h
+     * Height
+     * @return {Highcharts.SVGPathArray}
+     * Path
+     */
     diamond,
+
+    /**
+     * Rect symbol path.
+     *
+     * @param {number} x
+     * X coordinate
+     * @param {number} y
+     * Y coordinate
+     * @param {number} w
+     * Width
+     * @param {number} h
+     * Height
+     * @param {Highcharts.SymbolOptions} [options]
+     * Options
+     * @return {Highcharts.SVGPathArray}
+     * Path
+     */
     rect,
+
+    /**
+     * Rounded rectangle symbol path.
+     *
+     * @param {number} x
+     * X coordinate
+     * @param {number} y
+     * Y coordinate
+     * @param {number} w
+     * Width
+     * @param {number} h
+     * Height
+     * @param {Highcharts.SymbolOptions} [options]
+     * Options
+     * @return {Highcharts.SVGPathArray}
+     * Path
+     */
     roundedRect,
+
+    /**
+     * Rect symbol path.
+     *
+     * @param {number} x
+     * X coordinate
+     * @param {number} y
+     * Y coordinate
+     * @param {number} w
+     * Width
+     * @param {number} h
+     * Height
+     * @param {Highcharts.SymbolOptions} [options]
+     * Options
+     * @return {Highcharts.SVGPathArray}
+     * Path
+     */
     square: rect,
+
+    /**
+     * Triangle symbol path.
+     *
+     * @param {number} x
+     * X coordinate
+     * @param {number} y
+     * Y coordinate
+     * @param {number} w
+     * Width
+     * @param {number} h
+     * Height
+     * @return {Highcharts.SVGPathArray}
+     * Path
+     */
     triangle,
+
+    /**
+     * Inverted triangle symbol path.
+     *
+     * @param {number} x
+     * X coordinate
+     * @param {number} number
+     * Y coordinate
+     * @param {number} w
+     * Width
+     * @param {number} h
+     * Height
+     * @return {Highcharts.SVGPathArray}
+     * Path
+     */
     'triangle-down': triangleDown
 } as SymbolTypeRegistry;
 
@@ -441,3 +682,60 @@ const Symbols: SymbolTypeRegistry = {
  * */
 
 export default Symbols;
+
+/* *
+ *
+ *  API Declarations
+ *
+ * */
+
+/**
+ * @interface Highcharts.SymbolOptions
+ *//**
+ * @name anchorX
+ * @type {number|undefined}
+ *//**
+ * @name anchorY
+ * @type {number|undefined}
+ *//**
+ * @name backgroundSize
+ * @type {"contain"|"cover"|"within"}
+ *//**
+ * @name clockwise
+ * @type {0|1|undefined}
+ *//**
+ * @name context
+ * @type {string|undefined}
+ *//**
+ * @name end
+ * @type {number|undefined}
+ *//**
+ * @name height
+ * @type {number|undefined}
+ *//**
+ * @name innerR
+ * @type {number|undefined}
+ *//**
+ * @name longArc
+ * @type {0|1|undefined}
+ *//**
+ * @name open
+ * @type {boolean|undefined}
+ *//**
+ * @name r
+ * @type {number|undefined}
+ *//**
+ * @name start
+ * @type {number|undefined}
+ *//**
+ * @name width
+ * @type {number|undefined}
+ *//**
+ * @name x
+ * @type {number|undefined}
+ *//**
+ * @name y
+ * @type {number|undefined}
+ */
+
+''; // Keeps doclets above in file

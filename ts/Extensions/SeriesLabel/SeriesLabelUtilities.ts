@@ -1,10 +1,12 @@
 /* *
  *
- *  (c) 2009-2025 Torstein Honsi
+ *  (c) 2009-2026 Highsoft AS
+ *  Author: Torstein Hønsi
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -27,7 +29,7 @@ import type { LabelIntersectBoxObject } from './SeriesLabelOptions';
 /**
  * Counter-clockwise, part of the fast line intersection logic.
  *
- * @private
+ * @internal
  * @function ccw
  */
 function ccw(
@@ -46,7 +48,7 @@ function ccw(
 /**
  * Detect if two lines intersect.
  *
- * @private
+ * @internal
  * @function intersectLine
  */
 function intersectLine(
@@ -66,7 +68,7 @@ function intersectLine(
 /**
  * Detect if a box intersects with a line.
  *
- * @private
+ * @internal
  * @function boxIntersectLine
  */
 function boxIntersectLine(
@@ -87,9 +89,7 @@ function boxIntersectLine(
     );
 }
 
-/**
- * @private
- */
+/** @internal */
 function intersectRect(
     r1: LabelIntersectBoxObject,
     r2: LabelIntersectBoxObject
@@ -106,9 +106,11 @@ function intersectRect(
  *
  * */
 
+/** @internal */
 const SeriesLabelUtilities = {
     boxIntersectLine,
     intersectRect
 };
 
+/** @internal */
 export default SeriesLabelUtilities;

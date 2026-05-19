@@ -1,8 +1,9 @@
 /* *
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -14,7 +15,7 @@
  *
  * */
 
-import type { IndicatorLinkedSeriesLike } from '../IndicatorLike';
+import type { IndicatorLinkedSeriesBase } from '../IndicatorBase';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 import type {
@@ -27,12 +28,7 @@ import AU from '../ArrayUtilities.js';
 import MultipleLinesComposition from '../MultipleLinesComposition.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const { sma: SMAIndicator } = SeriesRegistry.seriesTypes;
-import U from '../../../Core/Utilities.js';
-const {
-    extend,
-    isArray,
-    merge
-} = U;
+import { extend, isArray, merge } from '../../../Shared/Utilities.js';
 
 /* *
  *
@@ -43,7 +39,7 @@ const {
 /**
  * The Stochastic series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.stochastic
  *
@@ -61,7 +57,7 @@ class StochasticIndicator extends SMAIndicator {
      * Stochastic oscillator. This series requires the `linkedTo` option to be
      * set and should be loaded after the `stock/indicators/indicators.js` file.
      *
-     * @sample stock/indicators/stochastic
+     * @sample {highstock} stock/indicators/stochastic
      *         Stochastic oscillator
      *
      * @extends      plotOptions.sma
@@ -153,7 +149,7 @@ class StochasticIndicator extends SMAIndicator {
     }
 
     public getValues <TLinkedSeries extends LineSeries>(
-        series: TLinkedSeries&IndicatorLinkedSeriesLike,
+        series: TLinkedSeries&IndicatorLinkedSeriesBase,
         params: StochasticParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
         const periodK: number = (params.periods as any)[0],
@@ -262,6 +258,7 @@ class StochasticIndicator extends SMAIndicator {
  *
  * */
 
+/** @internal */
 interface StochasticIndicator extends MultipleLinesComposition.IndicatorComposition {
     linesApiNames: Array<string>;
     nameBase: string;
@@ -290,6 +287,7 @@ MultipleLinesComposition.compose(StochasticIndicator);
  *
  * */
 
+/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         stochastic: typeof StochasticIndicator;
@@ -303,6 +301,7 @@ SeriesRegistry.registerSeriesType('stochastic', StochasticIndicator);
  *
  * */
 
+/** @internal */
 export default StochasticIndicator;
 
 /* *

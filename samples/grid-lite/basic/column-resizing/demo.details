@@ -1,0 +1,7 @@
+---
+ name: Column resizing mode Demo
+ authors:
+   - Dawid Draguła
+   - Sebastian Bochan
+ js_wrap: b
+...

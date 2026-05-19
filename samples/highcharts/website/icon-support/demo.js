@@ -447,7 +447,7 @@ const support = {
             ],
             startAngle: 0,
             zIndex: 15,
-            size: '70.5%',
+            size: '75%',
             center: ['50%', '50%']
         },
         // 12 - pie head

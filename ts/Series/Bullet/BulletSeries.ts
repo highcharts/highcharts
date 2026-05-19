@@ -1,10 +1,12 @@
 /* *
  *
- *  (c) 2010-2025 Kacper Madej
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Kacper Madej
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -23,14 +25,13 @@ import BulletPoint from './BulletPoint.js';
 import BulletSeriesDefaults from './BulletSeriesDefaults.js';
 import ColumnSeries from '../Column/ColumnSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-import U from '../../Core/Utilities.js';
-const {
+import {
     extend,
     isNumber,
     merge,
     pick,
     relativeLength
-} = U;
+} from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -41,7 +42,7 @@ const {
 /**
  * The bullet series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.bullet
  *
@@ -245,7 +246,6 @@ class BulletSeries extends ColumnSeries {
         return dataExtremes;
     }
 
-    /* eslint-enable valid-jsdoc */
 
 }
 
@@ -255,6 +255,7 @@ class BulletSeries extends ColumnSeries {
  *
  * */
 
+/** @internal */
 interface BulletSeries {
     parallelArrays: Array<string>;
     pointArrayMap: Array<string>;
@@ -273,6 +274,7 @@ BulletSeries.prototype.pointClass = BulletPoint;
  *
  * */
 
+/** @internal */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         bullet: typeof BulletSeries;
@@ -287,4 +289,5 @@ SeriesRegistry.registerSeriesType('bullet', BulletSeries);
  *
  * */
 
+/** @internal */
 export default BulletSeries;

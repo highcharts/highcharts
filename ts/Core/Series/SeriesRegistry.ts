@@ -1,10 +1,12 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Hønsi
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -16,19 +18,15 @@
  *
  * */
 
-import Series from './Series.js';
+import type { DeepPartial } from '../../Shared/Types';
 import type { SeriesTypeRegistry } from './SeriesType';
+import type Series from './Series.js';
 
 import H from '../Globals.js';
 import D from '../Defaults.js';
 const { defaultOptions } = D;
 import Point from './Point.js';
-import U from '../Utilities.js';
-const {
-    extend,
-    extendClass,
-    merge
-} = U;
+import { extend, extendClass, merge } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -62,7 +60,15 @@ namespace SeriesRegistry {
     /**
      * Registers class pattern of a series.
      *
-     * @private
+     * @param {string} seriesType
+     * The series type as an identifier string in lower case.
+     *
+     * @param {Function} SeriesClass
+     * The series class as a class pattern or a constructor function with
+     * prototype.
+     *
+     * @return {boolean}
+     * True if series type was added, false if it already exists.
      */
     export function registerSeriesType(
         seriesType: string,
@@ -107,10 +113,10 @@ namespace SeriesRegistry {
      * @param {Highcharts.SeriesOptionsType|Highcharts.Dictionary<*>} options
      * The additional default options that are merged with the parent's options.
      *
-     * @param {Highcharts.Dictionary<*>} [props]
+     * @param {Highcharts.Dictionary<*>} [seriesProto]
      * The properties (functions and primitives) to set on the new prototype.
      *
-     * @param {Highcharts.Dictionary<*>} [pointProps]
+     * @param {Highcharts.Dictionary<*>} [pointProto]
      * Members for a series-specific extension of the {@link Point} prototype if
      * needed.
      *
@@ -137,9 +143,11 @@ namespace SeriesRegistry {
 
         // Create the class
         delete seriesTypes[type];
-        const parentClass = seriesTypes[parent] as typeof Series || Series,
-            childClass =
-                extendClass(parentClass, seriesProto) as typeof Series;
+        const parentClass = (
+                seriesTypes[parent] as typeof Series ||
+                (H as unknown as { Series: typeof Series }).Series
+            ),
+            childClass = extendClass(parentClass, seriesProto) as typeof Series;
 
         registerSeriesType(type, childClass);
         seriesTypes[type].prototype.type = type;

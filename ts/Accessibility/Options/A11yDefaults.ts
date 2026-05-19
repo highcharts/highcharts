@@ -1,12 +1,14 @@
 /* *
  *
- *  (c) 2009-2025 Øystein Moseng
+ *  (c) 2009-2026 Highsoft AS
+ *  Author: Øystein Moseng
  *
  *  Default options for accessibility.
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -19,6 +21,7 @@
  * */
 
 import type A11yOptions from './A11yOptions';
+import type { DeepPartial } from '../../Shared/Types';
 
 import { Palette } from '../../Core/Color/Palettes.js';
 
@@ -84,6 +87,13 @@ import { Palette } from '../../Core/Color/Palettes.js';
  * @param {global.MouseEvent} evt
  *        Mouse click event
  *
+ * @param {Highcharts.Chart} [chart]
+ *        Chart context.
+ *
+ * @param {global.GlobalEventHandlers} [ctx]
+ *        Since v12.6.0, the global event handlers context passed as an extra
+ *        argument for arrow functions.
+ *
  * @return {void}
  */
 
@@ -94,6 +104,10 @@ import { Palette } from '../../Core/Color/Palettes.js';
  *
  * @param {T} context
  *        Context to format
+ *
+ * @param {*} [outerContext]
+ *        Since v12.6.0, the outer context passed as an extra argument for
+ *        arrow functions.
  *
  * @return {string}
  *         Formatted string for the screen reader module.
@@ -187,6 +201,9 @@ const Options: DeepPartial<A11yOptions> = {
              * the DOM.
              *
              * Set to empty string to remove the region altogether.
+             *
+             * @sample highcharts/accessibility/before-chart-format
+             *         beforeChartFormat
              *
              * @since 8.0.0
              */
@@ -302,6 +319,9 @@ const Options: DeepPartial<A11yOptions> = {
              * won't have accessible descriptions unless handled separately.
              *
              * Set to `false` to disable.
+             *
+             * @sample highcharts/accessibility/point-description-enabled-threshold
+             *         pointDescriptionEnabledThreshold
              *
              * @type  {boolean|number}
              * @since 8.0.0
@@ -533,6 +553,9 @@ const Options: DeepPartial<A11yOptions> = {
          * The default option is `auto`, which applies the high contrast theme
          * the user's system has a high contrast theme active.
          *
+         * @sample highcharts/accessibility/high-contrast-mode
+         *         High contrast mode enabled
+         *
          * @since 11.4.0
          */
         highContrastMode: 'auto',
@@ -631,11 +654,11 @@ const Options: DeepPartial<A11yOptions> = {
                  * @since   6.0.3
                  */
                 style: {
-                    /** @internal */
+                    /**
+                     * @type {Highcharts.ColorType}
+                     */
                     color: Palette.highlightColor80,
-                    /** @internal */
                     lineWidth: 2,
-                    /** @internal */
                     borderRadius: 3
                 },
 
@@ -656,6 +679,9 @@ const Options: DeepPartial<A11yOptions> = {
              * `container` first in order will make the keyboard focus stop on
              * the chart container first, requiring the user to tab again to
              * enter the chart.
+             *
+             * @sample highcharts/accessibility/custom-component
+             *         Custom order is set
              *
              * @type  {Array<string>}
              * @since 7.1.0

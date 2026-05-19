@@ -1,5 +1,5 @@
 @import url("https://code.highcharts.com/css/highcharts.css");
-@import url("https://code.highcharts.com/dashboards/css/datagrid.css");
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/css/grid-pro.css");
 @import url("https://code.highcharts.com/dashboards/css/dashboards.css");
 
 :root {
@@ -37,7 +37,7 @@
 
 /**
  *
- *  Dashboards/Datagrid specific
+ *  Dashboards/grid specific
  *
  **/
 .highcharts-dashboards-wrapper {
@@ -50,7 +50,7 @@
     max-height: var(--chart-height);
 }
 
-.highcharts-datagrid-container {
+.highcharts-grid-container {
     font-size: 0.8em;
     max-height: 100%;
 }
@@ -161,9 +161,9 @@ div#description {
 /* LARGE, MEDIUM: the page resides in an IFRAME */
 @media (max-width: 992px) {
     #column-chart-1,
-    #data-grid-1,
+    #grid-1,
     #column-chart-2,
-    #data-grid-2 {
+    #grid-2 {
         flex: 1 1 50%;
     }
 }
@@ -171,9 +171,9 @@ div#description {
 /* SMALL */
 @media (max-width: 576px) {
     #column-chart-1,
-    #data-grid-1,
+    #grid-1,
     #column-chart-2,
-    #data-grid-2 {
+    #grid-2 {
         flex: 1 1 100%;
     }
 

@@ -1,6 +1,4 @@
 ---
- name: Highcharts Demo
- authors:
-   - Torstein Hønsi
- js_wrap: b
+name: Demo of yAxis.labels.align and y
+js_wrap: b
 ...

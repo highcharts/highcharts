@@ -1,0 +1,23 @@
+[
+    {
+        "files": [
+            "Dashboards/Globals"
+        ],
+        "included": [],
+        "namespacePath": ""
+    },
+    {
+        "files": [
+            "Data/Modifiers/DataModifier"
+        ],
+        "included": [],
+        "namespacePath": ".DataModifier"
+    },
+    {
+        "files": [
+            "Dashboards/Components/ComponentRegistry"
+        ],
+        "included": [],
+        "namespacePath": ".ComponentRegistry"
+    }
+]

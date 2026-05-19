@@ -2,14 +2,15 @@
  *
  *  Select Cell Content class
  *
- *  (c) 2020-2025 Highsoft AS
+ *  (c) 2020-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
- *  - Dawid Dragula
+ *  - Dawid Draguła
  *  - Sebastian Bochan
  *
  * */
@@ -22,13 +23,14 @@
  *
  * */
 
-import type DataTable from '../../../../Data/DataTable';
+import type { CellType as DataTableCellType } from '../../../../Data/DataTable';
 import type { EditModeContent } from '../../CellEditing/CellEditMode';
 import type SelectRenderer from '../Renderers/SelectRenderer';
 import type TableCell from '../../../Core/Table/Body/TableCell';
 
 import CellContentPro from '../CellContentPro.js';
 import AST from '../../../../Core/Renderer/HTML/AST.js';
+import Globals from '../../../Core/Globals.js';
 
 
 /* *
@@ -100,9 +102,10 @@ class SelectContent extends CellContentPro implements EditModeContent {
 
         select.tabIndex = -1;
         select.name = cell.column.id + '-' + cell.row.id;
+        select.classList.add(Globals.getClassName('input'));
 
         if (options.attributes) {
-            Object.entries(options.attributes).forEach(([key, value]):void => {
+            Object.entries(options.attributes).forEach(([key, value]): void => {
                 select.setAttribute(key, value);
             });
         }
@@ -177,7 +180,7 @@ class SelectContent extends CellContentPro implements EditModeContent {
     /**
      * Gets the value of the select element.
      */
-    public get value(): DataTable.CellType {
+    public get value(): DataTableCellType {
         const val = this.select.value;
         switch (this.cell.column.dataType) {
             case 'datetime':
@@ -203,7 +206,7 @@ class SelectContent extends CellContentPro implements EditModeContent {
             this.changeHandler(e);
         } else {
             this.cell.htmlElement.focus();
-            void this.cell.setValue(this.value, true);
+            void this.cell.editValue(this.value);
         }
     };
 

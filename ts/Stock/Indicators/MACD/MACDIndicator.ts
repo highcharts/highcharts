@@ -1,8 +1,9 @@
 /* *
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -15,7 +16,8 @@
  * */
 
 import type ColorString from '../../../Core/Color/ColorString';
-import type { IndicatorLinkedSeriesLike } from '../IndicatorLike';
+import type ColumnSeries from '../../../Series/Column/ColumnSeries';
+import type { IndicatorLinkedSeriesBase } from '../IndicatorBase';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 import type {
@@ -31,16 +33,14 @@ import H from '../../../Core/Globals.js';
 const { noop } = H;
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
-    column: ColumnSeries,
     sma: SMAIndicator
 } = SeriesRegistry.seriesTypes;
-import U from '../../../Core/Utilities.js';
-const {
-    extend,
+import {
     correctFloat,
     defined,
+    extend,
     merge
-} = U;
+} from '../../../Shared/Utilities.js';
 
 /* *
  *
@@ -62,7 +62,7 @@ interface MACDZonesObject {
 /**
  * The MACD series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.macd
  *
@@ -81,7 +81,7 @@ class MACDIndicator extends SMAIndicator {
      * `linkedTo` option to be set and should be loaded after the
      * `stock/indicators/indicators.js`.
      *
-     * @sample stock/indicators/macd
+     * @sample {highstock} stock/indicators/macd
      *         MACD indicator
      *
      * @extends      plotOptions.sma
@@ -112,7 +112,7 @@ class MACDIndicator extends SMAIndicator {
          */
         signalLine: {
             /**
-             * @sample stock/indicators/macd-zones
+             * @sample {highstock} stock/indicators/macd-zones
              *         Zones in MACD
              *
              * @extends plotOptions.macd.zones
@@ -136,7 +136,7 @@ class MACDIndicator extends SMAIndicator {
          */
         macdLine: {
             /**
-             * @sample stock/indicators/macd-zones
+             * @sample {highstock} stock/indicators/macd-zones
              *         Zones in MACD
              *
              * @extends plotOptions.macd.zones
@@ -204,17 +204,17 @@ class MACDIndicator extends SMAIndicator {
     public init(): void {
         SeriesRegistry.seriesTypes.sma.prototype.init.apply(this, arguments);
 
-        const originalColor = this.color;
+        const originalColor = this.color,
+            originalColorIndex = this.colorIndex;
 
         // Check whether series is initialized. It may be not initialized,
         // when any of required indicators is missing.
         if (this.options) {
-            // If the default colour doesn't set, get the next available from
+            // If the default color doesn't set, get the next available from
             // the array and apply it #15608.
             if (defined(this.colorIndex)) {
                 if (
-                    this.options.signalLine &&
-                    this.options.signalLine.styles &&
+                    this.options.signalLine?.styles &&
                     !this.options.signalLine.styles.lineColor
                 ) {
                     this.options.colorIndex = this.colorIndex + 1;
@@ -224,8 +224,7 @@ class MACDIndicator extends SMAIndicator {
                 }
 
                 if (
-                    this.options.macdLine &&
-                    this.options.macdLine.styles &&
+                    this.options.macdLine?.styles &&
                     !this.options.macdLine.styles.lineColor
                 ) {
                     this.options.colorIndex = this.colorIndex + 1;
@@ -239,19 +238,20 @@ class MACDIndicator extends SMAIndicator {
             // Zones have indexes automatically calculated, we need to
             // translate them to support multiple lines within one indicator
             this.macdZones = {
-                zones: (this.options.macdLine as any).zones,
+                zones: this.options.macdLine?.zones,
                 startIndex: 0
             };
             this.signalZones = {
-                zones: (this.macdZones.zones as any).concat(
+                zones: this.macdZones.zones?.concat(
                     (this.options.signalLine as any).zones
                 ),
-                startIndex: (this.macdZones.zones as any).length
+                startIndex: this.macdZones.zones?.length
             };
         }
 
         // Reset color and index #15608.
         this.color = originalColor;
+        this.colorIndex = originalColorIndex;
     }
 
     public toYData(
@@ -378,7 +378,7 @@ class MACDIndicator extends SMAIndicator {
     }
 
     public getValues<TLinkedSeries extends LineSeries>(
-        series: TLinkedSeries&IndicatorLinkedSeriesLike,
+        series: TLinkedSeries&IndicatorLinkedSeriesBase,
         params: MACDParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
         const indexToShift: number = (
@@ -502,6 +502,7 @@ class MACDIndicator extends SMAIndicator {
  *
  * */
 
+/** @internal */
 interface MACDIndicator {
     crispCol: typeof ColumnSeries.prototype.crispCol;
     getColumnMetrics: typeof ColumnSeries.prototype.getColumnMetrics;
@@ -531,6 +532,7 @@ extend(MACDIndicator.prototype, {
  *
  * */
 
+/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         macd: typeof MACDIndicator;
@@ -545,6 +547,7 @@ SeriesRegistry.registerSeriesType('macd', MACDIndicator);
  *
  * */
 
+/** @internal */
 export default MACDIndicator;
 
 /* *

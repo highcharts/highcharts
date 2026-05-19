@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2009-2025 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Sophie Bremer
@@ -19,7 +20,10 @@
  *
  * */
 
-import type PluginHandler from '../PluginHandler';
+import type {
+    DashboardsPlugin,
+    Event as PluginHandlerEvent
+} from '../PluginHandler';
 import type { Highcharts as H } from './HighchartsTypes';
 
 import HighchartsComponent from '../Components/HighchartsComponent/HighchartsComponent.js';
@@ -67,7 +71,7 @@ function connectHighcharts(
  * Plugin context provided by the Dashboard.
  */
 function onRegister(
-    e: PluginHandler.Event
+    e: PluginHandlerEvent
 ): void {
     const { ComponentRegistry } = e;
     ComponentRegistry.registerComponent('Highcharts', HighchartsComponent);
@@ -83,7 +87,7 @@ function onRegister(
  * Plugin context provided by the Dashboard.
  */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function onUnregister(e: PluginHandler.Event): void {
+function onUnregister(e: PluginHandlerEvent): void {
 
 }
 
@@ -97,7 +101,7 @@ const HighchartsCustom = {
     connectHighcharts
 };
 
-const HighchartsPlugin: PluginHandler.DashboardsPlugin<typeof HighchartsCustom> = {
+const HighchartsPlugin: DashboardsPlugin<typeof HighchartsCustom> = {
     custom: HighchartsCustom,
     name: 'Highcharts.DashboardsPlugin',
     onRegister,

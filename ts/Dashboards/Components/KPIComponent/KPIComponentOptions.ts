@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2009-2025 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Sophie Bremer
@@ -21,14 +22,24 @@
  * */
 
 
-import type Component from '../Component';
+import type {
+    ConnectorOptions as ComponentConnectorOptions,
+    Options as ComponentOptions
+} from '../Component';
 import type CSSObject from '../../../Core/Renderer/CSSObject';
-import type DataTable from '../../../Data/DataTable';
+import type {
+    Column as DataTableColumn
+} from '../../../Data/DataTable';
 import type TextOptions from '../TextOptions';
 import type KPIComponent from './KPIComponent';
+import type { FormulaType } from './KPIComponent';
 
 import type { Options as HighchartsOptions } from '../../Plugins/HighchartsTypes';
-import Sync from '../Sync/Sync';
+import type {
+    OptionsEntry as SyncOptionsEntry,
+    OptionsRecord as SyncOptionsRecord,
+    RawOptionsRecord as SyncRawOptionsRecord
+} from '../Sync/Sync';
 
 
 /* *
@@ -37,13 +48,13 @@ import Sync from '../Sync/Sync';
  *
  * */
 
-export interface Options extends Component.Options {
-    columnName: string;
+export interface Options extends ComponentOptions {
+    columnId: string;
 
     /**
      * Connector options
      */
-    connector?: Component.ConnectorOptions;
+    connector?: ComponentConnectorOptions;
 
     /**
      * A full set of chart options applied into KPI chart that is displayed
@@ -65,7 +76,7 @@ export interface Options extends Component.Options {
      * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/kpi-component/threshold/ | Set a threshold}
      *
      */
-    threshold?: number|Array<number>;
+    threshold?: number | Array<number>;
 
     /**
      * Array of two colors strings that are applied when threshold is
@@ -83,7 +94,7 @@ export interface Options extends Component.Options {
     /**
      * The value that is displayed in KPI component.
      */
-    value?: number|string;
+    value?: number | string;
 
     /**
      * The minimal value of the font size, that KPI component should have.
@@ -94,12 +105,12 @@ export interface Options extends Component.Options {
      * The KPI's component subtitle. This can be used both to display
      * a subtitle below the main title.
      */
-    subtitle?: string|SubtitleOptions;
+    subtitle?: string | SubtitleOptions;
 
     /**
      * Sync options for the component.
      */
-    syncHandlers?: Sync.OptionsRecord;
+    syncHandlers?: SyncOptionsRecord;
 
     /**
      * A format string for the value text.
@@ -163,7 +174,7 @@ export interface Options extends Component.Options {
      * {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/dashboards/kpi-component/formula/ | KPI value formula}
      *
      */
-    formula?: KPIComponent.FormulaType|FormulaCallbackFunction;
+    formula?: FormulaType | FormulaCallbackFunction;
 }
 /**
  * Options for linking KPI value to the chart point.
@@ -205,7 +216,7 @@ export type SubtitleType = 'text' | 'diff' | 'diffpercent';
 export interface ValueFormatterCallbackFunction {
     (
         this: KPIComponent,
-        value: (number|string)
+        value: (number | string)
     ): string;
 }
 
@@ -213,8 +224,8 @@ export interface ValueFormatterCallbackFunction {
 export interface FormulaCallbackFunction {
     (
         this: KPIComponent,
-        values: DataTable.Column
-    ): (string|number);
+        values: DataTableColumn
+    ): (string | number);
 }
 
 /**
@@ -227,9 +238,9 @@ export interface FormulaCallbackFunction {
  * }
  * ```
  */
-export interface SyncOptions extends Sync.RawOptionsRecord {
+export interface SyncOptions extends SyncRawOptionsRecord {
     /**
-     * Extremes sync is available for Highcharts, KPI, DataGrid and
+     * Extremes sync is available for Highcharts, KPI, Grid and
      * Navigator components. Sets a common range of displayed data. For the
      * KPI Component sets the last value.
      *
@@ -239,7 +250,7 @@ export interface SyncOptions extends Sync.RawOptionsRecord {
      *
      * @default false
      */
-    extremes?: boolean|Sync.OptionsEntry;
+    extremes?: boolean | SyncOptionsEntry;
 }
 
 /* *

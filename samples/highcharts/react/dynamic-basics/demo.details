@@ -1,0 +1,8 @@
+---
+name: Dynamic React series (basic)
+authors:
+  - Highcharts Team
+js_wrap: b
+alt_text: >-
+  Highcharts React sample with buttons that toggle line, area and column series on the same chart.
+...

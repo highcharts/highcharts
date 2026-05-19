@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2009-2025 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Sebastian Bochan
@@ -31,7 +32,7 @@ import type {
 } from '../../Plugins/HighchartsTypes';
 import type Options from './KPIComponentOptions';
 import type SidebarPopup from '../../EditMode/SidebarPopup';
-import type Types from '../../../Shared/Types';
+import type { DeepPartial } from '../../../Shared/Types';
 
 import AST from '../../../Core/Renderer/HTML/AST.js';
 import Component from '../Component.js';
@@ -44,22 +45,21 @@ import MAX from '../../../Data/Formula/Functions/MAX.js';
 import MIN from '../../../Data/Formula/Functions/MIN.js';
 import COUNT from '../../../Data/Formula/Functions/COUNT.js';
 import PRODUCT from '../../../Data/Formula/Functions/PRODUCT.js';
-import Templating from '../../../Core/Templating.js';
-const {
-    format
-} = Templating;
-
-import U from '../../../Core/Utilities.js';
-const {
+import {
     createElement,
     css,
     defined,
     diffObjects,
     isArray,
+    isFunction,
     isNumber,
-    merge,
-    isFunction
-} = U;
+    merge
+} from '../../../Shared/Utilities.js';
+import Templating from '../../../Core/Templating.js';
+const {
+    format
+} = Templating;
+
 
 /* *
  *
@@ -137,7 +137,7 @@ class KPIComponent extends Component {
         }
     }
      */
-    public static defaultChartOptions: Types.DeepPartial<ChartOptions> = {
+    public static defaultChartOptions: DeepPartial<ChartOptions> = {
         chart: {
             type: 'spline',
             zooming: {
@@ -151,13 +151,13 @@ class KPIComponent extends Component {
         },
         xAxis: {
             visible: false
-        } as Types.DeepPartial<ChartOptions['xAxis']>,
+        } as DeepPartial<ChartOptions['xAxis']>,
         yAxis: {
             visible: false,
             title: {
                 text: null
             }
-        } as Types.DeepPartial<ChartOptions['yAxis']>,
+        } as DeepPartial<ChartOptions['yAxis']>,
         legend: {
             enabled: false
         },
@@ -398,9 +398,8 @@ class KPIComponent extends Component {
      */
     private getFormulaValue(): string|number|undefined {
         const formula = this.options.formula;
-        const connector = this.getFirstConnector();
-        const table = connector?.table.modified;
-        const column = table?.getColumn(this.options.columnName);
+        const table = this.getDataTable();
+        const column = table?.getColumn(this.options.columnId);
 
         if (!column || !formula) {
             return;
@@ -444,18 +443,16 @@ class KPIComponent extends Component {
             return this.options.value;
         }
 
-        const connector = this.getFirstConnector();
-
-        if (connector && this.options.columnName) {
+        const dataTable = this.getDataTable()?.getModified();
+        if (dataTable && this.options.columnId) {
             if (defined(this.options.formula)) {
                 return this.getFormulaValue();
             }
 
-            const table = connector.table.modified,
-                column = table.getColumn(this.options.columnName),
+            const column = dataTable.getColumn(this.options.columnId),
                 length = column?.length || 0;
 
-            return table.getCellAsString(this.options.columnName, length - 1);
+            return String(dataTable.getCell(this.options.columnId, length - 1));
         }
     }
 
@@ -668,7 +665,6 @@ class KPIComponent extends Component {
         const connectorsIds =
             sidebar.editMode.board.dataPool.getConnectorIds();
         let options: Partial<Options> = {
-            cell: '',
             type: 'KPI'
         };
 
@@ -702,24 +698,15 @@ class KPIComponent extends Component {
 
 /* *
  *
- *  Class Namespace
+ *  Type Declarations
  *
  * */
 
-namespace KPIComponent {
+/** @internal */
+export type ComponentType = KPIComponent;
 
-    /* *
-    *
-    *  Declarations
-    *
-    * */
-
-    /** @internal */
-    export type ComponentType = KPIComponent;
-
-    /** @internal */
-    export type FormulaType = keyof typeof KPIComponent.formulaFunctions;
-}
+/** @internal */
+export type FormulaType = keyof typeof KPIComponent.formulaFunctions;
 
 /* *
  *

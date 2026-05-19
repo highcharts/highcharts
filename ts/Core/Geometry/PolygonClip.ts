@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2010-2025 Highsoft AS
+ *  (c) 2010-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -16,10 +17,14 @@
  *
  * */
 
+
+/** @internal */
 interface XYArray extends XYPair {
     isIntersection?: boolean;
 }
 
+
+/** @internal */
 type XYPair = [number, number];
 
 /* *
@@ -30,7 +35,7 @@ type XYPair = [number, number];
 
 /**
  * Simple line string clipping. Clip to bounds and insert intersection points.
- * @private
+ * @internal
  */
 function clipLineString(
     line: Array<XYArray>,
@@ -57,7 +62,7 @@ function clipLineString(
 
 /**
  * Clip a polygon to another polygon using the Sutherland/Hodgman algorithm.
- * @private
+ * @internal
  */
 function clipPolygon(
     subjectPolygon: XYArray[],
@@ -108,7 +113,7 @@ function clipPolygon(
     return outputList;
 }
 
-/** @private */
+/** @internal */
 function isInside(
     clipEdge1: XYArray,
     clipEdge2: XYArray,
@@ -120,7 +125,7 @@ function isInside(
     );
 }
 
-/** @private */
+/** @internal */
 function intersection(
     clipEdge1: XYArray,
     clipEdge2: XYArray,
@@ -154,9 +159,11 @@ function intersection(
  *
  * */
 
+/** @internal */
 const PolygonClip = {
     clipLineString,
     clipPolygon
 };
 
+/** @internal */
 export default PolygonClip;

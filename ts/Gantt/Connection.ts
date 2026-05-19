@@ -1,11 +1,12 @@
 /* *
  *
- *  (c) 2016 Highsoft AS
+ *  (c) 2016-2026 Highsoft AS
  *  Authors: Øystein Moseng, Lars A. V. Cabrera
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -31,13 +32,8 @@ import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
 import Point from '../Core/Series/Point.js';
-import U from '../Core/Utilities.js';
-const {
-    defined,
-    error,
-    merge,
-    objectEach
-} = U;
+import { defined, merge, objectEach } from '../Shared/Utilities.js';
+import { error } from '../Core/Utilities.js';
 
 /* *
  *
@@ -59,7 +55,7 @@ const deg2rad = H.deg2rad,
  * The Connection class. Used internally to represent a connection between two
  * points.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.Connection
  *
@@ -73,6 +69,8 @@ const deg2rad = H.deg2rad,
  *        Connection options.
  */
 class Connection {
+
+    /** @internal */
     public constructor(
         from: Point,
         to: Point,
@@ -86,11 +84,23 @@ class Connection {
     * Properties
     *
     * */
+
+    /** @internal */
     public chart!: Chart;
+
+    /** @internal */
     public fromPoint!: Point;
+
+    /** @internal */
     public graphics!: Record<string, SVGElement>;
+
+    /** @internal */
     public options?: ConnectorsOptions;
+
+    /** @internal */
     public pathfinder!: Pathfinder;
+
+    /** @internal */
     public toPoint!: Point;
 
     /**
@@ -130,9 +140,6 @@ class Connection {
      *
      * @param {Highcharts.SVGAttributes} [attribs]
      *        SVG attributes for the path.
-     *
-     * @param {Partial<Highcharts.AnimationOptionsObject>} [animation]
-     *        Animation options for the rendering.
      */
     public renderPath(
         path: SVGPath,
@@ -472,6 +479,7 @@ class Connection {
  *
  * */
 
+/** @internal */
 export default Connection;
 
 /* *

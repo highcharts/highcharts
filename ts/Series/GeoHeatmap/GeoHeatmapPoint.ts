@@ -1,12 +1,13 @@
 /* *
  *
- *  (c) 2010-2025 Highsoft AS
+ *  (c) 2010-2026 Highsoft AS
  *
  *  Authors: Magdalena Gut, Piotr Madej
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -21,8 +22,8 @@
 import GeoHeatmapPointOptions from '../GeoHeatmap/GeoHeatmapPointOptions.js';
 import GeoHeatmapSeries from '../GeoHeatmap/GeoHeatmapSeries.js';
 import { PointShortOptions } from '../../Core/Series/PointOptions.js';
-import U from '../../Core/Utilities.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+import { isNumber } from '../../Shared/Utilities.js';
 
 const {
     map: {
@@ -32,9 +33,6 @@ const {
     }
 } = SeriesRegistry.seriesTypes;
 
-const {
-    isNumber
-} = U;
 
 /* *
  *
@@ -42,15 +40,15 @@ const {
  *
  * */
 
-declare module '../../Core/Series/KDPointSearchObjectLike' {
-    interface KDPointSearchObjectLike {
+declare module '../../Core/Series/KDPointSearchObjectBase' {
+    interface KDPointSearchObjectBase {
         lat?: number;
         lon?: number;
     }
 }
 
-declare module '../../Core/Series/PointLike' {
-    interface PointLike {
+declare module '../../Core/Series/PointBase' {
+    interface PointBase {
         lat?: number;
         lon?: number;
     }
@@ -84,7 +82,6 @@ class GeoHeatmapPoint extends MapPoint {
      *
      * */
 
-    /* eslint-disable valid-jsdoc */
 
     /**
      * @private
@@ -121,7 +118,6 @@ class GeoHeatmapPoint extends MapPoint {
 
         return point;
 
-        /* eslint-enable valid-jsdoc */
 
     }
 }

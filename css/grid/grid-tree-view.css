@@ -1,0 +1,74 @@
+/* SPDX-License-Identifier: LicenseRef-Highcharts */
+
+/* Grid Pro TreeView styles */
+
+.hcg-tree {
+    --ig-tree-indent-size: 16px;
+    --ig-tree-toggle-gap: 5px;
+    --ig-tree-toggle-slot-size: 20px;
+
+    display: flex;
+    align-items: center;
+    min-width: 0;
+    padding-left: calc(var(--ig-tree-depth, 0) * var(--ig-tree-indent-size));
+
+    .hcg-tree-toggle {
+        flex: 0 0 var(--ig-tree-toggle-slot-size);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: var(--ig-tree-toggle-slot-size);
+        margin-right: var(--ig-tree-toggle-gap);
+
+        button[aria-expanded="true"] > svg {
+            transform: rotate(90deg);
+        }
+    }
+
+    .hcg-tree-value {
+        flex: 1 1 auto;
+        min-width: 0;
+    }
+}
+
+.hcg-container .hcg-table.hcg-scrollable-content,
+.hcg-container .hcg-table.hcg-virtualization,
+.hcg-table {
+    tbody.hcg-tbody-sticky {
+        position: absolute;
+        display: block;
+        border-radius: 0;
+        left: 0;
+        height: 0;
+        min-height: 0;
+        overflow: hidden;
+        flex: none;
+        pointer-events: none;
+        z-index: 3;
+
+        &.hcg-tbody-sticky-active {
+            border-bottom: var(--ig-row-border);
+            box-shadow: 0 3px 5px -2px rgba(0, 0, 0, 0.1);
+        }
+
+        tr {
+            pointer-events: auto;
+
+            &:last-of-type {
+                td:first-child,
+                td:last-child {
+                    border-bottom-left-radius: 0;
+                    border-bottom-right-radius: 0;
+                }
+            }
+        }
+    }
+}
+
+.hcg-table tbody.hcg-tbody-sticky tr {
+    --ig-row-background-current: var(--hcg-row-background, var(--ig-background, var(--ig-default-background)));
+}
+
+.hcg-table tbody.hcg-tbody-sticky tr.hcg-row-even {
+    --ig-row-background-current: var(--hcg-row-even-background, var(--hcg-row-background, var(--ig-background, var(--ig-default-background))));
+}

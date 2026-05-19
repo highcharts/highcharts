@@ -1,17 +1,10 @@
 QUnit.test(
     'Legend items and checkboxes',
     function (assert) {
-        function countBoxes(legend) {
-            let count = 0;
-
-            legend.allItems.forEach(item => {
-                if (item.checkbox) {
-                    count++;
-                }
-            });
-
-            return count;
-        }
+        const countBoxes = legend =>
+            legend.allItems
+                .filter(item => item.checkbox?.parentElement)
+                .length;
 
         const chart = Highcharts.chart('container', {
             chart: {
@@ -97,6 +90,16 @@ QUnit.test(
             countBoxes(chart.legend),
             4,
             'Legend box contains checkboxes - 4 items'
+        );
+
+        chart.legend.update({
+            layout: 'vertical'
+        });
+
+        assert.strictEqual(
+            countBoxes(chart.legend),
+            4,
+            'Check boxes should survive legend.update (#22415)'
         );
     }
 );

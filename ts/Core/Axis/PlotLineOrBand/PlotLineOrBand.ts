@@ -1,10 +1,12 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Hønsi
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -15,8 +17,8 @@
  *  Imports
  *
  * */
+
 import type Chart from '../../Chart/Chart';
-import type Templating from '../../Templating';
 import type {
     PlotBandLabelOptions,
     PlotBandOptions
@@ -32,8 +34,7 @@ import type SVGPath from '../../Renderer/SVG/SVGPath';
 import Axis from '../Axis.js';
 import { Palette } from '../../Color/Palettes.js';
 import PlotLineOrBandAxis from './PlotLineOrBandAxis.js';
-import U from '../../Utilities.js';
-const {
+import {
     addEvent,
     arrayMax,
     arrayMin,
@@ -44,7 +45,7 @@ const {
     merge,
     objectEach,
     pick
-} = U;
+} from '../../../Shared/Utilities.js';
 
 /* *
  *
@@ -72,10 +73,21 @@ class PlotLineOrBand {
      *
      * */
 
+    /**
+     * Composes `PlotLineOrBand` with `Axis` and `Chart`.
+     *
+     * @param {Highcharts.Chart} ChartClass
+     * Chart class to compose.
+     *
+     * @param {Highcharts.Axis} AxisClass
+     * Axis class to compose.
+     *
+     * @internal
+     */
     public static compose<T extends typeof Axis>(
         ChartClass: Chart,
         AxisClass: T
-    ): ReturnType<typeof PlotLineOrBandAxis.compose> {
+    ): (T&typeof PlotLineOrBandAxis.Composition) {
 
         addEvent(ChartClass, 'afterInit', function (): void {
             this.labelCollectors.push((): SVGElement[] => {
@@ -133,6 +145,12 @@ class PlotLineOrBand {
      *
      * */
 
+    /**
+     * Related axis.
+     *
+     * @name Highcharts.PlotLineOrBand#axis
+     * @type {Highcharts.Axis}
+     */
     public axis: PlotLineOrBandAxis.Composition;
 
     /**
@@ -142,10 +160,35 @@ class PlotLineOrBand {
      * @type {string}
      */
     public id?: string;
+
+    /** @internal */
     public isActive?: boolean;
+
+    /** @internal */
     public eventsAdded?: boolean;
+
+    /**
+     * SVG element of the label.
+     *
+     * @name Highcharts.PlotLineOrBand#label
+     * @type {Highcharts.SVGElement}
+     */
     public label?: SVGElement;
+
+    /**
+     * Options of the plot line or band.
+     *
+     * @name Highcharts.PlotLineOrBand#options
+     * @type {AxisPlotBandsOptions|AxisPlotLinesOptions}
+     */
     public options: (PlotBandOptions|PlotLineOptions);
+
+    /**
+     * SVG element of the plot line or band.
+     *
+     * @name Highcharts.PlotLineOrBand#svgElem
+     * @type {Highcharts.SVGElement}
+     */
     public svgElem?: SVGElement;
 
     /* *
@@ -159,7 +202,7 @@ class PlotLineOrBand {
     /**
      * Render the plot line or plot band. If it is already existing,
      * move it.
-     * @private
+     * @internal
      * @function Highcharts.PlotLineOrBand#render
      */
     public render(): (PlotLineOrBand|undefined) {
@@ -263,7 +306,7 @@ class PlotLineOrBand {
                 svgElem?.on(
                     eventType,
                     (e: any): void => {
-                        events[eventType].apply(this, [e]);
+                        events[eventType].apply(this, [e, this]);
                     }
                 );
             });
@@ -315,7 +358,7 @@ class PlotLineOrBand {
 
     /**
      * Render and align label for plot line or band.
-     * @private
+     * @internal
      * @function Highcharts.PlotLineOrBand#renderLabel
      */
     public renderLabel(
@@ -406,9 +449,9 @@ class PlotLineOrBand {
                                         axis.top
                                     ) : (
                                         optionsLabel.clip ?
-                                            axis.width :
+                                            (axis.width + axis.left) :
                                             axis.chart.chartWidth
-                                    ) - (label.alignAttr.x - axis.left)
+                                    ) - label.alignAttr.x
                             ) :
                             bBoxWidth
                     )
@@ -421,16 +464,14 @@ class PlotLineOrBand {
 
     /**
      * Get label's text content.
-     * @private
+     * @internal
      * @function Highcharts.PlotLineOrBand#getLabelText
      */
     public getLabelText(
         optionsLabel: (PlotBandLabelOptions|PlotLineLabelOptions)
     ): string | undefined {
         return defined(optionsLabel.formatter) ?
-            (optionsLabel.formatter as
-              Templating.FormatterCallback<PlotLineOrBand>)
-                .call(this) :
+            optionsLabel.formatter.call(this, this) :
             optionsLabel.text;
     }
 
@@ -457,6 +498,7 @@ class PlotLineOrBand {
  *
  * */
 
+/** @internal */
 namespace PlotLineOrBand {
 
     /* *
@@ -584,7 +626,7 @@ export default PlotLineOrBand;
  * @sample {highstock} stock/xaxis/plotbands/
  *         Plot band on Y axis
  *
- * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+ * @type      {Highcharts.ColorType}
  * @default   ${palette.highlightColor10}
  * @apioption xAxis.plotBands.color
  */
@@ -1037,7 +1079,9 @@ export default PlotLineOrBand;
 /**
  * Callback JavaScript function to format the label. Useful properties like
  * the value of plot line or the range of plot band (`from` & `to`
- * properties) can be found in `this.options` object.
+ * properties) can be found in `this.options` object. Since v12.6.0, the
+ * callback also receives `ctx` as the first argument, so that arrow functions
+ * can access the same context as regular functions using `this`.
  *
  * @sample {highcharts} highcharts/xaxis/plotlines-plotbands-label-formatter
  *         Label formatters for plot line and plot band.
@@ -1149,54 +1193,6 @@ export default PlotLineOrBand;
  * @type      {Array<*>}
  * @extends   xAxis.plotBands
  * @apioption yAxis.plotBands
- */
-
-/**
- * In a gauge chart, this option determines the inner radius of the
- * plot band that stretches along the perimeter. It can be given as
- * a percentage string, like `"100%"`, or as a pixel number, like `100`.
- * By default, the inner radius is controlled by the [thickness](
- * #yAxis.plotBands.thickness) option.
- *
- * @sample {highcharts} highcharts/xaxis/plotbands-gauge
- *         Gauge plot band
- *
- * @type      {number|string}
- * @since     2.3
- * @product   highcharts
- * @apioption yAxis.plotBands.innerRadius
- */
-
-/**
- * In a gauge chart, this option determines the outer radius of the
- * plot band that stretches along the perimeter. It can be given as
- * a percentage string, like `"100%"`, or as a pixel number, like `100`.
- *
- * @sample {highcharts} highcharts/xaxis/plotbands-gauge
- *         Gauge plot band
- *
- * @type      {number|string}
- * @default   100%
- * @since     2.3
- * @product   highcharts
- * @apioption yAxis.plotBands.outerRadius
- */
-
-/**
- * In a gauge chart, this option sets the width of the plot band
- * stretching along the perimeter. It can be given as a percentage
- * string, like `"10%"`, or as a pixel number, like `10`. The default
- * value 10 is the same as the default [tickLength](#yAxis.tickLength),
- * thus making the plot band act as a background for the tick markers.
- *
- * @sample {highcharts} highcharts/xaxis/plotbands-gauge
- *         Gauge plot band
- *
- * @type      {number|string}
- * @default   10
- * @since     2.3
- * @product   highcharts
- * @apioption yAxis.plotBands.thickness
  */
 
 /**

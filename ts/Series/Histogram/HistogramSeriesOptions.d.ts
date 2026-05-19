@@ -1,11 +1,12 @@
 /* *
  *
- *  (c) 2010-2025 Highsoft AS
+ *  (c) 2010-2026 Highsoft AS
  *  Author: Sebastian Domas
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -15,10 +16,13 @@
  *
  * */
 
-import type ColumnSeriesOptions from '../Column/ColumnSeriesOptions';
-import type HistogramSeries from './HistogramSeries';
+import type {
+    ColumnSeriesOptions,
+    ColumnSeriesTooltipOptions
+} from '../Column/ColumnSeriesOptions';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
-import type TooltipOptions from '../../Core/TooltipOptions';
+import type HistogramPointOptions from './HistogramPointOptions';
+import type { PointShortOptions } from '../../Core/Series/PointOptions';
 
 /* *
  *
@@ -44,7 +48,7 @@ import type TooltipOptions from '../../Core/TooltipOptions';
  * @excluding boostThreshold, dragDrop, pointInterval, pointIntervalUnit,
  *            stacking, boostBlending
  *
- * @excluding data, dataParser, dataURL, boostThreshold, boostBlending
+ * @excluding dataParser, dataURL, boostThreshold, boostBlending
  *
  * @product highcharts
  *
@@ -79,7 +83,30 @@ export interface HistogramSeriesOptions extends ColumnSeriesOptions {
      */
     binWidth?: number;
 
-    data?: undefined;
+    /**
+     * An array of data points for the series. For the `histogram` series type,
+     * points can be given in the following way:
+     *
+     * An array of numerical values. In this case, the numerical values will
+     *  be
+     *    used to calculate the `x` and `y` values.
+     * Example:
+     *    ```js
+     *    data: [0, 5, 3, 5]
+     *    ```
+     *
+     * Data can also be passed in the form of a derived series.
+     *
+     * @sample {highcharts} highcharts/chart/reflow-true/
+     *         Numerical values
+     *
+     * @extends series.line.data
+     *
+     * @type {Array<number|null>|null|*}
+     *
+     * @product highcharts
+     */
+    data?: Array<(HistogramPointOptions|PointShortOptions)>;
 
     grouping?: boolean;
 
@@ -89,10 +116,22 @@ export interface HistogramSeriesOptions extends ColumnSeriesOptions {
 
     pointPlacement?: string;
 
-    states?: SeriesStatesOptions<HistogramSeries>;
+    states?: SeriesStatesOptions<HistogramSeriesOptions>;
 
-    tooltip?: Partial<TooltipOptions>;
+    tooltip?: HistogramSeriesTooltipOptions;
+}
 
+export interface HistogramSeriesTooltipOptions
+    extends ColumnSeriesTooltipOptions {
+    /**
+     * @default ''
+     */
+    headerFormat?: ColumnSeriesTooltipOptions['headerFormat'];
+
+    /**
+     * @default '<span style="font-size: 0.8em">{point.x} - {point.x2}</span><br/><span style="color:{point.color}">\u25CF</span> {series.name} <b>{point.y}</b><br/>'
+     */
+    pointFormat?: ColumnSeriesTooltipOptions['pointFormat'];
 }
 
 /* *

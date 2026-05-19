@@ -1,10 +1,12 @@
 /* *
  *
- *  (c) 2010-2025 Mateusz Bernacik
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Mateusz Bernacik
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -22,18 +24,13 @@ import type { Options } from '../../Core/Options';
 import Chart from '../../Core/Chart/Chart.js';
 import Navigator, { SetRangeEvent } from './Navigator.js';
 import G from '../../Core/Globals.js';
-import U from '../../Core/Utilities.js';
 import Axis from '../../Core/Axis/Axis.js';
 import standaloneNavigatorDefaults from './StandaloneNavigatorDefaults.js';
-const {
-    merge,
-    addEvent,
-    fireEvent,
-    pick
-} = U;
+import { addEvent, fireEvent, merge, pick } from '../../Shared/Utilities.js';
 
-declare module '../../Core/GlobalsLike.d.ts' {
-    interface GlobalsLike {
+/** @internal */
+declare module '../../Core/GlobalsBase' {
+    interface GlobalsBase {
         navigators: Array<StandaloneNavigator>;
     }
 }
@@ -49,6 +46,7 @@ declare module '../../Core/GlobalsLike.d.ts' {
  * creating a standalone navigator component that synchronizes the extremes
  * across multiple bound charts.
  *
+ * @internal
  * @class
  * @name Highcharts.StandaloneNavigator
  *
@@ -180,7 +178,9 @@ class StandaloneNavigator {
                     if (
                         e.trigger === 'pan' ||
                         e.trigger === 'zoom' ||
-                        e.trigger === 'mousewheel'
+                        e.trigger === 'mousewheel' ||
+                        e.trigger === 'rangeSelectorButton' ||
+                        e.trigger === 'rangeSelectorInput'
                     ) {
                         nav.setRange(
                             e.min,
@@ -332,7 +332,7 @@ class StandaloneNavigator {
     /**
      * Adds a series to the standalone navigator.
      *
-     * @private
+     * @internal
      *
      * @param {SeriesOptions} seriesOptions
      *        Options for the series to be added to the navigator.
@@ -349,7 +349,7 @@ class StandaloneNavigator {
     /**
      * Initialize the standalone navigator.
      *
-     * @private
+     * @internal
      */
     public initNavigator(): void {
         const nav = this.navigator;
@@ -437,7 +437,7 @@ class StandaloneNavigator {
     /**
      * Get the initial, options based extremes for the standalone navigator.
      *
-     * @private
+     * @internal
      *
      * @return {{ min: number, max: number }}
      *         The initial minimum and maximum extremes values.
@@ -452,6 +452,7 @@ class StandaloneNavigator {
     }
 }
 
+/** @internal */
 export default StandaloneNavigator;
 
 /* *

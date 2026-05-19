@@ -1,12 +1,13 @@
 /* *
  *
- *  (c) 2010-2025 Highsoft AS
+ *  (c) 2010-2026 Highsoft AS
  *
  *  Author: Paweł Potaczek
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -30,13 +31,12 @@ import D from '../../Core/Defaults.js';
 const { setOptions } = D;
 import H from '../../Core/Globals.js';
 const { composed } = H;
-import U from '../../Core/Utilities.js';
-const {
+import {
     addEvent,
     objectEach,
     pushUnique,
     wrap
-} = U;
+} from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -47,6 +47,8 @@ const {
 /**
  * If ranges are not specified, determine ranges from rendered bubble series
  * and render legend again.
+ *
+ * @internal
  */
 function chartDrawChartBox(
     this: Chart,
@@ -109,23 +111,19 @@ function chartDrawChartBox(
         // Check bubble legend sizes and correct them if necessary.
         legend.bubbleLegend.correctSizes();
 
-        // Correct items positions with different dimensions in legend.
-        retranslateItems(legend, getLinesHeights(legend));
-
     } else {
         proceed.call(chart, options, callback);
         // Allow color change on static bubble legend after click on legend
         if (legend && legend.options.enabled && legend.bubbleLegend) {
             legend.render();
-            retranslateItems(legend, getLinesHeights(legend));
         }
     }
 }
 
 /**
  * Compose classes for use with Bubble series.
- * @private
  *
+ * @internal
  * @param {Highcharts.Chart} ChartClass
  * Core chart class to use with Bubble series.
  *
@@ -148,7 +146,7 @@ function compose(
         wrap(ChartClass.prototype, 'drawChartBox', chartDrawChartBox);
 
         addEvent(LegendClass, 'afterGetAllItems', onLegendAfterGetAllItems);
-
+        addEvent(LegendClass, 'afterRender', onLegendAfterRender);
         addEvent(LegendClass, 'itemClick', onLegendItemClick);
     }
 
@@ -157,7 +155,7 @@ function compose(
 /**
  * Check if there is at least one visible bubble series.
  *
- * @private
+ * @internal
  * @function getVisibleBubbleSeriesIndex
  * @param {Highcharts.Chart} chart
  * Chart to check.
@@ -185,14 +183,14 @@ function getVisibleBubbleSeriesIndex(chart: Chart): number {
 /**
  * Calculate height for each row in legend.
  *
- * @private
+ * @internal
  * @function getLinesHeights
  *
  * @param {Highcharts.Legend} legend
  * Legend to calculate from.
  *
  * @return {Array<Highcharts.Dictionary<number>>}
- * Informations about line height and items amount
+ * Information about line height and items amount
  */
 function getLinesHeights(
     legend: Legend
@@ -234,6 +232,8 @@ function getLinesHeights(
 
 /**
  * Start the bubble legend creation process.
+ *
+ * @internal
  */
 function onLegendAfterGetAllItems(
     this: Legend,
@@ -268,7 +268,63 @@ function onLegendAfterGetAllItems(
 }
 
 /**
+ * Retranslate the legend items after render
+ *
+ * @internal
+ */
+function onLegendAfterRender(this: Legend): void {
+
+    if (this.bubbleLegend) {
+        const items = this.allItems,
+            rtl = this.options.rtl,
+            lines = getLinesHeights(this);
+
+        let orgTranslateX,
+            orgTranslateY,
+            movementX,
+            legendItem,
+            actualLine = 0;
+
+        items.forEach((
+            item: (BubbleLegendItem|Series|Point),
+            index: number
+        ): void => {
+            legendItem = item.legendItem || {};
+
+            if (!legendItem.group) {
+                return;
+            }
+
+            orgTranslateX = legendItem.group.translateX || 0;
+            orgTranslateY = legendItem.y || 0;
+
+            movementX = (item as any).movementX;
+
+            if (movementX || (rtl && (item as any).ranges)) {
+                movementX = rtl ?
+                    orgTranslateX - (item as any).options.maxSize / 2 :
+                    orgTranslateX + movementX;
+
+                legendItem.group.attr({ translateX: movementX });
+            }
+            if (index > lines[actualLine].step) {
+                actualLine++;
+            }
+
+            legendItem.group.attr({
+                translateY: Math.round(
+                    orgTranslateY + lines[actualLine].height / 2
+                )
+            });
+            legendItem.y = orgTranslateY + lines[actualLine].height / 2;
+        });
+    }
+}
+
+/**
  * Toggle bubble legend depending on the visible status of bubble series.
+ *
+ * @internal
  */
 function onLegendItemClick(this: Legend, e: any): void | boolean {
     // #14080 don't fire this code if click function is prevented
@@ -303,74 +359,16 @@ function onLegendItemClick(this: Legend, e: any): void | boolean {
     }
 }
 
-/**
- * Correct legend items translation in case of different elements heights.
- *
- * @private
- * @function Highcharts.Legend#retranslateItems
- *
- * @param {Highcharts.Legend} legend
- * Legend to translate in.
- *
- * @param {Array<Highcharts.Dictionary<number>>} lines
- * Informations about line height and items amount
- */
-function retranslateItems(
-    legend: Legend,
-    lines: Array<Record<string, number>>
-): void {
-    const items = legend.allItems,
-        rtl = legend.options.rtl;
-
-    let orgTranslateX,
-        orgTranslateY,
-        movementX,
-        legendItem,
-        actualLine = 0;
-
-    items.forEach((
-        item: (BubbleLegendItem|Series|Point),
-        index: number
-    ): void => {
-        legendItem = item.legendItem || {};
-
-        if (!legendItem.group) {
-            return;
-        }
-
-        orgTranslateX = legendItem.group.translateX || 0;
-        orgTranslateY = legendItem.y || 0;
-
-        movementX = (item as any).movementX;
-
-        if (movementX || (rtl && (item as any).ranges)) {
-            movementX = rtl ?
-                orgTranslateX - (item as any).options.maxSize / 2 :
-                orgTranslateX + movementX;
-
-            legendItem.group.attr({ translateX: movementX });
-        }
-        if (index > lines[actualLine].step) {
-            actualLine++;
-        }
-
-        legendItem.group.attr({
-            translateY: Math.round(
-                orgTranslateY + lines[actualLine].height / 2
-            )
-        });
-        legendItem.y = orgTranslateY + lines[actualLine].height / 2;
-    });
-}
-
 /* *
  *
  *  Default Export
  *
  * */
 
+/** @internal */
 const BubbleLegendComposition = {
     compose
 };
 
+/** @internal */
 export default BubbleLegendComposition;

@@ -1,6 +1,6 @@
-@import url("https://code.highcharts.com/dashboards/css/datagrid.css");
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/css/grid-pro.css");
 
-* {
+body {
     font-family:
         -apple-system,
         BlinkMacSystemFont,
@@ -12,10 +12,16 @@
         "Segoe UI Emoji",
         "Segoe UI Symbol",
         sans-serif;
+    background: var(--highcharts-background-color);
+    color: var(--highcharts-neutral-color-100);
 }
 
-.content {
-    padding: 8px;
+.demo {
+    padding: 8px 12px;
+}
+
+.highcharts-description {
+    padding: 0 8px;
 }
 
 .hide {
@@ -26,12 +32,23 @@
     margin-top: 8px;
 }
 
-.theme-custom {
-    --primary-color: 223, 249, 231;
-    --hover-background-color: #5749ad;
-    --hcg-header-background: rgba(var(--primary-color), 1);
+.theme-custom,
+.highcharts-light .theme-custom {
+    --hcg-header-background: #dff9e7;
     --hcg-header-color: #2f2b38;
-    --hcg-cell-hovered-background: var(--hover-background-color);
-    --hcg-cell-hovered-color: white;
+    --hcg-cell-hover-background: #5749ad;
+    --hcg-cell-hover-color: white;
     --hcg-border-radius: 5px;
+}
+
+@media (prefers-color-scheme: dark) {
+    .theme-custom {
+        --hcg-header-background: #2f2b38;
+        --hcg-header-color: #dff9e7;
+    }
+}
+
+.highcharts-dark .theme-custom {
+    --hcg-header-background: #2f2b38;
+    --hcg-header-color: #dff9e7;
 }

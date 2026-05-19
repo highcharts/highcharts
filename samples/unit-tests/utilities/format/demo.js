@@ -605,7 +605,11 @@ QUnit.module('Format', () => {
         );
 
         // Format %O as timezone offset to local time (#22329)
-        Highcharts.dateFormats.O = () => '+0100';
+        let dateFormatCtx;
+        Highcharts.dateFormats.O = (timestamp, ctx) => {
+            dateFormatCtx = ctx;
+            return '+0100';
+        };
         assert.strictEqual(
             format(
                 '{ucfirst (point.key:%d.%m.%Y %H:%M:%S %O)}',
@@ -618,8 +622,35 @@ QUnit.module('Format', () => {
             '11.12.2024 00:00:00 +0100',
             'Custom date format with plus sign'
         );
+        assert.strictEqual(
+            dateFormatCtx,
+            Highcharts.time,
+            'Custom date format callback got time ctx as the last argument'
+        );
         delete Highcharts.dateFormats.O;
 
+    });
+
+    QUnit.test('Locale-based formatting', assert => {
+        const originalLocale = Highcharts.defaultOptions.lang.locale;
+        Highcharts.setOptions({
+            lang: {
+                locale: 'no'
+            }
+        });
+
+        assert.strictEqual(
+            format('{value:.2f}', { value: 1.5 }),
+            '1,50',
+            'Should format number with locale-based decimal separator.'
+        );
+
+        // Reset
+        Highcharts.setOptions({
+            lang: {
+                locale: originalLocale
+            }
+        });
     });
 
     QUnit.test('Error handling', assert => {

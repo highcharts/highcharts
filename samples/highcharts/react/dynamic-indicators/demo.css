@@ -1,0 +1,26 @@
+.dynamic-series-demo {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.series-controls {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.series-controls button {
+    background-color: #545ecc;
+    border: none;
+    border-radius: 4px;
+    color: white;
+    cursor: pointer;
+    font-size: 14px;
+    padding: 8px 12px;
+}
+
+.series-controls button[disabled] {
+    background-color: #cdd2ff;
+    cursor: not-allowed;
+}

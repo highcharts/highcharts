@@ -1,8 +1,9 @@
 /* *
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -13,7 +14,7 @@
  *  Imports
  *
  * */
-import type { IndicatorLinkedSeriesLike } from '../IndicatorLike';
+import type { IndicatorLinkedSeriesBase } from '../IndicatorBase';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type {
     KeltnerChannelsOptions,
@@ -27,12 +28,7 @@ import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     sma: SMAIndicator
 } = SeriesRegistry.seriesTypes;
-import U from '../../../Core/Utilities.js';
-const {
-    correctFloat,
-    extend,
-    merge
-} = U;
+import { correctFloat, extend, merge } from '../../../Shared/Utilities.js';
 
 /* *
  *
@@ -43,7 +39,7 @@ const {
 /**
  * The Keltner Channels series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.keltnerchannels
  *
@@ -183,7 +179,7 @@ class KeltnerChannelsIndicator extends SMAIndicator {
     }
 
     public getValues <TLinkedSeries extends LineSeries>(
-        series: TLinkedSeries&IndicatorLinkedSeriesLike,
+        series: TLinkedSeries&IndicatorLinkedSeriesBase,
         params: KeltnerChannelsParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
         const period = (params.period as any),
@@ -252,6 +248,7 @@ class KeltnerChannelsIndicator extends SMAIndicator {
  *
  * */
 
+/** @internal */
 interface KeltnerChannelsIndicator extends MultipleLinesComposition.IndicatorComposition {
     nameBase: string;
     nameComponents: Array<string>;
@@ -275,6 +272,7 @@ MultipleLinesComposition.compose(KeltnerChannelsIndicator);
  *
  * */
 
+/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         keltnerchannels: typeof KeltnerChannelsIndicator;
@@ -288,6 +286,7 @@ SeriesRegistry.registerSeriesType('keltnerchannels', KeltnerChannelsIndicator);
  *
  * */
 
+/** @internal */
 export default KeltnerChannelsIndicator;
 
 /* *

@@ -1,0 +1,8 @@
+{
+    "compilerOptions": {
+        "allowImportingTsExtensions": true,
+        "module": "ES2022",
+        "noEmit": true,
+        "target": "ES2022"
+    }
+}

@@ -1,6 +1,4 @@
 ---
- name: Highcharts Demo
- authors:
-   - Torstein Hønsi
- js_wrap: b
+name: Demo of axis crosshair.snap options
+js_wrap: b
 ...

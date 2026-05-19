@@ -3,6 +3,7 @@ Dashboards.board('container', {
         enabled: true,
         contextMenu: {
             enabled: true,
+            items: ['editMode'],
             width: 400
         }
     },

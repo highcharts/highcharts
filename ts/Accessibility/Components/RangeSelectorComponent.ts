@@ -1,12 +1,14 @@
 /* *
  *
- *  (c) 2009-2025 Øystein Moseng
+ *  (c) 2009-2026 Highsoft AS
+ *  Author: Øystein Moseng
  *
  *  Accessibility component for the range selector.
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -34,12 +36,7 @@ const {
 } = ChartUtilities;
 import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';
 import RangeSelector from '../../Stock/RangeSelector/RangeSelector.js';
-import U from '../../Core/Utilities.js';
-const {
-    addEvent,
-    attr
-} = U;
-
+import { addEvent, attr } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -102,9 +99,6 @@ class RangeSelectorComponent extends AccessibilityComponent {
      *  Functions
      *
      * */
-
-    /* eslint-disable valid-jsdoc */
-
 
     /**
      * Init the component

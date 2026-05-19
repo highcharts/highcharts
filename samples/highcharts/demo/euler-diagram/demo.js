@@ -27,6 +27,11 @@ Highcharts.chart('container', {
             'rgb(160, 220, 245)',
             'rgb(160, 245, 220)'
         ],
+        dataLabels: {
+            style: {
+                color: 'black'
+            }
+        },
         data: [{
             sets: ['Core'],
             value: 10,
@@ -93,15 +98,15 @@ Highcharts.chart('container', {
             value: 1,
             name: 'Data Layer'
         }, {
-            sets: ['Dashboards', 'DataGrid'],
+            sets: ['Dashboards', 'Grid'],
             value: 0.5,
-            name: 'DataGrid'
+            name: 'Grid'
         }, {
             sets: ['Dashboards', 'KPI'],
             value: 0.5,
             name: 'KPI'
         }, {
-            sets: ['DataGrid'],
+            sets: ['Grid'],
             value: 0.5,
             name: ''
         }, {

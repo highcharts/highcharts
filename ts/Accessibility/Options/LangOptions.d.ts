@@ -1,12 +1,14 @@
 /* *
  *
- *  (c) 2009-2025 Øystein Moseng
+ *  (c) 2009-2026 Highsoft AS
+ *  Author: Øystein Moseng
  *
  *  Default lang/i18n options for accessibility.
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -17,6 +19,7 @@
  * */
 
 import type { LangOptions } from '../../Core/Options';
+import type { LangStockToolsOptions } from '../../Stock/StockTools/StockToolsOptions';
 
 /* *
  *
@@ -43,6 +46,11 @@ export interface LangAccessibilityAxisOptions {
     xAxisDescriptionSingular: string;
     yAxisDescriptionPlural: string;
     yAxisDescriptionSingular: string;
+    defaultAxisNames?: {
+        categories: string;
+        time: string;
+        values: string;
+    };
 }
 
 export interface LangAccessibilityChartTypesOptions {
@@ -101,6 +109,7 @@ export interface LangAccessibilityOptions {
         LangAccessibilitySeriesTypeDescriptionsOptions
     );
     sonification: LangAccessibilitySonificationOptions;
+    stockTools: LangStockToolsOptions;
     svgContainerLabel: string;
     svgContainerTitle: string;
     table: LangAccessibilityTableOptions;

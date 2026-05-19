@@ -10,7 +10,7 @@
     ]);
 
     // Create the chart
-    const chart = Highcharts.chart('container', {
+    Highcharts.chart('container', {
 
         chart: {
             zooming: {
@@ -36,28 +36,4 @@
             data
         }]
     });
-
-    // Update the chart with the options from the form
-    document.querySelectorAll('#options-table input, #options-table select')
-        .forEach(input => {
-            input.addEventListener('change', () => {
-                const key = input.id,
-                    value = input.type === 'checkbox' ?
-                        input.checked :
-                        input.type === 'number' ?
-                            parseFloat(input.value) :
-                            input.value;
-
-                // Convert the dot-notation string to a deep object
-                const optionsObject = key.split('.').reverse().reduce(
-                    (acc, key, i) => (
-                        i === 0 ? { [key]: value } : { [key]: acc }
-                    ),
-                    {}
-                );
-
-                chart.update(optionsObject);
-            });
-        });
-
 })();

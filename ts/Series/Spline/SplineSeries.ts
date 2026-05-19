@@ -1,10 +1,12 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Hønsi
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -24,11 +26,7 @@ import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     line: LineSeries
 } = SeriesRegistry.seriesTypes;
-import U from '../../Core/Utilities.js';
-const {
-    merge,
-    pick
-} = U;
+import { merge, pick } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -83,10 +81,9 @@ class SplineSeries extends LineSeries {
      *
      * */
 
-    /* eslint-disable valid-jsdoc */
 
     /**
-     * Get the spline segment from a given point's previous neighbour to the
+     * Get the spline segment from a given point's previous neighbor to the
      * given point.
      *
      * @private
@@ -151,7 +148,7 @@ class SplineSeries extends LineSeries {
             rightContY += correction;
 
             // To prevent false extremes, check that control points are
-            // between neighbouring points' y values
+            // between neighboring points' y values
             if (leftContY > lastY && leftContY > plotY) {
                 leftContY = Math.max(lastY, plotY);
                 // Mirror of left control point
@@ -257,7 +254,6 @@ class SplineSeries extends LineSeries {
         return ret;
     }
 
-    /* eslint-enable valid-jsdoc */
 
 }
 
@@ -362,6 +358,7 @@ export default SplineSeries;
  * @sample {highcharts} highcharts/series/data-array-of-objects/
  *         Config objects
  *
+ * @basic
  * @type      {Array<number|Array<(number|string),(number|null)>|null|*>}
  * @extends   series.line.data
  * @product   highcharts highstock

@@ -1,8 +1,9 @@
 /* *
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -14,7 +15,7 @@
  *
  * */
 
-import type { IndicatorLinkedSeriesLike } from '../IndicatorLike';
+import type { IndicatorLinkedSeriesBase } from '../IndicatorBase';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 import type MomentumOptions from './MomentumOptions';
@@ -22,12 +23,7 @@ import type MomentumPoint from './MomentumPoint';
 
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const { sma: SMAIndicator } = SeriesRegistry.seriesTypes;
-import U from '../../../Core/Utilities.js';
-const {
-    extend,
-    isArray,
-    merge
-} = U;
+import { extend, isArray, merge } from '../../../Shared/Utilities.js';
 
 /* *
  *
@@ -35,9 +31,7 @@ const {
  *
  * */
 
-/**
- * @private
- */
+/** @internal */
 function populateAverage(
     xVal: Array<number>,
     yVal: Array<Array<number>>,
@@ -60,7 +54,7 @@ function populateAverage(
 /**
  * The Momentum series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.momentum
  *
@@ -77,7 +71,7 @@ class MomentumIndicator extends SMAIndicator {
     /**
      * Momentum. This series requires `linkedTo` option to be set.
      *
-     * @sample stock/indicators/momentum
+     * @sample {highstock} stock/indicators/momentum
      *         Momentum indicator
      *
      * @extends      plotOptions.sma
@@ -110,7 +104,7 @@ class MomentumIndicator extends SMAIndicator {
      * */
 
     public getValues<TLinkedSeries extends LineSeries>(
-        series: TLinkedSeries&IndicatorLinkedSeriesLike,
+        series: TLinkedSeries&IndicatorLinkedSeriesBase,
         params: MomentumOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
         const period: number = params.period,
@@ -162,6 +156,7 @@ class MomentumIndicator extends SMAIndicator {
  *
  * */
 
+/** @internal */
 interface MomentumIndicator {
     pointClass: typeof MomentumPoint;
     nameBase: string;
@@ -176,6 +171,7 @@ extend(MomentumIndicator.prototype, {
  *
  * */
 
+/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         momentum: typeof MomentumIndicator;
@@ -190,6 +186,7 @@ SeriesRegistry.registerSeriesType('momentum', MomentumIndicator);
  *
  * */
 
+/** @internal */
 export default MomentumIndicator;
 
 /* *

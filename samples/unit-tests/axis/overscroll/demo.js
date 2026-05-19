@@ -350,7 +350,7 @@ QUnit.test('Overscroll with rangeSelector (#22334)', function (assert) {
     );
 });
 
-QUnit.test('Panning with overscroll', function (assert) {
+QUnit.test('Overscroll general tests', function (assert) {
     const data = [];
     for (let i = 0; i <= 100; i++) {
         data.push(
@@ -402,5 +402,15 @@ QUnit.test('Panning with overscroll', function (assert) {
         extremes.max - extremes.min,
         2,
         'xAxis range should not change when panning away from overscroll.'
+    );
+
+    // #23894
+    const oldMax = chart.xAxis[0].max;
+    chart.yAxis[0].update({});
+
+    assert.strictEqual(
+        chart.xAxis[0].max,
+        oldMax,
+        'xAxis.max should not change when update is called, #23894.'
     );
 });

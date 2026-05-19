@@ -1,12 +1,14 @@
 /* *
  *
- *  (c) 2009-2025 Torstein Honsi
+ *  (c) 2009-2026 Highsoft AS
+ *  Author: Torstein Hønsi
  *
  *  Dot plot series type for Highcharts
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -36,13 +38,7 @@ import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     column: ColumnSeries
 } = SeriesRegistry.seriesTypes;
-import U from '../../Core/Utilities.js';
-const {
-    extend,
-    isNumber,
-    merge,
-    pick
-} = U;
+import { extend, isNumber, merge, pick } from '../../Shared/Utilities.js';
 
 /* *
  *

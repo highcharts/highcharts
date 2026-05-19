@@ -1,13 +1,15 @@
 /* *
  *
- *  (c) 2009-2025 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Sophie Bremer
+ *  - Dawid Draguła
  *
  * */
 
@@ -21,6 +23,7 @@
 
 import type DataModifierOptions from './DataModifierOptions';
 
+
 /* *
  *
  *  Declarations
@@ -31,50 +34,25 @@ import type DataModifierOptions from './DataModifierOptions';
  * Options to configure the modifier.
  */
 export interface RangeModifierOptions extends DataModifierOptions {
-
     /**
      * Name of the related modifier for these options.
      */
     type: 'Range';
 
     /**
-     * If set to true, multiple ranges will add up instead of reduce.
+     * Zero-based index at which to start the range. If not set, the range
+     * starts at the beginning of the table.
      */
-    additive?: boolean;
+    start?: number;
 
     /**
-     * Value ranges to include in the result.
+     * Zero-based index at which to end the range. The row at this index
+     * is not included in the range. If not set, the range ends at the end of
+     * the table.
      */
-    ranges: Array<RangeModifierRangeOptions>;
-
-    /**
-     * If set to true, it will also compare the value type.
-     */
-    strict?: boolean;
-
+    end?: number;
 }
 
-/**
- * Options to configure a range.
- */
-export interface RangeModifierRangeOptions {
-
-    /**
-     * Column containing the values to filter.
-     */
-    column: string;
-
-    /**
-     * Maximum including value (`<=` operator).
-     */
-    maxValue: (boolean|number|string);
-
-    /**
-     * Minimum including value (`>=` operator).
-     */
-    minValue: (boolean|number|string);
-
-}
 
 /* *
  *

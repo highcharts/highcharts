@@ -130,7 +130,7 @@ const AMDPriceConnector =
         }],
         series: [{
             name: 'AMD',
-            data: AMDPriceConnector.table.getRows(),
+            data: AMDPriceConnector.getTable().getRows(),
             tooltip: {
                 valueDecimals: 2,
                 valueSuffix: ' EUR'

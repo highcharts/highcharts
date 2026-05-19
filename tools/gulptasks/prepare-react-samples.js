@@ -90,8 +90,6 @@ details {
     const { glob } = require('glob');
     const swc = require('@swc/core');
 
-    const hljs = require('highlight.js');
-
     const jsxFiles = glob.iterate('samples/**/demo.jsx');
 
     const { writeFile, readFile, stat } = require('node:fs/promises');
@@ -104,7 +102,7 @@ details {
 
         await writeFile(
             adjecentHTMLFile,
-            html`<style nonce="highcharts">${styles}</style><details><summary>Code</summary><pre><code>${hljs.highlight(originalCode, { language: 'javascript' }).value}</code></pre></details>`,
+            html`<style nonce="highcharts">${styles}</style>`,
             { force: true }
         );
 

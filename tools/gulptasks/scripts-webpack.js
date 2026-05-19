@@ -14,6 +14,7 @@ const Path = require('node:path');
  *
  * */
 
+
 /**
  * Webpack task.
  *
@@ -33,6 +34,10 @@ async function scriptsWebpack() {
     if (argv.product === 'Grid') {
         configs = {
             Grid: 'grid.webpack.mjs'
+        };
+    } else if (argv.product === 'Dashboards') {
+        configs = {
+            Dashboards: 'dashboards.webpack.mjs'
         };
     } else {
         configs = {
@@ -69,7 +74,6 @@ async function scriptsWebpack() {
     await FSP.writeFile('webpack.log', log, { flag: 'a' }); // 'a' - append
 
     LogLib.success('Finished packing.');
-
 }
 
 Gulp.task('scripts-webpack', scriptsWebpack);

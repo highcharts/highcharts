@@ -23,8 +23,8 @@ const PRODUCT_NAMES = {
     ],
     Dashboards: ['Highcharts Dashboards'],
     Grid: [
-        'Highcharts Grid Lite'
-        // 'Highcharts Grid Pro'
+        'Highcharts Grid Lite',
+        'Highcharts Grid Pro'
     ]
 };
 
@@ -38,7 +38,7 @@ function getZipLocation(productName, version) {
     const zipName = productName.replace(' ', '-');
 
     if (productName === 'Highcharts Dashboards') {
-        const { cdnFolder } = require('./dashboards/_config.json');
+        const { cdnFolder } = require('./scripts-dts/dashboards/_config.json');
         return `https://code.highcharts.com/${cdnFolder.length ? cdnFolder : ''}zips/${zipName}-${version}.zip`;
     }
 
@@ -48,7 +48,17 @@ function getZipLocation(productName, version) {
 function fetchCurrentProducts() {
     return global.fetch('https://code.highcharts.com/products.js')
         .then(response => response.text())
-        .then(content => JSON.parse(content.substring(JS_PREFIX.length)));
+        .then(content => {
+            try {
+                return JSON.parse(content.substring(JS_PREFIX.length));
+            } catch (err) {
+                throw new Error(
+                    'Failed to parse https://code.highcharts.com/products.js content.\n' +
+                    'Are you connected to the Highsoft VPN?\n' +
+                    'Error message: ' + err.message
+                );
+            }
+        });
 }
 
 function withZipURL(products) {
@@ -106,6 +116,11 @@ async function distProductsJS(options) {
         nr = (buildProperties.version || packageJson.version || '').split('-')[0];
     } else if (distProduct === 'Grid') {
         const buildProperties = require('./grid/build-properties.json');
+
+        date = new Date().toISOString().split('T')[0];
+        nr = buildProperties.version;
+    } else if (distProduct === 'Dashboards') {
+        const buildProperties = require('./dashboards/build-properties.json');
 
         date = new Date().toISOString().split('T')[0];
         nr = buildProperties.version;

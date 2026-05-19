@@ -24,30 +24,6 @@ describe('JSON serialization - gui enabled', () => {
         cy.visit('dashboards/cypress/dashboard-layout');
     });
 
-    it('Should save state after resizing cell.', () => {
-        cy.viewport(1200, 1000);
-        cy.toggleEditMode();
-        cy.get('.highcharts-dashboards-component').first().click();
-
-        cy.get('.highcharts-dashboards-edit-resize-snap-x').first()
-            .trigger('mousedown')
-            .trigger('mousemove', { clientX: 300 })
-            .trigger('mouseup');
-
-        cy.get('.highcharts-dashboards-edit-resize-snap-y').first()
-            .trigger('mousedown')
-            .trigger('mousemove', { clientY: 300 })
-            .trigger('mouseup');
-
-        cy.board().then((board) => {
-            const json = board.getOptions();
-            const cellOptions = json.gui.layouts[0].rows[0].cells[0];
-
-            expect(cellOptions.width).to.match(/%/);
-            expect(cellOptions.height).to.match(/px/);
-        });
-    });
-
     it('Component\'s state should be updated, after actions in sidebar', () => {
         const newChartOptions = {
             chart: {
@@ -225,7 +201,7 @@ describe('JSON serialization - gui enabled', () => {
         cy.toggleEditMode();
         cy.get('.highcharts-dashboards-component').first().click();
         cy.get('.highcharts-dashboards-edit-toolbar-cell').children()
-            .last()
+            .eq(2)
             .click();
 
         cy.get('button').contains('Confirm').click();

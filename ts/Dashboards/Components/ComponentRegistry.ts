@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2009-2025 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -21,52 +22,42 @@ import type { ComponentTypeRegistry } from './ComponentType';
 
 /* *
  *
- *  Namespace
+ *  Constants
  *
  * */
 
-namespace ComponentRegistry {
+/**
+ *
+ * Record of component classes
+ * @todo
+ *
+ */
+export const types = {} as ComponentTypeRegistry;
 
-    /* *
-     *
-     *  Constants
-     *
-     * */
+/* *
+ *
+ *  Functions
+ *
+ * */
 
-    /**
-     *
-     * Record of component classes
-     * @todo
-     *
-     */
-    export const types = {} as ComponentTypeRegistry;
-
-    /* *
-     *
-     *  Functions
-     *
-     * */
-
-    /**
-     * Method used to register new component classes.
-     *
-     * @param {string} key
-     * Registry key of the component class.
-     *
-     * @param {ComponentType} DataConnectorClass
-     * Component class (aka class constructor) to register.
-     */
-    export function registerComponent<T extends keyof ComponentTypeRegistry>(
-        key: T,
-        ComponentClass: ComponentTypeRegistry[T]
-    ): boolean {
-        return (
-            !!key &&
-            !types[key] &&
-            !!(types[key] = ComponentClass)
-        );
-    }
-
+/**
+ * Method used to register new component classes.
+ *
+ * @param {string} key
+ * Registry key of the component class.
+ *
+ * @param {ComponentType} ComponentClass
+ * Component class (aka class constructor) to register.
+ */
+export function registerComponent<T extends keyof ComponentTypeRegistry>(
+    key: T,
+    ComponentClass: ComponentTypeRegistry[T]
+): boolean {
+    return (
+        !!key &&
+        !types[key] &&
+        !!(types[key] = ComponentClass)
+    );
 }
 
 /* *
@@ -74,5 +65,10 @@ namespace ComponentRegistry {
  *  Default Export
  *
  * */
+
+const ComponentRegistry = {
+    registerComponent,
+    types
+};
 
 export default ComponentRegistry;

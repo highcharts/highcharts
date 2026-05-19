@@ -12,8 +12,8 @@ QUnit.test(
         chart = Highcharts.mapChart('container', {
             series: [
                 {
-                    data: [['gb-hi', 2]],
-                    mapData: Highcharts.maps['custom/british-isles-all'],
+                    data: [['gb-sct', 2]],
+                    mapData: Highcharts.maps['custom/british-isles'],
                     allAreas: false
                 }
             ]
@@ -29,8 +29,8 @@ QUnit.test(
         chart = Highcharts.mapChart('container', {
             series: [
                 {
-                    data: [['gb-hi', 2]],
-                    mapData: Highcharts.maps['custom/british-isles-all'],
+                    data: [['gb-sct', 2]],
+                    mapData: Highcharts.maps['custom/british-isles'],
                     allAreas: true
                 }
             ]

@@ -1,8 +1,8 @@
 @import url("https://code.highcharts.com/css/highcharts.css");
-@import url("https://code.highcharts.com/dashboards/css/datagrid.css");
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/css/grid-pro.css");
 @import url("https://code.highcharts.com/dashboards/css/dashboards.css");
 
-* {
+body {
     font-family:
         -apple-system,
         BlinkMacSystemFont,
@@ -14,13 +14,15 @@
         "Segoe UI Emoji",
         "Segoe UI Symbol",
         sans-serif;
+    background: var(--highcharts-background-color);
+    color: var(--highcharts-neutral-color-100);
 }
 
 .highcharts-background-color {
     fill: #f0f0f0;
 }
 
-.highcharts-datagrid-container {
+.highcharts-grid-container {
     height: 200px;
 }
 
@@ -54,7 +56,7 @@
     padding: 0 20px;
 }
 
-.highcharts-datagrid-table tbody {
+.highcharts-grid-table tbody {
     scroll-behavior: smooth;
 }
 

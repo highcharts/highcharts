@@ -6,7 +6,8 @@ Highcharts doclets also use custom tags to document the Highcharts options tree.
 
 The custom implementations have the following requirements:
 
-1. The `@private` tag should be the first or last tag in a doclet.
+1. The `@internal` or `@private` tags should be the first or last tags in
+   doclets.
 
 2. The tags `@apioption` and `@optionparent` have to come last in a doclet.
    Exception to this rule is the `@private` tag.
@@ -29,3 +30,7 @@ The custom implementations have the following requirements:
 
 8. `@since` and `@deprecated` support usage of `next` as the version number
    that is resolved on the next release when the next code version is known.
+
+9. `@basic` flags an option as commonly used within its parent option, referring
+   to the option itself, not to its type. Currently applied to `id`, `index`,
+   `name`, `type`, `className`, `color`, `events`, and `data`.

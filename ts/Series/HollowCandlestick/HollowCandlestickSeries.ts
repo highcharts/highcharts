@@ -1,10 +1,12 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Hønsi
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -19,12 +21,12 @@
 import HollowCandlestickPoint from './HollowCandlestickPoint.js';
 import type HollowCandlestickSeriesOptions from './HollowCandlestickSeriesOptions';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-import U from '../../Core/Utilities.js';
 import { StatesOptionsKey } from '../../Core/Series/StatesOptions.js';
 import SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes.js';
 import { Palette } from '../../Core/Color/Palettes.js';
 import Axis from '../../Core/Axis/Axis.js';
 import ColorType from '../../Core/Color/ColorType.js';
+import { addEvent, merge } from '../../Shared/Utilities.js';
 
 const {
     seriesTypes: {
@@ -32,10 +34,6 @@ const {
     }
 } = SeriesRegistry;
 
-const {
-    addEvent,
-    merge
-} = U;
 interface HollowcandleInfo {
     isBullish: boolean;
     trendDirection: 'down'|'up';
@@ -314,7 +312,6 @@ class HollowCandlestickSeries extends CandlestickSeries {
         return attribs;
     }
 
-    /* eslint-disable valid-jsdoc */
 }
 
 // Force to recalculate the hollowcandlestick data set after updating data.
@@ -333,9 +330,7 @@ addEvent(Axis, 'postProcessData', function (): void {
 
     series.forEach(function (series): void {
         if (series.is('hollowcandlestick')) {
-            const hollowcandlestickSeries = series as HollowCandlestickSeries;
-
-            hollowcandlestickSeries.getPriceMovement();
+            series.getPriceMovement();
         }
     });
 });
@@ -430,6 +425,7 @@ export default HollowCandlestickSeries;
  *    }]
  *    ```
  *
+ * @basic
  * @type      {Array<Array<(number|string),number,number,number>|Array<(number|string),number,number,number,number>|*>}
  * @extends   series.candlestick.data
  * @excluding y

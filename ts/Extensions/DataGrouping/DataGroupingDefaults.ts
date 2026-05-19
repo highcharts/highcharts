@@ -1,10 +1,12 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Hønsi
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -28,7 +30,7 @@ import type {
 
 /**
  * Common options
- * @private
+ * @internal
  */
 const common = {
     /// enabled: null, // (true for stock charts, false for basic),
@@ -84,7 +86,7 @@ const common = {
 
 /**
  * Extends common options
- * @private
+ * @internal
  */
 const seriesSpecific = {
     line: {},
@@ -116,7 +118,7 @@ const seriesSpecific = {
 /**
  * Units are defined in a separate array to allow complete overriding in
  * case of a user option.
- * @private
+ * @internal
  */
 const units = [
     [
@@ -152,10 +154,12 @@ const units = [
  *
  * */
 
+/** @internal */
 const DataGroupingDefaults = {
     common,
     seriesSpecific,
     units
 };
 
+/** @internal */
 export default DataGroupingDefaults;

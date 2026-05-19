@@ -1,11 +1,12 @@
 /* *
  *
- *  (c) 2016 Highsoft AS
+ *  (c) 2016-2026 Highsoft AS
  *  Authors: Øystein Moseng, Lars A. V. Cabrera
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -30,12 +31,8 @@ import type PositionObject from '../Core/Renderer/PositionObject';
 import ConnectorsDefaults from './ConnectorsDefaults.js';
 import D from '../Core/Defaults.js';
 const { setOptions } = D;
-import U from '../Core/Utilities.js';
-const {
-    defined,
-    error,
-    merge
-} = U;
+import { defined, merge } from '../Shared/Utilities.js';
+import { error } from '../Core/Utilities.js';
 
 /* *
  *
@@ -43,8 +40,9 @@ const {
  *
  * */
 
-declare module '../Core/Series/PointLike' {
-    interface PointLike {
+/** @internal */
+declare module '../Core/Series/PointBase' {
+    interface PointBase {
         getMarkerVector(
             radians: number,
             markerRadius: number,
@@ -57,6 +55,7 @@ declare module '../Core/Series/PointLike' {
     }
 }
 
+/** @internal */
 declare module '../Core/Series/PointOptions' {
     interface PointOptions {
         connect?: (
@@ -67,6 +66,7 @@ declare module '../Core/Series/PointOptions' {
     }
 }
 
+/** @internal */
 export interface PointConnectOptionsObject {
     to?: string;
 }
@@ -81,7 +81,7 @@ export interface PointConnectOptionsObject {
  * Get point bounding box using plotX/plotY and shapeArgs. If using
  * graphic.getBBox() directly, the bbox will be affected by animation.
  *
- * @private
+ * @internal
  * @function
  *
  * @param {Highcharts.Point} point
@@ -116,7 +116,7 @@ function getPointBB(point: Point): (Record<string, number>|null) {
 /**
  * Warn if using legacy options. Copy the options over. Note that this will
  * still break if using the legacy options in chart.update, addSeries etc.
- * @private
+ * @internal
  */
 function warnLegacy(chart: Chart): void {
     if (
@@ -152,6 +152,7 @@ function warnLegacy(chart: Chart): void {
  *
  * */
 
+/** @internal */
 namespace ConnectionComposition {
 
     /* *
@@ -160,7 +161,6 @@ namespace ConnectionComposition {
      *
      * */
 
-    /** @private */
     export function compose(
         ChartClass: typeof Chart,
         PathfinderClass: typeof Pathfinder,
@@ -195,7 +195,6 @@ namespace ConnectionComposition {
     /**
      * Get coordinates of anchor point for pathfinder connection.
      *
-     * @private
      * @function Highcharts.Point#getPathfinderAnchorPoint
      *
      * @param {Highcharts.ConnectorsMarkerOptions} markerOptions
@@ -239,7 +238,6 @@ namespace ConnectionComposition {
     /**
      * Utility to get the angle from one point to another.
      *
-     * @private
      * @function Highcharts.Point#getRadiansToVector
      *
      * @param {Highcharts.PositionObject} v1
@@ -275,7 +273,6 @@ namespace ConnectionComposition {
      * Utility to get the position of the marker, based on the path angle and
      * the marker's radius.
      *
-     * @private
      * @function Highcharts.Point#getMarkerVector
      *
      * @param {number} radians
@@ -364,7 +361,6 @@ namespace ConnectionComposition {
             y: edgePoint.y - (markerRadius * Math.sin(theta))
         };
     }
-
 }
 
 /* *
@@ -373,4 +369,5 @@ namespace ConnectionComposition {
  *
  * */
 
+/** @internal */
 export default ConnectionComposition;

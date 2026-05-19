@@ -1,10 +1,12 @@
 /* *
  *
- *  (c) 2009-2025 Torstein Honsi
+ *  (c) 2009-2026 Highsoft AS
+ *  Author: Torstein Hønsi
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -29,15 +31,14 @@ import type Series from '../Series/Series';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 
 import StackItem from './Stacking/StackItem.js';
-import U from '../Utilities.js';
-const {
+import {
     addEvent,
     find,
     fireEvent,
     isArray,
     isNumber,
     pick
-} = U;
+} from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -45,6 +46,7 @@ const {
  *
  * */
 
+/** @internal */
 declare module './AxisComposition' {
     interface AxisComposition {
         brokenAxis?: BrokenAxis.Additions;
@@ -52,26 +54,95 @@ declare module './AxisComposition' {
 }
 
 declare module './AxisOptions' {
+    /**
+     * An array defining breaks in the axis, the sections defined will be
+     * left out and all the points shifted closer to each other.
+     *
+     * @productdesc {highcharts}
+     * Requires that the broken-axis.js module is loaded.
+     *
+     * @sample {highcharts} highcharts/axisbreak/break-simple/
+     *         Simple break
+     * @sample {highcharts|highstock} highcharts/axisbreak/break-visualized/
+     *         Advanced with callback
+     * @sample {highstock} stock/demo/intraday-breaks/
+     *         Break on nights and weekends
+     *
+     * @since     4.1.0
+     * @product   highcharts highstock gantt
+     */
     interface AxisBreakOptions {
+        /**
+         * A number indicating how much space should be left between the start
+         * and the end of the break. The break size is given in axis units,
+         * so for instance on a `datetime` axis, a break size of 3600000 would
+         * indicate the equivalent of an hour.
+         *
+         * @default   0
+         * @since     4.1.0
+         * @product   highcharts highstock gantt
+         */
         breakSize?: number;
+        /**
+         * The axis value where the break starts. On datetime axes, this may be
+         * a date string.
+         *
+         * @since     4.1.0
+         * @product   highcharts highstock gantt
+         */
         from: number;
+        /** @internal */
         inclusive?: boolean;
+        /**
+         * Defines an interval after which the break appears again. By default
+         * the breaks do not repeat.
+         *
+         * @default   0
+         * @since     4.1.0
+         * @product   highcharts highstock gantt
+         */
         repeat?: number;
+        /**
+         * The axis value where the break ends. On datetime axes, this may be
+         * a date string.
+         *
+         * @since     4.1.0
+         * @product   highcharts highstock gantt
+         */
         to: number;
     }
     interface AxisOptions {
+        /**
+         * An array defining breaks in the axis, the sections defined will be
+         * left out and all the points shifted closer to each other.
+         *
+         * @productdesc {highcharts}
+         * Requires that the broken-axis.js module is loaded.
+         *
+         * @sample {highcharts} highcharts/axisbreak/break-simple/
+         *         Simple break
+         * @sample {highcharts|highstock} highcharts/axisbreak/break-visualized/
+         *         Advanced with callback
+         * @sample {highstock} stock/demo/intraday-breaks/
+         *         Break on nights and weekends
+         *
+         * @since     4.1.0
+         * @product   highcharts highstock gantt
+         */
         breaks?: Array<AxisBreakOptions>;
     }
 }
 
+/** @internal */
 declare module './AxisType' {
     interface AxisTypeRegistry {
         BrokenAxis: BrokenAxis.Composition;
     }
 }
 
-declare module '../Series/SeriesLike' {
-    interface SeriesLike {
+/** @internal */
+declare module '../Series/SeriesBase' {
+    interface SeriesBase {
         /** @requires modules/broken-axis */
         drawBreaks(axis: Axis, keys: Array<string>): void;
         /** @requires modules/broken-axis */
@@ -81,8 +152,58 @@ declare module '../Series/SeriesLike' {
 
 declare module '../Series/SeriesOptions' {
     interface SeriesOptions {
+        /**
+         * Defines when to display a gap in the graph, together with the
+         * [gapUnit](plotOptions.series.gapUnit) option.
+         *
+         * In case when `dataGrouping` is enabled, points can be grouped
+         * into a larger time span. This can make the grouped points to
+         * have a greater distance than the absolute value of `gapSize`
+         * property, which will result in disappearing graph completely.
+         * To prevent this situation the mentioned distance between
+         * grouped points is used instead of previously defined
+         * `gapSize`.
+         *
+         * In practice, this option is most often used to visualize gaps
+         * in time series. In a stock chart, intraday data is available
+         * for daytime hours, while gaps will appear in nights and
+         * weekends.
+         *
+         * @see [gapUnit](plotOptions.series.gapUnit)
+         * @see [xAxis.breaks](#xAxis.breaks)
+         *
+         * @sample {highstock} stock/plotoptions/series-gapsize/
+         *         Setting the gap size to 2 introduces gaps for weekends in
+         *         daily datasets.
+         *
+         * @default   0
+         * @product   highcharts highstock
+         * @requires  modules/broken-axis
+         */
         gapSize?: number;
-        gapUnit?: string;
+
+        /**
+         * Together with [gapSize](plotOptions.series.gapSize), this
+         * option defines where to draw gaps in the graph.
+         *
+         * When the `gapUnit` is `"relative"` (default), a gap size of 5
+         * means that if the distance between two points is greater than
+         * 5 times that of the two closest points, the graph will be
+         * broken.
+         *
+         * When the `gapUnit` is `"value"`, the gap is based on absolute
+         * axis values, which on a datetime axis is milliseconds. This
+         * also applies to the navigator series that inherits gap
+         * options from the base series.
+         *
+         * @see [gapSize](plotOptions.series.gapSize)
+         *
+         * @default    'relative'
+         * @since      5.0.13
+         * @product    highcharts highstock
+         * @requires   modules/broken-axis
+         */
+        gapUnit?: 'relative' | 'value';
     }
 }
 
@@ -94,7 +215,7 @@ declare module '../Series/SeriesOptions' {
 
 /**
  * Axis with support of broken data rows.
- * @private
+ * @internal
  */
 namespace BrokenAxis {
 
@@ -108,7 +229,7 @@ namespace BrokenAxis {
         /**
          * HC <= 8 backwards compatibility, used by demo samples.
          * @deprecated
-         * @private
+         * @internal
          * @requires modules/broken-axis
          */
         breakArray: Array<AxisBreakObject>;
@@ -124,7 +245,7 @@ namespace BrokenAxis {
 
     /**
      * Adds support for broken axes.
-     * @private
+     * @internal
      */
     export function compose<T extends typeof Axis>(
         AxisClass: T,
@@ -159,9 +280,7 @@ namespace BrokenAxis {
         return AxisClass as (T&typeof BrokenAxis);
     }
 
-    /**
-     * @private
-     */
+    /** @internal */
     function onAxisAfterInit(this: Axis): void {
         if (typeof this.brokenAxis !== 'undefined') {
             this.brokenAxis.setBreaks(this.options.breaks, false);
@@ -170,7 +289,7 @@ namespace BrokenAxis {
 
     /**
      * Force Axis to be not-ordinal when breaks are defined.
-     * @private
+     * @internal
      */
     function onAxisAfterSetOptions(this: Axis): void {
         const axis = this;
@@ -180,9 +299,7 @@ namespace BrokenAxis {
         }
     }
 
-    /**
-     * @private
-     */
+    /** @internal */
     function onAxisAfterSetTickPositions(this: Axis): void {
         const axis = this,
             brokenAxis = axis.brokenAxis;
@@ -203,9 +320,7 @@ namespace BrokenAxis {
         }
     }
 
-    /**
-     * @private
-     */
+    /** @internal */
     function onAxisInit(this: Axis): void {
         const axis = this;
 
@@ -214,9 +329,7 @@ namespace BrokenAxis {
         }
     }
 
-    /**
-     * @private
-     */
+    /** @internal */
     function onSeriesAfterGeneratePoints(this: Series): void {
         const {
             isDirty,
@@ -250,17 +363,13 @@ namespace BrokenAxis {
         }
     }
 
-    /**
-     * @private
-     */
+    /** @internal */
     function onSeriesAfterRender(this: Series): void {
         this.drawBreaks(this.xAxis, ['x']);
         this.drawBreaks(this.yAxis, pick(this.pointArrayMap, ['y']));
     }
 
-    /**
-     * @private
-     */
+    /** @internal */
     function seriesDrawBreaks(
         this: Series,
         axis: (Axis|undefined),
@@ -323,7 +432,7 @@ namespace BrokenAxis {
      * can draw a gap in the line or area. This was moved from ordinal
      * axis module to broken axis module as of #5045.
      *
-     * @private
+     * @internal
      * @function Highcharts.Series#gappedPath
      *
      * @return {Highcharts.SVGPathArray}
@@ -365,7 +474,7 @@ namespace BrokenAxis {
          *
          * @type      {number}
          * @default   0
-         * @product   highstock
+         * @product   highcharts highstock
          * @requires  modules/broken-axis
          * @apioption plotOptions.series.gapSize
          */
@@ -389,7 +498,7 @@ namespace BrokenAxis {
          * @type       {string}
          * @default    relative
          * @since      5.0.13
-         * @product    highstock
+         * @product    highcharts highstock
          * @validvalue ["relative", "value"]
          * @requires   modules/broken-axis
          * @apioption  plotOptions.series.gapUnit
@@ -448,7 +557,7 @@ namespace BrokenAxis {
                             (yAxis.options as YAxisOptions).stackLabels as any,
                             false,
                             xRange,
-                            this.stack
+                            this.stack ?? ''
                         );
                         stack.total = 0;
                     }
@@ -470,7 +579,7 @@ namespace BrokenAxis {
 
     /**
      * Provides support for broken axes.
-     * @private
+     * @internal
      * @class
      */
     export class Additions {
@@ -481,9 +590,7 @@ namespace BrokenAxis {
          *
          * */
 
-        /**
-         * @private
-         */
+        /** @internal */
         public static isInBreak(
             brk: AxisBreakOptions,
             val: number
@@ -507,9 +614,7 @@ namespace BrokenAxis {
             return ret;
         }
 
-        /**
-         * @private
-         */
+        /** @internal */
         public static lin2Val(
             this: Axis,
             val: (number|null)
@@ -554,9 +659,7 @@ namespace BrokenAxis {
             return nval;
         }
 
-        /**
-         * @private
-         */
+        /** @internal */
         public static val2Lin(
             this: Axis,
             val: (number|null)
@@ -609,6 +712,7 @@ namespace BrokenAxis {
          *
          * */
 
+        /** @internal */
         public constructor(axis: Composition) {
             this.axis = axis;
         }
@@ -619,9 +723,16 @@ namespace BrokenAxis {
          *
          * */
 
+        /** @internal */
         public axis: Composition;
+
+        /** @internal */
         public breakArray?: Array<AxisBreakObject>;
+
+        /** @internal */
         public hasBreaks?: boolean;
+
+        /** @internal */
         public unitLength?: number;
 
         /* *
@@ -653,9 +764,7 @@ namespace BrokenAxis {
             });
         }
 
-        /**
-         * @private
-         */
+        /** @internal */
         public isInAnyBreak(
             val: (number|null|undefined),
             testKeep?: boolean
@@ -696,7 +805,7 @@ namespace BrokenAxis {
          * Dynamically set or unset breaks in an axis. This function in lighter
          * than using Axis.update, and it also preserves animation.
          *
-         * @private
+         * @internal
          * @function Highcharts.Axis#setBreaks
          *
          * @param {Array<Highcharts.XAxisBreaksOptions>} [breaks]
@@ -800,21 +909,17 @@ namespace BrokenAxis {
                             repeat: number,
                             min = axis.userMin ?? axis.min,
                             max = axis.userMax ?? axis.max,
-                            dataMin = axis.dataMin ?? min,
-                            dataMax = axis.dataMax ?? max,
                             start: (number|undefined),
                             i: number;
 
-                        if (isNumber(axis.threshold)) {
-                            dataMin = Math.min(
-                                dataMin ?? axis.threshold,
-                                axis.threshold
-                            );
-                            dataMax = Math.max(
-                                dataMax ?? axis.threshold,
-                                axis.threshold
-                            );
-                        }
+                        // Extend range to include visible breaks outside of
+                        // series data.
+                        const dataMin = isNumber(min) ?
+                                Math.min(axis.dataMin ?? min, min) :
+                                (axis.dataMin ?? min),
+                            dataMax = isNumber(max) ?
+                                Math.max(axis.dataMax ?? max, max) :
+                                (axis.dataMax ?? max);
 
                         // Min & max check (#4247) but not for gantt (#13898)
                         if (!axis.treeGrid?.tree) {
@@ -964,4 +1069,5 @@ namespace BrokenAxis {
  *
  * */
 
+/** @internal */
 export default BrokenAxis;

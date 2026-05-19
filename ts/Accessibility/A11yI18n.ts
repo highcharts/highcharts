@@ -2,12 +2,13 @@
  *
  *  Accessibility module - internationalization support
  *
- *  (c) 2010-2025 Highsoft AS
+ *  (c) 2010-2026 Highsoft AS
  *  Author: Øystein Moseng
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -24,11 +25,7 @@ import type Time from '../Core/Time';
 import Chart from '../Core/Chart/Chart.js';
 import F from '../Core/Templating.js';
 const { format } = F;
-import U from '../Core/Utilities.js';
-const {
-    getNestedProperty,
-    pick
-} = U;
+import { getNestedProperty, pick } from '../Shared/Utilities.js';
 
 /* *
  *
@@ -36,8 +33,8 @@ const {
  *
  * */
 
-declare module '../Core/Chart/ChartLike' {
-    interface ChartLike extends A11yI18nComposition.ChartComposition {
+declare module '../Core/Chart/ChartBase' {
+    interface ChartBase extends A11yI18nComposition.ChartComposition {
         // Nothing to add
     }
 }

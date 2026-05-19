@@ -1,6 +1,4 @@
 ---
- name: Highcharts Demo
- authors:
-   - Pawel Dalek
- js_wrap: b
+name: Demo of xAxis.gridLineInterpolation
+js_wrap: b
 ...

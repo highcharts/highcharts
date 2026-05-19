@@ -2,11 +2,13 @@
  *
  *  Networkgraph series
  *
- *  (c) 2010-2025 Paweł Fus
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Paweł Fus
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -16,13 +18,9 @@
  *
  * */
 
-import type AnimationOptions from '../../Core/Animation/AnimationOptions';
 import type ColorType from '../../Core/Color/ColorType';
 import type DashStyleValue from '../../Core/Renderer/DashStyleValue';
-import type {
-    DataLabelOptions,
-    DataLabelTextPathOptions
-} from '../../Core/Series/DataLabelOptions';
+import type { DataLabelOptions } from '../../Core/Series/DataLabelOptions';
 import type { EventCallback } from '../../Core/Callback';
 import type {
     NetworkgraphDataOptions,
@@ -50,15 +48,16 @@ import type {
  * */
 
 declare module '../../Core/Series/SeriesOptions' {
-    interface SeriesStateInactiveOptions
-    {
-        animation?: (boolean|Partial<AnimationOptions>);
+    interface SeriesStateInactiveOptions {
         linkOpacity?: number;
     }
 }
 
 export interface NetworkgraphDataLabelsFormatterCallbackFunction {
-    (this: Point|NetworkgraphPoint): (number|string|null|undefined);
+    (
+        this: Point|NetworkgraphPoint,
+        options: DataLabelOptions
+    ): (number|string|null|undefined);
 }
 
 export interface NetworkgraphDataLabelsOptions
@@ -68,7 +67,7 @@ export interface NetworkgraphDataLabelsOptions
     formatter?: NetworkgraphDataLabelsFormatterCallbackFunction;
     linkFormat?: string;
     linkFormatter?: NetworkgraphDataLabelsFormatterCallbackFunction;
-    linkTextPath?: DataLabelTextPathOptions;
+    linkTextPath?: DataLabelOptions['textPath'];
 }
 
 /**
@@ -119,7 +118,7 @@ export interface NetworkgraphLinkOptions {
 }
 
 /**
- * A networkgraph is a type of relationship chart, where connnections
+ * A networkgraph is a type of relationship chart, where connections
  * (links) attracts nodes (points) and other nodes repulse each other.
  *
  * A `networkgraph` series. If the [type](#series.networkgraph.type) option is
@@ -236,7 +235,29 @@ export interface NetworkgraphSeriesOptions
      */
     link?: NetworkgraphLinkOptions;
 
-    marker?: PointMarkerOptions;
+    marker?: PointMarkerOptions & {
+        states?: PointMarkerOptions['states'] & {
+            /**
+             * The opposite state of a hover for a single point node.
+             * Applied to all not connected nodes to the hovered one.
+             */
+            inactive?: Required<PointMarkerOptions>['states']['inactive'] & {
+                /**
+                 * Animation when not hovering over the node.
+                 *
+                 * @default { duration: 50 }
+                 */
+                animation?: Required<Required<PointMarkerOptions>['states']>['inactive']['animation'];
+
+                /**
+                 * Opacity of inactive markers.
+                 *
+                 * @default 0.3
+                 */
+                opacity?: Required<Required<PointMarkerOptions>['states']>['inactive']['opacity'];
+            };
+        };
+    };
 
     /**
      * A collection of options for the individual nodes. The nodes in a
@@ -250,7 +271,7 @@ export interface NetworkgraphSeriesOptions
      */
     nodes?: Array<NetworkgraphPointOptions>;
 
-    states?: SeriesStatesOptions<NetworkgraphSeries>;
+    states?: SeriesStatesOptions<NetworkgraphSeriesOptions>;
 
     /**
      * The opposite state of a hover for a single point link. Applied

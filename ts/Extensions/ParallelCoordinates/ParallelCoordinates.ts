@@ -2,11 +2,13 @@
  *
  *  Parallel coordinates module
  *
- *  (c) 2010-2025 Pawel Fus
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Paweł Fus
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -20,6 +22,7 @@
 
 import type Axis from '../../Core/Axis/Axis';
 import type Chart from '../../Core/Chart/Chart';
+import type { DeepPartial } from '../../Shared/Types';
 import type Options from '../../Core/Options';
 import type Series from '../../Core/Series/Series';
 import type SeriesOptions from '../../Core/Series/SeriesOptions';
@@ -27,13 +30,7 @@ import type SeriesOptions from '../../Core/Series/SeriesOptions';
 import ParallelAxis from './ParallelAxis.js';
 import ParallelCoordinatesDefaults from './ParallelCoordinatesDefaults.js';
 import ParallelSeries from './ParallelSeries.js';
-import U from '../../Core/Utilities.js';
-const {
-    addEvent,
-    defined,
-    merge,
-    splat
-} = U;
+import { addEvent, defined, merge, splat } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -41,11 +38,11 @@ const {
  *
  * */
 
-declare module '../../Core/Chart/ChartLike'{
-    interface ChartLike {
+/** @internal */
+declare module '../../Core/Chart/ChartBase'{
+    interface ChartBase {
         hasParallelCoordinates?: boolean;
         parallelInfo?: ParallelCoordinates.InfoObject;
-        /** @requires modules/parallel-coordinates */
         setParallelInfo(options: DeepPartial<Options>): void;
     }
 }
@@ -56,6 +53,7 @@ declare module '../../Core/Chart/ChartLike'{
  *
  * */
 
+/** @internal */
 class ChartAdditions {
 
     /* *
@@ -85,7 +83,7 @@ class ChartAdditions {
      * */
 
     /**
-     * Define how many parellel axes we have according to the longest dataset.
+     * Define how many parallel axes we have according to the longest dataset.
      * This is quite heavy - loop over all series and check series.data.length
      * Consider:
      *
@@ -95,7 +93,7 @@ class ChartAdditions {
      * - check only first series for number of points and assume the rest is the
      *   same
      *
-     * @private
+     * @internal
      * @function Highcharts.Chart#setParallelInfo
      * @param {Highcharts.Options} options
      * User options
@@ -134,6 +132,7 @@ class ChartAdditions {
  *
  * */
 
+/** @internal */
 namespace ParallelCoordinates {
 
     /* *
@@ -142,14 +141,16 @@ namespace ParallelCoordinates {
      *
      * */
 
+    /** @internal */
     export declare class ChartComposition extends Chart {
         hasParallelCoordinates?: boolean;
         parallelInfo: InfoObject;
     }
 
-    export interface InfoObject {
+    /** @internal */
+    export type InfoObject = {
         counter: number;
-    }
+    };
 
     /* *
      *
@@ -157,7 +158,7 @@ namespace ParallelCoordinates {
      *
      * */
 
-    /** @private */
+    /** @internal */
     export function compose(
         AxisClass: typeof Axis,
         ChartClass: typeof Chart,
@@ -189,7 +190,7 @@ namespace ParallelCoordinates {
 
     /**
      * Initialize parallelCoordinates
-     * @private
+     * @internal
      */
     function onChartInit(
         this: ChartComposition,
@@ -261,7 +262,7 @@ namespace ParallelCoordinates {
 
     /**
      * Initialize parallelCoordinates
-     * @private
+     * @internal
      */
     function onChartUpdate(
         this: ChartComposition,
@@ -302,4 +303,5 @@ namespace ParallelCoordinates {
  *
  * */
 
+/** @internal */
 export default ParallelCoordinates;

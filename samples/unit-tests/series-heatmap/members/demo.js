@@ -261,6 +261,27 @@ QUnit.test('seriesTypes.heatmap.pointClass.setState', function (assert) {
         chart.series[0].color,
         'Point\'s stroke should be set on hover, #17856.'
     );
+
+    chart.update({
+        colorAxis: {
+            dataClasses: [{ to: 2 }]
+        }
+    }, true, true);
+
+    chart.legend.allItems[0].setVisible(false);
+    chart.legend.allItems[0].setVisible(true);
+
+    const controller = new TestController(chart);
+
+    controller.moveTo(100, 100);
+
+    assert.strictEqual(
+        chart.hoverPoint,
+        point,
+        `Tooltip should be visible on point hover after toggling data class
+        visibility, #23162.`
+    );
+
 });
 
 QUnit.test(

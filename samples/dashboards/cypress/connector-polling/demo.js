@@ -9,11 +9,9 @@ Dashboards.board('container', {
         connectors: [{
             type: 'CSV',
             id: 'fetched-data',
-            options: {
-                enablePolling: true,
-                dataRefreshRate: 1,
-                csvURL: 'https://demo-live-data.highcharts.com/time-data.csv'
-            }
+            enablePolling: true,
+            dataRefreshRate: 1,
+            csvURL: 'https://demo-live-data.highcharts.com/time-data.csv'
         }]
     },
     gui: {

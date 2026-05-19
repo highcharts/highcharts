@@ -55,7 +55,7 @@ In the example, `Grid` supports NPM loading, so after installing the package, yo
 
 ```ts
 import Dashboards from '@highcharts/dashboards/es-modules/masters/dashboards.src';
-import Grid from '@highcharts/dashboards/es-modules/masters/datagrid.src';
+import Grid from '@highcharts/grid/es-modules/masters/grid-pro.src';
 
 Dashboards.GridPlugin.custom.connectGrid(Grid);
 Dashboards.PluginHandler.addPlugin(Dashboards.GridPlugin);

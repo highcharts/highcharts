@@ -2,11 +2,13 @@
  *
  *  Networkgraph series
  *
- *  (c) 2010-2025 Paweł Fus
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Paweł Fus
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -30,15 +32,14 @@ const { win } = H;
 import GraphLayout from '../GraphLayoutComposition.js';
 import QuadTree from './QuadTree.js';
 import QuadTreeNode from './QuadTreeNode.js';
-import U from '../../Core/Utilities.js';
-const {
+import VerletIntegration from './VerletIntegration.js';
+import {
     clamp,
     defined,
-    isFunction,
     fireEvent,
+    isFunction,
     pick
-} = U;
-import VerletIntegration from './VerletIntegration.js';
+} from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -406,7 +407,7 @@ class ReingoldFruchtermanLayout {
 
         // Start with identified root nodes an sort the nodes by their
         // hierarchy. In trees, this ensures that branches don't cross
-        // eachother.
+        // each other.
         for (const rootNode of rootNodes) {
             sortedNodes.push(rootNode);
             addToNodes(rootNode);
@@ -821,7 +822,7 @@ namespace ReingoldFruchtermanLayout {
         approximation?: ('barnes-hut'|'none');
 
         /**
-         * Attraction force applied on a node which is conected to another
+         * Attraction force applied on a node which is connected to another
          * node by a link. Passed are two arguments:
          * - `d` - which is current distance between two nodes
          * - `k` - which is desired distance between two nodes
@@ -970,7 +971,7 @@ namespace ReingoldFruchtermanLayout {
 
         /**
          * Barnes-Hut approximation only.
-         * Deteremines when distance between cell and node is small enough
+         * Determines when distance between cell and node is small enough
          * to calculate forces. Value of `theta` is compared directly with
          * quotient `s / d`, where `s` is the size of the cell, and `d` is
          * distance between center of cell's mass and currently compared

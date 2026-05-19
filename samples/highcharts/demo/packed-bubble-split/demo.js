@@ -12,7 +12,7 @@ Highcharts.chart('container', {
         align: 'left'
     },
     tooltip: {
-        pointFormat: '<b>{point.name}:</b> {point.value}m CO<sub>2</sub>'
+        pointFormat: '<b>{point.name}:</b> {point.value}m CO₂'
     },
     plotOptions: {
         packedbubble: {

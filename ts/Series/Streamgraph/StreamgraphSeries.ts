@@ -2,11 +2,13 @@
  *
  *  Streamgraph module
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Hønsi
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -26,12 +28,7 @@ const {
     areaspline: AreaSplineSeries
 } = SeriesRegistry.seriesTypes;
 import StreamgraphSeriesDefaults from './StreamgraphSeriesDefaults.js';
-import U from '../../Core/Utilities.js';
-const {
-    addEvent,
-    merge,
-    extend
-} = U;
+import { addEvent, extend, merge } from '../../Shared/Utilities.js';
 
 /**
  * Streamgraph series type

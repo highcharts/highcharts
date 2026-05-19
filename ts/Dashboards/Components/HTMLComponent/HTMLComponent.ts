@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2009-2025 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Sebastian Bochan
@@ -24,17 +25,14 @@
 
 import type Cell from '../../Layout/Cell.js';
 import type Options from './HTMLComponentOptions';
+import type { EventTypes as ComponentEventTypes } from '../Component';
 
 import AST from '../../../Core/Renderer/HTML/AST.js';
 import Component from '../Component.js';
 import HTMLComponentDefaults from './HTMLComponentDefaults.js';
 import HTMLSyncs from './HTMLSyncs/HTMLSyncs.js';
 import DU from '../../Utilities.js';
-import U from '../../../Core/Utilities.js';
-const {
-    merge,
-    diffObjects
-} = U;
+import { diffObjects, merge } from '../../../Shared/Utilities.js';
 const { deepClone } = DU;
 
 // TODO: This may affect the AST parsing in Highcharts
@@ -234,7 +232,6 @@ class HTMLComponent extends Component {
 
     public getOptionsOnDrop(): Partial<Options> {
         return {
-            cell: '',
             type: 'HTML',
             elements: [{
                 tagName: 'span',
@@ -244,6 +241,7 @@ class HTMLComponent extends Component {
     }
 
     /**
+     * Constructs the HTML tree.
      * @internal
      */
     private constructTree(): void {
@@ -371,7 +369,7 @@ class HTMLComponent extends Component {
     /**
      * @internal
      */
-    public onTableChanged(e: Component.EventTypes): void {
+    public onTableChanged(e: ComponentEventTypes): void {
         if (e.detail?.sender !== this.id) {
             this.render();
         }
@@ -381,24 +379,15 @@ class HTMLComponent extends Component {
 
 /* *
  *
- *  Class Namespace
+ *  Type Declarations
  *
  * */
 
-namespace HTMLComponent {
+/** @internal */
+export type ComponentType = HTMLComponent;
 
-    /* *
-    *
-    *  Declarations
-    *
-    * */
-
-    /** @internal */
-    export type ComponentType = HTMLComponent;
-
-    /** @internal */
-    export type HTMLComponentEvents = Component.EventTypes;
-}
+/** @internal */
+export type HTMLComponentEvents = ComponentEventTypes;
 
 declare module '../ComponentType' {
     interface ComponentTypeRegistry {

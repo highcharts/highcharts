@@ -1,0 +1,15 @@
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/css/grid-pro.css");
+
+.controls {
+    padding: 8px;
+    margin-bottom: 8px;
+}
+
+.controls label {
+    cursor: pointer;
+    user-select: none;
+}
+
+.hcg-container {
+    min-height: 600px;
+}

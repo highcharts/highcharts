@@ -1,10 +1,12 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Hønsi
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -27,7 +29,6 @@ import type AreaSeriesOptions from './AreaSeriesOptions';
  *  API Options
  *
  * */
-
 
 /**
  * The area series type.
@@ -66,7 +67,7 @@ const AreaSeriesDefaults: AreaSeriesOptions = {
      * @sample {highcharts} highcharts/plotoptions/area-fillcolor-gradient/
      *         Gradient
      *
-     * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @type {Highcharts.ColorType}
      * @product   highcharts highstock
      * @apioption plotOptions.area.fillColor
      */
@@ -105,7 +106,7 @@ const AreaSeriesDefaults: AreaSeriesOptions = {
      * @sample {highcharts} highcharts/plotoptions/area-linecolor/
      *         Dark gray line
      *
-     * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @type {Highcharts.ColorType}
      * @product   highcharts highstock
      * @apioption plotOptions.area.lineColor
      */
@@ -122,7 +123,7 @@ const AreaSeriesDefaults: AreaSeriesOptions = {
      * @sample {highcharts} highcharts/css/series-negative-color/
      *         Negative color in styled mode
      *
-     * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @type {Highcharts.ColorType}
      * @since     3.0
      * @product   highcharts
      * @apioption plotOptions.area.negativeFillColor
@@ -239,6 +240,7 @@ const AreaSeriesDefaults: AreaSeriesOptions = {
  * @sample {highcharts} highcharts/series/data-array-of-objects/
  *         Config objects
  *
+ * @basic
  * @type      {Array<number|Array<(number|string),(number|null)>|null|*>}
  * @extends   series.line.data
  * @product   highcharts highstock

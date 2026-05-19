@@ -1,0 +1,7 @@
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-lite/css/grid-lite.css");
+
+#grid-1,
+#grid-2 {
+    height: 600px;
+    padding: 8px;
+}

@@ -1,8 +1,9 @@
 /* *
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -14,7 +15,7 @@
  *
  * */
 
-import type { IndicatorLinkedSeriesLike } from '../IndicatorLike';
+import type { IndicatorLinkedSeriesBase } from '../IndicatorBase';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 import type {
@@ -25,12 +26,7 @@ import type TEMAPoint from './TEMAPoint';
 
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const { ema: EMAIndicator } = SeriesRegistry.seriesTypes;
-import U from '../../../Core/Utilities.js';
-const {
-    correctFloat,
-    isArray,
-    merge
-} = U;
+import { correctFloat, isArray, merge } from '../../../Shared/Utilities.js';
 
 /* *
  *
@@ -41,7 +37,7 @@ const {
 /**
  * The TEMA series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.tema
  *
@@ -130,7 +126,7 @@ class TEMAIndicator extends EMAIndicator {
     }
 
     public getValues<TLinkedSeries extends LineSeries>(
-        series: TLinkedSeries&IndicatorLinkedSeriesLike,
+        series: TLinkedSeries&IndicatorLinkedSeriesBase,
         params: TEMAParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
         const period: number = (params.period as any),
@@ -272,6 +268,7 @@ class TEMAIndicator extends EMAIndicator {
  *
  * */
 
+/** @internal */
 interface TEMAIndicator {
     pointClass: typeof TEMAPoint;
 }
@@ -282,6 +279,7 @@ interface TEMAIndicator {
  *
  * */
 
+/** @internal */
 namespace TEMAIndicator {
 
     /* *
@@ -301,15 +299,28 @@ namespace TEMAIndicator {
 
 /* *
  *
+ *  Class Prototype
+ *
+ * */
+
+/** @internal */
+interface TEMAIndicator {
+    pointClass: typeof TEMAPoint;
+}
+
+/* *
+ *
  *  Registry
  *
  * */
 
+/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         tema: typeof TEMAIndicator;
     }
 }
+
 SeriesRegistry.registerSeriesType('tema', TEMAIndicator);
 
 /* *
@@ -318,6 +329,7 @@ SeriesRegistry.registerSeriesType('tema', TEMAIndicator);
  *
  * */
 
+/** @internal */
 export default TEMAIndicator;
 
 /* *

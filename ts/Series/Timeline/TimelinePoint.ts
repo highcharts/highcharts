@@ -2,13 +2,14 @@
  *
  *  Timeline Series.
  *
- *  (c) 2010-2025 Highsoft AS
+ *  (c) 2010-2026 Highsoft AS
  *
  *  Author: Daniel Studencki
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -33,14 +34,13 @@ const {
     pie: { prototype: { pointClass: PiePoint } }
 } = SeriesRegistry.seriesTypes;
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
-import U from '../../Core/Utilities.js';
-const {
+import {
     defined,
     isNumber,
     merge,
     objectEach,
     pick
-} = U;
+} from '../../Shared/Utilities.js';
 
 /* *
  *

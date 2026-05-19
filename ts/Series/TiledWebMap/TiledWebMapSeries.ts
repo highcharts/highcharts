@@ -1,10 +1,12 @@
 /* *
  *
- *  (c) 2010-2025 Hubert Kozik, Kamil Musiałowski
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Hubert Kozik, Kamil Musiałowski
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -26,19 +28,17 @@ import H from '../../Core/Globals.js';
 const { composed } = H;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const { map: MapSeries } = SeriesRegistry.seriesTypes;
-import TilesProvidersRegistry from '../../Maps/TilesProviders/TilesProviderRegistry.js';
+import TilesProviderRegistry from '../../Maps/TilesProviders/TilesProviderRegistry.js';
 import TiledWebMapSeriesDefaults from './TiledWebMapSeriesDefaults.js';
 import MapView from '../../Maps/MapView.js';
-import U from '../../Core/Utilities.js';
-const {
+import {
     addEvent,
     defined,
-    error,
     merge,
     pick,
     pushUnique
-} = U;
-
+} from '../../Shared/Utilities.js';
+import { error } from '../../Core/Utilities.js';
 
 /* *
  *
@@ -83,7 +83,7 @@ function onRecommendMapView(
 
     if (twm && twm.provider && twm.provider.type && !twm.provider.url) {
         const ProviderDefinition =
-            TilesProvidersRegistry[twm.provider.type];
+            TilesProviderRegistry[twm.provider.type];
 
         if (!defined(ProviderDefinition)) {
             error(
@@ -215,12 +215,6 @@ class TiledWebMapSeries extends MapSeries {
     /**
      * Convert tile to map coordinates in longitude/latitude
      * @private
-     * @param  xTile
-     *         Position x of the tile
-     * @param  yTile
-     *         Position y of the tile
-     * @param  zTile
-     *         Zoom of the tile
      * @return {Highcharts.MapLonLatObject}
      *         The map coordinates
      */
@@ -332,7 +326,7 @@ class TiledWebMapSeries extends MapSeries {
         if (provider && (provider.type || provider.url)) {
             if (provider.type && !provider.url) {
                 const ProviderDefinition =
-                    TilesProvidersRegistry[provider.type];
+                    TilesProviderRegistry[provider.type];
 
                 if (!defined(ProviderDefinition)) {
                     error(
@@ -780,12 +774,10 @@ class TiledWebMapSeries extends MapSeries {
         }
     }
 
-    public update(): void {
-        const series = this,
-            { transformGroups } = series,
+    public update(options: TiledWebMapSeriesOptions): void {
+        const { transformGroups } = this,
             chart = this.chart,
             mapView = chart.mapView,
-            options: TiledWebMapSeriesOptions = arguments[0],
             { provider } = options;
 
         if (transformGroups) {
@@ -800,26 +792,21 @@ class TiledWebMapSeries extends MapSeries {
         if (
             mapView &&
             !defined(chart.userOptions.mapView?.projection) &&
-            provider &&
-            provider.type
+            provider?.type
         ) {
-            const ProviderDefinition = TilesProvidersRegistry[provider.type];
+            const ProviderDefinition = TilesProviderRegistry[provider.type];
 
             if (ProviderDefinition) {
-                const def = new ProviderDefinition(),
-                    { initialProjectionName: providerProjectionName } = def;
-
                 mapView.update({
                     projection: {
-                        name: providerProjectionName
+                        name: (new ProviderDefinition()).initialProjectionName
                     }
                 });
             }
         }
 
-        super.update.apply(series, arguments);
+        super.update.apply(this, arguments);
     }
-
 }
 
 /* *

@@ -12,18 +12,18 @@ describe('layout resize on window changes', () => {
 
     it('Chart and Grid Component should have synced hover events.', () => {
         // Arrange
-        cy.get('tr.highcharts-datagrid-row').eq(0).as('firstGridRow');
-        cy.get('tr.highcharts-datagrid-row').eq(1).as('secondGridRow');
+        cy.get('tr.hcg-row').eq(0).as('firstGridRow');
+        cy.get('tr.hcg-row').eq(1).as('secondGridRow');
 
         // Act - hover over Grid Component.
         cy.get('@firstGridRow').children().eq(0).trigger('mouseover');
 
         // Assert - hover over Grid Component.
-        cy.get('@firstGridRow').should('have.class', 'highcharts-datagrid-hovered-row');
-        cy.get('@firstGridRow').children().eq(0).should('have.class', 'highcharts-datagrid-hovered-column');
-        cy.get('@firstGridRow').children().eq(1).should('not.have.class', 'highcharts-datagrid-hovered-column');
+        cy.get('@firstGridRow').should('have.class', 'hcg-hovered-row');
+        cy.get('@firstGridRow').children().eq(0).should('have.class', 'hcg-hovered-column');
+        cy.get('@firstGridRow').children().eq(1).should('not.have.class', 'hcg-hovered-column');
         cy.chart().then((chart) => {
-            assert.notOk(chart.tooltip.isHidden, 'When hovering over DataGrid, chart should have tooltip.');
+            assert.notOk(chart.tooltip.isHidden, 'When hovering over Grid, chart should have tooltip.');
         });
         cy.get('@firstGridRow').children().eq(0).trigger('mouseout');
 
@@ -31,25 +31,25 @@ describe('layout resize on window changes', () => {
         cy.get('.highcharts-point').eq(1).trigger('mouseover');
 
         // Assert - synced over the chart.
-        cy.get('@firstGridRow').should('not.have.class', 'highcharts-datagrid-synced-row');
-        cy.get('@secondGridRow').should('have.class', 'highcharts-datagrid-synced-row');
-        cy.get('@secondGridRow').children().eq(0).should('not.have.class', 'highcharts-datagrid-synced-column');
-        cy.get('@secondGridRow').children().eq(1).should('have.class', 'highcharts-datagrid-synced-column');
+        cy.get('@firstGridRow').should('not.have.class', 'hcg-synced-row');
+        cy.get('@secondGridRow').should('have.class', 'hcg-synced-row');
+        cy.get('@secondGridRow').children().eq(0).should('not.have.class', 'hcg-synced-column');
+        cy.get('@secondGridRow').children().eq(1).should('have.class', 'hcg-synced-column');
     });
 
-    it('Updating of the store should work by changing chart and datagrid', () => {
+    it('Updating of the store should work by changing chart and grid', () => {
         // Arrange
-        cy.get('tr.highcharts-datagrid-row').eq(1).children().eq(1).as('dataGridCell');
+        cy.get('tr.hcg-row').eq(1).children().eq(1).as('gridCell');
 
         // Act
-        cy.get('@dataGridCell').dblclick().type('{backspace}{backspace}{backspace}000{enter}');
+        cy.get('@gridCell').dblclick().type('{backspace}{backspace}{backspace}000{enter}');
 
         // Assert
         cy.chart().then((chart) => {
             assert.strictEqual(
                 chart.series[0].points[1].y,
                 2000,
-                'After updating the DataGrid the chart should be updated.'
+                'After updating the Grid the chart should be updated.'
             );
         });
     });
@@ -95,9 +95,9 @@ describe('layout resize on window changes', () => {
 
             // simulate dragging
             points[lastPointIndex].update(2000);
-            // datagrid component
+            // grid component
             try {
-                board.mountedComponents[1].component.connectorHandlers[0].connector.table.emit({
+                board.mountedComponents[1].component.connectorHandlers[0].connector.getTable().emit({
                     type: 'afterSetCell'
                 });
             } catch (e) {

@@ -62,7 +62,9 @@ QUnit.module('Styled mode for series types', function () {
             // Uses CSS for HTML data label positioning
             type !== 'organization' &&
             // Error because of missing data
-            type !== 'renko'
+            type !== 'renko' &&
+            // WebGPU
+            type !== 'contour'
         ) {
             QUnit.test('Styled mode for ' + type, function (assert) {
                 var cfg = {
@@ -116,6 +118,11 @@ QUnit.module('Styled mode for series types', function () {
                 if (type === 'networkgraph') {
                     cfg.series[0].keys = ['from', 'to'];
                     cfg.series[1].keys = ['from', 'to'];
+                }
+
+                if (type === 'histogram' || type === 'bellcurve') {
+                    cfg.series[0].data = [1, 1, 2, 2, 2, 2, 3, 3];
+                    cfg.series[1].data = [1, 1, 2, 2, 2, 2, 3, 3];
                 }
 
                 var chart = Highcharts.chart('container', cfg);

@@ -1,5 +1,9 @@
 @import url("https://code.highcharts.com/css/highcharts.css");
 
+html {
+    overflow: hidden;
+}
+
 body {
     margin: 0;
 }
@@ -123,7 +127,7 @@ body {
     aspect-ratio: 1 / 1;
     border-radius: 4px;
     background-color: #2f2b38;
-    border: 1px solid #46465c;
+    border: none;
 }
 
 #stock .transparent {

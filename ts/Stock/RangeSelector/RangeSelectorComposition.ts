@@ -1,10 +1,12 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Hønsi
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -24,8 +26,7 @@ const { defaultOptions } = D;
 import H from '../../Core/Globals.js';
 const { composed } = H;
 import RangeSelectorDefaults from './RangeSelectorDefaults.js';
-import U from '../../Core/Utilities.js';
-const {
+import {
     addEvent,
     defined,
     extend,
@@ -33,7 +34,7 @@ const {
     merge,
     pick,
     pushUnique
-} = U;
+} from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -63,7 +64,7 @@ let RangeSelectorConstructor: typeof RangeSelector;
  * selected range is a multiple of months or years, it is compensated for
  * various month lengths.
  *
- * @private
+ * @internal
  * @function Highcharts.Axis#minFromRange
  * @return {number|undefined}
  *         The new minimum value.
@@ -157,16 +158,12 @@ function axisMinFromRange(
     return min;
 }
 
-/**
- * @private
- */
+/** @internal */
 function updateRangeSelectorButtons(this: Chart): void {
     this.rangeSelector?.redrawElements();
 }
 
-/**
- * @private
- */
+/** @internal */
 function compose(
     AxisClass: typeof Axis,
     ChartClass: typeof Chart,
@@ -204,7 +201,7 @@ function compose(
 
 /**
  * Initialize rangeselector for stock charts
- * @private
+ * @internal
  */
 function createRangeSelector(
     this: Chart
@@ -217,9 +214,7 @@ function createRangeSelector(
     }
 }
 
-/**
- * @private
- */
+/** @internal */
 function onChartBeforeRender(
     this: Chart
 ): void {
@@ -244,6 +239,10 @@ function onChartBeforeRender(
     }
 
 }
+/**
+ * Redraw rangeSelector on chart redraw event
+ * @internal
+ */
 function redrawRangeSelector(this: Chart): void {
     const chart = this;
     const rangeSelector = this.rangeSelector;
@@ -264,7 +263,7 @@ function redrawRangeSelector(this: Chart): void {
 
     // Re-align the legend so that it's below the rangeselector
     if (
-        legend.display &&
+        legend?.display &&
             verticalAlign === 'top' &&
             verticalAlign === legend.options.verticalAlign
     ) {
@@ -283,7 +282,7 @@ function redrawRangeSelector(this: Chart): void {
 
 /**
  * Remove resize/afterSetExtremes at chart destroy.
- * @private
+ * @internal
  */
 function onChartDestroy(
     this: Chart
@@ -299,7 +298,8 @@ function onChartDestroy(
 }
 
 /**
- *
+ * Reflow rangeSelector and adjust chart layout
+ * @internal
  */
 function onChartGetMargins(
     this: Chart
@@ -307,6 +307,17 @@ function onChartGetMargins(
     const rangeSelector = this.rangeSelector;
 
     if (rangeSelector?.options?.enabled) {
+
+        // Rerender rangeSelector in order to return correct plotHeight, #23058
+        const { min, max } = this.xAxis[0].getExtremes();
+        if (
+            isNumber(min) &&
+            rangeSelector.inputGroup &&
+            rangeSelector.inputGroup.getBBox().width < 20
+        ) {
+            rangeSelector.render(min, max);
+        }
+
         const rangeSelectorHeight = rangeSelector.getHeight();
 
         const verticalAlign = rangeSelector.options.verticalAlign;
@@ -321,9 +332,7 @@ function onChartGetMargins(
     }
 }
 
-/**
- * @private
- */
+/** @internal */
 function onChartUpdate(
     this: Chart,
     e: Chart
@@ -383,8 +392,10 @@ function onChartUpdate(
  *
  * */
 
+/** @internal */
 const RangeSelectorComposition = {
     compose
 };
 
+/** @internal */
 export default RangeSelectorComposition;

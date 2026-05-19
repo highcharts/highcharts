@@ -1,10 +1,12 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Hønsi
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -23,8 +25,9 @@ import type {
     AxisOptions
 } from './AxisOptions';
 import type CSSObject from '../Renderer/CSSObject';
+import type { DeepPartial } from '../../Shared/Types';
 import type PositionObject from '../Renderer/PositionObject';
-import type TickLike from './TickLike';
+import type TickBase from './TickBase';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import type SVGPath from '../Renderer/SVG/SVGPath';
@@ -35,20 +38,19 @@ import type TimeTicksInfoObject from './TimeTicksInfoObject';
 import F from '../Templating.js';
 import H from '../Globals.js';
 const { deg2rad } = H;
-import U from '../Utilities.js';
-const {
-    clamp,
+import {
     correctFloat,
+    clamp,
     defined,
-    destroyObjectProperties,
     extend,
-    fireEvent,
-    getAlignFactor,
     isNumber,
     merge,
     objectEach,
-    pick
-} = U;
+    pick,
+    destroyObjectProperties,
+    getAlignFactor,
+    fireEvent
+} from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -56,6 +58,7 @@ const {
  *
  * */
 
+/** @internal */
 declare module './AxisOptions' {
     interface AxisLabelFormatterContextObject {
         tickPositionInfo?: TimeTicksInfoObject;
@@ -148,42 +151,102 @@ class Tick {
      *
      * */
 
+    /**
+     * The related axis of the tick.
+     * @name Highcharts.Tick#axis
+     * @type {Highcharts.Axis}
+     */
     public axis: Axis;
 
+    /**
+     * The rendered grid line of the tick.
+     * @name Highcharts.Tick#gridLine
+     * @type {Highcharts.SVGElement|undefined}
+     */
     public gridLine?: SVGElement;
 
+    /** @internal */
     public isActive?: boolean;
 
+    public boundary?: string;
+
+    /**
+     * True if the tick is the first one on the axis.
+     * @name Highcharts.Tick#isFirst
+     * @readonly
+     * @type {boolean|undefined}
+     */
     public isFirst?: boolean;
 
+    /** @internal */
     public isNew: boolean = true;
 
+    /** @internal */
     public isNewLabel: boolean = true;
 
+    /**
+     * True if the tick is the last one on the axis.
+     * @name Highcharts.Tick#isLast
+     * @readonly
+     * @type {boolean|undefined}
+     */
     public isLast?: boolean;
 
+    /**
+     * The rendered text label of the tick.
+     * @name Highcharts.Tick#label
+     * @type {Highcharts.SVGElement|undefined}
+     */
     public label?: SVGElement;
 
+    /** @internal */
     public labelPos?: PositionObject;
 
+    /**
+     * The rendered mark of the tick.
+     * @name Highcharts.Tick#mark
+     * @type {Highcharts.SVGElement|undefined}
+     */
     public mark?: SVGElement;
 
+    /** @internal */
     public movedLabel?: SVGElement;
 
+    /** @internal */
     public options?: DeepPartial<AxisOptions>;
 
+    /** @internal */
     public parameters: Tick.ParametersObject;
 
+    /**
+     * The logical position of the tick on the axis in terms of axis values.
+     * @name Highcharts.Tick#pos
+     * @type {number}
+     */
     public pos: number;
 
+    /** @internal */
     public rotation?: number;
 
+    /** @internal */
     public shortenLabel?: Function;
 
+    /** @internal */
     public slotWidth?: number;
 
+    /**
+     * The mark offset of the tick on the axis. Usually `undefined`, numeric
+     * for grid axes.
+     * @name Highcharts.Tick#tickmarkOffset
+     * @type {number|undefined}
+     */
     public tickmarkOffset?: number;
 
+    /**
+     * The tick type, which can be `"minor"`, or an empty string.
+     * @name Highcharts.Tick#type
+     * @type {string}
+     */
     public type: string;
 
     /* *
@@ -195,7 +258,7 @@ class Tick {
     /**
      * Write the tick label.
      *
-     * @private
+     * @internal
      * @function Highcharts.Tick#addLabel
      */
     public addLabel(): void {
@@ -216,7 +279,9 @@ class Tick {
             isLast = pos === tickPositions[tickPositions.length - 1],
             animateLabels = (!labelOptions.step || labelOptions.step === 1) &&
                 axis.tickInterval === 1,
-            tickPositionInfo = tickPositions.info;
+            tickPositionInfo = tickPositions.info,
+            boundary = tickPositionInfo?.boundaryTicks[pos],
+            DTLFormats = options.dateTimeLabelFormats;
 
         let label = tick.label,
             dateTimeLabelFormat,
@@ -234,25 +299,34 @@ class Tick {
         }
 
 
-        // Set the datetime label format. If a higher rank is set for this
-        // position, use that. If not, use the general format.
-        if (axis.dateTime) {
+        // Set the datetime label format. If a boundary is set for this
+        // position, use that. If not, use the main format from base ticks.
+        if (axis.dateTime && DTLFormats) {
             if (tickPositionInfo) {
-                dateTimeLabelFormats = chart.time.resolveDTLFormat(
-                    (options.dateTimeLabelFormats as any)[
-                        (
-                            !options.grid?.enabled &&
-                            tickPositionInfo.higherRanks[pos]
-                        ) ||
-                        tickPositionInfo.unitName
-                    ]
-                );
+                const boundariesMap: Record<Time.TimeUnit, Time.TimeUnit> = {
+                    millisecond: 'hour',
+                    second: 'hour',
+                    minute: 'hour',
+                    hour: 'day',
+                    day: 'month',
+                    week: 'month',
+                    month: 'year',
+                    year: 'year'
+                };
+                const unitName = tickPositionInfo.unitName,
+                    boundaryKey = boundariesMap[unitName],
+                    format = !options.grid?.enabled &&
+                        boundary &&
+                        boundaryKey &&
+                        (DTLFormats[boundaryKey] as
+                            Time.DateTimeLabelFormatObject).boundary ||
+                        DTLFormats[unitName];
+
+                dateTimeLabelFormats = chart.time.resolveDTLFormat(format);
                 dateTimeLabelFormat = dateTimeLabelFormats.main;
             } else if (isNumber(value)) { // #1441
                 dateTimeLabelFormat = axis.dateTime.getXDateFormat(
-                    value,
-                    options.dateTimeLabelFormats ||
-                        {} as Time.DateTimeLabelFormatsOption
+                    value, DTLFormats || {}
                 );
             }
         }
@@ -272,12 +346,20 @@ class Tick {
          * @type {boolean|undefined}
          */
         tick.isLast = isLast;
+        /**
+         * Boundary time unit for the label (e.g `day`, `month`, `year`), used
+         * for date/time formatting.
+         * @name Highcharts.Tick#boundary
+         * @type {string|undefined}
+         */
+        tick.boundary = boundary;
 
         // Get the string
         const ctx: AxisLabelFormatterContextObject = {
             axis,
             chart,
             dateTimeLabelFormat: dateTimeLabelFormat,
+            boundary,
             isFirst,
             isLast,
             pos,
@@ -377,7 +459,7 @@ class Tick {
     /**
      * Render and return the label of the tick.
      *
-     * @private
+     * @internal
      * @function Highcharts.Tick#createLabel
      */
     public createLabel(
@@ -418,7 +500,7 @@ class Tick {
     /**
      * Destructor for the tick prototype
      *
-     * @private
+     * @internal
      * @function Highcharts.Tick#destroy
      */
     public destroy(): void {
@@ -428,7 +510,7 @@ class Tick {
     /**
      * Gets the x and y positions for ticks in terms of pixels.
      *
-     * @private
+     * @internal
      * @function Highcharts.Tick#getPosition
      *
      * @param {boolean} horiz
@@ -509,7 +591,7 @@ class Tick {
 
     /**
      * Get the x, y position of the tick label
-     * @private
+     * @internal
      */
     public getLabelPosition(
         x: number,
@@ -600,7 +682,7 @@ class Tick {
     /**
      * Get the offset height or width of the label
      *
-     * @private
+     * @internal
      * @function Highcharts.Tick#getLabelSize
      */
     public getLabelSize(): number {
@@ -611,7 +693,7 @@ class Tick {
 
     /**
      * Extendible method to return the path of the marker
-     * @private
+     * @internal
      */
     public getMarkPath(
         x: number,
@@ -634,9 +716,9 @@ class Tick {
 
     /**
      * Handle the label overflow by adjusting the labels to the left and right
-     * edge, or hide them if they collide into the neighbour label.
+     * edge, or hide them if they collide into the neighbor label.
      *
-     * @private
+     * @internal
      * @function Highcharts.Tick#handleOverflow
      */
     public handleOverflow(xy: PositionObject): void {
@@ -746,7 +828,7 @@ class Tick {
     /**
      * Try to replace the label if the same one already exists.
      *
-     * @private
+     * @internal
      * @function Highcharts.Tick#moveLabel
      */
     public moveLabel(str: string, labelOptions: AxisLabelOptions): void {
@@ -798,7 +880,7 @@ class Tick {
     /**
      * Put everything in place
      *
-     * @private
+     * @internal
      * @param {number} index
      *
      * @param {boolean} [old]
@@ -859,7 +941,7 @@ class Tick {
     /**
      * Renders the gridLine.
      *
-     * @private
+     * @internal
      * @function Highcharts.Tick#renderGridLine
      * @param {boolean} old  Whether or not the tick is old
      * @param {number} opacity  The opacity of the grid line
@@ -940,7 +1022,7 @@ class Tick {
     /**
      * Renders the tick mark.
      *
-     * @private
+     * @internal
      * @function Highcharts.Tick#renderMark
      * @param {Highcharts.PositionObject} xy  The position vector of the mark
      * @param {number} opacity  The opacity of the mark
@@ -1014,7 +1096,7 @@ class Tick {
      * Note: The label should already be created in init(), so it should only
      * have to be moved into place.
      *
-     * @private
+     * @internal
      * @function Highcharts.Tick#renderLabel
      * @param {Highcharts.PositionObject} xy  The position vector of the label
      * @param {boolean} old  Whether or not the tick is old
@@ -1069,13 +1151,7 @@ class Tick {
                 show = false;
 
             // Handle label overflow and show or hide accordingly
-            } else if (
-                horiz &&
-                !labelOptions.step &&
-                !labelOptions.rotation &&
-                !old &&
-                opacity !== 0
-            ) {
+            } else if (horiz && !old && opacity !== 0) {
                 tick.handleOverflow(xy);
             }
 
@@ -1101,7 +1177,7 @@ class Tick {
      * Replace labels with the moved ones to perform animation. Additionally
      * destroy unused labels.
      *
-     * @private
+     * @internal
      * @function Highcharts.Tick#replaceMovedLabel
      */
     public replaceMovedLabel(): void {
@@ -1133,7 +1209,7 @@ class Tick {
  *
  * */
 
-interface Tick extends TickLike {
+interface Tick extends TickBase {
     // Nothing here yet
 }
 
@@ -1177,7 +1253,7 @@ export default Tick;
 
 /**
  * Optional parameters for the tick.
- * @private
+ * @internal
  * @interface Highcharts.TickParametersObject
  *//**
  * Set category for the tick.
@@ -1198,7 +1274,7 @@ export default Tick;
  * @interface Highcharts.TimeTicksInfoObject
  * @extends Highcharts.TimeNormalizedObject
  *//**
- * @name Highcharts.TimeTicksInfoObject#higherRanks
+ * @name Highcharts.TimeTicksInfoObject#boundaryTicks
  * @type {Array<string>}
  *//**
  * @name Highcharts.TimeTicksInfoObject#totalRange

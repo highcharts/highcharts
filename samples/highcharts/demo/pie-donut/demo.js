@@ -238,7 +238,7 @@ Highcharts.chart('container', {
     responsive: {
         rules: [{
             condition: {
-                maxWidth: 400
+                maxWidth: 500
             },
             chartOptions: {
                 series: [{

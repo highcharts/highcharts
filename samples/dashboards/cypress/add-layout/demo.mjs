@@ -1,27 +1,24 @@
-
 // Bring in other forms of Highcharts
 import Dashboards from '../../../../code/dashboards/es-modules/masters/dashboards.src.js';
 import EditMode from '../../../../code/dashboards/es-modules/masters/modules/layout.src.js';
-import DataGrid from '../../../../code/datagrid/es-modules/masters/datagrid.src.js';
 import Highcharts from '../../../../code/es-modules/masters/highcharts.src.js';
+import Grid from '../../../../code/grid/es-modules/masters/grid-pro.src.js';
 
 Dashboards.HighchartsPlugin.custom.connectHighcharts(Highcharts);
-Dashboards.DataGridPlugin.custom.connectDataGrid(DataGrid);
+Dashboards.GridPlugin.custom.connectGrid(Grid);
 
 Dashboards.PluginHandler.addPlugin(Dashboards.HighchartsPlugin);
-Dashboards.PluginHandler.addPlugin(Dashboards.DataGridPlugin);
+Dashboards.PluginHandler.addPlugin(Dashboards.GridPlugin);
 
 Dashboards.board('container', {
     dataPool: {
         connectors: [{
             id: 'connector-1',
             type: 'CSV',
-            options: {
-                csv: `ABC,DEF
+            csv: `ABC,DEF
                     4,5
                     1,5
                     41,23`
-            }
         }]
     },
     editMode: {
@@ -97,7 +94,7 @@ Dashboards.board('container', {
             connector: {
                 id: 'connector-1'
             },
-            type: 'DataGrid'
+            type: 'Grid'
         }
     ]
 }, true);

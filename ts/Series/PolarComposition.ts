@@ -1,10 +1,12 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Hønsi
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -45,25 +47,29 @@ import type Tick from '../Core/Axis/Tick';
 
 import A from '../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
+import { optionsToObject } from '../Extensions/BorderRadius.js';
+import D from '../Core/Defaults.js';
+const { defaultOptions } = D;
 import H from '../Core/Globals.js';
 const { composed } = H;
 import Series from '../Core/Series/Series.js';
 import Pane from '../Extensions/Pane/Pane.js';
 import RadialAxis from '../Core/Axis/RadialAxis.js';
-import U from '../Core/Utilities.js';
-const {
+import {
     addEvent,
+    clamp,
     defined,
     find,
     isNumber,
+    isObject,
     merge,
     pick,
     pushUnique,
     relativeLength,
     splat,
-    uniqueKey,
     wrap
-} = U;
+} from '../Shared/Utilities.js';
+import { uniqueKey } from '../Core/Utilities.js';
 
 /* *
  *
@@ -71,14 +77,14 @@ const {
  *
  * */
 
-declare module '../Core/Axis/AxisLike' {
-    interface AxisLike {
+declare module '../Core/Axis/AxisBase' {
+    interface AxisBase {
         center?: Array<number>;
     }
 }
 
-declare module '../Core/Chart/ChartLike' {
-    interface ChartLike {
+declare module '../Core/Chart/ChartBase' {
+    interface ChartBase {
         polar: ChartOptions['polar'];
     }
 }
@@ -89,16 +95,16 @@ declare module '../Core/Chart/ChartOptions' {
     }
 }
 
-declare module '../Core/Series/PointLike' {
-    interface PointLike {
+declare module '../Core/Series/PointBase' {
+    interface PointBase {
         rectPlotX?: PolarPoint['rectPlotX'];
         rectPlotY?: PolarPoint['rectPlotY'];
         ttBelow?: boolean;
     }
 }
 
-declare module '../Core/Series/SeriesLike' {
-    interface SeriesLike {
+declare module '../Core/Series/SeriesBase' {
+    interface SeriesBase {
         hasClipCircleSetter?: boolean;
         /** @requires Series/Polar */
         polar?: PolarAdditions;
@@ -107,6 +113,16 @@ declare module '../Core/Series/SeriesLike' {
 
 declare module '../Core/Series/SeriesOptions' {
     interface SeriesOptions {
+        /**
+         * Polar charts only. Whether to connect the ends of a line series
+         * plot across the extremes.
+         *
+         * @sample {highcharts} highcharts/plotoptions/line-connectends-false/
+         *         Do not connect
+         *
+         * @since   2.3.0
+         * @product highcharts
+         */
         connectEnds?: boolean;
     }
 }
@@ -229,9 +245,6 @@ function findAlignments(
 /**
  * #6212 Calculate connectors for spline series in polar chart.
  * @private
- * @param {boolean} calculateNeighbours
- *        Check if connectors should be calculated for neighbour points as
- *        well allows short recurrence
  */
 function getConnectors(
     segment: Array<PolarPoint>,
@@ -251,7 +264,7 @@ function getConnectors(
         jointAngle: number;
 
     // Calculate final index of points depending on the initial index value.
-    // Because of calculating neighbours, index may be outside segment
+    // Because of calculating neighbors, index may be outside segment
     // array.
     if (index >= 0 && index <= segment.length - 1) {
         i = index;
@@ -654,6 +667,48 @@ function onSeriesAfterInit(
 }
 
 /**
+ * Apply conditional rounding to polar bars
+ */
+function onSeriesAfterColumnTranslate(
+    this: Series
+): void {
+    const { chart, options, yAxis } = this;
+    if (
+        options.borderRadius &&
+        chart.polar &&
+        chart.inverted
+    ) {
+        const seriesDefault = defaultOptions.plotOptions
+                ?.[this.type]
+                ?.borderRadius,
+            { scope, where = 'end' } = optionsToObject(
+                options.borderRadius,
+                isObject(seriesDefault) ? seriesDefault : {}
+            );
+
+        for (const point of this.points) {
+            const { shapeArgs } = point;
+            if (point.shapeType === 'arc' && shapeArgs) {
+                let brStart = where === 'all',
+                    brEnd = true;
+
+                if (options.stacking && scope === 'stack') {
+                    brStart = point.stackY === point.y && where === 'all',
+                    brEnd = point.stackY === point.stackTotal;
+                }
+
+                if (yAxis.reversed) {
+                    [brStart, brEnd] = [brEnd, brStart];
+                }
+
+                shapeArgs.brStart = brStart;
+                shapeArgs.brEnd = brEnd;
+            }
+        }
+    }
+}
+
+/**
  * Extend translate. The plotX and plotY values are computed as if the polar
  * chart were a cartesian plane, where plotX denotes the angle in radians
  * and (yAxis.len - plotY) is the pixel distance from center.
@@ -883,7 +938,7 @@ function wrapColumnSeriesAlignDataLabel(
                             .xAxis.startAngleRad,
                         // Radius
                         (point as ColumnPoint).barX +
-                        (point as ColumnPoint).pointWidth / 2
+                        ((point as ColumnPoint).pointWidth || 0) / 2
                     );
 
                 alignTo = merge(alignTo, {
@@ -1017,7 +1072,7 @@ function onAfterColumnTranslate(
                             // If starting point is beyond the
                             // range, set it to 0
                             if (defined(start)) {
-                                start = U.clamp(start, 0, visibleRange);
+                                start = clamp(start, 0, visibleRange);
                             }
                         }
                     }
@@ -1066,7 +1121,7 @@ function onAfterColumnTranslate(
                 // In case when radius, inner radius or both are negative, a
                 // point is rendered but partially or as a center point
                 innerR = Math.max(barX, 0);
-                r = Math.max(barX + point.pointWidth, 0);
+                r = Math.max(barX + (point.pointWidth || 0), 0);
 
                 // Handle border radius
                 const brOption = options.borderRadius,
@@ -1101,7 +1156,7 @@ function onAfterColumnTranslate(
                     point.yBottom,
                     point.plotY,
                     start,
-                    start + point.pointWidth
+                    start + (point.pointWidth || 0)
                 );
 
                 // Disallow border radius on polar columns for now. It would
@@ -1121,7 +1176,7 @@ function onAfterColumnTranslate(
             if (chart.inverted) {
                 tooltipPos = yAxis.postTranslate(
                     point.rectPlotY,
-                    barX + point.pointWidth / 2
+                    barX + (point.pointWidth || 0) / 2
                 );
 
                 point.tooltipPos = [
@@ -1518,6 +1573,15 @@ class PolarAdditions {
             );
 
             addEvent(SeriesClass, 'afterInit', onSeriesAfterInit);
+            addEvent(
+                SeriesClass,
+                'afterColumnTranslate',
+                onSeriesAfterColumnTranslate,
+                {
+                    // After columnrange and polar column modifications
+                    order: 9
+                }
+            );
             addEvent(
                 SeriesClass,
                 'afterTranslate',

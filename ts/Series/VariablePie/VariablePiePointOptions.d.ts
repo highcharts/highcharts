@@ -2,11 +2,13 @@
  *
  *  Variable Pie module for Highcharts
  *
- *  (c) 2010-2025 Grzegorz Blachliński
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Grzegorz Blachliński
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -25,7 +27,15 @@ import type PiePointOptions from '../Pie/PiePointOptions';
  * */
 
 export interface VariablePiePointOptions extends PiePointOptions {
-    // Nothing to add yet
+    /**
+     * The z value of the point.
+     *
+     * @type {number}
+     *
+     * @product highcharts
+     *
+     * @apioption series.variablepie.data.z
+     */
 }
 
 /* *

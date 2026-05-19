@@ -4,27 +4,33 @@
 /**
  * Usage: node changelog/upload
  *
- * This node script is used to call generation of the changelog HTML, then
- * upload it to S3.
+ * This node script is used to call generation of the changelog HTML and JSON,
+ * then upload them to S3.
  */
 
 const { exit } = require('node:process');
 const { uploadFiles } = require('../tools/gulptasks/lib/uploadS3');
-const { generateHTML } = require('./generate-html');
+const { generateHTML, generateJSON } = require('./generate-html');
 
-async function uploadFile(filename) {
+async function uploadChangelogFiles(htmlFile, jsonFile) {
     uploadFiles({
         bucket: 'assets.highcharts.com',
         files: [{
-            from: filename,
+            from: htmlFile,
             to: 'changelog/changelog.html'
+        }, {
+            from: jsonFile,
+            to: 'changelog/changelog-tree.json'
         }],
-        name: 'changelog'
+        name: 'changelog files'
     });
 }
 
-generateHTML()
-    .then(params => uploadFile(params.outputFile))
+Promise.all([generateHTML(), generateJSON()])
+    .then(([htmlResult, jsonResult]) => uploadChangelogFiles(
+        htmlResult.outputFile,
+        jsonResult.outputFile
+    ))
     .catch(error => {
         console.error(error);
         exit(1);

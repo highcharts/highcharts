@@ -177,7 +177,7 @@ You need to import the default CSS stylesheet to your project so that the dashbo
 
 ```css
 @import url("https://code.highcharts.com/dashboards/css/dashboards.css");
-@import url("https://code.highcharts.com/dashboards/css/datagrid.css");
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/css/grid-pro.css");
 ```
 
 However, you can customize the dashboard style by adding your custom CSS stylesheet.

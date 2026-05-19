@@ -2,11 +2,13 @@
  *
  *  Networkgraph series
  *
- *  (c) 2010-2025 Paweł Fus
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Paweł Fus
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -292,7 +294,7 @@ class QuadTreeNode {
             plotY = 0;
 
         if (this.isInternal) {
-            // Calculate weightened mass of the quad node:
+            // Calculate weighted mass of the quad node:
             for (const pointMass of this.nodes) {
                 if (!pointMass.isEmpty) {
                     mass += (pointMass.mass as any);

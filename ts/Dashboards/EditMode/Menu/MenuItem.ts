@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2009-2025 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Sebastian Bochan
@@ -18,14 +19,9 @@ import type CSSJSONObject from '../../CSSJSONObject';
 
 import { HTMLDOMElement } from '../../../Core/Renderer/DOMElementType.js';
 import EditGlobals from '../EditGlobals.js';
-import U from '../../../Core/Utilities.js';
 import Menu from './Menu.js';
 import EditRenderer from '../EditRenderer.js';
-
-const {
-    createElement,
-    merge
-} = U;
+import { createElement, merge } from '../../../Shared/Utilities.js';
 
 class MenuItem {
     /* *
@@ -34,7 +30,7 @@ class MenuItem {
     *
     * */
 
-    public static defaultOptions: Partial<MenuItem.Options> = {
+    public static defaultOptions: Partial<Options> = {
         type: 'text'
     };
 
@@ -45,7 +41,7 @@ class MenuItem {
     * */
     constructor(
         menu: Menu,
-        options: MenuItem.Options
+        options: Options
     ) {
         this.menu = menu;
         this.isActive = false;
@@ -61,7 +57,7 @@ class MenuItem {
     *
     * */
     public menu: Menu;
-    public options: MenuItem.Options;
+    public options: Options;
     public container: HTMLDOMElement;
     public innerElement?: HTMLDOMElement;
     public isActive: boolean;
@@ -179,65 +175,63 @@ class MenuItem {
     }
 }
 
-namespace MenuItem {
-    export type ToolbarItemId =
-        'destroy' | 'settings' | 'drag' | 'viewFullscreen';
+export type ToolbarItemId =
+    'destroy' | 'settings' | 'drag' | 'viewFullscreen';
 
-    export interface ItemOptions {
-        id: ToolbarItemId;
-        name?: string;
-        type: 'icon'|'toggle'|'text'|'button';
-        className?: string;
-        text?: string;
-        langKey?: string;
-        style?: CSSJSONObject;
-        events?: {
-            update?: Function;
-        }
+export interface ItemOptions {
+    id: ToolbarItemId;
+    name?: string;
+    type: 'icon'|'toggle'|'text'|'button';
+    className?: string;
+    text?: string;
+    langKey?: string;
+    style?: CSSJSONObject;
+    events?: {
+        update?: Function;
     }
-
-    export interface ButtonOptions extends ItemOptions {
-        type: 'button';
-        text?: string;
-        events?: {
-            update?: Function;
-            click?: Function;
-        }
-    }
-
-    export interface IconOptions extends ItemOptions {
-        type: 'icon';
-        icon: string;
-        events: {
-            update?: Function;
-            onmousedown?: Function;
-            click?: Function;
-        }
-
-    }
-
-    export interface ToggleOptions extends ItemOptions {
-        type: 'toggle';
-        getValue?: (item: MenuItem) => boolean;
-        setValue: (item: MenuItem, value: boolean) => void;
-        events: {
-            update?: Function;
-            click: Function;
-        }
-
-    }
-
-    export interface TextOptions extends ItemOptions {
-        type: 'text';
-    }
-
-    export type Type = 'icon'|'toggle'|'text'|'button';
-
-    export type Options =
-        | ButtonOptions
-        | IconOptions
-        | ToggleOptions
-        | TextOptions;
 }
+
+export interface ButtonOptions extends ItemOptions {
+    type: 'button';
+    text?: string;
+    events?: {
+        update?: Function;
+        click?: Function;
+    }
+}
+
+export interface IconOptions extends ItemOptions {
+    type: 'icon';
+    icon: string;
+    events: {
+        update?: Function;
+        onmousedown?: Function;
+        click?: Function;
+    }
+
+}
+
+export interface ToggleOptions extends ItemOptions {
+    type: 'toggle';
+    getValue?: (item: MenuItem) => boolean;
+    setValue: (item: MenuItem, value: boolean) => void;
+    events: {
+        update?: Function;
+        click: Function;
+    }
+
+}
+
+export interface TextOptions extends ItemOptions {
+    type: 'text';
+}
+
+export type Type = 'icon'|'toggle'|'text'|'button';
+
+export type Options =
+    | ButtonOptions
+    | IconOptions
+    | ToggleOptions
+    | TextOptions;
 
 export default MenuItem;

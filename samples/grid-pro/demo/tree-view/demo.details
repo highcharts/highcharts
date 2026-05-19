@@ -1,0 +1,16 @@
+---
+name: Tree View
+authors:
+  - Stian Totland
+js_wrap: b
+alt_text: >-
+  Grid with hierarchical data structure
+tags:
+  - Highcharts Grid demo
+categories:
+  - General:
+        priority: 90
+use_png_thumbnail: true
+is_pro: true
+...
+

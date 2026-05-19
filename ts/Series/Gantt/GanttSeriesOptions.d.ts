@@ -1,12 +1,13 @@
 /* *
  *
- *  (c) 2016-2025 Highsoft AS
+ *  (c) 2016-2026 Highsoft AS
  *
  *  Author: Lars A. V. Cabrera
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -17,20 +18,16 @@
  * */
 
 import type AnimationOptions from '../../Core/Animation/AnimationOptions';
-import type ColorType from '../../Core/Color/ColorType';
 import type {
-    ConnectorsOptions,
-    ConnectorsStartMarkerOptions
+    ConnectorsOptions
 } from '../../Gantt/ConnectorsOptions';
 import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
 import type GanttPointOptions from './GanttPointOptions';
-import type GanttSeries from './GanttSeries';
+import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 import type {
-    SeriesEventsOptions,
-    SeriesStatesOptions
-} from '../../Core/Series/SeriesOptions';
-import type TooltipOptions from '../../Core/TooltipOptions';
-import type XRangeSeriesOptions from '../XRange/XRangeSeriesOptions';
+    XRangeSeriesOptions,
+    XRangeSeriesTooltipOptions
+} from '../XRange/XRangeSeriesOptions';
 
 /* *
  *
@@ -49,11 +46,6 @@ export interface GanttAnimationOptions extends Partial<AnimationOptions> {
 
 export interface GanttConnectorOptions extends ConnectorsOptions {
     animation?: (boolean|GanttAnimationOptions);
-    startMarker?: GanttConnectorStartMarkerOptions;
-}
-
-export interface GanttConnectorStartMarkerOptions extends ConnectorsStartMarkerOptions {
-    fill: ColorType;
 }
 
 export type GanttDependencyOptions = (
@@ -62,10 +54,6 @@ export type GanttDependencyOptions = (
     | Array<GanttConnectorOptions>
     | Array<string>
 );
-
-export interface GanttSeriesEventsOptions extends SeriesEventsOptions {
-    afterAnimate?: undefined;
-}
 
 /**
  * A `gantt` series. If the [type](#series.gantt.type) option is not specified,
@@ -90,14 +78,6 @@ export interface GanttSeriesOptions extends XRangeSeriesOptions {
     connectors?: GanttConnectorOptions;
 
     /**
-     *
-     * @excluding afterAnimate
-     *
-     * @apioption series.gantt.events
-     */
-    events?: GanttSeriesEventsOptions;
-
-    /**
      * Data for a Gantt series.
      *
      * @declare Highcharts.GanttPointOptionsObject
@@ -106,8 +86,7 @@ export interface GanttSeriesOptions extends XRangeSeriesOptions {
      *
      * @extends series.xrange.data
      *
-     * @excluding className, connect, dataLabels, events,
-     *            partialFill, selected, x, x2
+     * @excluding className, connect, dataLabels, events, selected, x, x2
      *
      * @product gantt
      */
@@ -117,10 +96,32 @@ export interface GanttSeriesOptions extends XRangeSeriesOptions {
 
     grouping?: boolean;
 
-    states?: SeriesStatesOptions<GanttSeries>;
+    /**
+     * A partial fill for each point, typically used to visualize how much
+     * of a task is performed.
+     *
+     * @see [completed](#series.gantt.data.completed)
+     *
+     * @sample gantt/demo/progress-indicator
+     *         Gantt with progress indicator
+     */
+    partialFill?: XRangeSeriesOptions['partialFill'];
 
-    tooltip?: Partial<TooltipOptions>;
+    states?: SeriesStatesOptions<GanttSeriesOptions>;
 
+    tooltip?: GanttSeriesTooltipOptions;
+}
+
+export interface GanttSeriesTooltipOptions extends XRangeSeriesTooltipOptions {
+    /**
+     * @default '<span style="font-size: 0.8em">{series.name}</span><br/>'
+     */
+    headerFormat?: XRangeSeriesTooltipOptions['headerFormat'];
+
+    /**
+     * @default function (this): string { [internal code] }
+     */
+    pointFormatter?: XRangeSeriesTooltipOptions['pointFormatter'];
 }
 
 /* *

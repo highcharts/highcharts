@@ -1,0 +1,8 @@
+---
+ name: Highcharts A11y Portal Demo
+ authors:
+   - Øystein Moseng
+   - Nancy Dillon
+ requiresManualTesting: true
+ js_wrap: b
+...

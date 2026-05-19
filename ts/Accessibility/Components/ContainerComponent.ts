@@ -1,12 +1,14 @@
 /* *
  *
- *  (c) 2009-2025 Øystein Moseng
+ *  (c) 2009-2026 Highsoft AS
+ *  Author: Øystein Moseng
  *
  *  Accessibility component for chart container.
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -57,9 +59,6 @@ class ContainerComponent extends AccessibilityComponent {
      *  Functions
      *
      * */
-
-    /* eslint-disable valid-jsdoc */
-
 
     /**
      * Called on first render/updates to the chart, including options changes.
@@ -194,7 +193,7 @@ class ContainerComponent extends AccessibilityComponent {
         return new (KeyboardNavigationHandler as any)(chart, {
             keyCodeMap: [],
 
-            validate: function (): (boolean) {
+            validate: function (): boolean {
                 return true;
             },
 

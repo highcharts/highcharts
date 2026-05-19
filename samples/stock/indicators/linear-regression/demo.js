@@ -25,14 +25,14 @@
             data: data,
             id: 'base'
         }, {
-            type: 'linearRegression',
+            type: 'linearregression',
             linkedTo: 'base',
             zIndex: -1,
             params: {
                 period: 5
             }
         }, {
-            type: 'linearRegression',
+            type: 'linearregression',
             linkedTo: 'base',
             zIndex: -1,
             params: {

@@ -1,12 +1,13 @@
 /* *
  *
- *  (c) 2009-2025 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *
  *  Authors: Øystein Moseng, Torstein Hønsi, Jon A. Nygård
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -18,23 +19,7 @@
  *
  * */
 
-import type {
-    DragDropGuideBoxOptions,
-    DragDropHandleOptions,
-    DragDropOptions
-} from './DragDropOptions';
-
-/* *
- *
- *  Declarations
- *
- * */
-
-interface DragDropDefaults extends DragDropOptions {
-    dragSensitivity: number;
-    dragHandle: DragDropHandleOptions;
-    guideBox: Record<string, DragDropGuideBoxOptions>;
-}
+import type DragDropOptions from './DragDropOptions';
 
 /* *
  *
@@ -73,8 +58,9 @@ interface DragDropDefaults extends DragDropOptions {
  * @since        6.2.0
  * @requires     modules/draggable-points
  * @optionparent plotOptions.series.dragDrop
+ * @internal
  */
-const DragDropDefaults: DragDropDefaults = {
+const DragDropDefaults: DragDropOptions = {
 
     /**
      * Set the minimum X value the points can be moved to.
@@ -197,6 +183,10 @@ const DragDropDefaults: DragDropDefaults = {
      */
 
     /**
+     * Deprecated. Use
+     * [chart.zooming.key](#chart.zooming.key)
+     * instead.
+     *
      * Set a key to hold when dragging to zoom the chart. This is useful to
      * avoid zooming while moving points. Should be set different than
      * [chart.panKey](#chart.panKey).
@@ -204,9 +194,25 @@ const DragDropDefaults: DragDropDefaults = {
      * @type       {string}
      * @since      6.2.0
      * @validvalue ["alt", "ctrl", "meta", "shift"]
-     * @deprecated
-     * @requires  modules/draggable-points
+     * @deprecated 10.2.1
+     * @requires   modules/draggable-points
      * @apioption  chart.zoomKey
+     */
+
+    /**
+     * Set a key to hold when dragging to zoom the chart. This is useful to
+     * avoid zooming while moving points. Should be set different than
+     * [chart.panKey](#chart.panKey).
+     *
+     * **Note:** If both zooming and panning are enabled without keys,
+     * zooming will take precedence by default. To prioritize panning,
+     * either set zooming key or [chart.panKey](#chart.panKey).
+     *
+     * @type       {string}
+     * @default    {highcharts} undefined
+     * @validvalue ["alt", "ctrl", "meta", "shift"]
+     * @requires   modules/draggable-points
+     * @apioption  chart.zooming.key
      */
 
     /**
@@ -324,7 +330,7 @@ const DragDropDefaults: DragDropDefaults = {
         /**
          * The fill color of the drag handles.
          *
-         * @type  {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @type  {Highcharts.ColorType}
          * @since 6.2.0
          */
         color: '#fff',
@@ -396,7 +402,7 @@ const DragDropDefaults: DragDropDefaults = {
             /**
              * Guide box fill color.
              *
-             * @type  {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+             * @type  {Highcharts.ColorType}
              * @since 6.2.0
              */
             color: 'rgba(0, 0, 0, 0.1)',
@@ -425,4 +431,5 @@ const DragDropDefaults: DragDropDefaults = {
  *
  * */
 
+/** @internal */
 export default DragDropDefaults;

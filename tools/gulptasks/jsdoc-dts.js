@@ -46,10 +46,10 @@ function jsDocESMDTS() {
         .getFilePaths('code', true)
         .filter(file => (
             file.endsWith('.d.ts') &&
-            !file.includes('dashboards') &&
-            !file.includes('datagrid') &&
-            !file.includes('grid') &&
-            !file.includes('es-modules')
+            !file.split(path.sep).includes('dashboards') &&
+            !file.split(path.sep).includes('grid') &&
+            !file.split(path.sep).includes('es-modules') &&
+            !file.split(path.sep).includes('esm')
         ));
     const argv = require('yargs').argv;
     const promises = [];
@@ -60,7 +60,7 @@ function jsDocESMDTS() {
             if (
                 // Skip compiled DTS for es-modules/masters
                 !dtsFile.endsWith('.src.d.ts') &&
-                folder.includes('masters')
+                folder.split(path.sep).includes('masters')
             ) {
                 continue;
             }

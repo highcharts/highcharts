@@ -2,11 +2,13 @@
  *
  *  Sankey diagram module
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Hønsi
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -18,16 +20,20 @@
 
 import type ColorString from '../../Core/Color/ColorString';
 import type ColorType from '../../Core/Color/ColorType';
-import type ColumnSeriesOptions from '../Column/ColumnSeriesOptions';
-import type Templating from '../../Core/Templating';
+import type {
+    ColumnSeriesOptions,
+    ColumnSeriesTooltipOptions
+} from '../Column/ColumnSeriesOptions';
 import type NodesComposition from '../NodesComposition';
 import type { PointShortOptions } from '../../Core/Series/PointOptions';
 import type SankeyDataLabelOptions from './SankeyDataLabelOptions';
 import type SankeyPoint from './SankeyPoint';
-import type SankeyPointOptions from './SankeyPointOptions';
-import type SankeySeries from './SankeySeries';
+import type {
+    SankeyPointOptions,
+    SankeyPointDataLabelOptions
+} from './SankeyPointOptions';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
-import type TooltipOptions from '../../Core/TooltipOptions';
+import type Templating from '../../Core/Templating';
 
 /* *
  *
@@ -53,7 +59,7 @@ export interface SankeySeriesLevelOptions {
     /**
      * Can set `color` on all nodes which lay on the same level.
      *
-     * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @type {Highcharts.ColorType}
      *
      * @apioption plotOptions.sankey.levels.color
      */
@@ -91,7 +97,7 @@ export interface SankeySeriesLevelOptions {
      *
      * @apioption plotOptions.sankey.levels.states
      */
-    states?: SeriesStatesOptions<SankeySeries>;
+    states?: SeriesStatesOptions<SankeySeriesOptions>;
 
 }
 
@@ -100,7 +106,7 @@ export interface SankeySeriesNodeOptions {
     /**
      * The color of the auto generated node.
      *
-     * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @type {Highcharts.ColorType}
      *
      * @product highcharts
      */
@@ -120,7 +126,7 @@ export interface SankeySeriesNodeOptions {
 
     /**
      * An optional column index of where to place the node. The default
-     * behaviour is to place it next to the preceding node. Note that this
+     * behavior is to place it next to the preceding node. Note that this
      * option name is counter intuitive in inverted charts, like for example an
      * organization chart rendered top down. In this case the "columns" are
      * horizontal.
@@ -138,7 +144,10 @@ export interface SankeySeriesNodeOptions {
      * Individual data label for each node. The options are the same as
      * the ones for [series.sankey.dataLabels](#series.sankey.dataLabels).
      */
-    dataLabels?: SankeyDataLabelOptions;
+    dataLabels?: (
+        SankeyPointDataLabelOptions |
+        Array<SankeyPointDataLabelOptions>
+    );
 
     /**
      * The height of the node.
@@ -159,9 +168,9 @@ export interface SankeySeriesNodeOptions {
     id?: string;
 
     /**
-     * An optional level index of where to place the node. The default behaviour
+     * An optional level index of where to place the node. The default behavior
      * is to place it next to the preceding node. Alias of `nodes.column`, but
-     * in inverted sankeys and org charts, the levels are laid out as rows.
+     * in inverted sankey and org chart, the levels are laid out as rows.
      *
      * @since 7.1.0
      *
@@ -502,7 +511,7 @@ export interface SankeySeriesOptions extends ColumnSeriesOptions, NodesCompositi
 
     showInLegend?: boolean;
 
-    states?: SeriesStatesOptions<SankeySeries>;
+    states?: SankeySeriesStatesOptions;
 
     /**
      * The opposite state of a hover for a single point node/link.
@@ -518,7 +527,52 @@ export interface SankeySeriesOptions extends ColumnSeriesOptions, NodesCompositi
 
 }
 
-export interface SankeySeriesTooltipOptions extends Partial<TooltipOptions> {
+export interface SankeySeriesStatesOptions extends SeriesStatesOptions<SankeySeriesOptions> {
+    hover?: SeriesStatesOptions<SankeySeriesOptions>['hover'] & {
+        /**
+         * Opacity for the links between nodes in the sankey diagram in
+         * hover mode.
+         *
+         * @default 1
+         */
+        linkOpacity?: Required<SeriesStatesOptions<SankeySeriesOptions>>['hover']['linkOpacity'];
+
+        /**
+         * Opacity for the nodes in the sankey diagram in hover mode.
+         *
+         * @default 1
+         */
+        opacity?: Required<SeriesStatesOptions<SankeySeriesOptions>>['hover']['opacity'];
+    };
+    /**
+     * The opposite state of a hover for a single point node/link.
+     */
+    inactive?: SeriesStatesOptions<SankeySeriesOptions>['inactive'] & {
+        /**
+         * Opacity for the links between nodes in the sankey diagram in
+         * inactive mode.
+         *
+         * @default 0.1
+         */
+        linkOpacity?: Required<SeriesStatesOptions<SankeySeriesOptions>>['inactive']['linkOpacity'];
+
+        /**
+         * Opacity of the nodes in the sankey diagram in inactive mode.
+         *
+         * @default 0.1
+         */
+        opacity?: Required<SeriesStatesOptions<SankeySeriesOptions>>['inactive']['opacity'];
+
+        /**
+         * Animation when not hovering over the marker.
+         *
+         * @default { duration: 50 }
+         */
+        animation?: Required<SeriesStatesOptions<SankeySeriesOptions>>['inactive']['animation'];
+    };
+}
+
+export interface SankeySeriesTooltipOptions extends ColumnSeriesTooltipOptions {
     nodeFormat?: string;
     nodeFormatter?: Templating.FormatterCallback<SankeyPoint>;
 }

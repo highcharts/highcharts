@@ -1,10 +1,12 @@
 /* *
  *
- *  (c) 2010-2025 Pawel Lysy Grzegorz Blachlinski
+ *  (c) 2010-2026 Highsoft AS
+ *  Authors: Paweł Lysy, Grzegorz Blachliński
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -238,7 +240,7 @@ class TreegraphLayout {
         // left to right with root node close to the chart border, this is why
         // x and y positions are switched.
         node.yPosition = node.preX + modSum;
-        node.xPosition = node.level;
+        node.xPosition = node.point?.x ?? node.level;
         for (const child of node.children) {
             treeLayout.secondWalk(child, modSum + node.mod);
         }
@@ -266,7 +268,7 @@ class TreegraphLayout {
     /**
      * The core of the algorithm. The new subtree is combined with the previous
      * subtrees. Threads are used to traverse the inside and outside contours of
-     * the left and right subtree up to the highest common level. The vertecies
+     * the left and right subtree up to the highest common level. The vertices
      * are left(right)Int(Out)node where Int means internal and Out means
      * outernal. For summing up the modifiers along the contour we use the
      * `left(right)Int(Out)mod` variable. Whenever two nodes of the inside
@@ -277,8 +279,10 @@ class TreegraphLayout {
      * right outernal node or defaultAncestor.
      *
      * @param {TreegraphNode} node
+     * Treegraph node.
+     *
      * @param {TreegraphNode} defaultAncestor
-     *        The default ancestor of the passed node.
+     * The default ancestor of the passed node.
      */
     public apportion(
         node: TreegraphNode,
@@ -358,9 +362,13 @@ class TreegraphLayout {
      * Shifts the subtree from leftNode to rightNode.
      *
      * @param {TreegraphNode} leftNode
+     * Left treegraph node.
+     *
      * @param {TreegraphNode} rightNode
+     * Right treegraph node.
+     *
      * @param {number} shift
-     *        The value, by which the subtree should be moved.
+     * The value, by which the subtree should be moved.
      */
     public moveSubtree(
         leftNode: TreegraphNode,
@@ -392,8 +400,8 @@ class TreegraphLayout {
                 node.parentNode = node.oldParentNode;
 
                 // Delete dummyNode
-                delete node.oldParentNode.children[node.relativeXPosition];
-                node.oldParentNode.children[node.relativeXPosition] = node;
+                node.oldParentNode.children
+                    .splice(node.relativeXPosition, 1, node);
                 node.oldParentNode = void 0;
             }
         }

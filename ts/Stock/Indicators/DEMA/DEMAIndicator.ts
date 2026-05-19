@@ -1,8 +1,9 @@
 /* *
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -19,7 +20,7 @@ import type {
     DEMAParamsOptions
 } from './DEMAOptions';
 import type DEMAPoint from './DEMAPoint';
-import type { IndicatorLinkedSeriesLike } from '../IndicatorLike';
+import type { IndicatorLinkedSeriesBase } from '../IndicatorBase';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 
@@ -27,12 +28,7 @@ import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     ema: EMAIndicator
 } = SeriesRegistry.seriesTypes;
-import U from '../../../Core/Utilities.js';
-const {
-    correctFloat,
-    isArray,
-    merge
-} = U;
+import { correctFloat, isArray, merge } from '../../../Shared/Utilities.js';
 
 /* *
  *
@@ -43,7 +39,7 @@ const {
 /**
  * The DEMA series Type
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.dema
  *
@@ -116,7 +112,7 @@ class DEMAIndicator extends EMAIndicator {
     }
 
     public getValues<TLinkedSeries extends LineSeries>(
-        series: TLinkedSeries&IndicatorLinkedSeriesLike,
+        series: TLinkedSeries&IndicatorLinkedSeriesBase,
         params: DEMAParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
         const period: number = (params.period as any),
@@ -219,6 +215,7 @@ class DEMAIndicator extends EMAIndicator {
  *
  * */
 
+/** @internal */
 interface DEMAIndicator {
     pointClass: typeof DEMAPoint;
 }
@@ -229,6 +226,7 @@ interface DEMAIndicator {
  *
  * */
 
+/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         dema: typeof DEMAIndicator;
@@ -242,6 +240,7 @@ SeriesRegistry.registerSeriesType('dema', DEMAIndicator);
  *
  * */
 
+/** @internal */
 export default DEMAIndicator;
 
 /* *

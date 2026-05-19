@@ -1,10 +1,12 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Hønsi
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -33,11 +35,7 @@ const {
         }
     }
 } = SeriesRegistry.seriesTypes;
-import U from '../../Core/Utilities.js';
-const {
-    defined,
-    isNumber
-} = U;
+import { defined, isNumber } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -45,10 +43,23 @@ const {
  *
  * */
 
-declare module '../../Core/Series/PointLike' {
-    interface PointLike {
-        plotHigh?: AreaRangePoint['plotHigh'];
-        plotLow?: AreaRangePoint['plotLow'];
+declare module '../../Core/Series/PointBase' {
+    interface PointBase {
+        /**
+         * Range series only. The high or maximum value for each data point.
+         */
+        high?: number;
+
+        /**
+         * Range series only. The low or minimum value for each data point.
+         */
+        low?: number;
+
+        /** @internal */
+        plotHigh?: number;
+
+        /** @internal */
+        plotLow?: number;
     }
 }
 
@@ -58,6 +69,7 @@ declare module '../../Core/Series/PointLike' {
  *
  * */
 
+/** @internal */
 class AreaRangePoint extends AreaPoint {
 
     /* *
@@ -96,18 +108,6 @@ class AreaRangePoint extends AreaPoint {
 
     public series!: AreaRangeSeries;
 
-    /**
-     * Range series only. The high or maximum value for each data point.
-     * @name Highcharts.Point#high
-     * @type {number|undefined}
-     */
-
-    /**
-     * Range series only. The low or minimum value for each data point.
-     * @name Highcharts.Point#low
-     * @type {number|undefined}
-     */
-
     /* *
      *
      *  Functions
@@ -115,7 +115,7 @@ class AreaRangePoint extends AreaPoint {
      * */
 
     /**
-     * @private
+     * @internal
      */
     public setState(): void {
         const prevState = this.state,
@@ -213,4 +213,26 @@ class AreaRangePoint extends AreaPoint {
  *
  * */
 
+/** @internal */
 export default AreaRangePoint;
+
+/* *
+ *
+ *  API Options
+ *
+ * */
+
+/**
+ * Range series only. The high or maximum value for each data point.
+ *
+ * @name Highcharts.Point#high
+ * @type {number|undefined}
+ */
+/**
+ * Range series only. The low or minimum value for each data point.
+ *
+ * @name Highcharts.Point#low
+ * @type {number|undefined}
+ */
+
+''; // Keeps doclets above in JS file.

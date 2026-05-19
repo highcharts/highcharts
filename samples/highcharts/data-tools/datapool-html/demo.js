@@ -64,7 +64,9 @@ getConnectorButton.addEventListener('click', async () => {
     const timeStamp = new Date().getTime();
     log.innerText = '0ms Loading connector...\n';
 
-    const table = await dataPool.getConnectorTable(getConnectorSelect.value);
+    const table = await dataPool
+        .getConnector(getConnectorSelect.value)
+        .then(connector => connector.getTable());
 
     const timeDelta = (new Date().getTime() - timeStamp);
     log.innerText += timeDelta + 'ms Connector loaded.\n';
@@ -87,7 +89,7 @@ function renderTable(container, table) {
     html.push('<table>');
     html.push('<thead>');
     html.push('<tr>');
-    for (const column of table.getColumnNames()) {
+    for (const column of table.getColumnIds()) {
         html.push('<th>', escapeStringForHTML(column), '</th>');
     }
     html.push('</tr>');

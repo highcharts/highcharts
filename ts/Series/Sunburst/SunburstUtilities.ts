@@ -2,13 +2,14 @@
  *
  *  This module implements sunburst charts in Highcharts.
  *
- *  (c) 2016-2025 Highsoft AS
+ *  (c) 2016-2026 Highsoft AS
  *
- *  Authors: Jon Arild Nygard
+ *  Authors: Jon Arild Nygård
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -27,13 +28,8 @@ const {
         treemap: TreemapSeries
     }
 } = SeriesRegistry;
-import U from '../../Core/Utilities.js';
 import type SunburstNode from './SunburstNode.js';
-const {
-    isNumber,
-    isObject,
-    merge
-} = U;
+import { isNumber, isObject, merge } from '../../Shared/Utilities.js';
 
 /* *
  *

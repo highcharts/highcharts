@@ -52,7 +52,7 @@
             data: data,
             id: 'base'
         }, {
-            type: 'linearRegressionIntercept',
+            type: 'linearregressionintercept',
             linkedTo: 'base',
             yAxis: 1,
             zIndex: -1,
@@ -60,7 +60,7 @@
                 period: 5
             }
         }, {
-            type: 'linearRegressionIntercept',
+            type: 'linearregressionintercept',
             linkedTo: 'base',
             yAxis: 1,
             zIndex: -1,

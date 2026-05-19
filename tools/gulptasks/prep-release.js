@@ -12,7 +12,7 @@ const fs = require('fs');
  * Prepares a new release by replacing version numbers with the supplied
  * version. Replaces version numbers in package.json, bower.json,
  * build-properties.json and replaces any "@ since next" and "@ deprecated next"
- * tags in docs with the specified --nextversion
+ * (or "{next}") tags in docs with the specified --nextversion
  *
  * Run using `gulp prep-release --nextversion` and
  * `gulp prep-release --cleanup (--commit)`.
@@ -110,24 +110,25 @@ function prepareRelease() {
             JSON.stringify(buildProperties, null, 2)
         );
 
-        // Replace occurences of "@ since next" in docs with "@ since x.y.z",
-        // and the same for "@ deprecated next", first checking if xargs is on
-        // gnu (linux) or bsd (osx).
+        // Replace occurrences of "@ since next" (or {next}) in docs with
+        // "@ since x.y.z", and the same for "deprecated",
+        // first checking if xargs is on gnu (linux) or bsd (osx).
         const isGNU = ChildProcess.execSync(
             'xargs --version 2>&1 |grep -s GNU >/dev/null && echo true ||' +
             ' echo false'
         ).toString().replace('\n', '') === 'true';
         ChildProcess.execSync(
             'grep -Rl --exclude=*.bak --exclude-dir=node_modules' +
-            ' --exclude-dir=code -e "@since\\s\\+next" -e' +
-            ` "@deprecated\\s\\+next" . | xargs ${isGNU ? '-r' : ''} ` +
-            `sed -i'.bak' -e 's/@since *next/@since ${nextVersion}/; ` +
-            `s/@deprecated *next/@deprecated ${nextVersion}/'`
+            ' --exclude-dir=code -e "@since\\s\\+\\(next\\|{next}\\)" -e' +
+            ' "@deprecated\\s\\+\\(next\\|{next}\\)" . | ' +
+            `xargs ${isGNU ? '-r' : ''} sed -i'.bak'` +
+            ` -e 's/@since *\\(next\\|{next}\\)/@since ${nextVersion}/; ` +
+            `s/@deprecated *\\(next\\|{next}\\)/@deprecated ${nextVersion}/'`
         );
 
         LogLib.success(
             'Updated version in package.json, bower.json,' +
-            ' build-properties.json and replaced next in @ since and' +
+            ' build-properties.json and replaced next/{next} in @ since and' +
             ' @ deprecated in the docs. Please review changes and commit' +
             ' & push when ready.'
         );
@@ -138,13 +139,15 @@ function prepareRelease() {
 prepareRelease.description = 'Prepares a new release by replacing version' +
     ' numbers with the supplied version. Replaces version numbers in' +
     ' package.json, bower.json, build-properties.json and replaces any' +
-    ' "@ since next" tag in docs with the specified nextversion';
+    ' "next" or "{next}" in doclets\' tags "since" and "deprecated" with the' +
+    ' specified nextversion';
 prepareRelease.flags = {
     '--cleanup': 'Will add -modified to version and remove date from' +
         ' build-properties.json. Exludes --version',
     '--commit': 'Commit cleanup changes. Implies --cleanup.',
     '--nextversion': 'Version that will replace version in package.json,' +
-        ' build-properties.json, bower.json and "since next" in the docs.'
+        ' build-properties.json, bower.json and "next"/"{next}" in doclets\'' +
+        ' "since" and "deprecated" tags.'
 };
 
 Gulp.task('prep-release', prepareRelease);

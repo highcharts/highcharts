@@ -1,10 +1,12 @@
 /* *
  *
- *  (c) 2010-2025 Sebastian Bochan, Rafal Sebestjanski
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Sebastian Bochan, Rafał Sebestjański
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -33,11 +35,7 @@ const {
         scatter: ScatterSeries
     }
 } = SeriesRegistry;
-import U from '../../Core/Utilities.js';
-const {
-    extend,
-    merge
-} = U;
+import { extend, merge } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -76,7 +74,7 @@ class LollipopSeries extends Series {
      * */
 
     /**
-     * The lollipop series is a carteseian series with a line anchored from
+     * The lollipop series is a cartesian series with a line anchored from
      * the x axis and a dot at the end to mark the value.
      * Requires `highcharts-more.js`, `modules/dumbbell.js` and
      * `modules/lollipop.js`.
@@ -320,6 +318,7 @@ export default LollipopSeries;
  * @sample {highcharts} highcharts/series/data-array-of-objects/
  *         Config objects
  *
+ * @basic
  * @type      {Array<number|Array<(number|string),(number|null)>|null|*>}
  * @extends   series.dumbbell.data
  * @excluding high, low, lowColor

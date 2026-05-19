@@ -1,10 +1,12 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Hønsi
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -139,13 +141,11 @@ const mapNavigation: MapNavigationOptions = {
     /**
      * The individual buttons for the map navigation. This usually includes
      * the zoom in and zoom out buttons. Properties for each button is
-     * inherited from
-     * [mapNavigation.buttonOptions](#mapNavigation.buttonOptions), while
-     * individual options can be overridden. But default, the `onclick`, `text`
-     * and `y` options are individual.
+     * inherited from [mapNavigation.buttonOptions](#mapNavigation.buttonOptions),
+     * while individual options can be overridden. But default, the `onclick`,
+     * `text` and `y` options are individual.
      */
     buttons: {
-
         /**
          * Options for the zoom in button. Properties for the zoom in and zoom
          * out buttons are inherited from
@@ -229,7 +229,7 @@ const mapNavigation: MapNavigationOptions = {
      * Whether to enable map navigation. The default is not to enable
      * navigation, as many choropleth maps are simple and don't need it.
      * Additionally, when touch zoom and mouse wheel zoom is enabled, it breaks
-     * the default behaviour of these interactions in the website, and the
+     * the default behavior of these interactions in the website, and the
      * implementer should be aware of this.
      *
      * Individual interactions can be enabled separately, namely buttons,

@@ -1,5 +1,5 @@
 Grid.grid('container', {
-    dataTable: {
+    data: {
         columns: {
             product: ['Apples', 'Pears', 'Plums', 'Bananas'],
             weight: [100, 40, 0.5, 200],
@@ -9,6 +9,7 @@ Grid.grid('container', {
         }
     },
     columnDefaults: {
+        width: 80,
         cells: {
             editMode: {
                 enabled: true
@@ -16,8 +17,12 @@ Grid.grid('container', {
         }
     },
     columns: [{
+        id: 'product',
+        width: 'auto'
+    }, {
         id: 'weight',
         className: 'custom-column-class-name',
+        width: '40%',
         cells: {
             formatter: function () {
                 return 'V: ' + this.value;

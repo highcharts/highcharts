@@ -61,9 +61,7 @@ Dashboards.board('container', {
         connectors: [{
             type: 'JSON',
             id: 'synchro-data',
-            options: {
-                data
-            }
+            data
         }]
     },
     gui: {

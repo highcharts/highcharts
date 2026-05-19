@@ -535,7 +535,7 @@ Math.easeOutQuint = function (pos) {
 Highcharts.chart('container', {
 
     chart: {
-        backgroundColor: '#201836',
+        backgroundColor: 'var(--illo-background)',
         animation: {
             duration: 2000,
             easing: 'easeOutQuint'
@@ -608,7 +608,7 @@ Highcharts.chart('container', {
                     }, 100);
 
                     chart.series[15].update({
-                        color: '#201836'
+                        color: 'var(--illo-accent-0)'
                     }, false);
 
                     // fake column covers
@@ -764,7 +764,7 @@ Highcharts.chart('container', {
 
                     // fake columns
                     chart.series[16].update({
-                        color: '#A3EDBA',
+                        color: 'var(--illo-green)',
                         borderRadius: 10,
                         borderWidth: 1,
                         data: [{
@@ -780,7 +780,7 @@ Highcharts.chart('container', {
                     }, false);
 
                     chart.series[17].update({
-                        color: '#A3EDBA',
+                        color: 'var(--illo-green)',
                         data: [{
                             x: 7.5,
                             low: 4,
@@ -794,7 +794,7 @@ Highcharts.chart('container', {
                     }, false);
 
                     chart.series[18].update({
-                        color: '#8087E8',
+                        color: 'var(--illo-purple)',
                         data: [{
                             x: 10.5,
                             low: 4,
@@ -808,7 +808,7 @@ Highcharts.chart('container', {
                     }, false);
 
                     chart.series[19].update({
-                        color: '#A3EDBA',
+                        color: 'var(--illo-green)',
                         data: [{
                             x: 13.5,
                             low: 4,
@@ -846,7 +846,7 @@ Highcharts.chart('container', {
                                 high: 3
                             },
                             {
-                                x: 0.1,
+                                x: 0.01,
                                 low: -2,
                                 high: 3
                             }
@@ -887,7 +887,7 @@ Highcharts.chart('container', {
                                 high: 3
                             },
                             {
-                                x: 0.1,
+                                x: 0.01,
                                 low: -2,
                                 high: 3
                             }
@@ -1006,7 +1006,7 @@ Highcharts.chart('container', {
         {
             min: 0,
             max: 20,
-            gridLineColor: 'white',
+            gridLineColor: 'var(--illo-lines)',
             gridLineWidth: 0,
             gridZIndex: 30,
             tickInterval: 1
@@ -1015,7 +1015,7 @@ Highcharts.chart('container', {
             min: 0,
             max: 20,
             reversed: true,
-            gridLineColor: 'white',
+            gridLineColor: 'var(--illo-lines)',
             gridLineWidth: 0,
             gridZIndex: 30,
             tickInterval: 1
@@ -1028,7 +1028,7 @@ Highcharts.chart('container', {
             max: 18,
             gridZIndex: 20,
             gridLineWidth: 0,
-            gridLineColor: 'white',
+            gridLineColor: 'var(--illo-lines)',
             tickInterval: 1,
             startOnTick: false,
             endOnTick: false
@@ -1062,8 +1062,9 @@ Highcharts.chart('container', {
         // 0 - arearange top left
         {
             type: 'arearange',
-            color: '#30426b',
+            color: 'var(--illo-accent-50)',
             fillOpacity: 1,
+            borderWidth: 0,
             zIndex: 4,
             data: [
                 {
@@ -1081,7 +1082,7 @@ Highcharts.chart('container', {
         // 1 - arearange top right
         {
             type: 'arearange',
-            color: '#30426b',
+            color: 'var(--illo-accent-50)',
             xAxis: 1,
             zIndex: 4,
             fillOpacity: 1,
@@ -1101,8 +1102,9 @@ Highcharts.chart('container', {
         // 2 - arearange bottom left
         {
             type: 'arearange',
-            color: '#30426b',
+            color: 'var(--illo-accent-50)',
             fillOpacity: 1,
+            borderWidth: 0,
             zIndex: 4,
             data: [
                 {
@@ -1120,9 +1122,10 @@ Highcharts.chart('container', {
         // 3 - arearange bottom right
         {
             type: 'arearange',
-            color: '#30426b',
+            color: 'var(--illo-accent-50)',
             zIndex: 4,
             fillOpacity: 1,
+            borderWidth: 0,
             xAxis: 1,
             data: [
                 {
@@ -1141,7 +1144,7 @@ Highcharts.chart('container', {
         // 4 - white line
         {
             type: 'line',
-            color: '#fff',
+            color: 'var(--illo-lines)',
             data: [
                 {
                     y: 13,
@@ -1156,7 +1159,7 @@ Highcharts.chart('container', {
         // 5 - white line
         {
             type: 'line',
-            color: '#fff',
+            color: 'var(--illo-lines)',
             data: [
                 {
                     y: 12,
@@ -1171,7 +1174,7 @@ Highcharts.chart('container', {
         // 6 - white line
         {
             type: 'line',
-            color: '#fff',
+            color: 'var(--illo-lines)',
             data: [
                 {
                     y: 11,
@@ -1186,7 +1189,7 @@ Highcharts.chart('container', {
         // 7 - white line
         {
             type: 'line',
-            color: '#fff',
+            color: 'var(--illo-lines)',
             data: [
                 {
                     y: 10,
@@ -1201,7 +1204,7 @@ Highcharts.chart('container', {
         // 8 - white line
         {
             type: 'line',
-            color: '#fff',
+            color: 'var(--illo-lines)',
             data: [
                 {
                     y: 9,
@@ -1216,7 +1219,7 @@ Highcharts.chart('container', {
         // 9 - white line
         {
             type: 'line',
-            color: '#fff',
+            color: 'var(--illo-lines)',
             data: [
                 {
                     y: 8,
@@ -1231,7 +1234,7 @@ Highcharts.chart('container', {
         // 10 - white line
         {
             type: 'line',
-            color: '#fff',
+            color: 'var(--illo-lines)',
             data: [
                 {
                     y: 7,
@@ -1246,7 +1249,7 @@ Highcharts.chart('container', {
         // 11 - white line
         {
             type: 'line',
-            color: '#fff',
+            color: 'var(--illo-lines)',
             data: [
                 {
                     y: 6,
@@ -1261,7 +1264,7 @@ Highcharts.chart('container', {
         // 12 - white line
         {
             type: 'line',
-            color: '#fff',
+            color: 'var(--illo-lines)',
             data: [
                 {
                     y: 5,
@@ -1276,7 +1279,7 @@ Highcharts.chart('container', {
         // 13 - white line
         {
             type: 'line',
-            color: '#fff',
+            color: 'var(--illo-lines)',
             data: [
                 {
                     y: 4,
@@ -1291,7 +1294,7 @@ Highcharts.chart('container', {
         // 14 - white line
         {
             type: 'line',
-            color: '#fff',
+            color: 'var(--illo-lines)',
             data: [
                 {
                     y: 3,
@@ -1307,7 +1310,7 @@ Highcharts.chart('container', {
         {
             type: 'arearange',
             visible: true,
-            color: '#46465c',
+            color: 'var(--illo-accent-50)',
             zIndex: 5,
             fillOpacity: 1,
             data: [
@@ -1326,7 +1329,7 @@ Highcharts.chart('container', {
         // 16 - arearange - fake column 1
         {
             type: 'arearange',
-            color: '#201836',
+            color: 'var(--illo-accent-0)',
             zIndex: 6,
             fillOpacity: 1,
             data: [
@@ -1345,7 +1348,7 @@ Highcharts.chart('container', {
         // 17 - arearange - fake column 2
         {
             type: 'arearange',
-            color: '#201836',
+            color: 'var(--illo-accent-0)',
             zIndex: 6,
             fillOpacity: 1,
             data: [
@@ -1364,7 +1367,7 @@ Highcharts.chart('container', {
         // 18 - arearange - fake column 3
         {
             type: 'arearange',
-            color: '#201836',
+            color: 'var(--illo-accent-0)',
             zIndex: 6,
             fillOpacity: 1,
             data: [
@@ -1383,7 +1386,7 @@ Highcharts.chart('container', {
         // 19 - arearange - fake column 4
         {
             type: 'arearange',
-            color: '#201836',
+            color: 'var(--illo-accent-0)',
             zIndex: 6,
             fillOpacity: 1,
             data: [
@@ -1409,7 +1412,7 @@ Highcharts.chart('container', {
                 draggableY: true,
                 draggableX: true
             },
-            enableMouseTracking: true,
+            // enableMouseTracking: true,
             data: [
                 {
                     x: 0,
@@ -1486,7 +1489,7 @@ Highcharts.chart('container', {
         // 21 - arearange - cover 1
         {
             type: 'arearange',
-            color: '#46465c',
+            color: 'var(--illo-accent-50)',
             zIndex: 11,
             fillOpacity: 1,
             data: [
@@ -1505,7 +1508,7 @@ Highcharts.chart('container', {
         // 22 - arearange - cover 2
         {
             type: 'arearange',
-            color: '#46465c',
+            color: 'var(--illo-accent-50)',
             zIndex: 11,
             fillOpacity: 1,
             data: [
@@ -1524,7 +1527,7 @@ Highcharts.chart('container', {
         // 23 - arearange - cover 3
         {
             type: 'arearange',
-            color: '#46465c',
+            color: 'var(--illo-accent-50)',
             zIndex: 11,
             fillOpacity: 1,
             data: [
@@ -1544,7 +1547,7 @@ Highcharts.chart('container', {
         {
             type: 'arearange',
             visible: false,
-            color: '#201836',
+            color: 'var(--illo-accent-0)',
             zIndex: 11,
             fillOpacity: 1,
             data: [
@@ -1563,7 +1566,7 @@ Highcharts.chart('container', {
         // 25 - arearange top left end cover
         {
             type: 'arearange',
-            color: '#30426b',
+            color: 'var(--illo-accent-50)',
             fillOpacity: 1,
             zIndex: 4,
             data: [
@@ -1582,7 +1585,7 @@ Highcharts.chart('container', {
         // 26 - arearange middle end cover
         {
             type: 'arearange',
-            color: '#30426b',
+            color: 'var(--illo-accent-50)',
             fillOpacity: 1,
             zIndex: 4,
             data: [
@@ -1601,7 +1604,7 @@ Highcharts.chart('container', {
         // 27 - arearange center end cover
         {
             type: 'arearange',
-            color: '#30426b',
+            color: 'var(--illo-accent-50)',
             fillOpacity: 1,
             zIndex: 4,
             data: [
@@ -1620,7 +1623,7 @@ Highcharts.chart('container', {
         // 28 - arearange center end cover
         {
             type: 'arearange',
-            color: '#30426b',
+            color: 'var(--illo-accent-50)',
             fillOpacity: 1,
             zIndex: 14,
             data: [
@@ -1640,10 +1643,10 @@ Highcharts.chart('container', {
         {
             type: 'pie',
             visible: false,
-            colors: ['#8085ef', '#a3edba'],
+            colors: ['var(--illo-purple)', 'var(--illo-green)'],
             size: '23%',
             borderWidth: 1,
-            borderColor: '#201836',
+            borderColor: 'var(--illo-accent-0)',
             center: ['30%', '23%'],
             innerSize: '75%',
             data: [80, 20]
@@ -1658,7 +1661,7 @@ Highcharts.chart('container', {
                 radius: 4
             },
             enableMouseTracking: false,
-            color: '#a3edba',
+            color: 'var(--illo-green)',
             borderWidth: 0,
             data: [{
                 x: 10.46,
@@ -1704,7 +1707,7 @@ Highcharts.chart('container', {
                 radius: 4
             },
             // enableMouseTracking: true,
-            color: '#8085ef',
+            color: 'var(--illo-purple)',
             borderWidth: 0,
             data: [{
                 x: 10.46,

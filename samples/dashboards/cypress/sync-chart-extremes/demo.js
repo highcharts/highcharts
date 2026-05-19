@@ -3,12 +3,10 @@ Dashboards.board('container', {
         connectors: [{
             id: 'connector',
             type: 'CSV',
-            options: {
-                csv: `$GME,$AMC,$NOK
+            csv: `$GME,$AMC,$NOK
             4,5,6
             1,5,2
             41,23,2`
-            }
         }]
     },
     gui: {

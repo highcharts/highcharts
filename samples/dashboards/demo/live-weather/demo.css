@@ -1,6 +1,11 @@
 @import url("https://code.highcharts.com/css/highcharts.css");
-@import url("https://code.highcharts.com/dashboards/css/datagrid.css");
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/css/grid-pro.css");
 @import url("https://code.highcharts.com/dashboards/css/dashboards.css");
+
+body {
+    background: var(--highcharts-background-color);
+    color: var(--highcharts-neutral-color-100);
+}
 
 /**
  *
@@ -190,7 +195,7 @@
     stroke: var(--highcharts-neutral-color-20);
 }
 
-#kpi-layout .highcharts-dashboards-component-kpi-chart-container .highcharts-series .highcharts-color-0 {
+#kpi-layout .highcharts-dashboards-component-kpi-chart-container .highcharts-color-0 .highcharts-point {
     fill: var(--color-gauge);
     stroke: none;
 }
@@ -261,9 +266,14 @@
 
 /**
  *
- *  Weather forecast Datagrid
+ *  Weather forecast grid
  *
  **/
+
+#forecast-grid {
+    min-height: 260px;
+}
+
 #forecast-grid .highcharts-dashboards-component-title {
     font-size: 1.1em;
     text-align: center;

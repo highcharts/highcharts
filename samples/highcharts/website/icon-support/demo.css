@@ -1,25 +1,83 @@
 @import url("https://code.highcharts.com/css/highcharts.css");
+@import url("https://www.highcharts.com/demo/_next/static/css/pages/_app.css");
+
+:root,
+.highcharts-light {
+    --illo-green: var(--primitives-success-200);
+    --illo-purple: var(--primitives-brand-500);
+    --illo-accent-0: var(--primitives-neutral-0);
+    --illo-accent-50: var(--primitives-neutral-50);
+    --illo-accent-200: var(--primitives-neutral-200);
+    --illo-accent-800: var(--primitives-neutral-800);
+    --illo-brand-200: var(--primitives-brand-200);
+    --illo-brand-800: var(--primitives-brand-800);
+    --illo-background: var(--primitives-neutral-0);
+    --illo-lines: var(--primitives-neutral-100);
+    --illo-just-white: #fff;
+    --illo-just-black: #000;
+    --illo-accent-teal: #6699a1;
+}
+
+.highcharts-dark {
+    --illo-green: var(--primitives-success-300);
+    --illo-purple: var(--primitives-brand-500);
+    --illo-accent-0: var(--primitives-neutral-1000);
+    --illo-accent-50: var(--primitives-neutral-700);
+    --illo-accent-200: var(--primitives-neutral-500);
+    --illo-accent-800: var(--primitives-neutral-0);
+    --illo-brand-200: var(--primitives-brand-500);
+    --illo-brand-800: var(--primitives-brand-200);
+    --illo-background: var(--primitives-neutral-1000);
+    --illo-lines: var(--primitives-neutral-500);
+    --illo-just-white: #fff;
+    --illo-just-black: #000;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --illo-green: var(--primitives-success-300);
+        --illo-purple: var(--primitives-brand-500);
+        --illo-accent-0: var(--primitives-neutral-1000);
+        --illo-accent-50: var(--primitives-neutral-700);
+        --illo-accent-200: var(--primitives-neutral-500);
+        --illo-accent-800: var(--primitives-neutral-0);
+        --illo-brand-200: var(--primitives-brand-500);
+        --illo-brand-800: var(--primitives-brand-200);
+        --illo-background: var(--primitives-neutral-1000);
+        --illo-lines: var(--primitives-neutral-500);
+        --illo-just-white: #fff;
+        --illo-just-black: #000;
+    }
+}
+
+html {
+    overflow: hidden;
+}
+
+body {
+    margin: 0;
+}
 
 .chart-container .thick {
     stroke-width: 1;
-    stroke: white;
-    color: white;
+    stroke: var(--illo-lines);
+    color: var(--illo-lines);
     transition: all 2s;
 }
 
 .chart-container .thin {
     /* transform:translate(0px, 1px); */
     stroke-width: 1;
-    stroke: white;
-    color: white;
+    stroke: var(--illo-lines);
+    color: var(--illo-lines);
     transition: all 2s;
 }
 
 .chart-container .transparent {
     opacity: 1;
     stroke-width: 1;
-    stroke: white;
-    color: white;
+    stroke: var(--illo-lines);
+    color: var(--illo-lines);
     transition: all 2s;
 }
 
@@ -30,8 +88,8 @@
 }
 
 .line {
-    color: #fff;
-    stroke: #fff;
+    color: var(--illo-lines);
+    stroke: var(--illo-lines);
     stroke-width: 1px;
 }
 
@@ -71,7 +129,7 @@
 
 .chart-container .highcharts-plot-band,
 .highcharts-pane {
-    fill: #30426b;
+    fill: var(--illo-accent-0);
     fill-opacity: 1;
     z-index: 30;
 }
@@ -124,6 +182,11 @@
     aspect-ratio: 1 / 1;
 }
 
+/* #support {
+    width: 500px;
+    height: 500px;
+} */
+
 #support .face {
     transition: all 2s;
     transform-origin: center;
@@ -142,12 +205,12 @@
 }
 
 #support .headbg path {
-    stroke-width: 20px;
+    stroke-width: 0;
 }
 
 #support .head {
     clip-path: circle(50%);
-    fill: #8087e8;
+    fill: var(--illo-purple);
     transform-origin: center;
     transition: all 2s;
     transform: rotate(-45deg);
@@ -162,14 +225,14 @@
 #support .head .highcharts-color-1,
 #support .head .highcharts-color-2,
 #support .head .highcharts-color-3 {
-    fill: #8087e8;
+    fill: var(--illo-purple);
 }
 
 #support .headbg .highcharts-color-0,
 #support .headbg .highcharts-color-1,
 #support .headbg .highcharts-color-2,
 #support .headbg .highcharts-color-3 {
-    fill: #fff;
+    fill: var(--illo-just-white);
 }
 
 #support .head-cover {
@@ -177,13 +240,13 @@
 }
 
 #support .highcharts-plot-background {
-    fill: #46445d;
+    fill: var(--illo-accent-0);
     stroke: transparent;
 }
 
 #support .foreground,
 #support .midground {
-    fill: #201836;
+    fill: var(--illo-accent-50);
     stroke: transparent;
 }
 
@@ -193,8 +256,8 @@
 }
 
 #support .green {
-    fill: #8bf2b6;
-    stroke: #8bf2b6;
+    fill: var(--illo-green);
+    stroke: var(--illo-lines);
 }
 
 #support .particles image {
