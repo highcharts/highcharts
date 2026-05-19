@@ -674,9 +674,14 @@ class Point {
         { x = 0, y = 0 }: SVGAttributes,
         shape: SVGAttributes = {}
     ): SVGAttributes {
+        const { graphic, series } = this;
+
+        // The chart is inverted, but the marker group is not, like a scatter
+        // series in an inverted chart.
         if (
-            this.series.chart.inverted &&
-            !this.graphic?.parentGroup?.rotation
+            series.chart.inverted &&
+            graphic?.parentGroup &&
+            !graphic?.parentGroup?.rotation
         ) {
             const pos = this.pos(false, x, y);
             if (pos) {
@@ -693,7 +698,7 @@ class Point {
         // To avoid having to deal with stacking, column height etc, we only set
         // y for non-column series. Range series (having this.plotHigh) also
         // have their own logic, with two markers per point.
-        if (!this.series.is('column') && !this.plotHigh) {
+        if (!series.is('column') && !this.plotHigh) {
             attribs.y = y;
         }
 
