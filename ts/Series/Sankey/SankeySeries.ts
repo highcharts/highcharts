@@ -599,7 +599,7 @@ class SankeySeries extends ColumnSeries {
                 (options.curveFactor as any)
             ),
             nodeLeft = fromNode.nodeX +
-                (fromNode.column === 0 ?
+                (fromNode.column === 0 && this.firstColCircLinkMaxH ?
                     this.firstColCircLinkMaxH + this.circularLinkBend : 0),
             right = toNode.nodeX,
             outgoing = point.outgoing;

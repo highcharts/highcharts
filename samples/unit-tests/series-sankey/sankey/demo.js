@@ -619,6 +619,93 @@ QUnit.test('Sankey and circular data', function (assert) {
         1,
         '#16080: Node should be translated correctly after redraw'
     );
+
+    // Circular data links
+    chart.series[0].setData([
+        ['a', 'b', 3],
+        ['b', 'a', 1],
+        ['b', 'c', 2],
+        ['c', 'b', 1],
+        ['c', 'a', 1]
+    ]);
+
+    const topCircularLink = chart.series[0].nodes[0].linksTo[0];
+    const topCircularLinkShapeArgs = topCircularLink.shapeArgs;
+
+    assert.deepEqual(
+        topCircularLinkShapeArgs.d[0],
+        [
+            'M',
+            topCircularLink.fromNode.nodeX + chart.series[0].nodeWidth,
+            topCircularLink.fromNode.nodeY +
+                chart.series[0].translationFactor * topCircularLink.weight
+        ],
+        'Top circular link first path point should start from node right side'
+    );
+
+    assert.deepEqual(
+        [
+            topCircularLinkShapeArgs.d[3][6],
+            topCircularLinkShapeArgs.d[4][2],
+            topCircularLinkShapeArgs.d[5][2]
+        ],
+        [0, 0, 0],
+        'Top circular link top side y should equal 0'
+    );
+
+    assert.deepEqual(
+        [
+            topCircularLinkShapeArgs.d[5][5],
+            topCircularLinkShapeArgs.d[6][1],
+            topCircularLinkShapeArgs.d[7][1]
+        ],
+        [0, 0, 0],
+        'Top circular link left side x should equal 0'
+    );
+
+    const bottomCircularLink = chart.series[0].nodes[0].linksTo[0];
+    const bottomCircLinkShapeArgs = bottomCircularLink.shapeArgs;
+
+    assert.deepEqual(
+        bottomCircLinkShapeArgs.d[0],
+        [
+            'M',
+            bottomCircularLink.fromNode.nodeX + chart.series[0].nodeWidth,
+            bottomCircularLink.fromNode.nodeY
+        ],
+        'Bottom circular link first path point should start from node right ' +
+            'side'
+    );
+
+    assert.deepEqual(
+        [
+            bottomCircLinkShapeArgs.d[1][3],
+            bottomCircLinkShapeArgs.d[2][1],
+            bottomCircLinkShapeArgs.d[3][1]
+        ],
+        [chart.plotWidth, chart.plotWidth, chart.plotWidth],
+        'Bottom circular link right side x should equal plotWidth'
+    );
+
+    assert.deepEqual(
+        [
+            bottomCircLinkShapeArgs.d[3][6],
+            bottomCircLinkShapeArgs.d[4][2],
+            bottomCircLinkShapeArgs.d[5][2]
+        ],
+        [chart.plotHeight, chart.plotHeight, chart.plotHeight],
+        'Bottom circular link bottom side y should equal plotHeight'
+    );
+
+    assert.deepEqual(
+        [
+            bottomCircLinkShapeArgs.d[5][5],
+            bottomCircLinkShapeArgs.d[6][1],
+            bottomCircLinkShapeArgs.d[7][1]
+        ],
+        [0, 0, 0],
+        'Bottom circular link left side x should equal 0'
+    );
 });
 
 QUnit.test('Sankey and minimum line width', function (assert) {
