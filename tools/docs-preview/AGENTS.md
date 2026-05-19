@@ -33,7 +33,7 @@ If dependencies appear missing after a branch switch, install workspace dependen
 - The docs route base is `/docs/`; preview links should use `/docs/<path>?branch=<encodedBranch>` when pointing at branch builds.
 - Local MDX helpers are registered globally in `src/theme/MDXComponents/index.tsx`: `GridProBadge`, `GridProBanner`, and `CodeSwitchable`.
 - `gridProPlugin.js` injects Grid Pro badges/banners from metadata; avoid duplicating those manually unless there is a specific rendering need.
-- `iframePlugin.js` and the `removeIframeStyle` hook in `docusaurus.config.js` normalize iframe-heavy docs content for Docusaurus/MDX compatibility.
+- `iframePlugin.js` normalizes iframe-heavy docs content for Docusaurus/MDX compatibility.
 
 ## Cross-repo caution
 

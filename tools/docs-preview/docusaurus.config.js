@@ -1,29 +1,9 @@
 // @ts-check
 import { themes as prismThemes } from 'prism-react-renderer';
 
-import { visit } from 'unist-util-visit';
 import gridProPlugin from './src/remark/gridProPlugin.js';
 import iframePlugin from './src/remark/iframePlugin.js';
 import customStartMessagePlugin from './plugins/custom-start-message.js';
-
-// Plugin to remove iframe styles that can not be parsed as JSX
-function removeIframeStyle() {
-    return async function (ast) {
-        visit(ast, 'mdxJsxFlowElement', node => {
-            if (node.name === 'iframe') {
-                if (Array.isArray(node.attributes)) {
-                    const styleAttr = node.attributes.find(el => el.name === 'style');
-
-                    if (styleAttr && typeof styleAttr.value === 'string') {
-                        // Remove from node.attributes
-                        node.attributes = node.attributes.filter(el => el.name !== 'style');
-                    }
-                }
-            }
-
-        });
-    };
-}
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
@@ -60,7 +40,6 @@ const config = {
                     routeBasePath: '/docs/',
                     exclude: ['**/Readme.md', '**/AGENTS.md', '**/AUTHORING.md'],
                     remarkPlugins: [
-                        removeIframeStyle,
                         iframePlugin,
                         gridProPlugin
                     ]

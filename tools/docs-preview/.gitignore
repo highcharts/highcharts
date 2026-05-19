@@ -1,6 +1,5 @@
 # Dependencies
 /node_modules
-/tools/docs-preview/node_modules/
 
 # Production
 /build

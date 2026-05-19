@@ -52,6 +52,8 @@ jobs:
           DOC_BUILDER_URL: ${{ secrets.DOC_BUILDER_URL }}
         with:
           script: |
+            const fs = require('fs');
+            const path = require('path');
             const { createOrUpdateComment } = require('./.github/scripts/commentOnPR.js');
 
             const { data: files } = await github.rest.pulls.listFiles({
@@ -67,13 +69,40 @@ jobs:
             if (docsFiles.length === 0) return;
 
             const branch = context.payload.pull_request.head.ref;
-            const baseUrl = process.env.DOC_BUILDER_URL;
+            const baseUrl = (process.env.DOC_BUILDER_URL || '').replace(/\/+$/, '');
 
-            const links = docsFiles.map(file => {
-              // Convert docs/some-folder/file.md to the URL path
-              const urlPath = file.replace(/^docs\//, '').replace(/\.md$/, '');
-              return `- [${file}](${baseUrl}/docs/${urlPath}?branch=${encodeURIComponent(branch)})`;
-            }).join('\n');
+            function getDocUrl(file) {
+              const defaultPath = file.replace(/^docs\//, '').replace(/\.md$/, '');
+              const defaultUrl = `${baseUrl}/docs/${defaultPath}`;
+
+              try {
+                const content = fs.readFileSync(path.join(process.cwd(), file), 'utf8');
+                const frontmatterMatch = content.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n?/);
+
+                if (!frontmatterMatch) {
+                  return defaultUrl;
+                }
+
+                const slugMatch = frontmatterMatch[1].match(/^\s*slug:\s*(.+)\s*$/m);
+
+                if (!slugMatch) {
+                  return defaultUrl;
+                }
+
+                const rawSlug = slugMatch[1].trim().replace(/^["']|["']$/g, '');
+
+                if (rawSlug === '/') {
+                  return `${baseUrl}/docs/`;
+                }
+
+                const normalizedSlug = rawSlug.startsWith('/') ? rawSlug : `/${rawSlug}`;
+                return `${baseUrl}/docs${normalizedSlug}`;
+              } catch {
+                return defaultUrl;
+              }
+            }
+
+            const links = docsFiles.map(file => `- [${file}](${getDocUrl(file)}?branch=${encodeURIComponent(branch)})`).join('\n');
 
             const body = `The following documentation files were changed in this PR:\n\n${links}`;
 
