@@ -84,6 +84,13 @@ Best for quick prototypes, CodePen, JSFiddle, or projects without build tools.
 </html>
 ```
 
+For Grid Pro, swap the filenames:
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/grid-pro.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/css/grid-pro.css" />
+```
+
 > **TIP:** Want to lock to a specific version? Use: `https://cdn.jsdelivr.net/npm/@highcharts/grid-lite@2.0.0/grid-lite.js`
 
 ---
@@ -113,6 +120,7 @@ For Grid Pro, swap the filenames:
 ## Use Grid Pro
 
 Switch to Grid Pro for editing, validation, sparklines, and advanced features.
+Note that [Grid Pro requires a Grid Key](https://www.highcharts.com/docs/grid/grid-key).
 
 ### Install Grid Pro
 
@@ -129,6 +137,7 @@ import '@highcharts/grid-pro/css/grid-pro.css';
 
 // Create grid with Pro features
 Grid.grid('container', {
+    gridKey: 'YOUR-GRID-KEY-HERE',
     data: {
         columns: {
             product: ['Apple', 'Pear', 'Plum', 'Banana'],
