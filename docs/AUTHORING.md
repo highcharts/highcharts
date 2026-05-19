@@ -262,6 +262,23 @@ tags:
 ---
 ```
 
+When adding a Grid Pro-specific article to `docs/sidebars.js`, use the `doc` helper from `docs/sidebar-utils.js` instead of a raw string. The helper reads the same `grid-pro` tag and adds the sidebar `Pro` badge metadata automatically while preserving the page's normal sidebar label:
+
+```js
+const { doc } = require('./sidebar-utils');
+
+const sidebars = {
+    docs: {
+        Grid: [
+            doc('grid/grid-key'),
+            doc('grid/events')
+        ]
+    }
+};
+```
+
+For pages without the `grid-pro` tag, `doc('path/to/page')` returns the same value as the raw string, so it is safe to use when you want the sidebar entry to follow the page metadata.
+
 For inline Grid Pro badges, prefer the supported text markers when editing Markdown content:
 
 ```md

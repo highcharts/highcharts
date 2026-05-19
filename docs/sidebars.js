@@ -1,3 +1,5 @@
+const { doc } = require('./sidebar-utils');
+
 const sidebars = {
     docs: {
         Highcharts: [
@@ -121,7 +123,7 @@ const sidebars = {
         Grid: [
             'grid/general',
             'grid/installation',
-            'grid/grid-key',
+            doc('grid/grid-key'),
             'grid/understanding-grid',
             {
                 'Columns': [
@@ -138,8 +140,8 @@ const sidebars = {
                 'Rows': [
                     'grid/rows/index',
                     'grid/rows/data',
-                    'grid/rows/tree-view',
-                    'grid/rows/pinning',
+                    doc('grid/rows/tree-view'),
+                    doc('grid/rows/pinning'),
                     'grid/rows/pagination',
                     'grid/rows/virtualization',
                     'grid/rows/performance'
@@ -155,10 +157,10 @@ const sidebars = {
             },
             {
                 'Editing': [
-                    'grid/editing/index',
-                    'grid/editing/renderers',
-                    'grid/editing/validation',
-                    'grid/editing/custom-renderers'
+                    doc('grid/editing/index'),
+                    doc('grid/editing/renderers'),
+                    doc('grid/editing/validation'),
+                    doc('grid/editing/custom-renderers')
                 ]
             },
             {
@@ -175,15 +177,15 @@ const sidebars = {
                 'Data handling': [
                     'grid/data-handling/overview',
                     'grid/data-handling/clientside',
-                    'grid/data-handling/serverside',
+                    doc('grid/data-handling/serverside'),
                     'grid/data-handling/connectors'
                 ]
             },
-            'grid/events',
+            doc('grid/events'),
             'grid/accessibility',
             'grid/internationalization',
-            'grid/exporting',
-            'grid/sparklines',
+            doc('grid/exporting'),
+            doc('grid/sparklines'),
             {
                 'Frameworks': [
                     'grid/frameworks/index',
