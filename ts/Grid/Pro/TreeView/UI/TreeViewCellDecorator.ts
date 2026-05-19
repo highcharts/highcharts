@@ -87,6 +87,9 @@ export function decorateTreeViewCell(
 ): void {
     const context = getTreeViewCellContext(cell);
     const rowElement = cell.row.htmlElement;
+    const rowState = context?.rowState;
+    const hasChildren = rowState?.hasChildren === true;
+    const isExpanded = rowState?.isExpanded === true;
 
     rowElement.classList.toggle(
         TreeViewGlobals.classNames.rowTree,
@@ -94,17 +97,11 @@ export function decorateTreeViewCell(
     );
     rowElement.classList.toggle(
         TreeViewGlobals.classNames.rowExpanded,
-        !!(
-            context?.rowState.hasChildren &&
-            context.rowState.isExpanded
-        )
+        hasChildren && isExpanded
     );
     rowElement.classList.toggle(
         TreeViewGlobals.classNames.rowCollapsed,
-        !!(
-            context?.rowState.hasChildren &&
-            !context.rowState.isExpanded
-        )
+        hasChildren && !isExpanded
     );
 
     cell.htmlElement.classList.toggle(
@@ -112,10 +109,10 @@ export function decorateTreeViewCell(
         !!context?.isTreeColumnCell
     );
 
-    if (context) {
+    if (rowState) {
         rowElement.style.setProperty(
             TreeViewGlobals.cssVariables.depth,
-            context.rowState.depth.toFixed()
+            rowState.depth.toFixed()
         );
     } else {
         rowElement.style.removeProperty(TreeViewGlobals.cssVariables.depth);
@@ -126,11 +123,11 @@ export function decorateTreeViewCell(
         !!context?.controller.isCellDerived(context.rowId, cell.column.id)
     );
 
-    if (!context?.isTreeColumnCell) {
+    if (!context?.isTreeColumnCell || !rowState) {
         return;
     }
 
-    const { options, rowState } = context;
+    const { options } = context;
     const grid = cell.row.viewport.grid;
 
     const rendererType = cell.column.options.cells?.renderer?.type;
