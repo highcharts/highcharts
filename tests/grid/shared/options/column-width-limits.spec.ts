@@ -38,7 +38,7 @@ async function setupGridPage(
 
     await page.waitForFunction(() => {
         return typeof (window as any).Grid !== 'undefined';
-    }, { timeout: 10000 });
+    });
 }
 
 async function renderGrid(
