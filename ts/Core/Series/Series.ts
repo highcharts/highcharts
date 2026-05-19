@@ -4441,6 +4441,8 @@ class Series {
      *         Append point
      * @sample highcharts/members/series-addpoint-append-and-shift/
      *         Append and shift
+     * @sample highcharts/members/series-addpoint-shift-column/
+     *         Append and shift columns
      * @sample highcharts/datatable/live-chart/
      *         Append and shift with data table
      * @sample highcharts/members/series-addpoint-x-and-y/

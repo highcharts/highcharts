@@ -17,6 +17,7 @@ export default {
         value: false,
         inTitle: false
     }],
+    codePath: 'https://cdn.jsdelivr.net/npm/highcharts@v13.0.0-beta.1',
     chartOptionsExtra: {
         chart: {
             plotBackgroundColor: 'light-dark(#f8f8f8, #222)'

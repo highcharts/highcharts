@@ -415,13 +415,18 @@ Relevant links:
 
 A few smaller changes in v13 are the kind users may not name, but they will feel. Motion is smoother, legends are clearer, and chart surfaces have a little more polish out of the box.
 
-* **Improved animation on added or removed points**. Points now fade in and out from the correct position in the coordinate system, regardless of whether they are added through `addPoint`, removed through `removePoint`, or updated through other data flows. The result is a smoother impression in dynamic charts, especially column-like series.
+* **Improved animation on added or removed points**. Points now fade in and out
+  from the correct position in the coordinate system, regardless of whether they
+  are added through `addPoint`, removed through `removePoint`, or updated
+  through other data flows. The result is a smoother impression in dynamic
+  charts, especially column-like series. View [append point and shift demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/trettan/samples/highcharts/members/series-addpoint-shift-column/)
 
 * **Improved legend symbols**. Legend symbols now better reflect the actual styling of their series. This makes legends more useful as visual keys, not just labels with decorative marks.
 
 * **Rounded corners for the plot area**. The new rounded plot area option gives
   cartesian charts, maps and other rectangular visualizations a softer frame.
   Elements inside the plot area, including axes, plot bands and grid lines, are
-  clipped to match the rounding. Enable it by setting `chart.plotBorderRadius`.
+  clipped to match the rounding. Enable it by setting
+  [`chart.plotBorderRadius`](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/trettan/samples/highcharts/chart/plotborderradius/).
 
 * **Treegrid facelift for Gantt**. The Gantt treegrid has been brought closer to the rest of the grid-axis styling, with updated default colors and a cleaner visual fit.
