@@ -2742,7 +2742,7 @@ class Chart {
             chart.plotBorder = plotBorder = renderer.rect()
                 .addClass('highcharts-plot-border')
                 .attr({
-                    zIndex: 1 // Above the grid
+                    zIndex: 2 // Above the grid
                 })
                 .add();
         }
@@ -2764,21 +2764,21 @@ class Chart {
 
         // Preserve same-zIndex paint order after axis updates recreate grids.
         // #24521
-        const plotBorderElement = plotBorder.element,
-            plotBorderParent = plotBorderElement.parentNode;
+        // const plotBorderElement = plotBorder.element,
+        //     plotBorderParent = plotBorderElement.parentNode;
 
-        chart.axes.forEach(({ gridGroup, options }): void => {
-            const gridElement = gridGroup?.element;
-            if (
-                gridElement &&
-                plotBorderParent &&
-                options.gridZIndex <= 1 &&
-                gridElement.parentNode === plotBorderParent &&
-                (plotBorderElement.compareDocumentPosition(gridElement) & 4)
-            ) {
-                plotBorderParent.insertBefore(gridElement, plotBorderElement);
-            }
-        });
+        // chart.axes.forEach(({ gridGroup, options }): void => {
+        //     const gridElement = gridGroup?.element;
+        //     if (
+        //         gridElement &&
+        //         plotBorderParent &&
+        //         options.gridZIndex <= 1 &&
+        //         gridElement.parentNode === plotBorderParent &&
+        //         (plotBorderElement.compareDocumentPosition(gridElement) & 4)
+        //     ) {
+        //       plotBorderParent.insertBefore(gridElement, plotBorderElement);
+        //     }
+        // });
 
         // Reset
         chart.isDirtyBox = false;
