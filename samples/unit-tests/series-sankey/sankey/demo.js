@@ -636,11 +636,11 @@ QUnit.test('Sankey and circular data', function (assert) {
         topCircularLinkShapeArgs.d[0],
         [
             'M',
-            topCircularLink.fromNode.nodeX + chart.series[0].nodeWidth,
-            topCircularLink.fromNode.nodeY +
+            topCircularLink.fromNode.shapeArgs.x + chart.series[0].nodeWidth,
+            topCircularLink.fromNode.shapeArgs.y +
                 chart.series[0].translationFactor * topCircularLink.weight
         ],
-        'Top circular link first path point should start from node right side'
+        'Top circular link path should start at the from-node right edge'
     );
 
     assert.deepEqual(
@@ -663,18 +663,22 @@ QUnit.test('Sankey and circular data', function (assert) {
         'Top circular link left side x should equal 0'
     );
 
-    const bottomCircularLink = chart.series[0].nodes[0].linksTo[0];
+    const bottomCircularLink = chart.series[0].nodes[0].linksTo[1];
     const bottomCircLinkShapeArgs = bottomCircularLink.shapeArgs;
 
-    assert.deepEqual(
-        bottomCircLinkShapeArgs.d[0],
-        [
-            'M',
-            bottomCircularLink.fromNode.nodeX + chart.series[0].nodeWidth,
-            bottomCircularLink.fromNode.nodeY
-        ],
-        'Bottom circular link first path point should start from node right ' +
-            'side'
+    assert.strictEqual(
+        bottomCircLinkShapeArgs.d[0][1],
+        bottomCircularLink.fromNode.shapeArgs.x + chart.series[0].nodeWidth,
+        'Bottom circular link path should start at the from-node right edge (x)'
+    );
+
+    assert.close(
+        bottomCircLinkShapeArgs.d[0][2],
+        bottomCircularLink.fromNode.shapeArgs.y +
+            chart.series[0].translationFactor *
+            bottomCircularLink.fromNode.linksFrom[0].weight,
+        0.5,
+        'Bottom circular link path should start at the from-node right edge (y)'
     );
 
     assert.deepEqual(
