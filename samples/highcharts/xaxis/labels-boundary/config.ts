@@ -10,6 +10,7 @@ export default {
         path: 'xAxis.dateTimeLabelFormats.day.main',
         value: '%e of %b'
     }],
+    codePath: 'https://cdn.jsdelivr.net/npm/highcharts@v13.0.0-beta.1',
     dataFile: 'usdeur.json',
     templates: [],
     factory: 'chart',

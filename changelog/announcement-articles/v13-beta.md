@@ -2,8 +2,6 @@
 
 _Disclaimer: This is a draft document - v13 Beta is not yet released._
 
-## Intro
-
 Highcharts v13 is now available as a public beta, and we would love for you to
 try it before the final release lands in early June.
 
@@ -14,14 +12,17 @@ experimental autoloading of modules. Others are design and UX improvements that
 make everyday charts feel more polished: better gauges, more readable data
 labels, smarter datetime labels and smoother visual details throughout.
 
-For developers, the theme is less boilerplate and fewer custom workarounds. For
-product teams, it means dashboards that are easier to keep consistent. And for
-AI agents generating chart configurations, v13 adds better defaults and clearer
-configuration patterns.
-
 The beta is the right time to test your existing charts, try the new APIs and
 tell us where the edges still feel sharp. The sections below walk through the
 highlights and link to the relevant docs and live demos.
+
+The beta release is available on npm:
+* Either do `npm install highcharts@beta`
+* Or to load the script bundles directly, use jsdelivr:
+  * `https://cdn.jsdelivr.net/npm/highcharts@beta/highcharts.js`
+  * `https://cdn.jsdelivr.net/npm/highcharts@beta/modules/stock.js`
+  * `https://cdn.jsdelivr.net/npm/highcharts@beta/modules/accessibility.js`
+  * etc...
 
 ## Palette
 
@@ -73,9 +74,9 @@ Relevant links:
 
 - [Palette options](https://github.com/highcharts/highcharts/blob/trettan/ts/Core/Color/PaletteDefaults.ts)
 - [Branding Highcharts](https://github.com/highcharts/highcharts/blob/trettan/docs/chart-design-and-style/branding.md)
-- [Palette options demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/palette/general)
+- [Palette options demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/trettan/samples/highcharts/palette/general)
 - [Color scheme
-  demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/palette/colorscheme)
+  demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/trettan/samples/highcharts/palette/colorscheme)
 
 ## DataTable
 
@@ -136,8 +137,8 @@ Relevant links:
 - [Chart-level `dataTable`](https://github.com/highcharts/highcharts/blob/370ef95f78341e0eedaed694b3bd184da7b3d49f/ts/Core/Options.ts#L323-L356)
 - [Series-level `dataTable`](https://github.com/highcharts/highcharts/blob/370ef95f78341e0eedaed694b3bd184da7b3d49f/ts/Core/Series/SeriesOptions.ts#L688-L709)
 - [`series.dataMapping`](https://github.com/highcharts/highcharts/blob/370ef95f78341e0eedaed694b3bd184da7b3d49f/ts/Core/Series/SeriesOptions.ts#L614-L678)
-- [Single chart-level DataTable demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/datatable/chart-datatable-single/)
-- [Series-level DataTable demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/datatable/series-datatable/)
+- [Single chart-level DataTable demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/trettan/samples/highcharts/datatable/chart-datatable-single/)
+- [Series-level DataTable demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/trettan/samples/highcharts/datatable/series-datatable/)
 
 ## Autoload
 
@@ -197,8 +198,8 @@ Relevant links:
 - [Highcharts Loader API](https://github.com/highcharts/highcharts/blob/370ef95f78341e0eedaed694b3bd184da7b3d49f/ts/Extensions/Autoload/Loader.ts#L151-L181)
 - [Installation docs: Autoload modules](https://github.com/highcharts/highcharts/blob/trettan/docs/getting-started/installation.md#autoload-modules)
 - [ESM installation docs: Autoload](https://github.com/highcharts/highcharts/blob/trettan/docs/getting-started/installation-with-esm.md#dynamic-imports-from-cdn)
-- [UMD autoload demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/global/autoload/)
-- [ESM autoload demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/global/autoload-esm/)
+- [UMD autoload demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/trettan/samples/highcharts/global/autoload/)
+- [ESM autoload demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/trettan/samples/highcharts/global/autoload-esm/)
 
 ## Gorgeous Gauges
 
@@ -276,7 +277,7 @@ dial path. It is basically a mood board, but with runnable chart options.
 
 Relevant links:
 
-- [Gauge inspiration demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/demo/gauge-inspiration)
+- [Gauge inspiration demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/trettan/samples/highcharts/demo/gauge-inspiration)
 - [Pane options](https://github.com/highcharts/highcharts/blob/trettan/ts/Extensions/Pane/PaneOptions.ts)
 - [Gauge options](https://github.com/highcharts/highcharts/blob/370ef95f78341e0eedaed694b3bd184da7b3d49f/ts/Series/Gauge/GaugeSeries.ts#L115-L435)
 - [Solid gauge options](https://github.com/highcharts/highcharts/blob/trettan/ts/Series/SolidGauge/SolidGaugeSeriesOptions.d.ts)
@@ -335,12 +336,9 @@ xAxis: {
 
 Relevant links:
 
-- [`xAxis.dateTimeLabelFormats`](https://api.highcharts.com/highcharts/xAxis.dateTimeLabelFormats)
-- [`xAxis.dateTimeLabelFormats.month.boundary`](https://api.highcharts.com/highcharts/xAxis.dateTimeLabelFormats.month.boundary)
-- [`xAxis.labels.format`](https://api.highcharts.com/highcharts/xAxis.labels.format)
-- [Highcharts boundary labels demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/xaxis/labels-boundary/)
-- [Boundary labels with `labels.format`](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/xaxis/labels-boundary-format/)
-- [Highcharts Stock boundary labels demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/xaxis/labels-boundary/)
+- [Highcharts boundary labels demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/trettan/samples/highcharts/xaxis/labels-boundary/)
+- [Boundary labels with `labels.format`](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/trettan/samples/highcharts/xaxis/labels-boundary-format/)
+- [Highcharts Stock boundary labels demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/trettan/samples/stock/xaxis/labels-boundary/)
 
 ## Data Labels Contrast Background
 
@@ -408,10 +406,10 @@ Small feature, big day-to-day payoff: readable labels with less fiddling.
 
 Relevant links:
 
-- [Contrast background in stacked columns](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/series-datalabels-background-contrast/)
-- [Contrast background in pie](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/series-pie/datalabels-background-contrast/)
+- [Contrast background in stacked columns](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/trettan/samples/highcharts/plotoptions/series-datalabels-background-contrast/)
+- [Contrast background in pie](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/trettan/samples/highcharts/series-pie/datalabels-background-contrast/)
 - [Data label background strategies
-  demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/series-datalabels-background-options/)
+  demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/trettan/samples/highcharts/plotoptions/series-datalabels-background-options/)
 
 ## Other Design and UX Improvements
 
