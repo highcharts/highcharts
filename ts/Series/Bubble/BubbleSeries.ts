@@ -564,7 +564,6 @@ class BubbleSeries extends ScatterSeries {
         super.init(chart, options);
 
         this.noSharedTooltip = !(
-            chart.options?.tooltip?.shared ||
             this.tooltipOptions.shared ||
             this.tooltipOptions.split
         );
