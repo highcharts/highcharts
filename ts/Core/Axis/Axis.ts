@@ -3781,6 +3781,7 @@ class Axis {
 
         let tickRotCorr = axis.tickRotCorr || { x: 0, y: 0 },
             absTickRotCorrX = 0,
+            skipRotationMarginCorr,
             showAxis,
             titleOffset = 0,
             titleOffsetOption,
@@ -3807,6 +3808,10 @@ class Axis {
             axis.renderUnsquish();
             tickRotCorr = axis.tickRotCorr;
             absTickRotCorrX = Math.abs(tickRotCorr.x);
+            skipRotationMarginCorr = !horiz && (
+                (side === 3 && labelOptions.align === 'left') ||
+                (side === 1 && labelOptions.align === 'right')
+            );
 
             // Left side must be align: right and right side must
             // have align: left for labels
@@ -3834,7 +3839,11 @@ class Axis {
             if (axis.staggerLines) {
                 labelOffset *= axis.staggerLines;
             }
-            if (!horiz && isNumber(axis.labelRotation)) {
+            if (
+                !horiz &&
+                isNumber(axis.labelRotation) &&
+                !skipRotationMarginCorr
+            ) {
                 labelOffset -= absTickRotCorrX;
             }
             axis.labelOffset = labelOffset * (axis.opposite ? -1 : 1);
@@ -3897,14 +3906,18 @@ class Axis {
                     ) :
                     pick(
                         labelOptions.x,
-                        directionFactor * (
-                            labelOptions.distance - absTickRotCorrX
-                        )
+                        skipRotationMarginCorr ?
+                            tickRotCorr.x +
+                            directionFactor * labelOptions.distance :
+                            directionFactor * (
+                                labelOptions.distance - absTickRotCorrX
+                            )
                     )
             );
 
             if (
                 !horiz &&
+                !skipRotationMarginCorr &&
                 axis.labelAlign === 'center' &&
                 isNumber(axis.labelRotation)
             ) {
