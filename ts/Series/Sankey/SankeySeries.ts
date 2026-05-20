@@ -125,6 +125,11 @@ class SankeySeries extends ColumnSeries {
      *
      * */
 
+    /**
+     * Whether to use circular layout
+     */
+    protected useCircularLayout = true;
+
     public colDistance!: number;
 
     public data!: Array<SankeyPoint>;
@@ -503,14 +508,16 @@ class SankeySeries extends ColumnSeries {
         );
 
         // Check if data has circular dependencies
-        this.isDataCircular = this.checkGraphHasCycle(this.points);
+        if (this.useCircularLayout) {
+            this.isDataCircular = this.checkGraphHasCycle(this.points);
 
-        if (this.isDataCircular) {
-            // Make some room for the circular links
-            this.translationFactor = this.translationFactor / 2;
-            this.firstColCircLinkMaxH = this.getCircularLinkMaxHeight();
-            this.lastColCircLinkMaxH = this.getCircularLinkMaxHeight(true);
-            this.circularLinkBend = 20;
+            if (this.isDataCircular) {
+                // Make some room for the circular links
+                this.translationFactor = this.translationFactor / 2;
+                this.firstColCircLinkMaxH = this.getCircularLinkMaxHeight();
+                this.lastColCircLinkMaxH = this.getCircularLinkMaxHeight(true);
+                this.circularLinkBend = 20;
+            }
         }
 
         this.colDistance =

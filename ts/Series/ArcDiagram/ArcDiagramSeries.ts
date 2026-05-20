@@ -79,6 +79,8 @@ class ArcDiagramSeries extends SankeySeries {
      *
      * */
 
+    protected useCircularLayout = false;
+
     public data!: Array<ArcDiagramPoint>;
 
     public options!: ArcDiagramSeriesOptions;
@@ -228,16 +230,6 @@ class ArcDiagramSeries extends SankeySeries {
             column.push(node);
         });
         return [column];
-    }
-
-    /**
-     * Whether the data has circular dependencies.
-     * We dont need to check for cycles in arc diagram so
-     * always return false.
-     * @return {boolean} Always false.
-     */
-    public checkGraphHasCycle(): boolean {
-        return false;
     }
 
     /**

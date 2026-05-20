@@ -83,6 +83,8 @@ class OrganizationSeries extends SankeySeries {
      *
      * */
 
+    protected useCircularLayout = false;
+
     public data!: Array<OrganizationPoint>;
 
     public options!: OrganizationSeriesOptions;
@@ -237,16 +239,6 @@ class OrganizationSeries extends SankeySeries {
             }
         }
         return attribs;
-    }
-
-    /**
-     * Whether the data has circular dependencies.
-     * We dont need to check for cycles in organization chart so
-     * always return false.
-     * @return {boolean} Always false.
-     */
-    public checkGraphHasCycle(): boolean {
-        return false;
     }
 
     public translateLink(point: OrganizationPoint): void {

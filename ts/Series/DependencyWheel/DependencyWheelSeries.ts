@@ -71,6 +71,8 @@ class DependencyWheelSeries extends SankeySeries {
      *
      * */
 
+    protected useCircularLayout = false;
+
     public data!: Array<DependencyWheelPoint>;
 
     public options!: DependencyWheelSeriesOptions;
@@ -122,16 +124,6 @@ class DependencyWheelSeries extends SankeySeries {
             }
 
         }
-    }
-
-    /**
-     * Whether the data has circular dependencies.
-     * We dont need to check for cycles in dependency wheel so
-     * always return false.
-     * @return {boolean} Always false.
-     */
-    public checkGraphHasCycle(): boolean {
-        return false;
     }
 
     public createNode(id: string): DependencyWheelPoint {
