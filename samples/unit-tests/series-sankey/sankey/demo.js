@@ -561,7 +561,8 @@ QUnit.test('Sankey and inactive state', function (assert) {
 QUnit.test('Sankey and circular data', function (assert) {
     const chart = Highcharts.chart('container', {
         chart: {
-            width: 489
+            width: 489,
+            height: 400
         },
         title: {
             text: 'Highcharts Sankey Diagram'
@@ -600,15 +601,113 @@ QUnit.test('Sankey and circular data', function (assert) {
     );
 
     chart.series[0].setData([
-        ['a', 'a', 1]
+        ['a', 'a', 1],
+        ['a', 'b', 2]
     ]);
     chart.series[0].redraw();
 
     const shapeArgs = chart.series[0].nodes[0].shapeArgs;
+    assert.strictEqual(
+        shapeArgs.x,
+        chart.series[0].firstColCircLinkMaxH + chart.series[0].circularLinkBend,
+        '#16080: Node should be translated correctly after redraw (x)'
+    );
+    assert.close(
+        shapeArgs.y,
+        (chart.plotHeight - chart.series[0].nodes[0].shapeArgs.height) / 2,
+        0.5,
+        '#16080: Node should be translated correctly after redraw (y)'
+    );
+
+    // Circular data links
+    chart.series[0].setData([
+        ['a', 'b', 3],
+        ['b', 'a', 1],
+        ['b', 'c', 2],
+        ['c', 'b', 1],
+        ['c', 'a', 1]
+    ]);
+
+    const topCircularLink = chart.series[0].nodes[0].linksTo[0];
+    const topCircularLinkShapeArgs = topCircularLink.shapeArgs;
+
     assert.deepEqual(
-        [shapeArgs.x, shapeArgs.y],
-        [0, 0],
-        '#16080: Node should still be in top left corner after redraw'
+        topCircularLinkShapeArgs.d[0],
+        [
+            'M',
+            topCircularLink.fromNode.shapeArgs.x + chart.series[0].nodeWidth,
+            topCircularLink.fromNode.shapeArgs.y +
+                chart.series[0].translationFactor * topCircularLink.weight
+        ],
+        'Top circular link path should start at the from-node right edge'
+    );
+
+    assert.deepEqual(
+        [
+            topCircularLinkShapeArgs.d[3][6],
+            topCircularLinkShapeArgs.d[4][2],
+            topCircularLinkShapeArgs.d[5][2]
+        ],
+        [0, 0, 0],
+        'Top circular link top side y should equal 0'
+    );
+
+    assert.deepEqual(
+        [
+            topCircularLinkShapeArgs.d[5][5],
+            topCircularLinkShapeArgs.d[6][1],
+            topCircularLinkShapeArgs.d[7][1]
+        ],
+        [0, 0, 0],
+        'Top circular link left side x should equal 0'
+    );
+
+    const bottomCircularLink = chart.series[0].nodes[0].linksTo[1];
+    const bottomCircLinkShapeArgs = bottomCircularLink.shapeArgs;
+
+    assert.strictEqual(
+        bottomCircLinkShapeArgs.d[0][1],
+        bottomCircularLink.fromNode.shapeArgs.x + chart.series[0].nodeWidth,
+        'Bottom circular link path should start at the from-node right edge (x)'
+    );
+
+    assert.close(
+        bottomCircLinkShapeArgs.d[0][2],
+        bottomCircularLink.fromNode.shapeArgs.y +
+            chart.series[0].translationFactor *
+            bottomCircularLink.fromNode.linksFrom[0].weight,
+        0.5,
+        'Bottom circular link path should start at the from-node right edge (y)'
+    );
+
+    assert.deepEqual(
+        [
+            bottomCircLinkShapeArgs.d[1][3],
+            bottomCircLinkShapeArgs.d[2][1],
+            bottomCircLinkShapeArgs.d[3][1]
+        ],
+        [chart.plotWidth, chart.plotWidth, chart.plotWidth],
+        'Bottom circular link right side x should equal plotWidth'
+    );
+
+    assert.deepEqual(
+        [
+            bottomCircLinkShapeArgs.d[3][6],
+            bottomCircLinkShapeArgs.d[4][2],
+            bottomCircLinkShapeArgs.d[5][2]
+        ],
+        [chart.plotHeight, chart.plotHeight, chart.plotHeight],
+        'Bottom circular link bottom side y should equal plotHeight'
+    );
+
+    assert.deepEqual(
+        [
+            bottomCircLinkShapeArgs.d[5][5],
+            bottomCircLinkShapeArgs.d[6][1],
+            bottomCircLinkShapeArgs.d[7][1]
+        ],
+        [0, 0, 0],
+        'Bottom circular link left side x should equal 0'
     );
 });
 

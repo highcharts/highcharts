@@ -83,6 +83,8 @@ class OrganizationSeries extends SankeySeries {
      *
      * */
 
+    protected useCircularLayout = false;
+
     public data!: Array<OrganizationPoint>;
 
     public options!: OrganizationSeriesOptions;

@@ -79,6 +79,8 @@ class ArcDiagramSeries extends SankeySeries {
      *
      * */
 
+    protected useCircularLayout = false;
+
     public data!: Array<ArcDiagramPoint>;
 
     public options!: ArcDiagramSeriesOptions;

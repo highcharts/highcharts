@@ -71,6 +71,8 @@ class DependencyWheelSeries extends SankeySeries {
      *
      * */
 
+    protected useCircularLayout = false;
+
     public data!: Array<DependencyWheelPoint>;
 
     public options!: DependencyWheelSeriesOptions;
