@@ -230,7 +230,7 @@ Aggregation rules:
 - With `path` input, parent rows do not need to be defined unless they carry
   their own source values.
 - Generated ancestors from `path` input can also receive aggregated values.
-- Derived cells are rendered with the `hcg-tree-cell-aggregated` CSS class.
+- Derived cells are rendered with the `hcg-cell-aggregated` CSS class.
 
 ## Runtime API
 
