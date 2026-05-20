@@ -32,6 +32,7 @@ import {
     buildPathHierarchy,
     getPathSegments
 } from './TreeViewCommons.js';
+import { getTreeViewRowId } from './TreeViewRowResolver.js';
 import { defined } from '../../../Shared/Utilities.js';
 
 
@@ -124,12 +125,11 @@ function getTreePathSyntaxValidationMessage(
         return 'TreeView path cannot be empty.';
     }
 
-    const rowId = cell.row.id ?? controller?.getProjectionState()
-        ?.rowIds[cell.row.index];
+    const projectionState = controller?.getProjectionState();
+    const rowId = getTreeViewRowId(cell.row, projectionState);
     const sourceRowIndex = defined(rowId) ?
         (
-            controller?.getProjectionState()
-                ?.sourceRowIndexesById.get(rowId) ??
+            projectionState?.sourceRowIndexesById.get(rowId) ??
             cell.row.index
         ) :
         cell.row.index;

@@ -26,6 +26,11 @@ import type { TreeProjectionState } from '../TreeViewTypes';
 import TableRow from '../../../Core/Table/Body/TableRow.js';
 import Globals from '../../../Core/Globals.js';
 import TreeViewGlobals from '../TreeViewGlobals.js';
+import {
+    getLocalTreeViewRowIndex,
+    getTreeViewProjectedRowIndex,
+    getTreeViewRowId
+} from '../TreeViewRowResolver.js';
 import { defined } from '../../../../Shared/Utilities.js';
 
 
@@ -311,7 +316,10 @@ class TreeStickyRowController {
             return;
         }
 
-        this.viewport.focusCellByRowIndex(rowIndex, columnIndex);
+        this.viewport.focusCellByRowIndex(
+            getLocalTreeViewRowIndex(this.viewport, rowIndex),
+            columnIndex
+        );
     }
 
     /**
@@ -565,12 +573,24 @@ class TreeStickyRowController {
             const rowBottom = rowTop + row.htmlElement.offsetHeight;
 
             if (rowBottom > visibleTop) {
-                return row;
+                return {
+                    id: getTreeViewRowId(row, projectionState),
+                    index:
+                        getTreeViewProjectedRowIndex(row, projectionState) ??
+                        row.index
+                };
             }
         }
 
         if (!this.viewport.virtualRows) {
-            return rows[rowsLength - 1];
+            const row = rows[rowsLength - 1];
+
+            return {
+                id: getTreeViewRowId(row, projectionState),
+                index:
+                    getTreeViewProjectedRowIndex(row, projectionState) ??
+                    row.index
+            };
         }
 
         const firstRow = rows[0];
@@ -581,14 +601,26 @@ class TreeStickyRowController {
             lastRow.htmlElement.offsetHeight
         );
         const rowHeight = this.viewport.rowsVirtualizer.defaultRowHeight;
-        let estimatedRowIndex = lastRow.index;
+        const firstProjectedRowIndex = getTreeViewProjectedRowIndex(
+            firstRow,
+            projectionState
+        );
+        const lastProjectedRowIndex = getTreeViewProjectedRowIndex(
+            lastRow,
+            projectionState
+        );
+        let estimatedRowIndex = lastProjectedRowIndex ?? lastRow.index;
 
         if (visibleTop < firstRowTop) {
-            estimatedRowIndex = firstRow.index - Math.ceil(
+            estimatedRowIndex = (
+                firstProjectedRowIndex ?? firstRow.index
+            ) - Math.ceil(
                 (firstRowTop - visibleTop) / rowHeight
             );
         } else if (visibleTop >= lastRowBottom) {
-            estimatedRowIndex = lastRow.index + Math.floor(
+            estimatedRowIndex = (
+                lastProjectedRowIndex ?? lastRow.index
+            ) + Math.floor(
                 (visibleTop - lastRowBottom) / rowHeight
             ) + 1;
         }
@@ -755,7 +787,7 @@ class TreeStickyRowController {
 
         const renderedRow = this.viewport.getRow(rowId);
         if (renderedRow) {
-            return renderedRow.index;
+            return getTreeViewProjectedRowIndex(renderedRow, projectionState);
         }
 
         const projectedRowIndex = projectionState.rowIds.indexOf(rowId);
