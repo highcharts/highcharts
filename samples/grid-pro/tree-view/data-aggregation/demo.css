@@ -1,0 +1,48 @@
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/css/grid-pro.css");
+
+#container {
+    min-height: 500px;
+    padding: 12px;
+}
+
+#container .hcg-tree-cell-aggregated {
+    color: #9399a5;
+    font-style: italic;
+}
+
+#container .risk-label {
+    display: inline-block;
+    margin-left: 0.4em;
+    padding: 0.1em 0.5em;
+    border-radius: 999px;
+    font-size: 0.85em;
+    font-weight: 600;
+    line-height: 1.4;
+    vertical-align: middle;
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.05);
+}
+
+#container .risk-label-0 {
+    background: #e6f4ea;
+    color: #336348;
+}
+
+#container .risk-label-1 {
+    background: #e8f1f6;
+    color: #3f6278;
+}
+
+#container .risk-label-2 {
+    background: #f5efdf;
+    color: #7a6731;
+}
+
+#container .risk-label-3 {
+    background: #f7e9df;
+    color: #865440;
+}
+
+#container .risk-label-4 {
+    background: #f5e5ea;
+    color: #8b425b;
+}
