@@ -305,16 +305,16 @@ QUnit.test(
                     {
                         type: 'bubble',
                         data: [
-                            ['A', 21709, 2201],
-                            ['B', 4932, 500]
+                            [0, 21709, 2201],
+                            [1, 4932, 500]
                         ]
                     },
                     {
                         type: 'bubble',
                         data: [
-                            ['C', 5602, 500],
-                            ['D', 43499, 4258],
-                            ['B', 26773, 2260]
+                            [2, 5602, 500],
+                            [3, 43499, 4258],
+                            [1, 26773, 2260]
                         ]
                     }
                 ]
@@ -349,6 +349,21 @@ QUnit.test(
             chart.hoverPoint,
             point,
             'Bubble targets should keep the actual hovered point'
+        );
+        assert.strictEqual(
+            chart.hoverPoints.length,
+            2,
+            'Bubble targets with shared tooltip should include matching ' +
+            'points from all bubble series'
+        );
+        assert.strictEqual(
+            chart.hoverPoints.some(function (hoverPoint) {
+                return hoverPoint !== point &&
+                    hoverPoint.series === chart.series[0];
+            }),
+            true,
+            'Bubble shared tooltip should include the matching point from ' +
+            'the other series'
         );
 
         pointer.findNearestKDPoint = originalFindNearestKDPoint;
