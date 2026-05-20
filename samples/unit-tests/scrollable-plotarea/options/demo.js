@@ -78,118 +78,112 @@ QUnit.test('fixedRenderer options', function (assert) {
 QUnit.test(
     'Scrollable plot area keeps native scrollbars inside chart, #24416',
     function (assert) {
-        const scrollbarStyle = document.createElement('style');
-        scrollbarStyle.textContent = [
-            '.highcharts-scrolling::-webkit-scrollbar {',
-            '    height: 16px;',
-            '    width: 16px;',
-            '}'
-        ].join('\n');
-        document.head.appendChild(scrollbarStyle);
-
-        try {
-            let chart = Highcharts.chart('container', {
-                    chart: {
-                        scrollablePlotArea: {
-                            minWidth: 2000
-                        }
-                    },
-                    series: [{
-                        data: [1, 3, 2]
-                    }]
-                }),
-                scrollingContainer =
-                    chart.scrollablePlotArea.scrollingContainer;
-            const scrollbarHeight =
+        const data = [1, 3, 2],
+            getScrollbarHeight = scrollingContainer => (
                 scrollingContainer.offsetHeight -
-                scrollingContainer.clientHeight;
-
-            assert.strictEqual(
-                scrollingContainer.offsetHeight,
-                chart.chartHeight,
-                'Horizontal scrolling container should not exceed chart height'
-            );
-
-            if (scrollbarHeight) {
-                const creditsBox =
-                        chart.credits.element.getBoundingClientRect(),
-                    scrollingBox = scrollingContainer.getBoundingClientRect();
-
-                assert.ok(
-                    creditsBox.bottom <=
-                        scrollingBox.top + scrollingContainer.clientHeight + 1,
-                    'Credits should not overlap the horizontal scrollbar'
-                );
-            } else {
-                assert.ok(true, 'No non-overlay horizontal scrollbar');
-            }
-
-            chart.destroy();
-
+                scrollingContainer.clientHeight
+            ),
+            getScrollbarWidth = scrollingContainer => (
+                scrollingContainer.offsetWidth -
+                scrollingContainer.clientWidth
+            ),
             chart = Highcharts.chart('container', {
                 chart: {
-                    type: 'bar',
                     scrollablePlotArea: {
-                        minHeight: 1000
-                    },
-                    marginRight: 30
-                },
-                xAxis: {
-                    categories: ['A', 'B', 'C'],
-                    title: {
-                        text: null
+                        minWidth: 2000
                     }
                 },
-                yAxis: {
-                    lineWidth: 1,
-                    title: {
-                        text: 'Votes',
-                        align: 'high'
-                    },
-                    showLastLabel: false
-                },
                 series: [{
-                    data: [1, 3, 2]
+                    data
                 }]
             });
-            scrollingContainer =
+
+        let scrollingContainer =
                 chart.scrollablePlotArea.scrollingContainer;
+        const scrollbarHeight = getScrollbarHeight(scrollingContainer);
 
-            const scrollbarWidth =
-                scrollingContainer.offsetWidth -
-                scrollingContainer.clientWidth;
+        assert.strictEqual(
+            scrollingContainer.offsetHeight,
+            chart.chartHeight,
+            'Horizontal scrolling container should not exceed chart height'
+        );
 
-            assert.strictEqual(
-                scrollingContainer.offsetWidth,
-                chart.chartWidth,
-                'Vertical scrolling container should not exceed chart width'
+        if (scrollbarHeight) {
+            const creditsBox =
+                    chart.credits.element.getBoundingClientRect(),
+                scrollingBox = scrollingContainer.getBoundingClientRect();
+
+            assert.ok(
+                creditsBox.bottom <=
+                    scrollingBox.top + scrollingContainer.clientHeight + 1,
+                'Credits should not overlap the horizontal scrollbar'
             );
+        } else {
+            assert.ok(true, 'No non-overlay horizontal scrollbar');
+        }
 
-            if (scrollbarWidth) {
-                const creditsBox =
-                        chart.credits.element.getBoundingClientRect(),
-                    axisTitleBox =
-                        chart.yAxis[0].axisTitle.element
-                            .getBoundingClientRect(),
-                    scrollingBox = scrollingContainer.getBoundingClientRect();
+        chart.update({
+            chart: {
+                scrollablePlotArea: {
+                    minWidth: null,
+                    minHeight: 1000
+                },
+                type: 'bar',
+                marginRight: 30
+            },
+            xAxis: {
+                categories: ['A', 'B', 'C'],
+                title: {
+                    text: null
+                }
+            },
+            yAxis: {
+                lineWidth: 1,
+                title: {
+                    text: 'Votes',
+                    align: 'high'
+                },
+                showLastLabel: false
+            },
+            series: [{
+                type: 'bar',
+                data
+            }]
+        }, true, true);
 
-                assert.ok(
-                    creditsBox.right <=
-                        scrollingBox.left +
-                        scrollingContainer.clientWidth + 1,
-                    'Credits should not overlap the vertical scrollbar'
-                );
-                assert.ok(
-                    axisTitleBox.right <=
-                        scrollingBox.left +
-                        scrollingContainer.clientWidth + 1,
-                    'Axis title should not overlap the vertical scrollbar'
-                );
-            } else {
-                assert.ok(true, 'No non-overlay vertical scrollbar');
-            }
-        } finally {
-            scrollbarStyle.remove();
+        scrollingContainer =
+            chart.scrollablePlotArea.scrollingContainer;
+
+        const scrollbarWidth = getScrollbarWidth(scrollingContainer);
+
+        assert.strictEqual(
+            scrollingContainer.offsetWidth,
+            chart.chartWidth,
+            'Vertical scrolling container should not exceed chart width'
+        );
+
+        if (scrollbarWidth) {
+            const creditsBox =
+                    chart.credits.element.getBoundingClientRect(),
+                axisTitleBox =
+                    chart.yAxis[0].axisTitle.element
+                        .getBoundingClientRect(),
+                scrollingBox = scrollingContainer.getBoundingClientRect();
+
+            assert.ok(
+                creditsBox.right <=
+                    scrollingBox.left +
+                    scrollingContainer.clientWidth + 1,
+                'Credits should not overlap the vertical scrollbar'
+            );
+            assert.ok(
+                axisTitleBox.right <=
+                    scrollingBox.left +
+                    scrollingContainer.clientWidth + 1,
+                'Axis title should not overlap the vertical scrollbar'
+            );
+        } else {
+            assert.ok(true, 'No non-overlay vertical scrollbar');
         }
     }
 );
