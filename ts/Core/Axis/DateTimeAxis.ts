@@ -48,7 +48,7 @@ declare module './AxisComposition' {
             startOfWeek?: number,
             positions?: Array<number>|TypedArray,
             closestDistance?: number,
-            findHigherRanks?: boolean
+            findBoundaryTicks?: boolean
         ): TickPositionsArray;
     }
 }

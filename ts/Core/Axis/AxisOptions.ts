@@ -411,6 +411,12 @@ export interface AxisLabelFormatterContextObject {
     dateTimeLabelFormat?: Time.DateTimeFormat;
 
     /**
+     * Boundary time unit for the label (e.g `day`, `month`, `year`), used for
+     * date/time formatting.
+     */
+    boundary?: string;
+
+    /**
      * Whether the label belongs to the first tick on the axis.
      */
     isFirst: boolean;
