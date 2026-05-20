@@ -937,7 +937,6 @@ extend(BubbleSeries.prototype, {
     bubblePadding: true,
     isBubble: true,
     keysAffectYAxis: ['y'],
-    noSharedTooltip: false,
     pointArrayMap: ['y', 'z'],
     pointClass: BubblePoint,
     parallelArrays: ['x', 'y', 'z'],

@@ -1713,6 +1713,20 @@ class Pointer {
      * @emits Highcharts.Point#event:mouseOver
      */
     public runPointActions(e?: PointerEvent, p?: Point, force?: boolean): void {
+        if (!p && e) {
+            const directTouchPoint = this.getPointFromEvent(e as any);
+
+            if (
+                directTouchPoint?.series.isBubble &&
+                pick(
+                    directTouchPoint.series.options.enableMouseTracking,
+                    true
+                )
+            ) {
+                p = directTouchPoint;
+            }
+        }
+
         const pointer = this,
             chart = pointer.chart,
             series = chart.series,

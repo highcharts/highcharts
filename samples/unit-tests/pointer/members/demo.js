@@ -283,3 +283,75 @@ QUnit.test('Pointer.getHoverData', function (assert) {
         'noSharedTooltip'
     );
 });
+
+QUnit.test(
+    'Pointer.runPointActions preserves direct hover for bubble targets',
+    function (assert) {
+        const chart = Highcharts.chart('container', {
+                chart: {
+                    animation: false,
+                    width: 1000
+                },
+                plotOptions: {
+                    series: {
+                        animation: false,
+                        kdNow: true
+                    }
+                },
+                tooltip: {
+                    shared: true
+                },
+                series: [
+                    {
+                        type: 'bubble',
+                        data: [
+                            ['A', 21709, 2201],
+                            ['B', 4932, 500]
+                        ]
+                    },
+                    {
+                        type: 'bubble',
+                        data: [
+                            ['C', 5602, 500],
+                            ['D', 43499, 4258],
+                            ['B', 26773, 2260]
+                        ]
+                    }
+                ]
+            }),
+            point = chart.series[1].points[2],
+            replacementPoint = chart.series[0].points[1],
+            pointer = chart.pointer,
+            originalFindNearestKDPoint = pointer.findNearestKDPoint;
+        let kdSearchCalled = false;
+
+        chart.hoverPoint = point;
+        chart.hoverSeries = point.series;
+        pointer.isDirectTouch = true;
+        pointer.findNearestKDPoint = function () {
+            kdSearchCalled = true;
+            return replacementPoint;
+        };
+
+        pointer.runPointActions({
+            chartX: point.series.xAxis.pos + point.clientX,
+            chartY: point.series.yAxis.pos + point.plotY,
+            target: point.graphic && point.graphic.element,
+            type: 'mousemove'
+        });
+
+        assert.strictEqual(
+            kdSearchCalled,
+            false,
+            'Bubble point targets should preserve the directly hovered point'
+        );
+        assert.strictEqual(
+            chart.hoverPoint,
+            point,
+            'Bubble targets should keep the actual hovered point'
+        );
+
+        pointer.findNearestKDPoint = originalFindNearestKDPoint;
+        chart.destroy();
+    }
+);
