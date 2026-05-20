@@ -7,7 +7,6 @@
 
     // create the chart
     Highcharts.stockChart('container', {
-
         title: {
             text: 'AAPL stock price by minute'
         },
@@ -17,7 +16,7 @@
         },
 
         xAxis: {
-            gapGridLineWidth: 0
+            overscroll: '25px'
         },
 
         rangeSelector: {
@@ -65,7 +64,21 @@
                     ]
                 ]
             },
-            threshold: null
+            threshold: null,
+            lastPrice: {
+                enabled: true,
+                color: 'transparent',
+                label: {
+                    enabled: true,
+                    format: '{value:.2f}',
+                    backgroundColor: '#ffffff',
+                    borderColor: '#2caffe',
+                    borderWidth: 1,
+                    style: {
+                        color: '#000000'
+                    }
+                }
+            }
         }]
     });
 })();
