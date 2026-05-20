@@ -1,6 +1,6 @@
 {
-  "date": "2026-05-19",
-  "version": "13.0.0-beta.1",
+  "date": "2026-05-20",
+  "version": "13.0.0-beta.2",
   "products": {
     "Highcharts": {
       "cdnpath": "",

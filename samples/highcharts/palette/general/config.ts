@@ -39,7 +39,7 @@ export default {
     }],
     controlsDescription: `Text elements use different blends of the neutral
         color and background color`,
-    codePath: 'https://cdn.jsdelivr.net/npm/highcharts@v13.0.0-beta.1',
+    codePath: 'https://cdn.jsdelivr.net/npm/highcharts@v13.0.0-beta.2',
     chartOptionsExtra: {
         subtitle: {
             text: 'This subtitle uses the highlight color',

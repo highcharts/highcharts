@@ -8,7 +8,7 @@ export default {
         value: `{#if (eq boundary "month")}{value: %b <b>%Y</b>}
         {else}{value: %e of %b}{/if}`
     }],
-    codePath: 'https://cdn.jsdelivr.net/npm/highcharts@v13.0.0-beta.1',
+    codePath: 'https://cdn.jsdelivr.net/npm/highcharts@v13.0.0-beta.2',
     dataFile: 'usdeur.json',
     templates: [],
     factory: 'chart',
