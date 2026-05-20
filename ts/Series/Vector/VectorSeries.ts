@@ -22,12 +22,14 @@
 
 import type VectorPoint from './VectorPoint';
 import type VectorSeriesOptions from './VectorSeriesOptions';
+import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 
 import A from '../../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
 import H from '../../Core/Globals.js';
+import { getSeriesStateOptions } from '../../Core/Series/StatesUtilities.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     series: Series,
@@ -214,7 +216,7 @@ class VectorSeries extends ScatterSeries {
      */
     public pointAttribs(
         point?: VectorPoint,
-        state?: string
+        state?: StatesOptionsKey
     ): SVGAttributes {
         const options = this.options;
 
@@ -222,10 +224,13 @@ class VectorSeries extends ScatterSeries {
             strokeWidth = this.options.lineWidth;
 
         if (state) {
-            stroke = (options.states as any)[state].color || stroke;
-            strokeWidth =
-            ((options.states as any)[state].lineWidth || strokeWidth) +
-            ((options.states as any)[state].lineWidthPlus || 0);
+            const resolved = getSeriesStateOptions(options.states, state);
+            if (resolved) {
+                stroke = resolved.color || stroke;
+                strokeWidth =
+                    (resolved.lineWidth ?? strokeWidth ?? 0) +
+                    (resolved.lineWidthPlus || 0);
+            }
         }
 
         return {

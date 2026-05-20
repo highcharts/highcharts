@@ -30,6 +30,7 @@ const {
     column: ColumnSeries,
     ohlc: OHLCSeries
 } = SeriesRegistry.seriesTypes;
+import { getSeriesStateOptions } from '../../Core/Series/StatesUtilities.js';
 import { crisp, merge } from '../../Shared/Utilities.js';
 
 /* *
@@ -108,11 +109,13 @@ class CandlestickSeries extends OHLCSeries {
 
         // Select or hover states
         if (state) {
-            const stateOptions = (options.states as any)[state];
-            attribs.fill = stateOptions.color || attribs.fill;
-            attribs.stroke = stateOptions.lineColor || attribs.stroke;
-            attribs['stroke-width'] =
-                stateOptions.lineWidth || attribs['stroke-width'];
+            const stateOptions = getSeriesStateOptions(options.states, state);
+            if (stateOptions) {
+                attribs.fill = stateOptions.color || attribs.fill;
+                attribs.stroke = stateOptions.lineColor || attribs.stroke;
+                attribs['stroke-width'] =
+                    stateOptions.lineWidth || attribs['stroke-width'];
+            }
         }
 
         return attribs;

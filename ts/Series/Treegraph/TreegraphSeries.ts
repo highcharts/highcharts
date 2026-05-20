@@ -26,6 +26,7 @@ import type SVGLabel from '../../Core/Renderer/SVG/SVGLabel.js';
 
 import PU from '../PathUtilities.js';
 const { getLinkPath } = PU;
+import { getSeriesStateOptions } from '../../Core/Series/StatesUtilities.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 
 const {
@@ -612,7 +613,10 @@ class TreegraphSeries extends TreemapSeries {
             options = point && point.options,
             stateOptions =
                 (levelOptions.states &&
-                    (levelOptions.states as any)[state as any]) ||
+                    getSeriesStateOptions(
+                        levelOptions.states,
+                        state || 'normal'
+                    )) ||
                 {};
 
         if (point) {

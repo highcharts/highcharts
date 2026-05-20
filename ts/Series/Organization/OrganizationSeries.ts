@@ -26,6 +26,7 @@ import type {
     OrganizationSeriesLevelOptions,
     OrganizationSeriesOptions
 } from './OrganizationSeriesOptions';
+import type { SeriesAnyStateOptions } from '../../Core/Series/SeriesOptions';
 import type SankeyColumnComposition from '../Sankey/SankeyColumnComposition.js';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
@@ -33,6 +34,7 @@ import type SVGLabel from '../../Core/Renderer/SVG/SVGLabel';
 
 import OrganizationPoint from './OrganizationPoint.js';
 import OrganizationSeriesDefaults from './OrganizationSeriesDefaults.js';
+import { getSeriesStateOptions } from '../../Core/Series/StatesUtilities.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import PathUtilities from '../PathUtilities.js';
 const {
@@ -181,9 +183,12 @@ class OrganizationSeries extends SankeySeries {
             levelOptions: OrganizationSeriesLevelOptions =
                 (series.mapOptionsToLevel as any)[level || 0] || {},
             options = point.options,
-            stateOptions: OrganizationSeriesOptions =
+            stateOptions: SeriesAnyStateOptions<OrganizationSeriesOptions> =
                 (levelOptions.states &&
-                    (levelOptions.states as any)[state as any]) ||
+                    getSeriesStateOptions(
+                        levelOptions.states,
+                        state || 'normal'
+                    )) ||
                 {},
             borderRadius = pick(
                 stateOptions.borderRadius,

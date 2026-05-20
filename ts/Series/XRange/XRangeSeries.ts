@@ -24,7 +24,8 @@ import type Axis from '../../Core/Axis/Axis';
 import type ColumnMetricsObject from '../Column/ColumnMetricsObject';
 import type DataTableCore from '../../Data/DataTableCore';
 import type SeriesClass from '../../Core/Series/Series';
-import type { SeriesStateHoverOptions } from '../../Core/Series/SeriesOptions';
+import type { StatesOptions } from '../../Core/Series/StatesOptions';
+import type { SeriesAnyStateOptions } from '../../Core/Series/SeriesOptions';
 import type {
     XRangePointOptions,
     XRangePointPartialFillOptions
@@ -43,6 +44,7 @@ import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     column: ColumnSeries
 } = SeriesRegistry.seriesTypes;
+import { getSeriesStateOptions } from '../../Core/Series/StatesUtilities.js';
 import XRangeSeriesDefaults from './XRangeSeriesDefaults.js';
 import XRangePoint from './XRangePoint.js';
 import {
@@ -512,8 +514,18 @@ class XRangeSeries extends ColumnSeries {
             partShapeArgs = point.partShapeArgs,
             clipRectArgs = point.clipRectArgs,
             pointState = point.state,
-            stateOpts: SeriesStateHoverOptions = (
-                (seriesOpts.states as any)[pointState || 'normal'] ||
+            // Point.state is typed as string; map to a series state slot key.
+            seriesStateKey: keyof StatesOptions = (
+                pointState === 'hover' ||
+                pointState === 'inactive' ||
+                pointState === 'normal' ||
+                pointState === 'select'
+            ) ? pointState : 'normal',
+            stateOpts: SeriesAnyStateOptions<XRangeSeriesOptions> = (
+                getSeriesStateOptions(
+                    seriesOpts.states,
+                    seriesStateKey
+                ) ||
                 {}
             ),
             pointStateVerb = typeof pointState === 'undefined' ?

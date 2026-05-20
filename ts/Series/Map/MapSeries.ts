@@ -52,6 +52,10 @@ const { splitPath } = MapChart;
 import MapPoint from './MapPoint.js';
 import MapSeriesDefaults from './MapSeriesDefaults.js';
 import MapView from '../../Maps/MapView.js';
+import {
+    getMarkerStateOptions,
+    getSeriesStateOptions
+} from '../../Core/Series/StatesUtilities.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     // Indirect dependency to keep product size low
@@ -638,9 +642,9 @@ class MapSeries extends ScatterSeries {
         // Handle state specific border or line width
         if (state) {
             const stateOptions = merge(
-                    this.options.states?.[state] as MapSeriesOptions,
-                    point.options.states?.[state] || {}
-                ),
+                    getSeriesStateOptions(this.options.states, state) || {},
+                    getMarkerStateOptions(point.options.states, state) || {}
+                ) as MapSeriesOptions,
                 stateStrokeWidth = this.getStrokeWidth(stateOptions);
 
             if (defined(stateStrokeWidth)) {

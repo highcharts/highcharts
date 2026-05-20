@@ -1219,7 +1219,15 @@ const seriesDefaults: PlotOptionsOf<Series> = {
         /**
          * States for a single point marker.
          *
+         * In addition to the options documented for each marker state, you can
+         * set any option from
+         * [plotOptions.series.marker](#plotOptions.series.marker) except nested
+         * `states`. Those values override the base marker options while the
+         * marker is in that state.
+         *
          * @declare Highcharts.PointStatesOptionsObject
+         *
+         * @product highcharts highstock highmaps gantt
          */
         states: {
 
@@ -2145,7 +2153,19 @@ const seriesDefaults: PlotOptionsOf<Series> = {
     /**
      * A collection of options for different series states.
      *
+     * In addition to the options documented under each state (`hover`,
+     * `inactive`, `normal`, `select`), you can set any option from the parent
+     * series type except `data` and nested `states`. Those values override the
+     * base series options while the series is in that state—for example
+     * `lineWidth` under
+     * [plotOptions.series.states.hover](#plotOptions.series.states.hover), or
+     * `borderColor` and `borderWidth` under
+     * [plotOptions.pie.states.inactive](#plotOptions.pie.states.inactive) for
+     * pie series.
+     *
      * @declare Highcharts.SeriesStatesOptionsObject
+     *
+     * @product highcharts highstock highmaps gantt
      */
     states: {
 

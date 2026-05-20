@@ -36,6 +36,7 @@ import NetworkgraphPoint from './NetworkgraphPoint.js';
 import NetworkgraphSeriesDefaults from './NetworkgraphSeriesDefaults.js';
 import NodesComposition from '../NodesComposition.js';
 import ReingoldFruchtermanLayout from './ReingoldFruchtermanLayout.js';
+import { getSeriesStateOptions } from '../../Core/Series/StatesUtilities.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     series: Series,
@@ -390,7 +391,10 @@ class NetworkgraphSeries extends Series {
     ): SVGAttributes {
         // By default, only `selected` state is passed on
         const pointState = state || point && point.state || 'normal',
-            stateOptions = (this.options.states as any)[pointState];
+            stateOptions = getSeriesStateOptions(
+                this.options.states,
+                pointState as StatesOptionsKey
+            );
 
         let attribs = Series.prototype.pointAttribs.call(
             this,
@@ -403,7 +407,6 @@ class NetworkgraphSeries extends Series {
             // For link, get prefixed names:
             if (stateOptions) {
                 attribs = {
-                    // TO DO: API?
                     stroke: stateOptions.linkColor || attribs.stroke,
                     dashstyle: (
                         stateOptions.linkDashStyle || attribs.dashstyle
@@ -411,8 +414,10 @@ class NetworkgraphSeries extends Series {
                     opacity: pick(
                         stateOptions.linkOpacity, attribs.opacity
                     ),
-                    'stroke-width': stateOptions.linkColor ||
-                        attribs['stroke-width']
+                    // Legacy: width option was read from linkColor (#legacy)
+                    'stroke-width': (
+                        stateOptions.linkColor as unknown as number
+                    ) || attribs['stroke-width']
                 };
             }
         }

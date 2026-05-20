@@ -33,6 +33,7 @@ import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGLabel from '../../Core/Renderer/SVG/SVGLabel';
 
+import { getMarkerStateOptions } from '../../Core/Series/StatesUtilities.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     column: ColumnSeries,
@@ -412,8 +413,14 @@ class TimelineSeries extends LineSeries {
 
         // Handle hover and select states
         if (state) {
-            seriesStateOptions = seriesMarkerOptions?.states?.[state];
-            pointStateOptions = pointMarkerOptions.states?.[state];
+            seriesStateOptions = getMarkerStateOptions(
+                seriesMarkerOptions?.states,
+                state
+            );
+            pointStateOptions = getMarkerStateOptions(
+                pointMarkerOptions.states,
+                state
+            );
 
             radius = pick(
                 pointStateOptions?.radius,

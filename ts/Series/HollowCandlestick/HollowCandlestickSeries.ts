@@ -26,6 +26,7 @@ import SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes.js';
 import { Palette } from '../../Core/Color/Palettes.js';
 import Axis from '../../Core/Axis/Axis.js';
 import ColorType from '../../Core/Color/ColorType.js';
+import { getSeriesStateOptions } from '../../Core/Series/StatesUtilities.js';
 import { addEvent, merge } from '../../Shared/Utilities.js';
 
 const {
@@ -303,11 +304,13 @@ class HollowCandlestickSeries extends CandlestickSeries {
 
         // Select or hover states
         if (state) {
-            stateOptions = (this.options.states as any)[state];
-            attribs.fill = stateOptions.color || attribs.fill;
-            attribs.stroke = stateOptions.lineColor || attribs.stroke;
-            attribs['stroke-width'] =
-                stateOptions.lineWidth || attribs['stroke-width'];
+            stateOptions = getSeriesStateOptions(this.options.states, state);
+            if (stateOptions) {
+                attribs.fill = stateOptions.color || attribs.fill;
+                attribs.stroke = stateOptions.lineColor || attribs.stroke;
+                attribs['stroke-width'] =
+                    stateOptions.lineWidth || attribs['stroke-width'];
+            }
         }
         return attribs;
     }

@@ -724,6 +724,17 @@ export interface PointMarkerStateNormalOptions extends StateNormalOptions {
     opacity?: number;
 }
 
+/**
+ * States for a single point marker.
+ *
+ * In addition to the options documented for each marker state, you can set any
+ * option from [plotOptions.series.marker](#plotOptions.series.marker) except
+ * nested `states`. Those values override the base marker options while the
+ * marker is in that state.
+ *
+ * In TypeScript, each state is typed as the corresponding state interface
+ * intersected with {@link StateGenericOptions} for the marker type `T`.
+ */
 export interface PointMarkerStatesOptions<T extends PointMarkerOptions> extends StatesOptions {
     /**
      * The hover state for a single point marker.
@@ -802,6 +813,22 @@ export interface PointMarkerStateSelectOptions extends StateSelectOptions {
      */
     radius?: number;
 }
+
+/**
+ * Superset type for a resolved marker state, merged with
+ * {@link StateGenericOptions}.
+ *
+ * @internal
+ */
+export type PointMarkerAnyStateOptions<T extends PointMarkerOptions> = (
+    Partial<
+        PointMarkerStateHoverOptions &
+        PointMarkerStateInactiveOptions &
+        PointMarkerStateNormalOptions &
+        PointMarkerStateSelectOptions
+    > &
+    StateGenericOptions<T>
+);
 
 /* *
  *

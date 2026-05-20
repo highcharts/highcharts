@@ -29,6 +29,7 @@ import type SeriesOptions from '../Core/Series/SeriesOptions';
 
 import H from '../Core/Globals.js';
 const { composed } = H;
+import { getSeriesStateOptions } from '../Core/Series/StatesUtilities.js';
 import { addEvent, pushUnique } from '../Shared/Utilities.js';
 
 /* *
@@ -284,9 +285,16 @@ function redrawHalo(
     point: DragNodesPoint
 ): void {
     if (point && this.halo) {
+        const haloRaw = getSeriesStateOptions(this.options.states, 'hover')
+                ?.halo,
+            haloCfg = (
+                haloRaw && typeof haloRaw === 'object' ?
+                    haloRaw :
+                    void 0
+            );
         this.halo.attr({
             d: point.haloPath(
-                (this.options.states as any).hover.halo.size
+                (haloCfg?.size ?? 0) as number
             ) as any
         });
     }
