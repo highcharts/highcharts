@@ -64,6 +64,8 @@ class DependencyWheelPoint extends SankeyPoint {
 
     public toNode!: DependencyWheelPoint;
 
+    public weightTo?: number;
+
     /* *
      *
      *  Functions

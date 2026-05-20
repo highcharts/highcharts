@@ -134,8 +134,14 @@ const DependencyWheelSeriesDefaults: DependencyWheelSeriesOptions = {
                 dy: 5
             }
         }
-    }
+    },
 
+    tooltip: {
+        pointFormat: '{point.fromNode.name} \u2192 ' +
+            '{point.toNode.name}: <b>{point.weight}</b><br/>' +
+            '{#if point.weightTo}{point.toNode.name} \u2192 ' +
+            '{point.fromNode.name}: <b>{point.weightTo}</b><br/>{/if}'
+    }
 };
 
 /**
@@ -175,13 +181,29 @@ const DependencyWheelSeriesDefaults: DependencyWheelSeriesOptions = {
  *     data: [{
  *         from: 'Category1',
  *         to: 'Category2',
- *         weight: 2
+ *         weight: 2,
+ *         weightTo: 3
  *     }, {
  *         from: 'Category1',
  *         to: 'Category3',
- *         weight: 5
+ *         weight: 5,
+ *         weightTo: 6
  *     }]
  *  ```
+ *  When you provide the data as tuples, the keys option has to be set as well.
+ *
+ *  ```js
+ *     keys: ['from', 'to', 'weight', 'weightTo'],
+ *     data: [
+ *         ['Category1', 'Category2', 2, 4],
+ *         ['Category1', 'Category3', 5, 2]
+ *     ]
+ *  ```
+ *
+ * @sample {highcharts} highcharts/demo/dependency-wheel
+ *         Dependency wheel
+ * @sample {highcharts} highcharts/demo/chord-diagram
+ *         Chord diagram
  *
  * @basic
  * @type      {Array<Array<string,string,number>|*>}
@@ -196,6 +218,23 @@ const DependencyWheelSeriesDefaults: DependencyWheelSeriesOptions = {
  * the ones for [series.dependencywheel.dataLabels](#series.dependencywheel.dataLabels).
  *
  * @apioption series.dependencywheel.nodes.dataLabels
+ */
+
+/**
+ * The weight of the link from the node.
+ *
+ * @type      {number|null}
+ * @product   highcharts
+ * @apioption series.dependencywheel.data.weight
+ */
+
+/**
+ * The weight of the link to the node.
+ * When not specified, the `weight` is used.
+ *
+ * @type      {number|null}
+ * @product   highcharts
+ * @apioption series.dependencywheel.data.weightTo
  */
 
 ''; // Keeps doclets above separate
