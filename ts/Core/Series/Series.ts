@@ -58,6 +58,7 @@ import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 import type { SymbolKey } from '../Renderer/SVG/SymbolType';
 import type TooltipOptions from '../TooltipOptions';
+import type { LegendSymbolOptions } from '../Legend/LegendSymbol';
 
 import A from '../Animation/AnimationUtilities.js';
 const {
@@ -5147,7 +5148,16 @@ class Series {
      */
     public drawLegendSymbol(legend: Legend, item: Legend.Item): void {
         const renderer = this.chart.renderer,
-            legendSymbol = this.options.legendSymbol || 'rectangle',
+            legendSymbolOption = this.options.legendSymbol,
+            legendSymbolObject: LegendSymbolOptions | undefined =
+                typeof legendSymbolOption === 'object' ?
+                    legendSymbolOption : void 0,
+            legendSymbol = (
+                legendSymbolObject?.symbol ??
+                (typeof legendSymbolOption === 'string' ?
+                    legendSymbolOption : void 0) ??
+                'rectangle'
+            ),
             legendItem = item.legendItem || {},
             { options, symbolHeight, symbolWidth } = legend,
             squareSymbol = options.squareSymbol,
@@ -5190,6 +5200,8 @@ class Series {
             LegendSymbol[legendSymbol as keyof typeof LegendSymbol]
                 ?.call(this, legend, item);
         }
+
+        fireEvent(this, 'drawLegendSymbol', { legend, item });
     }
 
     // eslint-enable valid-jsdoc
