@@ -557,6 +557,18 @@ class BubbleSeries extends ScatterSeries {
      *
      * */
 
+    public init(
+        chart: Chart,
+        options: BubbleSeriesOptions
+    ): void {
+        super.init(chart, options);
+
+        this.noSharedTooltip = !(
+            this.tooltipOptions.shared ||
+            this.tooltipOptions.split
+        );
+    }
+
     /**
      * Perform animation on the bubbles
      * @internal
