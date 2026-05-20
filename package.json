@@ -61,6 +61,7 @@
     "reset": "npx gulp reset-clone && npm i",
     "benchmark": "tsx test/ts-node-unit-tests/bench.ts",
     "benchmark-compare": "tsx test/ts-node-unit-tests/benchmark-compare.ts",
+    "sync:skills": "bash tools/sync-agent-skills.sh",
     "preview-docs": "npm run start --workspace=docs-preview"
   },
   "devDependencies": {
