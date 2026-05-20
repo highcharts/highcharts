@@ -456,7 +456,11 @@ class TextBuilder {
         nodes: AST.Node[]
     ): void {
 
-        const modifyChild = (node: AST.Node, i: number): void => {
+        const modifyChild = (
+            siblings: AST.Node[],
+            node: AST.Node,
+            i: number
+        ): void => {
             const { attributes = {}, children, style = {}, tagName } = node,
                 styledMode = this.renderer.styledMode;
 
@@ -482,13 +486,23 @@ class TextBuilder {
                 style.fill = style.color;
             }
 
+            // Block elements
+            if (
+                (tagName === 'div' || tagName === 'p' || tagName === 'tr') &&
+                // No need to insert a break if it's the last element
+                siblings[i + 1]
+            ) {
+                // Insert a break after this node
+                siblings.splice(i + 1, 0, { tagName: 'br' });
+            }
+
             // Handle breaks
             if (tagName === 'br') {
                 attributes['class'] = 'highcharts-br'; // eslint-disable-line dot-notation
                 node.textContent = '\u200B'; // Zero-width space
 
                 // Trim whitespace off the beginning of new lines
-                const nextNode = nodes[i + 1];
+                const nextNode = siblings[i + 1];
                 if (nextNode?.textContent) {
                     nextNode.textContent =
                         nextNode.textContent.replace(/^ +/gm, '');
@@ -500,8 +514,7 @@ class TextBuilder {
             // in a tspan. #16173.
             } else if (
                 tagName === 'a' &&
-                children &&
-                children.some((child): boolean => child.tagName === '#text')
+                children?.some((child): boolean => child.tagName === '#text')
             ) {
                 node.children = [{ children, tagName: 'tspan' }];
             }
@@ -513,13 +526,17 @@ class TextBuilder {
 
             // Recurse
             if (children) {
-                children
-                    .filter((c): boolean => c.tagName !== '#text')
-                    .forEach(modifyChild);
+                for (let i = 0; i < children.length; i++) {
+                    if (children[i].tagName !== '#text') {
+                        modifyChild(children, children[i], i);
+                    }
+                }
             }
         };
 
-        nodes.forEach(modifyChild);
+        for (let i = 0; i < nodes.length; i++) {
+            modifyChild(nodes, nodes[i], i);
+        }
 
         fireEvent(this.svgElement, 'afterModifyTree', { nodes });
     }

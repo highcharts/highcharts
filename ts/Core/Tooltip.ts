@@ -352,14 +352,20 @@ class Tooltip {
         this: Point,
         tooltip: Tooltip
     ): (string|Array<string>) {
-        const hoverPoints = this.points || splat(this);
-        let s: (string|Array<string>);
+        const hoverPoints = this.points || splat(this),
+            body = tooltip.bodyFormatter(hoverPoints);
+        let s: (string|Array<string>),
+            header = tooltip.headerFooterFormatter(hoverPoints[0]);
 
-        // Build the header
-        s = [tooltip.headerFooterFormatter(hoverPoints[0])];
+        // Build the header. When a pre-v13 header is used with the post v13
+        // table-based body, make sure there is a table tab in the header.
+        if (body[0]?.indexOf('<tr') === 0 && header.indexOf('<table') === -1) {
+            header += '<table>';
+        }
+        s = [header];
 
         // Build the values
-        s = s.concat(tooltip.bodyFormatter(hoverPoints));
+        s = s.concat(body);
 
         // Footer
         s.push(tooltip.headerFooterFormatter(hoverPoints[0], true));
@@ -1824,6 +1830,10 @@ class Tooltip {
             .replace(
                 'style="font-size: 0.8em"',
                 'class="highcharts-header"'
+            )
+            .replace(
+                'style="text-align: right"',
+                'class="highcharts-align-right"'
             )
             .replace(
                 /style="color:{(point|series)\.color}"/g,
