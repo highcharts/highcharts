@@ -1714,7 +1714,7 @@ class Pointer {
      */
     public runPointActions(e?: PointerEvent, p?: Point, force?: boolean): void {
         if (!p && e) {
-            const directTouchPoint = this.getPointFromEvent(e as any);
+            const directTouchPoint = this.getPointFromEvent(e as Event);
 
             if (
                 directTouchPoint?.series.isBubble &&
