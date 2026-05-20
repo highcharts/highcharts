@@ -4160,7 +4160,7 @@ class Chart {
                 trigger,
                 allowResetButton = true
             } = params,
-            { inverted, time } = this;
+            { time } = this;
 
         // Remove active points for shared tooltip
         this.hoverPoints?.forEach((point): void => point.setState());
@@ -4191,11 +4191,12 @@ class Chart {
                 toCenter = (to[xy] ?? axis.pos) +
                     toLength / 2 - axis.pos,
                 move = fromCenter - toCenter / scale,
-                pointRangeDirection =
-                    (reversed && !inverted) ||
-                    (!reversed && inverted) ?
-                        -1 :
-                        1,
+                pointRangeDirection = (
+                    (horiz && !reversed) ||
+                       (!horiz && reversed)
+                ) ?
+                    1 :
+                    -1,
                 minPx = move;
 
             // Zooming in multiple panes, zoom only in the pane that receives

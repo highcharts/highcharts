@@ -334,3 +334,81 @@ QUnit.test(
         }
     }
 );
+
+QUnit.test(
+    'Y panning should preserve heatmap row clipping, (#15368)',
+    function (assert) {
+        const chart = Highcharts.chart('container', {
+                chart: {
+                    type: 'heatmap',
+                    width: 300,
+                    height: 250,
+                    zooming: {
+                        type: 'y'
+                    },
+                    panning: {
+                        enabled: true,
+                        type: 'y'
+                    },
+                    panKey: 'shift'
+                },
+
+                yAxis: {
+                    categories: [
+                        'Monday',
+                        'Tuesday',
+                        'Wednesday',
+                        'Thursday',
+                        'Friday',
+                        'Saturday',
+                        'Sunday'
+                    ]
+                },
+
+
+                series: [{
+                    data: [
+                        [0, 0, 1],
+                        [0, 1, 2],
+                        [0, 2, 3],
+                        [0, 3, 4],
+                        [0, 4, 5],
+                        [0, 5, 6],
+                        [0, 6, 7],
+                        [1, 0, 7],
+                        [1, 1, 6],
+                        [1, 2, 5],
+                        [1, 3, 4],
+                        [1, 4, 3],
+                        [1, 5, 2],
+                        [1, 6, 1]
+                    ]
+                }]
+            }),
+            yAxis = chart.yAxis[0],
+            controller = new TestController(chart);
+
+        yAxis.setExtremes(1, 4, false, false);
+        chart.redraw(false);
+
+        const range = yAxis.max - yAxis.min;
+
+        controller.pan([150, 120], [150, 137], {
+            shiftKey: true
+        });
+
+        assert.close(
+            yAxis.max - yAxis.min,
+            range,
+            0.00001,
+            'Y panning should preserve the zoomed range, (#15368).'
+        );
+
+        assert.notEqual(
+            Highcharts.correctFloat(yAxis.min),
+            Math.round(yAxis.min),
+            'Y panning should preserve fractional extremes for clipped rows, ' +
+            '(#15368).'
+        );
+    }
+);
