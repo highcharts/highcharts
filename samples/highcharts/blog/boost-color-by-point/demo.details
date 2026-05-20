@@ -1,0 +1,6 @@
+---
+ name: Boost module color by point demo
+ authors:
+   - Black Label
+ js_wrap: b
+...
