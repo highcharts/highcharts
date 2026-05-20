@@ -21,7 +21,7 @@
 import HollowCandlestickPoint from './HollowCandlestickPoint.js';
 import type HollowCandlestickSeriesOptions from './HollowCandlestickSeriesOptions';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-import { StatesOptionsKey } from '../../Core/Series/StatesOptions.js';
+import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes.js';
 import { Palette } from '../../Core/Color/Palettes.js';
 import Axis from '../../Core/Axis/Axis.js';
@@ -292,8 +292,6 @@ class HollowCandlestickSeries extends CandlestickSeries {
         state?: StatesOptionsKey
     ): SVGAttributes {
         const attribs = super.pointAttribs.call(this, point, state);
-        let stateOptions;
-
         const index = point.index,
             hollowcandleInfo = this.hollowCandlestickData[index];
 
@@ -303,11 +301,11 @@ class HollowCandlestickSeries extends CandlestickSeries {
 
         // Select or hover states
         if (state) {
-            stateOptions = (this.options.states as any)[state];
-            attribs.fill = stateOptions.color || attribs.fill;
-            attribs.stroke = stateOptions.lineColor || attribs.stroke;
+            const stateOptions = this.options.states?.[state];
+            attribs.fill = stateOptions?.color || attribs.fill;
+            attribs.stroke = stateOptions?.lineColor || attribs.stroke;
             attribs['stroke-width'] =
-                stateOptions.lineWidth || attribs['stroke-width'];
+                stateOptions?.lineWidth || attribs['stroke-width'];
         }
         return attribs;
     }

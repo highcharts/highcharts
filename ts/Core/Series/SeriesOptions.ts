@@ -33,13 +33,9 @@ import type Series from './Series';
 import type ShadowOptionsObject from '../Renderer/ShadowOptionsObject';
 import type {
     StateGenericOptions,
-    StateHoverOptions,
-    StateInactiveOptions,
-    StateNormalOptions,
-    StateSelectOptions,
+    StateOptions,
     StatesOptions
 } from './StatesOptions';
-import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 
 /* *
  *
@@ -1189,185 +1185,14 @@ export interface SeriesPointOptions {
     events?: PointEventsOptions;
 }
 
-export interface SeriesStateHoverHaloOptions {
-    /**
-     * A collection of SVG attributes to override the appearance
-     * of the halo, for example `fill`, `stroke` and
-     * `stroke-width`.
-     *
-     * @since   4.0
-     * @product highcharts highstock
-     */
-    attributes?: SVGAttributes;
-
-    brightness?: number;
-
-    /**
-     * Opacity for the halo unless a specific fill is overridden
-     * using the `attributes` setting.
-     *
-     * @since   4.0
-     * @product highcharts highstock
-     * @default 0.25
-     */
-    opacity?: number;
-
-    /**
-     * The pixel size of the halo. For point markers this is the
-     * radius of the halo. For pie slices it is the width of the
-     * halo outside the slice. For bubbles it defaults to 5 and
-     * is the width of the halo outside the bubble.
-     *
-     * @since   4.0
-     * @product highcharts highstock
-     * @default 10
-     */
-    size?: number;
-}
-
-export interface SeriesStateHoverOptions extends StateHoverOptions {
-    /**
-     * Animation setting for hovering the graph in line-type series.
-     *
-     * By default the hover state animates quickly in, and slowly back to
-     * normal.
-     *
-     * @since   5.0.8
-     * @product highcharts highstock
-     * @default {"duration":150}
-     */
-    animation?: (boolean|DeepPartial<AnimationOptions>);
-
-    brightness?: number;
-
-    /**
-     * Enable separate styles for the hovered series to visualize
-     * that the user hovers either the series itself or the legend.
-     *
-     * @sample {highcharts} highcharts/plotoptions/series-states-hover-enabled/
-     *         Line
-     * @sample {highcharts} highcharts/plotoptions/series-states-hover-enabled-column/
-     *         Column
-     * @sample {highcharts} highcharts/plotoptions/series-states-hover-enabled-pie/
-     *         Pie
-     *
-     * @default true
-     * @since   1.2
-     */
-    enabled?: boolean;
-
-    /**
-     * Options for the halo appearing around the hovered point in
-     * line-type series as well as outside the hovered slice in pie
-     * charts. By default the halo is filled by the current point or
-     * series color with an opacity of 0.25\. The halo can be
-     * disabled by setting the `halo` option to `null`.
-     *
-     * In styled mode, the halo is styled with the
-     * `.highcharts-halo` class, with colors inherited from
-     * `.highcharts-color-{n}`.
-     *
-     * @sample {highcharts} highcharts/plotoptions/halo/
-     *         Halo options
-     * @sample {highstock} highcharts/plotoptions/halo/
-     *         Halo options
-     *
-     * @since   4.0
-     * @product highcharts highstock
-     */
-    halo?: (boolean|SeriesStateHoverHaloOptions);
-
-    /**
-     * Pixel width of the graph line. By default this property is
-     * undefined, and the `lineWidthPlus` property dictates how much
-     * to increase the linewidth from normal state.
-     *
-     * @sample {highcharts} highcharts/plotoptions/series-states-hover-linewidth/
-     *         5px line on hover
-     *
-     * @product highcharts highstock
-     */
-    lineWidth?: number;
-
-    /**
-     * The additional line width for the graph of a hovered series.
-     *
-     * @sample {highcharts} highcharts/plotoptions/series-states-hover-linewidthplus/
-     *         5 pixels wider
-     * @sample {highstock} highcharts/plotoptions/series-states-hover-linewidthplus/
-     *         5 pixels wider
-     *
-     * @since   4.0.3
-     * @product highcharts highstock
-     * @default 1
-     */
-    lineWidthPlus?: number;
-
-    /**
-     * In Highcharts 1.0, the appearance of all markers belonging
-     * to the hovered series. For settings on the hover state of the
-     * individual point, see
-     * [marker.states.hover](#plotOptions.series.marker.states.hover).
-     *
-     * @deprecated
-     *
-     * @excluding states, symbol
-     * @product   highcharts highstock
-     */
-    marker?: PointMarkerOptions;
-
-    radius?: number;
-    radiusPlus?: number;
-    opacity?: number;
-}
-
-export interface SeriesStateInactiveOptions extends StateInactiveOptions {
-    /**
-     * The animation for entering the inactive state.
-     *
-     * @default {"duration":150}
-     */
-    animation?: (boolean|DeepPartial<AnimationOptions>);
-
-    /**
-     * Enable or disable the inactive state for a series
-     *
-     * @sample highcharts/plotoptions/series-states-inactive-disabled
-     *         Disabled inactive state
-     *
-     * @default true
-     */
-    enabled?: boolean;
-
-    /**
-     * Opacity of series elements (dataLabels, line, area).
-     *
-     * @default 0.2
-     */
-    opacity?: number;
-}
-
-export interface SeriesStateNormalOptions extends StateNormalOptions {
-    /**
-     * Animation when returning to normal state after hovering.
-     *
-     * @default true
-     */
-    animation?: (boolean|DeepPartial<AnimationOptions>);
-}
-
-export interface SeriesStateSelectOptions extends StateSelectOptions {
-    enabled?: boolean;
-}
-
 export interface SeriesStatesOptions<T extends SeriesOptions> extends StatesOptions {
     /**
-     * Options for the hovered series. These settings override the
-     * normal state options when a series is moused over or touched.
+     * Options for the hovered series. These settings override the normal state
+     * options when a series is moused over or touched.
      *
      * @declare Highcharts.SeriesStatesHoverOptionsObject
      */
-    hover?: SeriesStateHoverOptions & StateGenericOptions<T>;
+    hover?: StateOptions & StateGenericOptions<T>;
 
     /**
      * The opposite state of a hover for series.
@@ -1375,20 +1200,19 @@ export interface SeriesStatesOptions<T extends SeriesOptions> extends StatesOpti
      * @sample highcharts/plotoptions/series-states-inactive-disabled
      *         Disabled inactive state
      */
-    inactive?: SeriesStateInactiveOptions & StateGenericOptions<T>;
+    inactive?: StateOptions & StateGenericOptions<T>;
 
     /**
-     * The normal state of a series, or for point items in column, pie
-     * and similar series. Currently only used for setting animation
-     * when returning to normal state from hover.
+     * The normal state of a series, or for point items in column, pie and
+     * similar series. Currently only used for setting animation when returning
+     * to normal state from hover.
      */
-    normal?: SeriesStateNormalOptions & StateGenericOptions<T>;
+    normal?: StateOptions & StateGenericOptions<T>;
 
     /**
-     * Specific options for point in selected states, after being
-     * selected by
-     * [allowPointSelect](#plotOptions.series.allowPointSelect)
-     * or programmatically.
+     * Specific options for point in selected states, after being selected by
+     * [allowPointSelect](#plotOptions.series.allowPointSelect) or
+     * programmatically.
      *
      * @sample maps/plotoptions/series-allowpointselect/
      *         Allow point select demo
@@ -1397,7 +1221,7 @@ export interface SeriesStatesOptions<T extends SeriesOptions> extends StatesOpti
      * @excluding brightness
      * @default   {"animation":{"duration":0}}
      */
-    select?: SeriesStateSelectOptions & StateGenericOptions<T>;
+    select?: StateOptions & StateGenericOptions<T>;
 }
 
 export type SeriesStepValue = ('center'|'left'|'right');

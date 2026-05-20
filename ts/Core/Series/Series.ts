@@ -3137,11 +3137,10 @@ class Series {
         state = state || 'normal';
         if (state) {
             seriesStateOptions = (
-                (seriesMarkerOptions as any).states[state] || {}
+                seriesMarkerOptions?.states?.[state] || {}
             );
             pointStateOptions = (
-                pointMarkerOptions.states &&
-                (pointMarkerOptions.states as any)[state]
+                pointMarkerOptions.states?.[state]
             ) || {};
             strokeWidth = pick(
                 pointStateOptions.lineWidth,

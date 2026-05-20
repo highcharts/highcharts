@@ -25,7 +25,7 @@ import type ColumnPoint from './ColumnPoint';
 import type ColumnSeriesOptions from './ColumnSeriesOptions';
 import type DashStyleValue from '../../Core/Renderer/DashStyleValue';
 import type PointerEvent from '../../Core/PointerEvent';
-import type { SeriesStateHoverOptions } from '../../Core/Series/SeriesOptions';
+import type { StateOptions } from '../../Core/Series/StatesOptions';
 import type StackItem from '../../Core/Axis/Stacking/StackItem';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
@@ -679,7 +679,7 @@ class ColumnSeries extends Series {
             strokeOption = p2o.stroke || 'borderColor',
             strokeWidthOption = p2o['stroke-width'] || 'borderWidth';
 
-        let stateOptions: SeriesStateHoverOptions,
+        let stateOptions: StateOptions,
             zone,
             brightness,
             fill = (point && point.color) || this.color,
@@ -719,7 +719,7 @@ class ColumnSeries extends Series {
         // Select or hover states
         if (state && point) {
             stateOptions = merge(
-                (options.states as any)[state],
+                options.states?.[state],
                 // #6401
                 point.options.states?.[state] || {}
             );

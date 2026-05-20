@@ -63,10 +63,9 @@ import {
  *
  * */
 
-declare module '../../Core/Series/SeriesOptions' {
-    interface SeriesStateHoverOptions {
+declare module '../../Core/Series/StatesOptions' {
+    interface StateOptions {
         borderColor?: ColorType;
-        color?: ColorType;
     }
 }
 

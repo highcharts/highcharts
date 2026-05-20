@@ -57,11 +57,6 @@ declare module '../../Core/Series/SeriesBase' {
     }
 }
 
-declare module '../../Core/Series/SeriesOptions' {
-    interface SeriesStateHoverHaloOptions {
-        enabled?: boolean;
-    }
-}
 
 /* *
  *
