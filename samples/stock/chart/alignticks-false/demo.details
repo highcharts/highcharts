@@ -1,0 +1,6 @@
+---
+ name: Highcharts Stock
+ authors:
+   - Torstein Hønsi
+ js_wrap: b
+...
