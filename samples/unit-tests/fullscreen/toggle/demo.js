@@ -8,9 +8,7 @@ QUnit.test(
             series: [{ data: [1, 2, 3] }]
         });
 
-        const controller = new TestController(chart),
-            alignAttr = chart.exporting.svgElements[0].alignAttr;
-        controller.click(alignAttr.translateX + 5, alignAttr.translateY + 5);
+        Highcharts.fireEvent(chart.exporting.svgElements[0].element, 'click');
 
         chart.fullscreen.isOpen = false;
         chart.fullscreen.setButtonText();
