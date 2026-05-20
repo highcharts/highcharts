@@ -155,3 +155,101 @@ QUnit.test('cumulative start option', function (assert) {
         'Frist Point should start at 0'
     );
 });
+
+QUnit.test(
+    'cumulative start excludes the pre-visible point from extremes',
+    function (assert) {
+        const data = [
+                [1, -50],
+                [2, -50],
+                [3, -50],
+                [4, -50],
+                [5, -50],
+                [6, -50],
+                [7, -50],
+                [8, -50],
+                [9, -50],
+                [10, -50]
+            ],
+            createChart = cumulativeStart => Highcharts.stockChart(
+                'container',
+                {
+                    navigator: {
+                        enabled: false
+                    },
+                    scrollbar: {
+                        enabled: false
+                    },
+                    rangeSelector: {
+                        enabled: false
+                    },
+                    xAxis: {
+                        min: 6,
+                        max: 10,
+                        ordinal: false
+                    },
+                    yAxis: {
+                        startOnTick: false,
+                        endOnTick: false
+                    },
+                    plotOptions: {
+                        series: {
+                            cumulative: true,
+                            dataGrouping: {
+                                enabled: false
+                            }
+                        }
+                    },
+                    series: [{
+                        cumulativeStart,
+                        data
+                    }]
+                }
+            ),
+            chart = createChart(true),
+            visiblePoints = chart.series[0].points.filter(
+                point => point.x >= 6 && point.x <= 10
+            );
+
+        assert.strictEqual(
+            chart.yAxis[0].dataMin,
+            -250,
+            `The cumulativeStart dataMin should start from the first visible
+            point.`
+        );
+
+        assert.strictEqual(
+            chart.yAxis[0].dataMax,
+            -50,
+            `The cumulativeStart dataMax should exclude the pre-visible
+            shoulder point.`
+        );
+
+        visiblePoints.forEach(point => {
+            assert.ok(
+                point.plotY >= 0 && point.plotY <= chart.plotHeight,
+                'The visible cumulative points should be inside the plot area.'
+            );
+        });
+
+        chart.destroy();
+
+        const chartWithoutCumulativeStart = createChart(false);
+
+        assert.strictEqual(
+            chartWithoutCumulativeStart.yAxis[0].dataMin,
+            -300,
+            `Without cumulativeStart, the pre-visible shoulder point should
+            still affect cumulative extremes.`
+        );
+
+        assert.strictEqual(
+            chartWithoutCumulativeStart.yAxis[0].dataMax,
+            -50,
+            `Without cumulativeStart, the highest cumulative value should be
+            preserved.`
+        );
+
+        chartWithoutCumulativeStart.destroy();
+    }
+);

@@ -310,11 +310,25 @@ namespace DataModifyComposition {
             } else if (
                 this.options.cumulative &&
                 isArray(activeYData) &&
-                // If only one y visible, sum doesn't change
-                // so no need to change extremes
-                activeYData.length >= 2
+                activeYData.length
             ) {
-                extremes = Additions.getCumulativeExtremes(activeYData);
+                const cumulativeYData = this.options.cumulativeStart ?
+                    getVisibleYData(this, activeYData) :
+                    activeYData;
+
+                if (cumulativeYData.length >= 2) {
+                    extremes = Additions.getCumulativeExtremes(
+                        cumulativeYData
+                    );
+                } else if (
+                    this.options.cumulativeStart &&
+                    cumulativeYData.length
+                ) {
+                    extremes = [
+                        cumulativeYData[0],
+                        cumulativeYData[0]
+                    ];
+                }
             }
 
             if (extremes) {
@@ -322,6 +336,53 @@ namespace DataModifyComposition {
                 dataExtremes.dataMax = arrayMax(extremes);
             }
         }
+    }
+
+    /**
+     * Get only the visible y values for cumulativeStart. Series#getExtremes
+     * includes a shoulder point outside the x-range for line continuity, but
+     * cumulativeStart should anchor at the first visible point.
+     * @private
+     */
+    function getVisibleYData(
+        series: Series,
+        activeYData: Array<number>
+    ): Array<number> {
+        const { xAxis, yAxis } = series;
+
+        if (!xAxis) {
+            return activeYData;
+        }
+
+        const xExtremes = xAxis.getExtremes(),
+            xData = series.getColumn('x', true),
+            yData = series.getColumn((
+                series.pointArrayMap &&
+                (series.options.pointValKey || series.pointValKey)
+            ) || 'y', true),
+            positiveValuesOnly = yAxis ? yAxis.positiveValuesOnly : false,
+            visibleYData: Array<number> = [];
+
+        if (xData.length !== yData.length) {
+            return activeYData;
+        }
+
+        for (let i = 0, iEnd = yData.length; i < iEnd; ++i) {
+            const x = xData[i],
+                y = yData[i];
+
+            if (
+                isNumber(x) &&
+                x >= xExtremes.min &&
+                x <= xExtremes.max &&
+                isNumber(y) &&
+                (y > 0 || !positiveValuesOnly)
+            ) {
+                visibleYData.push(y);
+            }
+        }
+
+        return visibleYData;
     }
 
     /* ********************************************************************** *
