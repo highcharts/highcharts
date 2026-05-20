@@ -64,7 +64,7 @@ Crosshair
 
 Shows a line perpendicular to the corresponding axis which is following the mouse position or nearest point, depending on the `crosshair.snap` property. This functionality can be found in the [axis API](https://api.highcharts.com/highstock/xAxis.crosshair) options. Crosshairs can also be used in Highcharts Core (without Stock module), but are not enabled by default.
 
-<iframe style="width: 100%; height: 570px; border: none;" src="https://www.highcharts.com/samples/embed/stock/xaxis/crosshair-interactive" allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 750px; border: none;" src="https://www.highcharts.com/samples/embed/stock/xaxis/crosshair-interactive" allow="fullscreen"></iframe>
 
 ```js
 chart.xAxis[0].update({
@@ -81,7 +81,7 @@ Data grouping
 
 Automatically groups multiple points into a single point to improve readability. The displayed value for a grouped point depends on the approximation function which is set by default depending on the series type, but can be manually overwritten. The amount of points in a single group is selected based on the zoom level, data density and user options.
 
-<iframe style="width: 100%; height: 600px; border: none;" src="https://www.highcharts.com/samples/embed/stock/plotoptions/series-datagrouping-interactive" allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 520px; border: none;" src="https://www.highcharts.com/samples/embed/stock/plotoptions/series-datagrouping-interactive" allow="fullscreen"></iframe>
 
 See [Data grouping](https://www.highcharts.com/docs/stock/data-grouping) for more information.
 
