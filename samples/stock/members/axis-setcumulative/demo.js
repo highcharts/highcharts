@@ -1,8 +1,14 @@
 Highcharts.stockChart('container', {
-
     tooltip: {
         changeDecimals: 2,
         valueDecimals: 2
+    },
+
+    plotOptions: {
+        series: {
+            pointStart: '2025-01-01',
+            pointInterval: 24 * 36e5
+        }
     },
 
     series: [{
