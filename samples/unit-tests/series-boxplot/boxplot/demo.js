@@ -367,3 +367,142 @@ QUnit.test('All values should be draggable (#13576)', function (assert) {
 
     assert.ok(result, 'Drag handles are rendered in correct positions.');
 });
+
+QUnit.test('Data labels for boxplot statistics (#23904)', function (assert) {
+    let formatterValues;
+
+    const chart = Highcharts.chart('container', {
+            chart: {
+                type: 'boxplot'
+            },
+            title: {
+                text: null
+            },
+            yAxis: {
+                min: 0,
+                max: 12
+            },
+            series: [{
+                dataLabels: [{
+                    enabled: true,
+                    pointValKey: 'high',
+                    format: 'High: {point.high}'
+                }, {
+                    enabled: true,
+                    pointValKey: 'q3',
+                    format: 'Q3: {point.q3}',
+                    y: 5
+                }, {
+                    enabled: true,
+                    pointValKey: 'median',
+                    formatter: function () {
+                        formatterValues = [
+                            this.low,
+                            this.q1,
+                            this.median,
+                            this.q3,
+                            this.high
+                        ];
+
+                        return 'Median: ' + this.median + ' y=' + this.y;
+                    }
+                }, {
+                    enabled: true,
+                    pointValKey: 'q1',
+                    format: 'Q1: {point.q1}'
+                }, {
+                    enabled: true,
+                    pointValKey: 'low',
+                    format: 'Low: {point.low}'
+                }],
+                data: [[1, 3, 5, 7, 9]]
+            }]
+        }),
+        point = chart.series[0].points[0],
+        assertLabels = function (expectedLabels, message) {
+            const highLabel = point.dataLabels[0],
+                medianLabel = point.dataLabels[2],
+                q1Label = point.dataLabels[3],
+                lowLabel = point.dataLabels[4];
+
+            assert.deepEqual(
+                point.dataLabels.map(label => label.text.textStr),
+                expectedLabels,
+                message + ': labels are formatted from selected statistics'
+            );
+
+            assert.ok(
+                highLabel.y + highLabel.height <= point.highPlot + 1,
+                message + ': high label is above the high whisker'
+            );
+
+            assert.ok(
+                medianLabel.y + medianLabel.height <= point.medianPlot + 1,
+                message + ': median label is above the median line'
+            );
+
+            assert.ok(
+                q1Label.y + q1Label.height <= point.q1Plot + 1,
+                message + ': q1 label is above the q1 line'
+            );
+
+            assert.ok(
+                lowLabel.y >= point.lowPlot - 1,
+                message + ': low label is below the low whisker'
+            );
+        };
+
+    assert.strictEqual(
+        point.dataLabels.length,
+        5,
+        'High, q3, median, q1 and low labels are rendered'
+    );
+
+    assert.strictEqual(
+        chart.container.querySelectorAll('.highcharts-data-label').length,
+        5,
+        'A custom y offset on one label does not create duplicate labels'
+    );
+
+    assert.deepEqual(
+        formatterValues,
+        [1, 3, 5, 7, 9],
+        'Formatter has access to all five boxplot statistics'
+    );
+
+    assertLabels(
+        [
+            'High: 9',
+            'Q3: 7',
+            'Median: 5 y=5',
+            'Q1: 3',
+            'Low: 1'
+        ],
+        'Initial render'
+    );
+
+    point.update({
+        low: 2,
+        q1: 4,
+        median: 6,
+        q3: 8,
+        high: 10
+    }, true, false);
+
+    assertLabels(
+        [
+            'High: 10',
+            'Q3: 8',
+            'Median: 6 y=6',
+            'Q1: 4',
+            'Low: 2'
+        ],
+        'After update'
+    );
+
+    assert.strictEqual(
+        chart.container.querySelectorAll('.highcharts-data-label').length,
+        5,
+        'A custom y offset still does not create duplicate labels after update'
+    );
+});

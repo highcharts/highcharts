@@ -18,6 +18,7 @@
 
 import type BoxPlotPointOptions from './BoxPlotPointOptions';
 import type BoxPlotSeries from './BoxPlotSeries';
+import type { BoxPlotPointValKey } from './BoxPlotSeriesOptions';
 import type ColumnPoint from '../Column/ColumnPoint';
 import type ColorString from '../../Core/Color/ColorString';
 import type ColorType from '../../Core/Color/ColorType';
@@ -58,6 +59,8 @@ declare class BoxPlotPoint extends ColumnPoint {
     public stemColor: ColorType;
     public stemDashStyle: DashStyleValue;
     public stemWidth: number;
+    public below?: boolean;
+    public boxPlotLabels?: Partial<Record<BoxPlotPointValKey, SVGElement>>;
     public whiskerColor: ColorType;
     public whiskerDashStyle: DashStyleValue;
     public whiskerLength: (number|string|undefined);
