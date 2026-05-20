@@ -1414,7 +1414,7 @@ class MapView {
         }
 
         if (redraw) {
-            this.chart.redraw(animation);
+            this.redraw(animation);
         }
     }
 
