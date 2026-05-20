@@ -48,9 +48,9 @@ Highcharts.chart('container', {
         x: -40,
         y: 80,
         floating: true,
+        borderRadius: 4,
         borderWidth: 1,
-        backgroundColor: 'var(--highcharts-background-color, #ffffff)',
-        shadow: true
+        backgroundColor: 'var(--highcharts-background-color, #ffffff)'
     },
     credits: {
         enabled: false

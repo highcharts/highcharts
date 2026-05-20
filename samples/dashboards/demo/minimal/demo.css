@@ -1,4 +1,3 @@
-@import url("https://code.highcharts.com/css/highcharts.css");
 @import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/css/grid-pro.css");
 @import url("https://code.highcharts.com/dashboards/css/dashboards.css");
 
@@ -14,130 +13,105 @@ body {
         "Segoe UI Emoji",
         "Segoe UI Symbol",
         sans-serif;
-    background: var(--highcharts-background-color);
+    background: var(--highcharts-neutral-color-0);
     color: var(--highcharts-neutral-color-100);
 }
 
-#title {
-    text-align: center;
-    padding: 10px 0;
-    margin: 0;
-    background-color: var(--highcharts-neutral-color-0);
-}
-
-#kpi-vitamin-a .highcharts-dashboards-component-title::before,
-#kpi-iron .highcharts-dashboards-component-title::before {
-    width: 14px;
-    height: 14px;
-    border-radius: 28px;
-    display: inline-block;
-    padding: 0;
-    margin-right: 4px;
-    background-color: var(--highcharts-color-0);
-    content: " ";
-}
-
-#kpi-iron .highcharts-dashboards-component-title::before {
-    background-color: var(--highcharts-color-2);
-}
-
-#kpi-vitamin-a .highcharts-dashboards-component-kpi-subtitle,
-#kpi-iron .highcharts-dashboards-component-kpi-subtitle {
-    margin-top: 10px;
-    font-size: 1.2em;
-    color: var(--highcharts-neutral-color-60);
-}
-
-#kpi-vitamin-a .highcharts-dashboards-component-kpi-value,
-#kpi-iron .highcharts-dashboards-component-kpi-value {
-    font-size: 4em;
-    line-height: 2.4rem;
-    margin-top: 10px;
-    color: var(--highcharts-color-0);
-}
-
-#kpi-iron .highcharts-dashboards-component-kpi-value {
-    color: var(--highcharts-color-2);
-}
-
-#dashboard-col-1 .highcharts-color-0 {
-    fill: var(--highcharts-color-2);
-    stroke: var(--highcharts-color-2);
-}
-
-#kpi-vitamin-a .highcharts-dashboards-component-kpi-value::after,
-#kpi-iron .highcharts-dashboards-component-kpi-value::after {
-    content: "micrograms";
-    display: block;
-    font-size: 1rem;
-}
-
-.highcharts-plot-line {
-    stroke-dasharray: 2px;
-    stroke: var(--highcharts-color-3);
-}
-
-.highcharts-plot-line-label {
-    fill: var(--highcharts-color-3);
-}
-
 .highcharts-description {
-    padding: 0 20px;
+    margin: 0 20px 20px;
 }
 
-#kpi-vitamin-a,
-#kpi-iron {
-    flex: 1 1 100%;
-    height: 205px;
+#title {
+    font-size: 1.1em;
+    margin: 10px 0 0 20px;
 }
 
-/* LARGE */
-@media (max-width: 1200px) {
-    #dashboard-col-0,
-    #dashboard-col-1 {
-        flex: 1 1 35%;
-    }
+.rating {
+    --rating-size: 18px;
+    --rating-empty: light-dark(#d9d9d9, #575757);
+    --rating-fill: light-dark(#141414, #fff);
+    --size: var(--rating-size);
+    --width: calc(var(--size) * 5);
+    --p: 0%;
 
-    #kpi-wrapper {
-        flex: 1 1 30%;
-    }
+    width: var(--width);
+    height: var(--size);
+    position: relative;
+    display: inline-block;
+    background-color: var(--rating-empty);
 
-    #kpi-vitamin-a,
-    #kpi-iron {
-        flex: 1 1 100%;
+    /* ⭐ star shape */
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 20'%3E%3Cg%3E%3Cpath d='M10 .9l2.78 5.64 6.22.9-4.5 4.39 1.06 6.18L10 15.17 4.44 18l1.06-6.18L1 7.44l6.22-.9z'/%3E%3Cpath d='M30 .9l2.78 5.64 6.22.9-4.5 4.39 1.06 6.18L30 15.17 24.44 18l1.06-6.18L21 7.44l6.22-.9z'/%3E%3Cpath d='M50 .9l2.78 5.64 6.22.9-4.5 4.39 1.06 6.18L50 15.17 44.44 18l1.06-6.18L41 7.44l6.22-.9z'/%3E%3Cpath d='M70 .9l2.78 5.64 6.22.9-4.5 4.39 1.06 6.18L70 15.17 64.44 18l1.06-6.18L61 7.44l6.22-.9z'/%3E%3Cpath d='M90 .9l2.78 5.64 6.22.9-4.5 4.39 1.06 6.18L90 15.17 84.44 18l1.06-6.18L81 7.44l6.22-.9z'/%3E%3C/g%3E%3C/svg%3E") no-repeat 0 0 / var(--width) var(--size);
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 20'%3E%3Cg%3E%3Cpath d='M10 .9l2.78 5.64 6.22.9-4.5 4.39 1.06 6.18L10 15.17 4.44 18l1.06-6.18L1 7.44l6.22-.9z'/%3E%3Cpath d='M30 .9l2.78 5.64 6.22.9-4.5 4.39 1.06 6.18L30 15.17 24.44 18l1.06-6.18L21 7.44l6.22-.9z'/%3E%3Cpath d='M50 .9l2.78 5.64 6.22.9-4.5 4.39 1.06 6.18L50 15.17 44.44 18l1.06-6.18L41 7.44l6.22-.9z'/%3E%3Cpath d='M70 .9l2.78 5.64 6.22.9-4.5 4.39 1.06 6.18L70 15.17 64.44 18l1.06-6.18L61 7.44l6.22-.9z'/%3E%3Cpath d='M90 .9l2.78 5.64 6.22.9-4.5 4.39 1.06 6.18L90 15.17 84.44 18l1.06-6.18L81 7.44l6.22-.9z'/%3E%3C/g%3E%3C/svg%3E") no-repeat 0 0 / var(--width) var(--size);
+}
+
+.rating::after {
+    content: "";
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: var(--p);
+    background-color: var(--rating-fill);
+    -webkit-mask: inherit;
+    mask: inherit;
+}
+
+.r0 { --p: 0%; }
+.r1 { --p: 10%; }
+.r2 { --p: 20%; }
+.r3 { --p: 30%; }
+.r4 { --p: 40%; }
+.r5 { --p: 50%; }
+.r6 { --p: 60%; }
+.r7 { --p: 70%; }
+.r8 { --p: 80%; }
+.r9 { --p: 90%; }
+.r10 { --p: 100%; }
+
+.time-unit {
+    color: #888;
+}
+
+.department {
+    display: inline-block;
+    border-radius: 3px;
+    border-width: 1px;
+    border-style: solid;
+    padding: 1px 5px;
+    text-transform: uppercase;
+    font-size: 0.8em;
+    color: light-dark(#033427, #fff);
+    background: light-dark(#d1fae5, #047857);
+    border-color: light-dark(#a7f3d0, #059669);
+
+    &.sales {
+        color: light-dark(#592507, #fff);
+        background: light-dark(#fef3c7, #d97706);
+        border-color: light-dark(#fde68a, #f59e0b);
     }
 }
 
-/* MEDIUM */
-@media (max-width: 992px) {
-    #dashboard-col-0,
-    #dashboard-col-1 {
-        flex: 1 1 50%;
-    }
-
-    #kpi-wrapper {
-        flex: 1 1 100%;
-    }
-
-    #kpi-vitamin-a,
-    #kpi-iron {
-        flex: 1 1 50%;
-    }
+.highcharts-dark .theme-support,
+.highcharts-light .theme-support,
+.theme-support {
+    --hcg-font-size: 14px;
+    --hcg-vertical-padding: 10px;
+    --hcg-header-vertical-padding: 10px;
+    --hcg-header-font-weight: bold;
+    --hcg-border-width: 0;
+    --hcg-row-border-width: 1px;
+    --hcg-column-border-width: 1px;
+    --hcg-column-border-color: transparent;
+    --hcg-row-even-background: light-dark(#f6f6f6, #272727);
+    --hcg-row-hover-background: light-dark(#5f8ef7, #0443e1);
+    --hcg-row-hover-opacity: 10%;
+    --hcg-border-color: light-dark(#e8e8e8, #3b3b3b);
+    --hcg-header-background: light-dark(#fff, #272727);
 }
 
 /* SMALL */
-@media (max-width: 576px) {
+@media (max-width: 750px) {
     #dashboard-col-0,
     #dashboard-col-1 {
         flex: 1 1 100%;
-    }
-
-    #kpi-wrapper {
-        flex: 1 1 100%;
-    }
-
-    #kpi-vitamin-a,
-    #kpi-iron {
-        flex: 1 1 50%;
     }
 }

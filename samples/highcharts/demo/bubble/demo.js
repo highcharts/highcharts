@@ -13,11 +13,14 @@ Highcharts.chart('container', {
     },
 
     title: {
-        text: 'Sugar and fat intake per country'
+        text: 'Sugar and fat intake per country',
+        align: 'left'
     },
 
     subtitle: {
-        text: 'Source: <a href="http://www.euromonitor.com/">Euromonitor</a> and <a href="https://data.oecd.org/">OECD</a>'
+        text: 'Source: <a href="http://www.euromonitor.com/">Euromonitor</a>' +
+            ' and <a href="https://data.oecd.org/">OECD</a>',
+        align: 'left'
     },
 
     accessibility: {
@@ -29,6 +32,7 @@ Highcharts.chart('container', {
 
     xAxis: {
         gridLineWidth: 1,
+        minPadding: 0.06,
         title: {
             text: 'Daily fat intake'
         },
@@ -36,17 +40,25 @@ Highcharts.chart('container', {
             format: '{value} gr'
         },
         plotLines: [{
-            dashStyle: 'dot',
-            width: 2,
+            color: '#00DD81',
+            dashStyle: 'dash',
             value: 65,
+            zIndex: 3
+        }],
+        plotBands: [{
+            from: 0,
+            to: 65,
             label: {
                 rotation: 0,
-                y: 15,
+                verticalAlign: 'bottom',
+                y: -22,
                 style: {
-                    fontStyle: 'italic'
+                    fontStyle: 'italic',
+                    color: '#007D49'
                 },
-                text: 'Safe fat intake 65g/day'
+                text: 'Safe zone'
             },
+            color: '#00E28424',
             zIndex: 3
         }],
         accessibility: {
@@ -64,18 +76,26 @@ Highcharts.chart('container', {
             format: '{value} gr'
         },
         maxPadding: 0.2,
+        min: 0,
         plotLines: [{
-            dashStyle: 'dot',
-            width: 2,
+            color: '#00DD81',
+            dashStyle: 'dash',
             value: 50,
+            zIndex: 3
+        }],
+        plotBands: [{
+            from: 0,
+            to: 50,
             label: {
                 align: 'right',
                 style: {
-                    fontStyle: 'italic'
+                    fontStyle: 'italic',
+                    color: '#007D49'
                 },
-                text: 'Safe sugar intake 50g/day',
+                text: 'Safe zone',
                 x: -10
             },
+            color: '#00E28424',
             zIndex: 3
         }],
         accessibility: {
@@ -85,8 +105,8 @@ Highcharts.chart('container', {
 
     tooltip: {
         useHTML: true,
-        headerFormat: '<table>',
-        pointFormat: '<tr><th colspan="2"><h3>{point.country}</h3></th></tr>' +
+        headerFormat: '<table style="border-left: 3px solid {point.color};">',
+        pointFormat: '<tr><th colspan="2">{point.country}</th></tr>' +
             '<tr><th>Fat intake:</th><td>{point.x}g</td></tr>' +
             '<tr><th>Sugar intake:</th><td>{point.y}g</td></tr>' +
             '<tr><th>Obesity (adults):</th><td>{point.z}%</td></tr>',
@@ -99,7 +119,8 @@ Highcharts.chart('container', {
             dataLabels: {
                 enabled: true,
                 format: '{point.name}'
-            }
+            },
+            minSize: 20
         }
     },
 
@@ -120,8 +141,7 @@ Highcharts.chart('container', {
                 x: 65.5,
                 y: 126.4,
                 z: 35.3,
-                name:
-                    'US',
+                name: 'US',
                 country: 'United States'
             },
             { x: 65.4, y: 50.8, z: 28.5, name: 'HU', country: 'Hungary' },

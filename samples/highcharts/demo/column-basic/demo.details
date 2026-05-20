@@ -7,8 +7,11 @@ alt_text: >-
   Highcharts vertical basic column chart JavaScript example graph compares
   yearly approximate production of wheat and corn.
 tags:
+  - Highcharts overview
   - Highcharts demo
 categories:
+  - Basics:
+      priority: 2
   - Column and bar charts:
       priority: 2
 ...

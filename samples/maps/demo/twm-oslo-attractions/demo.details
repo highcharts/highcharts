@@ -5,7 +5,10 @@ authors:
 js_wrap: b
 use_png_thumbnail: true
 tags:
+  - Highcharts overview
   - Highcharts Maps demo
 categories:
+  - Basics:
+      priority: 12
   - General
 ...
