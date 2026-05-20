@@ -234,6 +234,9 @@ class StackItem {
     /** @internal */
     public textAlign: AlignValue;
 
+    /** @internal */
+    public tip?: string;
+
     /**
      * Total value of the stacked data points
      * @name Highcharts.StackItemObject#total
