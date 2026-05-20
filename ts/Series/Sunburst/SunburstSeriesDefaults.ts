@@ -161,7 +161,7 @@ const SunburstSeriesDefaults: SunburstSeriesOptions = {
      * zoom in on its children. Deprecated and replaced by
      * [allowTraversingTree](#plotOptions.sunburst.allowTraversingTree).
      *
-     * @deprecated
+     * @deprecated 7.0.3
      * @type      {boolean}
      * @default   false
      * @since     6.0.0
@@ -312,7 +312,7 @@ const SunburstSeriesDefaults: SunburstSeriesOptions = {
      *
      * @extends   plotOptions.treemap.traverseUpButton
      * @since     6.0.0
-     * @deprecated
+     * @deprecated 9.3.3
      * @apioption plotOptions.sunburst.traverseUpButton
      *
      */

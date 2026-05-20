@@ -519,7 +519,7 @@ export interface ErrorMessageEventObject {
  * Generic dictionary in TypeScript notation.
  * Use the native `AnyRecord` instead.
  *
- * @deprecated
+ * @deprecated 8.1.2
  * @interface Highcharts.Dictionary<T>
  *//**
  * @name Highcharts.Dictionary<T>#[key:string]
