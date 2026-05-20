@@ -124,6 +124,20 @@ QUnit.test('Point colors within color zones(#4430)', function (assert) {
     );
 });
 
+QUnit.test('Point.getZone without zones (#24633)', function (assert) {
+    const chart = Highcharts.chart('container', {
+        series: [{
+            data: [1]
+        }]
+    });
+
+    assert.strictEqual(
+        chart.series[0].data[0].getZone(),
+        void 0,
+        'Point.getZone should return undefined when no zones are defined.'
+    );
+});
+
 // Highcharts 4.1.1, Issue #3898
 // negativeColor not rendered correctly when threshold is out of range
 QUnit.test('Spline zones out of range', function (assert) {
