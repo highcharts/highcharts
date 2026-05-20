@@ -1,25 +1,18 @@
 /* eslint-disable max-len */
-const SPORT_COLORS = ['#ffa8d4', '#a8d4ff', '#ffa956', '#46f15f'];
-const SPORT_LINE_COLORS = ['#ff7abf', '#7abbff', '#ff8c2b', '#22d63e'];
 const MIN_MAX_COLOR = 'var(--highcharts-neutral-color-100, #000000)',
     QUANTILE_COLOR = '#4169E1',
     MEDIAN_COLOR = '#DC143C';
 
-// 1. Grab the local data directly from the HTML block
-const athleteCsv = document.getElementById('athlete-data').textContent;
-
-function parseAthleteData(csvText) {
-    return csvText.trim().split(/\r?\n/).slice(1).map(line => {
-        const [sport, weight] = line.split(',');
-
-        return {
-            sport,
-            weight: Number(weight)
-        };
-    });
-}
-
-const athleteData = parseAthleteData(athleteCsv);
+// A vibrant, modern palette supporting 7+ disciplines.
+const SPORT_COLORS = [
+    '#4CAFFE',
+    '#544FC5',
+    '#00E272',
+    '#FE6A35',
+    '#6B8ABC',
+    '#D568FB',
+    '#2EE0CA'
+];
 
 // Native Math Helpers
 const mathUtils = {
@@ -70,7 +63,7 @@ function generateViolinData(step, sortedDataArrays) {
         );
     });
 
-    // Add a little breathing room so the violins do not touch the plot edges.
+    // Add a little breathing room so the violins narrow out to 0.
     globalMin = Math.floor(globalMin) - 10;
     globalMax = Math.ceil(globalMax) + 10;
 
@@ -107,6 +100,10 @@ function generateViolinData(step, sortedDataArrays) {
         results.push(seriesData);
     });
 
+    // Normalize the density values.
+    // 0.4 represents the maximum width extending from the center line.
+    // This ensures violins from adjacent categories (spaced by 1) don't overlap,
+    // leaving a 0.2 gap between them.
     const scale = 0.4 / (maxDensity || 1);
     const scaledResults = results.map((series, index) =>
         series.map(point => [
@@ -118,32 +115,38 @@ function generateViolinData(step, sortedDataArrays) {
     return { xiData, results: scaledResults, stats: stats };
 }
 
-// 2. Parse the data and group it by sport
-const groupedData = athleteData.reduce((acc, curr) => {
-    const sport = curr.sport.charAt(0).toUpperCase() + curr.sport.slice(1);
-    if (!acc[sport]) {
-        acc[sport] = [];
+// Grab the local CSV data from the HTML block and parse it with the Data module.
+const athleteCsv = document.getElementById('athlete-data').textContent,
+    athleteData = new Highcharts.Data({ csv: athleteCsv }),
+    sports = athleteData.columns[0],
+    heights = athleteData.columns[1],
+    groupedData = {};
+
+for (let i = 1; i < sports.length; i++) {
+    const sport = sports[i];
+    const height = Number(heights[i]);
+
+    if (sport && height) {
+        const cleanSport = sport.charAt(0).toUpperCase() + sport.slice(1);
+        if (!groupedData[cleanSport]) {
+            groupedData[cleanSport] = [];
+        }
+        groupedData[cleanSport].push(height);
     }
-    acc[sport].push(curr.weight);
-    return acc;
-}, {});
+}
 
 const categories = Object.keys(groupedData);
 const sortedDataArrays = Object.values(groupedData).map(values =>
     values.slice().sort((a, b) => a - b)
 );
 
-// 3. Process Data
 const step = 1;
 const data = generateViolinData(step, sortedDataArrays);
 const xi = data.xiData;
 const stats = data.stats;
 
-// 4. Generate Series Arrays Dynamically
 const areaSeries = categories.map((sport, i) => ({
     name: sport,
-    color: SPORT_COLORS[i],
-    lineColor: SPORT_LINE_COLORS[i],
     data: data.results[i],
     custom: { stat: stats[i] }
 }));
@@ -157,11 +160,10 @@ const whiskerSeries = categories.map((sport, i) => ({
         { x: stats[i][3], y: i },
         { x: stats[i][4], y: i }
     ],
-    // The scatter markers already expose these statistics, so keep this helper line silent.
     accessibility: { enabled: false }
 }));
 
-// Transpose stats for the legend-toggled scatter points
+// Transpose stats for the legend-toggled scatter points.
 const scatterData = [[], [], [], [], []];
 for (let col = 0; col < 5; col++) {
     for (let line = 0; line < categories.length; line++) {
@@ -183,22 +185,22 @@ const scatterSeries = [
     { type: 'scatter', name: 'Max', color: MIN_MAX_COLOR, data: scatterData[4] }
 ];
 
-// 5. Initialize Chart
 Highcharts.chart('container', {
     chart: {
         type: 'areasplinerange',
         inverted: true
     },
+    colors: SPORT_COLORS,
     accessibility: {
         description:
-            'A violin plot showing the weight distribution of female ' +
-            'athletes at the 2012 Olympics across four sports. The plot ' +
+            'A violin plot showing the height distribution of female ' +
+            'athletes at the 2024 Olympics across multiple sports. The plot ' +
             'features a density shape for each sport, overlaid with ' +
             'statistical markers indicating the minimum, first quartile, ' +
-            'median, third quartile, and maximum weights.'
+            'median, third quartile, and maximum heights.'
     },
     title: {
-        text: 'Weight distribution of female athletes at the 2012 Olympics'
+        text: 'Height distribution of female athletes at the 2024 Olympics'
     },
     xAxis: {
         reversed: false,
@@ -206,7 +208,7 @@ Highcharts.chart('container', {
         gridLineColor: '#E6E6E6',
         gridLineDashStyle: 'Dash',
         labels: {
-            format: '{value} kg',
+            format: '{value} cm',
             style: { fontSize: '10px' }
         }
     },
@@ -230,21 +232,19 @@ Highcharts.chart('container', {
 
             const formatValue = value => Highcharts.numberFormat(value, 2);
             return `
-        <div>
-            <span
-                style="font-size: 15px; font-weight: bold; color: ${this.series.color};"
-            >
-                ${this.series.name}
-            </span>
-            <table style="margin-top: 8px; border-collapse: collapse; width: 100%;">
-                <tr><td style="padding-right: 15px; color: var(--highcharts-neutral-color-60, #666);">Max:</td><td style="font-family: monospace; text-align: right;">${formatValue(stat[4])} kg</td></tr>
-                <tr><td style="padding-right: 15px; color: var(--highcharts-neutral-color-60, #666);">Q 3:</td><td style="font-family: monospace; text-align: right;">${formatValue(stat[3])} kg</td></tr>
-                <tr><td style="padding-right: 15px; font-weight: bold;">Median:</td><td style="font-family: monospace; text-align: right; font-weight: bold;">${formatValue(stat[2])} kg</td></tr>
-                <tr><td style="padding-right: 15px; color: var(--highcharts-neutral-color-60, #666);">Q 1:</td><td style="font-family: monospace; text-align: right;">${formatValue(stat[1])} kg</td></tr>
-                <tr><td style="padding-right: 15px; color: var(--highcharts-neutral-color-60, #666);">Min:</td><td style="font-family: monospace; text-align: right;">${formatValue(stat[0])} kg</td></tr>
-            </table>
-        </div>
-      `;
+                    <div class="violin-tooltip">
+                        <span class="violin-tooltip-header" style="color: ${this.series.color};">
+                            ${this.series.name}
+                        </span>
+                        <table class="violin-tooltip-table">
+                            <tr><td class="violin-tooltip-label">Max:</td><td class="violin-tooltip-value">${formatValue(stat[4])} cm</td></tr>
+                            <tr><td class="violin-tooltip-label">Q 3:</td><td class="violin-tooltip-value">${formatValue(stat[3])} cm</td></tr>
+                            <tr><td class="violin-tooltip-label median-row">Median:</td><td class="violin-tooltip-value median-row">${formatValue(stat[2])} cm</td></tr>
+                            <tr><td class="violin-tooltip-label">Q 1:</td><td class="violin-tooltip-value">${formatValue(stat[1])} cm</td></tr>
+                            <tr><td class="violin-tooltip-label">Min:</td><td class="violin-tooltip-value">${formatValue(stat[0])} cm</td></tr>
+                        </table>
+                    </div>
+                `;
         }
     },
     plotOptions: {
