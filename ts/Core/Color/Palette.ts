@@ -244,6 +244,12 @@ export default class Palette {
             }
         }
 
+        // Publish resolved values for the Color fast-path. Light scheme is
+        // used as the canonical source for color manipulation (brighten /
+        // setOpacity); the rendered `var(...)` reference still resolves
+        // dark/light correctly via CSS at paint time.
+        Color.cssVars = cssVars.light;
+
         // Add a style tag to the chart renderer box
         const defs = renderer.defs.element,
             specifier = hasSpecificPalette ?

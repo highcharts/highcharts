@@ -147,6 +147,18 @@ class Color implements ColorBase {
         'color-mix(in srgb,red,blue 9%)'
     );
 
+    /**
+     * Registry of resolved CSS variable values, keyed by variable name
+     * (e.g. `--highcharts-color-0`). Populated by `Palette.injectCSS`, used by
+     * the constructor to short-circuit `var(...)` inputs to their underlying
+     * hex value. This keeps the numeric rgba path alive in `brighten` and
+     * `setOpacity`, so SVG attributes end up as cheap `rgb(...)` literals
+     * rather than nested `color-mix(...)` expressions that the browser must
+     * resolve at paint time.
+     * @internal
+     */
+    public static cssVars: Record<string, string> = {};
+
 
     /**
      * A static Color instance representing no color.
@@ -212,14 +224,32 @@ class Color implements ColorBase {
 
         // Solid colors
         } else if (typeof input === 'string') {
-            this.input = input = (Color.names[input.toLowerCase()] || input);
 
-            i = Color.parsers.length;
-            while (i-- && !rgba) {
-                parser = Color.parsers[i];
-                result = parser.regex.exec(input);
-                if (result) {
-                    rgba = parser.parse(result);
+            // Resolve `var(--highcharts-...)` to its underlying hex via the
+            // palette registry, so the numeric path below takes over.
+            if (input.indexOf('var(') === 0) {
+                const resolved = Color.cssVars[input.slice(4, -1).trim()];
+                if (resolved) {
+                    this.input = input = resolved;
+                }
+            }
+
+            // Skip the regex loop for unresolvable CSS expressions — none of
+            // the parsers will match, so the work is wasted.
+            if (
+                input.indexOf('var(') !== 0 &&
+                input.indexOf('color-mix(') !== 0
+            ) {
+                this.input = input =
+                    (Color.names[input.toLowerCase()] || input);
+
+                i = Color.parsers.length;
+                while (i-- && !rgba) {
+                    parser = Color.parsers[i];
+                    result = parser.regex.exec(input);
+                    if (result) {
+                        rgba = parser.parse(result);
+                    }
                 }
             }
         }
