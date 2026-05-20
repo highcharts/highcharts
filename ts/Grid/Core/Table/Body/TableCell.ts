@@ -153,21 +153,18 @@ class TableCell extends Cell {
         const fetchToken = ++this.asyncFetchToken;
         const { grid } = this.column.viewport;
 
-        // TODO(design): Design a better way to show the cell val being updated.
-        this.htmlElement.style.opacity = '0.5';
-
         if (!defined(value)) {
             value = await this.column.getCellValue(this);
 
             // Discard stale response if cell was reused for a different row
             if (fetchToken !== this.asyncFetchToken) {
-                this.htmlElement.style.opacity = '';
                 return;
             }
         }
 
         const oldValue = this.value;
         this.value = value;
+        const valueChanged = oldValue !== value;
 
         if (updateDataset) {
             try {
@@ -184,13 +181,21 @@ class TableCell extends Cell {
             }
         }
 
-        if (this.content) {
+        const cellsOptions = this.column.options.cells;
+        const isValueOnlyText = (
+            !cellsOptions?.format && !cellsOptions?.formatter
+        );
+
+        if (this.content && (valueChanged || !isValueOnlyText)) {
             this.content.update();
-        } else {
+        } else if (!this.content) {
             this.content = this.column.createCellContent(this);
         }
 
-        this.htmlElement.setAttribute('data-value', this.value + '');
+        const valueAttribute = this.value + '';
+        if (this.htmlElement.getAttribute('data-value') !== valueAttribute) {
+            this.htmlElement.setAttribute('data-value', valueAttribute);
+        }
 
         // Set alignment in column cells based on column data type
         this.htmlElement.classList[
@@ -198,12 +203,9 @@ class TableCell extends Cell {
         ](Globals.getClassName('rightAlign'));
 
         // Add custom class name from column options
-        this.setCustomClassName(this.column.options.cells?.className);
+        this.setCustomClassName(cellsOptions?.className);
 
         this.setCustomStyles(this.getCellStyles());
-
-        // TODO(design): Remove this after the first part was implemented.
-        this.htmlElement.style.opacity = '';
 
         fireEvent(this, 'afterRender', { target: this });
     }
