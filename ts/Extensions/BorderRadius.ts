@@ -187,7 +187,9 @@ let oldRoundedRect: SVGRenderer['symbols']['roundedRect'] = noop as any;
 function applyBorderRadius(
     path: SVGPath,
     i: number,
-    r: number
+    r: number,
+    padding: number, // Padding in pixels
+    skipInnerRadius?: boolean
 ): void {
     const a = path[i];
 
@@ -213,15 +215,19 @@ function applyBorderRadius(
     }
 
     if (line && arc && arc.params) {
-        const bigR = arc[1],
+        const params = arc.params;
+        const { start, end, cx, cy, innerRadius } = params;
+        const bigR = innerRadius || arc[1],
             // In our use cases, outer pie slice arcs are clockwise and inner
             // arcs (donut/sunburst etc) are anti-clockwise
-            clockwise = arc[5],
-            params = arc.params,
-            { start, end, cx, cy } = params;
+            clockwise = arc[5];
 
         // Some geometric constants
-        const relativeR = clockwise ? (bigR - r) : (bigR + r),
+        const relativeR =
+            Math.max(clockwise ? (bigR - r) : (bigR + r), 0.0001),
+            // Padding for calculated relativeR value in radians
+            relativeRPadding = relativeR > 0 ? padding / relativeR : 0,
+            padDir = innerRadius && innerRadius > 0 ? -1 : 1,
             // The angle, on the big arc, that the border radius arc takes up
             angleOfBorderRadius = relativeR ? Math.asin(r / relativeR) : 0,
             angleOffset = clockwise ?
@@ -229,63 +235,64 @@ function applyBorderRadius(
                 -angleOfBorderRadius,
             // The distance along the radius of the big arc to the starting
             // point of the small border radius arc
-            distanceBigCenterToStartArc = (
-                Math.cos(angleOfBorderRadius) *
-                relativeR
-            );
+            distanceBigCenterToStartArc =
+                Math.cos(angleOfBorderRadius) * relativeR;
 
-        // From line to arc
-        if (fromLineToArc) {
+        if (innerRadius === void 0 || (innerRadius > 0 && !skipInnerRadius)) {
+            // From line to arc
+            if (fromLineToArc) {
 
-            // Update the cache
-            params.start = start + angleOffset;
+                // Update the cache
+                const rStart = start + padDir * relativeRPadding;
+                params.start = rStart + angleOffset;
 
-            // First move to the start position at the radial line. We want to
-            // start one borderRadius closer to the center.
-            line[1] = cx + distanceBigCenterToStartArc * Math.cos(start);
-            line[2] = cy + distanceBigCenterToStartArc * Math.sin(start);
+                // First move to the start position at the radial line. We
+                // want to start one borderRadius closer to the center.
+                line[1] = cx + distanceBigCenterToStartArc * Math.cos(rStart);
+                line[2] = cy + distanceBigCenterToStartArc * Math.sin(rStart);
 
-            // Now draw an arc towards the point where the small circle touches
-            // the great circle.
-            path.splice(i + 1, 0, [
-                'A',
-                r,
-                r,
-                0, // Slanting,
-                0, // Long arc
-                1, // Clockwise
-                cx + bigR * Math.cos(params.start),
-                cy + bigR * Math.sin(params.start)
-            ]);
+                // Now draw an arc towards the point where the small circle
+                // touches the great circle.
+                path.splice(i + 1, 0, [
+                    'A',
+                    r,
+                    r,
+                    0, // Slanting,
+                    0, // Long arc
+                    1, // Clockwise
+                    cx + bigR * Math.cos(params.start),
+                    cy + bigR * Math.sin(params.start)
+                ]);
 
-        // From arc to line
-        } else {
+            // From arc to line
+            } else {
 
-            // Update the cache
-            params.end = end - angleOffset;
+                // Update the cache
+                const rEnd = end - padDir * relativeRPadding;
+                params.end = rEnd - angleOffset;
 
-            // End the big arc a bit earlier
-            arc[6] = cx + bigR * Math.cos(params.end);
-            arc[7] = cy + bigR * Math.sin(params.end);
+                // End the big arc a bit earlier
+                arc[6] = cx + bigR * Math.cos(params.end);
+                arc[7] = cy + bigR * Math.sin(params.end);
 
-            // Draw a small arc towards a point on the end angle, but one
-            // borderRadius closer to the center relative to the perimeter.
-            path.splice(i + 1, 0, [
-                'A',
-                r,
-                r,
-                0,
-                0,
-                1,
-                cx + distanceBigCenterToStartArc * Math.cos(end),
-                cy + distanceBigCenterToStartArc * Math.sin(end)
-            ]);
+                // Draw a small arc towards a point on the end angle, but one
+                // borderRadius closer to the center relative to the perimeter.
+                path.splice(i + 1, 0, [
+                    'A',
+                    r,
+                    r,
+                    0,
+                    0,
+                    1,
+                    cx + distanceBigCenterToStartArc * Math.cos(rEnd),
+                    cy + distanceBigCenterToStartArc * Math.sin(rEnd)
+                ]);
+            }
+
+            // Long or short arc must be reconsidered because we have modified
+            // the start and end points
+            arc[4] = Math.abs(params.end - params.start) < Math.PI ? 0 : 1;
         }
-
-        // Long or short arc must be reconsidered because we have modified the
-        // start and end points
-        arc[4] = Math.abs(params.end - params.start) < Math.PI ? 0 : 1;
-
     }
 }
 
@@ -307,14 +314,15 @@ function arc(
             innerR = 0,
             r = w,
             start = 0,
-            end = 0
+            end = 0,
+            padding = 0
         } = options;
 
     if (options.open || !options.borderRadius) {
         return path;
     }
 
-    const alpha = end - start,
+    const alpha = end - start - (2 * padding) / r,
         sinHalfAlpha = Math.sin(alpha / 2),
         borderRadius = Math.max(Math.min(
             relativeLength(options.borderRadius || 0, r - innerR),
@@ -329,7 +337,9 @@ function arc(
         innerBorderRadius = Math.min(
             borderRadius,
             2 * (alpha / Math.PI) * innerR
-        );
+        ),
+        // When inner alpha is too small, we skip the inner radius
+        innerAlpha = alpha - 2 * padding / innerR;
 
     // Apply turn-by-turn border radius. Start at the end since we're
     // splicing in arc segments.
@@ -341,11 +351,19 @@ function arc(
         ) {
             continue;
         }
-        applyBorderRadius(
-            path,
-            i,
-            i > 1 ? innerBorderRadius : borderRadius
-        );
+
+        if (
+            (i > 1 && innerBorderRadius > 0.001) ||
+            (i <= 1 && borderRadius > 0.001)
+        ) {
+            applyBorderRadius(
+                path,
+                i,
+                i > 1 ? innerBorderRadius : borderRadius,
+                padding,
+                innerAlpha <= 0
+            );
+        }
     }
 
     return path;

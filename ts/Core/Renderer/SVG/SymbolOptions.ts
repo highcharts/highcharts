@@ -32,6 +32,7 @@ export interface SymbolOptions {
     width?: number;
     x?: number;
     y?: number;
+    padding?: number;
 }
 
 /* *

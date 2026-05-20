@@ -38,7 +38,8 @@ import {
     extend,
     fireEvent,
     merge,
-    pick
+    pick,
+    relativeLength
 } from '../../Shared/Utilities.js';
 
 /* *
@@ -423,9 +424,6 @@ class PieSeries extends Series {
         let start,
             end,
             angle,
-            // The x component of the radius vector for a given point
-            radiusX,
-            radiusY,
             i,
             point,
             cumulative = 0;
@@ -444,6 +442,10 @@ class PieSeries extends Series {
              */
             series.center = positions = series.getCenter();
         }
+
+        const radius = positions[2] / 2;
+        const pointPadding =
+            relativeLength(series.options.pointPadding || 0, radius) / 2;
 
         // Calculate the geometry for each point
         for (i = 0; i < len; i++) {
@@ -464,10 +466,11 @@ class PieSeries extends Series {
             const shapeArgs = {
                 x: positions[0],
                 y: positions[1],
-                r: positions[2] / 2,
+                r: radius,
                 innerR: positions[3] / 2,
                 start,
-                end
+                end,
+                padding: pointPadding
             };
             point.shapeType = 'arc';
             point.shapeArgs = shapeArgs;
@@ -491,11 +494,9 @@ class PieSeries extends Series {
             };
 
             // Set the anchor point for tooltips
-            radiusX = Math.cos(angle) * positions[2] / 2;
-            radiusY = Math.sin(angle) * positions[2] / 2;
             point.tooltipPos = [
-                positions[0] + radiusX * 0.7,
-                positions[1] + radiusY * 0.7
+                positions[0] + Math.cos(angle) * radius * 0.7,
+                positions[1] + Math.sin(angle) * radius * 0.7
             ];
 
             point.half = angle < -Math.PI / 2 || angle > Math.PI / 2 ?
@@ -503,6 +504,7 @@ class PieSeries extends Series {
                 0;
             point.angle = angle;
         }
+
         fireEvent(series, 'afterTranslate');
     }
 

@@ -153,7 +153,8 @@ class SVGElement implements SVGElementBase {
         'start',
         'width',
         'x',
-        'y'
+        'y',
+        'padding'
     ];
 
     /** @internal */
