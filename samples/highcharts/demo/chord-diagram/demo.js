@@ -1,8 +1,38 @@
+const countryColors = {
+    Norway: '#38bdf8',
+    Germany: '#fb7185',
+    Denmark: '#fbbf24',
+    Netherlands: '#f97316',
+    Sweden: '#34d399',
+    UK: '#a78bfa'
+};
+
 Highcharts.chart('container', {
 
+    chart: {
+        backgroundColor: '#0c1524',
+        style: {
+            fontFamily: 'Segoe UI, Roboto, Helvetica, Arial, sans-serif'
+        },
+        spacingTop: 24,
+        spacingBottom: 16
+    },
+
     title: {
-        text:
-        'Cross border electricity trading of Norway with its neighbours in 2026'
+        text: 'Nordic electricity exchange',
+        style: {
+            color: '#e2e8f0',
+            fontSize: '1.35rem',
+            fontWeight: '600'
+        }
+    },
+
+    subtitle: {
+        text: 'Bidirectional cross-border flows (GWh), Norway and neighbours',
+        style: {
+            color: '#94a3b8',
+            fontSize: '0.9rem'
+        }
     },
 
     accessibility: {
@@ -15,6 +45,12 @@ Highcharts.chart('container', {
     },
 
     tooltip: {
+        backgroundColor: 'rgba(15, 23, 42, 0.94)',
+        borderColor: '#334155',
+        borderRadius: 8,
+        style: {
+            color: '#f1f5f9'
+        },
         headerFormat: '',
         pointFormatter: function () {
             const point = this;
@@ -64,32 +100,49 @@ Highcharts.chart('container', {
     series: [{
         keys: ['from', 'to', 'weight', 'weightTo'],
         data: [
-            ['Germany', 'Denmark', 3678, 5476],
+            ['Germany', 'Denmark', 512, 5399],
             ['Germany', 'Netherlands', 3066, 3772],
-            ['Germany', 'Norway', 1302, 1954],
-            ['Germany', 'Sweden', 109, 281],
-            ['Denmark', 'Netherlands', 908, 1537],
-            ['Denmark', 'Norway', 1399, 1584],
-            ['Denmark', 'Sweden', 737, 3475],
-            ['Denmark', 'United Kingdom', 1982, 1250],
-            ['Netherlands', 'Norway', 571, 488],
-            ['Netherlands', 'United Kingdom', 1788, 1267],
-            ['Norway', 'Sweden', 1324, 3300],
-            ['Norway', 'United Kingdom', 1937, 1135]
+            ['Germany', 'Norway', 1102, 5954],
+            ['Germany', 'Sweden', 109, 881],
+            ['Denmark', 'Netherlands', 912, 1318],
+            ['Denmark', 'Norway', 1397, 1381],
+            ['Denmark', 'Sweden', 731, 3377],
+            ['Denmark', 'UK', 1882, 1049],
+            ['Netherlands', 'Norway', 583, 487],
+            ['Netherlands', 'UK', 1666, 261],
+            ['Norway', 'Sweden', 1296, 3211],
+            ['Norway', 'UK', 1766, 1201]
         ],
         type: 'dependencywheel',
-        name: 'Dependency wheel series',
+        name: 'Electricity flows',
+        linkOpacity: 0.42,
+        fillOpacity: 0.75,
+        borderWidth: 0,
+        borderRadius: '30%',
+        nodes: Object.keys(countryColors).map(id => ({
+            id,
+            color: countryColors[id],
+            dataLabels: id === 'Norway' ? {
+                style: {
+                    fontWeight: '700',
+                    fontSize: '0.95rem'
+                }
+            } : undefined
+        })),
         dataLabels: {
-            color: 'var(--highcharts-neutral-color-80, #333)',
+            enabled: true,
+            color: '#f8fafc',
             style: {
-                textOutline: 'none'
+                fontSize: '0.8rem',
+                fontWeight: '500',
+                textOutline: '2px rgba(12, 21, 36, 0.85)'
             },
             textPath: {
-                enabled: true
+                enabled: false
             },
-            distance: 10
+            distance: 16
         },
-        size: '95%'
+        size: '94%'
     }]
 
 });
