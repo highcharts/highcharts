@@ -861,6 +861,14 @@ class BubbleSeries extends ScatterSeries {
         }
     }
 
+    public init(chart: Chart, options: BubbleSeriesOptions): void {
+        super.init(chart, options);
+
+        if (chart.options?.tooltip?.shared) {
+            this.noSharedTooltip = false;
+        }
+    }
+
     /**
      * @internal
      * @function Highcharts.Series#searchKDTree
@@ -888,7 +896,7 @@ class BubbleSeries extends ScatterSeries {
             } else if (p1Dist < 0 && p2Dist < 0) {
                 ret = (
                     p1Dist - (p1.marker?.radius || 0) >=
-                    p2Dist - (p2.marker?.radius || 0)
+                        p2Dist - (p2.marker?.radius || 0)
                 ) ?
                     p1 :
                     p2;
@@ -906,6 +914,7 @@ class BubbleSeries extends ScatterSeries {
             b: number,
             flip: boolean
         ): boolean => !flip && (a > b) || (a < b);
+
         return super.searchKDTree(
             point,
             compareX,

@@ -119,8 +119,12 @@ QUnit.test('Align dataLabel', function (assert) {
                 }
             }
         },
+        tooltip: {
+            shared: true
+        },
         series: [
             {
+                name: '===',
                 data: [{
                     x: 2,
                     y: 3,
@@ -141,14 +145,16 @@ QUnit.test('Align dataLabel', function (assert) {
             }
         ]
     });
-
-    const point = chart.series[2].points[0];
-
-    const dataLabel = point.dataLabel;
-    const bubbleCenter = {
-        x: point.plotX,
-        y: point.plotY
-    };
+    const tc = new TestController(chart),
+        offset = Highcharts.offset(chart),
+        { series, plotLeft, plotTop, tooltip } = chart,
+        p1 = series[0].points[0],
+        point = series[2].points[0],
+        dataLabel = point.dataLabel,
+        bubbleCenter = {
+            x: point.plotX,
+            y: point.plotY
+        };
 
     assert.ok(
         dataLabel,
@@ -169,5 +175,16 @@ QUnit.test('Align dataLabel', function (assert) {
         1, // Assuming 1 pixel tolerance
         `Data label for point (${point.x}, ${point.y}) is vertically centered
         (#13240)`
+    );
+
+    tc.moveTo(
+        offset.left + plotLeft + p1.plotX,
+        offset.top + plotTop + p1.plotY
+    );
+
+    assert.strictEqual(
+        tooltip.label.text.textStr.includes('==='),
+        true,
+        'Shared bubble tooltip should include \"===\" (#22967)'
     );
 });

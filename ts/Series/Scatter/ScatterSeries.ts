@@ -155,6 +155,7 @@ class ScatterSeries extends LineSeries {
         }
     }
 
+    /* eslint-enable valid-jsdoc */
 
 }
 
