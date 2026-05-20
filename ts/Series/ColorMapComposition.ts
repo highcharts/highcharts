@@ -70,6 +70,7 @@ namespace ColorMapComposition {
     export declare class PointComposition extends ScatterPoint {
         dataLabelOnNull?: boolean;
         moveToTopOnHover?: boolean;
+        stateUseGraphic?: SVGElement;
         series: SeriesComposition;
         value: (number|null);
         isValid(): boolean;
@@ -141,10 +142,12 @@ namespace ColorMapComposition {
 
         if (point.moveToTopOnHover && point.graphic) {
             if (!series.stateMarkerGraphic) {
-                // Create a `use` element and add it to the end of the group,
-                // which would make it appear on top of the other elements. This
-                // deals with z-index without reordering DOM elements (#13049).
-                series.stateMarkerGraphic = new SVGElement(renderer, 'use')
+                // Create a container `g` at the end of the series group.
+                // Each hovered point appends a `use` child referencing its
+                // graphic, so multiple points (e.g. a dataClass) can all
+                // appear on top without reordering DOM elements (#13049,
+                // #22891).
+                series.stateMarkerGraphic = renderer.g()
                     .css({
                         pointerEvents: 'none'
                     })
@@ -152,19 +155,18 @@ namespace ColorMapComposition {
             }
             if (e?.state === 'hover') {
                 // Give the graphic DOM element the same id as the Point
-                // instance
+                // instance, then add a `use` referencing it to the container.
                 point.graphic.attr({
                     id: this.id
                 });
-
-                series.stateMarkerGraphic.attr({
-                    href: `${renderer.url}#${this.id}`,
-                    visibility: 'visible'
-                });
+                point.stateUseGraphic = new SVGElement(renderer, 'use')
+                    .attr({
+                        href: `${renderer.url}#${this.id}`,
+                        visibility: 'visible'
+                    })
+                    .add(series.stateMarkerGraphic);
             } else {
-                series.stateMarkerGraphic.attr({
-                    href: ''
-                });
+                point.stateUseGraphic = point.stateUseGraphic?.destroy();
             }
         }
     }
