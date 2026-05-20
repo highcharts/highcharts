@@ -1,6 +1,16 @@
 # Security
 
-Highsoft takes security seriously. If you believe you have found a security vulnerability in Highcharts, Highcharts Gantt, Highcharts Stock, Highcharts Maps, or Highcharts Dashboards, we encourage you to report it to us as described below. We will investigate all legitimate reports and do our best to quickly fix the problem. Before reporting, please read the Secure Usage section below.
+Highsoft takes security seriously. We will investigate all legitimate reports and do our best to quickly fix the problem. If you believe you have found a security vulnerability in one of the following products, we encourage you to report it to us as described below:
+
+  * Highcharts Core
+  * Highcharts Gantt
+  * Highcharts Stock
+  * Highcharts Maps
+  * Highcharts Dashboards
+  * Highcharts Grid Lite
+  * Highcharts Grid Pro
+
+Before reporting, please read the Secure Usage section below.
 
 ## Reporting Security Issues
 
