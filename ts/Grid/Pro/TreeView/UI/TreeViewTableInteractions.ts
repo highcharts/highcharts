@@ -30,6 +30,7 @@ import type { TreeRowToggleTriggerEvent } from '../Projection/TreeProjectionCont
 
 import TreeStickyRowController from './TreeStickyRowController.js';
 import { getTreeViewCellContext } from './TreeViewCellContext.js';
+import { getTreeViewRowId } from '../TreeViewRowResolver.js';
 import { waitForAnimationFrame } from '../../../Core/GridUtils.js';
 
 
@@ -564,10 +565,9 @@ export function createTreeToggleListeners(
         const editedCell = context.cell.row.viewport.cellEditing?.editedCell;
         if (
             editedCell?.column.id === context.cell.column.id &&
-            (
-                editedCell.row.id ??
+            getTreeViewRowId(
+                editedCell.row,
                 context.controller.getProjectionState()
-                    ?.rowIds[editedCell.row.index]
             ) === context.rowId
         ) {
             return;

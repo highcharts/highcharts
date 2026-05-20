@@ -123,6 +123,51 @@ test.describe('Grid Pro - tree view', () => {
         ]);
     });
 
+    test('projects parentId rows without idColumn using original row indexes', async ({ page }) => {
+        await loadGridPro(page);
+
+        await page.evaluate(async (): Promise<void> => {
+            (window as any).grid = await (window as any).Grid.grid('container', {
+                data: {
+                    columns: {
+                        parentId: [null, 0, 0, 1],
+                        name: ['Root', 'Sales', 'Marketing', 'EMEA'],
+                        sortKey: ['Z', 'B', 'A', 'C']
+                    },
+                    treeView: {
+                        expandedRowIds: 'all',
+                        treeColumn: 'name'
+                    }
+                },
+                columns: [{
+                    id: 'sortKey',
+                    sorting: {
+                        order: 'asc'
+                    }
+                }],
+                rendering: {
+                    rows: {
+                        virtualization: false
+                    }
+                }
+            }, true);
+        });
+
+        await expect(page.locator('tbody .hcg-row')).toHaveCount(4);
+        expect(await getVisibleRowIds(page)).toStrictEqual([
+            '0',
+            '2',
+            '1',
+            '3'
+        ]);
+        expect(await getTreeColumnValues(page, 'name')).toStrictEqual([
+            'Root',
+            'Marketing',
+            'Sales',
+            'EMEA'
+        ]);
+    });
+
     test('seeds explicit expandedRowIds without expanding every branch', async ({ page }) => {
         await loadGridPro(page);
 
@@ -186,6 +231,39 @@ test.describe('Grid Pro - tree view', () => {
             '2',
             '__hcg_tree_path__:B',
             '3'
+        ]);
+    });
+
+    test('detects path input without idColumn using original row indexes', async ({ page }) => {
+        await loadGridPro(page);
+
+        await page.evaluate(async (): Promise<void> => {
+            (window as any).grid = await (window as any).Grid.grid('container', {
+                data: {
+                    columns: {
+                        path: ['A/a', 'A/b', 'B/c'],
+                        name: ['a', 'b', 'c']
+                    },
+                    treeView: {
+                        treeColumn: 'name',
+                        expandedRowIds: 'all'
+                    }
+                },
+                rendering: {
+                    rows: {
+                        virtualization: false
+                    }
+                }
+            }, true);
+        });
+
+        await expect(page.locator('tbody .hcg-row')).toHaveCount(5);
+        expect(await getVisibleRowIds(page)).toStrictEqual([
+            '__hcg_tree_path__:A',
+            '0',
+            '1',
+            '__hcg_tree_path__:B',
+            '2'
         ]);
     });
 

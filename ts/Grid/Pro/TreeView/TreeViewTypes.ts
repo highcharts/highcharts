@@ -23,8 +23,10 @@
  * */
 
 import type { RowId } from '../../Core/Data/DataProvider';
-import type { CellType as DataTableCellType } from '../../../Data/DataTable';
-import type { ColumnCollection } from '../../../Data/DataTable';
+import type DataTable from '../../../Data/DataTable';
+import type {
+    CellType as DataTableCellType
+} from '../../../Data/DataTable';
 
 
 /* *
@@ -297,8 +299,8 @@ export interface TreeProjectionState {
  */
 export interface TreeInputAdapter {
     buildIndexFromColumns(
-        columns: ColumnCollection,
-        idColumn: string,
+        table: DataTable,
+        idColumn: string | undefined,
         input: TreeInputOptions
     ): TreeIndexBuildResult;
 }
