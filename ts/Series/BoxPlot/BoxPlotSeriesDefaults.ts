@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -18,8 +19,6 @@
  * */
 
 import type BoxPlotSeriesOptions from './BoxPlotSeriesOptions';
-
-import { Palette } from '../../Core/Color/Palettes.js';
 
 /* *
  *
@@ -100,7 +99,7 @@ const BoxPlotSeriesDefaults: BoxPlotSeriesOptions = {
      * @since   3.0
      * @product highcharts
      */
-    fillColor: Palette.backgroundColor,
+    fillColor: 'var(--highcharts-background-color)',
 
     /**
      * The width of the line surrounding the box. If any of
@@ -381,6 +380,7 @@ const BoxPlotSeriesDefaults: BoxPlotSeriesOptions = {
  * @sample {highcharts} highcharts/series/data-array-of-objects/
  *         Config objects
  *
+ * @basic
  * @type      {Array<Array<(number|string),number,number,number,number>|Array<(number|string),number,number,number,number,number>|*>}
  * @extends   series.line.data
  * @excluding marker

@@ -4,8 +4,9 @@
  *
  *  (c) 2020-2026 Highsoft AS
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  *  Authors:
@@ -22,8 +23,6 @@
  *
  * */
 
-import type DataTable from '../../../Data/DataTable';
-import type DataProvider from '../Data/DataProvider';
 import type TableCell from './Body/TableCell';
 import type { RowId } from '../Data/DataProvider';
 
@@ -230,22 +229,6 @@ class Table {
     *  Methods
     *
     * */
-
-    /**
-     * The presentation version of the data table. It has applied modifiers
-     * and is ready to be rendered.
-     *
-     * @deprecated Use `grid.dataProvider` instead.
-     */
-    public get dataTable(): DataTable | undefined {
-        const dp = this.grid.dataProvider as (
-            DataProvider & {
-                getDataTable?(presentation?: boolean): DataTable | undefined;
-            }
-        ) | undefined;
-
-        return dp?.getDataTable?.(true);
-    }
 
     /**
      * Initializes the table. Should be called after creation so that the table

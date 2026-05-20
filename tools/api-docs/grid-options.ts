@@ -67,6 +67,11 @@ interface RendererOptionSpec {
     typeName: string;
 }
 
+interface TreeInputOptionSpec {
+    interfaceName: string;
+    typeName: string;
+}
+
 const VIEW_RENDERER_OPTIONS: Array<RendererOptionSpec> = [
     { interfaceName: 'TextRendererOptions', typeName: 'text' },
     { interfaceName: 'CheckboxRendererOptions', typeName: 'checkbox' },
@@ -87,6 +92,11 @@ const EDIT_RENDERER_OPTIONS: Array<RendererOptionSpec> = [
     { interfaceName: 'DateTimeInputRendererOptions', typeName: 'dateTimeInput' },
     { interfaceName: 'TimeInputRendererOptions', typeName: 'timeInput' },
     { interfaceName: 'NumberInputRendererOptions', typeName: 'numberInput' }
+];
+
+const TREE_INPUT_OPTIONS: Array<TreeInputOptionSpec> = [
+    { interfaceName: 'TreeInputParentIdOptions', typeName: 'parentId' },
+    { interfaceName: 'TreeInputPathOptions', typeName: 'path' }
 ];
 
 
@@ -195,6 +205,10 @@ function addTreeNode(
             }
             if (info.type) {
                 for (const _type of info.type) {
+                    if (isTreeInputOptionsType(sourceInfo, _type, info)) {
+                        continue;
+                    }
+
                     const resolvedInterface = resolveTypeToInterface(
                         sourceInfo, _type, info
                     );
@@ -468,6 +482,9 @@ function addTreeNode(
 
     expandRendererOptionChildren(_nodeDoclet, _treeNode, debug);
     expandDataProviderOptionChildren(
+        sourceInfo, info, _nodeDoclet, _treeNode, debug
+    );
+    expandTreeInputOptionChildren(
         sourceInfo, info, _nodeDoclet, _treeNode, debug
     );
 
@@ -971,6 +988,113 @@ function expandDataProviderOptionChildren(
                         `'${provider.providerType}'`;
                 }
             }
+        }
+    }
+}
+
+function isTreeInputOptionsType(
+    sourceInfo: TSLib.SourceInfo,
+    typeName: string,
+    info: TSLib.CodeInfo
+): boolean {
+    if (
+        typeName === 'TreeInputOptions' ||
+        (
+            typeName.includes('TreeInputParentIdOptions') &&
+            typeName.includes('TreeInputPathOptions')
+        )
+    ) {
+        return true;
+    }
+
+    const alias = resolveTypeAliasInfo(sourceInfo, typeName, info);
+    const aliasValues = Array.isArray(alias?.value) ? alias.value : [];
+
+    return aliasValues.some(
+        (aliasValue: string): boolean => (
+            aliasValue.includes('TreeInputParentIdOptions') &&
+            aliasValue.includes('TreeInputPathOptions')
+        )
+    );
+}
+
+function expandTreeInputOptionChildren(
+    sourceInfo: TSLib.SourceInfo,
+    info: TSLib.CodeInfo,
+    nodeDoclet: Record<string, any>,
+    treeNode: TreeLib.Option,
+    debug?: boolean
+): void {
+    const infoTypeNames = (
+        info.kind === 'Property' || info.kind === 'Variable' ?
+            info.type || [] :
+            []
+    );
+    const docletTypeNames = Array.isArray(nodeDoclet.type?.names) ?
+        nodeDoclet.type.names :
+        [];
+    const typeNames = infoTypeNames.concat(docletTypeNames);
+
+    if (
+        !typeNames.some(
+            (typeName: string): boolean => (
+                isTreeInputOptionsType(sourceInfo, typeName, info)
+            )
+        )
+    ) {
+        return;
+    }
+
+    for (const spec of TREE_INPUT_OPTIONS) {
+        const interfaceInfo = findInterfaceInfoByName(spec.interfaceName);
+
+        if (!interfaceInfo || interfaceInfo.info.kind !== 'Interface') {
+            continue;
+        }
+
+        const typeNode = getTreeNode(`${treeNode.meta.fullname}.${spec.typeName}`);
+        const interfaceDesc = (
+            interfaceInfo.info.doclet &&
+            TSLib.extractTagText(
+                interfaceInfo.info.doclet,
+                'description',
+                true
+            )
+        ) || '';
+
+        if (!typeNode.doclet.description) {
+            typeNode.doclet.description = interfaceDesc || (
+                `Options for tree input type <code>'${spec.typeName}'</code>.`
+            );
+        }
+        if (
+            typeof nodeDoclet.product !== 'undefined' &&
+            typeof (typeNode.doclet as any).product === 'undefined'
+        ) {
+            (typeNode.doclet as any).product = nodeDoclet.product;
+        }
+
+        const typeMember = interfaceInfo.info.members.find(
+            member => TSLib.extractInfoName(member) === 'type'
+        );
+
+        if (typeMember) {
+            addTreeNode(interfaceInfo.sourceInfo, typeNode, typeMember, debug);
+
+            const typeValueNode = findTreeNode(`${typeNode.meta.fullname}.type`);
+
+            if (typeValueNode) {
+                typeValueNode.doclet.defaultvalue = `'${spec.typeName}'`;
+                typeValueNode.meta.default = `'${spec.typeName}'`;
+            }
+        }
+
+        for (const member of interfaceInfo.info.members) {
+            if (TSLib.extractInfoName(member) === 'type') {
+                continue;
+            }
+
+            addTreeNode(interfaceInfo.sourceInfo, typeNode, member, debug);
         }
     }
 }

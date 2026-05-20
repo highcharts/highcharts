@@ -5,8 +5,8 @@
  *
  * (c) 2009-2026 Highsoft AS
  *
- * A commercial license may be required depending on use.
- * See www.highcharts.com/license
+ * A commercial license may be required depending on use,
+ * see www.highcharts.com/license
  */
 'use strict';
 import Highcharts from '../Core/Globals.js';
@@ -15,7 +15,6 @@ import Fx from '../Core/Animation/Fx.js';
 import Animation from '../Core/Animation/AnimationUtilities.js';
 import AST from '../Core/Renderer/HTML/AST.js';
 import Templating from '../Core/Templating.js';
-import RendererRegistry from '../Core/Renderer/RendererRegistry.js';
 import RendererUtilities from '../Core/Renderer/RendererUtilities.js';
 import SVGElement from '../Core/Renderer/SVG/SVGElement.js';
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
@@ -31,7 +30,7 @@ import Pointer from '../Core/Pointer.js';
 import Legend from '../Core/Legend/Legend.js';
 import LegendSymbol from '../Core/Legend/LegendSymbol.js';
 import Chart from '../Core/Chart/Chart.js';
-import ScrollablePlotArea from '../Extensions/ScrollablePlotArea.js';
+import { ScrollablePlotArea } from '../Extensions/ScrollablePlotArea.js';
 import StackingAxis from '../Core/Axis/Stacking/StackingAxis.js';
 import StackItem from '../Core/Axis/Stacking/StackItem.js';
 import DataTableCore from '../Data/DataTableCore.js';
@@ -49,7 +48,7 @@ import '../Series/Pie/PieSeries.js';
 import PieDataLabel from '../Series/Pie/PieDataLabel.js';
 import DataLabel from '../Core/Series/DataLabel.js';
 import { composeOverlappingDataLabels } from '../Core/Series/OverlappingDataLabels.js';
-import BorderRadius from '../Extensions/BorderRadius.js';
+import { composeBorderRadius } from '../Extensions/BorderRadius.js';
 import Responsive from '../Core/Responsive.js';
 import Color from '../Core/Color/Color.js';
 import Time from '../Core/Time.js';
@@ -110,6 +109,7 @@ G.Axis = Axis;
 G.Chart = Chart;
 G.Color = Color;
 G.DataLabel = DataLabel;
+G.DataTable = DataTableCore;
 G.DataTableCore = DataTableCore;
 G.Fx = Fx;
 G.HTMLElement = HTMLElement;
@@ -118,7 +118,6 @@ G.LegendSymbol = LegendSymbol;
 G.PlotLineOrBand = PlotLineOrBand;
 G.Point = Point;
 G.Pointer = Pointer;
-G.RendererRegistry = RendererRegistry;
 G.Series = Series;
 G.SeriesRegistry = SeriesRegistry;
 G.StackItem = StackItem;
@@ -193,7 +192,7 @@ G.useSerialIds = useSerialIds;
 G.wrap = wrap;
 
 // Compositions
-BorderRadius.compose(G.Series, G.SVGElement, G.SVGRenderer);
+composeBorderRadius(G.Series, G.SVGElement, G.SVGRenderer);
 ColumnDataLabel.compose(G.Series.types.column);
 DataLabel.compose(G.Series);
 DateTimeAxis.compose(G.Axis);

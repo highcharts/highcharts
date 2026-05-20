@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -61,6 +62,8 @@ declare module './ChartBase'{
  */
 class MapChart extends Chart {
 
+    public promise?: Promise<MapChart>;
+
     /* *
      *
      *  Functions
@@ -76,9 +79,10 @@ class MapChart extends Chart {
      * @param {Highcharts.Options} userOptions
      *        Custom options.
      *
-     * @param {Function} [callback]
+     * @param {Function|true} [callback]
      *        Function to run when the chart has loaded and all external
-     *        images are loaded.
+     *        images are loaded. Set to `true` to return a promise that
+     *        resolves when the chart is ready.
      *
      *
      * @emits Highcharts.MapChart#event:init
@@ -86,7 +90,7 @@ class MapChart extends Chart {
      */
     public init(
         userOptions: Partial<Options>,
-        callback?: Chart.CallbackFunction
+        callback?: Chart.CallbackFunction|true
     ): void {
 
         const defaultCreditsOptions = getOptions().credits;
@@ -284,11 +288,12 @@ namespace MapChart {
      * The chart object.
      */
     export function mapChart(
-        a: (string|HTMLDOMElement|Partial<Options>),
-        b?: (Chart.CallbackFunction|Partial<Options>),
-        c?: Chart.CallbackFunction
-    ): MapChart {
-        return new MapChart(a as any, b as any, c);
+        a: string|HTMLDOMElement|Partial<Options>,
+        b?: Chart.CallbackFunction|true|Partial<Options>,
+        c?: Chart.CallbackFunction|true
+    ): MapChart|Promise<MapChart> {
+        const chart = new MapChart(a as any, b as any, c);
+        return chart.promise || chart;
     }
     /* eslint-enable jsdoc/check-param-names */
 

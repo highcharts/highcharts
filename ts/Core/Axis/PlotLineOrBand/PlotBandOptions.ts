@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  * */
 
@@ -23,6 +24,7 @@ import type ColorType from '../../Color/ColorType';
 import type CSSObject from '../../Renderer/CSSObject';
 import type Templating from '../../Templating';
 import type PlotLineOrBand from './PlotLineOrBand';
+import type { BorderRadiusOptionsObject } from '../../../Extensions/BorderRadius';
 
 /* *
  *
@@ -235,7 +237,7 @@ export interface PlotBandOptions {
      *
      * @since 11.4.2
      */
-    borderRadius?: number|string;
+    borderRadius?: number|string|BorderRadiusOptionsObject;
 
     /**
      * Border width for the plot band. Also requires `borderColor` to be set.
@@ -260,7 +262,7 @@ export interface PlotBandOptions {
      * @sample {highstock} stock/xaxis/plotbands/
      *         Plot band on Y axis
      *
-     * @default ${palette.highlightColor10}
+     * @default var(--highcharts-highlight-color-10)
      */
     color?: ColorType;
 

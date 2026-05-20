@@ -4,8 +4,9 @@
  *
  *  (c) 2020-2026 Highsoft AS
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  *  Authors:
@@ -21,6 +22,9 @@
  *
  * */
 
+import {
+    hasDataTableProvider
+} from '../Data/DataProvider.js';
 import QueryingController from './QueryingController.js';
 import RangeModifier from '../../../Data/Modifiers/RangeModifier.js';
 
@@ -181,7 +185,9 @@ class PaginationController {
      */
     public createModifier(
         rowsCountBeforePagination: number = (
-            this.querying.grid.dataTable?.rowCount || 0
+            hasDataTableProvider(this.querying.grid.dataProvider) ?
+                this.querying.grid.dataProvider.getDataTable()?.rowCount || 0 :
+                0
         )
     ): RangeModifier | undefined {
         if (!this.enabled) {

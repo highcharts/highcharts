@@ -22,13 +22,6 @@ const grid = Grid.grid('container', {
                 'Root/Engineering/Backend/Database',
                 'Root/Engineering/DevOps/Infrastructure'
             ],
-            name: [
-                'Root', 'Sales', 'Marketing', 'Engineering',
-                'EMEA', 'APAC', 'Germany', 'France',
-                'Campaigns', 'Analytics',
-                'Frontend', 'Backend', 'DevOps',
-                'React', 'Vue', 'API', 'Database', 'Infrastructure'
-            ],
             value: [
                 1000, 350, 280, 370, 180, 170, 90, 90, 140,
                 140, 120, 130, 120, 60, 60, 70, 60, 60
@@ -52,9 +45,7 @@ const grid = Grid.grid('container', {
         treeView: {
             input: {
                 type: 'path'
-            },
-            treeColumn: 'name',
-            expandedRowIds: 'all'
+            }
         }
     },
     columnDefaults: {
@@ -63,7 +54,7 @@ const grid = Grid.grid('container', {
             inline: true
         }
     },
-    header: ['name', 'value', 'status', 'category', 'id', 'path']
+    header: ['path', 'value', 'status', 'category', 'id']
 });
 
 document.getElementById('tree-view-enabled').addEventListener('change', e => {

@@ -2,8 +2,9 @@
  *
  *  (c) 2009-2026 Highsoft AS
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -1794,6 +1795,21 @@ export function wrap<T, K extends FunctionNamesOf<T>>(
             [].slice.call(arguments)
         ) as Parameters<typeof func>);
     } as T[K];
+}
+
+/* *
+ *
+ *  Enums
+ *
+ * */
+
+/**
+ * Limits for regex check to prevent overload of regex engine.
+ * @internal
+ */
+export const enum RegexLimits {
+    shortLimit = 1000,
+    svgLimit = 1e8
 }
 
 /* *

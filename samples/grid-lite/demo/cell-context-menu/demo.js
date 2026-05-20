@@ -61,7 +61,7 @@ function getSourceRowIndex(cell) {
 
 async function addRowBelow(cell) {
     const grid = cell.row.viewport.grid;
-    const dt = grid.dataTable;
+    const dt = grid.dataProvider.getDataTable();
 
     if (!dt) {
         return;
@@ -90,7 +90,7 @@ async function addRowBelow(cell) {
 
 async function addRowAbove(cell) {
     const grid = cell.row.viewport.grid;
-    const dt = grid.dataTable;
+    const dt = grid.dataProvider.getDataTable();
 
     if (!dt) {
         return;
@@ -117,7 +117,7 @@ async function addRowAbove(cell) {
 
 function addColumnLeft(cell) {
     const grid = cell.row.viewport.grid;
-    const dt = grid.dataTable;
+    const dt = grid.dataProvider.getDataTable();
 
     if (!dt) {
         return;
@@ -149,7 +149,7 @@ function addColumnLeft(cell) {
 
 function addColumnRight(cell) {
     const grid = cell.row.viewport.grid;
-    const dt = grid.dataTable;
+    const dt = grid.dataProvider.getDataTable();
 
     if (!dt) {
         return;
@@ -183,7 +183,7 @@ function addColumnRight(cell) {
 
 function deleteRow(cell) {
     const grid = cell.row.viewport.grid;
-    const dt = grid.dataTable;
+    const dt = grid.dataProvider.getDataTable();
 
     if (!dt) {
         return;

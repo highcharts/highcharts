@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -20,7 +21,6 @@
 import type MapPoint from './MapPoint';
 import type MapSeriesOptions from './MapSeriesOptions';
 
-import { Palette } from '../../Core/Color/Palettes.js';
 import { isNumber } from '../../Shared/Utilities.js';
 
 /* *
@@ -62,6 +62,7 @@ const MapSeriesDefaults: MapSeriesOptions = {
 
     dataLabels: {
         crop: false,
+        distance: 0,
         formatter: function (): string { // #2945
             const { numberFormatter } = this.series.chart;
             const { value } = this.point as MapPoint;
@@ -71,7 +72,7 @@ const MapSeriesDefaults: MapSeriesOptions = {
         },
         inside: true, // For the color
         overflow: false as any,
-        padding: 0,
+        padding: [0, 2],
         verticalAlign: 'middle'
     },
 
@@ -108,7 +109,7 @@ const MapSeriesDefaults: MapSeriesOptions = {
      *
      * @private
      */
-    nullColor: Palette.neutralColor3,
+    nullColor: 'var(--highcharts-neutral-color-3)',
 
     /**
      * Whether to allow pointer interaction like tooltips and mouse events
@@ -161,13 +162,12 @@ const MapSeriesDefaults: MapSeriesOptions = {
      *         Borders demo
      *
      * @type      {Highcharts.ColorType}
-     * @default   #cccccc
      * @product   highmaps
      * @apioption plotOptions.series.borderColor
      *
      * @private
      */
-    borderColor: Palette.neutralColor10,
+    borderColor: 'var(--highcharts-neutral-color-20)',
 
     /**
      * The border width of each map area.
@@ -266,7 +266,7 @@ const MapSeriesDefaults: MapSeriesOptions = {
              * @product   highmaps
              * @apioption plotOptions.series.states.hover.borderColor
              */
-            borderColor: Palette.neutralColor60,
+            borderColor: 'var(--highcharts-neutral-color-60)',
 
             /**
              * The border width of the point in this state
@@ -314,11 +314,11 @@ const MapSeriesDefaults: MapSeriesOptions = {
 
             /**
              * @type      {Highcharts.ColorType}
-             * @default   ${palette.neutralColor20}
+             * @default   var(--highcharts-neutral-color-20)
              * @product   highmaps
              * @apioption plotOptions.series.states.select.color
              */
-            color: Palette.neutralColor20
+            color: 'var(--highcharts-neutral-color-20)'
         }
     },
 
@@ -389,6 +389,7 @@ const MapSeriesDefaults: MapSeriesOptions = {
  *        }]
  *    ```
  *
+ * @basic
  * @type      {Array<number|Array<string,(number|null)>|null|*>}
  * @product   highmaps
  * @apioption series.map.data

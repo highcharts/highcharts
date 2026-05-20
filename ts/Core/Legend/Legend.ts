@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -18,6 +19,7 @@
  * */
 
 import type AnimationOptions from '../Animation/AnimationOptions';
+import type AreaSeries from '../../Series/Area/AreaSeries';
 import type Axis from '../Axis/Axis';
 import type BBoxObject from '../Renderer/BBoxObject';
 import type BubbleLegendItem from '../../Series/Bubble/BubbleLegendItem';
@@ -508,7 +510,7 @@ class Legend {
         if (!this.chart.styledMode) {
             const { itemHiddenStyle = {} } = this,
                 hiddenColor = itemHiddenStyle.color,
-                { fillColor, fillOpacity, lineColor, marker } =
+                { fillColor, lineColor } =
                     (item as Series).options,
                 colorizeHidden = (attr: SVGAttributes): SVGAttributes => {
                     if (!visible) {
@@ -525,18 +527,20 @@ class Legend {
 
             line?.attr(colorizeHidden({ stroke: lineColor || item.color }));
 
-            if (symbol) {
-                // Apply marker options
-                symbol.attr(colorizeHidden(
-                    marker && symbol.isMarker ? // #585
-                        (item as Series).pointAttribs() :
-                        { fill: item.color }
-                ));
-            }
+            // Apply legend symbol attributes
+            symbol?.attr(colorizeHidden(
+                (item as Point).series ?
+                    // When `legendType` is `point`, like pie series
+                    (item as Point).series.pointAttribs?.(item as Point) :
+                    // When `legendType` is `series`, like line or column series
+                    (item as Series).pointAttribs?.() || { fill: item.color }
+            ));
 
             area?.attr(colorizeHidden({
                 fill: fillColor || item.color,
-                'fill-opacity': fillColor ? 1 : (fillOpacity ?? 0.75)
+                'fill-opacity': fillColor ?
+                    1 :
+                    ((item as AreaSeries).options.fillOpacity ?? 0.75)
             }));
         }
 

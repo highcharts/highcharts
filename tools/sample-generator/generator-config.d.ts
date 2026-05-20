@@ -88,6 +88,12 @@ export interface SampleGeneratorConfig {
      */
     chartOptionsExtra?: Options;
     /**
+     * Preliminary code path to use instead of the default
+     * `https://code.highcharts.com` when generating the sample. This can be
+     * useful for testing beta versions or custom builds.
+     */
+    codePath?: string;
+    /**
      * Controls to generate for this sample
      */
     controls?: ControlOptions[];
@@ -132,6 +138,7 @@ export interface SampleGeneratorConfig {
         'categories-12' |
         'column' |
         'datetime' |
+        'gauge' |
         'linear-12'
     )[];
 }

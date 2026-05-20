@@ -1,0 +1,18 @@
+<script src="https://cdn.jsdelivr.net/npm/highcharts@v13.0.0-beta.2/highcharts.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/highcharts@v13.0.0-beta.2/modules/accessibility.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/@highcharts/controls@0.8.0" type="module"></script>
+
+<figure class="highcharts-figure">
+  <div id="container"></div>
+</figure>
+
+<div class="highcharts-controls-wrapper">
+  <highcharts-controls>
+    <highcharts-group header="Update options">
+      <highcharts-control path="chart.plotBorderRadius" value="10" max="20"></highcharts-control>
+      <highcharts-control type="number" path="chart.plotBorderWidth" value="1" max="3"></highcharts-control>
+      <highcharts-control type="boolean" path="chart.plotShadow" value="false"></highcharts-control>
+    </highcharts-group>
+  </highcharts-controls>
+</div>

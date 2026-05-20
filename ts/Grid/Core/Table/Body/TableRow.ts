@@ -4,8 +4,9 @@
  *
  *  (c) 2020-2026 Highsoft AS
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  *  Authors:
@@ -149,11 +150,8 @@ class TableRow extends Row {
      *
      * @param index
      * The index of the row in the data table.
-     *
-     * @param doReflow
-     * Whether to reflow the row after updating the cells.
      */
-    public async reuse(index: number, doReflow: boolean = true): Promise<void> {
+    public async reuse(index: number): Promise<void> {
         for (let i = 0, iEnd = this.cells.length; i < iEnd; ++i) {
             fireEvent(this.cells[i], 'outdate');
         }
@@ -178,9 +176,7 @@ class TableRow extends Row {
             await cell.setValue();
         }
 
-        if (doReflow) {
-            this.reflow();
-        }
+        this.reflow();
     }
 
     /**

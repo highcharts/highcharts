@@ -551,6 +551,13 @@ export async function getDemoHTML(
         );
     }
 
+    if (config?.codePath) {
+        html = html.replace(
+            /https:\/\/code\.highcharts\.com/gu,
+            config.codePath
+        );
+    }
+
     // Collect unique handler types and generate functions once
     const handlerTypes = new Set<string>();
     const controls: string[] = [];

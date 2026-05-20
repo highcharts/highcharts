@@ -87,7 +87,7 @@ function prepareRelease() {
         }
         if (
             nextVersion &&
-            !/^[0-9]{1,2}\.[0-9]{1,2}\.[0-9]{1,2}$/.test(nextVersion)
+            !/^[0-9]{1,2}\.[0-9]{1,2}\.[0-9]{1,2}/.test(nextVersion)
         ) {
             reject(new Error('--nextversion must be on the form x.x.x'));
             return;

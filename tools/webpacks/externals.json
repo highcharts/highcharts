@@ -127,7 +127,6 @@
             "Core/Renderer/HTML/AST",
             "Core/Renderer/SVG/SVGElement",
             "Core/Renderer/SVG/SVGRenderer",
-            "Core/Renderer/RendererRegistry",
             "Core/Series/DataLabel",
             "Core/Series/Point",
             "Core/Series/Series",
