@@ -371,7 +371,8 @@ class MapView {
                         this.zoom = this.userOptions.zoom;
                     }
                     if (this.userOptions.center) {
-                        merge(true, this.center, this.userOptions.center);
+                        this.center[0] = this.userOptions.center[0];
+                        this.center[1] = this.userOptions.center[1];
                     }
                 }
             })
