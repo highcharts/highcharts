@@ -3,6 +3,10 @@ const options = {
         text: 'Dynamic data in Highcharts Stock'
     },
 
+    lang: {
+        locale: 'en-GB' // For compact hh:mm labels
+    },
+
     xAxis: {
         overscroll: 500000,
         range: 4 * 200000,
@@ -29,7 +33,7 @@ const options = {
 
     navigator: {
         series: {
-            color: '#000000'
+            color: 'var(--highcharts-neutral-color-80)'
         }
     },
 

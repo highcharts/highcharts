@@ -26,8 +26,6 @@ import type {
 } from './AxisOptions';
 import type StackItem from './Stacking/StackItem';
 
-import { Palette } from '../Color/Palettes.js';
-
 /* *
  *
  *  Namespace
@@ -1281,7 +1279,7 @@ namespace AxisDefaults {
                 /**
                  * @type {Highcharts.ColorType}
                  */
-                color: Palette.neutralColor80,
+                color: 'var(--highcharts-neutral-color-80)',
                 cursor: 'default',
                 fontSize: '0.8em',
                 textOverflow: 'ellipsis'
@@ -1467,7 +1465,7 @@ namespace AxisDefaults {
          * The pixel length of the minor tick marks.
          *
          * @sample {highcharts} highcharts/yaxis/minorticklength/
-         *         10px on Y axis
+         *         Minor ticks on Y axis
          * @sample {highstock} stock/xaxis/minorticks/
          *         10px on Y axis
          */
@@ -1517,6 +1515,8 @@ namespace AxisDefaults {
         /**
          * The number of minor ticks per major tick. Works for `linear`,
          * `logarithmic` and `datetime` axes.
+         *
+         * For radial axes in gauges, the default value is 10.
          *
          * @sample {highcharts} highcharts/yaxis/minortickspermajor/
          *         2 minor ticks per major tick on Y axis
@@ -1604,16 +1604,23 @@ namespace AxisDefaults {
 
         /**
          * The distance in pixels from the plot area to the axis line.
-         * A positive offset moves the axis with it's line, labels and ticks
+         * A positive offset moves the axis with its line, labels and ticks
          * away from the plot area. This is typically used when two or more
          * axes are displayed on the same side of the plot. With multiple
          * axes the offset is dynamically adjusted to avoid collision, this
          * can be overridden by setting offset explicitly.
+        *
+        * For radial axes in gauges, the offset can be a percentage string, and
+        * defaults to render the line and ticks on the inside of the pane and
+        * plot bands (since v13). Labels are not affected by the offset in
+        * radial axes.
          *
          * @sample {highcharts} highcharts/yaxis/offset/
          *         Y axis offset of 70
          * @sample {highcharts} highcharts/yaxis/offset-centered/
          *         Axes positioned in the center of the plot
+         * @sample {highcharts} highcharts/yaxis/radial-offset
+         *         Radial axis offset in gauge
          * @sample {highstock} stock/xaxis/offset/
          *         Y axis offset by 70 px
          *
@@ -2101,17 +2108,25 @@ namespace AxisDefaults {
              */
 
             /**
-             * The distance of the axis title from the axis line. By default,
-             * this distance is computed from the offset width of the labels,
-             * the labels' distance from the axis and the title's margin.
-             * However when the offset option is set, it overrides all this.
+             * The distance from the plot area to the axis line. A positive
+             * offset moves the axis with its line, labels and ticks away from
+             * the plot area. With multiple axes the offset is dynamically
+             * adjusted to avoid collision, this can be overridden by setting
+             * offset explicitly.
              *
-             * @sample {highcharts} highcharts/yaxis/title-offset/
-             *         Place the axis title on top of the axis
-             * @sample {highstock} highcharts/yaxis/title-offset/
-             *         Place the axis title on top of the Y axis
+             * For radial axes in gauges, the offset can be a percentage string,
+             * and defaults to render the line and ticks on the inside of the
+             * pane and plot bands (since v13). Labels are not affected by the
+             * offset in radial axes.
              *
-             * @type      {number}
+             * @sample highcharts/yaxis/offset/
+             *         Axis offfset
+             * @sample {highcharts} highcharts/yaxis/offset-centered/
+             *         Axes positioned in the center of the plot
+             * @sample {highstock} stock/xaxis/offset/
+             *         Y axis offset in stock chart
+             *
+             * @type      {number|string}
              * @since     2.2.0
              * @apioption xAxis.title.offset
              */
@@ -2220,7 +2235,7 @@ namespace AxisDefaults {
                 /**
                  * @type {Highcharts.ColorType}
                  */
-                color: Palette.neutralColor60,
+                color: 'var(--highcharts-neutral-color-60)',
                 /**
                  * @type {number|string}
                  */
@@ -2352,7 +2367,7 @@ namespace AxisDefaults {
          *
          * @type    {Highcharts.ColorType}
          */
-        minorGridLineColor: Palette.neutralColor5,
+        minorGridLineColor: 'var(--highcharts-neutral-color-5)',
 
         /**
          * Width of the minor, secondary grid lines.
@@ -2379,7 +2394,7 @@ namespace AxisDefaults {
          *
          * @type    {Highcharts.ColorType}
          */
-        minorTickColor: Palette.neutralColor40,
+        minorTickColor: 'var(--highcharts-neutral-color-40)',
 
         /**
          * The color of the line marking the axis itself.
@@ -2396,7 +2411,7 @@ namespace AxisDefaults {
          *
          * @type    {Highcharts.ColorType}
          */
-        lineColor: Palette.neutralColor80,
+        lineColor: 'var(--highcharts-neutral-color-80)',
 
         /**
          * The width of the line marking the axis itself.
@@ -2434,12 +2449,15 @@ namespace AxisDefaults {
          *
          * @type    {Highcharts.ColorType}
          */
-        gridLineColor: Palette.neutralColor10,
+        gridLineColor: 'var(--highcharts-neutral-color-10)',
 
         /**
          * The width of the grid lines extending the ticks across the plot area.
          * Defaults to 1 on the Y axis and 0 on the X axis, except for 3d
-         * charts.
+         * charts and gauges.
+         *
+         * In gauges, the grid lines are limited to the pane's `size` and
+         * `innerSize`.
          *
          * In styled mode, the stroke width is given in the
          * `.highcharts-grid-line` class.
@@ -2448,6 +2466,8 @@ namespace AxisDefaults {
          *         2px lines
          * @sample {highcharts|highstock} highcharts/css/axis-grid/
          *         Styled mode
+         * @sample {highcharts} highcharts/yaxis/radial-gridline
+         *         Grid lines on gauge
          * @sample {highstock} stock/xaxis/gridlinewidth/
          *         2px lines
          *
@@ -2501,7 +2521,7 @@ namespace AxisDefaults {
          *
          * @type    {Highcharts.ColorType}
          */
-        tickColor: Palette.neutralColor80
+        tickColor: 'var(--highcharts-neutral-color-80)'
 
         // `tickWidth: 1`
     };
@@ -3365,7 +3385,7 @@ namespace AxisDefaults {
              */
             style: {
                 /** @type {Highcharts.ColorType} */
-                color: Palette.neutralColor100,
+                color: 'var(--highcharts-neutral-color-100)',
 
                 /**
                  * @type {number|string}

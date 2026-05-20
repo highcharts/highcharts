@@ -32,15 +32,12 @@ import type {
 import type Series from './Series/Series';
 import type SVGElement from './Renderer/SVG/SVGElement';
 
-import Color from './Color/Color.js';
-const { parse: color } = Color;
 import H from './Globals.js';
 const {
     charts,
     composed,
     isTouchDevice
 } = H;
-import { Palette } from '../Core/Color/Palettes.js';
 import SVGAttributes from './Renderer/SVG/SVGAttributes';
 import {
     addEvent,
@@ -446,11 +443,12 @@ class Pointer {
                 mouseDownX = 0,
                 mouseDownY = 0
             } = chart,
+            chartOptions = chart.options,
             {
                 panning,
                 panKey,
                 selectionMarkerFill
-            } = chart.options.chart,
+            } = chartOptions.chart,
             plotLeft = chart.plotLeft,
             plotTop = chart.plotTop,
             plotWidth = chart.plotWidth,
@@ -523,10 +521,7 @@ class Pointer {
 
                     if (!chart.styledMode) {
                         selectionMarker.attr({
-                            fill:
-                                selectionMarkerFill ||
-                                color(Palette.highlightColor80)
-                                    .setOpacity(0.25).get()
+                            fill: selectionMarkerFill
                         });
                     }
                 }

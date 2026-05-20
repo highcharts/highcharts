@@ -35,7 +35,7 @@ import type { ColumnDataType } from './Table/Column';
 import type { DataProviderOptionsType } from './Data/DataProviderType';
 import type DataTable from '../../Data/DataTable';
 import type { CellType as DataTableCellType } from '../../Data/DataTable';
-import type DataTableOptions from '../../Data/DataTableOptions';
+import type { DataTableOptionsObject } from '../../Data/DataTableOptions';
 import type Cell from './Table/Cell';
 import type Column from './Table/Column';
 import type TableCell from './Table/Body/TableCell';
@@ -271,7 +271,7 @@ export interface Options {
      * @deprecated
      * Use `data.dataTable` instead.
      */
-    dataTable?: DataTable | DataTableOptions;
+    dataTable?: DataTable | DataTableOptionsObject;
 
     /**
      * Options for the description of the grid.

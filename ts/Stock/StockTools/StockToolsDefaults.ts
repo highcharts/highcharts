@@ -613,6 +613,8 @@ const lang: LangOptions = {
  * @sample stock/demo/stock-tools-custom-gui Stock Tools customized GUI
  *
  * @since        7.0.0
+ *
+ * @requires stock/modules/stock-tools
  * @optionparent stockTools
  */
 const stockTools: StockToolsOptions = {

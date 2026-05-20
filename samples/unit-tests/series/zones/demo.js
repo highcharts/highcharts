@@ -227,7 +227,7 @@ QUnit.test('Zones and column presentational props (#6234)', assert => {
 
     assert.strictEqual(
         points[0].graphic.element.getAttribute('stroke'),
-        '#ffffff',
+        'var(--highcharts-background-color)',
         'No zones stroke'
     );
 
