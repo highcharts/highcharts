@@ -31,6 +31,7 @@ const {
     pageLang
 } = G;
 import {
+    correctFloat,
     extend,
     getNestedProperty,
     isArray,
@@ -79,7 +80,7 @@ const helpers: Record<string, Function> = {
     'if': (condition: string[] | undefined): boolean => !!condition,
     le: (a: number, b: number): boolean => a <= b,
     lt: (a: number, b: number): boolean => a < b,
-    multiply: (a: number, b: number): number => a * b,
+    multiply: (a: number, b: number): number => correctFloat(a * b, 15),
     // eslint-disable-next-line eqeqeq
     ne: (a: unknown, b: unknown): boolean => a != b,
     subtract: (a: number, b: number): number => a - b,
