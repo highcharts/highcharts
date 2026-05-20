@@ -1,7 +1,7 @@
 (async () => {
 
     const json = await fetch(
-        'https://www.highcharts.com/samples/data/morningstar/magnum-ice-cream-company-ohlcv.json'
+        'https://cdn.jsdelivr.net/gh/highcharts/highcharts@f856865fbf/samples/data/morningstar/magnum-ice-cream-company-ohlcv.json'
     ).then(r => r.json());
 
     const rawData = json.ts.results[0].data;
