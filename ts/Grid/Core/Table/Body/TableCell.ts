@@ -184,13 +184,22 @@ class TableCell extends Cell {
             }
         }
 
+        const cellsOptions = this.column.options.cells;
+
+        // Always run content.update() — `afterRender` listeners (e.g.
+        // tree-view's decoration hook) rely on a freshly-rendered cell
+        // body, so skipping the update would let stale wrappers nest into
+        // the next pass.
         if (this.content) {
             this.content.update();
         } else {
             this.content = this.column.createCellContent(this);
         }
 
-        this.htmlElement.setAttribute('data-value', this.value + '');
+        const valueAttribute = this.value + '';
+        if (this.htmlElement.getAttribute('data-value') !== valueAttribute) {
+            this.htmlElement.setAttribute('data-value', valueAttribute);
+        }
 
         // Set alignment in column cells based on column data type
         this.htmlElement.classList[
@@ -198,7 +207,7 @@ class TableCell extends Cell {
         ](Globals.getClassName('rightAlign'));
 
         // Add custom class name from column options
-        this.setCustomClassName(this.column.options.cells?.className);
+        this.setCustomClassName(cellsOptions?.className);
 
         this.setCustomStyles(this.getCellStyles());
 

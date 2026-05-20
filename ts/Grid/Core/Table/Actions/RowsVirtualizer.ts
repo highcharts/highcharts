@@ -424,12 +424,17 @@ class RowsVirtualizer {
         const maxRowCursor = Math.max(0, this.rowCount - 1);
         rowCursor = Math.min(rowCursor, maxRowCursor);
         if (this.rowCursor !== rowCursor) {
-            await this.renderRows(rowCursor);
+            // The renderRows method is responsible for calling
+            // adjustRowHeights and adjustRowOffsets on success — including
+            // the queued pass that runs after this one returns false.
+            if (!await this.renderRows(rowCursor)) {
+                return;
+            }
+        } else {
+            this.adjustRowHeights();
+            this.adjustRowOffsets();
         }
-        this.rowCursor = rowCursor;
 
-        this.adjustRowHeights();
-        this.adjustRowOffsets();
         if (
             !this.strictRowHeights &&
             lastScrollTop > target.scrollTop &&
@@ -510,12 +515,12 @@ class RowsVirtualizer {
      * @param rowCursor
      * The index of the first visible row.
      */
-    private async renderRows(rowCursor: number): Promise<void> {
+    private async renderRows(rowCursor: number): Promise<boolean> {
         // Prevent concurrent render operations. Queue the latest cursor and
         // render it once the current pass completes.
         if (this.isRendering) {
             this.pendingRowCursor = rowCursor;
-            return;
+            return false;
         }
 
         this.isRendering = true;
@@ -533,10 +538,11 @@ class RowsVirtualizer {
                 }
                 vp.tbodyElement.innerHTML = '';
                 this.rowCursor = 0;
-                return;
+                return true;
             }
 
             const rowEnd = rowCount - 1;
+            rowCursor = Math.min(Math.max(rowCursor, 0), rowEnd);
             const isVirtualization = this.viewport.virtualRows;
 
             if (isVirtualization && vp.grid.popups.size) {
@@ -597,102 +603,79 @@ class RowsVirtualizer {
                 rowEnd - 1
             );
 
-            const tempRows: TableRow[] = [];
-            const currentFrom = rows[0]?.index;
-            const currentTo = rows[rows.length - 1]?.index;
-            const hasOverlap = (
-                rows.length > 0 &&
-                defined(currentFrom) &&
-                defined(currentTo) &&
-                !(to < currentFrom || from > currentTo)
-            );
-
-            if (!hasOverlap) {
-                // Remove rows that are out of the range except the last row.
-                for (let i = 0, iEnd = rows.length; i < iEnd; ++i) {
-                    const row = rows[i];
-                    const rowIndex = row.index;
-
-                    if (rowIndex < from || rowIndex > to) {
-                        this.poolRow(row);
-                    } else {
-                        tempRows.push(row);
-                    }
-                }
-
-                rows = tempRows;
-                vp.rows = rows;
-
-                for (let i = from; i <= to; ++i) {
-                    const firstRowIndex =
-                        rows.length > 0 ? rows[0].index : from;
-                    const row = rows[i - firstRowIndex];
-                    // Recreate the row when it is missing from the target
-                    // range.
-                    if (!row) {
-                        rows.push(await this.getOrCreateRow(i));
-                    }
-                }
-
-                rows.sort((a, b): number => a.index - b.index);
-            } else {
-                // Remove rows outside the range from the start.
-                while (rows.length && rows[0].index < from) {
-                    this.poolRow(rows.shift() as TableRow);
-                }
-
-                // Remove rows outside the range from the end.
-                while (rows.length && rows[rows.length - 1].index > to) {
-                    this.poolRow(rows.pop() as TableRow);
-                }
-
-                if (!rows.length) {
-                    for (let i = from; i <= to; ++i) {
-                        rows.push(await this.getOrCreateRow(i));
-                    }
-                } else {
-                    // Add rows before the current range.
-                    for (let i = rows[0].index - 1; i >= from; --i) {
-                        rows.unshift(await this.getOrCreateRow(i));
-                    }
-
-                    // Add rows after the current range.
-                    const lastRowIndex = rows[rows.length - 1].index + 1;
-                    for (let i = lastRowIndex; i <= to; ++i) {
-                        rows.push(await this.getOrCreateRow(i));
-                    }
-                }
-
-                vp.rows = rows;
-            }
+            const keptRows = new Map<number, TableRow>();
 
             for (let i = 0, iEnd = rows.length; i < iEnd; ++i) {
                 const row = rows[i];
+                const rowIndex = row.index;
+
+                if (rowIndex >= from && rowIndex <= to) {
+                    keptRows.set(rowIndex, row);
+                } else {
+                    this.poolRow(row);
+                }
+            }
+
+            rows = await Promise.all(Array.from(
+                { length: Math.max(to - from + 1, 0) },
+                (_row, i): TableRow | Promise<TableRow> => {
+                    const index = from + i;
+                    return keptRows.get(index) || this.getOrCreateRow(index);
+                }
+            ));
+            vp.rows = rows;
+
+            await Promise.all(
+                rows
+                    .filter((row): boolean => (
+                        !row.rendered &&
+                        !row.htmlElement.hasAttribute('data-row-index')
+                    ))
+                    .map((row): Promise<void> => row.init())
+            );
+
+            const rowsToRender: TableRow[] = [];
+            const insertBeforeNode = (
+                alwaysLastRow?.htmlElement.isConnected ?
+                    alwaysLastRow.htmlElement :
+                    null
+            );
+            for (let i = 0, iEnd = rows.length; i < iEnd; ++i) {
+                const row = rows[i];
                 if (!row.rendered) {
-                    // Ensure the row is initialized before rendering.
-                    if (!row.htmlElement.hasAttribute('data-row-index')) {
-                        await row.init();
-                    }
                     vp.tbodyElement.insertBefore(
                         row.htmlElement,
-                        vp.tbodyElement.lastChild
+                        insertBeforeNode
                     );
-                    await row.render();
-                    if (isVirtualization) {
-                        const topOffset = Math.min(
-                            row.getDefaultTopOffset(),
-                            this.maxElementHeight - row.htmlElement.offsetHeight
-                        );
-                        row.setTranslateY(topOffset);
-                    }
+                    rowsToRender.push(row);
                     continue;
                 }
 
                 if (!row.htmlElement.isConnected) {
                     vp.tbodyElement.insertBefore(
                         row.htmlElement,
-                        vp.tbodyElement.lastChild
+                        insertBeforeNode
                     );
+                }
+            }
+
+            await Promise.all(rowsToRender.map(
+                (row): Promise<void> => row.render()
+            ));
+
+            if (isVirtualization) {
+                // Batch reads before writes so we force layout once for the
+                // whole set instead of once per row.
+                const heights = rowsToRender.map(
+                    (row): number => row.htmlElement.offsetHeight
+                );
+                for (let i = 0, iEnd = rowsToRender.length; i < iEnd; ++i) {
+                    const row = rowsToRender[i];
+                    const topOffset = Math.min(
+                        row.getDefaultTopOffset(),
+                        this.maxElementHeight - heights[i]
+                    );
+                    row.setTranslateY(topOffset);
                 }
             }
 
@@ -724,6 +707,8 @@ class RowsVirtualizer {
 
                 rows.push(alwaysLastRow);
             }
+
+            this.rowCursor = rowCursor;
 
             // Focus the cell if the focus cursor is set
             const hadPendingFocusCursor = !!vp.pendingFocusCursor;
@@ -775,6 +760,14 @@ class RowsVirtualizer {
 
             await vp.syncAriaRowIndexes();
             await this.afterRenderRows?.();
+
+            this.adjustRowHeights();
+            // Only virtualized rows use translateY positioning; running this
+            // for static layout would offset rows out of the viewport.
+            if (isVirtualization) {
+                this.adjustRowOffsets();
+            }
+            return true;
         } finally {
             this.isRendering = false;
 
@@ -807,22 +800,25 @@ class RowsVirtualizer {
             return;
         }
 
-        let translateBuffer = rows[0].getDefaultTopOffset();
+        const firstVisibleProgress = (
+            tbodyElement.scrollTop / defaultH -
+            Math.floor(cursor - this.scrollOffset / defaultH)
+        );
 
+        // First reset heights/transforms, then measure. Keeping reads grouped
+        // before writes avoids repeated forced layout work during scroll.
         for (let i = 0; i < rowsLn; ++i) {
             const row = rows[i];
+            row.effectiveHeight = void 0;
 
-            // Skip if row is not fully rendered or has no cells
             if (
                 !row.rendered ||
                 !row.cells.length ||
                 !row.cells[0]?.htmlElement
             ) {
-                row.htmlElement.style.height = defaultH + 'px';
                 continue;
             }
 
-            // Reset row height and cell transforms
             row.htmlElement.style.height = '';
             if (row.cells[0].htmlElement.style.transform) {
                 for (let j = 0, jEnd = row.cells.length; j < jEnd; ++j) {
@@ -832,47 +828,72 @@ class RowsVirtualizer {
                     }
                 }
             }
+        }
 
-            // Rows above the first visible row
+        for (let i = 0; i < rowsLn; ++i) {
+            const row = rows[i];
+
+            if (
+                !row.rendered ||
+                !row.cells.length ||
+                !row.cells[0]?.htmlElement
+            ) {
+                row.effectiveHeight = defaultH;
+                continue;
+            }
+
+            if (row.index < cursor) {
+                row.effectiveHeight = defaultH;
+                continue;
+            }
+
+            row.effectiveHeight = row.cells[0].htmlElement.offsetHeight;
+        }
+
+        for (let i = 0; i < rowsLn; ++i) {
+            const row = rows[i];
+            const measuredHeight = row.effectiveHeight ?? defaultH;
+
             if (row.index < cursor) {
                 row.htmlElement.style.height = defaultH + 'px';
                 continue;
             }
 
-            const cellHeight = row.cells[0].htmlElement.offsetHeight;
-            row.htmlElement.style.height = cellHeight + 'px';
-
-            // Rows below the first visible row
             if (row.index > cursor) {
+                row.htmlElement.style.height = measuredHeight + 'px';
                 continue;
             }
 
-            // First visible row
-            if (row.htmlElement.offsetHeight > defaultH) {
+            if (measuredHeight > defaultH) {
                 const newHeight = Math.floor(
-                    cellHeight - (cellHeight - defaultH) * (
-                        tbodyElement.scrollTop / defaultH - Math.floor(
-                            cursor - this.scrollOffset / defaultH
-                        )
-                    )
+                    measuredHeight -
+                    (measuredHeight - defaultH) * firstVisibleProgress
                 );
 
                 row.htmlElement.style.height = newHeight + 'px';
+                // After scroll interpolation the row no longer occupies its
+                // raw measured height; remember the value used for layout so
+                // adjustRowOffsets places the next row correctly.
+                row.effectiveHeight = newHeight;
 
                 for (let j = 0, jEnd = row.cells.length; j < jEnd; ++j) {
                     const cell = row.cells[j];
                     if (cell?.htmlElement) {
                         cell.htmlElement.style.transform = `translateY(${
-                            newHeight - cellHeight
+                            newHeight - measuredHeight
                         }px)`;
                     }
                 }
+                continue;
             }
+
+            row.htmlElement.style.height = measuredHeight + 'px';
         }
 
+        let translateBuffer = rows[0].getDefaultTopOffset();
         rows[0].setTranslateY(translateBuffer);
         for (let i = 1, iEnd = rowsLn - 1; i < iEnd; ++i) {
-            translateBuffer += rows[i - 1].htmlElement.offsetHeight;
+            translateBuffer += rows[i - 1].getEffectiveHeight();
             rows[i].setTranslateY(translateBuffer);
         }
 
@@ -881,7 +902,7 @@ class RowsVirtualizer {
         const preLastRow = rows[rowsLn - 2];
         if (preLastRow && preLastRow.index === lastRow.index - 1) {
             lastRow.setTranslateY(
-                preLastRow.htmlElement.offsetHeight + translateBuffer
+                preLastRow.getEffectiveHeight() + translateBuffer
             );
         }
     }
@@ -1062,6 +1083,10 @@ class RowsVirtualizer {
             this.viewport.preserveFocusDuringDetach();
         }
 
+        // The pooled row's previous layout pass is irrelevant once it is
+        // detached; clearing the cache prevents stale heights leaking into
+        // the next reuse before adjustRowHeights runs.
+        row.effectiveHeight = void 0;
         row.htmlElement.remove();
         if (this.rowPool.length < RowsVirtualizer.MAX_POOL_SIZE) {
             this.rowPool.push(row);
@@ -1136,16 +1161,13 @@ class RowsVirtualizer {
         translateBuffer = Math.floor(translateBuffer - this.scrollOffset);
 
         if (isSecondToLastRowVisible && this.gridHeightOverflow > 0) {
-            lastRow.setTranslateY(
-                this.maxElementHeight -
-                lastRow.htmlElement.offsetHeight
-            );
+            const lastRowBottom =
+                this.maxElementHeight - lastRow.getEffectiveHeight();
+            lastRow.setTranslateY(lastRowBottom);
 
-            let bottomOffset = this.maxElementHeight -
-                lastRow.htmlElement.offsetHeight;
-
+            let bottomOffset = lastRowBottom;
             for (let i = rowsLn - 2; i >= 0; i--) {
-                bottomOffset -= rows[i].htmlElement.offsetHeight;
+                bottomOffset -= rows[i].getEffectiveHeight();
                 rows[i].setTranslateY(bottomOffset);
             }
 
@@ -1154,7 +1176,7 @@ class RowsVirtualizer {
 
         rows[0].setTranslateY(translateBuffer);
         for (let i = 1, iEnd = rowsLn - 1; i < iEnd; ++i) {
-            translateBuffer += rows[i - 1].htmlElement.offsetHeight;
+            translateBuffer += rows[i - 1].getEffectiveHeight();
             rows[i].setTranslateY(translateBuffer);
         }
         if (this.gridHeightOverflow > 0) {
@@ -1166,7 +1188,7 @@ class RowsVirtualizer {
 
         if (preLastRow && preLastRow.index === lastRow.index - 1) {
             lastRow.setTranslateY(
-                preLastRow.htmlElement.offsetHeight + translateBuffer
+                preLastRow.getEffectiveHeight() + translateBuffer
             );
         }
     }

@@ -347,16 +347,25 @@ abstract class Cell {
     protected setCustomClassName(template?: string): void {
         const element = this.htmlElement;
 
-        if (this.customClassName) {
-            element.classList.remove(...this.customClassName.split(/\s+/g));
-        }
-
         if (!template) {
+            if (this.customClassName) {
+                element.classList.remove(
+                    ...this.customClassName.split(/\s+/g)
+                );
+            }
             delete this.customClassName;
             return;
         }
 
         const newClassName = this.format(template);
+        if (newClassName === this.customClassName) {
+            return;
+        }
+
+        if (this.customClassName) {
+            element.classList.remove(...this.customClassName.split(/\s+/g));
+        }
+
         if (!newClassName) {
             delete this.customClassName;
             return;

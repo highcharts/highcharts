@@ -72,6 +72,14 @@ class TableRow extends Row {
      */
     public translateY: number = 0;
 
+    /**
+     * Effective row height used by the current virtualizer layout pass — may
+     * be the raw measured height or, for the cursor row scrolling into view,
+     * the interpolated value used for translate buffer math.
+     * @internal
+     */
+    public effectiveHeight?: number;
+
 
     /* *
     *
@@ -137,10 +145,9 @@ class TableRow extends Row {
 
         await this.loadData();
 
-        for (let i = 0, iEnd = this.cells.length; i < iEnd; ++i) {
-            const cell = this.cells[i] as TableCell;
-            await cell.setValue();
-        }
+        await Promise.all(this.cells.map((cell): Promise<void> =>
+            (cell as TableCell).setValue()
+        ));
 
         this.reflow();
     }
@@ -171,10 +178,9 @@ class TableRow extends Row {
 
         await this.loadData();
 
-        for (let i = 0, iEnd = this.cells.length; i < iEnd; ++i) {
-            const cell = this.cells[i] as TableCell;
-            await cell.setValue();
-        }
+        await Promise.all(this.cells.map((cell): Promise<void> =>
+            (cell as TableCell).setValue()
+        ));
 
         this.reflow();
     }
@@ -293,6 +299,15 @@ class TableRow extends Row {
     public setTranslateY(value: number): void {
         this.translateY = value;
         this.htmlElement.style.transform = `translateY(${value}px)`;
+    }
+
+    /**
+     * Returns the current row height without forcing a layout read when an
+     * effective height is already cached for the active layout pass.
+     * @internal
+     */
+    public getEffectiveHeight(): number {
+        return this.effectiveHeight ?? this.htmlElement.offsetHeight;
     }
 
     /**
