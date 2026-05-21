@@ -567,6 +567,7 @@ class BubbleSeries extends ScatterSeries {
             this.tooltipOptions.shared ||
             this.tooltipOptions.split
         );
+        this.directTouch = !this.noSharedTooltip;
     }
 
     /**
@@ -947,7 +948,6 @@ extend(BubbleSeries.prototype, {
     alignDataLabel: columnProto.alignDataLabel,
     applyZones: noop,
     bubblePadding: true,
-    directTouch: true,
     isBubble: true,
     keysAffectYAxis: ['y'],
     pointArrayMap: ['y', 'z'],
