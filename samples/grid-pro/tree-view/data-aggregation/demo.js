@@ -40,7 +40,7 @@ Grid.grid('container', {
         }
     },
     columnDefaults: {
-        width: 124,
+        width: 78,
         cells: {
             editMode: {
                 enabled: true
@@ -52,7 +52,8 @@ Grid.grid('container', {
         header: {
             format: 'Team / Department'
         },
-        width: 'auto'
+        width: 'auto',
+        minWidth: 200
     }, {
         id: 'budget',
         header: {
@@ -99,6 +100,7 @@ Grid.grid('container', {
         }
     }, {
         id: 'risk',
+        width: 124,
         header: {
             format: 'Risk'
         },
