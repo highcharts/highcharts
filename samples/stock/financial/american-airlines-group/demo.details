@@ -1,0 +1,6 @@
+---
+ name: Highcharts Stock
+ authors:
+   - Paweł Dalek
+ js_wrap: b
+...
