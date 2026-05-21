@@ -1085,7 +1085,7 @@ class TreeProjectionController {
             rowsById
         );
 
-        const projectedRowIds: RowId[] = [];
+        const projectedNodeIds: RowId[] = [];
 
         const visitVisibleNode = (nodeId: RowId): void => {
             const rowState = rowsById.get(nodeId);
@@ -1093,7 +1093,7 @@ class TreeProjectionController {
                 return;
             }
 
-            projectedRowIds.push(nodeId);
+            projectedNodeIds.push(nodeId);
 
             if (!rowState.childrenIds.length || !rowState.isExpanded) {
                 return;
@@ -1113,10 +1113,10 @@ class TreeProjectionController {
         }
 
         const rowStateStack: TreeProjectionRowState[] = [];
-        let lastVisitedRowId: RowId | undefined;
+        let lastVisitedNodeId: RowId | undefined;
 
-        for (let i = 0, iEnd = projectedRowIds.length; i < iEnd; ++i) {
-            const rowState = rowsById.get(projectedRowIds[i]);
+        for (let i = 0, iEnd = projectedNodeIds.length; i < iEnd; ++i) {
+            const rowState = rowsById.get(projectedNodeIds[i]);
             if (!rowState) {
                 continue;
             }
@@ -1125,39 +1125,39 @@ class TreeProjectionController {
                 const completedState = rowStateStack.pop();
                 if (
                     completedState &&
-                    typeof lastVisitedRowId !== 'undefined'
+                    typeof lastVisitedNodeId !== 'undefined'
                 ) {
-                    completedState.lastVisibleDescendantId = lastVisitedRowId;
+                    completedState.lastVisibleDescendantId = lastVisitedNodeId;
                 }
             }
 
             rowStateStack.push(rowState);
-            lastVisitedRowId = rowState.id;
+            lastVisitedNodeId = rowState.id;
         }
 
         while (rowStateStack.length) {
             const completedState = rowStateStack.pop();
             if (
                 completedState &&
-                typeof lastVisitedRowId !== 'undefined'
+                typeof lastVisitedNodeId !== 'undefined'
             ) {
-                completedState.lastVisibleDescendantId = lastVisitedRowId;
+                completedState.lastVisibleDescendantId = lastVisitedNodeId;
             }
         }
 
         this.injectedAncestorIds = injectedAncestorIds;
 
         const projectedIndexes = new Array<number | undefined>(
-            projectedRowIds.length
+            projectedNodeIds.length
         );
-        for (let i = 0, iEnd = projectedRowIds.length; i < iEnd; ++i) {
-            const rowIndex = rowIndexById.get(projectedRowIds[i]);
+        for (let i = 0, iEnd = projectedNodeIds.length; i < iEnd; ++i) {
+            const rowIndex = rowIndexById.get(projectedNodeIds[i]);
             if (typeof rowIndex === 'number') {
                 projectedIndexes[i] = rowIndex;
                 continue;
             }
 
-            const nodeId = projectedRowIds[i];
+            const nodeId = projectedNodeIds[i];
             const node = index.nodes.get(nodeId);
             if (
                 !node ||
@@ -1175,7 +1175,9 @@ class TreeProjectionController {
 
         return {
             derivedCellColumnIdsByRowId: new Map(),
-            rowIds: projectedRowIds,
+            // `rowIds` stores projected tree node IDs, including generated
+            // path parents without a backing source row.
+            rowIds: projectedNodeIds,
             rowIndexes: projectedIndexes,
             sourceRowIndexesById: rowIndexById,
             rowsById

@@ -99,7 +99,7 @@ export function buildIndexFromColumns(
     const rootIds: RowId[] = [];
 
     for (let rowIndex = 0; rowIndex < rowCount; ++rowIndex) {
-        const id = idColumn ?
+        const nodeId = idColumn ?
             normalizeRowIdValue(
                 columns[idColumn]?.[rowIndex],
                 idColumn,
@@ -107,7 +107,7 @@ export function buildIndexFromColumns(
             ) :
             table.getOriginalRowIndex(rowIndex);
 
-        if (!defined(id)) {
+        if (!defined(nodeId)) {
             throw new Error(
                 'TreeView: Could not resolve original row index ' +
                 `at row ${rowIndex}.`
@@ -121,12 +121,12 @@ export function buildIndexFromColumns(
         );
         const { hierarchy, path } = normalizedPath;
 
-        if (nodes.has(id)) {
+        if (nodes.has(nodeId)) {
             throw new Error(
                 idColumn ?
-                    `TreeView: Duplicate row id "${String(id)}" in column ` +
+                    `TreeView: Duplicate row id "${String(nodeId)}" in column ` +
                         `"${idColumn}" at row ${rowIndex}.` :
-                    `TreeView: Duplicate original row index "${String(id)}" ` +
+                    `TreeView: Duplicate original row index "${String(nodeId)}" ` +
                         `at row ${rowIndex}.`
             );
         }
@@ -138,17 +138,17 @@ export function buildIndexFromColumns(
             );
         }
 
-        nodes.set(id, {
-            id,
+        nodes.set(nodeId, {
+            id: nodeId,
             parentId: null,
             rowIndex,
             path,
             childrenIds: []
         });
-        rowOrder.push(id);
-        pathToId.set(path, id);
-        pathById.set(id, path);
-        hierarchyById.set(id, hierarchy);
+        rowOrder.push(nodeId);
+        pathToId.set(path, nodeId);
+        pathById.set(nodeId, path);
+        hierarchyById.set(nodeId, hierarchy);
 
         for (let i = 0, iEnd = hierarchy.length; i < iEnd; ++i) {
             const hierarchyPath = hierarchy[i];
@@ -173,7 +173,7 @@ export function buildIndexFromColumns(
      * Path to ensure node for.
      *
      * @returns
-     * Existing or generated node ID.
+     * Existing or generated tree node ID.
      */
     function ensureNodeForPath(path: string): RowId {
         const existingId = pathToId.get(path);
@@ -188,9 +188,9 @@ export function buildIndexFromColumns(
                 ensureNodeForPath(parentPath)
         );
 
-        const generatedId = createGeneratedRowId(path, nodes);
-        nodes.set(generatedId, {
-            id: generatedId,
+        const generatedNodeId = createGeneratedRowId(path, nodes);
+        nodes.set(generatedNodeId, {
+            id: generatedNodeId,
             parentId,
             rowIndex: null,
             isGenerated: true,
@@ -198,17 +198,17 @@ export function buildIndexFromColumns(
             childrenIds: []
         });
 
-        rowOrder.push(generatedId);
-        pathToId.set(path, generatedId);
-        pathById.set(generatedId, path);
+        rowOrder.push(generatedNodeId);
+        pathToId.set(path, generatedNodeId);
+        pathById.set(generatedNodeId, path);
 
         if (parentId === null) {
-            rootIds.push(generatedId);
+            rootIds.push(generatedNodeId);
         } else {
-            nodes.get(parentId)?.childrenIds.push(generatedId);
+            nodes.get(parentId)?.childrenIds.push(generatedNodeId);
         }
 
-        return generatedId;
+        return generatedNodeId;
     }
 
     for (let i = 0, iEnd = sourceRowOrder.length; i < iEnd; ++i) {
