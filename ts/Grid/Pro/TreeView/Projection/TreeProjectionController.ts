@@ -229,8 +229,6 @@ class TreeProjectionController {
 
     private projectionStateCache?: TreeProjectionState;
 
-    private injectedAncestorIds?: Set<RowId>;
-
     private expansionStateSeedKey?: string;
 
     private resolvedOptions?: ResolvedTreeViewOptions;
@@ -612,7 +610,6 @@ class TreeProjectionController {
     private clearCache(): void {
         this.indexCache = void 0;
         this.projectionStateCache = void 0;
-        this.injectedAncestorIds = void 0;
         this.cacheSource = void 0;
     }
 
@@ -1145,8 +1142,6 @@ class TreeProjectionController {
             }
         }
 
-        this.injectedAncestorIds = injectedAncestorIds;
-
         const projectedIndexes = new Array<number | undefined>(
             projectedNodeIds.length
         );
@@ -1392,7 +1387,9 @@ class TreeProjectionController {
             const rowIndex = rowIndexes[i];
             if (typeof rowIndex === 'number') {
                 originalRowIndexes[i] = table.getOriginalRowIndex(rowIndex);
-            } else if (this.injectedAncestorIds?.has(rowIds[i])) {
+            } else if (
+                projectionState.rowsById.get(rowIds[i])?.isAncestorOnly
+            ) {
                 const node = this.indexCache?.nodes.get(rowIds[i]);
                 originalRowIndexes[i] = (
                     typeof node?.rowIndex === 'number' ?
@@ -1460,7 +1457,7 @@ class TreeProjectionController {
             return table.columns[columnId]?.[rowIndex] as DataTableCellType;
         }
 
-        if (this.injectedAncestorIds?.has(rowId)) {
+        if (projectionState.rowsById.get(rowId)?.isAncestorOnly) {
             return this.getSourceTableCellValue(columnId, rowId);
         }
 

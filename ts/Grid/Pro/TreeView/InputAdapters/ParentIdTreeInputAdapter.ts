@@ -118,8 +118,6 @@ export function buildIndexFromColumns(
         rowOrder.push(id);
     }
 
-    const rootIds: RowId[] = [];
-
     for (let i = 0, iEnd = rowOrder.length; i < iEnd; ++i) {
         const id = rowOrder[i];
         const node = nodes.get(id);
@@ -128,7 +126,6 @@ export function buildIndexFromColumns(
         }
 
         if (node.parentId === null) {
-            rootIds.push(node.id);
             continue;
         }
 
@@ -147,8 +144,7 @@ export function buildIndexFromColumns(
 
     return {
         nodes,
-        rowOrder,
-        rootIds
+        rowOrder
     };
 }
 

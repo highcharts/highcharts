@@ -96,7 +96,6 @@ export function buildIndexFromColumns(
     const pathById = new Map<RowId, string>();
     const hierarchyById = new Map<RowId, string[]>();
     const parentPathByPath = new Map<string, string | null>();
-    const rootIds: RowId[] = [];
 
     for (let rowIndex = 0; rowIndex < rowCount; ++rowIndex) {
         const nodeId = idColumn ?
@@ -202,9 +201,7 @@ export function buildIndexFromColumns(
         pathToId.set(path, generatedNodeId);
         pathById.set(generatedNodeId, path);
 
-        if (parentId === null) {
-            rootIds.push(generatedNodeId);
-        } else {
+        if (parentId !== null) {
             nodes.get(parentId)?.childrenIds.push(generatedNodeId);
         }
 
@@ -222,7 +219,6 @@ export function buildIndexFromColumns(
 
         const parentPath = parentPathByPath.get(path) ?? null;
         if (parentPath === null) {
-            rootIds.push(node.id);
             continue;
         }
 
@@ -234,8 +230,7 @@ export function buildIndexFromColumns(
 
     return {
         nodes,
-        rowOrder,
-        rootIds
+        rowOrder
     };
 }
 
