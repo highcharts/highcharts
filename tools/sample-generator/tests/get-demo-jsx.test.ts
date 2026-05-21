@@ -57,4 +57,65 @@ describe('sample-generator getDemoJSX', () => {
             'should call setHighcharts when modules are used'
         );
     });
+
+    it('uses @highcharts/react wrapper import for known wrapper modules (no setHighcharts)', async () => {
+        const jsx = await getDemoJSX(
+            {
+                modules: ['modules/accessibility'],
+                output: 'highcharts/react/unit-test/wrapper-module'
+            },
+            metaList
+        );
+
+        ok(
+            jsx.includes("import '@highcharts/react/modules/Accessibility';"),
+            'should import Accessibility module wrapper as a side-effect import'
+        );
+        ok(
+            !jsx.includes('setHighcharts('),
+            'should not call setHighcharts when all modules have wrappers'
+        );
+        ok(
+            !jsx.includes("import { Chart, setHighcharts }"),
+            'should not import setHighcharts from @highcharts/react'
+        );
+    });
+
+    it('uses setHighcharts fallback for modules without wrappers (highcharts-more)', async () => {
+        const jsx = await getDemoJSX(
+            {
+                modules: ['highcharts-more'],
+                output: 'highcharts/react/unit-test/no-wrapper-module'
+            },
+            metaList
+        );
+
+        ok(
+            jsx.includes('setHighcharts(Highcharts);'),
+            'should call setHighcharts for modules without wrappers'
+        );
+        ok(
+            !jsx.includes("@highcharts/react/modules"),
+            'should not use wrapper imports for highcharts-more'
+        );
+    });
+
+    it('supports mixed: wrapper module + non-wrapper module coexist', async () => {
+        const jsx = await getDemoJSX(
+            {
+                modules: ['modules/accessibility', 'highcharts-more'],
+                output: 'highcharts/react/unit-test/mixed-modules'
+            },
+            metaList
+        );
+
+        ok(
+            jsx.includes("import '@highcharts/react/modules/Accessibility';"),
+            'should import Accessibility module wrapper as a side-effect import'
+        );
+        ok(
+            jsx.includes('setHighcharts(Highcharts);'),
+            'should call setHighcharts for the non-wrapper module'
+        );
+    });
 });

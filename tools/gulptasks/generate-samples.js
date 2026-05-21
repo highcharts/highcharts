@@ -44,8 +44,8 @@ function getOutputDir(configFile, outputMode) {
     const flattenedPath = normalizedRest.join('-');
 
     return flattenedPath ?
-        `${product}/react/${flattenedPath}` :
-        `${product}/react`;
+        `react/${product}/${flattenedPath}` :
+        `react/${product}`;
 }
 
 /* *
@@ -268,3 +268,5 @@ async function task() {
 }
 
 gulp.task('generate-samples', task);
+
+module.exports = { getOutputDir };
