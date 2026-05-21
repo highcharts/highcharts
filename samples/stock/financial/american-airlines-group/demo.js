@@ -12,23 +12,6 @@ const FIELD_MAP = {
 };
 
 /**
- * Parses a date and time string into a timestamp.
- *
- * @param dateStr A date string in the format 'DD-MM-YYYY'.
- * @param timeStr A time string in the format 'HH:MM:SS.sss'.
- *
- * @return {number} A timestamp in milliseconds.
- */
-function parseTimestamp(dateStr, timeStr) {
-    const [day, month, year] = dateStr.split('-').map(Number),
-        [hms, msPart] = timeStr.split('.'),
-        [hours, minutes, seconds] = hms.split(':').map(Number),
-        ms = msPart ? Number(msPart.padEnd(3, '0').slice(0, 3)) : 0;
-
-    return Date.UTC(year, month - 1, day, hours, minutes, seconds, ms);
-}
-
-/**
  * Loads and normalizes the dataset from the provided JSON file.
  *
  * @return {Promise<Array<object>>} Resolves to an array of normalized trade
@@ -46,7 +29,10 @@ async function loadDataset() {
             }
 
             // Parse and normalize the data types
-            row.timestamp = parseTimestamp(row.dateReceived, row.timeReceived);
+            row.dateReceived = row.dateReceived.split('-').reverse().join('-');
+            row.timestamp = new Date(
+                row.dateReceived + 'T' + row.timeReceived + 'Z'
+            ).getTime();
             row.price = Number(row.price);
             row.bid = Number(row.bid);
             row.ask = Number(row.ask);
@@ -95,7 +81,7 @@ function getPriceSeries(rows) {
  * table.
  */
 function getTradesTable(rows) {
-    const descRows = [...rows].sort((a, b) => b.timestamp - a.timestamp),
+    const descRows = [...rows],
         date = [],
         time = [],
         price = [],
@@ -254,6 +240,9 @@ function getTradesTable(rows) {
                     id: 'Time',
                     cells: {
                         format: '{value}'
+                    },
+                    sorting: {
+                        order: 'desc'
                     }
                 }, {
                     id: 'Volume',
