@@ -17,6 +17,12 @@ body {
     color: var(--highcharts-neutral-color-100);
 }
 
+#dashboard-container {
+    max-width: 1200px;
+    min-width: 320px;
+    margin: 0 auto;
+}
+
 .highcharts-description {
     margin: 0 20px 20px;
 }

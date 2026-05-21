@@ -44,14 +44,19 @@
             legend: {
                 layout: 'vertical',
                 align: 'right',
-                verticalAlign: 'top',
+                verticalAlign: 'middle',
                 y: 42,
                 margin: 0,
-                backgroundColor: `color-mix(
-                    in srgb,
-                    var(--highcharts-background-color, white),
-                    transparent 15%
-                )`
+                borderColor: 'var(--highcharts-neutral-color-5, #f2f2f2)',
+                borderWidth: 1,
+                borderRadius: 8,
+                backgroundColor: 'var(--highcharts-background-color, white)',
+                padding: 10,
+                shadow: {
+                    width: 1,
+                    opacity: 0.03
+                },
+                symbolRadius: 6
             },
 
             mapNavigation: {
@@ -59,12 +64,21 @@
             },
 
             colorAxis: {
-                min: 0,
-                max: 25,
+                min: -1,
+                max: 26,
                 tickInterval: 5,
                 labels: {
                     format: '{value}%'
-                }
+                },
+                startOnTick: false,
+                endOnTick: false,
+                minColor: '#ebf1ff',
+                maxColor: '#0048ff',
+                // Dots for ticks, extended also by custom CSS
+                tickColor: '#ffffff',
+                tickLength: 0.1,
+                tickWidth: 6,
+                gridLineWidth: 0
             },
 
             plotOptions: {

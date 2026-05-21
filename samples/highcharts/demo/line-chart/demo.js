@@ -1,4 +1,11 @@
 Highcharts.chart('container', {
+
+    chart: {
+        plotBorderColor: 'var(--highcharts-neutral-color-10, #e6e6e6)',
+        plotBorderWidth: 1,
+        plotBorderRadius: 5
+    },
+
     title: {
         text: 'Application users last 24 hours',
         align: 'left'
@@ -19,7 +26,10 @@ Highcharts.chart('container', {
         crosshair: true,
         dateTimeLabelFormats: {
             day: '%H:%M' // Don't show the date
-        }
+        },
+        lineWidth: 0,
+        tickLength: 6,
+        tickColor: 'var(--highcharts-neutral-color-10, #e6e6e6)'
     },
 
     legend: {
@@ -29,7 +39,6 @@ Highcharts.chart('container', {
     tooltip: {
         shared: true,
         fixed: true,
-        shadow: true,
         dateTimeLabelFormats: {
             hour: '%H:%M'
         }

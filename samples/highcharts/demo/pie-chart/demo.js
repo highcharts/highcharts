@@ -7,13 +7,18 @@ Highcharts.chart('container', {
         text: 'Support requests'
     },
 
-    colors: [
-        'var(--highcharts-color-0, #544fc5)',
-        'var(--highcharts-neutral-color-60, #666666)',
-        'var(--highcharts-neutral-color-40, #999999)',
-        'var(--highcharts-neutral-color-20, #cccccc)',
-        'var(--highcharts-neutral-color-10, #e6e6e6)'
-    ],
+    palette: {
+        light: {
+            colors: [
+                '#014CE5', '#A5AFB6', '#D6DBDE', '#E8EEF1', '#F5FCFF'
+            ]
+        },
+        dark: {
+            colors: [
+                '#216AFF', '#AABAC4', '#929FA7', '#818C93', '#697278'
+            ]
+        }
+    },
 
     tooltip: {
         valueSuffix: '%'
@@ -21,12 +26,13 @@ Highcharts.chart('container', {
 
     series: [{
         name: 'Requests',
-        colorByPoint: true,
         // We can show multiple data labels per point
         dataLabels: [{
-            format: '{point.name}'
+            format: '{point.name}',
+            connectorColor: 'var(--highcharts-neutral-color-80, #333)'
         }, {
             format: '{point.percentage:.0f}%',
+            backgroundColor: 'contrast',
             distance: -30, // Placing the label inside
             style: {
                 fontSize: '0.9em',

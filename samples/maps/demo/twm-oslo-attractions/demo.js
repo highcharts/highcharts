@@ -19,7 +19,7 @@ Highcharts.mapChart('container', {
         buttonOptions: {
             align: 'left',
             theme: {
-                stroke: '#e6e6e6'
+                stroke: 'var(highcharts-neutral-color-10, #e6e6e6)'
             }
         }
     },
@@ -27,7 +27,10 @@ Highcharts.mapChart('container', {
     mapNavigation: {
         enabled: true,
         buttonOptions: {
-            alignTo: 'spacingBox'
+            alignTo: 'spacingBox',
+            theme: {
+                stroke: 'var(highcharts-neutral-color-10, #e6e6e6)'
+            }
         }
     },
 

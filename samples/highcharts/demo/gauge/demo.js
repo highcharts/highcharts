@@ -38,6 +38,9 @@ Highcharts.chart('container', {
         data: [80000],
         tooltip: {
             valuePrefix: '$'
+        },
+        dataLabels: {
+            format: '${y:,.0f}'
         }
     }]
 

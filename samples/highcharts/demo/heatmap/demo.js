@@ -7,8 +7,9 @@ Highcharts.chart('container', {
 
     chart: {
         type: 'heatmap',
-        plotBorderWidth: 1,
         plotBorderColor: '#0443E1',
+        plotBorderWidth: 2,
+        plotBorderRadius: 5,
         marginBottom: 25
     },
 
@@ -87,7 +88,8 @@ Highcharts.chart('container', {
         format: '<div style="border-left: 3px solid {point.color};' +
             ' padding-left: 5px;"><b>{series.xAxis.categories.(point.x)}</b>' +
             ' sold <b>{point.value}</b><br>' +
-            'items on <b>{series.yAxis.categories.(point.y)}</b></div>'
+            'items on <b>{series.yAxis.categories.(point.y)}</b></div>',
+        padding: 12
     },
 
     series: [{
@@ -108,7 +110,10 @@ Highcharts.chart('container', {
         ],
         dataLabels: {
             enabled: true,
-            color: 'contrast'
+            color: 'contrast',
+            style: {
+                fontSize: '0.85em'
+            }
         }
     }],
 

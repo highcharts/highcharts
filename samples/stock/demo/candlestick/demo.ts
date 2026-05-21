@@ -52,6 +52,10 @@
         navigator: {
             height: 72,
             maskFill: 'rgba(44, 175, 254, 0.15)',
+            handles: {
+                width: 12,
+                borderRadius: 4
+            },
             series: {
                 fillColor: {
                     linearGradient: { x1: 0, x2: 0, y1: 0, y2: 1 },

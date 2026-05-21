@@ -49,8 +49,10 @@ getData().then(data => {
 
     Highcharts.chart('container', {
         chart: {
-            plotBorderWidth: 1,
             type: 'scatter',
+            plotBorderColor: 'var(--highcharts-neutral-color-10, #e6e6e6)',
+            plotBorderWidth: 1,
+            plotBorderRadius: 5,
             zooming: {
                 type: 'xy'
             }
@@ -69,11 +71,11 @@ getData().then(data => {
             labels: {
                 format: '{value} m'
             },
+            gridLineWidth: 1,
             lineWidth: 0,
             startOnTick: true,
             endOnTick: true,
-            showLastLabel: true,
-            tickColor: 'var(--highcharts-neutral-color-20, #ccc)'
+            tickLength: 0
         },
         yAxis: {
             title: {

@@ -32,6 +32,21 @@ Highcharts.chart('container', {
     tooltip: {
         valueSuffix: ' millions'
     },
+    legend: {
+        layout: 'vertical',
+        align: 'right',
+        verticalAlign: 'top',
+        x: -40,
+        y: 80,
+        floating: true,
+        borderColor: 'var(--highcharts-neutral-color-10, #e6e6e6)',
+        borderRadius: 4,
+        borderWidth: 1,
+        backgroundColor: 'var(--highcharts-background-color, #ffffff)'
+    },
+    credits: {
+        enabled: false
+    },
     plotOptions: {
         bar: {
             borderRadius: '50%',
@@ -40,20 +55,6 @@ Highcharts.chart('container', {
             },
             groupPadding: 0.1
         }
-    },
-    legend: {
-        layout: 'vertical',
-        align: 'right',
-        verticalAlign: 'top',
-        x: -40,
-        y: 80,
-        floating: true,
-        borderRadius: 4,
-        borderWidth: 1,
-        backgroundColor: 'var(--highcharts-background-color, #ffffff)'
-    },
-    credits: {
-        enabled: false
     },
     series: [{
         name: 'Year 1990',

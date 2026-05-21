@@ -8,3 +8,14 @@ body {
     min-width: 360px;
     margin: 0 auto;
 }
+
+/* Custom CSS for the color axis ticks */
+.highcharts-coloraxis .highcharts-tick {
+    stroke-linecap: round;
+    translate: -6px 0;
+    filter:
+        drop-shadow(0 0 1px rgba(0, 0, 0, 0.1))
+        drop-shadow(0 1px 1px rgba(0, 0, 0, 0.09))
+        drop-shadow(0 3px 2px rgba(0, 0, 0, 0.05))
+        drop-shadow(0 6px 2px rgba(0, 0, 0, 0.01));
+}

@@ -42,7 +42,7 @@ Highcharts.chart('container', {
             format: '{value} gr'
         },
         plotLines: [{
-            color: '#00DD81',
+            color: 'light-dark(#00b066, #007D49)',
             dashStyle: 'dash',
             value: 65,
             zIndex: 3
@@ -52,11 +52,11 @@ Highcharts.chart('container', {
             to: 65,
             label: {
                 rotation: 0,
-                verticalAlign: 'bottom',
-                y: -22,
+                verticalAlign: 'top',
+                y: 40,
                 style: {
                     fontStyle: 'italic',
-                    color: '#007D49'
+                    color: 'light-dark(#007D49, #00b066)'
                 },
                 text: 'Safe zone'
             },
@@ -80,7 +80,7 @@ Highcharts.chart('container', {
         maxPadding: 0.2,
         min: 0,
         plotLines: [{
-            color: '#00DD81',
+            color: 'light-dark(#00b066, #007D49)',
             dashStyle: 'dash',
             value: 50,
             zIndex: 3
@@ -92,7 +92,7 @@ Highcharts.chart('container', {
                 align: 'right',
                 style: {
                     fontStyle: 'italic',
-                    color: '#007D49'
+                    color: 'light-dark(#007D49, #00b066)'
                 },
                 text: 'Safe zone',
                 x: -10
