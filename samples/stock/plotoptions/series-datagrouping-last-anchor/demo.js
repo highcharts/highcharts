@@ -53,7 +53,7 @@ Highcharts.stockChart('container', {
             enabled: true,
             forced: true,
             units: [
-                ['week', [5]]
+                ['week', [1]]
             ],
             lastAnchor: 'lastPoint'
         }
