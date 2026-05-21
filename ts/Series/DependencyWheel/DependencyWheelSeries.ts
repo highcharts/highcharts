@@ -366,6 +366,21 @@ class DependencyWheelSeries extends SankeySeries {
         // Override the last linkBase value
         point.linkBase[3] = linkToY + linkToHeight;
     }
+
+    /**
+     * Run translation operations for one node.
+     * @internal
+     */
+    public translateNode(
+        node: DependencyWheelPoint,
+        column: SankeyColumnComposition.ArrayComposition<DependencyWheelPoint>
+    ): void {
+        super.translateNode(node, column);
+
+        // Calculate the sum of incoming links weight and
+        // outgoing links weightTo.
+        node.sumTo = node.getSumTo();
+    }
 }
 
 /* *

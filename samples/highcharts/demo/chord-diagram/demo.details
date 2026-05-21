@@ -1,10 +1,11 @@
 ---
-name: Dependency wheel
+name: Chord diagram
 authors:
   - Wojciech Chmiel
 js_wrap: b
 tags:
   - Highcharts demo
 categories:
-  - More chart types
+  - More chart types:
+      priority: 20
 ...

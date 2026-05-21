@@ -65,11 +65,28 @@ class DependencyWheelPoint extends SankeyPoint {
 
     public weightTo?: number;
 
+    public sumTo?: number;
+
     /* *
      *
      *  Functions
      *
      * */
+
+    /**
+     * Return the sum of incoming links wieght and outgoing links weightTo.
+     * @internal
+     */
+    public getSumTo(): number {
+        let sum = 0;
+        for (const link of this.linksFrom) {
+            sum += link.weightTo || link.weight || 0;
+        }
+        for (const link of this.linksTo) {
+            sum += link.weight || 0;
+        }
+        return sum;
+    }
 
     /**
      * Return a text path that the data label uses.

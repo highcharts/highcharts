@@ -1,12 +1,3 @@
-const countryColors = {
-    Norway: '#38bdf8',
-    Germany: '#fb7185',
-    Denmark: '#fbbf24',
-    Netherlands: '#f97316',
-    Sweden: '#34d399',
-    UK: '#a78bfa'
-};
-
 Highcharts.chart('container', {
 
     chart: {
@@ -52,49 +43,22 @@ Highcharts.chart('container', {
             color: '#f1f5f9'
         },
         headerFormat: '',
-        pointFormatter: function () {
-            const point = this;
-            const formatEnergy = function (value) {
-                if (value >= 1000) {
-                    return (value / 1000).toFixed(2) + ' TWh';
-                }
-                return value + ' GWh';
-            };
-            let output = point.fromNode.name + ' \u2192 ' +
-                point.toNode.name + ': <b>' + formatEnergy(point.weight) +
-                '</b><br/>';
-
-            if (point.weightTo) {
-                output += point.toNode.name + ' \u2192 ' +
-                    point.fromNode.name + ': <b>' +
-                    formatEnergy(point.weightTo) + '</b><br/>';
-            }
-
-            return output;
-        },
-        nodeFormatter: function () {
-            const node = this;
-            const linksFrom = node.linksFrom || [];
-            const linksTo = node.linksTo || [];
-
-            const exportGWh =
-                linksFrom.reduce((sum, link) => sum + (link.weight || 0), 0) +
-                linksTo.reduce((sum, link) => sum + (link.weightTo || 0), 0);
-
-            const importGWh =
-                linksTo.reduce((sum, link) => sum + (link.weight || 0), 0) +
-                linksFrom.reduce((sum, link) => sum + (link.weightTo || 0), 0);
-
-            const toTWh = function (value) {
-                return (value / 1000).toFixed(2) + ' TWh';
-            };
-
-            return (
-                '<b>' + node.name + '</b><br/>' +
-                'Import: <b>' + toTWh(importGWh) + '</b><br/>' +
-                'Export: <b>' + toTWh(exportGWh) + '</b>'
-            );
-        }
+        pointFormat: '{point.fromNode.name} \u2192 {point.toNode.name}: <b>' +
+            '{#if (ge point.weight 1000)}' +
+            '{(divide point.weight 1000):.2f} TWh' +
+            '{else}{point.weight:,.0f} GWh{/if}</b><br/>' +
+            '{#if point.weightTo}{point.toNode.name} \u2192 ' +
+            '{point.fromNode.name}: <b>' +
+            '{#if (ge point.weightTo 1000)}' +
+            '{(divide point.weightTo 1000):.2f} TWh' +
+            '{else}{point.weightTo:,.0f} GWh{/if}</b><br/>{/if}',
+        nodeFormat: '<b>{point.name}</b><br/>' +
+            'Import: <b>{#if (ge point.sumTo 1000)}' +
+            '{(divide point.sumTo 1000):.2f} TWh' +
+            '{else}{point.sumTo:,.0f} GWh{/if}</b><br/>' +
+            'Export: <b>{#if (ge point.sum 1000)}' +
+            '{(divide point.sum 1000):.2f} TWh' +
+            '{else}{point.sum:,.0f} GWh{/if}</b>'
     },
 
     series: [{
@@ -119,16 +83,38 @@ Highcharts.chart('container', {
         fillOpacity: 0.75,
         borderWidth: 0,
         borderRadius: '30%',
-        nodes: Object.keys(countryColors).map(id => ({
-            id,
-            color: countryColors[id],
-            dataLabels: id === 'Norway' ? {
-                style: {
-                    fontWeight: '700',
-                    fontSize: '0.95rem'
+        nodes: [
+            {
+                id: 'Norway',
+                color: '#38bdf8',
+                dataLabels: {
+                    style: {
+                        fontWeight: '700',
+                        fontSize: '0.95rem'
+                    }
                 }
-            } : undefined
-        })),
+            },
+            {
+                id: 'Germany',
+                color: '#fb7185'
+            },
+            {
+                id: 'Denmark',
+                color: '#fbbf24'
+            },
+            {
+                id: 'Netherlands',
+                color: '#f97316'
+            },
+            {
+                id: 'Sweden',
+                color: '#34d399'
+            },
+            {
+                id: 'UK',
+                color: '#a78bfa'
+            }
+        ],
         dataLabels: {
             enabled: true,
             color: '#f8fafc',
