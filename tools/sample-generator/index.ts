@@ -1112,10 +1112,12 @@ export async function getDemoJSX(
         'setHighcharts(Highcharts);'
     ].join('\n') : '';
 
-    // Add wrapper module imports (e.g. Accessibility, Drilldown)
+    // Add wrapper module imports as side effects.
+    // We do not yet render wrapper JSX components in the template,
+    // so bound imports would be unused and may be tree-shaken.
     for (const wrapperName of wrapperImports) {
         reactImports.push(
-            `import ${wrapperName} from '@highcharts/react/modules/${wrapperName}';`
+            `import '@highcharts/react/modules/${wrapperName}';`
         );
     }
 

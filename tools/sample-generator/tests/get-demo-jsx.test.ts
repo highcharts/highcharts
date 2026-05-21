@@ -68,8 +68,8 @@ describe('sample-generator getDemoJSX', () => {
         );
 
         ok(
-            jsx.includes("import Accessibility from '@highcharts/react/modules/Accessibility';"),
-            'should import the Accessibility wrapper component'
+            jsx.includes("import '@highcharts/react/modules/Accessibility';"),
+            'should import Accessibility module wrapper as a side-effect import'
         );
         ok(
             !jsx.includes('setHighcharts('),
@@ -110,8 +110,8 @@ describe('sample-generator getDemoJSX', () => {
         );
 
         ok(
-            jsx.includes("import Accessibility from '@highcharts/react/modules/Accessibility';"),
-            'should import Accessibility wrapper component'
+            jsx.includes("import '@highcharts/react/modules/Accessibility';"),
+            'should import Accessibility module wrapper as a side-effect import'
         );
         ok(
             jsx.includes('setHighcharts(Highcharts);'),
