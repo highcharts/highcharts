@@ -36,7 +36,7 @@ function parseTimestamp(dateStr, timeStr) {
  */
 async function loadDataset() {
     const json = await fetch(
-            'https://www.highcharts.com/samples/data/morningstar/american-airlines-group.json'
+            'https://cdn.jsdelivr.net/gh/highcharts/highcharts@6671de8/samples/data/morningstar/american-airlines-group.json'
         ).then(r => r.json()),
         rows = json.ts.results[0].data.map(record => {
             const row = {};
