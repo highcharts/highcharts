@@ -1,6 +1,20 @@
 Highcharts.stockChart('container', {
     chart: {
-        height: 600
+        height: 600,
+        events: {
+            load: function () {
+                const chart = this,
+                    rawSeries = chart.series[0],
+                    groupedSeries = chart.series[1];
+
+                setInterval(function () {
+                    const randomNumber = Math.random() * 5;
+
+                    rawSeries.addPoint(randomNumber, false);
+                    groupedSeries.addPoint(randomNumber);
+                }, 1000);
+            }
+        }
     },
     yAxis: [{
         height: '50%',
@@ -39,7 +53,7 @@ Highcharts.stockChart('container', {
             enabled: true,
             forced: true,
             units: [
-                ['week', [1]]
+                ['week', [5]]
             ],
             lastAnchor: 'lastPoint'
         }
