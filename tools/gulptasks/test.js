@@ -98,8 +98,8 @@ async function checkSamplesConsistency() {
         return path.join(
             process.cwd(),
             'samples',
-            product,
             'react',
+            product,
             flattenedPath
         );
     }
