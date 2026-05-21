@@ -40,6 +40,17 @@ import * as selectHandler from './type-handlers/select.ts';
 import * as colorHandler from './type-handlers/color.ts';
 import * as textHandler from './type-handlers/text.ts';
 import * as separatorHandler from './type-handlers/separator.ts';
+const REACT_MODULE_WRAPPERS: Record<string, string> = {
+    'accessibility': 'Accessibility',
+    'boost': 'Boost',
+    'broken-axis': 'BrokenAxis',
+    'data': 'Data',
+    'draggable-points': 'DraggablePoints',
+    'drilldown': 'Drilldown',
+    'exporting': 'Exporting',
+    'stock-tools': 'StockTools'
+};
+
 interface MetaData {
     controlOptions?: ControlOptions;
     path?: string;
@@ -981,8 +992,12 @@ function getReactFactoryConfig(factory: SampleGeneratorConfig['factory'] = 'char
     };
 }
 
-function getReactModuleImports(config: SampleGeneratorConfig): string[] {
-    const moduleImports: string[] = [];
+function getReactModuleImports(config: SampleGeneratorConfig): {
+    sideEffectImports: string[];
+    wrapperImports: string[];
+} {
+    const sideEffectImports: string[] = [];
+    const wrapperImports: string[] = [];
     const modules = config.modules || [];
 
     for (const moduleName of modules) {
@@ -997,16 +1012,26 @@ function getReactModuleImports(config: SampleGeneratorConfig): string[] {
             continue;
         }
 
-        const importPath = normalized.startsWith('esm/') ?
-            `highcharts/${normalized}${normalized.endsWith('.js') ? '' : '.js'}` :
-            `highcharts/esm/${normalized}.src.js`;
+        // Extract the last segment after '/' for wrapper lookup
+        const lastSegment = normalized.split('/').pop() || '';
+        const wrapperName = REACT_MODULE_WRAPPERS[lastSegment];
 
-        if (!moduleImports.includes(importPath)) {
-            moduleImports.push(importPath);
+        if (wrapperName) {
+            if (!wrapperImports.includes(wrapperName)) {
+                wrapperImports.push(wrapperName);
+            }
+        } else {
+            const importPath = normalized.startsWith('esm/') ?
+                `highcharts/${normalized}${normalized.endsWith('.js') ? '' : '.js'}` :
+                `highcharts/esm/${normalized}.src.js`;
+
+            if (!sideEffectImports.includes(importPath)) {
+                sideEffectImports.push(importPath);
+            }
         }
     }
 
-    return moduleImports;
+    return { sideEffectImports, wrapperImports };
 }
 
 // Function to get TS (one listener per path)
@@ -1060,8 +1085,8 @@ export async function getDemoJSX(
         componentName,
         highchartsImportPath
     } = getReactFactoryConfig(factory);
-    const moduleImports = getReactModuleImports(config);
-    const shouldSetupHighcharts = moduleImports.length > 0;
+    const { sideEffectImports, wrapperImports } = getReactModuleImports(config);
+    const shouldSetupHighcharts = sideEffectImports.length > 0;
     const chartOptions = await getChartOptionsLiteral(
         config,
         metaList,
@@ -1082,10 +1107,17 @@ export async function getDemoJSX(
         ];
     const highchartsSetup = shouldSetupHighcharts ? [
         `import Highcharts from '${highchartsImportPath}';`,
-        ...moduleImports.map(moduleImport => `import '${moduleImport}';`),
+        ...sideEffectImports.map(moduleImport => `import '${moduleImport}';`),
         '',
         'setHighcharts(Highcharts);'
     ].join('\n') : '';
+
+    // Add wrapper module imports (e.g. Accessibility, Drilldown)
+    for (const wrapperName of wrapperImports) {
+        reactImports.push(
+            `import ${wrapperName} from '@highcharts/react/modules/${wrapperName}';`
+        );
+    }
 
     const dataStateBlock = dataFile ? [
         '    const [data, setData] = React.useState([]);',
@@ -1108,6 +1140,8 @@ export async function getDemoJSX(
         .replace('__CHART_OPTIONS__', indentBlock(chartOptions, 8).trimStart())
         .replace('__DEPENDENCIES__', dependencies)
         .replace(/__COMPONENT_NAME__/gu, componentName);
+
+    // TODO: render wrapper components (e.g. <Accessibility />) as siblings of chart component once template supports multiple JSX children
 
     return jsx;
 }
