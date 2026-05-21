@@ -947,6 +947,7 @@ extend(BubbleSeries.prototype, {
     alignDataLabel: columnProto.alignDataLabel,
     applyZones: noop,
     bubblePadding: true,
+    directTouch: true,
     isBubble: true,
     keysAffectYAxis: ['y'],
     pointArrayMap: ['y', 'z'],
