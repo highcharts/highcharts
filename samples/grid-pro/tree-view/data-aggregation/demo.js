@@ -28,20 +28,12 @@ const columns = {
         0.71, 0.76, 0.82, 0.78, 0.63,
         0.68, 0.79, 0.76, 0.84
     ],
-    risk: [
-        0, 1, 0, 3, 0,
-        0, 1, 2, 4
-    ],
-    id: [
-        'amw', 'ame', 'ger', 'fra', 'bra',
-        'dem', 'pla', 'app', 'inf'
-    ]
+    risk: [0, 1, 0, 3, 0, 0, 1, 2, 4]
 };
 
 Grid.grid('container', {
     data: {
         columns,
-        idColumn: 'id',
         treeView: {
             enabled: true,
             expandedRowIds: 'all'
