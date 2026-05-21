@@ -81,8 +81,7 @@ function getPriceSeries(rows) {
  * table.
  */
 function getTradesTable(rows) {
-    const descRows = [...rows],
-        date = [],
+    const date = [],
         time = [],
         price = [],
         volume = [],
@@ -90,8 +89,8 @@ function getTradesTable(rows) {
         ask = [],
         spread = [];
 
-    for (let i = 0; i < descRows.length; i++) {
-        const row = descRows[i];
+    for (let i = 0; i < rows.length; i++) {
+        const row = rows[i];
 
         date.push(row.dateReceived);
         time.push(row.tradeTime);
