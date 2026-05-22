@@ -45,6 +45,10 @@ export const classNames = {
     tbodyStickyActive: Globals.classNamePrefix + 'tbody-sticky-active'
 } as const;
 
+export const dataAttributes = {
+    depth: 'data-tree-depth'
+} as const;
+
 export const cssVariables = {
     depth: '--ig-tree-depth'
 } as const;
@@ -58,5 +62,6 @@ export const cssVariables = {
 
 export default {
     classNames,
+    dataAttributes,
     cssVariables
 } as const;

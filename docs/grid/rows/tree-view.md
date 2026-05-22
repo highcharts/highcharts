@@ -138,6 +138,7 @@ The expand/collapse UI is rendered in the tree column.
 - Use `data.treeView.treeColumn` to choose which column receives indentation
   and toggle buttons.
 - If `treeColumn` is omitted, Grid uses the first rendered column.
+- Tree rows expose their depth on the `tr` element as `data-tree-depth`.
 - For path input, `showFullPath: false` renders only the current segment when
   the path column is also the tree column. Set it to `true` to render the full
   path string.

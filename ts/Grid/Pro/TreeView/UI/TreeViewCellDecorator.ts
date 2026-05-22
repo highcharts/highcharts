@@ -110,12 +110,19 @@ export function decorateTreeViewCell(
     );
 
     if (rowState) {
+        const depth = rowState.depth.toFixed();
+
         rowElement.style.setProperty(
             TreeViewGlobals.cssVariables.depth,
-            rowState.depth.toFixed()
+            depth
+        );
+        rowElement.setAttribute(
+            TreeViewGlobals.dataAttributes.depth,
+            depth
         );
     } else {
         rowElement.style.removeProperty(TreeViewGlobals.cssVariables.depth);
+        rowElement.removeAttribute(TreeViewGlobals.dataAttributes.depth);
     }
 
     cell.htmlElement.classList.toggle(
