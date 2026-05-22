@@ -147,7 +147,7 @@ export function decorateTreeViewCell(
     wrapper.className = TreeViewGlobals.classNames.disclosure;
 
     const toggleContainer = document.createElement('span');
-    toggleContainer.className = TreeViewGlobals.classNames.disclosureToggle;
+    toggleContainer.className = TreeViewGlobals.classNames.disclosureIcon;
 
     if (rowState.hasChildren) {
         const toggleButton = document.createElement('button');
@@ -168,7 +168,6 @@ export function decorateTreeViewCell(
             'chevronRight',
             grid.options?.rendering?.icons
         );
-        toggleIcon.classList.add(TreeViewGlobals.classNames.disclosureIcon);
         toggleIcon.setAttribute('aria-hidden', 'true');
         toggleButton.appendChild(toggleIcon);
 

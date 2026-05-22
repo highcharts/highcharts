@@ -36,7 +36,6 @@ export const classNames = {
     cellTree: Globals.classNamePrefix + 'cell-tree',
     disclosure: Globals.classNamePrefix + 'disclosure',
     disclosureIcon: Globals.classNamePrefix + 'disclosure-icon',
-    disclosureToggle: Globals.classNamePrefix + 'disclosure-toggle',
     disclosureValue: Globals.classNamePrefix + 'disclosure-value',
     rowCollapsed: Globals.classNamePrefix + 'row-collapsed',
     rowExpanded: Globals.classNamePrefix + 'row-expanded',

@@ -12,7 +12,7 @@
     min-width: 0;
     padding-left: calc(var(--ig-tree-depth, 0) * var(--ig-tree-indent-size));
 
-    .hcg-disclosure-toggle {
+    .hcg-disclosure-icon {
         flex: 0 0 var(--ig-tree-toggle-slot-size);
         display: flex;
         align-items: center;
@@ -20,7 +20,7 @@
         height: var(--ig-tree-toggle-slot-size);
         margin-right: var(--ig-tree-toggle-gap);
 
-        button[aria-expanded="true"] > .hcg-disclosure-icon {
+        button[aria-expanded="true"] > svg {
             transform: rotate(90deg);
         }
     }
