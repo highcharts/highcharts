@@ -1,0 +1,22 @@
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/sankey.js"></script>
+<script src="https://code.highcharts.com/modules/dependency-wheel.js"></script>
+<script src="https://code.highcharts.com/modules/accessibility.js"></script>
+<script src="https://code.highcharts.com/themes/high-contrast-dark.js"></script>
+
+<figure class="highcharts-figure">
+    <div id="container"></div>
+    <p class="highcharts-description">
+        This chart uses the <strong>dependency wheel</strong> series with
+        <strong>bidirectional link data</strong> (<code>weight</code> and
+        <code>weightTo</code>) to mimic a chord diagram. Each ribbon connects two
+        countries: its width at the <em>from</em> node is the export volume
+        (<code>weight</code>), and its width at the <em>to</em> node is the return
+        flow in the opposite direction (<code>weightTo</code>). Compare this with
+        the <strong>dependency wheel</strong> demo, where links only
+        define <code>weight</code> — ribbons keep the same thickness on both ends,
+        which suits one-way flows. Here, the data are illustrative cross-border
+        electricity trades (GWh); <strong>Norway</strong> is highlighted in the
+        colour palette.
+    </p>
+</figure>
