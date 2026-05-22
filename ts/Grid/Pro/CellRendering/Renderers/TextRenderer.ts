@@ -4,12 +4,13 @@
  *
  *  (c) 2020-2026 Highsoft AS
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  *  Authors:
- *  - Dawid Dragula
+ *  - Dawid Draguła
  *
  * */
 
@@ -31,11 +32,7 @@ import type {
 import { CellRenderer, CellRendererOptions } from '../CellRenderer.js';
 import { registerRenderer } from '../CellRendererRegistry.js';
 import TextContent from '../../../Core/Table/CellContent/TextContent.js';
-
-import U from '../../../../Core/Utilities.js';
-const {
-    merge
-} = U;
+import { merge } from '../../../../Shared/Utilities.js';
 
 
 /* *
@@ -127,6 +124,11 @@ class TextRenderer extends CellRenderer {
  * Options to control the text renderer content.
  */
 export interface TextRendererOptions extends CellRendererOptions {
+    /**
+     * Use the built-in plain text renderer.
+     *
+     * @default 'text'
+     */
     type: 'text';
 }
 

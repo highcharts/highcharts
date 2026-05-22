@@ -28,17 +28,12 @@ import type Pointer from '../../Core/Pointer';
 import type Series from '../../Core/Series/Series';
 import type SeriesOptions from '../../Core/Series/SeriesOptions';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
-import type Types from '../../Shared/Types';
+import type { TypedArray } from '../../Shared/Types';
 
 import BoostableMap from './BoostableMap.js';
 import H from '../../Core/Globals.js';
 const { composed } = H;
-import U from '../../Core/Utilities.js';
-const {
-    addEvent,
-    pick,
-    pushUnique
-} = U;
+import { addEvent, pick, pushUnique } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -202,6 +197,7 @@ function isChartSeriesBoosting(
     // If there are more than five series currently boosting,
     // we should boost the whole chart to avoid running out of webgl contexts.
     let canBoostCount = 0,
+        eligibleCount = 0,
         needBoostCount = 0,
         seriesOptions: SeriesOptions;
 
@@ -226,6 +222,8 @@ function isChartSeriesBoosting(
             continue;
         }
 
+        ++eligibleCount;
+
         if (BoostableMap[series.type]) {
             ++canBoostCount;
         }
@@ -246,6 +244,15 @@ function isChartSeriesBoosting(
             // to 5, force a chart boost when all series are to be boosted.
             // See #18815
             canBoostCount === allSeries.length &&
+            needBoostCount === canBoostCount
+        ) ||
+        // Preserve chart-level boost when it was already active (markerGroup
+        // exists) and all remaining visible eligible series still need boost,
+        // so that hiding a series does not drop out of chart-boost mode
+        // and break the shared halo (#23338).
+        (
+            !!boost.markerGroup &&
+            canBoostCount === eligibleCount &&
             needBoostCount === canBoostCount
         ) ||
         needBoostCount > 5
@@ -370,7 +377,7 @@ function onChartCallback(
  * @return {number}
  * Max value
  */
-function patientMax(...args: Array<Array<unknown>|Types.TypedArray>): number {
+function patientMax(...args: Array<Array<unknown>|TypedArray>): number {
     let r = -Number.MAX_VALUE;
 
     args.forEach((t): boolean|undefined => {

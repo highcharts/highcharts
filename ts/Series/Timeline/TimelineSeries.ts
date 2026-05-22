@@ -6,8 +6,9 @@
  *
  *  Author: Daniel Studencki
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -39,8 +40,7 @@ const {
 } = SeriesRegistry.seriesTypes;
 import TimelinePoint from './TimelinePoint.js';
 import TimelineSeriesDefaults from './TimelineSeriesDefaults.js';
-import U from '../../Core/Utilities.js';
-const {
+import {
     addEvent,
     arrayMax,
     arrayMin,
@@ -48,7 +48,7 @@ const {
     extend,
     merge,
     pick
-} = U;
+} from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -218,6 +218,9 @@ class TimelineSeries extends LineSeries {
                     // Forced. Point level limitations.
                     { zIndex: void 0 }
                 );
+                // Delete so it doesn't override anything on merge.
+                delete point.options.dataLabels.zIndex;
+
                 visibilityIndex++;
             }
         }

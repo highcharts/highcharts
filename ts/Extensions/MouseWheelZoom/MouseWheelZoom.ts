@@ -1,10 +1,11 @@
 /* *
  *
  *  (c) 2023-2026 Highsoft AS
- *  Author: Torstein Honsi, Askel Eirik Johansson
+ *  Author: Torstein Hønsi, Askel Eirik Johansson
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -24,16 +25,15 @@ import type PointerEvent from '../../Core/PointerEvent';
 import type MouseWheelZoomOptions from './MouseWheelZoomOptions';
 import type DOMElementType from '../../Core/Renderer/DOMElementType';
 
-import U from '../../Core/Utilities.js';
-const {
-    addEvent,
-    isObject,
-    pick,
-    defined,
-    merge
-} = U;
-
 import NBU from '../Annotations/NavigationBindingsUtilities.js';
+import {
+    addEvent,
+    defined,
+    internalClearTimeout,
+    isObject,
+    merge,
+    pick
+} from '../../Shared/Utilities.js';
 const { getAssignedAxis } = NBU;
 
 /* *
@@ -119,7 +119,7 @@ const zoomBy = function (
 
     if (hasZoomed) {
         if (defined(wheelTimer)) {
-            clearTimeout(wheelTimer);
+            internalClearTimeout(wheelTimer);
         }
 
         // Some time after the last mousewheel event, run drop. In case any of

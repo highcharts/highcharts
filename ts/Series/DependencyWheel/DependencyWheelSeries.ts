@@ -3,10 +3,11 @@
  *  Dependency wheel module
  *
  *  (c) 2018-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -33,15 +34,10 @@ const {
     pie: PieSeries,
     sankey: SankeySeries
 } = SeriesRegistry.seriesTypes;
-import U from '../../Core/Utilities.js';
-const {
-    extend,
-    merge,
-    relativeLength
-} = U;
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
-import TextPath from '../../Extensions/TextPath.js';
-TextPath.compose(SVGElement);
+import { composeTextPath } from '../../Extensions/TextPath.js';
+import { extend, merge, relativeLength } from '../../Shared/Utilities.js';
+composeTextPath(SVGElement);
 
 /* *
  *
@@ -291,7 +287,7 @@ class DependencyWheelSeries extends SankeySeries {
 
                             // The distance between the from and to node
                             // along the perimeter. This affect how curved
-                            // the link is, so that links between neighbours
+                            // the link is, so that links between neighbors
                             // don't extend too far towards the center.
                             distance = Math.abs(
                                 point.linkBase[3 - i] * factor - angle

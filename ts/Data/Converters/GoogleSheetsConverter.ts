@@ -2,8 +2,9 @@
  *
  *  (c) 2009-2026 Highsoft AS
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  *  Authors:
@@ -34,11 +35,8 @@ import type {
     ColumnCollection as DataTableColumnCollection
 } from '../DataTable.js';
 import DataConverterUtils from './DataConverterUtils.js';
-import U from '../../Core/Utilities.js';
-const {
-    merge,
-    uniqueKey
-} = U;
+import { merge } from '../../Shared/Utilities.js';
+import { uniqueKey } from '../../Core/Utilities.js';
 
 /* *
  *

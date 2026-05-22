@@ -2,10 +2,11 @@
  *
  *  (c) 2014-2026 Highsoft AS
  *
- *  Authors: Jon Arild Nygard / Oystein Moseng
+ *  Authors: Jon Arild Nygård / Øystein Moseng
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -23,8 +24,6 @@ import type {
 import type ButtonThemeObject from '../../Core/Renderer/SVG/ButtonThemeObject';
 import type ColorString from '../../Core/Color/ColorString';
 import type ColorType from '../../Core/Color/ColorType';
-import type GradientColor from '../../Core/Color/GradientColor';
-import { PatternObject } from '../../Extensions/PatternFill';
 import type DashStyleValue from '../../Core/Renderer/DashStyleValue';
 import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
 import type { PointMarkerOptions } from '../../Core/Series/PointOptions';
@@ -85,7 +84,6 @@ export type TreemapSeriesLayoutStartingDirectionValue = (
  *         Treegraph nodes with color variation
  *
  * @since 6.0.0
- *
  * @product highcharts
  */
 export interface TreemapSeriesLevelColorVariationOptions {
@@ -93,12 +91,8 @@ export interface TreemapSeriesLevelColorVariationOptions {
     /**
      * The key of a color variation. Currently supports `brightness` only.
      *
-     * @type {string}
-     *
      * @since 6.0.0
-     *
      * @product highcharts
-     *
      * @validvalue ["brightness"]
      */
     key?: string;
@@ -107,10 +101,7 @@ export interface TreemapSeriesLevelColorVariationOptions {
      * The ending value of a color variation. The last sibling will receive
      * this value.
      *
-     * @type {number}
-     *
      * @since 6.0.0
-     *
      * @product highcharts
      */
     to?: number;
@@ -130,10 +121,10 @@ export interface TreemapSeriesClusterOptions extends MarkerClusterOptions {
      * Individual color for the grouped point. By default the color is pulled
      * from the parent color.
      *
-     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @type      {Highcharts.ColorType}
      * @product   highcharts
      */
-    color?: ColorString|GradientColor|PatternObject;
+    color?: ColorType;
 
     /**
      * Enable or disable Treemap grouping.
@@ -249,7 +240,7 @@ export interface TreemapSeriesLevelOptions extends Omit<SeriesOptions, ('data'|'
     /**
      * Can set a color on all points which lies on the same level.
      *
-     * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @type {Highcharts.ColorType}
      *
      * @since 4.1.0
      *
@@ -440,7 +431,7 @@ export interface TreemapSeriesOptions extends ScatterSeriesOptions {
      * of the global [colors](#colors) when
      * [colorByPoint](#plotOptions.treemap.colorByPoint) is true.
      *
-     * @type {Array<Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject>}
+     * @type {Array<Highcharts.ColorType>}
      *
      * @since 3.0
      *
@@ -450,7 +441,7 @@ export interface TreemapSeriesOptions extends ScatterSeriesOptions {
 
     /**
      * When the series contains less points than the crop threshold, all
-     * points are drawn, event if the points fall outside the visible plot
+     * points are drawn, even if the points fall outside the visible plot
      * area at the current zoom. The advantage of drawing all points
      * (including markers and columns), is that animation is performed on
      * updates. On the other hand, when the series contains more points than

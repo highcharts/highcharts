@@ -2,12 +2,13 @@
  *
  *  (c) 2009-2026 Highsoft AS
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  *  Authors:
- *  - Dawid Dragula
+ *  - Dawid Draguła
  *
  * */
 
@@ -25,8 +26,7 @@ import type { Event as DataCursorEvent } from '../../../../Data/DataCursor';
 import type KPIComponent from '../KPIComponent.js';
 
 import Component from '../../Component';
-import U from '../../../../Core/Utilities.js';
-const { defined } = U;
+import { defined } from '../../../../Shared/Utilities.js';
 
 
 /* *

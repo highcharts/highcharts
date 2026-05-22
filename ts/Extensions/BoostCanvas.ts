@@ -1,8 +1,9 @@
 /* *
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
- *  Author: Torstein Honsi, Christer Vasseng
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
+ *  Author: Torstein Hønsi, Christer Vasseng
  *
  *  This module serves as a fallback for the Boost module in IE9 and IE10. Newer
  *  browsers support WebGL which is faster.
@@ -35,7 +36,7 @@ import type {
     PointOptions,
     PointShortOptions
 } from '../Core/Series/PointOptions';
-import type Types from '../Shared/Types';
+import type { TypedArray } from '../Shared/Types';
 import type ScatterSeries from '../Series/Scatter/ScatterSeries';
 import type Series from '../Core/Series/Series';
 import type SeriesRegistry from '../Core/Series/SeriesRegistry';
@@ -56,15 +57,15 @@ const {
     noop
 } = H;
 import { Palette } from '../Core/Color/Palettes.js';
-import U from '../Core/Utilities.js';
-const {
+import {
     addEvent,
     fireEvent,
+    internalClearTimeout,
     isNumber,
     merge,
     pick,
     wrap
-} = U;
+} from '../Shared/Utilities.js';
 
 /* *
  *
@@ -72,6 +73,11 @@ const {
  *
  * */
 
+/**
+ * The options below are working, but not documented. In case they are
+ * made public, refactor to match BoostDebugOptions interface.
+ * @internal
+ */
 declare module './Boost/BoostOptions' {
     interface BoostOptions {
         timeRendering?: boolean;
@@ -80,6 +86,7 @@ declare module './Boost/BoostOptions' {
     }
 }
 
+/** @internal */
 declare module '../Core/Series/SeriesBase' {
     interface SeriesBase extends BoostTargetObject {
         /** @internal */
@@ -128,6 +135,7 @@ declare module '../Core/Series/SeriesBase' {
  *
  * */
 
+/** @internal */
 namespace BoostCanvas {
 
     /* *
@@ -500,7 +508,7 @@ namespace BoostCanvas {
             requireSorting = series.requireSorting,
             connectNulls = options.connectNulls,
             useRaw = !xData,
-            sdata: Array<any>|Types.TypedArray = (
+            sdata: Array<any>|TypedArray = (
                 isStacked ?
                     series.data :
                     (xData || rawData)
@@ -582,7 +590,7 @@ namespace BoostCanvas {
                     opacity: 1
                 }
             });
-            U.clearTimeout(destroyLoadingDiv);
+            internalClearTimeout(destroyLoadingDiv);
             chart.showLoading('Drawing...');
             chart.options.loading = loadingOptions; // Reset
         }
@@ -1024,4 +1032,5 @@ namespace BoostCanvas {
  *
  * */
 
+/** @internal */
 export default BoostCanvas;

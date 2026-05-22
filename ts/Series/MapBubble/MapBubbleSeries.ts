@@ -1,10 +1,11 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -34,11 +35,7 @@ const {
         }
     }
 } = SeriesRegistry;
-import U from '../../Core/Utilities.js';
-const {
-    extend,
-    merge
-} = U;
+import { extend, merge } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -85,7 +82,7 @@ class MapBubbleSeries extends BubbleSeries {
          * @sample {highmaps} maps/plotoptions/mapbubble-color/
          *         Pink bubbles
          *
-         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @type      {Highcharts.ColorType}
          * @apioption plotOptions.mapbubble.color
          */
 
@@ -117,7 +114,7 @@ class MapBubbleSeries extends BubbleSeries {
          * @sample {highmaps} maps/plotoptions/spider-map-line-color/
          *         Different line color
          *
-         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @type      {Highcharts.ColorType}
          * @apioption plotOptions.mapbubble.lineColor
          */
 
@@ -170,7 +167,7 @@ class MapBubbleSeries extends BubbleSeries {
          * @sample {highmaps} maps/plotoptions/mapbubble-negativecolor/
          *         Negative color below a threshold
          *
-         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @type      {Highcharts.ColorType}
          * @apioption plotOptions.mapbubble.negativeColor
          */
 
@@ -405,6 +402,7 @@ export default MapBubbleSeries;
  *        }]
  *    ```
  *
+ * @basic
  * @type      {Array<number|null|*>}
  * @extends   series.mappoint.data
  * @excluding labelrank, middleX, middleY, path, value, x, y, lat, lon

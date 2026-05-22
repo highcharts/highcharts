@@ -1,10 +1,11 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Pawel Lysy
+ *  Author: Paweł Lysy
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -29,14 +30,9 @@ import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     column: ColumnSeries
 } = SeriesRegistry.seriesTypes;
-import U from '../../Core/Utilities.js';
-const {
-    crisp,
-    extend,
-    merge
-} = U;
 
 import D from '../../Core/Defaults.js';
+import { crisp, extend, merge } from '../../Shared/Utilities.js';
 const { defaultOptions } = D;
 
 /* *

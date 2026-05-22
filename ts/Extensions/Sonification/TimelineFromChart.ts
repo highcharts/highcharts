@@ -5,8 +5,9 @@
  *
  *  Build a timeline from a chart.
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -20,33 +21,37 @@ import type TimelineChannel from './TimelineChannel';
 import SonificationTimeline from './SonificationTimeline.js';
 import SonificationInstrument from './SonificationInstrument.js';
 import SonificationSpeaker from './SonificationSpeaker.js';
-import U from '../../Core/Utilities.js';
-const {
+import T from '../../Core/Templating.js';
+import {
     clamp,
     defined,
     extend,
     getNestedProperty,
     merge,
     pick
-} = U;
-import T from '../../Core/Templating.js';
+} from '../../Shared/Utilities.js';
 const {
     format
 } = T;
 
+/** @internal */
 interface PointGroupItem {
     point: Point;
     time: number;
 }
+/** @internal */
 interface PropExtremes {
     max: number;
     min: number;
 }
+/** @internal */
 type PropExtremesCache = Record<string, PropExtremes>;
+/** @internal */
 interface ExtremesCache {
     globalExtremes: PropExtremesCache;
     seriesExtremes: Array<PropExtremesCache>;
 }
+/** @internal */
 export interface PropMetrics extends ExtremesCache {
     seriesTimeProps: Array<Record<string, boolean>>;
 }
@@ -1235,4 +1240,5 @@ function timelineFromChart(
  *
  * */
 
+/** @internal */
 export default timelineFromChart;

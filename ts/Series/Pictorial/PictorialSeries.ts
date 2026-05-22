@@ -1,10 +1,11 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi, Magdalena Gut
+ *  Author: Torstein Hønsi, Magdalena Gut
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -18,14 +19,14 @@
  * */
 
 import '../Column/ColumnSeries.js';
-import PatternFill from '../../Extensions/PatternFill.js';
+import { composePatternFill } from '../../Extensions/PatternFill.js';
 
 import type ColorType from '../../Core/Color/ColorType.js';
 import type ColumnSeriesType from '../Column/ColumnSeries';
 import type DataExtremesObject from '../../Core/Series/DataExtremesObject';
 import type PictorialSeriesOptions from './PictorialSeriesOptions';
 
-import A from '../../Core/Animation/AnimationUtilities.js';
+import { animObject } from '../../Core/Animation/AnimationUtilities.js';
 import Chart from '../../Core/Chart/Chart.js';
 import PictorialPoint from './PictorialPoint.js';
 import PictorialUtilities from './PictorialUtilities.js';
@@ -34,15 +35,30 @@ import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import StackItem from '../../Core/Axis/Stacking/StackItem.js';
 import SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes.js';
 import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
-import U from '../../Core/Utilities.js';
 import { PictorialPathOptions } from './PictorialSeriesOptions';
+import {
+    addEvent,
+    defined,
+    merge,
+    objectEach,
+    pick
+} from '../../Shared/Utilities.js';
+
+/* *
+ *
+ *  Composition
+ *
+ * */
+
+composePatternFill(Chart, Series, SVGRenderer);
+
+/* *
+ *
+ *  Constants
+ *
+ * */
 
 const ColumnSeries: typeof ColumnSeriesType = SeriesRegistry.seriesTypes.column;
-
-PatternFill.compose(Chart, Series, SVGRenderer);
-const {
-    animObject
-} = A;
 
 const {
     getStackMetrics,
@@ -50,19 +66,25 @@ const {
     rescalePatternFill
 } = PictorialUtilities;
 
-const {
-    addEvent,
-    defined,
-    merge,
-    objectEach,
-    pick
-} = U;
+/* *
+ *
+ *  Functions
+ *
+ * */
+
 export interface StackShadowOptions {
     borderColor?: ColorType;
     borderWidth?: number;
     color?: ColorType;
     enabled?: boolean;
 }
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
 declare module '../../Core/Axis/AxisOptions' {
     interface AxisOptions {
         stackShadow?: StackShadowOptions;
@@ -137,7 +159,6 @@ class PictorialSeries extends ColumnSeries {
      *
      * */
 
-    /* eslint-disable valid-jsdoc */
 
     /**
      * Animate in the series. Called internally twice. First with the `init`
@@ -262,7 +283,6 @@ class PictorialSeries extends ColumnSeries {
         return extremes;
     }
 
-    /* eslint-enable valid-jsdoc */
 
 }
 
@@ -641,6 +661,7 @@ export default PictorialSeries;
  *    }]
  *    ```
  *
+ * @basic
  * @type      {Array<Array<(number|string),number>|Array<(number|string),number,number>|*>}
  * @extends   series.column.data
  *
@@ -717,7 +738,7 @@ export default PictorialSeries;
  * The color of the `stackShadow` border.
  *
  * @declare   Highcharts.YAxisOptions
- * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+ * @type      {Highcharts.ColorType}
  * @default   transparent
  * @product   highcharts
  * @requires  modules/pictorial
@@ -739,7 +760,7 @@ export default PictorialSeries;
  * The color of the `stackShadow`.
  *
  * @declare   Highcharts.YAxisOptions
- * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+ * @type      {Highcharts.ColorType}
  * @default   #dedede
  * @product   highcharts
  * @requires  modules/pictorial

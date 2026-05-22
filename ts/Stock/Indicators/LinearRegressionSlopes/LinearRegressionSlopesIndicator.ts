@@ -1,11 +1,11 @@
-// SPDX-License-Identifier: LicenseRef-Highcharts
-/**
+/* *
  *
  *  (c) 2010-2026 Highsoft AS
  *  Author: Kamil Kulig
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -28,11 +28,7 @@ import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     linearregression: LinearRegressionIndicator
 } = SeriesRegistry.seriesTypes;
-import U from '../../../Core/Utilities.js';
-const {
-    extend,
-    merge
-} = U;
+import { extend, merge } from '../../../Shared/Utilities.js';
 
 /* *
  *
@@ -43,7 +39,7 @@ const {
 /**
  * The Linear Regression Slope series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.linearRegressionSlope
  *
@@ -68,7 +64,7 @@ class LinearRegressionSlopesIndicator extends LinearRegressionIndicator {
      * @since        7.0.0
      * @product      highstock
      * @requires     stock/indicators/indicators
-     * @requires  stock/indicators/regressions
+     * @requires     stock/indicators/regressions
      * @optionparent plotOptions.linearregressionslope
      */
     public static defaultOptions: LinearRegressionOptions = merge(
@@ -104,6 +100,7 @@ class LinearRegressionSlopesIndicator extends LinearRegressionIndicator {
  *
  * */
 
+/** @internal */
 interface LinearRegressionSlopesIndicator {
     pointClass: typeof LinearRegressionSlopesPoint;
     nameBase: string;
@@ -119,6 +116,7 @@ extend(LinearRegressionSlopesIndicator.prototype, {
  *
  * */
 
+/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         linearregressionslope: typeof LinearRegressionSlopesIndicator;
@@ -143,6 +141,7 @@ SeriesRegistry.registerSeriesType(
  *
  * */
 
+/** @internal */
 export default LinearRegressionSlopesIndicator;
 
 /* *
@@ -152,7 +151,7 @@ export default LinearRegressionSlopesIndicator;
  * */
 
 /**
- * A linear regression intercept series. If the
+ * A linear regression slope series. If the
  * [type](#series.linearregressionslope.type) option is not specified, it is
  * inherited from [chart.type](#chart.type).
  *

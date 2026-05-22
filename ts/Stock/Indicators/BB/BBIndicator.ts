@@ -1,8 +1,9 @@
-// SPDX-License-Identifier: LicenseRef-Highcharts
-/**
+/* *
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -29,12 +30,7 @@ import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     sma: SMAIndicator
 } = SeriesRegistry.seriesTypes;
-import U from '../../../Core/Utilities.js';
-const {
-    extend,
-    isArray,
-    merge
-} = U;
+import { extend, isArray, merge } from '../../../Shared/Utilities.js';
 
 /* *
  *
@@ -43,9 +39,7 @@ const {
  * */
 
 // Utils:
-/**
- * @private
- */
+/** @internal */
 function getStandardDeviation(
     arr: Array<Array<number>>,
     index: number,
@@ -77,7 +71,7 @@ function getStandardDeviation(
 /**
  * Bollinger Bands series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.bb
  *
@@ -95,7 +89,7 @@ class BBIndicator extends SMAIndicator {
      * Bollinger bands (BB). This series requires the `linkedTo` option to be
      * set and should be loaded after the `stock/indicators/indicators.js` file.
      *
-     * @sample stock/indicators/bollinger-bands
+     * @sample {highstock} stock/indicators/bollinger-bands
      *         Bollinger bands
      *
      * @extends      plotOptions.sma
@@ -296,6 +290,7 @@ class BBIndicator extends SMAIndicator {
  *
  * */
 
+/** @internal */
 interface BBIndicator extends MultipleLinesComposition.IndicatorComposition {
     linesApiNames: Array<string>;
     nameComponents: Array<string>;
@@ -318,6 +313,7 @@ MultipleLinesComposition.compose(BBIndicator);
  *
  * */
 
+/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         bb: typeof BBIndicator;
@@ -331,6 +327,7 @@ SeriesRegistry.registerSeriesType('bb', BBIndicator);
  *
  * */
 
+/** @internal */
 export default BBIndicator;
 
 /* *

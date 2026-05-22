@@ -4,8 +4,9 @@
  *
  *  Authors: Øystein Moseng, Torstein Hønsi, Jon A. Nygård
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -21,11 +22,7 @@
 import type Chart from '../../Core/Chart/Chart';
 import type { EventCallback } from '../../Core/Callback';
 import type PointerEvent from '../../Core/PointerEvent';
-
-import U from '../../Core/Utilities.js';
-const {
-    addEvent
-} = U;
+import { addEvent, type EventOptions } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -57,7 +54,7 @@ function addEvents<T>(
     el: T,
     types: Array<string>,
     fn: (Function|EventCallback<T>),
-    options?: U.EventOptions
+    options?: EventOptions
 ): Function {
     const removeFuncs: Array<Function> = types.map(
         (type: string): Function => addEvent(el, type, fn, options)

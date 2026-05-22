@@ -5,8 +5,9 @@
  *
  *  Accessibility module for Highcharts
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -33,13 +34,6 @@ import D from '../Core/Defaults.js';
 const { defaultOptions } = D;
 import H from '../Core/Globals.js';
 const { doc } = H;
-import U from '../Core/Utilities.js';
-const {
-    addEvent,
-    extend,
-    fireEvent,
-    merge
-} = U;
 import HU from './Utils/HTMLUtilities.js';
 const {
     removeElement
@@ -64,6 +58,7 @@ import highContrastTheme from './HighContrastTheme.js';
 import defaultOptionsA11Y from './Options/A11yDefaults.js';
 import defaultLangOptions from './Options/LangDefaults.js';
 import copyDeprecatedOptions from './Options/DeprecatedOptions.js';
+import { addEvent, extend, fireEvent, merge } from '../Shared/Utilities.js';
 
 /* *
  *
@@ -255,10 +250,12 @@ class Accessibility {
         this.keyboardNavigation.update(kbdNavOrder);
 
         // Handle high contrast mode
-        // Should only be applied once, and not if explicitly disabled
+        // Reapply after updates while HC mode is active, but avoid recursion
+        // while the theme itself is being applied through chart.update.
         if (
-            !chart.highContrastModeActive &&
+            !chart.highContrastState?.applying &&
             a11yOptions.highContrastMode !== false && (
+                chart.highContrastState?.active ||
                 whcm.isHighContrastModeActive() ||
                 a11yOptions.highContrastMode === true
             )

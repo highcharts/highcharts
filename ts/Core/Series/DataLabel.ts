@@ -1,10 +1,11 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -38,8 +39,7 @@ import F from '../Templating.js';
 const { format } = F;
 import { Palette } from '../Color/Palettes.js';
 import R from '../Renderer/RendererUtilities.js';
-import U from '../Utilities.js';
-const {
+import {
     defined,
     extend,
     fireEvent,
@@ -51,7 +51,7 @@ const {
     pick,
     pInt,
     splat
-} = U;
+} from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -208,7 +208,6 @@ declare module '../../Core/Renderer/SVG/SVGElementBase' {
  *
  * */
 
-/** @internal */
 namespace DataLabel {
 
     /* *
@@ -217,6 +216,7 @@ namespace DataLabel {
      *
      * */
 
+    /** @internal */
     export interface PositionersObject {
         alignToConnectors(
             points: Array<Point>,
@@ -253,12 +253,14 @@ namespace DataLabel {
         (...args: Array<any>): SVGPath;
     }
 
+    /** @internal */
     export interface LabelConnectorPositionObject {
         angle?: number;
         breakAt: CorePositionObject;
         touchingSliceAt: CorePositionObject;
     }
 
+    /** @internal */
     export interface LabelPositionObject {
         alignment: AlignValue;
         attribs?: SVGAttributes;
@@ -272,6 +274,7 @@ namespace DataLabel {
         top?: number;
     }
 
+    /** @internal */
     export interface PositionObject extends CorePositionObject {
         alignment: AlignValue;
     }
@@ -585,7 +588,7 @@ namespace DataLabel {
             'initDataLabelsGroup',
             {
                 index,
-                zIndex: dataLabelsOptions?.zIndex ?? 6
+                zIndex: dataLabelsOptions?.zIndex
             }
         );
 
@@ -672,10 +675,8 @@ namespace DataLabel {
                 (isString(backgroundColor) && backgroundColor) ||
                 Palette.neutralColor100
             ),
+            groupByIndex: SVGElement[] = [],
             seriesDlOptions = mergedDataLabelOptions(series);
-
-        let pointOptions: Array<DataLabelOptions>,
-            dataLabelsGroup: SVGElement;
 
         // Resolve the animation
         const { animation, defer } = seriesDlOptions[0],
@@ -691,27 +692,24 @@ namespace DataLabel {
             points.forEach((point): void => {
 
                 const dataLabels = point.dataLabels || [],
-                    pointColor = point.color || series.color;
+                    pointColor = point.color || series.color,
 
-                // Merge in series options for the point.
-                // @note dataLabelAttribs (like pointAttribs) would eradicate
-                // the need for dlOptions, and simplify the section below.
-                pointOptions = splat(
-                    mergeArrays(
-                        seriesDlOptions,
-                        // The dlOptions prop is used in treemaps
-                        point.dlOptions || point.options?.dataLabels
-                    )
-                );
+                    // Merge in series options for the point.
+                    // @note
+                    // dataLabelAttribs (like pointAttribs) would eradicate the
+                    // need for dlOptions, and simplify the section below.
+                    pointOptions = splat(
+                        mergeArrays(
+                            seriesDlOptions,
+                            // The dlOptions prop is used in treemap
+                            point.dlOptions || point.options?.dataLabels
+                        )
+                    );
 
                 // Handle each individual data label for this point
                 pointOptions.forEach((labelOptions, i): void => {
-                    // Create dataLabelsGroup for each data labels config
-                    // (can be multiple)
-                    dataLabelsGroup =
-                        this.initDataLabels(i, animationConfig, labelOptions);
 
-                    // Options for one datalabel
+                    // Options for one dataLabel
                     const labelEnabled = (
                             labelOptions.enabled &&
                             (point.visible || point.dataLabelOnHidden) &&
@@ -752,7 +750,7 @@ namespace DataLabel {
                                     point.formatPrefix + 'Formatter'
                                 ] ||
                                 labelOptions.formatter
-                            ).call(point, labelOptions);
+                            ).call(point, labelOptions, point);
 
                         rotation = labelOptions.rotation;
 
@@ -916,6 +914,16 @@ namespace DataLabel {
                                 dataLabel,
                                 'beforeAddingDataLabel',
                                 { labelOptions, point }
+                            );
+
+                            // On the first occurrence, create a dataLabelsGroup
+                            // for each data labels config (#24626)
+                            const dataLabelsGroup = groupByIndex[i] = (
+                                groupByIndex[i] || this.initDataLabels(
+                                    i,
+                                    animationConfig,
+                                    labelOptions
+                                )
                             );
 
                             if (!dataLabel.added) {
@@ -1179,7 +1187,6 @@ namespace DataLabel {
  *
  * */
 
-/** @internal */
 export default DataLabel;
 
 /* *

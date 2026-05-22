@@ -1,0 +1,139 @@
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/stock/modules/stock.js"></script>
+<script src="https://code.highcharts.com/maps/modules/map.js"></script>
+<script src="https://code.highcharts.com/modules/variable-pie.js"></script>
+<script src="https://code.highcharts.com/highcharts-more.js"></script>
+<script src="https://code.highcharts.com/maps/modules/data.js"></script>
+<!-- <script src="https://code.highcharts.com/stock/modules/exporting.js"></script> -->
+<script src="https://code.highcharts.com/modules/boost.js"></script>
+<script src="https://code.highcharts.com/stock/modules/heikinashi.js"></script>
+<script src="https://code.highcharts.com/modules/annotations-advanced.js"></script>
+<script src="https://code.highcharts.com/stock/indicators/indicators-all.js"></script>
+<script src="https://code.highcharts.com/stock/modules/drag-panes.js"></script>
+<script src="https://code.highcharts.com/modules/price-indicator.js"></script>
+<script src="https://code.highcharts.com/modules/full-screen.js"></script>
+<script src="https://code.highcharts.com/modules/stock-tools.js"></script>
+<script src="https://code.highcharts.com/stock/modules/hollowcandlestick.js"></script>
+<script src="https://code.highcharts.com/connectors/morningstar/connectors-morningstar.js"></script>
+<script src="https://code.highcharts.com/modules/navigator.js"></script>
+<script src="https://code.highcharts.com/stock/indicators/pivot-points.js"></script>
+<script src="https://code.highcharts.com/stock/indicators/macd.js"></script>
+<script src="https://code.highcharts.com/modules/accessibility.js"></script>
+<script src="https://code.highcharts.com/themes/adaptive.js"></script>
+
+<link rel="stylesheet" type="text/css" href="https://code.highcharts.com/css/stocktools/gui.css">
+<link rel="stylesheet" type="text/css" href="https://code.highcharts.com/css/annotations/popup.css">
+
+
+<div id="demoCard" class="demo-card"  aria-label="">
+    <div class="demo-header">
+        <div class="demo-title">
+                <p id="demoName" class="demo-name"></p>
+                <p id="demoDescription" class="demo-description"></p>
+        </div>
+        <div id="made-with">
+            <span class="made-label">MADE WITH:</span>
+            <div id="productButtons">
+              
+            </div>
+           
+        </div>
+      
+    </div>
+    <div id="chart-wrapper">
+        <div class="chart-description" id="chartDescription">
+            
+        </div>
+        <div id="selectors-container">
+            <div class="col">
+                <label for="overlays">Overlays:</label>
+                <select class="left-select" id="overlays">
+                    <option value="abands">Acceleration Bands</option>
+                    <option value="bb">Bollinger Bands</option>
+                    <option value="dema">DEMA (Double Exponential Moving Average)</option>
+                    <option value="ema">EMA (Exponential Moving Average)</option>
+                    <option value="ikh">Ichimoku Kinko Hyo</option>
+                    <option value="keltnerchannels">Keltner Channels</option>
+                    <option value="linearregression">Linear Regression</option>
+                    <option value="pivotpoints">Pivot Points</option>
+                    <option value="pc" selected="selected">Price Channel</option>
+                    <option value="priceenvelopes">Price Envelopes</option>
+                    <option value="psar">PSAR (Parabolic SAR)</option>
+                    <option value="sma">SMA (Simple Moving Average)</option>
+                    <option value="supertrend">Super Trend</option>
+                    <option value="tema">TEMA (Triple Exponential Moving Average)</option>
+                    <option value="vbp">VbP (Volume by Price)</option>
+                    <option value="vwap">WMA (Weighted Moving Average)</option>
+                    <option value="wma">VWAP (Volume Weighted Average Price)</option>
+                    <option value="zigzag">Zig Zag</option>
+                </select>
+            </div>
+            <div class="col">
+                <label for="oscillators">Oscillators:</label>
+                <select class="right-select" id="oscillators">
+                    <option value="apo">Absolute price indicator</option>
+                    <option value="ad">A/D (Accumulation/Distribution)</option>
+                    <option value="aroon">Aroon</option>
+                    <option value="aroonoscillator">Aroon oscillator</option>
+                    <option value="atr">ATR (Average True Range)</option>
+                    <option value="ao">Awesome oscillator</option>
+                    <option value="cci">CCI (Commodity Channel Index)</option>
+                    <option value="chaikin">Chaikin</option>
+                    <option value="cmf">CMF (Chaikin Money Flow)</option>
+                    <option value="disparityindex">Disparity Index</option>
+                    <option value="cmo">CMO (Chande Momentum Oscillator)</option>
+                    <option value="dmi">DMI (Directional Movement Index)</option>
+                    <option value="dpo">Detrended price</option>
+                    <option value="linearregressionangle">Linear Regression Angle</option>
+                    <option value="linearregressionintercept">Linear Regression Intercept</option>
+                    <option value="linearregressionslope">Linear Regression Slope</option>
+                    <option value="klinger">Klinger Oscillator</option>
+                    <option value="macd" selected="selected">MACD (Moving Average Convergence Divergence)</option>
+                    <option value="mfi">MFI (Money Flow Index)</option>
+                    <option value="momentum">Momentum</option>
+                    <option value="natr">NATR (Normalized Average True Range)</option>
+                    <option value="obv">OBV (On-Balance Volume)</option>
+                    <option value="ppo">Percentage Price oscillator</option>
+                    <option value="roc">RoC (Rate of Change)</option>
+                    <option value="rsi">RSI (Relative Strength Index)</option>
+                    <option value="slowstochastic">Slow Stochastic</option>
+                    <option value="stochastic">Stochastic</option>
+                    <option value="trix">TRIX</option>
+                    <option value="williamsr">Williams %R</option>
+                </select>
+            </div>
+        </div>
+        <div class="demo-body" id="container">
+            <div class="ms" id="navigator-container"></div>
+            <div class="ms" id="second-navigator-container"></div>
+            <div class="ms" id="price-chart"></div>
+        </div>
+   
+    </div>
+
+    <!-- <div class="demo-footer">
+        <div class="demo-button-container">
+            <button aria-label="Light Mode" class="hc-button demo-button active hc-button--size-200" id="light">
+                Light
+               <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M8.00004 1.3335V2.66683M8.00004 13.3335V14.6668M2.66671 8.00016H1.33337M4.20945 4.20957L3.26664 3.26676M11.7906 4.20957L12.7334 3.26676M4.20945 11.7935L3.26664 12.7363M11.7906 11.7935L12.7334 12.7363M14.6667 8.00016H13.3334M11.3334 8.00016C11.3334 9.84111 9.84099 11.3335 8.00004 11.3335C6.15909 11.3335 4.66671 9.84111 4.66671 8.00016C4.66671 6.15921 6.15909 4.66683 8.00004 4.66683C9.84099 4.66683 11.3334 6.15921 11.3334 8.00016Z" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+
+            </button>
+
+             <button aria-label="Dark Mode" class="hc-button demo-button hc-button--size-200" id="dark">
+                Dark
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M14.6667 10.563C13.7911 10.959 12.8191 11.1794 11.7957 11.1794C7.94357 11.1794 4.82081 8.05664 4.82081 4.20452C4.82081 3.18106 5.04124 2.20909 5.43722 1.3335C3.01721 2.42792 1.33337 4.8633 1.33337 7.69196C1.33337 11.5441 4.45613 14.6668 8.30825 14.6668C11.1369 14.6668 13.5723 12.983 14.6667 10.563Z" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
+
+             <button aria-label="System Settings" class="hc-button demo-button hc-button--size-200" id="system">
+                System
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M10 11.3333V14H6.00004V11.3333M3.46671 11.3333H12.5334C13.2801 11.3333 13.6535 11.3333 13.9387 11.188C14.1896 11.0602 14.3936 10.8562 14.5214 10.6053C14.6667 10.3201 14.6667 9.94674 14.6667 9.2V4.13333C14.6667 3.3866 14.6667 3.01323 14.5214 2.72801C14.3936 2.47713 14.1896 2.27316 13.9387 2.14532C13.6535 2 13.2801 2 12.5334 2H3.46671C2.71997 2 2.3466 2 2.06139 2.14532C1.8105 2.27316 1.60653 2.47713 1.4787 2.72801C1.33337 3.01323 1.33337 3.3866 1.33337 4.13333V9.2C1.33337 9.94674 1.33337 10.3201 1.4787 10.6053C1.60653 10.8562 1.8105 11.0602 2.06139 11.188C2.3466 11.3333 2.71997 11.3333 3.46671 11.3333Z" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
+        </div>
+    </div> -->
+</div>

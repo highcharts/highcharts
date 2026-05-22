@@ -17,7 +17,7 @@ const customStarIcon = {
 };
 
 Grid.grid('container', {
-    dataTable: {
+    data: {
         columns: {
             product: [
                 'Apples', 'Pears', 'Plums', 'Bananas', 'Oranges',

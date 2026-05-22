@@ -1,13 +1,13 @@
-// SPDX-License-Identifier: LicenseRef-Highcharts
-/**
+/* *
  *
  *  Events generator for Stock tools
  *
  *  (c) 2009-2026 Highsoft AS
  *  Author: Paweł Fus
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -33,13 +33,12 @@ const {
     isNotNavigatorYAxis,
     isPriceIndicatorEnabled
 } = STU;
-import U from '../../Core/Utilities.js';
-const {
+import {
     correctFloat,
     defined,
     isNumber,
     pick
-} = U;
+} from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -47,6 +46,7 @@ const {
  *
  * */
 
+/** @internal */
 declare module '../../Extensions/Annotations/NavigationBindingsBase' {
     interface NavigationBindingsBase {
         /** @requires modules/stock-tools */
@@ -76,16 +76,19 @@ declare module '../../Extensions/Annotations/NavigationBindingsBase' {
     }
 }
 
+/** @internal */
 export interface AxisPositions {
     top: string;
     height: string;
 }
 
+/** @internal */
 export interface NavigationBindingsResizerObject {
     controlledAxis?: Record<string, Array<string|number>>;
     enabled: boolean;
 }
 
+/** @internal */
 export interface YAxisPositions {
     positions: Array<Record<string, number>>;
     allAxesHeight: number;
@@ -97,9 +100,7 @@ export interface YAxisPositions {
  *
  * */
 
-/**
- * @private
- */
+/** @internal */
 function compose(
     NavigationBindingsClass: typeof NavigationBindings
 ): void {
@@ -132,7 +133,7 @@ function compose(
  * Get current positions for all yAxes. If new axis does not have position,
  * returned is default height and last available top place.
  *
- * @private
+ * @internal
  * @function Highcharts.NavigationBindings#getYAxisPositions
  *
  * @param {Array<Highcharts.Axis>} yAxes
@@ -162,7 +163,7 @@ function navigationGetYAxisPositions(
         previousAxisHeight: number,
         removedHeight: number,
         removedTop: number;
-    /** @private */
+    /** @internal */
     function isPercentage(prop: number | string | undefined): boolean {
         return defined(prop) && !isNumber(prop) && (prop.match('%') as any);
     }
@@ -179,12 +180,12 @@ function navigationGetYAxisPositions(
     const positions = yAxes.map((yAxis, index): Record<string, number> => {
         let height = correctFloat(
                 isPercentage(yAxis.options.height) ?
-                    parseFloat(yAxis.options.height as any) / 100 :
+                    parseFloat(String(yAxis.options.height)) / 100 :
                     yAxis.height / plotHeight
             ),
             top = correctFloat(
                 isPercentage(yAxis.options.top) ?
-                    parseFloat(yAxis.options.top as any) / 100 :
+                    parseFloat(String(yAxis.options.top)) / 100 :
                     (yAxis.top - yAxis.chart.plotTop) / plotHeight
             );
 
@@ -238,7 +239,7 @@ function navigationGetYAxisPositions(
  * axes in the navigator. Because indicator can be removed with it's yAxis
  * in the middle of yAxis array, we need to bind closest yAxes back.
  *
- * @private
+ * @internal
  * @function Highcharts.NavigationBindings#getYAxisResizers
  *
  * @param {Array<Highcharts.Axis>} yAxes
@@ -284,7 +285,7 @@ function navigationGetYAxisResizers(
  * Utility to modify calculated positions according to the remaining/needed
  * space. Later, these positions are used in `yAxis.update({ top, height })`
  *
- * @private
+ * @internal
  * @function Highcharts.NavigationBindings#recalculateYAxisPositions
  * @param {Array<Highcharts.Dictionary<number>>} positions
  * Default positions of all yAxes.
@@ -332,13 +333,13 @@ function navigationRecalculateYAxisPositions(
  * If axis is removed, the current plot area stretches to fit into 100%
  * of the plot area.
  *
- * @private
+ * @internal
  */
 function navigationResizeYAxes(
     this: NavigationBindings,
     removedYAxisProps?: AxisPositions
 ): void {
-    // The height of the new axis before rescalling. In %, but as a number.
+    // The height of the new axis before rescaling. In %, but as a number.
     const defaultHeight = 20;
     const chart = this.chart,
         // Only non-navigator axes
@@ -393,8 +394,10 @@ function navigationResizeYAxes(
  *
  * */
 
+/** @internal */
 const StockTools = {
     compose
 };
 
+/** @internal */
 export default StockTools;

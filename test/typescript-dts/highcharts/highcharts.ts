@@ -7,6 +7,7 @@
  * */
 
 import * as Highcharts from "highcharts";
+import "highcharts/modules/series-label";
 
 test_legend();
 test_selectEvent();

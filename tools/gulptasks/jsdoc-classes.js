@@ -81,7 +81,8 @@ const SOURCE_GLOBS = [
     'Series/Sankey/SankeySeries.js',
     'Series/Timeline/TimelineSeries.js',
     'Series/GeoHeatmap/GeoHeatmapSeries.js',
-    'Stock/Navigator/StandaloneNavigator.js'
+    'Stock/Navigator/StandaloneNavigator.js',
+    'Shared/Utilities.js'
 ].map(path => `code/es-modules/${path}`));
 
 const TARGET_DIRECTORY = Path.join('build', 'api', 'class-reference');

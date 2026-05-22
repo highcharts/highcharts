@@ -4,19 +4,17 @@
  *
  * */
 
-import type { BBoxObject } from '../../Core/Renderer/BBoxObject';
 import type Chart from '../../Core/Chart/Chart';
 import type Pane from './Pane';
 import type Pointer from '../../Core/Pointer';
 import type Series from '../../Core/Series/Series';
 
-import U from '../../Core/Utilities.js';
-const {
+import {
     addEvent,
     correctFloat,
     defined,
     pick
-} = U;
+} from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -71,47 +69,10 @@ function chartGetHoverPane(
     return hoverPane;
 }
 
-/**
- * Adjusts the clipBox based on the position of panes.
- * @internal
- */
-function onSetClip(
-    this: Series,
-    {
-        clipBox
-    }: {
-        clipBox: BBoxObject
-    }
-): void {
-    if (
-        !this.xAxis ||
-        !this.yAxis ||
-        (!this.chart.angular && !this.chart.polar)
-    ) {
-        return;
-    }
-
-    const { plotWidth, plotHeight } = this.chart,
-        smallestSize = Math.min(plotWidth, plotHeight),
-        xPane = this.xAxis.pane,
-        yPane = this.yAxis.pane;
-
-    if (xPane && xPane.axis) {
-        clipBox.x += xPane.center[0] -
-            (xPane.center[2] / smallestSize) * plotWidth / 2;
-    }
-
-    if (yPane && yPane.axis) {
-        clipBox.y += yPane.center[1] -
-            (yPane.center[2] / smallestSize) * plotHeight / 2;
-    }
-}
-
 /** @internal */
 function compose(
     ChartClass: typeof Chart,
-    PointerClass: typeof Pointer,
-    SeriesClass: typeof Series
+    PointerClass: typeof Pointer
 ): void {
     const chartProto = ChartClass.prototype as PaneChart;
 
@@ -120,15 +81,12 @@ function compose(
         chartProto.getHoverPane = chartGetHoverPane;
 
         addEvent(ChartClass, 'afterIsInsidePlot', onChartAfterIsInsiderPlot);
-
         addEvent(PointerClass, 'afterGetHoverData', onPointerAfterGetHoverData);
         addEvent(
             PointerClass,
             'beforeGetHoverData',
             onPointerBeforeGetHoverData
         );
-
-        addEvent(SeriesClass, 'setClip', onSetClip);
     }
 
 }

@@ -1,10 +1,11 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  * */
 
@@ -164,6 +165,10 @@ export interface AxisCrosshairLabelOptions {
     /**
      * Formatter function for the label text.
      *
+     * Since v12.6.0, the callback also receives `ctx` as the second argument,
+     * so that arrow functions can access the same context as regular functions
+     * using `this`.
+     *
      * @since   2.1
      * @product highstock
      */
@@ -265,9 +270,10 @@ export interface AxisCrosshairOptions {
     * mouse over a point. Works on initial hover.
     *
     * @sample {highcharts|highstock} highcharts/tooltip/showdelay/
+    *         Show crosshair after 2 seconds
     *
     * @default 0
-    * @since next
+    * @since 12.6.0
     */
     showDelay?: number,
 
@@ -289,11 +295,7 @@ export interface AxisCrosshairOptions {
      * The pixel width of the crosshair. Defaults to 1 for numeric or
      * datetime axes, and for one category width for category axes.
      *
-     * @sample {highcharts} highcharts/xaxis/crosshair-customized/
-     *         Customized crosshairs
-     * @sample {highstock} highcharts/xaxis/crosshair-customized/
-     *         Customized crosshairs
-     * @sample {highmaps} highcharts/xaxis/crosshair-customized/
+     * @sample {highcharts|highstock|highmaps} highcharts/xaxis/crosshair-customized/
      *         Customized crosshairs
      *
      * @default 1
@@ -407,6 +409,12 @@ export interface AxisLabelFormatterContextObject {
      * Default formatting of date/time labels.
      */
     dateTimeLabelFormat?: Time.DateTimeFormat;
+
+    /**
+     * Boundary time unit for the label (e.g `day`, `month`, `year`), used for
+     * date/time formatting.
+     */
+    boundary?: string;
 
     /**
      * Whether the label belongs to the first tick on the axis.
@@ -566,7 +574,9 @@ export interface AxisLabelOptions {
      * Callback JavaScript function to format the label. The value
      * is given by `this.value`. Additional properties for `this` are
      * `axis`, `chart`, `isFirst`, `isLast` and `text` which holds the
-     * value of the default formatter.
+     * value of the default formatter. Since v12.6.0, the callback also
+     * receives `ctx` as the first argument, so that arrow functions can
+     * access the same context as regular functions using `this`.
      *
      * Defaults to a built in function returning a formatted string
      * depending on whether the axis is `category`, `datetime`,
@@ -697,7 +707,19 @@ export interface AxisLabelOptions {
      * @sample {highcharts} highcharts/xaxis/labels-style/
      *         Red X axis labels
      */
-    style: CSSObject;
+    style: CSSObject & {
+        /** @default ${palette.neutralColor80} */
+        color?: CSSObject['color'];
+
+        /** @default 'default' */
+        cursor?: CSSObject['cursor'];
+
+        /** @default '0.8em' */
+        fontSize?: CSSObject['fontSize'];
+
+        /** @default 'ellipsis' */
+        textOverflow?: CSSObject['textOverflow'];
+    };
 
     /**
      * Whether to [use HTML](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting#html)
@@ -830,6 +852,9 @@ export interface AxisOptions {
     /**
      * Configure a crosshair that follows either the mouse pointer or the
      * hovered point.
+     *
+     * Support boolean or object definition. If `true`, a crosshair with
+     * default settings will be displayed.
      *
      * In styled mode, the crosshairs are styled in the
      * `.highcharts-crosshair`, `.highcharts-crosshair-thin` or
@@ -1769,10 +1794,13 @@ export interface AxisOptions {
 
     /**
      * A callback function returning array defining where the ticks are
-     * laid out on the axis. This overrides the default behaviour of
+     * laid out on the axis. This overrides the default behavior of
      * [tickPixelInterval](#xAxis.tickPixelInterval) and [tickInterval](
      * #xAxis.tickInterval). The automatic tick positions are accessible
-     * through `this.tickPositions` and can be modified by the callback.
+     * through `this.tickPositions` and can be modified by the callback. Since
+     * v12.5.0, the callback also receives `ctx` as the third argument, so that
+     * arrow functions can access the same context as regular functions using
+     * `this`.
      *
      * @see [tickPositions](#xAxis.tickPositions)
      *
@@ -1785,7 +1813,7 @@ export interface AxisOptions {
 
     /**
      * An array defining where the ticks are laid out on the axis. This
-     * overrides the default behaviour of [tickPixelInterval](
+     * overrides the default behavior of [tickPixelInterval](
      * #xAxis.tickPixelInterval) and [tickInterval](#xAxis.tickInterval).
      *
      * Note: When working with date-time axes, be aware of time zone
@@ -1967,7 +1995,8 @@ export interface AxisTickPositionerCallback {
     (
         this: Axis,
         min: number,
-        max: number
+        max: number,
+        ctx?: Axis
     ): (TickPositionsArray|undefined);
 }
 
@@ -2059,7 +2088,13 @@ export interface AxisTitleOptions {
      * @sample {highcharts} highcharts/css/axis/
      *         Styled mode
      */
-    style: CSSObject;
+    style: CSSObject & {
+        /** @default ${palette.neutralColor60} */
+        color?: CSSObject['color'];
+
+        /** @default '0.8em' */
+        fontSize?: CSSObject['fontSize'];
+    };
 
     /**
      * The actual text of the axis title. It can contain basic HTML tags

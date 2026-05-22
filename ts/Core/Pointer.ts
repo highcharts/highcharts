@@ -1,10 +1,11 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -40,9 +41,8 @@ const {
     isTouchDevice
 } = H;
 import { Palette } from '../Core/Color/Palettes.js';
-import U from './Utilities.js';
 import SVGAttributes from './Renderer/SVG/SVGAttributes';
-const {
+import {
     addEvent,
     attr,
     css,
@@ -57,7 +57,7 @@ const {
     pick,
     pushUnique,
     splat
-} = U;
+} from '../Shared/Utilities.js';
 
 /* *
  *
@@ -166,7 +166,7 @@ class Pointer {
     public hasPinched?: boolean;
 
     /**
-     * Indicates if there has beeen a movement larger than ~4px during
+     * Indicates if there has been a movement larger than ~4px during
      * a pinch event.
      * @internal
      */
@@ -2116,7 +2116,7 @@ class Pointer {
                 // Android fires touchmove events after the touchstart even if
                 // the finger hasn't moved, or moved only a pixel or two. In iOS
                 // however, the touchmove doesn't fire unless the finger moves
-                // more than ~4px. So we emulate this behaviour in Android by
+                // more than ~4px. So we emulate this behavior in Android by
                 // checking how much it moved, and cancelling on small
                 // distances. #3450. Tested and still relevant as of 2024.
                 if (e.type === 'touchmove') {

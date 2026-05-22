@@ -1,7 +1,7 @@
 ---
  name: Cumulative Sum
  authors:
-   - Rafal Sebestjanski
+   - Rafał Sebestjański
  js_wrap: b
  tags:
    - Highcharts Stock demo

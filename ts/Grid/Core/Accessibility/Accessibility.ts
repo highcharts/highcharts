@@ -4,12 +4,13 @@
  *
  *  (c) 2020-2026 Highsoft AS
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  *  Authors:
- *  - Dawid Dragula
+ *  - Dawid Draguła
  *  - Sebastian Bochan
  *  - Kamil Kubik
  *
@@ -27,15 +28,20 @@ import type Grid from '../Grid';
 import type { ColumnSortingOrder, FilteringCondition } from '../Options';
 import whcm from '../../../Accessibility/HighContrastMode.js';
 
+import {
+    hasDataTableProvider
+} from '../Data/DataProvider.js';
 import Globals from '../Globals.js';
 import ColumnFiltering from '../Table/Actions/ColumnFiltering/ColumnFiltering.js';
 import GridUtils from '../GridUtils.js';
 import AST from '../../../Core/Renderer/HTML/AST.js';
-import U from '../../../Core/Utilities.js';
 import HTMLU from '../../../Accessibility/Utils/HTMLUtilities.js';
+import {
+    internalClearTimeout,
+    replaceNested
+} from '../../../Shared/Utilities.js';
 
 const { formatText } = GridUtils;
-const { replaceNested } = U;
 const { getHeadingTagNameForElement } = HTMLU;
 
 
@@ -140,7 +146,7 @@ class Accessibility {
      */
     public announce(msg: string, assertive = false): void {
         if (this.announcerTimeout) {
-            clearTimeout(this.announcerTimeout);
+            internalClearTimeout(this.announcerTimeout);
         }
 
         this.announcerElement.remove();
@@ -429,7 +435,7 @@ class Accessibility {
      */
     private defaultBeforeFormatter(): string {
         const grid = this.grid;
-        const { container, dataTable, options } = grid;
+        const { container, options } = grid;
         const format =
             options?.accessibility?.screenReaderSection?.beforeGridFormat;
 
@@ -450,6 +456,9 @@ class Accessibility {
             }
         }
 
+        const dataTable = hasDataTableProvider(grid.dataProvider) ?
+            grid.dataProvider.getDataTable() :
+            void 0;
         const context = {
             gridTitle: formattedGridTitle,
             gridDescription: options?.description?.text || '',
@@ -540,7 +549,7 @@ class Accessibility {
 
         this.element.remove();
         this.announcerElement.remove();
-        clearTimeout(this.announcerTimeout);
+        internalClearTimeout(this.announcerTimeout);
     }
 }
 

@@ -2,8 +2,9 @@
  *
  *  (c) 2009-2026 Highsoft AS
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  *  Authors:
@@ -49,14 +50,13 @@ import type {
 import NavigatorSyncs from './NavigatorSyncs/NavigatorSyncs.js';
 import NavigatorSyncUtils from './NavigatorSyncs/NavigatorSyncUtils.js';
 
-import U from '../../../Core/Utilities.js';
-const {
+import {
     diffObjects,
     isNumber,
     isString,
     merge,
     pick
-} = U;
+} from '../../../Shared/Utilities.js';
 
 
 /* *

@@ -1,12 +1,13 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
  *  Extension for 3D charts
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -37,14 +38,13 @@ const {
     shapeArea3D
 } = Math3D;
 import Series from '../Series/Series.js';
-import U from '../Utilities.js';
-const {
+import {
     addEvent,
     isArray,
     merge,
     pick,
     wrap
-} = U;
+} from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -69,12 +69,10 @@ declare module '../Chart/ChartBase'{
     }
 }
 
-declare module '../Chart/ChartOptions'{
+declare module '../Chart/ChartOptions' {
     interface ChartOptions {
         /**
-         * Options to render charts in 3 dimensions. This feature requires
-         * `highcharts-3d.js`, found in the download package or online at
-         * [code.highcharts.com/highcharts-3d.js](https://code.highcharts.com/highcharts-3d.js).
+         * Options to render chart in 3 dimensions.
          *
          * @since    4.0
          * @product  highcharts
@@ -302,7 +300,6 @@ namespace Chart3D {
 
     /**
      * @optionparent
-     * @internal
      */
     export const defaultOptions = {
 
@@ -412,7 +409,7 @@ namespace Chart3D {
                     /**
                      * The color of the panel.
                      *
-                     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+                     * @type      {Highcharts.ColorType}
                      * @default   transparent
                      * @since     4.0
                      * @product   highcharts
@@ -1421,7 +1418,7 @@ namespace Chart3D {
             }, {
                 name: 'brighter',
                 slope: 1.4
-            }].forEach(function (cfg): void {
+            }].forEach(function (this: Chart, cfg): void {
                 this.renderer.definition({
                     tagName: 'filter',
                     attributes: {
@@ -1464,13 +1461,7 @@ namespace Chart3D {
 
         if (this.is3d()) {
             (options.series || []).forEach(function (s): void {
-                const type = (
-                    s.type ||
-                    options.chart.type ||
-                    options.chart.defaultSeriesType
-                );
-
-                if (type === 'scatter') {
+                if ((s.type || options.chart.type) === 'scatter') {
                     s.type = 'scatter3d';
                 }
             });
@@ -1487,7 +1478,7 @@ namespace Chart3D {
             chart.is3d()
         ) {
 
-            // Add a 0-360 normalisation for alfa and beta angles in 3d graph
+            // Add a 0-360 normalization for alfa and beta angles in 3d graph
             if (options3d) {
                 options3d.alpha = options3d.alpha % 360 +
                     (options3d.alpha >= 0 ? 0 : 360);
@@ -2187,7 +2178,7 @@ export default Chart3D;
  * The color of the panel.
  *
  * @deprecated
- * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+ * @type      {Highcharts.ColorType}
  * @default   transparent
  * @since     4.0
  * @product   highcharts

@@ -3,8 +3,9 @@
  *  (c) 2009-2026 Highsoft AS
  *  Author: Highsoft, Black Label
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -405,7 +406,10 @@ export interface AnnotationLabelOptionsOptions {
      * Callback JavaScript function to format the annotation's
      * label. Note that if a `format` or `text` are defined,
      * the format or text take precedence and the formatter is
-     * ignored. `This` refers to a point object.
+     * ignored. `This` refers to a point object. The callback also receives
+     * an argument `ctx` so that arrow-functions can access the same
+     * context (the point in this case) as normal functions can using
+     * `this`. Since v12.6.0, the callback receives `ctx`.
      *
      * @sample highcharts/annotations/label-text/
      *         Set labels text

@@ -1,5 +1,23 @@
 QUnit.test('Curve bell', function (assert) {
-    var chart = Highcharts.chart('container', {
+    let chart = Highcharts.chart('container', {
+        series: [
+            {
+                type: 'bellcurve',
+                data: [
+                    { y: 1 },
+                    { y: 2 },
+                    { y: 3 }
+                ]
+            }
+        ]
+    });
+
+    assert.ok(
+        chart.series[0],
+        'Bellcurve should work with object data without baseseries (#24073).'
+    );
+
+    chart = Highcharts.chart('container', {
         series: [
             {
                 type: 'bellcurve',
@@ -38,8 +56,8 @@ QUnit.test('Curve bell', function (assert) {
         ]
     });
 
-    var bellcurve = chart.series[0];
-    var baseSeries = chart.series[1];
+    const bellcurve = chart.series[0],
+        baseSeries = chart.series[1];
 
     assert.ok(bellcurve, 'Curve bell series initialised');
     assert.ok(

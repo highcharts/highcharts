@@ -6,8 +6,9 @@
  *
  *  Author: Kacper Madej
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -31,11 +32,11 @@ const { parse: color } = Color;
 import H from '../../Core/Globals.js';
 const { charts } = H;
 import RendererRegistry from '../../Core/Renderer/RendererRegistry.js';
+import { merge } from '../../Shared/Utilities.js';
 const {
     Element3D: SVGElement3D
 } = RendererRegistry.getRendererType().prototype;
-import U from '../../Core/Utilities.js';
-const { merge } = U;
+
 
 /* *
  *

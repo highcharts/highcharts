@@ -1,10 +1,11 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -19,7 +20,7 @@
 
 import type LinePoint from './LinePoint';
 import type LineSeriesOptions from './LineSeriesOptions';
-import type { PlotOptionsOf, SeriesZonesOptions } from '../../Core/Series/SeriesOptions';
+import type { SeriesZonesOptions } from '../../Core/Series/SeriesOptions';
 import type SplineSeries from '../Spline/SplineSeries';
 import type SplinePoint from '../Spline/SplinePoint';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
@@ -28,12 +29,7 @@ import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import { Palette } from '../../Core/Color/Palettes.js';
 import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-import U from '../../Core/Utilities.js';
-const {
-    defined,
-    merge,
-    isObject
-} = U;
+import { defined, isObject, merge } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -44,7 +40,7 @@ const {
 /**
  * The line series is the base type and is therefor the series base prototype.
  *
- * @private
+ * @internal
  */
 class LineSeries extends Series {
 
@@ -54,16 +50,23 @@ class LineSeries extends Series {
      *
      * */
 
-    public static defaultOptions = merge(
+    public static defaultOptions: LineSeriesOptions = merge(
         Series.defaultOptions,
-        /**
-         * General options for all series types.
-         *
-         * @optionparent plotOptions.series
-         */
         {
+            /**
+             * What type of legend symbol to render for this series. Can be one
+             * of `areaMarker`, `lineMarker` or `rectangle`.
+             *
+             * @sample {highcharts} highcharts/series/legend-symbol/
+             *         Change the legend symbol
+             *
+             * @type      {string}
+             * @default   lineMarker
+             * @since     11.0.1
+             * @apioption plotOptions.line.legendSymbol
+             */
             legendSymbol: 'lineMarker'
-        } as PlotOptionsOf<LineSeries>
+        }
     );
 
     /* *
@@ -92,6 +95,7 @@ class LineSeries extends Series {
      * positions and attributes.
      *
      * @function Highcharts.Series#drawGraph
+     * @internal
      */
     public drawGraph(): void {
         const options = this.options,
@@ -122,6 +126,7 @@ class LineSeries extends Series {
                  *
                  * @name Highcharts.Series#graph
                  * @type {Highcharts.SVGElement|undefined}
+                 * @internal
                  */
                 owner.graph = graph = this.chart.renderer
                     .path(graphPath)
@@ -193,7 +198,7 @@ class LineSeries extends Series {
     /**
      * Get the graph path.
      *
-     * @private
+     * @internal
      */
     public getGraphPath(
         points?: Array<LinePoint>,
@@ -352,6 +357,7 @@ class LineSeries extends Series {
  *
  * */
 
+/** @internal */
 interface LineSeries {
     pointClass: typeof LinePoint;
 }
@@ -362,6 +368,7 @@ interface LineSeries {
  *
  * */
 
+/** @internal */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         line: typeof LineSeries;
@@ -375,6 +382,7 @@ SeriesRegistry.registerSeriesType('line', LineSeries);
  *
  * */
 
+/** @internal */
 export default LineSeries;
 
 /* *
@@ -395,17 +403,6 @@ export default LineSeries;
  * @extends   plotOptions.series
  * @product   highcharts highstock
  * @apioption plotOptions.line
- */
-
-/**
- * The SVG value used for the `stroke-linecap` and `stroke-linejoin`
- * of a line graph. Round means that lines are rounded in the ends and
- * bends.
- *
- * @type       {Highcharts.SeriesLinecapValue}
- * @default    round
- * @since      3.0.7
- * @apioption  plotOptions.line.linecap
  */
 
 /**
@@ -482,6 +479,7 @@ export default LineSeries;
  * @sample {highcharts} highcharts/series/data-array-of-objects/
  *         Config objects
  *
+ * @basic
  * @declare   Highcharts.PointOptionsObject
  * @type      {Array<number|Array<(number|string),(number|null)>|null|*>}
  * @apioption series.line.data
@@ -511,7 +509,7 @@ export default LineSeries;
  * @sample {highcharts} highcharts/point/color/
  *         Mark the highest point
  *
- * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+ * @type      {Highcharts.ColorType}
  * @product   highcharts highstock gantt
  * @apioption series.line.data.color
  */
@@ -562,16 +560,6 @@ export default LineSeries;
  * @excluding zIndex
  * @product   highcharts highstock gantt
  * @apioption series.line.data.dataLabels
- */
-
-/**
- * A description of the point to add to the screen reader information
- * about the point.
- *
- * @type      {string}
- * @since     5.0.0
- * @requires  modules/accessibility
- * @apioption series.line.data.description
  */
 
 /**

@@ -7,10 +7,10 @@
  * Pictorial graph series type for Highcharts
  *
  * (c) 2010-2026 Highsoft AS
- * Author: Torstein Honsi, Magdalena Gut
+ * Author: Torstein Hønsi, Magdalena Gut
  *
- * A commercial license may be required depending on use.
- * See www.highcharts.com/license
+ * A commercial license may be required depending on use,
+ * see www.highcharts.com/license
  */
 'use strict';
 import Highcharts from '../../Core/Globals.js';

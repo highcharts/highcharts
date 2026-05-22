@@ -4,13 +4,14 @@ tags: ["grid-pro"]
 
 # Events
 
-**Highcharts Grid Pro** supports event listeners that are triggered when interacting with the grid. Events are configured at different levels depending on their scope:
+Highcharts Grid Pro supports event listeners for grid interactions. Events are configured at different levels depending on their scope:
 
-- **Grid-level events** are configured in the [events](https://api.highcharts.com/grid/#interfaces/Grid_Pro_GridEvents.GridEvents) property at the root of grid options
-- **Column-level events** are configured in [columnDefaults.events](https://api.highcharts.com/grid/#interfaces/Grid_Pro_GridEvents.ColumnEvents) or [columns[].events](https://api.highcharts.com/grid/#interfaces/Grid_Pro_GridEvents.ColumnEvents)
-- **Cell events** are configured in [columnDefaults.cells.events](https://api.highcharts.com/grid/#interfaces/Grid_Pro_GridEvents.CellEvents) or [columns[].cells.events](https://api.highcharts.com/grid/#interfaces/Grid_Pro_GridEvents.CellEvents)
-- **Header events** are configured in [columnDefaults.header.events](https://api.highcharts.com/grid/#interfaces/Grid_Pro_GridEvents.HeaderEvents) or [columns[].header.events](https://api.highcharts.com/grid/#interfaces/Grid_Pro_GridEvents.HeaderEvents)
-- **Pagination events** are configured in [pagination.events](https://api.highcharts.com/grid/#interfaces/Grid_Core_Pagination_PaginationOptions.PaginationOptions#events)
+- **Grid-level events** are configured in the [events](https://api.highcharts.com/grid/events) property at the root of grid options
+- **Column-level events** are configured in [columnDefaults.events](https://api.highcharts.com/grid/columnDefaults.events) or [columns[].events](https://api.highcharts.com/grid/columns.events)
+- **Cell events** are configured in [columnDefaults.cells.events](https://api.highcharts.com/grid/columnDefaults.cells.events) or [columns[].cells.events](https://api.highcharts.com/grid/columns.cells.events)
+- **Header events** are configured in [columnDefaults.header.events](https://api.highcharts.com/grid/columnDefaults.header.events) or [columns[].header.events](https://api.highcharts.com/grid/columns.header.events)
+- **Pagination events** are configured in [pagination.events](https://api.highcharts.com/grid/pagination.events)
+- **Row pinning events** are configured in `rendering.rows.pinning.events`
 
 ## Grid-level events
 
@@ -24,9 +25,12 @@ Configured in `events` at the root of grid options:
 | `afterUpdate`          | Triggered after grid options are updated via `update()`. | `this: Grid`          |
 | `beforeRedraw`         | Triggered before the grid DOM is redrawn. Fired by default when `update()` is called, unless `redraw` is set to `false`. | `this: Grid`          |
 | `afterRedraw`          | Triggered after the grid DOM is redrawn. Fired by default when `update()` is called, unless `redraw` is set to `false`. | `this: Grid`          |
+| `beforeTreeRowToggle`  | Triggered before a Tree view row is expanded or collapsed. Call `event.preventDefault()` to cancel the toggle. | `this: Grid`          |
+| `afterTreeRowToggle`   | Triggered after a Tree view row is expanded or collapsed. | `this: Grid`          |
 
 Related topic:
 - [Overview / Understanding](https://www.highcharts.com/docs/grid/understanding-grid)
+- [Rows / Tree view](https://www.highcharts.com/docs/grid/rows/tree-view)
 
 ## Column-level events
 
@@ -60,7 +64,6 @@ Configured in `columnDefaults.cells.events` or `columns[].cells.events`:
 
 Related topics:
 - [Editing / Overview](https://www.highcharts.com/docs/grid/editing/index)
-- [Cells / Context menu](https://www.highcharts.com/docs/grid/cells/context-menu)
 
 ## Header events
 
@@ -88,9 +91,9 @@ Configured in `pagination.events`:
 Related topic:
 - [Rows / Pagination](https://www.highcharts.com/docs/grid/rows/pagination)
 
-# Examples
+## Examples
 
-## Grid-level events
+### Grid-level events
 
 Grid-level events are configured at the root `events` property:
 
@@ -114,12 +117,45 @@ Grid-level events are configured at the root `events` property:
         },
         afterRedraw: function () {
             console.log('Grid DOM redraw finished.');
+        },
+    }
+}
+```
+
+## Row pinning events
+
+Row pinning events are configured in `rendering.rows.pinning.events`:
+
+```js
+{
+    rendering: {
+        rows: {
+            pinning: {
+                events: {
+                    beforeRowPin: function (event) {
+                        console.log(
+                            'Before row pinning change:',
+                            this,
+                            event.action,
+                            event.rowId
+                        );
+                    },
+                    afterRowPin: function (event) {
+                        console.log(
+                            'After row pinning change:',
+                            this,
+                            event.action,
+                            event.rowId
+                        );
+                    }
+                }
+            }
         }
     }
 }
 ```
 
-## Column-level events
+### Column-level events
 
 Column-level events can be configured in `columnDefaults.events` (applies to all columns) or in individual column definitions:
 
@@ -155,7 +191,7 @@ Column-level events can be configured in `columnDefaults.events` (applies to all
 }
 ```
 
-## Cell events
+### Cell events
 
 Cell events can be configured in `columnDefaults.cells.events` (applies to all cells in all columns) or in individual column definitions:
 
@@ -198,7 +234,7 @@ Cell events can be configured in `columnDefaults.cells.events` (applies to all c
 }
 ```
 
-## Header events
+### Header events
 
 Header events can be configured in `columnDefaults.header.events` (applies to all headers) or in individual column definitions:
 
@@ -229,7 +265,7 @@ Header events can be configured in `columnDefaults.header.events` (applies to al
 }
 ```
 
-## Pagination events
+### Pagination events
 
 Pagination events are configured in `pagination.events`:
 

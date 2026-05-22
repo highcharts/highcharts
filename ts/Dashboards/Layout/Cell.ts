@@ -2,8 +2,9 @@
  *
  *  (c) 2009-2026 Highsoft AS
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  *  Authors:
@@ -33,12 +34,7 @@ import type CellHTML from './CellHTML.js';
 import EditGlobals from '../EditMode/EditGlobals.js';
 import Globals from '../Globals.js';
 import GUIElement from './GUIElement.js';
-import U from '../../Core/Utilities.js';
-const {
-    defined,
-    merge,
-    fireEvent
-} = U;
+import { defined, fireEvent, merge } from '../../Shared/Utilities.js';
 
 /* *
  *

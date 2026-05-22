@@ -1,10 +1,11 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -23,24 +24,22 @@ import type FlagSeries from '../../Series/Flags/FlagsSeries';
 import type Point from '../Series/Point.js';
 import type TickPositionsArray from './TickPositionsArray';
 import type Time from '../Time';
-import type Types from '../../Shared/Types';
+import type { TypedArray } from '../../Shared/Types';
 
 import Axis from './Axis.js';
 import DataTableCore from '../../Data/DataTableCore.js';
 import H from '../Globals.js';
 import Series from '../Series/Series.js';
-import U from '../Utilities.js';
-const {
-    addEvent,
+import {
     correctFloat,
-    css,
     defined,
-    error,
+    isString,
     isNumber,
     pick,
-    timeUnits,
-    isString
-} = U;
+    css,
+    addEvent
+} from '../../Shared/Utilities.js';
+import { error, timeUnits } from '../Utilities.js';
 
 /* *
  *
@@ -118,9 +117,9 @@ namespace OrdinalAxis {
             min: number,
             max: number,
             startOfWeek: number,
-            positions?: Array<number>|Types.TypedArray,
+            positions?: Array<number>|TypedArray,
             closestDistance?: number,
-            findHigherRanks?: boolean
+            findBoundaryTicks?: boolean
         ): TickPositionsArray;
 
         /** @internal */
@@ -147,15 +146,6 @@ namespace OrdinalAxis {
      * Extends the axis with ordinal support.
      *
      * @internal
-     *
-     * @param AxisClass
-     * Axis class to extend.
-     *
-     * @param ChartClass
-     * Chart class to use.
-     *
-     * @param SeriesClass
-     * Series class to use.
      */
     export function compose<T extends typeof Axis>(
         AxisClass: T,
@@ -211,10 +201,10 @@ namespace OrdinalAxis {
         startOfWeek?: number,
         positions: Array<number> = [],
         closestDistance: number = 0,
-        findHigherRanks?: boolean
+        findBoundaryTicks?: boolean
     ): TickPositionsArray {
 
-        const higherRanks = {} as Record<string, string>,
+        const boundaryTicks = {} as Record<string, string>,
             tickPixelIntervalOption = this.options.tickPixelInterval,
             time = this.chart.time,
             // Record all the start positions of a segment, to use when
@@ -222,7 +212,7 @@ namespace OrdinalAxis {
             segmentStarts = [];
         let end,
             segmentPositions,
-            hasCrossedHigherRank,
+            hasCrossedBoundary,
             info,
             outsideMax,
             start = 0,
@@ -304,9 +294,9 @@ namespace OrdinalAxis {
         if (segmentPositions) {
             info = (segmentPositions as any).info;
 
-            // Optionally identify ticks with higher rank, for example
+            // Optionally identify ticks with boundary, for example
             // when the ticks have crossed midnight.
-            if (findHigherRanks && info.unitRange <= timeUnits.hour) {
+            if (findBoundaryTicks && info.unitRange <= timeUnits.hour) {
                 end = groupPositions.length - 1;
 
                 // Compare points two by two
@@ -315,17 +305,17 @@ namespace OrdinalAxis {
                         time.dateFormat('%d', groupPositions[start]) !==
                         time.dateFormat('%d', groupPositions[start - 1])
                     ) {
-                        higherRanks[groupPositions[start]] = 'day';
-                        hasCrossedHigherRank = true;
+                        boundaryTicks[groupPositions[start]] = 'day';
+                        hasCrossedBoundary = true;
                     }
                 }
 
                 // If the complete array has crossed midnight, we want
-                // to mark the first positions also as higher rank
-                if (hasCrossedHigherRank) {
-                    higherRanks[groupPositions[0]] = 'day';
+                // to mark the first positions also as boundary
+                if (hasCrossedBoundary) {
+                    boundaryTicks[groupPositions[0]] = 'day';
                 }
-                info.higherRanks = higherRanks;
+                info.boundaryTicks = boundaryTicks;
             }
 
             // Save the info
@@ -338,7 +328,7 @@ namespace OrdinalAxis {
         // Don't show ticks within a gap in the ordinal axis, where the
         // space between two points is greater than a portion of the tick
         // pixel interval
-        if (findHigherRanks && defined(tickPixelIntervalOption)) {
+        if (findBoundaryTicks && defined(tickPixelIntervalOption)) {
 
             const length = groupPositions.length,
                 translatedArr = [],
@@ -385,15 +375,14 @@ namespace OrdinalAxis {
                     (medianDistance === null || distance < medianDistance * 0.8)
                 ) {
 
-                    // Is this a higher ranked position with a normal
+                    // Is this a boundary position with a normal
                     // position to the right?
                     if (
-                        higherRanks[groupPositions[i]] &&
-                        !higherRanks[groupPositions[i + 1]]
+                        boundaryTicks[groupPositions[i]] &&
+                        !boundaryTicks[groupPositions[i + 1]]
                     ) {
 
-                        // Yes: remove the lower ranked neighbour to the
-                        // right
+                        // Yes: remove the lower ranked neighbor to the right
                         itemToRemove = i + 1;
                         lastTranslated = translated; // #709
 
@@ -476,7 +465,7 @@ namespace OrdinalAxis {
         // In some cases (especially in early stages of the chart creation) the
         // getExtendedPositions might return undefined.
         if (positions?.length) {
-            // Convert back from modivied value to pixels. // #15970
+            // Convert back from modified value to pixels. // #15970
             const pixelVal = correctFloat(
                     (val - (localMin as number)) * localA +
                     axis.minPixelPadding
@@ -490,9 +479,9 @@ namespace OrdinalAxis {
             // Check if the index is inside position array. If true,
             // read/approximate value for that exact index.
             if (index >= 0 && index <= positions.length - 1) {
-                const leftNeighbour = positions[Math.floor(index)],
-                    rightNeighbour = positions[Math.ceil(index)],
-                    distance = rightNeighbour - leftNeighbour;
+                const leftNeighbor = positions[Math.floor(index)],
+                    rightNeighbor = positions[Math.ceil(index)],
+                    distance = rightNeighbor - leftNeighbor;
 
                 return positions[Math.floor(index)] + mantissa * distance;
             }
@@ -560,7 +549,7 @@ namespace OrdinalAxis {
                     eventArgs?.trigger !== 'pan' ||
                     axis.isInternal
                 ) &&
-                // Scrollbar buttons are the other execption
+                // Scrollbar buttons are the other exception
                 eventArgs?.trigger !== 'navigator'
             ) {
 
@@ -805,7 +794,7 @@ namespace OrdinalAxis {
 
         const ordinalLength = ordinalPositions.length;
         let ordinalIndex;
-        // If the searched value is inside visible plotArea, ivastigate the
+        // If the searched value is inside visible plotArea, investigate the
         // value basing on ordinalPositions.
         if (
             ordinalPositions[0] <= val &&

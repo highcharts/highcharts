@@ -2,12 +2,13 @@
  *
  *  (c) 2009-2026 Highsoft AS
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  *  Authors:
- *  - Karol Kolodziej
+ *  - Karol Kołodziej
  *  - Kamil Kubik
  *
  * */
@@ -94,7 +95,7 @@ export interface GoogleSheetsConnectorOptions extends DataConnectorOptions {
      * Allows defining multiple data tables within a single connector to adjust
      * options or data parsing in various ways based on the same data source.
      *
-     * @example
+     * ```js
      * dataPool: {
      *     connectors: [{
      *         id: 'data-connector',
@@ -134,6 +135,7 @@ export interface GoogleSheetsConnectorOptions extends DataConnectorOptions {
      *         }]
      *     }]
      * }
+     * ```
      **/
     dataTables?: GoogleSheetsDataTableConnectorOptions[];
 

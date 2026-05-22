@@ -5,8 +5,9 @@
  *
  *  Default lang/i18n options for accessibility.
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -18,6 +19,7 @@
  * */
 
 import type { LangOptions } from '../../Core/Options';
+import type { LangStockToolsOptions } from '../../Stock/StockTools/StockToolsOptions';
 
 /* *
  *
@@ -107,6 +109,7 @@ export interface LangAccessibilityOptions {
         LangAccessibilitySeriesTypeDescriptionsOptions
     );
     sonification: LangAccessibilitySonificationOptions;
+    stockTools: LangStockToolsOptions;
     svgContainerLabel: string;
     svgContainerTitle: string;
     table: LangAccessibilityTableOptions;

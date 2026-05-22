@@ -1,10 +1,11 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -29,14 +30,13 @@ import F from '../../Core/Templating.js';
 const { format } = F;
 import H from '../../Core/Globals.js';
 const { composed } = H;
-import U from '../../Core/Utilities.js';
-const {
+import {
     addEvent,
     extend,
     isNumber,
     pick,
     pushUnique
-} = U;
+} from '../../Shared/Utilities.js';
 
 /* *
  *

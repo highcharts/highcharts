@@ -5,8 +5,9 @@
  *  (c) 2009-2026 Highsoft AS
  *  Author: Sebastian Bochan
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -28,10 +29,10 @@ import type {
     StockToolsOptions
 } from './StockToolsOptions';
 
-import U from '../../Core/Utilities.js';
 import AST from '../../Core/Renderer/HTML/AST.js';
 import StockToolsUtilities from './StockToolsUtilities.js';
-const {
+import type HTMLAttributes from '../../Core/Renderer/HTML/HTMLAttributes';
+import {
     addEvent,
     createElement,
     css,
@@ -41,7 +42,7 @@ const {
     isArray,
     merge,
     pick
-} = U;
+} from '../../Shared/Utilities.js';
 const {
     shallowArraysEqual
 } = StockToolsUtilities;
@@ -55,7 +56,7 @@ const {
 /**
  * Toolbar Class
  *
- * @private
+ * @internal
  * @class
  *
  * @param {object} options
@@ -141,7 +142,7 @@ class Toolbar {
 
     /**
      * Create and set up stockTools buttons with their events and submenus.
-     * @private
+     * @internal
      */
     public createButtons(): void {
         const lang = this.lang,
@@ -181,7 +182,7 @@ class Toolbar {
      * Create submenu (list of buttons) for the option. In example main button
      * is Line, in submenu will be buttons with types of lines.
      *
-     * @private
+     * @internal
      *
      * @param {Highcharts.Dictionary<Highcharts.HTMLDOMElement>} parentBtn
      *        Button which has submenu
@@ -199,18 +200,21 @@ class Toolbar {
             wrapper = this.wrapper,
             menuWrapper = this.listWrapper,
             allButtons = this.toolbar.childNodes,
+            title = buttonWrapper.title,
             // Create submenu container
             submenuWrapper = this.submenu = createElement('ul', {
-                className: 'highcharts-submenu-wrapper'
-            }, void 0, buttonWrapper);
+                className: 'highcharts-submenu-wrapper',
+                id: 'highcharts-submenu-wrapper-' +
+                    title.toLowerCase().replace(/\s+/g, '-')
+            } as HTMLAttributes, void 0, buttonWrapper);
 
         // Create submenu buttons and select the first one
         this.addSubmenuItems(buttonWrapper, button);
+        submenuArrow.setAttribute('aria-controls', submenuWrapper.id);
 
         // Show / hide submenu
         this.eventsToUnbind.push(
             addEvent(submenuArrow, 'click', (e: Event): void => {
-
                 e.stopPropagation();
                 // Erase active class on all other buttons
                 this.eraseActiveButtons(allButtons, buttonWrapper);
@@ -220,11 +224,14 @@ class Toolbar {
                     buttonWrapper.className
                         .indexOf('highcharts-current') >= 0
                 ) {
+                    submenuArrow.setAttribute('aria-expanded', false);
                     menuWrapper.style.width =
                         (menuWrapper as any).startWidth + 'px';
                     buttonWrapper.classList.remove('highcharts-current');
                     (submenuWrapper as any).style.display = 'none';
                 } else {
+
+                    submenuArrow.setAttribute('aria-expanded', true);
                     // Show menu
                     // to calculate height of element
                     (submenuWrapper as any).style.display = 'block';
@@ -264,7 +271,7 @@ class Toolbar {
     /**
      * Create buttons in submenu
      *
-     * @private
+     * @internal
      *
      * @param {Highcharts.HTMLDOMElement} buttonWrapper
      *        Button where submenu is placed
@@ -318,7 +325,7 @@ class Toolbar {
 
     /**
      * Erase active class on all other buttons.
-     * @private
+     * @internal
      */
     public eraseActiveButtons(
         buttons: NodeListOf<ChildNode>,
@@ -344,7 +351,7 @@ class Toolbar {
      * Create single button. Consist of HTML elements `li`, `button`, and (if
      * exists) submenu container.
      *
-     * @private
+     * @internal
      *
      * @param {Highcharts.HTMLDOMElement} target
      *        HTML reference, where button should be added
@@ -372,21 +379,25 @@ class Toolbar {
     ): Record<string, HTMLDOMElement> {
         const btnOptions: StockToolsGuiDefinitionsButtonsOptions =
                 options[btnName] as any,
+            btnLabelName = lang[btnName] || btnName,
+            arrowLabel = this.chart.options.lang.accessibility
+                ?.stockTools.arrowLabel,
             items = btnOptions.items,
             classMapping = Toolbar.prototype.classMapping,
             userClassName = btnOptions.className || '';
 
         // Main button wrapper
         const buttonWrapper = createElement('li', {
-            className: pick(classMapping[btnName], '') + ' ' + userClassName,
-            title: lang[btnName] || btnName
+            className: pick(classMapping[btnName], '') + ' ' + userClassName
         }, void 0, target);
 
         // Single button
         const elementType = (btnOptions.elementType || 'button') as string;
         const mainButton = createElement(elementType, {
-            className: 'highcharts-menu-item-btn'
-        }, void 0, buttonWrapper);
+            className: 'highcharts-menu-item-btn',
+            title: btnLabelName,
+            ariaLabel: btnLabelName
+        } as HTMLAttributes, void 0, buttonWrapper);
 
         // Submenu
         if (items && items.length) {
@@ -394,8 +405,10 @@ class Toolbar {
             // Arrow is a hook to show / hide submenu
             const submenuArrow = createElement('button', {
                 className: 'highcharts-submenu-item-arrow ' +
-                    'highcharts-arrow-right'
-            }, void 0, buttonWrapper);
+                    'highcharts-arrow-right',
+                ariaLabel: arrowLabel,
+                ariaExpanded: false
+            } as HTMLAttributes, void 0, buttonWrapper);
 
             submenuArrow.style.backgroundImage = 'url(' +
                 this.iconsURL + 'arrow-bottom.svg)';
@@ -418,7 +431,7 @@ class Toolbar {
 
     /**
      * Create navigation's HTML elements: container and arrows.
-     * @private
+     * @internal
      */
     public addNavigation(): void {
         const wrapper = this.wrapper;
@@ -451,7 +464,7 @@ class Toolbar {
     /**
      * Add events to navigation (two arrows) which allows user to scroll
      * top/down GUI buttons, if container's height is not enough.
-     * @private
+     * @internal
      */
     public scrollButtons(): void {
         const wrapper = this.wrapper,
@@ -487,6 +500,8 @@ class Toolbar {
      */
     public createContainer(): void {
         const chart = this.chart,
+            groupLabel = chart.options.lang.accessibility
+                ?.stockTools.groupLabel,
             guiOptions = this.options,
             container = chart.container,
             navigation = chart.options.navigation,
@@ -498,8 +513,9 @@ class Toolbar {
         // Create main container
         const wrapper = this.wrapper = createElement('div', {
             className: 'highcharts-stocktools-wrapper ' +
-                guiOptions.className + ' ' + bindingsClassName
-        });
+                guiOptions.className + ' ' + bindingsClassName,
+            ariaHidden: false
+        } as HTMLAttributes);
 
         container.appendChild(wrapper);
 
@@ -519,7 +535,7 @@ class Toolbar {
         );
 
 
-        // Mimic event behaviour of being outside chart.container
+        // Mimic event behavior of being outside chart.container
         [
             'mousedown',
             'mousemove',
@@ -537,8 +553,9 @@ class Toolbar {
         // Toolbar
         this.toolbar = toolbar = createElement('ul', {
             className: 'highcharts-stocktools-toolbar ' +
-                    guiOptions.toolbarClassName
-        });
+                    guiOptions.toolbarClassName,
+            ariaLabel: groupLabel
+        } as HTMLAttributes);
 
         // Add container for list of buttons
         this.listWrapper = listWrapper = createElement('div', {
@@ -555,7 +572,7 @@ class Toolbar {
     }
     /**
      * Function called in redraw verifies if the navigation should be visible.
-     * @private
+     * @internal
      */
     public showHideNavigation(): void {
         // Arrows
@@ -575,7 +592,7 @@ class Toolbar {
     }
     /**
      * Create button which shows or hides GUI toolbar.
-     * @private
+     * @internal
      */
     public showHideToolbar(): void {
         const wrapper = this.wrapper,
@@ -651,7 +668,7 @@ class Toolbar {
 
     /**
      * Set select state (active class) on button.
-     * @private
+     * @internal
      */
     public toggleButtonActiveClass(
         button: HTMLDOMElement
@@ -667,7 +684,7 @@ class Toolbar {
 
     /**
      * Remove active class from all buttons except defined.
-     * @private
+     * @internal
      */
     public unselectAllButtons(
         button: HTMLDOMElement
@@ -684,7 +701,7 @@ class Toolbar {
 
     /**
      * Update GUI with given options.
-     * @private
+     * @internal
      */
     public update(
         options: StockToolsOptions,
@@ -708,7 +725,7 @@ class Toolbar {
 
     /**
      * Destroy all HTML GUI elements.
-     * @private
+     * @internal
      */
     public destroy(): void {
         const stockToolsDiv = this.wrapper,
@@ -724,7 +741,7 @@ class Toolbar {
 
     /**
      * Redraws the toolbar based on the current state of the options.
-     * @private
+     * @internal
      */
     public redraw(): void {
         if (this.options.enabled !== this.guiEnabled) {
@@ -744,7 +761,7 @@ class Toolbar {
 
     /**
      * Hadles the change of the `enabled` option.
-     * @private
+     * @internal
      */
     private handleGuiEnabledChange(): void {
         if (this.options.enabled === false) {
@@ -762,7 +779,7 @@ class Toolbar {
 
     /**
      * Updates the class names of the GUI and toolbar elements.
-     * @private
+     * @internal
      */
     private updateClassNames(): void {
         if (this.options.className !== this.guiClassName) {
@@ -788,7 +805,7 @@ class Toolbar {
 
     /**
      * Updates the buttons in the toolbar if the button options have changed.
-     * @private
+     * @internal
      */
     private updateButtons(): void {
         if (
@@ -802,7 +819,7 @@ class Toolbar {
 
     /**
      * Updates visibility based on current options.
-     * @private
+     * @internal
      */
     private updateVisibility(): void {
         if (defined(this.options.visible)) {
@@ -810,9 +827,7 @@ class Toolbar {
         }
     }
 
-    /**
-     * @private
-     */
+    /** @internal */
     public getIconsURL(): string {
         return (this.chart.options.navigation as any).iconsURL ||
             this.options.iconsURL ||
@@ -827,10 +842,11 @@ class Toolbar {
  *
  * */
 
+/** @internal */
 interface Toolbar {
     /**
      * Mapping JSON fields to CSS classes.
-     * @private
+     * @internal
      */
     classMapping: Record<string, string>;
 }
@@ -890,4 +906,5 @@ Toolbar.prototype.classMapping = {
  *
  * */
 
+/** @internal */
 export default Toolbar;

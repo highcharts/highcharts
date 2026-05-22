@@ -2,10 +2,11 @@
  *
  *  Highcharts Breadcrumbs module
  *
- *  Authors: Grzegorz Blachlinski, Karol Kolodziej
+ *  Authors: Grzegorz Blachliński, Karol Kołodziej
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -100,14 +101,13 @@ const options: BreadcrumbsOptions = {
     },
 
     /**
-     * Fires when clicking on the breadcrumbs button. Two arguments are
-     * passed to the function. First breadcrumb button as an SVG element.
-     * Second is the breadcrumbs class, containing reference to the chart,
-     * series etc.
+     * Fires when clicking on a breadcrumb button. Two arguments are passed
+     * to the function. First is the click event. Second is the breadcrumb
+     * options for the clicked button.
      *
      * ```js
-     * click: function(button, breadcrumbs) {
-     *   console.log(button);
+     * click: function (e, breadcrumb) {
+     *   console.log(breadcrumb.level);
      * }
      * ```
      *

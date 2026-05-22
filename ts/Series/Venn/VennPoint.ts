@@ -4,13 +4,14 @@
  *  diagram.
  *
  *  (c) 2016-2026 Highsoft AS
- *  Authors: Jon Arild Nygard
+ *  Authors: Jon Arild Nygård
  *
  *  Layout algorithm by Ben Frederickson:
  *  https://www.benfrederickson.com/better-venn-diagrams/
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -27,11 +28,10 @@ import type VennPointOptions from './VennPointOptions';
 import type VennSeries from './VennSeries';
 
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+import { isNumber } from '../../Shared/Utilities.js';
 const {
     scatter: { prototype: { pointClass: ScatterPoint } }
 } = SeriesRegistry.seriesTypes;
-import U from '../../Core/Utilities.js';
-const { isNumber } = U;
 
 /* *
  *

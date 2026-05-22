@@ -121,7 +121,7 @@ QUnit.test(
                 series: [
                     {
                         type: 'pie',
-                        data: [3, 2, 1]
+                        data: [4, 2, 1]
                     }
                 ],
                 tooltip: {

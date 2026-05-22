@@ -2,15 +2,16 @@
  *
  *  (c) 2009-2026 Highsoft AS
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  *  Authors:
  *  - Sophie Bremer
  *  - Gøran Slettemark
  *  - Jomar Hønsi
- *  - Dawid Dragula
+ *  - Dawid Draguła
  *
  * */
 
@@ -39,15 +40,14 @@ import DataTableCore from './DataTableCore.js';
 import ColumnUtils from './ColumnUtils.js';
 const { splice, setLength } = ColumnUtils;
 
-import U from '../Core/Utilities.js';
-const {
+import {
     addEvent,
     defined,
     extend,
     fireEvent,
-    isNumber,
-    uniqueKey
-} = U;
+    isNumber
+} from '../Shared/Utilities.js';
+import { uniqueKey } from '../Core/Utilities.js';
 
 
 /* *

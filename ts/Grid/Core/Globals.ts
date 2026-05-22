@@ -2,12 +2,13 @@
  *
  *  (c) 2009-2026 Highsoft AS
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  *  Authors:
- *  - Dawid Dragula
+ *  - Dawid Draguła
  *  - Sebastian Bochan
  *
  * */
@@ -36,7 +37,7 @@ export type ClassNameKey = keyof typeof rawClassNames;
 
 export const classNamePrefix: string = 'hcg-';
 export const version = '@product.version@';
-
+export const buildDate = '@product.date@';
 export const rawClassNames = {
     container: 'container',
     tableElement: 'table',
@@ -44,6 +45,7 @@ export const rawClassNames = {
     descriptionElement: 'description',
     theadElement: 'thead',
     tbodyElement: 'tbody',
+    cell: 'cell',
     rowElement: 'row',
     rowEven: 'row-even',
     rowOdd: 'row-odd',
@@ -87,9 +89,10 @@ export const rawClassNames = {
     popup: 'popup',
     button: 'button',
     buttonSelected: 'button-selected',
-    buttonHighlighted: 'button-highlighted',
     input: 'input',
     icon: 'icon',
+    iconSelected: 'icon-selected',
+    iconHighlighted: 'icon-highlighted',
     iconSearch: 'icon-search',
     popupContent: 'popup-content',
     columnFilterWrapper: 'column-filter-wrapper',
@@ -102,13 +105,12 @@ export const rawClassNames = {
     menuItemLabel: 'menu-item-label',
     menuDivider: 'menu-divider',
     clearFilterButton: 'clear-filter-button',
-    paginationWrapper: 'pagination-wrapper',
-    paginationContainer: 'pagination-container',
+    pagination: 'pagination',
     paginationPageInfo: 'pagination-info',
-    paginationControlsContainer: 'pagination-controls-container',
-    paginationNavButtonsContainer: 'pagination-nav-buttons-container',
-    paginationNavDropdown: 'pagination-nav-dropdown',
+    paginationControls: 'pagination-controls',
     paginationPageSize: 'pagination-page-size',
+    paginationPages: 'pagination-pages',
+    paginationNavDropdown: 'pagination-nav-dropdown',
     paginationLeft: 'pagination-left',
     paginationCenter: 'pagination-center',
     paginationRight: 'pagination-right',
@@ -119,7 +121,11 @@ export const rawClassNames = {
     leftAlign: 'left'
 } as const;
 
-export const win = window;
+export const win = (
+    typeof window !== 'undefined' ?
+        window :
+        {}
+) as (Window&typeof globalThis);
 export const composed: Array<string> = [];
 export const userAgent = (win.navigator && win.navigator.userAgent) || '';
 export const isChrome = userAgent.indexOf('Chrome') !== -1;
@@ -137,6 +143,7 @@ export const getClassName = (classNameKey: ClassNameKey): string =>
 export default {
     classNamePrefix,
     version,
+    buildDate,
     rawClassNames,
     win,
     composed,

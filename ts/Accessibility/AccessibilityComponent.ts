@@ -5,8 +5,9 @@
  *
  *  Accessibility component class definition
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -26,6 +27,7 @@ import type HTMLElement from '../Core/Renderer/HTML/HTMLElement';
 import type KeyboardNavigationHandler from './KeyboardNavigationHandler';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type ProxyProvider from './ProxyProvider';
+import type { EventOptions } from '../Shared/Utilities.js';
 
 import CU from './Utils/ChartUtilities.js';
 const { fireEventOnWrappedOrUnwrappedElement } = CU;
@@ -33,7 +35,6 @@ import DOMElementProvider from './Utils/DOMElementProvider.js';
 import EventProvider from './Utils/EventProvider.js';
 import HU from './Utils/HTMLUtilities.js';
 const { getFakeMouseEvent } = HU;
-import U from '../Core/Utilities.js';
 
 /* *
  *
@@ -162,7 +163,7 @@ class AccessibilityComponent {
         el: (T|Class<T>),
         type: string,
         fn: (Function|EventCallback<T>),
-        options?: U.EventOptions
+        options?: EventOptions
     ): Function {
         return this.eventProvider.addEvent<T>(el, type, fn, options);
     }

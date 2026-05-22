@@ -9,7 +9,17 @@ Supported values are pixels (for example `150` or `'150px'`), percentages (for e
 
 The default value is `'auto'`. An `'auto'` width, either explicitly set or implied by omitting the option, causes the column to participate in automatic width distribution.
 
+Use `columnDefaults.width` when most columns should start with the same width,
+and set `columns[].width` to `'auto'` on individual columns to opt back into
+automatic distribution.
+
 Percentage values are calculated relative to the table width.
+
+Use `columns[].minWidth` and `columns[].maxWidth` (or their
+`columnDefaults` equivalents) to constrain how far end users
+can resize a column. Both options accept pixels and percentages.
+The limits apply during initial layout as well as manual resizing, 
+and they take precedence over `width` when there is a conflict.
 
 ## Width behavior
 
@@ -27,6 +37,20 @@ columns: [{
     width: '20%'
 }, {
     id: 'column_3'
+}]
+```
+
+If you use shared defaults, an individual column can still opt out:
+
+```js
+columnDefaults: {
+    width: 50
+},
+columns: [{
+    id: 'column_1'
+}, {
+    id: 'column_2',
+    width: 'auto'
 }]
 ```
 
@@ -52,16 +76,18 @@ rendering: {
 - `independent`: resize only current column; columns to the right keep their current widths.
 - `distributed`: resize current column and rebalance remaining flexible columns.
 
-### Width behavior after resize
-
-After user resize, the resized column width becomes fixed in pixels.
-
-## Events
+## Events __grid_pro__
 
 Relevant column events:
 - `afterResize`
 
-See [Interaction / Events](https://www.highcharts.com/docs/grid/events).
+See [Interaction / Events](https://www.highcharts.com/docs/grid/events) for event details.
+
+## API reference
+
+- [`columnDefaults.width`](https://api.highcharts.com/grid/columnDefaults.width)
+- [`columns.width`](https://api.highcharts.com/grid/columns.width)
+- [`rendering.columns.resizing`](https://api.highcharts.com/grid/rendering.columns.resizing)
 
 ## Demo
 

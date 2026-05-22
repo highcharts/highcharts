@@ -3,8 +3,9 @@
  *  (c) 2009-2026 Highsoft AS
  *  Author: Highsoft, Black Label
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -28,11 +29,7 @@ import type PointerEvent from '../../Core/PointerEvent';
 
 import NBU from './NavigationBindingsUtilities.js';
 const { getAssignedAxis } = NBU;
-import U from '../../Core/Utilities.js';
-const {
-    isNumber,
-    merge
-} = U;
+import { isNumber, merge } from '../../Shared/Utilities.js';
 
 /* *
  *

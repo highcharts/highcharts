@@ -2,12 +2,12 @@ const grid = Grid.grid('container', {
     data: {
         providerType: 'remote',
         dataSource: {
-            urlTemplate: 'https://demo-data-server.highstage.dev' +
+            urlTemplate: 'https://demo-data-server.highsoftlabs.com' +
                 '/data?format={format}&columnsInclude=employeeId,firstName,' +
                 'lastName&page={page}&pageSize={pageSize}&filter={filter}&' +
-                'sortBy={sortBy}&sortOrder={sortOrder}',
-            rowIdColumn: 'employeeId'
+                'sortBy={sortBy}&sortOrder={sortOrder}'
         },
+        idColumn: 'employeeId',
         setValueCallback: async (columnId, rowId, value) => {
             console.log('Setting value:', columnId, rowId, value);
         }

@@ -18,10 +18,11 @@ body {
 
 .demo {
     padding: 8px 12px;
+    box-sizing: border-box;
 }
 
 #container {
-    height: 320px;
+    min-width: 0;
 }
 
 .event-log {
@@ -36,6 +37,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    flex-wrap: wrap;
     gap: 12px;
     margin-bottom: 8px;
 }
@@ -70,6 +72,7 @@ body {
 .event-log-list li {
     padding: 4px 0;
     border-top: 1px dashed rgba(0, 0, 0, 0.12);
+    overflow-wrap: anywhere;
 }
 
 .event-log-list li:first-child {
@@ -79,4 +82,18 @@ body {
 .highcharts-description {
     max-width: 60rem;
     padding: 0 8px;
+}
+
+@media (max-width: 480px) {
+    .demo {
+        padding: 8px;
+    }
+
+    .event-log {
+        padding: 8px 10px;
+    }
+
+    .highcharts-description {
+        padding: 0;
+    }
 }

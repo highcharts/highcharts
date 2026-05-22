@@ -1,10 +1,11 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -34,12 +35,7 @@ import RendererRegistry from '../../Core/Renderer/RendererRegistry.js';
 const { getRendererType } = RendererRegistry;
 import StockUtilities from '../../Stock/Utilities/StockUtilities.js';
 const { setFixedRange } = StockUtilities;
-import U from '../../Core/Utilities.js';
-const {
-    addEvent,
-    extend,
-    pushUnique
-} = U;
+import { addEvent, extend, pushUnique } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -47,12 +43,14 @@ const {
  *
  * */
 
+/** @internal */
 declare module '../../Core/Renderer/SVG/SymbolType' {
     interface SymbolTypeRegistry {
         'navigator-handle': SymbolFunction;
     }
 }
 
+/** @internal */
 declare module '../../Core/Series/SeriesBase' {
     interface SeriesBase {
         baseSeries?: Series;
@@ -73,9 +71,7 @@ declare module '../../Core/Series/SeriesBase' {
  *
  * */
 
-/**
- * @private
- */
+/** @internal */
 function compose(
     ChartClass: typeof Chart,
     AxisClass: typeof Axis,
@@ -96,7 +92,7 @@ function compose(
 
 /**
  * Handle updating series
- * @private
+ * @internal
  */
 function onSeriesAfterUpdate(
     this: Series
@@ -112,8 +108,10 @@ function onSeriesAfterUpdate(
  *
  * */
 
+/** @internal */
 const NavigatorComposition = {
     compose
 };
 
+/** @internal */
 export default NavigatorComposition;

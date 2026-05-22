@@ -1,10 +1,11 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -26,13 +27,7 @@ import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     scatter: { prototype: { pointClass: ScatterPoint } }
 } = SeriesRegistry.seriesTypes;
-import U from '../../Core/Utilities.js';
-const {
-    clamp,
-    defined,
-    extend,
-    pick
-} = U;
+import { clamp, defined, extend, pick } from '../../Shared/Utilities.js';
 
 /* *
  *

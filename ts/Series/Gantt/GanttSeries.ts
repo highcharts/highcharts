@@ -4,8 +4,9 @@
  *
  *  Author: Lars A. V. Cabrera
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -35,14 +36,9 @@ const {
         xrange: XRangeSeries
     }
 } = SeriesRegistry;
-import StaticScale from '../../Extensions/StaticScale.js';
+import { composeStaticScale } from '../../Extensions/StaticScale.js';
 import TreeGridAxis from '../../Core/Axis/TreeGrid/TreeGridAxis.js';
-import U from '../../Core/Utilities.js';
-const {
-    extend,
-    isNumber,
-    merge
-} = U;
+import { extend, isNumber, merge } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -89,7 +85,7 @@ class GanttSeries extends XRangeSeries {
             return;
         }
 
-        StaticScale.compose(AxisClass, ChartClass);
+        composeStaticScale(AxisClass, ChartClass);
 
         if (!SeriesClass) {
             return;

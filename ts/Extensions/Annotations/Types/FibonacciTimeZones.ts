@@ -1,7 +1,12 @@
 /* *
  *
- *  Author: Rafal Sebestjanski
+ *  (c) 2009-2026 Highsoft AS
  *
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
+ *
+ *  Author: Rafał Sebestjański
  *
  * */
 
@@ -25,9 +30,8 @@ const { defaultOptions } = D;
 import InfinityLine from './InfinityLine.js';
 import MockPoint from '../MockPoint.js';
 import { Palette } from '../../../Core/Color/Palettes';
-import U from '../../../Core/Utilities.js';
 import { AnnotationMockPointFunction } from '../AnnotationOptions';
-const { merge } = U;
+import { merge } from '../../../Shared/Utilities.js';
 
 if (defaultOptions.annotations?.types) {
     defaultOptions.annotations.types.fibonacciTimeZones = merge(

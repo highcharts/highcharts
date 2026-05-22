@@ -3,10 +3,11 @@
  *  Organization chart module
  *
  *  (c) 2018-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -37,18 +38,17 @@ import PathUtilities from '../PathUtilities.js';
 const {
     sankey: SankeySeries
 } = SeriesRegistry.seriesTypes;
-import U from '../../Core/Utilities.js';
-const {
-    css,
+import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
+import {
     crisp,
+    css,
     extend,
     isNumber,
     merge,
     pick
-} = U;
-import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
-import TextPath from '../../Extensions/TextPath.js';
-TextPath.compose(SVGElement);
+} from '../../Shared/Utilities.js';
+import { composeTextPath } from '../../Extensions/TextPath.js';
+composeTextPath(SVGElement);
 
 /* *
  *
@@ -104,7 +104,7 @@ class OrganizationSeries extends SankeySeries {
         const shapeArgs = point.shapeArgs,
             text = dataLabel.text;
         if (options.useHTML && shapeArgs) {
-            const padjust = (
+            const pAdjust = (
                 (this.options.borderWidth as any) +
                 2 * (this.options.dataLabels as any).padding
             );
@@ -117,8 +117,8 @@ class OrganizationSeries extends SankeySeries {
                 height = shapeArgs.width || 0;
             }
 
-            height -= padjust;
-            width -= padjust;
+            height -= pAdjust;
+            width -= pAdjust;
 
             text.foreignObject?.attr({
                 x: 0,

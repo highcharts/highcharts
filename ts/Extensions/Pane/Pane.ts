@@ -1,10 +1,11 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -29,12 +30,7 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import CU from '../../Series/CenteredUtilities.js';
 import PaneComposition from './PaneComposition.js';
 import PaneDefaults from './PaneDefaults.js';
-import U from '../../Core/Utilities.js';
-const {
-    extend,
-    merge,
-    splat
-} = U;
+import { extend, merge, splat } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -298,7 +294,7 @@ class Pane {
 
         this.setOptions(this.options);
         this.render();
-        this.chart.axes.forEach(function (axis): void {
+        this.chart.axes.forEach(function (this: Pane, axis): void {
             if (axis.pane === this) {
                 axis.pane = null as any;
                 axis.update({}, redraw);

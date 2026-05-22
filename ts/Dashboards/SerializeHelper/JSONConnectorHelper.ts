@@ -2,12 +2,13 @@
  *
  *  (c) 2009-2026 Highsoft AS
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  *  Authors:
- *  - Pawel Lysy
+ *  - Paweł Lysy
  *
  * */
 
@@ -22,12 +23,12 @@
 import type { AnyRecord } from '../../Shared/Types';
 import type { JSONObject } from '../JSON';
 import type JSONConnectorOptions from '../../Data/Connectors/JSONConnectorOptions';
+import type { Helper as SerializableHelper, JSON as SerializableJSON } from '../Serializable';
 
 import JSONConnector from '../../Data/Connectors/JSONConnector.js';
 import DataTableHelper from './DataTableHelper.js';
-import type { Helper as SerializableHelper, JSON as SerializableJSON } from '../Serializable';
-import U from '../../Core/Utilities.js';
-const { merge } = U;
+import { merge } from '../../Shared/Utilities.js';
+
 
 /* *
  *

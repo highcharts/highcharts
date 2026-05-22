@@ -1,11 +1,11 @@
-// SPDX-License-Identifier: LicenseRef-Highcharts
-/**
+/* *
  *
  *  (c) 2010-2026 Highsoft AS
  *  Author: Wojciech Chmiel
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -30,12 +30,8 @@ import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     sma: { prototype: smaProto }
 } = SeriesRegistry.seriesTypes;
-import U from '../../Core/Utilities.js';
-const {
-    defined,
-    error,
-    merge
-} = U;
+import { defined, merge } from '../../Shared/Utilities.js';
+import { error } from '../../Core/Utilities.js';
 
 /* *
  *
@@ -51,6 +47,9 @@ namespace MultipleLinesComposition {
      *
      * */
 
+    /**
+     * @internal
+     */
     export declare class IndicatorComposition extends SMAIndicator {
         areaLinesNames: Array<string>;
         linesApiNames: Array<string>;
@@ -77,7 +76,7 @@ namespace MultipleLinesComposition {
      * Notice that linesApiNames should have decreased amount of elements
      * relative to pointArrayMap (without pointValKey).
      *
-     * @private
+     * @internal
      * @type {Array<string>}
      */
     const linesApiNames = ['bottomLine'];
@@ -89,7 +88,7 @@ namespace MultipleLinesComposition {
      * Also it should be consistent with amount of lines calculated in
      * getValues method from your implementation.
      *
-     * @private
+     * @internal
      * @type {Array<string>}
      */
     const pointArrayMap = ['top', 'bottom'];
@@ -100,7 +99,7 @@ namespace MultipleLinesComposition {
      * be disabled for some indicators, leave this option as an empty array.
      * Names should be the same as the names in the pointArrayMap.
      *
-     * @private
+     * @internal
      * @type {Array<string>}
      */
     const areaLinesNames: Array<string> = ['top'];
@@ -108,7 +107,7 @@ namespace MultipleLinesComposition {
     /**
      * Main line id.
      *
-     * @private
+     * @internal
      * @type {string}
      */
     const pointValKey = 'top';
@@ -127,7 +126,7 @@ namespace MultipleLinesComposition {
      * should be consistent with the amount of lines calculated in the
      * `getValues` method.
      *
-     * @private
+     * @internal
      */
     export function compose<T extends typeof SMAIndicator>(
         IndicatorClass: T
@@ -164,8 +163,8 @@ namespace MultipleLinesComposition {
     /**
      * Generate the API name of the line
      *
-     * @private
-     * @param propertyName name of the line
+     * @internal
+     * @param {string} propertyName name of the line
      */
     function getLineName(
         propertyName: string
@@ -180,7 +179,8 @@ namespace MultipleLinesComposition {
     /**
      * Create translatedLines Collection based on pointArrayMap.
      *
-     * @private
+     * @internal
+     * @param {SMAIndicator} indicator
      * @param {string} [excludedValue]
      *        Main line id
      * @return {Array<string>}
@@ -204,7 +204,7 @@ namespace MultipleLinesComposition {
     /**
      * Draw main and additional lines.
      *
-     * @private
+     * @internal
      */
     function indicatorDrawGraph(
         this: SMAIndicator
@@ -327,8 +327,8 @@ namespace MultipleLinesComposition {
      * Create the path based on points provided as argument.
      * If indicator.nextPoints option is defined, create the areaFill.
      *
-     * @private
-     * @param points Points on which the path should be created
+     * @internal
+     * @param {Array<LinePoint>} points Points on which the path should be created
      */
     function indicatorGetGraphPath(
         this: IndicatorComposition,
@@ -363,7 +363,7 @@ namespace MultipleLinesComposition {
     }
 
     /**
-     * @private
+     * @internal
      * @param {Highcharts.Point} point
      *        Indicator point
      * @return {Array<number>}
@@ -385,7 +385,7 @@ namespace MultipleLinesComposition {
     /**
      * Add lines plot pixel values.
      *
-     * @private
+     * @internal
      */
     function indicatorTranslate(
         this: IndicatorComposition
