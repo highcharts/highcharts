@@ -1140,6 +1140,7 @@ function scatterProcessData(
         // Calling setColumns with cropped data must be done on a new instance
         // to avoid modification of the original (complete) data
         series.dataTable.modified = new DataTableCore();
+        series.hasProcessedDataTable = true;
     }
     series.dataTable.getModified().setColumns({
         x: processedXData,
