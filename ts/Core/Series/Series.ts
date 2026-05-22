@@ -3539,14 +3539,19 @@ class Series {
                 if (inverted) {
                     plotY = len - plotY;
                 }
-                const { translated = 0, lineClip } = zone,
+                const { translated = 0, lineClip, value } = zone,
                     distance = plotY - translated;
 
                 lineClip?.push([
                     'L',
                     plotX,
                     Math.abs(distance) < halfWidth ?
-                        plotY - halfWidth * (distance <= 0 ? -1 : 1) :
+                        plotY - halfWidth * (
+                            distance < 0 ||
+                            (distance === 0 && defined(value)) ?
+                                -1 :
+                                1
+                        ) :
                         translated
                 ]);
             };

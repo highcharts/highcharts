@@ -870,10 +870,16 @@ export class Grid {
         }
         delete columnDiff.cells;
 
-        if ('width' in columnDiff) {
+        if (
+            'width' in columnDiff ||
+            'minWidth' in columnDiff ||
+            'maxWidth' in columnDiff
+        ) {
             vp.columnResizing.isDirty = true;
         }
         delete columnDiff.width;
+        delete columnDiff.minWidth;
+        delete columnDiff.maxWidth;
 
         if ('sorting' in columnDiff) {
             const sortingDiff = columnDiff.sorting ?? {};

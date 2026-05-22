@@ -1507,19 +1507,23 @@ class Tooltip {
             }
 
             tt.isActive = true;
+            // Apply styles before text to ensure correct font metrics on
+            // first render. (#24293)
+            if (!styledMode) {
+                tt.css(specificOptions.style);
+            }
             tt.attr({
                 text: str
             });
             if (!styledMode) {
-                tt.css(specificOptions.style)
-                    .attr({
-                        stroke: (
-                            specificOptions.borderColor ||
-                            point.color ||
-                            series.color ||
-                            'var(--highcharts-neutral-color-80)'
-                        )
-                    });
+                tt.attr({
+                    stroke: (
+                        specificOptions.borderColor ||
+                        point.color ||
+                        series.color ||
+                        'var(--highcharts-neutral-color-80)'
+                    )
+                });
             }
             return tt;
         }
