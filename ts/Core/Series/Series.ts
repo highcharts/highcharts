@@ -3894,7 +3894,7 @@ class Series {
         // the clip is later applied. This is necessary to handle multi-pane
         // layouts and entrance animation.
         if (chart.plotClipInner) {
-            series.plotClipGroup = chart.renderer.g().add(chartSeriesGroup);
+            series.plotClipGroup ||= chart.renderer.g().add(chartSeriesGroup);
         }
 
         // The group
@@ -4759,6 +4759,7 @@ class Series {
                 'dataLabelsParentGroups',
                 'group',
                 'markerGroup',
+                'plotClipGroup',
                 'transformGroup'
             ],
             optionsToCheck = [
