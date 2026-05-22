@@ -111,7 +111,7 @@ interface BoostPointMockup {
     plotX: number;
     plotY: number;
     i: number;
-    dataIndex?: number;
+    /// dataIndex?: number;
     percentage: number;
 }
 
@@ -119,7 +119,13 @@ interface BoostPointMockup {
 interface BoostSeriesAdditions extends BoostTargetAdditions {
     altered?: Array<BoostAlteredObject>;
     getPoint(boostPoint: (BoostPointMockup|Point)): BoostPointComposition;
-    pointDataIndices?: Array<number>;
+    // Skipped for v13. We need to consider whether extended data should be
+    // supported in boosted series, because it adds complexity and slows down
+    // the performance. The idea of the Boost module is to support only a faster
+    // subset of functionality. If we decide to support it, the
+    // scatterProcessData function needs to loop over all columns in the data
+    // table and copy values over to processed data.
+    // pointDataIndices?: Array<number>;
 }
 
 /** @internal */
@@ -952,8 +958,8 @@ function getPoint(
             false
         ),
         pointIndex = boostPoint.i,
-        dataIndex = boostPoint.dataIndex ?? pointIndex,
-        pointColor = (data?.[dataIndex] as { color?: string } | undefined)
+        /// dataIndex = boostPoint.dataIndex ?? pointIndex,
+        pointColor = (data?.[pointIndex] as { color?: string } | undefined)
             ?.color,
         point = new PointClass(
             series as BoostSeriesComposition,
@@ -969,19 +975,18 @@ function getPoint(
         isScatter &&
         seriesOptions?.keys?.length
     ) {
-        const keys = seriesOptions.keys,
-            pointData = data?.[dataIndex];
+        const keys = seriesOptions.keys;
+        /// pointData = data?.[dataIndex];
 
-        if (isArray(pointData)) {
-            // Don't reassign X and Y properties as they're already handled
-            // above
-            for (
-                let keysIndex = keys.length - 1;
-                keysIndex > -1;
-                keysIndex--
-            ) {
-                (point as any)[keys[keysIndex]] = pointData[keysIndex];
-            }
+        // Don't reassign X and Y properties as they're already handled
+        // above
+        for (
+            let keysIndex = keys.length - 1;
+            keysIndex > -1;
+            keysIndex--
+        ) {
+            (point as any)[keys[keysIndex]] =
+                (data as any)[pointIndex][keysIndex];
         }
     }
 
@@ -997,7 +1002,7 @@ function getPoint(
     point.distX = boostPoint.distX;
     point.plotX = boostPoint.plotX;
     point.plotY = boostPoint.plotY;
-    point.index = dataIndex;
+    /// point.index = dataIndex;
     point.percentage = boostPoint.percentage;
     point.isInside = series.isPointInside(point);
     if (pointColor) {
@@ -1043,9 +1048,9 @@ function scatterProcessData(
         yMax = yExtremes.max ?? Number.MAX_VALUE,
         yMin = yExtremes.min ?? -Number.MAX_VALUE;
 
-    if (series.boost) {
-        delete series.boost.pointDataIndices;
-    }
+    /// if (series.boost) {
+    //     delete series.boost.pointDataIndices;
+    // }
 
     // Skip processing in non-boost zoom
     if (
@@ -1146,9 +1151,9 @@ function scatterProcessData(
         x: processedXData,
         y: processedYData
     });
-    if (series.boost && cropped) {
-        series.boost.pointDataIndices = processedDataIndices;
-    }
+    /// if (series.boost && cropped) {
+    //     series.boost.pointDataIndices = processedDataIndices;
+    // }
 
     return true;
 }
@@ -1185,9 +1190,9 @@ function seriesRenderCanvas(this: Series): void {
         isStacked = !!options.stacking,
         cropStart = this.cropStart || 0,
         requireSorting = this.requireSorting,
-        pointDataIndices = !requireSorting ?
-            seriesBoost?.pointDataIndices :
-            void 0,
+        /// pointDataIndices = !requireSorting ?
+        //     seriesBoost?.pointDataIndices :
+        //     void 0,
         useRaw = !xData,
         compareX = options.findNearestPointBy === 'x',
         xDataFull = (
@@ -1304,8 +1309,8 @@ function seriesRenderCanvas(this: Series): void {
             i: number,
             percentage: number
         ): void => {
-            const dataIndex = pointDataIndices?.[i] ?? (cropStart + i),
-                x = xDataFull ? xDataFull[dataIndex] : false,
+            const /// dataIndex = pointDataIndices?.[i] ?? (cropStart + i),
+                x = xDataFull ? xDataFull[cropStart + i] : false,
                 pushPoint = (plotX: number): void => {
                     if (chart.inverted) {
                         plotX = xAxis.len - plotX;
@@ -1319,7 +1324,7 @@ function seriesRenderCanvas(this: Series): void {
                         plotX: plotX,
                         plotY: plotY,
                         i: cropStart + i,
-                        dataIndex: dataIndex,
+                        /// dataIndex: dataIndex,
                         percentage: percentage
                     });
                 };
