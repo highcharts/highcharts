@@ -352,6 +352,61 @@ QUnit.test('Adding and removing zones', function (assert) {
         'Series line should be hidden after adding zones back (#10569).'
     );
 
+    chart.update({
+        yAxis: {
+            min: -15,
+            max: 20
+        },
+        series: [
+            {
+                data: [
+                    -10, -5, 0, 5, 10, 20, 10, 10, 5, 0, -5, -10,
+                    -10, -10, -5
+                ],
+                dashStyle: 'Dash',
+                zones: [
+                    {
+                        value: 0,
+                        color: '#f7a35c'
+                    },
+                    {
+                        value: 10,
+                        color: '#7cb5ec'
+                    },
+                    {
+                        value: 19.9,
+                        color: '#90ed7d'
+                    }
+                ]
+            }
+        ]
+    });
+
+    const maxPoint = chart.series[0].points[5],
+        maxClip = chart.series[0].zones[3].lineClip.find(
+            clip => clip[1] === maxPoint.plotX
+        ),
+        maxHalfWidth = chart.series[0].graph.strokeWidth() / 2 + 1;
+
+    assert.deepEqual(
+        maxClip,
+        ['L', maxPoint.plotX, maxPoint.plotY - maxHalfWidth],
+        'Clip path should not clip a line drawn at axis max, #24544.'
+    );
+
+    const boundaryPoint = chart.series[0].points[6],
+        boundaryClip = chart.series[0].zones[1].lineClip.find(
+            clip => clip[1] === boundaryPoint.plotX
+        ),
+        boundaryHalfWidth = chart.series[0].graph.strokeWidth() / 2 + 1;
+
+    assert.deepEqual(
+        boundaryClip,
+        ['L', boundaryPoint.plotX, boundaryPoint.plotY + boundaryHalfWidth],
+        'Clip path should preserve horizontal lines on internal zone ' +
+        'boundaries.'
+    );
+
     const clip = chart.series[0].zones[0].clip;
     chart.series[0].destroy();
 
