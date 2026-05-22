@@ -1,5 +1,13 @@
-const series = [{
+type Athlete = {
+    sport: string;
+    weight: number;
+    height: number;
+    continent: string;
+};
+
+const series: Highcharts.SeriesScatterOptions[] = [{
     name: 'Basketball',
+    type: 'scatter',
     id: 'basketball',
     marker: {
         symbol: 'circle'
@@ -7,6 +15,7 @@ const series = [{
 },
 {
     name: 'Triathlon',
+    type: 'scatter',
     id: 'triathlon',
     marker: {
         symbol: 'triangle'
@@ -14,31 +23,30 @@ const series = [{
 },
 {
     name: 'Volleyball',
+    type: 'scatter',
     id: 'volleyball',
     marker: {
         symbol: 'square'
     }
 }];
 
-
-async function getData() {
+async function getData(): Promise<Athlete[]> {
     const response = await fetch(
         'https://www.highcharts.com/samples/data/olympic2012.json'
     );
     return response.json();
 }
 
-
 getData().then(data => {
-    const getData = sportName => {
-        const temp = [];
-        data.forEach(elm => {
+    const getData = (sportName: string) => {
+        const temp: [number, number][] = [];
+        data.forEach(athlete => {
             if (
-                elm.sport === sportName &&
-                elm.weight > 0 && elm.height > 0 &&
-                elm.continent === 'Europe'
+                athlete.sport === sportName &&
+                athlete.weight > 0 && athlete.height > 0 &&
+                athlete.continent === 'Europe'
             ) {
-                temp.push([elm.height, elm.weight]);
+                temp.push([athlete.height, athlete.weight]);
             }
         });
         return temp;
@@ -113,7 +121,7 @@ getData().then(data => {
             }
         },
         tooltip: {
-            pointFormat: 'Height: {point.x} m <br/> Weight: {point.y} kg'
+            pointFormat: 'Height: {point.x:.2f} m <br/> Weight: {point.y} kg'
         },
         series
     });

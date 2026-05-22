@@ -25,7 +25,11 @@ Highcharts.chart('container', {
         type: 'datetime',
         crosshair: true,
         dateTimeLabelFormats: {
-            day: '%H:%M' // Don't show the date
+            // Don't show the date
+            day: {
+                boundary: '%H:%M',
+                main: '%H:%M'
+            }
         },
         lineWidth: 0,
         tickLength: 6,
@@ -68,7 +72,7 @@ Highcharts.chart('container', {
     }, {
         name: 'Average',
         color: '#8791BA',
-        dashStyle: 'dot',
+        dashStyle: 'Dot',
         data: [
             865, 832, 775, 728, 779, 812, 989, 1095, 1623, 2102,
             2289, 2315, 2412, 2662, 3089, 2812, 2427, 2112, 2356, 2305,
