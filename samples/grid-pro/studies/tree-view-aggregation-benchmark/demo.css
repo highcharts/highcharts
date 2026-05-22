@@ -13,6 +13,7 @@ body {
     --bench-control-surface-color: #fff;
     --bench-border-color: #e2e2e2;
     --bench-hover-border-color: #c6c6c6;
+    --bench-aggregate-text-color: #48607f;
     --risk-0-background: #e7f7ec;
     --risk-0-color: #1b7f42;
     --risk-1-background: #eef4fb;
@@ -91,6 +92,16 @@ body {
     overflow: hidden;
 }
 
+#container .hcg-tree-cell-aggregated {
+    color: var(--bench-aggregate-text-color);
+    font-style: italic;
+    font-weight: 100;
+}
+
+#container .hcg-tree-cell-aggregated .hcg-tree-value {
+    color: inherit;
+}
+
 .risk-pill {
     display: inline-block;
     min-width: 68px;
@@ -134,6 +145,7 @@ body {
         --bench-control-surface-color: #151b23;
         --bench-border-color: #384252;
         --bench-hover-border-color: #556277;
+        --bench-aggregate-text-color: #bfd5f2;
         --risk-0-background: #173726;
         --risk-0-color: #9ae6b4;
         --risk-1-background: #16324a;
@@ -156,6 +168,7 @@ body {
     --bench-control-surface-color: #151b23;
     --bench-border-color: #384252;
     --bench-hover-border-color: #556277;
+    --bench-aggregate-text-color: #bfd5f2;
     --risk-0-background: #173726;
     --risk-0-color: #9ae6b4;
     --risk-1-background: #16324a;

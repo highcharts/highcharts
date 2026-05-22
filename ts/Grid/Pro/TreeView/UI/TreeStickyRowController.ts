@@ -355,6 +355,30 @@ class TreeStickyRowController {
     }
 
     /**
+     * Refreshes sticky rows immediately instead of batching on the next frame.
+     *
+     * @param syncRow
+     * Whether sticky rows should be synchronized with source rows.
+     *
+     * @param reflowRow
+     * Whether sticky rows should be reflowed after synchronization.
+     */
+    public async refreshNow(
+        syncRow: boolean = false,
+        reflowRow: boolean = false
+    ): Promise<void> {
+        if (typeof this.animationFrameId === 'number') {
+            cancelAnimationFrame(this.animationFrameId);
+            delete this.animationFrameId;
+        }
+
+        this.needsRowSync = this.needsRowSync || syncRow;
+        this.needsRowReflow = this.needsRowReflow || reflowRow;
+
+        await this.refresh();
+    }
+
+    /**
      * Schedules sticky row refresh on the next animation frame.
      *
      * @param syncRow

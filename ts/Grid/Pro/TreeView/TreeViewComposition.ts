@@ -317,6 +317,15 @@ function onTableBeforeInit(this: Table): void {
         this,
         createTreeToggleListeners(this, treeToggleAttribute)
     );
+    this.afterUpdateRowsHooks.push((): Promise<void> => {
+        const stickyRowController = this.treeStickyRowController;
+
+        if (!stickyRowController) {
+            return Promise.resolve();
+        }
+
+        return stickyRowController.refreshNow(true, true);
+    });
 }
 
 /**
