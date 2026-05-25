@@ -571,29 +571,36 @@ class SankeySeries extends ColumnSeries {
     }
 
     /**
-     * Run translation operations for one link.
-     * @private
+     * Get the Y position of a link.
+     * @internal
      */
-    public translateLink(point: SankeyPoint): void {
+    public getY(
+        point: SankeyPoint,
+        node: SankeyPoint,
+        fromOrTo: string,
+        linkHeight: number
+    ): number {
+        const linkTop =
+            (node.offset(point, fromOrTo) || 0) * this.translationFactor;
+        const y = Math.min(
+            node.nodeY + linkTop,
+            // Prevent links from spilling below the node (#12014)
+            node.nodeY + (
+                node.shapeArgs && node.shapeArgs.height || 0
+            ) - linkHeight
+        );
 
-        const getY = (
-            node: SankeyPoint,
-            fromOrTo: string
-        ): number => {
-            const linkTop = (
-                (node.offset(point, fromOrTo) as any) *
-                translationFactor
-            );
-            const y = Math.min(
-                node.nodeY + linkTop,
-                // Prevent links from spilling below the node (#12014)
-                node.nodeY + (
-                    node.shapeArgs && node.shapeArgs.height || 0
-                ) - linkHeight
-            );
-            return y;
-        };
+        return y;
+    }
 
+    /**
+     * Run translation operations for one link.
+     * @internal
+     */
+    public translateLink(
+        point: SankeyPoint,
+        linkToY?: number
+    ): void {
         const fromNode = point.fromNode,
             toNode = point.toNode,
             chart = this.chart,
@@ -612,12 +619,11 @@ class SankeySeries extends ColumnSeries {
             outgoing = point.outgoing;
 
         let linkHeight = Math.max(
-                (point.weight as any) * translationFactor,
-                (this.options.minLinkWidth as any
-                )
+                (point.weight || 0) * translationFactor,
+                this.options.minLinkWidth || 0
             ),
-            fromY = getY(fromNode, 'linksFrom'),
-            toY = getY(toNode, 'linksTo'),
+            fromY = this.getY(point, fromNode, 'linksFrom', linkHeight),
+            toY = linkToY || this.getY(point, toNode, 'linksTo', linkHeight),
             nodeW = this.nodeWidth,
             straight = right > nodeLeft + nodeW;
 
@@ -789,7 +795,7 @@ class SankeySeries extends ColumnSeries {
 
     /**
      * Run translation operations for one node.
-     * @private
+     * @internal
      */
     public translateNode(
         node: SankeyPoint,
