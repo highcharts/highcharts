@@ -25,9 +25,27 @@ Highcharts.chart('container', {
             text: '1000 metric tons (MT)'
         }
     },
+    legend: {
+        symbolRadius: 3
+    },
     tooltip: {
-        valueSuffix: ' (1000 MT)',
-        shared: true
+        shared: true,
+        headerFormat: '<table><caption>{point.key}</caption>',
+        pointFormat: `
+        <tr>
+          <th>
+            <svg width="20" height="10">
+              <rect x="5" y="0" width="10" height="10" rx="3" ry="3"
+                  fill="{series.color}" />
+            </svg>
+            {series.name}
+          </th>
+          <td>{point.y}</td>
+        </tr>
+        `,
+        footerFormat: '</table>',
+        valueSuffix: ' GT',
+        useHTML: true
     },
     plotOptions: {
         column: {

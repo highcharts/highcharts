@@ -42,10 +42,22 @@ Highcharts.chart('container', {
 
     tooltip: {
         shared: true,
-        fixed: true,
-        dateTimeLabelFormats: {
-            hour: '%H:%M'
-        }
+        headerFormat: `<table>
+            <caption>{point.x:%[HM]} → {(add point.x 3540000):%[HM]}</caption>`,
+        pointFormat: `
+        <tr>
+          <th>
+            <svg width="20" height="10">
+              <path d="M 5 5 L 13 5" stroke="{series.color}" stroke-width="5"
+                stroke-linecap="round" />
+            </svg>
+            {series.name}
+          </th>
+          <td>{point.y}</td>
+        </tr>
+        `,
+        footerFormat: '</table>',
+        useHTML: true
     },
 
     // Common options for all series
@@ -63,7 +75,7 @@ Highcharts.chart('container', {
 
     series: [{
         name: 'Users',
-        color: '#1F75FF',
+        color: 'light-dark(#0097FF, #27A6FE)',
         data: [
             990, 652, 965, 1048, 939, 1012, 2089, 3995, 4123, 4302,
             5289, 6115, 7723, 8162, 10089, 7812, 4127, 3812, 4156, 3805,
@@ -72,7 +84,7 @@ Highcharts.chart('container', {
     }, {
         name: 'Average',
         color: '#8791BA',
-        dashStyle: 'Dot',
+        dashStyle: 'ShortDot',
         data: [
             865, 832, 775, 728, 779, 812, 989, 1095, 1623, 2102,
             2289, 2315, 2412, 2662, 3089, 2812, 2427, 2112, 2356, 2305,

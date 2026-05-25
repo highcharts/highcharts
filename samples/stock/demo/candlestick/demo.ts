@@ -38,7 +38,39 @@
         }],
 
         tooltip: {
-            fixed: true
+            fixed: true,
+            pointFormat: `
+            <table>
+                <tr>
+                    <td rowspan="5" style="vertical-align: top;">
+                        <svg width="14" height="14">
+                            <circle cx="6" cy="7" r="5" fill="{point.color}"
+                                stroke="var(--highcharts-neutral-color-80)"
+                                stroke-width="1" />
+                        </svg>
+                    </td>
+                    <td colspan="2"><b>{series.name}</b></td>
+                </tr>
+                <tr>
+                    <th>Open</th>
+                    <td>{point.open}</td>
+                </tr>
+                <tr>
+                    <th>High</th>
+                    <td>{point.high}</td>
+                </tr>
+                <tr>
+                    <th>Low</th>
+                    <td>{point.low}</td>
+                </tr>
+                <tr>
+                    <th>Close</th>
+                    <td>{point.close}</td>
+                </tr>
+            </table>`,
+            valueDecimals: 2,
+            valuePrefix: '$',
+            useHTML: true
         },
 
         yAxis: {

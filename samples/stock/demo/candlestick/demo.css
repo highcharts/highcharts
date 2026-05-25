@@ -7,3 +7,14 @@ body {
     height: 600px;
     min-width: 310px;
 }
+
+.highcharts-tooltip {
+    th {
+        font-weight: normal;
+        opacity: 0.7;
+    }
+
+    td {
+        text-align: right;
+    }
+}

@@ -85,10 +85,12 @@ Highcharts.chart('container', {
 
     tooltip: {
         useHTML: true,
-        format: '<div style="border-left: 3px solid {point.color};' +
-            ' padding-left: 5px;"><b>{series.xAxis.categories.(point.x)}</b>' +
-            ' sold <b>{point.value}</b><br>' +
-            'items on <b>{series.yAxis.categories.(point.y)}</b></div>',
+        format: `<div
+                style="border-left: 3px solid {point.color}; padding-left: 8px;"
+            >
+            <b>{series.xAxis.categories.(point.x)}</b> sold
+            <b>{point.value}</b><br>
+            items on <b>{series.yAxis.categories.(point.y)}</b></div>`,
         padding: 12
     },
 

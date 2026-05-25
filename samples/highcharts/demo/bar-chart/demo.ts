@@ -30,7 +30,20 @@ Highcharts.chart('container', {
         gridLineWidth: 0
     },
     tooltip: {
-        valueSuffix: ' millions'
+        headerFormat: `<svg width="10" height="30" style="position: absolute;">
+              <path d="M 1.5 1.5 L 1.5 28.5" stroke="{series.color}"
+                stroke-width="3" stroke-linecap="round" />
+            </svg>
+            <span class="highcharts-header" style="margin-left: 10px;">
+                {point.key}
+            </span>
+            <br>`,
+        pointFormat: `<span style="margin: 0 10px;opacity: 0.7;">
+                {series.name}
+            </span>
+            <b>{point.y}</b>`,
+        useHTML: true,
+        valueSuffix: ' million'
     },
     legend: {
         layout: 'vertical',
