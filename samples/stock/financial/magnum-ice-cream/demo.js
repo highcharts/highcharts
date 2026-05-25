@@ -1,5 +1,21 @@
 (async () => {
 
+    const labelStyle = {
+        color: 'var(--mstar-text-muted)',
+        fontSize: '11px',
+        fontWeight: '300'
+    };
+    const smallLabelStyle = {
+        color: 'var(--mstar-text-muted)',
+        fontSize: '10px',
+        fontWeight: '300'
+    };
+    const bodyTextStyle = {
+        color: 'var(--mstar-text-strong)',
+        fontSize: '12px',
+        fontWeight: '300'
+    };
+
     const json = await fetch(
         'https://cdn.jsdelivr.net/gh/highcharts/highcharts@a38d619238/samples/data/morningstar/magnum-ice-cream-company-ohlcv.json'
     ).then(r => r.json());
@@ -38,7 +54,7 @@
         title: {
             align: 'left',
             style: {
-                color: '#1a1918',
+                color: 'var(--mstar-text-strong)',
                 fontSize: '16px',
                 fontWeight: '500'
             },
@@ -49,7 +65,7 @@
         subtitle: {
             align: 'left',
             style: {
-                color: '#64625f',
+                color: 'var(--mstar-text-muted)',
                 fontSize: '12px',
                 fontWeight: '300'
             },
@@ -57,11 +73,7 @@
         },
 
         caption: {
-            style: {
-                color: '#64625f',
-                fontSize: '11px',
-                fontWeight: '300'
-            },
+            style: labelStyle,
             text: 'The Magnum Ice Cream Company peaked near €20 in early ' +
                 'February before a -18% drop on Feb 12 set off a ' +
                 'months-long drawdown. Late-April lows of €13 have since ' +
@@ -73,7 +85,7 @@
                 focusBorder: {
                     enabled: true,
                     style: {
-                        color: '#2364B9',
+                        color: 'var(--mstar-accent)',
                         lineWidth: 2
                     }
                 }
@@ -86,20 +98,23 @@
                 r: 4,
                 states: {
                     hover: {
-                        fill: 'rgba(100, 98, 95, 0.08)',
-                        style: { color: '#1a1918' }
+                        fill: 'var(--mstar-hover)',
+                        style: { color: 'var(--mstar-text-strong)' }
                     },
                     select: {
-                        fill: 'rgba(35, 100, 185, 0.12)',
+                        fill: 'var(--mstar-accent-select)',
                         style: {
-                            color: '#2364B9',
+                            color: 'var(--mstar-accent)',
                             fontWeight: '500'
                         }
                     }
                 },
                 stroke: 'none',
                 'stroke-width': 0,
-                style: { color: '#64625f', fontWeight: '300' }
+                style: {
+                    color: 'var(--mstar-text-muted)',
+                    fontWeight: '300'
+                }
             },
             buttons: [{
                 count: 1,
@@ -120,40 +135,39 @@
                 title: 'View all',
                 type: 'all'
             }],
-            inputStyle: { color: '#1a1918', fontWeight: '300' },
-            labelStyle: { color: '#64625f' },
+            inputStyle: {
+                color: 'var(--mstar-text-strong)',
+                fontWeight: '300'
+            },
+            labelStyle: { color: 'var(--mstar-text-muted)' },
             selected: 1
         },
 
         navigator: {
             handles: {
-                backgroundColor: '#ffffff',
-                borderColor: '#dad9d8'
+                backgroundColor: 'var(--mstar-surface)',
+                borderColor: 'var(--mstar-line)'
             },
-            maskFill: 'rgba(100, 98, 95, 0.2)',
-            outlineColor: '#dad9d8',
+            maskFill: 'var(--mstar-mask)',
+            outlineColor: 'var(--mstar-line)',
             series: {
                 type: 'areaspline',
-                color: '#2364B9',
-                fillColor: 'rgba(35, 100, 185, 0.15)',
+                color: 'var(--mstar-accent)',
+                fillColor: 'var(--mstar-accent-soft)',
                 lineWidth: 1
             },
-            xAxis: { gridLineColor: '#dad9d8' }
+            xAxis: { gridLineColor: 'var(--mstar-line)' }
         },
 
         scrollbar: { enabled: false },
 
         tooltip: {
-            backgroundColor: '#ffffff',
-            borderColor: '#dad9d8',
+            backgroundColor: 'var(--mstar-surface)',
+            borderColor: 'var(--mstar-line)',
             borderRadius: 4,
             borderWidth: 1,
             shadow: false,
-            style: {
-                color: '#1a1918',
-                fontSize: '12px',
-                fontWeight: '300'
-            },
+            style: bodyTextStyle,
             valueDecimals: 2
         },
 
@@ -163,14 +177,10 @@
                 rangeDescription: 'From January 2 through May 7, 2026'
             },
             labels: {
-                style: {
-                    color: '#64625f',
-                    fontSize: '11px',
-                    fontWeight: '300'
-                }
+                style: labelStyle
             },
-            lineColor: '#dad9d8',
-            tickColor: '#dad9d8'
+            lineColor: 'var(--mstar-line)',
+            tickColor: 'var(--mstar-line)'
         },
 
         yAxis: [{
@@ -178,25 +188,17 @@
                 description: 'Daily OHLC price in euros',
                 rangeDescription: 'Approximately €13 to €20'
             },
-            gridLineColor: '#dad9d8',
+            gridLineColor: 'var(--mstar-line)',
             gridLineWidth: 1,
             height: '100%',
             labels: {
                 align: 'left',
-                style: {
-                    color: '#64625f',
-                    fontSize: '11px',
-                    fontWeight: '300'
-                },
+                style: labelStyle,
                 x: 8
             },
             lineWidth: 0,
             title: {
-                style: {
-                    color: '#64625f',
-                    fontSize: '11px',
-                    fontWeight: '300'
-                },
+                style: labelStyle,
                 text: 'Price (€)'
             }
         }, {
@@ -210,11 +212,7 @@
             labels: {
                 align: 'left',
                 reserveSpace: false,
-                style: {
-                    color: '#64625f',
-                    fontSize: '10px',
-                    fontWeight: '300'
-                },
+                style: smallLabelStyle,
                 x: 4,
                 y: -2
             },
@@ -227,14 +225,14 @@
 
         plotOptions: {
             candlestick: {
-                color: '#c52a26',
-                lineColor: '#c52a26',
-                upColor: '#0a7a13',
-                upLineColor: '#0a7a13'
+                color: 'var(--mstar-negative)',
+                lineColor: 'var(--mstar-negative)',
+                upColor: 'var(--mstar-positive)',
+                upLineColor: 'var(--mstar-positive)'
             },
             column: {
                 borderWidth: 0,
-                color: 'rgba(35, 100, 185, 0.35)'
+                color: 'var(--mstar-accent-soft)'
             },
             series: {
                 dataGrouping: { enabled: true }
