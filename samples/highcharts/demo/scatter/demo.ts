@@ -6,14 +6,6 @@ type Athlete = {
 };
 
 const series: Highcharts.SeriesScatterOptions[] = [{
-    name: 'Basketball',
-    type: 'scatter',
-    id: 'basketball',
-    marker: {
-        symbol: 'circle'
-    }
-},
-{
     name: 'Triathlon',
     type: 'scatter',
     id: 'triathlon',
@@ -28,6 +20,14 @@ const series: Highcharts.SeriesScatterOptions[] = [{
     marker: {
         symbol: 'square'
     }
+},
+{
+    name: 'Basketball',
+    type: 'scatter',
+    id: 'basketball',
+    marker: {
+        symbol: 'circle'
+    }
 }];
 
 async function getData(): Promise<Athlete[]> {
@@ -38,21 +38,15 @@ async function getData(): Promise<Athlete[]> {
 }
 
 getData().then(data => {
-    const getData = (sportName: string) => {
-        const temp: [number, number][] = [];
-        data.forEach(athlete => {
-            if (
-                athlete.sport === sportName &&
-                athlete.weight > 0 && athlete.height > 0 &&
-                athlete.continent === 'Europe'
-            ) {
-                temp.push([athlete.height, athlete.weight]);
-            }
-        });
-        return temp;
-    };
     series.forEach(s => {
-        s.data = getData(s.id);
+        s.data = data
+            .filter(athlete =>
+                athlete.sport === s.id &&
+                athlete.weight > 0 &&
+                athlete.height > 0 &&
+                athlete.continent === 'Europe'
+            )
+            .map(athlete => [athlete.weight, athlete.height]);
     });
 
     Highcharts.chart('container', {
@@ -77,7 +71,7 @@ getData().then(data => {
         },
         xAxis: {
             labels: {
-                format: '{value} m'
+                format: '{value} kg'
             },
             gridLineWidth: 1,
             lineWidth: 0,
@@ -87,10 +81,10 @@ getData().then(data => {
         },
         yAxis: {
             title: {
-                text: 'Weight'
+                text: 'Height'
             },
             labels: {
-                format: '{value} kg'
+                format: '{value:.1f} m'
             }
         },
         legend: {
@@ -121,7 +115,7 @@ getData().then(data => {
             }
         },
         tooltip: {
-            pointFormat: 'Height: {point.x:.2f} m <br/> Weight: {point.y} kg'
+            pointFormat: 'Weight: {point.x} kg <br/> Height: {point.y:.2f} m'
         },
         series
     });
