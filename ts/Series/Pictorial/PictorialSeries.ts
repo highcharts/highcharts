@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi, Magdalena Gut
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -18,14 +19,14 @@
  * */
 
 import '../Column/ColumnSeries.js';
-import PatternFill from '../../Extensions/PatternFill.js';
+import { composePatternFill } from '../../Extensions/PatternFill.js';
 
 import type ColorType from '../../Core/Color/ColorType.js';
 import type ColumnSeriesType from '../Column/ColumnSeries';
 import type DataExtremesObject from '../../Core/Series/DataExtremesObject';
 import type PictorialSeriesOptions from './PictorialSeriesOptions';
 
-import A from '../../Core/Animation/AnimationUtilities.js';
+import { animObject } from '../../Core/Animation/AnimationUtilities.js';
 import Chart from '../../Core/Chart/Chart.js';
 import PictorialPoint from './PictorialPoint.js';
 import PictorialUtilities from './PictorialUtilities.js';
@@ -43,12 +44,21 @@ import {
     pick
 } from '../../Shared/Utilities.js';
 
-const ColumnSeries: typeof ColumnSeriesType = SeriesRegistry.seriesTypes.column;
+/* *
+ *
+ *  Composition
+ *
+ * */
 
-PatternFill.compose(Chart, Series, SVGRenderer);
-const {
-    animObject
-} = A;
+composePatternFill(Chart, Series, SVGRenderer);
+
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+const ColumnSeries: typeof ColumnSeriesType = SeriesRegistry.seriesTypes.column;
 
 const {
     getStackMetrics,
@@ -56,12 +66,25 @@ const {
     rescalePatternFill
 } = PictorialUtilities;
 
+/* *
+ *
+ *  Functions
+ *
+ * */
+
 export interface StackShadowOptions {
     borderColor?: ColorType;
     borderWidth?: number;
     color?: ColorType;
     enabled?: boolean;
 }
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
 declare module '../../Core/Axis/AxisOptions' {
     interface AxisOptions {
         stackShadow?: StackShadowOptions;
@@ -638,6 +661,7 @@ export default PictorialSeries;
  *    }]
  *    ```
  *
+ * @basic
  * @type      {Array<Array<(number|string),number>|Array<(number|string),number,number>|*>}
  * @extends   series.column.data
  *

@@ -8,14 +8,14 @@
     // property by default. See API docs for 'joinBy' for more info on linking
     // data and map.
     const data = [
-        ['tz-mw', 10], ['tz-kr', 11], ['tz-pw', 12], ['tz-mo', 13],
-        ['tz-nj', 14], ['tz-zs', 15], ['tz-zw', 16], ['tz-km', 17],
-        ['tz-mt', 18], ['tz-rv', 19], ['tz-pn', 20], ['tz-ps', 21],
-        ['tz-zn', 22], ['tz-sd', 23], ['tz-sh', 24], ['tz-as', 25],
-        ['tz-my', 26], ['tz-ma', 27], ['tz-si', 28], ['tz-mb', 29],
-        ['tz-rk', 30], ['tz-ds', 31], ['tz-do', 32], ['tz-tb', 33],
-        ['tz-li', 34], ['tz-ge', 35], ['tz-kl', 36], ['tz-tn', 37],
-        ['tz-ka', 38], ['tz-ir', 39]
+        ['tz-09', 10], ['tz-13', 11], ['tz-26', 12], ['tz-01', 13],
+        ['tz-05', 14], ['tz-14', 15], ['tz-23', 16], ['tz-17', 17],
+        ['tz-04', 18], ['tz-12', 19], ['tz-24', 20], ['tz-19', 21],
+        ['tz-21', 22], ['tz-16', 23], ['tz-20', 24], ['tz-08', 25],
+        ['tz-25', 26], ['tz-03', 27], ['tz-11', 28], ['tz-06', 29],
+        ['tz-07', 30], ['tz-15', 31], ['tz-10', 32], ['tz-28', 33],
+        ['tz-29', 34], ['tz-27', 35], ['tz-30', 36], ['tz-18', 37],
+        ['tz-22', 38], ['tz-02', 39], ['tz-31', 40]
     ];
 
     // Create the chart
@@ -29,7 +29,7 @@
         },
 
         subtitle: {
-            text: 'Source map: <a href="https://code.highcharts.com/mapdata/countries/tz/tz-all.topo.json">United Republic of Tanzania</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/countries/tz/tz-all.topo.json">Tanzania</a>'
         },
 
         mapNavigation: {

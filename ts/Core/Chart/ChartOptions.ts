@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  * */
 
@@ -228,6 +229,7 @@ export interface ChartEventsOptions {
 export interface ChartLoadCallbackFunction {
     (this: Chart, event: Event): void;
 }
+
 /**
  * General options for the chart.
  */
@@ -246,8 +248,9 @@ export interface ChartOptions {
      *
      * @sample {highcharts} highcharts/chart/alignthresholds/ Set to true
      *
-     * @since    10.0.0
-     * @product  highcharts highstock gantt
+     * @since   10.0.0
+     * @product highcharts highstock gantt
+     * @default false
      */
     alignThresholds?: boolean;
 
@@ -278,6 +281,18 @@ export interface ChartOptions {
      * @product   highcharts highstock gantt
      */
     alignTicks?: boolean;
+
+    /**
+     * By default, (because of memory and performance reasons) the chart does
+     * not copy the data but keeps it as a reference. In some cases, this might
+     * result in mutating the original data source. In order to prevent that,
+     * set that property to false. Please note that changing that might decrease
+     * performance, especially with bigger sets of data.
+     *
+     * @since 10.1.0
+     * @default true
+     */
+    allowMutatingData?: boolean;
 
     /**
      * Set the overall animation for all chart updating. Animation can be
@@ -338,8 +353,8 @@ export interface ChartOptions {
      * **Note:** Changing that option to higher than the default might decrease
      * performance significantly, especially with bigger sets of data.
      *
-     * @default   2
-     * @since     11.3.0
+     * @default 2
+     * @since   11.3.0
      */
     axisLayoutRuns?: number;
 
@@ -361,6 +376,8 @@ export interface ChartOptions {
      *         Color
      * @sample {highmaps} maps/chart/backgroundcolor-gradient/
      *         Gradient
+     *
+     * @default ${palette.backgroundColor}
      */
     backgroundColor?: ColorType;
 
@@ -376,6 +393,8 @@ export interface ChartOptions {
      *         Brown border
      * @sample {highmaps} maps/chart/border/
      *         Border options
+     *
+     * @default ${palette.highlightColor80}
      */
     borderColor?: ColorType;
 
@@ -388,6 +407,8 @@ export interface ChartOptions {
      *         10px radius
      * @sample {highmaps} maps/chart/border/
      *         Border options
+     *
+     * @default 0
      */
     borderRadius?: number;
 
@@ -395,7 +416,7 @@ export interface ChartOptions {
      * The pixel width of the outer chart border.
      *
      * @see In styled mode, the stroke is set with the
-     *      `.highcharts-background` class.
+     *       `.highcharts-background` class.
      *
      * @sample {highcharts} highcharts/chart/borderwidth/
      *         5px border
@@ -404,7 +425,7 @@ export interface ChartOptions {
      * @sample {highmaps} maps/chart/border/
      *         Border options
      *
-     * @default   0
+     * @default 0
      */
     borderWidth?: number;
 
@@ -421,42 +442,10 @@ export interface ChartOptions {
      * [...] `highcharts-color-9`. The equivalent in non-styled mode
      * is to set colors using the [colors](#colors) setting.
      *
-     * @since      5.0.0
+     * @since 5.0.0
+     * @default 10
      */
     colorCount?: number;
-
-    /**
-     * The default series type for the chart. Can be any of the chart types
-     * listed under [plotOptions](#plotOptions) and [series](#series) or can
-     * be a series provided by an additional module.
-     *
-     * In TypeScript this option has no effect in sense of typing and
-     * instead the `type` option must always be set in the series.
-     *
-     * @sample {highcharts} highcharts/chart/type-bar/
-     *         Bar
-     * @sample {highstock} stock/chart/type/
-     *         Areaspline
-     * @sample {highmaps} maps/chart/type-mapline/
-     *         Mapline
-     *
-     * @default    {highcharts} line
-     * @default    {highstock} line
-     * @default    {highmaps} map
-     * @since      2.1.0
-     */
-    defaultSeriesType?: string;
-
-    /**
-     * By default, (because of memory and performance reasons) the chart does
-     * not copy the data but keeps it as a reference. In some cases, this might
-     * result in mutating the original data source. In order to prevent that,
-     * set that property to false. Please note that changing that might decrease
-     * performance, especially with bigger sets of data.
-     *
-     * @since 10.1.0
-     */
-    allowMutatingData?: boolean;
 
     /**
      * Event listeners for the chart.
@@ -464,15 +453,28 @@ export interface ChartOptions {
     events?: ChartEventsOptions;
 
     /**
-     * An explicit width for the chart. By default (when `null`) the width
-     * is calculated from the offset width of the containing element.
+     * An explicit height for the chart. If a _number_, the height is
+     * given in pixels. If given a _percentage string_ (for example
+     * `'56%'`), the height is given as the percentage of the actual chart
+     * width. This allows for preserving the aspect ratio across responsive
+     * sizes.
      *
-     * @sample {highcharts} highcharts/chart/width/
-     *         800px wide
-     * @sample {highstock} stock/chart/width/
-     *         800px wide
+     * By default (when `null`) the height is calculated from the offset
+     * height of the containing element, or 400 pixels if the containing
+     * element's height is 0.
+     *
+     * @sample {highcharts} highcharts/chart/height/
+     *         Forced 200px height
+     * @sample {highstock} stock/chart/height/
+     *         300px height
      * @sample {highmaps} maps/chart/size/
      *         Chart with explicit size
+     * @sample highcharts/chart/height-percent/
+     *         Highcharts with percentage height
+     * @sample highcharts/chart/height-inherited/
+     *         Chart with inherited height
+     *
+     * @default null
      */
     height?: (null|number|string);
 
@@ -496,6 +498,7 @@ export interface ChartOptions {
      *
      * @since   1.2.0
      * @product highcharts highstock gantt
+     * @default true
      */
     ignoreHiddenSeries?: boolean;
 
@@ -527,13 +530,13 @@ export interface ChartOptions {
      * For picking out individual shapes and geometries to use for each series
      * of the map, see [series.mapData](#series.map.mapData).
      *
-     * @sample    maps/demo/geojson
-     *            Loading GeoJSON data
-     * @sample    maps/chart/topojson
-     *            Loading TopoJSON data
+     * @sample  maps/demo/geojson
+     *          Loading GeoJSON data
+     * @sample  maps/chart/topojson
+     *          Loading TopoJSON data
      *
-     * @since     5.0.0
-     * @product   highmaps
+     * @since   5.0.0
+     * @product highmaps
      */
     map?: string|GeoJSON|TopoJSON;
 
@@ -541,8 +544,8 @@ export interface ChartOptions {
      * Set lat/lon transformation definitions for the chart. If not defined,
      * these are extracted from the map data.
      *
-     * @since     5.0.0
-     * @product   highmaps
+     * @since   5.0.0
+     * @product highmaps
      */
     mapTransforms?: any; // @todo migrate to unknown
 
@@ -567,7 +570,9 @@ export interface ChartOptions {
     /**
      * The margin between the bottom outer edge of the chart and the plot
      * area. Use this to set a fixed pixel value for the margin as opposed
-     * to the default dynamic margin. See also `spacingBottom`.
+     * to the default dynamic margin.
+     *
+     * @see [spacingBottom](#chart.spacingBottom)
      *
      * @sample {highcharts} highcharts/chart/marginbottom/
      *         100px bottom margin
@@ -576,14 +581,16 @@ export interface ChartOptions {
      * @sample {highmaps} maps/chart/margin/
      *         100px margins
      *
-     * @since     2.0
+     * @since  2.0
      */
     marginBottom?: number;
 
     /**
      * The margin between the left outer edge of the chart and the plot
      * area. Use this to set a fixed pixel value for the margin as opposed
-     * to the default dynamic margin. See also `spacingLeft`.
+     * to the default dynamic margin.
+     *
+     * @see [spacingLeft](#chart.spacingLeft)
      *
      * @sample {highcharts} highcharts/chart/marginleft/
      *         150px left margin
@@ -592,14 +599,16 @@ export interface ChartOptions {
      * @sample {highmaps} maps/chart/margin/
      *         100px margins
      *
-     * @since     2.0
+     * @since  2.0
      */
     marginLeft?: number;
 
     /**
      * The margin between the right outer edge of the chart and the plot
      * area. Use this to set a fixed pixel value for the margin as opposed
-     * to the default dynamic margin. See also `spacingRight`.
+     * to the default dynamic margin.
+     *
+     * @see [spacingRight](#chart.spacingRight)
      *
      * @sample {highcharts} highcharts/chart/marginright/
      *         100px right margin
@@ -608,14 +617,16 @@ export interface ChartOptions {
      * @sample {highmaps} maps/chart/margin/
      *         100px margins
      *
-     * @since     22.0
+     * @since  2.0
      */
     marginRight?: number;
 
     /**
      * The margin between the top outer edge of the chart and the plot area.
      * Use this to set a fixed pixel value for the margin as opposed to
-     * the default dynamic margin. See also `spacingTop`.
+     * the default dynamic margin.
+     *
+     * @see [spacingTop](#chart.spacingTop)
      *
      * @sample {highcharts} highcharts/chart/margintop/
      *         100px top margin
@@ -624,7 +635,7 @@ export interface ChartOptions {
      * @sample {highmaps} maps/chart/margin/
      *         100px margins
      *
-     * @since     2.0
+     * @since  2.0
      */
     marginTop?: number;
 
@@ -646,11 +657,10 @@ export interface ChartOptions {
      * properties of the click event argument (`event.altKey`,
      * `event.ctrlKey`, `event.metaKey` and `event.shiftKey`).
      *
-     * @since      4.0.3
-     * @product    highcharts gantt
-     * @validvalue ["alt", "ctrl", "meta", "shift"]
+     * @since   4.0.3
+     * @product highcharts gantt
      */
-    panKey?: 'ctrl'|'shift';
+    panKey?: 'alt'|'ctrl'|'meta'|'shift';
 
     /**
      * Allow panning in a chart. Best used with [panKey](#chart.panKey)
@@ -673,6 +683,10 @@ export interface ChartOptions {
     panning?: ChartPanningOptions;
 
     /**
+     * Deprecated. Use
+     * [chart.zooming.pinchType](#chart.zooming.pinchType)
+     * instead.
+     *
      * Equivalent to [zoomType](#chart.zoomType), but for multitouch
      * gestures only. By default, the `pinchType` is the same as the
      * `zoomType` setting. However, pinching can be enabled separately in
@@ -681,16 +695,15 @@ export interface ChartOptions {
      * #tooltip.followTouchMove) is true, pinchType only applies to
      * two-finger touches.
      *
-     * @default    {highcharts} undefined
-     * @default    {highstock} undefined
      * @since      3.0
      * @product    highcharts highstock gantt
-     * @deprecated
+     * @deprecated 10.2.1
      */
-    pinchType?: ChartPinchTypeValue;
+    pinchType?: 'x' | 'y' | 'xy';
 
     /**
-     * The background color or gradient for the plot area.
+     * The background color or gradient for the plot area. If not set, the
+     * plot area will have the background color set to `'none'`.
      *
      * @see In styled mode, the plot background is set with the
      *      `.highcharts-plot-background` class.
@@ -739,6 +752,8 @@ export interface ChartOptions {
      *         Blue border
      * @sample {highmaps} maps/chart/plotborder/
      *         Plot border options
+     *
+     * @default ${palette.neutralColor20}
      */
     plotBorderColor?: ColorType;
 
@@ -752,13 +767,13 @@ export interface ChartOptions {
      * @sample {highmaps} maps/chart/plotborder/
      *         Plot border options
      *
-     * @default   0
+     * @default 0
      */
     plotBorderWidth?: number;
 
     /**
      * Whether to apply a drop shadow to the plot area. Requires that
-     * plotBackgroundColor be set. The shadow can be an object configuration
+     * `plotBackgroundColor` be set. The shadow can be an object configuration
      * containing `color`, `offsetX`, `offsetY`, `opacity` and `width`.
      *
      * @sample {highcharts} highcharts/chart/plotshadow/
@@ -768,7 +783,7 @@ export interface ChartOptions {
      * @sample {highmaps} maps/chart/plotborder/
      *         Plot border options
      *
-     * @default   false
+     * @default false
      */
     plotShadow?: (boolean|Partial<ShadowOptionsObject>);
 
@@ -789,7 +804,8 @@ export interface ChartOptions {
      * @sample {highmaps} maps/chart/reflow-false/
      *         False
      *
-     * @since     2.1
+     * @since   2.1
+     * @default true
      */
     reflow?: boolean;
 
@@ -811,6 +827,10 @@ export interface ChartOptions {
     renderTo?: (string|HTMLDOMElement);
 
     /**
+     * Deprecated. Use
+     * [chart.zooming.resetButton](#chart.zooming.resetButton)
+     * instead.
+     *
      * The button that appears after a selection zoom, allowing the user
      * to reset zoom. This option is deprecated in favor of
      * [zooming](#chart.zooming).
@@ -879,19 +899,16 @@ export interface ChartOptions {
     showAxes?: boolean;
 
     /**
-     * The space between the bottom edge of the chart and the content (plot
-     * area, axis title and labels, title, subtitle or legend in top
-     * position).
+     * The distance between the outer edge of the chart and the content,
+     * like title or legend, or axis title and labels if present. The
+     * numbers in the array designate top, right, bottom and left
+     * respectively. Use the options `spacingTop`, `spacingRight`,
+     * `spacingBottom` and `spacingLeft` options for shorthand setting of one
+     * option.
      *
-     * @sample {highcharts} highcharts/chart/spacingbottom/
-     *         Spacing bottom set to 100
-     * @sample {highstock} stock/chart/spacingbottom/
-     *         Spacing bottom set to 100
-     * @sample {highmaps} maps/chart/spacing/
-     *         Spacing 100 all around
-     *
-     * @default   15
-     * @since     2.1
+     * @see     [chart.margin](#chart.margin)
+     * @default [10, 10, 15, 10]
+     * @since   3.0.6
      */
     spacing?: Array<number>;
 
@@ -1042,57 +1059,59 @@ export interface ChartOptions {
     type?: string;
 
     /**
-     * An explicit height for the chart. If a _number_, the height is
-     * given in pixels. If given a _percentage string_ (for example
-     * `'56%'`), the height is given as the percentage of the actual chart
-     * width. This allows for preserving the aspect ratio across responsive
-     * sizes.
+     * An explicit width for the chart. By default (when `null`) the width
+     * is calculated from the offset width of the containing element.
      *
-     * By default (when `null`) the height is calculated from the offset
-     * height of the containing element, or 400 pixels if the containing
-     * element's height is 0.
-     *
-     * @sample {highcharts} highcharts/chart/height/
-     *         Forced 200px height
-     * @sample {highstock} stock/chart/height/
-     *         300px height
+     * @sample {highcharts} highcharts/chart/width/
+     *         800px wide
+     * @sample {highstock} stock/chart/width/
+     *         800px wide
      * @sample {highmaps} maps/chart/size/
      *         Chart with explicit size
-     * @sample highcharts/chart/height-percent/
-     *         Highcharts with percentage height
-     * @sample highcharts/chart/height-inherited/
-     *         Chart with inherited height
+     *
+     * @default null
      */
     width?: (null|number); // @todo Add support for string (percent)
 
     /**
+     * Deprecated. Use
+     * [chart.zooming.singleTouch](#chart.zooming.singleTouch)
+     * instead.
+     *
      * Enables zooming by a single touch, in combination with
      * [chart.zoomType](#chart.zoomType). When enabled, two-finger pinch
      * will still work as set up by [chart.pinchType](#chart.pinchType).
      * However, `zoomBySingleTouch` will interfere with touch-dragging the
      * chart to read the tooltip. And especially when vertical zooming is
      * enabled, it will make it hard to scroll vertically on the page.
-     * @since      9.0.0
+     *
      * @sample     highcharts/chart/zoombysingletouch
      *             Zoom by single touch enabled, with buttons to toggle
+     *
      * @product    highcharts highstock gantt
-     * @deprecated
+     * @since      9.0.0
+     * @default    false
+     * @deprecated 10.2.1
      */
     zoomBySingleTouch?: boolean;
 
     /**
      * Chart zooming options.
      *
-     * @sample     highcharts/plotoptions/sankey-node-color
-     *             Zooming in sankey series
-     * @sample     highcharts/series-treegraph/link-types
-     *             Zooming in treegraph series
+     * @sample highcharts/plotoptions/sankey-node-color
+     *         Zooming in sankey series
+     * @sample highcharts/series-treegraph/link-types
+     *         Zooming in treegraph series
      *
      * @since 10.2.1
      */
     zooming: Partial<ChartZoomingOptions>;
 
     /**
+     * Deprecated. Use
+     * [chart.zooming.type](#chart.zooming.type)
+     * instead.
+     *
      * Decides in what dimensions the user can zoom by dragging the mouse.
      * Can be one of `x`, `y` or `xy`.
      *
@@ -1119,34 +1138,20 @@ export interface ChartOptions {
      * @sample {highstock} stock/chart/zoomtype-xy/
      *         Map with selection zoom
      *
-     * @validvalue ["x", "y", "xy"]
-     * @deprecated
+     * @deprecated 10.2.1
      */
-    zoomType?: ('x'|'xy'|'y');
+    zoomType?: 'x' | 'xy' | 'y';
 }
 
-/**
- * Allow panning in a chart. Best used with [panKey](#chart.panKey)
- * to combine zooming and panning.
- *
- * On touch devices, when the [tooltip.followTouchMove](
- * #tooltip.followTouchMove) option is `true` (default), panning
- * requires two fingers. To allow panning with one finger, set
- * `followTouchMove` to `false`.
- *
- * @sample  {highcharts} highcharts/chart/pankey/
- *          Zooming and panning
- * @sample  {highstock} stock/chart/panning/
- *          Zooming and xy panning
- */
 export interface ChartPanningOptions {
     /**
      * Enable or disable chart panning.
      *
-     * @default   {highcharts} false
-     * @default   {highstock|highmaps} true
+     * @default {highcharts} false
+     * @default {highstock|highmaps} true
      */
     enabled: boolean;
+
     /**
      * Decides in what dimensions the user can pan the chart. Can be
      * one of `x`, `y`, or `xy`.
@@ -1164,14 +1169,11 @@ export interface ChartPanningOptions {
      * @sample {highcharts} highcharts/chart/panning-type
      *         Zooming and xy panning
      *
-     * @product    highcharts highstock gantt
+     * @product highcharts highstock gantt
+     * @default 'x'
      */
-    type: ChartPanningTypeValue;
+    type: 'x' | 'y' | 'xy';
 }
-
-export type ChartPanningTypeValue = ('x'|'y'|'xy');
-
-export type ChartPinchTypeValue = ('x'|'y'|'xy');
 
 export interface ChartRedrawCallbackFunction {
     (this: Chart, event: Event): void;
@@ -1181,10 +1183,6 @@ export interface ChartRenderCallbackFunction {
     (this: Chart, event: Event): void;
 }
 
-/**
- * The button that appears after a selection zoom, allowing the user
- * to reset zoom.
- */
 export interface ChartResetZoomButtonOptions {
     /**
      * The position of the button.
@@ -1202,19 +1200,32 @@ export interface ChartResetZoomButtonOptions {
      *
      * @since 10.2.1
      */
-    position?: AlignObject;
+    position?: AlignObject & {
+        /** @default 'right' */
+        align?: AlignObject['align'];
+
+        /** @default 'top' */
+        verticalAlign?: AlignObject['verticalAlign'];
+
+        /** @default -10 */
+        x?: AlignObject['x'];
+
+        /** @default 10 */
+        y?: AlignObject['y'];
+    };
+
     /**
      * What frame the button placement should be related to. Can be
      * either `plotBox` or `spacingBox`.
      *
-     * @sample {highcharts} highcharts/chart/resetzoombutton-relativeto/
-     *         Relative to the chart
-     * @sample {highstock} highcharts/chart/resetzoombutton-relativeto/
+     * @sample {highcharts|highstock}
+     *         highcharts/chart/resetzoombutton-relativeto/
      *         Relative to the chart
      *
-     * @default   plot
+     * @default 'plotBox'
      */
     relativeTo?: ButtonRelativeToValue;
+
     /**
      * A collection of attributes for the button. The object takes SVG
      * attributes like `fill`, `stroke`, `stroke-width` or `r`, the
@@ -1227,7 +1238,8 @@ export interface ChartResetZoomButtonOptions {
      * @sample {highstock} highcharts/chart/resetzoombutton-theme/
      *         Theming the button
      *
-     * @since 10.2.1
+     * @since   10.2.1
+     * @default { zIndex: 6 }
      */
     theme?: SVGAttributes;
 }
@@ -1250,30 +1262,7 @@ export interface ChartSelectionContextObject {
     yAxis: Array<ChartSelectionAxisContextObject>;
 }
 
-/**
- * Chart zooming options.
- * @since 10.2.1
- *
- * @sample     highcharts/plotoptions/sankey-node-color
- *             Zooming in sankey series
- * @sample     highcharts/series-treegraph/link-types
- *             Zooming in treegraph series
- */
 export interface ChartZoomingOptions {
-    /**
-     * Set a key to hold when dragging to zoom the chart. This is useful to
-     * avoid zooming while moving points. Should be set different than
-     * [chart.panKey](#chart.panKey).
-     *
-     * **Note:** If both zooming and panning are enabled without keys, zooming
-     * will take precedence by default. To prioritize panning, either set
-     * zooming key or [chart.panKey](#chart.panKey).
-     *
-     * @default    {highcharts} undefined
-     * @validvalue ["alt", "ctrl", "meta", "shift"]
-     * @requires   modules/draggable-points
-     */
-    key?: string;
     /**
      * Equivalent to [type](#chart.zooming.type), but for multitouch
      * gestures only. By default, the `pinchType` is the same as the
@@ -1289,6 +1278,7 @@ export interface ChartZoomingOptions {
      * @validvalue ["x", "y", "xy"]
      */
     pinchType?: string;
+
     /**
      * The button that appears after a selection zoom, allowing the user
      * to reset zoom.
@@ -1320,10 +1310,8 @@ export interface ChartZoomingOptions {
      * @default    {highcharts} undefined
      * @product    highcharts highstock gantt
      */
-    type?: ChartZoomingTypeValue;
+    type?: 'x' | 'xy' | 'y';
 }
-
-export type ChartZoomingTypeValue = ('x'|'xy'|'y');
 
 /* *
  *

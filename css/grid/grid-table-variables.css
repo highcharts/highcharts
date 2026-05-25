@@ -131,15 +131,15 @@
     /* End header hover & sync */
 
     /* <tbody> */
-    .hcg-table tbody tr:last-of-type td:first-child {
+    .hcg-table > tbody:last-of-type > tr:last-of-type > :where(.hcg-cell):first-child {
         border-bottom-left-radius: var(--ig-border-radius);
     }
 
-    .hcg-table tbody tr:last-of-type td:last-child {
+    .hcg-table > tbody:last-of-type > tr:last-of-type > :where(.hcg-cell):last-child {
         border-bottom-right-radius: var(--ig-border-radius);
     }
 
-    .hcg-table tbody {
+    .hcg-table > tbody:last-of-type {
         border-bottom-left-radius: var(--hcg-border-radius);
         border-bottom-right-radius: var(--hcg-border-radius);
     }
@@ -160,8 +160,7 @@
         --ig-row-font-family-current: var(--hcg-row-even-font-family, var(--hcg-row-font-family));
     }
 
-    .hcg-table tbody tr.hcg-mocked-row td,
-    .hcg-table tbody tr td {
+    .hcg-table tbody tr > :where(.hcg-cell) {
         --ig-cell-column-background: var(--hcg-column-background);
         --ig-cell-column-color: var(--hcg-column-color);
         --ig-cell-column-font-weight: var(--hcg-column-font-weight);
@@ -197,7 +196,7 @@
         text-align: var(--ig-cell-text-align);
     }
 
-    .hcg-table tbody tr td:nth-child(even) {
+    .hcg-table tbody tr > :where(.hcg-cell):nth-child(even) {
         --ig-cell-column-background: var(--hcg-column-even-background, var(--hcg-column-background));
         --ig-cell-column-color: var(--hcg-column-even-color, var(--hcg-column-color));
         --ig-cell-column-font-weight: var(--hcg-column-even-font-weight, var(--hcg-column-font-weight));
@@ -205,12 +204,12 @@
         --ig-cell-column-font-family: var(--hcg-column-even-font-family, var(--hcg-column-font-family));
     }
 
-    .hcg-table tbody td:focus {
+    .hcg-table tbody :where(.hcg-cell):focus {
         box-shadow: inset var(--ig-focus-ring);
     }
 
     /* Start column hover & sync */
-    .hcg-table td.hcg-hovered-column {
+    .hcg-table tbody :where(.hcg-cell).hcg-hovered-column {
         --ig-column-layer:
             color-mix(
                 in srgb,
@@ -220,7 +219,7 @@
         --ig-column-text-layer: var(--hcg-cell-hovered-column-color, var(--hcg-column-hover-color, var(--ig-cell-base-color)));
     }
 
-    .hcg-table td.hcg-synced-column {
+    .hcg-table tbody :where(.hcg-cell).hcg-synced-column {
         --ig-column-layer:
             color-mix(
                 in srgb,
@@ -238,7 +237,7 @@
             );
     }
 
-    .hcg-table th.hcg-hovered-column:not(:hover) {
+    .hcg-table thead th.hcg-hovered-column:not(:hover) {
         --ig-header-column-hover-color:
             color-mix(
                 in srgb,
@@ -252,7 +251,7 @@
         color: var(--ig-header-current-color);
     }
 
-    .hcg-table th.hcg-synced-column:not(:hover) {
+    .hcg-table thead th.hcg-synced-column:not(:hover) {
         --ig-header-sync-opacity:
             var(
                 --hcg-header-sync-opacity,
@@ -298,7 +297,7 @@
     /* End column hover & sync */
 
     /* Start row hover & sync */
-    .hcg-table tr:hover td {
+    .hcg-table tbody tr:hover > :where(.hcg-cell) {
         --ig-row-hover-color:
             color-mix(
                 in srgb,
@@ -312,7 +311,7 @@
         color: var(--ig-cell-hover-text-color);
     }
 
-    .hcg-table tr.hcg-synced-row td {
+    .hcg-table tbody tr.hcg-synced-row > :where(.hcg-cell) {
         --ig-row-hover-color:
             color-mix(
                 in srgb,
@@ -338,9 +337,9 @@
     /* End row hover & sync */
 
     /* Start cell hover & sync */
-    .hcg-table td:hover,
-    .hcg-table tr:hover td:hover,
-    .hcg-table td.hcg-hovered-column:hover {
+    .hcg-table tbody :where(.hcg-cell):hover,
+    .hcg-table tbody tr:hover > :where(.hcg-cell):hover,
+    .hcg-table tbody :where(.hcg-cell).hcg-hovered-column:hover {
         --ig-cell-hover-layer:
             color-mix(
                 in srgb,
@@ -353,7 +352,7 @@
         color: var(--ig-cell-hover-text-color);
     }
 
-    .hcg-table tr.hcg-synced-row td.hcg-synced-column {
+    .hcg-table tbody tr.hcg-synced-row > :where(.hcg-cell).hcg-synced-column {
         --ig-cell-hover-layer:
             color-mix(
                 in srgb,

@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -742,9 +743,9 @@ class Tooltip {
                     // is a transform/zoom on the container. #11329
                     isX ? scaleX(boxWidth) : scaleY(boxHeight),
                     isX ? chartPosition.left - distance +
-                            scaleX(plotX + plotLeft) :
+                        scaleX(plotX + plotLeft) :
                         chartPosition.top - distance +
-                            scaleY(plotY + plotTop),
+                        scaleY(plotY + plotTop),
                     0,
                     isX ? outerWidth : outerHeight
                 ] : [
@@ -1215,11 +1216,13 @@ class Tooltip {
                         // (#6659)
                         if (!options.style.width || styledMode) {
                             label.css({
+                                // Subtract padding on both sides so the box
+                                // stays within the available space (#24104)
                                 width: (
                                     this.outside ?
                                         this.getPlayingField() :
                                         chart.spacingBox
-                                ).width + 'px'
+                                ).width - 2 * options.padding + 'px'
                             });
                         }
 
@@ -1495,19 +1498,23 @@ class Tooltip {
             }
 
             tt.isActive = true;
+            // Apply styles before text to ensure correct font metrics on
+            // first render. (#24293)
+            if (!styledMode) {
+                tt.css(ttOptions.style);
+            }
             tt.attr({
                 text: str
             });
             if (!styledMode) {
-                tt.css(ttOptions.style)
-                    .attr({
-                        stroke: (
-                            ttOptions.borderColor ||
-                            point.color ||
-                            series.color ||
-                            Palette.neutralColor80
-                        )
-                    });
+                tt.attr({
+                    stroke: (
+                        ttOptions.borderColor ||
+                        point.color ||
+                        series.color ||
+                        Palette.neutralColor80
+                    )
+                });
             }
             return tt;
         }
@@ -1957,10 +1964,19 @@ class Tooltip {
         // Set the renderer size dynamically to prevent document size to change.
         // Renderer only exists when tooltip is outside.
         if (renderer && container) {
-            const { scrollLeft = 0, scrollTop = 0 } = chart
-                .scrollablePlotArea?.scrollingContainer || {};
-            pos.x += scrollLeft + left;
-            pos.y += scrollTop + top;
+            pos.x += left;
+            pos.y += top;
+
+            // Scroll offset is only needed for custom/fixed positions.
+            // Default getPosition already returns coordinates in the tooltip's
+            // expected coordinate space.
+            if (positioner || fixed) {
+                const { scrollLeft = 0, scrollTop = 0 } = chart
+                    .scrollablePlotArea?.scrollingContainer || {};
+
+                pos.x += scrollLeft;
+                pos.y += scrollTop;
+            }
 
             // Pad it by the border width and distance. Add 2 to make room for
             // the default shadow (#19314).
@@ -2121,7 +2137,7 @@ export default Tooltip;
  * The tooltip instance
  *
  * @param {Highcharts.Point} [ctx]
- * Since v12.5.0, the point context passed as an extra argument for arrow
+ * Since v12.6.0, the point context passed as an extra argument for arrow
  * functions.
  *
  * @return {false|string|Array<(string|null|undefined)>|null|undefined}
@@ -2146,7 +2162,7 @@ export default Tooltip;
  * Point information for positioning a tooltip.
  *
  * @param {Highcharts.Tooltip} [ctx]
- * Since v12.5.0, the tooltip context passed as an extra argument for arrow
+ * Since v12.6.0, the tooltip context passed as an extra argument for arrow
  * functions.
  *
  * @return {Highcharts.PositionObject}

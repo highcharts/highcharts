@@ -110,6 +110,10 @@ class SparklineEditorContent extends Grid.CellContentPro {
         return this.popup.data.join(',');
     }
 
+    get rawValue() {
+        return this.value;
+    }
+
     add(parentElement) {
         const { column } = this.renderer;
 

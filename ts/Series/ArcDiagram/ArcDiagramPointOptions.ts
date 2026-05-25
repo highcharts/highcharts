@@ -5,8 +5,9 @@
  *  (c) 2018-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -34,7 +35,6 @@ export interface ArcDiagramPointOptions extends SankeyPointOptions {
      *         Link weight set on series
      *
      * @since 10.0.0
-     * @default undefined
      * @product highcharts
      */
     linkWeight?: number;

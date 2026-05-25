@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -407,7 +408,6 @@ class PieSeries extends Series {
         this.generatePoints();
 
         const series = this,
-            precision = 1000, // Issue #172
             options = series.options,
             slicedOffset = options.slicedOffset,
             radians = getStartAndEndRadians(
@@ -466,8 +466,8 @@ class PieSeries extends Series {
                 y: positions[1],
                 r: positions[2] / 2,
                 innerR: positions[3] / 2,
-                start: Math.round(start * precision) / precision,
-                end: Math.round(end * precision) / precision
+                start,
+                end
             };
             point.shapeType = 'arc';
             point.shapeArgs = shapeArgs;

@@ -78,6 +78,71 @@ QUnit.test('Test dynamic behaviour of Scrollable PlotArea', function (assert) {
     */
 });
 
+QUnit.test(
+    'Two scrollable charts should not corrupt fixed elements, #23508.',
+    function (assert) {
+        const container2 = document.createElement('div');
+        document.getElementById('container').parentNode.appendChild(container2);
+
+        const horizontalChart = Highcharts.chart('container', {
+                chart: {
+                    width: 400,
+                    scrollablePlotArea: {
+                        minWidth: 2000
+                    }
+                },
+                series: [{
+                    data: [1, 2, 3]
+                }]
+            }),
+            verticalChart = Highcharts.chart(container2, {
+                chart: {
+                    width: 400,
+                    height: 300,
+                    scrollablePlotArea: {
+                        minHeight: 2000
+                    }
+                },
+                series: [{
+                    data: [1, 2, 3]
+                }]
+            }),
+            horizontalFixedBox =
+                horizontalChart.scrollablePlotArea.fixedRenderer.box,
+            verticalFixedBox =
+                verticalChart.scrollablePlotArea.fixedRenderer.box;
+
+        assert.strictEqual(
+            verticalFixedBox.contains(
+                verticalChart.yAxis[0].axisGroup.element
+            ),
+            false,
+            'Vertical chart yAxis should not be fixed (#23508)'
+        );
+        verticalChart.scrollablePlotArea.moveFixedElements();
+        horizontalChart.scrollablePlotArea.moveFixedElements();
+
+        assert.strictEqual(
+            verticalFixedBox.contains(
+                verticalChart.yAxis[0].axisGroup.element
+            ),
+            false,
+            'Vertical chart yAxis should still not be fixed after ' +
+                'moveFixedElements (#23508)'
+        );
+        assert.strictEqual(
+            horizontalFixedBox.contains(
+                horizontalChart.yAxis[0].axisGroup.element
+            ),
+            true,
+            'Horizontal chart yAxis should still be fixed after ' +
+                'moveFixedElements (#23508)'
+        );
+
+        container2.remove();
+    }
+);
+
 QUnit.test('Responsive scrollable plot area.', function (assert) {
     let chart = Highcharts.chart('container', {
         chart: {

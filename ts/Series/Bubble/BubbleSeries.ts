@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -60,12 +61,14 @@ import {
  *
  * */
 
+/** @internal */
 declare module '../../Core/Chart/ChartBase'{
     interface ChartBase {
         bubbleZExtremes?: BubbleZExtremes;
     }
 }
 
+/** @internal */
 declare module '../../Core/Series/SeriesBase' {
     interface SeriesBase {
         bubblePadding?: BubbleSeries['bubblePadding'];
@@ -79,6 +82,7 @@ type BubblePxExtremes = { minPxSize: number; maxPxSize: number };
 
 type BubbleZExtremes = { zMin: number; zMax: number };
 
+/** @internal */
 interface KDPointSearchObject extends KDPointSearchObjectBase {
 }
 
@@ -219,6 +223,9 @@ function onAxisAfterRender(this: Axis): void {
  *
  * */
 
+/**
+ * @internal
+ */
 class BubbleSeries extends ScatterSeries {
 
     /* *
@@ -552,14 +559,14 @@ class BubbleSeries extends ScatterSeries {
 
     /**
      * Perform animation on the bubbles
-     * @private
+     * @internal
      */
     public animate(init?: boolean): void {
         if (
             !init &&
             this.points.length < (this.options.animationLimit as any) // #8099
         ) {
-            this.points.forEach(function (point): void {
+            this.points.forEach(function (this: BubbleSeries, point): void {
                 const { graphic, plotX = 0, plotY = 0 } = point;
 
                 if (graphic && graphic.width) { // URL symbols don't have width
@@ -587,7 +594,7 @@ class BubbleSeries extends ScatterSeries {
      * Get the radius for each point based on the minSize, maxSize and each
      * point's Z value. This must be done prior to Series.translate because
      * the axis needs to add padding in accordance with the point sizes.
-     * @private
+     * @internal
      */
     public getRadii(): void {
         const zData = this.getColumn('z'),
@@ -655,7 +662,7 @@ class BubbleSeries extends ScatterSeries {
 
     /**
      * Get the individual radius for one point.
-     * @private
+     * @internal
      */
     public getRadius(
         zMin: number,
@@ -710,14 +717,14 @@ class BubbleSeries extends ScatterSeries {
     /**
      * Define hasData function for non-cartesian series.
      * Returns true if the series has points at all.
-     * @private
+     * @internal
      */
     public hasData(): boolean {
         return !!this.dataTable.rowCount;
     }
 
     /**
-     * @private
+     * @internal
      */
     public markerAttribs(
         point: Point,
@@ -736,7 +743,7 @@ class BubbleSeries extends ScatterSeries {
     }
 
     /**
-     * @private
+     * @internal
      */
     public pointAttribs(
         point?: BubblePoint,
@@ -753,7 +760,7 @@ class BubbleSeries extends ScatterSeries {
 
     /**
      * Extend the base translate method to handle bubble size
-     * @private
+     * @internal
      */
     public translate(): void {
 
@@ -855,7 +862,7 @@ class BubbleSeries extends ScatterSeries {
     }
 
     /**
-     * @private
+     * @internal
      * @function Highcharts.Series#searchKDTree
      */
     public searchKDTree(
@@ -915,6 +922,7 @@ class BubbleSeries extends ScatterSeries {
  *
  * */
 
+/** @internal */
 interface BubbleSeries {
     alignDataLabel: typeof columnProto.alignDataLabel;
     bubblePadding: boolean;
@@ -963,6 +971,7 @@ addEvent(BubbleSeries, 'update', (e): void => {
  *
  * */
 
+/** @internal */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         bubble: typeof BubbleSeries;
@@ -976,6 +985,7 @@ SeriesRegistry.registerSeriesType('bubble', BubbleSeries);
  *
  * */
 
+/** @internal */
 export default BubbleSeries;
 
 /* *
@@ -1056,6 +1066,7 @@ export default BubbleSeries;
  * @sample {highcharts} highcharts/series/data-array-of-objects/
  *         Config objects
  *
+ * @basic
  * @type      {Array<Array<(number|string),number>|Array<(number|string),number,number>|*>}
  * @extends   series.line.data
  * @product   highcharts

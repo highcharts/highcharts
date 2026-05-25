@@ -4,8 +4,9 @@
  *
  *  Authors: Magdalena Gut, Piotr Madej
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -809,6 +810,7 @@ export default GeoHeatmapSeries;
  * @sample maps/series-geoheatmap/geoheatmap-equalearth/
  *         GeoHeatmap Chart on the Equal Earth Projection
  *
+ * @basic
  * @type      {Array<Array<number>|*>}
  * @extends   series.map.data
  * @product   highmaps
