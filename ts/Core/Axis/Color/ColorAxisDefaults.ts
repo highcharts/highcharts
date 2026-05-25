@@ -326,11 +326,8 @@ const colorAxisDefaults: DeepPartial<ColorAxisOptions> = {
             duration: 50
         },
 
-        /**
-         * Maps to stroke-width because marker options are passed as crosshair.
-         * @internal
-         */
-        width: 0.01,
+        /** @internal */
+        clip: false,
 
         /**
          * The color of the marker.
@@ -338,7 +335,13 @@ const colorAxisDefaults: DeepPartial<ColorAxisOptions> = {
          * @type    {Highcharts.ColorType}
          * @product highcharts highstock highmaps
          */
-        color: 'var(--highcharts-neutral-color-40)'
+        color: 'var(--highcharts-neutral-color-40)',
+
+        /**
+         * Maps to stroke-width because marker options are passed as crosshair.
+         * @internal
+         */
+        width: 0.01
     },
 
     /**

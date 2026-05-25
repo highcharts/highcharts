@@ -143,6 +143,14 @@ export interface ColorAxisMarkerOptions {
     animation?: (boolean|Partial<AnimationOptions>);
 
     /**
+     * Whether to clip the marker within the plot area. Always false for the
+     * color axis marker.
+     *
+     * @internal
+     * */
+    clip?: boolean;
+
+    /**
      * The color of the marker.
      *
      * @product highcharts highstock highmaps
