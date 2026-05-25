@@ -20,6 +20,7 @@ import type AxisOptions from '../AxisOptions';
 import type ColorType from '../../Color/ColorType';
 import type GradientColor from '../../Color/GradientColor';
 import type LegendOptions from '../../Legend/LegendOptions';
+import type { SymbolKey } from '../../Renderer/SVG/SymbolType';
 
 /* *
  *
@@ -151,11 +152,40 @@ export interface ColorAxisMarkerOptions {
     clip?: boolean;
 
     /**
-     * The color of the marker.
+     * The fill color of the marker.
      *
+     * @sample highcharts/coloraxis/marker
+     *         Marker symbol options
      * @product highcharts highstock highmaps
      */
     color?: ColorType;
+
+    /**
+     * The color of the marker's outline.
+     *
+     * @sample highcharts/coloraxis/marker
+     *         Marker symbol options
+     * @since next
+     */
+    lineColor?: ColorType;
+
+    /**
+     * The width of the marker's outline.
+     *
+     * @since next
+     * @product highcharts highstock highmaps
+     */
+    lineWidth?: number;
+
+    /**
+     * The symbol of the marker. Can be one of the predefined symbols ('circle',
+     * 'square', 'diamond', 'triangle', 'triangle-down') or a custom symbol URL.
+     *
+     * @sample highcharts/coloraxis/marker
+     *         Marker symbol options
+     * @since next
+     */
+    symbol?: SymbolKey;
 
     /**
      * Maps to stroke-width because marker options are passed as crosshair.

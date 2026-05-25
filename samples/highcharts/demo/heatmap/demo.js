@@ -71,7 +71,13 @@ Highcharts.chart('container', {
         tickColor: '#ffffff',
         tickLength: 0.1,
         tickWidth: 6,
-        gridLineWidth: 0
+        gridLineWidth: 0,
+        marker: {
+            symbol: 'circle',
+            color: 'transparent',
+            lineColor: '#fff',
+            lineWidth: 3
+        }
     },
 
     legend: {
