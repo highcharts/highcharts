@@ -319,7 +319,7 @@ class Tick {
                         boundary &&
                         boundaryKey &&
                         (DTLFormats[boundaryKey] as
-                            Time.DateTimeLabelFormatObject).boundary ||
+                            Time.DateTimeLabelFormatObject)?.boundary ||
                         DTLFormats[unitName];
 
                 dateTimeLabelFormats = chart.time.resolveDTLFormat(format);
