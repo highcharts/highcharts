@@ -96,7 +96,7 @@ Highcharts.chart('container', {
 
     series: [{
         name: 'Sales per employee',
-        color: '#0443E1',
+        borderColor: '#0443E1',
         borderWidth: 1,
         data: [
             [0, 0, 10], [0, 1, 19], [0, 2, 8], [0, 3, 24], [0, 4, 67],
@@ -112,7 +112,6 @@ Highcharts.chart('container', {
         ],
         dataLabels: {
             enabled: true,
-            color: 'contrast',
             style: {
                 fontSize: '0.85em'
             }
