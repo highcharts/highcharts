@@ -3781,7 +3781,6 @@ class Axis {
 
         let tickRotCorr = axis.tickRotCorr || { x: 0, y: 0 },
             absTickRotCorrX = 0,
-            skipRotationMarginCorr,
             showAxis,
             titleOffset = 0,
             titleOffsetOption,
@@ -3808,10 +3807,6 @@ class Axis {
             axis.renderUnsquish();
             tickRotCorr = axis.tickRotCorr;
             absTickRotCorrX = Math.abs(tickRotCorr.x);
-            skipRotationMarginCorr = !horiz && (
-                (side === 3 && labelOptions.align === 'left') ||
-                (side === 1 && labelOptions.align === 'right')
-            );
 
             // Left side must be align: right and right side must
             // have align: left for labels
@@ -3842,7 +3837,7 @@ class Axis {
             if (
                 !horiz &&
                 isNumber(axis.labelRotation) &&
-                !skipRotationMarginCorr
+                axis.reserveSpaceDefault
             ) {
                 labelOffset -= absTickRotCorrX;
             }
@@ -3906,7 +3901,7 @@ class Axis {
                     ) :
                     pick(
                         labelOptions.x,
-                        skipRotationMarginCorr ?
+                        !axis.reserveSpaceDefault ?
                             tickRotCorr.x +
                             directionFactor * labelOptions.distance :
                             directionFactor * (
@@ -3917,7 +3912,7 @@ class Axis {
 
             if (
                 !horiz &&
-                !skipRotationMarginCorr &&
+                !axis.reserveSpaceDefault &&
                 axis.labelAlign === 'center' &&
                 isNumber(axis.labelRotation)
             ) {
