@@ -117,6 +117,17 @@ function getTradesTable(rows) {
         series = getPriceSeries(rows),
         tradesTable = getTradesTable(rows);
 
+    const labelStyle = {
+        color: 'var(--mstar-text-muted)',
+        fontSize: '11px',
+        fontWeight: '300'
+    };
+    const bodyTextStyle = {
+        color: 'var(--mstar-text-strong)',
+        fontSize: '12px',
+        fontWeight: '300'
+    };
+
     Dashboards.board('container', {
         dataPool: {
             connectors: [{
@@ -135,12 +146,13 @@ function getTradesTable(rows) {
             chartOptions: {
                 title: {
                     text: 'American Airlines Group &middot; <span ' +
-                        'style="color:#64625f;font-weight:300">AAL</span>',
+                        'style="color:var(--mstar-text-muted);' +
+                        'font-weight:300">AAL</span>',
                     useHTML: true,
                     align: 'left',
                     margin: 4,
                     style: {
-                        color: '#1a1918',
+                        color: 'var(--mstar-text-strong)',
                         fontSize: '22px',
                         fontWeight: '500'
                     }
@@ -150,7 +162,7 @@ function getTradesTable(rows) {
                         'band and per-trade volume',
                     align: 'left',
                     style: {
-                        color: '#64625f',
+                        color: 'var(--mstar-text-muted)',
                         fontSize: '13px',
                         fontWeight: '300'
                     }
@@ -160,7 +172,7 @@ function getTradesTable(rows) {
                         focusBorder: {
                             enabled: true,
                             style: {
-                                color: '#2364B9',
+                                color: 'var(--mstar-accent)',
                                 lineWidth: 2
                             }
                         }
@@ -174,14 +186,10 @@ function getTradesTable(rows) {
                         'translucent band shows the bid-ask quote at that ' +
                         'moment. Volume per trade is in the lower pane.',
                     align: 'left',
-                    style: {
-                        color: '#64625f',
-                        fontSize: '11px',
-                        fontWeight: '300'
-                    }
+                    style: labelStyle
                 },
                 chart: {
-                    backgroundColor: '#ffffff',
+                    backgroundColor: 'var(--mstar-surface)',
                     plotBorderWidth: 0,
                     style: {
                         fontFamily: '"MorningstarIntrinsic", ' +
@@ -192,34 +200,30 @@ function getTradesTable(rows) {
                     enabled: false
                 },
                 tooltip: {
-                    backgroundColor: '#ffffff',
-                    borderColor: '#dad9d8',
+                    backgroundColor: 'var(--mstar-surface)',
+                    borderColor: 'var(--mstar-line)',
                     borderRadius: 4,
                     borderWidth: 1,
                     shadow: false,
-                    style: {
-                        color: '#1a1918',
-                        fontSize: '12px',
-                        fontWeight: '300'
-                    },
+                    style: bodyTextStyle,
                     xDateFormat: '%H:%M:%S',
                     valueDecimals: 2,
                     valuePrefix: '$'
                 },
                 navigator: {
                     handles: {
-                        backgroundColor: '#ffffff',
-                        borderColor: '#dad9d8'
+                        backgroundColor: 'var(--mstar-surface)',
+                        borderColor: 'var(--mstar-line)'
                     },
-                    maskFill: 'rgba(100, 98, 95, 0.2)',
-                    outlineColor: '#dad9d8',
+                    maskFill: 'var(--mstar-mask)',
+                    outlineColor: 'var(--mstar-line)',
                     series: {
                         name: 'Navigator',
                         data: series.price,
-                        color: 'rgba(35, 100, 185, 0.45)'
+                        color: 'var(--mstar-accent-soft)'
                     },
                     xAxis: {
-                        gridLineColor: '#dad9d8'
+                        gridLineColor: 'var(--mstar-line)'
                     }
                 },
                 scrollbar: {
@@ -234,27 +238,27 @@ function getTradesTable(rows) {
                         stroke: 'none',
                         'stroke-width': 0,
                         style: {
-                            color: '#64625f',
+                            color: 'var(--mstar-text-muted)',
                             fontWeight: '300'
                         },
                         states: {
                             hover: {
-                                fill: 'rgba(100, 98, 95, 0.08)',
+                                fill: 'var(--mstar-hover)',
                                 style: {
-                                    color: '#1a1918'
+                                    color: 'var(--mstar-text-strong)'
                                 }
                             },
                             select: {
-                                fill: 'rgba(35, 100, 185, 0.12)',
+                                fill: 'var(--mstar-accent-select)',
                                 style: {
-                                    color: '#2364B9',
+                                    color: 'var(--mstar-accent)',
                                     fontWeight: '500'
                                 }
                             }
                         }
                     },
                     labelStyle: {
-                        color: '#64625f'
+                        color: 'var(--mstar-text-muted)'
                     },
                     buttons: [{
                         type: 'minute',
@@ -279,22 +283,18 @@ function getTradesTable(rows) {
                 },
                 xAxis: {
                     type: 'datetime',
-                    lineColor: '#dad9d8',
-                    tickColor: '#dad9d8',
+                    lineColor: 'var(--mstar-line)',
+                    tickColor: 'var(--mstar-line)',
                     accessibility: {
                         description: 'Time of trade'
                     },
                     labels: {
-                        style: {
-                            color: '#64625f',
-                            fontSize: '11px',
-                            fontWeight: '300'
-                        }
+                        style: labelStyle
                     }
                 },
                 yAxis: [{
                     height: '80%',
-                    gridLineColor: '#dad9d8',
+                    gridLineColor: 'var(--mstar-line)',
                     gridLineWidth: 1,
                     lineWidth: 0,
                     accessibility: {
@@ -302,26 +302,18 @@ function getTradesTable(rows) {
                     },
                     title: {
                         text: 'Price (USD)',
-                        style: {
-                            color: '#64625f',
-                            fontSize: '11px',
-                            fontWeight: '300'
-                        }
+                        style: labelStyle
                     },
                     labels: {
                         format: '${value:.2f}',
-                        style: {
-                            color: '#64625f',
-                            fontSize: '11px',
-                            fontWeight: '300'
-                        }
+                        style: labelStyle
                     }
                 }, {
                     top: '80%',
                     height: '20%',
                     offset: 0,
                     maxPadding: 0,
-                    gridLineColor: '#dad9d8',
+                    gridLineColor: 'var(--mstar-line)',
                     gridLineWidth: 1,
                     showLastLabel: true,
                     lineWidth: 0,
@@ -330,28 +322,20 @@ function getTradesTable(rows) {
                     },
                     title: {
                         text: 'Shares (Volume)',
-                        style: {
-                            color: '#64625f',
-                            fontSize: '11px',
-                            fontWeight: '300'
-                        }
+                        style: labelStyle
                     },
                     reserveSpace: false,
                     labels: {
                         x: 0,
                         y: 11,
-                        style: {
-                            color: '#64625f',
-                            fontSize: '11px',
-                            fontWeight: '300'
-                        }
+                        style: labelStyle
                     }
                 }],
                 series: [{
                     type: 'arearange',
                     name: 'Bid / Ask',
                     data: series.spread,
-                    color: '#a9c0db',
+                    color: 'var(--mstar-band)',
                     fillOpacity: 0.55,
                     lineWidth: 0,
                     zIndex: 0,
@@ -366,7 +350,7 @@ function getTradesTable(rows) {
                     type: 'line',
                     name: 'Price',
                     data: series.price,
-                    color: '#2364B9',
+                    color: 'var(--mstar-accent)',
                     lineWidth: 1.5,
                     zIndex: 1,
                     marker: {
@@ -382,7 +366,7 @@ function getTradesTable(rows) {
                     name: 'Volume',
                     type: 'column',
                     data: series.volume,
-                    color: 'rgba(35, 100, 185, 0.45)',
+                    color: 'var(--mstar-accent-soft)',
                     borderWidth: 0,
                     yAxis: 1,
                     tooltip: {
