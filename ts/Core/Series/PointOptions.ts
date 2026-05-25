@@ -620,6 +620,17 @@ export type PointShortOptions = (
     null
 );
 
+declare module './StatesOptions' {
+    interface StateOptionsBase {
+        /**
+         * Option used for hover state.
+         *
+         * @see [marker.states.hover](#plotOptions.series.marker.states.hover)
+         */
+        lineWidthPlus?: number;
+    }
+}
+
 export interface PointMarkerStateHoverOptions extends StateHoverOptions {
     /**
      * Animation when hovering over the marker.
@@ -668,10 +679,7 @@ export interface PointMarkerStateHoverOptions extends StateHoverOptions {
     /**
      * The additional line width for a hovered point.
      *
-     * @sample {highcharts} highcharts/plotoptions/series-states-hover-linewidthplus/
-     * 2 pixels wider on hover
-     *
-     * @sample {highstock} highcharts/plotoptions/series-states-hover-linewidthplus/
+     * @sample {highcharts|highstock} highcharts/plotoptions/series-states-hover-linewidthplus/
      * 2 pixels wider on hover
      *
      * @since 4.0.3

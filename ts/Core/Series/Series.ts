@@ -2859,19 +2859,17 @@ class Series {
             chart = series.chart,
             styledMode = chart.styledMode,
             { colorAxis, options } = series,
-            seriesMarkerOptions = options.marker,
+            seriesMarkerOptions = options.marker || {},
             nullInteraction = options.nullInteraction,
             markerGroup = series[series.specialGroup || 'markerGroup'],
             xAxis = series.xAxis,
-            globallyEnabled = pick(
-                (seriesMarkerOptions as any).enabled,
-                !xAxis || xAxis.isRadial ? true : null,
+            globallyEnabled = seriesMarkerOptions.enabled ??
+                (!xAxis || xAxis.isRadial ? true : null) ??
                 // Use larger or equal as radius is null in bubbles (#6321)
-                (series.closestPointRangePx as any) >= (
-                    (seriesMarkerOptions as any).enabledThreshold *
+                (!!series.closestPointRangePx && series.closestPointRangePx >= (
+                    (seriesMarkerOptions.enabledThreshold ?? 2) *
                     (seriesMarkerOptions as any).radius
-                )
-            );
+                ));
         let i,
             point,
             graphic,
@@ -2881,7 +2879,7 @@ class Series {
             markerAttribs;
 
         if (
-            (seriesMarkerOptions as any).enabled !== false ||
+            seriesMarkerOptions.enabled !== false ||
             series._hasPointMarkers
         ) {
 
@@ -3014,34 +3012,27 @@ class Series {
         state?: StatesOptionsKey
     ): SVGAttributes {
         const seriesOptions = this.options,
-            seriesMarkerOptions = seriesOptions.marker,
+            seriesMarkerOptions = seriesOptions.marker ?? {},
             pointMarkerOptions = point.marker || {},
             symbol = (
                 pointMarkerOptions.symbol ||
-                (seriesMarkerOptions as any).symbol
+                seriesMarkerOptions.symbol
             ),
             attribs: SVGAttributes = {};
 
         let seriesStateOptions,
             pointStateOptions,
-            radius: number|undefined = pick(
-                pointMarkerOptions.radius,
-                seriesMarkerOptions?.radius
-            );
+            radius: number|undefined = pointMarkerOptions.radius ??
+                seriesMarkerOptions.radius;
 
         // Handle hover and select states
         if (state) {
-            seriesStateOptions = seriesMarkerOptions?.states?.[state];
+            seriesStateOptions = seriesMarkerOptions.states?.[state];
             pointStateOptions = pointMarkerOptions.states?.[state];
 
-            radius = pick(
-                pointStateOptions?.radius,
-                seriesStateOptions?.radius,
-                radius && radius + (
-                    seriesStateOptions?.radiusPlus ||
-                    0
-                )
-            );
+            radius = pointStateOptions?.radius ??
+                seriesStateOptions?.radius ??
+                radius && radius + (seriesStateOptions?.radiusPlus || 0);
         }
 
         point.hasImage = symbol && symbol.indexOf('url') === 0;
@@ -3059,7 +3050,7 @@ class Series {
                         0 :
                         symbol === 'rect' ?
                             // Rectangle symbols need crisp edges, others don't
-                            seriesMarkerOptions?.lineWidth || 0 :
+                            seriesMarkerOptions.lineWidth || 0 :
                             1
                 );
             }
@@ -3098,21 +3089,17 @@ class Series {
         state?: StatesOptionsKey
     ): SVGAttributes {
         const options = this.options,
-            seriesMarkerOptions = options.marker,
+            seriesMarkerOptions = options.marker ?? {},
             pointOptions = point?.options,
             pointMarkerOptions = pointOptions?.marker || {},
             pointColorOption = pointOptions?.color,
             pointColor = point?.color,
             zoneColor = point?.zone?.color;
-        let seriesStateOptions,
-            pointStateOptions,
-            color: (ColorType|undefined) = this.color,
-            fill,
-            stroke,
-            strokeWidth = pick(
-                pointMarkerOptions.lineWidth,
-                (seriesMarkerOptions as any).lineWidth
-            ),
+        let color: (ColorType|undefined) = this.color,
+            fill: (ColorType|undefined),
+            stroke: (ColorType|undefined),
+            strokeWidth = pointMarkerOptions.lineWidth ??
+                seriesMarkerOptions.lineWidth,
             opacity = (point?.isNull && options.nullInteraction) ? 0 : 1;
 
         color = (
@@ -3124,57 +3111,49 @@ class Series {
 
         fill = (
             pointMarkerOptions.fillColor ||
-            (seriesMarkerOptions as any).fillColor ||
+            seriesMarkerOptions.fillColor ||
             color
         );
         stroke = (
             pointMarkerOptions.lineColor ||
-            (seriesMarkerOptions as any).lineColor ||
+            seriesMarkerOptions.lineColor ||
             color
         );
 
         // Handle hover and select states
         state = state || 'normal';
-        if (state) {
-            seriesStateOptions = (
-                (seriesMarkerOptions as any).states[state] || {}
-            );
-            pointStateOptions = (
-                pointMarkerOptions.states &&
-                (pointMarkerOptions.states as any)[state]
-            ) || {};
-            strokeWidth = pick(
-                pointStateOptions.lineWidth,
-                seriesStateOptions.lineWidth,
-                strokeWidth + pick(
-                    pointStateOptions.lineWidthPlus,
-                    seriesStateOptions.lineWidthPlus,
-                    0
-                )
-            );
-            fill = (
-                pointStateOptions.fillColor ||
-                seriesStateOptions.fillColor ||
-                fill
-            );
-            stroke = (
-                pointStateOptions.lineColor ||
-                seriesStateOptions.lineColor ||
-                stroke
-            );
 
-            opacity = pick(
-                pointStateOptions.opacity,
-                seriesStateOptions.opacity,
-                opacity
+        const seriesStateOptions = seriesMarkerOptions.states?.[state] || {};
+        const pointStateOptions = pointMarkerOptions.states?.[state] || {};
+        strokeWidth = pointStateOptions.lineWidth ??
+            seriesStateOptions.lineWidth ??
+            (strokeWidth || 0) + (
+                pointStateOptions.lineWidthPlus ??
+                seriesStateOptions.lineWidthPlus ??
+                0
             );
-        }
+        fill = (
+            pointStateOptions.fillColor ||
+            seriesStateOptions.fillColor ||
+            fill
+        );
+        stroke = (
+            pointStateOptions.lineColor ||
+            seriesStateOptions.lineColor ||
+            stroke
+        );
+
+        opacity = (
+            pointStateOptions.opacity ??
+            seriesStateOptions.opacity ??
+            opacity
+        );
 
         return {
-            'stroke': stroke,
-            'stroke-width': strokeWidth,
-            'fill': fill,
-            'opacity': opacity
+            fill,
+            opacity,
+            stroke,
+            'stroke-width': strokeWidth
         };
     }
 
