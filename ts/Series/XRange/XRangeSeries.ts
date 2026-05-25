@@ -533,29 +533,26 @@ class XRangeSeries extends ColumnSeries {
             // Original graphic
             if (graphic) { // Update
                 graphic.rect[verb](shapeArgs);
-
-                graphic.addClass(
-                    className + (
-                        pointState && pointState !== 'select' ?
-                            ' highcharts-point-' + pointState :
-                            ''
-                    ),
-                    true
-                );
-                graphic.rect.addClass(
-                    className + ' highcharts-partfill-original',
-                    true
-                );
             } else {
                 point.graphic = graphic = renderer.g('point')
-                    .addClass(className)
                     .add(point.group || this.group);
 
                 graphic.rect = (renderer as any)[type](merge(shapeArgs))
-                    .addClass(className)
-                    .addClass('highcharts-partfill-original')
                     .add(graphic);
             }
+
+            graphic.addClass(
+                className + (
+                    pointState && pointState !== 'select' ?
+                        ' highcharts-point-' + pointState :
+                        ''
+                ),
+                true
+            );
+            graphic.rect.addClass(
+                className + ' highcharts-partfill-original',
+                true
+            );
 
             // Partial fill graphic
             if (partShapeArgs) {
