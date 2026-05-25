@@ -1312,7 +1312,7 @@ function stockWithAnnotations() {
                 panning: true,
                 panKey: 'shift',
                 scrollablePlotArea: {
-                    minWidth: 600,
+                    minWidth: 500,
                     scrollPositionX: 1
                 }
             },
@@ -2495,13 +2495,14 @@ function grid() {
                     }
                 }
             }
-        }, {
-            id: 'publicIP',
-            header: {
-                format: 'Public IP'
-            },
-            width: 110
         },
+        // {
+        //     id: 'publicIP',
+        //     header: {
+        //         format: 'Public IP'
+        //     },
+        //     width: 110
+        // },
         // {
         //     id: 'diskOperationsIn',
         //     header: {
@@ -2574,7 +2575,7 @@ function grid() {
         // },
         {
             id: 'diskUsage',
-            width: 120,
+            // width: 120,
             header: {
                 format: 'Disk Usage'
             },
@@ -2611,7 +2612,7 @@ function grid() {
             }
         }],
         pagination: {
-            enabled: true,
+            enabled: false,
             pageSize: 10,
             controls: {
                 pageSizeSelector: {
