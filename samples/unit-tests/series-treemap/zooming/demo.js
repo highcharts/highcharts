@@ -134,3 +134,77 @@ QUnit.test(
         );
     }
 );
+
+QUnit.test(
+    'Traversing treemap should not init data labels per point (#24626)',
+    function (assert) {
+        const data = [
+                { id: 'tech', name: 'Technology' },
+                { id: 'finance', name: 'Finance' }
+            ],
+            pointsCount = 300;
+
+        for (let i = 0; i < pointsCount; i++) {
+            data.push({
+                id: `id-${i}`,
+                name: `Point ${i}`,
+                parent: i % 2 ? 'tech' : 'finance',
+                value: i + 1
+            });
+        }
+
+        const chart = Highcharts.chart('container', {
+                chart: {
+                    animation: false
+                },
+                series: [{
+                    type: 'treemap',
+                    allowTraversingTree: true,
+                    dataLabels: {
+                        animation: false,
+                        defer: false,
+                        enabled: true,
+                        headers: true
+                    },
+                    data
+                }]
+            }),
+            series = chart.series[0],
+            allPointsCount = series.points.length;
+
+        let drawDataLabelsCalls = 0,
+            initDataLabelsCalls = 0;
+
+        const originalDrawDataLabels = series.drawDataLabels,
+            originalInitDataLabels = series.initDataLabels;
+
+        series.drawDataLabels = function () {
+            drawDataLabelsCalls++;
+            return originalDrawDataLabels.apply(this, arguments);
+        };
+
+        series.initDataLabels = function () {
+            initDataLabelsCalls++;
+            return originalInitDataLabels.apply(this, arguments);
+        };
+
+        series.setRootNode('tech');
+        series.setRootNode('');
+        series.setRootNode('finance');
+        series.setRootNode('');
+
+        series.drawDataLabels = originalDrawDataLabels;
+        series.initDataLabels = originalInitDataLabels;
+
+        assert.ok(
+            drawDataLabelsCalls > 0,
+            'Sanity check: traversing should trigger data labels redraw.'
+        );
+
+        assert.ok(
+            initDataLabelsCalls < allPointsCount,
+            'initDataLabels should not scale with number of points on ' +
+            'treemap traversing.'
+        );
+    }
+);

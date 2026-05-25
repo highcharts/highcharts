@@ -138,6 +138,7 @@ module.exports = {
                 'Rows': [
                     'grid/rows/index',
                     'grid/rows/data',
+                    'grid/rows/tree-view',
                     'grid/rows/pinning',
                     'grid/rows/pagination',
                     'grid/rows/virtualization',
@@ -351,7 +352,7 @@ module.exports = {
             'flutter/your-first-chart',
             'flutter/highcharts-bundling'
         ],
-        'React integration': [
+        'React': [
             'react/getting-started',
             {
                 'Components': [
