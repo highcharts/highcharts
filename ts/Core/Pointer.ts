@@ -597,16 +597,8 @@ class Pointer {
             if (axis.isPanning) {
                 axis.isPanning = false;
                 if (
-                    (
-                        (
-                            chart.mouseIsDown !== 'mousedown' ||
-                            selectionMarker
-                        ) &&
-                        (
-                            axis.options.startOnTick ||
-                            axis.options.endOnTick
-                        )
-                    ) ||
+                    axis.options.startOnTick ||
+                    axis.options.endOnTick ||
                     axis.series.some((s): boolean|undefined => s.boosted)
                 ) {
                     axis.forceRedraw = true;

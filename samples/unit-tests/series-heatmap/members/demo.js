@@ -336,7 +336,7 @@ QUnit.test(
 );
 
 QUnit.test(
-    'Y panning should preserve heatmap row clipping, (#15368)',
+    'Y panning should handle heatmap row clipping and ticks, (#15368)',
     function (assert) {
         const chart = Highcharts.chart('container', {
                 chart: {
@@ -354,6 +354,7 @@ QUnit.test(
                 },
 
                 yAxis: {
+                    reversed: true,
                     categories: [
                         'Monday',
                         'Tuesday',
@@ -391,7 +392,30 @@ QUnit.test(
         yAxis.setExtremes(1, 4, false, false);
         chart.redraw(false);
 
-        const range = yAxis.max - yAxis.min;
+        controller.pan([150, 120], [150, 137], {
+            shiftKey: true
+        });
+
+        assert.strictEqual(
+            Highcharts.correctFloat(yAxis.min),
+            Math.round(yAxis.min),
+            'Y panning should respect startOnTick after drop, (#15368).'
+        );
+
+        assert.strictEqual(
+            Highcharts.correctFloat(yAxis.max),
+            Math.round(yAxis.max),
+            'Y panning should respect endOnTick after drop, (#15368).'
+        );
+
+        yAxis.update({
+            startOnTick: false,
+            endOnTick: false
+        }, false);
+        yAxis.setExtremes(1, 4, false, false);
+        chart.redraw(false);
+
+        const offTickRange = yAxis.max - yAxis.min;
 
         controller.pan([150, 120], [150, 137], {
             shiftKey: true
@@ -399,16 +423,17 @@ QUnit.test(
 
         assert.close(
             yAxis.max - yAxis.min,
-            range,
+            offTickRange,
             0.00001,
-            'Y panning should preserve the zoomed range, (#15368).'
+            'Y panning should preserve the zoomed range when tick snapping ' +
+            'is disabled, (#15368).'
         );
 
         assert.notEqual(
             Highcharts.correctFloat(yAxis.min),
             Math.round(yAxis.min),
-            'Y panning should preserve fractional extremes for clipped rows, ' +
-            '(#15368).'
+            'Y panning should preserve fractional extremes for clipped rows ' +
+            'when tick snapping is disabled, (#15368).'
         );
     }
 );
