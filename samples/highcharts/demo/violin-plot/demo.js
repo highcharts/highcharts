@@ -1,8 +1,4 @@
 /* eslint-disable max-len */
-const MIN_MAX_COLOR = 'var(--highcharts-neutral-color-100, #000000)',
-    QUANTILE_COLOR = '#4169E1',
-    MEDIAN_COLOR = '#DC143C';
-
 // A vibrant, modern palette supporting 7+ disciplines.
 const SPORT_COLORS = [
     '#4CAFFE',
@@ -145,50 +141,119 @@ const data = generateViolinData(step, sortedDataArrays);
 const xi = data.xiData;
 const stats = data.stats;
 
-const areaSeries = categories.map((sport, i) => ({
-    name: sport,
-    data: data.results[i],
-    custom: { stat: stats[i] }
-}));
+// Rounded rectangle SVG path for boxplot boxes.
+function roundedBoxPath(x, right, q1Plot, q3Plot, r) {
+    const minR = Math.min(r, Math.abs(q1Plot - q3Plot) / 2, (right - x) / 2);
+    return [
+        ['M', x, q3Plot + minR],
+        ['L', x, q1Plot - minR],
+        ['A', minR, minR, 0, 0, 0, x + minR, q1Plot],
+        ['L', right - minR, q1Plot],
+        ['A', minR, minR, 0, 0, 0, right, q1Plot - minR],
+        ['L', right, q3Plot + minR],
+        ['A', minR, minR, 0, 0, 0, right - minR, q3Plot],
+        ['L', x + minR, q3Plot],
+        ['A', minR, minR, 0, 0, 0, x, q3Plot + minR],
+        ['Z']
+    ];
+}
 
-const whiskerSeries = categories.map((sport, i) => ({
-    type: 'line',
-    data: [
-        { x: stats[i][0], y: i },
-        { x: stats[i][1], y: i },
-        { x: stats[i][2], y: i },
-        { x: stats[i][3], y: i },
-        { x: stats[i][4], y: i }
-    ],
-    accessibility: { enabled: false }
-}));
+function setLinkedOpacity(chart, activeIndex) {
+    let polygonIndex = -1;
+    const bp = chart.series.find(s => s.type === 'boxplot');
 
-// Transpose stats for the legend-toggled scatter points.
-const scatterData = [[], [], [], [], []];
-for (let col = 0; col < 5; col++) {
-    for (let line = 0; line < categories.length; line++) {
-        scatterData[col].push([stats[line][col], line]);
+    chart.series.forEach(s => {
+        if (s.type === 'polygon') {
+            polygonIndex++;
+            s.group?.attr({ opacity: polygonIndex === activeIndex ? 1 : 0.2 });
+        }
+    });
+
+    if (bp) {
+        bp.points.forEach((p, i) => {
+            p.graphic?.attr({ opacity: i === activeIndex ? 1 : 0.2 });
+        });
     }
 }
 
-const scatterSeries = [
-    { type: 'scatter', name: 'Min', color: MIN_MAX_COLOR, data: scatterData[0] },
-    { type: 'scatter', name: 'Q 1', color: QUANTILE_COLOR, data: scatterData[1] },
-    {
-        type: 'scatter',
-        name: 'Median',
-        color: MEDIAN_COLOR,
-        data: scatterData[2],
-        marker: { radius: 5 }
-    },
-    { type: 'scatter', name: 'Q 3', color: QUANTILE_COLOR, data: scatterData[3] },
-    { type: 'scatter', name: 'Max', color: MIN_MAX_COLOR, data: scatterData[4] }
-];
+function resetLinkedOpacity(chart) {
+    chart.series.forEach(s => {
+        if (s.type === 'polygon') {
+            s.group?.attr({ opacity: 1 });
+        }
+    });
+
+    const bp = chart.series.find(s => s.type === 'boxplot');
+    if (bp) {
+        bp.points.forEach(p => p.graphic?.attr({ opacity: 1 }));
+    }
+}
+
+// Build polygon series: one per sport, tracing right side up then left side down.
+const polygonSeries = categories.map((sport, i) => {
+    const rightSide = xi.map((y, j) => [data.results[i][j][1], y]);
+    const leftSide = xi.map((y, j) => [data.results[i][j][0], y]).reverse();
+    return {
+        type: 'polygon',
+        name: sport,
+        data: [...rightSide, ...leftSide],
+        custom: { stat: stats[i] },
+        events: {
+            mouseOver() {
+                setLinkedOpacity(this.chart, i);
+            },
+            mouseOut() {
+                resetLinkedOpacity(this.chart);
+            }
+        }
+    };
+});
+
+// Build boxplot series: one point per sport.
+const boxplotSeries = {
+    type: 'boxplot',
+    name: 'Statistics',
+    showInLegend: false,
+    enableMouseTracking: true,
+    data: categories.map((sport, i) => ({
+        x: i,
+        low: stats[i][0],
+        q1: stats[i][1],
+        median: stats[i][2],
+        q3: stats[i][3],
+        high: stats[i][4],
+        name: sport
+    }))
+};
 
 Highcharts.chart('container', {
     chart: {
-        type: 'areasplinerange',
-        inverted: true
+        type: 'polygon',
+        events: {
+            render() {
+                this.series.forEach(s => {
+                    if (s.type === 'polygon' && s.area) {
+                        s.area.attr({ 'fill-opacity': 0.5 });
+                    }
+                });
+
+                const bp = this.series.find(s => s.type === 'boxplot');
+                if (bp) {
+                    bp.points.forEach(point => {
+                        if (point.box) {
+                            const sa = point.shapeArgs;
+                            point.box.attr({
+                                d: roundedBoxPath(
+                                    sa.x, sa.x + sa.width,
+                                    point.q1Plot, point.q3Plot,
+                                    4
+                                )
+                            });
+                        }
+                    });
+                }
+            }
+        }
     },
     colors: SPORT_COLORS,
     accessibility: {
@@ -203,21 +268,23 @@ Highcharts.chart('container', {
         text: 'Height distribution of female athletes at the 2024 Olympics'
     },
     xAxis: {
-        reversed: false,
+        categories: categories,
+        lineWidth: 0
+    },
+    yAxis: {
+        title: { text: null },
         gridLineWidth: 1,
         gridLineColor: '#E6E6E6',
         gridLineDashStyle: 'Dash',
         labels: {
             format: '{value} cm',
             style: { fontSize: '10px' }
-        }
+        },
+        startOnTick: false,
+        endOnTick: false
     },
-    yAxis: {
-        title: { text: null },
-        categories: categories,
-        min: 0,
-        max: categories.length - 1,
-        gridLineWidth: 0
+    legend: {
+        enabled: false
     },
     tooltip: {
         useHTML: true,
@@ -249,32 +316,36 @@ Highcharts.chart('container', {
     },
     plotOptions: {
         series: {
-            states: { hover: { enabled: false } }
+            states: {
+                hover: { enabled: false }
+            }
         },
-        areasplinerange: {
+        polygon: {
             marker: { enabled: false },
-            pointStart: xi[0],
-            fillOpacity: 0.5,
-            lineWidth: 1,
-            showInLegend: false,
-            pointInterval: step
+            lineWidth: 1
         },
-        line: {
-            marker: { enabled: false },
-            showInLegend: false,
-            enableMouseTracking: false,
-            color: 'var(--highcharts-neutral-color-80, #333333)',
-            lineWidth: 1,
-            dashStyle: 'shortdot'
-        },
-        scatter: {
-            marker: {
-                enabled: true,
-                symbol: 'diamond'
+        boxplot: {
+            pointWidth: 8,
+            whiskerLength: '50%',
+            color: '#333',
+            fillColor: '#333',
+            medianColor: '#fff',
+            enableMouseTracking: true,
+            point: {
+                events: {
+                    mouseOver() {
+                        setLinkedOpacity(this.series.chart, this.x);
+                    },
+                    mouseOut() {
+                        resetLinkedOpacity(this.series.chart);
+                    }
+                }
             },
-            enableMouseTracking: false
+            states: {
+                inactive: { enabled: false }
+            }
         }
     },
 
-    series: [...areaSeries, ...whiskerSeries, ...scatterSeries]
+    series: [...polygonSeries, boxplotSeries]
 });

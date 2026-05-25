@@ -3,6 +3,7 @@ name: Violin Plot
 authors:
   - Andrzej Bułeczka
   - Mustapha Mekhatria
+  - Torstein Honsi
 js_wrap: b
 alt_text: >-
     Violin chart showing the height distribution of female athletes
