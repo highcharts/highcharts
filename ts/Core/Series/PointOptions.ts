@@ -620,17 +620,6 @@ export type PointShortOptions = (
     null
 );
 
-declare module './StatesOptions' {
-    interface StateOptionsBase {
-        /**
-         * Option used for hover state.
-         *
-         * @see [marker.states.hover](#plotOptions.series.marker.states.hover)
-         */
-        lineWidthPlus?: number;
-    }
-}
-
 export interface PointMarkerStateHoverOptions extends StateHoverOptions {
     /**
      * Animation when hovering over the marker.

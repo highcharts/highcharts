@@ -3032,7 +3032,7 @@ class Series {
 
             radius = pointStateOptions?.radius ??
                 seriesStateOptions?.radius ??
-                radius && radius + (seriesStateOptions?.radiusPlus || 0);
+                (radius && radius + (seriesStateOptions?.radiusPlus || 0));
         }
 
         point.hasImage = symbol && symbol.indexOf('url') === 0;

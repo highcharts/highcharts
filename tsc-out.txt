@@ -1,0 +1,21 @@
+1:26:42 PM - Projects in this build: 
+    * ts/tsconfig.json
+
+1:26:42 PM - Project 'ts/tsconfig.json' is out of date because output file 'code/es-modules/tsconfig.tsbuildinfo' does not exist
+
+1:26:42 PM - Building project 'C:/Users/kacpe/Desktop/BLACK_LABEL/REPOS/highcharts/ts/tsconfig.json'...
+
+Files:             1198
+Lines:           440505
+Identifiers:     329460
+Symbols:         438385
+Types:           143346
+Instantiations:  460596
+Memory used:    678402K
+I/O read:         1.39s
+I/O write:        1.62s
+Parse time:       3.42s
+Bind time:        0.64s
+Check time:       8.74s
+Emit time:        4.84s
+Total time:      17.64s
