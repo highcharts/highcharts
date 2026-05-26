@@ -20,7 +20,11 @@ import type ColorType from '../Color/ColorType';
 import type DashStyleValue from '../Renderer/DashStyleValue';
 import type { DeepPartial } from '../../Shared/Types';
 import type { PointMarkerOptions } from './PointOptions';
-import type SeriesOptions from './SeriesOptions';
+import type {
+    SeriesOptions,
+    SeriesStateHoverHaloOptions
+} from './SeriesOptions';
+import type { AnimationOptions } from '../Animation/AnimationOptions';
 
 /* *
  *
@@ -34,11 +38,15 @@ export type StateGenericOptions<T extends SeriesOptions | PointMarkerOptions> = 
     DeepPartial<Omit<T, ('states'|'data'|'nodes'| keyof StateOptionsBase)>>
 );
 
-// Internal notes: Used to ensure ColorType doesn't get loosened by DeepPartial.
+// Internal notes: Used to ensure ColorType doesn't get loosened by DeepPartial,
+// and all shared options.
 export interface StateOptionsBase {
+    animation?: (boolean|Partial<AnimationOptions>);
     color?: ColorType;
     dashStyle?: DashStyleValue;
+    enabled?: boolean;
     fillColor?: ColorType;
+    halo?: (boolean|SeriesStateHoverHaloOptions);
     lineColor?: ColorType;
     lineWidthPlus?: number;
 }
@@ -47,7 +55,13 @@ export interface StateHoverOptions extends StateOptionsBase {}
 
 export interface StateInactiveOptions extends StateOptionsBase {}
 
-export interface StateNormalOptions extends StateOptionsBase {}
+export interface StateNormalOptions extends StateOptionsBase {
+    /**
+     * General point marker's state options can also be disabled through
+     * series.options.marker.enabled.
+     */
+    enabled?: StateOptionsBase['enabled'];
+}
 
 export interface StateSelectOptions extends StateHoverOptions {}
 

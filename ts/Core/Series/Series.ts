@@ -43,7 +43,6 @@ import type RangeSelector from '../../Stock/RangeSelector/RangeSelector';
 import type SeriesBase from './SeriesBase';
 import type {
     NonPlotOptions,
-    SeriesDataSortingOptions,
     SeriesOptions,
     SeriesZonesOptions
 } from './SeriesOptions';
@@ -1312,7 +1311,7 @@ class Series {
 
         this.getCyclic(
             'symbol',
-            (seriesMarkerOption as any).symbol,
+            seriesMarkerOption?.symbol,
             this.chart.options.symbols
         );
     }
@@ -1398,7 +1397,7 @@ class Series {
 
         // Search for the same X in the existing data set
         if (typeof pointIndex === 'undefined' && isNumber(x)) {
-            pointIndex = this.getColumn('x').indexOf(x as any, fromIndex);
+            pointIndex = this.getColumn('x').indexOf(x, fromIndex);
         }
 
         // Reduce pointIndex if data is cropped
@@ -1872,8 +1871,7 @@ class Series {
     ): Array<PointOptions> {
         const series = this,
             options = series.options,
-            dataSorting: SeriesDataSortingOptions = options.dataSorting as any,
-            sortKey = dataSorting.sortKey || 'y',
+            sortKey = options.dataSorting?.sortKey || 'y',
             getPointOptionsObject = function (
                 series: Series,
                 pointOptions: (PointOptions|PointShortOptions)
@@ -2910,7 +2908,7 @@ class Series {
 
                     markerAttribs = series.markerAttribs(
                         point,
-                        (point.selected && 'select') as any
+                        point.selected ? 'select' : ''
                     );
 
                     // Set starting position for point sliding animation.
@@ -3208,7 +3206,7 @@ class Series {
 
         // Clear the animation timeout if we are destroying the series
         // during initial animation
-        internalClearTimeout(series.animationTimeout as any);
+        internalClearTimeout(series.animationTimeout);
 
         // Destroy all SVGElements associated to the series
         objectEach(series, function (val: any, prop: string): void {
@@ -3232,7 +3230,7 @@ class Series {
         chart.orderItems('series');
 
         // Clear all members
-        objectEach(series, function (val: any, prop: string): void {
+        objectEach(series, function (_val: any, prop: string): void {
             if (!keepEventsForUpdate || prop !== 'hcEvents') {
                 delete (series as any)[prop];
             }
@@ -3788,7 +3786,7 @@ class Series {
 
         const series = this,
             seriesOptions = series.options,
-            dimensions = (seriesOptions.findNearestPointBy as any)
+            dimensions = (seriesOptions.findNearestPointBy ?? '')
                 .indexOf('y') > -1 ? 2 : 1;
 
         /**
@@ -3979,7 +3977,7 @@ class Series {
                     point,
                     doSearch(
                         search,
-                        tree[sideA] as any,
+                        tree[sideA],
                         depth + 1,
                         dimensions
                     ),
@@ -3990,7 +3988,7 @@ class Series {
             if (tree[sideB]) {
 
                 const sqrtTDist = Math.sqrt(tdist * tdist),
-                    retDist = (ret as any)[kdComparer];
+                    retDist = ret[kdComparer];
 
                 // Compare distance to current best to splitting point to decide
                 // whether to check side B or no
@@ -3999,7 +3997,7 @@ class Series {
                         ret,
                         doSearch(
                             search,
-                            tree[sideB] as any,
+                            tree[sideB],
                             depth + 1,
                             dimensions
                         ),
@@ -4758,7 +4756,7 @@ class Series {
 
         // Trigger the event, but to save processing time,
         // only if defined
-        if ((series.options.events as any).mouseOver) {
+        if (series.options.events?.mouseOver) {
             fireEvent(series, 'mouseOver');
         }
 
@@ -4839,11 +4837,11 @@ class Series {
     ): void {
         const series = this,
             { graph, options } = series,
-            { inactiveOtherPoints, states: stateOptions } = options,
+            { inactiveOtherPoints, states: stateOptions = {} } = options,
             // By default a quick animation to hover/inactive,
             // slower to un-hover
             stateAnimation = pick(
-                stateOptions?.[state || 'normal']?.animation,
+                stateOptions[state || 'normal']?.animation,
                 series.chart.options.chart.animation
             );
         let { lineWidth, opacity } = options;
@@ -4881,17 +4879,12 @@ class Series {
                 }
 
                 if (state) {
-                    lineWidth = (
-                        (stateOptions as any)[state].lineWidth ||
-                        lineWidth + (
-                            (stateOptions as any)[state].lineWidthPlus || 0
-                        )
+                    lineWidth = stateOptions[state]?.lineWidth || (
+                        (lineWidth || 0) +
+                        (stateOptions?.[state]?.lineWidthPlus || 0)
                     ); // #4035
 
-                    opacity = pick(
-                        (stateOptions as any)[state].opacity,
-                        opacity
-                    );
+                    opacity = stateOptions[state]?.opacity ?? opacity;
                 }
 
                 if (graph && !graph.dashstyle && isNumber(lineWidth)) {
@@ -4943,11 +4936,7 @@ class Series {
      *        Can be either `hover` or undefined to set to normal state.
      */
     public setAllPointsToState(state?: StatesOptionsKey): void {
-        this.points.forEach(function (point): void {
-            if (point.setState) {
-                point.setState(state);
-            }
-        });
+        this.points.forEach((point): void => point.setState?.(state));
     }
 
     /**
