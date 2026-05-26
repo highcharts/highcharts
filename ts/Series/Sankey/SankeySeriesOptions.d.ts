@@ -34,6 +34,8 @@ import type {
 } from './SankeyPointOptions';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 import type Templating from '../../Core/Templating';
+import type { AnimationOptions } from '../../Core/Animation/AnimationOptions';
+import type { DeepPartial } from '../../Shared/Types';
 
 /* *
  *
@@ -472,8 +474,7 @@ export interface SankeySeriesOptions extends ColumnSeriesOptions, NodesCompositi
     /**
      * A collection of options for the individual nodes. The nodes in a sankey
      * diagram are auto-generated instances of `Highcharts.Point`, but options
-     *  can
-     * be applied here and linked by the `id`.
+     * can be applied here and linked by the `id`.
      *
      * @sample highcharts/css/sankey/
      *         Sankey diagram with node options
@@ -528,48 +529,50 @@ export interface SankeySeriesOptions extends ColumnSeriesOptions, NodesCompositi
 }
 
 export interface SankeySeriesStatesOptions extends SeriesStatesOptions<SankeySeriesOptions> {
-    hover?: SeriesStatesOptions<SankeySeriesOptions>['hover'] & {
-        /**
-         * Opacity for the links between nodes in the sankey diagram in
-         * hover mode.
-         *
-         * @default 1
-         */
-        linkOpacity?: Required<SeriesStatesOptions<SankeySeriesOptions>>['hover']['linkOpacity'];
-
-        /**
-         * Opacity for the nodes in the sankey diagram in hover mode.
-         *
-         * @default 1
-         */
-        opacity?: Required<SeriesStatesOptions<SankeySeriesOptions>>['hover']['opacity'];
-    };
+    hover?: SankeySeriesStatesHoverOptions;
     /**
      * The opposite state of a hover for a single point node/link.
      */
-    inactive?: SeriesStatesOptions<SankeySeriesOptions>['inactive'] & {
-        /**
-         * Opacity for the links between nodes in the sankey diagram in
-         * inactive mode.
-         *
-         * @default 0.1
-         */
-        linkOpacity?: Required<SeriesStatesOptions<SankeySeriesOptions>>['inactive']['linkOpacity'];
+    inactive?: SankeySeriesStatesInactiveOptions;
+}
+export interface SankeySeriesStatesHoverOptions {
+    /**
+     * Opacity for the links between nodes in the sankey diagram in
+     * hover mode.
+     *
+     * @default 1
+     */
+    linkOpacity?: number;
 
-        /**
-         * Opacity of the nodes in the sankey diagram in inactive mode.
-         *
-         * @default 0.1
-         */
-        opacity?: Required<SeriesStatesOptions<SankeySeriesOptions>>['inactive']['opacity'];
+    /**
+     * Opacity for the nodes in the sankey diagram in hover mode.
+     *
+     * @default 1
+     */
+    opacity?: number;
+}
+export interface SankeySeriesStatesInactiveOptions {
+    /**
+     * Opacity for the links between nodes in the sankey diagram in
+     * inactive mode.
+     *
+     * @default 0.1
+     */
+    linkOpacity?: number;
 
-        /**
-         * Animation when not hovering over the marker.
-         *
-         * @default { duration: 50 }
-         */
-        animation?: Required<SeriesStatesOptions<SankeySeriesOptions>>['inactive']['animation'];
-    };
+    /**
+     * Opacity of the nodes in the sankey diagram in inactive mode.
+     *
+     * @default 0.1
+     */
+    opacity?: number;
+
+    /**
+     * Animation when not hovering over the marker.
+     *
+     * @default { duration: 50 }
+     */
+    animation?: (boolean|DeepPartial<AnimationOptions>);
 }
 
 export interface SankeySeriesTooltipOptions extends ColumnSeriesTooltipOptions {

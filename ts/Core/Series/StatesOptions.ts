@@ -31,7 +31,7 @@ import type SeriesOptions from './SeriesOptions';
 export interface StateClassWithOptions {}
 
 export type StateGenericOptions<T extends SeriesOptions | PointMarkerOptions> = (
-    DeepPartial<Omit<T, (('states'|'data') & keyof StateOptionsBase)>>
+    DeepPartial<Omit<T, ('states'|'data'|'nodes' | keyof StateOptionsBase)>>
 );
 
 // Internal note: ensure ColorType doesn't get loosened by DeepPartial
