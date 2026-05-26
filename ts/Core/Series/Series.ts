@@ -2866,7 +2866,7 @@ class Series {
             globallyEnabled = seriesMarkerOptions.enabled ??
                 (!xAxis || xAxis.isRadial ? true : null) ??
                 // Use larger or equal as radius is null in bubbles (#6321)
-                (!!series.closestPointRangePx && series.closestPointRangePx >= (
+                ((series.closestPointRangePx ?? -Infinity) >= (
                     (seriesMarkerOptions.enabledThreshold ?? 2) *
                     (seriesMarkerOptions as any).radius
                 ));
