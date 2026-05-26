@@ -583,8 +583,8 @@ class TreeStickyRowController {
         const computedStyle = getComputedStyle(stickyBodyElement);
 
         return (
-            parseFloat(computedStyle.borderTopWidth || '0') || 0 +
-            parseFloat(computedStyle.borderBottomWidth || '0') || 0
+            parseFloat(computedStyle.borderTopWidth) || 0 +
+            parseFloat(computedStyle.borderBottomWidth) || 0
         );
     }
 
