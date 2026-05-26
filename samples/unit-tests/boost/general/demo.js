@@ -602,6 +602,44 @@ QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
             `Clip rect 'x' should take into account opposite navigator boosted
             series on inverted charts, #20936.`
         );
+
+    }
+);
+
+QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
+    'The boost clip-path should have appropriate size, #22949.',
+    function (assert) {
+        const chart = Highcharts.chart('container', {
+            chart: {
+                inverted: false
+            },
+            navigator: {
+                enabled: false
+            },
+            plotOptions: {
+                series: {
+                    boostThreshold: 1
+                }
+            },
+            yAxis: [
+                { lineWidth: 1 },
+                { opposite: true, lineWidth: 1 }
+            ],
+            series: [{
+                data: [[4, 3], [5, 4]]
+            }, {
+                data: [[3, 5], [4, 6]]
+            }]
+        });
+
+        chart.setSize(600, 500);
+
+        assert.strictEqual(
+            chart.boost.clipRect.attr('width'),
+            chart.clipBox.width,
+            'Clip rect width should take into account opposing y-axis ' +
+            'line widths after resize, #22949.'
+        );
     }
 );
 
