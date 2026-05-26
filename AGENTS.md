@@ -12,6 +12,7 @@ Scope: instructions for coding/review agents working in this repository.
 
 - Source of truth is `.agents/skills`.
 - Mirror skills to `.claude/skills` with `npm run sync:skills`.
+- Use `npm run sync:skills -- --help` to inspect script options.
 
 ## Read First
 
@@ -31,6 +32,13 @@ Scope: instructions for coding/review agents working in this repository.
 - Keep behavior compatible across evergreen browsers.
 - Follow existing APIs and naming patterns; avoid broad refactors unless requested.
 
+## Tooling Guardrails
+
+- For tooling changes, use the `tooling` skill in `.agents/skills/tooling/SKILL.md`.
+- Reuse existing repo tooling (npm scripts, gulp tasks, existing helpers in `tools/`) before adding new mechanisms.
+- Prefer cross-platform Node-based scripts unless shell-specific behavior is explicitly required.
+- Avoid introducing ad-hoc dependencies or an inconsistent automation stack.
+
 ## Docs, Doclets, and Types
 
 - If behavior or API changes, update docs/doclets in the same PR.
@@ -43,6 +51,21 @@ Scope: instructions for coding/review agents working in this repository.
 - Prefer extending an existing test file over creating a new one.
 - For bugfixes, prefer test-first workflow when practical.
 - If automated coverage is hard, provide a short manual test plan in the PR/task output.
+
+## Skill and Tooling Change Validation
+
+- Validate script behavior with:
+- `npm run sync:skills -- --help`
+- `npm run sync:skills -- --yes`
+- For non-interactive safety, validate:
+- `npm run sync:skills < /dev/null` (should fail unless `--yes` is used)
+- In PR description, include commands executed and whether result was expected.
+
+## Skill Evaluation Notes
+
+- For new/changed skills, compare at least one representative task run with and without the skill.
+- In PR description, report: task used, qualitative outcome, and approximate token/step delta if available from the client logs.
+- If no evaluator is used, explicitly state that and provide manual observations.
 
 ## Samples and Accessibility
 
