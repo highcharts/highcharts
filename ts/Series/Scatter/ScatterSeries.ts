@@ -18,8 +18,11 @@
  *
  * */
 
+import type Chart from '../../Core/Chart/Chart';
+import type { SeriesTypeOptions } from '../../Core/Series/SeriesType';
 import type ScatterPoint from './ScatterPoint';
 import type ScatterSeriesOptions from './ScatterSeriesOptions';
+import type { DeepPartial } from '../../Shared/Types';
 
 import ScatterSeriesDefaults from './ScatterSeriesDefaults.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
@@ -153,6 +156,23 @@ class ScatterSeries extends LineSeries {
         } else if (this.graph) {
             this.graph = this.graph.destroy();
         }
+    }
+
+    /**
+     * Enable shared and split tooltips for scatter-like series while
+     * preserving direct point hover when tooltip grouping is active.
+     */
+    public init(
+        chart: Chart,
+        userOptions: DeepPartial<SeriesTypeOptions>
+    ): void {
+        super.init(chart, userOptions);
+
+        this.noSharedTooltip = !(
+            this.tooltipOptions.shared ||
+            this.tooltipOptions.split
+        );
+        this.directTouch = !this.noSharedTooltip;
     }
 
 
