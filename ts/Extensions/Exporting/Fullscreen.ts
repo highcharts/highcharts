@@ -439,7 +439,7 @@ class Fullscreen {
                     !this.isOpen ?
                         (
                             exportingOptions.menuItemDefinitions.viewFullscreen
-                                ?.textKey ||
+                                ?.text ||
                             lang.viewFullscreen
                         ) : lang.exitFullscreen
                 );
