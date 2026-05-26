@@ -264,23 +264,21 @@ QUnit.test(
 QUnit.test(
     'Preserve point config initial array type in options.data',
     function (assert) {
-        const chart = $('#container')
-            .highcharts({
-                accessibility: {
-                    enabled: false // Forces markers
-                },
-                series: [
-                    {
-                        data: [
-                            [0, 1],
-                            [1, 2],
-                            [2, 3]
-                        ],
-                        turboThreshold: 2
-                    }
-                ]
-            })
-            .highcharts();
+        const chart = Highcharts.chart('container', {
+            accessibility: {
+                enabled: false // Forces markers
+            },
+            series: [
+                {
+                    data: [
+                        [0, 1],
+                        [1, 2],
+                        [2, 3]
+                    ],
+                    turboThreshold: 2
+                }
+            ]
+        });
 
         assert.strictEqual(
             chart.series[0].options.data
