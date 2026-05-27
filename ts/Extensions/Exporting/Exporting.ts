@@ -1815,6 +1815,10 @@ export class Exporting {
 
             // Allow fallback to server only for PDFs that failed locally
             await this.exportChart(exportingOptions);
+
+        } else {
+            // General unknown error
+            throw err;
         }
     }
 
