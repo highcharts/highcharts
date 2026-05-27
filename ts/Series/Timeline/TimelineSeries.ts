@@ -388,16 +388,17 @@ class TimelineSeries extends LineSeries {
             seriesMarkerOptions = series.options.marker,
             pointMarkerOptions = point.marker || {},
             symbol = (
-                pointMarkerOptions.symbol || seriesMarkerOptions?.symbol
+                pointMarkerOptions.symbol ||
+                seriesMarkerOptions?.symbol
             ),
-            width = pick<number|undefined, number|undefined, number>(
-                pointMarkerOptions.width,
-                seriesMarkerOptions?.width,
-                series.closestPointRangePx as any
+            width = (
+                pointMarkerOptions.width ??
+                seriesMarkerOptions?.width ??
+                (series.closestPointRangePx || 0)
             ),
-            height = pick<number|undefined, number>(
-                pointMarkerOptions.height,
-                seriesMarkerOptions?.height as any
+            height = (
+                pointMarkerOptions.height ??
+                (seriesMarkerOptions?.height || 0)
             );
 
         let seriesStateOptions,
@@ -415,9 +416,9 @@ class TimelineSeries extends LineSeries {
             seriesStateOptions = seriesMarkerOptions?.states?.[state];
             pointStateOptions = pointMarkerOptions.states?.[state];
 
-            radius = pick(
-                pointStateOptions?.radius,
-                seriesStateOptions?.radius,
+            radius = (
+                pointStateOptions?.radius ??
+                seriesStateOptions?.radius ??
                 radius + (seriesStateOptions?.radiusPlus || 0)
             );
         }
@@ -434,7 +435,7 @@ class TimelineSeries extends LineSeries {
         return (series.chart.inverted) ? {
             y: (attribs.x && attribs.width) &&
                 series.xAxis.len - attribs.x - attribs.width,
-            x: attribs.y && attribs.y,
+            x: attribs.y,
             width: attribs.height,
             height: attribs.width
         } : attribs;

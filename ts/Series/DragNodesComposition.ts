@@ -286,8 +286,9 @@ function redrawHalo(
     if (point && this.halo) {
         this.halo.attr({
             d: point.haloPath(
-                (this.options.states as any).hover.halo.size
-            ) as any
+                typeof this.options.states?.hover?.halo === 'object' &&
+                this.options.states?.hover?.halo.size || 0
+            )
         });
     }
 }

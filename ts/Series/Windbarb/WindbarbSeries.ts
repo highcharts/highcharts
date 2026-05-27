@@ -143,17 +143,16 @@ class WindbarbSeries extends ColumnSeries {
         const options = this.options;
 
         let stroke = point.color || this.color,
-            strokeWidth = this.options.lineWidth;
+            strokeWidth = options.lineWidth;
 
         if (state) {
-            stroke = (options.states as any)[state].color || stroke;
-            strokeWidth =
-            ((options.states as any)[state].lineWidth || strokeWidth) +
-            ((options.states as any)[state].lineWidthPlus || 0);
+            stroke = options.states?.[state]?.color || stroke;
+            strokeWidth = (options.states?.[state]?.lineWidthPlus || 0) +
+                (options.states?.[state]?.lineWidth || strokeWidth || 0);
         }
 
         return {
-            'stroke': stroke,
+            stroke,
             'stroke-width': strokeWidth
         };
     }
