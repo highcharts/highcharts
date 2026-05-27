@@ -40,6 +40,12 @@ import type {
     SeriesOptions,
     SeriesStatesOptions
 } from '../../Core/Series/SeriesOptions';
+import type {
+    OrganizationLinkOptions
+} from '../Organization/OrganizationSeriesOptions';
+import type {
+    TreegraphLinkOptions
+} from '../Treegraph/TreegraphLink';
 
 /* *
  *
@@ -54,10 +60,15 @@ declare module '../../Core/Series/SeriesOptions' {
 }
 
 // Prevent ColorType (link.color) getting loosened by DeepPartial in
-// StateGenericOptions.
+// StateGenericOptions, with care about inheritance.
 declare module '../../Core/Series/StatesOptions' {
     interface StateOptionsBase {
-        link?: NetworkgraphLinkOptions;
+        link?: (
+            SeriesLinkOptionsBase &
+            NetworkgraphLinkOptions &
+            OrganizationLinkOptions &
+            TreegraphLinkOptions
+        );
     }
 }
 
@@ -99,13 +110,19 @@ export interface NetworkgraphEventsOptions extends SeriesEventsOptions {
  *
  * @optionparent series.networkgraph.link
  */
-export interface NetworkgraphLinkOptions {
-
+export interface SeriesLinkOptionsBase {
     /**
      * Color of the link between two nodes.
      */
     color?: ColorType;
+}
 
+/**
+ * @product highcharts
+ *
+ * @optionparent series.networkgraph.link
+ */
+export interface NetworkgraphLinkOptions extends SeriesLinkOptionsBase {
     /**
      * A name for the dash style to use for links.
      */
@@ -122,7 +139,6 @@ export interface NetworkgraphLinkOptions {
      * Width (px) of the link between two nodes.
      */
     width?: number;
-
 }
 
 /**
