@@ -45,7 +45,7 @@ describe('sample-generator getDemoJSX', () => {
             'should import setHighcharts alongside Chart'
         );
         ok(
-            jsx.includes("import Highcharts from 'highcharts/esm/highcharts.js';"),
+            jsx.includes("import Highcharts from 'highcharts/esm/highcharts.src.js';"),
             'should import Highcharts when modules are used'
         );
         ok(
@@ -116,6 +116,26 @@ describe('sample-generator getDemoJSX', () => {
         ok(
             jsx.includes('setHighcharts(Highcharts);'),
             'should call setHighcharts for the non-wrapper module'
+        );
+    });
+
+    it('uses .src Highcharts entrypoint for stock factory when setHighcharts fallback is needed', async () => {
+        const jsx = await getDemoJSX(
+            {
+                factory: 'stockChart',
+                modules: ['highcharts-more'],
+                output: 'highcharts/react/unit-test/stock-src-entrypoint'
+            },
+            metaList
+        );
+
+        ok(
+            jsx.includes("import Highcharts from 'highcharts/esm/highstock.src.js';"),
+            'should import highstock.src.js so side-effect modules register on the same Highcharts instance'
+        );
+        ok(
+            jsx.includes('setHighcharts(Highcharts);'),
+            'should call setHighcharts for stock factory fallback modules'
         );
     });
 });

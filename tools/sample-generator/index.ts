@@ -960,7 +960,7 @@ function getReactFactoryConfig(factory: SampleGeneratorConfig['factory'] = 'char
         return {
             componentImportPath: '@highcharts/react/Stock',
             componentName: 'StockChart',
-            highchartsImportPath: 'highcharts/esm/highstock.js'
+            highchartsImportPath: 'highcharts/esm/highstock.src.js'
         };
     }
 
@@ -968,7 +968,7 @@ function getReactFactoryConfig(factory: SampleGeneratorConfig['factory'] = 'char
         return {
             componentImportPath: '@highcharts/react/Maps',
             componentName: 'MapsChart',
-            highchartsImportPath: 'highcharts/esm/highmaps.js'
+            highchartsImportPath: 'highcharts/esm/highmaps.src.js'
         };
     }
 
@@ -976,14 +976,14 @@ function getReactFactoryConfig(factory: SampleGeneratorConfig['factory'] = 'char
         return {
             componentImportPath: '@highcharts/react/Gantt',
             componentName: 'GanttChart',
-            highchartsImportPath: 'highcharts/esm/highcharts-gantt.js'
+            highchartsImportPath: 'highcharts/esm/highcharts-gantt.src.js'
         };
     }
 
     return {
         componentImportPath: '@highcharts/react',
         componentName: 'Chart',
-        highchartsImportPath: 'highcharts/esm/highcharts.js'
+        highchartsImportPath: 'highcharts/esm/highcharts.src.js'
     };
 }
 
