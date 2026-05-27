@@ -101,7 +101,13 @@ const NetworkgraphSeriesDefaults: NetworkgraphSeriesOptions = {
          */
         inactive: {
             /**
+             * Deprecated. Use
+             * [link.opacity](#series.networkgraph.states.inactive.link.opacity)
+             * instead.
+             *
              * Opacity of inactive links.
+             *
+             * @deprecated next
              */
             linkOpacity: 0.3,
 

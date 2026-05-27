@@ -53,6 +53,14 @@ declare module '../../Core/Series/SeriesOptions' {
     }
 }
 
+// Prevent ColorType (link.color) getting loosened by DeepPartial in
+// StateGenericOptions.
+declare module '../../Core/Series/StatesOptions' {
+    interface StateOptionsBase {
+        link?: NetworkgraphLinkOptions;
+    }
+}
+
 export interface NetworkgraphDataLabelsFormatterCallbackFunction {
     (
         this: Point|NetworkgraphPoint,
@@ -271,7 +279,7 @@ export interface NetworkgraphSeriesOptions
      */
     nodes?: Array<NetworkgraphPointOptions>;
 
-    states?: SeriesStatesOptions<NetworkgraphSeriesOptions>;
+    states?: NetworkgraphSeriesStatesOptions;
 
     /**
      * The opposite state of a hover for a single point link. Applied
@@ -286,6 +294,24 @@ export interface NetworkgraphSeriesOptions
 
     stickyTracking?: boolean;
 
+}
+
+type SeriesStatesOptionsAlias = SeriesStatesOptions<NetworkgraphSeriesOptions>;
+export interface NetworkgraphSeriesStatesOptions extends
+    SeriesStatesOptionsAlias {
+    inactive?: SeriesStatesOptionsAlias['inactive'] & {
+        /**
+         * Deprecated. Use
+         * [link.opacity](#series.networkgraph.states.inactive.link.opacity)
+         * instead.
+         *
+         * Opacity of inactive links.
+         *
+         * @deprecated next
+         * @default 0.3
+         */
+        linkOpacity?: number;
+    };
 }
 
 export type NetworkgraphAfterSimulationCallback =
