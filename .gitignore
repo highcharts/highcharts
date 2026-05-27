@@ -54,6 +54,7 @@ samples/**/.generated-checksum
 samples/**/config.js
 # Temporary: ignore generated React sample outputs
 samples/*/react/**
+/samples/react/
 nbproject/
 *.DS_Store
 /node_modules/
