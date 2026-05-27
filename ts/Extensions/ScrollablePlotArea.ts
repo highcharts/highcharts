@@ -370,7 +370,12 @@ export class ScrollablePlotArea {
                 fixedDiv,
                 chart.chartWidth,
                 chart.chartHeight,
-                chartOptions.style
+                chartOptions.style,
+                // eslint-disable-next-line no-undefined
+                undefined,
+                // eslint-disable-next-line no-undefined
+                undefined,
+                chart.styledMode
             );
 
         // Mask
