@@ -44,6 +44,13 @@ const SHARED_BUBBLE_POINT_FORMAT =
     '<span style="color:{point.color}">\u25CF</span> ' +
     '{series.name}: <b>{point.y}</b>, Size: <b>{point.z}</b><br/>';
 
+function hasSharedScatterTooltip(series: ScatterSeries): boolean {
+    return (
+        (series.type === 'scatter' || series.type === 'bubble') &&
+        !!series.tooltipOptions.shared
+    );
+}
+
 function hasExplicitTooltipFormat(
     series: ScatterSeries,
     userOptions: DeepPartial<SeriesTypeOptions>,
@@ -223,8 +230,8 @@ class ScatterSeries extends LineSeries {
     }
 
     /**
-     * Enable shared and split tooltips for scatter-like series while
-     * preserving direct point hover when tooltip grouping is active.
+     * Enable shared tooltips for scatter and bubble series while preserving
+     * direct point hover when tooltip grouping is active.
      */
     public init(
         chart: Chart,
@@ -232,13 +239,9 @@ class ScatterSeries extends LineSeries {
     ): void {
         super.init(chart, userOptions);
 
-        this.noSharedTooltip = !(
-            this.tooltipOptions.shared ||
-            this.tooltipOptions.split
-        );
-        this.directTouch = !this.noSharedTooltip;
-
-        if (!this.noSharedTooltip) {
+        if (hasSharedScatterTooltip(this)) {
+            this.noSharedTooltip = false;
+            this.directTouch = true;
             updateGroupedTooltipDefaults(this, userOptions);
         }
     }

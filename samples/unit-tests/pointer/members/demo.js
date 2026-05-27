@@ -239,7 +239,7 @@ QUnit.test('Pointer.getHoverData', function (assert) {
 
 QUnit.test(
     'Pointer.runPointActions preserves direct hover for scatter and bubble ' +
-    'targets with shared and split tooltips',
+    'targets with shared tooltips',
     function (assert) {
         [
             {
@@ -251,24 +251,8 @@ QUnit.test(
                 ]
             },
             {
-                type: 'scatter',
-                tooltip: { split: true },
-                data: [
-                    [[0, 21709], [1, 4932]],
-                    [[2, 5602], [3, 43499], [1, 26773]]
-                ]
-            },
-            {
                 type: 'bubble',
                 tooltip: { shared: true },
-                data: [
-                    [[0, 21709, 2201], [1, 4932, 500]],
-                    [[2, 5602, 500], [3, 43499, 4258], [1, 26773, 2260]]
-                ]
-            },
-            {
-                type: 'bubble',
-                tooltip: { split: true },
                 data: [
                     [[0, 21709, 2201], [1, 4932, 500]],
                     [[2, 5602, 500], [3, 43499, 4258], [1, 26773, 2260]]
@@ -346,8 +330,8 @@ QUnit.test(
 );
 
 QUnit.test(
-    'Scatter-like series use grouped tooltip defaults for shared and split ' +
-    'tooltips without overriding explicit formats',
+    'Scatter-like series use grouped tooltip defaults for shared tooltips ' +
+    'without overriding explicit formats',
     function (assert) {
         var sharedHeaderFormat =
                 Highcharts.defaultOptions.tooltip.headerFormat,
@@ -370,18 +354,8 @@ QUnit.test(
                     expectedPointFormat: sharedScatterPointFormat
                 },
                 {
-                    type: 'scatter',
-                    tooltip: { split: true },
-                    expectedPointFormat: sharedScatterPointFormat
-                },
-                {
                     type: 'bubble',
                     tooltip: { shared: true },
-                    expectedPointFormat: sharedBubblePointFormat
-                },
-                {
-                    type: 'bubble',
-                    tooltip: { split: true },
                     expectedPointFormat: sharedBubblePointFormat
                 }
             ];
