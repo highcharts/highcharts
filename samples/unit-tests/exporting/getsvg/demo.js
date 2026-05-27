@@ -211,6 +211,64 @@ QUnit.test('Hide label with useHTML', async function (assert) {
     );
 });
 
+QUnit.test(
+    'getSVGForExport should include custom render labels (#24537)',
+    async function (assert) {
+        const chart = Highcharts.chart('container', {
+            chart: {
+                type: 'pie',
+                events: {
+                    render: context => {
+                        const chart = context.target,
+                            pie = chart.series[0];
+
+                        chart.renderer.box.querySelector(
+                            '.highcharts-custom-centered-label'
+                        )?.remove();
+
+                        if (pie?.center) {
+                            const left = chart.plotLeft + pie.center[0],
+                                top = chart.plotTop + pie.center[1];
+
+                            chart.renderer
+                                .text('<b>TEST</b>', left, top)
+                                .attr({
+                                    'text-anchor': 'middle',
+                                    zIndex: 1
+                                })
+                                .addClass(
+                                    'highcharts-custom-centered-label'
+                                )
+                                .add();
+                        }
+                    }
+                }
+            },
+
+            plotOptions: {
+                pie: {
+                    innerSize: '40%'
+                }
+            },
+
+            series: [{
+                data: [55.02, 26.71, 1.09]
+            }]
+        });
+
+        const svg = await chart.exporting.getSVGForExport();
+        document.getElementById('output').innerHTML = svg;
+
+        assert.strictEqual(
+            document.querySelector(
+                '#output .highcharts-custom-centered-label'
+            )?.textContent,
+            'TEST',
+            'The custom label from chart.events.render should be exported'
+        );
+    }
+);
+
 QUnit.test('getSVGForExport XHTML', async function (assert) {
     var chart = Highcharts.chart('container', {
         chart: {

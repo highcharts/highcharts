@@ -58,6 +58,7 @@ declare module '../../Core/Chart/ChartOptions'{
          *         Show errors on chart
          *
          * @since    7.0.0
+         * @default  true
          * @requires modules/debugger
          */
         displayErrors?: boolean;

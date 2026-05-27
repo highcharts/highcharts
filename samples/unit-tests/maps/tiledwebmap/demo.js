@@ -130,6 +130,42 @@ QUnit.test('Tiled Web Map on the chart', assert => {
         the provider.`
     );
 
+    let drawPointsCount = 0;
+    const drawPoints = series.drawPoints;
+    series.drawPoints = function () {
+        drawPointsCount++;
+        return drawPoints.apply(this, arguments);
+    };
+
+    chart.mapView.update({
+        center: [10.73028454146517, 59.91261204279989],
+        zoom: 13
+    });
+
+    assert.ok(
+        drawPointsCount > 0,
+        'Tiles should reload after updating the map view with center and ' +
+        'zoom, #24441.'
+    );
+
+    drawPointsCount = 0;
+
+    chart.mapView.update({
+        fitToGeometry: {
+            type: 'MultiPoint',
+            coordinates: [
+                [0, 0],
+                [1, 1]
+            ]
+        }
+    });
+
+    assert.ok(
+        drawPointsCount > 0,
+        'Tiles should reload after updating the map view with ' +
+        'fitToGeometry, #24441.'
+    );
+
     chart.series[0].update({
         provider: {
             type: void 0,
