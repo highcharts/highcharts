@@ -41,7 +41,9 @@ export type StateGenericOptions<T extends SeriesOptions | PointMarkerOptions> = 
 // Internal notes: Used to ensure ColorType doesn't get loosened by DeepPartial,
 // and all shared options.
 export interface StateOptionsBase {
-    animation?: (boolean|Partial<AnimationOptions>);
+    animation?: (boolean|DeepPartial<AnimationOptions>);
+    borderColor?: ColorType;
+    brightness?: number;
     color?: ColorType;
     dashStyle?: DashStyleValue;
     enabled?: boolean;

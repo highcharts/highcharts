@@ -37,6 +37,12 @@ import type { SeriesTooltipOptions } from '../../Core/TooltipOptions';
  *
  * */
 
+declare module '../../Core/Series/PointBase' {
+    interface PointBase {
+        borderWidth?: number;
+    }
+}
+
 declare module '../../Core/Series/SeriesOptions' {
     interface SeriesOptions {
         borderColor?: ColorType;

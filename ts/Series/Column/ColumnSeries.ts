@@ -25,7 +25,7 @@ import type ColumnPoint from './ColumnPoint';
 import type ColumnSeriesOptions from './ColumnSeriesOptions';
 import type DashStyleValue from '../../Core/Renderer/DashStyleValue';
 import type PointerEvent from '../../Core/PointerEvent';
-import type { SeriesStateHoverOptions } from '../../Core/Series/SeriesOptions';
+import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 import type StackItem from '../../Core/Axis/Stacking/StackItem';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
@@ -217,7 +217,7 @@ class ColumnSeries extends Series {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         options: ColumnSeriesOptions
     ): void {
-        super.init.apply(this, arguments as any);
+        super.init.apply(this, arguments);
 
         const series = this;
 
@@ -675,25 +675,24 @@ class ColumnSeries extends Series {
         state?: StatesOptionsKey
     ): SVGAttributes {
         const options = this.options,
-            p2o = (this as any).pointAttrToOptions || {},
+            p2o = this.pointAttrToOptions || {},
             strokeOption = p2o.stroke || 'borderColor',
             strokeWidthOption = p2o['stroke-width'] || 'borderWidth';
 
-        let stateOptions: SeriesStateHoverOptions,
+        let stateOptions: SeriesStatesOptions<ColumnSeriesOptions>[keyof SeriesStatesOptions<ColumnSeriesOptions>],
             zone,
             brightness,
-            fill = (point && point.color) || this.color,
+            fill = point?.color || this.color,
             // Set to fill when borderColor null:
             stroke = (
-                (point && (point as any)[strokeOption]) ||
-                (options as any)[strokeOption] ||
+                point?.[strokeOption] ||
+                options[strokeOption] ||
                 fill
             ),
-            dashstyle =
-                (point && point.options.dashStyle) || options.dashStyle,
-            strokeWidth = (point && (point as any)[strokeWidthOption]) ||
-                (options as any)[strokeWidthOption] ||
-                (this as any)[strokeWidthOption] || 0,
+            dashstyle = point?.options.dashStyle || options.dashStyle,
+            strokeWidth = point?.[strokeWidthOption] ||
+                options[strokeWidthOption] ||
+                this[strokeWidthOption] || 0,
             opacity = (point?.isNull && options.nullInteraction) ?
                 0 :
                 (point?.opacity ?? options.opacity ?? 1);
@@ -719,7 +718,7 @@ class ColumnSeries extends Series {
         // Select or hover states
         if (state && point) {
             stateOptions = merge(
-                (options.states as any)[state],
+                options.states?.[state],
                 // #6401
                 point.options.states?.[state] || {}
             );
@@ -727,22 +726,21 @@ class ColumnSeries extends Series {
             fill =
                 stateOptions.color || (
                     typeof brightness !== 'undefined' &&
-                    color(fill as any)
+                    color(fill)
                         .brighten(stateOptions.brightness as any)
                         .get()
                 ) || fill;
-            stroke = (stateOptions as any)[strokeOption] || stroke;
-            strokeWidth =
-                (stateOptions as any)[strokeWidthOption] || strokeWidth;
+            stroke = stateOptions[strokeOption] || stroke;
+            strokeWidth = stateOptions[strokeWidthOption] || strokeWidth;
             dashstyle = stateOptions.dashStyle || dashstyle;
-            opacity = pick(stateOptions.opacity, opacity);
+            opacity = stateOptions.opacity ?? opacity;
         }
 
         const ret: SVGAttributes = {
-            fill: fill as any,
-            stroke: stroke,
+            fill,
+            stroke,
             'stroke-width': strokeWidth,
-            opacity: opacity
+            opacity
         };
 
         if (dashstyle) {
@@ -823,7 +821,7 @@ class ColumnSeries extends Series {
                 if (!chart.styledMode) {
                     (graphic as any)[verb](series.pointAttribs(
                         point,
-                        (point.selected && 'select') as any
+                        point.selected ? 'select' : ''
                     ))
                         .shadow(
                             point.allowShadow !== false && options.shadow
@@ -966,7 +964,7 @@ class ColumnSeries extends Series {
             });
         }
 
-        Series.prototype.remove.apply(series, arguments as any);
+        Series.prototype.remove.apply(series, arguments);
     }
 
 

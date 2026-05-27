@@ -275,7 +275,6 @@ class HLCSeries extends ColumnSeries {
 
 interface HLCSeries {
     pointClass: typeof HLCPoint;
-    pointAttrToOptions: Record<string, string>;
 }
 extend(HLCSeries.prototype, {
     pointClass: HLCPoint,

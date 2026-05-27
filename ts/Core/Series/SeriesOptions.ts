@@ -1001,6 +1001,9 @@ export interface SeriesOptions {
 
     /**
      * A collection of options for different series states.
+     *
+     * In addition to the options documented under each state, any option from
+     * the parent series type can be set, with exception of `data` and `states`.
      */
     states?: SeriesStatesOptions<SeriesOptions>;
 

@@ -86,6 +86,19 @@ declare module '../../Core/Series/SeriesBase' {
         mapTitle?: string;
         transformGroups?: Array<SVGElement>|undefined;
         useMapGeometry?: boolean;
+
+        /**
+         * Mapping point specific attributes to options. Implemented in map and
+         * hlc series, and by extension all series derived from them.
+         * The concept seems flexible but is used as strictly as the type
+         * indicates, so extend the type if needed.
+         *
+         * @internal
+         */
+        pointAttrToOptions?: {
+            stroke?: 'color';
+            'stroke-width'?: 'lineWidth';
+        };
     }
 }
 
@@ -152,8 +165,6 @@ class MapSeries extends ScatterSeries {
     public mapTitle?: string;
 
     public options!: MapSeriesOptions;
-
-    public pointAttrToOptions?: Record<string, string>;
 
     public points!: Array<MapPoint>;
 
