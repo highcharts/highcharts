@@ -205,7 +205,8 @@ const options = {
             day: '%e<br><span style="opacity: 0.5; font-size: 0.7em">%a</span>'
         },
         grid: {
-            borderWidth: 0
+            borderWidth: 0,
+            cellHeight: 46
         },
         gridLineWidth: 1,
         min: today - 3 * day,
@@ -215,6 +216,25 @@ const options = {
                 color: 'var(--highcharts-neutral-color-5, #f2f2f2)'
             }
         }
+    }, {
+
+        dateTimeLabelFormats: {
+            month: '%[bY]'
+        },
+        labels: {
+            align: 'left',
+            x: 5,
+            style: {
+                fontSize: '0.7em',
+                fontWeight: 'bold',
+                textTransform: 'uppercase'
+            }
+        },
+        grid: {
+            borderWidth: 0,
+            cellHeight: 24
+        },
+        tickInterval: 30 * 24 * 36e5
     }],
     yAxis: {
         grid: {
