@@ -559,6 +559,22 @@ QUnit.test('Sankey and inactive state', function (assert) {
 });
 
 QUnit.test('Sankey and circular data', function (assert) {
+    function getPathCoordinates(path) {
+        const coordinates = {
+            x: [],
+            y: []
+        };
+
+        path.forEach(segment => {
+            for (let i = 1; i < segment.length; i += 2) {
+                coordinates.x.push(segment[i]);
+                coordinates.y.push(segment[i + 1]);
+            }
+        });
+
+        return coordinates;
+    }
+
     const chart = Highcharts.chart('container', {
         chart: {
             width: 489,
@@ -606,108 +622,173 @@ QUnit.test('Sankey and circular data', function (assert) {
     ]);
     chart.series[0].redraw();
 
-    const shapeArgs = chart.series[0].nodes[0].shapeArgs;
+    let series = chart.series[0];
+    let selfLink = series.points[0];
+    const shapeArgs = series.nodes[0].shapeArgs;
+
     assert.strictEqual(
-        shapeArgs.x,
-        chart.series[0].firstColCircLinkMaxH + chart.series[0].circularLinkBend,
-        '#16080: Node should be translated correctly after redraw (x)'
+        selfLink.isCircular,
+        true,
+        'Self links should be marked as circular'
     );
     assert.close(
         shapeArgs.y,
-        (chart.plotHeight - chart.series[0].nodes[0].shapeArgs.height) / 2,
+        (chart.plotHeight - series.nodes[0].shapeArgs.height) / 2,
         0.5,
         '#16080: Node should be translated correctly after redraw (y)'
     );
+    assert.deepEqual(
+        selfLink.shapeArgs.d,
+        [],
+        'Self link path should not render'
+    );
 
-    // Circular data links
     chart.series[0].setData([
-        ['a', 'b', 3],
-        ['b', 'a', 1],
-        ['b', 'c', 2],
-        ['c', 'b', 1],
-        ['c', 'a', 1]
+        ['a', 'a', 5]
     ]);
 
-    const topCircularLink = chart.series[0].nodes[0].linksTo[0];
-    const topCircularLinkShapeArgs = topCircularLink.shapeArgs;
-
-    assert.deepEqual(
-        topCircularLinkShapeArgs.d[0],
-        [
-            'M',
-            topCircularLink.fromNode.shapeArgs.x + chart.series[0].nodeWidth,
-            topCircularLink.fromNode.shapeArgs.y +
-                chart.series[0].translationFactor * topCircularLink.weight
-        ],
-        'Top circular link path should start at the from-node right edge'
-    );
-
-    assert.deepEqual(
-        [
-            topCircularLinkShapeArgs.d[3][6],
-            topCircularLinkShapeArgs.d[4][2],
-            topCircularLinkShapeArgs.d[5][2]
-        ],
-        [0, 0, 0],
-        'Top circular link top side y should equal 0'
-    );
-
-    assert.deepEqual(
-        [
-            topCircularLinkShapeArgs.d[5][5],
-            topCircularLinkShapeArgs.d[6][1],
-            topCircularLinkShapeArgs.d[7][1]
-        ],
-        [0, 0, 0],
-        'Top circular link left side x should equal 0'
-    );
-
-    const bottomCircularLink = chart.series[0].nodes[0].linksTo[1];
-    const bottomCircLinkShapeArgs = bottomCircularLink.shapeArgs;
+    series = chart.series[0];
+    selfLink = series.points[0];
+    const selfNode = series.nodes[0];
 
     assert.strictEqual(
-        bottomCircLinkShapeArgs.d[0][1],
-        bottomCircularLink.fromNode.shapeArgs.x + chart.series[0].nodeWidth,
-        'Bottom circular link path should start at the from-node right edge (x)'
+        selfLink.isCircular,
+        true,
+        'Single-node self link should be marked as circular'
+    );
+    assert.deepEqual(
+        selfLink.shapeArgs.d,
+        [],
+        'Single-node self link path should not render'
+    );
+    assert.close(
+        selfNode.shapeArgs.x,
+        (chart.plotWidth - selfNode.shapeArgs.width) / 2,
+        0.5,
+        'Single self-linked node should be centered horizontally'
+    );
+    assert.close(
+        selfNode.shapeArgs.y,
+        (chart.plotHeight - selfNode.shapeArgs.height) / 2,
+        0.5,
+        'Single self-linked node should be centered vertically'
+    );
+    selfNode.onMouseOver();
+    assert.notEqual(
+        chart.tooltip.label.text.textStr.indexOf('a \u2192 a:'),
+        -1,
+        'Single self-linked node tooltip should show the hidden self flow'
+    );
+
+    series.setData([
+        ['a', 'b', 1],
+        ['b', 'c', 1]
+    ]);
+
+    assert.strictEqual(
+        series.isDataCircular,
+        false,
+        'Circular state should reset after setting non-circular data'
+    );
+    assert.deepEqual(
+        [
+            series.firstColCircLinkMaxH,
+            series.lastColCircLinkMaxH,
+            series.circularLinkBend,
+            series.circularLinkMargin
+        ],
+        [0, 0, 0, 0],
+        'Circular spacing should reset after setting non-circular data'
+    );
+    assert.notOk(
+        series.points.some(point => point.isCircular),
+        'No links should remain marked as circular'
+    );
+
+    chart.series[0].setData([
+        ['a', 'b', 3],
+        ['b', 'a', 1]
+    ]);
+
+    series = chart.series[0];
+    const forwardLink = series.points[0],
+        returnLink = series.points[1],
+        returnLinkShapeArgs = returnLink.shapeArgs,
+        returnLinkCoordinates = getPathCoordinates(returnLinkShapeArgs.d);
+
+    assert.strictEqual(
+        forwardLink.isCircular,
+        false,
+        'The forward link should remain a straight link'
+    );
+    assert.strictEqual(
+        returnLink.isCircular,
+        true,
+        'The return link should be marked as circular'
     );
 
     assert.close(
-        bottomCircLinkShapeArgs.d[0][2],
-        bottomCircularLink.fromNode.shapeArgs.y +
-            chart.series[0].translationFactor *
-            bottomCircularLink.fromNode.linksFrom[0].weight,
+        returnLinkShapeArgs.d[0][1],
+        returnLink.fromNode.shapeArgs.x + series.nodeWidth,
         0.5,
-        'Bottom circular link path should start at the from-node right edge (y)'
+        'Circular link path should start at the from-node right edge (x)'
     );
 
-    assert.deepEqual(
-        [
-            bottomCircLinkShapeArgs.d[1][3],
-            bottomCircLinkShapeArgs.d[2][1],
-            bottomCircLinkShapeArgs.d[3][1]
-        ],
-        [chart.plotWidth, chart.plotWidth, chart.plotWidth],
-        'Bottom circular link right side x should equal plotWidth'
+    assert.ok(
+        Math.abs(returnLinkShapeArgs.d[0][2] - returnLink.linkBase[0]) < 0.5 ||
+            Math.abs(
+                returnLinkShapeArgs.d[0][2] - returnLink.linkBase[1]
+            ) < 0.5,
+        'Circular link path should start at the from-node vertical edge'
     );
 
-    assert.deepEqual(
-        [
-            bottomCircLinkShapeArgs.d[3][6],
-            bottomCircLinkShapeArgs.d[4][2],
-            bottomCircLinkShapeArgs.d[5][2]
-        ],
-        [chart.plotHeight, chart.plotHeight, chart.plotHeight],
-        'Bottom circular link bottom side y should equal plotHeight'
+    assert.close(
+        returnLinkShapeArgs.d[7][5],
+        returnLink.toNode.shapeArgs.x,
+        0.5,
+        'Circular link path should curve into the to-node left edge'
     );
 
-    assert.deepEqual(
-        [
-            bottomCircLinkShapeArgs.d[5][5],
-            bottomCircLinkShapeArgs.d[6][1],
-            bottomCircLinkShapeArgs.d[7][1]
-        ],
-        [0, 0, 0],
-        'Bottom circular link left side x should equal 0'
+    assert.close(
+        returnLinkShapeArgs.d[8][1],
+        returnLink.toNode.shapeArgs.x,
+        0.5,
+        'Circular link path should enter the to-node left edge'
+    );
+
+    assert.ok(
+        Math.min.apply(null, returnLinkCoordinates.x) > 0 &&
+            Math.max.apply(null, returnLinkCoordinates.x) < chart.plotWidth &&
+            Math.min.apply(null, returnLinkCoordinates.y) > 0 &&
+            Math.max.apply(null, returnLinkCoordinates.y) < chart.plotHeight,
+        'Simple circular links should not touch the plot boundaries'
+    );
+
+    chart.series[0].setData([
+        ['x', 'y', 1],
+        ['a', 'b', 3],
+        ['b', 'a', 1]
+    ]);
+
+    series = chart.series[0];
+    const orderedReturnLink = series.points[2],
+        orderedReturnLinkShapeArgs = orderedReturnLink.shapeArgs;
+
+    assert.notEqual(
+        orderedReturnLink.toNode.index,
+        0,
+        'Test setup should make the circular target a non-first node'
+    );
+    assert.strictEqual(
+        orderedReturnLink.isCircular,
+        true,
+        'Return link should be circular when the target is not the first node'
+    );
+    assert.close(
+        orderedReturnLinkShapeArgs.d[8][1],
+        orderedReturnLink.toNode.shapeArgs.x,
+        0.5,
+        'Circular link should enter a first-column target by column, not index'
     );
 });
 

@@ -49,7 +49,6 @@ import { composeTextPath } from '../../Extensions/TextPath.js';
 import {
     clamp,
     crisp,
-    defined,
     extend,
     isObject,
     merge,
@@ -174,6 +173,11 @@ class SankeySeries extends ColumnSeries {
      */
     public circularLinkBend = 0;
 
+    /**
+     * The margin between circular links and the plot edge.
+     */
+    public circularLinkMargin = 0;
+
     /* *
      *
      *  Functions
@@ -234,7 +238,11 @@ class SankeySeries extends ColumnSeries {
             node.level = level;
             visited.add(node);
             for (const link of node.linksFrom) {
-                if (link.toNode && !visited.has(link.toNode)) {
+                if (
+                    !link.isCircular &&
+                    link.toNode &&
+                    !visited.has(link.toNode)
+                ) {
                     series.order(link.toNode, level + 1, visited);
                 }
             }
@@ -249,10 +257,14 @@ class SankeySeries extends ColumnSeries {
     public generatePoints(): void {
         NodesComposition.generatePoints.apply(this, arguments as any);
 
+        if (this.useCircularLayout) {
+            this.isDataCircular = this.markCircularLinks(this.points);
+        }
+
         if (this.orderNodes) {
             for (const node of this.nodes) {
                 // Identify the root node(s)
-                if (node.linksTo.length === 0) {
+                if (!node.linksTo.some((link): boolean => !link.isCircular)) {
                     // Start by the root node(s) and recursively set the level
                     // on all following nodes.
                     this.order(node, 0);
@@ -373,70 +385,123 @@ class SankeySeries extends ColumnSeries {
     }
 
     /**
-     * Whether link points form a directed cycle in from/to topology.
+     * Mark links that would close a directed cycle in from/to topology.
+     * Circular links are ignored when assigning node columns.
+     *
      * @param {Array<SankeyPoint>} points The points to check.
-     * @return {boolean} Whether the link points form a directed cycle
-     * in from/to topology.
+     * @return {boolean} Whether any circular links were found.
      *
      * @internal
      */
-    public checkGraphHasCycle(points: Array<SankeyPoint>): boolean {
-        // Nodes map to their outgoing links
-        const adjacency: Record<string, Array<string>> = {};
+    public markCircularLinks(points: Array<SankeyPoint>): boolean {
+        const adjacency = new Map<SankeyPoint, Array<SankeyPoint>>();
+        const nodes: Array<SankeyPoint> = [];
 
         for (const point of points) {
-            if (point.isNode) {
-                continue;
-            }
-            const fromNode = point.fromNode,
-                toNode = point.toNode;
-            if (!fromNode || !toNode) {
-                continue;
-            }
-            const fromId = fromNode.id,
-                toId = toNode.id;
-            if (!defined(fromId) || !defined(toId)) {
-                continue;
-            }
-            const fromKey = '' + fromId,
-                toKey = '' + toId;
+            point.isCircular = false;
 
-            if (!adjacency[fromKey]) {
-                adjacency[fromKey] = [];
+            if (point.isNode || !point.fromNode || !point.toNode) {
+                continue;
             }
-            adjacency[fromKey].push(toKey);
+
+            if (!adjacency.has(point.fromNode)) {
+                adjacency.set(point.fromNode, []);
+                nodes.push(point.fromNode);
+            }
+            adjacency.get(point.fromNode)?.push(point);
+
+            if (!adjacency.has(point.toNode)) {
+                adjacency.set(point.toNode, []);
+                nodes.push(point.toNode);
+            }
         }
 
-        const checkedNodes = new Set<string>(),
-            nodesInStack = new Set<string>();
+        const visited = new Set<SankeyPoint>(),
+            nodesInStack = new Set<SankeyPoint>();
+        let hasCircularLink = false;
 
-        const checkNodeHasCycle = (node: string): boolean => {
-            checkedNodes.add(node);
+        const visitNode = (node: SankeyPoint): void => {
+            visited.add(node);
             nodesInStack.add(node);
 
-            for (const neighbor of adjacency[node] || []) {
-                if (!checkedNodes.has(neighbor)) {
-                    if (checkNodeHasCycle(neighbor)) {
-                        return true;
-                    }
-                } else if (nodesInStack.has(neighbor)) {
-                    return true;
+            for (const link of adjacency.get(node) || []) {
+                const nextNode = link.toNode;
+
+                if (!visited.has(nextNode)) {
+                    visitNode(nextNode);
+                } else if (nodesInStack.has(nextNode)) {
+                    link.isCircular = true;
+                    hasCircularLink = true;
                 }
             }
 
             nodesInStack.delete(node);
-            return false;
         };
 
-        for (const node of Object.keys(adjacency)) {
-            if (!checkedNodes.has(node)) {
-                if (checkNodeHasCycle(node)) {
-                    return true;
-                }
+        for (const node of nodes) {
+            if (!visited.has(node)) {
+                visitNode(node);
             }
         }
 
-        return false;
+        return hasCircularLink;
+    }
+
+    /**
+     * Reset circular layout values before each translate.
+     * @internal
+     */
+    public resetCircularLayout(): void {
+        this.isDataCircular = false;
+        this.firstColCircLinkMaxH = 0;
+        this.lastColCircLinkMaxH = 0;
+        this.circularLinkBend = 0;
+        this.circularLinkMargin = 0;
+    }
+
+    /**
+     * Get the x offset reserved for circular links around a node.
+     * @param {SankeyPoint} node Sankey node.
+     * @return {number} The x offset.
+     * @internal
+     */
+    public getCircularNodeOffset(node: SankeyPoint): number {
+        const nodeColumns = this.nodeColumns,
+            linkBend = this.circularLinkBend,
+            linkMargin = this.circularLinkMargin;
+
+        let offset = 0;
+
+        if (node.column === 0 && this.firstColCircLinkMaxH) {
+            offset += this.firstColCircLinkMaxH + linkBend + linkMargin;
+        }
+
+        if (
+            nodeColumns &&
+            node.column === (nodeColumns.length - 1) &&
+            this.lastColCircLinkMaxH
+        ) {
+            offset -= this.lastColCircLinkMaxH + linkBend + linkMargin;
+        }
+
+        return offset;
+    }
+
+    /**
+     * Whether a single self-linked node should be centered in the plot.
+     * @param {SankeyPoint} node Sankey node.
+     * @return {boolean} Whether the node should be centered.
+     * @internal
+     */
+    public shouldCenterSelfLinkNode(node: SankeyPoint): boolean {
+        return (
+            this.nodes.length === 1 &&
+            node.linksFrom.length > 0 &&
+            node.linksFrom.every((link): boolean => (
+                !!link.isCircular &&
+                link.fromNode === link.toNode
+            ))
+        );
     }
 
     /**
@@ -456,22 +521,33 @@ class SankeySeries extends ColumnSeries {
         const column = last ?
             nodeColumns[nodeColumns.length - 1] : nodeColumns[0];
 
-        let weight = 0;
+        let weight = 0,
+            hasCircularLink = false;
 
         for (const node of column) {
             const links = last ? node.linksFrom : node.linksTo;
             const nodeLinksMaxWeight = links.reduce(
-                (maxHeight, link): number =>
-                    Math.max(maxHeight, link.weight || 0),
+                (maxHeight, link): number => (
+                    link.isCircular && link.fromNode !== link.toNode ?
+                        Math.max(maxHeight, link.weight || 0) :
+                        maxHeight
+                ),
                 0
+            );
+            hasCircularLink = hasCircularLink || links.some(
+                (link): boolean => (
+                    !!link.isCircular && link.fromNode !== link.toNode
+                )
             );
             weight = Math.max(weight, nodeLinksMaxWeight);
         }
 
-        return Math.max(
-            weight * this.translationFactor,
-            this.options.minLinkWidth || 0
-        );
+        return hasCircularLink ?
+            Math.max(
+                weight * this.translationFactor,
+                this.options.minLinkWidth || 0
+            ) :
+            0;
     }
 
     /**
@@ -480,6 +556,7 @@ class SankeySeries extends ColumnSeries {
      */
     public translate(): void {
 
+        this.resetCircularLayout();
         this.generatePoints();
 
         this.nodeColumns = this.createNodeColumns();
@@ -507,17 +584,13 @@ class SankeySeries extends ColumnSeries {
             Infinity
         );
 
-        // Check if data has circular dependencies
-        if (this.useCircularLayout) {
-            this.isDataCircular = this.checkGraphHasCycle(this.points);
-
-            if (this.isDataCircular) {
-                // Make some room for the circular links
-                this.translationFactor = this.translationFactor / 2;
-                this.firstColCircLinkMaxH = this.getCircularLinkMaxHeight();
-                this.lastColCircLinkMaxH = this.getCircularLinkMaxHeight(true);
-                this.circularLinkBend = 20;
-            }
+        if (this.isDataCircular) {
+            // Make some room for the circular links
+            this.translationFactor = this.translationFactor / 2;
+            this.circularLinkBend = 20;
+            this.circularLinkMargin = 8;
+            this.firstColCircLinkMaxH = this.getCircularLinkMaxHeight();
+            this.lastColCircLinkMaxH = this.getCircularLinkMaxHeight(true);
         }
 
         this.colDistance =
@@ -612,10 +685,8 @@ class SankeySeries extends ColumnSeries {
                 (chart.inverted ? -this.colDistance : this.colDistance) *
                 (options.curveFactor as any)
             ),
-            nodeLeft = fromNode.nodeX +
-                (fromNode.column === 0 && this.firstColCircLinkMaxH ?
-                    this.firstColCircLinkMaxH + this.circularLinkBend : 0),
-            right = toNode.nodeX,
+            nodeLeft = fromNode.nodeX + this.getCircularNodeOffset(fromNode),
+            right = toNode.nodeX + this.getCircularNodeOffset(toNode),
             outgoing = point.outgoing;
 
         let linkHeight = Math.max(
@@ -643,13 +714,16 @@ class SankeySeries extends ColumnSeries {
             toY + linkHeight
         ];
 
-        // Links going from left to right
-        if (straight && typeof toY === 'number') {
-            const isLast = this.nodeColumns &&
-                toNode.column === (this.nodeColumns.length - 1);
-            const circularLinkCorrection = isLast && this.lastColCircLinkMaxH ?
-                -this.lastColCircLinkMaxH - this.circularLinkBend : 0;
+        if (
+            point.isCircular &&
+            fromNode === toNode
+        ) {
+            point.shapeArgs = {
+                d: []
+            };
 
+        // Links going from left to right
+        } else if (straight && typeof toY === 'number') {
             point.shapeArgs = {
                 d: [
                     ['M', nodeLeft + nodeW, fromY],
@@ -659,19 +733,11 @@ class SankeySeries extends ColumnSeries {
                         fromY,
                         right - curvy,
                         toY,
-                        right + circularLinkCorrection,
+                        right,
                         toY
                     ],
-                    [
-                        'L',
-                        right + (outgoing ? nodeW : 0) + circularLinkCorrection,
-                        toY + linkHeight / 2
-                    ],
-                    [
-                        'L',
-                        right + circularLinkCorrection,
-                        toY + linkHeight
-                    ],
+                    ['L', right + (outgoing ? nodeW : 0), toY + linkHeight / 2],
+                    ['L', right, toY + linkHeight],
                     [
                         'C',
                         right - curvy,
@@ -686,34 +752,38 @@ class SankeySeries extends ColumnSeries {
 
         // Handle circular links pointing backwards. #8218.
         } else if (typeof toY === 'number') {
-            const circularLinkUp =
-                    fromY + toY + linkHeight < chart.plotHeight,
-                sign = circularLinkUp ? -1 : 1,
-                bend = this.circularLinkBend,
-                vDist = circularLinkUp ?
-                    fromY - linkHeight - 2 * bend :
-                    chart.plotHeight - fromY - 2 * linkHeight - 2 * bend,
-                x1 = right - bend - linkHeight +
-                    (toNode.index === 0 ?
-                        this.firstColCircLinkMaxH + bend : 0),
-                x2 = right - bend +
-                    (toNode.index === 0 ?
-                        this.firstColCircLinkMaxH + bend : 0),
-                x3 = right +
-                    (toNode.index === 0 ?
-                        this.firstColCircLinkMaxH + bend : 0),
-                x4 = nodeLeft + nodeW - (
-                    this.nodeColumns &&
-                    fromNode.column === (this.nodeColumns.length - 1) ?
-                        this.lastColCircLinkMaxH + bend : 0
+            const bend = this.circularLinkBend || 20,
+                linkTop = Math.min(fromY, toY),
+                linkBottom = Math.max(
+                    fromY + linkHeight,
+                    toY + linkHeight
                 ),
+                topSpace = linkTop,
+                bottomSpace = chart.plotHeight - linkBottom,
+                preferredCircularLinkUp =
+                    fromY + toY + linkHeight < chart.plotHeight,
+                circularLinkUp = topSpace >= linkHeight + bend && (
+                    preferredCircularLinkUp ||
+                    bottomSpace < linkHeight + bend
+                ),
+                sign = circularLinkUp ? -1 : 1,
+                innerY = circularLinkUp ?
+                    Math.max(linkHeight, linkTop - bend) :
+                    Math.min(
+                        chart.plotHeight - linkHeight,
+                        linkBottom + bend
+                    ),
+                x1 = right - bend - linkHeight,
+                x2 = right - bend,
+                x3 = right,
+                x4 = nodeLeft + nodeW,
                 x5 = x4 + bend,
                 x6 = x5 + linkHeight,
                 fy1 = fromY + (circularLinkUp ? linkHeight : 0),
                 fy2 = fromY + (circularLinkUp ? 0 : linkHeight),
                 fy3 = fy2 + sign * bend,
-                y4 = fy3 + sign * vDist,
-                y5 = y4 + sign * bend,
+                y5 = innerY,
+                y4 = y5 - sign * bend,
                 y6 = y5 + sign * linkHeight,
                 ty1 = toY + (circularLinkUp ? linkHeight : 0),
                 ty2 = toY + (circularLinkUp ? 0 : linkHeight),
@@ -860,6 +930,14 @@ class SankeySeries extends ColumnSeries {
                 height = node.options.width || options.width || nodeHeight;
             }
 
+            if (this.shouldCenterSelfLinkNode(node)) {
+                if (chart.inverted) {
+                    y = ((chart.plotSizeY as any) - height) / 2;
+                } else {
+                    x = ((chart.plotSizeX as any) - width) / 2;
+                }
+            }
+
             // Calculate data label options for the point
             node.dlOptions = {
                 ...SankeySeries.getDLOptions({
@@ -885,16 +963,7 @@ class SankeySeries extends ColumnSeries {
             ];
 
             node.shapeArgs = {
-                x: x +
-                    (node.column === 0 && this.firstColCircLinkMaxH ?
-                        this.firstColCircLinkMaxH + this.circularLinkBend : 0) +
-                    (
-                        this.nodeColumns &&
-                        node.column === (this.nodeColumns.length - 1) &&
-                        this.lastColCircLinkMaxH ?
-                            -this.lastColCircLinkMaxH -
-                            this.circularLinkBend : 0
-                    ),
+                x: x + this.getCircularNodeOffset(node),
                 y: y,
                 width,
                 height,

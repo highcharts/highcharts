@@ -53,6 +53,8 @@ class SankeyPoint extends ColumnSeries.prototype.pointClass {
 
     public hangsFrom?: SankeyPoint;
 
+    public isCircular?: boolean;
+
     public level!: number;
 
     public linkBase!: Array<number>;
@@ -74,6 +76,8 @@ class SankeyPoint extends ColumnSeries.prototype.pointClass {
     public outgoing?: boolean;
 
     public series!: SankeySeries;
+
+    public selfLinkWeight?: number;
 
     public sum?: number;
 
@@ -118,7 +122,9 @@ class SankeyPoint extends ColumnSeries.prototype.pointClass {
      * @param {Array<SankeyPoint>} [links] Optional array of links.
      * @internal
      */
-    public getFromNode(links?: Array<SankeyPoint>): { fromNode?: SankeyPoint, fromColumn: number } {
+    public getFromNode(
+        links?: Array<SankeyPoint>
+    ): { fromNode?: SankeyPoint, fromColumn: number } {
         const node = this;
         const linksTo = links || node.linksTo;
 
@@ -153,10 +159,7 @@ class SankeyPoint extends ColumnSeries.prototype.pointClass {
             // Filter out circular links
             if (node.series.isDataCircular) {
                 straightLinksTo = node.linksTo.filter((link): boolean => (
-                    !defined(link.toNode.nodeX) ||
-                    !defined(link.fromNode.nodeX) ||
-                    link.toNode.nodeX >
-                        link.fromNode.nodeX + node.series.nodeWidth
+                    !link.isCircular
                 ));
             }
 
@@ -175,6 +178,46 @@ class SankeyPoint extends ColumnSeries.prototype.pointClass {
      */
     public isValid(): boolean {
         return this.isNode || typeof this.weight === 'number';
+    }
+
+    public getSelfLinkWeight(): number {
+        return this.linksFrom.reduce(
+            (sum, link): number => (
+                link.fromNode === link.toNode ?
+                    sum + (link.weight || 0) :
+                    sum
+            ),
+            0
+        );
+    }
+
+    /**
+     * Extend the default node tooltip with hidden self-link information.
+     * @internal
+     */
+    public tooltipFormatter(pointFormat: string): string {
+        const tooltip = Point.prototype.tooltipFormatter.call(
+            this,
+            pointFormat
+        );
+
+        if (!this.isNode) {
+            return tooltip;
+        }
+
+        const selfLinkWeight = this.getSelfLinkWeight();
+
+        if (!selfLinkWeight) {
+            return tooltip;
+        }
+
+        this.selfLinkWeight = selfLinkWeight;
+
+        return tooltip + Point.prototype.tooltipFormatter.call(
+            this,
+            '{point.name} \u2192 {point.name}: ' +
+                '<b>{point.selfLinkWeight}</b><br/>'
+        );
     }
 
 }
