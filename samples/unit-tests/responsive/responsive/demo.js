@@ -512,6 +512,13 @@ QUnit.test('Revert axis properties', function (assert) {
         'in SVG order (#24521)'
     );
 
+    assert.ok(
+        chart.plotBorder.element.compareDocumentPosition(
+            chart.yAxis[0].axisGroup.element
+        ) & 4,
+        'The plot border should stay before the y-axis group in SVG order'
+    );
+
     chart.setSize(600);
 
     assert.strictEqual(
