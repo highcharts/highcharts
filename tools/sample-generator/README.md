@@ -6,22 +6,10 @@ Generates sample assets from `config.ts` files under `samples/**`.
 
 Run commands from the repository root.
 
-Generate classic samples:
+Generate classic and React samples (always both):
 
 ```bash
 npx gulp generate-samples
-```
-
-Generate React samples:
-
-```bash
-npx gulp generate-samples --outputMode react
-```
-
-Generate both classic and React samples:
-
-```bash
-npx gulp generate-samples --outputMode both
 ```
 
 ## Unit tests

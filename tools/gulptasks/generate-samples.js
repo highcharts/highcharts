@@ -9,26 +9,7 @@ const path = require('path');
 const fs = require('fs');
 const { glob } = require('glob');
 
-function getOutputModes(argv) {
-    const outputArg = String(
-        argv.outputMode ||
-        argv.output ||
-        (argv.react ? 'react' : 'classic')
-    ).toLowerCase();
-
-    if (outputArg === 'both') {
-        return ['classic', 'react'];
-    }
-
-    if (outputArg === 'classic' || outputArg === 'react') {
-        return [outputArg];
-    }
-
-    throw new Error(
-        `Unknown output mode "${outputArg}". ` +
-        'Use classic, react or both.'
-    );
-}
+const OUTPUT_MODES = ['classic', 'react'];
 
 function getOutputDir(configFile, outputMode) {
     const sampleDir = path.dirname(configFile)
@@ -105,9 +86,6 @@ async function generateSample(configFile, log, outputMode = 'classic') {
  * // Generate specific samples
  * gulp generate-samples --samples "highcharts/xaxis/*"
  *
- * // Generate React variants
- * gulp generate-samples --outputMode react
- *
  * // Rebuild options lookup (flat-tree.json)
  * gulp generate-samples --setup
  *
@@ -120,9 +98,8 @@ async function generateSample(configFile, log, outputMode = 'classic') {
 async function task() {
     const log = require('../libs/log');
     const argv = require('yargs').argv;
-    const outputModes = getOutputModes(argv);
 
-    log.message(`Output mode(s): ${outputModes.join(', ')}`);
+    log.message(`Output mode(s): ${OUTPUT_MODES.join(', ')}`);
 
     // Check the setup argument. If set, run `gulp scripts`, `gulp jsdoc-dts`
     // and the sample-generator/setup.ts script before generating samples.
@@ -193,7 +170,7 @@ async function task() {
 
                 log.message(`⚡️ Detected change: ${configFile}`);
                 try {
-                    for (const outputMode of outputModes) {
+                    for (const outputMode of OUTPUT_MODES) {
                         await generateSample(configFile, log, outputMode);
                     }
                 } catch (error) {
@@ -257,7 +234,7 @@ async function task() {
 
     // Process each config file
     for (const configFile of configFiles) {
-        for (const outputMode of outputModes) {
+        for (const outputMode of OUTPUT_MODES) {
             await generateSample(configFile, log, outputMode);
         }
     }

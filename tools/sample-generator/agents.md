@@ -47,5 +47,5 @@ node --import tsx --test tools/sample-generator/tests/*.test.ts
 - If generation behavior changed, run a focused smoke check:
 
 ```bash
-npx gulp generate-samples --samples "highcharts/xaxis/type-linear" --outputMode react
+npx gulp generate-samples --samples "highcharts/xaxis/type-linear"
 ```
