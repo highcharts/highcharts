@@ -627,17 +627,19 @@ async function getChartOptionsLiteral(
     metaList: MetaList,
     {
         dataIdentifier,
-        indentDataReference = false
+        indentDataReference = false,
+        prebuiltConfig
     }: {
         dataIdentifier?: string;
         indentDataReference?: boolean;
+        prebuiltConfig?: any;
     } = {}
 ) {
 
     const { dataFile } = config;
 
     let chartOptions = JSON.stringify(
-        await generateChartConfig(config, metaList),
+        prebuiltConfig || await generateChartConfig(config, metaList),
         null,
         4
     );
@@ -1069,6 +1071,210 @@ export async function getDemoTS(
     return ts;
 }
 
+function escapeJSXText(s: string): string {
+    return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/[{}]/g, c => `{'${c}'}`);
+}
+
+// Extract React option components from chart config
+function extractReactOptionComponents(
+    chartConfig: any,
+    dataIdentifier?: string,
+    extractableKeys?: Set<string>
+): { prunedConfig: any; imports: string[]; childrenJSX: string } {
+    const prunedConfig = { ...chartConfig };
+    const imports: string[] = [];
+    const children: string[] = [];
+    const indent = '        '; // 8 spaces
+
+    // Only extract keys that are in the extractable set (from chartOptionsExtra)
+    const canExtract = (key: string) => !!extractableKeys && extractableKeys.has(key);
+
+    // 1. Title: only extract if title has ONLY `text` key
+    if (canExtract('title') && prunedConfig.title && Object.keys(prunedConfig.title).length === 1 &&
+        'text' in prunedConfig.title) {
+        children.push(`${indent}<Title>${escapeJSXText(prunedConfig.title.text)}</Title>`);
+        if (!imports.includes('Title')) {
+            imports.push('Title');
+        }
+        delete prunedConfig.title;
+    }
+
+    // 2. Tooltip
+    if (canExtract('tooltip') && prunedConfig.tooltip) {
+        const tooltip = prunedConfig.tooltip;
+        const formatKeys = ['pointFormat', 'headerFormat', 'footerFormat'];
+        const props: string[] = [];
+        const formatChildren: string[] = [];
+
+        for (const [key, value] of Object.entries(tooltip)) {
+            if (formatKeys.includes(key)) {
+                formatChildren.push(
+                    `${indent}    <data-hc-option name="${key}">${escapeJSXText(value as string)}</data-hc-option>`
+                );
+            } else {
+                if (typeof value === 'string') {
+                    props.push(`${key}={${JSON.stringify(value)}}`);
+                } else {
+                    props.push(`${key}={${JSON.stringify(value)}}`);
+                }
+            }
+        }
+
+        if (!imports.includes('Tooltip')) {
+            imports.push('Tooltip');
+        }
+
+        const propsStr = props.length ? ' ' + props.join(' ') : '';
+        if (formatChildren.length > 0) {
+            children.push(`${indent}<Tooltip${propsStr}>`);
+            children.push(...formatChildren);
+            children.push(`${indent}</Tooltip>`);
+        } else {
+            children.push(`${indent}<Tooltip${propsStr} />`);
+        }
+        delete prunedConfig.tooltip;
+    }
+
+    // 3. Series: always extract
+    if (canExtract('series') && prunedConfig.series && Array.isArray(prunedConfig.series)) {
+        if (!imports.includes('Series')) {
+            imports.push('Series');
+        }
+        for (const s of prunedConfig.series) {
+            const props: string[] = [];
+            const remaining: Record<string, any> = {};
+
+            // Extract type first, then data, then name, then rest
+            if ('type' in s) {
+                props.push(`type={${JSON.stringify(s.type)}}`);
+            }
+            if ('data' in s) {
+                if (s.data === 'data' || s.data === dataIdentifier) {
+                    props.push('data={data}');
+                } else if (Array.isArray(s.data) && s.data.every((v: any) => typeof v === 'number')) {
+                    props.push(`data={${JSON.stringify(s.data).replace(/,/g, ', ')}}`);
+                } else {
+                    props.push(`data={${JSON.stringify(s.data)}}`);
+                }
+            }
+            if ('name' in s) {
+                props.push(`name={${JSON.stringify(s.name)}}`);
+            }
+
+            for (const [key, value] of Object.entries(s)) {
+                if (key !== 'type' && key !== 'data' && key !== 'name') {
+                    remaining[key] = value;
+                }
+            }
+
+            if (Object.keys(remaining).length > 0) {
+                props.push(`options={${JSON.stringify(remaining)}}`);
+            }
+
+            children.push(`${indent}<Series ${props.join(' ')} />`);
+        }
+        delete prunedConfig.series;
+    }
+
+    // 4. XAxis
+    if (canExtract('xAxis') && prunedConfig.xAxis && !Array.isArray(prunedConfig.xAxis)) {
+        const axis = prunedConfig.xAxis;
+        const axisChildren: string[] = [];
+
+        if (axis.title && axis.title.text) {
+            axisChildren.push(`${indent}    <Title>${escapeJSXText(axis.title.text)}</Title>`);
+            if (!imports.includes('Title')) {
+                imports.push('Title');
+            }
+            // Remove only title from xAxis, keep other keys in config
+            const { title: _t, ...rest } = axis;
+            if (Object.keys(rest).length > 0) {
+                prunedConfig.xAxis = rest;
+            } else {
+                delete prunedConfig.xAxis;
+            }
+        }
+
+        if (axisChildren.length > 0) {
+            if (!imports.includes('XAxis')) {
+                imports.push('XAxis');
+            }
+            children.push(`${indent}<XAxis>`);
+            children.push(...axisChildren);
+            children.push(`${indent}</XAxis>`);
+        }
+    }
+
+    // 5. YAxis
+    if (canExtract('yAxis') && prunedConfig.yAxis && !Array.isArray(prunedConfig.yAxis)) {
+        const axis = prunedConfig.yAxis;
+        const axisChildren: string[] = [];
+
+        if (axis.title && axis.title.text) {
+            axisChildren.push(`${indent}    <Title>${escapeJSXText(axis.title.text)}</Title>`);
+            if (!imports.includes('Title')) {
+                imports.push('Title');
+            }
+            const { title: _t, ...rest } = axis;
+            if (Object.keys(rest).length > 0) {
+                prunedConfig.yAxis = rest;
+            } else {
+                delete prunedConfig.yAxis;
+            }
+        }
+
+        if (axisChildren.length > 0) {
+            if (!imports.includes('YAxis')) {
+                imports.push('YAxis');
+            }
+            children.push(`${indent}<YAxis>`);
+            children.push(...axisChildren);
+            children.push(`${indent}</YAxis>`);
+        }
+    }
+
+    // 6. Legend
+    if (canExtract('legend') && prunedConfig.legend) {
+        const legend = prunedConfig.legend;
+        const props: string[] = [];
+        const legendChildren: string[] = [];
+
+        for (const [key, value] of Object.entries(legend)) {
+            if (key === 'labelFormat') {
+                legendChildren.push(
+                    `${indent}    <data-hc-option name="labelFormat">${escapeJSXText(value as string)}</data-hc-option>`
+                );
+            } else {
+                if (typeof value === 'string') {
+                    props.push(`${key}={${JSON.stringify(value)}}`);
+                } else {
+                    props.push(`${key}={${JSON.stringify(value)}}`);
+                }
+            }
+        }
+
+        if (!imports.includes('Legend')) {
+            imports.push('Legend');
+        }
+
+        const propsStr = props.length ? ' ' + props.join(' ') : '';
+        if (legendChildren.length > 0) {
+            children.push(`${indent}<Legend${propsStr}>`);
+            children.push(...legendChildren);
+            children.push(`${indent}</Legend>`);
+        } else {
+            children.push(`${indent}<Legend${propsStr} />`);
+        }
+        delete prunedConfig.legend;
+    }
+
+    return {
+        prunedConfig,
+        imports,
+        childrenJSX: children.join('\n')
+    };
+}
+
 // Function to get JSX for React samples.
 export async function getDemoJSX(
     config: SampleGeneratorConfig,
@@ -1082,22 +1288,33 @@ export async function getDemoJSX(
     } = getReactFactoryConfig(factory);
     const { sideEffectImports, wrapperImports } = getReactModuleImports(config);
     const shouldSetupHighcharts = sideEffectImports.length > 0;
+    const dataIdentifier = dataFile ? 'data' : void 0;
+
+    // Generate config, extract components, then serialize the pruned config
+    const fullConfig = await generateChartConfig(config, metaList);
+    const extractableKeys = config.chartOptionsExtra ?
+        new Set(Object.keys(config.chartOptionsExtra)) : undefined;
+    const { prunedConfig, imports: componentImports, childrenJSX } =
+        extractReactOptionComponents(fullConfig, dataIdentifier, extractableKeys);
+
     const chartOptions = await getChartOptionsLiteral(
         config,
         metaList,
-        { dataIdentifier: dataFile ? 'data' : void 0 }
+        { dataIdentifier, prebuiltConfig: prunedConfig }
     );
     const dependencies = dataFile ? '[data]' : '[]';
     const reactImports = componentImportPath === '@highcharts/react' ?
         [
             shouldSetupHighcharts ?
-                `import { ${componentName}, setHighcharts } from '@highcharts/react';` :
-                `import { ${componentName} } from '@highcharts/react';`
+                `import { ${[componentName, 'setHighcharts', ...componentImports].join(', ')} } from '@highcharts/react';` :
+                `import { ${[componentName, ...componentImports].join(', ')} } from '@highcharts/react';`
         ] :
         [
             ...(shouldSetupHighcharts ?
-                ["import { setHighcharts } from '@highcharts/react';"] :
-                []),
+                [`import { setHighcharts${componentImports.length ? ', ' + componentImports.join(', ') : ''} } from '@highcharts/react';`] :
+                (componentImports.length ?
+                    [`import { ${componentImports.join(', ')} } from '@highcharts/react';`] :
+                    [])),
             `import { ${componentName} } from '${componentImportPath}';`
         ];
     const highchartsSetup = shouldSetupHighcharts ? [
@@ -1136,7 +1353,16 @@ export async function getDemoJSX(
         .replace('    /* __DATA_STATE_BLOCK__ */', dataStateBlock)
         .replace('__CHART_OPTIONS__', indentBlock(chartOptions, 8).trimStart())
         .replace('__DEPENDENCIES__', dependencies)
-        .replace(/__COMPONENT_NAME__/gu, componentName);
+        .replace(/__COMPONENT_NAME__/gu, componentName)
+        .replace('        __CHART_CHILDREN__', childrenJSX);
+
+    // If no children, convert block form back to self-closing
+    if (!childrenJSX) {
+        jsx = jsx.replace(
+            /(<\w+ options=\{chartOptions\}>)\s*\n\s*(<\/\w+>)/u,
+            (_, open) => open.replace(/>$/u, ' />')
+        );
+    }
 
     // TODO: render wrapper components (e.g. <Accessibility />) as siblings of chart component once template supports multiple JSX children
 

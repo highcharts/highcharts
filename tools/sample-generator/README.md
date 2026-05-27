@@ -156,3 +156,40 @@ categories: [
     'July', 'August', 'September', 'October', 'November', 'December'
 ]
 ```
+
+## React option component extraction
+
+When generating React samples, the generator extracts supported option blocks
+from `chartOptions` and emits them as JSX children of the chart wrapper
+component. Extraction is **all-or-nothing per block** — if a block contains
+unsupported keys, it stays entirely in `chartOptions`.
+
+Only blocks present in `chartOptionsExtra` are candidates for extraction.
+
+### Supported components
+
+| Option block | Component | Extraction rule |
+|---|---|---|
+| `title` | `<Title>` | Only if `title` has exactly one key (`text`) |
+| `tooltip` | `<Tooltip>` | Simple values → props, format strings → `<data-hc-option>` children |
+| `series` | `<Series>` | `type`, `data`, `name` → direct props; remainder → `options={}` |
+| `xAxis` | `<XAxis>` | Extracts `title.text` as `<Title>` child; skipped if axis is an array |
+| `yAxis` | `<YAxis>` | Same as xAxis |
+| `legend` | `<Legend>` | `labelFormat` → `<data-hc-option>` child; other keys → props |
+
+### Example output
+
+```jsx
+import { Chart, Title, Series, Legend } from '@highcharts/react';
+
+// ...
+return (
+    <Chart options={chartOptions}>
+        <Title>My Chart Title</Title>
+        <Series type="line" data={[1, 2, 3]} name="Revenue" />
+        <Legend align="right" layout="proximate">
+            <data-hc-option name="labelFormat">{name} (Click to hide)</data-hc-option>
+        </Legend>
+    </Chart>
+);
+```

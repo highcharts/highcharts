@@ -10,7 +10,9 @@ export default function ChartComponent() {
     ), __DEPENDENCIES__);
 
     return (
-        <__COMPONENT_NAME__ options={chartOptions} />
+        <__COMPONENT_NAME__ options={chartOptions}>
+        __CHART_CHILDREN__
+        </__COMPONENT_NAME__>
     );
 }
 

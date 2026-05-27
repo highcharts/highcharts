@@ -138,4 +138,140 @@ describe('sample-generator getDemoJSX', () => {
             'should call setHighcharts for stock factory fallback modules'
         );
     });
+
+    it('extracts title and series options into components', async () => {
+        const jsx = await getDemoJSX(
+            {
+                chartOptionsExtra: {
+                    title: { text: 'My Title' },
+                    series: [{ type: 'line', data: [1, 2, 3], name: 'Revenue' }]
+                },
+                output: 'highcharts/react/unit-test/title-series'
+            },
+            metaList
+        );
+
+        ok(jsx.includes('<Title>My Title</Title>'), 'should extract title as a component');
+        ok(jsx.includes('<Series type={"line"}'), 'should include series type as a prop');
+        ok(jsx.includes('name={"Revenue"}'), 'should include series name as a prop');
+        ok(jsx.includes('data={[1, 2, 3]}'), 'should include series data as a prop');
+        ok(!jsx.includes('title:'), 'should remove title from chartOptions');
+    });
+
+    it('extracts tooltip simple props', async () => {
+        const jsx = await getDemoJSX(
+            {
+                chartOptionsExtra: {
+                    tooltip: { showDelay: 500 }
+                },
+                output: 'highcharts/react/unit-test/tooltip-props'
+            },
+            metaList
+        );
+
+        ok(jsx.includes('<Tooltip showDelay={500}'), 'should extract tooltip props');
+    });
+
+    it('extracts tooltip format children', async () => {
+        const jsx = await getDemoJSX(
+            {
+                chartOptionsExtra: {
+                    tooltip: { pointFormat: '<b>{point.y}</b>' }
+                },
+                output: 'highcharts/react/unit-test/tooltip-format'
+            },
+            metaList
+        );
+
+        ok(jsx.includes('<Tooltip>'), 'should open tooltip component');
+        ok(
+            jsx.includes('<data-hc-option name="pointFormat">'),
+            'should emit tooltip format as a child option'
+        );
+        ok(jsx.includes('</Tooltip>'), 'should close tooltip component');
+    });
+
+    it('extracts legend children', async () => {
+        const jsx = await getDemoJSX(
+            {
+                chartOptionsExtra: {
+                    legend: { labelFormat: '{name}' }
+                },
+                output: 'highcharts/react/unit-test/legend-children'
+            },
+            metaList
+        );
+
+        ok(jsx.includes('<Legend>'), 'should open legend component');
+        ok(
+            jsx.includes('<data-hc-option name="labelFormat">'),
+            'should emit legend label format as a child option'
+        );
+        ok(jsx.includes('</Legend>'), 'should close legend component');
+    });
+
+    it('extracts xAxis title children', async () => {
+        const jsx = await getDemoJSX(
+            {
+                chartOptionsExtra: {
+                    xAxis: { title: { text: 'Time' } }
+                },
+                output: 'highcharts/react/unit-test/xaxis-title'
+            },
+            metaList
+        );
+
+        ok(jsx.includes('<XAxis>'), 'should open xAxis component');
+        ok(jsx.includes('<Title>Time</Title>'), 'should extract xAxis title');
+        ok(jsx.includes('</XAxis>'), 'should close xAxis component');
+    });
+
+    it('extracts yAxis title children', async () => {
+        const jsx = await getDemoJSX(
+            {
+                chartOptionsExtra: {
+                    yAxis: { title: { text: 'Values' } }
+                },
+                output: 'highcharts/react/unit-test/yaxis-title'
+            },
+            metaList
+        );
+
+        ok(jsx.includes('<YAxis>'), 'should open yAxis component');
+        ok(jsx.includes('<Title>Values</Title>'), 'should extract yAxis title');
+        ok(jsx.includes('</YAxis>'), 'should close yAxis component');
+    });
+
+    it('uses data identifier for series when dataFile is present', async () => {
+        const jsx = await getDemoJSX(
+            {
+                dataFile: 'usdeur.json',
+                chartOptionsExtra: {
+                    series: [{ type: 'line', name: 'USD/EUR' }]
+                },
+                output: 'highcharts/react/unit-test/datafile-series'
+            },
+            metaList
+        );
+
+        ok(jsx.includes('<Series'), 'should include a Series component');
+        ok(jsx.includes('data={data}'), 'should use the data identifier for series data');
+        ok(jsx.includes('type={"line"}'), 'should include series type as a prop');
+        ok(jsx.includes('name={"USD/EUR"}'), 'should include series name as a prop');
+    });
+
+    it('keeps unsupported title keys in chartOptions', async () => {
+        const jsx = await getDemoJSX(
+            {
+                chartOptionsExtra: {
+                    title: { text: 'Hello', useHTML: true, style: { color: 'red' } }
+                },
+                output: 'highcharts/react/unit-test/fallback-unsupported'
+            },
+            metaList
+        );
+
+        ok(!jsx.includes('<Title>'), 'should not emit a Title component');
+        ok(jsx.includes('title:'), 'should keep title in chartOptions');
+    });
 });

@@ -33,6 +33,8 @@ node --import tsx --test tools/sample-generator/tests/*.test.ts
 - You add support for new config options that affect generated files.
 - You change expected imports, chart constructor/component selection, or
   dependency handling.
+- You change React option component extraction logic or add new extractable
+  option blocks.
 
 ## What to test
 
