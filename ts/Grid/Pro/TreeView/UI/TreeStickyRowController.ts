@@ -572,6 +572,23 @@ class TreeStickyRowController {
     }
 
     /**
+     * Returns the current sticky body vertical border height.
+     */
+    private getStickyBodyVerticalBorderHeight(): number {
+        const stickyBodyElement = this.stickyBodyElement;
+        if (!stickyBodyElement) {
+            return 0;
+        }
+
+        const computedStyle = getComputedStyle(stickyBodyElement);
+
+        return (
+            parseFloat(computedStyle.borderTopWidth) || 0 +
+            parseFloat(computedStyle.borderBottomWidth) || 0
+        );
+    }
+
+    /**
      * Finds the first rendered row intersecting the given scroll position.
      *
      * @param visibleTop
@@ -1105,6 +1122,7 @@ class TreeStickyRowController {
         }
 
         const { defaultRowHeight } = this.viewport.rowsVirtualizer;
+        const borderHeight = this.getStickyBodyVerticalBorderHeight();
         let height = 0;
 
         for (let i = 0, iEnd = this.stickyRows.length; i < iEnd; ++i) {
@@ -1114,7 +1132,9 @@ class TreeStickyRowController {
             height = Math.max(height, row.translateY + rowHeight);
         }
 
-        stickyBodyElement.style.height = Math.ceil(height) + 'px';
+        stickyBodyElement.style.height = Math.ceil(
+            height + borderHeight
+        ) + 'px';
     }
 
     /**
@@ -1385,6 +1405,7 @@ class TreeStickyRowController {
                 tbodyElement.scrollWidth,
                 tbodyElement.clientWidth
             );
+            const borderHeight = this.getStickyBodyVerticalBorderHeight();
             const tableRect =
                 this.viewport.tableElement.getBoundingClientRect();
             const tbodyRect = tbodyElement.getBoundingClientRect();
@@ -1396,7 +1417,9 @@ class TreeStickyRowController {
 
             stickyBodyElement.style.top = stickyTop + 'px';
             stickyBodyElement.style.width = bodyWidth + 'px';
-            stickyBodyElement.style.height = this.getStickyRowsHeight() + 'px';
+            stickyBodyElement.style.height = (
+                this.getStickyRowsHeight() + borderHeight
+            ) + 'px';
         }
 
         stickyBodyElement.style.transform = tbodyElement.scrollLeft ?
