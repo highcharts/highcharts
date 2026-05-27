@@ -1,0 +1,13 @@
+---
+name: Grid rendering benchmark
+js_wrap: b
+alt_text: >-
+  Benchmark comparing virtualized and full DOM grid rendering across init,
+  fast scrolling and resize reflow.
+tags:
+  - Highcharts Grid demo
+categories:
+  - General:
+        priority: 25
+use_png_thumbnail: true
+...
