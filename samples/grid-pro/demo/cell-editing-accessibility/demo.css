@@ -73,6 +73,24 @@ body {
     margin: 8px 0 0;
 }
 
+#changelog {
+    max-height: 240px;
+    overflow-y: auto;
+    min-height: 48px;
+}
+
+#changelog:empty::before {
+    content: "Edits will be listed here.";
+    color: #777;
+    font-style: italic;
+}
+
+#changelog div + div {
+    margin-top: 6px;
+    padding-top: 6px;
+    border-top: 1px solid #e6e6e6;
+}
+
 .highcharts-description {
     padding: 0 8px;
 }
@@ -87,8 +105,13 @@ body {
         border-color: #525252;
     }
 
-    .description {
+    .description,
+    #changelog:empty::before {
         color: #aaa;
+    }
+
+    #changelog div + div {
+        border-top-color: #525252;
     }
 }
 
@@ -101,6 +124,11 @@ body {
     border-color: #525252;
 }
 
-.highcharts-dark .description {
+.highcharts-dark .description,
+.highcharts-dark #changelog:empty::before {
     color: #aaa;
+}
+
+.highcharts-dark #changelog div + div {
+    border-top-color: #525252;
 }

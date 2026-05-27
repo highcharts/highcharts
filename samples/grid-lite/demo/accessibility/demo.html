@@ -1,4 +1,4 @@
-<script src="https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/grid-pro.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@highcharts/grid-lite/grid-lite.js"></script>
 
 <div class="demo">
     <div id="container"></div>
@@ -29,13 +29,6 @@
                                 <span class="description">[ Enable accessibility announcements for the filtering
                                     ]</span>
                             </div>
-                            <div class="option">
-                                <label for="editing-enabled">cellEditing:</label>
-                                <input type="checkbox" id="editing-enabled"
-                                    name="accessibility.announcements.cellEditing" />
-                                <span class="description">[ Enable accessibility announcements for the cell editing
-                                    ]</span>
-                            </div>
                         </div>
                     </details>
                 </div>
@@ -46,9 +39,10 @@
                     <summary>sorting</summary>
                     <div class="option-group">
                         <div class="option">
-                            <label for="enabled">enabled:</label>
-                            <input type="text" id="enabled" name="lang.accessibility.sorting.enabled" />
-                            <span class="description">[ An additional hint read by the voice over after a sort enabled
+                            <label for="sorting-sortable">sortable:</label>
+                            <input type="text" id="sorting-sortable"
+                                name="lang.accessibility.sorting.sortable" />
+                            <span class="description">[ An additional hint read by the voice over after a sortable
                                 column name ]</span>
                         </div>
                     </div>
@@ -102,47 +96,13 @@
                         </div>
                     </details>
                 </details>
-                <details>
-                    <summary>cellEditing</summary>
-                    <div class="option-group">
-                        <div class="option">
-                            <label for="editable">editable:</label>
-                            <input type="text" id="editable" name="lang.accessibility.cellEditing.editable" />
-                            <span class="description">[ An additional hint read by the voice over after an editable cell
-                                value ]</span>
-                        </div>
-                    </div>
-                    <details>
-                        <summary>announcements</summary>
-                        <div class="option-group">
-                            <div class="option">
-                                <label for="editing-started">started:</label>
-                                <input type="text" id="editing-started"
-                                    name="lang.accessibility.cellEditing.announcements.started" />
-                                <span class="description">[ Announcement for starting editing ]</span>
-                            </div>
-                            <div class="option">
-                                <label for="editing-edited">edited:</label>
-                                <input type="text" id="editing-edited"
-                                    name="lang.accessibility.cellEditing.announcements.edited" />
-                                <span class="description">[ Announcement for edited cell value ]</span>
-                            </div>
-                            <div class="option">
-                                <label for="editing-cancelled">cancelled:</label>
-                                <input type="text" id="editing-cancelled"
-                                    name="lang.accessibility.cellEditing.announcements.cancelled" />
-                                <span class="description">[ Announcement for cancelled editing ]</span>
-                            </div>
-                        </div>
-                    </details>
-                </details>
             </details>
         </form>
-        <div class="last description">Changes are applied as you type. Use a screen reader to observe updates in real
-            time.</div>
+        <div class="last description">Text changes apply as you type. Use a screen reader to hear sorting and
+            filtering updates in real time.</div>
     </div>
     <p class="highcharts-description">
-        Highlights accessible table structures, ARIA attributes, and
-        navigability. Notes that cell editing is available in the Pro version.
+        Highlights grouped headers, inline filters, screen reader sections, and
+        announcement strings available in Highcharts Grid Lite.
     </p>
 </div>
