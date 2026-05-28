@@ -133,7 +133,6 @@ function isPermissionError(error: unknown): error is ErrorWithCode {
         'code' in error &&
         (
             (error as ErrorWithCode).code === 'EACCES' ||
-            (error as ErrorWithCode).code === 'EACCESS' ||
             (error as ErrorWithCode).code === 'EPERM'
         )
     );
