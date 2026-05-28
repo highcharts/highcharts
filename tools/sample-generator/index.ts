@@ -147,7 +147,7 @@ async function writeFile(filePath: string, content: string) {
             { encoding: 'utf-8', mode: 0o644 }
         );
     } catch (error: unknown) {
-        // On permission errors, force rewrite with open mode for all users.
+        // On permission errors, force rewrite after unlinking the target file.
         if (!isPermissionError(error)) {
             throw error;
         }
