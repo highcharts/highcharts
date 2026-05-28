@@ -1817,8 +1817,7 @@ export class Exporting {
             await this.exportChart(exportingOptions);
 
         } else {
-            // General unknown error
-            throw err;
+            error(err.message, false);
         }
     }
 
