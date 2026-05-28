@@ -1341,6 +1341,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
              * `series.allowPointSelect` option to true.
              *
              * @declare Highcharts.PointStatesSelectOptionsObject
+             * @extends plotOptions.series.marker.states.hover
              */
             select: {
 
@@ -2338,6 +2339,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
          *         Disabled inactive state
          *
          * @declare Highcharts.SeriesStatesInactiveOptionsObject
+         * @extends plotOptions.series.states.hover
          */
         inactive: {
             /**
