@@ -43,6 +43,7 @@ import Yargs from 'yargs';
 
 interface Args {
     debug?: boolean;
+    output?: string;
     source?: string;
 }
 
@@ -61,6 +62,14 @@ const STACK: Array<TSLib.CodeInfo> = [];
 
 
 const TREE: TreeLib.Options = {};
+
+function resetBuildState(): void {
+    STACK.length = 0;
+
+    for (const key of Object.keys(TREE)) {
+        delete TREE[key];
+    }
+}
 
 interface RendererOptionSpec {
     interfaceName: string;
@@ -1976,12 +1985,15 @@ function findTreeNode(
 }
 
 
-async function main() {
-    const args = Yargs.parseSync(process.argv) as Args;
+export async function buildGridOptionsTree(
+    args: Args = {}
+): Promise<TreeLib.Options> {
     const debug = !!args.debug;
-    const source = args.source as (string | undefined) || DEFAULT_SOURCE;
+    const source = args.source || DEFAULT_SOURCE;
 
     let timer: number;
+
+    resetBuildState();
 
     const _paths = (
         FSLib.isFile(source) ?
@@ -2033,14 +2045,14 @@ async function main() {
     LogLib.message(`Found ${Object.keys(TREE).length} root options:`);
     LogLib.message(Object.keys(TREE).sort().join(', '));
 
-    // 4. Save output
-    LogLib.warn('Saving JSON ...');
-    await saveJSON();
-    LogLib.success('Done');
+    return TREE;
 }
 
 
-async function saveJSON() {
+export async function saveJSON(
+    outputPath = 'tree-grid.json',
+    tree: TreeLib.Options = TREE
+): Promise<void> {
     const save = (filePath: string, obj: any) => {
         FS.writeFileSync(
             filePath,
@@ -2050,13 +2062,25 @@ async function saveJSON() {
         LogLib.message('Saved', filePath, '.');
     };
 
-    TREE._meta = {
+    tree._meta = {
         branch: await GitLib.getBranch(),
         commit: await GitLib.getLatestCommitShaSync(),
         version: JSON.parse(FS.readFileSync('package.json', 'utf8')).version
     } as any;
 
-    save('tree-grid.json', { _meta: TREE._meta, ...TREE });
+    save(outputPath, { _meta: tree._meta, ...tree });
+}
+
+
+async function main() {
+    const args = Yargs.parseSync(process.argv) as Args;
+    const outputPath = args.output || 'tree-grid.json';
+    const tree = await buildGridOptionsTree(args);
+
+    // 4. Save output
+    LogLib.warn('Saving JSON ...');
+    await saveJSON(outputPath, tree);
+    LogLib.success('Done');
 }
 
 
@@ -2067,4 +2091,9 @@ async function saveJSON() {
  * */
 
 
-main();
+if (
+    process.argv[1] &&
+    /(^|[\\/])grid-options\.(?:ts|js)$/u.test(process.argv[1])
+) {
+    void main();
+}

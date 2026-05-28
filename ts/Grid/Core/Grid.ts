@@ -45,6 +45,7 @@ import ColumnPolicyResolver, {
 } from './ColumnPolicyResolver.js';
 import DataProviderRegistry from './Data/DataProviderRegistry.js';
 import DataTable from '../../Data/DataTable.js';
+import { warnIfDeprecatedOptions } from './DeprecatedOptions.js';
 import { defaultOptions } from './Defaults.js';
 import {
     makeHTMLElement,
@@ -443,6 +444,7 @@ export class Grid {
     ): DeepPartial<NonArrayOptions> {
         // Operate on a copy of the options argument
         newOptions = merge(newOptions);
+        warnIfDeprecatedOptions(newOptions);
 
         const diff: DeepPartial<NonArrayOptions> = {};
         const preserveIdOnlyColumnOptions = (
