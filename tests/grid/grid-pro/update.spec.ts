@@ -68,8 +68,8 @@ test('Grid partial update: columns[].sorting.order', async ({ page }) => {
         .toBe(true);
 });
 
-// Equivalent of test/typescript-karma/Grid/update.test.js - partial update: columns[].filtering.condition and value
-test('Grid partial update: columns[].filtering.condition and value', async ({ page }) => {
+// Equivalent of test/typescript-karma/Grid/update.test.js - partial update: columns[].filtering.rule
+test('Grid partial update: columns[].filtering.rule', async ({ page }) => {
     await page.setContent(`
         <!DOCTYPE html>
         <html>
@@ -102,9 +102,11 @@ test('Grid partial update: columns[].filtering.condition and value', async ({ pa
                 // Make sure the filter icon is visible.
                 width: 200,
                 filtering: {
-                    condition: 'contains',
-                    value: 'Apple',
-                    enabled: true
+                    enabled: true,
+                    rule: {
+                        operator: 'contains',
+                        value: 'Apple'
+                    }
                 }
             }]
         }, true);
@@ -117,8 +119,10 @@ test('Grid partial update: columns[].filtering.condition and value', async ({ pa
             columns: [{
                 id: 'product',
                 filtering: {
-                    condition: 'beginsWith',
-                    value: 'P'
+                    rule: {
+                        operator: 'beginsWith',
+                        value: 'P'
+                    }
                 }
             }]
         });
@@ -137,7 +141,7 @@ test('Grid partial update: columns[].filtering.condition and value', async ({ pa
         };
     });
 
-    expect(result?.filteredData, 'The data should be filtered by the new condition and value.')
+    expect(result?.filteredData, 'The data should be filtered by the new rule operator and value.')
         .toStrictEqual(['Pears', 'Plums']);
 
     expect(result?.filterButtonActive, 'The filtering button should be active.')

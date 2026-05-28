@@ -357,7 +357,7 @@ test.describe('Grid filtering', () => {
 
 });
 
-test.describe('Grid filtering conditions allowlist', () => {
+test.describe('Grid filtering operators allowlist', () => {
     test.beforeEach(async ({ page }) => {
         await page.goto('/grid-lite/e2e/inline-filtering', {
             waitUntil: 'networkidle'
@@ -366,10 +366,10 @@ test.describe('Grid filtering conditions allowlist', () => {
             return typeof (window as any).Grid !== 'undefined' &&
                    (window as any).Grid.grids &&
                    (window as any).Grid.grids.length > 0;
-        }, { timeout: 10000 });
+        });
     });
 
-    test('Product column shows only column conditions', async ({
+    test('Product column shows only column operators', async ({
         page
     }) => {
         await page.evaluate(() => {
@@ -382,14 +382,14 @@ test.describe('Grid filtering conditions allowlist', () => {
                     filtering: {
                         enabled: true,
                         inline: true,
-                        conditions: []
+                        operators: []
                     }
                 },
                 columns: [{
                     id: 'product',
                     filtering: {
                         enabled: true,
-                        conditions: ['contains', 'beginsWith']
+                        operators: ['contains', 'beginsWith']
                     }
                 }]
             });
@@ -407,7 +407,7 @@ test.describe('Grid filtering conditions allowlist', () => {
         );
     });
 
-    test('Defaults apply per type and defined column conditions', async ({
+    test('Defaults apply per type and defined column operators', async ({
         page
     }) => {
         await page.evaluate(() => {
@@ -420,14 +420,14 @@ test.describe('Grid filtering conditions allowlist', () => {
                     filtering: {
                         enabled: true,
                         inline: true,
-                        conditions: ['equals', 'doesNotEqual', 'lessThan']
+                        operators: ['equals', 'doesNotEqual', 'lessThan']
                     }
                 },
                 columns: [{
                     id: 'product',
                     filtering: {
                         enabled: true,
-                        conditions: ['contains', 'beginsWith']
+                        operators: ['contains', 'beginsWith']
                     }
                 }]
             });
