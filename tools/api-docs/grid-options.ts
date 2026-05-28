@@ -699,7 +699,7 @@ function appendDeprecationToDescription(
         TSLib.extractTagText(infoDoclet, 'deprecated', true) || ''
     ).trim();
     const deprecatedHTML = deprecatedText ?
-        `<p><em>Deprecated:</em> ${deprecatedText}</p>` :
+        `<p><em>Deprecated:</em> ${formatJSDocLinks(deprecatedText)}</p>` :
         '<p><em>Deprecated.</em></p>';
     const existingDescription = nodeDoclet.description || '';
 

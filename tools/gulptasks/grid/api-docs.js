@@ -98,6 +98,20 @@ function postProcessApiJS(gridDir, classMap) {
     const injection = `
   var gridClassMap = ${gridClassMap};
 
+  function formatGridDocText(text, asHTML) {
+    return (text || '').replace(
+      /\\{@link\\s+([^}\\s|]+)(?:\\s*\\|\\s*([^}]+)|\\s+([^}]+))?\\}/g,
+      function (_match, target, pipeLabel, spaceLabel) {
+        var href = (target || '').trim();
+        var label = (pipeLabel || spaceLabel || href).trim();
+        if (asHTML && /^https?:\\/\\//.test(href)) {
+          return '<a href="' + href + '">' + label + '</a>';
+        }
+        return label;
+      }
+    );
+  }
+
   function getGridClassReferenceUrl(type) {
     // Extract class names from callback signatures like
     // "(this: Column) => void" or "(this: Grid, e: AnyRecord) => void"
@@ -181,8 +195,8 @@ function postProcessApiJS(gridDir, classMap) {
         /if \(def\.deprecated\) \{\n\s+deprecated = cr\('p', 'deprecated', 'Deprecated' \+ \(\n\s+def\.deprecated === true \? '' : ' ' \+ def\.deprecated\n\s+\)\);\n\s+option\.setAttribute\(\n\s+'class', option\.getAttribute\('class'\) \+ ' deprecated'\n\s+\);\n\s+\}\n\n\s+state\.split/u,
         'if (def.deprecated) {\n' +
         '          deprecated = cr(\'p\', \'deprecated\', \'Deprecated\' + (\n' +
-        '            def.deprecated === true ? \'\' : \' \' + def.deprecated\n' +
-        '          ));\n' +
+        '            def.deprecated === true ? \'\' : \' \' + formatGridDocText(def.deprecated, true)\n' +
+        '          ), true);\n' +
         '          option.setAttribute(\n' +
         '            \'class\', option.getAttribute(\'class\') + \' deprecated\'\n' +
         '          );\n' +
@@ -213,6 +227,12 @@ function postProcessApiJS(gridDir, classMap) {
     content = content.replace(
         /ap\(\n\s+title,\n\s+arrow\n\s+\)/u,
         'ap(\n          title,\n          proBadge,\n          arrow\n        )'
+    );
+    content = content.replace(
+        /deprecated = cr\('p', 'deprecated', 'Deprecated' \+ \(\n\s+def\.deprecated === true \? '' : ' ' \+ def\.deprecated\n\s+\)\);/gu,
+        'deprecated = cr(\'p\', \'deprecated\', \'Deprecated\' + (\n' +
+        '            def.deprecated === true ? \'\' : \' \' + formatGridDocText(def.deprecated, true)\n' +
+        '          ), true);'
     );
 
     fs.writeFileSync(apiJsPath, content, 'utf8');
