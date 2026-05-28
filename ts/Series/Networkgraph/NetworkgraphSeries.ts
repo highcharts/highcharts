@@ -406,7 +406,10 @@ class NetworkgraphSeries extends Series {
                     stroke: stateOptions.link?.color || attribs.stroke,
                     dashstyle: stateOptions.link?.dashStyle ||
                         attribs.dashstyle,
-                    opacity: stateOptions.link?.opacity ?? attribs.opacity,
+                    // Deprecated linkOpacity, but keep for backwards compat.
+                    opacity: (stateOptions as any).linkOpacity ??
+                        stateOptions.link?.opacity ??
+                        attribs.opacity,
                     'stroke-width': stateOptions.link?.width ||
                         attribs['stroke-width']
                 };

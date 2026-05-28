@@ -112,6 +112,13 @@ const NetworkgraphSeriesDefaults: NetworkgraphSeriesOptions = {
             linkOpacity: 0.3,
 
             /**
+             * @extends plotOptions.networkgraph.link
+             */
+            link: {
+                opacity: 0.3
+            },
+
+            /**
              * Animation when not hovering over the node.
              *
              * @default { duration: 50 }
