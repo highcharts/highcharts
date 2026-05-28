@@ -70,7 +70,8 @@ body {
 }
 
 .last {
-    margin: 8px 0 0;
+    margin: 0;
+    padding: 0;
 }
 
 #changelog {
