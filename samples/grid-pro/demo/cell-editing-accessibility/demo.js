@@ -24,10 +24,6 @@ const grid = Grid.grid('container', {
     caption: {
         text: 'Editable fruit inventory'
     },
-    description: {
-        text: 'Editable stock, price, availability, and supplier columns ' +
-            'with screen reader announcements for cell editing.'
-    },
     lang: {
         accessibility: {
             cellEditing: {
