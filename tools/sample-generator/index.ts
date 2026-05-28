@@ -40,6 +40,17 @@ import * as selectHandler from './type-handlers/select.ts';
 import * as colorHandler from './type-handlers/color.ts';
 import * as textHandler from './type-handlers/text.ts';
 import * as separatorHandler from './type-handlers/separator.ts';
+const REACT_MODULE_WRAPPERS: Record<string, string> = {
+    'accessibility': 'Accessibility',
+    'boost': 'Boost',
+    'broken-axis': 'BrokenAxis',
+    'data': 'Data',
+    'draggable-points': 'DraggablePoints',
+    'drilldown': 'Drilldown',
+    'exporting': 'Exporting',
+    'stock-tools': 'StockTools'
+};
+
 interface MetaData {
     controlOptions?: ControlOptions;
     path?: string;
@@ -51,6 +62,17 @@ interface MetaData {
 }
 
 type MetaList = Array<MetaData>;
+
+export type OutputMode = 'classic' | 'react';
+
+const GENERATED_FILES_BY_OUTPUT_MODE: Record<OutputMode, string[]> = {
+    classic: ['demo.ts', 'demo.html', 'demo.css', 'demo.details'],
+    react: ['demo.jsx', 'demo.css', 'demo.details']
+};
+
+export function getGeneratedFiles(outputMode: OutputMode = 'classic'): string[] {
+    return [...GENERATED_FILES_BY_OUTPUT_MODE[outputMode]];
+}
 
 const executedDirectly = import.meta.url === process.argv[1] ||
     import.meta.url === `file://${process.argv[1]}`;
@@ -599,25 +621,41 @@ export async function getDemoHTML(
     return html;
 }
 
-// Function to get TS (one listener per path)
-export async function getDemoTS(
+// Build chart options as a formatted JS object literal string.
+async function getChartOptionsLiteral(
     config: SampleGeneratorConfig,
-    metaList: MetaList
+    metaList: MetaList,
+    {
+        dataIdentifier,
+        indentDataReference = false,
+        prebuiltConfig
+    }: {
+        dataIdentifier?: string;
+        indentDataReference?: boolean;
+        prebuiltConfig?: any;
+    } = {}
 ) {
 
-    const { dataFile, factory = 'chart' } = config;
+    const { dataFile } = config;
 
     let chartOptions = JSON.stringify(
-        await generateChartConfig(config, metaList),
+        prebuiltConfig || await generateChartConfig(config, metaList),
         null,
         4
     );
 
     // Fix data file reference
-    if (dataFile) {
-        chartOptions = chartOptions
-            .replace(/"data": "data"/u, '"data": data')
-            .replace(/\n/gu, '\n    ');
+    if (dataFile && dataIdentifier) {
+        chartOptions = chartOptions.replace(
+            /"data": "data"/u,
+            `"data": ${dataIdentifier}`
+        );
+
+        if (indentDataReference) {
+            chartOptions = chartOptions.replace(/\n/gu, '\n    ');
+        }
+    } else if (dataFile) {
+        chartOptions = chartOptions.replace(/"data": "data"/u, '"data": []');
     }
 
     // Replace double quotes with single quotes for strings
@@ -906,6 +944,110 @@ export async function getDemoTS(
         }
     );
 
+    // Some cases, for example tooltip.borderWidth, have defaultValue as
+    // "undefined" in tree.json
+    return chartOptions.replace(/"undefined"/gu, 'undefined');
+}
+
+function indentBlock(text: string, spaces = 4): string {
+    const indent = ' '.repeat(spaces);
+    return text
+        .split('\n')
+        .map(line => indent + line)
+        .join('\n');
+}
+
+function getReactFactoryConfig(factory: SampleGeneratorConfig['factory'] = 'chart') {
+    if (factory === 'stockChart') {
+        return {
+            componentImportPath: '@highcharts/react/Stock',
+            componentName: 'StockChart',
+            highchartsImportPath: 'highcharts/esm/highstock.src.js'
+        };
+    }
+
+    if (factory === 'mapChart') {
+        return {
+            componentImportPath: '@highcharts/react/Maps',
+            componentName: 'MapsChart',
+            highchartsImportPath: 'highcharts/esm/highmaps.src.js'
+        };
+    }
+
+    if (factory === 'ganttChart') {
+        return {
+            componentImportPath: '@highcharts/react/Gantt',
+            componentName: 'GanttChart',
+            highchartsImportPath: 'highcharts/esm/highcharts-gantt.src.js'
+        };
+    }
+
+    return {
+        componentImportPath: '@highcharts/react',
+        componentName: 'Chart',
+        highchartsImportPath: 'highcharts/esm/highcharts.src.js'
+    };
+}
+
+function getReactModuleImports(config: SampleGeneratorConfig): {
+    sideEffectImports: string[];
+    wrapperImports: string[];
+} {
+    const sideEffectImports: string[] = [];
+    const wrapperImports: string[] = [];
+    const modules = config.modules || [];
+
+    for (const moduleName of modules) {
+        const normalized = moduleName.replace(/\.js$/u, '');
+
+        // Built into dedicated React chart components.
+        if (
+            normalized === 'modules/stock' ||
+            normalized === 'modules/map' ||
+            normalized === 'modules/gantt'
+        ) {
+            continue;
+        }
+
+        // Extract the last segment after '/' for wrapper lookup
+        const lastSegment = normalized.split('/').pop() || '';
+        const wrapperName = REACT_MODULE_WRAPPERS[lastSegment];
+
+        if (wrapperName) {
+            if (!wrapperImports.includes(wrapperName)) {
+                wrapperImports.push(wrapperName);
+            }
+        } else {
+            const importPath = normalized.startsWith('esm/') ?
+                `highcharts/${normalized}${normalized.endsWith('.js') ? '' : '.js'}` :
+                `highcharts/esm/${normalized}.src.js`;
+
+            if (!sideEffectImports.includes(importPath)) {
+                sideEffectImports.push(importPath);
+            }
+        }
+    }
+
+    return { sideEffectImports, wrapperImports };
+}
+
+// Function to get TS (one listener per path)
+export async function getDemoTS(
+    config: SampleGeneratorConfig,
+    metaList: MetaList
+) {
+
+    const { dataFile, factory = 'chart' } = config;
+
+    const chartOptions = await getChartOptionsLiteral(
+        config,
+        metaList,
+        {
+            dataIdentifier: dataFile ? 'data' : void 0,
+            indentDataReference: true
+        }
+    );
+
     let ts = '';
 
     if (dataFile) {
@@ -920,18 +1062,384 @@ export async function getDemoTS(
 
     // Build the TS. Would like to have `satisfies Highcharts.Options` here, but
     // that breaks jsFiddle. Revisit later.
-    ts += `Highcharts.${factory}('container', ${
-        chartOptions
-    });\n`
-        // Some cases, for example tooltip.borderWidth, have defaultValue as
-        // "undefined" in tree.json
-        .replace(/"undefined"/gu, 'undefined');
+    ts += `Highcharts.${factory}('container', ${chartOptions});\n`;
 
     if (dataFile) {
         ts += '\n})();\n';
     }
 
     return ts;
+}
+
+function escapeJSXText(s: string): string {
+    return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/[{}]/g, c => `{'${c}'}`);
+}
+
+// Extract React option components from chart config
+function extractReactOptionComponents(
+    chartConfig: any,
+    dataIdentifier?: string,
+    extractableKeys?: Set<string>
+): { prunedConfig: any; imports: string[]; childrenJSX: string } {
+    const prunedConfig = { ...chartConfig };
+    const imports: string[] = [];
+    const children: string[] = [];
+    const indent = '        '; // 8 spaces
+
+    // Only extract keys that are in the extractable set (from chartOptionsExtra)
+    const canExtract = (key: string) => !!extractableKeys && extractableKeys.has(key);
+
+    // 1. Title: only extract if title has ONLY `text` key
+    if (canExtract('title') && prunedConfig.title && Object.keys(prunedConfig.title).length === 1 &&
+        'text' in prunedConfig.title) {
+        children.push(`${indent}<Title>${escapeJSXText(prunedConfig.title.text)}</Title>`);
+        if (!imports.includes('Title')) {
+            imports.push('Title');
+        }
+        delete prunedConfig.title;
+    }
+
+    // 2. Tooltip
+    if (canExtract('tooltip') && prunedConfig.tooltip) {
+        const tooltip = prunedConfig.tooltip;
+        const formatKeys = ['pointFormat', 'headerFormat', 'footerFormat'];
+        const props: string[] = [];
+        const formatChildren: string[] = [];
+
+        for (const [key, value] of Object.entries(tooltip)) {
+            if (formatKeys.includes(key)) {
+                formatChildren.push(
+                    `${indent}    <data-hc-option name="${key}">${escapeJSXText(value as string)}</data-hc-option>`
+                );
+            } else {
+                if (typeof value === 'string') {
+                    props.push(`${key}={${JSON.stringify(value)}}`);
+                } else {
+                    props.push(`${key}={${JSON.stringify(value)}}`);
+                }
+            }
+        }
+
+        if (!imports.includes('Tooltip')) {
+            imports.push('Tooltip');
+        }
+
+        const propsStr = props.length ? ' ' + props.join(' ') : '';
+        if (formatChildren.length > 0) {
+            children.push(`${indent}<Tooltip${propsStr}>`);
+            children.push(...formatChildren);
+            children.push(`${indent}</Tooltip>`);
+        } else {
+            children.push(`${indent}<Tooltip${propsStr} />`);
+        }
+        delete prunedConfig.tooltip;
+    }
+
+    // 3. Series: always extract
+    if (canExtract('series') && prunedConfig.series && Array.isArray(prunedConfig.series)) {
+        if (!imports.includes('Series')) {
+            imports.push('Series');
+        }
+        for (const s of prunedConfig.series) {
+            const props: string[] = [];
+            const remaining: Record<string, any> = {};
+
+            // Extract type first, then data, then name, then rest
+            if ('type' in s) {
+                props.push(`type={${JSON.stringify(s.type)}}`);
+            }
+            if ('data' in s) {
+                if (s.data === 'data' || s.data === dataIdentifier) {
+                    props.push('data={data}');
+                } else if (Array.isArray(s.data) && s.data.every((v: any) => typeof v === 'number')) {
+                    props.push(`data={${JSON.stringify(s.data).replace(/,/g, ', ')}}`);
+                } else {
+                    props.push(`data={${JSON.stringify(s.data)}}`);
+                }
+            }
+            if ('name' in s) {
+                props.push(`name={${JSON.stringify(s.name)}}`);
+            }
+
+            for (const [key, value] of Object.entries(s)) {
+                if (key !== 'type' && key !== 'data' && key !== 'name') {
+                    remaining[key] = value;
+                }
+            }
+
+            if (Object.keys(remaining).length > 0) {
+                props.push(`options={${JSON.stringify(remaining)}}`);
+            }
+
+            children.push(`${indent}<Series ${props.join(' ')} />`);
+        }
+        delete prunedConfig.series;
+    }
+
+    // 4. XAxis
+    if (canExtract('xAxis') && prunedConfig.xAxis && !Array.isArray(prunedConfig.xAxis)) {
+        const axis = prunedConfig.xAxis;
+
+        if (axis && typeof axis === 'object') {
+            const axisChildren: string[] = [];
+            const axisForOptions = { ...axis };
+
+            if (axis.title && typeof axis.title === 'object' && 'text' in axis.title) {
+                axisChildren.push(
+                    `${indent}    <Title>${escapeJSXText(String(axis.title.text))}</Title>`
+                );
+                if (!imports.includes('Title')) {
+                    imports.push('Title');
+                }
+
+                const titleForOptions = { ...axis.title };
+                delete titleForOptions.text;
+
+                if (Object.keys(titleForOptions).length > 0) {
+                    axisForOptions.title = titleForOptions;
+                } else {
+                    delete axisForOptions.title;
+                }
+            }
+
+            if (!imports.includes('XAxis')) {
+                imports.push('XAxis');
+            }
+
+            const axisOptions = Object.keys(axisForOptions).length > 0 ?
+                ` options={${JSON.stringify(axisForOptions)}}` :
+                '';
+
+            if (axisChildren.length > 0) {
+                children.push(`${indent}<XAxis${axisOptions}>`);
+                children.push(...axisChildren);
+                children.push(`${indent}</XAxis>`);
+            } else {
+                children.push(`${indent}<XAxis${axisOptions} />`);
+            }
+
+            delete prunedConfig.xAxis;
+        }
+    }
+
+    // 5. YAxis
+    if (canExtract('yAxis') && prunedConfig.yAxis && !Array.isArray(prunedConfig.yAxis)) {
+        const axis = prunedConfig.yAxis;
+
+        if (axis && typeof axis === 'object') {
+            const axisChildren: string[] = [];
+            const axisForOptions = { ...axis };
+
+            if (axis.title && typeof axis.title === 'object' && 'text' in axis.title) {
+                axisChildren.push(
+                    `${indent}    <Title>${escapeJSXText(String(axis.title.text))}</Title>`
+                );
+                if (!imports.includes('Title')) {
+                    imports.push('Title');
+                }
+
+                const titleForOptions = { ...axis.title };
+                delete titleForOptions.text;
+
+                if (Object.keys(titleForOptions).length > 0) {
+                    axisForOptions.title = titleForOptions;
+                } else {
+                    delete axisForOptions.title;
+                }
+            }
+
+            if (!imports.includes('YAxis')) {
+                imports.push('YAxis');
+            }
+
+            const axisOptions = Object.keys(axisForOptions).length > 0 ?
+                ` options={${JSON.stringify(axisForOptions)}}` :
+                '';
+
+            if (axisChildren.length > 0) {
+                children.push(`${indent}<YAxis${axisOptions}>`);
+                children.push(...axisChildren);
+                children.push(`${indent}</YAxis>`);
+            } else {
+                children.push(`${indent}<YAxis${axisOptions} />`);
+            }
+
+            delete prunedConfig.yAxis;
+        }
+    }
+
+    // 6. Legend
+    if (canExtract('legend') && prunedConfig.legend) {
+        const legend = prunedConfig.legend;
+        const props: string[] = [];
+        const legendChildren: string[] = [];
+
+        for (const [key, value] of Object.entries(legend)) {
+            if (key === 'labelFormat') {
+                legendChildren.push(
+                    `${indent}    <data-hc-option name="labelFormat">${escapeJSXText(value as string)}</data-hc-option>`
+                );
+            } else {
+                if (typeof value === 'string') {
+                    props.push(`${key}={${JSON.stringify(value)}}`);
+                } else {
+                    props.push(`${key}={${JSON.stringify(value)}}`);
+                }
+            }
+        }
+
+        if (!imports.includes('Legend')) {
+            imports.push('Legend');
+        }
+
+        const propsStr = props.length ? ' ' + props.join(' ') : '';
+        if (legendChildren.length > 0) {
+            children.push(`${indent}<Legend${propsStr}>`);
+            children.push(...legendChildren);
+            children.push(`${indent}</Legend>`);
+        } else {
+            children.push(`${indent}<Legend${propsStr} />`);
+        }
+        delete prunedConfig.legend;
+    }
+
+    return {
+        prunedConfig,
+        imports,
+        childrenJSX: children.join('\n')
+    };
+}
+
+function getImplicitReactOptionComponentKeys(
+    chartConfig: any,
+    metaList: MetaList
+): Set<string> {
+    const inferredKeys = new Set<string>();
+    const hasXAxisControl = metaList.some(
+        meta => typeof meta.path === 'string' && meta.path.startsWith('xAxis.')
+    );
+    const hasYAxisControl = metaList.some(
+        meta => typeof meta.path === 'string' && meta.path.startsWith('yAxis.')
+    );
+
+    if (hasXAxisControl && chartConfig.xAxis && !Array.isArray(chartConfig.xAxis)) {
+        inferredKeys.add('xAxis');
+    }
+    if (hasYAxisControl && chartConfig.yAxis && !Array.isArray(chartConfig.yAxis)) {
+        inferredKeys.add('yAxis');
+    }
+
+    if ((inferredKeys.has('xAxis') || inferredKeys.has('yAxis')) &&
+        chartConfig.title &&
+        typeof chartConfig.title === 'object' &&
+        Object.keys(chartConfig.title).length === 1 &&
+        'text' in chartConfig.title) {
+        inferredKeys.add('title');
+    }
+
+    if ((inferredKeys.has('xAxis') || inferredKeys.has('yAxis')) &&
+        Array.isArray(chartConfig.series) &&
+        chartConfig.series.length > 0) {
+        inferredKeys.add('series');
+    }
+
+    return inferredKeys;
+}
+
+// Function to get JSX for React samples.
+export async function getDemoJSX(
+    config: SampleGeneratorConfig,
+    metaList: MetaList
+) {
+    const { dataFile, factory = 'chart' } = config;
+    const {
+        componentImportPath,
+        componentName,
+        highchartsImportPath
+    } = getReactFactoryConfig(factory);
+    const { sideEffectImports, wrapperImports } = getReactModuleImports(config);
+    const shouldSetupHighcharts = sideEffectImports.length > 0;
+    const dataIdentifier = dataFile ? 'data' : void 0;
+
+    // Generate config, extract components, then serialize the pruned config
+    const fullConfig = await generateChartConfig(config, metaList);
+    const extractableKeys = new Set([
+        ...Object.keys(config.chartOptionsExtra || {}),
+        ...getImplicitReactOptionComponentKeys(fullConfig, metaList)
+    ]);
+    const { prunedConfig, imports: componentImports, childrenJSX } =
+        extractReactOptionComponents(fullConfig, dataIdentifier, extractableKeys);
+
+    const chartOptions = await getChartOptionsLiteral(
+        config,
+        metaList,
+        { dataIdentifier, prebuiltConfig: prunedConfig }
+    );
+    const dependencies = dataFile ? '[data]' : '[]';
+    const reactImports = componentImportPath === '@highcharts/react' ?
+        [
+            shouldSetupHighcharts ?
+                `import { ${[componentName, 'setHighcharts', ...componentImports].join(', ')} } from '@highcharts/react';` :
+                `import { ${[componentName, ...componentImports].join(', ')} } from '@highcharts/react';`
+        ] :
+        [
+            ...(shouldSetupHighcharts ?
+                [`import { setHighcharts${componentImports.length ? ', ' + componentImports.join(', ') : ''} } from '@highcharts/react';`] :
+                (componentImports.length ?
+                    [`import { ${componentImports.join(', ')} } from '@highcharts/react';`] :
+                    [])),
+            `import { ${componentName} } from '${componentImportPath}';`
+        ];
+    const highchartsSetup = shouldSetupHighcharts ? [
+        `import Highcharts from '${highchartsImportPath}';`,
+        ...sideEffectImports.map(moduleImport => `import '${moduleImport}';`),
+        '',
+        'setHighcharts(Highcharts);'
+    ].join('\n') : '';
+
+    // Add wrapper module imports as side effects.
+    // We do not yet render wrapper JSX components in the template,
+    // so bound imports would be unused and may be tree-shaken.
+    for (const wrapperName of wrapperImports) {
+        reactImports.push(
+            `import '@highcharts/react/modules/${wrapperName}';`
+        );
+    }
+
+    const dataStateBlock = dataFile ? [
+        '    const [data, setData] = React.useState([]);',
+        '',
+        '    React.useEffect(() => {',
+        '        fetch(',
+        `            'https://www.highcharts.com/samples/data/${dataFile}'`,
+        '        )',
+        '            .then(response => response.json())',
+        '            .then(setData);',
+        '    }, []);'
+    ].join('\n') : '';
+
+    let jsx = await loadTemplate('demo.jsx');
+
+    jsx = jsx
+        .replace('/* __REACT_IMPORTS__ */', reactImports.join('\n'))
+        .replace('/* __HIGHCHARTS_SETUP__ */', highchartsSetup)
+        .replace('    /* __DATA_STATE_BLOCK__ */', dataStateBlock)
+        .replace('__CHART_OPTIONS__', indentBlock(chartOptions, 8).trimStart())
+        .replace('__DEPENDENCIES__', dependencies)
+        .replace(/__COMPONENT_NAME__/gu, componentName)
+        .replace('        __CHART_CHILDREN__', childrenJSX);
+
+    // If no children, convert block form back to self-closing
+    if (!childrenJSX) {
+        jsx = jsx.replace(
+            /(<\w+ options=\{chartOptions\}>)\s*\n\s*(<\/\w+>)/u,
+            (_, open) => open.replace(/>$/u, ' />')
+        );
+    }
+
+    // TODO: render wrapper components (e.g. <Accessibility />) as siblings of chart component once template supports multiple JSX children
+
+    return jsx;
 }
 
 /**
@@ -1091,8 +1599,11 @@ function getDemoDetails(config: SampleGeneratorConfig): string {
  * @return {Promise<string>}
  *         SHA256 checksum
  */
-export async function calculateChecksum(outputDir: string): Promise<string> {
-    const files = ['demo.ts', 'demo.html', 'demo.css', 'demo.details'];
+export async function calculateChecksum(
+    outputDir: string,
+    outputMode: OutputMode = 'classic'
+): Promise<string> {
+    const files = getGeneratedFiles(outputMode);
     const hash = crypto.createHash('sha256');
 
     for (const file of files) {
@@ -1117,25 +1628,35 @@ export async function calculateChecksum(outputDir: string): Promise<string> {
  * @return {Promise<void>}
  *         Promise to keep
  */
-async function saveChecksum(outputDir: string): Promise<void> {
-    const checksum = await calculateChecksum(outputDir);
+async function saveChecksum(
+    outputDir: string,
+    outputMode: OutputMode = 'classic'
+): Promise<void> {
+    const checksum = await calculateChecksum(outputDir, outputMode);
     const checksumPath = join(outputDir, '.generated-checksum');
     await fs.writeFile(
         checksumPath, checksum, { encoding: 'utf-8', mode: 0o644 }
     );
 }
 
-export async function saveDemoFile(config: SampleGeneratorConfig) {
+export async function saveDemoFile(
+    config: SampleGeneratorConfig,
+    outputMode: OutputMode = 'classic'
+) {
     const metaList = getPathMeta(config);
     if (!metaList.length && config.paths) {
         throw new Error(`No nodes found for paths: ${config.paths.join(', ')}`);
     }
 
     // Build all assets in parallel based on per-path mainTypes
-    const [html, css, ts] = await Promise.all([
-        getDemoHTML(config, metaList),
+    const [css, demoCode, html] = await Promise.all([
         getDemoCSS(config),
-        getDemoTS(config, metaList)
+        outputMode === 'react' ?
+            getDemoJSX(config, metaList) :
+            getDemoTS(config, metaList),
+        outputMode === 'classic' ?
+            getDemoHTML(config, metaList) :
+            Promise.resolve('')
     ]);
     const details = getDemoDetails(config);
 
@@ -1150,13 +1671,7 @@ export async function saveDemoFile(config: SampleGeneratorConfig) {
         { recursive: true }
     );
 
-    // Write all files in parallel
-    await Promise.all([
-        fs.writeFile(
-            join(outputDir, 'demo.html'),
-            html,
-            { encoding: 'utf-8', mode: 0o644 }
-        ),
+    const writeOperations = [
         fs.writeFile(
             join(outputDir, 'demo.css'),
             css,
@@ -1166,52 +1681,74 @@ export async function saveDemoFile(config: SampleGeneratorConfig) {
             join(outputDir, 'demo.details'),
             details,
             { encoding: 'utf-8', mode: 0o644 }
-        ),
-        fs.writeFile(
-            join(outputDir, '.gitignore'),
-            'demo.js',
-            { encoding: 'utf-8', mode: 0o644 }
         )
-    ]);
+    ];
 
-    // If demo.ts is successfully written, delete demo.js if it exists
-    try {
-        await fs.unlink(join(outputDir, 'demo.js'));
-        if (executedDirectly) {
-            console.log(colors.blue('Deleted obsolete demo.js file.'));
-        }
-    } catch {
-        // File does not exist, no action needed
-    }
-
-    // Format the generated demo.ts file with ESLint
-    if (executedDirectly) {
-        console.log(colors.blue('Formatting demo.ts with ESLint...'));
-    }
-
-    /*
-    const eslint = new ESLint({ fix: true });
-    const results = await eslint.lintText(
-        ts, {
-            filePath: `${outputDir}/demo.ts`
-        }
-    );
-
-    if (results[0].output) {
-        await fs.writeFile(`${outputDir}/demo.ts`, results[0].output, { encoding: 'utf-8', mode: 0o644 });
+    if (outputMode === 'react') {
+        writeOperations.push(fs.writeFile(
+            join(outputDir, 'demo.jsx'),
+            demoCode,
+            { encoding: 'utf-8', mode: 0o644 }
+        ));
     } else {
-        await fs.writeFile(`${outputDir}/demo.ts`, results[0].source, { encoding: 'utf-8', mode: 0o644 });
-        console.error(
-            colors.red(results[0].messages.map(msg => msg.message).join('\n'))
+        writeOperations.push(
+            fs.writeFile(
+                join(outputDir, 'demo.html'),
+                html,
+                { encoding: 'utf-8', mode: 0o644 }
+            ),
+            fs.writeFile(
+                join(outputDir, '.gitignore'),
+                'demo.js',
+                { encoding: 'utf-8', mode: 0o644 }
+            ),
+            fs.writeFile(
+                join(outputDir, 'demo.ts'),
+                demoCode,
+                { encoding: 'utf-8', mode: 0o644 }
+            )
         );
     }
-    */
-    await fs.writeFile(
-        join(outputDir, 'demo.ts'), ts, { encoding: 'utf-8', mode: 0o644 }
-    );
+
+    await Promise.all(writeOperations);
+
+    if (outputMode === 'classic') {
+        // If demo.ts is successfully written, delete demo.js if it exists.
+        try {
+            await fs.unlink(join(outputDir, 'demo.js'));
+            if (executedDirectly) {
+                console.log(colors.blue('Deleted obsolete demo.js file.'));
+            }
+        } catch {
+            // File does not exist, no action needed
+        }
+
+        // Format the generated demo.ts file with ESLint
+        if (executedDirectly) {
+            console.log(colors.blue('Formatting demo.ts with ESLint...'));
+        }
+
+        /*
+        const eslint = new ESLint({ fix: true });
+        const results = await eslint.lintText(
+            demoCode, {
+                filePath: `${outputDir}/demo.ts`
+            }
+        );
+
+        if (results[0].output) {
+            await fs.writeFile(`${outputDir}/demo.ts`, results[0].output, { encoding: 'utf-8', mode: 0o644 });
+        } else {
+            await fs.writeFile(`${outputDir}/demo.ts`, results[0].source, { encoding: 'utf-8', mode: 0o644 });
+            console.error(
+                colors.red(results[0].messages.map(msg => msg.message).join('\n'))
+            );
+        }
+        */
+    }
 
     // Calculate and save checksum for validation
-    await saveChecksum(outputDir);
+    await saveChecksum(outputDir, outputMode);
 
     if (executedDirectly) {
         console.log(colors.green('Demo files generated successfully.'));
