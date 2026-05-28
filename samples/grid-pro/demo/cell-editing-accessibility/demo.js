@@ -112,7 +112,7 @@ const grid = Grid.grid('container', {
             format: '{value:.2f} €',
             editMode: {
                 renderer: {
-                    type: 'numberInput'
+                    type: 'textInput'
                 },
                 validationRules: ['notEmpty', 'number']
             }
