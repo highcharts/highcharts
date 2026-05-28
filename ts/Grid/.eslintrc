@@ -1,5 +1,15 @@
 {
     "extends": "../.eslintrc",
+    "overrides": [
+        {
+            "files": [
+                "Core/DeprecatedOptionsMetadata.ts"
+            ],
+            "rules": {
+                "max-len": 0
+            }
+        }
+    ],
     "rules": {
       "jsdoc/require-jsdoc": 2,
       "jsdoc/require-description": 2,
