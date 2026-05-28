@@ -189,14 +189,12 @@
                 rangeDescription: 'Approximately €13 to €20'
             },
             gridLineColor: 'var(--mstar-line)',
-            gridLineWidth: 1,
             height: '100%',
             labels: {
                 align: 'left',
                 style: labelStyle,
                 x: 8
             },
-            lineWidth: 0,
             title: {
                 style: labelStyle,
                 text: 'Price (€)'
@@ -216,7 +214,6 @@
                 x: 4,
                 y: -2
             },
-            lineWidth: 0,
             offset: 0,
             opposite: false,
             title: { text: undefined },
