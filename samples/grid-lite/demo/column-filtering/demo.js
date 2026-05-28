@@ -71,8 +71,10 @@ const grid = Grid.grid('container', {
     }, {
         id: 'weight',
         filtering: {
-            condition: 'greaterThan',
-            value: 100
+            rule: {
+                operator: 'greaterThan',
+                value: 100
+            }
         }
     }]
 });

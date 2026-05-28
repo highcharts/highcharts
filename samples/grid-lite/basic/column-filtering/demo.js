@@ -99,8 +99,10 @@ Grid.grid('container', {
     }, {
         id: 'weight',
         filtering: {
-            condition: 'greaterThan',
-            value: 1000
+            rule: {
+                operator: 'greaterThan',
+                value: 1000
+            }
         }
     }]
 });

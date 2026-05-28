@@ -23,8 +23,10 @@ Grid.grid('container', {
             format: '{value:0.2f}'
         },
         filtering: {
-            condition: 'greaterThan',
-            value: 0
+            rule: {
+                operator: 'greaterThan',
+                value: 0
+            }
         }
     }]
 });
