@@ -3,7 +3,6 @@ const changelog = document.querySelector('#changelog');
 const grid = Grid.grid('container', {
     data: {
         columns: {
-            id: [1, 2, 3, 4],
             product: ['Apples', 'Pears', 'Plums', 'Bananas'],
             available: [true, false, true, true],
             stock: [120, 85, 30, 200],
