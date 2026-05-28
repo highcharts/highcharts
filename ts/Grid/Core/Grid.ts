@@ -4,8 +4,9 @@
  *
  *  (c) 2020-2026 Highsoft AS
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  *  Authors:
@@ -475,6 +476,7 @@ export class Grid {
 
         this.userOptions = merge(this.userOptions, newOptions);
         this.options = merge(
+            // TODO: Investigate if it should be always only `defaultOptions`
             this.options ?? defaultOptions,
             this.userOptions
         );
@@ -871,10 +873,16 @@ export class Grid {
         }
         delete columnDiff.cells;
 
-        if ('width' in columnDiff) {
+        if (
+            'width' in columnDiff ||
+            'minWidth' in columnDiff ||
+            'maxWidth' in columnDiff
+        ) {
             vp.columnResizing.isDirty = true;
         }
         delete columnDiff.width;
+        delete columnDiff.minWidth;
+        delete columnDiff.maxWidth;
 
         if ('sorting' in columnDiff) {
             const sortingDiff = columnDiff.sorting ?? {};

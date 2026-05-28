@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -1367,7 +1368,7 @@ class Point {
             if (data && !series.processedData) {
                 data[i] = (isObject(data[i], true) || isObject(options, true)) ?
                     point.options :
-                    (options ?? data[i]);
+                    (options === void 0 ? data[i] : options); // #20412
             }
 
             // Redraw
@@ -1543,8 +1544,13 @@ class Point {
      * @emits Highcharts.Point#event:mouseOut
      */
     public onMouseOut(): void {
-        const point = this,
-            chart = point.series.chart;
+        const point = this;
+
+        if (!point.series) {
+            return;
+        }
+
+        const chart = point.series.chart;
 
         point.firePointEvent('mouseOut');
 

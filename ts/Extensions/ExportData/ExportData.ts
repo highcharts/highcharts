@@ -5,8 +5,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -1643,21 +1644,38 @@ namespace ExportData {
     ): void {
         const exporting = this.exporting,
             dataTableDiv = exporting?.dataTableDiv,
-            getCellValue =
-                (tr: HTMLDOMElement, index: number): (string | null) =>
-                    tr.children[index].textContent,
+            langOptions = this.options.lang,
+            decimalPoint = langOptions?.decimalPoint || '.',
+            thousandsSep = langOptions?.thousandsSep || ',',
+
+            getCellValue = (tr: HTMLDOMElement, index: number): string =>
+                tr.children[index].textContent || '',
+
+            parseNumber = (value: string): number | null => {
+                if (!value) {
+                    return null;
+                }
+
+                let normalized = value;
+                if (thousandsSep) {
+                    normalized = normalized.split(thousandsSep).join('');
+                }
+                normalized = normalized.replace(decimalPoint, '.');
+
+                const number = Number(normalized);
+                return isNumber(number) ? number : null;
+            },
+
             comparer = (index: number, ascending: boolean) =>
                 (a: HTMLDOMElement, b: HTMLDOMElement): number => {
-                    const sort = (v1: any, v2: any): number => (
-                        v1 !== '' && v2 !== '' && !isNaN(v1) && !isNaN(v2) ?
-                            v1 - v2 :
-                            v1.toString().localeCompare(v2)
-                    );
+                    const valA = getCellValue(ascending ? a : b, index),
+                        valB = getCellValue(ascending ? b : a, index),
+                        numA = parseNumber(valA),
+                        numB = parseNumber(valB);
 
-                    return sort(
-                        getCellValue(ascending ? a : b, index),
-                        getCellValue(ascending ? b : a, index)
-                    );
+                    return numA !== null && numB !== null ?
+                        numA - numB :
+                        valA.localeCompare(valB);
                 };
 
         if (dataTableDiv && exporting.options.allowTableSorting) {

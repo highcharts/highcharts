@@ -1,8 +1,34 @@
 // Automated fullscreen tests disabled.
 // See samples\highcharts\members\chart-togglefullscreen-test\test-notes.md
 
+QUnit.test(
+    '#24274, viewFullscreen button label after exiting fullscreen.',
+    function (assert) {
+        const chart = Highcharts.chart('container', {
+            series: [{ data: [1, 2, 3] }]
+        });
+
+        Highcharts.fireEvent(chart.exporting.svgElements[0].element, 'click');
+
+        chart.fullscreen.isOpen = false;
+        chart.fullscreen.setButtonText();
+
+        const menuItems =
+            chart.options.exporting.buttons.contextButton.menuItems;
+        const buttonElement =
+            chart.exporting.divElements[menuItems.indexOf('viewFullscreen')];
+
+        assert.strictEqual(
+            buttonElement.innerHTML,
+            chart.options.lang.viewFullscreen,
+            '#24274: after exiting fullscreen the viewFullscreen button ' +
+            'label works correctly.'
+        );
+    }
+);
+
 QUnit.skip('Fullscreen module.', function (assert) {
-    var chart = Highcharts.chart('container', {
+    const chart = Highcharts.chart('container', {
         series: [
             {
                 data: [5, 3, 4, 2, 4, 3]

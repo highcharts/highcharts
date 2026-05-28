@@ -5,8 +5,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -1814,6 +1815,9 @@ export class Exporting {
 
             // Allow fallback to server only for PDFs that failed locally
             await this.exportChart(exportingOptions);
+
+        } else {
+            error(err.message, false);
         }
     }
 
@@ -2148,7 +2152,18 @@ export class Exporting {
                 options || {},
                 function (e): void {
                     chart.callback?.call(this, e);
-                    resolve(postprocessAndGetSVG(this));
+
+                    // `chart.events.render` is triggered after the callback in
+                    // `Chart.onload`, so wait for it before serializing the
+                    // chart copy (#24537)
+                    const unbindRender = addEvent(
+                        this,
+                        'render',
+                        function (): void {
+                            unbindRender();
+                            resolve(postprocessAndGetSVG(this));
+                        }
+                    );
                 }
             ));
 

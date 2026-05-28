@@ -1532,6 +1532,37 @@ QUnit.test('Sortable table (#16972)', function (assert) {
         null,
         'Unsorted columns should not have aria-sort.'
     );
+
+    chart.series[0].setData([300, 2000, 9, 999, 111], true);
+
+    chart.exporting.ascendingOrderInTable = false;
+
+    chart
+        .exporting
+        .dataTableDiv
+        .children[0]
+        .children[1]
+        .children[0]
+        .children[1]
+        .click();
+
+    const table = chart.exporting.dataTableDiv.children[0];
+
+    assert.strictEqual(
+        table.children[2].children[0].children[1].innerText,
+        '9',
+        'Table sorting should correctly handle formatted numbers with' +
+        'thousands separators, (#24476).'
+    );
+
+    assert.strictEqual(
+        table.children[2].children[4].children[1].innerText,
+        '2,000',
+        'Formatted numbers should be sorted numerically,' +
+        'not lexicographically, (#24476).'
+    );
+
+
 });
 
 QUnit.test('Exporting duplicated points (#17639)', function (assert) {

@@ -94,7 +94,7 @@ const columns = [{
 }];
 
 // Grid setup
-Grid.grid('container', {
+const todoGrid = Grid.grid('container', {
     time: {
         locale: ''
     },
@@ -130,7 +130,8 @@ Grid.grid('container', {
         enabled: false
     }
 });
-Grid.grid('container-done', {
+
+const doneGrid = Grid.grid('container-done', {
     data: {
         columns: {
             Done: [true, true, true],
@@ -158,11 +159,15 @@ Grid.grid('container-done', {
 });
 
 // Custom events
-function addCustomEvents(isTodoGrid) {
-    const sourceGrid = Grid.grids[isTodoGrid ? 0 : 1];
-    const targetGrid = Grid.grids[isTodoGrid ? 1 : 0];
+function addCustomEvents(sourceGrid, targetGrid, isTodoGrid) {
+    const sourceTable = sourceGrid.dataProvider?.getDataTable();
+    const targetTable = targetGrid.dataProvider?.getDataTable();
 
-    sourceGrid.dataTable.on('afterSetCell', function (e) {
+    if (!sourceTable || !targetTable) {
+        return;
+    }
+
+    sourceTable.on('afterSetCell', function (e) {
         if (e.columnId !== 'Done') {
             return;
         }
@@ -172,11 +177,16 @@ function addCustomEvents(isTodoGrid) {
             const dataTable = e.target;
             const rowIndex = e.rowIndex;
             const rowData = dataTable.getRowObject(rowIndex);
-            const data = { ...rowData, Completed: selected };
+
+            if (!rowData) {
+                return;
+            }
+
+            const data = { ...rowData, Done: selected };
             const accessibility = sourceGrid.accessibility;
             const taskName = data.Task;
 
-            targetGrid.dataTable.setRow(data);
+            targetTable.setRow(data);
             dataTable.deleteRows(rowIndex);
 
             sourceGrid.viewport.updateRows();
@@ -192,8 +202,8 @@ function addCustomEvents(isTodoGrid) {
         }
     });
 }
-addCustomEvents(true);
-addCustomEvents(false);
+addCustomEvents(todoGrid, doneGrid, true);
+addCustomEvents(doneGrid, todoGrid, false);
 
 // Generate modal
 const container = document.getElementById('formFieldsContainer');
@@ -261,7 +271,6 @@ document.addEventListener('keydown', e => {
 form.addEventListener('submit', function (e) {
     e.preventDefault();
     const formData = new FormData(e.target);
-    const todoGrid = Grid.grids[0];
     const rowData = {};
 
     for (const column of columns) {
@@ -274,7 +283,7 @@ form.addEventListener('submit', function (e) {
         rowData[key] = value;
     }
 
-    todoGrid.dataTable.setRow(rowData);
+    todoGrid.dataProvider?.getDataTable()?.setRow(rowData);
     todoGrid.viewport.updateRows();
 
     form.reset();
