@@ -10,7 +10,7 @@
 'use strict';
 
 const deprecatedOptionsMetadata: Record<string, string> = {
-    'dataTable': 'Use data.dataTable instead.'
+    'dataTable': 'Use `data.dataTable` instead.'
 };
 
 export { deprecatedOptionsMetadata };

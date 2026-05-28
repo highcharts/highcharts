@@ -269,7 +269,7 @@ export interface Options {
      * Data table with the data to display in the grid structure.
      *
      * @deprecated
-     * Use {@link https://api.highcharts.com/grid/data.local.dataTable | data.dataTable} instead.
+     * Use {@link https://api.highcharts.com/grid/data.local.dataTable | `data.dataTable`} instead.
      */
     dataTable?: DataTable | DataTableOptions;
 
