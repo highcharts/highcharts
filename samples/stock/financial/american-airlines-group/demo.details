@@ -1,5 +1,5 @@
 ---
- name: Highcharts Stock
+ name: AAL intraday ticks with bid-ask spread and volume
  authors:
    - Paweł Dalek
  js_wrap: b

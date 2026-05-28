@@ -50,26 +50,24 @@ async function loadDataset() {
  *
  * @param rows An array of normalized trade rows.
  *
- * @return {Object} An object containing arrays for price, bid, ask and volume
- * series.
+ * @return {Object} An object containing arrays for price, spread (bid/ask
+ * range) and volume series.
  */
 function getPriceSeries(rows) {
     const price = [],
-        bid = [],
-        ask = [],
+        spread = [],
         volume = [];
 
     for (let i = 0; i < rows.length; i++) {
         const row = rows[i],
             date = row.timestamp;
 
-        ask.push([date, row.ask]);
-        bid.push([date, row.bid]);
         price.push([date, row.price]);
+        spread.push([date, row.bid, row.ask]);
         volume.push([date, row.volume]);
     }
 
-    return { ask, bid, price, volume };
+    return { price, spread, volume };
 }
 
 /**
@@ -119,6 +117,17 @@ function getTradesTable(rows) {
         series = getPriceSeries(rows),
         tradesTable = getTradesTable(rows);
 
+    const labelStyle = {
+        color: 'var(--mstar-text-muted)',
+        fontSize: '11px',
+        fontWeight: '300'
+    };
+    const bodyTextStyle = {
+        color: 'var(--mstar-text-strong)',
+        fontSize: '12px',
+        fontWeight: '300'
+    };
+
     Dashboards.board('container', {
         dataPool: {
             connectors: [{
@@ -134,26 +143,121 @@ function getTradesTable(rows) {
             renderTo: 'dashboard-col-stock',
             type: 'Highcharts',
             chartConstructor: 'stockChart',
-            title: 'Intraday Price & Quote (Bid/Ask) with Volume',
             chartOptions: {
+                title: {
+                    text: 'American Airlines Group &middot; <span ' +
+                        'style="color:var(--mstar-text-muted);' +
+                        'font-weight:300">AAL</span>',
+                    useHTML: true,
+                    align: 'left',
+                    margin: 4,
+                    style: {
+                        color: 'var(--mstar-text-strong)',
+                        fontSize: '22px',
+                        fontWeight: '500'
+                    }
+                },
+                subtitle: {
+                    text: 'Tick-by-tick last price with bid/ask spread ' +
+                        'band and per-trade volume',
+                    align: 'left',
+                    style: {
+                        color: 'var(--mstar-text-muted)',
+                        fontSize: '13px',
+                        fontWeight: '300'
+                    }
+                },
+                accessibility: {
+                    keyboardNavigation: {
+                        focusBorder: {
+                            enabled: true,
+                            style: {
+                                color: 'var(--mstar-accent)',
+                                lineWidth: 2
+                            }
+                        }
+                    },
+                    point: {
+                        valueDescriptionFormat: '{xDescription}, ${point.y}'
+                    }
+                },
+                caption: {
+                    text: 'Each marker on the line is a single trade; the ' +
+                        'translucent band shows the bid-ask quote at that ' +
+                        'moment. Volume per trade is in the lower pane.',
+                    style: labelStyle
+                },
+                chart: {
+                    backgroundColor: 'var(--mstar-surface)',
+                    style: {
+                        fontFamily: '"MorningstarIntrinsic", ' +
+                            '"Helvetica Neue", Helvetica, Arial, sans-serif'
+                    }
+                },
                 credits: {
                     enabled: false
                 },
                 tooltip: {
+                    backgroundColor: 'var(--mstar-surface)',
+                    borderColor: 'var(--mstar-line)',
+                    borderRadius: 4,
+                    borderWidth: 1,
+                    shadow: false,
+                    style: bodyTextStyle,
                     xDateFormat: '%H:%M:%S',
-                    valueDecimals: 2
+                    valueDecimals: 2,
+                    valuePrefix: '$'
                 },
                 navigator: {
+                    handles: {
+                        backgroundColor: 'var(--mstar-surface)',
+                        borderColor: 'var(--mstar-line)'
+                    },
+                    maskFill: 'var(--mstar-mask)',
+                    outlineColor: 'var(--mstar-line)',
                     series: {
                         name: 'Navigator',
-                        type: 'column',
-                        data: series.volume,
-                        color: '#00e272'
+                        data: series.price,
+                        color: 'var(--mstar-accent-soft)'
+                    },
+                    xAxis: {
+                        gridLineColor: 'var(--mstar-line)'
                     }
+                },
+                scrollbar: {
+                    enabled: false
                 },
                 rangeSelector: {
                     inputEnabled: false,
-                    selected: 4,
+                    selected: 3,
+                    buttonTheme: {
+                        fill: 'none',
+                        r: 4,
+                        stroke: 'none',
+                        'stroke-width': 0,
+                        style: {
+                            color: 'var(--mstar-text-muted)',
+                            fontWeight: '300'
+                        },
+                        states: {
+                            hover: {
+                                fill: 'var(--mstar-hover)',
+                                style: {
+                                    color: 'var(--mstar-text-strong)'
+                                }
+                            },
+                            select: {
+                                fill: 'var(--mstar-accent-select)',
+                                style: {
+                                    color: 'var(--mstar-accent)',
+                                    fontWeight: '500'
+                                }
+                            }
+                        }
+                    },
+                    labelStyle: {
+                        color: 'var(--mstar-text-muted)'
+                    },
                     buttons: [{
                         type: 'minute',
                         count: 5,
@@ -176,44 +280,96 @@ function getTradesTable(rows) {
                     }]
                 },
                 xAxis: {
-                    type: 'datetime'
-                },
-                yAxis: [{
-                    height: '60%',
-                    title: {
-                        text: 'Price (USD)'
+                    lineColor: 'var(--mstar-line)',
+                    tickColor: 'var(--mstar-line)',
+                    accessibility: {
+                        description: 'Time of trade'
                     },
                     labels: {
-                        format: '${value:.2f}'
+                        style: labelStyle
+                    }
+                },
+                yAxis: [{
+                    height: '80%',
+                    gridLineColor: 'var(--mstar-line)',
+                    gridLineWidth: 1,
+                    lineWidth: 0,
+                    accessibility: {
+                        description: 'Trade price in US dollars'
+                    },
+                    title: {
+                        text: 'Price (USD)',
+                        style: labelStyle
+                    },
+                    labels: {
+                        format: '${value:.2f}',
+                        style: labelStyle
                     }
                 }, {
-                    top: '65%',
-                    height: '35%',
+                    top: '80%',
+                    height: '20%',
                     offset: 0,
+                    maxPadding: 0,
+                    gridLineColor: 'var(--mstar-line)',
+                    gridLineWidth: 1,
+                    showLastLabel: true,
+                    lineWidth: 0,
+                    accessibility: {
+                        description: 'Number of shares per trade'
+                    },
                     title: {
-                        text: 'Shares (Volume)'
+                        text: 'Shares (Volume)',
+                        style: labelStyle
+                    },
+                    reserveSpace: false,
+                    labels: {
+                        x: 0,
+                        y: 11,
+                        style: labelStyle
                     }
                 }],
                 series: [{
-                    name: 'Ask',
-                    data: series.ask,
-                    color: '#2caffe'
-                }, {
-                    name: 'Bid',
-                    data: series.bid,
-                    color: '#544fc5'
+                    type: 'arearange',
+                    name: 'Bid / Ask',
+                    data: series.spread,
+                    color: 'var(--mstar-band)',
+                    fillOpacity: 0.55,
+                    lineWidth: 0,
+                    marker: {
+                        enabled: false
+                    },
+                    accessibility: {
+                        description: 'Translucent band showing the bid-ask ' +
+                            'spread at each trade time.'
+                    }
                 }, {
                     name: 'Price',
                     data: series.price,
-                    color: '#fe6a35'
+                    color: 'var(--mstar-accent)',
+                    lineWidth: 1.5,
+                    marker: {
+                        enabled: true,
+                        radius: 2,
+                        symbol: 'circle'
+                    },
+                    accessibility: {
+                        description: 'Last traded price at each individual ' +
+                            'trade.'
+                    }
                 }, {
                     name: 'Volume',
                     type: 'column',
                     data: series.volume,
-                    color: '#00e272',
+                    color: 'var(--mstar-accent-soft)',
+                    borderWidth: 0,
                     yAxis: 1,
                     tooltip: {
-                        valueDecimals: 0
+                        valueDecimals: 0,
+                        valuePrefix: ''
+                    },
+                    accessibility: {
+                        description: 'Number of shares exchanged in each ' +
+                            'individual trade.'
                     }
                 }]
             }
