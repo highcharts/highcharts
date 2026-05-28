@@ -680,17 +680,13 @@ class TiledWebMapSeries extends MapSeries {
                                 chart.renderer.globalAnimation &&
                                 chart.hasRendered
                             ) {
-                                const startX = Number(
-                                        tiles[zoomKey].tiles[key].attr('x')
-                                    ),
-                                    startY = Number(
-                                        tiles[zoomKey].tiles[key].attr('y')
-                                    ),
+                                const startX = Number(tile.attr('x')),
+                                    startY = Number(tile.attr('y')),
                                     startWidth = Number(
-                                        tiles[zoomKey].tiles[key].attr('width')
+                                        tile.attr('width')
                                     ),
                                     startHeight = Number(
-                                        tiles[zoomKey].tiles[key].attr('height')
+                                        tile.attr('height')
                                     );
 
 
