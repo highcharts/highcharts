@@ -1179,57 +1179,92 @@ function extractReactOptionComponents(
     // 4. XAxis
     if (canExtract('xAxis') && prunedConfig.xAxis && !Array.isArray(prunedConfig.xAxis)) {
         const axis = prunedConfig.xAxis;
-        const axisChildren: string[] = [];
 
-        if (axis.title && axis.title.text) {
-            axisChildren.push(`${indent}    <Title>${escapeJSXText(axis.title.text)}</Title>`);
-            if (!imports.includes('Title')) {
-                imports.push('Title');
-            }
-            // Remove only title from xAxis, keep other keys in config
-            const { title: _t, ...rest } = axis;
-            if (Object.keys(rest).length > 0) {
-                prunedConfig.xAxis = rest;
-            } else {
-                delete prunedConfig.xAxis;
-            }
-        }
+        if (axis && typeof axis === 'object') {
+            const axisChildren: string[] = [];
+            const axisForOptions = { ...axis };
 
-        if (axisChildren.length > 0) {
+            if (axis.title && typeof axis.title === 'object' && 'text' in axis.title) {
+                axisChildren.push(
+                    `${indent}    <Title>${escapeJSXText(String(axis.title.text))}</Title>`
+                );
+                if (!imports.includes('Title')) {
+                    imports.push('Title');
+                }
+
+                const titleForOptions = { ...axis.title };
+                delete titleForOptions.text;
+
+                if (Object.keys(titleForOptions).length > 0) {
+                    axisForOptions.title = titleForOptions;
+                } else {
+                    delete axisForOptions.title;
+                }
+            }
+
             if (!imports.includes('XAxis')) {
                 imports.push('XAxis');
             }
-            children.push(`${indent}<XAxis>`);
-            children.push(...axisChildren);
-            children.push(`${indent}</XAxis>`);
+
+            const axisOptions = Object.keys(axisForOptions).length > 0 ?
+                ` options={${JSON.stringify(axisForOptions)}}` :
+                '';
+
+            if (axisChildren.length > 0) {
+                children.push(`${indent}<XAxis${axisOptions}>`);
+                children.push(...axisChildren);
+                children.push(`${indent}</XAxis>`);
+            } else {
+                children.push(`${indent}<XAxis${axisOptions} />`);
+            }
+
+            delete prunedConfig.xAxis;
         }
     }
 
     // 5. YAxis
     if (canExtract('yAxis') && prunedConfig.yAxis && !Array.isArray(prunedConfig.yAxis)) {
         const axis = prunedConfig.yAxis;
-        const axisChildren: string[] = [];
 
-        if (axis.title && axis.title.text) {
-            axisChildren.push(`${indent}    <Title>${escapeJSXText(axis.title.text)}</Title>`);
-            if (!imports.includes('Title')) {
-                imports.push('Title');
-            }
-            const { title: _t, ...rest } = axis;
-            if (Object.keys(rest).length > 0) {
-                prunedConfig.yAxis = rest;
-            } else {
-                delete prunedConfig.yAxis;
-            }
-        }
+        if (axis && typeof axis === 'object') {
+            const axisChildren: string[] = [];
+            const axisForOptions = { ...axis };
 
-        if (axisChildren.length > 0) {
+            if (axis.title && typeof axis.title === 'object' && 'text' in axis.title) {
+                axisChildren.push(
+                    `${indent}    <Title>${escapeJSXText(String(axis.title.text))}</Title>`
+                );
+                if (!imports.includes('Title')) {
+                    imports.push('Title');
+                }
+
+                const titleForOptions = { ...axis.title };
+                delete titleForOptions.text;
+
+                if (Object.keys(titleForOptions).length > 0) {
+                    axisForOptions.title = titleForOptions;
+                } else {
+                    delete axisForOptions.title;
+                }
+            }
+
             if (!imports.includes('YAxis')) {
                 imports.push('YAxis');
             }
-            children.push(`${indent}<YAxis>`);
-            children.push(...axisChildren);
-            children.push(`${indent}</YAxis>`);
+
+            const axisOptions = Object.keys(axisForOptions).length > 0 ?
+                ` options={${JSON.stringify(axisForOptions)}}` :
+                '';
+
+            if (axisChildren.length > 0) {
+                children.push(`${indent}<YAxis${axisOptions}>`);
+                children.push(...axisChildren);
+                children.push(`${indent}</YAxis>`);
+            } else {
+                children.push(`${indent}<YAxis${axisOptions} />`);
+            }
+
+            delete prunedConfig.yAxis;
         }
     }
 
@@ -1275,6 +1310,42 @@ function extractReactOptionComponents(
     };
 }
 
+function getImplicitReactOptionComponentKeys(
+    chartConfig: any,
+    metaList: MetaList
+): Set<string> {
+    const inferredKeys = new Set<string>();
+    const hasXAxisControl = metaList.some(
+        meta => typeof meta.path === 'string' && meta.path.startsWith('xAxis.')
+    );
+    const hasYAxisControl = metaList.some(
+        meta => typeof meta.path === 'string' && meta.path.startsWith('yAxis.')
+    );
+
+    if (hasXAxisControl && chartConfig.xAxis && !Array.isArray(chartConfig.xAxis)) {
+        inferredKeys.add('xAxis');
+    }
+    if (hasYAxisControl && chartConfig.yAxis && !Array.isArray(chartConfig.yAxis)) {
+        inferredKeys.add('yAxis');
+    }
+
+    if ((inferredKeys.has('xAxis') || inferredKeys.has('yAxis')) &&
+        chartConfig.title &&
+        typeof chartConfig.title === 'object' &&
+        Object.keys(chartConfig.title).length === 1 &&
+        'text' in chartConfig.title) {
+        inferredKeys.add('title');
+    }
+
+    if ((inferredKeys.has('xAxis') || inferredKeys.has('yAxis')) &&
+        Array.isArray(chartConfig.series) &&
+        chartConfig.series.length > 0) {
+        inferredKeys.add('series');
+    }
+
+    return inferredKeys;
+}
+
 // Function to get JSX for React samples.
 export async function getDemoJSX(
     config: SampleGeneratorConfig,
@@ -1292,8 +1363,10 @@ export async function getDemoJSX(
 
     // Generate config, extract components, then serialize the pruned config
     const fullConfig = await generateChartConfig(config, metaList);
-    const extractableKeys = config.chartOptionsExtra ?
-        new Set(Object.keys(config.chartOptionsExtra)) : undefined;
+    const extractableKeys = new Set([
+        ...Object.keys(config.chartOptionsExtra || {}),
+        ...getImplicitReactOptionComponentKeys(fullConfig, metaList)
+    ]);
     const { prunedConfig, imports: componentImports, childrenJSX } =
         extractReactOptionComponents(fullConfig, dataIdentifier, extractableKeys);
 

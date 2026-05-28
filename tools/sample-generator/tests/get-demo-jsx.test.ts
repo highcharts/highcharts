@@ -3,9 +3,17 @@ import { ok } from 'node:assert';
 
 import { getDemoJSX } from '../index.ts';
 
-const metaList = [{
+const axisMetaList = [{
     defaultValue: 'linear',
     path: 'xAxis.type'
+}];
+
+const genericMetaList = [{
+    defaultValue: false,
+    path: 'chart.inverted',
+    controlOptions: {
+        inTitle: false
+    }
 }];
 
 describe('sample-generator getDemoJSX', () => {
@@ -14,7 +22,7 @@ describe('sample-generator getDemoJSX', () => {
             {
                 output: 'highcharts/react/unit-test/no-modules'
             },
-            metaList
+            genericMetaList
         );
 
         ok(
@@ -37,7 +45,7 @@ describe('sample-generator getDemoJSX', () => {
                 modules: ['modules/contour'],
                 output: 'highcharts/react/unit-test/with-modules'
             },
-            metaList
+            genericMetaList
         );
 
         ok(
@@ -64,7 +72,7 @@ describe('sample-generator getDemoJSX', () => {
                 modules: ['modules/accessibility'],
                 output: 'highcharts/react/unit-test/wrapper-module'
             },
-            metaList
+            genericMetaList
         );
 
         ok(
@@ -87,7 +95,7 @@ describe('sample-generator getDemoJSX', () => {
                 modules: ['highcharts-more'],
                 output: 'highcharts/react/unit-test/no-wrapper-module'
             },
-            metaList
+            genericMetaList
         );
 
         ok(
@@ -106,7 +114,7 @@ describe('sample-generator getDemoJSX', () => {
                 modules: ['modules/accessibility', 'highcharts-more'],
                 output: 'highcharts/react/unit-test/mixed-modules'
             },
-            metaList
+            genericMetaList
         );
 
         ok(
@@ -126,7 +134,7 @@ describe('sample-generator getDemoJSX', () => {
                 modules: ['highcharts-more'],
                 output: 'highcharts/react/unit-test/stock-src-entrypoint'
             },
-            metaList
+            genericMetaList
         );
 
         ok(
@@ -148,7 +156,7 @@ describe('sample-generator getDemoJSX', () => {
                 },
                 output: 'highcharts/react/unit-test/title-series'
             },
-            metaList
+            axisMetaList
         );
 
         ok(jsx.includes('<Title>My Title</Title>'), 'should extract title as a component');
@@ -166,7 +174,7 @@ describe('sample-generator getDemoJSX', () => {
                 },
                 output: 'highcharts/react/unit-test/tooltip-props'
             },
-            metaList
+            axisMetaList
         );
 
         ok(jsx.includes('<Tooltip showDelay={500}'), 'should extract tooltip props');
@@ -180,7 +188,7 @@ describe('sample-generator getDemoJSX', () => {
                 },
                 output: 'highcharts/react/unit-test/tooltip-format'
             },
-            metaList
+            axisMetaList
         );
 
         ok(jsx.includes('<Tooltip>'), 'should open tooltip component');
@@ -199,7 +207,7 @@ describe('sample-generator getDemoJSX', () => {
                 },
                 output: 'highcharts/react/unit-test/legend-children'
             },
-            metaList
+            axisMetaList
         );
 
         ok(jsx.includes('<Legend>'), 'should open legend component');
@@ -218,12 +226,41 @@ describe('sample-generator getDemoJSX', () => {
                 },
                 output: 'highcharts/react/unit-test/xaxis-title'
             },
-            metaList
+            axisMetaList
         );
 
-        ok(jsx.includes('<XAxis>'), 'should open xAxis component');
+        ok(
+            jsx.includes('<XAxis options={{') && jsx.includes('"categories":["Apples","Bananas","Oranges","Pears"]') && jsx.includes('"type":"linear"'),
+            'should open xAxis component with remaining axis options'
+        );
         ok(jsx.includes('<Title>Time</Title>'), 'should extract xAxis title');
         ok(jsx.includes('</XAxis>'), 'should close xAxis component');
+    });
+
+    it('implicitly extracts title and series when xAxis controls are extracted', async () => {
+        const jsx = await getDemoJSX(
+            {
+                chartOptionsExtra: {
+                    xAxis: {
+                        categories: ['Apples', 'Bananas', 'Oranges', 'Pears'],
+                        gridLineWidth: 1,
+                        gridZIndex: 4
+                    }
+                },
+                output: 'highcharts/react/unit-test/xaxis-options'
+            },
+            axisMetaList
+        );
+
+        ok(jsx.includes('<Title>Demo of &lt;em&gt;xAxis.type&lt;/em&gt;</Title>'), 'should extract the generated title');
+        ok(jsx.includes('<Series data={[1, 3, 2, 4]} />'), 'should extract template series as a component');
+        ok(
+            jsx.includes('<XAxis options={{') && jsx.includes('"gridLineWidth":1') && jsx.includes('"gridZIndex":4') && jsx.includes('"type":"linear"'),
+            'should extract xAxis options into the XAxis component'
+        );
+        ok(!jsx.includes('title:'), 'should remove title from chartOptions');
+        ok(!jsx.includes('series:'), 'should remove series from chartOptions');
+        ok(!jsx.includes('xAxis:'), 'should remove xAxis from chartOptions');
     });
 
     it('extracts yAxis title children', async () => {
@@ -234,12 +271,37 @@ describe('sample-generator getDemoJSX', () => {
                 },
                 output: 'highcharts/react/unit-test/yaxis-title'
             },
-            metaList
+            axisMetaList
         );
 
         ok(jsx.includes('<YAxis>'), 'should open yAxis component');
         ok(jsx.includes('<Title>Values</Title>'), 'should extract yAxis title');
         ok(jsx.includes('</YAxis>'), 'should close yAxis component');
+    });
+
+    it('preserves non-text axis title options under YAxis options', async () => {
+        const jsx = await getDemoJSX(
+            {
+                chartOptionsExtra: {
+                    yAxis: {
+                        title: {
+                            text: 'Values',
+                            align: 'high'
+                        },
+                        opposite: true
+                    }
+                },
+                output: 'highcharts/react/unit-test/yaxis-title-options'
+            },
+            axisMetaList
+        );
+
+        ok(
+            jsx.includes('<YAxis options={{"title":{"align":"high"},"opposite":true}}>'),
+            'should keep non-text axis title options on the YAxis component'
+        );
+        ok(jsx.includes('<Title>Values</Title>'), 'should still extract yAxis title text');
+        ok(!jsx.includes('yAxis:'), 'should remove yAxis from chartOptions');
     });
 
     it('uses data identifier for series when dataFile is present', async () => {
@@ -251,7 +313,7 @@ describe('sample-generator getDemoJSX', () => {
                 },
                 output: 'highcharts/react/unit-test/datafile-series'
             },
-            metaList
+            axisMetaList
         );
 
         ok(jsx.includes('<Series'), 'should include a Series component');
@@ -268,7 +330,7 @@ describe('sample-generator getDemoJSX', () => {
                 },
                 output: 'highcharts/react/unit-test/fallback-unsupported'
             },
-            metaList
+            axisMetaList
         );
 
         ok(!jsx.includes('<Title>'), 'should not emit a Title component');
