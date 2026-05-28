@@ -433,31 +433,44 @@ class SankeySeries extends ColumnSeries {
         }
 
         const visited = new Set<SankeyPoint>(),
-            nodesInStack = new Set<SankeyPoint>();
+            nodesInStack = new Set<SankeyPoint>(),
+            // Iterative DFS to avoid stack overflow on large graphs. Each
+            // frame tracks the node and an index into its outgoing links so
+            // we can resume after recursing into a child. The back edge
+            // selected as circular follows the input data order.
+            stack: Array<{ node: SankeyPoint, i: number }> = [];
         let hasCircularLink = false;
 
-        // The back edge selected as circular follows the input data order.
-        const visitNode = (node: SankeyPoint): void => {
-            visited.add(node);
-            nodesInStack.add(node);
+        for (const start of nodes) {
+            if (visited.has(start)) {
+                continue;
+            }
 
-            for (const link of adjacency.get(node) || []) {
-                const nextNode = link.toNode;
+            visited.add(start);
+            nodesInStack.add(start);
+            stack.push({ node: start, i: 0 });
+
+            while (stack.length) {
+                const frame = stack[stack.length - 1],
+                    links = adjacency.get(frame.node) || [];
+
+                if (frame.i >= links.length) {
+                    nodesInStack.delete(frame.node);
+                    stack.pop();
+                    continue;
+                }
+
+                const link = links[frame.i++],
+                    nextNode = link.toNode;
 
                 if (!visited.has(nextNode)) {
-                    visitNode(nextNode);
+                    visited.add(nextNode);
+                    nodesInStack.add(nextNode);
+                    stack.push({ node: nextNode, i: 0 });
                 } else if (nodesInStack.has(nextNode)) {
                     link.isCircular = true;
                     hasCircularLink = true;
                 }
-            }
-
-            nodesInStack.delete(node);
-        };
-
-        for (const node of nodes) {
-            if (!visited.has(node)) {
-                visitNode(node);
             }
         }
 

@@ -216,9 +216,11 @@ class SankeyPoint extends ColumnSeries.prototype.pointClass {
             return tooltip;
         }
 
+        const selfLinkFormat =
+            this.series.options.tooltip?.nodeSelfLinkFormat || '';
+
         return tooltip + format(
-            '{point.name} \u2192 {point.name}: ' +
-                '<b>{selfLinkWeight}</b><br/>',
+            selfLinkFormat,
             {
                 point: this,
                 selfLinkWeight

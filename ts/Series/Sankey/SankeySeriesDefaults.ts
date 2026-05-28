@@ -398,7 +398,18 @@ const SankeySeriesDefaults: PlotOptionsOf<SankeySeries> = {
          * specifying what to show for _nodes_ in tooltip of a diagram
          * series, as opposed to links.
          */
-        nodeFormat: '{point.name}: <b>{point.sum}</b><br/>'
+        nodeFormat: '{point.name}: <b>{point.sum}</b><br/>',
+        /**
+         * The
+         * [format string](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting)
+         * appended to the node tooltip when the node has self-referencing
+         * (circular) links. The `selfLinkWeight` variable is the sum of all
+         * self-link weights for the node.
+         *
+         * @since next
+         */
+        nodeSelfLinkFormat:
+            '{point.name} → {point.name}: <b>{selfLinkWeight}</b><br/>'
     }
 };
 
