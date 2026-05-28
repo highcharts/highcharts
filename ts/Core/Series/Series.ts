@@ -4879,9 +4879,15 @@ class Series {
                 }
 
                 if (state) {
-                    lineWidth = stateOptions[state]?.lineWidth || (
-                        (lineWidth || 0) +
-                        (stateOptions?.[state]?.lineWidthPlus || 0)
+                    lineWidth = stateOptions[state]?.lineWidth ?? (
+                        !isNumber(lineWidth) ?
+                            void 0 :
+                            // Increase by lineWidthPlus only when lineWidth
+                            // is a number.
+                            (
+                                lineWidth +
+                                (stateOptions?.[state]?.lineWidthPlus || 0)
+                            )
                     ); // #4035
 
                     opacity = stateOptions[state]?.opacity ?? opacity;
