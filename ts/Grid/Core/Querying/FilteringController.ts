@@ -26,7 +26,10 @@
 import type {
     FilterCondition
 } from '../../../Data/Modifiers/FilterModifierOptions.js';
-import type { FilteringCondition } from '../Options.js';
+import type {
+    ColumnFilteringOptions,
+    FilteringCondition
+} from '../Options.js';
 
 import FilterModifier from '../../../Data/Modifiers/FilterModifier.js';
 import QueryingController from './QueryingController.js';
@@ -100,9 +103,10 @@ class FilteringController {
      */
     public static mapOptionsToFilter(
         columnId: string,
-        options: FilteringCondition
+        options: ColumnFilteringOptions
     ): FilterCondition | undefined {
-        const { condition, value } = options;
+        const condition = options.rule?.operator ?? options.condition;
+        const value = options.rule?.value ?? options.value;
         const isStringValue = isString(value);
         const stringifiedValue = isStringValue ? value : '';
         const nonValueConditions = ['empty', 'notEmpty', 'true', 'false'];

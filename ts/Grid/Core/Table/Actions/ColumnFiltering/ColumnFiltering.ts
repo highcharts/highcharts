@@ -135,25 +135,25 @@ class ColumnFiltering {
     * */
 
     /**
-     * Sets the value and condition for the filtering.
+     * Sets the value and operator for the filtering.
      *
      * @param value
      * The value to set.
      *
-     * @param condition
-     * The condition to set.
+     * @param operator
+     * The operator to set.
      */
-    public async set(value?: string, condition?: Condition): Promise<void> {
+    public async set(value?: string, operator?: Condition): Promise<void> {
         if (this.filterInput) {
             this.filterInput.value = value ?? '';
         }
 
         const conditions = this.getAllowedConditions();
         if (this.filterSelect) {
-            this.filterSelect.value = condition ?? conditions[0];
+            this.filterSelect.value = operator ?? conditions[0];
         }
 
-        await this.applyFilter({ value, condition });
+        await this.applyFilter({ value, condition: operator });
     }
 
     /**
@@ -163,17 +163,23 @@ class ColumnFiltering {
      */
     public refreshState(): void {
         const colFilteringOptions = this.column.options.filtering;
+        const operator =
+            colFilteringOptions?.rule?.operator ??
+            colFilteringOptions?.condition;
+        const value =
+            colFilteringOptions?.rule?.value ??
+            colFilteringOptions?.value;
         if (this.filterSelect) {
             const conditions = this.getAllowedConditions();
             this.filterSelect.value =
-                colFilteringOptions?.condition ??
+                operator ??
                 conditions[0];
         }
 
         if (this.filterInput) {
             this.filterInput.value =
                 '' + (
-                    colFilteringOptions?.value ?? ''
+                    value ?? ''
                 );
         }
 
@@ -319,10 +325,24 @@ class ColumnFiltering {
 
         this.column.setOptions({
             filtering: {
-                condition: condition.condition,
-                value: condition.value
+                rule: {
+                    operator: condition.condition,
+                    value: condition.value
+                }
             }
         });
+
+        const filteringOptions = this.column.viewport.grid.columnPolicy
+            .getIndividualColumnOptions(this.column.id)
+            ?.filtering;
+
+        // The setOptions deep-merges filtering, so deprecated keys
+        // would otherwise remain alongside rule after a user interaction.
+        if (filteringOptions) {
+            delete filteringOptions.condition;
+            delete filteringOptions.value;
+            delete filteringOptions.conditions;
+        }
 
         filteringController.addColumnFilterCondition(columnId, condition);
         this.disableInputIfNeeded();
@@ -409,7 +429,9 @@ class ColumnFiltering {
         }
 
         // Assign the default input value.
-        const { value } = this.column.options.filtering ?? {};
+        const value =
+            this.column.options.filtering?.rule?.value ??
+            this.column.options.filtering?.value;
         if (value || value === 0) {
             this.filterInput.value = columnType === 'datetime' ?
                 column.viewport.grid.time.dateFormat(
@@ -468,10 +490,12 @@ class ColumnFiltering {
             this.filterSelect.appendChild(optionElement);
         }
 
-        // Use condition from options or first available condition as default.
-        const filteringCondition = column.options.filtering?.condition;
-        if (filteringCondition && conditions.includes(filteringCondition)) {
-            this.filterSelect.value = filteringCondition;
+        // Use operator from options or first available operator as default.
+        const filteringOperator =
+            column.options.filtering?.rule?.operator ??
+            column.options.filtering?.condition;
+        if (filteringOperator && conditions.includes(filteringOperator)) {
+            this.filterSelect.value = filteringOperator;
         } else {
             this.filterSelect.value = conditions[0];
         }
@@ -552,14 +576,16 @@ class ColumnFiltering {
         const defaultTypeConditions = conditionsMap[column.dataType];
         const columnConditions =
             grid.columnPolicy.getIndividualColumnOptions(column.id)
+                ?.filtering?.operators ??
+            grid.columnPolicy.getIndividualColumnOptions(column.id)
                 ?.filtering?.conditions ??
+            grid.options?.columnDefaults?.filtering?.operators ??
             grid.options?.columnDefaults?.filtering?.conditions;
 
         if (!columnConditions?.length) {
             return defaultTypeConditions;
         }
 
-        // Filter configured conditions by default data type conditions.
         const allowedSet = new Set(columnConditions as readonly Condition[]);
         const allowed = defaultTypeConditions.filter((c): boolean =>
             allowedSet.has(c)

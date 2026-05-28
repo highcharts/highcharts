@@ -1015,26 +1015,99 @@ export interface TimeOptions {
 }
 
 /**
- * Column filtering options.
+ * Active filtering rule for a column.
+ */
+export interface FilteringRule {
+    /**
+     * The operator to use for filtering the column.
+     */
+    operator?: ColumnFilteringCondition;
+
+    /**
+     * The value that is used with the operator to filter the column.
+     */
+    value?: string | number | boolean | null;
+}
+
+/**
+ * Applied column filter state used internally when filtering is executed.
  */
 export interface FilteringCondition {
     /**
+     * The operator applied to the column filter.
+     */
+    condition?: ColumnFilteringCondition;
+
+    /**
+     * The value applied to the column filter.
+     */
+    value?: string | number | boolean | null;
+}
+
+/**
+ * Column filtering options.
+ */
+export interface ColumnFilteringOptions {
+    /**
+     * The active filtering rule applied to the column.
+     *
+     * @example
+     * ```js
+     * columns: [{
+     *   id: 'weight',
+     *   filtering: {
+     *     enabled: true,
+     *     rule: {
+     *       operator: 'greaterThan',
+     *       value: 100
+     *     }
+     *   }
+     * }]
+     * ```
+     */
+    rule?: FilteringRule;
+
+    /**
+     * Restricts the list of available filtering operators for the column.
+     *
+     * If set, the UI will only display the provided operators that are valid
+     * for the column's `dataType`. Invalid operators are ignored.
+     *
+     * @example
+     * ```js
+     * columns: [{
+     *   id: 'name',
+     *   dataType: 'string',
+     *   filtering: {
+     *     enabled: true,
+     *     operators: ['contains', 'beginsWith']
+     *   }
+     * }]
+     * ```
+     */
+    operators?: Array<ColumnFilteringCondition>;
+
+    /**
      * The condition to use for filtering the column.
+     *
+     * @deprecated
+     * Use `rule.operator` instead.
      */
     condition?: ColumnFilteringCondition;
 
     /**
      * The value that is used with the condition to filter the column.
+     *
+     * @deprecated
+     * Use `rule.value` instead.
      */
     value?: string | number | boolean | null;
-}
 
-export interface ColumnFilteringOptions extends FilteringCondition {
     /**
      * Restricts the list of available filtering conditions for the column.
      *
-     * If set, the UI will only display the provided conditions that are valid
-     * for the column's `dataType`. Invalid conditions are ignored.
+     * @deprecated
+     * Use `operators` instead.
      *
      * @example
      * ```js
