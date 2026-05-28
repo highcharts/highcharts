@@ -1,7 +1,6 @@
 const grid = Grid.grid('container', {
     data: {
         columns: {
-            id: [1, 2, 3, 4, 5, 6],
             product: [
                 'Apples', 'Pears', 'Plums', 'Bananas', 'Oranges', 'Grapes'
             ],
