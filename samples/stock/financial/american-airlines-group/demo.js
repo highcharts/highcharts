@@ -185,12 +185,10 @@ function getTradesTable(rows) {
                     text: 'Each marker on the line is a single trade; the ' +
                         'translucent band shows the bid-ask quote at that ' +
                         'moment. Volume per trade is in the lower pane.',
-                    align: 'left',
                     style: labelStyle
                 },
                 chart: {
                     backgroundColor: 'var(--mstar-surface)',
-                    plotBorderWidth: 0,
                     style: {
                         fontFamily: '"MorningstarIntrinsic", ' +
                             '"Helvetica Neue", Helvetica, Arial, sans-serif'
@@ -282,7 +280,6 @@ function getTradesTable(rows) {
                     }]
                 },
                 xAxis: {
-                    type: 'datetime',
                     lineColor: 'var(--mstar-line)',
                     tickColor: 'var(--mstar-line)',
                     accessibility: {
@@ -338,7 +335,6 @@ function getTradesTable(rows) {
                     color: 'var(--mstar-band)',
                     fillOpacity: 0.55,
                     lineWidth: 0,
-                    zIndex: 0,
                     marker: {
                         enabled: false
                     },
@@ -347,12 +343,10 @@ function getTradesTable(rows) {
                             'spread at each trade time.'
                     }
                 }, {
-                    type: 'line',
                     name: 'Price',
                     data: series.price,
                     color: 'var(--mstar-accent)',
                     lineWidth: 1.5,
-                    zIndex: 1,
                     marker: {
                         enabled: true,
                         radius: 2,
