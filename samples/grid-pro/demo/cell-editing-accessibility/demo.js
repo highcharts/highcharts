@@ -68,14 +68,6 @@ const grid = Grid.grid('container', {
         }
     },
     columns: [{
-        id: 'id',
-        cells: {
-            editMode: {
-                enabled: false
-            }
-        },
-        width: 60
-    }, {
         id: 'product',
         cells: {
             editMode: {

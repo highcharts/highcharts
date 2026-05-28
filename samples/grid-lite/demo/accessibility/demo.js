@@ -41,47 +41,37 @@ const grid = Grid.grid('container', {
             inline: true
         }
     },
-    header: [
-        'id',
-        {
-            format: 'Product details',
-            accessibility: {
-                description: 'The Product details group contains the product ' +
-                    'name and category columns.'
-            },
-            columns: [{
-                columnId: 'product',
-                format: 'Product name'
-            }, {
-                columnId: 'category',
-                format: 'Category'
-            }]
+    header: [{
+        format: 'Product details',
+        accessibility: {
+            description: 'The Product details group contains the product ' +
+                'name and category columns.'
         },
-        {
-            format: 'Availability',
-            accessibility: {
-                description: 'The Availability group contains the stock, ' +
-                    'price, and last updated columns.'
-            },
-            columns: [{
-                columnId: 'stock',
-                format: 'Stock'
-            }, {
-                columnId: 'price',
-                format: 'Price'
-            }, {
-                columnId: 'updated',
-                format: 'Last updated'
-            }]
-        }
-    ],
-    columns: [{
-        id: 'id',
-        filtering: {
-            enabled: false
-        },
-        width: 60
+        columns: [{
+            columnId: 'product',
+            format: 'Product name'
+        }, {
+            columnId: 'category',
+            format: 'Category'
+        }]
     }, {
+        format: 'Availability',
+        accessibility: {
+            description: 'The Availability group contains the stock, ' +
+                'price, and last updated columns.'
+        },
+        columns: [{
+            columnId: 'stock',
+            format: 'Stock'
+        }, {
+            columnId: 'price',
+            format: 'Price'
+        }, {
+            columnId: 'updated',
+            format: 'Last updated'
+        }]
+    }],
+    columns: [{
         id: 'stock',
         cells: {
             format: '{value} kg'
