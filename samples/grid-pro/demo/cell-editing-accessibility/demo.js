@@ -5,7 +5,7 @@ const grid = Grid.grid('container', {
         columns: {
             product: ['Apples', 'Pears', 'Plums', 'Bananas'],
             available: [true, false, true, true],
-            stock: [120, 85, 30, 200],
+            sku: ['APL-120', 'PER-085', 'PLM-030', 'BAN-200'],
             price: [1.5, 2.53, 5, 4.5],
             country: ['PL', 'NL', 'RO', 'EC']
         }
@@ -86,14 +86,24 @@ const grid = Grid.grid('container', {
             }
         }
     }, {
-        id: 'stock',
+        id: 'sku',
+        header: {
+            format: 'SKU'
+        },
         cells: {
-            format: '{value} kg',
             editMode: {
-                renderer: {
-                    type: 'numberInput'
-                },
-                validationRules: ['notEmpty', 'number']
+                validationRules: [
+                    'notEmpty',
+                    {
+                        validate: 'unique',
+                        notification: 'SKU must be unique.'
+                    },
+                    {
+                        validate: ({ rawValue }) =>
+                            /^[A-Z]{3}-\d{3}$/.test(rawValue),
+                        notification: 'SKU must be in the format AAA-123.'
+                    }
+                ]
             }
         }
     }, {
