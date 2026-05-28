@@ -26,10 +26,12 @@ import type SankeySeries from './SankeySeries';
 import NodesComposition from '../NodesComposition.js';
 import Point from '../../Core/Series/Point.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+import Templating from '../../Core/Templating.js';
 import { defined } from '../../Shared/Utilities.js';
 const {
     column: ColumnSeries
 } = SeriesRegistry.seriesTypes;
+const { format } = Templating;
 
 /* *
  *
@@ -53,6 +55,7 @@ class SankeyPoint extends ColumnSeries.prototype.pointClass {
 
     public hangsFrom?: SankeyPoint;
 
+    /** @internal */
     public isCircular?: boolean;
 
     public level!: number;
@@ -76,8 +79,6 @@ class SankeyPoint extends ColumnSeries.prototype.pointClass {
     public outgoing?: boolean;
 
     public series!: SankeySeries;
-
-    public selfLinkWeight?: number;
 
     public sum?: number;
 
@@ -180,6 +181,10 @@ class SankeyPoint extends ColumnSeries.prototype.pointClass {
         return this.isNode || typeof this.weight === 'number';
     }
 
+    /**
+     * Get the sum of self-referencing links.
+     * @internal
+     */
     public getSelfLinkWeight(): number {
         return this.linksFrom.reduce(
             (sum, link): number => (
@@ -211,12 +216,14 @@ class SankeyPoint extends ColumnSeries.prototype.pointClass {
             return tooltip;
         }
 
-        this.selfLinkWeight = selfLinkWeight;
-
-        return tooltip + Point.prototype.tooltipFormatter.call(
-            this,
+        return tooltip + format(
             '{point.name} \u2192 {point.name}: ' +
-                '<b>{point.selfLinkWeight}</b><br/>'
+                '<b>{selfLinkWeight}</b><br/>',
+            {
+                point: this,
+                selfLinkWeight
+            },
+            this.series.chart
         );
     }
 
