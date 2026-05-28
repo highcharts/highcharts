@@ -24,7 +24,12 @@ body {
 }
 
 .editor h2 {
-    margin: 3px 0 16px;
+    margin: 0 0 7px;
+}
+
+.editor .instructions {
+    font-size: 0.9em;
+    margin-bottom: 7px;
 }
 
 .editor,
@@ -62,18 +67,6 @@ body {
     display: inline-block;
 }
 
-.description,
-.highcharts-light .description {
-    font-style: italic;
-    font-size: 0.8em;
-    color: #777;
-}
-
-.last {
-    margin: 0;
-    padding: 0;
-}
-
 .highcharts-description {
     padding: 0 8px;
 }
@@ -87,10 +80,6 @@ body {
     .editor details {
         border-color: #525252;
     }
-
-    .description {
-        color: #aaa;
-    }
 }
 
 .highcharts-dark .demo {
@@ -100,8 +89,4 @@ body {
 .highcharts-dark .editor,
 .highcharts-dark .editor details {
     border-color: #525252;
-}
-
-.highcharts-dark .description {
-    color: #aaa;
 }

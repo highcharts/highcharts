@@ -24,7 +24,12 @@ body {
 }
 
 .editor h2 {
-    margin: 3px 0 16px;
+    margin: 0 0 7px;
+}
+
+.editor .instructions {
+    font-size: 0.9em;
+    margin-bottom: 7px;
 }
 
 .editor,
@@ -62,18 +67,6 @@ body {
     display: inline-block;
 }
 
-.description,
-.highcharts-light .description {
-    font-style: italic;
-    font-size: 0.8em;
-    color: #777;
-}
-
-.last {
-    margin: 0;
-    padding: 0;
-}
-
 #changelog {
     max-height: 240px;
     overflow-y: auto;
@@ -106,7 +99,6 @@ body {
         border-color: #525252;
     }
 
-    .description,
     #changelog:empty::before {
         color: #aaa;
     }
@@ -125,7 +117,6 @@ body {
     border-color: #525252;
 }
 
-.highcharts-dark .description,
 .highcharts-dark #changelog:empty::before {
     color: #aaa;
 }
