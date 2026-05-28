@@ -30,10 +30,6 @@ const grid = Grid.grid('container', {
     caption: {
         text: 'Fruit inventory overview'
     },
-    description: {
-        text: 'Grouped headers, inline filtering, and screen reader ' +
-            'announcements in a Grid Lite demo.'
-    },
     rendering: {
         rows: {
             minVisibleRows: 6
