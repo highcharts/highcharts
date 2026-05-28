@@ -116,14 +116,18 @@ function collectDeprecatedOptions(
 
             if (branchMetadata) {
                 const { discriminator, runtimeBasePath } = branchMetadata;
-
-                runtimePath = runtimeBasePath;
-                segments = parentSegments.concat({
-                    allowUndefined: discriminator.allowUndefined,
+                const segment: DeprecatedOptionDiscriminatorSegment = {
                     kind: 'discriminator',
                     name: discriminator.property,
                     value: discriminator.value
-                });
+                };
+
+                if (discriminator.allowUndefined) {
+                    segment.allowUndefined = true;
+                }
+
+                runtimePath = runtimeBasePath;
+                segments = parentSegments.concat(segment);
             }
 
             if (typeof deprecatedText !== 'undefined') {

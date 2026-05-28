@@ -367,7 +367,12 @@ function addTreeNode(
         switch (_tag) {
 
             default:
-                if (_infoDoclet.tags[_tag].length > 1) {
+                if (
+                    _tag === 'deprecated' &&
+                    !_infoDoclet.tags[_tag].length
+                ) {
+                    _nodeDoclet[_tag] = '';
+                } else if (_infoDoclet.tags[_tag].length > 1) {
                     _nodeDoclet[_tag] =
                         _infoDoclet.tags[_tag].slice();
                 } else {
