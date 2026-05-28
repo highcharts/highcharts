@@ -30,9 +30,10 @@ The custom implementations have the following requirements:
 
 8. `@since` and `@deprecated` support usage of `next` as the version number
    that is resolved on the next release when the next code version is known.
-   When used in a public doclet, **must have a value** - a version number or
-   `next`. (Guarded by `@highcharts/highcharts/doclet-versioned-tags` eslint
-   rule.)
+   When used in a public doclet - any block comment starting with `/**` that do
+   not have `@internal` (nor its legacy alias `@private`) tag,
+   **must have a value** - a version number or `next`. This is guarded by
+   `@highcharts/highcharts/doclet-versioned-tags` eslint rule.
 
 9. `@basic` flags an option as commonly used within its parent option, referring
    to the option itself, not to its type. Currently applied to `id`, `index`,
@@ -56,5 +57,38 @@ When documenting a TS type, interface, or class some additional rules apply:
 - Doclet placed on an interface or class should be about the interface or class
   itself, not the related API option that is using it.
 
-- `@extends` and `@excludes` tags should be replaced with proper changes to the
-  types.
+- `@extends` and `@excluding` tags should be replaced with proper changes to the
+  types. Tag `@extends` is to be resolved via `extends` keyword. Tag
+  `@excluding` is to be resolved via `propX?: undefined;` for optional
+  properties or `Omit` type when ancestry line between new interface and old is
+  not needed (in general, if you want to pass either of the interfaces through a common
+  function or processing, then you care about the ancestry and don't want to
+  use `Omit`).
+  Example:
+
+Interface with the tags (so the resolving them is still a todo task).
+```ts
+/**
+* An example of options object.
+*
+* @extends xAxis
+* @excluding linkedTo, maxZoom
+*/
+interface FakeAxis { ...props... }
+```
+
+Interface without the tags.
+```ts
+interface FakeAxis extends Axis {
+   ...props...
+
+   /* *
+    *
+    *  Excluded
+    *
+    * */
+
+   linkedTo?: undefined;
+   maxZoom?: undefined;
+}
+```
