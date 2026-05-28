@@ -20,6 +20,10 @@
  * */
 
 import type { Options } from './Options';
+import type {
+    DeprecatedOptionMatchSegment,
+    DeprecatedOptionMetadata
+} from './DeprecatedOptionsMetadata';
 
 import { error } from '../../Core/Utilities.js';
 import { deprecatedOptionsMetadata } from './DeprecatedOptionsMetadata.js';
@@ -32,7 +36,6 @@ import { deprecatedOptionsMetadata } from './DeprecatedOptionsMetadata.js';
  * */
 
 const API_BASE_URL = 'https://api.highcharts.com/grid/';
-const deprecatedOptionPaths = Object.keys(deprecatedOptionsMetadata).sort();
 
 
 /* *
@@ -62,25 +65,28 @@ function ensureSentence(text: string): string {
 }
 
 /**
- * Checks whether a nested option path exists in an options object.
+ * Checks whether a deprecated-option match pattern is used in an options
+ * object.
  *
  * @param source
  * Source object or array to inspect.
  *
  * @param pathSegments
- * Dot-path segments to traverse.
+ * Property and discriminator segments to traverse.
  *
  * @param segmentIndex
  * Current segment index during recursive traversal.
  */
-function hasOptionPath(
+export function matchesDeprecatedOption(
     source: unknown,
-    pathSegments: Array<string>,
+    pathSegments: Array<DeprecatedOptionMatchSegment>,
     segmentIndex = 0
 ): boolean {
     if (segmentIndex >= pathSegments.length) {
         return true;
     }
+
+    const segment = pathSegments[segmentIndex];
 
     if (!source || typeof source !== 'object') {
         return false;
@@ -88,65 +94,71 @@ function hasOptionPath(
 
     if (Array.isArray(source)) {
         return source.some((item): boolean =>
-            hasOptionPath(item, pathSegments, segmentIndex)
+            matchesDeprecatedOption(item, pathSegments, segmentIndex)
         );
     }
 
-    const segment = pathSegments[segmentIndex];
     const sourceRecord = source as Record<string, unknown>;
 
-    if (!Object.prototype.hasOwnProperty.call(sourceRecord, segment)) {
+    if (segment.kind === 'discriminator') {
+        if (!Object.prototype.hasOwnProperty.call(sourceRecord, segment.name)) {
+            return !!segment.allowUndefined &&
+                matchesDeprecatedOption(
+                    source,
+                    pathSegments,
+                    segmentIndex + 1
+                );
+        }
+
+        return sourceRecord[segment.name] === segment.value &&
+            matchesDeprecatedOption(source, pathSegments, segmentIndex + 1);
+    }
+
+    if (!Object.prototype.hasOwnProperty.call(sourceRecord, segment.name)) {
         return false;
     }
 
-    return hasOptionPath(
-        sourceRecord[segment],
+    return matchesDeprecatedOption(
+        sourceRecord[segment.name],
         pathSegments,
         segmentIndex + 1
     );
 }
 
 /**
- * Finds deprecated option paths used in the provided options object.
+ * Finds deprecated options used in the provided options object.
  *
  * @param options
  * Grid options to inspect.
  */
-export function findMatchingDeprecatedOptionPaths(
+export function findMatchingDeprecatedOptions(
     options: Partial<Options>
-): string[] {
-    return deprecatedOptionPaths.filter((path): boolean =>
-        hasOptionPath(options, path.split('.'))
+): Array<DeprecatedOptionMetadata> {
+    return deprecatedOptionsMetadata.filter(
+        (metadata): boolean => (
+            matchesDeprecatedOption(options, metadata.segments)
+        )
     );
 }
 
 /**
- * Builds a warning message for a deprecated Grid option path.
+ * Builds a warning message for a deprecated Grid option.
  *
- * @param path
- * Deprecated option path.
+ * @param metadata
+ * Deprecated option metadata.
  */
-export function getDeprecatedOptionMessage(path: string): string {
-    if (
-        !Object.prototype.hasOwnProperty.call(
-            deprecatedOptionsMetadata,
-            path
-        )
-    ) {
-        return '';
-    }
-
-    const metadata = deprecatedOptionsMetadata[path];
-
+export function getDeprecatedOptionMessage(
+    metadata: DeprecatedOptionMetadata
+): string {
     const messageParts = [
-        `Option "${path}" has been deprecated.`
+        `Option "${metadata.runtimePath}" has been deprecated.`
     ];
 
-    if (metadata) {
-        messageParts.push(ensureSentence(metadata));
+    if (metadata.text) {
+        messageParts.push(ensureSentence(metadata.text));
     }
 
-    messageParts.push(`Read more at ${API_BASE_URL}${path}`);
+    messageParts.push(`Read more at ${API_BASE_URL}${metadata.docsPath}`);
 
     return messageParts.join(' ');
 }
@@ -160,7 +172,7 @@ export function getDeprecatedOptionMessage(path: string): string {
 export function warnIfDeprecatedOptions(
     options: Partial<Options>
 ): void {
-    for (const path of findMatchingDeprecatedOptionPaths(options)) {
-        error(getDeprecatedOptionMessage(path), false);
+    for (const metadata of findMatchingDeprecatedOptions(options)) {
+        error(getDeprecatedOptionMessage(metadata), false);
     }
 }

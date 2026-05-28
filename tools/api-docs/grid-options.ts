@@ -47,6 +47,17 @@ interface Args {
     source?: string;
 }
 
+interface RuntimeBranchDiscriminator {
+    allowUndefined?: boolean;
+    property: string;
+    value: string;
+}
+
+interface RuntimeBranchMetadata {
+    discriminator: RuntimeBranchDiscriminator;
+    runtimeBasePath: string;
+}
+
 
 /* *
  *
@@ -63,8 +74,11 @@ const STACK: Array<TSLib.CodeInfo> = [];
 
 const TREE: TreeLib.Options = {};
 
+let runtimeBranchMetadata = new WeakMap<TreeLib.Option, RuntimeBranchMetadata>();
+
 function resetBuildState(): void {
     STACK.length = 0;
+    runtimeBranchMetadata = new WeakMap();
 
     for (const key of Object.keys(TREE)) {
         delete TREE[key];
@@ -774,6 +788,15 @@ function expandRendererOptionChildren(
         // Group renderer-specific options by renderer type, similar to
         // how Highcharts Core groups series options by series type.
         const typeNode = getTreeNode(`${treeNode.meta.fullname}.${spec.typeName}`);
+
+        runtimeBranchMetadata.set(typeNode, {
+            discriminator: {
+                property: 'type',
+                value: spec.typeName
+            },
+            runtimeBasePath: treeNode.meta.fullname
+        });
+
         if (!typeNode.doclet.description) {
             const interfaceDesc = (
                 info.doclet &&
@@ -940,6 +963,16 @@ function expandDataProviderOptionChildren(
         const providerNode = getTreeNode(
             `${treeNode.meta.fullname}.${provider.providerType}`
         );
+
+        runtimeBranchMetadata.set(providerNode, {
+            discriminator: {
+                allowUndefined: provider.providerType === 'local',
+                property: 'providerType',
+                value: provider.providerType
+            },
+            runtimeBasePath: treeNode.meta.fullname
+        });
+
         const providerSourcePath = (
             provider.interfaceInfo.meta.file ||
             provider.sourceInfo.path ||
@@ -1062,6 +1095,15 @@ function expandTreeInputOptionChildren(
         }
 
         const typeNode = getTreeNode(`${treeNode.meta.fullname}.${spec.typeName}`);
+
+        runtimeBranchMetadata.set(typeNode, {
+            discriminator: {
+                property: 'type',
+                value: spec.typeName
+            },
+            runtimeBasePath: treeNode.meta.fullname
+        });
+
         const interfaceDesc = (
             interfaceInfo.info.doclet &&
             TSLib.extractTagText(
@@ -1982,6 +2024,12 @@ function findTreeNode(
     }
 
     return undefined;
+}
+
+export function getRuntimeBranchMetadata(
+    node: TreeLib.Option
+): RuntimeBranchMetadata | undefined {
+    return runtimeBranchMetadata.get(node);
 }
 
 

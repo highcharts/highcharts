@@ -9,8 +9,42 @@
 
 'use strict';
 
-const deprecatedOptionsMetadata: Record<string, string> = {
-    'dataTable': 'Use `data.dataTable` instead.'
-};
+interface DeprecatedOptionPropertySegment {
+    kind: 'property';
+    name: string;
+}
 
+interface DeprecatedOptionDiscriminatorSegment {
+    allowUndefined?: boolean;
+    kind: 'discriminator';
+    name: string;
+    value: string;
+}
+
+type DeprecatedOptionMatchSegment =
+    DeprecatedOptionDiscriminatorSegment |
+    DeprecatedOptionPropertySegment;
+
+interface DeprecatedOptionMetadata {
+    docsPath: string;
+    runtimePath: string;
+    segments: Array<DeprecatedOptionMatchSegment>;
+    text: string;
+}
+
+const deprecatedOptionsMetadata: Array<DeprecatedOptionMetadata> = [
+    {
+        'docsPath': 'dataTable',
+        'runtimePath': 'dataTable',
+        'segments': [
+            {
+                'kind': 'property',
+                'name': 'dataTable'
+            }
+        ],
+        'text': 'Use `data.dataTable` instead.'
+    }
+];
+
+export type { DeprecatedOptionMatchSegment, DeprecatedOptionMetadata };
 export { deprecatedOptionsMetadata };

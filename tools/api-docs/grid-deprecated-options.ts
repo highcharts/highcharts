@@ -21,9 +21,13 @@ import FS from 'node:fs';
 import * as Path from 'node:path';
 
 import LogLib from '../libs/log.js';
+import TreeLib from '../libs/tree.js';
 import Yargs from 'yargs';
 
-import { buildGridOptionsTree } from './grid-options';
+import {
+    buildGridOptionsTree,
+    getRuntimeBranchMetadata
+} from './grid-options';
 
 
 /* *
@@ -38,11 +42,26 @@ interface Args {
     source?: string;
 }
 
-interface OptionNode {
-    children?: Record<string, OptionNode>;
-    doclet?: {
-        deprecated?: unknown;
-    };
+interface DeprecatedOptionPropertySegment {
+    kind: 'property';
+    name: string;
+}
+
+interface DeprecatedOptionDiscriminatorSegment {
+    allowUndefined?: boolean;
+    kind: 'discriminator';
+    name: string;
+    value: string;
+}
+
+interface DeprecatedOptionMetadata {
+    docsPath: string;
+    runtimePath: string;
+    segments: Array<
+        DeprecatedOptionDiscriminatorSegment |
+        DeprecatedOptionPropertySegment
+    >;
+    text: string;
 }
 
 
@@ -64,13 +83,15 @@ const DEFAULT_OUTPUT = Path.resolve(
  * */
 
 function collectDeprecatedOptions(
-    tree: Record<string, OptionNode>
-): Record<string, string> {
-    const deprecatedOptions: Record<string, string> = {};
+    tree: TreeLib.Options
+): Array<DeprecatedOptionMetadata> {
+    const deprecatedOptions: Array<DeprecatedOptionMetadata> = [];
 
     const visit = (
-        nodes: Record<string, OptionNode>,
-        parentPath = ''
+        nodes: TreeLib.Options,
+        parentDocsPath = '',
+        parentRuntimePath = '',
+        parentSegments: DeprecatedOptionMetadata['segments'] = []
     ): void => {
         const nodeNames = Object.keys(nodes)
             .filter((name): boolean => name !== '_meta')
@@ -78,24 +99,59 @@ function collectDeprecatedOptions(
 
         for (const nodeName of nodeNames) {
             const node = nodes[nodeName];
-            const path = parentPath ? `${parentPath}.${nodeName}` : nodeName;
+            const docsPath = parentDocsPath ?
+                `${parentDocsPath}.${nodeName}` :
+                nodeName;
+            const branchMetadata = getRuntimeBranchMetadata(node);
             const deprecatedText = normalizeDocletText(
                 node.doclet?.deprecated
             );
+            let runtimePath = parentRuntimePath ?
+                `${parentRuntimePath}.${nodeName}` :
+                nodeName;
+            let segments = parentSegments.concat({
+                kind: 'property',
+                name: nodeName
+            });
+
+            if (branchMetadata) {
+                const { discriminator, runtimeBasePath } = branchMetadata;
+
+                runtimePath = runtimeBasePath;
+                segments = parentSegments.concat({
+                    allowUndefined: discriminator.allowUndefined,
+                    kind: 'discriminator',
+                    name: discriminator.property,
+                    value: discriminator.value
+                });
+            }
 
             if (typeof deprecatedText !== 'undefined') {
-                deprecatedOptions[path] = deprecatedText;
+                deprecatedOptions.push({
+                    docsPath,
+                    runtimePath,
+                    segments,
+                    text: deprecatedText
+                });
             }
 
             if (node.children) {
-                visit(node.children, path);
+                visit(node.children, docsPath, runtimePath, segments);
             }
         }
     };
 
     visit(tree);
 
-    return deprecatedOptions;
+    return deprecatedOptions.sort(
+        (
+            left: DeprecatedOptionMetadata,
+            right: DeprecatedOptionMetadata
+        ): number => (
+            left.docsPath.localeCompare(right.docsPath) ||
+            left.runtimePath.localeCompare(right.runtimePath)
+        )
+    );
 }
 
 function normalizeDocletText(value: unknown): string | undefined {
@@ -139,11 +195,36 @@ function stringifySingleQuoted(value: string): string {
 }
 
 function serializeLiteral(
-    value: Record<string, unknown> | string,
+    value: Array<unknown> | Record<string, unknown> | string | boolean,
     indentLevel = 0
 ): string {
+    if (typeof value === 'boolean') {
+        return `${value}`;
+    }
+
     if (typeof value === 'string') {
         return stringifySingleQuoted(value);
+    }
+
+    if (Array.isArray(value)) {
+        if (!value.length) {
+            return '[]';
+        }
+
+        const indent = '    '.repeat(indentLevel);
+        const childIndent = '    '.repeat(indentLevel + 1);
+        const serializedEntries = value.map(
+            (entryValue): string => `${childIndent}${serializeLiteral(
+                entryValue as
+                    Array<unknown> |
+                    Record<string, unknown> |
+                    string |
+                    boolean,
+                indentLevel + 1
+            )}`
+        );
+
+        return `[\n${serializedEntries.join(',\n')}\n${indent}]`;
     }
 
     const indent = '    '.repeat(indentLevel);
@@ -158,7 +239,11 @@ function serializeLiteral(
         ([key, entryValue]): string => `${childIndent}${stringifySingleQuoted(
             key
         )}: ${serializeLiteral(
-            entryValue as Record<string, unknown> | string,
+            entryValue as
+                Array<unknown> |
+                Record<string, unknown> |
+                string |
+                boolean,
             indentLevel + 1
         )}`
     );
@@ -167,14 +252,9 @@ function serializeLiteral(
 }
 
 function renderMetadataModule(
-    deprecatedOptions: Record<string, string>
+    deprecatedOptions: Array<DeprecatedOptionMetadata>
 ): string {
-    const normalizedEntries = Object.entries(deprecatedOptions)
-        .sort(([leftPath], [rightPath]): number => (
-            leftPath.localeCompare(rightPath)
-        ))
-        .map(([path, text]) => [path, text]);
-    const serialized = serializeLiteral(Object.fromEntries(normalizedEntries));
+    const serialized = serializeLiteral(deprecatedOptions);
 
     return `/* *
  *
@@ -187,8 +267,32 @@ function renderMetadataModule(
 
 'use strict';
 
-const deprecatedOptionsMetadata: Record<string, string> = ${serialized};
+interface DeprecatedOptionPropertySegment {
+    kind: 'property';
+    name: string;
+}
 
+interface DeprecatedOptionDiscriminatorSegment {
+    allowUndefined?: boolean;
+    kind: 'discriminator';
+    name: string;
+    value: string;
+}
+
+type DeprecatedOptionMatchSegment =
+    DeprecatedOptionDiscriminatorSegment |
+    DeprecatedOptionPropertySegment;
+
+interface DeprecatedOptionMetadata {
+    docsPath: string;
+    runtimePath: string;
+    segments: Array<DeprecatedOptionMatchSegment>;
+    text: string;
+}
+
+const deprecatedOptionsMetadata: Array<DeprecatedOptionMetadata> = ${serialized};
+
+export type { DeprecatedOptionMatchSegment, DeprecatedOptionMetadata };
 export { deprecatedOptionsMetadata };
 `;
 }
@@ -209,7 +313,7 @@ async function main(): Promise<void> {
     LogLib.success(
         'Saved',
         outputPath,
-        `(${Object.keys(deprecatedOptions).length} deprecated options).`
+        `(${deprecatedOptions.length} deprecated options).`
     );
 }
 
