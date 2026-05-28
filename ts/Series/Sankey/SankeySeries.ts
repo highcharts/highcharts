@@ -51,6 +51,7 @@ import {
     crisp,
     extend,
     isObject,
+    isNumber,
     merge,
     pick,
     relativeLength,
@@ -177,6 +178,11 @@ class SankeySeries extends ColumnSeries {
      * The margin between circular links and the plot edge.
      */
     public circularLinkMargin = 0;
+
+    /**
+     * Vertical node offset used to center simple reciprocal links.
+     */
+    public circularNodeTopOffset = 0;
 
     /* *
      *
@@ -457,6 +463,7 @@ class SankeySeries extends ColumnSeries {
         this.lastColCircLinkMaxH = 0;
         this.circularLinkBend = 0;
         this.circularLinkMargin = 0;
+        this.circularNodeTopOffset = 0;
     }
 
     /**
@@ -551,6 +558,115 @@ class SankeySeries extends ColumnSeries {
     }
 
     /**
+     * Scale circular data down when one circular link would otherwise dominate
+     * the plot. This keeps simple reciprocal diagrams readable.
+     * @internal
+     */
+    public scaleCircularTranslationFactor(): void {
+        const maxCircularLinkHeight = Math.max(
+            this.getCircularLinkMaxHeight(),
+            this.getCircularLinkMaxHeight(true)
+        );
+
+        if (maxCircularLinkHeight > this.chart.plotHeight / 4) {
+            this.translationFactor *=
+                (this.chart.plotHeight / 4) / maxCircularLinkHeight;
+        }
+    }
+
+    /**
+     * Get the Y extent of currently translated nodes and links.
+     * @internal
+     */
+    public getLayoutYExtremes(): { min: number, max: number } {
+        let min = Infinity,
+            max = -Infinity;
+
+        const addY = (y: unknown): void => {
+            if (isNumber(y)) {
+                min = Math.min(min, y);
+                max = Math.max(max, y);
+            }
+        };
+
+        for (const node of this.nodes) {
+            const { shapeArgs } = node;
+
+            if (
+                shapeArgs &&
+                isNumber(shapeArgs.y) &&
+                isNumber(shapeArgs.height)
+            ) {
+                addY(shapeArgs.y);
+                addY(shapeArgs.y + shapeArgs.height);
+            }
+        }
+
+        for (const point of this.points) {
+            const d = point.shapeArgs && point.shapeArgs.d;
+
+            if (!d) {
+                continue;
+            }
+
+            for (const segment of d) {
+                for (let i = 2; i < segment.length; i += 2) {
+                    addY(segment[i]);
+                }
+            }
+        }
+
+        return { min, max };
+    }
+
+    /**
+     * Shift already translated circular data vertically without rerouting it.
+     * @internal
+     */
+    public shiftCircularLayout(shift: number): void {
+        for (const node of this.nodes) {
+            if (node.shapeArgs && isNumber(node.shapeArgs.y)) {
+                node.shapeArgs.y += shift;
+                node.nodeY += shift;
+            }
+
+            if (node.tooltipPos) {
+                node.tooltipPos[1] += shift;
+            }
+        }
+
+        for (const point of this.points) {
+            const d = point.shapeArgs && point.shapeArgs.d;
+
+            if (d) {
+                for (const segment of d) {
+                    for (let i = 2; i < segment.length; i += 2) {
+                        const y = segment[i];
+
+                        if (isNumber(y)) {
+                            (segment as Array<string|number>)[i] = y + shift;
+                        }
+                    }
+                }
+            }
+
+            if (point.linkBase) {
+                for (let i = 0; i < point.linkBase.length; ++i) {
+                    point.linkBase[i] += shift;
+                }
+            }
+
+            if (point.dlBox) {
+                point.dlBox.y += shift;
+            }
+
+            if (point.tooltipPos) {
+                point.tooltipPos[1] += shift;
+            }
+        }
+    }
+
+    /**
      * Run pre-translation by generating the nodeColumns.
      * @private
      */
@@ -589,6 +705,7 @@ class SankeySeries extends ColumnSeries {
             this.translationFactor = this.translationFactor / 2;
             this.circularLinkBend = 20;
             this.circularLinkMargin = 8;
+            this.scaleCircularTranslationFactor();
             this.firstColCircLinkMaxH = this.getCircularLinkMaxHeight();
             this.lastColCircLinkMaxH = this.getCircularLinkMaxHeight(true);
         }
@@ -622,22 +739,57 @@ class SankeySeries extends ColumnSeries {
             }
         });
 
-        // First translate all nodes so we can use them when drawing links
-        for (const column of nodeColumns) {
-            for (const node of column) {
-                series.translateNode(node, column);
+        const translateNodesAndLinks = (): void => {
+            // First translate all nodes so we can use them when drawing links
+            for (const column of nodeColumns) {
+                for (const node of column) {
+                    series.translateNode(node, column);
+                }
             }
-        }
 
-        // Then translate links
-        for (const node of this.nodes) {
-            // Translate the links from this node
-            for (const linkPoint of node.linksFrom) {
-                // If weight is 0 - don't render the link path #12453,
-                // render null points (for organization chart)
-                if ((linkPoint.weight || linkPoint.isNull) && linkPoint.to) {
-                    series.translateLink(linkPoint);
-                    linkPoint.allowShadow = false;
+            // Then translate links
+            for (const node of this.nodes) {
+                // Translate the links from this node
+                for (const linkPoint of node.linksFrom) {
+                    // If weight is 0 - don't render the link path #12453,
+                    // render null points (for organization chart)
+                    if (
+                        (linkPoint.weight || linkPoint.isNull) &&
+                        linkPoint.to
+                    ) {
+                        series.translateLink(linkPoint);
+                        linkPoint.allowShadow = false;
+                    }
+                }
+            }
+        };
+
+        translateNodesAndLinks();
+
+        if (this.isDataCircular && !chart.inverted) {
+            const firstPoint = this.points[0],
+                secondPoint = this.points[1],
+                simpleCircularData = (
+                    this.nodes.length === 2 &&
+                    this.points.length === 2 &&
+                    !!firstPoint.isCircular !== !!secondPoint.isCircular &&
+                    firstPoint.fromNode === secondPoint.toNode &&
+                    firstPoint.toNode === secondPoint.fromNode
+                ),
+                { min, max } = this.getLayoutYExtremes(),
+                offset = isNumber(min) ?
+                    (chart.plotHeight - min - max) / 2 :
+                    0,
+                circularNodeTopOffset = simpleCircularData ?
+                    offset :
+                    Math.max(Math.min(offset, 0), -min);
+
+            if (Math.abs(circularNodeTopOffset) > 1) {
+                if (simpleCircularData) {
+                    this.circularNodeTopOffset = circularNodeTopOffset;
+                    translateNodesAndLinks();
+                } else {
+                    this.shiftCircularLayout(circularNodeTopOffset);
                 }
             }
         }
@@ -797,7 +949,7 @@ class SankeySeries extends ColumnSeries {
             point.shapeArgs = {
                 d: [
                     ['M', x4, fy1],
-                    ['C', cx2, fy1, x6, cfy1, x6, fy3],
+                    ['C', cx2, fy1, x6, cfy1, x6, y4],
                     ['L', x6, y4],
                     ['C', x6, cy2, cx2, y6, x4, y6],
                     ['L', x3, y6],
@@ -882,13 +1034,15 @@ class SankeySeries extends ColumnSeries {
             ),
             nodeWidth = Math.round(this.nodeWidth),
             nodeOffset = column.sankeyColumn.offset(node, translationFactor),
-            fromNodeTop = crisp(pick(
-                (nodeOffset as any).absoluteTop,
-                (
-                    column.sankeyColumn.top(translationFactor) +
-                    (nodeOffset as any).relativeTop
-                )
-            ), borderWidth),
+            fromNodeTop = (
+                crisp(pick(
+                    (nodeOffset as any).absoluteTop,
+                    (
+                        column.sankeyColumn.top(translationFactor) +
+                        (nodeOffset as any).relativeTop
+                    )
+                ), borderWidth) + this.circularNodeTopOffset
+            ),
             left = crisp(
                 this.colDistance * (node.column as any) +
                     borderWidth / 2,

@@ -695,9 +695,10 @@ QUnit.test('Sankey and circular data', function (assert) {
             series.firstColCircLinkMaxH,
             series.lastColCircLinkMaxH,
             series.circularLinkBend,
-            series.circularLinkMargin
+            series.circularLinkMargin,
+            series.circularNodeTopOffset
         ],
-        [0, 0, 0, 0],
+        [0, 0, 0, 0, 0],
         'Circular spacing should reset after setting non-circular data'
     );
     assert.notOk(
@@ -762,6 +763,77 @@ QUnit.test('Sankey and circular data', function (assert) {
             Math.min.apply(null, returnLinkCoordinates.y) > 0 &&
             Math.max.apply(null, returnLinkCoordinates.y) < chart.plotHeight,
         'Simple circular links should not touch the plot boundaries'
+    );
+
+    chart.series[0].setData([
+        ['a', 'b', 5],
+        ['b', 'a', 5]
+    ]);
+
+    series = chart.series[0];
+    const equalReturnLink = series.points[1],
+        equalReturnCoordinates = getPathCoordinates(
+            equalReturnLink.shapeArgs.d
+        ),
+        equalLayoutYExtremes = series.getLayoutYExtremes();
+
+    assert.ok(
+        equalReturnLink.linkBase[1] - equalReturnLink.linkBase[0] <=
+            chart.plotHeight / 4 + 0.5,
+        'Equal reciprocal links should be scaled down in the plot area'
+    );
+
+    assert.close(
+        (equalLayoutYExtremes.min + equalLayoutYExtremes.max) / 2,
+        chart.plotHeight / 2,
+        1,
+        'Equal reciprocal links should be vertically centered in the plot area'
+    );
+
+    assert.ok(
+        Math.min.apply(null, equalReturnCoordinates.x) > 0 &&
+            Math.max.apply(null, equalReturnCoordinates.x) < chart.plotWidth &&
+            Math.min.apply(null, equalReturnCoordinates.y) >= 0 &&
+            Math.max.apply(null, equalReturnCoordinates.y) <= chart.plotHeight,
+        'Equal reciprocal links should stay within the plot area'
+    );
+
+    chart.series[0].setData([
+        ['a', 'b', 5],
+        ['b', 'c', 10],
+        ['b', 'a', 5],
+        ['c', 'd', 5]
+    ]);
+
+    series = chart.series[0];
+    const naturalReturnLink = series.points[2],
+        naturalReturnCoordinates = getPathCoordinates(
+            naturalReturnLink.shapeArgs.d
+        ),
+        naturalReturnPath = naturalReturnLink.shapeArgs.d,
+        naturalLinkBottom = Math.max(
+            naturalReturnLink.linkBase[1],
+            naturalReturnLink.linkBase[3]
+        ),
+        naturalLayoutYExtremes = series.getLayoutYExtremes();
+
+    assert.ok(
+        Math.max.apply(null, naturalReturnCoordinates.y) > naturalLinkBottom,
+        'Circular links in larger setups should keep the natural lower route'
+    );
+
+    assert.close(
+        (naturalLayoutYExtremes.min + naturalLayoutYExtremes.max) / 2,
+        chart.plotHeight / 2,
+        1,
+        'Complex circular links should be shifted up without rerouting'
+    );
+
+    assert.close(
+        naturalReturnPath[1][6],
+        naturalReturnPath[2][2],
+        0.5,
+        'Circular bend should not fold back at the outer edge'
     );
 
     chart.series[0].setData([
