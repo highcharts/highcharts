@@ -24,6 +24,7 @@ import type {
     DeprecatedOptionMatchSegment,
     DeprecatedOptionMetadata
 } from './DeprecatedOptionsMetadata';
+import type { DeepPartial } from '../../Shared/Types';
 
 import { error } from '../../Core/Utilities.js';
 import { deprecatedOptionsMetadata } from './DeprecatedOptionsMetadata.js';
@@ -132,7 +133,7 @@ export function matchesDeprecatedOption(
  * Grid options to inspect.
  */
 export function findMatchingDeprecatedOptions(
-    options: Partial<Options>
+    options: DeepPartial<Options>
 ): Array<DeprecatedOptionMetadata> {
     return deprecatedOptionsMetadata.filter(
         (metadata): boolean => (
@@ -170,7 +171,7 @@ export function getDeprecatedOptionMessage(
  * Grid options to inspect.
  */
 export function warnIfDeprecatedOptions(
-    options: Partial<Options>
+    options: DeepPartial<Options>
 ): void {
     for (const metadata of findMatchingDeprecatedOptions(options)) {
         error(getDeprecatedOptionMessage(metadata), false);

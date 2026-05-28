@@ -26,6 +26,7 @@
 import type { Options, LangOptions } from './Options';
 import type { DeepPartial } from '../../Shared/Types';
 
+import { warnIfDeprecatedOptions } from './DeprecatedOptions.js';
 import Pagination from './Pagination/Pagination.js';
 import { merge } from '../../Shared/Utilities.js';
 
@@ -171,6 +172,7 @@ export const defaultOptions: DeepPartial<Options> = {
 export function setOptions(
     options: DeepPartial<Options>
 ): void {
+    warnIfDeprecatedOptions(options);
     merge(true, defaultOptions, options);
 }
 

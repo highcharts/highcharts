@@ -191,7 +191,11 @@ function normalizeDocletText(value: unknown): string | undefined {
 function stringifySingleQuoted(value: string): string {
     return `'${value
         .replace(/\\/gu, '\\\\')
-        .replace(/'/gu, '\\\'')}'`;
+        .replace(/'/gu, '\\\'')
+        .replace(/\r/gu, '\\r')
+        .replace(/\n/gu, '\\n')
+        .replace(/\u2028/gu, '\\u2028')
+        .replace(/\u2029/gu, '\\u2029')}'`;
 }
 
 function serializeLiteral(
