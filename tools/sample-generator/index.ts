@@ -163,7 +163,7 @@ async function writeFile(filePath: string, content: string) {
         await fs.writeFile(
             filePath,
             content,
-            { encoding: 'utf-8', mode: 0o666 }
+            { encoding: 'utf-8', mode: 0o644 }
         );
     }
 }
