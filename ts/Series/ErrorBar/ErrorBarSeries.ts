@@ -20,6 +20,7 @@
 
 import type ErrorBarPoint from './ErrorBarPoint';
 import type ErrorBarSeriesOptions from './ErrorBarSeriesOptions';
+import type { BoxPlotPointValKey } from '../BoxPlot/BoxPlotSeriesOptions';
 import type ColumnMetricsObject from '../Column/ColumnMetricsObject';
 
 import BoxPlotSeries from '../BoxPlot/BoxPlotSeries.js';
@@ -123,8 +124,8 @@ interface ErrorBarSeries extends BoxPlotSeries {
     pointClass: typeof ErrorBarPoint;
     doQuartiles: boolean;
     linkedParent: ErrorBarSeries;
-    pointArrayMap: Array<string>;
-    pointValKey: string;
+    pointArrayMap: Array<BoxPlotPointValKey>;
+    pointValKey: BoxPlotPointValKey;
 }
 
 extend(ErrorBarSeries.prototype, {

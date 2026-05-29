@@ -395,7 +395,7 @@ QUnit.test('Data labels for boxplot statistics (#23904)', function (assert) {
                 }, {
                     enabled: true,
                     pointValKey: 'median',
-                    formatter: function () {
+                    formatter: function (options) {
                         formatterValues = [
                             this.low,
                             this.q1,
@@ -404,7 +404,9 @@ QUnit.test('Data labels for boxplot statistics (#23904)', function (assert) {
                             this.high
                         ];
 
-                        return 'Median: ' + this.median + ' y=' + this.y;
+                        // The label value is selected through the pointValKey
+                        // passed in the label options (#23904)
+                        return 'Median: ' + this[options.pointValKey];
                     }
                 }, {
                     enabled: true,
@@ -474,7 +476,7 @@ QUnit.test('Data labels for boxplot statistics (#23904)', function (assert) {
         [
             'High: 9',
             'Q3: 7',
-            'Median: 5 y=5',
+            'Median: 5',
             'Q1: 3',
             'Low: 1'
         ],
@@ -493,7 +495,7 @@ QUnit.test('Data labels for boxplot statistics (#23904)', function (assert) {
         [
             'High: 10',
             'Q3: 8',
-            'Median: 6 y=6',
+            'Median: 6',
             'Q1: 4',
             'Low: 2'
         ],
@@ -506,3 +508,213 @@ QUnit.test('Data labels for boxplot statistics (#23904)', function (assert) {
         'A custom y offset still does not create duplicate labels after update'
     );
 });
+
+QUnit.test(
+    'Data labels for boxplot statistics, inverted (#23904)',
+    function (assert) {
+        const chart = Highcharts.chart('container', {
+                chart: {
+                    type: 'boxplot',
+                    inverted: true
+                },
+                title: {
+                    text: null
+                },
+                yAxis: {
+                    min: 0,
+                    max: 12
+                },
+                series: [{
+                    dataLabels: [{
+                        enabled: true,
+                        pointValKey: 'high',
+                        format: 'High: {point.high}'
+                    }, {
+                        enabled: true,
+                        pointValKey: 'low',
+                        format: 'Low: {point.low}'
+                    }],
+                    data: [[1, 3, 5, 7, 9]]
+                }]
+            }),
+            point = chart.series[0].points[0],
+            highLabel = point.dataLabels[0],
+            lowLabel = point.dataLabels[1];
+
+        assert.deepEqual(
+            point.dataLabels.map(label => label.text.textStr),
+            ['High: 9', 'Low: 1'],
+            'Both labels are rendered on an inverted chart'
+        );
+
+        // On an inverted chart the value axis is horizontal, so the higher
+        // value must be placed to the right of the lower value
+        assert.ok(
+            highLabel.x > lowLabel.x,
+            'High label is placed to the right of the low label'
+        );
+
+        // The high label aligns to the high whisker (left edge near highPlot),
+        // the low label to the low whisker (right edge near lowPlot)
+        assert.ok(
+            highLabel.x + 1 >= point.highPlot,
+            'High label is aligned to the high whisker'
+        );
+
+        assert.ok(
+            lowLabel.x - 1 <= point.lowPlot,
+            'Low label is aligned to the low whisker'
+        );
+    }
+);
+
+QUnit.test(
+    'Box plot data labels default formatter (#23904)',
+    function (assert) {
+        const chart = Highcharts.chart('container', {
+            chart: {
+                type: 'boxplot'
+            },
+            title: {
+                text: null
+            },
+            series: [{
+                // Array of labels without an explicit format/formatter
+                dataLabels: [{
+                    enabled: true,
+                    pointValKey: 'high'
+                }, {
+                    enabled: true,
+                    pointValKey: 'low'
+                }],
+                data: [[1, 3, 5, 7, 9]]
+            }, {
+                // Single label without pointValKey defaults to high
+                dataLabels: {
+                    enabled: true
+                },
+                data: [[1, 3, 5, 7, 9]]
+            }]
+        });
+
+        assert.deepEqual(
+            chart.series[0].points[0].dataLabels
+                .map(label => label.text.textStr),
+            ['9', '1'],
+            'Each label defaults to the value of its own pointValKey'
+        );
+
+        assert.strictEqual(
+            chart.series[1].points[0].dataLabel.text.textStr,
+            '9',
+            'A label without pointValKey defaults to the high value'
+        );
+
+        // An invalid pointValKey falls back to the series pointValKey (high)
+        // instead of reading an arbitrary point[...Plot] key (#23904)
+        const invalidChart = Highcharts.chart('container', {
+                chart: {
+                    type: 'boxplot'
+                },
+                series: [{
+                    dataLabels: {
+                        enabled: true,
+                        pointValKey: 'notAValue'
+                    },
+                    data: [[1, 3, 5, 7, 9]]
+                }]
+            }),
+            invalidPoint = invalidChart.series[0].points[0];
+
+        assert.strictEqual(
+            invalidPoint.dataLabel.text.textStr,
+            '9',
+            'Invalid pointValKey falls back to the series pointValKey'
+        );
+
+        assert.ok(
+            invalidPoint.dataLabel.y + invalidPoint.dataLabel.height <=
+                invalidPoint.highPlot + 1,
+            'Label with invalid pointValKey is aligned to the high whisker'
+        );
+    }
+);
+
+QUnit.test(
+    'Box plot data labels y context: this.y, {point.y}, filter (#23904)',
+    function (assert) {
+        const yValues = [];
+
+        // this.y and {point.y} resolve to the selected statistic per label
+        const chart = Highcharts.chart('container', {
+            chart: {
+                type: 'boxplot'
+            },
+            title: {
+                text: null
+            },
+            series: [{
+                dataLabels: [{
+                    enabled: true,
+                    pointValKey: 'high',
+                    formatter: function () {
+                        yValues.push(this.y);
+                        return '{this.y}=' + this.y;
+                    }
+                }, {
+                    enabled: true,
+                    pointValKey: 'low',
+                    format: '{point.y}'
+                }],
+                data: [[1, 3, 5, 7, 9]]
+            }]
+        });
+
+        assert.deepEqual(
+            chart.series[0].points[0].dataLabels
+                .map(label => label.text.textStr),
+            ['{this.y}=9', '1'],
+            'this.y and {point.y} resolve to each label\'s own statistic'
+        );
+
+        assert.deepEqual(
+            yValues,
+            [9],
+            'this.y inside the formatter equals the selected statistic'
+        );
+
+        assert.strictEqual(
+            chart.series[0].points[0].y,
+            9,
+            'point.y is restored to the series value after rendering'
+        );
+
+        // dataLabels.filter compares against the selected statistic per label
+        const filterChart = Highcharts.chart('container', {
+                chart: {
+                    type: 'boxplot'
+                },
+                series: [{
+                    dataLabels: [{
+                        enabled: true,
+                        pointValKey: 'high',
+                        format: 'H',
+                        filter: { property: 'y', operator: '<', value: 5 }
+                    }, {
+                        enabled: true,
+                        pointValKey: 'low',
+                        format: 'L',
+                        filter: { property: 'y', operator: '<', value: 5 }
+                    }],
+                    data: [[1, 3, 5, 7, 9]]
+                }]
+            }),
+            filterPoint = filterChart.series[0].points[0];
+
+        assert.deepEqual(
+            (filterPoint.dataLabels || []).map(label => label.text.textStr),
+            ['L'],
+            'Only the low label passes a filter on y < 5'
+        );
+    }
+);

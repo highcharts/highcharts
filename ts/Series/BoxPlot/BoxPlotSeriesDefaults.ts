@@ -19,6 +19,7 @@
  * */
 
 import type BoxPlotSeriesOptions from './BoxPlotSeriesOptions';
+import type Point from '../../Core/Series/Point';
 
 import { Palette } from '../../Core/Color/Palettes.js';
 
@@ -61,6 +62,25 @@ const BoxPlotSeriesDefaults: BoxPlotSeriesOptions = {
      * @product highcharts
      */
     threshold: null,
+
+    dataLabels: {
+        /**
+         * The default formatter renders the value of the statistic selected by
+         * the label's
+         * [pointValKey](#plotOptions.boxplot.dataLabels.pointValKey). During
+         * rendering `point.y` is set to that statistic, so `this.y`,
+         * `{point.y}` and `dataLabels.filter` all resolve to it as well.
+         *
+         * @type {Highcharts.DataLabelsFormatterCallbackFunction}
+         */
+        formatter: function (this: Point): string {
+            const { numberFormatter } = this.series.chart;
+
+            return typeof this.y === 'number' ?
+                numberFormatter(this.y, -1) :
+                '';
+        }
+    },
 
     tooltip: {
         pointFormat:
@@ -275,6 +295,13 @@ const BoxPlotSeriesDefaults: BoxPlotSeriesOptions = {
     /**
      * @default   high
      * @apioption plotOptions.boxplot.colorKey
+     */
+
+    /**
+     * The box plot point value used to position a data label and, by default,
+     * the value it displays.
+     *
+     * @typedef {"low"|"q1"|"median"|"q3"|"high"} Highcharts.BoxPlotPointValKey
      */
 
     /**
