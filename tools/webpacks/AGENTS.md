@@ -95,3 +95,51 @@ node --import tsx --test "test/ts-node-unit-tests/tests/Dashboards/**"
   entire modules. If even one export is missing from the namespace, it breaks.
 - **Forgetting Dashboards/Grid** → `externals.json` is shared. A change for
   Highcharts affects all products.
+
+## Validation scripts
+
+Two scripts validate the externals configuration against actual build output
+and source code.
+
+### check-duplicates.mjs
+
+Detects when an externalized module has been accidentally inlined into a
+secondary webpack bundle.
+
+```bash
+node tools/webpacks/check-duplicates.mjs
+```
+
+**Prerequisites:** Build must have been run (`npx gulp scripts`) so that
+`code/` contains `.js` bundles.
+
+**What it does:** Reads `externals.json` and `externals-dashboards.json`, then
+scans all secondary bundles (excluding masters) for module path strings that
+indicate the module was inlined rather than externalized.
+
+**Exit codes:** 0 = no duplicates found (or no build output); 1 = violations
+detected.
+
+### check-namespace-exposure.mjs
+
+Verifies that all named exports from modules with `namespacePath: ""` are
+exposed on the global namespace in the corresponding masters file.
+
+```bash
+node tools/webpacks/check-namespace-exposure.mjs
+```
+
+**Prerequisites:** None (reads TypeScript source directly).
+
+**What it does:** For each externalized module with `namespacePath: ""`, parses
+the TS source for named exports, then checks the masters file for matching
+`G.xxx = xxx` assignments.
+
+**Exit codes:** 0 = all exports exposed; 1 = missing exposures found.
+
+### When to run
+
+Run both scripts after:
+- Adding or removing entries in `externals.json` / `externals-dashboards.json`
+- Adding new exports to an externalized module
+- Modifying masters files
