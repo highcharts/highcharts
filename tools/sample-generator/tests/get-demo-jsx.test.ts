@@ -181,11 +181,11 @@ describe('sample-generator getDemoJSX', () => {
             'should extract template series data into a Series component'
         );
         ok(
-            jsx.includes('<XAxis options={{"categories":["Apples","Bananas","Oranges","Pears"]}} />'),
+            jsx.includes("<XAxis options={{ categories: ['Apples', 'Bananas', 'Oranges', 'Pears'] }} />"),
             'should extract xAxis options into an XAxis component'
         );
         ok(
-            jsx.includes('<Legend backgroundColor={"#aaaaaa40"} />'),
+            jsx.includes("<Legend backgroundColor={'#aaaaaa40'} />"),
             'should extract legend options into a Legend component'
         );
         ok(!jsx.includes('\n            title:'), 'should remove top-level title from chartOptions');
@@ -207,8 +207,8 @@ describe('sample-generator getDemoJSX', () => {
         );
 
         ok(jsx.includes('<Title>My Title</Title>'), 'should extract title as a component');
-        ok(jsx.includes('<Series type={"line"}'), 'should include series type as a prop');
-        ok(jsx.includes('name={"Revenue"}'), 'should include series name as a prop');
+        ok(jsx.includes("<Series type={'line'}"), 'should include series type as a prop');
+        ok(jsx.includes("name={'Revenue'}"), 'should include series name as a prop');
         ok(jsx.includes('data={[1, 2, 3]}'), 'should include series data as a prop');
         ok(!jsx.includes('title:'), 'should remove title from chartOptions');
     });
@@ -277,7 +277,7 @@ describe('sample-generator getDemoJSX', () => {
         );
 
         ok(
-            jsx.includes('<XAxis options={{') && jsx.includes('"categories":["Apples","Bananas","Oranges","Pears"]') && jsx.includes('"type":"linear"'),
+            jsx.includes('<XAxis options={{') && jsx.includes("categories: ['Apples', 'Bananas', 'Oranges', 'Pears']") && jsx.includes("type: 'linear'"),
             'should open xAxis component with remaining axis options'
         );
         ok(jsx.includes('<Title>Time</Title>'), 'should extract xAxis title');
@@ -302,7 +302,7 @@ describe('sample-generator getDemoJSX', () => {
         ok(jsx.includes('<Title>Demo of &lt;em&gt;xAxis.type&lt;/em&gt;</Title>'), 'should extract the generated title');
         ok(jsx.includes('<Series data={[1, 3, 2, 4]} />'), 'should extract template series as a component');
         ok(
-            jsx.includes('<XAxis options={{') && jsx.includes('"gridLineWidth":1') && jsx.includes('"gridZIndex":4') && jsx.includes('"type":"linear"'),
+            jsx.includes('<XAxis options={{') && jsx.includes('gridLineWidth: 1') && jsx.includes('gridZIndex: 4') && jsx.includes("type: 'linear'"),
             'should extract xAxis options into the XAxis component'
         );
         ok(!jsx.includes('title:'), 'should remove title from chartOptions');
@@ -344,7 +344,7 @@ describe('sample-generator getDemoJSX', () => {
         );
 
         ok(
-            jsx.includes('<YAxis options={{"title":{"align":"high"},"opposite":true}}>'),
+            jsx.includes("<YAxis options={{ title: { align: 'high' }, opposite: true }}>"),
             'should keep non-text axis title options on the YAxis component'
         );
         ok(jsx.includes('<Title>Values</Title>'), 'should still extract yAxis title text');
@@ -365,8 +365,8 @@ describe('sample-generator getDemoJSX', () => {
 
         ok(jsx.includes('<Series'), 'should include a Series component');
         ok(jsx.includes('data={data}'), 'should use the data identifier for series data');
-        ok(jsx.includes('type={"line"}'), 'should include series type as a prop');
-        ok(jsx.includes('name={"USD/EUR"}'), 'should include series name as a prop');
+        ok(jsx.includes("type={'line'}"), 'should include series type as a prop');
+        ok(jsx.includes("name={'USD/EUR'}"), 'should include series name as a prop');
     });
 
     it('keeps unsupported title keys in chartOptions', async () => {
@@ -416,11 +416,11 @@ describe('sample-generator getDemoJSX', () => {
 
         ok(!jsx.includes('<Title>Hello</Title>'), 'should not extract unsupported title shape');
         ok(!jsx.includes('<XAxis'), 'should not extract array xAxis shape');
-        ok(jsx.includes('<Legend'), 'should still extract supported legend object shape');
+        ok(!jsx.includes('<Legend'), 'should not extract legend when unsupported keys are present and no options fallback exists');
 
         ok(jsx.includes('title:'), 'should keep unsupported title in chartOptions');
         ok(jsx.includes('xAxis:'), 'should keep unsupported xAxis in chartOptions');
-        ok(!jsx.includes('\n            legend:'), 'should remove top-level legend from chartOptions');
+        ok(jsx.includes('legend:'), 'should keep legend in chartOptions when unsupported legend keys exist');
         ok(jsx.includes('<Series data={[1, 2, 3]} />'), 'should still extract supported series shape');
     });
 });

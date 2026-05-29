@@ -46,8 +46,9 @@ describe('react generated output verification (legend samples)', () => {
         ok(backgroundColor.includes('<Chart options={chartOptions}>'));
         ok(backgroundColor.includes('<Title>Demo of &lt;em&gt;legend.backgroundColor&lt;/em&gt;</Title>'));
         ok(backgroundColor.includes('<Series data={[1, 3, 2, 4]} />'));
-        ok(backgroundColor.includes('<XAxis options={{"categories":["Apples","Bananas","Oranges","Pears"]}} />'));
-        ok(backgroundColor.includes('<Legend backgroundColor={"#aaaaaa40"} />'));
+        ok(backgroundColor.includes("<XAxis options={{ categories: ['Apples', 'Bananas', 'Oranges', 'Pears'] }} />"));
+        ok(backgroundColor.includes("<Legend backgroundColor={'#aaaaaa40'} />"));
+        ok(!backgroundColor.includes('options={{"'));
         ok(!backgroundColor.includes('\n            title:'));
         ok(!backgroundColor.includes('\n            series:'));
         ok(!backgroundColor.includes('\n            xAxis:'));

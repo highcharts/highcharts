@@ -213,3 +213,23 @@ node --import tsx --test tools/sample-generator/tests/react-generated-output-ver
 # Optional full sample-generator test suite
 node --import tsx --test tools/sample-generator/tests/*.test.ts
 ```
+
+## React prop contract bootstrap (deterministic test input)
+
+The React option-component prop contract is stored as a checked-in JSON file:
+
+- `tools/sample-generator/contracts/react-props.contract.json`
+
+Tests should read this file directly and must not fetch data from npm/network.
+
+To refresh the contract from a local `@highcharts/react` install:
+
+```bash
+node --import tsx tools/sample-generator/scripts/extract-react-prop-contract.ts
+```
+
+Notes:
+
+- The refresh script reads local `node_modules/@highcharts/react/*.d.ts` files.
+- If `@highcharts/react` is not installed locally, the script exits with a clear error.
+- Run this only when intentionally updating the contract snapshot.

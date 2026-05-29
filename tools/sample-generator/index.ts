@@ -31,6 +31,7 @@ import { promises as fs } from 'fs';
 import { fileURLToPath } from 'url';
 
 import config from './config-example.ts';
+import { serializeJSXPropValue } from './lib/jsx-prop-serializer.ts';
 
 // Type handlers
 import * as booleanHandler from './type-handlers/boolean.ts';
@@ -81,6 +82,11 @@ const executedDirectly = import.meta.url === process.argv[1] ||
 // `node tools/sample-generator/setup.ts`.
 const flatTree: FlatTreeNode[] = JSON.parse(await fs.readFile(
     join(dirname(fileURLToPath(import.meta.url)), 'flat-tree.json'),
+    'utf-8'
+));
+
+const reactPropContract = JSON.parse(await fs.readFile(
+    join(dirname(fileURLToPath(import.meta.url)), 'contracts/react-props.contract.json'),
     'utf-8'
 ));
 
@@ -1088,6 +1094,18 @@ function extractReactOptionComponents(
 
     // Only extract keys that are in the extractable set (from chartOptionsExtra)
     const canExtract = (key: string) => !!extractableKeys && extractableKeys.has(key);
+    const getAllowedProps = (component: string): Set<string> => new Set(
+        reactPropContract?.components?.[component]?.directProps || []
+    );
+    const toProp = (key: string, value: unknown): string | null => {
+        const serialized = serializeJSXPropValue(value);
+
+        if (serialized === null) {
+            return null;
+        }
+
+        return `${key}={${serialized}}`;
+    };
 
     // 1. Title: only extract if title has ONLY `text` key
     if (canExtract('title') && prunedConfig.title && Object.keys(prunedConfig.title).length === 1 &&
@@ -1103,62 +1121,98 @@ function extractReactOptionComponents(
     if (canExtract('tooltip') && prunedConfig.tooltip) {
         const tooltip = prunedConfig.tooltip;
         const formatKeys = ['pointFormat', 'headerFormat', 'footerFormat'];
+        const allowedTooltipProps = getAllowedProps('Tooltip');
         const props: string[] = [];
         const formatChildren: string[] = [];
+        let shouldExtractTooltip = true;
 
         for (const [key, value] of Object.entries(tooltip)) {
             if (formatKeys.includes(key)) {
                 formatChildren.push(
                     `${indent}    <data-hc-option name="${key}">${escapeJSXText(value as string)}</data-hc-option>`
                 );
-            } else {
-                if (typeof value === 'string') {
-                    props.push(`${key}={${JSON.stringify(value)}}`);
-                } else {
-                    props.push(`${key}={${JSON.stringify(value)}}`);
+            } else if (allowedTooltipProps.has(key)) {
+                const rendered = toProp(key, value);
+                if (!rendered) {
+                    shouldExtractTooltip = false;
+                    break;
                 }
+                props.push(rendered);
+            } else {
+                shouldExtractTooltip = false;
+                break;
             }
         }
 
-        if (!imports.includes('Tooltip')) {
-            imports.push('Tooltip');
-        }
+        if (shouldExtractTooltip) {
+            if (!imports.includes('Tooltip')) {
+                imports.push('Tooltip');
+            }
 
-        const propsStr = props.length ? ' ' + props.join(' ') : '';
-        if (formatChildren.length > 0) {
-            children.push(`${indent}<Tooltip${propsStr}>`);
-            children.push(...formatChildren);
-            children.push(`${indent}</Tooltip>`);
-        } else {
-            children.push(`${indent}<Tooltip${propsStr} />`);
+            const propsStr = props.length ? ' ' + props.join(' ') : '';
+            if (formatChildren.length > 0) {
+                children.push(`${indent}<Tooltip${propsStr}>`);
+                children.push(...formatChildren);
+                children.push(`${indent}</Tooltip>`);
+            } else {
+                children.push(`${indent}<Tooltip${propsStr} />`);
+            }
+            delete prunedConfig.tooltip;
         }
-        delete prunedConfig.tooltip;
     }
 
     // 3. Series: always extract
     if (canExtract('series') && prunedConfig.series && Array.isArray(prunedConfig.series)) {
-        if (!imports.includes('Series')) {
-            imports.push('Series');
-        }
+        const allowedSeriesProps = getAllowedProps('Series');
+        let shouldExtractSeries = true;
+        const nextSeriesChildren: string[] = [];
+
         for (const s of prunedConfig.series) {
             const props: string[] = [];
             const remaining: Record<string, any> = {};
 
             // Extract type first, then data, then name, then rest
             if ('type' in s) {
-                props.push(`type={${JSON.stringify(s.type)}}`);
-            }
-            if ('data' in s) {
-                if (s.data === 'data' || s.data === dataIdentifier) {
-                    props.push('data={data}');
-                } else if (Array.isArray(s.data) && s.data.every((v: any) => typeof v === 'number')) {
-                    props.push(`data={${JSON.stringify(s.data).replace(/,/g, ', ')}}`);
+                if (allowedSeriesProps.has('type')) {
+                    const renderedType = toProp('type', s.type);
+                    if (!renderedType) {
+                        shouldExtractSeries = false;
+                        break;
+                    }
+                    props.push(renderedType);
                 } else {
-                    props.push(`data={${JSON.stringify(s.data)}}`);
+                    remaining.type = s.type;
                 }
             }
+
+            if ('data' in s) {
+                if (allowedSeriesProps.has('data')) {
+                    if (s.data === 'data' || s.data === dataIdentifier) {
+                        props.push('data={data}');
+                    } else {
+                        const renderedData = toProp('data', s.data);
+                        if (!renderedData) {
+                            shouldExtractSeries = false;
+                            break;
+                        }
+                        props.push(renderedData);
+                    }
+                } else {
+                    remaining.data = s.data;
+                }
+            }
+
             if ('name' in s) {
-                props.push(`name={${JSON.stringify(s.name)}}`);
+                if (allowedSeriesProps.has('name')) {
+                    const renderedName = toProp('name', s.name);
+                    if (!renderedName) {
+                        shouldExtractSeries = false;
+                        break;
+                    }
+                    props.push(renderedName);
+                } else {
+                    remaining.name = s.name;
+                }
             }
 
             for (const [key, value] of Object.entries(s)) {
@@ -1168,12 +1222,28 @@ function extractReactOptionComponents(
             }
 
             if (Object.keys(remaining).length > 0) {
-                props.push(`options={${JSON.stringify(remaining)}}`);
+                if (!allowedSeriesProps.has('options')) {
+                    shouldExtractSeries = false;
+                    break;
+                }
+                const renderedOptions = toProp('options', remaining);
+                if (!renderedOptions) {
+                    shouldExtractSeries = false;
+                    break;
+                }
+                props.push(renderedOptions);
             }
 
-            children.push(`${indent}<Series ${props.join(' ')} />`);
+            nextSeriesChildren.push(`${indent}<Series ${props.join(' ')} />`);
         }
-        delete prunedConfig.series;
+
+        if (shouldExtractSeries) {
+            if (!imports.includes('Series')) {
+                imports.push('Series');
+            }
+            children.push(...nextSeriesChildren);
+            delete prunedConfig.series;
+        }
     }
 
     // 4. XAxis
@@ -1206,19 +1276,24 @@ function extractReactOptionComponents(
                 imports.push('XAxis');
             }
 
-            const axisOptions = Object.keys(axisForOptions).length > 0 ?
-                ` options={${JSON.stringify(axisForOptions)}}` :
+            const serializedAxisOptions = Object.keys(axisForOptions).length > 0 ?
+                serializeJSXPropValue(axisForOptions) :
+                null;
+            const axisOptions = serializedAxisOptions ?
+                ` options={${serializedAxisOptions}}` :
                 '';
 
-            if (axisChildren.length > 0) {
-                children.push(`${indent}<XAxis${axisOptions}>`);
-                children.push(...axisChildren);
-                children.push(`${indent}</XAxis>`);
-            } else {
-                children.push(`${indent}<XAxis${axisOptions} />`);
-            }
+            if (!(Object.keys(axisForOptions).length > 0 && !serializedAxisOptions)) {
+                if (axisChildren.length > 0) {
+                    children.push(`${indent}<XAxis${axisOptions}>`);
+                    children.push(...axisChildren);
+                    children.push(`${indent}</XAxis>`);
+                } else {
+                    children.push(`${indent}<XAxis${axisOptions} />`);
+                }
 
-            delete prunedConfig.xAxis;
+                delete prunedConfig.xAxis;
+            }
         }
     }
 
@@ -1252,55 +1327,68 @@ function extractReactOptionComponents(
                 imports.push('YAxis');
             }
 
-            const axisOptions = Object.keys(axisForOptions).length > 0 ?
-                ` options={${JSON.stringify(axisForOptions)}}` :
+            const serializedAxisOptions = Object.keys(axisForOptions).length > 0 ?
+                serializeJSXPropValue(axisForOptions) :
+                null;
+            const axisOptions = serializedAxisOptions ?
+                ` options={${serializedAxisOptions}}` :
                 '';
 
-            if (axisChildren.length > 0) {
-                children.push(`${indent}<YAxis${axisOptions}>`);
-                children.push(...axisChildren);
-                children.push(`${indent}</YAxis>`);
-            } else {
-                children.push(`${indent}<YAxis${axisOptions} />`);
-            }
+            if (!(Object.keys(axisForOptions).length > 0 && !serializedAxisOptions)) {
+                if (axisChildren.length > 0) {
+                    children.push(`${indent}<YAxis${axisOptions}>`);
+                    children.push(...axisChildren);
+                    children.push(`${indent}</YAxis>`);
+                } else {
+                    children.push(`${indent}<YAxis${axisOptions} />`);
+                }
 
-            delete prunedConfig.yAxis;
+                delete prunedConfig.yAxis;
+            }
         }
     }
 
     // 6. Legend
     if (canExtract('legend') && prunedConfig.legend) {
         const legend = prunedConfig.legend;
+        const allowedLegendProps = getAllowedProps('Legend');
         const props: string[] = [];
         const legendChildren: string[] = [];
+        let shouldExtractLegend = true;
 
         for (const [key, value] of Object.entries(legend)) {
             if (key === 'labelFormat') {
                 legendChildren.push(
                     `${indent}    <data-hc-option name="labelFormat">${escapeJSXText(value as string)}</data-hc-option>`
                 );
-            } else {
-                if (typeof value === 'string') {
-                    props.push(`${key}={${JSON.stringify(value)}}`);
-                } else {
-                    props.push(`${key}={${JSON.stringify(value)}}`);
+            } else if (allowedLegendProps.has(key)) {
+                const rendered = toProp(key, value);
+                if (!rendered) {
+                    shouldExtractLegend = false;
+                    break;
                 }
+                props.push(rendered);
+            } else {
+                shouldExtractLegend = false;
+                break;
             }
         }
 
-        if (!imports.includes('Legend')) {
-            imports.push('Legend');
-        }
+        if (shouldExtractLegend) {
+            if (!imports.includes('Legend')) {
+                imports.push('Legend');
+            }
 
-        const propsStr = props.length ? ' ' + props.join(' ') : '';
-        if (legendChildren.length > 0) {
-            children.push(`${indent}<Legend${propsStr}>`);
-            children.push(...legendChildren);
-            children.push(`${indent}</Legend>`);
-        } else {
-            children.push(`${indent}<Legend${propsStr} />`);
+            const propsStr = props.length ? ' ' + props.join(' ') : '';
+            if (legendChildren.length > 0) {
+                children.push(`${indent}<Legend${propsStr}>`);
+                children.push(...legendChildren);
+                children.push(`${indent}</Legend>`);
+            } else {
+                children.push(`${indent}<Legend${propsStr} />`);
+            }
+            delete prunedConfig.legend;
         }
-        delete prunedConfig.legend;
     }
 
     return {
