@@ -19,6 +19,7 @@
  * */
 
 import type ColorString from '../../Core/Color/ColorString';
+import type ColorType from '../../Core/Color/ColorType';
 import type OrganizationDataLabelOptions from './OrganizationDataLabelOptions';
 import type {
     SankeySeriesLevelOptions,
@@ -41,6 +42,19 @@ declare module '../Sankey/SankeySeriesOptions' {
         linkLineWidth?: OrganizationSeriesOptions['linkLineWidth'];
         /** @requires OrganizationSeries */
         link?: OrganizationSeriesOptions['link'];
+    }
+}
+
+declare module '../../Core/Series/StatesOptions' {
+    interface StateOptions {
+        /** Applies to hover state of organization link. */
+        link?: OrganizationLinkOptions;
+        /** Applies to hover state of organization link. */
+        linkColor?: ColorType;
+        /** Applies to hover state of organization link. */
+        linkLineWidth?: number;
+        /** Applies to hover state of organization link. */
+        linkOpacity?: number;
     }
 }
 

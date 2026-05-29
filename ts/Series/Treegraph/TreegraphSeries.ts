@@ -610,10 +610,9 @@ class TreegraphSeries extends TreemapSeries {
             levelOptions = point &&
                 (series.mapOptionsToLevel as any)[point.node.level ?? 0] || {},
             options = point && point.options,
-            stateOptions =
-                (levelOptions.states &&
-                    (levelOptions.states as any)[state as any]) ||
-                {};
+            stateOptions = (
+                state && levelOptions.states?.[state]
+            ) || {};
 
         if (point) {
             point.options.marker = merge(

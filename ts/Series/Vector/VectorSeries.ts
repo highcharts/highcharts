@@ -20,6 +20,7 @@
  *
  * */
 
+import type { StatesOptions } from '../../Core/Series/StatesOptions';
 import type VectorPoint from './VectorPoint';
 import type VectorSeriesOptions from './VectorSeriesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
@@ -219,13 +220,16 @@ class VectorSeries extends ScatterSeries {
         const options = this.options;
 
         let stroke = point?.color || this.color,
-            strokeWidth = this.options.lineWidth;
+            strokeWidth = this.options.lineWidth || 0;
 
         if (state) {
-            stroke = (options.states as any)[state].color || stroke;
+            const stateOptions = options.states?.[
+                state as keyof StatesOptions
+            ];
+            stroke = stateOptions?.color || stroke;
             strokeWidth =
-            ((options.states as any)[state].lineWidth || strokeWidth) +
-            ((options.states as any)[state].lineWidthPlus || 0);
+                (stateOptions?.lineWidth || strokeWidth) +
+                (stateOptions?.lineWidthPlus || 0);
         }
 
         return {

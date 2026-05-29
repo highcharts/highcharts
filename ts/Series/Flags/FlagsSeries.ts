@@ -18,9 +18,9 @@
  *
  * */
 
-import type ColorType from '../../Core/Color/ColorType';
 import type { FlagsShapeValue } from './FlagsPointOptions';
 import type FlagsSeriesOptions from './FlagsSeriesOptions';
+import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 
 import FlagsPoint from './FlagsPoint.js';
@@ -61,10 +61,8 @@ declare module '../../Core/Series/SeriesBase' {
     }
 }
 
-declare module '../../Core/Series/SeriesOptions' {
-    interface SeriesStateHoverOptions {
-        fillColor?: ColorType;
-        lineColor?: ColorType;
+declare module '../../Core/Series/StatesOptions' {
+    interface StateOptions {
         shape?: FlagsShapeValue;
     }
 }
@@ -408,7 +406,7 @@ class FlagsSeries extends ColumnSeries {
      */
     public pointAttribs(
         point: FlagsPoint,
-        state?: string
+        state?: StatesOptionsKey
     ): SVGAttributes {
         const options = this.options,
             color = (point && point.color) || this.color;
@@ -418,9 +416,10 @@ class FlagsSeries extends ColumnSeries {
             fill = (point && point.fillColor) || options.fillColor;
 
         if (state) {
-            fill = (options.states as any)[state].fillColor;
-            lineColor = (options.states as any)[state].lineColor;
-            lineWidth = (options.states as any)[state].lineWidth;
+            const stateOptions = options.states?.[state];
+            fill = stateOptions?.fillColor;
+            lineColor = stateOptions?.lineColor;
+            lineWidth = stateOptions?.lineWidth;
         }
 
         return {

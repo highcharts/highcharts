@@ -18,7 +18,6 @@
  *
  * */
 
-import type AnimationOptions from '../../Core/Animation/AnimationOptions';
 import type ColorType from '../../Core/Color/ColorType';
 import type DashStyleValue from '../../Core/Renderer/DashStyleValue';
 import type { NetworkgraphDataLabelsOptions } from './NetworkgraphSeriesOptions';
@@ -34,13 +33,6 @@ import type { PointDataLabelOptionsModifier } from '../../Core/Series/DataLabel'
  *  Declarations
  *
  * */
-
-declare module '../../Core/Series/PointOptions' {
-    interface PointMarkerStateInactiveOptions
-    {
-        animation?: (boolean|Partial<AnimationOptions>);
-    }
-}
 
 /**
  * @product highcharts

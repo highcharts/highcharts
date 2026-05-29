@@ -1220,6 +1220,9 @@ const seriesDefaults: PlotOptionsOf<Series> = {
          * States for a single point marker.
          *
          * @declare Highcharts.PointStatesOptionsObject
+         *
+         * @product highcharts highstock highmaps gantt
+         * @apioption plotOptions.series.marker.states
          */
         states: {
 
@@ -1235,6 +1238,8 @@ const seriesDefaults: PlotOptionsOf<Series> = {
                  * Animation when returning to normal state after hovering.
                  *
                  * @type {boolean|Partial<Highcharts.AnimationOptionsObject>}
+                 * @default true
+                 * @apioption plotOptions.series.marker.states.normal.animation
                  */
                 animation: true
             },
@@ -1250,8 +1255,12 @@ const seriesDefaults: PlotOptionsOf<Series> = {
                  * Animation when hovering over the marker.
                  *
                  * @type {boolean|Partial<Highcharts.AnimationOptionsObject>}
+                 * @apioption plotOptions.series.marker.states.hover.animation
                  */
                 animation: {
+                    /**
+                     * @apioption plotOptions.series.marker.states.hover.animation.duration
+                     */
                     duration: 150
                 },
 
@@ -1260,25 +1269,55 @@ const seriesDefaults: PlotOptionsOf<Series> = {
                  *
                  * @sample {highcharts} highcharts/plotoptions/series-marker-states-hover-enabled/
                  *         Disabled hover state
+                 *
+                 * @default true
+                 * @apioption plotOptions.series.marker.states.hover.enabled
                  */
                 enabled: true,
 
                 /**
-                 * The fill color of the marker in hover state. When
-                 * `undefined`, the series' or point's fillColor for normal
-                 * state is used.
+                 * Used by hover and inactive states. Brightness adjustment
+                 * applied to the series or point color, e.g. for column, pie
+                 * and map series.
+                 *
+                 * @apioption plotOptions.series.marker.states.hover.brightness
+                 */
+                // brightness: void 0,
+
+                /**
+                 * Used by hover, inactive, and select states. The color of
+                 * the series or point marker in this state.
+                 *
+                 * @apioption plotOptions.series.marker.states.hover.color
+                 */
+                // color: void 0,
+
+                /**
+                 * Used by hover, inactive, and select states. The dash
+                 * style of the series line in this state.
+                 *
+                 * @apioption plotOptions.series.marker.states.hover.dashStyle
+                 */
+                // dashStyle: void 0,
+                /**
+                 * Used by hover and select states (marker). The fill color
+                 * of the point marker in this state. When `undefined`, the
+                 * series' or point's color is used.
+                 *
+                 * @sample {highcharts} highcharts/plotoptions/series-marker-states-select-fillcolor/
+                 * Solid red discs for selected points
                  *
                  * @type      {Highcharts.ColorType}
                  * @apioption plotOptions.series.marker.states.hover.fillColor
                  */
 
                 /**
-                 * The color of the point marker's outline. When
-                 * `undefined`, the series' or point's lineColor for normal
-                 * state is used.
+                 * Used by hover and select states (marker). The color of the
+                 * point marker's outline in this state. When `undefined`, the
+                 * series' or point's color is used.
                  *
                  * @sample {highcharts} highcharts/plotoptions/series-marker-states-hover-linecolor/
-                 *         White fill color, black line color
+                 * White fill color, black line color
                  *
                  * @type      {Highcharts.ColorType}
                  * @apioption plotOptions.series.marker.states.hover.lineColor
@@ -1310,8 +1349,8 @@ const seriesDefaults: PlotOptionsOf<Series> = {
                  */
 
                 /**
-                 * The number of pixels to increase the radius of the
-                 * hovered point.
+                 * Used by hover state (marker). The number of pixels to add
+                 * to the marker radius on hover.
                  *
                  * @sample {highcharts} highcharts/plotoptions/series-states-hover-linewidthplus/
                  *         5 pixels greater radius on hover
@@ -1319,11 +1358,15 @@ const seriesDefaults: PlotOptionsOf<Series> = {
                  *         5 pixels greater radius on hover
                  *
                  * @since 4.0.3
+                 * @default 2
+                 * @apioption plotOptions.series.marker.states.hover.radiusPlus
                  */
                 radiusPlus: 2,
 
                 /**
-                 * The additional line width for a hovered point.
+                 * Used by hover state (series and marker). The additional
+                 * line width for the graph or marker outline relative to the
+                 * normal state.
                  *
                  * @sample {highcharts} highcharts/plotoptions/series-states-hover-linewidthplus/
                  *         2 pixels wider on hover
@@ -1331,8 +1374,19 @@ const seriesDefaults: PlotOptionsOf<Series> = {
                  *         2 pixels wider on hover
                  *
                  * @since 4.0.3
+                 * @default 1
+                 * @apioption plotOptions.series.marker.states.hover.lineWidthPlus
                  */
-                lineWidthPlus: 1
+                lineWidthPlus: 1,
+
+                /**
+                 * Used by hover and inactive states (series and marker). The
+                 * opacity of the series or marker elements. In the inactive
+                 * state this defaults to `0.2` for series.
+                 *
+                 * @apioption plotOptions.series.marker.states.hover.opacity
+                 */
+                opacity: void 0
             },
 
             /**
@@ -1341,6 +1395,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
              * `series.allowPointSelect` option to true.
              *
              * @declare Highcharts.PointStatesSelectOptionsObject
+             * @extends   plotOptions.series.marker.states.hover
              */
             select: {
 
@@ -1354,6 +1409,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
                  * @default   true
                  * @apioption plotOptions.series.marker.states.select.enabled
                  */
+                enabled: true,
 
                 /**
                  * The radius of the point marker. In hover state, it
@@ -1373,6 +1429,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
                  *         Solid red discs for selected points
                  *
                  * @type {Highcharts.ColorType}
+                 * @apioption plotOptions.series.marker.states.select.fillColor
                  */
                 fillColor: Palette.neutralColor20,
 
@@ -1384,6 +1441,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
                  *         Red line color for selected points
                  *
                  * @type {Highcharts.ColorType}
+                 * @apioption plotOptions.series.marker.states.select.lineColor
                  */
                 lineColor: Palette.neutralColor100,
 
@@ -1392,6 +1450,8 @@ const seriesDefaults: PlotOptionsOf<Series> = {
                  *
                  * @sample {highcharts} highcharts/plotoptions/series-marker-states-select-linewidth/
                  *         3px line width for selected points
+                 *
+                 * @apioption plotOptions.series.marker.states.select.lineWidth
                  */
                 lineWidth: 2
             }
@@ -2145,7 +2205,20 @@ const seriesDefaults: PlotOptionsOf<Series> = {
     /**
      * A collection of options for different series states.
      *
+     * In addition to the options documented under each state (`hover`,
+     * `inactive`, `normal`, `select`), you can set any option from the parent
+     * series type except `data` and nested `states`. Those values override the
+     * base series options while the series is in that state—for example
+     * `lineWidth` under
+     * [plotOptions.series.states.hover](#plotOptions.series.states.hover), or
+     * `borderColor` and `borderWidth` under
+     * [plotOptions.pie.states.inactive](#plotOptions.pie.states.inactive) for
+     * pie series.
+     *
      * @declare Highcharts.SeriesStatesOptionsObject
+     *
+     * @product highcharts highstock highmaps gantt
+     * @apioption plotOptions.series.states
      */
     states: {
 
@@ -2161,6 +2234,8 @@ const seriesDefaults: PlotOptionsOf<Series> = {
              * Animation when returning to normal state after hovering.
              *
              * @type {boolean|Partial<Highcharts.AnimationOptionsObject>}
+             * @default true
+             * @apioption plotOptions.series.states.normal.animation
              */
             animation: true
         },
@@ -2189,7 +2264,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
              * @since     1.2
              * @apioption plotOptions.series.states.hover.enabled
              */
-
+            enabled: true,
 
             /**
              * Animation setting for hovering the graph in line-type series.
@@ -2197,6 +2272,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
              * @type {boolean|Partial<Highcharts.AnimationOptionsObject>}
              * @since   5.0.8
              * @product highcharts highstock
+             * @apioption plotOptions.series.states.hover.animation
              */
             animation: {
 
@@ -2204,6 +2280,8 @@ const seriesDefaults: PlotOptionsOf<Series> = {
                  * The duration of the hover animation in milliseconds. By
                  * default the hover state animates quickly in, and slowly
                  * back to normal.
+                 *
+                 * @apioption plotOptions.series.states.hover.animation.duration
                  */
                 duration: 150
             },
@@ -2231,8 +2309,90 @@ const seriesDefaults: PlotOptionsOf<Series> = {
              *
              * @since   4.0.3
              * @product highcharts highstock
+             * @default 1
+             * @apioption plotOptions.series.states.hover.lineWidthPlus
              */
             lineWidthPlus: 1,
+
+            /**
+             * Used by hover and inactive states. Brightness adjustment
+             * applied to the series or point color, e.g. for column, pie and
+             * map series.
+             *
+             * @apioption plotOptions.series.states.hover.brightness
+             */
+
+            /**
+            * Used by hover, inactive, and select states. The color of the
+            * series or point marker in this state.
+            *
+            * @apioption plotOptions.series.states.hover.color
+            */
+
+            /**
+            * Used by hover, inactive, and select states. The dash style of
+            * the series line in this state.
+            *
+            * @apioption plotOptions.series.states.hover.dashStyle
+            */
+
+            /**
+            * Used by hover and select states (marker). The fill color of the
+            * point marker in this state. When `undefined`, the series' or
+            * point's color is used.
+            *
+            * @sample {highcharts} highcharts/plotoptions/series-marker-states-select-fillcolor/
+            * Solid red discs for selected points
+            *
+            * @apioption plotOptions.series.states.hover.fillColor
+            */
+
+            /**
+            * Used by hover and select states (marker). The color of the
+            * point marker's outline in this state. When `undefined`, the
+            * series' or point's color is used.
+            *
+            * @sample {highcharts} highcharts/plotoptions/series-marker-states-hover-linecolor/
+            * White fill color, black line color
+            *
+            * @apioption plotOptions.series.states.hover.lineColor
+            */
+
+            /**
+            * Used by hover and inactive states (series and marker). The
+            * opacity of the series or marker elements. In the inactive state
+            * this defaults to `0.2` for series.
+            *
+            * @default 0.2
+            *
+            * @apioption plotOptions.series.states.hover.opacity
+            */
+
+            /**
+            * Used by hover and select states (marker). The radius of the
+            * point marker in this state. In hover state, defaults to the
+            * normal state's radius plus `radiusPlus`.
+            *
+            * @sample {highcharts} highcharts/plotoptions/series-marker-states-hover-radius/
+            * 10px radius on hover
+            *
+            * @apioption plotOptions.series.states.hover.radius
+            */
+            radius: void 0,
+
+            /**
+            * Used by hover state (marker). The number of pixels to add to
+            * the marker radius on hover.
+            *
+            * @sample {highcharts} highcharts/plotoptions/series-states-hover-linewidthplus/
+            * 5 pixels greater radius on hover
+            *
+            * @since   4.0.3
+            * @default 2
+            *
+            * @apioption plotOptions.series.states.hover.radiusPlus
+            */
+            radiusPlus: void 0,
 
             /**
              * In Highcharts 1.0, the appearance of all markers belonging
@@ -2323,7 +2483,13 @@ const seriesDefaults: PlotOptionsOf<Series> = {
          * @excluding brightness
          */
         select: {
+            /**
+             * @apioption plotOptions.series.states.select.animation
+             */
             animation: {
+                /**
+                 * @apioption plotOptions.series.states.select.animation.duration
+                 */
                 duration: 0
             }
         },
@@ -2335,6 +2501,8 @@ const seriesDefaults: PlotOptionsOf<Series> = {
          *         Disabled inactive state
          *
          * @declare Highcharts.SeriesStatesInactiveOptionsObject
+         * @extends   plotOptions.series.states.hover
+         * @excluding marker
          */
         inactive: {
             /**
@@ -2347,19 +2515,25 @@ const seriesDefaults: PlotOptionsOf<Series> = {
              * @default true
              * @apioption plotOptions.series.states.inactive.enabled
              */
+            enabled: true,
 
             /**
              * The animation for entering the inactive state.
              *
              * @type {boolean|Partial<Highcharts.AnimationOptionsObject>}
+             * @apioption plotOptions.series.states.inactive.animation
              */
             animation: {
+                /**
+                 * @apioption plotOptions.series.states.inactive.animation.duration
+                 */
                 duration: 150
             },
             /**
              * Opacity of series elements (dataLabels, line, area).
              *
              * @type {number}
+             * @apioption plotOptions.series.states.inactive.opacity
              */
             opacity: 0.2
         }
