@@ -772,7 +772,7 @@ namespace AxisDefaults {
                 /**
                  * @apioption xAxis.dateTimeLabelFormats.year.main
                  */
-                main: '%Y',
+                main: '%[Y]',
                 /**
                  * Label format that should be used when a tick is a boundary
                  * tick, e.g. start of day, start of year, etc.
