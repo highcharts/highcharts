@@ -204,7 +204,11 @@ function getTradesTable(rows) {
                     borderWidth: 1,
                     shadow: false,
                     style: bodyTextStyle,
-                    xDateFormat: '%H:%M:%S',
+                    dateTimeLabelFormats: {
+                        millisecond: '%e %b, %H:%M:%S.%L',
+                        second: '%e %b, %H:%M:%S',
+                        minute: '%e %b, %H:%M'
+                    },
                     valueDecimals: 2,
                     valuePrefix: '$'
                 },
@@ -328,6 +332,29 @@ function getTradesTable(rows) {
                         style: labelStyle
                     }
                 }],
+                plotOptions: {
+                    series: {
+                        dataGrouping: {
+                            dateTimeLabelFormats: {
+                                millisecond: [
+                                    '%e %b, %H:%M:%S.%L',
+                                    '%e %b, %H:%M:%S',
+                                    '-%H:%M:%S'
+                                ],
+                                second: [
+                                    '%e %b, %H:%M:%S',
+                                    '%e %b, %H:%M:%S',
+                                    '-%H:%M:%S'
+                                ],
+                                minute: [
+                                    '%e %b, %H:%M',
+                                    '%e %b, %H:%M',
+                                    '-%H:%M'
+                                ]
+                            }
+                        }
+                    }
+                },
                 series: [{
                     type: 'arearange',
                     name: 'Bid / Ask',
