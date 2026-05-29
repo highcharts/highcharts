@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "sourcePackage": "@highcharts/react",
   "sourceVersion": "5.0.1",
-  "generatedAt": "2026-05-29T11:57:00.709Z",
+  "generatedAt": "2026-05-29T12:23:21.027Z",
   "notes": [
     "Generated from local node_modules @highcharts/react d.ts files.",
     "This file is deterministic test input; do not fetch network data in tests."

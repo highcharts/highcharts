@@ -12,7 +12,8 @@ const TARGET_SAMPLES = [
     'highcharts/legend/backgroundcolor',
     'highcharts/legend/bordercolor',
     'highcharts/legend/borderwidth',
-    'highcharts/legend/enabled-false'
+    'highcharts/legend/enabled-false',
+    'highcharts/xaxis/title-text'
 ];
 
 function generateTargetSamples() {
@@ -65,5 +66,10 @@ describe('react generated output verification (legend samples)', () => {
         const enabledFalse = readReactDemo('legend-enabled-false');
         ok(enabledFalse.includes('<Legend'));
         ok(!enabledFalse.includes('\n            legend:'));
+
+        const xAxisTitleText = readReactDemo('xaxis-title-text');
+        ok(xAxisTitleText.includes('<Chart>'));
+        ok(!xAxisTitleText.includes('const chartOptions = React.useMemo'));
+        ok(!xAxisTitleText.includes('options={chartOptions}'));
     });
 });

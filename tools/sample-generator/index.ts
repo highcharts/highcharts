@@ -1475,6 +1475,7 @@ export async function getDemoJSX(
         metaList,
         { dataIdentifier, prebuiltConfig: prunedConfig }
     );
+    const hasEmptyChartOptions = /^\{\s*\}$/u.test(chartOptions);
     const dependencies = dataFile ? '[data]' : '[]';
     const reactImports = componentImportPath === '@highcharts/react' ?
         [
@@ -1529,10 +1530,19 @@ export async function getDemoJSX(
         .replace(/__COMPONENT_NAME__/gu, componentName)
         .replace('        __CHART_CHILDREN__', childrenJSX);
 
+    if (hasEmptyChartOptions) {
+        jsx = jsx
+            .replace(
+                /\n\s*const chartOptions = React\.useMemo\(\(\) => \(\n[\s\S]*?\n\s*\), [^\)]*\);\n/gu,
+                '\n'
+            )
+            .replace(' options={chartOptions}', '');
+    }
+
     // If no children, convert block form back to self-closing
     if (!childrenJSX) {
         jsx = jsx.replace(
-            /(<\w+ options=\{chartOptions\}>)\s*\n\s*(<\/\w+>)/u,
+            /(<\w+(?: options=\{chartOptions\})?>)\s*\n\s*(<\/\w+>)/u,
             (_, open) => open.replace(/>$/u, ' />')
         );
     }
