@@ -44,65 +44,6 @@ const SHARED_BUBBLE_POINT_FORMAT =
     '<span style="color:{point.color}">\u25CF</span> ' +
     '{series.name}: <b>{point.y}</b>, Size: <b>{point.z}</b><br/>';
 
-function hasSharedScatterTooltip(series: ScatterSeries): boolean {
-    return (
-        (series.type === 'scatter' || series.type === 'bubble') &&
-        !!series.tooltipOptions.shared
-    );
-}
-
-function hasExplicitTooltipFormat(
-    series: ScatterSeries,
-    userOptions: DeepPartial<SeriesTypeOptions>,
-    key: 'headerFormat'|'pointFormat'
-): boolean {
-    const chart = series.chart,
-        chartUserOptions = chart.userOptions as any,
-        plotOptions = chartUserOptions.plotOptions,
-        seriesUserOptions = userOptions as any;
-
-    return (
-        chartUserOptions.tooltip?.[key] !== void 0 ||
-        plotOptions?.series?.tooltip?.[key] !== void 0 ||
-        plotOptions?.[series.type]?.tooltip?.[key] !== void 0 ||
-        seriesUserOptions.tooltip?.[key] !== void 0
-    );
-}
-
-function getSharedPointFormat(series: ScatterSeries): string {
-    return series.type === 'bubble' ?
-        SHARED_BUBBLE_POINT_FORMAT :
-        SHARED_SCATTER_POINT_FORMAT;
-}
-
-function getSinglePointFormat(series: ScatterSeries): string {
-    return series.type === 'bubble' ?
-        BUBBLE_POINT_FORMAT :
-        SCATTER_POINT_FORMAT;
-}
-
-function updateGroupedTooltipDefaults(
-    series: ScatterSeries,
-    userOptions: DeepPartial<SeriesTypeOptions>
-): void {
-    const { tooltipOptions } = series;
-
-    if (
-        tooltipOptions.headerFormat === SCATTER_HEADER_FORMAT &&
-        !hasExplicitTooltipFormat(series, userOptions, 'headerFormat')
-    ) {
-        tooltipOptions.headerFormat =
-            DefaultOptions.defaultOptions.tooltip!.headerFormat;
-    }
-
-    if (
-        tooltipOptions.pointFormat === getSinglePointFormat(series) &&
-        !hasExplicitTooltipFormat(series, userOptions, 'pointFormat')
-    ) {
-        tooltipOptions.pointFormat = getSharedPointFormat(series);
-    }
-}
-
 /* *
  *
  *  Declarations
@@ -239,10 +180,28 @@ class ScatterSeries extends LineSeries {
     ): void {
         super.init(chart, userOptions);
 
-        if (hasSharedScatterTooltip(this)) {
+        const { tooltipOptions } = this;
+
+        if (tooltipOptions.shared) {
             this.noSharedTooltip = false;
             this.directTouch = true;
-            updateGroupedTooltipDefaults(this, userOptions);
+
+            if (tooltipOptions.headerFormat === SCATTER_HEADER_FORMAT) {
+                tooltipOptions.headerFormat =
+                    DefaultOptions.defaultOptions.tooltip!.headerFormat;
+            }
+
+            if (
+                tooltipOptions.pointFormat === (
+                    this.type === 'bubble' ?
+                        BUBBLE_POINT_FORMAT :
+                        SCATTER_POINT_FORMAT
+                )
+            ) {
+                tooltipOptions.pointFormat = this.type === 'bubble' ?
+                    SHARED_BUBBLE_POINT_FORMAT :
+                    SHARED_SCATTER_POINT_FORMAT;
+            }
         }
     }
 
