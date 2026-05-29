@@ -166,7 +166,7 @@ Each entry is an object with the following properties:
   - It reflects the namespace assignment that happens in the masters files (the ones in `included`).
   - A leading dot will be replaced with the shared product namespace.
   - A `{name}` pattern will be replaced with the imports file name (without file extension).
-  - If the export of a file is merged into the namespace root itself, then you can keep the namespace empty.
+   - If the export of a file is merged into the namespace root itself, then you can keep the namespacePath empty.
 
 **Examples:**
 
@@ -179,21 +179,14 @@ Each entry is an object with the following properties:
         "included": [
             "module/stock"
         ],
-        "namespace": ".Series.types.sma"
-    },
-    {
-        "files": [
-            "Shared/TimeBase",
-        ],
-        "included": [], // = highcharts
-        "namespace": ".Time"
+        "namespacePath": ".Series.types.sma"
     },
     {
         "files": [
             "Core/Utilities"
         ],
         "included": [],
-        "namespace": "" // Utilities properties are part of the namespace itself.
+        "namespacePath": "" // Utilities properties are part of the namespace itself.
     }
 ]
 ```
