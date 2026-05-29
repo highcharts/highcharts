@@ -54,3 +54,51 @@ QUnit.test('Label position after redraw (#4133)', function (assert) {
         'Upper data label has not changed position'
     );
 });
+
+QUnit.test(
+    'Upper and lower labels keep their values (#23904)',
+    function (assert) {
+        const chart = Highcharts.chart('container', {
+                chart: {
+                    type: 'errorbar'
+                },
+                yAxis: {
+                    min: 0,
+                    max: 120
+                },
+                series: [{
+                    dataLabels: {
+                        enabled: true
+                    },
+                    data: [[48, 51], [68, 73], [92, 110]]
+                }]
+            }),
+            point = chart.series[0].points[2], // low 92, high 110
+            labels = point.dataLabels || [],
+            highLabel = labels.find(label => label.text.textStr === '110'),
+            lowLabel = labels.find(label => label.text.textStr === '92');
+
+        assert.deepEqual(
+            labels.map(label => label.text.textStr).sort(),
+            ['110', '92'],
+            'Both the upper and lower values are rendered'
+        );
+
+        // Regression: the box plot alignDataLabel must not drag the lower
+        // label up to the high value on error bars
+        assert.ok(
+            highLabel.y < lowLabel.y,
+            'Upper label is placed above the lower label'
+        );
+
+        assert.ok(
+            highLabel.y + highLabel.height <= point.highPlot + 2,
+            'Upper label is aligned to the high value'
+        );
+
+        assert.ok(
+            lowLabel.y >= point.lowPlot - 2,
+            'Lower label is aligned to the low value'
+        );
+    }
+);

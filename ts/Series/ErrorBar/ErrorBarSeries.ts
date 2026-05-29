@@ -87,6 +87,13 @@ class ErrorBarSeries extends BoxPlotSeries {
         );
     }
 
+    public alignDataLabel(): void {
+        // Error bars draw upper/lower labels via the area range logic, so use
+        // the column alignment rather than the box plot's pointValKey-based
+        // one inherited from BoxPlotSeries (#23904)
+        ColumnSeries.prototype.alignDataLabel.apply(this, arguments);
+    }
+
     public drawDataLabels(): void {
         const series = this,
             valKey = series.pointValKey;
