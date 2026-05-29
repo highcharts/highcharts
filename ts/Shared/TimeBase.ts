@@ -448,14 +448,11 @@ class TimeBase {
 
             // Adjustments close to DST transitions
             if (
-                // Optimize for speed by limiting the number of calls to
-                // `getTimezoneOffset`. According to
+                // Limit the number of calls to `getTimezoneOffset` to months
+                // where DST changes may occur. According to
                 // https://en.wikipedia.org/wiki/Daylight_saving_time_by_country,
                 // DST change may only occur in these months.
-                [2, 3, 8, 9, 10, 11].indexOf(month) !== -1 &&
-
-                // DST transitions occur only in the night-time
-                (hours < 5 || hours > 20)
+                [2, 3, 8, 9, 10, 11].indexOf(month) !== -1
             ) {
                 const newOffset = this.getTimezoneOffset(d);
 
