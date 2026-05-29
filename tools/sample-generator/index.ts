@@ -1315,12 +1315,12 @@ function getImplicitReactOptionComponentKeys(
     metaList: MetaList
 ): Set<string> {
     const inferredKeys = new Set<string>();
-    const hasXAxisControl = metaList.some(
-        meta => typeof meta.path === 'string' && meta.path.startsWith('xAxis.')
+    const hasControlWithPath = (prefix: string) => metaList.some(
+        meta => typeof meta.path === 'string' && meta.path.startsWith(prefix)
     );
-    const hasYAxisControl = metaList.some(
-        meta => typeof meta.path === 'string' && meta.path.startsWith('yAxis.')
-    );
+    const hasXAxisControl = hasControlWithPath('xAxis.');
+    const hasYAxisControl = hasControlWithPath('yAxis.');
+    const hasLegendControl = hasControlWithPath('legend.');
 
     if (hasXAxisControl && chartConfig.xAxis && !Array.isArray(chartConfig.xAxis)) {
         inferredKeys.add('xAxis');
@@ -1328,8 +1328,13 @@ function getImplicitReactOptionComponentKeys(
     if (hasYAxisControl && chartConfig.yAxis && !Array.isArray(chartConfig.yAxis)) {
         inferredKeys.add('yAxis');
     }
+    if (hasLegendControl && chartConfig.legend && typeof chartConfig.legend === 'object' && !Array.isArray(chartConfig.legend)) {
+        inferredKeys.add('legend');
+    }
 
-    if ((inferredKeys.has('xAxis') || inferredKeys.has('yAxis')) &&
+    const hasPathDrivenComponentControl = hasXAxisControl || hasYAxisControl || hasLegendControl;
+
+    if (hasPathDrivenComponentControl &&
         chartConfig.title &&
         typeof chartConfig.title === 'object' &&
         Object.keys(chartConfig.title).length === 1 &&
@@ -1337,10 +1342,17 @@ function getImplicitReactOptionComponentKeys(
         inferredKeys.add('title');
     }
 
-    if ((inferredKeys.has('xAxis') || inferredKeys.has('yAxis')) &&
+    if (hasPathDrivenComponentControl &&
         Array.isArray(chartConfig.series) &&
         chartConfig.series.length > 0) {
         inferredKeys.add('series');
+    }
+
+    if (hasPathDrivenComponentControl &&
+        chartConfig.xAxis &&
+        typeof chartConfig.xAxis === 'object' &&
+        !Array.isArray(chartConfig.xAxis)) {
+        inferredKeys.add('xAxis');
     }
 
     return inferredKeys;

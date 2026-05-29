@@ -165,10 +165,10 @@ component. Extraction is **all-or-nothing per block** — if a block contains
 unsupported keys, it stays entirely in `chartOptions`.
 
 Explicit blocks from `chartOptionsExtra` are always candidates for extraction.
-In addition, samples with non-array `xAxis` / `yAxis` controls implicitly
-extract the matching axis component plus the generated root `<Title>` and
-template `<Series>` blocks, so axis demos do not need placeholder `title` or
-`series` entries just to trigger React option components.
+In addition, path-driven samples with non-array `xAxis`, `yAxis`, or `legend`
+controls implicitly extract supported React components (`<Title>`, `<Series>`,
+`<XAxis>`, `<YAxis>`, `<Legend>`) so demos do not need placeholder
+`title`/`series`/`xAxis`/`legend` entries just to trigger JSX extraction.
 
 ### Supported components
 
@@ -196,4 +196,20 @@ return (
         </Legend>
     </Chart>
 );
+```
+
+## Verification for React JSX extraction
+
+When changing React extraction behavior, run both parser-level and
+generated-artifact verification:
+
+```bash
+# Unit/regression coverage for JSX extraction helpers
+node --import tsx --test tools/sample-generator/tests/get-demo-jsx.test.ts
+
+# Verify generated React sample files for legend path-driven cases
+node --import tsx --test tools/sample-generator/tests/react-generated-output-verification.test.ts
+
+# Optional full sample-generator test suite
+node --import tsx --test tools/sample-generator/tests/*.test.ts
 ```

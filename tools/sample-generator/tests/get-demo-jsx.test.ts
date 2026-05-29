@@ -16,6 +16,11 @@ const genericMetaList = [{
     }
 }];
 
+const legendMetaList = [{
+    defaultValue: '#aaaaaa40',
+    path: 'legend.backgroundColor'
+}];
+
 describe('sample-generator getDemoJSX', () => {
     it('omits setHighcharts boilerplate when no modules are configured', async () => {
         const jsx = await getDemoJSX(
@@ -145,6 +150,48 @@ describe('sample-generator getDemoJSX', () => {
             jsx.includes('setHighcharts(Highcharts);'),
             'should call setHighcharts for stock factory fallback modules'
         );
+    });
+
+    it('implicitly extracts title, series, xAxis, and legend from legend path-driven samples', async () => {
+        const jsx = await getDemoJSX(
+            {
+                output: 'highcharts/react/unit-test/legend-backgroundcolor-full',
+                controls: [{
+                    path: 'legend.backgroundColor',
+                    value: '#aaaaaa40'
+                }]
+            },
+            legendMetaList
+        );
+
+        ok(
+            jsx.includes("import { Chart, Title, Series, XAxis, Legend } from '@highcharts/react';"),
+            'should import Title, Series, XAxis, and Legend components'
+        );
+        ok(
+            jsx.includes('<Chart options={chartOptions}>'),
+            'should render a non-self-closing Chart when option components are extracted'
+        );
+        ok(
+            jsx.includes('<Title>Demo of &lt;em&gt;legend.backgroundColor&lt;/em&gt;</Title>'),
+            'should extract the generated title text into a Title component'
+        );
+        ok(
+            jsx.includes('<Series data={[1, 3, 2, 4]} />'),
+            'should extract template series data into a Series component'
+        );
+        ok(
+            jsx.includes('<XAxis options={{"categories":["Apples","Bananas","Oranges","Pears"]}} />'),
+            'should extract xAxis options into an XAxis component'
+        );
+        ok(
+            jsx.includes('<Legend backgroundColor={"#aaaaaa40"} />'),
+            'should extract legend options into a Legend component'
+        );
+        ok(!jsx.includes('\n            title:'), 'should remove top-level title from chartOptions');
+        ok(!jsx.includes('\n            series:'), 'should remove top-level series from chartOptions');
+        ok(!jsx.includes('\n            xAxis:'), 'should remove top-level xAxis from chartOptions');
+        ok(!jsx.includes('\n            legend:'), 'should remove top-level legend from chartOptions');
     });
 
     it('extracts title and series options into components', async () => {
@@ -335,5 +382,45 @@ describe('sample-generator getDemoJSX', () => {
 
         ok(!jsx.includes('<Title>'), 'should not emit a Title component');
         ok(jsx.includes('title:'), 'should keep title in chartOptions');
+    });
+
+    it('keeps unsupported title/xAxis shapes in chartOptions in path-driven context', async () => {
+        const jsx = await getDemoJSX(
+            {
+                controls: [{
+                    path: 'legend.backgroundColor',
+                    value: '#aaaaaa40'
+                }],
+                chartOptionsExtra: {
+                    title: {
+                        text: 'Hello',
+                        useHTML: true
+                    },
+                    xAxis: [{
+                        categories: ['A', 'B', 'C']
+                    }],
+                    legend: {
+                        backgroundColor: '#aaaaaa40',
+                        title: {
+                            text: 'Legend title'
+                        }
+                    },
+                    series: [{
+                        data: [1, 2, 3]
+                    }]
+                },
+                output: 'highcharts/react/unit-test/path-driven-fallback-shapes'
+            },
+            legendMetaList
+        );
+
+        ok(!jsx.includes('<Title>Hello</Title>'), 'should not extract unsupported title shape');
+        ok(!jsx.includes('<XAxis'), 'should not extract array xAxis shape');
+        ok(jsx.includes('<Legend'), 'should still extract supported legend object shape');
+
+        ok(jsx.includes('title:'), 'should keep unsupported title in chartOptions');
+        ok(jsx.includes('xAxis:'), 'should keep unsupported xAxis in chartOptions');
+        ok(!jsx.includes('\n            legend:'), 'should remove top-level legend from chartOptions');
+        ok(jsx.includes('<Series data={[1, 2, 3]} />'), 'should still extract supported series shape');
     });
 });
