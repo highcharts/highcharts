@@ -2682,8 +2682,8 @@ class Chart {
         chartBackground[verb]({
             x: mgn / 2,
             y: mgn / 2,
-            width: (chartWidth as any) - mgn - chartBorderWidth % 2,
-            height: (chartHeight as any) - mgn - chartBorderWidth % 2,
+            width: chartWidth - mgn - chartBorderWidth % 2,
+            height: chartHeight - mgn - chartBorderWidth % 2,
             r: optionsChart.borderRadius
         });
 
@@ -2742,7 +2742,7 @@ class Chart {
             chart.plotBorder = plotBorder = renderer.rect()
                 .addClass('highcharts-plot-border')
                 .attr({
-                    zIndex: 1
+                    zIndex: 1.5 // Above the grid, below the axes, #24521.
                 })
                 .add();
         }
@@ -2761,10 +2761,6 @@ class Chart {
             // #3282 plotBorder should be negative
             -plotBorder.strokeWidth()
         ));
-
-        // Preserve the same-zIndex paint order after axis updates recreate
-        // grids, #24521.
-        plotBorder.zIndexSetter();
 
         // Reset
         chart.isDirtyBox = false;
