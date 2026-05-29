@@ -836,6 +836,39 @@ QUnit.test('Sankey and circular data', function (assert) {
         'Circular bend should not fold back at the outer edge'
     );
 
+    const invertedContainer = document.createElement('div');
+    document.body.appendChild(invertedContainer);
+
+    const invertedChart = Highcharts.chart(invertedContainer, {
+            chart: {
+                inverted: true,
+                width: 500,
+                height: 420
+            },
+            series: [
+                {
+                    keys: ['from', 'to', 'weight'],
+                    data: [
+                        ['a', 'b', 5],
+                        ['b', 'c', 10],
+                        ['b', 'a', 5]
+                    ],
+                    type: 'sankey'
+                }
+            ]
+        }),
+        invertedSeries = invertedChart.series[0],
+        invertedReturnPath = invertedSeries.points[2].shapeArgs.d;
+
+    assert.ok(
+        Math.abs(invertedReturnPath[0][1] - invertedReturnPath[1][5]) <=
+            invertedSeries.circularLinkBend * 2 + 1,
+        'Inverted return links should cap middle-column source bends'
+    );
+
+    invertedChart.destroy();
+    invertedContainer.remove();
+
     chart.series[0].setData([
         ['x', 'y', 1],
         ['a', 'b', 3],
