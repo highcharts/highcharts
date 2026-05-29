@@ -115,18 +115,17 @@ function getTradesTable(rows) {
 (async () => {
     const rows = await loadDataset(),
         series = getPriceSeries(rows),
-        tradesTable = getTradesTable(rows);
-
-    const labelStyle = {
-        color: 'var(--mstar-text-muted)',
-        fontSize: '11px',
-        fontWeight: '300'
-    };
-    const bodyTextStyle = {
-        color: 'var(--mstar-text-strong)',
-        fontSize: '12px',
-        fontWeight: '300'
-    };
+        tradesTable = getTradesTable(rows),
+        labelStyle = {
+            color: 'var(--mstar-text-muted)',
+            fontSize: '11px',
+            fontWeight: '300'
+        },
+        bodyTextStyle = {
+            color: 'var(--mstar-text-strong)',
+            fontSize: '12px',
+            fontWeight: '300'
+        };
 
     Dashboards.board('container', {
         dataPool: {
@@ -225,7 +224,12 @@ function getTradesTable(rows) {
                         color: 'var(--mstar-accent-soft)'
                     },
                     xAxis: {
-                        gridLineColor: 'var(--mstar-line)'
+                        gridLineColor: 'var(--mstar-line)',
+                        labels: {
+                            style: {
+                                color: 'var(--mstar-text-strong)'
+                            }
+                        }
                     }
                 },
                 scrollbar: {
