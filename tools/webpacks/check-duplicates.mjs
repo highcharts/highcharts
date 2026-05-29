@@ -47,7 +47,7 @@ function collectJsFiles(directory) {
     for (const entry of fs.readdirSync(directory, { withFileTypes: true })) {
         const entryPath = path.join(directory, entry.name);
 
-        if (entryPath.includes('/es-modules/')) {
+        if (entryPath.replace(/\\/g, '/').includes('/es-modules/')) {
             continue;
         }
 
@@ -78,9 +78,9 @@ for (const externalsFile of externalsFiles) {
 
 const jsFiles = collectJsFiles(codeRoot).filter((filePath) => {
     return !masterBundleBasenames.has(path.basename(filePath)) &&
-        !filePath.includes('/es-modules/') &&
-        !filePath.includes('/es5/') &&
-        !filePath.includes('/esm/');
+        !filePath.replace(/\\/g, '/').includes('/es-modules/') &&
+        !filePath.replace(/\\/g, '/').includes('/es5/') &&
+        !filePath.replace(/\\/g, '/').includes('/esm/');
 });
 
 if (!fs.existsSync(codeRoot) || jsFiles.length === 0) {
