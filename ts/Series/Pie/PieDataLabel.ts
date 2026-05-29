@@ -787,11 +787,8 @@ namespace ColumnDataLabel {
                 centerYOffset = (overflow[0] - overflow[2]) / 2;
             }
 
-            center[0] += centerXOffset;
-            center[1] += centerYOffset;
-
             // If the size must be decreased, we need to run translate and
-            // drawDataLabels again with the corrected center.
+            // drawDataLabels again
             if (newSize < center[2]) {
                 center[2] = newSize;
                 center[3] = Math.min( // #3632
@@ -809,6 +806,8 @@ namespace ColumnDataLabel {
             // Else, return true to indicate that the pie and its labels is
             // within the plot area
             } else {
+                center[0] += centerXOffset;
+                center[1] += centerYOffset;
                 ret = true;
             }
         }
