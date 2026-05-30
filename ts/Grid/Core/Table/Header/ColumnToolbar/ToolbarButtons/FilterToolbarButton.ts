@@ -2,14 +2,15 @@
  *
  *  Grid Filter Toolbar Button class
  *
- *  (c) 2020-2025 Highsoft AS
+ *  (c) 2020-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
- *  - Dawid Dragula
+ *  - Dawid Draguła
  *
  * */
 
@@ -27,9 +28,7 @@ import type ColumnToolbar from '../ColumnToolbar.js';
 import FilterPopup from '../FilterPopup.js';
 import ToolbarButton from '../../../../UI/ToolbarButton.js';
 import StateHelpers from '../StateHelpers.js';
-import U from '../../../../../../Core/Utilities.js';
-
-const { addEvent } = U;
+import { addEvent } from '../../../../../../Shared/Utilities.js';
 
 
 /* *
@@ -50,7 +49,6 @@ class FilterToolbarButton extends ToolbarButton {
     public override toolbar?: ColumnToolbar;
 
     public override popup?: FilterPopup;
-
 
     /* *
      *
@@ -77,7 +75,7 @@ class FilterToolbarButton extends ToolbarButton {
      *
      * */
 
-    protected override refreshState(): void {
+    public override refreshState(): void {
         const column = this.toolbar?.column;
         if (column) {
             this.setActive(StateHelpers.isFiltered(column));

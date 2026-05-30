@@ -2,11 +2,13 @@
  *
  *  Organization chart module
  *
- *  (c) 2018-2025 Torstein Honsi
+ *  (c) 2018-2026 Highsoft AS
+ *  Author: Torstein Hønsi
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -20,6 +22,7 @@ import type OrganizationDataLabelOptions from './OrganizationDataLabelOptions';
 import type SankeyPointOptions from '../Sankey/SankeyPointOptions';
 import type ColorString from '../../Core/Color/ColorString';
 import type { OrganizationLinkOptions } from './OrganizationSeriesOptions';
+import type { PointDataLabelOptionsModifier } from '../../Core/Series/DataLabel';
 
 /* *
  *
@@ -33,9 +36,15 @@ export interface OrganizationPointOptions extends SankeyPointOptions {
     linkLineWidth?: number;
     link?: OrganizationLinkOptions;
     borderRadius?: number;
-    dataLabels?: (OrganizationDataLabelOptions|Array<OrganizationDataLabelOptions>);
+    dataLabels?: (
+        OrganizationPointDataLabelOptions |
+        Array<OrganizationPointDataLabelOptions>
+    );
     offset?: (number|string);
 }
+
+export type OrganizationPointDataLabelOptions =
+    OrganizationDataLabelOptions & PointDataLabelOptionsModifier;
 
 /* *
  *

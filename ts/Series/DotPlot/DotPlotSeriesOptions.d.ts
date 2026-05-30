@@ -1,10 +1,12 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Hønsi
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -15,7 +17,6 @@
  * */
 
 import type ColumnSeriesOptions from '../Column/ColumnSeriesOptions';
-import type DotPlotSeries from './DotPlotSeries';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 
 /* *
@@ -27,7 +28,7 @@ import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 export interface DotPlotSeriesOptions extends ColumnSeriesOptions {
     itemPadding?: number;
     slotsPerBar?: number;
-    states?: SeriesStatesOptions<DotPlotSeries>;
+    states?: SeriesStatesOptions<DotPlotSeriesOptions>;
 }
 
 /* *

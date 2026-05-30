@@ -2,12 +2,13 @@
  *
  *  Experimental Highcharts module which enables visualization of a word cloud.
  *
- *  (c) 2016-2025 Highsoft AS
- *  Authors: Jon Arild Nygard
+ *  (c) 2016-2026 Highsoft AS
+ *  Authors: Jon Arild Nygård
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  * */
 
 'use strict';
@@ -26,14 +27,13 @@ import type WordcloudSeries from './WordcloudSeries';
 
 import H from '../../Core/Globals.js';
 const { deg2rad } = H;
-import U from '../../Core/Utilities.js';
-const {
+import {
     extend,
     find,
     isNumber,
     isObject,
     merge
-} = U;
+} from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -279,7 +279,7 @@ function intersectsAnyWord(
 }
 
 /**
- * Gives a set of cordinates for an Archimedian Spiral.
+ * Gives a set of coordinates for an Archimedean Spiral.
  *
  * @private
  * @function archimedeanSpiral
@@ -394,7 +394,7 @@ function squareSpiral(
  * @param {Highcharts.WordcloudSpiralParamsObject} [params]
  * Additional parameters.
  *
- * @return {boolean|Higcharts.PositionObject}
+ * @return {boolean|Highcharts.PositionObject}
  * Resulting coordinates, x and y. False if the word should be dropped from
  * the visualization.
  */

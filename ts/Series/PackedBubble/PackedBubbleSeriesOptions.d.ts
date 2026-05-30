@@ -1,10 +1,12 @@
 /* *
  *
- *  (c) 2010-2025 Grzegorz Blachlinski, Sebastian Bochan
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Grzegorz Blachliński, Sebastian Bochan
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -16,13 +18,13 @@
 
 import type {
     BubbleSeriesOptions,
+    BubbleSeriesTooltipOptions,
     BubbleSizeByValue
 } from '../Bubble/BubbleSeriesOptions';
 import type NetworkgraphSeriesOptions from '../Networkgraph/NetworkgraphSeriesOptions';
 import type PackedBubbleDataLabelOptions from './PackedBubbleDataLabelOptions';
 import type PackedBubbleLayout from './PackedBubbleLayout';
 import type PackedBubblePointOptions from './PackedBubblePointOptions';
-import type PackedBubbleSeries from './PackedBubbleSeries';
 import type {
     SeriesEventsOptions,
     SeriesStatesOptions
@@ -31,7 +33,6 @@ import type {
     PointMarkerOptions,
     PointShortOptions
 } from '../../Core/Series/PointOptions';
-import type TooltipOptions from '../../Core/TooltipOptions';
 
 /* *
  *
@@ -77,7 +78,7 @@ export interface PackedBubbleParentNodeOptions {
  *
  * @excluding connectEnds, connectNulls, cropThreshold, dragDrop, jitter,
  *            keys, pointPlacement, sizeByAbsoluteValue, step, xAxis,
- *            yAxis, zMax, zMin, dataSorting, boostThreshold,
+ *            yAxis, dataSorting, boostThreshold,
  *            boostBlending
  *
  * @excluding cropThreshold, dataParser, dataSorting, dataURL, dragDrop, stack,
@@ -203,9 +204,11 @@ export interface PackedBubbleSeriesOptions
 
     sizeBy?: BubbleSizeByValue;
 
-    states?: SeriesStatesOptions<PackedBubbleSeries>;
+    states?: SeriesStatesOptions<PackedBubbleSeriesOptions>;
+
     stickyTracking: false;
-    tooltip?: Partial<TooltipOptions>;
+
+    tooltip?: PackedBubbleSeriesTooltipOptions;
 
     /**
      * An option is giving a possibility to choose between using simulation
@@ -224,6 +227,14 @@ export interface PackedBubbleSeriesOptions
 
     zoneAxis?: ('x'|'y'|'z'|undefined);
 
+}
+
+export interface PackedBubbleSeriesTooltipOptions
+    extends BubbleSeriesTooltipOptions {
+    /**
+     * @default 'Value: {point.value}'
+     */
+    pointFormat?: BubbleSeriesTooltipOptions['pointFormat'];
 }
 
 /* *

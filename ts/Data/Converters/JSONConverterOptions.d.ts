@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2009-2025 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Kamil Kubik
@@ -22,7 +23,7 @@ import type {
     JSONBeforeParseCallbackFunction
 } from '../Connectors/JSONConnectorOptions';
 
-import DataConverter from './DataConverter';
+import type { Options as DataConverterOptions } from './DataConverter';
 
 /* *
  *
@@ -33,7 +34,7 @@ import DataConverter from './DataConverter';
 /**
  * Options of the JSONConverter.
  */
-export interface JSONConverterOptions extends DataConverter.Options {
+export interface JSONConverterOptions extends DataConverterOptions {
     orientation: 'columns' | 'rows';
     data?: JSONData;
     columnIds?: string[] | ColumnIdsOptions;

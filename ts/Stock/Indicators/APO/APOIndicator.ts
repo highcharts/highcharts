@@ -1,8 +1,9 @@
 /* *
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -26,12 +27,8 @@ import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     ema: EMAIndicator
 } = SeriesRegistry.seriesTypes;
-import U from '../../../Core/Utilities.js';
-const {
-    extend,
-    merge,
-    error
-} = U;
+import { extend, merge } from '../../../Shared/Utilities.js';
+import { error } from '../../../Core/Utilities.js';
 
 /* *
  *
@@ -42,7 +39,7 @@ const {
 /**
  * The APO series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.apo
  *
@@ -177,6 +174,7 @@ class APOIndicator extends EMAIndicator {
  *
  * */
 
+/** @internal */
 interface APOIndicator {
     nameBase: string;
     nameComponents: Array<string>;
@@ -194,6 +192,7 @@ extend(APOIndicator.prototype, {
  *
  * */
 
+/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         apo: typeof APOIndicator;
@@ -208,6 +207,7 @@ SeriesRegistry.registerSeriesType('apo', APOIndicator);
  *
  * */
 
+/** @internal */
 export default APOIndicator;
 
 /* *

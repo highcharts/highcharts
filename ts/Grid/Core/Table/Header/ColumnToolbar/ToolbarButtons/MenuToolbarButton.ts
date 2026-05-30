@@ -2,14 +2,15 @@
  *
  *  Grid Menu Toolbar Button class
  *
- *  (c) 2020-2025 Highsoft AS
+ *  (c) 2020-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
- *  - Dawid Dragula
+ *  - Dawid Draguła
  *
  * */
 
@@ -25,11 +26,12 @@
 import type ColumnToolbar from '../ColumnToolbar.js';
 
 import ToolbarButton from '../../../../UI/ToolbarButton.js';
+import GridUtils from '../../../../GridUtils.js';
 import StateHelpers from '../StateHelpers.js';
 import MenuPopup from '../MenuPopup.js';
-import U from '../../../../../../Core/Utilities.js';
+import { addEvent } from '../../../../../../Shared/Utilities.js';
 
-const { addEvent } = U;
+const { formatText } = GridUtils;
 
 
 /* *
@@ -51,6 +53,32 @@ class MenuToolbarButton extends ToolbarButton {
 
     public override popup?: MenuPopup;
 
+    private getColumnLabel(): string {
+        const column = this.toolbar?.column;
+        const label = (
+            column?.header?.headerContent?.textContent ||
+            column?.id ||
+            ''
+        ).trim();
+
+        return label || column?.id || '';
+    }
+
+    private updateA11yLabel(): void {
+        const button = this.wrapper?.querySelector('button');
+        const column = this.toolbar?.column;
+        const lang = column?.viewport.grid.options?.lang;
+        const columnLabel = this.getColumnLabel();
+        const menuLabel = formatText(
+            lang?.accessibility?.columnMenu || 'Open menu for {column}.',
+            { column: columnLabel }
+        );
+
+        if (button && menuLabel) {
+            button.setAttribute('aria-label', menuLabel);
+        }
+    }
+
 
     /* *
      *
@@ -61,7 +89,10 @@ class MenuToolbarButton extends ToolbarButton {
     constructor() {
         super({
             icon: 'menu',
-            classNameKey: 'headerCellMenuIcon'
+            classNameKey: 'headerCellMenuIcon',
+            accessibility: {
+                ariaExpanded: false
+            }
         });
     }
 
@@ -87,12 +118,13 @@ class MenuToolbarButton extends ToolbarButton {
         this.popup.toggle(this.wrapper);
     }
 
-    protected override refreshState(): void {
+    public override refreshState(): void {
         const column = this.toolbar?.column;
         if (!column) {
             return;
         }
 
+        this.updateA11yLabel();
         this.setActive(
             StateHelpers.isSorted(column) ||
             StateHelpers.isFiltered(column)

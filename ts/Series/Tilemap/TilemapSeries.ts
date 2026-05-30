@@ -1,13 +1,14 @@
 /* *
  *
- *  Tilemaps module
+ *  Tilemap module
  *
- *  (c) 2010-2025 Highsoft AS
+ *  (c) 2010-2026 Highsoft AS
  *  Author: Øystein Moseng
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -36,13 +37,7 @@ const {
 import TilemapPoint from './TilemapPoint.js';
 import TilemapSeriesDefaults from './TilemapSeriesDefaults.js';
 import TilemapShapes from './TilemapShapes.js';
-import U from '../../Core/Utilities.js';
-const {
-    addEvent,
-    extend,
-    merge,
-    pushUnique
-} = U;
+import { addEvent, extend, merge, pushUnique } from '../../Shared/Utilities.js';
 
 /* *
  *

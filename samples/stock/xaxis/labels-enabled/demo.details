@@ -1,6 +1,4 @@
 ---
- name: Highcharts Stock Demo
- authors:
-   - Torstein Hønsi
- js_wrap: b
+name: Demo of xAxis.labels.enabled
+js_wrap: b
 ...

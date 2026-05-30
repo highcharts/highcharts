@@ -1,12 +1,14 @@
 /* *
  *
- *  (c) 2009-2025 Øystein Moseng
+ *  (c) 2009-2026 Highsoft AS
+ *  Author: Øystein Moseng
  *
  *  Default lang/i18n options for accessibility.
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -247,6 +249,16 @@ const langOptions: DeepPartial<LangOptions> = {
         },
 
         /**
+         * Stock tools language options for accessibility.
+         *
+         * @since next
+         */
+        stockTools: {
+            groupLabel: 'Stock chart tools',
+            arrowLabel: 'Toggle submenu'
+        },
+
+        /**
          * Accessibility language options for the data table.
          *
          * @since 8.0.0
@@ -386,7 +398,7 @@ const langOptions: DeepPartial<LangOptions> = {
          */
         exporting: {
             chartMenuLabel: 'Chart menu',
-            menuButtonLabel: 'View chart menu, {chartTitle}'
+            menuButtonLabel: 'View chart context menu, {chartTitle}'
         },
 
         /**

@@ -1,14 +1,15 @@
 /* *
  *
- *  (c) 2009-2025 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Sophie Bremer
- *  - Dawid Dragula
+ *  - Dawid Draguła
  *
  * */
 
@@ -23,15 +24,14 @@
  * */
 
 
-import type DataEvent from '../DataEvent';
+import type {
+    DataEventDetail
+} from '../DataEvent';
 import type { RangeModifierOptions } from './RangeModifierOptions';
 
 import DataModifier from './DataModifier.js';
 import DataTable from '../DataTable.js';
-import U from '../../Core/Utilities.js';
-const {
-    merge
-} = U;
+import { merge } from '../../Shared/Utilities.js';
 
 
 /* *
@@ -74,7 +74,7 @@ class RangeModifier extends DataModifier {
     /**
      * Constructs an instance of the range modifier.
      *
-     * @param {Partial<RangeModifier.Options>} [options]
+     * @param {Partial<RangeModifierOptions>} [options]
      * Options to configure the range modifier.
      */
     public constructor(
@@ -114,7 +114,7 @@ class RangeModifier extends DataModifier {
      * @param {DataTable} table
      * Table to modify.
      *
-     * @param {DataEvent.Detail} [eventDetail]
+     * @param {DataEventDetail} [eventDetail]
      * Custom information for pending events.
      *
      * @return {DataTable}
@@ -123,7 +123,7 @@ class RangeModifier extends DataModifier {
      */
     public override modifyTable(
         table: DataTable,
-        eventDetail?: DataEvent.Detail
+        eventDetail?: DataEventDetail
     ): DataTable {
         const modifier = this;
 

@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2009-2025 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Sebastian Bochan
@@ -47,11 +48,11 @@ class CellHTML extends GUIElement {
     /**
      * Constructs an instance of the CellHTML class.
      *
-     * @param {Cell.Options} options
+     * @param {Options} options
      * Options for the cell.
      */
     public constructor(
-        options: CellHTML.Options
+        options: Options
     ) {
         super();
 
@@ -85,7 +86,7 @@ class CellHTML extends GUIElement {
     /**
      * The cell options.
      */
-    public options: CellHTML.Options;
+    public options: Options;
 
     /**
      * The type of a GUIElement instance.
@@ -134,72 +135,70 @@ class CellHTML extends GUIElement {
 
 /* *
  *
- *  Namespace
+ *  Type Declarations
  *
  * */
 
-namespace CellHTML {
-    /**
-     * Checks if a valid cell HTML instance.
-     */
-    export function isCellHTML(cellHTML: unknown): cellHTML is CellHTML {
-        return cellHTML instanceof CellHTML;
-    }
+/**
+ * Checks if a valid cell HTML instance.
+ */
+export function isCellHTML(cellHTML: unknown): cellHTML is CellHTML {
+    return cellHTML instanceof CellHTML;
+}
 
+/**
+ * Options for each cell.
+ **/
+export interface Options {
     /**
-     * Options for each cell.
+     * Unique cell id.
      **/
-    export interface Options {
-        /**
-         * Unique cell id.
-         **/
-        id: string;
+    id: string;
 
+    /**
+     * Options controlling the edit mode for the cell.
+     **/
+    editMode?: {
         /**
-         * Options controlling the edit mode for the cell.
+         * Individual options for the toolbar items.
          **/
-        editMode?: {
+        toolbarItems?: {
             /**
-             * Individual options for the toolbar items.
-             **/
-            toolbarItems?: {
-                /**
-                 * Options for the `destroy` toolbar item.
-                 */
-                destroy: {
-                    enabled?: boolean;
-                };
-                /**
-                 * Options for the `drag` toolbar item.
-                 */
-                drag: {
-                    enabled?: boolean;
-                };
-                /**
-                 * Options for the `settings` toolbar item.
-                 */
-                settings: {
-                    enabled?: boolean;
-                };
-                /**
-                 * Options for the `viewFullscreen` toolbar item.
-                 */
-                viewFullscreen: {
-                    enabled?: boolean;
-                };
-            }
+             * Options for the `destroy` toolbar item.
+             */
+            destroy: {
+                enabled?: boolean;
+            };
+            /**
+             * Options for the `drag` toolbar item.
+             */
+            drag: {
+                enabled?: boolean;
+            };
+            /**
+             * Options for the `settings` toolbar item.
+             */
+            settings: {
+                enabled?: boolean;
+            };
+            /**
+             * Options for the `viewFullscreen` toolbar item.
+             */
+            viewFullscreen: {
+                enabled?: boolean;
+            };
         }
-
-        /**
-         * HTML container of a GUIElement.
-         **/
-        container: HTMLElement;
-
-        /**
-         * Component mounted in the cell.
-         **/
-        mountedComponent?: Component;
     }
+
+    /**
+     * HTML container of a GUIElement.
+     **/
+    container: HTMLElement;
+
+    /**
+     * Component mounted in the cell.
+     **/
+    mountedComponent?: Component;
 }
 
 /* *

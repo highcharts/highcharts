@@ -2,14 +2,15 @@
  *
  *  Text Cell Renderer class
  *
- *  (c) 2020-2025 Highsoft AS
+ *  (c) 2020-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
- *  - Dawid Dragula
+ *  - Dawid Draguła
  *
  * */
 
@@ -22,20 +23,16 @@
  *
  * */
 
-import type Column from '../../../Core/Table/Column';
+import type { Column, ColumnDataType } from '../../../Core/Table/Column';
 import type TableCell from '../../../Core/Table/Body/TableCell';
 import type {
     EditModeRendererTypeName
 } from '../../CellEditing/CellEditingComposition';
 
-import CellRenderer from '../CellRenderer.js';
-import CellRendererRegistry from '../CellRendererRegistry.js';
+import { CellRenderer, CellRendererOptions } from '../CellRenderer.js';
+import { registerRenderer } from '../CellRendererRegistry.js';
 import TextContent from '../../../Core/Table/CellContent/TextContent.js';
-
-import U from '../../../../Core/Utilities.js';
-const {
-    merge
-} = U;
+import { merge } from '../../../../Shared/Utilities.js';
 
 
 /* *
@@ -53,7 +50,7 @@ class TextRenderer extends CellRenderer {
      * The default edit mode renderer type names for this view renderer.
      */
     public static defaultEditingRenderer: Record<
-        Column.DataType, EditModeRendererTypeName
+        ColumnDataType, EditModeRendererTypeName
     > = {
             string: 'textInput',
             number: 'numberInput',
@@ -64,11 +61,11 @@ class TextRenderer extends CellRenderer {
     /**
      * Default options for the text renderer.
      */
-    public static defaultOptions: TextRenderer.Options = {
+    public static defaultOptions: TextRendererOptions = {
         type: 'text'
     };
 
-    public override options: TextRenderer.Options;
+    public override options: TextRendererOptions;
 
     /**
      * The format to use for the text content.
@@ -119,19 +116,20 @@ class TextRenderer extends CellRenderer {
 
 /* *
  *
- *  Namespace
+ *  Declarations
  *
  * */
 
-namespace TextRenderer {
-
+/**
+ * Options to control the text renderer content.
+ */
+export interface TextRendererOptions extends CellRendererOptions {
     /**
-     * Options to control the text renderer content.
+     * Use the built-in plain text renderer.
+     *
+     * @default 'text'
      */
-    export interface Options extends CellRenderer.Options {
-        type: 'text';
-    }
-
+    type: 'text';
 }
 
 
@@ -147,7 +145,7 @@ declare module '../CellRendererType' {
     }
 }
 
-CellRendererRegistry.registerRenderer('text', TextRenderer);
+registerRenderer('text', TextRenderer);
 
 
 /* *

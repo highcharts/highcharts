@@ -1,10 +1,12 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Hønsi
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -16,7 +18,6 @@
 
 import type LineSeriesOptions from '../Line/LineSeriesOptions';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
-import type SplineSeries from './SplineSeries';
 
 /* *
  *
@@ -25,7 +26,7 @@ import type SplineSeries from './SplineSeries';
  * */
 
 export interface SplineSeriesOptions extends LineSeriesOptions {
-    states?: SeriesStatesOptions<SplineSeries>;
+    states?: SeriesStatesOptions<SplineSeriesOptions>;
 }
 
 /* *

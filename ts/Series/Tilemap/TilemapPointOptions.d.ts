@@ -1,13 +1,14 @@
 /* *
  *
- *  Tilemaps module
+ *  Tilemap module
  *
- *  (c) 2010-2025 Highsoft AS
+ *  (c) 2010-2026 Highsoft AS
  *  Author: Øystein Moseng
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -29,11 +30,11 @@ import type HeatmapPointOptions from '../Heatmap/HeatmapPointOptions';
 export interface TilemapPointOptions extends HeatmapPointOptions {
 
     /**
-     * The color of the point. In tilemaps the point color is rarely set
+     * The color of the point. In tilemap, the point color is rarely set
      * explicitly, as we use the color to denote the `value`. Options for
      * this are set in the [colorAxis](#colorAxis) configuration.
      *
-     * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @type {Highcharts.ColorType}
      *
      * @product highcharts highmaps
      */

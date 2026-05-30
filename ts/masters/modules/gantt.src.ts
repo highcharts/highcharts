@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LicenseRef-Highcharts
 /**
  * @license Highcharts Gantt JS v@product.version@ (@product.date@)
  * @module highcharts/modules/gantt
@@ -5,15 +6,19 @@
  *
  * Gantt series
  *
- * (c) 2016-2025 Lars A. V. Cabrera
+ * (c) 2016-2026 Highsoft AS
+ * Author: Lars A. V. Cabrera
  *
- * License: www.highcharts.com/license
+ * A commercial license may be required depending on use,
+ * see www.highcharts.com/license
  */
 'use strict';
 import Highcharts from '../../Core/Globals.js';
-import ArrowSymbols from '../../Extensions/ArrowSymbols.js';
+import { composeArrowSymbols } from '../../Extensions/ArrowSymbols.js';
 import Connection from '../../Gantt/Connection.js';
-import CurrentDateIndication from '../../Extensions/CurrentDateIndication.js';
+import {
+    composeCurrentDateIndication
+} from '../../Extensions/CurrentDateIndication.js';
 import GanttChart from '../../Core/Chart/GanttChart.js';
 import Navigator from '../../Stock/Navigator/Navigator.js';
 import RangeSelector from '../../Stock/RangeSelector/RangeSelector.js';
@@ -33,8 +38,8 @@ G.Scrollbar = G.Scrollbar || Scrollbar;
 // Functions
 G.ganttChart = G.GanttChart.ganttChart;
 // Compositions
-ArrowSymbols.compose(G.SVGRenderer);
-CurrentDateIndication.compose(G.Axis, G.PlotLineOrBand);
+composeArrowSymbols(G.SVGRenderer);
+composeCurrentDateIndication(G.Axis, G.PlotLineOrBand);
 GanttSeries.compose(G.Axis, G.Chart, G.Series, G.Tick);
 G.Navigator.compose(G.Chart, G.Axis, G.Series);
 G.RangeSelector.compose(G.Axis, G.Chart);

@@ -1,10 +1,12 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Hønsi
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -46,3 +48,10 @@ export type TypedArrayConstructor = (
     Int16ArrayConstructor|Uint16ArrayConstructor|Int32ArrayConstructor|
     Uint32ArrayConstructor|Float32ArrayConstructor|Float64ArrayConstructor
 );
+
+/**
+ * Make specified properties optional in a union of object types, without
+ * losing the union.
+ */
+export type MakeOptional<T extends object, K extends keyof T> =
+    T extends unknown ? Omit<T, K> & Partial<Pick<T, K>> : never;

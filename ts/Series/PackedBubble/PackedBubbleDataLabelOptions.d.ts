@@ -1,10 +1,12 @@
 /* *
  *
- *  (c) 2010-2025 Grzegorz Blachlinski, Sebastian Bochan
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Grzegorz Blachliński, Sebastian Bochan
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -14,10 +16,7 @@
  *
  * */
 
-import type {
-    DataLabelOptions,
-    DataLabelTextPathOptions
-} from '../../Core/Series/DataLabelOptions';
+import type { DataLabelOptions } from '../../Core/Series/DataLabelOptions';
 import type PackedBubblePoint from './PackedBubblePoint';
 import type Point from '../../Core/Series/Point';
 
@@ -28,7 +27,10 @@ import type Point from '../../Core/Series/Point';
  * */
 
 export interface PackedBubbleDataLabelsFormatterCallbackFunction {
-    (this: (Point|PackedBubblePoint)): (number|string|null|undefined);
+    (
+        this: (Point|PackedBubblePoint),
+        options: PackedBubbleDataLabelOptions
+    ): (number|string|null|undefined);
 }
 
 export interface PackedBubbleDataLabelOptions extends DataLabelOptions {
@@ -38,8 +40,7 @@ export interface PackedBubbleDataLabelOptions extends DataLabelOptions {
     parentNodeFormatter?: (
         PackedBubbleDataLabelsFormatterCallbackFunction
     );
-    parentNodeTextPath?: DataLabelTextPathOptions;
-    textPath?: DataLabelTextPathOptions;
+    parentNodeTextPath?: DataLabelOptions['textPath'];
 }
 
 /* *

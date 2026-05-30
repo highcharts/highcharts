@@ -1,10 +1,12 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Hønsi
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -198,14 +200,14 @@ const NavigatorDefaults: NavigatorOptions = {
         /**
          * The fill for the handle.
          *
-         * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @type {Highcharts.ColorType}
          */
         backgroundColor: Palette.neutralColor5,
 
         /**
          * The stroke for the handle border and the stripes inside.
          *
-         * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @type {Highcharts.ColorType}
          */
         borderColor: Palette.neutralColor40
     },
@@ -222,7 +224,7 @@ const NavigatorDefaults: NavigatorOptions = {
      * @sample {highstock} stock/navigator/maskfill/
      *         Blue, semi transparent mask
      *
-     * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @type    {Highcharts.ColorType}
      * @default rgba(102,133,194,0.3)
      */
     maskFill: color(Palette.highlightColor60).setOpacity(0.3).get(),
@@ -234,8 +236,7 @@ const NavigatorDefaults: NavigatorOptions = {
      * @sample {highstock} stock/navigator/outline/
      *         2px blue outline
      *
-     * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-     * @default #cccccc
+     * @type {Highcharts.ColorType}
      */
     outlineColor: Palette.neutralColor40,
 
@@ -383,7 +384,7 @@ const NavigatorDefaults: NavigatorOptions = {
         /**
          * Sets the fill color of the navigator series.
          *
-         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @type      {Highcharts.ColorType}
          * @apioption navigator.series.color
          */
 
@@ -406,7 +407,6 @@ const NavigatorDefaults: NavigatorOptions = {
          *
          * In Highcharts Stock version < 8, defaults to 0.
          *
-         * @extends plotOptions.series.pointRange
          * @type {number|null}
          * @apioption navigator.series.pointRange
          */
@@ -588,6 +588,7 @@ const NavigatorDefaults: NavigatorOptions = {
  *
  * */
 
+/** @internal */
 export default NavigatorDefaults;
 
 /* *

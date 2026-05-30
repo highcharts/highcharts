@@ -1,13 +1,14 @@
 /* *
  *
- *  (c) 2009-2025 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
- *  - Karol Kolodziej
+ *  - Karol Kołodziej
  *  - Kamil Kubik
  *
  * */
@@ -19,7 +20,9 @@
  * */
 
 import type DataConnectorOptions from './DataConnectorOptions';
-import type DataTable from '../DataTable';
+import type {
+    BasicColumn as DataTableBasicColumn
+} from '../DataTable';
 import type { DataTableConnectorOptions } from './DataConnectorOptions';
 
 /* *
@@ -92,7 +95,7 @@ export interface GoogleSheetsConnectorOptions extends DataConnectorOptions {
      * Allows defining multiple data tables within a single connector to adjust
      * options or data parsing in various ways based on the same data source.
      *
-     * @example
+     * ```js
      * dataPool: {
      *     connectors: [{
      *         id: 'data-connector',
@@ -132,6 +135,7 @@ export interface GoogleSheetsConnectorOptions extends DataConnectorOptions {
      *         }]
      *     }]
      * }
+     * ```
      **/
     dataTables?: GoogleSheetsDataTableConnectorOptions[];
 
@@ -155,7 +159,7 @@ export interface GoogleSheetsDataTableConnectorOptions extends DataTableConnecto
  *
  */
 export interface GoogleSheetsBeforeParseCallbackFunction {
-    (data: DataTable.BasicColumn[]): DataTable.BasicColumn[];
+    (data: DataTableBasicColumn[]): DataTableBasicColumn[];
 }
 
 /* *

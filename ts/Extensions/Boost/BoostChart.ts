@@ -1,12 +1,11 @@
 /* *
  *
- *  (c) 2019-2025 Highsoft AS
+ *  (c) 2019-2026 Highsoft AS
  *
  *  Boost module: stripped-down renderer for higher performance
  *
  *  License: highcharts.com/license
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -29,17 +28,12 @@ import type Pointer from '../../Core/Pointer';
 import type Series from '../../Core/Series/Series';
 import type SeriesOptions from '../../Core/Series/SeriesOptions';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
-import type Types from '../../Shared/Types';
+import type { TypedArray } from '../../Shared/Types';
 
 import BoostableMap from './BoostableMap.js';
 import H from '../../Core/Globals.js';
 const { composed } = H;
-import U from '../../Core/Utilities.js';
-const {
-    addEvent,
-    pick,
-    pushUnique
-} = U;
+import { addEvent, pick, pushUnique } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -47,18 +41,21 @@ const {
  *
  * */
 
+/** @internal */
 interface BoostChartAdditions extends BoostTargetAdditions {
     forceChartBoost?: boolean;
     markerGroup?: Series['markerGroup'];
     lineWidthFilter?: SVGElement;
 }
 
+/** @internal */
 export declare class BoostChartComposition extends Chart {
     boosted?: boolean;
     boost: BoostChartAdditions;
     series: Array<BoostSeriesComposition>;
 }
 
+/** @internal */
 declare module '../../Core/Chart/ChartBase'{
     interface ChartBase extends BoostTargetObject {
         boosted?: boolean;
@@ -72,9 +69,7 @@ declare module '../../Core/Chart/ChartBase'{
  *
  * */
 
-/**
- * @private
- */
+/** @internal */
 function compose<T extends typeof Chart>(
     ChartClass: T,
     wglMode?: boolean
@@ -92,7 +87,7 @@ function compose<T extends typeof Chart>(
  * For the chart, we need to consider the maximum extent of its Y axes,
  * in case of Highcharts Stock panes and navigator.
  *
- * @private
+ * @internal
  * @function Highcharts.Chart#getBoostClipRect
  */
 function getBoostClipRect(
@@ -154,7 +149,8 @@ function getBoostClipRect(
 
 /**
  * Returns true if the chart is in series boost mode.
- * @private
+ *
+ * @internal
  * @param {Highcharts.Chart} chart
  * Chart to check.
  * @return {boolean}
@@ -201,6 +197,7 @@ function isChartSeriesBoosting(
     // If there are more than five series currently boosting,
     // we should boost the whole chart to avoid running out of webgl contexts.
     let canBoostCount = 0,
+        eligibleCount = 0,
         needBoostCount = 0,
         seriesOptions: SeriesOptions;
 
@@ -225,6 +222,8 @@ function isChartSeriesBoosting(
             continue;
         }
 
+        ++eligibleCount;
+
         if (BoostableMap[series.type]) {
             ++canBoostCount;
         }
@@ -247,6 +246,15 @@ function isChartSeriesBoosting(
             canBoostCount === allSeries.length &&
             needBoostCount === canBoostCount
         ) ||
+        // Preserve chart-level boost when it was already active (markerGroup
+        // exists) and all remaining visible eligible series still need boost,
+        // so that hiding a series does not drop out of chart-boost mode
+        // and break the shared halo (#23338).
+        (
+            !!boost.markerGroup &&
+            canBoostCount === eligibleCount &&
+            needBoostCount === canBoostCount
+        ) ||
         needBoostCount > 5
     );
 
@@ -254,8 +262,8 @@ function isChartSeriesBoosting(
 }
 
 /**
- * Take care of the canvas blitting
- * @private
+ * Take care of the canvas blitting.
+ * @internal
  */
 function onChartCallback(
     chart: Chart
@@ -263,7 +271,7 @@ function onChartCallback(
 
     /**
      * Convert chart-level canvas to image.
-     * @private
+     * @internal
      */
     function canvasToSVG(): void {
         if (
@@ -277,7 +285,7 @@ function onChartCallback(
 
     /**
      * Clear chart-level canvas.
-     * @private
+     * @internal
      */
     function preRender(): void {
 
@@ -363,13 +371,13 @@ function onChartCallback(
 /**
  * Tolerant max() function.
  *
- * @private
+ * @internal
  * @param {...Array<Array<unknown>>} args
  * Max arguments
  * @return {number}
  * Max value
  */
-function patientMax(...args: Array<Array<unknown>|Types.TypedArray>): number {
+function patientMax(...args: Array<Array<unknown>|TypedArray>): number {
     let r = -Number.MAX_VALUE;
 
     args.forEach((t): boolean|undefined => {
@@ -394,10 +402,12 @@ function patientMax(...args: Array<Array<unknown>|Types.TypedArray>): number {
  *
  * */
 
+/** @internal */
 const BoostChart = {
     compose,
     getBoostClipRect,
     isChartSeriesBoosting
 };
 
+/** @internal */
 export default BoostChart;

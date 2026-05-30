@@ -2,11 +2,13 @@
  *
  *  Exporting module
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Hønsi
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -28,6 +30,7 @@ import type Symbols from '../../Core/Renderer/SVG/Symbols';
  *
  * */
 
+/** @internal */
 declare module '../../Core/Renderer/SVG/SymbolType' {
     interface SymbolTypeRegistry {
         /** @requires Extensions/Exporting */
@@ -43,6 +46,7 @@ declare module '../../Core/Renderer/SVG/SymbolType' {
  *
  * */
 
+/** @internal */
 namespace ExportingSymbols {
 
     /* *
@@ -59,10 +63,9 @@ namespace ExportingSymbols {
      *
      * */
 
-    /* eslint-disable valid-jsdoc */
 
     /**
-     * @private
+     * @internal
      */
     export function compose(
         SVGRendererClass: typeof SVGRenderer
@@ -78,7 +81,7 @@ namespace ExportingSymbols {
     }
 
     /**
-     * @private
+     * @internal
      */
     function menu(
         x: number,
@@ -99,7 +102,7 @@ namespace ExportingSymbols {
     }
 
     /**
-     * @private
+     * @internal
      */
     function menuball(
         this: typeof Symbols,
@@ -128,4 +131,5 @@ namespace ExportingSymbols {
  *
  * */
 
+/** @internal */
 export default ExportingSymbols;

@@ -1,20 +1,20 @@
 <script src="https://cdn.jsdelivr.net/npm/@highcharts/grid-lite/grid-lite.js"></script>
 
-<div class="demo">
-    <div id="container"></div>
-    <div>
-        <label for="select-distr">Column Distribution: </label>
-        <select id="select-distr">
-            <option selected>adjacent</option>
-            <option>independent</option>
-            <option>distributed</option>
-        </select>
+<div id="container" class="demo">
+    <div class="grid-block">
+        <div id="grid-adjacent" class="grid-container"></div>
+        <button data-grid-index="0">Reset widths</button>
     </div>
-    <div>
-        <label for="cbx-virt">Virtualization: </label>
-        <input type="checkbox" id="cbx-virt">
+    <div class="grid-block">
+        <div id="grid-independent" class="grid-container"></div>
+        <button data-grid-index="1">Reset widths</button>
     </div>
-    <div>
-        <button id="btn-remove-widths">Remove Width Options</button>
+    <div class="grid-block">
+        <div id="grid-distributed" class="grid-container"></div>
+        <button data-grid-index="2">Reset widths</button>
     </div>
+    <p>
+        Resize the columns by dragging the border between them to see the
+        different resizing modes in action.
+    </p>
 </div>

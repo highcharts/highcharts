@@ -1,11 +1,12 @@
 /* *
  *
- *  (c) 2016 Highsoft AS
+ *  (c) 2016-2026 Highsoft AS
  *  Authors: Øystein Moseng, Lars A. V. Cabrera
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -62,7 +63,7 @@ export interface ConnectorsEndMarkerOptions {
      * Set the color of the connector markers. By default this is the
      * same as the connector color.
      *
-     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @type      {Highcharts.ColorType}
      * @since     6.2.0
      * @apioption connectors.marker.color
      */
@@ -160,7 +161,7 @@ export interface ConnectorsMarkerOptions {
      * Set the color of the connector markers. By default this is the
      * same as the connector color.
      *
-     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @type      {Highcharts.ColorType}
      * @since     6.2.0
      * @apioption connectors.marker.color
      */
@@ -405,7 +406,7 @@ export interface ConnectorsStartMarkerOptions {
      * Set the color of the connector markers. By default this is the
      * same as the connector color.
      *
-     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @type      {Highcharts.ColorType}
      * @since     6.2.0
      * @apioption connectors.marker.color
      */

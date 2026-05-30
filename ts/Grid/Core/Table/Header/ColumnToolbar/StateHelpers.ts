@@ -2,14 +2,15 @@
  *
  *  Grid Header Cell State Helpers namespace
  *
- *  (c) 2020-2025 Highsoft AS
+ *  (c) 2020-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
- *  - Dawid Dragula
+ *  - Dawid Draguła
  *
  * */
 
@@ -31,47 +32,58 @@ import type Column from '../../Column';
  *
  * */
 
-namespace StateHelpers {
-    /**
-     * Checks if the column is filtered.
-     *
-     * @param column
-     * The column to check.
-     */
-    export function isFiltered(column: Column): boolean {
-        const { condition, value } = column.options.filtering || {};
-        return !!(condition && (
-            ['empty', 'notEmpty', 'true', 'false'].includes(condition) ||
-            (value !== void 0 && value !== '') // Accept null and 0
-        ));
+
+/**
+ * Checks if the column is filtered.
+ *
+ * @param column
+ * The column to check.
+ */
+export function isFiltered(column: Column): boolean {
+    const { condition, value } = column.options.filtering || {};
+    return !!(condition && (
+        ['empty', 'notEmpty', 'true', 'false'].includes(condition) ||
+        (value !== void 0 && value !== '') // Accept null and 0
+    ));
+}
+
+/**
+ * Checks if the column is sorted.
+ *
+ * @param column
+ * The column to check.
+ *
+ * @param order
+ * Optional sorting order to check for.
+ *
+ * @returns
+ * True if the column is sorted. In case of `order` is provided, true
+ * only if the column is sorted in the provided order.
+ */
+export function isSorted(column: Column, order?: ('asc'|'desc')): boolean {
+    const {
+        currentSorting,
+        currentSortings
+    } = column.viewport.grid.querying.sorting || {};
+
+    const columnSorting = (
+        currentSortings?.find((sorting): boolean =>
+            sorting.columnId === column.id
+        ) ||
+        (
+            currentSorting?.columnId === column.id ?
+                currentSorting :
+                void 0
+        )
+    );
+
+    if (!columnSorting?.order) {
+        return false;
     }
 
-    /**
-     * Checks if the column is sorted.
-     *
-     * @param column
-     * The column to check.
-     *
-     * @param order
-     * Optional sorting order to check for.
-     *
-     * @returns
-     * True if the column is sorted. In case of `order` is provided, true
-     * only if the column is sorted in the provided order.
-     */
-    export function isSorted(column: Column, order?: ('asc'|'desc')): boolean {
-        const {
-            currentSorting
-        } = column.viewport.grid.querying.sorting || {};
-
-        if (currentSorting?.columnId !== column.id) {
-            return false;
-        }
-
-        return order ?
-            currentSorting?.order === order :
-            !!currentSorting?.order;
-    }
+    return order ?
+        columnSorting.order === order :
+        !!columnSorting.order;
 }
 
 
@@ -81,4 +93,7 @@ namespace StateHelpers {
  *
  * */
 
-export default StateHelpers;
+export default {
+    isFiltered,
+    isSorted
+} as const;

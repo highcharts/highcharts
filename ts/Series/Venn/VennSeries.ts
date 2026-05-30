@@ -3,15 +3,16 @@
  *  Highcharts module which enables visualization of a Venn
  *  diagram.
  *
- *  (c) 2016-2025 Highsoft AS
- *  Authors: Jon Arild Nygard
+ *  (c) 2016-2026 Highsoft AS
+ *  Authors: Jon Arild Nygård
  *
  *  Layout algorithm by Ben Frederickson:
  *  https://www.benfrederickson.com/better-venn-diagrams/
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -24,7 +25,6 @@
  * */
 
 import type CircleObject from '../../Core/Geometry/CircleObject';
-import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
 import type IntersectionObject from '../../Core/Geometry/IntersectionObject';
 import type {
     NelderMeadPointArray,
@@ -63,15 +63,14 @@ const {
 import VennPoint from './VennPoint.js';
 import VennSeriesDefaults from './VennSeriesDefaults.js';
 import VennUtils from './VennUtils.js';
-import U from '../../Core/Utilities.js';
-const {
+import {
     addEvent,
     extend,
     isArray,
     isNumber,
     isObject,
     merge
-} = U;
+} from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -112,7 +111,7 @@ class VennSeries extends ScatterSeries {
      * distance from the internal circles, and as large possible distance to the
      * external circles.
      * @private
-     * @todo Optimize the intial position.
+     * @todo Optimize the initial position.
      * @todo Add unit tests.
      * @param {Array<Highcharts.CircleObject>} internal
      * Internal circles.
@@ -152,7 +151,7 @@ class VennSeries extends ScatterSeries {
                         );
 
                         // If the margin better than the current best, then
-                        // update sbest.
+                        // update best.
                         if (best.margin < margin) {
                             best.point = point;
                             best.margin = margin;
@@ -275,7 +274,7 @@ class VennSeries extends ScatterSeries {
      *
      * @private
      * @todo Add support for constrained MDS.
-     * @param {Array<Highchats.VennRelationObject>} relations
+     * @param {Array<Highcharts.VennRelationObject>} relations
      * List of the overlap between two or more sets, or the size of a single
      * set.
      * @return {Highcharts.Dictionary<*>}
@@ -411,7 +410,6 @@ class VennSeries extends ScatterSeries {
      *
      * */
 
-    /* eslint-disable valid-jsdoc */
 
     public animate(init?: boolean): void {
         if (!init) {
@@ -643,15 +641,12 @@ class VennSeries extends ScatterSeries {
             // Add width for the data label
             if (dataLabelWidth && shapeArgs) {
                 point.dlOptions = merge(
-                    true,
-                    {
-                        style: {
-                            width: dataLabelWidth
-                        }
-                    } as DataLabelOptions,
+                    { style: { width: dataLabelWidth } },
                     isObject(dlOptions, true) ? dlOptions : void 0,
                     { zIndex: void 0 }
-                ) as DataLabelOptions & { zIndex: undefined };
+                );
+                // Delete so it doesn't override anything on merge.
+                delete point.dlOptions.zIndex;
             }
 
             // Set name for usage in tooltip and in data label.
@@ -659,7 +654,6 @@ class VennSeries extends ScatterSeries {
         }
     }
 
-    /* eslint-enable valid-jsdoc */
 }
 
 /* *
@@ -690,7 +684,7 @@ addEvent(VennSeries, 'afterSetOptions', function (
     e: { options: VennSeriesOptions }
 ): void {
     const options = e.options,
-        states: SeriesStatesOptions<VennSeries> = options.states || {};
+        states: SeriesStatesOptions<VennSeriesOptions> = options.states || {};
 
     if (this.is('venn')) {
         // Explicitly disable all halo options.

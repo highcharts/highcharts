@@ -1,6 +1,5 @@
 /* *
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -15,12 +14,8 @@ import type NetworkgraphSeries from './Networkgraph/NetworkgraphSeries';
 import type PackedBubbleSeries from './PackedBubble/PackedBubbleSeries';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 
-import U from '../Core/Utilities.js';
-const {
-    syncTimeout
-} = U;
-
 import A from '../Core/Animation/AnimationUtilities.js';
+import { syncTimeout } from '../Shared/Utilities.js';
 const { animObject } = A;
 
 type SimulationSeries = (NetworkgraphSeries | PackedBubbleSeries);

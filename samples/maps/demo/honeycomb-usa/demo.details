@@ -1,5 +1,5 @@
 ---
-name: 'Tile map, honeycomb'
+name: 'Tilemap, honeycomb'
 authors:
   - Mustapha Mekhatria
 js_wrap: b

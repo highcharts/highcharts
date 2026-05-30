@@ -1,12 +1,14 @@
 /* *
  *
- *  (c) 2009-2025 Øystein Moseng
+ *  (c) 2009-2026 Highsoft AS
+ *  Author: Øystein Moseng
  *
  *  Utils for dealing with charts.
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -31,12 +33,7 @@ import H from '../../Core/Globals.js';
 const { doc } = H;
 import HU from './HTMLUtilities.js';
 const { stripHTMLTagsFromString: stripHTMLTags } = HU;
-import U from '../../Core/Utilities.js';
-const {
-    defined,
-    find,
-    fireEvent
-} = U;
+import { defined, find, fireEvent } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -44,7 +41,6 @@ const {
  *
  * */
 
-/* eslint-disable valid-jsdoc */
 
 /**
  * Fire an event on an element that is either wrapped by Highcharts,

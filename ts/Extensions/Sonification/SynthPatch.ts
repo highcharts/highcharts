@@ -1,47 +1,44 @@
 /* *
  *
- *  (c) 2009-2025 Øystein Moseng
+ *  (c) 2009-2026 Highsoft AS
+ *  Author: Øystein Moseng
  *
  *  Class representing a Synth Patch, used by Instruments in the
  *  sonification.js module.
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
 'use strict';
 
-import U from '../../Core/Utilities.js';
-const {
-    clamp,
-    defined,
-    pick
-} = U;
+import { clamp, defined, pick } from '../../Shared/Utilities.js';
 
+/** @internal */
 type EnvelopePoint = Record<'t'|'vol', number>;
+/** @internal */
 type Envelope = Array<EnvelopePoint>;
+/** @internal */
 type OscType = 'sine'|'square'|'sawtooth'|'triangle'|'whitenoise'|'pulse';
 
+/** @internal */
 interface FilterOptions {
     frequency?: number;
     frequencyPitchTrackingMultiplier?: number;
     Q?: number;
 }
 
-interface EQOptions {
-    frequency?: number;
-    gain?: number;
-    Q?: number;
-}
-
+/** @internal */
 interface PulseOscOptions {
     detune?: number;
     pulseWidth?: number;
     frequency?: number;
 }
 
+/** @internal */
 interface OscOptions {
     attackEnvelope?: Envelope;
     detune?: number;
@@ -59,13 +56,217 @@ interface OscOptions {
 }
 
 namespace SynthPatch {
+    /**
+     * A point in a synth envelope.
+     *
+     * @requires modules/sonification
+     */
+    export type SynthEnvelopePoint = Record<'t'|'vol', number>;
+    /**
+     * A synth envelope defined as an array of time/volume points.
+     *
+     * @requires modules/sonification
+     */
+    export type SynthEnvelope = Array<SynthEnvelopePoint>;
+    /**
+     * Oscillator waveform type.
+     *
+     * @requires modules/sonification
+     */
+    export type OscillatorType =
+        'sine'|'square'|'sawtooth'|'triangle'|'whitenoise'|'pulse';
+    /**
+     * An EQ filter definition for a bell filter.
+     *
+     * @requires modules/sonification
+     */
+    export interface EQFilter {
+        /**
+         * Filter frequency.
+         *
+         */
+        frequency?: number;
+        /**
+         * Filter gain.
+         *
+         * @default 0
+         *
+         */
+        gain?: number;
+        /**
+         * Filter Q.
+         *
+         * @default 1
+         *
+         */
+        Q?: number;
+    }
+    /**
+     * Configuration for an oscillator for the synth.
+     *
+     * @requires modules/sonification
+     */
+    export interface OscillatorOptions {
+        /**
+         * Volume envelope for note attack, specific to this oscillator.
+         *
+         */
+        attackEnvelope?: SynthEnvelope;
+        /**
+         * Applies a detuning of all frequencies. Set in cents.
+         *
+         * @default 0
+         *
+         */
+        detune?: number;
+        /**
+         * A multiplier for the input frequency of the oscillator.
+         *
+         * @default 1
+         *
+         */
+        freqMultiplier?: number;
+        /**
+         * Play a fixed frequency for the oscillator - ignoring input
+         * frequency.
+         *
+         */
+        fixedFrequency?: number;
+        /**
+         * Index of another oscillator to use as a frequency modulator.
+         *
+         */
+        fmOscillator?: number;
+        /**
+         * Highpass filter options for the oscillator.
+         *
+         */
+        highpass?: PassFilter;
+        /**
+         * Lowpass filter options for the oscillator.
+         *
+         */
+        lowpass?: PassFilter;
+        /**
+         * Width of the pulse waveform.
+         *
+         * @default 0.5
+         *
+         */
+        pulseWidth?: number;
+        /**
+         * Volume envelope for note release, specific to this oscillator.
+         *
+         */
+        releaseEnvelope?: SynthEnvelope;
+        /**
+         * The type of oscillator.
+         *
+         */
+        type?: OscillatorType;
+        /**
+         * Index of another oscillator to use as a volume modulator.
+         *
+         */
+        vmOscillator?: number;
+        /**
+         * A volume modifier for the oscillator.
+         *
+         * @default 1
+         *
+         */
+        volume?: number;
+        /**
+         * A tracking multiplier used for frequency dependent volume behavior.
+         *
+         */
+        volumePitchTrackingMultiplier?: number;
+    }
+
+    /**
+     * An EQ filter definition for a low/highpass filter.
+     *
+     * @requires modules/sonification
+     */
+    export interface PassFilter {
+        /**
+         * Filter frequency.
+         *
+         */
+        frequency?: number;
+        /**
+         * A pitch tracking multiplier similarly to the one for oscillator
+         * volume. Affects the filter frequency.
+         *
+         */
+        frequencyPitchTrackingMultiplier?: number;
+        /**
+         * Filter resonance bump/dip in dB.
+         *
+         * @default 0
+         *
+         */
+        Q?: number;
+    }
+
+    /**
+     * A set of options for the SynthPatch class.
+     *
+     * @requires modules/sonification
+     */
     export interface SynthPatchOptions {
-        eq?: Array<EQOptions>;
-        masterAttackEnvelope?: Envelope;
-        masterReleaseEnvelope?: Envelope;
+        /**
+         * Master EQ filters for the synth, affecting the overall sound.
+         *
+         */
+        eq?: Array<EQFilter>;
+        /**
+         * Volume envelope for the overall attack of a note - what happens to
+         * the volume when a note first plays. If the volume goes to 0 in the
+         * attack envelope, the synth will not be able to play the note
+         * continuously/sustained, and the notes will be staccato.
+         *
+         */
+        masterAttackEnvelope?: SynthEnvelope;
+        /**
+         * Volume envelope for the overall release of a note - what happens to
+         * the volume when a note stops playing. If the release envelope starts
+         * at a higher volume than the attack envelope ends, the volume will
+         * first rise to that volume before falling when releasing a note. If
+         * the note is released while the attack envelope is still in effect,
+         * the attack envelope is interrupted, and the release envelope plays
+         * instead.
+         *
+         */
+        masterReleaseEnvelope?: SynthEnvelope;
+        /**
+         * Global volume modifier for the synth. Note that if the total volume
+         * of all oscillators is too high, the browser's audio engine can
+         * distort.
+         *
+         * @default 1
+         *
+         */
         masterVolume?: number;
+        /**
+         * Time in milliseconds to glide between notes. Causes a glissando
+         * effect.
+         *
+         */
         noteGlideDuration?: number;
-        oscillators?: Array<OscOptions>;
+        /**
+         * Array of oscillators to add to the synth.
+         *
+         */
+        oscillators?: Array<OscillatorOptions>;
+        /**
+         * MIDI instrument ID for the synth. Used with MIDI export of Timelines
+         * to have tracks open with a similar instrument loaded when imported
+         * into other applications.
+         *
+         * @default 1
+         *
+         */
         midiInstrument?: number;
     }
 }
@@ -75,7 +276,7 @@ namespace SynthPatch {
  * Get the multiplier value from a pitch tracked multiplier. The parameter
  * specifies the multiplier at ca 3200Hz. It is 1 at ca 50Hz. In between
  * it is mapped logarithmically.
- * @private
+ * @internal
  * @param {number} multiplier The multiplier to track.
  * @param {number} freq The current frequency.
  */
@@ -90,7 +291,7 @@ function getPitchTrackedMultiplierVal(
 
 /**
  * Schedule a mini ramp to volume at time - avoid clicks/pops.
- * @private
+ * @internal
  * @param {Object} gainNode The gain node to schedule for.
  * @param {number} time The time in seconds to start ramp.
  * @param {number} vol The volume to ramp to.
@@ -110,7 +311,7 @@ function miniRampToVolAtTime(
 
 /**
  * Schedule a gain envelope for a gain node.
- * @private
+ * @internal
  * @param {Array<Object>} envelope The envelope to schedule.
  * @param {string} type Type of envelope, attack or release.
  * @param {number} time At what time (in seconds) to start envelope.
@@ -167,7 +368,7 @@ interface PulseFrequencyFacade {
  * Combines two sawtooth oscillators to create a pulse by phase inverting and
  * delaying one of them.
  * @class
- * @private
+ * @internal
  */
 class PulseOscNode {
     private delayNode: DelayNode;
@@ -262,7 +463,7 @@ class PulseOscNode {
 /**
  * Internal class used by SynthPatch
  * @class
- * @private
+ * @internal
  */
 class Oscillator {
     fmOscillatorIx?: number;
@@ -752,7 +953,7 @@ class SynthPatch {
 
     /**
      * Create nodes for master EQ
-     * @private
+     * @internal
      */
     private createEqChain(outputNode: AudioNode): void {
         this.eqNodes = (this.options.eq || []).map((eqDef): BiquadFilterNode =>
@@ -770,7 +971,7 @@ class SynthPatch {
 
     /**
      * Fade by release envelopes at time
-     * @private
+     * @internal
      */
     private releaseAtTime(time: number): void {
         let maxReleaseDuration = 0;

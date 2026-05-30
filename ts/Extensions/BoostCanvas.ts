@@ -1,7 +1,9 @@
 /* *
  *
- *  License: www.highcharts.com/license
- *  Author: Torstein Honsi, Christer Vasseng
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
+ *  Author: Torstein Hønsi, Christer Vasseng
  *
  *  This module serves as a fallback for the Boost module in IE9 and IE10. Newer
  *  browsers support WebGL which is faster.
@@ -9,7 +11,6 @@
  *  It is recommended to include this module in conditional comments targeting
  *  IE9 and IE10.
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -35,7 +36,7 @@ import type {
     PointOptions,
     PointShortOptions
 } from '../Core/Series/PointOptions';
-import type Types from '../Shared/Types';
+import type { TypedArray } from '../Shared/Types';
 import type ScatterSeries from '../Series/Scatter/ScatterSeries';
 import type Series from '../Core/Series/Series';
 import type SeriesRegistry from '../Core/Series/SeriesRegistry';
@@ -56,15 +57,15 @@ const {
     noop
 } = H;
 import { Palette } from '../Core/Color/Palettes.js';
-import U from '../Core/Utilities.js';
-const {
+import {
     addEvent,
     fireEvent,
+    internalClearTimeout,
     isNumber,
     merge,
     pick,
     wrap
-} = U;
+} from '../Shared/Utilities.js';
 
 /* *
  *
@@ -72,6 +73,11 @@ const {
  *
  * */
 
+/**
+ * The options below are working, but not documented. In case they are
+ * made public, refactor to match BoostDebugOptions interface.
+ * @internal
+ */
 declare module './Boost/BoostOptions' {
     interface BoostOptions {
         timeRendering?: boolean;
@@ -80,8 +86,10 @@ declare module './Boost/BoostOptions' {
     }
 }
 
+/** @internal */
 declare module '../Core/Series/SeriesBase' {
     interface SeriesBase extends BoostTargetObject {
+        /** @internal */
         cvsStrokeBatch?: number;
         /** @requires modules/boost-canvas */
         canvasToSVG(): void;
@@ -127,6 +135,7 @@ declare module '../Core/Series/SeriesBase' {
  *
  * */
 
+/** @internal */
 namespace BoostCanvas {
 
     /* *
@@ -158,7 +167,7 @@ namespace BoostCanvas {
      * */
 
     /**
-     * @private
+     * @internal
      */
     function areaCvsDrawPoint(
         this: AreaSeries,
@@ -177,7 +186,7 @@ namespace BoostCanvas {
     }
 
     /**
-     * @private
+     * @internal
      */
     function bubbleCvsMarkerCircle(
         this: BubbleSeries,
@@ -199,7 +208,7 @@ namespace BoostCanvas {
     }
 
     /**
-     * @private
+     * @internal
      */
     function columnCvsDrawPoint(
         this: ColumnSeries,
@@ -212,7 +221,7 @@ namespace BoostCanvas {
     }
 
     /**
-     * @private
+     * @internal
      */
     export function compose(
         ChartClass: typeof Chart,
@@ -282,7 +291,7 @@ namespace BoostCanvas {
     }
 
     /**
-     * @private
+     * @internal
      */
     function onChartCanvasToSVG(
         this: Chart
@@ -293,7 +302,7 @@ namespace BoostCanvas {
     }
 
     /**
-     * @private
+     * @internal
      */
     function onChartClear(this: Chart): void {
         const boost = this.boost || {};
@@ -315,7 +324,7 @@ namespace BoostCanvas {
     /**
      * Draw the canvas image inside an SVG image
      *
-     * @private
+     * @internal
      * @function Highcharts.Series#canvasToSVG
      */
     function seriesCanvasToSVG(
@@ -333,7 +342,7 @@ namespace BoostCanvas {
     }
 
     /**
-     * @private
+     * @internal
      */
     function seriesCvsLineTo(
         this: Series,
@@ -348,7 +357,7 @@ namespace BoostCanvas {
      * Create a hidden canvas to draw the graph on. The contents is later
      * copied over to an SVG image element.
      *
-     * @private
+     * @internal
      * @function Highcharts.Series#getContext
      */
     function seriesGetContext(
@@ -454,7 +463,7 @@ namespace BoostCanvas {
     }
 
     /**
-     * @private
+     * @internal
      */
     function seriesRenderCanvas(
         this: Series
@@ -499,7 +508,7 @@ namespace BoostCanvas {
             requireSorting = series.requireSorting,
             connectNulls = options.connectNulls,
             useRaw = !xData,
-            sdata: Array<any>|Types.TypedArray = (
+            sdata: Array<any>|TypedArray = (
                 isStacked ?
                     series.data :
                     (xData || rawData)
@@ -581,7 +590,7 @@ namespace BoostCanvas {
                     opacity: 1
                 }
             });
-            U.clearTimeout(destroyLoadingDiv);
+            internalClearTimeout(destroyLoadingDiv);
             chart.showLoading('Drawing...');
             chart.options.loading = loadingOptions; // Reset
         }
@@ -924,7 +933,7 @@ namespace BoostCanvas {
     }
 
     /**
-     * @private
+     * @internal
      */
     function scatterCvsMarkerCircle(
         this: ScatterSeries,
@@ -939,7 +948,7 @@ namespace BoostCanvas {
 
     /**
      * Rect is twice as fast as arc, should be used for small markers.
-     * @private
+     * @internal
      */
     function scatterCvsMarkerSquare(
         this: ScatterSeries,
@@ -952,7 +961,7 @@ namespace BoostCanvas {
     }
 
     /**
-     * @private
+     * @internal
      */
     function wrapHeatmapDrawPoints(
         this: HeatmapSeries
@@ -1023,4 +1032,5 @@ namespace BoostCanvas {
  *
  * */
 
+/** @internal */
 export default BoostCanvas;

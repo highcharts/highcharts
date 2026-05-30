@@ -1,14 +1,13 @@
+// SPDX-License-Identifier: LicenseRef-Highcharts
 /**
  * @license Highcharts Grid Pro v@product.version@ (@product.date@)
  * @module grid/grid-pro
  *
- * (c) 2009-2025 Highsoft AS
+ * (c) 2009-2026 Highsoft AS
  *
- * License: www.highcharts.com/license
+ * A commercial license may be required depending on use,
+ * see www.highcharts.com/license
  */
-
-
-'use strict';
 
 
 /* *
@@ -18,7 +17,6 @@
  * */
 
 import type _Options from '../Grid/Core/Options';
-import type * as H from '../Grid/Pro/highcharts';
 
 import AST from '../Core/Renderer/HTML/AST.js';
 import Templating from '../Core/Templating.js';
@@ -33,13 +31,16 @@ import DataTable from '../Data/DataTable.js';
 import Defaults from '../Grid/Core/Defaults.js';
 import Globals from '../Grid/Core/Globals.js';
 import whcm from '../Accessibility/HighContrastMode.js';
-import Utilities from '../Core/Utilities.js';
+import { merge } from '../Shared/Utilities.js';
 
 import Table from '../Grid/Core/Table/Table.js';
 import Column from '../Grid/Core/Table/Column.js';
 import HeaderCell from '../Grid/Core/Table/Header/HeaderCell.js';
+import TableRow from '../Grid/Core/Table/Body/TableRow.js';
 import TableCell from '../Grid/Core/Table/Body/TableCell.js';
 import SvgIcons from '../Grid/Core/UI/SvgIcons.js';
+
+import ResponsiveComposition from '../Grid/Core/Responsive/ResponsiveComposition.js';
 
 import GridEvents from '../Grid/Pro/GridEvents.js';
 import CellEditingComposition from '../Grid/Pro/CellEditing/CellEditingComposition.js';
@@ -49,12 +50,16 @@ import ValidatorComposition from '../Grid/Pro/ColumnTypes/ValidatorComposition.j
 import CellRenderersComposition from '../Grid/Pro/CellRendering/CellRenderersComposition.js';
 import CellRendererRegistry from '../Grid/Pro/CellRendering/CellRendererRegistry.js';
 import PaginationComposition from '../Grid/Pro/Pagination/PaginationComposition.js';
+import LicenseValidationComposition from '../Grid/Pro/License/LicenseValidationComposition.js';
+import RowPinningComposition from '../Grid/Pro/RowPinning/RowPinningComposition.js';
+import TreeViewComposition from '../Grid/Pro/TreeView/TreeViewComposition.js';
 import Pagination from '../Grid/Core/Pagination/Pagination.js';
 import CellContentPro from '../Grid/Pro/CellRendering/CellContentPro.js';
 import CellRenderer from '../Grid/Pro/CellRendering/CellRenderer.js';
 
 import Popup from '../Grid/Core/UI/Popup.js';
 
+import DataProviderRegistry from '../Grid/Core/Data/DataProviderRegistry.js';
 
 /* *
  *
@@ -74,6 +79,8 @@ import '../Data/Modifiers/SortModifier.js';
 import '../Data/Modifiers/FilterModifier.js';
 
 // Compositions
+import '../Grid/Core/Responsive/ResponsiveComposition.js';
+import '../Grid/Pro/RowPinning/RowPinningComposition.js';
 import '../Grid/Pro/GridEvents.js';
 import '../Grid/Pro/CellEditing/CellEditingComposition.js';
 import '../Grid/Pro/Credits/CreditsProComposition.js';
@@ -93,52 +100,8 @@ import '../Grid/Pro/CellRendering/Renderers/TimeInputRenderer.js';
 import '../Grid/Pro/CellRendering/Renderers/SparklineRenderer.js';
 import '../Grid/Pro/CellRendering/Renderers/NumberInputRenderer.js';
 
-
-/* *
- *
- *  Declarations
- *
- * */
-
-
-declare global {
-    interface GridNamespace {
-        win: typeof Globals.win;
-        product: 'Grid Lite' | 'Grid Pro';
-        version: typeof Globals.version;
-        AST: typeof AST;
-        classNamePrefix: typeof Globals.classNamePrefix;
-        Grid: typeof _Grid;
-        grid: typeof _Grid.grid;
-        grids: Array<(_Grid | undefined)>;
-        ColumnResizing: typeof ColumnResizing;
-        DataConverter: typeof DataConverter;
-        DataCursor: typeof DataCursor;
-        DataModifier: typeof DataModifier;
-        DataConnector: typeof DataConnector;
-        DataPool: typeof DataPool;
-        DataTable: typeof DataTable;
-        isHighContrastModeActive: typeof whcm.isHighContrastModeActive;
-        defaultOptions: typeof Defaults.defaultOptions;
-        setOptions: typeof Defaults.setOptions;
-        Table: typeof Table;
-        Column: typeof Column;
-        HeaderCell: typeof HeaderCell;
-        TableCell: typeof TableCell;
-        Pagination: typeof Pagination;
-        Templating: typeof Templating;
-        CellContentPro: typeof CellContentPro;
-        merge: typeof Utilities.merge;
-        CellRendererRegistry: typeof CellRendererRegistry;
-        CellRenderer: typeof CellRenderer;
-        SvgIcons: typeof SvgIcons;
-        Popup: typeof Popup;
-    }
-    interface Window {
-        Grid: GridNamespace;
-        Highcharts?: typeof H;
-    }
-}
+import '../Grid/Core/Data/LocalDataProvider.js';
+import '../Grid/Pro/Data/RemoteDataProvider.js';
 
 
 /* *
@@ -147,33 +110,40 @@ declare global {
  *
  * */
 
-
-const G = Globals as unknown as GridNamespace;
-
-G.AST = AST;
-G.classNamePrefix = 'hcg-';
-G.DataConnector = DataConnector;
-G.DataCursor = DataCursor;
-G.DataConverter = DataConverter;
-G.Grid = _Grid;
-G.grid = _Grid.grid;
-G.grids = _Grid.grids;
-G.DataModifier = DataModifier;
-G.DataPool = DataPool;
-G.DataTable = DataTable;
-G.ColumnResizing = ColumnResizing;
-G.defaultOptions = Defaults.defaultOptions;
-G.isHighContrastModeActive = whcm.isHighContrastModeActive;
-G.setOptions = Defaults.setOptions;
-G.Templating = Templating;
-G.product = 'Grid Pro';
-G.merge = Utilities.merge;
-
-G.Table = G.Table || Table;
-G.Column = G.Column || Column;
-G.HeaderCell = G.HeaderCell || HeaderCell;
-G.TableCell = G.TableCell || TableCell;
-G.Pagination = G.Pagination || Pagination;
+const G = {
+    AST,
+    CellContentPro,
+    CellRenderer,
+    CellRendererRegistry,
+    classNamePrefix: Globals.classNamePrefix,
+    Column,
+    ColumnResizing,
+    DataConnector,
+    DataConverter,
+    DataCursor,
+    DataModifier,
+    DataPool,
+    DataProviderRegistry,
+    DataTable,
+    defaultOptions: Defaults.defaultOptions,
+    Grid: _Grid,
+    grid: _Grid.grid,
+    grids: _Grid.grids,
+    HeaderCell,
+    isHighContrastModeActive: whcm.isHighContrastModeActive,
+    merge: merge,
+    Pagination,
+    Popup,
+    product: 'Grid Pro',
+    setOptions: Defaults.setOptions,
+    SvgIcons,
+    Table,
+    TableCell,
+    TableRow,
+    Templating,
+    version: Globals.version,
+    win: Globals.win
+} as const;
 
 GridEvents.compose(G.Grid, G.Column, G.HeaderCell, G.TableCell);
 CellEditingComposition.compose(G.Table, G.TableCell, G.Column);
@@ -182,38 +152,68 @@ ExportingComposition.compose(G.Grid);
 ValidatorComposition.compose(G.Table);
 CellRenderersComposition.compose(G.Column);
 PaginationComposition.compose(G.Pagination);
-
-G.CellRendererRegistry = G.CellRendererRegistry || CellRendererRegistry;
-G.CellContentPro = CellContentPro;
-G.CellRenderer = CellRenderer;
-G.SvgIcons = SvgIcons;
-G.Popup = Popup;
-
-
-/* *
- *
- *  Export types
- *
- * */
-
-namespace G {
-    export type Options = _Options;
-}
+LicenseValidationComposition.compose(G.Grid);
+RowPinningComposition.compose(
+    G.Grid, G.Table, G.Column,
+    G.TableRow, G.TableCell
+);
+TreeViewComposition.compose(G.Grid, G.Table, G.TableCell);
+ResponsiveComposition.compose(G.Grid);
 
 
 /* *
  *
- *  Classic Export
+ * Named Exports
  *
  * */
 
+export {
+    AST,
+    CellContentPro,
+    CellRenderer,
+    CellRendererRegistry,
+    Column,
+    ColumnResizing,
+    DataConnector,
+    DataConverter,
+    DataCursor,
+    DataModifier,
+    DataProviderRegistry,
+    DataPool,
+    DataTable,
+    _Grid as Grid,
+    HeaderCell,
+    _Options as Options,
+    Pagination,
+    Popup,
+    SvgIcons,
+    Table,
+    TableCell,
+    Templating
+};
 
-if (!G.win.Grid) {
-    G.win.Grid = G;
-}
+export const {
+    classNamePrefix,
+    defaultOptions,
+    grid,
+    grids,
+    isHighContrastModeActive,
+    product,
+    setOptions,
+    version,
+    win
+} = G;
 
-if (G.win.Highcharts) {
-    G.CellRendererRegistry.types.sparkline.useHighcharts(G.win.Highcharts);
+
+/* *
+ *
+ *  Classic Extensions
+ *
+ * */
+
+const wnd = G.win as { Highcharts?: unknown };
+if (wnd.Highcharts) {
+    G.CellRendererRegistry.types.sparkline.useHighcharts(wnd.Highcharts);
 }
 
 
@@ -223,5 +223,8 @@ if (G.win.Highcharts) {
  *
  * */
 
+namespace G {
+    export type Options = _Options;
+}
 
 export default G;

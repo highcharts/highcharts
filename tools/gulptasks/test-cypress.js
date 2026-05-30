@@ -39,9 +39,12 @@ async function testCypress() {
         await processLib.exec('npx gulp scripts --product Grid');
     }
 
+    const configFile = argv.demos ?
+        path.join('test', 'cypress', product, 'demos.config.mjs') :
+        path.join('test', 'cypress', product, 'config.mjs');
+
     await processLib.exec(
-        'npx cypress run --config-file ' +
-            path.join('test', 'cypress', product, 'config.mjs')
+        'npx cypress run --config-file ' + configFile
     );
 
     logLib.success('Cypress tests successful');

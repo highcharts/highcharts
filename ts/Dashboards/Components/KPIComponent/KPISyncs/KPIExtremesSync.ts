@@ -1,13 +1,14 @@
 /* *
  *
- *  (c) 2009-2025 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
- *  - Dawid Dragula
+ *  - Dawid Draguła
  *
  * */
 
@@ -20,13 +21,12 @@
  *
  * */
 
-import type Sync from '../../Sync/Sync';
+import type { OptionsEntry, SyncPair } from '../../Sync/Sync';
+import type { Event as DataCursorEvent } from '../../../../Data/DataCursor';
 import type KPIComponent from '../KPIComponent.js';
 
 import Component from '../../Component';
-import DataCursor from '../../../../Data/DataCursor';
-import U from '../../../../Core/Utilities.js';
-const { defined } = U;
+import { defined } from '../../../../Shared/Utilities.js';
 
 
 /* *
@@ -35,9 +35,9 @@ const { defined } = U;
  *
  * */
 
-const defaultOptions: Sync.OptionsEntry = {};
+const defaultOptions: OptionsEntry = {};
 
-const syncPair: Sync.SyncPair = {
+const syncPair: SyncPair = {
     emitter: void 0,
     handler: function (this: Component): (() => void) | void {
         if (this.type !== 'KPI') {
@@ -49,7 +49,7 @@ const syncPair: Sync.SyncPair = {
 
         const { board } = this;
 
-        const handleChangeExtremes = (e: DataCursor.Event): void => {
+        const handleChangeExtremes = (e: DataCursorEvent): void => {
             const cursor = e.cursor;
             if (
                 cursor.type === 'position' &&
@@ -76,7 +76,7 @@ const syncPair: Sync.SyncPair = {
             if (!cursor) {
                 return;
             }
-            const table = this.getFirstConnector()?.getTable();
+            const table = this.getDataTable();
 
             if (!table) {
                 return;
@@ -90,7 +90,7 @@ const syncPair: Sync.SyncPair = {
         };
 
         const unregisterCursorListeners = (): void => {
-            const table = this.getFirstConnector()?.getTable();
+            const table = this.getDataTable();
             const { dataCursor: cursor } = board;
 
             if (!table) {

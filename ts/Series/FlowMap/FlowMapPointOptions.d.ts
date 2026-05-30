@@ -1,10 +1,12 @@
 /* *
  *
- *  (c) 2018-2025 Askel Eirik Johansson
+ *  (c) 2018-2026 Highsoft AS
+ *  Author: Askel Eirik Johansson
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 

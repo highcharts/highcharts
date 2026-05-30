@@ -55,7 +55,14 @@ function getProducts(logPaths) {
     }
 
     paths.forEach(path => {
-        // Any path part check
+        const pathParts = path.split('/');
+
+        // Docs: skip – don't trigger tests when only docs are modified
+        if (pathParts[0] === 'docs' && pathParts.length > 1) {
+            return;
+        }
+
+        // Any path part check (for non-docs paths)
         products.forEach(productName => {
             const productNameRegex = new RegExp(productName, 'iu');
             if (productNameRegex.test(path)) {
@@ -64,8 +71,6 @@ function getProducts(logPaths) {
         });
 
         // By directory detection
-        const pathParts = path.split('/');
-
         if (pathParts.length > 2 && pathParts[0] === 'ts') {
             if (['Shared', 'Data'].indexOf(pathParts[1]) !== -1) {
                 mark('Core');
@@ -96,7 +101,7 @@ function checkProduct(product) {
 
 /**
  * Checks if tests should run
- * @param {{ configFile: string, codeDirectory: string, jsDirectory: string, testsDirectory: string }}} config
+ * @param {{ configFile: string, codeDirectory: string, jsDirectory: string, testsDirectory: string, project?: string }} config
  * Configuration
  *
  * @return {Promise<boolean>}
@@ -106,7 +111,8 @@ async function shouldRun({
     configFile,
     codeDirectory,
     jsDirectory,
-    testsDirectory
+    testsDirectory,
+    project
 }) {
 
     const fs = require('fs');
@@ -117,13 +123,20 @@ async function shouldRun({
     let configuration = {
         latestCodeHash: '',
         latestJsHash: '',
-        latestTestsHash: ''
+        latestTestsHash: '',
+        project: ''
     };
 
     if (fs.existsSync(configFile)) {
         configuration = JSON.parse(
             fs.readFileSync(configFile).toString()
         );
+    }
+
+    // If project parameter is provided and differs from cached project,
+    // force rebuild
+    if (project && configuration.project !== project) {
+        return true;
     }
 
     const latestCodeHash = fsLib.getDirectoryHash(
@@ -160,7 +173,7 @@ async function shouldRun({
 
 /**
  * Saves test run information
- * @param {{ configFile: string, codeDirectory: string, jsDirectory: string, testsDirectory: string }} config
+ * @param {{ configFile: string, codeDirectory: string, jsDirectory: string, testsDirectory: string, project?: string }} config
  * Configuration
  *
  * @return {void}
@@ -169,7 +182,8 @@ function saveRun({
     configFile,
     codeDirectory,
     jsDirectory,
-    testsDirectory
+    testsDirectory,
+    project
 }) {
 
     const FS = require('fs');
@@ -189,7 +203,8 @@ function saveRun({
     const configuration = {
         latestCodeHash,
         latestJsHash,
-        latestTestsHash
+        latestTestsHash,
+        project: project || ''
     };
 
     FS.writeFileSync(configFile, JSON.stringify(configuration));

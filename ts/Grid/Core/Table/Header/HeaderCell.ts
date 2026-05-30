@@ -2,14 +2,15 @@
  *
  *  Grid HeaderCell class
  *
- *  (c) 2020-2025 Highsoft AS
+ *  (c) 2020-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
- *  - Dawid Dragula
+ *  - Dawid Draguła
  *  - Sebastian Bochan
  *
  * */
@@ -24,27 +25,24 @@
  * */
 
 import type { GroupedHeaderOptions } from '../../Options';
+import type { NoIdColumnOptions } from '../Column';
+import type CSSObject from '../../../../Core/Renderer/CSSObject';
 
 import Cell from '../Cell.js';
 import Column from '../Column';
 import Row from '../Row';
-import GridUtils from '../../GridUtils.js';
-import ColumnSorting from '../Actions/ColumnSorting.js';
-import Globals from '../../Globals.js';
-import Utilities from '../../../../Core/Utilities.js';
-import TableHeader from './TableHeader.js';
-import ColumnToolbar from './ColumnToolbar/ColumnToolbar.js';
-
-const {
+import {
     makeHTMLElement,
     setHTMLContent,
-    createOptionsProxy
-} = GridUtils;
-const {
-    fireEvent,
-    isString
-} = Utilities;
-
+    createOptionsProxy,
+    resolveStyleValue,
+    mergeStyleValues
+} from '../../GridUtils.js';
+import ColumnSorting from '../Actions/ColumnSorting.js';
+import Globals from '../../Globals.js';
+import TableHeader from './TableHeader.js';
+import ColumnToolbar from './ColumnToolbar/ColumnToolbar.js';
+import { fireEvent, isString } from '../../../../Shared/Utilities.js';
 
 /* *
  *
@@ -78,7 +76,7 @@ class HeaderCell extends Cell {
      * the column options.
      * @internal
      */
-    public readonly superColumnOptions: Partial<Column.Options> = {};
+    public readonly superColumnOptions: Partial<NoIdColumnOptions> = {};
 
     /**
      * List of columns that are subordinated to the header cell.
@@ -166,17 +164,18 @@ class HeaderCell extends Cell {
     /**
      * Render the cell container.
      */
-    public override render(): void {
+    public override async render(): Promise<void> {
         const { column } = this;
         const options = createOptionsProxy(
             this.superColumnOptions,
             column?.options
         );
         const headerCellOptions = options.header || {};
+        const headerValue = column ?
+            headerCellOptions.formatter?.call(column) : void 0;
 
-
-        if (headerCellOptions.formatter) {
-            this.value = headerCellOptions.formatter.call(this).toString();
+        if (headerValue) {
+            this.value = headerValue.toString();
         } else if (isString(headerCellOptions.format)) {
             this.value = column ?
                 column.format(headerCellOptions.format) :
@@ -241,7 +240,40 @@ class HeaderCell extends Cell {
         // Add custom class name from column options
         this.setCustomClassName(options.header?.className);
 
+        this.setCustomStyles(this.getColumnStyles());
+
         fireEvent(this, 'afterRender', { column });
+
+        return Promise.resolve();
+    }
+
+    /**
+     * Returns merged header styles from defaults and current column options.
+     *
+     */
+    private getColumnStyles(): (CSSObject | undefined) {
+        const { column } = this;
+
+        if (!column) {
+            return resolveStyleValue(this.superColumnOptions.header?.style);
+        }
+
+        const { grid } = this.row.viewport;
+        const rawColumnOptions = grid.columnPolicy
+            .getIndividualColumnOptions(column.id);
+
+        return {
+            ...mergeStyleValues(
+                column,
+                grid.options?.columnDefaults?.style,
+                rawColumnOptions?.style
+            ),
+            ...mergeStyleValues(
+                column,
+                grid.options?.columnDefaults?.header?.style,
+                rawColumnOptions?.header?.style
+            )
+        };
     }
 
     public override reflow(): void {
@@ -263,7 +295,7 @@ class HeaderCell extends Cell {
         this.toolbar?.reflow();
     }
 
-    protected override onKeyDown(e: KeyboardEvent): void {
+    public override onKeyDown(e: KeyboardEvent): void {
         if (!this.column || e.target !== this.htmlElement) {
             return;
         }
@@ -277,25 +309,28 @@ class HeaderCell extends Cell {
         super.onKeyDown(e);
     }
 
-    protected override onClick(e: MouseEvent): void {
-        const column = this.column;
+    public override onClick(e: MouseEvent): void {
+        const { column } = this;
 
         if (
-            !column || (
-                e.target !== this.htmlElement &&
-                e.target !== column.header?.headerContent
-            ) || column.viewport.columnsResizer?.isResizing
+            !column ||
+            !this.htmlElement.contains(e.target as Node) ||
+            this.toolbar?.container?.contains(e.target as Node) ||
+            column.viewport.columnsResizer?.isResizing
         ) {
             return;
         }
 
-        if (column.options.sorting?.sortable) {
-            column.sorting?.toggle();
+        const grid = column.viewport.grid;
+
+        // Toggle sort only when clicking header text/area, not toolbar icons
+        if (grid.columnPolicy.isColumnSortingEnabled(column.id)) {
+            column.sorting?.toggle(e);
         }
 
         fireEvent(this, 'click', {
             originalEvent: e,
-            column: this.column
+            column
         });
     }
 

@@ -46,7 +46,7 @@
 	},
 	"21": {
 		"title": "Can't find Proj4js library",
-		"text": "<h1>Can't find Proj4js library</h1><p>Using latitude/longitude functionality with pre-projected GeoJSON in Highcharts Maps requires the <a href=\"http://proj4js.org\">Proj4js</a> library to be loaded.</p><p>It is recommended to utilize TopoJSON for Highcharts v10 and above, as built-in projection support is included and no third-party library is required. For more information, see the <a href=\"https://www.highcharts.com/blog/tutorials/highcharts-now-prefers-topojson-maps/\">Highcharts now prefers topojson maps</a>.</p>"
+		"text": "<h1>Can't find Proj4js library</h1><p>Using latitude/longitude functionality with pre-projected GeoJSON in Highcharts Maps requires the <a href=\"http://proj4js.org\">Proj4js</a> library to be loaded.</p><p>It is recommended to utilize TopoJSON for Highcharts v10 and above, as built-in projection support is included and no third-party library is required. For more information, see the <a href=\"https://www.highcharts.com/blog/tutorials/highcharts-now-prefers-topojson-maps/\">Highcharts now prefers TopoJSON maps</a>.</p>"
 	},
 	"22": {
 		"title": "Map does not support latitude/longitude",
@@ -99,5 +99,13 @@
 	"35": {
 		"title": "Missing highcharts.css file",
 		"text": "<h1>Missing <b>highcharts.css</b> file</h1><p>This error occurs if you enable <a href=\"https://api.highcharts.com/highcharts/chart.styledMode\">styled mode</a> (<code>chart.styledMode = true</code>) without including the required **highcharts.css** file. Without this stylesheet, charts cannot be rendered correctly.</p><p>To fix this, make sure to load the official stylesheet in your page: <a href=\"https://www.highcharts.com/docs/chart-design-and-style/style-by-css\">Style by CSS</a>.</p>"
+	},
+	"36": {
+		"title": "Chart constructor called in non-browser environment",
+		"text": "<h1>Chart constructor called in non-browser environment</h1><p>This error occurs when attempting to create a chart during server-side rendering (SSR) or in other environments without DOM support.</p><p>Highcharts requires a browser environment to render charts. If using server-side rendering frameworks, ensure that chart initialization only occurs client-side.</p>"
+	},
+	"37": {
+		"title": "WebGPU Unsupported",
+		"text": "<h1>WebGPU Unsupported</h1><p>This error occurs if your browser does not support WebGPU.</p>"
 	}
 }

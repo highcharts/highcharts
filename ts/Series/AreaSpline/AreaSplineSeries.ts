@@ -1,10 +1,12 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Hønsi
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -25,11 +27,7 @@ const {
     area: AreaSeries,
     area: { prototype: areaProto }
 } = SeriesRegistry.seriesTypes;
-import U from '../../Core/Utilities.js';
-const {
-    extend,
-    merge
-} = U;
+import { extend, merge } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -40,7 +38,7 @@ const {
 /**
  * AreaSpline series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.areaspline
  *
@@ -75,6 +73,7 @@ class AreaSplineSeries extends SplineSeries {
  *  Class Prototype
  *
  * */
+/** @internal */
 interface AreaSplineSeries extends SplineSeries {
     pointClass: typeof AreaSplinePoint;
     getGraphPath: typeof areaProto.getGraphPath,
@@ -94,6 +93,7 @@ extend(AreaSplineSeries.prototype, {
  *
  * */
 
+/** @internal */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         areaspline: typeof AreaSplineSeries;
@@ -108,6 +108,7 @@ SeriesRegistry.registerSeriesType('areaspline', AreaSplineSeries);
  *
  * */
 
+/** @internal */
 export default AreaSplineSeries;
 
 /* *
@@ -225,6 +226,7 @@ export default AreaSplineSeries;
  * @sample {highcharts} highcharts/series/data-array-of-objects/
  *         Config objects
  *
+ * @basic
  * @type      {Array<number|Array<(number|string),(number|null)>|null|*>}
  * @extends   series.line.data
  * @product   highcharts highstock

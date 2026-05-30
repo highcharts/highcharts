@@ -1,12 +1,14 @@
-/**
+/* *
  *
  *  Events generator for Stock tools
  *
- *  (c) 2009-2025 Paweł Fus
+ *  (c) 2009-2026 Highsoft AS
+ *  Author: Paweł Fus
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -39,13 +41,8 @@ const {
     getFieldType
 } = NBU;
 import Series from '../../Core/Series/Series.js';
-import U from '../../Core/Utilities.js';
-const {
-    defined,
-    fireEvent,
-    isNumber,
-    uniqueKey
-} = U;
+import { defined, fireEvent, isNumber } from '../../Shared/Utilities.js';
+import { uniqueKey } from '../../Core/Utilities.js';
 
 /* *
  *
@@ -72,9 +69,7 @@ interface StockToolsFieldsObject {
  *
  * */
 
-/**
- * @private
- */
+/** @internal */
 const indicatorsWithAxes = [
     'apo',
     'ad',
@@ -90,9 +85,9 @@ const indicatorsWithAxes = [
     'disparityindex',
     'dmi',
     'dpo',
-    'linearRegressionAngle',
-    'linearRegressionIntercept',
-    'linearRegressionSlope',
+    'linearregressionangle',
+    'linearregressionintercept',
+    'linearregressionslope',
     'klinger',
     'macd',
     'mfi',
@@ -109,9 +104,7 @@ const indicatorsWithAxes = [
     'williamsr'
 ];
 
-/**
- * @private
- */
+/** @internal */
 const indicatorsWithVolume = [
     'ad',
     'cmf',
@@ -136,7 +129,7 @@ const indicatorsWithVolume = [
  * Example: NavigationBindings.utils.addFlagFromForm('url(...)') - will
  * generate function that shows modal in GUI.
  *
- * @private
+ * @internal
  * @function bindingsUtils.addFlagFromForm
  *
  * @param {Highcharts.FlagsShapeValue} type
@@ -256,7 +249,7 @@ function addFlagFromForm(
 }
 
 /**
- * @private
+ * @internal
  * @todo
  * Consider using getHoverData(), but always kdTree (columns?)
  */
@@ -310,7 +303,7 @@ function attractToPoint(
 /**
  * Shorthand to check if given yAxis comes from navigator.
  *
- * @private
+ * @internal
  * @function bindingsUtils.isNotNavigatorYAxis
  *
  * @param {Highcharts.Axis} axis
@@ -327,7 +320,7 @@ function isNotNavigatorYAxis(
 
 /**
  * Check if any of the price indicators are enabled.
- * @private
+ * @internal
  * @function bindingsUtils.isLastPriceEnabled
  *
  * @param {Array} series
@@ -345,9 +338,7 @@ function isPriceIndicatorEnabled(
     );
 }
 
-/**
- * @private
- */
+/** @internal */
 function manageIndicators(
     this: NavigationBindings,
     data: StockToolsFieldsObject
@@ -466,7 +457,7 @@ function manageIndicators(
  * between last point in `typeOptions` and current position. It's a value,
  * not pixels height.
  *
- * @private
+ * @internal
  * @function bindingsUtils.updateHeight
  *
  * @param {Highcharts.PointerEventObject} e
@@ -480,14 +471,14 @@ function updateHeight(
     e: PointerEvent,
     annotation: Annotation
 ): void {
-    const options = annotation.options.typeOptions,
+    const options = annotation.options.typeOptions!,
         yAxis = isNumber(options.yAxis) && this.chart.yAxis[options.yAxis];
 
     if (yAxis && options.points) {
         annotation.update({
             typeOptions: {
                 height: yAxis.toValue(e[yAxis.horiz ? 'chartX' : 'chartY']) -
-                    (options.points[1].y || 0)
+                    ((options.points[1] as any).y || 0)
             }
         });
     }
@@ -501,7 +492,7 @@ function updateHeight(
  * Example: NavigationBindings.utils.updateNthPoint(1) - will generate
  * function that updates all consecutive points except point with index=0.
  *
- * @private
+ * @internal
  * @function bindingsUtils.updateNthPoint
  *
  * @param {number} startIndex
@@ -518,7 +509,7 @@ function updateNthPoint(
         e: PointerEvent,
         annotation: Annotation
     ): void {
-        const options = annotation.options.typeOptions,
+        const options = annotation.options.typeOptions!,
             xAxis = isNumber(options.xAxis) && this.chart.xAxis[options.xAxis],
             yAxis = isNumber(options.yAxis) && this.chart.yAxis[options.yAxis];
 
@@ -550,7 +541,7 @@ function updateNthPoint(
  * Update size of background (rect) in some annotations: Measure, Simple
  * Rect.
  *
- * @private
+ * @internal
  * @function Highcharts.NavigationBindingsUtilsObject.updateRectSize
  *
  * @param {Highcharts.PointerEventObject} event
@@ -564,15 +555,15 @@ function updateRectSize(
     annotation: Annotation
 ): void {
     const chart = annotation.chart,
-        options = annotation.options.typeOptions,
+        options = annotation.options.typeOptions!,
         xAxis = isNumber(options.xAxis) && chart.xAxis[options.xAxis],
         yAxis = isNumber(options.yAxis) && chart.yAxis[options.yAxis];
 
     if (xAxis && yAxis) {
         const x = xAxis.toValue(event[xAxis.horiz ? 'chartX' : 'chartY']),
             y = yAxis.toValue(event[yAxis.horiz ? 'chartX' : 'chartY']),
-            width = x - options.point.x,
-            height = options.point.y - y;
+            width = x - (options.point as any).x,
+            height = (options.point as any).y - y;
 
         annotation.update({
             typeOptions: {
@@ -620,6 +611,7 @@ function shallowArraysEqual(
  *
  * */
 
+/** @internal */
 const StockToolsUtilities = {
     indicatorsWithAxes,
     indicatorsWithVolume,
@@ -635,4 +627,5 @@ const StockToolsUtilities = {
     updateRectSize
 };
 
+/** @internal */
 export default StockToolsUtilities;

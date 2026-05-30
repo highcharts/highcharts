@@ -1,0 +1,19 @@
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/themes/adaptive.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/@highcharts/controls@0.5.0" type="module"></script>
+
+<figure class="highcharts-figure">
+  <div id="container"></div>
+</figure>
+
+<div class="highcharts-controls-wrapper">
+  <highcharts-controls>
+    <highcharts-group header="Update options">
+      <highcharts-control type="boolean" path="legend.enabled" value="true"></highcharts-control>
+      <highcharts-control type="select" path="legend.align" value="center" options="left,center,right"></highcharts-control>
+      <highcharts-control type="number" path="legend.x"></highcharts-control>
+      <highcharts-control type="color" path="legend.backgroundColor" value="#efefef"></highcharts-control>
+    </highcharts-group>
+  </highcharts-controls>
+</div>

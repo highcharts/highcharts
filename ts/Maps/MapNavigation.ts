@@ -1,10 +1,12 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Hønsi
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -36,15 +38,14 @@ const { composed } = H;
 import MapNavigationDefaults from './MapNavigationDefaults.js';
 import MapPointer from './MapPointer.js';
 import MapSymbols from './MapSymbols.js';
-import U from '../Core/Utilities.js';
-const {
-    addEvent,
+import {
     extend,
-    merge,
     objectEach,
+    merge,
     pick,
-    pushUnique
-} = U;
+    pushUnique,
+    addEvent
+} from '../Shared/Utilities.js';
 
 /* *
  *
@@ -297,7 +298,7 @@ class MapNavigation {
                 if (!chart.hasLoaded) {
                     // Align it after the plotBox is known (#12776)
                     const unbind = addEvent(chart, 'load', (): void => {
-                        // #15406: Make sure button hasnt been destroyed
+                        // #15406: Make sure button hasn't been destroyed
                         if (button.element) {
                             button.align(
                                 buttonOptions,
@@ -406,7 +407,7 @@ class MapNavigation {
                 'wheel',
                 function (e: PointerEvent): boolean {
                     // Prevent scrolling when the pointer is over the element
-                    // with that class, for example anotation popup #12100.
+                    // with that class, for example annotation popup #12100.
                     if (!chart.pointer.inClass(
                         e.target as any,
                         'highcharts-no-mousewheel'

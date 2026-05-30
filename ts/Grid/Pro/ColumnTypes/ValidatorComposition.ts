@@ -2,11 +2,12 @@
  *
  *  Validator Composition.
  *
- *  (c) 2020-2024 Highsoft AS
+ *  (c) 2020-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Sebastian Bochan
@@ -23,15 +24,15 @@
  * */
 
 import type Table from '../../Core/Table/Table';
+import type {
+    RuleKey,
+    RuleDefinition,
+    ValidationNotificationsType
+} from './Validator';
 
 import Validator from './Validator.js';
 import Globals from '../../Core/Globals.js';
-import U from '../../../Core/Utilities.js';
-
-const {
-    addEvent,
-    pushUnique
-} = U;
+import { addEvent, pushUnique } from '../../../Shared/Utilities.js';
 
 
 /* *
@@ -41,42 +42,37 @@ const {
  * */
 
 /**
- * @internal
+ * Extends the grid classes with cell editing functionality.
+ *
+ * @param TableClass
+ * The class to extend.
+ *
  */
-namespace ValidatorComposition {
-
-    /**
-     * Extends the grid classes with cell editing functionality.
-     *
-     * @param TableClass
-     * The class to extend.
-     *
-     */
-    export function compose(
-        TableClass: typeof Table
-    ): void {
-        if (!pushUnique(Globals.composed, 'Validator')) {
-            return;
-        }
-
-        addEvent(TableClass, 'afterInit', initValidatorComposition);
-        addEvent(TableClass, 'afterDestroy', destroy);
+export function compose(
+    TableClass: typeof Table
+): void {
+    if (!pushUnique(Globals.composed, 'Validator')) {
+        return;
     }
 
-    /**
-     * Callback function called after table initialization.
-     */
-    function initValidatorComposition(this: Table): void {
-        this.validator = new Validator(this);
-    }
-
-    /**
-     * Callback function called after table destroy.
-     */
-    function destroy(this: Table): void {
-        this.validator.destroy();
-    }
+    addEvent(TableClass, 'beforeInit', initValidatorComposition);
+    addEvent(TableClass, 'afterDestroy', destroy);
 }
+
+/**
+ * Callback function called after table initialization.
+ */
+function initValidatorComposition(this: Table): void {
+    this.validator = new Validator(this);
+}
+
+/**
+ * Callback function called after table destroy.
+ */
+function destroy(this: Table): void {
+    this.validator?.destroy();
+}
+
 
 /* *
  *
@@ -89,7 +85,7 @@ declare module '../../Core/Table/Table' {
         /**
          * The validator object.
          */
-        validator: Validator;
+        validator?: Validator;
     }
 }
 
@@ -100,20 +96,23 @@ declare module '../../Pro/CellEditing/CellEditingComposition' {
          *
          * If not set, the validation rules are applied according to the data
          * type.
+         *
+         * Can be an array where each item can be
+         * either a rule key (string) or a rule definition (object).
+         *
+         * @sample grid-pro/demo/validation Validation rules
          */
-        validationRules?: (Validator.RuleKey|Validator.RuleDefinition)[];
+        validationRules?: (RuleKey|RuleDefinition)[];
     }
 }
 
 declare module '../../Core/Options' {
     interface LangOptions {
         /**
-         * Validation options for the column.
-         *
-         * If not set, the validation rules are applied according to the data
-         * type.
+         * Localized validation notifications for predefined rules or custom
+         * validators.
          */
-        validationErrors?: Validator.RulesRegistryType;
+        validationNotifications?: ValidationNotificationsType;
     }
 }
 
@@ -123,4 +122,6 @@ declare module '../../Core/Options' {
  *
  * */
 
-export default ValidatorComposition;
+export default {
+    compose
+} as const;

@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2009-2025 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Torstein Hønsi
@@ -23,14 +24,18 @@
  *
  * */
 
-import type DataEvent from '../DataEvent';
+import type {
+    DataEventDetail
+} from '../DataEvent';
 import type CSVConverterOptions from './CSVConverterOptions';
 
 import DataConverter from './DataConverter.js';
-import DataTable from '../DataTable.js';
+import type {
+    BasicColumn as DataTableBasicColumn,
+    ColumnCollection as DataTableColumnCollection
+} from '../DataTable.js';
 import DataConverterUtils from './DataConverterUtils.js';
-import U from '../../Core/Utilities.js';
-const { merge } = U;
+import { merge } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -111,9 +116,9 @@ class CSVConverter extends DataConverter {
      *
      * @param {Partial<CSVConverterOptions>} [options]
      * Options for the parser.
-     * @param {DataEvent.Detail} [eventDetail]
+     * @param {DataEventDetail} [eventDetail]
      * Custom information for pending events.
-     * @return {DataTable.ColumnCollection}
+     * @return {DataTableColumnCollection}
      * The parsed column collection.
      *
      * @emits CSVDataParser#parse
@@ -121,8 +126,8 @@ class CSVConverter extends DataConverter {
      */
     public parse(
         options: Partial<CSVConverterOptions>,
-        eventDetail?: DataEvent.Detail
-    ): DataTable.ColumnCollection {
+        eventDetail?: DataEventDetail
+    ): DataTableColumnCollection {
         const converter = this,
             dataTypes = converter.dataTypes,
             parserOptions = merge(this.options, options),
@@ -142,7 +147,7 @@ class CSVConverter extends DataConverter {
             } = parserOptions,
             column;
 
-        const columnsArray: DataTable.BasicColumn[] = [];
+        const columnsArray: DataTableBasicColumn[] = [];
 
         converter.emit({
             type: 'parse',
@@ -255,7 +260,7 @@ class CSVConverter extends DataConverter {
      * quoted values, data type inference, and column range selection.
      */
     private parseCSVRow(
-        columns: DataTable.BasicColumn[],
+        columns: DataTableBasicColumn[],
         columnStr: string,
         rowNumber: number
     ): void {
@@ -418,7 +423,7 @@ class CSVConverter extends DataConverter {
                 cl,
                 token = '';
 
-            // We should be able to detect dateformats within 13 rows
+            // We should be able to detect dateFormats within 13 rows
             if (i > 13) {
                 break;
             }

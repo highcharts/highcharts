@@ -1,6 +1,5 @@
 /* *
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -30,14 +29,15 @@ const {
         }
     }
 } = SeriesRegistry;
-import U from '../Core/Utilities.js';
-const {
+import {
+    addEvent,
     defined,
     extend,
     find,
     merge,
     pick
-} = U;
+} from '../Shared/Utilities.js';
+
 
 /* *
  *
@@ -150,7 +150,21 @@ namespace NodesComposition {
         seriesProto.destroy = destroy;
         seriesProto.setData = setData;
 
+        addEvent(SeriesClass, 'afterUpdate', afterUpdate);
+
         return SeriesClass as (T&typeof SeriesComposition);
+    }
+
+    /**
+     * Destroy data labels on nodes.
+     * @private
+     */
+    function afterUpdate(this: Series): void {
+        if (!this.hasDataLabels?.() && this.nodes) { // #23385
+            for (const node of this.nodes) {
+                node.destroyElements({ dataLabel: 1 });
+            }
+        }
     }
 
     /**

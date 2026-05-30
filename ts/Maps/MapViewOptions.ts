@@ -1,10 +1,12 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Hønsi
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -169,12 +171,16 @@ export interface MapViewInsetOptions {
 
     /**
      * What coordinate system the `field` and `borderPath` should relate to.
+     *
      * If `plotBox`, they will be fixed to the plot box and responsively move
-     * in relation to the main map. If `mapBoundingBox`, they will be fixed to
-     * the map bounding box, which is constant and centered in different chart
-     * sizes and ratios.
+     * in relation to the main map.
+     *
+     * If `mapBoundingBox`, they will be fixed to the map bounding box, which is
+     * constant and centered in different chart sizes and ratios.
+     *
+     * @default mapBoundingBox
      */
-    relativeTo: ('mapBoundingBox'|'plotBox');
+    relativeTo: MapViewInsetOptionsRelativeToValue;
 
     /**
      * What units to use for the `field` and `borderPath` geometries. If
@@ -183,6 +189,13 @@ export interface MapViewInsetOptions {
      */
     units: ('percent'|'pixels');
 }
+
+/**
+ * Possible values for the specific `relativeTo` option.
+ *
+ * @typedef {"mapBoundingBox"|"plotBox"} Highcharts.MapViewInsetOptionsRelativeToValue
+ */
+export type MapViewInsetOptionsRelativeToValue = 'mapBoundingBox' | 'plotBox';
 
 /**
  * Options for each individual inset.

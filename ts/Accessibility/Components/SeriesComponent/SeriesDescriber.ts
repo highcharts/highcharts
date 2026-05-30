@@ -1,12 +1,14 @@
 /* *
  *
- *  (c) 2009-2025 Øystein Moseng
+ *  (c) 2009-2026 Highsoft AS
+ *  Author: Øystein Moseng
  *
- *  Place desriptions on a series and its points.
+ *  Place descriptions on a series and its points.
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -47,14 +49,13 @@ const {
     reverseChildNodes,
     stripHTMLTagsFromString: stripHTMLTags
 } = HTMLUtilities;
-import U from '../../../Core/Utilities.js';
-const {
+import {
+    defined,
     find,
-    isNumber,
     isString,
-    pick,
-    defined
-} = U;
+    isNumber,
+    pick
+} from '../../../Shared/Utilities.js';
 
 
 /* *
@@ -76,9 +77,6 @@ declare module '../../../Core/Series/PointBase' {
  *  Functions
  *
  * */
-
-/* eslint-disable valid-jsdoc */
-
 
 /**
  * @private
@@ -350,7 +348,7 @@ function getPointA11yTimeDescription(
             ),
             dateFormat = seriesA11yOptions.dateFormatter &&
                 seriesA11yOptions.dateFormatter(point) ||
-                a11yOptions.dateFormatter && a11yOptions.dateFormatter(point) ||
+                a11yOptions.dateFormatter?.(point) ||
                 seriesA11yOptions.dateFormat ||
                 a11yOptions.dateFormat ||
                 tooltipDateFormat;

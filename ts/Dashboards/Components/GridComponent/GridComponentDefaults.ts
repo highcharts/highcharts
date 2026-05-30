@@ -1,13 +1,14 @@
 /* *
  *
- *  (c) 2009-2025 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
- *  - Karol Kolodziej
+ *  - Karol Kołodziej
  *
  * */
 
@@ -20,15 +21,12 @@
  *
  * */
 
-import type Component from '../Component';
+import type { ConnectorTypes as ComponentConnectorTypes } from '../Component';
 import type { Options } from './GridComponentOptions';
 import type { DeepPartial } from '../../../Shared/Types';
 
 import DataConverter from '../../../Data/Converters/DataConverter.js';
-import U from '../../../Core/Utilities.js';
-const {
-    uniqueKey
-} = U;
+import { uniqueKey } from '../../../Core/Utilities.js';
 
 /* *
  *
@@ -110,7 +108,7 @@ const GridComponentDefaults: DeepPartial<Options> = {
                                 'gridOptions',
                                 'columnDefaults',
                                 'sorting',
-                                'sortable'
+                                'enabled'
                             ],
                         type: 'toggle'
                     }, {
@@ -136,7 +134,7 @@ const GridComponentDefaults: DeepPartial<Options> = {
             type: 'input'
         }
     ],
-    onUpdate: (e: KeyboardEvent, connector: Component.ConnectorTypes): void => {
+    onUpdate: (e: KeyboardEvent, connector: ComponentConnectorTypes): void => {
         const inputElement = e.target as HTMLInputElement;
         if (inputElement) {
             const parentRow = inputElement

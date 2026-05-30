@@ -1,11 +1,12 @@
 /* *
  *
- *  (c) 2017 Highsoft AS
+ *  (c) 2017-2026 Highsoft AS
  *  Authors: Lars A. V. Cabrera
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -28,17 +29,17 @@ import type SVGRenderer from '../Core/Renderer/SVG/SVGRenderer';
 
 declare module '../Core/Renderer/SVG/SymbolType' {
     interface SymbolTypeRegistry {
-        /** @requires Extensions/ArrowSymbols */
+        /** @requires modules/arrow-symbols */
         arrow: typeof arrow;
-        /** @requires Extensions/ArrowSymbols */
+        /** @requires modules/arrow-symbols */
         'arrow-filled': typeof triangleLeft;
-        /** @requires Extensions/ArrowSymbols */
+        /** @requires modules/arrow-symbols */
         'arrow-filled-half': typeof triangleLeftHalf;
-        /** @requires Extensions/ArrowSymbols */
+        /** @requires modules/arrow-symbols */
         'arrow-half': typeof arrowHalf;
-        /** @requires Extensions/ArrowSymbols */
+        /** @requires modules/arrow-symbols */
         'triangle-left': typeof triangleLeft;
-        /** @requires Extensions/ArrowSymbols */
+        /** @requires modules/arrow-symbols */
         'triangle-left-half': typeof triangleLeftHalf;
     }
 }
@@ -61,7 +62,6 @@ declare module '../Core/Renderer/SVG/SymbolType' {
  *                   o
  * ```
  *
- * @private
  * @function
  *
  * @param {number} x
@@ -103,7 +103,6 @@ function arrow(
  *       o
  * ```
  *
- * @private
  * @function
  *
  * @param {number} x
@@ -131,9 +130,11 @@ function arrowHalf(
 }
 
 /**
- * @private
+ * Adds the arrow symbols to the SVGRenderer.
+ *
+ * @internal
  */
-function compose(
+export function composeArrowSymbols(
     SVGRendererClass: typeof SVGRenderer
 ): void {
     const symbols = SVGRendererClass.prototype.symbols;
@@ -156,7 +157,6 @@ function compose(
  *             o
  * ```
  *
- * @private
  * @function
  *
  * @param {number} x
@@ -198,7 +198,6 @@ function triangleLeft(
  *       o
  * ```
  *
- * @private
  * @function
  *
  * @param {number} x
@@ -224,15 +223,3 @@ function triangleLeftHalf(
 ): SVGPath {
     return triangleLeft(x, y, w / 2, h);
 }
-
-/* *
- *
- *  Default Export
- *
- * */
-
-const ArrowSymbols = {
-    compose
-};
-
-export default ArrowSymbols;

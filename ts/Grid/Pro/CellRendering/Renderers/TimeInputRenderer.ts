@@ -2,14 +2,15 @@
  *
  *  Time Input Cell Renderer class
  *
- *  (c) 2020-2025 Highsoft AS
+ *  (c) 2020-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
- *  - Dawid Dragula
+ *  - Dawid Draguła
  *
  * */
 
@@ -23,22 +24,17 @@
  * */
 
 import type Column from '../../../Core/Table/Column';
-import type TimeInputRendererBase from './DateInputRendererBase';
+import type { DateInputRendererBaseOptions } from './DateInputRendererBase';
 import type TableCell from '../../../Core/Table/Body/TableCell';
 import type { EditModeRenderer } from '../../CellEditing/CellEditMode';
 import type {
     EditModeRendererTypeName
 } from '../../CellEditing/CellEditingComposition';
 
-import CellRenderer from '../CellRenderer.js';
-import CellRendererRegistry from '../CellRendererRegistry.js';
+import { CellRenderer, CellRendererOptions } from '../CellRenderer.js';
+import { registerRenderer } from '../CellRendererRegistry.js';
 import TimeInputContent from '../ContentTypes/TimeInputContent.js';
-
-import U from '../../../../Core/Utilities.js';
-const {
-    merge
-} = U;
-
+import { merge } from '../../../../Shared/Utilities.js';
 
 /* *
  *
@@ -60,11 +56,11 @@ class TimeInputRenderer extends CellRenderer implements EditModeRenderer {
     /**
      * Default options for the time input renderer.
      */
-    public static defaultOptions: TimeInputRenderer.Options = {
+    public static defaultOptions: TimeInputRendererOptions = {
         type: 'timeInput'
     };
 
-    public override options: TimeInputRenderer.Options;
+    public override options: TimeInputRendererOptions;
 
 
     /* *
@@ -73,7 +69,7 @@ class TimeInputRenderer extends CellRenderer implements EditModeRenderer {
      *
      * */
 
-    public constructor(column: Column, options: Partial<CellRenderer.Options>) {
+    public constructor(column: Column, options: Partial<CellRendererOptions>) {
         super(column);
         this.options = merge(TimeInputRenderer.defaultOptions, options);
     }
@@ -97,18 +93,20 @@ class TimeInputRenderer extends CellRenderer implements EditModeRenderer {
 
 /* *
  *
- *  Namespace
+ *  Declarations
  *
  * */
 
-namespace TimeInputRenderer {
-
+/**
+ * Options to control the time input renderer content.
+ */
+export interface TimeInputRendererOptions extends DateInputRendererBaseOptions {
     /**
-     * Options to control the time input renderer content.
+     * Use the built-in time input renderer.
+     *
+     * @default 'timeInput'
      */
-    export interface Options extends TimeInputRendererBase.Options {
-        type: 'timeInput';
-    }
+    type: 'timeInput';
 }
 
 
@@ -124,7 +122,7 @@ declare module '../CellRendererType' {
     }
 }
 
-CellRendererRegistry.registerRenderer('timeInput', TimeInputRenderer);
+registerRenderer('timeInput', TimeInputRenderer);
 
 
 /* *

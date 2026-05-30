@@ -1,10 +1,12 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Hønsi
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -23,21 +25,19 @@ const {
     pageLang,
     win
 } = H;
-import U from '../Core/Utilities.js';
-const {
+import {
     defined,
-    error,
     extend,
-    isNumber,
     isObject,
+    isNumber,
     isString,
     merge,
     objectEach,
     pad,
     splat,
-    timeUnits,
     ucfirst
-} = U;
+} from './Utilities.js';
+import { error, timeUnits } from '../Core/Utilities.js';
 
 /* *
  *
@@ -188,7 +188,7 @@ class TimeBase {
      * initializing Highcharts, after running `Highcharts.setOptions` and on
      * `Chart.update`.
      *
-     * @private
+     * @internal
      * @function Highcharts.Time#update
      *
      * @param {Highcharts.TimeOptions} [options]
@@ -312,17 +312,17 @@ class TimeBase {
             //      L, 6/3/2023 14:30:00
             .split(/(?:, | |\/|:)/g);
         return [
-            year,
+            +year,
             +month - 1,
-            dayOfMonth,
-            hours,
-            minutes,
-            seconds,
+            +dayOfMonth,
+            +hours,
+            +minutes,
+            +seconds,
             // Milliseconds
             Math.floor(Number(timestamp) || 0) % 1000,
             // Spanish weekday index
             'DLMXJVS'.indexOf(weekday)
-        ].map(Number);
+        ];
     }
 
     /**
@@ -592,8 +592,8 @@ class TimeBase {
      * | `%o` | Month number, 1 through 12                   |       |
      * | `%y` | Two digits year, like 24 for 2024            |       |
      * | `%Y` | Four digits year, like 2024                  |       |
-     * | `%H` | Two digits hours in 24h format, 00 through 23 | Depending on the locale, 12h format may be instered. |
-     * | `%k` | Hours in 24h format, 0 through 23            | Depending on the locale, 12h format may be instered. |
+     * | `%H` | Two digits hours in 24h format, 00 through 23 | Depending on the locale, 12h format may be inserted. |
+     * | `%k` | Hours in 24h format, 0 through 23            | Depending on the locale, 12h format may be inserted. |
      * | `%I` | Two digits hours in 12h format, 00 through 11 | N/A. The locale determines the hour format. |
      * | `%l` | Hours in 12h format, 1 through 12            | N/A. The locale determines the hour format. |
      * | `%M` | Two digits minutes, 00 through 59            |       |
@@ -784,7 +784,7 @@ class TimeBase {
                         format = format.replace(
                             '%' + key,
                             typeof val === 'function' ?
-                                val.call(time, timestamp) :
+                                val.call(time, timestamp, time) :
                                 val
                         );
                     }
@@ -812,7 +812,7 @@ class TimeBase {
     /**
      * Resolve legacy formats of dateTimeLabelFormats (strings and arrays) into
      * an object.
-     * @private
+     * @internal
      * @param {string|Array<T>|Highcharts.Dictionary<T>} f
      * General format description
      * @return {Highcharts.Dictionary<T>}
@@ -841,7 +841,7 @@ class TimeBase {
     /**
      * Get the optimal date format for a point, based on a range.
      *
-     * @private
+     * @internal
      * @function Highcharts.Time#getDateFormat
      *
      * @param {number} range
@@ -929,7 +929,7 @@ namespace TimeBase {
 
     export interface DateTimeFormatOptions extends Intl.DateTimeFormatOptions {
         dateStyle?: 'full'|'long'|'medium'|'short';
-        fractionalSecondDigits?: number;
+        fractionalSecondDigits?: 1|2|3;
         prefix?: string;
         suffix?: string;
         timeStyle?: 'full'|'long'|'medium'|'short';
@@ -1129,7 +1129,7 @@ export default TimeBase;
  * The number of fractional digits to use. 3 means milliseconds.
  *
  * @name Highcharts.DateTimeFormatOptions#fractionalSecondDigits
- * @type {number|undefined}
+ * @type {1|2|3|undefined}
  *//**
  * The representation of the time zone name.
  *

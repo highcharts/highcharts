@@ -1,10 +1,12 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Hønsi
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -51,8 +53,7 @@ const { topo2geo } = GeoJSONComposition;
 import MU from './MapUtilities.js';
 const { boundsFromPath } = MU;
 import Projection from './Projection.js';
-import U from '../Core/Utilities.js';
-const {
+import {
     addEvent,
     clamp,
     crisp,
@@ -65,7 +66,7 @@ const {
     pick,
     pushUnique,
     relativeLength
-} = U;
+} from '../Shared/Utilities.js';
 
 /* *
  *
@@ -410,6 +411,9 @@ class MapView {
 
     /** @internal */
     public group?: SVGElement;
+
+    /** @internal */
+    public groupClipRect?: SVGElement;
 
     /** @internal */
     public insets: MapViewInset[] = [];
@@ -1304,12 +1308,17 @@ class MapView {
 
     /** @internal */
     public render(): void {
+        const chart = this.chart;
 
-        // We need a group for the insets
+        // We need a group and clip for the group for the insets
         if (!this.group) {
-            this.group = this.chart.renderer.g('map-view')
+            this.groupClipRect = chart.renderer.clipRect(chart.plotBox);
+            this.group = chart.renderer.g('map-view')
                 .attr({ zIndex: 4 })
+                .clip(this.groupClipRect)
                 .add();
+        } else if (this.groupClipRect) {
+            this.groupClipRect.animate(chart.plotBox);
         }
     }
 
@@ -1405,7 +1414,7 @@ class MapView {
         }
 
         if (redraw) {
-            this.chart.redraw(animation);
+            this.redraw(animation);
         }
     }
 
@@ -1718,3 +1727,18 @@ class MapViewInset extends MapView {
  * */
 
 export default MapView;
+
+
+/* *
+ *
+ *  API Declarations
+ *
+ * */
+
+/**
+ * Possible values for the specific `relativeTo` option.
+ *
+ * @typedef {"mapBoundingBox"|"plotBox"} Highcharts.MapViewInsetOptionsRelativeToValue
+ */
+
+''; // Keeps doclets above in JS file

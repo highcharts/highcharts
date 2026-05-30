@@ -1,11 +1,12 @@
 /* *
  *
- *  (c) 2016 Highsoft AS
+ *  (c) 2016-2026 Highsoft AS
  *  Author: Øystein Moseng
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -22,8 +23,7 @@ import type PositionObject from '../Core/Renderer/PositionObject';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 
 import PathUtilities from '../Series/PathUtilities.js';
-import U from '../Core/Utilities.js';
-const { pick } = U;
+import { pick } from '../Shared/Utilities.js';
 
 /* *
  *

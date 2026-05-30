@@ -1,10 +1,12 @@
 /* *
  *
- *  (c) 2010-2025 Pawel Lysy Grzegorz Blachlinski
+ *  (c) 2010-2026 Highsoft AS
+ *  Authors: Paweł Lysy, Grzegorz Blachliński
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -24,13 +26,8 @@ import type { OrganizationLinkOptions } from '../Organization/OrganizationSeries
 import Point from '../../Core/Series/Point.js';
 import TreegraphPoint from './TreegraphPoint.js';
 import TreegraphPointOptions from './TreegraphPointOptions.js';
-import U from '../../Core/Utilities.js';
-
-const {
-    pick,
-    extend
-} = U;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+import { extend, pick } from '../../Shared/Utilities.js';
 const {
     seriesTypes: {
         column: {
@@ -55,21 +52,19 @@ export interface TreegraphLinkOptions extends OrganizationLinkOptions {
      * percentage defines the relative position on the link. For example, a
      * `bendAt` of `50%` means that the link bends in the middle.
      *
-     * @since next
+     * @since 12.5.0
      * @default '50%'
      */
     bendAt?: number|string;
 
     /**
-     * Radius for the rounded corners of the links between nodes. Works for
-     * `orthogonal` link type.
-     */
-    radius?: number;
-
-    /**
      * The color of the links between nodes.
+     *
+     * @default ${palette.neutralColor60}
      */
     color?: ColorString;
+
+    // TODO: cursor
 
     /**
      * Modifier of the shape of the curved link. Works best for values between 0
@@ -86,8 +81,18 @@ export interface TreegraphLinkOptions extends OrganizationLinkOptions {
 
     /**
      * The line width of the links connecting nodes, in pixels.
+     *
+     * @default 1
      */
     lineWidth?: number;
+
+    /**
+     * Radius for the rounded corners of the links between nodes. Works for
+     * `orthogonal` link type.
+     *
+     * @default 10
+     */
+    radius?: number;
 
     /**
      * Type of the link shape.
@@ -96,6 +101,7 @@ export interface TreegraphLinkOptions extends OrganizationLinkOptions {
      *         Different link types
      *
      * @product highcharts
+     * @default 'curved'
      */
     type?: 'curved' | 'orthogonal' | 'straight';
 

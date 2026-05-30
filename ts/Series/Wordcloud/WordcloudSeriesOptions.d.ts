@@ -2,12 +2,13 @@
  *
  *  Experimental Highcharts module which enables visualization of a word cloud.
  *
- *  (c) 2016-2025 Highsoft AS
- *  Authors: Jon Arild Nygard
+ *  (c) 2016-2026 Highsoft AS
+ *  Authors: Jon Arild Nygård
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  * */
 
 /* *
@@ -16,16 +17,17 @@
  *
  * */
 
-import type ColumnSeriesOptions from '../Column/ColumnSeriesOptions';
+import type {
+    ColumnSeriesOptions,
+    ColumnSeriesTooltipOptions
+} from '../Column/ColumnSeriesOptions';
 import type CSSObject from '../../Core/Renderer/CSSObject';
 import type {
     PointOptions,
     PointShortOptions
 } from '../../Core/Series/PointOptions';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
-import type TooltipOptions from '../../Core/TooltipOptions';
 import type WordcloudPointOptions from './WordcloudPointOptions';
-import type WordcloudSeries from './WordcloudSeries';
 
 /* *
  *
@@ -77,7 +79,8 @@ export interface WordcloudSeriesOptions extends ColumnSeriesOptions {
      */
     allowExtendPlayingField?: boolean;
 
-    animation?: WordcloudSeriesAnimationOptions;
+    /** @default { duration: 500 } */
+    animation?: ColumnSeriesOptions['animation'];
 
     borderWidth?: number;
 
@@ -129,7 +132,7 @@ export interface WordcloudSeriesOptions extends ColumnSeriesOptions {
     /**
      * The word with the largest weight will have a font size equal to this
      * value. The font size of a word is the ratio between its weight and the
-     * largest occuring weight, multiplied with the value of maxFontSize.
+     * largest occurring weight, multiplied with the value of maxFontSize.
      */
     maxFontSize?: number;
 
@@ -141,7 +144,7 @@ export interface WordcloudSeriesOptions extends ColumnSeriesOptions {
 
     /**
      * This option decides which algorithm is used for placement, and rotation
-     * of a word. The choice of algorith is therefore a crucial part of the
+     * of a word. The choice of algorithm is therefore a crucial part of the
      * resulting layout of the wordcloud. It is possible for users to add their
      * own custom placement strategies for use in word cloud. Read more about it
      * in our
@@ -172,7 +175,7 @@ export interface WordcloudSeriesOptions extends ColumnSeriesOptions {
      */
     spiral?: string;
 
-    states?: SeriesStatesOptions<WordcloudSeries>;
+    states?: SeriesStatesOptions<WordcloudSeriesOptions>;
 
     /**
      * CSS styles for the words.
@@ -183,14 +186,22 @@ export interface WordcloudSeriesOptions extends ColumnSeriesOptions {
      */
     style?: CSSObject;
 
-    tooltip?: Partial<TooltipOptions>;
+    tooltip?: WordcloudSeriesTooltipOptions;
 
 }
 
-interface WordcloudSeriesAnimationOptions {
-    duration?: number;
-}
+export interface WordcloudSeriesTooltipOptions
+    extends ColumnSeriesTooltipOptions {
+    /**
+     * @default true
+     */
+    followPointer?: ColumnSeriesTooltipOptions['followPointer'];
 
+    /**
+     * @default '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.weight}</b><br/>'
+     */
+    pointFormat?: ColumnSeriesTooltipOptions['pointFormat'];
+}
 
 /**
  * Rotation options for the words in the wordcloud.

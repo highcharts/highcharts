@@ -11,7 +11,7 @@ Use the `RNANewsConnector` to load regulatory news announcements.
 In dashboards, this connector is called `MorningstarRNANews`
 
 Specify the security to retrieve in the options along with a postman environment
-file for authentication, and other parameters such as `startDate`, `endDate` 
+file for authentication, and other parameters such as `startDate`, `endDate`
 or `maxStories`.
 
 ### RNANews with Morningstar standalone for Highcharts:
@@ -33,18 +33,18 @@ const rnaNewsConnector = new HighchartsConnectors.Morningstar.RNANewsConnector({
 
 await rnaNewsConnector.load();
 
-new Grid.Grid('container', {
+new Grid.grid('container', {
     dataTable: rnaNewsConnector,
-    editable: false,
-    columns: {
-      Day: {
-        cellFormatter: function () {
-            return new Date(this.value)
-                .toISOString()
-                .substring(0, 10);
+    columns: [{
+        id: 'Day',
+        cells: {
+            formatter: function() {
+                return new Date(this.value)
+                    .toISOString()
+                    .substring(0, 10);
+            }
         }
-      }
-    }
+    }]
 });
 ```
 
@@ -78,16 +78,16 @@ Dashboards.board('container', {
             type: 'Grid',
             title: 'Regulatory News for Tesco',
             gridOptions: {
-                editable: false,
-                columns: {
-                    Day: {
-                        cellFormatter: function () {
+                columns: [{
+                    id: 'Day',
+                    cells: {
+                        formatter: function() {
                             return new Date(this.value)
                                 .toISOString()
                                 .substring(0, 10);
                         }
                     }
-                }
+                }]
             }
         }
     ]
@@ -100,7 +100,7 @@ For more details, see [Morningstar’s RNANews API].
 
 You will find examples of how to use RNANewsConnector in our demos.
 
-- **Highcharts Dashboards + Morningstar RNA News**: Shows how to use 
+- **Highcharts Dashboards + Morningstar RNA News**: Shows how to use
 RNANewsConnector in dashboards to retrieve RNANews for Tesco.
 
 [Morningstar’s RNANews API]: https://developer.morningstar.com/direct-web-services/documentation/api-reference/time-series/regulatory-news-announcements

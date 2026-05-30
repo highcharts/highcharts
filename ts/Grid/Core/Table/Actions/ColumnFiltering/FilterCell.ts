@@ -2,14 +2,15 @@
  *
  *  Grid Filter Cell class
  *
- *  (c) 2020-2025 Highsoft AS
+ *  (c) 2020-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
- *  - Dawid Dragula
+ *  - Dawid Draguła
  *
  * */
 
@@ -25,10 +26,7 @@ import type Row from '../../Row.js';
 import type Column from '../../Column.js';
 
 import HeaderCell from '../../Header/HeaderCell.js';
-import U from '../../../../../Core/Utilities.js';
-
-const { fireEvent } = U;
-
+import { fireEvent } from '../../../../../Shared/Utilities.js';
 
 /* *
  *
@@ -63,10 +61,10 @@ class FilterCell extends HeaderCell {
      *
      * */
 
-    public override render(): void {
+    public override async render(): Promise<void> {
         const { column } = this;
         if (!column) {
-            return;
+            return Promise.resolve();
         }
 
         // Render content of th element
@@ -87,23 +85,27 @@ class FilterCell extends HeaderCell {
         fireEvent(this, 'afterRender', { column, filtering: true });
     }
 
-    protected override onKeyDown(e: KeyboardEvent): void {
-        this.column.filtering?.onKeyDown(e);
-
+    public override onKeyDown(e: KeyboardEvent): void {
         if (e.target === this.htmlElement) {
-            if (e.key === 'Enter') {
+            if (
+                e.key === 'Enter' &&
+                this.column.viewport.grid.columnPolicy
+                    .isColumnInlineFilteringEnabled(this.column.id)
+            ) {
                 this.column.filtering?.filterSelect?.focus();
             } else {
                 super.onKeyDown(e);
             }
         } else {
+            this.column.filtering?.onKeyDown(e);
+
             if (e.key === 'Escape') {
                 this.htmlElement.focus();
             }
         }
     }
 
-    protected override onClick(e: MouseEvent): void {
+    public override onClick(e: MouseEvent): void {
         if (e.target === this.htmlElement) {
             this.htmlElement.focus();
         }

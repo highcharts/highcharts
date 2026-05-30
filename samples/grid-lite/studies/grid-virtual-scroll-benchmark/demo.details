@@ -1,0 +1,12 @@
+---
+name: Grid virtual scroll benchmark
+authors:
+  - Mikkel Espolin Birkeland
+js_wrap: b
+tags:
+  - Highcharts Grid demo
+categories:
+  - General:
+        priority: 20
+use_png_thumbnail: true
+...

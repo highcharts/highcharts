@@ -1,12 +1,14 @@
 /* *
  *
- *  (c) 2019-2025 Torstein Honsi
+ *  (c) 2019-2026 Highsoft AS
+ *  Author: Torstein Hønsi
  *
  *  Item series type for Highcharts
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -31,15 +33,14 @@ import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     pie: PieSeries
 } = SeriesRegistry.seriesTypes;
-import U from '../../Core/Utilities.js';
-const {
+import {
     defined,
     extend,
     fireEvent,
     isNumber,
     merge,
     pick
-} = U;
+} from '../../Shared/Utilities.js';
 
 /* *
  *

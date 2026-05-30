@@ -1,10 +1,12 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Hønsi
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -18,6 +20,7 @@
 
 import type { DeepPartial } from '../../Shared/Types';
 import type {
+    AxisTitleOptions,
     XAxisOptions,
     YAxisOptions
 } from './AxisOptions';
@@ -223,6 +226,9 @@ namespace AxisDefaults {
          * Configure a crosshair that follows either the mouse pointer or the
          * hovered point.
          *
+         * Support boolean or object definition. If `true`, a crosshair with
+         * default settings will be displayed.
+         *
          * In styled mode, the crosshairs are styled in the
          * `.highcharts-crosshair`, `.highcharts-crosshair-thin` or
          * `.highcharts-xaxis-category` classes.
@@ -243,20 +249,6 @@ namespace AxisDefaults {
          * @default   false
          * @since     4.1
          * @apioption xAxis.crosshair
-         */
-
-        /**
-         * The value on a perpendicular axis where this axis should cross. This
-         * is typically used on mathematical plots where the axes cross at 0.
-         * When `crossing` is set, space will not be reserved at the sides of
-         * the chart for axis labels and title, so those may be clipped. In this
-         * case it is better to place the axes without the `crossing` option.
-         *
-         * @type      {number}
-         * @sample    highcharts/xaxis/crossing
-         *            Function plot with axes crossing at 0
-         * @since 11.0.1
-         * @apioption xAxis.crossing
          */
 
         /**
@@ -389,6 +381,9 @@ namespace AxisDefaults {
 
         /**
          * Formatter function for the label text.
+         * Since v12.6.0, the callback also receives `ctx` as the second
+         * argument, so that arrow functions can access the same context as
+         * regular functions using `this`.
          *
          * @type      {Highcharts.XAxisCrosshairLabelFormatterCallbackFunction}
          * @since     2.1
@@ -424,6 +419,19 @@ namespace AxisDefaults {
          * @since     2.1
          * @product   highstock
          * @apioption xAxis.crosshair.label.style
+         */
+
+        /**
+         * The number of milliseconds to wait until the crosshair is shown when
+         * the mouse is over a point. Works on initial hover.
+         *
+         * @sample {highcharts|highstock} highcharts/tooltip/showdelay/
+         *         Show crosshair after 2 seconds
+         *
+         * @type      {number}
+         * @default   0
+         * @since     12.6.0
+         * @apioption xAxis.crosshair.showDelay
          */
 
         /**
@@ -469,6 +477,20 @@ namespace AxisDefaults {
          */
 
         /**
+         * The value on a perpendicular axis where this axis should cross. This
+         * is typically used on mathematical plots where the axes cross at 0.
+         * When `crossing` is set, space will not be reserved at the sides of
+         * the chart for axis labels and title, so those may be clipped. In this
+         * case it is better to place the axes without the `crossing` option.
+         *
+         * @type      {number}
+         * @sample    highcharts/xaxis/crossing
+         *            Function plot with axes crossing at 0
+         * @since 11.0.1
+         * @apioption xAxis.crossing
+         */
+
+        /**
          * Whether to pan axis. If `chart.panning` is enabled, the option
          * allows to disable panning on an individual axis.
          */
@@ -493,26 +515,54 @@ namespace AxisDefaults {
 
         /**
          * For a datetime axis, the scale will automatically adjust to the
-         * appropriate unit. This member gives the default string
-         * representations used for each unit. For intermediate values,
-         * different units may be used, for example the `day` unit can be used
-         * on midnight and `hour` unit be used for intermediate values on the
-         * same axis.
+         * appropriate unit. This member gives the default representations used
+         * for each unit. For easier data interpretation, `hour`, `day`, `month`
+         * and `year` units can be used and formatted as boundary tick values.
+         * Check boundaries map below to see where to format boundary ticks on
+         * given main time units.
          *
-         * For an overview of the string or object configuration, see
+         * ```js
+         *     baseUnit: boundaryUnit
+         *     ----------------------
+         *     millisecond: 'hour',
+         *     second: 'hour',
+         *     minute: 'hour',
+         *     hour: 'day',
+         *     day: 'month',
+         *     week: 'month',
+         *     month: 'year',
+         *     year: 'year'
+         * ```
+         *
+         * For an overview of the date time label formats configuration, see
          * [dateFormat](/class-reference/Highcharts.Time#dateFormat).
          *
          * Defaults to:
          * ```js
          * {
-         *     millisecond: '%[HMSL]',
-         *     second: '%[HMS]',
-         *     minute: '%[HM]',
-         *     hour: '%[HM]',
-         *     day: '%[eb]',
-         *     week: '%[eb]',
-         *     month: '%[bY]',
-         *     year: '%Y'
+         *     millisecond: { main: '%[HMSL]' },
+         *     second: { main: '%[HMS]' },
+         *     minute: { main: '%[HM]' },
+         *     hour: { main: '%[HM]', boundary: undefined },
+         *     day: { main: '%[eb]', boundary: '%[eb]' },
+         *     week: { main: '%[eb]' },
+         *     month: { main: '%[bY]', boundary: undefined },
+         *     year: { main: '%Y', boundary: undefined }
+         * }
+         * ```
+         *
+         * @productdesc {gantt}
+         * For grid axes (like in Gantt charts),
+         * it is possible to declare as a list to provide different
+         * formats depending on available space.
+         *
+         * Defaults to:
+         * ```js
+         * {
+         *     hour: { list: ['%H:%M', '%H'] },
+         *     day: { list: ['%A, %e. %B', '%a, %e. %b', '%E'] },
+         *     week: { list: ['Week %W', 'W%W'] },
+         *     month: { list: ['%B', '%b', '%o'] }
          * }
          * ```
          *
@@ -520,8 +570,16 @@ namespace AxisDefaults {
          *         Object day format on X axis
          * @sample {highcharts} highcharts/xaxis/datetimelabelformats/
          *         String day format on X axis
+         * @sample {highcharts} highcharts/xaxis/labels-boundary/
+         *         Month boundary on daily ticks
+         * @sample {highcharts} highcharts/xaxis/labels-boundary-format/
+         *         Using axis labels format to format boundary labels
          * @sample {highstock} stock/xaxis/datetimelabelformats/
          *         More information in x axis labels
+         * @sample {highstock} stock/xaxis/labels-boundary/
+         *         Year boundary on monthly ticks
+         * @sample {gantt} gantt/grid-axis/date-time-label-formats
+         *         Gantt chart with custom axis date format.
          *
          * @declare Highcharts.AxisDateTimeLabelFormatsOptions
          * @product highcharts highstock gantt
@@ -529,143 +587,199 @@ namespace AxisDefaults {
         dateTimeLabelFormats: {
             /**
              * @declare Highcharts.AxisDateTimeLabelFormatsOptionsObject
-             * @type {string|*}
              */
             millisecond: {
                 /**
-                 * @type {Array<string|Highcharts.DateTimeFormatOptions>}
-                 * @default undefined
+                 * List of possible format strings used for this unit.
+                 *
+                 * @type {Array<string>}
                  * @apioption xAxis.dateTimeLabelFormats.millisecond.list
                  */
 
                 /**
-                 * @type {string|Highcharts.DateTimeFormatOptions}
                  * @apioption xAxis.dateTimeLabelFormats.millisecond.main
                  */
                 main: '%[HMSL]',
+                /**
+                 * When `false`, this time unit is treated as a point in time
+                 * rather than a range. In Gantt charts, when grid axis is
+                 * enabled, point-in-time ticks get left-aligned in the grid
+                 * cell by default.
+                 *
+                 * @product gantt
+                 * @apioption xAxis.dateTimeLabelFormats.millisecond.range
+                 */
                 range: false
             },
             /**
              * @declare Highcharts.AxisDateTimeLabelFormatsOptionsObject
-             * @type {string|*}
              */
             second: {
                 /**
-                 * @type {Array<string|Highcharts.DateTimeFormatOptions>}
-                 * @default undefined
+                 * List of possible format strings used for this unit.
+                 *
+                 * @type {Array<string>}
                  * @apioption xAxis.dateTimeLabelFormats.second.list
                  */
 
                 /**
-                 * @type {string|Highcharts.DateTimeFormatOptions}
                  * @apioption xAxis.dateTimeLabelFormats.second.main
                  */
                 main: '%[HMS]',
+                /**
+                 * When `false`, this time unit is treated as a point in time
+                 * rather than a range. In Gantt charts, when grid axis is
+                 * enabled, point-in-time ticks get left-aligned in the grid
+                 * cell by default.
+                 *
+                 * @product gantt
+                 * @apioption xAxis.dateTimeLabelFormats.second.range
+                 */
                 range: false
             },
             /**
              * @declare Highcharts.AxisDateTimeLabelFormatsOptionsObject
-             * @type {string|*}
              */
             minute: {
                 /**
-                 * @type {Array<string|Highcharts.DateTimeFormatOptions>}
-                 * @default undefined
+                 * List of possible format strings used for this unit.
+                 *
+                 * @type {Array<string>}
                  * @apioption xAxis.dateTimeLabelFormats.minute.list
                  */
 
                 /**
-                 * @type {string|Highcharts.DateTimeFormatOptions}
                  * @apioption xAxis.dateTimeLabelFormats.minute.main
                  */
                 main: '%[HM]',
+                /**
+                 * When `false`, this time unit is treated as a point in time
+                 * rather than a range. In Gantt charts, when grid axis is
+                 * enabled, point-in-time ticks get left-aligned in the grid
+                 * cell by default.
+                 *
+                 * @product gantt
+                 * @apioption xAxis.dateTimeLabelFormats.minute.range
+                 */
                 range: false
             },
             /**
              * @declare Highcharts.AxisDateTimeLabelFormatsOptionsObject
-             * @type {string|*}
              */
             hour: {
                 /**
-                 * @type {Array<string|Highcharts.DateTimeFormatOptions>}
-                 * @default undefined
+                 * List of possible format strings used for this unit.
+                 *
+                 * @type {Array<string>}
                  * @apioption xAxis.dateTimeLabelFormats.hour.list
                  */
 
                 /**
-                 * @type {string|Highcharts.DateTimeFormatOptions}
                  * @apioption xAxis.dateTimeLabelFormats.hour.main
                  */
                 main: '%[HM]',
+                /**
+                 * Label format that should be used when a tick is a boundary
+                 * tick, e.g. start of day, start of year, etc.
+                 *
+                 * @apioption xAxis.dateTimeLabelFormats.hour.boundary
+                 */
+                boundary: void 0,
+                /**
+                 * When `false`, this time unit is treated as a point in time
+                 * rather than a range. In Gantt charts, when grid axis is
+                 * enabled, point-in-time ticks get left-aligned in the grid
+                 * cell by default.
+                 *
+                 * @product gantt
+                 * @apioption xAxis.dateTimeLabelFormats.hour.range
+                 */
                 range: false
             },
             /**
              * @declare Highcharts.AxisDateTimeLabelFormatsOptionsObject
-             * @type {string|*}
              */
             day: {
                 /**
-                 * @type {Array<string|Highcharts.DateTimeFormatOptions>}
-                 * @default undefined
+                 * List of possible format strings used for this unit.
+                 *
+                 * @type {Array<string>}
                  * @apioption xAxis.dateTimeLabelFormats.day.list
                  */
 
                 /**
-                 * @type {string|Highcharts.DateTimeFormatOptions}
                  * @apioption xAxis.dateTimeLabelFormats.day.main
                  */
-                main: '%[eb]'
+                main: '%[eb]',
+                /**
+                 * Label format that should be used when a tick is a boundary
+                 * tick, e.g. start of day, start of year, etc.
+                 *
+                 * @apioption xAxis.dateTimeLabelFormats.day.boundary
+                 */
+                boundary: '%[eb]'
             },
             /**
              * @declare Highcharts.AxisDateTimeLabelFormatsOptionsObject
-             * @type {string|*}
              */
             week: {
                 /**
-                 * @type {Array<string|Highcharts.DateTimeFormatOptions>}
-                 * @default undefined
+                 * List of possible format strings used for this unit.
+                 *
+                 * @type {Array<string>}
                  * @apioption xAxis.dateTimeLabelFormats.week.list
                  */
 
                 /**
-                 * @type {string|Highcharts.DateTimeFormatOptions}
                  * @apioption xAxis.dateTimeLabelFormats.week.main
                  */
                 main: '%[eb]'
             },
             /**
              * @declare Highcharts.AxisDateTimeLabelFormatsOptionsObject
-             * @type {string|*}
              */
             month: {
                 /**
-                 * @type {Array<string|Highcharts.DateTimeFormatOptions>}
-                 * @default undefined
+                 * List of possible format strings used for this unit.
+                 *
+                 * @type {Array<string>}
                  * @apioption xAxis.dateTimeLabelFormats.month.list
                  */
 
                 /**
-                 * @type {string|Highcharts.DateTimeFormatOptions}
                  * @apioption xAxis.dateTimeLabelFormats.month.main
                  */
-                main: '%[bY]'
+                main: '%[bY]',
+                /**
+                 * Label format that should be used when a tick is a boundary
+                 * tick, e.g. start of day, start of year, etc.
+                 *
+                 * @apioption xAxis.dateTimeLabelFormats.month.boundary
+                 */
+                boundary: void 0
             },
             /**
              * @declare Highcharts.AxisDateTimeLabelFormatsOptionsObject
-             * @type {string|*}
              */
             year: {
                 /**
-                 * @type {Array<string|Highcharts.DateTimeFormatOptions>}
-                 * @default undefined
+                 * List of possible format strings used for this unit.
+                 *
+                 * @type {Array<string>}
                  * @apioption xAxis.dateTimeLabelFormats.year.list
                  */
 
                 /**
-                 * @type {string|Highcharts.DateTimeFormatOptions}
                  * @apioption xAxis.dateTimeLabelFormats.year.main
                  */
-                main: '%Y'
+                main: '%[Y]',
+                /**
+                 * Label format that should be used when a tick is a boundary
+                 * tick, e.g. start of day, start of year, etc.
+                 *
+                 * @apioption xAxis.dateTimeLabelFormats.year.boundary
+                 */
+                boundary: void 0
             }
         },
 
@@ -964,6 +1078,8 @@ namespace AxisDefaults {
              *         Linked category names
              * @sample {highcharts} highcharts/xaxis/labels-format-custom/
              *         Custom number format
+             * @sample {highstock} stock/xaxis/labels-format/
+             *         Added units on Y axis
              *
              * @type      {string}
              * @since     3.0
@@ -974,7 +1090,9 @@ namespace AxisDefaults {
              * Callback JavaScript function to format the label. The value
              * is given by `this.value`. Additional properties for `this` are
              * `axis`, `chart`, `isFirst`, `isLast` and `text` which holds the
-             * value of the default formatter.
+             * value of the default formatter. Since v12.6.0, the callback also
+             * receives `ctx` as the first argument, so that arrow functions can
+             * access the same context as regular functions using `this`.
              *
              * Defaults to a built in function returning a formatted string
              * depending on whether the axis is `category`, `datetime`,
@@ -1160,15 +1278,12 @@ namespace AxisDefaults {
              * @type      {Highcharts.CSSObject}
              */
             style: {
-                /** @internal */
-                color: Palette.neutralColor80,
-                /** @internal */
-                cursor: 'default',
                 /**
-                 * @type {number|string}
+                 * @type {Highcharts.ColorType}
                  */
+                color: Palette.neutralColor80,
+                cursor: 'default',
                 fontSize: '0.8em',
-                /** @internal */
                 textOverflow: 'ellipsis'
             }
         },
@@ -1519,7 +1634,7 @@ namespace AxisDefaults {
          *
          * @default   {highcharts|highstock|highmaps} false
          * @default   {gantt} true
-         * @type      Boolean
+         * @type      {boolean}
          * @apioption xAxis.opposite
          */
 
@@ -1592,7 +1707,6 @@ namespace AxisDefaults {
          * @product   highcharts
          * @apioption xAxis.pane
          */
-
 
         /**
          * The zoomed range to display when only defining one or none of `min`
@@ -1758,7 +1872,6 @@ namespace AxisDefaults {
          */
         startOnTick: false,
 
-
         /**
          * The amount of ticks to draw on the axis. This opens up for aligning
          * the ticks of multiple charts or panes within a chart. This option
@@ -1824,6 +1937,23 @@ namespace AxisDefaults {
         tickLength: 10,
 
         /**
+         * For categorized axes only. If `on` the tick mark is placed in the
+         * center of the category, if `between` the tick mark is placed between
+         * categories. The default is `between` if the `tickInterval` is 1, else
+         * `on`. In order to render tick marks on a category axis it is necessary
+         * to provide a [tickWidth](#xAxis.tickWidth).
+         *
+         * @sample {highcharts} highcharts/xaxis/tickmarkplacement-between/
+         *         "between" by default
+         * @sample {highcharts} highcharts/xaxis/tickmarkplacement-on/
+         *         "on"
+         *
+         * @product    highcharts gantt
+         * @validvalue ["on", "between"]
+         */
+        tickmarkPlacement: 'between',
+
+        /**
          * If tickInterval is `null` this option sets the approximate pixel
          * interval of the tick marks. Not applicable to categorized axis.
          *
@@ -1843,23 +1973,6 @@ namespace AxisDefaults {
         tickPixelInterval: 100,
 
         /**
-         * For categorized axes only. If `on` the tick mark is placed in the
-         * center of the category, if `between` the tick mark is placed between
-         * categories. The default is `between` if the `tickInterval` is 1, else
-         * `on`. In order to render tick marks on a category axis it is necessary
-         * to provide a [tickWidth](#xAxis.tickWidth).
-         *
-         * @sample {highcharts} highcharts/xaxis/tickmarkplacement-between/
-         *         "between" by default
-         * @sample {highcharts} highcharts/xaxis/tickmarkplacement-on/
-         *         "on"
-         *
-         * @product    highcharts gantt
-         * @validvalue ["on", "between"]
-         */
-        tickmarkPlacement: 'between',
-
-        /**
          * The position of the major tick marks relative to the axis line.
          * Can be one of `inside` and `outside`.
          *
@@ -1876,10 +1989,13 @@ namespace AxisDefaults {
 
         /**
          * A callback function returning array defining where the ticks are
-         * laid out on the axis. This overrides the default behaviour of
+         * laid out on the axis. This overrides the default behavior of
          * [tickPixelInterval](#xAxis.tickPixelInterval) and [tickInterval](
          * #xAxis.tickInterval). The automatic tick positions are accessible
          * through `this.tickPositions` and can be modified by the callback.
+         * Since v12.6.0, the callback also receives `ctx` as the third
+         * argument, so that arrow functions can access the same context as
+         * regular functions using `this`.
          *
          * @see [tickPositions](#xAxis.tickPositions)
          *
@@ -1894,7 +2010,7 @@ namespace AxisDefaults {
 
         /**
          * An array defining where the ticks are laid out on the axis. This
-         * overrides the default behaviour of [tickPixelInterval](
+         * overrides the default behavior of [tickPixelInterval](
          * #xAxis.tickPixelInterval) and [tickInterval](#xAxis.tickInterval).
          *
          * Note: When working with date-time axes, be aware of time zone
@@ -2101,14 +2217,16 @@ namespace AxisDefaults {
              * @type    {Highcharts.CSSObject}
              */
             style: {
-                /** @internal */
+                /**
+                 * @type {Highcharts.ColorType}
+                 */
                 color: Palette.neutralColor60,
                 /**
                  * @type {number|string}
                  */
                 fontSize: '0.8em'
             }
-        },
+        } as AxisTitleOptions,
 
         /**
          * The type of axis. Can be one of `linear`, `logarithmic`, `datetime`
@@ -2233,7 +2351,6 @@ namespace AxisDefaults {
          *         Bright grey lines from Y axis
          *
          * @type    {Highcharts.ColorType}
-         * @default #f2f2f2
          */
         minorGridLineColor: Palette.neutralColor5,
 
@@ -2261,7 +2378,6 @@ namespace AxisDefaults {
          *         Black tick marks on Y axis
          *
          * @type    {Highcharts.ColorType}
-         * @default #999999
          */
         minorTickColor: Palette.neutralColor40,
 
@@ -2317,7 +2433,6 @@ namespace AxisDefaults {
          *         Green lines
          *
          * @type    {Highcharts.ColorType}
-         * @default #e6e6e6
          */
         gridLineColor: Palette.neutralColor10,
 
@@ -2896,124 +3011,6 @@ namespace AxisDefaults {
          */
 
         /**
-         * Defines the horizontal alignment of the stack total label. Can be one
-         * of `"left"`, `"center"` or `"right"`. The default value is calculated
-         * at runtime and depends on orientation and whether the stack is
-         * positive or negative.
-         *
-         * @sample {highcharts} highcharts/yaxis/stacklabels-align-left/
-         *         Aligned to the left
-         * @sample {highcharts} highcharts/yaxis/stacklabels-align-center/
-         *         Aligned in center
-         * @sample {highcharts} highcharts/yaxis/stacklabels-align-right/
-         *         Aligned to the right
-         *
-         * @type      {Highcharts.AlignValue}
-         * @since     2.1.5
-         * @product   highcharts
-         * @apioption yAxis.stackLabels.align
-         */
-
-        /**
-         * A format string for the data label. Available variables are the same
-         * as for `formatter`.
-         *
-         * @type      {string}
-         * @default   {total}
-         * @since     3.0.2
-         * @product   highcharts highstock
-         * @apioption yAxis.stackLabels.format
-         */
-
-        /**
-         * Rotation of the labels in degrees.
-         *
-         * @sample {highcharts} highcharts/yaxis/stacklabels-rotation/
-         *         Labels rotated 45°
-         *
-         * @type      {number}
-         * @default   0
-         * @since     2.1.5
-         * @product   highcharts
-         * @apioption yAxis.stackLabels.rotation
-         */
-
-        /**
-         * The text alignment for the label. While `align` determines where the
-         * texts anchor point is placed with regards to the stack, `textAlign`
-         * determines how the text is aligned against its anchor point. Possible
-         * values are `"left"`, `"center"` and `"right"`. The default value is
-         * calculated at runtime and depends on orientation and whether the
-         * stack is positive or negative.
-         *
-         * @sample {highcharts} highcharts/yaxis/stacklabels-textalign-left/
-         *         Label in center position but text-aligned left
-         *
-         * @type      {Highcharts.AlignValue}
-         * @since     2.1.5
-         * @product   highcharts
-         * @apioption yAxis.stackLabels.textAlign
-         */
-
-        /**
-         * Whether to [use HTML](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting#html)
-         * to render the labels.
-         *
-         * @type      {boolean}
-         * @default   false
-         * @since     3.0
-         * @product   highcharts highstock
-         * @apioption yAxis.stackLabels.useHTML
-         */
-
-        /**
-         * Defines the vertical alignment of the stack total label. Can be one
-         * of `"top"`, `"middle"` or `"bottom"`. The default value is calculated
-         * at runtime and depends on orientation and whether the stack is
-         * positive or negative.
-         *
-         * @sample {highcharts} highcharts/yaxis/stacklabels-verticalalign-top/
-         *         Vertically aligned top
-         * @sample {highcharts} highcharts/yaxis/stacklabels-verticalalign-middle/
-         *         Vertically aligned middle
-         * @sample {highcharts} highcharts/yaxis/stacklabels-verticalalign-bottom/
-         *         Vertically aligned bottom
-         *
-         * @type      {Highcharts.VerticalAlignValue}
-         * @since     2.1.5
-         * @product   highcharts
-         * @apioption yAxis.stackLabels.verticalAlign
-         */
-
-        /**
-         * The x position offset of the label relative to the left of the
-         * stacked bar. The default value is calculated at runtime and depends
-         * on orientation and whether the stack is positive or negative.
-         *
-         * @sample {highcharts} highcharts/yaxis/stacklabels-x/
-         *         Stack total labels with x offset
-         *
-         * @type      {number}
-         * @since     2.1.5
-         * @product   highcharts
-         * @apioption yAxis.stackLabels.x
-         */
-
-        /**
-         * The y position offset of the label relative to the tick position
-         * on the axis. The default value is calculated at runtime and depends
-         * on orientation and whether the stack is positive or negative.
-         *
-         * @sample {highcharts} highcharts/yaxis/stacklabels-y/
-         *         Stack total labels with y offset
-         *
-         * @type      {number}
-         * @since     2.1.5
-         * @product   highcharts
-         * @apioption yAxis.stackLabels.y
-         */
-
-        /**
          * Whether to force the axis to start on a tick. Use this option with
          * the `maxPadding` option to control the axis start.
          *
@@ -3052,7 +3049,7 @@ namespace AxisDefaults {
              * The actual text of the axis title. Horizontal texts can contain
              * HTML, but rotated texts are painted using vector techniques and
              * must be clean text. The Y axis title is disabled by setting the
-             * `text` option to `undefined`. The default value is overriden by
+             * `text` option to `undefined`. The default value is overridden by
              * the `lang.yAxisTitle` language option.
              *
              * @sample {highcharts} highcharts/xaxis/title-text/
@@ -3093,6 +3090,126 @@ namespace AxisDefaults {
          * @product highcharts
          */
         stackLabels: {
+            /**
+             * Defines the horizontal alignment of the stack total label. Can be
+             * one of `"left"`, `"center"` or `"right"`. The default value is
+             * calculated at runtime and depends on orientation and whether the
+             * stack is positive or negative.
+             *
+             * @sample {highcharts} highcharts/yaxis/stacklabels-align-left/
+             *         Aligned to the left
+             * @sample {highcharts} highcharts/yaxis/stacklabels-align-center/
+             *         Aligned in center
+             * @sample {highcharts} highcharts/yaxis/stacklabels-align-right/
+             *         Aligned to the right
+             *
+             * @type      {Highcharts.AlignValue}
+             * @since     2.1.5
+             * @product   highcharts
+             * @apioption yAxis.stackLabels.align
+             */
+
+            /**
+             * A format string for the data label. Available variables are the
+             * same as for `formatter`.
+             *
+             * @type      {string}
+             * @default   {total}
+             * @since     3.0.2
+             * @product   highcharts highstock
+             * @apioption yAxis.stackLabels.format
+             */
+
+            /**
+             * Rotation of the labels in degrees.
+             *
+             * @sample {highcharts} highcharts/yaxis/stacklabels-rotation/
+             *         Labels rotated 45°
+             *
+             * @type      {number}
+             * @default   0
+             * @since     2.1.5
+             * @product   highcharts
+             * @apioption yAxis.stackLabels.rotation
+             */
+
+            /**
+             * The text alignment for the label. While `align` determines where
+             * the texts anchor point is placed with regards to the stack,
+             * `textAlign` determines how the text is aligned against its anchor
+             * point. Possible values are `"left"`, `"center"` and `"right"`.
+             * The default value is calculated at runtime and depends on
+             * orientation and whether the stack is positive or negative.
+             *
+             * @sample {highcharts} highcharts/yaxis/stacklabels-textalign-left/
+             *         Label in center position but text-aligned left
+             *
+             * @type      {Highcharts.AlignValue}
+             * @since     2.1.5
+             * @product   highcharts
+             * @apioption yAxis.stackLabels.textAlign
+             */
+
+            /**
+             * Whether to [use HTML](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting#html)
+             * to render the labels.
+             *
+             * @type      {boolean}
+             * @default   false
+             * @since     3.0
+             * @product   highcharts highstock
+             * @apioption yAxis.stackLabels.useHTML
+             */
+
+            /**
+             * Defines the vertical alignment of the stack total label. Can be
+             * one of `"top"`, `"middle"` or `"bottom"`. The default value is
+             * calculated at runtime and depends on orientation and whether the
+             * stack is positive or negative.
+             *
+             * @sample {highcharts} highcharts/yaxis/stacklabels-verticalalign-top/
+             *         Vertically aligned top
+             * @sample {highcharts} highcharts/yaxis/stacklabels-verticalalign-middle/
+             *         Vertically aligned middle
+             * @sample {highcharts} highcharts/yaxis/stacklabels-verticalalign-bottom/
+             *         Vertically aligned bottom
+             *
+             * @type      {Highcharts.VerticalAlignValue}
+             * @since     2.1.5
+             * @product   highcharts
+             * @apioption yAxis.stackLabels.verticalAlign
+             */
+
+            /**
+             * The x position offset of the label relative to the left of the
+             * stacked bar. The default value is calculated at runtime and
+             * depends on orientation and whether the stack is positive or
+             * negative.
+             *
+             * @sample {highcharts} highcharts/yaxis/stacklabels-x/
+             *         Stack total labels with x offset
+             *
+             * @type      {number}
+             * @since     2.1.5
+             * @product   highcharts
+             * @apioption yAxis.stackLabels.x
+             */
+
+            /**
+             * The y position offset of the label relative to the tick position
+             * on the axis. The default value is calculated at runtime and
+             * depends on orientation and whether the stack is positive or
+             * negative.
+             *
+             * @sample {highcharts} highcharts/yaxis/stacklabels-y/
+             *         Stack total labels with y offset
+             *
+             * @type      {number}
+             * @since     2.1.5
+             * @product   highcharts
+             * @apioption yAxis.stackLabels.y
+             */
+
             /**
              * Enable or disable the initial animation when a series is
              * displayed for the `stackLabels`. The animation can also be set as
@@ -3216,10 +3333,11 @@ namespace AxisDefaults {
              */
             overflow: 'justify',
 
-            /* eslint-disable valid-jsdoc */
             /**
              * Callback JavaScript function to format the label. The value is
-             * given by `this.total`.
+             * given by `this.total`. Since v12.6.0, the callback also receives
+             * `ctx` as the first argument, so that arrow functions can access
+             * the same context as regular functions using `this`.
              *
              * @sample {highcharts} highcharts/yaxis/stacklabels-formatter/
              *         Added units to stack total value
@@ -3229,9 +3347,7 @@ namespace AxisDefaults {
              * @product highcharts
              */
             formatter: function (this: StackItem): string {
-                const { numberFormatter } = this.axis.chart;
-                /* eslint-enable valid-jsdoc */
-                return numberFormatter(this.total || 0, -1);
+                return this.axis.chart.numberFormatter(this.total || 0, -1);
             },
 
             /**
@@ -3248,15 +3364,15 @@ namespace AxisDefaults {
              * @product highcharts
              */
             style: {
-                /** @internal */
+                /** @type {Highcharts.ColorType} */
                 color: Palette.neutralColor100,
+
                 /**
                  * @type {number|string}
                  */
                 fontSize: '0.7em',
-                /** @internal */
+
                 fontWeight: 'bold',
-                /** @internal */
                 textOutline: '1px contrast'
             }
         },

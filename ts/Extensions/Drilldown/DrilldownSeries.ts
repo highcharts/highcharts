@@ -2,11 +2,12 @@
  *
  *  Highcharts Drilldown module
  *
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -39,15 +40,15 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
 import A from '../../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
-import U from '../../Core/Utilities.js';
-const {
+import {
     addEvent,
     extend,
     fireEvent,
+    isString,
     merge,
-    pick,
+    splat,
     syncTimeout
-} = U;
+} from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -57,17 +58,38 @@ const {
 
 declare module '../../Core/Series/PointBase' {
     interface PointBase {
+        /** @internal */
         drilldown?: string;
+
+        /**
+         * Perform drilldown on a point instance. The [drilldown](https://api.highcharts.com/highcharts/series.line.data.drilldown)
+         * property must be set on the point options.
+         *
+         * To drill down multiple points in the same category, use
+         * `Axis.drilldownCategory` instead.
+         *
+         * @requires  modules/drilldown
+         *
+         * @function Highcharts.Point#doDrilldown
+         *
+         * @sample highcharts/drilldown/programmatic
+         *         Programmatic drilldown
+         */
         doDrilldown(): void;
+
+        /** @internal */
         runDrilldown(
             holdRedraw?: boolean,
             category?: number,
             originalEvent?: Event
         ): void;
+
+        /** @internal */
         unbindDrilldownClick?: Function;
     }
 }
 
+/** @internal */
 declare module '../../Core/Series/SeriesBase' {
     interface SeriesBase {
         drilldownLevel?: Drilldown.LevelObject;
@@ -82,9 +104,16 @@ declare module '../../Core/Series/SeriesBase' {
     }
 }
 
+/** @internal */
 declare module '../../Core/Series/SeriesOptions' {
     interface SeriesOptions {
         _ddSeriesId?: number;
+        /**
+         * Drilldown depth index for this series (`0` is top level).
+         * Used internally to match series during drilldown and drill-up.
+         *
+         * @internal
+         */
         _levelNumber?: number;
         drilldown?: string;
     }
@@ -96,7 +125,7 @@ declare module '../../Core/Series/SeriesOptions' {
  *
  * */
 
-/** @private */
+/** @internal */
 function applyCursorCSS(
     element: SVGElement,
     cursor: CursorValue,
@@ -112,7 +141,7 @@ function applyCursorCSS(
     }
 }
 
-/** @private */
+/** @internal */
 function columnAnimateDrilldown(
     this: ColumnSeries,
     init?: boolean
@@ -121,7 +150,7 @@ function columnAnimateDrilldown(
         chart = series.chart as Drilldown.ChartComposition,
         { drilldownLevels, styledMode } = chart,
         animationOptions = animObject(chart.options.drilldown?.animation),
-        xAxis = this.xAxis;
+        { xAxis, yAxis } = this;
 
     if (!init) {
         let animateFrom: (SVGAttributes|undefined);
@@ -134,34 +163,32 @@ function columnAnimateDrilldown(
                     level.lowerSeriesOptions._ddSeriesId
             ) {
                 animateFrom = level.shapeArgs;
-                if (!styledMode && animateFrom) {
-                    // Add the point colors to animate from
-                    animateFrom.fill = level.color;
+
+                if (animateFrom) {
+                    // Adjust for changing axis positions
+                    animateFrom.x = (animateFrom.x || 0) +
+                        (level.plotLeft ?? xAxis.pos) - xAxis.pos;
+                    animateFrom.y = (animateFrom.y || 0) +
+                        (level.plotTop ?? yAxis.pos) - yAxis.pos;
+
+                    if (!styledMode) {
+                        // Add the point colors to animate from
+                        animateFrom.fill = level.color;
+                    }
                 }
             }
         });
 
-        (animateFrom as any).x += pick(xAxis.oldPos, xAxis.pos) - xAxis.pos;
-
         series.points.forEach((point: Point): void => {
-            const animateTo = point.shapeArgs;
-
-            if (!styledMode) {
-                // Add the point colors to animate to
-                (animateTo as any).fill = point.color;
-            }
-
-            if (point.graphic) {
-                point.graphic
-                    .attr(animateFrom)
-                    .animate(
-                        extend(
-                            point.shapeArgs,
-                            { fill: point.color || series.color }
-                        ),
-                        animationOptions
-                    );
-            }
+            point.graphic
+                ?.attr(animateFrom)
+                .animate(
+                    extend(
+                        point.shapeArgs,
+                        { fill: point.color || series.color }
+                    ),
+                    animationOptions
+                );
         });
 
         this.dataLabelsGroups?.forEach(
@@ -178,7 +205,7 @@ function columnAnimateDrilldown(
  * When drilling up, pull out the individual point graphics from the lower
  * series and animate them into the origin point in the upper series.
  *
- * @private
+ * @internal
  * @function Highcharts.ColumnSeries#animateDrillupFrom
  * @param {Highcharts.DrilldownLevelObject} level
  *        Level container
@@ -248,7 +275,7 @@ function columnAnimateDrillupFrom(
  * When drilling up, keep the upper series invisible until the lower series has
  * moved into place.
  *
- * @private
+ * @internal
  * @function Highcharts.ColumnSeries#animateDrillupTo
  * @param {boolean} [init=false]
  * Whether to initialize animation
@@ -258,7 +285,8 @@ function columnAnimateDrillupTo(
     init?: boolean
 ): void {
     const series = this,
-        level = series.drilldownLevel;
+        level = series.drilldownLevel,
+        animation = animObject(series.chart.options.drilldown?.animation);
 
     if (!init) {
 
@@ -315,9 +343,7 @@ function columnAnimateDrillupTo(
                     }
                 });
             }
-        }, Math.max(
-            (series.chart.options.drilldown as any).animation.duration - 50, 0
-        ));
+        }, Math.max(animation.duration - 50, 0));
 
         // Reset to prototype
         delete (this as AnyRecord).animate;
@@ -325,7 +351,7 @@ function columnAnimateDrillupTo(
 
 }
 
-/** @private */
+/** @internal */
 function compose(
     SeriesClass: typeof Series,
     seriesTypes: SeriesTypeRegistry
@@ -383,7 +409,7 @@ function compose(
 
 /**
  * Animate in the new series.
- * @private
+ * @internal
  */
 function mapAnimateDrilldown(
     this: MapSeries,
@@ -415,8 +441,8 @@ function mapAnimateDrilldown(
                 (): void => {
                     if (series.options) {
                         series.options.inactiveOtherPoints = false;
-                        series.options.enableMouseTracking = pick(
-                            series.userOptions?.enableMouseTracking,
+                        series.options.enableMouseTracking = (
+                            series.userOptions?.enableMouseTracking ??
                             true
                         );
                     }
@@ -434,7 +460,7 @@ function mapAnimateDrilldown(
  * When drilling up, pull out the individual point graphics from the
  * lower series and animate them into the origin point in the upper
  * series.
- * @private
+ * @internal
  */
 function mapAnimateDrillupFrom(
     this: MapSeries
@@ -454,7 +480,7 @@ function mapAnimateDrillupFrom(
 /**
  * When drilling up, keep the upper series invisible until the lower
  * series has moved into place.
- * @private
+ * @internal
  */
 function mapAnimateDrillupTo(
     this: MapSeries,
@@ -492,7 +518,7 @@ function mapAnimateDrillupTo(
 /**
  * On initialization of each point, identify its label and make it clickable.
  * Also, provide a list of points associated to that label.
- * @private
+ * @internal
  */
 function onPointAfterInit(
     this: Point
@@ -507,7 +533,7 @@ function onPointAfterInit(
     return point;
 }
 
-/** @private */
+/** @internal */
 function onPointAfterSetState(
     this: Point
 ): void {
@@ -522,7 +548,7 @@ function onPointAfterSetState(
     }
 }
 
-/** @private */
+/** @internal */
 function onPointClick(
     this: Point,
     e: MouseEvent
@@ -536,13 +562,13 @@ function onPointClick(
         false
     ) {
         // #5822, x changed
-        series.xAxis.drilldownCategory(point.x as any, e);
+        series.xAxis.drilldownCategory(point.x, e);
     } else {
         point.runDrilldown(void 0, void 0, e);
     }
 }
 
-/** @private */
+/** @internal */
 function onPointUpdate(
     this: Point,
     e: { options: Options }
@@ -562,37 +588,40 @@ function onPointUpdate(
     }
 }
 
-/** @private */
+/** @internal */
 function onSeriesAfterDrawDataLabels(
     this: Series
 ): void {
     const series = this,
         chart = series.chart,
-        css = (chart.options.drilldown as any).activeDataLabelStyle,
+        css = chart.options.drilldown?.activeDataLabelStyle || {},
         renderer = chart.renderer,
         styledMode = chart.styledMode;
 
     for (const point of series.points) {
-        const dataLabelsOptions = point.options.dataLabels,
-            pointCSS = pick(
-                point.dlOptions,
-                dataLabelsOptions && (dataLabelsOptions as any).style,
+        const dataLabelsOptions = splat(point.options.dataLabels)[0] || {},
+            pointCSS = (
+                point.dlOptions ||
+                dataLabelsOptions.style ||
                 {}
             ) as CSSObject;
 
         if (point.drilldown && point.dataLabel) {
 
             if (css.color === 'contrast' && !styledMode) {
-                pointCSS.color = renderer.getContrast(
-                    (point.color as any) || (series.color as any)
+                const itemColor = (
+                    (isString(point.color) && point.color) ||
+                    (isString(series.color) && series.color)
                 );
+                if (isString(itemColor)) {
+                    pointCSS.color = renderer.getContrast(itemColor);
+                }
             }
 
-            if (dataLabelsOptions && (dataLabelsOptions as any).color) {
-                pointCSS.color = (dataLabelsOptions as any).color;
+            if (dataLabelsOptions && dataLabelsOptions.color) {
+                pointCSS.color = dataLabelsOptions.color;
             }
-            point.dataLabel
-                .addClass('highcharts-drilldown-data-label');
+            point.dataLabel.addClass('highcharts-drilldown-data-label');
 
             if (!styledMode) {
                 point.dataLabel
@@ -605,7 +634,7 @@ function onSeriesAfterDrawDataLabels(
 
 /**
  * Mark the trackers with a pointer.
- * @private
+ * @internal
  */
 function onSeriesAfterDrawTracker(
     this: Series
@@ -620,7 +649,7 @@ function onSeriesAfterDrawTracker(
     }
 }
 
-/** @private */
+/** @internal */
 function pieAnimateDrilldown(
     this: PieSeries,
     init?: boolean
@@ -628,23 +657,24 @@ function pieAnimateDrilldown(
     const series = this,
         chart = series.chart as Drilldown.ChartComposition,
         points = series.points,
-        level: Drilldown.LevelObject =
-            (chart.drilldownLevels as any)[
-                (chart.drilldownLevels as any).length - 1
-            ],
-        animationOptions =
-            (chart.options.drilldown as any).animation;
+        drilldownLevels = chart.drilldownLevels || [],
+        level = drilldownLevels[drilldownLevels.length - 1],
+        animation = animObject(chart.options.drilldown?.animation);
 
     if (series.is('item')) {
-        animationOptions.duration = 0;
+        animation.duration = 0;
     }
     // Unable to drill down in the horizontal item series #13372
     if (series.center) {
-        const animateFrom = level.shapeArgs,
-            start = (animateFrom as any).start,
-            angle = (animateFrom as any).end - start,
+        const animateFrom = level.shapeArgs || {},
+            start = animateFrom.start || 0,
+            angle = (animateFrom.end || 0) - start,
             startAngle = angle / series.points.length,
             styledMode = chart.styledMode;
+
+        // Adjust for moving plot area, typically adjusting to breadcrumbs
+        animateFrom.y = (animateFrom.y || 0) +
+            ((level.plotTop ?? chart.plotTop) - chart.plotTop) / 2;
 
         if (!init) {
             let animateTo: (SVGAttributes|undefined),
@@ -652,23 +682,21 @@ function pieAnimateDrilldown(
 
             for (let i = 0, iEnd = points.length; i < iEnd; ++i) {
                 point = points[i];
-                animateTo = point.shapeArgs;
+                animateTo = point.shapeArgs || {};
 
                 if (!styledMode) {
-                    (animateFrom as any).fill = level.color;
-                    (animateTo as any).fill = point.color;
+                    animateFrom.fill = level.color;
+                    animateTo.fill = point.color;
                 }
 
-                if (point.graphic) {
-                    point.graphic.attr(merge(animateFrom, {
-                        start: start + i * startAngle,
-                        end: start + (i + 1) * startAngle
-                    }))[animationOptions ? 'animate' : 'attr'](
-                        (
-                            animateTo as any),
-                        animationOptions
-                    );
-                }
+                const attr = merge(animateFrom, {
+                    start: start + i * startAngle,
+                    end: start + (i + 1) * startAngle
+                } as SVGAttributes);
+                point.graphic?.attr(attr).animate(
+                    animateTo,
+                    animation
+                );
             }
 
             series.dataLabelsGroups?.forEach(
@@ -693,7 +721,7 @@ function pieAnimateDrilldown(
  *
  * @function Highcharts.Point#doDrilldown
  *
- * @sample {highcharts} highcharts/drilldown/programmatic
+ * @sample highcharts/drilldown/programmatic
  *         Programmatic drilldown
  */
 function pointDoDrilldown(
@@ -702,7 +730,7 @@ function pointDoDrilldown(
     this.runDrilldown();
 }
 
-/** @private */
+/** @internal */
 function pointRunDrilldown(
     this: Point,
     holdRedraw: (boolean|undefined),
@@ -738,27 +766,32 @@ function pointRunDrilldown(
 
     // Fire the event. If seriesOptions is undefined, the implementer can check
     // for seriesOptions, and call addSeriesAsDrilldown async if necessary.
-    fireEvent(chart, 'drilldown', {
-        point,
-        seriesOptions: seriesOptions,
-        category: category,
-        originalEvent: originalEvent,
-        points: (
-            typeof category !== 'undefined' &&
-            series.xAxis.getDDPoints(category).slice(0)
-        )
-    } as Drilldown.EventObject, (e: Drilldown.EventObject): void => {
-        const chart = e.point.series && e.point.series.chart,
-            seriesOptions = e.seriesOptions;
+    fireEvent(
+        chart,
+        'drilldown',
+        {
+            point,
+            seriesOptions,
+            category,
+            originalEvent,
+            points: (
+                typeof category !== 'undefined' &&
+                series.xAxis.getDDPoints(category).slice(0)
+            )
+        } as Drilldown.DrilldownEventObject,
+        (e: Drilldown.DrilldownEventObject): void => {
+            const chart = e.point.series?.chart,
+                seriesOptions = e.seriesOptions;
 
-        if (chart && seriesOptions) {
-            if (holdRedraw) {
-                chart.addSingleSeriesAsDrilldown(e.point, seriesOptions);
-            } else {
-                chart.addSeriesAsDrilldown(e.point, seriesOptions);
+            if (chart && seriesOptions) {
+                if (holdRedraw) {
+                    chart.addSingleSeriesAsDrilldown(e.point, seriesOptions);
+                } else {
+                    chart.addSeriesAsDrilldown(e.point, seriesOptions);
+                }
             }
         }
-    });
+    );
 }
 
 /* *
@@ -767,8 +800,10 @@ function pointRunDrilldown(
  *
  * */
 
+/** @internal */
 const DrilldownSeries = {
     compose
 };
 
+/** @internal */
 export default DrilldownSeries;

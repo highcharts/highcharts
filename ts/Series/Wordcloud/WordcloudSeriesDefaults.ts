@@ -2,12 +2,13 @@
  *
  *  Experimental Highcharts module which enables visualization of a word cloud.
  *
- *  (c) 2016-2025 Highsoft AS
- *  Authors: Jon Arild Nygard
+ *  (c) 2016-2026 Highsoft AS
+ *  Authors: Jon Arild Nygård
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  * */
 
 'use strict';
@@ -63,10 +64,7 @@ const WordcloudSeriesDefaults: WordcloudSeriesOptions = {
     allowExtendPlayingField: true,
 
     animation: {
-
-        /** @internal */
         duration: 500
-
     },
 
     borderWidth: 0,
@@ -80,6 +78,8 @@ const WordcloudSeriesDefaults: WordcloudSeriesOptions = {
 
     cropThreshold: Infinity,
 
+    colorKey: 'weight',
+
     /**
      * A threshold determining the minimum font size that can be applied to
      * a word.
@@ -89,14 +89,14 @@ const WordcloudSeriesDefaults: WordcloudSeriesOptions = {
     /**
      * The word with the largest weight will have a font size equal to this
      * value. The font size of a word is the ratio between its weight and
-     * the largest occuring weight, multiplied with the value of
+     * the largest occurring weight, multiplied with the value of
      * maxFontSize.
      */
     maxFontSize: 25,
 
     /**
      * This option decides which algorithm is used for placement, and
-     * rotation of a word. The choice of algorith is therefore a crucial
+     * rotation of a word. The choice of algorithm is therefore a crucial
      * part of the resulting layout of the wordcloud. It is possible for
      * users to add their own custom placement strategies for use in word
      * cloud. Read more about it in our
@@ -214,6 +214,7 @@ const WordcloudSeriesDefaults: WordcloudSeriesOptions = {
  *    }]
  *    ```
  *
+ * @basic
  * @type      {Array<Array<string,number>|*>}
  * @extends   series.line.data
  * @excluding drilldown, marker, x, y

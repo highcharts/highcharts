@@ -2,11 +2,13 @@
  *
  *  Popup generator for Stock tools
  *
- *  (c) 2009-2025 Sebastian Bochan
+ *  (c) 2009-2026 Highsoft AS
+ *  Author: Sebastian Bochan
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -24,6 +26,7 @@ import type Chart from '../../../Core/Chart/Chart';
 import type { HTMLDOMElement } from '../../../Core/Renderer/DOMElementType';
 
 import BaseForm from '../../../Shared/BaseForm.js';
+import Color from '../../../Core/Color/Color.js';
 import H from '../../../Core/Globals.js';
 const { doc } = H;
 import D from '../../../Core/Defaults.js';
@@ -31,14 +34,14 @@ const { getOptions } = D;
 import PopupAnnotations from './PopupAnnotations.js';
 import PopupIndicators from './PopupIndicators.js';
 import PopupTabs from './PopupTabs.js';
-import U from '../../../Core/Utilities.js';
-const {
+import {
     addEvent,
+    clamp,
     createElement,
     extend,
     fireEvent,
     pick
-} = U;
+} from '../../../Shared/Utilities.js';
 
 /* *
  *
@@ -46,6 +49,7 @@ const {
  *
  * */
 
+/** @internal */
 interface InputAttributes {
     value?: string;
     type?: string;
@@ -53,6 +57,7 @@ interface InputAttributes {
     labelClassName?: string;
 }
 
+/** @internal */
 export interface PopupFieldsObject {
     actionType: string;
     fields: PopupFieldsTree;
@@ -61,6 +66,7 @@ export interface PopupFieldsObject {
     type?: string;
 }
 
+/** @internal */
 export interface PopupFieldsTree {
     [key: string]: (string | PopupFieldsTree);
 }
@@ -74,7 +80,7 @@ export interface PopupFieldsTree {
 /**
  * Get values from all inputs and selections then create JSON.
  *
- * @private
+ * @internal
  *
  * @param {Highcharts.HTMLDOMElement} parentDiv
  * The container where inputs and selections are created.
@@ -111,7 +117,21 @@ function getFields(
         if (seriesId) {
             fieldsOutput.seriesId = input.value;
         } else if (param) {
-            fieldsOutput.fields[param] = input.value;
+            const wrapper = input.closest('.highcharts-popup-color-wrapper'),
+                opacityInput = wrapper?.querySelector(
+                    '.highcharts-popup-opacity-percentage'
+                ) as HTMLInputElement,
+                opacity = opacityInput ?
+                    Number(opacityInput.value) / 100 : 1;
+
+            if (opacityInput) {
+                const rgba = Color.parse(input.value).rgba;
+                fieldsOutput.fields[param] = !Number.isNaN(rgba[0]) ?
+                    `rgba(${rgba[0]},${rgba[1]},${rgba[2]},${opacity})` :
+                    input.value;
+            } else {
+                fieldsOutput.fields[param] = input.value;
+            }
         } else {
             // Type like sma / ema
             fieldsOutput.type = input.value;
@@ -140,12 +160,69 @@ function getFields(
     return fieldsOutput;
 }
 
+/**
+ * Resolve CSS 'var()', 'color-mix()' and 'rgba()' values to hex and alpha.
+ * @internal
+ */
+function resolveColorValue(
+    value: string,
+    contextElement: HTMLDOMElement
+): { value: string, alpha: number } {
+    const toHex = (n: number): string =>
+        ('0' + Math.round(n).toString(16)).slice(-2).toUpperCase();
+
+    const rgbaToHex = (value: string): { value: string, alpha: number } => {
+        const [r, g, b, a] = Color.parse(value).rgba;
+        return { value: '#' + toHex(r) + toHex(g) + toHex(b), alpha: a };
+    };
+
+    // If 'rgb()' or 'rgba()', use built-in parser.
+    if (value.startsWith('rgb') || value.startsWith('rgba')) {
+        return rgbaToHex(value);
+    }
+
+    // If 'color()' or 'var()', use a dummy element and getComputedStyle.
+    if (value.startsWith('color') || value.startsWith('var')) {
+        // Create a dummy span element and get the computed style from it.
+        const dummy = doc.createElement('span');
+        dummy.style.setProperty('color', value);
+        contextElement.appendChild(dummy);
+        const computed = window.getComputedStyle(dummy).color;
+        contextElement.removeChild(dummy);
+
+        // Parse color(srgb r g b / a) directly to hex and alpha.
+        if (computed.startsWith('color')) {
+            const srgbMatch = computed.match(
+                new RegExp(
+                    'color\\s*\\(\\s*srgb\\s+([\\d.]+)\\s+([\\d.]+)\\s+' +
+                    '([\\d.]+)\\s+(?:\\s*\\/\\s*([\\d.]+))?\\s*\\)'
+                ));
+            if (srgbMatch) {
+                const r = Math.round(parseFloat(srgbMatch[1]) * 255),
+                    g = Math.round(parseFloat(srgbMatch[2]) * 255),
+                    b = Math.round(parseFloat(srgbMatch[3]) * 255),
+                    alpha = srgbMatch[4] ? parseFloat(srgbMatch[4]) : 1;
+                return { value: '#' + toHex(r) + toHex(g) + toHex(b), alpha };
+            }
+        }
+
+        // If 'rgb()' or 'rgba()', use built-in parser.
+        if (computed.startsWith('rgb') || computed.startsWith('rgba')) {
+            return rgbaToHex(computed);
+        }
+    }
+
+    // Don't parse hex colors and other non-color values like contrast, none.
+    return { value, alpha: 1 };
+}
+
 /* *
  *
  *  Class
  *
  * */
 
+/** @internal */
 class Popup extends BaseForm {
 
     /* *
@@ -201,8 +278,6 @@ class Popup extends BaseForm {
     /**
      * Create input with label.
      *
-     * @private
-     *
      * @param {string} option
      *        Chain of fields i.e params.styles.fontSize separated by the dot.
      *
@@ -247,6 +322,16 @@ class Popup extends BaseForm {
             );
         }
 
+        if (inputAttributes.type === 'color' && this.chart?.container) {
+            return this.createColorInput(
+                option,
+                inputName,
+                inputAttributes,
+                parentDiv,
+                this.chart.container
+            );
+        }
+
         // Add input
         const input = createElement(
             'input',
@@ -263,6 +348,159 @@ class Popup extends BaseForm {
         input.setAttribute('highcharts-data-name', option);
 
         return input;
+    }
+
+    /**
+     * Create color input group with color picker, text field and opacity
+     * controls.
+     */
+    public createColorInput(
+        option: string,
+        inputName: string,
+        inputAttributes: InputAttributes,
+        parentDiv: HTMLDOMElement,
+        container: HTMLDOMElement
+    ): HTMLDOMElement {
+        const { value, alpha } = resolveColorValue(
+            inputAttributes.value || '',
+            container
+        );
+
+        const parsedOpacity = Color.parse(inputAttributes.value || '').rgba[3],
+            opacity = isNaN(parsedOpacity) ? alpha : parsedOpacity;
+
+        const wrapper = createElement(
+            'div',
+            { className: 'highcharts-popup-color-wrapper' },
+            void 0,
+            parentDiv
+        );
+
+        const colorInput: HTMLInputElement = createElement(
+            'input',
+            {
+                type: 'color',
+                value,
+                className: (
+                    'highcharts-popup-field highcharts-popup-field-color'
+                )
+            },
+            void 0,
+            wrapper
+        ) as HTMLInputElement;
+
+        const textInput = createElement(
+            'input',
+            {
+                name: inputName,
+                id: inputName,
+                value,
+                type: 'text',
+                className: (
+                    'highcharts-popup-field highcharts-popup-field-text'
+                )
+            },
+            void 0,
+            wrapper
+        ) as HTMLInputElement;
+        textInput.setAttribute('highcharts-data-name', option);
+
+        const separator = createElement(
+            'span',
+            { className: 'highcharts-popup-color-separator' },
+            void 0,
+            wrapper
+        );
+
+        const opacityPercentInput = createElement(
+            'input',
+            {
+                type: 'number',
+                value: String(Math.round(opacity * 100)),
+                className: (
+                    'highcharts-popup-field highcharts-popup-opacity-percentage'
+                ),
+                min: '0',
+                max: '100',
+                step: '1'
+            },
+            void 0,
+            wrapper
+        ) as HTMLInputElement;
+
+        const opacityPercentSuffix = createElement(
+            'span',
+            { className: 'highcharts-popup-opacity-percent-suffix' },
+            void 0,
+            wrapper
+        );
+        opacityPercentSuffix.appendChild(doc.createTextNode(' %'));
+
+        const opacitySlider = createElement(
+            'input',
+            {
+                type: 'range',
+                value: String(Math.round(opacity * 100)),
+                className: 'highcharts-popup-opacity-slider',
+                min: '0',
+                max: '100',
+                step: '1'
+            },
+            void 0,
+            parentDiv
+        ) as HTMLInputElement;
+        opacitySlider.style.setProperty(
+            '--highcharts-popup-opacity-track-color',
+            value
+        );
+        opacitySlider.style.setProperty('display', 'none');
+
+        const setOpacityGroupVisibility = (): void => {
+            const isHex = /^#[0-9A-Fa-f]{6}$/.test(textInput.value);
+            separator.style.display = isHex ? '' : 'none';
+            opacityPercentInput.style.display = isHex ? '' : 'none';
+            opacityPercentSuffix.style.display = isHex ? '' : 'none';
+        };
+        setOpacityGroupVisibility();
+
+        const syncOpacityInputs = (e: Event): void => {
+            const target = e.target as HTMLInputElement,
+                val = clamp(Number(target.value), 0, 100);
+            opacitySlider.value = String(val);
+            opacityPercentInput.value = String(Math.round(val));
+        };
+
+        const syncColorInputs = (e: Event): void => {
+            if (e.target === colorInput) {
+                textInput.value = colorInput.value.toUpperCase();
+            } else {
+                colorInput.value = textInput.value;
+            }
+
+            opacitySlider.style.setProperty(
+                '--highcharts-popup-opacity-track-color',
+                colorInput.value
+            );
+            setOpacityGroupVisibility();
+        };
+
+        addEvent(parentDiv, 'mousedown', (e: MouseEvent): void => {
+            if (
+                e.target !== opacityPercentInput &&
+                e.target !== opacitySlider
+            ) {
+                opacitySlider.style.display = 'none';
+            }
+        });
+        addEvent(opacityPercentInput, 'focus', (): void => {
+            opacitySlider.style.display = '';
+        });
+        addEvent(opacityPercentInput, 'input', syncOpacityInputs);
+        addEvent(opacitySlider, 'input', syncOpacityInputs);
+        addEvent(colorInput, 'input', syncColorInputs);
+        addEvent(textInput, 'input', syncColorInputs);
+
+        return wrapper;
     }
 
     public closeButtonEvents(): void {
@@ -288,17 +526,17 @@ class Popup extends BaseForm {
 
     /**
      * Create button.
-     * @private
+     *
      * @param {Highcharts.HTMLDOMElement} parentDiv
      * Container where elements should be added
      * @param {string} label
      * Text placed as button label
      * @param {string} type
      * add | edit | remove
-     * @param {Function} callback
-     * On click callback
      * @param {Highcharts.HTMLDOMElement} fieldsDiv
      * Container where inputs are generated
+     * @param {Function} callback
+     * On click callback
      * @return {Highcharts.HTMLDOMElement}
      * HTML button
      */
@@ -329,11 +567,15 @@ class Popup extends BaseForm {
 
     /**
      * Create content and show popup.
-     * @private
-     * @param {string} - type of popup i.e indicators
-     * @param {Highcharts.Chart} - chart
-     * @param {Highcharts.AnnotationsOptions} - options
-     * @param {Function} - on click callback
+     *
+     * @param {string} type
+     *        Type of popup i.e indicators
+     * @param {Highcharts.Chart} chart
+     *        Chart instance
+     * @param {Highcharts.AnnotationsOptions} options
+     *        Annotation options
+     * @param {Function} callback
+     *        On click callback
      */
     public showForm(
         type: string,
@@ -382,6 +624,7 @@ class Popup extends BaseForm {
  *
  * */
 
+/** @internal */
 interface Popup {
     readonly annotations: typeof PopupAnnotations;
     readonly indicators: typeof PopupIndicators;
@@ -400,4 +643,5 @@ extend(Popup.prototype, {
  *
  * */
 
+/** @internal */
 export default Popup;

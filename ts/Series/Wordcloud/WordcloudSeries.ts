@@ -2,12 +2,13 @@
  *
  *  Highcharts module which enables visualization of a word cloud.
  *
- *  (c) 2016-2025 Highsoft AS
- *  Authors: Jon Arild Nygard
+ *  (c) 2016-2026 Highsoft AS
+ *  Authors: Jon Arild Nygård
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  * */
 
 'use strict';
@@ -37,17 +38,16 @@ import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     column: ColumnSeries
 } = SeriesRegistry.seriesTypes;
-import U from '../../Core/Utilities.js';
-const {
+import WordcloudPoint from './WordcloudPoint.js';
+import WordcloudSeriesDefaults from './WordcloudSeriesDefaults.js';
+import WU from './WordcloudUtils.js';
+import {
     extend,
     isArray,
     isNumber,
     isObject,
     merge
-} = U;
-import WordcloudPoint from './WordcloudPoint.js';
-import WordcloudSeriesDefaults from './WordcloudSeriesDefaults.js';
-import WU from './WordcloudUtils.js';
+} from '../../Shared/Utilities.js';
 const {
     archimedeanSpiral,
     extendPlayingField,

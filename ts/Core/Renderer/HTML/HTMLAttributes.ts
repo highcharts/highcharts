@@ -1,0 +1,64 @@
+/* *
+ *
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Hønsi
+ *
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
+ *
+ *
+ * */
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+export interface HTMLAttributes {
+    // [key: string]: (boolean|number|string|Function|undefined);
+    'aria-expanded'?: boolean;
+    'aria-label'?: string;
+    'aria-live'?: string;
+    'aria-atomic'?: boolean;
+    'aria-sort'?: string;
+    'aria-pressed'?: boolean;
+    'aria-rowindex'?: number;
+    checked?: boolean;
+    class?: string;
+    className?: string;
+    colspan?: number;
+    defaultChecked?: boolean;
+    disabled?: boolean;
+    href?: string;
+    htmlFor?: string;
+    id?: string;
+    min?: string;
+    max?: string;
+    name?: string;
+    onclick?: any;
+    onload?: any;
+    placeholder?: string;
+    scope?: string;
+    textContent?: string;
+    title?: string;
+    type?: string;
+    rel?: string;
+    role?: string;
+    src?: string;
+    step?: string;
+    rowspan?: number;
+    summary?: string;
+    tabindex?: number;
+    valign?: 'bottom'|'middle'|'top';
+    value?: string;
+}
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+export default HTMLAttributes;

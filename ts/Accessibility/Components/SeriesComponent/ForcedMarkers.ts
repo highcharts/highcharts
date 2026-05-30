@@ -1,12 +1,14 @@
 /* *
  *
- *  (c) 2009-2025 Øystein Moseng
+ *  (c) 2009-2026 Highsoft AS
+ *  Author: Øystein Moseng
  *
  *  Handle forcing series markers.
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -28,12 +30,7 @@ import type SeriesOptions from '../../../Core/Series/SeriesOptions';
 
 import H from '../../../Core/Globals.js';
 const { composed } = H;
-import U from '../../../Core/Utilities.js';
-const {
-    addEvent,
-    merge,
-    pushUnique
-} = U;
+import { addEvent, merge, pushUnique } from '../../../Shared/Utilities.js';
 
 /* *
  *
@@ -250,7 +247,7 @@ namespace ForcedMarkersComposition {
             options = series.options;
 
         if (shouldForceMarkers(series)) {
-            if (options.marker && options.marker.enabled === false) {
+            if (options.marker?.enabled === false) {
                 series.a11yMarkersForced = true;
                 forceZeroOpacityMarkerOptions(series.options);
             }
@@ -264,9 +261,17 @@ namespace ForcedMarkersComposition {
             // Mark series dirty to ensure marker graphics are cleaned up
             series.isDirty = true;
             unforceSeriesMarkerOptions(series);
-            if (options.marker && options.marker.enabled === false) { // #23329
+            if (options.marker?.enabled === false) { // #23329
                 delete series.resetA11yMarkerOptions; // #16624
             }
+        } else if (
+            series.chart.styledMode &&
+            options.marker?.enabled === false &&
+            !hasIndividualPointMarkerOptions(series)
+        ) {
+            // `a11yMarkersForced` can be reset during `Series.update`.
+            // Clean up stale marker graphics that may still exist (#24164).
+            destroyPointMarkerGraphics(series);
         }
     }
 
@@ -305,6 +310,18 @@ namespace ForcedMarkersComposition {
 
 
     /**
+     * @private
+     */
+    function destroyPointMarkerGraphics(series: SeriesComposition): void {
+        series.points?.forEach((point): void => {
+            if (point.graphic) {
+                point.graphic = point.graphic.destroy();
+            }
+        });
+    }
+
+
+    /**
      * Reset markers to normal
      * @private
      */
@@ -314,6 +331,14 @@ namespace ForcedMarkersComposition {
             const originalOpacity = resetMarkerOptions.states &&
                 resetMarkerOptions.states.normal &&
                 resetMarkerOptions.states.normal.opacity;
+
+            // Prevent ghost markers when zooming out (#23878).
+            if (
+                series.chart.styledMode &&
+                resetMarkerOptions.enabled === false
+            ) {
+                destroyPointMarkerGraphics(series);
+            }
 
             // Temporarily set the old marker options to enabled in order to
             // trigger destruction of the markers in Series.update.

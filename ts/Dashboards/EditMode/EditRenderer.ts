@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2009-2025 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Sebastian Bochan
@@ -25,15 +26,10 @@
 import type MenuItem from './Menu/MenuItem.js';
 import type CSSObject from '../../Core/Renderer/CSSObject';
 import type EditMode from './EditMode.js';
+import type { LangAccessibilityOptions, LangOptions } from './EditGlobals';
 
 import EditGlobals from './EditGlobals.js';
-import U from '../../Core/Utilities.js';
-const {
-    merge,
-    createElement,
-    defined
-} = U;
-
+import { createElement, defined, find, merge } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -45,7 +41,7 @@ const {
  * Function to create a context button.
  * @internal
  *
- * @param parentElement
+ * @param parentNode
  * The element to which the new element should be appended.
  *
  * @param editMode
@@ -295,7 +291,7 @@ function renderSelect(
     );
 
     const iconURL = (
-        U.find(
+        find(
             options.selectOptions,
             (item): boolean => item.name === options.value
         ) || {}
@@ -448,7 +444,7 @@ function renderToggle(
     const lang = options.lang,
         value = options.value,
         title = options.title || options.name,
-        langKey = options.langKey as keyof EditGlobals.LangAccessibilityOptions;
+        langKey = options.langKey as keyof LangAccessibilityOptions;
 
     if (options.isNested) {
         const labeledToggleWrapper = createElement(
@@ -547,11 +543,8 @@ function renderToggle(
  * @param parentElement
  * The element to which the new element should be appended
  *
- * @param text
- * Text to be displayed
- *
- * @param callback
- * Callback function to be fired on the click
+ * @param options
+ * Text options.
  *
  * @returns text Element
  */
@@ -586,11 +579,8 @@ function renderText(
  * @param parentElement
  * The element to which the new element should be appended.
  *
- * @param icon
- * Icon URL
- *
- * @param callback
- * Callback function
+ * @param options
+ * Icon options.
  *
  * @returns
  * Icon Element
@@ -903,7 +893,7 @@ export interface ToggleFormFieldOptions {
     onchange?: (value: boolean) => void;
     id: string;
     name: string;
-    lang: EditGlobals.LangOptions;
+    lang: LangOptions;
     langKey?: string;
     isNested?: boolean;
 }
@@ -916,7 +906,7 @@ export interface NestedHeaderFormFieldOptions {
     isEnabled?: boolean;
     isNested?: boolean;
     iconsURLPrefix?: string;
-    lang: EditGlobals.LangOptions;
+    lang: LangOptions;
 }
 
 export type RendererElement = (

@@ -2,14 +2,15 @@
  *
  *  Date Input Cell Content Base class
  *
- *  (c) 2020-2025 Highsoft AS
+ *  (c) 2020-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
- *  - Dawid Dragula
+ *  - Dawid Draguła
  *
  * */
 
@@ -21,7 +22,9 @@
  *
  * */
 
-import type DateInputRendererBase from '../Renderers/DateInputRendererBase';
+import type {
+    DateInputRendererBaseOptions
+} from '../Renderers/DateInputRendererBase';
 import type { EditModeContent } from '../../CellEditing/CellEditMode';
 import type TableCell from '../../../Core/Table/Body/TableCell';
 
@@ -55,7 +58,7 @@ abstract class DateInputContentBase extends CellContentPro implements EditModeCo
     /**
      * Options of the renderer.
      */
-    public options: DateInputRendererBase.Options;
+    public options: DateInputRendererBaseOptions;
 
     /**
      * The HTML input element representing the date input.
@@ -75,7 +78,7 @@ abstract class DateInputContentBase extends CellContentPro implements EditModeCo
         parentElement?: HTMLElement
     ) {
         super(cell, renderer);
-        this.options = renderer.options as DateInputRendererBase.Options;
+        this.options = renderer.options as DateInputRendererBaseOptions;
         this.input = this.add(parentElement);
     }
 

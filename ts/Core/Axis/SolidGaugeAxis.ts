@@ -1,10 +1,12 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Hønsi
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -21,9 +23,8 @@ import type Pane from '../../Extensions/Pane/Pane';
 import type RadialAxis from './RadialAxis';
 import type RadialAxisOptions from './RadialAxisOptions';
 
-import ColorAxisBase from './Color/ColorAxisBase';
-import U from '../Utilities.js';
-const { extend } = U;
+import { extend } from '../../Shared/Utilities.js';
+import ColorAxisBase from './Color/ColorAxisBase.js';
 
 /* *
  *
@@ -31,9 +32,7 @@ const { extend } = U;
  *
  * */
 
-/**
- * @private
- */
+/** @internal */
 interface SolidGaugeAxis extends ColorAxisBase, RadialAxis.AxisComposition {
     center: Array<number>;
     coll: AxisCollectionKey;
@@ -49,9 +48,7 @@ interface SolidGaugeAxis extends ColorAxisBase, RadialAxis.AxisComposition {
  *
  * */
 
-/**
- * @private
- */
+/** @internal */
 function init(
     axis: RadialAxis.AxisComposition
 ): void {
@@ -64,8 +61,10 @@ function init(
  *
  * */
 
+/** @internal */
 const SolidGaugeAxis = {
     init
 };
 
+/** @internal */
 export default SolidGaugeAxis;

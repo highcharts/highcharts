@@ -1,10 +1,12 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Hønsi
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -56,21 +58,20 @@ const {
     column: ColumnSeries,
     scatter: ScatterSeries
 } = SeriesRegistry.seriesTypes;
-import U from '../../Core/Utilities.js';
-const {
+import {
+    defined,
     extend,
     find,
     fireEvent,
     getNestedProperty,
     isArray,
-    defined,
     isNumber,
     isObject,
     merge,
     objectEach,
     pick,
     splat
-} = U;
+} from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -637,11 +638,8 @@ class MapSeries extends ScatterSeries {
         // Handle state specific border or line width
         if (state) {
             const stateOptions = merge(
-                    this.options.states &&
-                    this.options.states[state] as MapSeriesOptions,
-                    point.options.states &&
-                    point.options.states[state] as MapPointOptions ||
-                    {}
+                    this.options.states?.[state] as MapSeriesOptions,
+                    point.options.states?.[state] || {}
                 ),
                 stateStrokeWidth = this.getStrokeWidth(stateOptions);
 
@@ -909,7 +907,7 @@ class MapSeries extends ScatterSeries {
             }
         }
         // The processedXData array is used by general chart logic for checking
-        // data length in various scanarios.
+        // data length in various scenarios.
         this.dataTable.rowCount = processedData.length;
 
         return void 0;

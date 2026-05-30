@@ -1,10 +1,12 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Hønsi
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -49,8 +51,7 @@ import RangeSelectorDefaults from '../../Stock/RangeSelector/RangeSelectorDefaul
 import ScrollbarDefaults from '../../Stock/Scrollbar/ScrollbarDefaults.js';
 import StockUtilities from '../../Stock/Utilities/StockUtilities.js';
 const { setFixedRange } = StockUtilities;
-import U from '../Utilities.js';
-const {
+import {
     addEvent,
     clamp,
     crisp,
@@ -62,7 +63,7 @@ const {
     merge,
     pick,
     splat
-} = U;
+} from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -70,12 +71,14 @@ const {
  *
  * */
 
+/** @internal */
 declare module '../Axis/AxisBase' {
     interface AxisBase {
         crossLabel?: SVGElement;
     }
 }
 
+/** @internal */
 declare module './ChartBase' {
     interface ChartBase {
         _labelPanes?: Record<string, Axis>;
@@ -84,12 +87,14 @@ declare module './ChartBase' {
     }
 }
 
+/** @internal */
 declare module '../Options'{
     interface Options {
         isStock?: boolean;
     }
 }
 
+/** @internal */
 declare module '../Series/SeriesBase' {
     interface SeriesBase {
         clipBox?: BBoxObject;
@@ -97,6 +102,7 @@ declare module '../Series/SeriesBase' {
     }
 }
 
+/** @internal */
 declare module '../Renderer/SVG/SVGRendererBase' {
     interface SVGRendererBase {
         crispPolyLine(points: SVGPath, width: number): SVGPath;
@@ -113,7 +119,7 @@ declare module '../Renderer/SVG/SVGRendererBase' {
 /**
  * Get stock-specific default axis options.
  *
- * @private
+ * @internal
  * @function getDefaultAxisOptions
  */
 function getDefaultAxisOptions(
@@ -151,7 +157,7 @@ function getDefaultAxisOptions(
 /**
  * Get stock-specific forced axis options.
  *
- * @private
+ * @internal
  * @function getForcedAxisOptions
  */
 function getForcedAxisOptions(
@@ -330,7 +336,7 @@ class StockChart extends Chart {
      * Factory for creating different axis types.
      * Extended to add stock defaults.
      *
-     * @private
+     * @internal
      * @function Highcharts.StockChart#createAxis
      * @param {string} coll
      * An axis type.
@@ -378,6 +384,7 @@ addEvent(Chart, 'update', function (
  *
  * */
 
+/** @internal */
 namespace StockChart {
 
     /* *
@@ -386,7 +393,23 @@ namespace StockChart {
      *
      * */
 
-    /** @private */
+    /**
+     * Composes the chart with the stock-specific functionality.
+     *
+     * @internal
+     *
+     * @param {Highcharts.Class<Highcharts.Chart>} ChartClass
+     * The chart class to compose.
+     *
+     * @param {Highcharts.Class<Highcharts.Axis>} AxisClass
+     * The axis class to compose.
+     *
+     * @param {Highcharts.Class<Highcharts.Series>} SeriesClass
+     * The series class to compose.
+     *
+     * @param {Highcharts.Class<Highcharts.SVGRenderer>} SVGRendererClass
+     * The SVG renderer class to compose.
+     */
     export function compose(
         ChartClass: typeof Chart,
         AxisClass: typeof Axis,
@@ -415,7 +438,7 @@ namespace StockChart {
 
     /**
      * Extend crosshairs to also draw the label.
-     * @private
+     * @internal
      */
     function onAxisAfterDrawCrosshair(
         this: Axis,
@@ -542,7 +565,7 @@ namespace StockChart {
         if (formatOption) {
             text = format(formatOption, { value }, chart);
         } else if (options.formatter && isNumber(value)) {
-            text = options.formatter.call(axis, value);
+            text = options.formatter.call(axis, value, axis);
         }
 
         crossLabel.attr({
@@ -612,7 +635,7 @@ namespace StockChart {
 
     /**
      * Wrapper to hide the label.
-     * @private
+     * @internal
      */
     function onAxisAfterHideCrosshair(
         this: Axis
@@ -627,7 +650,7 @@ namespace StockChart {
     /**
      * Override the automatic label alignment so that the first Y axis' labels
      * are drawn on top of the grid line, and subsequent axes are drawn outside.
-     * @private
+     * @internal
      */
     function onAxisAutoLabelAlign(
         this: Axis,
@@ -662,7 +685,7 @@ namespace StockChart {
 
     /**
      * Clear axis from label panes. (#6071)
-     * @private
+     * @internal
      */
     function onAxisDestroy(
         this: Axis
@@ -681,13 +704,14 @@ namespace StockChart {
 
     /**
      * Override getPlotLinePath to allow for multipane charts.
-     * @private
+     * @internal
      */
     function onAxisGetPlotLinePath(
         this: Axis,
         e: (Event&Axis.PlotLinePathOptions)
     ): void {
         const axis = this,
+            axisOptions = axis.options,
             series = (
                 axis.isLinked && !axis.series && axis.linkedParent ?
                     axis.linkedParent.series :
@@ -700,16 +724,20 @@ namespace StockChart {
             allPerpendicularAxes = (
                 axis.isXAxis ? chart.yAxis : chart.xAxis
             ) || [],
+            crossingPosName = horiz ? 'top' : 'left',
+            crossingLenName = horiz ? 'height' : 'width',
+            hasCrossingBounds = defined(axisOptions[crossingPosName]) ||
+                defined(axisOptions[crossingLenName]),
             /**
              * Return the other axis based on either the axis option or on
              * related series.
-             * @private
+             * @internal
              */
             getAxis = (coll: string): Array<Axis> => {
                 const otherColl = coll === 'xAxis' ? 'yAxis' : 'xAxis',
-                    opt = (axis.options as AnyRecord)[otherColl];
+                    opt = (axisOptions as AnyRecord)[otherColl];
 
-                if (acrossPanes && !axis.options.isInternal) {
+                if (acrossPanes && !axisOptions.isInternal) {
                     return allPerpendicularAxes.filter((a): boolean =>
                         !a.options.isInternal
                     );
@@ -748,7 +776,7 @@ namespace StockChart {
             transVal: number;
 
         if (
-            chart.options.isStock &&
+            (chart.options.isStock || hasCrossingBounds) &&
             // Ignore in case of colorAxis or zAxis. #3360, #3524, #6720
             (axis.coll === 'xAxis' || axis.coll === 'yAxis')
         ) {
@@ -821,18 +849,16 @@ namespace StockChart {
                 }
 
                 if (!skip) {
-                    const crossingPosName = horiz ? 'top' : 'left',
-                        crossingLenName = horiz ? 'height' : 'width';
                     if (
-                        !acrossPanes &&
                         // If the perpendicular position is set explicitly on
                         // the axis, use it. For example, if `top` and `height`
                         // options are set on a horizontal x-axis, the grid
                         // lines should conform to that position.
-                        (
-                            axis.options[crossingPosName] ||
-                            axis.options[crossingLenName]
-                        )
+                        hasCrossingBounds &&
+                        // In parallel coordinates, the axis height/width is 0,
+                        // so we need to skip that, #24442.
+                        axis[crossingLenName] > 0 &&
+                        !acrossPanes
                     ) {
                         pushSegment(
                             pos,
@@ -860,7 +886,7 @@ namespace StockChart {
     /**
      * Handle som Stock-specific series defaults, override the plotOptions
      * before series options are handled.
-     * @private
+     * @internal
      */
     function onSeriesSetOptions(
         this: Series,
@@ -965,7 +991,7 @@ namespace StockChart {
     /**
      * Function to crisp a line with multiple segments
      *
-     * @private
+     * @internal
      * @function Highcharts.SVGRenderer#crispPolyLine
      */
     function svgRendererCrispPolyLine(

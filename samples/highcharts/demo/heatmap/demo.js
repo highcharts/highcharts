@@ -7,16 +7,23 @@ Highcharts.chart('container', {
 
     chart: {
         type: 'heatmap',
-        marginTop: 40,
+        marginTop: 60,
         marginBottom: 80,
         plotBorderWidth: 1
     },
 
 
     title: {
-        text: 'Sales per employee per weekday',
+        text: 'Simple heatmap',
         style: {
             fontSize: '1em'
+        }
+    },
+
+    subtitle: {
+        text: 'Sales per employee per weekday',
+        style: {
+            fontSize: '0.8em'
         }
     },
 
@@ -52,8 +59,8 @@ Highcharts.chart('container', {
         layout: 'vertical',
         margin: 0,
         verticalAlign: 'top',
-        y: 25,
-        symbolHeight: 280
+        y: 40,
+        symbolHeight: 260
     },
 
     tooltip: {

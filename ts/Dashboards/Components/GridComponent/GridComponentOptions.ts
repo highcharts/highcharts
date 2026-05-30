@@ -1,13 +1,14 @@
 /* *
  *
- *  (c) 2009-2025 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
- *  - Karol Kolodziej
+ *  - Karol Kołodziej
  *
  * */
 
@@ -21,8 +22,16 @@
  * */
 
 import type { GridOptions } from '../../Plugins/GridTypes';
-import type Component from '../Component';
-import type Sync from '../Sync/Sync';
+import type {
+    ConnectorOptions as ComponentConnectorOptions,
+    ConnectorTypes as ComponentConnectorTypes,
+    Options as ComponentOptions
+} from '../Component';
+import type {
+    OptionsEntry as SyncOptionsEntry,
+    OptionsRecord as SyncOptionsRecord,
+    RawOptionsRecord as SyncRawOptionsRecord
+} from '../Sync/Sync';
 
 /* *
  *
@@ -33,11 +42,11 @@ import type Sync from '../Sync/Sync';
 /**
  * Options to control the Grid component.
  */
-export interface Options extends Component.Options {
+export interface Options extends ComponentOptions {
     /**
      * Connector options
      */
-    connector?: Component.ConnectorOptions;
+    connector?: ComponentConnectorOptions;
 
     /**
      * The style class to add to the rendered data grid container.
@@ -61,7 +70,7 @@ export interface Options extends Component.Options {
      * @param connector
      * Relate store of the change.
      */
-    onUpdate(e: KeyboardEvent, connector: Component.ConnectorTypes): void
+    onUpdate(e: KeyboardEvent, connector: ComponentConnectorTypes): void
 
     type: 'Grid';
     /**
@@ -95,7 +104,7 @@ export interface Options extends Component.Options {
     /**
      * Sync options for the component.
      */
-    syncHandlers?: Sync.OptionsRecord;
+    syncHandlers?: SyncOptionsRecord;
 }
 
 /**
@@ -108,7 +117,7 @@ export interface Options extends Component.Options {
  * }
  * ```
  */
-export interface SyncOptions extends Sync.RawOptionsRecord {
+export interface SyncOptions extends SyncRawOptionsRecord {
     /**
      * Extremes sync is available for Highcharts, KPI, Grid and
      * Navigator components. Sets a common range of displayed data. For the
@@ -120,7 +129,7 @@ export interface SyncOptions extends Sync.RawOptionsRecord {
      *
      * @default false
      */
-    extremes?: boolean | Sync.OptionsEntry;
+    extremes?: boolean | SyncOptionsEntry;
     /**
      * Highlight sync is available for Highcharts and Grid components.
      * It allows to highlight hovered corresponding rows in the table and
@@ -132,7 +141,7 @@ export interface SyncOptions extends Sync.RawOptionsRecord {
      *
      * @default false
      */
-    highlight?: boolean | Sync.OptionsEntry;
+    highlight?: boolean | SyncOptionsEntry;
     /**
      * Visibility sync is available for Highcharts and Grid components.
      * Synchronizes the visibility of data from a hidden/shown series.
@@ -143,7 +152,7 @@ export interface SyncOptions extends Sync.RawOptionsRecord {
      *
      * @default false
      */
-    visibility?: boolean | Sync.OptionsEntry;
+    visibility?: boolean | SyncOptionsEntry;
 }
 
 /**
@@ -157,7 +166,7 @@ export interface SyncOptions extends Sync.RawOptionsRecord {
  * }
  * ```
  */
-export interface GridHighlightSyncOptions extends Sync.OptionsEntry {
+export interface GridHighlightSyncOptions extends SyncOptionsEntry {
     /**
      * Whether to scroll the data grid to the highlighted row automatically.
      *

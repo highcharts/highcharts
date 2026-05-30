@@ -2,14 +2,15 @@
  *
  *  Independent Resizing Mode class
  *
- *  (c) 2020-2025 Highsoft AS
+ *  (c) 2020-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
- *  - Dawid Dragula
+ *  - Dawid Draguła
  *
  * */
 
@@ -57,24 +58,28 @@ class IndependentResizingMode extends ResizingMode {
         }
 
         // Set the width of the resized column.
-        const width = this.columnWidths[column.id] = Math.round(Math.max(
-            (resizer.columnStartWidth || 0) + diff,
-            ResizingMode.getMinWidth(column)
-        ) * 10) / 10;
+        const width = this.columnWidths[column.id] = Math.round(
+            ResizingMode.fitWidth(
+                column,
+                (resizer.columnStartWidth ?? 0) + diff
+            ) * 10
+        ) / 10;
         this.columnWidthUnits[column.id] = 0; // Set to px
 
-        // Change width units of all columns on the right to px.
+        // Change width units of all columns to px.
         const vp = this.viewport;
-        const colIndex = column.index;
-        for (let i = colIndex; i < vp.columns.length; ++i) {
-            const rightCol = vp.columns[i];
-            const rcWidth = this.columnWidths[rightCol.id] =
-                rightCol.getWidth();
-            this.columnWidthUnits[rightCol.id] = 0; // Set to px
-            rightCol.update({ width: rcWidth }, false);
+        for (let i = 0; i < vp.columns.length; ++i) {
+            const col = vp.columns[i];
+            if (col.id === column.id) {
+                continue;
+            }
+
+            const colWidth = this.columnWidths[col.id] = col.getWidth();
+            this.columnWidthUnits[col.id] = 0; // Set to px
+            col.setOptions({ width: colWidth });
         }
 
-        column.update({ width }, false);
+        column.setOptions({ width });
     }
 
 }

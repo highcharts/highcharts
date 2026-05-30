@@ -2,14 +2,15 @@
  *
  *  Grid Sort Context Menu Button class
  *
- *  (c) 2020-2025 Highsoft AS
+ *  (c) 2020-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
- *  - Dawid Dragula
+ *  - Dawid Draguła
  *
  * */
 
@@ -24,12 +25,11 @@
 
 import type MenuPopup from '../MenuPopup';
 import type { LangOptions } from '../../../../Options';
+import type Column from '../../../Column';
 
 import ContextMenuButton from '../../../../UI/ContextMenuButton.js';
 import StateHelpers from '../StateHelpers.js';
-import U from '../../../../../../Core/Utilities.js';
-
-const { addEvent } = U;
+import { addEvent } from '../../../../../../Shared/Utilities.js';
 
 
 /* *
@@ -51,6 +51,7 @@ class SortMenuButton extends ContextMenuButton {
 
     private direction: ('asc'|'desc');
 
+    private baseLabel: string;
 
     /* *
      *
@@ -62,12 +63,13 @@ class SortMenuButton extends ContextMenuButton {
         langOptions: LangOptions,
         direction: typeof SortMenuButton.prototype.direction
     ) {
-        super({ icon: direction === 'asc' ? 'sortAsc' : 'sortDesc' });
+        super({ icon: direction === 'asc' ? 'arrowUp' : 'arrowDown' });
 
         this.direction = direction;
-        this.options.label = langOptions[
+        this.baseLabel = langOptions[
             direction === 'asc' ? 'sortAscending' : 'sortDescending'
-        ];
+        ] || '';
+        this.options.label = this.baseLabel;
     }
 
 
@@ -83,7 +85,45 @@ class SortMenuButton extends ContextMenuButton {
             return;
         }
 
-        this.setActive(StateHelpers.isSorted(column, this.direction));
+        const isSorted = StateHelpers.isSorted(column, this.direction);
+        this.setActive(isSorted);
+
+        // Update label with priority if multi-column sorting is active
+        this.updateLabelWithPriority(isSorted ? column : void 0);
+    }
+
+    /**
+     * Updates the label to include the sort priority when multi-column
+     * sorting is active.
+     *
+     * @param column
+     * The column to get the priority from, or undefined to reset the label.
+     */
+    private updateLabelWithPriority(column?: Column): void {
+        if (!column) {
+            this.setLabel(this.baseLabel);
+            return;
+        }
+
+        const { currentSortings } =
+            column.viewport.grid.querying.sorting;
+        const sortings = currentSortings || [];
+
+        const sortIndex = sortings.findIndex((sorting): boolean =>
+            sorting.columnId === column.id
+        );
+
+        const priority = (
+            sortings.length > 1 && sortIndex !== -1 ?
+                sortIndex + 1 :
+                void 0
+        );
+
+        if (priority) {
+            this.setLabel(`${this.baseLabel} (${priority})`);
+        } else {
+            this.setLabel(this.baseLabel);
+        }
     }
 
     protected override addEventListeners(): void {
@@ -111,7 +151,10 @@ class SortMenuButton extends ContextMenuButton {
             return;
         }
 
-        void sorting.setOrder(this.isActive ? null : this.direction);
+        void sorting.setOrder(
+            this.isActive ? null : this.direction,
+            !!event?.shiftKey
+        );
     }
 }
 

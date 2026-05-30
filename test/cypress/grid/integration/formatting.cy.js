@@ -82,20 +82,3 @@ describe('Formatting cells.', () => {
         cy.get('.hcg-row').eq(0).find('td').eq(4).should('not.contain', 'Default');
     });
 });
-
-describe('I18n cells formatting.', () => {
-    before(() => {
-        cy.visit('grid-lite/demo/internationalization');
-    });
-
-    it('The lang locale property is properly updated.', () => {
-        // Select the norwegian lang.
-        cy.get('#lang-select').select('no');
-        cy.grid().then(grid => {
-            // Locale should be changed to no.
-            expect(grid.locale).to.equal('no');
-            // The price should have a point decimal corresponding to the locale.
-            cy.get('.hcg-row td').eq(3).should('contain.text', '1,50 €');
-        });
-    });
-});

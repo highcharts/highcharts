@@ -1,5 +1,5 @@
 Grid.grid('container', {
-    dataTable: {
+    data: {
         columns: {
             string: ['Apples', 'Pears', 'Plums', 'Bananas'],
             booleans: [true, false, null, false],

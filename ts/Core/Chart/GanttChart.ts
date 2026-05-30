@@ -1,12 +1,13 @@
 /* *
  *
- *  (c) 2016-2025 Highsoft AS
+ *  (c) 2016-2026 Highsoft AS
  *
  *  Author: Lars A. V. Cabrera
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -30,12 +31,7 @@ import Chart from './Chart.js';
 import D from '../Defaults.js';
 const { defaultOptions } = D;
 import { Palette } from '../Color/Palettes.js';
-import U from '../Utilities.js';
-const {
-    isArray,
-    merge,
-    splat
-} = U;
+import { isArray, merge, splat } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -45,6 +41,8 @@ const {
 
 declare module '../Options' {
     interface Options {
+
+        /** @internal */
         isGantt?: boolean;
     }
 }
@@ -203,6 +201,7 @@ class GanttChart extends Chart {
  *
  * */
 
+/** @internal */
 namespace GanttChart {
 
     /* *

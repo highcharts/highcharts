@@ -25,9 +25,9 @@ Use the `TimeSeriesConnector` to load time series data.
 
 In dashboards, this connector is called `MorningstarTimeSeries`
 
-You can fetch time series data of various kinds. Specify the securities and type 
-to retrieve in the options along with a postman environment file for 
-authentication, and other parameters such as `startDate`, `endDate` 
+You can fetch time series data of various kinds. Specify the securities and type
+to retrieve in the options along with a postman environment file for
+authentication, and other parameters such as `startDate`, `endDate`
 or `currencyId`.
 
 ### Time Series with Morningstar standalone for Highcharts:
@@ -56,7 +56,7 @@ await dividendConnector.load();
 Highcharts.stockChart('container', {
     series: [{
         type: 'line',
-        table: dividendConnector.getTable().getRows(0, undefined)
+        table: dividendConnector.getTable().getRows()
     }]
 });
 ```
@@ -95,16 +95,16 @@ Dashboards.board('container', {
             type: 'Grid',
             title: 'Dividends',
             gridOptions: {
-                editable: false,
-                columns: {
-                    Date: {
-                        cellFormatter: function () {
+                columns: [{
+                    id: 'Date',
+                    cells: {
+                        formatter: function () {
                             return new Date(this.value)
                                 .toISOString()
                                 .substring(0, 10);
                         }
                     }
-                }
+                }]
             }
         }
     ]
@@ -115,7 +115,7 @@ Dashboards.board('container', {
 
 You will find examples of how to use the time series connector in our demos.
 
-- **Highcharts Stock + Morningstar TimeSeries**: Shows how to use 
+- **Highcharts Stock + Morningstar TimeSeries**: Shows how to use
 TimeSeriesConnector to retrieve Dividend time series.
 
 [Morningstar’s Time Series API]: https://developer.morningstar.com/direct-web-services/documentation/api-reference/time-series/overview

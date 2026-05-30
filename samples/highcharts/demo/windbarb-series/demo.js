@@ -56,6 +56,10 @@ Highcharts.chart('container', {
         }
     },
 
+    tooltip: {
+        shared: true
+    },
+
     series: [{
         type: 'area',
         keys: ['y'], // wind direction is not used here
@@ -89,7 +93,7 @@ Highcharts.chart('container', {
         name: 'Wind',
         showInLegend: false,
         tooltip: {
-            valueSuffix: ' m/s'
+            pointFormat: '{beaufort}, {direction:.0f}°'
         }
     }]
 

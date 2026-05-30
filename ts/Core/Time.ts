@@ -1,10 +1,12 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Hønsi
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -20,17 +22,16 @@ import type TickPositionsArray from './Axis/TickPositionsArray';
 import type TimeTicksInfoObject from './Axis/TimeTicksInfoObject';
 
 import TimeBase from '../Shared/TimeBase.js';
-import U from '../Core/Utilities.js';
-const {
-    defined,
-    extend,
-    timeUnits
-} = U;
+import { defined, extend } from '../Shared/Utilities.js';
+import { timeUnits } from './Utilities.js';
+
 /* *
  *
  *  Declarations
  *
  * */
+
+
 declare module './Axis/TickPositionsArray'{
     interface TickPositionsArray {
         info?: TimeTicksInfoObject;
@@ -43,6 +44,102 @@ declare module './Axis/TickPositionsArray'{
  *
  * */
 class Time extends TimeBase {
+
+    public getBoundaryTicks(
+        tickPositions: TickPositionsArray,
+        unitRange: number,
+        visibleMin?: number,
+        visibleMax?: number
+    ): Record<number, Time.TimeUnit> {
+        const boundaryTicks: Record<number, Time.TimeUnit> = {};
+
+        // No boundary ticks for year range.
+        if (unitRange === timeUnits.year) {
+            return boundaryTicks;
+        }
+
+        const hasVisibleRange = defined(visibleMin) && defined(visibleMax),
+            needsHourBoundary = unitRange < timeUnits.hour,
+            needsDayBoundary = unitRange < timeUnits.day,
+            needsMonthBoundary = unitRange < timeUnits.month,
+            tickAlignment = (
+                unitRange >= timeUnits.hour ?
+                    900000 : unitRange >= timeUnits.minute ?
+                        60000 : unitRange >= timeUnits.second ?
+                            1000 : false
+            );
+
+        // Handle boundary ticks. Use a reasonable dropout threshold
+        // to prevent looping over dense data grouping (#6156).
+        if (tickPositions.length < 10000) {
+            let isFirstVisibleTick = true;
+
+            for (let i = 0; i < tickPositions.length; i++) {
+                const t = tickPositions[i];
+
+                // Loop only over visible ticks.
+                if (hasVisibleRange) {
+                    if (t < visibleMin) {
+                        continue;
+                    }
+                    if (t > visibleMax) {
+                        break;
+                    }
+                }
+
+                // Mark first visible tick as boundary, if timeUnit is month or
+                // hour.
+                if (isFirstVisibleTick) {
+                    if (unitRange === timeUnits.month) {
+                        boundaryTicks[t] = 'year';
+                        isFirstVisibleTick = false;
+                        continue;
+                    }
+                    if (unitRange === timeUnits.hour) {
+                        boundaryTicks[t] = 'day';
+                        isFirstVisibleTick = false;
+                        continue;
+                    }
+                }
+
+                // Skip misaligned ticks to save performance.
+                if (tickAlignment && t % tickAlignment !== 0) {
+                    isFirstVisibleTick = false;
+                    continue;
+                }
+
+                const [
+                    , // Unused 'year' var
+                    month,
+                    day,
+                    hours,
+                    minutes,
+                    seconds,
+                    milliseconds
+                ] = this.toParts(t);
+
+                const isMidnight =
+                    !hours && !minutes && !seconds && !milliseconds;
+
+                if (needsHourBoundary && minutes === 0) {
+                    boundaryTicks[t] = 'hour';
+                }
+                if (needsDayBoundary && isMidnight) {
+                    boundaryTicks[t] = 'day';
+                }
+                if (needsMonthBoundary && day === 1 && isMidnight) {
+                    boundaryTicks[t] = 'month';
+                }
+                if (month === 0 && day === 1 && isMidnight) {
+                    boundaryTicks[t] = 'year';
+                }
+
+                isFirstVisibleTick = false;
+            }
+        }
+
+        return boundaryTicks;
+    }
 
     /**
      * Return an array with time positions distributed on round time values
@@ -73,8 +170,9 @@ class Time extends TimeBase {
     ): TickPositionsArray {
         const time = this,
             tickPositions = [] as TickPositionsArray,
-            higherRanks = {} as Record<string, string>,
-            { count = 1, unitRange } = normalizedInterval;
+            { count = 1, unitRange } = normalizedInterval,
+            visibleMin = min,
+            visibleMax = max;
 
         let [
                 year,
@@ -221,7 +319,7 @@ class Time extends TimeBase {
                     unitRange === timeUnits.hour &&
                     count > 1
                 ) {
-                    // Make sure higher ranks are preserved across DST (#6797,
+                    // Make sure boundary ticks are preserved across DST (#6797,
                     // #7621)
                     t = time.makeTime(
                         year,
@@ -240,32 +338,18 @@ class Time extends TimeBase {
 
             // Push the last time
             tickPositions.push(t);
-
-
-            // Handle higher ranks. Mark new days if the time is on midnight
-            // (#950, #1649, #1760, #3349). Use a reasonable dropout threshold
-            // to prevent looping over dense data grouping (#6156).
-            if (unitRange <= timeUnits.hour && tickPositions.length < 10000) {
-                tickPositions.forEach((t: number): void => {
-                    if (
-                        // Speed optimization, no need to run dateFormat unless
-                        // we're on a full or half hour
-                        t % 1800000 === 0 &&
-                        // Check for local or global midnight
-                        time.dateFormat('%H%M%S%L', t) === '000000000'
-                    ) {
-                        higherRanks[t] = 'day';
-                    }
-                });
-            }
         }
 
 
-        // Record information on the chosen unit - for dynamic label formatter
         tickPositions.info = extend<Time.TimeNormalizedObject|TimeTicksInfoObject>(
             normalizedInterval,
             {
-                higherRanks,
+                boundaryTicks: this.getBoundaryTicks(
+                    tickPositions,
+                    unitRange,
+                    visibleMin,
+                    visibleMax
+                ),
                 totalRange: unitRange * count
             }
         ) as TimeTicksInfoObject;
@@ -284,7 +368,7 @@ namespace Time {
 
     export interface DateTimeFormatOptions extends Intl.DateTimeFormatOptions {
         dateStyle?: 'full'|'long'|'medium'|'short';
-        fractionalSecondDigits?: number;
+        fractionalSecondDigits?: 1|2|3;
         prefix?: string;
         suffix?: string;
         timeStyle?: 'full'|'long'|'medium'|'short';
@@ -296,13 +380,13 @@ namespace Time {
         from?: DateTimeFormat;
         list?: DateTimeFormat[];
         main: DateTimeFormat;
+        boundary?: DateTimeFormat;
         range?: boolean;
         to?: DateTimeFormat;
     }
 
     export type DateTimeLabelFormatOption = (
         DateTimeFormat|
-        Array<string>|
         Time.DateTimeLabelFormatObject
     );
     export type DateTimeLabelFormatsOption = (
@@ -319,8 +403,25 @@ namespace Time {
         (this: Time, timestamp: number): string;
     }
     export interface TimeNormalizedObject {
+        /**
+         * The count of the interval.
+         */
         count: number;
+        /**
+         * A value for how well the returned tick interval fits the input
+         * interval. Ranges close to but above 1 indicate that the fit is bad,
+         * where 1 is a perfect fit for the _next_ higher interval. For example,
+         * if the algorithm lands on weekly ticks but the match is 1.01, it is
+         * very close to monthly ticks.
+         */
+        match?: number;
+        /**
+         * The name of the time unit.
+         */
         unitName: TimeUnit;
+        /**
+         * The interval in axis values (ms).
+         */
         unitRange: number;
     }
     export type TimeUnit = (

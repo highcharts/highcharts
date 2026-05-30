@@ -1,10 +1,12 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Hønsi
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -28,8 +30,7 @@ import G from './Globals.js';
 const {
     pageLang
 } = G;
-import U from './Utilities.js';
-const {
+import {
     extend,
     getNestedProperty,
     isArray,
@@ -38,8 +39,9 @@ const {
     isString,
     pick,
     ucfirst
-} = U;
+} from '../Shared/Utilities.js';
 
+/** @internal */
 interface MatchObject {
     body?: string;
     ctx: any;
@@ -53,6 +55,7 @@ interface MatchObject {
     startInner: number;
 }
 
+/** @internal */
 const helpers: Record<string, Function> = {
     // Built-in helpers
     add: (a: number, b: number): number => a + b,
@@ -92,7 +95,10 @@ const numberFormatCache: Record<string, Intl.NumberFormat> = {};
  *
  * */
 
-// Internal convenience function
+/**
+ * Internal convenience function.
+ * @internal
+ */
 const isQuotedString = (str: string): boolean => /^["'].+["']$/.test(str);
 
 /**
@@ -184,7 +190,7 @@ function format(
 
     // eslint-disable-next-line prefer-regex-literals
     const regex = new RegExp(
-            '\\{([\\p{L}\\d:\\.,;\\-\\/<>\\[\\]%_@+"\'’= #\\(\\)]+)\\}',
+            '\\{([\\p{L}\\p{M}\\d:\\.,;\\-\\/<>\\[\\]%_@+"\'’= #\\(\\)]+)\\}',
             'gu'
         ),
         // The sub expression regex is the same as the top expression regex,
@@ -192,7 +198,7 @@ function format(
         // instead of curly brackets.
         // eslint-disable-next-line prefer-regex-literals
         subRegex = new RegExp(
-            '\\(([\\p{L}\\d:\\.,;\\-\\/<>\\[\\]%_@+"\'= ]+)\\)',
+            '\\(([\\p{L}\\p{M}\\d:\\.,;\\-\\/<>\\[\\]%_@+"\'= ]+)\\)',
             'gu'
         ),
         matches = [],
@@ -379,15 +385,10 @@ function format(
             replacement = resolveProperty(valueAndFormat.shift() || '');
 
             // Format the replacement
-            const isFloat = replacement % 1 !== 0;
-            if (
-                typeof replacement === 'number' &&
-                (valueAndFormat.length || isFloat)
-            ) {
-
+            if (valueAndFormat.length && typeof replacement === 'number') {
                 const segment = valueAndFormat.join(':');
 
-                if (floatRegex.test(segment) || isFloat) { // Float
+                if (floatRegex.test(segment)) { // Float
                     const decimals = parseInt(
                         (segment.match(decRegex) || ['', '-1'])[1],
                         10
@@ -555,16 +556,32 @@ const Templating = {
 
 namespace Templating {
     export interface FormatterCallback<T> {
-        (this: T): string;
+        (this: T, ...args: Array<any>): string;
     }
     export interface OwnerOptions {
+        /**
+         * Language options. See {@link Highcharts.LangOptions} for details.
+         */
         lang?: LangOptionsCore;
     }
     export interface Owner {
+        /**
+         * The chart options. See {@link Highcharts.Options} for details.
+         */
         options?: OwnerOptions;
+        /**
+         * The time object. See {@link Highcharts.Time} for details.
+         */
         time?: TimeBase;
+        /**
+         * A function to format numbers. See {@link Highcharts.numberFormat} for
+         * details.
+         */
         numberFormatter?: Function;
-        locale?: string | string[]
+        /**
+         * The locale to use for number formatting.
+         */
+        locale?: string | string[];
     }
 }
 

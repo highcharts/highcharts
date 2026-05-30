@@ -2,14 +2,15 @@
  *
  *  Text Cell Content class
  *
- *  (c) 2020-2025 Highsoft AS
+ *  (c) 2020-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
- *  - Dawid Dragula
+ *  - Dawid Draguła
  *
  * */
 
@@ -21,7 +22,7 @@
  *
  * */
 
-import type Column from '../Column';
+import type { ColumnDataType } from '../Column';
 
 import AST from '../../../../Core/Renderer/HTML/AST.js';
 import CellContent from './CellContent.js';
@@ -31,12 +32,7 @@ import GridUtils from '../../GridUtils.js';
 const {
     setHTMLContent
 } = GridUtils;
-
-import Utils from '../../../../Core/Utilities.js';
-const {
-    defined,
-    isString
-} = Utils;
+import { defined } from '../../../../Shared/Utilities.js';
 
 
 /* *
@@ -50,10 +46,37 @@ const {
  */
 class TextContent extends CellContent {
 
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+
+    public static readonly defaultFormatsForDataTypes: Record<ColumnDataType, string> = {
+        string: '{value}',
+        number: '{value:,.f}',
+        'boolean': '{value}',
+        datetime: '{value:%Y-%m-%d %H:%M:%S}'
+    };
+
+
+    /* *
+     *
+     *  Constructor
+     *
+     * */
+
     constructor(cell: TableCell) {
         super(cell);
         this.add();
     }
+
+
+    /* *
+     *
+     *  Methods
+     *
+     * */
 
     protected override add(): void {
         this.update();
@@ -103,11 +126,8 @@ class TextContent extends CellContent {
         } else if (isDefaultFormat) {
             const formattedValue = formatter?.call(cell);
 
-            if (isString(formattedValue)) {
-                cellContent = formattedValue;
-            } else {
-                cellContent = value + '';
-            }
+            cellContent = defined(formattedValue) ?
+                String(formattedValue) : value + '';
 
         } else if (isDefaultFormatter) {
             cellContent = format ? cell.format(format) : value + '';
@@ -118,25 +138,6 @@ class TextContent extends CellContent {
 
 }
 
-
-/* *
- *
- *  Namespace
- *
- * */
-
-namespace TextContent {
-
-    /**
-     * Default formats for data types.
-     */
-    export const defaultFormatsForDataTypes: Record<Column.DataType, string> = {
-        string: '{value}',
-        number: '{value}',
-        'boolean': '{value}',
-        datetime: '{value:%Y-%m-%d %H:%M:%S}'
-    };
-}
 
 /* *
  *

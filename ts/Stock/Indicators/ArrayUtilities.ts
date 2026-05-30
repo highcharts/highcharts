@@ -1,10 +1,11 @@
-/**
+/* *
  *
- *  (c) 2010-2025 Pawel Fus & Daniel Studencki
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Paweł Fus & Daniel Studencki
  *
- *  License: www.highcharts.com/license
- *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  * */
 
@@ -19,7 +20,7 @@
 /**
  * Get extremes of array filled by OHLC data.
  *
- * @private
+ * @internal
  *
  * @param {Array<Array<number>>} arr
  * Array of OHLC points (arrays).
@@ -56,6 +57,9 @@ function getArrayExtremes<T extends Array<number>>(
  *
  * */
 
+/**
+ * @internal
+ */
 namespace ArrayUtilities {
 
     /** 0: min, 1: max */
@@ -69,8 +73,10 @@ namespace ArrayUtilities {
  *
  * */
 
+/** @internal */
 const ArrayUtilities = {
     getArrayExtremes
 };
 
+/** @internal */
 export default ArrayUtilities;

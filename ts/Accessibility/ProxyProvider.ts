@@ -1,6 +1,7 @@
 /* *
  *
- *  (c) 2009-2025 Øystein Moseng
+ *  (c) 2009-2026 Highsoft AS
+ *  Author: Øystein Moseng
  *
  *  Proxy elements are used to shadow SVG elements in HTML for assistive
  *  technology, such as screen readers or voice input software.
@@ -8,9 +9,10 @@
  *  The ProxyProvider keeps track of all proxy elements of the a11y module,
  *  and updating their order and positioning.
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -29,11 +31,6 @@ import type { NullableHTMLAttributes } from './ProxyElement';
 
 import H from '../Core/Globals.js';
 const { doc } = H;
-import U from '../Core/Utilities.js';
-const {
-    attr,
-    css
-} = U;
 
 import CU from './Utils/ChartUtilities.js';
 const { unhideChartElementFromAT } = CU;
@@ -43,6 +40,7 @@ const {
     removeChildNodes
 } = HU;
 import ProxyElement from './ProxyElement.js';
+import { attr, css } from '../Shared/Utilities.js';
 
 
 /**
@@ -348,15 +346,14 @@ class ProxyProvider {
         const el = this.domElementProvider.createElement('div');
         el.setAttribute('aria-hidden', 'false');
         el.className = 'highcharts-a11y-proxy-container' + (classNamePostfix ? '-' + classNamePostfix : '');
+        // Position inline so the container stays out of flow even when
+        // `highcharts.css` is missing in styled mode
         css(el, {
+            position: 'absolute',
             top: '0',
-            left: '0'
+            left: '0',
+            whiteSpace: 'nowrap'
         });
-
-        if (!this.chart.styledMode) {
-            el.style.whiteSpace = 'nowrap';
-            el.style.position = 'absolute';
-        }
 
         return el;
     }

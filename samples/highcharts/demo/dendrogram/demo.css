@@ -1,4 +1,4 @@
-* {
+body {
     font-family:
         -apple-system,
         BlinkMacSystemFont,
@@ -10,6 +10,8 @@
         "Segoe UI Emoji",
         "Segoe UI Symbol",
         sans-serif;
+    background: var(--highcharts-background-color);
+    color: var(--highcharts-neutral-color-100);
 }
 
 .highcharts-figure {
@@ -92,6 +94,11 @@
         stroke-width: 20px;
         stroke: #ccc;
     }
+
+    .polarbear .icon-light {
+        stroke: #141414;
+        stroke-width: 20px;
+    }
 }
 
 @media (prefers-color-scheme: dark) {
@@ -104,6 +111,11 @@
             filter: drop-shadow(5px 5px 10px #fff);
             stroke-width: 20px;
             stroke: #ccc;
+        }
+
+        .polarbear .icon-light {
+            stroke: #141414;
+            stroke-width: 20px;
         }
     }
 }

@@ -1,12 +1,14 @@
 /* *
  *
- *  (c) 2009-2025 Øystein Moseng
+ *  (c) 2009-2026 Highsoft AS
+ *  Author: Øystein Moseng
  *
  *  Accessibility component for chart legend.
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -32,14 +34,6 @@ const { animObject } = A;
 import H from '../../Core/Globals.js';
 const { doc } = H;
 import Legend from '../../Core/Legend/Legend.js';
-import U from '../../Core/Utilities.js';
-const {
-    addEvent,
-    fireEvent,
-    isNumber,
-    pick,
-    syncTimeout
-} = U;
 
 import AccessibilityComponent from '../AccessibilityComponent.js';
 import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';
@@ -47,6 +41,13 @@ import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';
 import CU from '../Utils/ChartUtilities.js';
 const { getChartTitle } = CU;
 import HU from '../Utils/HTMLUtilities.js';
+import {
+    addEvent,
+    fireEvent,
+    isNumber,
+    pick,
+    syncTimeout
+} from '../../Shared/Utilities.js';
 const {
     stripHTMLTagsFromString: stripHTMLTags,
     addClass,

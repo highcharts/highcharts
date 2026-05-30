@@ -6,7 +6,7 @@
  *
  * */
 
-import * as Grid from '@highcharts/grid/grid-lite';
+import * as Grid from '@highcharts/grid/es-modules/masters/grid-lite.src';
 
 test_grid();
 
@@ -23,8 +23,11 @@ function test_grid() {
         }
     });
 
-    Grid.grid('container', {
-        dataTable,
+    const grid = Grid.grid('container', {
+        data: {
+            dataTable,
+            idColumn: 'x'
+        },
         header: [{
             format: 'grouped header',
             columns: [{
@@ -40,9 +43,34 @@ function test_grid() {
                 }
             }
         },
+        columnDefaults: {
+            cells: {
+                contextMenu: {
+                    enabled: true,
+                    items: [
+                        {
+                            label: 'Test',
+                            onClick: function () {
+                                // noop
+                            }
+                        }
+                    ]
+                }
+            }
+        },
         columns: [{
             id: 'hidden',
             enabled: false
-        }]
+        }],
+        responsive: {
+            rules: [{
+                condition: {
+                    minHeight: 500
+                },
+                gridOptions: {
+                    header: ['x']
+                }
+            }]
+        }
     });
 }

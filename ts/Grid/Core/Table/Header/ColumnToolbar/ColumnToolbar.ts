@@ -2,14 +2,15 @@
  *
  *  Grid Header Cell Toolbar class
  *
- *  (c) 2020-2025 Highsoft AS
+ *  (c) 2020-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
- *  - Dawid Dragula
+ *  - Dawid Draguła
  *
  * */
 
@@ -22,6 +23,7 @@
  *
  * */
 
+import type Grid from '../../../Grid';
 import type Toolbar from '../../../UI/Toolbar';
 import type Column from '../../Column';
 
@@ -31,10 +33,9 @@ import ToolbarButton from '../../../UI/ToolbarButton.js';
 import SortToolbarButton from './ToolbarButtons/SortToolbarButton.js';
 import FilterToolbarButton from './ToolbarButtons/FilterToolbarButton.js';
 import MenuToolbarButton from './ToolbarButtons/MenuToolbarButton.js';
-import U from '../../../../../Core/Utilities.js';
+import { getStyle } from '../../../../../Shared/Utilities.js';
 
 const { makeHTMLElement } = GridUtils;
-const { getStyle } = U;
 
 
 /* *
@@ -60,6 +61,13 @@ class HeaderCellToolbar implements Toolbar {
      * The column that this toolbar belongs to.
      */
     public column: Column;
+
+    /**
+     * Reference to the Grid instance for icon registry and options.
+     */
+    public get grid(): Grid {
+        return this.column.viewport.grid;
+    }
 
     public buttons: ToolbarButton[] = [];
 
@@ -112,14 +120,18 @@ class HeaderCellToolbar implements Toolbar {
      */
     private renderFull(): void {
         const columnOptions = this.column.options;
+        const sortingEnabled = this.column.viewport.grid.columnPolicy
+            .isColumnSortingEnabled(this.column.id);
 
-        if (columnOptions.sorting?.sortable) {
+        if (sortingEnabled) {
             new SortToolbarButton().add(this);
         }
 
         if (
-            columnOptions.filtering?.enabled &&
-            !columnOptions.filtering.inline
+            this.column.viewport.grid.columnPolicy.isColumnFilteringEnabled(
+                this.column.id
+            ) &&
+            !columnOptions.filtering?.inline
         ) {
             new FilterToolbarButton().add(this);
         }
@@ -127,10 +139,15 @@ class HeaderCellToolbar implements Toolbar {
 
     private renderMinimized(): void {
         const columnOptions = this.column.options;
+        const sortingEnabled = this.column.viewport.grid.columnPolicy
+            .isColumnSortingEnabled(this.column.id);
+
         if (
-            columnOptions.sorting?.sortable || (
-                columnOptions.filtering?.enabled &&
-                !columnOptions.filtering.inline
+            sortingEnabled || (
+                this.column.viewport.grid.columnPolicy.isColumnFilteringEnabled(
+                    this.column.id
+                ) &&
+                !columnOptions.filtering?.inline
             )
         ) {
             new MenuToolbarButton().add(this);
@@ -172,6 +189,16 @@ class HeaderCellToolbar implements Toolbar {
     }
 
     /**
+     * Refreshes the state of the toolbar buttons.
+     * @internal
+     */
+    public refreshState(): void {
+        for (const button of this.buttons) {
+            button.refreshState();
+        }
+    }
+
+    /**
      * Destroys all buttons of the toolbar.
      */
     public clearButtons(): void {
@@ -201,6 +228,13 @@ class HeaderCellToolbar implements Toolbar {
         }
 
         if (!shouldBeMinimized) {
+            // Ensure we reset any "minimized only" header state. This can
+            // happen if the grid was initialized in a hidden container
+            // (e.g. display:none) where widths measure as 0. (#24002)
+            this.isMenuCentered = void 0;
+            this.column.header?.container?.classList.remove(
+                Globals.getClassName('noWidth')
+            );
             return;
         }
 
@@ -235,6 +269,7 @@ class HeaderCellToolbar implements Toolbar {
             destroyer();
         }
         this.eventListenerDestroyers.length = 0;
+        this.clearButtons();
 
         this.columnResizeObserver?.disconnect();
         delete this.columnResizeObserver;

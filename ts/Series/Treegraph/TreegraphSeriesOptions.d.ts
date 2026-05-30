@@ -1,10 +1,12 @@
 /* *
  *
- *  (c) 2010-2025 Pawel Lysy Grzegorz Blachlinski
+ *  (c) 2010-2026 Highsoft AS
+ *  Authors: Paweł Lysy, Grzegorz Blachliński
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -16,19 +18,16 @@
 
 import type ColorType from '../../Core/Color/ColorType';
 import type CSSObject from '../../Core/Renderer/CSSObject';
-import type {
-    DataLabelOptions,
-    DataLabelTextPathOptions
-} from '../../Core/Series/DataLabelOptions';
+import type { DataLabelOptions } from '../../Core/Series/DataLabelOptions';
 import type Point from '../../Core/Series/Point';
 import type { PointMarkerOptions } from '../../Core/Series/PointOptions';
 import type { SymbolKey } from '../../Core/Renderer/SVG/SymbolType';
-import type TooltipOptions from '../../Core/TooltipOptions';
 import type { TreegraphLinkOptions } from './TreegraphLink';
 import type TreegraphPoint from './TreegraphPoint';
 import type {
     TreemapSeriesLevelOptions,
-    TreemapSeriesOptions
+    TreemapSeriesOptions,
+    TreemapSeriesTooltipOptions
 } from '../Treemap/TreemapSeriesOptions';
 
 /* *
@@ -97,7 +96,7 @@ export interface CollapseButtonOptions {
 
 }
 
-export interface TreegraphDataLabelFormatterCallback {
+export interface TreegraphDataLabelsFormatterCallbackFunction {
     (
         this: (TreegraphPoint|Point)
     ): (string|undefined);
@@ -109,8 +108,8 @@ export interface TreegraphDataLabelFormatterContext {
 
 export interface TreegraphDataLabelOptions extends DataLabelOptions {
     linkFormat?: string;
-    linkFormatter: TreegraphDataLabelFormatterCallback;
-    linkTextPath?: DataLabelTextPathOptions;
+    linkFormatter: TreegraphDataLabelsFormatterCallbackFunction;
+    linkTextPath?: DataLabelOptions['textPath'];
 }
 
 export interface TreegraphSeriesLevelOptions extends TreemapSeriesLevelOptions {
@@ -124,8 +123,6 @@ export interface TreegraphSeriesLevelOptions extends TreemapSeriesLevelOptions {
  * and descendants with a clear parent - child relation.
  * The best examples of the dataStructures, which best reflect this chart
  * are e.g. genealogy tree or directory structure.
- *
- * TODO change back the demo path
  *
  * @sample highcharts/demo/treegraph-chart
  *         Treegraph Chart
@@ -143,17 +140,14 @@ export interface TreegraphSeriesLevelOptions extends TreemapSeriesLevelOptions {
  *            zones
  *
  * @product highcharts
- *
  * @since 10.3.0
- *
  * @requires modules/treemap
- *
  * @requires modules/treegraph
  */
 export interface TreegraphSeriesOptions extends TreemapSeriesOptions {
 
     /**
-     * Options applied to collapse Button. The collape button is the
+     * Options applied to collapse Button. The collapse button is the
      * small button which indicates, that the node is collapsable.
      */
     collapseButton?: CollapseButtonOptions;
@@ -236,8 +230,17 @@ export interface TreegraphSeriesOptions extends TreemapSeriesOptions {
      */
     reversed?: boolean;
 
-    tooltip?: Partial<TooltipOptions>;
+    tooltip?: TreegraphSeriesTooltipOptions;
+}
 
+export interface TreegraphSeriesTooltipOptions
+    extends TreemapSeriesTooltipOptions {
+    /**
+     * @default '{point.id}'
+     */
+    pointFormat?: TreemapSeriesTooltipOptions['pointFormat']
+
+    // TODO: linkFormat & linkFormatter
 }
 
 /* *

@@ -1,10 +1,12 @@
 /* *
  *
- *  (c) 2010-2025 Grzegorz Blachlinski, Sebastian Bochan
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Grzegorz Blachliński, Sebastian Bochan
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -52,8 +54,9 @@ const {
     initDataLabels,
     initDataLabelsDefer
 } = D;
-import U from '../../Core/Utilities.js';
-const {
+import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
+import { composeTextPath } from '../../Extensions/TextPath.js';
+import {
     addEvent,
     clamp,
     defined,
@@ -63,10 +66,8 @@ const {
     isNumber,
     merge,
     pick
-} = U;
-import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
-import TextPath from '../../Extensions/TextPath.js';
-TextPath.compose(SVGElement);
+} from '../../Shared/Utilities.js';
+composeTextPath(SVGElement);
 
 /* *
  *
@@ -148,7 +149,6 @@ class PackedBubbleSeries extends BubbleSeries {
      *
      * */
 
-    /* eslint-disable valid-jsdoc */
 
     /**
      * Create a single array of all points from all series
@@ -576,7 +576,7 @@ class PackedBubbleSeries extends BubbleSeries {
         // pointer = chart.pointer,
         // onMouseOver = function (e: PointerEvent): void {
         //     const point = pointer.getPointFromEvent(e);
-        //     // undefined on graph in scatterchart
+        //     // undefined on graph in scatter chart
         //     if (typeof point !== 'undefined') {
         //         pointer.isDirectTouch = true;
         //         point.onMouseOver(e);
@@ -695,7 +695,6 @@ class PackedBubbleSeries extends BubbleSeries {
     /**
      * Mouse up action, finalizing drag&drop.
      * @private
-     * @param {Highcharts.Point} point The point that event occurred.
      */
     public onMouseUp(
         dnPoint: DragNodesPoint
@@ -1219,7 +1218,6 @@ class PackedBubbleSeries extends BubbleSeries {
         fireEvent(this, 'afterTranslate');
     }
 
-    /* eslint-enable valid-jsdoc */
 
 }
 

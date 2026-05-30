@@ -1,10 +1,12 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Hønsi
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -17,20 +19,14 @@
  * */
 
 import type AxisBase from './AxisBase';
-import type AxisOptions from './AxisOptions';
+import type { XAxisOptions } from './AxisOptions';
 import type Chart from '../Chart/Chart.js';
 import type { DeepPartial } from '../../Shared/Types';
 
 import Axis from './Axis.js';
 import D from '../Defaults.js';
 const { defaultOptions } = D;
-import U from '../Utilities.js';
-const {
-    addEvent,
-    merge,
-    pick,
-    splat
-} = U;
+import { splat, merge, pick, addEvent } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -47,16 +43,29 @@ declare module './AxisType' {
 declare module '../Chart/ChartBase'{
     interface ChartBase {
         zAxis?: Array<ZAxis>;
-        addZAxis(options: DeepPartial<AxisOptions>): Axis;
+        addZAxis(options: DeepPartial<XAxisOptions>): Axis;
     }
 }
 
 declare module '../Options' {
     interface Options {
-        zAxis?: (
-            DeepPartial<AxisOptions>|
-            Array<DeepPartial<AxisOptions>>
-        );
+        /**
+         * The Z axis or depth axis for 3D plots.
+         *
+         * See the [Axis class](/class-reference/Highcharts.Axis) for
+         * programmatic access to the axis.
+         *
+         * @sample {highcharts} highcharts/3d/scatter-zaxis-categories/
+         *         Z-Axis with Categories
+         * @sample {highcharts} highcharts/3d/scatter-zaxis-grid/
+         *         Z-Axis with styling
+         *
+         * @since     5.0.0
+         * @product   highcharts
+         * @excluding breaks, crosshair, height, left, lineColor, lineWidth,
+         *            nameToX, showEmpty, top, width
+         */
+        zAxis?: (DeepPartial<XAxisOptions>|Array<DeepPartial<XAxisOptions>>);
     }
 }
 
@@ -66,19 +75,17 @@ declare module '../Options' {
  *
  * */
 
-/**
- * @private
- */
+/** @internal */
 function chartAddZAxis(
     this: Chart,
-    options: DeepPartial<AxisOptions>
+    options: DeepPartial<XAxisOptions>
 ): Axis {
     return new ZAxis(this, options);
 }
 
 /**
  * Get the Z axis in addition to the default X and Y.
- * @private
+ * @internal
  */
 function onChartAfterCreateAxes(this: Chart): void {
     const zAxisOptions = this.options.zAxis = splat(this.options.zAxis || {});
@@ -102,7 +109,6 @@ function onChartAfterCreateAxes(this: Chart): void {
 
 /**
  * 3D axis for z coordinates.
- * @private
  */
 class ZAxis extends Axis implements AxisBase {
 
@@ -112,6 +118,7 @@ class ZAxis extends Axis implements AxisBase {
      *
      * */
 
+    /** @internal */
     public static compose(
         ChartClass: typeof Chart
     ): void {
@@ -141,7 +148,7 @@ class ZAxis extends Axis implements AxisBase {
 
     public init(
         chart: Chart,
-        userOptions: AxisOptions
+        userOptions: XAxisOptions
     ):void {
         // #14793, this used to be set on the prototype
         this.isZAxis = true;
@@ -156,9 +163,13 @@ class ZAxis extends Axis implements AxisBase {
      *
      * */
 
+    /** @internal */
     public ignoreMaxPadding?: boolean;
+
+    /** @internal */
     public ignoreMinPadding?: boolean;
-    public isZAxis: true = true;
+
+    public isZAxis = true as const;
 
     /* *
      *
@@ -166,6 +177,7 @@ class ZAxis extends Axis implements AxisBase {
      *
      * */
 
+    /** @internal */
     public getSeriesExtremes(): void {
         this.hasVisibleSeries = false;
 
@@ -208,9 +220,7 @@ class ZAxis extends Axis implements AxisBase {
         });
     }
 
-    /**
-     * @private
-     */
+    /** @internal */
     public setAxisSize(): void {
         const chart = this.chart;
 

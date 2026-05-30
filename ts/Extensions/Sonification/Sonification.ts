@@ -1,12 +1,14 @@
 /* *
  *
- *  (c) 2009-2025 Øystein Moseng
+ *  (c) 2009-2026 Highsoft AS
+ *  Author: Øystein Moseng
  *
  *  Sonification module.
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -35,14 +37,6 @@ const {
     defaultOptions,
     getOptions
 } = D;
-import U from '../../Core/Utilities.js';
-const {
-    addEvent,
-    extend,
-    fireEvent,
-    merge,
-    pick
-} = U;
 import H from '../../Core/Globals.js';
 const {
     doc,
@@ -55,27 +49,89 @@ import SonificationSpeaker from './SonificationSpeaker.js';
 import SynthPatch from './SynthPatch.js';
 import InstrumentPresets from './InstrumentPresets.js';
 import timelineFromChart from './TimelineFromChart.js';
+import {
+    addEvent,
+    extend,
+    fireEvent,
+    internalClearTimeout,
+    merge,
+    pick
+} from '../../Shared/Utilities.js';
 
 
 declare module '../../Core/Chart/ChartBase' {
     interface ChartBase {
+        /**
+         * Sonification capabilities for the chart.
+         *
+         * @requires modules/sonification
+         */
         sonification?: Sonification;
+        /**
+         * Play a sonification of a chart.
+         *
+         * @param onEnd
+         * Callback to call after play completed.
+         *
+         * @requires modules/sonification
+         */
         sonify: (onEnd?: globalThis.Sonification.ChartCallback) => void;
+        /**
+         * Play/pause sonification of a chart.
+         *
+         * @param reset
+         * Reset the playing cursor after play completed.
+         * @param onEnd
+         * Callback to call after play completed.
+         *
+         * @requires modules/sonification
+         */
         toggleSonify: (
             reset?: boolean,
             onEnd?: globalThis.Sonification.ChartCallback
         ) => void;
+        /**
+         * @internal
+         */
         updateSonificationEnabled: () => void;
     }
 }
 declare module '../../Core/Series/SeriesBase' {
     interface SeriesBase {
+        /**
+         * Play a sonification of a series.
+         *
+         * @function Highcharts.Series#sonify
+         * @param {Highcharts.SonificationChartEventCallback} [onEnd]
+         * Callback to call after play completed
+         *
+         * @requires modules/sonification
+         */
         sonify: (onEnd?: globalThis.Sonification.ChartCallback) => void;
     }
 }
 declare module '../../Core/Series/PointBase' {
     interface PointBase {
-        sonify: () => void;
+        /**
+         * Play a sonification of a point.
+         *
+         * @param onEnd
+         * Callback to call after play completed.
+         *
+         * @requires modules/sonification
+         */
+        sonify: (onEnd?: globalThis.Sonification.ChartCallback) => void;
+    }
+}
+
+declare module '../../Core/GlobalsBase' {
+    interface GlobalsBase {
+        /**
+         * Global Sonification classes and objects.
+         *
+         * @requires modules/sonification
+         */
+        sonification: Sonification.GlobalObject;
     }
 }
 
@@ -98,34 +154,43 @@ declare module '../../Core/Series/PointBase' {
  * @param {Highcharts.Chart} chart The chart to tie the sonification to
  */
 class Sonification {
+    /** @internal */
+    private chart: Chart;
     /**
      * Used for testing when working audio is not needed, but we want
      * synchronous timeline calculation.
-     * @private
+     * @internal
      */
     forceReady?: boolean;
     /**
      * Used for testing, updated on timeline creation
-     * @private
+     * @internal
      */
     propMetrics?: PropMetrics;
     /**
      * The internal SonificationTimeline, accessed for more advanced
      * functionality & testing
-     * @private
+     * @internal
      */
     timeline?: SonificationTimeline;
 
-    // Internal props
+    /** @internal */
     private unbindKeydown: Function;
+    /** @internal */
     private audioContext?: AudioContext;
+    /** @internal */
     private retryContextCounter = 0;
+    /** @internal */
     private lastUpdate = 0;
+    /** @internal */
     private scheduledUpdate?: number;
+    /** @internal */
     private audioDestination?: AudioDestinationNode;
+    /** @internal */
     private boundaryInstrument?: SynthPatch;
 
-    constructor(private chart: Chart) {
+    constructor(chart: Chart) {
+        this.chart = chart;
         this.unbindKeydown = addEvent(
             doc, 'keydown',
             function (e: KeyboardEvent): void {
@@ -421,7 +486,7 @@ class Sonification {
 
     /**
      * Implementation of chart.sonify
-     * @private
+     * @internal
      */
     sonifyChart(
         resetAfter?: boolean, onEnd?: globalThis.Sonification.ChartCallback
@@ -440,7 +505,7 @@ class Sonification {
 
     /**
      * Implementation of series.sonify
-     * @private
+     * @internal
      */
     sonifySeries(
         series: Series, resetAfter?: boolean,
@@ -465,7 +530,7 @@ class Sonification {
 
     /**
      * Implementation of point.sonify
-     * @private
+     * @internal
      */
     sonifyPoint(
         point: Point, onEnd?: globalThis.Sonification.ChartCallback
@@ -487,7 +552,7 @@ class Sonification {
     /**
      * Set the overall/master volume for the sonification.
      * Usually handled through chart update.
-     * @private
+     * @internal
      */
     setMasterVolume(vol: number): void {
         if (this.timeline) {
@@ -498,7 +563,7 @@ class Sonification {
 
     /**
      * Destroy the sonification capabilities
-     * @private
+     * @internal
      */
     destroy(): void {
         this.unbindKeydown();
@@ -522,7 +587,7 @@ class Sonification {
      * automatically. Note that the [sonification.updateInterval](https://api.highcharts.com/highcharts/sonification.updateInterval)
      * option can stop updates from happening in rapid succession, including
      * manual calls to this function.
-     * @private
+     * @internal
      */
     update(): void {
         const sOpts = this.chart.options && this.chart.options.sonification;
@@ -534,7 +599,7 @@ class Sonification {
         const now = Date.now(),
             updateInterval = sOpts.updateInterval;
         if (now - this.lastUpdate < updateInterval && !this.forceReady) {
-            clearTimeout(this.scheduledUpdate);
+            internalClearTimeout(this.scheduledUpdate);
             this.scheduledUpdate = setTimeout(
                 this.update.bind(this), updateInterval / 2
             );
@@ -569,7 +634,7 @@ class Sonification {
     /**
      * Only continue if sonification enabled. If audioContext is
      * suspended, retry up to 20 times with a small delay.
-     * @private
+     * @internal
      */
     private ready(whenReady: () => void): boolean {
         if (
@@ -604,7 +669,7 @@ class Sonification {
 
     /**
      * Call beforePlay event handler if exists
-     * @private
+     * @internal
      */
     private beforePlay(): void {
         const opts = this.chart.options.sonification,
@@ -617,7 +682,7 @@ class Sonification {
 
     /**
      * Initialize the builtin boundary hit instrument
-     * @private
+     * @internal
      */
     private initBoundaryInstrument(): void {
         if (!this.boundaryInstrument) {
@@ -635,7 +700,7 @@ class Sonification {
 
     /**
      * The default boundary hit sound
-     * @private
+     * @internal
      */
     private defaultBoundaryHit(): void {
         if (this.boundaryInstrument) {
@@ -649,10 +714,47 @@ class Sonification {
 namespace Sonification {
 
     const composedClasses: Array<Function> = [];
+    /**
+     * Collection of Sonification classes and objects.
+     *
+     * @requires modules/sonification
+     */
+    export interface GlobalObject {
+        /**
+         * SynthPatch presets.
+         */
+        InstrumentPresets?: typeof import('./InstrumentPresets').default;
+        /**
+         * Musical scale presets.
+         */
+        Scales?: typeof import('./Scales').default;
+        /**
+         * SynthPatch class.
+         */
+        SynthPatch?: typeof SynthPatch;
+        /**
+         * SonificationInstrument class.
+         */
+        SonificationInstrument?: typeof SonificationInstrument;
+        /**
+         * SonificationSpeaker class.
+         */
+        SonificationSpeaker?: typeof SonificationSpeaker;
+        /**
+         * SonificationTimeline class.
+         * @internal
+         */
+        SonificationTimeline?: typeof SonificationTimeline;
+        /**
+         * Sonification class.
+         * @internal
+         */
+        Sonification?: typeof Sonification;
+    }
 
     /**
      * Update sonification object on chart.
-     * @private
+     * @internal
      */
     function updateSonificationEnabled(this: Chart): void {
         const sonification = this.sonification,
@@ -674,7 +776,7 @@ namespace Sonification {
 
     /**
      * Destroy with chart.
-     * @private
+     * @internal
      */
     function chartOnDestroy(this: Chart): void {
         if (this && this.sonification) {
@@ -685,7 +787,7 @@ namespace Sonification {
 
     /**
      * Update on render
-     * @private
+     * @internal
      */
     function chartOnRender(this: Chart): void {
         if (this.updateSonificationEnabled) {
@@ -696,7 +798,7 @@ namespace Sonification {
 
     /**
      * Update
-     * @private
+     * @internal
      */
     function chartOnUpdate(this: Chart, e: { options: Options }): void {
         const newOptions = e.options.sonification;
@@ -709,7 +811,7 @@ namespace Sonification {
 
     /**
      * Compose
-     * @private
+     * @internal
      */
     export function compose(
         ChartClass: typeof Chart,
@@ -812,6 +914,7 @@ merge(
  *
  * */
 
+/** @internal */
 export default Sonification;
 
 

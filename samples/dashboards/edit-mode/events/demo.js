@@ -51,5 +51,12 @@ Dashboards.board('container', {
 
     addEvent(editMode, 'layoutChanged', e => {
         console.log('Layout Changed', e);
+        if (e.type === 'cellDestroyed') {
+            console.log('Cell Destroyed', e);
+        }
+        if (e.type === 'rowDestroyed') {
+            console.log('Row Destroyed', e);
+        }
     });
+
 });

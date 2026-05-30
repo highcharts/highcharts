@@ -14,12 +14,14 @@ body {
         sans-serif;
 }
 
-.hcg-theme-default {
-    --hcg-column-border-width: 1px;
-    --hcg-header-column-border-width: 1px;
+.demo {
+    display: grid;
+    gap: 20px;
+    padding: 16px;
 }
 
-#container {
-    height: 250px;
-    padding: 8px;
+.grid-block {
+    border: 1px solid #6663;
+    border-radius: 8px;
+    padding: 12px;
 }

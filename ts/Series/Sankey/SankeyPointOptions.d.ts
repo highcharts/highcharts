@@ -2,11 +2,13 @@
  *
  *  Sankey diagram module
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Hønsi
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -18,6 +20,7 @@
 
 import type ColorType from '../../Core/Color/ColorType';
 import type ColumnPointOptions from '../Column/ColumnPointOptions';
+import type { PointDataLabelOptionsModifier } from '../../Core/Series/DataLabel';
 import type SankeyDataLabelOptions from './SankeyDataLabelOptions';
 import type NodesComposition from '../NodesComposition';
 
@@ -35,7 +38,7 @@ export interface SankeyPointOptions extends ColumnPointOptions, NodesComposition
      * applies to the points, so when setting a specific link color, consider
      * setting the `fillOpacity` to 1.
      *
-     * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @type {Highcharts.ColorType}
      *
      * @product highcharts
      */
@@ -46,7 +49,10 @@ export interface SankeyPointOptions extends ColumnPointOptions, NodesComposition
     /**
      * @product highcharts
      */
-    dataLabels?: (SankeyDataLabelOptions|Array<SankeyDataLabelOptions>);
+    dataLabels?: (
+        SankeyPointDataLabelOptions |
+        Array<SankeyPointDataLabelOptions>
+    );
 
     /**
      * The node that the link runs from.
@@ -84,6 +90,9 @@ export interface SankeyPointOptions extends ColumnPointOptions, NodesComposition
     width?: number;
 
 }
+
+export type SankeyPointDataLabelOptions =
+    SankeyDataLabelOptions & PointDataLabelOptionsModifier;
 
 /* *
  *

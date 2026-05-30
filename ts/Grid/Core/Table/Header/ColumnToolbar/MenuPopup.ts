@@ -2,14 +2,15 @@
  *
  *  Grid Menu Popup class
  *
- *  (c) 2020-2025 Highsoft AS
+ *  (c) 2020-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
- *  - Dawid Dragula
+ *  - Dawid Draguła
  *
  * */
 
@@ -70,12 +71,13 @@ class MenuPopup extends ContextMenu {
 
     protected override renderContent(): void {
         const lang = this.grid.options?.lang || {};
-        const columnOptions = this.button.toolbar?.column.options || {};
-        const filteringEnabled = (
-            columnOptions.filtering?.enabled &&
-            !columnOptions.filtering.inline
-        );
-        const sortingEnabled = columnOptions.sorting?.sortable;
+        const column = this.button.toolbar?.column;
+        const columnOptions = column?.options || {};
+        const filteringEnabled = !!column &&
+            this.grid.columnPolicy.isColumnFilteringEnabled(column.id) &&
+            !columnOptions.filtering?.inline;
+        const sortingEnabled = !!column &&
+            this.grid.columnPolicy.isColumnSortingEnabled(column.id);
 
         this.addHeader(
             this.button.toolbar?.column.header?.value || '',

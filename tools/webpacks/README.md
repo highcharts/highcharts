@@ -65,7 +65,9 @@ Circular dependencies must be avoided.
  *
  * (c) 2009-2025 Highsoft AS
  *
- * License: www.highcharts.com/license
+ * Integration of this software requires a license:
+ * - For commercial use, see www.highcharts.com/license
+ * - For non-commercial, see www.highcharts.com/license-eula
  */
 'use strict';
 import Highcharts from '../../Core/Globals.js';
@@ -97,7 +99,9 @@ This helps Webpack to make the correct decision when to bundle the code and when
  *
  * (c) 2009-2025 Highsoft AS
  *
- * License: www.highcharts.com/license
+ * Integration of this software requires a license:
+ * - For commercial use, see www.highcharts.com/license
+ * - For non-commercial, see www.highcharts.com/license-eula
  */
 'use strict';
 import Highcharts from '../../Core/Globals.js';
@@ -119,7 +123,9 @@ export default Highcharts;
  *
  * (c) 2009-2025 Highsoft AS
  *
- * License: www.highcharts.com/license
+ * Integration of this software requires a license:
+ * - For commercial use, see www.highcharts.com/license
+ * - For non-commercial, see www.highcharts.com/license-eula
  */
 'use strict';
 import Highcharts from '../../Core/Globals.js';

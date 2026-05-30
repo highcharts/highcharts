@@ -2,14 +2,15 @@
  *
  *  Time Input Cell Content class
  *
- *  (c) 2020-2025 Highsoft AS
+ *  (c) 2020-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
- *  - Dawid Dragula
+ *  - Dawid Draguła
  *
  * */
 
@@ -22,7 +23,7 @@
  * */
 
 import type { EditModeContent } from '../../CellEditing/CellEditMode.js';
-import type TimeInputRenderer from '../Renderers/TimeInputRenderer.js';
+import type { TimeInputRendererOptions } from '../Renderers/TimeInputRenderer.js';
 
 import DateInputContentBase from './DateInputContentBase.js';
 
@@ -38,7 +39,7 @@ import DateInputContentBase from './DateInputContentBase.js';
  */
 class TimeInputContent extends DateInputContentBase implements EditModeContent {
 
-    public override options!: TimeInputRenderer.Options;
+    public override options!: TimeInputRendererOptions;
 
     protected override getInputType(): 'time' {
         return 'time';

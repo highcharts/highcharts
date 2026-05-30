@@ -1,10 +1,12 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Hønsi
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -16,13 +18,14 @@
 
 import type { AlignValue } from '../../Core/Renderer/AlignObject';
 import type ColorType from '../../Core/Color/ColorType';
-import type ColumnSeriesOptions from '../Column/ColumnSeriesOptions';
+import type {
+    ColumnSeriesOptions,
+    ColumnSeriesTooltipOptions
+} from '../Column/ColumnSeriesOptions';
 import type CSSObject from '../../Core/Renderer/CSSObject';
 import type FlagsPointOptions from './FlagsPointOptions';
-import type FlagsSeries from './FlagsSeries';
 import type { FlagsShapeValue } from './FlagsPointOptions';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
-import type TooltipOptions from '../../Core/TooltipOptions';
 
 /* *
  *
@@ -79,7 +82,7 @@ export interface FlagsSeriesOptions extends ColumnSeriesOptions {
     /**
      * The fill color for the flags.
      *
-     * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @type {Highcharts.ColorType}
      *
      * @product highstock
      */
@@ -101,7 +104,7 @@ export interface FlagsSeriesOptions extends ColumnSeriesOptions {
      * In styled mode, the stroke is set in the
      * `.highcharts-flag-series.highcharts-point` rule.
      *
-     * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @type {Highcharts.ColorType}
      *
      * @default #000000
      *
@@ -175,7 +178,7 @@ export interface FlagsSeriesOptions extends ColumnSeriesOptions {
      */
     stackDistance?: number;
 
-    states?: SeriesStatesOptions<FlagsSeries>;
+    states?: SeriesStatesOptions<FlagsSeriesOptions>;
 
     /**
      * The text styles of the flag.
@@ -299,14 +302,27 @@ export interface FlagsSeriesOptions extends ColumnSeriesOptions {
      * value, so the tooltip rather displays the `text` option for each
      * point.
      *
-     * @extends plotOptions.series.tooltip
-     *
-     * @excluding changeDecimals, valueDecimals, valuePrefix, valueSuffix
-     *
      * @product highstock
      */
-    tooltip?: Partial<TooltipOptions>;
+    tooltip?: FlagsSeriesTooltipOptions;
+}
 
+export interface FlagsSeriesTooltipOptions extends ColumnSeriesTooltipOptions {
+    /**
+     * @default '{point.text}'
+     */
+    pointFormat?: string;
+
+    /* *
+     *
+     *  Excluded
+     *
+     * */
+
+    changeDecimals?: undefined;
+    valueDecimals?: undefined;
+    valuePrefix?: undefined;
+    valueSuffix?: undefined;
 }
 
 /* *

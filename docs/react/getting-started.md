@@ -4,75 +4,116 @@
 
 The release has been tested with:
 
-* The [Highcharts npm package](https://www.npmjs.com/package/highcharts) version 11.4.8 and newer
-* [Vite](https://vite.dev/) with [plugin-react](https://www.npmjs.com/package/@vitejs/plugin-react) version 4.3.3 and newer
-* React and react-dom version 18.3.1 and newer
+- The [Highcharts npm package](https://www.npmjs.com/package/highcharts) version 12.0.0 and newer
+- [Vite](https://vite.dev/) with [plugin-react](https://www.npmjs.com/package/@vitejs/plugin-react) version 4.3.3 and newer
+- React and react-dom version 18.3.1 and newer
 
-## 1. Install Highcharts and highcharts-react from npm
+## 1. Install Highcharts React
 
-Install the Highcharts package along with our [React integration](https://www.npmjs.com/package/@highcharts/react) from npm by running:
+Install [Highcharts React](https://www.npmjs.com/package/@highcharts/react) by running:
 
 ```sh
-npm install highcharts @highcharts/react
+npm install @highcharts/react
 ```
 
-## 2. Add basic components
+> **Note:** [Highcharts](https://www.npmjs.com/package/highcharts) is included as a peer dependency and is installed automatically with npm v7+.
 
-In your JSX file, import the components that you need:
+## 2. Create your chart
 
-```jsx
-import {
-    Chart,
-    Series,
-    Title
-} from '@highcharts/react';
-```
+Start by creating a simple chart using a series component:
 
-## 3. Create your chart
+```tsx
+import { Chart } from "@highcharts/react";
+import { LineSeries } from "@highcharts/react/series/Line";
 
-Now, you can create a simple chart like this:
-
-```jsx
-function ChartComponent () {
+export default function LineChart() {
   return (
     <Chart>
-      <Title>Line chart</Title>
-      <Series type="line" data={[1, 2, 3]} />
+      <LineSeries data={[3, 4, 1, 5, 2]} />
     </Chart>
-  )
+  );
 }
 ```
 
-## 4. Loading modules (optional)
+## 3. Customize your chart
 
-If you wish to load additional Highcharts modules, use the `setHighcharts` function:
+Highcharts React provides dedicated React components for chart elements and modules to customize your chart.
 
-```jsx
-import { Chart, setHighcharts } from '@highcharts/react';
+### Chart elements
 
-import Highcharts from 'highcharts/highcharts';
-import 'highcharts/modules/exporting';
-import 'highcharts/modules/accessibility';
+You can use element components to shape your chart structure:
 
-setHighcharts(Highcharts);
+```tsx
+import { Chart, Title, Legend } from "@highcharts/react";
+import { ColumnSeries } from "@highcharts/react/series/Column";
 
-export function ChartWithCustomHC () {
+export default function ColumnChart() {
   return (
-      <Chart>
-        <Series
-          type="line"
-          data={[1, 2, 3, 4, 5]}
-        />
-      </Chart>
-    );
+    <Chart options={{ chart: { className: "column-chart" } }}>
+      <Title>Column chart</Title>
+      <Legend>{"{index}: {name}"}</Legend>
+      <ColumnSeries data={[3, 4, 1, 5, 2]} name="Column series" color="red" />
+    </Chart>
+  );
 }
 ```
 
-For more in-depth information on configuring your chart, see the documentation
-for the [Chart and Series](https://www.highcharts.com/docs/react/series-and-chart-types) components,
-and [how to set options](https://www.highcharts.com/docs/react/options).
+Learn more about the concepts used:
 
+- See the [Chart](https://www.highcharts.com/docs/react/components/chart) documentation to configure your chart.
+- See the [Series types](https://www.highcharts.com/docs/react/components/series-types) documentation to work with different series types.
+- See the [Legend](https://www.highcharts.com/docs/react/components/chart-elements/legend) documentation as an example of working with chart elements.
 
 The result should look like this:
 
-<iframe src="https://www.highcharts.com/samples/embed/highcharts/react/basic" style="width: 100%; height: 800px; border: 0;" > </iframe>
+<iframe src="https://www.highcharts.com/samples/embed/highcharts/react/basic" title="Basic Highcharts React chart example"></iframe>
+
+### Modules (optional)
+
+You can use module components to load additional Highcharts modules:
+
+```tsx
+import { Chart } from "@highcharts/react";
+import { LineSeries } from "@highcharts/react/series/Line";
+import { Accessibility } from "@highcharts/react/modules/Accessibility";
+import { Exporting } from "@highcharts/react/modules/Exporting";
+
+export default function ModulesChart() {
+  return (
+    <Chart>
+      <Accessibility />
+      <Exporting />
+      <LineSeries data={[3, 4, 1, 5, 2]} />
+    </Chart>
+  );
+}
+```
+
+> **Note:** Each component automatically includes the corresponding Highcharts module.
+
+To explore modules with dedicated components, see the [Module components](https://www.highcharts.com/docs/react/components/modules/accessibility) documentation. If a module doesn't have a dedicated component, we recommend importing it directly from Highcharts using its ESM version:
+
+```tsx
+import { Chart, YAxis } from "@highcharts/react";
+import { ScatterSeries } from "@highcharts/react/series/Scatter";
+
+import "highcharts/es-modules/masters/modules/marker-clusters.src.js";
+
+export default function MarkerClustersChart() {
+  return (
+    <Chart>
+      <YAxis min={0} max={10} />
+      <ScatterSeries
+        data={[
+          [1, 4],
+          [1, 5],
+          [1, 6],
+        ]}
+        cluster={{ enabled: true }}
+      />
+    </Chart>
+  );
+}
+```
+
+> **Note:** For more information on ESM imports, see the [Bundling and tree shaking](https://www.highcharts.com/docs/react/bundling-and-tree-shaking) documentation.

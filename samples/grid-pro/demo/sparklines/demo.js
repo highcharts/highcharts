@@ -126,7 +126,7 @@ const percentageZones = [{
 
 // Create the grid with the data table and configure the columns.
 const grid = Grid.grid('container', {
-    dataTable: data,
+    data: { dataTable: data },
     rendering: {
         rows: {
             strictHeights: true
@@ -304,6 +304,7 @@ const grid = Grid.grid('container', {
                             type: 'pie'
                         },
                         series: [{
+                            innerSize: '50%',
                             data: [{
                                 name: 'Used',
                                 y: data,
@@ -400,10 +401,7 @@ async function updateInstanceStatus(rowIndex) {
     // Apply the modifiers to the data table.
     await grid.querying.proceed(true);
 
-    // Matach the data table to the presentation table.
-    grid.viewport.dataTable = grid.presentationTable;
-
-    // Load the data into the columns.
+    // Reload the column caches from the provider's presentation table.
     for (const column of grid.viewport.columns) {
         column.loadData();
     }

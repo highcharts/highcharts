@@ -2,11 +2,12 @@
  *
  *  Text Input Cell Content class
  *
- *  (c) 2020-2025 Highsoft AS
+ *  (c) 2020-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Sebastian Bochan
@@ -26,12 +27,8 @@ import type TableCell from '../../../Core/Table/Body/TableCell';
 import type NumberInputRenderer from '../Renderers/NumberInputRenderer';
 
 import CellContentPro from '../CellContentPro.js';
-import U from '../../../../Core/Utilities.js';
 import Globals from '../../../Core/Globals.js';
-
-const {
-    defined
-} = U;
+import { defined } from '../../../../Shared/Utilities.js';
 
 
 /* *

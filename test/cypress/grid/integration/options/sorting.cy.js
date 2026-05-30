@@ -1,6 +1,6 @@
 describe('Grid sorting.', () => {
     before(() => {
-        cy.visit('grid-pro/cypress/sorting-options');
+        cy.visit('grid-pro/e2e/sorting-options');
     });
 
     it('Grid should be sorted initially by price in ascending order.', () => {
@@ -9,7 +9,7 @@ describe('Grid sorting.', () => {
 
         cy.window().its('grid').then(grid => {
             expect(
-                grid.presentationTable.columns.price,
+                grid.dataProvider.getDataTable(true).columns.price,
                 'Price column should be sorted.',
             ).to.deep.equal([1.5, 2.53, 4.5, 5]);
         })
@@ -23,7 +23,7 @@ describe('Grid sorting.', () => {
 
         cy.window().its('grid').then(grid => {
             expect(
-                grid.presentationTable.columns.price,
+                grid.dataProvider.getDataTable(true).columns.price,
                 'Weight column should be sorted.',
             ).to.deep.equal([1.5, 2.53, 5, 4.5]);
         })
@@ -36,7 +36,7 @@ describe('Grid sorting.', () => {
 
         cy.window().its('grid').then(grid => {
             expect(
-                grid.presentationTable.columns.price,
+                grid.dataProvider.getDataTable(true).columns.price,
                 'Weight column should be sorted.',
             ).to.deep.equal([1.5, 2.53, 5, 4.5]);
         })
@@ -48,12 +48,15 @@ describe('Grid sorting.', () => {
 
         cy.window().its('grid').then(grid => {
             expect(
-                grid.presentationTable.columns.weight,
+                grid.dataProvider.getDataTable(true).columns.weight,
                 'Weight column should be sorted.',
             ).to.deep.equal([200, 100, 40, 0.5]);
 
             expect(
-                grid.columnOptionsMap.weight.options.sorting.order,
+                grid.columnPolicy
+                    .getIndividualColumnOptions('weight')
+                    .sorting
+                    .order,
                 'Weight column sorting options should be updated.'
             ).to.equal('desc');
         })
@@ -68,7 +71,7 @@ describe('Grid sorting.', () => {
 
         cy.window().its('grid').then(grid => {
             expect(
-                grid.presentationTable.columns.metaData,
+                grid.dataProvider.getDataTable(true).columns.metaData,
                 'Icon column should be sorted.',
             ).to.deep.equal(['a', 'd', 'b', 'c']);
         })
@@ -76,7 +79,7 @@ describe('Grid sorting.', () => {
         cy.get('th[data-column-id="icon"]').should('have.class', 'hcg-column-sorted-asc');
     });
 
-    it ('Editing a cell in sorted column should resort the table.', () => {
+    it('Editing a cell in sorted column should resort the table.', () => {
         cy.get('th[data-column-id="weight"]').click();
         cy.get('tr[data-row-index="1"] td[data-column-id="weight"]')
             .dblclick()
@@ -93,7 +96,7 @@ describe('Grid sorting.', () => {
             ).to.equal('Pears');
 
             expect(
-                grid.presentationTable.columns.weight,
+                grid.dataProvider.getDataTable(true).columns.weight,
                 'Weight column should be sorted.',
             ).to.deep.equal([0.5, 100, 200, 40000]);
         });

@@ -2,11 +2,13 @@
  *
  *  Client side exporting module
  *
- *  (c) 2015 Torstein Honsi / Oystein Moseng
+ *  (c) 2015-2026 Highsoft AS
+ *  Author: Torstein Hønsi / Øystein Moseng
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -18,7 +20,7 @@
  *
  * */
 
-import type Exporting from '../Exporting/Exporting';
+import type { Exporting } from '../Exporting/Exporting';
 import type {
     DOMElementType,
     HTMLDOMElement,
@@ -35,11 +37,10 @@ const {
     getOptions,
     setOptions
 } = D;
-import DownloadURL from '../../Shared/DownloadURL.js';
-const {
+import {
     downloadURL,
     getScript
-} = DownloadURL;
+} from '../../Shared/DownloadURL.js';
 import G from '../../Core/Globals.js';
 const {
     composed,
@@ -47,12 +48,7 @@ const {
     win
 } = G;
 import OfflineExportingDefaults from './OfflineExportingDefaults.js';
-import U from '../../Core/Utilities.js';
-const {
-    addEvent,
-    extend,
-    pushUnique
-} = U;
+import { addEvent, extend, pushUnique } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -63,9 +59,12 @@ const {
 declare module '../../Core/Chart/ChartBase' {
     interface ChartBase {
         /**
-         * Deprecated in favor of [Exporting.exportChart](https://api.highcharts.com/class-reference/Highcharts.Exporting#exportChart).
+         * Deprecated. Use
+         * [Exporting.exportChart](https://api.highcharts.com/class-reference/Highcharts.Exporting#exportChart)
+         * instead.
          *
-         * @deprecated */
+         * @deprecated 12.2.0
+         */
         exportChartLocal(
             exportingOptions?: ExportingOptions,
             chartOptions?: Options
@@ -73,9 +72,35 @@ declare module '../../Core/Chart/ChartBase' {
     }
 }
 
-declare module '../../Core/GlobalsBase.d.ts' {
+
+declare module '../../Core/GlobalsBase' {
     interface GlobalsBase {
-        Exporting: typeof Exporting
+        /**
+         * Deprecated. Use
+         * [Exporting.downloadSVG](https://api.highcharts.com/class-reference/Highcharts.Exporting#downloadSVG)
+         * instead.
+         *
+         * Get data URL to an image of an SVG and call download on it options
+         * object:
+         *
+         * - **filename:** Name of resulting downloaded file without extension.
+         * Default is `chart`.
+         * - **type:** File type of resulting download. Default is `image/png`.
+         * - **scale:** Scaling factor of downloaded image compared to source.
+         * Default is `2`.
+         * - **libURL:** URL pointing to location of dependency scripts to
+         * download on demand. Default is the `exporting.libURL` option of the
+         * global Highcharts options pointing to our server.
+         *
+         * @deprecated 11.4.4
+         *
+         * @param {string} svg
+         * The generated SVG
+         *
+         * @param {Highcharts.ExportingOptions} options
+         * The exporting options
+         */
+        downloadSVGLocal: Exporting.DownloadSVGFunction;
     }
 }
 
@@ -96,7 +121,7 @@ namespace OfflineExporting {
     /**
      * Composition function.
      *
-     * @private
+     * @internal
      * @function compose
      *
      * @param {ExportingClass} ExportingClass
@@ -186,11 +211,11 @@ namespace OfflineExporting {
         // Update with defaults of the offline exporting module
         setOptions(OfflineExportingDefaults);
 
-        // Additionaly, extend the menuItems with the offline exporting variants
+        // Additionally, extend menuItems with the offline exporting variants
         const menuItems =
             getOptions().exporting?.buttons?.contextButton?.menuItems;
-        menuItems && menuItems.push('downloadPDF');
 
+        menuItems?.push('downloadPDF');
     }
 
     /**
@@ -233,7 +258,7 @@ namespace OfflineExporting {
      * function processes the SVG, applies necessary font adjustments, converts
      * it to a PDF, and initiates the file download.
      *
-     * @private
+     * @internal
      * @async
      * @function downloadPDF
      *
@@ -281,7 +306,7 @@ namespace OfflineExporting {
      * It fetches font files (if provided in `pdfFont`), converts them to
      * base64, and registers them with jsPDF.
      *
-     * @private
+     * @internal
      * @function loadPdfFonts
      *
      * @param {SVGElement} svgElement
@@ -389,7 +414,7 @@ namespace OfflineExporting {
      * a given SVG string, applies font styles inherited from parent elements,
      * and removes text outlines and title elements to improve PDF rendering.
      *
-     * @private
+     * @internal
      * @function preparePDF
      *
      * @param {string} svg
@@ -484,7 +509,7 @@ namespace OfflineExporting {
      * Transform from PDF to SVG.
      *
      * @async
-     * @private
+     * @internal
      * @function svgToPdf
      *
      * @param {Highcharts.SVGElement} svgElement

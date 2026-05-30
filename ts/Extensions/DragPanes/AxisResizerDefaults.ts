@@ -2,13 +2,14 @@
  *
  *  Plugin for resizing axes / panes in a chart.
  *
- *  (c) 2010-2025 Highsoft AS
+ *  (c) 2010-2026 Highsoft AS
  *
  *  Author: Kacper Madej
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -18,7 +19,7 @@
  *
  * */
 
-import type AxisResizerOptions from './AxisResizerOptions';
+import type AxisOptions from '../../Core/Axis/AxisOptions';
 
 import { Palette } from '../../Core/Color/Palettes.js';
 
@@ -28,7 +29,8 @@ import { Palette } from '../../Core/Color/Palettes.js';
  *
  * */
 
-const AxisResizerDefaults: AxisResizerOptions = {
+/** @internal */
+const AxisResizerDefaults: Partial<AxisOptions> = {
     /**
      * Minimal size of a resizable axis. Could be set as a percent
      * of plot area or pixel size.
@@ -196,4 +198,5 @@ const AxisResizerDefaults: AxisResizerOptions = {
  *
  * */
 
+/** @internal */
 export default AxisResizerDefaults;

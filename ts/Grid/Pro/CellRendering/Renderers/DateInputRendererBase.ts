@@ -2,14 +2,15 @@
  *
  *  Date Input Cell Renderer Base namespace
  *
- *  (c) 2020-2025 Highsoft AS
+ *  (c) 2020-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
- *  - Dawid Dragula
+ *  - Dawid Draguła
  *
  * */
 
@@ -22,42 +23,51 @@
  *
  * */
 
-import type CellRenderer from '../CellRenderer.js';
+import type { CellRendererOptions } from '../CellRenderer.js';
 
 
 /* *
  *
- *  Namespace
+ *  Declarations
  *
  * */
 
-namespace DateInputRendererBase {
+/**
+ * Options to control the date input renderer content.
+ */
+export interface DateInputRendererBaseOptions extends CellRendererOptions {
+    /**
+     * Type of the built-in date-based input renderer.
+     */
+    type: 'dateInput' | 'dateTimeInput' | 'timeInput';
 
     /**
-     * Options to control the date input renderer content.
+     * Whether the date input is disabled.
      */
-    export interface Options extends CellRenderer.Options {
-        type: 'dateInput' | 'dateTimeInput' | 'timeInput';
-
-        /**
-         * Whether the date input is disabled.
-         */
-        disabled?: boolean;
-
-        /**
-         * Attributes to control the date input.
-         */
-        attributes?: DateInputAttributes;
-    }
+    disabled?: boolean;
 
     /**
      * Attributes to control the date input.
      */
-    export interface DateInputAttributes {
-        min?: string;
-        max?: string;
-        step?: string;
-    }
+    attributes?: DateInputAttributes;
 }
 
-export default DateInputRendererBase;
+/**
+ * Attributes to control the date input.
+ */
+export interface DateInputAttributes {
+    /**
+     * Minimum accepted value in the native input format.
+     */
+    min?: string;
+
+    /**
+     * Maximum accepted value in the native input format.
+     */
+    max?: string;
+
+    /**
+     * Step interval passed to the native input element.
+     */
+    step?: string;
+}

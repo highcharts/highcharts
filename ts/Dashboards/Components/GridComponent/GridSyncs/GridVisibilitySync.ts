@@ -1,13 +1,14 @@
 /* *
  *
- *  (c) 2009-2025 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
- *  - Dawid Dragula
+ *  - Dawid Draguła
  *
  * */
 
@@ -20,11 +21,11 @@
  *
  * */
 
-import type Sync from '../../Sync/Sync';
+import type { OptionsEntry, SyncPair } from '../../Sync/Sync';
+import type { Event as DataCursorEvent } from '../../../../Data/DataCursor';
 import type GridComponent from '../GridComponent.js';
 
 import Component from '../../Component';
-import DataCursor from '../../../../Data/DataCursor';
 
 
 /* *
@@ -33,9 +34,9 @@ import DataCursor from '../../../../Data/DataCursor';
  *
  * */
 
-const defaultOptions: Sync.OptionsEntry = {};
+const defaultOptions: OptionsEntry = {};
 
-const syncPair: Sync.SyncPair = {
+const syncPair: SyncPair = {
     emitter: void 0,
     handler: function (this: Component): (() => void) | void {
         if (
@@ -50,7 +51,7 @@ const syncPair: Sync.SyncPair = {
 
         const { board } = component;
 
-        const handleVisibilityChange = (e: DataCursor.Event): void => {
+        const handleVisibilityChange = (e: DataCursorEvent): void => {
             const cursor = e.cursor,
                 grid = component.grid;
             if (!(grid && cursor.type === 'position' && cursor.column)) {
@@ -69,7 +70,7 @@ const syncPair: Sync.SyncPair = {
                 return;
             }
 
-            const table = component.connectorHandlers?.[0]?.presentationTable;
+            const table = component.getDataTable();
 
             if (!table) {
                 return;
@@ -88,7 +89,7 @@ const syncPair: Sync.SyncPair = {
         };
 
         const unregisterCursorListeners = (): void => {
-            const table = component.connectorHandlers?.[0]?.presentationTable;
+            const table = component.getDataTable();
             const { dataCursor: cursor } = board;
 
             if (!table) {

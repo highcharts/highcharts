@@ -1,12 +1,13 @@
 /* *
  *
- *  (c) 2014-2025 Highsoft AS
+ *  (c) 2014-2026 Highsoft AS
  *
- *  Authors: Jon Arild Nygard / Oystein Moseng
+ *  Authors: Jon Arild Nygård / Øystein Moseng
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -26,8 +27,7 @@ import type CoreSeries from '../Core/Series/Series';
 import type ColorType from '../Core/Color/ColorType';
 
 import Color from '../Core/Color/Color.js';
-import U from '../Core/Utilities.js';
-const {
+import {
     extend,
     isArray,
     isNumber,
@@ -35,7 +35,7 @@ const {
     merge,
     pick,
     relativeLength
-} = U;
+} from '../Shared/Utilities.js';
 
 /* *
  *
@@ -43,7 +43,6 @@ const {
  *
  * */
 
-/* eslint-disable valid-jsdoc */
 
 /**
  * @private

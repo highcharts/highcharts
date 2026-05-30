@@ -1,10 +1,12 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Hønsi
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -16,7 +18,6 @@
 
 import type LineSeriesOptions from '../Line/LineSeriesOptions';
 import type ParetoPointOptions from './ParetoPointOptions';
-import type ParetoSeries from './ParetoSeries';
 import type { PointShortOptions } from '../../Core/Series/PointOptions';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 
@@ -80,7 +81,7 @@ interface ParetoSeriesOptions extends LineSeriesOptions {
      */
     baseSeries?: number|string;
 
-    states?: SeriesStatesOptions<ParetoSeries>;
+    states?: SeriesStatesOptions<ParetoSeriesOptions>;
 
     /**
      * Higher zIndex than column series to draw line above shapes.

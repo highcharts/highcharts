@@ -2,14 +2,15 @@
  *
  *  Date Input Cell Content class
  *
- *  (c) 2020-2025 Highsoft AS
+ *  (c) 2020-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
- *  - Dawid Dragula
+ *  - Dawid Draguła
  *  - Sebastian Bochan
  *
  * */
@@ -23,7 +24,9 @@
  * */
 
 import type { EditModeContent } from '../../CellEditing/CellEditMode.js';
-import type DateInputRenderer from '../Renderers/DateInputRenderer.js';
+import type {
+    DateInputRendererOptions
+} from '../Renderers/DateInputRenderer.js';
 
 import DateInputContentBase from './DateInputContentBase.js';
 
@@ -39,7 +42,7 @@ import DateInputContentBase from './DateInputContentBase.js';
  */
 class DateInputContent extends DateInputContentBase implements EditModeContent {
 
-    public override options!: DateInputRenderer.Options;
+    public override options!: DateInputRendererOptions;
 
     protected override getInputType(): 'date' {
         return 'date';

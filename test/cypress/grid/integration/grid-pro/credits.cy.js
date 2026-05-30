@@ -1,6 +1,6 @@
 describe('Credits.', () => {
     beforeEach(() => {
-        cy.visit('/grid-pro/cypress/credits-pro/');
+        cy.visit('grid-pro/e2e/credits-pro/');
     });
 
     it('Default credits should be displayed.', () => {

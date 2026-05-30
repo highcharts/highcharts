@@ -1,0 +1,34 @@
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-lite/css/grid-lite.css");
+
+.content-wrapper {
+    height: 200px;
+}
+
+.fixed-placeholder {
+    height: 100px;
+    width: 100px;
+    background-color: red;
+}
+
+.content-wrapper-flex {
+    display: flex;
+    flex-direction: column;
+    height: 400px;
+    overflow: hidden;
+}
+
+.overflow-hidden {
+    overflow: hidden;
+}
+
+#grid2 {
+    height: 100%;
+}
+
+#grid3 {
+    max-height: 180px;
+}
+
+#grid4 {
+    flex: 1;
+}

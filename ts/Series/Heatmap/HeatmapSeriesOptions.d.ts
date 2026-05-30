@@ -1,10 +1,12 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Hønsi
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -16,18 +18,16 @@
 
 import type ColorType from '../../Core/Color/ColorType';
 import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
-import type HeatmapSeries from './HeatmapSeries';
 import type {
     HeatmapPointMarkerOptions,
     HeatmapPointOptions
 } from './HeatmapPointOptions';
 import type { PointShortOptions } from '../../Core/Series/PointOptions';
-import type ScatterSeriesOptions from '../Scatter/ScatterSeriesOptions';
 import type {
-    SeriesStatesOptions,
-    LegendSymbolType
-} from '../../Core/Series/SeriesOptions';
-import type TooltipOptions from '../../Core/TooltipOptions';
+    ScatterSeriesOptions,
+    ScatterSeriesTooltipOptions
+} from '../Scatter/ScatterSeriesOptions';
+import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 
 /* *
  *
@@ -128,7 +128,7 @@ export interface HeatmapSeriesOptions extends ScatterSeriesOptions {
      * are set in the [colorAxis](#colorAxis), the default value is pulled from
      * the [options.colors](#colors) array.
      *
-     * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @type {Highcharts.ColorType}
      *
      * @since 4.0
      *
@@ -238,7 +238,10 @@ export interface HeatmapSeriesOptions extends ScatterSeriesOptions {
      */
     interpolation?: boolean;
 
-    legendSymbol?: LegendSymbolType;
+    /**
+     * @default 'rectangle'
+     */
+    legendSymbol?: ScatterSeriesOptions['legendSymbol'];
 
     /**
      * @excluding radius, enabledThreshold
@@ -253,7 +256,7 @@ export interface HeatmapSeriesOptions extends ScatterSeriesOptions {
      * The color applied to null points. In styled mode, a general CSS class
      * is applied instead.
      *
-     * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @type {Highcharts.ColorType}
      */
     nullColor?: ColorType;
 
@@ -285,10 +288,17 @@ export interface HeatmapSeriesOptions extends ScatterSeriesOptions {
      */
     rowsize?: number;
 
-    states?: SeriesStatesOptions<HeatmapSeries>;
+    states?: SeriesStatesOptions<HeatmapSeriesOptions>;
 
-    tooltip?: Partial<TooltipOptions>;
+    tooltip?: HeatmapSeriesTooltipOptions;
+}
 
+export interface HeatmapSeriesTooltipOptions
+    extends ScatterSeriesTooltipOptions {
+    /**
+     * @default '{point.x}, {point.y}: {point.value}<br/>'
+     */
+    pointFormat?: ScatterSeriesTooltipOptions['pointFormat'];
 }
 
 /* *

@@ -1,14 +1,15 @@
 /* *
  *
- *   (c) 2010-2025 Highsoft AS
+ *   (c) 2010-2026 Highsoft AS
  *
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *  Dynamic light/dark theme based on CSS variables
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -25,7 +26,9 @@ import type { DefaultOptions } from '../../Core/Options';
 import type Fibonacci from '../Annotations/Types/Fibonacci';
 import type Measure from '../Annotations/Types/Measure';
 
+import Chart from '../../Core/Chart/Chart.js';
 import D from '../../Core/Defaults.js';
+import { addEvent } from '../../Shared/Utilities.js';
 const { setOptions } = D;
 
 /* *
@@ -1030,10 +1033,27 @@ namespace DynamicDefaultTheme {
         const style = document.createElement('style');
         style.nonce = 'highcharts';
         style.innerText = styleSheet;
+        style.id = 'highcharts-adaptive-theme';
         document.getElementsByTagName('head')[0].appendChild(style);
 
         // Apply the theme
         setOptions(options);
+
+        // Copy it over to the shadow DOM of each chart (#23967)
+        addEvent(Chart, 'afterGetContainer', function (): void {
+            const shadowRoot = (
+                this.container
+                    .getRootNode() as DocumentFragment & { host?: Element }
+            ).host?.shadowRoot;
+
+            if (
+                shadowRoot &&
+                !shadowRoot.getElementById('highcharts-adaptive-theme')
+            ) {
+                const adaptiveStyle = style.cloneNode(true) as HTMLStyleElement;
+                shadowRoot.appendChild(adaptiveStyle);
+            }
+        });
     }
 
 }

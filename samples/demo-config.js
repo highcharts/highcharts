@@ -23,6 +23,7 @@ module.exports = {
             'Gauges',
             'Heat and tree maps',
             'Trees and networks',
+            'Data',
             'More chart types'
         ],
         filter: { tags: ['Highcharts demo'] },

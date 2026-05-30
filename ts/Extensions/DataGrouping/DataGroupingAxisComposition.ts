@@ -1,10 +1,12 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Hønsi
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -21,13 +23,7 @@ import type AxisType from '../../Core/Axis/AxisType';
 import type DataGroupingOptions from './DataGroupingOptions';
 
 import DataGroupingDefaults from './DataGroupingDefaults.js';
-import U from '../../Core/Utilities.js';
-const {
-    addEvent,
-    extend,
-    merge,
-    pick
-} = U;
+import { addEvent, extend, merge, pick } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -35,6 +31,7 @@ const {
  *
  * */
 
+/** @internal */
 declare module '../../Core/Axis/AxisBase' {
     interface AxisBase {
         applyGrouping(e: PostProcessDataEvent): void;
@@ -46,6 +43,7 @@ declare module '../../Core/Axis/AxisBase' {
     }
 }
 
+/** @internal */
 export interface PostProcessDataEvent {
     hasExtremesChanged?: boolean;
 }
@@ -93,15 +91,12 @@ function applyGrouping(
         if (series.groupPixelWidth) {
             series.hasProcessed = true; // #2692
         }
-        // Fire independing on series.groupPixelWidth to always set a proper
+        // Fire independently on series.groupPixelWidth to always set a proper
         // dataGrouping state, (#16238)
         series.applyGrouping(!!e.hasExtremesChanged);
     });
 }
 
-/**
- * @private
- */
 function compose(
     AxisClass: typeof Axis
 ): void {
@@ -127,7 +122,7 @@ function compose(
 /**
  * Get the data grouping pixel width based on the greatest defined individual
  * width of the axis' series, and if whether one of the axes need grouping.
- * @private
+ * @internal
  */
 function getGroupPixelWidth(
     this: Axis
@@ -183,9 +178,9 @@ function getGroupPixelWidth(
 
 /**
  * When resetting the scale reset the hasProcessed flag to avoid taking
- * previous data grouping of neighbour series into account when determining
+ * previous data grouping of neighbor series into account when determining
  * group pixel width (#2692).
- * @private
+ * @internal
  */
 function onAfterSetScale(
     this: Axis
@@ -265,8 +260,10 @@ function setDataGrouping(
  *
  * */
 
+/** @internal */
 const DataGroupingAxisComposition = {
     compose
 };
 
+/** @internal */
 export default DataGroupingAxisComposition;

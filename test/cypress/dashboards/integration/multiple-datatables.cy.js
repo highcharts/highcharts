@@ -1,5 +1,5 @@
 describe('Multiple dataTables rendering', () => {
-    before(() => {
+    beforeEach(() => {
         cy.visit('/dashboards/cypress/multiple-datatables');
     });
     const CONNECTOR_ID = 'data-connector';
@@ -61,7 +61,7 @@ describe('Multiple dataTables rendering', () => {
             connector.components.forEach((component) => {
                 assert.deepEqual(
                     connector.dataTables[component.connectorHandlers[0].options.dataTableKey].columns,
-                    component.connectorHandlers[0].presentationTable.columns,
+                    component.getDataTable().columns,
                     'The component dataTable columns should match based on the provided data table key.'
                 );
             });

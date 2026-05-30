@@ -1,10 +1,12 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Hønsi
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -15,7 +17,6 @@
  * */
 
 import type AreaRangeSeriesOptions from '../AreaRange/AreaRangeSeriesOptions';
-import type ColumnRangeSeries from './ColumnRangeSeries';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 
 /* *
@@ -26,7 +27,7 @@ import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 
 interface ColumnRangeSeriesOptions extends AreaRangeSeriesOptions {
     minPointLength?: number;
-    states?: SeriesStatesOptions<ColumnRangeSeries>;
+    states?: SeriesStatesOptions<ColumnRangeSeriesOptions>;
 }
 
 /* *

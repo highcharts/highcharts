@@ -1,12 +1,14 @@
+// SPDX-License-Identifier: LicenseRef-Highcharts
 /**
  * @license Highcharts JS v@product.version@ (@product.date@)
  * @module highcharts/modules/treemap
  * @requires highcharts
  *
- * (c) 2014-2025 Highsoft AS
- * Authors: Jon Arild Nygard / Oystein Moseng
+ * (c) 2014-2026 Highsoft AS
+ * Authors: Jon Arild Nygård / Øystein Moseng
  *
- * License: www.highcharts.com/license
+ * A commercial license may be required depending on use,
+ * see www.highcharts.com/license
  */
 'use strict';
 import Highcharts from '../../Core/Globals.js';

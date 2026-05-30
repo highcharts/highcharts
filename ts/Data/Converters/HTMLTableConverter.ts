@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2009-2025 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Torstein Hønsi
@@ -23,15 +24,20 @@
  *
  * */
 
-import type DataEvent from '../DataEvent';
+import type {
+    DataEventDetail
+} from '../DataEvent';
 import type DataConnector from '../Connectors/DataConnector';
 import type HTMLTableConverterOptions from './HTMLTableConverterOptions';
 
 import DataConverter from './DataConverter.js';
-import DataTable from '../DataTable.js';
+import type {
+    BasicColumn as DataTableBasicColumn,
+    ColumnCollection as DataTableColumnCollection,
+    Row as DataTableRow
+} from '../DataTable.js';
 import DataConverterUtils from './DataConverterUtils.js';
-import U from '../../Core/Utilities.js';
-const { merge } = U;
+import { merge } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -166,7 +172,7 @@ class HTMLTableConverter extends DataConverter {
             htmlRows: string[] = [],
             columnsCount = columnIds.length;
 
-        const rowArray: DataTable.Row[] = [];
+        const rowArray: DataTableRow[] = [];
 
         let tableHead = '';
 
@@ -395,7 +401,7 @@ class HTMLTableConverter extends DataConverter {
      * @param {Partial<HTMLTableConverterOptions>}[options]
      * Options for the parser
      *
-     * @param {DataEvent.Detail} [eventDetail]
+     * @param {DataEventDetail} [eventDetail]
      * Custom information for pending events.
      *
      * @emits CSVDataParser#parse
@@ -404,10 +410,10 @@ class HTMLTableConverter extends DataConverter {
      */
     public parse(
         options: Partial<HTMLTableConverterOptions>,
-        eventDetail?: DataEvent.Detail
-    ): DataTable.ColumnCollection {
+        eventDetail?: DataEventDetail
+    ): DataTableColumnCollection {
         const converter = this,
-            columnsArray: DataTable.BasicColumn[] = [],
+            columnsArray: DataTableBasicColumn[] = [],
             headers: string[] = [],
             parseOptions = merge(converter.options, options),
             {

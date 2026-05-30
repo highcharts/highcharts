@@ -123,10 +123,7 @@
                 align: 'left',
                 verticalAlign: 'middle'
             },
-            animation: false,
-            tooltip: {
-                pointFormat: '{point.name}'
-            }
+            animation: false
         }]
     });
 

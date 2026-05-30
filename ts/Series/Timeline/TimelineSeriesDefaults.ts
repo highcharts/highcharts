@@ -2,13 +2,14 @@
  *
  *  Timeline Series.
  *
- *  (c) 2010-2025 Highsoft AS
+ *  (c) 2010-2026 Highsoft AS
  *
  *  Author: Daniel Studencki
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -122,7 +123,7 @@ const TimelineSeriesDefaults: TimelineSeriesOptions = {
          * @sample {highcharts} highcharts/series-timeline/connector-styles
          *         Custom connector width and color
          *
-         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @type      {Highcharts.ColorType}
          * @apioption plotOptions.timeline.dataLabels.connectorColor
          */
 
@@ -181,13 +182,9 @@ const TimelineSeriesDefaults: TimelineSeriesOptions = {
         },
 
         style: {
-            /** @internal */
             textOutline: 'none',
-            /** @internal */
             fontWeight: 'normal',
-            /** @internal */
             fontSize: '0.8em',
-            /** @internal */
             textAlign: 'left'
         },
 
@@ -260,6 +257,7 @@ const TimelineSeriesDefaults: TimelineSeriesOptions = {
  * @sample {highcharts} highcharts/series-timeline/datetime-axis
  *         Real time intervals
  *
+ * @basic
  * @type      {Array<*>}
  * @extends   series.line.data
  * @excluding marker, y

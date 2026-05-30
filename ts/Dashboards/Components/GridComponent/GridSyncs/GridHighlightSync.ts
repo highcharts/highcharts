@@ -1,13 +1,14 @@
 /* *
  *
- *  (c) 2009-2025 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
- *  - Dawid Dragula
+ *  - Dawid Draguła
  *
  * */
 
@@ -20,15 +21,15 @@
  *
  * */
 
-import type Sync from '../../Sync/Sync';
-import type DataCursor from '../../../../Data/DataCursor';
+import type { SyncPair } from '../../Sync/Sync';
+import type { Event as DataCursorEvent } from '../../../../Data/DataCursor';
 import type GridComponent from '../GridComponent.js';
 import type { GridHighlightSyncOptions } from '../GridComponentOptions';
-import type { TableCell } from '../../../Plugins/GridTypes';
+import type { TableCellEvent } from '../../../Plugins/GridTypes';
 
 import Component from '../../Component';
-import U from '../../../../Core/Utilities.js';
-const { addEvent, removeEvent } = U;
+import { hasDataTableProvider } from '../GridDataProvider.js';
+import { addEvent, removeEvent } from '../../../../Shared/Utilities.js';
 
 /* *
  *
@@ -40,7 +41,7 @@ const defaultOptions: GridHighlightSyncOptions = {
     autoScroll: false
 };
 
-const syncPair: Sync.SyncPair = {
+const syncPair: SyncPair = {
     emitter: function (this: Component): (() => void) | void {
         if (
             this.type !== 'Grid'
@@ -59,15 +60,25 @@ const syncPair: Sync.SyncPair = {
         }
 
         const { dataCursor: cursor } = board;
-        const table = this.connectorHandlers[0]?.presentationTable;
+        const table = this.getDataTable();
+        const dataProvider = grid.dataProvider;
+        const presentationTable = hasDataTableProvider(dataProvider) ?
+            dataProvider.getDataTable(true) :
+            void 0;
 
-        const onCellHover = (e: TableCell.TableCellEvent): void => {
+        const onCellHover = (e: TableCellEvent): void => {
             if (table) {
                 const cell = e.target;
+                const localIndex = cell.row.index;
+                const originalIndex =
+                    presentationTable?.getOriginalRowIndex(localIndex);
+                if (typeof originalIndex !== 'number') {
+                    return;
+                }
 
                 cursor.emitCursor(table, {
                     type: 'position',
-                    row: cell.row.id,
+                    row: originalIndex,
                     column: cell.column.id,
                     state: 'point.mouseOver' + groupKey,
                     sourceId: this.id
@@ -75,13 +86,19 @@ const syncPair: Sync.SyncPair = {
             }
         };
 
-        const onCellMouseOut = (e: TableCell.TableCellEvent): void => {
+        const onCellMouseOut = (e: TableCellEvent): void => {
             if (table) {
                 const cell = e.target;
+                const localIndex = cell.row.index;
+                const originalIndex =
+                    presentationTable?.getOriginalRowIndex(localIndex);
+                if (typeof originalIndex !== 'number') {
+                    return;
+                }
 
                 cursor.emitCursor(table, {
                     type: 'position',
-                    row: cell.row.id,
+                    row: originalIndex,
                     column: cell.column.id,
                     state: 'point.mouseOut' + groupKey,
                     sourceId: this.id
@@ -124,9 +141,9 @@ const syncPair: Sync.SyncPair = {
             return;
         }
 
-        const table = component.connectorHandlers[0]?.presentationTable;
+        const table = component.getDataTable();
 
-        const handleCursor = (e: DataCursor.Event): void => {
+        const handleCursor = (e: DataCursorEvent): void => {
             const cursor = e.cursor;
             if (
                 cursor.sourceId === component.id ||
@@ -138,12 +155,17 @@ const syncPair: Sync.SyncPair = {
             const { row, column } = cursor;
             const { grid } = component;
             const viewport = grid?.viewport;
+            const dataProvider = grid?.dataProvider;
+            const presentationTable = hasDataTableProvider(dataProvider) ?
+                dataProvider.getDataTable(true) :
+                void 0;
 
             if (row === void 0 || !viewport) {
                 return;
             }
 
-            const rowIndex = viewport.dataTable.getLocalRowIndex(row);
+            const rowIndex = presentationTable?.getLocalRowIndex(row);
+
             if (rowIndex === void 0) {
                 return;
             }
@@ -156,7 +178,7 @@ const syncPair: Sync.SyncPair = {
             grid.syncColumn(column);
         };
 
-        const handleCursorOut = (e: DataCursor.Event): void => {
+        const handleCursorOut = (e: DataCursorEvent): void => {
             const { grid } = component;
             if (grid && e.cursor.sourceId !== component.id) {
                 grid.syncColumn();

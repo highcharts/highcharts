@@ -2,14 +2,15 @@
  *
  *  Grid Cell abstract class
  *
- *  (c) 2020-2025 Highsoft AS
+ *  (c) 2020-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
- *  - Dawid Dragula
+ *  - Dawid Draguła
  *  - Sebastian Bochan
  *
  * */
@@ -22,13 +23,16 @@
  *
  * */
 
-import type DataTable from '../../../Data/DataTable';
+import type { CellType as DataTableCellType } from '../../../Data/DataTable';
+import type CSSObject from '../../../Core/Renderer/CSSObject';
 import type TableRow from './Body/TableRow';
 import type HeaderRow from './Header/HeaderRow';
 
 import Column from './Column';
 import Row from './Row';
+import Globals from '../Globals.js';
 import Templating from '../../../Core/Templating.js';
+import { fireEvent } from '../../../Shared/Utilities.js';
 
 
 /* *
@@ -62,12 +66,17 @@ abstract class Cell {
     /**
      * The raw value of the cell.
      */
-    public value: DataTable.CellType;
+    public value: DataTableCellType;
 
     /**
      * An additional, custom class name that can be changed dynamically.
      */
     private customClassName?: string;
+
+    /**
+     * Custom inline styles currently applied from user options.
+     */
+    private customStyleProperties?: string[];
 
     /**
      * Array of cell events to be removed when the cell is destroyed.
@@ -101,7 +110,12 @@ abstract class Cell {
         this.htmlElement = this.init();
         this.htmlElement.setAttribute('tabindex', '-1');
 
-        if (!this.column?.options.cells?.editMode?.enabled) {
+        if (
+            !this.column ||
+            !this.column.viewport.grid.columnPolicy.isColumnEditable(
+                this.column.id
+            )
+        ) {
             this.htmlElement.setAttribute('aria-readonly', 'true');
         }
 
@@ -120,9 +134,17 @@ abstract class Cell {
      * @internal
      */
     protected init(): HTMLTableCellElement {
-        const cell = document.createElement('td', {});
+        const isRowHeader = !!this.column?.options.cells?.rowHeader;
+        const cell = document.createElement(isRowHeader ? 'th' : 'td', {});
 
-        cell.setAttribute('role', 'gridcell');
+        cell.classList.add(Globals.getClassName('cell'));
+
+        if (isRowHeader) {
+            cell.setAttribute('scope', 'row');
+            cell.setAttribute('role', 'rowheader');
+        } else {
+            cell.setAttribute('role', 'gridcell');
+        }
 
         return cell;
     }
@@ -140,6 +162,12 @@ abstract class Cell {
         this.cellEvents.push(['keydown', (e): void => {
             this.onKeyDown(e as KeyboardEvent);
         }]);
+        this.cellEvents.push(['mouseout', (): void => {
+            this.onMouseOut();
+        }]);
+        this.cellEvents.push(['mouseover', (): void => {
+            this.onMouseOver();
+        }]);
 
         this.cellEvents.forEach((pair): void => {
             this.htmlElement.addEventListener(pair[0], pair[1]);
@@ -155,7 +183,7 @@ abstract class Cell {
      *
      * @internal
      */
-    protected abstract onClick(e: MouseEvent|KeyboardEvent): void;
+    public abstract onClick(e: MouseEvent|KeyboardEvent): void;
 
     /**
      * Handles the focus event on the cell.
@@ -176,8 +204,10 @@ abstract class Cell {
      *
      * @param e
      * Keyboard event object.
+     *
+     * @internal
      */
-    protected onKeyDown(e: KeyboardEvent): void {
+    public onKeyDown(e: KeyboardEvent): void {
         const { row, column } = this;
         if (!column) {
             return;
@@ -188,10 +218,17 @@ abstract class Cell {
 
         const getVerticalPos = (): number => {
             if ((row as TableRow).index !== void 0) {
-                return (row as TableRow).index - vp.rows[0].index;
+                const renderedRowIndex = vp.getRenderedRows()
+                    .indexOf(row as TableRow);
+
+                if (renderedRowIndex !== -1) {
+                    return renderedRowIndex;
+                }
+
+                return (row as TableRow).index - (vp.rows[0]?.index ?? 0);
             }
 
-            const level = (row as HeaderRow).level;
+            const level = (row as unknown as HeaderRow).level;
             if (!header || level === void 0) {
                 return 0;
             }
@@ -232,7 +269,7 @@ abstract class Cell {
                 return;
             }
 
-            const nextRow = vp.rows[nextVerticalDir];
+            const nextRow = vp.getRenderedRows()[nextVerticalDir];
             if (nextRow) {
                 nextRow.cells[column.index + dir[1]]?.htmlElement.focus();
             }
@@ -240,11 +277,38 @@ abstract class Cell {
     }
 
     /**
+     * Handles the mouse over event on the cell.
+     * @internal
+     */
+    public onMouseOver(): void {
+        const { grid } = this.row.viewport;
+        grid.hoverColumn(this.column?.id);
+
+        fireEvent(this, 'mouseOver', {
+            target: this
+        });
+    }
+
+    /**
+     * Handles the mouse out event on the cell.
+     * @internal
+     */
+    public onMouseOut(): void {
+        const { grid } = this.row.viewport;
+        grid.hoverColumn();
+
+        fireEvent(this, 'mouseOut', {
+            target: this
+        });
+    }
+
+    /**
      * Renders the cell by appending the HTML element to the row.
      */
-    public render(): void {
+    public async render(): Promise<void> {
         this.row.htmlElement.appendChild(this.htmlElement);
         this.reflow();
+        return Promise.resolve();
     }
 
     /**
@@ -300,6 +364,48 @@ abstract class Cell {
 
         element.classList.add(...newClassName.split(/\s+/g));
         this.customClassName = newClassName;
+    }
+
+    /**
+     * Sets custom inline styles from options and removes the previously applied
+     * custom styles to keep updates deterministic.
+     *
+     * @param styles
+     * A style object to apply.
+     */
+    protected setCustomStyles(styles?: CSSObject): void {
+        const elementStyle = this.htmlElement.style;
+        const getCSSPropertyName = (property: string): string => (
+            property.indexOf('-') > -1 ?
+                property :
+                property.replace(/[A-Z]/g, '-$&').toLowerCase()
+        );
+
+        if (this.customStyleProperties) {
+            for (const property of this.customStyleProperties) {
+                elementStyle.removeProperty(property);
+            }
+        }
+
+        if (!styles) {
+            delete this.customStyleProperties;
+            return;
+        }
+
+        const appliedProperties: string[] = [];
+
+        for (const key of Object.keys(styles) as Array<keyof CSSObject>) {
+            const value = styles[key];
+            if (value === void 0 || value === null) {
+                continue;
+            }
+
+            const property = getCSSPropertyName(String(key));
+            elementStyle.setProperty(property, String(value));
+            appliedProperties.push(property);
+        }
+
+        this.customStyleProperties = appliedProperties;
     }
 
     /**

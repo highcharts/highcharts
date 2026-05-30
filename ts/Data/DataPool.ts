@@ -1,10 +1,11 @@
 /* *
  *
- *  (c) 2009-2025 Highsoft AS
+ *  (c) 2009-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Sophie Bremer
@@ -21,19 +22,16 @@
  * */
 
 
-import type DataEvent from './DataEvent';
+import type {
+    DataEventCallback,
+    DataEventEmitter
+} from './DataEvent';
 import type DataConnectorType from './Connectors/DataConnectorType';
 import type { DataConnectorTypeOptions } from './Connectors/DataConnectorType';
 import type DataPoolOptions from './DataPoolOptions';
 
 import DataConnector from './Connectors/DataConnector.js';
-import U from '../Core/Utilities.js';
-const {
-    addEvent,
-    fireEvent,
-    merge
-} = U;
-
+import { addEvent, fireEvent, merge } from '../Shared/Utilities.js';
 
 /* *
  *
@@ -51,7 +49,7 @@ const {
  * @param {DataPoolOptions} options
  * Pool options with all connectors.
  */
-class DataPool implements DataEvent.Emitter<DataPool.Event> {
+class DataPool implements DataEventEmitter<Event> {
 
     /* *
      *
@@ -110,10 +108,10 @@ class DataPool implements DataEvent.Emitter<DataPool.Event> {
      * Emits an event on this data pool to all registered callbacks of the given
      * event.
      *
-     * @param {DataTable.Event} e
+     * @param {DataTableEvent} e
      * Event object with event information.
      */
-    public emit(e: DataPool.Event): void {
+    public emit(e: Event): void {
         fireEvent(this, e.type, e);
     }
 
@@ -304,9 +302,9 @@ class DataPool implements DataEvent.Emitter<DataPool.Event> {
      * @return {Function}
      * Function to unregister callback from the event.
      */
-    public on<T extends DataPool.Event['type']>(
+    public on<T extends Event['type']>(
         type: T,
-        callback: DataEvent.Callback<this, Extract<DataPool.Event, {
+        callback: DataEventCallback<this, Extract<Event, {
             type: T
         }>>
     ): Function {
@@ -314,13 +312,31 @@ class DataPool implements DataEvent.Emitter<DataPool.Event> {
     }
 
 
+    public setConnectorOptions(
+        options: DataConnectorTypeOptions,
+        update?: boolean
+    ): void;
+
+    public setConnectorOptions(
+        options: DataConnectorTypeOptions,
+        update: true
+    ): Promise<void>;
+
+
     /**
      * Sets connector options under the specified `options.id`.
      *
-     * @param options
+     * @param {object} options
      * Connector options to set.
+     *
+     * @param {boolean} [update]
+     * Whether to update the existing connector with the new options and reload
+     * it (`true`) or replace it with a new connector instance (`false`).
      */
-    public setConnectorOptions(options: DataConnectorTypeOptions): void {
+    public async setConnectorOptions(
+        options: DataConnectorTypeOptions,
+        update?: boolean
+    ): Promise<void> {
         const connectorsOptions = this.options.connectors;
         const connectorsInstances = this.connectors;
 
@@ -336,13 +352,22 @@ class DataPool implements DataEvent.Emitter<DataPool.Event> {
             }
         }
 
-        // TODO: Check if can be refactored
-        if (connectorsInstances[options.id]) {
-            connectorsInstances[options.id].stopPolling();
-            delete connectorsInstances[options.id];
+        let existingConnector: DataConnectorType | undefined =
+            connectorsInstances[options.id];
+
+        if (existingConnector) {
+            if (update) {
+                await existingConnector.update(options, true);
+            } else {
+                existingConnector.stopPolling();
+                existingConnector = void 0;
+                delete connectorsInstances[options.id];
+            }
         }
 
-        connectorsOptions.push(options);
+        if (!existingConnector) {
+            connectorsOptions.push(options);
+        }
 
         this.emit({
             type: 'afterSetConnectorOptions',
@@ -356,27 +381,16 @@ class DataPool implements DataEvent.Emitter<DataPool.Event> {
 
 /* *
  *
- *  Class Namespace
+ *  Declarations
  *
  * */
 
-
-namespace DataPool {
-
-    /* *
-     *
-     *  Declarations
-     *
-     * */
-
-    export interface Event {
-        type: (
-            'load' | 'afterLoad' | 'setConnectorOptions' |
-            'afterSetConnectorOptions'
-        );
-        options: DataConnectorTypeOptions;
-    }
-
+export interface Event {
+    type: (
+        'load' | 'afterLoad' | 'setConnectorOptions' |
+        'afterSetConnectorOptions'
+    );
+    options: DataConnectorTypeOptions;
 }
 
 

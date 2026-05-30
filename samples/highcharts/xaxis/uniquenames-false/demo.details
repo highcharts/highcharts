@@ -1,6 +1,4 @@
 ---
- name: Highcharts Demo
- authors:
-   - Torstein Hønsi
- js_wrap: b
+name: Demo of xAxis.uniqueNames
+js_wrap: b
 ...

@@ -2,14 +2,15 @@
  *
  *  Adjacent Resizing Mode class
  *
- *  (c) 2020-2025 Highsoft AS
+ *  (c) 2020-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
- *  - Dawid Dragula
+ *  - Dawid Draguła
  *
  * */
 
@@ -58,24 +59,25 @@ class AdjacentResizingMode extends ResizingMode {
         }
 
         const colW = resizer.columnStartWidth ?? 0;
-        const minWidth = ResizingMode.getMinWidth(column);
         const nextCol = vp.columns[column.index + 1];
 
-        const newW = Math.round(Math.max(colW + diff, minWidth) * 10) / 10;
+        const newW = Math.round(
+            ResizingMode.fitWidth(column, colW + diff) * 10
+        ) / 10;
 
         this.columnWidths[column.id] = newW;
         this.columnWidthUnits[column.id] = 0; // Always save in px
-        column.update({ width: newW }, false);
+        column.setOptions({ width: newW });
 
         if (nextCol) {
             const newNextW = this.columnWidths[nextCol.id] = Math.round(
-                Math.max(
-                    (resizer.nextColumnStartWidth ?? 0) + colW - newW,
-                    minWidth
+                ResizingMode.fitWidth(
+                    nextCol,
+                    (resizer.nextColumnStartWidth ?? 0) + colW - newW
                 ) * 10
             ) / 10;
             this.columnWidthUnits[nextCol.id] = 0; // Always save in px
-            nextCol.update({ width: newNextW }, false);
+            nextCol.setOptions({ width: newNextW });
         }
     }
 

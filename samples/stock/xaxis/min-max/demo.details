@@ -1,6 +1,4 @@
 ---
- name: Highcharts Stock Demo
- authors:
-   - Torstein Hønsi
- js_wrap: b
+name: Demo of xAxis.min and max
+js_wrap: b
 ...

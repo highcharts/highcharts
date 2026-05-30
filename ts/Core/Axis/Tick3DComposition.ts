@@ -1,12 +1,14 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Hønsi
  *
  *  Extension for 3d axes
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -24,13 +26,7 @@ import type Tick from './Tick.js';
 
 import H from '../Globals.js';
 const { composed } = H;
-import U from '../Utilities.js';
-const {
-    addEvent,
-    extend,
-    pushUnique,
-    wrap
-} = U;
+import { addEvent, extend, pushUnique, wrap } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -38,9 +34,7 @@ const {
  *
  * */
 
-/**
- * @private
- */
+/** @internal */
 function compose(
     TickClass: typeof Tick
 ): void {
@@ -57,9 +51,7 @@ function compose(
 
 }
 
-/**
- * @private
- */
+/** @internal */
 function onTickAfterGetLabelPosition(
     this: Tick,
     e: {
@@ -75,9 +67,7 @@ function onTickAfterGetLabelPosition(
     }
 }
 
-/**
- * @private
- */
+/** @internal */
 function wrapTickGetMarkPath(
     this: Tick,
     proceed: Function
@@ -110,8 +100,10 @@ function wrapTickGetMarkPath(
  *
  * */
 
+/** @internal */
 const Tick3DAdditions = {
     compose
 };
 
+/** @internal */
 export default Tick3DAdditions;

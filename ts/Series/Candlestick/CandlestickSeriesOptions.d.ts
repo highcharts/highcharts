@@ -1,10 +1,12 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Hønsi
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -14,7 +16,6 @@
  *
  * */
 
-import type CandlestickSeries from './CandlestickSeries';
 import type CandlestickPointOptions from './CandlestickPointOptions';
 import type ColorType from '../../Core/Color/ColorType';
 import type OHLCSeriesOptions from '../OHLC/OHLCSeriesOptions';
@@ -54,7 +55,7 @@ export interface CandlestickSeriesOptions extends OHLCSeriesOptions {
      * The color of the line/border of the candlestick.
      *
      * In styled mode, the line stroke can be set with the
-     * `.highcharts-candlestick-series .highcahrts-point` rule.
+     * `.highcharts-candlestick-series .highcharts-point` rule.
      *
      * @see [upLineColor](#plotOptions.candlestick.upLineColor)
      *
@@ -67,7 +68,7 @@ export interface CandlestickSeriesOptions extends OHLCSeriesOptions {
      */
     lineColor?: ColorType;
 
-    states?: SeriesStatesOptions<CandlestickSeries>;
+    states?: SeriesStatesOptions<CandlestickSeriesOptions>;
 
     /**
      * The specific line color for up candle sticks. The default is to
@@ -180,7 +181,7 @@ export interface CandlestickSeriesOptions extends OHLCSeriesOptions {
      *
      *
      * In styled mode, the line stroke width can be set with the
-     * `.highcharts-candlestick-series .highcahrts-point` rule.
+     * `.highcharts-candlestick-series .highcharts-point` rule.
      *
      * @product highstock
      */

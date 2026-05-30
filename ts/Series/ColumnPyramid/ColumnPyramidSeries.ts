@@ -1,10 +1,12 @@
 /* *
  *
- *  (c) 2010-2025 Sebastian Bochan
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Sebastian Bochan
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -24,12 +26,7 @@ import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     column: ColumnSeries
 } = SeriesRegistry.seriesTypes;
-import U from '../../Core/Utilities.js';
-const {
-    clamp,
-    merge,
-    pick
-} = U;
+import { clamp, merge, pick } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -174,7 +171,7 @@ class ColumnPyramidSeries extends ColumnSeries {
             stackTotal =
                 (threshold as any) + ((point.total || point.y) as any);
 
-            // Overwrite stacktotal (always 100 / -100)
+            // Overwrite stackTotal (always 100 / -100)
             if (options.stacking === 'percent') {
                 stackTotal =
                     (threshold as any) + ((point.y as any) < 0) ?
@@ -248,7 +245,7 @@ class ColumnPyramidSeries extends ColumnSeries {
 
             // Register shape type and arguments to be used in drawPoints
             point.shapeType = 'path';
-            point.shapeArgs = { // Args for datalabels positioning
+            point.shapeArgs = { // Args for dataLabels positioning
                 x: x1,
                 y: y1,
                 width: x2 - x1,

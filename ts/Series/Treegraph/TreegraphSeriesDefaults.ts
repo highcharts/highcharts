@@ -1,10 +1,12 @@
 /* *
  *
- *  (c) 2010-2025 Pawel Lysy Grzegorz Blachlinski
+ *  (c) 2010-2026 Highsoft AS
+ *  Authors: Paweł Lysy, Grzegorz Blachliński
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -32,7 +34,6 @@ import { Palette } from '../../Core/Color/Palettes';
  * The best examples of the dataStructures, which best reflect this chart
  * are e.g. genealogy tree or directory structure.
  *
- * TODO change back the demo path
  * @sample highcharts/demo/treegraph-chart
  *         Treegraph Chart
  *
@@ -48,7 +49,7 @@ import { Palette } from '../../Core/Color/Palettes';
  *               zones, cluster
  *
  * @product      highcharts
- * @since 10.3.0
+ * @since        10.3.0
  * @requires     modules/treemap
  * @requires     modules/treegraph
  * @optionparent plotOptions.treegraph
@@ -80,25 +81,13 @@ const TreegraphSeriesDefaults = {
     },
     link: {
         /**
-         * Modifier of the shape of the curved link. Works best for
-         * values between 0 and 1, where 0 is a straight line, and 1 is
-         * a shape close to the default one.
-         *
-         * @type      {number}
-         * @default   0.5
-         * @product   highcharts
-         * @since 10.3.0
-         * @apioption plotOptions.treegraph.link.curveFactor
-         */
-
-        /**
          * For the orthogonal link type, this defines how far down the link
          * bends. A number defines the pixel offset from the start of the link,
          * and a percentage defines the relative position on the link. For
          * example, a `bendAt` of `50%` means that the link bends in the middle.
          *
          * @type      {number|string}
-         * @since     next
+         * @since     12.5.0
          * @product   highcharts
          * @default   50%
          * @apioption plotOptions.treegraph.link.bendAt
@@ -108,24 +97,34 @@ const TreegraphSeriesDefaults = {
          * The color of the links between nodes.
          *
          * @type {Highcharts.ColorString}
-         * @private
          */
         color: Palette.neutralColor60,
+
+        cursor: 'default',
+
+        /**
+         * Modifier of the shape of the curved link. Works best for
+         * values between 0 and 1, where 0 is a straight line, and 1 is
+         * a shape close to the default one.
+         *
+         * @type      {number}
+         * @default   0.5
+         * @product   highcharts
+         * @since     10.3.0
+         * @apioption plotOptions.treegraph.link.curveFactor
+         */
+
         /**
          * The line width of the links connecting nodes, in pixels.
-         * @type {number}
-         *
-         * @private
          */
         lineWidth: 1,
+
         /**
          * Radius for the rounded corners of the links between nodes.
          * Works for the `orthogonal` link type.
-         *
-         * @private
          */
         radius: 10,
-        cursor: 'default',
+
         /**
          * Type of the link shape.
          *
@@ -134,7 +133,6 @@ const TreegraphSeriesDefaults = {
          *
          * @type {'orthogonal' | 'curved' | 'straight'}
          * @product highcharts
-         *
          */
         type: 'curved'
     },
@@ -149,7 +147,7 @@ const TreegraphSeriesDefaults = {
      * @apioption plotOptions.treegraph.levels.dataLabels
      */
     /**
-     * Options applied to collapse Button. The collape button is the
+     * Options applied to collapse Button. The collapse button is the
      * small button which indicates, that the node is collapsable.
      */
     collapseButton: {
@@ -265,7 +263,11 @@ const TreegraphSeriesDefaults = {
          * @since 10.3.0
          */
         linkTextPath: {
+            /**
+             * @default { startOffset: '50%' }
+             */
             attributes: {
+                /** @ignore */
                 startOffset: '50%'
             }
         },

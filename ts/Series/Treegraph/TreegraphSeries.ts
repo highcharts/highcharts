@@ -1,10 +1,12 @@
 /* *
  *
- *  (c) 2010-2025 Pawel Lysy Grzegorz Blachlinski
+ *  (c) 2010-2026 Highsoft AS
+ *  Authors: Paweł Lysy, Grzegorz Blachliński
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -41,16 +43,6 @@ import TreegraphNode from './TreegraphNode.js';
 import TreegraphPoint from './TreegraphPoint.js';
 import TU from '../TreeUtilities.js';
 const { getLevelOptions, getNodeWidth } = TU;
-import U from '../../Core/Utilities.js';
-const {
-    arrayMax,
-    crisp,
-    extend,
-    merge,
-    pick,
-    relativeLength,
-    splat
-} = U;
 
 import TreegraphLink from './TreegraphLink.js';
 import TreegraphLayout from './TreegraphLayout.js';
@@ -58,11 +50,21 @@ import { TreegraphSeriesLevelOptions } from './TreegraphSeriesOptions.js';
 import TreegraphSeriesDefaults from './TreegraphSeriesDefaults.js';
 import TreemapPoint from '../Treemap/TreemapPoint.js';
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
-import TextPath from '../../Extensions/TextPath.js';
-TextPath.compose(SVGElement);
+import { composeTextPath } from '../../Extensions/TextPath.js';
+import {
+    arrayMax,
+    crisp,
+    extend,
+    merge,
+    pick,
+    relativeLength,
+    splat
+} from '../../Shared/Utilities.js';
+composeTextPath(SVGElement);
+
 /* *
  *
- *  Declatarions
+ *  Declarations
  *
  * */
 
@@ -121,7 +123,7 @@ class TreegraphSeries extends TreemapSeries {
 
     public nodeList: Array<TreegraphNode> = [];
 
-    public layoutAlgorythm!: TreegraphLayout;
+    public layoutAlgorithm!: TreegraphLayout;
 
     public links: Array<TreegraphLink> = [];
 
@@ -135,7 +137,7 @@ class TreegraphSeries extends TreemapSeries {
 
     public init(): void {
         super.init.apply(this, arguments);
-        this.layoutAlgorythm = new TreegraphLayout();
+        this.layoutAlgorithm = new TreegraphLayout();
 
         // Register the link data labels in the label collector for overlap
         // detection.
@@ -378,7 +380,7 @@ class TreegraphSeries extends TreemapSeries {
         series.links = series.getLinks();
         series.setTreeValues(tree);
 
-        this.layoutAlgorythm.calculatePositions(series);
+        this.layoutAlgorithm.calculatePositions(series);
         series.layoutModifier = this.getLayoutModifiers();
 
         this.points.forEach((point): void => {
@@ -568,7 +570,7 @@ class TreegraphSeries extends TreemapSeries {
     }
 
     /**
-     * Treegraph has two separate collecions of nodes and lines,
+     * Treegraph has two separate collections of nodes and lines,
      * render dataLabels for both sets.
      */
     public drawDataLabels(): void {
@@ -883,6 +885,7 @@ export default TreegraphSeries;
  *     }]
  *  ```
  *
+ * @basic
  * @type      {Array<*>}
  * @extends   series.treemap.data
  * @product   highcharts

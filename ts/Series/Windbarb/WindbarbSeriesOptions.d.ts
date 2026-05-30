@@ -2,11 +2,13 @@
  *
  *  Wind barb series module
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Hønsi
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -16,12 +18,13 @@
  *
  * */
 
-import type ColumnSeriesOptions from '../Column/ColumnSeriesOptions';
+import type {
+    ColumnSeriesOptions,
+    ColumnSeriesTooltipOptions
+} from '../Column/ColumnSeriesOptions';
 import type PointShortOptions from '../../Core/Series/PointOptions';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
-import type TooltipOptions from '../../Core/TooltipOptions';
 import type WindbarbPointOptions from './WindbarbPointOptions';
-import type WindbarbSeries from './WindbarbSeries';
 
 /* *
  *
@@ -156,9 +159,9 @@ export interface WindbarbSeriesOptions extends ColumnSeriesOptions {
      */
     onSeries?: (string|null);
 
-    states?: SeriesStatesOptions<WindbarbSeries>;
+    states?: SeriesStatesOptions<WindbarbSeriesOptions>;
 
-    tooltip?: Partial<TooltipOptions>;
+    tooltip?: WindbarbSeriesTooltipOptions;
 
     /**
      * Pixel length of the stems.
@@ -182,6 +185,18 @@ export interface WindbarbSeriesOptions extends ColumnSeriesOptions {
      */
     yOffset?: number;
 
+}
+
+export interface WindbarbSeriesTooltipOptions extends ColumnSeriesTooltipOptions {
+    /**
+     * The default point format for the wind barb tooltip. Note the
+     * `point.beaufort` property that refers to the Beaufort wind scale.
+     * The names can be internationalized by modifying
+     * `Highcharts.seriesTypes.windbarb.prototype.beaufortNames`.
+     *
+     * @default '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.value}</b> ({point.beaufort})<br/>'
+     */
+    pointFormat?: ColumnSeriesTooltipOptions['pointFormat'];
 }
 
 /**

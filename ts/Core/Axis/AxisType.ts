@@ -1,0 +1,53 @@
+/* *
+ *
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Hønsi
+ *
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
+ *
+ *
+ * */
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type Axis from './Axis';
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+/**
+ * All possible axis types.
+ */
+export type AxisType = AxisTypeRegistry[keyof AxisTypeRegistry];
+
+/**
+ * All possible axis options.
+ */
+export type AxisTypeOptions = AxisType['options'];
+
+/**
+ * Helper interface to add axis types to `AxisType`.
+ *
+ * Use the `declare module 'Types'` pattern to overload the interface in this
+ * definition file.
+ */
+export interface AxisTypeRegistry {
+    Axis: Axis;
+}
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+export default AxisType;

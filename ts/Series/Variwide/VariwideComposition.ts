@@ -2,11 +2,13 @@
  *
  *  Highcharts variwide module
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Hønsi
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -27,12 +29,7 @@ import type Tick from '../../Core/Axis/Tick';
 import H from '../../Core/Globals.js';
 const { composed } = H;
 import VariwidePoint from './VariwidePoint.js';
-import U from '../../Core/Utilities.js';
-const {
-    addEvent,
-    pushUnique,
-    wrap
-} = U;
+import { addEvent, pushUnique, wrap } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -76,7 +73,6 @@ function compose(
 
         addEvent(AxisClass, 'afterDrawCrosshair', onAxisAfterDrawCrosshair);
         addEvent(AxisClass, 'afterRender', onAxisAfterRender);
-
         addEvent(TickClass, 'afterGetPosition', onTickAfterGetPosition);
 
         tickProto.postTranslate = tickPostTranslate;

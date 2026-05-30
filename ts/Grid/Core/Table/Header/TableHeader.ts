@@ -2,14 +2,15 @@
  *
  *  Grid TableHeader class
  *
- *  (c) 2020-2025 Highsoft AS
+ *  (c) 2020-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
- *  - Dawid Dragula
+ *  - Dawid Draguła
  *  - Sebastian Bochan
  *
  * */
@@ -103,7 +104,7 @@ class TableHeader {
     /**
      * Renders the table head content.
      */
-    public render(): void {
+    public async render(): Promise<void> {
         const vp = this.viewport;
 
         if (!vp.grid.enabledColumns) {
@@ -113,19 +114,16 @@ class TableHeader {
         // Render regular, multiple level rows.
         for (let i = 0, iEnd = this.levels; i < iEnd; i++) {
             const row = new HeaderRow(vp, i + 1); // Avoid indexing from 0
-            row.renderContent(i);
+            await Promise.resolve(row.renderContent(i));
             this.rows.push(row);
         }
 
         // Render an extra row for inline filtering.
         if (vp.columns.some((column): boolean =>
-            (
-                column.options.filtering?.enabled &&
-                column.options.filtering.inline
-            ) || false
+            vp.grid.columnPolicy.isColumnInlineFilteringEnabled(column.id)
         )) {
             const row = new FilterRow(vp);
-            row.renderContent();
+            await row.renderContent();
             this.rows.push(row);
         }
     }
@@ -203,17 +201,6 @@ class TableHeader {
             row.destroy();
         }
     }
-}
-
-
-/* *
- *
- *  Class Namespace
- *
- * */
-
-namespace TableHeader {
-
 }
 
 

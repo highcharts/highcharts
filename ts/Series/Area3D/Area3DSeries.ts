@@ -1,10 +1,12 @@
 /* *
  *
- *  (c) 2010-2025 Grzegorz Blachliński
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Grzegorz Blachliński
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -22,11 +24,7 @@ import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     line: { prototype: lineProto }
 } = SeriesRegistry.seriesTypes;
-import U from '../../Core/Utilities.js';
-const {
-    pushUnique,
-    wrap
-} = U;
+import { pushUnique, wrap } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -35,7 +33,8 @@ const {
  * */
 
 /**
- *
+ * Adds 3D behavior to the area series.
+ * @internal
  */
 function compose(
     AreaSeriesClass: typeof AreaSeries
@@ -52,7 +51,8 @@ function compose(
 }
 
 /**
- *
+ * Extends the area path with a projected bottom path in 3D charts.
+ * @internal
  */
 function wrapAreaSeriesGetGraphPath(
     this: AreaSeries,
@@ -139,8 +139,10 @@ function wrapAreaSeriesGetGraphPath(
  *
  * */
 
+/** @internal */
 const Area3DSeries = {
     compose
 };
 
+/** @internal */
 export default Area3DSeries;

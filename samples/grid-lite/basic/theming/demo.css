@@ -1,0 +1,135 @@
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/css/grid-pro.css");
+
+/* @import url("/code/grid/css/grid.css"); */
+
+:root,
+.highcharts-light {
+    --code-background: #f7f7f7;
+    --code-border: #e1e1e1;
+}
+
+.demo {
+    padding: 8px 12px;
+}
+
+.hcg-description {
+    line-height: 1.5em;
+}
+
+label {
+    display: block;
+}
+
+.table-wrapper {
+    margin-top: 50px;
+    background: #fcfcfc;
+    border: 1px solid #e8e8e8;
+    border-radius: 12px;
+    padding: 12px;
+}
+
+.highcharts-light .hcg-description code {
+    font-family: Consolas, "courier new", monospace;
+    line-height: 1em;
+    background: var(--code-background);
+    border: 1px solid var(--code-border);
+    color: var(--highcharts-neutral-color-100);
+    padding: 2px 4px;
+    border-radius: 5px;
+    display: inline-block;
+}
+
+.highcharts-light .theme-more-hover-states,
+.theme-more-hover-states {
+    --hcg-hover-opacity: 4%;
+    --hcg-row-hover-background: blue;
+    --hcg-column-hover-background: blue;
+    --hcg-column-hover-header-background: green;
+    --hcg-cell-hover-opacity: 40%;
+    --hcg-cell-hover-background: yellow;
+    --hcg-header-hover-opacity: 40%;
+    --hcg-header-hover-background: yellow;
+    --hcg-cell-sync-opacity: 80%;
+    --hcg-cell-sync-background: green;
+    --hcg-cell-sync-color: yellow;
+    --hcg-column-sync-header-opacity: 40%;
+}
+
+.highcharts-light .theme-columns,
+.theme-columns {
+    --hcg-padding: 10px;
+    --hcg-border-width: 2px;
+    --hcg-border-color: #f4e0e0;
+    --hcg-row-border-width: 0;
+    --hcg-header-row-border-width: 2px;
+    --hcg-border-radius: 5px;
+    --hcg-column-even-background: #f0f0f0;
+    --hcg-column-hover-background: #f4e0e0;
+    --hcg-cell-hover-background: #fef3f3;
+    --hcg-row-hover-color: #a25858;
+    --hcg-header-hover-background: #a25858;
+    --hcg-header-hover-color: #fff;
+}
+
+.highcharts-light .theme-opacity,
+.theme-opacity {
+    --hcg-hover-opacity: 30%;
+}
+
+.highcharts-light .theme-conditional-cells,
+.theme-conditional-cells {
+    td[data-value="Sales"] {
+        --hcg-cell-background: lightgreen;
+    }
+
+    td[data-value="Manager"] {
+        --hcg-cell-background: lightblue;
+        --hcg-row-hover-background: lightblue;
+    }
+
+    td[data-value="Katie"]::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        border: 2px dashed #b54242;
+    }
+}
+
+.highcharts-light .theme-conditional-rows,
+.theme-conditional-rows {
+    tr[data-row-index="0"] {
+        --hcg-cell-background: green;
+        --hcg-cell-color: #fff;
+        --hcg-row-hover-opacity: 30%;
+    }
+
+    tr:has(td[data-value*="Executive"]) {
+        --hcg-cell-background: blue;
+        --hcg-row-hover-background: blue;
+        --hcg-cell-color: #fff;
+    }
+}
+
+.highcharts-light .theme-conditional-columns,
+.theme-conditional-columns {
+    td:nth-of-type(1) {
+        --hcg-column-hover-background: #393939;
+        --hcg-column-hover-color: #fff;
+        --hcg-cell-hover-background: #393939;
+        --hcg-cell-hover-opacity: 80%;
+    }
+
+    td[data-column-id="Position"] {
+        --hcg-row-hover-opacity: 40%;
+        --hcg-cell-background: lightgreen;
+        --hcg-cell-hover-color: white;
+        --hcg-cell-hover-background: green;
+        --hcg-cell-hover-opacity: 100%;
+    }
+
+    th[data-column-id="Position"] {
+        --hcg-header-background: green;
+        --hcg-header-color: #fff;
+    }
+}

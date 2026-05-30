@@ -81,9 +81,9 @@ QUnit.test('Time zone with small interval (#4951)', function (assert) {
     });
 
     assert.strictEqual(
-        Object.keys(chart.xAxis[0].tickPositions.info.higherRanks).length,
+        Object.keys(chart.xAxis[0].tickPositions.info.boundaryTicks).length,
         4,
-        '4 higher ranks found'
+        '4 boundary ticks found'
     );
 
     // Reset
@@ -166,7 +166,7 @@ QUnit.test('Time zone with bigger interval (#4951)', function (assert) {
 });
 
 QUnit.test(
-    'Higher rank applied to first and last labels (#1649, #1760)',
+    'Boundary applied to first and last labels (#1649, #1760)',
     function (assert) {
         Highcharts.setOptions({
             time: {
@@ -206,15 +206,48 @@ QUnit.test(
         });
 
         assert.strictEqual(
-            Object.keys(chart.xAxis[0].tickPositions.info.higherRanks).length,
+            Object.keys(chart.xAxis[0].tickPositions.info.boundaryTicks).length,
             4,
-            '4 higher ranks found'
+            '4 boundary ticks found'
+        );
+
+        const locale = 'ar-SA';
+
+        chart.update({
+            lang: {
+                locale
+            },
+            time: {
+                locale
+            },
+            xAxis: {
+                min: null
+            },
+            series: [{
+                data: [523, 633, 467, 742, 634, 255, 135],
+                pointStart: '2016',
+                pointInterval: 1,
+                pointIntervalUnit: 'year'
+            }]
+        });
+
+        const firstTick = chart.xAxis[0].ticks[chart.xAxis[0].tickPositions[0]],
+            firstTickText = firstTick.label.element.textContent,
+            expectedText = new Intl.DateTimeFormat(locale, {
+                year: 'numeric',
+                timeZone: 'UTC'
+            }).format(new Date(chart.xAxis[0].tickPositions[0]));
+
+        assert.strictEqual(
+            firstTickText,
+            expectedText,
+            'Year tick labels should use the configured locale.'
         );
     }
 );
 
 QUnit.test(
-    'Higher rank not showing with negative time offset (#3359)',
+    'Boundary not showing with negative time offset (#3359)',
     function (assert) {
         Highcharts.setOptions({
             time: {
@@ -242,10 +275,14 @@ QUnit.test(
             ]
         });
 
+        const dayBoundaryCount = Object.values(
+            chart.xAxis[0].tickPositions.info.boundaryTicks
+        ).filter(t => t === 'day').length;
+
         assert.strictEqual(
-            Object.keys(chart.xAxis[0].tickPositions.info.higherRanks).length,
-            2,
-            '2 higher ranks found'
+            dayBoundaryCount,
+            3,
+            '3 boundary ticks with value "day" found'
         );
 
         // Reset
@@ -256,3 +293,159 @@ QUnit.test(
         });
     }
 );
+
+QUnit.test('Boundary ticks general tests, (#22231)', function (assert) {
+    const chart = Highcharts.stockChart('container', {
+        series: [{
+            type: 'line',
+            data: Array.from({ length: 50 }, () => Math.random() * 10),
+            pointInterval: 2600000000,
+            pointStart: Date.UTC(2000, 0, 1)
+        }],
+        xAxis: {
+            dateTimeLabelFormats: {
+                month: {
+                    boundary: '%Y',
+                    main: '%b'
+                },
+                year: {
+                    boundary: '%Y',
+                    main: '%Y'
+                }
+            }
+        }
+    });
+
+    let ticks = chart.xAxis[0].ticks,
+        tickPositions = chart.xAxis[0].tickPositions;
+
+    // First and second ticks on full range
+    assert.strictEqual(
+        ticks[tickPositions[0]].label.textStr,
+        '2000',
+        'First tick on full range chart should have a boundary label.'
+    );
+    assert.strictEqual(
+        tickPositions.info.boundaryTicks[tickPositions[0]],
+        'year',
+        'First tick on full range chart should have a boundary set as year.'
+    );
+    assert.strictEqual(
+        ticks[tickPositions[1]].label.textStr,
+        'Jul',
+        'Second tick on full range chart should have a main format applied.'
+    );
+
+    // Navigator ticks
+    const navigatorTickLabels =
+        Object.values(chart.xAxis[1].ticks).map(
+            tick => tick.label.textStr
+        );
+
+    assert.deepEqual(
+        navigatorTickLabels,
+        ['2000', '2001', '2002', '2003', '2004'],
+        'Navigator ticks should not be affected by boundaryTicks.'
+    );
+
+    // Ticks after scrolling
+    chart.xAxis[0].setExtremes(989297903448, 1037622041379);
+
+    ticks = chart.xAxis[0].ticks;
+    tickPositions = chart.xAxis[0].tickPositions;
+
+    assert.strictEqual(
+        ticks[tickPositions[0]].label.textStr,
+        '2001',
+        'First tick after scrolling should have a boundary label.'
+    );
+
+    chart.xAxis[0].update({
+        labels: {
+            format: '{#if (eq boundary "year")}BOUNDARY{/if}'
+        }
+    });
+
+    ticks = chart.xAxis[0].ticks;
+    tickPositions = chart.xAxis[0].tickPositions;
+
+    assert.strictEqual(
+        ticks[tickPositions[0]].label.textStr,
+        'BOUNDARY',
+        'Boundary tick should be formatted with template string.'
+    );
+});
+
+QUnit.test('Tick layout versus updates (#17393)', assert => {
+    for (let date = 8; date <= 28; date++) {
+        // Pad to two digits
+        const day = date.toString().padStart(2, '0');
+        const chart = Highcharts.chart('container', {
+            chart: {
+                width: 800
+            },
+            xAxis: {
+                type: 'datetime'
+            },
+
+            series: [{
+                data: [
+                    ['2017-01-15', 0.9557],
+                    ['2017-01-18', 0.963],
+                    // Fails from 11. through 24.
+                    [`2017-06-${day}`, 0.8914]
+                ]
+            }]
+        });
+
+        const initialTickAmount = chart.xAxis[0].tickPositions.length;
+
+        chart.series[0].points[0].update({
+            y: chart.series[0].points[0].y + 0.01
+        }, true, false);
+
+        assert.strictEqual(
+            chart.xAxis[0].tickPositions.length,
+            initialTickAmount,
+            `Tick amount should be stable for date 2017-06-${day}`
+        );
+    }
+});
+
+QUnit.test('Tick layout versus setData (#17393)', assert => {
+    for (let date = 8; date <= 28; date++) {
+        // Pad to two digits
+        const day = date.toString().padStart(2, '0');
+        const chart = Highcharts.chart('container', {
+            chart: {
+                width: 800
+            },
+            xAxis: {
+                type: 'datetime'
+            },
+
+            series: [{
+                data: [
+                    ['2017-01-15', 0.9557],
+                    ['2017-01-18', 0.963],
+                    // Fails from 11. through 24.
+                    [`2017-06-${day}`, 0.8914]
+                ]
+            }]
+        });
+
+        const initialTickAmount = chart.xAxis[0].tickPositions.length;
+
+        chart.series[0].setData([
+            ['2017-01-15', 0.9657],
+            ['2017-01-18', 0.973],
+            [`2017-06-${day}`, 0.9014]
+        ], true, false);
+
+        assert.strictEqual(
+            chart.xAxis[0].tickPositions.length,
+            initialTickAmount,
+            `Tick amount should be stable for date 2017-06-${day} after setData`
+        );
+    }
+});

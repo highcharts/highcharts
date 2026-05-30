@@ -5,7 +5,12 @@ QUnit.test(
             chart: {
                 width: 350
             },
+            xAxis: {
+                min: 0,
+                max: 2
+            },
             rangeSelector: {
+                selected: 3,
                 dropdown: 'never',
                 inputPosition: {
                     align: 'right'
@@ -25,6 +30,8 @@ QUnit.test(
                 }
             ]
         });
+
+        assert.ok(chart.legend, 'The legend exists.');
 
         assert.ok(
             chart.legend.group.element.getBoundingClientRect().top >=

@@ -50,11 +50,11 @@ function task() {
     return new Promise((resolve, reject) => {
         try {
             if (skipBuildClean) {
-                log.message('Preserving build directory (dashboards-all sequence).');
+                log.message('Preserving build directory (with-deps sequence).');
             }
 
             if (skipCodeClean) {
-                log.message('Preserving code directory (dashboards-all sequence).');
+                log.message('Preserving code directory (with-deps sequence).');
             }
 
             for (const ptd of pathsToDelete) {

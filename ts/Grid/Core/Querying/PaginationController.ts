@@ -2,11 +2,12 @@
  *
  *  Grid Pagination Controller class
  *
- *  (c) 2020-2025 Highsoft AS
+ *  (c) 2020-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Sebastian Bochan
@@ -21,6 +22,9 @@
  *
  * */
 
+import {
+    hasDataTableProvider
+} from '../Data/DataProvider.js';
 import QueryingController from './QueryingController.js';
 import RangeModifier from '../../../Data/Modifiers/RangeModifier.js';
 
@@ -47,14 +51,24 @@ class PaginationController {
     private querying: QueryingController;
 
     /**
-     * The current page.
+     * Whether the pagination is enabled.
      */
-    public currentPage?: number;
+    public enabled: boolean;
+
+    /**
+     * The current page (1-based index).
+     */
+    public currentPage: number = 1;
+
+    /**
+     * The current page size.
+     */
+    public currentPageSize: number = 10;
 
     /**
      * The number of rows before pagination.
      */
-    public totalItems?: number;
+    public totalItemsCount?: number;
 
 
     /* *
@@ -71,6 +85,7 @@ class PaginationController {
      */
     constructor(querying: QueryingController) {
         this.querying = querying;
+        this.enabled = !!querying.grid.options?.pagination?.enabled;
     }
 
 
@@ -81,13 +96,63 @@ class PaginationController {
     * */
 
     /**
-     * Sets the range options.
+     * Total number of items (rows before pagination).
+     */
+    public get totalItems(): number {
+        return this.totalItemsCount ?? 0;
+    }
+
+    /**
+     * Gets the total number of pages.
+     */
+    public get totalPages(): number {
+        const computed = this.currentPageSize > 0 ? Math.ceil(
+            this.totalItems / this.currentPageSize
+        ) : 1;
+
+        return Math.max(1, computed);
+    }
+
+    /**
+     * Clamps the current page to the valid range [1, totalPages].
+     */
+    public clampPage(): void {
+        if (this.totalItemsCount === void 0) {
+            return;
+        }
+
+        const target = Math.max(
+            1,
+            Math.min(this.currentPage, this.totalPages || 1)
+        );
+        if (this.currentPage === target) {
+            return;
+        }
+
+        this.currentPage = target;
+        this.querying.shouldBeUpdated = true;
+    }
+
+    /**
+     * Sets the page.
      *
      * @param currentPage
      * The current page.
      */
-    public setRange(currentPage: number): void {
+    public setPage(currentPage: number): void {
         this.currentPage = currentPage;
+        this.clampPage();
+        this.querying.shouldBeUpdated = true;
+    }
+
+    /**
+     * Sets the page size.
+     *
+     * @param pageSize
+     * The page size.
+     */
+    public setPageSize(pageSize: number): void {
+        this.currentPageSize = pageSize;
         this.querying.shouldBeUpdated = true;
     }
 
@@ -95,14 +160,19 @@ class PaginationController {
      * Loads range options from the grid options.
      */
     public loadOptions(): void {
-        const pagination = this.querying.grid.pagination;
+        const options = this.querying.grid.options?.pagination || {};
 
-        if (
-            pagination?.options.enabled &&
-            this.currentPage !== pagination.currentPage
-        ) {
-            this.currentPage = pagination.currentPage;
-            this.setRange(this.currentPage);
+        if (this.enabled === !options.enabled) {
+            this.enabled = !!options.enabled;
+            this.querying.shouldBeUpdated = true;
+        }
+
+        if (this.currentPageSize !== options.pageSize) {
+            this.setPageSize(options.pageSize ?? this.currentPageSize);
+        }
+
+        if (this.currentPage !== options.page) {
+            this.setPage(options.page ?? this.currentPage);
         }
     }
 
@@ -115,16 +185,17 @@ class PaginationController {
      */
     public createModifier(
         rowsCountBeforePagination: number = (
-            this.querying.grid.dataTable?.rowCount || 0
+            hasDataTableProvider(this.querying.grid.dataProvider) ?
+                this.querying.grid.dataProvider.getDataTable()?.rowCount || 0 :
+                0
         )
     ): RangeModifier | undefined {
-        const currentPage = this.currentPage || 1; // Start from page 1, not 0
-        const pageSize =
-            this.querying.grid.pagination?.currentPageSize;
-
-        if (!pageSize) {
+        if (!this.enabled) {
             return;
         }
+
+        const currentPage = this.currentPage;
+        const pageSize = this.currentPageSize;
 
         // Calculate the start index (0-based)
         const start = (currentPage - 1) * pageSize;
@@ -133,20 +204,12 @@ class PaginationController {
             rowsCountBeforePagination
         );
 
-        this.totalItems = rowsCountBeforePagination;
+        this.totalItemsCount = rowsCountBeforePagination;
 
         return new RangeModifier({
             start,
             end
         });
-    }
-
-    /**
-     * Reset the pagination controller.
-     */
-    public reset(): void {
-        delete this.currentPage;
-        this.querying.shouldBeUpdated = true;
     }
 }
 

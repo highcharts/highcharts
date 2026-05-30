@@ -2,14 +2,15 @@
  *
  *  Grid Cell Editing class.
  *
- *  (c) 2020-2025 Highsoft AS
+ *  (c) 2020-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
- *  - Dawid Dragula
+ *  - Dawid Draguła
  *  - Sebastian Bochan
  *
  * */
@@ -28,11 +29,7 @@ import { EditModeContent } from './CellEditMode.js';
 import TableCell from '../../Core/Table/Body/TableCell.js';
 import Table from '../../Core/Table/Table.js';
 import Globals from '../../Core/Globals.js';
-import U from '../../../Core/Utilities.js';
-
-const {
-    fireEvent
-} = U;
+import { fireEvent } from '../../../Shared/Utilities.js';
 
 
 /* *
@@ -139,8 +136,8 @@ class CellEditing {
 
         if (submit) {
             const validationErrors: string[] = [];
-            if (!vp.validator.validate(cell, validationErrors)) {
-                vp.validator.initErrorBox(cell, validationErrors);
+            if (!vp.validator?.validate(cell, validationErrors)) {
+                vp.validator?.initErrorBox(cell, validationErrors);
                 this.setA11yAttributes(false);
 
                 return false;
@@ -153,7 +150,7 @@ class CellEditing {
         }
 
         // Hide notification
-        this.viewport.validator.hide();
+        this.viewport.validator?.hide();
 
         // Hide input
         this.destroy();
@@ -164,16 +161,18 @@ class CellEditing {
         cell.htmlElement.focus();
 
         const isValueChanged = cell.value !== newValue;
+
         void cell.setValue(
             submit ? newValue : cell.value,
             submit && isValueChanged
-        );
+        ).then((): void => {
 
-        if (isValueChanged) {
-            fireEvent(cell, 'stoppedEditing', { submit });
-        }
+            if (isValueChanged) {
+                fireEvent(cell, 'stoppedEditing', { submit });
+            }
 
-        delete this.editedCell;
+            delete this.editedCell;
+        });
 
         return true;
     }
@@ -257,8 +256,7 @@ class CellEditing {
 
         this.containerElement = this.containerElement ||
             document.createElement('div');
-        this.containerElement.className =
-            CellEditing.classNames.cellEditingContainer;
+        this.containerElement.className = classNames.cellEditingContainer;
         this.editedCell?.htmlElement.appendChild(this.containerElement);
 
         this.editModeContent = cell.column.editModeRenderer?.render(
@@ -295,23 +293,19 @@ class CellEditing {
     }
 }
 
+
 /* *
  *
- *  Namespace
+ *  Declarations
  *
  * */
 
-
-namespace CellEditing {
-
-    /**
-     * The class names used by the CellEditing functionality.
-     */
-    export const classNames = {
-        cellEditingContainer: Globals.classNamePrefix + 'cell-editing-container'
-    } as const;
-
-}
+/**
+ * The class names used by the CellEditing functionality.
+ */
+export const classNames = {
+    cellEditingContainer: Globals.classNamePrefix + 'cell-editing-container'
+} as const;
 
 
 /* *

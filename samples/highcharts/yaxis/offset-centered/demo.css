@@ -2,3 +2,7 @@
     width: 400px;
     height: 400px;
 }
+
+.highcharts-description {
+    color: red;
+}

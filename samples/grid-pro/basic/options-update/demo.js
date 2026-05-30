@@ -21,7 +21,7 @@ const initialOptions = {
 };
 
 const grid = Grid.grid('container', {
-    dataTable: {
+    data: {
         columns: {
             product: [
                 'Apples', 'Pears', 'Plums', 'Bananas', 'Oranges', 'Grapes', 'Peaches', 'Cherries', 'Strawberries', 'Blueberries',

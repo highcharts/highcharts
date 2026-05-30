@@ -1,8 +1,9 @@
 /* *
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -26,13 +27,8 @@ import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     ema: EMAIndicator
 } = SeriesRegistry.seriesTypes;
-import U from '../../../Core/Utilities.js';
-const {
-    correctFloat,
-    extend,
-    merge,
-    error
-} = U;
+import { correctFloat, extend, merge } from '../../../Shared/Utilities.js';
+import { error } from '../../../Core/Utilities.js';
 
 /* *
  *
@@ -43,7 +39,7 @@ const {
 /**
  * The PPO series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.ppo
  *
@@ -184,6 +180,7 @@ class PPOIndicator extends EMAIndicator {
  *
  * */
 
+/** @internal */
 interface PPOIndicator {
     nameBase: string;
     nameComponents: Array<string>;
@@ -201,6 +198,7 @@ extend(PPOIndicator.prototype, {
  *
  * */
 
+/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         ppo: typeof PPOIndicator;
@@ -215,6 +213,7 @@ SeriesRegistry.registerSeriesType('ppo', PPOIndicator);
  *
  * */
 
+/** @internal */
 export default PPOIndicator;
 
 /* *
@@ -228,7 +227,7 @@ export default PPOIndicator;
  * option is not specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.ppo
- * @since     7.0.0
+ * @since        7.0.0
  * @product   highstock
  * @excluding allAreas, colorAxis, dataParser, dataURL, joinBy, keys,
  *            navigatorOptions, pointInterval, pointIntervalUnit,

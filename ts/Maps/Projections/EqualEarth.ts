@@ -6,12 +6,14 @@
  *  Invented by Bojan Šavrič, Bernhard Jenny, and Tom Patterson in 2018. It is
  *  inspired by the widely used Robinson projection.
  *
- *  (c) 2020-2025 Highsoft AS
+ *  (c) 2020-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *  Authors:
- *  - Torstein Honsi
+ *  - Torstein Hønsi
  *
  * */
 

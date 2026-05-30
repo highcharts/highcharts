@@ -1,7 +1,8 @@
 import Dashboards from '../../../../code/dashboards/es-modules/masters/dashboards.src.js';
-import EditMode from '../../../../code/dashboards/es-modules/masters/modules/layout.src.js';
 import Highcharts from '../../../../code/es-modules/masters/highcharts.src.js';
 import Grid from '../../../../code/grid/es-modules/masters/grid-pro.src.js';
+
+import '../../../../code/dashboards/es-modules/masters/modules/layout.src.js';
 
 Highcharts.win.Highcharts = Highcharts;
 

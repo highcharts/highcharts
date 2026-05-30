@@ -1,6 +1,4 @@
 ---
- name: Highcharts Stock Demo
- authors:
-   - Jakub Januchta
- js_wrap: b
+name: Demo of xAxis.overscroll
+js_wrap: b
 ...

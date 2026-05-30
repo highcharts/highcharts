@@ -1,10 +1,12 @@
 /* *
  *
- *  (c) 2023 Torstein Honsi, Askel Eirik Johansson
+ *  (c) 2023-2026 Highsoft AS
+ *  Author: Torstein Hønsi, Askel Eirik Johansson
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -23,16 +25,15 @@ import type PointerEvent from '../../Core/PointerEvent';
 import type MouseWheelZoomOptions from './MouseWheelZoomOptions';
 import type DOMElementType from '../../Core/Renderer/DOMElementType';
 
-import U from '../../Core/Utilities.js';
-const {
-    addEvent,
-    isObject,
-    pick,
-    defined,
-    merge
-} = U;
-
 import NBU from '../Annotations/NavigationBindingsUtilities.js';
+import {
+    addEvent,
+    defined,
+    internalClearTimeout,
+    isObject,
+    merge,
+    pick
+} from '../../Shared/Utilities.js';
 const { getAssignedAxis } = NBU;
 
 /* *
@@ -56,9 +57,7 @@ let wheelTimer: number;
  *
  * */
 
-/**
- * @private
- */
+/** @internal */
 const optionsToObject = (
     options?: boolean|MouseWheelZoomOptions
 ): MouseWheelZoomOptions => {
@@ -71,9 +70,7 @@ const optionsToObject = (
 };
 
 
-/**
- * @private
- */
+/** @internal */
 const zoomBy = function (
     chart: Chart,
     howMuch: number,
@@ -122,7 +119,7 @@ const zoomBy = function (
 
     if (hasZoomed) {
         if (defined(wheelTimer)) {
-            clearTimeout(wheelTimer);
+            internalClearTimeout(wheelTimer);
         }
 
         // Some time after the last mousewheel event, run drop. In case any of
@@ -136,9 +133,7 @@ const zoomBy = function (
     return hasZoomed;
 };
 
-/**
- * @private
- */
+/** @internal */
 function onAfterGetContainer(this: Chart): void {
     const wheelZoomOptions = optionsToObject(this.zooming.mouseWheel);
 
@@ -192,9 +187,7 @@ function onAfterGetContainer(this: Chart): void {
 }
 
 
-/**
- * @private
- */
+/** @internal */
 function compose(
     ChartClass: typeof Chart
 ): void {
@@ -212,10 +205,12 @@ function compose(
  *
  * */
 
+/** @internal */
 const MouseWheelZoomComposition = {
     compose
 };
 
+/** @internal */
 export default MouseWheelZoomComposition;
 
 /* *

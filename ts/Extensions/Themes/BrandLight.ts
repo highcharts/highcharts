@@ -1,14 +1,15 @@
 /* *
  *
- *   (c) 2010-2025 Highsoft AS
+ *   (c) 2010-2026 Highsoft AS
  *
  *  Author: Nancy Dillon
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *  Light theme based on Highcharts brand system
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -24,9 +25,8 @@ import type { DeepPartial } from '../../Shared/Types';
 import type { DefaultOptions } from '../../Core/Options';
 
 import D from '../../Core/Defaults.js';
+import { createElement } from '../../Shared/Utilities.js';
 const { setOptions } = D;
-import U from '../../Core/Utilities.js';
-const { createElement } = U;
 
 /* *
  *

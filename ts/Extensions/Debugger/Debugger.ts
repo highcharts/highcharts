@@ -1,10 +1,12 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Hønsi
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -25,13 +27,13 @@ const { setOptions } = D;
 import ErrorMessages from './ErrorMessages.js';
 import H from '../../Core/Globals.js';
 const { composed } = H;
-import U from '../../Core/Utilities.js';
-const {
+import {
     addEvent,
     find,
     isNumber,
     pushUnique
-} = U;
+} from '../../Shared/Utilities.js';
+import { type ErrorMessageEventObject } from '../../Core/Utilities.js';
 
 /* *
  *
@@ -39,6 +41,7 @@ const {
  *
  * */
 
+/** @internal */
 declare module '../../Core/Chart/ChartBase'{
     interface ChartBase {
         errorElements?: Array<SVGElement>;
@@ -47,6 +50,17 @@ declare module '../../Core/Chart/ChartBase'{
 
 declare module '../../Core/Chart/ChartOptions'{
     interface ChartOptions {
+        /**
+         * Whether to display errors on the chart. When `false`, the errors will
+         * be shown only in the console.
+         *
+         * @sample highcharts/chart/display-errors/
+         *         Show errors on chart
+         *
+         * @since    7.0.0
+         * @default  true
+         * @requires modules/debugger
+         */
         displayErrors?: boolean;
     }
 }
@@ -82,9 +96,7 @@ const defaultOptions = {
  *
  * */
 
-/**
- * @private
- */
+/** @internal */
 function compose(
     ChartClass: typeof Chart
 ): void {
@@ -99,9 +111,7 @@ function compose(
 
 }
 
-/**
- * @private
- */
+/** @internal */
 function onChartBeforeRedraw(
     this: Chart
 ): void {
@@ -116,12 +126,10 @@ function onChartBeforeRedraw(
     delete this.errorElements;
 }
 
-/**
- * @private
- */
+/** @internal */
 function onHighchartsDisplayError(
     this: GlobalsBase,
-    e: U.ErrorMessageEventObject
+    e: ErrorMessageEventObject
 ): void {
     // Display error on the chart causing the error or the last created chart.
     const chart = (
@@ -216,8 +224,10 @@ function onHighchartsDisplayError(
  *
  * */
 
+/** @internal */
 const Debugger = {
     compose
 };
 
+/** @internal */
 export default Debugger;

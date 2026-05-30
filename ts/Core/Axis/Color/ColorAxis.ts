@@ -1,10 +1,12 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Hønsi
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -16,33 +18,33 @@
  *
  * */
 
-import type AnimationOptions from '../../Animation/AnimationOptions';
-import type AxisBase from '../AxisBase';
-import type Chart from '../../Chart/Chart.js';
-import type ColorType from '../../Color/ColorType';
+import type Chart from '../../Chart/Chart';
+import type {
+    ColorAxisDataClassOptions,
+    ColorAxisOptions
+} from './ColorAxisOptions';
 import type { DeepPartial } from '../../../Shared/Types';
 import type Fx from '../../Animation/Fx';
 import type GradientColor from '../../Color/GradientColor';
 import type Legend from '../../Legend/Legend';
 import type { LegendItemObject } from '../../Legend/LegendItem';
-import type LegendOptions from '../../Legend/LegendOptions';
-import type Point from '../../Series/Point.js';
+import type Point from '../../Series/Point';
 import type PointerEvent from '../../PointerEvent';
 import type { StatesOptionsKey } from '../../Series/StatesOptions';
 import type SVGPath from '../../Renderer/SVG/SVGPath';
+import type SVGElement from '../../Renderer/SVG/SVGElement';
+import type PositionObject from '../../Renderer/PositionObject';
 
 import Axis from '../Axis.js';
+import ColorAxisBase from './ColorAxisBase.js';
 import ColorAxisComposition from './ColorAxisComposition.js';
 import ColorAxisDefaults from './ColorAxisDefaults.js';
-import ColorAxisBase from './ColorAxisBase.js';
 import D from '../../Defaults.js';
 const { defaultOptions } = D;
-import LegendSymbol from '../../Legend/LegendSymbol.js';
 import SeriesRegistry from '../../Series/SeriesRegistry.js';
 import SeriesClass from '../../Series/Series';
 const { series: Series } = SeriesRegistry;
-import U from '../../Utilities.js';
-const {
+import {
     defined,
     extend,
     fireEvent,
@@ -51,7 +53,7 @@ const {
     merge,
     pick,
     relativeLength
-} = U;
+} from '../../../Shared/Utilities.js';
 
 /* *
  *
@@ -75,8 +77,8 @@ declare module '../../Chart/ChartBase' {
 declare module '../../../Core/Options'{
     interface Options {
         colorAxis?: (
-            DeepPartial<ColorAxis.Options>|
-            Array<DeepPartial<ColorAxis.Options>>
+            DeepPartial<ColorAxisOptions>|
+            Array<DeepPartial<ColorAxisOptions>>
         );
     }
 }
@@ -94,12 +96,6 @@ declare module '../../Series/SeriesBase' {
         colorKey?: string;
         minColorValue?: number;
         maxColorValue?: number;
-    }
-}
-
-declare module '../../Series/SeriesOptions' {
-    interface SeriesOptions {
-        colorKey?: string;
     }
 }
 
@@ -124,7 +120,7 @@ defaultOptions.colorAxis = merge(defaultOptions.xAxis, ColorAxisDefaults);
  * @param {Highcharts.ColorAxisOptions} userOptions
  * The color axis options for initialization.
  */
-class ColorAxis extends Axis implements AxisBase {
+class ColorAxis extends Axis implements ColorAxisBase {
 
     /* *
      *
@@ -132,11 +128,11 @@ class ColorAxis extends Axis implements AxisBase {
      *
      * */
 
+
+    /** @internal */
     public static defaultLegendLength: number = 200;
 
-    /**
-     * @private
-     */
+    /** @internal */
     public static keepProps: Array<string> = [
         'legendItem'
     ];
@@ -147,6 +143,8 @@ class ColorAxis extends Axis implements AxisBase {
      *
      * */
 
+
+    /** @internal */
     public static compose(
         ChartClass: typeof Chart,
         FxClass: typeof Fx,
@@ -168,12 +166,10 @@ class ColorAxis extends Axis implements AxisBase {
      *
      * */
 
-    /**
-     * @private
-     */
+    /** @internal */
     public constructor(
         chart: Chart,
-        userOptions: Partial<ColorAxis.Options>
+        userOptions: Partial<ColorAxisOptions>
     ) {
         super(chart, userOptions);
         this.init(chart, userOptions);
@@ -185,15 +181,35 @@ class ColorAxis extends Axis implements AxisBase {
      *
      * */
 
+
+    /** @internal */
     public added?: boolean;
+
+    /** @internal */
     public chart!: Chart;
+
+    /** @internal */
     public coll = 'colorAxis' as const;
-    public dataClasses!: Array<ColorAxis.DataClassesOptions>;
+
+    /** @internal */
+    public dataClasses!: Array<ColorAxisDataClassOptions>;
+
+    /** @internal */
     public legendColor?: GradientColor;
+
+    /** @internal */
     public legendItem?: LegendItemObject;
+
+    /** @internal */
     public name?: string;
-    public options!: ColorAxis.Options;
+
+    /** @internal */
+    public options!: ColorAxisOptions;
+
+    /** @internal */
     public stops!: GradientColor['stops'];
+
+    /** @internal */
     public visible: boolean = true;
 
     /* *
@@ -215,7 +231,7 @@ class ColorAxis extends Axis implements AxisBase {
      */
     public init(
         chart: Chart,
-        userOptions: Partial<ColorAxis.Options>
+        userOptions: Partial<ColorAxisOptions>
     ): void {
         const axis = this;
         const legend = chart.options.legend || {},
@@ -261,7 +277,7 @@ class ColorAxis extends Axis implements AxisBase {
 
     /**
      * Override so that ticks are not added in data class axes (#6914)
-     * @private
+     * @internal
      */
     public setTickPositions(): void {
         if (!this.dataClasses) {
@@ -270,31 +286,41 @@ class ColorAxis extends Axis implements AxisBase {
     }
 
     /**
-     * Extend the setOptions method to process extreme colors and color stops.
-     * @private
+     * Extend the setOptions method to process title, extreme colors and
+     * color stops.
+     * @internal
      */
-    public setOptions(userOptions: DeepPartial<ColorAxis.Options>): void {
+    public setOptions(userOptions: DeepPartial<ColorAxisOptions>): void {
+        const legend = this.chart.options.legend || {},
+            theme = defaultOptions.colorAxis as ColorAxisOptions,
+            layout = userOptions.layout || legend.layout || theme.layout,
+            horiz = layout !== 'vertical';
+
+        const sideSpecific = horiz ? { title: { rotation: 0 } } :
+            {
+                title: {
+                    rotation: 90,
+                    margin: 10
+                }
+            };
 
         const options = merge(
-            defaultOptions.colorAxis as ColorAxis.Options,
+            sideSpecific,
+            theme,
             userOptions,
             // Forced options
             {
                 showEmpty: false,
-                title: null,
                 visible: this.chart.options.legend.enabled &&
                     userOptions.visible !== false
             }
         );
 
         super.setOptions(options);
-
         this.options.crosshair = this.options.marker;
     }
 
-    /**
-     * @private
-     */
+    /** @internal */
     public setAxisSize(): void {
         const axis = this,
             chart = axis.chart,
@@ -324,7 +350,7 @@ class ColorAxis extends Axis implements AxisBase {
     /**
      * Override the getOffset method to add the whole axis groups inside the
      * legend.
-     * @private
+     * @internal
      */
     public getOffset(): void {
         const axis = this;
@@ -353,13 +379,6 @@ class ColorAxis extends Axis implements AxisBase {
             legend.render();
             this.chart.getMargins(true);
 
-            // If not drilling down/up
-            if (!this.chart.series.some((series): boolean | undefined =>
-                series.isDrilling
-            )) {
-                axis.isDirty = true; // Flag to fire drawChartBox
-            }
-
             // First time only
             if (!axis.added) {
                 axis.added = true;
@@ -374,7 +393,7 @@ class ColorAxis extends Axis implements AxisBase {
 
     /**
      * Create the color gradient.
-     * @private
+     * @internal
      */
     public setLegendColor(): void {
         const axis = this;
@@ -397,7 +416,7 @@ class ColorAxis extends Axis implements AxisBase {
 
     /**
      * The color axis appears inside the legend and has its own legend symbol.
-     * @private
+     * @internal
      */
     public drawLegendSymbol(
         legend: Legend,
@@ -423,6 +442,49 @@ class ColorAxis extends Axis implements AxisBase {
 
         this.setLegendColor();
 
+        let titleHeight = 0;
+        let titleWidth = 0;
+
+        if (axis.options.title?.text && !axis.axisTitle) {
+            if (!axis.axisGroup) {
+                axis.axisParent = legendItem.group;
+                axis.createGroups();
+            }
+            // --- THE SVG TRANSFORM FIX ---
+            // Provide mock dimensions so getTitlePosition returns valid numbers
+            // on Pass 1. This ensures the rotation transform succeeds, allowing
+            // getBBox() to read the true ROTATED dimensions!
+            const tempLen = axis.len,
+                tempTop = axis.top,
+                tempLeft = axis.left,
+                tempWidth = axis.width;
+
+            axis.len = horiz ? width : height;
+            axis.top = 0;
+            axis.left = 0;
+            axis.width = width;
+
+            axis.addTitle(true);
+
+            // Restore the original undefined values
+            // (setAxisSize will overwrite them later)
+            axis.len = tempLen;
+            axis.top = tempTop;
+            axis.left = tempLeft;
+            axis.width = tempWidth;
+            // -----------------------------
+        }
+
+        if (axis.axisTitle) {
+            const titleBBox = axis.axisTitle.getBBox();
+            titleHeight = titleBBox.height;
+            titleWidth = titleBBox.width;
+        }
+
+        const titleOptions = axis.options.title || {};
+        const titleMargin = axis.axisTitle ? (titleOptions.margin ?? 0) : 0;
+        const yShift = horiz ? (titleHeight + titleMargin) : 0;
+
         // Create the gradient
         if (!legendItem.symbol) {
             legendItem.symbol = this.chart.renderer.symbol('roundedRect')
@@ -434,28 +496,58 @@ class ColorAxis extends Axis implements AxisBase {
 
         legendItem.symbol.attr({
             x: 0,
-            y: (legend.baseline || 0) - 11,
+            y: (legend.baseline || 0) - 11 + yShift,
             width: width,
             height: height
         });
 
         // Set how much space this legend item takes up
-        legendItem.labelWidth = (
-            width +
-            padding +
-            (
-                horiz ?
-                    itemDistance :
-                    pick(labelOptions.x, labelOptions.distance) +
-                        (this.maxLabelLength || 0)
-            )
-        );
-        legendItem.labelHeight = height + padding + (horiz ? labelPadding : 0);
+        if (horiz) {
+            legendItem.labelWidth = Math.max(
+                width + padding + itemDistance,
+                titleWidth || 0
+            );
+            legendItem.labelHeight = height + padding + labelPadding +
+            titleHeight + titleMargin;
+        } else {
+            legendItem.labelWidth = width + padding +
+                (labelOptions.x ?? labelOptions.distance ?? 0) +
+                (this.maxLabelLength || 0) +
+                (titleWidth || 0) + titleMargin;
+
+            legendItem.labelHeight = Math.max(
+                height + padding,
+                titleHeight || 0
+            );
+        }
+    }
+
+    /**
+     * Override the title position to place it above the color bar
+     * for horizontal layouts, or outside the labels for vertical layouts.
+     * @internal
+     */
+    public getTitlePosition(axisTitle: SVGElement): PositionObject {
+        // Pass the argument down to the base class
+        const pos = super.getTitlePosition(axisTitle),
+            titleMargin = this.options.title?.margin ?? 0;
+
+        if (this.horiz && axisTitle) {
+            pos.y = this.top - titleMargin;
+        } else if (!this.horiz && axisTitle) {
+            const labelOptions = this.options.labels || {},
+                labelDistance = labelOptions.x ?? labelOptions.distance ?? 0;
+
+            pos.x = this.left + this.width + labelDistance +
+            (this.maxLabelLength || 0) + titleMargin;
+        }
+
+        return pos;
     }
 
     /**
      * Fool the legend.
-     * @private
+     * @internal
      */
     public setState(state?: StatesOptionsKey): void {
         this.series.forEach(function (series): void {
@@ -463,15 +555,11 @@ class ColorAxis extends Axis implements AxisBase {
         });
     }
 
-    /**
-     * @private
-     */
+    /** @internal */
     public setVisible(): void {
     }
 
-    /**
-     * @private
-     */
+    /** @internal */
     public getSeriesExtremes(): void {
         const axis = this;
         const series = axis.series;
@@ -608,9 +696,7 @@ class ColorAxis extends Axis implements AxisBase {
         }
     }
 
-    /**
-     * @private
-     */
+    /** @internal */
     public getPlotLinePath(
         options: Axis.PlotLinePathOptions
     ): (SVGPath|undefined) {
@@ -654,7 +740,7 @@ class ColorAxis extends Axis implements AxisBase {
      * and call {@link Highcharts.Chart#redraw} after.
      */
     public update(
-        newOptions: DeepPartial<ColorAxis.Options>,
+        newOptions: DeepPartial<ColorAxisOptions>,
         redraw?: boolean
     ): void {
         const axis = this,
@@ -682,7 +768,7 @@ class ColorAxis extends Axis implements AxisBase {
 
     /**
      * Destroy color axis legend items.
-     * @private
+     * @internal
      */
     public destroyItems(): void {
         const axis = this,
@@ -701,7 +787,10 @@ class ColorAxis extends Axis implements AxisBase {
         chart.isDirtyLegend = true;
     }
 
-    //   Removing the whole axis (#14283)
+    /**
+     * Removing the whole axis (#14283)
+     * @internal
+     */
     public destroy(): void {
         this.chart.isDirtyLegend = true;
 
@@ -724,7 +813,7 @@ class ColorAxis extends Axis implements AxisBase {
 
     /**
      * Get the legend item symbols for data classes.
-     * @private
+     * @internal
      */
     public getDataClassLegendSymbols(): Array<ColorAxis.LegendItemObject> {
         const axis = this,
@@ -779,7 +868,7 @@ class ColorAxis extends Axis implements AxisBase {
                         chart,
                         name,
                         options: {},
-                        drawLegendSymbol: LegendSymbol.rectangle,
+                        drawLegendSymbol: Series.prototype.drawLegendSymbol,
                         visible: true,
                         isDataClass: true,
 
@@ -822,7 +911,7 @@ class ColorAxis extends Axis implements AxisBase {
 
     /**
      * Get size of color axis symbol.
-     * @private
+     * @internal
      */
     public getSize(): ({
         width: number,
@@ -867,7 +956,8 @@ class ColorAxis extends Axis implements AxisBase {
  * */
 
 interface ColorAxis extends ColorAxisBase {
-    // Nothing to add
+    coll: 'colorAxis';
+    options: ColorAxisOptions;
 }
 
 extend(ColorAxis.prototype, ColorAxisBase);
@@ -886,33 +976,16 @@ namespace ColorAxis {
      *
      * */
 
-    export type DataClassesOptions = ColorAxisBase.DataClassOptions;
-
-    export interface LegendItemObject extends DataClassesOptions {
+    export interface LegendItemObject extends ColorAxisDataClassOptions {
         [key: string]: any;
         chart: Chart;
         name: string;
         options: object;
-        drawLegendSymbol: typeof LegendSymbol['rectangle'];
+        drawLegendSymbol: Function;
         visible: boolean;
         setState: Point['setState'];
         isDataClass: true;
         setVisible: Function;
-    }
-
-    export interface MarkerOptions {
-        animation?: (boolean|Partial<AnimationOptions>);
-        color?: ColorType;
-        width?: number;
-    }
-
-    export interface Options extends ColorAxisBase.Options {
-        dataClasses?: Array<DataClassesOptions>;
-        layout?: 'horizontal'|'vertical';
-        legend?: LegendOptions;
-        marker?: MarkerOptions;
-        showInLegend?: boolean;
-        labelRight?: number;
     }
 
 }

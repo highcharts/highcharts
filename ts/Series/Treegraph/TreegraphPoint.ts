@@ -1,10 +1,12 @@
 /* *
  *
- *  (c) 2010-2025 Pawel Lysy Grzegorz Blachlinski
+ *  (c) 2010-2026 Highsoft AS
+ *  Authors: Paweł Lysy, Grzegorz Blachliński
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -36,12 +38,7 @@ const {
     }
 } = SeriesRegistry;
 import TreegraphSeries from './TreegraphSeries';
-import U from '../../Core/Utilities.js';
-const {
-    addEvent,
-    fireEvent,
-    merge
-} = U;
+import { addEvent, fireEvent, merge } from '../../Shared/Utilities.js';
 
 /* *
  *

@@ -2,11 +2,12 @@
  *
  *  Grid Pro Pagination class
  *
- *  (c) 2020-2025 Highsoft AS
+ *  (c) 2020-2026 Highsoft AS
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
  *  - Sebastian Bochan
@@ -23,90 +24,86 @@
 
 import type Pagination from '../../Core/Pagination/Pagination';
 
-import Utilities from '../../../Core/Utilities.js';
 import Globals from '../../../Core/Globals.js';
-
-const { addEvent, pushUnique } = Utilities;
+import { addEvent, pushUnique } from '../../../Shared/Utilities.js';
 
 /* *
  *
- *  Class Namespace
+ *  Composition
  *
  * */
 
-namespace PaginationComposition {
-    /**
-     * Extends the pagination class with events.
-     *
-     * @param PaginationClass
-     * The class to extend.
-     *
-     */
-    export function compose(
-        PaginationClass: typeof Pagination
-    ): void {
-        if (!pushUnique(Globals.composed, 'PaginationPro')) {
-            return;
-        }
-
-        // Register pagination events
-        addEvent(
-            PaginationClass,
-            'beforePageChange',
-            (e: PaginationEvent): void => {
-                const { target, currentPage, nextPage, pageSize } = e;
-                target.options.events?.beforePageChange?.call(target, {
-                    currentPage: currentPage,
-                    nextPage: nextPage,
-                    pageSize: pageSize
-                });
-            }
-        );
-
-        addEvent(
-            PaginationClass,
-            'afterPageChange',
-            (e: PaginationEvent): void => {
-                const { target, currentPage, previousPage, pageSize } = e;
-                target.options.events?.afterPageChange?.call(target, {
-                    currentPage: currentPage,
-                    previousPage: previousPage,
-                    pageSize: pageSize
-                });
-            }
-        );
-
-        addEvent(
-            PaginationClass,
-            'beforePageSizeChange',
-            (e: PaginationEvent): void => {
-                const { target, newPageSize, pageSize } = e;
-                target.options.events?.beforePageSizeChange?.call(target, {
-                    pageSize: pageSize,
-                    newPageSize: newPageSize
-                });
-            }
-        );
-
-        addEvent(
-            PaginationClass,
-            'afterPageSizeChange',
-            (e: PaginationEvent): void => {
-                const { target, previousPageSize, pageSize } = e;
-                target.options.events?.afterPageSizeChange?.call(target, {
-                    pageSize: pageSize,
-                    previousPageSize: previousPageSize
-                });
-            }
-        );
+/**
+ * Extends the pagination class with events.
+ *
+ * @param PaginationClass
+ * The class to extend.
+ *
+ * @internal
+ */
+export function compose(
+    PaginationClass: typeof Pagination
+): void {
+    if (!pushUnique(Globals.composed, 'PaginationPro')) {
+        return;
     }
+
+    // Register pagination events
+    addEvent(
+        PaginationClass,
+        'beforePageChange',
+        (e: PaginationEvent): void => {
+            const { target, currentPage, nextPage, pageSize } = e;
+            target.options?.events?.beforePageChange?.call(target, {
+                currentPage: currentPage,
+                nextPage: nextPage,
+                pageSize: pageSize
+            });
+        }
+    );
+
+    addEvent(
+        PaginationClass,
+        'afterPageChange',
+        (e: PaginationEvent): void => {
+            const { target, currentPage, previousPage, pageSize } = e;
+            target.options?.events?.afterPageChange?.call(target, {
+                currentPage: currentPage,
+                previousPage: previousPage,
+                pageSize: pageSize
+            });
+        }
+    );
+
+    addEvent(
+        PaginationClass,
+        'beforePageSizeChange',
+        (e: PaginationEvent): void => {
+            const { target, newPageSize, pageSize } = e;
+            target.options?.events?.beforePageSizeChange?.call(target, {
+                pageSize: pageSize,
+                newPageSize: newPageSize
+            });
+        }
+    );
+
+    addEvent(
+        PaginationClass,
+        'afterPageSizeChange',
+        (e: PaginationEvent): void => {
+            const { target, previousPageSize, pageSize } = e;
+            target.options?.events?.afterPageSizeChange?.call(target, {
+                pageSize: pageSize,
+                previousPageSize: previousPageSize
+            });
+        }
+    );
 }
 
 declare module '../../Core/Pagination/PaginationOptions' {
     interface PaginationOptions {
         /**
          * Pagination events.
-         *
          */
         events?: PaginationEvents;
     }
@@ -185,4 +182,6 @@ export type PaginationEvent = Record<string, number> & { target: Pagination };
  *
  * */
 
-export default PaginationComposition;
+export default {
+    compose
+} as const;

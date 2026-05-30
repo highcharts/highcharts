@@ -2,11 +2,13 @@
  *
  *  X-range series module
  *
- *  (c) 2010-2025 Torstein Honsi, Lars A. V. Cabrera
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Hønsi, Lars A. V. Cabrera
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -16,13 +18,14 @@
  *
  * */
 
-import type ColumnSeriesOptions from '../Column/ColumnSeriesOptions';
+import type {
+    ColumnSeriesOptions,
+    ColumnSeriesTooltipOptions
+} from '../Column/ColumnSeriesOptions';
 import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
-import type TooltipOptions from '../../Core/TooltipOptions';
 import type XRangePointOptions from './XRangePointOptions';
 import type { XRangePointPartialFillOptions } from './XRangePointOptions';
-import type XRangeSeries from './XRangeSeries';
 
 /* *
  *
@@ -132,10 +135,27 @@ export interface XRangeSeriesOptions extends ColumnSeriesOptions {
 
     pointRange?: number;
 
-    states?: SeriesStatesOptions<XRangeSeries>;
+    states?: SeriesStatesOptions<XRangeSeriesOptions>;
 
-    tooltip?: Partial<TooltipOptions>;
+    tooltip?: XRangeSeriesTooltipOptions;
 
+}
+
+export interface XRangeSeriesTooltipOptions extends ColumnSeriesTooltipOptions {
+    /**
+     * @default '+ {point.groupedPointsAmount} more...<br/>'
+     */
+    clusterFormat?: ColumnSeriesTooltipOptions['clusterFormat'];
+
+    /**
+     * @default '<span style="font-size: 0.8em">{ucfirst point.x} - {point.x2}</span><br/>'
+     */
+    headerFormat?: ColumnSeriesTooltipOptions['headerFormat'];
+
+    /**
+     * @default '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.yCategory}</b><br/>'
+     */
+    pointFormat?: ColumnSeriesTooltipOptions['pointFormat'];
 }
 
 /* *
