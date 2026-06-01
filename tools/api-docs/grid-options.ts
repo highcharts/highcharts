@@ -123,6 +123,14 @@ const DATA_CONNECTOR_OPTIONS: Array<DataConnectorOptionSpec> = [
     }
 ];
 
+// These shared DataConnector options support Dashboards infrastructure, but
+// are not part of the recommended declarative Grid configuration.
+const DATA_CONNECTOR_GRID_HIDDEN_OPTIONS = new Set([
+    'dataTables',
+    'id',
+    'metadata'
+]);
+
 const TREE_INPUT_OPTIONS: Array<TreeInputOptionSpec> = [
     { interfaceName: 'TreeInputParentIdOptions', typeName: 'parentId' },
     { interfaceName: 'TreeInputPathOptions', typeName: 'path' }
@@ -1067,8 +1075,16 @@ function expandDataConnectorOptionChildren(
         }
 
         for (const member of interfaceInfo.members) {
+            const memberName = TSLib.extractInfoName(member);
+
             // `type` is represented by the synthetic connector branch label.
-            if (TSLib.extractInfoName(member) === 'type') {
+            if (
+                memberName === 'type' ||
+                (
+                    memberName &&
+                    DATA_CONNECTOR_GRID_HIDDEN_OPTIONS.has(memberName)
+                )
+            ) {
                 continue;
             }
             addTreeNode(sourceInfo, typeNode, member, debug);
