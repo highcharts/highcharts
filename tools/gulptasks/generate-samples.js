@@ -8,6 +8,8 @@ const gulp = require('gulp');
 const path = require('path');
 const fs = require('fs');
 const { glob } = require('glob');
+const saveDemoFilePromise = import('../sample-generator/index.ts')
+    .then(m => m.saveDemoFile);
 
 /* *
  *
@@ -31,10 +33,7 @@ const { glob } = require('glob');
  */
 async function generateSample(configFile, log, options = {}) {
     const { silent = false } = options;
-
-    const { saveDemoFile } = await import(
-        '../sample-generator/index.ts'
-    );
+    const saveDemoFile = await saveDemoFilePromise;
 
     const configPath = path.join(__dirname, '../../', configFile);
     const outputDir = path.dirname(configFile);
