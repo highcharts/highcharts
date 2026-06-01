@@ -4,12 +4,13 @@
  *
  *  (c) 2020-2026 Highsoft AS
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  *  Authors:
- *  - Dawid Dragula
+ *  - Dawid Draguła
  *
  * */
 
@@ -85,15 +86,19 @@ class FilterCell extends HeaderCell {
     }
 
     public override onKeyDown(e: KeyboardEvent): void {
-        this.column.filtering?.onKeyDown(e);
-
         if (e.target === this.htmlElement) {
-            if (e.key === 'Enter') {
+            if (
+                e.key === 'Enter' &&
+                this.column.viewport.grid.columnPolicy
+                    .isColumnInlineFilteringEnabled(this.column.id)
+            ) {
                 this.column.filtering?.filterSelect?.focus();
             } else {
                 super.onKeyDown(e);
             }
         } else {
+            this.column.filtering?.onKeyDown(e);
+
             if (e.key === 'Escape') {
                 this.htmlElement.focus();
             }

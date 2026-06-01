@@ -31,7 +31,7 @@ In this case, the initial global padding for all table cells (`th` and `td`) is 
 
 For normal body cells, the effective background fallback chain is `--hcg-cell-background` -> `--hcg-row-background` -> `--hcg-column-background` -> `--hcg-background`. Body cell text color follows the same pattern: `--hcg-cell-color` -> `--hcg-row-color` -> `--hcg-column-color` -> `--hcg-color`. In a non-conditional theme, setting every level usually adds little value because the most specific variable for that cell wins.
 
-These options exist mainly for [Conditional theming](https://www.highcharts.com/docs/grid/theming/conditional.md), where you may want to style only selected rows, columns, or cells. There is no required variable for the "base" background color, but if you are not using conditional rules, `--hcg-background` is the recommended starting point because it is the simplest. Headers are a small exception: header backgrounds use `--hcg-header-background` -> `--hcg-cell-background` -> `--hcg-column-background`, while header text color uses `--hcg-header-color` -> `--hcg-column-color` -> `--hcg-cell-color` -> `--hcg-color`.
+These options exist mainly for [Conditional theming](https://www.highcharts.com/docs/grid/theming/conditional.md), where you may want to style only selected rows, columns, or cells. There is no required variable for the "base" background color, but if you are not using conditional rules, `--hcg-background` is the recommended starting point because it is the simplest. Headers are a small exception: header backgrounds use `--hcg-header-background` -> `--hcg-cell-background` -> `--hcg-column-background`, while header text color uses `--hcg-header-color` -> `--hcg-column-color` -> `--hcg-cell-color` -> `--hcg-color`. Unless controls define their own input/button tokens, nested buttons and inputs inherit that resolved section color by default.
 
 ## Fonts and text
 
@@ -126,6 +126,22 @@ These options exist mainly for [Conditional theming](https://www.highcharts.com/
 | --hcg-column       | Border between columns  | Global border |
 | --hcg-header-row   | Borders between header rows   | --hcg-row |
 | --hcg-header-column| Borders between header columns| --hcg-column |
+
+### Pinned row separators
+
+In Grid Pro, when rows are pinned to the top or bottom, a separator line and
+shadow are shown to distinguish pinned rows from the scrollable area.
+
+| Variable                   | Default Value                      | Valid Values                                                                  |
+| -------------------------- | ---------------------------------- | ----------------------------------------------------------------------------- |
+| --hcg-pinned-border-width  | --hcg-row-border-width             | [border-width](https://developer.mozilla.org/en-US/docs/Web/CSS/border-width) |
+| --hcg-pinned-border-style  | --hcg-row-border-style             | [border-style](https://developer.mozilla.org/en-US/docs/Web/CSS/border-style) |
+| --hcg-pinned-border-color  | --hcg-row-border-color             | [border-color](https://developer.mozilla.org/en-US/docs/Web/CSS/border-color) |
+| --hcg-pinned-top-shadow    | 0 3px 5px -2px rgba(0, 0, 0, 0.1)  | [box-shadow](https://developer.mozilla.org/en-US/docs/Web/CSS/box-shadow)     |
+| --hcg-pinned-bottom-shadow | 0 -3px 5px -2px rgba(0, 0, 0, 0.1) | [box-shadow](https://developer.mozilla.org/en-US/docs/Web/CSS/box-shadow)     |
+
+Set `--hcg-pinned-top-shadow: none` and
+`--hcg-pinned-bottom-shadow: none` to disable shadows entirely.
 
 ### Example
 

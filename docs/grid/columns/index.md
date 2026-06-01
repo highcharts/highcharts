@@ -37,6 +37,73 @@ column-specific behavior where needed.
 
 Most options in `columnDefaults` are mirrored 1:1 in `columns[]`.
 
+## Working with data (`autogenerateColumns`)
+`data.autogenerateColumns` controls how Grid combines provider columns with
+`columns[]` configuration.
+
+- `true` (default): provider columns are rendered automatically. If `header` is
+  not set, they keep provider order. Columns configured in `columns[]` that are
+  not present in provider data (for example unbound/computed columns) are
+  appended at the end in `columns[]` order.
+- `false`: provider columns are not rendered automatically. Grid renders only
+  columns explicitly defined in `columns[]` (or referenced by `header`).
+
+### Example: append custom column in auto-generation mode
+```js
+Grid.grid('container', {
+    data: {
+        columns: {
+            product: ['Apple', 'Pear', 'Plum', 'Banana'],
+            weight: [100, 40, 0.5, 200],
+            price: [1.5, 2.53, 5, 4.5]
+        }
+    },
+    columns: [{
+        id: 'weight',
+        enabled: false
+    }, {
+        id: 'lineValue',
+        dataId: null,
+        dataType: 'number',
+        cells: {
+            valueGetter: cell => cell.row.data.weight * cell.row.data.price,
+            format: '${value:,.2f}'
+        }
+    }]
+});
+// Rendered order (no header): product, price, lineValue
+```
+
+### Example: manual column set only
+```js
+Grid.grid('container', {
+    data: {
+        autogenerateColumns: false,
+        columns: {
+            product: ['Apple', 'Pear', 'Plum', 'Banana'],
+            price: [3.24, 2.62, 5.99, 4.74],
+            revenue: [120, 85, 200, 150],
+            ignoredByConfig: ['A', 'B', 'C', 'D']
+        }
+    },
+    columns: [{
+        id: 'sum',
+        dataId: null,
+        cells: {
+            valueGetter: cell => cell.row.data.revenue * cell.row.data.price
+        }
+    }, {
+        id: 'sales',
+        dataId: 'revenue'
+    }, {
+        id: 'price'
+    }, {
+        id: 'product'
+    }]
+});
+// Rendered columns: sum, sales, price, product
+```
+
 ## Styling and Theming
 
 Use column-level classes, inline styles, and theme variables to control how

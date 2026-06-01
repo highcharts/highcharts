@@ -3,8 +3,9 @@
  *  (c) 2009-2026 Highsoft AS
  *  Author: Highsoft, Black Label
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -408,7 +409,7 @@ export interface AnnotationLabelOptionsOptions {
      * ignored. `This` refers to a point object. The callback also receives
      * an argument `ctx` so that arrow-functions can access the same
      * context (the point in this case) as normal functions can using
-     * `this`. Since v12.5.0, the callback receives `ctx`.
+     * `this`. Since v12.6.0, the callback receives `ctx`.
      *
      * @sample highcharts/annotations/label-text/
      *         Set labels text

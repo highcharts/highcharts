@@ -1,7 +1,7 @@
 ---
 name: Large dataset
 authors:
-  - Karol Kolodziej
+  - Karol Kołodziej
 js_wrap: b
 alt_text: >-
   Data grid performance with large datasets

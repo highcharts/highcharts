@@ -3,8 +3,9 @@
  *  (c) 2009-2026 Highsoft AS
  *  Author: Highsoft, Black Label
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -87,9 +88,6 @@ function getAssignedAxis(
  * Get field type according to value
  *
  * @internal
- *
- * @param {'boolean'|'number'|'string'} value
- * Atomic type (one of: string, number, boolean)
  *
  * @return {'checkbox'|'color'|'number'|'text'}
  * Field type (one of: text, number, checkbox, color)

@@ -9,6 +9,7 @@ export default {
         min: 10,
         max: 100
     }],
+    templates: [],
     chartOptionsExtra: {
         chart: {
             type: 'column',

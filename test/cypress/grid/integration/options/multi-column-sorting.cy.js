@@ -17,7 +17,7 @@ describe('Grid multi-column sorting.', () => {
                 'Applied sorting priority'
             ).to.deep.equal(['group', 'score', 'id']);
             expect(
-                grid.presentationTable.columns.id,
+                grid.dataProvider.getDataTable(true).columns.id,
                 'Sorted row order'
             ).to.deep.equal(expectedOrder);
         });

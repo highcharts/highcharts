@@ -1,7 +1,8 @@
 /* *
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -39,9 +40,7 @@ import { extend, merge, pick } from '../../../Shared/Utilities.js';
 // Utils
 
 // Index of element with extreme value from array (min or max)
-/**
- * @private
- */
+/** @internal */
 function getExtremeIndexInArray(arr: Array<number>, extreme: string): number {
     let extremeValue = arr[0],
         valueIndex = 0,
@@ -69,7 +68,7 @@ function getExtremeIndexInArray(arr: Array<number>, extreme: string): number {
 /**
  * The Aroon series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.aroon
  *
@@ -222,6 +221,7 @@ class AroonIndicator extends SMAIndicator {
  *
  * */
 
+/** @internal */
 interface AroonIndicator extends MultipleLinesComposition.IndicatorComposition {
     linesApiNames: Array<string>;
     nameComponents: Array<string>|undefined;
@@ -244,6 +244,7 @@ MultipleLinesComposition.compose(AroonIndicator);
  *
  * */
 
+/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         aroon: typeof AroonIndicator;
@@ -258,6 +259,7 @@ SeriesRegistry.registerSeriesType('aroon', AroonIndicator);
  *
  * */
 
+/** @internal */
 export default AroonIndicator;
 
 /* *

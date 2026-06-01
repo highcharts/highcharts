@@ -1,10 +1,11 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -48,7 +49,7 @@ namespace ColumnDataLabel {
     /**
      * Override the basic data label alignment by adjusting for the position of
      * the column.
-     * @private
+     * @internal
      */
     function alignDataLabel(
         this: ColumnSeries,
@@ -138,7 +139,7 @@ namespace ColumnDataLabel {
         }
     }
 
-    /** @private */
+    /** @internal */
     export function compose(
         ColumnSeriesClass: typeof ColumnSeries
     ): void {

@@ -3,8 +3,9 @@
  *  (c) 2016-2026 Highsoft AS
  *  Authors: Lars A. V. Cabrera
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -146,7 +147,7 @@ export interface GridAxisOptions {
      * axes, check the [#yAxis.staticScale](yAxis.staticScale) option.
      *
      * @sample gantt/grid-axis/cellheight
-     *         Gant chart with custom cell height
+     *         Gantt chart with custom cell height
      */
     cellHeight?: number;
     /**
@@ -1555,28 +1556,6 @@ export default GridAxis;
  * */
 
 /**
- * @productdesc {gantt}
- * For grid axes (like in Gantt charts),
- * it is possible to declare as a list to provide different
- * formats depending on available space.
- *
- * Defaults to:
- * ```js
- * {
- *     hour: { list: ['%H:%M', '%H'] },
- *     day: { list: ['%A, %e. %B', '%a, %e. %b', '%E'] },
- *     week: { list: ['Week %W', 'W%W'] },
- *     month: { list: ['%B', '%b', '%o'] }
- * }
- * ```
- *
- * @sample {gantt} gantt/grid-axis/date-time-label-formats
- *         Gantt chart with custom axis date format.
- *
- * @apioption xAxis.dateTimeLabelFormats
- */
-
-/**
  * Set grid options for the axis labels. Requires Highcharts Gantt.
  *
  * @since     6.2.0
@@ -1632,7 +1611,7 @@ export default GridAxis;
  * the [#yAxis.staticScale](yAxis.staticScale) option.
  *
  * @sample gantt/grid-axis/cellheight
- *         Gant chart with custom cell height
+ *         Gantt chart with custom cell height
  * @type      {number}
  * @apioption xAxis.grid.cellHeight
  */

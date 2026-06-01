@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Hubert Kozik
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -87,7 +88,7 @@ function getContext(
         context
     } = series;
 
-    // We can trust that the conext is canvas when clearRect is present.
+    // We can trust that the context is canvas when clearRect is present.
     if (canvas && context?.clearRect) {
         context.clearRect(0, 0, canvas.width, canvas.height);
     } else {

@@ -1,10 +1,11 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -76,8 +77,7 @@ import { Palette } from '../../Color/Palettes.js';
  *               categories, crosshair, dateTimeLabelFormats, left,
  *               lineWidth, linkedTo, maxZoom, minRange, minTickInterval,
  *               offset, opposite, pane, plotBands, plotLines,
- *               reversedStacks, scrollbar, showEmpty, title, top,
- *               zoomEnabled
+ *               reversedStacks, scrollbar, showEmpty, top, zoomEnabled
  * @product      highcharts highstock highmaps
  * @type         {*|Array<*>}
  * @optionparent colorAxis
@@ -134,7 +134,7 @@ const colorAxisDefaults: DeepPartial<ColorAxisOptions> = {
      * @sample {highmaps} maps/demo/data-class-two-ranges/
      *         Explicit colors
      *
-     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @type      {Highcharts.ColorType}
      * @product   highcharts highstock highmaps
      * @apioption colorAxis.dataClasses.color
      */
@@ -247,7 +247,7 @@ const colorAxisDefaults: DeepPartial<ColorAxisOptions> = {
      * @sample {highmaps} maps/coloraxis/gridlines/
      *         Grid lines demonstrated
      *
-     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @type      {Highcharts.ColorType}
      * @product   highcharts highstock highmaps
      */
     gridLineColor: Palette.backgroundColor,
@@ -315,24 +315,28 @@ const colorAxisDefaults: DeepPartial<ColorAxisOptions> = {
     marker: {
 
         /**
-         * Animation for the marker as it moves between values. Set to
-         * `false` to disable animation. Defaults to `{ duration: 50 }`.
+         * Animation for the marker as it moves between values. Set to `false`
+         * to disable animation.
          *
          * @type    {boolean|Partial<Highcharts.AnimationOptionsObject>}
          * @product highcharts highstock highmaps
+         * @default { duration: 50 }
          */
         animation: {
             /** @internal */
             duration: 50
         },
 
-        /** @internal */
+        /**
+         * Maps to stroke-width because marker options are passed as crosshair.
+         * @internal
+         */
         width: 0.01,
 
         /**
          * The color of the marker.
          *
-         * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @type    {Highcharts.ColorType}
          * @product highcharts highstock highmaps
          */
         color: Palette.neutralColor40
@@ -381,7 +385,7 @@ const colorAxisDefaults: DeepPartial<ColorAxisOptions> = {
      * @sample {highmaps} maps/coloraxis/mincolor-maxcolor-dataclasses/
      *         On data classes
      *
-     * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @type    {Highcharts.ColorType}
      * @product highcharts highstock highmaps
      */
     minColor: Palette.highlightColor10,
@@ -401,7 +405,7 @@ const colorAxisDefaults: DeepPartial<ColorAxisOptions> = {
      * @sample {highmaps} maps/coloraxis/mincolor-maxcolor-dataclasses/
      *         On data classes
      *
-     * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @type    {Highcharts.ColorType}
      * @product highcharts highstock highmaps
      */
     maxColor: Palette.highlightColor100,
@@ -429,6 +433,20 @@ const colorAxisDefaults: DeepPartial<ColorAxisOptions> = {
      * The pixel length of the main tick marks on the color axis.
      */
     tickLength: 5,
+
+    /**
+     * The color axis title. Displayed alongside the color axis. When the
+     * legend is vertical the title is rotated accordingly.
+     *
+     * @sample highcharts/coloraxis/coloraxis-title/
+     * Color axis with title
+     *
+     * @type      {Highcharts.AxisTitleOptions}
+     * @product   highcharts highstock highmaps
+     */
+    title: {
+        margin: 5
+    },
 
     /**
      * The type of interpolation to use for the color axis. Can be

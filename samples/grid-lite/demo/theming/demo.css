@@ -117,7 +117,7 @@ body {
     --hcg-column-hover-background: var(--hover-background);
     --hcg-row-hover-background: var(--hover-background);
     --hcg-header-hover-opacity: 20%;
-    --hcg-header-button-hover-background: var(--gradient-from-color);
+    --hcg-header-icon-hover-background: var(--gradient-from-color);
 }
 
 @media (prefers-color-scheme: dark) {

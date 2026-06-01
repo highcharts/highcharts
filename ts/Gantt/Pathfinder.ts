@@ -3,8 +3,9 @@
  *  (c) 2016-2026 Highsoft AS
  *  Authors: Øystein Moseng, Lars A. V. Cabrera
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -154,18 +155,18 @@ function calculateObstacleMargin(obstacles: Array<any>): number {
     const len = obstacles.length,
         distances = [];
 
-    let onstacleDistance: number;
+    let obstacleDistance: number;
 
     // Go over all obstacles and compare them to the others.
     for (let i = 0; i < len; ++i) {
         // Compare to all obstacles ahead. We will already have compared this
         // obstacle to the ones before.
         for (let j = i + 1; j < len; ++j) {
-            onstacleDistance =
+            obstacleDistance =
                 calculateObstacleDistance(obstacles[i], obstacles[j]);
             // TODO: Magic number 80
-            if (onstacleDistance < 80) { // Ignore large distances
-                distances.push(onstacleDistance);
+            if (obstacleDistance < 80) { // Ignore large distances
+                distances.push(obstacleDistance);
             }
         }
     }

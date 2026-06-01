@@ -122,6 +122,52 @@ async function loadTemplate(fileName: string) {
     return await fs.readFile(path, 'utf-8');
 }
 
+interface ErrorWithCode {
+    code?: string;
+}
+
+function isPermissionError(error: unknown): error is ErrorWithCode {
+    return (
+        typeof error === 'object' &&
+        error !== null &&
+        'code' in error &&
+        (
+            (error as ErrorWithCode).code === 'EACCES' ||
+            (error as ErrorWithCode).code === 'EPERM'
+        )
+    );
+}
+
+// Function to write a file with the appropriate encoding and permissions
+async function writeFile(filePath: string, content: string) {
+    try {
+        await fs.writeFile(
+            filePath,
+            content,
+            { encoding: 'utf-8', mode: 0o644 }
+        );
+    } catch (error: unknown) {
+        // On permission errors, force rewrite after unlinking the target file.
+        if (!isPermissionError(error)) {
+            throw error;
+        }
+
+        try {
+            await fs.unlink(filePath);
+        } catch (unlinkError: unknown) {
+            if ((unlinkError as ErrorWithCode).code !== 'ENOENT') {
+                throw unlinkError;
+            }
+        }
+
+        await fs.writeFile(
+            filePath,
+            content,
+            { encoding: 'utf-8', mode: 0o644 }
+        );
+    }
+}
+
 // Parse override values from path definitions
 function parsePathOverride(
     pathDef: string
@@ -1001,7 +1047,7 @@ function objectToYml(value: unknown): string {
                             // keep the "key: value" structure on the same line,
                             // and put the rest of the object on the next line
                             const { key, ...rest } = item as any;
-                            const inner = render(rest, indent + 1);
+                            const inner = render(rest, indent + 2);
                             return `${indentStr(indent)}- ${key}:\n${inner}`;
                         }
                         const inner = render(item, indent + 1);
@@ -1120,9 +1166,7 @@ export async function calculateChecksum(outputDir: string): Promise<string> {
 async function saveChecksum(outputDir: string): Promise<void> {
     const checksum = await calculateChecksum(outputDir);
     const checksumPath = join(outputDir, '.generated-checksum');
-    await fs.writeFile(
-        checksumPath, checksum, { encoding: 'utf-8', mode: 0o644 }
-    );
+    await writeFile(checksumPath, checksum);
 }
 
 export async function saveDemoFile(config: SampleGeneratorConfig) {
@@ -1152,26 +1196,10 @@ export async function saveDemoFile(config: SampleGeneratorConfig) {
 
     // Write all files in parallel
     await Promise.all([
-        fs.writeFile(
-            join(outputDir, 'demo.html'),
-            html,
-            { encoding: 'utf-8', mode: 0o644 }
-        ),
-        fs.writeFile(
-            join(outputDir, 'demo.css'),
-            css,
-            { encoding: 'utf-8', mode: 0o644 }
-        ),
-        fs.writeFile(
-            join(outputDir, 'demo.details'),
-            details,
-            { encoding: 'utf-8', mode: 0o644 }
-        ),
-        fs.writeFile(
-            join(outputDir, '.gitignore'),
-            'demo.js',
-            { encoding: 'utf-8', mode: 0o644 }
-        )
+        writeFile(join(outputDir, 'demo.html'), html),
+        writeFile(join(outputDir, 'demo.css'), css),
+        writeFile(join(outputDir, 'demo.details'), details),
+        writeFile(join(outputDir, '.gitignore'), 'demo.js')
     ]);
 
     // If demo.ts is successfully written, delete demo.js if it exists
@@ -1198,17 +1226,15 @@ export async function saveDemoFile(config: SampleGeneratorConfig) {
     );
 
     if (results[0].output) {
-        await fs.writeFile(`${outputDir}/demo.ts`, results[0].output, { encoding: 'utf-8', mode: 0o644 });
+        await writeFile(`${outputDir}/demo.ts`, results[0].output);
     } else {
-        await fs.writeFile(`${outputDir}/demo.ts`, results[0].source, { encoding: 'utf-8', mode: 0o644 });
+        await writeFile(`${outputDir}/demo.ts`, results[0].source);
         console.error(
             colors.red(results[0].messages.map(msg => msg.message).join('\n'))
         );
     }
     */
-    await fs.writeFile(
-        join(outputDir, 'demo.ts'), ts, { encoding: 'utf-8', mode: 0o644 }
-    );
+    await writeFile(join(outputDir, 'demo.ts'), ts);
 
     // Calculate and save checksum for validation
     await saveChecksum(outputDir);

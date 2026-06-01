@@ -112,9 +112,7 @@ Pagination is a typical use case for `responsive.rules`. Use it to override pagi
 ```js
 Grid.grid('container', {
     data: {
-        dataTable: {
-            columns: {...}
-        }
+        columns: {...}
     },
     pagination: {
         enabled: true,

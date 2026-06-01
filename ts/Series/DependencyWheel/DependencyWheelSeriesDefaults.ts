@@ -3,10 +3,11 @@
  *  Dependency wheel module
  *
  *  (c) 2018-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -106,7 +107,7 @@ const DependencyWheelSeriesDefaults: DependencyWheelSeriesOptions = {
 
     /**
      * The center of the wheel relative to the plot area. Can be
-     * percentages or pixel values. The default behaviour is to
+     * percentages or pixel values. The default behavior is to
      * center the wheel inside the plot area.
      *
      * @type    {Array<number|string|null>}
@@ -124,31 +125,23 @@ const DependencyWheelSeriesDefaults: DependencyWheelSeriesOptions = {
 
     dataLabels: {
         textPath: {
-            /**
-             * Enable or disable `textPath` option for link's or marker's data
-             * labels.
-             *
-             * @type      {boolean}
-             * @default   false
-             * @since     7.1.0
-             * @apioption plotOptions.series.dataLabels.textPath.enabled
-             */
             enabled: false,
-
+            /**
+             * @default { dy: 5 }
+            */
             attributes: {
-                /**
-                * Text path shift along its y-axis.
-                *
-                * @type      {Highcharts.SVGAttributes}
-                * @default   5
-                * @since     7.1.0
-                * @apioption plotOptions.dependencywheel.dataLabels.textPath.attributes.dy
-                */
+                /** @ignore */
                 dy: 5
             }
         }
-    }
+    },
 
+    tooltip: {
+        pointFormat: '{point.fromNode.name} \u2192 ' +
+            '{point.toNode.name}: <b>{point.weight}</b><br/>' +
+            '{#if point.weightTo}{point.toNode.name} \u2192 ' +
+            '{point.fromNode.name}: <b>{point.weightTo}</b><br/>{/if}'
+    }
 };
 
 /**
@@ -188,14 +181,31 @@ const DependencyWheelSeriesDefaults: DependencyWheelSeriesOptions = {
  *     data: [{
  *         from: 'Category1',
  *         to: 'Category2',
- *         weight: 2
+ *         weight: 2,
+ *         weightTo: 3
  *     }, {
  *         from: 'Category1',
  *         to: 'Category3',
- *         weight: 5
+ *         weight: 5,
+ *         weightTo: 6
  *     }]
  *  ```
+ *  When you provide the data as tuples, the keys option has to be set as well.
  *
+ *  ```js
+ *     keys: ['from', 'to', 'weight', 'weightTo'],
+ *     data: [
+ *         ['Category1', 'Category2', 2, 4],
+ *         ['Category1', 'Category3', 5, 2]
+ *     ]
+ *  ```
+ *
+ * @sample {highcharts} highcharts/demo/dependency-wheel
+ *         Dependency wheel
+ * @sample {highcharts} highcharts/demo/chord-diagram
+ *         Chord diagram
+ *
+ * @basic
  * @type      {Array<Array<string,string,number>|*>}
  * @extends   series.sankey.data
  * @product   highcharts
@@ -208,6 +218,24 @@ const DependencyWheelSeriesDefaults: DependencyWheelSeriesOptions = {
  * the ones for [series.dependencywheel.dataLabels](#series.dependencywheel.dataLabels).
  *
  * @apioption series.dependencywheel.nodes.dataLabels
+ */
+
+/**
+ * The weight of the link from the node.
+ *
+ * @type      {number|null}
+ * @product   highcharts
+ * @apioption series.dependencywheel.data.weight
+ */
+
+/**
+ * The weight of the link to the node.
+ * When not specified, the `weight` is used.
+ *
+ * @type      {number|null}
+ * @product   highcharts
+ * @since     next
+ * @apioption series.dependencywheel.data.weightTo
  */
 
 ''; // Keeps doclets above separate

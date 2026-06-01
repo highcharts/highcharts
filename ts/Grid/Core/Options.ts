@@ -4,12 +4,13 @@
  *
  *  (c) 2020-2026 Highsoft AS
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  *  Authors:
- *  - Dawid Dragula
+ *  - Dawid Draguła
  *  - Sebastian Bochan
  *
  * */
@@ -38,7 +39,7 @@ import type DataTableOptions from '../../Data/DataTableOptions';
 import type Cell from './Table/Cell';
 import type Column from './Table/Column';
 import type TableCell from './Table/Body/TableCell';
-import type { IconRegistryValue } from './UI/SvgIcons';
+import type { GridIconName, IconRegistryValue } from './UI/SvgIcons';
 import type { LangOptionsCore } from '../../Shared/LangOptionsCore';
 import type {
     Condition as ColumnFilteringCondition
@@ -57,6 +58,16 @@ import type CSSObject from '../../Core/Renderer/CSSObject';
  * formatted cell's string.
  */
 export type CellFormatterCallback = (this: Cell) => string;
+
+/**
+ * Callback function to resolve the value of an unbound column cell.
+ * For bound columns, overrides only the rendered content - sorting,
+ * filtering, and export remain unaffected.
+ */
+export type CellValueGetterCallback = (
+    this: TableCell,
+    cell: TableCell
+) => (DataTableCellType | Promise<DataTableCellType>);
 
 /**
  * Callback function to be called when a header event is triggered. Returns a
@@ -78,6 +89,18 @@ export type StyleValue<T> = CSSObject | StyleCallback<T>;
  * Column sorting order type.
  */
 export type ColumnSortingOrder = 'asc' | 'desc' | null;
+
+/**
+ * Registry of built-in action IDs for the cell context menu.
+ * Composed features can extend this via module augmentation.
+ */
+export interface CellContextMenuBuiltInActionIdRegistry {}
+
+/**
+ * Built-in action ID for the cell context menu.
+ */
+export type CellContextMenuActionId =
+    keyof CellContextMenuBuiltInActionIdRegistry | (string & {});
 
 /**
  * Options for a single cell context menu item.
@@ -114,6 +137,11 @@ export interface CellContextMenuActionItemOptions {
         this: TableCell,
         cell: TableCell
     ) => void;
+
+    /**
+     * Nested submenu items.
+     */
+    items?: Array<CellContextMenuItemOptions>;
 }
 
 /**
@@ -133,20 +161,52 @@ export interface CellContextMenuDividerItemOptions {
 }
 
 /**
+ * Options for a built-in item in the cell context menu.
+ */
+export interface CellContextMenuBuiltInItemOptions {
+    /**
+     * Built-in action ID.
+     */
+    actionId: CellContextMenuActionId;
+
+    /**
+     * Optional custom label for this built-in action.
+     */
+    label?: string;
+
+    /**
+     * Optional icon override for this built-in action.
+     */
+    icon?: GridIconName;
+
+    /**
+     * Whether this built-in action should be disabled.
+     */
+    disabled?: boolean;
+
+    /**
+     * Nested submenu items.
+     */
+    items?: Array<CellContextMenuItemOptions>;
+}
+
+/**
  * Options for a single cell context menu item.
  */
 export type CellContextMenuItemOptions =
     CellContextMenuDividerItemOptions |
-    CellContextMenuActionItemOptions;
+    CellContextMenuActionItemOptions |
+    CellContextMenuBuiltInItemOptions |
+    CellContextMenuActionId;
 
 /**
  * Cell context menu options.
  */
 export interface CellContextMenuOptions {
     /**
-     * Whether the cell context menu is enabled.
-     *
-     * @default true
+     * Whether the cell context menu is enabled. When omitted, the menu is
+     * enabled when `items` are provided, or when a composed feature registers
+     * visible built-in actions for the current cell.
      */
     enabled?: boolean;
 
@@ -169,6 +229,9 @@ export interface Options {
 
     /**
      * Pagination options for the grid.
+     *
+     * @sample grid-lite/basic/pagination-alignment-controls
+     *         Pagination
      */
     pagination?: PaginationOptions;
 
@@ -190,6 +253,15 @@ export interface Options {
 
     /**
      * Options for the data provider.
+     *
+     * @sample grid-lite/basic/data-connector
+     *         Data from connector
+     * @sample grid-lite/options/data-table-instance
+     *         Data from a DataTable instance
+     * @sample grid-lite/options/data-columns
+     *         Data from column arrays
+     * @sample grid-pro/demo/serverside-data
+     *         Server-side data
      */
     data?: DataProviderOptionsType;
 
@@ -210,7 +282,10 @@ export interface Options {
      * Defines the structure of levels in header. Used for grouping columns
      * headers.
      *
-     * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/grid-lite/basic/grouped-headers | Grouped headers}
+     * An array where each item can be either a string (column ID) or an object
+     * of type {@link https://api.highcharts.com/grid/typedoc/interfaces/Grid_Core_Options.GroupedHeaderOptions.html | GroupedHeaderOptions}.
+     *
+     * @sample grid-lite/basic/grouped-headers Grouped headers
      */
     header?: Array<GroupedHeaderOptions | string>;
 
@@ -221,6 +296,8 @@ export interface Options {
 
     /**
      * Language options for the grid.
+     *
+     * @sample grid-lite/demo/internationalization Internationalization
      */
     lang?: LangOptions;
 
@@ -256,6 +333,8 @@ export interface RenderingSettings {
      *   }
      * }
      * ```
+     *
+     * @sample grid-lite/basic/custom-icons Custom icons
      */
     icons?: Record<string, IconRegistryValue>;
 
@@ -292,19 +371,6 @@ export interface RenderingSettings {
  * Options to control the columns rendering.
  */
 export interface ColumnsSettings {
-
-    /**
-     * Columns included in the grid structure - contains the columns IDs.
-     * If not set, all columns will be included. Useful when many columns needs
-     * to be excluded from the grid.
-     *
-     * Individual column options `enabled` options can be set to `false` to
-     * disable a column.
-     *
-     * @private
-     */
-    included?: Array<string>;
-
     /**
      * Options for the columns resizing.
      */
@@ -319,7 +385,7 @@ export interface ResizingOptions {
      * Whether the columns resizing is enabled. If `true`, the user can
      * resize the columns by dragging the column header edges.
      *
-     * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/grid-lite/basic/column-resizing-disabled | Column resize disabled}
+     * @sample grid-lite/basic/column-resizing-disabled Column resizing disabled
      *
      * @default true
      */
@@ -336,7 +402,9 @@ export interface ResizingOptions {
      * - `'distributed'`: Only the resized column is affected; other column
      *   width settings will not be changed.
      *
-     * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/grid-lite/basic/column-resizing | Resizing overview}
+     * @sample grid-lite/basic/column-resizing Column resizing
+     * @sample grid-lite/basic/custom-column-resizing-mode
+     *         Custom resizing mode
      *
      * @default 'adjacent'
      */
@@ -380,7 +448,7 @@ export interface RowsSettings {
      * to set this option to `true` for the performance reasons, to avoid the
      * unnecessary calculations.
      *
-     * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/grid-lite/basic/strict-row-heights | Strict row heights}
+     * @sample grid-lite/basic/strict-row-heights Strict row heights
      *
      * @default false
      */
@@ -394,6 +462,9 @@ export interface RowsSettings {
      * The option is automatically set to `true` when the number of rows exceeds
      * the `virtualizationThreshold` option value. If defined, it takes the
      * precedence over the `virtualizationThreshold` option.
+     *
+     * @sample grid-lite/options/rows-virtualization
+     *         Row virtualization
      *
      * @default false
      */
@@ -409,6 +480,7 @@ export interface RowsSettings {
      * @default 50
      */
     virtualizationThreshold?: number;
+
 }
 
 /**
@@ -461,24 +533,40 @@ export interface ColumnOptions {
     /**
      * Column sorting options.
      *
-     * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/grid-pro/basic/sorting-options | Sorting options}
+     * @sample grid-pro/basic/sorting-options Sorting options
      */
     sorting?: ColumnSortingOptions;
 
     /**
      * The width of the column. It can be set in pixels, as a percentage of the
-     * table width, or `'auto'`. If unset or `'auto'`, the width is distributed
-     * evenly between columns without a fixed width.
+     * table width, or `'auto'`. If unset or `'auto'`, the remaining table
+     * width is distributed between columns without an explicit width.
      *
-     * This option does not work with the `resizing` option set to `full`.
-     *
-     * If the `resizing` option is undefined, it is set to `mixed` and the
-     * `width` option is used to set the width of the column.
+     * The final width is also constrained by `minWidth` and `maxWidth`, if
+     * they are set.
      */
     width?: number | string;
 
     /**
+     * The minimum width of the column. It can be set in pixels or as a
+     * percentage of the table width.
+     *
+     * @sample grid-lite/options/column-width-limits Column width limits
+     */
+    minWidth?: number | string;
+
+    /**
+     * The maximum width of the column. It can be set in pixels or as a
+     * percentage of the table width.
+     *
+     * @sample grid-lite/options/column-width-limits Column width limits
+     */
+    maxWidth?: number | string;
+
+    /**
      * Filtering options for the column.
+     *
+     * @sample grid-lite/basic/column-filtering Column filtering
      */
     filtering?: ColumnFilteringOptions;
 
@@ -487,12 +575,32 @@ export interface ColumnOptions {
      * Can be a static style object or a callback that returns one.
      */
     style?: StyleValue<Column>;
+
+    /**
+     * Whether the column should be included in exports.
+     *
+     * For unbound columns, exporting is always disabled.
+     *
+     * @default true
+     */
+    exportable?: boolean;
 }
 
 /**
  * Options for all cells in the column.
  */
 export interface ColumnCellOptions {
+
+    /**
+     * Whether cells in this column should be rendered as row header cells.
+     *
+     * When enabled, body cells are rendered as `<th scope="row">` instead of
+     * `<td>`. This is useful for accessible data grids where the first column
+     * acts as a row header.
+     *
+     * @default false
+     */
+    rowHeader?: boolean;
 
     /**
      * Allows to define an additional class name to all table cells in the
@@ -511,7 +619,7 @@ export interface ColumnCellOptions {
      *
      * When not set, the default format `'{value}'` is used.
      *
-     * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/grid-pro/basic/cell-formatting/ | Cell formatting}
+     * @sample grid-pro/basic/cell-formatting Cell formatting
      *
      * @default undefined
      */
@@ -522,7 +630,7 @@ export interface ColumnCellOptions {
      * grid. Applied only to cell that are in the table not the column
      * header.
      *
-     * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/grid-pro/basic/cell-formatting/ | Cell formatting}
+     * @sample grid-pro/basic/cell-formatting Cell formatting
      *
      * @return
      * A string to be set as a table cell's content.
@@ -530,9 +638,17 @@ export interface ColumnCellOptions {
     formatter?: CellFormatterCallback;
 
     /**
+     * Callback function to resolve the value of an unbound column cell.
+     * For bound columns, overrides only the rendered content - sorting,
+     * filtering, and export remain unaffected.
+     */
+    valueGetter?: CellValueGetterCallback;
+
+    /**
      * Context menu options for table body cells. When configured, a custom
      * context menu will be shown on right-click.
-     * @internal Disabled until meaningful functionality is ready.
+     *
+     * @sample grid-lite/demo/cell-context-menu Cell context menu
      */
     contextMenu?: CellContextMenuOptions;
 
@@ -590,17 +706,11 @@ export interface ColumnSortingOptions {
      * user interface. However, the order of rows in this column may still
      * change when other columns are sorted.
      *
-     * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/grid-pro/basic/sorting-options | Sorting options}
+     * @sample grid-pro/basic/sorting-options Sorting options
      *
      * @default true
      */
     enabled?: boolean;
-
-    /**
-     * @deprecated
-     * Use `enabled` instead
-     */
-    sortable?: boolean;
 
     /**
      * Sequence of sorting orders used when toggling sorting from the user
@@ -666,30 +776,44 @@ export interface IndividualColumnOptions extends ColumnOptions {
      *
      * It does not use templating.
      *
-     * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/grid-pro/basic/custom-class | Custom class}
+     * @sample grid-pro/basic/custom-class Custom class
      *
      * @default undefined
      */
     className?: string;
 
     /**
-     * Whether the column is enabled and should be displayed. If `false`, the
-     * column will not be rendered.
+     * Whether the column is enabled and should be displayed. If `false`,
+     * the column will not be rendered.
      *
-     * Shorter way to disable multiple columns at once is to use the `included`
-     * array in the `columns` settings.
-     *
-     * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/grid-pro/basic/overview | Disabled meta column}
+     * @sample grid-lite/options/column-enabled
+     *         Toggle column visibility
      *
      * @default true
      */
     enabled?: boolean;
 
     /**
-     * The id of the column in the data table for which the options are applied.
+     * The column id used by Grid as the column identity.
      */
     id: string;
 
+    /**
+     * The id of the data source column.
+     *
+     * - `undefined`: defaults to `id`.
+     * - `null`: forces the column to be unbound.
+     */
+    dataId?: string | null;
+
+    /**
+     * Column sorting options for this specific column.
+     *
+     * Use this to override `columnDefaults.sorting` or to define initial
+     * sorting state and priority for multi-column sorting.
+     *
+     * @sample grid-pro/basic/sorting-options Sorting options
+     */
     sorting?: IndividualColumnSortingOptions;
 }
 
@@ -712,7 +836,8 @@ export interface CaptionOptions {
     /**
      * The caption of the grid.
      *
-     * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/grid-pro/basic/overview | Caption}
+     * @sample grid-lite/options/caption-text
+     *         Caption text
      */
     text?: string;
 }
@@ -872,6 +997,7 @@ export interface LangOptions extends LangOptionsCore {
      * Language options for pagination text values.
      */
     pagination?: PaginationLangOptions;
+
 }
 
 
@@ -906,12 +1032,17 @@ export interface FilteringCondition {
 export interface ColumnFilteringOptions extends FilteringCondition {
     /**
      * Whether the filtering is enabled or not.
+     *
+     * @sample grid-lite/basic/column-filtering Column filtering
      */
     enabled?: boolean;
 
     /**
      * Whether the filtering inputs should be rendered inline in the special
      * table header row (`true`), or should be accessed via a popup (`false`).
+     *
+     * @sample grid-lite/options/inline-filtering
+     *         Inline filtering
      *
      * @default false
      */

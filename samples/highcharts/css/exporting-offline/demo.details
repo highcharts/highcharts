@@ -3,5 +3,6 @@
  authors:
    - Torstein Hønsi
  requiresManualTesting: true
+ applyCSP: false
  js_wrap: b
 ...

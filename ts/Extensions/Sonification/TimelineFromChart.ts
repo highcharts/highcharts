@@ -5,8 +5,9 @@
  *
  *  Build a timeline from a chart.
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -33,19 +34,24 @@ const {
     format
 } = T;
 
+/** @internal */
 interface PointGroupItem {
     point: Point;
     time: number;
 }
+/** @internal */
 interface PropExtremes {
     max: number;
     min: number;
 }
+/** @internal */
 type PropExtremesCache = Record<string, PropExtremes>;
+/** @internal */
 interface ExtremesCache {
     globalExtremes: PropExtremesCache;
     seriesExtremes: Array<PropExtremesCache>;
 }
+/** @internal */
 export interface PropMetrics extends ExtremesCache {
     seriesTimeProps: Array<Record<string, boolean>>;
 }
@@ -1234,4 +1240,5 @@ function timelineFromChart(
  *
  * */
 
+/** @internal */
 export default timelineFromChart;

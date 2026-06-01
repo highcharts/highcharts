@@ -3,10 +3,11 @@
  *  Organization chart module
  *
  *  (c) 2018-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -78,7 +79,7 @@ const OrganizationSeriesDefaults: OrganizationSeriesOptions = {
      * @sample   highcharts/series-organization/link-options
      *           Square links
      *
-     * @deprecated
+     * @deprecated 10.3.0
      * @apioption series.organization.linkRadius
      */
 
@@ -143,7 +144,6 @@ const OrganizationSeriesDefaults: OrganizationSeriesOptions = {
      */
     dataLabels: {
 
-        /* eslint-disable valid-jsdoc */
         /**
          * A callback for defining the format for _nodes_ in the
          * organization chart. The `nodeFormat` option takes precedence
@@ -254,22 +254,27 @@ const OrganizationSeriesDefaults: OrganizationSeriesOptions = {
                 '</div>';
             return html;
         },
-        /* eslint-enable valid-jsdoc */
 
         style: {
-            /** @internal */
             fontWeight: 'normal',
-            /** @internal */
             fontSize: '0.9em',
-            /** @internal */
             textAlign: 'left'
         },
 
         useHTML: true,
 
+        /**
+         * @extends plotOptions.series.dataLabels.textPath
+         */
         linkTextPath: {
+            /**
+             * @default { startOffset: '95%', textAnchor: 'end' }
+             */
             attributes: {
+                /** @ignore */
                 startOffset: '95%',
+
+                /** @ignore */
                 textAnchor: 'end'
             }
         }
@@ -327,7 +332,7 @@ const OrganizationSeriesDefaults: OrganizationSeriesOptions = {
      * [link.color](#plotOptions.organization.link.color).
      *
      * @type {Highcharts.ColorString}
-     * @deprecated
+     * @deprecated 10.3.0
      * @apioption series.organization.linkColor
      * @private
      */
@@ -340,7 +345,7 @@ const OrganizationSeriesDefaults: OrganizationSeriesOptions = {
      * @sample   highcharts/series-organization/link-options
      *           Square links
      *
-     * @deprecated
+     * @deprecated 10.3.0
      * @apioption series.organization.linkLineWidth
      * @private
      */
@@ -348,7 +353,7 @@ const OrganizationSeriesDefaults: OrganizationSeriesOptions = {
     /**
      * In a horizontal chart, the minimum width of the **hanging** nodes
      * only, in pixels. In a vertical chart, the minimum height of the
-     * **haning** nodes only, in pixels too.
+     * **hanging** nodes only, in pixels too.
      *
      * Note: Used only when
      * [hangingIndentTranslation](#plotOptions.organization.hangingIndentTranslation)
@@ -524,6 +529,7 @@ const OrganizationSeriesDefaults: OrganizationSeriesOptions = {
  *     }]
  *  ```
  *
+ * @basic
  * @type      {Array<*>}
  * @extends   series.sankey.data
  * @product   highcharts

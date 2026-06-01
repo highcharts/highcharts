@@ -30,7 +30,7 @@ import type {
     PointShortOptions
 } from '../../Core/Series/PointOptions';
 import type Series from '../../Core/Series/Series';
-import type Types from '../../Shared/Types';
+import type * as Types from '../../Shared/Types';
 import type SeriesRegistry from '../../Core/Series/SeriesRegistry';
 import type { SeriesTypePlotOptions } from '../../Core/Series/SeriesType';
 import BoostableMap from './BoostableMap.js';
@@ -112,6 +112,7 @@ interface BoostPointMockup {
     plotX: number;
     plotY: number;
     i: number;
+    dataIndex?: number;
     percentage: number;
 }
 
@@ -119,6 +120,7 @@ interface BoostPointMockup {
 interface BoostSeriesAdditions extends BoostTargetAdditions {
     altered?: Array<BoostAlteredObject>;
     getPoint(boostPoint: (BoostPointMockup|Point)): BoostPointComposition;
+    pointDataIndices?: Array<number>;
 }
 
 /** @internal */
@@ -867,7 +869,9 @@ function onSeriesDestroy(
 function onSeriesHide(
     this: Series
 ): void {
-    const boost = this.boost;
+    const boost = this.boost,
+        chartBoost = this.chart.boost,
+        sharedMarkerGroup = chartBoost?.markerGroup;
 
     if (boost && boost.canvas && boost.target) {
         if (boost.wgl) {
@@ -876,6 +880,17 @@ function onSeriesHide(
         if (boost.clear) {
             boost.clear();
         }
+    }
+
+    if (
+        sharedMarkerGroup &&
+        this.markerGroup === sharedMarkerGroup &&
+        this.chart.series.some((series): boolean =>
+            series.visible &&
+            series.markerGroup === sharedMarkerGroup
+        )
+    ) {
+        sharedMarkerGroup.show();
     }
 }
 
@@ -939,7 +954,8 @@ function getPoint(
             false
         ),
         pointIndex = boostPoint.i,
-        pointColor = (data?.[pointIndex] as { color?: string } | undefined)
+        dataIndex = pick(boostPoint.dataIndex, pointIndex),
+        pointColor = (data?.[dataIndex] as { color?: string } | undefined)
             ?.color,
         point = new PointClass(
             series as BoostSeriesComposition,
@@ -955,16 +971,19 @@ function getPoint(
         isScatter &&
         seriesOptions?.keys?.length
     ) {
-        const keys = seriesOptions.keys;
+        const keys = seriesOptions.keys,
+            pointData = (data as any)?.[dataIndex];
 
-        // Don't reassign X and Y properties as they're already handled above
-        for (
-            let keysIndex = keys.length - 1;
-            keysIndex > -1;
-            keysIndex--
-        ) {
-            (point as any)[keys[keysIndex]] =
-                (data as any)[pointIndex][keysIndex];
+        if (isArray(pointData)) {
+            // Don't reassign X and Y properties as they're already handled
+            // above
+            for (
+                let keysIndex = keys.length - 1;
+                keysIndex > -1;
+                keysIndex--
+            ) {
+                (point as any)[keys[keysIndex]] = pointData[keysIndex];
+            }
         }
     }
 
@@ -980,7 +999,7 @@ function getPoint(
     point.distX = boostPoint.distX;
     point.plotX = boostPoint.plotX;
     point.plotY = boostPoint.plotY;
-    point.index = pointIndex;
+    point.index = dataIndex;
     point.percentage = boostPoint.percentage;
     point.isInside = series.isPointInside(point);
     if (pointColor) {
@@ -1026,6 +1045,10 @@ function scatterProcessData(
         yMax = yExtremes.max ?? Number.MAX_VALUE,
         yMin = yExtremes.min ?? -Number.MAX_VALUE;
 
+    if (series.boost) {
+        delete series.boost.pointDataIndices;
+    }
+
     // Skip processing in non-boost zoom
     if (
         !series.boosted &&
@@ -1064,9 +1087,10 @@ function scatterProcessData(
     }
 
     // Filter unsorted scatter data for ranges
-    const processedData: Array<PointOptions> = [],
+    const processedData: Array<(PointOptions|PointShortOptions)> = [],
         processedXData: Array<number> = [],
         processedYData: Array<number> = [],
+        processedDataIndices: Array<number> = [],
         xRangeNeeded = !(isNumber(xExtremes.max) || isNumber(xExtremes.min)),
         yRangeNeeded = !(isNumber(yExtremes.max) || isNumber(yExtremes.min));
 
@@ -1086,9 +1110,14 @@ function scatterProcessData(
             x >= xMin && x <= xMax &&
             y >= yMin && y <= yMax
         ) {
-            processedData.push({ x, y });
+            processedData.push(
+                typeof options.data?.[i] !== 'undefined' ?
+                    options.data[i] :
+                    { x, y }
+            );
             processedXData.push(x);
             processedYData.push(y);
+            processedDataIndices.push(i);
             if (xRangeNeeded) {
                 xDataMax = Math.max(xDataMax, x);
                 xDataMin = Math.min(xDataMin, x);
@@ -1124,6 +1153,9 @@ function scatterProcessData(
         x: processedXData,
         y: processedYData
     });
+    if (series.boost && cropped) {
+        series.boost.pointDataIndices = processedDataIndices;
+    }
 
     if (!getSeriesBoosting(series, processedXData)) {
         series.processedData = processedData; // For un-boosted points rendering
@@ -1164,6 +1196,9 @@ function seriesRenderCanvas(this: Series): void {
         isStacked = !!options.stacking,
         cropStart = this.cropStart || 0,
         requireSorting = this.requireSorting,
+        pointDataIndices = !requireSorting ?
+            seriesBoost?.pointDataIndices :
+            void 0,
         useRaw = !xData,
         compareX = options.findNearestPointBy === 'x',
         xDataFull = (
@@ -1280,7 +1315,8 @@ function seriesRenderCanvas(this: Series): void {
             i: number,
             percentage: number
         ): void => {
-            const x = xDataFull ? xDataFull[cropStart + i] : false,
+            const dataIndex = pointDataIndices?.[i] ?? (cropStart + i),
+                x = xDataFull ? xDataFull[dataIndex] : false,
                 pushPoint = (plotX: number): void => {
                     if (chart.inverted) {
                         plotX = xAxis.len - plotX;
@@ -1294,6 +1330,7 @@ function seriesRenderCanvas(this: Series): void {
                         plotX: plotX,
                         plotY: plotY,
                         i: cropStart + i,
+                        dataIndex: dataIndex,
                         percentage: percentage
                     });
                 };
@@ -1625,7 +1662,7 @@ function wrapSeriesGetExtremes(
 
 /**
  * If the series is a heatmap or treemap, or if the series is not boosting
- * do the default behaviour. Otherwise, process if the series has no
+ * do the default behavior. Otherwise, process if the series has no
  * extremes.
  * @internal
  */
@@ -1647,7 +1684,7 @@ function wrapSeriesProcessData(
                 !series.is('heatmap');
         // If there are no extremes given in the options, we also need to
         // process the data to read the data extremes. If this is a heatmap,
-        // do default behaviour.
+        // do default behavior.
         if (
             // First pass with options.data:
             !getSeriesBoosting(series, dataToMeasure) ||

@@ -5,8 +5,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi, Øystein Moseng
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -31,8 +32,7 @@ import type { SVGDOMElement } from '../Core/Renderer/DOMElementType';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 
-import A from '../Core/Animation/AnimationUtilities.js';
-const { animObject } = A;
+import { animObject } from '../Core/Animation/AnimationUtilities.js';
 import D from '../Core/Defaults.js';
 const { getOptions } = D;
 import MapPoint from '../Series/Map/MapPoint';
@@ -55,6 +55,7 @@ import {
  *
  * */
 
+/** @internal */
 declare module '../Core/Renderer/SVG/SVGRendererBase' {
     interface SVGRendererBase {
         defIds?: Array<string>;
@@ -67,6 +68,7 @@ declare module '../Core/Renderer/SVG/SVGRendererBase' {
     }
 }
 
+/** @internal */
 declare module '../Core/Series/PointBase' {
     interface PointBase {
         /** @requires modules/pattern-fill */
@@ -76,25 +78,44 @@ declare module '../Core/Series/PointBase' {
     }
 }
 
+/** @internal */
 export interface BPatternObject extends BBoxObject {
-
-    /** @internal */
     aspectHeight?: number;
-
-    /** @internal */
     aspectRatio?: number;
-
-    /** @internal */
     aspectWidth?: number;
-
 }
 
+/**
+ * Holds a pattern definition.
+ *
+ * @sample highcharts/series/pattern-fill-area/
+ *         Define a custom path pattern
+ * @sample highcharts/series/pattern-fill-pie/
+ *         Default patterns and a custom image pattern
+ * @sample maps/demo/pattern-fill-map/
+ *         Custom images on map
+ *
+ * @example
+ * // Pattern used as a color option
+ * color: {
+ *     pattern: {
+ *            path: {
+ *                 d: 'M 3 3 L 8 3 L 8 8 Z',
+ *                fill: '#102045'
+ *            },
+ *            width: 12,
+ *            height: 12,
+ *            color: '#907000',
+ *            opacity: 0.5
+ *     }
+ * }
+ */
 export interface PatternObject {
 
     /**
      * Animation options for the image pattern loading.
      */
-    animation?: Partial<AnimationOptions>;
+    animation?: boolean | Partial<AnimationOptions>;
 
     /**
      * Pattern options
@@ -111,6 +132,9 @@ export interface PatternObject {
 
 }
 
+/**
+ * Pattern options.
+ */
 export interface PatternOptionsObject {
 
     /** @internal */
@@ -133,6 +157,12 @@ export interface PatternOptionsObject {
      * using a global pattern grid. This ensures consistent pattern rendering
      * across points of different sizes and improves accessibility for narrow
      * columns. Defaults to false for backward compatibility.
+     *
+     * @sample highcharts/series/pattern-fill-anchor-to-point/
+     *         Compare shared vs anchored pattern positioning
+     *
+     * @since 12.6.0
+     * @default false
      */
     anchorToPoint?: boolean;
 
@@ -202,12 +232,16 @@ export interface PatternOptionsObject {
     width: number;
 
     /**
-     * Horizontal offset of the pattern. Defaults to 0.
+     * Horizontal offset of the pattern.
+     *
+     * @default 0
      */
     x?: number;
 
     /**
-     * Vertical offset of the pattern. Defaults to 0.
+     * Vertical offset of the pattern.
+     *
+     * @default 0
      */
     y?: number;
 
@@ -219,7 +253,8 @@ export interface PatternOptionsObject {
  *
  * */
 
-const patterns = createPatterns();
+/** @internal */
+export const patterns = createPatterns();
 
 /* *
  *
@@ -228,7 +263,7 @@ const patterns = createPatterns();
  * */
 
 /** @internal */
-function compose(
+export function composePatternFill(
     ChartClass: typeof Chart,
     SeriesClass: typeof Series,
     SVGRendererClass: typeof SVGRenderer
@@ -480,8 +515,7 @@ function onPointAfterInit(
     this: Point
 ): void {
     const point = this,
-        colorOptions: (PatternObject|undefined) =
-            (point.color || point.options.color) as any;
+        colorOptions: (PatternObject|undefined) = (point.options.color) as any;
 
     // Only do this if we have defined a specific color on this point. Otherwise
     // we will end up trying to re-add the series color for each point.
@@ -778,7 +812,7 @@ function pointCalculatePatternDimensions(
  * @internal
  * @function Highcharts.SVGRenderer#addPattern
  *
- * @param {Highcharts.PatternObject} options
+ * @param {Highcharts.PatternOptionsObject} options
  * The pattern options.
  *
  * @param {boolean|Partial<Highcharts.AnimationOptionsObject>} [animation]
@@ -1057,19 +1091,6 @@ declare module '../Core/Color/ColorType' {
 
 /* *
  *
- *  Export
- *
- * */
-
-const PatternFill = {
-    compose,
-    patterns
-};
-
-export default PatternFill;
-
-/* *
- *
  *  API Declarations
  *
  * */
@@ -1088,7 +1109,7 @@ export default PatternFill;
  *         Compare shared vs anchored pattern positioning
  * @name Highcharts.PatternOptionsObject#anchorToPoint
  * @type {boolean|undefined}
- * @since next
+ * @since 12.6.0
  * @default false
  *//**
  * Background color for the pattern if a `path` is set (not images).
@@ -1117,13 +1138,15 @@ export default PatternFill;
  * @name Highcharts.PatternOptionsObject#aspectRatio
  * @type {number|undefined}
  *//**
- * Horizontal offset of the pattern. Defaults to 0.
+ * Horizontal offset of the pattern.
  * @name Highcharts.PatternOptionsObject#x
  * @type {number|undefined}
+ * @default 0
  *//**
- * Vertical offset of the pattern. Defaults to 0.
+ * Vertical offset of the pattern.
  * @name Highcharts.PatternOptionsObject#y
  * @type {number|undefined}
+ * @default 0
  *//**
  * Either an SVG path as string, or an object. As an object, supply the path
  * string in the `path.d` property. Other supported properties are standard SVG

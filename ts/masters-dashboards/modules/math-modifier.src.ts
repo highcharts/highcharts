@@ -6,8 +6,8 @@
  *
  * (c) 2009-2026 Highsoft AS
  *
- * A commercial license may be required depending on use.
- * See www.highcharts.com/license
+ * A commercial license may be required depending on use,
+ * see www.highcharts.com/license
  */
 
 
@@ -38,7 +38,7 @@ import '../../Data/Modifiers/MathModifier.js';
 declare global {
     interface Dashboards {
         Formula: typeof Formula;
-        // MathModifier registeres itself in DataModifier.types
+        // MathModifier registers itself in DataModifier.types
     }
 }
 

@@ -5,8 +5,9 @@
  *  (c) 2009-2026 Highsoft AS
  *  Author: Sebastian Bochan
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -532,10 +533,10 @@ class Popup extends BaseForm {
      * Text placed as button label
      * @param {string} type
      * add | edit | remove
-     * @param {Function} callback
-     * On click callback
      * @param {Highcharts.HTMLDOMElement} fieldsDiv
      * Container where inputs are generated
+     * @param {Function} callback
+     * On click callback
      * @return {Highcharts.HTMLDOMElement}
      * HTML button
      */
@@ -567,10 +568,14 @@ class Popup extends BaseForm {
     /**
      * Create content and show popup.
      *
-     * @param {string} - type of popup i.e indicators
-     * @param {Highcharts.Chart} - chart
-     * @param {Highcharts.AnnotationsOptions} - options
-     * @param {Function} - on click callback
+     * @param {string} type
+     *        Type of popup i.e indicators
+     * @param {Highcharts.Chart} chart
+     *        Chart instance
+     * @param {Highcharts.AnnotationsOptions} options
+     *        Annotation options
+     * @param {Function} callback
+     *        On click callback
      */
     public showForm(
         type: string,

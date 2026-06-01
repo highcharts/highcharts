@@ -5,8 +5,9 @@
  *
  *  Handle announcing new data for a chart.
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -51,7 +52,6 @@ const {
  *
  * */
 
-/* eslint-disable valid-jsdoc */
 
 /**
  * @private
@@ -147,9 +147,6 @@ class NewDataAnnouncer {
      *  Functions
      *
      * */
-
-    /* eslint-disable valid-jsdoc */
-
 
     /**
      * Initialize the new data announcer.
@@ -476,7 +473,6 @@ namespace NewDataAnnouncer {
     /**
      * On new data in the series, make sure we add it to the dirty list.
      * @private
-     * @param {Highcharts.Series} series
      */
     function seriesOnUpdatedData(
         this: Accessibility.SeriesComposition
