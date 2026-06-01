@@ -287,36 +287,6 @@ class SankeySeries extends ColumnSeries {
 
         if (this.useCircularLayout) {
             this.isDataCircular = this.markCircularLinks(this.points);
-            if (this.isDataCircular && this.chart.inverted) {
-                // A circular link represents flow looping through the node,
-                // not new throughflow. Exclude it from the node's size sum
-                // so the node is rendered proportional to forward flow only.
-                // The circular link still attaches to the outgoing edge,
-                // visually overlapping with the forward attachment.
-                for (const node of this.nodes) {
-                    node.getSum = function (): number {
-                        let sumTo = 0,
-                            sumFrom = 0;
-                        for (const link of node.linksTo) {
-                            if (
-                                !link.isCircular ||
-                                link.fromNode === link.toNode
-                            ) {
-                                sumTo += link.weight || 0;
-                            }
-                        }
-                        for (const link of node.linksFrom) {
-                            if (
-                                !link.isCircular ||
-                                link.fromNode === link.toNode
-                            ) {
-                                sumFrom += link.weight || 0;
-                            }
-                        }
-                        return Math.max(sumTo, sumFrom);
-                    };
-                }
-            }
         }
 
         if (this.orderNodes) {
@@ -885,9 +855,11 @@ class SankeySeries extends ColumnSeries {
 
         translateNodesAndLinks();
 
-        // The post-layout y shift works in non-inverted plot coordinates.
-        // Inverted circular links keep the default route.
-        if (this.isDataCircular && !chart.inverted) {
+        // Recenter the translated layout on the flow axis so the circular
+        // bends are balanced within the plot. The measured extremes and the
+        // shift both operate in `shapeArgs` space, which maps to the flow
+        // axis in normal and inverted mode alike (bounded by `plotSizeY`).
+        if (this.isDataCircular) {
             const firstPoint = this.points[0],
                 secondPoint = this.points[1],
                 simpleCircularData = (
@@ -897,16 +869,22 @@ class SankeySeries extends ColumnSeries {
                     firstPoint.fromNode === secondPoint.toNode &&
                     firstPoint.toNode === secondPoint.fromNode
                 ),
+                plotFlowSize = chart.plotSizeY || chart.plotHeight,
                 { min, max } = this.getLayoutYExtremes(),
                 offset = isNumber(min) ?
-                    (chart.plotHeight - min - max) / 2 :
+                    (plotFlowSize - min - max) / 2 :
                     0,
                 circularNodeTopOffset = simpleCircularData ?
                     offset :
                     Math.max(Math.min(offset, 0), -min);
 
             if (Math.abs(circularNodeTopOffset) > 1) {
-                if (simpleCircularData) {
+                // Simple reciprocal data in normal mode re-routes through a
+                // re-translate so the links re-pick their bend direction at
+                // the centered position. Every other case (including all
+                // inverted data) rigidly shifts the final geometry, which is
+                // sign-correct in `shapeArgs` space.
+                if (simpleCircularData && !chart.inverted) {
                     this.circularNodeTopOffset = circularNodeTopOffset;
                     translateNodesAndLinks();
                 } else {
@@ -1047,29 +1025,28 @@ class SankeySeries extends ColumnSeries {
                     toY,
                     toY + linkHeight
                 ),
-                topSpace = linkTop,
-                bottomSpace = plotSizeY - linkBottom,
-                preferredCircularLinkUp =
-                    fromY + toY + linkHeight < plotSizeY,
-                capSourceBend = inverted && fromNode.linksFrom.some(
-                    (link): boolean => (
-                        !link.isCircular &&
-                        isNumber(link.toNode.column) &&
-                        isNumber(fromNode.column) &&
-                        link.toNode.column > fromNode.column
-                    )
+                // Decide the bend direction in NATURAL (un-inverted) flow
+                // coordinates, where the band-to-node attachment and the
+                // available space are unambiguous. In inverted mode the
+                // renderer reflects the whole plot, so the direction is
+                // mirrored: a bend going down in natural space must be built
+                // going up in these pre-reflection coordinates. Without the
+                // mirror, multi-column circular links wrap the wrong way and
+                // cross the intermediate nodes.
+                natFromY = inverted ? plotSizeY - fromY : fromY,
+                natToY = inverted ? plotSizeY - toY : toY,
+                natLinkTop = Math.min(natFromY, natToY),
+                natLinkBottom = Math.max(natFromY, natToY) + lh,
+                naturalUp = natLinkTop >= lh + bend && (
+                    natFromY + natToY + lh < plotSizeY ||
+                    plotSizeY - natLinkBottom < lh + bend
                 ),
-                circularLinkUp = inverted ?
-                    false :
-                    topSpace >= linkHeight + bend && (
-                        preferredCircularLinkUp ||
-                        bottomSpace < linkHeight + bend
-                    ),
+                circularLinkUp = inverted ? !naturalUp : naturalUp,
                 sign = circularLinkUp ? -1 : 1,
                 innerY = circularLinkUp ?
-                    Math.max(linkHeight, linkTop - bend) :
+                    Math.max(lh, linkTop - bend) :
                     Math.min(
-                        plotSizeY - Math.max(linkHeight, 0),
+                        plotSizeY - lh,
                         linkBottom + bend
                     ),
                 x1 = right - colSign * (bend + lh),
@@ -1077,9 +1054,7 @@ class SankeySeries extends ColumnSeries {
                 x3 = right,
                 x4 = nodeLeft + nodeW,
                 x5 = x4 + colSign * bend,
-                x6 = x5 + colSign * (
-                    capSourceBend ? Math.min(lh, bend) : lh
-                ),
+                x6 = x5 + colSign * lh,
                 // Band edges at from/to nodes: fy1/ty1 must always be the
                 // edge AWAY from the bend direction, fy2/ty2 the edge TOWARD
                 // it. In inverted mode linkHeight is pre-negated, so use
@@ -1103,9 +1078,7 @@ class SankeySeries extends ColumnSeries {
                 cy2 = y5 + sign * lh * 0.7,
                 cty1 = ty2 + 0.7 * (ty1 - ty2),
                 cx1 = x3 - colSign * lh * 0.7,
-                cx2 = capSourceBend ?
-                    x5 :
-                    x4 + colSign * lh * 0.7;
+                cx2 = x4 + colSign * lh * 0.7;
 
             point.shapeArgs = {
                 d: [
