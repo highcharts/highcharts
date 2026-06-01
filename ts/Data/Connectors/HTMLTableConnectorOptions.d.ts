@@ -28,7 +28,7 @@ import type DataConnectorOptions from './DataConnectorOptions';
  * */
 
 /**
- * Options of the GoogleSheetsConnector.
+ * Options of the HTMLTableConnector.
  */
 export interface HTMLTableConnectorOptions extends DataConnectorOptions {
     /**

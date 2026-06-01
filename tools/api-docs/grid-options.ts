@@ -67,6 +67,12 @@ interface RendererOptionSpec {
     typeName: string;
 }
 
+interface DataConnectorOptionSpec {
+    interfaceName: string;
+    sourcePath: string;
+    typeName: string;
+}
+
 interface TreeInputOptionSpec {
     interfaceName: string;
     typeName: string;
@@ -92,6 +98,29 @@ const EDIT_RENDERER_OPTIONS: Array<RendererOptionSpec> = [
     { interfaceName: 'DateTimeInputRendererOptions', typeName: 'dateTimeInput' },
     { interfaceName: 'TimeInputRendererOptions', typeName: 'timeInput' },
     { interfaceName: 'NumberInputRendererOptions', typeName: 'numberInput' }
+];
+
+const DATA_CONNECTOR_OPTIONS: Array<DataConnectorOptionSpec> = [
+    {
+        interfaceName: 'CSVConnectorOptions',
+        sourcePath: 'ts/Data/Connectors/CSVConnectorOptions.d.ts',
+        typeName: 'CSV'
+    },
+    {
+        interfaceName: 'JSONConnectorOptions',
+        sourcePath: 'ts/Data/Connectors/JSONConnectorOptions.d.ts',
+        typeName: 'JSON'
+    },
+    {
+        interfaceName: 'GoogleSheetsConnectorOptions',
+        sourcePath: 'ts/Data/Connectors/GoogleSheetsConnectorOptions.d.ts',
+        typeName: 'GoogleSheets'
+    },
+    {
+        interfaceName: 'HTMLTableConnectorOptions',
+        sourcePath: 'ts/Data/Connectors/HTMLTableConnectorOptions.d.ts',
+        typeName: 'HTMLTable'
+    }
 ];
 
 const TREE_INPUT_OPTIONS: Array<TreeInputOptionSpec> = [
@@ -484,6 +513,7 @@ function addTreeNode(
     expandDataProviderOptionChildren(
         sourceInfo, info, _nodeDoclet, _treeNode, debug
     );
+    expandDataConnectorOptionChildren(_nodeDoclet, _treeNode, debug);
     expandTreeInputOptionChildren(
         sourceInfo, info, _nodeDoclet, _treeNode, debug
     );
@@ -988,6 +1018,60 @@ function expandDataProviderOptionChildren(
                         `'${provider.providerType}'`;
                 }
             }
+        }
+    }
+}
+
+function expandDataConnectorOptionChildren(
+    nodeDoclet: Record<string, any>,
+    treeNode: TreeLib.Option,
+    debug?: boolean
+): void {
+    const typeNames = nodeDoclet.type?.names;
+
+    if (
+        !Array.isArray(typeNames) ||
+        !typeNames.includes('GridDataConnectorTypeOptions')
+    ) {
+        return;
+    }
+
+    for (const spec of DATA_CONNECTOR_OPTIONS) {
+        const sourceInfo = TSLib.getSourceInfo(spec.sourcePath, void 0, debug);
+        const interfaceInfo = sourceInfo.code.find(
+            code => (
+                code.kind === 'Interface' &&
+                code.name === spec.interfaceName
+            )
+        );
+
+        if (!interfaceInfo || interfaceInfo.kind !== 'Interface') {
+            continue;
+        }
+
+        TSLib.autoExtendInfo(interfaceInfo);
+
+        const typeNode = getTreeNode(
+            `${treeNode.meta.fullname}.${spec.typeName}`
+        );
+
+        if (!typeNode.doclet.description) {
+            const interfaceDesc = (
+                interfaceInfo.doclet &&
+                TSLib.extractTagText(interfaceInfo.doclet, 'description', true)
+            ) || '';
+
+            typeNode.doclet.description = interfaceDesc || (
+                `Options for data connector type <code>'${spec.typeName}'</code>.`
+            );
+        }
+
+        for (const member of interfaceInfo.members) {
+            // `type` is represented by the synthetic connector branch label.
+            if (TSLib.extractInfoName(member) === 'type') {
+                continue;
+            }
+            addTreeNode(sourceInfo, typeNode, member, debug);
         }
     }
 }
