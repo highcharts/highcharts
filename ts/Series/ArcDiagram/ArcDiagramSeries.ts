@@ -79,8 +79,6 @@ class ArcDiagramSeries extends SankeySeries {
      *
      * */
 
-    protected useCircularLayout = false;
-
     public data!: Array<ArcDiagramPoint>;
 
     public options!: ArcDiagramSeriesOptions;
@@ -545,7 +543,8 @@ interface ArcDiagramSeries {
     pointClass: typeof ArcDiagramPoint;
 }
 extend(ArcDiagramSeries.prototype, {
-    orderNodes: false
+    orderNodes: false,
+    useCircularLayout: false
 });
 
 /* *

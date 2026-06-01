@@ -83,8 +83,6 @@ class OrganizationSeries extends SankeySeries {
      *
      * */
 
-    protected useCircularLayout = false;
-
     public data!: Array<OrganizationPoint>;
 
     public options!: OrganizationSeriesOptions;
@@ -486,7 +484,8 @@ interface OrganizationSeries {
     pointClass: typeof OrganizationPoint;
 }
 extend(OrganizationSeries.prototype, {
-    pointClass: OrganizationPoint
+    pointClass: OrganizationPoint,
+    useCircularLayout: false
 });
 
 /* *

@@ -128,12 +128,6 @@ class SankeySeries extends ColumnSeries {
      *
      * */
 
-    /**
-     * Whether to use circular layout
-     * @internal
-     */
-    protected useCircularLayout = true;
-
     public colDistance!: number;
 
     public data!: Array<SankeyPoint>;
@@ -157,6 +151,12 @@ class SankeySeries extends ColumnSeries {
     public points!: Array<SankeyPoint>;
 
     public translationFactor!: number;
+
+    /**
+     * Whether to use circular layout.
+     * @internal
+     */
+    public useCircularLayout!: boolean;
 
     /**
      * Whether the data has circular dependencies.
@@ -1331,7 +1331,8 @@ extend(SankeySeries.prototype, {
     noSharedTooltip: true,
     pointArrayMap: ['from', 'to', 'weight'],
     pointClass: SankeyPoint,
-    searchPoint: H.noop as any
+    searchPoint: H.noop as any,
+    useCircularLayout: true
 });
 
 /* *

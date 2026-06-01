@@ -71,8 +71,6 @@ class DependencyWheelSeries extends SankeySeries {
      *
      * */
 
-    protected useCircularLayout = false;
-
     public data!: Array<DependencyWheelPoint>;
 
     public options!: DependencyWheelSeriesOptions;
@@ -400,7 +398,8 @@ interface DependencyWheelSeries {
 extend(DependencyWheelSeries.prototype, {
     orderNodes: false,
     pointArrayMap: ['from', 'to', 'weight', 'weightTo'],
-    getCenter: PieSeries.prototype.getCenter
+    getCenter: PieSeries.prototype.getCenter,
+    useCircularLayout: false
 });
 
 /* *
