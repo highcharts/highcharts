@@ -177,7 +177,7 @@ const exporting: ExportingOptions = {
      * modify the request, now use [fetchOptions](#exporting.fetchOptions)
      * instead.
      *
-     * @deprecated
+     * @deprecated 11.3.0
      * @type      {Highcharts.HTMLAttributes}
      * @since     3.0.8
      * @apioption exporting.formAttributes
