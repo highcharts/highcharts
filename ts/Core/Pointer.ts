@@ -1725,14 +1725,23 @@ class Pointer {
                 tooltip ?
                     tooltip.shared :
                     false
-            );
+            ),
+            directTouchPoint = (
+                shared &&
+                !p &&
+                e &&
+                pointer.isDirectTouch
+            ) ?
+                pointer.getPointFromEvent(e as any) :
+                void 0;
 
-        let hoverPoint = p || chart.hoverPoint,
+        let hoverPoint = p || directTouchPoint || chart.hoverPoint,
             hoverSeries = hoverPoint?.series || chart.hoverSeries;
 
         const // `onMouseOver` or already hovering a series with directTouch
             isDirectTouch = (!e || e.type !== 'touchmove') && (
-                !!p || (
+                !!p ||
+                !!directTouchPoint || (
                     (hoverSeries?.directTouch) &&
                     pointer.isDirectTouch
                 )

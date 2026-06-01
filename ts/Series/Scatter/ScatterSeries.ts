@@ -18,13 +18,9 @@
  *
  * */
 
-import type Chart from '../../Core/Chart/Chart';
-import type { SeriesTypeOptions } from '../../Core/Series/SeriesType';
 import type ScatterPoint from './ScatterPoint';
 import type ScatterSeriesOptions from './ScatterSeriesOptions';
-import type { DeepPartial } from '../../Shared/Types';
 
-import DefaultOptions from '../../Core/Defaults.js';
 import ScatterSeriesDefaults from './ScatterSeriesDefaults.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
@@ -32,17 +28,6 @@ const {
     line: LineSeries
 } = SeriesRegistry.seriesTypes;
 import { addEvent, extend, merge } from '../../Shared/Utilities.js';
-
-const SCATTER_HEADER_FORMAT = '<span style="color:{point.color}">\u25CF</span> ' +
-    '<span style="font-size: 0.8em"> {series.name}</span><br/>';
-const SCATTER_POINT_FORMAT = 'x: <b>{point.x}</b><br/>y: <b>{point.y}</b><br/>';
-const SHARED_SCATTER_POINT_FORMAT =
-    '<span style="color:{point.color}">\u25CF</span> ' +
-    '{series.name}: <b>{point.y}</b><br/>';
-const BUBBLE_POINT_FORMAT = '({point.x}, {point.y}), Size: {point.z}';
-const SHARED_BUBBLE_POINT_FORMAT =
-    '<span style="color:{point.color}">\u25CF</span> ' +
-    '{series.name}: <b>{point.y}</b>, Size: <b>{point.z}</b><br/>';
 
 /* *
  *
@@ -169,43 +154,6 @@ class ScatterSeries extends LineSeries {
             this.graph = this.graph.destroy();
         }
     }
-
-    /**
-     * Enable shared tooltips for scatter and bubble series while preserving
-     * direct point hover when tooltip grouping is active.
-     */
-    public init(
-        chart: Chart,
-        userOptions: DeepPartial<SeriesTypeOptions>
-    ): void {
-        super.init(chart, userOptions);
-
-        const { tooltipOptions } = this;
-
-        if (tooltipOptions.shared) {
-            this.noSharedTooltip = false;
-            this.directTouch = true;
-
-            if (tooltipOptions.headerFormat === SCATTER_HEADER_FORMAT) {
-                tooltipOptions.headerFormat =
-                    DefaultOptions.defaultOptions.tooltip!.headerFormat;
-            }
-
-            if (
-                tooltipOptions.pointFormat === (
-                    this.type === 'bubble' ?
-                        BUBBLE_POINT_FORMAT :
-                        SCATTER_POINT_FORMAT
-                )
-            ) {
-                tooltipOptions.pointFormat = this.type === 'bubble' ?
-                    SHARED_BUBBLE_POINT_FORMAT :
-                    SHARED_SCATTER_POINT_FORMAT;
-            }
-        }
-    }
-
-
 }
 
 /* *
