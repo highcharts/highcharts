@@ -451,20 +451,7 @@ function addTreeNode(
                 break;
 
             case 'sample':
-                _array = _nodeDoclet[`${_tag}s`] = [];
-                for (
-                    const _object
-                    of TSLib.extractTagObjects(_infoDoclet, 'sample')
-                ) {
-                    const _sample: TreeLib.OptionDocletSample = {
-                        name: _object.name || _object.text,
-                        value: _object.value || ''
-                    };
-                    if (_object.type) {
-                        _sample.products = _object.type.slice();
-                    }
-                    _array.push(_sample);
-                }
+                addSamplesToNode(_infoDoclet, _treeNode);
                 break;
 
             case 'type':
@@ -714,6 +701,29 @@ function formatJSDocLinks(
             return label;
         }
     );
+}
+
+function addSamplesToNode(
+    infoDoclet: TSLib.DocletInfo | undefined,
+    treeNode: TreeLib.Option
+): void {
+    if (!infoDoclet?.tags.sample) {
+        return;
+    }
+
+    const samples = treeNode.doclet.samples = [];
+
+    for (const object of TSLib.extractTagObjects(infoDoclet, 'sample')) {
+        const sample: TreeLib.OptionDocletSample = {
+            name: object.name || object.text,
+            value: object.value || ''
+        };
+
+        if (object.type) {
+            sample.products = object.type.slice();
+        }
+        samples.push(sample);
+    }
 }
 
 function appendDeprecationToDescription(
@@ -1073,6 +1083,7 @@ function expandDataConnectorOptionChildren(
                 `Options for data connector type <code>'${spec.typeName}'</code>.`
             );
         }
+        addSamplesToNode(interfaceInfo.doclet, typeNode);
 
         for (const member of interfaceInfo.members) {
             const memberName = TSLib.extractInfoName(member);

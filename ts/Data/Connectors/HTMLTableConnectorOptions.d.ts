@@ -29,6 +29,9 @@ import type DataConnectorOptions from './DataConnectorOptions';
 
 /**
  * Options of the HTMLTableConnector.
+ *
+ * @sample grid-lite/basic/data-connector-html-table
+ *         Grid with HTML table connector
  */
 export interface HTMLTableConnectorOptions extends DataConnectorOptions {
     /**

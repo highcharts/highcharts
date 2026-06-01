@@ -1,5 +1,5 @@
 ---
-name: CSV connector
+name: HTML table connector
 authors:
   - Dawid Dragula
 js_wrap: b
