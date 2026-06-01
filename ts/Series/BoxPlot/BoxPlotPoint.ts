@@ -59,7 +59,6 @@ declare class BoxPlotPoint extends ColumnPoint {
     public stemDashStyle: DashStyleValue;
     public stemWidth: number;
     public below?: boolean;
-    public boxPlotDataLabels?: Array<SVGElement|undefined>;
     public whiskerColor: ColorType;
     public whiskerDashStyle: DashStyleValue;
     public whiskerLength: (number|string|undefined);

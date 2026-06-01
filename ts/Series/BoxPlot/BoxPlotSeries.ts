@@ -39,8 +39,7 @@ import {
     extend,
     merge,
     pick,
-    relativeLength,
-    splat
+    relativeLength
 } from '../../Shared/Utilities.js';
 
 /* *
@@ -92,7 +91,7 @@ class BoxPlotSeries extends ColumnSeries {
     /**
      * Resolve the data label's `pointValKey` option, falling back to the
      * series `pointValKey` when it is missing or not one of the box plot
-     * values (`pointArrayMap`). Shared by rendering and alignment.
+     * values (`pointArrayMap`).
      * @internal
      */
     public resolvePointValKey(
@@ -101,105 +100,6 @@ class BoxPlotSeries extends ColumnSeries {
         return rawKey && this.pointArrayMap.indexOf(rawKey) > -1 ?
             rawKey :
             this.pointValKey;
-    }
-
-    /**
-     * Render the data labels. Each label config is drawn in its own pass with
-     * `point.y`/`point.plotY` set to the statistic selected by its
-     * `pointValKey`, so the formatter, the `{point.y}` token and
-     * `dataLabels.filter` all operate on that value. Positioning is delegated
-     * to `alignDataLabel`. The rendered labels are cached per config index on
-     * the point, so they are reused on redraw instead of duplicated.
-     * @internal
-     */
-    public drawDataLabels(): void {
-        const series = this,
-            points = series.points,
-            originalOptions = series.options.dataLabels;
-
-        if (!series.hasDataLabels?.()) {
-            return;
-        }
-
-        const labelConfigs = splat(
-                originalOptions || {}
-            ) as Array<BoxPlotDataLabelOptions>,
-            // Box plot data label defaults (incl. the value formatter), merged
-            // into every config since the per-config rendering below replaces
-            // series.options.dataLabels and would otherwise drop them
-            dlDefaults = splat(
-                BoxPlotSeries.defaultOptions.dataLabels || {}
-            )[0],
-            pointCount = points.length,
-            // Type plot options carry the same dataLabels array; null it while
-            // rendering so each pass produces a single label, not the whole set
-            typePlotOptions = series.chart.options
-                .plotOptions?.[series.type],
-            savedTypePlotDL = typePlotOptions?.dataLabels,
-            originalY = points.map((point): BoxPlotPoint['y'] => point.y),
-            originalPlotY = points.map(
-                (point): BoxPlotPoint['plotY'] => point.plotY
-            );
-
-        if (typePlotOptions) {
-            typePlotOptions.dataLabels = void 0;
-        }
-
-        labelConfigs.forEach((labelOptions, index): void => {
-            const pointValKey = series.resolvePointValKey(
-                labelOptions.pointValKey
-            );
-
-            series.options.dataLabels = merge(dlDefaults, labelOptions);
-
-            for (let i = 0; i < pointCount; ++i) {
-                const point = points[i],
-                    cache = point.boxPlotDataLabels ||= [],
-                    label = cache[index];
-
-                // Expose the selected statistic for formatting and filtering
-                point.y = point[pointValKey];
-                point.plotY = point[`${pointValKey}Plot`];
-                // Reuse the label drawn for this config in the previous redraw
-                point.dataLabel = label;
-                point.dataLabels = label ? [label] : [];
-            }
-
-            ColumnSeries.prototype.drawDataLabels.call(series, points);
-
-            for (let i = 0; i < pointCount; ++i) {
-                const point = points[i],
-                    cache = point.boxPlotDataLabels || [];
-
-                cache[index] = point.dataLabel;
-                point.boxPlotDataLabels = cache;
-            }
-        });
-
-        series.options.dataLabels = originalOptions;
-        if (typePlotOptions) {
-            typePlotOptions.dataLabels = savedTypePlotDL;
-        }
-
-        for (let i = 0; i < pointCount; ++i) {
-            const point = points[i],
-                cache = point.boxPlotDataLabels || [];
-
-            // Destroy labels left over from configs that no longer exist
-            for (let j = labelConfigs.length; j < cache.length; ++j) {
-                cache[j]?.destroy();
-            }
-            cache.length = labelConfigs.length;
-
-            const finalLabels = cache.filter(
-                (label): label is SVGElement => !!label
-            );
-
-            point.y = originalY[i];
-            point.plotY = originalPlotY[i];
-            point.dataLabels = finalLabels;
-            point.dataLabel = finalLabels[0];
-        }
     }
 
     /**
@@ -233,8 +133,12 @@ class BoxPlotSeries extends ColumnSeries {
                 height: 0
             };
         }
-        // Place the `low` label below the value, the rest above
+
+        // Place labels on the side that matches the screen direction.
         point.below = pointValKey === 'low';
+        if (series.yAxis.reversed) {
+            point.below = !point.below;
+        }
 
         ColumnSeries.prototype.alignDataLabel.call(
             series,

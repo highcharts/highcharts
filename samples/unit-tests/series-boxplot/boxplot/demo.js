@@ -641,11 +641,10 @@ QUnit.test(
 );
 
 QUnit.test(
-    'Box plot data labels y context: this.y, {point.y}, filter (#23904)',
+    'Box plot data labels keep the standard y context (#23904)',
     function (assert) {
         const yValues = [];
 
-        // this.y and {point.y} resolve to the selected statistic per label
         const chart = Highcharts.chart('container', {
             chart: {
                 type: 'boxplot'
@@ -673,23 +672,25 @@ QUnit.test(
         assert.deepEqual(
             chart.series[0].points[0].dataLabels
                 .map(label => label.text.textStr),
-            ['{this.y}=9', '1'],
-            'this.y and {point.y} resolve to each label\'s own statistic'
+            ['{this.y}=9', '9'],
+            'this.y and {point.y} keep resolving to the point y value'
         );
 
         assert.deepEqual(
             yValues,
             [9],
-            'this.y inside the formatter equals the selected statistic'
+            'this.y inside the formatter equals the point y value'
         );
 
         assert.strictEqual(
             chart.series[0].points[0].y,
             9,
-            'point.y is restored to the series value after rendering'
+            'point.y keeps the series value after rendering'
         );
 
-        // dataLabels.filter compares against the selected statistic per label
+        // dataLabels.filter keeps comparing against the point value. Use
+        // point.low or another statistic explicitly to filter by box plot
+        // values.
         const filterChart = Highcharts.chart('container', {
                 chart: {
                     type: 'boxplot'
@@ -713,8 +714,161 @@ QUnit.test(
 
         assert.deepEqual(
             (filterPoint.dataLabels || []).map(label => label.text.textStr),
-            ['L'],
-            'Only the low label passes a filter on y < 5'
+            [],
+            'No label passes a filter on y < 5 because point.y is high'
+        );
+    }
+);
+
+QUnit.test(
+    'Point-level box plot data label arrays are reused on redraw (#23904)',
+    function (assert) {
+        const chart = Highcharts.chart('container', {
+                chart: {
+                    type: 'boxplot'
+                },
+                title: {
+                    text: null
+                },
+                series: [{
+                    dataLabels: {
+                        enabled: true,
+                        format: 'Series'
+                    },
+                    data: [{
+                        low: 1,
+                        q1: 3,
+                        median: 5,
+                        q3: 7,
+                        high: 9,
+                        dataLabels: [{
+                            enabled: true,
+                            pointValKey: 'low',
+                            format: 'P-low'
+                        }, {
+                            enabled: true,
+                            pointValKey: 'median',
+                            format: 'P-median'
+                        }]
+                    }]
+                }]
+            }),
+            point = chart.series[0].points[0],
+            assertLabels = function (message) {
+                assert.deepEqual(
+                    point.dataLabels.map(label => label.text.textStr),
+                    ['P-low', 'P-median'],
+                    message + ': point-level labels are tracked on the point'
+                );
+
+                assert.strictEqual(
+                    chart.container.querySelectorAll(
+                        '.highcharts-data-label'
+                    ).length,
+                    2,
+                    message + ': redraw does not duplicate point-level labels'
+                );
+            };
+
+        assertLabels('Initial render');
+
+        chart.redraw();
+        assertLabels('First redraw');
+
+        chart.redraw();
+        assertLabels('Second redraw');
+    }
+);
+
+QUnit.test(
+    'Box plot data label arrays use separate groups (#23904)',
+    function (assert) {
+        const chart = Highcharts.chart('container', {
+                chart: {
+                    type: 'boxplot'
+                },
+                title: {
+                    text: null
+                },
+                series: [{
+                    dataLabels: [{
+                        enabled: true,
+                        pointValKey: 'high',
+                        format: 'High',
+                        zIndex: 2
+                    }, {
+                        enabled: true,
+                        pointValKey: 'low',
+                        format: 'Low',
+                        zIndex: 20
+                    }],
+                    data: [[1, 3, 5, 7, 9]]
+                }]
+            }),
+            series = chart.series[0],
+            point = series.points[0],
+            groups = series.dataLabelsGroups;
+
+        assert.strictEqual(
+            groups.length,
+            2,
+            'A separate group is created for each data label config'
+        );
+
+        assert.deepEqual(
+            groups.map(group => group.attr('zIndex')),
+            [2, 20],
+            'Each data label config keeps its own group zIndex'
+        );
+
+        assert.notStrictEqual(
+            point.dataLabels[0].parentGroup,
+            point.dataLabels[1].parentGroup,
+            'The two labels belong to different groups'
+        );
+    }
+);
+
+QUnit.test(
+    'Data labels for boxplot statistics, reversed y axis (#23904)',
+    function (assert) {
+        const chart = Highcharts.chart('container', {
+                chart: {
+                    type: 'boxplot'
+                },
+                title: {
+                    text: null
+                },
+                yAxis: {
+                    min: 0,
+                    max: 10,
+                    reversed: true
+                },
+                series: [{
+                    dataLabels: [{
+                        enabled: true,
+                        pointValKey: 'high',
+                        format: 'High'
+                    }, {
+                        enabled: true,
+                        pointValKey: 'low',
+                        format: 'Low'
+                    }],
+                    data: [[3, 4, 5, 6, 7]]
+                }]
+            }),
+            point = chart.series[0].points[0],
+            highLabel = point.dataLabels[0],
+            lowLabel = point.dataLabels[1];
+
+        assert.ok(
+            highLabel.y >= point.highPlot - 1,
+            'High label is below the high whisker on a reversed y axis'
+        );
+
+        assert.ok(
+            lowLabel.y + lowLabel.height <= point.lowPlot + 1,
+            'Low label is above the low whisker on a reversed y axis'
         );
     }
 );

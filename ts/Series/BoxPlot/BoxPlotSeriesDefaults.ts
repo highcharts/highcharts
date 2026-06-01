@@ -18,7 +18,9 @@
  *
  * */
 
+import type BoxPlotPoint from './BoxPlotPoint';
 import type BoxPlotSeriesOptions from './BoxPlotSeriesOptions';
+import type { BoxPlotDataLabelOptions } from './BoxPlotSeriesOptions';
 import type Point from '../../Core/Series/Point';
 
 import { Palette } from '../../Core/Color/Palettes.js';
@@ -67,17 +69,23 @@ const BoxPlotSeriesDefaults: BoxPlotSeriesOptions = {
         /**
          * The default formatter renders the value of the statistic selected by
          * the label's
-         * [pointValKey](#plotOptions.boxplot.dataLabels.pointValKey). During
-         * rendering `point.y` is set to that statistic, so `this.y`,
-         * `{point.y}` and `dataLabels.filter` all resolve to it as well.
+         * [pointValKey](#plotOptions.boxplot.dataLabels.pointValKey).
          *
          * @type {Highcharts.DataLabelsFormatterCallbackFunction}
          */
-        formatter: function (this: Point): string {
-            const { numberFormatter } = this.series.chart;
+        formatter: function (
+            this: Point,
+            options: BoxPlotDataLabelOptions
+        ): string {
+            const point = this as BoxPlotPoint,
+                { series } = point,
+                { pointValKey } = options,
+                value = pointValKey ?
+                    point[series.resolvePointValKey(pointValKey)] :
+                    point.y;
 
-            return typeof this.y === 'number' ?
-                numberFormatter(this.y, -1) :
+            return typeof value === 'number' ?
+                series.chart.numberFormatter(value, -1) :
                 '';
         }
     },
