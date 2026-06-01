@@ -1713,6 +1713,20 @@ class Pointer {
      * @emits Highcharts.Point#event:mouseOver
      */
     public runPointActions(e?: PointerEvent, p?: Point, force?: boolean): void {
+        if (!p && e) {
+            const directTouchPoint = this.getPointFromEvent(e as Event);
+
+            if (
+                directTouchPoint &&
+                pick(
+                    directTouchPoint.series.options.enableMouseTracking,
+                    true
+                )
+            ) {
+                p = directTouchPoint;
+            }
+        }
+
         const pointer = this,
             chart = pointer.chart,
             series = chart.series,
@@ -1725,23 +1739,14 @@ class Pointer {
                 tooltip ?
                     tooltip.shared :
                     false
-            ),
-            directTouchPoint = (
-                shared &&
-                !p &&
-                e &&
-                pointer.isDirectTouch
-            ) ?
-                pointer.getPointFromEvent(e as any) :
-                void 0;
+            );
 
-        let hoverPoint = p || directTouchPoint || chart.hoverPoint,
+        let hoverPoint = p || chart.hoverPoint,
             hoverSeries = hoverPoint?.series || chart.hoverSeries;
 
         const // `onMouseOver` or already hovering a series with directTouch
             isDirectTouch = (!e || e.type !== 'touchmove') && (
-                !!p ||
-                !!directTouchPoint || (
+                !!p || (
                     (hoverSeries?.directTouch) &&
                     pointer.isDirectTouch
                 )
