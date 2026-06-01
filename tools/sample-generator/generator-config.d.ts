@@ -11,6 +11,8 @@ export interface ControlOptions {
     max?: number;
     /** The minimum value for number controls */
     min?: number;
+    /** Whether the control value can be set to null */
+    nullable?: boolean;
     /** The option valid values for select controls */
     options?: Array<string>;
     /**
