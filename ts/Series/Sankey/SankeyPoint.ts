@@ -216,8 +216,9 @@ class SankeyPoint extends ColumnSeries.prototype.pointClass {
             return tooltip;
         }
 
-        const selfLinkFormat =
-            this.series.options.tooltip?.nodeSelfLinkFormat || '';
+        const selfLinkFormat = (
+            this.series.tooltipOptions as { nodeSelfLinkFormat?: string }
+        ).nodeSelfLinkFormat || '';
 
         return tooltip + format(
             selfLinkFormat,

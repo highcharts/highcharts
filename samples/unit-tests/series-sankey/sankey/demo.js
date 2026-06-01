@@ -583,6 +583,9 @@ QUnit.test('Sankey and circular data', function (assert) {
         title: {
             text: 'Highcharts Sankey Diagram'
         },
+        tooltip: {
+            split: false
+        },
         series: [
             {
                 keys: ['from', 'to', 'weight'],
@@ -858,12 +861,41 @@ QUnit.test('Sankey and circular data', function (assert) {
             ]
         }),
         invertedSeries = invertedChart.series[0],
-        invertedReturnPath = invertedSeries.points[2].shapeArgs.d;
+        invertedReturnLink = invertedSeries.points[2],
+        invertedReturnPath = invertedReturnLink.shapeArgs.d,
+        invertedReturnCoordinates = getPathCoordinates(invertedReturnPath);
 
     assert.ok(
-        Math.abs(invertedReturnPath[0][1] - invertedReturnPath[1][5]) <=
-            invertedSeries.circularLinkBend * 2 + 1,
-        'Inverted return links should cap middle-column source bends'
+        Math.min.apply(null, invertedReturnCoordinates.x) > 0 &&
+            Math.max.apply(null, invertedReturnCoordinates.x) <
+                invertedChart.plotSizeX &&
+            Math.min.apply(null, invertedReturnCoordinates.y) >= 0 &&
+            Math.max.apply(null, invertedReturnCoordinates.y) <=
+                invertedChart.plotSizeY,
+        'Inverted return links should stay within the plot area'
+    );
+
+    assert.ok(
+        Math.min.apply(null, invertedReturnCoordinates.y) <
+            Math.min.apply(null, invertedReturnLink.linkBase),
+        'Inverted return links should route away from the nodes'
+    );
+
+    // Node sizing includes circular links, identical to non-inverted mode, so
+    // b sums its outgoing flow (b -> c plus the circular b -> a): 10 + 5.
+    assert.strictEqual(
+        invertedSeries.nodes.find(node => node.id === 'b').sum,
+        15,
+        'Inverted node sum should include circular links, as in normal mode'
+    );
+
+    // The circular layout flag lives on the prototype, so circular detection
+    // must survive a series update that strips own properties (#8218).
+    invertedSeries.update({ name: 'updated' });
+    assert.strictEqual(
+        invertedSeries.isDataCircular,
+        true,
+        'Circular layout should persist after a series update'
     );
 
     invertedChart.destroy();

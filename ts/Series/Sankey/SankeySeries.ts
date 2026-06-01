@@ -700,6 +700,18 @@ class SankeySeries extends ColumnSeries {
      * @internal
      */
     public shiftCircularLayout(shift: number): void {
+        // Inverted charts store `tooltipPos` swapped, with the flow axis on
+        // index 0 and negated relative to `shapeArgs.y`. Shift it there
+        // instead of index 1 so node and link tooltips stay anchored.
+        const inverted = this.chart.inverted,
+            shiftTooltip = (pos: Array<number>): void => {
+                if (inverted) {
+                    pos[0] -= shift;
+                } else {
+                    pos[1] += shift;
+                }
+            };
+
         for (const node of this.nodes) {
             if (node.shapeArgs && isNumber(node.shapeArgs.y)) {
                 node.shapeArgs.y += shift;
@@ -707,7 +719,7 @@ class SankeySeries extends ColumnSeries {
             }
 
             if (node.tooltipPos) {
-                node.tooltipPos[1] += shift;
+                shiftTooltip(node.tooltipPos);
             }
         }
 
@@ -739,7 +751,7 @@ class SankeySeries extends ColumnSeries {
             }
 
             if (point.tooltipPos) {
-                point.tooltipPos[1] += shift;
+                shiftTooltip(point.tooltipPos);
             }
         }
     }
