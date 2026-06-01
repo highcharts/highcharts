@@ -22,7 +22,7 @@ export default {
     templates: ['categories-12'],
     chartOptionsExtra: {
         series: [{
-            data: [1, 3, 2, 4]
+            data: [1, 3, 2, 5]
         }, {
             data: [5, 3, 4, 2]
         }, {
