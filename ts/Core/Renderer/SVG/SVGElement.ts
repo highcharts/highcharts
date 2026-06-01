@@ -2457,10 +2457,8 @@ class SVGElement implements SVGElementBase {
         value?: number,
         key?: string
     ): boolean {
-        const renderer = this.renderer,
-            parentGroup = this.parentGroup,
-            parentNode = (parentGroup && parentGroup.element) || renderer.box,
-            element = this.element,
+        const { element, parentGroup, renderer } = this,
+            parentNode = parentGroup?.element || renderer.box,
             svgParent = parentNode === renderer.box;
 
         let childNodes,
