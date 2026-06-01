@@ -22,10 +22,16 @@ const { glob } = require('glob');
  *        The config file path (relative to project root)
  * @param {object} log
  *        Logger instance
+ * @param {object} [options]
+ *        Generation options
+ * @param {boolean} [options.silent=false]
+ *        Whether to suppress per-sample log output
  * @return {Promise<void>}
  *         Promise to keep
  */
-async function generateSample(configFile, log) {
+async function generateSample(configFile, log, options = {}) {
+    const { silent = false } = options;
+
     const { saveDemoFile } = await import(
         '../sample-generator/index.ts'
     );
@@ -33,7 +39,9 @@ async function generateSample(configFile, log) {
     const configPath = path.join(__dirname, '../../', configFile);
     const outputDir = path.dirname(configFile);
 
-    log.message(`Generating sample from ${configFile}...`);
+    if (!silent) {
+        log.message(`Generating sample from ${configFile}...`);
+    }
 
     // Clear the module cache to ensure fresh import
     delete require.cache[configPath];
@@ -52,7 +60,9 @@ async function generateSample(configFile, log) {
     // Generate sample assets from config.
     await saveDemoFile(config);
 
-    log.success(' ✔︎ Success');
+    if (!silent) {
+        log.success(' ✔︎ Success');
+    }
 }
 
 /**
@@ -282,9 +292,25 @@ async function task() {
 
     log.message(`Found ${configFiles.length} config file(s)`);
 
+    const useDotProgress = Boolean(argv.check);
+    let dotCount = 0;
+
     // Process each config file
     for (const configFile of configFiles) {
-        await generateSample(configFile, log);
+        await generateSample(configFile, log, { silent: useDotProgress });
+
+        if (useDotProgress) {
+            process.stdout.write('.');
+            dotCount += 1;
+
+            if (dotCount % 80 === 0) {
+                process.stdout.write('\n');
+            }
+        }
+    }
+
+    if (useDotProgress && dotCount % 80 !== 0) {
+        process.stdout.write('\n');
     }
 
     if (argv.check) {

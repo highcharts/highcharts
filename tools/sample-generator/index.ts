@@ -448,12 +448,14 @@ function getPathMeta(config: SampleGeneratorConfig): MetaList {
                 node = flatTree.find(n => n.name === name);
             }
 
+            /*
             if (!node) {
                 console.log(colors.gray(
                     `  - ${path} not found in flat-tree.json, ` +
                     'trying to build control anyway.'
                 ));
             }
+            */
 
             const { default: defaultValue, mainType, options } = node || {};
 
