@@ -98,13 +98,16 @@ export function buildIndexFromColumns(
     const parentPathByPath = new Map<string, string | null>();
 
     for (let rowIndex = 0; rowIndex < rowCount; ++rowIndex) {
-        const nodeId = idColumn ?
-            normalizeRowIdValue(
+        let nodeId: RowId | undefined;
+        if (idColumn) {
+            nodeId = normalizeRowIdValue(
                 columns[idColumn]?.[rowIndex],
                 idColumn,
                 rowIndex
-            ) :
-            table.getOriginalRowIndex(rowIndex);
+            );
+        } else {
+            nodeId = table.getOriginalRowIndex(rowIndex);
+        }
 
         if (!defined(nodeId)) {
             throw new Error(
