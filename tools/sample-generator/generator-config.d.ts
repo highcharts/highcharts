@@ -102,6 +102,11 @@ export interface SampleGeneratorConfig {
      */
     dataFile?: string;
     /**
+     * A descriptive text of the demo, rendered in a paragraph below the chart.
+     * Supports HTML.
+     */
+    description?: string;
+    /**
      * Additional details for the demo, serialized into YML and used for
      * `demo.details`.
      */

@@ -579,6 +579,14 @@ export async function getDemoHTML(
         );
     }
 
+    // Add the description or remove the placeholder
+    html = html.replace(
+        '\n  <!-- DESCRIPTION_PLACEHOLDER -->',
+        config?.description ?
+            `\n  <p class="highcharts-description">${config.description}</p>` :
+            ''
+    );
+
     // Collect unique handler types and generate functions once
     const handlerTypes = new Set<string>();
     const controls: string[] = [];
@@ -612,17 +620,20 @@ export async function getDemoHTML(
       ` :
         '';
 
-
     // Add the config
     if (controls.length > 0) {
         html = html.replace(
             '<!-- CONTROLS_PLACEHOLDER -->',
-            `<highcharts-controls>
+            `<div class="highcharts-controls-wrapper">
+  <highcharts-controls>
     <highcharts-group header="Update options">
       ${description}${controls.join('\n      ')}
     </highcharts-group>
-  </highcharts-controls>`
+  </highcharts-controls>
+</div>`
         );
+    } else {
+        html = html.replace('\n<!-- CONTROLS_PLACEHOLDER -->', '');
     }
     return html;
 }
@@ -1671,6 +1682,20 @@ export async function getDemoCSS(config: SampleGeneratorConfig) {
 
     if (config.chartOptionsExtra?.chart?.styledMode) {
         css = '@import url("https://code.highcharts.com/css/highcharts.css");\n\n' + css;
+    }
+
+    if (config.description) {
+        css += `
+.highcharts-description {
+    background: light-dark(#f2f6f2, #323232);
+    border-radius: 0 4px 4px 0;
+    border-left: 2px solid light-dark(#1d6aff, #fff);
+    font-size: 0.8rem;
+    font-style: italic;
+    padding: 8px 16px;
+    margin: 2em 10px 1em;
+}
+`;
     }
 
     return css;
