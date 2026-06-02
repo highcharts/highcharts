@@ -7,7 +7,7 @@ Grid.grid('container', {
     data: {
         providerType: 'remote',
         dataSource: {
-            urlTemplate: 'https://demo-data-server.highstage.dev/data' +
+            urlTemplate: 'https://demo-data-server.highsoftlabs.com/data' +
                 '?format={format}&dataset=large' +
                 '&columnsInclude=' + columns +
                 '&page={page}&pageSize={pageSize}' +

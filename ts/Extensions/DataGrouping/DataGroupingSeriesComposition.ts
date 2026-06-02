@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -610,6 +611,7 @@ function destroyGroupedData(
     // Clear previous groups
     if (this.groupedData) {
         this.groupedData.forEach(function (
+            this: Series,
             point: Point,
             i: number
         ): void {

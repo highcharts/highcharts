@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  * */
 
@@ -209,7 +210,7 @@ export interface AxisCrosshairOptions {
      * `false` to disable animation. Used by the color axis marker.
      *
      * @product highcharts highstock highmaps
-     * @since next
+     * @since 12.6.0
      */
     animation?: (boolean|Partial<AnimationOptions>);
 
@@ -269,9 +270,10 @@ export interface AxisCrosshairOptions {
     * mouse over a point. Works on initial hover.
     *
     * @sample {highcharts|highstock} highcharts/tooltip/showdelay/
+    *         Show crosshair after 2 seconds
     *
     * @default 0
-    * @since next
+    * @since 12.6.0
     */
     showDelay?: number,
 
@@ -293,11 +295,7 @@ export interface AxisCrosshairOptions {
      * The pixel width of the crosshair. Defaults to 1 for numeric or
      * datetime axes, and for one category width for category axes.
      *
-     * @sample {highcharts} highcharts/xaxis/crosshair-customized/
-     *         Customized crosshairs
-     * @sample {highstock} highcharts/xaxis/crosshair-customized/
-     *         Customized crosshairs
-     * @sample {highmaps} highcharts/xaxis/crosshair-customized/
+     * @sample {highcharts|highstock|highmaps} highcharts/xaxis/crosshair-customized/
      *         Customized crosshairs
      *
      * @default 1
@@ -411,6 +409,12 @@ export interface AxisLabelFormatterContextObject {
      * Default formatting of date/time labels.
      */
     dateTimeLabelFormat?: Time.DateTimeFormat;
+
+    /**
+     * Boundary time unit for the label (e.g `day`, `month`, `year`), used for
+     * date/time formatting.
+     */
+    boundary?: string;
 
     /**
      * Whether the label belongs to the first tick on the axis.
@@ -703,7 +707,19 @@ export interface AxisLabelOptions {
      * @sample {highcharts} highcharts/xaxis/labels-style/
      *         Red X axis labels
      */
-    style: CSSObject;
+    style: CSSObject & {
+        /** @default ${palette.neutralColor80} */
+        color?: CSSObject['color'];
+
+        /** @default 'default' */
+        cursor?: CSSObject['cursor'];
+
+        /** @default '0.8em' */
+        fontSize?: CSSObject['fontSize'];
+
+        /** @default 'ellipsis' */
+        textOverflow?: CSSObject['textOverflow'];
+    };
 
     /**
      * Whether to [use HTML](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting#html)
@@ -1149,7 +1165,7 @@ export interface AxisOptions {
     /**
      * Deprecated. Use `minRange` instead.
      *
-     * @deprecated
+     * @deprecated 6.0.0
      * @product highcharts highstock
      */
     maxZoom?: number;
@@ -2010,7 +2026,7 @@ export interface AxisTitleOptions {
     /**
      * Deprecated. Set the `text` to `undefined` to disable the title.
      *
-     * @deprecated
+     * @deprecated 3.0.0
      * @product highcharts
      */
     enabled?: boolean;
@@ -2072,7 +2088,13 @@ export interface AxisTitleOptions {
      * @sample {highcharts} highcharts/css/axis/
      *         Styled mode
      */
-    style: CSSObject;
+    style: CSSObject & {
+        /** @default ${palette.neutralColor60} */
+        color?: CSSObject['color'];
+
+        /** @default '0.8em' */
+        fontSize?: CSSObject['fontSize'];
+    };
 
     /**
      * The actual text of the axis title. It can contain basic HTML tags

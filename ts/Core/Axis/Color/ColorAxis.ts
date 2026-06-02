@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -17,13 +18,11 @@
  *
  * */
 
-import type AnimationOptions from '../../Animation/AnimationOptions';
 import type Chart from '../../Chart/Chart';
 import type {
     ColorAxisDataClassOptions,
     ColorAxisOptions
 } from './ColorAxisOptions';
-import type ColorType from '../../Color/ColorType';
 import type { DeepPartial } from '../../../Shared/Types';
 import type Fx from '../../Animation/Fx';
 import type GradientColor from '../../Color/GradientColor';
@@ -987,12 +986,6 @@ namespace ColorAxis {
         setState: Point['setState'];
         isDataClass: true;
         setVisible: Function;
-    }
-
-    export interface MarkerOptions {
-        animation?: (boolean|Partial<AnimationOptions>);
-        color?: ColorType;
-        width?: number;
     }
 
 }

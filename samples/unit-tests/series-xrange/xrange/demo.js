@@ -302,7 +302,8 @@ QUnit.test('X-Range', function (assert) {
 QUnit.test('Partial fill reversed', assert => {
     const chart = Highcharts.chart('container', {
         chart: {
-            type: 'xrange'
+            type: 'xrange',
+            styledMode: true
         },
         xAxis: {
             type: 'datetime'
@@ -314,6 +315,7 @@ QUnit.test('Partial fill reversed', assert => {
                         x: Date.UTC(2019, 0, 1),
                         x2: Date.UTC(2019, 0, 2),
                         y: 1,
+                        colorIndex: 0,
                         partialFill: 0.5
                     }
                 ]
@@ -338,6 +340,30 @@ QUnit.test('Partial fill reversed', assert => {
         chart.series[0].points[0].graphic.partialClipRect.attr('width'),
         1,
         'Partial fill should be aligned left'
+    );
+
+    const graphic = chart.series[0].points[0].graphic;
+
+    chart.series[0].setData([
+        {
+            x: Date.UTC(2019, 0, 1),
+            x2: Date.UTC(2019, 0, 2),
+            y: 1,
+            colorIndex: 2,
+            partialFill: 0.25
+        }
+    ]);
+
+    assert.strictEqual(
+        graphic.element.classList.contains('highcharts-color-2'),
+        true,
+        'The reused point group color class was refreshed, #24547.'
+    );
+
+    assert.strictEqual(
+        graphic.rect.element.classList.contains('highcharts-color-2'),
+        true,
+        'The reused point rect color class was refreshed, #24547.'
     );
 });
 

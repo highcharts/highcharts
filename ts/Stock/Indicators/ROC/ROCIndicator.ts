@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Kacper Madej
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -39,9 +40,7 @@ import { extend, isArray, merge } from '../../../Shared/Utilities.js';
  * */
 
 // Utils:
-/**
- *
- */
+/** @internal */
 function populateAverage(
     xVal: Array<number>,
     yVal: (Array<number>|Array<Array<number>>),
@@ -84,7 +83,7 @@ function populateAverage(
 /**
  * The ROC series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.roc
  *
@@ -110,7 +109,7 @@ class ROCIndicator extends SMAIndicator {
      *
      * This series requires `linkedTo` option to be set.
      *
-     * @sample stock/indicators/roc
+     * @sample {highstock} stock/indicators/roc
      *         Rate of change indicator
      *
      * @extends      plotOptions.sma
@@ -194,6 +193,7 @@ class ROCIndicator extends SMAIndicator {
  *
  * */
 
+/** @internal */
 interface ROCIndicator {
     nameBase: string;
     pointClass: typeof ROCPoint;
@@ -209,6 +209,7 @@ extend(ROCIndicator.prototype, {
  *
  * */
 
+/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         roc: typeof ROCIndicator;
@@ -223,6 +224,7 @@ SeriesRegistry.registerSeriesType('roc', ROCIndicator);
  *
  * */
 
+/** @internal */
 export default ROCIndicator;
 
 /* *
@@ -232,7 +234,7 @@ export default ROCIndicator;
  * */
 
 /**
- * A `ROC` series. If the [type](#series.wma.type) option is not
+ * A `ROC` series. If the [type](#series.roc.type) option is not
  * specified, it is inherited from [chart.type](#chart.type).
  *
  * Rate of change indicator (ROC). The indicator value for each point

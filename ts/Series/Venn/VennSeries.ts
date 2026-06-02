@@ -9,8 +9,9 @@
  *  Layout algorithm by Ben Frederickson:
  *  https://www.benfrederickson.com/better-venn-diagrams/
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -24,7 +25,6 @@
  * */
 
 import type CircleObject from '../../Core/Geometry/CircleObject';
-import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
 import type IntersectionObject from '../../Core/Geometry/IntersectionObject';
 import type {
     NelderMeadPointArray,
@@ -641,15 +641,12 @@ class VennSeries extends ScatterSeries {
             // Add width for the data label
             if (dataLabelWidth && shapeArgs) {
                 point.dlOptions = merge(
-                    true,
-                    {
-                        style: {
-                            width: dataLabelWidth
-                        }
-                    } as DataLabelOptions,
+                    { style: { width: dataLabelWidth } },
                     isObject(dlOptions, true) ? dlOptions : void 0,
                     { zIndex: void 0 }
-                ) as DataLabelOptions & { zIndex: undefined };
+                );
+                // Delete so it doesn't override anything on merge.
+                delete point.dlOptions.zIndex;
             }
 
             // Set name for usage in tooltip and in data label.

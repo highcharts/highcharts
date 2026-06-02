@@ -5,8 +5,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -35,7 +36,9 @@ const {
     composed,
     noop
 } = H;
-import BorderRadius from '../../Extensions/BorderRadius.js';
+import {
+    optionsToObject as borderRadiusOptionsToObject
+} from '../../Extensions/BorderRadius.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     column: ColumnSeries,
@@ -304,7 +307,7 @@ class FunnelSeries extends PieSeries {
             options = series.options,
             reversed = options.reversed,
             ignoreHiddenPoint = options.ignoreHiddenPoint,
-            borderRadiusObject = BorderRadius.optionsToObject(
+            borderRadiusObject = borderRadiusOptionsToObject(
                 options.borderRadius
             ),
             plotWidth = chart.plotWidth,

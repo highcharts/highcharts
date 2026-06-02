@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -260,6 +261,16 @@ const MapSeriesDefaults: MapSeriesOptions = {
              */
 
             /**
+             * The relative brightness of the point when hovered, relative
+             * to the normal point color.
+             *
+             * @type      {number}
+             * @product   highmaps
+             * @default   0
+             * @apioption plotOptions.series.states.hover.brightness
+             */
+
+            /**
              * The border color of the point in this state.
              *
              * @type      {Highcharts.ColorType}
@@ -276,16 +287,6 @@ const MapSeriesDefaults: MapSeriesOptions = {
              * @apioption plotOptions.series.states.hover.borderWidth
              */
             borderWidth: 2
-
-            /**
-             * The relative brightness of the point when hovered, relative
-             * to the normal point color.
-             *
-             * @type      {number}
-             * @product   highmaps
-             * @default   0
-             * @apioption plotOptions.series.states.hover.brightness
-             */
         },
 
         /**
@@ -389,6 +390,7 @@ const MapSeriesDefaults: MapSeriesOptions = {
  *        }]
  *    ```
  *
+ * @basic
  * @type      {Array<number|Array<string,(number|null)>|null|*>}
  * @product   highmaps
  * @apioption series.map.data

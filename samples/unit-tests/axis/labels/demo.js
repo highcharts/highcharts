@@ -1061,6 +1061,107 @@ QUnit.test('Label reserve space', function (assert) {
         `#21172,
             Opposite yAxis label should not be narrower than normal yAxis label`
     );
+
+    // #23527 Test short labels
+    chart.update({
+        chart: {
+            marginLeft: void 0,
+            spacingLeft: void 0
+        },
+        yAxis: [{
+            opposite: false,
+            labels: {
+                format: 'LBL',
+                rotation: 0,
+                style: {
+                    fontSize: 20
+                }
+            }
+        }]
+    });
+
+    let unrotatedPlotLeft = chart.plotLeft;
+    chart.update({
+        yAxis: [{
+            labels: {
+                rotation: -45
+            }
+        }]
+    });
+    assert.ok(
+        unrotatedPlotLeft >= chart.plotLeft,
+        'Short rotated label should not increase the plot left margin (#23527).'
+    );
+
+    // #23527 Test long labels
+    chart.update({
+        yAxis: [{
+            labels: {
+                format: 'ReallyLongLabel',
+                rotation: 0
+            }
+        }]
+    });
+    unrotatedPlotLeft = chart.plotLeft;
+    chart.update({
+        yAxis: [{
+            labels: {
+                rotation: -45
+            }
+        }]
+    });
+    assert.ok(
+        unrotatedPlotLeft >= chart.plotLeft,
+        'Long rotated label should not increase the plot left margin (#23527).'
+    );
+
+    chart.update({
+        yAxis: {
+            lineWidth: 1,
+            labels: {
+                align: 'left',
+                rotation: 0,
+                format: 'Label'
+            }
+        }
+    });
+
+    const plotLeft = chart.plotLeft;
+    chart.update({
+        yAxis: {
+            labels: {
+                rotation: 45
+            }
+        }
+    });
+    assert.strictEqual(
+        chart.plotLeft,
+        plotLeft,
+        'chart.plotLeft should not change when rotating labels with align left.'
+    );
+    chart.update({
+        yAxis: {
+            opposite: true,
+            labels: {
+                rotation: 0,
+                align: 'right'
+            }
+        }
+    });
+    const plotWidth = chart.plotWidth;
+    chart.update({
+        yAxis: {
+            labels: {
+                rotation: 45
+            }
+        }
+    });
+    assert.strictEqual(
+        chart.plotWidth,
+        plotWidth,
+        `chart.plotWidth should not change when rotating labels with align right
+        on opposite y-axis.`
+    );
 });
 
 QUnit.test('Label ellipsis', function (assert) {

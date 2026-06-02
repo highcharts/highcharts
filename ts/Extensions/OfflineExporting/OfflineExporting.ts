@@ -5,8 +5,9 @@
  *  (c) 2015-2026 Highsoft AS
  *  Author: Torstein Hønsi / Øystein Moseng
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -218,6 +219,10 @@ namespace OfflineExporting {
     }
 
     /**
+     * Deprecated. Use
+     * [Exporting.downloadSVG](https://api.highcharts.com/class-reference/Highcharts.Exporting#downloadSVG)
+     * instead.
+     *
      * Get data URL to an image of an SVG and call download on it options
      * object:
      * - **filename:** Name of resulting downloaded file without extension.
@@ -232,7 +237,7 @@ namespace OfflineExporting {
      * Highcharts options pointing to our server.
      *
      * @function Highcharts.downloadSVGLocal
-     * @deprecated
+     * @deprecated 11.4.4
      *
      * @param {string} svg
      * The generated SVG

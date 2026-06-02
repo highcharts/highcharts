@@ -1,7 +1,8 @@
 /* *
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *  Author: Torstein Hønsi, Christer Vasseng
  *
  *  This module serves as a fallback for the Boost module in IE9 and IE10. Newer
@@ -72,6 +73,11 @@ import {
  *
  * */
 
+/**
+ * The options below are working, but not documented. In case they are
+ * made public, refactor to match BoostDebugOptions interface.
+ * @internal
+ */
 declare module './Boost/BoostOptions' {
     interface BoostOptions {
         timeRendering?: boolean;
@@ -80,6 +86,7 @@ declare module './Boost/BoostOptions' {
     }
 }
 
+/** @internal */
 declare module '../Core/Series/SeriesBase' {
     interface SeriesBase extends BoostTargetObject {
         /** @internal */
@@ -128,6 +135,7 @@ declare module '../Core/Series/SeriesBase' {
  *
  * */
 
+/** @internal */
 namespace BoostCanvas {
 
     /* *
@@ -1024,4 +1032,5 @@ namespace BoostCanvas {
  *
  * */
 
+/** @internal */
 export default BoostCanvas;

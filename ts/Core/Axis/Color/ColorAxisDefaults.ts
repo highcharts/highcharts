@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -314,18 +315,22 @@ const colorAxisDefaults: DeepPartial<ColorAxisOptions> = {
     marker: {
 
         /**
-         * Animation for the marker as it moves between values. Set to
-         * `false` to disable animation. Defaults to `{ duration: 50 }`.
+         * Animation for the marker as it moves between values. Set to `false`
+         * to disable animation.
          *
          * @type    {boolean|Partial<Highcharts.AnimationOptionsObject>}
          * @product highcharts highstock highmaps
+         * @default { duration: 50 }
          */
         animation: {
             /** @internal */
             duration: 50
         },
 
-        /** @internal */
+        /**
+         * Maps to stroke-width because marker options are passed as crosshair.
+         * @internal
+         */
         width: 0.01,
 
         /**
