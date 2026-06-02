@@ -79,6 +79,11 @@ abstract class Cell {
     private customStyleProperties?: string[];
 
     /**
+     * Custom inline style values currently applied from user options.
+     */
+    private customStyleValues?: Record<string, string>;
+
+    /**
      * Array of cell events to be removed when the cell is destroyed.
      */
     protected cellEvents: Array<[
@@ -347,16 +352,25 @@ abstract class Cell {
     protected setCustomClassName(template?: string): void {
         const element = this.htmlElement;
 
-        if (this.customClassName) {
-            element.classList.remove(...this.customClassName.split(/\s+/g));
-        }
-
         if (!template) {
+            if (this.customClassName) {
+                element.classList.remove(
+                    ...this.customClassName.split(/\s+/g)
+                );
+            }
             delete this.customClassName;
             return;
         }
 
         const newClassName = this.format(template);
+        if (newClassName === this.customClassName) {
+            return;
+        }
+
+        if (this.customClassName) {
+            element.classList.remove(...this.customClassName.split(/\s+/g));
+        }
+
         if (!newClassName) {
             delete this.customClassName;
             return;
@@ -381,18 +395,19 @@ abstract class Cell {
                 property.replace(/[A-Z]/g, '-$&').toLowerCase()
         );
 
-        if (this.customStyleProperties) {
-            for (const property of this.customStyleProperties) {
-                elementStyle.removeProperty(property);
-            }
-        }
-
         if (!styles) {
+            if (this.customStyleProperties) {
+                for (const property of this.customStyleProperties) {
+                    elementStyle.removeProperty(property);
+                }
+            }
             delete this.customStyleProperties;
+            delete this.customStyleValues;
             return;
         }
 
         const appliedProperties: string[] = [];
+        const appliedValues: Record<string, string> = {};
 
         for (const key of Object.keys(styles) as Array<keyof CSSObject>) {
             const value = styles[key];
@@ -401,11 +416,37 @@ abstract class Cell {
             }
 
             const property = getCSSPropertyName(String(key));
-            elementStyle.setProperty(property, String(value));
+            appliedValues[property] = String(value);
             appliedProperties.push(property);
         }
 
+        const previousValues = this.customStyleValues;
+        if (
+            previousValues &&
+            this.customStyleProperties?.length === appliedProperties.length &&
+            appliedProperties.every((property): boolean =>
+                previousValues[property] === appliedValues[property]
+            )
+        ) {
+            return;
+        }
+
+        if (this.customStyleProperties) {
+            for (const property of this.customStyleProperties) {
+                if (!(property in appliedValues)) {
+                    elementStyle.removeProperty(property);
+                }
+            }
+        }
+
+        for (const property of appliedProperties) {
+            if (previousValues?.[property] !== appliedValues[property]) {
+                elementStyle.setProperty(property, appliedValues[property]);
+            }
+        }
+
         this.customStyleProperties = appliedProperties;
+        this.customStyleValues = appliedValues;
     }
 
     /**
