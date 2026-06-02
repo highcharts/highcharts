@@ -66,7 +66,7 @@ declare module '../Core/Chart/ChartBase'{
         /**
          * Deprecated. Use `MapView.lonLatToProjectedUnits` instead.
          *
-         * @deprecated
+         * @deprecated 10.0.0
          *
          * @requires modules/map
          *
@@ -85,7 +85,7 @@ declare module '../Core/Chart/ChartBase'{
         /**
          * Deprecated. Use `MapView.projectedUnitsToLonLat` instead.
          *
-         * @deprecated
+         * @deprecated 10.0.0
          *
          * @requires modules/map
          *
@@ -192,7 +192,7 @@ namespace GeoJSONComposition {
     /**
      * Deprecated. Use `MapView.lonLatToProjectedUnits` instead.
      *
-     * @deprecated
+     * @deprecated 10.0.0
      *
      * @requires modules/map
      *
@@ -214,7 +214,7 @@ namespace GeoJSONComposition {
     /**
      * Deprecated. Use `MapView.projectedUnitsToLonLat` instead.
      *
-     * @deprecated
+     * @deprecated 10.0.0
      *
      * @requires modules/map
      *

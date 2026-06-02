@@ -261,6 +261,16 @@ const MapSeriesDefaults: MapSeriesOptions = {
              */
 
             /**
+             * The relative brightness of the point when hovered, relative
+             * to the normal point color.
+             *
+             * @type      {number}
+             * @product   highmaps
+             * @default   0
+             * @apioption plotOptions.series.states.hover.brightness
+             */
+
+            /**
              * The border color of the point in this state.
              *
              * @type      {Highcharts.ColorType}
@@ -277,16 +287,6 @@ const MapSeriesDefaults: MapSeriesOptions = {
              * @apioption plotOptions.series.states.hover.borderWidth
              */
             borderWidth: 2
-
-            /**
-             * The relative brightness of the point when hovered, relative
-             * to the normal point color.
-             *
-             * @type      {number}
-             * @product   highmaps
-             * @default   0
-             * @apioption plotOptions.series.states.hover.brightness
-             */
         },
 
         /**

@@ -73,8 +73,8 @@ export interface StackBoxProps {
 }
 
 /**
- * Use StackItem instead.
- * @deprecated
+ * Alias for StackItem. Use StackItem instead.
+ * @todo deprecate
  */
 export type StackItemObject = StackItem;
 
