@@ -210,7 +210,7 @@ export interface AxisCrosshairOptions {
      * `false` to disable animation. Used by the color axis marker.
      *
      * @product highcharts highstock highmaps
-     * @since next
+     * @since 12.6.0
      */
     animation?: (boolean|Partial<AnimationOptions>);
 
@@ -1170,7 +1170,7 @@ export interface AxisOptions {
     /**
      * Deprecated. Use `minRange` instead.
      *
-     * @deprecated
+     * @deprecated 6.0.0
      * @product highcharts highstock
      */
     maxZoom?: number;
@@ -2037,7 +2037,7 @@ export interface AxisTitleOptions {
     /**
      * Deprecated. Set the `text` to `undefined` to disable the title.
      *
-     * @deprecated
+     * @deprecated 3.0.0
      * @product highcharts
      */
     enabled?: boolean;

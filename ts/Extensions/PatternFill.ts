@@ -160,7 +160,7 @@ export interface PatternOptionsObject {
      * @sample highcharts/series/pattern-fill-anchor-to-point/
      *         Compare shared vs anchored pattern positioning
      *
-     * @since next
+     * @since 12.6.0
      * @default false
      */
     anchorToPoint?: boolean;
@@ -1109,7 +1109,7 @@ declare module '../Core/Color/ColorType' {
  *         Compare shared vs anchored pattern positioning
  * @name Highcharts.PatternOptionsObject#anchorToPoint
  * @type {boolean|undefined}
- * @since next
+ * @since 12.6.0
  * @default false
  *//**
  * Background color for the pattern if a `path` is set (not images).

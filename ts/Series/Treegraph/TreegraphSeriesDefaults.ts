@@ -210,6 +210,17 @@ const TreegraphSeriesDefaults = {
      * @excluding clusterFormat
      */
     tooltip: {
+
+        /**
+         * A callback function for formatting the HTML output for a
+         * single link in the tooltip. Like the `linkFormat` string,
+         * but with more flexibility.
+         *
+         * @type {Highcharts.FormatterCallbackFunction.<Highcharts.Point>}
+         * @apioption series.treegraph.tooltip.linkFormatter
+         *
+         */
+
         /**
          * The HTML of the point's line in the tooltip. Variables are enclosed
          * by curly brackets. Available variables are `point.id`,
@@ -225,15 +236,6 @@ const TreegraphSeriesDefaults = {
          */
         linkFormat: '{point.fromNode.id} \u2192 {point.toNode.id}',
         pointFormat: '{point.id}'
-        /**
-         * A callback function for formatting the HTML output for a
-         * single link in the tooltip. Like the `linkFormat` string,
-         * but with more flexibility.
-         *
-         * @type {Highcharts.FormatterCallbackFunction.<Highcharts.Point>}
-         * @apioption series.treegraph.tooltip.linkFormatter
-         *
-         */
     },
     /**
      * Options for the data labels appearing on top of the nodes and
@@ -271,6 +273,15 @@ const TreegraphSeriesDefaults = {
         },
         enabled: true,
         linkFormatter: (): string => '',
+
+        /**
+         * Callback function to format data labels for _nodes_ in the
+         * treegraph, when `pointFormat` is not sufficient.
+         *
+         * @type {function}
+         * @apioption series.treegraph.dataLabels.pointFormatter
+         */
+
         /**
          * The
          * [format string](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting)
@@ -285,14 +296,6 @@ const TreegraphSeriesDefaults = {
         style: {
             textOverflow: 'none'
         }
-        /**
-         * Callback function to format data labels for _nodes_ in the
-         * treegraph, when `pointFormat` is not sufficient.
-         *
-         * @type {function}
-         * @apioption series.treegraph.dataLabels.pointFormatter
-         */
-
     },
     /**
      * The distance between nodes in a tree graph in the longitudinal direction.

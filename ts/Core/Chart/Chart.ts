@@ -2796,7 +2796,7 @@ class Chart {
             chart.plotBorder = plotBorder = renderer.rect()
                 .addClass('highcharts-plot-border')
                 .attr({
-                    zIndex: 1 // Above the grid
+                    zIndex: 1.5 // Above the grid, below the axes, #24521.
                 })
                 .add();
         }

@@ -54,7 +54,7 @@ const TreemapSeriesDefaults: TreemapSeriesOptions = {
      * @sample {highcharts} highcharts/plotoptions/treemap-allowdrilltonode/
      *         Enabled
      *
-     * @deprecated
+     * @deprecated 7.0.3
      * @type      {boolean}
      * @default   false
      * @since     4.1.0
@@ -291,7 +291,7 @@ const TreemapSeriesDefaults: TreemapSeriesOptions = {
      *
      * Since v9.3.3 the `traverseUpButton` is replaced by `breadcrumbs`.
      *
-     * @deprecated
+     * @deprecated 9.3.3
      */
     traverseUpButton: {
 

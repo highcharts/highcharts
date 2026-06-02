@@ -1167,7 +1167,7 @@ export interface ChartOptions {
      *
      * @deprecated 10.2.1
      */
-    zoomType?: 'x' | 'xy' | 'y';
+    zoomType?: ('x'|'xy'|'y');
 }
 
 export interface ChartPanningOptions {

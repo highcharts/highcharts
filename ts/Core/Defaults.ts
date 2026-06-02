@@ -611,7 +611,7 @@ const defaultOptions: DefaultOptions = {
          * @sample {highcharts} highcharts/time/useutc-false/
          *         False
          *
-         * @deprecated
+         * @deprecated 12.0.0
          */
         useUTC: void 0
     },
@@ -1342,7 +1342,7 @@ const defaultOptions: DefaultOptions = {
          * @sample {highcharts} highcharts/legend/lineheight/
          *         Setting padding
          *
-         * @deprecated
+         * @deprecated 2.1.0
          *
          * @type      {number}
          * @default   16
@@ -1584,7 +1584,7 @@ const defaultOptions: DefaultOptions = {
          * determined by properties like `align`, `verticalAlign`, `x` and `y`,
          * but the styles are still parsed for backwards compatibility.
          *
-         * @deprecated
+         * @deprecated 2.0.0
          *
          * @type      {Highcharts.CSSObject}
          * @product   highcharts highstock
@@ -2092,7 +2092,7 @@ const defaultOptions: DefaultOptions = {
          * @sample {highcharts} highcharts/tooltip/crosshairs-x/
          *         Enable a crosshair for the x value
          *
-         * @deprecated
+         * @deprecated 4.1.0
          *
          * @type      {*}
          * @default   true
@@ -2519,7 +2519,7 @@ const defaultOptions: DefaultOptions = {
             day: '%[AebY]',
             week: '%v %[AebY]',
             month: '%[BY]',
-            year: '%Y'
+            year: '%[Y]'
         },
 
         /**
@@ -2564,7 +2564,7 @@ const defaultOptions: DefaultOptions = {
          *         Header options for split tooltip
          * @sample {highstock} stock/tooltip/header
          *         Header options for split tooltip
-         * @since v13.0.0
+         * @since  13.0.0
          */
         header: {
             /**

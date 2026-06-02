@@ -133,7 +133,7 @@ class MapChart extends Chart {
      *
      * Deprecated as of v9.3 in favor of [MapView.zoomBy](https://api.highcharts.com/class-reference/Highcharts.MapView#zoomBy).
      *
-     * @deprecated
+     * @deprecated 9.3.0
      * @function Highcharts.Chart#mapZoom
      *
      * @param {number} [howMuch]

@@ -3817,7 +3817,8 @@ class Axis {
             titleMargin = 0,
             labelOffset = 0, // Reset
             labelOffsetPadded,
-            lineHeightCorrection;
+            lineHeightCorrection,
+            reserveSpaceDefault: boolean|undefined;
 
         // For reuse in Axis.render
         axis.showAxis = showAxis = hasData || options.showEmpty;
@@ -3841,17 +3842,17 @@ class Axis {
 
             // Left side must be align: right and right side must
             // have align: left for labels
-            axis.reserveSpaceDefault = (
+            reserveSpaceDefault = axis.reserveSpaceDefault = (
                 side === 0 ||
                 side === 2 ||
-                ({ 1: 'left', 3: 'right' } as any)[side] === axis.labelAlign
+                ({ 1: 'left', 3: 'right' })[side] === axis.labelAlign
             );
-            if (pick(
-                labelOptions.reserveSpace,
-                hasCrossing ? false : null,
-                axis.labelAlign === 'center' ? true : null,
-                axis.reserveSpaceDefault
-            )) {
+            if (
+                labelOptions.reserveSpace ??
+                (hasCrossing ? false : null) ??
+                (axis.labelAlign === 'center' ? true : null) ??
+                reserveSpaceDefault
+            ) {
                 tickPositions.forEach(function (pos: number): void {
                     // Get the highest offset
                     labelOffset = Math.max(
@@ -3865,7 +3866,11 @@ class Axis {
             if (axis.staggerLines) {
                 labelOffset *= axis.staggerLines;
             }
-            if (!horiz && isNumber(axis.labelRotation)) {
+            if (
+                !horiz &&
+                isNumber(axis.labelRotation) &&
+                reserveSpaceDefault
+            ) {
                 labelOffset -= absTickRotCorrX;
             }
             axis.labelOffset = labelOffset * (axis.opposite ? -1 : 1);
@@ -3925,20 +3930,28 @@ class Axis {
             labelOffsetPadded -= lineHeightCorrection;
             labelOffsetPadded += directionFactor * (
                 horiz ?
-                    pick(
-                        labelOptions.y,
-                        tickRotCorr.y + directionFactor * labelOptions.distance
+                    (
+                        labelOptions.y ??
+                        (
+                            tickRotCorr.y +
+                            directionFactor * labelOptions.distance
+                        )
                     ) :
-                    pick(
-                        labelOptions.x,
-                        directionFactor * (
-                            labelOptions.distance - absTickRotCorrX
+                    (
+                        labelOptions.x ?? (
+                            reserveSpaceDefault ?
+                                directionFactor * (
+                                    labelOptions.distance - absTickRotCorrX
+                                ) :
+                                tickRotCorr.x +
+                                    directionFactor * labelOptions.distance
                         )
                     )
             );
 
             if (
                 !horiz &&
+                !reserveSpaceDefault &&
                 axis.labelAlign === 'center' &&
                 isNumber(axis.labelRotation)
             ) {
@@ -3946,14 +3959,12 @@ class Axis {
             }
         }
 
-        axis.axisTitleMargin = pick(titleOffsetOption, labelOffsetPadded);
+        axis.axisTitleMargin = titleOffsetOption ?? labelOffsetPadded;
 
-        if (axis.getMaxLabelDimensions) {
-            axis.maxLabelDimensions = axis.getMaxLabelDimensions(
-                ticks,
-                tickPositions
-            );
-        }
+        axis.maxLabelDimensions = axis.getMaxLabelDimensions?.(
+            ticks,
+            tickPositions
+        );
 
         // Due to GridAxis.tickSize, tickSize should be calculated after ticks
         // has rendered.

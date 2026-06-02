@@ -107,7 +107,8 @@
             "Core/Defaults",
             "Core/Globals",
             "Core/Renderer/RendererUtilities",
-            "Core/Utilities"
+            "Core/Utilities",
+            "Shared/Utilities"
         ],
         "included": [],
         "namespacePath": ""

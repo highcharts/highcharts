@@ -450,7 +450,8 @@ QUnit.test('Annotations applied on init', function (assert) {
 QUnit.test('Revert axis properties', function (assert) {
     var chart = Highcharts.chart('container', {
         chart: {
-            width: 600
+            width: 600,
+            plotBorderWidth: 10
         },
 
         xAxis: {
@@ -501,6 +502,21 @@ QUnit.test('Revert axis properties', function (assert) {
         chart.xAxis[0].ticks[0].label.textStr,
         'sample',
         'Responsive label'
+    );
+
+    assert.ok(
+        chart.yAxis[0].gridGroup.element.compareDocumentPosition(
+            chart.plotBorder.element
+        ) & 4,
+        'The y-axis grid group should stay before the plot border ' +
+        'in SVG order (#24521)'
+    );
+
+    assert.ok(
+        chart.plotBorder.element.compareDocumentPosition(
+            chart.yAxis[0].axisGroup.element
+        ) & 4,
+        'The plot border should stay before the y-axis group in SVG order'
     );
 
     chart.setSize(600);

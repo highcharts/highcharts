@@ -1743,7 +1743,7 @@ class SVGRenderer implements SVGRendererBase {
      * // Leave only the lower right quarter visible
      * circle.clip(clipRect);
      *
-     * @deprecated
+     * @deprecated 11.2.0
      *
      * @param x
      *
@@ -1779,7 +1779,7 @@ class SVGRenderer implements SVGRendererBase {
      * // Leave only the lower right quarter visible
      * circle.clip(clipRect);
      *
-     * @deprecated
+     * @deprecated 11.2.0
      *
      * @function Highcharts.SVGRenderer#clipRect
      *
@@ -2329,7 +2329,7 @@ interface SVGRenderer extends SVGRendererBase {
      * Dummy function for plugins, called every time the renderer is updated.
      * Prior to Highcharts 5, this was used for the canvg renderer.
      *
-     * @deprecated
+     * @deprecated 5.0.0
      * @function Highcharts.SVGRenderer#draw
      */
     draw: Function;
@@ -2387,7 +2387,7 @@ extend(SVGRenderer.prototype, {
      * Dummy function for plugins, called every time the renderer is updated.
      * Prior to Highcharts 5, this was used for the canvg renderer.
      *
-     * @deprecated
+     * @deprecated 5.0.0
      * @function Highcharts.SVGRenderer#draw
      */
     draw: noop

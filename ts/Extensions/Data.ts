@@ -3225,7 +3225,7 @@ export default Data;
  * the [googleSpreadsheetRange](#data.googleSpreadsheetRange) option to load a
  * specific sheet.
  *
- * @deprecated
+ * @deprecated 9.2.2
  * @type      {string}
  * @since     4.0
  * @apioption data.googleSpreadsheetWorksheet

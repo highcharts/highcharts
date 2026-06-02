@@ -333,6 +333,10 @@ namespace OfflineExporting {
     }
 
     /**
+     * Deprecated. Use
+     * [Exporting.downloadSVG](https://api.highcharts.com/class-reference/Highcharts.Exporting#downloadSVG)
+     * instead.
+     *
      * Get data URL to an image of an SVG and call download on it options
      * object:
      * - **filename:** Name of resulting downloaded file without extension.
@@ -346,7 +350,7 @@ namespace OfflineExporting {
      * on demand.
      *
      * @function Highcharts.downloadSVGLocal
-     * @deprecated
+     * @deprecated 11.4.4
      *
      * @param {string} svg
      * The generated SVG
