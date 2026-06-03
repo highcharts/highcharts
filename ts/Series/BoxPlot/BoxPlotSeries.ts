@@ -89,9 +89,8 @@ class BoxPlotSeries extends ColumnSeries {
      * */
 
     /**
-     * Resolve the data label's `pointValKey` option, falling back to the
-     * series `pointValKey` when it is missing or not one of the box plot
-     * values (`pointArrayMap`).
+     * Resolve a data label's `pointValKey`, falling back to the series default
+     * when missing or not a box plot value.
      * @internal
      */
     public resolvePointValKey(
@@ -103,11 +102,8 @@ class BoxPlotSeries extends ColumnSeries {
     }
 
     /**
-     * Align each data label to the box plot value given by its `pointValKey`
-     * option, then defer to the column alignment logic (which also handles
-     * inverted charts). The data label box is temporarily set to the selected
-     * value and restored afterwards, so the next label and subsequent redraws
-     * are unaffected.
+     * Align each data label to its `pointValKey` value via the column logic.
+     * The alignment box is set to that value and restored afterwards.
      * @internal
      */
     public alignDataLabel(
@@ -134,11 +130,7 @@ class BoxPlotSeries extends ColumnSeries {
             };
         }
 
-        // Place labels on the side that matches the screen direction.
-        point.below = pointValKey === 'low';
-        if (series.yAxis.reversed) {
-            point.below = !point.below;
-        }
+        point.below = plotY === Math.max(point.highPlot, point.lowPlot);
 
         ColumnSeries.prototype.alignDataLabel.call(
             series,

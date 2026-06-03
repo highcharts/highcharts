@@ -24,6 +24,7 @@ import type { BoxPlotDataLabelOptions } from './BoxPlotSeriesOptions';
 import type Point from '../../Core/Series/Point';
 
 import { Palette } from '../../Core/Color/Palettes.js';
+import { isNumber } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -74,19 +75,18 @@ const BoxPlotSeriesDefaults: BoxPlotSeriesOptions = {
          * @type {Highcharts.DataLabelsFormatterCallbackFunction}
          */
         formatter: function (
-            this: Point,
+            this: (Point|BoxPlotPoint),
             options: BoxPlotDataLabelOptions
         ): string {
-            const point = this as BoxPlotPoint,
+            const point = this.point as BoxPlotPoint,
                 { series } = point,
+                { numberFormatter } = series.chart,
                 { pointValKey } = options,
                 value = pointValKey ?
                     point[series.resolvePointValKey(pointValKey)] :
                     point.y;
 
-            return typeof value === 'number' ?
-                series.chart.numberFormatter(value, -1) :
-                '';
+            return isNumber(value) ? numberFormatter(value, -1) : '';
         }
     },
 

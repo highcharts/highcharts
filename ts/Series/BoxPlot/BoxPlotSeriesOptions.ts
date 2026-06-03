@@ -40,6 +40,9 @@ export interface BoxPlotDataLabelOptions extends DataLabelOptions {
      * The box plot point value to use for positioning this data label.
      * Possible values are `low`, `q1`, `median`, `q3` and `high`.
      *
+     * @sample {highcharts} highcharts/series-boxplot/data-labels/
+     *         Multiple data labels
+     *
      * @default high
      *
      * @product highcharts
