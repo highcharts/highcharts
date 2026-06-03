@@ -11,6 +11,7 @@
 /code
 /vendor
 /cypress
+/tree-react.json
 /errors/errors.json
 /errors/errors.xml
 /git-ignore-me.properties
