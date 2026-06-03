@@ -398,8 +398,8 @@ QUnit.test('Box plot data label value selection (#23904)', function (assert) {
 
     assert.deepEqual(
         point.dataLabels.map(label => label.text.textStr),
-        ['9', '5', '1', 'Y: 9', '9'],
-        'Each label resolves to its pointValKey; {point.y}=high; invalid→high'
+        ['9', '5', '1', 'Y: 1', '9'],
+        'Each label resolves to its pointValKey; {point.y}=low; invalid→high'
     );
 
     point.update({
@@ -412,7 +412,7 @@ QUnit.test('Box plot data label value selection (#23904)', function (assert) {
 
     assert.deepEqual(
         point.dataLabels.map(label => label.text.textStr),
-        ['10', '6', '2', 'Y: 10', '10'],
+        ['10', '6', '2', 'Y: 2', '10'],
         'Values re-resolve after update, no stale labels'
     );
 

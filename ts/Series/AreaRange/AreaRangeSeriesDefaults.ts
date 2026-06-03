@@ -172,6 +172,17 @@ const AreaRangeSeriesDefaults: AreaRangeSeriesOptions = {
 };
 
 /**
+ * The range point value to use for positioning this data label.
+ * Possible values are `low` and `high`. In the legacy array form, the first
+ * label defaults to `high` and the second label defaults to `low`.
+ *
+ * @type      {"low"|"high"}
+ * @validvalue ["low", "high"]
+ * @product   highcharts highstock
+ * @apioption plotOptions.arearange.dataLabels.pointValKey
+ */
+
+/**
  * A `arearange` series. If the [type](#series.arearange.type) option is not
  * specified, it is inherited from [chart.type](#chart.type).
  *

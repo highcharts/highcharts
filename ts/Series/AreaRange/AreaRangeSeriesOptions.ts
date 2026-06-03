@@ -51,6 +51,16 @@ declare module '../../Core/Series/SeriesOptions' {
 export interface AreaRangeDataLabelOptions extends DataLabelOptions {
 
     /**
+     * The range point value to use for positioning this data label.
+     * Possible values are `low` and `high`.
+     *
+     * @default high for the first label, low for the second label
+     *
+     * @product highcharts highstock
+     */
+    pointValKey?: 'low'|'high';
+
+    /**
      * X offset of the higher data labels relative to the point value.
      *
      * @sample highcharts/plotoptions/arearange-datalabels/

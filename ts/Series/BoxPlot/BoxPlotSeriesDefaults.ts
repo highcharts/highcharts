@@ -24,6 +24,7 @@ import type { BoxPlotDataLabelOptions } from './BoxPlotSeriesOptions';
 import type Point from '../../Core/Series/Point';
 
 import { Palette } from '../../Core/Color/Palettes.js';
+import RangeDataLabel from '../RangeDataLabel.js';
 import { isNumber } from '../../Shared/Utilities.js';
 
 /* *
@@ -83,7 +84,9 @@ const BoxPlotSeriesDefaults: BoxPlotSeriesOptions = {
                 { numberFormatter } = series.chart,
                 { pointValKey } = options,
                 value = pointValKey ?
-                    point[series.resolvePointValKey(pointValKey)] :
+                    point[
+                        RangeDataLabel.resolvePointValKey(series, pointValKey)
+                    ] :
                     point.y;
 
             return isNumber(value) ? numberFormatter(value, -1) : '';

@@ -21,10 +21,8 @@
 import type BoxPlotPoint from './BoxPlotPoint';
 import type BoxPlotSeriesOptions from './BoxPlotSeriesOptions';
 import type {
-    BoxPlotDataLabelOptions,
     BoxPlotPointValKey
 } from './BoxPlotSeriesOptions';
-import type BBoxObject from '../../Core/Renderer/BBoxObject';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
@@ -33,6 +31,7 @@ import BoxPlotSeriesDefaults from './BoxPlotSeriesDefaults.js';
 import ColumnSeries from '../Column/ColumnSeries.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
+import RangeDataLabel from '../RangeDataLabel.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import {
     crisp,
@@ -87,63 +86,6 @@ class BoxPlotSeries extends ColumnSeries {
      *  Functions
      *
      * */
-
-    /**
-     * Resolve a data label's `pointValKey`, falling back to the series default
-     * when missing or not a box plot value.
-     * @internal
-     */
-    public resolvePointValKey(
-        rawKey?: BoxPlotPointValKey
-    ): BoxPlotPointValKey {
-        return rawKey && this.pointArrayMap.indexOf(rawKey) > -1 ?
-            rawKey :
-            this.pointValKey;
-    }
-
-    /**
-     * Align each data label to its `pointValKey` value via the column logic.
-     * The alignment box is set to that value and restored afterwards.
-     * @internal
-     */
-    public alignDataLabel(
-        point: BoxPlotPoint,
-        dataLabel: SVGElement,
-        options: BoxPlotDataLabelOptions,
-        alignTo?: BBoxObject,
-        isNew?: boolean
-    ): void {
-        const series = this,
-            pointValKey = series.resolvePointValKey(options.pointValKey),
-            plotY = point[`${pointValKey}Plot`],
-            shapeArgs = point.shapeArgs,
-            originalDlBox = point.dlBox,
-            originalBelow = point.below;
-
-        // Position the alignment box at the selected value (#23904)
-        if (shapeArgs && typeof plotY === 'number') {
-            point.dlBox = {
-                x: shapeArgs.x,
-                y: plotY,
-                width: shapeArgs.width,
-                height: 0
-            };
-        }
-
-        point.below = plotY === Math.max(point.highPlot, point.lowPlot);
-
-        ColumnSeries.prototype.alignDataLabel.call(
-            series,
-            point,
-            dataLabel,
-            options,
-            alignTo,
-            isNew
-        );
-
-        point.dlBox = originalDlBox;
-        point.below = originalBelow;
-    }
 
     // Get presentational attributes
     public pointAttribs(): SVGAttributes {
@@ -473,6 +415,8 @@ extend(BoxPlotSeries.prototype, {
     pointValKey: 'high',
     setStackedPoints: noop // #3890
 });
+
+RangeDataLabel.compose(BoxPlotSeries);
 
 /* *
  *
