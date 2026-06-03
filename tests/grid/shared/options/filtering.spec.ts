@@ -6,10 +6,13 @@ const selectProductFilter = '.hcg-header-cell[data-column-id="product"] select';
 const inputWeightFilter = '.hcg-header-cell[data-column-id="weight"] input';
 const selectWeightFilter = '.hcg-header-cell[data-column-id="weight"] select';
 const selectBooleanFilter = '.hcg-header-cell[data-column-id="active"] select';
+const selectDateFilter = '.hcg-header-cell[data-column-id="date"] select';
+const inputDateFilter = '.hcg-header-cell[data-column-id="date"] input';
 const gridRows = '.hcg-row';
 const productColumn = 'td[data-column-id="product"]';
 const weightColumn = 'td[data-column-id="weight"]';
 const booleanColumn = 'td[data-column-id="active"]';
+const dateColumn = 'td[data-column-id="date"]';
 
 // Helper functions to reduce code duplication
 async function clearWeightFilter(page: Page): Promise<void> {
@@ -82,6 +85,27 @@ async function getSelectOptionValues(
     return await select.locator('option').evaluateAll((options) =>
         options.map((o) => (o as HTMLOptionElement).value)
     );
+}
+
+async function getSelectOptionLabel(
+    page: Page,
+    selectLocator: string,
+    value: string
+): Promise<string | null> {
+    return page.locator(selectLocator)
+        .locator(`option[value="${value}"]`)
+        .textContent();
+}
+
+async function applyDateFilter(
+    page: Page,
+    operator: string,
+    dateValue: string
+): Promise<void> {
+    await setFilterCondition(page, selectDateFilter, operator);
+    const dateInput = page.locator(inputDateFilter);
+    await dateInput.fill(dateValue);
+    await expect(dateInput).toHaveValue(dateValue);
 }
 
 test.describe('Grid filtering', () => {
@@ -448,5 +472,177 @@ test.describe('Grid filtering operators allowlist', () => {
         ).filter(Boolean);
 
         expect(productValues.sort()).toEqual(['beginsWith', 'contains']);
+    });
+
+    test('Datetime column respects filtering.operators allowlist', async ({
+        page
+    }) => {
+        await page.evaluate(() => {
+            const base = (window as any).grid.userOptions;
+            (window as any).grid.destroy();
+            (window as any).grid = (window as any).Grid.grid('container', {
+                data: base.data,
+                header: base.header,
+                columnDefaults: {
+                    filtering: {
+                        enabled: true,
+                        inline: true,
+                        operators: ['equals', 'doesNotEqual', 'empty']
+                    }
+                },
+                columns: [{
+                    id: 'date',
+                    dataType: 'datetime',
+                    cells: {
+                        format: '{value:%Y-%m-%d}'
+                    },
+                    filtering: {
+                        operators: ['greaterThan', 'lessThan']
+                    }
+                }, {
+                    id: 'weight',
+                    filtering: {
+                        enabled: true
+                    }
+                }]
+            });
+        });
+
+        const dateValues = (
+            await getSelectOptionValues(page, selectDateFilter)
+        ).filter(Boolean);
+
+        expect(dateValues.sort()).toEqual(['greaterThan', 'lessThan']);
+
+        await clearWeightFilter(page);
+        await applyDateFilter(page, 'greaterThan', '2025-10-15');
+        await verifyRowCount(page, 5);
+        await verifyRowsContent(page, dateColumn, (text) =>
+            (text ?? '') > '2025-10-15'
+        );
+    });
+});
+
+test.describe('Grid datetime filtering', () => {
+    test.beforeEach(async ({ page }) => {
+        await page.goto('/grid-lite/e2e/inline-filtering', {
+            waitUntil: 'networkidle'
+        });
+        await page.waitForFunction(() => {
+            return typeof (window as any).Grid !== 'undefined' &&
+                   (window as any).Grid.grids &&
+                   (window as any).Grid.grids.length > 0;
+        });
+    });
+
+    test('Datetime column shows default operator labels without custom lang', async ({
+        page
+    }) => {
+        await expect(getSelectOptionLabel(
+            page,
+            selectDateFilter,
+            'greaterThan'
+        )).resolves.toBe('After');
+        await expect(getSelectOptionLabel(
+            page,
+            selectDateFilter,
+            'greaterThanOrEqualTo'
+        )).resolves.toBe('On or after');
+        await expect(getSelectOptionLabel(
+            page,
+            selectDateFilter,
+            'lessThan'
+        )).resolves.toBe('Before');
+        await expect(getSelectOptionLabel(
+            page,
+            selectDateFilter,
+            'lessThanOrEqualTo'
+        )).resolves.toBe('On or before');
+    });
+
+    test('Datetime column shows operator labels from lang', async ({
+        page
+    }) => {
+        await page.evaluate(() => {
+            const base = (window as any).grid.userOptions;
+            (window as any).grid.destroy();
+            (window as any).grid = (window as any).Grid.grid('container', {
+                data: base.data,
+                header: base.header,
+                columnDefaults: base.columnDefaults,
+                columns: base.columns,
+                lang: {
+                    columnFilteringDateTimeOperators: {
+                        greaterThan: 'Custom after',
+                        greaterThanOrEqualTo: 'Custom on or after',
+                        lessThan: 'Custom before',
+                        lessThanOrEqualTo: 'Custom on or before'
+                    }
+                }
+            });
+        });
+
+        await expect(getSelectOptionLabel(
+            page,
+            selectDateFilter,
+            'greaterThan'
+        )).resolves.toBe('Custom after');
+        await expect(getSelectOptionLabel(
+            page,
+            selectDateFilter,
+            'greaterThanOrEqualTo'
+        )).resolves.toBe('Custom on or after');
+        await expect(getSelectOptionLabel(
+            page,
+            selectDateFilter,
+            'lessThan'
+        )).resolves.toBe('Custom before');
+        await expect(getSelectOptionLabel(
+            page,
+            selectDateFilter,
+            'lessThanOrEqualTo'
+        )).resolves.toBe('Custom on or before');
+    });
+
+    test.describe('Datetime comparison operators', () => {
+        test.beforeEach(async ({ page }) => {
+            await clearWeightFilter(page);
+            await page.evaluate(() => {
+                (window as any).grid.viewport.getColumn('date').filtering.set();
+            });
+            await verifyRowCount(page, 20);
+        });
+
+        test('greaterThan filters rows', async ({ page }) => {
+            await applyDateFilter(page, 'greaterThan', '2025-10-10');
+            await verifyRowCount(page, 9);
+            await verifyRowsContent(page, dateColumn, (text) =>
+                (text ?? '') > '2025-10-10'
+            );
+        });
+
+        test('greaterThanOrEqualTo filters rows', async ({ page }) => {
+            await applyDateFilter(page, 'greaterThanOrEqualTo', '2025-10-10');
+            await verifyRowCount(page, 10);
+            await verifyRowsContent(page, dateColumn, (text) =>
+                (text ?? '') >= '2025-10-10'
+            );
+        });
+
+        test('lessThan filters rows', async ({ page }) => {
+            await applyDateFilter(page, 'lessThan', '2025-10-10');
+            await verifyRowCount(page, 10);
+            await verifyRowsContent(page, dateColumn, (text) =>
+                !text || text < '2025-10-10'
+            );
+        });
+
+        test('lessThanOrEqualTo filters rows', async ({ page }) => {
+            await applyDateFilter(page, 'lessThanOrEqualTo', '2025-10-10');
+            await verifyRowCount(page, 11);
+            await verifyRowsContent(page, dateColumn, (text) =>
+                !text || text <= '2025-10-10'
+            );
+        });
     });
 });
