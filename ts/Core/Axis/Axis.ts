@@ -3268,13 +3268,17 @@ class Axis {
      */
     public labelMetrics(): FontMetricsObject {
         const renderer = this.chart.renderer,
-            ticks = this.ticks,
-            tick = ticks[Object.keys(ticks)[0]] || {};
+            tick = this.ticks[Object.keys(this.ticks)[0]],
+            fontSize = this.options.labels?.style?.fontSize,
+            fontSizePx =
+                typeof fontSize === 'number' ? fontSize :
+                    typeof fontSize === 'string' &&
+                        /^\d+(\.\d+)?px$/.test(fontSize) ?
+                        parseFloat(fontSize) :
+                        void 0;
 
-        return this.chart.renderer.fontMetrics(
-            tick.label ||
-            tick.movedLabel ||
-            renderer.box
+        return renderer.fontMetrics(
+            tick?.label || tick?.movedLabel || fontSizePx || renderer.box
         );
     }
 
@@ -3291,34 +3295,53 @@ class Axis {
             padding = labelOptions.padding || 0,
             horiz = this.horiz,
             tickInterval = this.tickInterval,
-            slotSize = this.len / (
-                (
-                    (this.categories ? 1 : 0) +
-                    (this.max as any) -
-                    (this.min as any)
-                ) /
-                tickInterval
+            axisLen = this.len,
+            min = (this.min as any),
+            max = (this.max as any),
+            slotSize = axisLen / (
+                ((this.categories ? 1 : 0) + max - min) / tickInterval
             ),
             rotationOption = labelOptions.rotation,
+            labelHeight = this.labelMetrics().h,
             // We don't know the actual rendered line height at this point, but
             // it defaults to 0.8em
-            lineHeight = correctFloat(this.labelMetrics().h * 0.8),
-            range = Math.max((this.max as any) - (this.min as any), 0),
-            // Return the multiple of tickInterval that is needed to avoid
-            // collision
+            lineHeight = correctFloat(labelHeight * 0.8),
+            range = Math.max(max - min, 0),
             getStep = function (spaceNeeded: number): number {
-                let step = (spaceNeeded + 2 * padding) / (slotSize || 1);
+                const requiredSpace = spaceNeeded + 2 * padding;
 
-                step = step > 1 ? Math.ceil(step) : 1;
+                let step = Math.max(
+                    1,
+                    Math.ceil(requiredSpace / (slotSize || 1))
+                );
 
-                // Guard for very small or negative angles (#9835)
                 if (
-                    step * tickInterval > range &&
                     spaceNeeded !== Infinity &&
                     slotSize !== Infinity &&
                     range
                 ) {
-                    step = Math.ceil(range / tickInterval);
+                    const calculatedSlotCount = (
+                        step: number
+                    ): number => {
+                        const newInterval = step * tickInterval;
+                        return Math.ceil(max / newInterval) -
+                            Math.floor(min / newInterval);
+                    };
+
+                    const maxStep = Math.ceil(
+                        Math.max(Math.abs(min), Math.abs(max)) / tickInterval
+                    ) + 1;
+
+                    let slotCount = calculatedSlotCount(step);
+                    // Iterate to find the smallest `step` that fits the
+                    // labels without overlapping.
+                    while (
+                        step < maxStep &&
+                        axisLen / slotCount < requiredSpace
+                    ) {
+                        step += 1;
+                        slotCount = calculatedSlotCount(step);
+                    }
                 }
 
                 return correctFloat(step * tickInterval);
@@ -3368,7 +3391,7 @@ class Axis {
             }
 
         } else { // #4411
-            newTickInterval = getStep(lineHeight * 0.75);
+            newTickInterval = getStep(labelHeight);
         }
 
         this.autoRotation = autoRotation;
