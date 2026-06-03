@@ -987,7 +987,25 @@ export interface LangOptions extends LangOptionsCore {
     setFilter?: string;
 
     /**
+     * Language options for column filtering operators.
+     */
+    columnFilteringOperators?: Partial<
+        Record<ColumnFilteringCondition, string>
+    >;
+
+    /**
+     * Language options for column filtering operator labels on datetime
+     * columns. Overrides matching keys from `columnFilteringOperators`.
+     */
+    columnFilteringDateTimeOperators?: Partial<
+        Record<ColumnFilteringCondition, string>
+    >;
+
+    /**
      * Language options for column filtering conditions.
+     *
+     * @deprecated
+     * Use `columnFilteringOperators` instead.
      */
     columnFilteringConditions?: Partial<
         Record<ColumnFilteringCondition, string>

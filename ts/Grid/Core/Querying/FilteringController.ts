@@ -33,6 +33,8 @@ import type {
 
 import FilterModifier from '../../../Data/Modifiers/FilterModifier.js';
 import QueryingController from './QueryingController.js';
+import type { Condition } from '../Table/Actions/ColumnFiltering/FilteringTypes.js';
+import { operatorAliases } from '../Table/Actions/ColumnFiltering/FilteringTypes.js';
 import { isString } from '../../../Shared/Utilities.js';
 
 
@@ -106,6 +108,14 @@ class FilteringController {
         options: ColumnFilteringOptions
     ): FilterCondition | undefined {
         const condition = options.rule?.operator ?? options.condition;
+        let operator: Condition | undefined;
+        if (condition) {
+            // TODO: Remove, deprecated.
+            // Legacy `before`/`after` → `lessThan`/`greaterThan` aliases.
+            const alias =
+                operatorAliases[condition as keyof typeof operatorAliases];
+            operator = (alias ?? condition) as Condition;
+        }
         const value = options.rule?.value ?? options.value;
         const isStringValue = isString(value);
         const stringifiedValue = isStringValue ? value : '';
@@ -115,12 +125,12 @@ class FilteringController {
             (
                 typeof value === 'undefined' ||
                 (isStringValue && !stringifiedValue)
-            ) && !nonValueConditions.includes(condition ?? '')
+            ) && !nonValueConditions.includes(operator ?? '')
         ) {
             return;
         }
 
-        switch (condition) {
+        switch (operator) {
             case 'contains':
                 return {
                     columnId,
@@ -191,20 +201,6 @@ class FilteringController {
                 return {
                     columnId,
                     operator: '<=',
-                    value
-                };
-
-            case 'before':
-                return {
-                    columnId,
-                    operator: '<',
-                    value
-                };
-
-            case 'after':
-                return {
-                    columnId,
-                    operator: '>',
                     value
                 };
 

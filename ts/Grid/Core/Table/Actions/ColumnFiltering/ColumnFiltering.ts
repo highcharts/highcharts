@@ -29,13 +29,17 @@ import type { Column, ColumnDataType } from '../../Column';
 import type { Condition } from './FilteringTypes';
 import type FilterCell from './FilterCell';
 import type {
-    FilteringCondition
+    FilteringCondition,
+    LangOptions
 } from '../../../Options';
 
 import { makeHTMLElement } from '../../../GridUtils.js';
 import FilteringController from '../../../Querying/FilteringController.js';
 import Globals from '../../../Globals.js';
-import { conditionsMap } from './FilteringTypes.js';
+import {
+    conditionsMap,
+    operatorAliases
+} from './FilteringTypes.js';
 import {
     defined,
     fireEvent
@@ -75,6 +79,63 @@ class ColumnFiltering {
             .toLowerCase()
             .split(/\s+/).join(' ');
         return readable.charAt(0).toUpperCase() + readable.slice(1);
+    }
+
+    /**
+     * Returns the localized label for a filtering operator.
+     *
+     * @param operator
+     * The filtering operator.
+     *
+     * @param dataType
+     * The column data type.
+     *
+     * @param lang
+     * The grid language options.
+     */
+    public static getOperatorLabel(
+        operator: string,
+        dataType: ColumnDataType,
+        lang?: LangOptions
+    ): string {
+        if (dataType === 'datetime') {
+            const datetimeLabel =
+                lang?.columnFilteringDateTimeOperators?.[operator as Condition];
+            if (datetimeLabel) {
+                return datetimeLabel;
+            }
+        }
+
+        const label =
+            lang?.columnFilteringOperators?.[operator as Condition] ??
+            // TODO: Remove, deprecated
+            lang?.columnFilteringConditions?.[operator as Condition];
+
+        if (label) {
+            return label;
+        }
+
+        return ColumnFiltering.parseCamelCaseToReadable(operator);
+    }
+
+    /**
+     * Maps legacy filtering operators to their canonical names for UI use.
+     * TODO: Remove, deprecated — only needed for `before`/`after` aliases.
+     *
+     * @param operator
+     * The filtering operator from options or UI.
+     */
+    private static mapOperatorAliases(
+        operator?: string
+    ): Condition | undefined {
+        if (!operator) {
+            return;
+        }
+
+        return (
+            operatorAliases[operator as keyof typeof operatorAliases] ??
+            operator as Condition
+        );
     }
 
 
@@ -149,11 +210,21 @@ class ColumnFiltering {
         }
 
         const conditions = this.getAllowedConditions();
+        const normalizedOperator = ColumnFiltering.mapOperatorAliases(operator);
         if (this.filterSelect) {
-            this.filterSelect.value = operator ?? conditions[0];
+            this.filterSelect.value =
+                (
+                    normalizedOperator &&
+                    conditions.includes(normalizedOperator)
+                ) ?
+                    normalizedOperator :
+                    conditions[0];
         }
 
-        await this.applyFilter({ value, condition: operator });
+        await this.applyFilter({
+            value,
+            condition: normalizedOperator ?? conditions[0]
+        });
     }
 
     /**
@@ -171,9 +242,15 @@ class ColumnFiltering {
             colFilteringOptions?.value;
         if (this.filterSelect) {
             const conditions = this.getAllowedConditions();
+            const normalizedOperator =
+                ColumnFiltering.mapOperatorAliases(operator);
             this.filterSelect.value =
-                operator ??
-                conditions[0];
+                (
+                    normalizedOperator &&
+                    conditions.includes(normalizedOperator)
+                ) ?
+                    normalizedOperator :
+                    conditions[0];
         }
 
         if (this.filterInput) {
@@ -478,22 +555,25 @@ class ColumnFiltering {
         );
 
         const conditions = this.getAllowedConditions();
-        const langConditions = column.viewport.grid.options?.lang
-            ?.columnFilteringConditions ?? {};
+        const lang = column.viewport.grid.options?.lang;
 
         // Render the options.
         for (const condition of conditions) {
             const optionElement = document.createElement('option');
             optionElement.value = condition;
-            optionElement.textContent = langConditions[condition] ??
-                ColumnFiltering.parseCamelCaseToReadable(condition);
+            optionElement.textContent = ColumnFiltering.getOperatorLabel(
+                condition,
+                column.dataType,
+                lang
+            );
             this.filterSelect.appendChild(optionElement);
         }
 
         // Use operator from options or first available operator as default.
-        const filteringOperator =
+        const filteringOperator = ColumnFiltering.mapOperatorAliases(
             column.options.filtering?.rule?.operator ??
-            column.options.filtering?.condition;
+            column.options.filtering?.condition
+        );
         if (filteringOperator && conditions.includes(filteringOperator)) {
             this.filterSelect.value = filteringOperator;
         } else {
@@ -586,7 +666,12 @@ class ColumnFiltering {
             return defaultTypeConditions;
         }
 
-        const allowedSet = new Set(columnConditions as readonly Condition[]);
+        const allowedSet = new Set(
+            columnConditions.map((operator): Condition =>
+                ColumnFiltering.mapOperatorAliases(operator) ??
+                    operator as Condition
+            )
+        );
         const allowed = defaultTypeConditions.filter((c): boolean =>
             allowedSet.has(c)
         );
