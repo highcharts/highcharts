@@ -406,6 +406,9 @@ const SankeySeriesDefaults: PlotOptionsOf<SankeySeries> = {
          * (circular) links. The `selfLinkWeight` variable is the sum of all
          * self-link weights for the node.
          *
+         * @sample highcharts/series-sankey/circular-dependencies/
+         *         Circular dependencies
+         *
          * @since next
          */
         nodeSelfLinkFormat:

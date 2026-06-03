@@ -50,8 +50,8 @@ import {
     clamp,
     crisp,
     extend,
-    isObject,
     isNumber,
+    isObject,
     merge,
     pick,
     relativeLength,
@@ -165,40 +165,10 @@ class SankeySeries extends ColumnSeries {
     public isDataCircular!: boolean;
 
     /**
-     * The maximum height of the circular link in the first column.
-     * @internal
-     */
-    public firstColCircLinkMaxH = 0;
-
-    /**
-     * The maximum height of the circular link in the last column.
-     * @internal
-     */
-    public lastColCircLinkMaxH = 0;
-
-    /**
      * Reserved column-axis space for the circular bend on the first column.
      * @internal
      */
     public firstColCircShift = 0;
-
-    /**
-     * Reserved column-axis space for the circular bend on the last column.
-     * @internal
-     */
-    public lastColCircShift = 0;
-
-    /**
-     * The bend of the circular link.
-     * @internal
-     */
-    public circularLinkBend = 0;
-
-    /**
-     * The margin between circular links and the plot edge.
-     * @internal
-     */
-    public circularLinkMargin = 0;
 
     /**
      * Vertical node offset used to center simple reciprocal links.
@@ -286,13 +256,21 @@ class SankeySeries extends ColumnSeries {
         NodesComposition.generatePoints.apply(this, arguments as any);
 
         if (this.useCircularLayout) {
+            // Runs on every Sankey translate, so keep the cycle check linear
+            // and allocation-light for the common non-circular case.
             this.isDataCircular = this.markCircularLinks(this.points);
         }
 
         if (this.orderNodes) {
             for (const node of this.nodes) {
-                // Identify the root node(s)
-                if (!node.linksTo.some((link): boolean => !link.isCircular)) {
+                // Identify the root node(s). Only inspect the per-link
+                // circular flag when the data is actually circular, so the
+                // common case keeps the cheap length check.
+                const isRoot = this.isDataCircular ?
+                    !node.linksTo.some((link): boolean => !link.isCircular) :
+                    node.linksTo.length === 0;
+
+                if (isRoot) {
                     // Start by the root node(s) and recursively set the level
                     // on all following nodes.
                     this.order(node, 0);
@@ -432,11 +410,14 @@ class SankeySeries extends ColumnSeries {
                 continue;
             }
 
-            if (!adjacency.has(point.fromNode)) {
-                adjacency.set(point.fromNode, []);
+            let linksFrom = adjacency.get(point.fromNode);
+
+            if (!linksFrom) {
+                linksFrom = [];
+                adjacency.set(point.fromNode, linksFrom);
                 nodes.push(point.fromNode);
             }
-            adjacency.get(point.fromNode)?.push(point);
+            linksFrom.push(point);
 
             if (!adjacency.has(point.toNode)) {
                 adjacency.set(point.toNode, []);
@@ -490,38 +471,6 @@ class SankeySeries extends ColumnSeries {
     }
 
     /**
-     * Reset circular layout values before each translate.
-     * @internal
-     */
-    public resetCircularLayout(): void {
-        this.isDataCircular = false;
-        this.firstColCircLinkMaxH = 0;
-        this.lastColCircLinkMaxH = 0;
-        this.firstColCircShift = 0;
-        this.lastColCircShift = 0;
-        this.circularLinkBend = 0;
-        this.circularLinkMargin = 0;
-        this.circularNodeTopOffset = 0;
-    }
-
-    /**
-     * Whether a single self-linked node should be centered in the plot.
-     * @param {SankeyPoint} node Sankey node.
-     * @return {boolean} Whether the node should be centered.
-     * @internal
-     */
-    public shouldCenterSelfLinkNode(node: SankeyPoint): boolean {
-        return (
-            this.nodes.length === 1 &&
-            node.linksFrom.length > 0 &&
-            node.linksFrom.every((link): boolean => (
-                !!link.isCircular &&
-                link.fromNode === link.toNode
-            ))
-        );
-    }
-
-    /**
      * Get the maximum height of the circular link in the last or first column.
      * @param {boolean} last Whether to get the maximum height of
      * the circular link in the last column. Default is false.
@@ -569,8 +518,8 @@ class SankeySeries extends ColumnSeries {
     public scaleCircularTranslationFactor(): void {
         const chart = this.chart,
             nodeColumns = this.nodeColumns,
-            bend = this.circularLinkBend,
-            margin = bend + this.circularLinkMargin,
+            bend = CIRCULAR_LINK_BEND,
+            margin = bend + CIRCULAR_LINK_MARGIN,
             firstH = this.getCircularLinkMaxHeight(),
             lastH = this.getCircularLinkMaxHeight(true),
             maxBandY = Math.max(firstH, lastH);
@@ -581,8 +530,7 @@ class SankeySeries extends ColumnSeries {
 
         let scale = 1;
 
-        // Perpendicular-to-flow axis: cap band thickness at 1/4 of the
-        // axis so a single circular link doesn't dominate across the flow.
+        // Keep one circular band from dominating the flow axis.
         const yLimit = (chart.plotSizeY || chart.plotHeight) / 4;
         if (maxBandY > yLimit) {
             scale = yLimit / maxBandY;
@@ -593,23 +541,14 @@ class SankeySeries extends ColumnSeries {
                 availX = (chart.plotSizeX || chart.plotWidth) - this.nodeWidth,
                 sides = (firstH > 0 ? 1 : 0) + (lastH > 0 ? 1 : 0);
 
-            // Column-axis: the bend depth on each side equals
-            // `linkHeight + bend + margin`. Reserve at least 40% of the
-            // column axis for actual column spacing so the outer columns
-            // don't squeeze the inner ones (matters most in inverted mode,
-            // where the column axis is the visual height and can be much
-            // smaller than the width).
+            // Reserve column-axis room for outer circular bends.
             const totalRawHeight = firstH + lastH,
                 maxShifts = Math.max(0, availX * 0.6 - sides * margin);
             if (totalRawHeight * scale > maxShifts) {
                 scale = Math.min(scale, maxShifts / totalRawHeight);
             }
 
-            // Middle-col constraint: a circular link whose from-node is not
-            // the last column extends `bend + linkHeight` in the forward
-            // direction past the from-node. That extension must fit in the
-            // gap to the next column (`colDistance - nodeWidth`) so the
-            // wrap doesn't crash through downstream nodes.
+            // Keep middle-column wraps clear of downstream nodes.
             let maxMiddleLh = 0;
             for (const point of this.points) {
                 const fromNode = point.fromNode;
@@ -626,10 +565,6 @@ class SankeySeries extends ColumnSeries {
                 }
             }
             if (maxMiddleLh > 0) {
-                // Solve for scale such that
-                //   bend + maxMiddleLh*scale <= colDist*scale - nodeWidth
-                // where colDist*scale = (P - nW - sides*margin -
-                //   (firstH+lastH)*scale) / (N - 1).
                 const numerator = availX - (N - 1) * this.nodeWidth -
                     sides * margin - (N - 1) * bend;
                 const denominator = (N - 1) * maxMiddleLh +
@@ -700,17 +635,9 @@ class SankeySeries extends ColumnSeries {
      * @internal
      */
     public shiftCircularLayout(shift: number): void {
-        // Inverted charts store `tooltipPos` swapped, with the flow axis on
-        // index 0 and negated relative to `shapeArgs.y`. Shift it there
-        // instead of index 1 so node and link tooltips stay anchored.
         const inverted = this.chart.inverted,
-            shiftTooltip = (pos: Array<number>): void => {
-                if (inverted) {
-                    pos[0] -= shift;
-                } else {
-                    pos[1] += shift;
-                }
-            };
+            tooltipIndex = inverted ? 0 : 1,
+            tooltipShift = inverted ? -shift : shift;
 
         for (const node of this.nodes) {
             if (node.shapeArgs && isNumber(node.shapeArgs.y)) {
@@ -719,7 +646,7 @@ class SankeySeries extends ColumnSeries {
             }
 
             if (node.tooltipPos) {
-                shiftTooltip(node.tooltipPos);
+                node.tooltipPos[tooltipIndex] += tooltipShift;
             }
         }
 
@@ -727,8 +654,6 @@ class SankeySeries extends ColumnSeries {
             const d = point.shapeArgs && point.shapeArgs.d;
 
             if (d) {
-                // Sankey paths currently use M/L/C/Z segments, with y values
-                // at even indexes from 2.
                 for (const segment of d) {
                     for (let i = 2; i < segment.length; i += 2) {
                         const y = segment[i];
@@ -751,7 +676,7 @@ class SankeySeries extends ColumnSeries {
             }
 
             if (point.tooltipPos) {
-                shiftTooltip(point.tooltipPos);
+                point.tooltipPos[tooltipIndex] += tooltipShift;
             }
         }
     }
@@ -762,7 +687,9 @@ class SankeySeries extends ColumnSeries {
      */
     public translate(): void {
 
-        this.resetCircularLayout();
+        this.isDataCircular = false;
+        this.firstColCircShift = 0;
+        this.circularNodeTopOffset = 0;
         this.generatePoints();
 
         this.nodeColumns = this.createNodeColumns();
@@ -790,31 +717,34 @@ class SankeySeries extends ColumnSeries {
             Infinity
         );
 
+        let firstColCircLinkMaxH = 0,
+            lastColCircLinkMaxH = 0;
+
         if (this.isDataCircular) {
             // Make some room for the circular links
             this.translationFactor = this.translationFactor / 2;
-            this.circularLinkBend = CIRCULAR_LINK_BEND;
-            this.circularLinkMargin = CIRCULAR_LINK_MARGIN;
             this.scaleCircularTranslationFactor();
-            this.firstColCircLinkMaxH = this.getCircularLinkMaxHeight();
-            this.lastColCircLinkMaxH = this.getCircularLinkMaxHeight(true);
+            firstColCircLinkMaxH = this.getCircularLinkMaxHeight();
+            lastColCircLinkMaxH = this.getCircularLinkMaxHeight(true);
         }
 
         // The circular bend extends past col 0 / last col by
         // `linkHeight + bend + margin`. Reserve that space from the
         // column-axis range so ALL columns shift evenly inward, instead of
         // squeezing col 0 / last col against their neighbors.
-        const margin = this.circularLinkBend + this.circularLinkMargin;
-        this.firstColCircShift = this.firstColCircLinkMaxH ?
-            this.firstColCircLinkMaxH + margin : 0;
-        this.lastColCircShift = this.lastColCircLinkMaxH ?
-            this.lastColCircLinkMaxH + margin : 0;
+        const margin = this.isDataCircular ?
+            CIRCULAR_LINK_BEND + CIRCULAR_LINK_MARGIN :
+            0;
+        this.firstColCircShift = firstColCircLinkMaxH ?
+            firstColCircLinkMaxH + margin : 0;
+        const lastColCircShift = lastColCircLinkMaxH ?
+            lastColCircLinkMaxH + margin : 0;
 
         this.colDistance =
             (
                 (chart.plotSizeX as any) - this.nodeWidth -
                 (options.borderWidth as any) -
-                this.firstColCircShift - this.lastColCircShift
+                this.firstColCircShift - lastColCircShift
             ) / Math.max(1, nodeColumns.length - 1);
 
         // Calculate level options used in sankey and organization
@@ -1015,13 +945,9 @@ class SankeySeries extends ColumnSeries {
 
         // Handle circular links pointing backwards. #8218.
         } else if (typeof toY === 'number') {
-            // In inverted mode, low-column nodes sit at higher pre-rotation
-            // X (see translateNode). That flips the "outward" direction of
-            // the U-bend along the column axis, so use a colSign here. The
-            // band thickness on the column axis must also use the magnitude
-            // of linkHeight, since the upstream inversion flip negates it.
+            // Route in natural flow coordinates, then mirror inverted charts.
             const inverted = chart.inverted,
-                bend = this.circularLinkBend,
+                bend = CIRCULAR_LINK_BEND,
                 plotSizeY = chart.plotSizeY || chart.plotHeight,
                 colSign = inverted ? -1 : 1,
                 lh = Math.abs(linkHeight),
@@ -1037,14 +963,6 @@ class SankeySeries extends ColumnSeries {
                     toY,
                     toY + linkHeight
                 ),
-                // Decide the bend direction in NATURAL (un-inverted) flow
-                // coordinates, where the band-to-node attachment and the
-                // available space are unambiguous. In inverted mode the
-                // renderer reflects the whole plot, so the direction is
-                // mirrored: a bend going down in natural space must be built
-                // going up in these pre-reflection coordinates. Without the
-                // mirror, multi-column circular links wrap the wrong way and
-                // cross the intermediate nodes.
                 natFromY = inverted ? plotSizeY - fromY : fromY,
                 natToY = inverted ? plotSizeY - toY : toY,
                 natLinkTop = Math.min(natFromY, natToY),
@@ -1067,25 +985,17 @@ class SankeySeries extends ColumnSeries {
                 x4 = nodeLeft + nodeW,
                 x5 = x4 + colSign * bend,
                 x6 = x5 + colSign * lh,
-                // Band edges at from/to nodes: fy1/ty1 must always be the
-                // edge AWAY from the bend direction, fy2/ty2 the edge TOWARD
-                // it. In inverted mode linkHeight is pre-negated, so use
-                // `sign * linkHeight < 0` rather than `circularLinkUp` to
-                // decide which side `linkHeight` adds to.
+                // Keep band edges consistent despite inverted linkHeight.
                 farFromBend = sign * linkHeight < 0,
                 fy1 = fromY + (farFromBend ? linkHeight : 0),
                 fy2 = fromY + (farFromBend ? 0 : linkHeight),
                 fy3 = fy2 + sign * bend,
                 y5 = innerY,
                 y4 = y5 - sign * bend,
-                // The apex outer band edge must always sit on the OPPOSITE
-                // side of y5 from y4 (regardless of linkHeight sign).
                 y6 = y5 + sign * lh,
                 ty1 = toY + (farFromBend ? linkHeight : 0),
                 ty2 = toY + (farFromBend ? 0 : linkHeight),
                 ty3 = ty2 + sign * bend,
-                // Control points use the geometric gap (fy1 - fy2) directly
-                // so the curve stays smooth regardless of sign or lh sign.
                 cfy1 = fy2 + 0.7 * (fy1 - fy2),
                 cy2 = y5 + sign * lh * 0.7,
                 cty1 = ty2 + 0.7 * (ty1 - ty2),
@@ -1231,7 +1141,14 @@ class SankeySeries extends ColumnSeries {
                 height = node.options.width || options.width || nodeHeight;
             }
 
-            if (this.shouldCenterSelfLinkNode(node)) {
+            if (
+                this.nodes.length === 1 &&
+                node.linksFrom.length > 0 &&
+                node.linksFrom.every((link): boolean => (
+                    !!link.isCircular &&
+                    link.fromNode === link.toNode
+                ))
+            ) {
                 if (chart.inverted) {
                     y = ((chart.plotSizeY as any) - height) / 2;
                 } else {

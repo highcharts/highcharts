@@ -22,6 +22,7 @@
 
 import type SankeyPointOptions from './SankeyPointOptions';
 import type SankeySeries from './SankeySeries';
+import type { SankeySeriesTooltipOptions } from './SankeySeriesOptions';
 
 import NodesComposition from '../NodesComposition.js';
 import Point from '../../Core/Series/Point.js';
@@ -217,7 +218,7 @@ class SankeyPoint extends ColumnSeries.prototype.pointClass {
         }
 
         const selfLinkFormat = (
-            this.series.tooltipOptions as { nodeSelfLinkFormat?: string }
+            this.series.tooltipOptions as unknown as SankeySeriesTooltipOptions
         ).nodeSelfLinkFormat || '';
 
         return tooltip + format(
