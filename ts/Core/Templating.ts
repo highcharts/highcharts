@@ -31,6 +31,7 @@ const {
     pageLang
 } = G;
 import {
+    correctFloat,
     extend,
     getNestedProperty,
     isArray,
@@ -59,7 +60,8 @@ interface MatchObject {
 const helpers: Record<string, Function> = {
     // Built-in helpers
     add: (a: number, b: number): number => a + b,
-    divide: (a: number, b: number): number | string => (b !== 0 ? a / b : ''),
+    divide: (a: number, b: number): number | string =>
+        (b !== 0 ? correctFloat(a / b) : ''),
     // eslint-disable-next-line eqeqeq
     eq: (a: unknown, b: unknown): boolean => a == b,
     each: function (arr: string[] | object[] | undefined): string | false {
@@ -79,7 +81,7 @@ const helpers: Record<string, Function> = {
     'if': (condition: string[] | undefined): boolean => !!condition,
     le: (a: number, b: number): boolean => a <= b,
     lt: (a: number, b: number): boolean => a < b,
-    multiply: (a: number, b: number): number => a * b,
+    multiply: (a: number, b: number): number => correctFloat(a * b, 15),
     // eslint-disable-next-line eqeqeq
     ne: (a: unknown, b: unknown): boolean => a != b,
     subtract: (a: number, b: number): number => a - b,
