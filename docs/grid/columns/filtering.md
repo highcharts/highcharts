@@ -72,6 +72,45 @@ columnDefaults: {
 
 Inline mode works well for data-heavy tables where filtering is a primary interaction.
 
+#### Hiding the operator dropdown
+
+When `hideDropdown` is `true` together with `inline: true`, the operator
+`<select>` is not rendered. Filtering uses a fixed operator:
+
+* the first operator for the column `dataType`, or
+* the first entry in `filtering.operators` when that list is set, or
+* `filtering.rule.operator` when it is valid for the column.
+
+End users cannot change the operator in the UI. Update
+`filtering.rule.operator` programmatically (for example via `grid.update()`)
+to switch operators.
+
+For `boolean` columns the dropdown is the only inline control, so hiding it
+removes all interactive filtering in the cell; use `filtering.rule` or
+`grid.update()` instead.
+
+```js
+columnDefaults: {
+    filtering: {
+        enabled: true,
+        inline: true,
+        hideDropdown: true
+    }
+},
+columns: [{
+    id: 'product',
+    // Uses default string operator: contains
+}, {
+    id: 'stock',
+    filtering: {
+        operators: ['greaterThan', 'lessThan']
+        // Uses greaterThan (first in operators)
+    }
+}]
+```
+
+See also: [Inline filtering with hidden operator dropdown](https://www.highcharts.com/samples/grid-lite/options/inline-filtering-hide-dropdown).
+
 ## Filter operators by data type
 
 Available filter operators depend on the column’s `dataType`.
