@@ -62,6 +62,13 @@ interface WGLPoint extends Point {
 }
 
 /** @internal */
+interface WGLBandPoint {
+    x: number;
+    low: number;
+    high: number;
+}
+
+/** @internal */
 interface WGLRendererCallbackFunction {
     (renderer: WGLRenderer): void;
 }
@@ -242,6 +249,7 @@ class WGLRenderer {
 
     /** @internal */
     private static seriesPointCount(series: Series): number {
+        const drawMode = WGLRenderer.seriesDrawMode(series);
         let isStacked: boolean,
             xData: Array<number>,
             s: number;
@@ -264,6 +272,11 @@ class WGLRenderer {
                 s *= 12;
             } else if (series.type === 'heatmap') {
                 s *= 6;
+            } else if (
+                series.type === 'area' ||
+                series.type === 'arearange'
+            ) {
+                s *= drawMode === 'TRIANGLES' ? 6 : 2;
             } else if (asBar[series.type]) {
                 s *= 2;
             }
@@ -406,6 +419,24 @@ class WGLRenderer {
         vbuffer && vbuffer.allocate(s);
     }
 
+    /** @internal */
+    private static seriesDrawMode(series: Series): WGLDrawModeValue {
+        if (
+            series.type === 'area' ||
+            series.type === 'arearange'
+        ) {
+            const boostShape = series.options.boostShape as (
+                string|undefined
+            );
+
+            return boostShape?.toLowerCase() === 'triangles' ?
+                'TRIANGLES' :
+                'LINES';
+        }
+
+        return WGLDrawMode[series.type] || 'LINE_STRIP';
+    }
+
     /**
      * Clear the depth and color buffer
      * @internal
@@ -468,9 +499,14 @@ class WGLRenderer {
             cullXThreshold = 1,
             cullYThreshold = 1,
             chartDestroyed = typeof chart.index === 'undefined',
-            drawAsBar = asBar[series.type],
             pixelRatio = this.getPixelRatio(),
-            colors = chart.options.colors || [];
+            colors = chart.options.colors || [],
+            isBandSeries = (
+                series.type === 'area' ||
+                series.type === 'arearange'
+            ),
+            drawAsBand = isBandSeries && inst.drawMode === 'TRIANGLES',
+            drawAsBar = asBar[series.type] && !drawAsBand;
 
         let plotWidth = series.chart.plotWidth,
             lastX: number = false as any,
@@ -500,6 +536,8 @@ class WGLRenderer {
             gapSize: number = false as any,
             vlen = 0,
             colorIndex = 0;
+
+        let previousBandPoint: (WGLBandPoint|undefined);
 
         if (options.boostData && options.boostData.length > 0) {
             return;
@@ -681,6 +719,26 @@ class WGLRenderer {
             vertice(x + w, y + h);
             pushColor(color);
             vertice(x + w, y);
+        };
+
+        const pushBandSegment = (
+            fromPoint: WGLBandPoint,
+            toPoint: WGLBandPoint,
+            color?: Color.RGBA
+        ): void => {
+            pushColor(color);
+            vertice(fromPoint.x, fromPoint.low, false, 0);
+            pushColor(color);
+            vertice(fromPoint.x, fromPoint.high, false, 0);
+            pushColor(color);
+            vertice(toPoint.x, toPoint.high, false, 0);
+
+            pushColor(color);
+            vertice(fromPoint.x, fromPoint.low, false, 0);
+            pushColor(color);
+            vertice(toPoint.x, toPoint.high, false, 0);
+            pushColor(color);
+            vertice(toPoint.x, toPoint.low, false, 0);
         };
 
         // Create the first segment
@@ -918,6 +976,7 @@ class WGLRenderer {
 
             if (!connectNulls && (x === null || y === null)) {
                 beginSegment();
+                previousBandPoint = void 0;
                 continue;
             }
 
@@ -941,6 +1000,26 @@ class WGLRenderer {
                 x = (d as any).x;
                 y = (d as any).stackY;
                 low = (y as any) - (d as any).y;
+            } else if (drawAsBand) {
+                low = low || 0;
+
+                if ((low as any) === false || typeof low === 'undefined') {
+                    if (y < 0) {
+                        low = y;
+                    } else {
+                        low = 0;
+                    }
+                }
+
+                if (
+                    (!isRange && !isStacked) ||
+                    yAxis.logarithmic
+                ) {
+                    low = Math.max(
+                        (typeof threshold !== 'undefined' ? threshold as number : yMin as number),
+                        yMin as number
+                    );
+                }
             }
 
             if (
@@ -949,7 +1028,9 @@ class WGLRenderer {
                 yMax !== null &&
                 typeof yMax !== 'undefined'
             ) {
-                isYInside = y >= yMin && y <= yMax;
+                isYInside = isNumber(low) ?
+                    Math.max(low, y) >= yMin && Math.min(low, y) <= yMax :
+                    y >= yMin && y <= yMax;
             }
 
             // Do not render points outside the zoomed range (#19701)
@@ -971,6 +1052,12 @@ class WGLRenderer {
                 continue;
             }
 
+            if (drawAsBand && (low === null || typeof low === 'undefined')) {
+                beginSegment();
+                previousBandPoint = void 0;
+                continue;
+            }
+
             // Cull points outside the extremes
 
             // Continue if `sdata` has only one point as `nextInside` asserts
@@ -982,6 +1069,7 @@ class WGLRenderer {
                 )
             ) {
                 beginSegment();
+                previousBandPoint = void 0;
                 continue;
             }
 
@@ -1006,6 +1094,7 @@ class WGLRenderer {
 
             if (gapSize && x - px > gapSize) {
                 beginSegment();
+                previousBandPoint = void 0;
             }
 
             // Note: Boost requires that zones are sorted!
@@ -1043,6 +1132,9 @@ class WGLRenderer {
                 inst.skipTranslation = true;
                 x = xAxis.toPixels(x, true);
                 y = yAxis.toPixels(y, true);
+                if (drawAsBand && isNumber(low)) {
+                    low = yAxis.toPixels(low, true);
+                }
 
                 // Make sure we're not drawing outside of the chart area.
                 // See #6594. Update: this is no longer required as far as I
@@ -1105,6 +1197,25 @@ class WGLRenderer {
                     ++skipped;
                 }
 
+                continue;
+            }
+
+            if (drawAsBand && isNumber(low)) {
+                const bandPoint = {
+                    x,
+                    low,
+                    high: y
+                };
+
+                if (previousBandPoint) {
+                    pushBandSegment(previousBandPoint, bandPoint, pcolor);
+                }
+
+                previousBandPoint = bandPoint;
+                lastX = x;
+                lastY = y;
+                hadPoints = true;
+                firstPoint = false;
                 continue;
             }
 
@@ -1260,7 +1371,7 @@ class WGLRenderer {
                 s.options.marker.enabled !== false :
                 false,
             showMarkers: true,
-            drawMode: WGLDrawMode[s.type] || 'LINE_STRIP'
+            drawMode: WGLRenderer.seriesDrawMode(s)
         };
 
         if (s.index >= series.length) {

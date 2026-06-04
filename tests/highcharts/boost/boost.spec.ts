@@ -1,8 +1,88 @@
+import type { Page } from '@playwright/test';
+
 import { test, expect, createChart } from '~/fixtures.ts';
 
 // Equivalent of test/typescript-karma/masters/modules/boost.test.js
 
 const boostModules = { modules: ['modules/boost.src.js'] };
+
+async function boostedAreaSampleHasContent(
+    page: Page,
+    seriesType: 'area' | 'arearange',
+    boostShape: 'lines' | 'triangles'
+): Promise<boolean> {
+    const data = Array.from({ length: 24 }, (_, i) => {
+        if (seriesType === 'arearange') {
+            const low = 20 + Math.sin(i / 8) * 4;
+
+            return [i * 25, low, low + 18];
+        }
+
+        return [
+            i * 27 + 10,
+            70 + Math.sin(i / 8) * 8
+        ];
+    });
+
+    const chart = await createChart(
+        page,
+        {
+            boost: {
+                useGPUTranslations: true,
+                seriesThreshold: 1
+            },
+            chart: {
+                animation: false
+            },
+            yAxis: {
+                min: 0,
+                max: 100
+            },
+            series: [{
+                type: seriesType,
+                boostShape,
+                data,
+                boostThreshold: 1
+            }]
+        },
+        {
+            ...boostModules,
+            css: '#container { width: 600px; height: 400px; }'
+        }
+    );
+
+    return chart.evaluate((c, sampleValue) => {
+        const canvas = (c as any).boost?.canvas;
+        if (!canvas) {
+            return false;
+        }
+
+        const tmp = document.createElement('canvas');
+        tmp.width = canvas.width;
+        tmp.height = canvas.height;
+
+        const ctx = tmp.getContext('2d');
+        if (!ctx) {
+            return false;
+        }
+
+        ctx.drawImage(canvas, 0, 0);
+
+        const sampleX = Math.floor(c.plotLeft + c.plotWidth * 0.5);
+        const sampleY = Math.floor(
+            c.plotTop + c.yAxis[0].toPixels(sampleValue, true)
+        );
+        const sample = ctx.getImageData(sampleX - 4, sampleY - 4, 8, 8);
+
+        for (let i = 3; i < sample.data.length; i += 4) {
+            if (sample.data[i] > 10) {
+                return true;
+            }
+        }
+
+        return false;
+    }, seriesType === 'arearange' ? 29 : 50);
+}
 
 test.describe('Boost Module', () => {
     test('Highcharts boost composition', async ({ page }) => {
@@ -146,5 +226,65 @@ test.describe('Boost Module', () => {
             result.hasContentInBottomRight,
             'Boost should render content in bottom-right (full chart), not only top-left quarter'
         ).toBe(true);
+    });
+
+    test('Boosted arearange renders a filled band in triangles mode', async ({
+        page
+    }) => {
+        const hasContent = await boostedAreaSampleHasContent(
+            page,
+            'arearange',
+            'triangles'
+        );
+
+        expect(
+            hasContent,
+            'Boosted arearange should fill the band in triangles mode'
+        ).toBe(true);
+    });
+
+    test('Boosted arearange keeps the center empty in lines mode', async ({
+        page
+    }) => {
+        const hasContent = await boostedAreaSampleHasContent(
+            page,
+            'arearange',
+            'lines'
+        );
+
+        expect(
+            hasContent,
+            'Boosted arearange in lines mode should not fill the band center'
+        ).toBe(false);
+    });
+
+    test('Boosted area renders a filled band in triangles mode', async ({
+        page
+    }) => {
+        const hasContent = await boostedAreaSampleHasContent(
+            page,
+            'area',
+            'triangles'
+        );
+
+        expect(
+            hasContent,
+            'Boosted area should fill the center in triangles mode'
+        ).toBe(true);
+    });
+
+    test('Boosted area keeps the center empty in lines mode', async ({
+        page
+    }) => {
+        const hasContent = await boostedAreaSampleHasContent(
+            page,
+            'area',
+            'lines'
+        );
+
+        expect(
+            hasContent,
+            'Boosted area should not fill the center in lines mode'
+        ).toBe(false);
     });
 });
