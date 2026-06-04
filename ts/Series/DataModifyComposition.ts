@@ -348,7 +348,7 @@ namespace DataModifyComposition {
         series: Series,
         activeYData: Array<number>
     ): Array<number> {
-        const { xAxis, yAxis } = series;
+        const { xAxis } = series;
 
         if (!xAxis) {
             return activeYData;
@@ -360,7 +360,6 @@ namespace DataModifyComposition {
                 series.pointArrayMap &&
                 (series.options.pointValKey || series.pointValKey)
             ) || 'y', true),
-            positiveValuesOnly = yAxis ? yAxis.positiveValuesOnly : false,
             visibleYData: Array<number> = [];
 
         if (xData.length !== yData.length) {
@@ -375,8 +374,7 @@ namespace DataModifyComposition {
                 isNumber(x) &&
                 x >= xExtremes.min &&
                 x <= xExtremes.max &&
-                isNumber(y) &&
-                (y > 0 || !positiveValuesOnly)
+                isNumber(y)
             ) {
                 visibleYData.push(y);
             }
