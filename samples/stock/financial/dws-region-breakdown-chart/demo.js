@@ -24,7 +24,7 @@ Highcharts.Templating.helpers.translateRegionClassification = value =>
 
 async function renderChart() {
 
-    // Then configure the connector
+    // Configure the connector
     const connector =
         new HighchartsConnectors.MorningstarDWS.InvestmentsConnector({
             api: {
