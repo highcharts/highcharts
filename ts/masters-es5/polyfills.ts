@@ -156,6 +156,54 @@ if (typeof ElementPrototype.closest !== 'function') {
         '\u0610-\u061A\u064B-\u065F\u0670\u06D6-\u06ED' + // Arabic
         '\u09BC\u09BE-\u09C4\u09C7-\u09C8\u09CB-\u09CD\u09D7\u09E2-\u09E3'; // Bengali
 
+    const decimalDigits =
+        '0-9' +
+        '\\u0660-\\u0669' +  // Arabic-Indic
+        '\\u06F0-\\u06F9' +  // Farsi
+        '\\u09E6-\\u09EF' +  // Bengali
+        '\\u0966-\\u096F' +  // Devanagari
+        '\\u0A66-\\u0A6F' +  // Gurmukhi
+        '\\u0AE6-\\u0AEF' +  // Gujarati
+        '\\u0B66-\\u0B6F' +  // Oriya
+        '\\u0B66-\\u0B6F' +  // Tamil
+        '\\u0BE6-\\u0BEF' +  // Telugu
+        '\\u0C66-\\u0C6F' +  // Kannada
+        '\\u0CE6-\\u0CEF' +  // Malayalam
+        '\\u0D58-\\u0D5E' +  // Malayalam (archaic)
+        '\\u0E50-\\u0E59' +  // Thai
+        '\\u0ED0-\\u0ED9' +  // Lao
+        '\\u0F20-\\u0F29' +  // Tibetan
+        '\\u1040-\\u1049' +  // Myanmar
+        '\\u1090-\\u1099' +  // Myanmar (Shan)
+        '\\u17E0-\\u17E9' +  // Khmer
+        '\\u1810-\\u1819' +  // Mongolian
+        '\\u1946-\\u194F' +  // Limbu
+        '\\u19D0-\\u19D9' +  // New Tai Lue
+        '\\u1A80-\\u1A89' +  // Tai Tham
+        '\\u1A90-\\u1A99' +  // Tai Tham
+        '\\u1B50-\\u1B59' +  // Balinese
+        '\\u1BB0-\\u1BB9' +  // Sundanese
+        '\\u1C40-\\u1C49' +  // Lepcha
+        '\\u1C50-\\u1C59' +  // Ol Chiki
+        '\\u2070' +          // Superscript zero
+        '\\u2074-\\u2079' +  // Superscript digits
+        '\\u2080-\\u2089' +  // Subscript digits
+        '\\u2150-\\u2182' +  // Number forms
+        '\\u2185-\\u2189' +  // Roman numerals
+        '\\u3007' +          // Ideographic number zero
+        '\\u3021-\\u3029' +  // CJK numerals
+        '\\u3038-\\u303A' +  // CJK numerals
+        '\\uA620-\\uA629' +  // Vai
+        '\\uA6E6-\\uA6EF' +  // Bamum
+        '\\uA8D0-\\uA8D9' +  // Saurashtra
+        '\\uA900-\\uA909' +  // Kayah Li
+        '\\uA9D0-\\uA9D9' +  // Javanese
+        '\\uA9F0-\\uA9F9' +  // Myanmar (Kawi)
+        '\\uAA50-\\uAA59' +  // Cham
+        '\\uABF0-\\uABF9' +  // Meetei Mayek
+        '\\uFF10-\\uFF19';   // Full-width digits
+
+
     const OriginalRegExp = RegExp;
 
     (window as any).RegExp = function (
@@ -179,6 +227,13 @@ if (typeof ElementPrototype.closest !== 'function') {
 
         if (source.indexOf('\\p{M}') !== -1) {
             source = source.replace(/\\p\{M\}/g, combiningMarks);
+            if (finalFlags) {
+                finalFlags = finalFlags.replace('u', '');
+            }
+        }
+
+        if (source.indexOf('\\p{Nd}') !== -1) {
+            source = source.replace(/\\p\{Nd\}/g, decimalDigits);
             if (finalFlags) {
                 finalFlags = finalFlags.replace('u', '');
             }
