@@ -77,6 +77,9 @@ Inline mode works well for data-heavy tables where filtering is a primary intera
 Available filter operators depend on the column’s `dataType`.
 If not specified, the data type is inferred automatically.
 
+Active filters should always be configured with `filtering.rule.operator` and
+`filtering.rule.value`.
+
 ### String columns
 
 * `contains`
@@ -129,10 +132,29 @@ columns: [{
 
 * `equals`
 * `doesNotEqual`
-* `before`
-* `after`
+* `greaterThan`
+* `greaterThanOrEqualTo`
+* `lessThan`
+* `lessThanOrEqualTo`
 * `empty`
 * `notEmpty`
+
+DateTime columns use the **same operator keys** as number columns. The filter UI
+shows date-specific labels by default. Customize them with
+`lang.columnFilteringDateTimeOperators` (see
+[Internationalization](https://www.highcharts.com/docs/grid/internationalization)).
+
+| Operator (in config and API) | Default UI label |
+|--------------------------------|------------------|
+| `equals` | On |
+| `doesNotEqual` | Not on |
+| `greaterThan` | After |
+| `greaterThanOrEqualTo` | On or after |
+| `lessThan` | Before |
+| `lessThanOrEqualTo` | On or before |
+
+The `empty` and `notEmpty` operators use labels from
+`lang.columnFilteringOperators`, not from `columnFilteringDateTimeOperators`.
 
 ```js
 columns: [{
@@ -140,12 +162,17 @@ columns: [{
     dataType: "datetime", // in most cases not needed
     filtering: {
         rule: {
-            operator: "after",
+            operator: "greaterThan",
             value: "2023-01-01"
         }
     }
 }]
 ```
+
+Filter values can be an ISO date string (`YYYY-MM-DD`) or a numeric timestamp.
+
+The operators `before` and `after` are deprecated. Use `lessThan` and
+`greaterThan` instead.
 
 ### Boolean columns
 
@@ -209,6 +236,15 @@ columns: [{
             value: 2
         }
     }
+}, {
+    id: 'date',
+    filtering: {
+        enabled: true,
+        rule: {
+            operator: 'greaterThan',
+            value: '2023-01-01'
+        }
+    }
 }]
 ```
 
@@ -216,7 +252,9 @@ This example shows:
 
 * A text filter on the `product` column
 * A numeric filter on the `price` column
-* Both filters applied together (AND logic)
+* A date filter on the `date` column using `greaterThan` (not the deprecated
+  `after` operator)
+* All filters applied together (AND logic)
 
 ## Mixing filter UI modes
 
@@ -267,9 +305,13 @@ Filters can also be controlled programmatically through the API.
 ```js
 const grid = Grid.grid('container', options);
 const productColumn = grid.viewport.getColumn('product');
+const dateColumn = grid.viewport.getColumn('date');
 
 // Apply a filter: set(value, operator)
 productColumn.filtering.set('Apple', 'contains');
+
+// DateTime columns use greaterThan / lessThan, not after / before
+dateColumn.filtering.set('2023-01-01', 'greaterThan');
 
 // Clear the filter
 productColumn.filtering.set();
@@ -279,16 +321,21 @@ This makes it easy to integrate column filtering with external UI controls, such
 
 ## Deprecated filtering options
 
-The following options are deprecated but still supported for backward compatibility. If both old and new options are defined, the new options take precedence.
+The following options are deprecated. Use the replacements in the table below.
+Deprecated options may be removed in a future release. If both old and new
+options are defined, the new options take precedence.
 
 | Deprecated | Use instead |
 |------------|-------------|
 | `filtering.condition` | `filtering.rule.operator` |
 | `filtering.value` | `filtering.rule.value` |
 | `filtering.conditions` | `filtering.operators` |
+| `before` (datetime operator) | `lessThan` |
+| `after` (datetime operator) | `greaterThan` |
+| `lang.columnFilteringConditions` | `lang.columnFilteringOperators` |
 
 ```js
-// Deprecated, but still supported:
+// Deprecated:
 filtering: {
     conditions: ['greaterThan', 'lessThan'],
     condition: 'greaterThan',
@@ -335,6 +382,8 @@ These events can be used for e.g. logging, analytics, and UI feedback.
 * Filtering is configured per column using `filtering`
 * Active filters use `filtering.rule.operator` and `filtering.rule.value`
 * Allowed UI operators can be restricted with `filtering.operators`
+* DateTime columns share operator keys with number columns; customize date UI
+  labels with `lang.columnFilteringDateTimeOperators`
 * Multiple active filters are combined using AND logic
 * UI can be inline or popup, and mixed per column
 * Filter behavior depends on column data type
