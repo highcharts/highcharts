@@ -60,7 +60,8 @@ interface MatchObject {
 const helpers: Record<string, Function> = {
     // Built-in helpers
     add: (a: number, b: number): number => a + b,
-    divide: (a: number, b: number): number | string => (b !== 0 ? a / b : ''),
+    divide: (a: number, b: number): number | string =>
+        (b !== 0 ? correctFloat(a / b) : ''),
     // eslint-disable-next-line eqeqeq
     eq: (a: unknown, b: unknown): boolean => a == b,
     each: function (arr: string[] | object[] | undefined): string | false {
