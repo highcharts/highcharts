@@ -301,6 +301,22 @@ class ColumnPolicyResolver {
     }
 
     /**
+     * Returns whether the inline filter operator dropdown is hidden.
+     *
+     * @param columnId
+     * Grid column id.
+     */
+    public isFilterDropdownHidden(columnId: string): boolean {
+        const hideDropdown = (
+            this.getIndividualColumnOptions(columnId)
+                ?.filtering?.hideDropdown ??
+            this.columnDefaults.filtering?.hideDropdown
+        );
+        return this.isColumnInlineFilteringEnabled(columnId) &&
+            !!hideDropdown;
+    }
+
+    /**
      * Returns whether editing should be enabled for the column.
      *
      * @param columnId

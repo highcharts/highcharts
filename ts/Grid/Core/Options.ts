@@ -1158,6 +1158,21 @@ export interface ColumnFilteringOptions {
      * @default false
      */
     inline?: boolean;
+
+    /**
+     * Hides the operator dropdown in inline filtering. Ignored in popup mode.
+     *
+     * Uses {@link ColumnFilteringOptions.rule} operator when valid, otherwise
+     * the first operator for the column `dataType` or
+     * {@link ColumnFilteringOptions.operators}. Not supported for `boolean`
+     * columns (no value input).
+     *
+     * @sample grid-lite/options/inline-filtering-hide-dropdown
+     *         Inline filtering with hidden operator dropdown
+     *
+     * @default false
+     */
+    hideDropdown?: boolean;
 }
 
 /* *
