@@ -188,23 +188,11 @@ function format(
     owner?: Templating.Owner
 ): string {
 
-    const innerRegex = '([\\p{L}' +
-            // Characters from various languages
-            '\\p{M}' +
-            // Numbers in various languages
-            '\\p{Nd}' +
-            // Zero-width non-joiner, zero-width joiner (for conjunct formation)
-            '\\u200C\\u200D' +
-            '\\d:' +
-            // Punctuation
-            '\\.,،׳॰;' +
-            '\\-\\/<>\\[\\]%_@+"\'’= ',
-        regex = new RegExp('\\{' + innerRegex + '#\\(\\)]+)\\}', 'gu'),
+    const regex = /\{([^{}]+)\}/g,
         // The sub expression regex is the same as the top expression regex,
         // but except parens and block helpers (#), and surrounded by parens
         // instead of curly brackets.
-        // eslint-disable-next-line prefer-regex-literals
-        subRegex = new RegExp('\\(' + innerRegex + ']+)\\)', 'gu'),
+        subRegex = /\(([^()]+)\)/g,
         matches = [],
         floatRegex = /f$/,
         decRegex = /\.(\d)/,
