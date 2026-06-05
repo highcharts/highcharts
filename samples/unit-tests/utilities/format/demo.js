@@ -1430,10 +1430,12 @@ QUnit.module('Format', () => {
         locales.forEach(locale => {
             const time = new Highcharts.Time({ locale }),
                 dateStr = time.dateFormat('%[AeBYHMS]', Date.UTC(2026, 5, 4)),
-                ucfirstStr = format(`{ucfirst "${dateStr}"}`);
+                expected = dateStr.charAt(0).toUpperCase() + dateStr.slice(1),
+                ucfirstStr = format(`{ucfirst "${dateStr}"}`, {});
 
-            assert.ok(
-                ucfirstStr.indexOf('ucfirst') === -1,
+            assert.strictEqual(
+                ucfirstStr,
+                expected,
                 `locale = ${locale}: ${ucfirstStr}`
             );
         });
