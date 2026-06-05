@@ -173,22 +173,10 @@ class SankeyPoint extends ColumnSeries.prototype.pointClass {
     }
 
     /**
-     * Get the sum of self-referencing links.
-     * @internal
-     */
-    public getSelfLinkWeight(): number {
-        return this.linksFrom.reduce(
-            (sum, link): number => (
-                link.fromNode === link.toNode ?
-                    sum + (link.weight || 0) :
-                    sum
-            ),
-            0
-        );
-    }
-
-    /**
-     * Extend the default node tooltip with hidden self-link information.
+     * Extend the default node tooltip with hidden self-link information. Only
+     * the circular Sankey layout hides self-links (rendering an empty path),
+     * so the derived series (arc diagram, dependency wheel, organization)
+     * that opt out of circular layout render self-links normally and skip it.
      * @internal
      */
     public tooltipFormatter(pointFormat: string): string {
@@ -197,11 +185,16 @@ class SankeyPoint extends ColumnSeries.prototype.pointClass {
             pointFormat
         );
 
-        if (!this.isNode) {
+        if (!this.isNode || !this.series.useCircularLayout) {
             return tooltip;
         }
 
-        const selfLinkWeight = this.getSelfLinkWeight();
+        let selfLinkWeight = 0;
+        for (const link of this.linksFrom) {
+            if (link.fromNode === link.toNode) {
+                selfLinkWeight += link.weight || 0;
+            }
+        }
 
         if (!selfLinkWeight) {
             return tooltip;

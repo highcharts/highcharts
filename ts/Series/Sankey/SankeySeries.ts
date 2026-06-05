@@ -943,11 +943,11 @@ class SankeySeries extends ColumnSeries {
                 ]
             };
 
-        // Handle circular links pointing backwards. #8218.
+        // Handle links that point backwards: circular back-edges, and links
+        // whose explicit `column` places the target left of the source. #8218.
         } else if (typeof toY === 'number') {
             // Route in natural flow coordinates, then mirror inverted charts.
-            const inverted = chart.inverted,
-                bend = CIRCULAR_LINK_BEND,
+            const bend = CIRCULAR_LINK_BEND,
                 plotSizeY = chart.plotSizeY || chart.plotHeight,
                 colSign = inverted ? -1 : 1,
                 lh = Math.abs(linkHeight),

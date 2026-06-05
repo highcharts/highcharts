@@ -1,7 +1,4 @@
 Highcharts.chart('container', {
-    chart: {
-        type: 'sankey'
-    },
     title: {
         text: 'Highcharts Sankey Diagram'
     },
@@ -10,8 +7,8 @@ Highcharts.chart('container', {
     },
     accessibility: {
         description: 'An abstract Sankey diagram where the flow loops back ' +
-            'on itself: the links b → a and c → b return to earlier nodes, ' +
-            'and node d links to itself.'
+            'on itself: the links b \u2192 a and c \u2192 b return to ' +
+            'earlier nodes, and node d links to itself.'
     },
     series: [{
         keys: ['from', 'to', 'weight'],

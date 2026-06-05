@@ -412,7 +412,7 @@ const SankeySeriesDefaults: PlotOptionsOf<SankeySeries> = {
          * @since next
          */
         nodeSelfLinkFormat:
-            '{point.name} → {point.name}: <b>{selfLinkWeight}</b><br/>'
+            '{point.name} \u2192 {point.name}: <b>{selfLinkWeight}</b><br/>'
     }
 };
 
