@@ -40,8 +40,9 @@ const options = {
             }, {
                 enabled: true,
                 align: 'right',
-                format: '{#if point.completed}{(multiply ' +
-                    'point.completed.amount 100):.0f}%{/if}',
+                format: `{#if point.completed}
+                    {(multiply point.completed.amount 100):.0f}%
+                {/if}`,
                 padding: 10,
                 style: {
                     fontWeight: 'normal',
@@ -96,7 +97,6 @@ const options = {
         }, {
             name: 'Relocate',
             id: 'relocate',
-            parent: 'new_offices',
             owner: 'Josh',
             pointWidth: 3,
             color: 'var(--highcharts-neutral-color-60, #666)',
@@ -245,7 +245,8 @@ const options = {
                     text: 'Title'
                 },
                 labels: {
-                    format: '{value}'
+                    format: '{value}',
+                    indentation: 0
                 }
             }, {
                 title: {
@@ -254,7 +255,10 @@ const options = {
                 labels: {
                     format: '{#if point.x2}' +
                         '{(divide (subtract point.x2 point.x) 86400000)} days' +
-                        '{else} - {/if}'
+                        '{else} - {/if}',
+                    style: {
+                        opacity: 0.7
+                    }
                 }
             }]
         },
