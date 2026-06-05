@@ -99,7 +99,7 @@ columnDefaults: {
 },
 columns: [{
     id: 'product',
-    // Uses default string operator: contains
+    // Uses default string filtering operator: contains
 }, {
     id: 'stock',
     filtering: {
