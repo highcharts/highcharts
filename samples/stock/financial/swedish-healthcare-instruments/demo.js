@@ -113,15 +113,6 @@ function getInstrumentsTable(rows) {
             },
             type: 'column'
         },
-        title: {
-            align: 'left',
-            style: {
-                color: 'var(--mstar-text-strong)',
-                fontSize: '16px',
-                fontWeight: '500'
-            }
-
-        },
         credits: {
             enabled: false
         },
@@ -249,7 +240,13 @@ function getInstrumentsTable(rows) {
             chartOptions: {
                 ...sharedChartOptions,
                 title: {
-                    text: 'Annualized Price Volatility'
+                    text: 'Annualized Price Volatility',
+                    align: 'left',
+                    style: {
+                        color: 'var(--mstar-text-strong)',
+                        fontSize: '16px',
+                        fontWeight: '500'
+                    }
                 },
                 subtitle: {
                     text: 'Rolling window annualized volatility · % · ' +
