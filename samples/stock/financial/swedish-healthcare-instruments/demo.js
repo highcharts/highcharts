@@ -22,7 +22,7 @@ const FIELD_MAPS = {
  */
 async function loadDataset() {
     const json = await fetch(
-        'https://cdn.jsdelivr.net/gh/highcharts/highcharts@sha/samples/data/morningstar/swedish-healthcare-instruments.json'
+        'https://cdn.jsdelivr.net/gh/highcharts/highcharts@9aef7bec3a/samples/data/morningstar/swedish-healthcare-instruments.json'
     ).then(r => r.json());
 
     return json.quotes.results.map(record => {
