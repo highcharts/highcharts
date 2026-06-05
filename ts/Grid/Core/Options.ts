@@ -987,7 +987,25 @@ export interface LangOptions extends LangOptionsCore {
     setFilter?: string;
 
     /**
+     * Language options for column filtering operators.
+     */
+    columnFilteringOperators?: Partial<
+        Record<ColumnFilteringCondition, string>
+    >;
+
+    /**
+     * Language options for column filtering operator labels on datetime
+     * columns. Overrides matching keys from `columnFilteringOperators`.
+     */
+    columnFilteringDateTimeOperators?: Partial<
+        Record<ColumnFilteringCondition, string>
+    >;
+
+    /**
      * Language options for column filtering conditions.
+     *
+     * @deprecated
+     * Use `columnFilteringOperators` instead.
      */
     columnFilteringConditions?: Partial<
         Record<ColumnFilteringCondition, string>
@@ -1140,6 +1158,21 @@ export interface ColumnFilteringOptions {
      * @default false
      */
     inline?: boolean;
+
+    /**
+     * Hides the operator dropdown in inline filtering. Ignored in popup mode.
+     *
+     * Uses {@link ColumnFilteringOptions.rule} operator when valid, otherwise
+     * the first operator for the column `dataType` or
+     * {@link ColumnFilteringOptions.operators}. Not supported for `boolean`
+     * columns (no value input).
+     *
+     * @sample grid-lite/options/inline-filtering-hide-dropdown
+     *         Inline filtering with hidden operator dropdown
+     *
+     * @default false
+     */
+    hideDropdown?: boolean;
 }
 
 /* *
