@@ -119,26 +119,25 @@ class SankeyPoint extends ColumnSeries.prototype.pointClass {
 
     /**
      * If there are incoming links, place it to the right of the
-     * highest order column that links to this one.
+     * highest order column that links to this one. Circular links are
+     * ignored, so a node reached only through a cycle still anchors to its
+     * non-circular predecessors (or column 0 when it has none).
      *
-     * @param {Array<SankeyPoint>} [links] Optional array of links.
-     * @internal
+     * @private
      */
-    public getFromNode(
-        links?: Array<SankeyPoint>
-    ): { fromNode?: SankeyPoint, fromColumn: number } {
+    public getFromNode(): { fromNode?: SankeyPoint, fromColumn: number } {
         const node = this;
-        const linksTo = links || node.linksTo;
 
         let fromColumn = -1,
             fromNode;
 
-        for (let i = 0; i < linksTo.length; i++) {
-            const point = linksTo[i];
+        for (let i = 0; i < node.linksTo.length; i++) {
+            const point = node.linksTo[i];
 
             if (
                 (point.fromNode.column as any) > fromColumn &&
-                point.fromNode !== node // #16080
+                point.fromNode !== node && // #16080
+                !point.isCircular
             ) {
                 fromNode = point.fromNode;
                 fromColumn = (fromNode.column as any);
@@ -156,20 +155,11 @@ class SankeyPoint extends ColumnSeries.prototype.pointClass {
         const node = this;
 
         if (!defined(node.options.column)) {
-            let straightLinksTo = node.linksTo;
-
-            // Filter out circular links
-            if (node.series.isDataCircular) {
-                straightLinksTo = node.linksTo.filter((link): boolean => (
-                    !link.isCircular
-                ));
-            }
-
-            // No straight links to this node, place it left
-            if (straightLinksTo.length === 0) {
+            // No links to this node, place it left
+            if (node.linksTo.length === 0) {
                 node.column = 0;
             } else {
-                node.column = node.getFromNode(straightLinksTo).fromColumn + 1;
+                node.column = node.getFromNode().fromColumn + 1;
             }
         }
     }
