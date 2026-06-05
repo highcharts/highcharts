@@ -49,43 +49,47 @@ const offlineIcon = `
 </svg>
 `;
 
+const data = new Grid.DataTable({
+    columns: {
+        server: [
+            'Flux01', 'Nexus02', 'Vex03', 'Pulse04', 'Drift05', 'Ion06'
+        ],
+        region: [
+            'USA', 'Africa', 'Europe', 'Asia', 'S. America', 'Australia'
+        ],
+        live: [
+            true, true, true, true, false, true
+        ],
+        ip: [
+            '203.0.113.45', '198.51.100.23', '128.11.120.26',
+            '185.220.100.12', '200.100.50.88', '213.20.13315'
+
+        ],
+        disk: [
+            4, 9, 80, 30, 0, 50
+        ],
+        cpu: [
+            '15, 18, 29, 48, 56, 54, 34',
+            '99, 96, 82, 53, 33, 22, 29',
+            '1, 4, 24, 65, 79, 77, 52',
+            '50, 54, 64, 78, 89, 96, 99',
+            '',
+            '20, 21, 22, 25, 28, 31, 35'
+        ],
+        ram: [
+            '28, 35, 41, 41, 43, 80, 85, 90, 63, 100, 40, 25, 27, 34, 30',
+            '76, 79, 77, 72, 67, 63, 63, 56, 54, 49, 42, 38, 42, 33, 28',
+            '49, 55, 57, 67, 69, 72, 78, 78, 75, 72, 72, 67, 61, 61, 54',
+            '90, 95, 100, 100, 70, 26, 20, 22, 28, 24, 29, 26, 39, 35, 55',
+            '',
+            '40, 40, 40, 41, 39, 38, 40, 42, 39, 69, 63, 67, 61, 65, 64'
+        ]
+    }
+});
+
 const grid = Grid.grid('container', {
     data: {
-        columns: {
-            server: [
-                'Flux01', 'Nexus02', 'Vex03', 'Pulse04', 'Drift05', 'Ion06'
-            ],
-            region: [
-                'USA', 'Africa', 'Europe', 'Asia', 'S. America', 'Australia'
-            ],
-            live: [
-                true, true, true, true, false, true
-            ],
-            ip: [
-                '203.0.113.45', '198.51.100.23', '128.11.120.26',
-                '185.220.100.12', '200.100.50.88', '213.20.13315'
-
-            ],
-            disk: [
-                4, 9, 80, 30, 0, 50
-            ],
-            cpu: [
-                '15, 18, 29, 48, 56, 54, 34',
-                '99, 96, 82, 53, 33, 22, 29',
-                '1, 4, 24, 65, 79, 77, 52',
-                '50, 54, 64, 78, 89, 96, 99',
-                '',
-                '20, 21, 22, 25, 28, 31, 35'
-            ],
-            ram: [
-                '28, 35, 41, 41, 43, 80, 85, 90, 63, 100, 40, 25, 27, 34, 30',
-                '76, 79, 77, 72, 67, 63, 63, 56, 54, 49, 42, 38, 42, 33, 28',
-                '49, 55, 57, 67, 69, 72, 78, 78, 75, 72, 72, 67, 61, 61, 54',
-                '90, 95, 100, 100, 70, 26, 20, 22, 28, 24, 29, 26, 39, 35, 55',
-                '',
-                '40, 40, 40, 41, 39, 38, 40, 42, 39, 69, 63, 67, 61, 65, 64'
-            ]
-        }
+        dataTable: data
     },
     rendering: {
         theme: 'hcg-theme-default theme-servers'
@@ -211,7 +215,7 @@ const grid = Grid.grid('container', {
 
 // Live updates for the demo. It simulates live data updates by randomly
 // changing the sparkline cells' data every 0.5-2 seconds.
-(data => {
+(() => {
     function scheduleUpdate(rowIndex) {
         const delay = Math.random() * 1500 + 500;
         setTimeout(async () => {
@@ -295,4 +299,4 @@ const grid = Grid.grid('container', {
             cell.setValue();
         });
     }
-})(grid.dataProvider.getDataTable());
+})();
