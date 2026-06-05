@@ -645,4 +645,86 @@ test.describe('Grid datetime filtering', () => {
             );
         });
     });
+
+    test.describe('Inline filtering with hideDropdown option', () => {
+        const inputProductFilter =
+            '.hcg-header-cell[data-column-id="product"] input';
+        const inputCategoryFilter =
+            '.hcg-header-cell[data-column-id="category"] input';
+        const productColumn = 'td[data-column-id="product"]';
+        const categoryColumn = 'td[data-column-id="category"]';
+
+        test.beforeEach(async ({ page }) => {
+            await page.goto(
+                '/grid-lite/e2e/inline-filtering-hide-dropdown',
+                { waitUntil: 'networkidle' }
+            );
+            await page.waitForFunction(() => {
+                return typeof (window as any).Grid !== 'undefined' &&
+                    (window as any).Grid.grids &&
+                    (window as any).Grid.grids.length > 0;
+            });
+        });
+
+        test('inline hideDropdown hides select and filters columns', async ({
+            page
+        }) => {
+            await expect(
+                page.locator(
+                    'th[data-column-id="product"] select'
+                )
+            ).toHaveCount(0);
+            await expect(page.locator(inputProductFilter)).toBeVisible();
+
+            await typeFilterValue(page, inputProductFilter, 'Pear');
+            await verifyRowCount(page, 1);
+            await verifyRowsContent(
+                page,
+                productColumn,
+                (text) => (text ?? '').includes('Pear')
+            );
+
+            await clearFilterInput(page, inputProductFilter);
+            await verifyRowCount(page, 6);
+
+            await typeFilterValue(page, inputCategoryFilter, 'Citrus');
+            await verifyRowCount(page, 1);
+            await verifyRowsContent(
+                page,
+                categoryColumn,
+                (text) => (text ?? '').includes('Citrus')
+            );
+        });
+
+        test('hideDropdown without inline keeps select in popup', async ({
+            page
+        }) => {
+            await page.evaluate(() => {
+                const data = (window as any).grid.userOptions.data;
+                (window as any).grid.destroy();
+                (window as any).grid = (window as any).Grid.grid('container', {
+                    data,
+                    columns: [{
+                        id: 'product',
+                        dataType: 'string',
+                        filtering: {
+                            enabled: true,
+                            hideDropdown: true
+                        }
+                    }]
+                });
+            });
+
+            await page
+                .locator(
+                    '[data-column-id="product"] ' +
+                    '.hcg-header-cell-filter-icon button'
+                )
+                .evaluate((button: HTMLButtonElement) => button.click());
+            await expect(
+                page.locator('.hcg-popup-content select')
+            ).toBeVisible();
+        });
+
+    });
 });

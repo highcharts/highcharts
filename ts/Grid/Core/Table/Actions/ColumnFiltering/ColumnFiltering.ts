@@ -289,7 +289,12 @@ class ColumnFiltering {
             className: Globals.getClassName('columnFilterWrapper')
         }, container);
 
-        this.renderConditionSelect(inputWrapper);
+        if (
+            !column.viewport.grid.columnPolicy
+                .isFilterDropdownHidden(column.id)
+        ) {
+            this.renderConditionSelect(inputWrapper);
+        }
         if (columnType !== 'boolean') {
             this.renderFilteringInput(inputWrapper, columnType);
         }
@@ -345,7 +350,7 @@ class ColumnFiltering {
      */
     private applyFilterFromForm(): void {
         const result: FilteringCondition = {
-            condition: this.filterSelect?.value as Condition
+            condition: this.getActiveCondition()
         };
 
         if (this.filterInput) {
@@ -518,9 +523,7 @@ class ColumnFiltering {
                 value.toString();
         }
 
-        if (this.filterSelect) {
-            this.disableInputIfNeeded();
-        }
+        this.disableInputIfNeeded();
 
         const eventTypes = {
             string: ['keyup'],
@@ -607,12 +610,9 @@ class ColumnFiltering {
      * `true` if filtering is applied to the column, `false` otherwise.
      */
     private isFilteringApplied(): boolean {
-        const {
-            filterSelect: select,
-            filterInput: input
-        } = this;
+        const { filterInput: input } = this;
         const { dataType } = this.column;
-        const condition = select?.value as Condition;
+        const condition = this.getActiveCondition();
 
         if (dataType === 'boolean') {
             return condition !== 'all';
@@ -629,20 +629,57 @@ class ColumnFiltering {
      * Disables the input element if the condition is `empty` or `notEmpty`.
      */
     private disableInputIfNeeded(): void {
-        const {
-            filterSelect: select,
-            filterInput: input
-        } = this;
-        const condition = select?.value as Condition;
+        const { filterInput: input } = this;
+        const condition = this.getActiveCondition();
 
-        if (!input || !select) {
+        if (!input) {
             return;
         }
 
         if (condition === 'empty' || condition === 'notEmpty') {
             input.disabled = true;
-        } else if (input?.disabled) {
+        } else if (input.disabled) {
             input.disabled = false;
+        }
+    }
+
+    /**
+     * Returns the current filtering operator from the dropdown or options.
+     */
+    private getActiveCondition(): Condition {
+        if (this.filterSelect) {
+            return this.filterSelect.value as Condition;
+        }
+
+        const conditions = this.getAllowedConditions();
+        const filteringOperator = ColumnFiltering.mapOperatorAliases(
+            this.column.options.filtering?.rule?.operator ??
+            this.column.options.filtering?.condition
+        );
+
+        if (filteringOperator && conditions.includes(filteringOperator)) {
+            return filteringOperator;
+        }
+
+        return conditions[0];
+    }
+
+    /**
+     * Focuses the first filter control in tab order for inline filtering.
+     */
+    public focusFirstControl(): void {
+        if (!this.filterSelect?.disabled) {
+            this.filterSelect?.focus();
+            return;
+        }
+
+        if (!this.filterInput?.disabled) {
+            this.filterInput?.focus();
+            return;
+        }
+
+        if (!this.clearButton?.disabled) {
+            this.clearButton?.focus();
         }
     }
 
