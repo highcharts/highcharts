@@ -39,6 +39,10 @@
 
         tooltip: {
             fixed: true,
+            header: {
+                borderColor: 'var(--highcharts-neutral-color-20)',
+                borderWidth: 1
+            },
             pointFormat: `
             <table>
                 <tr>
