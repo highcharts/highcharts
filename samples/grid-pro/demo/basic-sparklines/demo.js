@@ -49,7 +49,7 @@ const offlineIcon = `
 </svg>
 `;
 
-Grid.grid('container', {
+const grid = Grid.grid('container', {
     data: {
         columns: {
             server: [
@@ -208,3 +208,91 @@ Grid.grid('container', {
         }]
     }
 });
+
+// Live updates for the demo. It simulates live data updates by randomly
+// changing the sparkline cells' data every 0.5-2 seconds.
+(data => {
+    function scheduleUpdate(rowIndex) {
+        const delay = Math.random() * 1500 + 500;
+        setTimeout(async () => {
+            await updateInstanceStatus(rowIndex);
+            scheduleUpdate(rowIndex);
+        }, delay);
+    }
+
+    // Schedule updates for all rows in the data table.
+    for (let i = 0, iEnd = data.getRowCount(); i < iEnd; i++) {
+        scheduleUpdate(i);
+    }
+
+    // Function to generate a new dummy sparkline data array
+    // based on the old one.
+    function generateArrayFlow(stringArray) {
+        const r = Math.random() * 2 - 1;
+        const change = Math.floor(r * r * r * 30);
+
+        const array = stringArray.split(',').map(Number);
+        array.shift();
+        array.push(
+            Highcharts.clamp(array[array.length - 1] + change, 0, 100)
+        );
+
+        return array.join(', ');
+    }
+
+    // Function to update the instance status in the data table and refresh the
+    // cells. It updates the data even if the cells are not rendered in the
+    // grid.
+    async function updateInstanceStatus(rowIndex) {
+        const live = data.getCell('live', rowIndex);
+        if (!live) {
+            return;
+        }
+
+        const oldRam = data.getCell('ram', rowIndex);
+        const oldCpu = data.getCell('cpu', rowIndex);
+
+        // Data Table cells can be updated directly, even if the cells are not
+        // rendered in the grid.
+        data.setCell(
+            'ram',
+            rowIndex,
+            generateArrayFlow(oldRam)
+        );
+        data.setCell(
+            'cpu',
+            rowIndex,
+            generateArrayFlow(oldCpu)
+        );
+        data.setCell(
+            'disk',
+            rowIndex,
+            Math.round(Math.random() * 100)
+        );
+
+        const row = grid?.viewport.getRow(rowIndex);
+        if (!row) {
+            return;
+        }
+
+        // Apply the modifiers to the data table.
+        await grid.querying.proceed(true);
+
+        // Reload the column caches from the provider's presentation table.
+        for (const column of grid.viewport.columns) {
+            column.loadData();
+        }
+
+        // row.loadData() is used to fetch the data from the data table into the
+        // `row.data` object, because unlike the `column.data`, the `row.data`
+        // is not a direct reference to the data table, but a copy of the data
+        // for the row.
+        row.loadData();
+
+        row.cells.forEach(cell => {
+            // `cell.setValue()` without arguments will refresh the cell with
+            // the current value from the data table.
+            cell.setValue();
+        });
+    }
+})(grid.dataProvider.getDataTable());
