@@ -25,6 +25,7 @@ import type TiledWebMapSeriesOptions from './TiledWebMapSeriesOptions';
 import type MapChart from '../../Core/Chart/MapChart';
 
 import AnimationUtilities from '../../Core/Animation/AnimationUtilities.js';
+import Fx from '../../Core/Animation/Fx.js';
 import H from '../../Core/Globals.js';
 const { composed } = H;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
@@ -638,7 +639,9 @@ class TiledWebMapSeries extends MapSeries {
                     if (mapView.projection && mapView.projection.def) {
                         const tile = tiles[zoomKey].tiles[key];
 
-                        stop(tile);
+                        if (Fx.timers.length > 0) {
+                            stop(tile);
+                        }
 
                         // Calculate group translations based on first loaded
                         // tile
