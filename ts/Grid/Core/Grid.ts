@@ -906,14 +906,23 @@ export class Grid {
 
         if ('filtering' in columnDiff) {
             const filteringDiff = columnDiff.filtering ?? {};
+            const ruleDiff = filteringDiff.rule ?? {};
             if (
-                'condition' in filteringDiff ||
-                'value' in filteringDiff
+                'condition' in filteringDiff || // TODO: Remove, deprecated
+                'value' in filteringDiff || // TODO: Remove, deprecated
+                'conditions' in filteringDiff || // TODO: Remove, deprecated
+                'operators' in filteringDiff ||
+                'rule' in filteringDiff ||
+                'operator' in ruleDiff ||
+                'value' in ruleDiff
             ) {
                 flags.add('filtering');
             }
-            delete filteringDiff.condition;
-            delete filteringDiff.value;
+            delete filteringDiff.condition; // TODO: Remove, deprecated
+            delete filteringDiff.value; // TODO: Remove, deprecated
+            delete filteringDiff.conditions; // TODO: Remove, deprecated
+            delete filteringDiff.operators;
+            delete filteringDiff.rule;
 
             if (Object.keys(filteringDiff).length > 0) {
                 flags.add('grid');

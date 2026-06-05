@@ -29,13 +29,17 @@ import type { Column, ColumnDataType } from '../../Column';
 import type { Condition } from './FilteringTypes';
 import type FilterCell from './FilterCell';
 import type {
-    FilteringCondition
+    FilteringCondition,
+    LangOptions
 } from '../../../Options';
 
 import { makeHTMLElement } from '../../../GridUtils.js';
 import FilteringController from '../../../Querying/FilteringController.js';
 import Globals from '../../../Globals.js';
-import { conditionsMap } from './FilteringTypes.js';
+import {
+    conditionsMap,
+    operatorAliases
+} from './FilteringTypes.js';
 import {
     defined,
     fireEvent
@@ -75,6 +79,63 @@ class ColumnFiltering {
             .toLowerCase()
             .split(/\s+/).join(' ');
         return readable.charAt(0).toUpperCase() + readable.slice(1);
+    }
+
+    /**
+     * Returns the localized label for a filtering operator.
+     *
+     * @param operator
+     * The filtering operator.
+     *
+     * @param dataType
+     * The column data type.
+     *
+     * @param lang
+     * The grid language options.
+     */
+    public static getOperatorLabel(
+        operator: string,
+        dataType: ColumnDataType,
+        lang?: LangOptions
+    ): string {
+        if (dataType === 'datetime') {
+            const datetimeLabel =
+                lang?.columnFilteringDateTimeOperators?.[operator as Condition];
+            if (datetimeLabel) {
+                return datetimeLabel;
+            }
+        }
+
+        const label =
+            lang?.columnFilteringOperators?.[operator as Condition] ??
+            // TODO: Remove, deprecated
+            lang?.columnFilteringConditions?.[operator as Condition];
+
+        if (label) {
+            return label;
+        }
+
+        return ColumnFiltering.parseCamelCaseToReadable(operator);
+    }
+
+    /**
+     * Maps legacy filtering operators to their canonical names for UI use.
+     * TODO: Remove, deprecated — only needed for `before`/`after` aliases.
+     *
+     * @param operator
+     * The filtering operator from options or UI.
+     */
+    private static mapOperatorAliases(
+        operator?: string
+    ): Condition | undefined {
+        if (!operator) {
+            return;
+        }
+
+        return (
+            operatorAliases[operator as keyof typeof operatorAliases] ??
+            operator as Condition
+        );
     }
 
 
@@ -135,25 +196,35 @@ class ColumnFiltering {
     * */
 
     /**
-     * Sets the value and condition for the filtering.
+     * Sets the value and operator for the filtering.
      *
      * @param value
      * The value to set.
      *
-     * @param condition
-     * The condition to set.
+     * @param operator
+     * The operator to set.
      */
-    public async set(value?: string, condition?: Condition): Promise<void> {
+    public async set(value?: string, operator?: Condition): Promise<void> {
         if (this.filterInput) {
             this.filterInput.value = value ?? '';
         }
 
         const conditions = this.getAllowedConditions();
+        const normalizedOperator = ColumnFiltering.mapOperatorAliases(operator);
         if (this.filterSelect) {
-            this.filterSelect.value = condition ?? conditions[0];
+            this.filterSelect.value =
+                (
+                    normalizedOperator &&
+                    conditions.includes(normalizedOperator)
+                ) ?
+                    normalizedOperator :
+                    conditions[0];
         }
 
-        await this.applyFilter({ value, condition });
+        await this.applyFilter({
+            value,
+            condition: normalizedOperator ?? conditions[0]
+        });
     }
 
     /**
@@ -163,17 +234,29 @@ class ColumnFiltering {
      */
     public refreshState(): void {
         const colFilteringOptions = this.column.options.filtering;
+        const operator =
+            colFilteringOptions?.rule?.operator ??
+            colFilteringOptions?.condition;
+        const value =
+            colFilteringOptions?.rule?.value ??
+            colFilteringOptions?.value;
         if (this.filterSelect) {
             const conditions = this.getAllowedConditions();
+            const normalizedOperator =
+                ColumnFiltering.mapOperatorAliases(operator);
             this.filterSelect.value =
-                colFilteringOptions?.condition ??
-                conditions[0];
+                (
+                    normalizedOperator &&
+                    conditions.includes(normalizedOperator)
+                ) ?
+                    normalizedOperator :
+                    conditions[0];
         }
 
         if (this.filterInput) {
             this.filterInput.value =
                 '' + (
-                    colFilteringOptions?.value ?? ''
+                    value ?? ''
                 );
         }
 
@@ -206,7 +289,12 @@ class ColumnFiltering {
             className: Globals.getClassName('columnFilterWrapper')
         }, container);
 
-        this.renderConditionSelect(inputWrapper);
+        if (
+            !column.viewport.grid.columnPolicy
+                .isFilterDropdownHidden(column.id)
+        ) {
+            this.renderConditionSelect(inputWrapper);
+        }
         if (columnType !== 'boolean') {
             this.renderFilteringInput(inputWrapper, columnType);
         }
@@ -262,7 +350,7 @@ class ColumnFiltering {
      */
     private applyFilterFromForm(): void {
         const result: FilteringCondition = {
-            condition: this.filterSelect?.value as Condition
+            condition: this.getActiveCondition()
         };
 
         if (this.filterInput) {
@@ -319,10 +407,24 @@ class ColumnFiltering {
 
         this.column.setOptions({
             filtering: {
-                condition: condition.condition,
-                value: condition.value
+                rule: {
+                    operator: condition.condition,
+                    value: condition.value
+                }
             }
         });
+
+        const filteringOptions = this.column.viewport.grid.columnPolicy
+            .getIndividualColumnOptions(this.column.id)
+            ?.filtering;
+
+        // The setOptions deep-merges filtering, so deprecated keys
+        // would otherwise remain alongside rule after a user interaction.
+        if (filteringOptions) {
+            delete filteringOptions.condition;
+            delete filteringOptions.value;
+            delete filteringOptions.conditions;
+        }
 
         filteringController.addColumnFilterCondition(columnId, condition);
         this.disableInputIfNeeded();
@@ -409,7 +511,9 @@ class ColumnFiltering {
         }
 
         // Assign the default input value.
-        const { value } = this.column.options.filtering ?? {};
+        const value =
+            this.column.options.filtering?.rule?.value ??
+            this.column.options.filtering?.value;
         if (value || value === 0) {
             this.filterInput.value = columnType === 'datetime' ?
                 column.viewport.grid.time.dateFormat(
@@ -419,9 +523,7 @@ class ColumnFiltering {
                 value.toString();
         }
 
-        if (this.filterSelect) {
-            this.disableInputIfNeeded();
-        }
+        this.disableInputIfNeeded();
 
         const eventTypes = {
             string: ['keyup'],
@@ -456,22 +558,27 @@ class ColumnFiltering {
         );
 
         const conditions = this.getAllowedConditions();
-        const langConditions = column.viewport.grid.options?.lang
-            ?.columnFilteringConditions ?? {};
+        const lang = column.viewport.grid.options?.lang;
 
         // Render the options.
         for (const condition of conditions) {
             const optionElement = document.createElement('option');
             optionElement.value = condition;
-            optionElement.textContent = langConditions[condition] ??
-                ColumnFiltering.parseCamelCaseToReadable(condition);
+            optionElement.textContent = ColumnFiltering.getOperatorLabel(
+                condition,
+                column.dataType,
+                lang
+            );
             this.filterSelect.appendChild(optionElement);
         }
 
-        // Use condition from options or first available condition as default.
-        const filteringCondition = column.options.filtering?.condition;
-        if (filteringCondition && conditions.includes(filteringCondition)) {
-            this.filterSelect.value = filteringCondition;
+        // Use operator from options or first available operator as default.
+        const filteringOperator = ColumnFiltering.mapOperatorAliases(
+            column.options.filtering?.rule?.operator ??
+            column.options.filtering?.condition
+        );
+        if (filteringOperator && conditions.includes(filteringOperator)) {
+            this.filterSelect.value = filteringOperator;
         } else {
             this.filterSelect.value = conditions[0];
         }
@@ -503,12 +610,9 @@ class ColumnFiltering {
      * `true` if filtering is applied to the column, `false` otherwise.
      */
     private isFilteringApplied(): boolean {
-        const {
-            filterSelect: select,
-            filterInput: input
-        } = this;
+        const { filterInput: input } = this;
         const { dataType } = this.column;
-        const condition = select?.value as Condition;
+        const condition = this.getActiveCondition();
 
         if (dataType === 'boolean') {
             return condition !== 'all';
@@ -525,20 +629,57 @@ class ColumnFiltering {
      * Disables the input element if the condition is `empty` or `notEmpty`.
      */
     private disableInputIfNeeded(): void {
-        const {
-            filterSelect: select,
-            filterInput: input
-        } = this;
-        const condition = select?.value as Condition;
+        const { filterInput: input } = this;
+        const condition = this.getActiveCondition();
 
-        if (!input || !select) {
+        if (!input) {
             return;
         }
 
         if (condition === 'empty' || condition === 'notEmpty') {
             input.disabled = true;
-        } else if (input?.disabled) {
+        } else if (input.disabled) {
             input.disabled = false;
+        }
+    }
+
+    /**
+     * Returns the current filtering operator from the dropdown or options.
+     */
+    private getActiveCondition(): Condition {
+        if (this.filterSelect) {
+            return this.filterSelect.value as Condition;
+        }
+
+        const conditions = this.getAllowedConditions();
+        const filteringOperator = ColumnFiltering.mapOperatorAliases(
+            this.column.options.filtering?.rule?.operator ??
+            this.column.options.filtering?.condition
+        );
+
+        if (filteringOperator && conditions.includes(filteringOperator)) {
+            return filteringOperator;
+        }
+
+        return conditions[0];
+    }
+
+    /**
+     * Focuses the first filter control in tab order for inline filtering.
+     */
+    public focusFirstControl(): void {
+        if (!this.filterSelect?.disabled) {
+            this.filterSelect?.focus();
+            return;
+        }
+
+        if (!this.filterInput?.disabled) {
+            this.filterInput?.focus();
+            return;
+        }
+
+        if (!this.clearButton?.disabled) {
+            this.clearButton?.focus();
         }
     }
 
@@ -552,15 +693,22 @@ class ColumnFiltering {
         const defaultTypeConditions = conditionsMap[column.dataType];
         const columnConditions =
             grid.columnPolicy.getIndividualColumnOptions(column.id)
+                ?.filtering?.operators ??
+            grid.columnPolicy.getIndividualColumnOptions(column.id)
                 ?.filtering?.conditions ??
+            grid.options?.columnDefaults?.filtering?.operators ??
             grid.options?.columnDefaults?.filtering?.conditions;
 
         if (!columnConditions?.length) {
             return defaultTypeConditions;
         }
 
-        // Filter configured conditions by default data type conditions.
-        const allowedSet = new Set(columnConditions as readonly Condition[]);
+        const allowedSet = new Set(
+            columnConditions.map((operator): Condition =>
+                ColumnFiltering.mapOperatorAliases(operator) ??
+                    operator as Condition
+            )
+        );
         const allowed = defaultTypeConditions.filter((c): boolean =>
             allowedSet.has(c)
         );

@@ -92,7 +92,7 @@ class FilterCell extends HeaderCell {
                 this.column.viewport.grid.columnPolicy
                     .isColumnInlineFilteringEnabled(this.column.id)
             ) {
-                this.column.filtering?.filterSelect?.focus();
+                this.column.filtering?.focusFirstControl();
             } else {
                 super.onKeyDown(e);
             }
