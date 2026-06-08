@@ -45,7 +45,6 @@ declare module '../../Core/Series/SeriesBase' {
         allowOutsidePlotInteraction?: boolean;
     }
 }
-
 /* *
  *
  *  Class
