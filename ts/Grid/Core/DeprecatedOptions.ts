@@ -27,6 +27,7 @@ import type {
 import type { DeepPartial } from '../../Shared/Types';
 
 import { error } from '../../Core/Utilities.js';
+import { isObject } from '../../Shared/Utilities.js';
 import { deprecatedOptionsMetadata } from './DeprecatedOptionsMetadata.js';
 
 
@@ -54,15 +55,14 @@ const API_BASE_URL = 'https://api.highcharts.com/grid/';
 function ensureSentence(text: string): string {
     const trimmedText = text.trim();
 
-    if (!trimmedText) {
-        return trimmedText;
+    if (
+        trimmedText &&
+        !/[.!?]$/u.test(trimmedText)
+    ) {
+        return `${trimmedText}.`;
     }
 
-    if (/[.!?]$/u.test(trimmedText)) {
-        return trimmedText;
-    }
-
-    return `${trimmedText}.`;
+    return trimmedText;
 }
 
 /**
@@ -89,7 +89,7 @@ export function matchesDeprecatedOption(
 
     const segment = pathSegments[segmentIndex];
 
-    if (!source || typeof source !== 'object') {
+    if (!isObject(source)) {
         return false;
     }
 
