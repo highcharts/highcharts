@@ -181,7 +181,7 @@ function getInstrumentsTable(rows) {
                     align: 'left',
                     style: {
                         color: 'var(--mstar-text-strong)',
-                        fontSize: '16px',
+                        fontSize: '22px',
                         fontWeight: '500'
                     }
                 },
@@ -244,7 +244,7 @@ function getInstrumentsTable(rows) {
                     align: 'left',
                     style: {
                         color: 'var(--mstar-text-strong)',
-                        fontSize: '16px',
+                        fontSize: '22px',
                         fontWeight: '500'
                     }
                 },
@@ -311,27 +311,60 @@ function getInstrumentsTable(rows) {
             title: 'Instruments Overview',
             gridOptions: {
                 columnDefaults: {
+                    minWidth: 75,
                     cells: {
                         format: '{value:.1f}%'
                     }
                 },
+                header: [
+                    'Company',
+                    {
+                        format: 'Average Trading Volume',
+                        columns: [{
+                            columnId: '30-Day Avg. Volume',
+                            format: '30-Day'
+                        }, {
+                            columnId: '90-Day Avg. Volume',
+                            format: '90-Day'
+                        }, {
+                            columnId: '180-Day Avg. Volume',
+                            format: '180-Day'
+                        }]
+                    }, {
+                        format: 'Annualized Price Volatility',
+                        columns: [{
+                            columnId: '10-Day Ann. Volatility',
+                            format: '10-Day'
+                        }, {
+                            columnId: '30-Day Ann. Volatility',
+                            format: '30-Day'
+                        }, {
+                            columnId: '60-Day Ann. Volatility',
+                            format: '60-Day'
+                        }]
+                    }
+                ],
                 columns: [{
                     id: 'Company',
+                    minWidth: 130,
                     cells: {
                         format: '{value}'
                     }
                 }, {
                     id: '30-Day Avg. Volume',
+                    minWidth: 90,
                     cells: {
                         format: '{value:,.0f}'
                     }
                 }, {
                     id: '90-Day Avg. Volume',
+                    minWidth: 90,
                     cells: {
                         format: '{value:,.0f}'
                     }
                 }, {
                     id: '180-Day Avg. Volume',
+                    minWidth: 90,
                     cells: {
                         format: '{value:,.0f}'
                     }
