@@ -47,7 +47,7 @@ declare module '../../Core/Series/SeriesOptions' {
     interface SeriesOptions {
         borderColor?: ColorType;
         borderDashStyle?: DashStyleValue;
-        borderRadius?: (number|string|BorderRadiusOptionsObject);
+        borderRadius?: (number|string|Partial<BorderRadiusOptionsObject>);
         borderWidth?: number;
         centerInCategory?: boolean;
         fillColor?: ColorType;
@@ -76,7 +76,7 @@ declare module '../../Core/Series/SeriesOptions' {
 declare module '../../Core/Series/StatesOptions' {
     interface StateOptionsBase {
         borderDashStyle?: DashStyleValue;
-        borderRadius?: (number|string|BorderRadiusOptionsObject);
+        borderRadius?: (number|string|Partial<BorderRadiusOptionsObject>);
         borderWidth?: number;
     }
 }
@@ -133,7 +133,7 @@ export interface ColumnSeriesOptions extends SeriesOptions {
      *
      * @product highcharts highstock gantt
      */
-    borderRadius?: (number|string|BorderRadiusOptionsObject);
+    borderRadius?: (number|string|Partial<BorderRadiusOptionsObject>);
 
     /**
      * The width of the border surrounding each column or bar. Defaults to
