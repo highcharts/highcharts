@@ -337,8 +337,8 @@ class TreeProjectionController {
         if (!isCacheValid) {
             this.indexCache = this.buildIndexFromInput(
                 table,
-                idColumn,
-                options.input
+                options.input,
+                idColumn
             );
 
             this.cacheSource = {
@@ -590,8 +590,8 @@ class TreeProjectionController {
         return this.createProjectedTable(
             table,
             projectionState,
-            idColumn,
-            aggregateColumnIds
+            aggregateColumnIds,
+            idColumn
         );
     }
 
@@ -733,32 +733,32 @@ class TreeProjectionController {
      * @param table
      * Source table.
      *
-     * @param idColumn
-     * Column ID containing stable row IDs, when configured.
-     *
      * @param input
      * Normalized input configuration.
+     *
+     * @param idColumn
+     * Column ID containing stable row IDs, when configured.
      *
      * @returns
      * Canonical tree index.
      */
     private buildIndexFromInput(
         table: DataTable,
-        idColumn: string | undefined,
-        input: NormalizedTreeInputOptions
+        input: NormalizedTreeInputOptions,
+        idColumn?: string
     ): TreeIndexBuildResult {
         if (input.type === 'parentId') {
             return buildParentIdIndexFromColumns(
                 table,
-                idColumn,
-                input
+                input,
+                idColumn
             );
         }
 
         return buildPathIndexFromColumns(
             table,
-            idColumn,
-            input
+            input,
+            idColumn
         );
     }
 
@@ -1075,11 +1075,11 @@ class TreeProjectionController {
 
         this.sortProjectedTreeNodes(
             table,
-            idColumn,
             rootIds,
             childrenByParent,
             rowIndexById,
-            rowsById
+            rowsById,
+            idColumn
         );
 
         const projectedNodeIds: RowId[] = [];
@@ -1186,9 +1186,6 @@ class TreeProjectionController {
      * @param table
      * Queried table after filtering/sorting and before pagination.
      *
-     * @param idColumn
-     * Column containing stable row IDs, when configured.
-     *
      * @param rootIds
      * Root ids in the projected logical tree.
      *
@@ -1200,14 +1197,17 @@ class TreeProjectionController {
      *
      * @param rowsById
      * Logical projected tree row states.
+     *
+     * @param idColumn
+     * Column containing stable row IDs, when configured.
      */
     private sortProjectedTreeNodes(
         table: DataTable,
-        idColumn: string | undefined,
         rootIds: RowId[],
         childrenByParent: Map<RowId, RowId[]>,
         rowIndexById: Map<RowId, number>,
-        rowsById: Map<RowId, TreeProjectionRowState>
+        rowsById: Map<RowId, TreeProjectionRowState>,
+        idColumn?: string
     ): void {
         const activeSortings = resolveActiveGridSortings(
             this.grid,
@@ -1244,8 +1244,8 @@ class TreeProjectionController {
                     sorting.sourceColumnId,
                     table,
                     sortProjectionState,
-                    idColumn,
-                    new Map()
+                    new Map(),
+                    idColumn
                 )
             );
         }
@@ -1306,11 +1306,11 @@ class TreeProjectionController {
      * @param projectionState
      * Projection state for table rebuild.
      *
-     * @param idColumn
-     * Column containing stable row IDs, when configured.
-     *
      * @param aggregateColumnIds
      * Source column ids that should be aggregated in the projected table.
+     *
+     * @param idColumn
+     * Column containing stable row IDs, when configured.
      *
      * @returns
      * Cloned table with projected column values and row index references.
@@ -1318,8 +1318,8 @@ class TreeProjectionController {
     private createProjectedTable(
         table: DataTable,
         projectionState: TreeProjectionState,
-        idColumn: string | undefined,
-        aggregateColumnIds: string[]
+        aggregateColumnIds: string[],
+        idColumn?: string
     ): DataTable {
         const { rowIds, rowIndexes } = projectionState;
 
@@ -1345,8 +1345,8 @@ class TreeProjectionController {
                     columnId,
                     table,
                     projectionState,
-                    idColumn,
-                    derivedCellColumnIdsByRowId
+                    derivedCellColumnIdsByRowId,
+                    idColumn
                 ) :
                 void 0;
 

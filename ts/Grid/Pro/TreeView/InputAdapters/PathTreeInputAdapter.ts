@@ -61,19 +61,19 @@ interface NormalizedPathValue {
  * @param table
  * Source table.
  *
- * @param idColumn
- * Column ID containing stable row IDs, when configured.
- *
  * @param input
  * Normalized tree input options.
+ *
+ * @param idColumn
+ * Column ID containing stable row IDs, when configured.
  *
  * @returns
  * Canonical tree index.
  */
 export function buildIndexFromColumns(
     table: DataTable,
-    idColumn: string | undefined,
-    input: NormalizedTreeInputPathOptions
+    input: NormalizedTreeInputPathOptions,
+    idColumn?: string
 ): TreeIndexBuildResult {
     const { columns } = table;
     const { pathColumn, separator } = input;

@@ -349,7 +349,7 @@ export interface TreeProjectionState {
 export interface TreeInputAdapter {
     buildIndexFromColumns(
         table: DataTable,
-        idColumn: string | undefined,
-        input: TreeInputOptions
+        input: TreeInputOptions,
+        idColumn?: string
     ): TreeIndexBuildResult;
 }

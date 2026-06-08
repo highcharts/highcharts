@@ -48,19 +48,19 @@ import { defined } from '../../../../Shared/Utilities.js';
  * @param table
  * Source table.
  *
- * @param idColumn
- * Column ID containing stable row IDs, when configured.
- *
  * @param input
  * Normalized tree input options.
+ *
+ * @param idColumn
+ * Column ID containing stable row IDs, when configured.
  *
  * @returns
  * Canonical tree index.
  */
 export function buildIndexFromColumns(
     table: DataTable,
-    idColumn: string | undefined,
-    input: NormalizedTreeInputParentIdOptions
+    input: NormalizedTreeInputParentIdOptions,
+    idColumn?: string
 ): TreeIndexBuildResult {
     const { columns } = table;
     const { parentIdColumn } = input;

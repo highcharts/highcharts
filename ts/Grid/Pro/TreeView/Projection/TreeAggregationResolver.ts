@@ -54,7 +54,7 @@ interface TreeAggregationResolverDependencies {
         rowId: RowId,
         table: DataTable,
         projectionState: TreeProjectionState,
-        idColumn: string | undefined
+        idColumn?: string
     ) => DataTableCellType;
 }
 
@@ -136,18 +136,18 @@ class TreeAggregationResolver {
      * @param projectionState
      * Current projected tree state.
      *
-     * @param idColumn
-     * Column containing stable row IDs, when configured.
-     *
      * @param derivedCellColumnIdsByRowId
      * Mutable map collecting derived cells for the projected state.
+     *
+     * @param idColumn
+     * Column containing stable row IDs, when configured.
      */
     public resolveColumnValues(
         columnId: string,
         table: DataTable,
         projectionState: TreeProjectionState,
-        idColumn: string | undefined,
-        derivedCellColumnIdsByRowId: Map<RowId, Set<string>>
+        derivedCellColumnIdsByRowId: Map<RowId, Set<string>>,
+        idColumn?: string
     ): Map<RowId, DataTableCellType> {
         const resolvedValuesByRowId = new Map<RowId, DataTableCellType>();
         const resolvingRowIds = new Set<RowId>();
