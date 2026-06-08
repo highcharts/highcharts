@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -2681,8 +2682,8 @@ class Chart {
         chartBackground[verb]({
             x: mgn / 2,
             y: mgn / 2,
-            width: (chartWidth as any) - mgn - chartBorderWidth % 2,
-            height: (chartHeight as any) - mgn - chartBorderWidth % 2,
+            width: chartWidth - mgn - chartBorderWidth % 2,
+            height: chartHeight - mgn - chartBorderWidth % 2,
             r: optionsChart.borderRadius
         });
 
@@ -2741,7 +2742,7 @@ class Chart {
             chart.plotBorder = plotBorder = renderer.rect()
                 .addClass('highcharts-plot-border')
                 .attr({
-                    zIndex: 1 // Above the grid
+                    zIndex: 1.5 // Above the grid, below the axes, #24521.
                 })
                 .add();
         }

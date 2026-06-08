@@ -5,8 +5,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi, Lars A. V. Cabrera
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -527,20 +528,31 @@ class XRangeSeries extends ColumnSeries {
             pfOptions = point.partialFill;
 
         if (!point.isNull && point.visible !== false) {
+            const className = point.getClassName();
 
             // Original graphic
             if (graphic) { // Update
                 graphic.rect[verb](shapeArgs);
             } else {
                 point.graphic = graphic = renderer.g('point')
-                    .addClass(point.getClassName())
                     .add(point.group || this.group);
 
                 graphic.rect = (renderer as any)[type](merge(shapeArgs))
-                    .addClass(point.getClassName())
-                    .addClass('highcharts-partfill-original')
                     .add(graphic);
             }
+
+            graphic.addClass(
+                className + (
+                    pointState && pointState !== 'select' ?
+                        ' highcharts-point-' + pointState :
+                        ''
+                ),
+                true
+            );
+            graphic.rect.addClass(
+                className + ' highcharts-partfill-original',
+                true
+            );
 
             // Partial fill graphic
             if (partShapeArgs) {

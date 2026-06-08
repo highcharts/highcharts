@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  * */
 
@@ -209,7 +210,7 @@ export interface AxisCrosshairOptions {
      * `false` to disable animation. Used by the color axis marker.
      *
      * @product highcharts highstock highmaps
-     * @since next
+     * @since 12.6.0
      */
     animation?: (boolean|Partial<AnimationOptions>);
 
@@ -408,6 +409,12 @@ export interface AxisLabelFormatterContextObject {
      * Default formatting of date/time labels.
      */
     dateTimeLabelFormat?: Time.DateTimeFormat;
+
+    /**
+     * Boundary time unit for the label (e.g `day`, `month`, `year`), used for
+     * date/time formatting.
+     */
+    boundary?: string;
 
     /**
      * Whether the label belongs to the first tick on the axis.
@@ -1158,7 +1165,7 @@ export interface AxisOptions {
     /**
      * Deprecated. Use `minRange` instead.
      *
-     * @deprecated
+     * @deprecated 6.0.0
      * @product highcharts highstock
      */
     maxZoom?: number;
@@ -2019,7 +2026,7 @@ export interface AxisTitleOptions {
     /**
      * Deprecated. Set the `text` to `undefined` to disable the title.
      *
-     * @deprecated
+     * @deprecated 3.0.0
      * @product highcharts
      */
     enabled?: boolean;

@@ -6,8 +6,9 @@
  *
  *  Authors: Jon Arild Nygård
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -210,7 +211,7 @@ export interface SunburstSeriesOptions extends TreemapSeriesOptions {
      * zoom in on its children. Deprecated and replaced by
      * [allowTraversingTree](#plotOptions.sunburst.allowTraversingTree).
      *
-     * @deprecated
+     * @deprecated 7.0.3
      *
      * @default false
      *
@@ -314,7 +315,7 @@ export interface SunburstSeriesOptions extends TreemapSeriesOptions {
      * Options for the button appearing when traversing down in a sunburst.
      * Since v9.3.3 the `traverseUpButton` is replaced by `breadcrumbs`.
      *
-     * @deprecated
+     * @deprecated 9.3.3
      *
      * @since 6.0.0
      *

@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -2456,11 +2457,8 @@ class SVGElement implements SVGElementBase {
         value?: number,
         key?: string
     ): boolean {
-        const renderer = this.renderer,
-            parentGroup = this.parentGroup,
-            parentWrapper = parentGroup || renderer,
-            parentNode = (parentWrapper as any).element || renderer.box,
-            element = this.element,
+        const { element, parentGroup, renderer } = this,
+            parentNode = parentGroup?.element || renderer.box,
             svgParent = parentNode === renderer.box;
 
         let childNodes,
@@ -2473,18 +2471,18 @@ class SVGElement implements SVGElementBase {
 
         if (defined(value)) {
             // So we can read it for other elements in the group
-            element.setAttribute('data-z-index', (value as any));
+            element.setAttribute('data-z-index', value);
 
-            (value as any) = +(value as any);
-            if ((this as any)[key as any] === value) {
+            value = +value;
+            if (this[key as string] === value) {
                 // Only update when needed (#3865)
                 run = false;
             }
-        } else if (defined((this as any)[key as any])) {
+        } else if (defined(this[key as string])) {
             element.removeAttribute('data-z-index');
         }
 
-        (this as any)[key as any] = value;
+        this[key as string] = value;
 
         // Insert according to this and other elements' zIndex. Before .add() is
         // called, nothing is done. Then on add, or by later calls to
@@ -2498,7 +2496,7 @@ class SVGElement implements SVGElementBase {
 
             childNodes = parentNode.childNodes;
             for (i = childNodes.length - 1; i >= 0 && !inserted; i--) {
-                otherElement = childNodes[i];
+                otherElement = childNodes[i] as Element;
                 otherZIndex = otherElement.getAttribute('data-z-index');
                 undefinedOtherZIndex = !defined(otherZIndex);
 
@@ -2508,7 +2506,7 @@ class SVGElement implements SVGElementBase {
                         // On all levels except the highest. If the parent is
                         // <svg>, then we don't want to put items before <desc>
                         // or <defs>
-                        value as any < 0 &&
+                        defined(value) && value < 0 &&
                         undefinedOtherZIndex &&
                         !svgParent &&
                         !i
@@ -2517,12 +2515,15 @@ class SVGElement implements SVGElementBase {
                         inserted = true;
                     } else if (
                         // Insert after the first element with a lower zIndex
-                        pInt(otherZIndex) <= (value as any) ||
+                        (
+                            defined(value) &&
+                            parseFloat(otherZIndex || '') <= value
+                        ) ||
                         // If negative zIndex, add this before first undefined
                         // zIndex element
                         (
                             undefinedOtherZIndex &&
-                            (!defined(value) || (value as any) >= 0)
+                            (!defined(value) || value >= 0)
                         )
                     ) {
                         parentNode.insertBefore(

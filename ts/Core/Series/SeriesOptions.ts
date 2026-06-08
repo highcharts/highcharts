@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -1308,7 +1309,7 @@ export interface SeriesStateHoverOptions extends StateHoverOptions {
      * individual point, see
      * [marker.states.hover](#plotOptions.series.marker.states.hover).
      *
-     * @deprecated
+     * @deprecated 2.0.0
      *
      * @excluding states, symbol
      * @product   highcharts highstock

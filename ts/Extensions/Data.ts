@@ -5,8 +5,9 @@
  *  (c) 2012-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -3211,7 +3212,7 @@ export default Data;
  * the [googleSpreadsheetRange](#data.googleSpreadsheetRange) option to load a
  * specific sheet.
  *
- * @deprecated
+ * @deprecated 9.2.2
  * @type      {string}
  * @since     4.0
  * @apioption data.googleSpreadsheetWorksheet

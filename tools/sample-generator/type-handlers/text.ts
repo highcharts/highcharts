@@ -13,6 +13,10 @@ export function getHTML(ctrlOpt: ControlOptions, overrideValue?: any): string {
 
         html += ` value="${overrideValue}"`;
     }
+    if (ctrlOpt.nullable) {
+        html += ' nullable';
+    }
+
     html += '></highcharts-control>';
 
     return html;

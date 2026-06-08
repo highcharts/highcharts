@@ -5,8 +5,9 @@
  *
  *  Default options for accessibility.
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -154,7 +155,7 @@ declare module '../../Core/Series/SeriesOptions'{
          *
          * @requires   modules/accessibility
          * @since      11.1.0
-         * @deprecated next
+         * @deprecated 12.6.0
          */
         pointDescriptionFormat?:
         SeriesAccessibilityOptions['point']['descriptionFormat'];
