@@ -67,6 +67,12 @@ interface RendererOptionSpec {
     typeName: string;
 }
 
+interface DataConnectorOptionSpec {
+    interfaceName: string;
+    sourcePath: string;
+    typeName: string;
+}
+
 interface TreeInputOptionSpec {
     interfaceName: string;
     typeName: string;
@@ -93,6 +99,37 @@ const EDIT_RENDERER_OPTIONS: Array<RendererOptionSpec> = [
     { interfaceName: 'TimeInputRendererOptions', typeName: 'timeInput' },
     { interfaceName: 'NumberInputRendererOptions', typeName: 'numberInput' }
 ];
+
+const DATA_CONNECTOR_OPTIONS: Array<DataConnectorOptionSpec> = [
+    {
+        interfaceName: 'CSVConnectorOptions',
+        sourcePath: 'ts/Data/Connectors/CSVConnectorOptions.d.ts',
+        typeName: 'CSV'
+    },
+    {
+        interfaceName: 'JSONConnectorOptions',
+        sourcePath: 'ts/Data/Connectors/JSONConnectorOptions.d.ts',
+        typeName: 'JSON'
+    },
+    {
+        interfaceName: 'GoogleSheetsConnectorOptions',
+        sourcePath: 'ts/Data/Connectors/GoogleSheetsConnectorOptions.d.ts',
+        typeName: 'GoogleSheets'
+    },
+    {
+        interfaceName: 'HTMLTableConnectorOptions',
+        sourcePath: 'ts/Data/Connectors/HTMLTableConnectorOptions.d.ts',
+        typeName: 'HTMLTable'
+    }
+];
+
+// These shared DataConnector options support Dashboards infrastructure, but
+// are not part of the recommended declarative Grid configuration.
+const DATA_CONNECTOR_GRID_HIDDEN_OPTIONS = new Set([
+    'dataTables',
+    'id',
+    'metadata'
+]);
 
 const TREE_INPUT_OPTIONS: Array<TreeInputOptionSpec> = [
     { interfaceName: 'TreeInputParentIdOptions', typeName: 'parentId' },
@@ -414,20 +451,7 @@ function addTreeNode(
                 break;
 
             case 'sample':
-                _array = _nodeDoclet[`${_tag}s`] = [];
-                for (
-                    const _object
-                    of TSLib.extractTagObjects(_infoDoclet, 'sample')
-                ) {
-                    const _sample: TreeLib.OptionDocletSample = {
-                        name: _object.name || _object.text,
-                        value: _object.value || ''
-                    };
-                    if (_object.type) {
-                        _sample.products = _object.type.slice();
-                    }
-                    _array.push(_sample);
-                }
+                addSamplesToNode(_infoDoclet, _treeNode);
                 break;
 
             case 'type':
@@ -484,6 +508,7 @@ function addTreeNode(
     expandDataProviderOptionChildren(
         sourceInfo, info, _nodeDoclet, _treeNode, debug
     );
+    expandDataConnectorOptionChildren(_nodeDoclet, _treeNode, debug);
     expandTreeInputOptionChildren(
         sourceInfo, info, _nodeDoclet, _treeNode, debug
     );
@@ -676,6 +701,29 @@ function formatJSDocLinks(
             return label;
         }
     );
+}
+
+function addSamplesToNode(
+    infoDoclet: TSLib.DocletInfo | undefined,
+    treeNode: TreeLib.Option
+): void {
+    if (!infoDoclet?.tags.sample) {
+        return;
+    }
+
+    const samples = treeNode.doclet.samples = [];
+
+    for (const object of TSLib.extractTagObjects(infoDoclet, 'sample')) {
+        const sample: TreeLib.OptionDocletSample = {
+            name: object.name || object.text,
+            value: object.value || ''
+        };
+
+        if (object.type) {
+            sample.products = object.type.slice();
+        }
+        samples.push(sample);
+    }
 }
 
 function appendDeprecationToDescription(
@@ -988,6 +1036,69 @@ function expandDataProviderOptionChildren(
                         `'${provider.providerType}'`;
                 }
             }
+        }
+    }
+}
+
+function expandDataConnectorOptionChildren(
+    nodeDoclet: Record<string, any>,
+    treeNode: TreeLib.Option,
+    debug?: boolean
+): void {
+    const typeNames = nodeDoclet.type?.names;
+
+    if (
+        !Array.isArray(typeNames) ||
+        !typeNames.includes('GridDataConnectorTypeOptions')
+    ) {
+        return;
+    }
+
+    for (const spec of DATA_CONNECTOR_OPTIONS) {
+        const sourceInfo = TSLib.getSourceInfo(spec.sourcePath, void 0, debug);
+        const interfaceInfo = sourceInfo.code.find(
+            code => (
+                code.kind === 'Interface' &&
+                code.name === spec.interfaceName
+            )
+        );
+
+        if (!interfaceInfo || interfaceInfo.kind !== 'Interface') {
+            continue;
+        }
+
+        TSLib.autoExtendInfo(interfaceInfo);
+
+        const typeNode = getTreeNode(
+            `${treeNode.meta.fullname}.${spec.typeName}`
+        );
+
+        if (!typeNode.doclet.description) {
+            const interfaceDesc = (
+                interfaceInfo.doclet &&
+                TSLib.extractTagText(interfaceInfo.doclet, 'description', true)
+            ) || '';
+
+            typeNode.doclet.description = interfaceDesc || (
+                `Options for data connector type <code>'${spec.typeName}'</code>.`
+            );
+        }
+        addSamplesToNode(interfaceInfo.doclet, typeNode);
+
+        for (const member of interfaceInfo.members) {
+            const memberName = TSLib.extractInfoName(member);
+
+            // `type` is represented by the synthetic connector branch label.
+            if (
+                memberName === 'type' ||
+                (
+                    memberName &&
+                    DATA_CONNECTOR_GRID_HIDDEN_OPTIONS.has(memberName)
+                )
+            ) {
+                continue;
+            }
+            addTreeNode(sourceInfo, typeNode, member, debug);
         }
     }
 }
