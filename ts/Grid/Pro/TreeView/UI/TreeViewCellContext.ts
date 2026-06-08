@@ -30,6 +30,7 @@ import type {
 } from '../TreeViewTypes';
 import type { ResolvedTreeViewOptions } from '../TreeViewOptionsNormalizer';
 
+import { getTreeViewRowId } from '../TreeViewRowResolver.js';
 import { defined } from '../../../../Shared/Utilities.js';
 
 
@@ -82,7 +83,7 @@ export function getTreeViewCellContext(
         return;
     }
 
-    const rowId = cell.row.id ?? projectionState.rowIds[cell.row.index];
+    const rowId = getTreeViewRowId(cell.row, projectionState);
     if (!defined(rowId)) {
         return;
     }

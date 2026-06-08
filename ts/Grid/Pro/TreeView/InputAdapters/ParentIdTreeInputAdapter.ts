@@ -22,7 +22,7 @@
  *
  * */
 
-import type { ColumnCollection } from '../../../../Data/DataTable';
+import type DataTable from '../../../../Data/DataTable';
 import type { RowId } from '../../../Core/Data/DataProvider';
 import type {
     TreeIndexBuildResult,
@@ -45,29 +45,25 @@ import { defined } from '../../../../Shared/Utilities.js';
 /**
  * Builds a canonical tree index from flat columns using `id` and `parentId`.
  *
- * @param columns
- * Source columns.
- *
- * @param idColumn
- * Column ID containing stable row IDs.
+ * @param table
+ * Source table.
  *
  * @param input
  * Normalized tree input options.
+ *
+ * @param idColumn
+ * Column ID containing stable row IDs, when configured.
  *
  * @returns
  * Canonical tree index.
  */
 export function buildIndexFromColumns(
-    columns: ColumnCollection,
-    idColumn: string,
-    input: NormalizedTreeInputParentIdOptions
+    table: DataTable,
+    input: NormalizedTreeInputParentIdOptions,
+    idColumn?: string
 ): TreeIndexBuildResult {
+    const { columns } = table;
     const { parentIdColumn } = input;
-
-    const idValues = columns[idColumn];
-    if (!idValues) {
-        throw new Error(`TreeView: idColumn "${idColumn}" not found.`);
-    }
 
     const parentValues = columns[parentIdColumn];
     if (!parentValues) {
@@ -76,17 +72,26 @@ export function buildIndexFromColumns(
         );
     }
 
-    const rowCount = Math.max(idValues.length, parentValues.length);
+    const rowCount = Math.max(table.getRowCount(), parentValues.length);
     const nodes = new Map<RowId, TreeNodeRecord>();
     const rowOrder: RowId[] = [];
 
     for (let rowIndex = 0; rowIndex < rowCount; ++rowIndex) {
-        const id = normalizeRowIdValue(
-            idValues[rowIndex],
-            idColumn,
-            rowIndex,
-            false
-        );
+        const id = idColumn ?
+            normalizeRowIdValue(
+                columns[idColumn]?.[rowIndex],
+                idColumn,
+                rowIndex,
+                false
+            ) :
+            table.getOriginalRowIndex(rowIndex);
+
+        if (!defined(id)) {
+            throw new Error(
+                'TreeView: Could not resolve original row index ' +
+                `at row ${rowIndex}.`
+            );
+        }
         const parentId = normalizeRowIdValue(
             parentValues[rowIndex],
             parentIdColumn,
@@ -96,8 +101,11 @@ export function buildIndexFromColumns(
 
         if (nodes.has(id)) {
             throw new Error(
-                `TreeView: Duplicate row id "${String(id)}" in column ` +
-                `"${idColumn}" at row ${rowIndex}.`
+                idColumn ?
+                    `TreeView: Duplicate row id "${String(id)}" in column ` +
+                        `"${idColumn}" at row ${rowIndex}.` :
+                    `TreeView: Duplicate original row index "${String(id)}" ` +
+                        `at row ${rowIndex}.`
             );
         }
 
@@ -110,8 +118,6 @@ export function buildIndexFromColumns(
         rowOrder.push(id);
     }
 
-    const rootIds: RowId[] = [];
-
     for (let i = 0, iEnd = rowOrder.length; i < iEnd; ++i) {
         const id = rowOrder[i];
         const node = nodes.get(id);
@@ -120,7 +126,6 @@ export function buildIndexFromColumns(
         }
 
         if (node.parentId === null) {
-            rootIds.push(node.id);
             continue;
         }
 
@@ -139,8 +144,7 @@ export function buildIndexFromColumns(
 
     return {
         nodes,
-        rowOrder,
-        rootIds
+        rowOrder
     };
 }
 

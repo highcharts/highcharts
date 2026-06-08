@@ -122,6 +122,8 @@ class TableCell extends Cell {
     /**
      * Edits the cell value and updates the dataset. Call this instead of
      * `setValue` when you want it to trigger the cell value user change event.
+     * Does nothing if the cell is not editable or the value is the same as the
+     * current one.
      *
      * @param value
      * The new value to set.

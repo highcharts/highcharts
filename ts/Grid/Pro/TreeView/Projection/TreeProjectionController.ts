@@ -57,6 +57,7 @@ import {
 import {
     hasDataTableProvider
 } from '../../../Core/Data/DataProvider.js';
+import { normalizeRowIdValue } from '../TreeViewCommons.js';
 import { normalizeTreeViewOptions } from '../TreeViewOptionsNormalizer.js';
 import { isDeepEqual } from '../../../Core/GridUtils.js';
 import { defined, fireEvent } from '../../../../Shared/Utilities.js';
@@ -228,8 +229,6 @@ class TreeProjectionController {
 
     private projectionStateCache?: TreeProjectionState;
 
-    private injectedAncestorIds?: Set<RowId>;
-
     private expansionStateSeedKey?: string;
 
     private resolvedOptions?: ResolvedTreeViewOptions;
@@ -237,7 +236,7 @@ class TreeProjectionController {
     private cacheSource?: {
         table: DataTable;
         versionTag: string;
-        idColumn: string;
+        idColumn?: string;
         input: NormalizedTreeInputOptions;
     };
 
@@ -309,11 +308,6 @@ class TreeProjectionController {
         const versionTag = table.getVersionTag();
 
         const idColumn = dataOptions?.idColumn;
-        if (!idColumn) {
-            throw new Error(
-                'TreeView: `data.idColumn` is required for tree input.'
-            );
-        }
         let resolvedInput: NormalizedTreeInputOptions;
 
         try {
@@ -342,9 +336,9 @@ class TreeProjectionController {
 
         if (!isCacheValid) {
             this.indexCache = this.buildIndexFromInput(
-                table.columns,
-                idColumn,
-                options.input
+                table,
+                options.input,
+                idColumn
             );
 
             this.cacheSource = {
@@ -576,11 +570,6 @@ class TreeProjectionController {
         }
 
         const idColumn = this.getDataOptions()?.idColumn;
-        if (!idColumn) {
-            throw new Error(
-                'TreeView: `data.idColumn` is required for tree input.'
-            );
-        }
 
         const projectionState = this.projectToVisibleState(table, idColumn);
         this.projectionStateCache = projectionState;
@@ -601,8 +590,8 @@ class TreeProjectionController {
         return this.createProjectedTable(
             table,
             projectionState,
-            idColumn,
-            aggregateColumnIds
+            aggregateColumnIds,
+            idColumn
         );
     }
 
@@ -621,7 +610,6 @@ class TreeProjectionController {
     private clearCache(): void {
         this.indexCache = void 0;
         this.projectionStateCache = void 0;
-        this.injectedAncestorIds = void 0;
         this.cacheSource = void 0;
     }
 
@@ -742,35 +730,35 @@ class TreeProjectionController {
     /**
      * Builds canonical tree index for currently selected input type.
      *
-     * @param columns
-     * Source columns.
-     *
-     * @param idColumn
-     * Column ID containing stable row IDs.
+     * @param table
+     * Source table.
      *
      * @param input
      * Normalized input configuration.
+     *
+     * @param idColumn
+     * Column ID containing stable row IDs, when configured.
      *
      * @returns
      * Canonical tree index.
      */
     private buildIndexFromInput(
-        columns: ColumnCollection,
-        idColumn: string,
-        input: NormalizedTreeInputOptions
+        table: DataTable,
+        input: NormalizedTreeInputOptions,
+        idColumn?: string
     ): TreeIndexBuildResult {
         if (input.type === 'parentId') {
             return buildParentIdIndexFromColumns(
-                columns,
-                idColumn,
-                input
+                table,
+                input,
+                idColumn
             );
         }
 
         return buildPathIndexFromColumns(
-            columns,
-            idColumn,
-            input
+            table,
+            input,
+            idColumn
         );
     }
 
@@ -843,22 +831,26 @@ class TreeProjectionController {
      * Queried table after sort/filter and before pagination.
      *
      * @param idColumn
-     * Column containing row IDs.
+     * Column containing row IDs, when configured.
      *
      * @returns
      * Projection state describing visible rows in tree order.
      */
     private projectToVisibleState(
         table: DataTable,
-        idColumn: string
+        idColumn?: string
     ): TreeProjectionState {
         const index = this.indexCache;
         if (!index) {
             throw new Error('TreeView: Source tree index is not initialized.');
         }
 
-        const idValues = table.columns[idColumn];
-        if (!idValues) {
+        const idValues = (
+            idColumn ?
+                table.columns[idColumn] :
+                void 0
+        );
+        if (idColumn && !idValues) {
             throw new Error(
                 `TreeView: idColumn "${idColumn}" not found in ` +
                 'presentation table.'
@@ -875,7 +867,16 @@ class TreeProjectionController {
             rowIndex < rowCount;
             ++rowIndex
         ) {
-            const rowId = idValues[rowIndex] as RowId;
+            const rowId = (idValues && idColumn) ?
+                normalizeRowIdValue(idValues[rowIndex], idColumn, rowIndex) :
+                table.getOriginalRowIndex(rowIndex);
+
+            if (!defined(rowId)) {
+                throw new Error(
+                    'TreeView: Could not resolve original row index for ' +
+                    `presentation row ${rowIndex}.`
+                );
+            }
             if (!index.nodes.has(rowId)) {
                 throw new Error(
                     `TreeView: Row id "${String(rowId)}" is not present in ` +
@@ -1074,14 +1075,14 @@ class TreeProjectionController {
 
         this.sortProjectedTreeNodes(
             table,
-            idColumn,
             rootIds,
             childrenByParent,
             rowIndexById,
-            rowsById
+            rowsById,
+            idColumn
         );
 
-        const projectedRowIds: RowId[] = [];
+        const projectedNodeIds: RowId[] = [];
 
         const visitVisibleNode = (nodeId: RowId): void => {
             const rowState = rowsById.get(nodeId);
@@ -1089,7 +1090,7 @@ class TreeProjectionController {
                 return;
             }
 
-            projectedRowIds.push(nodeId);
+            projectedNodeIds.push(nodeId);
 
             if (!rowState.childrenIds.length || !rowState.isExpanded) {
                 return;
@@ -1109,10 +1110,10 @@ class TreeProjectionController {
         }
 
         const rowStateStack: TreeProjectionRowState[] = [];
-        let lastVisitedRowId: RowId | undefined;
+        let lastVisitedNodeId: RowId | undefined;
 
-        for (let i = 0, iEnd = projectedRowIds.length; i < iEnd; ++i) {
-            const rowState = rowsById.get(projectedRowIds[i]);
+        for (let i = 0, iEnd = projectedNodeIds.length; i < iEnd; ++i) {
+            const rowState = rowsById.get(projectedNodeIds[i]);
             if (!rowState) {
                 continue;
             }
@@ -1121,39 +1122,37 @@ class TreeProjectionController {
                 const completedState = rowStateStack.pop();
                 if (
                     completedState &&
-                    typeof lastVisitedRowId !== 'undefined'
+                    typeof lastVisitedNodeId !== 'undefined'
                 ) {
-                    completedState.lastVisibleDescendantId = lastVisitedRowId;
+                    completedState.lastVisibleDescendantId = lastVisitedNodeId;
                 }
             }
 
             rowStateStack.push(rowState);
-            lastVisitedRowId = rowState.id;
+            lastVisitedNodeId = rowState.id;
         }
 
         while (rowStateStack.length) {
             const completedState = rowStateStack.pop();
             if (
                 completedState &&
-                typeof lastVisitedRowId !== 'undefined'
+                typeof lastVisitedNodeId !== 'undefined'
             ) {
-                completedState.lastVisibleDescendantId = lastVisitedRowId;
+                completedState.lastVisibleDescendantId = lastVisitedNodeId;
             }
         }
 
-        this.injectedAncestorIds = injectedAncestorIds;
-
         const projectedIndexes = new Array<number | undefined>(
-            projectedRowIds.length
+            projectedNodeIds.length
         );
-        for (let i = 0, iEnd = projectedRowIds.length; i < iEnd; ++i) {
-            const rowIndex = rowIndexById.get(projectedRowIds[i]);
+        for (let i = 0, iEnd = projectedNodeIds.length; i < iEnd; ++i) {
+            const rowIndex = rowIndexById.get(projectedNodeIds[i]);
             if (typeof rowIndex === 'number') {
                 projectedIndexes[i] = rowIndex;
                 continue;
             }
 
-            const nodeId = projectedRowIds[i];
+            const nodeId = projectedNodeIds[i];
             const node = index.nodes.get(nodeId);
             if (
                 !node ||
@@ -1171,7 +1170,9 @@ class TreeProjectionController {
 
         return {
             derivedCellColumnIdsByRowId: new Map(),
-            rowIds: projectedRowIds,
+            // `rowIds` stores projected tree node IDs, including generated
+            // path parents without a backing source row.
+            rowIds: projectedNodeIds,
             rowIndexes: projectedIndexes,
             sourceRowIndexesById: rowIndexById,
             rowsById
@@ -1185,9 +1186,6 @@ class TreeProjectionController {
      * @param table
      * Queried table after filtering/sorting and before pagination.
      *
-     * @param idColumn
-     * Column containing stable row IDs.
-     *
      * @param rootIds
      * Root ids in the projected logical tree.
      *
@@ -1199,14 +1197,17 @@ class TreeProjectionController {
      *
      * @param rowsById
      * Logical projected tree row states.
+     *
+     * @param idColumn
+     * Column containing stable row IDs, when configured.
      */
     private sortProjectedTreeNodes(
         table: DataTable,
-        idColumn: string,
         rootIds: RowId[],
         childrenByParent: Map<RowId, RowId[]>,
         rowIndexById: Map<RowId, number>,
-        rowsById: Map<RowId, TreeProjectionRowState>
+        rowsById: Map<RowId, TreeProjectionRowState>,
+        idColumn?: string
     ): void {
         const activeSortings = resolveActiveGridSortings(
             this.grid,
@@ -1243,8 +1244,8 @@ class TreeProjectionController {
                     sorting.sourceColumnId,
                     table,
                     sortProjectionState,
-                    idColumn,
-                    new Map()
+                    new Map(),
+                    idColumn
                 )
             );
         }
@@ -1305,11 +1306,11 @@ class TreeProjectionController {
      * @param projectionState
      * Projection state for table rebuild.
      *
-     * @param idColumn
-     * Column containing stable row IDs.
-     *
      * @param aggregateColumnIds
      * Source column ids that should be aggregated in the projected table.
+     *
+     * @param idColumn
+     * Column containing stable row IDs, when configured.
      *
      * @returns
      * Cloned table with projected column values and row index references.
@@ -1317,8 +1318,8 @@ class TreeProjectionController {
     private createProjectedTable(
         table: DataTable,
         projectionState: TreeProjectionState,
-        idColumn: string,
-        aggregateColumnIds: string[]
+        aggregateColumnIds: string[],
+        idColumn?: string
     ): DataTable {
         const { rowIds, rowIndexes } = projectionState;
 
@@ -1344,8 +1345,8 @@ class TreeProjectionController {
                     columnId,
                     table,
                     projectionState,
-                    idColumn,
-                    derivedCellColumnIdsByRowId
+                    derivedCellColumnIdsByRowId,
+                    idColumn
                 ) :
                 void 0;
 
@@ -1386,9 +1387,17 @@ class TreeProjectionController {
             const rowIndex = rowIndexes[i];
             if (typeof rowIndex === 'number') {
                 originalRowIndexes[i] = table.getOriginalRowIndex(rowIndex);
-            } else if (this.injectedAncestorIds?.has(rowIds[i])) {
+            } else if (
+                projectionState.rowsById.get(rowIds[i])?.isAncestorOnly
+            ) {
                 const node = this.indexCache?.nodes.get(rowIds[i]);
-                originalRowIndexes[i] = node?.rowIndex ?? void 0;
+                originalRowIndexes[i] = (
+                    typeof node?.rowIndex === 'number' ?
+                        this.cacheSource?.table.getOriginalRowIndex(
+                            node.rowIndex
+                        ) :
+                        void 0
+                );
             } else {
                 originalRowIndexes[i] = void 0;
             }
@@ -1434,21 +1443,21 @@ class TreeProjectionController {
      * Current projected tree state.
      *
      * @param idColumn
-     * Column containing stable row IDs.
+     * Column containing stable row IDs, when configured.
      */
     private resolveProjectedCellValue(
         columnId: string,
         rowId: RowId,
         table: DataTable,
         projectionState: TreeProjectionState,
-        idColumn: string
+        idColumn?: string
     ): DataTableCellType {
         const rowIndex = projectionState.sourceRowIndexesById.get(rowId);
         if (typeof rowIndex === 'number') {
             return table.columns[columnId]?.[rowIndex] as DataTableCellType;
         }
 
-        if (this.injectedAncestorIds?.has(rowId)) {
+        if (projectionState.rowsById.get(rowId)?.isAncestorOnly) {
             return this.getSourceTableCellValue(columnId, rowId);
         }
 
@@ -1562,7 +1571,7 @@ class TreeProjectionController {
      * Generated row ID.
      *
      * @param idColumn
-     * Column containing stable row IDs.
+     * Column containing stable row IDs, when configured.
      *
      * @returns
      * Cell value for generated row, or `null` for unsupported columns.
@@ -1570,7 +1579,7 @@ class TreeProjectionController {
     private getGeneratedCellValue(
         columnId: string,
         rowId: RowId,
-        idColumn: string
+        idColumn?: string
     ): DataTableCellType {
         const index = this.indexCache;
         const input = this.options?.input;
@@ -1584,7 +1593,7 @@ class TreeProjectionController {
             return null;
         }
 
-        if (columnId === idColumn) {
+        if (idColumn && columnId === idColumn) {
             return node.id;
         }
 

@@ -42,6 +42,7 @@ import type {
 import type TreeStickyRowController from './UI/TreeStickyRowController';
 
 import Globals from '../../Core/Globals.js';
+import TableRow from '../../Core/Table/Body/TableRow.js';
 import TreeProjectionController from './Projection/TreeProjectionController.js';
 import TreeViewValidation from './TreeViewValidation.js';
 import { decorateTreeViewCell } from './UI/TreeViewCellDecorator.js';
@@ -50,6 +51,10 @@ import {
     removeTreeToggleListeners,
     type TreeToggleListeners
 } from './UI/TreeViewTableInteractions.js';
+import {
+    getTreeViewRowId,
+    syncTreeViewRowId
+} from './TreeViewRowResolver.js';
 import { addEvent, pushUnique } from '../../../Shared/Utilities.js';
 
 
@@ -111,6 +116,7 @@ export function compose(
     );
     addEvent(TableClass, 'getViewportTopInset', onTableGetViewportTopInset);
     addEvent(TableClass, 'afterDestroy', onTableAfterDestroy);
+    addEvent(TableRow, 'afterUpdateAttributes', onRowAfterUpdateAttributes);
     addEvent(TableCellClass, 'getEditability', onCellGetEditability);
     addEvent(TableCellClass, 'afterDataMutation', onCellAfterDataMutation);
     addEvent(TableCellClass, 'afterRender', onAfterCellRender);
@@ -249,8 +255,10 @@ function onCellGetEditability(
     const sourceColumnId = this.row.viewport.grid.columnPolicy
         .getColumnSourceId(this.column.id) || this.column.id;
     const input = controller?.options?.input;
-    const rowId = this.row.id ?? controller?.getProjectionState()
-        ?.rowIds[this.row.index];
+    const rowId = getTreeViewRowId(
+        this.row,
+        controller?.getProjectionState()
+    );
     const isStructurallyReadonly = !!(
         controller?.isTreeSpecialColumn(sourceColumnId) &&
         !(
@@ -309,6 +317,15 @@ function onTableBeforeInit(this: Table): void {
         this,
         createTreeToggleListeners(this, treeToggleAttribute)
     );
+    this.afterUpdateRowsHooks.push((): Promise<void> => {
+        const stickyRowController = this.treeStickyRowController;
+
+        if (!stickyRowController) {
+            return Promise.resolve();
+        }
+
+        return stickyRowController.refreshNow(true, true);
+    });
 }
 
 /**
@@ -373,6 +390,18 @@ function onTableAfterDestroy(this: Table): void {
     }
 
     treeToggleListeners.delete(this);
+}
+
+/**
+ * Synchronizes rendered row IDs with the active TreeView projection.
+ */
+function onRowAfterUpdateAttributes(
+    this: TableRow
+): void {
+    syncTreeViewRowId(
+        this,
+        this.viewport.grid.treeView?.getProjectionState()
+    );
 }
 
 /**
