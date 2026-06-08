@@ -1,4 +1,5 @@
 const grid = Grid.grid('container', {
+    gridKey: 'YOUR-GRID-KEY-HERE',
     data: {
         columns: {
             id: [1, 2, 3, 4],
