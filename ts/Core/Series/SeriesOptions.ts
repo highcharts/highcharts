@@ -1312,7 +1312,7 @@ export interface SeriesStateHoverOptions extends StateHoverOptions {
      * individual point, see
      * [marker.states.hover](#plotOptions.series.marker.states.hover).
      *
-     * @deprecated
+     * @deprecated 2.0.0
      *
      * @excluding states, symbol
      * @product   highcharts highstock

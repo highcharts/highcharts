@@ -1369,7 +1369,7 @@ class Point {
             if (data && !series.processedData) {
                 data[i] = (isObject(data[i], true) || isObject(options, true)) ?
                     point.options :
-                    (options ?? data[i]);
+                    (options === void 0 ? data[i] : options); // #20412
             }
 
             // Redraw

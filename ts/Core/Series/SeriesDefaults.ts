@@ -580,7 +580,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      * @type       {Function}
      * @requires   modules/accessibility
      * @since      11.1.0
-     * @deprecated next
+     * @deprecated 12.6.0
      * @apioption  plotOptions.series.pointDescriptionFormat
      */
 

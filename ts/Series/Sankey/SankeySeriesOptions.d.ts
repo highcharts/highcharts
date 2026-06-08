@@ -204,7 +204,7 @@ export interface SankeySeriesNodeOptions {
      * If a percentage string is given, the node is offset by the percentage of
      * the node size plus `nodePadding`.
      *
-     * @deprecated
+     * @deprecated 9.3.0
      *
      * @default 0
      *
