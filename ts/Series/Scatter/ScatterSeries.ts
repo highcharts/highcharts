@@ -45,6 +45,7 @@ declare module '../../Core/Series/SeriesBase' {
         allowOutsidePlotInteraction?: boolean;
     }
 }
+
 /* *
  *
  *  Class
@@ -153,6 +154,7 @@ class ScatterSeries extends LineSeries {
             this.graph = this.graph.destroy();
         }
     }
+
 
 }
 
