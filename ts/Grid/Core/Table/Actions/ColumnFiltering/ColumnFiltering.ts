@@ -36,13 +36,15 @@ import type {
 import { makeHTMLElement } from '../../../GridUtils.js';
 import FilteringController from '../../../Querying/FilteringController.js';
 import Globals from '../../../Globals.js';
+import { defaultOptions } from '../../../Defaults.js';
 import {
     conditionsMap,
     operatorAliases
 } from './FilteringTypes.js';
 import {
     defined,
-    fireEvent
+    fireEvent,
+    pick
 } from '../../../../../Shared/Utilities.js';
 
 /* *
@@ -221,6 +223,8 @@ class ColumnFiltering {
                     conditions[0];
         }
 
+        this.updateFilterInputHint();
+
         await this.applyFilter({
             value,
             condition: normalizedOperator ?? conditions[0]
@@ -265,6 +269,7 @@ class ColumnFiltering {
         }
 
         this.disableInputIfNeeded();
+        this.updateFilterInputHint();
     }
 
     /**
@@ -291,9 +296,14 @@ class ColumnFiltering {
 
         if (
             !column.viewport.grid.columnPolicy
-                .isFilterDropdownHidden(column.id)
+                .isFilterOperatorSelectHidden(column.id)
         ) {
             this.renderConditionSelect(inputWrapper);
+        } else if (
+            column.viewport.grid.columnPolicy
+                .isColumnInlineFilteringEnabled(column.id)
+        ) {
+            this.renderOperatorSelectSpacer(inputWrapper);
         }
         if (columnType !== 'boolean') {
             this.renderFilteringInput(inputWrapper, columnType);
@@ -497,17 +507,12 @@ class ColumnFiltering {
             'filter-input-' + column.viewport.grid.id + '-' + column.id
         );
 
-        this.filterInput.placeholder = 'Value...';
-
         if (columnType === 'number') {
             this.filterInput.type = 'number';
         } else if (columnType === 'datetime') {
             this.filterInput.type = 'date';
         } else {
             this.filterInput.type = 'text';
-            this.filterInput.classList.add(
-                Globals.getClassName('iconSearch')
-            );
         }
 
         // Assign the default input value.
@@ -524,6 +529,7 @@ class ColumnFiltering {
         }
 
         this.disableInputIfNeeded();
+        this.updateFilterInputHint();
 
         const eventTypes = {
             string: ['keyup'],
@@ -536,6 +542,23 @@ class ColumnFiltering {
                 this.applyFilterFromForm();
             });
         }
+    }
+
+    /**
+     * Reserves the operator select row height in inline filtering when the
+     * select is hidden, so value inputs align across columns.
+     *
+     * @param inputWrapper
+     * Reference to the input wrapper.
+     */
+    private renderOperatorSelectSpacer(inputWrapper: HTMLElement): void {
+        const spacer = makeHTMLElement('div', {
+            className: Globals.getClassName('columnFilterOperatorSpacer') +
+                ' ' + Globals.getClassName('input'),
+            innerText: '\u00a0'
+        }, inputWrapper);
+
+        spacer.setAttribute('aria-hidden', 'true');
     }
 
     /**
@@ -623,6 +646,44 @@ class ColumnFiltering {
         }
 
         return input?.value !== '';
+    }
+
+    /**
+     * Updates the filter input placeholder or aria-label when the operator
+     * select is hidden.
+     */
+    private updateFilterInputHint(): void {
+        const input = this.filterInput;
+        const column = this.column;
+
+        if (!input) {
+            return;
+        }
+
+        const hideOperatorSelect = column.viewport.grid.columnPolicy
+            .isFilterOperatorSelectHidden(column.id);
+
+        if (!hideOperatorSelect) {
+            input.placeholder = pick(
+                column.viewport.grid.options?.lang?.filterValuePlaceholder,
+                defaultOptions.lang?.filterValuePlaceholder,
+                ''
+            );
+            input.removeAttribute('aria-label');
+            return;
+        }
+
+        const operatorLabel = ColumnFiltering.getOperatorLabel(
+            this.getActiveCondition(),
+            column.dataType,
+            column.viewport.grid.options?.lang
+        );
+
+        if (column.dataType === 'datetime') {
+            input.setAttribute('aria-label', operatorLabel);
+        } else {
+            input.placeholder = operatorLabel;
+        }
     }
 
     /**

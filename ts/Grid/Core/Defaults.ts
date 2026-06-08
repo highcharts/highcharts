@@ -72,6 +72,7 @@ export const defaultLangOptions: DeepPartial<LangOptions> = {
     sortDescending: 'Sort descending',
     column: 'Column',
     setFilter: 'Set filter',
+    filterValuePlaceholder: 'Value...',
     pagination: {
         pageInfo: 'Showing {start} - {end} of {total} ' +
             '(page {currentPage} of {totalPages})',

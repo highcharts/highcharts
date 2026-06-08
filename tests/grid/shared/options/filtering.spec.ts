@@ -646,7 +646,7 @@ test.describe('Grid datetime filtering', () => {
         });
     });
 
-    test.describe('Inline filtering with hideDropdown option', () => {
+    test.describe('Filtering with hideOperatorSelect option', () => {
         const inputProductFilter =
             '.hcg-header-cell[data-column-id="product"] input';
         const inputCategoryFilter =
@@ -666,7 +666,7 @@ test.describe('Grid datetime filtering', () => {
             });
         });
 
-        test('inline hideDropdown hides select and filters columns', async ({
+        test('Inline hideOperatorSelect hides select and filters columns', async ({
             page
         }) => {
             await expect(
@@ -696,7 +696,7 @@ test.describe('Grid datetime filtering', () => {
             );
         });
 
-        test('hideDropdown without inline keeps select in popup', async ({
+        test('The hideOperatorSelect hides the select in popup mode', async ({
             page
         }) => {
             await page.evaluate(() => {
@@ -709,7 +709,7 @@ test.describe('Grid datetime filtering', () => {
                         dataType: 'string',
                         filtering: {
                             enabled: true,
-                            hideDropdown: true
+                            hideOperatorSelect: true
                         }
                     }]
                 });
@@ -723,7 +723,79 @@ test.describe('Grid datetime filtering', () => {
                 .evaluate((button: HTMLButtonElement) => button.click());
             await expect(
                 page.locator('.hcg-popup-content select')
+            ).toHaveCount(0);
+            await expect(
+                page.locator('.hcg-popup-content input')
             ).toBeVisible();
+            await expect(
+                page.locator('.hcg-popup-content .hcg-column-filter-operator-spacer')
+            ).toHaveCount(0);
+        });
+
+        test('Single operator hides select by default', async ({ page }) => {
+            await page.evaluate(() => {
+                const data = (window as any).grid.userOptions.data;
+                (window as any).grid.destroy();
+                (window as any).grid = (window as any).Grid.grid('container', {
+                    data,
+                    columnDefaults: {
+                        filtering: {
+                            enabled: true,
+                            inline: true
+                        }
+                    },
+                    columns: [{
+                        id: 'category',
+                        dataType: 'string',
+                        filtering: {
+                            operators: ['contains']
+                        }
+                    }]
+                });
+            });
+
+            await expect(
+                page.locator('th[data-column-id="category"] select')
+            ).toHaveCount(0);
+            await expect(
+                page.locator(inputCategoryFilter)
+            ).toBeVisible();
+        });
+
+        test('Hidden operator select uses operator label as input placeholder', async ({
+            page
+        }) => {
+            await expect(page.locator(inputProductFilter)).toHaveAttribute(
+                'placeholder',
+                'Contains'
+            );
+        });
+
+        test('Visible operator select keeps default input placeholder', async ({
+            page
+        }) => {
+            await page.evaluate(() => {
+                const data = (window as any).grid.userOptions.data;
+                (window as any).grid.destroy();
+                (window as any).grid = (window as any).Grid.grid('container', {
+                    data,
+                    columnDefaults: {
+                        filtering: {
+                            enabled: true,
+                            inline: true
+                        }
+                    },
+                    columns: [{
+                        id: 'product',
+                        dataType: 'string'
+                    }]
+                });
+            });
+
+            await expect(page.locator(inputProductFilter)).toHaveAttribute(
+                'placeholder',
+                'Value...'
+            );
         });
 
     });

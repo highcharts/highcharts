@@ -24,7 +24,7 @@ window.grid = Grid.grid('container', {
         filtering: {
             enabled: true,
             inline: true,
-            hideDropdown: true
+            hideOperatorSelect: true
         }
     },
     columns: [{

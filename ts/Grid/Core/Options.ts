@@ -987,6 +987,14 @@ export interface LangOptions extends LangOptionsCore {
     setFilter?: string;
 
     /**
+     * Placeholder for the filter value input when the operator select is
+     * visible.
+     *
+     * @default 'Value...'
+     */
+    filterValuePlaceholder?: string;
+
+    /**
      * Language options for column filtering operators.
      */
     columnFilteringOperators?: Partial<
@@ -1160,7 +1168,7 @@ export interface ColumnFilteringOptions {
     inline?: boolean;
 
     /**
-     * Hides the operator dropdown in inline filtering. Ignored in popup mode.
+     * Hides the operator select in filtering UI.
      *
      * Uses {@link ColumnFilteringOptions.rule} operator when valid, otherwise
      * the first operator for the column `dataType` or
@@ -1168,11 +1176,12 @@ export interface ColumnFilteringOptions {
      * columns (no value input).
      *
      * @sample grid-lite/options/inline-filtering-hide-dropdown
-     *         Inline filtering with hidden operator dropdown
+     *         Inline filtering with hidden operator select
      *
-     * @default false
+     * @default true when {@link ColumnFilteringOptions.operators} has a
+     *         single entry, otherwise `false`
      */
-    hideDropdown?: boolean;
+    hideOperatorSelect?: boolean;
 }
 
 /* *

@@ -24,6 +24,7 @@
  * */
 
 import type { NoIdColumnOptions } from './Table/Column';
+import { defined } from '../../Shared/Utilities.js';
 /* *
  *
  *  Declarations
@@ -301,19 +302,31 @@ class ColumnPolicyResolver {
     }
 
     /**
-     * Returns whether the inline filter operator dropdown is hidden.
+     * Returns whether the filter operator select is hidden.
      *
      * @param columnId
      * Grid column id.
      */
-    public isFilterDropdownHidden(columnId: string): boolean {
-        const hideDropdown = (
-            this.getIndividualColumnOptions(columnId)
-                ?.filtering?.hideDropdown ??
-            this.columnDefaults.filtering?.hideDropdown
+    public isFilterOperatorSelectHidden(columnId: string): boolean {
+        const columnOptions = this.getIndividualColumnOptions(columnId);
+        const hideOperatorSelect = (
+            columnOptions?.filtering?.hideOperatorSelect ??
+            this.columnDefaults.filtering?.hideOperatorSelect
         );
-        return this.isColumnInlineFilteringEnabled(columnId) &&
-            !!hideDropdown;
+
+        if (defined(hideOperatorSelect)) {
+            return hideOperatorSelect;
+        }
+
+        const operators = (
+            columnOptions?.filtering?.operators ??
+            columnOptions?.filtering?.conditions ??
+            this.columnDefaults.filtering?.operators ??
+            this.columnDefaults.filtering?.conditions
+        );
+
+        // If there is only one operator, hide the select.
+        return operators?.length === 1;
     }
 
     /**

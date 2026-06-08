@@ -26,7 +26,7 @@ Grid.grid('container', {
         filtering: {
             enabled: true,
             inline: true,
-            hideDropdown: true
+            hideOperatorSelect: true
         }
     },
     columns: [{
@@ -34,7 +34,10 @@ Grid.grid('container', {
         width: 60
     }, {
         id: 'product',
-        dataType: 'string'
+        dataType: 'string',
+        filtering: {
+            operators: ['contains']
+        }
     }, {
         id: 'stock',
         filtering: {

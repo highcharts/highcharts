@@ -1,5 +1,5 @@
 ---
-name: Inline filtering with hidden operator dropdown
+name: Inline filtering with hidden operator select
 authors:
   - Sebastian Bochan
 js_wrap: b
