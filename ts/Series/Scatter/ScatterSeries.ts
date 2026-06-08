@@ -155,7 +155,6 @@ class ScatterSeries extends LineSeries {
         }
     }
 
-
 }
 
 /* *

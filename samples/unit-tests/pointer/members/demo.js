@@ -172,17 +172,28 @@ QUnit.test('Pointer.getHoverData', function (assert) {
     );
     assert.strictEqual(
         data.hoverPoints.length,
-        chart.series.length - 1,
-        '!isDirectTouch && shared: one point hovered per series, except from ' +
-        'series with noSharedTooltip'
+        chart.series.length,
+        '!isDirectTouch && shared: one point hovered per series'
+    );
+    assert.strictEqual(
+        scatterSeries.noSharedTooltip,
+        true,
+        '!isDirectTouch && shared: scatter series should keep its default ' +
+        'noSharedTooltip flag'
+    );
+    assert.strictEqual(
+        !!scatterSeries.directTouch,
+        false,
+        '!isDirectTouch && shared: scatter series should keep its default ' +
+        'directTouch flag'
     );
     assert.strictEqual(
         !!find(data.hoverPoints, function (p) {
             return p.series === scatterSeries;
         }),
-        false,
-        '!isDirectTouch && shared: series with noSharedTooltip should not be ' +
-        'included.'
+        true,
+        '!isDirectTouch && shared: scatter series should be included despite ' +
+        'noSharedTooltip flag'
     );
     assert.strictEqual(
         !!find(data.hoverPoints, function (p) {
@@ -283,3 +294,111 @@ QUnit.test('Pointer.getHoverData', function (assert) {
         'noSharedTooltip'
     );
 });
+
+QUnit.test(
+    'Pointer.runPointActions preserves direct hover for scatter and bubble ' +
+    'targets with shared and split tooltips',
+    function (assert) {
+        [
+            {
+                type: 'scatter',
+                tooltip: { shared: true },
+                data: [
+                    [[0, 21709], [1, 4932]],
+                    [[2, 5602], [3, 43499], [1, 26773]]
+                ]
+            },
+            {
+                type: 'scatter',
+                tooltip: { split: true },
+                data: [
+                    [[0, 21709], [1, 4932]],
+                    [[2, 5602], [3, 43499], [1, 26773]]
+                ]
+            },
+            {
+                type: 'bubble',
+                tooltip: { shared: true },
+                data: [
+                    [[0, 21709, 2201], [1, 4932, 500]],
+                    [[2, 5602, 500], [3, 43499, 4258], [1, 26773, 2260]]
+                ]
+            },
+            {
+                type: 'bubble',
+                tooltip: { split: true },
+                data: [
+                    [[0, 21709, 2201], [1, 4932, 500]],
+                    [[2, 5602, 500], [3, 43499, 4258], [1, 26773, 2260]]
+                ]
+            }
+        ].forEach(function (testCase) {
+            const mode = Object.keys(testCase.tooltip)[0],
+                chart = Highcharts.chart('container', {
+                    chart: {
+                        animation: false,
+                        width: 1000
+                    },
+                    plotOptions: {
+                        series: {
+                            animation: false,
+                            kdNow: true
+                        }
+                    },
+                    tooltip: testCase.tooltip,
+                    series: [
+                        {
+                            type: testCase.type,
+                            data: testCase.data[0]
+                        },
+                        {
+                            type: testCase.type,
+                            data: testCase.data[1]
+                        }
+                    ]
+                }),
+                point = chart.series[1].points[2],
+                replacementPoint = chart.series[0].points[1],
+                pointer = chart.pointer,
+                originalFindNearestKDPoint = pointer.findNearestKDPoint;
+            let kdSearchCalled = false;
+
+            chart.hoverPoint = point;
+            chart.hoverSeries = point.series;
+            pointer.isDirectTouch = true;
+            pointer.findNearestKDPoint = function () {
+                kdSearchCalled = true;
+                return replacementPoint;
+            };
+
+            pointer.runPointActions({
+                chartX: point.series.xAxis.pos + point.clientX,
+                chartY: point.series.yAxis.pos + point.plotY,
+                target: point.graphic && point.graphic.element,
+                type: 'mousemove'
+            });
+
+            assert.strictEqual(
+                kdSearchCalled,
+                false,
+                `${testCase.type} point targets should preserve the directly ` +
+                `hovered point with ${mode} tooltip`
+            );
+            assert.strictEqual(
+                chart.hoverPoint,
+                point,
+                `${testCase.type} targets should keep the actual hovered ` +
+                `point with ${mode} tooltip`
+            );
+            assert.strictEqual(
+                chart.hoverPoints.length,
+                2,
+                `${testCase.type} targets with ${mode} tooltip should ` +
+                'include matching points from both series'
+            );
+
+            pointer.findNearestKDPoint = originalFindNearestKDPoint;
+            chart.destroy();
+        });
+    }
+);

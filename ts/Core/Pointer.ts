@@ -59,6 +59,32 @@ import {
     splat
 } from '../Shared/Utilities.js';
 
+function allowsGroupedScatterTooltip(
+    series: (Series|undefined),
+    shared: (boolean|undefined)
+): boolean {
+    return !!(
+        shared &&
+        series?.xAxis &&
+        series.yAxis &&
+        (
+            series.type === 'scatter' ||
+            series.type === 'bubble'
+        )
+    );
+}
+
+function blocksSharedTooltip(
+    series: Series,
+    shared: (boolean|undefined)
+): boolean {
+    return !!(
+        shared &&
+        series.noSharedTooltip &&
+        !allowsGroupedScatterTooltip(series, shared)
+    );
+}
+
 /* *
  *
  *  Declarations
@@ -712,7 +738,7 @@ class Pointer {
         }
 
         series.forEach(function (s): void {
-            const noSharedTooltip = s.noSharedTooltip && shared,
+            const noSharedTooltip = blocksSharedTooltip(s, shared),
                 compareX = (
                     !noSharedTooltip &&
                     (s.options.findNearestPointBy as any).indexOf('y') < 0
@@ -922,10 +948,11 @@ class Pointer {
         // If we have a hoverPoint, assign hoverPoints.
         if (hoverPoint) {
             // When tooltip is shared, it displays more than one point
-            if (shared && !hoverSeries.noSharedTooltip) {
+            if (shared && !blocksSharedTooltip(hoverSeries, shared)) {
                 searchSeries = series.filter(function (s): boolean {
                     return eventArgs.filter ?
-                        eventArgs.filter(s) : filter(s) && !s.noSharedTooltip;
+                        eventArgs.filter(s) :
+                        filter(s) && !blocksSharedTooltip(s, shared);
                 });
 
                 // Get all points with the same x value as the hoverPoint
@@ -1733,7 +1760,10 @@ class Pointer {
         const // `onMouseOver` or already hovering a series with directTouch
             isDirectTouch = (!e || e.type !== 'touchmove') && (
                 !!p || (
-                    (hoverSeries?.directTouch) &&
+                    (
+                        hoverSeries?.directTouch ||
+                        allowsGroupedScatterTooltip(hoverSeries, shared)
+                    ) &&
                     pointer.isDirectTouch
                 )
             ),
@@ -1756,7 +1786,11 @@ class Pointer {
             useSharedTooltip = (
                 shared &&
                 hoverSeries &&
-                !hoverSeries.noSharedTooltip
+                (
+                    tooltip?.split ?
+                        !hoverSeries.noSharedTooltip :
+                        !blocksSharedTooltip(hoverSeries, shared)
+                )
             );
 
         // Refresh tooltip for kdpoint if new hover point or tooltip was hidden
