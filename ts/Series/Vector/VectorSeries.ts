@@ -260,19 +260,19 @@ interface VectorSeries {
 extend(VectorSeries.prototype, {
 
     /**
-     * @ignore
+     * @internal
      * @deprecated
      */
     drawGraph: H.noop,
 
     /**
-     * @ignore
+     * @internal
      * @deprecated
      */
     getSymbol: H.noop,
 
     /**
-     * @ignore
+     * @internal
      * @deprecated
      */
     markerAttribs: H.noop as any,
