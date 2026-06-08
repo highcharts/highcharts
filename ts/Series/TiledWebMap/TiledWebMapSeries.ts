@@ -640,7 +640,7 @@ class TiledWebMapSeries extends MapSeries {
                         const tile = tiles[zoomKey].tiles[key];
 
                         if (Fx.timers.length > 0) {
-                            stop(tile);
+                            stop(tile, 'animator');
                         }
 
                         // Calculate group translations based on first loaded
