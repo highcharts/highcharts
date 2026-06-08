@@ -1,5 +1,5 @@
 ---
-name: Basic gauge
+name: Gauge
 authors:
   - Øystein Moseng
 js_wrap: b

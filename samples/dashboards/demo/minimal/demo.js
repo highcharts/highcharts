@@ -1,4 +1,3 @@
-/* eslint-disable max-len */
 const colors = Highcharts.getOptions().colors.map((c, i) =>
     Highcharts.color('#0443E1')
         .brighten(i / 10)
@@ -199,7 +198,9 @@ Dashboards.board('container', {
                         cells: {
                             formatter() {
                                 const dept = this.value;
-                                return `<div class="department ${dept.toLowerCase()}">${dept}</div>`;
+                                return `<div
+                                    class="department ${dept.toLowerCase()}">
+                                    ${dept}</div>`;
                             }
                         }
                     },
@@ -215,25 +216,29 @@ Dashboards.board('container', {
                             formatter() {
                                 const minutes = this.value;
                                 if (minutes < 60) {
-                                    return `${minutes} <span class="time-unit">mins<span>`;
+                                    return `${minutes}
+                                        <span class="time-unit">mins<span>`;
                                 }
 
                                 const hours = minutes / 60;
                                 if (hours < 24) {
                                     const roundedHours = Math.floor(hours);
-                                    return `${roundedHours} <span class="time-unit">hours</span>`;
+                                    return `${roundedHours}
+                                        <span class="time-unit">hours</span>`;
                                 }
 
                                 const days = minutes / (60 * 24);
                                 const roundedDays = Math.floor(days);
-                                return `${roundedDays} <span class="time-unit">days</span>`;
+                                return `${roundedDays}
+                                    <span class="time-unit">days</span>`;
                             }
                         }
                     },
                     {
                         id: 'Resolution time',
                         cells: {
-                            format: '{value} <span class="time-unit">hours</span>'
+                            format:
+                                '{value} <span class="time-unit">hours</span>'
                         }
                     }
                 ]

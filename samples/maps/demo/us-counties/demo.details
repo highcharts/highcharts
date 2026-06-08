@@ -1,5 +1,5 @@
 ---
-name: 'Detailed map, US counties'
+name: Choropleth map
 authors:
   - Torstein Hønsi
 requiresManualTesting: true

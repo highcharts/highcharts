@@ -1,5 +1,5 @@
 ---
-name: Basic bar chart
+name: Bar chart
 authors:
   - Torstein Hønsi
 js_wrap: b

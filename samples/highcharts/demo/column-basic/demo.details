@@ -1,5 +1,5 @@
 ---
-name: Basic column
+name: Column chart
 authors:
   - Torstein Hønsi
 js_wrap: b
