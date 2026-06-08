@@ -18,7 +18,6 @@
  *
  * */
 
-import type ColorType from '../../Core/Color/ColorType';
 import type { FlagsShapeValue } from './FlagsPointOptions';
 import type FlagsSeriesOptions from './FlagsSeriesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
@@ -62,10 +61,8 @@ declare module '../../Core/Series/SeriesBase' {
     }
 }
 
-declare module '../../Core/Series/SeriesOptions' {
-    interface SeriesStateHoverOptions {
-        fillColor?: ColorType;
-        lineColor?: ColorType;
+declare module '../../Core/Series/StatesOptions' {
+    interface StateOptionsBase {
         shape?: FlagsShapeValue;
     }
 }

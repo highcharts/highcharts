@@ -32,10 +32,15 @@ import type {
     SankeyPointOptions,
     SankeyPointDataLabelOptions
 } from './SankeyPointOptions';
-import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
+import type {
+    SeriesStateHoverOptions,
+    SeriesStateInactiveOptions,
+    SeriesStatesOptions
+} from '../../Core/Series/SeriesOptions';
 import type Templating from '../../Core/Templating';
 import type { AnimationOptions } from '../../Core/Animation/AnimationOptions';
 import type { DeepPartial } from '../../Shared/Types';
+import { StateGenericOptions } from '../../Core/Series/StatesOptions';
 
 /* *
  *
@@ -528,14 +533,24 @@ export interface SankeySeriesOptions extends ColumnSeriesOptions, NodesCompositi
 
 }
 
-export interface SankeySeriesStatesOptions extends SeriesStatesOptions<SankeySeriesOptions> {
-    hover?: SankeySeriesStatesHoverOptions;
+
+export interface SankeySeriesStatesOptions
+    extends SeriesStatesOptions<SankeySeriesOptions> {
+    hover?: (
+        SankeySeriesStatesHoverOptions &
+        StateGenericOptions<SankeySeriesOptions>
+    );
     /**
      * The opposite state of a hover for a single point node/link.
      */
-    inactive?: SankeySeriesStatesInactiveOptions;
+    inactive?: (
+        SankeySeriesStatesInactiveOptions &
+        StateGenericOptions<SankeySeriesOptions>
+    );
 }
-export interface SankeySeriesStatesHoverOptions {
+
+export interface SankeySeriesStatesHoverOptions
+    extends SeriesStateHoverOptions {
     /**
      * Opacity for the links between nodes in the sankey diagram in
      * hover mode.
@@ -551,7 +566,8 @@ export interface SankeySeriesStatesHoverOptions {
      */
     opacity?: number;
 }
-export interface SankeySeriesStatesInactiveOptions {
+export interface SankeySeriesStatesInactiveOptions
+    extends SeriesStateInactiveOptions {
     /**
      * Opacity for the links between nodes in the sankey diagram in
      * inactive mode.

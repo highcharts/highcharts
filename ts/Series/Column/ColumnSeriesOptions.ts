@@ -66,19 +66,18 @@ declare module '../../Core/Series/SeriesOptions' {
          */
         pointRange?: (number|null);
     }
-    interface SeriesStateHoverOptions {
-        borderColor?: ColorType;
-        borderDashStyle?: DashStyleValue;
-        borderRadius?: number;
-        borderWidth?: number;
-        brightness?: number;
-        color?: ColorType;
-        dashStyle?: DashStyleValue;
-    }
     interface SeriesZonesOptions {
         borderColor?: ColorType;
         borderWidth?: number;
         color?: ColorType;
+    }
+}
+
+declare module '../../Core/Series/StatesOptions' {
+    interface StateOptionsBase {
+        borderDashStyle?: DashStyleValue;
+        borderRadius?: (number|string|BorderRadiusOptionsObject);
+        borderWidth?: number;
     }
 }
 

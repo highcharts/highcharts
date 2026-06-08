@@ -43,7 +43,6 @@ export type StateGenericOptions<T extends SeriesOptions | PointMarkerOptions> = 
 export interface StateOptionsBase {
     animation?: (boolean|DeepPartial<AnimationOptions>);
     borderColor?: ColorType;
-    brightness?: number;
     color?: ColorType;
     dashStyle?: DashStyleValue;
     enabled?: boolean;
