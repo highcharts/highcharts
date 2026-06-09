@@ -178,8 +178,28 @@ const grid = Grid.grid('container', {
         cells: {
             renderer: {
                 type: 'sparkline',
-                chartOptions: {
-                    plotOptions: sharedPlotOptions
+                chartOptions: function (data) {
+                    const yData = data.split(',').map(Number);
+
+                    // To make the sparkline animate like the points are added
+                    // to the end of the series isntead of updating the existing
+                    // points, we need to update also the x values of the
+                    // points. It can be done in the dataset directly, or
+                    // calculated here, in the `chartOptions` callback.
+                    const firstX = (
+                        this.content?.chart?.series?.[0].points?.[0]?.x ?? -1
+                    ) + 1;
+
+                    return {
+                        yAxis: {
+                            min: -5,
+                            max: 105
+                        },
+                        plotOptions: sharedPlotOptions,
+                        series: [{
+                            data: yData.map((y, i) => ([firstX + i, y]))
+                        }]
+                    };
                 }
             }
         }
@@ -194,12 +214,6 @@ const grid = Grid.grid('container', {
                 type: 'sparkline',
                 chartOptions: function (data) {
                     const yData = data.split(',').map(Number);
-
-                    // To make the sparkline animate like the points are added
-                    // to the end of the series isntead of updating the existing
-                    // points, we need to update also the x values of the
-                    // points. It can be done in the dataset directly, or
-                    // calculated here, in the `chartOptions` callback.
                     const firstX = (
                         this.content?.chart?.series?.[0].points?.[0]?.x ?? -1
                     ) + 1;
