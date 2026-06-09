@@ -246,9 +246,6 @@ class Pointer {
      */
     public eventsToUnbind: Array<Function> = [];
 
-    /** @internal */
-    public followTouchMove?: boolean;
-
     /**
      * The document mousemove event handler.
      * @internal
@@ -1377,7 +1374,7 @@ class Pointer {
                 pointer.runChartClick
             ),
             followTouchMove = touchesLength === 1 &&
-                pointer.followTouchMove;
+                (chart.tooltip?.options.followTouchMove ?? true);
 
         // Don't initiate panning until the user has pinched. This prevents us
         // from blocking page scrolling as users scroll down a long page
@@ -1974,24 +1971,20 @@ class Pointer {
      * @function Highcharts.Pointer#setPointerCapture
     */
     public setPointerCapture(): void {
-        const pointer = this,
-            events = pointer.pointerCaptureEventsToUnbind,
-            chart = pointer.chart,
-            container = chart.container,
-            // Set this.followTouchMove here to be read in the pinch and touch
-            // functions
-            followTouchMove = pointer.followTouchMove =
-                chart.options.tooltip?.followTouchMove ??
-                true,
-            shouldHave = followTouchMove && isTouchDevice && chart.series.some(
-                (series): boolean => (series.options.findNearestPointBy as any)
-                    .indexOf('y') > -1
-            );
-
         // Only for touch
         if (!isTouchDevice) {
             return;
         }
+
+        const pointer = this,
+            events = pointer.pointerCaptureEventsToUnbind,
+            chart = pointer.chart,
+            container = chart.container,
+            followTouchMove = chart.options.tooltip?.followTouchMove ?? true,
+            shouldHave = followTouchMove && isTouchDevice && chart.series.some(
+                (series): boolean => (series.options.findNearestPointBy as any)
+                    .indexOf('y') > -1
+            );
 
         if (!pointer.hasPointerCapture && shouldHave) {
             // Add
@@ -2122,7 +2115,10 @@ class Pointer {
 
             // If inside, capture touch-drag and display tooltip. If not inside,
             // allow dragging the finger to scroll the page
-            if (this.followTouchMove && isInside) {
+            if (
+                (chart.tooltip?.options.followTouchMove ?? true) &&
+                isInside
+            ) {
                 e.preventDefault();
             }
 
