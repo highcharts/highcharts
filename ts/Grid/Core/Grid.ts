@@ -1345,9 +1345,10 @@ export class Grid {
 
         this.captionElement = new AST([{
             tagName,
-            attributes: { 'class': className, id: this.id + '-caption' },
-            textContent: captionOptions.text
+            attributes: { 'class': className, id: this.id + '-caption' }
         }]).addToDOM(this.contentWrapper) as HTMLElement;
+
+        setHTMLContent(this.captionElement, captionOptions.text);
     }
 
     /**
