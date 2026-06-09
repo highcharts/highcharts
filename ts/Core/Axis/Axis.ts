@@ -3320,28 +3320,27 @@ class Axis {
                     slotSize !== Infinity &&
                     range
                 ) {
-                    const getSlotCount = (
-                        step: number
-                    ): number => {
-                        const newInterval = step * tickInterval;
-                        return Math.ceil(max / newInterval) -
-                            Math.floor(min / newInterval);
-                    };
-
                     const maxStep = Math.ceil(
                         Math.max(Math.abs(min), Math.abs(max)) / tickInterval
                     ) + 1;
                     step = Math.min(step, maxStep);
 
-                    let slotCount = getSlotCount(step);
-                    // Iterate to find the smallest `step` that fits the
-                    // labels without overlapping.
-                    while (
-                        step < maxStep &&
-                        axisLen / slotCount < requiredSpace
-                    ) {
-                        step += 1;
-                        slotCount = getSlotCount(step);
+                    if (!horiz) {
+                        const getSlotCount = (
+                            step: number
+                        ): number => {
+                            const newInterval = step * tickInterval;
+                            return Math.ceil(max / newInterval) -
+                                Math.floor(min / newInterval);
+                        };
+                        let slotCount = getSlotCount(step);
+                        while (
+                            step < maxStep &&
+                            axisLen / slotCount < requiredSpace
+                        ) {
+                            step += 1;
+                            slotCount = getSlotCount(step);
+                        }
                     }
                 }
 
