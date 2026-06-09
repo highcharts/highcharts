@@ -192,11 +192,29 @@ const grid = Grid.grid('container', {
         cells: {
             renderer: {
                 type: 'sparkline',
-                chartOptions: {
-                    chart: {
-                        type: 'column'
-                    },
-                    plotOptions: sharedPlotOptions
+                chartOptions: function (data) {
+                    const yData = data.split(',').map(Number);
+
+                    // To make the sparkline animate like the points are added
+                    // to the end of the series isntead of updating the existing
+                    // points, we need to update also the x values of the
+                    // points. It can be done in the dataset directly, or
+                    // calculated here, in the `chartOptions` callback.
+                    const firstX = (
+                        this.content?.chart?.series?.[0].points?.[0]?.x ?? -1
+                    ) + 1;
+
+                    return {
+                        yAxis: {
+                            min: 0,
+                            max: 100
+                        },
+                        plotOptions: sharedPlotOptions,
+                        series: [{
+                            type: 'column',
+                            data: yData.map((y, i) => ([firstX + i, y]))
+                        }]
+                    };
                 }
             }
         }
