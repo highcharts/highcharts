@@ -1,5 +1,5 @@
 ---
-name: Sparklines
+name: Grid with sparklines
 authors:
   - Stian Totland
 js_wrap: b
