@@ -11,9 +11,6 @@ Morningstar API they use. The version with the `dws` suffix uses the newer API,
 which provides access to the **Investment Details API** and the **Time Series
 API**, with more to come in the future.
 
-The standard version of the script provides access to all APIs described here:
-[Highcharts Connectors Docs](https://www.highcharts.com/docs/morningstar/morningstar/).
-
 ## Requirements
 
 You will need credentials to access the services.
@@ -53,17 +50,20 @@ pool as other connector types.
 
 ### Available Connectors
 
-- [Goal Analysis](https://www.highcharts.com/docs/morningstar/goal-analysis)
-- [Risk Score](https://www.highcharts.com/docs/morningstar/risk-score)
-- [TimeSeries](https://www.highcharts.com/docs/morningstar/time-series/time-series)
-- [X-Ray](https://www.highcharts.com/docs/morningstar/x-ray)
-- [Screener](https://www.highcharts.com/docs/morningstar/screeners/screener)
-- [Security Details](https://www.highcharts.com/docs/morningstar/security-details)
-- [Security Compare](https://www.highcharts.com/docs/morningstar/security-compare)
-- [Performance](https://www.highcharts.com/docs/morningstar/performance)
-- [Hypo Performance](https://www.highcharts.com/docs/morningstar/hypo-performance)
-- [DWS Investments Details](https://www.highcharts.com/docs/morningstar/dws/investments-details-connector)
-- [DWS Time Series](https://www.highcharts.com/docs/morningstar/dws/time-series-connector)
+- Direct Web Services:
+  - [DWS Investments Details](https://www.highcharts.com/docs/morningstar/dws/investments-details-connector)
+  - [DWS Time Series](https://www.highcharts.com/docs/morningstar/dws/time-series-connector)
+
+- Enterprise Components:
+  - [Goal Analysis](https://www.highcharts.com/docs/morningstar/goal-analysis)
+  - [Risk Score](https://www.highcharts.com/docs/morningstar/risk-score)
+  - [TimeSeries](https://www.highcharts.com/docs/morningstar/time-series/time-series)
+  - [X-Ray](https://www.highcharts.com/docs/morningstar/x-ray)
+  - [Screener](https://www.highcharts.com/docs/morningstar/screeners/screener)
+  - [Security Details](https://www.highcharts.com/docs/morningstar/security-details)
+  - [Security Compare](https://www.highcharts.com/docs/morningstar/security-compare)
+  - [Performance](https://www.highcharts.com/docs/morningstar/performance)
+  - [Hypo Performance](https://www.highcharts.com/docs/morningstar/hypo-performance)
 
 ### Morningstar Regions
 
