@@ -3320,7 +3320,7 @@ class Axis {
                     slotSize !== Infinity &&
                     range
                 ) {
-                    const calculatedSlotCount = (
+                    const getSlotCount = (
                         step: number
                     ): number => {
                         const newInterval = step * tickInterval;
@@ -3331,8 +3331,9 @@ class Axis {
                     const maxStep = Math.ceil(
                         Math.max(Math.abs(min), Math.abs(max)) / tickInterval
                     ) + 1;
+                    step = Math.min(step, maxStep);
 
-                    let slotCount = calculatedSlotCount(step);
+                    let slotCount = getSlotCount(step);
                     // Iterate to find the smallest `step` that fits the
                     // labels without overlapping.
                     while (
@@ -3340,7 +3341,7 @@ class Axis {
                         axisLen / slotCount < requiredSpace
                     ) {
                         step += 1;
-                        slotCount = calculatedSlotCount(step);
+                        slotCount = getSlotCount(step);
                     }
                 }
 
