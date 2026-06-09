@@ -31,6 +31,9 @@ import type { DataTableConnectorOptions } from './DataConnectorOptions';
 
 /**
  * Options of the CSVConnector.
+ *
+ * @sample grid-lite/basic/data-connector
+ *         Grid with CSV connector
  */
 export interface CSVConnectorOptions extends DataConnectorOptions {
     /**
