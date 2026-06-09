@@ -58,7 +58,7 @@
 }
 
 #dashboard-col-grid {
-    height: 320px;
+    min-height: 300px;
     padding: 0 10px;
 }
 
