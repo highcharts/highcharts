@@ -3294,6 +3294,7 @@ class Axis {
         const labelOptions = this.options.labels,
             padding = labelOptions.padding || 0,
             horiz = this.horiz,
+            isRadial = this.isRadial,
             tickInterval = this.tickInterval,
             axisLen = this.len,
             min = (this.min as any),
@@ -3325,7 +3326,7 @@ class Axis {
                     ) + 1;
                     step = Math.min(step, maxStep);
 
-                    if (!horiz) {
+                    if (!horiz && !isRadial) {
                         const getSlotCount = (
                             step: number
                         ): number => {
