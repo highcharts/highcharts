@@ -266,10 +266,10 @@ export interface Options {
     data?: DataProviderOptionsType;
 
     /**
-     * Data table with the data to display in the grid structure.
+     * Data table with the data to display in the grid structure. Deprecated,
+     * use `data.dataTable` instead.
      *
-     * @deprecated
-     * Use `data.dataTable` instead.
+     * @deprecated 2.3.0
      */
     dataTable?: DataTable | DataTableOptionsObject;
 
