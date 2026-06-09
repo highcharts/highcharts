@@ -103,9 +103,26 @@ export type CellContextMenuActionId =
     keyof CellContextMenuBuiltInActionIdRegistry | (string & {});
 
 /**
+ * Registry of built-in group IDs for the cell context menu.
+ * Composed features can extend this via module augmentation.
+ */
+export interface CellContextMenuBuiltInGroupIdRegistry {}
+
+/**
+ * Built-in group ID for the cell context menu.
+ */
+export type CellContextMenuGroupId =
+    keyof CellContextMenuBuiltInGroupIdRegistry | (string & {});
+
+/**
  * Options for a single cell context menu item.
  */
 export interface CellContextMenuActionItemOptions {
+    /**
+     * Type of the menu item.
+     */
+    type?: 'action';
+
     /**
      * The label shown in the menu.
      */
@@ -145,9 +162,45 @@ export interface CellContextMenuActionItemOptions {
 }
 
 /**
+ * Options for a submenu item in the cell context menu.
+ */
+export interface CellContextMenuSubmenuItemOptions {
+    /**
+     * Type of the menu item.
+     */
+    type: 'submenu';
+
+    /**
+     * The label shown in the menu.
+     */
+    label: string;
+
+    /**
+     * Optional icon name for the menu item (built-in name from the default
+     * registry or custom name from rendering.icons).
+     */
+    icon?: string;
+
+    /**
+     * Whether the menu item should be disabled.
+     */
+    disabled?: boolean;
+
+    /**
+     * Nested submenu items.
+     */
+    items: Array<CellContextMenuItemOptions>;
+}
+
+/**
  * Options for a divider item in the cell context menu.
  */
 export interface CellContextMenuDividerItemOptions {
+    /**
+     * Type of the menu item.
+     */
+    type?: 'separator';
+
     /**
      * Whether to render a divider instead of a button.
      */
@@ -161,9 +214,35 @@ export interface CellContextMenuDividerItemOptions {
 }
 
 /**
+ * Options for a typed divider item in the cell context menu.
+ */
+export interface CellContextMenuTypedDividerItemOptions {
+    /**
+     * Type of the menu item.
+     */
+    type: 'separator';
+
+    /**
+     * Whether to render a divider instead of a button.
+     */
+    separator?: true;
+
+    /**
+     * Optional label for accessibility or testing.
+     * Not rendered as a clickable item.
+     */
+    label?: string;
+}
+
+/**
  * Options for a built-in item in the cell context menu.
  */
 export interface CellContextMenuBuiltInItemOptions {
+    /**
+     * Type of the menu item.
+     */
+    type?: 'action';
+
     /**
      * Built-in action ID.
      */
@@ -191,13 +270,35 @@ export interface CellContextMenuBuiltInItemOptions {
 }
 
 /**
+ * Options for including a built-in group in a custom cell context menu.
+ */
+export interface CellContextMenuBuiltInGroupItemOptions {
+    /**
+     * Type of the menu item.
+     */
+    type?: 'group';
+
+    /**
+     * Built-in group ID.
+     */
+    groupId: CellContextMenuGroupId;
+}
+
+/**
  * Options for a single cell context menu item.
+ *
+ * Bare strings are resolved as built-in group IDs first and then as built-in
+ * action IDs. A group string expands inline in a user-configured menu.
  */
 export type CellContextMenuItemOptions =
     CellContextMenuDividerItemOptions |
+    CellContextMenuTypedDividerItemOptions |
     CellContextMenuActionItemOptions |
+    CellContextMenuSubmenuItemOptions |
     CellContextMenuBuiltInItemOptions |
-    CellContextMenuActionId;
+    CellContextMenuBuiltInGroupItemOptions |
+    CellContextMenuActionId |
+    CellContextMenuGroupId;
 
 /**
  * Cell context menu options.
@@ -268,7 +369,7 @@ export interface Options {
     /**
      * Data table with the data to display in the grid structure.
      *
-     * @deprecated
+     * @deprecated next
      * Use `data.dataTable` instead.
      */
     dataTable?: DataTable | DataTableOptions;

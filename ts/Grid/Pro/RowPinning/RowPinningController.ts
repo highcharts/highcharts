@@ -230,6 +230,10 @@ declare module '../../Core/Options' {
         unpinRow: never;
     }
 
+    interface CellContextMenuBuiltInGroupIdRegistry {
+        pinning: never;
+    }
+
     interface LangOptions {
         /**
          * Label used for the built-in "pin row to top" action.
@@ -251,6 +255,13 @@ declare module '../../Core/Options' {
          * @default 'Unpin row'
          */
         unpinRow?: string;
+
+        /**
+         * Label used for the built-in row pinning context menu group.
+         *
+         * @default 'Pinning'
+         */
+        pinningGroup?: string;
     }
 
     interface RowsSettings {

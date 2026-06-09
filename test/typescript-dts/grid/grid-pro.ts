@@ -66,6 +66,33 @@ function test_grid() {
                         type: 'textInput'
                     }
                 },
+                contextMenu: {
+                    items: [
+                        'pinning',
+                        {
+                            type: 'group',
+                            groupId: 'pinning'
+                        },
+                        {
+                            type: 'action',
+                            actionId: 'pinRowTop'
+                        },
+                        {
+                            type: 'separator'
+                        },
+                        {
+                            type: 'submenu',
+                            label: 'More',
+                            items: [{
+                                type: 'action',
+                                label: 'Custom',
+                                onClick: function (cell): void {
+                                    cell.row.id;
+                                }
+                            }]
+                        }
+                    ]
+                },
                 renderer: {
                     type: 'select',
                     options: [

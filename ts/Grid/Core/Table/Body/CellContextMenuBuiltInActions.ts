@@ -10,6 +10,7 @@
  *
  *  Authors:
  *  - Mikkel Espolin Birkeland
+ *  - Dawid Dragula
  *
  * */
 
@@ -22,12 +23,18 @@
  * */
 
 import type TableCell from './TableCell';
+import type Grid from '../../Grid';
+import type { RowId } from '../../Data/DataProvider';
 import type {
     CellContextMenuActionId,
     CellContextMenuActionItemOptions,
     CellContextMenuBuiltInItemOptions,
+    CellContextMenuBuiltInGroupItemOptions,
     CellContextMenuDividerItemOptions,
-    CellContextMenuItemOptions
+    CellContextMenuGroupId,
+    CellContextMenuItemOptions,
+    CellContextMenuSubmenuItemOptions,
+    CellContextMenuTypedDividerItemOptions
 } from '../../Options';
 import type { GridIconName } from '../../UI/SvgIcons';
 
@@ -44,7 +51,7 @@ import {
  *
  * */
 
-const warnedUnknownActionIds = new Set<string>();
+const warnedBuiltInIds = new Set<string>();
 
 export const defaultBuiltInCellContextMenuActions: CellContextMenuActionId[] =
     [];
@@ -53,6 +60,21 @@ const builtInActionDefinitions: Partial<Record<
     CellContextMenuActionId,
     BuiltInActionDefinition
 >> = {};
+
+const builtInGroupDefinitions: Partial<Record<
+    CellContextMenuGroupId,
+    BuiltInGroupDefinition
+>> = {};
+
+const builtInGroupOrder: CellContextMenuGroupId[] = [];
+
+export interface CellContextMenuContext {
+    cell: TableCell;
+    columnId: string;
+    grid: Grid;
+    rowId?: RowId;
+    sourceColumnId?: string;
+}
 
 export interface ResolvedCellContextMenuActionItemOptions {
     label: string;
@@ -71,23 +93,35 @@ export type ResolvedCellContextMenuItemOptions =
 
 type CellContextMenuBranchItemOptions = (
     CellContextMenuActionItemOptions |
-    CellContextMenuBuiltInItemOptions
+    CellContextMenuBuiltInItemOptions |
+    CellContextMenuSubmenuItemOptions
 ) & {
     items: CellContextMenuItemOptions[];
 };
 
+interface ResolvedBuiltInGroup {
+    definition: BuiltInGroupDefinition;
+    items: ResolvedCellContextMenuActionItemOptions[];
+}
+
 export interface BuiltInActionDefinition {
-    getLabel: (cell: TableCell) => string;
+    getLabel: (context: CellContextMenuContext) => string;
     icon: GridIconName;
     isVisible?: (
-        cell: TableCell,
-        rowId: string|number|undefined
+        context: CellContextMenuContext
     ) => boolean;
-    isDisabled: (
-        cell: TableCell,
-        rowId: string|number|undefined
+    isDisabled?: (
+        context: CellContextMenuContext
     ) => boolean;
-    onClick: (cell: TableCell, rowId: string|number) => void;
+    onClick: (context: CellContextMenuContext) => void;
+}
+
+export interface BuiltInGroupDefinition {
+    getLabel: (context: CellContextMenuContext) => string;
+    icon?: GridIconName;
+    isActive: (context: CellContextMenuContext) => boolean;
+    items: CellContextMenuActionId[];
+    order?: number;
 }
 
 /**
@@ -107,6 +141,14 @@ export function registerBuiltInAction(
     definition: BuiltInActionDefinition,
     useByDefault: boolean = false
 ): void {
+    if (builtInGroupDefinitions[actionId as CellContextMenuGroupId]) {
+        warnBuiltIn(
+            actionId,
+            `Grid cell context menu: Built-in action id "${actionId}" ` +
+            'is already registered as a group id.'
+        );
+    }
+
     builtInActionDefinitions[actionId] = definition;
 
     if (
@@ -115,6 +157,34 @@ export function registerBuiltInAction(
     ) {
         defaultBuiltInCellContextMenuActions.push(actionId);
     }
+}
+
+/**
+ * Registers one built-in context menu group.
+ *
+ * @param groupId
+ * Built-in group identifier.
+ *
+ * @param definition
+ * Group definition.
+ */
+export function registerBuiltInGroup(
+    groupId: CellContextMenuGroupId,
+    definition: BuiltInGroupDefinition
+): void {
+    if (builtInActionDefinitions[groupId as CellContextMenuActionId]) {
+        warnBuiltIn(
+            groupId,
+            `Grid cell context menu: Built-in group id "${groupId}" ` +
+            'is already registered as an action id.'
+        );
+    }
+
+    if (!builtInGroupDefinitions[groupId]) {
+        builtInGroupOrder.push(groupId);
+    }
+
+    builtInGroupDefinitions[groupId] = definition;
 }
 
 /* *
@@ -134,12 +204,17 @@ export function registerBuiltInAction(
  */
 function isDivider(
     item: CellContextMenuItemOptions
-): item is CellContextMenuDividerItemOptions {
+): item is (
+    CellContextMenuDividerItemOptions |
+    CellContextMenuTypedDividerItemOptions
+) {
     return (
         typeof item === 'object' &&
         !!item &&
-        'separator' in item &&
-        item.separator === true
+        (
+            ('separator' in item && item.separator === true) ||
+            ('type' in item && item.type === 'separator')
+        )
     );
 }
 
@@ -163,6 +238,25 @@ function isBuiltInOverride(
 }
 
 /**
+ * Checks whether an item is a built-in group declaration.
+ *
+ * @param item
+ * Context menu item declaration.
+ *
+ * @return
+ * True when the item is a built-in group declaration.
+ */
+function isBuiltInGroupItem(
+    item: CellContextMenuItemOptions
+): item is CellContextMenuBuiltInGroupItemOptions {
+    return (
+        typeof item === 'object' &&
+        !!item &&
+        'groupId' in item
+    );
+}
+
+/**
  * Checks whether an item contains nested submenu items.
  *
  * @param item
@@ -182,20 +276,34 @@ function hasNestedItems(
 }
 
 /**
- * Logs unknown built-in action ids once per id.
+ * Logs a built-in context menu warning once per id.
  *
- * @param actionId
- * Unknown action id.
+ * @param id
+ * Built-in id.
+ *
+ * @param message
+ * Warning message.
  */
-function warnUnknownBuiltInAction(actionId: string): void {
-    if (warnedUnknownActionIds.has(actionId)) {
+function warnBuiltIn(id: string, message: string): void {
+    if (warnedBuiltInIds.has(id)) {
         return;
     }
-    warnedUnknownActionIds.add(actionId);
+    warnedBuiltInIds.add(id);
 
     // eslint-disable-next-line no-console
-    console.warn(
-        `Grid cell context menu: Unknown built-in actionId "${actionId}".`
+    console.warn(message);
+}
+
+/**
+ * Logs unknown built-in action or group ids once per id.
+ *
+ * @param id
+ * Unknown action or group id.
+ */
+function warnUnknownBuiltInId(id: string): void {
+    warnBuiltIn(
+        id,
+        `Grid cell context menu: Unknown built-in action or group id "${id}".`
     );
 }
 
@@ -213,6 +321,27 @@ function getCurrentRowId(cell: TableCell): (string|number|undefined) {
     if (isString(rowId) || isNumber(rowId)) {
         return rowId;
     }
+}
+
+/**
+ * Creates the runtime context passed to built-in actions and groups.
+ *
+ * @param cell
+ * Table cell for the context menu.
+ *
+ * @return
+ * Context menu runtime context.
+ */
+function getContext(cell: TableCell): CellContextMenuContext {
+    const { grid } = cell.row.viewport;
+
+    return {
+        cell,
+        columnId: cell.column.id,
+        grid,
+        rowId: getCurrentRowId(cell),
+        sourceColumnId: grid.columnPolicy.getColumnSourceId(cell.column.id)
+    };
 }
 
 /**
@@ -234,7 +363,7 @@ function getBuiltInActionDefinition(
         return definition;
     }
 
-    warnUnknownBuiltInAction(actionId);
+    warnUnknownBuiltInId(actionId);
 }
 
 /**
@@ -243,8 +372,8 @@ function getBuiltInActionDefinition(
  * @param actionId
  * Built-in action id.
  *
- * @param cell
- * Table cell for the context menu.
+ * @param context
+ * Runtime context for built-ins.
  *
  * @param override
  * Optional label/icon/disabled overrides.
@@ -257,7 +386,7 @@ function getBuiltInActionDefinition(
  */
 function resolveBuiltInAction(
     actionId: string,
-    cell: TableCell,
+    context: CellContextMenuContext,
     override?: CellContextMenuBuiltInItemOptions,
     isBranch?: boolean
 ): (ResolvedCellContextMenuActionItemOptions|undefined) {
@@ -266,36 +395,217 @@ function resolveBuiltInAction(
         return;
     }
 
-    const rowId = getCurrentRowId(cell);
-    if (definition.isVisible && !definition.isVisible(cell, rowId)) {
+    if (definition.isVisible && !definition.isVisible(context)) {
         return;
     }
 
     const disabled = isBranch ?
         !!override?.disabled :
-        definition.isDisabled(cell, rowId) || !!override?.disabled;
+        !!definition.isDisabled?.(context) || !!override?.disabled;
 
     return {
-        label: override?.label || definition.getLabel(cell),
+        label: override?.label || definition.getLabel(context),
         icon: override?.icon || definition.icon,
         disabled,
         onClick: isBranch ?
             void 0 :
             (): void => {
-                if (rowId === void 0) {
-                    return;
-                }
-
-                definition.onClick(cell, rowId);
+                definition.onClick(context);
             }
     };
 }
 
 /**
+ * Resolves ordered built-in action ids into regular action items.
+ *
+ * @param actionIds
+ * Built-in action ids to resolve.
+ *
+ * @param context
+ * Runtime context for built-ins.
+ *
+ * @param skipIds
+ * Optional action ids that should not be resolved.
+ *
+ * @return
+ * Resolved action items.
+ */
+function resolveBuiltInActions(
+    actionIds: CellContextMenuActionId[],
+    context: CellContextMenuContext,
+    skipIds?: Set<CellContextMenuActionId>
+): ResolvedCellContextMenuActionItemOptions[] {
+    const items: ResolvedCellContextMenuActionItemOptions[] = [];
+
+    for (const actionId of actionIds) {
+        if (skipIds?.has(actionId)) {
+            continue;
+        }
+
+        const item = resolveBuiltInAction(actionId, context);
+        if (item) {
+            items.push(item);
+        }
+    }
+
+    return items;
+}
+
+/**
+ * Checks whether a built-in group id is registered.
+ *
+ * @param groupId
+ * Group id candidate.
+ *
+ * @return
+ * True if the group is registered.
+ */
+function isRegisteredGroup(groupId: string): boolean {
+    return builtInGroupDefinitions[groupId as CellContextMenuGroupId] !==
+        void 0;
+}
+
+/**
+ * Resolves a built-in group into inline action items.
+ *
+ * @param groupId
+ * Built-in group id.
+ *
+ * @param context
+ * Runtime context for built-ins.
+ *
+ * @param warnUnknown
+ * Whether to warn when the group id is unknown.
+ *
+ * @return
+ * Resolved group items when active.
+ */
+function resolveBuiltInGroupItems(
+    groupId: string,
+    context: CellContextMenuContext,
+    warnUnknown: boolean = true
+): ResolvedCellContextMenuActionItemOptions[] | undefined {
+    const definition =
+        builtInGroupDefinitions[groupId as CellContextMenuGroupId];
+
+    if (!definition) {
+        if (warnUnknown) {
+            warnUnknownBuiltInId(groupId);
+        }
+        return;
+    }
+
+    if (!definition.isActive(context)) {
+        return [];
+    }
+
+    return resolveBuiltInActions(definition.items, context);
+}
+
+/**
+ * Resolves active built-in groups for default menu rendering.
+ *
+ * @param context
+ * Runtime context for built-ins.
+ *
+ * @return
+ * Active groups with visible items.
+ */
+function getResolvedActiveGroups(
+    context: CellContextMenuContext
+): ResolvedBuiltInGroup[] {
+    const activeGroups: Array<{
+        definition: BuiltInGroupDefinition;
+        index: number;
+    }> = [];
+
+    for (let i = 0, iEnd = builtInGroupOrder.length; i < iEnd; ++i) {
+        const groupId = builtInGroupOrder[i];
+        const definition = builtInGroupDefinitions[groupId];
+
+        if (definition?.isActive(context)) {
+            activeGroups.push({
+                definition,
+                index: i
+            });
+        }
+    }
+
+    activeGroups.sort((a, b): number =>
+        (a.definition.order ?? a.index) -
+        (b.definition.order ?? b.index)
+    );
+
+    const resolvedGroups: ResolvedBuiltInGroup[] = [];
+
+    for (const { definition } of activeGroups) {
+        const items = resolveBuiltInActions(definition.items, context);
+        if (items.length) {
+            resolvedGroups.push({ definition, items });
+        }
+    }
+
+    return resolvedGroups;
+}
+
+/**
+ * Builds the default context menu from active built-in groups and legacy
+ * top-level defaults.
+ *
+ * @param context
+ * Runtime context for built-ins.
+ *
+ * @return
+ * Default resolved context menu items.
+ */
+function buildDefaultCellContextMenuItems(
+    context: CellContextMenuContext
+): ResolvedCellContextMenuItemOptions[] {
+    const groups = getResolvedActiveGroups(context);
+    const groupedActionIds = new Set<CellContextMenuActionId>();
+
+    for (const { definition } of groups) {
+        for (const actionId of definition.items) {
+            groupedActionIds.add(actionId);
+        }
+    }
+
+    const legacyItems = resolveBuiltInActions(
+        defaultBuiltInCellContextMenuActions,
+        context,
+        groupedActionIds
+    );
+
+    if (!groups.length) {
+        return legacyItems;
+    }
+
+    if (groups.length === 1) {
+        return [
+            ...groups[0].items,
+            ...legacyItems
+        ];
+    }
+
+    return [
+        ...groups.map(
+            ({ definition, items }): ResolvedCellContextMenuActionItemOptions =>
+                ({
+                    label: definition.getLabel(context),
+                    icon: definition.icon,
+                    disabled: items.every((item): boolean => !!item.disabled),
+                    items
+                })
+        ),
+        ...legacyItems
+    ];
+}
+
+/**
  * Resolves raw item declarations recursively.
  *
- * @param cell
- * Table cell for the context menu.
+ * @param context
+ * Runtime context for built-ins.
  *
  * @param rawItems
  * Source item declarations.
@@ -307,34 +617,54 @@ function resolveBuiltInAction(
  * Resolved context menu items.
  */
 function resolveCellContextMenuItemsAtLevel(
-    cell: TableCell,
+    context: CellContextMenuContext,
     rawItems: CellContextMenuItemOptions[] | undefined,
     useDefaults: boolean
 ): ResolvedCellContextMenuItemOptions[] {
-    const sourceItems = rawItems === void 0 ?
-        (useDefaults ? defaultBuiltInCellContextMenuActions : []) :
-        rawItems;
+    if (rawItems === void 0) {
+        return useDefaults ? buildDefaultCellContextMenuItems(context) : [];
+    }
 
-    if (!sourceItems.length) {
+    if (!rawItems.length) {
         return [];
     }
 
     const resolved: ResolvedCellContextMenuItemOptions[] = [];
 
-    for (const rawItem of sourceItems) {
+    for (const rawItem of rawItems) {
         if (isDivider(rawItem)) {
-            resolved.push(rawItem);
+            resolved.push({
+                separator: true,
+                label: rawItem.label
+            });
             continue;
         }
 
         const isBranchCandidate = hasNestedItems(rawItem);
         const childItems = isBranchCandidate ?
-            resolveCellContextMenuItemsAtLevel(cell, rawItem.items, false) :
+            resolveCellContextMenuItemsAtLevel(
+                context,
+                rawItem.items,
+                false
+            ) :
             [];
         const isBranch = childItems.length > 0;
 
         if (typeof rawItem === 'string') {
-            const builtInItem = resolveBuiltInAction(rawItem, cell);
+            if (isRegisteredGroup(rawItem)) {
+                const groupItems = resolveBuiltInGroupItems(
+                    rawItem,
+                    context,
+                    false
+                );
+
+                if (groupItems?.length) {
+                    resolved.push(...groupItems);
+                }
+                continue;
+            }
+
+            const builtInItem = resolveBuiltInAction(rawItem, context);
             if (builtInItem) {
                 resolved.push(builtInItem);
             }
@@ -344,7 +674,7 @@ function resolveCellContextMenuItemsAtLevel(
         if (isBuiltInOverride(rawItem)) {
             const builtInItem = resolveBuiltInAction(
                 rawItem.actionId,
-                cell,
+                context,
                 rawItem,
                 isBranch
             );
@@ -357,11 +687,27 @@ function resolveCellContextMenuItemsAtLevel(
             continue;
         }
 
+        if (isBuiltInGroupItem(rawItem)) {
+            const groupItems = resolveBuiltInGroupItems(
+                rawItem.groupId,
+                context
+            );
+
+            if (groupItems?.length) {
+                resolved.push(...groupItems);
+            }
+            continue;
+        }
+
+        const onClick = rawItem.type === 'submenu' ?
+            void 0 :
+            rawItem.onClick;
+
         const customItem: ResolvedCellContextMenuActionItemOptions = {
             label: rawItem.label,
             icon: rawItem.icon,
             disabled: rawItem.disabled,
-            onClick: isBranch ? void 0 : rawItem.onClick,
+            onClick: isBranch ? void 0 : onClick,
             items: isBranch ? childItems : void 0
         };
 
@@ -389,8 +735,9 @@ export function resolveCellContextMenuItems(
         return [];
     }
 
+    const context = getContext(cell);
     const items = resolveCellContextMenuItemsAtLevel(
-        cell,
+        context,
         options?.items,
         true
     );
@@ -420,5 +767,6 @@ export function resolveCellContextMenuItems(
 export default {
     defaultBuiltInCellContextMenuActions,
     registerBuiltInAction,
+    registerBuiltInGroup,
     resolveCellContextMenuItems
 } as const;
