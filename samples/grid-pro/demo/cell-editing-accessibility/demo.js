@@ -1,6 +1,7 @@
 const changelog = document.querySelector('#changelog');
 
 const grid = Grid.grid('container', {
+    gridKey: 'YOUR-GRID-KEY-HERE',
     data: {
         columns: {
             product: ['Apples', 'Pears', 'Plums', 'Bananas'],
