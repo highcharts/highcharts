@@ -111,7 +111,7 @@ This is a good fit for modern browser environments and simple apps without a bui
 
 Highcharts also provides lower-level ESM source files under `es-modules/`. These are mainly useful when you want tighter control over bundle contents and tree shaking.
 
-This is more advanced than most projects need. In most cases, start with `highcharts`, `highcharts/highstock`, or the `esm/*.js` product bundles shown above.
+This is more advanced than most projects need, and comes with a performance cost because of the high number of small files. In most cases, start with `highcharts`, `highcharts/highstock`, or the `esm/*.js` product bundles shown above.
 
 ## Script tags
 
