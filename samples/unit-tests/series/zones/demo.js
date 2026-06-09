@@ -495,7 +495,7 @@ QUnit.test('#24710, series.update and zones', function (assert) {
     // Run an update
     const dataCopy = chart.series[0].userOptions.data.slice();
     dataCopy.shift();
-    dataCopy.push([dataCopy[dataCopy.length - 1][0] + 1, Math.random() * 10]);
+    dataCopy.push([dataCopy[dataCopy.length - 1][0] + 1, 5]);
     // chart.series[0].setData(dataCopy); // <- it works with zones
     chart.update({
         series: [{
