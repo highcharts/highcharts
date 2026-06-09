@@ -11,7 +11,6 @@ If you are using an official framework integration, start with that installation
 - [Angular](https://www.highcharts.com/integrations/angular/)
 - [Vue](https://www.highcharts.com/integrations/vue/)
 - [Svelte](https://www.highcharts.com/integrations/svelte/)
-- [Flutter](https://www.highcharts.com/docs/flutter/getting-started)
 
 ## Looking for Grid or Dashboards?
 
@@ -36,6 +35,8 @@ Install the main package:
 ```bash
 npm install highcharts
 ```
+
+The npm package includes built-in TypeScript declarations.
 
 Then import the product you need:
 
@@ -83,6 +84,8 @@ import 'highcharts/modules/gantt';
 ```
 
 Use this module-based setup when you need more than one product in the same application or want finer control over what gets loaded.
+
+If you use TypeScript, see [Highcharts TypeScript declarations](https://www.highcharts.com/docs/advanced-chart-features/highcharts-typescript-declarations) for IDE support, framework notes, and advanced typing details.
 
 ## ES modules in the browser
 
@@ -182,6 +185,14 @@ The loading order is important:
 
 If a chart option does not seem to work, the most common cause is that the required module has not been loaded yet.
 
+## Experimental autoload
+
+Since v13, Highcharts also includes an experimental *autoload* script. It can load required modules based on the chart configuration, which is useful when chart options are generated dynamically and you do not fully control them ahead of time.
+
+Use explicit imports or script tags when you know exactly which modules your application needs. Use autoload when convenience matters more than strict control over what gets loaded.
+
+See the [Loader API documentation](https://api.highcharts.com/class-reference/Highcharts.Loader) for usage details and examples.
+
 ## CDN usage
 
 The CDN is useful for demos, prototypes, JSFiddle, CodePen, and simple static pages. For production applications, npm or self-hosted files are usually a better long-term choice.
@@ -235,6 +246,10 @@ AMD example:
 ## Legacy browsers
 
 If you need to support legacy browsers such as IE 11 or QtWeb, load files from the `es5` folder instead. See [System requirements](https://www.highcharts.com/docs/getting-started/system-requirements) for details.
+
+## Upgrading older setups
+
+If you are updating an older integration, see [A wind of change with Highcharts version 12](https://www.highcharts.com/docs/getting-started/version-12) for the packaging and module-loading changes introduced in v12.
 
 ## Build your own packages
 
