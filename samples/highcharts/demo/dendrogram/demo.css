@@ -41,9 +41,13 @@ body {
 
 .dendrogram-small .icon {
     width: 32px;
-    transform: rotate(-90deg);
     vertical-align: middle;
     margin: 0 5px 0 -5px;
+}
+
+/* Safari has an issue with CSS layout inside foreignObject */
+#container:not(.safari) .dendrogram-small .icon {
+    transform: rotate(-90deg);
 }
 
 .hidden {

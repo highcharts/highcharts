@@ -30,18 +30,22 @@ Highcharts.chart('container', {
         gridLineWidth: 0
     },
     tooltip: {
-        headerFormat: `<svg width="10" height="30" style="position: absolute;">
-              <path d="M 1.5 1.5 L 1.5 28.5" stroke="{series.color}"
-                stroke-width="3" stroke-linecap="round" />
-            </svg>
-            <span class="highcharts-header" style="margin-left: 10px;">
-                {point.key}
-            </span>
-            <br>`,
-        pointFormat: `<span style="margin: 0 10px;opacity: 0.7;">
+        headerFormat: `<div style="display: flex">
+            <div>
+                <svg width="10" height="30">
+                <path d="M 1.5 1.5 L 1.5 28.5" stroke="{series.color}"
+                    stroke-width="3" stroke-linecap="round" />
+                </svg>
+            </div>
+            <div>
+                <div class="highcharts-header">
+                    {point.key}
+                </div>`,
+        pointFormat: `<span style="color: var(--highcharts-neutral-color-40)">
                 {series.name}
             </span>
-            <b>{point.y}</b>`,
+            <b style="padding-left: 0.5em">{point.y}</b>`,
+        footerFormat: '</div>',
         useHTML: true,
         valueSuffix: ' million'
     },

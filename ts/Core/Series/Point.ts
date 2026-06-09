@@ -760,7 +760,7 @@ class Point {
             }
 
             // Remove properties after animation
-            if (duration) {
+            if (duration && series.condemnedPoints) {
                 series.condemnedPoints.push(this);
                 this.graphic?.addClass('highcharts-point-condemned');
                 setTimeout(destroyPoint, duration);

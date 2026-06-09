@@ -120,16 +120,13 @@
         tooltip: {
             headerFormat: `<b>{point.name}</b>
                 <hr style="border: 0; border-top: 1px solid #8884"/>`,
-            // Custom point format for consistent width
             pointFormat:
                 `<span style="color:{point.color};">\u25CF </span>
-                <span style="min-width: 140px; display: inline-block;
-                        opacity: 0.7;">
+                <span style="padding-right: 1em;
+                        color: var(--highcharts-neutral-color-40);">
                     {series.name}
                 </span>
-                <b style="min-width: 40px; display: inline-block;">
-                    {point.value}
-                </b>`,
+                <b>{point.value}</b>`,
             useHTML: true
         }
     });

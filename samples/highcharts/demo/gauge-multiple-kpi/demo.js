@@ -115,7 +115,7 @@ Highcharts.chart('container', {
     series: [{
         name: 'Conversion',
         data: [{
-            color: Highcharts.getOptions().colors[0],
+            color: 'var(--highcharts-color-0, #7cb5ec)',
             radius: '100%',
             innerRadius: '78%',
             y: 80
@@ -127,7 +127,7 @@ Highcharts.chart('container', {
     }, {
         name: 'Engagement',
         data: [{
-            color: Highcharts.getOptions().colors[1],
+            color: 'var(--highcharts-color-1, #434348)',
             radius: '77%',
             innerRadius: '56%',
             y: 65
@@ -139,7 +139,7 @@ Highcharts.chart('container', {
     }, {
         name: 'Feedback',
         data: [{
-            color: Highcharts.getOptions().colors[2],
+            color: 'var(--highcharts-color-2, #90ed7d)',
             radius: '55%',
             innerRadius: '34%',
             y: 50
