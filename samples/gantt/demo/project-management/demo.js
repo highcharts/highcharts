@@ -242,7 +242,9 @@ const options = {
             enabled: true,
             columns: [{
                 title: {
-                    text: 'Title'
+                    text: 'Title',
+                    textAlign: 'left',
+                    x: 18
                 },
                 labels: {
                     format: '{value}',
@@ -250,7 +252,9 @@ const options = {
                 }
             }, {
                 title: {
-                    text: 'Duration'
+                    text: 'Duration',
+                    textAlign: 'left',
+                    x: 8
                 },
                 labels: {
                     format: '{#if point.x2}' +
