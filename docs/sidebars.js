@@ -294,6 +294,7 @@ module.exports = {
                     'morningstar/performance',
                     'morningstar/hypo-performance',
                     'morningstar/dws-connector',
+                    'morningstar/dws-investments-connector',
                     {
                         'Time Series': [
                             'morningstar/time-series/time-series',
