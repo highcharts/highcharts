@@ -34,7 +34,7 @@ import type { DataProviderOptionsType } from '../../../Core/Data/DataProviderTyp
 import type { LocalDataProviderOptions } from '../../../Core/Data/LocalDataProvider';
 import type {
     TreeIndexBuildResult,
-    TreeViewColumnAggregateOption,
+    TreeViewColumnAggregatorOption,
     TreeViewColumnOptions,
     TreeProjectionRowState,
     TreeProjectionState
@@ -250,9 +250,9 @@ class TreeProjectionController {
     constructor(grid: Grid) {
         this.grid = grid;
         this.aggregationResolver = new TreeAggregationResolver({
-            getColumnAggregateOption: (sourceColumnId): (
-                TreeViewColumnAggregateOption | undefined
-            ) => this.getColumnAggregateOption(sourceColumnId),
+            getColumnAggregatorOption: (sourceColumnId): (
+                TreeViewColumnAggregatorOption | undefined
+            ) => this.getColumnAggregatorOption(sourceColumnId),
             resolveProjectedCellValue: (
                 columnId,
                 rowId,
@@ -1516,19 +1516,19 @@ class TreeProjectionController {
     }
 
     /**
-     * Resolves aggregation option for a source column id.
+     * Resolves aggregator option for a source column id.
      *
      * @param sourceColumnId
      * Source column id.
      */
-    private getColumnAggregateOption(
+    private getColumnAggregatorOption(
         sourceColumnId: string
-    ): (TreeViewColumnAggregateOption | undefined) {
+    ): (TreeViewColumnAggregatorOption | undefined) {
         if (this.isTreeSpecialColumn(sourceColumnId)) {
             return;
         }
 
-        return this.getColumnTreeViewOptions(sourceColumnId)?.aggregate;
+        return this.getColumnTreeViewOptions(sourceColumnId)?.aggregator;
     }
 
     /**

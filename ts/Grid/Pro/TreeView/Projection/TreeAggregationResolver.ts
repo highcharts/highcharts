@@ -29,7 +29,7 @@ import type { RowId } from '../../../Core/Data/DataProvider';
 import type {
     TreeProjectionRowState,
     TreeProjectionState,
-    TreeViewColumnAggregateOption
+    TreeViewColumnAggregatorOption
 } from '../TreeViewTypes';
 import type {
     Arguments as FormulaArguments
@@ -46,9 +46,9 @@ import { defined } from '../../../../Shared/Utilities.js';
  * */
 
 interface TreeAggregationResolverDependencies {
-    getColumnAggregateOption: (
+    getColumnAggregatorOption: (
         sourceColumnId: string
-    ) => (TreeViewColumnAggregateOption | undefined);
+    ) => (TreeViewColumnAggregatorOption | undefined);
     resolveProjectedCellValue: (
         columnId: string,
         rowId: RowId,
@@ -118,7 +118,7 @@ class TreeAggregationResolver {
      * Source column id.
      */
     public hasColumnAggregation(columnId: string): boolean {
-        return !!this.dependencies.getColumnAggregateOption(columnId);
+        return !!this.dependencies.getColumnAggregatorOption(columnId);
     }
 
     /**
@@ -175,10 +175,12 @@ class TreeAggregationResolver {
             let resolvedValue = sourceValue;
 
             if (rowState?.childrenIds.length) {
-                const aggregateFunctionName = this.resolveAggregateFunctionName(
-                    columnId,
-                    rowState,
-                    sourceValue
+                const aggregateFunctionName = (
+                    this.resolveAggregatorFunctionName(
+                        columnId,
+                        rowState,
+                        sourceValue
+                    )
                 );
 
                 if (aggregateFunctionName) {
@@ -252,19 +254,20 @@ class TreeAggregationResolver {
      * @param sourceValue
      * Source cell value before aggregation.
      */
-    private resolveAggregateFunctionName(
+    private resolveAggregatorFunctionName(
         columnId: string,
         rowState: TreeProjectionRowState,
         sourceValue: DataTableCellType
     ): string | undefined {
-        const aggregate = this.dependencies.getColumnAggregateOption(columnId);
-        if (!aggregate || !rowState.childrenIds.length) {
+        const aggregator = this.dependencies
+            .getColumnAggregatorOption(columnId);
+        if (!aggregator || !rowState.childrenIds.length) {
             return;
         }
 
-        const aggregateResult = (
-            typeof aggregate === 'function' ?
-                aggregate({
+        const aggregatorResult = (
+            typeof aggregator === 'function' ?
+                aggregator({
                     childCount: rowState.childrenIds.length,
                     childrenIds: rowState.childrenIds.slice(),
                     columnId,
@@ -273,14 +276,14 @@ class TreeAggregationResolver {
                     rowId: rowState.id,
                     sourceValue
                 }) :
-                aggregate
+                aggregator
         );
 
-        if (typeof aggregateResult !== 'string') {
+        if (typeof aggregatorResult !== 'string') {
             return;
         }
 
-        const normalizedName = aggregateResult.trim().toUpperCase();
+        const normalizedName = aggregatorResult.trim().toUpperCase();
         return normalizedName || void 0;
     }
 

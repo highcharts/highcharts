@@ -81,9 +81,9 @@ export interface TreeViewOptions {
 }
 
 /**
- * Context passed to tree aggregation callbacks for a specific row/column.
+ * Context passed to tree aggregator callbacks for a specific row/column.
  */
-export interface TreeViewColumnAggregateContext {
+export interface TreeViewColumnAggregatorContext {
     /**
      * Grid column / source column id that is being aggregated.
      */
@@ -126,21 +126,21 @@ export interface TreeViewColumnAggregateContext {
  * Return a registered Formula processor function name (for example `SUM`),
  * or a falsy value to skip aggregation for the current row.
  */
-export type TreeViewColumnAggregateResult = (false|null|string|undefined);
+export type TreeViewColumnAggregatorResult = (false|null|string|undefined);
 
 /**
  * Callback deciding which aggregation function should be applied for a row.
  */
-export interface TreeViewColumnAggregateCallback {
-    (context: TreeViewColumnAggregateContext): TreeViewColumnAggregateResult;
+export interface TreeViewColumnAggregatorCallback {
+    (context: TreeViewColumnAggregatorContext): TreeViewColumnAggregatorResult;
 }
 
 /**
- * Aggregation option accepted by a TreeView column.
+ * Aggregator option accepted by a TreeView column.
  */
-export type TreeViewColumnAggregateOption = (
+export type TreeViewColumnAggregatorOption = (
     string |
-    TreeViewColumnAggregateCallback
+    TreeViewColumnAggregatorCallback
 );
 
 /**
@@ -148,7 +148,7 @@ export type TreeViewColumnAggregateOption = (
  */
 export interface TreeViewColumnOptions {
     /**
-     * Aggregation function used for parent rows in the projected tree.
+     * Aggregator used for parent rows in the projected tree.
      *
      * When provided as a string, the function is applied to every row that
      * has children in the projected tree, overriding the row's source value.
@@ -162,7 +162,7 @@ export interface TreeViewColumnOptions {
      *
      * @sample grid-pro/tree-view/data-aggregation TreeView data aggregation
      */
-    aggregate?: TreeViewColumnAggregateOption;
+    aggregator?: TreeViewColumnAggregatorOption;
 }
 
 /**

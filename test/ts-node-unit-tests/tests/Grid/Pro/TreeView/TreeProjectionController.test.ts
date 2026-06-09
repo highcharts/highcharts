@@ -146,7 +146,7 @@ describe('TreeProjectionController', () => {
                     }
                 },
                 treeView: {
-                    aggregate: 'SUM'
+                    aggregator: 'SUM'
                 }
             }]
         }, true);
@@ -442,17 +442,17 @@ describe('TreeProjectionController', () => {
             columns: [{
                 id: 'id',
                 treeView: {
-                    aggregate: 'SUM'
+                    aggregator: 'SUM'
                 }
             }, {
                 id: 'path',
                 treeView: {
-                    aggregate: 'SUM'
+                    aggregator: 'SUM'
                 }
             }, {
                 id: 'value',
                 treeView: {
-                    aggregate: 'SUM'
+                    aggregator: 'SUM'
                 }
             }]
         }, true);
@@ -525,7 +525,7 @@ describe('TreeProjectionController', () => {
                     }
                 },
                 treeView: {
-                    aggregate: 'SUM'
+                    aggregator: 'SUM'
                 }
             }]
         }, true);
@@ -592,17 +592,17 @@ describe('TreeProjectionController', () => {
             columns: [{
                 id: 'id',
                 treeView: {
-                    aggregate: 'SUM'
+                    aggregator: 'SUM'
                 }
             }, {
                 id: 'parentId',
                 treeView: {
-                    aggregate: 'SUM'
+                    aggregator: 'SUM'
                 }
             }, {
                 id: 'value',
                 treeView: {
-                    aggregate: 'SUM'
+                    aggregator: 'SUM'
                 }
             }]
         }, true);
@@ -674,7 +674,7 @@ describe('TreeProjectionController', () => {
             columns: [{
                 id: 'value',
                 treeView: {
-                    aggregate: 'SUM'
+                    aggregator: 'SUM'
                 }
             }]
         }, true);
@@ -743,7 +743,7 @@ describe('TreeProjectionController', () => {
                         Math.abs(Number(b) - 12)
                 },
                 treeView: {
-                    aggregate: 'SUM'
+                    aggregator: 'SUM'
                 }
             }]
         }, true);

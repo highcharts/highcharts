@@ -212,7 +212,7 @@ async function buildGrid() {
                 format: '${value:,0f}'
             },
             treeView: {
-                aggregate: 'SUM'
+                aggregator: 'SUM'
             }
         }, {
             id: 'actual',
@@ -223,7 +223,7 @@ async function buildGrid() {
                 format: '${value:,0f}'
             },
             treeView: {
-                aggregate: 'SUM'
+                aggregator: 'SUM'
             }
         }, {
             id: 'headcount',
@@ -234,7 +234,7 @@ async function buildGrid() {
                 format: '{value:,0f}'
             },
             treeView: {
-                aggregate: 'SUM'
+                aggregator: 'SUM'
             }
         }, {
             id: 'utilization',
@@ -245,7 +245,7 @@ async function buildGrid() {
                 format: '{(multiply 100 value):.1f}%'
             },
             treeView: {
-                aggregate: 'AVERAGE'
+                aggregator: 'AVERAGE'
             }
         }, {
             id: 'risk',
@@ -275,7 +275,7 @@ async function buildGrid() {
                 }
             },
             treeView: {
-                aggregate: 'MAX'
+                aggregator: 'MAX'
             }
         }],
         header: [
