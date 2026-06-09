@@ -628,7 +628,7 @@ const stockTools: StockToolsOptions = {
          * Since 7.1.3 use [iconsURL](#navigation.iconsURL) for popup and
          * stock tools.
          *
-         * @deprecated
+         * @deprecated 7.1.3
          * @apioption stockTools.gui.iconsURL
          *
          */
