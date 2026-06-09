@@ -28,6 +28,7 @@ Scope: instructions for coding/review agents working in this repository.
 
 - Keep changes minimal and focused. Do not bloat core.
 - Prefer small, terse code with low file-size impact.
+- Avoid larger changes in the primary bundles (`highcharts.js`, `grid.js` etc) if the functionality or issue is unique to a secondary module.
 - Performance matters: avoid unnecessary loops, redraws, allocations, and DOM/SVG churn.
 - Keep behavior compatible across evergreen browsers.
 - Follow existing APIs and naming patterns; avoid broad refactors unless requested.

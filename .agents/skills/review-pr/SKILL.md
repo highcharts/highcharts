@@ -11,6 +11,7 @@ Use this skill when reviewing a PR, branch diff, staged diff, or selected files.
 
 - Optional scope: file paths, commit range, or branch.
 - If no scope is provided, review `git diff` and `git diff --staged`.
+- If PR metadata is available, review labels/tags and the PR description before reviewing code.
 
 ## Checklist
 
@@ -22,17 +23,22 @@ Use this skill when reviewing a PR, branch diff, staged diff, or selected files.
 - `samples/README.md`
 - `test/readme.md`
 
-2. Verify correctness:
+2. Check PR metadata when available:
+- Verify labels/tags are correct.
+- Review the PR description against `CONTRIBUTING.md#writing-content-for-the-changelog`.
+- Confirm changelog labels/product tags are present when needed, and that the first paragraph is suitable changelog text.
+
+3. Verify correctness:
 - Edge cases, null/undefined handling, backward compatibility, API consistency.
 
-3. Verify performance and size:
+4. Verify performance and size:
 - Avoid O(n^2) loops in hot paths, avoid extra redraw/reflow, keep bundle/core impact low.
 
-4. Verify docs/doclets/types:
+5. Verify docs/doclets/types:
 - New/changed options and public types should have doclets and type coverage.
 - Flag undocumented behavior changes.
 
-5. Verify tests:
+6. Verify tests:
 - Require unit/regression tests.
 - Prefer adding to existing test files.
 - If not automatable, require a manual test plan.

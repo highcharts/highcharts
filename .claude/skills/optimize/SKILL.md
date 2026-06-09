@@ -22,6 +22,7 @@ Use this skill when code is slow, memory-heavy, or larger than necessary.
 - Cache hot-loop option lookups and computed values.
 - Remove dead code and unnecessary imports to reduce size.
 - Ensure cleanup in destroy paths to avoid leaks.
+- Reuse pre-existing utility functions and patterns whenever possible.
 
 ## Output format
 
