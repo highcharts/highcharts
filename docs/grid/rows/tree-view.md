@@ -17,9 +17,10 @@ applied.
 ## Minimum requirements
 
 - Tree view is available in Highcharts Grid Pro.
-- Set `data.idColumn` to a column containing stable string or number row IDs.
 - Tree view works with local data (`data.columns`,
   `data.dataTable`, or connector-backed data).
+- Provide either `parentId` or `path` hierarchy data, or configure
+  `data.treeView.input` to point to custom hierarchy columns.
 
 ```js
 Grid.grid('container', {
@@ -28,16 +29,18 @@ Grid.grid('container', {
             path: [
                 'Root/Sales',
                 'Root/Marketing'
-            ],
-            id: [1, 2]
+            ]
         },
-        idColumn: 'id',
         treeView: {
             enabled: true
         }
     }
 });
 ```
+
+Tree view can work without `data.idColumn`. When it is not set, Grid uses the
+original row indexes as row IDs. Configure `data.idColumn` when your data or
+application state needs stable row IDs from a column value.
 
 ## Input models
 
@@ -52,7 +55,9 @@ prefers `path` when both `path` and `parentId` exist.
 ### `parentId` input
 
 Use `parentId` input when your backend already stores direct parent references
-and row IDs are the canonical source of hierarchy.
+and row IDs are the canonical source of hierarchy. `data.idColumn` is required
+when `parentIdColumn` values refer to IDs stored in a data column. Without
+`data.idColumn`, `parentIdColumn` values must refer to original row indexes.
 
 ```js
 Grid.grid('container', {
@@ -165,7 +170,12 @@ treeView: {
 ```
 
 `expandedRowIds: 'all'` expands every row that currently has children. Leaf
-rows are ignored automatically.
+rows are ignored automatically. It does not require `data.idColumn`.
+
+For an explicit `expandedRowIds` array, each value is matched against the
+current Tree view row IDs. `data.idColumn` is required when those values come
+from a stable ID column. Without `data.idColumn`, use original row indexes
+instead.
 
 ## Sticky parents
 
