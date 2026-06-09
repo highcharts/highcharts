@@ -299,7 +299,7 @@ export default Globals as unknown as GlobalsBase;
  * might not be possible to change this property because of read-only
  * restrictions, instead use {@link Highcharts.setOptions}.
  *
- * @deprecated
+ * @deprecated 9.1.2
  * @name Highcharts.theme
  * @type {Highcharts.Options}
  */
