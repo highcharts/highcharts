@@ -314,6 +314,18 @@ const colorAxisDefaults: DeepPartial<ColorAxisOptions> = {
     marker: {
 
         /**
+         * The symbol of the marker. Can be one of the predefined symbols
+         * ('circle', 'square', 'diamond', 'triangle', 'triangle-down') or a
+         * custom symbol URL.
+         *
+         * @type   {string}
+         * @since  next
+         * @sample highcharts/coloraxis/marker
+         *         Marker symbol options
+         * @apioption colorAxis.marker.symbol
+         */
+
+        /**
          * Animation for the marker as it moves between values. Set to `false`
          * to disable animation.
          *
@@ -327,18 +339,38 @@ const colorAxisDefaults: DeepPartial<ColorAxisOptions> = {
         },
 
         /**
-         * Maps to stroke-width because marker options are passed as crosshair.
-         * @internal
+         * The fill color of the marker.
+         * @internal */
+        clip: false,
+
+        /**
+         * The color of the marker's outline.
+         *
+         * @sample highcharts/coloraxis/marker
+         *         Marker symbol options
          */
-        width: 0.01,
+        lineColor: 'var(--highcharts-neutral-color-40)',
+
+        /**
+         * The width of the marker's outline.
+         */
+        lineWidth: 0,
 
         /**
          * The color of the marker.
          *
+         * @sample  highcharts/coloraxis/marker
+         *          Marker symbol options
          * @type    {Highcharts.ColorType}
          * @product highcharts highstock highmaps
          */
-        color: 'var(--highcharts-neutral-color-40)'
+        color: 'var(--highcharts-neutral-color-40)',
+
+        /**
+         * Maps to stroke-width because marker options are passed as crosshair.
+         * @internal
+         */
+        width: 0.01
     },
 
     /**

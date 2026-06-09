@@ -282,7 +282,7 @@ class GaugeSeries extends Series {
                  * @sample {highcharts} highcharts/plotoptions/gauge-dial/
                  *         Dial options demonstrated
                  *
-                 * @type      {string}
+                 * @type      {number|string}
                  * @default   70%
                  * @since     2.3.0
                  * @product   highcharts

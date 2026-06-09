@@ -35,6 +35,7 @@ import type {
 import type AxisBase from './AxisBase';
 import type { AxisType, AxisTypeOptions } from './AxisType';
 import type Chart from '../Chart/Chart';
+import type { ColorAxisMarkerOptions } from './Color/ColorAxisOptions';
 import type CSSObject from '../Renderer/CSSObject';
 import type { DeepPartial, TypedArray } from '../../Shared/Types';
 import type { EventCallback } from '../Callback';
@@ -4653,7 +4654,11 @@ class Axis {
                         .attr({
                             zIndex: pick(options.zIndex, 2)
                         })
-                        .clip(chart.plotClipInner)
+                        .clip(
+                            (options as ColorAxisMarkerOptions).clip === false ?
+                                void 0 :
+                                chart.plotClipInner
+                        )
                         .add();
 
                     // Presentational attributes

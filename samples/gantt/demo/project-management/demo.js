@@ -3,20 +3,28 @@ const day = 24 * 36e5,
 
 const options = {
     chart: {
-        plotBackgroundColor: 'rgba(128,128,128,0.02)',
         plotBorderColor: 'rgba(128,128,128,0.1)',
-        plotBorderWidth: 1
+        plotBorderWidth: 1,
+        plotBorderRadius: 5
     },
 
     plotOptions: {
         series: {
             borderRadius: '50%',
             connectors: {
-                dashStyle: 'ShortDot',
-                lineWidth: 2,
-                radius: 5,
+                lineWidth: 1,
+                lineColor: 'var(--highcharts-neutral-color-60, #666)',
+                radius: 10,
+                endMarker: {
+                    verticalAlign: 'bottom',
+                    align: 'center',
+                    yOffset: 5
+                },
                 startMarker: {
-                    enabled: false
+                    symbol: 'arrow-half',
+                    lineWidth: 1,
+                    lineColor: 'var(--highcharts-neutral-color-60, #666)',
+                    xOffset: -5
                 }
             },
             groupPadding: 0,
@@ -32,8 +40,9 @@ const options = {
             }, {
                 enabled: true,
                 align: 'right',
-                format: '{#if point.completed}{(multiply ' +
-                    'point.completed.amount 100):.0f}%{/if}',
+                format: `{#if point.completed}
+                    {(multiply point.completed.amount 100):.0f}%
+                {/if}`,
                 padding: 10,
                 style: {
                     fontWeight: 'normal',
@@ -49,15 +58,24 @@ const options = {
         data: [{
             name: 'New offices',
             id: 'new_offices',
-            owner: 'Peter'
+            owner: 'Peter',
+            pointWidth: 3,
+            color: 'var(--highcharts-neutral-color-60, #666)',
+            dataLabels: {
+                align: 'right',
+                style: {
+                    color: 'var(--highcharts-neutral-color-60, #666)'
+                },
+                x: 72
+            }
         }, {
             name: 'Prepare office building',
             id: 'prepare_building',
             parent: 'new_offices',
-            start: today - (2 * day),
+            start: today - (8 * day),
             end: today + (6 * day),
             completed: {
-                amount: 0.2
+                amount: 0.5
             },
             owner: 'Linda'
         }, {
@@ -79,9 +97,16 @@ const options = {
         }, {
             name: 'Relocate',
             id: 'relocate',
-            dependency: 'passed_inspection',
-            parent: 'new_offices',
-            owner: 'Josh'
+            owner: 'Josh',
+            pointWidth: 3,
+            color: 'var(--highcharts-neutral-color-60, #666)',
+            dataLabels: {
+                align: 'right',
+                style: {
+                    color: 'var(--highcharts-neutral-color-60, #666)'
+                },
+                x: 57
+            }
         }, {
             name: 'Relocate staff',
             id: 'relocate_staff',
@@ -108,7 +133,17 @@ const options = {
         data: [{
             name: 'New product launch',
             id: 'new_product',
-            owner: 'Peter'
+            owner: 'Peter',
+            pointWidth: 3,
+            color: 'var(--highcharts-neutral-color-60, #666)',
+            dataLabels: {
+                align: 'right',
+                style: {
+                    color: 'var(--highcharts-neutral-color-60, #666)'
+                },
+                format: 'Launch',
+                x: 50
+            }
         }, {
             name: 'Development',
             id: 'development',
@@ -116,8 +151,7 @@ const options = {
             start: today - day,
             end: today + (11 * day),
             completed: {
-                amount: 0.6,
-                fill: '#e80'
+                amount: 0.6
             },
             owner: 'Susan'
         }, {
@@ -155,11 +189,12 @@ const options = {
             'Owner: {#if point.owner}{point.owner}{else}unassigned{/if}'
     },
     title: {
-        text: 'Gantt Project Management'
+        text: 'Gantt Project Management',
+        align: 'left'
     },
     xAxis: [{
         currentDateIndicator: {
-            color: '#2caffe',
+            color: '#ef4444',
             dashStyle: 'ShortDot',
             width: 2,
             label: {
@@ -170,19 +205,62 @@ const options = {
             day: '%e<br><span style="opacity: 0.5; font-size: 0.7em">%a</span>'
         },
         grid: {
-            borderWidth: 0
+            borderWidth: 0,
+            cellHeight: 46
         },
         gridLineWidth: 1,
         min: today - 3 * day,
-        max: today + 18 * day,
+        max: today + 19 * day,
         custom: {
-            today,
-            weekendPlotBands: true
+            weekendPlotBands: {
+                color: 'var(--highcharts-neutral-color-5, #f2f2f2)'
+            }
         }
+    }, {
+
+        dateTimeLabelFormats: {
+            month: '%[bY]'
+        },
+        labels: {
+            align: 'left',
+            x: 5,
+            style: {
+                fontSize: '0.7em',
+                fontWeight: 'bold',
+                textTransform: 'uppercase'
+            }
+        },
+        grid: {
+            borderWidth: 0,
+            cellHeight: 24
+        },
+        tickInterval: 30 * 24 * 36e5
     }],
     yAxis: {
         grid: {
-            borderWidth: 0
+            borderWidth: 0,
+            enabled: true,
+            columns: [{
+                title: {
+                    text: 'Title'
+                },
+                labels: {
+                    format: '{value}',
+                    indentation: 0
+                }
+            }, {
+                title: {
+                    text: 'Duration'
+                },
+                labels: {
+                    format: '{#if point.x2}' +
+                        '{(divide (subtract point.x2 point.x) 86400000)} days' +
+                        '{else} - {/if}',
+                    style: {
+                        opacity: 0.7
+                    }
+                }
+            }]
         },
         gridLineWidth: 0,
         labels: {
@@ -238,7 +316,8 @@ const options = {
 
 // Plug-in to render plot bands for the weekends
 Highcharts.addEvent(Highcharts.Axis, 'foundExtremes', e => {
-    if (e.target.options.custom && e.target.options.custom.weekendPlotBands) {
+    const weekendColor = e.target.options.custom?.weekendPlotBands?.color;
+    if (weekendColor) {
         const axis = e.target,
             chart = axis.chart,
             day = 24 * 36e5,
@@ -256,14 +335,7 @@ Highcharts.addEvent(Highcharts.Axis, 'foundExtremes', e => {
             if (isWeekend(x) && !inWeekend) {
                 plotBands.push({
                     from: x,
-                    color: {
-                        pattern: {
-                            path: 'M 0 10 L 10 0 M -1 1 L 1 -1 M 9 11 L 11 9',
-                            width: 10,
-                            height: 10,
-                            color: 'rgba(128,128,128,0.15)'
-                        }
-                    }
+                    color: weekendColor
                 });
                 inWeekend = true;
             }

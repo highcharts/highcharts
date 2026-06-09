@@ -20,78 +20,118 @@
     document.getElementById('container').innerHTML = 'Rendering map...';
 
     // Create the map
-    setTimeout(function () { // Otherwise innerHTML doesn't update
-        Highcharts.mapChart('container', {
-            chart: {
-                map: mapData,
-                height: '80%'
-            },
+    Highcharts.mapChart('container', {
+        chart: {
+            map: mapData,
+            height: '80%'
+        },
 
-            title: {
-                text: 'US Counties unemployment rates, January 2018',
-                align: 'left'
-            },
+        title: {
+            text: 'US Counties unemployment rates',
+            align: 'left'
+        },
 
+        subtitle: {
+            text: 'January 2018',
+            align: 'left'
+        },
+
+        accessibility: {
+            description: 'Demo showing a large dataset.'
+        },
+
+        legend: {
+            layout: 'vertical',
+            align: 'right',
+            verticalAlign: 'middle',
+            y: 42,
+            margin: 0,
+            borderColor: 'var(--highcharts-neutral-color-5, #f2f2f2)',
+            borderWidth: 1,
+            borderRadius: 8,
+            backgroundColor: 'var(--highcharts-background-color, white)',
+            padding: 10,
+            shadow: {
+                width: 1,
+                opacity: 0.03
+            },
+            symbolRadius: 6
+        },
+
+        mapNavigation: {
+            enabled: true
+        },
+
+        colorAxis: {
+            min: -1,
+            max: 26,
+            tickInterval: 5,
+            labels: {
+                format: '{value}%'
+            },
+            startOnTick: false,
+            endOnTick: false,
+            minColor: '#ebf1ff',
+            maxColor: '#0048ff',
+            // Dots for ticks, extended also by custom CSS
+            tickColor: '#ffffff',
+            tickLength: 0.1,
+            tickWidth: 6,
+            gridLineWidth: 0,
+            marker: {
+                symbol: 'circle',
+                color: 'transparent',
+                lineColor: '#fff',
+                lineWidth: 3
+            }
+        },
+
+        plotOptions: {
+            mapline: {
+                showInLegend: false,
+                enableMouseTracking: false
+            }
+        },
+
+        series: [{
+            data: data,
+            joinBy: ['hc-key', 'code'],
+            name: 'Unemployment rate',
+            tooltip: {
+                valueSuffix: '%'
+            },
+            borderWidth: 0.5,
+
+            shadow: false,
             accessibility: {
-                description: 'Demo showing a large dataset.'
-            },
+                enabled: false
+            }
+        }, {
+            type: 'mapline',
+            name: 'State borders',
+            color: 'white',
+            shadow: false,
+            borderWidth: 2,
+            accessibility: {
+                enabled: false
+            }
+        }],
 
-            legend: {
-                layout: 'vertical',
-                align: 'right',
-                margin: 0,
-                backgroundColor: `color-mix(
-                    in srgb,
-                    var(--highcharts-background-color, white),
-                    transparent 15%
-                )`
-            },
-
-            mapNavigation: {
-                enabled: true
-            },
-
-            colorAxis: {
-                min: 0,
-                max: 25,
-                tickInterval: 5,
-                stops: [[0, '#F1EEF6'], [0.65, '#900037'], [1, '#500007']],
-                labels: {
-                    format: '{value}%'
-                }
-            },
-
-            plotOptions: {
-                mapline: {
-                    showInLegend: false,
-                    enableMouseTracking: false
-                }
-            },
-
-            series: [{
-                data: data,
-                joinBy: ['hc-key', 'code'],
-                name: 'Unemployment rate',
-                tooltip: {
-                    valueSuffix: '%'
-                },
-                borderWidth: 0.5,
-
-                shadow: false,
-                accessibility: {
-                    enabled: false
-                }
-            }, {
-                type: 'mapline',
-                name: 'State borders',
-                color: 'white',
-                shadow: false,
-                borderWidth: 2,
-                accessibility: {
-                    enabled: false
-                }
-            }]
-        });
-    }, 0);
+        tooltip: {
+            headerFormat: `<b>{point.name}</b>
+                <hr style="border: 0; border-top: 1px solid #8884"/>`,
+            // Custom point format for consistent width
+            pointFormat:
+                `<span style="color:{point.color};">\u25CF </span>
+                <span style="min-width: 140px; display: inline-block;
+                        opacity: 0.7;">
+                    {series.name}
+                </span>
+                <b style="min-width: 40px; display: inline-block;">
+                    {point.value}
+                </b>`,
+            useHTML: true
+        }
+    });
 
 })();

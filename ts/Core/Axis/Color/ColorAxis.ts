@@ -653,7 +653,8 @@ class ColorAxis extends Axis implements ColorAxisBase {
             plotX = point?.plotX,
             plotY = point?.plotY,
             axisPos = axis.pos,
-            axisLen = axis.len;
+            axisLen = axis.len,
+            markerOptions = axis.options.marker || {};
 
         let crossPos;
 
@@ -691,7 +692,9 @@ class ColorAxis extends Axis implements ColorAxisBase {
                     typeof axis.crosshair === 'object'
                 ) {
                     axis.cross.attr({
-                        fill: axis.crosshair.color
+                        fill: markerOptions.color,
+                        stroke: markerOptions.lineColor,
+                        'stroke-width': markerOptions.lineWidth
                     });
                 }
 
@@ -706,11 +709,23 @@ class ColorAxis extends Axis implements ColorAxisBase {
         const axis = this,
             left = axis.left,
             pos = options.translatedValue,
+            { symbol } = this.options.marker || {},
             top = axis.top;
 
         // Crosshairs only
-        return isNumber(pos) ? // `pos` can be 0 (#3969)
-            (
+        if (isNumber(pos)) {
+
+            const x = left,
+                w = axis.width,
+                y = pos - w / 2,
+                h = w;
+
+            if (symbol) {
+                return this.chart.renderer.symbols[symbol](x, y, w, h);
+            }
+
+            // Default to a triangle pointing to the value
+            return (
                 axis.horiz ? [
                     ['M', pos - 4, top - 6],
                     ['L', pos + 4, top - 6],
@@ -722,8 +737,10 @@ class ColorAxis extends Axis implements ColorAxisBase {
                     ['L', left - 6, pos - 6],
                     ['Z']
                 ]
-            ) :
-            super.getPlotLinePath(options);
+            );
+        }
+
+        return super.getPlotLinePath(options);
     }
 
     /**
