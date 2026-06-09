@@ -302,7 +302,7 @@ function checkDemosConsistency() {
  * @async
  * @return {Promise<void>}
  */
-function checkDocsConsistency() {
+async function checkDocsConsistency() {
     const FS = require('fs');
     const LogLib = require('../libs/log');
 
@@ -396,7 +396,7 @@ specified by config.imageCapture.resultsOutputPath.
         return;
     }
 
-    checkDocsConsistency();
+    await checkDocsConsistency();
     await checkSamplesConsistency();
     checkDemosConsistency();
     checkJSWrap();

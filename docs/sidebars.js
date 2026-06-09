@@ -1,7 +1,9 @@
-module.exports = {
+const { doc } = require('./sidebar-utils');
+
+const sidebars = {
     docs: {
         Highcharts: [
-            'public-index'
+            'index'
         ],
         'Getting started': [
             'getting-started/system-requirements',
@@ -36,7 +38,7 @@ module.exports = {
             'chart-concepts/dataviz-glossary',
             'chart-concepts/common-events'
         ],
-        'Stock': [
+        Stock: [
             'stock/getting-started-stock',
             'stock/understanding-highcharts-stock',
             'stock/stock-tools',
@@ -60,7 +62,7 @@ module.exports = {
             'stock/custom-technical-indicators',
             'stock/standalone-navigator'
         ],
-        'Maps': [
+        Maps: [
             'maps/getting-started',
             'maps/mapview-and-projection',
             'maps/map-navigation',
@@ -80,21 +82,21 @@ module.exports = {
             'maps/tilemap-series',
             'maps/geoheatmap-series'
         ],
-        'Gantt': [
+        Gantt: [
             'gantt/getting-started-gantt',
             'gantt/gantt-grouping-tasks',
             'gantt/gantt-task-dependencies',
             'gantt/gantt-axis-grid',
             'gantt/gantt-task-config'
         ],
-        'Dashboards': [
+        Dashboards: [
             'dashboards/installation',
             'dashboards/your-first-dashboard',
             {
-                'Wrappers': [
+                Wrappers: [
                     'dashboards/wrappers/dashboards-with-angular',
                     'dashboards/wrappers/dashboards-with-react',
-                    'dashboards/wrappers/dashboards-with-vue',
+                    'dashboards/wrappers/dashboards-with-vue'
                 ]
             },
             'dashboards/layout-description',
@@ -116,12 +118,12 @@ module.exports = {
             'dashboards/custom-component',
             'dashboards/installation-with-es-modules',
             'dashboards/get-options',
-            'dashboards/frequently-asked-questions',
+            'dashboards/frequently-asked-questions'
         ],
-        'Grid': [
+        Grid: [
             'grid/general',
             'grid/installation',
-            'grid/grid-key',
+            doc('grid/grid-key'),
             'grid/understanding-grid',
             {
                 'Columns': [
@@ -138,8 +140,8 @@ module.exports = {
                 'Rows': [
                     'grid/rows/index',
                     'grid/rows/data',
-                    'grid/rows/tree-view',
-                    'grid/rows/pinning',
+                    doc('grid/rows/tree-view'),
+                    doc('grid/rows/pinning'),
                     'grid/rows/pagination',
                     'grid/rows/virtualization',
                     'grid/rows/performance'
@@ -155,10 +157,10 @@ module.exports = {
             },
             {
                 'Editing': [
-                    'grid/editing/index',
-                    'grid/editing/renderers',
-                    'grid/editing/validation',
-                    'grid/editing/custom-renderers'
+                    doc('grid/editing/index'),
+                    doc('grid/editing/renderers'),
+                    doc('grid/editing/validation'),
+                    doc('grid/editing/custom-renderers')
                 ]
             },
             {
@@ -175,15 +177,15 @@ module.exports = {
                 'Data handling': [
                     'grid/data-handling/overview',
                     'grid/data-handling/clientside',
-                    'grid/data-handling/serverside',
+                    doc('grid/data-handling/serverside'),
                     'grid/data-handling/connectors'
                 ]
             },
-            'grid/events',
+            doc('grid/events'),
             'grid/accessibility',
             'grid/internationalization',
-            'grid/exporting',
-            'grid/sparklines',
+            doc('grid/exporting'),
+            doc('grid/sparklines'),
             {
                 'Frameworks': [
                     'grid/frameworks/index',
@@ -303,13 +305,13 @@ module.exports = {
                             'morningstar/time-series/ohlcv',
                             'morningstar/time-series/price'
                         ],
-                        'Screeners': [
+                        Screeners: [
                             'morningstar/screeners/screener',
                             'morningstar/screeners/esg-screener',
                             'morningstar/screeners/find-similar-screener',
                             'morningstar/screeners/investment-screener',
                             'morningstar/screeners/investor-preferences',
-                            'morningstar/screeners/regulatory-screener',
+                            'morningstar/screeners/regulatory-screener'
                         ]
                     }
                 ]
@@ -324,7 +326,7 @@ module.exports = {
             'chart-design-and-style/custom-themes-in-styled-mode',
             'chart-design-and-style/gradients-shadows-and-patterns'
         ],
-        'Accessibility': [
+        Accessibility: [
             'accessibility/accessibility-module',
             'accessibility/accessibility-module-feature-overview',
             'accessibility/configure-the-accessibility-module',
@@ -347,7 +349,7 @@ module.exports = {
         'Extending Highcharts': [
             'extending-highcharts/extending-highcharts'
         ],
-        'Flutter': [
+        Flutter: [
             'flutter/getting-started',
             'flutter/your-first-chart',
             'flutter/highcharts-bundling'
@@ -397,3 +399,5 @@ module.exports = {
         ]
     }
 };
+
+module.exports = sidebars;
