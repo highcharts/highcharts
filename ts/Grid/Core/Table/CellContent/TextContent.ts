@@ -28,6 +28,7 @@ import AST from '../../../../Core/Renderer/HTML/AST.js';
 import CellContent from './CellContent.js';
 import TableCell from '../Body/TableCell';
 
+import Globals from '../../Globals.js';
 import GridUtils from '../../GridUtils.js';
 const {
     setHTMLContent
@@ -87,7 +88,12 @@ class TextContent extends CellContent {
     }
 
     public override update(): void {
-        setHTMLContent(this.cell.htmlElement, this.format());
+        const cellContent = this.format();
+        setHTMLContent(this.cell.htmlElement, cellContent);
+        this.cell.htmlElement.classList.toggle(
+            Globals.getClassName('emptyCellContent'),
+            !cellContent
+        );
     }
 
     /**

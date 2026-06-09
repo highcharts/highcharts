@@ -103,6 +103,19 @@ export type CellContextMenuActionId =
     keyof CellContextMenuBuiltInActionIdRegistry | (string & {});
 
 /**
+ * Registry of built-in group IDs for the cell context menu.
+ * Composed features can extend this via module augmentation to declare
+ * group keys that bundle a set of built-in actions together.
+ */
+export interface CellContextMenuBuiltInGroupIdRegistry {}
+
+/**
+ * Built-in group ID for the cell context menu.
+ */
+export type CellContextMenuGroupId =
+    keyof CellContextMenuBuiltInGroupIdRegistry | (string & {});
+
+/**
  * Options for a single cell context menu item.
  */
 export interface CellContextMenuActionItemOptions {
@@ -192,12 +205,17 @@ export interface CellContextMenuBuiltInItemOptions {
 
 /**
  * Options for a single cell context menu item.
+ *
+ * When a bare string is used, it is resolved first as a built-in group id
+ * (in which case the group is expanded inline, filtered by the group's
+ * activation predicate); otherwise it resolves as a built-in action id.
  */
 export type CellContextMenuItemOptions =
     CellContextMenuDividerItemOptions |
     CellContextMenuActionItemOptions |
     CellContextMenuBuiltInItemOptions |
-    CellContextMenuActionId;
+    CellContextMenuActionId |
+    CellContextMenuGroupId;
 
 /**
  * Cell context menu options.
@@ -648,7 +666,7 @@ export interface ColumnCellOptions {
      * Context menu options for table body cells. When configured, a custom
      * context menu will be shown on right-click.
      *
-     * @sample grid-lite/demo/cell-context-menu Cell context menu
+     * @sample grid-pro/demo/cell-context-menu Cell context menu
      */
     contextMenu?: CellContextMenuOptions;
 

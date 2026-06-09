@@ -51,6 +51,7 @@ export type GridIconName = (
     'arrowDown' | 'chevronLeft' | 'chevronRight' | 'doubleChevronLeft' |
     'doubleChevronRight' | 'copy' | 'clipboard' | 'plus' | 'trash' |
     'addRowAbove' | 'addRowBelow' | 'addColumnLeft' | 'addColumnRight' |
+    'addColumnBefore' | 'addColumnAfter' |
     'pin' | 'unpin'
 );
 
@@ -217,6 +218,11 @@ export const icons: Record<GridIconName, SVGDefinition> = {
             'stroke-width': 1.34
         }]
     },
+    // `addColumnBefore` and `addColumnAfter` are semantic aliases of the
+    // directional `addColumnLeft` / `addColumnRight` icons, assigned after
+    // the registry is constructed. See below.
+    addColumnBefore: { width: 0, height: 0, children: [] },
+    addColumnAfter: { width: 0, height: 0, children: [] },
     pin: {
         width: 16,
         height: 16,
@@ -235,7 +241,11 @@ export const icons: Record<GridIconName, SVGDefinition> = {
             'stroke-width': 2
         }]
     }
-} as const;
+};
+
+// Semantic aliases for LTR flows. In an RTL-aware world these would flip.
+icons.addColumnBefore = icons.addColumnLeft;
+icons.addColumnAfter = icons.addColumnRight;
 
 /**
  * The default path definitions for the Grid Svg icons.

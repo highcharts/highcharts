@@ -45,7 +45,10 @@ import RowPinningController, {
 } from './RowPinningController.js';
 import RowPinningView, { classNames } from './RowPinningView.js';
 import PinnedTableCell from './PinnedTableCell.js';
-import { registerBuiltInAction } from '../../Core/Table/Body/CellContextMenuBuiltInActions.js';
+import {
+    registerBuiltInAction,
+    registerBuiltInGroup
+} from '../../Core/Table/Body/CellContextMenuBuiltInActions.js';
 import {
     addEvent,
     merge,
@@ -65,6 +68,7 @@ export const defaultOptions: DeepPartial<Options> = {
         pinRowTop: 'Pin row to top',
         pinRowBottom: 'Pin row to bottom',
         unpinRow: 'Unpin row',
+        pinningGroup: 'Pinning',
         accessibility: {
             rowPinning: {
                 announcements: {
@@ -101,6 +105,9 @@ const defaultPinnedRowsState = {
     topIds: [],
     bottomIds: []
 };
+
+type RowPinningContextMenuActionId =
+    'pinRowTop' | 'pinRowBottom' | 'unpinRow';
 
 /**
  * Compose row pinning APIs into Grid Pro.
@@ -148,58 +155,82 @@ export function compose(
 }
 
 /**
- * Registers row pinning built-in context menu actions.
+ * Registers row pinning built-in context menu actions and the `pinning`
+ * group that bundles them in the default menu.
  */
 function registerBuiltInActions(): void {
-    registerBuiltInAction(
+    registerRowPinningAction(
         'pinRowTop',
-        {
-            getLabel: (cell): string =>
-                cell.row.viewport.grid.options?.lang?.pinRowTop || '',
-            icon: 'pin',
-            isVisible: (cell, rowId): boolean =>
-                isRowPinningActionVisible(cell, rowId),
-            isDisabled: (cell, rowId): boolean =>
-                isRowPinningActionDisabled('pinRowTop', cell, rowId),
-            onClick: (cell, rowId): void => {
-                void cell.row.viewport.grid.rowPinning?.pin(rowId, 'top');
-            }
-        },
-        true
+        'pin',
+        (cell): string =>
+            cell.row.viewport.grid.options?.lang?.pinRowTop || '',
+        (cell, rowId): void => {
+            void cell.row.viewport.grid.rowPinning?.pin(rowId, 'top');
+        }
     );
 
-    registerBuiltInAction(
+    registerRowPinningAction(
         'pinRowBottom',
-        {
-            getLabel: (cell): string =>
-                cell.row.viewport.grid.options?.lang?.pinRowBottom || '',
-            icon: 'pin',
-            isVisible: (cell, rowId): boolean =>
-                isRowPinningActionVisible(cell, rowId),
-            isDisabled: (cell, rowId): boolean =>
-                isRowPinningActionDisabled('pinRowBottom', cell, rowId),
-            onClick: (cell, rowId): void => {
-                void cell.row.viewport.grid.rowPinning?.pin(rowId, 'bottom');
-            }
-        },
-        true
+        'pin',
+        (cell): string =>
+            cell.row.viewport.grid.options?.lang?.pinRowBottom || '',
+        (cell, rowId): void => {
+            void cell.row.viewport.grid.rowPinning?.pin(rowId, 'bottom');
+        }
     );
 
-    registerBuiltInAction(
+    registerRowPinningAction(
         'unpinRow',
+        'unpin',
+        (cell): string =>
+            cell.row.viewport.grid.options?.lang?.unpinRow || '',
+        (cell, rowId): void => {
+            void cell.row.viewport.grid.rowPinning?.unpin(rowId);
+        }
+    );
+
+    registerBuiltInGroup('pinning', {
+        getLabel: (cell): string =>
+            cell.row.viewport.grid.options?.lang?.pinningGroup || 'Pinning',
+        icon: 'pin',
+        items: ['pinRowTop', 'pinRowBottom', 'unpinRow'],
+        isActive: (cell, rowId): boolean =>
+            isRowPinningActionVisible(cell, rowId)
+    });
+}
+
+/**
+ * Registers one row pinning context menu action.
+ *
+ * @param actionId
+ * Row pinning built-in action id.
+ *
+ * @param icon
+ * Icon for the menu item.
+ *
+ * @param getLabel
+ * Label resolver.
+ *
+ * @param onClick
+ * Action callback.
+ */
+function registerRowPinningAction(
+    actionId: RowPinningContextMenuActionId,
+    icon: 'pin' | 'unpin',
+    getLabel: (cell: TableCell) => string,
+    onClick: (cell: TableCell, rowId: GridRowId) => void
+): void {
+    registerBuiltInAction(
+        actionId,
         {
-            getLabel: (cell): string =>
-                cell.row.viewport.grid.options?.lang?.unpinRow || '',
-            icon: 'unpin',
+            getLabel,
+            icon,
             isVisible: (cell, rowId): boolean =>
                 isRowPinningActionVisible(cell, rowId),
             isDisabled: (cell, rowId): boolean =>
-                isRowPinningActionDisabled('unpinRow', cell, rowId),
-            onClick: (cell, rowId): void => {
-                void cell.row.viewport.grid.rowPinning?.unpin(rowId);
-            }
-        },
-        true
+                isRowPinningActionDisabled(actionId, cell, rowId),
+            onClick
+        }
     );
 }
 

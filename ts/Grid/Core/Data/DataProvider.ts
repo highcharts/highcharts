@@ -149,6 +149,116 @@ export abstract class DataProvider {
     public abstract destroy(): void;
 
     /**
+     * Whether this provider supports inserting and deleting rows.
+     * Default: `false`. Override in providers that can mutate row structure.
+     */
+    public supportsRowMutation(): boolean {
+        return false;
+    }
+
+    /**
+     * Whether this provider supports inserting and deleting columns.
+     * Default: `false`. Override in providers that can mutate column structure.
+     */
+    public supportsColumnMutation(): boolean {
+        return false;
+    }
+
+    /**
+     * Inserts a row at the given index in the source data table.
+     *
+     * Providers that do not support row mutation should not override this
+     * method (the default rejects).
+     *
+     * @param row
+     * Row data keyed by source column id.
+     *
+     * @param atOriginalIndex
+     * Target index in the source (unfiltered, unsorted) data table.
+     *
+     * @return
+     * Resolves with the inserted row's id (when derivable from the id
+     * column), or `undefined`.
+     */
+    public insertRow(
+        row: RowObjectType,
+        atOriginalIndex: number
+    ): Promise<RowId | undefined> {
+        void row;
+        void atOriginalIndex;
+        return Promise.reject(
+            new Error('insertRow is not supported by this data provider.')
+        );
+    }
+
+    /**
+     * Deletes a row by id.
+     *
+     * @param rowId
+     * Id of the row to delete.
+     */
+    public deleteRow(
+        rowId: RowId
+    ): Promise<void> {
+        void rowId;
+        return Promise.reject(
+            new Error('deleteRow is not supported by this data provider.')
+        );
+    }
+
+    /**
+     * Inserts a column into the source data table.
+     *
+     * @param columnId
+     * Id of the new column.
+     *
+     * @param column
+     * Initial column data (aligned with existing row count).
+     */
+    public insertColumn(
+        columnId: string,
+        column: DataTableColumnType
+    ): Promise<void> {
+        void columnId;
+        void column;
+        return Promise.reject(
+            new Error('insertColumn is not supported by this data provider.')
+        );
+    }
+
+    /**
+     * Deletes a column by id from the source data table.
+     *
+     * @param columnId
+     * Id of the column to delete.
+     */
+    public deleteColumn(
+        columnId: string
+    ): Promise<void> {
+        void columnId;
+        return Promise.reject(
+            new Error('deleteColumn is not supported by this data provider.')
+        );
+    }
+
+    /**
+     * Returns the original (pre-query) source index for a given row id, or
+     * `undefined` when the row id is unknown.
+     *
+     * Default: resolves `undefined`. Providers with access to the source
+     * table should override.
+     *
+     * @param rowId
+     * Row id to resolve.
+     */
+    public getOriginalRowIndex(
+        rowId: RowId
+    ): Promise<number | undefined> {
+        void rowId;
+        return Promise.resolve(void 0);
+    }
+
+    /**
      * Returns the number of items before pagination has been applied.
      */
     public async getPrePaginationRowCount(): Promise<number> {
