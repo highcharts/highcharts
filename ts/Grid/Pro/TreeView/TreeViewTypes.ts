@@ -40,8 +40,11 @@ import type {
  */
 export interface TreeViewOptions {
     /**
-     * Enables tree view processing.
-     * @default true
+     * Enables or disables tree view processing.
+     *
+     * When `data.treeView` is configured and this option is omitted, Tree
+     * view is enabled. Set it to `false` to disable Tree view while keeping
+     * the rest of the configuration in place.
      */
     enabled?: boolean;
 
