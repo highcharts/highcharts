@@ -51,6 +51,7 @@ Gulp.registry(new GulpForwardReference());
     'dist-verify',
     'generate-samples',
     'grid/api-docs',
+    'grid/deprecated-options',
     'grid/cypress',
     'jsdoc',
     'jsdoc-classes',
