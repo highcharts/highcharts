@@ -172,17 +172,16 @@ QUnit.test('Pointer.getHoverData', function (assert) {
     );
     assert.strictEqual(
         data.hoverPoints.length,
-        chart.series.length - 1,
-        '!isDirectTouch && shared: one point hovered per series, except from ' +
-        'series with noSharedTooltip'
+        chart.series.length,
+        '!isDirectTouch && shared: one point hovered per series'
     );
     assert.strictEqual(
         !!find(data.hoverPoints, function (p) {
             return p.series === scatterSeries;
         }),
-        false,
-        '!isDirectTouch && shared: series with noSharedTooltip should not be ' +
-        'included.'
+        true,
+        '!isDirectTouch && shared: scatter series should be included when ' +
+        'shared tooltip is explicitly enabled.'
     );
     assert.strictEqual(
         !!find(data.hoverPoints, function (p) {
@@ -193,13 +192,7 @@ QUnit.test('Pointer.getHoverData', function (assert) {
         'index as the hoverPoint'
     );
 
-    // Allow scatter series in shared tooltip
-    scatterSeries.remove();
-    Highcharts.Series.types.scatter.prototype.noSharedTooltip = false;
-    scatterSeries = chart.addSeries({
-        type: 'scatter',
-        data: [5, 2, 8, 1, 5]
-    });
+    // isDirectTouch and shared tooltip
     data = chart.pointer.getHoverData(
         point, // existingHoverPoint
         series, // existingHoverSeries
@@ -214,39 +207,35 @@ QUnit.test('Pointer.getHoverData', function (assert) {
     assert.strictEqual(
         data.hoverPoint === point,
         true,
-        'Allow scatter series in shared tooltip: hoverPoint should be ' +
+        'isDirectTouch && shared: hoverPoint should be ' +
         'series[2].points[2]'
     );
     assert.strictEqual(
         data.hoverSeries === series,
         true,
-        'Allow scatter series in shared tooltip: hoverSeries should be ' +
+        'isDirectTouch && shared: hoverSeries should be ' +
         'series[2]'
     );
     assert.strictEqual(
         data.hoverPoints.length,
         chart.series.length,
-        'Allow scatter series in shared tooltip: one point hovered per series'
+        'isDirectTouch && shared: one point hovered per series'
     );
     assert.strictEqual(
         !!find(data.hoverPoints, function (p) {
             return p.series === scatterSeries;
         }),
         true,
-        'Allow scatter series in shared tooltip: one point from the scatter ' +
-        'series'
+        'isDirectTouch && shared: one point from the scatter series'
     );
     assert.strictEqual(
         !!find(data.hoverPoints, function (p) {
             return p.x !== data.hoverPoint.x;
         }),
         false,
-        'Allow scatter series in shared tooltip: All hoverPoints should have ' +
-        'the same index as the hoverPoint'
+        'isDirectTouch && shared: All hoverPoints should have the same index ' +
+        'as the hoverPoint'
     );
-
-    // Reset, avoid breaking tests downstream
-    Highcharts.Series.types.scatter.prototype.noSharedTooltip = true;
 
     // Combination chart
     series = chart.addSeries({

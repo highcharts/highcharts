@@ -25,10 +25,7 @@ test('Shared tooltip keeps the directly hovered bubble point', async ({
     await page.waitForFunction(() => !!window.Highcharts);
 
     const target = await page.evaluate(() => {
-        const H = window.Highcharts,
-            scatterProto = H.Series.types.scatter.prototype;
-
-        scatterProto.noSharedTooltip = false;
+        const H = window.Highcharts;
 
         const chart = H.chart('container', {
                 chart: {
@@ -131,10 +128,6 @@ test('Shared tooltip keeps the directly hovered bubble point', async ({
             y: 6
         }
     ]);
-
-    await page.evaluate(() => {
-        window.Highcharts.Series.types.scatter.prototype.noSharedTooltip = true;
-    });
 });
 
 test('Bubble demo points stay individually hoverable', async ({ page }) => {
