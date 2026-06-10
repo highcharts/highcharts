@@ -1276,6 +1276,7 @@ text.highcharts-drilldown-data-label,
     margin: 0;
     display: block;
     position: absolute;
+    pointer-events: none;
 }
 
 .highcharts-a11y-proxy-group li {
