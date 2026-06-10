@@ -1526,7 +1526,9 @@ class Series {
     public matchPoints(
         oldXColumn?: Column,
         oldIdColumn?: Column,
-        oldNameColumn?: Column
+        oldNameColumn?: Column,
+        // Index matching is used by the data-sorting module
+        oldIndexColumn?: Column
     ): boolean {
         const { dataTable, options, requireSorting } = this,
             dataSorting = options.dataSorting,
@@ -1546,13 +1548,15 @@ class Series {
         const newXColumn = dataTable.getColumn('x'),
             newIdColumn = dataTable.getColumn('id'),
             newNameColumn = dataSorting?.matchByName ?
-                dataTable.getColumn('name') : void 0;
+                dataTable.getColumn('name') : void 0,
+            newIndexColumn = dataTable.getColumn('index');
 
         // Iterate the new data
         for (i = 0; i < dataTable.rowCount; i++) {
             const x = newXColumn?.[i] as number|string|undefined,
                 id = newIdColumn?.[i] as string|undefined,
                 name = newNameColumn?.[i] as string|undefined,
+                index = newIndexColumn?.[i] as number|undefined,
                 [needle, haystack]: [
                     string|number,
                     Column
@@ -1560,9 +1564,11 @@ class Series {
                     [id, oldIdColumn] :
                     name && oldNameColumn ?
                         [name, oldNameColumn] :
-                        defined(x) && oldXColumn ?
-                            [x, oldXColumn] :
-                            [];
+                        defined(index) && oldIndexColumn ?
+                            [index, oldIndexColumn] :
+                            defined(x) && oldXColumn ?
+                                [x, oldXColumn] :
+                                [];
 
             let pointIndex = -1;
 
@@ -1783,6 +1789,7 @@ class Series {
                 options.dataSorting?.matchByName &&
                 oldData?.map((point): string|undefined => point.name)
             ) || table.getColumn('name'),
+            oldIndexColumn = table.getColumn('index'),
             chart = series.chart,
             xAxis = series.xAxis;
 
@@ -1835,7 +1842,8 @@ class Series {
             updatedData = this.matchPoints(
                 oldXColumn,
                 oldIdColumn,
-                oldNameColumn
+                oldNameColumn,
+                oldIndexColumn
             );
         }
 
