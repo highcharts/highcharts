@@ -49,21 +49,6 @@ import type {
 } from './Table/Actions/ColumnFiltering/FilteringTypes';
 import type CSSObject from '../../Core/Renderer/CSSObject';
 
-export type {
-    CellContextMenuActionId,
-    CellContextMenuActionItemOptions,
-    CellContextMenuBuiltInActionIdRegistry,
-    CellContextMenuBuiltInGroupIdRegistry,
-    CellContextMenuBuiltInGroupItemOptions,
-    CellContextMenuBuiltInItemOptions,
-    CellContextMenuDividerItemOptions,
-    CellContextMenuGroupId,
-    CellContextMenuItemOptions,
-    CellContextMenuOptions,
-    CellContextMenuSubmenuItemOptions,
-    CellContextMenuTypedDividerItemOptions
-} from './Table/CellContextMenu/CellContextMenuOptions';
-
 
 /* *
  *
