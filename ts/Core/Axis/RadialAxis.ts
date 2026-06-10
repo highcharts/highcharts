@@ -759,7 +759,7 @@ namespace RadialAxis {
                 this.pane.options.borderRadius
             ),
             fullRadius = center[2] / 2,
-            offset = Math.min(this.offset, 0),
+            offset = Math.min(this.offset || 0, 0),
             left = this.left || 0,
             top = this.top || 0,
             percentRegex = /%$/,
