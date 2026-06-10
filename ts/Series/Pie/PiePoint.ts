@@ -132,21 +132,22 @@ class PiePoint extends Point {
 
     /** @internal */
     public haloPath(size: number): SVGPath {
-        const shapeArgs = this.shapeArgs;
+        const shapeArgs = this.shapeArgs as Required<SVGAttributes>;
 
         return this.sliced || !this.visible ?
             [] :
             this.series.chart.renderer.symbols.arc(
-                (shapeArgs as any).x,
-                (shapeArgs as any).y,
-                (shapeArgs as any).r + size,
-                (shapeArgs as any).r + size, {
+                shapeArgs.x,
+                shapeArgs.y,
+                shapeArgs.r + size,
+                shapeArgs.r + size, {
                 // Subtract 1px to ensure the background is not bleeding
                 // through between the halo and the slice (#7495).
-                    innerR: (shapeArgs as any).r - 1,
-                    start: (shapeArgs as any).start,
-                    end: (shapeArgs as any).end,
-                    borderRadius: (shapeArgs as any).borderRadius
+                    innerR: shapeArgs.r - 1,
+                    start: shapeArgs.start,
+                    end: shapeArgs.end,
+                    borderRadius: shapeArgs.borderRadius,
+                    padding: shapeArgs.padding
                 }
             );
     }

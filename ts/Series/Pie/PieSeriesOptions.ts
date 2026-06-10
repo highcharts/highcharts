@@ -409,6 +409,22 @@ export interface PieSeriesOptions extends LineSeriesOptions {
      *
      * @product highcharts highmaps
      */
+
+    /**
+     * The padding between points in the pie.
+     *
+     * A numeric value is interpreted as pixels. A pixel string like `"10px"`
+     * is also interpreted as pixels. A percentage string, for example
+     * `"10%"`, is interpreted as a percentage of the first point's slice
+     * radius.
+     *
+     * @type {number|string}
+     *
+     * @sample highcharts/plotoptions/pie-pointpadding
+     *         Point padding on slices
+     */
+    pointPadding?: number|string;
+
     showInLegend?: boolean;
 
     /**
