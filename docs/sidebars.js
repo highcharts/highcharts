@@ -296,8 +296,8 @@ module.exports = {
                                     'morningstar/dws/equity-style-box',
                                     'morningstar/dws/equity-residual-risk',
                                     'morningstar/dws/equity-aggregates-residual-risk',
-                                    'morningstar/dws/morningstar-equity-sectors-breakdown',
-                                    'morningstar/dws/morningstar-fixed-income-sectors-breakdown',
+                                    'morningstar/dws/equity-sectors-breakdown',
+                                    'morningstar/dws/fixed-income-sectors-breakdown',
                                     'morningstar/dws/prospectus-fees'
                                 ]
                             }

@@ -1,6 +1,6 @@
-# Morningstar Fixed Income Sectors Breakdown
+# Fixed Income Sectors Breakdown
 
-The **Morningstar Fixed Income Sectors Breakdown** view provides the
+The **Fixed Income Sectors Breakdown** view provides the
 fixed-income portion of a portfolio classified by Morningstar's fixed-income
 sector structure into super, primary, and secondary sectors - including the
 per-region government, treasury, inflation-protected, and agency sectors -
@@ -27,7 +27,7 @@ Currently the following data tables are supported in the
 - **IncBrkPrimarySectors**
 - **IncBrkSecondarySectors**
 
-## How to use Morningstar Fixed Income Sectors Breakdown
+## How to use Fixed Income Sectors Breakdown
 
 Select the `FixedIncomeSectorsBreakdown` converter on the
 `InvestmentsConnector`, then read the data tables with

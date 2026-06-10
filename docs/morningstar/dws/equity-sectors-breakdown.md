@@ -1,6 +1,6 @@
-# Morningstar Equity Sectors Breakdown
+# Equity Sectors Breakdown
 
-The **Morningstar Equity Sectors Breakdown** view provides the equity portion of
+The **Equity Sectors Breakdown** view provides the equity portion of
 a portfolio classified by Morningstar's Global Equity Classification Structure
 into super sectors (Cyclical, Sensitive, Defensive), sectors, and industries,
 reported as long, short, net, and rescaled-long percentages.
@@ -16,7 +16,7 @@ Currently the following data tables are supported in the
 - **EqSectors**
 - **EqIndustries**
 
-## How to use Morningstar Equity Sectors Breakdown
+## How to use Equity Sectors Breakdown
 
 Select the `EquitySectorsBreakdown` converter on the `InvestmentsConnector`,
 then read the data tables with `connector.getTable('<TableName>')`.

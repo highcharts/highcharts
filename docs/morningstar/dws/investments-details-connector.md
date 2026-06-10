@@ -70,12 +70,12 @@ page, with more planned for the future.
 - [Equity Residual Risk and Return Sensitivity](https://www.highcharts.com/docs/morningstar/dws/equity-residual-risk) -
   equity residual-risk statistics (Alpha, Beta, RSquare, including non-dividend
   variants) at daily and monthly granularity.
-- [Morningstar Equity Sectors Breakdown](https://www.highcharts.com/docs/morningstar/dws/morningstar-equity-sectors-breakdown) -
+- [Equity Sectors Breakdown](https://www.highcharts.com/docs/morningstar/dws/equity-sectors-breakdown) -
   equity sector exposure at super-sector, sector, and industry levels.
 - [Equity Style Box](https://www.highcharts.com/docs/morningstar/dws/equity-style-box) -
   the Morningstar equity style box: the current style/size grid and its
 historical time series.
-- [Morningstar Fixed Income Sectors Breakdown](https://www.highcharts.com/docs/morningstar/dws/morningstar-fixed-income-sectors-breakdown) -
+- [Fixed Income Sectors Breakdown](https://www.highcharts.com/docs/morningstar/dws/fixed-income-sectors-breakdown) -
   fixed-income sector exposure across super/primary/secondary sectors, their
   breakdown (`Brk`) variants, and per-region tables.
 - [Prospectus Fees](https://www.highcharts.com/docs/morningstar/dws/prospectus-fees) -
