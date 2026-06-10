@@ -465,8 +465,8 @@ async function checkIfCodeExists(productName) {
     const codePaths = {
         Highcharts: ['code/highcharts.js'],
         Grid: [
-            join('build', 'dist', 'grid-lite', 'code', 'grid-lite.js')
-            // join('build', 'dist', 'grid-pro', 'code', 'grid-pro.js')
+            join('build', 'dist', 'grid-lite', 'code', 'grid-lite.js'),
+            join('build', 'dist', 'grid-pro', 'code', 'grid-pro.js')
         ],
         Dashboards: [
             join('build', 'dist', 'dashboards', 'code', 'dashboards.js')
@@ -547,14 +547,14 @@ async function release() {
     return 'Success!';
 }
 
-release.description = 'Copies distribution contents to highcharts-dist repo, tags and publishes on npm (after manual approval).' +
-                        'The task assumes that highcharts-dist is already cloned in a sibling folder of this repo.';
+release.description = 'Copies distribution contents to the dist repositories for the selected product, tags and publishes on npm (after manual approval).' +
+                        'The task assumes that the product dist repositories are already cloned in sibling folders of this repo.';
 release.flags = {
-    '--push': '(USE WITH CARE!) Will git commit, push and tag to the highcharts-dist repo, as well as publish to npm. ' +
+    '--push': '(USE WITH CARE!) Will git commit, push and tag to the relevant dist repository or repositories, as well as publish to npm. ' +
                 'Note that credentials for git/npm must be configured. The user will be asked for input both before the ' +
                 'git commands and npm publish is run.',
     '--force-yes': 'Automatically answers yes to all questions.',
-    '--product': 'Product name. Available products: Highcharts, Grid. Defaults to Highcharts.'
+    '--product': 'Product name. Available products: Highcharts, Grid, Dashboards. Defaults to Highcharts.'
 };
 
 gulp.task('dist-release', release);
