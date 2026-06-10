@@ -1,29 +1,24 @@
 (async () => {
 
-    // Load the dataset
     const data = await fetch(
-        'https://demo-live-data.highcharts.com/aapl-ohlc.json'
+        'https://www.highcharts.com/samples/data/aapl-ohlc.json'
     ).then(response => response.json());
 
-    // create the chart
     Highcharts.stockChart('container', {
-
-        scrollbar: {
-            liveRedraw: false
-        },
-
-        rangeSelector: {
-            selected: 1
-        },
-
         title: {
             text: 'AAPL Stock Price'
         },
-
+        rangeSelector: {
+            selected: 1
+        },
+        scrollbar: {
+            liveRedraw: false
+        },
         series: [{
-            type: 'candlestick',
+            data: data,
             name: 'AAPL Stock Price',
-            data: data
+            type: 'candlestick'
         }]
     });
+
 })();
