@@ -330,6 +330,30 @@ class ColumnPolicyResolver {
     }
 
     /**
+     * Returns whether a spacer should reserve the operator select row height
+     * for inline filtering in the given column.
+     *
+     * @param columnId
+     * Grid column id.
+     *
+     * @param enabledColumnIds
+     * Enabled Grid column ids in the filter row.
+     */
+    public shouldRenderOperatorSpacer(
+        columnId: string,
+        enabledColumnIds: string[]
+    ): boolean {
+        return (
+            this.isColumnInlineFilteringEnabled(columnId) &&
+            this.isFilterOperatorSelectHidden(columnId) &&
+            enabledColumnIds.some((id): boolean =>
+                this.isColumnInlineFilteringEnabled(id) &&
+                !this.isFilterOperatorSelectHidden(id)
+            )
+        );
+    }
+
+    /**
      * Returns whether editing should be enabled for the column.
      *
      * @param columnId

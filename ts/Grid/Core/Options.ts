@@ -1175,7 +1175,7 @@ export interface ColumnFilteringOptions {
      * {@link ColumnFilteringOptions.operators}. Not supported for `boolean`
      * columns (no value input).
      *
-     * @sample grid-lite/options/inline-filtering-hide-dropdown
+     * @sample grid-lite/options/inline-filtering-hide-select
      *         Inline filtering with hidden operator select
      *
      * @default true when {@link ColumnFilteringOptions.operators} has a

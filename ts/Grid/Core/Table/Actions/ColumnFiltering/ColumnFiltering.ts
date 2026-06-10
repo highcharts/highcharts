@@ -301,7 +301,10 @@ class ColumnFiltering {
             this.renderConditionSelect(inputWrapper);
         } else if (
             column.viewport.grid.columnPolicy
-                .isColumnInlineFilteringEnabled(column.id)
+                .shouldRenderOperatorSpacer(
+                    column.id,
+                    column.viewport.grid.enabledColumns ?? []
+                )
         ) {
             this.renderOperatorSelectSpacer(inputWrapper);
         }

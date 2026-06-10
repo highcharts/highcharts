@@ -656,7 +656,7 @@ test.describe('Grid datetime filtering', () => {
 
         test.beforeEach(async ({ page }) => {
             await page.goto(
-                '/grid-lite/e2e/inline-filtering-hide-dropdown',
+                '/grid-lite/e2e/inline-filtering-hide-select',
                 { waitUntil: 'networkidle' }
             );
             await page.waitForFunction(() => {
@@ -734,10 +734,17 @@ test.describe('Grid datetime filtering', () => {
 
         test('Single operator hides select by default', async ({ page }) => {
             await page.evaluate(() => {
-                const data = (window as any).grid.userOptions.data;
                 (window as any).grid.destroy();
                 (window as any).grid = (window as any).Grid.grid('container', {
-                    data,
+                    data: {
+                        columns: {
+                            category: [
+                                'Fruit',
+                                'Fruit',
+                                'Citrus'
+                            ]
+                        }
+                    },
                     columnDefaults: {
                         filtering: {
                             enabled: true,
@@ -760,6 +767,11 @@ test.describe('Grid datetime filtering', () => {
             await expect(
                 page.locator(inputCategoryFilter)
             ).toBeVisible();
+            await expect(
+                page.locator(
+                    'th[data-column-id="category"] .hcg-column-filter-operator-spacer'
+                )
+            ).toHaveCount(0);
         });
 
         test('Hidden operator select uses operator label as input placeholder', async ({
