@@ -1,0 +1,6 @@
+---
+ name: Cell context menu
+ authors:
+   - Dawid Draguła
+ js_wrap: b
+...

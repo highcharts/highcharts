@@ -525,6 +525,7 @@ export interface ColumnCellOptions {
      * context menu will be shown on right-click.
      *
      * @sample grid-lite/demo/cell-context-menu Cell context menu
+     * @sample grid-pro/basic/cell-context-menu Cell context menu with built-ins
      */
     contextMenu?: CellContextMenuOptions;
 

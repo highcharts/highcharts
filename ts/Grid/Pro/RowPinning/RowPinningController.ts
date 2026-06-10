@@ -263,7 +263,7 @@ declare module '../../Core/Options' {
          *
          * @default 'Pinning'
          */
-        pinningGroup?: string;
+        pinning?: string;
     }
 
     interface RowsSettings {
