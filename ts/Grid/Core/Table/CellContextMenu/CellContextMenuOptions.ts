@@ -99,11 +99,6 @@ export interface CellContextMenuActionItemOptions {
         this: TableCell,
         cell: TableCell
     ) => void;
-
-    /**
-     * Nested submenu items.
-     */
-    items?: Array<CellContextMenuItemOptions>;
 }
 
 /**
@@ -207,11 +202,6 @@ export interface CellContextMenuBuiltInItemOptions {
      * Whether this built-in action should be disabled.
      */
     disabled?: boolean;
-
-    /**
-     * Nested submenu items.
-     */
-    items?: Array<CellContextMenuItemOptions>;
 }
 
 /**

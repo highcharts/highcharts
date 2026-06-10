@@ -12,13 +12,6 @@ contextMenu.registerBuiltInAction('showCellValue', {
 });
 
 contextMenu.registerBuiltInGroup('sampleActions', {
-    getLabel: function () {
-        return 'Cell actions';
-    },
-    icon: 'checkmark',
-    isActive: function () {
-        return true;
-    },
     items: ['showCellValue']
 });
 

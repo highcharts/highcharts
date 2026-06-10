@@ -618,6 +618,7 @@ test.describe('Cell Context Menu', () => {
                             contextMenu: {
                                 enabled: true,
                                 items: [{
+                                    type: 'submenu',
                                     label: 'Branch',
                                     items: [{ label: 'First child' }]
                                 }]
@@ -663,6 +664,7 @@ test.describe('Cell Context Menu', () => {
                             contextMenu: {
                                 enabled: true,
                                 items: [{
+                                    type: 'submenu',
                                     label: 'Branch',
                                     items: [{ label: 'First child' }]
                                 }]

@@ -31,10 +31,8 @@ function test_grid() {
     Grid.CellContextMenuBuiltInActions.registerBuiltInGroup(
         'sampleActions',
         {
-            getLabel: function () {
-                return 'Cell actions';
-            },
-            isActive: function () {
+            isVisible: function (context) {
+                context.grid;
                 return true;
             },
             items: ['showCellValue']

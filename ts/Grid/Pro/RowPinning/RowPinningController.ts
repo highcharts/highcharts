@@ -253,13 +253,6 @@ declare module '../../Core/Options' {
          * @default 'Unpin row'
          */
         unpinRow?: string;
-
-        /**
-         * Label used for the built-in row pinning context menu group.
-         *
-         * @default 'Pinning'
-         */
-        pinning?: string;
     }
 
     interface RowsSettings {
