@@ -59,10 +59,11 @@ class AdjacentResizingMode extends ResizingMode {
         }
 
         const colW = resizer.columnStartWidth ?? 0;
-        const minWidth = ResizingMode.getMinWidth(column);
         const nextCol = vp.columns[column.index + 1];
 
-        const newW = Math.round(Math.max(colW + diff, minWidth) * 10) / 10;
+        const newW = Math.round(
+            ResizingMode.fitWidth(column, colW + diff) * 10
+        ) / 10;
 
         this.columnWidths[column.id] = newW;
         this.columnWidthUnits[column.id] = 0; // Always save in px
@@ -70,9 +71,9 @@ class AdjacentResizingMode extends ResizingMode {
 
         if (nextCol) {
             const newNextW = this.columnWidths[nextCol.id] = Math.round(
-                Math.max(
-                    (resizer.nextColumnStartWidth ?? 0) + colW - newW,
-                    minWidth
+                ResizingMode.fitWidth(
+                    nextCol,
+                    (resizer.nextColumnStartWidth ?? 0) + colW - newW
                 ) * 10
             ) / 10;
             this.columnWidthUnits[nextCol.id] = 0; // Always save in px

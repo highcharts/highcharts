@@ -69,12 +69,10 @@ declare module '../Chart/ChartBase'{
     }
 }
 
-declare module '../Chart/ChartOptions'{
+declare module '../Chart/ChartOptions' {
     interface ChartOptions {
         /**
-         * Options to render charts in 3 dimensions. This feature requires
-         * `highcharts-3d.js`, found in the download package or online at
-         * [code.highcharts.com/highcharts-3d.js](https://code.highcharts.com/highcharts-3d.js).
+         * Options to render chart in 3 dimensions.
          *
          * @since    4.0
          * @product  highcharts
@@ -302,7 +300,6 @@ namespace Chart3D {
 
     /**
      * @optionparent
-     * @internal
      */
     export const defaultOptions = {
 
@@ -1464,13 +1461,7 @@ namespace Chart3D {
 
         if (this.is3d()) {
             (options.series || []).forEach(function (s): void {
-                const type = (
-                    s.type ||
-                    options.chart.type ||
-                    options.chart.defaultSeriesType
-                );
-
-                if (type === 'scatter') {
+                if ((s.type || options.chart.type) === 'scatter') {
                     s.type = 'scatter3d';
                 }
             });
@@ -2176,7 +2167,7 @@ export default Chart3D;
  *
  * The side for the frame around a 3D chart.
  *
- * @deprecated
+ * @deprecated 5.0.12
  * @since     4.0
  * @product   highcharts
  * @requires  highcharts-3d
@@ -2186,7 +2177,7 @@ export default Chart3D;
 /**
  * The color of the panel.
  *
- * @deprecated
+ * @deprecated 5.0.12
  * @type      {Highcharts.ColorType}
  * @default   transparent
  * @since     4.0
@@ -2197,7 +2188,7 @@ export default Chart3D;
 /**
  * The thickness of the panel.
  *
- * @deprecated
+ * @deprecated 5.0.12
  * @type      {number}
  * @default   1
  * @since     4.0

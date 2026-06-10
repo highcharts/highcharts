@@ -237,6 +237,7 @@ function copyFiles() {
     }];
 
     const files = {
+        'SECURITY.md': join(pathToDistRepo, 'SECURITY.md')
         // 'vendor/canvg.js': join(pathToDistRepo, 'lib/canvg.js'),
         // 'vendor/jspdf.js': join(pathToDistRepo, 'lib/jspdf.js'),
         // 'vendor/jspdf.src.js': join(pathToDistRepo, 'lib/jspdf.src.js'),
@@ -520,7 +521,7 @@ async function release() {
             cwd: pathToDistRepo
         });
 
-        const keepFiles = ['^[.]git/', 'bower.json', 'package.json', 'README.md', 'LICENSE.txt'];
+        const keepFiles = ['^[.]git/', 'bower.json', 'package.json', 'README.md', 'LICENSE.txt', 'SECURITY.md'];
         await removeFilesInFolder(pathToDistRepo, keepFiles);
         log.message('Successfully removed content of ' + pathToDistRepo);
     }

@@ -365,7 +365,7 @@ export interface RangeSelectorOptions {
      * Deprecated. The height of the range selector. Currently it is
      * calculated dynamically.
      *
-     * @deprecated
+     * @deprecated 6.0.0
      * @since 2.1.9
      */
     height?: number;

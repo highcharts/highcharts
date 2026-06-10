@@ -413,48 +413,55 @@ function onAfterGetTitlePosition(
     if (gridOptions.enabled === true) {
         // Compute anchor points for each of the title align options
         const {
-            axisTitle,
-            height: axisHeight,
-            horiz,
-            left: axisLeft,
-            offset,
-            opposite,
-            options,
-            top: axisTop,
-            width: axisWidth
-        } = axis;
-        const tickSize = axis.tickSize();
-        const titleWidth = axisTitle?.getBBox().width;
-        const xOption = options.title.x;
-        const yOption = options.title.y;
-        const titleMargin = pick(options.title.margin, horiz ? 5 : 10);
-        const titleFontSize = axisTitle ? axis.chart.renderer.fontMetrics(
-            axisTitle
-        ).f : 0;
-        const crispCorr = tickSize ? tickSize[0] / 2 : 0;
-
-        // TODO account for alignment
-        // the position in the perpendicular direction of the axis
-        const offAxis = (
-            (horiz ? axisTop + axisHeight : axisLeft) +
-            (horiz ? 1 : -1) * // Horizontal axis reverses the margin
-            (opposite ? -1 : 1) * // So does opposite axes
-            crispCorr +
-            (axis.side === GridAxisSide.bottom ? titleFontSize : 0)
-        );
+                axisTitle,
+                height: axisHeight,
+                horiz,
+                left: axisLeft,
+                offset,
+                opposite,
+                options,
+                top: axisTop,
+                width: axisWidth
+            } = axis,
+            tickSize = axis.tickSize(),
+            titleWidth = axisTitle?.getBBox().width,
+            title = options.title,
+            { x, y } = title,
+            margin = title.margin ?? (horiz ? 5 : 10),
+            titleFontSize = axisTitle ? axis.chart.renderer.fontMetrics(
+                axisTitle
+            ).f : 0,
+            crispCorr = tickSize ? tickSize[0] / 2 : 0,
+            offAxis = (
+                (horiz ? axisTop + axisHeight : axisLeft) +
+                (horiz ? 1 : -1) * // Horizontal axis reverses the margin
+                (opposite ? -1 : 1) * // So does opposite axes
+                crispCorr +
+                (axis.side === GridAxisSide.bottom ? titleFontSize : 0)
+            );
 
         e.titlePosition.x = horiz ?
-            axisLeft - (titleWidth || 0) / 2 - titleMargin + xOption :
-            offAxis + (opposite ? axisWidth : 0) + offset + xOption;
+            axisLeft - (titleWidth || 0) / 2 - margin + x :
+            offAxis + (opposite ? axisWidth : 0) + offset + x;
         e.titlePosition.y = horiz ?
             (
                 offAxis -
                 (opposite ? axisHeight : 0) +
                 (opposite ? titleFontSize : -titleFontSize) / 2 +
                 offset +
-                yOption
+                y
             ) :
-            axisTop - titleMargin + yOption;
+            axisTop - margin + y;
+
+        // In a vertical grid axis, allow text alignment for column titles
+        if (!horiz) {
+            const [slotWidth = 0] = tickSize || [];
+            if (title.textAlign === 'left') {
+                e.titlePosition.x -= slotWidth / 2;
+            } else if (title.textAlign === 'right') {
+                e.titlePosition.x += slotWidth / 2;
+            }
+        }
     }
 }
 
@@ -1554,28 +1561,6 @@ export default GridAxis;
  *  API Options
  *
  * */
-
-/**
- * @productdesc {gantt}
- * For grid axes (like in Gantt charts),
- * it is possible to declare as a list to provide different
- * formats depending on available space.
- *
- * Defaults to:
- * ```js
- * {
- *     hour: { list: ['%H:%M', '%H'] },
- *     day: { list: ['%A, %e. %B', '%a, %e. %b', '%E'] },
- *     week: { list: ['Week %W', 'W%W'] },
- *     month: { list: ['%B', '%b', '%o'] }
- * }
- * ```
- *
- * @sample {gantt} gantt/grid-axis/date-time-label-formats
- *         Gantt chart with custom axis date format.
- *
- * @apioption xAxis.dateTimeLabelFormats
- */
 
 /**
  * Set grid options for the axis labels. Requires Highcharts Gantt.

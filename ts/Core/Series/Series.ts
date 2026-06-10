@@ -1096,13 +1096,24 @@ class Series {
         this.userOptions = e.userOptions;
 
         const options: SeriesTypeOptions = merge(
-            typeOptions,
-            plotOptions.series,
-            // #3881, chart instance plotOptions[type] should trump
-            // plotOptions.series
-            userPlotOptionsType,
-            seriesUserOptions
-        );
+                typeOptions,
+                plotOptions.series,
+                // #3881, chart instance plotOptions[type] should trump
+                // plotOptions.series
+                userPlotOptionsType,
+                seriesUserOptions
+            ),
+            // Handle color zones
+            {
+                negativeColor,
+                negativeFillColor,
+                zoneAxis = 'y',
+                zones
+            } = options,
+            // #20440, create deep copy of zones options
+            zonesCopy = (zones || []).map(
+                (z): SeriesZonesOptions => ({ ...z })
+            );
 
         // The tooltip options are merged between global and series specific
         // options. Importance in ascending order:
@@ -1138,17 +1149,7 @@ class Series {
             delete options.marker;
         }
 
-        // Handle color zones
-        const {
-                negativeColor,
-                negativeFillColor,
-                zoneAxis = 'y',
-                zones
-            } = options,
-            // #20440, create deep copy of zones options
-            zonesCopy = this.zones = (zones || []).map(
-                (z): SeriesZonesOptions => ({ ...z })
-            );
+        this.zones ||= zonesCopy;
 
         this.zoneAxis = zoneAxis;
         if (
@@ -3222,7 +3223,7 @@ class Series {
             data[i]?.destroy?.();
         }
 
-        for (const zone of series.zones) {
+        for (const zone of series.zones || []) {
             // Destroy SVGElement's but preserve primitive props (#20426)
             destroyObjectProperties(zone, void 0, true);
         }
@@ -3293,14 +3294,19 @@ class Series {
                 if (inverted) {
                     plotY = len - plotY;
                 }
-                const { translated = 0, lineClip } = zone,
+                const { translated = 0, lineClip, value } = zone,
                     distance = plotY - translated;
 
                 lineClip?.push([
                     'L',
                     plotX,
                     Math.abs(distance) < halfWidth ?
-                        plotY - halfWidth * (distance <= 0 ? -1 : 1) :
+                        plotY - halfWidth * (
+                            distance < 0 ||
+                            (distance === 0 && defined(value)) ?
+                                -1 :
+                                1
+                        ) :
                         translated
                 ]);
             };
@@ -4537,6 +4543,9 @@ class Series {
             keepProps.push.apply(keepProps, Series.keepPropsForPoints);
             if (options.visible !== false) {
                 keepProps.push('area', 'graph');
+                if (!('zones' in options)) {
+                    keepProps.push('zones');
+                }
             }
             series.parallelArrays.forEach(function (key: string): void {
                 keepProps.push(key + 'Data');

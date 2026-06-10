@@ -293,7 +293,7 @@ export interface TooltipOptions {
     /**
      * Whether the tooltip should update as the finger moves on a touch
      * device. If this is `true` and [chart.panning](#chart.panning) is
-     * set,`followTouchMove` will take over one-finger touches, so the user
+     * set, `followTouchMove` will take over one-finger touches, so the user
      * needs to use two fingers for zooming and panning.
      *
      * Note the difference to [followPointer](#tooltip.followPointer) that

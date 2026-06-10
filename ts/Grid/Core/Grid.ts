@@ -45,6 +45,7 @@ import ColumnPolicyResolver, {
 } from './ColumnPolicyResolver.js';
 import DataProviderRegistry from './Data/DataProviderRegistry.js';
 import DataTable from '../../Data/DataTable.js';
+import { warnIfDeprecatedOptions } from './DeprecatedOptions.js';
 import { defaultOptions } from './Defaults.js';
 import {
     makeHTMLElement,
@@ -443,6 +444,7 @@ export class Grid {
     ): DeepPartial<NonArrayOptions> {
         // Operate on a copy of the options argument
         newOptions = merge(newOptions);
+        warnIfDeprecatedOptions(newOptions);
 
         const diff: DeepPartial<NonArrayOptions> = {};
         const preserveIdOnlyColumnOptions = (
@@ -870,10 +872,16 @@ export class Grid {
         }
         delete columnDiff.cells;
 
-        if ('width' in columnDiff) {
+        if (
+            'width' in columnDiff ||
+            'minWidth' in columnDiff ||
+            'maxWidth' in columnDiff
+        ) {
             vp.columnResizing.isDirty = true;
         }
         delete columnDiff.width;
+        delete columnDiff.minWidth;
+        delete columnDiff.maxWidth;
 
         if ('sorting' in columnDiff) {
             const sortingDiff = columnDiff.sorting ?? {};
@@ -1337,9 +1345,10 @@ export class Grid {
 
         this.captionElement = new AST([{
             tagName,
-            attributes: { 'class': className, id: this.id + '-caption' },
-            textContent: captionOptions.text
+            attributes: { 'class': className, id: this.id + '-caption' }
         }]).addToDOM(this.contentWrapper) as HTMLElement;
+
+        setHTMLContent(this.captionElement, captionOptions.text);
     }
 
     /**
