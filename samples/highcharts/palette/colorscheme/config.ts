@@ -8,7 +8,6 @@ export default {
         options: ['light dark', 'light', 'dark'],
         value: 'dark'
     }],
-    codePath: 'https://cdn.jsdelivr.net/npm/highcharts@v13.0.0-beta.2',
     chartOptionsExtra: {
         series: [{
             data: [1, 3, 2, 4],

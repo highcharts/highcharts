@@ -4,24 +4,20 @@ import type {
 
 export default {
     controls: [{
-        path: 'xAxis.dateTimeLabelFormats.month.boundary',
-        value: '<i><b>%B</b></i>'
+        path: 'xAxis.dateTimeLabelFormats.year.boundary',
+        value: '%b<br>%Y'
     }, {
-        path: 'xAxis.dateTimeLabelFormats.day.main',
-        value: '%e of %b'
+        path: 'xAxis.dateTimeLabelFormats.month.main',
+        value: '%b'
     }],
-    codePath: 'https://cdn.jsdelivr.net/npm/highcharts@v13.0.0-beta.2',
-    dataFile: 'usdeur.json',
-    templates: [],
-    factory: 'chart',
+    templates: ['datetime'],
     chartOptionsExtra: {
         title: {
             text: 'Demo of axis label boundary'
         },
-        xAxis: {
-            type: 'datetime',
-            min: '2020-01-20',
-            max: '2020-02-07'
-        }
+        series: [{
+            data: [1, 3, 2, 6, 3, 5, 7, 5, 1, 2, 3, 2],
+            pointInterval: 2
+        }]
     }
 } satisfies SampleGeneratorConfig;

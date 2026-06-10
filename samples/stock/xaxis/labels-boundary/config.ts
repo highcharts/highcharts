@@ -10,7 +10,6 @@ export default {
         path: 'xAxis.dateTimeLabelFormats.month.main',
         value: '%b'
     }],
-    codePath: 'https://cdn.jsdelivr.net/npm/highcharts@v13.0.0-beta.2',
     dataFile: 'usdeur.json',
     templates: [],
     factory: 'stockChart',
