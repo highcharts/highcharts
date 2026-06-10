@@ -1981,7 +1981,7 @@ class Pointer {
             chart = pointer.chart,
             container = chart.container,
             followTouchMove = chart.options.tooltip?.followTouchMove ?? true,
-            shouldHave = followTouchMove && isTouchDevice && chart.series.some(
+            shouldHave = followTouchMove && chart.series.some(
                 (series): boolean => (series.options.findNearestPointBy as any)
                     .indexOf('y') > -1
             );
