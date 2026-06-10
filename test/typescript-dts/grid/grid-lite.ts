@@ -15,6 +15,32 @@ test_grid();
  */
 function test_grid() {
 
+    Grid.CellContextMenuBuiltInActions.registerBuiltInAction(
+        'showCellValue',
+        {
+            getLabel: function () {
+                return 'Show cell value';
+            },
+            icon: 'checkmark',
+            onClick: function (context): void {
+                context.cell.row.id;
+            }
+        }
+    );
+
+    Grid.CellContextMenuBuiltInActions.registerBuiltInGroup(
+        'sampleActions',
+        {
+            getLabel: function () {
+                return 'Cell actions';
+            },
+            isActive: function () {
+                return true;
+            },
+            items: ['showCellValue']
+        }
+    );
+
     const dataTable = new Grid.DataTable({
         columns: {
             x: ['A', 'B', 'C'],

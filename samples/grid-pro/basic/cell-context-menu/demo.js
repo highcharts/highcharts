@@ -1,3 +1,27 @@
+const contextMenu = Grid.CellContextMenuBuiltInActions;
+
+contextMenu.registerBuiltInAction('showCellValue', {
+    getLabel: function () {
+        return 'Show cell value';
+    },
+    icon: 'checkmark',
+    onClick: function (context) {
+        document.getElementById('status').textContent =
+            context.columnId + ': ' + String(context.cell.value);
+    }
+});
+
+contextMenu.registerBuiltInGroup('sampleActions', {
+    getLabel: function () {
+        return 'Cell actions';
+    },
+    icon: 'checkmark',
+    isActive: function () {
+        return true;
+    },
+    items: ['showCellValue']
+});
+
 Grid.grid('container', {
     data: {
         columns: {
@@ -11,18 +35,7 @@ Grid.grid('container', {
         cells: {
             contextMenu: {
                 items: [
-                    {
-                        type: 'submenu',
-                        label: 'Cell actions',
-                        items: [{
-                            label: 'Show cell value',
-                            icon: 'checkmark',
-                            onClick: function (cell) {
-                                document.getElementById('status').textContent =
-                                    cell.column.id + ': ' + String(cell.value);
-                            }
-                        }]
-                    },
+                    'sampleActions',
                     {
                         type: 'separator'
                     },
