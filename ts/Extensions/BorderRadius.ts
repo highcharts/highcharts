@@ -360,7 +360,6 @@ function seriesOnAfterColumnTranslate(
         !(this.chart.is3d && this.chart.is3d())
     ) {
         const { options, yAxis } = this,
-            percent = options.stacking === 'percent',
             seriesDefault = defaultOptions.plotOptions
                 ?.[this.type]
                 ?.borderRadius,
@@ -392,28 +391,42 @@ function seriesOnAfterColumnTranslate(
                     borderRadius.scope === 'stack' &&
                     point.stackTotal
                 ) {
-                    const stackEnd = yAxis.translate(
-                            percent ? 100 : point.stackTotal,
-                            false,
-                            true,
-                            false,
-                            true
-                        ),
-                        stackThreshold = yAxis.translate(
-                            options.threshold || 0,
-                            false,
-                            true,
-                            false,
-                            true
-                        ),
-                        box = this.crispCol(
-                            0,
-                            Math.min(stackEnd, stackThreshold),
-                            0,
-                            Math.abs(stackEnd - stackThreshold)
-                        );
-                    brBoxY = box.y;
-                    brBoxHeight = box.height;
+                    const stackItem = this.getStackItem(point);
+                    if (stackItem) {
+
+                        // @todo Refactor to get real points from
+                        // `StackItem.points`
+                        const [
+                                seriesIndex,
+                                x
+                            ] = stackItem.tip?.split(',').map(Number) || [],
+                            { height = 0, y = 0 } = this.chart
+                                .series[seriesIndex]
+                                ?.points
+                                // @todo Get rid of the expensive `find`
+                                ?.find((p): boolean => p.x === x)
+                                ?.shapeArgs || {},
+                            // Use the pre-translated position (#24454)
+                            stackTip = stackItem.isNegative ?
+                                y + height :
+                                y || 0,
+
+                            stackThreshold = yAxis.translate(
+                                options.threshold || 0,
+                                false,
+                                true,
+                                false,
+                                true
+                            ),
+                            box = this.crispCol(
+                                0,
+                                Math.min(stackTip, stackThreshold),
+                                0,
+                                Math.abs(stackTip - stackThreshold)
+                            );
+                        brBoxY = box.y;
+                        brBoxHeight = box.height;
+                    }
                 }
 
                 const flip = (point.negative ? -1 : 1) *
