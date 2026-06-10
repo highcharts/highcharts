@@ -1771,12 +1771,18 @@ class Series {
     ): void {
         const series = this,
             table = this.dataTable,
+            options = series.options,
             oldData = series.points,
             oldDataLength = oldData?.length || 0,
             oldXColumn = table.getColumn('x'),
             oldIdColumn = table.getColumn('id'),
-            oldNameColumn = table.getColumn('name'),
-            options = series.options,
+            oldNameColumn = (
+                // To get the bar race right. When data sorting is enabled, the
+                // point order is not in sync with the table order. Could this
+                // be done in a better way, maybe in the data sorting module?
+                options.dataSorting?.matchByName &&
+                oldData?.map((point): string|undefined => point.name)
+            ) || table.getColumn('name'),
             chart = series.chart,
             xAxis = series.xAxis;
 
