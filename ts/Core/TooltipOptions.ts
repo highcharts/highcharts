@@ -486,7 +486,7 @@ export interface TooltipOptions {
     /**
      * Deprecated since v13.0. Use `tooltip.header.shape` instead.
      *
-     * @since   7.0
+     * @since      7.0
      * @deprecated 13.0.0
      */
     headerShape?: Tooltip.ShapeValue;
