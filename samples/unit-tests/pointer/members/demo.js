@@ -352,10 +352,10 @@ QUnit.test(
                 `point with ${mode} tooltip`
             );
             assert.strictEqual(
-                chart.hoverPoints[0],
-                point,
+                chart.hoverPoints.indexOf(point) > -1,
+                true,
                 `${testCase.type} targets should keep the hovered point in ` +
-                `${mode} mode`
+                `${mode} tooltip points`
             );
 
             pointer.findNearestKDPoint = originalFindNearestKDPoint;

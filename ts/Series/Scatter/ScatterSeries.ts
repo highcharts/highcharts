@@ -93,8 +93,8 @@ class ScatterSeries extends LineSeries {
 
     /* eslint-disable valid-jsdoc */
     /**
-     * Honor explicit shared or split tooltip opt-in for cartesian
-     * scatter-like series while keeping the default behavior unchanged.
+     * Honor explicit shared-tooltip opt-in for cartesian scatter-like
+     * series while keeping the default behavior unchanged.
      * @private
      */
     public setOptions(
@@ -113,7 +113,7 @@ class ScatterSeries extends LineSeries {
 
         this.noSharedTooltip = !(
             this.isCartesian &&
-            (tooltipOptions.shared || tooltipOptions.split)
+            tooltipOptions.shared
         );
 
         return super.setOptions(itemOptions);
