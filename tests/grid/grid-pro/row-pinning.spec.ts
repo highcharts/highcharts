@@ -61,11 +61,14 @@ test.describe('Grid Pro row pinning', () => {
                         stock: rows.map((row) => row.stock)
                     }
                 },
+                data: {
+                    idColumn: 'id'
+                },
                 rendering: {
                     rows: {
                         virtualizationThreshold: 20,
                         pinning: {
-                            idColumn: 'id',
+                            enabled: true,
                             topIds: ['ROW-001'],
                             bottomIds: ['ROW-060']
                         }
@@ -692,7 +695,6 @@ test.describe('Grid Pro row pinning', () => {
                     rows: {
                         virtualization: false,
                         pinning: {
-                            idColumn: 'id',
                             topIds: rowIds
                         }
                     }
@@ -1154,7 +1156,6 @@ test.describe('Grid Pro row pinning', () => {
                     rendering: {
                         rows: {
                             pinning: {
-                                idColumn: 'id',
                                 topIds: ['ROW-001'],
                                 bottomIds: ['ROW-060']
                             }
@@ -1206,7 +1207,6 @@ test.describe('Grid Pro row pinning', () => {
                 rendering: {
                     rows: {
                         pinning: {
-                            idColumn: 'id',
                             topIds: ['ROW-001'],
                             bottomIds: []
                         }
@@ -1239,7 +1239,6 @@ test.describe('Grid Pro row pinning', () => {
                 rendering: {
                     rows: {
                         pinning: {
-                            idColumn: 'id',
                             topIds: ['ROW-MISSING-1'],
                             bottomIds: ['ROW-MISSING-2']
                         }
@@ -1318,7 +1317,6 @@ test.describe('Grid Pro row pinning', () => {
                 rendering: {
                     rows: {
                         pinning: {
-                            idColumn: 'id',
                             topIds: ['1'],
                             bottomIds: []
                         }

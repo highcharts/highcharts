@@ -25,10 +25,12 @@ test.describe('Pinned row cell editing', () => {
                         price: [1.5, 2.5, 3.5, 4.5, 5.5]
                     }
                 },
+                data: {
+                    idColumn: 'id'
+                },
                 rendering: {
                     rows: {
                         pinning: {
-                            idColumn: 'id',
                             topIds: ['A'],
                             bottomIds: ['E']
                         }

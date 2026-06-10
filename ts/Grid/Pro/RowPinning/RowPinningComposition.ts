@@ -88,7 +88,7 @@ export const defaultOptions: DeepPartial<Options> = {
     rendering: {
         rows: {
             pinning: {
-                enabled: true,
+                enabled: false,
                 topIds: [],
                 bottomIds: [],
                 events: {},
@@ -231,9 +231,6 @@ function registerBuiltInActions(): void {
  * Initializes row pinning state for a grid instance.
  */
 function initRowPinning(this: Grid): void {
-    syncPinningIdColumnOption(this.userOptions);
-    syncPinningIdColumnOption(this.options);
-
     this.rowPinning = new RowPinningController(this);
     this.rowPinning.loadOptions();
 }
@@ -376,8 +373,6 @@ function onBeforeGridUpdate(
         return;
     }
 
-    syncPinningIdColumnOption(updateOptions as Partial<Options>);
-
     if (
         hasOwnPath(
             updateOptions,
@@ -480,35 +475,6 @@ function hasOwnPath(
     }
 
     return true;
-}
-
-/**
- * Mirrors `rendering.rows.pinning.idColumn` into `data.idColumn`.
- *
- * @param options
- * Options object to normalize.
- */
-function syncPinningIdColumnOption(
-    options?: Partial<Options> | Record<string, unknown>
-): void {
-    if (!options || typeof options !== 'object') {
-        return;
-    }
-
-    const rendering = (options as Partial<Options>).rendering;
-    const idColumn = rendering?.rows?.pinning?.idColumn;
-
-    if (!idColumn) {
-        return;
-    }
-
-    if (!(options as Partial<Options>).data) {
-        (options as Partial<Options>).data = {};
-    }
-
-    if ((options as Partial<Options>).data?.idColumn === void 0) {
-        (options as Partial<Options>).data!.idColumn = idColumn;
-    }
 }
 
 /**

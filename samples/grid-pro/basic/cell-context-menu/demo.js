@@ -24,6 +24,7 @@ contextMenu.registerBuiltInGroup('sampleActions', {
 
 Grid.grid('container', {
     data: {
+        idColumn: 'id',
         columns: {
             id: ['SKU-1', 'SKU-2', 'SKU-3', 'SKU-4'],
             product: ['Apples', 'Pears', 'Plums', 'Bananas'],
@@ -56,7 +57,7 @@ Grid.grid('container', {
     rendering: {
         rows: {
             pinning: {
-                idColumn: 'id'
+                enabled: true
             }
         }
     }

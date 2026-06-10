@@ -71,6 +71,7 @@ function test_grid() {
             },
             rows: {
                 pinning: {
+                    enabled: true,
                     events: {
                         beforeRowPin: function (e): void {
                             e.target;

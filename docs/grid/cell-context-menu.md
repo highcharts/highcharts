@@ -31,16 +31,12 @@ Grid.grid('container', {
 
 ### Enabling behavior
 
-The context menu is enabled/disabled per column using `contextMenu.enabled`.
+The context menu is controlled per column using `contextMenu.enabled`.
 
-When `enabled` is omitted, Grid enables the context menu when:
-
-- `contextMenu.items` is provided (explicit opt-in), or
-- built-in actions are registered by a composed feature and at least one of
-  those actions is enabled for the clicked cell.
-
-In Grid Pro, row pinning registers built-in actions by default:
-`pinRowTop`, `pinRowBottom`, `unpinRow`.
+If `enabled` is omitted, Grid opens the menu when you provide
+`contextMenu.items`, or when a Grid Pro feature adds an active built-in item.
+For example, row pinning adds its menu items when
+`rendering.rows.pinning.enabled` is `true`.
 
 If `items` is empty, the browser's native context menu is kept.
 
@@ -62,25 +58,24 @@ Each item supports:
 - `disabled: true`: Disables the item
 - `onClick(cell)`: Callback invoked when the item is clicked
 
-Grid Pro exposes these built-in row pinning action IDs:
+Grid Pro exposes the built-in row pinning group ID `'pinning'`. Use it to add
+the full row pinning submenu.
+
+The individual row pinning action IDs are:
 
 - `'pinRowTop'`
 - `'pinRowBottom'`
 - `'unpinRow'`
 
-These built-in actions are not available in Grid Lite.
+These built-ins are not available in Grid Lite.
 
-Built-ins and custom items can be mixed in one list in Grid Pro:
+With row pinning enabled, the built-in group can be mixed with custom items in
+Grid Pro:
 
 ```js
 contextMenu: {
     items: [
-        'pinRowTop',
-        {
-            actionId: 'unpinRow',
-            label: 'Unpin now',
-            icon: 'unpin'
-        },
+        'pinning',
         { separator: true },
         {
             label: 'Show context',

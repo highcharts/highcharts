@@ -75,6 +75,9 @@ test.describe('Pagination', () => {
                         Name: rows.map((row) => row.Name)
                     }
                 },
+                data: {
+                    idColumn: 'ID'
+                },
                 pagination: {
                     enabled: true,
                     pageSize: 10,
@@ -82,9 +85,7 @@ test.describe('Pagination', () => {
                 },
                 rendering: {
                     rows: {
-                        pinning: {
-                            idColumn: 'ID'
-                        }
+                        pinning: {}
                     }
                 }
             });
@@ -139,6 +140,9 @@ test.describe('Pagination', () => {
                         Name: rows.map((row) => row.Name)
                     }
                 },
+                data: {
+                    idColumn: 'ID'
+                },
                 pagination: {
                     enabled: true,
                     pageSize: 10,
@@ -147,9 +151,7 @@ test.describe('Pagination', () => {
                 rendering: {
                     rows: {
                         virtualization: false,
-                        pinning: {
-                            idColumn: 'ID'
-                        }
+                        pinning: {}
                     }
                 }
             });

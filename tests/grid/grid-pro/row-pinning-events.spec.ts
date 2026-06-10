@@ -32,10 +32,12 @@ test.describe('Grid Pro row pinning events', () => {
                         value: [1, 2, 3]
                     }
                 },
+                data: {
+                    idColumn: 'id'
+                },
                 rendering: {
                     rows: {
                         pinning: {
-                            idColumn: 'id',
                             topIds: [],
                             events: {
                                 beforeRowPin(e: any): void {
@@ -139,10 +141,12 @@ test.describe('Grid Pro row pinning events', () => {
                             value: [1, 2, 3]
                         }
                     },
+                    data: {
+                        idColumn: 'id'
+                    },
                     rendering: {
                         rows: {
                             pinning: {
-                                idColumn: 'id',
                                 topIds: [],
                                 events: {
                                     beforeRowPin(e: any): void {
@@ -259,11 +263,13 @@ test.describe('Grid Pro row pinning events', () => {
                         value: [1, 2, 3]
                     }
                 },
+                data: {
+                    idColumn: 'id'
+                },
                 rendering: {
                     rows: {
                         pinning: {
                             enabled: false,
-                            idColumn: 'id',
                             topIds: ['A'],
                             bottomIds: ['C'],
                             events: {

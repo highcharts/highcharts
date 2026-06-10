@@ -36,11 +36,14 @@ const columns = {
 
 const grid = Grid.grid('container', {
     gridKey: 'YOUR-GRID-KEY-HERE',
-    data: { columns },
+    data: {
+        columns,
+        idColumn: 'id'
+    },
     rendering: {
         rows: {
             pinning: {
-                idColumn: 'id',
+                enabled: true,
                 topIds: [ids[0]],
                 bottomIds: [ids[ids.length - 1]],
                 events: {

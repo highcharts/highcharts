@@ -100,7 +100,47 @@ test.describe('Cell Context Menu', () => {
         );
 
         test(
-            'No contextMenu config with explicit pinning shows defaults',
+            'No contextMenu config with pinning options keeps native context menu',
+            async ({ page }) => {
+                await page.evaluate(() => {
+                    const existing = document.getElementById(
+                        'cm-auto-pinning-config'
+                    );
+                    existing?.remove();
+
+                    const container = document.createElement('div');
+                    container.id = 'cm-auto-pinning-config';
+                    document.body.appendChild(container);
+
+                    (window as any).Grid.grid(container, {
+                        dataTable: {
+                            columns: {
+                                id: ['ROW-001'],
+                                value: [1]
+                            }
+                        },
+                        data: {
+                            idColumn: 'id'
+                        },
+                        rendering: {
+                            rows: {
+                                pinning: {}
+                            }
+                        }
+                    });
+                });
+
+                const cell = page.locator(
+                    '#cm-auto-pinning-config tbody tr[data-row-index="0"] td[data-column-id="id"]'
+                );
+                await cell.click({ button: 'right' });
+
+                await expect(page.locator('.hcg-popup')).toHaveCount(0);
+            }
+        );
+
+        test(
+            'No contextMenu config with enabled pinning shows defaults',
             async ({ page }) => {
                 await page.evaluate(() => {
                     const existing = document.getElementById('cm-auto-on');
@@ -117,10 +157,13 @@ test.describe('Cell Context Menu', () => {
                                 value: [1]
                             }
                         },
+                        data: {
+                            idColumn: 'id'
+                        },
                         rendering: {
                             rows: {
                                 pinning: {
-                                    idColumn: 'id'
+                                    enabled: true
                                 }
                             }
                         }
@@ -156,6 +199,9 @@ test.describe('Cell Context Menu', () => {
                                 id: ['ROW-001'],
                                 value: [1]
                             }
+                        },
+                        data: {
+                            idColumn: 'id'
                         }
                     }
                 );
@@ -172,8 +218,21 @@ test.describe('Cell Context Menu', () => {
                 await (window as any).cmAutoRuntimeGrid.update({
                     rendering: {
                         rows: {
+                            pinning: {}
+                        }
+                    }
+                });
+            });
+
+            await cell.click({ button: 'right' });
+            await expect(page.locator('.hcg-popup')).toHaveCount(0);
+
+            await page.evaluate(async () => {
+                await (window as any).cmAutoRuntimeGrid.update({
+                    rendering: {
+                        rows: {
                             pinning: {
-                                idColumn: 'id'
+                                enabled: true
                             }
                         }
                     }
@@ -192,8 +251,7 @@ test.describe('Cell Context Menu', () => {
                     rendering: {
                         rows: {
                             pinning: {
-                                enabled: false,
-                                idColumn: 'id'
+                                enabled: false
                             }
                         }
                     }
@@ -349,10 +407,13 @@ test.describe('Cell Context Menu', () => {
                             value: [1]
                         }
                     },
+                    data: {
+                        idColumn: 'id'
+                    },
                     rendering: {
                         rows: {
                             pinning: {
-                                idColumn: 'id'
+                                enabled: true
                             }
                         }
                     },
@@ -393,11 +454,13 @@ test.describe('Cell Context Menu', () => {
                             value: [1]
                         }
                     },
+                    data: {
+                        idColumn: 'id'
+                    },
                     rendering: {
                         rows: {
                             pinning: {
-                                enabled: false,
-                                idColumn: 'id'
+                                enabled: false
                             }
                         }
                     },
@@ -437,11 +500,13 @@ test.describe('Cell Context Menu', () => {
                             value: [1]
                         }
                     },
+                    data: {
+                        idColumn: 'id'
+                    },
                     rendering: {
                         rows: {
                             pinning: {
-                                enabled: false,
-                                idColumn: 'id'
+                                enabled: false
                             }
                         }
                     },
@@ -486,11 +551,13 @@ test.describe('Cell Context Menu', () => {
                             value: [1]
                         }
                     },
+                    data: {
+                        idColumn: 'id'
+                    },
                     rendering: {
                         rows: {
                             pinning: {
-                                enabled: false,
-                                idColumn: 'id'
+                                enabled: false
                             }
                         }
                     },
