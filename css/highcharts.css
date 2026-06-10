@@ -183,10 +183,6 @@
     color-scheme: dark;
 }
 
-.highcharts-no-touch-action {
-    touch-action: none;
-}
-
 .highcharts-root {
     display: block;
 }

@@ -1,7 +1,6 @@
 Grid.grid('container', {
     data: {
         connector: {
-            id: 'employees-json',
             type: 'CSV',
             enablePolling: true,
             dataRefreshRate: 1,

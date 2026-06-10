@@ -16,6 +16,42 @@ body {
     color: var(--highcharts-neutral-color-100);
 }
 
+:root,
+.highcharts-light {
+    --code-background: #f7f7f7;
+    --code-border: #e1e1e1;
+    --anchor-color: #007bff;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --code-background: #2a2a2a;
+        --code-border: #4a4a4a;
+        --anchor-color: #8ec3fc;
+    }
+}
+
+.highcharts-dark {
+    --code-background: #2a2a2a;
+    --code-border: #4a4a4a;
+    --anchor-color: #8ec3fc;
+}
+
+code {
+    font-family: Consolas, "courier new", monospace;
+    line-height: 1em;
+    background: var(--code-background);
+    border: 1px solid var(--code-border);
+    color: var(--highcharts-neutral-color-100);
+    padding: 2px 4px;
+    border-radius: 5px;
+    display: inline-block;
+}
+
+.highcharts-description a {
+    color: var(--anchor-color);
+}
+
 .demo,
 .highcharts-light .demo {
     padding: 8px 12px;
@@ -24,7 +60,12 @@ body {
 }
 
 .editor h2 {
-    margin: 3px 0 16px;
+    margin: 0 0 7px;
+}
+
+.editor .instructions {
+    font-size: 0.9em;
+    margin-bottom: 7px;
 }
 
 .editor,
@@ -62,15 +103,22 @@ body {
     display: inline-block;
 }
 
-.description,
-.highcharts-light .description {
-    font-style: italic;
-    font-size: 0.8em;
-    color: #777;
+#changelog {
+    max-height: 240px;
+    overflow-y: auto;
+    min-height: 48px;
 }
 
-.last {
-    margin: 8px 0 0;
+#changelog:empty::before {
+    content: "Edits will be listed here.";
+    color: #777;
+    font-style: italic;
+}
+
+#changelog div + div {
+    margin-top: 6px;
+    padding-top: 6px;
+    border-top: 1px solid #e6e6e6;
 }
 
 .highcharts-description {
@@ -87,8 +135,12 @@ body {
         border-color: #525252;
     }
 
-    .description {
+    #changelog:empty::before {
         color: #aaa;
+    }
+
+    #changelog div + div {
+        border-top-color: #525252;
     }
 }
 
@@ -101,6 +153,10 @@ body {
     border-color: #525252;
 }
 
-.highcharts-dark .description {
+.highcharts-dark #changelog:empty::before {
     color: #aaa;
+}
+
+.highcharts-dark #changelog div + div {
+    border-top-color: #525252;
 }

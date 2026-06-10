@@ -3,6 +3,7 @@ let chart = null; // Chart is not created initially
 const activeCols = new Set();
 
 Grid.grid('grid', {
+    gridKey: 'YOUR-GRID-KEY-HERE',
     data: {
         columns: {
             Year: [

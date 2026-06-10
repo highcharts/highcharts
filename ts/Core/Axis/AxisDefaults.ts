@@ -592,7 +592,7 @@ namespace AxisDefaults {
                 /**
                  * List of possible format strings used for this unit.
                  *
-                 * @type {Array<string>}
+                 * @type {Array<string|Highcharts.DateTimeFormatOptions>}
                  * @apioption xAxis.dateTimeLabelFormats.millisecond.list
                  */
 
@@ -618,7 +618,7 @@ namespace AxisDefaults {
                 /**
                  * List of possible format strings used for this unit.
                  *
-                 * @type {Array<string>}
+                 * @type {Array<string|Highcharts.DateTimeFormatOptions>}
                  * @apioption xAxis.dateTimeLabelFormats.second.list
                  */
 
@@ -644,7 +644,7 @@ namespace AxisDefaults {
                 /**
                  * List of possible format strings used for this unit.
                  *
-                 * @type {Array<string>}
+                 * @type {Array<string|Highcharts.DateTimeFormatOptions>}
                  * @apioption xAxis.dateTimeLabelFormats.minute.list
                  */
 
@@ -670,7 +670,7 @@ namespace AxisDefaults {
                 /**
                  * List of possible format strings used for this unit.
                  *
-                 * @type {Array<string>}
+                 * @type {Array<string|Highcharts.DateTimeFormatOptions>}
                  * @apioption xAxis.dateTimeLabelFormats.hour.list
                  */
 
@@ -703,7 +703,7 @@ namespace AxisDefaults {
                 /**
                  * List of possible format strings used for this unit.
                  *
-                 * @type {Array<string>}
+                 * @type {Array<string|Highcharts.DateTimeFormatOptions>}
                  * @apioption xAxis.dateTimeLabelFormats.day.list
                  */
 
@@ -726,7 +726,7 @@ namespace AxisDefaults {
                 /**
                  * List of possible format strings used for this unit.
                  *
-                 * @type {Array<string>}
+                 * @type {Array<string|Highcharts.DateTimeFormatOptions>}
                  * @apioption xAxis.dateTimeLabelFormats.week.list
                  */
 
@@ -742,7 +742,7 @@ namespace AxisDefaults {
                 /**
                  * List of possible format strings used for this unit.
                  *
-                 * @type {Array<string>}
+                 * @type {Array<string|Highcharts.DateTimeFormatOptions>}
                  * @apioption xAxis.dateTimeLabelFormats.month.list
                  */
 
@@ -765,7 +765,7 @@ namespace AxisDefaults {
                 /**
                  * List of possible format strings used for this unit.
                  *
-                 * @type {Array<string>}
+                 * @type {Array<string|Highcharts.DateTimeFormatOptions>}
                  * @apioption xAxis.dateTimeLabelFormats.year.list
                  */
 
