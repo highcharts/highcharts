@@ -577,9 +577,3 @@ release.flags = {
 };
 
 gulp.task('dist-release', release);
-
-module.exports = {
-    release,
-    updateJSONFiles,
-    updateReleaseJSON
-};
