@@ -3756,6 +3756,7 @@ class Axis {
                     // Move tick instance
                     if (ticks[oldPos]) {
                         ticks[oldPos].pos = pos;
+                        this.isDirty = true; // Mark for redraw
                     }
                     // Check if the existing tick in the new position has a
                     // new place to go
