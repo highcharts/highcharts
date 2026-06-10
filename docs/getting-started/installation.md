@@ -85,6 +85,12 @@ import 'highcharts/modules/gantt';
 
 Use this module-based setup when you need more than one product in the same application or want finer control over what gets loaded.
 
+### When to use ESM source files
+
+Highcharts also provides lower-level ESM source files under `es-modules/`. These are mainly useful in bundler-based setups when you want tighter control over bundle contents.
+
+This is more advanced than most projects need, and comes with a performance cost if you load many small files individually. In most cases, start with `highcharts`, `highcharts/highstock`, or the `esm/*.js` product bundles shown above.
+
 If you use TypeScript, see [Highcharts TypeScript declarations](https://www.highcharts.com/docs/advanced-chart-features/highcharts-typescript-declarations) for IDE support, framework notes, and advanced typing details.
 
 ## ES modules in the browser
@@ -106,12 +112,6 @@ If you are not using a bundler, you can still use modern ESM imports directly in
 ```
 
 This is a good fit for modern browser environments and simple apps without a build step.
-
-### When to use ESM core files
-
-Highcharts also provides lower-level ESM source files under `es-modules/`. These are mainly useful when you want tighter control over bundle contents and tree shaking.
-
-This is more advanced than most projects need, and comes with a performance cost because of the high number of small files. In most cases, start with `highcharts`, `highcharts/highstock`, or the `esm/*.js` product bundles shown above.
 
 ## Script tags
 
