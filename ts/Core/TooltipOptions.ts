@@ -498,7 +498,7 @@ export interface TooltipOptions {
      *         Header options for split tooltip
      * @sample {highstock} stock/tooltip/header
      *         Header options for split tooltip
-     * @since v13.0.0
+     * @since  13.0.0
      */
     header: TooltipHeaderOptions;
     /**
