@@ -184,6 +184,34 @@ export interface SeriesEventsOptions {
      * @since 1.2.0
      */
     show?: SeriesShowCallbackFunction;
+
+    /**
+     * Fires after the legend symbol for the series has been drawn or
+     * redrawn. Use this event to add custom  elements to the legend item group.
+     * Any elements added here should also be cleaned up in the
+     * [destroyLegendSymbol](#plotOptions.series.events.destroyLegendSymbol)
+     * event.
+     *
+     * @sample {highcharts} highcharts/series/legend-symbol-object/
+     *         Custom badge added to the legend via drawLegendSymbol
+     *
+     * @since next
+     */
+    drawLegendSymbol?: EventCallback<Series, Event>;
+
+    /**
+     * Fires when the legend symbol for the series is about to be
+     * destroyed, for example when the legend is redrawn or the series is
+     * removed. Use this event to clean up any custom elements added in the
+     * [drawLegendSymbol](#plotOptions.series.events.drawLegendSymbol)
+     * event.
+     *
+     * @sample {highcharts} highcharts/series/legend-symbol-object/
+     *         Custom badge cleaned up via destroyLegendSymbol
+     *
+     * @since next
+     */
+    destroyLegendSymbol?: EventCallback<Series, Event>;
 }
 
 /**
