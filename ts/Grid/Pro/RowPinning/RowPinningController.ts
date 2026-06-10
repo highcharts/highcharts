@@ -223,7 +223,7 @@ export interface RowPinningLangA11yOptions {
     };
 }
 
-declare module '../../Core/Options' {
+declare module '../../Core/Table/CellContextMenu/CellContextMenuOptions' {
     interface CellContextMenuBuiltInActionIdRegistry {
         pinRowTop: never;
         pinRowBottom: never;
@@ -233,7 +233,9 @@ declare module '../../Core/Options' {
     interface CellContextMenuBuiltInGroupIdRegistry {
         pinning: never;
     }
+}
 
+declare module '../../Core/Options' {
     interface LangOptions {
         /**
          * Label used for the built-in "pin row to top" action.

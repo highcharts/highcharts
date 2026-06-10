@@ -48,7 +48,7 @@ import PinnedTableCell from './PinnedTableCell.js';
 import {
     registerBuiltInAction,
     registerBuiltInGroup
-} from '../../Core/Table/Body/CellContextMenuBuiltInActions.js';
+} from '../../Core/Table/CellContextMenu/CellContextMenuBuiltInActions.js';
 import {
     addEvent,
     merge,

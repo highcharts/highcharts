@@ -22,7 +22,7 @@
  *
  * */
 
-import type TableCell from './TableCell';
+import type TableCell from '../Body/TableCell';
 import type Grid from '../../Grid';
 import type { RowId } from '../../Data/DataProvider';
 import type {
@@ -35,7 +35,7 @@ import type {
     CellContextMenuItemOptions,
     CellContextMenuSubmenuItemOptions,
     CellContextMenuTypedDividerItemOptions
-} from '../../Options';
+} from './CellContextMenuOptions';
 import type { GridIconName } from '../../UI/SvgIcons';
 
 import {
