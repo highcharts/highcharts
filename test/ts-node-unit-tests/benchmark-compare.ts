@@ -1,10 +1,16 @@
 /// <reference lib="dom" />
 import type { BenchResults } from './benchmark.d.ts';
 import { opendir, readFile, appendFile, writeFile } from 'node:fs/promises';
-import type { Dir } from 'fs';
-import { join, resolve } from 'node:path';
+import { basename, join, resolve } from 'node:path';
 
 const TMP_FILE_PATH = resolve(__dirname, '../../tmp/benchmarks');
+const QUIET_BAND_THRESHOLD_PERCENT = 5;
+const REPORT_TABLE_INTRO = `> Rows with average difference between **−${QUIET_BAND_THRESHOLD_PERCENT}%** and **+${QUIET_BAND_THRESHOLD_PERCENT}%** are collapsed under a toggle inside each benchmark section.
+
+`;
+
+let hasAnyLoudLines = false;
+const benchmarkTableSections: string[] = [];
 
 function regression (yValues: number[], xValues: number[]){
     const yMean = yValues.reduce((a, b) => a + b) / yValues.length;
@@ -14,13 +20,12 @@ function regression (yValues: number[], xValues: number[]){
     let numerator = 0;
     let slopeDenominator = 0;
 
-
     for (let i = 0; i< yValues.length; i++){
         numerator += (xValues[i] - xMean) * (yValues[i] - yMean);
         slopeDenominator += Math.pow(xValues[i] - xMean, 2);
     }
 
-    slope = numerator/slopeDenominator;
+    slope = numerator / slopeDenominator;
 
     const intercept = yMean - xMean * slope;
 
@@ -57,8 +62,7 @@ function getSeriesData (
         type: 'scatter',
         data: xValues.map((x, i) => [x, yValues[i]]),
         visible
-    },
-    {
+    }, {
         name: `${seriesName} - Regression`,
         type: 'line',
         data: xValues.map(x => [x, predict(x, slope, intercept)]),
@@ -71,16 +75,28 @@ function getOutliers (array: number[], Q1:number, Q3: number){
     return array.filter(r => r < Q1 - 1.5 * IQR || r > Q3 + 1.5 * IQR);
 }
 
+function getMedian (values: number[]): number | undefined {
+    if (!values.length) {
+        return;
+    }
+
+    const sorted = [...values].sort((a, b) => a - b);
+    const mid = Math.floor(sorted.length / 2);
+
+    return sorted.length % 2 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2;
+}
+
 async function compare (base: BenchResults, actual: BenchResults){
-    console.log(`Comparing ${actual[0].test}`);
+    const chartId = basename(actual[0].test, '.bench.ts');
+    const benchmarkTitle = chartId.replace(/-/g, ' ');
+
+    console.log(`Comparing ${benchmarkTitle}`);
 
     // Remove outliers by sample size
     const filtered: Record<'base'|'actual', BenchResults> = actual.reduce((carry,entry) =>{
         const baseEntry = base.find(b => b.sampleSize === entry.sampleSize);
 
         if (baseEntry) {
-            // Compare
-            const diff = baseEntry.avg - entry.avg;
             const baseOutliers = getOutliers(baseEntry.results, baseEntry.Q1, baseEntry.Q3);
             const actualOutliers = getOutliers(entry.results, entry.Q1, entry.Q3);
 
@@ -95,8 +111,7 @@ async function compare (base: BenchResults, actual: BenchResults){
 
             return carry;
         }
-    },
-    {
+    }, {
         base: [],
         actual: []
     });
@@ -172,72 +187,102 @@ async function compare (base: BenchResults, actual: BenchResults){
         }
     });
 
-    const fmtResult = (num: number) =>
-        Math.round((num + Number.EPSILON) * 100) / 100;
+    const markdownTableHeader = `| Sample size | Avg: PR (ms) | Avg: Master (ms) | Avg Δ (ms) | Avg Δ (%) | Median: PR (ms) | Median: Master (ms) | Median Δ (ms) | Median Δ (%) |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |`;
 
-    // test, averages, diff
-    const markdownTableRows = actual.map((entry, i) =>{
-        const diff = base[i].avg - entry.avg;
+    const fmt = (n: number | undefined, sign: string = '') =>
+        n === undefined || Number.isNaN(n) ? '—' : `${Math.round(n)}${sign}`;
 
-        return `| ${entry.sampleSize} | ${fmtResult(base[i].avg)} | ${fmtResult(entry.avg)} | ${fmtResult(diff)} | ${fmtResult((diff) / entry.avg) * 100}%`;
+    const rowBands = actual.map((entry, i) => {
+        const baseEntry = base.find(b => b.sampleSize === entry.sampleSize) ?? base[i];
+
+        const diff = entry.avg - baseEntry.avg;
+        const avgPerc = (diff / baseEntry.avg) * 100;
+
+        const medianPR = getMedian(entry.results);
+        const medianMaster = getMedian(baseEntry.results);
+        const medianDiff = medianPR - medianMaster;
+        const medianPerc = (medianDiff / medianMaster) * 100;
+
+        const line = `| ${entry.sampleSize} | ${fmt(entry.avg)} | ${fmt(baseEntry.avg)} | ${fmt(diff)} | **${fmt(avgPerc, '%')}** | ${fmt(medianPR)} | ${fmt(medianMaster)} | ${fmt(medianDiff)} | **${fmt(medianPerc, '%')}** |`;
+        const inQuietBand = !Number.isNaN(avgPerc) &&
+            avgPerc >= -QUIET_BAND_THRESHOLD_PERCENT &&
+            avgPerc <= QUIET_BAND_THRESHOLD_PERCENT;
+
+        return { line, inQuietBand };
     });
 
-    const markdownTableHeader = `| Sample size | This PR avg (ms) | master avg (ms) | Diff | Percent diff |
-| --- | --- | --- | --- | --- |`;
+    const loudLines = rowBands.filter(r => !r.inQuietBand).map(r => r.line);
+    const quietLines = rowBands.filter(r => r.inQuietBand).map(r => r.line);
 
-    await appendFile(
-        join(TMP_FILE_PATH, 'table.md'),
-        `### ${actual[0].test}
+    if (loudLines.length > 0) {
+        hasAnyLoudLines = true;
+    }
+
+    const detailsSummary = `See hidden ${benchmarkTitle} results.`;
+
+    let benchSummaryMd: string;
+    if (quietLines.length === 0) {
+        benchSummaryMd = `${markdownTableHeader}
+${loudLines.join('\n')}`;
+    } else if (loudLines.length === 0) {
+        benchSummaryMd = `<details><summary>${detailsSummary}</summary>
+
 ${markdownTableHeader}
-${markdownTableRows[markdownTableRows.length - 1]}
+${quietLines.join('\n')}
 
-<details><summary>See all</summary>
+</details>`;
+    } else {
+        benchSummaryMd = `${markdownTableHeader}
+${loudLines.join('\n')}
 
+<details><summary>${detailsSummary}</summary>
 
 ${markdownTableHeader}
-${markdownTableRows.join('\n')}
+${quietLines.join('\n')}
 
+</details>`;
+    }
 
-</details>
+    benchmarkTableSections.push(`### ${benchmarkTitle}
+${benchSummaryMd}
 
 `);
 
-    const chartName = actual[0].test.replace('.bench.ts', '');
-
     await appendFile(
         join(TMP_FILE_PATH, 'report.html'), `
-        <div id="${chartName}"></div>
+        <div id="${chartId}"></div>
         <script type="text/javascript">
-        Highcharts.chart("${chartName}", ${JSON.stringify(chartConfig(chartName, series))});
+        Highcharts.chart("${chartId}", ${JSON.stringify(chartConfig(benchmarkTitle, series))});
         </script>`
     );
 }
 
 async function compareFile(actualFilePath: string, baseFilePath: string, comparisonsMade: number) {
 
-    const baseFileContent = await readFile(
+    const actualFileContent = await readFile(
         actualFilePath,
         'utf-8'
-    ).catch((e)=> console.log(e, 'couldnt read actual file'));
+    ).catch((e)=> console.log(e, 'couldn\'t read actual file'));
 
-    if (!baseFileContent) {
+    if (!actualFileContent) {
         return comparisonsMade;
     }
         // Do a compare
-        const actual = await readFile(
-        baseFilePath,
-            'utf-8'
+        const baseFileContent = await readFile(
+            baseFilePath,
+                'utf-8'
         ).catch(() => {throw new Error('File vanished');});
 
+        const actual = JSON.parse(actualFileContent);
         const base = JSON.parse(baseFileContent);
-        const act = JSON.parse(actual);
 
         // They should be arrays of objects
-    if (!(Array.isArray(base) && Array.isArray(act))) {
+    if (!(Array.isArray(base) && Array.isArray(actual))) {
         return comparisonsMade;
     }
-    await compare(base, act);
-    return comparisonsMade+1;
+    await compare(base, actual);
+    return comparisonsMade + 1;
 
 }
 
@@ -251,16 +296,13 @@ async function compareDirectories(
         throw new Error(`Could not open ${TMP_FILE_PATH}. It may not exist. Try running \`npm run benchmark\``);
     });
     for await (const dirEntry of directory) {
-
-        const isFile = dirEntry.isFile() && dirEntry.name.endsWith('.json');
-        const isDir = dirEntry.isDirectory();
-        if (isFile){
+        if (dirEntry.isFile() && dirEntry.name.endsWith('.json')){
             comparisonsMade = await compareFile(
                 join(actualDirPath, dirEntry.name),
                 join(baseDirPath, dirEntry.name),
                 comparisonsMade
             );
-        } else if(isDir) {
+        } else if(dirEntry.isDirectory()) {
             comparisonsMade = await compareDirectories(
                 comparisonsMade,
                 join(baseDirPath, dirEntry.name),
@@ -271,8 +313,6 @@ async function compareDirectories(
     return comparisonsMade;
 }
 async function compareBenchmarks (){
-
-    await writeFile(join(TMP_FILE_PATH, 'table.md'), '');
     await writeFile(join(TMP_FILE_PATH, 'report.html'), `
         <script src="https://code.highcharts.com/highcharts.js"></script>`);
 
@@ -281,6 +321,22 @@ async function compareBenchmarks (){
         join(TMP_FILE_PATH, 'base'),
         join(TMP_FILE_PATH, 'actual')
     );
+
+    const body = benchmarkTableSections.join('');
+
+    if (!hasAnyLoudLines) {
+        await writeFile(
+            join(TMP_FILE_PATH, 'table.md'),
+            `### No significant performance changes.
+
+<details><summary>See all tests.</summary>
+
+${REPORT_TABLE_INTRO}${body}</details>
+`
+        );
+    } else {
+        await writeFile(join(TMP_FILE_PATH, 'table.md'), `${REPORT_TABLE_INTRO}${body}`);
+    }
 
     if (comparisonsMade > 0){
         console.log('Report saved at', resolve(__dirname,TMP_FILE_PATH, 'report.html'));

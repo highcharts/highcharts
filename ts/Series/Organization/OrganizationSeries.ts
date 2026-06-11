@@ -5,8 +5,9 @@
  *  (c) 2018-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -44,10 +45,11 @@ import {
     extend,
     isNumber,
     merge,
-    pick
+    pick,
+    splat
 } from '../../Shared/Utilities.js';
-import TextPath from '../../Extensions/TextPath.js';
-TextPath.compose(SVGElement);
+import { composeTextPath } from '../../Extensions/TextPath.js';
+composeTextPath(SVGElement);
 
 /* *
  *
@@ -103,10 +105,10 @@ class OrganizationSeries extends SankeySeries {
         const shapeArgs = point.shapeArgs,
             text = dataLabel.text;
         if (options.useHTML && shapeArgs) {
-            const pAdjust = (
-                (this.options.borderWidth as any) +
-                2 * (this.options.dataLabels as any).padding
-            );
+            const padding = splat(this.options.dataLabels.padding || 0),
+                borderWidth = this.options.borderWidth || 0,
+                padjustX = borderWidth + 2 * padding[3 % padding.length],
+                padjustY = borderWidth + 2 * padding[0 % padding.length];
 
             let width = shapeArgs.width || 0,
                 height = shapeArgs.height || 0;
@@ -116,8 +118,8 @@ class OrganizationSeries extends SankeySeries {
                 height = shapeArgs.width || 0;
             }
 
-            height -= pAdjust;
-            width -= pAdjust;
+            width -= padjustX;
+            height -= padjustY;
 
             text.foreignObject?.attr({
                 x: 0,

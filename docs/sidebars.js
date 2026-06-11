@@ -102,7 +102,6 @@ module.exports = {
             'dashboards/edit-mode',
             'dashboards/types-of-components',
             'dashboards/grid-component',
-            'dashboards/grid-migration',
             'dashboards/kpi-component',
             'dashboards/highcharts-component',
             'dashboards/html-component',
@@ -122,6 +121,7 @@ module.exports = {
         'Grid': [
             'grid/general',
             'grid/installation',
+            'grid/grid-key',
             'grid/understanding-grid',
             {
                 'Columns': [
@@ -138,6 +138,8 @@ module.exports = {
                 'Rows': [
                     'grid/rows/index',
                     'grid/rows/data',
+                    'grid/rows/tree-view',
+                    'grid/rows/pinning',
                     'grid/rows/pagination',
                     'grid/rows/virtualization',
                     'grid/rows/performance'
@@ -147,7 +149,8 @@ module.exports = {
                 'Cells': [
                     'grid/cells/index',
                     'grid/cells/styling-and-theming',
-                    'grid/cells/formatting'
+                    'grid/cells/formatting',
+                    'grid/cell-context-menu'
                 ]
             },
             {
@@ -273,6 +276,7 @@ module.exports = {
         'Working with data': [
             'working-with-data/data-intro',
             'working-with-data/data-compression',
+            'working-with-data/using-datatables-in-series',
             'working-with-data/data-module',
             'working-with-data/custom-preprocessing',
             'working-with-data/live-data',
@@ -313,6 +317,7 @@ module.exports = {
             }
         ],
         'Chart design and style': [
+            'chart-design-and-style/branding',
             'chart-design-and-style/design-and-style',
             'chart-design-and-style/colors',
             'chart-design-and-style/pattern-fills',
@@ -349,7 +354,7 @@ module.exports = {
             'flutter/your-first-chart',
             'flutter/highcharts-bundling'
         ],
-        'React integration': [
+        'React': [
             'react/getting-started',
             {
                 'Components': [
@@ -357,18 +362,24 @@ module.exports = {
                     'react/components/series-types',
                     {
                         'Chart elements': [
-                            'react/components/chart-elements/accessibility',
+                            'react/components/chart-elements/title',
+                            'react/components/chart-elements/subtitle',
                             'react/components/chart-elements/credits',
-                            'react/components/chart-elements/data',
-                            'react/components/chart-elements/drilldown',
-                            'react/components/chart-elements/exporting',
                             'react/components/chart-elements/legend',
                             'react/components/chart-elements/plot-options',
-                            'react/components/chart-elements/subtitle',
-                            'react/components/chart-elements/title',
                             'react/components/chart-elements/tooltip',
                             'react/components/chart-elements/x-axis',
                             'react/components/chart-elements/y-axis'
+                        ],
+                        'Modules': [
+                            'react/components/modules/accessibility',
+                            'react/components/modules/exporting',
+                            'react/components/modules/data',
+                            'react/components/modules/boost',
+                            'react/components/modules/drilldown',
+                            'react/components/modules/broken-axis',
+                            'react/components/modules/draggable-points',
+                            'react/components/modules/stock-tools',
                         ]
                     },
                     'react/components/technical-indicators'
@@ -376,11 +387,15 @@ module.exports = {
             },
             'react/data-handling',
             'react/chart-instance',
+            'react/typescript',
+            'react/component-wrapping',
+            'react/highcharts-instance',
             'react/options-component-format',
             'react/nextjs',
             'react/bundling-and-tree-shaking',
             'react/component-children',
-            'react/v4-migration-guide'
+            'react/v4-migration-guide',
+            'react/v5-migration-guide'
         ]
     }
 };

@@ -4,8 +4,9 @@
  *
  *  (c) 2020-2026 Highsoft AS
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  *  Authors:
@@ -234,6 +235,72 @@ class FilteringController {
                     value: false
                 };
         }
+    }
+
+    /**
+     * Compares two serializable filter conditions produced from Grid options.
+     *
+     * @param left
+     * The current filter condition.
+     *
+     * @param right
+     * The next filter condition.
+     */
+    public static filterConditionsEqual(
+        left?: FilterCondition,
+        right?: FilterCondition
+    ): boolean {
+        if (left === right) {
+            return true;
+        }
+
+        if (!left || !right) {
+            return false;
+        }
+
+        if (
+            typeof left === 'function' ||
+            typeof right === 'function' ||
+            left.operator !== right.operator
+        ) {
+            return false;
+        }
+
+        if ('condition' in left || 'condition' in right) {
+            return (
+                'condition' in left &&
+                'condition' in right &&
+                FilteringController.filterConditionsEqual(
+                    left.condition,
+                    right.condition
+                )
+            );
+        }
+
+        if ('conditions' in left || 'conditions' in right) {
+            return (
+                'conditions' in left &&
+                'conditions' in right &&
+                left.conditions.length === right.conditions.length &&
+                left.conditions.every((condition, index): boolean =>
+                    FilteringController.filterConditionsEqual(
+                        condition,
+                        right.conditions[index]
+                    )
+                )
+            );
+        }
+
+        return (
+            'columnId' in left &&
+            'columnId' in right &&
+            left.columnId === right.columnId &&
+            left.value === right.value &&
+            (
+                ('ignoreCase' in left ? left.ignoreCase : void 0) ===
+                ('ignoreCase' in right ? right.ignoreCase : void 0)
+            )
+        );
     }
 
     /**

@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -33,7 +34,7 @@ import type {
 import type Series from '../../Core/Series/Series';
 import type TimeTicksInfoObject from '../../Core/Axis/TimeTicksInfoObject';
 import type { SeriesTypeOptions } from '../../Core/Series/SeriesType';
-import type Types from '../../Shared/Types';
+import type { TypedArray } from '../../Shared/Types';
 
 import ApproximationRegistry from './ApproximationRegistry.js';
 import DataGroupingDefaults from './DataGroupingDefaults.js';
@@ -209,7 +210,7 @@ export interface DataGroupingInfoObject {
 export interface DataGroupingResultObject {
     /**
      * @name Highcharts.DataGroupingResultObject#modified
-     * @type {Highcharts.DataTableCore}
+     * @type {Highcharts.DataTable}
      */
     modified: DataTableCore;
 
@@ -237,7 +238,7 @@ const baseGeneratePoints = seriesProto.generatePoints;
 /** @internal */
 function adjustExtremes(
     xAxis: Axis,
-    groupedXData: Array<number>|Types.TypedArray
+    groupedXData: Array<number>|TypedArray
 ): void {
     // Make sure the X axis extends to show the first group (#2533)
     // But only for visible series (#5493, #6393)
@@ -294,7 +295,7 @@ function adjustExtremes(
 /** @internal */
 function anchorPoints(
     series: Series,
-    groupedXData: Array<number>|Types.TypedArray,
+    groupedXData: Array<number>|TypedArray,
     xMax: number
 ): void {
     const options = series.options,
@@ -490,7 +491,7 @@ function applyGrouping(
 
         let modified = groupedData.modified,
             groupedXData = modified.getColumn('x', true) as
-                Array<number>|Types.TypedArray,
+                Array<number>|TypedArray,
             gapSize = 0;
 
         // The smoothed option is deprecated, instead, there is a fallback
@@ -610,6 +611,7 @@ function destroyGroupedData(
     // Clear previous groups
     if (this.groupedData) {
         this.groupedData.forEach(function (
+            this: Series,
             point: Point,
             i: number
         ): void {
@@ -695,11 +697,17 @@ function groupData(
     groupPositions: Array<number>,
     approximation: (ApproximationKeyValue|Function)
 ): DataGroupingResultObject {
-    const xData = table.getColumn('x', true) as Array<number> || [],
+    const xData = (table === this.dataTable) ?
+            // If the table is the series dataTable, get the cached x data
+            // to avoid undefined x values from the data table.
+            this.getColumn('x') :
+            table.getColumn('x', true) as Array<number>,
         yData = table.getColumn('y', true) as Array<number>,
         series = this,
+        topTable = series.dataTable,
+        cropStart = series.cropStart || 0,
         data = series.data,
-        dataOptions = series.options && series.options.data,
+        dataOptions = series.options?.data,
         groupedXData = [],
         modified = new DataTableCore(),
         groupMap = [],
@@ -713,10 +721,7 @@ function groupData(
         extendedPointArrayMap = ['x'].concat(pointArrayMap || ['y']),
         // Data columns to be applied to the modified data table at the end
         valueColumns = (pointArrayMap || ['y']).map((): Array<number> => []),
-        groupAll = (
-            this.options.dataGrouping &&
-            this.options.dataGrouping.groupAll
-        );
+        groupAll = this.options.dataGrouping?.groupAll;
 
     let pointX,
         pointY,
@@ -778,15 +783,19 @@ function groupData(
             // `name` and `color` or custom properties. Implementers can
             // override this from the approximation function, where they can
             // write custom options to `this.dataGroupInfo.options`.
-            if (series.pointClass && !defined(series.dataGroupInfo.options)) {
+            if (
+                series.pointClass &&
+                !defined(series.dataGroupInfo.options) &&
+                dataOptions
+            ) {
                 // Convert numbers and arrays into objects
                 series.dataGroupInfo.options = merge(
                     series.pointClass.prototype
                         .optionsToObject.call(
-                            { series: series },
-                            (series.options.data as any)[
-                                (series.cropStart as any) + start
-                            ]
+                            { series },
+                            topTable.getRowObject(
+                                cropStart + start
+                            ) as unknown as PointOptions
                         )
                 );
 
@@ -837,7 +846,9 @@ function groupData(
                 point = (data && data[index]) ||
                     series.pointClass.prototype.applyOptions.apply({
                         series: series
-                    }, [(dataOptions as any)[index]]);
+                    }, [
+                        topTable.getRowObject(index) as unknown as PointOptions
+                    ]);
 
             let val;
 

@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Grzegorz Blachliński
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -32,7 +33,8 @@ import { pushUnique, wrap } from '../../Shared/Utilities.js';
  * */
 
 /**
- *
+ * Adds 3D behavior to the area series.
+ * @internal
  */
 function compose(
     AreaSeriesClass: typeof AreaSeries
@@ -49,7 +51,8 @@ function compose(
 }
 
 /**
- *
+ * Extends the area path with a projected bottom path in 3D charts.
+ * @internal
  */
 function wrapAreaSeriesGetGraphPath(
     this: AreaSeries,
@@ -95,7 +98,10 @@ function wrapAreaSeriesGetGraphPath(
             series.markerGroup.add(series.group);
             series.markerGroup.attr({
                 translateX: 0,
-                translateY: 0
+                translateY: 0,
+
+                // Preserve the established 3D area paint order.
+                zIndex: 0
             });
         }
         series.group.attr({
@@ -136,8 +142,10 @@ function wrapAreaSeriesGetGraphPath(
  *
  * */
 
+/** @internal */
 const Area3DSeries = {
     compose
 };
 
+/** @internal */
 export default Area3DSeries;

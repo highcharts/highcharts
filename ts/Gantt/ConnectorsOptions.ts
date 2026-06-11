@@ -3,8 +3,9 @@
  *  (c) 2016-2026 Highsoft AS
  *  Authors: Øystein Moseng, Lars A. V. Cabrera
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -233,6 +234,20 @@ export interface ConnectorsMarkerOptions {
      * @apioption connectors.marker.width
      */
     width?: number;
+
+    /**
+     * The x offset of the marker.
+     *
+     * @since 13.0.0
+     */
+    xOffset?: number;
+
+    /**
+     * The y offset of the marker.
+     *
+     * @since 13.0.0
+     */
+    yOffset?: number;
 }
 
 /**

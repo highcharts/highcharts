@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -46,8 +47,7 @@ import type Tick from '../Core/Axis/Tick';
 
 import A from '../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
-import BorderRadius from '../Extensions/BorderRadius.js';
-const { optionsToObject } = BorderRadius;
+import { optionsToObject } from '../Extensions/BorderRadius.js';
 import D from '../Core/Defaults.js';
 const { defaultOptions } = D;
 import H from '../Core/Globals.js';
@@ -1490,25 +1490,24 @@ function wrapPointPos(
     this: PolarPoint,
     proceed: Function,
     chartCoordinates?: boolean,
+    plotX: number|undefined = this.plotX,
     plotY: number|undefined = this.plotY
 ): [number, number]|undefined {
-    if (!this.destroyed) {
-        const { plotX, series } = this,
-            { chart } = series;
+    const { series } = this,
+        { chart } = series || {};
 
-        if (
-            chart.polar &&
-            isNumber(plotX) &&
-            isNumber(plotY)
-        ) {
-            return [
-                plotX + (chartCoordinates ? chart.plotLeft : 0),
-                plotY + (chartCoordinates ? chart.plotTop : 0)
-            ];
-        }
-
-        return proceed.call(this, chartCoordinates, plotY);
+    if (
+        chart?.polar &&
+        isNumber(plotX) &&
+        isNumber(plotY)
+    ) {
+        return [
+            plotX + (chartCoordinates ? chart.plotLeft : 0),
+            plotY + (chartCoordinates ? chart.plotTop : 0)
+        ];
     }
+
+    return proceed.call(this, chartCoordinates, plotX, plotY);
 }
 
 /* *
@@ -1542,7 +1541,7 @@ class PolarAdditions {
         LineSeriesClass: typeof LineSeries,
         SplineSeriesClass: typeof SplineSeries
     ): void {
-        Pane.compose(ChartClass, PointerClass, SeriesClass);
+        Pane.compose(ChartClass, PointerClass);
         RadialAxis.compose(AxisClass, TickClass);
 
         if (pushUnique(composed, 'Polar')) {
@@ -1752,7 +1751,7 @@ class PolarAdditions {
         // in two dimensions.
         if (series.kdByAngle) {
             clientX = (
-                (plotX / Math.PI * 180) + (xAxis.pane.options.startAngle as any)
+                (plotX / Math.PI * 180) + (xAxis.pane.options.startAngle || 0)
             ) % 360;
             if (clientX < 0) { // #2665
                 clientX += 360;

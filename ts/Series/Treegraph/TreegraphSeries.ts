@@ -1,10 +1,11 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Paweł Lysy Grzegorz Blachliński
+ *  Authors: Paweł Lysy, Grzegorz Blachliński
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -49,7 +50,7 @@ import { TreegraphSeriesLevelOptions } from './TreegraphSeriesOptions.js';
 import TreegraphSeriesDefaults from './TreegraphSeriesDefaults.js';
 import TreemapPoint from '../Treemap/TreemapPoint.js';
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
-import TextPath from '../../Extensions/TextPath.js';
+import { composeTextPath } from '../../Extensions/TextPath.js';
 import {
     arrayMax,
     crisp,
@@ -59,7 +60,8 @@ import {
     relativeLength,
     splat
 } from '../../Shared/Utilities.js';
-TextPath.compose(SVGElement);
+composeTextPath(SVGElement);
+
 /* *
  *
  *  Declarations
@@ -266,7 +268,7 @@ class TreegraphSeries extends TreemapSeries {
                 (series.mapOptionsToLevel as any)[point.node.level ?? 0] || {};
             if (point.node.parent) {
                 const pointOptions = merge(levelOptions, point.options);
-                if (!point.linkToParent || point.linkToParent.destroyed) {
+                if (!point.linkToParent || point.linkToParent.condemned) {
                     const link = new series.LinkClass(
                         series,
                         pointOptions,
@@ -883,6 +885,7 @@ export default TreegraphSeries;
  *     }]
  *  ```
  *
+ * @basic
  * @type      {Array<*>}
  * @extends   series.treemap.data
  * @product   highcharts

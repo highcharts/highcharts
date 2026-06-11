@@ -4,8 +4,9 @@
  *
  *  (c) 2020-2026 Highsoft AS
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  *  Authors:
@@ -29,6 +30,7 @@ import type HeaderRow from './Header/HeaderRow';
 
 import Column from './Column';
 import Row from './Row';
+import Globals from '../Globals.js';
 import Templating from '../../../Core/Templating.js';
 import { fireEvent } from '../../../Shared/Utilities.js';
 
@@ -132,9 +134,17 @@ abstract class Cell {
      * @internal
      */
     protected init(): HTMLTableCellElement {
-        const cell = document.createElement('td', {});
+        const isRowHeader = !!this.column?.options.cells?.rowHeader;
+        const cell = document.createElement(isRowHeader ? 'th' : 'td', {});
 
-        cell.setAttribute('role', 'gridcell');
+        cell.classList.add(Globals.getClassName('cell'));
+
+        if (isRowHeader) {
+            cell.setAttribute('scope', 'row');
+            cell.setAttribute('role', 'rowheader');
+        } else {
+            cell.setAttribute('role', 'gridcell');
+        }
 
         return cell;
     }
@@ -208,7 +218,14 @@ abstract class Cell {
 
         const getVerticalPos = (): number => {
             if ((row as TableRow).index !== void 0) {
-                return (row as TableRow).index - vp.rows[0].index;
+                const renderedRowIndex = vp.getRenderedRows()
+                    .indexOf(row as TableRow);
+
+                if (renderedRowIndex !== -1) {
+                    return renderedRowIndex;
+                }
+
+                return (row as TableRow).index - (vp.rows[0]?.index ?? 0);
             }
 
             const level = (row as unknown as HeaderRow).level;
@@ -252,7 +269,7 @@ abstract class Cell {
                 return;
             }
 
-            const nextRow = vp.rows[nextVerticalDir];
+            const nextRow = vp.getRenderedRows()[nextVerticalDir];
             if (nextRow) {
                 nextRow.cells[column.index + dir[1]]?.htmlElement.focus();
             }

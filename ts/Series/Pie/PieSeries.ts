@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -26,7 +27,6 @@ const { getStartAndEndRadians } = CU;
 import ColumnSeries from '../Column/ColumnSeries.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
-import { Palette } from '../../Core/Color/Palettes.js';
 import PiePoint from './PiePoint.js';
 import PieSeriesDefaults from './PieSeriesDefaults.js';
 import Series from '../../Core/Series/Series.js';
@@ -216,7 +216,8 @@ class PieSeries extends Series {
                 this.graph.attr({
                     'stroke-width': options.borderWidth,
                     fill: options.fillColor || 'none',
-                    stroke: options.color || Palette.neutralColor20
+                    stroke: options.color ||
+                        'var(--highcharts-neutral-color-20)'
                 });
             }
 
@@ -265,7 +266,7 @@ class PieSeries extends Series {
      * logic in data labels.
      * @internal
      */
-    public getX(
+    public getXPos(
         y: number,
         left: boolean,
         point: PiePoint,
@@ -287,7 +288,10 @@ class PieSeries extends Series {
             (Math.cos(angle) * (radius + distance)) +
             (
                 distance > 0 ?
-                    (left ? -1 : 1) * (dataLabel.padding || 0) :
+                    // 5 is the horizontal part pointing out of the label. It
+                    // used to be the `padding` setting, but that doesn't make
+                    // sense
+                    (left ? -5 : 5) :
                     0
             );
         return x;
@@ -407,7 +411,6 @@ class PieSeries extends Series {
         this.generatePoints();
 
         const series = this,
-            precision = 1000, // Issue #172
             options = series.options,
             slicedOffset = options.slicedOffset,
             radians = getStartAndEndRadians(
@@ -466,8 +469,8 @@ class PieSeries extends Series {
                 y: positions[1],
                 r: positions[2] / 2,
                 innerR: positions[3] / 2,
-                start: Math.round(start * precision) / precision,
-                end: Math.round(end * precision) / precision
+                start,
+                end
             };
             point.shapeType = 'arc';
             point.shapeArgs = shapeArgs;
