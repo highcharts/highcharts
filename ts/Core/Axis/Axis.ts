@@ -60,7 +60,7 @@ const { defaultOptions } = D;
 import F from '../Foundation.js';
 const { registerEventOptions } = F;
 import H from '../Globals.js';
-const { deg2rad } = H;
+const { deg2rad, doc, win } = H;
 import { Palette } from '../Color/Palettes.js';
 import Tick from './Tick.js';
 import {
@@ -3269,13 +3269,28 @@ class Axis {
     public labelMetrics(): FontMetricsObject {
         const renderer = this.chart.renderer,
             tick = this.ticks[Object.keys(this.ticks)[0]],
-            fontSize = this.options.labels?.style?.fontSize,
-            fontSizePx =
-                typeof fontSize === 'number' ? fontSize :
-                    typeof fontSize === 'string' &&
-                        /^\d+(\.\d+)?px$/.test(fontSize) ?
-                        parseFloat(fontSize) :
-                        void 0;
+            fontSize = this.options.labels?.style?.fontSize;
+
+        let fontSizePx: number|undefined;
+
+        if (typeof fontSize === 'number') {
+            fontSizePx = fontSize;
+        } else if (typeof fontSize === 'string') {
+            if (/^\d+(\.\d+)?px$/.test(fontSize)) {
+                fontSizePx = parseFloat(fontSize);
+            } else {
+                const container = this.chart.container,
+                    span = doc.createElement('span');
+                span.style.cssText =
+                    `font-size:${fontSize};position:absolute;` +
+                    'visibility:hidden';
+                container.appendChild(span);
+                fontSizePx = parseFloat(
+                    win.getComputedStyle(span).fontSize
+                );
+                container.removeChild(span);
+            }
+        }
 
         return renderer.fontMetrics(
             tick?.label || tick?.movedLabel || fontSizePx || renderer.box
@@ -3299,8 +3314,9 @@ class Axis {
             axisLen = this.len,
             min = (this.min as any),
             max = (this.max as any),
+            categoriesOffset = this.categories ? 1 : 0,
             slotSize = axisLen / (
-                ((this.categories ? 1 : 0) + max - min) / tickInterval
+                (categoriesOffset + max - min) / tickInterval
             ),
             rotationOption = labelOptions.rotation,
             labelHeight = this.labelMetrics().h,
@@ -3332,7 +3348,8 @@ class Axis {
                         ): number => {
                             const newInterval = step * tickInterval;
                             return Math.ceil(max / newInterval) -
-                                Math.floor(min / newInterval);
+                                Math.floor(min / newInterval) +
+                                categoriesOffset;
                         };
                         let slotCount = getSlotCount(step);
                         while (
