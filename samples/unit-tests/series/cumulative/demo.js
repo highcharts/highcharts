@@ -169,15 +169,12 @@ QUnit.test('cumulative start option', function (assert) {
     );
 
     chart.update({
-        xAxis: {
-            min: 6,
-            max: 10
-        },
         series: [{
             cumulativeStart: true,
             data: originalData
         }]
-    }, true, true);
+    }, false, true);
+    chart.xAxis[0].setExtremes(6, 10);
 
     const visiblePoints = chart.series[0].points.filter(
         point => point.x >= 6 && point.x <= 10
