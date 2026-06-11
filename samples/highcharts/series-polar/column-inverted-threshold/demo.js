@@ -2,8 +2,7 @@ Highcharts.chart('container', {
     chart: {
         type: 'column',
         inverted: true,
-        polar: true,
-        marginTop: 50
+        polar: true
     },
     title: {
         text: 'Custom thresholds'

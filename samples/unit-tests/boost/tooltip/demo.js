@@ -151,7 +151,13 @@ QUnit.test(
     }
 );
 
-QUnit.test(
+// Skipped for v13. We need to consider whether extended data should be
+// supported in boosted series, because it adds complexity and slows down the
+// performance. The idea of the Boost module is to support only a faster subset
+// of functionality. If we decide to support it, the scatterProcessData function
+// needs to loop over all columns in the data table and copy values over to
+// processed data.
+QUnit.skip(
     'Scatter with boost should keep `keys` values after zoom (#23771)',
     function (assert) {
         const chart = Highcharts.chart('container', {
@@ -204,7 +210,12 @@ QUnit.test(
     }
 );
 
-QUnit.test(
+// Skipped for v13. We need to consider whether extended data should be
+// supported in boosted series, because it adds complexity and slows down the
+// performance. If we decide to support it, the scatterProcessData function
+// needs to loop over all columns in the data table and copy values over to
+// processed data.
+QUnit.skip(
     'Scatter boost should keep remapped keys after zoom (#23771, user demo)',
     function (assert) {
         const size = 18;

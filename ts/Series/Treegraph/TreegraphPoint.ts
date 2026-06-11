@@ -25,7 +25,6 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
 import type { CollapseButtonOptions } from './TreegraphSeriesOptions';
 
-import { Palette } from '../../Core/Color/Palettes';
 import Point from '../../Core/Series/Point.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
@@ -120,7 +119,7 @@ class TreegraphPoint extends TreemapPoint {
                 fill = (
                     btnOptions.fillColor ||
                     point.color ||
-                    Palette.neutralColor20
+                    'var(--highcharts-neutral-color-20)'
                 );
             point.collapseButton = chart.renderer
                 .label(point.collapsed ? '+' : '-', x, y, shape)
@@ -132,7 +131,8 @@ class TreegraphPoint extends TreemapPoint {
                     rotation: chart.inverted ? 90 : 0,
                     rotationOriginX: width / 2,
                     rotationOriginY: height / 2,
-                    stroke: btnOptions.lineColor || Palette.backgroundColor,
+                    stroke: btnOptions.lineColor ||
+                        'var(--highcharts-background-color)',
                     'stroke-width': btnOptions.lineWidth,
                     'text-align': 'center',
                     align: 'center',
@@ -147,7 +147,7 @@ class TreegraphPoint extends TreemapPoint {
                     {
                         color: typeof fill === 'string' ?
                             chart.renderer.getContrast(fill) :
-                            Palette.neutralColor80
+                            'var(--highcharts-neutral-color-80)'
                     },
                     style
                 ))
