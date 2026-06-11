@@ -1,6 +1,6 @@
 (async () => {
     const { default: Highcharts } = await import(
-        'https://cdn.jsdelivr.net/npm/highcharts@v13.0.0-beta.2/esm/highcharts-autoload.js'
+        'https://code.highcharts.com/esm/highcharts-autoload.js'
     );
     Highcharts.chart('container', {
         chart: {
