@@ -35,25 +35,23 @@ Grid.grid('container', {
 });
 ```
 
-In Grid Pro, row pinning is enabled by default. Use `pinning.enabled: false` to
-disable row pinning UI:
+Built-in row pinning UI, including context menu actions, is optional. Set
+`pinning.enabled: true` to show it:
 
 ```js
 Grid.grid('container', {
     rendering: {
         rows: {
             pinning: {
-                enabled: false
+                enabled: true
             }
         }
     }
 });
 ```
 
-When disabled, Grid still applies row pinning config (`topIds`, `bottomIds`,
-`resolve`, etc.) and the runtime row pinning API continues to work. The
-setting only disables built-in row pinning affordances such as context menu
-actions.
+To use row pinning without built-in controls, omit `enabled` or set it to
+`false`. Pinned rows and the runtime row pinning API continue to work.
 
 ```js
 const grid = Grid.grid('container', {
@@ -195,6 +193,27 @@ Available built-in actions are:
 
 For configuration and customization details, see
 [Cell context menu](https://www.highcharts.com/docs/grid/cell-context-menu).
+
+These actions appear in the default cell context menu when
+`pinning.enabled` is `true`. If you define custom `contextMenu.items`, add the
+built-in `'pinning'` group to include them:
+
+```js
+rendering: {
+    rows: {
+        pinning: {
+            enabled: true
+        }
+    }
+},
+columnDefaults: {
+    cells: {
+        contextMenu: {
+            items: ['pinning']
+        }
+    }
+}
+```
 
 ## Sorting and filtering behavior
 

@@ -26,16 +26,16 @@ test.describe('Grid Pro row pinning events', () => {
             document.body.appendChild(container);
 
             const grid = (window as any).Grid.grid(container, {
-                dataTable: {
+                data: {
                     columns: {
                         id: ['A', 'B', 'C'],
                         value: [1, 2, 3]
-                    }
+                    },
+                    idColumn: 'id'
                 },
                 rendering: {
                     rows: {
                         pinning: {
-                            idColumn: 'id',
                             topIds: [],
                             events: {
                                 beforeRowPin(e: any): void {
@@ -133,16 +133,16 @@ test.describe('Grid Pro row pinning events', () => {
                 document.body.appendChild(container);
 
                 const grid = (window as any).Grid.grid(container, {
-                    dataTable: {
+                    data: {
                         columns: {
                             id: ['A', 'B', 'C'],
                             value: [1, 2, 3]
-                        }
+                        },
+                        idColumn: 'id'
                     },
                     rendering: {
                         rows: {
                             pinning: {
-                                idColumn: 'id',
                                 topIds: [],
                                 events: {
                                     beforeRowPin(e: any): void {
@@ -253,17 +253,17 @@ test.describe('Grid Pro row pinning events', () => {
             document.body.appendChild(container);
 
             const grid = (window as any).Grid.grid(container, {
-                dataTable: {
+                data: {
                     columns: {
                         id: ['A', 'B', 'C'],
                         value: [1, 2, 3]
-                    }
+                    },
+                    idColumn: 'id'
                 },
                 rendering: {
                     rows: {
                         pinning: {
                             enabled: false,
-                            idColumn: 'id',
                             topIds: ['A'],
                             bottomIds: ['C'],
                             events: {

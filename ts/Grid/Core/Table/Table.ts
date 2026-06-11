@@ -39,8 +39,8 @@ import Globals from '../Globals.js';
 
 import Cell from './Cell.js';
 import { defined, fireEvent, getStyle } from '../../../Shared/Utilities.js';
-import CellContextMenu from './Body/CellContextMenu.js';
-import CellContextMenuBuiltInActions from './Body/CellContextMenuBuiltInActions.js';
+import CellContextMenu from './CellContextMenu/CellContextMenu.js';
+import CellContextMenuBuiltInActions from './CellContextMenu/CellContextMenuBuiltInActions.js';
 
 const { makeHTMLElement } = GridUtils;
 

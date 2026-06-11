@@ -15,6 +15,30 @@ test_grid();
  */
 function test_grid() {
 
+    Grid.CellContextMenuBuiltInActions.registerBuiltInAction(
+        'showCellValue',
+        {
+            getLabel: function () {
+                return 'Show cell value';
+            },
+            icon: 'checkmark',
+            onClick: function (context): void {
+                context.cell.row.id;
+            }
+        }
+    );
+
+    Grid.CellContextMenuBuiltInActions.registerBuiltInGroup(
+        'sampleActions',
+        {
+            isVisible: function (context) {
+                context.grid;
+                return true;
+            },
+            items: ['showCellValue']
+        }
+    );
+
     const grid = Grid.grid('container', {
         data: {
             providerType: 'remote',
@@ -45,6 +69,7 @@ function test_grid() {
             },
             rows: {
                 pinning: {
+                    enabled: true,
                     events: {
                         beforeRowPin: function (e): void {
                             e.target;
@@ -65,6 +90,32 @@ function test_grid() {
                     renderer: {
                         type: 'textInput'
                     }
+                },
+                contextMenu: {
+                    items: [
+                        'pinning',
+                        {
+                            type: 'group',
+                            groupId: 'pinning'
+                        },
+                        {
+                            type: 'action',
+                            actionId: 'pinRowTop'
+                        },
+                        {
+                            type: 'separator'
+                        },
+                        {
+                            type: 'submenu',
+                            label: 'More',
+                            items: [{
+                                label: 'Custom',
+                                onClick: function (cell): void {
+                                    cell.row.id;
+                                }
+                            }]
+                        }
+                    ]
                 },
                 renderer: {
                     type: 'select',

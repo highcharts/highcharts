@@ -38,6 +38,8 @@ import Column from '../Grid/Core/Table/Column.js';
 import HeaderCell from '../Grid/Core/Table/Header/HeaderCell.js';
 import TableRow from '../Grid/Core/Table/Body/TableRow.js';
 import TableCell from '../Grid/Core/Table/Body/TableCell.js';
+import CellContextMenuBuiltInActions
+    from '../Grid/Core/Table/CellContextMenu/CellContextMenuBuiltInActions.js';
 import SvgIcons from '../Grid/Core/UI/SvgIcons.js';
 
 import ResponsiveComposition from '../Grid/Core/Responsive/ResponsiveComposition.js';
@@ -112,6 +114,7 @@ import '../Grid/Pro/Data/RemoteDataProvider.js';
 
 const G = {
     AST,
+    CellContextMenuBuiltInActions,
     CellContentPro,
     CellRenderer,
     CellRendererRegistry,
@@ -169,6 +172,7 @@ ResponsiveComposition.compose(G.Grid);
 
 export {
     AST,
+    CellContextMenuBuiltInActions,
     CellContentPro,
     CellRenderer,
     CellRendererRegistry,
