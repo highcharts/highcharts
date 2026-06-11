@@ -19,7 +19,7 @@
  *
  * */
 
-import { extend, isNumber, pick } from '../Shared/Utilities.js';
+import { extend, isNumber } from '../Shared/Utilities.js';
 
 /* *
  *
@@ -186,8 +186,8 @@ function getNode(
 
     // Calculate start and end for point if it is not already explicitly set.
     if (data) {
-        data.start = pick(data.start, start);
-        data.end = pick(data.end, end);
+        data.start ??= start;
+        data.end ??= end;
     }
 
     extend(node, {
