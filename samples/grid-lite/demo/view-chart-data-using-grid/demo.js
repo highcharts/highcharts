@@ -133,8 +133,7 @@ function createGrid() {
     gridElement.id = 'grid';
     document.getElementById('container').appendChild(gridElement);
     grid = Grid.grid('grid', {
-        dataTable:
-        {
+        data: {
             columns: cols
         },
         rendering: {

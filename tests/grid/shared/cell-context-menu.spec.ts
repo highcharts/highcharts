@@ -81,7 +81,7 @@ test.describe('Cell Context Menu', () => {
                     document.body.appendChild(container);
 
                     (window as any).Grid.grid(container, {
-                        dataTable: {
+                        data: {
                             columns: {
                                 id: ['ROW-001'],
                                 value: [1]
@@ -113,13 +113,11 @@ test.describe('Cell Context Menu', () => {
                     document.body.appendChild(container);
 
                     (window as any).Grid.grid(container, {
-                        dataTable: {
+                        data: {
                             columns: {
                                 id: ['ROW-001'],
                                 value: [1]
-                            }
-                        },
-                        data: {
+                            },
                             idColumn: 'id'
                         },
                         rendering: {
@@ -151,13 +149,11 @@ test.describe('Cell Context Menu', () => {
                     document.body.appendChild(container);
 
                     (window as any).Grid.grid(container, {
-                        dataTable: {
+                        data: {
                             columns: {
                                 id: ['ROW-001'],
                                 value: [1]
-                            }
-                        },
-                        data: {
+                            },
                             idColumn: 'id'
                         },
                         rendering: {
@@ -194,13 +190,11 @@ test.describe('Cell Context Menu', () => {
                 (window as any).cmAutoRuntimeGrid = (window as any).Grid.grid(
                     container,
                     {
-                        dataTable: {
+                        data: {
                             columns: {
                                 id: ['ROW-001'],
                                 value: [1]
-                            }
-                        },
-                        data: {
+                            },
                             idColumn: 'id'
                         }
                     }
@@ -401,13 +395,11 @@ test.describe('Cell Context Menu', () => {
                 document.body.appendChild(container);
 
                 (window as any).Grid.grid(container, {
-                    dataTable: {
+                    data: {
                         columns: {
                             id: ['A'],
                             value: [1]
-                        }
-                    },
-                    data: {
+                        },
                         idColumn: 'id'
                     },
                     rendering: {
@@ -448,13 +440,11 @@ test.describe('Cell Context Menu', () => {
                 document.body.appendChild(container);
 
                 (window as any).Grid.grid(container, {
-                    dataTable: {
+                    data: {
                         columns: {
                             id: ['ROW-001'],
                             value: [1]
-                        }
-                    },
-                    data: {
+                        },
                         idColumn: 'id'
                     },
                     rendering: {
@@ -494,13 +484,11 @@ test.describe('Cell Context Menu', () => {
                 document.body.appendChild(container);
 
                 (window as any).Grid.grid(container, {
-                    dataTable: {
+                    data: {
                         columns: {
                             id: ['ROW-001'],
                             value: [1]
-                        }
-                    },
-                    data: {
+                        },
                         idColumn: 'id'
                     },
                     rendering: {
@@ -545,13 +533,11 @@ test.describe('Cell Context Menu', () => {
                 document.body.appendChild(container);
 
                 (window as any).Grid.grid(container, {
-                    dataTable: {
+                    data: {
                         columns: {
                             id: ['ROW-001'],
                             value: [1]
-                        }
-                    },
-                    data: {
+                        },
                         idColumn: 'id'
                     },
                     rendering: {
@@ -607,7 +593,7 @@ test.describe('Cell Context Menu', () => {
                 document.body.appendChild(container);
 
                 (window as any).Grid.grid(container, {
-                    dataTable: {
+                    data: {
                         columns: {
                             id: ['ROW-001'],
                             value: [1]
@@ -653,7 +639,7 @@ test.describe('Cell Context Menu', () => {
                 document.body.appendChild(container);
 
                 (window as any).Grid.grid(container, {
-                    dataTable: {
+                    data: {
                         columns: {
                             id: ['ROW-001'],
                             value: [1]

@@ -16,16 +16,14 @@ test.describe('Pinned row cell editing', () => {
 
             const Grid = (window as any).Grid;
             (window as any).testGrid = Grid.grid(container, {
-                dataTable: {
+                data: {
                     columns: {
                         id: ['A', 'B', 'C', 'D', 'E'],
                         product: [
                             'Apples', 'Pears', 'Plums', 'Bananas', 'Oranges'
                         ],
                         price: [1.5, 2.5, 3.5, 4.5, 5.5]
-                    }
-                },
-                data: {
+                    },
                     idColumn: 'id'
                 },
                 rendering: {

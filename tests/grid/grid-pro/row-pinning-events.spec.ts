@@ -26,13 +26,11 @@ test.describe('Grid Pro row pinning events', () => {
             document.body.appendChild(container);
 
             const grid = (window as any).Grid.grid(container, {
-                dataTable: {
+                data: {
                     columns: {
                         id: ['A', 'B', 'C'],
                         value: [1, 2, 3]
-                    }
-                },
-                data: {
+                    },
                     idColumn: 'id'
                 },
                 rendering: {
@@ -135,13 +133,11 @@ test.describe('Grid Pro row pinning events', () => {
                 document.body.appendChild(container);
 
                 const grid = (window as any).Grid.grid(container, {
-                    dataTable: {
+                    data: {
                         columns: {
                             id: ['A', 'B', 'C'],
                             value: [1, 2, 3]
-                        }
-                    },
-                    data: {
+                        },
                         idColumn: 'id'
                     },
                     rendering: {
@@ -257,13 +253,11 @@ test.describe('Grid Pro row pinning events', () => {
             document.body.appendChild(container);
 
             const grid = (window as any).Grid.grid(container, {
-                dataTable: {
+                data: {
                     columns: {
                         id: ['A', 'B', 'C'],
                         value: [1, 2, 3]
-                    }
-                },
-                data: {
+                    },
                     idColumn: 'id'
                 },
                 rendering: {

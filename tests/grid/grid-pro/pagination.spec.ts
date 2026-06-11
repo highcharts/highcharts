@@ -69,13 +69,11 @@ test.describe('Pagination', () => {
             }
 
             await grid.update({
-                dataTable: {
+                data: {
                     columns: {
                         ID: rows.map((row) => row.ID),
                         Name: rows.map((row) => row.Name)
-                    }
-                },
-                data: {
+                    },
                     idColumn: 'ID'
                 },
                 pagination: {
@@ -134,13 +132,11 @@ test.describe('Pagination', () => {
             }));
 
             await grid.update({
-                dataTable: {
+                data: {
                     columns: {
                         ID: rows.map((row) => row.ID),
                         Name: rows.map((row) => row.Name)
-                    }
-                },
-                data: {
+                    },
                     idColumn: 'ID'
                 },
                 pagination: {

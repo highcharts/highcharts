@@ -53,15 +53,13 @@ test.describe('Grid Pro row pinning', () => {
             }
 
             const grid = (window as any).Grid.grid('container', {
-                dataTable: {
+                data: {
                     columns: {
                         id: rows.map((row) => row.id),
                         product: rows.map((row) => row.product),
                         group: rows.map((row) => row.group),
                         stock: rows.map((row) => row.stock)
-                    }
-                },
-                data: {
+                    },
                     idColumn: 'id'
                 },
                 rendering: {
@@ -1145,7 +1143,7 @@ test.describe('Grid Pro row pinning', () => {
 
             try {
                 await grid.update({
-                    dataTable: {
+                    data: {
                         columns: {
                             id: [],
                             product: [],
@@ -1196,7 +1194,7 @@ test.describe('Grid Pro row pinning', () => {
             };
 
             await grid.update({
-                dataTable: {
+                data: {
                     columns: {
                         id: [],
                         product: [],
@@ -1306,7 +1304,7 @@ test.describe('Grid Pro row pinning', () => {
             const grid = (window as any).grid;
 
             await grid.update({
-                dataTable: {
+                data: {
                     columns: {
                         id: [1, 2, 3],
                         product: ['A', 'B', 'C'],
