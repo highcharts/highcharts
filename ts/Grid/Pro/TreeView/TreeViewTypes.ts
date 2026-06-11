@@ -23,6 +23,7 @@
  * */
 
 import type { RowId } from '../../Core/Data/DataProvider';
+import type { CellType as DataTableCellType } from '../../../Data/DataTable';
 import type { ColumnCollection } from '../../../Data/DataTable';
 
 
@@ -78,6 +79,91 @@ export interface TreeViewOptions {
 }
 
 /**
+ * Context passed to tree aggregation callbacks for a specific row/column.
+ */
+export interface TreeViewColumnAggregateContext {
+    /**
+     * Grid column / source column id that is being aggregated.
+     */
+    columnId: string;
+
+    /**
+     * Ordered direct children currently participating in the projected tree.
+     */
+    childrenIds: RowId[];
+
+    /**
+     * Number of direct children currently participating in the projected tree.
+     */
+    childCount: number;
+
+    /**
+     * Tree depth of the current row in the projected tree.
+     */
+    depth: number;
+
+    /**
+     * Whether the current row has direct children in the projected tree.
+     */
+    hasChildren: boolean;
+
+    /**
+     * Row id of the current row.
+     */
+    rowId: RowId;
+
+    /**
+     * Source cell value before aggregation is considered.
+     */
+    sourceValue: DataTableCellType;
+}
+
+/**
+ * Callback deciding which aggregation function should be applied for a row.
+ *
+ * Return a registered Formula processor function name (for example `SUM`),
+ * or a falsy value to skip aggregation for the current row.
+ */
+export type TreeViewColumnAggregateResult = (false|null|string|undefined);
+
+/**
+ * Callback deciding which aggregation function should be applied for a row.
+ */
+export interface TreeViewColumnAggregateCallback {
+    (context: TreeViewColumnAggregateContext): TreeViewColumnAggregateResult;
+}
+
+/**
+ * Aggregation option accepted by a TreeView column.
+ */
+export type TreeViewColumnAggregateOption = (
+    string |
+    TreeViewColumnAggregateCallback
+);
+
+/**
+ * TreeView column options.
+ */
+export interface TreeViewColumnOptions {
+    /**
+     * Aggregation function used for parent rows in the projected tree.
+     *
+     * When provided as a string, the function is applied to every row that
+     * has children in the projected tree, overriding the row's source value.
+     * Structural TreeView columns such as `data.idColumn`,
+     * `treeView.input.pathColumn`, and `treeView.input.parentIdColumn`
+     * never aggregate, even if configured.
+     *
+     * When provided as a callback, it is invoked for matching parent rows and
+     * should return a registered Formula processor function name, or a falsy
+     * value to skip aggregation for the current row.
+     *
+     * @sample grid-pro/tree-view/data-aggregation TreeView data aggregation
+     */
+    aggregate?: TreeViewColumnAggregateOption;
+}
+
+/**
  * Initial expansion seed for tree rows.
  */
 export type TreeExpandedRowIds = RowId[] | 'all';
@@ -115,6 +201,8 @@ export interface TreeInputParentIdOptions {
 
     /**
      * Column ID containing parent row IDs.
+     *
+     * Structural TreeView columns are reserved and rendered readonly.
      * @default 'parentId'
      */
     parentIdColumn?: string;
@@ -131,6 +219,8 @@ export interface TreeInputPathOptions {
 
     /**
      * Column ID containing full node paths.
+     *
+     * Path values must be unique within the source table.
      * @default 'path'
      */
     pathColumn?: string;
@@ -181,6 +271,7 @@ export interface TreeIndexBuildResult {
  * Tree metadata for a single visible row in projected order.
  */
 export interface TreeProjectionRowState {
+    childrenIds: RowId[];
     id: RowId;
     parentId: RowId | null;
     depth: number;
@@ -194,8 +285,10 @@ export interface TreeProjectionRowState {
  * Tree projection state cache for currently projected rows.
  */
 export interface TreeProjectionState {
+    derivedCellColumnIdsByRowId: Map<RowId, Set<string>>;
     rowIds: RowId[];
     rowIndexes: Array<number | undefined>;
+    sourceRowIndexesById: Map<RowId, number>;
     rowsById: Map<RowId, TreeProjectionRowState>;
 }
 
