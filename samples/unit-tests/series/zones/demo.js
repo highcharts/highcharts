@@ -227,7 +227,7 @@ QUnit.test('Zones and column presentational props (#6234)', assert => {
 
     assert.strictEqual(
         points[0].graphic.element.getAttribute('stroke'),
-        '#ffffff',
+        'var(--highcharts-background-color)',
         'No zones stroke'
     );
 
@@ -468,5 +468,43 @@ QUnit.test('#9198 setData and zones', function (assert) {
         chart.series[0].zones[0].graph !== chart.series[1].zones[0].graph,
         `Zones graphs should be differents between original series and
         navigator series (#20440).`
+    );
+});
+
+QUnit.test('#24710, series.update and zones', function (assert) {
+    const chart = Highcharts.chart('container', {
+        series: [{
+            data: [
+                [0, -2], [1, -4], [2, 10], [3, 12], [4, 14], [5, 15], [6, 16],
+                [7, 17], [8, 18], [9, 19]
+            ],
+            zones: [{ // <- with zones commented out, it works
+                value: 0,
+                color: '#f7a35c'
+            }, {
+                value: 3,
+                color: '#7cb5ec'
+            }, {
+                color: '#90ed7d'
+            }]
+        }]
+    });
+    const series = chart.series[0];
+    series.zones[0].graph.thisIsTheSame = true;
+
+    // Run an update
+    const dataCopy = chart.series[0].userOptions.data.slice();
+    dataCopy.shift();
+    dataCopy.push([dataCopy[dataCopy.length - 1][0] + 1, 5]);
+    // chart.series[0].setData(dataCopy); // <- it works with zones
+    chart.update({
+        series: [{
+            data: dataCopy
+        }]
+    });
+
+    assert.ok(
+        series.zones[0].graph.thisIsTheSame,
+        'Graph should be the same after update (#24710).'
     );
 });

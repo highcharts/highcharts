@@ -59,7 +59,7 @@ interface DumbbellPointOptions extends AreaRangePointOptions {
      *
      * @since 8.0.0
      *
-     * @default ${palette.neutralColor80}
+     * @default var(--highcharts-neutral-color-80)
      *
      * @product highcharts highstock
      */

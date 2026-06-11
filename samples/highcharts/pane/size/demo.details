@@ -1,0 +1,6 @@
+---
+ name: Responsive pane size
+ authors:
+   - Torstein Hønsi
+ js_wrap: b
+...

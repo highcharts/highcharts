@@ -1132,8 +1132,8 @@ Highcharts.getJSON(
                                 r: 1
                             },
                             stops: [
-                                [0, 'white'],
-                                [1, 'lightblue']
+                                [0, 'light-dark(white, #258)'],
+                                [1, 'light-dark(lightblue, #446)']
                             ]
                         },
                         zIndex: -1
