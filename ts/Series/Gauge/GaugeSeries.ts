@@ -242,7 +242,7 @@ class GaugeSeries extends Series {
                  *
                  * @type      {number|string}
                  * @default   9%
-                 * @since     next
+                 * @since     13.0.0
                  * @product   highcharts
                  * @apioption plotOptions.gauge.dial.borderRadius
                  */

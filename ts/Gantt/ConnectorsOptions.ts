@@ -238,14 +238,14 @@ export interface ConnectorsMarkerOptions {
     /**
      * The x offset of the marker.
      *
-     * @since next
+     * @since 13.0.0
      */
     xOffset?: number;
 
     /**
      * The y offset of the marker.
      *
-     * @since next
+     * @since 13.0.0
      */
     yOffset?: number;
 }

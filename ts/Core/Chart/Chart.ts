@@ -4897,7 +4897,7 @@ namespace Chart {
         /**
          * Whether to render the credits as HTML
          *
-         * @since  next
+         * @since  13.0.0
          * @sample highcharts/palette/branding
          *         Branding with HTML credits
          */

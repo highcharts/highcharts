@@ -319,7 +319,7 @@ const colorAxisDefaults: DeepPartial<ColorAxisOptions> = {
          * custom symbol URL.
          *
          * @type   {string}
-         * @since  next
+         * @since  13.0.0
          * @sample highcharts/coloraxis/marker
          *         Marker symbol options
          * @apioption colorAxis.marker.symbol

@@ -148,7 +148,7 @@ export interface PaneOptions {
      * @sample  highcharts/pane/borderradius
      *          Border radius
      * @type    {number|string}
-     * @since   next
+     * @since   13.0.0
      * @requires highcharts-more
      */
     borderRadius?: number|string;
@@ -207,7 +207,7 @@ export interface PaneOptions {
      * By default, the margin is approximated to make room for the radial axis
      * labels of a gauge chart.
      *
-     * @since   next
+     * @since   13.0.0
      * @sample  {highcharts} highcharts/pane/margin
      */
     margin?: number|Array<number>;
@@ -246,7 +246,7 @@ export interface PaneOptions {
      * background, plot bands and solid gauges. Use this for a fixed width pane
      * across different sizes, where `size` and `innerSize` are not practical.
      *
-     * @since    next
+     * @since    13.0.0
      * @sample   {highcharts} highcharts/pane/thickness
      *           Pane thickness
      * @requires highcharts-more

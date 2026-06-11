@@ -780,7 +780,7 @@ export interface ChartOptions {
      *         Map with plot border options
      *
      * @default   0
-     * @since     next
+     * @since     13.0.0
      */
     plotBorderRadius?: number;
 

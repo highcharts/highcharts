@@ -194,7 +194,7 @@ const pane: PaneOptions|Array<PaneOptions> = {
      * @sample  highcharts/pane/borderradius
      *          Border radius
      * @type    {number|string}
-     * @since   next
+     * @since   13.0.0
      * @product highcharts
      */
     borderRadius: 3,
@@ -283,7 +283,7 @@ const pane: PaneOptions|Array<PaneOptions> = {
      * @sample   {highcharts} highcharts/pane/thickness
      *           Pane thickness
      *
-     * @since    next
+     * @since    13.0.0
      * @product  highcharts
      * @type     {number}
      * @requires highcharts-more
@@ -299,7 +299,7 @@ const pane: PaneOptions|Array<PaneOptions> = {
      * labels of a gauge chart.
      *
      * @type    {number|Array<number>}
-     * @since   next
+     * @since   13.0.0
      * @sample  {highcharts} highcharts/pane/margin
      */
     margin: void 0

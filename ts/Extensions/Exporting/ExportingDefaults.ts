@@ -88,6 +88,8 @@ const exporting: ExportingOptions = {
      *         Added data labels
      * @sample {highstock} highcharts/exporting/chartoptions-data-labels/
      *         Added data labels
+     * @sample highcharts/palette/exporting-light
+     *         Dark chart with light export
      *
      * @type      {Highcharts.Options}
      * @apioption exporting.chartOptions

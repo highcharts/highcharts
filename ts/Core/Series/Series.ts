@@ -5658,7 +5658,7 @@ export default Series;
  * });
  *
  * @interface Highcharts.DataMappingOptionsObject
- * @since next
+ * @since 13.0.0
  */
 
 /**

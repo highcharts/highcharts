@@ -124,12 +124,12 @@ function prepareRelease() {
             '--exclude=*.md',
             '--exclude-dir=node_modules',
             '--exclude-dir=code',
-            '-e "@since\\s\\+next"',
-            '-e "@deprecated\\s\\+next"',
+            '-e "@since[[:space:]][[:space:]]*next"',
+            '-e "@deprecated[[:space:]][[:space:]]*next"',
             '. |',
             `xargs ${isGNU ? '-r' : ''} sed -i'.bak'`,
-            `-e 's/@since *next/@since ${nextVersion}/;`,
-            `s/@deprecated *next/@deprecated ${nextVersion}/'`
+            `-e 's/@since\\([[:space:]][[:space:]]*\\)next/@since\\1${nextVersion}/;`,
+            `s/@deprecated\\([[:space:]][[:space:]]*\\)next/@deprecated\\1${nextVersion}/'`
         ].join(' '));
 
         LogLib.success(

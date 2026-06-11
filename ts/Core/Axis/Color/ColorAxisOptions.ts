@@ -165,14 +165,14 @@ export interface ColorAxisMarkerOptions {
      *
      * @sample highcharts/coloraxis/marker
      *         Marker symbol options
-     * @since next
+     * @since 13.0.0
      */
     lineColor?: ColorType;
 
     /**
      * The width of the marker's outline.
      *
-     * @since next
+     * @since 13.0.0
      * @product highcharts highstock highmaps
      */
     lineWidth?: number;
@@ -183,7 +183,7 @@ export interface ColorAxisMarkerOptions {
      *
      * @sample highcharts/coloraxis/marker
      *         Marker symbol options
-     * @since next
+     * @since 13.0.0
      */
     symbol?: SymbolKey;
 

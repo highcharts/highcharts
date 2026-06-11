@@ -2288,7 +2288,7 @@ class Data {
      *
      * @function Highcharts.Data#getDataTable
      *
-     * @since next
+     * @since 13.0.0
      * @return {Highcharts.DataTable} DataTable with the parsed data
      */
     public getDataTable(): DataTableCore {

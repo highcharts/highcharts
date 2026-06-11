@@ -249,7 +249,7 @@ const connectorsDefaults: ConnectorsDefaults = {
             /**
              * The x offset of the marker.
              *
-             * @since next
+             * @since 13.0.0
              * @type number
              * @apioption connectors.marker.xOffset
              */
@@ -257,7 +257,7 @@ const connectorsDefaults: ConnectorsDefaults = {
             /**
              * The y offset of the marker.
              *
-             * @since next
+             * @since 13.0.0
              * @type number
              * @apioption connectors.marker.yOffset
              */

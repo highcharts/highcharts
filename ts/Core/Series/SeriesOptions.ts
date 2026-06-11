@@ -673,7 +673,7 @@ export interface SeriesOptions {
      * @sample {highcharts} highcharts/datatable/chart-datatable-multiple Chart
      *         with two data tables
      *
-     * @since next
+     * @since 13.0.0
      */
     dataMapping?: Record<string, string|DataMappingItem>;
 
@@ -704,7 +704,7 @@ export interface SeriesOptions {
      * @sample {highmaps} maps/datatable/series-datatable
      *        Series-level data table
      *
-     * @since next
+     * @since 13.0.0
      */
     dataTable?: DataTableCore|DataTableOptionsObject;
     enableMouseTracking?: boolean;

@@ -141,7 +141,7 @@ const defaultOptions: DefaultOptions = {
      *         Data table from CSV
      *
      * @type {Highcharts.DataTable|Highcharts.DataTableOptionsObject|Array<Highcharts.DataTable|Highcharts.DataTableOptionsObject>}
-     * @since     next
+     * @since     13.0.0
      * @apioption dataTable
      */
 
@@ -3070,7 +3070,7 @@ const defaultOptions: DefaultOptions = {
         /**
          * Whether to render the credits as HTML
          *
-         * @since     next
+         * @since     13.0.0
          * @sample    highcharts/palette/branding
          *            Branding with HTML credits
          * @type      {boolean}

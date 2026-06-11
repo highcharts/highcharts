@@ -236,7 +236,7 @@ const DependencyWheelSeriesDefaults: DependencyWheelSeriesOptions = {
  *
  * @type      {number|null}
  * @product   highcharts
- * @since     next
+ * @since     13.0.0
  * @apioption series.dependencywheel.data.weightTo
  */
 
