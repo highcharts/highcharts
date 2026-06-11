@@ -4,12 +4,13 @@
  *
  *  (c) 2020-2026 Highsoft AS
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  *  Authors:
- *  - Dawid Dragula
+ *  - Dawid Draguła
  *  - Sebastian Bochan
  *
  * */
@@ -39,15 +40,9 @@ import {
 } from '../../GridUtils.js';
 import ColumnSorting from '../Actions/ColumnSorting.js';
 import Globals from '../../Globals.js';
-import Utilities from '../../../../Core/Utilities.js';
 import TableHeader from './TableHeader.js';
 import ColumnToolbar from './ColumnToolbar/ColumnToolbar.js';
-
-const {
-    fireEvent,
-    isString
-} = Utilities;
-
+import { fireEvent, isString } from '../../../../Shared/Utilities.js';
 
 /* *
  *
@@ -264,7 +259,8 @@ class HeaderCell extends Cell {
         }
 
         const { grid } = this.row.viewport;
-        const rawColumnOptions = grid.columnOptionsMap?.[column.id]?.options;
+        const rawColumnOptions = grid.columnPolicy
+            .getIndividualColumnOptions(column.id);
 
         return {
             ...mergeStyleValues(
@@ -314,27 +310,27 @@ class HeaderCell extends Cell {
     }
 
     public override onClick(e: MouseEvent): void {
-        const column = this.column;
+        const { column } = this;
 
         if (
-            !column || (
-                e.target !== this.htmlElement &&
-                e.target !== column.header?.headerContent
-            ) || column.viewport.columnsResizer?.isResizing
+            !column ||
+            !this.htmlElement.contains(e.target as Node) ||
+            this.toolbar?.container?.contains(e.target as Node) ||
+            column.viewport.columnsResizer?.isResizing
         ) {
             return;
         }
 
-        if ((
-            column.options.sorting?.enabled ??
-            column.options.sorting?.sortable
-        )) {
+        const grid = column.viewport.grid;
+
+        // Toggle sort only when clicking header text/area, not toolbar icons
+        if (grid.columnPolicy.isColumnSortingEnabled(column.id)) {
             column.sorting?.toggle(e);
         }
 
         fireEvent(this, 'click', {
             originalEvent: e,
-            column: this.column
+            column
         });
     }
 

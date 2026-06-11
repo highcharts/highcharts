@@ -1,7 +1,8 @@
 /* *
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -27,11 +28,7 @@ const {
     sma: SMAIndicator,
     stochastic: StochasticIndicator
 } = SeriesRegistry.seriesTypes;
-import U from '../../../Core/Utilities.js';
-const {
-    extend,
-    merge
-} = U;
+import { extend, merge } from '../../../Shared/Utilities.js';
 
 /* *
  *
@@ -42,7 +39,7 @@ const {
 /**
  * The Slow Stochastic series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.slowstochastic
  *
@@ -61,7 +58,7 @@ class SlowStochasticIndicator extends StochasticIndicator {
      * to be set and should be loaded after `stock/indicators/indicators.js`
      * and `stock/indicators/stochastic.js` files.
      *
-     * @sample stock/indicators/slow-stochastic
+     * @sample {highstock} stock/indicators/slow-stochastic
      *         Slow Stochastic oscillator
      *
      * @extends      plotOptions.stochastic
@@ -168,6 +165,7 @@ class SlowStochasticIndicator extends StochasticIndicator {
  *
  * */
 
+/** @internal */
 interface SlowStochasticIndicator {
     pointClass: typeof SlowStochasticPoint;
     nameBase: string;
@@ -182,6 +180,7 @@ extend(SlowStochasticIndicator.prototype, {
  *
  * */
 
+/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         slowstochastic: typeof SlowStochasticIndicator;
@@ -196,6 +195,7 @@ SeriesRegistry.registerSeriesType('slowstochastic', SlowStochasticIndicator);
  *
  * */
 
+/** @internal */
 export default SlowStochasticIndicator;
 
 /* *

@@ -1,7 +1,8 @@
 /* *
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -28,13 +29,8 @@ import Series from '../../../Core/Series/Series';
 const {
     sma: SMAIndicator
 } = SeriesRegistry.seriesTypes;
-import U from '../../../Core/Utilities.js';
-const {
-    isNumber,
-    error,
-    extend,
-    merge
-} = U;
+import { extend, isNumber, merge } from '../../../Shared/Utilities.js';
+import { error } from '../../../Core/Utilities.js';
 
 /* *
  *
@@ -45,7 +41,7 @@ const {
 /**
  * The OBV series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.obv
  *
@@ -65,11 +61,11 @@ class OBVIndicator extends SMAIndicator {
      * the `stock/indicators/indicators.js` file. Through the `volumeSeriesID`
      * there also should be linked the volume series.
      *
-     * @sample stock/indicators/obv
+     * @sample {highstock} stock/indicators/obv
      *         OBV indicator
      *
      * @extends      plotOptions.sma
-     * @since 9.1.0
+     * @since        9.1.0
      * @product      highstock
      * @requires     stock/indicators/indicators
      * @requires     stock/indicators/obv
@@ -131,9 +127,9 @@ class OBVIndicator extends SMAIndicator {
         let OBVPoint: Array<number> = [],
             i: number = 1,
             previousOBV: number = 0,
-            curentOBV: number = 0,
+            currentOBV: number = 0,
             previousClose: number = 0,
-            curentClose: number = 0,
+            currentClose: number = 0,
             volume: Array<number>;
 
         // Checks if volume series exists.
@@ -150,23 +146,23 @@ class OBVIndicator extends SMAIndicator {
             yData.push(OBVPoint[1]);
 
             for (i; i < yVal.length; i++) {
-                curentClose = hasOHLC ?
+                currentClose = hasOHLC ?
                     (yVal as Array<Array<number>>)[i][3] : (yVal as Array<number>)[i];
 
-                if (curentClose > previousClose) { // Up
-                    curentOBV = previousOBV + volume[i];
-                } else if (curentClose === previousClose) { // Constant
-                    curentOBV = previousOBV;
+                if (currentClose > previousClose) { // Up
+                    currentOBV = previousOBV + volume[i];
+                } else if (currentClose === previousClose) { // Constant
+                    currentOBV = previousOBV;
                 } else { // Down
-                    curentOBV = previousOBV - volume[i];
+                    currentOBV = previousOBV - volume[i];
                 }
 
                 // Add point.
-                OBVPoint = [xVal[i], curentOBV];
+                OBVPoint = [xVal[i], currentOBV];
 
                 // Assign current as previous for next iteration.
-                previousOBV = curentOBV;
-                previousClose = curentClose;
+                previousOBV = currentOBV;
+                previousClose = currentClose;
 
                 OBV.push(OBVPoint);
                 xData.push(xVal[i]);
@@ -197,6 +193,7 @@ class OBVIndicator extends SMAIndicator {
  *
  * */
 
+/** @internal */
 interface OBVIndicator {
     nameComponents: Array<string>|undefined;
     pointClass: typeof OBVPoint;
@@ -212,6 +209,7 @@ extend(OBVIndicator.prototype, {
  *
  * */
 
+/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         obv: typeof OBVIndicator;
@@ -226,6 +224,7 @@ SeriesRegistry.registerSeriesType('obv', OBVIndicator);
  *
  * */
 
+/** @internal */
 export default OBVIndicator;
 
 /* *
@@ -239,7 +238,7 @@ export default OBVIndicator;
  * specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.obv
- * @since 9.1.0
+ * @since     9.1.0
  * @product   highstock
  * @excluding dataParser, dataURL
  * @requires  stock/indicators/indicators

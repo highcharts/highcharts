@@ -1,10 +1,11 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -19,8 +20,6 @@
 
 import type MapChart from '../Core/Chart/MapChart';
 import type MapNavigationOptions from './MapNavigationOptions';
-
-import { Palette } from '../Core/Color/Palettes.js';
 
 /* *
  *
@@ -105,7 +104,7 @@ const mapNavigation: MapNavigationOptions = {
          */
         style: {
             /** @ignore */
-            color: Palette.neutralColor60,
+            color: 'var(--highcharts-neutral-color-60)',
             /** @ignore */
             fontSize: '1em',
             /** @ignore */
@@ -126,9 +125,9 @@ const mapNavigation: MapNavigationOptions = {
          */
         theme: {
             /** @ignore */
-            fill: Palette.backgroundColor,
+            fill: 'var(--highcharts-background-color)',
             /** @ignore */
-            stroke: Palette.neutralColor10,
+            stroke: 'var(--highcharts-neutral-color-10)',
             /** @ignore */
             'stroke-width': 1,
             /** @ignore */
@@ -228,7 +227,7 @@ const mapNavigation: MapNavigationOptions = {
      * Whether to enable map navigation. The default is not to enable
      * navigation, as many choropleth maps are simple and don't need it.
      * Additionally, when touch zoom and mouse wheel zoom is enabled, it breaks
-     * the default behaviour of these interactions in the website, and the
+     * the default behavior of these interactions in the website, and the
      * implementer should be aware of this.
      *
      * Individual interactions can be enabled separately, namely buttons,

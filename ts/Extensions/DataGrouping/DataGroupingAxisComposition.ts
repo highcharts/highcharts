@@ -1,10 +1,11 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -22,13 +23,7 @@ import type AxisType from '../../Core/Axis/AxisType';
 import type DataGroupingOptions from './DataGroupingOptions';
 
 import DataGroupingDefaults from './DataGroupingDefaults.js';
-import U from '../../Core/Utilities.js';
-const {
-    addEvent,
-    extend,
-    merge,
-    pick
-} = U;
+import { addEvent, extend, merge, pick } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -96,7 +91,7 @@ function applyGrouping(
         if (series.groupPixelWidth) {
             series.hasProcessed = true; // #2692
         }
-        // Fire independing on series.groupPixelWidth to always set a proper
+        // Fire independently on series.groupPixelWidth to always set a proper
         // dataGrouping state, (#16238)
         series.applyGrouping(!!e.hasExtremesChanged);
     });
@@ -183,7 +178,7 @@ function getGroupPixelWidth(
 
 /**
  * When resetting the scale reset the hasProcessed flag to avoid taking
- * previous data grouping of neighbour series into account when determining
+ * previous data grouping of neighbor series into account when determining
  * group pixel width (#2692).
  * @internal
  */

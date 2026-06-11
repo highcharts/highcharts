@@ -6,8 +6,9 @@
  *  - Grzegorz Blachliński
  *  - Karol Kołodziej
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -30,6 +31,7 @@ import type {
     PointShortOptions
 } from '../../Core/Series/PointOptions';
 import type SeriesOptions from '../../Core/Series/SeriesOptions';
+import type Breadcrumbs from './Breadcrumbs';
 
 /* *
  *
@@ -151,14 +153,13 @@ export interface BreadcrumbsAlignOptions {
 
 export interface BreadcrumbsButtonsEventsOptions {
     /**
-     * Fires when clicking on the breadcrumbs button. Two arguments are
-     * passed to the function. First breadcrumb button as an SVG element.
-     * Second is the breadcrumbs class, containing reference to the chart,
-     * series etc.
+     * Fires when clicking on a breadcrumb button. Two arguments are passed
+     * to the function. First is the click event. Second is the breadcrumb
+     * options for the clicked button.
      *
      * ```js
-     * click: function(button, breadcrumbs) {
-     *   console.log(button);
+     * click: function (e, breadcrumb) {
+     *   console.log(breadcrumb.level);
      * }
      * ```
      *
@@ -191,17 +192,18 @@ export interface BreadcrumbsButtonsFormatter {
  *
  * @callback Highcharts.BreadcrumbsClickCallbackFunction
  *
- * @param {Highcharts.Event} event
+ * @param {Highcharts.Event} e
  * Event.
  *
- * @param {Highcharts.BreadcrumbOptions} options
+ * @param {Highcharts.BreadcrumbOptions} breadcrumb
  * Breadcrumb options.
- *
- * @param {global.Event} e
- * Event arguments.
  */
 export interface BreadcrumbsClickCallbackFunction {
-    (e: Event, breadcrumb: BreadcrumbOptions): (boolean|undefined);
+    (
+        e: Event,
+        breadcrumb: BreadcrumbOptions,
+        ctx: Breadcrumbs
+    ): (boolean|undefined);
 }
 
 export interface BreadcrumbsOptions {

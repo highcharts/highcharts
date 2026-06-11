@@ -1,10 +1,11 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -18,8 +19,6 @@
  * */
 
 import type FlagsSeriesOptions from './FlagsSeriesOptions';
-
-import { Palette } from '../../Core/Color/Palettes.js';
 
 /* *
  *
@@ -66,6 +65,16 @@ const FlagsSeriesDefaults: FlagsSeriesOptions = {
      * @validvalue ["y", "open", "high", "low", "close"]
      * @apioption  plotOptions.flags.onKey
      */
+
+    /**
+   * What type of legend symbol to render for this series. For flags
+   * series, the default is `flag-icon`, a pole with a pennant.
+   *
+     * @default   flag-icon
+     * @product   highstock
+     * @apioption plotOptions.flags.legendSymbol
+     */
+    legendSymbol: 'flag-icon',
 
     /**
      * The id of the series that the flags should be drawn on. If no id
@@ -201,10 +210,10 @@ const FlagsSeriesDefaults: FlagsSeriesOptions = {
     /**
      * The fill color for the flags.
      *
-     * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @type    {Highcharts.ColorType}
      * @product highstock
      */
-    fillColor: Palette.backgroundColor,
+    fillColor: 'var(--highcharts-background-color)',
 
     /**
      * The color of the line/border of the flag.
@@ -212,7 +221,7 @@ const FlagsSeriesDefaults: FlagsSeriesOptions = {
      * In styled mode, the stroke is set in the
      * `.highcharts-flag-series.highcharts-point` rule.
      *
-     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @type      {Highcharts.ColorType}
      * @default   #000000
      * @product   highstock
      * @apioption plotOptions.flags.lineColor
@@ -236,18 +245,18 @@ const FlagsSeriesDefaults: FlagsSeriesOptions = {
             /**
              * The color of the line/border of the flag.
              *
-             * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+             * @type    {Highcharts.ColorType}
              * @product highstock
              */
-            lineColor: Palette.neutralColor100,
+            lineColor: 'var(--highcharts-neutral-color-100)',
 
             /**
              * The fill or background color of the flag.
              *
-             * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+             * @type    {Highcharts.ColorType}
              * @product highstock
              */
-            fillColor: Palette.highlightColor20
+            fillColor: 'var(--highcharts-highlight-color-20)'
         }
     },
 
@@ -263,7 +272,7 @@ const FlagsSeriesDefaults: FlagsSeriesOptions = {
      */
     style: {
         /** @ignore-option */
-        color: Palette.neutralColor100,
+        color: 'var(--highcharts-neutral-color-100)',
         /** @ignore-option */
         fontSize: '0.7em',
         /** @ignore-option */
@@ -307,6 +316,7 @@ const FlagsSeriesDefaults: FlagsSeriesOptions = {
  *    }]
  *    ```
  *
+ * @basic
  * @type      {Array<*>}
  * @extends   series.line.data
  * @excluding dataLabels, marker, name, y
@@ -318,7 +328,7 @@ const FlagsSeriesDefaults: FlagsSeriesOptions = {
  * The fill color of an individual flag. By default it inherits from
  * the series color.
  *
- * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+ * @type      {Highcharts.ColorType}
  * @product   highstock
  * @apioption series.flags.data.fillColor
  */

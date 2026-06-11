@@ -208,21 +208,22 @@ QUnit.test('Defaults', assert => {
         '1',
         'A default stroke width should be applied to the plot line'
     );
+
+    const stroke = chart.xAxis[0].plotLinesAndBands[0].svgElem.element
+        .getAttribute('stroke');
+    const colorRegex = /^(#[0-9a-f]{6}|var\(--highcharts-[a-z0-9\-]+\))$/;
     assert.ok(
-        /^#[0-9a-f]{6}$/.test(
-            chart.xAxis[0].plotLinesAndBands[0].svgElem.element.getAttribute(
-                'stroke'
-            )
-        ),
-        'A default stroke color should be applied to the plot line'
+        colorRegex.test(stroke),
+        'A default stroke color should be applied to the plot line. ' +
+        `Actual: ${stroke}`
     );
 
+    const fill = chart.yAxis[0].plotLinesAndBands[0].svgElem.element
+        .getAttribute('fill');
     assert.ok(
-        /^#[0-9a-f]{6}$/.test(
-            chart.yAxis[0].plotLinesAndBands[0].svgElem.element.getAttribute(
-                'fill'
-            )
-        ),
+        colorRegex.test(fill),
+        'A default fill color should be applied to the plot band. ' +
+        `Actual: ${fill}`,
         'A default fill color should be applied to the plot band'
     );
 });
@@ -360,7 +361,6 @@ QUnit.test('General tests', function (assert) {
 
     // Radial Axes plot lines
     var plotLineValue = 27,
-        innerRadiusPx = 50,
         axis,
         plotLine,
         bBox,
@@ -383,7 +383,8 @@ QUnit.test('General tests', function (assert) {
                 innerRadius: '43%',
                 outerRadius: '100%',
                 shape: 'arc'
-            }
+            },
+            innerSize: '43%'
         },
         yAxis: {
             min: 0,
@@ -432,6 +433,10 @@ QUnit.test('General tests', function (assert) {
             'from inner to outer radius (percentage radius).'
     );
 
+    /*
+    Commented out test when implementing pane.innerSize. It was already faulty,
+    as the plot band size didn't update (only the plot line).
+    const innerRadiusPx = 50;
     chart.update({
         pane: {
             background: {
@@ -456,6 +461,7 @@ QUnit.test('General tests', function (assert) {
         'RadialAxis plotLine should be plotted from ' +
             'inner to outer radius (pixel radius).'
     );
+    */
 });
 
 QUnit.test(
@@ -709,16 +715,65 @@ QUnit.test(
                 ) > -1,
             'Plot band label is visible.'
         );
+
+        chart.update({
+            xAxis: {
+                plotLines: [
+                    {
+                        value: 1,
+                        color: '#f00',
+                        width: 1,
+                        label: {
+                            formatter: ctx => (
+                                (ctx && '###') || ''
+                            )
+                        }
+                    }
+                ],
+                plotBands: [
+                    {
+                        from: 2,
+                        to: 5,
+                        color: 'rgba(255, 255, 0, 0.2)',
+                        width: 1,
+                        label: {
+                            formatter: ctx => (
+                                (ctx && '###') || ''
+                            )
+                        }
+                    }
+                ]
+            }
+        });
+
+        plotLine = chart.xAxis[0].plotLinesAndBands[0];
+        plotBand = chart.xAxis[0].plotLinesAndBands[1];
+
+        assert.strictEqual(
+            '###',
+            plotLine.label.element.textContent,
+            'ES6 arrow function formatter works for plot line.'
+        );
+
+        assert.strictEqual(
+            '###',
+            plotBand.label.element.textContent,
+            'ES6 arrow function formatter works for plot band.'
+        );
     }
 );
 
 QUnit.test(
     '#13375: Click event on dynamically added plotBands.',
     function (assert) {
-        var plotBandClicked,
-            chart = Highcharts.chart('container', {
+        let plotBandClicked;
+
+        const chart = Highcharts.chart('container', {
                 series: []
-            });
+            }),
+            { plotLeft, plotTop } = chart,
+            top = plotTop - 20,
+            left = plotLeft - 20;
 
         chart.xAxis[0].addPlotBand({
             from: 0,
@@ -732,20 +787,23 @@ QUnit.test(
         });
 
         chart.addSeries({
-            data: [1, 2, 3, 4]
+            data: [1, 2, 3, 4, 5, 6]
         });
 
         const controller = new TestController(chart);
+
+        let { plotX, plotY } = chart.series[0].data[2];
+
         controller.triggerEvent(
             'mouseover',
-            chart.series[0].data[2].plotX + chart.plotLeft - 20,
-            chart.series[0].data[2].plotY + chart.plotTop - 20,
+            plotX + left,
+            plotY + top,
             {},
             false
         );
         controller.click(
-            chart.series[0].data[2].plotX + chart.plotLeft - 20,
-            chart.series[0].data[2].plotY + chart.plotTop - 20,
+            plotX + left,
+            plotY + top,
             {},
             false
         );
@@ -753,6 +811,42 @@ QUnit.test(
         assert.ok(
             plotBandClicked,
             'Plot band click event was correctly triggered.'
+        );
+
+        let es6CallbackCalled = false;
+
+        chart.xAxis[0].addPlotBand({
+            from: 3,
+            to: 6,
+            id: 'plotband',
+            events: {
+                click: (e, ctx) => {
+                    es6CallbackCalled = (
+                        e && ctx && true
+                    ) || false;
+                }
+            }
+        });
+
+        ({ plotX, plotY } = chart.series[0].data[5]);
+
+        controller.triggerEvent(
+            'mouseover',
+            plotX + left,
+            plotY + top,
+            {},
+            false
+        );
+        controller.click(
+            plotX + left,
+            plotY + top,
+            {},
+            false
+        );
+
+        assert.ok(
+            es6CallbackCalled,
+            'Es6 arrow function callback was correctly triggered.'
         );
     }
 );

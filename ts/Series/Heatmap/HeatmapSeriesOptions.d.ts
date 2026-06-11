@@ -1,10 +1,11 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -127,7 +128,7 @@ export interface HeatmapSeriesOptions extends ScatterSeriesOptions {
      * are set in the [colorAxis](#colorAxis), the default value is pulled from
      * the [options.colors](#colors) array.
      *
-     * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @type {Highcharts.ColorType}
      *
      * @since 4.0
      *
@@ -255,7 +256,7 @@ export interface HeatmapSeriesOptions extends ScatterSeriesOptions {
      * The color applied to null points. In styled mode, a general CSS class
      * is applied instead.
      *
-     * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @type {Highcharts.ColorType}
      */
     nullColor?: ColorType;
 

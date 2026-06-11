@@ -15,13 +15,17 @@
             "ES2015.Promise",
             "ES2016.Array.Include",
             "ES2015.Core",
-            "ES2017",          
+            "ES2015.Collection",
+            "ES2015.Iterable",
+            "ES2017",
             "ES2017.sharedMemory"
         ]
     },
     "exclude": [
         "../Dashboards/**/*.ts",
+        "../Extensions/Autoload/Loader.ts",
         "../Grid/**/*.ts",
+        "../masters/highcharts-autoload.src.ts",
         "../masters-dashboards/**/*.ts",
         "../masters-grid/**/*.ts"
     ],

@@ -1,0 +1,8 @@
+---
+ name: Highcharts Finance Demos
+ authors:
+   - Nancy Dillon
+ requiresManualTesting: true
+ applyCSP: false
+ js_wrap: b
+...

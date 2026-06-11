@@ -230,3 +230,5 @@ priceenvelopes
 slowstochastic
 supertrend
 williamsr
+overscan
+multicolumn

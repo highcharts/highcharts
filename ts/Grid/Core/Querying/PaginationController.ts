@@ -4,8 +4,9 @@
  *
  *  (c) 2020-2026 Highsoft AS
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  *  Authors:
@@ -21,6 +22,9 @@
  *
  * */
 
+import {
+    hasDataTableProvider
+} from '../Data/DataProvider.js';
 import QueryingController from './QueryingController.js';
 import RangeModifier from '../../../Data/Modifiers/RangeModifier.js';
 
@@ -102,20 +106,30 @@ class PaginationController {
      * Gets the total number of pages.
      */
     public get totalPages(): number {
-        return this.currentPageSize > 0 ? Math.ceil(
+        const computed = this.currentPageSize > 0 ? Math.ceil(
             this.totalItems / this.currentPageSize
         ) : 1;
+
+        return Math.max(1, computed);
     }
 
     /**
-     * Clamps the current page to the total number of pages.
+     * Clamps the current page to the valid range [1, totalPages].
      */
     public clampPage(): void {
-        if (this.currentPage <= this.totalPages) {
+        if (this.totalItemsCount === void 0) {
             return;
         }
 
-        this.currentPage = this.totalPages;
+        const target = Math.max(
+            1,
+            Math.min(this.currentPage, this.totalPages || 1)
+        );
+        if (this.currentPage === target) {
+            return;
+        }
+
+        this.currentPage = target;
         this.querying.shouldBeUpdated = true;
     }
 
@@ -171,7 +185,9 @@ class PaginationController {
      */
     public createModifier(
         rowsCountBeforePagination: number = (
-            this.querying.grid.dataTable?.rowCount || 0
+            hasDataTableProvider(this.querying.grid.dataProvider) ?
+                this.querying.grid.dataProvider.getDataTable()?.rowCount || 0 :
+                0
         )
     ): RangeModifier | undefined {
         if (!this.enabled) {

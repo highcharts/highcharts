@@ -3,8 +3,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Sebastian Domas
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -27,15 +28,14 @@ import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     column: ColumnSeries
 } = SeriesRegistry.seriesTypes;
-import U from '../../Core/Utilities.js';
 import AnimationOptions from '../../Core/Animation/AnimationOptions';
-const {
+import {
     arrayMax,
     arrayMin,
     correctFloat,
     isNumber,
     merge
-} = U;
+} from '../../Shared/Utilities.js';
 
 /* ************************************************************************** *
  *  HISTOGRAM
@@ -46,18 +46,18 @@ const {
  **/
 const binsNumberFormulas: Record<string, Function> = {
     'square-root': function (data: number[]): number {
-        return Math.ceil(Math.sqrt((data as any).length));
+        return Math.ceil(Math.sqrt(data.length));
     },
 
     'sturges': function (data: number[]): number {
         return Math.ceil(
-            Math.log((data as any).length) * Math.LOG2E
+            Math.log(data.length) * Math.LOG2E
         );
     },
 
     'rice': function (data: number[]): number {
         return Math.ceil(
-            2 * Math.pow((data as any).length, 1 / 3)
+            2 * Math.pow(data.length, 1 / 3)
         );
     }
 };
@@ -151,6 +151,13 @@ class HistogramSeries extends ColumnSeries {
     ): void {
         let alteredData;
         if (typeof data !== 'undefined' && data.length > 0) {
+            // Support data array of objects (#24073).
+            data = data.map(function (
+                item: number | { y?: number | null } | null | undefined
+            ): number {
+                return isNumber(item) ? item : item?.y ?? 0;
+            });
+
             alteredData = this.derivedData(
                 data.filter(isNumber),
                 this.binsNumber(data),

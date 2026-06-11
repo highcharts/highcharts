@@ -1,10 +1,11 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -26,13 +27,13 @@ const { setOptions } = D;
 import ErrorMessages from './ErrorMessages.js';
 import H from '../../Core/Globals.js';
 const { composed } = H;
-import U from '../../Core/Utilities.js';
-const {
+import {
     addEvent,
     find,
     isNumber,
     pushUnique
-} = U;
+} from '../../Shared/Utilities.js';
+import { type ErrorMessageEventObject } from '../../Core/Utilities.js';
 
 /* *
  *
@@ -57,6 +58,7 @@ declare module '../../Core/Chart/ChartOptions'{
          *         Show errors on chart
          *
          * @since    7.0.0
+         * @default  true
          * @requires modules/debugger
          */
         displayErrors?: boolean;
@@ -127,7 +129,7 @@ function onChartBeforeRedraw(
 /** @internal */
 function onHighchartsDisplayError(
     this: GlobalsBase,
-    e: U.ErrorMessageEventObject
+    e: ErrorMessageEventObject
 ): void {
     // Display error on the chart causing the error or the last created chart.
     const chart = (

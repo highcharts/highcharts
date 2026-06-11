@@ -37,4 +37,9 @@ test.describe('Rendering types and formatters', () => {
         await expect(page.locator('td[data-column-id="thousands"]').first()).toHaveText('12_452|4524');
         await expect(page.locator('td[data-column-id="thousands"]').nth(2)).toHaveText('1_234');
     });
+
+    test('When formatter returns number, the cell should display it as string', async ({ page }) => {
+        const cell = page.locator('td[data-column-id="formatterNumber"]').first();
+        await expect(cell).toHaveText('1');
+    });
 });

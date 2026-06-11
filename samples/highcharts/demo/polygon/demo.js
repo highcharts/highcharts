@@ -46,7 +46,7 @@ Highcharts.chart('container', {
     }, {
         name: 'Observations',
         type: 'scatter',
-        color: Highcharts.getOptions().colors[1],
+        color: 'var(--highcharts-color-0)',
         data: [
             { x: 184, y: 87.9, name: 'Netherlands' },
             { x: 183, y: 90.4, name: 'Montenegro' },

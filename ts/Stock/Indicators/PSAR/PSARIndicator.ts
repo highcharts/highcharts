@@ -5,8 +5,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Grzegorz Blachliński
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -29,13 +30,10 @@ import type {
 import type PSARPoint from './PSARPoint';
 
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
+import { merge } from '../../../Shared/Utilities.js';
 const {
     sma: SMAIndicator
 } = SeriesRegistry.seriesTypes;
-import U from '../../../Core/Utilities.js';
-const {
-    merge
-} = U;
 
 /* *
  *
@@ -45,16 +43,12 @@ const {
 
 // Utils:
 
-/**
- *
- */
+/** @internal */
 function toFixed(a: number, n: number): number {
     return parseFloat(a.toFixed(n));
 }
 
-/**
- *
- */
+/** @internal */
 function calculateDirection(
     previousDirection: number, low: number, high: number, PSAR: number
 ): number {
@@ -77,9 +71,7 @@ function calculateDirection(
  * maxAcc - maximum acceleration factor
  * initAcc - initial acceleration factor
  */
-/**
- *
- */
+/** @internal */
 function getAccelerationFactor(
     dir: number,
     pDir: number,
@@ -102,9 +94,7 @@ function getAccelerationFactor(
     return initAcc;
 }
 
-/**
- *
- */
+/** @internal */
 function getExtremePoint(
     high: number,
     low: number,
@@ -117,16 +107,12 @@ function getExtremePoint(
     return (low < previousExtremePoint) ? low : previousExtremePoint;
 }
 
-/**
- *
- */
+/** @internal */
 function getEPMinusPSAR(EP: number, PSAR: number): number {
     return EP - PSAR;
 }
 
-/**
- *
- */
+/** @internal */
 function getAccelerationFactorMultiply(
     accelerationFactor: number,
     EPMinusSAR: number
@@ -146,9 +132,7 @@ function getAccelerationFactorMultiply(
  * pHigh - previous high
  * pEP - previous extreme point
  */
-/**
- *
- */
+/** @internal */
 function getPSAR(
     pdir: number,
     sDir: number,
@@ -182,7 +166,7 @@ function getPSAR(
 /**
  * The Parabolic SAR series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.psar
  *
@@ -201,7 +185,7 @@ class PSARIndicator extends SMAIndicator {
      * option to be set and should be loaded
      * after `stock/indicators/indicators.js` file.
      *
-     * @sample stock/indicators/psar
+     * @sample {highstock} stock/indicators/psar
      *         Parabolic SAR Indicator
      *
      * @extends      plotOptions.sma
@@ -423,6 +407,7 @@ class PSARIndicator extends SMAIndicator {
  *
  * */
 
+/** @internal */
 interface PSARIndicator {
     pointClass: typeof PSARPoint;
     nameComponents: Array<string>|undefined;
@@ -434,6 +419,7 @@ interface PSARIndicator {
  *
  * */
 
+/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         psar: typeof PSARIndicator;
@@ -448,6 +434,7 @@ SeriesRegistry.registerSeriesType('psar', PSARIndicator);
  *
  * */
 
+/** @internal */
 export default PSARIndicator;
 
 /* *

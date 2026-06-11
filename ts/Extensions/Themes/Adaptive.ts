@@ -2,10 +2,11 @@
  *
  *   (c) 2010-2026 Highsoft AS
  *
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *  Dynamic light/dark theme based on CSS variables
  *
@@ -27,9 +28,8 @@ import type Measure from '../Annotations/Types/Measure';
 
 import Chart from '../../Core/Chart/Chart.js';
 import D from '../../Core/Defaults.js';
+import { addEvent } from '../../Shared/Utilities.js';
 const { setOptions } = D;
-import U from '../../Core/Utilities.js';
-const { addEvent } = U;
 
 /* *
  *
@@ -462,8 +462,8 @@ namespace DynamicDefaultTheme {
                     borderColor: 'var(--highcharts-neutral-color-20)'
                 },
                 pivot: {
-                    borderColor: 'var(--highcharts-neutral-color-20)',
-                    backgroundColor: 'var(--highcharts-neutral-color-100)'
+                    borderColor: 'var(--highcharts-neutral-color-100)',
+                    backgroundColor: 'var(--highcharts-background-color)'
                 }
             },
             packedbubble: {
@@ -856,18 +856,7 @@ namespace DynamicDefaultTheme {
         pane: {
             background: {
                 borderColor: 'var(--highcharts-neutral-color-20)',
-                backgroundColor: {
-                    stops: [
-                        [
-                            0,
-                            'var(--highcharts-background-color)'
-                        ],
-                        [
-                            1,
-                            'var(--highcharts-neutral-color-10)'
-                        ]
-                    ]
-                }
+                backgroundColor: 'var(--highcharts-neutral-color-5)'
             }
         },
         zAxis: {

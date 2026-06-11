@@ -1,10 +1,11 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *  Grid-light theme for Highcharts JS
  *
@@ -23,9 +24,8 @@ import type { DeepPartial } from '../../Shared/Types';
 import type { DefaultOptions } from '../../Core/Options';
 
 import D from '../../Core/Defaults.js';
+import { createElement } from '../../Shared/Utilities.js';
 const { setOptions } = D;
-import U from '../../Core/Utilities.js';
-const { createElement } = U;
 
 /* *
  *
@@ -42,12 +42,19 @@ namespace GridLightTheme {
      * */
 
     export const options: DeepPartial<DefaultOptions> = {
-        colors: [
-            '#7cb5ec', '#f7a35c', '#90ee7e', '#7798BF', '#aaeeee', '#ff0066',
-            '#eeaaee', '#55BF3B', '#DF5353', '#7798BF', '#aaeeee'
-        ],
+        palette: {
+            colorScheme: 'light',
+            light: {
+                neutralColor: '#111100',
+                colors: [
+                    '#7cb5ec', '#f7a35c', '#90ee7e', '#7798BF',
+                    '#aaeeee', '#ff0066', '#eeaaee', '#55BF3B',
+                    '#DF5353', '#7798BF', '#aaeeee'
+                ]
+            }
+
+        },
         chart: {
-            backgroundColor: null as any,
             style: {
                 fontFamily: 'Dosis, sans-serif'
             }
@@ -61,11 +68,15 @@ namespace GridLightTheme {
         },
         tooltip: {
             borderWidth: 0,
-            backgroundColor: 'rgba(219,219,216,0.8)',
-            shadow: false
+            shadow: false,
+            // Inverted colors
+            backgroundColor: 'var(--highcharts-neutral-color-80)',
+            style: {
+                color: 'var(--highcharts-background-color)'
+            }
         },
         legend: {
-            backgroundColor: '#F0F0EA',
+            backgroundColor: 'var(--highcharts-neutral-color-5)',
             itemStyle: {
                 fontWeight: 'bold',
                 fontSize: '13px'
@@ -91,13 +102,7 @@ namespace GridLightTheme {
                     fontSize: '12px'
                 }
             }
-        },
-        plotOptions: {
-            candlestick: {
-                lineColor: '#404048'
-            }
         }
-
     };
 
     /* *

@@ -1,7 +1,8 @@
 /* *
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -27,13 +28,12 @@ import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     sma: SMAIndicator
 } = SeriesRegistry.seriesTypes;
-import U from '../../../Core/Utilities.js';
-const {
+import {
+    correctFloat,
     extend,
     merge,
-    correctFloat,
     pick
-} = U;
+} from '../../../Shared/Utilities.js';
 
 /* *
  *
@@ -43,9 +43,7 @@ const {
 
 // Utils:
 
-/**
- * @private
- */
+/** @internal */
 function accumulatePoints(
     sum: number,
     yVal: (Array<number> | Array<Array<number>>),
@@ -73,7 +71,7 @@ function accumulatePoints(
 /**
  * The DPO series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.dpo
  *
@@ -206,6 +204,7 @@ class DPOIndicator extends SMAIndicator {
  *
  * */
 
+/** @internal */
 interface DPOIndicator {
     nameBase: string;
 }
@@ -220,6 +219,7 @@ extend(DPOIndicator.prototype, {
  *
  * */
 
+/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         dpo: typeof DPOIndicator;
@@ -234,6 +234,7 @@ SeriesRegistry.registerSeriesType('dpo', DPOIndicator);
  *
  * */
 
+/** @internal */
 export default DPOIndicator;
 
 /* *

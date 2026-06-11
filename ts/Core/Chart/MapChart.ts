@@ -1,10 +1,11 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -29,13 +30,8 @@ import Chart from './Chart.js';
 import D from '../Defaults.js';
 const { getOptions } = D;
 import SVGRenderer from '../Renderer/SVG/SVGRenderer.js';
-import U from '../Utilities.js';
-const {
-    isNumber,
-    merge,
-    pick
-} = U;
 import '../../Maps/MapSymbols.js';
+import { isNumber, merge, pick } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -66,6 +62,8 @@ declare module './ChartBase'{
  */
 class MapChart extends Chart {
 
+    public promise?: Promise<MapChart>;
+
     /* *
      *
      *  Functions
@@ -81,9 +79,10 @@ class MapChart extends Chart {
      * @param {Highcharts.Options} userOptions
      *        Custom options.
      *
-     * @param {Function} [callback]
+     * @param {Function|true} [callback]
      *        Function to run when the chart has loaded and all external
-     *        images are loaded.
+     *        images are loaded. Set to `true` to return a promise that
+     *        resolves when the chart is ready.
      *
      *
      * @emits Highcharts.MapChart#event:init
@@ -91,7 +90,7 @@ class MapChart extends Chart {
      */
     public init(
         userOptions: Partial<Options>,
-        callback?: Chart.CallbackFunction
+        callback?: Chart.CallbackFunction|true
     ): void {
 
         const defaultCreditsOptions = getOptions().credits;
@@ -134,7 +133,7 @@ class MapChart extends Chart {
      *
      * Deprecated as of v9.3 in favor of [MapView.zoomBy](https://api.highcharts.com/class-reference/Highcharts.MapView#zoomBy).
      *
-     * @deprecated
+     * @deprecated 9.3.0
      * @function Highcharts.Chart#mapZoom
      *
      * @param {number} [howMuch]
@@ -261,6 +260,7 @@ namespace MapChart {
      *
      * */
 
+    /* eslint-disable jsdoc/check-param-names */
     /**
      * The factory function for creating new map charts. Creates a new {@link
      * Highcharts.MapChart|MapChart} object with different default options than
@@ -288,12 +288,14 @@ namespace MapChart {
      * The chart object.
      */
     export function mapChart(
-        a: (string|HTMLDOMElement|Partial<Options>),
-        b?: (Chart.CallbackFunction|Partial<Options>),
-        c?: Chart.CallbackFunction
-    ): MapChart {
-        return new MapChart(a as any, b as any, c);
+        a: string|HTMLDOMElement|Partial<Options>,
+        b?: Chart.CallbackFunction|true|Partial<Options>,
+        c?: Chart.CallbackFunction|true
+    ): MapChart|Promise<MapChart> {
+        const chart = new MapChart(a as any, b as any, c);
+        return chart.promise || chart;
     }
+    /* eslint-enable jsdoc/check-param-names */
 
     /**
      * Utility for reading SVG paths directly.

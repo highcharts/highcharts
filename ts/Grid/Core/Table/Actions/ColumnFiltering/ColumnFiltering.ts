@@ -4,12 +4,13 @@
  *
  *  (c) 2020-2026 Highsoft AS
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  *  Authors:
- *  - Dawid Dragula
+ *  - Dawid Draguła
  *  - Sebastian Bochan
  *  - Kamil Kubik
  *
@@ -29,12 +30,12 @@ import type { Condition } from './FilteringTypes';
 import type FilterCell from './FilterCell.js';
 import type { FilteringCondition } from '../../../Options';
 
-import U from '../../../../../Core/Utilities.js';
 import GU from '../../../GridUtils.js';
+import FilteringController from '../../../Querying/FilteringController.js';
 import Globals from '../../../Globals.js';
 import { conditionsMap } from './FilteringTypes.js';
+import { defined, fireEvent } from '../../../../../Shared/Utilities.js';
 
-const { defined, fireEvent } = U;
 const { makeHTMLElement } = GU;
 
 /* *
@@ -185,7 +186,11 @@ class ColumnFiltering {
     public renderFilteringContent(container: HTMLElement): void {
         const column = this.column;
         const columnType = column.dataType;
-        if (!column.options.filtering?.enabled) {
+        if (
+            !column.viewport.grid.columnPolicy.isColumnFilteringEnabled(
+                column.id
+            )
+        ) {
             return;
         }
 
@@ -226,7 +231,7 @@ class ColumnFiltering {
             'ArrowUp': -1
         }[e.key];
 
-        if (direction) {
+        if (direction && contentOrder.length) {
             e.preventDefault();
             const currentIndex = contentOrder.indexOf(e.target as HTMLElement);
             const n = contentOrder.length;
@@ -301,6 +306,10 @@ class ColumnFiltering {
             }
         }
 
+        if (this.hasSameFilterCondition(columnId, condition)) {
+            return;
+        }
+
         this.column.setOptions({
             filtering: {
                 condition: condition.condition,
@@ -323,6 +332,35 @@ class ColumnFiltering {
         fireEvent(this.column, 'afterFilter', {
             target: this.column
         });
+    }
+
+    /**
+     * Returns whether the next filtering options would produce the same
+     * semantic filter condition as the current one.
+     *
+     * @param columnId
+     * The column ID to compare filtering state for.
+     *
+     * @param options
+     * The next filtering options to compare.
+     */
+    private hasSameFilterCondition(
+        columnId: string,
+        options: FilteringCondition
+    ): boolean {
+        const currentCondition = FilteringController.mapOptionsToFilter(
+            columnId,
+            this.column.options.filtering ?? {}
+        );
+        const nextCondition = FilteringController.mapOptionsToFilter(
+            columnId,
+            options
+        );
+
+        return FilteringController.filterConditionsEqual(
+            currentCondition,
+            nextCondition
+        );
     }
 
     /**
@@ -359,7 +397,6 @@ class ColumnFiltering {
         } else {
             this.filterInput.type = 'text';
             this.filterInput.classList.add(
-                Globals.getClassName('icon'),
                 Globals.getClassName('iconSearch')
             );
         }

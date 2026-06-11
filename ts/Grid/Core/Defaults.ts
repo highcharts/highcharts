@@ -4,12 +4,13 @@
  *
  *  (c) 2009-2026 Highsoft AS
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  *  Authors:
- *  - Dawid Dragula
+ *  - Dawid Draguła
  *  - Sebastian Bochan
  *
  * */
@@ -25,16 +26,16 @@
 import type { Options, LangOptions } from './Options';
 import type { DeepPartial } from '../../Shared/Types';
 
+import { warnIfDeprecatedOptions } from './DeprecatedOptions.js';
 import Pagination from './Pagination/Pagination.js';
-import Utils from '../../Core/Utilities.js';
-
-const { merge } = Utils;
+import { merge } from '../../Shared/Utilities.js';
 
 /**
  * Default language options for the Grid.
  */
 export const defaultLangOptions: DeepPartial<LangOptions> = {
     accessibility: {
+        columnMenu: 'Open menu for {column}.',
         sorting: {
             sortable: 'Sortable.',
             announcements: {
@@ -125,7 +126,8 @@ export const defaultOptions: DeepPartial<Options> = {
         }
     },
     data: {
-        providerType: 'local'
+        providerType: 'local',
+        autogenerateColumns: true
     },
     time: {
         timezone: 'UTC'
@@ -170,6 +172,7 @@ export const defaultOptions: DeepPartial<Options> = {
 export function setOptions(
     options: DeepPartial<Options>
 ): void {
+    warnIfDeprecatedOptions(options);
     merge(true, defaultOptions, options);
 }
 

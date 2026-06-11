@@ -1,10 +1,11 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -24,21 +25,19 @@ const {
     pageLang,
     win
 } = H;
-import U from '../Core/Utilities.js';
-const {
+import {
     defined,
-    error,
     extend,
-    isNumber,
     isObject,
+    isNumber,
     isString,
     merge,
     objectEach,
     pad,
     splat,
-    timeUnits,
     ucfirst
-} = U;
+} from './Utilities.js';
+import { error, timeUnits } from '../Core/Utilities.js';
 
 /* *
  *
@@ -313,17 +312,17 @@ class TimeBase {
             //      L, 6/3/2023 14:30:00
             .split(/(?:, | |\/|:)/g);
         return [
-            year,
+            +year,
             +month - 1,
-            dayOfMonth,
-            hours,
-            minutes,
-            seconds,
+            +dayOfMonth,
+            +hours,
+            +minutes,
+            +seconds,
             // Milliseconds
             Math.floor(Number(timestamp) || 0) % 1000,
             // Spanish weekday index
             'DLMXJVS'.indexOf(weekday)
-        ].map(Number);
+        ];
     }
 
     /**
@@ -593,8 +592,8 @@ class TimeBase {
      * | `%o` | Month number, 1 through 12                   |       |
      * | `%y` | Two digits year, like 24 for 2024            |       |
      * | `%Y` | Four digits year, like 2024                  |       |
-     * | `%H` | Two digits hours in 24h format, 00 through 23 | Depending on the locale, 12h format may be instered. |
-     * | `%k` | Hours in 24h format, 0 through 23            | Depending on the locale, 12h format may be instered. |
+     * | `%H` | Two digits hours in 24h format, 00 through 23 | Depending on the locale, 12h format may be inserted. |
+     * | `%k` | Hours in 24h format, 0 through 23            | Depending on the locale, 12h format may be inserted. |
      * | `%I` | Two digits hours in 12h format, 00 through 11 | N/A. The locale determines the hour format. |
      * | `%l` | Hours in 12h format, 1 through 12            | N/A. The locale determines the hour format. |
      * | `%M` | Two digits minutes, 00 through 59            |       |
@@ -785,7 +784,7 @@ class TimeBase {
                         format = format.replace(
                             '%' + key,
                             typeof val === 'function' ?
-                                val.call(time, timestamp) :
+                                val.call(time, timestamp, time) :
                                 val
                         );
                     }

@@ -1,4 +1,5 @@
 
+
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 import type {
     Route,
@@ -273,6 +274,44 @@ async function getJSONSources(): Promise<RouteType[]> {
     return routes;
 }
 
+async function replaceMorningstarConnectors(route: Route) {
+    const url = route.request().url();
+    const match = url.match(/connectors\/morningstar\/([^?#]+)/u);
+
+    if (match?.[1]) {
+        const filename = match[1];
+        try {
+            const filePath = join(
+                __dirname,
+                '..',
+                'node_modules',
+                '@highcharts',
+                'connectors-morningstar',
+                filename
+            );
+            const data = await readFile(filePath, 'utf8');
+
+            test.info().annotations.push({
+                type: 'redirect',
+                description:
+                    `${url} --> node_modules/@highcharts/connectors-morningstar/${filename}`
+            });
+
+            return route.fulfill({
+                status: 200,
+                contentType:
+                    contentTypes[extname(filename)] ?? 'application/javascript',
+                body: data
+            });
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    await route.abort();
+    throw new Error('Failed to find a matching Morningstar connector bundle');
+}
+
 async function replaceMapData(route: Route) {
     const url = route.request().url();
     const match = url.match(/mapdata\/(.+\.*)/u);
@@ -351,6 +390,10 @@ export async function setupRoutes(page: Page){
     if (!process.env.NO_REWRITES) {
         const routes: RouteType[] = [
             {
+                pattern: '**/code.highcharts.com/connectors/morningstar/**',
+                handler: replaceMorningstarConnectors
+            },
+            {
                 pattern: '**/code.highcharts.com/**',
                 handler: replaceHCCode
             },
@@ -384,7 +427,9 @@ export async function setupRoutes(page: Page){
                         return;
                     }
 
+
                     const ext = extname(localPath);
+
 
                     try {
                         const body = await readFile(

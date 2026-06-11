@@ -1,10 +1,11 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -39,17 +40,16 @@ const {
 } = SeriesRegistry;
 import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 const { prototype: { symbols } } = SVGRenderer;
-import U from '../../Core/Utilities.js';
-const {
+
+import IU from '../InterpolationUtilities.js';
+import {
     addEvent,
     extend,
     fireEvent,
     isNumber,
     merge,
     pick
-} = U;
-
-import IU from '../InterpolationUtilities.js';
+} from '../../Shared/Utilities.js';
 const {
     colorFromPoint,
     getContext
@@ -266,6 +266,14 @@ class HeatmapSeries extends ScatterSeries {
                 }
             });
         }
+    }
+
+    /**
+     * Override to use rectangle by default
+     * @private
+     */
+    getSymbol(): void {
+        this.symbol = this.options.marker?.symbol || 'rect';
     }
 
     /**
@@ -530,7 +538,6 @@ class HeatmapSeries extends ScatterSeries {
         fireEvent(series, 'afterTranslate');
     }
 
-    /* eslint-enable valid-jsdoc */
 
 }
 
@@ -583,9 +590,7 @@ extend(HeatmapSeries.prototype, {
      */
     alignDataLabel: ColumnSeries.prototype.alignDataLabel,
 
-    colorAttribs: ColorMapComposition.seriesMembers.colorAttribs,
-
-    getSymbol: Series.prototype.getSymbol
+    colorAttribs: ColorMapComposition.seriesMembers.colorAttribs
 
 });
 ColorMapComposition.compose(HeatmapSeries);

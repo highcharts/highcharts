@@ -1,10 +1,11 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  * */
 
@@ -13,6 +14,8 @@
  *  Declarations
  *
  * */
+
+import type { AnyRecord } from '../Shared/Types.js';
 
 /**
  * Generic callback function.
@@ -40,11 +43,14 @@ export interface Callback<TScope, TReturn> {
  * @param {TEvent} e
  * Event argument.
  *
+ * @param {TScope} [ctx]
+ * The context for the callback.
+ *
  * @return {boolean|void}
  * Return value.
  */
 export interface EventCallback<TScope, TEvent=AnyRecord|Event> {
-    (this: TScope, e: TEvent): (boolean|void);
+    (this: TScope, e: TEvent, ctx?: TScope): (boolean|void);
 }
 
 /**
@@ -58,11 +64,14 @@ export interface EventCallback<TScope, TEvent=AnyRecord|Event> {
  * @param {TEvent} e
  * Event argument.
  *
+ * @param {TScope} [ctx]
+ * The context for the callback.
+ *
  * @return {string}
  * Return value.
  */
 export interface FormatterCallback<TScope, TEvent=unknown> {
-    (this: TScope, e: TEvent): string;
+    (this: TScope, e: TEvent, ctx?: TScope): string;
 }
 
 /* *

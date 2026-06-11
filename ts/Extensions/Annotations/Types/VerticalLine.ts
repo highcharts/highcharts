@@ -27,12 +27,7 @@ import Annotation from '../Annotation.js';
 import D from '../../../Core/Defaults.js';
 const { defaultOptions } = D;
 import MockPoint from '../MockPoint.js';
-import U from '../../../Core/Utilities.js';
-import { Palette } from '../../../Core/Color/Palettes';
-const {
-    merge,
-    pick
-} = U;
+import { merge, pick } from '../../../Shared/Utilities.js';
 
 if (defaultOptions.annotations?.types) {
     /**
@@ -44,6 +39,7 @@ if (defaultOptions.annotations?.types) {
      * @extends      annotations.types.crookedLine
      * @excluding    labels, shapes, controlPointOptions
      * @product      highstock
+     * @requires     modules/annotations-advanced
      * @optionparent annotations.types.verticalLine
      */
     defaultOptions.annotations.types.verticalLine = {
@@ -85,7 +81,7 @@ if (defaultOptions.annotations?.types) {
         } as any,
         labelOptions: {
             style: {
-                color: Palette.neutralColor80,
+                color: 'var(--highcharts-neutral-color-80)',
                 fontSize: '0.7em'
             }
         }

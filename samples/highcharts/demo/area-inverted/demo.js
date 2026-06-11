@@ -15,7 +15,8 @@ Highcharts.chart('container', {
         }
     },
     tooltip: {
-        pointFormat: '• {series.name}: <b>${point.y} B</b>'
+        valuePrefix: '$',
+        valueSuffix: ' B'
     },
     legend: {
         layout: 'vertical',

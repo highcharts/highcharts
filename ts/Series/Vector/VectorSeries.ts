@@ -3,10 +3,11 @@
  *  Vector plot series module
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -34,14 +35,8 @@ const {
         scatter: ScatterSeries
     }
 } = SeriesRegistry;
-import U from '../../Core/Utilities.js';
-const {
-    arrayMax,
-    extend,
-    merge,
-    pick
-} = U;
 import VectorSeriesDefaults from './VectorSeriesDefaults.js';
+import { arrayMax, extend, merge, pick } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -265,19 +260,19 @@ interface VectorSeries {
 extend(VectorSeries.prototype, {
 
     /**
-     * @ignore
+     * @internal
      * @deprecated
      */
     drawGraph: H.noop,
 
     /**
-     * @ignore
+     * @internal
      * @deprecated
      */
     getSymbol: H.noop,
 
     /**
-     * @ignore
+     * @internal
      * @deprecated
      */
     markerAttribs: H.noop as any,

@@ -1,10 +1,11 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -29,8 +30,7 @@ import Axis from '../Axis.js';
 import SeriesRegistry from '../../Series/SeriesRegistry.js';
 const { series: { prototype: seriesProto } } = SeriesRegistry;
 import StackItem from './StackItem.js';
-import U from '../../Utilities.js';
-const {
+import {
     addEvent,
     correctFloat,
     defined,
@@ -39,7 +39,7 @@ const {
     isNumber,
     objectEach,
     pick
-} = U;
+} from '../../../Shared/Utilities.js';
 
 /* *
  *

@@ -64,7 +64,8 @@ Highcharts.chart('container', {
         size: '95%',
         background: [{
             backgroundColor: 'var(--highcharts-neutral-color-3, #f7f7f7)',
-            borderWidth: 0
+            borderWidth: 0,
+            outerRadius: '105%'
         }, {
             backgroundColor: 'var(--highcharts-background-color, #fff)',
             borderWidth: 0,

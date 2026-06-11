@@ -176,7 +176,7 @@ QUnit.test(
         let iteratorPB = 0,
             iteratorAB = 0;
 
-        Highcharts.chart('container', {
+        const chart = Highcharts.chart('container', {
             chart: {
                 width: 500,
                 height: 400,
@@ -233,6 +233,34 @@ QUnit.test(
 
         assert.strictEqual(iteratorAB, 7, 'All after breaks called');
         assert.strictEqual(iteratorPB, 8, 'All point breaks called');
+
+        // Testing es6 arrow functions for axis event callbacks.
+        let es6AfterBreaksFlag = false;
+
+        chart.update({
+            xAxis: {
+                breaks: [
+                    {
+                        from: 5,
+                        to: 15,
+                        breakSize: 1
+                    }
+                ],
+                events: {
+                    afterBreaks: (e, axis) => {
+                        es6AfterBreaksFlag = (
+                            e && axis && true
+                        ) || false;
+                    }
+                }
+            }
+        });
+
+        assert.strictEqual(
+            es6AfterBreaksFlag,
+            true,
+            'Es6 arrow-function should work for axis events.'
+        );
     }
 );
 
@@ -830,8 +858,8 @@ QUnit.test(
 
         chart.xAxis[0].setExtremes();
 
-        const point1 = chart.series[0].points[0].shapeArgs,
-            point2 = chart.series[0].points[1].shapeArgs;
+        const point1 = chart.series[0].points[0].graphic.getBBox(),
+            point2 = chart.series[0].points[1].graphic.getBBox();
         assert.ok(
             point1.x + point2.width < point2.x,
             'Points should not overlap after applying breaks property, #16368.'
@@ -976,7 +1004,7 @@ QUnit.test('Axis breaks with scatter series', function (assert) {
 });
 
 QUnit.test('Axis breaks on Y axis', function (assert) {
-    var chart = Highcharts.chart('container', {
+    const chart = Highcharts.chart('container', {
         yAxis: {
             breaks: [
                 {
@@ -998,6 +1026,27 @@ QUnit.test('Axis breaks on Y axis', function (assert) {
         chart.yAxis[0].toPixels(50),
         chart.yAxis[0].toPixels(100),
         '50 and 100 translate to the same axis position'
+    );
+
+    chart.update({
+        yAxis: {
+            tickInterval: 5,
+            min: 0,
+            max: 90,
+            breaks: [{
+                from: 20,
+                to: 62
+            }]
+        },
+        series: [{
+            data: [2, 6, 3]
+        }]
+    });
+
+    assert.strictEqual(
+        chart.yAxis[0].toPixels(20),
+        chart.yAxis[0].toPixels(62),
+        '20 and 62 translate to the same axis position, #23728.'
     );
 });
 

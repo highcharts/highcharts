@@ -2,8 +2,9 @@
  *
  *  (c) 2009-2026 Highsoft AS
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  *  Authors:
@@ -18,14 +19,9 @@ import type CSSJSONObject from '../../CSSJSONObject';
 
 import { HTMLDOMElement } from '../../../Core/Renderer/DOMElementType.js';
 import EditGlobals from '../EditGlobals.js';
-import U from '../../../Core/Utilities.js';
 import Menu from './Menu.js';
 import EditRenderer from '../EditRenderer.js';
-
-const {
-    createElement,
-    merge
-} = U;
+import { createElement, merge } from '../../../Shared/Utilities.js';
 
 class MenuItem {
     /* *

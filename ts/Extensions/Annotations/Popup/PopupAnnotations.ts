@@ -5,8 +5,9 @@
  *  (c) 2009-2026 Highsoft AS
  *  Author: Sebastian Bochan
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -29,15 +30,17 @@ const {
     doc,
     isFirefox
 } = H;
-import U from '../../../Core/Utilities.js';
-const {
+import BaseFormIcons from '../../../Shared/BaseFormIcons';
+import getIcon from '../../../Shared/BaseFormUtils';
+
+import {
     createElement,
     isArray,
     isObject,
     objectEach,
     pick,
     stableSort
-} = U;
+} from '../../../Shared/Utilities.js';
 
 /* *
  *
@@ -131,9 +134,12 @@ function addForm(
  * (edit / remove) and text label.
  *
  * @internal
- * @param {Highcharts.Chart} - chart
- * @param {Highcharts.AnnotationsOptions} - options
- * @param {Function} - on click callback
+ * @param {Highcharts.Chart} chart
+ *        The Chart instance
+ * @param {Highcharts.AnnotationsOptions} options
+ *        Annotation options
+ * @param {Function} callback
+ *        On click callback
  */
 function addToolbar(
     this: Popup,
@@ -200,7 +206,7 @@ function addToolbar(
     createElement('span', {
         className: 'highcharts-icon'
     }, {
-        backgroundImage: `url(${this.iconsURL}edit.svg)`
+        backgroundImage: getIcon('edit.svg', this.iconsURL, BaseFormIcons)
     }, button);
 
     button = this.addButton(
@@ -215,7 +221,7 @@ function addToolbar(
     createElement('span', {
         className: 'highcharts-icon'
     }, {
-        backgroundImage: `url(${this.iconsURL}destroy.svg)`
+        backgroundImage: getIcon('destroy.svg', this.iconsURL, BaseFormIcons)
     }, button);
 }
 

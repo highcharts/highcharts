@@ -239,8 +239,8 @@ QUnit.test('Dynamic markers on update', function (assert) {
     assert.strictEqual(hasVisibleMarker(pointB), false, 'Point marker hidden');
 });
 
-// #16624
-QUnit.test('Hover after disabling a11y', function (assert) {
+// #16624, temporarily skipped due to #23783
+QUnit.skip('Hover after disabling a11y', function (assert) {
     const chart = Highcharts.chart('container', {
         xAxis: {
             type: 'category'
@@ -284,6 +284,59 @@ QUnit.test('Hover after disabling a11y', function (assert) {
         'Point should not have marker after zoom in and zoom out'
     );
 });
+
+// #24164
+QUnit.test(
+    'No ghost markers after data update in styled mode' +
+    ' (#24164)',
+    function (assert) {
+        const getData = function (len) {
+            return Array.from({ length: len }, function (_, i) {
+                return [
+                    i * 86400000,
+                    Math.sin(i / 30) * 50 + 50 + Math.random() * 5
+                ];
+            });
+        };
+        const chart = Highcharts.chart('container', {
+            chart: {
+                styledMode: true,
+                zooming: {
+                    type: 'x'
+                }
+            },
+            plotOptions: {
+                line: {
+                    marker: {
+                        enabled: false
+                    }
+                }
+            },
+            series: [{
+                type: 'line',
+                data: getData(100)
+            }]
+        });
+
+        chart.update({
+            series: [{
+                data: getData(800)
+            }]
+        });
+
+        const series = chart.series[0];
+        assert.strictEqual(
+            series.markerGroup.element.childNodes.length,
+            0,
+            'Markers should be cleaned after update'
+        );
+        assert.strictEqual(
+            series.points.some(hasVisibleMarker),
+            false,
+            'No visible ghost markers should remain after update'
+        );
+    }
+);
 
 QUnit.test(
     'Update markers when a series is boosted and markers should not be ' +

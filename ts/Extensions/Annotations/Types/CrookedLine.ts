@@ -29,8 +29,7 @@ import ControlPoint from '../ControlPoint.js';
 import D from '../../../Core/Defaults.js';
 const { defaultOptions } = D;
 import MockPoint from '../MockPoint.js';
-import U from '../../../Core/Utilities.js';
-const { merge } = U;
+import { merge } from '../../../Shared/Utilities.js';
 
 if (defaultOptions.annotations?.types) {
     /**
@@ -40,6 +39,7 @@ if (defaultOptions.annotations?.types) {
     *         Crooked line
     *
     * @product      highstock
+    * @requires     modules/annotations-advanced
     * @optionparent annotations.types.crookedLine
     */
     defaultOptions.annotations.types.crookedLine = {
@@ -206,6 +206,7 @@ class CrookedLine extends Annotation {
     public addControlPoints(): void {
         this.getControlPointsOptions().forEach(
             function (
+                this: CrookedLine,
                 pointOptions: AnnotationMockPointOptionsObject,
                 i: number
             ): void {

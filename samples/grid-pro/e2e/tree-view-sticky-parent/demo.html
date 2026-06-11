@@ -1,0 +1,21 @@
+<script src="https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/grid-pro.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@highcharts/controls@0.7.0" type="module"></script>
+
+<div class="demo">
+    <div id="container"></div>
+</div>
+
+<div class="highcharts-controls-wrapper">
+    <highcharts-controls target="#container">
+        <highcharts-control
+            type="boolean"
+            path="data.treeView.stickyParents"
+            value="true"
+        ></highcharts-control>
+        <highcharts-control
+            type="boolean"
+            path="rendering.rows.virtualization"
+            value="true"
+        ></highcharts-control>
+    </highcharts-controls>
+</div>

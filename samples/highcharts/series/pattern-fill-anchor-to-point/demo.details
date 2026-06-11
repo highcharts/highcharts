@@ -1,0 +1,7 @@
+---
+ name: Highcharts Demo
+ description: Pattern fill with anchorToPoint option demonstration
+ authors:
+   - Highcharts
+ js_wrap: b
+...

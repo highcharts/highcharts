@@ -4,12 +4,13 @@
  *
  *  (c) 2020-2026 Highsoft AS
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  *  Authors:
- *  - Karol Kolodziej
+ *  - Karol Kołodziej
  *
  * */
 
@@ -26,10 +27,7 @@ import type Grid from '../../Core/Grid';
 import { defaultOptions } from '../../Core/Defaults.js';
 import Exporting from './Exporting.js';
 import Globals from '../../Core/Globals.js';
-import U from '../../../Core/Utilities.js';
-
-const { addEvent, pushUnique } = U;
-
+import { addEvent, pushUnique } from '../../../Shared/Utilities.js';
 
 /* *
  *
@@ -74,7 +72,7 @@ declare module '../../Core/Options' {
         /**
          * Options for the exporting.
          *
-         * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/grid-pro/basic/exporting | Export to CSV}
+         * @sample grid-pro/basic/exporting Export to CSV
          */
         exporting?: ExportingOptions;
     }

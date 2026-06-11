@@ -25,12 +25,12 @@ jobs:
       matrix:
         node-version: [lts/*]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           ref: master
 
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
@@ -45,7 +45,7 @@ jobs:
         run: node --import tsx test/ts-node-unit-tests/bench.ts --context base --pattern Stock/
 
       - name: Checkout current branch
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
            clean: false # do not remove files from previous run
       - run: npm ci
@@ -60,14 +60,14 @@ jobs:
         run: node --import tsx test/ts-node-unit-tests/benchmark-compare.ts
 
       - name: Store artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: benchmark-files
           path: |
             tmp/benchmarks
 
       - name: Comment on PR
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           github-token: ${{secrets.PR_COMMENT_TOKEN}}
           script: |

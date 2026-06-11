@@ -2,12 +2,13 @@
  *
  *  (c) 2009-2026 Highsoft AS
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  *  Authors:
- *  - Karol Kolodziej
+ *  - Karol Kołodziej
  *
  * */
 
@@ -25,10 +26,7 @@ import type { Options } from './GridComponentOptions';
 import type { DeepPartial } from '../../../Shared/Types';
 
 import DataConverter from '../../../Data/Converters/DataConverter.js';
-import U from '../../../Core/Utilities.js';
-const {
-    uniqueKey
-} = U;
+import { uniqueKey } from '../../../Core/Utilities.js';
 
 /* *
  *

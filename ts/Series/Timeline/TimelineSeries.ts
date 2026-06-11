@@ -6,8 +6,9 @@
  *
  *  Author: Daniel Studencki
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -39,8 +40,7 @@ const {
 } = SeriesRegistry.seriesTypes;
 import TimelinePoint from './TimelinePoint.js';
 import TimelineSeriesDefaults from './TimelineSeriesDefaults.js';
-import U from '../../Core/Utilities.js';
-const {
+import {
     addEvent,
     arrayMax,
     arrayMin,
@@ -48,7 +48,7 @@ const {
     extend,
     merge,
     pick
-} = U;
+} from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -218,6 +218,9 @@ class TimelineSeries extends LineSeries {
                     // Forced. Point level limitations.
                     { zIndex: void 0 }
                 );
+                // Delete so it doesn't override anything on merge.
+                delete point.options.dataLabels.zIndex;
+
                 visibilityIndex++;
             }
         }
@@ -232,8 +235,7 @@ class TimelineSeries extends LineSeries {
             xData = series.getColumn('x');
 
         for (let i = 0, iEnd = pointsLen; i < iEnd; ++i) {
-            const x = xData[i];
-            points[i].applyOptions({ x: x }, x);
+            points[i].x = xData[i];
         }
     }
 
@@ -443,7 +445,7 @@ class TimelineSeries extends LineSeries {
 // Add series-specific properties after data is already processed, #17890
 addEvent(TimelineSeries, 'afterProcessData', function (): void {
     const series = this,
-        xData = series.getColumn('x');
+        yData: Array<number|null> = series.getColumn('y');
 
     let visiblePoints = 0;
 
@@ -457,8 +459,11 @@ addEvent(TimelineSeries, 'afterProcessData', function (): void {
     }
 
     series.visiblePointsCount = visiblePoints;
-
-    this.dataTable.setColumn('y', new Array(xData.length).fill(1));
+    yData.length = series.dataTable.rowCount;
+    for (let i = 0; i < yData.length; ++i) {
+        yData[i] = yData[i] === null ? null : 1;
+    }
+    this.dataTable.setColumn('y', yData);
 
 });
 

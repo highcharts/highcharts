@@ -25,8 +25,7 @@ import CrookedLine from './CrookedLine.js';
 import D from '../../../Core/Defaults.js';
 const { defaultOptions } = D;
 import MockPoint from '../MockPoint.js';
-import U from '../../../Core/Utilities.js';
-const { merge } = U;
+import { merge } from '../../../Shared/Utilities.js';
 
 if (defaultOptions.annotations?.types) {
     defaultOptions.annotations.types.tunnel = merge(
@@ -38,6 +37,7 @@ if (defaultOptions.annotations?.types) {
          * @sample highcharts/annotations-advanced/tunnel/
          *         Tunnel
          * @product highstock
+         * @requires modules/annotations-advanced
          * @optionparent annotations.types.tunnel
          */
         {

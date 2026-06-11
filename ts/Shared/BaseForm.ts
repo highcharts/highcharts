@@ -2,8 +2,9 @@
  *
  *  (c) 2009-2026 Highsoft AS
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -17,11 +18,9 @@
  * */
 
 import AST from '../Core/Renderer/HTML/AST.js';
-import U from '../Core/Utilities.js';
-const {
-    addEvent,
-    createElement
-} = U;
+import BaseFormIcons from './BaseFormIcons.js';
+import getIcon from './BaseFormUtils.js';
+import { addEvent, createElement } from './Utilities.js';
 
 /* *
  *
@@ -101,9 +100,6 @@ abstract class BaseForm {
     protected addCloseButton(
         className: string = 'highcharts-popup-close'
     ): HTMLElement {
-        const popup = this,
-            iconsURL = this.iconsURL;
-
         // Create close popup button.
         const closeButton = createElement(
             'button',
@@ -115,26 +111,23 @@ abstract class BaseForm {
         createElement('span', {
             className: 'highcharts-icon'
         }, {
-            backgroundImage: 'url(' + (
-                iconsURL.match(/png|svg|jpeg|jpg|gif/ig) ?
-                    iconsURL : iconsURL + 'close.svg'
-            ) + ')'
+            backgroundImage: getIcon('close.svg', this.iconsURL, BaseFormIcons)
         }, closeButton);
 
         ['click', 'touchstart'].forEach((eventName: string): void => {
             addEvent(
                 closeButton,
                 eventName,
-                popup.closeButtonEvents.bind(popup)
+                this.closeButtonEvents.bind(this)
             );
         });
 
         // Close popup when press ESC
         addEvent(
             document,
-            'keydown', function (event: KeyboardEvent):void {
+            'keydown', (event: KeyboardEvent): void => {
                 if (event.code === 'Escape') {
-                    popup.closeButtonEvents();
+                    this.closeButtonEvents();
                 }
             }
         );
@@ -187,6 +180,7 @@ abstract class BaseForm {
     public closePopup(): void {
         this.container.style.display = 'none';
     }
+
 }
 
 /* *

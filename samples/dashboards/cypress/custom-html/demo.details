@@ -1,6 +1,6 @@
 ---
  name: Dashboards cypress test
  authors:
-   - Karol Kolodziej
+   - Karol Kołodziej
  js_wrap: b
 ...

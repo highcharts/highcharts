@@ -1,10 +1,12 @@
 /* *
  *
- *  (c) 2010-2025 Torstein Honsi
+ *  (c) 2010-2026 Highsoft AS
+ *  Author: Torstein Hønsi
  *
- *  License: www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
- *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
 
@@ -21,29 +23,27 @@
 import type ContourSeriesOptions from './ContourSeriesOptions';
 import type { DeepPartial } from '../../Shared/Types';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
-
 import Color from '../../Core/Color/Color.js';
 import ContourPoint from './ContourPoint.js';
-import contourShader from './contourShader.js';
+import contourShader from './ContourShader.js';
 import ContourSeriesDefaults from './ContourSeriesDefaults.js';
+import CrossSymbol from '../CrossSymbol.js';
 import Delaunay from '../../Core/Delaunay.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-import U from '../../Core/Utilities.js';
-import SVGPath from '../../Core/Renderer/SVG/SVGPath.js';
 import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
+import {
+    diffObjects,
+    extend,
+    merge,
+    normalizeTickInterval
+} from '../../Shared/Utilities.js';
+import { error } from '../../Core/Utilities.js';
 
 const {
     seriesTypes: {
         scatter: ScatterSeries
     }
 } = SeriesRegistry;
-const {
-    diffObjects,
-    error,
-    extend,
-    merge,
-    normalizeTickInterval
-} = U;
 
 
 /* *
@@ -64,6 +64,12 @@ export default class ContourSeries extends ScatterSeries {
         ScatterSeries.defaultOptions,
         ContourSeriesDefaults
     );
+
+    public static compose(
+        SVGRendererClass: typeof SVGRenderer
+    ): void {
+        CrossSymbol.compose(SVGRendererClass);
+    }
 
 
     /* *
@@ -222,6 +228,7 @@ export default class ContourSeries extends ScatterSeries {
         if (this.renderFrame) {
             this.renderFrame();
         } else {
+            /* eslint-disable @typescript-eslint/no-floating-promises */
             this.run();
         }
     }
@@ -234,12 +241,12 @@ export default class ContourSeries extends ScatterSeries {
             gpu = navigator.gpu,
             context = series.context = canvas.getContext('webgpu');
 
-        renderer.asyncCounter += 1;
-
         if (!gpu || !context) {
-            error(36, false);
+            error(37, false, chart);
             return;
         }
+
+        renderer.asyncCounter += 1;
 
         if (context) {
             let device = this.device;
@@ -722,7 +729,7 @@ export default class ContourSeries extends ScatterSeries {
     }
 
     /**
-     * Returns the lineWidth from the series options, which controlls the
+     * Returns the lineWidth from the series options, which controls the
      * visibility of contour lines, in format of the WebGPU uniform.
      */
     private getLineWidth(): number {
@@ -833,23 +840,6 @@ export default class ContourSeries extends ScatterSeries {
         ].map((val): number => val / 255);
     }
 }
-
-function cross(
-    x: number,
-    y: number,
-    w: number,
-    h: number
-): SVGPath {
-    return [
-        ['M', x, y],
-        ['L', x + w, y + h],
-        ['M', x + w, y],
-        ['L', x, y + h],
-        ['z']
-    ];
-}
-
-SVGRenderer.prototype.symbols.cross = cross;
 
 extend(ContourSeries.prototype, {
     pointClass: ContourPoint,
