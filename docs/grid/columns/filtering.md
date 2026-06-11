@@ -4,9 +4,9 @@ sidebar_label: "Filtering"
 
 # Column filtering
 
-Column filtering lets end users narrow visible rows by applying filter conditions to individual columns.
+Column filtering lets end users narrow visible rows by applying filter operators to individual columns.
 
-Each column filter operates independently. When multiple columns have active filters, only rows that satisfy **all** filter conditions are shown (logical **AND** across columns).
+Each column filter operates independently. When multiple columns have active filters, only rows that satisfy **all** filter rules are shown (logical **AND** across columns).
 
 With the default local data model, filtering is applied client-side on the
 loaded data. In Grid Pro, you can use `providerType: 'remote'` when filter
@@ -45,7 +45,7 @@ The Grid provides two user interface modes for column filtering.
 
 ### Popup mode (default)
 
-By default, a filter icon appears in the column header. Clicking the icon opens a popup where users can select a condition and enter a value.
+By default, a filter icon appears in the column header. Clicking the icon opens a popup where users can select an operator and enter a value.
 
 This mode keeps the table compact and is suitable when filtering is used occasionally.
 
@@ -72,10 +72,60 @@ columnDefaults: {
 
 Inline mode works well for data-heavy tables where filtering is a primary interaction.
 
-## Filter conditions by data type
+#### Hiding the operator select
 
-Available filter conditions depend on the column’s `dataType`.
+When `hideOperatorSelect` is `true`, the operator `<select>` is not rendered
+in inline or popup filtering. Filtering uses a fixed operator:
+
+* the first operator for the column `dataType`, or
+* the first entry in `filtering.operators` when that list is set, or
+* `filtering.rule.operator` when it is valid for the column.
+
+End users cannot change the operator in the UI. Update
+`filtering.rule.operator` programmatically (for example via `grid.update()`)
+to switch operators.
+
+When `filtering.operators` contains a single entry, `hideOperatorSelect`
+defaults to `true`. Set it to `false` explicitly to show the select anyway.
+
+For `boolean` columns the operator select is the only inline control, so
+hiding it removes all interactive filtering in the cell; use `filtering.rule`
+or `grid.update()` instead.
+
+```js
+columnDefaults: {
+    filtering: {
+        enabled: true,
+        inline: true,
+        hideOperatorSelect: true
+    }
+},
+columns: [{
+    id: 'product',
+    // Uses default string filtering operator: contains
+}, {
+    id: 'stock',
+    filtering: {
+        operators: ['greaterThan', 'lessThan']
+        // Uses greaterThan (first in operators)
+    }
+}, {
+    id: 'price',
+    filtering: {
+        operators: ['greaterThan']
+    }
+}]
+```
+
+See also: [Inline filtering with hidden operator select](https://www.highcharts.com/samples/grid-lite/options/inline-filtering-hide-select).
+
+## Filter operators by data type
+
+Available filter operators depend on the column’s `dataType`.
 If not specified, the data type is inferred automatically.
+
+Active filters should always be configured with `filtering.rule.operator` and
+`filtering.rule.value`.
 
 ### String columns
 
@@ -93,8 +143,10 @@ columns: [{
     id: "product",
     dataType: "string", // in most cases not needed
     filtering: {
-        condition: "contains",
-        value: "Apple"
+        rule: {
+            operator: "contains",
+            value: "Apple"
+        }
     }
 }]
 ```
@@ -115,8 +167,10 @@ columns: [{
     id: "price",
     dataType: "number", // in most cases not needed
     filtering: {
-        condition: "greaterThan",
-        value: 2.0
+        rule: {
+            operator: "greaterThan",
+            value: 2.0
+        }
     }
 }]
 ```
@@ -125,21 +179,47 @@ columns: [{
 
 * `equals`
 * `doesNotEqual`
-* `before`
-* `after`
+* `greaterThan`
+* `greaterThanOrEqualTo`
+* `lessThan`
+* `lessThanOrEqualTo`
 * `empty`
 * `notEmpty`
+
+DateTime columns use the **same operator keys** as number columns. The filter UI
+shows date-specific labels by default. Customize them with
+`lang.columnFilteringDateTimeOperators` (see
+[Internationalization](https://www.highcharts.com/docs/grid/internationalization)).
+
+| Operator (in config and API) | Default UI label |
+|--------------------------------|------------------|
+| `equals` | On |
+| `doesNotEqual` | Not on |
+| `greaterThan` | After |
+| `greaterThanOrEqualTo` | On or after |
+| `lessThan` | Before |
+| `lessThanOrEqualTo` | On or before |
+
+The `empty` and `notEmpty` operators use labels from
+`lang.columnFilteringOperators`, not from `columnFilteringDateTimeOperators`.
 
 ```js
 columns: [{
     id: "date",
     dataType: "datetime", // in most cases not needed
     filtering: {
-        condition: "after",
-        value: "2023-01-01"
+        rule: {
+            operator: "greaterThan",
+            value: "2023-01-01"
+        }
     }
 }]
 ```
+
+Filter values can be an ISO date string (`YYYY-MM-DD`) or a numeric timestamp.
+
+The operators `before` and `after` are deprecated. Use `lessThan` and
+`greaterThan` instead.
 
 ### Boolean columns
 
@@ -154,29 +234,63 @@ columns: [{
     dataType: "boolean",
     filtering: {
         enabled: true,
-        condition: "true"
+        rule: {
+            operator: "true"
+        }
+    }
+}]
+```
+
+## Restricting available operators
+
+You can limit which operators appear in the filter UI for a column using
+`filtering.operators`:
+
+```js
+columns: [{
+    id: 'weight',
+    filtering: {
+        enabled: true,
+        operators: ['greaterThan', 'lessThan'],
+        rule: {
+            operator: 'greaterThan',
+            value: 100
+        }
     }
 }]
 ```
 
 ## Initial filters
 
-You can define initial filter conditions and values in the grid configuration. These filters are applied immediately when the grid is rendered.
+You can define initial filter rules in the grid configuration. These filters are applied immediately when the grid is rendered.
 
 ```js
 columns: [{
     id: 'product',
     filtering: {
         enabled: true,
-        condition: 'contains',
-        value: 'Apple'
+        rule: {
+            operator: 'contains',
+            value: 'Apple'
+        }
     }
 }, {
     id: 'price',
     filtering: {
         enabled: true,
-        condition: 'greaterThanOrEqualTo',
-        value: 2
+        rule: {
+            operator: 'greaterThanOrEqualTo',
+            value: 2
+        }
+    }
+}, {
+    id: 'date',
+    filtering: {
+        enabled: true,
+        rule: {
+            operator: 'greaterThan',
+            value: '2023-01-01'
+        }
     }
 }]
 ```
@@ -185,7 +299,9 @@ This example shows:
 
 * A text filter on the `product` column
 * A numeric filter on the `price` column
-* Both filters applied together (AND logic)
+* A date filter on the `date` column using `greaterThan` (not the deprecated
+  `after` operator)
+* All filters applied together (AND logic)
 
 ## Mixing filter UI modes
 
@@ -235,16 +351,53 @@ Filters can also be controlled programmatically through the API.
 
 ```js
 const grid = Grid.grid('container', options);
-const productColumn = grid.getColumn('product');
+const productColumn = grid.viewport.getColumn('product');
+const dateColumn = grid.viewport.getColumn('date');
 
-// Apply a filter
+// Apply a filter: set(value, operator)
 productColumn.filtering.set('Apple', 'contains');
+
+// DateTime columns use greaterThan / lessThan, not after / before
+dateColumn.filtering.set('2023-01-01', 'greaterThan');
 
 // Clear the filter
 productColumn.filtering.set();
 ```
 
 This makes it easy to integrate column filtering with external UI controls, such as search fields or custom buttons.
+
+## Deprecated filtering options
+
+The following options are deprecated. Use the replacements in the table below.
+Deprecated options may be removed in a future release. If both old and new
+options are defined, the new options take precedence.
+
+| Deprecated | Use instead |
+|------------|-------------|
+| `filtering.condition` | `filtering.rule.operator` |
+| `filtering.value` | `filtering.rule.value` |
+| `filtering.conditions` | `filtering.operators` |
+| `before` (datetime operator) | `lessThan` |
+| `after` (datetime operator) | `greaterThan` |
+| `lang.columnFilteringConditions` | `lang.columnFilteringOperators` |
+
+```js
+// Deprecated:
+filtering: {
+    conditions: ['greaterThan', 'lessThan'],
+    condition: 'greaterThan',
+    value: 100
+}
+
+// Preferred:
+filtering: {
+    operators: ['greaterThan', 'lessThan'],
+    rule: {
+        operator: 'greaterThan',
+        value: 100
+    }
+}
+```
 
 ## Events __grid_pro__
 
@@ -274,6 +427,10 @@ These events can be used for e.g. logging, analytics, and UI feedback.
 ## Summary
 
 * Filtering is configured per column using `filtering`
+* Active filters use `filtering.rule.operator` and `filtering.rule.value`
+* Allowed UI operators can be restricted with `filtering.operators`
+* DateTime columns share operator keys with number columns; customize date UI
+  labels with `lang.columnFilteringDateTimeOperators`
 * Multiple active filters are combined using AND logic
 * UI can be inline or popup, and mixed per column
 * Filter behavior depends on column data type
@@ -281,6 +438,6 @@ These events can be used for e.g. logging, analytics, and UI feedback.
 
 ## Demo
 
-This example creates a grid with filtering enabled for all columns through `columnDefaults`. The grid displays various fruit data with different data types including strings, numbers, booleans, and dates. The weight column has an initial filter set to show only items weighing more than 1000 units, demonstrating how to pre-configure filtering conditions. The grouped header structure shows how filtering works with complex column layouts.
+This example creates a grid with filtering enabled for all columns through `columnDefaults`. The grid displays various fruit data with different data types including strings, numbers, booleans, and dates. The weight column has an initial filter set to show only items weighing more than 1000 units, demonstrating how to pre-configure filtering rules. The grouped header structure shows how filtering works with complex column layouts.
 
 <iframe src="https://www.highcharts.com/samples/embed/grid/basic/column-filtering?force-light-theme" allow="fullscreen"></iframe>
