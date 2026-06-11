@@ -14,6 +14,7 @@ Grid.grid('container', {
             value: [100, 24, 76]
         },
         treeView: {
+            enabled: true,
             input: {
                 type: 'path'
             }

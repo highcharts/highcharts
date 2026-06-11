@@ -83,7 +83,9 @@ test.describe('Pagination', () => {
                 },
                 rendering: {
                     rows: {
-                        pinning: {}
+                        pinning: {
+                            enabled: false
+                        }
                     }
                 }
             });
@@ -147,7 +149,9 @@ test.describe('Pagination', () => {
                 rendering: {
                     rows: {
                         virtualization: false,
-                        pinning: {}
+                        pinning: {
+                            enabled: false
+                        }
                     }
                 }
             });
