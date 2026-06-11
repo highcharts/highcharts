@@ -54,7 +54,7 @@ export interface AreaRangeDataLabelOptions extends DataLabelOptions {
      * The range point value to use for positioning this data label.
      * Possible values are `low` and `high`.
      *
-     * @default high for the first label, low for the second label
+     * @default `high` for the first label, `low` for the second label
      *
      * @product highcharts highstock
      */
