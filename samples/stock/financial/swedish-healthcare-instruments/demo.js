@@ -261,7 +261,7 @@ const FIELD_MAPS = {
             title: 'Instruments Overview',
             gridOptions: {
                 columnDefaults: {
-                    minWidth: 75,
+                    minWidth: 90,
                     cells: {
                         format: '{value:.1f}%'
                     }
@@ -308,22 +308,22 @@ const FIELD_MAPS = {
                     }
                 }, {
                     id: '30-Day Avg. Volume',
-                    minWidth: 90,
                     cells: {
                         format: '{value:,.0f}'
                     }
                 }, {
                     id: '90-Day Avg. Volume',
-                    minWidth: 90,
                     cells: {
                         format: '{value:,.0f}'
                     }
                 }, {
                     id: '180-Day Avg. Volume',
-                    minWidth: 90,
                     cells: {
                         format: '{value:,.0f}'
                     }
+                }, {
+                    id: 'Ann. Volatility',
+                    minWidth: 120
                 }]
             }
         }]
