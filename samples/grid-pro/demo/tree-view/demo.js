@@ -68,6 +68,7 @@ Grid.grid('container', {
         columns,
         idColumn: 'recordId',
         treeView: {
+            enabled: true,
             input: {
                 type: 'path',
                 pathColumn: 'Regions' // Column that contains the path

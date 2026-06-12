@@ -8,25 +8,24 @@ tags: ["grid-pro"]
 Row pinning is available in Highcharts Grid Pro. It lets you keep selected rows
 visible at the top or bottom while the main rows scroll normally.
 
-Pinned rows are existing `data.dataTable` rows. They remain in the scrollable
-area and are also rendered in dedicated pinned sections.
+Pinned rows are existing data rows. They remain in the scrollable area and are
+also rendered in dedicated pinned sections.
 
 ## Basic configuration
 
 ```js
 Grid.grid('container', {
     data: {
-        dataTable: {
-            columns: {
-                id: ['row-001', 'row-002', 'row-999'],
-                price: [1, 2, 999]
-            }
+        columns: {
+            id: ['row-001', 'row-002', 'row-999'],
+            price: [1, 2, 999]
         },
         idColumn: 'id'
     },
     rendering: {
         rows: {
             pinning: {
+                enabled: false,
                 topIds: ['row-001'],
                 bottomIds: ['row-999']
             }
@@ -50,17 +49,15 @@ Grid.grid('container', {
 });
 ```
 
-To use row pinning without built-in controls, omit `enabled` or set it to
-`false`. Pinned rows and the runtime row pinning API continue to work.
+To use row pinning without built-in controls, set `enabled` to `false`.
+Pinned rows and the runtime row pinning API continue to work.
 
 ```js
 const grid = Grid.grid('container', {
     data: {
-        dataTable: {
-            columns: {
-                id: ['row-001', 'row-002', 'row-003'],
-                priority: ['critical', 'normal', 'done']
-            }
+        columns: {
+            id: ['row-001', 'row-002', 'row-003'],
+            priority: ['critical', 'normal', 'done']
         },
         idColumn: 'id'
     },
@@ -99,6 +96,7 @@ Grid.grid('container', {
     rendering: {
         rows: {
             pinning: {
+                enabled: false,
                 resolve: function (row) {
                     if (row.priority === 'critical') {
                         return 'top';
@@ -143,6 +141,7 @@ Grid.grid('container', {
     rendering: {
         rows: {
             pinning: {
+                enabled: false,
                 events: {
                     beforeRowPin: function (event) {
                         console.log(
@@ -244,6 +243,7 @@ the inserted row visible.
 rendering: {
     rows: {
         pinning: {
+            enabled: false,
             topIds: ['row-001', 'row-002', 'row-003'],
             bottomIds: ['row-998', 'row-999'],
             top: {
