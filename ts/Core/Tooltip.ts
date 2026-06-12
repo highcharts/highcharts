@@ -23,7 +23,6 @@ import type Point from './Series/Point';
 import type Pointer from './Pointer';
 import type PointerEvent from './PointerEvent';
 import type PositionObject from './Renderer/PositionObject';
-import type RectangleObject from './Renderer/RectangleObject';
 import type Series from './Series/Series';
 import type SizeObject from './Renderer/SizeObject';
 import type SVGAttributes from './Renderer/SVG/SVGAttributes';
@@ -1766,46 +1765,19 @@ class Tooltip {
             return;
         }
 
-        const box: RectangleObject = {
-            x: 0,
-            y: 0,
-            width: 0,
-            height: 0
-        };
-
-        // Combine anchor and tooltip
-        const anchorPos = this.getAnchor(points);
-        const labelBBox = label.getBBox();
-
-        anchorPos[0] += chart.plotLeft - (label.translateX || 0);
-        anchorPos[1] += chart.plotTop - (label.translateY || 0);
-
-        // When the mouse pointer is between the anchor point and the label,
-        // the label should stick.
-        box.x = Math.min(0, anchorPos[0]);
-        box.y = Math.min(0, anchorPos[1]);
-        box.width = (
-            anchorPos[0] < 0 ?
-                Math.max(
-                    Math.abs(anchorPos[0]), labelBBox.width - anchorPos[0]
-                ) :
-                Math.max(Math.abs(anchorPos[0]), labelBBox.width)
-        );
-        box.height = (
-            anchorPos[1] < 0 ?
-                Math.max(
-                    Math.abs(anchorPos[1]),
-                    labelBBox.height - Math.abs(anchorPos[1])
-                ) :
-                Math.max(Math.abs(anchorPos[1]), labelBBox.height)
-        );
+        // Grab the exact SVG path data from the tooltip bubble's background
+        const d = label.box.d;
 
         if (tooltip.tracker) {
-            tooltip.tracker.attr(box);
+            tooltip.tracker.attr({ d });
         } else {
             tooltip.tracker = label.renderer
-                .rect(box)
-                .addClass('highcharts-tracker')
+                .path()
+                .attr({
+                    d,
+                    'stroke-width': 10 // Creates a 10px invisible buffer zone
+                })
+                .addClass('highcharts-tracker highcharts-tooltip-tracker')
                 .add(label);
 
             // For a rapid move going outside of the elements keeping the
@@ -1818,7 +1790,9 @@ class Tooltip {
 
             if (!chart.styledMode) {
                 tooltip.tracker.attr({
-                    fill: 'rgba(0,0,0,0)'
+                    fill: 'rgba(0,0,0,0)',
+                    stroke: 'rgba(0,0,0,0)',
+                    'stroke-width': 10
                 });
             }
         }

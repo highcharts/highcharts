@@ -320,6 +320,11 @@
     stroke: none;
 }
 
+.highcharts-tooltip-tracker {
+    stroke: transparent;
+    stroke-width: 10px;
+}
+
 .highcharts-tooltip text,
 .highcharts-tooltip foreignObject div {
     fill: var(--highcharts-neutral-color-80);
