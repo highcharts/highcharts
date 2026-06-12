@@ -618,11 +618,19 @@ QUnit.test('Sankey and circular data', function (assert) {
         true,
         'Self links should be marked as circular'
     );
-    assert.close(
-        shapeArgs.y,
-        (chart.plotHeight - series.nodes[0].shapeArgs.height) / 2,
-        0.5,
-        '#16080: Node should be translated correctly after redraw (y)'
+    assert.strictEqual(
+        series.isDataCircular,
+        false,
+        'Self links alone should not trigger the circular layout (#8218)'
+    );
+    assert.deepEqual(
+        [series.nodes[0].level, series.nodes[1].level],
+        [0, 1],
+        'Self links should not block root detection and node levels (#8218)'
+    );
+    assert.ok(
+        shapeArgs.height > chart.plotHeight / 2,
+        '#16080: Layout should not shrink for hidden self links'
     );
     assert.deepEqual(
         selfLink.shapeArgs.d,
@@ -649,11 +657,29 @@ QUnit.test('Sankey and circular data', function (assert) {
         0.5,
         'Single self-linked node should be centered vertically'
     );
-    selfNode.onMouseOver();
+    chart.tooltip.refresh(selfNode);
     assert.notEqual(
         chart.tooltip.label.text.textStr.indexOf('a \u2192 a:'),
         -1,
         'Single self-linked node tooltip should show the hidden self flow'
+    );
+    chart.tooltip.hide(0);
+
+    // Same-length data updates reuse point instances - a link updated into
+    // a self-link must not keep the render state of the old visible link
+    series.setData([['a', 'b', 5]]);
+    series.setData([['a', 'a', 5]]);
+
+    const reusedSelfLink = series.points[0];
+    assert.deepEqual(
+        [
+            reusedSelfLink.graphic,
+            reusedSelfLink.plotY,
+            reusedSelfLink.tooltipPos,
+            reusedSelfLink.dlBox
+        ],
+        [void 0, void 0, void 0, void 0],
+        'A link updated into a self-link should clear its render state (#8218)'
     );
 
     series.setData([
@@ -703,7 +729,7 @@ QUnit.test('Sankey and circular data', function (assert) {
         'Circular link path should start at the from-node right edge (x)'
     );
     assert.close(
-        returnLinkShapeArgs.d[8][1],
+        returnLinkShapeArgs.d[7][1],
         returnLink.toNode.shapeArgs.x,
         0.5,
         'Circular link path should enter the to-node left edge'
@@ -731,29 +757,19 @@ QUnit.test('Sankey and circular data', function (assert) {
         'Equal reciprocal links should be vertically centered in the plot area'
     );
 
-    const invertedContainer = document.createElement('div');
-    document.body.appendChild(invertedContainer);
+    chart.update({
+        chart: {
+            inverted: true
+        }
+    });
+    chart.series[0].setData([
+        ['a', 'b', 5],
+        ['b', 'c', 10],
+        ['b', 'a', 5]
+    ]);
 
-    const invertedChart = Highcharts.chart(invertedContainer, {
-            chart: {
-                inverted: true,
-                width: 500,
-                height: 420
-            },
-            series: [
-                {
-                    keys: ['from', 'to', 'weight'],
-                    data: [
-                        ['a', 'b', 5],
-                        ['b', 'c', 10],
-                        ['b', 'a', 5]
-                    ],
-                    type: 'sankey'
-                }
-            ]
-        }),
-        invertedSeries = invertedChart.series[0],
-        invertedReturnLink = invertedSeries.points[2],
+    series = chart.series[0];
+    const invertedReturnLink = series.points[2],
         invertedX = [],
         invertedY = [];
 
@@ -766,9 +782,9 @@ QUnit.test('Sankey and circular data', function (assert) {
 
     assert.ok(
         Math.min.apply(null, invertedX) > 0 &&
-            Math.max.apply(null, invertedX) < invertedChart.plotSizeX &&
+            Math.max.apply(null, invertedX) < chart.plotSizeX &&
             Math.min.apply(null, invertedY) >= 0 &&
-            Math.max.apply(null, invertedY) <= invertedChart.plotSizeY,
+            Math.max.apply(null, invertedY) <= chart.plotSizeY,
         'Inverted return links should stay within the plot area'
     );
 
@@ -780,15 +796,18 @@ QUnit.test('Sankey and circular data', function (assert) {
 
     // The circular layout flag lives on the prototype, so circular detection
     // must survive a series update that strips own properties (#8218).
-    invertedSeries.update({ name: 'updated' });
+    series.update({ name: 'updated' });
     assert.strictEqual(
-        invertedSeries.isDataCircular,
+        series.isDataCircular,
         true,
         'Circular layout should persist after a series update'
     );
 
-    invertedChart.destroy();
-    invertedContainer.remove();
+    chart.update({
+        chart: {
+            inverted: false
+        }
+    });
 
     chart.series[0].setData([
         ['x', 'y', 1],
@@ -811,7 +830,7 @@ QUnit.test('Sankey and circular data', function (assert) {
         'Return link should be circular when the target is not the first node'
     );
     assert.close(
-        orderedReturnLinkShapeArgs.d[8][1],
+        orderedReturnLinkShapeArgs.d[7][1],
         orderedReturnLink.toNode.shapeArgs.x,
         0.5,
         'Circular link should enter a first-column target by column, not index'
@@ -848,7 +867,7 @@ QUnit.test('Sankey and circular data', function (assert) {
         'Explicit-column backward link should not be marked circular'
     );
     assert.ok(
-        Math.abs(acyclicBackwardPath[9][1] - acyclicBackwardPath[8][1]) > 1,
+        Math.abs(acyclicBackwardPath[8][1] - acyclicBackwardPath[7][1]) > 1,
         'Explicit-column backward link should keep a visible bend'
     );
 });

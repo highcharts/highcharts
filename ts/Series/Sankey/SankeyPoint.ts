@@ -22,7 +22,6 @@
 
 import type SankeyPointOptions from './SankeyPointOptions';
 import type SankeySeries from './SankeySeries';
-import type { SankeySeriesTooltipOptions } from './SankeySeriesOptions';
 
 import NodesComposition from '../NodesComposition.js';
 import Point from '../../Core/Series/Point.js';
@@ -78,6 +77,8 @@ class SankeyPoint extends ColumnSeries.prototype.pointClass {
     public options!: SankeyPointOptions;
 
     public outgoing?: boolean;
+
+    public selfLinkWeight?: number;
 
     public series!: SankeySeries;
 
@@ -180,37 +181,24 @@ class SankeyPoint extends ColumnSeries.prototype.pointClass {
      * @internal
      */
     public tooltipFormatter(pointFormat: string): string {
-        const tooltip = Point.prototype.tooltipFormatter.call(
-            this,
-            pointFormat
-        );
+        const series = this.series,
+            { selfLinkWeight } = this,
+            tooltip = Point.prototype.tooltipFormatter.call(
+                this,
+                pointFormat
+            );
 
-        if (!this.isNode || !this.series.useCircularLayout) {
+        if (!this.isNode || !series.useCircularLayout || !selfLinkWeight) {
             return tooltip;
         }
-
-        let selfLinkWeight = 0;
-        for (const link of this.linksFrom) {
-            if (link.fromNode === link.toNode) {
-                selfLinkWeight += link.weight || 0;
-            }
-        }
-
-        if (!selfLinkWeight) {
-            return tooltip;
-        }
-
-        const selfLinkFormat = (
-            this.series.tooltipOptions as unknown as SankeySeriesTooltipOptions
-        ).nodeSelfLinkFormat || '';
 
         return tooltip + format(
-            selfLinkFormat,
+            series.tooltipOptions.nodeSelfLinkFormat || '',
             {
                 point: this,
                 selfLinkWeight
             },
-            this.series.chart
+            series.chart
         );
     }
 

@@ -1,3 +1,18 @@
+// Snapshot and exact-restore helpers for the default plot options tooltips.
+// setOptions cannot remove added members, and merging `tooltip: undefined`
+// assigns an explicit undefined that wipes the tooltip defaults for every
+// chart created later in the shared test page.
+function snapshotTooltip(typeOptions) {
+    return typeOptions.tooltip && Highcharts.merge(typeOptions.tooltip);
+}
+function restoreTooltip(typeOptions, snapshot) {
+    if (snapshot) {
+        typeOptions.tooltip = snapshot;
+    } else {
+        delete typeOptions.tooltip;
+    }
+}
+
 QUnit.test('Options importantance order static', function (assert) {
     /* The importantance asscending order:
      * 1) default / global -> tooltip
@@ -8,7 +23,10 @@ QUnit.test('Options importantance order static', function (assert) {
      * 6) user set -> plotOptions.<seriesType>
      * 7) user set -> series
      */
-    var resetTo = Highcharts.merge(Highcharts.defaultOptions.tooltip);
+    var defaultPlotOptions = Highcharts.defaultOptions.plotOptions,
+        resetTo = Highcharts.merge(Highcharts.defaultOptions.tooltip),
+        resetSeriesTooltip = snapshotTooltip(defaultPlotOptions.series),
+        resetLineTooltip = snapshotTooltip(defaultPlotOptions.line);
 
     Highcharts.setOptions({
         tooltip: {
@@ -170,8 +188,8 @@ QUnit.test('Options importantance order static', function (assert) {
         tooltip: resetTo
     });
 
-    delete Highcharts.defaultOptions.plotOptions.series.tooltip;
-    delete Highcharts.defaultOptions.plotOptions.line.tooltip;
+    restoreTooltip(defaultPlotOptions.series, resetSeriesTooltip);
+    restoreTooltip(defaultPlotOptions.line, resetLineTooltip);
 });
 
 QUnit.test('Options importantance order dynamic (#6218)', function (assert) {
@@ -184,19 +202,14 @@ QUnit.test('Options importantance order dynamic (#6218)', function (assert) {
      * 6) user set -> plotOptions.<seriesType>
      * 7) user set -> series
      */
-    var resetTo = {
-        tooltip: {
-            headerFormat: Highcharts.defaultOptions.tooltip.headerFormat
-        },
-        plotOptions: {
-            line: {
-                tooltip: undefined
-            },
-            series: {
-                tooltip: undefined
+    var defaultPlotOptions = Highcharts.defaultOptions.plotOptions,
+        resetTo = {
+            tooltip: {
+                headerFormat: Highcharts.defaultOptions.tooltip.headerFormat
             }
-        }
-    };
+        },
+        resetSeriesTooltip = snapshotTooltip(defaultPlotOptions.series),
+        resetLineTooltip = snapshotTooltip(defaultPlotOptions.line);
 
     Highcharts.setOptions({
         tooltip: {
@@ -347,4 +360,6 @@ QUnit.test('Options importantance order dynamic (#6218)', function (assert) {
 
     // Reset
     Highcharts.setOptions(resetTo);
+    restoreTooltip(defaultPlotOptions.series, resetSeriesTooltip);
+    restoreTooltip(defaultPlotOptions.line, resetLineTooltip);
 });

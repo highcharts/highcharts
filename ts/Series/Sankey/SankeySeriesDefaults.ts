@@ -404,7 +404,14 @@ const SankeySeriesDefaults: PlotOptionsOf<SankeySeries> = {
          * [format string](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting)
          * appended to the node tooltip when the node has self-referencing
          * (circular) links. The `selfLinkWeight` variable is the sum of all
-         * self-link weights for the node.
+         * self-link weights for the node, also available as
+         * `point.selfLinkWeight` in a custom
+         * [nodeFormatter](#plotOptions.sankey.tooltip.nodeFormatter).
+         *
+         * Applies to the sankey series only, where self-links render as
+         * hidden paths. Derived series like arc diagram, dependency wheel
+         * and organization render self-links normally and ignore this
+         * option.
          *
          * @sample highcharts/series-sankey/circular-dependencies/
          *         Circular dependencies
