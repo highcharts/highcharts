@@ -23,14 +23,14 @@ QUnit.test(
 
 QUnit.test('seriesTypes.map.pointClass.setState', function (assert) {
     const chart = Highcharts.mapChart('container', {
+            chart: { styledMode: true },
             colorAxis: {},
             series: [{
-                data: [{
-                    name: 'Test',
-                    value: 1,
-                    path:
-                        'M385,111,392,109,400,111,401,105z'
-                }]
+                data: [
+                    { name: 'A', value: 1, path: 'M0,0,10,0,10,10z' },
+                    { name: 'B', value: 1, path: 'M10,0,20,0,20,10z' },
+                    { name: 'C', value: 3, path: 'M0,10,10,10,10,20z' }
+                ]
             }]
         }),
         point = chart.series[0].points[0],
@@ -38,22 +38,85 @@ QUnit.test('seriesTypes.map.pointClass.setState', function (assert) {
             .pointClass.prototype.setState;
 
     setState.call(point, '');
+
     assert.notEqual(
-        point.series.stateMarkerGraphic.element.getAttribute('href'),
+        point.stateUseGraphic?.attr('href'),
         `${chart.renderer.url}#${point.graphic.element.id}`,
-        'State is normal, state marker graphic should not refer to the point'
+        'State is normal, use graphic should not refer to the point, #22891.'
     );
     setState.call(point, 'hover');
+    console.log(point.stateUseGraphic);
+
     assert.strictEqual(
-        point.series.stateMarkerGraphic.attr('href'),
+        point.stateUseGraphic?.attr('href'),
         `${chart.renderer.url}#${point.graphic.element.id}`,
-        'State is hover, state marker graphic should refer to the point'
+        'State is hover, use graphic should refer to the point, #22891.'
     );
     setState.call(point, 'select');
     assert.notEqual(
-        point.series.stateMarkerGraphic.element.getAttribute('href'),
+        point.stateUseGraphic?.attr('href'),
         `${chart.renderer.url}#${point.graphic.element.id}`,
-        'State is select, state marker graphic should not refer to the point'
+        'State is select, use graphic should not refer to the point, #22891.'
+    );
+
+    // Add dataClasses and verify hover state is applied to all points in the
+    // class, not just the last one, #22891
+    chart.update({
+        colorAxis: {
+            dataClasses: [{ to: 2 }, { from: 2 }]
+        }
+    });
+
+    const series = chart.series[0],
+        dataClassItem = chart.colorAxis[0].legendItem.labels[0],
+        pointsInClass = series.points.filter(p => p.dataClass === 0);
+
+    dataClassItem.setState('hover');
+
+    assert.ok(
+        series.group.hasClass('highcharts-series-hover'),
+        'Series group should have the hover CSS class.'
+    );
+
+    pointsInClass.forEach(p => {
+        assert.ok(
+            p.graphic.hasClass('highcharts-point-hover'),
+            `Point "${p.name}" should have the hover CSS class.`
+        );
+        assert.ok(
+            point.stateUseGraphic?.attr('href'),
+            `Point "${p.name}" should have a stateUseGraphic.`
+        );
+    });
+
+    assert.strictEqual(
+        series.stateMarkerGraphic.element.childNodes.length,
+        pointsInClass.length,
+        'Container <g> should have one <use> per hovered dataClass point.'
+    );
+
+    dataClassItem.setState('');
+
+    assert.notOk(
+        series.group.hasClass('highcharts-series-hover'),
+        'Series group hover CSS class should be removed.'
+    );
+
+    pointsInClass.forEach(p => {
+        assert.notOk(
+            p.graphic.hasClass('highcharts-point-hover'),
+            `Point "${p.name}" hover class should be removed.`
+        );
+        assert.notOk(
+            p.stateUseGraphic,
+            `Point "${p.name}" stateUseGraphic should be destroyed.`
+        );
+    });
+
+    assert.strictEqual(
+        series.stateMarkerGraphic.element.childNodes.length,
+        0,
+        'Container <g> should be empty after unhover.'
     );
 });
 
