@@ -150,7 +150,8 @@ class FunnelSeries extends PieSeries {
         const series = point.series,
             reversed = series.options.reversed,
             dlBox = point.dlBox || point.shapeArgs,
-            { align, padding = 0, verticalAlign } = options,
+            { align, verticalAlign } = options,
+            padding = splat(options.padding || 0),
             inside =
                 ((series.options || {}).dataLabels || {}).inside,
             centerY = series.center[1],
@@ -176,7 +177,8 @@ class FunnelSeries extends PieSeries {
         if (verticalAlign === 'middle') {
             y = dlBox.y - dlBox.height / 2 + dataLabelHeight / 2;
         } else if (verticalAlign === 'top') {
-            y = dlBox.y - dlBox.height + dataLabelHeight + padding;
+            y = dlBox.y - dlBox.height + dataLabelHeight +
+                padding[0];
         }
 
         if (
@@ -185,9 +187,9 @@ class FunnelSeries extends PieSeries {
             verticalAlign === 'middle'
         ) {
             if (align === 'right') {
-                x = dlBox.x - padding + offset;
+                x = dlBox.x - padding[1 % padding.length] + offset;
             } else if (align === 'left') {
-                x = dlBox.x + padding - offset;
+                x = dlBox.x + padding[3 % padding.length] - offset;
             }
         }
 
@@ -253,7 +255,7 @@ class FunnelSeries extends PieSeries {
     ): DataLabel.LabelPositionObject {
         const y = point.plotY || 0,
             sign = point.half ? 1 : -1,
-            x = this.getX(y, !!point.half, point);
+            x = this.getXPos(y, !!point.half, point);
 
         return {
             distance,
@@ -367,7 +369,7 @@ class FunnelSeries extends PieSeries {
                     (1 - (y - top) / (height - neckHeight));
         };
 
-        series.getX = function (
+        series.getXPos = function (
             this: FunnelSeries,
             y: number,
             half: boolean,
@@ -667,7 +669,7 @@ class FunnelSeries extends PieSeries {
 interface FunnelSeries {
     pointClass: typeof FunnelPoint;
     getWidthAt(y: number): number; // Added during translate
-    getX(
+    getXPos(
         y: number,
         half: boolean,
         point: FunnelPoint

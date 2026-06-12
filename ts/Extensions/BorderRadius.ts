@@ -69,15 +69,19 @@ export interface BorderRadiusOptionsObject {
     radius: number|string;
 
     /**
-     * The scope of the rounding for column charts. In a stacked column chart,
-     * the value `point` means each single point will get rounded corners. The
-     * value `stack` means the rounding will apply to the full stack, so that
-     * only points close to the top or bottom will receive rounding.
+     * The scope of the rounding for column charts or plot bands. In a stacked
+     * column chart, the value `point` means each single point will get rounded
+     * corners. The value `stack` means the rounding will apply to the full
+     * stack, so that only points close to the top or bottom will receive
+     * rounding.
+     *
+     * Similarly, for plot bands, the `individual` value means each plot band
+     * will get rounded corners.
      *
      * @sample {highcharts} highcharts/plotoptions/column-borderradius/
      *         Rounded columns
      */
-    scope: 'point'|'stack';
+    scope: 'individual'|'point'|'stack';
 
     /**
      * For column charts, where in the point or stack to apply rounding. The
@@ -694,16 +698,20 @@ function roundedRect(
  * @name Highcharts.BorderRadiusOptionsObject#radius
  * @type {string|number}
  *//**
- * The scope of the rounding for column charts. In a stacked column chart, the
- * value `point` means each single point will get rounded corners. The value
- * `stack` means the rounding will apply to the full stack, so that only points
- * close to the top or bottom will receive rounding.
+ * The scope of the rounding for column charts or plot bands. In a stacked
+ * column chart, the value `point` means each single point will get rounded
+ * corners. The value `stack` means the rounding will apply to the full
+ * stack, so that only points close to the top or bottom will receive
+ * rounding.
+ *
+ * Similarly, for plot bands, the `individual` value means each plot band
+ * will get rounded corners.
  *
  * @sample  {highcharts} highcharts/plotoptions/column-borderradius/
  *          Rounded columns
  *
  * @name Highcharts.BorderRadiusOptionsObject#scope
- * @validvalue ["point", "stack"]
+ * @validvalue ["individual", "point", "stack"]
  * @type {string}
  *//**
  * For column charts, where in the point or stack to apply rounding. The `end`

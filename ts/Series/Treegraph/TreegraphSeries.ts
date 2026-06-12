@@ -267,7 +267,7 @@ class TreegraphSeries extends TreemapSeries {
                 (series.mapOptionsToLevel as any)[point.node.level ?? 0] || {};
             if (point.node.parent) {
                 const pointOptions = merge(levelOptions, point.options);
-                if (!point.linkToParent || point.linkToParent.destroyed) {
+                if (!point.linkToParent || point.linkToParent.condemned) {
                     const link = new series.LinkClass(
                         series,
                         pointOptions,

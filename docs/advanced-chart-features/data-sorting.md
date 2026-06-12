@@ -1,20 +1,31 @@
 Data sorting
 ===
 
-Highcharts 8 introduces a possibility of presenting data in ascending or descending order. This concept, in a simple way, allows distinguishing points with the highest or lowest values, which is very useful for dynamic data. The whole functionality is based on setting the increasing `x` property for points according to their value defined in `sortKey` option. The order of points in an array is unchanged.
+Highcharts 8 introduces a possibility of presenting data in ascending or
+descending order. This concept, in a simple way, allows distinguishing points
+with the highest or lowest values, which is very useful for dynamic data. The
+whole functionality is based on setting the increasing `x` property for points
+according to their value defined in the `sortKey` option. The order of points in
+the data array is unchanged.
 
 Installation
 ------------
 
-Data sorting is implemented in the Highcharts core and does not require any additional modules.
-To use this feature set `dataSorting.enabled` to `true` on a series level.
+Since v13, the data sorting functionality requires a separate module. To use the
+module, include it after the `highcharts.js` file.
+
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/data-sorting.js"></script>
+
+To enable the feature, set `dataSorting.enabled` to `true` on the series level.
 
 Configuration
 -------------
 
-To manipulate the order of sorting use `xAxis.reversed` option.
+To manipulate the order of sorting (ascending or descending), use the
+`xAxis.reversed` option. By default, points are sorted descending.
 
-Below code in a simple way presents how `dataSorting` works:
+The code below presents in a simple way how `dataSorting` works:
 
 **Default `y` sortKey:**
 
@@ -147,6 +158,26 @@ If a `dataSorting` property is defined in the master series but not in the other
 ```
 
 <iframe style="width: 100%; height: 450px; border: none;" src="https://www.highcharts.com/samples/embed/highcharts/datasorting/dependent-sorting" allow="fullscreen"></iframe>
+
+Combining with DataTables
+--------------------------
+
+The `dataSorting` option works seamlessly with [`dataTable`](https://api.highcharts.com/highcharts/series.line.dataTable) and [`dataMapping`](https://api.highcharts.com/highcharts/series.line.dataMapping):
+
+```js
+{
+    series: [{
+        dataTable: myDataTable,
+        dataMapping: { x: 'date', y: 'value' },
+        dataSorting: {
+            enabled: true,
+            sortKey: 'value'
+        }
+    }]
+}
+```
+
+This allows you to combine structured data sources with dynamic sorting, making it easy to display sorted views of your data without creating separate copies. For more information about DataTables, see [Using DataTables with Series](https://highcharts.com/docs/working-with-data/using-datatables-in-series).
 
 API documentation
 -----------------

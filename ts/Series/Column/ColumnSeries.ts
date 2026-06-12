@@ -166,15 +166,15 @@ class ColumnSeries extends Series {
                 // Make sure the columns don't cover the axis line during
                 // entrance animation
                 translatedThreshold += reversed ?
-                    -Math.floor(clipOffset[0]) :
-                    Math.ceil(clipOffset[2]);
+                    -Math.floor(clipOffset[inverted ? 1 : 0]) :
+                    Math.ceil(clipOffset[inverted ? 3 : 2]);
                 attr.translateX = translatedThreshold - yAxis.len;
             } else {
                 // Make sure the columns don't cover the axis line during
                 // entrance animation
                 translatedThreshold += reversed ?
-                    Math.ceil(clipOffset[0]) :
-                    -Math.floor(clipOffset[2]);
+                    Math.ceil(clipOffset[inverted ? 1 : 0]) :
+                    -Math.floor(clipOffset[inverted ? 3 : 2]);
                 attr.translateY = translatedThreshold;
             }
 
@@ -529,7 +529,9 @@ class ColumnSeries extends Series {
         Series.prototype.translate.apply(series);
 
         // Record the new values
-        series.points.forEach(function (point): void {
+        series.points.concat(
+            series.condemnedPoints as ColumnPoint[]
+        ).forEach(function (point): void {
             const yBottom = point.yBottom ?? (translatedThreshold as any),
                 safeDistance = 999 + Math.abs(yBottom),
                 plotX = point.plotX || 0,
@@ -690,9 +692,9 @@ class ColumnSeries extends Series {
                 fill
             ),
             dashstyle = point?.options.dashStyle || options.dashStyle,
-            strokeWidth = point?.[strokeWidthOption] ||
-                options[strokeWidthOption] ||
-                this[strokeWidthOption] || 0,
+            strokeWidth = point?.[strokeWidthOption] ??
+                options[strokeWidthOption] ??
+                this[strokeWidthOption] ?? 1,
             opacity = (point?.isNull && options.nullInteraction) ?
                 0 :
                 (point?.opacity ?? options.opacity ?? 1);
@@ -740,7 +742,7 @@ class ColumnSeries extends Series {
             fill,
             stroke,
             'stroke-width': strokeWidth,
-            opacity
+            opacity: point?.condemned ? 0 : opacity
         };
 
         if (dashstyle) {
@@ -758,12 +760,15 @@ class ColumnSeries extends Series {
      * @internal
      * @function Highcharts.seriesTypes.column#drawPoints
      */
-    public drawPoints(points: Array<ColumnPoint> = this.points): void {
+    public drawPoints(points?: Array<ColumnPoint>): void {
+
+        points ||= this.points.concat(this.condemnedPoints as ColumnPoint[]);
+
         const series = this,
             chart = this.chart,
             options = series.options,
             nullInteraction = options.nullInteraction,
-            renderer = chart.renderer,
+            { styledMode, renderer } = chart,
             animationLimit = options.animationLimit || 250;
         let shapeArgs;
 
@@ -771,7 +776,7 @@ class ColumnSeries extends Series {
         points.forEach(function (point): void {
             const plotY = point.plotY;
             let graphic = point.graphic,
-                hasGraphic = !!graphic,
+                shouldUpdate = !!graphic,
                 verb = graphic && chart.pointCount < animationLimit ?
                     'animate' : 'attr';
 
@@ -784,42 +789,43 @@ class ColumnSeries extends Series {
                     graphic = graphic.destroy();
                 }
 
-                // Set starting position for point sliding animation.
-                if (series.enabledDataSorting) {
-                    point.startXPos = series.xAxis.reversed ?
-                        -(shapeArgs ? (shapeArgs.width || 0) : 0) :
-                        series.xAxis.width;
-                }
-
                 if (!graphic) {
-                    point.graphic = graphic =
-                        (renderer as any)[point.shapeType as any](shapeArgs)
-                            .add(point.group || series.group);
+                    let initialAttr = shapeArgs;
 
+                    // New points fade in from old axis position
                     if (
-                        graphic &&
-                        series.enabledDataSorting &&
-                        chart.hasRendered &&
+                        point.origin &&
                         chart.pointCount < animationLimit
                     ) {
-                        graphic.attr({
-                            x: point.startXPos
-                        });
-
-                        hasGraphic = true;
+                        initialAttr = merge(
+                            shapeArgs,
+                            point.getOrigin(point.origin, shapeArgs)
+                        );
+                        if (!styledMode) {
+                            initialAttr.opacity = 0;
+                        }
+                        shouldUpdate = true;
                         verb = 'animate';
                     }
+
+                    // Create new graphic
+                    point.graphic = graphic =
+                        renderer[
+                            point.shapeType as (
+                                'roundedRect'|'rect'|'circle'|'path'
+                            )
+                        ](initialAttr).add(point.group || series.group);
                 }
 
-                if (graphic && hasGraphic) { // Update
-                    graphic[verb](
-                        merge(shapeArgs)
-                    );
+                // Update existing graphic, either because it pre-existed, or
+                // because we created it in a temporary position
+                if (shouldUpdate) {
+                    graphic[verb](merge(shapeArgs));
                 }
 
                 // Presentational
-                if (!chart.styledMode) {
-                    (graphic as any)[verb](series.pointAttribs(
+                if (!styledMode) {
+                    graphic[verb](series.pointAttribs(
                         point,
                         point.selected ? 'select' : ''
                     ))
@@ -828,13 +834,11 @@ class ColumnSeries extends Series {
                         );
                 }
 
-                if (graphic) {
-                    graphic.addClass(point.getClassName(), true);
-
-                    graphic.attr({
+                graphic
+                    .addClass(point.getClassName(), true)
+                    .attr({
                         visibility: point.visible ? 'inherit' : 'hidden'
                     });
-                }
 
             } else if (graphic) {
                 point.graphic = graphic.destroy(); // #1269

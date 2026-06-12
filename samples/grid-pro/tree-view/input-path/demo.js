@@ -1,7 +1,6 @@
 const grid = Grid.grid('container', {
     data: {
         columns: {
-            id: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18],
             path: [
                 'Root',
                 'Root/Sales',
@@ -41,7 +40,6 @@ const grid = Grid.grid('container', {
                 'Project', 'Project', 'Project', 'Project', 'Project'
             ]
         },
-        idColumn: 'id',
         treeView: {
             input: {
                 type: 'path'
@@ -54,7 +52,7 @@ const grid = Grid.grid('container', {
             inline: true
         }
     },
-    header: ['path', 'value', 'status', 'category', 'id']
+    header: ['path', 'value', 'status', 'category']
 });
 
 document.getElementById('tree-view-enabled').addEventListener('change', e => {

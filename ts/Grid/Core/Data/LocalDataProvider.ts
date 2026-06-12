@@ -34,7 +34,7 @@ import type DataConnectorType from '../../../Data/Connectors/DataConnectorType';
 import type {
     DataConnectorTypeOptions
 } from '../../../Data/Connectors/DataConnectorType';
-import type { MakeOptional, TypedArray, AnyRecord } from '../../../Shared/Types';
+import type { MakeOptional, TypedArray } from '../../../Shared/Types';
 
 import { DataProvider } from './DataProvider.js';
 import DataTable from '../../../Data/DataTable.js';
@@ -44,6 +44,7 @@ import DataProviderRegistry from './DataProviderRegistry.js';
 import { uniqueKey } from '../../../Core/Utilities.js';
 import {
     defined,
+    fireEvent,
     isNumber,
     isString
 } from '../../../Shared/Utilities.js';
@@ -419,16 +420,17 @@ export class LocalDataProvider extends DataProvider {
             interTable = originalDataTable.getModified();
         }
 
-        const grid = this.querying.grid;
-        if ('treeView' in grid && grid.treeView) {
-            try {
-                grid.treeView.sync();
-                interTable = grid.treeView.projectTable(interTable);
-            } catch (error) {
-                // eslint-disable-next-line no-console
-                console.error((error as AnyRecord).message);
-            }
-        }
+        const projectPresentationTableEvent = {
+            table: interTable
+        } as {
+            table: DataTable;
+        };
+        fireEvent(
+            this.querying.grid,
+            'projectPresentationTable',
+            projectPresentationTableEvent
+        );
+        interTable = projectPresentationTableEvent.table;
 
         this.prePaginationRowCount = interTable.rowCount;
 
