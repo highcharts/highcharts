@@ -1,11 +1,10 @@
 ---
-name: Scatter plot
+name: Cluster plot
 authors:
-  - Torstein Hønsi
+  - Tord Vikestad
 js_wrap: b
 alt_text: >-
-  Highcharts basic scatter plot JavaScript example graph compares width and
-  height of athletes across different sports
+  Highcharts scatter plot used to visualize clustered data.
 tags:
   - Highcharts demo
 categories:

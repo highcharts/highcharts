@@ -48,9 +48,6 @@ function drawChart(dataset1, dataset2) {
                 }
             }
         },
-        // tooltip: {
-        //     pointFormat: 'Height: {point.x} m <br/> Weight: {point.y} kg'
-        // },
         series: [
             {
                 type: 'scatter',
@@ -65,8 +62,6 @@ function drawChart(dataset1, dataset2) {
         ]
     });
 }
-// }
-// );
 
 
 const dataset1 = [
