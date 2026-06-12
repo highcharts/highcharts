@@ -187,7 +187,13 @@ namespace RangeDataLabel {
                 };
             }
 
-            point.below = getBelow(point, options, plotY);
+            const below = point.below = getBelow(point, options, plotY);
+
+            if (series.chart.inverted) {
+                options.align ??= below ? 'right' : 'left';
+            } else {
+                options.verticalAlign ??= below ? 'top' : 'bottom';
+            }
         }
 
         ColumnSeries.prototype.alignDataLabel.call(
