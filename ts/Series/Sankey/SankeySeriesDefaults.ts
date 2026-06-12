@@ -398,7 +398,28 @@ const SankeySeriesDefaults: PlotOptionsOf<SankeySeries> = {
          * specifying what to show for _nodes_ in tooltip of a diagram
          * series, as opposed to links.
          */
-        nodeFormat: '{point.name}: <b>{point.sum}</b><br/>'
+        nodeFormat: '{point.name}: <b>{point.sum}</b><br/>',
+        /**
+         * The
+         * [format string](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting)
+         * appended to the node tooltip when the node has self-referencing
+         * (circular) links. The `selfLinkWeight` variable is the sum of all
+         * self-link weights for the node, also available as
+         * `point.selfLinkWeight` in a custom
+         * [nodeFormatter](#plotOptions.sankey.tooltip.nodeFormatter).
+         *
+         * Applies to the sankey series only, where self-links render as
+         * hidden paths. Derived series like arc diagram, dependency wheel
+         * and organization render self-links normally and ignore this
+         * option.
+         *
+         * @sample highcharts/series-sankey/circular-dependencies/
+         *         Circular dependencies
+         *
+         * @since next
+         */
+        nodeSelfLinkFormat:
+            '{point.name} \u2192 {point.name}: <b>{selfLinkWeight}</b><br/>'
     }
 };
 

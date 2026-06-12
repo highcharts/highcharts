@@ -485,7 +485,8 @@ interface OrganizationSeries {
     pointClass: typeof OrganizationPoint;
 }
 extend(OrganizationSeries.prototype, {
-    pointClass: OrganizationPoint
+    pointClass: OrganizationPoint,
+    useCircularLayout: false
 });
 
 /* *

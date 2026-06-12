@@ -575,6 +575,7 @@ export interface SankeySeriesStatesOptions extends SeriesStatesOptions<SankeySer
 export interface SankeySeriesTooltipOptions extends ColumnSeriesTooltipOptions {
     nodeFormat?: string;
     nodeFormatter?: Templating.FormatterCallback<SankeyPoint>;
+    nodeSelfLinkFormat?: string;
 }
 
 /* *

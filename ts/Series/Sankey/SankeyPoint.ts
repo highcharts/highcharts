@@ -26,10 +26,12 @@ import type SankeySeries from './SankeySeries';
 import NodesComposition from '../NodesComposition.js';
 import Point from '../../Core/Series/Point.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+import Templating from '../../Core/Templating.js';
 import { defined } from '../../Shared/Utilities.js';
 const {
     column: ColumnSeries
 } = SeriesRegistry.seriesTypes;
+const { format } = Templating;
 
 /* *
  *
@@ -53,6 +55,9 @@ class SankeyPoint extends ColumnSeries.prototype.pointClass {
 
     public hangsFrom?: SankeyPoint;
 
+    /** @internal */
+    public isCircular?: boolean;
+
     public level!: number;
 
     public linkBase!: Array<number>;
@@ -72,6 +77,8 @@ class SankeyPoint extends ColumnSeries.prototype.pointClass {
     public options!: SankeyPointOptions;
 
     public outgoing?: boolean;
+
+    public selfLinkWeight?: number;
 
     public series!: SankeySeries;
 
@@ -113,7 +120,9 @@ class SankeyPoint extends ColumnSeries.prototype.pointClass {
 
     /**
      * If there are incoming links, place it to the right of the
-     * highest order column that links to this one.
+     * highest order column that links to this one. Circular links are
+     * ignored, so a node reached only through a cycle still anchors to its
+     * non-circular predecessors (or column 0 when it has none).
      *
      * @private
      */
@@ -125,9 +134,11 @@ class SankeyPoint extends ColumnSeries.prototype.pointClass {
 
         for (let i = 0; i < node.linksTo.length; i++) {
             const point = node.linksTo[i];
+
             if (
                 (point.fromNode.column as any) > fromColumn &&
-                point.fromNode !== node // #16080
+                point.fromNode !== node && // #16080
+                !point.isCircular
             ) {
                 fromNode = point.fromNode;
                 fromColumn = (fromNode.column as any);
@@ -160,6 +171,35 @@ class SankeyPoint extends ColumnSeries.prototype.pointClass {
      */
     public isValid(): boolean {
         return this.isNode || typeof this.weight === 'number';
+    }
+
+    /**
+     * Extend the default node tooltip with hidden self-link information. Only
+     * the circular Sankey layout hides self-links (rendering an empty path),
+     * so the derived series (arc diagram, dependency wheel, organization)
+     * that opt out of circular layout render self-links normally and skip it.
+     * @internal
+     */
+    public tooltipFormatter(pointFormat: string): string {
+        const series = this.series,
+            { selfLinkWeight } = this,
+            tooltip = Point.prototype.tooltipFormatter.call(
+                this,
+                pointFormat
+            );
+
+        if (!this.isNode || !series.useCircularLayout || !selfLinkWeight) {
+            return tooltip;
+        }
+
+        return tooltip + format(
+            series.tooltipOptions.nodeSelfLinkFormat || '',
+            {
+                point: this,
+                selfLinkWeight
+            },
+            series.chart
+        );
     }
 
 }

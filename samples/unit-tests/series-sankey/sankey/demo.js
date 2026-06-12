@@ -561,10 +561,14 @@ QUnit.test('Sankey and inactive state', function (assert) {
 QUnit.test('Sankey and circular data', function (assert) {
     const chart = Highcharts.chart('container', {
         chart: {
-            width: 489
+            width: 489,
+            height: 400
         },
         title: {
             text: 'Highcharts Sankey Diagram'
+        },
+        tooltip: {
+            split: false
         },
         series: [
             {
@@ -600,15 +604,271 @@ QUnit.test('Sankey and circular data', function (assert) {
     );
 
     chart.series[0].setData([
-        ['a', 'a', 1]
+        ['a', 'a', 1],
+        ['a', 'b', 2]
     ]);
     chart.series[0].redraw();
 
-    const shapeArgs = chart.series[0].nodes[0].shapeArgs;
+    let series = chart.series[0];
+    const selfLink = series.points[0];
+    const shapeArgs = series.nodes[0].shapeArgs;
+
+    assert.strictEqual(
+        selfLink.isCircular,
+        true,
+        'Self links should be marked as circular'
+    );
+    assert.strictEqual(
+        series.isDataCircular,
+        false,
+        'Self links alone should not trigger the circular layout (#8218)'
+    );
     assert.deepEqual(
-        [shapeArgs.x, shapeArgs.y],
-        [0, 0],
-        '#16080: Node should still be in top left corner after redraw'
+        [series.nodes[0].level, series.nodes[1].level],
+        [0, 1],
+        'Self links should not block root detection and node levels (#8218)'
+    );
+    assert.ok(
+        shapeArgs.height > chart.plotHeight / 2,
+        '#16080: Layout should not shrink for hidden self links'
+    );
+    assert.deepEqual(
+        selfLink.shapeArgs.d,
+        [],
+        'Self link path should not render'
+    );
+
+    chart.series[0].setData([
+        ['a', 'a', 5]
+    ]);
+
+    series = chart.series[0];
+    const selfNode = series.nodes[0];
+
+    assert.close(
+        selfNode.shapeArgs.x,
+        (chart.plotWidth - selfNode.shapeArgs.width) / 2,
+        0.5,
+        'Single self-linked node should be centered horizontally'
+    );
+    assert.close(
+        selfNode.shapeArgs.y,
+        (chart.plotHeight - selfNode.shapeArgs.height) / 2,
+        0.5,
+        'Single self-linked node should be centered vertically'
+    );
+    chart.tooltip.refresh(selfNode);
+    assert.notEqual(
+        chart.tooltip.label.text.textStr.indexOf('a \u2192 a:'),
+        -1,
+        'Single self-linked node tooltip should show the hidden self flow'
+    );
+    chart.tooltip.hide(0);
+
+    // Same-length data updates reuse point instances - a link updated into
+    // a self-link must not keep the render state of the old visible link
+    series.setData([['a', 'b', 5]]);
+    series.setData([['a', 'a', 5]]);
+
+    const reusedSelfLink = series.points[0];
+    assert.deepEqual(
+        [
+            reusedSelfLink.graphic,
+            reusedSelfLink.plotY,
+            reusedSelfLink.tooltipPos,
+            reusedSelfLink.dlBox
+        ],
+        [void 0, void 0, void 0, void 0],
+        'A link updated into a self-link should clear its render state (#8218)'
+    );
+
+    series.setData([
+        ['a', 'b', 1],
+        ['b', 'c', 1]
+    ]);
+
+    assert.deepEqual(
+        [
+            series.isDataCircular,
+            series.firstColCircShift,
+            series.circularNodeTopOffset
+        ],
+        [false, 0, 0],
+        'Circular state and spacing should reset for non-circular data'
+    );
+    assert.notOk(
+        series.points.some(point => point.isCircular),
+        'No links should remain marked as circular'
+    );
+
+    chart.series[0].setData([
+        ['a', 'b', 3],
+        ['b', 'a', 1]
+    ]);
+
+    series = chart.series[0];
+    const forwardLink = series.points[0],
+        returnLink = series.points[1],
+        returnLinkShapeArgs = returnLink.shapeArgs;
+
+    assert.strictEqual(
+        forwardLink.isCircular,
+        false,
+        'The forward link should remain a straight link'
+    );
+    assert.strictEqual(
+        returnLink.isCircular,
+        true,
+        'The return link should be marked as circular'
+    );
+
+    assert.close(
+        returnLinkShapeArgs.d[0][1],
+        returnLink.fromNode.shapeArgs.x + series.nodeWidth,
+        0.5,
+        'Circular link path should start at the from-node right edge (x)'
+    );
+    assert.close(
+        returnLinkShapeArgs.d[7][1],
+        returnLink.toNode.shapeArgs.x,
+        0.5,
+        'Circular link path should enter the to-node left edge'
+    );
+
+    chart.series[0].setData([
+        ['a', 'b', 5],
+        ['b', 'a', 5]
+    ]);
+
+    series = chart.series[0];
+    const equalReturnLink = series.points[1],
+        equalLayoutYExtremes = series.getLayoutYExtremes();
+
+    assert.ok(
+        equalReturnLink.linkBase[1] - equalReturnLink.linkBase[0] <=
+            chart.plotHeight / 4 + 0.5,
+        'Equal reciprocal links should be scaled down in the plot area'
+    );
+
+    assert.close(
+        (equalLayoutYExtremes.min + equalLayoutYExtremes.max) / 2,
+        chart.plotHeight / 2,
+        1,
+        'Equal reciprocal links should be vertically centered in the plot area'
+    );
+
+    chart.update({
+        chart: {
+            inverted: true
+        }
+    });
+    chart.series[0].setData([
+        ['a', 'b', 5],
+        ['b', 'c', 10],
+        ['b', 'a', 5]
+    ]);
+
+    series = chart.series[0];
+    const invertedReturnLink = series.points[2],
+        invertedX = [],
+        invertedY = [];
+
+    invertedReturnLink.shapeArgs.d.forEach(segment => {
+        for (let i = 1; i < segment.length; i += 2) {
+            invertedX.push(segment[i]);
+            invertedY.push(segment[i + 1]);
+        }
+    });
+
+    assert.ok(
+        Math.min.apply(null, invertedX) > 0 &&
+            Math.max.apply(null, invertedX) < chart.plotSizeX &&
+            Math.min.apply(null, invertedY) >= 0 &&
+            Math.max.apply(null, invertedY) <= chart.plotSizeY,
+        'Inverted return links should stay within the plot area'
+    );
+
+    assert.ok(
+        Math.min.apply(null, invertedY) <
+            Math.min.apply(null, invertedReturnLink.linkBase),
+        'Inverted return links should route away from the nodes'
+    );
+
+    // The circular layout flag lives on the prototype, so circular detection
+    // must survive a series update that strips own properties (#8218).
+    series.update({ name: 'updated' });
+    assert.strictEqual(
+        series.isDataCircular,
+        true,
+        'Circular layout should persist after a series update'
+    );
+
+    chart.update({
+        chart: {
+            inverted: false
+        }
+    });
+
+    chart.series[0].setData([
+        ['x', 'y', 1],
+        ['a', 'b', 3],
+        ['b', 'a', 1]
+    ]);
+
+    series = chart.series[0];
+    const orderedReturnLink = series.points[2],
+        orderedReturnLinkShapeArgs = orderedReturnLink.shapeArgs;
+
+    assert.notEqual(
+        orderedReturnLink.toNode.index,
+        0,
+        'Test setup should make the circular target a non-first node'
+    );
+    assert.strictEqual(
+        orderedReturnLink.isCircular,
+        true,
+        'Return link should be circular when the target is not the first node'
+    );
+    assert.close(
+        orderedReturnLinkShapeArgs.d[7][1],
+        orderedReturnLink.toNode.shapeArgs.x,
+        0.5,
+        'Circular link should enter a first-column target by column, not index'
+    );
+
+    series.update({
+        data: [
+            ['A', 'B', 1],
+            ['C', 'D', 9],
+            ['E', 'F', 9]
+        ],
+        nodes: [
+            { id: 'A', column: 2 },
+            { id: 'B', column: 1 },
+            { id: 'C', column: 0 },
+            { id: 'D', column: 1 },
+            { id: 'E', column: 0 },
+            { id: 'F', column: 2 }
+        ]
+    });
+
+    series = chart.series[0];
+    const acyclicBackwardLink = series.points[0],
+        acyclicBackwardPath = acyclicBackwardLink.shapeArgs.d;
+
+    assert.strictEqual(
+        series.isDataCircular,
+        false,
+        'Explicit-column backward data should not be marked circular'
+    );
+    assert.strictEqual(
+        acyclicBackwardLink.isCircular,
+        false,
+        'Explicit-column backward link should not be marked circular'
+    );
+    assert.ok(
+        Math.abs(acyclicBackwardPath[8][1] - acyclicBackwardPath[7][1]) > 1,
+        'Explicit-column backward link should keep a visible bend'
     );
 });
 
