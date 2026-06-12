@@ -1,0 +1,53 @@
+h1 {
+    align-self: start;
+}
+
+span {
+    font-size: 11px;
+}
+
+#charts-container {
+    /* 1.8 times chart height */
+    max-width: 720px;
+    margin: 0 auto;
+}
+
+.tab-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 30px;
+}
+
+.tabs {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    border: 2px solid #e1e1e1;
+    border-radius: 5px;
+    gap: 10px;
+    padding: 2px;
+}
+
+.tab {
+    padding: 6px 10px;
+    border-radius: 5px;
+    background-color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.tab:hover {
+    background-color: #f2f1f4;
+}
+
+.tab.active {
+    background-color: #ea293c;
+    border: 2px solid #ce1023;
+    color: white;
+}

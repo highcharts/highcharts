@@ -1,0 +1,42 @@
+<script src="https://code.highcharts.com/stock/highstock.js"></script>
+<script src="https://code.highcharts.com/modules/price-indicator.js"></script>
+<script src="https://code.highcharts.com/modules/no-data-to-display.js"></script>
+<script src="https://code.highcharts.com/modules/accessibility.js"></script>
+<script src="https://code.highcharts.com/connectors/morningstar/connectors-morningstar.js"></script>
+
+<section id="chart-wrapper">
+    <div class="top-container">
+        <h2 id="chart-title">Fidelity Large Cap Growth Index Fund</h2>
+        <span class="rounded-border"></span>
+        <span class="date"></span>
+    </div>
+    <h3 id="chart-subtitle">FSGPX</h3>
+    <div id="range-selector">
+        <button id="1d" data-range="day">
+            1 day
+            <span class="change minus"></span>
+        </button>
+        <button id="1w" data-range="week">
+            1 week
+            <span class="change"></span>
+        </button>
+        <button id="1m" data-range="month">
+            1 month
+            <span class="change"></span>
+        </button>
+        <button id="1y" class="selected" data-range="year">
+            1 year
+            <span class="change"></span>
+        </button>
+        <button id="5y" data-range="5year">
+            5 year
+            <span class="change"></span>
+        </button>
+        <button id="all" data-range="all">
+            All
+            <span class="change"></span>
+        </button>
+    </div>
+    <div id="container"></div>
+</section>
+<p>Interactive chart displaying Fidelity Large Cap Growth Index Fund performance with range selectors showing percentage change per period.</p>

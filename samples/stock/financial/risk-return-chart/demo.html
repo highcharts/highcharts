@@ -1,0 +1,18 @@
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/accessibility.js"></script>
+<script src="https://code.highcharts.com/connectors/morningstar/connectors-morningstar.js"></script>
+
+<div class="tab-container">
+    <span>Select time</span>
+    <div class="tabs">
+        <button class="tab" data-period="M1">1 Month</button>
+        <button class="tab" data-period="M2">2 Months</button>
+        <button class="tab" data-period="M3">3 Months</button>
+        <button class="tab active" data-period="M6">6 Months</button>
+        <button class="tab" data-period="M12">12 Months</button>
+        <button class="tab" data-period="M36">36 Months</button>
+        <button class="tab" data-period="M60">60 Months</button>
+    </div>
+</div>
+<div id="charts-container"></div>
+<p>Scatter chart comparing fund, index, and category risk/return across multiple time periods.</p>
