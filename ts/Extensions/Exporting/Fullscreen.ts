@@ -146,10 +146,10 @@ const scrollBottomTolerance = 2;
 
 /**
  * @internal
- * Duration in milliseconds used to keep restoring scroll after fullscreen
- * exit, allowing delayed viewport/layout updates to settle.
+ * Time window in milliseconds used to re-apply saved scroll after fullscreen
+ * exit while late focus/resize updates settle.
  */
-const scrollRestoreDuration = 900;
+const scrollRestoreTimeout = 250;
 
 /* *
  *
@@ -294,16 +294,13 @@ class Fullscreen {
     public restoreScrollRAF?: number;
 
     /** @internal */
+    public restoreScrollTimer?: number;
+
+    /** @internal */
     public restoreScrollTop?: number;
 
     /** @internal */
     public restoreScrollWasAtBottom?: boolean;
-
-    /** @internal */
-    public restoreScrollWasBlurred?: boolean;
-
-    /** @internal */
-    public restoreScrollUntil?: number;
 
     /** @internal */
     public unbindScrollRestore?: Function;
@@ -547,97 +544,67 @@ class Fullscreen {
 
         fullscreen.stopScrollRestore();
 
-        const tick = (): void => {
+        const restore = (): void => {
             const position = fullscreen.getScrollPosition();
 
             if (!position || !win) {
-                // Defensive check for async ticks after teardown.
-                fullscreen.stopScrollRestore();
                 return;
             }
 
-            const targetY = fullscreen.restoreScrollWasAtBottom ?
-                position.maxY :
-                Math.min(originalY, position.maxY);
+            win.scrollTo(
+                0,
+                fullscreen.restoreScrollWasAtBottom ?
+                    position.maxY :
+                    Math.min(originalY, position.maxY)
+            );
+        };
 
-            win.scrollTo(0, targetY);
+        const tick = (frames: number): void => {
+            restore();
 
-            if (Date.now() < (fullscreen.restoreScrollUntil || 0)) {
-                fullscreen.restoreScrollRAF = win.requestAnimationFrame(tick);
-            } else {
-                fullscreen.stopScrollRestore();
+            if (frames > 0 && win) {
+                fullscreen.restoreScrollRAF = win.requestAnimationFrame(
+                    (): void => {
+                        tick(frames - 1);
+                    }
+                );
             }
         };
 
-        const extendRestoreDeadline = (): void => {
-            fullscreen.restoreScrollUntil = Date.now() + scrollRestoreDuration;
-            if (!fullscreen.restoreScrollRAF) {
-                fullscreen.restoreScrollRAF = win.requestAnimationFrame(tick);
-            }
-        };
+        const activeElement = doc.activeElement;
+        if (
+            activeElement instanceof HTMLElement &&
+            chart.renderTo.contains(activeElement)
+        ) {
+            activeElement.blur();
+        }
 
-        const blur = (): void => {
-            if (fullscreen.restoreScrollWasBlurred) {
-                return;
-            }
-            const activeElement = doc.activeElement;
-            if (
-                activeElement instanceof HTMLElement &&
-                chart.renderTo.contains(activeElement)
-            ) {
-                activeElement.blur();
-            }
-            fullscreen.restoreScrollWasBlurred = true;
-        };
-
-        const stopOnUserScroll = (
-            e: Event
-        ): void => {
-            const event = e as KeyboardEvent;
-            if (
-                event.type !== 'keydown' ||
-                (
-                    event.key === 'ArrowDown' ||
-                    event.key === 'ArrowUp' ||
-                    event.key === 'PageDown' ||
-                    event.key === 'PageUp' ||
-                    event.key === 'Home' ||
-                    event.key === 'End' ||
-                    event.key === ' '
-                )
-            ) {
-                fullscreen.stopScrollRestore();
-            }
-        };
-
-        const unbindResize = addEvent(win, 'resize', extendRestoreDeadline),
-            unbindFocusin = addEvent(doc, 'focusin', extendRestoreDeadline),
-            unbindWheel = addEvent(win, 'wheel', stopOnUserScroll),
-            unbindTouchMove = addEvent(win, 'touchmove', stopOnUserScroll),
-            unbindKeyDown = addEvent(doc, 'keydown', stopOnUserScroll),
+        const unbindResize = addEvent(win, 'resize', restore),
+            unbindFocusin = addEvent(doc, 'focusin', restore),
             unbindDestroy = addEvent(chart, 'destroy', (): void => {
                 fullscreen.stopScrollRestore();
             }),
             unbindViewport = (
                 win.visualViewport &&
-                addEvent(win.visualViewport, 'resize', extendRestoreDeadline)
+                addEvent(win.visualViewport, 'resize', restore)
             );
 
         fullscreen.unbindScrollRestore = (): void => {
             unbindResize();
             unbindFocusin();
-            unbindWheel();
-            unbindTouchMove();
-            unbindKeyDown();
             unbindDestroy();
             if (unbindViewport) {
                 unbindViewport();
             }
         };
 
-        fullscreen.restoreScrollWasBlurred = false;
-        blur();
-        extendRestoreDeadline();
+        fullscreen.restoreScrollTimer = win.setTimeout(
+            (): void => {
+                fullscreen.stopScrollRestore();
+            },
+            scrollRestoreTimeout
+        );
+        tick(2);
     }
 
     /**
@@ -650,10 +617,12 @@ class Fullscreen {
         if (win && typeof this.restoreScrollRAF === 'number') {
             win.cancelAnimationFrame(this.restoreScrollRAF);
         }
+        if (win && typeof this.restoreScrollTimer === 'number') {
+            win.clearTimeout(this.restoreScrollTimer);
+        }
 
         this.restoreScrollRAF = void 0;
-        this.restoreScrollWasBlurred = false;
-        this.restoreScrollUntil = void 0;
+        this.restoreScrollTimer = void 0;
 
         if (this.unbindScrollRestore) {
             this.unbindScrollRestore();
