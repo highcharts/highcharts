@@ -66,6 +66,14 @@ module.exports = {
         { from: 'dashboards/dashboards-with-angular', to: 'dashboards/wrappers/dashboards-with-angular' },
         { from: 'dashboards/dashboards-with-react', to: 'dashboards/wrappers/dashboards-with-react' },
         { from: 'dashboards/dashboards-with-vue', to: 'dashboards/wrappers/dashboards-with-vue' },
+        // More focus on new Global API, higher level:
+        { from: 'morningstar/dws-connector', to: 'morningstar/dws/investments-details-connector' },
+        // Endpoint no longer supported, use generic Morningstar page instead:
+        { from: 'morningstar/regulatory-news-announcements', to: 'morningstar/morningstar' },
+        // Endpoint no longer supported, use generic Screener page instead:
+        { from: 'morningstar/screeners/esg-screener', to: 'morningstar/screeners/screener' },
+        { from: 'morningstar/screeners/investor-preferences', to: 'morningstar/screeners/screener' },
+        { from: 'morningstar/screeners/regulatory-screener', to: 'morningstar/screeners/screener' },
         // Special case for xmlns schema in Map Collection
         // # --> https://github.com/highcharts/doc-builder/issues/58
         { from: 'mc', to: 'maps/map-collection#map-properties' }
