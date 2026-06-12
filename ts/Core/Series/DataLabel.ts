@@ -45,7 +45,6 @@ import {
     fireEvent,
     getAlignFactor,
     isArray,
-    isNumber,
     isString,
     merge,
     objectEach,
@@ -140,10 +139,6 @@ declare module './SeriesBase' {
             isNew?: boolean
         ): void;
         drawDataLabels(points?:Array<Point>): void;
-        getDataLabelValue?(
-            point: Point,
-            options: DataLabelOptions
-        ): number|undefined;
         getDataLabelPosition(
             point: PiePoint,
             distance: number
@@ -713,16 +708,6 @@ namespace DataLabel {
 
                 // Handle each individual data label for this point
                 pointOptions.forEach((labelOptions, i): void => {
-                    const savedY = point.y,
-                        dataLabelValue = series.getDataLabelValue?.(
-                            point,
-                            labelOptions
-                        );
-
-                    if (isNumber(dataLabelValue)) {
-                        point.y = dataLabelValue;
-                    }
-
                     // Options for one dataLabel
                     const labelEnabled = (
                             labelOptions.enabled &&
@@ -961,8 +946,6 @@ namespace DataLabel {
                             dataLabels[i] = dataLabel;
                         }
                     }
-
-                    point.y = savedY;
                 });
 
 

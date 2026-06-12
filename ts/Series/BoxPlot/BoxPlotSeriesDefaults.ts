@@ -18,14 +18,9 @@
  *
  * */
 
-import type BoxPlotPoint from './BoxPlotPoint';
 import type BoxPlotSeriesOptions from './BoxPlotSeriesOptions';
-import type { BoxPlotDataLabelOptions } from './BoxPlotSeriesOptions';
-import type Point from '../../Core/Series/Point';
 
 import { Palette } from '../../Core/Color/Palettes.js';
-import RangeDataLabel from '../RangeDataLabel.js';
-import { isNumber } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -66,32 +61,6 @@ const BoxPlotSeriesDefaults: BoxPlotSeriesOptions = {
      * @product highcharts
      */
     threshold: null,
-
-    dataLabels: {
-        /**
-         * The default formatter renders the value of the statistic selected by
-         * the label's
-         * [pointValKey](#plotOptions.boxplot.dataLabels.pointValKey).
-         *
-         * @type {Highcharts.DataLabelsFormatterCallbackFunction}
-         */
-        formatter: function (
-            this: (Point|BoxPlotPoint),
-            options: BoxPlotDataLabelOptions
-        ): string {
-            const point = this.point as BoxPlotPoint,
-                { series } = point,
-                { numberFormatter } = series.chart,
-                { pointValKey } = options,
-                value = pointValKey ?
-                    point[
-                        RangeDataLabel.resolvePointValKey(series, pointValKey)
-                    ] :
-                    point.y;
-
-            return isNumber(value) ? numberFormatter(value, -1) : '';
-        }
-    },
 
     tooltip: {
         pointFormat:
@@ -309,14 +278,13 @@ const BoxPlotSeriesDefaults: BoxPlotSeriesOptions = {
      */
 
     /**
-     * The box plot point value used to position a data label and, by default,
-     * the value it displays.
+     * The point key used to position a box plot data label.
      *
      * @typedef {"low"|"q1"|"median"|"q3"|"high"} Highcharts.BoxPlotPointValKey
      */
 
     /**
-     * The box plot point value to use for positioning this data label.
+     * The point key to use for positioning this data label.
      * Possible values are `low`, `q1`, `median`, `q3` and `high`.
      *
      * @sample {highcharts} highcharts/series-boxplot/data-labels/
@@ -326,7 +294,7 @@ const BoxPlotSeriesDefaults: BoxPlotSeriesOptions = {
      * @default   high
      * @validvalue ["low", "q1", "median", "q3", "high"]
      * @product   highcharts
-     * @apioption plotOptions.boxplot.dataLabels.pointValKey
+     * @apioption plotOptions.boxplot.dataLabels.alignToKey
      */
 
     /**

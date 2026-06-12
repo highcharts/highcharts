@@ -144,12 +144,10 @@ const areaRangeSeriesOptions: AreaRangeSeriesOptions = {
 
     /**
      * Extended data labels for range series types. Range series data
-     * labels use no `x` and `y` options. Instead, they have `xLow`,
-     * `xHigh`, `yLow` and `yHigh` options to allow the higher and lower
-     * data label sets individually.
+     * labels can be positioned individually by defining them as an array
+     * and setting `alignToKey` to `high` or `low`.
      *
      * @declare Highcharts.SeriesAreaRangeDataLabelsOptionsObject
-     * @exclude x, y
      * @since   2.3.0
      * @product highcharts highstock
      *
@@ -159,39 +157,57 @@ const areaRangeSeriesOptions: AreaRangeSeriesOptions = {
 
         align: void 0,
 
+        formatter: RangeDataLabel.formatter,
+
         verticalAlign: void 0,
 
         /**
          * X offset of the lower data labels relative to the point value.
          *
+         * Deprecated. Use a data labels array with `alignToKey: 'low'` and
+         * the regular `x` option instead.
+         *
          * @sample highcharts/plotoptions/arearange-datalabels/
          *         Data labels on range series
          * @sample highcharts/plotoptions/arearange-datalabels/
          *         Data labels on range series
+         * @deprecated next
          */
         xLow: 0,
 
         /**
          * X offset of the higher data labels relative to the point value.
          *
+         * Deprecated. Use a data labels array with `alignToKey: 'high'` and
+         * the regular `x` option instead.
+         *
          * @sample highcharts/plotoptions/arearange-datalabels/
          *         Data labels on range series
+         * @deprecated next
          */
         xHigh: 0,
 
         /**
          * Y offset of the lower data labels relative to the point value.
          *
+         * Deprecated. Use a data labels array with `alignToKey: 'low'` and
+         * the regular `y` option instead.
+         *
          * @sample highcharts/plotoptions/arearange-datalabels/
          *         Data labels on range series
+         * @deprecated next
          */
         yLow: 0,
 
         /**
          * Y offset of the higher data labels relative to the point value.
          *
+         * Deprecated. Use a data labels array with `alignToKey: 'high'` and
+         * the regular `y` option instead.
+         *
          * @sample highcharts/plotoptions/arearange-datalabels/
          *         Data labels on range series
+         * @deprecated next
          */
         yHigh: 0
 
@@ -204,19 +220,6 @@ const areaRangeSeriesOptions: AreaRangeSeriesOptions = {
  *  Functions
  *
  * */
-
-function getRangeDataLabelOffset(
-    options: AreaRangeDataLabelOptions,
-    pointValKey: string
-): Partial<AreaRangeDataLabelOptions> {
-    return pointValKey === 'high' ? {
-        x: options.xHigh,
-        y: options.yHigh
-    } : pointValKey === 'low' ? {
-        x: options.xLow,
-        y: options.yLow
-    } : {};
-}
 
 function getRangeDataLabelOptions(
     series: AreaRangeSeries
@@ -231,35 +234,41 @@ function getRangeDataLabelOptions(
             index
         ): AreaRangeDataLabelOptions => {
             const options = dataLabels[index],
-                defaultPointValKey = index === 0 ? 'high' :
+                defaultAlignToKey = index === 0 ? 'high' :
                     index === 1 ? 'low' :
                         series.pointValKey,
-                pointValKey = options?.pointValKey ?? defaultPointValKey;
+                alignToKey = options?.alignToKey ?? defaultAlignToKey;
 
             return merge(
                 options ?? { enabled: false },
-                { pointValKey }
+                { alignToKey }
             );
         });
     }
 
-    if (dataLabels?.pointValKey) {
+    if (dataLabels?.alignToKey) {
         return [
             merge(
                 dataLabels,
-                getRangeDataLabelOffset(dataLabels, dataLabels.pointValKey)
+                dataLabels.alignToKey === 'high' ? {
+                    x: dataLabels.xHigh,
+                    y: dataLabels.yHigh
+                } : dataLabels.alignToKey === 'low' ? {
+                    x: dataLabels.xLow,
+                    y: dataLabels.yLow
+                } : {}
             )
         ];
     }
 
     return [
         merge(dataLabels, {
-            pointValKey: 'high',
+            alignToKey: 'high',
             x: dataLabels?.xHigh,
             y: dataLabels?.yHigh
         }),
         merge(dataLabels, {
-            pointValKey: 'low',
+            alignToKey: 'low',
             x: dataLabels?.xLow,
             y: dataLabels?.yLow
         })
@@ -472,15 +481,17 @@ class AreaRangeSeries extends AreaSeries {
                 const labels = point.dataLabels ?? [];
 
                 point.dataLabelUpper = labels.find((label): boolean => (
-                    RangeDataLabel.resolvePointValKey(
+                    RangeDataLabel.resolveAlignToKey(
                         series,
-                        RangeDataLabel.getOptionsPointValKey(label.options)
+                        (label.options as AreaRangeDataLabelOptions|undefined)
+                            ?.alignToKey
                     ) === 'high'
                 ));
                 point.dataLabel = labels.find((label): boolean => (
-                    RangeDataLabel.resolvePointValKey(
+                    RangeDataLabel.resolveAlignToKey(
                         series,
-                        RangeDataLabel.getOptionsPointValKey(label.options)
+                        (label.options as AreaRangeDataLabelOptions|undefined)
+                            ?.alignToKey
                     ) === 'low'
                 ));
             }

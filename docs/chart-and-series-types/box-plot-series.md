@@ -18,7 +18,7 @@ Each point in a box plot has five values: low, q1, median, q3 and high. Highchar
 
 ### Data labels
 
-Box plots support data labels for the individual statistics of each point. Use the [dataLabels](https://api.highcharts.com/highcharts/plotOptions.boxplot.dataLabels) options to enable labels, and set `dataLabels.pointValKey` to choose the statistic that anchors the label. Possible values are `low`, `q1`, `median`, `q3` and `high`, with `high` as the default. To show several statistics on the same point, define `dataLabels` as an array, with one label configuration for each statistic. See the [box plot data labels](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/series-boxplot/data-labels/) sample for a demonstration.
+Box plots support data labels for the individual statistics of each point. Use the [dataLabels](https://api.highcharts.com/highcharts/plotOptions.boxplot.dataLabels) options to enable labels, and set `dataLabels.alignToKey` to choose the statistic that anchors the label. Possible values are `low`, `q1`, `median`, `q3` and `high`, with `high` as the default. To show several statistics on the same point, define `dataLabels` as an array, with one label configuration for each statistic. See the [box plot data labels](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/series-boxplot/data-labels/) sample for a demonstration.
 
 ### Styling the boxes
 

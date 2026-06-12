@@ -26,11 +26,11 @@ Highcharts.chart('container', {
         boxplot: {
             dataLabels: [{
                 enabled: true,
-                pointValKey: 'high',
+                alignToKey: 'high',
                 format: 'Max: {point.high}'
             }, {
                 enabled: true,
-                pointValKey: 'q3',
+                alignToKey: 'q3',
                 format: 'Q3: {point.q3}',
                 style: {
                     fontWeight: 'normal'
@@ -38,11 +38,11 @@ Highcharts.chart('container', {
                 y: 3
             }, {
                 enabled: true,
-                pointValKey: 'median',
+                alignToKey: 'median',
                 format: 'Median: {point.median}'
             }, {
                 enabled: true,
-                pointValKey: 'q1',
+                alignToKey: 'q1',
                 format: 'Q1: {point.q1}',
                 style: {
                     fontWeight: 'normal'
@@ -50,7 +50,7 @@ Highcharts.chart('container', {
                 y: 3
             }, {
                 enabled: true,
-                pointValKey: 'low',
+                alignToKey: 'low',
                 format: 'Min: {point.low}'
             }]
         }

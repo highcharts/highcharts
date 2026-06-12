@@ -117,12 +117,10 @@ const AreaRangeSeriesDefaults: AreaRangeSeriesOptions = {
 
     /**
      * Extended data labels for range series types. Range series data
-     * labels use no `x` and `y` options. Instead, they have `xLow`,
-     * `xHigh`, `yLow` and `yHigh` options to allow the higher and lower
-     * data label sets individually.
+     * labels can be positioned individually by defining them as an array
+     * and setting `alignToKey` to `high` or `low`.
      *
      * @declare Highcharts.SeriesAreaRangeDataLabelsOptionsObject
-     * @exclude x, y
      * @since   2.3.0
      * @product highcharts highstock
      * @apioption plotOptions.arearange.dataLabels
@@ -136,34 +134,50 @@ const AreaRangeSeriesDefaults: AreaRangeSeriesOptions = {
         /**
          * X offset of the lower data labels relative to the point value.
          *
+         * Deprecated. Use a data labels array with `alignToKey: 'low'` and
+         * the regular `x` option instead.
+         *
          * @sample highcharts/plotoptions/arearange-datalabels/
          *         Data labels on range series
          * @sample highcharts/plotoptions/arearange-datalabels/
          *         Data labels on range series
+         * @deprecated next
          */
         xLow: 0,
 
         /**
          * X offset of the higher data labels relative to the point value.
          *
+         * Deprecated. Use a data labels array with `alignToKey: 'high'` and
+         * the regular `x` option instead.
+         *
          * @sample highcharts/plotoptions/arearange-datalabels/
          *         Data labels on range series
+         * @deprecated next
          */
         xHigh: 0,
 
         /**
          * Y offset of the lower data labels relative to the point value.
          *
+         * Deprecated. Use a data labels array with `alignToKey: 'low'` and
+         * the regular `y` option instead.
+         *
          * @sample highcharts/plotoptions/arearange-datalabels/
          *         Data labels on range series
+         * @deprecated next
          */
         yLow: 0,
 
         /**
          * Y offset of the higher data labels relative to the point value.
          *
+         * Deprecated. Use a data labels array with `alignToKey: 'high'` and
+         * the regular `y` option instead.
+         *
          * @sample highcharts/plotoptions/arearange-datalabels/
          *         Data labels on range series
+         * @deprecated next
          */
         yHigh: 0
 
@@ -172,14 +186,25 @@ const AreaRangeSeriesDefaults: AreaRangeSeriesOptions = {
 };
 
 /**
- * The range point value to use for positioning this data label.
+ * The point key to use for positioning this data label.
  * Possible values are `low` and `high`. In the legacy array form, the first
  * label defaults to `high` and the second label defaults to `low`.
  *
  * @type      {"low"|"high"}
  * @validvalue ["low", "high"]
  * @product   highcharts highstock
- * @apioption plotOptions.arearange.dataLabels.pointValKey
+ * @apioption plotOptions.arearange.dataLabels.alignToKey
+ */
+
+/**
+ * By default, the data label renders the value of the point key it is
+ * [aligned to](#plotOptions.arearange.dataLabels.alignToKey). Define a
+ * [format](#plotOptions.arearange.dataLabels.format) or `formatter` to
+ * display other values.
+ *
+ * @type      {Highcharts.DataLabelsFormatterCallbackFunction}
+ * @product   highcharts highstock
+ * @apioption plotOptions.arearange.dataLabels.formatter
  */
 
 /**

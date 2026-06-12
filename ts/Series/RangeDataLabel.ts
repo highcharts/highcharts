@@ -3,11 +3,6 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Andrzej Buleczka
  *
- *  Integration of this software requires a license.
- *  - For commercial use, see www.highcharts.com/license
- *  - For non-commercial, see www.highcharts.com/license-eula
- *
- *
  * */
 
 'use strict';
@@ -37,8 +32,8 @@ import {
 
 namespace RangeDataLabel {
 
-    export interface DataLabelOptionsWithPointValKey extends DataLabelOptions {
-        pointValKey?: string;
+    export interface DataLabelOptionsWithAlignToKey extends DataLabelOptions {
+        alignToKey?: string;
     }
 
     interface PointComposition extends Point {
@@ -129,12 +124,33 @@ namespace RangeDataLabel {
         const seriesProto = SeriesClass.prototype as SeriesComposition;
 
         seriesProto.alignDataLabel = alignDataLabel;
-        seriesProto.getDataLabelValue = getDataLabelValue;
 
         return SeriesClass;
     }
 
-    export function resolvePointValKey<PointValKey extends string>(
+    /**
+     * Default formatter for range series data labels. Renders the value of
+     * the point key the label is aligned to, so the legacy high and low
+     * labels keep showing their respective values without an explicit format.
+     * Does not modify `point.y`. Falls back to `point.y` (the value of
+     * `series.pointValKey`) for an unresolved key.
+     * @internal
+     */
+    export function formatter(
+        this: Point,
+        options: DataLabelOptionsWithAlignToKey
+    ): string {
+        const rawValue = options.alignToKey ?
+                this.getNestedProperty(options.alignToKey) :
+                this.y,
+            value = isNumber(rawValue) ? rawValue : this.y;
+
+        return isNumber(value) ?
+            this.series.chart.numberFormatter(value, -1) :
+            '';
+    }
+
+    export function resolveAlignToKey<PointValKey extends string>(
         series: SeriesComposition<PointValKey>,
         rawKey?: PointValKey
     ): PointValKey {
@@ -143,38 +159,17 @@ namespace RangeDataLabel {
             series.pointValKey;
     }
 
-    export function getDataLabelValue(
-        this: SeriesComposition,
-        point: Point,
-        options: DataLabelOptions
-    ): number|undefined {
-        const pointValKey = resolvePointValKey(
-                this,
-                (options as DataLabelOptionsWithPointValKey).pointValKey
-            ),
-            value = point.getNestedProperty(pointValKey);
-
-        return isNumber(value) ? value : void 0;
-    }
-
-    export function getOptionsPointValKey(
-        options?: DataLabelOptions
-    ): string|undefined {
-        return (options as DataLabelOptionsWithPointValKey|undefined)
-            ?.pointValKey;
-    }
-
     export function alignDataLabel(
         this: SeriesComposition,
         point: PointComposition,
         dataLabel: SVGElement,
-        options: DataLabelOptionsWithPointValKey,
+        options: DataLabelOptionsWithAlignToKey,
         alignTo?: BBoxObject,
         isNew?: boolean
     ): void {
         const series = this,
-            pointValKey = resolvePointValKey(series, options.pointValKey),
-            plotY = getPointPlotY(point, pointValKey),
+            alignToKey = resolveAlignToKey(series, options.alignToKey),
+            plotY = getPointPlotY(point, alignToKey),
             shapeArgs = point.shapeArgs,
             originalPlotY = point.plotY,
             originalDlBox = point.dlBox,

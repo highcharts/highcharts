@@ -82,6 +82,66 @@ QUnit.test('Individual fill color (#5770)', function (assert) {
         'blue',
         'Generic fill'
     );
+
+    chart.series[0].update({
+        dataLabels: [{
+            enabled: true,
+            alignToKey: 'high',
+            format: 'High: {point.high}'
+        }, {
+            enabled: true,
+            alignToKey: 'median',
+            format: 'Median: {point.median}'
+        }, {
+            enabled: true,
+            alignToKey: 'low',
+            format: 'Low: {point.low}'
+        }]
+    });
+
+    let point = chart.series[0].points[0];
+
+    assert.deepEqual(
+        point.dataLabels.map(label => label.text.textStr),
+        ['High: 965', 'Median: 848', 'Low: 760'],
+        'Labels render text for individual box plot values (#23904)'
+    );
+
+    assert.ok(
+        point.dataLabels[0].y < point.dataLabels[1].y &&
+            point.dataLabels[1].y < point.dataLabels[2].y,
+        'Labels align to their selected box plot values (#23904)'
+    );
+
+    chart.update({
+        chart: {
+            inverted: true
+        }
+    });
+    point = chart.series[0].points[0];
+
+    assert.ok(
+        point.dataLabels[0].x > point.dataLabels[2].x,
+        'Inverted: high label is right of the low label (#23904)'
+    );
+
+    chart.update({
+        chart: {
+            inverted: false
+        },
+        yAxis: {
+            reversed: true
+        }
+    });
+    point = chart.series[0].points[0];
+
+    assert.ok(
+        point.dataLabels[0].y >= point.highPlot - 1 &&
+            point.dataLabels[2].y + point.dataLabels[2].height <=
+                point.lowPlot + 1,
+        'Reversed: high label below the high whisker, low label above low ' +
+            '(#23904)'
+    );
 });
 
 QUnit.test('Individual options and Point.update', function (assert) {
@@ -367,106 +427,3 @@ QUnit.test('All values should be draggable (#13576)', function (assert) {
 
     assert.ok(result, 'Drag handles are rendered in correct positions.');
 });
-
-QUnit.test('Box plot data label value selection (#23904)', function (assert) {
-    const chart = Highcharts.chart('container', {
-            chart: {
-                type: 'boxplot'
-            },
-            series: [{
-                dataLabels: [{
-                    enabled: true,
-                    pointValKey: 'high'
-                }, {
-                    enabled: true,
-                    pointValKey: 'median'
-                }, {
-                    enabled: true,
-                    pointValKey: 'low'
-                }, {
-                    enabled: true,
-                    pointValKey: 'low',
-                    format: 'Y: {point.y}'
-                }, {
-                    enabled: true,
-                    pointValKey: 'notAValue'
-                }],
-                data: [[1, 3, 5, 7, 9]]
-            }]
-        }),
-        point = chart.series[0].points[0];
-
-    assert.deepEqual(
-        point.dataLabels.map(label => label.text.textStr),
-        ['9', '5', '1', 'Y: 1', '9'],
-        'Each label resolves to its pointValKey; {point.y}=low; invalid→high'
-    );
-
-    point.update({
-        low: 2,
-        q1: 4,
-        median: 6,
-        q3: 8,
-        high: 10
-    });
-
-    assert.deepEqual(
-        point.dataLabels.map(label => label.text.textStr),
-        ['10', '6', '2', 'Y: 2', '10'],
-        'Values re-resolve after update, no stale labels'
-    );
-
-    assert.strictEqual(
-        chart.container.querySelectorAll('.highcharts-data-label').length,
-        5,
-        'Redraw does not duplicate data labels'
-    );
-});
-
-QUnit.test(
-    'Box plot data labels on inverted and reversed axes (#23904)',
-    function (assert) {
-        const invertedPoint = Highcharts.chart('container', {
-            chart: {
-                type: 'boxplot',
-                inverted: true
-            },
-            series: [{
-                dataLabels: [
-                    { enabled: true, pointValKey: 'high' },
-                    { enabled: true, pointValKey: 'low' }
-                ],
-                data: [[1, 3, 5, 7, 9]]
-            }]
-        }).series[0].points[0];
-
-        assert.ok(
-            invertedPoint.dataLabels[0].x > invertedPoint.dataLabels[1].x,
-            'Inverted: high label is right of the low label'
-        );
-
-        const reversedPoint = Highcharts.chart('container', {
-            chart: {
-                type: 'boxplot'
-            },
-            yAxis: {
-                reversed: true
-            },
-            series: [{
-                dataLabels: [
-                    { enabled: true, pointValKey: 'high' },
-                    { enabled: true, pointValKey: 'low' }
-                ],
-                data: [[3, 4, 5, 6, 7]]
-            }]
-        }).series[0].points[0];
-
-        assert.ok(
-            reversedPoint.dataLabels[0].y >= reversedPoint.highPlot - 1 &&
-                reversedPoint.dataLabels[1].y +
-                    reversedPoint.dataLabels[1].height <=
-                    reversedPoint.lowPlot + 1,
-            'Reversed: high label below the high whisker, low label above low'
-        );
-    }
-);

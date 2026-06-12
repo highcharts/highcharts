@@ -37,7 +37,7 @@ export type BoxPlotPointValKey = 'low'|'q1'|'median'|'q3'|'high';
 
 export interface BoxPlotDataLabelOptions extends DataLabelOptions {
     /**
-     * The box plot point value to use for positioning this data label.
+     * The point key to use for positioning this data label.
      * Possible values are `low`, `q1`, `median`, `q3` and `high`.
      *
      * @sample {highcharts} highcharts/series-boxplot/data-labels/
@@ -47,7 +47,7 @@ export interface BoxPlotDataLabelOptions extends DataLabelOptions {
      *
      * @product highcharts
      */
-    pointValKey?: BoxPlotPointValKey;
+    alignToKey?: BoxPlotPointValKey;
 }
 
 /**
