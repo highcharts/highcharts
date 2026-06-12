@@ -1,14 +1,31 @@
 (function (H) {
     const animateSVGPath = (svgElem, animation, callback = void 0) => {
-        const length = svgElem.element.getTotalLength();
-        svgElem.attr({
-            'stroke-dasharray': length,
-            'stroke-dashoffset': length,
-            opacity: 1
+        const renderer = svgElem.renderer,
+            box = svgElem.getBBox(),
+            // Pad vertically so a thick/dashed stroke isn't clipped along its
+            // edges, and start the reveal just left of the path
+            pad = 10,
+            clipRect = renderer.clipRect(
+                box.x - pad,
+                box.y - pad,
+                0,
+                box.height + 2 * pad
+            );
+
+        // Reveal the line with a growing clip rect instead of stroke-dasharray,
+        // so any configured dashStyle stays intact during the animation
+        svgElem.attr({ opacity: 1 }).clip(clipRect);
+
+        clipRect.animate({
+            width: box.width + 2 * pad
+        }, animation, function () {
+            // Drop the clip once fully revealed
+            svgElem.clip();
+            clipRect.destroy();
+            if (callback) {
+                return callback();
+            }
         });
-        svgElem.animate({
-            'stroke-dashoffset': 0
-        }, animation, callback);
     };
 
     H.seriesTypes.line.prototype.animate = function (init) {
@@ -116,12 +133,13 @@ Highcharts.chart('container', {
             text: 'Inflation'
         },
         plotLines: [{
-            color: 'var(--highcharts-neutral-color-100, black)',
+            color: Highcharts.getOptions().colors[0],
+            // colorIndex: 1,
             width: 2,
             value: 13.5492019749684,
+            dashStyle: 'Dash',
             animation: {
-                duration: 1000,
-                defer: 4000
+                duration: 1000
             },
             label: {
                 text: 'Max Inflation',
