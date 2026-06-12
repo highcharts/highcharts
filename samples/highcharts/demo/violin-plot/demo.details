@@ -1,0 +1,15 @@
+---
+name: Violin Plot
+authors:
+  - Andrzej Bułeczka
+  - Mustapha Mekhatria
+  - Torstein Honsi
+js_wrap: b
+alt_text: >-
+    Violin chart showing the height distribution of female athletes
+    at the 2024 Olympics across seven sports.
+tags:
+  - Highcharts demo
+categories:
+  - More chart types
+...
