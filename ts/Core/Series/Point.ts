@@ -913,10 +913,10 @@ class Point {
      *
      * @function Highcharts.Point#getZone
      *
-     * @return {Highcharts.SeriesZonesOptionsObject}
-     *         The zone item.
+     * @return {Highcharts.SeriesZonesOptionsObject|undefined}
+     *         The zone item, or `undefined` if the series has no zones.
      */
-    public getZone(): Series.ZoneObject {
+    public getZone(): Series.ZoneObject|undefined {
         const series = this.series,
             zones = series.zones,
             zoneAxis = series.zoneAxis || 'y';
@@ -924,7 +924,7 @@ class Point {
             i = 0;
 
         zone = zones[i];
-        while ((this as any)[zoneAxis] >= (zone.value as any)) {
+        while ((this as any)[zoneAxis] >= (zone?.value as any)) {
             zone = zones[++i];
         }
 
