@@ -1,0 +1,206 @@
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/css/grid-pro.css");
+@import url("https://code.highcharts.com/dashboards/css/dashboards.css");
+
+:root,
+.highcharts-light {
+    --highcharts-neutral-color-5: transparent;
+    --highcharts-neutral-color-3: #fff;
+}
+
+#container {
+    min-width: 450px;
+    max-width: 1300px;
+    margin: 0 auto;
+    container: dashboard / inline-size;
+}
+
+.highcharts-dashboards,
+.highcharts-dashboards-wrapper {
+    background-color: #fff;
+    box-shadow:
+        0 0.4688rem 2.1875rem rgba(var(--highcharts-dashboards-shadow-color), 0.03),
+        0 0.9375rem 1.4063rem rgba(var(--highcharts-dashboards-shadow-color), 0.03),
+        0 0.25rem 0.5313rem rgba(var(--highcharts-dashboards-shadow-color), 0.03),
+        0 0.125rem 0.1875rem rgba(var(--highcharts-dashboards-shadow-color), 0.03);
+    border-radius: 15px;
+}
+
+.highcharts-light .highcharts-dashboards-cell > .highcharts-dashboards-component {
+    border-radius: 5px;
+    padding: 0;
+    box-shadow: none;
+    background-color: transparent;
+}
+
+#pie-chart {
+    order: 0;
+}
+
+#year-return {
+    order: 1;
+    flex: 1 1 30%;
+}
+
+#barometer {
+    order: 2;
+    height: 350px;
+}
+
+#sector-breakdown-table {
+    order: 3;
+}
+
+#trailing-return {
+    order: 4;
+}
+
+#asset-allocation {
+    order: 5;
+}
+
+#barometer,
+#asset-allocation {
+    flex: 0 0 350px;
+}
+
+#pie-chart,
+#sector-breakdown-table {
+    flex: 0 0 30%;
+}
+
+.theme-piechart {
+    --hcg-background: var(--highcharts-background-color);
+    --hcg-color: var(--highcharts-neutral-color-100);
+    --hcg-padding: 5px 20px;
+    --hcg-cell-hovered-row-background: #014ce5;
+    --hcg-cell-hovered-row-color: var(--highcharts-neutral-color-3);
+    --hcg-row-even-background: #f7f7f7;
+    --hcg-header-row-border-color: #474554;
+    --hcg-row-border-color: transparent;
+
+    border-radius: 5px;
+}
+
+.theme-piechart table tr td {
+    line-height: 1.5;
+}
+
+.theme-piechart .name-col {
+    --ig-color: #525252;
+    --ig-row-even-color: #525252;
+    --ig-cell-hovered-column-color: #525252;
+    --ig-cell-hovered-column-even-color: #525252;
+}
+
+.theme-piechart .net-value-col,
+.theme-holdings .numeric-val-col {
+    --ig-text-align: right;
+}
+
+.theme-holdings {
+    --hcg-font-size: 15px;
+    --hcg-color: var(--highcharts-neutral-color-100);
+    --hcg-header-color: #474554;
+    --hcg-header-padding: 14px;
+    --hcg-background: var(--highcharts-neutral-color-3);
+    --hcg-padding: 10px;
+    --hcg-header-background: var(--highcharts-neutral-color-3);
+    --hcg-row-even-background: var(--highcharts-neutral-color-3);
+    --hcg-cell-hovered-row-background: #f2f3f4;
+    --hcg-border-width: 1px;
+    --hcg-border-color: #f1f1f3;
+
+    max-height: 350px;
+}
+
+@container dashboard (max-width: 1000px) {
+    #pie-chart {
+        order: 0;
+    }
+
+    #year-return {
+        flex: 1 1 70%;
+        order: 1;
+    }
+
+    #barometer {
+        order: 3;
+        flex: 0 0 35%;
+        height: 350px;
+    }
+
+    #sector-breakdown-table {
+        order: 2;
+        flex: 0 0 30%;
+    }
+
+    #trailing-return {
+        order: 5;
+        flex: 1 1 100%;
+    }
+
+    #asset-allocation {
+        order: 4;
+        flex: 0 0 calc(100% - (30% + 350px));
+    }
+
+    #underlying-holdings-table {
+        order: 1;
+    }
+
+    #bubble-chart {
+        order: 0;
+    }
+
+    #underlying-holdings-table,
+    #bubble-chart {
+        flex: 1 1 100%;
+    }
+}
+
+@container dashboard (max-width: 850px) {
+    #trailing-return {
+        order: 4;
+    }
+
+    #trailing-return,
+    #year-return {
+        flex: 0 0 60%;
+    }
+
+    #barometer {
+        order: 5;
+    }
+
+    #asset-allocation {
+        order: 6;
+    }
+
+    #barometer,
+    #asset-allocation {
+        flex: 1 1 50%;
+    }
+}
+
+@container dashboard (max-width: 700px) {
+    #pie-chart,
+    #year-return,
+    #barometer,
+    #sector-breakdown-table,
+    #trailing-return,
+    #asset-allocation {
+        flex: 1 1 100%;
+    }
+
+    #year-return {
+        order: 3;
+    }
+
+    #barometer {
+        height: 450px;
+    }
+}
+
+.highcharts-label.highcharts-range-label text {
+    fill: #ea293c !important;
+}

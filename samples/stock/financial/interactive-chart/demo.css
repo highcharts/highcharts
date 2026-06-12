@@ -1,0 +1,94 @@
+#chart-wrapper {
+    max-width: 850px;
+    margin: 0 auto;
+}
+
+.top-container {
+    display: flex;
+    align-items: center;
+}
+
+#chart-title {
+    font-size: 28px;
+    font-weight: 700;
+    margin-top: 0;
+    margin-bottom: 6px;
+    order: 0;
+}
+
+.change {
+    order: 0;
+}
+
+.date {
+    margin-left: auto;
+    font-size: 12px;
+    font-weight: 400;
+}
+
+#chart-subtitle {
+    font-size: 18px;
+    font-weight: 600;
+    margin-top: 0;
+    margin-bottom: 24px;
+}
+
+.minus-border {
+    background: #fee2e2;
+}
+
+.plus-border {
+    background: #dbfff4;
+}
+
+.minus {
+    color: #b91c1c;
+}
+
+.plus {
+    color: #059669;
+}
+
+.rounded-border {
+    margin-left: 18px;
+    font-size: 12px;
+    font-weight: 400;
+    border-radius: 66px;
+    padding: 6px;
+}
+
+#range-selector {
+    display: flex;
+    flex-direction: row;
+    margin: 0 10px;
+}
+
+#range-selector button {
+    border: none;
+    background: white;
+    color: #141414;
+    flex: 1 0 0;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    min-height: 57px;
+}
+
+#range-selector button:hover,
+#range-selector button.selected {
+    border-radius: 4px 4px 0 0;
+    border-bottom: 1px solid #274fe0;
+    background: rgba(0, 0, 0, 0.05);
+}
+
+#range-selector button .change {
+    margin-top: 3px;
+    font-size: 12px;
+    font-weight: 400;
+}

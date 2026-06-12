@@ -1,0 +1,15 @@
+#container-daily,
+#container-monthly {
+    display: flex;
+    justify-content: space-between;
+}
+
+#container-daily-alpha,
+#container-daily-beta,
+#container-daily-rsquare,
+#container-monthly-alpha,
+#container-monthly-beta,
+#container-monthly-rsquare {
+    width: 33%;
+    height: 330px;
+}

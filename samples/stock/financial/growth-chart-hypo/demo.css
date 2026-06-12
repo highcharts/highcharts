@@ -1,0 +1,9 @@
+#container {
+    height: 590px;
+    max-width: 1050px;
+    margin: 0 auto;
+}
+
+.highcharts-label.highcharts-range-label text {
+    fill: #ea293c !important;
+}

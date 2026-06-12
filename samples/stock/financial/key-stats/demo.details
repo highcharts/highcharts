@@ -1,0 +1,7 @@
+---
+name: Key Stats
+description: Shows key fund metadata including ISIN, SRRI, currency, and investment strategy.
+tags:
+  - Morningstar
+js_wrap: b
+...

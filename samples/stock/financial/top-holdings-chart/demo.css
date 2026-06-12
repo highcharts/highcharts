@@ -1,0 +1,32 @@
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/css/grid-pro.css");
+@import url("https://code.highcharts.com/dashboards/css/dashboards.css");
+
+#container {
+    --highcharts-neutral-color-5: #fff;
+
+    min-width: 450px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.theme-custom {
+    --hcg-font-size: 15px;
+    --hcg-color: #000;
+    --hcg-header-color: #474554;
+    --hcg-header-padding: 14px;
+    --hcg-background: #fff;
+    --hcg-padding: 10px;
+    --hcg-header-background: #fff;
+    --hcg-row-even-background: #fff;
+    --hcg-cell-hovered-row-background: #f2f3f4;
+    --hcg-border-width: 1px;
+    --hcg-border-color: #f1f1f3;
+}
+
+.theme-custom .numeric-val-col {
+    text-align: right;
+}
+
+.highcharts-light .highcharts-dashboards-cell > .highcharts-dashboards-component {
+    box-shadow: none;
+}

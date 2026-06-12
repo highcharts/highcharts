@@ -1,0 +1,12 @@
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/css/grid-pro.css");
+@import url("https://code.highcharts.com/dashboards/css/dashboards.css");
+
+#container {
+    max-width: 650px;
+    margin: 0 auto;
+}
+
+#datagrid .hcg-hovered-row td {
+    background: #014ce5;
+    color: #fff;
+}

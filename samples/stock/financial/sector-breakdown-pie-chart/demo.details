@@ -1,0 +1,8 @@
+---
+name: Sector Breakdown Pie Chart
+description: Displays global stock sector breakdown as a pie chart synchronized with a data grid.
+tags:
+  - Dashboards
+  - Morningstar
+js_wrap: b
+...

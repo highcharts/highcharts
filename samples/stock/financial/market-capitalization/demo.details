@@ -1,0 +1,8 @@
+---
+name: Market Capitalization
+description: Displays market capitalization breakdown as a donut pie chart synchronized with a data grid.
+tags:
+  - Dashboards
+  - Morningstar
+js_wrap: b
+...

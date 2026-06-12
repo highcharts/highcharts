@@ -1,0 +1,84 @@
+@import url("https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/css/grid-pro.css");
+@import url("https://code.highcharts.com/dashboards/css/dashboards.css");
+
+/* Themes */
+.theme-custom {
+    --hcg-border-radius: 5px;
+    --hcg-color: #000;
+    --hcg-vertical-padding: 9px;
+    --hcg-horizontal-padding: 4px;
+    --hcg-border-width: 0;
+    --hcg-border-color: #ccc;
+    --hcg-background: #fff;
+    --hcg-header-column-border-width: 0;
+    --hcg-header-background: transparent;
+    --hcg-font-size: 16px;
+    --hcg-header-row-border-color: transparent;
+    --hcg-row-border-color: transparent;
+
+    /* Hovered colors */
+    --hcg-cell-hovered-background: #f2f3f4;
+    --hcg-row-hovered-background: #f2f3f4;
+    --hcg-column-hovered-background: #f2f3f4;
+    --hcg-header-column-hovered-background: #f2f3f4;
+    --hcg-header-cell-hovered-background: #f2f3f4;
+    --hcg-cell-hovered-row-background: #f2f3f4;
+
+    /* Loader */
+    --hcg-loader-color: #666;
+}
+
+#container .highcharts-dashboards-wrapper {
+    border: 1px solid #d8dbe4;
+    border-radius: 6px;
+    background-color: #fff;
+    padding: 10px 15px 0;
+    max-width: 1000px;
+    min-width: 800px;
+    margin: 0 auto;
+    margin-bottom: 30px;
+}
+
+.highcharts-light .highcharts-dashboards-cell > .highcharts-dashboards-component {
+    border: none;
+    box-shadow: none;
+}
+
+.highcharts-dashboards-layouts-wrapper {
+    height: 100%;
+}
+
+th:not(:first-child) .hcg-header-cell-content,
+td:not(:first-child) {
+    text-align: right !important;
+}
+
+td:first-child {
+    z-index: 1;
+}
+
+td,
+th {
+    text-wrap: nowrap;
+    overflow: visible !important;
+}
+
+.hcg-row {
+    border-top: 1px solid #f2f3f4;
+}
+
+#basic-datagrid,
+#can-datagrid {
+    flex: 3;
+    height: 100%;
+}
+
+#basic-pie-chart,
+#can-pie-chart {
+    flex: 2;
+    max-height: 280px;
+}
+
+.highcharts-dashboards-component-title {
+    margin-bottom: 20px;
+}

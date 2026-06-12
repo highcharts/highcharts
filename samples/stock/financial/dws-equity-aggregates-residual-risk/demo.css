@@ -1,0 +1,13 @@
+#container-values,
+#container-companies {
+    display: flex;
+    justify-content: space-between;
+}
+
+#container-values-alpha,
+#container-values-beta,
+#container-companies-alpha,
+#container-companies-beta {
+    width: 50%;
+    height: 330px;
+}
