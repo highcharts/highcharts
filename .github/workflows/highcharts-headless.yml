@@ -21,6 +21,11 @@ jobs:
       - name: Build Highcharts
         run: npx gulp scripts
 
+      - name: Verify webpack bundles
+        run: |
+          node tools/webpacks/check-duplicates.mjs
+          node tools/webpacks/check-namespace-exposure.mjs
+
       - name: Run unit tests
         run: npm run test-node
 

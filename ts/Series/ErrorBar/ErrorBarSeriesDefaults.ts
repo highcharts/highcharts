@@ -60,7 +60,7 @@ const ErrorBarSeriesDefaults: ErrorBarSeriesOptions = {
      * @since   3.0
      * @product highcharts
      */
-    color: Palette.neutralColor100,
+    color: 'var(--highcharts-neutral-color-100)',
 
     dataLabels: {
 

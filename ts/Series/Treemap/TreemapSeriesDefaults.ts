@@ -22,7 +22,6 @@
 import type TreemapPoint from './TreemapPoint';
 import type TreemapSeriesOptions from './TreemapSeriesOptions';
 
-import { Palette } from '../../Core/Color/Palettes';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import { isString } from '../../Shared/Utilities.js';
 
@@ -55,7 +54,7 @@ const TreemapSeriesDefaults: TreemapSeriesOptions = {
      * @sample {highcharts} highcharts/plotoptions/treemap-allowdrilltonode/
      *         Enabled
      *
-     * @deprecated
+     * @deprecated 7.0.3
      * @type      {boolean}
      * @default   false
      * @since     4.1.0
@@ -292,7 +291,7 @@ const TreemapSeriesDefaults: TreemapSeriesOptions = {
      *
      * Since v9.3.3 the `traverseUpButton` is replaced by `breadcrumbs`.
      *
-     * @deprecated
+     * @deprecated 9.3.3
      */
     traverseUpButton: {
 
@@ -506,7 +505,7 @@ const TreemapSeriesDefaults: TreemapSeriesOptions = {
      *
      * @type {Highcharts.ColorString}
      */
-    borderColor: Palette.neutralColor10,
+    borderColor: 'var(--highcharts-neutral-color-10)',
 
     /**
      * The width of the border surrounding each tree map item.
@@ -542,7 +541,7 @@ const TreemapSeriesDefaults: TreemapSeriesOptions = {
             /**
              * The border color for the hovered state.
              */
-            borderColor: Palette.neutralColor40,
+            borderColor: 'var(--highcharts-neutral-color-40)',
 
             /**
              * Brightness for the hovered point. Defaults to 0 if the

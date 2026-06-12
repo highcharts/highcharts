@@ -43,6 +43,7 @@ import { addEvent, pick, pushUnique } from '../../Shared/Utilities.js';
 
 /** @internal */
 interface BoostChartAdditions extends BoostTargetAdditions {
+    cssVars?: Record<string, string>;
     forceChartBoost?: boolean;
     markerGroup?: Series['markerGroup'];
     lineWidthFilter?: SVGElement;
@@ -230,7 +231,7 @@ function isChartSeriesBoosting(
 
         if (patientMax(
             series.getColumn('x', true),
-            seriesOptions.data as any,
+            seriesOptions.data || [],
             /// series.xData,
             series.points
         ) >= (seriesOptions.boostThreshold || Number.MAX_VALUE)) {

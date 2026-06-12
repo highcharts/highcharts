@@ -1,3 +1,6 @@
+// Templating helper to trim some character from the end
+Highcharts.Templating.helpers.trim = (txt, len) => txt.slice(0, -len);
+
 // Create the chart
 Highcharts.mapChart('container', {
     chart: {
@@ -16,7 +19,7 @@ Highcharts.mapChart('container', {
         buttonOptions: {
             align: 'left',
             theme: {
-                stroke: '#e6e6e6'
+                stroke: 'var(highcharts-neutral-color-10, #e6e6e6)'
             }
         }
     },
@@ -24,27 +27,32 @@ Highcharts.mapChart('container', {
     mapNavigation: {
         enabled: true,
         buttonOptions: {
-            alignTo: 'spacingBox'
+            alignTo: 'spacingBox',
+            theme: {
+                stroke: 'var(highcharts-neutral-color-10, #e6e6e6)'
+            }
         }
     },
 
     mapView: {
-        center: [10.73028454146517, 59.91261204279989],
+        center: [10.7302, 59.9126],
         zoom: 13
     },
 
     tooltip: {
-        pointFormat: '{point.name}'
+        useHTML: true,
+        headerFormat: '<table style="border-left:3px solid {series.color};' +
+            ' padding-left:5px;"><tr><td style="font-size: 0.9em;">' +
+            '{trim series.name 1}</td></tr>',
+        pointFormat: '<tr><td style="font-size: 1.1em;">{point.name}</td></tr>',
+        footerFormat: '</table>'
     },
 
     legend: {
         enabled: true,
-        title: {
-            text: 'Attractions in Oslo'
-        },
         align: 'left',
-        symbolWidth: 20,
-        symbolHeight: 20,
+        symbolWidth: 24,
+        symbolHeight: 24,
         itemStyle: {
             textOutline: '1 1 1px rgba(255,255,255)'
         },
@@ -54,14 +62,21 @@ Highcharts.mapChart('container', {
             transparent 15%
         )`,
         float: true,
-        borderRadius: 2,
-        itemMarginBottom: 5
+        borderRadius: 12,
+        itemMarginBottom: 10,
+        itemMarginTop: 10,
+        padding: 10
     },
 
     plotOptions: {
         mappoint: {
             dataLabels: {
                 enabled: false
+            },
+            states: {
+                inactive: {
+                    opacity: 0.5
+                }
             }
         }
     },
@@ -70,7 +85,8 @@ Highcharts.mapChart('container', {
         type: 'tiledwebmap',
         name: 'Basemap Tiles',
         provider: {
-            type: 'OpenStreetMap'
+            type: 'OpenStreetMap',
+            theme: 'Standard'
         },
         showInLegend: false
     }, {
@@ -81,6 +97,7 @@ Highcharts.mapChart('container', {
             width: 24,
             height: 24
         },
+        color: '#414141',
         data: [{
             name: 'Fram Museum',
             lon: 10.69299,
@@ -122,6 +139,7 @@ Highcharts.mapChart('container', {
             width: 24,
             height: 24
         },
+        color: '#00AC22',
         data: [{
             name: 'The Vigeland Park',
             lon: 10.70514,
@@ -143,6 +161,7 @@ Highcharts.mapChart('container', {
             width: 24,
             height: 24
         },
+        color: '#0D66DB',
         data: [{
             name: 'The Norwegian National Opera & Ballet',
             lon: 10.75182,
@@ -172,6 +191,7 @@ Highcharts.mapChart('container', {
             width: 24,
             height: 24
         },
+        color: '#CE0056',
         data: [{
             name: 'Elias mat & sånt',
             lon: 10.73868,
