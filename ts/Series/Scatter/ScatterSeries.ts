@@ -20,6 +20,9 @@
 
 import type ScatterPoint from './ScatterPoint';
 import type ScatterSeriesOptions from './ScatterSeriesOptions';
+import type { SeriesTypeOptions } from '../../Core/Series/SeriesType';
+import type TooltipOptions from '../../Core/TooltipOptions';
+import type { DeepPartial } from '../../Shared/Types';
 
 import ScatterSeriesDefaults from './ScatterSeriesDefaults.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
@@ -90,6 +93,34 @@ class ScatterSeries extends LineSeries {
 
     /* eslint-disable valid-jsdoc */
     /**
+     * Honor explicit shared-tooltip opt-in for cartesian scatter-like
+     * series while keeping the default behavior unchanged.
+     * @private
+     */
+    public setOptions(
+        itemOptions: DeepPartial<SeriesTypeOptions>
+    ): this['options'] {
+        const chartOptions = this.chart.options,
+            plotOptions = chartOptions.plotOptions || {},
+            typePlotOptions = (plotOptions[this.type] || {}) as
+                DeepPartial<ScatterSeriesOptions>,
+            tooltipOptions = merge(
+                chartOptions.tooltip,
+                plotOptions.series?.tooltip,
+                typePlotOptions.tooltip,
+                itemOptions.tooltip
+            ) as TooltipOptions;
+
+        this.noSharedTooltip = !(
+            this.isCartesian &&
+            tooltipOptions.shared
+        );
+
+        return super.setOptions(itemOptions);
+    }
+
+    /* eslint-disable valid-jsdoc */
+    /**
      * Optionally add the jitter effect.
      * @private
      */
@@ -154,8 +185,6 @@ class ScatterSeries extends LineSeries {
             this.graph = this.graph.destroy();
         }
     }
-
-
 }
 
 /* *
