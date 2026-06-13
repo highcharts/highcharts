@@ -253,6 +253,156 @@ QUnit.test('Keyboard navigation', function (assert) {
     );
 });
 
+QUnit.test('HCM colors override series colors', function (assert) {
+    var colors = ['#f00', '#0f0', '#00f'],
+        chart = Highcharts.chart('container', {
+            accessibility: {
+                highContrastMode: true,
+                highContrastTheme: {
+                    colors: colors
+                }
+            },
+            series: [{
+                type: 'area',
+                data: [1, 2, 3]
+            }, {
+                type: 'line',
+                data: [3, 2, 1]
+            }, {
+                type: 'column',
+                data: [2, 2, 2]
+            }]
+        });
+
+    assert.strictEqual(
+        chart.series[0].area && chart.series[0].area.attr('fill'),
+        colors[0],
+        'Area series should use the configured high contrast fill.'
+    );
+
+    assert.strictEqual(
+        chart.series[0].graph && chart.series[0].graph.attr('stroke'),
+        'windowText',
+        'Area series should keep a visible high contrast outline.'
+    );
+
+    assert.strictEqual(
+        chart.series[0].points[0].graphic &&
+        chart.series[0].points[0].graphic.attr('stroke'),
+        'windowText',
+        'Area series markers should keep a visible high contrast outline.'
+    );
+
+    assert.strictEqual(
+        chart.series[0].points[0].graphic &&
+        chart.series[0].points[0].graphic.element.getAttribute('stroke-width'),
+        '1',
+        'Area series markers should render a visible outline width.'
+    );
+
+    assert.strictEqual(
+        chart.series[1].graph && chart.series[1].graph.attr('stroke'),
+        colors[1],
+        'Line series should use the configured high contrast stroke.'
+    );
+
+    assert.strictEqual(
+        chart.series[2].points[0].graphic &&
+        chart.series[2].points[0].graphic.attr('fill'),
+        colors[2],
+        'Column series should use the configured high contrast fill.'
+    );
+
+    assert.strictEqual(
+        chart.renderer.box.style.forcedColorAdjust,
+        'none',
+        'Custom high contrast colors should be preserved in forced colors mode.'
+    );
+
+    chart = Highcharts.chart('container', {
+        accessibility: {
+            highContrastMode: true,
+            highContrastTheme: {
+                colors: colors
+            }
+        },
+        series: [{
+            type: 'column',
+            data: [5, 4, 3]
+        }, {
+            type: 'pareto',
+            baseSeries: 0
+        }]
+    });
+
+    assert.strictEqual(
+        chart.series[1].graph && chart.series[1].graph.attr('stroke'),
+        colors[1],
+        'Pareto series should use the configured high contrast stroke.'
+    );
+
+    assert.strictEqual(
+        chart.series[1].color,
+        colors[1],
+        'Pareto series color should be updated for tooltip and legend state.'
+    );
+
+    chart = Highcharts.chart('container', {
+        accessibility: {
+            highContrastMode: true,
+            highContrastTheme: {
+                plotOptions: {
+                    series: {
+                        color: '#0f0'
+                    }
+                }
+            }
+        },
+        series: [{
+            type: 'line',
+            data: [1, 2, 3]
+        }]
+    });
+
+    const series = chart.series[0];
+
+    assert.strictEqual(
+        chart.renderer.box.style.forcedColorAdjust,
+        'none',
+        'Single custom high contrast series colors should also be preserved.'
+    );
+
+    assert.strictEqual(
+        series.graph && series.graph.attr('stroke'),
+        '#0f0',
+        'Single custom high contrast series colors should drive the ' +
+        'line stroke.'
+    );
+
+    assert.strictEqual(
+        series.points[0].graphic && series.points[0].graphic.attr('fill'),
+        '#0f0',
+        'Single custom high contrast series colors should drive marker colors.'
+    );
+
+    chart = Highcharts.chart('container', {
+        accessibility: {
+            highContrastMode: true,
+            highContrastTheme: {
+                colors: ['windowText']
+            }
+        },
+        series: [{
+            data: [1, 2, 3]
+        }]
+    });
+
+    assert.notOk(
+        chart.renderer.box.style.forcedColorAdjust,
+        'System color high contrast themes should keep browser adjustments.'
+    );
+});
+
 QUnit.test('No data', function (assert) {
     var chart = Highcharts.chart('container', {
         series: [{}]
