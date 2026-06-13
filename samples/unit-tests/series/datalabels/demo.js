@@ -431,9 +431,12 @@ QUnit.test(
                     ],
                     dataLabels: {
                         enabled: true,
-                        formatter: function () {
-                            if (this.y > 0.5 && this.y < 4.5) {
-                                return this.y;
+                        formatter: function (options) {
+                            // Read the value the label is aligned to, `high`
+                            // or `low` (#23904)
+                            var value = this[options.alignToKey];
+                            if (value > 0.5 && value < 4.5) {
+                                return value;
                             }
                             return null;
                         }

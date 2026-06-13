@@ -19,6 +19,7 @@
  * */
 
 import type ErrorBarSeriesOptions from './ErrorBarSeriesOptions';
+import RangeDataLabel from '../RangeDataLabel.js';
 
 /* *
  *
@@ -58,6 +59,20 @@ const ErrorBarSeriesDefaults: ErrorBarSeriesOptions = {
      * @product highcharts
      */
     color: 'var(--highcharts-neutral-color-100)',
+
+    dataLabels: {
+
+        /**
+         * The default formatter renders the value of the point key the label
+         * is [aligned to](#plotOptions.errorbar.dataLabels.alignToKey). Define
+         * a [format](#plotOptions.errorbar.dataLabels.format) or `formatter`
+         * to display other values.
+         *
+         * @type {Highcharts.DataLabelsFormatterCallbackFunction}
+         */
+        formatter: RangeDataLabel.formatter
+
+    },
 
     grouping: false,
 

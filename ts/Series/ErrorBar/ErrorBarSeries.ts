@@ -20,6 +20,7 @@
 
 import type ErrorBarPoint from './ErrorBarPoint';
 import type ErrorBarSeriesOptions from './ErrorBarSeriesOptions';
+import type { BoxPlotPointValKey } from '../BoxPlot/BoxPlotSeriesOptions';
 import type ColumnMetricsObject from '../Column/ColumnMetricsObject';
 
 import BoxPlotSeries from '../BoxPlot/BoxPlotSeries.js';
@@ -87,16 +88,9 @@ class ErrorBarSeries extends BoxPlotSeries {
     }
 
     public drawDataLabels(): void {
-        const series = this,
-            valKey = series.pointValKey;
-
+        // Error bars draw upper/lower labels via the area range option adapter.
         if (AreaRangeSeries) {
-            AreaRangeSeries.prototype.drawDataLabels.call(series);
-            // Arearange drawDataLabels does not reset point.y to high,
-            // but to low after drawing (#4133)
-            for (const point of series.points) {
-                point.y = (point as any)[valKey];
-            }
+            AreaRangeSeries.prototype.drawDataLabels.call(this);
         }
     }
 
@@ -123,8 +117,8 @@ interface ErrorBarSeries extends BoxPlotSeries {
     pointClass: typeof ErrorBarPoint;
     doQuartiles: boolean;
     linkedParent: ErrorBarSeries;
-    pointArrayMap: Array<string>;
-    pointValKey: string;
+    pointArrayMap: Array<BoxPlotPointValKey>;
+    pointValKey: BoxPlotPointValKey;
 }
 
 extend(ErrorBarSeries.prototype, {

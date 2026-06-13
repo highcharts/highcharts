@@ -82,6 +82,66 @@ QUnit.test('Individual fill color (#5770)', function (assert) {
         'blue',
         'Generic fill'
     );
+
+    chart.series[0].update({
+        dataLabels: [{
+            enabled: true,
+            alignToKey: 'high',
+            format: 'High: {point.high}'
+        }, {
+            enabled: true,
+            alignToKey: 'median',
+            format: 'Median: {point.median}'
+        }, {
+            enabled: true,
+            alignToKey: 'low',
+            format: 'Low: {point.low}'
+        }]
+    });
+
+    let point = chart.series[0].points[0];
+
+    assert.deepEqual(
+        point.dataLabels.map(label => label.text.textStr),
+        ['High: 965', 'Median: 848', 'Low: 760'],
+        'Labels render text for individual box plot values (#23904)'
+    );
+
+    assert.ok(
+        point.dataLabels[0].y < point.dataLabels[1].y &&
+            point.dataLabels[1].y < point.dataLabels[2].y,
+        'Labels align to their selected box plot values (#23904)'
+    );
+
+    chart.update({
+        chart: {
+            inverted: true
+        }
+    });
+    point = chart.series[0].points[0];
+
+    assert.ok(
+        point.dataLabels[0].x > point.dataLabels[2].x,
+        'Inverted: high label is right of the low label (#23904)'
+    );
+
+    chart.update({
+        chart: {
+            inverted: false
+        },
+        yAxis: {
+            reversed: true
+        }
+    });
+    point = chart.series[0].points[0];
+
+    assert.ok(
+        point.dataLabels[0].y >= point.highPlot - 1 &&
+            point.dataLabels[2].y + point.dataLabels[2].height <=
+                point.lowPlot + 1,
+        'Reversed: high label below the high whisker, low label above low ' +
+            '(#23904)'
+    );
 });
 
 QUnit.test('Individual options and Point.update', function (assert) {

@@ -733,7 +733,6 @@ namespace DataLabel {
 
                 // Handle each individual data label for this point
                 pointOptions.forEach((labelOptions, i): void => {
-
                     // Options for one dataLabel
                     const labelEnabled = (
                             labelOptions.enabled &&

@@ -33,8 +33,53 @@ QUnit.test('Range series data labels(#4421)', function (assert) {
         0,
         'Second label hidden'
     );
+    assert.deepEqual(
+        [
+            chart.series[0].points[0].dataLabelUpper.text.textStr,
+            chart.series[0].points[0].dataLabel.text.textStr
+        ],
+        ['100', '0'],
+        'Default labels render the high and low values (#23904)'
+    );
 
     const series = chart.series[0];
+
+    series.update({
+        dataLabels: [{
+            enabled: true,
+            alignToKey: 'high',
+            format: 'H1 {point.high}'
+        }, {
+            enabled: true,
+            alignToKey: 'high',
+            format: 'H2 {point.high}',
+            y: 16
+        }, {
+            enabled: true,
+            alignToKey: 'low',
+            format: 'L {point.low}'
+        }],
+        data: [[0, 1, 8]]
+    });
+
+    const point = series.points[0];
+
+    assert.deepEqual(
+        point.dataLabels.map(label => label.text.textStr),
+        ['H1 8', 'H2 8', 'L 1'],
+        'Multiple labels can be attached to the same range value'
+    );
+
+    assert.ok(
+        point.dataLabelUpper === point.dataLabels[0] &&
+            point.dataLabel === point.dataLabels[2],
+        'Legacy high and low label references point to the first matching label'
+    );
+
+    assert.ok(
+        point.dataLabels[0].y < point.dataLabels[2].y,
+        'Labels align to their selected range values'
+    );
 
     series.update({
         dataLabels: {
