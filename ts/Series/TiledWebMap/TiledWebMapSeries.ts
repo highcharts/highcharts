@@ -24,6 +24,8 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type TiledWebMapSeriesOptions from './TiledWebMapSeriesOptions';
 import type MapChart from '../../Core/Chart/MapChart';
 
+import AnimationUtilities from '../../Core/Animation/AnimationUtilities.js';
+import Fx from '../../Core/Animation/Fx.js';
 import H from '../../Core/Globals.js';
 const { composed } = H;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
@@ -39,6 +41,8 @@ import {
     pushUnique
 } from '../../Shared/Utilities.js';
 import { error } from '../../Core/Utilities.js';
+
+const { stop } = AnimationUtilities;
 
 /* *
  *
@@ -633,6 +637,12 @@ class TiledWebMapSeries extends MapSeries {
             for (const zoomKey of Object.keys(tiles)) {
                 for (const key of Object.keys(tiles[zoomKey].tiles)) {
                     if (mapView.projection && mapView.projection.def) {
+                        const tile = tiles[zoomKey].tiles[key];
+
+                        if (Fx.timers.length > 0) {
+                            stop(tile, 'animator');
+                        }
+
                         // Calculate group translations based on first loaded
                         // tile
                         const scale = ((tileSize / worldSize) *
@@ -642,7 +652,7 @@ class TiledWebMapSeries extends MapSeries {
                             firstTile = tiles[zoomKey].tiles[Object.keys(
                                 tiles[zoomKey].tiles
                             )[0]],
-                            { posX, posY } = tiles[zoomKey].tiles[key];
+                            { posX, posY } = tile;
 
                         if (
                             defined(posX) &&
@@ -673,17 +683,13 @@ class TiledWebMapSeries extends MapSeries {
                                 chart.renderer.globalAnimation &&
                                 chart.hasRendered
                             ) {
-                                const startX = Number(
-                                        tiles[zoomKey].tiles[key].attr('x')
-                                    ),
-                                    startY = Number(
-                                        tiles[zoomKey].tiles[key].attr('y')
-                                    ),
+                                const startX = Number(tile.attr('x')),
+                                    startY = Number(tile.attr('y')),
                                     startWidth = Number(
-                                        tiles[zoomKey].tiles[key].attr('width')
+                                        tile.attr('width')
                                     ),
                                     startHeight = Number(
-                                        tiles[zoomKey].tiles[key].attr('height')
+                                        tile.attr('height')
                                     );
 
 
@@ -691,7 +697,7 @@ class TiledWebMapSeries extends MapSeries {
                                     now,
                                     fx
                                 ): void => {
-                                    tiles[zoomKey].tiles[key].attr({
+                                    tile.attr({
                                         x: (
                                             startX + (((posX * scaledTileSize) -
                                                 tilesOffsetX - startX) * fx.pos)
@@ -714,7 +720,7 @@ class TiledWebMapSeries extends MapSeries {
 
                                 };
                                 series.isAnimating = true;
-                                tiles[zoomKey].tiles[key]
+                                tile
                                     .attr({ animator: 0 })
                                     .animate(
                                         { animator: 1 }, { step },
@@ -754,7 +760,7 @@ class TiledWebMapSeries extends MapSeries {
                                     animateTiles(duration);
                                 }
 
-                                tiles[zoomKey].tiles[key].attr({
+                                tile.attr({
                                     x: (posX * scaledTileSize) - tilesOffsetX,
                                     y: (posY * scaledTileSize) - tilesOffsetY,
                                     width: Math.ceil(scaledTileSize) + 1,
