@@ -21,7 +21,6 @@
  * */
 
 import type BBoxObject from '../../Core/Renderer/BBoxObject';
-import type ColorType from '../../Core/Color/ColorType';
 import type DataLabel from '../../Core/Series/DataLabel';
 import type FunnelDataLabelOptions from './FunnelDataLabelOptions';
 import type FunnelPoint from './FunnelPoint';
@@ -56,19 +55,6 @@ import {
     relativeLength,
     splat
 } from '../../Shared/Utilities.js';
-
-/* *
- *
- *  Declarations
- *
- * */
-
-declare module '../../Core/Series/SeriesOptions' {
-    interface SeriesStateHoverOptions {
-        borderColor?: ColorType;
-        color?: ColorType;
-    }
-}
 
 /* *
  *

@@ -45,7 +45,11 @@ function navigatorHandle(
     const halfWidth = options.width ? options.width / 2 : width,
         markerPosition = 1.5,
         r = relativeLength(
-            options.borderRadius || 0,
+            (
+                typeof options.borderRadius === 'object' ?
+                    options.borderRadius.radius :
+                    options.borderRadius
+            ) || 0,
             Math.min(halfWidth * 2, height)
         );
 

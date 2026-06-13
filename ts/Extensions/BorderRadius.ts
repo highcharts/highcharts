@@ -133,7 +133,7 @@ declare module '../Core/Renderer/SVG/SymbolOptions' {
          * is relative to the column width, for pies it is relative to the
          * radius and the inner radius.
          */
-        borderRadius?: number|string;
+        borderRadius?: number|string|Partial<BorderRadiusOptionsObject>;
 
         /**
          * The height of the border-radius box.
@@ -321,7 +321,14 @@ function arc(
     const alpha = end - start,
         sinHalfAlpha = Math.sin(alpha / 2),
         borderRadius = Math.max(Math.min(
-            relativeLength(options.borderRadius || 0, r - innerR),
+            relativeLength(
+                (
+                    typeof options.borderRadius === 'object' ?
+                        options.borderRadius.radius :
+                        options.borderRadius
+                ) || 0,
+                r - innerR
+            ),
             // Cap to half the sector radius
             (r - innerR) / 2,
             // For smaller pie slices, cap to the largest small circle that
