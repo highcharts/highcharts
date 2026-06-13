@@ -36,6 +36,7 @@ Gulp.registry(new GulpForwardReference());
     'default',
     'dependency-mapping',
     'dist',
+    'dist-benchmark-results',
     'dist-clean',
     'dist-compress',
     'dist-copy',
