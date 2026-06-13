@@ -424,9 +424,23 @@ class ControllablePath extends Controllable {
             chart = item.chart,
             defs = chart.options.defs,
             fill = itemOptions.fill,
-            color = defined(fill) && fill !== 'none' ?
+            // The marker (e.g. an arrow head) should follow the user-defined
+            // `fill` only when the user actually provided one; otherwise the
+            // default `fill` would override an explicitly set `stroke`,
+            // resulting in a line and arrow head with mismatched colors.
+            // Fall back to `stroke` when `fill` is not user-set or is 'none'.
+            annotationUserOptions: AnyRecord =
+                (item.annotation && item.annotation.userOptions) || {},
+            userShapes = annotationUserOptions.shapes,
+            userShapeOptions =
+                (userShapes && userShapes[item.index]) || {},
+            userBaseShapeOptions =
+                annotationUserOptions.shapeOptions || {},
+            fillIsUserDefined = defined(userShapeOptions.fill) ||
+                defined(userBaseShapeOptions.fill),
+            color = fillIsUserDefined && defined(fill) && fill !== 'none' ?
                 fill :
-                itemOptions.stroke;
+                (itemOptions.stroke || fill);
 
         const setMarker = function (
             markerType: ('markerEnd'|'markerStart')
