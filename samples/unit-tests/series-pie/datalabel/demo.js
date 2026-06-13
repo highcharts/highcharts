@@ -612,6 +612,91 @@ QUnit.test('Wide data labels', function (assert) {
     );
 });
 
+QUnit.test(
+    'Hidden labels should not shift donut center (#23143)',
+    function (assert) {
+        const data = [
+                ['ABC_098', 142],
+                ['DEF_123', 136],
+                ['ABC_123_EFB_456_098', 127],
+                ['TEXT WITH SPACES', 59],
+                ['MNO_345_03434', 58],
+                ['VERY_LONG_STRING_TESTING_LIMIT', 49],
+                ['TESTING_LONG_STRING', 46],
+                ['ABC', 41],
+                ['TEST_0001', 38],
+                ['TEST_0002', 20]
+            ],
+            referenceContainer = document.createElement('div'),
+            buildChart = function (renderTo, points) {
+                return Highcharts.chart(renderTo, {
+                    chart: {
+                        animation: false,
+                        type: 'pie',
+                        width: 600
+                    },
+                    plotOptions: {
+                        pie: {
+                            animation: false,
+                            innerSize: '60%'
+                        }
+                    },
+                    series: [{
+                        dataLabels: {
+                            format:
+                                '<b style="font-size: 16px;">' +
+                                '{point.name}</b>'
+                        },
+                        data: points
+                    }]
+                });
+            },
+            chart = buildChart('container', data);
+
+        chart.setSize(400, null, false);
+        document.body.appendChild(referenceContainer);
+
+        const series = chart.series[0],
+            visiblePoints = [];
+        const hiddenLabels = series.points.filter(
+            point => point.dataLabel?.attr('visibility') === 'hidden'
+        );
+
+        assert.ok(
+            hiddenLabels.length > 0,
+            'The chart has hidden data labels'
+        );
+
+        series.points.forEach(point => {
+            if (point.dataLabel?.attr('visibility') !== 'hidden') {
+                visiblePoints.push([point.name, point.y]);
+            }
+        });
+
+        const referenceChart = buildChart(referenceContainer, visiblePoints);
+
+        referenceChart.setSize(400, null, false);
+
+        assert.close(
+            series.center[0],
+            referenceChart.series[0].center[0],
+            2,
+            'Hidden labels should not affect donut horizontal centering'
+        );
+
+        assert.close(
+            series.center[1],
+            referenceChart.series[0].center[1],
+            2,
+            'Hidden labels should not affect donut vertical centering'
+        );
+
+        referenceChart.destroy();
+        chart.destroy();
+        referenceContainer.remove();
+    }
+);
+
 // Skipping since refactor. Visually it looks okay. Now it is clipping.
 // Previously the overflow wasn't handled at all.
 QUnit.skip(

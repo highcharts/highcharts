@@ -549,8 +549,13 @@ namespace ColumnDataLabel {
                         labelPosition.computed.x = x;
                         labelPosition.computed.y = y - topOffset;
 
-                        // Detect overflowing data labels
-                        if (pick(dataLabelOptions.crop, true)) {
+                        // Detect overflowing data labels. Labels hidden by the
+                        // distribution step should not affect pie centering.
+                        delete labelPosition.sideOverflow;
+                        if (
+                            visibility !== 'hidden' &&
+                            pick(dataLabelOptions.crop, true)
+                        ) {
                             dataLabelWidth = dataLabel.getBBox().width;
 
                             let sideOverflow: number|undefined;
