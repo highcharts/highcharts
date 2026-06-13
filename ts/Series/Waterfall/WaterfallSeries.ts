@@ -226,14 +226,14 @@ class WaterfallSeries extends ColumnSeries {
 
     // Postprocess mapping between options and SVG attributes
     public pointAttribs(
-        point: WaterfallPoint,
-        state: StatesOptionsKey
+        point?: WaterfallPoint,
+        state?: StatesOptionsKey
     ): SVGAttributes {
 
         const upColor = this.options.upColor;
 
         // Set or reset up color (#3710, update to negative)
-        if (upColor && !point.options.color && isNumber(point.y)) {
+        if (upColor && point && !point.options.color && isNumber(point.y)) {
             point.color = point.y > 0 ? upColor : void 0;
         }
 
