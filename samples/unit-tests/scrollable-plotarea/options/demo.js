@@ -74,3 +74,116 @@ QUnit.test('fixedRenderer options', function (assert) {
         'fixedRenderer should inherit style from options'
     );
 });
+
+QUnit.test(
+    'Scrollable plot area keeps native scrollbars inside chart, #24416',
+    function (assert) {
+        const data = [1, 3, 2],
+            getScrollbarHeight = scrollingContainer => (
+                scrollingContainer.offsetHeight -
+                scrollingContainer.clientHeight
+            ),
+            getScrollbarWidth = scrollingContainer => (
+                scrollingContainer.offsetWidth -
+                scrollingContainer.clientWidth
+            ),
+            chart = Highcharts.chart('container', {
+                chart: {
+                    scrollablePlotArea: {
+                        minWidth: 2000
+                    }
+                },
+                series: [{
+                    data
+                }]
+            });
+
+        let scrollingContainer =
+                chart.scrollablePlotArea.scrollingContainer;
+        const scrollbarHeight = getScrollbarHeight(scrollingContainer);
+
+        assert.strictEqual(
+            scrollingContainer.offsetHeight,
+            chart.chartHeight,
+            'Horizontal scrolling container should not exceed chart height'
+        );
+
+        if (scrollbarHeight) {
+            const creditsBox =
+                    chart.credits.element.getBoundingClientRect(),
+                scrollingBox = scrollingContainer.getBoundingClientRect();
+
+            assert.ok(
+                creditsBox.bottom <=
+                    scrollingBox.top + scrollingContainer.clientHeight + 1,
+                'Credits should not overlap the horizontal scrollbar'
+            );
+        } else {
+            assert.ok(true, 'No non-overlay horizontal scrollbar');
+        }
+
+        chart.update({
+            chart: {
+                scrollablePlotArea: {
+                    minWidth: null,
+                    minHeight: 1000
+                },
+                type: 'bar',
+                marginRight: 30
+            },
+            xAxis: {
+                categories: ['A', 'B', 'C'],
+                title: {
+                    text: null
+                }
+            },
+            yAxis: {
+                lineWidth: 1,
+                title: {
+                    text: 'Votes',
+                    align: 'high'
+                },
+                showLastLabel: false
+            },
+            series: [{
+                type: 'bar',
+                data
+            }]
+        }, true, true);
+
+        scrollingContainer =
+            chart.scrollablePlotArea.scrollingContainer;
+
+        const scrollbarWidth = getScrollbarWidth(scrollingContainer);
+
+        assert.strictEqual(
+            scrollingContainer.offsetWidth,
+            chart.chartWidth,
+            'Vertical scrolling container should not exceed chart width'
+        );
+
+        if (scrollbarWidth) {
+            const creditsBox =
+                    chart.credits.element.getBoundingClientRect(),
+                axisTitleBox =
+                    chart.yAxis[0].axisTitle.element
+                        .getBoundingClientRect(),
+                scrollingBox = scrollingContainer.getBoundingClientRect();
+
+            assert.ok(
+                creditsBox.right <=
+                    scrollingBox.left +
+                    scrollingContainer.clientWidth + 1,
+                'Credits should not overlap the vertical scrollbar'
+            );
+            assert.ok(
+                axisTitleBox.right <=
+                    scrollingBox.left +
+                    scrollingContainer.clientWidth + 1,
+                'Axis title should not overlap the vertical scrollbar'
+            );
+        } else {
+            assert.ok(true, 'No non-overlay vertical scrollbar');
+        }
+    }
+);
