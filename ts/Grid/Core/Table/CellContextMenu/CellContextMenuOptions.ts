@@ -21,8 +21,6 @@
  * */
 
 import type TableCell from '../Body/TableCell';
-import type { GridIconName } from '../../UI/SvgIcons';
-
 /* *
  *
  *  Declarations
@@ -196,7 +194,7 @@ export interface CellContextMenuBuiltInItemOptions {
     /**
      * Optional icon override for this built-in action.
      */
-    icon?: GridIconName;
+    icon?: string;
 
     /**
      * Whether this built-in action should be disabled.

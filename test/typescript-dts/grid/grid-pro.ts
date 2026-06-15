@@ -62,6 +62,15 @@ function test_grid() {
             }]
         }, 'hidden'],
         rendering: {
+            icons: {
+                customPinIcon: {
+                    width: 16,
+                    height: 16,
+                    children: [{
+                        d: 'M 2 8 L 6 12 L 14 3'
+                    }]
+                }
+            },
             columns: {
                 resizing: {
                     mode: 'distributed'
@@ -100,7 +109,8 @@ function test_grid() {
                         },
                         {
                             type: 'action',
-                            actionId: 'pinRowTop'
+                            actionId: 'pinRowTop',
+                            icon: 'customPinIcon'
                         },
                         {
                             type: 'separator'
