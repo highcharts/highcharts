@@ -72,7 +72,7 @@ columnDefaults: {
 
 Inline mode works well for data-heavy tables where filtering is a primary interaction.
 
-#### Hiding the operator select
+## Hiding the operator select
 
 When `hideOperatorSelect` is `true`, the operator `<select>` is not rendered
 in inline or popup filtering. Filtering uses a fixed operator:
