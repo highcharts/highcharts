@@ -30,6 +30,13 @@ QUnit.test('Stacking should not take effect', function (assert) {
         'fillOpacity controls the area fill opacity'
     );
 
+    chart.series[0].update({ fillColor: 'rgba(255, 0, 0, 0.5)' });
+    assert.strictEqual(
+        Number(chart.series[0].area.attr('fill-opacity')),
+        1,
+        'An explicit fillColor suppresses fillOpacity'
+    );
+
     chart = Highcharts.chart('container', {
         series: [
             {
