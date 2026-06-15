@@ -1,23 +1,126 @@
-/* eslint-disable max-len */
-// A vibrant, modern palette supporting 7+ disciplines.
-const SPORT_COLORS = [
-    '#4CAFFE',
-    '#544FC5',
-    '#00E272',
-    '#FE6A35',
-    '#6B8ABC',
-    '#D568FB',
-    '#2EE0CA'
-];
+const dataURL =
+    'https://www.highcharts.com/samples/data/' +
+    'olympic-female-heights-2024.csv';
 
-// Native Math Helpers
+// Render the violin plot. The chart configuration is kept at the top so that
+// readers meet the actual options first; the data crunching that feeds it
+// lives in the helpers below.
+function createChart(categories, series) {
+    Highcharts.chart('container', {
+        chart: {
+            type: 'polygon',
+            spacingBottom: 30
+        },
+        accessibility: {
+            description:
+                'A violin plot showing the height distribution of female ' +
+                'athletes at the 2024 Olympics across multiple sports. The ' +
+                'plot features a density shape for each sport, overlaid ' +
+                'with statistical markers indicating the minimum, first ' +
+                'quartile, median, third quartile, and maximum heights.'
+        },
+        title: {
+            text: 'Height distribution of female athletes at the 2024 Olympics'
+        },
+        xAxis: {
+            categories: categories,
+            lineWidth: 0,
+            // Highlight the hovered category instead of dimming the others
+            crosshair: {
+                enabled: true
+            }
+        },
+        yAxis: {
+            title: {
+                text: null
+            },
+            gridLineDashStyle: 'Dash',
+            labels: {
+                format: '{value} cm',
+                style: {
+                    fontSize: '10px'
+                }
+            },
+            startOnTick: false,
+            endOnTick: false
+        },
+        legend: {
+            enabled: false
+        },
+        tooltip: {
+            useHTML: true,
+            padding: 12,
+            formatter: function () {
+                const stat = (this.series.options.custom || {}).stat;
+
+                if (!stat) {
+                    return false;
+                }
+
+                const format = value => Highcharts.numberFormat(value, 2),
+                    row = (label, value, cls = '') =>
+                        '<tr>' +
+                        `<td class="violin-tooltip-label ${cls}">` +
+                        `${label}:</td>` +
+                        `<td class="violin-tooltip-value ${cls}">` +
+                        `${format(value)} cm</td>` +
+                        '</tr>';
+
+                return `
+                    <div class="violin-tooltip">
+                        <span class="violin-tooltip-header"
+                            style="color: ${this.series.color};">
+                            ${this.series.name}
+                        </span>
+                        <table class="violin-tooltip-table">
+                            ${row('Max', stat[4])}
+                            ${row('Q 3', stat[3])}
+                            ${row('Median', stat[2], 'median-row')}
+                            ${row('Q 1', stat[1])}
+                            ${row('Min', stat[0])}
+                        </table>
+                    </div>
+                `;
+            }
+        },
+        plotOptions: {
+            series: {
+                states: {
+                    inactive: {
+                        enabled: false
+                    }
+                }
+            },
+            polygon: {
+                fillOpacity: 0.5,
+                marker: {
+                    enabled: false
+                },
+                lineWidth: 1
+            },
+            boxplot: {
+                pointWidth: 8,
+                color: '#333',
+                fillColor: '#333',
+                medianColor: '#fff',
+                borderRadius: 4
+            }
+        },
+        series: series
+    });
+}
+
+// Native math helpers
 const mathUtils = {
     quantile: (sortedValues, q) => {
-        const pos = (sortedValues.length - 1) * q;
-        const base = Math.floor(pos);
-        const rest = pos - base;
-        return sortedValues[base + 1] !== undefined ? sortedValues[base] +
-        rest * (sortedValues[base + 1] - sortedValues[base]) : sortedValues[base];
+        const pos = (sortedValues.length - 1) * q,
+            base = Math.floor(pos),
+            rest = pos - base;
+        if (sortedValues[base + 1] === undefined) {
+            return sortedValues[base];
+        }
+        return sortedValues[base] +
+            rest * (sortedValues[base + 1] - sortedValues[base]);
     },
     stdDev: arr => {
         const mean = arr.reduce((a, b) => a + b) / arr.length;
@@ -29,7 +132,8 @@ const mathUtils = {
     gaussian: u => (1 / Math.sqrt(2 * Math.PI)) * Math.exp(-0.5 * u * u)
 };
 
-// Generate Violin Data
+// Generate the kernel density estimate (the violin shape) and the
+// five-number summary for each category.
 function generateViolinData(step, sortedDataArrays) {
     let globalMin = Infinity,
         globalMax = -Infinity;
@@ -48,15 +152,13 @@ function generateViolinData(step, sortedDataArrays) {
         if (max > globalMax) {
             globalMax = max;
         }
-        stats.push(
-            [
-                min,
-                mathUtils.quantile(sortedValues, 0.25),
-                mathUtils.quantile(sortedValues, 0.50),
-                mathUtils.quantile(sortedValues, 0.75),
-                max
-            ]
-        );
+        stats.push([
+            min,
+            mathUtils.quantile(sortedValues, 0.25),
+            mathUtils.quantile(sortedValues, 0.50),
+            mathUtils.quantile(sortedValues, 0.75),
+            max
+        ]);
     });
 
     // Add a little breathing room so the violins narrow out to 0.
@@ -77,7 +179,8 @@ function generateViolinData(step, sortedDataArrays) {
             return;
         }
         const bandwidth = Math.max(
-            1.06 * mathUtils.stdDev(sortedValues) * Math.pow(sortedValues.length, -0.2),
+            1.06 * mathUtils.stdDev(sortedValues) *
+                Math.pow(sortedValues.length, -0.2),
             step * 2
         );
 
@@ -96,10 +199,9 @@ function generateViolinData(step, sortedDataArrays) {
         results.push(seriesData);
     });
 
-    // Normalize the density values.
-    // 0.4 represents the maximum width extending from the center line.
-    // This ensures violins from adjacent categories (spaced by 1) don't overlap,
-    // leaving a 0.2 gap between them.
+    // Normalize the density values. 0.4 is the maximum half-width extending
+    // from the center line, so violins in adjacent categories (spaced by 1)
+    // keep a 0.2 gap between them.
     const scale = 0.4 / (maxDensity || 1);
     const scaledResults = results.map((series, index) =>
         series.map(point => [
@@ -108,244 +210,71 @@ function generateViolinData(step, sortedDataArrays) {
         ])
     );
 
-    return { xiData, results: scaledResults, stats: stats };
+    return { xiData, results: scaledResults, stats };
 }
 
-// Grab the local CSV data from the HTML block and parse it with the Data module.
-const athleteCsv = document.getElementById('athlete-data').textContent,
-    athleteData = new Highcharts.Data({ csv: athleteCsv }),
-    sports = athleteData.columns[0],
-    heights = athleteData.columns[1],
-    groupedData = {};
+// Group the parsed CSV by sport, build the series, and render the chart.
+function buildChart(columns) {
+    const sports = columns[0],
+        heights = columns[1],
+        groupedData = {};
 
-for (let i = 1; i < sports.length; i++) {
-    const sport = sports[i];
-    const height = Number(heights[i]);
+    for (let i = 1; i < sports.length; i++) {
+        const sport = sports[i],
+            height = Number(heights[i]);
 
-    if (sport && height) {
-        const cleanSport = sport.charAt(0).toUpperCase() + sport.slice(1);
-        if (!groupedData[cleanSport]) {
-            groupedData[cleanSport] = [];
-        }
-        groupedData[cleanSport].push(height);
-    }
-}
-
-const categories = Object.keys(groupedData);
-const sortedDataArrays = Object.values(groupedData).map(values =>
-    values.slice().sort((a, b) => a - b)
-);
-
-const step = 1;
-const data = generateViolinData(step, sortedDataArrays);
-const xi = data.xiData;
-const stats = data.stats;
-
-// Rounded rectangle SVG path for boxplot boxes.
-function roundedBoxPath(x, right, q1Plot, q3Plot, r) {
-    const minR = Math.min(r, Math.abs(q1Plot - q3Plot) / 2, (right - x) / 2);
-    return [
-        ['M', x, q3Plot + minR],
-        ['L', x, q1Plot - minR],
-        ['A', minR, minR, 0, 0, 0, x + minR, q1Plot],
-        ['L', right - minR, q1Plot],
-        ['A', minR, minR, 0, 0, 0, right, q1Plot - minR],
-        ['L', right, q3Plot + minR],
-        ['A', minR, minR, 0, 0, 0, right - minR, q3Plot],
-        ['L', x + minR, q3Plot],
-        ['A', minR, minR, 0, 0, 0, x, q3Plot + minR],
-        ['Z']
-    ];
-}
-
-function setLinkedOpacity(chart, activeIndex) {
-    let polygonIndex = -1;
-    const bp = chart.series.find(s => s.type === 'boxplot');
-
-    chart.series.forEach(s => {
-        if (s.type === 'polygon') {
-            polygonIndex++;
-            s.group?.attr({ opacity: polygonIndex === activeIndex ? 1 : 0.2 });
-        }
-    });
-
-    if (bp) {
-        bp.points.forEach((p, i) => {
-            p.graphic?.attr({ opacity: i === activeIndex ? 1 : 0.2 });
-        });
-    }
-}
-
-function resetLinkedOpacity(chart) {
-    chart.series.forEach(s => {
-        if (s.type === 'polygon') {
-            s.group?.attr({ opacity: 1 });
-        }
-    });
-
-    const bp = chart.series.find(s => s.type === 'boxplot');
-    if (bp) {
-        bp.points.forEach(p => p.graphic?.attr({ opacity: 1 }));
-    }
-}
-
-// Build polygon series: one per sport, tracing right side up then left side down.
-const polygonSeries = categories.map((sport, i) => {
-    const rightSide = xi.map((y, j) => [data.results[i][j][1], y]);
-    const leftSide = xi.map((y, j) => [data.results[i][j][0], y]).reverse();
-    return {
-        type: 'polygon',
-        name: sport,
-        data: [...rightSide, ...leftSide],
-        custom: { stat: stats[i] },
-        events: {
-            mouseOver() {
-                setLinkedOpacity(this.chart, i);
-            },
-            mouseOut() {
-                resetLinkedOpacity(this.chart);
+        if (sport && height) {
+            const cleanSport = sport.charAt(0).toUpperCase() + sport.slice(1);
+            if (!groupedData[cleanSport]) {
+                groupedData[cleanSport] = [];
             }
+            groupedData[cleanSport].push(height);
         }
+    }
+
+    const categories = Object.keys(groupedData),
+        sortedDataArrays = Object.values(groupedData).map(values =>
+            values.slice().sort((a, b) => a - b)
+        ),
+        data = generateViolinData(1, sortedDataArrays),
+        xi = data.xiData,
+        stats = data.stats;
+
+    // One polygon per sport, tracing the right side up then the left side down
+    const polygonSeries = categories.map((sport, i) => {
+        const rightSide = xi.map((y, j) => [data.results[i][j][1], y]),
+            leftSide = xi.map((y, j) => [data.results[i][j][0], y]).reverse();
+        return {
+            type: 'polygon',
+            name: sport,
+            data: [...rightSide, ...leftSide],
+            custom: { stat: stats[i] }
+        };
+    });
+
+    // One boxplot point per sport
+    const boxplotSeries = {
+        type: 'boxplot',
+        name: 'Statistics',
+        showInLegend: false,
+        data: categories.map((sport, i) => ({
+            x: i,
+            low: stats[i][0],
+            q1: stats[i][1],
+            median: stats[i][2],
+            q3: stats[i][3],
+            high: stats[i][4],
+            name: sport
+        }))
     };
-});
 
-// Build boxplot series: one point per sport.
-const boxplotSeries = {
-    type: 'boxplot',
-    name: 'Statistics',
-    showInLegend: false,
-    enableMouseTracking: true,
-    data: categories.map((sport, i) => ({
-        x: i,
-        low: stats[i][0],
-        q1: stats[i][1],
-        median: stats[i][2],
-        q3: stats[i][3],
-        high: stats[i][4],
-        name: sport
-    }))
-};
+    createChart(categories, [...polygonSeries, boxplotSeries]);
+}
 
-Highcharts.chart('container', {
-    chart: {
-        type: 'polygon',
-        events: {
-            render() {
-                this.series.forEach(s => {
-                    if (s.type === 'polygon' && s.area) {
-                        s.area.attr({ 'fill-opacity': 0.5 });
-                    }
-                });
-
-                const bp = this.series.find(s => s.type === 'boxplot');
-                if (bp) {
-                    bp.points.forEach(point => {
-                        if (point.box) {
-                            const sa = point.shapeArgs;
-                            point.box.attr({
-                                d: roundedBoxPath(
-                                    sa.x, sa.x + sa.width,
-                                    point.q1Plot, point.q3Plot,
-                                    4
-                                )
-                            });
-                        }
-                    });
-                }
-            }
-        }
-    },
-    colors: SPORT_COLORS,
-    accessibility: {
-        description:
-            'A violin plot showing the height distribution of female ' +
-            'athletes at the 2024 Olympics across multiple sports. The plot ' +
-            'features a density shape for each sport, overlaid with ' +
-            'statistical markers indicating the minimum, first quartile, ' +
-            'median, third quartile, and maximum heights.'
-    },
-    title: {
-        text: 'Height distribution of female athletes at the 2024 Olympics'
-    },
-    xAxis: {
-        categories: categories,
-        lineWidth: 0
-    },
-    yAxis: {
-        title: { text: null },
-        gridLineWidth: 1,
-        gridLineColor: '#E6E6E6',
-        gridLineDashStyle: 'Dash',
-        labels: {
-            format: '{value} cm',
-            style: { fontSize: '10px' }
-        },
-        startOnTick: false,
-        endOnTick: false
-    },
-    legend: {
-        enabled: false
-    },
-    tooltip: {
-        useHTML: true,
-        padding: 12,
-        formatter: function () {
-            const custom = this.series.options.custom || {};
-            const stat = custom.stat;
-
-            if (!stat) {
-                return false;
-            }
-
-            const formatValue = value => Highcharts.numberFormat(value, 2);
-            return `
-                    <div class="violin-tooltip">
-                        <span class="violin-tooltip-header" style="color: ${this.series.color};">
-                            ${this.series.name}
-                        </span>
-                        <table class="violin-tooltip-table">
-                            <tr><td class="violin-tooltip-label">Max:</td><td class="violin-tooltip-value">${formatValue(stat[4])} cm</td></tr>
-                            <tr><td class="violin-tooltip-label">Q 3:</td><td class="violin-tooltip-value">${formatValue(stat[3])} cm</td></tr>
-                            <tr><td class="violin-tooltip-label median-row">Median:</td><td class="violin-tooltip-value median-row">${formatValue(stat[2])} cm</td></tr>
-                            <tr><td class="violin-tooltip-label">Q 1:</td><td class="violin-tooltip-value">${formatValue(stat[1])} cm</td></tr>
-                            <tr><td class="violin-tooltip-label">Min:</td><td class="violin-tooltip-value">${formatValue(stat[0])} cm</td></tr>
-                        </table>
-                    </div>
-                `;
-        }
-    },
-    plotOptions: {
-        series: {
-            states: {
-                hover: { enabled: false }
-            }
-        },
-        polygon: {
-            marker: { enabled: false },
-            lineWidth: 1
-        },
-        boxplot: {
-            pointWidth: 8,
-            whiskerLength: '50%',
-            color: '#333',
-            fillColor: '#333',
-            medianColor: '#fff',
-            enableMouseTracking: true,
-            point: {
-                events: {
-                    mouseOver() {
-                        setLinkedOpacity(this.series.chart, this.x);
-                    },
-                    mouseOut() {
-                        resetLinkedOpacity(this.series.chart);
-                    }
-                }
-            },
-            states: {
-                inactive: { enabled: false }
-            }
-        }
-    },
-
-    series: [...polygonSeries, boxplotSeries]
-});
+// Load the local CSV data and parse it with the Data module.
+fetch(dataURL)
+    .then(response => response.text())
+    .then(csv => {
+        const parsed = new Highcharts.Data({ csv });
+        buildChart(parsed.columns);
+    });

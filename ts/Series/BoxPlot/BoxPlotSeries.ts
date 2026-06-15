@@ -333,14 +333,35 @@ class BoxPlotSeries extends ColumnSeries {
                     q3Plot = crisp(q3Plot, boxStrokeWidth);
                     x = crisp(x, boxStrokeWidth);
                     right = crisp(right, boxStrokeWidth);
-                    d = [
-                        ['M', x, q3Plot],
-                        ['L', x, q1Plot],
-                        ['L', right, q1Plot],
-                        ['L', right, q3Plot],
-                        ['L', x, q3Plot],
-                        ['Z']
-                    ];
+
+                    // Optionally round the corners of the box
+                    const brOption = options.borderRadius,
+                        radius = brOption && typeof brOption === 'object' ?
+                            brOption.radius : (brOption || 0),
+                        r = Math.min(
+                            relativeLength(radius, right - x),
+                            (right - x) / 2,
+                            Math.abs(q1Plot - q3Plot) / 2
+                        );
+
+                    if (r) {
+                        d = renderer.symbols.roundedRect(
+                            x,
+                            Math.min(q1Plot, q3Plot),
+                            right - x,
+                            Math.abs(q1Plot - q3Plot),
+                            { r }
+                        );
+                    } else {
+                        d = [
+                            ['M', x, q3Plot],
+                            ['L', x, q1Plot],
+                            ['L', right, q1Plot],
+                            ['L', right, q3Plot],
+                            ['L', x, q3Plot],
+                            ['Z']
+                        ];
+                    }
                     point.box[verb]({ d });
                 }
 
