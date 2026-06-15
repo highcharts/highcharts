@@ -256,6 +256,272 @@ test.describe('Cell Context Menu', () => {
             await expect(page.locator('.hcg-popup')).toHaveCount(0);
         });
 
+        test('Default menu renders multiple active groups as submenus', async ({ page }) => {
+            await page.evaluate(() => {
+                const existing = document.getElementById(
+                    'cm-default-groups'
+                );
+                existing?.remove();
+
+                const container = document.createElement('div');
+                container.id = 'cm-default-groups';
+                document.body.appendChild(container);
+
+                (window as any).Grid.grid(container, {
+                    data: {
+                        idColumn: 'id',
+                        columns: {
+                            id: ['ROW-001'],
+                            product: ['Apples']
+                        }
+                    },
+                    tableEditing: {
+                        enabled: true
+                    },
+                    rendering: {
+                        rows: {
+                            pinning: {
+                                enabled: true
+                            }
+                        }
+                    }
+                });
+            });
+
+            const cell = page.locator(
+                '#cm-default-groups tbody tr[data-row-index="0"] td[data-column-id="product"]'
+            );
+            await cell.click({ button: 'right' });
+
+            const popup = page.locator('.hcg-popup').last();
+            const rootItems = popup.locator('.hcg-menu-item');
+
+            await expect(rootItems).toHaveCount(3);
+            await expect(rootItems.nth(0)).toContainText('Row pinning');
+            await expect(rootItems.nth(1)).toContainText('Rows');
+            await expect(rootItems.nth(2)).toContainText('Columns');
+            await expect(popup).not.toContainText('Add row above');
+
+            await rootItems.nth(1).click();
+            await expect(page.locator('.hcg-popup')).toHaveCount(2);
+            await expect(page.locator('.hcg-popup').last())
+                .toContainText('Add row above');
+        });
+
+        test('Explicit built-in groups expand inline', async ({ page }) => {
+            await page.evaluate(() => {
+                const existing = document.getElementById(
+                    'cm-inline-groups'
+                );
+                existing?.remove();
+
+                const container = document.createElement('div');
+                container.id = 'cm-inline-groups';
+                document.body.appendChild(container);
+
+                (window as any).Grid.grid(container, {
+                    data: {
+                        columns: {
+                            product: ['Apples'],
+                            stock: [10]
+                        }
+                    },
+                    tableEditing: {
+                        enabled: true
+                    },
+                    columnDefaults: {
+                        cells: {
+                            contextMenu: {
+                                items: ['rows', 'columns']
+                            }
+                        }
+                    }
+                });
+            });
+
+            const cell = page.locator(
+                '#cm-inline-groups tbody tr[data-row-index="0"] td[data-column-id="product"]'
+            );
+            await cell.click({ button: 'right' });
+
+            const popup = page.locator('.hcg-popup').last();
+            const menuItems = popup.locator('.hcg-menu-item');
+
+            await expect(menuItems).toHaveCount(6);
+            await expect(popup).toContainText('Add row above');
+            await expect(popup).toContainText('Add column before');
+            await expect(menuItems.first()).not.toContainText('Rows');
+        });
+
+        test('Table editing context menu actions add and delete rows', async ({ page }) => {
+            await page.evaluate(() => {
+                const existing = document.getElementById('cm-edit-rows');
+                existing?.remove();
+
+                const container = document.createElement('div');
+                container.id = 'cm-edit-rows';
+                document.body.appendChild(container);
+
+                (window as any).cmEditRowsGrid = (window as any).Grid.grid(
+                    container,
+                    {
+                        data: {
+                            columns: {
+                                product: ['Apples', 'Pears', 'Plums'],
+                                stock: [10, 20, 30]
+                            }
+                        },
+                        tableEditing: {
+                            enabled: true
+                        },
+                        columnDefaults: {
+                            cells: {
+                                contextMenu: {
+                                    items: ['addRowAbove', 'deleteRow']
+                                }
+                            }
+                        }
+                    }
+                );
+            });
+
+            const secondProductCell = page.locator(
+                '#cm-edit-rows tbody tr[data-row-index="1"] td[data-column-id="product"]'
+            );
+            await secondProductCell.click({ button: 'right' });
+            await page.locator('.hcg-menu-item', { hasText: 'Add row above' })
+                .last()
+                .click();
+
+            await expect(page.locator('#cm-edit-rows tbody tr')).toHaveCount(4);
+
+            let state = await page.evaluate(() => {
+                const table = (window as any).cmEditRowsGrid
+                    .dataProvider
+                    .getDataTable();
+
+                return {
+                    rowCount: table.getRowCount(),
+                    row: table.getRow(1, ['product', 'stock'])
+                };
+            });
+
+            expect(state).toEqual({
+                rowCount: 4,
+                row: [null, null]
+            });
+
+            const insertedProductCell = page.locator(
+                '#cm-edit-rows tbody tr[data-row-index="1"] td[data-column-id="product"]'
+            );
+            await insertedProductCell.click({ button: 'right' });
+            await page.locator('.hcg-menu-item', { hasText: 'Delete row' })
+                .last()
+                .click();
+
+            await expect(page.locator('#cm-edit-rows tbody tr')).toHaveCount(3);
+
+            state = await page.evaluate(() => {
+                const table = (window as any).cmEditRowsGrid
+                    .dataProvider
+                    .getDataTable();
+
+                return {
+                    rowCount: table.getRowCount(),
+                    products: table.getColumn('product', true)
+                };
+            });
+
+            expect(state).toEqual({
+                rowCount: 3,
+                products: ['Apples', 'Pears', 'Plums']
+            });
+        });
+
+        test('Table editing context menu actions add and delete columns', async ({ page }) => {
+            await page.evaluate(() => {
+                const existing = document.getElementById('cm-edit-columns');
+                existing?.remove();
+
+                const container = document.createElement('div');
+                container.id = 'cm-edit-columns';
+                document.body.appendChild(container);
+
+                (window as any).cmEditColumnsGrid = (window as any).Grid.grid(
+                    container,
+                    {
+                        data: {
+                            columns: {
+                                product: ['Apples'],
+                                stock: [10]
+                            }
+                        },
+                        tableEditing: {
+                            enabled: true
+                        },
+                        columnDefaults: {
+                            cells: {
+                                contextMenu: {
+                                    items: [
+                                        'addColumnBefore',
+                                        'deleteColumn'
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                );
+            });
+
+            const stockCell = page.locator(
+                '#cm-edit-columns tbody tr[data-row-index="0"] td[data-column-id="stock"]'
+            );
+            await stockCell.click({ button: 'right' });
+            await page.locator(
+                '.hcg-menu-item',
+                { hasText: 'Add column before' }
+            ).last().click();
+
+            await expect(page.locator(
+                '#cm-edit-columns tbody tr[data-row-index="0"] td[data-column-id="column3"]'
+            )).toBeVisible();
+
+            let columnIds = await page.evaluate(() => {
+                return (window as any).cmEditColumnsGrid
+                    .dataProvider
+                    .getDataTable()
+                    .getColumnIds();
+            });
+
+            expect(columnIds).toEqual(['product', 'column3', 'stock']);
+
+            const newColumnCell = page.locator(
+                '#cm-edit-columns tbody tr[data-row-index="0"] td[data-column-id="column3"]'
+            );
+            await newColumnCell.click({ button: 'right' });
+            const deleteColumnItem = page.locator(
+                '.hcg-menu-item',
+                { hasText: 'Delete column' }
+            ).last();
+
+            await expect(deleteColumnItem).not.toBeDisabled();
+
+            await deleteColumnItem.click();
+
+            columnIds = await page.evaluate(() => {
+                return (window as any).cmEditColumnsGrid
+                    .dataProvider
+                    .getDataTable()
+                    .getColumnIds();
+            });
+
+            expect(columnIds).toEqual(['product', 'stock']);
+
+            await expect(page.locator(
+                '#cm-edit-columns tbody tr[data-row-index="0"] td[data-column-id="column3"]'
+            )).toHaveCount(0);
+        });
+
         test('Context menu closes after scrolling and refreshes context', async ({ page }) => {
             await page.evaluate(() => {
                 const existing = document.getElementById('cm-scroll');

@@ -65,6 +65,7 @@ export const defaultOptions: DeepPartial<Options> = {
         }
     },
     lang: {
+        rowPinning: 'Row pinning',
         pinRowTop: 'Pin row to top',
         pinRowBottom: 'Pin row to bottom',
         unpinRow: 'Unpin row',
@@ -217,6 +218,9 @@ function registerBuiltInActions(): void {
     );
 
     registerBuiltInGroup('pinning', {
+        getLabel: (context): string =>
+            context.grid.options?.lang?.rowPinning || '',
+        icon: 'pin',
         isVisible: (context): boolean => isRowPinningActionVisible(context),
         items: ['pinRowTop', 'pinRowBottom', 'unpinRow']
     }, true);

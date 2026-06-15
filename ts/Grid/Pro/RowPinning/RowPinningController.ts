@@ -234,6 +234,13 @@ declare module '../../Core/Table/CellContextMenu/CellContextMenuOptions' {
 declare module '../../Core/Options' {
     interface LangOptions {
         /**
+         * Label used for the built-in row pinning context menu group.
+         *
+         * @default 'Row pinning'
+         */
+        rowPinning?: string;
+
+        /**
          * Label used for the built-in "pin row to top" action.
          *
          * @default 'Pin row to top'

@@ -58,7 +58,7 @@ const builtInGroupDefinitions: Partial<Record<
     BuiltInGroupDefinition
 >> = {};
 
-const defaultBuiltInCellContextMenuItems: CellContextMenuItemOptions[] = [];
+const defaultBuiltInCellContextMenuGroups: CellContextMenuGroupId[] = [];
 
 export interface CellContextMenuContext {
     cell: TableCell;
@@ -96,6 +96,8 @@ export interface BuiltInActionDefinition {
 }
 
 export interface BuiltInGroupDefinition {
+    getLabel?: (context: CellContextMenuContext) => string;
+    icon?: string;
     isVisible?: (context: CellContextMenuContext) => boolean;
     items: CellContextMenuActionId[];
 }
@@ -153,9 +155,9 @@ export function registerBuiltInGroup(
 
     if (
         useByDefault &&
-        !defaultBuiltInCellContextMenuItems.includes(groupId)
+        !defaultBuiltInCellContextMenuGroups.includes(groupId)
     ) {
-        defaultBuiltInCellContextMenuItems.push(groupId);
+        defaultBuiltInCellContextMenuGroups.push(groupId);
     }
 }
 
@@ -317,6 +319,49 @@ function resolveBuiltInGroupItems(
 }
 
 /**
+ * Resolves default built-in groups. A single active group is shown inline,
+ * while multiple groups are shown as submenus.
+ *
+ * @param context
+ * Runtime context for built-ins.
+ *
+ * @return
+ * Resolved default context menu items.
+ */
+function resolveDefaultCellContextMenuItems(
+    context: CellContextMenuContext
+): ResolvedCellContextMenuItemOptions[] {
+    const groups: Array<{
+        definition: BuiltInGroupDefinition;
+        groupId: CellContextMenuGroupId;
+        items: ResolvedCellContextMenuActionItemOptions[];
+    }> = [];
+
+    for (const groupId of defaultBuiltInCellContextMenuGroups) {
+        const definition = builtInGroupDefinitions[groupId];
+        const items = resolveBuiltInGroupItems(groupId, context);
+
+        if (definition && items?.length) {
+            groups.push({
+                definition,
+                groupId,
+                items
+            });
+        }
+    }
+
+    if (groups.length === 1) {
+        return groups[0].items;
+    }
+
+    return groups.map((group): ResolvedCellContextMenuActionItemOptions => ({
+        label: group.definition.getLabel?.(context) || group.groupId,
+        icon: group.definition.icon,
+        items: group.items
+    }));
+}
+
+/**
  * Resolves raw item declarations recursively.
  *
  * @param context
@@ -440,10 +485,9 @@ export function resolveCellContextMenuItems(
     }
 
     const context = getContext(cell);
-    const items = resolveCellContextMenuItemsAtLevel(
-        context,
-        options?.items ?? defaultBuiltInCellContextMenuItems
-    );
+    const items = options?.items !== void 0 ?
+        resolveCellContextMenuItemsAtLevel(context, options.items) :
+        resolveDefaultCellContextMenuItems(context);
 
     if (
         !items.length ||
