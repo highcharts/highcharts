@@ -322,11 +322,7 @@ function arc(
         sinHalfAlpha = Math.sin(alpha / 2),
         borderRadius = Math.max(Math.min(
             relativeLength(
-                (
-                    typeof options.borderRadius === 'object' ?
-                        options.borderRadius.radius :
-                        options.borderRadius
-                ) || 0,
+                optionsToBorderRadiusObject(options.borderRadius).radius,
                 r - innerR
             ),
             // Cap to half the sector radius
@@ -375,7 +371,7 @@ function seriesOnAfterColumnTranslate(
             seriesDefault = defaultOptions.plotOptions
                 ?.[this.type]
                 ?.borderRadius,
-            borderRadius = optionsToObject(
+            borderRadius = optionsToBorderRadiusObject(
                 options.borderRadius,
                 isObject(seriesDefault) ? seriesDefault : {}
             ),
@@ -519,7 +515,7 @@ export function composeBorderRadius(
 }
 
 /** @internal */
-export function optionsToObject(
+export function optionsToBorderRadiusObject(
     options?: number|string|Partial<BorderRadiusOptionsObject>,
     seriesBROptions?: Partial<BorderRadiusOptionsObject>
 ): BorderRadiusOptionsObject {
@@ -533,7 +529,7 @@ export function optionsToObject(
 function pieSeriesOnAfterTranslate(
     this: PieSeries
 ): void {
-    const borderRadius = optionsToObject(this.options.borderRadius);
+    const borderRadius = optionsToBorderRadiusObject(this.options.borderRadius);
 
     for (const point of this.points) {
         const shapeArgs = point.shapeArgs;

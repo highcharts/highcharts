@@ -686,9 +686,10 @@ class SankeySeries extends ColumnSeries {
             // #18956
             const r = clamp(
                 relativeLength(
-                    (typeof borderRadius === 'object' ?
-                        borderRadius.radius :
-                        borderRadius
+                    (
+                        isObject(borderRadius) ?
+                            borderRadius.radius :
+                            borderRadius
                     ) || 0,
                     width
                 ),

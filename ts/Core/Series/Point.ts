@@ -1814,7 +1814,7 @@ class Point {
         }
 
         // Show me your halo
-        const haloOptions = typeof stateOptions.halo === 'object' ?
+        const haloOptions = isObject(stateOptions.halo) ?
             stateOptions.halo :
             {};
         const markerGraphic = (point.graphic || stateMarkerGraphic);
