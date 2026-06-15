@@ -1184,7 +1184,7 @@ namespace SVGRenderer3D {
         angleStart = toZeroPIRange(angleStart);
         angleMid = toZeroPIRange(angleMid);
 
-        // *1e5 is to compensate pInt in zIndexSetter
+        // Keep angle-derived z-indices well spaced.
         const incPrecision = 1e5,
             a1 = angleMid * incPrecision,
             a2 = angleStart * incPrecision,

@@ -55,24 +55,20 @@ const KPIChartOptions = {
         type: 'solidgauge'
     },
     pane: {
-        background: {
-            innerRadius: '90%',
-            outerRadius: '120%',
-            shape: 'arc'
-        },
-        center: ['50%', '70%'],
         endAngle: 90,
         startAngle: -90
     },
+    plotOptions: {
+        series: {
+            dataLabels: {
+                format: '{y:.0f}',
+                y: -20
+            },
+            enableMouseTracking: false
+        }
+    },
     series: [{
-        data: [0],
-        dataLabels: {
-            format: '{y:.0f}',
-            y: -34
-        },
-        enableMouseTracking: false,
-        innerRadius: '90%',
-        radius: '120%'
+        data: [0]
     }],
     yAxis: {
         labels: {
@@ -393,6 +389,14 @@ async function setupBoard() {
                     text: 'Average Temperature',
                     verticalAlign: 'bottom'
                 },
+                plotOptions: {
+                    series: {
+                        dataLabels: {
+                            format: '{y:.1f}℃',
+                            y: -20
+                        }
+                    }
+                },
                 yAxis: {
                     accessibility: {
                         description: 'Celsius'
@@ -421,6 +425,14 @@ async function setupBoard() {
                 title: {
                     text: 'Maximum Temperature',
                     verticalAlign: 'bottom'
+                },
+                plotOptions: {
+                    series: {
+                        dataLabels: {
+                            format: '{y:.1f}℃',
+                            y: -20
+                        }
+                    }
                 },
                 yAxis: {
                     accessibility: {

@@ -1,0 +1,9 @@
+---
+name: Live candlestick chart
+authors:
+  - Kamil Musialowski
+  - Paweł Fus
+  - Torstein Hønsi
+requiresManualTesting: true
+js_wrap: b
+...

@@ -21,7 +21,6 @@ import CrookedLine from './CrookedLine';
 import D from '../../../Core/Defaults.js';
 const { defaultOptions } = D;
 import MockPoint from '../MockPoint.js';
-import { Palette } from '../../../Core/Color/Palettes.js';
 import Tunnel from './Tunnel.js';
 import { merge } from '../../../Shared/Utilities.js';
 
@@ -36,6 +35,7 @@ if (defaultOptions.annotations?.types) {
          *
          * @extends      annotations.types.crookedLine
          * @product      highstock
+         * @requires     modules/annotations-advanced
          * @optionparent annotations.types.fibonacci
          */
         {
@@ -83,7 +83,7 @@ if (defaultOptions.annotations?.types) {
                 /**
                  * The color of line.
                  */
-                lineColor: Palette.neutralColor40,
+                lineColor: 'var(--highcharts-neutral-color-40)',
 
                 /**
                  * An array of colors for the lines.
@@ -109,7 +109,7 @@ if (defaultOptions.annotations?.types) {
                 overflow: 'none' as any,
                 shape: 'rect',
                 style: {
-                    color: Palette.neutralColor80
+                    color: 'var(--highcharts-neutral-color-80)'
                 },
                 verticalAlign: 'middle',
                 y: 0

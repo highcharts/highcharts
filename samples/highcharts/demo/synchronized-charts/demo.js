@@ -170,7 +170,7 @@ function resetZoom(e) {
                 data: dataset.data,
                 name: dataset.name,
                 type: dataset.type,
-                color: Highcharts.getOptions().colors[i],
+                color: `var(--highcharts-color-${i})`,
                 fillOpacity: 0.3,
                 tooltip: {
                     valueSuffix: ' ' + dataset.unit

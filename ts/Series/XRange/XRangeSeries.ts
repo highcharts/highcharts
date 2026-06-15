@@ -73,6 +73,9 @@ import {
 function onAxisAfterGetSeriesExtremes(
     this: Axis
 ): void {
+
+    const time = this.chart.time;
+
     let dataMax: (number|undefined),
         modMax: (boolean|undefined);
 
@@ -81,15 +84,17 @@ function onAxisAfterGetSeriesExtremes(
         for (const series of this.series as Array<XRangeSeries>) {
             const column = (
                 series.dataTable.getColumn('x2', true) ||
-                series.dataTable.getColumn('end', true)
+                series.dataTable.getColumn('end', true) ||
+                []
             );
 
-            if (column) {
-                for (const val of (column as any)) {
-                    if (isNumber(val) && val > dataMax) {
-                        dataMax = val;
-                        modMax = true;
-                    }
+            for (let val of (column as any)) {
+                if (typeof val === 'string') {
+                    val = time.parse(val);
+                }
+                if (isNumber(val) && val > dataMax) {
+                    dataMax = val;
+                    modMax = true;
                 }
             }
         }
@@ -528,20 +533,31 @@ class XRangeSeries extends ColumnSeries {
             pfOptions = point.partialFill;
 
         if (!point.isNull && point.visible !== false) {
+            const className = point.getClassName();
 
             // Original graphic
             if (graphic) { // Update
                 graphic.rect[verb](shapeArgs);
             } else {
                 point.graphic = graphic = renderer.g('point')
-                    .addClass(point.getClassName())
                     .add(point.group || this.group);
 
                 graphic.rect = (renderer as any)[type](merge(shapeArgs))
-                    .addClass(point.getClassName())
-                    .addClass('highcharts-partfill-original')
                     .add(graphic);
             }
+
+            graphic.addClass(
+                className + (
+                    pointState && pointState !== 'select' ?
+                        ' highcharts-point-' + pointState :
+                        ''
+                ),
+                true
+            );
+            graphic.rect.addClass(
+                className + ' highcharts-partfill-original',
+                true
+            );
 
             // Partial fill graphic
             if (partShapeArgs) {
