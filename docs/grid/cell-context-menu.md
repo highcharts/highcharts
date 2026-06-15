@@ -53,13 +53,13 @@ When a cell is focused, open the context menu using the `ContextMenu` key or
 Each item supports:
 
 - `label`: Text shown in the menu
-- `icon`: Optional built-in Grid icon name (see [Custom icons](https://www.highcharts.com/docs/grid/theming/custom-icons))
+- `icon`: Optional built-in or custom Grid icon name (see [Custom icons](https://www.highcharts.com/docs/grid/theming/custom-icons))
 - `separator: true`: Renders a divider instead of a clickable item
 - `disabled: true`: Disables the item
 - `onClick(cell)`: Callback invoked when the item is clicked
 
 Grid Pro exposes the built-in row pinning group ID `'pinning'`. Use it to add
-the full row pinning submenu.
+the full row pinning action group inline.
 
 The individual row pinning action IDs are:
 
@@ -110,15 +110,17 @@ Grid.grid('container', {
 
 ## Nested submenus
 
-Any action item can define `items` to become a branch item with a submenu.
+Use `type: 'submenu'` and `items` to define a branch item with a submenu.
 Branch items open submenus on click and do not execute leaf callbacks.
 
-The built-in row pinning submenu example below applies to Grid Pro only.
+To place row pinning actions in a submenu, define a custom submenu and include
+the individual built-in action IDs. This example applies to Grid Pro only.
 
 ```js
 contextMenu: {
     enabled: true,
     items: [{
+        type: 'submenu',
         label: 'Pinning',
         items: [
             'pinRowTop',
@@ -127,6 +129,7 @@ contextMenu: {
                 label: 'Unpin now'
             },
             {
+                type: 'submenu',
                 label: 'Advanced',
                 items: [{
                     label: 'Custom leaf',
@@ -140,12 +143,8 @@ contextMenu: {
 }
 ```
 
-For built-in branch items (`{ actionId, items }`), `actionId` is used for
-default label/icon only. Built-in row-state disabling is applied only to
-built-in leaf actions.
-
-Nested levels do not use implicit defaults. You must provide submenu `items`
-explicitly.
+Nested levels do not use implicit defaults. Define each submenu with
+`type: 'submenu'` and provide its `items` explicitly.
 
 ## Callback context
 
