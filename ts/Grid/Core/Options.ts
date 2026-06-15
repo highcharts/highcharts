@@ -988,7 +988,33 @@ export interface LangOptions extends LangOptionsCore {
     setFilter?: string;
 
     /**
+     * Placeholder for the filter value input when the operator select is
+     * visible.
+     *
+     * @default 'Value...'
+     */
+    filterValuePlaceholder?: string;
+
+    /**
+     * Language options for column filtering operators.
+     */
+    columnFilteringOperators?: Partial<
+        Record<ColumnFilteringCondition, string>
+    >;
+
+    /**
+     * Language options for column filtering operator labels on datetime
+     * columns. Overrides matching keys from `columnFilteringOperators`.
+     */
+    columnFilteringDateTimeOperators?: Partial<
+        Record<ColumnFilteringCondition, string>
+    >;
+
+    /**
      * Language options for column filtering conditions.
+     *
+     * @deprecated
+     * Use `columnFilteringOperators` instead.
      */
     columnFilteringConditions?: Partial<
         Record<ColumnFilteringCondition, string>
@@ -1016,21 +1042,114 @@ export interface TimeOptions {
 }
 
 /**
- * Column filtering options.
+ * Active filtering rule for a column.
+ */
+export interface FilteringRule {
+    /**
+     * The operator to use for filtering the column.
+     */
+    operator?: ColumnFilteringCondition;
+
+    /**
+     * The value that is used with the operator to filter the column.
+     */
+    value?: string | number | boolean | null;
+}
+
+/**
+ * Applied column filter state used internally when filtering is executed.
  */
 export interface FilteringCondition {
     /**
+     * The operator applied to the column filter.
+     */
+    condition?: ColumnFilteringCondition;
+
+    /**
+     * The value applied to the column filter.
+     */
+    value?: string | number | boolean | null;
+}
+
+/**
+ * Column filtering options.
+ */
+export interface ColumnFilteringOptions {
+    /**
+     * The active filtering rule applied to the column.
+     *
+     * @example
+     * ```js
+     * columns: [{
+     *   id: 'weight',
+     *   filtering: {
+     *     enabled: true,
+     *     rule: {
+     *       operator: 'greaterThan',
+     *       value: 100
+     *     }
+     *   }
+     * }]
+     * ```
+     */
+    rule?: FilteringRule;
+
+    /**
+     * Restricts the list of available filtering operators for the column.
+     *
+     * If set, the UI will only display the provided operators that are valid
+     * for the column's `dataType`. Invalid operators are ignored.
+     *
+     * @example
+     * ```js
+     * columns: [{
+     *   id: 'name',
+     *   dataType: 'string',
+     *   filtering: {
+     *     enabled: true,
+     *     operators: ['contains', 'beginsWith']
+     *   }
+     * }]
+     * ```
+     */
+    operators?: Array<ColumnFilteringCondition>;
+
+    /**
      * The condition to use for filtering the column.
+     *
+     * @deprecated
+     * Use `rule.operator` instead.
      */
     condition?: ColumnFilteringCondition;
 
     /**
      * The value that is used with the condition to filter the column.
+     *
+     * @deprecated
+     * Use `rule.value` instead.
      */
     value?: string | number | boolean | null;
-}
 
-export interface ColumnFilteringOptions extends FilteringCondition {
+    /**
+     * Restricts the list of available filtering conditions for the column.
+     *
+     * @deprecated
+     * Use `operators` instead.
+     *
+     * @example
+     * ```js
+     * columns: [{
+     *   id: 'name',
+     *   dataType: 'string',
+     *   filtering: {
+     *     enabled: true,
+     *     conditions: ['contains', 'beginsWith']
+     *   }
+     * }]
+     * ```
+     */
+    conditions?: Array<ColumnFilteringCondition>;
+
     /**
      * Whether the filtering is enabled or not.
      *
@@ -1048,6 +1167,22 @@ export interface ColumnFilteringOptions extends FilteringCondition {
      * @default false
      */
     inline?: boolean;
+
+    /**
+     * Hides the operator select in filtering UI.
+     *
+     * Uses {@link ColumnFilteringOptions.rule} operator when valid, otherwise
+     * the first operator for the column `dataType` or
+     * {@link ColumnFilteringOptions.operators}. Not supported for `boolean`
+     * columns (no value input).
+     *
+     * @sample grid-lite/options/inline-filtering-hide-select
+     *         Inline filtering with hidden operator select
+     *
+     * @default true when {@link ColumnFilteringOptions.operators} has a
+     *         single entry, otherwise `false`
+     */
+    hideOperatorSelect?: boolean;
 }
 
 /* *
