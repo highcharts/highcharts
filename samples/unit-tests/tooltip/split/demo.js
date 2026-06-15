@@ -219,7 +219,7 @@ QUnit.test('Split tooltip with useHTML and outside', function (assert) {
 
     assert.strictEqual(
         chart.series[0].tt.text.element.tagName,
-        'SPAN',
+        'DIV',
         '#7238: The label should be HTML'
     );
 
@@ -433,7 +433,8 @@ QUnit.test(
                 }
             ],
             tooltip: {
-                split: true
+                split: true,
+                borderColor: undefined
             }
         });
         const firstPointColor = chart.series[0].points[0].color,

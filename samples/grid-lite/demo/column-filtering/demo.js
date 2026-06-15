@@ -67,12 +67,20 @@ const grid = Grid.grid('container', {
         dataType: 'datetime',
         cells: {
             format: '{value:%Y-%m-%d}'
+        },
+        filtering: {
+            rule: {
+                operator: 'greaterThan',
+                value: Date.UTC(2025, 8, 30)
+            }
         }
     }, {
         id: 'weight',
         filtering: {
-            condition: 'greaterThan',
-            value: 100
+            rule: {
+                operator: 'greaterThan',
+                value: 100
+            }
         }
     }]
 });

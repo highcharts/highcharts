@@ -26,8 +26,6 @@ import type OrganizationSeriesOptions from './OrganizationSeriesOptions';
 import type Point from '../../Core/Series/Point';
 import type SankeyPoint from '../Sankey/SankeyPoint';
 
-import { Palette } from '../../Core/Color/Palettes.js';
-
 /* *
  *
  *  API Options
@@ -52,6 +50,7 @@ import { Palette } from '../../Core/Color/Palettes.js';
  * @excluding    allowPointSelect, curveFactor, dataSorting
  * @since        7.1.0
  * @product      highcharts
+ * @requires     modules/sankey
  * @requires     modules/organization
  * @optionparent plotOptions.organization
  */
@@ -62,7 +61,7 @@ const OrganizationSeriesDefaults: OrganizationSeriesOptions = {
      *
      * @type {Highcharts.ColorString}
      */
-    borderColor: Palette.neutralColor60,
+    borderColor: 'var(--highcharts-neutral-color-60)',
 
     /**
      * The border radius of the node cards.
@@ -106,7 +105,7 @@ const OrganizationSeriesDefaults: OrganizationSeriesOptions = {
          *
          * @type {Highcharts.ColorString}
          */
-        color: Palette.neutralColor60,
+        color: 'var(--highcharts-neutral-color-60)',
         /**
          * The line width of the links connecting nodes, in pixels.
          *

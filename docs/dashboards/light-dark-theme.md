@@ -10,10 +10,9 @@ To use the Light and Dark theme, you need to import the `dashboards.css` file.
 Next, if your dashboard contains components with **Highcharts** charts, you want
 to apply an adaptive Highcharts theme two. There are two options for that:
 
-1. Load the `adaptive.js` theme for Highcharts.
-```html
-<script src="https://code.highcharts.com/themes/adaptive.js"></script>
-```
+1. Highcharts from v13 adapts to browser color scheme preferences by default. Light or dark modes can be forced
+through top-level class names (`highcharts-light` or `highcharts-dark`), or by setting the
+[`palette`](https://api.highcharts.com/highcharts/palette) option.
 
 2. Alternatively, use [styledMode](https://api.highcharts.com/highcharts/chart.styledMode) and import `https://code.highcharts.com/dashboards/css/dashboards.css`. Enable the `styledMode` option for all components that contain a chart. You can do this by setting the `styledMode` option to `true` in the component's configuration.
 
