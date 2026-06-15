@@ -3156,7 +3156,8 @@ class Chart {
         const chart = this,
             creds = merge(
                 true, this.options.credits as Chart.CreditsOptions, credits
-            );
+            ),
+            position = creds.position || {};
 
         if (creds.enabled && !this.credits) {
 
@@ -3189,7 +3190,7 @@ class Chart {
                     );
                 })
                 .attr({
-                    align: (creds.position as any).align,
+                    align: position.align,
                     zIndex: 8
                 });
 
@@ -3204,13 +3205,13 @@ class Chart {
 
             this.credits
                 .add()
-                .align(creds.position);
+                .align(position, false, position.relativeTo);
 
             // Dynamically update
             this.credits.update = function (
                 options: Chart.CreditsOptions
             ): void {
-                chart.credits = (chart.credits as any).destroy();
+                chart.credits = chart.credits?.destroy();
                 chart.addCredits(options);
             };
         }
@@ -4853,13 +4854,21 @@ namespace Chart {
             /** @default 'right' */
             align?: AlignObject['align'];
 
+            /**
+             * Which box to align the credits to. Can be either `chartBox`,
+             * `plotBox` or `spacingBox`.
+             * @default spacingBox
+             * @since next
+             */
+            relativeTo?: 'chartBox'|'plotBox'|'spacingBox';
+
             /** @default 'bottom' */
             verticalAlign?: AlignObject['verticalAlign'];
 
-            /** @default -10 */
+            /** @default 0 */
             x?: AlignObject['x'];
 
-            /** @default -5 */
+            /** @default 10 */
             y?: AlignObject['y'];
         };
 

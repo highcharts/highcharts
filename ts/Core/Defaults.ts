@@ -3113,9 +3113,10 @@ const defaultOptions: DefaultOptions = {
          */
         position: {
             align: 'right',
+            relativeTo: 'spacingBox',
             verticalAlign: 'bottom',
-            x: -10,
-            y: -5
+            x: 0,
+            y: 10
         },
 
         /**
