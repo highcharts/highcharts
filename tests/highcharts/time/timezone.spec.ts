@@ -21,7 +21,7 @@ const TIMEZONES = [
 ] as const;
 
 /**
- * Helper to set up a page with Highcharts and optionally moment-timezone
+ * Helper to set up a page with Highcharts
  */
 async function setupPage(page: import('@playwright/test').Page) {
     await page.setContent(`
@@ -38,8 +38,17 @@ async function setupPage(page: import('@playwright/test').Page) {
 }
 
 for (const tz of TIMEZONES) {
-    test.describe(`Timezone: ${tz}; userAgent: ${navigator.userAgent}`, () => {
+    test.describe(`Timezone: ${tz}`, () => {
         test.use({ timezoneId: tz });
+
+        test.afterEach(async ({ page }, testInfo) => {
+            if (testInfo.status !== testInfo.expectedStatus) {
+                const userAgent = await page.evaluate(
+                    () => navigator.userAgent
+                );
+                console.log(`userAgent: ${userAgent}`);
+            }
+        });
 
         test('Time.dateFormat with fixed CET timezone across DST', async ({ page }) => {
             await setupPage(page);
