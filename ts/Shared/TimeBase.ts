@@ -447,12 +447,21 @@ class TimeBase {
             d += offset;
 
             // Adjustments close to DST transitions
+            const initialOffsetCheckLocalHour =
+                (hours - offset / timeUnits.hour + 24) % 24;
+
             if (
                 // Limit the number of calls to `getTimezoneOffset` to months
                 // where DST changes may occur. According to
                 // https://en.wikipedia.org/wiki/Daylight_saving_time_by_country,
                 // DST change may only occur in these months.
-                [2, 3, 8, 9, 10, 11].indexOf(month) !== -1
+                [2, 3, 8, 9, 10, 11].indexOf(month) !== -1 &&
+                (
+                    hours < 5 ||
+                    hours > 20 ||
+                    initialOffsetCheckLocalHour < 5 ||
+                    initialOffsetCheckLocalHour > 20
+                )
             ) {
                 const newOffset = this.getTimezoneOffset(d);
 
