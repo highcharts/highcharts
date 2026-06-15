@@ -92,21 +92,30 @@ the native browser context menu.
 
 ## Localize built-in labels
 
-Built-in row pinning actions use these root language keys in Grid Pro:
+Built-in feature actions use feature-specific language options in Grid Pro.
+For row pinning:
 
-- `lang.pinRowTop`
-- `lang.pinRowBottom`
-- `lang.unpinRow`
+- `lang.rowPinning.label`
+- `lang.rowPinning.pinRowTop`
+- `lang.rowPinning.pinRowBottom`
+- `lang.rowPinning.unpinRow`
 
 ```js
 Grid.grid('container', {
     lang: {
-        pinRowTop: 'Pin to top',
-        pinRowBottom: 'Pin to bottom',
-        unpinRow: 'Remove pin'
+        rowPinning: {
+            label: 'Pinning',
+            pinRowTop: 'Pin to top',
+            pinRowBottom: 'Pin to bottom',
+            unpinRow: 'Remove pin'
+        }
     }
 });
 ```
+
+Table editing labels are configured under `lang.tableEditing`, for example
+`lang.tableEditing.rows`, `lang.tableEditing.addRowAbove` and
+`lang.tableEditing.deleteColumn`.
 
 ## Nested submenus
 

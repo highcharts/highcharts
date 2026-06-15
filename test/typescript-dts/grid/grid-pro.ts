@@ -61,6 +61,24 @@ function test_grid() {
         tableEditing: {
             enabled: true
         },
+        lang: {
+            rowPinning: {
+                label: 'Pinning',
+                pinRowTop: 'Pin to top',
+                pinRowBottom: 'Pin to bottom',
+                unpinRow: 'Unpin'
+            },
+            tableEditing: {
+                rows: 'Rows',
+                columns: 'Columns',
+                addRowAbove: 'Add row above',
+                addRowBelow: 'Add row below',
+                deleteRow: 'Delete row',
+                addColumnBefore: 'Add column before',
+                addColumnAfter: 'Add column after',
+                deleteColumn: 'Delete column'
+            }
+        },
         header: [{
             format: 'grouped header',
             columns: [{

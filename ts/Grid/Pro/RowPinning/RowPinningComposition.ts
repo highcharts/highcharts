@@ -65,10 +65,12 @@ export const defaultOptions: DeepPartial<Options> = {
         }
     },
     lang: {
-        rowPinning: 'Row pinning',
-        pinRowTop: 'Pin row to top',
-        pinRowBottom: 'Pin row to bottom',
-        unpinRow: 'Unpin row',
+        rowPinning: {
+            label: 'Row pinning',
+            pinRowTop: 'Pin row to top',
+            pinRowBottom: 'Pin row to bottom',
+            unpinRow: 'Unpin row'
+        },
         accessibility: {
             rowPinning: {
                 announcements: {
@@ -164,7 +166,7 @@ function registerBuiltInActions(): void {
         'pinRowTop',
         {
             getLabel: (context): string =>
-                context.grid.options?.lang?.pinRowTop || '',
+                context.grid.options?.lang?.rowPinning?.pinRowTop || '',
             icon: 'pin',
             isVisible: (context): boolean =>
                 isRowPinningActionVisible(context),
@@ -182,7 +184,7 @@ function registerBuiltInActions(): void {
         'pinRowBottom',
         {
             getLabel: (context): string =>
-                context.grid.options?.lang?.pinRowBottom || '',
+                context.grid.options?.lang?.rowPinning?.pinRowBottom || '',
             icon: 'pin',
             isVisible: (context): boolean =>
                 isRowPinningActionVisible(context),
@@ -203,7 +205,7 @@ function registerBuiltInActions(): void {
         'unpinRow',
         {
             getLabel: (context): string =>
-                context.grid.options?.lang?.unpinRow || '',
+                context.grid.options?.lang?.rowPinning?.unpinRow || '',
             icon: 'unpin',
             isVisible: (context): boolean =>
                 isRowPinningActionVisible(context),
@@ -219,7 +221,7 @@ function registerBuiltInActions(): void {
 
     registerBuiltInGroup('pinning', {
         getLabel: (context): string =>
-            context.grid.options?.lang?.rowPinning || '',
+            context.grid.options?.lang?.rowPinning?.label || '',
         icon: 'pin',
         isVisible: (context): boolean => isRowPinningActionVisible(context),
         items: ['pinRowTop', 'pinRowBottom', 'unpinRow']
