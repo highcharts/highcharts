@@ -117,6 +117,13 @@ declare module '../Core/Chart/ChartOptions' {
          * horizontal or vertical scrolling, depending on whether the `minWidth`
          * or `minHeight` option is set.
          *
+         * **Note:** Because native browser scrollbars are used, they may
+         * overlap with fixed chart elements such as credits or the chart
+         * border. To avoid this collision, it is recommended to manually add
+         * extra space to the corresponding side using chart.spacingBottom (for
+         * horizontal scrollbars) or chart.spacingRight (for vertical
+         * scrollbars).
+         *
          * @sample highcharts/chart/scrollable-plotarea
          *         Scrollable plot area
          * @sample highcharts/chart/scrollable-plotarea-vertical
@@ -170,26 +177,6 @@ function markDirty(
 }
 
 /** @internal */
-function reserveScrollbarGutter(
-    this: Chart
-): void {
-    const {
-        scrollbarHeight = 0,
-        scrollbarWidth = 0
-    } = this.scrollablePlotArea || {};
-
-    if (this.scrollablePixelsX && scrollbarHeight) {
-        this.marginBottom = (this.marginBottom || 0) + scrollbarHeight;
-        this.spacing[2] += scrollbarHeight;
-    }
-
-    if (this.scrollablePixelsY && scrollbarWidth) {
-        this.marginRight = (this.marginRight || 0) + scrollbarWidth;
-        this.spacing[1] += scrollbarWidth;
-    }
-}
-
-/** @internal */
 export class ScrollablePlotArea {
     /* *
      *
@@ -231,7 +218,6 @@ export class ScrollablePlotArea {
                 (e: { skipAxes: boolean, target: Chart }): void =>
                     this.afterSetSize(e.target, e)
             );
-            addEvent(ChartClass, 'getMargins', reserveScrollbarGutter);
             addEvent(ChartClass, 'render', onChartRender);
 
             addEvent(SeriesClass, 'show', markDirty);
@@ -318,8 +304,6 @@ export class ScrollablePlotArea {
     public innerContainer: HTMLDOMElement;
     public isDirty?: boolean;
     public scrollingContainer: HTMLDOMElement;
-    public scrollbarHeight?: number;
-    public scrollbarWidth?: number;
     public parentDiv: HTMLDOMElement;
     public mask: SVGElement;
 
@@ -445,7 +429,6 @@ export class ScrollablePlotArea {
                 chart,
                 fixedRenderer,
                 isDirty,
-                parentDiv,
                 scrollingContainer
             } = this,
             {
@@ -466,6 +449,14 @@ export class ScrollablePlotArea {
             scrollableWidth = chartWidth + scrollablePixelsX,
             scrollableHeight = chartHeight + scrollablePixelsY;
 
+        // Set the size of the fixed renderer to the visible width
+        fixedRenderer.setSize(chartWidth, chartHeight);
+
+        if (isDirty ?? true) {
+            this.isDirty = false;
+            this.moveFixedElements();
+        }
+
         // Increase the size of the scrollable renderer and background
         stop(chart.container);
         css(container, {
@@ -482,47 +473,10 @@ export class ScrollablePlotArea {
             height: scrollableHeight
         });
 
-        // Keep the scrollable containers inside the chart box.
-        css(parentDiv, {
-            width: `${chartWidth}px`,
-            height: `${chartHeight}px`
-        });
         css(scrollingContainer, {
             width: `${chartWidth}px`,
             height: `${chartHeight}px`
         });
-
-        const scrollbarWidth = scrollablePixelsY ?
-                scrollingContainer.offsetWidth -
-                scrollingContainer.clientWidth :
-                0,
-            scrollbarHeight = scrollablePixelsX ?
-                scrollingContainer.offsetHeight -
-                scrollingContainer.clientHeight :
-                0;
-
-        if (
-            this.scrollbarWidth !== scrollbarWidth ||
-            this.scrollbarHeight !== scrollbarHeight
-        ) {
-            this.scrollbarWidth = scrollbarWidth;
-            this.scrollbarHeight = scrollbarHeight;
-
-            if (chart.hasRendered) {
-                chart.isDirtyBox = true;
-                chart.redraw(false);
-                return;
-            }
-        }
-
-        fixedRenderer.setSize(chartWidth, chartHeight);
-
-        if (isDirty !== false) {
-            this.isDirty = false;
-            this.moveFixedElements();
-        }
-
-        this.alignCredits(scrollbarWidth, scrollbarHeight);
 
         // Set scroll position the first time (this.isDirty was undefined at
         // the top of this function)
@@ -650,42 +604,6 @@ export class ScrollablePlotArea {
             );
         }
     }
-
-    /**
-     * Credits are aligned directly to the chart box, after margins are
-     * calculated. Keep them out of the native scrollbar gutter.
-     *
-     * @internal
-     */
-    public alignCredits(
-        scrollbarWidth: number,
-        scrollbarHeight: number
-    ): void {
-        const {
-                chart
-            } = this,
-            creditsPosition = chart.options.credits?.position;
-
-        if (chart.credits && creditsPosition) {
-            const offsetX = (
-                    scrollbarWidth &&
-                    creditsPosition.align === 'right'
-                ) ?
-                    scrollbarWidth :
-                    0,
-                offsetY = (
-                    scrollbarHeight &&
-                    creditsPosition.verticalAlign === 'bottom'
-                ) ?
-                    scrollbarHeight :
-                    0;
-
-            chart.credits.align(merge(creditsPosition, {
-                x: (creditsPosition.x || 0) - offsetX,
-                y: (creditsPosition.y || 0) - offsetY
-            }));
-        }
-    }
 }
 
 /* *
@@ -704,6 +622,13 @@ export class ScrollablePlotArea {
  * Since v7.1.2, a scrollable plot area can be defined for either horizontal or
  * vertical scrolling, depending on whether the `minWidth` or `minHeight`
  * option is set.
+ *
+ * **Note:** Because native browser scrollbars are used, they may
+ * overlap with fixed chart elements such as credits or the chart
+ * border. To avoid this collision, it is recommended to manually add
+ * extra space to the corresponding side using chart.spacingBottom (for
+ * horizontal scrollbars) or chart.spacingRight (for vertical
+ * scrollbars).
  *
  * @sample highcharts/chart/scrollable-plotarea
  *         Scrollable plot area
