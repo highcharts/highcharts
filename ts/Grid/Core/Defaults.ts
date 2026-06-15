@@ -73,6 +73,7 @@ export const defaultLangOptions: DeepPartial<LangOptions> = {
     sortDescending: 'Sort descending',
     column: 'Column',
     setFilter: 'Set filter',
+    filterValuePlaceholder: 'Value...',
     pagination: {
         pageInfo: 'Showing {start} - {end} of {total} ' +
             '(page {currentPage} of {totalPages})',
@@ -84,7 +85,7 @@ export const defaultLangOptions: DeepPartial<LangOptions> = {
         pageNumber: 'Page {page}',
         ellipsis: 'More pages'
     },
-    columnFilteringConditions: {
+    columnFilteringOperators: {
         contains: 'Contains',
         doesNotContain: 'Does not contain',
         equals: 'Equals',
@@ -97,11 +98,17 @@ export const defaultLangOptions: DeepPartial<LangOptions> = {
         greaterThanOrEqualTo: 'Greater than or equal to',
         lessThan: 'Less than',
         lessThanOrEqualTo: 'Less than or equal to',
-        before: 'Before',
-        after: 'After',
         all: 'All',
         'true': 'True',
         'false': 'False'
+    },
+    columnFilteringDateTimeOperators: {
+        equals: 'On',
+        doesNotEqual: 'Not on',
+        greaterThan: 'After',
+        greaterThanOrEqualTo: 'On or after',
+        lessThan: 'Before',
+        lessThanOrEqualTo: 'On or before'
     }
 };
 
