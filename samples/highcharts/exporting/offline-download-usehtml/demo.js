@@ -11,6 +11,7 @@ Highcharts.chart('container', {
             }
         },
         scale: 3,
+        libURL: 'https://code.highcharts.com/lib/',
         fallbackToExportServer: false,
         error: function (opt, err) {
             console.log('Failed with error: "' + err + '". Options:', opt);

@@ -9,6 +9,7 @@ Highcharts.chart('container', {
                 }
             }
         },
+        libURL: 'https://code.highcharts.com/lib/',
         fallbackToExportServer: false
     },
 

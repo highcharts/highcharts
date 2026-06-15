@@ -35,7 +35,7 @@ import type { ColumnDataType } from './Table/Column';
 import type { DataProviderOptionsType } from './Data/DataProviderType';
 import type DataTable from '../../Data/DataTable';
 import type { CellType as DataTableCellType } from '../../Data/DataTable';
-import type DataTableOptions from '../../Data/DataTableOptions';
+import type { DataTableOptionsObject } from '../../Data/DataTableOptions';
 import type Cell from './Table/Cell';
 import type Column from './Table/Column';
 import type TableCell from './Table/Body/TableCell';
@@ -142,12 +142,13 @@ export interface Options {
     data?: DataProviderOptionsType;
 
     /**
-     * Data table with the data to display in the grid structure.
+     * Data table with the data to display in the grid structure. Deprecated,
+     * use {@link https://api.highcharts.com/grid/data.local.dataTable | `data.dataTable`}
+     * instead.
      *
-     * @deprecated
-     * Use {@link https://api.highcharts.com/grid/data.local.dataTable | `data.dataTable`} instead.
+     * @deprecated 2.3.0
      */
-    dataTable?: DataTable | DataTableOptions;
+    dataTable?: DataTable | DataTableOptionsObject;
 
     /**
      * Options for the description of the grid.
