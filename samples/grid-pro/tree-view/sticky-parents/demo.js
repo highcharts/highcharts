@@ -92,6 +92,7 @@ Grid.grid('container', {
     data: {
         columns,
         treeView: {
+            enabled: true,
             input: {
                 type: 'path'
             },

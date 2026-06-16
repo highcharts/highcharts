@@ -912,6 +912,7 @@ export interface ColumnFilteringOptions extends FilteringCondition {
      * Whether the filtering is enabled or not.
      *
      * @sample grid-lite/basic/column-filtering Column filtering
+     * @default false
      */
     enabled?: boolean;
 
