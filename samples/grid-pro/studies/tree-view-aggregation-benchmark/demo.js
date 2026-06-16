@@ -181,6 +181,7 @@ async function buildGrid() {
         data: {
             columns: sourceData.columns,
             treeView: {
+                enabled: true,
                 input: {
                     type: 'path',
                     showFullPath: false

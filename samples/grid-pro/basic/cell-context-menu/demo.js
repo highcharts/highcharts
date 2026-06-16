@@ -29,15 +29,22 @@ Grid.grid('container', {
         cells: {
             contextMenu: {
                 items: [
-                    'sampleActions',
+                    {
+                        type: 'submenu',
+                        label: 'Sample actions',
+                        items: ['sampleActions']
+                    },
                     {
                         type: 'separator'
                     },
                     'pinning',
                     {
-                        type: 'action',
-                        actionId: 'pinRowTop',
-                        label: 'Custom pin to top'
+                        label: 'Show row ID',
+                        icon: 'checkmark',
+                        onClick: function (cell) {
+                            document.getElementById('status').textContent =
+                                'Row ID: ' + String(cell.row.id);
+                        }
                     }
                 ]
             }

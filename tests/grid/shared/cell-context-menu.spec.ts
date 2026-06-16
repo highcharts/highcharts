@@ -100,7 +100,7 @@ test.describe('Cell Context Menu', () => {
         );
 
         test(
-            'No contextMenu config with pinning options keeps native context menu',
+            'Legacy pinning config without enabled keeps native context menu',
             async ({ page }) => {
                 await page.evaluate(() => {
                     const existing = document.getElementById(
@@ -122,6 +122,7 @@ test.describe('Cell Context Menu', () => {
                         },
                         rendering: {
                             rows: {
+                                // Legacy config must not enable UI.
                                 pinning: {}
                             }
                         }
@@ -226,7 +227,7 @@ test.describe('Cell Context Menu', () => {
             }
         );
 
-        test('Auto mode reacts to runtime pinning updates', async ({ page }) => {
+        test('Auto mode reacts to runtime pinning enabled updates', async ({ page }) => {
             await page.evaluate(() => {
                 const existing = document.getElementById('cm-auto-runtime');
                 existing?.remove();
@@ -260,6 +261,7 @@ test.describe('Cell Context Menu', () => {
                 await (window as any).cmAutoRuntimeGrid.update({
                     rendering: {
                         rows: {
+                            // Legacy config must not enable UI.
                             pinning: {}
                         }
                     }
