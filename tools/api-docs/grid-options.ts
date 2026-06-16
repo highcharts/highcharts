@@ -762,11 +762,17 @@ function appendDeprecationToDescription(
         return;
     }
 
-    const deprecatedText = (
-        TSLib.extractTagText(infoDoclet, 'deprecated', true) || ''
+    const deprecationNote = (
+        TSLib.extractTagText(
+            infoDoclet,
+            'deprnote',
+            true
+        ) || ''
     ).trim();
-    const deprecatedHTML = deprecatedText ?
-        `<p><em>Deprecated:</em> ${formatJSDocLinks(deprecatedText)}</p>` :
+    const deprecatedHTML = deprecationNote ?
+        `<p><em>Deprecated:</em> ${
+            formatJSDocLinks(deprecationNote)
+        }</p>` :
         '<p><em>Deprecated.</em></p>';
     const existingDescription = nodeDoclet.description || '';
 
