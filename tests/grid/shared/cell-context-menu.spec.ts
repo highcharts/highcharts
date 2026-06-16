@@ -178,6 +178,54 @@ test.describe('Cell Context Menu', () => {
             }
         );
 
+        test(
+            'Deprecated row pinning lang keys customize built-in labels',
+            async ({ page }) => {
+                await page.evaluate(() => {
+                    const existing = document.getElementById(
+                        'cm-legacy-pinning-lang'
+                    );
+                    existing?.remove();
+
+                    const container = document.createElement('div');
+                    container.id = 'cm-legacy-pinning-lang';
+                    document.body.appendChild(container);
+
+                    (window as any).Grid.grid(container, {
+                        data: {
+                            columns: {
+                                id: ['ROW-001'],
+                                value: [1]
+                            },
+                            idColumn: 'id'
+                        },
+                        lang: {
+                            pinRowTop: 'Legacy pin top',
+                            pinRowBottom: 'Legacy pin bottom',
+                            unpinRow: 'Legacy unpin'
+                        },
+                        rendering: {
+                            rows: {
+                                pinning: {
+                                    enabled: true
+                                }
+                            }
+                        }
+                    });
+                });
+
+                const cell = page.locator(
+                    '#cm-legacy-pinning-lang tbody tr[data-row-index="0"] td[data-column-id="id"]'
+                );
+                await cell.click({ button: 'right' });
+
+                const popup = page.locator('.hcg-popup').last();
+                await expect(popup).toContainText('Legacy pin top');
+                await expect(popup).toContainText('Legacy pin bottom');
+                await expect(popup).toContainText('Legacy unpin');
+            }
+        );
+
         test('Auto mode reacts to runtime pinning updates', async ({ page }) => {
             await page.evaluate(() => {
                 const existing = document.getElementById('cm-auto-runtime');

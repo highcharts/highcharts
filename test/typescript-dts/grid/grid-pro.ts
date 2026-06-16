@@ -68,6 +68,9 @@ function test_grid() {
                 pinRowBottom: 'Pin to bottom',
                 unpinRow: 'Unpin'
             },
+            pinRowTop: 'Legacy pin to top',
+            pinRowBottom: 'Legacy pin to bottom',
+            unpinRow: 'Legacy unpin',
             tableEditing: {
                 rows: 'Rows',
                 columns: 'Columns',

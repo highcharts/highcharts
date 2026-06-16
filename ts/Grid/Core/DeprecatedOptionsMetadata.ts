@@ -43,6 +43,51 @@ const deprecatedOptionsMetadata: Array<DeprecatedOptionMetadata> = [
             }
         ],
         'text': '2.3.0'
+    },
+    {
+        'docsPath': 'lang.pinRowBottom',
+        'runtimePath': 'lang.pinRowBottom',
+        'segments': [
+            {
+                'kind': 'property',
+                'name': 'lang'
+            },
+            {
+                'kind': 'property',
+                'name': 'pinRowBottom'
+            }
+        ],
+        'text': 'Use `lang.rowPinning.pinRowBottom` instead.'
+    },
+    {
+        'docsPath': 'lang.pinRowTop',
+        'runtimePath': 'lang.pinRowTop',
+        'segments': [
+            {
+                'kind': 'property',
+                'name': 'lang'
+            },
+            {
+                'kind': 'property',
+                'name': 'pinRowTop'
+            }
+        ],
+        'text': 'Use `lang.rowPinning.pinRowTop` instead.'
+    },
+    {
+        'docsPath': 'lang.unpinRow',
+        'runtimePath': 'lang.unpinRow',
+        'segments': [
+            {
+                'kind': 'property',
+                'name': 'lang'
+            },
+            {
+                'kind': 'property',
+                'name': 'unpinRow'
+            }
+        ],
+        'text': 'Use `lang.rowPinning.unpinRow` instead.'
     }
 ];
 

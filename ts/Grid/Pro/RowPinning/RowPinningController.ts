@@ -270,6 +270,33 @@ declare module '../../Core/Options' {
          * Language options for the row pinning feature.
          */
         rowPinning?: RowPinningLangOptions;
+
+        /**
+         * Label used for the built-in "pin row to top" action.
+         *
+         * @default 'Pin row to top'
+         *
+         * @deprecated Use `lang.rowPinning.pinRowTop` instead.
+         */
+        pinRowTop?: string;
+
+        /**
+         * Label used for the built-in "pin row to bottom" action.
+         *
+         * @default 'Pin row to bottom'
+         *
+         * @deprecated Use `lang.rowPinning.pinRowBottom` instead.
+         */
+        pinRowBottom?: string;
+
+        /**
+         * Label used for the built-in "unpin row" action.
+         *
+         * @default 'Unpin row'
+         *
+         * @deprecated Use `lang.rowPinning.unpinRow` instead.
+         */
+        unpinRow?: string;
     }
 
     interface RowsSettings {
