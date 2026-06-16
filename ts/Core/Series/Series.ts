@@ -2592,6 +2592,11 @@ class Series {
             xMin = xExtremes.min;
             xMax = xExtremes.max;
         }
+        // Used only for `cumulativeStart`, #24608
+        const excludeShoulder = this.options.cumulative &&
+            this.options.cumulativeStart &&
+            shoulder &&
+            !getExtremesFromAll;
 
         for (i = 0; i < rowCount; i++) {
 
@@ -2605,6 +2610,8 @@ class Series {
                     (xData[i - shoulder] || x) <= xMax
                 )
             ) {
+                const skipShoulder = excludeShoulder && isNumber(x) && x < xMin;
+
                 for (const values of yAxisData) {
                     const val = values[i];
 
@@ -2613,7 +2620,8 @@ class Series {
                     // consider y extremes.
                     if (
                         isNumber(val) &&
-                        (val > 0 || !positiveValuesOnly)
+                        (val > 0 || !positiveValuesOnly) &&
+                        !skipShoulder
                     ) {
                         activeYData.push(val);
                     }
