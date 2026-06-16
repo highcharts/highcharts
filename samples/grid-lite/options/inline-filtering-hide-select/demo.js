@@ -25,22 +25,29 @@ Grid.grid('container', {
     columnDefaults: {
         filtering: {
             enabled: true,
-            inline: true
+            inline: true,
+            hideOperatorSelect: true
         }
     },
     columns: [{
         id: 'id',
         width: 60
     }, {
+        id: 'product',
+        dataType: 'string',
+        filtering: {
+            operators: ['contains']
+        }
+    }, {
         id: 'stock',
         filtering: {
-            rule: {
-                operator: 'greaterThan',
-                value: 50
-            }
+            operators: ['greaterThan', 'lessThan']
         }
     }, {
         id: 'price',
+        filtering: {
+            operators: ['greaterThan']
+        },
         cells: {
             format: '${value:.2f}'
         }
