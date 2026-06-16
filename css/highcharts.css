@@ -985,6 +985,11 @@ input.highcharts-range-selector {
     fill: var(--highcharts-background-color);
 }
 
+.highcharts-candlestick-series .highcharts-candlestick-legend-symbol {
+    fill: var(--highcharts-neutral-color-100);
+    stroke: none;
+}
+
 .highcharts-renko-series .highcharts-point-down,
 .highcharts-hollowcandlestick-series .highcharts-point-down {
     fill: var(--highcharts-negative-color);

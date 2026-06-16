@@ -140,7 +140,6 @@ class CandlestickSeries extends OHLCSeries {
 
         const { chart } = this,
             { renderer } = chart,
-            { lineColor } = this.options,
             legendItem = item.legendItem || {},
             symbolHeight = legend.symbolHeight,
             squareSymbol = legend.options.squareSymbol,
@@ -157,8 +156,12 @@ class CandlestickSeries extends OHLCSeries {
                 const element = renderer
                     .rect(rect.x, rect.y, rect.width, rect.height, rect.r)
                     .addClass('highcharts-point')
-                    .attr({ zIndex: 3, 'stroke-width': strokeWidth })
+                    .attr({ zIndex: 3 })
                     .add(legendItem.group);
+
+                if (!chart.styledMode) {
+                    element.attr({ 'stroke-width': strokeWidth });
+                }
 
                 if (up) {
                     element.addClass('highcharts-point-up');
@@ -166,11 +169,7 @@ class CandlestickSeries extends OHLCSeries {
                 boxes.push({ element, up });
             };
 
-        // In styled mode the wicks would inherit the series color from CSS;
-        // tint them with the border color so the line matches the boxes.
-        if (chart.styledMode && lineColor) {
-            legendItem.symbol?.attr({ fill: lineColor });
-        }
+        legendItem.symbol?.addClass('highcharts-candlestick-legend-symbol');
 
         box(filled);
         box(hollow, true);
