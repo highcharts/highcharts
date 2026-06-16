@@ -1,4 +1,4 @@
-Grid.grid('container', {
+window.grid = Grid.grid('container', {
     data: {
         columns: {
             id: [1, 2, 3, 4, 5, 6],
@@ -17,32 +17,24 @@ Grid.grid('container', {
                 'Tropical',
                 'Citrus',
                 'Berry'
-            ],
-            stock: [120, 40, 5, 200, 85, 60],
-            price: [1.5, 2.53, 5, 4.5, 3.2, 6.75]
+            ]
         }
     },
     columnDefaults: {
         filtering: {
             enabled: true,
-            inline: true
+            inline: true,
+            hideOperatorSelect: true
         }
     },
     columns: [{
-        id: 'id',
-        width: 60
+        id: 'product',
+        dataType: 'string'
     }, {
-        id: 'stock',
+        id: 'category',
+        dataType: 'string',
         filtering: {
-            rule: {
-                operator: 'greaterThan',
-                value: 50
-            }
-        }
-    }, {
-        id: 'price',
-        cells: {
-            format: '${value:.2f}'
+            operators: ['contains', 'beginsWith']
         }
     }]
 });
