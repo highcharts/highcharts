@@ -7,6 +7,7 @@
  *
  * This replaces the previous QUnit-based approach with native Playwright tests.
  */
+/* eslint-disable playwright/no-skipped-test */
 import { test, expect } from '~/fixtures.ts';
 
 const TIMEZONES = [
@@ -37,6 +38,35 @@ async function setupPage(page: import('@playwright/test').Page) {
     await page.waitForFunction(() => !!(window as any).Highcharts);
 }
 
+async function hasIntlTimeZoneSupport(
+    page: import('@playwright/test').Page,
+    timeZone: string
+): Promise<boolean> {
+    return page.evaluate((tz: string): boolean => {
+        try {
+            new Intl.DateTimeFormat('en', { timeZone: tz });
+            return true;
+        } catch {
+            return false;
+        }
+    }, timeZone);
+}
+
+async function getUnsupportedIntlTimeZones(
+    page: import('@playwright/test').Page,
+    timeZones: Array<string>
+): Promise<Array<string>> {
+    const unsupported: Array<string> = [];
+
+    for (const timeZone of timeZones) {
+        if (!(await hasIntlTimeZoneSupport(page, timeZone))) {
+            unsupported.push(timeZone);
+        }
+    }
+
+    return unsupported;
+}
+
 for (const tz of TIMEZONES) {
     test.describe(`Timezone: ${tz}`, () => {
         test.use({ timezoneId: tz });
@@ -52,6 +82,17 @@ for (const tz of TIMEZONES) {
 
         test('Time.dateFormat with fixed CET timezone across DST', async ({ page }) => {
             await setupPage(page);
+
+            const unsupportedTimeZones = await getUnsupportedIntlTimeZones(
+                page,
+                [tz, 'CET']
+            );
+            test.skip(
+                unsupportedTimeZones.length > 0,
+                `Browser Intl does not support timezone(s): ${
+                    unsupportedTimeZones.join(', ')
+                }`
+            );
 
             const result = await page.evaluate(() => {
                 const Highcharts = (window as any).Highcharts;
