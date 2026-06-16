@@ -36,9 +36,9 @@
         plotOptions: {
             series: {
                 marker: {
-                    fillColor: '#FFFFFF',
+                    fillColor: 'var(--highcharts-background-color)',
                     lineWidth: 2,
-                    lineColor: Highcharts.getOptions().colors[1]
+                    lineColor: 'var(--highcharts-color-0)'
                 }
             }
         },

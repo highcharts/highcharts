@@ -42,7 +42,8 @@ QUnit.test('Candlestick series colors tests.', function (assert) {
 
     $('#container').highcharts('StockChart', {
         tooltip: {
-            split: false
+            split: false,
+            borderColor: undefined
         },
         rangeSelector: {
             selected: 1

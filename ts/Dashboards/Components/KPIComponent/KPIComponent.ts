@@ -60,7 +60,6 @@ const {
     format
 } = Templating;
 
-
 /* *
  *
  *  Class

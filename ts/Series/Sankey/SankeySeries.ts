@@ -863,7 +863,7 @@ export default SankeySeries;
  * @see {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/sankey-node-column/|Highcharts-Demo:}
  *         Specified node offset
  *
- * @deprecated
+ * @deprecated 9.3.0
  * @name Highcharts.SankeyNodeObject#offset
  * @type {number|string}
  * @default 0

@@ -28,35 +28,8 @@ const NVIDIAPriceConnector =
 (async () => {
     await NVIDIAPriceConnector.load();
 
-    const {
-        [`${NVIDIACorpId}_Open`]: open,
-        [`${NVIDIACorpId}_High`]: high,
-        [`${NVIDIACorpId}_Low`]: low,
-        [`${NVIDIACorpId}_Close`]: close,
-        [`${NVIDIACorpId}_Volume`]: volume,
-        Date: date
-    } = NVIDIAPriceConnector.getTable().getColumns();
-
-    const ohlc = [],
-        volumeSeriesData = [],
-        dataLength = date.length;
-
-    for (let i = 0; i < dataLength; i += 1) {
-        ohlc.push([
-            date[i],
-            open[i],
-            high[i],
-            low[i],
-            close[i]
-        ]);
-
-        volumeSeriesData.push([
-            date[i],
-            volume[i]
-        ]);
-    }
-
     Highcharts.stockChart('container', {
+        dataTable: NVIDIAPriceConnector.getTable(),
         yAxis: [{
             labels: {
                 align: 'left'
@@ -87,7 +60,14 @@ const NVIDIAPriceConnector =
             type: 'candlestick',
             id: 'nvidia-candlestick',
             name: 'NVIDIA Corp Stock Price',
-            data: ohlc,
+            dataMapping: {
+                x: 'Date',
+                open: `${NVIDIACorpId}_Open`,
+                high: `${NVIDIACorpId}_High`,
+                low: `${NVIDIACorpId}_Low`,
+                close: `${NVIDIACorpId}_Close`,
+                y: `${NVIDIACorpId}_Close` // #22506, issue no. 6
+            },
             dataGrouping: {
                 groupPixelWidth: 20
             }
@@ -95,7 +75,10 @@ const NVIDIAPriceConnector =
             type: 'column',
             id: 'nvidia-volume',
             name: 'NVIDIA Volume',
-            data: volumeSeriesData,
+            dataMapping: {
+                x: 'Date',
+                y: `${NVIDIACorpId}_Volume`
+            },
             yAxis: 1
         }],
         responsive: {

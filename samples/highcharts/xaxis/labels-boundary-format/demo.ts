@@ -1,25 +1,22 @@
-(async () => {
-
-    const data = await fetch(
-        'https://www.highcharts.com/samples/data/usdeur.json'
-    ).then(response => response.json());
-
-    Highcharts.chart('container', {
-        title: {
-            text: 'Demo of axis label boundary format'
+Highcharts.chart('container', {
+    title: {
+        text: 'Demo of axis label boundary'
+    },
+    xAxis: {
+        labels: {
+            format: `{#if (eq boundary "year")}{value:%b<br>%Y}
+        {else}{value:%b}{/if}`
         },
-        xAxis: {
-            labels: {
-                format: `{#if (eq boundary "month")}{value: %b <b>%Y</b>}
-        {else}{value: %e of %b}{/if}`
-            },
-            max: '2020-02-07',
-            min: '2020-01-20',
-            type: 'datetime'
-        },
-        series: [{
-            data: data
-        }]
-    });
-
-})();
+        type: 'datetime'
+    },
+    plotOptions: {
+        series: {
+            pointIntervalUnit: 'month',
+            pointStart: '2026-01-01'
+        }
+    },
+    series: [{
+        data: [1, 3, 2, 6, 3, 5, 7, 5, 1, 2, 3, 2],
+        pointInterval: 2
+    }]
+});
