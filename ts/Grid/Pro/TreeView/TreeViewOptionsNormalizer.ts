@@ -28,7 +28,11 @@ import type {
     TreeViewOptions
 } from './TreeViewTypes';
 
-import { merge } from '../../../Shared/Utilities.js';
+import {
+    isArray,
+    isString,
+    merge
+} from '../../../Shared/Utilities.js';
 
 /* *
  *
@@ -48,7 +52,14 @@ export interface NormalizedTreeInputPathOptions {
     showFullPath: boolean;
 }
 
+export interface NormalizedTreeInputGroupingOptions {
+    type: 'grouping';
+    groupBy: string[];
+    groupColumn: string;
+}
+
 export type NormalizedTreeInputOptions = (
+    NormalizedTreeInputGroupingOptions |
     NormalizedTreeInputParentIdOptions |
     NormalizedTreeInputPathOptions
 );
@@ -79,12 +90,37 @@ const defaultPathInput: NormalizedTreeInputPathOptions = {
     showFullPath: false
 };
 
+const defaultGroupingInput: NormalizedTreeInputGroupingOptions = {
+    type: 'grouping',
+    groupBy: [],
+    groupColumn: 'Group'
+};
+
 
 /* *
  *
  *  Functions
  *
  * */
+
+/**
+ * Normalizes row grouping column definitions.
+ *
+ * @param groupBy
+ * Raw grouping column or columns.
+ *
+ * @returns
+ * Normalized grouping column IDs.
+ */
+function normalizeGroupBy(
+    groupBy: (string | string[] | undefined)
+): string[] {
+    if (isArray(groupBy)) {
+        return groupBy.slice();
+    }
+
+    return isString(groupBy) ? [groupBy] : [];
+}
 
 /**
  * Validates and normalizes TreeView options from Grid config.
@@ -108,7 +144,12 @@ export function normalizeTreeViewOptions(
             void 0 :
             treeView.input.type === 'path' ?
                 merge(defaultPathInput, treeView.input) :
-                merge(defaultParentIdInput, treeView.input)
+                treeView.input.type === 'grouping' ?
+                    {
+                        ...merge(defaultGroupingInput, treeView.input),
+                        groupBy: normalizeGroupBy(treeView.input.groupBy)
+                    } :
+                    merge(defaultParentIdInput, treeView.input)
     );
 
     return {

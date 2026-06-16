@@ -234,6 +234,7 @@ function onProjectPresentationTable(
         controller.sync();
         TreeViewValidation.syncTreePathValidationRules(this);
         e.table = controller.projectTable(e.table);
+        this.columnPolicy.setAvailableSourceColumnIds(e.table.getColumnIds());
     } catch (error) {
         // eslint-disable-next-line no-console
         console.error((error as { message?: string }).message || error);
@@ -296,6 +297,9 @@ function onCellAfterDataMutation(
             ) || (
                 input.type === 'parentId' &&
                 e.sourceColumnId === input.parentIdColumn
+            ) || (
+                input.type === 'grouping' &&
+                input.groupBy.indexOf(e.sourceColumnId) !== -1
             )
         )
     );
@@ -460,6 +464,7 @@ declare module '../../Core/Data/LocalDataProvider' {
          *
          * @sample grid-pro/tree-view/parent-id Parent ID tree input
          * @sample grid-pro/tree-view/input-path Path tree input
+         * @sample grid-pro/tree-view/row-grouping Row grouping
          */
         treeView?: TreeViewOptions;
     }
