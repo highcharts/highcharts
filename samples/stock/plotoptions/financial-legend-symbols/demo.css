@@ -1,0 +1,9 @@
+body {
+    background: var(--highcharts-background-color);
+    color: var(--highcharts-neutral-color-100);
+}
+
+#container {
+    height: 640px;
+    min-width: 320px;
+}

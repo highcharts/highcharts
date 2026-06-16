@@ -52,6 +52,9 @@ const OHLCSeriesDefaults: OHLCSeriesOptions = {
      * the default is `ohlc`, a vertical stem with an open tick on the left
      * and a close tick on the right.
      *
+     * @sample {highstock} stock/plotoptions/financial-legend-symbols/
+     *         Candlestick, OHLC and HLC legend symbols
+     *
      * @default   ohlc
      * @product   highstock
      * @apioption plotOptions.ohlc.legendSymbol

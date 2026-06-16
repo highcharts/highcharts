@@ -74,6 +74,9 @@ const HLCSeriesDefaults: HLCSeriesOptions = {
      * the default is `hlc`, a vertical stem with a tick on the right
      * representing the closing value.
      *
+     * @sample {highstock} stock/plotoptions/financial-legend-symbols/
+     *         Candlestick, OHLC and HLC legend symbols
+     *
      * @default   hlc
      * @product   highstock
      * @apioption plotOptions.hlc.legendSymbol

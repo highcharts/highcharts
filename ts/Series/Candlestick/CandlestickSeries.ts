@@ -20,11 +20,14 @@
 
 import type CandlestickPoint from './CandlestickPoint';
 import type CandlestickSeriesOptions from './CandlestickSeriesOptions';
+import type Legend from '../../Core/Legend/Legend';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 
 import CandlestickSeriesDefaults from './CandlestickSeriesDefaults.js';
+import FinancialSymbols from '../FinancialSymbols.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     column: ColumnSeries,
@@ -69,6 +72,8 @@ class CandlestickSeries extends OHLCSeries {
 
     public data!: Array<CandlestickPoint>;
 
+    public legendSymbolBoxes?: Array<{ element: SVGElement; up?: boolean }>;
+
     public options!: CandlestickSeriesOptions;
 
     public points!: Array<CandlestickPoint>;
@@ -89,21 +94,25 @@ class CandlestickSeries extends OHLCSeries {
         point?: CandlestickPoint,
         state?: StatesOptionsKey
     ): SVGAttributes {
+        if (!point) {
+            return { fill: this.options.lineColor || this.color };
+        }
+
         const attribs = ColumnSeries.prototype.pointAttribs.call(
                 this,
                 point,
                 state
             ),
             options = this.options,
-            isUp = (point?.open || 0) < (point?.close || 0),
+            isUp = (point.open || 0) < (point.close || 0),
             stroke = options.lineColor || this.color,
-            color = point?.color || this.color; // (#14826)
+            color = point.color || this.color; // (#14826)
 
         attribs['stroke-width'] = options.lineWidth;
 
-        attribs.fill = point?.options.color ||
+        attribs.fill = point.options.color ||
             (isUp ? (options.upColor || color) : color);
-        attribs.stroke = point?.options.lineColor ||
+        attribs.stroke = point.options.lineColor ||
             (isUp ? (options.upLineColor || stroke) : stroke);
 
         // Select or hover states
@@ -116,6 +125,58 @@ class CandlestickSeries extends OHLCSeries {
         }
 
         return attribs;
+    }
+
+    /**
+     * Draw the candlestick legend symbol. The symbol path carries only the
+     * wicks; the two box bodies are drawn here as bordered rectangles and
+     * colored/dimmed by `FinancialSymbols` on `afterColorizeItem` (#24567).
+     *
+     * @private
+     * @function Highcharts.seriesTypes.candlestick#drawLegendSymbol
+     */
+    public drawLegendSymbol(legend: Legend, item: Legend.Item): void {
+        super.drawLegendSymbol(legend, item);
+
+        const { chart } = this,
+            { renderer } = chart,
+            { lineColor } = this.options,
+            legendItem = item.legendItem || {},
+            symbolHeight = legend.symbolHeight,
+            squareSymbol = legend.options.squareSymbol,
+            w = squareSymbol ? symbolHeight : legend.symbolWidth,
+            x = squareSymbol ?
+                (legend.symbolWidth - symbolHeight) / 2 :
+                0,
+            y = (legend.baseline || 0) - symbolHeight + 1,
+            { filled, hollow, strokeWidth } =
+                FinancialSymbols.candlestickBoxes(x, y, w, symbolHeight),
+            boxes: NonNullable<CandlestickSeries['legendSymbolBoxes']> = [],
+            // A bordered box; `up` flags the hollow (background-filled) candle
+            box = (rect: FinancialSymbols.Rect, up?: boolean): void => {
+                const element = renderer
+                    .rect(rect.x, rect.y, rect.width, rect.height, rect.r)
+                    .addClass('highcharts-point')
+                    .attr({ zIndex: 3, 'stroke-width': strokeWidth })
+                    .add(legendItem.group);
+
+                if (up) {
+                    element.addClass('highcharts-point-up');
+                }
+                boxes.push({ element, up });
+            };
+
+        // In styled mode the wicks would inherit the series color from CSS;
+        // tint them with the border color so the line matches the boxes.
+        if (chart.styledMode && lineColor) {
+            legendItem.symbol?.attr({ fill: lineColor });
+        }
+
+        box(filled);
+        box(hollow, true);
+
+        // `FinancialSymbols` colors and dims these on every `colorizeItem`.
+        this.legendSymbolBoxes = boxes;
     }
 
     /**

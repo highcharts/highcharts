@@ -78,6 +78,9 @@ const CandlestickSeriesDefaults: CandlestickSeriesOptions = {
      * series, the default is `candlestick`, a vertical line (wick) with a
      * rectangular body.
      *
+     * @sample {highstock} stock/plotoptions/financial-legend-symbols/
+     *         Candlestick, OHLC and HLC legend symbols
+     *
      * @default   candlestick
      * @product   highstock
      * @apioption plotOptions.candlestick.legendSymbol
