@@ -255,7 +255,12 @@ class TableEditingController {
             return;
         }
 
-        this.insertRow(table, this.getEmptyRow(table), rowIndex + offset);
+        table.setRows(
+            [this.getEmptyRow(table)],
+            rowIndex + offset,
+            true,
+            { fromGrid: true }
+        );
         await this.updateRowsFromTable(table);
     }
 
@@ -296,27 +301,6 @@ class TableEditingController {
         table.deleteColumns(void 0, { fromGrid: true });
         table.setColumns(nextColumns, void 0, { fromGrid: true });
         await this.updateColumnsFromTable(table);
-    }
-
-    private insertRow(
-        table: DataTable,
-        row: DataTableRowObject,
-        rowIndex: number
-    ): void {
-        const columnIds = table.getColumnIds();
-        const columns = table.getColumns(void 0, true);
-        const nextColumns: Record<string, Array<DataTableValue>> = {};
-
-        for (let i = 0, iEnd = columnIds.length; i < iEnd; ++i) {
-            const columnId = columnIds[i];
-            const column = Array.from(columns[columnId]);
-
-            column.splice(rowIndex, 0, row[columnId] ?? null);
-            nextColumns[columnId] = column;
-        }
-
-        table.deleteColumns(void 0, { fromGrid: true });
-        table.setColumns(nextColumns, void 0, { fromGrid: true });
     }
 
     private getDataTable(): DataTable | undefined {
@@ -372,10 +356,18 @@ class TableEditingController {
 
     private getEmptyRow(table: DataTable): DataTableRowObject {
         const idColumn = this.getIdColumn();
+        const row: DataTableRowObject = {};
+        const columnIds = table.getColumnIds();
 
-        return idColumn ? {
-            [idColumn]: this.getNewRowId(table, idColumn)
-        } : {};
+        for (let i = 0, iEnd = columnIds.length; i < iEnd; ++i) {
+            row[columnIds[i]] = null;
+        }
+
+        if (idColumn) {
+            row[idColumn] = this.getNewRowId(table, idColumn);
+        }
+
+        return row;
     }
 
     private getNewRowId(

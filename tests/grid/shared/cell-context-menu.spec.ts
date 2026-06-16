@@ -414,7 +414,9 @@ test.describe('Cell Context Menu', () => {
                     container,
                     {
                         data: {
+                            idColumn: 'id',
                             columns: {
+                                id: ['row1', 'row2', 'row3'],
                                 product: ['Apples', 'Pears', 'Plums'],
                                 stock: [10, 20, 30]
                             }
@@ -450,13 +452,13 @@ test.describe('Cell Context Menu', () => {
 
                 return {
                     rowCount: table.getRowCount(),
-                    row: table.getRow(1, ['product', 'stock'])
+                    row: table.getRow(1, ['id', 'product', 'stock'])
                 };
             });
 
             expect(state).toEqual({
                 rowCount: 4,
-                row: [null, null]
+                row: ['row4', null, null]
             });
 
             const insertedProductCell = page.locator(
@@ -476,12 +478,14 @@ test.describe('Cell Context Menu', () => {
 
                 return {
                     rowCount: table.getRowCount(),
+                    ids: table.getColumn('id', true),
                     products: table.getColumn('product', true)
                 };
             });
 
             expect(state).toEqual({
                 rowCount: 3,
+                ids: ['row1', 'row2', 'row3'],
                 products: ['Apples', 'Pears', 'Plums']
             });
         });
