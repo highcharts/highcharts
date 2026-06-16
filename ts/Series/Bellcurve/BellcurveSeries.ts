@@ -198,24 +198,18 @@ class BellcurveSeries extends AreaSplineSeries {
     }
 
     public setMean(data: number[]): void {
-        const series = this;
+        const mean = BellcurveSeries.mean(data || []);
 
-        series.mean = correctFloat(
-            BellcurveSeries.mean(
-                data || []
-            ) as any
-        );
+        this.mean = isNumber(mean) ? correctFloat(mean) : void 0;
     }
 
     public setStandardDeviation(data: number[]): void {
-        const series = this;
-
-        series.standardDeviation = correctFloat(
-            BellcurveSeries.standardDeviation(
-                data || [],
-                series.mean as any
-            ) as any
+        const sd = BellcurveSeries.standardDeviation(
+            data || [],
+            this.mean
         );
+
+        this.standardDeviation = isNumber(sd) ? correctFloat(sd) : void 0;
     }
 
 }
