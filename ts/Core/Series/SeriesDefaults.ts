@@ -1356,6 +1356,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
              * `series.allowPointSelect` option to true.
              *
              * @declare Highcharts.PointStatesSelectOptionsObject
+             * @extends plotOptions.series.marker.states.hover
              */
             select: {
 
@@ -2188,6 +2189,9 @@ const seriesDefaults: PlotOptionsOf<Series> = {
     /**
      * A collection of options for different series states.
      *
+     * In addition to the options documented under each state, any option from
+     * the parent series type can be set, with exception of `data` and `states`.
+     *
      * @declare Highcharts.SeriesStatesOptionsObject
      */
     states: {
@@ -2378,6 +2382,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
          *         Disabled inactive state
          *
          * @declare Highcharts.SeriesStatesInactiveOptionsObject
+         * @extends plotOptions.series.states.hover
          */
         inactive: {
             /**

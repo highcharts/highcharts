@@ -22,7 +22,6 @@ import type {
     AnimationOptions,
     AnimationStepCallbackFunction
 } from '../../Core/Animation/AnimationOptions';
-import type ColorType from '../../Core/Color/ColorType';
 import type ColumnPoint from '../Column/ColumnPoint';
 import type CSSObject from '../../Core/Renderer/CSSObject';
 import type { RowObject } from '../../Data/DataTable';
@@ -89,6 +88,19 @@ declare module '../../Core/Series/SeriesBase' {
         transformGroups?: Array<SVGElement>|undefined;
         tupleKey?: string;
         useMapGeometry?: boolean;
+
+        /**
+         * Mapping point specific attributes to options. Implemented in map and
+         * hlc series, and by extension all series derived from them.
+         * The concept seems flexible but is used as strictly as the type
+         * indicates, so extend the type if needed.
+         *
+         * @internal
+         */
+        pointAttrToOptions?: {
+            stroke?: 'color';
+            'stroke-width'?: 'lineWidth';
+        };
     }
 }
 
@@ -96,11 +108,6 @@ declare module '../../Core/Series/SeriesOptions' {
     interface SeriesOptions {
         /** @requires modules/map */
         mapData?: MapDataType;
-    }
-    interface SeriesStateHoverOptions
-    {
-        brightness?: number;
-        color?: ColorType;
     }
 }
 
@@ -155,8 +162,6 @@ class MapSeries extends ScatterSeries {
     public mapTitle?: string;
 
     public options!: MapSeriesOptions;
-
-    public pointAttrToOptions?: Record<string, string>;
 
     public points!: Array<MapPoint>;
 
