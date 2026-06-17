@@ -1,10 +1,11 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -27,6 +28,23 @@ const {
     line: LineSeries
 } = SeriesRegistry.seriesTypes;
 import { addEvent, extend, merge } from '../../Shared/Utilities.js';
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+/** @internal */
+declare module '../../Core/Series/SeriesBase' {
+    interface SeriesBase {
+        /**
+         * Allow scatter points on the edge to be interacted
+         * with outside the plot.
+         */
+        allowOutsidePlotInteraction?: boolean;
+    }
+}
 
 /* *
  *
@@ -70,7 +88,7 @@ class ScatterSeries extends LineSeries {
      *
      * */
 
-
+    /* eslint-disable valid-jsdoc */
     /**
      * Optionally add the jitter effect.
      * @private
@@ -150,6 +168,7 @@ interface ScatterSeries {
     pointClass: typeof ScatterPoint;
 }
 extend(ScatterSeries.prototype, {
+    allowOutsidePlotInteraction: true,
     drawTracker: ColumnSeries.prototype.drawTracker,
     sorted: false,
     requireSorting: false,
@@ -183,6 +202,7 @@ declare module '../../Core/Series/SeriesType' {
     }
 }
 SeriesRegistry.registerSeriesType('scatter', ScatterSeries);
+
 
 /* *
  *

@@ -3,6 +3,7 @@ let chart = null; // Chart is not created initially
 const activeCols = new Set();
 
 Grid.grid('grid', {
+    gridKey: 'YOUR-GRID-KEY-HERE',
     data: {
         columns: {
             Year: [
@@ -45,7 +46,9 @@ Grid.grid('grid', {
                     }
 
                     // We get the x axis from the Year column
-                    const years = grid.dataTable.getColumn(yearColumnId);
+                    const years = grid.dataProvider
+                        .getDataTable()
+                        .getColumn(yearColumnId);
 
                     // Create chart if it doesn't exist
                     if (!chart) {

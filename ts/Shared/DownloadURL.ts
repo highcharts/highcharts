@@ -1,10 +1,11 @@
 /* *
  *
  *  (c) 2015-2026 Highsoft AS
- *  Author: Oystein Moseng
+ *  Author: Øystein Moseng
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  *  Mixin for downloading content in the browser
@@ -26,7 +27,7 @@ const {
     win,
     win: { document: doc }
 } = H;
-import RegexLimits from '../Extensions/RegexLimits.js';
+import { RegexLimits } from '../Shared/Utilities.js';
 
 /* *
  *
@@ -207,7 +208,7 @@ export function getScript(
         script.type = 'text/javascript';
         script.src = scriptLocation;
 
-        // Resolve in case of a succesful script fetching
+        // Resolve in case of a successful script fetching
         script.onload = (): void => {
             resolve();
         };

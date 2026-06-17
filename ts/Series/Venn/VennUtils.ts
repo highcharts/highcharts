@@ -4,13 +4,14 @@
  *  diagram.
  *
  *  (c) 2016-2026 Highsoft AS
- *  Authors: Jon Arild Nygard
+ *  Authors: Jon Arild Nygård
  *
  *  Layout algorithm by Ben Frederickson:
  *  https://www.benfrederickson.com/better-venn-diagrams/
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -24,6 +25,7 @@
  * */
 
 import type CircleObject from '../../Core/Geometry/CircleObject';
+import type DataTableCore from '../../Data/DataTableCore';
 import type PositionObject from '../../Core/Renderer/PositionObject';
 import type VennPointOptions from './VennPointOptions';
 
@@ -829,16 +831,23 @@ function nelderMead(
  * the data or has (value < 1). Adds missing relations between sets in the
  * data as value = 0.
  * @private
- * @param {Array<object>} data The raw input data.
+ * @param {DataTableCore} dataTable The raw input data.
  * @return {Array<object>} Returns an array of valid venn data.
  */
 function processVennData(
-    data: Array<VennPointOptions>,
+    dataTable: DataTableCore|undefined,
     splitter: string
 ): Array<VennRelationObject> {
-    const d = isArray(data) ? data : [];
+    const rows: Array<VennPointOptions> = dataTable?.columns ?
+        new Array((dataTable as DataTableCore).rowCount)
+            .fill(void 0)
+            .map((_, i): VennPointOptions =>
+                (dataTable as DataTableCore)
+                    .getRowObject(i) as unknown as VennPointOptions
+            ) :
+        [];
 
-    const validSets = d
+    const validSets = rows
         .reduce(function (
             arr: Array<string>,
             x: VennPointOptions
@@ -851,7 +860,7 @@ function processVennData(
         }, [])
         .sort();
 
-    const mapOfIdToRelation = d.reduce(function (
+    const mapOfIdToRelation = rows.reduce(function (
         mapOfIdToRelation: Record<string, VennRelationObject>,
         relation: VennPointOptions
     ): Record<string, VennRelationObject> {

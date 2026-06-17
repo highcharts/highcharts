@@ -1,10 +1,11 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  * */
 
@@ -80,6 +81,77 @@ export interface SeriesTooltipOptions extends Partial<TooltipOptions> {
     stickOnContact?: undefined;
     style?: undefined;
     useHTML?: undefined;
+}
+
+interface TooltipHeaderOptions {
+
+    /**
+     * Background color for the tooltip header when
+     * [tooltip.split](#tooltip.split) is enabled.
+     *
+     * @sample {highcharts} highcharts/tooltip/header
+     *         Header options for split tooltip
+     * @sample {highstock} stock/tooltip/header
+     *         Header options for split tooltip
+     */
+    backgroundColor?: ColorType;
+    /**
+     * Border color for the tooltip header when
+     * [tooltip.split](#tooltip.split) is enabled.
+     *
+     * @sample {highcharts} highcharts/tooltip/header
+     *         Header options for split tooltip
+     * @sample {highstock} stock/tooltip/header
+     *         Header options for split tooltip
+     */
+    borderColor?: ColorType;
+    /**
+     * The width of the border for the tooltip header when
+     * [tooltip.split](#tooltip.split) is enabled.
+     *
+     * @sample {highcharts} highcharts/tooltip/header
+     *         Header options for split tooltip
+     * @sample {highstock} stock/tooltip/header
+     *         Header options for split tooltip
+     */
+    borderWidth?: number;
+    /**
+     * Distance between the plot area and the header (except the chevron) in a
+     * split tooltip, in pixels. The default value makes the header text align
+     * with the axis labels.
+     *
+     * @sample {highcharts} highcharts/tooltip/header
+     *         Header options for split tooltip
+     * @sample {highstock} stock/tooltip/header
+     *         Header options for split tooltip
+     */
+    distance: number;
+    /**
+     * The name of a symbol to use for the border around the tooltip
+     * header. Applies only when [tooltip.split](#tooltip.split) is
+     * enabled.
+     *
+     * Custom callbacks for symbol path generation can also be added to
+     * `Highcharts.SVGRenderer.prototype.symbols` the same way as for
+     * [series.marker.symbol](plotOptions.line.marker.symbol).
+     *
+     * @see [tooltip.shape](#tooltip.shape)
+     *
+     * @sample {highstock} stock/tooltip/split-positioner/
+     *         Different shapes for header and split boxes
+     */
+    shape?: Tooltip.ShapeValue
+
+    /**
+     * CSS styles for the tooltip header. The default is `{ fontSize: '1em' }`,
+     * ensuring that the header text is the same size as the axis labels.
+     *
+     * @sample {highcharts} highcharts/tooltip/header
+     *         Header options for split tooltip
+     * @sample {highstock} stock/tooltip/header
+     *         Header options for split tooltip
+     */
+    style?: CSSObject;
 }
 
 /**
@@ -192,10 +264,11 @@ export interface TooltipOptions {
      * @sample {highcharts} highcharts/tooltip/crosshairs-x/
      *         Enable a crosshair for the x value
      *
-     * @deprecated
-     * @default   true
+     * @deprecated 4.1.0
+     * @default true
      */
     crosshairs?: any;
+
     /**
      * For series on datetime axes, the date format in the tooltip's
      * header will by default be guessed based on the closest data points.
@@ -207,11 +280,36 @@ export interface TooltipOptions {
      *
      * @product highcharts highstock gantt
      */
-    dateTimeLabelFormats: Time.DateTimeLabelFormatsOption;
+    dateTimeLabelFormats: Time.DateTimeLabelFormatsOption & {
+        /** @default '%[AebHMSL]' */
+        millisecond: Time.DateTimeLabelFormatsOption['millisecond'];
+
+        /** @default '%[AebHMS]' */
+        second: Time.DateTimeLabelFormatsOption['second'];
+
+        /** @default '%[AebHM]' */
+        minute: Time.DateTimeLabelFormatsOption['minute'];
+
+        /** @default '%[AebHM]' */
+        hour: Time.DateTimeLabelFormatsOption['hour'];
+
+        /** @default '%[AebY]' */
+        day: Time.DateTimeLabelFormatsOption['day'];
+
+        /** @default '%v %[AebY]' */
+        week: Time.DateTimeLabelFormatsOption['week'];
+
+        /** @default '%[BY]' */
+        month: Time.DateTimeLabelFormatsOption['month'];
+
+        /** @default '%Y' */
+        year: Time.DateTimeLabelFormatsOption['year'];
+    };
+
     /**
      * Distance from point to tooltip in pixels.
      *
-     * @default   16
+     * @default 16
      */
     distance?: number;
     /**
@@ -266,7 +364,7 @@ export interface TooltipOptions {
     /**
      * Whether the tooltip should update as the finger moves on a touch
      * device. If this is `true` and [chart.panning](#chart.panning) is
-     * set,`followTouchMove` will take over one-finger touches, so the user
+     * set, `followTouchMove` will take over one-finger touches, so the user
      * needs to use two fingers for zooming and panning.
      *
      * Note the difference to [followPointer](#tooltip.followPointer) that
@@ -386,22 +484,23 @@ export interface TooltipOptions {
      */
     headerFormat: string;
     /**
-     * The name of a symbol to use for the border around the tooltip
-     * header. Applies only when [tooltip.split](#tooltip.split) is
-     * enabled.
+     * Deprecated since v13.0. Use `tooltip.header.shape` instead.
      *
-     * Custom callbacks for symbol path generation can also be added to
-     * `Highcharts.SVGRenderer.prototype.symbols` the same way as for
-     * [series.marker.symbol](plotOptions.line.marker.symbol).
-     *
-     * @see [tooltip.shape](#tooltip.shape)
-     *
-     * @sample {highstock} stock/tooltip/split-positioner/
-     *         Different shapes for header and split boxes
-     *
-     * @since   7.0
+     * @since      7.0
+     * @deprecated 13.0.0
      */
-    headerShape: Tooltip.ShapeValue;
+    headerShape?: Tooltip.ShapeValue;
+    /**
+     * Options for the tooltip header when [tooltip.split](#tooltip.split) is
+     * enabled. The header is the box containing the X value in a split tooltip.
+     *
+     * @sample {highcharts} highcharts/tooltip/header
+     *         Header options for split tooltip
+     * @sample {highstock} stock/tooltip/header
+     *         Header options for split tooltip
+     * @since  13.0.0
+     */
+    header: TooltipHeaderOptions;
     /**
      * The number of milliseconds to wait until the tooltip is hidden when
      * mouse out from a point or chart.
@@ -603,9 +702,10 @@ export interface TooltipOptions {
     * mouse over a point. Works on initial hover.
     *
     * @sample {highcharts|highstock} highcharts/tooltip/showdelay/
+    *         Show crosshair after 2 seconds
     *
     * @default 0
-    * @since next
+    * @since   12.6.0
     */
     showDelay?: number,
 
@@ -664,6 +764,8 @@ export interface TooltipOptions {
      *
      * @sample highcharts/tooltip/stickoncontact/
      *         Tooltip sticks on pointer contact
+     * @sample highcharts/tooltip/stickoncontact-anchor-link/
+     *         Tooltip with clickable links
      *
      * @since     8.0.1
      */
@@ -679,7 +781,16 @@ export interface TooltipOptions {
      * @sample {highcharts} highcharts/tooltip/style/
      *         Greater padding, bold text
      */
-    style: CSSObject;
+    style: CSSObject & {
+        /** @default ${palette.neutralColor80} */
+        color?: CSSObject['color'];
+
+        /** @default 'default' */
+        cursor?: CSSObject['cursor'];
+
+        /** @default '0.8em' */
+        fontSize?: CSSObject['fontSize'];
+    };
     /**
      * Use HTML to render the contents of the tooltip instead of SVG. Using
      * HTML allows advanced formatting like tables and images in the

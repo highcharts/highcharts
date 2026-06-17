@@ -1,8 +1,9 @@
 /* *
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
- *  Author: Torstein Honsi, Christer Vasseng
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
+ *  Author: Torstein Hønsi, Christer Vasseng
  *
  *  This module serves as a fallback for the Boost module in IE9 and IE10. Newer
  *  browsers support WebGL which is faster.
@@ -31,11 +32,7 @@ import type Chart from '../Core/Chart/Chart';
 import type ColumnSeries from '../Series/Column/ColumnSeries';
 import type HeatmapSeries from '../Series/Heatmap/HeatmapSeries';
 import type HTMLElement from '../Core/Renderer/HTML/HTMLElement';
-import type {
-    PointOptions,
-    PointShortOptions
-} from '../Core/Series/PointOptions';
-import type Types from '../Shared/Types';
+import type { TypedArray } from '../Shared/Types';
 import type ScatterSeries from '../Series/Scatter/ScatterSeries';
 import type Series from '../Core/Series/Series';
 import type SeriesRegistry from '../Core/Series/SeriesRegistry';
@@ -55,7 +52,6 @@ const {
     doc,
     noop
 } = H;
-import { Palette } from '../Core/Color/Palettes.js';
 import {
     addEvent,
     fireEvent,
@@ -72,6 +68,11 @@ import {
  *
  * */
 
+/**
+ * The options below are working, but not documented. In case they are
+ * made public, refactor to match BoostDebugOptions interface.
+ * @internal
+ */
 declare module './Boost/BoostOptions' {
     interface BoostOptions {
         timeRendering?: boolean;
@@ -80,6 +81,7 @@ declare module './Boost/BoostOptions' {
     }
 }
 
+/** @internal */
 declare module '../Core/Series/SeriesBase' {
     interface SeriesBase extends BoostTargetObject {
         /** @internal */
@@ -128,6 +130,7 @@ declare module '../Core/Series/SeriesBase' {
  *
  * */
 
+/** @internal */
 namespace BoostCanvas {
 
     /* *
@@ -474,7 +477,7 @@ namespace BoostCanvas {
             },
             xData = series.getColumn('x', true),
             yData = series.getColumn('y', true),
-            rawData: Array<(PointOptions|PointShortOptions)> = options.data as any,
+            rawData = options.data || [],
             xExtremes = xAxis.getExtremes(),
             xMin = xExtremes.min,
             xMax = xExtremes.max,
@@ -500,7 +503,7 @@ namespace BoostCanvas {
             requireSorting = series.requireSorting,
             connectNulls = options.connectNulls,
             useRaw = !xData,
-            sdata: Array<any>|Types.TypedArray = (
+            sdata: Array<any>|TypedArray = (
                 isStacked ?
                     series.data :
                     (xData || rawData)
@@ -571,9 +574,8 @@ namespace BoostCanvas {
         if (rawData.length > 99999) {
             chart.options.loading = merge(loadingOptions, {
                 labelStyle: {
-                    backgroundColor: color(
-                        Palette.backgroundColor
-                    ).setOpacity(0.75).get(),
+                    backgroundColor: color('var(--highcharts-background-color)')
+                        .setOpacity(0.75).get(),
                     padding: '1em',
                     borderRadius: '0.5em'
                 },
@@ -1024,4 +1026,5 @@ namespace BoostCanvas {
  *
  * */
 
+/** @internal */
 export default BoostCanvas;

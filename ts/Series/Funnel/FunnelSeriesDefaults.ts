@@ -3,10 +3,11 @@
  *  Highcharts funnel module
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -20,8 +21,6 @@
  * */
 
 import type FunnelSeriesOptions from './FunnelSeriesOptions';
-
-import { Palette } from '../../Core/Color/Palettes.js';
 
 /* *
  *
@@ -153,16 +152,16 @@ const FunnelSeriesDefaults: FunnelSeriesOptions = {
             /**
              * A specific color for the selected point.
              *
-             * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+             * @type {Highcharts.ColorType}
              */
-            color: Palette.neutralColor20,
+            color: 'var(--highcharts-neutral-color-20)',
 
             /**
              * A specific border color for the selected point.
              *
              * @type {Highcharts.ColorString}
              */
-            borderColor: Palette.neutralColor100
+            borderColor: 'var(--highcharts-neutral-color-100)'
 
         }
 
@@ -221,6 +220,7 @@ const FunnelSeriesDefaults: FunnelSeriesOptions = {
  * @sample {highcharts} highcharts/series/data-array-of-objects/
  *         Config objects
  *
+ * @basic
  * @type      {Array<number|null|*>}
  * @extends   series.pie.data
  * @excluding sliced

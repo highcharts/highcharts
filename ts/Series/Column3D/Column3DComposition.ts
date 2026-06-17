@@ -1,10 +1,11 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -462,7 +463,7 @@ function wrapColumnSeriesAnimate(
                 }
             }
 
-            // Redraw datalabels to the correct position
+            // Redraw dataLabels to the correct position
             this.drawDataLabels();
         }
 
@@ -549,7 +550,7 @@ function wrapColumnSeriesSetState(
 
 /**
  * When series is not added to group it is needed to change setVisible method to
- * allow correct Legend funcionality. This wrap is basing on pie chart series.
+ * allow correct Legend functionality. This wrap is basing on pie chart series.
  * @private
  */
 function wrapColumnSeriesSetVisible(
@@ -564,13 +565,12 @@ function wrapColumnSeriesSetVisible(
             point.visible = point.options.visible = vis =
                 typeof vis === 'undefined' ?
                     !pick(series.visible, point.visible) : vis;
-            (series.options.data as any)[series.data.indexOf(point)] =
-                point.options;
-            if (point.graphic) {
-                point.graphic.attr({
-                    visibility: vis ? 'visible' : 'hidden'
-                });
+            if (series.options.data) {
+                series.options.data[series.data.indexOf(point)] = point.options;
             }
+            point.graphic?.attr({
+                visibility: vis ? 'visible' : 'hidden'
+            });
         }
     }
     proceed.apply(this, Array.prototype.slice.call(arguments, 1));
@@ -609,11 +609,11 @@ function wrapSeriesAlignDataLabel(
         chart.is3d() &&
         this.is('column')
     ) {
-        const series = this as ColumnSeries,
+        const series = this,
             seriesOptions: ColumnSeriesOptions = series.options,
             inside = pick(options.inside, !!series.options.stacking),
             options3d = chart.options.chart.options3d as any,
-            xOffset = point.pointWidth / 2 || 0;
+            xOffset = (point.pointWidth || 0) / 2;
 
         let dLPosition = {
             x: alignTo.x + xOffset,
@@ -623,7 +623,7 @@ function wrapSeriesAlignDataLabel(
         if (chart.inverted) {
             // Inside dataLabels are positioned according to above
             // logic and there is no need to position them using
-            // non-3D algorighm (that use alignTo.width)
+            // non-3D algorithm (that use alignTo.width)
             if (inside) {
                 alignTo.width = 0;
                 dLPosition.x += (point.shapeArgs as any).height / 2;

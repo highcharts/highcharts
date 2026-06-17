@@ -2,10 +2,11 @@
  *
  *  (c) 2014-2026 Highsoft AS
  *
- *  Authors: Jon Arild Nygard / Oystein Moseng
+ *  Authors: Jon Arild Nygård / Øystein Moseng
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -147,7 +148,7 @@ function onSeriesAfterBindAxes(
                 yAxis.userOptions
             );
 
-            // Set the propertys on the axis object
+            // Set the properties on the axis object
             xAxis.visible = xAxis.options.visible;
             yAxis.visible = yAxis.options.visible;
 
@@ -898,10 +899,16 @@ class TreemapSeries extends ScatterSeries {
                 const { height = 0, width = 0 } = point.shapeArgs;
                 if (width > 32 && height > 16 && point.shouldDraw()) {
                     const dataLabelWidth = width -
-                        2 * (options.padding || padding || 0);
+                        2 * (
+                            splat(options.padding)[0] || splat(padding)[0] || 0
+                        );
                     style.width = `${dataLabelWidth}px`;
                     style.lineClamp ??= Math.floor(height / 16);
-                    style.visibility = 'inherit';
+                    // Only set this in traversal mode, with zooming data labels
+                    // should not inherit group visibility (#24220).
+                    if (this.options.allowTraversingTree) {
+                        style.visibility = 'inherit';
+                    }
 
                     // Make the label box itself fill the width. Reset when
                     // no longer header (#23100).
@@ -920,6 +927,8 @@ class TreemapSeries extends ScatterSeries {
             point.dlOptions = merge(options, point.options.dataLabels, {
                 zIndex: void 0
             });
+            // Delete so it doesn't override anything on merge.
+            delete point.dlOptions.zIndex;
         }
         super.drawDataLabels(points);
     }
@@ -1101,7 +1110,7 @@ class TreemapSeries extends ScatterSeries {
     }
 
     /**
-     * Creates an object map from parent id to childrens index.
+     * Creates an object map from parent id to children index.
      *
      * @private
      * @function Highcharts.Series#getListOfParents
@@ -1395,11 +1404,11 @@ class TreemapSeries extends ScatterSeries {
                     series.mapOptionsToLevel :
                     {}
             ),
-            level = point && mapOptionsToLevel[point.node.level] || {},
+            level = point?.node && mapOptionsToLevel[point.node.level] || {},
             options = this.options,
             stateOptions =
                 state && options.states && options.states[state] || {},
-            className = point?.getClassName() || '',
+            className = point?.node && point.getClassName() || '',
             // Set attributes by precedence. Point trumps level trumps series.
             // Stroke width uses pick because it can be 0.
             attr: SVGAttributes = {
@@ -1524,7 +1533,7 @@ class TreemapSeries extends ScatterSeries {
                     y2Value = yAxis.toPixels(y + height, true),
 
                     // If the edge of a rectangle is on the edge, make sure it
-                    // stays within the plot area by adding or substracting half
+                    // stays within the plot area by adding or subtracting half
                     // of the stroke width.
                     x1 = xValue === 0 ?
                         strokeWidth / 2 :

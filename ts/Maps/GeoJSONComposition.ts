@@ -1,10 +1,11 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -65,7 +66,7 @@ declare module '../Core/Chart/ChartBase'{
         /**
          * Deprecated. Use `MapView.lonLatToProjectedUnits` instead.
          *
-         * @deprecated
+         * @deprecated 10.0.0
          *
          * @requires modules/map
          *
@@ -84,7 +85,7 @@ declare module '../Core/Chart/ChartBase'{
         /**
          * Deprecated. Use `MapView.projectedUnitsToLonLat` instead.
          *
-         * @deprecated
+         * @deprecated 10.0.0
          *
          * @requires modules/map
          *
@@ -191,7 +192,7 @@ namespace GeoJSONComposition {
     /**
      * Deprecated. Use `MapView.lonLatToProjectedUnits` instead.
      *
-     * @deprecated
+     * @deprecated 10.0.0
      *
      * @requires modules/map
      *
@@ -213,7 +214,7 @@ namespace GeoJSONComposition {
     /**
      * Deprecated. Use `MapView.projectedUnitsToLonLat` instead.
      *
-     * @deprecated
+     * @deprecated 10.0.0
      *
      * @requires modules/map
      *
@@ -479,7 +480,7 @@ namespace GeoJSONComposition {
 
                     /**
                      * In Highcharts Maps, when data is loaded from GeoJSON, the
-                     * GeoJSON item's properies are copied over here.
+                     * GeoJSON item's properties are copied over here.
                      *
                      * @requires modules/map
                      * @name Highcharts.Point#properties
@@ -576,8 +577,8 @@ namespace GeoJSONComposition {
                     let arc = arcNo < 0 ? arcsArray[~arcNo] : arcsArray[arcNo];
 
                     // The first point of an arc is always identical to the last
-                    // point of the previes arc, so slice it off to save further
-                    // processing.
+                    // point of the previous arc, so slice it off to save
+                    // further processing.
                     if (arcNo < 0) {
                         arc = arc.slice(
                             0,

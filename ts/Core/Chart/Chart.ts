@@ -1,10 +1,11 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -63,6 +64,8 @@ import D from '../Defaults.js';
 const {
     defaultOptions
 } = D;
+import DataTableCore from '../../Data/DataTableCore.js';
+import { DataTableOptionsObject } from '../../Data/DataTableOptions';
 import Templating from '../Templating.js';
 const { numberFormat } = Templating;
 import Foundation from '../Foundation.js';
@@ -72,11 +75,9 @@ const {
     charts,
     doc,
     marginNames,
-    svg,
     win
 } = H;
 import Pointer from '../Pointer.js';
-import RendererRegistry from '../Renderer/RendererRegistry.js';
 import Series from '../Series/Series.js';
 import SeriesRegistry from '../Series/SeriesRegistry.js';
 const { seriesTypes } = SeriesRegistry;
@@ -195,7 +196,7 @@ declare module '../Options' {
         caption?: Chart.CaptionOptions;
 
         /**
-         * Highchart by default puts a credits label in the lower right corner
+         * Highcharts by default puts a credits label in the lower right corner
          * of the chart. This can be changed using these options.
          */
         credits?: Chart.CreditsOptions;
@@ -276,11 +277,12 @@ declare module '../Series/SeriesBase' {
  * @param {Highcharts.Options} options
  *        The chart options structure.
  *
- * @param {Highcharts.ChartCallbackFunction} [callback]
+ * @param {Highcharts.ChartCallbackFunction|true} [callback]
  *        Function to run when the chart has loaded and all external images
  *        are loaded. Defining a
  *        [chart.events.load](https://api.highcharts.com/highcharts/chart.events.load)
- *        handler is equivalent.
+ *        handler is equivalent. Set to `true` to return a promise that resolves
+ *        when the chart is ready.
  */
 class Chart {
 
@@ -295,18 +297,26 @@ class Chart {
         callback?: Chart.CallbackFunction
     ): Chart;
     public static chart(
+        options: Partial<Options>,
+        callback: true
+    ): Promise<Chart>;
+    public static chart(
         renderTo: (string|globalThis.HTMLElement),
         options: Partial<Options>,
         callback?: Chart.CallbackFunction
     ): Chart;
-
+    public static chart(
+        renderTo: (string|globalThis.HTMLElement),
+        options: Partial<Options>,
+        callback: true
+    ): Promise<Chart>;
     /* eslint-disable jsdoc/check-param-names */
     /**
      * Factory function for basic charts.
      *
      * @example
-     * // Render a chart in to div#container
-     * let chart = Highcharts.chart('container', {
+     * // Render a chart into div#container
+     * const chart = Highcharts.chart('container', {
      *     title: {
      *         text: 'My chart'
      *     },
@@ -323,21 +333,23 @@ class Chart {
      * @param {Highcharts.Options} options
      * The chart options structure.
      *
-     * @param {Highcharts.ChartCallbackFunction} [callback]
+     * @param {Highcharts.ChartCallbackFunction|true} [callback]
      * Function to run when the chart has loaded and all external images are
      * loaded. Defining a
      * [chart.events.load](https://api.highcharts.com/highcharts/chart.events.load)
-     * handler is equivalent.
+     * handler is equivalent. Set to `true` to return a promise that resolves
+     * when the chart is ready.
      *
      * @return {Highcharts.Chart}
      * Returns the Chart object.
      */
     public static chart(
-        a: (string|globalThis.HTMLElement|Partial<Options>),
-        b?: (Chart.CallbackFunction|Partial<Options>),
-        c?: Chart.CallbackFunction
-    ): Chart {
-        return new Chart(a as any, b as any, c);
+        a: string|globalThis.HTMLElement|Partial<Options>,
+        b?: Chart.CallbackFunction|true|Partial<Options>,
+        c?: Chart.CallbackFunction|true
+    ): Chart|Promise<Chart> {
+        const chart = new Chart(a as any, b as any, c);
+        return chart.promise || chart;
     }
     /* eslint-enable jsdoc/check-param-names */
 
@@ -350,20 +362,20 @@ class Chart {
     // Definitions
     public constructor(
         options: Partial<Options>,
-        callback?: Chart.CallbackFunction
+        callback?: Chart.CallbackFunction|true
     );
     public constructor(
         renderTo: (string|globalThis.HTMLElement),
         options: Partial<Options>,
-        callback?: Chart.CallbackFunction
+        callback?: Chart.CallbackFunction|true
     );
 
     // Implementation
     public constructor(
-        a: (string|globalThis.HTMLElement|Partial<Options>),
+        a: string|globalThis.HTMLElement|Partial<Options>,
         /* eslint-disable @typescript-eslint/no-unused-vars */
-        b?: (Chart.CallbackFunction|Partial<Options>),
-        c?: Chart.CallbackFunction
+        b?: Chart.CallbackFunction|true|Partial<Options>,
+        c?: Chart.CallbackFunction|true
         /* eslint-enable @typescript-eslint/no-unused-vars */
     ) {
         // Return early if there's no browser API (server environment).
@@ -475,6 +487,14 @@ class Chart {
      */
     public caption?: SVGElement;
 
+    /**
+     * The array of data table instances associated with the chart.
+     *
+     * @name Highcharts.Chart#dataTable
+     * @type {Array<Highcharts.DataTable>}
+     */
+    public dataTable!: Array<DataTableCore>;
+
     /** @internal */
     public eventOptions!: Record<string, EventCallback<Series, Event>>;
 
@@ -568,6 +588,24 @@ class Chart {
     /** @internal */
     public plotBox!: BBoxObject;
 
+    /** @internal */
+    public plotBoxOuter?: BBoxObject;
+
+    /**
+     * The plot clipping rectangle is fitted along the outside of plot border,
+     * grid lines and axis lines, and applied when a `plotBorderRadius` is set.
+     * @internal
+     */
+    public plotClipOuter?: SVGElement;
+
+    /**
+     * The plot clipping rectangle is fitted along the inside of plot border,
+     * grid lines and axis lines, and applied to the series content when a
+     * `plotBorderRadius` is set.
+     * @internal
+     */
+    public plotClipInner?: SVGElement;
+
     /**
      * The current height of the plot area in pixels.
      *
@@ -611,6 +649,12 @@ class Chart {
 
     /** @internal */
     public pointer?: Pointer;
+
+    /** @internal */
+    public redrawTimeout?: number;
+
+    /** @internal */
+    public promise?: Promise<Chart>;
 
     /** @internal */
     public reflowTimeout?: number;
@@ -783,22 +827,23 @@ class Chart {
      * @param {Highcharts.Options} userOptions
      *        Custom options.
      *
-     * @param {Function} [callback]
+     * @param {Function|true} [callback]
      *        Function to run when the chart has loaded and all external
-     *        images are loaded.
+     *        images are loaded. Set to `true` to return a promise that
+     *        resolves when the chart is ready.
      *
      * @emits Highcharts.Chart#event:init
      * @emits Highcharts.Chart#event:afterInit
      */
     public init(
         userOptions: Partial<Options>,
-        callback?: Chart.CallbackFunction
+        callback?: Chart.CallbackFunction|true
     ): void {
 
         // Fire the event with a default function
         fireEvent(this, 'init', { args: arguments }, function (): void {
 
-            const options = merge(defaultOptions, userOptions), // Do the merge
+            const options = merge(defaultOptions, userOptions),
                 optionsChart = options.chart,
                 renderTo = this.renderTo || optionsChart.renderTo;
 
@@ -838,7 +883,15 @@ class Chart {
             // considered for anti-collision
             this.labelCollectors = [];
 
-            this.callback = callback;
+            // Create a promise to be resolved later
+            if (callback === true) {
+                this.promise = new Promise<Chart>((resolve): void => {
+                    this.callback = resolve;
+                });
+            } else {
+                this.callback = callback;
+            }
+
             this.isResizing = 0;
 
             /**
@@ -927,6 +980,9 @@ class Chart {
              */
             chart.index = charts.length; // Add the chart to the global lookup
 
+            // The chart.dataTable option
+            chart.dataTable = chart.getDataTable(options);
+
             charts.push(chart);
             H.chartCount++;
 
@@ -964,6 +1020,22 @@ class Chart {
         });
     }
 
+    public getDataTable(options: {
+        dataTable?: (
+            DataTableCore|
+            DataTableOptionsObject|
+            Array<DataTableCore|DataTableOptionsObject>
+        )
+    }): Array<DataTableCore> {
+        return (
+            options.dataTable ? splat(options.dataTable) : []
+        ).map((dataTableOptions): DataTableCore => (
+            dataTableOptions.isDataTable ?
+                dataTableOptions :
+                new DataTableCore(dataTableOptions)
+        ));
+    }
+
     /**
      * Internal function to initialize an individual series.
      *
@@ -990,37 +1062,6 @@ class Chart {
             series.init(chart, options);
         }
         return series;
-    }
-
-    /**
-     * Internal function to set data for all series with enabled sorting.
-     *
-     * @internal
-     * @function Highcharts.Chart#setSortedData
-     */
-    public setSortedData(): void {
-        this.getSeriesOrderByLinks().forEach(function (series): void {
-            // We need to set data for series with sorting after series init
-            if (!series.points && !series.data && series.enabledDataSorting) {
-                series.setData(series.options.data as any, false);
-            }
-        });
-    }
-
-    /**
-     * Sort and return chart series in order depending on the number of linked
-     * series.
-     *
-     * @internal
-     * @function Highcharts.Series#getSeriesOrderByLinks
-     */
-    public getSeriesOrderByLinks(): Array<Series> {
-        return this.series.concat().sort(function (a, b): number {
-            if (a.linkedSeries.length || b.linkedSeries.length) {
-                return b.linkedSeries.length - a.linkedSeries.length;
-            }
-            return 0;
-        });
     }
 
     /**
@@ -1078,7 +1119,7 @@ class Chart {
     }
 
     /**
-     * Get the clipping for a series. Could be called for a series to initialate
+     * Get the clipping for a series. Could be called for a series to initialize
      * animating the clip or to set the final clip (only width and x).
      *
      * @internal
@@ -1095,11 +1136,11 @@ class Chart {
         if (series) {
             // Otherwise, use clipBox.width which is corrected for
             // plotBorderWidth and clipOffset
-            if (xAxis && xAxis.len !== this.plotSizeX) {
+            if (xAxis && xAxis.len !== this.plotSizeX && !xAxis.isRadial) {
                 width = xAxis.len;
             }
 
-            if (yAxis && yAxis.len !== this.plotSizeY) {
+            if (yAxis && yAxis.len !== this.plotSizeY && !yAxis.isRadial) {
                 height = yAxis.len;
             }
 
@@ -1410,6 +1451,11 @@ class Chart {
 
         // Redraw if canvas
         renderer.draw();
+
+        // Save the existing state
+        axes.forEach((axis): void => {
+            axis.saveOld();
+        });
 
         // Fire the events
         fireEvent(chart, 'redraw');
@@ -1736,14 +1782,6 @@ class Chart {
                                 baseline :
                                 offset + baseline
                         },
-                        {
-                            align: key === 'title' ?
-                                // Title defaults to center for short titles,
-                                // left for word-wrapped titles
-                                (uncappedScale < minScale ? 'left' : 'center') :
-                                // Subtitle defaults to the title.align
-                                this.title?.alignValue
-                        },
                         descOptions
                     ),
                     width = (descOptions.width || (
@@ -1755,6 +1793,14 @@ class Chart {
                                 alignTo.width
                         ) / scale
                     )) + 'px';
+
+                // Handle auto alignment
+                alignAttr.align ??= key === 'title' ?
+                    // Title defaults to center for short titles,
+                    // left for word-wrapped titles
+                    (uncappedScale < minScale ? 'left' : 'center') :
+                    // Subtitle defaults to the title.align
+                    this.title?.alignValue;
 
                 // No animation when switching alignment
                 if (desc.alignValue !== alignAttr.align) {
@@ -1948,7 +1994,7 @@ class Chart {
                 }
                 if (
                     getStyle(node, 'display', false) === 'none' ||
-                    (node as any).hcOricDetached
+                    (node as any).hcOrigDetached
                 ) {
                     (node as any).hcOrigStyle = {
                         display: node.style.display,
@@ -2058,8 +2104,8 @@ class Chart {
         const chartHeight = chart.chartHeight;
         let chartWidth = chart.chartWidth;
 
-        // Allow table cells and flex-boxes to shrink without the chart blocking
-        // them out (#6427)
+        // Allow table cells and flex-boxes to shrink without the chart
+        // blocking them out (#6427)
         css(renderTo, { overflow: 'hidden' });
 
         // Create the inner container
@@ -2110,15 +2156,9 @@ class Chart {
                 });
             }
         }
-        chart.containerBox = chart.getContainerBox();
 
         // Cache the cursor (#1650)
         chart._cursor = container.style.cursor as CursorValue;
-
-        // Initialize the renderer
-        const Renderer = optionsChart.renderer || !svg ?
-            RendererRegistry.getRendererType(optionsChart.renderer) :
-            SVGRenderer;
 
         /**
          * The renderer instance of the chart. Each chart instance has only one
@@ -2127,32 +2167,37 @@ class Chart {
          * @name Highcharts.Chart#renderer
          * @type {Highcharts.SVGRenderer}
          */
-        chart.renderer = new Renderer(
+        chart.renderer = new SVGRenderer(
             container,
             chartWidth,
             chartHeight,
             void 0,
             optionsChart.forExport,
             options.exporting?.allowHTML,
-            chart.styledMode
+            chart.styledMode,
+            options.palette,
+            chart.index
         );
+
+        // Measure after the SVG is appended. In styled mode the inner
+        // container's CSS `height: 100%` otherwise yields 0 and causes a false
+        // first ResizeObserver reflow
+        chart.containerBox = chart.getContainerBox();
 
         // Set the initial animation from the options
         setAnimation(void 0, chart);
 
-
         chart.setClassName(optionsChart.className);
         if (!chart.styledMode) {
             chart.renderer.setStyle(optionsChart.style as any);
+            this.palette = chart.renderer.palette;
+
         } else {
             // Initialize definitions
             for (const key in options.defs) { // eslint-disable-line guard-for-in
                 this.renderer.definition((options.defs as any)[key]);
             }
         }
-
-        // Add a reference to the charts index
-        chart.renderer.chartIndex = chart.index;
 
         fireEvent(this, 'afterGetContainer');
     }
@@ -2463,11 +2508,11 @@ class Chart {
             {
                 chartHeight,
                 chartWidth,
+                clipOffset,
                 inverted,
                 spacing,
                 renderer
             } = chart,
-            clipOffset = chart.clipOffset,
             clipRoundFunc = Math[inverted ? 'floor' : 'round'];
 
         let plotLeft,
@@ -2533,22 +2578,24 @@ class Chart {
         // Compute the clipping box
         if (clipOffset) {
             chart.clipBox = {
-                x: clipRoundFunc(clipOffset[3]),
-                y: clipRoundFunc(clipOffset[0]),
+                x: clipRoundFunc(clipOffset[inverted ? 2 : 3]),
+                y: clipRoundFunc(clipOffset[inverted ? 1 : 0]),
                 width: clipRoundFunc(
-                    chart.plotSizeX - clipOffset[1] - clipOffset[3]
+                    chart.plotSizeX - clipOffset[inverted ? 0 : 1] -
+                    clipOffset[inverted ? 2 : 3]
                 ),
                 height: clipRoundFunc(
-                    chart.plotSizeY - clipOffset[0] - clipOffset[2]
+                    chart.plotSizeY - clipOffset[inverted ? 1 : 0] -
+                    clipOffset[inverted ? 3 : 2]
                 )
             };
         }
 
         if (!skipAxes) {
-            chart.axes.forEach(function (axis): void {
+            for (const axis of chart.axes) {
                 axis.setAxisSize();
                 axis.setAxisTranslation();
-            });
+            }
             renderer.alignElements();
         }
 
@@ -2604,6 +2651,7 @@ class Chart {
             halfWidth,
             halfWidth
         ];
+
         chart.plotBorderWidth = plotBorderWidth;
 
     }
@@ -2619,21 +2667,28 @@ class Chart {
     public drawChartBox(): void {
         const chart = this,
             optionsChart = chart.options.chart,
-            renderer = chart.renderer,
-            chartWidth = chart.chartWidth,
-            chartHeight = chart.chartHeight,
-            styledMode = chart.styledMode,
-            plotBGImage = chart.plotBGImage,
-            chartBackgroundColor = optionsChart.backgroundColor,
-            plotBackgroundColor = optionsChart.plotBackgroundColor,
-            plotBackgroundImage = optionsChart.plotBackgroundImage,
-            plotLeft = chart.plotLeft,
-            plotTop = chart.plotTop,
-            plotWidth = chart.plotWidth,
-            plotHeight = chart.plotHeight,
-            plotBox = chart.plotBox,
-            clipRect = chart.clipRect,
-            clipBox = chart.clipBox;
+            {
+                backgroundColor,
+                plotBackgroundColor,
+                plotBackgroundImage,
+                plotBorderRadius = 0,
+                shadow
+            } = optionsChart,
+            {
+                chartWidth,
+                chartHeight,
+                clipBox,
+                clipOffset,
+                clipRect,
+                plotBGImage,
+                plotBox,
+                plotLeft,
+                plotTop,
+                plotWidth,
+                plotHeight,
+                renderer,
+                styledMode
+            } = chart;
 
         let chartBackground = chart.chartBackground,
             plotBackground = chart.plotBackground,
@@ -2654,10 +2709,10 @@ class Chart {
         if (!styledMode) {
             // Presentational
             chartBorderWidth = optionsChart.borderWidth || 0;
-            mgn = chartBorderWidth + (optionsChart.shadow ? 8 : 0);
+            mgn = chartBorderWidth + (shadow ? 8 : 0);
 
             bgAttr = {
-                fill: chartBackgroundColor || 'none'
+                fill: backgroundColor || 'none'
             };
 
             if (chartBorderWidth || chartBackground['stroke-width']) { // #980
@@ -2666,7 +2721,7 @@ class Chart {
             }
             chartBackground
                 .attr(bgAttr)
-                .shadow(optionsChart.shadow);
+                .shadow(shadow);
         } else {
             chartBorderWidth = mgn = chartBackground.strokeWidth();
         }
@@ -2675,8 +2730,8 @@ class Chart {
         chartBackground[verb]({
             x: mgn / 2,
             y: mgn / 2,
-            width: (chartWidth as any) - mgn - chartBorderWidth % 2,
-            height: (chartHeight as any) - mgn - chartBorderWidth % 2,
+            width: chartWidth - mgn - chartBorderWidth % 2,
+            height: chartHeight - mgn - chartBorderWidth % 2,
             r: optionsChart.borderRadius
         });
 
@@ -2688,7 +2743,10 @@ class Chart {
                 .addClass('highcharts-plot-background')
                 .add();
         }
-        plotBackground[verb](plotBox);
+        plotBackground[verb]({
+            ...plotBox,
+            r: plotBorderRadius
+        });
 
         if (!styledMode) {
             // Presentational attributes for the background
@@ -2735,25 +2793,58 @@ class Chart {
             chart.plotBorder = plotBorder = renderer.rect()
                 .addClass('highcharts-plot-border')
                 .attr({
-                    zIndex: 1 // Above the grid
+                    zIndex: 1.5 // Above the grid, below the axes, #24521.
                 })
                 .add();
         }
 
-        if (!styledMode) {
-            // Presentational
-            plotBorder.attr({
-                stroke: optionsChart.plotBorderColor,
-                'stroke-width': optionsChart.plotBorderWidth || 0,
-                fill: 'none'
-            });
+        // Presentational
+        plotBorder.attr(styledMode ? void 0 : {
+            stroke: optionsChart.plotBorderColor,
+            'stroke-width': optionsChart.plotBorderWidth || 0,
+            fill: 'none'
+        })[verb]({ r: plotBorderRadius });
+
+        const strokeWidth = plotBorder.strokeWidth(),
+            plotBorderBox = merge(plotBorder.crisp(plotBox, -strokeWidth));
+
+        // If any of the clipOffset sides are larger than half the stroke width,
+        // the plotBorderBox needs to be extended so that the plot border
+        // includes the full stroke of axis lines. Not for styled mode because
+        // the stroke-width is (accidentally) not considered in the `clipOffset`
+        // calculation.
+        if (clipOffset && !styledMode) {
+            const extendUp = clipOffset[0] - strokeWidth / 2,
+                extendLeft = clipOffset[3] - strokeWidth / 2;
+            plotBorderBox.x -= extendLeft;
+            plotBorderBox.y -= extendUp;
+            plotBorderBox.width += extendLeft + clipOffset[1] - strokeWidth / 2;
+            plotBorderBox.height += extendUp + clipOffset[2] - strokeWidth / 2;
         }
 
-        plotBorder[verb](plotBorder.crisp(
-            plotBox,
-            // #3282 plotBorder should be negative
-            -plotBorder.strokeWidth()
-        ));
+        plotBorder[verb](plotBorderBox);
+
+        // Plot border clipping along for the `plotBorderRadius` feature. A half
+        // stroke width must be added for the outside clip, and subtracter for
+        // the inside clip.
+        (
+            ['plotClipOuter', 'plotClipInner'] as const
+        ).forEach((prop, i): void => {
+            const clip = chart[prop],
+                sw = i ? -strokeWidth : strokeWidth;
+            clip?.[plotBorderRadius ? verb : 'attr']({
+                x: plotBorderBox.x - sw / 2,
+                y: plotBorderBox.y - sw / 2,
+                width: plotBorderBox.width + sw,
+                height: plotBorderBox.height + sw,
+                r: plotBorderRadius ? plotBorderRadius + sw / 2 : 0
+            });
+
+            // Apply clipping only when we actually have a plot border radius
+            clip?.parentGroup?.attr({
+                display: plotBorderRadius ? '' : 'none'
+            });
+        });
 
         // Reset
         chart.isDirtyBox = false;
@@ -2850,10 +2941,6 @@ class Chart {
 
                 series.linkedParent = linkedParent;
 
-                if (linkedParent.enabledDataSorting) {
-                    series.setDataSortingOptions();
-                }
-
                 series.visible = (
                     series.options.visible ??
                     linkedParent.options.visible ??
@@ -2889,7 +2976,7 @@ class Chart {
             axes = chart.axes,
             colorAxis = chart.colorAxis,
             renderer = chart.renderer,
-            axisLayoutRuns = chart.options.chart.axisLayoutRuns || 2,
+            { axisLayoutRuns = 2, plotBorderRadius } = chart.options.chart,
             renderAxes = (axes: Array<Axis>): void => {
                 axes.forEach((axis): void => {
                     if (axis.visible) {
@@ -2904,6 +2991,12 @@ class Chart {
             redoHorizontal = true,
             redoVertical: boolean|undefined,
             run = 0;
+
+        // Create the clip rectangle for plot border radius
+        if (plotBorderRadius) {
+            chart.plotClipOuter ||= renderer.clipRect();
+            chart.plotClipInner ||= renderer.clipRect();
+        }
 
         // Title
         chart.setTitle();
@@ -2921,7 +3014,7 @@ class Chart {
 
         for (const axis of axes) {
             const { options } = axis,
-                { labels } = options;
+                { labels, offset } = options;
 
             if (
                 chart.hasCartesianSeries && // #20948
@@ -2930,7 +3023,7 @@ class Chart {
                 labels.enabled &&
                 axis.series.length &&
                 axis.coll !== 'colorAxis' &&
-                !chart.polar
+                !axis.isRadial // Gauges and polar chart (#24526)
             ) {
 
                 expectedSpace = options.tickLength;
@@ -2949,7 +3042,7 @@ class Chart {
                 ) {
                     expectedSpace = label.getBBox().height +
                         labels.distance +
-                        Math.max(options.offset || 0, 0);
+                        Math.max(isNumber(offset) ? offset : 0, 0);
                 }
 
                 if (expectedSpace) {
@@ -3075,7 +3168,8 @@ class Chart {
             this.credits = this.renderer.text(
                 creds.text + (this.mapCredits || ''),
                 0,
-                0
+                0,
+                creds.useHTML
             )
                 .addClass('highcharts-credits')
                 .on('click', function (e: PointerEvent): void {
@@ -3235,7 +3329,6 @@ class Chart {
         );
 
         chart.linkSeries();
-        chart.setSortedData();
 
         // Run an event after axes and series are initialized, but before
         // render. At this stage, the series data is indexed and cached in the
@@ -3394,11 +3487,6 @@ class Chart {
 
                     chart.isDirtyLegend = true;
                     chart.linkSeries();
-
-                    if (series.enabledDataSorting) {
-                        // We need to call `setData` after `linkSeries`
-                        series.setData(options.data as any, false);
-                    }
 
                     fireEvent(chart, 'afterAddSeries', { series: series });
 
@@ -3931,12 +4019,12 @@ class Chart {
         // Certain options require the whole series structure to be thrown away
         // and rebuilt
         if (updateAllSeries) {
-            chart.getSeriesOrderByLinks().forEach(function (series): void {
+            chart.series.forEach((series): void => {
                 // Avoid removed navigator series
                 if (series.chart) {
                     series.update({}, false);
                 }
-            }, this);
+            });
         }
 
         // Update size. Redraw is forced.
@@ -4019,9 +4107,8 @@ class Chart {
      * @emits Highcharts.Chart#event:beforeShowResetZoom
      */
     public showResetZoom(): void {
-
         const chart = this,
-            lang = defaultOptions.lang,
+            lang = chart.options.lang,
             btnOptions = chart.zooming.resetButton as any,
             theme = btnOptions.theme,
             alignTo = (
@@ -4154,7 +4241,7 @@ class Chart {
                 trigger,
                 allowResetButton = true
             } = params,
-            { inverted, time } = this;
+            { time } = this;
 
         // Remove active points for shared tooltip
         this.hoverPoints?.forEach((point): void => point.setState());
@@ -4185,11 +4272,12 @@ class Chart {
                 toCenter = (to[xy] ?? axis.pos) +
                     toLength / 2 - axis.pos,
                 move = fromCenter - toCenter / scale,
-                pointRangeDirection =
-                    (reversed && !inverted) ||
-                    (!reversed && inverted) ?
-                        -1 :
-                        1,
+                pointRangeDirection = (
+                    (horiz && !reversed) ||
+                       (!horiz && reversed)
+                ) ?
+                    1 :
+                    -1,
                 minPx = move;
 
             // Zooming in multiple panes, zoom only in the pane that receives
@@ -4200,7 +4288,10 @@ class Chart {
 
             // Adjust offset to ensure selection zoom triggers correctly
             // (#22945)
-            const offset = (axis.chart.polar || axis.isOrdinal) ?
+            // Set offset to 0 for ordinal axis only when zooming out, (#24545).
+            const offset = (
+                    axis.chart.polar || (axis.isOrdinal && scale <= 1)
+                ) ?
                     0 :
                     (minPointOffset * pointRangeDirection || 0),
                 eventMin = axis.toValue(minPx, true),
@@ -4489,6 +4580,7 @@ extend(Chart.prototype, {
         'plotBackgroundColor',
         'plotBackgroundImage',
         'plotBorderColor',
+        'plotBorderRadius',
         'plotBorderWidth',
         'plotShadow',
         'shadow'
@@ -4665,7 +4757,7 @@ namespace Chart {
     }
 
     /**
-     * Highchart by default puts a credits label in the lower right corner
+     * Highcharts by default puts a credits label in the lower right corner
      * of the chart. This can be changed using these options.
      */
     export interface CreditsOptions {
@@ -4749,16 +4841,24 @@ namespace Chart {
          *
          * @sample {highcharts} highcharts/credits/position-left/
          *         Left aligned
-         * @sample {highcharts} highcharts/credits/position-left/
-         *         Left aligned
-         * @sample {highmaps} maps/credits/customized/
-         *         Left aligned
          * @sample {highmaps} maps/credits/customized/
          *         Left aligned
          *
          * @since 2.1
          */
-        position?: AlignObject;
+        position?: AlignObject & {
+            /** @default 'right' */
+            align?: AlignObject['align'];
+
+            /** @default 'bottom' */
+            verticalAlign?: AlignObject['verticalAlign'];
+
+            /** @default -10 */
+            x?: AlignObject['x'];
+
+            /** @default -5 */
+            y?: AlignObject['y'];
+        };
 
         /**
          * CSS styles for the credits label.
@@ -4766,7 +4866,16 @@ namespace Chart {
          * @see In styled mode, credits styles can be set with the
          *      `.highcharts-credits` class.
          */
-        style: CSSObject;
+        style: CSSObject & {
+            /** @default ${palette.neutralColor40} */
+            color?: CSSObject['color'];
+
+            /** @default 'pointer' */
+            cursor?: CSSObject['cursor'];
+
+            /** @default '0.6em' */
+            fontSize?: CSSObject['fontSize'];
+        };
 
         /**
          * The text for the credits label.
@@ -4782,6 +4891,15 @@ namespace Chart {
          *         Custom URL and text
          */
         text?: string;
+
+        /**
+         * Whether to render the credits as HTML
+         *
+         * @since  13.0.0
+         * @sample highcharts/palette/branding
+         *         Branding with HTML credits
+         */
+        useHTML?: boolean;
 
     }
 
@@ -5177,7 +5295,7 @@ export default Chart;
  *        options, or a space character.
  *
  * @param {Highcharts.Chart} [ctx]
- *        Since v12.5.0, the chart context passed as an extra argument for
+ *        Since v12.6.0, the chart context passed as an extra argument for
  *        arrow functions.
  *
  * @return {string} The formatted number.

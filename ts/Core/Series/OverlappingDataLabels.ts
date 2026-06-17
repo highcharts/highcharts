@@ -4,10 +4,11 @@
  *  This module is included in Highcharts.
  *
  *  (c) 2009-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -104,10 +105,12 @@ function chartHideOverlappingLabels(
     function getAbsoluteBox(label: SVGElement): (BBoxObject|undefined) {
         if (label && (!label.alignAttr || label.placed)) {
             const padding = label.box ? 0 : (label.padding || 0),
-                pos = label.alignAttr || {
-                    x: label.attr('x'),
-                    y: label.attr('y')
-                },
+                pos = label.dataLabelPosition?.posAttribs || // #21725
+                    label.alignAttr ||
+                    {
+                        x: label.attr('x'),
+                        y: label.attr('y')
+                    },
                 { height, polygon, width } = label.getBBox(),
                 alignOffset = getAlignFactor(label.alignValue) * width;
 
@@ -186,7 +189,7 @@ function chartHideOverlappingLabels(
                     if (isPolygonOverlap(box1Poly, box2Poly)) {
                         toHide = true;
                     }
-                // If there are no polygons, evaluate rectangles coliding
+                // If there are no polygons, evaluate rectangles colliding
                 } else if (isIntersectRect(box1, box2)) {
                     toHide = true;
                 }
@@ -278,7 +281,7 @@ function hideOrShow(label: SVGElement, chart: Chart): boolean {
                 isLabelAffected = true;
 
                 // Animate or set the opacity
-                label[label.isOld ? 'animate' : 'attr'](
+                label[label.isOld || label.placed ? 'animate' : 'attr'](
                     { opacity: newOpacity },
                     void 0,
                     complete
@@ -347,6 +350,22 @@ function onChartRender(
                                 point.shapeArgs?.height
                             ); // #4118
 
+                            // #21725: Sync target positions for generic overlap
+                            // checking. During animations (e.g., toggling a
+                            // point), DOM positions may overlap. We force
+                            // alignAttr to the final target coordinates so
+                            // getAbsoluteBox() evaluates the final resting
+                            // positions.
+                            /*
+                            // Commented out because it caused initial overlap
+                            // in the highcharts/demo/pie-semi-circle sample.
+                            const pos = label.dataLabelPosition?.posAttribs;
+                            if (pos) {
+                                label.alignAttr = label.alignAttr || {};
+                                label.alignAttr.x = pos.x;
+                                label.alignAttr.y = pos.y;
+                            }
+                            */
                             // Allow overlap if the option is explicitly true
                             if (
                                 // #13449
@@ -354,7 +373,10 @@ function onChartRender(
 
                                 // Pie labels outside have a separate placement
                                 // logic, skip the overlap logic
-                                Number(options.distance) > 0
+                                (
+                                    series.is('pie') &&
+                                    Number(options.distance) > 0
+                                )
                             ) {
                                 label.oldOpacity = label.opacity;
                                 label.newOpacity = 1;

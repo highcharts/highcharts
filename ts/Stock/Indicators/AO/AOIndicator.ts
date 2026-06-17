@@ -1,8 +1,8 @@
 /* *
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
- *
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  * */
 
@@ -22,7 +22,6 @@ import type LineSeries from '../../../Series/Line/LineSeries';
 
 import H from '../../../Core/Globals.js';
 const { noop } = H;
-import { Palette } from '../../../Core/Color/Palettes.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     column: {
@@ -46,7 +45,7 @@ import {
 /**
  * The AO series type
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.ao
  *
@@ -91,10 +90,10 @@ class AOIndicator extends SMAIndicator {
          * @sample {highstock} stock/indicators/ao/
          *         greaterBarColor
          *
-         * @type  {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @type  {Highcharts.ColorType}
          * @since 7.0.0
          */
-        greaterBarColor: Palette.positiveColor,
+        greaterBarColor: 'var(--highcharts-positive-color)',
         /**
          * Color of the Awesome oscillator series bar that is lower than the
          * previous one. Note that if a `color` is defined, the `color`
@@ -103,10 +102,10 @@ class AOIndicator extends SMAIndicator {
          * @sample {highstock} stock/indicators/ao/
          *         lowerBarColor
          *
-         * @type  {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @type  {Highcharts.ColorType}
          * @since 7.0.0
          */
-        lowerBarColor: Palette.negativeColor,
+        lowerBarColor: 'var(--highcharts-negative-color)',
         threshold: 0,
         groupPadding: 0.2,
         pointPadding: 0.2,
@@ -252,6 +251,7 @@ class AOIndicator extends SMAIndicator {
  *
  * */
 
+/** @internal */
 interface AOIndicator {
     nameBase: string;
     nameComponents: Array<string>|undefined;
@@ -280,6 +280,7 @@ extend(AOIndicator.prototype, {
  *
  * */
 
+/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         ao: typeof AOIndicator;
@@ -294,6 +295,7 @@ SeriesRegistry.registerSeriesType('ao', AOIndicator);
  *
  * */
 
+/** @internal */
 export default AOIndicator;
 
 /* *

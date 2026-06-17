@@ -1,7 +1,8 @@
 /* *
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -36,9 +37,7 @@ import { correctFloat, extend, merge } from '../../../Shared/Utilities.js';
  *
  * */
 
-/**
- * @private
- */
+/** @internal */
 function getBaseForBand(low: number, high: number, factor: number): number {
     return ((
         (correctFloat(high - low)) /
@@ -46,16 +45,12 @@ function getBaseForBand(low: number, high: number, factor: number): number {
     ) * 1000) * factor;
 }
 
-/**
- * @private
- */
+/** @internal */
 function getPointUB(high: number, base: number): number {
     return high * (correctFloat(1 + 2 * base));
 }
 
-/**
- * @private
- */
+/** @internal */
 function getPointLB(low: number, base: number): number {
     return low * (correctFloat(1 - 2 * base));
 }
@@ -69,7 +64,7 @@ function getPointLB(low: number, base: number): number {
 /**
  * The ABands series type
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.abands
  *
@@ -105,7 +100,7 @@ class ABandsIndicator extends SMAIndicator {
      */
     public static defaultOptions: ABandsOptions = merge(SMAIndicator.defaultOptions, {
         /**
-         * Option for fill color between lines in Accelleration bands Indicator.
+         * Option for fill color between lines in Acceleration bands Indicator.
          *
          * @sample {highstock} stock/indicators/indicator-area-fill
          *      Background fill between lines.
@@ -265,6 +260,7 @@ class ABandsIndicator extends SMAIndicator {
  *
  * */
 
+/** @internal */
 interface ABandsIndicator extends MultipleLinesComposition.IndicatorComposition {
     nameBase: string;
     nameComponents: Array<string>;
@@ -288,6 +284,7 @@ MultipleLinesComposition.compose(ABandsIndicator);
  *
  * */
 
+/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         abands: typeof ABandsIndicator;
@@ -301,6 +298,7 @@ SeriesRegistry.registerSeriesType('abands', ABandsIndicator);
  *
  * */
 
+/** @internal */
 export default ABandsIndicator;
 
 /* *

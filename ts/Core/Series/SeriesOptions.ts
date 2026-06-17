@@ -1,10 +1,11 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -19,6 +20,8 @@ import type AnimationOptions from '../Animation/AnimationOptions';
 import type ColorType from '../Color/ColorType';
 import type { CursorValue } from '../Renderer/CSSObject';
 import type DashStyleValue from '../Renderer/DashStyleValue';
+import type DataTableCore from '../../Data/DataTableCore';
+import type { DataTableOptionsObject } from '../../Data/DataTableOptions';
 import type { DeepPartial } from '../../Shared/Types';
 import type { EventCallback } from '../Callback';
 import type Point from './Point';
@@ -45,6 +48,21 @@ import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
  *  Declarations
  *
  * */
+
+export interface DataMappingItem {
+    /**
+     * The column from which to read the value for this data point property.
+     * This can be either a column id (string) or a column index (number) in the
+     * data table.
+     */
+    column: number|string;
+    /**
+     * The data table from which to read the value for this data point property.
+     * This can be either a data table id (string) or a data table index
+     * (number).
+     */
+    dataTable: number|string;
+}
 
 export type NonPlotOptions = (
     'data'|'id'|'index'|'legendIndex'|'mapData'|'name'|'stack'|'treemap'|'type'|
@@ -188,11 +206,17 @@ export interface SeriesEventsOptions {
 /**
  * Function callback when a series has been animated.
  *
+ * @callback Highcharts.SeriesAfterAnimateCallbackFunction
+ *
  * @param {Highcharts.Series} this
  *        The series where the event occurred.
  *
  * @param {Highcharts.SeriesAfterAnimateEventObject} event
  *        Event arguments.
+ *
+ * @param {Highcharts.Series} [ctx]
+ *        Since v12.6.0, the series context passed as an extra argument for
+ *        arrow functions.
  */
 export type SeriesAfterAnimateCallbackFunction =
     EventCallback<Series, SeriesAfterAnimateEventObject>;
@@ -216,11 +240,17 @@ export interface SeriesAfterAnimateEventObject {
  * Function callback when a series is clicked. Return false to cancel toggle
  * actions.
  *
+ * @callback Highcharts.SeriesClickCallbackFunction
+ *
  * @param {Highcharts.Series} this
  *        The series where the event occurred.
  *
  * @param {Highcharts.SeriesClickEventObject} event
  *        Event arguments.
+ *
+ * @param {Highcharts.Series} [ctx]
+ *        Since v12.6.0, the series context passed as an extra argument for
+ *        arrow functions.
  */
 export type SeriesClickCallbackFunction =
     EventCallback<Series, SeriesClickEventObject>;
@@ -241,11 +271,17 @@ export interface SeriesClickEventObject {
  * Gets fired when the series is hidden after chart generation time, either by
  * clicking the legend item or by calling `.hide()`.
  *
+ * @callback Highcharts.SeriesHideCallbackFunction
+ *
  * @param {Highcharts.Series} this
  *        The series where the event occurred.
  *
  * @param {global.Event} event
  *        The event that occurred.
+ *
+ * @param {Highcharts.Series} [ctx]
+ *        Since v12.6.0, the series context passed as an extra argument for
+ *        arrow functions.
  */
 export type SeriesHideCallbackFunction = EventCallback<Series, Event>;
 
@@ -259,6 +295,10 @@ export type SeriesHideCallbackFunction = EventCallback<Series, Event>;
  *
  * @param {global.PointerEvent} event
  *        Event that occurred.
+ *
+ * @param {Highcharts.Series} [ctx]
+ *        Since v12.6.0, the series context passed as an extra argument for
+ *        arrow functions.
  */
 export type SeriesMouseOutCallbackFunction =
     EventCallback<Series, PointerEvent>;
@@ -273,6 +313,10 @@ export type SeriesMouseOutCallbackFunction =
  *
  * @param {global.PointerEvent} event
  *        Event that occurred.
+ *
+ * @param {Highcharts.Series} [ctx]
+ *        Since v12.6.0, the series context passed as an extra argument for
+ *        arrow functions.
  */
 export type SeriesMouseOverCallbackFunction =
     EventCallback<Series, PointerEvent>;
@@ -288,6 +332,10 @@ export type SeriesMouseOverCallbackFunction =
  *
  * @param {global.Event} event
  *        Event that occurred.
+ *
+ * @param {Highcharts.Series} [ctx]
+ *        Since v12.6.0, the series context passed as an extra argument for
+ *        arrow functions.
  */
 export type SeriesShowCallbackFunction = EventCallback<Series, Event>;
 
@@ -397,6 +445,7 @@ export interface SeriesOptions {
      * @sample {highcharts} highcharts/css/point-series-classname
      *         Series and point class name
      *
+     * @basic
      * @since 5.0.0
      */
     className?: string;
@@ -445,6 +494,8 @@ export interface SeriesOptions {
      *         Pattern fill
      * @sample {highmaps} maps/demo/category-map/
      *         Category map by multiple series
+     *
+     * @basic
      */
     color?: ColorType;
     colorByPoint?: boolean;
@@ -463,22 +514,6 @@ export interface SeriesOptions {
      */
     colorIndex?: number;
     colors?: Array<ColorType>;
-
-    /**
-     * Whether to connect a graph line across null points, or render a gap
-     * between the two points on either side of the null.
-     *
-     * In stacked area chart, if `connectNulls` is set to true,
-     * null points are interpreted as 0.
-     *
-     * @sample {highcharts} highcharts/plotoptions/series-connectnulls-false/
-     *         False by default
-     * @sample {highcharts} highcharts/plotoptions/series-connectnulls-true/
-     *         True
-     *
-     * @default false
-     * @product highcharts highstock
-     */
     connectNulls?: boolean;
 
     /**
@@ -571,7 +606,76 @@ export interface SeriesOptions {
      */
     dashStyle?: DashStyleValue;
 
+    /**
+     * @basic
+     */
     data?: Array<(PointOptions|PointShortOptions)>;
+
+    /**
+     * The mapping between the data table and the series data points. This is
+     * used in conjunction with the `dataTable` option (on [chart](#dataTable)
+     * or [series](#plotOptions.series.dataTable) level) to map columns from the
+     * data table to the properties of the data points. The keys of the
+     * `dataMapping` object correspond to the properties of the data points
+     * (e.g. `x`, `y`, `name`), and the values are objects that specify which
+     * column from which data table to use for that property.
+     *
+     * The keys can also be nested paths, for example `dataLabel.format`, to map
+     * to nested properties of the data points.
+     *
+     * The values can also be strings, in which case they are interpreted as
+     * column id's from the first data table.
+     *
+     * A typical use case is that multiple series share a common column, like
+     * `name` or `x`. In this case, to avoid repetition, the common column can
+     * be applied in `plotOptions.series.dataMapping` and the individual series
+     * can specify only the columns that are unique to them.
+     *
+     * The series name defaults to the column ID of the main data column in the
+     * mapping. In the inline example below, the series name will be `Cost`
+     * unless `series.name` is explicitly defined.
+     *
+     * ```js
+     * // Shorthand mapping with string
+     * dataMapping: {
+     *     y: 'Cost'
+     * }
+     *
+     * // Full mapping with object
+     * dataMapping: {
+     *    y: {
+     *       // Optional, defaults to the first data table. Can be either a data
+     *       // table index or id.
+     *       dataTable: 'dataTable1',
+     *       // Can be either a column index or id.
+     *       column: 'Cost'
+     *    }
+     * }
+     * ```
+     *
+     * If the columns of the DataTable have keys matching the series keys, the
+     * data mapping is not necessary. For example, this DataTable will connect
+     * directly to the series' `x` and `y` keys:
+     *
+     * ```js
+     * const dataTable = new Highcharts.DataTable({
+     *     columns: {
+     *         x: ['2026-05-04', '2026-05-05', '2026-05-06'],
+     *         y: [1, 4, 2]
+     *     }
+     *  });
+     * ```
+     *
+     * @type    {Highcharts.DataMappingOptionsObject}
+     * @sample {highcharts} highcharts/datatable/series-datatable-multiple
+     *         Series with two data tables
+     * @sample {highcharts} highcharts/datatable/nested-keys Nested keys
+     * @sample {highcharts} highcharts/datatable/chart-datatable-multiple Chart
+     *         with two data tables
+     *
+     * @since 13.0.0
+     */
+    dataMapping?: Record<string, string|DataMappingItem>;
 
     /**
      * Options for the series data sorting.
@@ -582,23 +686,35 @@ export interface SeriesOptions {
     dataSorting?: SeriesDataSortingOptions;
 
     /**
-     * Enable or disable the mouse tracking for a specific series. This
-     * includes point tooltips and click events on graphs and points. For
-     * large datasets it improves performance.
+     * Options for a specific series-level data table. The `dataTable` option
+     * can be either a configuration object or an instance of the
+     * `DataTable` class. If a `DataTable` instance is passed, it will
+     * be used directly. If a configuration object is passed, a new
+     * `DataTable` instance will be created based on the provided
+     * configuration.
      *
-     * @sample {highcharts} highcharts/plotoptions/series-enablemousetracking-false/
-     *         No mouse tracking
-     * @sample {highmaps} maps/plotoptions/series-enablemousetracking-false/
-     *         No mouse tracking
+     * @sample {highcharts} highcharts/datatable/series-datatable/
+     *        Series with one data table each
+     * @sample {highcharts} highcharts/datatable/series-datatable-multiple/
+     *        Series with two data tables
+     * @sample {highstock} stock/datatable/series-datatable/
+     *        Series with one data table each
+     * @sample {highstock} stock/datatable/series-datatable-multiple/
+     *        Series with two data tables
+     * @sample {highmaps} maps/datatable/series-datatable
+     *        Series-level data table
      *
-     * @default true
+     * @since 13.0.0
      */
+    dataTable?: DataTableCore|DataTableOptionsObject;
     enableMouseTracking?: boolean;
 
     /**
      * General event handlers for the series items. These event hooks can
      * also be attached to the series at run time using the
      * `Highcharts.addEvent` function.
+     *
+     * @basic
      */
     events?: SeriesEventsOptions;
 
@@ -643,6 +759,7 @@ export interface SeriesOptions {
      * @sample {highcharts} highcharts/plotoptions/series-id/
      *         Get series by id
      *
+     * @basic
      * @since 1.2.0
      */
     id?: string;
@@ -652,6 +769,7 @@ export interface SeriesOptions {
      * `chart.series` array, the visible Z index as well as the order in the
      * legend.
      *
+     * @basic
      * @since 2.3.0
      */
     index?: number;
@@ -693,6 +811,9 @@ export interface SeriesOptions {
     keys?: Array<string>;
 
     /**
+     * The line cap used for line ends and line joins on the graph.
+     *
+     * @productdesc {highcharts|highstock}
      * The SVG value used for the `stroke-linecap` and `stroke-linejoin`
      * of a line graph. Round means that lines are rounded in the ends and
      * bends.
@@ -701,9 +822,10 @@ export interface SeriesOptions {
      *         Line cap comparison
      *
      * @default 'round'
-     * @since 3.0.7
+     * @since   3.0.7
      */
     linecap?: SeriesLinecapValue;
+
     lineColor?: ColorType;
 
     /**
@@ -759,13 +881,17 @@ export interface SeriesOptions {
     marker?: PointMarkerOptions;
 
     /**
-     * The name of the series as shown in the legend, tooltip etc.
+     * The name of the series as shown in the legend, tooltip etc. If a
+     * `dataTable` and `dataMapping` are used, the name defaults to the id of
+     * the primary data table column. Otherwise, it defaults to "Series {n}",
+     * where n is the index of the series, starting at 1.
      *
-     * @sample {highcharts} highcharts/series/name/
-     *         Series name
+     * @sample {highcharts} highcharts/series/name/ Series name
      *
      * @sample {highmaps} maps/demo/category-map/
      *         Series name
+     *
+     * @basic
      */
     name?: string;
 
@@ -803,8 +929,9 @@ export interface SeriesOptions {
      * points, and this option also enables keyboard navigation for such points.
      * Format options for such points include
      * [`nullFormat`](#tooltip.nullFormat) and
-     * [`nullFormater`](#tooltip.nullFormatter). Works for these series: `line`,
-     * `spline`, `area`, `area-spline`, `column`, `bar`, and* `timeline`.
+     * [`nullFormatter`](#tooltip.nullFormatter). Works for these series:
+     * `line`, `spline`, `area`, `area-spline`, `column`, `bar`, and
+     * `timeline`.
      *
      * @sample {highcharts} highcharts/series/null-interaction/
      *         Chart with interactive `null` points
@@ -837,7 +964,7 @@ export interface SeriesOptions {
      * create any padding of the X axis. In a polar column chart this means
      * that the first column points directly north. If the pointPlacement is
      * `"between"`, the columns will be laid out between ticks. This is
-     * useful for example for visualising an amount between two points in
+     * useful for example for visualizing an amount between two points in
      * time or in a certain sector of a polar chart.
      *
      * Since Highcharts 3.0.2, the point placement can also be numeric,
@@ -953,6 +1080,9 @@ export interface SeriesOptions {
 
     /**
      * A collection of options for different series states.
+     *
+     * In addition to the options documented under each state, any option from
+     * the parent series type can be set, with exception of `data` and `states`.
      */
     states?: SeriesStatesOptions<SeriesOptions>;
 
@@ -1033,6 +1163,8 @@ export interface SeriesOptions {
      *
      * @sample {highmaps} maps/demo/mapline-mappoint/
      * Multiple types in the same map
+     *
+     * @basic
      */
     type?: string;
 
@@ -1259,7 +1391,7 @@ export interface SeriesStateHoverOptions extends StateHoverOptions {
      * individual point, see
      * [marker.states.hover](#plotOptions.series.marker.states.hover).
      *
-     * @deprecated
+     * @deprecated 2.0.0
      *
      * @excluding states, symbol
      * @product   highcharts highstock

@@ -3,8 +3,9 @@
  *  (c) 2009-2026 Highsoft AS
  *  Author: Highsoft, Black Label
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -296,7 +297,7 @@ function selectableAnnotation(annotationType: typeof Annotation): void {
                             const typeOptions = config.typeOptions;
 
                             if (annotation.options.type === 'measure') {
-                                // Manually disable crooshars according to
+                                // Manually disable crosshairs according to
                                 // stroke width of the shape:
                                 (typeOptions as any).crosshairY.enabled = (
                                     (typeOptions as any).crosshairY
@@ -877,7 +878,8 @@ class NavigationBindings {
             if (
                 isNumber(parsedValue) &&
                 !value.match(/px|em/g) &&
-                !field.match(/format/g)
+                !field.match(/format/g) &&
+                !field.match(/title/g)
             ) {
                 value = parsedValue as any;
             }

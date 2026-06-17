@@ -8,9 +8,9 @@
  *
  * (c) 2009-2026 Highsoft AS
  *
- * Author: Torstein Honsi
- * A commercial license may be required depending on use.
- * See www.highcharts.com/license
+ * Author: Torstein Hønsi
+ * A commercial license may be required depending on use,
+ * see www.highcharts.com/license
  *
  */
 'use strict';

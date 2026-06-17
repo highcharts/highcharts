@@ -5,8 +5,8 @@
  *
  * (c) 2009-2026 Highsoft AS
  *
- * A commercial license may be required depending on use.
- * See www.highcharts.com/license
+ * A commercial license may be required depending on use,
+ * see www.highcharts.com/license
  */
 
 'use strict';
@@ -22,7 +22,6 @@ import type { Highcharts as HighchartsNamespace } from '../Dashboards/Plugins/Hi
 import type { GridNamespace } from '../Dashboards/Plugins/GridTypes';
 
 // Fill registries
-import '../Dashboards/Components/HTMLComponent/HTMLComponent.js';
 import '../Data/Connectors/CSVConnector.js';
 import '../Data/Connectors/GoogleSheetsConnector.js';
 import '../Data/Connectors/HTMLTableConnector.js';
@@ -59,9 +58,34 @@ import HighchartsPlugin from '../Dashboards/Plugins/HighchartsPlugin.js';
 import PluginHandler from '../Dashboards/PluginHandler.js';
 import Sync from '../Dashboards/Components/Sync/Sync.js';
 import Utilities from '../Dashboards/Utilities.js';
-import { addEvent, merge, removeEvent } from '../Shared/Utilities.js';
+import {
+    addEvent,
+    createElement,
+    css,
+    defined,
+    diffObjects,
+    find,
+    fireEvent,
+    getStyle,
+    isArray,
+    isFunction,
+    isNumber,
+    isObject,
+    isString,
+    merge,
+    objectEach,
+    pick,
+    removeEvent,
+    splat
+} from '../Shared/Utilities.js';
 import { uniqueKey } from '../Core/Utilities.js';
 
+// Import components
+import GridComponent from '../Dashboards/Components/GridComponent/GridComponent.js';
+import HighchartsComponent from '../Dashboards/Components/HighchartsComponent/HighchartsComponent.js';
+import HTMLComponent from '../Dashboards/Components/HTMLComponent/HTMLComponent.js';
+import KPIComponent from '../Dashboards/Components/KPIComponent/KPIComponent.js';
+import NavigatorComponent from '../Dashboards/Components/NavigatorComponent/NavigatorComponent.js';
 
 /* *
  *
@@ -75,10 +99,25 @@ declare global {
         addEvent: typeof addEvent;
         board: typeof Board.board;
         boards: typeof Globals.boards;
+        createElement: typeof createElement;
+        css: typeof css;
+        defined: typeof defined;
+        diffObjects: typeof diffObjects;
         error: typeof Utilities.error;
+        find: typeof find;
+        fireEvent: typeof fireEvent;
+        getStyle: typeof getStyle;
+        isArray: typeof isArray;
+        isFunction: typeof isFunction;
+        isNumber: typeof isNumber;
+        isObject: typeof isObject;
+        isString: typeof isString;
         merge: typeof merge;
+        objectEach: typeof objectEach;
+        pick: typeof pick;
         removeEvent: typeof removeEvent;
         setOptions: typeof Defaults.setOptions;
+        splat: typeof splat;
         uniqueKey: typeof uniqueKey;
         version: typeof Globals.version;
         win: typeof Globals.win;
@@ -86,6 +125,11 @@ declare global {
         Board: typeof Board;
         Component: typeof Component;
         ComponentRegistry: typeof ComponentRegistry;
+        GridComponent: typeof GridComponent;
+        HighchartsComponent: typeof HighchartsComponent;
+        HTMLComponent: typeof HTMLComponent;
+        KPIComponent: typeof KPIComponent;
+        NavigatorComponent: typeof NavigatorComponent;
         DataConnector: typeof DataConnector;
         DataConverter: typeof DataConverter;
         DataCursor: typeof DataCursor;
@@ -118,15 +162,35 @@ const G = Globals as unknown as Dashboards;
 
 G.board = Board.board;
 G.addEvent = addEvent;
+G.createElement = createElement;
+G.css = css;
+G.defined = defined;
+G.diffObjects = diffObjects;
 G.error = Utilities.error;
+G.find = find;
+G.fireEvent = fireEvent;
+G.getStyle = getStyle;
+G.isArray = isArray;
+G.isFunction = isFunction;
+G.isNumber = isNumber;
+G.isObject = isObject;
+G.isString = isString;
 G.merge = merge;
+G.objectEach = objectEach;
+G.pick = pick;
 G.removeEvent = removeEvent;
 G.setOptions = Defaults.setOptions;
+G.splat = splat;
 G.uniqueKey = uniqueKey;
 G.AST = AST;
 G.Board = Board;
 G.Component = Component;
 G.ComponentRegistry = ComponentRegistry;
+G.GridComponent = GridComponent;
+G.HighchartsComponent = HighchartsComponent;
+G.HTMLComponent = HTMLComponent;
+G.KPIComponent = KPIComponent;
+G.NavigatorComponent = NavigatorComponent;
 G.DataConnector = DataConnector;
 G.DataConverter = DataConverter;
 G.DataCursor = DataCursor;

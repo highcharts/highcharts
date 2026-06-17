@@ -4,8 +4,9 @@
  *
  *  Authors: Øystein Moseng, Torstein Hønsi, Jon A. Nygård
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -81,24 +82,6 @@ declare module '../../Core/Chart/ChartBase'{
         hideDragHandles(): void;
         /** @requires modules/draggable-points */
         zoomOrPanKeyPressed(e: Event): boolean;
-    }
-}
-
-declare module '../../Core/Chart/ChartOptions'{
-    interface ChartOptions {
-        /**
-         * Set a key to hold when dragging to zoom the chart. This is useful to
-         * avoid zooming while moving points. Should be set different than
-         * [chart.panKey](#chart.panKey).
-         *
-         * @type       {string}
-         * @since      6.2.0
-         * @validvalue ["alt", "ctrl", "meta", "shift"]
-         * @deprecated
-         * @requires  modules/draggable-points
-         * @apioption  chart.zoomKey
-         */
-        zoomKey?: string;
     }
 }
 
@@ -476,7 +459,7 @@ function getGroupedPoints(point: Point): Array<Point> {
  * @param {Highcharts.PointerEventObject} newPos
  *        Event with the new position of the mouse (chartX/Y properties).
  *
- * @return {Highchats.Dictionary<object>}
+ * @return {Highcharts.Dictionary<object>}
  *         Hashmap with point.id mapped to an object with the original point
  *         reference, as well as the new data values.
  */

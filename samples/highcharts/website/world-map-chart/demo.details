@@ -1,0 +1,7 @@
+---
+ name: Regional Exposure World Map Chart
+ authors:
+   - Kamil Musiałowski
+ requiresManualTesting: true
+ js_wrap: b
+...

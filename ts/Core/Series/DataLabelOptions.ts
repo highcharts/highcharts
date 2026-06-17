@@ -1,10 +1,11 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -25,7 +26,6 @@ import type ColorType from '../Color/ColorType';
 import type CSSObject from '../Renderer/CSSObject';
 import type Point from './Point';
 import type ShadowOptionsObject from '../Renderer/ShadowOptionsObject';
-import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type { SymbolTypeRegistry } from '../Renderer/SVG/SymbolType';
 
 /* *
@@ -37,12 +37,6 @@ import type { SymbolTypeRegistry } from '../Renderer/SVG/SymbolType';
 export type DataLabelsFilterOperatorValue = (
     '>'|'<'|'>='|'<='|'=='|'==='|'!='|'!=='
 );
-
-export interface TextPathAttributes extends SVGAttributes {
-    startOffset?: string;
-    textAnchor?: 'start'|'middle'|'end';
-    dy?: number;
-}
 
 export interface DataLabelsFilterOptionsObject {
     /**
@@ -144,17 +138,27 @@ export interface DataLabelOptions {
      * @sample {highcharts} highcharts/plotoptions/series-datalabels-allowoverlap-false/
      *         Don't allow overlap
      *
-     * @default   false
-     * @since     4.1.0
+     * @default false
+     * @since   4.1.0
      */
     allowOverlap?: boolean;
 
     /**
      * The background color or gradient for the data label. Setting it to
-     * `auto` will use the point's color.
+     * `auto` will use the point's color. In addition to
+     * regular colors, there are two special setting for this option:
+     * - `auto` will set the background color the point's color.
+     * - `contrast` will set it to a contrast against the text color, with
+     *   an opacity allowing to see the underlying content. The contrast is
+     *   great enough to ensure readability for the text according to
+     *   accessibility standards.
      *
      * @sample {highcharts} highcharts/plotoptions/series-datalabels-box/
      *         Data labels box options
+     * @sample {highcharts} highcharts/plotoptions/series-datalabels-background-contrast/
+     *         Contrast background color in stacked column
+     * @sample {highcharts} highcharts/series-pie/datalabels-background-contrast/
+     *         Contrast background color in pie
      * @sample {highmaps} maps/plotoptions/series-datalabels-box/
      *         Data labels box options
      * @sample {highmaps} maps/demo/mappoint-datalabels-mapmarker
@@ -183,7 +187,7 @@ export interface DataLabelOptions {
      * @sample {highmaps} maps/plotoptions/series-datalabels-box/
      *         Data labels box options
      *
-     * @default   0
+     * @default   3
      * @since     2.2.1
      */
     borderRadius?: number;
@@ -263,10 +267,11 @@ export interface DataLabelOptions {
     defer?: boolean;
 
     /**
-     * TODO: This is a pie (and derived) series option. It should be
-     * moved to the pie module.
+     * The distance of the data label from the data point. Note that the
+     * `padding` setting also affects the rendered distance, but is not
+     * visible unless the data label has a border or background.
      *
-     * @internal
+     * @product   highcharts highstock gantt
      */
     distance?: number|string;
 
@@ -290,12 +295,13 @@ export interface DataLabelOptions {
      * programmatic control, use the `formatter` instead, and return
      * `undefined` to disable a single data label.
      *
-     * @example
+     * ```js
      * filter: {
      *     property: 'percentage',
      *     operator: '>',
      *     value: 4
      * }
+     * ```
      *
      * @sample {highcharts} highcharts/demo/pie-monochrome
      *         Data labels filtered by percentage
@@ -403,6 +409,10 @@ export interface DataLabelOptions {
      * When either the `borderWidth` or the `backgroundColor` is set,
      * this is the padding within the box.
      *
+     * An array of numbers sets padding for the respective sides. An array
+     * of two numbers repeats the values for the horizontal and vertical
+     * sides.
+     *
      * @sample {highcharts} highcharts/plotoptions/series-datalabels-box/
      *         Data labels box options
      * @sample {highmaps} maps/plotoptions/series-datalabels-box/
@@ -410,7 +420,7 @@ export interface DataLabelOptions {
      * @default 5
      * @since 2.2.1
      */
-    padding?: number;
+    padding?: number|Array<number>;
 
     /**
      * Aligns data labels relative to points. If `center` alignment is
@@ -471,8 +481,12 @@ export interface DataLabelOptions {
      * background. In some cases, especially with grayscale text, the
      * text outline doesn't work well, in which cases it can be disabled
      * by setting it to `"none"`. When `useHTML` is true, the
-     * `textOutline` will not be picked up. In this, case, the same
-     * effect can be achieved through the `text-shadow` CSS property.
+     * `textOutline` will not be picked up. In this case, the same
+     * effect can be acheived through the `text-shadow` CSS property. As a
+     * complementary or alternative to the `textOutline`, a
+     * `dataLabels.backgroundColor` can be used. It provides a more calm
+     * impression and ensures readable text label, at the cost of a risk of
+     * overshadowing the underlying chart elements.
      *
      * For some series types, where each point has an extent, like for
      * example tree maps, the data label may overflow the point. There
@@ -487,25 +501,27 @@ export interface DataLabelOptions {
      *         Long labels truncated with an ellipsis in a pie
      * @sample {highcharts} highcharts/plotoptions/pie-datalabels-overflow-wrap/
      *         Long labels are wrapped in a pie
+     * @sample {highcharts} highcharts/plotoptions/series-datalabels-background-contrast/
+     *         Default text outline and contrast background color
      * @sample {highmaps} maps/demo/color-axis/
      *         Bold labels
      *
+     * @default { color: 'contrast', fontSize: '0.7em', fontWeight: 'bold', textOutline: '1px contrast' }
      * @since 4.1.0
      */
-    style?: CSSObject;
+    style?: CSSObject & {
+        /** @default 'contrast' */
+        color?: CSSObject['color'];
 
-    /**
-     * Options for a label text which should follow marker's shape.
-     * Border and background are disabled for a label that follows a
-     * path.
-     *
-     * **Note:** Only SVG-based renderer supports this option. Setting
-     * `useHTML` to true will disable this option.
-     *
-     * @declare Highcharts.DataLabelsTextPathOptionsObject
-     * @since   7.1.0
-     */
-    textPath?: DataLabelTextPathOptions;
+        /** @default '0.7em' */
+        fontSize?: CSSObject['fontSize'];
+
+        /** @default 'bold' */
+        fontWeight?: CSSObject['fontWeight'];
+
+        /** @default '1px contrast' */
+        textOutline?: CSSObject['textOutline'];
+    };
 
     /**
      * Whether to
@@ -568,23 +584,6 @@ export interface DataLabelOptions {
  * @typedef {"allow"|"justify"} Highcharts.DataLabelsOverflowValue
  */
 export type DataLabelsOverflowValue = ('allow'|'justify');
-
-export interface DataLabelTextPathOptions {
-    /**
-     * Presentation attributes for the text path.
-     *
-     * @since 7.1.0
-     */
-    attributes?: TextPathAttributes;
-
-    /**
-     * Enable or disable `textPath` option for link's or marker's data
-     * labels.
-     *
-     * @since 7.1.0
-     */
-    enabled?: boolean;
-}
 
 /* *
  *

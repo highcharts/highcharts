@@ -4,12 +4,13 @@
  *
  *  (c) 2020-2026 Highsoft AS
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  *  Authors:
- *  - Dawid Dragula
+ *  - Dawid Draguła
  *  - Sebastian Bochan
  *
  * */
@@ -78,7 +79,7 @@ declare module '../../Core/Options' {
         /**
          * Options for the credits label.
          *
-         * Try it: {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/grid-pro/basic/credits | Credits options}
+         * @sample grid-pro/basic/credits Credits options
          */
         credits?: CreditsOptions;
     }

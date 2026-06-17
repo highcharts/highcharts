@@ -35,6 +35,7 @@ const FS = require('node:fs');
  * @type {Array<string>}
  */
 const OPTION_DOCLET_PROPERTIES = [
+    'basic',
     'defaultByProduct',
     'defaultvalue',
     'deprecated',

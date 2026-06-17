@@ -17,6 +17,143 @@
           </div>
           <div class="changelog-container">
             <h3 class="release-header">
+              <a id="highcharts-v13.0.0"></a>
+              <span>Highcharts v13.0.0 (2026-06-11)</span>
+              <a class="release-header-hashtag" href="#highcharts-v13.0.0">#</a>
+              <span class="download-link" ><a href="https://code.highcharts.com/zips/Highcharts-13.0.0.zip" title="Download the zip archive for Highcharts v13.0.0"><i class="fas fa-download"></i></a></span>
+            </h3>
+            <ul>
+              <li>Added new options set, <a href="https://api.highcharts.com/highcharts/palette">palette</a>, making it easy to apply general design colors for light and dark mode. This replaces the former Adaptive theme.</li>
+              <li>Added support for providing data as <a href="https://api.highcharts.com/class-reference/Highcharts.DataTable">DataTable</a> through the new options <a href="https://api.highcharts.com/highcharts/dataTable"><code>dataTable</code></a>, <a href="https://api.highcharts.com/highcharts/series.line.dataTable"><code>series.dataTable</code></a> and <a href="https://api.highcharts.com/highcharts/series.line.dataMapping"><code>series.dataMapping</code></a>.</li>
+              <li>Updated gauge and solid-gauge series, including panes and radial y-axis, with more sensible defaults and major design facelift, making it easier for implementers and AI agents to create great looking gauges from minimal configuration.</li>
+              <li>Refactored the data sorting functionality into a separate module, in order to simplify and reduce weight on the core script file.</li>
+              <li>Improved entrance and exit animation of points and data labels when they are dynamically created, destroyed or zoomed in or out of view.</li>
+              <li>Added the experimental <a href="https://api.highcharts.com/class-reference/Highcharts.Loader">autoload</a> feature, loading required modules based on the chart configuration.</li>
+              <li>Added customizable <code>boundary</code> ticks for <code>datetime</code> axes, see the docs for <a href="https://www.highcharts.com/docs/chart-concepts/axes#datetime">Axes → Datetime</a> → Boundary ticks on datetime axis.</li>
+              <li>Added new setting, <code>contrast</code>, for <code>dataLabels.backgroundColor</code>. Allows enhancing readability with a plain, semi-transparent background color. Extended the <code>dataLabels.distance</code> option to apply to more series types than previously.</li>
+              <li>Added new option, <a href="https://api.highcharts.com/chart.plotBorderRadius"><code>chart.plotBorderRadius</code></a>.</li>
+              <li>Added new options set, <a href="https://api.highcharts.com/highcharts/tooltip.header"><code>tooltip.header</code></a>, for better control over the header design i split tooltips.</li>
+            </ul>
+            <div class="accordion card-group">
+              <div class="card">
+                <div id="heading-13-0-0-upgrade-notes" class="card-header">
+                  <h4 class="card-title">
+                    <button aria-label="Upgrade Notes Highcharts v13.0.0" aria-expanded="false" class="btn btn-link collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#upgrade-notes-13-0-0"><span> Upgrade notes </span></button>
+                  </h4>
+                </div>
+                <div id="upgrade-notes-13-0-0" class="collapse" aria-labelledby="heading-13-0-0-bug-fixes" data-parent=".accordion">
+                  <div class="card-body">
+                    <ul>
+                      <li>Default pane layout and design for gauges and polar charts has gone through a major facelift. See <a href="https://www.highcharts.com/samples/highcharts/pane/v12-design-compatibility">v12 pane design compatibility</a> to see what&#39;s changed.</li>
+                      <li>Solid gauge <code>radius</code> and <code>innerRadius</code>, when given as numeric values, defined on series or point level, no longer resolve as percents, but as pixels. To set it to a percent, use a percentage string like <code>radius: &#39;50%&#39;</code>.</li>
+                      <li>The <code>dataSorting</code> feature now requires the <code>modules/data-sorting.js</code> file.</li>
+                      <li>Default data label positions have changed slightly. Previously, the distance to the point or column was determined by <code>padding</code> and adjusted by <code>x</code> and <code>y</code>. Introduced new option, <code>dataLabels.distance</code>, in order to allow backgrounds with padding without touching the point.</li>
+                    </ul>
+
+                  </div>
+                </div>
+                <div id="heading-13-0-0-bug-fixes" class="card-header">
+                  <h4 class="card-title" aria-label="Bug Fixes Highcharts v13.0.0">
+                    <button aria-label="Bug Fixes Highcharts v13.0.0" aria-expanded="false" class="btn btn-link collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#bug-fixes-13-0-0"><span> Bug fixes </span></button>
+                  </h4>
+                </div>
+                <div id="bug-fixes-13-0-0" class="collapse" aria-labelledby="heading-13-0-0-bug-fixes" data-parent=".accordion">
+                  <div class="card-body">
+                    <ul>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/23771">#23771</a>, boosted points were missing keyed values after zoom.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/24274">#24274</a>, in the exporting menu, the &#39;View in fullscreen&quot; label was broken after being used.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/24293">#24293</a>, fixed and split tooltip with <code>useHTML</code> shifted after first render.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/24572">#24572</a>, templating multiply helper exposed floating-point precision in axis labels.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/24521">#24521</a>, grid lines rendered above the plot border after responsive axis update.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/20412">#20412</a>, exported charts did not have correct data after updating it with <code>null</code> values.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/24547">#24547</a>, styled mode x-range missed <code>colorIndex</code> after <code>setData</code>.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/24266">#24266</a>, year resolution date labels didn&#39;t respect localized format.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/24304">#24304</a>, consistent chart menu aria-label and i18n translations.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/24544">#24544</a>, regression with zones set below max value and axis max set, line on max was clipped.</li>
+                    </ul>
+
+                  </div>
+                </div>
+              </div>
+            </div>
+            <h3 class="release-header">
+              <a id="highcharts-v12.6.0"></a>
+              <span>Highcharts v12.6.0 (2026-04-13)</span>
+              <a class="release-header-hashtag" href="#highcharts-v12.6.0">#</a>
+              <span class="download-link" ><a href="https://code.highcharts.com/zips/Highcharts-12.6.0.zip" title="Download the zip archive for Highcharts v12.6.0"><i class="fas fa-download"></i></a></span>
+            </h3>
+            <ul>
+              <li>Added experimental <a href="https://www.highcharts.com/docs/chart-and-series-types/contour">contour plot</a> functionality to Highcharts, with WebGPU rendering. See <a href="https://github.com/highcharts/highcharts/issues/17324">#17324</a>.</li>
+              <li>Added the ability to use axis units for global setting for annotation points drawing and sizing, see <a href="https://github.com/highcharts/highcharts/issues/23612">#23612</a>.</li>
+              <li>Added full support for arrow-functions as callbacks by giving them the context as a separate argument, see <a href="https://github.com/highcharts/highcharts/issues/9050">#9050</a>.</li>
+              <li>Added support for anchored pattern fills, see <a href="https://github.com/highcharts/highcharts/issues/23567">#23567</a>.</li>
+              <li>Added <code>showDelay</code> option for tooltip and crosshair, see <a href="https://github.com/highcharts/highcharts/issues/9286">#9286</a>.</li>
+              <li>Added new option, <a href="https://api.highcharts.com/highcharts/boost.chunkSize">boost.chunkSize</a> option to allow fine tuning the performance of tooltip position indexing in boosted charts. See <a href="https://github.com/highcharts/highcharts/issues/23902">#23902</a>.</li>
+              <li>Added <a href="https://api.highcharts.com/highcharts/credits.events.click">click event callback</a> for credits.</li>
+            </ul>
+            <div class="accordion card-group">
+              <div class="card">
+                <div id="heading-12-6-0-upgrade-notes" class="card-header">
+                  <h4 class="card-title">
+                    <button aria-label="Upgrade Notes Highcharts v12.6.0" aria-expanded="false" class="btn btn-link collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#upgrade-notes-12-6-0"><span> Upgrade notes </span></button>
+                  </h4>
+                </div>
+                <div id="upgrade-notes-12-6-0" class="collapse" aria-labelledby="heading-12-6-0-bug-fixes" data-parent=".accordion">
+                  <div class="card-body">
+                    <ul>
+                      <li>Setting <code>xAxis</code> and/or <code>yAxis</code> on annotations <a href="https://api.highcharts.com/highcharts/annotations.shapes">shapes</a> or <a href="https://api.highcharts.com/highcharts/annotations.shapeOptions">shapeOptions</a> will convert the point <code>x</code> and <code>y</code> units, and dimensions like <code>width</code>, <code>height</code>, <code>r</code> and <code>ry</code> to axis units.</li>
+                    </ul>
+
+                  </div>
+                </div>
+                <div id="heading-12-6-0-bug-fixes" class="card-header">
+                  <h4 class="card-title" aria-label="Bug Fixes Highcharts v12.6.0">
+                    <button aria-label="Bug Fixes Highcharts v12.6.0" aria-expanded="false" class="btn btn-link collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#bug-fixes-12-6-0"><span> Bug fixes </span></button>
+                  </h4>
+                </div>
+                <div id="bug-fixes-12-6-0" class="collapse" aria-labelledby="heading-12-6-0-bug-fixes" data-parent=".accordion">
+                  <div class="card-body">
+                    <ul>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/22758">#22758</a>, long label text was not clipped to plot area.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/24138">#24138</a>, <code>zMin</code> for bubble series was not changed on <code>series.update()</code>.</li>
+                      <li>Fixed issue with setting position styles for <code>loading</code>.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/23477">#23477</a>, styles from shadow DOM weren&#39;t applied to exported chart.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/24104">#24104</a>, tooltip with large padding overflowed on narrow charts.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/23508">#23508</a>, incorrect axes in <code>scrollablePlotArea</code> with multiple chart instances.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/23654">#23654</a>, wrong <code>dateTime</code> parsing when exporting data set as date string.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/24073">#24073</a>, object data in histogram caused error.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/24096">#24096</a>, missing point events for scatter points on the edge of the plot area.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/23674">#23674</a>, rotated step axis labels were cut off.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/21725">#21725</a>, <code>pie.dataLabels</code> with negative distance set missing after update or visibility toggle.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/23850">#23850</a>, tooltip position was affected by chart position when tooltip was outside and using positioner.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/24220">#24220</a>, treemap data labels outside of zoomed range were still visible.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/24323">#24323</a>, subtitle alignment could not be unset dynamically.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/22330">#22330</a>, rendering of waterfall points crossing axis break was incorrect.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/24102">#24102</a>, a regression causing boosted series being invisible in online exports, when <a href="https://api.highcharts.com/highcharts/exporting.local">exporting.local</a> was false.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/24164">#24164</a>, ghost markers appeared when updating a11y series data.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/23307">#23307</a>, <code>minPointLength</code> didn&#39;t grow in the right direction for small negative values.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/23712">#23712</a>, flex caused infinite chart reflows.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/24186">#24186</a>, custom <a href="https://api.highcharts.com/highcharts/boost.pixelRatio">pixelRatio</a> broke rendering series by boost.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/24126">#24126</a>, <code>negativeColor</code> was not applied in styled mode.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/24265">#24265</a>, broken tooltip rendering in some locales, upper case first was not applied to titles with combining marks.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/23566">#23566</a>, the ES5 build for the AMD package was incorrect.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/24225">#24225</a>, animated data updates didn&#39;t work when <a href="https://api.highcharts.com/highcharts/chart.allowMutatingData">chart.allowMutatingData</a> was false.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/24042">#24042</a>, wrong rendering of 3d chart series when data grouping kicked in.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/23843">#23843</a>, <code>colorAxis</code> marker didn&#39;t animate when moving.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/16583">#16583</a>, <a href="https://api.highcharts.com/highcharts/chart.zoomKey">zoomKey</a> and <a href="https://api.highcharts.com/highcharts/chart.panKey">panKey</a> were ignored when set together.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/23879">#23879</a>, exporting process stopped and gave error when failed to fetch CSS.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/23662">#23662</a>, <a href="https://api.highcharts.com/highcharts/plotOptions.series.boostThreshold">boostThreshold</a> 0 did not disable boost as documented.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/23730">#23730</a>, more forgiving point configuration options when exceeding <code>turboThreshold</code>.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/23946">#23946</a>, bad clipping in an inverted chart if a series had shadow enabled.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/23993">#23993</a>, in some cases the y-axis labels were taking too much space.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/20322">#20322</a>, the color axis did not work with wordcloud.</li>
+                    </ul>
+
+                  </div>
+                </div>
+              </div>
+            </div>
+            <h3 class="release-header">
               <a id="highcharts-v12.5.0"></a>
               <span>Highcharts v12.5.0 (2026-01-12)</span>
               <a class="release-header-hashtag" href="#highcharts-v12.5.0">#</a>
@@ -2432,7 +2569,7 @@ import &#39;highcharts/modules/accessibility&#39;;
               <li>Added <a href="https://www.highcharts.com/docs/advanced-chart-features/data-sorting">data sorting</a> with animations on update.</li>
               <li>Added <a href="https://www.highcharts.com/docs/advanced-chart-features/marker-clusters">marker clusters </a> for scatter and map point series.</li>
               <li>Added new option <a href="https://api.highcharts.com/highcharts/accessibility.linkedDescription">accessibility.linkedDescription</a>.</li>
-              <li>Added new accessibility options with more flexibility for customizing the hidden screen reader regions. See <a href="https://github.com/highcharts/highcharts/issues/12095">#12095</a>.</li>
+              <li>Added new accessibility options with more flexibility for customizing the hidden screen reader regions. See #12095.</li>
               <li>Added <a href="https://www.highcharts.com/demo/flame">flame chart demo</a>.</li>
             </ul>
             <div class="accordion card-group">
@@ -7680,6 +7817,61 @@ import &#39;highcharts/modules/accessibility&#39;;
           </div>
           <div class="changelog-container">
             <h3 class="release-header">
+              <a id="highcharts-stock-v13.0.0"></a>
+              <span>Highcharts Stock v13.0.0 (2026-06-11)</span>
+              <a class="release-header-hashtag" href="#highcharts-stock-v13.0.0">#</a>
+              <span class="download-link" ><a href="https://code.highcharts.com/zips/Highcharts-Stock-13.0.0.zip" title="Download the zip archive for Highcharts Stock v13.0.0"><i class="fas fa-download"></i></a></span>
+            </h3>
+            <ul>
+              <li>Most changes listed under Highcharts 13.0.0 above also apply to Highcharts Stock 13.0.0.</li>
+            </ul>
+            <h3 class="release-header">
+              <a id="highcharts-stock-v12.6.0"></a>
+              <span>Highcharts Stock v12.6.0 (2026-04-13)</span>
+              <a class="release-header-hashtag" href="#highcharts-stock-v12.6.0">#</a>
+              <span class="download-link" ><a href="https://code.highcharts.com/zips/Highcharts-Stock-12.6.0.zip" title="Download the zip archive for Highcharts Stock v12.6.0"><i class="fas fa-download"></i></a></span>
+            </h3>
+            <ul>
+              <li>Most changes listed under Highcharts 12.6.0 above also apply to Highcharts Stock 12.6.0.</li>
+              <li>Added navigator supports for live redraw without scrollbar, see <a href="https://github.com/highcharts/highcharts/issues/23798">#23798</a>.</li>
+              <li>Added color picker and opacity inputs for annotations popup, see <a href="https://github.com/highcharts/highcharts/issues/1677">#1677</a>6.</li>
+            </ul>
+            <div class="accordion card-group">
+              <div class="card">
+                <div id="hs-heading-12-6-0-upgrade-notes" class="card-header">
+                  <h4 class="card-title">
+                    <button aria-label="Upgrade Notes Highcharts-stock v12.6.0" aria-expanded="false" class="btn btn-link collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#upgrade-notes-hs-12-6-0"><span> Upgrade notes </span></button>
+                  </h4>
+                </div>
+                <div id="upgrade-notes-hs-12-6-0" class="collapse" aria-labelledby="hs-heading-12-6-0-bug-fixes" data-parent=".accordion">
+                  <div class="card-body">
+                    <ul>
+                      <li>Navigator with disabled scrollbar now supports the <a href="https://api.highcharts.com/highstock/scrollbar.liveRedraw">live redraw option</a>. To enable or disable live redraw on the navigator, even with disabled scrollbar, use <a href="https://api.highcharts.com/highstock/scrollbar.liveRedraw">scrollbar.liveRedraw</a>.</li>
+                    </ul>
+
+                  </div>
+                </div>
+                <div id="hs-heading-12-6-0-bug-fixes" class="card-header">
+                  <h4 class="card-title" aria-label="Bug Fixes Highcharts-stock v12.6.0">
+                    <button aria-label="Bug Fixes Highcharts-stock v12.6.0" aria-expanded="false" class="btn btn-link collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#bug-fixes-hs-12-6-0"><span> Bug fixes </span></button>
+                  </h4>
+                </div>
+                <div id="bug-fixes-hs-12-6-0" class="collapse" aria-labelledby="hs-heading-12-6-0-bug-fixes" data-parent=".accordion">
+                  <div class="card-body">
+                    <ul>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/23871">#23871</a>, uncaught error when legend was undefined and starting with YTD selected on the range selector.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/21775">#21775</a>, toggling navigator would shrink the chart.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/24247">#24247</a>, <code>StockTools</code> GUI types were incorrect.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/23011">#23011</a>, missing aria labels in stock toolbar.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/24114">#24114</a>, <a href="https://github.com/highcharts/highcharts/issues/24057">#24057</a> <a href="https://api.highcharts.com/highstock/xAxis.events.setExtremes">setExtremes</a> and <code>setRange</code> event was called more than once on navigator.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/24031">#24031</a>, compare percent values calculation was not correct for negative points.</li>
+                    </ul>
+
+                  </div>
+                </div>
+              </div>
+            </div>
+            <h3 class="release-header">
               <a id="highcharts-stock-v12.5.0"></a>
               <span>Highcharts Stock v12.5.0 (2026-01-12)</span>
               <a class="release-header-hashtag" href="#highcharts-stock-v12.5.0">#</a>
@@ -11703,7 +11895,7 @@ import &#39;highcharts/modules/accessibility&#39;;
             </div>
             <h3 class="release-header">
               <a id="highcharts-stock-v1.1.6"></a>
-              <span>Highcharts Stock v1.1.6 (2012-08-24)</span>
+              <span>Highcharts Stock v1.1.6 (2012-06-08)</span>
               <a class="release-header-hashtag" href="#highcharts-stock-v1.1.6">#</a>
               <span class="download-link" ><a href="https://code.highcharts.com/zips/Highstock-1.1.6.zip" title="Download the zip archive for Highcharts Stock v1.1.6"><i class="fas fa-download"></i></a></span>
             </h3>
@@ -12014,6 +12206,64 @@ import &#39;highcharts/modules/accessibility&#39;;
             <h2 id="highcharts-maps">Highcharts Maps</h2>
           </div>
           <div class="changelog-container">
+            <h3 class="release-header">
+              <a id="highcharts-maps-v13.0.0"></a>
+              <span>Highcharts Maps v13.0.0 (2026-06-11)</span>
+              <a class="release-header-hashtag" href="#highcharts-maps-v13.0.0">#</a>
+              <span class="download-link" ><a href="https://code.highcharts.com/zips/Highcharts-Maps-13.0.0.zip" title="Download the zip archive for Highcharts Maps v13.0.0"><i class="fas fa-download"></i></a></span>
+            </h3>
+            <ul>
+              <li>Most changes listed under Highcharts 13.0.0 above also apply to Highcharts Maps 13.0.0.</li>
+            </ul>
+            <div class="accordion card-group">
+              <div class="card">
+
+                <div id="hm-heading-13-0-0-bug-fixes" class="card-header">
+                  <h4 class="card-title" aria-label="Bug Fixes Highcharts-maps v13.0.0">
+                    <button aria-label="Bug Fixes Highcharts-maps v13.0.0" aria-expanded="false" class="btn btn-link collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#bug-fixes-hm-13-0-0"><span> Bug fixes </span></button>
+                  </h4>
+                </div>
+                <div id="bug-fixes-hm-13-0-0" class="collapse" aria-labelledby="hm-heading-13-0-0-bug-fixes" data-parent=".accordion">
+                  <div class="card-body">
+                    <ul>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/24441">#24441</a>, ensured tiled web map tiles reload after <code>mapView</code> updates.</li>
+                    </ul>
+
+                  </div>
+                </div>
+              </div>
+            </div>
+            <h3 class="release-header">
+              <a id="highcharts-maps-v12.6.0"></a>
+              <span>Highcharts Maps v12.6.0 (2026-04-13)</span>
+              <a class="release-header-hashtag" href="#highcharts-maps-v12.6.0">#</a>
+              <span class="download-link" ><a href="https://code.highcharts.com/zips/Highcharts-Maps-12.6.0.zip" title="Download the zip archive for Highcharts Maps v12.6.0"><i class="fas fa-download"></i></a></span>
+            </h3>
+            <ul>
+              <li>Most changes listed under Highcharts 12.6.0 above also apply to Highcharts Maps 12.6.0.</li>
+              <li>Added <code>colorAxis.title</code> option, to allow a separate title for each color scale in the legend. See <a href="https://github.com/highcharts/highcharts/issues/14107">#14107</a>.</li>
+            </ul>
+            <div class="accordion card-group">
+              <div class="card">
+
+                <div id="hm-heading-12-6-0-bug-fixes" class="card-header">
+                  <h4 class="card-title" aria-label="Bug Fixes Highcharts-maps v12.6.0">
+                    <button aria-label="Bug Fixes Highcharts-maps v12.6.0" aria-expanded="false" class="btn btn-link collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#bug-fixes-hm-12-6-0"><span> Bug fixes </span></button>
+                  </h4>
+                </div>
+                <div id="bug-fixes-hm-12-6-0" class="collapse" aria-labelledby="hm-heading-12-6-0-bug-fixes" data-parent=".accordion">
+                  <div class="card-body">
+                    <ul>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/24451">#24451</a>, ghost elements in map after point update.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/23723">#23723</a>, <code>mapView</code> inset borders were not clipped correctly.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/23760">#23760</a>, data label was hidden when drilled down and up.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/23541">#23541</a>, pie data label distribution froze for equal ranks.</li>
+                    </ul>
+
+                  </div>
+                </div>
+              </div>
+            </div>
             <h3 class="release-header">
               <a id="highcharts-maps-v12.5.0"></a>
               <span>Highcharts Maps v12.5.0 (2026-01-12)</span>
@@ -14180,6 +14430,43 @@ import &#39;highcharts/modules/accessibility&#39;;
           </div>
           <div class="changelog-container">
             <h3 class="release-header">
+              <a id="highcharts-gantt-v13.0.0"></a>
+              <span>Highcharts Gantt v13.0.0 (2026-06-11)</span>
+              <a class="release-header-hashtag" href="#highcharts-gantt-v13.0.0">#</a>
+              <span class="download-link" ><a href="https://code.highcharts.com/zips/Highcharts-Gantt-13.0.0.zip" title="Download the zip archive for Highcharts Gantt v13.0.0"><i class="fas fa-download"></i></a></span>
+            </h3>
+            <ul>
+              <li>Most changes listed under Highcharts 13.0.0 above also apply to Highcharts Gantt 13.0.0.</li>
+              <li>Added text align support for grid axis titles (column header).</li>
+            </ul>
+            <h3 class="release-header">
+              <a id="highcharts-gantt-v12.6.0"></a>
+              <span>Highcharts Gantt v12.6.0 (2026-04-13)</span>
+              <a class="release-header-hashtag" href="#highcharts-gantt-v12.6.0">#</a>
+              <span class="download-link" ><a href="https://code.highcharts.com/zips/Highcharts-Gantt-12.6.0.zip" title="Download the zip archive for Highcharts Gantt v12.6.0"><i class="fas fa-download"></i></a></span>
+            </h3>
+            <ul>
+              <li>Most changes listed under Highcharts 12.6.0 above also apply to Highcharts Gantt 12.6.0.</li>
+            </ul>
+            <div class="accordion card-group">
+              <div class="card">
+
+                <div id="hg-heading-12-6-0-bug-fixes" class="card-header">
+                  <h4 class="card-title" aria-label="Bug Fixes Highcharts-gantt v12.6.0">
+                    <button aria-label="Bug Fixes Highcharts-gantt v12.6.0" aria-expanded="false" class="btn btn-link collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#bug-fixes-hg-12-6-0"><span> Bug fixes </span></button>
+                  </h4>
+                </div>
+                <div id="bug-fixes-hg-12-6-0" class="collapse" aria-labelledby="hg-heading-12-6-0-bug-fixes" data-parent=".accordion">
+                  <div class="card-body">
+                    <ul>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts-react/issues/558">#558</a>, pattern module crashed with Gantt charts in React.</li>
+                    </ul>
+
+                  </div>
+                </div>
+              </div>
+            </div>
+            <h3 class="release-header">
               <a id="highcharts-gantt-v12.5.0"></a>
               <span>Highcharts Gantt v12.5.0 (2026-01-12)</span>
               <a class="release-header-hashtag" href="#highcharts-gantt-v12.5.0">#</a>
@@ -15324,6 +15611,39 @@ import &#39;highcharts/modules/accessibility&#39;;
           </div>
           <div class="changelog-container">
             <h3 class="release-header">
+              <a id="highcharts-dashboards-v4.2.0"></a>
+              <span>Highcharts Dashboards v4.2.0 (2026-05-12)</span>
+              <a class="release-header-hashtag" href="#highcharts-dashboards-v4.2.0">#</a>
+              <span class="download-link" ><a href="https://code.highcharts.com/dashboards/zips/Highcharts-Dashboards-4.2.0.zip" title="Download the zip archive for Highcharts Dashboards v4.2.0"><i class="fas fa-download"></i></a></span>
+            </h3>
+            <ul>
+              <li>Restored cell <code>width</code>/<code>height</code> options.</li>
+            </ul>
+            <div class="accordion card-group">
+              <div class="card">
+
+                <div id="hd-heading-4-2-0-bug-fixes" class="card-header">
+                  <h4 class="card-title" aria-label="Bug Fixes Highcharts-dashboards v4.2.0">
+                    <button aria-label="Bug Fixes Highcharts-dashboards v4.2.0" aria-expanded="false" class="btn btn-link collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#bug-fixes-hd-4-2-0"><span> Bug fixes </span></button>
+                  </h4>
+                </div>
+                <div id="bug-fixes-hd-4-2-0" class="collapse" aria-labelledby="hd-heading-4-2-0-bug-fixes" data-parent=".accordion">
+                  <div class="card-body">
+                    <ul>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/24446">#24446</a>, changing the connector in edit mode did not update the Grid Component properly.</li>
+                      <li>Fixed double re-render when polling is activated.</li>
+                      <li>Fixed component namespaces in Dashboards.</li>
+                      <li>Fixed lacking dts for minified module src files.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/24258">#24258</a>, changed event type for cell.destroy.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/24086">#24086</a>, the grid was not destroyed properly on board.update() call.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/24067">#24067</a>, dataTable was not saved in gridOptions on update.</li>
+                    </ul>
+
+                  </div>
+                </div>
+              </div>
+            </div>
+            <h3 class="release-header">
               <a id="highcharts-dashboards-v4.1.0"></a>
               <span>Highcharts Dashboards v4.1.0 (2026-01-21)</span>
               <a class="release-header-hashtag" href="#highcharts-dashboards-v4.1.0">#</a>
@@ -16101,6 +16421,55 @@ import &#39;highcharts/modules/accessibility&#39;;
             <h2 id="highcharts-grid">Highcharts Grid</h2>
           </div>
           <div class="changelog-container">
+            <h3 class="release-header">
+              <a id="highcharts-grid-v3.0.0"></a>
+              <span>Highcharts Grid v3.0.0 (2026-05-06)</span>
+              <a class="release-header-hashtag" href="#highcharts-grid-v3.0.0">#</a>
+              <span class="download-link" ><a href="https://code.highcharts.com/grid/zips/Highcharts-Grid-3.0.0.zip" title="Download the zip archive for Highcharts Grid v3.0.0"><i class="fas fa-download"></i></a></span>
+            </h3>
+            <ul>
+              <li><strong>Grid Pro:</strong> Added support for hierarchical data using <code>data.treeView</code>.</li>
+              <li><strong>Grid Pro:</strong> Added support for row pinning using <code>rendering.rows.pinning</code>.</li>
+              <li><strong>Grid Pro:</strong> Added <code>pageSize</code> field to Remote Data Provider callback, so it can automatically realign chunk indexing when the backend clamps or adjusts the requested page size.</li>
+              <li><strong>Grid:</strong> Cleaned up deprecated methods and options (details in the upgrade note).</li>
+              <li><strong>Grid:</strong> Added support for row headers (<code>th</code>) in <code>tbody</code>.</li>
+              <li><strong>Grid:</strong> Added support for touch devices on column resizing.</li>
+              <li><strong>Grid:</strong> Added <code>data.autogenerateColumns</code> (default <code>true</code>) with support for unbound columns via <code>columns[].dataId = null</code> and <code>cells.valueGetter</code>, so column generation can be fully controlled from <code>columns[]</code> and do not have to have a direct column source in the data source.</li>
+            </ul>
+            <div class="accordion card-group">
+              <div class="card">
+                <div id="hGrid-heading-3-0-0-upgrade-notes" class="card-header">
+                  <h4 class="card-title">
+                    <button aria-label="Upgrade Notes Highcharts-grid v3.0.0" aria-expanded="false" class="btn btn-link collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#upgrade-notes-hGrid-3-0-0"><span> Upgrade notes </span></button>
+                  </h4>
+                </div>
+                <div id="upgrade-notes-hGrid-3-0-0" class="collapse" aria-labelledby="hGrid-heading-3-0-0-bug-fixes" data-parent=".accordion">
+                  <div class="card-body">
+                    <ul>
+                      <li><strong>Grid Pro:</strong> Introduced required Grid Key. <a href="https://www.highcharts.com/docs/grid/grid-key">Read more...</a></li>
+                      <li><strong>Grid:</strong> Replaced uses of <code>grid.dataTable</code> and <code>grid.presentationTable</code> with <code>grid.dataProvider.getDataTable()</code>.</li>
+                      <li><strong>Grid:</strong> Replaced uses of <code>grid.columnOptionsMap</code> with <code>grid.columnPolicy</code> methods.</li>
+                      <li><strong>Grid:</strong> Replaced <code>sorting.sortable</code> with <code>sorting.enabled</code>.</li>
+                    </ul>
+
+                  </div>
+                </div>
+                <div id="hGrid-heading-3-0-0-bug-fixes" class="card-header">
+                  <h4 class="card-title" aria-label="Bug Fixes Highcharts-grid v3.0.0">
+                    <button aria-label="Bug Fixes Highcharts-grid v3.0.0" aria-expanded="false" class="btn btn-link collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#bug-fixes-hGrid-3-0-0"><span> Bug fixes </span></button>
+                  </h4>
+                </div>
+                <div id="bug-fixes-hGrid-3-0-0" class="collapse" aria-labelledby="hGrid-heading-3-0-0-bug-fixes" data-parent=".accordion">
+                  <div class="card-body">
+                    <ul>
+                      <li><strong>Grid Pro:</strong> Prevented <code>grid-lite.css</code> module removal from Grid Pro dist package.</li>
+                      <li><strong>Grid:</strong> Added label to header context menu button.</li>
+                    </ul>
+
+                  </div>
+                </div>
+              </div>
+            </div>
             <h3 class="release-header">
               <a id="highcharts-grid-v2.3.1"></a>
               <span>Highcharts Grid v2.3.1 (2026-03-24)</span>

@@ -5,8 +5,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Øystein Moseng
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -275,7 +276,7 @@ namespace A11yI18nComposition {
      * A `Chart` instance with a time object and numberFormatter, passed on to
      * format().
      *
-     * @deprecated
+     * @deprecated 11.1.0
      *
      * @return {string}
      * The formatted string.

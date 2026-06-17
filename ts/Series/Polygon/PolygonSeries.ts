@@ -1,10 +1,11 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -84,8 +85,8 @@ class PolygonSeries extends ScatterSeries {
     }
 
     public drawGraph(): void {
-        // Hack into the fill logic in area.drawGraph
-        this.options.fillColor = this.color;
+        // Borrow the fill logic from area.drawGraph, honoring `fillOpacity`
+        // and an optional `fillColor`
         AreaSeries.prototype.drawGraph.call(this);
     }
 

@@ -1,7 +1,8 @@
 /* *
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -25,7 +26,6 @@ import type PCPoint from './PCPoint';
 
 import AU from '../ArrayUtilities.js';
 import MultipleLinesComposition from '../MultipleLinesComposition.js';
-import Palettes from '../../../Core/Color/Palettes.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const { sma: SMAIndicator } = SeriesRegistry.seriesTypes;
 import { extend, merge } from '../../../Shared/Utilities.js';
@@ -39,7 +39,7 @@ import { extend, merge } from '../../../Shared/Utilities.js';
 /**
  * The Price Channel series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.pc
  *
@@ -76,11 +76,10 @@ class PCIndicator extends SMAIndicator {
          * Option for fill color between lines in Price channel Indicator.
          *
          * @sample {highstock} stock/indicators/indicator-area-fill
-         *      background fill between lines
+         *      Background fill between lines.
          *
          * @type {Highcharts.Color}
          * @apioption plotOptions.pc.fillColor
-         *
          */
         /**
          * @excluding index
@@ -98,7 +97,7 @@ class PCIndicator extends SMAIndicator {
                  *
                  * @type {Highcharts.ColorString}
                  */
-                lineColor: Palettes.colors[2],
+                lineColor: 'var(--highcharts-color-2)',
                 /**
                  * Pixel width of the line.
                  */
@@ -113,7 +112,7 @@ class PCIndicator extends SMAIndicator {
                  *
                  * @type {Highcharts.ColorString}
                  */
-                lineColor: Palettes.colors[8],
+                lineColor: 'var(--highcharts-color-8)',
                 /**
                  * Pixel width of the line.
                  */
@@ -195,6 +194,7 @@ class PCIndicator extends SMAIndicator {
  *
  * */
 
+/** @internal */
 interface PCIndicator extends MultipleLinesComposition.IndicatorComposition {
     nameBase: string;
     nameComponents: Array<string>;
@@ -218,6 +218,7 @@ MultipleLinesComposition.compose(PCIndicator);
  *
  * */
 
+/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         pc: typeof PCIndicator;
@@ -232,6 +233,7 @@ SeriesRegistry.registerSeriesType('pc', PCIndicator);
  *
  * */
 
+/** @internal */
 export default PCIndicator;
 
 /* *

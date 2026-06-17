@@ -4,12 +4,13 @@
  *
  *  (c) 2020-2026 Highsoft AS
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  *  Authors:
- *  - Dawid Dragula
+ *  - Dawid Draguła
  *  - Sebastian Bochan
  *  - Kamil Kubik
  *
@@ -27,6 +28,9 @@ import type Grid from '../Grid';
 import type { ColumnSortingOrder, FilteringCondition } from '../Options';
 import whcm from '../../../Accessibility/HighContrastMode.js';
 
+import {
+    hasDataTableProvider
+} from '../Data/DataProvider.js';
 import Globals from '../Globals.js';
 import ColumnFiltering from '../Table/Actions/ColumnFiltering/ColumnFiltering.js';
 import GridUtils from '../GridUtils.js';
@@ -238,8 +242,12 @@ class Accessibility {
         let msg: string | undefined;
 
         if (filteringApplied && condition) {
-            const parsedCondition =
-                ColumnFiltering.parseCamelCaseToReadable(condition);
+            const column = this.grid.viewport?.getColumn(columnId);
+            const parsedCondition = ColumnFiltering.getOperatorLabel(
+                condition,
+                column?.dataType ?? 'string',
+                lang
+            );
 
             if (
                 condition === 'empty' ||
@@ -431,7 +439,7 @@ class Accessibility {
      */
     private defaultBeforeFormatter(): string {
         const grid = this.grid;
-        const { container, dataTable, options } = grid;
+        const { container, options } = grid;
         const format =
             options?.accessibility?.screenReaderSection?.beforeGridFormat;
 
@@ -452,6 +460,9 @@ class Accessibility {
             }
         }
 
+        const dataTable = hasDataTableProvider(grid.dataProvider) ?
+            grid.dataProvider.getDataTable() :
+            void 0;
         const context = {
             gridTitle: formattedGridTitle,
             gridDescription: options?.description?.text || '',

@@ -1,10 +1,11 @@
 /* *
  *
  *  (c) 2016-2026 Highsoft AS
- *  Authors: Jon Arild Nygard
+ *  Authors: Jon Arild Nygård
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -31,8 +32,6 @@ import type { SymbolKey } from '../../Renderer/SVG/SymbolType';
 import type Tick from '../Tick';
 import type { TreeGridAxisComposition } from './TreeGridAxis';
 import type { TreeGridAxisLabelIconOptions } from './TreeGridAxisOptions';
-
-import { Palette } from '../../Color/Palettes.js';
 import {
     addEvent,
     correctFloat,
@@ -164,7 +163,7 @@ function renderLabelIcon(
         icon
             .attr({
                 cursor: 'pointer',
-                'fill': pick(params.color, Palette.neutralColor60),
+                'fill': params.color || 'var(--highcharts-neutral-color-60)',
                 'stroke-width': 1,
                 stroke: options.lineColor,
                 strokeWidth: options.lineWidth || 0

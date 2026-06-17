@@ -98,6 +98,20 @@ function postProcessApiJS(gridDir, classMap) {
     const injection = `
   var gridClassMap = ${gridClassMap};
 
+  function formatGridDocText(text, asHTML) {
+    return (text || '').replace(
+      /\\{@link\\s+([^}\\s|]+)(?:\\s*\\|\\s*([^}]+)|\\s+([^}]+))?\\}/g,
+      function (_match, target, pipeLabel, spaceLabel) {
+        var href = (target || '').trim();
+        var label = (pipeLabel || spaceLabel || href).trim();
+        if (asHTML && /^https?:\\/\\//.test(href)) {
+          return '<a href="' + href + '">' + label + '</a>';
+        }
+        return label;
+      }
+    );
+  }
+
   function getGridClassReferenceUrl(type) {
     // Extract class names from callback signatures like
     // "(this: Column) => void" or "(this: Grid, e: AnyRecord) => void"
@@ -141,11 +155,11 @@ function postProcessApiJS(gridDir, classMap) {
         'function createOption(target, def, parentDef, state, origState) {'
     );
 
-    // Display renderer-type branches in the same "{ type: ..., ... }" style
-    // used by series-type branches in the left navigation tree.
+    // Display discriminator-based branches in the same "{ type: ..., ... }"
+    // style used by series-type branches in the left navigation tree.
     content = content.replace(
         /\/\^series\\\.\[a-z0-9\]\+\$\/\.test\(def\.fullname\)/u,
-        '/(^series\\.[a-z0-9]+$)|(^.*renderer\\.[A-Za-z0-9]+$)|(^data\\.[a-z0-9]+$)/.test(def.fullname)'
+        '/(^series\\.[a-z0-9]+$)|(^.*renderer\\.[A-Za-z0-9]+$)|(^data\\.[a-z0-9]+$)|(^.*connector\\.[A-Za-z0-9]+$)|(^.*treeView\\.input\\.[A-Za-z0-9]+$)/.test(def.fullname)'
     );
 
     // For data provider branches, use `providerType` as discriminator key.
@@ -181,8 +195,8 @@ function postProcessApiJS(gridDir, classMap) {
         /if \(def\.deprecated\) \{\n\s+deprecated = cr\('p', 'deprecated', 'Deprecated' \+ \(\n\s+def\.deprecated === true \? '' : ' ' \+ def\.deprecated\n\s+\)\);\n\s+option\.setAttribute\(\n\s+'class', option\.getAttribute\('class'\) \+ ' deprecated'\n\s+\);\n\s+\}\n\n\s+state\.split/u,
         'if (def.deprecated) {\n' +
         '          deprecated = cr(\'p\', \'deprecated\', \'Deprecated\' + (\n' +
-        '            def.deprecated === true ? \'\' : \' \' + def.deprecated\n' +
-        '          ));\n' +
+        '            def.deprecated === true ? \'\' : \' \' + formatGridDocText(def.deprecated, true)\n' +
+        '          ), true);\n' +
         '          option.setAttribute(\n' +
         '            \'class\', option.getAttribute(\'class\') + \' deprecated\'\n' +
         '          );\n' +
@@ -213,6 +227,12 @@ function postProcessApiJS(gridDir, classMap) {
     content = content.replace(
         /ap\(\n\s+title,\n\s+arrow\n\s+\)/u,
         'ap(\n          title,\n          proBadge,\n          arrow\n        )'
+    );
+    content = content.replace(
+        /deprecated = cr\('p', 'deprecated', 'Deprecated' \+ \(\n\s+def\.deprecated === true \? '' : ' ' \+ def\.deprecated\n\s+\)\);/gu,
+        'deprecated = cr(\'p\', \'deprecated\', \'Deprecated\' + (\n' +
+        '            def.deprecated === true ? \'\' : \' \' + formatGridDocText(def.deprecated, true)\n' +
+        '          ), true);'
     );
 
     fs.writeFileSync(apiJsPath, content, 'utf8');
@@ -458,7 +478,7 @@ function postProcessSitemap(gridDir) {
  * Path to the Grid API docs output directory.
  *
  * @param {string|undefined} gridVersion
- * Grid version string (e.g. "v2.2.0") for the navbar.
+ * Grid version string (e.g. "v2.2.0").
  */
 function postProcessHTML(gridDir, gridVersion) {
     const fs = require('fs');
@@ -552,7 +572,7 @@ function postProcessHTML(gridDir, gridVersion) {
         ],
         [
             /Highcharts Core (v[\d.]+)/gu,
-            'Highcharts Grid $1'
+            `Highcharts Grid ${gridVersion || '$1'}`
         ],
 
         // Fix og:url to use /grid/ instead of /highcharts/
@@ -728,7 +748,7 @@ async function apiDocs() {
     log.message('Post-processing HTML for Grid branding...');
     const gridVersion = await fetchGridVersion();
     if (gridVersion) {
-        log.message('Using Grid version', gridVersion, 'for navbar.');
+        log.message('Using Grid version', gridVersion, 'for navbar and footer.');
     } else {
         log.warn(
             'Could not read Grid version from build-properties.json. ' +

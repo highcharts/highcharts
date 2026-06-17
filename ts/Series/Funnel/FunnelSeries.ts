@@ -3,10 +3,11 @@
  *  Highcharts funnel module
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -20,7 +21,6 @@
  * */
 
 import type BBoxObject from '../../Core/Renderer/BBoxObject';
-import type ColorType from '../../Core/Color/ColorType';
 import type DataLabel from '../../Core/Series/DataLabel';
 import type FunnelDataLabelOptions from './FunnelDataLabelOptions';
 import type FunnelPoint from './FunnelPoint';
@@ -35,7 +35,7 @@ const {
     composed,
     noop
 } = H;
-import BorderRadius from '../../Extensions/BorderRadius.js';
+import { optionsToBorderRadiusObject } from '../../Extensions/BorderRadius.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     column: ColumnSeries,
@@ -53,19 +53,6 @@ import {
     relativeLength,
     splat
 } from '../../Shared/Utilities.js';
-
-/* *
- *
- *  Declarations
- *
- * */
-
-declare module '../../Core/Series/SeriesOptions' {
-    interface SeriesStateHoverOptions {
-        borderColor?: ColorType;
-        color?: ColorType;
-    }
-}
 
 /* *
  *
@@ -161,7 +148,8 @@ class FunnelSeries extends PieSeries {
         const series = point.series,
             reversed = series.options.reversed,
             dlBox = point.dlBox || point.shapeArgs,
-            { align, padding = 0, verticalAlign } = options,
+            { align, verticalAlign } = options,
+            padding = splat(options.padding || 0),
             inside =
                 ((series.options || {}).dataLabels || {}).inside,
             centerY = series.center[1],
@@ -187,7 +175,8 @@ class FunnelSeries extends PieSeries {
         if (verticalAlign === 'middle') {
             y = dlBox.y - dlBox.height / 2 + dataLabelHeight / 2;
         } else if (verticalAlign === 'top') {
-            y = dlBox.y - dlBox.height + dataLabelHeight + padding;
+            y = dlBox.y - dlBox.height + dataLabelHeight +
+                padding[0];
         }
 
         if (
@@ -196,9 +185,9 @@ class FunnelSeries extends PieSeries {
             verticalAlign === 'middle'
         ) {
             if (align === 'right') {
-                x = dlBox.x - padding + offset;
+                x = dlBox.x - padding[1 % padding.length] + offset;
             } else if (align === 'left') {
-                x = dlBox.x + padding - offset;
+                x = dlBox.x + padding[3 % padding.length] - offset;
             }
         }
 
@@ -264,7 +253,7 @@ class FunnelSeries extends PieSeries {
     ): DataLabel.LabelPositionObject {
         const y = point.plotY || 0,
             sign = point.half ? 1 : -1,
-            x = this.getX(y, !!point.half, point);
+            x = this.getXPos(y, !!point.half, point);
 
         return {
             distance,
@@ -304,7 +293,7 @@ class FunnelSeries extends PieSeries {
             options = series.options,
             reversed = options.reversed,
             ignoreHiddenPoint = options.ignoreHiddenPoint,
-            borderRadiusObject = BorderRadius.optionsToObject(
+            borderRadiusObject = optionsToBorderRadiusObject(
                 options.borderRadius
             ),
             plotWidth = chart.plotWidth,
@@ -378,7 +367,7 @@ class FunnelSeries extends PieSeries {
                     (1 - (y - top) / (height - neckHeight));
         };
 
-        series.getX = function (
+        series.getXPos = function (
             this: FunnelSeries,
             y: number,
             half: boolean,
@@ -678,7 +667,7 @@ class FunnelSeries extends PieSeries {
 interface FunnelSeries {
     pointClass: typeof FunnelPoint;
     getWidthAt(y: number): number; // Added during translate
-    getX(
+    getXPos(
         y: number,
         half: boolean,
         point: FunnelPoint

@@ -4,8 +4,9 @@
  *
  *  Authors: Øystein Moseng, Torstein Hønsi, Jon A. Nygård
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -182,6 +183,10 @@ const DragDropDefaults: DragDropOptions = {
      */
 
     /**
+     * Deprecated. Use
+     * [chart.zooming.key](#chart.zooming.key)
+     * instead.
+     *
      * Set a key to hold when dragging to zoom the chart. This is useful to
      * avoid zooming while moving points. Should be set different than
      * [chart.panKey](#chart.panKey).
@@ -189,9 +194,25 @@ const DragDropDefaults: DragDropOptions = {
      * @type       {string}
      * @since      6.2.0
      * @validvalue ["alt", "ctrl", "meta", "shift"]
-     * @deprecated
-     * @requires  modules/draggable-points
+     * @deprecated 10.2.1
+     * @requires   modules/draggable-points
      * @apioption  chart.zoomKey
+     */
+
+    /**
+     * Set a key to hold when dragging to zoom the chart. This is useful to
+     * avoid zooming while moving points. Should be set different than
+     * [chart.panKey](#chart.panKey).
+     *
+     * **Note:** If both zooming and panning are enabled without keys,
+     * zooming will take precedence by default. To prioritize panning,
+     * either set zooming key or [chart.panKey](#chart.panKey).
+     *
+     * @type       {string}
+     * @default    {highcharts} undefined
+     * @validvalue ["alt", "ctrl", "meta", "shift"]
+     * @requires   modules/draggable-points
+     * @apioption  chart.zooming.key
      */
 
     /**
@@ -309,7 +330,7 @@ const DragDropDefaults: DragDropOptions = {
         /**
          * The fill color of the drag handles.
          *
-         * @type  {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @type  {Highcharts.ColorType}
          * @since 6.2.0
          */
         color: '#fff',
@@ -381,7 +402,7 @@ const DragDropDefaults: DragDropOptions = {
             /**
              * Guide box fill color.
              *
-             * @type  {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+             * @type  {Highcharts.ColorType}
              * @since 6.2.0
              */
             color: 'rgba(0, 0, 0, 0.1)',
