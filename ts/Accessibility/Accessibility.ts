@@ -36,7 +36,8 @@ import H from '../Core/Globals.js';
 const { doc } = H;
 import HU from './Utils/HTMLUtilities.js';
 const {
-    removeElement
+    removeElement,
+    stripHTMLTagsFromString
 } = HU;
 
 import A11yI18n from './A11yI18n.js';
@@ -422,6 +423,57 @@ namespace Accessibility {
     }
 
     /**
+     * Inject the accessibility description into the exported SVG as a
+     * Dublin Core RDF metadata block. Runs on the source chart so the
+     * `linkedDescription` selector resolves against the live DOM, then
+     * mutates the export copy's `<svg>` element before its `innerHTML`
+     * is serialized.
+     * @private
+     */
+    function chartOnBeforeGetSVG(
+        this: ChartComposition,
+        e: { chartCopy: Chart }
+    ): void {
+        const a11y = this.accessibility;
+        if (!a11y || a11y.zombie) {
+            return;
+        }
+
+        const infoRegions = a11y.components.infoRegions;
+        const text = infoRegions && (
+            infoRegions.getLongdescText() ||
+            infoRegions.getTypeDescriptionText()
+        );
+        if (!text) {
+            return;
+        }
+
+        const safe = stripHTMLTagsFromString(text, true)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;');
+        if (!safe.trim()) {
+            return;
+        }
+        const box = e.chartCopy.renderer.box;
+
+        box.querySelector(':scope > metadata')?.remove();
+        box.insertAdjacentHTML(
+            'afterbegin',
+            '<metadata>' +
+                '<rdf:RDF ' +
+                    'xmlns:rdf="http://www.w3.org/' +
+                        '1999/02/22-rdf-syntax-ns#" ' +
+                    'xmlns:dc="http://purl.org/dc/elements/1.1/">' +
+                    '<rdf:Description>' +
+                        '<dc:description>' + safe + '</dc:description>' +
+                    '</rdf:Description>' +
+                '</rdf:RDF>' +
+            '</metadata>'
+        );
+    }
+
+    /**
      * Update with chart/series/point updates.
      * @private
      */
@@ -543,6 +595,11 @@ namespace Accessibility {
                 ChartClass as typeof ChartComposition,
                 'update',
                 chartOnUpdate
+            );
+            addEvent(
+                ChartClass as typeof ChartComposition,
+                'beforeGetSVG',
+                chartOnBeforeGetSVG
             );
 
             // Mark dirty for update

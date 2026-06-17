@@ -1951,6 +1951,7 @@ export class Exporting {
      * @return {string|Promise<string>}
      * The SVG representation of the rendered chart.
      *
+     * @emits Highcharts.Chart#event:beforeGetSVG
      * @emits Highcharts.Chart#event:getSVG
      *
      * @requires modules/exporting
@@ -2125,6 +2126,8 @@ export class Exporting {
             if (exporting?.options.applyStyleSheets) {
                 this.applyShadowDOMStyles(chartCopy);
             }
+
+            fireEvent(chart, 'beforeGetSVG', { chartCopy: chartCopy });
 
             // Get the SVG from the container's innerHTML
             svg = exporting?.getChartHTML(
