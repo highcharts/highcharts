@@ -197,22 +197,33 @@ is set in exporting.chartConfig.`
         }]
     });
 
-    const dummySvg = document.createElementNS(
-            'http://www.w3.org/2000/svg',
-            'svg'
-        ),
-        text = document.createElementNS(
-            'http://www.w3.org/2000/svg',
-            'text'
-        );
+    const createDummySvg = function (fontOnRoot) {
+        const svg = document.createElementNS(
+                'http://www.w3.org/2000/svg',
+                'svg'
+            ),
+            text = document.createElementNS(
+                'http://www.w3.org/2000/svg',
+                'text'
+            );
 
-    text.setAttribute('style', 'font-family: MockExportFont');
-    text.textContent = 'Highcharts';
-    dummySvg.append(text);
+        text.textContent = 'Highcharts';
 
-    await Highcharts.Exporting.inlineFonts(dummySvg);
-    const styleText = dummySvg.querySelector('style').textContent;
-    restoreMocks();
+        if (fontOnRoot) {
+            svg.setAttribute('style', 'font-family: MockExportFont');
+            text.setAttribute('style', 'font-family: OtherUsedFont');
+        } else {
+            text.setAttribute('style', 'font-family: MockExportFont');
+        }
+
+        svg.append(text);
+
+        return svg;
+    };
+
+    const elementSvg = createDummySvg(false);
+    await Highcharts.Exporting.inlineFonts(elementSvg);
+    const elementStyleText = elementSvg.querySelector('style').textContent;
 
     assert.strictEqual(
         stylesheetFetchCount,
@@ -227,10 +238,22 @@ is set in exporting.chartConfig.`
     );
 
     assert.ok(
-        styleText.includes('@font-face') &&
-        styleText.includes('MockExportFont') &&
-        styleText.includes('data:font/woff2;base64,AAEC'),
+        elementStyleText.includes('@font-face') &&
+        elementStyleText.includes('MockExportFont') &&
+        elementStyleText.includes('data:font/woff2;base64,AAEC'),
         'Should inline fonts from cross-origin stylesheets.'
+    );
+
+    const rootSvg = createDummySvg(true);
+    await Highcharts.Exporting.inlineFonts(rootSvg);
+    const rootStyleText = rootSvg.querySelector('style').textContent;
+    restoreMocks();
+
+    assert.ok(
+        rootStyleText.includes('@font-face') &&
+        rootStyleText.includes('MockExportFont') &&
+        rootStyleText.includes('data:font/woff2;base64,AAEC'),
+        'Should inline fonts declared chart-wide on the root SVG (#24722).'
     );
 
 });
