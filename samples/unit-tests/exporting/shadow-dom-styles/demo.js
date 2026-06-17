@@ -38,7 +38,7 @@ QUnit.test('Shadow DOM CSS styles', function (assert) {
     const svg = chart.exporting.getSVG();
 
     assert.ok(
-        svg.endsWith('</svg>'),
+        svg.trim().endsWith('</svg>'),
         'Exported SVG string should end with </svg>'
     );
 
