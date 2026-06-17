@@ -39,23 +39,20 @@ body {
     margin-top: 8px;
     border-collapse: collapse;
     width: 100%;
-}
 
-.violin-tooltip-label {
-    padding-right: 15px;
-    color: var(--highcharts-neutral-color-60, #666);
-}
+    th {
+        padding-right: 15px;
+        color: var(--highcharts-neutral-color-60, #666);
+    }
 
-.violin-tooltip-value {
-    font-family: monospace;
-    text-align: right;
-}
+    td {
+        font-family: monospace;
+        text-align: right;
+    }
 
-.violin-tooltip-label.median-row {
-    font-weight: bold;
-    color: var(--highcharts-neutral-color-100, #000);
-}
-
-.violin-tooltip-value.median-row {
-    font-weight: bold;
+    .median-row th,
+    .median-row td {
+        font-weight: bold;
+        color: var(--highcharts-neutral-color-100, #000);
+    }
 }

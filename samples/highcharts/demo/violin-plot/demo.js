@@ -50,38 +50,39 @@ function createChart(categories, series) {
         tooltip: {
             useHTML: true,
             padding: 12,
-            formatter: function () {
-                const stat = (this.series.options.custom || {}).stat;
-
-                if (!stat) {
-                    return false;
-                }
-
-                const format = value => Highcharts.numberFormat(value, 2),
-                    row = (label, value, cls = '') =>
-                        '<tr>' +
-                        `<td class="violin-tooltip-label ${cls}">` +
-                        `${label}:</td>` +
-                        `<td class="violin-tooltip-value ${cls}">` +
-                        `${format(value)} cm</td>` +
-                        '</tr>';
-
-                return `
-                    <div class="violin-tooltip">
-                        <span class="violin-tooltip-header"
-                            style="color: ${this.series.color};">
-                            ${this.series.name}
-                        </span>
-                        <table class="violin-tooltip-table">
-                            ${row('Max', stat[4])}
-                            ${row('Q 3', stat[3])}
-                            ${row('Median', stat[2], 'median-row')}
-                            ${row('Q 1', stat[1])}
-                            ${row('Min', stat[0])}
-                        </table>
-                    </div>
-                `;
-            }
+            // Since the polygon series have disabled mouse tracking, the
+            // tooltip is only triggered by the boxplot points.
+            format: `
+                <div class="violin-tooltip">
+                    <span class="violin-tooltip-header"
+                        style="color: var(--highcharts-color-{point.index})">
+                        {point.name}
+                    </span>
+                    <table class="violin-tooltip-table">
+                        <tr>
+                            <th>Max:</th>
+                            <td>{high:.2f} cm</td>
+                        </tr>
+                        <tr>
+                            <th>Q3:</th>
+                            <td>{q3:.2f} cm</td>
+                        </tr>
+                        <tr class="median-row">
+                            <th>Median:</th>
+                            <td>{median:.2f} cm</td>
+                        </tr>
+                        <tr>
+                            <th>Q1:</th>
+                            <td>{q1:.2f} cm</td>
+                        </tr>
+                        <tr>
+                            <th>Min:</th>
+                            <td>{low:.2f} cm</td>
+                        </tr>
+                    </table>
+                </div>
+            `,
+            shared: true
         },
         plotOptions: {
             series: {
@@ -92,6 +93,7 @@ function createChart(categories, series) {
                 }
             },
             polygon: {
+                enableMouseTracking: false,
                 fillOpacity: 0.5,
                 marker: {
                     enabled: false
@@ -103,10 +105,11 @@ function createChart(categories, series) {
                 color: '#333',
                 fillColor: '#333',
                 medianColor: '#fff',
-                borderRadius: 4
+                borderRadius: 4,
+                showInLegend: false
             }
         },
-        series: series
+        series
     });
 }
 
@@ -256,7 +259,6 @@ function buildChart(columns) {
     const boxplotSeries = {
         type: 'boxplot',
         name: 'Statistics',
-        showInLegend: false,
         data: categories.map((sport, i) => ({
             x: i,
             low: stats[i][0],
