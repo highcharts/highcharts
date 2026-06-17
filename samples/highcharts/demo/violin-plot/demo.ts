@@ -1,4 +1,4 @@
-const dataURL = 'https://www.highcharts.com/samples/data/olympic-female-heights-2024.csv';
+const dataURL = 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@ef9afb0d0/samples/data/olympic-female-heights-2024.csv';
 
 // Render the violin plot out of multiple polygon series (the density shapes)
 // and a boxplot series (the five-number summary)
