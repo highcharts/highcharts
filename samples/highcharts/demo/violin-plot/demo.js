@@ -1,10 +1,7 @@
-const dataURL =
-    'https://www.highcharts.com/samples/data/' +
-    'olympic-female-heights-2024.csv';
+const dataURL = 'https://www.highcharts.com/samples/data/olympic-female-heights-2024.csv';
 
-// Render the violin plot. The chart configuration is kept at the top so that
-// readers meet the actual options first; the data crunching that feeds it
-// lives in the helpers below.
+// Render the violin plot out of multiple polygon series (the density shapes)
+// and a boxplot series (the five-number summary)
 function createChart(categories, series) {
     Highcharts.chart('container', {
         chart: {
@@ -23,9 +20,9 @@ function createChart(categories, series) {
             text: 'Height distribution of female athletes at the 2024 Olympics'
         },
         xAxis: {
-            categories: categories,
+            categories,
             lineWidth: 0,
-            // Highlight the hovered category instead of dimming the others
+            // Highlight the hovered category
             crosshair: {
                 enabled: true
             }
@@ -105,15 +102,14 @@ function createChart(categories, series) {
                 color: '#333',
                 fillColor: '#333',
                 medianColor: '#fff',
-                borderRadius: 4,
-                showInLegend: false
+                borderRadius: 4
             }
         },
         series
     });
 }
 
-// Native math helpers
+// Math helpers
 const mathUtils = {
     quantile: (sortedValues, q) => {
         const pos = (sortedValues.length - 1) * q,
@@ -217,21 +213,21 @@ function generateViolinData(step, sortedDataArrays) {
 }
 
 // Group the parsed CSV by sport, build the series, and render the chart.
-function buildChart(columns) {
-    const sports = columns[0],
-        heights = columns[1],
+function processData(dataTable) {
+    const sports = dataTable.getColumn('sport'),
+        heights = dataTable.getColumn('height'),
         groupedData = {};
 
-    for (let i = 1; i < sports.length; i++) {
+    for (let i = 0; i < sports.length; i++) {
         const sport = sports[i],
             height = Number(heights[i]);
 
         if (sport && height) {
-            const cleanSport = sport.charAt(0).toUpperCase() + sport.slice(1);
-            if (!groupedData[cleanSport]) {
-                groupedData[cleanSport] = [];
+            const ucSport = sport.charAt(0).toUpperCase() + sport.slice(1);
+            if (!groupedData[ucSport]) {
+                groupedData[ucSport] = [];
             }
-            groupedData[cleanSport].push(height);
+            groupedData[ucSport].push(height);
         }
     }
 
@@ -270,13 +266,20 @@ function buildChart(columns) {
         }))
     };
 
-    createChart(categories, [...polygonSeries, boxplotSeries]);
+    return { categories, polygonSeries, boxplotSeries };
 }
 
 // Load the local CSV data and parse it with the Data module.
 fetch(dataURL)
     .then(response => response.text())
     .then(csv => {
-        const parsed = new Highcharts.Data({ csv });
-        buildChart(parsed.columns);
+        const dataTable = new Highcharts.Data({ csv }).getDataTable();
+
+        const {
+            categories,
+            polygonSeries,
+            boxplotSeries
+        } = processData(dataTable);
+
+        createChart(categories, [...polygonSeries, boxplotSeries]);
     });
