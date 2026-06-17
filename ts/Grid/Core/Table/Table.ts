@@ -41,6 +41,7 @@ import Cell from './Cell.js';
 import { defined, fireEvent, getStyle } from '../../../Shared/Utilities.js';
 import CellContextMenu from './CellContextMenu/CellContextMenu.js';
 import CellContextMenuBuiltInActions from './CellContextMenu/CellContextMenuBuiltInActions.js';
+import { CellContextMenuLongPress } from './CellContextMenu/CellContextMenuLongPress.js';
 
 const { makeHTMLElement } = GridUtils;
 
@@ -167,6 +168,20 @@ class Table {
     private cellContextMenu?: CellContextMenu;
 
     /**
+     * The iOS long-press polyfill for cell context menus.
+     */
+    private cellContextMenuLongPress?: CellContextMenuLongPress;
+
+    /**
+     * Optional cell editing controller. Populated by Grid Pro composition.
+     *
+     * @internal
+     */
+    public cellEditing?: {
+        editedCell?: TableCell;
+    };
+
+    /**
      * Async hooks executed after the main row update cycle.
      * @internal
      */
@@ -216,6 +231,9 @@ class Table {
 
         this.tbodyElement.addEventListener('scroll', this.onScroll);
         this.addBodyEventListeners(this.tbodyElement);
+        if (this.isContextMenuLongPressed()) {
+            this.cellContextMenuLongPress!.addEvents(this.tableElement);
+        }
         document.addEventListener('focusin', this.onDocumentFocusIn, true);
         document.addEventListener(
             'pointerdown',
@@ -304,6 +322,36 @@ class Table {
         body.removeEventListener('mouseover', this.onCellMouseOver);
         body.removeEventListener('mouseout', this.onCellMouseOut);
         body.removeEventListener('keydown', this.onCellKeyDown);
+    }
+
+    private isContextMenuLongPressed(): boolean {
+        if (!Globals.isIos) {
+            return false;
+        }
+
+        if (!this.cellContextMenuLongPress) {
+            this.cellContextMenuLongPress = new CellContextMenuLongPress({
+                getTableCellFromTarget: (target): TableCell | undefined =>
+                    this.getTableCellFromTarget(target),
+                openCellContextMenu: (cell, clientX, clientY): boolean =>
+                    this.openCellContextMenu(cell, clientX, clientY),
+                isCellInEditMode: (cell): boolean =>
+                    this.cellEditing?.editedCell === cell
+            });
+        }
+
+        return true;
+    }
+
+    private getTableCellFromTarget(
+        target: EventTarget | null
+    ): TableCell | undefined {
+        const cell = this.getCellFromElement(target);
+        if (!cell || !('column' in cell) || !('row' in cell)) {
+            return;
+        }
+
+        return cell as TableCell;
     }
 
     /**
@@ -635,12 +683,11 @@ class Table {
      * @param e Mouse event
      */
     private onCellContextMenu = (e: MouseEvent): void => {
-        const cell = this.getCellFromElement(e.target);
-        if (!cell || !('column' in cell) || !('row' in cell)) {
+        const tableCell = this.getTableCellFromTarget(e.target);
+        if (!tableCell) {
             return;
         }
 
-        const tableCell = cell as TableCell;
         if (this.openCellContextMenu(tableCell, e.clientX, e.clientY)) {
             e.preventDefault();
         }
@@ -1099,6 +1146,8 @@ class Table {
         this.header?.destroy();
         this.cellContextMenu?.hide();
         delete this.cellContextMenu;
+        this.cellContextMenuLongPress?.removeEvents();
+        delete this.cellContextMenuLongPress;
 
         for (let i = 0, iEnd = this.rows.length; i < iEnd; ++i) {
             this.rows[i]?.destroy();
