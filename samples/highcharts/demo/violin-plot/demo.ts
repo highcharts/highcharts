@@ -2,7 +2,10 @@ const dataURL = 'https://www.highcharts.com/samples/data/olympic-female-heights-
 
 // Render the violin plot out of multiple polygon series (the density shapes)
 // and a boxplot series (the five-number summary)
-function createChart(categories, series) {
+function renderChart(
+    categories: string[],
+    series: Highcharts.SeriesOptionsType[]
+) {
     Highcharts.chart('container', {
         chart: {
             type: 'polygon',
@@ -23,9 +26,7 @@ function createChart(categories, series) {
             categories,
             lineWidth: 0,
             // Highlight the hovered category
-            crosshair: {
-                enabled: true
-            }
+            crosshair: true
         },
         yAxis: {
             title: {
@@ -111,7 +112,7 @@ function createChart(categories, series) {
 
 // Math helpers
 const mathUtils = {
-    quantile: (sortedValues, q) => {
+    quantile: (sortedValues: number[], q: number) => {
         const pos = (sortedValues.length - 1) * q,
             base = Math.floor(pos),
             rest = pos - base;
@@ -121,23 +122,24 @@ const mathUtils = {
         return sortedValues[base] +
             rest * (sortedValues[base + 1] - sortedValues[base]);
     },
-    stdDev: arr => {
+    stdDev: (arr: number[]) => {
         const mean = arr.reduce((a, b) => a + b) / arr.length;
         return Math.sqrt(
             arr.map(x => Math.pow(x - mean, 2))
                 .reduce((a, b) => a + b) / arr.length
         );
     },
-    gaussian: u => (1 / Math.sqrt(2 * Math.PI)) * Math.exp(-0.5 * u * u)
+    gaussian: (u: number) =>
+        (1 / Math.sqrt(2 * Math.PI)) * Math.exp(-0.5 * u * u)
 };
 
 // Generate the kernel density estimate (the violin shape) and the
 // five-number summary for each category.
-function generateViolinData(step, sortedDataArrays) {
+function generateViolinData(step: number, sortedDataArrays: number[][]) {
     let globalMin = Infinity,
         globalMax = -Infinity;
 
-    const stats = [];
+    const stats: number[][] = [];
 
     sortedDataArrays.forEach(sortedValues => {
         if (!sortedValues.length) {
@@ -164,12 +166,12 @@ function generateViolinData(step, sortedDataArrays) {
     globalMin = Math.floor(globalMin) - 10;
     globalMax = Math.ceil(globalMax) + 10;
 
-    const xiData = [];
+    const xiData: number[] = [];
     for (let i = globalMin; i <= globalMax; i += step) {
         xiData.push(i);
     }
 
-    const results = [];
+    const results: number[][][] = [];
     let maxDensity = 0;
 
     sortedDataArrays.forEach(sortedValues => {
@@ -183,7 +185,7 @@ function generateViolinData(step, sortedDataArrays) {
             step * 2
         );
 
-        const seriesData = [];
+        const seriesData: number[][] = [];
         xiData.forEach(x => {
             let sum = 0;
             for (let i = 0; i < sortedValues.length; i++) {
@@ -213,10 +215,14 @@ function generateViolinData(step, sortedDataArrays) {
 }
 
 // Group the parsed CSV by sport, build the series, and render the chart.
-function processData(dataTable) {
-    const sports = dataTable.getColumn('sport'),
-        heights = dataTable.getColumn('height'),
-        groupedData = {};
+function processData(dataTable: Highcharts.DataTable): {
+    categories: string[],
+    polygonSeries: Highcharts.SeriesOptionsType[],
+    boxplotSeries: Highcharts.SeriesOptionsType
+} {
+    const sports = dataTable.getColumn('sport') as string[],
+        heights = dataTable.getColumn('height') as number[],
+        groupedData: { [key: string]: number[] } = {};
 
     for (let i = 0; i < sports.length; i++) {
         const sport = sports[i],
@@ -232,27 +238,31 @@ function processData(dataTable) {
     }
 
     const categories = Object.keys(groupedData),
-        sortedDataArrays = Object.values(groupedData).map(values =>
-            values.slice().sort((a, b) => a - b)
+        sortedDataArrays = categories.map(sport =>
+            groupedData[sport].slice().sort((a, b) => a - b)
         ),
         data = generateViolinData(1, sortedDataArrays),
         xi = data.xiData,
         stats = data.stats;
 
     // One polygon per sport, tracing the right side up then the left side down
-    const polygonSeries = categories.map((sport, i) => {
-        const rightSide = xi.map((y, j) => [data.results[i][j][1], y]),
-            leftSide = xi.map((y, j) => [data.results[i][j][0], y]).reverse();
-        return {
-            type: 'polygon',
-            name: sport,
-            data: [...rightSide, ...leftSide],
-            custom: { stat: stats[i] }
-        };
-    });
+    const polygonSeries: Highcharts.SeriesOptionsType[] = categories.map(
+        (sport, i) => {
+            const rightSide = xi.map((y, j) => [data.results[i][j][1], y]),
+                leftSide = xi.map(
+                    (y, j) => [data.results[i][j][0], y]
+                ).reverse();
+            return {
+                type: 'polygon',
+                name: sport,
+                data: [...rightSide, ...leftSide],
+                custom: { stat: stats[i] }
+            };
+        }
+    );
 
     // One boxplot point per sport
-    const boxplotSeries = {
+    const boxplotSeries: Highcharts.SeriesOptionsType = {
         type: 'boxplot',
         name: 'Statistics',
         data: categories.map((sport, i) => ({
@@ -281,5 +291,5 @@ fetch(dataURL)
             boxplotSeries
         } = processData(dataTable);
 
-        createChart(categories, [...polygonSeries, boxplotSeries]);
+        renderChart(categories, [...polygonSeries, boxplotSeries]);
     });
