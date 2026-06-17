@@ -72,7 +72,7 @@ export interface BoxPlotDataLabelOptions extends DataLabelOptions {
  *
  * @extends   series,plotOptions.boxplot
  *
- * @excluding borderColor, borderRadius, borderWidth, groupZPadding,
+ * @excluding borderColor, borderWidth, groupZPadding,
  *                states, boostThreshold, boostBlending
  *
  * @excluding dataParser, dataURL, marker, stack, stacking, states,
