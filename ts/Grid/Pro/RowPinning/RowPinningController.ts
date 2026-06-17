@@ -276,7 +276,8 @@ declare module '../../Core/Options' {
          *
          * @default 'Pin row to top'
          *
-         * @deprecated Use `lang.rowPinning.pinRowTop` instead.
+         * @deprecated 3.1.0
+         * @deprnote Use `lang.rowPinning.pinRowTop` instead.
          */
         pinRowTop?: string;
 
@@ -285,7 +286,8 @@ declare module '../../Core/Options' {
          *
          * @default 'Pin row to bottom'
          *
-         * @deprecated Use `lang.rowPinning.pinRowBottom` instead.
+         * @deprecated 3.1.0
+         * @deprnote Use `lang.rowPinning.pinRowBottom` instead.
          */
         pinRowBottom?: string;
 
@@ -294,7 +296,8 @@ declare module '../../Core/Options' {
          *
          * @default 'Unpin row'
          *
-         * @deprecated Use `lang.rowPinning.unpinRow` instead.
+         * @deprecated 3.1.0
+         * @deprnote Use `lang.rowPinning.unpinRow` instead.
          */
         unpinRow?: string;
     }
