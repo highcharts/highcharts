@@ -150,6 +150,29 @@ namespace RangeDataLabel {
             '';
     }
 
+    /**
+     * Rewrite a label's `format` so that `{y}` and `{point.y}` references
+     * resolve to the value of the point key the label is aligned to, keeping
+     * the legacy per-label `{y}` behavior of range data labels.
+     * @internal
+     */
+    export function applyAlignToKeyValue(
+        options: DataLabelOptionsWithAlignToKey
+    ): void {
+        const { alignToKey, format } = options;
+
+        // An explicit `format` ignores `alignToKey`, so its `{y}` (and
+        // `{point.y}`) tokens point at the whole point. Rewrite them to the
+        // aligned key so each range label keeps rendering its own value.
+        // The default formatter already reads `alignToKey`.
+        if (alignToKey && format) {
+            options.format = format.replace(
+                /\{(?:point\.)?y([:}])/g,
+                '{point.' + alignToKey + '$1'
+            );
+        }
+    }
+
     export function resolveAlignToKey<PointValKey extends string>(
         series: SeriesComposition<PointValKey>,
         rawKey?: PointValKey
@@ -178,7 +201,7 @@ namespace RangeDataLabel {
         if (isNumber(plotY)) {
             point.plotY = plotY;
 
-            if (shapeArgs) {
+            if (shapeArgs && !options.inside) {
                 point.dlBox = {
                     x: shapeArgs.x ?? 0,
                     y: plotY,

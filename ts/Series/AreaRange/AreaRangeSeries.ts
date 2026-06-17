@@ -469,7 +469,11 @@ class AreaRangeSeries extends AreaSeries {
             dataLabelOptions = series.options.dataLabels;
 
         if (dataLabelOptions) {
-            series.options.dataLabels = getRangeDataLabelOptions(series);
+            const rangeOptions = getRangeDataLabelOptions(series);
+
+            // Resolve value references like `{y}` against the aligned key
+            rangeOptions.forEach(RangeDataLabel.applyAlignToKeyValue);
+            series.options.dataLabels = rangeOptions;
 
             if (areaProto.drawDataLabels) {
                 // #1209

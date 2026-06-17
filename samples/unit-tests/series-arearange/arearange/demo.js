@@ -44,6 +44,27 @@ QUnit.test('Range series data labels(#4421)', function (assert) {
 
     const series = chart.series[0];
 
+    chart.update({
+        plotOptions: {
+            arearange: {
+                dataLabels: {
+                    enabled: true,
+                    format: '{y}'
+                }
+            }
+        }
+    });
+
+    assert.deepEqual(
+        [
+            series.points[0].dataLabelUpper.text.textStr,
+            series.points[0].dataLabel.text.textStr
+        ],
+        ['100', '0'],
+        'Legacy {y} format resolves to the high and low value per label ' +
+        '(#23904)'
+    );
+
     series.update({
         dataLabels: [{
             enabled: true,
