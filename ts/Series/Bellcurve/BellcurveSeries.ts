@@ -146,10 +146,16 @@ class BellcurveSeries extends AreaSplineSeries {
                 .filter(isNumber);
             this.setMean(data);
             this.setStandardDeviation(data);
-            alteredData = this.derivedData(
-                this.mean || 0,
-                this.standardDeviation || 0
-            );
+            if (
+                isNumber(this.mean) &&
+                isNumber(this.standardDeviation) &&
+                this.standardDeviation > 0
+            ) {
+                alteredData = this.derivedData(
+                    this.mean,
+                    this.standardDeviation
+                );
+            }
         }
 
         super.setData.call(
