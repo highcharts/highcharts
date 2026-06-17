@@ -1446,7 +1446,7 @@ QUnit.module('Format', () => {
             } else {
                 assert.ok(
                     true,
-                    `Skipping ucfirst assertion for locale = ${locale}: ${dateStr}`
+                    `Skipping ucfirst test for locale = ${locale}: ${dateStr}`
                 );
             }
         });
