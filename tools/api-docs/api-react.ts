@@ -2,8 +2,22 @@
  *
  *  Generating API documentation for the @highcharts/react package.
  *
+ *  Reads the integration's `.d.ts` files and writes a `tree-react.json`. The
+ *  integration is generated from the Highcharts source by the 
+ *  hc-integration-gen repo, and the tree is consumed by the API docs backend
+ *  (hc-apidoc-backend), whose React sync task runs this tool with its own
+ *  `--source` and `--out` paths.
+ *
+ *  Usage:
+ *  npx ts-node tools/api-docs/api-react.ts [--source <path>] [--out <path>]
+ *
+ *  --source  Path to the @highcharts/react package, i.e. hc-integration-gen's
+ *            generated output (default: node_modules/@highcharts/react).
+ *  --out     Path to write the generated tree to
+ *            (default: tree-react.json in the current directory).
+ *
  *  (c) Highsoft AS
- * 
+ *
  *  Authors:
  *  - Kamil Kubik
  *
@@ -60,6 +74,8 @@ interface ComponentDoc {
     importPath: string;
     description: string;
     props: PropEntry[];
+    // Source `.d.ts` path emitted as the node's `meta.file`.
+    sourceFile: string;
     // The options subtree this whole component points to (its `doclet.crossref`).
     // Only chart elements, modules, and PlotOptions use this.
     crossref?: string;
@@ -473,6 +489,7 @@ function extractComponentsFromFile(
     src: TSCompiler.SourceFile,
     category: string,
     importPath: string,
+    sourceFile: string,
     checker?: TSCompiler.TypeChecker
 ): ComponentDoc[] {
     // Prop containers: interfaces and object-literal type aliases.
@@ -635,6 +652,7 @@ function extractComponentsFromFile(
             importPath,
             description: c.description,
             props,
+            sourceFile,
             ...(crossref !== undefined ? { crossref } : {})
         });
     }
@@ -700,7 +718,8 @@ function extractComponentsFromFile(
                 description: seriesEntity ?
                     (c.description || seriesEntity.description) :
                     c.description,
-                props: basicProps
+                props: basicProps,
+                sourceFile: c.sourceFile
             });
         }
         return out;
@@ -745,6 +764,15 @@ function detectSeriesType(src: TSCompiler.SourceFile): string | undefined {
     const text = src.getFullText();
     const m = text.match(/import type \{ Series(\w+)Options \}/);
     return m ? m[1].toLowerCase() : undefined;
+}
+
+
+// Source `.d.ts` path relative to the package root, with forward slashes.
+function sourceFileFor(
+    filePath: string,
+    packageRoot: string
+): string {
+    return Path.relative(packageRoot, filePath).replace(/\\/g, '/');
 }
 
 
@@ -806,6 +834,7 @@ function extractComponents(
         entrySrc,
         'Core',
         entryImportPath,
+        product.entryFile,
         checker
     );
 
@@ -843,6 +872,7 @@ function extractComponents(
                 variantSrc,
                 'Core',
                 variantImportPath,
+                variant.entryFile,
                 checker
             );
             for (const c of variantExtracted) {
@@ -870,6 +900,7 @@ function extractComponents(
                     src,
                     category,
                     importPath,
+                    sourceFileFor(f, packageRoot),
                     checker
                 );
                 for (const c of extracted) {
@@ -983,7 +1014,9 @@ function buildTreeReact(
                     doclet: propDoclet,
                     meta: {
                         fullname: `${catKey}.${c.name}.${p.name}`,
-                        name: p.name
+                        name: p.name,
+                        // Declared in the same `.d.ts` as its component.
+                        file: c.sourceFile
                     }
                 };
             }
@@ -1000,7 +1033,8 @@ function buildTreeReact(
                 doclet: componentDoclet,
                 meta: {
                     fullname: `${catKey}.${c.name}`,
-                    name: c.name
+                    name: c.name,
+                    file: c.sourceFile
                 },
                 children: propChildren
             };
