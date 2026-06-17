@@ -343,7 +343,7 @@ class BoxPlotSeries extends ColumnSeries {
                     // Optionally round the corners of the box
                     const brOption = options.borderRadius,
                         radius = brOption && typeof brOption === 'object' ?
-                            brOption.radius : (brOption || 0),
+                            (brOption.radius || 0) : (brOption || 0),
                         r = Math.min(
                             relativeLength(radius, right - x),
                             (right - x) / 2,

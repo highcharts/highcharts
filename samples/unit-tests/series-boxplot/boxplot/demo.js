@@ -141,6 +141,7 @@ QUnit.test('Individual fill color (#5770)', function (assert) {
                 point.lowPlot + 1,
         'Reversed: high label below the high whisker, low label above low ' +
             '(#23904)'
+    );
     // borderRadius rounds the corners of the box
     chart.series[0].update({ borderRadius: 5 });
 
