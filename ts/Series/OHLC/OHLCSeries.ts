@@ -214,7 +214,6 @@ class OHLCSeries extends HLCSeries {
 
 interface OHLCSeries {
     pointClass: typeof OHLCPoint;
-    pointAttrToOptions: Record<string, string>;
     toYData(point: OHLCPoint): Array<number>;
 }
 extend(OHLCSeries.prototype, {
