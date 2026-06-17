@@ -172,14 +172,6 @@ class Table {
      */
     private cellContextMenuLongPress?: CellContextMenuLongPress;
 
-    /**
-     * Optional cell editing controller. Populated by Grid Pro composition.
-     *
-     * @internal
-     */
-    public cellEditing?: {
-        editedCell?: TableCell;
-    };
 
     /**
      * Async hooks executed after the main row update cycle.
@@ -336,7 +328,9 @@ class Table {
                 openCellContextMenu: (cell, clientX, clientY): boolean =>
                     this.openCellContextMenu(cell, clientX, clientY),
                 isCellInEditMode: (cell): boolean =>
-                    this.cellEditing?.editedCell === cell
+                    (this as unknown as {
+                        cellEditing?: { editedCell?: TableCell };
+                    }).cellEditing?.editedCell === cell
             });
         }
 
