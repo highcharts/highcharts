@@ -21,7 +21,6 @@
  * */
 
 import type BBoxObject from '../../Core/Renderer/BBoxObject';
-import type ColorType from '../../Core/Color/ColorType';
 import type DataLabel from '../../Core/Series/DataLabel';
 import type FunnelDataLabelOptions from './FunnelDataLabelOptions';
 import type FunnelPoint from './FunnelPoint';
@@ -36,9 +35,7 @@ const {
     composed,
     noop
 } = H;
-import {
-    optionsToObject as borderRadiusOptionsToObject
-} from '../../Extensions/BorderRadius.js';
+import { optionsToBorderRadiusObject } from '../../Extensions/BorderRadius.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     column: ColumnSeries,
@@ -56,19 +53,6 @@ import {
     relativeLength,
     splat
 } from '../../Shared/Utilities.js';
-
-/* *
- *
- *  Declarations
- *
- * */
-
-declare module '../../Core/Series/SeriesOptions' {
-    interface SeriesStateHoverOptions {
-        borderColor?: ColorType;
-        color?: ColorType;
-    }
-}
 
 /* *
  *
@@ -309,7 +293,7 @@ class FunnelSeries extends PieSeries {
             options = series.options,
             reversed = options.reversed,
             ignoreHiddenPoint = options.ignoreHiddenPoint,
-            borderRadiusObject = borderRadiusOptionsToObject(
+            borderRadiusObject = optionsToBorderRadiusObject(
                 options.borderRadius
             ),
             plotWidth = chart.plotWidth,

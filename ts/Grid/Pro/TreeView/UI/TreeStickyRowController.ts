@@ -18,15 +18,20 @@
  *
  * */
 
-import type { RowId } from '../../Core/Data/DataProvider';
-import type Table from '../../Core/Table/Table';
-import type TableCell from '../../Core/Table/Body/TableCell';
-import type { TreeProjectionState } from './TreeViewTypes';
+import type { RowId } from '../../../Core/Data/DataProvider';
+import type Table from '../../../Core/Table/Table';
+import type TableCell from '../../../Core/Table/Body/TableCell';
+import type { TreeProjectionState } from '../TreeViewTypes';
 
-import TableRow from '../../Core/Table/Body/TableRow.js';
-import Globals from '../../Core/Globals.js';
-import TreeViewGlobals from './TreeViewGlobals.js';
-import { defined } from '../../../Shared/Utilities.js';
+import TableRow from '../../../Core/Table/Body/TableRow.js';
+import Globals from '../../../Core/Globals.js';
+import TreeViewGlobals from '../TreeViewGlobals.js';
+import {
+    getLocalTreeViewRowIndex,
+    getTreeViewProjectedRowIndex,
+    getTreeViewRowId
+} from '../TreeViewRowResolver.js';
+import { defined } from '../../../../Shared/Utilities.js';
 
 
 /* *
@@ -311,7 +316,10 @@ class TreeStickyRowController {
             return;
         }
 
-        this.viewport.focusCellByRowIndex(rowIndex, columnIndex);
+        this.viewport.focusCellByRowIndex(
+            getLocalTreeViewRowIndex(this.viewport, rowIndex),
+            columnIndex
+        );
     }
 
     /**
@@ -344,6 +352,30 @@ class TreeStickyRowController {
         }
 
         this.scheduleRefresh();
+    }
+
+    /**
+     * Refreshes sticky rows immediately instead of batching on the next frame.
+     *
+     * @param syncRow
+     * Whether sticky rows should be synchronized with source rows.
+     *
+     * @param reflowRow
+     * Whether sticky rows should be reflowed after synchronization.
+     */
+    public async refreshNow(
+        syncRow: boolean = false,
+        reflowRow: boolean = false
+    ): Promise<void> {
+        if (typeof this.animationFrameId === 'number') {
+            cancelAnimationFrame(this.animationFrameId);
+            delete this.animationFrameId;
+        }
+
+        this.needsRowSync = this.needsRowSync || syncRow;
+        this.needsRowReflow = this.needsRowReflow || reflowRow;
+
+        await this.refresh();
     }
 
     /**
@@ -540,6 +572,23 @@ class TreeStickyRowController {
     }
 
     /**
+     * Returns the current sticky body vertical border height.
+     */
+    private getStickyBodyVerticalBorderHeight(): number {
+        const stickyBodyElement = this.stickyBodyElement;
+        if (!stickyBodyElement) {
+            return 0;
+        }
+
+        const computedStyle = getComputedStyle(stickyBodyElement);
+
+        return (
+            parseFloat(computedStyle.borderTopWidth) || 0 +
+            parseFloat(computedStyle.borderBottomWidth) || 0
+        );
+    }
+
+    /**
      * Finds the first rendered row intersecting the given scroll position.
      *
      * @param visibleTop
@@ -565,12 +614,24 @@ class TreeStickyRowController {
             const rowBottom = rowTop + row.htmlElement.offsetHeight;
 
             if (rowBottom > visibleTop) {
-                return row;
+                return {
+                    id: getTreeViewRowId(row, projectionState),
+                    index:
+                        getTreeViewProjectedRowIndex(row, projectionState) ??
+                        row.index
+                };
             }
         }
 
         if (!this.viewport.virtualRows) {
-            return rows[rowsLength - 1];
+            const row = rows[rowsLength - 1];
+
+            return {
+                id: getTreeViewRowId(row, projectionState),
+                index:
+                    getTreeViewProjectedRowIndex(row, projectionState) ??
+                    row.index
+            };
         }
 
         const firstRow = rows[0];
@@ -581,14 +642,26 @@ class TreeStickyRowController {
             lastRow.htmlElement.offsetHeight
         );
         const rowHeight = this.viewport.rowsVirtualizer.defaultRowHeight;
-        let estimatedRowIndex = lastRow.index;
+        const firstProjectedRowIndex = getTreeViewProjectedRowIndex(
+            firstRow,
+            projectionState
+        );
+        const lastProjectedRowIndex = getTreeViewProjectedRowIndex(
+            lastRow,
+            projectionState
+        );
+        let estimatedRowIndex = lastProjectedRowIndex ?? lastRow.index;
 
         if (visibleTop < firstRowTop) {
-            estimatedRowIndex = firstRow.index - Math.ceil(
+            estimatedRowIndex = (
+                firstProjectedRowIndex ?? firstRow.index
+            ) - Math.ceil(
                 (firstRowTop - visibleTop) / rowHeight
             );
         } else if (visibleTop >= lastRowBottom) {
-            estimatedRowIndex = lastRow.index + Math.floor(
+            estimatedRowIndex = (
+                lastProjectedRowIndex ?? lastRow.index
+            ) + Math.floor(
                 (visibleTop - lastRowBottom) / rowHeight
             ) + 1;
         }
@@ -755,7 +828,7 @@ class TreeStickyRowController {
 
         const renderedRow = this.viewport.getRow(rowId);
         if (renderedRow) {
-            return renderedRow.index;
+            return getTreeViewProjectedRowIndex(renderedRow, projectionState);
         }
 
         const projectedRowIndex = projectionState.rowIds.indexOf(rowId);
@@ -1049,6 +1122,7 @@ class TreeStickyRowController {
         }
 
         const { defaultRowHeight } = this.viewport.rowsVirtualizer;
+        const borderHeight = this.getStickyBodyVerticalBorderHeight();
         let height = 0;
 
         for (let i = 0, iEnd = this.stickyRows.length; i < iEnd; ++i) {
@@ -1058,7 +1132,9 @@ class TreeStickyRowController {
             height = Math.max(height, row.translateY + rowHeight);
         }
 
-        stickyBodyElement.style.height = Math.ceil(height) + 'px';
+        stickyBodyElement.style.height = Math.ceil(
+            height + borderHeight
+        ) + 'px';
     }
 
     /**
@@ -1329,6 +1405,7 @@ class TreeStickyRowController {
                 tbodyElement.scrollWidth,
                 tbodyElement.clientWidth
             );
+            const borderHeight = this.getStickyBodyVerticalBorderHeight();
             const tableRect =
                 this.viewport.tableElement.getBoundingClientRect();
             const tbodyRect = tbodyElement.getBoundingClientRect();
@@ -1340,7 +1417,9 @@ class TreeStickyRowController {
 
             stickyBodyElement.style.top = stickyTop + 'px';
             stickyBodyElement.style.width = bodyWidth + 'px';
-            stickyBodyElement.style.height = this.getStickyRowsHeight() + 'px';
+            stickyBodyElement.style.height = (
+                this.getStickyRowsHeight() + borderHeight
+            ) + 'px';
         }
 
         stickyBodyElement.style.transform = tbodyElement.scrollLeft ?
