@@ -50,6 +50,11 @@ Read `ts/DOCLETS.md` for tag syntax, formatting rules, and tooling. Linting enfo
 - "options" (not "config", "configuration", "settings")
 - "Read only." as a sentence prefix for immutable computed members (in addition to `@readonly`)
 
+**Programmatic references** — option names, property names, and API identifiers in prose must be either in backticks or rephrased to natural language. Never leave them bare.
+- Good: "Enable data labels for the series." - natural language
+- Good: "Enable `dataLabels` for the series." - programmatic backtick-wrapped
+- Bad: "Enable dataLabels for the series." - bare identifier reference
+
 **Avoid:**
 - "simply", "easily", "just", "straightforward"
 - "allows you to", "lets you", "enables you to" - rephrase as a noun phrase
@@ -88,3 +93,5 @@ For cross-references: use `{@link}` inline in prose for direct object/method ref
 | `Fires when the user clicks a point.` | `Fires when a point is clicked.` (avoid attributing to "the user") |
 | `An optional boolean that controls…` | `Whether \<condition\>.` |
 | `A configuration object for the tooltip rendering of each series.` | `The tooltip options for each individual series.` (use "options", not "configuration object"; use "The" for a specific instance) |
+| `Whether to render the xAxis.` | `Whether to render the x-axis.` or `Whether to render the` `` `xAxis` `` `.` (bare identifier - rephrase or wrap in backticks) |
+| `Enable dataLabels for the series.` | `Enable data labels for the series.` or `Enable` `` `dataLabels` `` `for the series.` (natural language does not require hyphens - "data labels", not "data-labels") |
