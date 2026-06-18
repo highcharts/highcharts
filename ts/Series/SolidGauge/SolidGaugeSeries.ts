@@ -25,7 +25,7 @@ import type SolidGaugeSeriesOptions from './SolidGaugeSeriesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 
-import { optionsToObject } from '../../Extensions/BorderRadius.js';
+import { optionsToBorderRadiusObject } from '../../Extensions/BorderRadius.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     gauge: GaugeSeries,
@@ -117,7 +117,7 @@ class SolidGaugeSeries extends GaugeSeries {
             renderer = series.chart.renderer,
             overshoot = options.overshoot,
             rounded = options.rounded,
-            borderRadius = optionsToObject(
+            borderRadius = optionsToBorderRadiusObject(
                 rounded ? '50%' : (
                     options.borderRadius ??
                     yAxis.pane.options.borderRadius
