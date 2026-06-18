@@ -110,11 +110,11 @@ QUnit.test('Individual fill color (#5770)', function (assert) {
     );
 
     chart.series[0].update({ borderRadius: 0 });
-    assert.strictEqual(
-        chart.series[0].points[0].box.pathArray.filter(
+    assert.deepEqual(
+        chart.series[0].points[0].box.pathArray.find(
             segment => segment[0] === 'A'
-        ).length,
-        0,
+        ).slice(0, 3),
+        ['A', 0, 0],
         'A borderRadius of 0 should fall back to sharp corners'
     );
 });

@@ -35,7 +35,7 @@ const {
     composed,
     noop
 } = H;
-import { optionsToBorderRadiusObject } from '../../Extensions/BorderRadius.js';
+import { borderRadiusObject } from '../../Extensions/BorderRadius.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     column: ColumnSeries,
@@ -293,9 +293,7 @@ class FunnelSeries extends PieSeries {
             options = series.options,
             reversed = options.reversed,
             ignoreHiddenPoint = options.ignoreHiddenPoint,
-            borderRadiusObject = optionsToBorderRadiusObject(
-                options.borderRadius
-            ),
+            borderRadiusObj = borderRadiusObject(options.borderRadius),
             plotWidth = chart.plotWidth,
             plotHeight = chart.plotHeight,
             center: Array<(number|string)> = options.center as any,
@@ -308,10 +306,10 @@ class FunnelSeries extends PieSeries {
             neckY = (centerY - height / 2) + height - neckHeight,
             points = series.points,
             borderRadius = relativeLength(
-                borderRadiusObject.radius,
+                borderRadiusObj.radius,
                 width
             ),
-            radiusScope = borderRadiusObject.scope,
+            radiusScope = borderRadiusObj.scope,
             half = (
                 (options.dataLabels as any).position === 'left' ?
                     1 :
