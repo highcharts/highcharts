@@ -39,7 +39,7 @@ import type ErrorBarSeriesOptions from './ErrorBarSeriesOptions';
  *         Error bars with data labels
  *
  * @extends      plotOptions.boxplot
- * @excluding    boostBlending, boostThreshold
+ * @excluding    borderRadius, boostBlending, boostThreshold
  * @product      highcharts
  * @requires     highcharts-more
  * @optionparent plotOptions.errorbar
