@@ -63,7 +63,7 @@ Read `ts/DOCLETS.md` for tag syntax, formatting rules, and tooling. Linting enfo
 The first sentence is the summary. Everything after adds precision:
 
 1. **Clarify edge cases** on a separate sentence: *"In a logarithmic axis, this is the logarithm of the real value…"*
-2. **State defaults or fallbacks** as a separate sentence, or use `@default`.
+2. **Defaults or fallbacks** as a separate sentence, but prefer `@default` tag over a sentence with the same info.
 3. **Cross-reference related members** at the end of the description, before tags.
 
 ---
