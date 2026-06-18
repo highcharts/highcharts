@@ -484,8 +484,8 @@ export class Exporting {
 
     /** @internal */
     /**
-     * Collects all unique font family names used inline
-     * within <text> and <tspan> elements of an SVG by inspecting
+     * Collects all unique font family names used inline within the root
+     * SVG element and its <text> and <tspan> elements by inspecting
      * their style attributes and font-family attributes.
      *
      * @param {SVGSVGElement} svg
@@ -497,9 +497,12 @@ export class Exporting {
         svg: SVGSVGElement,
         usedFontFamilies: Set<string>
     ): void {
-        const textNodes = svg.querySelectorAll('text, tspan');
+        // Include the root SVG element itself, since the chart-wide
+        // `chart.style.fontFamily` is applied there rather than on the
+        // individual text nodes (#24722).
+        const nodes = [svg, ...Array.from(svg.querySelectorAll('text, tspan'))];
 
-        for (const textNode of Array.from(textNodes)) {
+        for (const textNode of nodes) {
             const styleAttr = textNode.getAttribute('style') || '';
             const inlineFontFamily = textNode.getAttribute('font-family') || '';
 
@@ -534,18 +537,6 @@ export class Exporting {
                 return;
             }
             visited.add(href);
-
-            try {
-                const sheetOrigin = new URL(href, doc.baseURI).origin;
-                if (sheetOrigin !== win.location.origin) {
-                    // We skip all cross-origin stylesheets on purpose.
-                    // This prevents DOM SecurityErrors and unhandled network
-                    // rejections when the browser blocks cssRules access.
-                    return;
-                }
-            } catch {
-                // URL parsing failed, proceed to try/catch
-            }
         }
 
         try {
