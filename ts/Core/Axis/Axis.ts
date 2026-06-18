@@ -1,10 +1,11 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -34,8 +35,9 @@ import type {
 import type AxisBase from './AxisBase';
 import type { AxisType, AxisTypeOptions } from './AxisType';
 import type Chart from '../Chart/Chart';
+import type { ColorAxisMarkerOptions } from './Color/ColorAxisOptions';
 import type CSSObject from '../Renderer/CSSObject';
-import type { DeepPartial } from '../../Shared/Types';
+import type { DeepPartial, TypedArray } from '../../Shared/Types';
 import type { EventCallback } from '../Callback';
 import type FontMetricsObject from '../Renderer/FontMetricsObject';
 import type PlotLineOrBand from './PlotLineOrBand/PlotLineOrBand';
@@ -48,23 +50,21 @@ import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 import type TickPositionsArray from './TickPositionsArray';
-import type Types from '../../Shared/Types';
 
 import A from '../Animation/AnimationUtilities.js';
 const { animObject } = A;
 import AxisDefaults from './AxisDefaults.js';
 const { xAxis, yAxis } = AxisDefaults;
 import Color from '../Color/Color.js';
+const { parse: color } = Color;
 import D from '../Defaults.js';
 const { defaultOptions } = D;
 import F from '../Foundation.js';
 const { registerEventOptions } = F;
 import H from '../Globals.js';
 const { deg2rad } = H;
-import { Palette } from '../Color/Palettes.js';
 import Tick from './Tick.js';
-import U from '../Utilities.js';
-const {
+import {
     arrayMax,
     arrayMin,
     clamp,
@@ -72,11 +72,9 @@ const {
     defined,
     destroyObjectProperties,
     erase,
-    error,
     extend,
     fireEvent,
     getClosestDistance,
-    insertItem,
     isArray,
     isNumber,
     isString,
@@ -88,7 +86,8 @@ const {
     removeEvent,
     splat,
     syncTimeout
-} = U;
+} from '../../Shared/Utilities.js';
+import { error, insertItem } from '../Utilities.js';
 
 const getNormalizedTickInterval = (
     axis: Axis,
@@ -291,6 +290,12 @@ class Axis {
      */
     public chart!: Chart;
 
+    /**
+     * Whether this axis is allowed to be clipped to the plot area.
+     * @internal
+     */
+    public clippable = true;
+
     /** @internal */
     public closestPointRange?: number;
 
@@ -314,6 +319,7 @@ class Axis {
      * @type {boolean|Highcharts.AxisCrosshairOptions}
      */
     public crosshair?: AxisCrosshairOptions;
+    public crossShowTimer?: number;
 
     /** @internal */
     public dataMax?: number;
@@ -559,9 +565,6 @@ class Axis {
     public staggerLines?: number;
 
     /** @internal */
-    public staticScale?: number;
-
-    /** @internal */
     public threshold?: number;
 
     /** @internal */
@@ -650,7 +653,7 @@ class Axis {
      * */
 
     /**
-     * Overrideable function to initialize the axis.
+     * Overridable function to initialize the axis.
      *
      * @see {@link Axis}
      *
@@ -789,6 +792,10 @@ class Axis {
         axis.names ||= []; // Preserve on update (#3830)
         axis.namesMap ||= {};
 
+
+        // Placeholder for plotLines and plotBands groups
+        axis.plotLinesAndBandsGroups ||= {};
+
         // Shorthand types
         axis.positiveValuesOnly = !!axis.logarithmic;
 
@@ -827,7 +834,6 @@ class Axis {
         axis.len ??= 0;
         axis.minRange = axis.userMinRange = options.minRange || options.maxZoom;
         axis.range = options.range;
-        axis.offset = options.offset || 0;
 
 
         /**
@@ -962,9 +968,6 @@ class Axis {
      * @param {Highcharts.AxisLabelsFormatterContextObject} this
      * Formatter context of axis label.
      *
-     * @param {Highcharts.AxisLabelsFormatterContextObject} [ctx]
-     * Formatter context of axis label.
-     *
      * @return {string}
      * The formatted label content.
      */
@@ -1020,19 +1023,20 @@ class Axis {
                     value !== 0
                 ) { // #5480
                     ret = numberFormatter(
-                        value / multi, -1
+                        value / multi, -1, void 0, void 0, chart
                     ) + numericSymbols[i];
                 }
             }
         }
 
-        if (typeof ret === 'undefined') {
-            if (Math.abs(value) >= 10000) { // Add thousands separators
-                ret = numberFormatter(value, -1);
-            } else { // Small numbers
-                ret = numberFormatter(value, -1, void 0, ''); // #2466
-            }
-        }
+        ret ??= numberFormatter(
+            value,
+            -1,
+            void 0,
+            // Add thousands separators when 10 000 or more
+            Math.abs(value) < 10000 ? '' : void 0,
+            chart
+        );
 
         return ret;
     }
@@ -1628,12 +1632,11 @@ class Axis {
                 minRange = null;
 
             } else {
-
                 // Find the closest distance between raw data points, as opposed
                 // to closestPointRange that applies to processed points
                 // (cropped and grouped)
                 closestDataRange = getClosestDistance(
-                    axis.series.map((s): number[]|Types.TypedArray => {
+                    axis.series.map((s): number[]|TypedArray => {
                         const xData = s.getColumn('x');
                         // If xIncrement, we only need to measure the two first
                         // points to get the distance. Saves processing time.
@@ -1758,25 +1761,28 @@ class Axis {
      * @return {number}
      * The X value that the point is given.
      */
-    public nameToX(point: Point): number {
+    public nameToX(
+        point: { name: string, series: Series, x?: number },
+        nameX?: number|string
+    ): number {
         const explicitCategories = isArray(this.options.categories),
+            { name, series } = point,
             names = explicitCategories ? this.categories : this.names,
             namesMap = this.namesMap;
 
-        let nameX = point.options.x,
-            x: (number|undefined);
+        let x: (number|undefined);
 
-        point.series.requireSorting = false;
+        series.requireSorting = false;
 
         if (!defined(nameX)) {
             nameX = this.uniqueNames && names ?
                 (
                     explicitCategories ?
-                        names.indexOf(point.name) :
-                        (namesMap[point.name] ?? -1)
+                        names.indexOf(name) :
+                        (namesMap[name] ?? -1)
 
                 ) :
-                point.series.autoIncrement();
+                series.autoIncrement();
         }
         if (nameX === -1) { // Not found in current categories
             if (!explicitCategories && names) {
@@ -1790,9 +1796,10 @@ class Axis {
         if (typeof x !== 'undefined') {
             this.names[x] = point.name;
             namesMap[point.name] = x;
-
-        } else if (point.x) {
+        } else if (isNumber(point.x)) {
             x = point.x; // #17438
+        } else {
+            x = series.autoIncrement();
         }
 
         return x as any;
@@ -1822,6 +1829,7 @@ class Axis {
 
                 // Reset incrementer (#5928)
                 series.xIncrement = null;
+                delete series.xColumn;
 
                 // When adding a series, points are not yet generated
                 if (!series.points || series.isDirtyData) {
@@ -1837,26 +1845,12 @@ class Axis {
 
                     series.processData();
                     series.generatePoints();
+                } else {
+                    const xData = series.getColumn('x');
+                    series.points?.forEach((point): void => {
+                        point.x = xData[point.index];
+                    });
                 }
-
-                const xData = series.getColumn('x').slice();
-                series.data.forEach((
-                    point,
-                    i: number
-                ): void => { // #9487
-                    let x = xData[i];
-
-                    if (
-                        point?.options &&
-                        typeof point.name !== 'undefined' // #9562
-                    ) {
-                        x = axis.nameToX(point);
-                        if (typeof x !== 'undefined' && x !== point.x) {
-                            xData[i] = point.x = x;
-                        }
-                    }
-                });
-                series.dataTable.setColumn('x', xData);
             });
         }
     }
@@ -2449,7 +2443,7 @@ class Axis {
                 this.tickPositions = tickPositions;
                 tickPositionerResult = tickPositioner.apply(
                     axis,
-                    [this.min, this.max]
+                    [this.min, this.max, axis]
                 );
                 if (tickPositionerResult) {
                     tickPositions = tickPositionerResult;
@@ -2482,7 +2476,7 @@ class Axis {
         this.trimTicks(tickPositions, startOnTick, endOnTick);
         if (!this.isLinked && isNumber(this.min) && isNumber(this.max)) {
 
-            // Substract half a unit (#2619, #2846, #2515, #3390), but not in
+            // Subtract half a unit (#2619, #2846, #2515, #3390), but not in
             // case of multiple ticks (#6897)
             if (
                 this.single &&
@@ -2537,15 +2531,15 @@ class Axis {
             // Grid axis has custom handling of ticks.
             !this.grid
         ) {
-            if (startOnTick && roundedMin !== -Infinity) { // #6502
+            if (startOnTick && isNumber(roundedMin)) { // #6502
                 this.min = roundedMin;
-            } else {
+            } else if (tickPositions.length) {
                 while ((this.min as any) - minPointOffset > tickPositions[0]) {
                     tickPositions.shift();
                 }
             }
 
-            if (endOnTick) {
+            if (endOnTick && isNumber(roundedMax)) { // #6502
                 this.max = roundedMax;
             } else {
                 while (
@@ -3008,10 +3002,10 @@ class Axis {
      *
      * @function Highcharts.Axis#setExtremes
      *
-     * @param {number|string} [newMin]
+     * @param {number|string} [min]
      * The new minimum value. For datetime axes, date strings are accepted.
      *
-     * @param {number|string} [newMax]
+     * @param {number|string} [max]
      * The new maximum value. For datetime axes, date strings are accepted.
      *
      * @param {boolean} [redraw=true]
@@ -3034,8 +3028,8 @@ class Axis {
         eventArguments?: Partial<AxisSetExtremesEventObject>
     ): void {
         const chart = this.chart;
-        this.series.forEach((serie): void => {
-            delete serie.kdTree;
+        this.series.forEach((s): void => {
+            delete s.kdTree;
         });
 
         min = chart.time.parse(min);
@@ -3252,7 +3246,7 @@ class Axis {
             tickSize = [tickLength, tickWidth];
         }
 
-        const e = { tickSize };
+        const e = { tickSize, prefix };
         fireEvent(this, 'afterTickSize', e);
 
         return e.tickSize;
@@ -3547,7 +3541,7 @@ class Axis {
                         // Speed optimizing, #7656
                         commonWidth < (label.textPxLength || 0) ||
                         // Resetting CSS, #4928
-                        label.element.tagName === 'SPAN'
+                        label.element.tagName === 'DIV'
                     )
                 ) {
                     label.css(extend(css, {
@@ -3555,9 +3549,17 @@ class Axis {
                         lineClamp
                     }));
 
-                // Reset previously shortened label (#8210)
-                } else if (label.styles.width && !css.width && !widthOption) {
-                    label.css({ width: 'auto' });
+                // Reset previously shortened label (#8210, #22961)
+                } else {
+                    const wasSquished = label.styles.width ||
+                    label.textWidth || label.styles.lineClamp;
+
+                    if (wasSquished && !css.width && !widthOption) {
+                        label.css({
+                            width: 'auto',
+                            lineClamp: 0
+                        });
+                    }
                 }
             }
         }, this);
@@ -3674,12 +3676,6 @@ class Axis {
      *
      * @internal
      * @function Highcharts.Axis#generateTick
-     *
-     * @param {number} pos
-     * The tick position in axis values.
-     *
-     * @param {number} [i]
-     * The index of the tick in {@link Axis.tickPositions}.
      */
     public generateTick(pos: number): void {
         const axis = this,
@@ -3727,7 +3723,7 @@ class Axis {
                 'grid',
                 '-grid',
                 options.gridZIndex
-            );
+            ).clip(this.clippable ? chart.plotClipInner : void 0);
             this.axisGroup = createGroup(
                 'axis',
                 '',
@@ -3756,6 +3752,7 @@ class Axis {
                     // Move tick instance
                     if (ticks[oldPos]) {
                         ticks[oldPos].pos = pos;
+                        this.isDirty = true; // Mark for redraw
                     }
                     // Check if the existing tick in the new position has a
                     // new place to go
@@ -3802,11 +3799,6 @@ class Axis {
                 tickPositions,
                 coll
             } = axis,
-            invertedSide = (
-                chart.inverted && !axis.isZAxis ?
-                    [1, 0, 3, 2][side] :
-                    side
-            ),
             hasData = axis.hasData(),
             axisTitleOptions = options.title,
             labelOptions = options.labels,
@@ -3814,15 +3806,18 @@ class Axis {
             axisOffset = chart.axisOffset,
             clipOffset = chart.clipOffset,
             directionFactor = [-1, 1, 1, -1][side],
-            appliedDistance = directionFactor * (labelOptions.distance ?? 15);
+            distance = labelOptions.distance ?? 15;
 
-        let showAxis,
+        let tickRotCorr = axis.tickRotCorr || { x: 0, y: 0 },
+            absTickRotCorrX = 0,
+            showAxis,
             titleOffset = 0,
             titleOffsetOption,
             titleMargin = 0,
             labelOffset = 0, // Reset
             labelOffsetPadded,
-            lineHeightCorrection;
+            lineHeightCorrection,
+            reserveSpaceDefault: boolean|undefined;
 
         // For reuse in Axis.render
         axis.showAxis = showAxis = hasData || options.showEmpty;
@@ -3841,20 +3836,22 @@ class Axis {
             tickPositions.forEach(axis.generateTick.bind(axis));
 
             axis.renderUnsquish();
+            tickRotCorr = axis.tickRotCorr;
+            absTickRotCorrX = Math.abs(tickRotCorr.x);
 
             // Left side must be align: right and right side must
             // have align: left for labels
-            axis.reserveSpaceDefault = (
+            reserveSpaceDefault = axis.reserveSpaceDefault = (
                 side === 0 ||
                 side === 2 ||
-                ({ 1: 'left', 3: 'right' } as any)[side] === axis.labelAlign
+                ({ 1: 'left', 3: 'right' })[side] === axis.labelAlign
             );
-            if (pick(
-                labelOptions.reserveSpace,
-                hasCrossing ? false : null,
-                axis.labelAlign === 'center' ? true : null,
-                axis.reserveSpaceDefault
-            )) {
+            if (
+                labelOptions.reserveSpace ??
+                (hasCrossing ? false : null) ??
+                (axis.labelAlign === 'center' ? true : null) ??
+                reserveSpaceDefault
+            ) {
                 tickPositions.forEach(function (pos: number): void {
                     // Get the highest offset
                     labelOffset = Math.max(
@@ -3867,6 +3864,13 @@ class Axis {
 
             if (axis.staggerLines) {
                 labelOffset *= axis.staggerLines;
+            }
+            if (
+                !horiz &&
+                isNumber(axis.labelRotation) &&
+                reserveSpaceDefault
+            ) {
+                labelOffset -= absTickRotCorrX;
             }
             axis.labelOffset = labelOffset * (axis.opposite ? -1 : 1);
 
@@ -3905,16 +3909,18 @@ class Axis {
         axis.renderLine();
 
         // Handle automatic or user set offset
-        axis.offset = directionFactor * pick(
-            options.offset,
-            axisOffset[side] ? axisOffset[side] + (options.margin || 0) : 0
+        axis.offset = directionFactor * (
+            isNumber(options.offset) ?
+                options.offset :
+                axisOffset[side] ?
+                    axisOffset[side] + (options.margin || 0) :
+                    0
         );
 
-        axis.tickRotCorr = axis.tickRotCorr || { x: 0, y: 0 }; // Polar
         if (side === 0) {
             lineHeightCorrection = -axis.labelMetrics().h;
         } else if (side === 2) {
-            lineHeightCorrection = axis.tickRotCorr.y;
+            lineHeightCorrection = tickRotCorr.y;
         } else {
             lineHeightCorrection = 0;
         }
@@ -3925,25 +3931,35 @@ class Axis {
             labelOffsetPadded -= lineHeightCorrection;
             labelOffsetPadded += directionFactor * (
                 horiz ?
-                    pick(
-                        labelOptions.y,
-                        axis.tickRotCorr.y + appliedDistance
+                    (
+                        labelOptions.y ??
+                        (tickRotCorr.y + directionFactor * distance)
                     ) :
-                    pick(
-                        labelOptions.x,
-                        appliedDistance
+                    (
+                        labelOptions.x ?? (
+                            reserveSpaceDefault ?
+                                directionFactor * (distance - absTickRotCorrX) :
+                                tickRotCorr.x + directionFactor * distance
+                        )
                     )
             );
+
+            if (
+                !horiz &&
+                !reserveSpaceDefault &&
+                axis.labelAlign === 'center' &&
+                isNumber(axis.labelRotation)
+            ) {
+                labelOffsetPadded += absTickRotCorrX;
+            }
         }
 
-        axis.axisTitleMargin = pick(titleOffsetOption, labelOffsetPadded);
+        axis.axisTitleMargin = titleOffsetOption ?? labelOffsetPadded;
 
-        if (axis.getMaxLabelDimensions) {
-            axis.maxLabelDimensions = axis.getMaxLabelDimensions(
-                ticks,
-                tickPositions
-            );
-        }
+        axis.maxLabelDimensions = axis.getMaxLabelDimensions?.(
+            ticks,
+            tickPositions
+        );
 
         // Due to GridAxis.tickSize, tickSize should be calculated after ticks
         // has rendered.
@@ -3966,7 +3982,7 @@ class Axis {
                 0 :
                 // #4308, #4371
                 axis.axisLine.strokeWidth() / 2;
-            clipOffset[invertedSide] = Math.max(clipOffset[invertedSide], clip);
+            clipOffset[side] = Math.max(clipOffset[side], clip);
         }
 
         fireEvent(this, 'afterGetOffset');
@@ -4027,16 +4043,22 @@ class Axis {
      * @function Highcharts.Axis#renderLine
      */
     public renderLine(): void {
-        const verb = this.axisLine ? 'animate' : 'attr';
-        this.axisLine ||= this.chart.renderer.path()
+        const { chart, offset = 0, options } = this,
+            verb = this.axisLine ? 'animate' : 'attr';
+        this.axisLine ||= chart.renderer.path()
             .addClass('highcharts-axis-line')
             .attr({ zIndex: 7 })
+            .clip(
+                this.clippable && offset <= 0 ?
+                    chart.plotClipOuter :
+                    void 0
+            )
             .add(this.axisGroup);
 
-        if (!this.chart.styledMode) {
+        if (!chart.styledMode) {
             this.axisLine[verb]({
-                stroke: this.options.lineColor,
-                'stroke-width': this.options.lineWidth
+                stroke: options.lineColor,
+                'stroke-width': options.lineWidth
             });
         }
     }
@@ -4065,7 +4087,7 @@ class Axis {
             fontMetrics = this.chart.renderer.fontMetrics(axisTitle),
             // The part of a multiline text that is below the baseline of the
             // first line. Subtract 1 to preserve pixel-perfectness from the
-            // old behaviour (v5.0.12), where only one line was allowed.
+            // old behavior (v5.0.12), where only one line was allowed.
             textHeightOvershoot = axisTitle ? Math.max(
                 axisTitle.getBBox(false, 0).height - fontMetrics.h - 1,
                 0
@@ -4251,7 +4273,7 @@ class Axis {
             }
 
             // Major ticks. Pull out the first item and render it last so that
-            // we can get the position of the neighbour label. #808.
+            // we can get the position of the neighbor label. #808.
             if (tickPositions.length) { // #1300
                 tickPositions.forEach(function (pos: number, i: number): void {
                     axis.renderTick(pos, i, slideInTicks);
@@ -4420,7 +4442,7 @@ class Axis {
      * @private
      */
     public saveOld(): void {
-        this.old = {
+        this.old = isNumber(this.min) ? {
             len: this.len,
             max: this.max,
             min: this.min,
@@ -4428,7 +4450,7 @@ class Axis {
             transA: this.transA,
             userMax: this.userMax,
             userMin: this.userMin
-        };
+        } : void 0;
     }
 
     /**
@@ -4485,6 +4507,12 @@ class Axis {
             }
         );
 
+        // Destroy each generated group for plotlines and plotbands
+        for (const plotGroup in axis.plotLinesAndBandsGroups) { // eslint-disable-line guard-for-in
+            axis.plotLinesAndBandsGroups[plotGroup].destroy();
+            delete axis.plotLinesAndBandsGroups[plotGroup];
+        }
+
         // Delete all properties and fall back to the prototype.
         objectEach(axis, function (_val: any, key: string): void {
             if (axis.getKeepProps().indexOf(key) === -1) {
@@ -4513,12 +4541,12 @@ class Axis {
 
         const options = this.crosshair,
             snap = options?.snap ?? true,
-            chart = this.chart;
+            chart = this.chart,
+            graphic = this.cross;
 
-        let path,
+        let path: SVGPath | null | undefined,
             pos,
-            categorized,
-            graphic = this.cross,
+            categorized: boolean | undefined,
             crossOptions: Axis.PlotLinePathOptions;
 
         fireEvent(this, 'drawCrosshair', { e: e, point: point });
@@ -4537,23 +4565,24 @@ class Axis {
         ) {
             this.hideCrosshair();
         } else {
+            clearTimeout(this.crossShowTimer);
 
             // Get the path
             if (!snap) {
                 pos = e &&
                     (
                         this.horiz ?
-                            e.chartX - (this.pos as any) :
-                            this.len - e.chartY + (this.pos as any)
+                            e.chartX - this.pos :
+                            this.len - e.chartY + this.pos
                     );
             } else if (defined(point)) {
                 // #3834
                 pos = pick(
                     this.coll !== 'colorAxis' ?
-                        (point as any).crosshairPos : // 3D axis extension
+                        point.crosshairPos : // 3D axis extension
                         null,
                     this.isXAxis ?
-                        (point as any).plotX :
+                        point.plotX :
                         this.len - (point as any).plotY
                 );
             }
@@ -4563,7 +4592,7 @@ class Axis {
                     // Value, only used on radial
                     value: point && (this.isXAxis ?
                         point.x :
-                        pick(point.stackY, point.y)) as any,
+                        pick(point.stackY, point.y)),
                     translatedValue: pos
                 };
 
@@ -4589,54 +4618,75 @@ class Axis {
 
             categorized = this.categories && !this.isRadial;
 
-            // Draw the cross
-            if (!graphic) {
-                this.cross = graphic = chart.renderer
-                    .path()
-                    .addClass(
-                        'highcharts-crosshair highcharts-crosshair-' +
-                        (categorized ? 'category ' : 'thin ') +
-                        (options.className || '')
-                    )
-                    .attr({
-                        zIndex: pick(options.zIndex, 2)
-                    })
-                    .add();
+            this.crossShowTimer = syncTimeout((): void => {
+                // Get the *current* crosshair, in case it was created by
+                // another call while this one was delayed.
+                let cross = this.cross;
 
-                // Presentational attributes
-                if (!chart.styledMode) {
-                    graphic.attr({
-                        stroke: options.color ||
-                            (
-                                categorized ?
-                                    Color
-                                        .parse(Palette.highlightColor20)
-                                        .setOpacity(0.25)
-                                        .get() :
-                                    Palette.neutralColor20
-                            ),
-                        'stroke-width': pick(options.width, 1)
-                    }).css({
-                        'pointer-events': 'none'
-                    });
-                    if (options.dashStyle) {
-                        graphic.attr({
-                            dashstyle: options.dashStyle
+                // Draw the cross
+                if (!cross) {
+                    this.cross = cross = chart.renderer
+                        .path()
+                        .addClass(
+                            'highcharts-crosshair highcharts-crosshair-' +
+                            (categorized ? 'category ' : 'thin ') +
+                            (options.className || '')
+                        )
+                        .attr({
+                            zIndex: pick(options.zIndex, 2)
+                        })
+                        .clip(
+                            (options as ColorAxisMarkerOptions).clip === false ?
+                                void 0 :
+                                chart.plotClipInner
+                        )
+                        .add();
+
+                    // Presentational attributes
+                    if (!chart.styledMode) {
+                        cross.attr({
+                            stroke: options.color ||
+                                (
+                                    categorized ?
+                                        color(
+                                            // eslint-disable-next-line max-len
+                                            'var(--highcharts-highlight-color-20)'
+                                        ).setOpacity(0.25).get() :
+                                        'var(--highcharts-neutral-color-20)'
+                                ),
+                            'stroke-width': pick(options.width, 1)
+                        }).css({
+                            'pointer-events': 'none'
                         });
+                        if (options.dashStyle) {
+                            cross.attr({
+                                dashstyle: options.dashStyle
+                            });
+                        }
                     }
                 }
-            }
 
-            graphic.show().attr({
-                d: path
-            });
+                cross
+                    .show()
+                    .animate(
+                        { d: path as SVGPath },
+                        animObject(options?.animation)
+                    );
 
-            if (categorized && !(options as any).width) {
-                graphic.attr({
-                    'stroke-width': this.transA
-                });
-            }
-            (this.cross as any).e = e;
+                if (categorized && !options.width) {
+                    cross.attr({
+                        'stroke-width': this.transA
+                    });
+                }
+                if (this.cross) {
+                    this.cross.e = e;
+                }
+            },
+            // Only use delay if the crosshair is currently hidden
+            (!graphic || graphic.attr('visibility') === 'hidden') ?
+                options.showDelay || 0 :
+                0
+            );
         }
 
         fireEvent(this, 'afterDrawCrosshair', { e: e, point: point });
@@ -4648,6 +4698,8 @@ class Axis {
      * @function Highcharts.Axis#hideCrosshair
      */
     public hideCrosshair(): void {
+        clearTimeout(this.crossShowTimer);
+
         if (this.cross) {
             this.cross.hide();
         }
@@ -4996,6 +5048,8 @@ export default Axis;
  * @param {Highcharts.AxisLabelsFormatterContextObject} this
  *
  * @param {Highcharts.AxisLabelsFormatterContextObject} ctx
+ * Since v12.6.0, the formatter context passed as an extra argument for arrow
+ * functions.
  *
  * @return {string}
  */
@@ -5107,7 +5161,17 @@ export default Axis;
  *
  * @param {Highcharts.Axis} this
  *
- * @return {Highcharts.AxisTickPositionsArray}
+ * @param {number} min
+ * Current minimum value.
+ *
+ * @param {number} max
+ * Current maximum value.
+ *
+ * @param {Highcharts.Axis} [ctx]
+ * Since v12.6.0, the axis context passed as an extra argument for arrow
+ * functions.
+ *
+ * @return {Highcharts.AxisTickPositionsArray|undefined}
  */
 
 /**
@@ -5174,6 +5238,10 @@ export default Axis;
  *
  * @param {number} value
  * Y value of the data point
+ *
+ * @param {Highcharts.Axis} [ctx]
+ * Since v12.6.0, the axis context passed as an extra argument for arrow
+ * functions.
  *
  * @return {string}
  */

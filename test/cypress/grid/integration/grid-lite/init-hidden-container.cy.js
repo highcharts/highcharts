@@ -1,6 +1,6 @@
 describe('Grid init in a hidden container.', () => {
     it('Should not keep `noWidth` class on header containers after showing.', () => {
-        cy.visit('grid-lite/cypress/init-hidden-container');
+        cy.visit('grid-lite/e2e/init-hidden-container');
 
         // Sample starts hidden on purpose.
         cy.get('#outer').should('have.css', 'display', 'none');

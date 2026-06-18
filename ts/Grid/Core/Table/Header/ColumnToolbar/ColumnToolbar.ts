@@ -4,12 +4,13 @@
  *
  *  (c) 2020-2026 Highsoft AS
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  *  Authors:
- *  - Dawid Dragula
+ *  - Dawid Draguła
  *
  * */
 
@@ -22,6 +23,7 @@
  *
  * */
 
+import type Grid from '../../../Grid';
 import type Toolbar from '../../../UI/Toolbar';
 import type Column from '../../Column';
 
@@ -31,10 +33,9 @@ import ToolbarButton from '../../../UI/ToolbarButton.js';
 import SortToolbarButton from './ToolbarButtons/SortToolbarButton.js';
 import FilterToolbarButton from './ToolbarButtons/FilterToolbarButton.js';
 import MenuToolbarButton from './ToolbarButtons/MenuToolbarButton.js';
-import U from '../../../../../Core/Utilities.js';
+import { getStyle } from '../../../../../Shared/Utilities.js';
 
 const { makeHTMLElement } = GridUtils;
-const { getStyle } = U;
 
 
 /* *
@@ -60,6 +61,13 @@ class HeaderCellToolbar implements Toolbar {
      * The column that this toolbar belongs to.
      */
     public column: Column;
+
+    /**
+     * Reference to the Grid instance for icon registry and options.
+     */
+    public get grid(): Grid {
+        return this.column.viewport.grid;
+    }
 
     public buttons: ToolbarButton[] = [];
 
@@ -112,16 +120,18 @@ class HeaderCellToolbar implements Toolbar {
      */
     private renderFull(): void {
         const columnOptions = this.column.options;
-        const sortingEnabled = columnOptions.sorting?.enabled ??
-            columnOptions.sorting?.sortable;
+        const sortingEnabled = this.column.viewport.grid.columnPolicy
+            .isColumnSortingEnabled(this.column.id);
 
         if (sortingEnabled) {
             new SortToolbarButton().add(this);
         }
 
         if (
-            columnOptions.filtering?.enabled &&
-            !columnOptions.filtering.inline
+            this.column.viewport.grid.columnPolicy.isColumnFilteringEnabled(
+                this.column.id
+            ) &&
+            !columnOptions.filtering?.inline
         ) {
             new FilterToolbarButton().add(this);
         }
@@ -129,13 +139,15 @@ class HeaderCellToolbar implements Toolbar {
 
     private renderMinimized(): void {
         const columnOptions = this.column.options;
-        const sortingEnabled = columnOptions.sorting?.enabled ??
-            columnOptions.sorting?.sortable;
+        const sortingEnabled = this.column.viewport.grid.columnPolicy
+            .isColumnSortingEnabled(this.column.id);
 
         if (
             sortingEnabled || (
-                columnOptions.filtering?.enabled &&
-                !columnOptions.filtering.inline
+                this.column.viewport.grid.columnPolicy.isColumnFilteringEnabled(
+                    this.column.id
+                ) &&
+                !columnOptions.filtering?.inline
             )
         ) {
             new MenuToolbarButton().add(this);

@@ -45,6 +45,10 @@ H.addEvent(H.Chart, 'load', function(e) {
 
 [Try it live](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/chart/events-load-class/)
 
+When extending with `addEvent`, prefer regular functions over arrow functions.
+Highcharts binds `this` to the runtime object, while arrow functions keep
+lexical `this`.
+
 
 
 ## Wrapping prototype functions
@@ -72,6 +76,9 @@ H.wrap(H.Series.types.line.prototype, 'drawGraph', function (proceed) {
 ```
 
 [Try it live](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/series/wrap-drawgraph/)
+
+For `wrap`, regular functions are strongly recommended because they rely on
+runtime `this`, `proceed`, and access to the original argument list.
 
 When loading ES modules, one can [access modules directly](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/esm/extending-members/) for further modifications.
 

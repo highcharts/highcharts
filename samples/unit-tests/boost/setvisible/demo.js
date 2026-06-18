@@ -1,27 +1,14 @@
 QUnit.test('Boosted series show/hide', function (assert) {
-    var chart = Highcharts.chart('container', {
-        boost: {
-            // Do not allow the chart to force chart-wide boosting
-            allowForce: false
-        },
-        plotOptions: {
-            series: {
-                boostThreshold: 1
-            }
-        },
-        series: [
-            {
-                data: [1, 3, 2, 4],
-                visible: false
-            },
-            {
-                data: [4, 2, 5, 3]
-            }
-        ]
-    });
-
-    const s = chart.series[0],
-        blankPixel = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=';
+    const s = Highcharts.chart('container', {
+        series: [{
+            boostThreshold: 1,
+            data: [1, 3],
+            visible: false
+        }, {
+            data: [4, 2]
+        }]
+    }).series[0];
+    const blankPixel = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=';
 
     assert.strictEqual(
         s.boost.target.attr('href'),
@@ -46,19 +33,19 @@ QUnit.test('Boosted series show/hide', function (assert) {
 });
 
 QUnit.test('Boosted and not boosted series - visibility', function (assert) {
-    var chart = Highcharts.chart('container', {
-            series: [
-                {
-                    boostThreshold: 1000,
-                    data: [10, 3]
-                },
-                {
-                    boostThreshold: 1,
-                    data: [5, 10]
-                }
-            ]
-        }),
-        series = chart.series[0];
+    const chart = Highcharts.chart('container', {
+        series: [
+            {
+                boostThreshold: 1000,
+                data: [10, 3]
+            },
+            {
+                boostThreshold: 1,
+                data: [5, 10]
+            }
+        ]
+    });
+    const series = chart.series[0];
 
     series.hide();
     series.show();
@@ -71,6 +58,64 @@ QUnit.test('Boosted and not boosted series - visibility', function (assert) {
         'series (#10013).'
     );
 });
+
+QUnit.test(
+    'Shared boost marker group stays visible for hovered series, (#23338)',
+    function (assert) {
+        const chart = Highcharts.chart('container', {
+            plotOptions: {
+                series: {
+                    boostThreshold: 1
+                }
+            },
+            series: [{
+                data: [1, 3, 2, 4, 5, 4]
+            }, {
+                data: [4, 2, 5, 3, 2, 1]
+            }]
+        });
+
+        const visibleSeries = chart.series[1],
+            controller = new TestController(chart);
+
+        assert.strictEqual(
+            chart.series[0].markerGroup,
+            visibleSeries.markerGroup,
+            'Boosted series should share one marker group.'
+        );
+
+        chart.series[0].hide();
+
+        controller.moveTo(
+            chart.plotLeft + visibleSeries.points[1].plotX,
+            chart.plotTop + visibleSeries.points[1].plotY
+        );
+
+        assert.notStrictEqual(
+            visibleSeries.markerGroup?.attr('visibility'),
+            'hidden',
+            'Shared marker group stays visible for the remaining series.'
+        );
+
+        assert.strictEqual(
+            chart.hoverPoint?.series,
+            visibleSeries,
+            'Hover lands on the remaining visible boosted series.'
+        );
+
+        assert.notStrictEqual(
+            visibleSeries.stateMarkerGraphic?.attr('visibility'),
+            'hidden',
+            'Hover marker stays visible after hiding another boosted series.'
+        );
+
+        assert.notStrictEqual(
+            visibleSeries.halo?.attr('visibility'),
+            'hidden',
+            'Halo stays visible after hiding another boosted series.'
+        );
+    }
+);
 
 QUnit.test('Marker group zooming and visibility', function (assert) {
     const chart = Highcharts.chart('container', {

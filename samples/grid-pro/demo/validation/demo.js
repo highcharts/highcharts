@@ -1,5 +1,6 @@
 Grid.grid('container', {
-    dataTable: {
+    gridKey: 'YOUR-GRID-KEY-HERE',
+    data: {
         columns: {
             productName: [
                 'Phone',

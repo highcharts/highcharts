@@ -85,8 +85,78 @@ QUnit.test(
         );
 
         chart.renderTo.style.transform = '';
+
+        chart.update({
+            tooltip: {
+                positioner: (width, size, point, tt) => (
+                    width && size && point && tt ? {
+                        x: 100,
+                        y: 100
+                    } : {
+                        x: 0,
+                        y: 0
+                    }
+                )
+            }
+        });
+
+        chart.tooltip.refresh(chart.series[1].points[1]);
+
+        assert.close(
+            chart.tooltip.label.translateX,
+            100,
+            20,
+            'Arrow function should work for tooltip.positioner.'
+        );
     }
 );
+
+QUnit.test(
+    'Tooltip getPosition should respect scrollablePlotArea scroll offset, ' +
+    '(#24548)',
+    function (assert) {
+        const chart = Highcharts.chart('container', {
+            chart: {
+                width: 300,
+                height: 300,
+                scrollablePlotArea: {
+                    minHeight: 600
+                }
+            },
+            tooltip: {
+                animation: false
+            },
+            series: [{
+                data: [1, 2, 3, 4, 5, 6, 7, 8]
+            }]
+        });
+
+        const tooltip = chart.tooltip,
+            point = chart.series[0].points[6],
+            scrollingContainer =
+                chart.scrollablePlotArea.scrollingContainer;
+
+        scrollingContainer.scrollTop = 0;
+        delete chart.pointer.chartPosition;
+        tooltip.refresh(point);
+
+        const yBefore = tooltip.label.translateY;
+
+        scrollingContainer.scrollTop = 100;
+        delete chart.pointer.chartPosition;
+        tooltip.refresh(point);
+
+        const yAfter = tooltip.label.translateY;
+
+        assert.strictEqual(
+            yBefore,
+            yAfter,
+            'Tooltip position should be stable when updatePosition handles ' +
+            'default tooltip scroll coordinates.'
+        );
+    }
+);
+
 // Highcharts v4.0.3, Issue #424
 // Tooltip is positioned on the top series if multiple y axis is used.
 QUnit.test('Wrong tooltip pos for column (#424)', function (assert) {
@@ -346,3 +416,51 @@ QUnit.test('Tooltip position for inverted polar chart.', assert => {
         'Tooltip y position should be valid.'
     );
 });
+
+QUnit.test(
+    'Tooltip with large padding should stay within chart bounds (#24104)',
+    function (assert) {
+        const chart = Highcharts.chart('container', {
+            chart: {
+                type: 'line',
+                width: 300,
+                height: 300
+            },
+            tooltip: {
+                animation: false,
+                padding: 12,
+                useHTML: true,
+                pointFormatter: function () {
+                    return (
+                        '<div>' + this.category +
+                        ' and some extra long text to simulate what happens' +
+                        ' when the text is very very long and wraps onto a' +
+                        ' second line</div>'
+                    );
+                }
+            },
+            xAxis: {
+                categories: ['Apples', 'Bananas', 'Oranges', 'Pears', 'Grapes']
+            },
+            series: [{
+                data: [1, 0, 4, 3, 2]
+            }]
+        });
+        const rightPoint =
+            chart.series[0].points[chart.series[0].points.length - 1];
+
+        chart.tooltip.refresh(rightPoint);
+
+        const label = chart.tooltip.label;
+
+        assert.ok(
+            label.translateX >= 0,
+            'Tooltip left edge should not overflow the chart.'
+        );
+
+        assert.ok(
+            label.translateX + (label.width || 0) <= chart.chartWidth + 1,
+            'Tooltip right edge should not overflow the chart width.'
+        );
+    }
+);

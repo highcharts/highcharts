@@ -1,10 +1,11 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -29,6 +30,7 @@ import type {
 } from '../DOMElementType';
 import type { EventCallback } from '../../../Core/Callback';
 import type FontMetricsObject from '../FontMetricsObject';
+import type { PaletteOptions } from '../../Color/PaletteOptions';
 import type PositionObject from '../PositionObject';
 import type ShadowOptionsObject from '../ShadowOptionsObject';
 import type SVGAttributes from './SVGAttributes';
@@ -54,13 +56,12 @@ const {
     symbolSizes,
     win
 } = H;
-import RendererRegistry from '../RendererRegistry.js';
+import Palette from '../../Color/Palette';
 import SVGElement from './SVGElement.js';
 import SVGLabel from './SVGLabel.js';
 import Symbols from './Symbols.js';
 import TextBuilder from './TextBuilder.js';
-import U from '../../Utilities.js';
-const {
+import {
     addEvent,
     attr,
     createElement,
@@ -76,9 +77,9 @@ const {
     merge,
     pick,
     pInt,
-    replaceNested,
-    uniqueKey
-} = U;
+    replaceNested
+} from '../../../Shared/Utilities.js';
+import { uniqueKey } from '../../Utilities.js';
 
 /* *
  *
@@ -217,7 +218,9 @@ class SVGRenderer implements SVGRendererBase {
         style?: CSSObject,
         forExport?: boolean,
         allowHTML?: boolean,
-        styledMode?: boolean
+        styledMode?: boolean,
+        palette?: PaletteOptions,
+        chartIndex?: number
     ) {
         const renderer = this,
             boxWrapper = renderer
@@ -227,10 +230,6 @@ class SVGRenderer implements SVGRendererBase {
                     'class': 'highcharts-root'
                 }),
             element = boxWrapper.element as SVGDOMElement;
-
-        if (!styledMode) {
-            boxWrapper.css(this.getStyle(style || {}));
-        }
 
         container.appendChild(element);
 
@@ -249,7 +248,6 @@ class SVGRenderer implements SVGRendererBase {
 
         this.url = this.getReferenceURL();
 
-
         // Add description
         const desc = this.createElement('desc').add();
         desc.element.appendChild(
@@ -260,13 +258,21 @@ class SVGRenderer implements SVGRendererBase {
         this.allowHTML = allowHTML;
         this.forExport = forExport;
         this.styledMode = styledMode;
+        this.chartIndex = chartIndex || 0;
         this.gradients = {}; // Object where gradient SvgElements are stored
         this.cache = {}; // Cache for numerical bounding boxes
         this.cacheKeys = [];
-        this.imgCount = 0;
+        this.asyncCounter = 0;
         this.rootFontSize = boxWrapper.getStyle('font-size');
 
         renderer.setSize(width, height, false);
+
+        if (!styledMode) {
+            boxWrapper.css(this.getStyle(style || {}));
+
+            // Create the palette
+            this.palette = new Palette(this, palette || defaultOptions.palette);
+        }
 
         // Issue 110 workaround:
         // In Firefox, if a div is positioned by percentage, its pixel position
@@ -332,7 +338,7 @@ class SVGRenderer implements SVGRendererBase {
     public cacheKeys: Array<string>;
 
     /** @internal */
-    public chartIndex!: number;
+    public chartIndex: number;
 
     /**
      * A pointer to the `defs` node of the root SVG.
@@ -359,8 +365,24 @@ class SVGRenderer implements SVGRendererBase {
     /** @internal */
     public height!: number;
 
-    /** @internal */
-    public imgCount: number;
+    /**
+     * A counter for async elements, like images or WebGPU-driven canvases. When
+     * the counter is above zero, the chart will wait with finalizing. When
+     * the counter reaches zero, the chart will run its onload functions. The
+     * counter is increased by one for each async element added, and decreased
+     * by one when each element has finished loading.
+     * @internal
+     **/
+    public asyncCounter: number;
+
+    /**
+     * The palette instance associated with the renderer. Typically the same
+     * as the chart's palette.
+     *
+     * @name Highcharts.SVGRenderer#palette
+     * @type {Highcharts.Palette|undefined}
+     */
+    public palette?: Palette;
 
     /** @internal */
     public rootFontSize: string|undefined;
@@ -507,7 +529,7 @@ class SVGRenderer implements SVGRendererBase {
                 return replaceNested(
                     win.location.href.split('#')[0], // Remove hash
                     [/<[^>]*>/g, ''], // Wing cut HTML
-                    [/([\('\)])/g, '\\$1'], // Escape parantheses and quotes
+                    [/([\('\)])/g, '\\$1'], // Escape parentheses and quotes
                     [/ /g, '%20'] // Replace spaces (needed for Safari only)
                 );
             }
@@ -655,10 +677,10 @@ class SVGRenderer implements SVGRendererBase {
             ].join('-').toLowerCase().replace(/[^a-z\d\-]/g, ''),
             options: ShadowOptionsObject = merge({
                 color: '#000000',
-                offsetX: 1,
-                offsetY: 1,
-                opacity: 0.15,
-                width: 5
+                offsetX: 0,
+                offsetY: 2,
+                opacity: 0.05,
+                width: 6
             }, shadowOptions);
 
         if (!this.defs.element.querySelector(`#${id}`)) {
@@ -734,6 +756,7 @@ class SVGRenderer implements SVGRendererBase {
         if (color === 'transparent') {
             return '#000000';
         }
+
         // #6216, #17273
         const rgba256 = Color.parse(color).rgba,
             // For each rgb channel, compute the luminosity based on all
@@ -947,7 +970,7 @@ class SVGRenderer implements SVGRendererBase {
     }
 
     /**
-     * Make a straight line crisper by not spilling out to neighbour pixels.
+     * Make a straight line crisper by not spilling out to neighbor pixels.
      *
      * @function Highcharts.SVGRenderer#crispLine
      *
@@ -1002,7 +1025,7 @@ class SVGRenderer implements SVGRendererBase {
      *
      * @function Highcharts.SVGRenderer#path
      *
-     * @param {Highcharts.SVGAttributes} [attribs]
+     * @param {Highcharts.SVGAttributes|Highcharts.SVGPathArray} [path]
      * The initial attributes.
      *
      * @return {Highcharts.SVGElement}
@@ -1021,6 +1044,7 @@ class SVGRenderer implements SVGRendererBase {
         return this.createElement('path').attr(attribs) as any;
     }
 
+    /* eslint-disable jsdoc/check-param-names */
     /**
      * Draw a circle, wraps the SVG `circle` element.
      *
@@ -1074,6 +1098,8 @@ class SVGRenderer implements SVGRendererBase {
 
         return wrapper.attr(attribs);
     }
+    /* eslint-enable jsdoc/check-param-names */
+
 
     /**
      * Draw and return an arc. Overloaded function that takes arguments object.
@@ -1122,6 +1148,8 @@ class SVGRenderer implements SVGRendererBase {
         start?: number,
         end?: number
     ): SVGElement;
+
+    /* eslint-disable jsdoc/check-param-names */
     /**
      * Draw and return an arc.
      *
@@ -1198,7 +1226,9 @@ class SVGRenderer implements SVGRendererBase {
         arc.r = r; // #959
         return arc;
     }
+    /* eslint-enable jsdoc/check-param-names */
 
+    /* eslint-disable jsdoc/check-param-names */
     /**
      * Draw and return a rectangle.
      *
@@ -1289,6 +1319,7 @@ class SVGRenderer implements SVGRendererBase {
 
         return wrapper.attr(attribs);
     }
+    /* eslint-enable jsdoc/check-param-names */
 
     /**
      * Draw and return a rectangle with advanced corner rounding options.
@@ -1524,7 +1555,7 @@ class SVGRenderer implements SVGRendererBase {
                 obj.attr('fill', 'none');
             }
 
-            // Expando properties for use in animate and attr
+            // Expand properties for use in animate and attr
             extend(obj, {
                 symbolName: (sym || void 0),
                 x: x,
@@ -1679,14 +1710,14 @@ class SVGRenderer implements SVGRendererBase {
 
                         // Fire the load event when all external images are
                         // loaded
-                        ren.imgCount--;
-                        if (!ren.imgCount && chart && !chart.hasLoaded) {
+                        ren.asyncCounter--;
+                        if (!ren.asyncCounter && chart && !chart.hasLoaded) {
                             chart.onload();
                         }
                     },
                     src: imageSrc
                 });
-                this.imgCount++;
+                this.asyncCounter++;
             }
         }
 
@@ -1712,7 +1743,7 @@ class SVGRenderer implements SVGRendererBase {
      * // Leave only the lower right quarter visible
      * circle.clip(clipRect);
      *
-     * @deprecated
+     * @deprecated 11.2.0
      *
      * @param x
      *
@@ -1748,7 +1779,7 @@ class SVGRenderer implements SVGRendererBase {
      * // Leave only the lower right quarter visible
      * circle.clip(clipRect);
      *
-     * @deprecated
+     * @deprecated 11.2.0
      *
      * @function Highcharts.SVGRenderer#clipRect
      *
@@ -2280,7 +2311,14 @@ interface SVGRenderer extends SVGRendererBase {
     escapes: Record<string, string>;
 
     /**
-     * An extendable collection of functions for defining symbol paths.
+     * An extendable collection of functions for defining symbol paths. Each
+     * symbol function takes five parameters: `x`, `y`, `width`, `height` and
+     * `options`, and returns an `SVGPath` array.
+     *
+     * @sample highcharts/members/renderer-symbols
+     *         Renderer symbols overview
+     * @sample highcharts/plotoptions/series-marker-symbol
+     *         Custom marker symbol
      *
      * @name Highcharts.SVGRenderer#symbols
      * @type {Highcharts.SymbolDictionary}
@@ -2291,7 +2329,7 @@ interface SVGRenderer extends SVGRendererBase {
      * Dummy function for plugins, called every time the renderer is updated.
      * Prior to Highcharts 5, this was used for the canvg renderer.
      *
-     * @deprecated
+     * @deprecated 5.0.0
      * @function Highcharts.SVGRenderer#draw
      */
     draw: Function;
@@ -2331,7 +2369,14 @@ extend(SVGRenderer.prototype, {
     },
 
     /**
-     * An extendable collection of functions for defining symbol paths.
+     * An extendable collection of functions for defining symbol paths. Each
+     * symbol function takes five parameters: `x`, `y`, `width`, `height` and
+     * `options`, and returns an `SVGPath` array.
+     *
+     * @sample highcharts/members/renderer-symbols
+     *         Renderer symbols overview
+     * @sample highcharts/plotoptions/series-marker-symbol
+     *         Custom marker symbol
      *
      * @name Highcharts.SVGRenderer#symbols
      * @type {Highcharts.SymbolDictionary}
@@ -2342,7 +2387,7 @@ extend(SVGRenderer.prototype, {
      * Dummy function for plugins, called every time the renderer is updated.
      * Prior to Highcharts 5, this was used for the canvg renderer.
      *
-     * @deprecated
+     * @deprecated 5.0.0
      * @function Highcharts.SVGRenderer#draw
      */
     draw: noop
@@ -2361,11 +2406,11 @@ namespace SVGRenderer {
 
 /* *
  *
- *  Registry
+ *  Compatibility
  *
  * */
 
-RendererRegistry.registerRendererType('svg', SVGRenderer, true);
+(H as AnyRecord).Renderer = SVGRenderer;
 
 /* *
  *
@@ -2463,7 +2508,7 @@ export default SVGRenderer;
  * The shadow color.
  * @name    Highcharts.ShadowOptionsObject#color
  * @type    {Highcharts.ColorString|undefined}
- * @default ${palette.neutralColor100}
+ * @default var(--highcharts-neutral-color-100)
  *//**
  * The horizontal offset from the element.
  *

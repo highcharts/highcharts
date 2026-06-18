@@ -1,10 +1,11 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -31,8 +32,10 @@ const {
     column: ColumnSeries,
     line: LineSeries
 } = SeriesRegistry.seriesTypes;
-import U from '../../Core/Utilities.js';
-const {
+import WaterfallAxis from '../../Core/Axis/WaterfallAxis.js';
+import WaterfallPoint from './WaterfallPoint.js';
+import WaterfallSeriesDefaults from './WaterfallSeriesDefaults.js';
+import {
     addEvent,
     arrayMax,
     arrayMin,
@@ -40,13 +43,11 @@ const {
     crisp,
     extend,
     isNumber,
+    isObject,
     merge,
     objectEach,
     pick
-} = U;
-import WaterfallAxis from '../../Core/Axis/WaterfallAxis.js';
-import WaterfallPoint from './WaterfallPoint.js';
-import WaterfallSeriesDefaults from './WaterfallSeriesDefaults.js';
+} from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -167,13 +168,13 @@ class WaterfallSeries extends ColumnSeries {
             options = series.options,
             yData = series.getColumn('y') as
                 Array<number|'intermediateSum'|'sum'>,
+            isSumData = series.getColumn('isSum'),
+            isIntermediateSumData = series.getColumn('isIntermediateSum'),
             // #3710 Update point does not propagate to sum
-            points = options.data,
             dataLength = yData.length,
             threshold = options.threshold || 0;
 
-        let point,
-            subSum,
+        let subSum,
             sum,
             dataMin,
             dataMax,
@@ -183,13 +184,12 @@ class WaterfallSeries extends ColumnSeries {
 
         for (let i = 0; i < dataLength; i++) {
             y = yData[i];
-            point = points?.[i] || {};
 
-            if (y === 'sum' || (point as any).isSum) {
+            if (y === 'sum' || isSumData[i]) {
                 yData[i] = correctFloat(sum);
             } else if (
                 y === 'intermediateSum' ||
-                (point as any).isIntermediateSum
+                isIntermediateSumData[i]
             ) {
                 yData[i] = correctFloat(subSum);
                 subSum = 0;
@@ -226,14 +226,14 @@ class WaterfallSeries extends ColumnSeries {
 
     // Postprocess mapping between options and SVG attributes
     public pointAttribs(
-        point: WaterfallPoint,
-        state: StatesOptionsKey
+        point?: WaterfallPoint,
+        state?: StatesOptionsKey
     ): SVGAttributes {
 
         const upColor = this.options.upColor;
 
         // Set or reset up color (#3710, update to negative)
-        if (upColor && !point.options.color && isNumber(point.y)) {
+        if (upColor && point && !point.options.color && isNumber(point.y)) {
             point.color = point.y > 0 ? upColor : void 0;
         }
 
@@ -473,7 +473,7 @@ class WaterfallSeries extends ColumnSeries {
                         }
 
                         // Points do not exist yet, so raw data is used
-                        xPoint = (options.data as any)[i];
+                        xPoint = options.data?.[i];
 
                         posTotal = actualStackX.absolutePos =
                             actualStackX.posTotal;
@@ -482,7 +482,10 @@ class WaterfallSeries extends ColumnSeries {
                         actualStackX.stackTotal = posTotal + negTotal;
                         statesLen = actualStackX.stackState.length;
 
-                        if (xPoint?.isIntermediateSum) {
+                        if (
+                            isObject(xPoint, true) &&
+                            xPoint.isIntermediateSum
+                        ) {
                             calculateStackState(
                                 prevSum,
                                 actualSum,
@@ -497,7 +500,7 @@ class WaterfallSeries extends ColumnSeries {
                             stackThreshold ^= interSum;
                             interSum ^= stackThreshold;
                             stackThreshold ^= interSum;
-                        } else if (xPoint?.isSum) {
+                        } else if (isObject(xPoint, true) && xPoint.isSum) {
                             calculateStackState(
                                 seriesThreshold,
                                 totalYVal,
@@ -619,7 +622,6 @@ addEvent(WaterfallSeries, 'afterColumnTranslate', function (): void {
         previousY = threshold,
         y,
         total,
-        yPos,
         hPos;
 
     for (let i = 0; i < points.length; i++) {
@@ -702,33 +704,28 @@ addEvent(WaterfallSeries, 'afterColumnTranslate', function (): void {
                         actualStackX.threshold + actualStackX.stackTotal;
                 }
 
+                hPos = y - Math.abs(pointY);
+
                 if (yAxis.reversed) {
-                    yPos = (pointY >= 0) ? (y - pointY) : (y + pointY);
-                    hPos = y;
-                } else {
-                    yPos = y;
-                    hPos = y - pointY;
+                    [y, hPos] = [hPos, y];
                 }
 
-                point.below = yPos <= threshold;
+                point.below = y <= threshold;
 
                 box.y = yAxis.translate(
-                    yPos,
+                    y,
                     false,
                     true,
                     false,
                     true
                 );
-                box.height = Math.abs(
-                    box.y -
-                    yAxis.translate(
-                        hPos,
-                        false,
-                        true,
-                        false,
-                        true
-                    )
-                );
+                box.height = yAxis.translate(
+                    hPos,
+                    false,
+                    true,
+                    false,
+                    true
+                ) - box.y;
 
                 const dummyStackItem = yAxis.waterfall?.dummyStackItem;
                 if (dummyStackItem) {
@@ -775,22 +772,19 @@ addEvent(WaterfallSeries, 'afterColumnTranslate', function (): void {
                 point.below = range[1] <= threshold;
             } else if (point.isIntermediateSum) {
                 if (pointY >= 0) {
-                    yPos = range[1] + previousIntermediate;
+                    y = range[1] + previousIntermediate;
                     hPos = previousIntermediate;
                 } else {
-                    yPos = previousIntermediate;
+                    y = previousIntermediate;
                     hPos = range[1] + previousIntermediate;
                 }
 
                 if (yAxis.reversed) {
-                    // Swapping values
-                    yPos ^= hPos;
-                    hPos ^= yPos;
-                    yPos ^= hPos;
+                    [y, hPos] = [hPos, y];
                 }
 
                 box.y = yAxis.translate(
-                    yPos,
+                    y,
                     false,
                     true,
                     false,
@@ -811,7 +805,7 @@ addEvent(WaterfallSeries, 'afterColumnTranslate', function (): void {
                 );
 
                 previousIntermediate += range[1];
-                point.below = yPos <= threshold;
+                point.below = y <= threshold;
 
             // If it's not the sum point, update previous stack end position
             // and get shape height (#3886)
@@ -825,13 +819,13 @@ addEvent(WaterfallSeries, 'afterColumnTranslate', function (): void {
                         true
                     ) - box.y :
                     yAxis.translate(
-                        previousY,
+                        previousY + yValue,
                         false,
                         true,
                         false,
                         true
                     ) - yAxis.translate(
-                        previousY - yValue,
+                        previousY,
                         false,
                         true,
                         false,
@@ -841,12 +835,12 @@ addEvent(WaterfallSeries, 'afterColumnTranslate', function (): void {
                 previousY += yValue;
                 point.below = previousY < threshold;
             }
+        }
 
-            // #3952 Negative sum or intermediate sum not rendered correctly
-            if (box.height < 0) {
-                box.y += box.height;
-                box.height *= -1;
-            }
+        // #3952 Negative sum or intermediate sum not rendered correctly
+        if (box.height < 0) {
+            box.y += box.height;
+            box.height *= -1;
         }
 
         point.plotY = box.y;

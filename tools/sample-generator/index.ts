@@ -122,6 +122,52 @@ async function loadTemplate(fileName: string) {
     return await fs.readFile(path, 'utf-8');
 }
 
+interface ErrorWithCode {
+    code?: string;
+}
+
+function isPermissionError(error: unknown): error is ErrorWithCode {
+    return (
+        typeof error === 'object' &&
+        error !== null &&
+        'code' in error &&
+        (
+            (error as ErrorWithCode).code === 'EACCES' ||
+            (error as ErrorWithCode).code === 'EPERM'
+        )
+    );
+}
+
+// Function to write a file with the appropriate encoding and permissions
+async function writeFile(filePath: string, content: string) {
+    try {
+        await fs.writeFile(
+            filePath,
+            content,
+            { encoding: 'utf-8', mode: 0o644 }
+        );
+    } catch (error: unknown) {
+        // On permission errors, force rewrite after unlinking the target file.
+        if (!isPermissionError(error)) {
+            throw error;
+        }
+
+        try {
+            await fs.unlink(filePath);
+        } catch (unlinkError: unknown) {
+            if ((unlinkError as ErrorWithCode).code !== 'ENOENT') {
+                throw unlinkError;
+            }
+        }
+
+        await fs.writeFile(
+            filePath,
+            content,
+            { encoding: 'utf-8', mode: 0o644 }
+        );
+    }
+}
+
 // Parse override values from path definitions
 function parsePathOverride(
     pathDef: string
@@ -262,13 +308,6 @@ async function generateChartConfig(
     metaList: MetaList
 ) {
     const { chartOptionsExtra } = config;
-    const paths = metaList
-        .filter(meta => typeof meta.path === 'string')
-        .map(meta => meta.path);
-    if (!metaList.length && paths) {
-        throw new Error(`No nodes found for paths: ${paths.join(', ')}`);
-    }
-
     const chartOptions: any = {};
     for (const optionsTpl of config.templates || ['column', 'categories-4']) {
         const tplModule = await import(`./tpl/chart-options/${optionsTpl}.ts`);
@@ -558,6 +597,13 @@ export async function getDemoHTML(
         );
     }
 
+    if (config?.codePath) {
+        html = html.replace(
+            /https:\/\/code\.highcharts\.com/gu,
+            config.codePath
+        );
+    }
+
     // Collect unique handler types and generate functions once
     const handlerTypes = new Set<string>();
     const controls: string[] = [];
@@ -629,13 +675,17 @@ export async function getDemoTS(
 
     // Replace double quotes with single quotes for strings
     chartOptions = chartOptions.replace(/"([^"]+)":/gu, '$1:') // Keys
+        .replace(/\\"/gu, '[DOUBLE_QUOTE_IN_STRING]') // Escaped quotes
         // eslint-disable-next-line quotes
         .replace(/: "([^"]+)"/gu, ": '$1'") // String values
+        // eslint-disable-next-line quotes
+        .replace(/""/gu, "''") // Empty strings
         .replace(
             /\[([^\]]*)"([^"]+)"([^\]]*)\]/gu,
             // Array elements - replace all double quotes with single quotes
             match => match.replace(/"/gu, '\'')
-        );
+        )
+        .replace(/\[DOUBLE_QUOTE_IN_STRING\]/gu, '"'); // Restore escaped quotes
 
     // For arrays of objects, put the open brace on the same line and reindent
     // the inner properties. Make no distinction between single lines/objects
@@ -867,6 +917,11 @@ export async function getDemoTS(
             const indentWithKey = (indentMatch?.[0] || '')
                 .replace(/^[\n\r]+/u, '');
 
+            if (/\\n/u.test(p1)) {
+                // Already has line breaks, return as template string
+                return `: \`${p1.replace(/\\n/gu, '\n')}\``;
+            }
+
             // Check if the total line length exceeds 80 characters
             if (indentWithKey.length + `: '${p1}'`.length <= 80) {
                 return _match;
@@ -999,7 +1054,7 @@ function objectToYml(value: unknown): string {
                             // keep the "key: value" structure on the same line,
                             // and put the rest of the object on the next line
                             const { key, ...rest } = item as any;
-                            const inner = render(rest, indent + 1);
+                            const inner = render(rest, indent + 2);
                             return `${indentStr(indent)}- ${key}:\n${inner}`;
                         }
                         const inner = render(item, indent + 1);
@@ -1118,7 +1173,7 @@ export async function calculateChecksum(outputDir: string): Promise<string> {
 async function saveChecksum(outputDir: string): Promise<void> {
     const checksum = await calculateChecksum(outputDir);
     const checksumPath = join(outputDir, '.generated-checksum');
-    await fs.writeFile(checksumPath, checksum, 'utf-8');
+    await writeFile(checksumPath, checksum);
 }
 
 export async function saveDemoFile(config: SampleGeneratorConfig) {
@@ -1148,10 +1203,10 @@ export async function saveDemoFile(config: SampleGeneratorConfig) {
 
     // Write all files in parallel
     await Promise.all([
-        fs.writeFile(join(outputDir, 'demo.html'), html, 'utf-8'),
-        fs.writeFile(join(outputDir, 'demo.css'), css, 'utf-8'),
-        fs.writeFile(join(outputDir, 'demo.details'), details, 'utf-8'),
-        fs.writeFile(join(outputDir, '.gitignore'), 'demo.js', 'utf-8')
+        writeFile(join(outputDir, 'demo.html'), html),
+        writeFile(join(outputDir, 'demo.css'), css),
+        writeFile(join(outputDir, 'demo.details'), details),
+        writeFile(join(outputDir, '.gitignore'), 'demo.js')
     ]);
 
     // If demo.ts is successfully written, delete demo.js if it exists
@@ -1178,15 +1233,15 @@ export async function saveDemoFile(config: SampleGeneratorConfig) {
     );
 
     if (results[0].output) {
-        await fs.writeFile(`${outputDir}/demo.ts`, results[0].output, 'utf-8');
+        await writeFile(`${outputDir}/demo.ts`, results[0].output);
     } else {
-        await fs.writeFile(`${outputDir}/demo.ts`, results[0].source, 'utf-8');
+        await writeFile(`${outputDir}/demo.ts`, results[0].source);
         console.error(
             colors.red(results[0].messages.map(msg => msg.message).join('\n'))
         );
     }
     */
-    await fs.writeFile(join(outputDir, 'demo.ts'), ts, 'utf-8');
+    await writeFile(join(outputDir, 'demo.ts'), ts);
 
     // Calculate and save checksum for validation
     await saveChecksum(outputDir);

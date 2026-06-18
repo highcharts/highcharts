@@ -4,12 +4,13 @@
  *
  *  (c) 2020-2026 Highsoft AS
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  *  Authors:
- *  - Dawid Dragula
+ *  - Dawid Draguła
  *
  * */
 
@@ -57,10 +58,12 @@ class IndependentResizingMode extends ResizingMode {
         }
 
         // Set the width of the resized column.
-        const width = this.columnWidths[column.id] = Math.round(Math.max(
-            (resizer.columnStartWidth || 0) + diff,
-            ResizingMode.getMinWidth(column)
-        ) * 10) / 10;
+        const width = this.columnWidths[column.id] = Math.round(
+            ResizingMode.fitWidth(
+                column,
+                (resizer.columnStartWidth ?? 0) + diff
+            ) * 10
+        ) / 10;
         this.columnWidthUnits[column.id] = 0; // Set to px
 
         // Change width units of all columns to px.

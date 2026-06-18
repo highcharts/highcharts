@@ -1,7 +1,8 @@
 /* *
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -30,22 +31,20 @@ import type {
 import type SupertrendPoint from './SupertrendPoint';
 import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
 
-import { Palette } from '../../../Core/Color/Palettes.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     atr: ATRIndicator,
     sma: SMAIndicator
 } = SeriesRegistry.seriesTypes;
-import U from '../../../Core/Utilities.js';
-const {
+import {
     addEvent,
     correctFloat,
+    extend,
     isArray,
     isNumber,
-    extend,
     merge,
     objectEach
-} = U;
+} from '../../../Shared/Utilities.js';
 
 /* *
  *
@@ -54,9 +53,7 @@ const {
  * */
 
 // Utils:
-/**
- * @private
- */
+/** @internal */
 function createPointObj(
     mainSeries: SupertrendLinkedParentObject,
     index: number
@@ -77,7 +74,7 @@ function createPointObj(
 /**
  * The Supertrend series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.supertrend
  *
@@ -135,18 +132,18 @@ class SupertrendIndicator extends SMAIndicator {
          * @sample {highstock} stock/indicators/supertrend/
          *         Example with risingTrendColor
          *
-         * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @type {Highcharts.ColorType}
          */
-        risingTrendColor: Palette.positiveColor,
+        risingTrendColor: 'var(--highcharts-positive-color)',
         /**
          * Color of the Supertrend series line that is above the main series.
          *
          * @sample {highstock} stock/indicators/supertrend/
          *         Example with fallingTrendColor
          *
-         * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @type {Highcharts.ColorType}
          */
-        fallingTrendColor: Palette.negativeColor,
+        fallingTrendColor: 'var(--highcharts-negative-color)',
         /**
          * The styles for the Supertrend line that intersect main series.
          *
@@ -165,7 +162,7 @@ class SupertrendIndicator extends SMAIndicator {
                  *
                  * @type {Highcharts.ColorString}
                  */
-                lineColor: Palette.neutralColor80,
+                lineColor: 'var(--highcharts-neutral-color-80)',
 
                 /**
                  * The dash or dot style of the grid lines. For possible
@@ -250,7 +247,7 @@ class SupertrendIndicator extends SMAIndicator {
             // Points offset between lines
             tempOffset: number = mainLinePoints.length - indicPoints.length,
             offset: number = tempOffset > 0 ? tempOffset : 0,
-            // @todo: fix when ichi-moku indicator is merged to master.
+            // @todo: fix when ichimoku indicator is merged to master.
             gappedExtend: SupertrendGappedExtensionObject = {
                 options: {
                     gapSize: indicOptions.gapSize
@@ -661,6 +658,7 @@ class SupertrendIndicator extends SMAIndicator {
  *
  * */
 
+/** @internal */
 interface SupertrendIndicator {
     nameBase: string;
     nameComponents: Array<string>;
@@ -678,6 +676,7 @@ extend(SupertrendIndicator.prototype, {
  *
  * */
 
+/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         supertrend: typeof SupertrendIndicator;
@@ -692,6 +691,7 @@ SeriesRegistry.registerSeriesType('supertrend', SupertrendIndicator);
  *
  * */
 
+/** @internal */
 export default SupertrendIndicator;
 
 /* *

@@ -6,7 +6,7 @@ test.describe('Rendering types', () => {
     });
 
     test.beforeEach(async ({ page }) => {
-        await page.goto('grid-pro/cypress/cell-renderers');
+        await page.goto('grid-pro/e2e/cell-renderers');
     });
 
     // Boolean

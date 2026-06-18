@@ -7,7 +7,7 @@ test.describe('Date Input Types', () => {
 
     test('Should parse date input values correctly', async ({ page }) => {
         const browserName = page.context().browser()?.browserType().name();
-        await page.goto('grid-pro/cypress/date-input-types');
+        await page.goto('grid-pro/e2e/date-input-types');
 
         // Test date input type
         const dateCell = page.locator('tr[data-row-index="1"] td[data-column-id="dateView"]');
@@ -34,7 +34,7 @@ test.describe('Date Input Types', () => {
     });
 
     test('Should parse datetime input values correctly', async ({ page }) => {
-        await page.goto('grid-pro/cypress/date-input-types');
+        await page.goto('grid-pro/e2e/date-input-types');
 
         // Test datetime input type
         const datetimeCell = page.locator('tr[data-row-index="0"] td[data-column-id="datetimeView"]');
@@ -49,7 +49,7 @@ test.describe('Date Input Types', () => {
     });
 
     test('Should parse time input values correctly', async ({ page }) => {
-        await page.goto('grid-pro/cypress/date-input-types');
+        await page.goto('grid-pro/e2e/date-input-types');
 
         // Test time input type
         const timeCell = page.locator('tr[data-row-index="0"] td[data-column-id="timeView"]');
@@ -67,7 +67,7 @@ test.describe('Date Input Types', () => {
 
     test('Should use correct input types for each column', async ({ page }) => {
         const browserName = page.context().browser()?.browserType().name();
-        await page.goto('grid-pro/cypress/date-input-types');
+        await page.goto('grid-pro/e2e/date-input-types');
 
         // In WebKit, input[type="date"] uses the native OS date picker, which
         // cannot be programmatically selected or committed (no Playwright
@@ -95,7 +95,7 @@ test.describe('Date Input Types', () => {
     });
 
     test('Should handle always-edit mode columns', async ({ page }) => {
-        await page.goto('grid-pro/cypress/date-input-types');
+        await page.goto('grid-pro/e2e/date-input-types');
 
         // Test columns that are always in edit mode
         const dateEditCell = page.locator('tr[data-row-index="0"] td[data-column-id="dateEdit"]');

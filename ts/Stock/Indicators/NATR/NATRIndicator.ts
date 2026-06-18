@@ -1,7 +1,8 @@
 /* *
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -24,11 +25,10 @@ import type {
 import type NATRPoint from './NATRPoint';
 
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
+import { merge } from '../../../Shared/Utilities.js';
 const {
     atr: ATRIndicator
 } = SeriesRegistry.seriesTypes;
-import U from '../../../Core/Utilities.js';
-const { merge } = U;
 
 /* *
  *
@@ -39,7 +39,7 @@ const { merge } = U;
 /**
  * The NATR series type.
  *
- * @private
+ * @internal
  * @class
  * @name Highcharts.seriesTypes.natr
  *
@@ -74,10 +74,6 @@ class NATRIndicator extends ATRIndicator {
             valueSuffix: '%'
         }
     } as NATROptions);
-
-    /**
-     * @lends Highcharts.Series#
-     */
 
     /* *
      *
@@ -132,6 +128,7 @@ class NATRIndicator extends ATRIndicator {
  *
  * */
 
+/** @internal */
 interface NATRIndicator {
     pointClass: typeof NATRPoint;
 }
@@ -142,6 +139,7 @@ interface NATRIndicator {
  *
  * */
 
+/** @internal */
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         natr: typeof NATRIndicator;
@@ -156,6 +154,7 @@ SeriesRegistry.registerSeriesType('natr', NATRIndicator);
  *
  * */
 
+/** @internal */
 export default NATRIndicator;
 
 /* *
@@ -178,4 +177,4 @@ export default NATRIndicator;
  * @apioption series.natr
  */
 
-''; // To include the above in the js output'
+''; // To include the above in the js output

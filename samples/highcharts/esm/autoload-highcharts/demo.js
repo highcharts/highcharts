@@ -1616,44 +1616,6 @@ let success = 0,
     }
 })();
 
-// tilemap test
-(async () => {
-    const { default: Highcharts } = await import(
-        'https://code.highcharts.com/esm/highcharts-autoload.js'
-    );
-
-    if (/Compiled on demand/.test(Highcharts.version)) {
-        document.getElementById('results').innerText =
-            'Compiled on demand is enabled. ' +
-            'Please disable it to run the tests.';
-        document.getElementById('results').classList.add('failed');
-        return;
-    }
-    const container = document.createElement('div');
-    container.className = 'test-container';
-    document.getElementById('container').appendChild(container);
-
-    try {
-        await Highcharts.chart(container, {
-            title: {
-                text: 'Testing tilemap'
-            },
-            series: [{
-                type: 'tilemap',
-                data: [1, 3, 2, 4]
-            }]
-        });
-        success++;
-        document.getElementById('success').innerText = success;
-    } catch (e) {
-        container.innerText = 'tilemap failed';
-        container.className += ' failed';
-        failed++;
-        document.getElementById('failed').innerText = failed;
-        console.error('Failed to load tilemap', e);
-    }
-})();
-
 // timeline test
 (async () => {
     const { default: Highcharts } = await import(

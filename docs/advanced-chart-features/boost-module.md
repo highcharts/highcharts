@@ -34,10 +34,19 @@ The main boost configuration is set in the `boost` property in the chart options
 
 ```js
 {
+    dataTable: {
+        columns: {
+            x: new Uint8Array([0, 1, 3, 4]),
+            y: new Uint8Array([6, 4, 7, 3])
+        }
+    },
     boost: {
         useGPUTranslations: true,
         // Chart-level boost when there are more than 5 series in the chart
-        seriesThreshold: 5
+        seriesThreshold: 5,
+        // Points processed per frame when building the k-d tree.
+        // Must be > 0; otherwise it falls back to the default (3000).
+        chunkSize: 3000
     },
 
     title: {
@@ -45,9 +54,8 @@ The main boost configuration is set in the `boost` property in the chart options
     },
 
     series: [{
-        boostThreshold: 1,  // Boost when there are more than 1
-                            // point in the series.
-        data: [ [0, 1], [1, 2], [2, 3] ]
+        // Boost when there is more than 1 point in the series
+        boostThreshold: 1
     }]
 };
 ```
@@ -56,8 +64,12 @@ _Configuration for a boosted line chart._
 
 Configuration Data Options
 --------------------------
+We recommend configuring data in a
+[DataTable](https://api.highcharts.com/highcharts/dataTable) with typed arrays
+as columns. This performs up to 20% faster than `series.data` options in a chart
+with 500k data points.
 
-In boost mode, [turbo mode](https://api.highcharts.com/highcharts/plotOptions.series.turboThreshold) is always turned on. That means all data points should be configured as an array of numbers (e.g. `[1, 2, 3]`) or a two dimensional array of numbers (e.g. `[ [1, 2], [2, 3], [3, 4] ]`).
+Should you choose to use `series.data` instead, [turbo mode](https://api.highcharts.com/highcharts/plotOptions.series.turboThreshold) is always turned on. That means all data points should be configured as an array of numbers (e.g. `[1, 2, 3]`) or a two dimensional array of numbers (e.g. `[ [1, 2], [2, 3], [3, 4] ]`).
 
 Note that when `dataGrouping` is enabled (default in `stockChart`), boost mode will not kick in.
 
@@ -94,6 +106,7 @@ Optimizing tips
 
 * Set the extremes ([min](https://api.highcharts.com/highcharts/xAxis.min) and [max](https://api.highcharts.com/highcharts/xAxis.max)) explicitly on the `xAxis` and `yAxis` in order for Highcharts to avoid computing the extremes. In a scatter chart with 1M points, this may reduce the rendering time by ~10%.
 * If the value increments on both the X and Y axis aren't small, consider setting [`useGPUTranslations`](https://api.highcharts.com/highcharts/boost.useGPUTranslations) to true. If you do this and the increments are small (e.g. datetime axis with small time increments) it may cause rendering issues due to floating point rounding errors, so this should be considered case by case.
+* Tune [`chunkSize`](https://api.highcharts.com/highcharts/boost.chunkSize) to balance UI responsiveness against k-d tree build time in boost mode. The value must be greater than `0`; values less than or equal to `0` fall back to the default (`3000`).
 
 
 Getting timing information

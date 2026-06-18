@@ -2,10 +2,11 @@
  *
  *  Highcharts Border Radius module
  *
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -30,14 +31,13 @@ const { defaultOptions } = D;
 import H from '../Core/Globals.js';
 const { noop } = H;
 import Series from '../Core/Series/Series.js';
-import U from '../Core/Utilities.js';
-const {
+import {
     addEvent,
     extend,
     isObject,
     merge,
     relativeLength
-} = U;
+} from '../Shared/Utilities.js';
 
 /* *
  *
@@ -45,6 +45,14 @@ const {
  *
  * */
 
+/**
+ * Detailed options for border radius.
+ *
+ * @sample {highcharts} highcharts/plotoptions/column-borderradius/
+ *         Rounded columns
+ * @sample highcharts/plotoptions/series-border-radius
+ *         Column and pie with rounded border
+ */
 export interface BorderRadiusOptionsObject {
 
     /**
@@ -52,23 +60,39 @@ export interface BorderRadiusOptionsObject {
      * for example `50%`, signifies a relative size. For columns this is
      * relative to the column width, for pies it is relative to the radius and
      * the inner radius.
+     *
+     * @sample {highcharts} highcharts/plotoptions/column-borderradius/
+     *         Rounded columns
+     * @sample highcharts/plotoptions/series-border-radius
+     *         Column and pie with rounded border
      */
     radius: number|string;
 
     /**
-     * The scope of the rounding for column charts. In a stacked column chart,
-     * the value `point` means each single point will get rounded corners. The
-     * value `stack` means the rounding will apply to the full stack, so that
-     * only points close to the top or bottom will receive rounding.
+     * The scope of the rounding for column charts or plot bands. In a stacked
+     * column chart, the value `point` means each single point will get rounded
+     * corners. The value `stack` means the rounding will apply to the full
+     * stack, so that only points close to the top or bottom will receive
+     * rounding.
+     *
+     * Similarly, for plot bands, the `individual` value means each plot band
+     * will get rounded corners.
+     *
+     * @sample {highcharts} highcharts/plotoptions/column-borderradius/
+     *         Rounded columns
      */
-    scope: 'point'|'stack';
+    scope: 'individual'|'point'|'stack';
 
     /**
      * For column charts, where in the point or stack to apply rounding. The
      * `end` value means only those corners at the point value will be rounded,
      * leaving the corners at the base or threshold unrounded. This is the most
-     * intuitive behaviour. The `all` value means also the base will be
-     * rounded.
+     * intuitive behavior. The `all` value means also the base will be rounded.
+     *
+     * @sample {highcharts} highcharts/plotoptions/column-borderradius-where-all
+     *         Rounding on all corners
+     *
+     * @default 'end'
      */
     where?: 'end'|'all';
 
@@ -109,7 +133,7 @@ declare module '../Core/Renderer/SVG/SymbolOptions' {
          * is relative to the column width, for pies it is relative to the
          * radius and the inner radius.
          */
-        borderRadius?: number|string;
+        borderRadius?: number|string|Partial<BorderRadiusOptionsObject>;
 
         /**
          * The height of the border-radius box.
@@ -297,7 +321,10 @@ function arc(
     const alpha = end - start,
         sinHalfAlpha = Math.sin(alpha / 2),
         borderRadius = Math.max(Math.min(
-            relativeLength(options.borderRadius || 0, r - innerR),
+            relativeLength(
+                optionsToBorderRadiusObject(options.borderRadius).radius,
+                r - innerR
+            ),
             // Cap to half the sector radius
             (r - innerR) / 2,
             // For smaller pie slices, cap to the largest small circle that
@@ -344,7 +371,7 @@ function seriesOnAfterColumnTranslate(
             seriesDefault = defaultOptions.plotOptions
                 ?.[this.type]
                 ?.borderRadius,
-            borderRadius = optionsToObject(
+            borderRadius = optionsToBorderRadiusObject(
                 options.borderRadius,
                 isObject(seriesDefault) ? seriesDefault : {}
             ),
@@ -448,7 +475,7 @@ function seriesOnAfterColumnTranslate(
 }
 
 /** @internal */
-function compose(
+export function composeBorderRadius(
     SeriesClass: typeof Series,
     SVGElementClass: typeof SVGElement,
     SVGRendererClass: typeof SVGRenderer
@@ -488,7 +515,7 @@ function compose(
 }
 
 /** @internal */
-function optionsToObject(
+export function optionsToBorderRadiusObject(
     options?: number|string|Partial<BorderRadiusOptionsObject>,
     seriesBROptions?: Partial<BorderRadiusOptionsObject>
 ): BorderRadiusOptionsObject {
@@ -502,7 +529,7 @@ function optionsToObject(
 function pieSeriesOnAfterTranslate(
     this: PieSeries
 ): void {
-    const borderRadius = optionsToObject(this.options.borderRadius);
+    const borderRadius = optionsToBorderRadiusObject(this.options.borderRadius);
 
     for (const point of this.points) {
         const shapeArgs = point.shapeArgs;
@@ -641,19 +668,6 @@ function roundedRect(
 
 /* *
  *
- *  Default Export
- *
- * */
-
-const BorderRadius = {
-    compose,
-    optionsToObject
-};
-
-export default BorderRadius;
-
-/* *
- *
  *  API Declarations
  *
  * */
@@ -680,22 +694,26 @@ export default BorderRadius;
  * @name Highcharts.BorderRadiusOptionsObject#radius
  * @type {string|number}
  *//**
- * The scope of the rounding for column charts. In a stacked column chart, the
- * value `point` means each single point will get rounded corners. The value
- * `stack` means the rounding will apply to the full stack, so that only points
- * close to the top or bottom will receive rounding.
+ * The scope of the rounding for column charts or plot bands. In a stacked
+ * column chart, the value `point` means each single point will get rounded
+ * corners. The value `stack` means the rounding will apply to the full
+ * stack, so that only points close to the top or bottom will receive
+ * rounding.
+ *
+ * Similarly, for plot bands, the `individual` value means each plot band
+ * will get rounded corners.
  *
  * @sample  {highcharts} highcharts/plotoptions/column-borderradius/
  *          Rounded columns
  *
  * @name Highcharts.BorderRadiusOptionsObject#scope
- * @validvalue ["point", "stack"]
+ * @validvalue ["individual", "point", "stack"]
  * @type {string}
  *//**
  * For column charts, where in the point or stack to apply rounding. The `end`
  * value means only those corners at the point value will be rounded, leaving
  * the corners at the base or threshold unrounded. This is the most intuitive
- * behaviour. The `all` value means also the base will be rounded.
+ * behavior. The `all` value means also the base will be rounded.
  *
  * @sample  {highcharts} highcharts/plotoptions/column-borderradius-where-all
  *          Rounding on all corners

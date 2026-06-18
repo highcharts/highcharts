@@ -4,12 +4,13 @@
  *
  *  (c) 2020-2026 Highsoft AS
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  *  Authors:
- *  - Dawid Dragula
+ *  - Dawid Draguła
  *  - Sebastian Bochan
  *  - Kamil Kubik
  *
@@ -42,9 +43,9 @@ export type StringCondition = typeof stringConditions[number];
 export type NumberCondition = typeof numberConditions[number];
 
 /**
- * DateTime filtering conditions.
+ * DateTime filtering conditions (same operators as number).
  */
-export type DateTimeCondition = typeof dateTimeConditions[number];
+export type DateTimeCondition = NumberCondition;
 
 /**
  * Boolean filtering conditions.
@@ -58,12 +59,6 @@ export type AfterRenderEvent = Event & {
     column: ColumnDataType;
     filtering: boolean;
 };
-
-/**
- * Combined filtering conditions.
- */
-export type Condition =
-    StringCondition | NumberCondition | DateTimeCondition | BooleanCondition;
 
 /**
  * String conditions values for the condition select options.
@@ -99,8 +94,10 @@ export const numberConditions = [
 export const dateTimeConditions = [
     'equals',
     'doesNotEqual',
-    'before',
-    'after',
+    'greaterThan',
+    'greaterThanOrEqualTo',
+    'lessThan',
+    'lessThanOrEqualTo',
     'empty',
     'notEmpty'
 ] as const;
@@ -114,6 +111,22 @@ export const booleanConditions = [
     'false',
     'empty'
 ] as const;
+
+/**
+ * Legacy datetime operator aliases (`before` → `lessThan`, `after` → `greaterThan`).
+ */
+// TODO: Remove, deprecated
+export const operatorAliases = {
+    before: 'lessThan',
+    after: 'greaterThan'
+} as const;
+
+/**
+ * Combined filtering conditions.
+ */
+export type Condition =
+    StringCondition | NumberCondition | BooleanCondition |
+    keyof typeof operatorAliases; // TODO: Remove, deprecated
 
 /**
  * Corresponding values for the boolean select options.

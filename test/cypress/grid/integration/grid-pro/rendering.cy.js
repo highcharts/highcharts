@@ -1,6 +1,6 @@
 describe('Rendering types.', () => {
     before(() => {
-        cy.visit('grid-pro/cypress/cell-renderers');
+        cy.visit('grid-pro/e2e/cell-renderers');
     });
 
     // Boolean

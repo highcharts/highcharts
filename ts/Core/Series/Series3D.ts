@@ -1,12 +1,13 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
  *  Extension to the Series object in 3D charts.
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -27,15 +28,14 @@ const { composed } = H;
 import Math3D from '../Math3D.js';
 const { perspective } = Math3D;
 import Series from '../Series/Series.js';
-import U from '../Utilities.js';
-const {
+import {
     addEvent,
     extend,
     isNumber,
     merge,
     pick,
     pushUnique
-} = U;
+} from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -130,7 +130,7 @@ class Series3D extends Series {
         series.zPadding = stack *
             (seriesOptions.depth || 0 + (seriesOptions.groupZPadding || 1));
 
-        series.data.forEach((rawPoint): void => {
+        series.points.forEach((rawPoint): void => {
             if (zAxis?.translate) {
                 zValue = zAxis.logarithmic && zAxis.val2lin ?
                     zAxis.val2lin(rawPoint.z as any) :
@@ -161,7 +161,7 @@ class Series3D extends Series {
 
         const projectedPoints = perspective(rawPoints, chart, true);
 
-        series.data.forEach((rawPoint, i): void => {
+        series.points.forEach((rawPoint, i): void => {
             projectedPoint = projectedPoints[i];
 
             rawPoint.plotX = projectedPoint.x;

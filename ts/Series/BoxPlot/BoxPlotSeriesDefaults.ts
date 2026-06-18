@@ -1,10 +1,11 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -18,8 +19,6 @@
  * */
 
 import type BoxPlotSeriesOptions from './BoxPlotSeriesOptions';
-
-import { Palette } from '../../Core/Color/Palettes.js';
 
 /* *
  *
@@ -41,7 +40,7 @@ import { Palette } from '../../Core/Color/Palettes.js';
  *         Jittered scatter plot on top of a box plot
  *
  * @extends      plotOptions.column
- * @excluding    borderColor, borderRadius, borderWidth, groupZPadding,
+ * @excluding    borderColor, borderWidth, groupZPadding,
  *               states, boostThreshold, boostBlending
  * @product      highcharts
  * @requires     highcharts-more
@@ -50,7 +49,29 @@ import { Palette } from '../../Core/Color/Palettes.js';
 const BoxPlotSeriesDefaults: BoxPlotSeriesOptions = {
 
     /**
-     * @type {number|null}
+     * The corner radius of the border surrounding the box. A number
+     * signifies pixels. A percentage string, like for example `50%`, signifies
+     * a size relative to the box width.
+     *
+     * @sample {highcharts} highcharts/demo/violin-plot/
+     *         Box plot with rounded corners
+     *
+     * @type    {number|string|Highcharts.BorderRadiusOptionsObject}
+     * @default 0
+     * @since   next
+     * @product highcharts
+     */
+    borderRadius: 0,
+
+    /**
+     * The Y axis value to serve as the base for the columns, for
+     * distinguishing between values above and below a threshold. If `null`,
+     * the columns extend from the padding Y axis minimum.
+     *
+     * @type    {number|null}
+     * @default null
+     * @since   2.0
+     * @product highcharts
      */
     threshold: null,
 
@@ -88,12 +109,12 @@ const BoxPlotSeriesDefaults: BoxPlotSeriesOptions = {
      * @sample {highcharts} highcharts/plotoptions/box-plot-styling/
      *         Box plot styling
      *
-     * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @type    {Highcharts.ColorType}
      * @default #ffffff
      * @since   3.0
      * @product highcharts
      */
-    fillColor: Palette.backgroundColor,
+    fillColor: 'var(--highcharts-background-color)',
 
     /**
      * The width of the line surrounding the box. If any of
@@ -126,7 +147,7 @@ const BoxPlotSeriesDefaults: BoxPlotSeriesOptions = {
      * @sample {highcharts} highcharts/plotoptions/error-bar-styling/
      *         Error bar styling
      *
-     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject}
+     * @type      {Highcharts.ColorType}
      * @since     3.0
      * @product   highcharts
      * @apioption plotOptions.boxplot.medianColor
@@ -174,7 +195,7 @@ const BoxPlotSeriesDefaults: BoxPlotSeriesOptions = {
      * @sample {highcharts} highcharts/plotoptions/error-bar-styling/
      *         Error bar styling
      *
-     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @type      {Highcharts.ColorType}
      * @since     3.0
      * @product   highcharts
      * @apioption plotOptions.boxplot.stemColor
@@ -274,14 +295,14 @@ const BoxPlotSeriesDefaults: BoxPlotSeriesOptions = {
      * values. When `undefined`, the general series color is used.
      *
      * In styled mode, the whisker stroke can be set with the
-     * `.highcharts-boxplot-whisker` class .
+     * `.highcharts-boxplot-whisker` class.
      *
      * @sample {highcharts} highcharts/plotoptions/box-plot-styling/
      *         Box plot styling
      * @sample {highcharts} highcharts/css/boxplot/
      *         Box plot in styled mode
      *
-     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @type      {Highcharts.ColorType}
      * @since     3.0
      * @product   highcharts
      * @apioption plotOptions.boxplot.whiskerColor
@@ -374,6 +395,7 @@ const BoxPlotSeriesDefaults: BoxPlotSeriesOptions = {
  * @sample {highcharts} highcharts/series/data-array-of-objects/
  *         Config objects
  *
+ * @basic
  * @type      {Array<Array<(number|string),number,number,number,number>|Array<(number|string),number,number,number,number,number>|*>}
  * @extends   series.line.data
  * @excluding marker

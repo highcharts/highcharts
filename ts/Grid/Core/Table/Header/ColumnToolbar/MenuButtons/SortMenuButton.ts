@@ -4,12 +4,13 @@
  *
  *  (c) 2020-2026 Highsoft AS
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  *  Authors:
- *  - Dawid Dragula
+ *  - Dawid Draguła
  *
  * */
 
@@ -28,9 +29,7 @@ import type Column from '../../../Column';
 
 import ContextMenuButton from '../../../../UI/ContextMenuButton.js';
 import StateHelpers from '../StateHelpers.js';
-import U from '../../../../../../Core/Utilities.js';
-
-const { addEvent } = U;
+import { addEvent } from '../../../../../../Shared/Utilities.js';
 
 
 /* *
@@ -54,7 +53,6 @@ class SortMenuButton extends ContextMenuButton {
 
     private baseLabel: string;
 
-
     /* *
      *
      *  Constructor
@@ -65,7 +63,7 @@ class SortMenuButton extends ContextMenuButton {
         langOptions: LangOptions,
         direction: typeof SortMenuButton.prototype.direction
     ) {
-        super({ icon: direction === 'asc' ? 'sortAsc' : 'sortDesc' });
+        super({ icon: direction === 'asc' ? 'arrowUp' : 'arrowDown' });
 
         this.direction = direction;
         this.baseLabel = langOptions[

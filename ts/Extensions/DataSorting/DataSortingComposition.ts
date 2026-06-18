@@ -26,14 +26,13 @@ import type {
 } from '../../Core/Series/PointOptions.js';
 import type Series from '../../Core/Series/Series';
 
-import U from '../../Core/Utilities.js';
-const {
+import {
     addEvent,
     defined,
     extend,
     getNestedProperty,
     wrap
-} = U;
+} from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -67,10 +66,7 @@ declare module '../../Core/Series/SeriesBase' {
 /**
  * Internal function to sort series data
  *
- * @private
- * @function Highcharts.Series#sortData
- * @param {Array<Highcharts.PointOptionsType>} data
- * Force data grouping.
+ * @internal
  */
 function sortData(
     series: Series,

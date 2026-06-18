@@ -23,8 +23,7 @@ import D from '../../../Core/Defaults.js';
 const { defaultOptions } = D;
 import InfinityLine from './InfinityLine.js';
 import MockPoint from '../MockPoint.js';
-import U from '../../../Core/Utilities.js';
-const { merge } = U;
+import { merge } from '../../../Shared/Utilities.js';
 
 if (defaultOptions.annotations?.types) {
     defaultOptions.annotations.types.pitchfork = merge(

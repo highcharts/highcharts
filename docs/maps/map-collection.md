@@ -3,6 +3,8 @@ Map Collection
 
 For your convenience, Highcharts Maps offers a free [collection of maps](https://code.highcharts.com/mapdata/), optimized for use with Highcharts Maps. For common maps, it saves you the trouble of finding or drawing suitable SVG or GeoJSON/TopoJSON maps. Instead, you can choose between hundreds of pre-generated maps of countries, regions and other administration levels.
 
+All maps in the collection can be previewed in [this interactive demo](https://www.highcharts.com/demo/maps/all-maps).
+
 The Highcharts Maps Collection maps mainly follow [United Nations cartographic standards](https://www.un.org/geospatial/mapsgeo). These maps are specifically designed to reflect internationally recognized boundaries and regions. For users requiring a specific geopolitical perspective, such as [World with Palestine areas](https://code.highcharts.com/mapdata/), the collection offers three different resolutions. These maps detail regions like the West Bank and Gaza to ensure accurate representation based on the UN's view of world borders.
 
 ![west-bank-gaza.jpg](west-bank-gaza.jpg)
@@ -10,48 +12,12 @@ The Highcharts Maps Collection maps mainly follow [United Nations cartographic s
 License
 -------
 
-The Highcharts Maps Map Collection comes with the license of the source data. For most of Admin0 (countries) and Admin1 (US states, German Bundesländer, Dutch regions, etc.), the source data is [Natural Earth](https://www.naturalearthdata.com/), which is a public domain dataset. For Admin2, we have only compiled selected countries, and most of these maps are created from national files with their own license which is specified on the SVG map and in the other format files as meta data. If your country is missing from the list, please contact us and we'll try to find a suitable shapefile and generate more maps.
+The Highcharts Maps Map Collection comes with the license of the source data. For most of Admin0 (countries) and Admin1 (US states, German Bundesländer, Dutch regions, etc.), the source data is [Natural Earth](https://www.naturalearthdata.com/), which is a public domain dataset. For Admin2, we have only compiled selected countries, and most of these maps are created from national files with their own license which is specified on the SVG map and in the other format files as meta data. If your country is missing from the list, please [contact us](https://github.com/highcharts/map-collection-dist/issues) and we'll try to find a suitable shapefile and generate more maps.
 
 For maps loaded using the default TopoJSON or GeoJSON input into the [`series.mapData`](https://api.highcharts.com/highmaps/series.map.mapData) or [`chart.map`](https://api.highcharts.com/highmaps/chart.map) options, a short version of the copyright will be printed in the chart's credits label.
 
 Using the Map Collection
 ------------------------
-
-### Install from our CDN
-
-In the [Map Collection reference](https://code.highcharts.com/mapdata/), each map name is followed by links to demos and data. Click the TopoJSON link and copy the URL.
-
-1. Load the map and parse the JSON
-
-```js
-const topology = await fetch(
-    'https://code.highcharts.com/mapdata/custom/world.topo.json'
-).then(response => response.json());
-```
-
-<p>You can alternatively link to a specific version or subversion of the map at <code>https://code.highcharts.com/mapdata/<strong>1.1</strong>/custom/world.topo.json</code>.</p>
-
------------------------------------------------------------------------------------------------------------------------------------------
-
-2. Apply it in [`chart.map`](https://api.highcharts.com/highmaps/chart.map) to make it the default map for all series:
-```js
-chart: {
-    map: topology,
-    ...
-```
-Alternatively, you can apply different maps for different series ([view demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/maps/series/affectsmapview/)):
-```js
-series: [{
-    mapData: topology,
-    ...
-```
-
-
-3. Join your data with the map. By default Highcharts Maps is set up to map your data against the `hc-key` property of the Map Collection, allowing you to define your data like this:
-```js
-data: [['us-ny', 0], ['us-mi', 5], ['us-tx', 3], ['us-ak', 5]]
-```
-For other data joining options, see the [`series.joinBy`](https://api.highcharts.com/highmaps/plotOptions.series.joinBy) and [`series.keys`](https://api.highcharts.com/highcharts/plotOptions.series.keys) options.
 
 ### Install from npm
 
@@ -60,7 +26,7 @@ The Map Collection is available on npm as [@highcharts/map-collection](https://w
 npm i @highcharts/map-collection
 ```
 
-To load a map in Node.js and use it in Highcharts Maps you can do the following:
+1. Load a map in Node.js and use it in Highcharts Maps. Apply it in [`chart.map`](https://api.highcharts.com/highmaps/chart.map) to make it the default map for all series.
 
 ```js
 const Highcharts = require('highcharts/highmaps.js'),
@@ -74,6 +40,48 @@ Highcharts.mapChart('container', {
 });
 ```
 
+Alternatively, you can apply different maps for different series ([view demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/maps/series/affectsmapview/)):
+```js
+series: [{
+    mapData: map,
+    // ...
+```
+
+
+2. Join your data with the map. By default Highcharts Maps is set up to map your data against the `hc-key` property of the Map Collection, allowing you to define your data like this:
+```js
+data: [['us-ny', 0], ['us-mi', 5], ['us-tx', 3], ['us-ak', 5]]
+```
+For other data joining options, see the [`series.joinBy`](https://api.highcharts.com/highmaps/plotOptions.series.joinBy) and [`series.keys`](https://api.highcharts.com/highcharts/plotOptions.series.keys) options.
+
+### Download the source code
+
+The source code for the Map Collection is available on [GitHub](https://github.com/highcharts/map-collection-dist). Each release is tagged with the version number and linked assets: https://github.com/highcharts/map-collection-dist/releases
+
+### Install from our CDN
+
+By using the Highcharts CDN, you agree to abide by [this fair usage policy](https://www.highcharts.com/blog/fair-usage-policy-pdf) and the associated licensing terms.
+
+In the [Map Collection reference](https://code.highcharts.com/mapdata/), each map name is followed by links to demos and data. Click the TopoJSON link and copy the URL.
+
+Load the map and parse the JSON:
+
+```js
+const map = await fetch(
+    'https://code.highcharts.com/mapdata/custom/world.topo.json'
+).then(response => response.json());
+
+Highcharts.mapChart('container', {
+    chart: {
+        map
+    },
+    // ...
+});
+```
+
+Specific map versions are available via versioned URLs.
+For example: <code>https://code.highcharts.com/mapdata/<strong>2.3</strong>/custom/world.topo.json</code>
+corresponds to version **^2.3**.
 
 Map properties
 --------------
@@ -133,4 +141,4 @@ Our maps are also a good starting points for your own modified maps. Borders can
 Disclaimer
 ----------
 
-We offer the map collection for free to use with Highcharts Maps, for your convenience. We will not be held responsible for errors in the maps, although we will strive to respond to bug reports and keep the maps correct.
+We offer the map collection for free to use with Highcharts Maps, for your convenience. We will not be held responsible for errors in the maps, although we will strive to respond to [bug reports](https://github.com/highcharts/map-collection-dist/issues) and keep the maps correct.

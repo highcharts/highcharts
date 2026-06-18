@@ -2,8 +2,9 @@
  *
  *  (c) 2009-2026 Highsoft AS
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  *  Authors:
@@ -19,16 +20,11 @@ import type CSSJSONObject from '../CSSJSONObject';
 import type { DeepPartial } from '../../Shared/Types';
 import type { Options as RowOptions } from './Row';
 
-import U from '../../Core/Utilities.js';
-const {
-    pick,
-    defined
-} = U;
-
 import Cell from './Cell.js';
 import Row from './Row.js';
 import GUIElement from './GUIElement.js';
 import Globals from '../Globals.js';
+import { defined, pick } from '../../Shared/Utilities.js';
 
 /**
  * @internal

@@ -2,7 +2,7 @@ import { test, expect } from '~/fixtures.ts';
 
 test.describe('Grid Pro - grid events', () => {
     test.beforeEach(async ({ page }) => {
-        await page.goto('/grid-pro/cypress/grid-events', { waitUntil: 'networkidle' });
+        await page.goto('/grid-pro/e2e/grid-events', { waitUntil: 'networkidle' });
     });
 
     test('Grid beforeLoad event', async ({ page }) => {
@@ -45,9 +45,47 @@ test.describe('Grid Pro - grid events', () => {
     });
 });
 
+test.describe('Grid Pro - tree view events', () => {
+    test.beforeEach(async ({ page }) => {
+        await page.goto('/grid-pro/e2e/tree-view-events', { waitUntil: 'networkidle' });
+    });
+
+    test('beforeTreeRowToggle / afterTreeRowToggle', async ({ page }) => {
+        const treeToggleButton = page.locator('[data-hcg-tree-toggle]').first();
+        const rows = page.locator('tbody .hcg-row');
+
+        await treeToggleButton.click();
+
+        await expect(page.locator('#beforeTreeRowToggle')).toHaveValue('1:true');
+        await expect(page.locator('#afterTreeRowToggle')).toHaveValue('1:true');
+        await expect(rows).toHaveCount(3);
+
+        await treeToggleButton.click();
+
+        await expect(page.locator('#beforeTreeRowToggle')).toHaveValue('1:false');
+        await expect(page.locator('#afterTreeRowToggle')).toHaveValue('1:false');
+        await expect(rows).toHaveCount(1);
+    });
+
+    test('beforeTreeRowToggle can cancel toggle', async ({ page }) => {
+        const treeToggleButton = page.locator('[data-hcg-tree-toggle]').first();
+        const rows = page.locator('tbody .hcg-row');
+
+        await treeToggleButton.click();
+        await expect(rows).toHaveCount(3);
+
+        await page.locator('#preventToggle').check();
+        await treeToggleButton.click();
+
+        await expect(page.locator('#beforeTreeRowToggle')).toHaveValue('1:false');
+        await expect(page.locator('#afterTreeRowToggle')).toHaveValue('1:true');
+        await expect(rows).toHaveCount(3);
+    });
+});
+
 test.describe('Grid Pro - cell and column events', () => {
     test.beforeEach(async ({ page }) => {
-        await page.goto('grid-pro/cypress/column-cell-events');
+        await page.goto('grid-pro/e2e/column-cell-events');
     });
 
     test('Cell mouseOver / mouseOut event', async ({ page }) => {
@@ -199,6 +237,19 @@ test.describe('Grid Pro - cell and column events', () => {
         await expect(page.locator('#afterColumnSorting')).toHaveValue('afterSortColumnOption');
     });
 
+    test('Header click event fires when clicking on toolbar icons', async ({ page }) => {
+        // Reset headerClick to verify the event fires
+        await page.locator('#headerClick').fill('');
+
+        // Click on the sort icon (not the header text) - header.events.click should fire
+        const sortIcon = page.locator(
+            'th[data-column-id="product"] .hcg-header-cell-icons button'
+        ).first();
+        await sortIcon.click({ force: true });
+
+        await expect(page.locator('#headerClick')).toHaveValue('headerClick');
+    });
+
     test('Filtering column event', async ({ page }) => {
         // ColumnDefaults
         const productInput = page.locator('th[data-column-id="product"] input').first();
@@ -219,4 +270,3 @@ test.describe('Grid Pro - cell and column events', () => {
         await expect(page.locator('#afterColumnFiltering')).toHaveValue('afterFilterColumnOption');
     });
 });
-

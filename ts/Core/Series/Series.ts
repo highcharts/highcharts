@@ -1,10 +1,11 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -26,9 +27,13 @@ import type DataExtremesObject from './DataExtremesObject';
 import type DataLabelOptions from './DataLabelOptions';
 import type {
     Column,
-    ColumnCollection
+    ColumnCollection,
+    ColumnEvent,
+    RowEvent,
+    RowObject
 } from '../../Data/DataTable';
-import type { DeepPartial } from '../../Shared/Types';
+import type { DataTableOptionsObject } from '../../Data/DataTableOptions';
+import type { DeepPartial, TypedArray } from '../../Shared/Types';
 import type { EventCallback } from '../Callback';
 import type KDPointSearchObjectBase from './KDPointSearchObjectBase';
 import type Legend from '../Legend/Legend';
@@ -46,6 +51,7 @@ import type {
     SeriesZonesOptions
 } from './SeriesOptions';
 import type {
+    SeriesTypeRegistry,
     SeriesTypeOptions,
     SeriesTypePlotOptions
 } from './SeriesType';
@@ -55,7 +61,6 @@ import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 import type { SymbolKey } from '../Renderer/SVG/SymbolType';
 import type TooltipOptions from '../TooltipOptions';
-import type Types from '../../Shared/Types';
 
 import A from '../Animation/AnimationUtilities.js';
 const {
@@ -73,7 +78,6 @@ const {
     win
 } = H;
 import LegendSymbol from '../Legend/LegendSymbol.js';
-import { Palette } from '../Color/Palettes.js';
 import Point from './Point.js';
 import SeriesDefaults from './SeriesDefaults.js';
 import SeriesRegistry from './SeriesRegistry.js';
@@ -81,8 +85,8 @@ const { seriesTypes } = SeriesRegistry;
 import SVGElement from '../Renderer/SVG/SVGElement.js';
 import T from '../Templating.js';
 const { format } = T;
-import U from '../Utilities.js';
-const {
+import {
+    addEvent,
     arrayMax,
     arrayMin,
     clamp,
@@ -92,21 +96,22 @@ const {
     destroyObjectProperties,
     diffObjects,
     erase,
-    error,
+    type EventWrapperObject,
     extend,
-    find,
     fireEvent,
     getClosestDistance,
-    insertItem,
+    internalClearTimeout,
     isArray,
     isNumber,
     isString,
     merge,
     objectEach,
     pick,
+    pushUnique,
     removeEvent,
     syncTimeout
-} = U;
+} from '../../Shared/Utilities.js';
+import { error, insertItem } from '../Utilities.js';
 
 /* *
  *
@@ -317,7 +322,7 @@ class Series {
         'condemnedPoints',
         'dataTable',
 
-        'processedData', // #17057
+        'hasProcessedDataTable', // #17057
 
         'xIncrement',
         'cropped',
@@ -387,9 +392,10 @@ class Series {
 
     /**
      * Points that are marked for removal. During deleting of points, whether it
-     * is after adding points with shift, destroying points directly, udating
-     * data or other operations, we render the condemened point one last time
+     * is after adding points with shift, destroying points directly, updating
+     * data or other operations, we render the condemned point one last time
      * into their final position as we fade them out, then destroy the elements.
+     *
      * @internal
      */
     public condemnedPoints!: Array<Point>;
@@ -413,6 +419,24 @@ class Series {
      * @see Series.points
      */
     public data!: Array<Point>;
+
+    /** @internal */
+    public dataColumnKeys?: Array<string>;
+
+    /** @internal */
+    public dataTable!: DataTableCore;
+
+    /** @internal */
+    public dataTableOptions?: DataTableOptionsObject;
+
+    /** @internal */
+    public dataTableColumns?: Array<Column>;
+
+    /** @internal */
+    public dataTableRows?: Array<Array<unknown>>;
+
+    /** @internal */
+    public dataTableRowCount?: number;
 
     /**
      * Contains the maximum value of the series' data point. Some series
@@ -460,7 +484,13 @@ class Series {
     public halo?: SVGElement;
 
     /** @internal */
+    public hasBoundDataTableEvents?: boolean;
+
+    /** @internal */
     public hasCartesianSeries?: Chart['hasCartesianSeries'];
+
+    /** @internal */
+    public hasProcessedDataTable?: boolean;
 
     /** @internal */
     public hasRendered?: boolean;
@@ -529,6 +559,9 @@ class Series {
     public options!: SeriesOptions;
 
     /** @internal */
+    public plotClipGroup?: SVGElement;
+
+    /** @internal */
     public pointInterval?: number;
 
     /**
@@ -570,9 +603,6 @@ class Series {
     public symbolIndex?: number;
 
     /** @internal */
-    public dataTable!: DataTableCore;
-
-    /** @internal */
     public tooltipOptions!: TooltipOptions;
 
     /** @internal */
@@ -607,6 +637,12 @@ class Series {
      * with the series.
      */
     public xAxis!: AxisType;
+
+    /** @internal */
+    public xColumn?: Array<number>;
+
+    /** @internal */
+    public xColumnIsNumbers?: boolean|undefined;
 
     /** @internal */
     public xIncrement?: (number|null);
@@ -775,7 +811,6 @@ class Series {
      *
      * */
 
-    /* eslint-disable valid-jsdoc */
     /** @internal */
     public init(
         chart: Chart,
@@ -783,9 +818,6 @@ class Series {
     ): void {
 
         fireEvent(this, 'init', { options: userOptions });
-
-        // Create the data table
-        this.dataTable ??= new DataTableCore();
 
         const series = this,
             chartSeries = chart.series;
@@ -797,20 +829,80 @@ class Series {
 
         this.condemnedPoints ||= [];
 
+        /**
+         * Read only. The chart that the series belongs to.
+         *
+         * @name Highcharts.Series#chart
+         * @type {Highcharts.Chart}
+         */
         series.chart = chart;
-        series.options = series.setOptions(userOptions);
 
+        /**
+         * Read only. The series' type, like "line", "area", "column" etc.
+         * The type in the series options anc can be altered using
+         * {@link Series#update}.
+         *
+         * @name Highcharts.Series#type
+         * @type {string}
+         */
+
+        /**
+         * Read only. The series' current options. To update, use
+         * {@link Series#update}.
+         *
+         * @name Highcharts.Series#options
+         * @type {Highcharts.SeriesOptionsType}
+         */
+        series.options = series.setOptions(userOptions);
         const options = series.options,
             visible = options.visible !== false;
 
+        // Create the data table
+        this.dataTable ??= (
+            options.dataTable?.isDataTable ?
+                options.dataTable :
+                new DataTableCore(options.dataTable)
+        );
+
+        /**
+         * All child series that are linked to the current series through the
+         * [linkedTo](https://api.highcharts.com/highcharts/series.line.linkedTo)
+         * option.
+         *
+         * @name Highcharts.Series#linkedSeries
+         * @type {Array<Highcharts.Series>}
+         * @readonly
+         */
         series.linkedSeries = [];
         // Bind the axes
         series.bindAxes();
 
         extend<Series>(series, {
+            /**
+             * The series name as given in the options. Defaults to
+             * "Series {n}".
+             *
+             * @name Highcharts.Series#name
+             * @type {string}
+             */
             name: options.name,
             state: '',
-            visible,
+            /**
+             * Read only. The series' visibility state as set by {@link
+             * Series#show}, {@link Series#hide}, or in the initial
+             * configuration.
+             *
+             * @name Highcharts.Series#visible
+             * @type {boolean}
+             */
+            visible, // True by default
+            /**
+             * Read only. The series' selected state as set by {@link
+             * Highcharts.Series#select}.
+             *
+             * @name Highcharts.Series#selected
+             * @type {boolean}
+             */
             selected: options.selected === true // False by default
         });
 
@@ -847,7 +939,7 @@ class Series {
         chart.orderItems('series', insertItem(this, chartSeries));
 
         if (!series.points && !series.data) {
-            series.setData(options.data as any, false);
+            series.setData(options.data, false);
         }
 
         fireEvent(this, 'afterInit');
@@ -865,7 +957,12 @@ class Series {
      * @return {boolean}
      *        True if this item is or inherits from the given type.
      */
-    public is(type: string): boolean {
+    // TODO: Runtime checks `instanceof`, so this also confirms inheritance.
+    // The type guard currently narrows to the requested type only. Aligning
+    // typing 1:1 with runtime should be easier after pending TS cleanups.
+    public is<K extends keyof SeriesTypeRegistry>(
+        type: K
+    ): this is InstanceType<typeof seriesTypes[K]> {
         return seriesTypes[type] && this instanceof seriesTypes[type];
     }
 
@@ -1071,13 +1168,24 @@ class Series {
         this.userOptions = e.userOptions;
 
         const options: SeriesTypeOptions = merge(
-            typeOptions,
-            plotOptions.series,
-            // #3881, chart instance plotOptions[type] should trump
-            // plotOptions.series
-            userPlotOptionsType,
-            seriesUserOptions
-        );
+                typeOptions,
+                plotOptions.series,
+                // #3881, chart instance plotOptions[type] should trump
+                // plotOptions.series
+                userPlotOptionsType,
+                seriesUserOptions
+            ),
+            // Handle color zones
+            {
+                negativeColor,
+                negativeFillColor,
+                zoneAxis = 'y',
+                zones
+            } = options,
+            // #20440, create deep copy of zones options
+            zonesCopy = (zones || []).map(
+                (z): SeriesZonesOptions => ({ ...z })
+            );
 
         // The tooltip options are merged between global and series specific
         // options. Importance in ascending order:
@@ -1113,58 +1221,74 @@ class Series {
             delete options.marker;
         }
 
-        // Handle color zones
-        this.zoneAxis = options.zoneAxis || 'y';
-        const zones = this.zones = // #20440, create deep copy of zones options
-            (options.zones || []).map((z): SeriesZonesOptions => ({ ...z }));
+        this.zones ||= zonesCopy;
+
+        this.zoneAxis = zoneAxis;
         if (
-            (options.negativeColor || options.negativeFillColor) &&
-            !options.zones
+            (negativeColor || negativeFillColor) &&
+            !zones
         ) {
             zone = {
                 value:
-                    (options as any)[this.zoneAxis + 'Threshold'] ||
+                    (options as any)[zoneAxis + 'Threshold'] ||
                     options.threshold ||
                     0,
                 className: 'highcharts-negative'
             } as SeriesZonesOptions;
             if (!styledMode) {
-                zone.color = options.negativeColor;
-                zone.fillColor = options.negativeFillColor;
+                // Styled mode allows boolean
+                if (typeof negativeColor !== 'boolean') {
+                    zone.color = negativeColor;
+                }
+                zone.fillColor = negativeFillColor;
             }
-            zones.push(zone);
+            zonesCopy.push(zone);
         }
         // Push one extra zone for the rest
-        if (zones.length && defined(zones[zones.length - 1].value)) {
-            zones.push(styledMode ? {} : {
+        if (
+            zonesCopy.length &&
+            defined(zonesCopy[zonesCopy.length - 1].value)
+        ) {
+            zonesCopy.push(styledMode ? {} : {
                 color: this.color,
                 fillColor: this.fillColor
             });
         }
 
-        fireEvent(this, 'afterSetOptions', { options: options });
+        fireEvent(this, 'afterSetOptions', { options });
 
         return options;
     }
 
     /**
-     * Return series name in "Series {Number}" format or the one defined by
-     * a user. This method can be simply overridden as series name format
-     * can vary (e.g. technical indicators).
+     * Return the name for the series. Looks for a `name` in the options. If not
+     * found, looks for a column name in the data mapping. If not found, returns
+     * a default name based on the series type and index in `Series {n}`"
+     * format. This method can be simply overridden as series name format can
+     * vary (e.g. technical indicators).
      *
      * @function Highcharts.Series#getName
      *
-     * @return {string}
-     * The series name.
+     * @return {string} The series name.
      */
     public getName(): string {
+
+        const { chart, options } = this,
+            { dataMapping, name } = options,
+            valueMapping = dataMapping?.y || dataMapping?.value,
+            columnKey = isString(valueMapping) ?
+                valueMapping : valueMapping?.column;
+
         // #4119
-        return this.options.name ??
-            format(
-                this.chart.options.lang.seriesName,
-                this,
-                this.chart
-            );
+        return name ?? (
+            isString(columnKey) ?
+                columnKey :
+                format(
+                    chart.options.lang.seriesName,
+                    this,
+                    chart
+                )
+        );
     }
 
     /**
@@ -1234,18 +1358,19 @@ class Series {
      * @function Highcharts.Series#getColor
      */
     public getColor(): void {
-        if (this.chart.styledMode) {
+        const chart = this.chart;
+        if (chart.styledMode) {
             this.getCyclic('color');
 
         } else if (this.options.colorByPoint) {
-            this.color = Palette.neutralColor20;
+            this.color = 'var(--highcharts-neutral-color-20)';
 
         } else {
             this.getCyclic(
                 'color',
                 this.options.color ||
-                (defaultOptions.plotOptions as any)[this.type].color,
-                this.chart.options.colors
+                defaultOptions.plotOptions[this.type]?.color,
+                chart.options.colors
             );
         }
     }
@@ -1272,7 +1397,7 @@ class Series {
 
         this.getCyclic(
             'symbol',
-            (seriesMarkerOption as any).symbol,
+            seriesMarkerOption?.symbol,
             this.chart.options.symbols
         );
     }
@@ -1283,102 +1408,109 @@ class Series {
      * @internal
      * @function Highcharts.Series#getColumn
      */
-    public getColumn(columnId: string, modified?: boolean): Array<number> {
-        return (
-            (modified ? this.dataTable.getModified() : this.dataTable)
-                .getColumn(columnId, true) as Array<number>
-        ) || [];
+    public getColumn(
+        columnId: string,
+        modified?: boolean,
+        matchLength?: boolean
+    ): Array<number> {
+        const table = modified ? this.dataTable.getModified() : this.dataTable,
+            rowCount = table.rowCount,
+            usingModified = this.dataTable !== table,
+            column = table.getColumn(columnId, true) as Array<number>;
+
+        // When there is no x column in the data set, generate an internal x
+        // column for the series. The `xColumn` array is cached and reused, but
+        // cleared on series update.
+        if (columnId === 'x' && !usingModified) {
+            // Return cached xColumn if it exists
+            if (this.xColumn) {
+                return this.xColumn;
+            }
+
+            const nameColumn = table.getColumn('name', true),
+                options = this.options,
+                // Check for empty or non-numeric x values. A for loop is faster
+                // than Array.prototype.some, and covers empty slots. Cache the
+                // result for faster subsequent checks.
+                isNumbers = (arr: any[]): boolean => {
+                    if (this.xColumnIsNumbers !== void 0) {
+                        return this.xColumnIsNumbers;
+                    }
+                    for (const x of arr) {
+                        if (typeof x !== 'number') {
+                            return (this.xColumnIsNumbers = false);
+                        }
+                    }
+                    return (this.xColumnIsNumbers = true);
+                };
+
+            // Reset the counter
+            this.xIncrement = null;
+
+            // Under these conditions, we need to generate the x data
+            if (
+                !column ||
+                this.xAxis?.hasNames ||
+                options.relativeXValue ||
+                // X column exists in the data table, but has gaps or strings
+                (
+                    column.length < (options.turboThreshold || Infinity) &&
+                    !this.boosted &&
+                    !isNumbers(column)
+                )
+            ) {
+                const xColumn: number[] = [];
+                for (let i = 0; i < rowCount; i++) {
+                    const xOption = column?.[i];
+                    if (!defined(xOption)) {
+                        // When x values are missing, make sure we
+                        // auto-increment from the last point, not from zero.
+                        // Otherwise date-axes would be extended from
+                        // 1970-01-01.
+                        this.xIncrement ??= xColumn[xColumn.length - 1] ?? null;
+                    }
+                    xColumn.push(this.getX(
+                        xOption,
+                        nameColumn?.[i] as string|undefined
+                    ));
+                }
+                return (this.xColumn = xColumn);
+            }
+        }
+
+        return column || Array(matchLength ? rowCount : 0);
     }
 
     /**
-     * Finds the index of an existing point that matches the given point
-     * options.
+     * Get the x value for a given point.
      *
      * @internal
-     * @function Highcharts.Series#findPointIndex
-     * @param {Highcharts.PointOptionsObject} optionsObject
-     * The options of the point.
-     * @param {number} fromIndex
-     * The index to start searching from, used for optimizing series with
-     * required sorting.
-     * @return {number|undefined}
-     * Returns the index of a matching point, or undefined if no match is found.
      */
-    public findPointIndex(
-        optionsObject: PointOptions,
-        fromIndex: number
-    ): (number|undefined) {
-        const { id, x } = optionsObject,
-            oldData = this.points,
-            dataSorting = this.options.dataSorting,
-            cropStart = this.cropStart || 0;
-
-        let matchingPoint: Point|undefined,
-            matchedById: boolean|undefined,
-            pointIndex: number|undefined;
-
-        if (id) {
-            const item = this.chart.get(id);
-            if (item instanceof Point) {
-                matchingPoint = item;
-            }
-
-        } else if (
-            this.linkedParent ||
-            this.enabledDataSorting ||
-            this.options.relativeXValue
-        ) {
-
-            let matcher = (oldPoint: Point): boolean => !oldPoint.touched &&
-                oldPoint.index === optionsObject.index;
-
-            if (dataSorting?.matchByName) {
-                matcher = (oldPoint: Point): boolean => !oldPoint.touched &&
-                    oldPoint.name === optionsObject.name;
-
-            } else if (this.options.relativeXValue) {
-                matcher = (oldPoint: Point): boolean => !oldPoint.touched &&
-                    oldPoint.options.x === optionsObject.x;
-            }
-
-            matchingPoint = find(oldData, matcher);
-
-            // Add unmatched point as a new point
-            if (!matchingPoint) {
-                return void 0;
-            }
-        }
-
-        if (matchingPoint) {
-            pointIndex = matchingPoint?.index;
-            if (typeof pointIndex !== 'undefined') {
-                matchedById = true;
-            }
-        }
-
-        // Search for the same X in the existing data set
-        if (typeof pointIndex === 'undefined' && isNumber(x)) {
-            pointIndex = this.getColumn('x').indexOf(x as any, fromIndex);
-        }
-
-        // Reduce pointIndex if data is cropped
+    public getX(xOption?: number|string, name?: string): number {
         if (
-            pointIndex !== -1 &&
-            typeof pointIndex !== 'undefined' &&
-            this.cropped
+            this.xAxis?.hasNames &&
+            this.dataTable.getColumn('name', true) &&
+            defined(name)
         ) {
-            pointIndex = pointIndex >= cropStart ?
-                pointIndex - cropStart : pointIndex;
+            return this.xAxis.nameToX({ name, series: this }, xOption);
         }
 
         if (
-            !matchedById &&
-            isNumber(pointIndex) &&
-            oldData[pointIndex]?.touched
+            typeof xOption === 'undefined' ||
+            (isNumber(xOption) && this.options.relativeXValue)
         ) {
-            pointIndex = void 0;
+            return this.autoIncrement(xOption);
         }
-        return pointIndex;
+
+        // If x is a string, try to parse it to a datetime
+        if (typeof xOption === 'string') {
+            xOption = this.chart.time.parse(xOption);
+            if (isNumber(xOption)) {
+                return xOption;
+            }
+        }
+
+        return xOption as any;
     }
 
     /**
@@ -1389,64 +1521,86 @@ class Series {
      * don't match.
      *
      * @internal
-     * @function Highcharts.Series#updateData
+     * @function Highcharts.Series#matchPoints
      */
-    public updateData(
-        data: Array<(PointOptions|PointShortOptions)>,
-        animation?: (boolean|Partial<AnimationOptions>)
+    public matchPoints(
+        oldXColumn?: Column,
+        oldIdColumn?: Column,
+        oldNameColumn?: Column,
+        // Index matching is used by the data-sorting module
+        oldIndexColumn?: Column
     ): boolean {
-        const { options, requireSorting } = this,
+        const { dataTable, options, requireSorting } = this,
             dataSorting = options.dataSorting,
-            oldData = this.points,
-            pointsToAdd = [] as Array<(PointOptions|PointShortOptions)>,
-            equalLength = data.length === oldData.length,
-            oldXIncrement = this.xIncrement;
+            oldData = this.data,
+            rowsToAdd: Array<{ newIndex: number, oldIndex: number }> = [],
+            rowsToUpdate: Array<{ newIndex: number, oldIndex: number }> = [],
+            equalLength = dataTable.rowCount === oldData.length;
         let hasUpdatedByKey,
             i,
             point,
-            lastIndex: number,
+            lastIndex = 0,
             succeeded = true;
 
         this.xIncrement = null;
+        delete this.xColumn;
+
+        const newXColumn = dataTable.getColumn('x'),
+            newIdColumn = dataTable.getColumn('id'),
+            newNameColumn = dataSorting?.matchByName ?
+                dataTable.getColumn('name') : void 0,
+            newIndexColumn = dataTable.getColumn('index');
 
         // Iterate the new data
-        data.forEach((pointOptions, i): void => {
-            const optionsObject = (
-                    defined(pointOptions) &&
-                        this.pointClass.prototype.optionsToObject.call(
-                            { series: this },
-                            pointOptions
-                        )
-                ) || {},
-                { id, x } = optionsObject;
+        for (i = 0; i < dataTable.rowCount; i++) {
+            const x = newXColumn?.[i] as number|string|undefined,
+                id = newIdColumn?.[i] as string|undefined,
+                name = newNameColumn?.[i] as string|undefined,
+                index = newIndexColumn?.[i] as number|undefined,
+                [needle, haystack]: [
+                    string|number,
+                    Column
+                ] | [] = id && oldIdColumn ?
+                    [id, oldIdColumn] :
+                    name && oldNameColumn ?
+                        [name, oldNameColumn] :
+                        defined(index) && oldIndexColumn ?
+                            [index, oldIndexColumn] :
+                            defined(x) && oldXColumn ?
+                                [x, oldXColumn] :
+                                [];
 
-            let pointIndex;
+            let pointIndex = -1;
 
-            if (id || isNumber(x)) {
-                pointIndex = this.findPointIndex(
-                    optionsObject,
-                    lastIndex
-                );
+            // We have a needle and a haystack to search for matching points
+            if (haystack) {
+
+                pointIndex = haystack.indexOf(needle as any, lastIndex);
 
                 // Matching X not found or used already due to non-unique x
                 // values (#8995), add point (but later)
-                if (
-                    pointIndex === -1 ||
-                    typeof pointIndex === 'undefined'
-                ) {
-                    pointsToAdd.push(pointOptions);
+                if (pointIndex === -1) {
+                    const optionsX = newXColumn?.[i];
+                    let newIndex = oldXColumn?.length ?? dataTable.rowCount;
+                    while (
+                        newIndex &&
+                        oldXColumn &&
+                        typeof optionsX === 'number' &&
+                        oldXColumn[newIndex - 1] as number > optionsX
+                    ) {
+                        newIndex--;
+                    }
+                    rowsToAdd.push({ newIndex, oldIndex: i });
 
                 // Matching X found, update
                 } else if (
-                    oldData[pointIndex] &&
-                    pointOptions !== options.data?.[pointIndex]
+                    oldData[pointIndex] /* &&
+                    pOptions === oldData[pointIndex]?.options*/
                 ) {
-                    oldData[pointIndex].update(
-                        pointOptions,
-                        false,
-                        void 0,
-                        false
-                    );
+                    rowsToUpdate.push({
+                        newIndex: pointIndex,
+                        oldIndex: i
+                    });
 
                     // Mark it touched, below we will remove all points that
                     // are not touched.
@@ -1458,9 +1612,9 @@ class Series {
                         lastIndex = pointIndex + 1;
                     }
                 // Point exists, no changes, don't remove it
-                } else if (oldData[pointIndex]) {
+                } /*/ else if (oldData[pointIndex]) {
                     oldData[pointIndex].touched = true;
-                }
+                }*/
 
                 // If the length is equal and some of the nodes had a
                 // match in the same position, we don't want to remove
@@ -1475,32 +1629,64 @@ class Series {
                 }
             } else {
                 // Gather all points that are not matched
-                pointsToAdd.push(pointOptions);
+                rowsToAdd.push({ newIndex: i, oldIndex: i });
             }
-        }, this);
+        }
 
         // Remove points that don't exist in the updated data set
         if (hasUpdatedByKey) {
+            // Update matching points
+            rowsToUpdate.forEach((row): void => {
+                oldData[row.newIndex].applyOptions(
+                    dataTable.getRowObject(row.oldIndex) as PointOptions
+                );
+            });
+
+            // Add new points
+            rowsToAdd.sort((a, b): number => b.newIndex - a.newIndex);
+            rowsToAdd.forEach((data): void => {
+                // Splice in an undefined item, `generatePoints` will pick it
+                // up and create the point
+                oldData.splice(data.newIndex, 0, void 0 as any);
+            });
+            // Remove points not touched
             i = oldData.length;
             while (i--) {
                 point = oldData[i];
                 if (point && !point.touched) {
-                    point.remove?.(false, animation);
+                    point.destroy();
+                    oldData.splice(i, 1);
                 }
             }
+
+            this.isDirtyData = this.isDirty = true;
 
         // If we did not find keys (ids or x-values), and the length is the
         // same, update one-to-one
         } else if (equalLength && !dataSorting?.enabled) {
-            data.forEach((point, i): void => {
-                // .update doesn't exist on a linked, hidden series (#3709)
-                // (#10187)
-                if (point !== oldData[i].y && !oldData[i].condemned) {
-                    oldData[i].update(point, false, void 0, false);
+            for (i = 0; i < dataTable.rowCount; i++) {
+                if (!oldData[i].destroyed && !oldData[i].condemned) {
+                    const pOptions = dataTable.getRowObject(i);
+                    if (pOptions) {
+                        Object.keys(pOptions).forEach((key): void => {
+                            if (
+                                !defined(pOptions[key]) /* ||
+                                pOptions[key] === oldData[i].options[key]*/
+                            ) {
+                                delete pOptions[key];
+                            }
+                        });
+                        if (Object.keys(pOptions).length) {
+                            oldData[i].update(
+                                pOptions as PointOptions,
+                                false,
+                                void 0,
+                                false
+                            );
+                        }
+                    }
                 }
-            });
-            // Don't add new points since those configs are used above
-            pointsToAdd.length = 0;
+            }
 
         // Did not succeed in updating data
         } else {
@@ -1517,14 +1703,8 @@ class Series {
             return false;
         }
 
-        // Add new points
-        pointsToAdd.forEach((point): void => {
-            this.addPoint(point, false, void 0, void 0, false);
-        }, this);
-
         const xData = this.getColumn('x');
         if (
-            oldXIncrement !== null &&
             this.xIncrement === null &&
             xData.length
         ) {
@@ -1535,20 +1715,18 @@ class Series {
         return true;
     }
 
-    /** @internal */
-    public dataColumnKeys(): Array<string> {
-        return ['x', ...(this.pointArrayMap || ['y'])];
+    public getDataColumnKeys(): Array<string> {
+        return this.dataColumnKeys || ['x', ...(this.pointArrayMap || ['y'])];
     }
 
     /**
-     * Apply a new set of data to the series and optionally redraw it. The
-     * new data array is passed by reference (except in case of
-     * `updatePoints`), and may later be mutated when updating the chart
-     * data.
+     * Apply a new set of data to the series and optionally redraw it. The new
+     * data array is passed by reference (except in case of `updatePoints`), and
+     * may later be mutated when updating the chart data.
      *
-     * Note the difference in behavior when setting the same amount of
-     * points, or a different amount of points, as handled by the
-     * `updatePoints` parameter.
+     * Note the difference in behavior when setting the same amount of points,
+     * or a different amount of points, as handled by the `updatePoints`
+     * parameter.
      *
      * @sample highcharts/members/series-setdata/
      *         Set new data from a button
@@ -1561,56 +1739,62 @@ class Series {
      *
      * @function Highcharts.Series#setData
      *
-     * @param {Array<Highcharts.PointOptionsType>} data
+     * @param {Array<Highcharts.PointOptionsType>|Highcharts.DataTableOptionsObject|Highcharts.DataTable|undefined} data
      *        Takes an array of data in the same format as described under
-     *        `series.{type}.data` for the given series type, for example a
-     *        line series would take data in the form described under
+     *        `series.{type}.data` for the given series type, for example a line
+     *        series would take data in the form described under
      *        [series.line.data](https://api.highcharts.com/highcharts/series.line.data).
      *
      * @param {boolean} [redraw=true]
-     *        Whether to redraw the chart after the series is altered. If
-     *        doing more operations on the chart, it is a good idea to set
-     *        redraw to false and call {@link Chart#redraw} after.
+     *        Whether to redraw the chart after the series is altered. If doing
+     *        more operations on the chart, it is a good idea to set redraw to
+     *        false and call {@link Chart#redraw} after.
      *
      * @param {boolean|Partial<Highcharts.AnimationOptionsObject>} [animation]
      *        When the updated data is the same length as the existing data,
-     *        points will be updated by default, and animation visualizes
-     *        how the points are changed. Set false to disable animation, or
-     *        a configuration object to set duration or easing.
+     *        points will be updated by default, and animation visualizes how
+     *        the points are changed. Set false to disable animation, or a
+     *        configuration object to set duration or easing.
      *
      * @param {boolean} [updatePoints=true]
      *        When this is true, points will be updated instead of replaced
      *        whenever possible. This occurs a) when the updated data is the
-     *        same length as the existing data, b) when points are matched
-     *        by their id's, or c) when points can be matched by X values.
-     *        This allows updating with animation and performs better. In
-     *        this case, the original array is not passed by reference. Set
-     *        `false` to prevent.
+     *        same length as the existing data, b) when points are matched by
+     *        their id's, or c) when points can be matched by X values. This
+     *        allows updating with animation and performs better. In this case,
+     *        the original array is not passed by reference. Set `false` to
+     *        prevent.
      */
     public setData(
-        data: Array<(PointOptions|PointShortOptions)>|undefined,
+        data?: (
+            Array<PointOptions|PointShortOptions>|
+            DataTableOptionsObject|
+            DataTableCore
+        ),
         redraw: boolean = true,
         animation?: (boolean|Partial<AnimationOptions>),
         updatePoints?: boolean
     ): void {
         const series = this,
+            table = this.dataTable,
+            options = series.options,
             oldData = series.points,
             oldDataLength = oldData?.length || 0,
-            options = series.options,
+            oldXColumn = table.getColumn('x'),
+            oldIdColumn = table.getColumn('id'),
+            oldNameColumn = (
+                // To get the bar race right. When data sorting is enabled, the
+                // point order is not in sync with the table order. Could this
+                // be done in a better way, maybe in the data sorting module?
+                options.dataSorting?.matchByName &&
+                oldData?.map((point): string|undefined => point.name)
+            ) || table.getColumn('name'),
+            oldIndexColumn = table.getColumn('index'),
             chart = series.chart,
-            xAxis = series.xAxis,
-            turboThreshold = options.turboThreshold,
-            table = this.dataTable,
-            dataColumnKeys = this.dataColumnKeys(),
-            pointValKey = series.pointValKey || 'y',
-            pointArrayMap = series.pointArrayMap || [],
-            valueCount = pointArrayMap.length,
-            keys = options.keys;
+            xAxis = series.xAxis;
 
-        let i,
-            updatedData,
-            indexOfX = 0,
-            indexOfY = 1,
+        let updatedData: boolean|undefined,
+            i,
             copiedData;
 
         if (!chart.options.chart.allowMutatingData) { // #4259
@@ -1624,17 +1808,29 @@ class Series {
             copiedData = merge(true, data);
 
         }
-        data = copiedData || data || [];
+        data = copiedData || data;
 
+        // Reset properties
+        series.xIncrement = null;
+        delete series.xColumn;
+        delete series.xColumnIsNumbers;
+        if (table !== options.dataTable) {
+            delete table.columns.x;
+        }
 
-        const dataLength = data.length;
+        series.colorCounter = 0; // For series with colorByPoint (#1547)
 
-        // First try to run Point.update which is cheaper, allows animation, and
-        // keeps references to points.
+        // Array passed as option
+        if (isArray(data)) {
+            this.setDataFromArray(data);
+
+        // Data table passed as option, either on series or chart
+        } else {
+            this.setDataFromTable(data);
+        }
+
         if (
-            chart.options.chart.allowMutatingData &&
             updatePoints !== false &&
-            dataLength &&
             oldDataLength &&
             !series.cropped &&
             !series.hasGroupedData &&
@@ -1643,140 +1839,15 @@ class Series {
             // (#8355)
             !series.boosted
         ) {
-            updatedData = this.updateData(data, animation);
+            updatedData = this.matchPoints(
+                oldXColumn,
+                oldIdColumn,
+                oldNameColumn,
+                oldIndexColumn
+            );
         }
 
         if (!updatedData) {
-
-            // Reset properties
-            series.xIncrement = null;
-
-            series.colorCounter = 0; // For series with colorByPoint (#1547)
-
-            // In turbo mode, look for one- or twodimensional arrays of numbers.
-            // The first and the last valid value are tested, and we assume that
-            // all the rest are defined the same way. Although the 'for' loops
-            // are similar, they are repeated inside each if-else conditional
-            // for max performance.
-            let runTurbo = (
-                turboThreshold &&
-                !options.relativeXValue &&
-                dataLength > turboThreshold
-            );
-            if (runTurbo) {
-
-                const firstPoint = series.getFirstValidPoint(data),
-                    lastPoint = series.getFirstValidPoint(
-                        data, dataLength - 1, -1
-                    ),
-                    isShortArray = (a: unknown): a is Array<unknown> => Boolean(
-                        isArray(a) && (keys || isNumber(a[0]))
-                    );
-
-                // Assume all points are numbers
-                if (isNumber(firstPoint) && isNumber(lastPoint)) {
-                    const x: Array<number> = [],
-                        valueData: Array<number|null> = [];
-                    for (const value of data) {
-                        x.push(this.autoIncrement());
-                        valueData.push(value as number|null);
-                    }
-                    table.setColumns({
-                        x,
-                        [pointValKey]: valueData
-                    });
-
-                // Assume all points are arrays when first point is
-                } else if (
-                    isShortArray(firstPoint) &&
-                    isShortArray(lastPoint)
-                ) {
-                    if (valueCount) { // [x, low, high] or [x, o, h, l, c]
-
-                        // When autoX is 1, the x is skipped: [low, high]. When
-                        // autoX is 0, the x is included: [x, low, high]
-                        const autoX = firstPoint.length === valueCount ?
-                                1 : 0,
-                            colArray = new Array(dataColumnKeys.length)
-                                .fill(0).map((): Array<number> => []);
-                        for (const pt of data as number[][]) {
-                            if (autoX) {
-                                colArray[0].push(this.autoIncrement());
-                            }
-                            for (let j = autoX; j <= valueCount; j++) {
-                                colArray[j]?.push(pt[j - autoX]);
-                            }
-                        }
-
-                        table.setColumns(dataColumnKeys.reduce(
-                            (columns, columnId, i):
-                            ColumnCollection => {
-                                columns[columnId] = colArray[i];
-                                return columns;
-                            }, {} as ColumnCollection));
-
-                    } else { // [x, y]
-                        if (keys) {
-                            indexOfX = keys.indexOf('x');
-                            indexOfY = keys.indexOf('y');
-
-                            indexOfX = indexOfX >= 0 ? indexOfX : 0;
-                            indexOfY = indexOfY >= 0 ? indexOfY : 1;
-                        }
-
-                        if (firstPoint.length === 1) {
-                            indexOfY = 0;
-                        }
-
-                        const xData: Array<number> = [],
-                            valueData: Array<number|null> = [];
-
-                        for (const pt of data) {
-                            if (indexOfX === indexOfY) {
-                                xData.push(this.autoIncrement());
-                            } else {
-                                xData.push(
-                                    (pt as any)[indexOfX] ?? (pt as any).x ??
-                                        null
-                                );
-                            }
-
-                            valueData.push(
-                                (pt as any)[indexOfY] ?? (pt as any).y ?? null
-                            );
-                        }
-                        table.setColumns({
-                            x: xData,
-                            [pointValKey]: valueData
-                        });
-                    }
-                } else {
-                    // Highcharts expects configs to be numbers or arrays in
-                    // turbo mode
-                    runTurbo = false;
-                }
-            }
-
-            if (!runTurbo) {
-                const columns = dataColumnKeys.reduce(
-                    (columns, columnId):
-                    ColumnCollection => {
-                        columns[columnId] = [];
-                        return columns;
-                    }, {} as ColumnCollection);
-                for (i = 0; i < dataLength; i++) {
-                    const pt = series.pointClass.prototype.applyOptions.apply(
-                        { series },
-                        [data[i]]
-                    );
-                    for (const key of dataColumnKeys) {
-                        columns[key][i] = (pt as any)[key];
-                    }
-                }
-
-                table.setColumns(columns);
-            }
-
             // Forgetting to cast strings to numbers is a common caveat when
             // handling CSV or JSON
             if (isString(this.getColumn('y')[0])) {
@@ -1784,10 +1855,12 @@ class Series {
             }
 
             series.data = [];
-            series.options.data = series.userOptions.data = data;
 
             // Destroy old points
-            destroyObjectProperties(oldData);
+            i = oldDataLength;
+            while (i--) {
+                oldData[i]?.destroy();
+            }
 
             // Reset minRange (#878)
             if (xAxis) {
@@ -1800,8 +1873,12 @@ class Series {
             animation = false;
         }
 
-        // Typically for pie series, points need to be processed and
-        // generated prior to rendering the legend
+        if (isArray(data)) {
+            series.options.data = series.userOptions.data = data;
+        }
+
+        // Typically for pie series, points need to be processed and generated
+        // prior to rendering the legend
         if (options.legendType === 'point') {
             this.processData();
             this.generatePoints();
@@ -1810,6 +1887,301 @@ class Series {
         if (redraw) {
             chart.redraw(animation);
         }
+    }
+
+    /**
+     * Internal function to set data from an array of point options - objects,
+     * arrays or numbers. This corresponds to the `data` series option. Called
+     * from the official `setData` method.
+     *
+     * @param {Array<Highcharts.PointOptionsType>} data
+     *        The data array
+     * @internal
+     */
+    public setDataFromArray(
+        data: Array<(PointOptions|PointShortOptions)>
+    ): void {
+        const dataLength = data.length,
+            { keys, turboThreshold } = this.options,
+            { pointValKey = 'y', pointArrayMap = [] } = this,
+            valueCount = pointArrayMap.length,
+            table = this.dataTable,
+            dataColumnKeys = this.getDataColumnKeys();
+
+        // In turbo mode, look for one- or twodimensional arrays of numbers. The
+        // first and the last valid value are tested, and we assume that all the
+        // rest are defined the same way. Although the 'for' loops are similar,
+        // they are repeated inside each if-else conditional for max
+        // performance.
+        let runTurbo = turboThreshold && dataLength > turboThreshold,
+            indexOfX = 0,
+            indexOfY = 1;
+
+        if (runTurbo) {
+
+            const firstPoint = this.getFirstValidPoint(data),
+                lastPoint = this.getFirstValidPoint(
+                    data, dataLength - 1, -1
+                ),
+                isShortArray = (a: unknown): a is Array<unknown> =>
+                    Boolean(isArray(a) && (keys || isNumber(a[0])));
+
+            // Assume all points are numbers
+            if (isNumber(firstPoint) && isNumber(lastPoint)) {
+                table.setColumn(
+                    pointValKey,
+                    data as Array<number|null>
+                );
+
+            // Assume all points are arrays when first point is
+            } else if (
+                isShortArray(firstPoint) &&
+                isShortArray(lastPoint)
+            ) {
+                if (valueCount) { // [x, low, high] or [x, o, h, l, c]
+
+                    // When autoX is 1, the x is skipped: [low, high]. When
+                    // autoX is 0, the x is included: [x, low, high]
+                    const autoX = firstPoint.length === valueCount,
+                        colArray = new Array(firstPoint.length)
+                            .fill(0).map((): Array<number> => []);
+
+                    for (const pt of data as number[][]) {
+                        for (let j = 0; j <= valueCount; j++) {
+                            colArray[j]?.push(pt[j]);
+                        }
+                    }
+
+                    table.setColumns((
+                        autoX ? pointArrayMap : dataColumnKeys
+                    ).reduce(
+                        (columns, columnId, i):
+                        ColumnCollection => {
+                            columns[columnId] = colArray[i];
+                            return columns;
+                        }, {} as ColumnCollection));
+
+                } else { // [x, y]
+                    if (keys) {
+                        indexOfX = keys.indexOf('x');
+                        indexOfY = keys.indexOf('y');
+
+                        indexOfX = indexOfX >= 0 ? indexOfX : 0;
+                        indexOfY = indexOfY >= 0 ? indexOfY : 1;
+                    }
+
+                    if (firstPoint.length === 1) {
+                        indexOfY = 0;
+                    }
+
+                    const xData: Array<number> = [],
+                        valueData: Array<number|null> = [];
+
+                    if (indexOfX === indexOfY) {
+                        for (const pt of data) {
+                            valueData.push((pt as any)[indexOfY]);
+                        }
+                        table.setColumn(pointValKey, valueData);
+
+                    } else {
+                        for (const pt of data) {
+                            xData.push((pt as any)[indexOfX]);
+                            valueData.push((pt as any)[indexOfY]);
+                        }
+                        table.setColumns({
+                            x: xData,
+                            [pointValKey]: valueData
+                        });
+                    }
+                }
+            } else {
+                // Highcharts expects configs to be numbers or arrays in turbo
+                // mode
+                runTurbo = false;
+            }
+        }
+
+        if (!runTurbo) {
+            const columns = {} as ColumnCollection;
+            for (let i = 0; i < dataLength; i++) {
+                const ptOptions = this.pointClass.prototype
+                    .optionsToObject
+                    .call({ series: this }, data[i]);
+
+                for (const key of Object.keys(ptOptions)) {
+                    columns[key] ||= new Array(dataLength);
+                    columns[key][i] = (ptOptions as any)[key];
+                }
+            }
+
+            // Empty data, clear table
+            if (dataLength) {
+                table.setColumns(columns);
+            } else {
+                table.deleteRows(0, table.rowCount);
+            }
+        }
+    }
+
+    /**
+     * Internal function to set data from a data table, either an instance or
+     * options object. This corresponds to the `data` series option. Called
+     * from the official `setData` method.
+     *
+     * @param {Highcharts.DataTableOptionsObject|Highcharts.DataTable} data
+     *        The data array
+     * @internal
+     */
+    public setDataFromTable(
+        data?: (DataTableOptionsObject|DataTableCore)
+    ): void {
+        const { chart, options, dataTable: table } = this,
+            seriesDataTable = chart.getDataTable(options),
+            dataTables = data ? [data] : (
+                // Use either dataTable from series options or from the chart
+                seriesDataTable.length ?
+                    seriesDataTable :
+                    chart.dataTable
+            ),
+            dataColumnKeys = this.getDataColumnKeys(),
+            mapping = options.dataMapping,
+            keys = dataColumnKeys.slice();
+
+        // Extend the data column keys with the keys from the column assignment
+        if (mapping) {
+            Object.keys(mapping).forEach((key): void => {
+                pushUnique(keys, key);
+            });
+            this.dataColumnKeys = keys;
+        }
+
+        dataTables.forEach((dataTable, dtIndex): void => {
+
+            // Resolve the data mapping
+            const columns = keys
+                .reduce((targetColumns, key): ColumnCollection => {
+                    const mappingItem = mapping?.[key],
+                        srcColumns = dataTable.columns || {},
+                        dtId = dataTable.id,
+                        column = isString(mappingItem) ?
+                            // String definition points directly to a column id
+                            // on the first data table
+                            (dtIndex === 0 && srcColumns[mappingItem]) :
+                            // Object definition, check for matching data table
+                            // and column id/index
+                            (
+                                (mappingItem?.dataTable || 0) === dtIndex ||
+                                (dtId && mappingItem?.dataTable === dtId)
+                            ) &&
+                            (isNumber(mappingItem?.column) ?
+                                Object.values(srcColumns)[mappingItem.column] :
+                                srcColumns[mappingItem?.column || key]
+                            );
+
+                    if (column) {
+                        targetColumns[key] = column;
+                    }
+                    return targetColumns;
+                }, {} as ColumnCollection);
+
+            // If a DataTable is passed and no column assignment is set, use it
+            // directly
+            if (mapping || dataTable) {
+                // Set the columns
+                table.setColumns(columns);
+            }
+
+            // If a DataTable is passed directly by reference, bind events to
+            // keep the series updated
+            if ((dataTable as DataTableCore).isDataTable) {
+                this.bindDataTableEvents(dataTable as DataTableCore, columns);
+            }
+        });
+    }
+
+    /**
+     * Bind data table events to keep the series updated when changes occur to
+     * the data table.
+     *
+     * @internal
+     */
+    public bindDataTableEvents(
+        dataTable: DataTableCore,
+        columns: ColumnCollection
+    ): void {
+        if (this.hasBoundDataTableEvents) {
+            return;
+        }
+
+        const { chart, eventsToUnbind } = this,
+            queueRedraw = (): void => {
+                clearTimeout(chart.redrawTimeout);
+                chart.redrawTimeout = setTimeout(
+                    (): void => chart.renderer && chart.redraw(),
+                    0
+                );
+            };
+
+        eventsToUnbind.push(addEvent(
+            dataTable,
+            'afterSetRows',
+            (e: RowEvent): void => {
+                const rowIndex = e.rowIndex;
+
+                if (isNumber(rowIndex)) {
+                    const row = DataTableCore.prototype.getRowObject.call(
+                            { columns },
+                            rowIndex
+                        ),
+                        point = this.data[rowIndex];
+
+                    if (row) {
+                        if (this.currentDataGrouping) {
+                            // Set data with immediate redraw because it
+                            // destroys points
+                            this.setData();
+                        } else {
+                            if (point) {
+                                point.update(row, false);
+                            } else {
+                                this.addPoint(row, false);
+                            }
+                            queueRedraw();
+                        }
+                    }
+                }
+            }
+        ));
+
+        eventsToUnbind.push(addEvent(
+            dataTable,
+            'afterDeleteRows',
+            (e: RowEvent): void => {
+                const { rowCount, rowIndex } = e;
+
+                if (isNumber(rowIndex)) {
+                    for (
+                        let i = rowIndex + rowCount - 1;
+                        i >= rowIndex;
+                        i--
+                    ) {
+                        this.removePoint(i, false);
+                    }
+
+                    queueRedraw();
+                }
+            }
+        ));
+
+        eventsToUnbind.push(addEvent(
+            dataTable,
+            'afterSetColumns',
+            (e: ColumnEvent): void => {
+                this.setData(e.target);
+            }
+        ));
+
+        this.hasBoundDataTableEvents = true;
     }
 
     /**
@@ -1841,7 +2213,7 @@ class Series {
             xExtremes,
             min,
             max,
-            xData: Array<number>|Types.TypedArray = series.getColumn('x'),
+            xData: Array<number>|TypedArray = series.getColumn('x'),
             modified = table,
             updatingNames = false;
 
@@ -1889,7 +2261,7 @@ class Series {
         }
 
         // Find the closest distance between processed points
-        xData = modified.getColumn('x') as Array<number> || [];
+        xData = this.getColumn('x', true);
         const closestPointRange = getClosestDistance(
             [
                 logarithmic ?
@@ -1969,9 +2341,10 @@ class Series {
         min: number,
         max: number
     ): Series.CropDataObject {
-        const xData = table.getColumn('x', true) as Array<number> || [],
-            dataLength = xData.length,
-            columns: ColumnCollection = {};
+        const xData = table === this.dataTable ?
+                this.getColumn('x') :
+                table.getColumn('x', true) as Array<number>,
+            dataLength = xData.length;
 
         let i,
             j,
@@ -1994,12 +2367,18 @@ class Series {
             }
         }
 
-        for (const key of this.dataColumnKeys()) {
-            const column = table.getColumn(key, true);
-            if (column) {
-                columns[key] = column.slice(start, end);
-            }
-        }
+        // Slice all the columns and return a copy
+        const columns = Object.keys(table.columns)
+            .reduce((columns, key): ColumnCollection => {
+                columns[key] = (
+                    table.getColumn(key, true) || []
+                ).slice(start, end);
+                return columns;
+            }, {} as ColumnCollection);
+
+        // Add cropped x data to modified table
+        columns.x = xData.slice(start, end);
+
         return {
             modified: new DataTableCore({ columns }),
             start,
@@ -2017,7 +2396,7 @@ class Series {
     public generatePoints(): void {
         const series = this,
             options = series.options,
-            dataOptions = series.processedData || options.data,
+            dataOptions = series.hasProcessedDataTable ? void 0 : options.data,
             table = series.dataTable.getModified(),
             xData = series.getColumn('x', true),
             PointClass = series.pointClass,
@@ -2031,16 +2410,14 @@ class Series {
                     cropStart :
                     0
             ),
-            pointArrayMap = series.pointArrayMap || ['y'],
             // Create a configuration object out of a data row
-            dataColumnKeys = this.dataColumnKeys();
+            dataColumnKeys = this.getDataColumnKeys();
         let dataLength,
             cursor,
             point: Point,
             i: number,
             data = series.data,
             pOptions: PointShortOptions|PointOptions;
-
 
         if (!data && !hasGroupedData) {
             const arr = [] as Array<Point>;
@@ -2059,14 +2436,13 @@ class Series {
             if (!hasGroupedData) {
                 point = data[cursor];
                 pOptions = dataOptions ?
+                    // We could use table.getRowObject(i) here, but that would
+                    // be less performant
                     dataOptions[cursor] :
-                    table.getRow(i, pointArrayMap) as Array<number>;
+                    table.getRowObject(i) as unknown as PointOptions;
 
-                // #970:
-                if (
-                    !point &&
-                    pOptions !== void 0
-                ) {
+                // #970
+                if (!point && pOptions !== void 0) {
                     data[cursor] = point = new PointClass(
                         series,
                         pOptions,
@@ -2083,7 +2459,10 @@ class Series {
                 // Splat the y data in case of ohlc data array
                 point = new PointClass(
                     series,
-                    table.getRow(i, dataColumnKeys) as Array<number> || []
+                    table.getRowObject(
+                        i,
+                        dataColumnKeys
+                    ) as unknown as PointOptions
                 );
 
                 point.dataGroup = series.groupMap?.[
@@ -2148,7 +2527,7 @@ class Series {
      * The data to inspect. Defaults to the current data within the visible
      * range.
      */
-    public getXExtremes(xData: Array<number>|Types.TypedArray): RangeSelector.RangeObject {
+    public getXExtremes(xData: Array<number>|TypedArray): RangeSelector.RangeObject {
         return {
             min: arrayMin(xData),
             max: arrayMax(xData)
@@ -2171,15 +2550,15 @@ class Series {
         yData?: (
             Array<(number|null)>|
             Array<Array<(number|null)>>|
-            Types.TypedArray
+            TypedArray
         ),
         forceExtremesFromAll?: boolean
     ): DataExtremesObject {
-        const { xAxis, yAxis } = this,
+        const { options, xAxis, yAxis } = this,
             getExtremesFromAll =
                 forceExtremesFromAll ||
                 this.getExtremesFromAll ||
-                this.options.getExtremesFromAll, // #4599, #21003
+                options.getExtremesFromAll, // #4599, #21003
             table = getExtremesFromAll && this.cropped ?
                 this.dataTable :
                 this.dataTable.getModified(),
@@ -2196,14 +2575,19 @@ class Series {
             // non-sorted data like scatter (#7639).
             shoulder = this.requireSorting && !this.is('column') ?
                 1 : 0,
-            // #2117, need to compensate for log X axis
+            // Used only for `cumulativeStart` (#24608)
+            excludeShoulder = options.cumulative &&
+                options.cumulativeStart &&
+                shoulder &&
+                !getExtremesFromAll,
+            // Compensate for log X axis (#2117)
             positiveValuesOnly = yAxis ? yAxis.positiveValuesOnly : false,
             doAll = getExtremesFromAll ||
                 this.cropped ||
                 !xAxis; // For colorAxis support
 
         let xExtremes,
-            x,
+            x: number,
             i,
             xMin = 0,
             xMax = 0;
@@ -2218,14 +2602,15 @@ class Series {
 
             x = xData[i];
 
-            // Check if it is within the selected x axis range
-            if (
+            // Check if it is within the selected x-axis range
+            if ((
                 doAll ||
                 (
                     (xData[i + shoulder] || x) >= xMin &&
                     (xData[i - shoulder] || x) <= xMax
                 )
-            ) {
+            ) && (!excludeShoulder || x >= xMin)) {
+
                 for (const values of yAxisData) {
                     const val = values[i];
 
@@ -2569,15 +2954,14 @@ class Series {
      * @function Highcharts.Series#setClip
      */
     public setClip(): void {
-        const { chart, group, markerGroup } = this,
+        const { chart, group, markerGroup, options, plotClipGroup } = this,
             sharedClips = chart.sharedClips,
             renderer = chart.renderer,
             clipBox = chart.getClipBox(this),
+            clip = options.clip ?? true,
             sharedClipKey = this.getSharedClipKey(); // #4526
 
         let clipRect = sharedClips[sharedClipKey];
-
-        fireEvent(this, 'setClip', { clipBox });
 
         // If a clipping rectangle for the same set of axes does not exist,
         // create it
@@ -2590,15 +2974,19 @@ class Series {
             clipRect.animate(clipBox);
         }
 
-        if (group) {
-            // When clip is false, reset to no clip after animation
-            group.clip(this.options.clip === false ? void 0 : clipRect);
-        }
+        // When clip is false, reset to no clip after animation
+        group?.clip(clip ? clipRect : void 0);
 
         // Unclip temporary animation clip
-        if (markerGroup) {
-            markerGroup.clip();
-        }
+        markerGroup?.clip();
+
+        // Apply plotBorderRadius clipping
+        plotClipGroup?.clip(
+            // Navigator y-axis is not clippable
+            clip && this.yAxis.clippable ?
+                chart.plotClipInner :
+                void 0
+        );
     }
 
     /**
@@ -2746,19 +3134,17 @@ class Series {
             chart = series.chart,
             styledMode = chart.styledMode,
             { colorAxis, options } = series,
-            seriesMarkerOptions = options.marker,
+            seriesMarkerOptions = options.marker || {},
             nullInteraction = options.nullInteraction,
             markerGroup = series[series.specialGroup || 'markerGroup'],
             xAxis = series.xAxis,
-            globallyEnabled = pick(
-                (seriesMarkerOptions as any).enabled,
-                !xAxis || xAxis.isRadial ? true : null,
+            globallyEnabled = seriesMarkerOptions.enabled ??
+                (!xAxis || xAxis.isRadial ? true : null) ??
                 // Use larger or equal as radius is null in bubbles (#6321)
-                (series.closestPointRangePx as any) >= (
-                    (seriesMarkerOptions as any).enabledThreshold *
+                ((series.closestPointRangePx ?? -Infinity) >= (
+                    (seriesMarkerOptions.enabledThreshold ?? 2) *
                     (seriesMarkerOptions as any).radius
-                )
-            );
+                ));
         let i,
             point,
             graphic,
@@ -2768,7 +3154,7 @@ class Series {
             markerAttribs;
 
         if (
-            (seriesMarkerOptions as any).enabled !== false ||
+            seriesMarkerOptions.enabled !== false ||
             series._hasPointMarkers
         ) {
 
@@ -2799,7 +3185,7 @@ class Series {
 
                     markerAttribs = series.markerAttribs(
                         point,
-                        (point.selected && 'select') as any
+                        point.selected ? 'select' : ''
                     );
 
                     const isInside = point.isInside !== false;
@@ -2892,34 +3278,27 @@ class Series {
         state?: StatesOptionsKey
     ): SVGAttributes {
         const seriesOptions = this.options,
-            seriesMarkerOptions = seriesOptions.marker,
+            seriesMarkerOptions = seriesOptions.marker ?? {},
             pointMarkerOptions = point.marker || {},
             symbol = (
                 pointMarkerOptions.symbol ||
-                (seriesMarkerOptions as any).symbol
+                seriesMarkerOptions.symbol
             ),
             attribs: SVGAttributes = {};
 
         let seriesStateOptions,
             pointStateOptions,
-            radius: number|undefined = pick(
-                pointMarkerOptions.radius,
-                seriesMarkerOptions?.radius
-            );
+            radius: number|undefined = pointMarkerOptions.radius ??
+                seriesMarkerOptions.radius;
 
         // Handle hover and select states
         if (state) {
-            seriesStateOptions = seriesMarkerOptions?.states?.[state];
+            seriesStateOptions = seriesMarkerOptions.states?.[state];
             pointStateOptions = pointMarkerOptions.states?.[state];
 
-            radius = pick(
-                pointStateOptions?.radius,
-                seriesStateOptions?.radius,
-                radius && radius + (
-                    seriesStateOptions?.radiusPlus ||
-                    0
-                )
-            );
+            radius = pointStateOptions?.radius ??
+                seriesStateOptions?.radius ??
+                (radius && radius + (seriesStateOptions?.radiusPlus || 0));
         }
 
         point.hasImage = symbol && symbol.indexOf('url') === 0;
@@ -2937,7 +3316,7 @@ class Series {
                         0 :
                         symbol === 'rect' ?
                             // Rectangle symbols need crisp edges, others don't
-                            seriesMarkerOptions?.lineWidth || 0 :
+                            seriesMarkerOptions.lineWidth || 0 :
                             1
                 );
             }
@@ -2976,21 +3355,17 @@ class Series {
         state?: StatesOptionsKey
     ): SVGAttributes {
         const options = this.options,
-            seriesMarkerOptions = options.marker,
+            seriesMarkerOptions = options.marker ?? {},
             pointOptions = point?.options,
             pointMarkerOptions = pointOptions?.marker || {},
             pointColorOption = pointOptions?.color,
             pointColor = point?.color,
             zoneColor = point?.zone?.color;
-        let seriesStateOptions,
-            pointStateOptions,
-            color: (ColorType|undefined) = this.color,
-            fill,
-            stroke,
-            strokeWidth = pick(
-                pointMarkerOptions.lineWidth,
-                (seriesMarkerOptions as any).lineWidth
-            ),
+        let color: (ColorType|undefined) = this.color,
+            fill: (ColorType|undefined),
+            stroke: (ColorType|undefined),
+            strokeWidth = pointMarkerOptions.lineWidth ??
+                seriesMarkerOptions.lineWidth,
             opacity = (point?.isNull && options.nullInteraction) ? 0 : 1;
 
         color = (
@@ -3002,51 +3377,43 @@ class Series {
 
         fill = (
             pointMarkerOptions.fillColor ||
-            (seriesMarkerOptions as any).fillColor ||
+            seriesMarkerOptions.fillColor ||
             color
         );
         stroke = (
             pointMarkerOptions.lineColor ||
-            (seriesMarkerOptions as any).lineColor ||
+            seriesMarkerOptions.lineColor ||
             color
         );
 
         // Handle hover and select states
         state = state || 'normal';
-        if (state) {
-            seriesStateOptions = (
-                (seriesMarkerOptions as any).states[state] || {}
-            );
-            pointStateOptions = (
-                pointMarkerOptions.states &&
-                (pointMarkerOptions.states as any)[state]
-            ) || {};
-            strokeWidth = pick(
-                pointStateOptions.lineWidth,
-                seriesStateOptions.lineWidth,
-                strokeWidth + pick(
-                    pointStateOptions.lineWidthPlus,
-                    seriesStateOptions.lineWidthPlus,
-                    0
-                )
-            );
-            fill = (
-                pointStateOptions.fillColor ||
-                seriesStateOptions.fillColor ||
-                fill
-            );
-            stroke = (
-                pointStateOptions.lineColor ||
-                seriesStateOptions.lineColor ||
-                stroke
-            );
 
-            opacity = pick(
-                pointStateOptions.opacity,
-                seriesStateOptions.opacity,
-                opacity
+        const seriesStateOptions = seriesMarkerOptions.states?.[state] || {};
+        const pointStateOptions = pointMarkerOptions.states?.[state] || {};
+        strokeWidth = pointStateOptions.lineWidth ??
+            seriesStateOptions.lineWidth ??
+            (strokeWidth || 0) + (
+                pointStateOptions.lineWidthPlus ??
+                seriesStateOptions.lineWidthPlus ??
+                0
             );
-        }
+        fill = (
+            pointStateOptions.fillColor ||
+            seriesStateOptions.fillColor ||
+            fill
+        );
+        stroke = (
+            pointStateOptions.lineColor ||
+            seriesStateOptions.lineColor ||
+            stroke
+        );
+
+        opacity = (
+            pointStateOptions.opacity ??
+            seriesStateOptions.opacity ??
+            opacity
+        );
 
         return {
             'stroke': stroke,
@@ -3096,14 +3463,14 @@ class Series {
         // Destroy all points with their elements
         destroyObjectProperties(series.data);
 
-        for (const zone of series.zones) {
+        for (const zone of series.zones || []) {
             // Destroy SVGElement's but preserve primitive props (#20426)
             destroyObjectProperties(zone, void 0, true);
         }
 
         // Clear the animation timeout if we are destroying the series
         // during initial animation
-        U.clearTimeout(series.animationTimeout as any);
+        internalClearTimeout(series.animationTimeout);
 
         // Destroy all SVGElements associated to the series
         objectEach(series, function (val: any, prop: string): void {
@@ -3127,7 +3494,7 @@ class Series {
         chart.orderItems('series');
 
         // Clear all members
-        objectEach(series, function (val: any, prop: string): void {
+        objectEach(series, function (_val: any, prop: string): void {
             if (!keepEventsForUpdate || prop !== 'hcEvents') {
                 delete (series as any)[prop];
             }
@@ -3167,14 +3534,19 @@ class Series {
                 if (inverted) {
                     plotY = len - plotY;
                 }
-                const { translated = 0, lineClip } = zone,
+                const { translated = 0, lineClip, value } = zone,
                     distance = plotY - translated;
 
                 lineClip?.push([
                     'L',
                     plotX,
                     Math.abs(distance) < halfWidth ?
-                        plotY - halfWidth * (distance <= 0 ? -1 : 1) :
+                        plotY - halfWidth * (
+                            distance < 0 ||
+                            (distance === 0 && defined(value)) ?
+                                -1 :
+                                1
+                        ) :
                         translated
                 ]);
             };
@@ -3518,13 +3890,20 @@ class Series {
 
         fireEvent(this, 'render');
 
+        // If we have a plot border radius, create a separate parent group where
+        // the clip is later applied. This is necessary to handle multi-pane
+        // layouts and entrance animation.
+        if (chart.plotClipInner) {
+            series.plotClipGroup ||= chart.renderer.g().add(chartSeriesGroup);
+        }
+
         // The group
         series.plotGroup(
             'group',
             'series',
             visibility,
             zIndex,
-            chartSeriesGroup
+            series.plotClipGroup || chartSeriesGroup
         );
 
         series.markerGroup = series.plotGroup(
@@ -3679,7 +4058,7 @@ class Series {
 
         const series = this,
             seriesOptions = series.options,
-            dimensions = (seriesOptions.findNearestPointBy as any)
+            dimensions = (seriesOptions.findNearestPointBy ?? '')
                 .indexOf('y') > -1 ? 2 : 1;
 
         /**
@@ -3870,7 +4249,7 @@ class Series {
                     point,
                     doSearch(
                         search,
-                        tree[sideA] as any,
+                        tree[sideA],
                         depth + 1,
                         dimensions
                     ),
@@ -3881,7 +4260,7 @@ class Series {
             if (tree[sideB]) {
 
                 const sqrtTDist = Math.sqrt(tdist * tdist),
-                    retDist = (ret as any)[kdComparer];
+                    retDist = ret[kdComparer];
 
                 // Compare distance to current best to splitting point to decide
                 // whether to check side B or no
@@ -3890,7 +4269,7 @@ class Series {
                         ret,
                         doSearch(
                             search,
-                            tree[sideB] as any,
+                            tree[sideB],
                             depth + 1,
                             dimensions
                         ),
@@ -4055,10 +4434,17 @@ class Series {
      * the end, or by giving it an X value, to the start or in the middle of the
      * series.
      *
+     * Alternatively, when the chart is using data table for the data, a point
+     * can be added by running `dataTable.setRow`.
+     *
      * @sample highcharts/members/series-addpoint-append/
      *         Append point
      * @sample highcharts/members/series-addpoint-append-and-shift/
      *         Append and shift
+     * @sample highcharts/members/series-addpoint-shift-column/
+     *         Append and shift columns
+     * @sample highcharts/datatable/live-chart/
+     *         Append and shift with data table
      * @sample highcharts/members/series-addpoint-x-and-y/
      *         Both X and Y values given
      * @sample highcharts/members/series-addpoint-pie/
@@ -4121,8 +4507,13 @@ class Series {
         // Get options and push the point to xData, yData and series.options. In
         // series.generatePoints the Point instance will be created on demand
         // and pushed to the series.data array.
-        const point = { series: series } as any;
-        series.pointClass.prototype.applyOptions.apply(point, [options]);
+        const {
+                applyOptions,
+                optionsToObject
+            } = series.pointClass.prototype,
+            point = { series } as any,
+            pointOptions = optionsToObject.call(point, options);
+        applyOptions.call(point, pointOptions, void 0, false);
         const x: (number|null) = point.x;
 
         // Get the insertion point
@@ -4135,7 +4526,8 @@ class Series {
         }
 
         // Insert the row at the given index
-        table.setRow(point, i, true, { addColumns: false });
+        table.setRow(pointOptions as RowObject, i, true);
+        this.xColumn?.splice(i, 0, this.getX(x as any));
 
         if (names && point.name) {
             names[x as any] = point.name;
@@ -4144,9 +4536,9 @@ class Series {
 
         if (
             isInTheMiddle ||
-            // When processedData is present we need to splice an empty slot
+            // When hasProcessedData is true we need to splice an empty slot
             // into series.data, otherwise generatePoints won't pick it up.
-            series.processedData
+            series.hasProcessedDataTable
         ) {
             series.data.splice(i, 0, null as any);
             series.processData();
@@ -4164,7 +4556,8 @@ class Series {
             } else {
                 [
                     data,
-                    dataOptions
+                    dataOptions,
+                    this.xColumn
                 ].filter(defined).forEach((coll): void => {
                     coll.shift();
                 });
@@ -4229,12 +4622,15 @@ class Series {
                     // #4935
                     points?.length === data.length ? points : void 0,
                     data,
-                    series.options.data
+                    series.options.data,
+                    series.xColumn
                 ].filter(defined).forEach((coll): void => {
                     coll.splice(i, 1);
                 });
 
                 table.deleteRows(i);
+                // Reset modified data (shouldn't this happen automagically?)
+                table.modified = table;
 
                 point?.destroy();
 
@@ -4363,6 +4759,7 @@ class Series {
                 'dataLabelsParentGroups',
                 'group',
                 'markerGroup',
+                'plotClipGroup',
                 'transformGroup'
             ],
             optionsToCheck = [
@@ -4377,7 +4774,8 @@ class Series {
             // directly after chart initialization, or when applying responsive
             // rules (#6912).
             animation = series.finishedAnimating && { animation: false },
-            kinds = {} as Record<string, number>;
+            kinds = {} as Record<string, number>,
+            dataOptions = options.data || options.dataTable;
         let seriesOptions: SeriesOptions,
             n,
             keepProps = Series.keepProps.slice(),
@@ -4412,18 +4810,21 @@ class Series {
             keepProps.push.apply(keepProps, Series.keepPropsForPoints);
             if (options.visible !== false) {
                 keepProps.push('area', 'graph');
+                if (!('zones' in options)) {
+                    keepProps.push('zones');
+                }
             }
             series.parallelArrays.forEach(function (key: string): void {
                 keepProps.push(key + 'Data');
             });
 
-            if (options.data) {
+            if (dataOptions) {
                 // `setData` uses `dataSorting` options so we need to update
                 // them earlier
                 if (options.dataSorting) {
                     extend(series.options.dataSorting, options.dataSorting);
                 }
-                this.setData(options.data as any, false);
+                this.setData(dataOptions as any, false);
             }
         } else {
             this.dataTable.modified = this.dataTable;
@@ -4448,9 +4849,7 @@ class Series {
                 pointStart:
                     // When updating from blank (#7933)
                     plotOptions?.series?.pointStart ??
-                    oldOptions.pointStart ??
-                    // When updating after addPoint
-                    series.getColumn('x')[0]
+                    oldOptions.pointStart
             },
             !keepPoints && { data: series.options.data },
             options,
@@ -4645,11 +5044,8 @@ class Series {
             hoverSeries.onMouseOut();
         }
 
-        // Trigger the event, but to save processing time,
-        // only if defined
-        if ((series.options.events as any).mouseOver) {
-            fireEvent(series, 'mouseOver');
-        }
+        // Trigger the event
+        fireEvent(series, 'mouseOver');
 
         // Hover this
         series.setState('hover');
@@ -4673,7 +5069,6 @@ class Series {
     public onMouseOut(): void {
         // Trigger the event only if listeners exist
         const series = this,
-            options = series.options,
             chart = series.chart,
             tooltip = chart.tooltip,
             hoverPoint = chart.hoverPoint;
@@ -4687,10 +5082,7 @@ class Series {
         }
 
         // Fire the mouse out event
-        if (series && (options.events as any).mouseOut) {
-            fireEvent(series, 'mouseOut');
-        }
-
+        fireEvent(series, 'mouseOut');
 
         // Hide the tooltip
         if (
@@ -4728,11 +5120,11 @@ class Series {
     ): void {
         const series = this,
             { graph, options } = series,
-            { inactiveOtherPoints, states: stateOptions } = options,
+            { inactiveOtherPoints, states: stateOptions = {} } = options,
             // By default a quick animation to hover/inactive,
             // slower to un-hover
             stateAnimation = pick(
-                stateOptions?.[state || 'normal']?.animation,
+                stateOptions[state || 'normal']?.animation,
                 series.chart.options.chart.animation
             );
         let { lineWidth, opacity } = options;
@@ -4770,17 +5162,18 @@ class Series {
                 }
 
                 if (state) {
-                    lineWidth = (
-                        (stateOptions as any)[state].lineWidth ||
-                        lineWidth + (
-                            (stateOptions as any)[state].lineWidthPlus || 0
-                        )
+                    lineWidth = stateOptions[state]?.lineWidth ?? (
+                        !isNumber(lineWidth) ?
+                            void 0 :
+                            // Increase by lineWidthPlus only when lineWidth
+                            // is a number.
+                            (
+                                lineWidth +
+                                (stateOptions?.[state]?.lineWidthPlus || 0)
+                            )
                     ); // #4035
 
-                    opacity = pick(
-                        (stateOptions as any)[state].opacity,
-                        opacity
-                    );
+                    opacity = stateOptions[state]?.opacity ?? opacity;
                 }
 
                 if (graph && !graph.dashstyle && isNumber(lineWidth)) {
@@ -4832,11 +5225,7 @@ class Series {
      *        Can be either `hover` or undefined to set to normal state.
      */
     public setAllPointsToState(state?: StatesOptionsKey): void {
-        this.points.forEach(function (point): void {
-            if (point.setState) {
-                point.setState(state);
-            }
-        });
+        this.points.forEach((point): void => point.setState?.(state));
     }
 
     /**
@@ -5014,8 +5403,50 @@ class Series {
      * @internal
      */
     public drawLegendSymbol(legend: Legend, item: Legend.Item): void {
-        LegendSymbol[this.options.legendSymbol || 'rectangle']
-            ?.call(this, legend, item);
+        const renderer = this.chart.renderer,
+            legendSymbol = this.options.legendSymbol || 'rectangle',
+            legendItem = item.legendItem || {},
+            { options, symbolHeight, symbolWidth } = legend,
+            squareSymbol = options.squareSymbol,
+            adjustedSymbolWidth = squareSymbol ? symbolHeight : symbolWidth,
+            x = squareSymbol ? (symbolWidth - symbolHeight) / 2 : 0,
+            y = (legend.baseline || 0) - symbolHeight + 1,
+            w = adjustedSymbolWidth,
+            h = symbolHeight,
+            r = options.symbolRadius ?? symbolHeight;
+
+        const symbol: SVGElement|undefined = legendSymbol === 'rectangle' ?
+            // For the rectangle, use a true `rect` element because it renders
+            // sharper than a symbol with `path` and arcs
+            renderer.rect(x, y, w, h, r) :
+            (
+                renderer.symbols[
+                    legendSymbol as keyof typeof renderer.symbols
+                ] &&
+                renderer.symbol(
+                    legendSymbol as keyof typeof renderer.symbols,
+                    x,
+                    y,
+                    w,
+                    h,
+                    { r }
+                )
+            );
+
+        // Rectangle or SVGRenderer symbol
+        if (symbol) {
+            legendItem.symbol = symbol
+                .addClass('highcharts-point')
+                .attr({
+                    zIndex: 3
+                })
+                .add(legendItem.group);
+
+        // Symbol function defined in LegendSymbol
+        } else {
+            LegendSymbol[legendSymbol as keyof typeof LegendSymbol]
+                ?.call(this, legend, item);
+        }
     }
 
     // eslint-enable valid-jsdoc
@@ -5042,7 +5473,7 @@ interface Series extends SeriesBase {
     directTouch: boolean;
 
     /** @internal */
-    hcEvents?: Record<string, Array<U.EventWrapperObject<Series>>>;
+    hcEvents?: Record<string, Array<EventWrapperObject<Series>>>;
 
     /** @internal */
     invertible: boolean;
@@ -5166,6 +5597,48 @@ export default Series;
  */
 
 /**
+ * Options for `dataMapping`. The data mapping options allow you to define
+ * how data from a data table should be mapped to series points. The object
+ * keys refer to the point property that should be mapped, and the values refer
+ * to the `dataTable` and `column` that should be used for the mapping.
+ *
+ * Values can be either a string pointing directly to a column in the first
+ * data table, or an object with `dataTable` and `column` properties to specify
+ * the mapping in more detail.
+ *
+ * @example
+ * Highcharts.chart('container', {
+ *     dataTable: {
+ *         columns: {
+ *             Year: [2020, 2021, 2022, 2023],
+ *             Cost: [11, 13, 12, 14],
+ *             Revenue: [12, 15, 14, 18]
+ *         }
+ *     },
+ *     plotOptions: {
+ *         series: {
+ *             // Mapping to a shared column goes in plotOptions
+ *             dataMapping: {
+ *                 x: 'Year'
+ *             }
+ *         }
+ *     },
+ *     series: [{
+ *         dataMapping: {
+ *             y: 'Cost'
+ *         }
+ *     }, {
+ *         dataMapping: {
+ *             y: 'Revenue'
+ *         }
+ *     }]
+ * });
+ *
+ * @interface Highcharts.DataMappingOptionsObject
+ * @since 13.0.0
+ */
+
+/**
  * Function callback when a series has been animated.
  *
  * @callback Highcharts.SeriesAfterAnimateCallbackFunction
@@ -5175,6 +5648,10 @@ export default Series;
  *
  * @param {Highcharts.SeriesAfterAnimateEventObject} event
  *        Event arguments.
+ *
+ * @param {Highcharts.Series} [ctx]
+ *        Since v12.6.0, the series context passed as an extra argument for
+ *        arrow functions.
  */
 
 /**
@@ -5237,6 +5714,10 @@ export default Series;
  *
  * @param {Highcharts.SeriesClickEventObject} event
  *        Event arguments.
+ *
+ * @param {Highcharts.Series} [ctx]
+ *        Since v12.6.0, the series context passed as an extra argument for
+ *        arrow functions.
  */
 
 /**
@@ -5261,6 +5742,10 @@ export default Series;
  *
  * @param {global.Event} event
  *        The event that occurred.
+ *
+ * @param {Highcharts.Series} [ctx]
+ *        Since v12.6.0, the series context passed as an extra argument for
+ *        arrow functions.
  */
 
 /**
@@ -5280,6 +5765,10 @@ export default Series;
  *
  * @param {global.PointerEvent} event
  *        Event that occurred.
+ *
+ * @param {Highcharts.Series} [ctx]
+ *        Since v12.6.0, the series context passed as an extra argument for
+ *        arrow functions.
  */
 
 /**
@@ -5292,6 +5781,10 @@ export default Series;
  *
  * @param {global.PointerEvent} event
  *        Event that occurred.
+ *
+ * @param {Highcharts.Series} [ctx]
+ *        Since v12.6.0, the series context passed as an extra argument for
+ *        arrow functions.
  */
 
 /**
@@ -5323,6 +5816,10 @@ export default Series;
  *
  * @param {global.Event} event
  *        Event that occurred.
+ *
+ * @param {Highcharts.Series} [ctx]
+ *        Since v12.6.0, the series context passed as an extra argument for
+ *        arrow functions.
  */
 
 /**
@@ -5344,7 +5841,7 @@ export default Series;
  * have to cast the series options to specific series types, to get all
  * possible options for a series.
  *
- * @example
+ * ```ts
  * // TypeScript example
  * Highcharts.chart('container', {
  *     series: [{
@@ -5352,6 +5849,7 @@ export default Series;
  *         data: [[0, 1], [2, 3]]
  *     } as Highcharts.SeriesLineOptions ]
  * });
+ * ```
  *
  * @type      {Array<*>}
  * @apioption series
@@ -5364,6 +5862,7 @@ export default Series;
  * @sample {highcharts} highcharts/plotoptions/series-id/
  *         Get series by id
  *
+ * @basic
  * @type      {string}
  * @since     1.2.0
  * @apioption series.id
@@ -5374,6 +5873,7 @@ export default Series;
  * `chart.series` array, the visible Z index as well as the order in the
  * legend.
  *
+ * @basic
  * @type      {number}
  * @since     2.3.0
  * @apioption series.index
@@ -5392,13 +5892,17 @@ export default Series;
  * @apioption series.legendIndex
  */
 /**
- * The name of the series as shown in the legend, tooltip etc.
+ * The name of the series as shown in the legend, tooltip etc. If a `dataTable`
+ * and `dataMapping` are used, the name defaults to the id of the primary data
+ * table column. Otherwise, it defaults to "Series {n}", where n is the index of
+ * the series, starting at 1.
  *
  * @sample {highcharts} highcharts/series/name/
  *         Series name
  * @sample {highmaps} maps/demo/category-map/
  *         Series name
  *
+ * @basic
  * @type      {string}
  * @apioption series.name
  */
@@ -5416,6 +5920,7 @@ export default Series;
  * @sample {highmaps} maps/demo/mapline-mappoint/
  *         Multiple types in the same map
  *
+ * @basic
  * @type      {string}
  * @apioption series.type
  */

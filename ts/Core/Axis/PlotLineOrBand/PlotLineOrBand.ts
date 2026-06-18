@@ -1,10 +1,11 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -19,7 +20,6 @@
 
 import type Chart from '../../Chart/Chart';
 import type { DeepPartial } from '../../../Shared/Types';
-import type Templating from '../../Templating';
 import type {
     PlotBandLabelOptions,
     PlotBandOptions
@@ -33,10 +33,8 @@ import type SVGElement from '../../Renderer/SVG/SVGElement';
 import type SVGPath from '../../Renderer/SVG/SVGPath';
 
 import Axis from '../Axis.js';
-import { Palette } from '../../Color/Palettes.js';
 import PlotLineOrBandAxis from './PlotLineOrBandAxis.js';
-import U from '../../Utilities.js';
-const {
+import {
     addEvent,
     arrayMax,
     arrayMin,
@@ -46,7 +44,7 @@ const {
     fireEvent,
     merge,
     objectEach
-} = U;
+} from '../../../Shared/Utilities.js';
 
 /* *
  *
@@ -206,7 +204,7 @@ class PlotLineOrBand {
         fireEvent(this, 'render');
 
         const { axis, options } = this,
-            { horiz, logarithmic } = axis,
+            { chart, horiz, logarithmic } = axis,
             { color, events, zIndex = 0 } = options,
             { renderer, styledMode, time } = axis.chart,
 
@@ -241,6 +239,7 @@ class PlotLineOrBand {
         if (!group) {
             axis.plotLinesAndBandsGroups[groupName] = group =
                 renderer.g('plot-' + groupName)
+                    .clip(chart.plotClipOuter)
                     .attr({ zIndex }).add();
         }
         group[isNew ? 'attr' : 'animate']({ opacity: +axis.visible });
@@ -282,12 +281,12 @@ class PlotLineOrBand {
         // Apply the styling
         if (!styledMode) {
             if (isBand) { // Plot band
-                attribs.fill = color || Palette.highlightColor10;
+                attribs.fill = color || 'var(--highcharts-highlight-color-10)';
                 if (borderWidth) {
                     attribs.stroke = (options as PlotBandOptions).borderColor;
                 }
             } else {
-                attribs.stroke = color || Palette.neutralColor40;
+                attribs.stroke = color || 'var(--highcharts-neutral-color-40)';
                 if ((options as PlotLineOptions).dashStyle) {
                     attribs.dashstyle = (options as PlotLineOptions).dashStyle;
                 }
@@ -301,7 +300,7 @@ class PlotLineOrBand {
                 svgElem?.on(
                     eventType,
                     (e: any): void => {
-                        events[eventType].apply(this, [e]);
+                        events[eventType].apply(this, [e, this]);
                     }
                 );
             });
@@ -486,9 +485,7 @@ class PlotLineOrBand {
         optionsLabel: (PlotBandLabelOptions|PlotLineLabelOptions)
     ): string | undefined {
         return defined(optionsLabel.formatter) ?
-            (optionsLabel.formatter as
-              Templating.FormatterCallback<PlotLineOrBand>)
-                .call(this) :
+            optionsLabel.formatter.call(this, this) :
             optionsLabel.text;
     }
 
@@ -634,7 +631,7 @@ export default PlotLineOrBand;
  * Border radius for the plot band. Applies only to gauges. Can be a pixel
  * value or a percentage, for example `50%`.
  *
- * @type      {number|string}
+ * @type      {number|string|Highcharts.BorderRadiusOptionsObject}
  * @since 11.4.2
  * @sample    {highcharts} highcharts/xaxis/plotbands-gauge-borderradius
  *            Angular gauge with rounded plot bands
@@ -666,8 +663,8 @@ export default PlotLineOrBand;
  * @sample {highstock} stock/xaxis/plotbands/
  *         Plot band on Y axis
  *
- * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
- * @default   ${palette.highlightColor10}
+ * @type      {Highcharts.ColorType}
+ * @default   var(--highcharts-highlight-color-10)
  * @apioption xAxis.plotBands.color
  */
 
@@ -978,7 +975,7 @@ export default PlotLineOrBand;
  *         Plot line on Y axis
  *
  * @type      {Highcharts.ColorString}
- * @default   ${palette.neutralColor40}
+ * @default   var(--highcharts-neutral-color-40)
  * @apioption xAxis.plotLines.color
  */
 
@@ -1130,7 +1127,9 @@ export default PlotLineOrBand;
 /**
  * Callback JavaScript function to format the label. Useful properties like
  * the value of plot line or the range of plot band (`from` & `to`
- * properties) can be found in `this.options` object.
+ * properties) can be found in `this.options` object. Since v12.6.0, the
+ * callback also receives `ctx` as the first argument, so that arrow functions
+ * can access the same context as regular functions using `this`.
  *
  * @sample {highcharts} highcharts/xaxis/plotlines-plotbands-label-formatter
  *         Label formatters for plot line and plot band.
@@ -1242,6 +1241,51 @@ export default PlotLineOrBand;
  * @type      {Array<*>}
  * @extends   xAxis.plotBands
  * @apioption yAxis.plotBands
+ */
+
+/**
+ * In a gauge chart, this option determines the inner radius of the
+ * plot band that stretches along the perimeter. It can be given as
+ * a percentage string, like `"100%"`, or as a pixel number, like `100`.
+ * By default, the inner radius is controlled by the [thickness](
+ * #yAxis.plotBands.thickness) option.
+ *
+ * @sample {highcharts} highcharts/xaxis/plotbands-gauge
+ *         Gauge plot band
+ *
+ * @type      {number|string}
+ * @since     2.3
+ * @product   highcharts
+ * @apioption yAxis.plotBands.innerRadius
+ */
+
+/**
+ * In a gauge chart, this option determines the outer radius of the
+ * plot band that stretches along the perimeter. It can be given as
+ * a percentage string, like `"100%"`, or as a pixel number, like `100`.
+ *
+ * @sample {highcharts} highcharts/xaxis/plotbands-gauge
+ *         Gauge plot band
+ *
+ * @type      {number|string}
+ * @default   100%
+ * @since     2.3
+ * @product   highcharts
+ * @apioption yAxis.plotBands.outerRadius
+ */
+
+/**
+ * In a gauge chart, this option sets the width of the plot band stretching
+ * along the perimeter. It can be given as a percentage string, like `'10%'`, or
+ * as a pixel number, like `10`. If `undefined`, the plot band fills out the
+ * range between `pane.size` and `pane.innerSize`.
+ *
+ * @sample {highcharts} highcharts/xaxis/plotbands-gauge Gauge plot band
+ *
+ * @type      {number|string}
+ * @since     2.3
+ * @product   highcharts
+ * @apioption yAxis.plotBands.thickness
  */
 
 /**

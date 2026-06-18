@@ -18,7 +18,7 @@ Highcharts.ganttChart('container', {
         scrollablePlotArea: {
             minHeight: 600
         },
-        marginRight: 30
+        spacingRight: 30
     },
 
     xAxis: {

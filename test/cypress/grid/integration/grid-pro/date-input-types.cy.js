@@ -1,6 +1,6 @@
 describe('Date Input Types', () => {
     before(() => {
-        cy.visit('grid-pro/cypress/date-input-types');
+        cy.visit('grid-pro/e2e/date-input-types');
     });
 
     it('Should parse date input values correctly', () => {

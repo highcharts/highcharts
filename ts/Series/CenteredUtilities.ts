@@ -1,10 +1,11 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -22,13 +23,12 @@ import type SeriesOptions from '../Core/Series/SeriesOptions';
 import H from '../Core/Globals.js';
 const { deg2rad } = H;
 import Series from '../Core/Series/Series.js';
-import U from '../Core/Utilities.js';
-const {
+import {
     fireEvent,
     isNumber,
     pick,
     relativeLength
-} = U;
+} from '../Shared/Utilities.js';
 
 /**
  * @private
@@ -64,7 +64,6 @@ namespace CenteredUtilities {
      *
      * */
 
-    /* eslint-disable valid-jsdoc */
 
     /**
      * Get the center of the pie based on the size and center options relative
@@ -108,12 +107,6 @@ namespace CenteredUtilities {
                 '0%'
             )
         ];
-
-        // No need for inner size in angular (gauges) series but still required
-        // for pie series
-        if (chart.angular && !(this instanceof Series)) {
-            positions[3] = 0;
-        }
 
         for (i = 0; i < 4; ++i) {
             value = positions[i];

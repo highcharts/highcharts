@@ -1,10 +1,11 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Pawel Lysy
+ *  Author: Paweł Lysy
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -21,6 +22,8 @@ import type HLCSeriesOptions from './HLCSeriesOptions';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer';
+import type Series from '../../Core/Series/Series';
 
 import HLCPoint from './HLCPoint.js';
 import HLCSeriesDefaults from './HLCSeriesDefaults.js';
@@ -28,14 +31,10 @@ import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     column: ColumnSeries
 } = SeriesRegistry.seriesTypes;
-import U from '../../Core/Utilities.js';
-const {
-    crisp,
-    extend,
-    merge
-} = U;
+import FinancialSymbols from '../FinancialSymbols.js';
 
 import D from '../../Core/Defaults.js';
+import { crisp, extend, merge } from '../../Shared/Utilities.js';
 const { defaultOptions } = D;
 
 /* *
@@ -60,6 +59,13 @@ class HLCSeries extends ColumnSeries {
      *  Static Properties
      *
      * */
+
+    public static compose(
+        _SeriesClass: typeof Series,
+        SVGRendererClass: typeof SVGRenderer
+    ): void {
+        FinancialSymbols.compose(SVGRendererClass);
+    }
 
     public static defaultOptions: HLCSeriesOptions = merge(
         ColumnSeries.defaultOptions,
@@ -165,8 +171,8 @@ class HLCSeries extends ColumnSeries {
      * @private
      */
     public pointAttribs(
-        point: HLCPoint,
-        state: StatesOptionsKey
+        point?: HLCPoint,
+        state?: StatesOptionsKey
     ): SVGAttributes {
         const attribs = super.pointAttribs.call(
             this,
@@ -174,7 +180,9 @@ class HLCSeries extends ColumnSeries {
             state
         );
 
-        delete attribs.fill;
+        if (point) {
+            delete attribs.fill;
+        }
 
         return attribs;
     }
@@ -250,7 +258,6 @@ class HLCSeries extends ColumnSeries {
 
 interface HLCSeries {
     pointClass: typeof HLCPoint;
-    pointAttrToOptions: Record<string, string>;
 }
 extend(HLCSeries.prototype, {
     pointClass: HLCPoint,
@@ -300,6 +307,7 @@ declare module '../../Core/Series/SeriesType' {
         hlc: typeof HLCSeries;
     }
 }
+
 SeriesRegistry.registerSeriesType('hlc', HLCSeries);
 
 /* *

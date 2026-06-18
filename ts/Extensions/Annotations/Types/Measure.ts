@@ -37,15 +37,13 @@ import Annotation from '../Annotation.js';
 import ControlPoint from '../ControlPoint.js';
 import D from '../../../Core/Defaults.js';
 const { defaultOptions } = D;
-import U from '../../../Core/Utilities.js';
-const {
+import {
     defined,
     extend,
     isNumber,
     merge,
     pick
-} = U;
-import { Palette } from '../../../Core/Color/Palettes.js';
+} from '../../../Shared/Utilities.js';
 
 if (defaultOptions.annotations?.types) {
     /**
@@ -177,7 +175,7 @@ if (defaultOptions.annotations?.types) {
                  */
                 style: {
                     fontSize: '0.7em',
-                    color: Palette.neutralColor80
+                    color: 'var(--highcharts-neutral-color-80)'
                 },
                 /**
                  * Formatter function for the label text.
@@ -841,7 +839,7 @@ class Measure extends Annotation {
 
         if (this.labels.length > 0) {
             (this.labels[0]).text = (
-                (formatter && formatter.call(this)) ||
+                formatter?.call(this, this) ||
                 defaultFormatter.call(this)
             );
 
@@ -872,7 +870,7 @@ class Measure extends Annotation {
                     };
                 } as any,
                 text: (
-                    (formatter && formatter.call(this)) ||
+                    formatter?.call(this, this) ||
                     defaultFormatter.call(this)
                 )
             }, typeOptions.label as any), void 0 as any);
@@ -1277,9 +1275,12 @@ namespace Measure {
          * Defaults to true.
          */
         enabled: boolean;
-
         /**
          * Formatter function for the label text.
+         *
+         * Since v12.6.0, the callback also receives `ctx` as the first
+         * argument, so that arrow functions can access the same context as
+         * regular functions using `this`.
          *
          * Available data are:
          *

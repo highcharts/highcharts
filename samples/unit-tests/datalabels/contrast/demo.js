@@ -5,7 +5,8 @@ QUnit.test(
                 chart: {
                     width: 600,
                     height: 400,
-                    type: 'column'
+                    type: 'column',
+                    animation: false
                 },
                 plotOptions: {
                     column: {
@@ -75,10 +76,10 @@ QUnit.test(
         });
 
         assert.strictEqual(
-            Highcharts.color(
-                point.dataLabel.element.querySelector('text').style.fill
-            ).get(),
-            'rgb(0,0,0)',
+            window.getComputedStyle(
+                point.dataLabel.element.querySelector('text')
+            ).fill,
+            'color(srgb 0 0 0)',
             `Contrast color should not be used when dataLabel does not collide
             with column (#6657).`
         );

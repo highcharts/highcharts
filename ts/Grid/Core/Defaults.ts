@@ -4,12 +4,13 @@
  *
  *  (c) 2009-2026 Highsoft AS
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  *  Authors:
- *  - Dawid Dragula
+ *  - Dawid Draguła
  *  - Sebastian Bochan
  *
  * */
@@ -25,16 +26,16 @@
 import type { Options, LangOptions } from './Options';
 import type { DeepPartial } from '../../Shared/Types';
 
+import { warnIfDeprecatedOptions } from './DeprecatedOptions.js';
 import Pagination from './Pagination/Pagination.js';
-import Utils from '../../Core/Utilities.js';
-
-const { merge } = Utils;
+import { merge } from '../../Shared/Utilities.js';
 
 /**
  * Default language options for the Grid.
  */
 export const defaultLangOptions: DeepPartial<LangOptions> = {
     accessibility: {
+        columnMenu: 'Open menu for {column}.',
         sorting: {
             sortable: 'Sortable.',
             announcements: {
@@ -72,6 +73,7 @@ export const defaultLangOptions: DeepPartial<LangOptions> = {
     sortDescending: 'Sort descending',
     column: 'Column',
     setFilter: 'Set filter',
+    filterValuePlaceholder: 'Value...',
     pagination: {
         pageInfo: 'Showing {start} - {end} of {total} ' +
             '(page {currentPage} of {totalPages})',
@@ -83,7 +85,7 @@ export const defaultLangOptions: DeepPartial<LangOptions> = {
         pageNumber: 'Page {page}',
         ellipsis: 'More pages'
     },
-    columnFilteringConditions: {
+    columnFilteringOperators: {
         contains: 'Contains',
         doesNotContain: 'Does not contain',
         equals: 'Equals',
@@ -96,11 +98,17 @@ export const defaultLangOptions: DeepPartial<LangOptions> = {
         greaterThanOrEqualTo: 'Greater than or equal to',
         lessThan: 'Less than',
         lessThanOrEqualTo: 'Less than or equal to',
-        before: 'Before',
-        after: 'After',
         all: 'All',
         'true': 'True',
         'false': 'False'
+    },
+    columnFilteringDateTimeOperators: {
+        equals: 'On',
+        doesNotEqual: 'Not on',
+        greaterThan: 'After',
+        greaterThanOrEqualTo: 'On or after',
+        lessThan: 'Before',
+        lessThanOrEqualTo: 'On or before'
     }
 };
 
@@ -125,7 +133,8 @@ export const defaultOptions: DeepPartial<Options> = {
         }
     },
     data: {
-        providerType: 'local'
+        providerType: 'local',
+        autogenerateColumns: true
     },
     time: {
         timezone: 'UTC'
@@ -170,6 +179,7 @@ export const defaultOptions: DeepPartial<Options> = {
 export function setOptions(
     options: DeepPartial<Options>
 ): void {
+    warnIfDeprecatedOptions(options);
     merge(true, defaultOptions, options);
 }
 

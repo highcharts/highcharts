@@ -5,18 +5,16 @@
  *
  * (c) 2009-2026 Highsoft AS
  *
- * A commercial license may be required depending on use.
- * See www.highcharts.com/license
+ * A commercial license may be required depending on use,
+ * see www.highcharts.com/license
  */
 'use strict';
 import Highcharts from '../Core/Globals.js';
-import Utilities from '../Core/Utilities.js';
 import Defaults from '../Core/Defaults.js';
 import Fx from '../Core/Animation/Fx.js';
 import Animation from '../Core/Animation/AnimationUtilities.js';
 import AST from '../Core/Renderer/HTML/AST.js';
 import Templating from '../Core/Templating.js';
-import RendererRegistry from '../Core/Renderer/RendererRegistry.js';
 import RendererUtilities from '../Core/Renderer/RendererUtilities.js';
 import SVGElement from '../Core/Renderer/SVG/SVGElement.js';
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
@@ -32,7 +30,7 @@ import Pointer from '../Core/Pointer.js';
 import Legend from '../Core/Legend/Legend.js';
 import LegendSymbol from '../Core/Legend/LegendSymbol.js';
 import Chart from '../Core/Chart/Chart.js';
-import ScrollablePlotArea from '../Extensions/ScrollablePlotArea.js';
+import { ScrollablePlotArea } from '../Extensions/ScrollablePlotArea.js';
 import StackingAxis from '../Core/Axis/Stacking/StackingAxis.js';
 import StackItem from '../Core/Axis/Stacking/StackItem.js';
 import DataTableCore from '../Data/DataTableCore.js';
@@ -49,20 +47,77 @@ import '../Series/Scatter/ScatterSeries.js';
 import '../Series/Pie/PieSeries.js';
 import PieDataLabel from '../Series/Pie/PieDataLabel.js';
 import DataLabel from '../Core/Series/DataLabel.js';
-import {
-    composeOverlappingDataLabels
-} from '../Core/Series/OverlappingDataLabels.js';
-import BorderRadius from '../Extensions/BorderRadius.js';
+import { composeOverlappingDataLabels } from '../Core/Series/OverlappingDataLabels.js';
+import { composeBorderRadius } from '../Extensions/BorderRadius.js';
 import Responsive from '../Core/Responsive.js';
 import Color from '../Core/Color/Color.js';
 import Time from '../Core/Time.js';
+import {
+    addEvent,
+    arrayMax,
+    arrayMin,
+    attr,
+    clamp,
+    correctFloat,
+    createElement,
+    crisp,
+    css,
+    defined,
+    destroyObjectProperties,
+    diffObjects,
+    discardElement,
+    erase,
+    extend,
+    extendClass,
+    find,
+    fireEvent,
+    getMagnitude,
+    getAlignFactor,
+    getClosestDistance,
+    getNestedProperty,
+    getStyle,
+    isArray,
+    isClass,
+    isDOMElement,
+    isFunction,
+    isNumber,
+    isObject,
+    isString,
+    internalClearTimeout,
+    merge,
+    normalizeTickInterval,
+    objectEach,
+    offset,
+    pad,
+    pick,
+    pushUnique,
+    pInt,
+    relativeLength,
+    removeEvent,
+    replaceNested,
+    splat,
+    stableSort,
+    syncTimeout,
+    ucfirst,
+    wrap
+} from '../Shared/Utilities.js';
+import {
+    error,
+    insertItem,
+    timeUnits,
+    uniqueKey,
+    useSerialIds
+} from '../Core/Utilities.js';
+
 const G: AnyRecord = Highcharts;
+
 // Classes
 G.AST = AST;
 G.Axis = Axis;
 G.Chart = Chart;
 G.Color = Color;
 G.DataLabel = DataLabel;
+G.DataTable = DataTableCore;
 G.DataTableCore = DataTableCore;
 G.Fx = Fx;
 G.HTMLElement = HTMLElement;
@@ -71,7 +126,6 @@ G.LegendSymbol = LegendSymbol;
 G.PlotLineOrBand = PlotLineOrBand;
 G.Point = Point;
 G.Pointer = Pointer;
-G.RendererRegistry = RendererRegistry;
 G.Series = Series;
 G.SeriesRegistry = SeriesRegistry;
 G.StackItem = StackItem;
@@ -81,26 +135,80 @@ G.Templating = Templating;
 G.Tick = Tick;
 G.Time = Time;
 G.Tooltip = Tooltip;
+
 // Utilities
-G.animate = Animation.animate;
+G.addEvent = addEvent;
 G.animObject = Animation.animObject;
+G.animate = Animation.animate;
+G.arrayMax = arrayMax;
+G.arrayMin = arrayMin;
+G.attr = attr;
 G.chart = Chart.chart;
+G.clamp = clamp;
 G.color = Color.parse;
+G.correctFloat = correctFloat;
+G.createElement = createElement;
+G.css = css;
+G.crisp = crisp;
 G.dateFormat = Templating.dateFormat;
 G.defaultOptions = Defaults.defaultOptions;
+G.defined = defined;
+G.destroyObjectProperties = destroyObjectProperties;
+G.diffObjects = diffObjects;
+G.discardElement = discardElement;
 G.distribute = RendererUtilities.distribute;
+G.erase = erase;
+G.error = error;
+G.extend = extend;
+G.extendClass = extendClass;
+G.find = find;
+G.fireEvent = fireEvent;
 G.format = Templating.format;
+G.getAlignFactor = getAlignFactor;
+G.getClosestDistance = getClosestDistance;
 G.getDeferredAnimation = Animation.getDeferredAnimation;
+G.getMagnitude = getMagnitude;
+G.getNestedProperty = getNestedProperty;
 G.getOptions = Defaults.getOptions;
+G.getStyle = getStyle;
+G.insertItem = insertItem;
+G.isArray = isArray;
+G.isClass = isClass;
+G.isDOMElement = isDOMElement;
+G.isFunction = isFunction;
+G.isNumber = isNumber;
+G.isObject = isObject;
+G.isString = isString;
+G.internalClearTimeout = internalClearTimeout;
+G.merge = merge;
+G.normalizeTickInterval = normalizeTickInterval;
 G.numberFormat = Templating.numberFormat;
+G.objectEach = objectEach;
+G.offset = offset;
+G.pad = pad;
+G.pick = pick;
+G.pushUnique = pushUnique;
+G.pInt = pInt;
+G.relativeLength = relativeLength;
+G.removeEvent = removeEvent;
+G.replaceNested = replaceNested;
 G.seriesType = SeriesRegistry.seriesType;
 G.setAnimation = Animation.setAnimation;
 G.setOptions = Defaults.setOptions;
+G.splat = splat;
+G.stableSort = stableSort;
 G.stop = Animation.stop;
+G.syncTimeout = syncTimeout;
 G.time = Defaults.defaultTime;
+G.ucfirst = ucfirst;
 G.timers = Fx.timers;
+G.timeUnits = timeUnits;
+G.uniqueKey = uniqueKey;
+G.useSerialIds = useSerialIds;
+G.wrap = wrap;
+
 // Compositions
-BorderRadius.compose(G.Series, G.SVGElement, G.SVGRenderer);
+composeBorderRadius(G.Series, G.SVGElement, G.SVGRenderer);
 ColumnDataLabel.compose(G.Series.types.column);
 DataLabel.compose(G.Series);
 DateTimeAxis.compose(G.Axis);
@@ -115,6 +223,5 @@ Responsive.compose(G.Chart);
 ScrollablePlotArea.compose(G.Axis, G.Chart, G.Series);
 StackingAxis.compose(G.Axis, G.Chart, G.Series);
 Tooltip.compose(G.Pointer);
-Utilities.extend(G, Utilities);
 // Default Export
 export default G;

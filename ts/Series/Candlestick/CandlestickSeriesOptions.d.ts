@@ -1,10 +1,11 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -54,7 +55,7 @@ export interface CandlestickSeriesOptions extends OHLCSeriesOptions {
      * The color of the line/border of the candlestick.
      *
      * In styled mode, the line stroke can be set with the
-     * `.highcharts-candlestick-series .highcahrts-point` rule.
+     * `.highcharts-candlestick-series .highcharts-point` rule.
      *
      * @see [upLineColor](#plotOptions.candlestick.upLineColor)
      *
@@ -66,6 +67,16 @@ export interface CandlestickSeriesOptions extends OHLCSeriesOptions {
      * @product highstock
      */
     lineColor?: ColorType;
+
+    /**
+     * What type of legend symbol to render for this series. For candlestick
+     * series, the default is `candlestick`, a vertical line (wick) with a
+     * rectangular body.
+     *
+     * @default candlestick
+     * @apioption plotOptions.candlestick.legendSymbol
+     */
+    legendSymbol?: string;
 
     states?: SeriesStatesOptions<CandlestickSeriesOptions>;
 
@@ -180,7 +191,7 @@ export interface CandlestickSeriesOptions extends OHLCSeriesOptions {
      *
      *
      * In styled mode, the line stroke width can be set with the
-     * `.highcharts-candlestick-series .highcahrts-point` rule.
+     * `.highcharts-candlestick-series .highcharts-point` rule.
      *
      * @product highstock
      */

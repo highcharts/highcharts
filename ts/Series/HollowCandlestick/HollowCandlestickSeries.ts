@@ -1,10 +1,11 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -20,12 +21,11 @@
 import HollowCandlestickPoint from './HollowCandlestickPoint.js';
 import type HollowCandlestickSeriesOptions from './HollowCandlestickSeriesOptions';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-import U from '../../Core/Utilities.js';
 import { StatesOptionsKey } from '../../Core/Series/StatesOptions.js';
 import SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes.js';
-import { Palette } from '../../Core/Color/Palettes.js';
 import Axis from '../../Core/Axis/Axis.js';
 import ColorType from '../../Core/Color/ColorType.js';
+import { addEvent, merge } from '../../Shared/Utilities.js';
 
 const {
     seriesTypes: {
@@ -33,17 +33,22 @@ const {
     }
 } = SeriesRegistry;
 
-const {
-    addEvent,
-    merge
-} = U;
 interface HollowcandleInfo {
     isBullish: boolean;
     trendDirection: 'down'|'up';
 }
 
-// Data array type (o, h, l, c) used locally
-type DataArr = Array<number|null|undefined>;
+/* *
+ *
+ *  Declarations
+ *
+ * */
+type OHLCObject = {
+    open: number | null | undefined;
+    high: number | null | undefined;
+    low: number | null | undefined;
+    close: number | null | undefined;
+};
 
 /* *
  *
@@ -93,7 +98,7 @@ class HollowCandlestickSeries extends CandlestickSeries {
          * @type    {ColorType}
          * @product highstock
          */
-        color: Palette.negativeColor,
+        color: 'var(--highcharts-negative-color)',
 
         dataGrouping: {
             groupAll: true,
@@ -112,7 +117,7 @@ class HollowCandlestickSeries extends CandlestickSeries {
          * @type    {ColorType}
          * @product highstock
          */
-        lineColor: Palette.negativeColor,
+        lineColor: 'var(--highcharts-negative-color)',
 
         /**
          * The fill color of the candlestick when the current
@@ -126,7 +131,7 @@ class HollowCandlestickSeries extends CandlestickSeries {
          * @type    {ColorType}
          * @product highstock
          */
-        upColor: Palette.positiveColor,
+        upColor: 'var(--highcharts-positive-color)',
 
         /**
          * The color of the line/border of the hollow candlestick when
@@ -140,7 +145,7 @@ class HollowCandlestickSeries extends CandlestickSeries {
          * @type    {ColorType}
          * @product highstock
          */
-        upLineColor: Palette.positiveColor
+        upLineColor: 'var(--highcharts-positive-color)'
 
     } as HollowCandlestickSeriesOptions);
 
@@ -179,20 +184,20 @@ class HollowCandlestickSeries extends CandlestickSeries {
 
         hollowCandlestickData.length = 0;
 
-        let previousDataArr: DataArr|undefined;
+        let previousDataPoint: OHLCObject|undefined;
         for (let i = 0; i < dataLength; i++) {
-            const dataArr = table.getRow(
+            const dataPoint = table.getRowObject(
                 i,
                 this.pointArrayMap
-            ) as Array<number>;
+            ) as OHLCObject;
 
             hollowCandlestickData.push(series.isBullish(
-                dataArr,
+                dataPoint,
                 // Determine the first point is bullish based on
                 // its open and close values.(#21683)
-                i ? previousDataArr : dataArr
+                i ? previousDataPoint : dataPoint
             ));
-            previousDataArr = dataArr;
+            previousDataPoint = dataPoint;
         }
     }
 
@@ -213,8 +218,8 @@ class HollowCandlestickSeries extends CandlestickSeries {
 
         // Return line color based on trend direction
         return trendDirection === 'up' ?
-            series.options.upColor || Palette.positiveColor :
-            series.options.color || Palette.negativeColor;
+            series.options.upColor || 'var(--highcharts-positive-color)' :
+            series.options.color || 'var(--highcharts-negative-color)';
     }
 
     /**
@@ -237,8 +242,8 @@ class HollowCandlestickSeries extends CandlestickSeries {
             return 'transparent';
         }
         return hollowcandleInfo.trendDirection === 'up' ?
-            series.options.upColor || Palette.positiveColor :
-            series.options.color || Palette.negativeColor;
+            series.options.upColor || 'var(--highcharts-positive-color)' :
+            series.options.color || 'var(--highcharts-negative-color)';
     }
 
     /**
@@ -246,7 +251,7 @@ class HollowCandlestickSeries extends CandlestickSeries {
      * @function Highcharts.seriesTypes.hollowcandlestick#init
      */
     public init(): void {
-        super.init.apply(this, arguments as any);
+        super.init.apply(this, arguments);
 
         this.hollowCandlestickData = [];
     }
@@ -257,22 +262,22 @@ class HollowCandlestickSeries extends CandlestickSeries {
      *
      * @function Highcharts.seriesTypes.hollowcandlestick#isBullish
      *
-     * @param {Array<(number)>} dataPoint
+     * @param {Object} dataPoint
      * Current point which we calculate.
      *
-     * @param {Array<(number)>} previousDataPoint
+     * @param {Object} previousDataPoint
      * Previous point.
      */
     public isBullish(
-        dataPoint: DataArr,
-        previousDataPoint?: DataArr
+        dataPoint: OHLCObject,
+        previousDataPoint?: OHLCObject
     ): HollowcandleInfo {
         return {
             // Compare points' open and close value.
-            isBullish: (dataPoint[0] || 0) <= (dataPoint[3] || 0),
+            isBullish: (dataPoint.open || 0) <= (dataPoint.close || 0),
             // For bearish candles.
             trendDirection:
-                (dataPoint[3] || 0) < (previousDataPoint?.[3] || 0) ?
+                (dataPoint.close || 0) < (previousDataPoint?.close || 0) ?
                     'down' : 'up'
         };
     }
@@ -291,14 +296,14 @@ class HollowCandlestickSeries extends CandlestickSeries {
      * Current point state.
      */
     public pointAttribs(
-        point: HollowCandlestickPoint,
+        point?: HollowCandlestickPoint,
         state?: StatesOptionsKey
     ): SVGAttributes {
         const attribs = super.pointAttribs.call(this, point, state);
         let stateOptions;
 
-        const index = point.index,
-            hollowcandleInfo = this.hollowCandlestickData[index];
+        const index = point?.index,
+            hollowcandleInfo = this.hollowCandlestickData[index || 0] || {};
 
         attribs.fill = this.getPointFill(hollowcandleInfo) || attribs.fill;
         attribs.stroke = this.getLineColor(hollowcandleInfo.trendDirection) ||
@@ -306,16 +311,15 @@ class HollowCandlestickSeries extends CandlestickSeries {
 
         // Select or hover states
         if (state) {
-            stateOptions = (this.options.states as any)[state];
+            stateOptions = this.options.states?.[state] || {};
             attribs.fill = stateOptions.color || attribs.fill;
             attribs.stroke = stateOptions.lineColor || attribs.stroke;
-            attribs['stroke-width'] =
-                stateOptions.lineWidth || attribs['stroke-width'];
+            attribs['stroke-width'] = stateOptions.lineWidth ||
+                attribs['stroke-width'];
         }
         return attribs;
     }
 
-    /* eslint-disable valid-jsdoc */
 }
 
 // Force to recalculate the hollowcandlestick data set after updating data.
@@ -334,9 +338,7 @@ addEvent(Axis, 'postProcessData', function (): void {
 
     series.forEach(function (series): void {
         if (series.is('hollowcandlestick')) {
-            const hollowcandlestickSeries = series as HollowCandlestickSeries;
-
-            hollowcandlestickSeries.getPriceMovement();
+            series.getPriceMovement();
         }
     });
 });
@@ -432,6 +434,7 @@ export default HollowCandlestickSeries;
  *    }]
  *    ```
  *
+ * @basic
  * @type      {Array<Array<(number|string),number,number,number>|Array<(number|string),number,number,number,number>|*>}
  * @extends   series.candlestick.data
  * @excluding y

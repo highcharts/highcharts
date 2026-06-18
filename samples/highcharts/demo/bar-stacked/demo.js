@@ -1,5 +1,13 @@
 // Data retrieved from: https://ferjedatabanken.no/statistikk
 Highcharts.chart('container', {
+    dataTable: {
+        columns: {
+            Month: ['January', 'February', 'March', 'April', 'May'],
+            Motorcycles: [74, 27, 52, 93, 1272],
+            'Null-emission vehicles': [2106, 2398, 3046, 3195, 4916],
+            'Conventional vehicles': [12213, 12721, 15242, 16518, 25037]
+        }
+    },
     chart: {
         type: 'bar'
     },
@@ -8,9 +16,7 @@ Highcharts.chart('container', {
         align: 'left'
     },
     xAxis: {
-        categories: [
-            'January', 'February', 'March', 'April', 'May'
-        ]
+        type: 'category'
     },
     yAxis: {
         min: 0,
@@ -23,6 +29,9 @@ Highcharts.chart('container', {
     },
     plotOptions: {
         series: {
+            dataMapping: {
+                name: 'Month'
+            },
             stacking: 'normal',
             dataLabels: {
                 enabled: true,
@@ -34,13 +43,16 @@ Highcharts.chart('container', {
         }
     },
     series: [{
-        name: 'Motorcycles',
-        data: [74, 27, 52, 93, 1272]
+        dataMapping: {
+            y: 'Motorcycles'
+        }
     }, {
-        name: 'Null-emission vehicles',
-        data: [2106, 2398, 3046, 3195, 4916]
+        dataMapping: {
+            y: 'Null-emission vehicles'
+        }
     }, {
-        name: 'Conventional vehicles',
-        data: [12213, 12721, 15242, 16518, 25037]
+        dataMapping: {
+            y: 'Conventional vehicles'
+        }
     }]
 });

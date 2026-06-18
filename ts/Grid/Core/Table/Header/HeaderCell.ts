@@ -4,12 +4,13 @@
  *
  *  (c) 2020-2026 Highsoft AS
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  *  Authors:
- *  - Dawid Dragula
+ *  - Dawid Draguła
  *  - Sebastian Bochan
  *
  * */
@@ -25,27 +26,23 @@
 
 import type { GroupedHeaderOptions } from '../../Options';
 import type { NoIdColumnOptions } from '../Column';
+import type CSSObject from '../../../../Core/Renderer/CSSObject';
 
 import Cell from '../Cell.js';
 import Column from '../Column';
 import Row from '../Row';
-import GridUtils from '../../GridUtils.js';
-import ColumnSorting from '../Actions/ColumnSorting.js';
-import Globals from '../../Globals.js';
-import Utilities from '../../../../Core/Utilities.js';
-import TableHeader from './TableHeader.js';
-import ColumnToolbar from './ColumnToolbar/ColumnToolbar.js';
-
-const {
+import {
     makeHTMLElement,
     setHTMLContent,
-    createOptionsProxy
-} = GridUtils;
-const {
-    fireEvent,
-    isString
-} = Utilities;
-
+    createOptionsProxy,
+    resolveStyleValue,
+    mergeStyleValues
+} from '../../GridUtils.js';
+import ColumnSorting from '../Actions/ColumnSorting.js';
+import Globals from '../../Globals.js';
+import TableHeader from './TableHeader.js';
+import ColumnToolbar from './ColumnToolbar/ColumnToolbar.js';
+import { fireEvent, isString } from '../../../../Shared/Utilities.js';
 
 /* *
  *
@@ -243,9 +240,40 @@ class HeaderCell extends Cell {
         // Add custom class name from column options
         this.setCustomClassName(options.header?.className);
 
+        this.setCustomStyles(this.getColumnStyles());
+
         fireEvent(this, 'afterRender', { column });
 
         return Promise.resolve();
+    }
+
+    /**
+     * Returns merged header styles from defaults and current column options.
+     *
+     */
+    private getColumnStyles(): (CSSObject | undefined) {
+        const { column } = this;
+
+        if (!column) {
+            return resolveStyleValue(this.superColumnOptions.header?.style);
+        }
+
+        const { grid } = this.row.viewport;
+        const rawColumnOptions = grid.columnPolicy
+            .getIndividualColumnOptions(column.id);
+
+        return {
+            ...mergeStyleValues(
+                column,
+                grid.options?.columnDefaults?.style,
+                rawColumnOptions?.style
+            ),
+            ...mergeStyleValues(
+                column,
+                grid.options?.columnDefaults?.header?.style,
+                rawColumnOptions?.header?.style
+            )
+        };
     }
 
     public override reflow(): void {
@@ -282,27 +310,27 @@ class HeaderCell extends Cell {
     }
 
     public override onClick(e: MouseEvent): void {
-        const column = this.column;
+        const { column } = this;
 
         if (
-            !column || (
-                e.target !== this.htmlElement &&
-                e.target !== column.header?.headerContent
-            ) || column.viewport.columnsResizer?.isResizing
+            !column ||
+            !this.htmlElement.contains(e.target as Node) ||
+            this.toolbar?.container?.contains(e.target as Node) ||
+            column.viewport.columnsResizer?.isResizing
         ) {
             return;
         }
 
-        if ((
-            column.options.sorting?.enabled ??
-            column.options.sorting?.sortable
-        )) {
+        const grid = column.viewport.grid;
+
+        // Toggle sort only when clicking header text/area, not toolbar icons
+        if (grid.columnPolicy.isColumnSortingEnabled(column.id)) {
             column.sorting?.toggle(e);
         }
 
         fireEvent(this, 'click', {
             originalEvent: e,
-            column: this.column
+            column
         });
     }
 

@@ -6,8 +6,9 @@
  *
  *  Author: Wojciech Chmiel
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -48,16 +49,15 @@ import H from '../../Core/Globals.js';
 const { composed } = H;
 import MarkerClusterDefaults from './MarkerClusterDefaults.js';
 import MarkerClusterScatter from './MarkerClusterScatter.js';
-import U from '../../Core/Utilities.js';
-const {
+import {
     addEvent,
     defined,
-    error,
     isFunction,
     merge,
     pushUnique,
     syncTimeout
-} = U;
+} from '../../Shared/Utilities.js';
+import { error } from '../../Core/Utilities.js';
 
 /* *
  *

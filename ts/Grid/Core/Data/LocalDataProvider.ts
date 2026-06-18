@@ -9,7 +9,7 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  *  Authors:
- *  - Dawid Dragula
+ *  - Dawid Draguła
  *
  * */
 
@@ -23,7 +23,7 @@
  * */
 
 import type { DataProviderOptions, RowId } from './DataProvider';
-import type DataTableOptions from '../../../Data/DataTableOptions';
+import { DataTableValue } from '../../../Data/DataTableOptions';
 import type { ColumnDataType } from '../Table/Column';
 import type {
     RowObject as RowObjectType,
@@ -34,18 +34,20 @@ import type DataConnectorType from '../../../Data/Connectors/DataConnectorType';
 import type {
     DataConnectorTypeOptions
 } from '../../../Data/Connectors/DataConnectorType';
-import type { MakeOptional } from '../../../Shared/Types';
+import type { MakeOptional, TypedArray } from '../../../Shared/Types';
 
 import { DataProvider } from './DataProvider.js';
 import DataTable from '../../../Data/DataTable.js';
 import ChainModifier from '../../../Data/Modifiers/ChainModifier.js';
 import DataConnector from '../../../Data/Connectors/DataConnector.js';
 import DataProviderRegistry from './DataProviderRegistry.js';
-import U from '../../../Core/Utilities.js';
-
-const {
-    uniqueKey
-} = U;
+import { uniqueKey } from '../../../Core/Utilities.js';
+import {
+    defined,
+    fireEvent,
+    isNumber,
+    isString
+} from '../../../Shared/Utilities.js';
 
 
 /* *
@@ -111,6 +113,12 @@ export class LocalDataProvider extends DataProvider {
      */
     private connectorEventDestructors: Function[] = [];
 
+    /**
+     * Map of row IDs (from `idColumn`) to original data table row indexes.
+     * Set only when `options.idColumn` is configured.
+     */
+    private originalRowIndexesMap?: Map<RowId, number>;
+
 
     /* *
      *
@@ -136,12 +144,12 @@ export class LocalDataProvider extends DataProvider {
             return;
         }
 
-        const tableOptions = this.options.dataTable;
-
-        // If the table is passed as a reference, it should be used instead of
-        // creating a new one.
-        const dataTable = tableOptions && 'clone' in tableOptions ?
-            tableOptions : new DataTable(tableOptions || {});
+        let dataTable = this.options.dataTable;
+        if (!dataTable) {
+            dataTable = new DataTable({
+                columns: this.options.columns ?? {}
+            });
+        }
 
         this.setDataTable(dataTable);
     }
@@ -157,6 +165,8 @@ export class LocalDataProvider extends DataProvider {
             });
             this.dataTableEventDestructors.push(fn);
         }
+
+        this.originalRowIndexesMap = this.createOriginalRowIndexesMap();
     }
 
     private async handleTableChange(e: DataEvent): Promise<void> {
@@ -255,18 +265,92 @@ export class LocalDataProvider extends DataProvider {
         return Promise.resolve(this.presentationTable?.getColumnIds() ?? []);
     }
 
-    public override getRowId(rowIndex: number): Promise<RowId | undefined> {
+    /**
+     * Returns the row ID for a given local row index. If not found, returns
+     * `undefined`.
+     *
+     * If the `data.idColumn` option is set, the row ID is the value of the
+     * row in the column with the given ID. Otherwise, the row ID is the
+     * original row index.
+     *
+     * @param rowIndex
+     * The local (presentation table) row index to get the row ID for.
+     */
+    public override async getRowId(
+        rowIndex: number
+    ): Promise<RowId | undefined> {
+        const idColId = this.options.idColumn;
+        if (idColId) {
+            const rawId = this.presentationTable?.getCell(idColId, rowIndex);
+            if (isString(rawId) || isNumber(rawId)) {
+                return Promise.resolve(rawId);
+            }
+        }
+
+        const originalRowIndex =
+            await this.getOriginalRowIndexFromLocal(rowIndex);
+        if (!defined(originalRowIndex) || !this.dataTable) {
+            return Promise.resolve(void 0);
+        }
+
+        if (!idColId) {
+            return Promise.resolve(originalRowIndex);
+        }
+
+        const rawId = this.dataTable.getCell(idColId, originalRowIndex);
+        if (isString(rawId) || isNumber(rawId)) {
+            return Promise.resolve(rawId);
+        }
+    }
+
+    /**
+     * Returns the local (presentation table) row index for a given row ID. If
+     * not found, returns `undefined`.
+     *
+     * @param rowId
+     * The row ID to get the row index for. If the `data.idColumn` option is
+     * set, the row ID is the value of the row in the column with the given ID.
+     * Otherwise, the row ID is the original row index.
+     */
+    public override getRowIndex(
+        rowId: RowId
+    ): Promise<number | undefined> {
+        if (!this.originalRowIndexesMap && isNumber(rowId)) {
+            return this.getLocalRowIndexFromOriginal(rowId);
+        }
+
+        const originalRowIndex = this.originalRowIndexesMap?.get(rowId);
+        if (!defined(originalRowIndex)) {
+            return Promise.resolve(void 0);
+        }
+        return this.getLocalRowIndexFromOriginal(originalRowIndex);
+    }
+
+    /**
+     * Returns the original row index for a given local row index.
+     *
+     * @param localRowIndex
+     * The local row index to get the original row index for.
+     */
+    public getOriginalRowIndexFromLocal(
+        localRowIndex: number
+    ): Promise<number | undefined> {
         return Promise.resolve(
-            this.presentationTable?.getOriginalRowIndex(rowIndex)
+            this.presentationTable?.getOriginalRowIndex(localRowIndex)
         );
     }
 
-    public override getRowIndex(rowId: RowId): Promise<number | undefined> {
-        if (typeof rowId !== 'number') {
-            return Promise.resolve(void 0);
-        }
+    /**
+     * Returns the local row index for a given original row index.
+     *
+     * @param originalRowIndex
+     * The original row index to get the local row index for.
+     */
+    public getLocalRowIndexFromOriginal(
+        originalRowIndex: number
+    ): Promise<number | undefined> {
         return Promise.resolve(
-            this.presentationTable?.getLocalRowIndex(rowId)
+            this.presentationTable?.getLocalRowIndex(originalRowIndex)
         );
     }
 
@@ -293,15 +377,23 @@ export class LocalDataProvider extends DataProvider {
         );
     }
 
-    public override async setValue(
+    public override setValue(
         value: DataTableCellType,
         columnId: string,
         rowId: RowId
     ): Promise<void> {
-        if (typeof rowId !== 'number') {
-            throw new Error('LocalDataProvider supports only numeric row ids.');
+        const originalIndex = this.resolveOriginalRowIndex(rowId);
+
+        if (originalIndex === void 0) {
+            // eslint-disable-next-line no-console
+            console.error('[setValue] Wrong row ID:', rowId);
+            return Promise.resolve();
         }
-        this.dataTable?.setCell(columnId, rowId, value, { fromGrid: true });
+
+        this.dataTable?.setCell(columnId, originalIndex, value, {
+            fromGrid: true
+        });
+
         return Promise.resolve();
     }
 
@@ -328,6 +420,18 @@ export class LocalDataProvider extends DataProvider {
             interTable = originalDataTable.getModified();
         }
 
+        const projectPresentationTableEvent = {
+            table: interTable
+        } as {
+            table: DataTable;
+        };
+        fireEvent(
+            this.querying.grid,
+            'projectPresentationTable',
+            projectPresentationTableEvent
+        );
+        interTable = projectPresentationTableEvent.table;
+
         this.prePaginationRowCount = interTable.rowCount;
 
         // Pagination modifier
@@ -340,6 +444,46 @@ export class LocalDataProvider extends DataProvider {
         }
 
         this.presentationTable = interTable;
+    }
+
+    private createOriginalRowIndexesMap(): Map<RowId, number> | undefined {
+        const idColId = this.options.idColumn;
+        const table = this.dataTable;
+        if (!idColId || !table) {
+            return;
+        }
+
+        const idColumn = table.getColumn(idColId, true);
+        if (!idColumn) {
+            throw new Error(`Column "${idColId}" not found in table.`);
+        }
+
+        const map = new Map<RowId, number>();
+        for (let i = 0, len = idColumn.length; i < len; ++i) {
+            const value = idColumn[i];
+            if (!isString(value) && !isNumber(value)) {
+                throw new Error(
+                    'idColumn must contain only string or number values.'
+                );
+            }
+            map.set(value, i);
+        }
+
+        if (map.size !== idColumn.length) {
+            throw new Error('idColumn must contain unique values.');
+        }
+
+        return map;
+    }
+
+    private resolveOriginalRowIndex(rowId: RowId): number | undefined {
+        if (this.originalRowIndexesMap) {
+            return this.originalRowIndexesMap.get(rowId);
+        }
+
+        if (isNumber(rowId)) {
+            return rowId;
+        }
     }
 
     public override destroy(): void {
@@ -396,21 +540,53 @@ export class LocalDataProvider extends DataProvider {
     }
 }
 
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
 export type GridDataConnectorTypeOptions =
     MakeOptional<DataConnectorTypeOptions, 'id'>;
 
 export interface LocalDataProviderOptions extends DataProviderOptions {
+    /**
+     * The local data provider type.
+     *
+     * @default 'local'
+     */
     providerType?: 'local';
 
     /**
-     * The data table used by the provider.
+     * Data table as a source of data for the grid.
+     *
+     * @sample grid-lite/options/data-table-instance
+     *         Data from a DataTable instance
      */
-    dataTable?: DataTable | DataTableOptions;
+    dataTable?: DataTable;
 
     /**
      * Connector instance or options used to populate the data table.
+     *
+     * @sample grid-lite/basic/data-connector
+     *         Grid with CSV connector
+     * @sample grid-lite/basic/data-connector-json
+     *         Grid with JSON connector
+     * @sample grid-lite/basic/data-connector-google-sheets
+     *         Grid with Google Sheets connector
+     * @sample grid-lite/basic/data-connector-html-table
+     *         Grid with HTML table connector
      */
     connector?: GridDataConnectorTypeOptions | DataConnectorType;
+
+    /**
+     * Columns data to initialize the Grid with.
+     *
+     * @sample grid-lite/options/data-columns
+     *         Data from column arrays
+     */
+    columns?: Record<string, Array<DataTableValue> | TypedArray>;
 
     /**
      * Automatically update the grid when the data table changes. It is disabled
@@ -422,6 +598,12 @@ export interface LocalDataProviderOptions extends DataProviderOptions {
      * @default false
      */
     updateOnChange?: boolean;
+
+    /**
+     * The column ID that contains the stable, unique row IDs. If not
+     * provided, the original row index is used as the row ID.
+     */
+    idColumn?: string;
 }
 
 declare module './DataProviderType' {

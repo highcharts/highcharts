@@ -4,8 +4,9 @@
  *
  *  (c) 2020-2026 Highsoft AS
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  *  Authors:
@@ -23,11 +24,8 @@
 
 import type Pagination from '../../Core/Pagination/Pagination';
 
-import Utilities from '../../../Core/Utilities.js';
 import Globals from '../../../Core/Globals.js';
-
-const { addEvent, pushUnique } = Utilities;
-
+import { addEvent, pushUnique } from '../../../Shared/Utilities.js';
 
 /* *
  *
@@ -106,7 +104,6 @@ declare module '../../Core/Pagination/PaginationOptions' {
     interface PaginationOptions {
         /**
          * Pagination events.
-         *
          */
         events?: PaginationEvents;
     }

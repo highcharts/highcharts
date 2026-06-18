@@ -1,10 +1,11 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -17,10 +18,10 @@
  *
  * */
 
-import type ColorType from '../../Core/Color/ColorType';
 import type { FlagsShapeValue } from './FlagsPointOptions';
 import type FlagsSeriesOptions from './FlagsSeriesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 
 import FlagsPoint from './FlagsPoint.js';
 import FlagsSeriesDefaults from './FlagsSeriesDefaults.js';
@@ -38,8 +39,7 @@ const {
     }
 } = SeriesRegistry;
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
-import U from '../../Core/Utilities.js';
-const {
+import {
     addEvent,
     defined,
     extend,
@@ -47,7 +47,7 @@ const {
     merge,
     objectEach,
     wrap
-} = U;
+} from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -61,10 +61,8 @@ declare module '../../Core/Series/SeriesBase' {
     }
 }
 
-declare module '../../Core/Series/SeriesOptions' {
-    interface SeriesStateHoverOptions {
-        fillColor?: ColorType;
-        lineColor?: ColorType;
+declare module '../../Core/Series/StatesOptions' {
+    interface StateOptionsBase {
         shape?: FlagsShapeValue;
     }
 }
@@ -408,19 +406,19 @@ class FlagsSeries extends ColumnSeries {
      */
     public pointAttribs(
         point: FlagsPoint,
-        state?: string
+        state?: StatesOptionsKey
     ): SVGAttributes {
         const options = this.options,
-            color = (point && point.color) || this.color;
+            color = point?.color || this.color;
 
         let lineColor = options.lineColor,
-            lineWidth = (point && point.lineWidth),
-            fill = (point && point.fillColor) || options.fillColor;
+            lineWidth = point?.lineWidth,
+            fill = point?.fillColor || options.fillColor;
 
         if (state) {
-            fill = (options.states as any)[state].fillColor;
-            lineColor = (options.states as any)[state].lineColor;
-            lineWidth = (options.states as any)[state].lineWidth;
+            fill = options.states?.[state]?.fillColor;
+            lineColor = options.states?.[state]?.lineColor;
+            lineWidth = options.states?.[state]?.lineWidth;
         }
 
         return {

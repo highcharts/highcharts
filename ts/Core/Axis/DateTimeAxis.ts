@@ -1,10 +1,11 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -21,15 +22,14 @@ import type Axis from './Axis';
 import type AxisOptions from './AxisOptions';
 import type TickPositionsArray from './TickPositionsArray';
 import type Time from '../Time';
-import type Types from '../../Shared/Types';
+import type { TypedArray } from '../../Shared/Types';
 
-import U from '../Utilities.js';
-const {
+import {
     addEvent,
     getMagnitude,
-    normalizeTickInterval,
-    timeUnits
-} = U;
+    normalizeTickInterval
+} from '../../Shared/Utilities.js';
+import { timeUnits } from '../Utilities.js';
 
 /* *
  *
@@ -46,9 +46,9 @@ declare module './AxisComposition' {
             min: number,
             max: number,
             startOfWeek?: number,
-            positions?: Array<number>|Types.TypedArray,
+            positions?: Array<number>|TypedArray,
             closestDistance?: number,
-            findHigherRanks?: boolean
+            findBoundaryTicks?: boolean
         ): TickPositionsArray;
     }
 }
@@ -136,7 +136,6 @@ declare module './TimeTicksInfoObject' {
  *
  * */
 
-/* eslint-disable valid-jsdoc */
 
 namespace DateTimeAxis{
 
@@ -188,12 +187,6 @@ namespace DateTimeAxis{
      *
      * @internal
      * @function Highcharts.Axis#getTimeTicks
-     * @param {Highcharts.TimeNormalizeObject} normalizedInterval
-     * The interval in axis values (ms) and the count.
-     * @param {number} min
-     * The minimum in axis values.
-     * @param {number} max
-     * The maximum in axis values.
      */
     function getTimeTicks(
         this: Axis

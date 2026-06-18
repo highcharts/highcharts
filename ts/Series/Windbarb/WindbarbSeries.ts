@@ -3,10 +3,11 @@
  *  Wind barb series module
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -35,14 +36,9 @@ import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     column: ColumnSeries
 } = SeriesRegistry.seriesTypes;
-import U from '../../Core/Utilities.js';
-const {
-    extend,
-    merge,
-    pick
-} = U;
 import WindbarbPoint from './WindbarbPoint.js';
 import WindbarbSeriesDefaults from './WindbarbSeriesDefaults.js';
+import { extend, merge, pick } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -141,23 +137,22 @@ class WindbarbSeries extends ColumnSeries {
 
     // Get presentational attributes.
     public pointAttribs(
-        point: WindbarbPoint,
+        point?: WindbarbPoint,
         state?: StatesOptionsKey
     ): SVGAttributes {
         const options = this.options;
 
-        let stroke = point.color || this.color,
-            strokeWidth = this.options.lineWidth;
+        let stroke = point?.color || this.color,
+            strokeWidth = options.lineWidth;
 
         if (state) {
-            stroke = (options.states as any)[state].color || stroke;
-            strokeWidth =
-            ((options.states as any)[state].lineWidth || strokeWidth) +
-            ((options.states as any)[state].lineWidthPlus || 0);
+            stroke = options.states?.[state]?.color || stroke;
+            strokeWidth = (options.states?.[state]?.lineWidthPlus || 0) +
+                (options.states?.[state]?.lineWidth || strokeWidth || 0);
         }
 
         return {
-            'stroke': stroke,
+            stroke,
             'stroke-width': strokeWidth
         };
     }
@@ -207,7 +202,7 @@ class WindbarbSeries extends ColumnSeries {
                     ['L', 0, pos * u + 4]
                 );
 
-                // Substract from the rest and move position for next
+                // Subtract from the rest and move position for next
                 knots -= 50;
                 pos += 7;
             }

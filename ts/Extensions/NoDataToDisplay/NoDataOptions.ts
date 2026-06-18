@@ -4,10 +4,11 @@
  *
  *  (c) 2010-2026 Highsoft AS
  *
- *  Author: Oystein Moseng
+ *  Author: Øystein Moseng
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -18,9 +19,9 @@
  *
  * */
 
-import type AlignObject from '../../Core/Renderer/AlignObject';
-import type CSSObject from '../../Core/Renderer/CSSObject';
-import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+import type { AlignObject } from '../../Core/Renderer/AlignObject';
+import type { CSSObject } from '../../Core/Renderer/CSSObject';
+import type { SVGAttributes } from '../../Core/Renderer/SVG/SVGAttributes';
 
 /* *
  *
@@ -29,9 +30,38 @@ import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
  * */
 
 export interface NoDataOptions {
+    /**
+     * An object of additional SVG attributes for the no-data label.
+     *
+     * @since    3.0.8
+     * @requires modules/no-data-to-display
+     */
     attr?: SVGAttributes;
+
+    /**
+     * Whether to insert the label as HTML, or as pseudo-HTML rendered with
+     * SVG.
+     *
+     * @since    4.1.10
+     * @requires modules/no-data-to-display
+     * @default false
+     */
     useHTML?: boolean;
+
+    /**
+     * The position of the no-data label, relative to the plot area.
+     *
+     * @since    3.0.8
+     * @requires modules/no-data-to-display
+     */
     position?: AlignObject;
+
+    /**
+     * CSS styles for the no-data label.
+     *
+     * @since    3.0.8
+     * @requires modules/no-data-to-display
+     */
     style?: CSSObject;
 }
 

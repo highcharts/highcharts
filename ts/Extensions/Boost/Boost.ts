@@ -20,7 +20,7 @@
 import type Axis from '../../Core/Axis/Axis';
 import type { AxisSetExtremesEventObject } from '../../Core/Axis/AxisOptions';
 import type Chart from '../../Core/Chart/Chart';
-import type Color from '../../Core/Color/Color';
+import Color from '../../Core/Color/Color';
 import type HTMLElement from '../../Core/Renderer/HTML/HTMLElement';
 import type Series from '../../Core/Series/Series';
 import type SeriesRegistry from '../../Core/Series/SeriesRegistry';
@@ -35,11 +35,8 @@ const {
     win
 } = H;
 import NamedColors from './NamedColors.js';
-import U from '../../Core/Utilities.js';
-const {
-    addEvent,
-    error
-} = U;
+import { error } from '../../Core/Utilities.js';
+import { addEvent } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -244,6 +241,8 @@ export default Boost;
  *         Scatter chart with colored points
  * @sample highcharts/boost/scatter-colorbypoint
  *         Scatter chart with colorByPoint
+ * @sample highcharts/boost/scatter-zones
+ *         Scatter chart with zones
  * @sample highcharts/boost/area
  *         Area chart
  * @sample highcharts/boost/arearange
@@ -359,6 +358,16 @@ export default Boost;
  * @type      {boolean}
  * @default   false
  * @apioption boost.debug.timeBufferCopy
+ */
+
+/**
+ * The number of points processed per frame when building the k-d tree for
+ * boosted series. Lower values improve responsiveness but increase the time it
+ * takes to build the tree.
+ *
+ * @type      {number}
+ * @default   3000
+ * @apioption boost.chunkSize
  */
 
 /**

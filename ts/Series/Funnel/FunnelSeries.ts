@@ -3,10 +3,11 @@
  *  Highcharts funnel module
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -20,7 +21,6 @@
  * */
 
 import type BBoxObject from '../../Core/Renderer/BBoxObject';
-import type ColorType from '../../Core/Color/ColorType';
 import type DataLabel from '../../Core/Series/DataLabel';
 import type FunnelDataLabelOptions from './FunnelDataLabelOptions';
 import type FunnelPoint from './FunnelPoint';
@@ -35,14 +35,13 @@ const {
     composed,
     noop
 } = H;
-import BorderRadius from '../../Extensions/BorderRadius.js';
+import { optionsToBorderRadiusObject } from '../../Extensions/BorderRadius.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     column: ColumnSeries,
     pie: PieSeries
 } = SeriesRegistry.seriesTypes;
-import U from '../../Core/Utilities.js';
-const {
+import {
     addEvent,
     correctFloat,
     extend,
@@ -53,20 +52,7 @@ const {
     pushUnique,
     relativeLength,
     splat
-} = U;
-
-/* *
- *
- *  Declarations
- *
- * */
-
-declare module '../../Core/Series/SeriesOptions' {
-    interface SeriesStateHoverOptions {
-        borderColor?: ColorType;
-        color?: ColorType;
-    }
-}
+} from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -148,7 +134,6 @@ class FunnelSeries extends PieSeries {
      *
      * */
 
-    /* eslint-disable valid-jsdoc */
 
     /**
      * @private
@@ -268,7 +253,7 @@ class FunnelSeries extends PieSeries {
     ): DataLabel.LabelPositionObject {
         const y = point.plotY || 0,
             sign = point.half ? 1 : -1,
-            x = this.getX(y, !!point.half, point);
+            x = this.getXPos(y, !!point.half, point);
 
         return {
             distance,
@@ -308,7 +293,7 @@ class FunnelSeries extends PieSeries {
             options = series.options,
             reversed = options.reversed,
             ignoreHiddenPoint = options.ignoreHiddenPoint,
-            borderRadiusObject = BorderRadius.optionsToObject(
+            borderRadiusObject = optionsToBorderRadiusObject(
                 options.borderRadius
             ),
             plotWidth = chart.plotWidth,
@@ -382,7 +367,7 @@ class FunnelSeries extends PieSeries {
                     (1 - (y - top) / (height - neckHeight));
         };
 
-        series.getX = function (
+        series.getXPos = function (
             this: FunnelSeries,
             y: number,
             half: boolean,
@@ -670,7 +655,6 @@ class FunnelSeries extends PieSeries {
         points.sort((a, b): number => ((a.plotY as any) - (b.plotY as any)));
     }
 
-    /* eslint-enable valid-jsdoc */
 
 }
 
@@ -683,7 +667,7 @@ class FunnelSeries extends PieSeries {
 interface FunnelSeries {
     pointClass: typeof FunnelPoint;
     getWidthAt(y: number): number; // Added during translate
-    getX(
+    getXPos(
         y: number,
         half: boolean,
         point: FunnelPoint

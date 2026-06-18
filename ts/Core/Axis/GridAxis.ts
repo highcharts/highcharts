@@ -3,8 +3,9 @@
  *  (c) 2016-2026 Highsoft AS
  *  Authors: Lars A. V. Cabrera
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -37,21 +38,20 @@ import Axis from './Axis.js';
 import Chart from '../Chart/Chart.js';
 import H from '../Globals.js';
 const { dateFormats } = H;
-import { Palette } from '../Color/Palettes';
 import Tick from './Tick.js';
-import U from '../Utilities.js';
-const {
-    addEvent,
+import {
     defined,
-    erase,
     find,
+    erase,
     isArray,
     isNumber,
+    isObject as isObjectUtils,
     merge,
     pick,
-    timeUnits,
-    wrap
-} = U;
+    wrap,
+    addEvent
+} from '../../Shared/Utilities.js';
+import { timeUnits } from '../Utilities.js';
 
 /* *
  *
@@ -147,7 +147,7 @@ export interface GridAxisOptions {
      * axes, check the [#yAxis.staticScale](yAxis.staticScale) option.
      *
      * @sample gantt/grid-axis/cellheight
-     *         Gant chart with custom cell height
+     *         Gantt chart with custom cell height
      */
     cellHeight?: number;
     /**
@@ -205,7 +205,7 @@ function argsToArray(args: IArguments): Array<any> {
 /** @internal */
 function isObject(x: unknown): x is object {
     // Always use strict mode
-    return U.isObject(x, true);
+    return isObjectUtils(x, true);
 }
 
 /** @internal */
@@ -413,48 +413,55 @@ function onAfterGetTitlePosition(
     if (gridOptions.enabled === true) {
         // Compute anchor points for each of the title align options
         const {
-            axisTitle,
-            height: axisHeight,
-            horiz,
-            left: axisLeft,
-            offset,
-            opposite,
-            options,
-            top: axisTop,
-            width: axisWidth
-        } = axis;
-        const tickSize = axis.tickSize();
-        const titleWidth = axisTitle?.getBBox().width;
-        const xOption = options.title.x;
-        const yOption = options.title.y;
-        const titleMargin = pick(options.title.margin, horiz ? 5 : 10);
-        const titleFontSize = axisTitle ? axis.chart.renderer.fontMetrics(
-            axisTitle
-        ).f : 0;
-        const crispCorr = tickSize ? tickSize[0] / 2 : 0;
-
-        // TODO account for alignment
-        // the position in the perpendicular direction of the axis
-        const offAxis = (
-            (horiz ? axisTop + axisHeight : axisLeft) +
-            (horiz ? 1 : -1) * // Horizontal axis reverses the margin
-            (opposite ? -1 : 1) * // So does opposite axes
-            crispCorr +
-            (axis.side === GridAxisSide.bottom ? titleFontSize : 0)
-        );
+                axisTitle,
+                height: axisHeight,
+                horiz,
+                left: axisLeft,
+                offset,
+                opposite,
+                options,
+                top: axisTop,
+                width: axisWidth
+            } = axis,
+            tickSize = axis.tickSize(),
+            titleWidth = axisTitle?.getBBox().width,
+            title = options.title,
+            { x, y } = title,
+            margin = title.margin ?? (horiz ? 5 : 10),
+            titleFontSize = axisTitle ? axis.chart.renderer.fontMetrics(
+                axisTitle
+            ).f : 0,
+            crispCorr = tickSize ? tickSize[0] / 2 : 0,
+            offAxis = (
+                (horiz ? axisTop + axisHeight : axisLeft) +
+                (horiz ? 1 : -1) * // Horizontal axis reverses the margin
+                (opposite ? -1 : 1) * // So does opposite axes
+                crispCorr +
+                (axis.side === GridAxisSide.bottom ? titleFontSize : 0)
+            );
 
         e.titlePosition.x = horiz ?
-            axisLeft - (titleWidth || 0) / 2 - titleMargin + xOption :
-            offAxis + (opposite ? axisWidth : 0) + offset + xOption;
+            axisLeft - (titleWidth || 0) / 2 - margin + x :
+            offAxis + (opposite ? axisWidth : 0) + offset + x;
         e.titlePosition.y = horiz ?
             (
                 offAxis -
                 (opposite ? axisHeight : 0) +
                 (opposite ? titleFontSize : -titleFontSize) / 2 +
                 offset +
-                yOption
+                y
             ) :
-            axisTop - titleMargin + yOption;
+            axisTop - margin + y;
+
+        // In a vertical grid axis, allow text alignment for column titles
+        if (!horiz) {
+            const [slotWidth = 0] = tickSize || [];
+            if (title.textAlign === 'left') {
+                e.titlePosition.x -= slotWidth / 2;
+            } else if (title.textAlign === 'right') {
+                e.titlePosition.x += slotWidth / 2;
+            }
+        }
     }
 }
 
@@ -1088,7 +1095,7 @@ function onInit(
     const axis = this;
     const userOptions = e.userOptions || {};
     const gridOptions = merge(
-        { borderColor: Palette.neutralColor20 },
+        { borderColor: 'var(--highcharts-neutral-color-20)' },
         userOptions.grid || {}
     );
 
@@ -1104,6 +1111,7 @@ function onInit(
 
     axis.hiddenLabels = [];
     axis.hiddenMarks = [];
+    axis.clippable = false;
 }
 
 /**
@@ -1240,23 +1248,31 @@ function onTickLabelFormat(ctx: AxisLabelFormatterContextObject): void {
     } = ctx;
     if (axis.options.grid?.enabled) {
         const tickPos = axis.tickPositions;
-        const series = (
-            axis.linkedParent || axis
-        ).series[0];
+        const allSeries = (axis.linkedParent || axis).series;
+        const allSeriesData = allSeries
+            .reduce<(typeof allSeries)[number]['options']['data']>(
+            (acc, series): (typeof allSeries)[number]['options']['data'] => {
+                if (series.is('gantt')) {
+                    return acc?.concat(series.options?.data ?? []);
+                }
+                return acc;
+            },
+        []
+        ) ?? [];
         const isFirst = value === tickPos[0];
         const isLast = value === tickPos[tickPos.length - 1];
-        const point: (Point|undefined) =
-            series && find(series.options.data as any, function (
-                p: Point
+        const point =
+            allSeries[0] && find(allSeriesData, function (
+                p
             ): boolean {
-                return p[axis.isXAxis ? 'x' : 'y'] === value;
+                return (p as any)[axis.isXAxis ? 'x' : 'y'] === value;
             });
         let pointCopy;
 
-        if (point && series.is('gantt')) {
+        if (point) {
             // For the Gantt set point aliases to the pointCopy
             // to do not change the original point
-            pointCopy = merge(point);
+            pointCopy = merge(point as any);
             H.seriesTypes.gantt.prototype.pointClass
                 .setGanttPointAliases(pointCopy as any, axis.chart);
         }
@@ -1565,28 +1581,6 @@ export default GridAxis;
  * */
 
 /**
- * @productdesc {gantt}
- * For grid axes (like in Gantt charts),
- * it is possible to declare as a list to provide different
- * formats depending on available space.
- *
- * Defaults to:
- * ```js
- * {
- *     hour: { list: ['%H:%M', '%H'] },
- *     day: { list: ['%A, %e. %B', '%a, %e. %b', '%E'] },
- *     week: { list: ['Week %W', 'W%W'] },
- *     month: { list: ['%B', '%b', '%o'] }
- * }
- * ```
- *
- * @sample {gantt} gantt/grid-axis/date-time-label-formats
- *         Gantt chart with custom axis date format.
- *
- * @apioption xAxis.dateTimeLabelFormats
- */
-
-/**
  * Set grid options for the axis labels. Requires Highcharts Gantt.
  *
  * @since     6.2.0
@@ -1642,7 +1636,7 @@ export default GridAxis;
  * the [#yAxis.staticScale](yAxis.staticScale) option.
  *
  * @sample gantt/grid-axis/cellheight
- *         Gant chart with custom cell height
+ *         Gantt chart with custom cell height
  * @type      {number}
  * @apioption xAxis.grid.cellHeight
  */

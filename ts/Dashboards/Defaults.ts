@@ -4,8 +4,9 @@
  *
  *  (c) 2009-2026 Highsoft AS
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -21,8 +22,7 @@
 import type { Options as BoardOptions } from './Board';
 import type { DeepPartial } from '../Shared/Types';
 
-import Utils from '../Core/Utilities.js';
-const { merge } = Utils;
+import { merge } from '../Shared/Utilities.js';
 
 /**
  * Default options for the Board.

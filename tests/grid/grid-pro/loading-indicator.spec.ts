@@ -6,7 +6,7 @@ test.describe('Loading indicator', () => {
     });
 
     test.beforeEach(async ({ page }) => {
-        await page.goto('grid-pro/cypress/custom-class');
+        await page.goto('grid-pro/e2e/custom-class');
     });
 
     test('Loading indicator should be visible', async ({ page }) => {

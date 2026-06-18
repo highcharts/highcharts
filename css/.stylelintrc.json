@@ -1,5 +1,5 @@
 {
-    "extends": "../.stylelintrc.json",
+    "extends": ["../.stylelintrc.json", "./grid/.stylelintrc.json"],
     "rules": {
         "color-hex-length": "long",
         "hue-degree-notation": "number",

@@ -1,10 +1,11 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -21,12 +22,7 @@ import type SVGPath from './SVGPath';
 import type SymbolOptions from './SymbolOptions';
 import type { SymbolTypeRegistry } from './SymbolType';
 
-import U from '../../Utilities.js';
-const {
-    defined,
-    isNumber,
-    pick
-} = U;
+import { defined, isNumber, pick } from '../../../Shared/Utilities.js';
 
 /* *
  *
@@ -68,12 +64,9 @@ function arc(
         const rx = pick(options.r, w),
             ry = pick(options.r, h || w),
             // Subtract a small number to prevent cos and sin of start and end
-            // from becoming equal on 360 arcs (#1561). The size of the circle
-            // affects the constant, therefore the division by `rx`. If the
-            // proximity is too small, the arc disappears. If it is too great, a
-            // gap appears. This can be seen in the animation of the official
-            // bubble demo (#20585).
-            proximity = 0.0002 / (options.borderRadius ? 1 : Math.max(rx, 1)),
+            // from becoming equal on 360 arcs (#1561). See "Arc proximity"
+            // tests at samples/unit-tests/svgrenderer/symbol/demo.js
+            proximity = 0.0001,
             fullCircle = (
                 Math.abs(end - start - 2 * Math.PI) <
                 proximity
@@ -86,10 +79,10 @@ function arc(
 
         const innerRadius = options.innerR,
             open = pick(options.open, fullCircle),
-            cosStart = Math.cos(start),
-            sinStart = Math.sin(start),
-            cosEnd = Math.cos(end),
-            sinEnd = Math.sin(end),
+            cosStart = fullCircle ? 0 : Math.cos(start),
+            sinStart = fullCircle ? 1 : Math.sin(start),
+            cosEnd = fullCircle ? 0 : Math.cos(end),
+            sinEnd = fullCircle ? 1 : Math.sin(end),
             // Proximity takes care of rounding errors around PI (#6971)
             longArc = pick(
                 options.longArc,
@@ -103,7 +96,8 @@ function arc(
             0, // Slanting
             longArc, // Long or short arc
             pick(options.clockwise, 1), // Clockwise
-            cx + rx * cosEnd,
+            // Use a static pixel offset for full circle (#21701)
+            cx + (fullCircle ? 0.001 : rx * cosEnd),
             cy + ry * sinEnd
         ];
         arcSegment.params = { start, end, cx, cy }; // Memo for border radius
@@ -125,7 +119,7 @@ function arc(
                 longArc, // Long or short arc
                 // Clockwise - opposite to the outer arc clockwise
                 defined(options.clockwise) ? 1 - options.clockwise : 0,
-                cx + innerRadius * cosStart,
+                cx + (fullCircle ? -0.001 : innerRadius * cosStart),
                 cy + innerRadius * sinStart
             ];
             // Memo for border radius
@@ -160,9 +154,9 @@ function arc(
 /**
  * Callout shape used for default tooltips.
  *
- * @param {number} cx
+ * @param {number} x
  * Center X
- * @param {number} cy
+ * @param {number} y
  * Center Y
  * @param {number} w
  * Width
@@ -340,7 +334,6 @@ function circle(
         open: false
     });
 }
-
 
 /**
  * Diamond symbol path.

@@ -4,12 +4,13 @@
  *
  *  (c) 2020-2026 Highsoft AS
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  *  Authors:
- *  - Dawid Dragula
+ *  - Dawid Draguła
  *  - Sebastian Bochan
  *  - Kamil Kubik
  *
@@ -57,6 +58,9 @@ export interface A11yOptions {
 
     /**
      * Options for screen reader sections before and after the Grid.
+     *
+     * @sample grid-lite/options/screen-reader-section
+     *         Screen reader sections
      */
     screenReaderSection?: ScreenReaderSectionOptions;
 }
@@ -78,6 +82,7 @@ export interface A11yAnnouncementsOptions {
      * @default true
      */
     filtering?: boolean;
+
 }
 
 /**
@@ -98,6 +103,14 @@ export interface LangAccessibilityOptions {
      * Language options for the accessibility descriptions in filtering.
      */
     filtering?: FilteringLangA11yOptions;
+
+    /**
+     * Accessible label for the minimized column header menu button. Use
+     * `{column}` to insert the current column label.
+     *
+     * @default 'Open menu for {column}.'
+     */
+    columnMenu?: string;
 
     /**
      * Language options for screen reader sections before and after the Grid.

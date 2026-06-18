@@ -1,10 +1,11 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -37,19 +38,18 @@ import type TimeTicksInfoObject from './TimeTicksInfoObject';
 import F from '../Templating.js';
 import H from '../Globals.js';
 const { deg2rad } = H;
-import U from '../Utilities.js';
-const {
-    clamp,
+import {
     correctFloat,
+    clamp,
     defined,
-    destroyObjectProperties,
     extend,
-    fireEvent,
-    getAlignFactor,
     isNumber,
     merge,
-    pick
-} = U;
+    pick,
+    destroyObjectProperties,
+    getAlignFactor,
+    fireEvent
+} from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -167,6 +167,8 @@ class Tick {
     /** @internal */
     public isActive?: boolean;
 
+    public boundary?: string;
+
     /**
      * True if the tick is the first one on the axis.
      * @name Highcharts.Tick#isFirst
@@ -268,7 +270,9 @@ class Tick {
             tickPositions = axis.tickPositions,
             isFirst = pos === tickPositions[0],
             isLast = pos === tickPositions[tickPositions.length - 1],
-            tickPositionInfo = tickPositions.info;
+            tickPositionInfo = tickPositions.info,
+            boundary = tickPositionInfo?.boundaryTicks[pos],
+            DTLFormats = options.dateTimeLabelFormats;
 
         let dateTimeLabelFormat,
             dateTimeLabelFormats,
@@ -285,25 +289,34 @@ class Tick {
         }
 
 
-        // Set the datetime label format. If a higher rank is set for this
-        // position, use that. If not, use the general format.
-        if (axis.dateTime) {
+        // Set the datetime label format. If a boundary is set for this
+        // position, use that. If not, use the main format from base ticks.
+        if (axis.dateTime && DTLFormats) {
             if (tickPositionInfo) {
-                dateTimeLabelFormats = chart.time.resolveDTLFormat(
-                    (options.dateTimeLabelFormats as any)[
-                        (
-                            !options.grid?.enabled &&
-                            tickPositionInfo.higherRanks[pos]
-                        ) ||
-                        tickPositionInfo.unitName
-                    ]
-                );
+                const boundariesMap: Record<Time.TimeUnit, Time.TimeUnit> = {
+                    millisecond: 'hour',
+                    second: 'hour',
+                    minute: 'hour',
+                    hour: 'day',
+                    day: 'month',
+                    week: 'month',
+                    month: 'year',
+                    year: 'year'
+                };
+                const unitName = tickPositionInfo.unitName,
+                    boundaryKey = boundariesMap[unitName],
+                    format = !options.grid?.enabled &&
+                        boundary &&
+                        boundaryKey &&
+                        (DTLFormats[boundaryKey] as
+                            Time.DateTimeLabelFormatObject)?.boundary ||
+                        DTLFormats[unitName];
+
+                dateTimeLabelFormats = chart.time.resolveDTLFormat(format);
                 dateTimeLabelFormat = dateTimeLabelFormats.main;
             } else if (isNumber(value)) { // #1441
                 dateTimeLabelFormat = axis.dateTime.getXDateFormat(
-                    value,
-                    options.dateTimeLabelFormats ||
-                        {} as Time.DateTimeLabelFormatsOption
+                    value, DTLFormats || {}
                 );
             }
         }
@@ -323,12 +336,20 @@ class Tick {
          * @type {boolean|undefined}
          */
         tick.isLast = isLast;
+        /**
+         * Boundary time unit for the label (e.g `day`, `month`, `year`), used
+         * for date/time formatting.
+         * @name Highcharts.Tick#boundary
+         * @type {string|undefined}
+         */
+        tick.boundary = boundary;
 
         // Get the string
         const ctx: AxisLabelFormatterContextObject = {
             axis,
             chart,
             dateTimeLabelFormat: dateTimeLabelFormat,
+            boundary,
             isFirst,
             isLast,
             pos,
@@ -683,7 +704,7 @@ class Tick {
 
     /**
      * Handle the label overflow by adjusting the labels to the left and right
-     * edge, or hide them if they collide into the neighbour label.
+     * edge, or hide them if they collide into the neighbor label.
      *
      * @internal
      * @function Highcharts.Tick#handleOverflow
@@ -1066,13 +1087,7 @@ class Tick {
                 show = false;
 
             // Handle label overflow and show or hide accordingly
-            } else if (
-                horiz &&
-                !labelOptions.step &&
-                !labelOptions.rotation &&
-                !old &&
-                opacity !== 0
-            ) {
+            } else if (horiz && !old && opacity !== 0) {
                 tick.handleOverflow(xy);
             }
 
@@ -1166,7 +1181,7 @@ export default Tick;
  * @interface Highcharts.TimeTicksInfoObject
  * @extends Highcharts.TimeNormalizedObject
  *//**
- * @name Highcharts.TimeTicksInfoObject#higherRanks
+ * @name Highcharts.TimeTicksInfoObject#boundaryTicks
  * @type {Array<string>}
  *//**
  * @name Highcharts.TimeTicksInfoObject#totalRange

@@ -5,8 +5,9 @@
  *  (c) 2009-2026 Highsoft AS
  *  Author: Sebastian Bochan
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -358,7 +359,7 @@ const lang: LangOptions = {
                  */
                 zigzag: ['Zig Zag'],
 
-                // Oscilators
+                // Oscillators
                 /**
                  *  Absolute price indicator alias.
                  *
@@ -629,7 +630,7 @@ const stockTools: StockToolsOptions = {
          * Since 7.1.3 use [iconsURL](#navigation.iconsURL) for popup and
          * stock tools.
          *
-         * @deprecated
+         * @deprecated 7.1.3
          * @apioption stockTools.gui.iconsURL
          *
          */
@@ -711,7 +712,7 @@ const stockTools: StockToolsOptions = {
                  * A collection of strings pointing to config options for
                  * the items.
                  *
-                 * @type {Array}
+                 * @type {Array<string>}
                  * @default [
                  *   'label',
                  *   'circle',
@@ -768,7 +769,7 @@ const stockTools: StockToolsOptions = {
                  * A collection of strings pointing to config options for
                  * the items.
                  *
-                 * @type {Array}
+                 * @type {Array<string>}
                  * @default [
                  *   'flagCirclepin',
                  *   'flagDiamondpin',
@@ -823,7 +824,7 @@ const stockTools: StockToolsOptions = {
                  * A collection of strings pointing to config options for
                  * the items.
                  *
-                 * @type {Array}
+                 * @type {Array<string>}
                  * @default [
                  *   'segment',
                  *   'arrowSegment',
@@ -915,7 +916,7 @@ const stockTools: StockToolsOptions = {
                  * A collection of strings pointing to config options for
                  * the items.
                  *
-                 * @type {Array}
+                 * @type {Array<string>}
                  * @default [
                  *   'elliott3',
                  *   'elliott5',
@@ -968,7 +969,7 @@ const stockTools: StockToolsOptions = {
                  * A collection of strings pointing to config options for
                  * the items.
                  *
-                 * @type {Array}
+                 * @type {Array<string>}
                  * @default [
                  *   'verticalCounter',
                  *   'verticalLabel',
@@ -1010,7 +1011,7 @@ const stockTools: StockToolsOptions = {
                  * A collection of strings pointing to config options for
                  * the items.
                  *
-                 * @type {Array}
+                 * @type {Array<string>}
                  * @default [
                  *   'fibonacci',
                  *   'fibonacciTimeZones',
@@ -1072,7 +1073,7 @@ const stockTools: StockToolsOptions = {
                  * A collection of strings pointing to config options for
                  * the items.
                  *
-                 * @type {Array}
+                 * @type {Array<string>}
                  * @default [
                  *   'measureXY',
                  *   'measureX',
@@ -1138,7 +1139,7 @@ const stockTools: StockToolsOptions = {
                  * A collection of strings pointing to config options for
                  * the items.
                  *
-                 * @type {Array}
+                 * @type {Array<string>}
                  * @default [
                  *   'zoomX',
                  *   'zoomY',
@@ -1180,7 +1181,7 @@ const stockTools: StockToolsOptions = {
                  * A collection of strings pointing to config options for
                  * the items.
                  *
-                 * @type {Array}
+                 * @type {Array<string>}
                  * @default [
                  *   'typeOHLC',
                  *   'typeLine',
@@ -1277,9 +1278,11 @@ const stockTools: StockToolsOptions = {
  *
  * */
 
+/** @internal */
 const StockToolsDefaults = {
     lang,
     stockTools
 };
 
+/** @internal */
 export default StockToolsDefaults;

@@ -521,3 +521,230 @@ QUnit.test(
         }, duration * 1.5);
     }
 );
+
+QUnit.test(
+    'Mappoint dataLabels visible after map drill up',
+    async assert => {
+        const usTopology = await fetch(
+                'https://code.highcharts.com/mapdata/countries/us/us-all.topo.json'
+            ).then(response => response.json()),
+            caTopology = await fetch(
+                'https://code.highcharts.com/mapdata/countries/us/us-ca-all.topo.json'
+            ).then(response => response.json()),
+            mapView = usTopology.objects.default['hc-recommended-mapview'],
+            usData = Highcharts.geojson(usTopology);
+
+        usData.forEach((d, i) => {
+            d.drilldown = d.properties['hc-key'] === 'us-ca' ?
+                'california' : void 0;
+            d.value = i;
+        });
+
+        const caData = Highcharts.geojson(caTopology);
+        caData.forEach((d, i) => {
+            d.value = i;
+        });
+
+        const chart = Highcharts.mapChart('container', {
+            chart: { animation: false },
+            mapView,
+            drilldown: {
+                animation: false,
+                mapZooming: true,
+                series: [{
+                    id: 'california',
+                    name: 'California',
+                    mapData: caTopology,
+                    data: caData,
+                    dataLabels: { enabled: true, format: '{point.name}' }
+                }]
+            },
+            series: [{
+                data: usData,
+                name: 'USA',
+                custom: { mapView }
+            }, {
+                type: 'mappoint',
+                zIndex: 4,
+                dataLabels: { enabled: true },
+                data: [{ lon: -118.24, lat: 34.05, name: 'LA' }]
+            }]
+        });
+
+        assert.ok(
+            chart.series[1].dataLabelsGroup.element.childNodes.length > 0,
+            'LA point should have dataLabel and be placed.'
+        );
+
+        const caPoint = chart.series[0].points.find(
+            p => (
+                p.drilldown === 'california' ||
+                p.options?.drilldown === 'california'
+            )
+        );
+
+        caPoint?.doDrilldown();
+        chart.drillUp();
+
+        assert.ok(
+            chart.series[0].dataLabelsGroup.element.childNodes.length > 0,
+            'LA point should have dataLabel and be placed after drill up.'
+        );
+    }
+);
+
+QUnit.test(
+    '#23238, Remove previous map level after update and second drilldown',
+    async assert => {
+        const usTopology = await fetch(
+                'https://code.highcharts.com/mapdata/countries/us/us-all.topo.json'
+            ).then(response => response.json()),
+            alTopology = await fetch(
+                'https://code.highcharts.com/mapdata/countries/us/us-al-all.topo.json'
+            ).then(response => response.json()),
+            mapView = usTopology.objects.default['hc-recommended-mapview'],
+            duration = 50;
+
+        const toMapData = (topology, nextDrilldown, className) => {
+            const data = Highcharts.geojson(topology);
+            data.forEach((d, i) => {
+                d.value = i;
+                d.className = className;
+                if (nextDrilldown) {
+                    d.drilldown = nextDrilldown;
+                }
+            });
+            return data;
+        };
+
+        const usData = Highcharts.geojson(usTopology);
+        usData.forEach((d, i) => {
+            d.value = i;
+            d.drilldown = d.properties['hc-key'] === 'us-al' ?
+                'al-level-2' : void 0;
+        });
+
+        let clock = null;
+        try {
+            clock = TestUtilities.lolexInstall();
+            const drilldownIds = [];
+
+            const chart = Highcharts.mapChart('container', {
+                    chart: {
+                        events: {
+                            drilldown(e) {
+                                if (e.seriesOptions) {
+                                    return;
+                                }
+                                drilldownIds.push(e.point.drilldown);
+
+                                const isSecondLevel =
+                                        e.point.drilldown === 'al-level-2',
+                                    data = toMapData(
+                                        alTopology,
+                                        isSecondLevel ? 'al-level-3' : void 0,
+                                        isSecondLevel ?
+                                            'level2-point' : 'level3-point'
+                                    );
+
+                                chart.mapView.update(
+                                    Highcharts.merge(
+                                        {
+                                            insets: void 0,
+                                            padding: 0
+                                        },
+                                        alTopology.objects.default[
+                                            'hc-recommended-mapview'
+                                        ]
+                                    )
+                                );
+
+                                chart.addSeriesAsDrilldown(e.point, {
+                                    data,
+                                    className: isSecondLevel ?
+                                        'drill-level-2' : 'drill-level-3',
+                                    dataLabels: {
+                                        enabled: true,
+                                        format: '{point.name}'
+                                    }
+                                });
+                            }
+                        }
+                    },
+                    mapView,
+                    series: [{
+                        data: usData,
+                        dataLabels: {
+                            enabled: true,
+                            format: '{point.properties.postal-code}'
+                        },
+                        custom: { mapView }
+                    }],
+                    drilldown: {
+                        animation: {
+                            duration: duration
+                        },
+                        mapZooming: true
+                    }
+                }),
+                alabamaPoint = chart.series[0].points.find(
+                    p => p.properties?.['hc-key'] === 'us-al'
+                );
+
+            alabamaPoint?.doDrilldown();
+
+            setTimeout(() => {
+                const secondLevelSeries = chart.series.find(
+                    series => series.options.className === 'drill-level-2'
+                );
+
+                assert.ok(
+                    secondLevelSeries,
+                    'Second-level series should be present before update.'
+                );
+
+                secondLevelSeries?.update({
+                    opacity: 0.5
+                }, true);
+
+                secondLevelSeries?.points[0].doDrilldown();
+            }, duration * 4);
+
+            setTimeout(() => {
+                chart.mapView.zoomBy(-1);
+            }, duration * 10);
+
+            setTimeout(() => {
+                assert.strictEqual(
+                    chart.series.length,
+                    1,
+                    'Only one series should remain after second drilldown.'
+                );
+
+                assert.deepEqual(
+                    drilldownIds.slice(0, 2),
+                    ['al-level-2', 'al-level-3'],
+                    'Drilldown should proceed to the third level.'
+                );
+
+                assert.strictEqual(
+                    chart.container.querySelectorAll('.drill-level-2').length,
+                    0,
+                    'Second-level series groups should be fully removed.'
+                );
+
+                assert.strictEqual(
+                    chart.series[0].points.some(
+                        point => point.drilldown === 'al-level-3'
+                    ),
+                    false,
+                    'Third-level series should be the active one.'
+                );
+            }, duration * 14);
+
+            TestUtilities.lolexRunAndUninstall(clock);
+        } finally {
+            TestUtilities.lolexUninstall(clock);
+        }
+    }
+);

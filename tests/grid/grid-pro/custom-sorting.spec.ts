@@ -2,7 +2,7 @@ import { test, expect } from '~/fixtures.ts';
 
 test.describe('Custom sorting', () => {
     test.beforeEach(async ({ page }) => {
-        await page.goto('grid-pro/cypress/custom-sorting');
+        await page.goto('grid-pro/e2e/custom-sorting');
     });
 
     test('Custom sorting defined in the default column options should be applied', async ({ page }) => {

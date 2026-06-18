@@ -183,7 +183,8 @@ QUnit.test('Sankey nodeFormat, nodeFormatter', function (assert) {
         ]
     });
 
-    var series = chart.series[0];
+    var nodeFormatterCtx,
+        series = chart.series[0];
 
     // Defaults
     assert.strictEqual(
@@ -213,7 +214,8 @@ QUnit.test('Sankey nodeFormat, nodeFormatter', function (assert) {
             }
         },
         tooltip: {
-            nodeFormatter: function () {
+            nodeFormatter: (pointFormat, ctx) => {
+                nodeFormatterCtx = ctx;
                 return 'Foo';
             }
         }
@@ -235,6 +237,11 @@ QUnit.test('Sankey nodeFormat, nodeFormatter', function (assert) {
         chart.tooltip.label.text.textStr.indexOf('Foo'),
         -1,
         'Tooltip ok'
+    );
+    assert.strictEqual(
+        nodeFormatterCtx,
+        series.nodes[0],
+        'Tooltip nodeFormatter got node ctx as the last argument'
     );
 
     series.update({
@@ -586,10 +593,10 @@ QUnit.test('Sankey and circular data', function (assert) {
         .attr('d')
         .split(' ')
         .filter(item => item === 'C').length;
-    assert.ok(
-        numberOfCurves > 4,
-        'The link should have a complex, circular structure, ' +
-            'not direct (#12882)'
+    assert.strictEqual(
+        numberOfCurves,
+        2,
+        'The link should be a straight forward link (#24079)'
     );
 
     chart.series[0].setData([
@@ -757,6 +764,18 @@ QUnit.test(
             'Netherlands',
             'This node id(position) should not been have changed ' +
                 'after the update (#12453)'
+        );
+
+        chart.series[0].update({
+            dataLabels: {
+                enabled: false
+            }
+        });
+
+        assert.strictEqual(
+            !!chart.series[0].nodes[0].dataLabel,
+            false,
+            'Node should not have the dataLabel after the update (#23385).'
         );
     }
 );
@@ -1059,3 +1078,101 @@ QUnit.test('Sankey and point updates', assert => {
         `
     );
 });
+
+QUnit.test(
+    'Node column assignment with the right levels (#24079)',
+    function (assert) {
+        const chart = Highcharts.chart('container', {
+            series: [
+                {
+                    type: 'sankey',
+                    data: [
+                        {
+                            from: 'Root',
+                            to: 'A',
+                            weight: 1
+                        },
+                        {
+                            from: 'A',
+                            to: 'D',
+                            weight: 1
+                        },
+                        {
+                            from: 'Root',
+                            to: 'B',
+                            weight: 1
+                        },
+                        {
+                            from: 'B',
+                            to: 'C',
+                            weight: 1
+                        },
+                        {
+                            from: 'C',
+                            to: 'D',
+                            weight: 1
+                        }
+                    ]
+                }
+            ]
+        });
+
+        const series = chart.series[0],
+            nodeColumns = series.nodeColumns,
+            nodeLookup = series.nodeLookup;
+
+        assert.strictEqual(
+            nodeColumns.length,
+            4,
+            'There should be 4 columns - Root (0), A and B (1), C (2), D (3)'
+        );
+
+        assert.strictEqual(
+            nodeLookup.Root.column,
+            0,
+            'Root should be in column 0'
+        );
+
+        assert.strictEqual(
+            nodeLookup.A.column,
+            1,
+            'A should be in column 1'
+        );
+
+        assert.strictEqual(
+            nodeLookup.B.column,
+            1,
+            'B should be in column 1'
+        );
+
+        assert.strictEqual(
+            nodeLookup.C.column,
+            2,
+            'C should be in column 2'
+        );
+
+        assert.strictEqual(
+            nodeLookup.D.column,
+            3,
+            'D should be in column 3'
+        );
+
+        // Verify the C - D link renders correctly
+        const link = series.points.find(p => p.from === 'C' && p.to === 'D'),
+            path = link.shapeArgs?.d;
+
+        assert.ok(
+            path,
+            'The C - D link should have a rendered path'
+        );
+
+        // Check the start and end of the link
+        const startX = path[0][1],
+            endX = path[1][5];
+
+        assert.ok(
+            endX > startX,
+            'The C node should be rendered before the D node'
+        );
+    }
+);

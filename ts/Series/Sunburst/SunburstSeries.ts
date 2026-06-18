@@ -4,10 +4,11 @@
  *
  *  (c) 2016-2026 Highsoft AS
  *
- *  Authors: Jon Arild Nygard
+ *  Authors: Jon Arild Nygård
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -52,12 +53,12 @@ const {
     setTreeValues,
     updateRootId
 } = TU;
-import U from '../../Core/Utilities.js';
 import SunburstNode from './SunburstNode.js';
 import SunburstSeriesDefaults from './SunburstSeriesDefaults.js';
-const {
+import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
+import { composeTextPath } from '../../Extensions/TextPath.js';
+import {
     defined,
-    error,
     extend,
     fireEvent,
     isNumber,
@@ -65,10 +66,9 @@ const {
     isString,
     merge,
     splat
-} = U;
-import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
-import TextPath from '../../Extensions/TextPath.js';
-TextPath.compose(SVGElement);
+} from '../../Shared/Utilities.js';
+import { error } from '../../Core/Utilities.js';
+composeTextPath(SVGElement);
 
 /* *
  *
@@ -670,6 +670,9 @@ class SunburstSeries extends TreemapSeries {
                 }),
                 zIndex: void 0
             };
+            // Delete so it doesn't override anything on merge.
+            delete point.dlOptions.zIndex;
+
             if (!addedHack && visible) {
                 addedHack = true;
                 onComplete = animateLabels;

@@ -1,10 +1,11 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -29,8 +30,7 @@ const {
     column: ColumnSeries,
     ohlc: OHLCSeries
 } = SeriesRegistry.seriesTypes;
-import U from '../../Core/Utilities.js';
-const { crisp, merge } = U;
+import { crisp, merge } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -86,7 +86,7 @@ class CandlestickSeries extends OHLCSeries {
      * @function Highcharts.seriesTypes.candlestick#pointAttribs
      */
     public pointAttribs(
-        point: CandlestickPoint,
+        point?: CandlestickPoint,
         state?: StatesOptionsKey
     ): SVGAttributes {
         const attribs = ColumnSeries.prototype.pointAttribs.call(
@@ -95,24 +95,24 @@ class CandlestickSeries extends OHLCSeries {
                 state
             ),
             options = this.options,
-            isUp = point.open < point.close,
+            isUp = (point?.open || 0) < (point?.close || 0),
             stroke = options.lineColor || this.color,
-            color = point.color || this.color; // (#14826)
+            color = point?.color || this.color; // (#14826)
 
         attribs['stroke-width'] = options.lineWidth;
 
-        attribs.fill = point.options.color ||
+        attribs.fill = point?.options.color ||
             (isUp ? (options.upColor || color) : color);
-        attribs.stroke = point.options.lineColor ||
+        attribs.stroke = point?.options.lineColor ||
             (isUp ? (options.upLineColor || stroke) : stroke);
 
         // Select or hover states
         if (state) {
-            const stateOptions = (options.states as any)[state];
+            const stateOptions = options.states?.[state] || {};
             attribs.fill = stateOptions.color || attribs.fill;
             attribs.stroke = stateOptions.lineColor || attribs.stroke;
-            attribs['stroke-width'] =
-                stateOptions.lineWidth || attribs['stroke-width'];
+            attribs['stroke-width'] = stateOptions.lineWidth ||
+                attribs['stroke-width'];
         }
 
         return attribs;

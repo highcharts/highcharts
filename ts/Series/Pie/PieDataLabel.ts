@@ -1,10 +1,11 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -29,13 +30,11 @@ const {
     composed,
     noop
 } = H;
-import { Palette } from '../../Core/Color/Palettes.js';
 import R from '../../Core/Renderer/RendererUtilities.js';
 const { distribute } = R;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const { series: Series } = SeriesRegistry;
-import U from '../../Core/Utilities.js';
-const {
+import {
     arrayMax,
     clamp,
     defined,
@@ -43,7 +42,7 @@ const {
     pick,
     pushUnique,
     relativeLength
-} = U;
+} from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -51,6 +50,7 @@ const {
  *
  * */
 
+/** @internal */
 declare module '../../Core/Renderer/SVG/SVGElementBase' {
     interface SVGElementBase {
         connector?: SVGElement;
@@ -64,6 +64,7 @@ declare module '../../Core/Renderer/SVG/SVGElementBase' {
  *
  * */
 
+/** @internal */
 namespace ColumnDataLabel {
 
     /* *
@@ -84,7 +85,7 @@ namespace ColumnDataLabel {
         },
 
         // Get the x - use the natural x position for labels near the top and
-        // bottom, to prevent the top and botton slice connectors from touching
+        // bottom, to prevent the top and bottom slice connectors from touching
         // each other on either side. Based on the value computed in Highcharts'
         // distribute algorithm.
         radialDistributionX: function (
@@ -95,7 +96,7 @@ namespace ColumnDataLabel {
             dataLabel: SVGElement
         ): number {
             const pos = dataLabel.dataLabelPosition;
-            return series.getX(
+            return series.getXPos(
                 y < (pos?.top || 0) + 2 || y > (pos?.bottom || 0) - 2 ?
                     naturalY :
                     y,
@@ -162,7 +163,7 @@ namespace ColumnDataLabel {
      *
      * */
 
-    /** @private */
+    /** @internal */
     export function compose(PieSeriesClass: typeof PieSeries): void {
 
         DataLabel.compose(Series);
@@ -180,7 +181,7 @@ namespace ColumnDataLabel {
 
     }
 
-    /** @private */
+    /** @internal */
     function getDataLabelPosition(
         this: PieSeries,
         point: PiePoint,
@@ -252,8 +253,8 @@ namespace ColumnDataLabel {
     }
 
     /**
-     * Override the base drawDataLabels method by pie specific functionality
-     * @private
+     * Override the base drawDataLabels method by pie specific functionality.
+     * @internal
      */
     function drawDataLabels(
         this: PieSeries
@@ -659,7 +660,7 @@ namespace ColumnDataLabel {
                                     'stroke': (
                                         connectorColor ||
                                         point.color ||
-                                        Palette.neutralColor60
+                                        'var(--highcharts-neutral-color-60)'
                                     )
                                 });
                             }
@@ -683,7 +684,7 @@ namespace ColumnDataLabel {
     /**
      * Perform the final placement of the data labels after we have verified
      * that they fall within the plot area.
-     * @private
+     * @internal
      */
     function placeDataLabels(
         this: PieSeries
@@ -730,7 +731,7 @@ namespace ColumnDataLabel {
      * Verify whether the data labels are allowed to draw, or we should run more
      * translation and data label positioning to keep them inside the plot area.
      * Returns true when data labels are ready to draw.
-     * @private
+     * @internal
      */
     function verifyDataLabelOverflow(
         this: PieSeries,
@@ -816,4 +817,5 @@ namespace ColumnDataLabel {
  *
  * */
 
+/** @internal */
 export default ColumnDataLabel;

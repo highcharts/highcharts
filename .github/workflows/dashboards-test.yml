@@ -8,10 +8,13 @@ on:
     paths:
       - '.github/workflows/dashboards-test.yml'
       - 'css/dashboards*'
+      - 'css/grid*'
       - 'samples/dashboards/**'
-      - 'test/cypress/dashboards/visual/**'
       - 'ts/Dashboards/**'
       - 'ts/Data/**'
+      - 'ts/Grid/**'
+      - 'ts/masters-dashboards/**'
+      - 'ts/masters-grid/**'
 
 permissions:
   contents: read
@@ -25,8 +28,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
         with:
           node-version: 'lts/*'
           cache: 'npm'
@@ -38,59 +41,4 @@ jobs:
         run: npx playwright install --with-deps chromium
 
       - name: Run Dashboards Tests
-        run: npx playwright test --project=setup-highcharts --project=setup-dashboards --project=dashboards
-
-  dashboards_cypress:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          path: highcharts
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 'lts/*'
-          cache: 'npm'
-          cache-dependency-path: highcharts/package-lock.json
-
-      - name: Install Dependencies
-        run: |
-          cd highcharts
-          npm ci
-
-      - name: Build Highcharts
-        run: |
-          cd highcharts
-          npx gulp scripts
-
-      - name: Build Grid
-        run: |
-          cd highcharts
-          npx gulp scripts --product Grid
-
-      - name: Build Dashboards
-        run: |
-          cd highcharts
-          npx gulp scripts --product Dashboards
-
-      - name: Checkout utils
-        uses: actions/checkout@v4
-        with:
-          repository: highcharts/highcharts-utils
-          path: utils
-          fetch-depth: 1
-
-      - name: Install Highcharts Utils
-        run: |
-          cd utils
-          npm ci
-
-      - name: Run Cypress test
-        uses: cypress-io/github-action@v6
-        with:
-          start: node ../utils/server --localOnly
-          wait-on: 'http://localhost:3031/dashboards.js'
-          browser: chrome
-          working-directory: highcharts
-          config-file: test/cypress/dashboards/config.mjs
-          install: false
+        run: npx playwright test --project=setup-highcharts --project=setup-grid-lite --project=setup-grid-pro --project=setup-dashboards --project=dashboards

@@ -1,10 +1,11 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -34,14 +35,13 @@ import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     hlc: HLCSeries
 } = SeriesRegistry.seriesTypes;
-import U from '../../Core/Utilities.js';
-const {
+import {
     addEvent,
     crisp,
     extend,
     merge,
     pushUnique
-} = U;
+} from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -180,8 +180,8 @@ class OHLCSeries extends HLCSeries {
      * @private
      */
     public pointAttribs(
-        point: OHLCPoint,
-        state: StatesOptionsKey
+        point?: OHLCPoint,
+        state?: StatesOptionsKey
     ): SVGAttributes {
         const attribs = super.pointAttribs.call(this, point, state),
             options = this.options;
@@ -189,9 +189,9 @@ class OHLCSeries extends HLCSeries {
         delete attribs.fill;
 
         if (
-            !point.options.color &&
+            !point?.options.color &&
             options.upColor &&
-            point.open < point.close
+            (point?.open || 0) < (point?.close || 0)
         ) {
             attribs.stroke = options.upColor;
         }
@@ -214,7 +214,6 @@ class OHLCSeries extends HLCSeries {
 
 interface OHLCSeries {
     pointClass: typeof OHLCPoint;
-    pointAttrToOptions: Record<string, string>;
     toYData(point: OHLCPoint): Array<number>;
 }
 extend(OHLCSeries.prototype, {

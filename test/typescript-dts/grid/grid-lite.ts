@@ -23,9 +23,10 @@ function test_grid() {
         }
     });
 
-    Grid.grid('container', {
+    const grid = Grid.grid('container', {
         data: {
             dataTable,
+            idColumn: 'x'
         },
         header: [{
             format: 'grouped header',
@@ -45,12 +46,15 @@ function test_grid() {
         columnDefaults: {
             cells: {
                 contextMenu: {
-                    items: [{
-                        label: 'Test',
-                        onClick: function () {
-                            // noop
+                    enabled: true,
+                    items: [
+                        {
+                            label: 'Test',
+                            onClick: function () {
+                                // noop
+                            }
                         }
-                    }]
+                    ]
                 }
             }
         },
