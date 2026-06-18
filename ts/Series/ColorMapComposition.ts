@@ -156,15 +156,18 @@ namespace ColorMapComposition {
             if (e?.state === 'hover') {
                 // Give the graphic DOM element the same id as the Point
                 // instance, then add a `use` referencing it to the container.
+                // Reuse if `afterSetState` re-fires during hover (#22891).
                 point.graphic.attr({
                     id: this.id
                 });
-                point.stateUseGraphic = new SVGElement(renderer, 'use')
-                    .attr({
-                        href: `${renderer.url}#${this.id}`,
-                        visibility: 'visible'
-                    })
-                    .add(series.stateMarkerGraphic);
+                if (!point.stateUseGraphic) {
+                    point.stateUseGraphic = new SVGElement(renderer, 'use')
+                        .attr({
+                            href: `${renderer.url}#${this.id}`,
+                            visibility: 'visible'
+                        })
+                        .add(series.stateMarkerGraphic);
+                }
             } else {
                 point.stateUseGraphic = point.stateUseGraphic?.destroy();
             }

@@ -45,7 +45,6 @@ QUnit.test('seriesTypes.map.pointClass.setState', function (assert) {
         'State is normal, use graphic should not refer to the point, #22891.'
     );
     setState.call(point, 'hover');
-    console.log(point.stateUseGraphic);
 
     assert.strictEqual(
         point.stateUseGraphic?.attr('href'),
@@ -84,7 +83,7 @@ QUnit.test('seriesTypes.map.pointClass.setState', function (assert) {
             `Point "${p.name}" should have the hover CSS class.`
         );
         assert.ok(
-            point.stateUseGraphic?.attr('href'),
+            p.stateUseGraphic?.attr('href'),
             `Point "${p.name}" should have a stateUseGraphic.`
         );
     });
