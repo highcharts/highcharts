@@ -409,6 +409,7 @@ function getPathMeta(config: SampleGeneratorConfig): MetaList {
             const name = path.replace(/\[\d+\]/gu, '');
 
             let node = flatTree.find(n => n.name === name);
+
             if (!node) {
                 const keys = path.split('.').map(
                     k => k.replace(/\[\d+\]/gu, '[*]')
@@ -456,7 +457,11 @@ function getPathMeta(config: SampleGeneratorConfig): MetaList {
                 ));
             }
 
-            const { default: defaultValue, mainType, options } = node || {};
+            const { default: defaultValue, mainType } = node || {},
+                options = node?.options || (
+                    typeof controlOptions === 'object' ?
+                        controlOptions?.options : void 0
+                );
 
             if (executedDirectly) {
                 if (overrideValue !== void 0) {

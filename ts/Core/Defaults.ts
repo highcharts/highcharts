@@ -3103,6 +3103,8 @@ const defaultOptions: DefaultOptions = {
         /**
          * Position configuration for the credits label.
          *
+         * @sample highcharts/credits/position/
+         *         Credits position
          * @sample {highcharts} highcharts/credits/position-left/
          *         Left aligned
          * @sample {highmaps} maps/credits/customized/
