@@ -2105,11 +2105,8 @@ class Chart {
         let chartWidth = chart.chartWidth;
 
         // Allow table cells and flex-boxes to shrink without the chart
-        // blocking them out (#6427) but skip in styled mode so inline styles
-        // don't override user CSS on renderTo
-        if (!chart.styledMode) {
-            css(renderTo, { overflow: 'hidden' });
-        }
+        // blocking them out (#6427)
+        css(renderTo, { overflow: 'hidden' });
 
         // Create the inner container
         if (!chart.styledMode) {
@@ -4244,7 +4241,7 @@ class Chart {
                 trigger,
                 allowResetButton = true
             } = params,
-            { inverted, time } = this;
+            { time } = this;
 
         // Remove active points for shared tooltip
         this.hoverPoints?.forEach((point): void => point.setState());
@@ -4275,11 +4272,12 @@ class Chart {
                 toCenter = (to[xy] ?? axis.pos) +
                     toLength / 2 - axis.pos,
                 move = fromCenter - toCenter / scale,
-                pointRangeDirection =
-                    (reversed && !inverted) ||
-                    (!reversed && inverted) ?
-                        -1 :
-                        1,
+                pointRangeDirection = (
+                    (horiz && !reversed) ||
+                       (!horiz && reversed)
+                ) ?
+                    1 :
+                    -1,
                 minPx = move;
 
             // Zooming in multiple panes, zoom only in the pane that receives

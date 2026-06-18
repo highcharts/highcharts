@@ -74,6 +74,7 @@ Highcharts.chart('container', {
         minorTickWidth: 3,
         minorTickLength: 5,
         minorTickPosition: 'inside',
+        minorTicksPerMajor: 5,
         minorGridLineWidth: 0,
 
         tickInterval: 1,

@@ -1,7 +1,6 @@
 const grid = Grid.grid('container', {
     data: {
         columns: {
-            id: [1, 2, 3, 4, 5, 6, 7, 8],
             path: [
                 'Company',
                 'CompanySales',
@@ -43,7 +42,6 @@ const grid = Grid.grid('container', {
                 190
             ]
         },
-        idColumn: 'id',
         treeView: {
             input: {
                 type: 'path',

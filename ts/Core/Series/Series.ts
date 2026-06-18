@@ -1397,7 +1397,7 @@ class Series {
 
         this.getCyclic(
             'symbol',
-            (seriesMarkerOption as any).symbol,
+            seriesMarkerOption?.symbol,
             this.chart.options.symbols
         );
     }
@@ -2554,11 +2554,11 @@ class Series {
         ),
         forceExtremesFromAll?: boolean
     ): DataExtremesObject {
-        const { xAxis, yAxis } = this,
+        const { options, xAxis, yAxis } = this,
             getExtremesFromAll =
                 forceExtremesFromAll ||
                 this.getExtremesFromAll ||
-                this.options.getExtremesFromAll, // #4599, #21003
+                options.getExtremesFromAll, // #4599, #21003
             table = getExtremesFromAll && this.cropped ?
                 this.dataTable :
                 this.dataTable.getModified(),
@@ -2575,14 +2575,19 @@ class Series {
             // non-sorted data like scatter (#7639).
             shoulder = this.requireSorting && !this.is('column') ?
                 1 : 0,
-            // #2117, need to compensate for log X axis
+            // Used only for `cumulativeStart` (#24608)
+            excludeShoulder = options.cumulative &&
+                options.cumulativeStart &&
+                shoulder &&
+                !getExtremesFromAll,
+            // Compensate for log X axis (#2117)
             positiveValuesOnly = yAxis ? yAxis.positiveValuesOnly : false,
             doAll = getExtremesFromAll ||
                 this.cropped ||
                 !xAxis; // For colorAxis support
 
         let xExtremes,
-            x,
+            x: number,
             i,
             xMin = 0,
             xMax = 0;
@@ -2597,14 +2602,15 @@ class Series {
 
             x = xData[i];
 
-            // Check if it is within the selected x axis range
-            if (
+            // Check if it is within the selected x-axis range
+            if ((
                 doAll ||
                 (
                     (xData[i + shoulder] || x) >= xMin &&
                     (xData[i - shoulder] || x) <= xMax
                 )
-            ) {
+            ) && (!excludeShoulder || x >= xMin)) {
+
                 for (const values of yAxisData) {
                     const val = values[i];
 
@@ -3128,19 +3134,17 @@ class Series {
             chart = series.chart,
             styledMode = chart.styledMode,
             { colorAxis, options } = series,
-            seriesMarkerOptions = options.marker,
+            seriesMarkerOptions = options.marker || {},
             nullInteraction = options.nullInteraction,
             markerGroup = series[series.specialGroup || 'markerGroup'],
             xAxis = series.xAxis,
-            globallyEnabled = pick(
-                (seriesMarkerOptions as any).enabled,
-                !xAxis || xAxis.isRadial ? true : null,
+            globallyEnabled = seriesMarkerOptions.enabled ??
+                (!xAxis || xAxis.isRadial ? true : null) ??
                 // Use larger or equal as radius is null in bubbles (#6321)
-                (series.closestPointRangePx as any) >= (
-                    (seriesMarkerOptions as any).enabledThreshold *
+                ((series.closestPointRangePx ?? -Infinity) >= (
+                    (seriesMarkerOptions.enabledThreshold ?? 2) *
                     (seriesMarkerOptions as any).radius
-                )
-            );
+                ));
         let i,
             point,
             graphic,
@@ -3150,7 +3154,7 @@ class Series {
             markerAttribs;
 
         if (
-            (seriesMarkerOptions as any).enabled !== false ||
+            seriesMarkerOptions.enabled !== false ||
             series._hasPointMarkers
         ) {
 
@@ -3181,7 +3185,7 @@ class Series {
 
                     markerAttribs = series.markerAttribs(
                         point,
-                        (point.selected && 'select') as any
+                        point.selected ? 'select' : ''
                     );
 
                     const isInside = point.isInside !== false;
@@ -3274,34 +3278,27 @@ class Series {
         state?: StatesOptionsKey
     ): SVGAttributes {
         const seriesOptions = this.options,
-            seriesMarkerOptions = seriesOptions.marker,
+            seriesMarkerOptions = seriesOptions.marker ?? {},
             pointMarkerOptions = point.marker || {},
             symbol = (
                 pointMarkerOptions.symbol ||
-                (seriesMarkerOptions as any).symbol
+                seriesMarkerOptions.symbol
             ),
             attribs: SVGAttributes = {};
 
         let seriesStateOptions,
             pointStateOptions,
-            radius: number|undefined = pick(
-                pointMarkerOptions.radius,
-                seriesMarkerOptions?.radius
-            );
+            radius: number|undefined = pointMarkerOptions.radius ??
+                seriesMarkerOptions.radius;
 
         // Handle hover and select states
         if (state) {
-            seriesStateOptions = seriesMarkerOptions?.states?.[state];
+            seriesStateOptions = seriesMarkerOptions.states?.[state];
             pointStateOptions = pointMarkerOptions.states?.[state];
 
-            radius = pick(
-                pointStateOptions?.radius,
-                seriesStateOptions?.radius,
-                radius && radius + (
-                    seriesStateOptions?.radiusPlus ||
-                    0
-                )
-            );
+            radius = pointStateOptions?.radius ??
+                seriesStateOptions?.radius ??
+                (radius && radius + (seriesStateOptions?.radiusPlus || 0));
         }
 
         point.hasImage = symbol && symbol.indexOf('url') === 0;
@@ -3319,7 +3316,7 @@ class Series {
                         0 :
                         symbol === 'rect' ?
                             // Rectangle symbols need crisp edges, others don't
-                            seriesMarkerOptions?.lineWidth || 0 :
+                            seriesMarkerOptions.lineWidth || 0 :
                             1
                 );
             }
@@ -3358,21 +3355,17 @@ class Series {
         state?: StatesOptionsKey
     ): SVGAttributes {
         const options = this.options,
-            seriesMarkerOptions = options.marker,
+            seriesMarkerOptions = options.marker ?? {},
             pointOptions = point?.options,
             pointMarkerOptions = pointOptions?.marker || {},
             pointColorOption = pointOptions?.color,
             pointColor = point?.color,
             zoneColor = point?.zone?.color;
-        let seriesStateOptions,
-            pointStateOptions,
-            color: (ColorType|undefined) = this.color,
-            fill,
-            stroke,
-            strokeWidth = pick(
-                pointMarkerOptions.lineWidth,
-                (seriesMarkerOptions as any).lineWidth
-            ),
+        let color: (ColorType|undefined) = this.color,
+            fill: (ColorType|undefined),
+            stroke: (ColorType|undefined),
+            strokeWidth = pointMarkerOptions.lineWidth ??
+                seriesMarkerOptions.lineWidth,
             opacity = (point?.isNull && options.nullInteraction) ? 0 : 1;
 
         color = (
@@ -3384,51 +3377,43 @@ class Series {
 
         fill = (
             pointMarkerOptions.fillColor ||
-            (seriesMarkerOptions as any).fillColor ||
+            seriesMarkerOptions.fillColor ||
             color
         );
         stroke = (
             pointMarkerOptions.lineColor ||
-            (seriesMarkerOptions as any).lineColor ||
+            seriesMarkerOptions.lineColor ||
             color
         );
 
         // Handle hover and select states
         state = state || 'normal';
-        if (state) {
-            seriesStateOptions = (
-                (seriesMarkerOptions as any).states[state] || {}
-            );
-            pointStateOptions = (
-                pointMarkerOptions.states &&
-                (pointMarkerOptions.states as any)[state]
-            ) || {};
-            strokeWidth = pick(
-                pointStateOptions.lineWidth,
-                seriesStateOptions.lineWidth,
-                strokeWidth + pick(
-                    pointStateOptions.lineWidthPlus,
-                    seriesStateOptions.lineWidthPlus,
-                    0
-                )
-            );
-            fill = (
-                pointStateOptions.fillColor ||
-                seriesStateOptions.fillColor ||
-                fill
-            );
-            stroke = (
-                pointStateOptions.lineColor ||
-                seriesStateOptions.lineColor ||
-                stroke
-            );
 
-            opacity = pick(
-                pointStateOptions.opacity,
-                seriesStateOptions.opacity,
-                opacity
+        const seriesStateOptions = seriesMarkerOptions.states?.[state] || {};
+        const pointStateOptions = pointMarkerOptions.states?.[state] || {};
+        strokeWidth = pointStateOptions.lineWidth ??
+            seriesStateOptions.lineWidth ??
+            (strokeWidth || 0) + (
+                pointStateOptions.lineWidthPlus ??
+                seriesStateOptions.lineWidthPlus ??
+                0
             );
-        }
+        fill = (
+            pointStateOptions.fillColor ||
+            seriesStateOptions.fillColor ||
+            fill
+        );
+        stroke = (
+            pointStateOptions.lineColor ||
+            seriesStateOptions.lineColor ||
+            stroke
+        );
+
+        opacity = (
+            pointStateOptions.opacity ??
+            seriesStateOptions.opacity ??
+            opacity
+        );
 
         return {
             'stroke': stroke,
@@ -3490,7 +3475,7 @@ class Series {
 
         // Clear the animation timeout if we are destroying the series
         // during initial animation
-        internalClearTimeout(series.animationTimeout as any);
+        internalClearTimeout(series.animationTimeout);
 
         // Destroy all SVGElements associated to the series
         objectEach(series, function (val: any, prop: string): void {
@@ -3514,7 +3499,7 @@ class Series {
         chart.orderItems('series');
 
         // Clear all members
-        objectEach(series, function (val: any, prop: string): void {
+        objectEach(series, function (_val: any, prop: string): void {
             if (!keepEventsForUpdate || prop !== 'hcEvents') {
                 delete (series as any)[prop];
             }
@@ -4078,7 +4063,7 @@ class Series {
 
         const series = this,
             seriesOptions = series.options,
-            dimensions = (seriesOptions.findNearestPointBy as any)
+            dimensions = (seriesOptions.findNearestPointBy ?? '')
                 .indexOf('y') > -1 ? 2 : 1;
 
         /**
@@ -4269,7 +4254,7 @@ class Series {
                     point,
                     doSearch(
                         search,
-                        tree[sideA] as any,
+                        tree[sideA],
                         depth + 1,
                         dimensions
                     ),
@@ -4280,7 +4265,7 @@ class Series {
             if (tree[sideB]) {
 
                 const sqrtTDist = Math.sqrt(tdist * tdist),
-                    retDist = (ret as any)[kdComparer];
+                    retDist = ret[kdComparer];
 
                 // Compare distance to current best to splitting point to decide
                 // whether to check side B or no
@@ -4289,7 +4274,7 @@ class Series {
                         ret,
                         doSearch(
                             search,
-                            tree[sideB] as any,
+                            tree[sideB],
                             depth + 1,
                             dimensions
                         ),
@@ -5140,11 +5125,11 @@ class Series {
     ): void {
         const series = this,
             { graph, options } = series,
-            { inactiveOtherPoints, states: stateOptions } = options,
+            { inactiveOtherPoints, states: stateOptions = {} } = options,
             // By default a quick animation to hover/inactive,
             // slower to un-hover
             stateAnimation = pick(
-                stateOptions?.[state || 'normal']?.animation,
+                stateOptions[state || 'normal']?.animation,
                 series.chart.options.chart.animation
             );
         let { lineWidth, opacity } = options;
@@ -5182,17 +5167,18 @@ class Series {
                 }
 
                 if (state) {
-                    lineWidth = (
-                        (stateOptions as any)[state].lineWidth ||
-                        lineWidth + (
-                            (stateOptions as any)[state].lineWidthPlus || 0
-                        )
+                    lineWidth = stateOptions[state]?.lineWidth ?? (
+                        !isNumber(lineWidth) ?
+                            void 0 :
+                            // Increase by lineWidthPlus only when lineWidth
+                            // is a number.
+                            (
+                                lineWidth +
+                                (stateOptions?.[state]?.lineWidthPlus || 0)
+                            )
                     ); // #4035
 
-                    opacity = pick(
-                        (stateOptions as any)[state].opacity,
-                        opacity
-                    );
+                    opacity = stateOptions[state]?.opacity ?? opacity;
                 }
 
                 if (graph && !graph.dashstyle && isNumber(lineWidth)) {
@@ -5244,11 +5230,7 @@ class Series {
      *        Can be either `hover` or undefined to set to normal state.
      */
     public setAllPointsToState(state?: StatesOptionsKey): void {
-        this.points.forEach(function (point): void {
-            if (point.setState) {
-                point.setState(state);
-            }
-        });
+        this.points.forEach((point): void => point.setState?.(state));
     }
 
     /**
