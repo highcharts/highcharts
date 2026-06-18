@@ -94,6 +94,8 @@ class CandlestickSeries extends OHLCSeries {
         point?: CandlestickPoint,
         state?: StatesOptionsKey
     ): SVGAttributes {
+        // Without a point (e.g. the legend symbol), use the line or series
+        // color as the fill.
         if (!point) {
             return { fill: this.options.lineColor || this.color };
         }
@@ -132,7 +134,7 @@ class CandlestickSeries extends OHLCSeries {
      * wicks; the two box bodies are drawn here as bordered rectangles and
      * colored/dimmed by `FinancialSymbols` on `afterColorizeItem` (#24567).
      *
-     * @private
+     * @internal
      * @function Highcharts.seriesTypes.candlestick#drawLegendSymbol
      */
     public drawLegendSymbol(legend: Legend, item: Legend.Item): void {

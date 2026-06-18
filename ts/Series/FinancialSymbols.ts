@@ -39,6 +39,7 @@ namespace FinancialSymbols {
     /**
      * Scaled drawing helpers mapping the design viewBox onto the legend
      * symbol box.
+     * @internal
      */
     export interface Pen {
         stem: (cx: number, y1: number, y2: number) => SVGPath;
@@ -47,6 +48,7 @@ namespace FinancialSymbols {
 
     /**
      * A rounded rectangle in symbol-box coordinates.
+     * @internal
      */
     export interface Rect {
         x: number;
@@ -59,6 +61,7 @@ namespace FinancialSymbols {
     /**
      * The candlestick legend's two box bodies (stroked rectangles) plus the
      * border width that the legend should apply.
+     * @internal
      */
     export interface CandleBoxes {
         filled: Rect;
