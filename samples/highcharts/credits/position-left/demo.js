@@ -6,8 +6,7 @@ Highcharts.chart('container', {
 
     credits: {
         position: {
-            align: 'left',
-            x: 15
+            align: 'left'
         }
     },
 
