@@ -15,7 +15,8 @@ Highcharts.chart('container', {
         scrollablePlotArea: {
             minWidth: 600,
             scrollPositionX: 1
-        }
+        },
+        spacingBottom: 22
     },
     title: {
         text: 'Temperature variation by day',
