@@ -2554,11 +2554,11 @@ class Series {
         ),
         forceExtremesFromAll?: boolean
     ): DataExtremesObject {
-        const { xAxis, yAxis } = this,
+        const { options, xAxis, yAxis } = this,
             getExtremesFromAll =
                 forceExtremesFromAll ||
                 this.getExtremesFromAll ||
-                this.options.getExtremesFromAll, // #4599, #21003
+                options.getExtremesFromAll, // #4599, #21003
             table = getExtremesFromAll && this.cropped ?
                 this.dataTable :
                 this.dataTable.getModified(),
@@ -2575,14 +2575,19 @@ class Series {
             // non-sorted data like scatter (#7639).
             shoulder = this.requireSorting && !this.is('column') ?
                 1 : 0,
-            // #2117, need to compensate for log X axis
+            // Used only for `cumulativeStart` (#24608)
+            excludeShoulder = options.cumulative &&
+                options.cumulativeStart &&
+                shoulder &&
+                !getExtremesFromAll,
+            // Compensate for log X axis (#2117)
             positiveValuesOnly = yAxis ? yAxis.positiveValuesOnly : false,
             doAll = getExtremesFromAll ||
                 this.cropped ||
                 !xAxis; // For colorAxis support
 
         let xExtremes,
-            x,
+            x: number,
             i,
             xMin = 0,
             xMax = 0;
@@ -2592,25 +2597,19 @@ class Series {
             xMin = xExtremes.min;
             xMax = xExtremes.max;
         }
-        // Used only for `cumulativeStart`, #24608
-        const excludeShoulder = this.options.cumulative &&
-            this.options.cumulativeStart &&
-            shoulder &&
-            !getExtremesFromAll;
 
         for (i = 0; i < rowCount; i++) {
 
             x = xData[i];
 
-            // Check if it is within the selected x axis range
-            if (
+            // Check if it is within the selected x-axis range
+            if ((
                 doAll ||
                 (
                     (xData[i + shoulder] || x) >= xMin &&
                     (xData[i - shoulder] || x) <= xMax
                 )
-            ) {
-                const skipShoulder = excludeShoulder && isNumber(x) && x < xMin;
+            ) && (!excludeShoulder || x >= xMin)) {
 
                 for (const values of yAxisData) {
                     const val = values[i];
@@ -2620,8 +2619,7 @@ class Series {
                     // consider y extremes.
                     if (
                         isNumber(val) &&
-                        (val > 0 || !positiveValuesOnly) &&
-                        !skipShoulder
+                        (val > 0 || !positiveValuesOnly)
                     ) {
                         activeYData.push(val);
                     }
