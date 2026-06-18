@@ -1433,22 +1433,11 @@ QUnit.module('Format', () => {
                 expected = dateStr.charAt(0).toUpperCase() + dateStr.slice(1),
                 ucfirstStr = format(`{ucfirst "${dateStr}"}`, {});
 
-            // Make an exception for locales with parentheses, this is not yet
-            // supported. Specifically, the "eu" locale format for Firefox has
-            // "2026(e)ko ekainaren 4(a), osteguna (00:00:00)" that doesn't
-            // work.
-            if (dateStr.indexOf('(') === -1) {
-                assert.strictEqual(
-                    ucfirstStr,
-                    expected,
-                    `locale = ${locale}: ${ucfirstStr}`
-                );
-            } else {
-                assert.ok(
-                    true,
-                    `Skipping ucfirst test for locale = ${locale}: ${dateStr}`
-                );
-            }
+            assert.strictEqual(
+                ucfirstStr,
+                expected,
+                `locale = ${locale}: ${ucfirstStr}`
+            );
         });
     });
 

@@ -2213,7 +2213,7 @@ export class Exporting {
         rootNode?.querySelectorAll('style').forEach(
             (style: HTMLStyleElement): void => {
                 const clonedStyle = style.cloneNode(true) as HTMLStyleElement;
-                chartCopy.renderer.defs.element.appendChild(clonedStyle);
+                chartCopy.container.appendChild(clonedStyle);
 
                 // Store for the later removal
                 shadowStyles.push(clonedStyle);
