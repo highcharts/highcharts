@@ -21,6 +21,7 @@ import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 
 import ColumnSeries from './Column/ColumnSeries.js';
 import {
+    crisp,
     isNumber
 } from '../Shared/Utilities.js';
 
@@ -52,6 +53,7 @@ namespace RangeDataLabel {
     export interface SeriesComposition<
         PointValKey extends string = string
     > extends Series {
+        borderWidth?: number;
         pointArrayMap: Array<PointValKey>;
         pointValKey: PointValKey;
     }
@@ -204,7 +206,7 @@ namespace RangeDataLabel {
             if (shapeArgs && !options.inside) {
                 point.dlBox = {
                     x: shapeArgs.x ?? 0,
-                    y: plotY,
+                    y: crisp(plotY, series.borderWidth, series.chart.inverted),
                     width: shapeArgs.width ?? 0,
                     height: 0
                 };
