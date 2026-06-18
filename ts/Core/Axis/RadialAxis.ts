@@ -38,7 +38,7 @@ import type Tick from './Tick';
 import type RadialAxisOptions from './RadialAxisOptions';
 import RadialAxisDefaults from './RadialAxisDefaults.js';
 
-import { optionsToBorderRadiusObject } from '../../Extensions/BorderRadius.js';
+import { borderRadiusObject } from '../../Extensions/BorderRadius.js';
 import D from '../Defaults.js';
 const { defaultOptions } = D;
 import H from '../Globals.js';
@@ -754,7 +754,7 @@ namespace RadialAxis {
             },
             center = this.center,
             { endAngleRad, startAngleRad } = this,
-            borderRadius = optionsToBorderRadiusObject(
+            borderRadius = borderRadiusObject(
                 options.borderRadius ??
                 this.pane.options.borderRadius
             ),

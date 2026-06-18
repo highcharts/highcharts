@@ -24,6 +24,7 @@ import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 
+import { borderRadiusObject } from '../../Extensions/BorderRadius.js';
 import BoxPlotSeriesDefaults from './BoxPlotSeriesDefaults.js';
 import ColumnSeries from '../Column/ColumnSeries.js';
 import H from '../../Core/Globals.js';
@@ -308,24 +309,24 @@ class BoxPlotSeries extends ColumnSeries {
                     point.medianShape.attr(medianAttr);
                 }
 
-                let d: SVGPath;
-
                 // The stem
                 const stemX = crisp(
                     (point.plotX || 0) + (series.pointXOffset || 0) +
                         ((series.barW || 0) / 2),
                     point.stem.strokeWidth()
                 );
-                d = [
-                    // Stem up
-                    ['M', stemX, q3Plot],
-                    ['L', stemX, highPlot],
 
-                    // Stem down
-                    ['M', stemX, q1Plot],
-                    ['L', stemX, lowPlot]
-                ];
-                point.stem[verb]({ d });
+                point.stem[verb]({
+                    d: [
+                        // Stem up
+                        ['M', stemX, q3Plot],
+                        ['L', stemX, highPlot],
+
+                        // Stem down
+                        ['M', stemX, q1Plot],
+                        ['L', stemX, lowPlot]
+                    ]
+                });
 
                 // The box
                 if (doQuartiles) {
@@ -336,34 +337,24 @@ class BoxPlotSeries extends ColumnSeries {
                     right = crisp(right, boxStrokeWidth);
 
                     // Optionally round the corners of the box
-                    const brOption = options.borderRadius,
-                        radius = brOption && typeof brOption === 'object' ?
-                            (brOption.radius || 0) : (brOption || 0),
-                        r = Math.min(
-                            relativeLength(radius, right - x),
-                            (right - x) / 2,
-                            Math.abs(q1Plot - q3Plot) / 2
-                        );
+                    const r = Math.min(
+                        relativeLength(
+                            borderRadiusObject(options.borderRadius).radius,
+                            right - x
+                        ),
+                        (right - x) / 2,
+                        Math.abs(q1Plot - q3Plot) / 2
+                    );
 
-                    if (r) {
-                        d = renderer.symbols.roundedRect(
+                    point.box[verb]({
+                        d: renderer.symbols.roundedRect(
                             x,
                             Math.min(q1Plot, q3Plot),
                             right - x,
                             Math.abs(q1Plot - q3Plot),
                             { r }
-                        );
-                    } else {
-                        d = [
-                            ['M', x, q3Plot],
-                            ['L', x, q1Plot],
-                            ['L', right, q1Plot],
-                            ['L', right, q3Plot],
-                            ['L', x, q3Plot],
-                            ['Z']
-                        ];
-                    }
-                    point.box[verb]({ d });
+                        )
+                    });
                 }
 
                 // The whiskers
@@ -394,11 +385,12 @@ class BoxPlotSeries extends ColumnSeries {
                     point.medianShape.strokeWidth()
                 );
 
-                d = [
-                    ['M', x, medianPlot],
-                    ['L', right, medianPlot]
-                ];
-                point.medianShape[verb]({ d });
+                point.medianShape[verb]({
+                    d: [
+                        ['M', x, medianPlot],
+                        ['L', right, medianPlot]
+                    ]
+                });
             }
         }
 
