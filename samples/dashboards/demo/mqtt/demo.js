@@ -201,14 +201,12 @@ const kpiComponent = {
             type: 'solidgauge'
         },
         pane: {
-            innerRadius: '80%',
             endAngle: 90,
             startAngle: -90
         },
         yAxis: {
             title: {
-                text: measInfo.descr('P_gen'),
-                y: -80
+                text: measInfo.descr('P_gen')
             },
             labels: {
                 distance: '100%',
