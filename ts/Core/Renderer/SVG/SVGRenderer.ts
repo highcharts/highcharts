@@ -56,7 +56,7 @@ const {
     symbolSizes,
     win
 } = H;
-import Palette from '../../Color/Palette';
+import Palette from '../../Color/Palette.js';
 import SVGElement from './SVGElement.js';
 import SVGLabel from './SVGLabel.js';
 import Symbols from './Symbols.js';
