@@ -25,7 +25,6 @@ import type {
 
 import D from '../../Core/Defaults.js';
 const { defaultOptions } = D;
-import { Palette } from '../../Core/Color/Palettes.js';
 
 /* *
  *
@@ -37,8 +36,10 @@ import { Palette } from '../../Core/Color/Palettes.js';
  * A background item or an array of such for the pane. When used in
  * `Highcharts.setOptions` for theming, the background must be a single item.
  *
- * @sample {highcharts} highcharts/demo/gauge-speedometer/
- *         Speedometer gauge with multiple backgrounds
+ * @sample   highcharts/pane/background
+ *           Pane background options
+ * @sample {highcharts} highcharts/series-solidgauge/pane-borderradius
+ *         Solid gauge with background settings
  *
  * @type         {*|Array<*>}
  * @requires     highcharts-more
@@ -72,75 +73,70 @@ const background: PaneBackgroundOptions = {
      * @product highcharts
      * @requires highcharts-more
      */
-    shape: 'circle',
+    shape: 'arc',
 
     /**
-     * The border radius of the pane background when the shape is `arc`. Can be
-     * a number (pixels) or a percentage string.
+     * The specific border radius of the pane background when the shape is
+     * `arc`. Can be a number (pixels) or a percentage string. Defaults to the
+     * value of `pane.borderRadius`.
      *
      * @since 11.4.2
-     * @sample  highcharts/series-solidgauge/pane-borderradius
-     *          Circular gauge and pane with equal border radius
+     * @sample  highcharts/series-solidgauge/pane-borderradius Circular gauge
+     *          and pane with equal border radius
      * @product highcharts
      * @type    {number|string}
      * @requires highcharts-more
      */
-    borderRadius: 0,
+    borderRadius: void 0,
 
     /**
      * The pixel border width of the pane background.
      *
+     * @sample   highcharts/pane/background
+     *           Pane background options
      * @since 2.3.0
      * @product highcharts
      * @requires highcharts-more
      */
-    borderWidth: 1,
+    borderWidth: 0,
 
     /**
      * The pane background border color.
      *
+     * @sample   highcharts/pane/background
+     *           Pane background options
      * @type    {Highcharts.ColorType}
      * @since   2.3.0
      * @product highcharts
      * @requires highcharts-more
      */
-    borderColor: Palette.neutralColor20,
+    borderColor: 'var(--highcharts-neutral-color-20)',
 
     /**
      * The background color or gradient for the pane.
      *
+     * @sample   highcharts/pane/background
+     *           Pane background options
      * @type    {Highcharts.ColorType}
-     * @default { linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 }, stops: [[0, #ffffff], [1, #e6e6e6]] }
      * @since   2.3.0
      * @product highcharts
      * @requires highcharts-more
      */
-    backgroundColor: {
-
-        /** @ignore-option */
-        linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
-
-        /** @ignore-option */
-        stops: [
-            [0, Palette.backgroundColor],
-            [1, Palette.neutralColor10]
-        ]
-
-    },
+    backgroundColor: 'var(--highcharts-neutral-color-3)',
 
     /** @ignore-option */
     from: -Number.MAX_VALUE, // Corrected to axis min
 
     /**
      * The inner radius of the pane background. Can be either numeric
-     * (pixels) or a percentage string.
+     * (pixels) or a percentage string. Defaults to match the `pane.innerSize`.
      *
      * @type    {number|string}
      * @since   2.3.0
      * @product highcharts
      * @requires highcharts-more
+     * @apioption pane.background.innerRadius
      */
-    innerRadius: 0,
 
     /** @ignore-option */
     to: Number.MAX_VALUE, // Corrected to axis max
@@ -154,7 +150,7 @@ const background: PaneBackgroundOptions = {
      * @product  highcharts
      * @requires highcharts-more
      */
-    outerRadius: '105%'
+    outerRadius: '100%'
 
 };
 
@@ -173,13 +169,13 @@ const background: PaneBackgroundOptions = {
  */
 const pane: PaneOptions|Array<PaneOptions> = {
 
-    background,
-
     /**
      * The end angle of the polar X axis or gauge value axis, given in
-     * degrees where 0 is north. Defaults to
-     * [startAngle](#pane.startAngle) plus 360.
+     * degrees where 0 is north. Defaults to [startAngle](#pane.startAngle)
+     * + 360 for polar charts, `startAngle` + 240 for gauges.
      *
+     * @sample   {highcharts} highcharts/pane/size
+     *           Responsive pane size and center
      * @sample {highcharts} highcharts/demo/gauge-vu-meter/
      *         VU-meter with custom start and end angle
      *
@@ -191,59 +187,122 @@ const pane: PaneOptions|Array<PaneOptions> = {
      */
 
     /**
-     * The center of a polar chart or angular gauge, given as an array
-     * of [x, y] positions. Positions can be given as integers that
-     * transform to pixels, or as percentages of the plot area size.
+     * The border radius of the elements of the pane. This affects the pane
+     * background, plot bands and solid gauges, unless they have specific
+     * border radius settings.
      *
+     * @sample  highcharts/pane/borderradius
+     *          Border radius
+     * @type    {number|string}
+     * @since   13.0.0
+     * @product highcharts
+     */
+    borderRadius: 3,
+
+    /**
+     * The center of a polar chart or angular gauge, given as an array of [x, y]
+     * positions. Positions can be given as integers that transform to pixels,
+     * or as percentages of the plot area size.
+     *
+     * By default, the center is calculated to fit the plot area, depending on
+     * the `startAngle` and `endAngle`, `margin`, background shape, axis labels,
+     * and gauge data labels.
+     *
+     * @sample {highcharts} highcharts/pane/size
+     *         Responsive pane size and center
      * @sample {highcharts} highcharts/demo/gauge-vu-meter/
      *         Two gauges with different center
      *
      * @type    {Array<string|number>}
+     * @default ["50%", undefined]
      * @since   2.3.0
      * @product highcharts
      * @requires highcharts-more
+     * @apioption pane.center
      */
-    center: ['50%', '50%'],
-
-    /**
-     * The size of the pane, either as a number defining pixels, or a
-     * percentage defining a percentage of the available plot area (the
-     * smallest of the plot height or plot width).
-     *
-     * @sample {highcharts} highcharts/demo/gauge-vu-meter/
-     *         Smaller size
-     *
-     * @type    {number|string}
-     * @product highcharts
-     * @requires highcharts-more
-     */
-    size: '85%',
 
     /**
      * The inner size of the pane, either as a number defining pixels, or a
-     * percentage defining a percentage of the pane's size.
+     * percentage defining a percentage of the pane's size. Defaults to 0 on
+     * polar charts, 80% on gauges.
      *
+     * @sample   {highcharts} highcharts/pane/size-percent
+     *           Gauge with pane sizing
      * @sample {highcharts} highcharts/series-polar/column-inverted-inner
      *         The inner size set to 20%
      *
      * @type    {number|string}
      * @product highcharts
      * @requires highcharts-more
+     * @apioption pane.innerSize
      */
-    innerSize: '0%',
+
+    /**
+     * The size of the pane, either as a number defining pixels, or a percentage
+     * defining a percentage of the available plot area (the smallest of the
+     * plot height or plot width).
+     *
+     * By default, the size is calculated to fit the plot area, depending on the
+     * `startAngle` and `endAngle`, `margin`, background shape, axis labels,
+     * and gauge data labels.
+     *
+     * @sample   {highcharts} highcharts/pane/size-percent
+     *           Gauge with pane sizing
+     * @sample {highcharts} highcharts/pane/size
+     *         Responsive pane size and center
+     * @sample {highcharts} highcharts/demo/gauge-vu-meter/
+     *         Smaller size
+     *
+     * @type    {number|string}
+     * @default undefined
+     * @product highcharts
+     * @apioption pane.size
+     */
 
     /**
      * The start angle of the polar X axis or gauge axis, given in degrees
-     * where 0 is north.
+     * where 0 is north. Defaults to 0 for polar charts, -135 for gauges.
      *
+     * @sample {highcharts} highcharts/pane/size
+     *         Responsive pane size and center
      * @sample {highcharts} highcharts/demo/gauge-vu-meter/
      *         VU-meter with custom start and end angle
      *
      * @since   2.3.0
      * @product highcharts
+     * @type      {number}
      * @requires highcharts-more
+     * @apioption pane.startAngle
      */
-    startAngle: 0
+
+    /**
+     * The thickness of the pane in terms of pixels. This applies to the pane
+     * background, plot bands and solid gauges. Use this for a fixed width pane
+     * across different sizes, where `size` and `innerSize` are not practical.
+     *
+     * @sample   {highcharts} highcharts/pane/thickness
+     *           Pane thickness
+     *
+     * @since    13.0.0
+     * @product  highcharts
+     * @type     {number}
+     * @requires highcharts-more
+     * @apioption pane.thickness
+     */
+
+    /**
+     * The margin between the pane and the plot area when auto-fitting the pane.
+     * This does not apply when an explicit `pane.size` is set. An array sets
+     * individual margins for the sides in the order [top, right, bottom, left].
+     *
+     * By default, the margin is approximated to make room for the radial axis
+     * labels of a gauge chart.
+     *
+     * @type    {number|Array<number>}
+     * @since   13.0.0
+     * @sample  {highcharts} highcharts/pane/margin
+     */
+    margin: void 0
 
 };
 

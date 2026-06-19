@@ -140,6 +140,8 @@ interface PolygonSeriesOptions extends ScatterSeriesOptions {
 
     fillColor?: ColorType;
 
+    fillOpacity?: number;
+
     /**
      * @default 'rectangle'
      */

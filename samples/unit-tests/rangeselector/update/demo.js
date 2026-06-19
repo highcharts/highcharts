@@ -90,19 +90,26 @@ QUnit.test('RangeSelector update', function (assert) {
             allButtonsEnabled: true,
             buttonTheme: {
                 style: {
-                    color: '#FF00FF'
+                    color: 'rgb(255, 0, 255)'
                 }
             }
         }
     });
 
     const buttonColors = chart.rangeSelector.buttons.map(
-        btn => btn.text.styles.color
+        btn => btn.text.element.style.fill
     );
 
     assert.deepEqual(
         buttonColors,
-        ['#FF00FF', '#FF00FF', '#FF00FF', '#000000', '#FF00FF', '#FF00FF'],
+        [
+            'rgb(255, 0, 255)',
+            'rgb(255, 0, 255)',
+            'rgb(255, 0, 255)',
+            'var(--highcharts-neutral-color-100)',
+            'rgb(255, 0, 255)',
+            'rgb(255, 0, 255)'
+        ],
         `All active range selector buttons color should be updated, except for
         the selected one, #23125.`
     );
@@ -122,7 +129,7 @@ QUnit.test('RangeSelector update hover', function (assert) {
 
     assert.strictEqual(
         chart.rangeSelector.buttons[1].fill,
-        '#e6e6e6',
+        'var(--highcharts-neutral-color-10)',
         'Color of the button should be correct'
     );
 });

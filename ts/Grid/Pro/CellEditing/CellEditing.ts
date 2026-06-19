@@ -98,6 +98,7 @@ class CellEditing {
      */
     public startEditing(cell: TableCell): void {
         if (
+            !cell.isEditable() ||
             this.editedCell === cell || (
                 // If value is invalid, do not start new editing
                 this.editedCell && !this.stopEditing()

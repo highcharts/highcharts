@@ -91,7 +91,6 @@ const columns = [
 Grid.grid('container', {
     data: {
         columns,
-        idColumn: 'path',
         treeView: {
             input: {
                 type: 'path'
