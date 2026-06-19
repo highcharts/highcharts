@@ -46,7 +46,7 @@ const {
     updateNthPoint,
     updateRectSize
 } = STU;
-import FibonacciTimeZones from '../../Extensions/Annotations/Types/FibonacciTimeZones';
+import FibonacciTimeZones from '../../Extensions/Annotations/Types/FibonacciTimeZones.js';
 import getIcon from '../../Shared/BaseFormUtils.js';
 import StockToolsIcons from './StockToolsIcons.js';
 import { fireEvent, merge } from '../../Shared/Utilities.js';
