@@ -1072,6 +1072,10 @@ function onDestroy(
         grid
     } = this as GridAxisComposition;
 
+    if (!grid) {
+        return;
+    }
+
     (grid.columns || []).forEach(
         (column): void => column.destroy(e.keepEvents)
     );
