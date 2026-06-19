@@ -363,3 +363,76 @@ QUnit.test(
         });
     }
 );
+
+QUnit.test(
+    'Scatter-like series honor globally shared tooltips',
+    function (assert) {
+        const globalShared = Highcharts.defaultOptions.tooltip.shared,
+            chartOptions = {
+                chart: {
+                    animation: false
+                },
+                plotOptions: {
+                    series: {
+                        animation: false
+                    }
+                },
+                series: []
+            };
+        let chart;
+
+        Highcharts.setOptions({
+            tooltip: {
+                shared: true
+            }
+        });
+
+        try {
+            ['scatter', 'bubble'].forEach(function (type) {
+                chartOptions.chart.type = type;
+                chartOptions.series = [
+                    {
+                        data: type === 'bubble' ?
+                            [[0, 1, 1], [1, 2, 1]] :
+                            [[0, 1], [1, 2]]
+                    },
+                    {
+                        data: type === 'bubble' ?
+                            [[0, 2, 1], [1, 3, 1]] :
+                            [[0, 2], [1, 3]]
+                    }
+                ];
+
+                chart = Highcharts.chart('container', chartOptions);
+
+                assert.strictEqual(
+                    chart.series[0].tooltipOptions.shared,
+                    true,
+                    `${type} should include global shared tooltip options`
+                );
+                assert.strictEqual(
+                    chart.series[0].noSharedTooltip,
+                    false,
+                    `${type} should support globally shared tooltips`
+                );
+                assert.strictEqual(
+                    chart.series[0].stickyTracking,
+                    true,
+                    `${type} should keep shared-tooltip sticky tracking`
+                );
+
+                chart.destroy();
+                chart = void 0;
+            });
+        } finally {
+            if (chart) {
+                chart.destroy();
+            }
+            Highcharts.setOptions({
+                tooltip: {
+                    shared: globalShared
+                }
+            });
+        }
+    }
+);

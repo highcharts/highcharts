@@ -21,7 +21,6 @@
 import type ScatterPoint from './ScatterPoint';
 import type ScatterSeriesOptions from './ScatterSeriesOptions';
 import type { SeriesTypeOptions } from '../../Core/Series/SeriesType';
-import type TooltipOptions from '../../Core/TooltipOptions';
 import type { DeepPartial } from '../../Shared/Types';
 
 import ScatterSeriesDefaults from './ScatterSeriesDefaults.js';
@@ -100,23 +99,16 @@ class ScatterSeries extends LineSeries {
     public setOptions(
         itemOptions: DeepPartial<SeriesTypeOptions>
     ): this['options'] {
-        const chartOptions = this.chart.options,
-            plotOptions = chartOptions.plotOptions || {},
-            typePlotOptions = (plotOptions[this.type] || {}) as
-                DeepPartial<ScatterSeriesOptions>,
-            tooltipOptions = merge(
-                chartOptions.tooltip,
-                plotOptions.series?.tooltip,
-                typePlotOptions.tooltip,
-                itemOptions.tooltip
-            ) as TooltipOptions;
+        this.noSharedTooltip = !this.isCartesian;
+
+        const options = super.setOptions(itemOptions);
 
         this.noSharedTooltip = !(
             this.isCartesian &&
-            tooltipOptions.shared
+            this.tooltipOptions.shared
         );
 
-        return super.setOptions(itemOptions);
+        return options;
     }
 
     /* eslint-disable valid-jsdoc */
