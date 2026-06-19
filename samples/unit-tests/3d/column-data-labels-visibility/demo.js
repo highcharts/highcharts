@@ -50,7 +50,7 @@ QUnit.test('3D columns dataLabels initial visibility', function (assert) {
         'dataLabel should be in proper x position'
     );
     assert.close(
-        dataLabel.y + dataLabel.height,
+        dataLabel.y + dataLabel.height + dataLabel.options.distance,
         points[0].plot3d.y,
         4,
         'dataLabel should be in proper y position'
@@ -64,7 +64,7 @@ QUnit.test('3D columns dataLabels initial visibility', function (assert) {
         'dataLabel should be in proper x position'
     );
     assert.close(
-        dataLabel.y + dataLabel.height,
+        dataLabel.y + dataLabel.height + dataLabel.options.distance,
         points[1].plot3d.y,
         4,
         'dataLabel should be in proper y position'
@@ -90,7 +90,7 @@ QUnit.test('3D columns dataLabels initial visibility', function (assert) {
         'dataLabel should be in proper x position'
     );
     assert.close(
-        dataLabel.y + dataLabel.height,
+        dataLabel.y + dataLabel.height + dataLabel.options.distance,
         points[0].plot3d.y,
         4,
         'dataLabel should be in proper y position'
@@ -104,7 +104,7 @@ QUnit.test('3D columns dataLabels initial visibility', function (assert) {
         'dataLabel should be in proper x position'
     );
     assert.close(
-        dataLabel.y + dataLabel.height,
+        dataLabel.y + dataLabel.height + dataLabel.options.distance,
         points[1].plot3d.y,
         4,
         'dataLabel should be in proper y position'

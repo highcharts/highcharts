@@ -155,12 +155,6 @@ const kpiGaugeOptions = {
         type: 'solidgauge'
     },
     pane: {
-        background: {
-            innerRadius: '90%',
-            outerRadius: '120%',
-            shape: 'arc'
-        },
-        center: ['50%', '70%'],
         endAngle: 90,
         startAngle: -90
     },
@@ -182,10 +176,7 @@ const kpiGaugeOptions = {
             format: '{y:.1f}',
             y: -25
         },
-        enableMouseTracking: false,
-        innerRadius: '90%',
-        radius: '120%',
-        clip: false
+        enableMouseTracking: false
     }],
     accessibility: {
         typeDescription: 'The gauge chart with 1 data point.'

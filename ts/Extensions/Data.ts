@@ -29,12 +29,14 @@ import type SeriesOptions from '../Core/Series/SeriesOptions';
 import Axis from '../Core/Axis/Axis.js';
 import Chart from '../Core/Chart/Chart.js';
 import { getOptions } from '../Core/Defaults.js';
+import DataTableCore from '../Data/DataTableCore.js';
 import G from '../Core/Globals.js';
 const { doc } = G;
 import { ajax } from '../Core/HttpUtilities.js';
 import Point from '../Core/Series/Point.js';
 import SeriesRegistry from '../Core/Series/SeriesRegistry.js';
 const { seriesTypes } = SeriesRegistry;
+import Time from '../Core/Time.js';
 import {
     addEvent,
     defined,
@@ -450,7 +452,7 @@ interface DataOptions {
      *
      * @since 4.0
      */
-    parseDate?: DataParseDateCallbackFunction;
+    parseDate?: DataParseDateCallbackFunction|false;
 
     /**
      * The same as the columns input option, but defining rows instead of
@@ -2213,6 +2215,9 @@ class Data {
         if (parseDate) {
             ret = parseDate(val);
 
+        } else if (parseDate === false) {
+            ret = val;
+
         } else if (typeof val === 'string') {
             // Auto-detect the date format the first time
             if (!dateFormat) {
@@ -2244,33 +2249,7 @@ class Data {
             }
             // Fall back to Date.parse
             if (!match) {
-                if (val.match(/:.+(GMT|UTC|[Z+\-])/)) {
-                    val = val
-                        .replace(
-                            /\s*(?:GMT|UTC)?([+\-])(\d\d)(\d\d)$/,
-                            '$1$2:$3'
-                        )
-                        .replace(/(?:\s+|GMT|UTC)([+\-])/, '$1')
-                        .replace(/(\d)\s*(?:GMT|UTC|Z)$/, '$1+00:00');
-                }
-                match = Date.parse(val);
-                // External tools like Date.js and MooTools extend Date object
-                // and return a date.
-                if (
-                    typeof match === 'object' &&
-                    match !== null &&
-                    (match as Date).getTime
-                ) {
-                    ret = (
-                        (match as Date).getTime() -
-                        (match as Date).getTimezoneOffset() *
-                        60000
-                    );
-
-                // Timestamp
-                } else if (isNumber(match)) {
-                    ret = match - (new Date(match)).getTimezoneOffset() * 60000;
-                }
+                ret = new Time().parse(val);
             }
         }
         return ret as any;
@@ -2294,6 +2273,40 @@ class Data {
         if (this.columns) {
             return this.rowsToColumns(this.columns)?.slice(1);
         }
+    }
+
+    /**
+     * Return a DataTable with the parsed data
+     *
+     * @example
+     * const csv = await fetch(
+     *   'https://www.example.com/sample-data.csv'
+     * ).then(result => result.text());
+     * const dataTable = new Highcharts.Data({ csv }).getDataTable();
+     *
+     * @sample highcharts/data/getdatatable
+     *
+     * @function Highcharts.Data#getDataTable
+     *
+     * @since 13.0.0
+     * @return {Highcharts.DataTable} DataTable with the parsed data
+     */
+    public getDataTable(): DataTableCore {
+        return new DataTableCore({
+            columns: Object.values(this.columns || [])
+                .reduce((dtColumns, dtColumn): DataTableCore['columns'] => {
+                    // To avoid shifting the original column, create a copy
+                    const column = dtColumn.slice(),
+                        columnId = column.shift();
+                    if (
+                        typeof columnId === 'string' ||
+                        typeof columnId === 'number'
+                    ) {
+                        dtColumns[columnId] = column;
+                    }
+                    return dtColumns;
+                }, {} as DataTableCore['columns'])
+        });
     }
 
     /**
@@ -3212,7 +3225,7 @@ export default Data;
  * the [googleSpreadsheetRange](#data.googleSpreadsheetRange) option to load a
  * specific sheet.
  *
- * @deprecated
+ * @deprecated 9.2.2
  * @type      {string}
  * @since     4.0
  * @apioption data.googleSpreadsheetWorksheet
@@ -3263,12 +3276,15 @@ export default Data;
  */
 
 /**
- * A callback function to parse string representations of dates into
- * JavaScript timestamps. Should return an integer timestamp on success.
+ * A callback function to parse string representations of dates into JavaScript
+ * timestamps. Should return an integer timestamp on success.
+ *
+ * Set `false` to disable date parsing. Highcharts supports internal date
+ * parsing as of v12.
  *
  * @see [dateFormat](#data.dateFormat)
  *
- * @type      {Highcharts.DataParseDateCallbackFunction}
+ * @type      {Highcharts.DataParseDateCallbackFunction|false}
  * @since     4.0
  * @apioption data.parseDate
  */

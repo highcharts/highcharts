@@ -20,8 +20,6 @@
 
 import type ErrorBarSeriesOptions from './ErrorBarSeriesOptions';
 
-import { Palette } from '../../Core/Color/Palettes.js';
-
 /* *
  *
  *  API Options
@@ -41,7 +39,7 @@ import { Palette } from '../../Core/Color/Palettes.js';
  *         Error bars with data labels
  *
  * @extends      plotOptions.boxplot
- * @excluding    boostBlending, boostThreshold
+ * @excluding    borderRadius, boostBlending, boostThreshold
  * @product      highcharts
  * @requires     highcharts-more
  * @optionparent plotOptions.errorbar
@@ -59,7 +57,7 @@ const ErrorBarSeriesDefaults: ErrorBarSeriesOptions = {
      * @since   3.0
      * @product highcharts
      */
-    color: Palette.neutralColor100,
+    color: 'var(--highcharts-neutral-color-100)',
 
     grouping: false,
 

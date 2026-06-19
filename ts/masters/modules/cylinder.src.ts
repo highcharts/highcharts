@@ -15,7 +15,7 @@
  */
 'use strict';
 import Highcharts from '../../Core/Globals.js';
+import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 import CylinderSeries from '../../Series/Cylinder/CylinderSeries.js';
-import RendererRegistry from '../../Core/Renderer/RendererRegistry.js';
-CylinderSeries.compose(RendererRegistry.getRendererType());
+CylinderSeries.compose(SVGRenderer);
 export default Highcharts;

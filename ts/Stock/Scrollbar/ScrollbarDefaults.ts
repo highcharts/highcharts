@@ -20,8 +20,6 @@
 
 import type ScrollbarOptions from './ScrollbarOptions';
 
-import { Palette } from '../../Core/Color/Palettes.js';
-
 /* *
  *
  *  Constant
@@ -153,7 +151,7 @@ const ScrollbarDefaults: ScrollbarOptions = {
      *
      * @type {Highcharts.ColorType}
      */
-    barBackgroundColor: Palette.neutralColor20,
+    barBackgroundColor: 'var(--highcharts-neutral-color-20)',
 
     /**
      * The width of the bar's border.
@@ -168,7 +166,7 @@ const ScrollbarDefaults: ScrollbarOptions = {
      *
      * @type {Highcharts.ColorType}
      */
-    barBorderColor: Palette.neutralColor20,
+    barBorderColor: 'var(--highcharts-neutral-color-20)',
 
     /**
      * The color of the small arrow inside the scrollbar buttons.
@@ -178,7 +176,7 @@ const ScrollbarDefaults: ScrollbarOptions = {
      *
      * @type {Highcharts.ColorType}
      */
-    buttonArrowColor: Palette.neutralColor80,
+    buttonArrowColor: 'var(--highcharts-neutral-color-80)',
 
     /**
      * The color of scrollbar buttons.
@@ -188,7 +186,7 @@ const ScrollbarDefaults: ScrollbarOptions = {
      *
      * @type {Highcharts.ColorType}
      */
-    buttonBackgroundColor: Palette.neutralColor10,
+    buttonBackgroundColor: 'var(--highcharts-neutral-color-10)',
 
     /**
      * The color of the border of the scrollbar buttons.
@@ -198,7 +196,7 @@ const ScrollbarDefaults: ScrollbarOptions = {
      *
      * @type {Highcharts.ColorType}
      */
-    buttonBorderColor: Palette.neutralColor20,
+    buttonBorderColor: 'var(--highcharts-neutral-color-20)',
 
     /**
      * The border width of the scrollbar buttons.
@@ -233,7 +231,7 @@ const ScrollbarDefaults: ScrollbarOptions = {
      *
      * @type {Highcharts.ColorType}
      */
-    trackBorderColor: Palette.neutralColor20,
+    trackBorderColor: 'var(--highcharts-neutral-color-20)',
 
     /**
      * The corner radius of the border of the scrollbar track.

@@ -119,6 +119,19 @@ class GanttSeries extends XRangeSeries {
      *
      * */
 
+    public getColumn(columnName: string): Array<number> {
+        const time = this.chart.time;
+        if (columnName === 'x') {
+            const startColumn = super.getColumn('start');
+            if (startColumn.length) {
+                return startColumn.map((val: number|string): number =>
+                    time.parse(val) || 0
+                );
+            }
+        }
+        return super.getColumn.apply(this, arguments);
+    }
+
     /**
      * Draws a single point in the series.
      *
@@ -138,7 +151,7 @@ class GanttSeries extends XRangeSeries {
      */
     public drawPoint(
         point: GanttPoint,
-        verb: string
+        verb: ('animate'|'attr')
     ): void {
         const series = this,
             seriesOpts = series.options,
