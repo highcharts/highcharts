@@ -23,8 +23,9 @@
  * */
 
 import type Grid from '../../Core/Grid';
+import type { GridCapabilities } from '../../Core/Grid';
 
-import { validate } from './LicenseValidation.js';
+import { getStatus, validate } from './LicenseValidation.js';
 import Globals from '../../Core/Globals.js';
 import { addEvent, pushUnique } from '../../../Shared/Utilities.js';
 
@@ -49,6 +50,7 @@ function compose(GridClass: typeof Grid): void {
 
     addEvent(GridClass, 'afterLoad', validateLicense);
     addEvent(GridClass, 'afterUpdate', validateLicense);
+    addEvent(GridClass, 'updateCapabilities', updateKeyCapability);
 }
 
 /**
@@ -58,6 +60,25 @@ function compose(GridClass: typeof Grid): void {
  */
 function validateLicense(this: Grid): void {
     validate(this);
+}
+
+/**
+ * Adds Grid Key status to the derived capabilities object.
+ *
+ * @param this
+ * Grid instance.
+ *
+ * @param e
+ * Capabilities update event.
+ *
+ * @param e.capabilities
+ * Derived Grid capabilities object.
+ */
+function updateKeyCapability(
+    this: Grid,
+    e: { capabilities: GridCapabilities }
+): void {
+    e.capabilities.key = getStatus(this.options?.gridKey);
 }
 
 /* *
