@@ -407,6 +407,8 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      * @type    {Highcharts.DataMappingOptionsObject}
      * @sample highcharts/datatable/datamapping
      *         Basic data mapping
+     * @sample highcharts/datatable/datamapping-dynamic
+     *         Data mapping with dynamic updates
      * @sample {highcharts} highcharts/datatable/series-datatable-multiple
      *         Series with two data tables
      * @sample {highcharts} highcharts/datatable/nested-keys
