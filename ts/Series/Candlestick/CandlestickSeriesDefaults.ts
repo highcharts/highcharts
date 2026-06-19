@@ -75,8 +75,8 @@ const CandlestickSeriesDefaults: CandlestickSeriesOptions = {
 
     /**
      * What type of legend symbol to render for this series. For candlestick
-     * series, the default is `candlestick`, a vertical line (wick) with a
-     * rectangular body.
+     * series, the default is `candlestick`, showing a filled (down) and a
+     * hollow (up) candle, each a wick with a rectangular body.
      *
      * @sample {highstock} stock/plotoptions/financial-legend-symbols/
      *         Candlestick, OHLC and HLC legend symbols
