@@ -26,10 +26,15 @@
 import type {
     FilterCondition
 } from '../../../Data/Modifiers/FilterModifierOptions.js';
-import type { FilteringCondition } from '../Options.js';
+import type {
+    ColumnFilteringOptions,
+    FilteringCondition
+} from '../Options.js';
 
 import FilterModifier from '../../../Data/Modifiers/FilterModifier.js';
 import QueryingController from './QueryingController.js';
+import type { Condition } from '../Table/Actions/ColumnFiltering/FilteringTypes.js';
+import { operatorAliases } from '../Table/Actions/ColumnFiltering/FilteringTypes.js';
 import { isString } from '../../../Shared/Utilities.js';
 
 
@@ -100,9 +105,18 @@ class FilteringController {
      */
     public static mapOptionsToFilter(
         columnId: string,
-        options: FilteringCondition
+        options: ColumnFilteringOptions
     ): FilterCondition | undefined {
-        const { condition, value } = options;
+        const condition = options.rule?.operator ?? options.condition;
+        let operator: Condition | undefined;
+        if (condition) {
+            // TODO: Remove, deprecated.
+            // Legacy `before`/`after` → `lessThan`/`greaterThan` aliases.
+            const alias =
+                operatorAliases[condition as keyof typeof operatorAliases];
+            operator = (alias ?? condition) as Condition;
+        }
+        const value = options.rule?.value ?? options.value;
         const isStringValue = isString(value);
         const stringifiedValue = isStringValue ? value : '';
         const nonValueConditions = ['empty', 'notEmpty', 'true', 'false'];
@@ -111,12 +125,12 @@ class FilteringController {
             (
                 typeof value === 'undefined' ||
                 (isStringValue && !stringifiedValue)
-            ) && !nonValueConditions.includes(condition ?? '')
+            ) && !nonValueConditions.includes(operator ?? '')
         ) {
             return;
         }
 
-        switch (condition) {
+        switch (operator) {
             case 'contains':
                 return {
                     columnId,
@@ -187,20 +201,6 @@ class FilteringController {
                 return {
                     columnId,
                     operator: '<=',
-                    value
-                };
-
-            case 'before':
-                return {
-                    columnId,
-                    operator: '<',
-                    value
-                };
-
-            case 'after':
-                return {
-                    columnId,
-                    operator: '>',
                     value
                 };
 
@@ -321,7 +321,10 @@ class FilteringController {
                 .getIndividualColumnOptions(columnId)
                 ?.filtering;
 
-            if (!filteringOptions || !sourceColumnId) {
+            if (
+                !filteringOptions ||
+                !sourceColumnId
+            ) {
                 continue;
             }
 

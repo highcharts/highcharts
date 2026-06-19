@@ -133,7 +133,7 @@ declare module '../Core/Renderer/SVG/SymbolOptions' {
          * is relative to the column width, for pies it is relative to the
          * radius and the inner radius.
          */
-        borderRadius?: number|string;
+        borderRadius?: number|string|Partial<BorderRadiusOptionsObject>;
 
         /**
          * The height of the border-radius box.
@@ -321,7 +321,10 @@ function arc(
     const alpha = end - start,
         sinHalfAlpha = Math.sin(alpha / 2),
         borderRadius = Math.max(Math.min(
-            relativeLength(options.borderRadius || 0, r - innerR),
+            relativeLength(
+                borderRadiusObject(options.borderRadius).radius,
+                r - innerR
+            ),
             // Cap to half the sector radius
             (r - innerR) / 2,
             // For smaller pie slices, cap to the largest small circle that
@@ -368,7 +371,7 @@ function seriesOnAfterColumnTranslate(
             seriesDefault = defaultOptions.plotOptions
                 ?.[this.type]
                 ?.borderRadius,
-            borderRadius = optionsToObject(
+            borderRadius = borderRadiusObject(
                 options.borderRadius,
                 isObject(seriesDefault) ? seriesDefault : {}
             ),
@@ -511,8 +514,12 @@ export function composeBorderRadius(
 
 }
 
-/** @internal */
-export function optionsToObject(
+/**
+ * Utility function to get the full border radius options object, from a simple
+ * number or a partial options object.
+ * @internal
+ */
+export function borderRadiusObject(
     options?: number|string|Partial<BorderRadiusOptionsObject>,
     seriesBROptions?: Partial<BorderRadiusOptionsObject>
 ): BorderRadiusOptionsObject {
@@ -526,7 +533,7 @@ export function optionsToObject(
 function pieSeriesOnAfterTranslate(
     this: PieSeries
 ): void {
-    const borderRadius = optionsToObject(this.options.borderRadius);
+    const borderRadius = borderRadiusObject(this.options.borderRadius);
 
     for (const point of this.points) {
         const shapeArgs = point.shapeArgs;

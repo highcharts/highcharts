@@ -223,8 +223,7 @@ const NavigatorDefaults: NavigatorOptions = {
      *
      * @type    {Highcharts.ColorType}
      */
-    maskFill:
-        'color-mix(var(--highcharts-highlight-color-60) 30%, transparent)',
+    maskFill: 'color-mix(in srgb, var(--highcharts-highlight-color-60) 30%, transparent)', // eslint-disable-line max-len
 
     /**
      * The color of the line marking the currently zoomed area in the
