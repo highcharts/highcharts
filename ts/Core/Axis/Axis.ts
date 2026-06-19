@@ -3275,22 +3275,24 @@ class Axis {
 
         let fontSizePx: number|undefined;
 
-        if (typeof fontSize === 'number') {
-            fontSizePx = fontSize;
-        } else if (typeof fontSize === 'string') {
-            if (/^\d+(\.\d+)?px$/.test(fontSize)) {
-                fontSizePx = parseFloat(fontSize);
-            } else {
-                const container = this.chart.container,
-                    span = doc.createElement('span');
-                span.style.cssText =
-                    `font-size:${fontSize};position:absolute;` +
-                    'visibility:hidden';
-                container.appendChild(span);
-                fontSizePx = parseFloat(
-                    win.getComputedStyle(span).fontSize
-                );
-                container.removeChild(span);
+        if (!this.horiz && !this.isRadial) {
+            if (typeof fontSize === 'number') {
+                fontSizePx = fontSize;
+            } else if (typeof fontSize === 'string') {
+                if (/^\d+(\.\d+)?px$/.test(fontSize)) {
+                    fontSizePx = parseFloat(fontSize);
+                } else {
+                    const container = this.chart.container,
+                        span = doc.createElement('span');
+                    span.style.cssText =
+                        `font-size:${fontSize};position:absolute;` +
+                        'visibility:hidden';
+                    container.appendChild(span);
+                    fontSizePx = parseFloat(
+                        win.getComputedStyle(span).fontSize
+                    );
+                    container.removeChild(span);
+                }
             }
         }
 
@@ -3333,6 +3335,7 @@ class Axis {
                 );
 
                 if (
+                    !isRadial &&
                     spaceNeeded !== Infinity &&
                     slotSize !== Infinity &&
                     range
@@ -3342,7 +3345,7 @@ class Axis {
                     ) + 1;
                     step = Math.min(step, maxStep);
 
-                    if (!horiz && !isRadial) {
+                    if (!horiz) {
                         const getSlotCount = (
                             step: number
                         ): number => {
