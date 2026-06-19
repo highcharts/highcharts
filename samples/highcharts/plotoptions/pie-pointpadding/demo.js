@@ -1,6 +1,15 @@
 // Pie point padding plugin
+//
+// `oldArc` and `applyBorderRadius` below are forked from Highcharts core
+// (ts/Core/Renderer/SVG/Symbols.ts `arc` and ts/Extensions/BorderRadius.ts
+// `applyBorderRadius`) and extended to thread per-point `padding` through the
+// internal angle and corner-radius math. The base arc is private to the
+// BorderRadius module, so it can't be reused via the wrap's `proceed`; this
+// copy will need to be re-synced if those core modules change.
 (function (H) {
-    H.SVGElement.symbolCustomAttribs.push('padding');
+    if (H.SVGElement.symbolCustomAttribs.indexOf('padding') === -1) {
+        H.SVGElement.symbolCustomAttribs.push('padding');
+    }
 
     function oldArc(cx, cy, w, h, options) {
         const arc = [];
@@ -423,8 +432,18 @@ Highcharts.chart('container', {
 
     tooltip: {
         pointFormat: '<span style="color:{point.color}">\u25CF</span> ' +
-            '<b>{point.country}</b><br/>' +
+            '<b>{point.name}</b><br/>' +
             '{point.y:,.0f} TWh ({point.percentage:.1f}%)'
+    },
+
+    accessibility: {
+        description: 'Pie chart showing illustrative annual electricity ' +
+            'consumption in terawatt-hours for a selection of countries, ' +
+            'demonstrating the pie point padding plugin.',
+        point: {
+            valueDescriptionFormat: '{point.name}: {point.y} TWh, ' +
+                '{point.percentage:.1f}%.'
+        }
     },
 
     series: [{
