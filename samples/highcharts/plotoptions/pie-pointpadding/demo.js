@@ -290,8 +290,8 @@
     }
 
     H.wrap(H.Renderer.prototype.symbols, 'arc', function () {
-        const [x, y, w, h, options] = Array.prototype.slice.call(arguments, 1);
-        const path = oldArc(x, y, w, h, options),
+        const [, x, y, w, h, options] = arguments,
+            path = oldArc(x, y, w, h, options),
             {
                 brStart = true,
                 brEnd = true,
@@ -358,8 +358,7 @@
     H.wrap(
         H.Series.types.pie.prototype.pointClass.prototype,
         'haloPath',
-        function () {
-            const [size] = Array.prototype.slice.call(arguments, 1);
+        function (proceed, size) {
             const shapeArgs = this.shapeArgs;
 
             return this.sliced || !this.visible ?
@@ -381,24 +380,23 @@
         }
     );
 
-    H.wrap(H.Series.types.pie.prototype, 'translate', function (proceed) {
-        const props = Array.prototype.slice.call(arguments, 1);
-        proceed.apply(this, props);
-
-        const series = this;
-        let [positions] = props;
+    H.wrap(H.Series.types.pie.prototype, 'translate', function (
+        proceed,
+        positions
+    ) {
+        proceed.call(this, positions);
 
         if (!positions) {
-            positions = series.getCenter();
+            positions = this.getCenter();
         }
 
         const r = positions[2] / 2;
         const padding =
-            H.relativeLength(series.options.pointPadding || 0, r) / 2;
-        const len = series.points.length;
+            H.relativeLength(this.options.pointPadding || 0, r) / 2;
+        const len = this.points.length;
 
         for (let i = 0; i < len; i++) {
-            const point = series.points[i];
+            const point = this.points[i];
             const shapeArgs = {
                 ...point.shapeArgs,
                 r,
