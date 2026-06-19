@@ -322,8 +322,10 @@
                 borderRadius,
                 2 * (alpha / Math.PI) * innerR
             ),
-            // When inner alpha is too small, we skip the inner radius
-            innerAlpha = alpha - 2 * padding / innerR;
+            // When inner alpha is too small, we skip the inner radius. Guard
+            // against a zero inner radius (full pie), where there is no inner
+            // arc to pad.
+            innerAlpha = innerR ? alpha - 2 * padding / innerR : alpha;
 
         // Apply turn-by-turn border radius. Start at the end since we're
         // splicing in arc segments.
