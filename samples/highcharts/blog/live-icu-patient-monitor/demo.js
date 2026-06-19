@@ -7,10 +7,10 @@ function nextValue(current, baseline, variance, min, max) {
 
 // State for each vital
 const state = {
-    hr:  { value: 78,  baseline: 78,  variance: 4,  min: 40,  max: 160 },
-    spo2:{ value: 97,  baseline: 97,  variance: 1,  min: 80,  max: 100 },
-    sbp: { value: 125, baseline: 125, variance: 4,  min: 60,  max: 200 },
-    rr:  { value: 16,  baseline: 16,  variance: 1.5,min: 8,   max: 40  }
+    hr: { value: 78, baseline: 78, variance: 4, min: 40, max: 160 },
+    spo2: { value: 97, baseline: 97, variance: 1, min: 80, max: 100 },
+    sbp: { value: 125, baseline: 125, variance: 4, min: 60, max: 200 },
+    rr: { value: 16, baseline: 16, variance: 1.5, min: 8, max: 40 }
 };
 
 // Simulate a critical event between t+30s and t+60s
@@ -51,10 +51,10 @@ function getNextVitals() {
     }
 
     return {
-        hr:   Math.round(state.hr.value),
+        hr: Math.round(state.hr.value),
         spo2: parseFloat(state.spo2.value.toFixed(1)),
-        sbp:  Math.round(state.sbp.value),
-        rr:   Math.round(state.rr.value)
+        sbp: Math.round(state.sbp.value),
+        rr: Math.round(state.rr.value)
     };
 }
 
@@ -98,10 +98,10 @@ Highcharts.addEvent(Highcharts.Series, 'addPoint', e => {
 
 const initial = buildInitialData();
 
-const chart = Highcharts.chart('container', {
+Highcharts.chart('container', {
     chart: {
         backgroundColor: '#0d1117',
-        style: { fontFamily: "'Courier New', monospace" },
+        style: { fontFamily: '\'Courier New\', monospace' },
         animation: { duration: 500 },
         events: {
             load: function () {
@@ -125,7 +125,8 @@ const chart = Highcharts.chart('container', {
         style: { color: '#e2e8f0', fontSize: '15px', fontWeight: '600' }
     },
     subtitle: {
-        text: 'ICU Bed 3 · Patient ID 7742 · Crisis event will trigger at t+30s',
+        text: 'ICU Bed 3 · Patient ID 7742 · ' +
+    'Crisis event will trigger at t+30s',
         style: { color: '#ef4444', fontSize: '11px' }
     },
 
