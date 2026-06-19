@@ -44,7 +44,7 @@ QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
         );
 
         // Reset zoom
-        yAxis.setExtremes(null, null);
+        chart.zoomOut();
 
         assert.strictEqual(
             yAxis.dataMin,
@@ -97,7 +97,7 @@ QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
         );
 
         // Zoom into a tiny Y sector with few points to disable boost
-        yAxis.setExtremes(995, 1000);
+        yAxis.setExtremes(99.5, 100);
 
         assert.notOk(
             series.boosted,
@@ -105,7 +105,7 @@ QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
         );
 
         // Reset zoom
-        yAxis.setExtremes(null, null);
+        chart.zoomOut();
 
         assert.strictEqual(
             yAxis.dataMin,
