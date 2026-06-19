@@ -54,6 +54,17 @@ QUnit.test(
             'Candlestick hollow body should be filled with upColor'
         );
 
+        // `legendSymbolColor` recolors the filled (series-color) body (#24567).
+        candlestick.update({ legendSymbolColor: '#00ff00' });
+        assert.strictEqual(
+            boxes().find(
+                rect => !rect.classList.contains('highcharts-point-up')
+            ).getAttribute('fill'),
+            '#00ff00',
+            'Candlestick filled body should honor legendSymbolColor'
+        );
+        candlestick.update({ legendSymbolColor: void 0 });
+
         // Hiding the series dims the boxes along with the wicks.
         const filledBox = boxes().find(
                 rect => !rect.classList.contains('highcharts-point-up')

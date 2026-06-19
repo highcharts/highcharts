@@ -17,7 +17,11 @@ const { composed } = H;
 interface LegendBoxSeries {
     color?: ColorType;
     legendSymbolBoxes?: Array<{ element: SVGElement; up?: boolean }>;
-    options: { lineColor?: ColorType; upColor?: ColorType };
+    options: {
+        legendSymbolColor?: ColorType;
+        lineColor?: ColorType;
+        upColor?: ColorType;
+    };
 }
 
 /* *
@@ -141,12 +145,14 @@ namespace FinancialSymbols {
                     boxes = item.legendSymbolBoxes;
 
                 if (boxes && !this.chart.styledMode) {
-                    const { upColor, lineColor } = item.options,
+                    const { upColor, lineColor, legendSymbolColor } =
+                            item.options,
+                        color = legendSymbolColor || item.color,
                         hidden = visible ? void 0 : this.itemHiddenStyle?.color;
 
                     boxes.forEach(({ element, up }): void => {
                         element.attr({
-                            fill: hidden ?? (up ? upColor : item.color),
+                            fill: hidden ?? (up ? upColor : color),
                             stroke: hidden ?? lineColor
                         });
                     });
