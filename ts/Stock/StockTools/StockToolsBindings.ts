@@ -26,6 +26,7 @@ import type {
 } from '../../Extensions/Annotations/AnnotationOptions';
 import type AxisType from '../../Core/Axis/AxisType';
 import type { DeepPartial } from '../../Shared/Types';
+import type FibonacciTimeZones from '../../Extensions/Annotations/Types/FibonacciTimeZones';
 import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
 import type NavigationBindingsOptions from '../../Extensions/Annotations/NavigationBindingsOptions';
 import type PointerEvent from '../../Core/PointerEvent';
@@ -46,7 +47,6 @@ const {
     updateNthPoint,
     updateRectSize
 } = STU;
-import FibonacciTimeZones from '../../Extensions/Annotations/Types/FibonacciTimeZones.js';
 import getIcon from '../../Shared/BaseFormUtils.js';
 import StockToolsIcons from './StockToolsIcons.js';
 import { fireEvent, merge } from '../../Shared/Utilities.js';
