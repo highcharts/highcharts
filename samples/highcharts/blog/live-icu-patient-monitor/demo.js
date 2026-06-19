@@ -140,13 +140,17 @@ Highcharts.chart('container', {
     },
 
     yAxis: [{
-        title: { text: 'HR / RR', style: { color: '#64748b', fontSize: '10px' } },
+        title: {
+            text: 'HR / RR',
+            style: { color: '#64748b', fontSize: '10px' }
+        },
         min: 0,
         max: 160,
         gridLineColor: '#1f2937',
         labels: { style: { color: '#64748b', fontSize: '10px' } },
         plotBands: [{
-            from: 60, to: 100,
+            from: 60,
+            to: 100,
             color: 'rgba(52, 211, 153, 0.05)'
         }],
         plotLines: [{
@@ -156,14 +160,18 @@ Highcharts.chart('container', {
             dashStyle: 'Dot'
         }]
     }, {
-        title: { text: 'SpO₂ / SBP', style: { color: '#64748b', fontSize: '10px' } },
+        title: {
+            text: 'SpO₂ / SBP',
+            style: { color: '#64748b', fontSize: '10px' }
+        },
         min: 60,
         max: 200,
         opposite: true,
         gridLineColor: '#1f2937',
         labels: { style: { color: '#64748b', fontSize: '10px' } },
         plotBands: [{
-            from: 95, to: 100,
+            from: 95,
+            to: 100,
             color: 'rgba(56, 189, 248, 0.05)'
         }],
         plotLines: [{
