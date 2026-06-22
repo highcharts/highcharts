@@ -1426,7 +1426,7 @@ namespace RadialAxis {
                 this.pos,
                 (axis.center[2] / 2) +
                     relativeLength(
-                        labelOptions.distance ?? -25,
+                        labelOptions.distance ?? 15,
                         axis.center[2] / 2
                     ) +
                     axis.offset
