@@ -87,9 +87,9 @@ Use this module-based setup when you need more than one product in the same appl
 
 ### When to use ESM source files
 
-Highcharts also provides lower-level ESM source files under `es-modules/`. These are mainly useful in bundler-based setups when you want tighter control over bundle contents.
+Highcharts also provides lower-level ESM source files under `es-modules/`. These are mainly relevant for advanced use cases, such as custom package workflows or direct control over entry points in bundler-based setups.
 
-This is more advanced than most projects need, and comes with a performance cost if you load many small files individually. In most cases, start with `highcharts`, `highcharts/highstock`, or the `esm/*.js` product bundles shown above.
+Most projects should start with `highcharts`, `highcharts/highstock`, or the `esm/*.js` product bundles shown above.
 
 If you use TypeScript, see [Highcharts TypeScript declarations](https://www.highcharts.com/docs/advanced-chart-features/highcharts-typescript-declarations) for IDE support, framework notes, and advanced typing details.
 
