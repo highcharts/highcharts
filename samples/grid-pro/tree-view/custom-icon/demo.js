@@ -11,15 +11,13 @@ Grid.grid('container', {
     data: {
         columns: {
             path: ['Alone', 'Root/Child 1', 'Root/Child 2'],
-            value: [100, 24, 76],
-            id: [1, 2, 3]
+            value: [100, 24, 76]
         },
         treeView: {
             input: {
                 type: 'path'
             }
-        },
-        idColumn: 'id'
+        }
     },
     rendering: {
         icons: {

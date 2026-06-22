@@ -50,7 +50,7 @@ QUnit.test('Formats in tooltip header (#3238)', function (assert) {
         `
                     point.x = 0,
                     point.y = 1,
-                    point.color = #2caffe,
+                    point.color = var(--highcharts-color-0),
                     point.colorIndex = 0,
                     point.key = Point name,
                     point.series.name = Series 1,

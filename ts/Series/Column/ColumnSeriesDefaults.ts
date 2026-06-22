@@ -21,8 +21,6 @@
 import type ColumnSeries from './ColumnSeries';
 import type { PlotOptionsOf } from '../../Core/Series/SeriesOptions';
 
-import { Palette } from '../../Core/Color/Palettes.js';
-
 /* *
  *
  *  API Options
@@ -172,6 +170,8 @@ const ColumnSeriesDefaults: PlotOptionsOf<ColumnSeries> = {
      *          0.25
      * @sample {highcharts} highcharts/plotoptions/column-pointpadding-none/
      *         0 for tightly packed columns
+     * @sample {highcharts} highcharts/plotoptions/pie-pointpadding/
+     *         Pie point padding plugin
      *
      * @product highcharts highstock gantt
      */
@@ -305,7 +305,7 @@ const ColumnSeriesDefaults: PlotOptionsOf<ColumnSeries> = {
              *
              * @product highcharts highstock gantt
              */
-            brightness: 0.1
+            brightness: 0.2
         },
 
         /**
@@ -325,7 +325,7 @@ const ColumnSeriesDefaults: PlotOptionsOf<ColumnSeries> = {
              * @default #cccccc
              * @product highcharts highstock gantt
              */
-            color: Palette.neutralColor20,
+            color: 'var(--highcharts-neutral-color-20)',
 
             /**
              * A specific border color for the selected point.
@@ -334,7 +334,7 @@ const ColumnSeriesDefaults: PlotOptionsOf<ColumnSeries> = {
              * @default #000000
              * @product highcharts highstock gantt
              */
-            borderColor: Palette.neutralColor100
+            borderColor: 'var(--highcharts-neutral-color-100)'
         }
     },
 
@@ -402,7 +402,7 @@ const ColumnSeriesDefaults: PlotOptionsOf<ColumnSeries> = {
      * @default   #ffffff
      * @product   highcharts highstock gantt
      */
-    borderColor: Palette.backgroundColor
+    borderColor: 'var(--highcharts-background-color)'
 
 };
 

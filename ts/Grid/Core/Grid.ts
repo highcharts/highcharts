@@ -45,6 +45,7 @@ import ColumnPolicyResolver, {
 } from './ColumnPolicyResolver.js';
 import DataProviderRegistry from './Data/DataProviderRegistry.js';
 import DataTable from '../../Data/DataTable.js';
+import { warnIfDeprecatedOptions } from './DeprecatedOptions.js';
 import { defaultOptions } from './Defaults.js';
 import {
     makeHTMLElement,
@@ -443,6 +444,7 @@ export class Grid {
     ): DeepPartial<NonArrayOptions> {
         // Operate on a copy of the options argument
         newOptions = merge(newOptions);
+        warnIfDeprecatedOptions(newOptions);
 
         const diff: DeepPartial<NonArrayOptions> = {};
         const preserveIdOnlyColumnOptions = (
@@ -563,6 +565,9 @@ export class Grid {
 
         for (let i = 0, iEnd = newColumnOptions.length; i < iEnd; ++i) {
             const newOptions = newColumnOptions[i];
+            if (!newOptions) {
+                continue;
+            }
             const colOptionsIndex =
                 this.columnPolicy.getColumnOptionIndex(newOptions.id) ?? -1;
 
@@ -903,14 +908,23 @@ export class Grid {
 
         if ('filtering' in columnDiff) {
             const filteringDiff = columnDiff.filtering ?? {};
+            const ruleDiff = filteringDiff.rule ?? {};
             if (
-                'condition' in filteringDiff ||
-                'value' in filteringDiff
+                'condition' in filteringDiff || // TODO: Remove, deprecated
+                'value' in filteringDiff || // TODO: Remove, deprecated
+                'conditions' in filteringDiff || // TODO: Remove, deprecated
+                'operators' in filteringDiff ||
+                'rule' in filteringDiff ||
+                'operator' in ruleDiff ||
+                'value' in ruleDiff
             ) {
                 flags.add('filtering');
             }
-            delete filteringDiff.condition;
-            delete filteringDiff.value;
+            delete filteringDiff.condition; // TODO: Remove, deprecated
+            delete filteringDiff.value; // TODO: Remove, deprecated
+            delete filteringDiff.conditions; // TODO: Remove, deprecated
+            delete filteringDiff.operators;
+            delete filteringDiff.rule;
 
             if (Object.keys(filteringDiff).length > 0) {
                 flags.add('grid');
@@ -1343,9 +1357,10 @@ export class Grid {
 
         this.captionElement = new AST([{
             tagName,
-            attributes: { 'class': className, id: this.id + '-caption' },
-            textContent: captionOptions.text
+            attributes: { 'class': className, id: this.id + '-caption' }
         }]).addToDOM(this.contentWrapper) as HTMLElement;
+
+        setHTMLContent(this.captionElement, captionOptions.text);
     }
 
     /**
