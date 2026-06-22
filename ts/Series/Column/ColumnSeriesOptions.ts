@@ -380,7 +380,7 @@ export interface ColumnSeriesOptions extends SeriesOptions {
      *         0 for tightly packed columns
      *
      * @sample {highcharts} highcharts/plotoptions/pie-pointpadding/
-     *         pie point padding plugin
+     *         Pie point padding plugin
      *
      * @product highcharts highstock gantt
      */

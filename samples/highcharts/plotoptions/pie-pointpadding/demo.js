@@ -6,9 +6,17 @@
 // internal angle and corner-radius math. The base arc is private to the
 // BorderRadius module, so it can't be reused via the wrap's `proceed`; this
 // copy will need to be re-synced if those core modules change.
-(function (H) {
-    if (H.SVGElement.symbolCustomAttribs.indexOf('padding') === -1) {
-        H.SVGElement.symbolCustomAttribs.push('padding');
+(function ({
+    defined,
+    pick,
+    Series,
+    SVGElement,
+    relativeLength,
+    Renderer,
+    wrap
+}) {
+    if (SVGElement.symbolCustomAttribs.indexOf('padding') === -1) {
+        SVGElement.symbolCustomAttribs.push('padding');
     }
 
     function oldArc(cx, cy, w, h, options) {
@@ -46,8 +54,8 @@
                 end = middleAngle + minArcRange / 2;
             }
 
-            const rx = H.pick(options.r, w),
-                ry = H.pick(options.r, h || w),
+            const rx = pick(options.r, w),
+                ry = pick(options.r, h || w),
                 fullCircle = (
                     Math.abs(end - start - 2 * Math.PI) <
                     proximity
@@ -64,7 +72,7 @@
                 cosEnd = fullCircle ? 0 : Math.cos(end),
                 sinEnd = fullCircle ? 1 : Math.sin(end),
                 // Proximity takes care of rounding errors around PI (#6971)
-                longArc = H.pick(
+                longArc = pick(
                     options.longArc,
                     end - start - Math.PI < proximity ? 0 : 1
                 );
@@ -75,7 +83,7 @@
                 ry, // Y radius
                 0, // Slanting
                 longArc, // Long or short arc
-                H.pick(options.clockwise, 1), // Clockwise
+                pick(options.clockwise, 1), // Clockwise
                 // Use a static pixel offset for full circle (#21701)
                 cx + (fullCircle ? 0.001 : rx * cosEnd),
                 cy + ry * sinEnd
@@ -91,7 +99,7 @@
                 arcSegment
             );
 
-            if (H.defined(innerRadius)) {
+            if (defined(innerRadius)) {
                 // Check minimal inner radius value
                 const minInnerRadius = (padding * 2) / radianRange;
                 const minAcceptableInnerRadius =
@@ -126,7 +134,7 @@
                     innerCosEnd = fullCircle ? 0 : Math.cos(innerEnd),
                     innerSinEnd = fullCircle ? 1 : Math.sin(innerEnd),
                     // Proximity takes care of rounding errors around PI (#6971)
-                    innerlongArc = H.pick(
+                    innerlongArc = pick(
                         options.longArc,
                         innerEnd - innerStart - Math.PI < proximity ? 0 : 1
                     );
@@ -138,7 +146,7 @@
                     0, // Slanting
                     innerlongArc, // Long or short arc
                     // Clockwise - opposite to the outer arc clockwise
-                    H.defined(options.clockwise) ? 1 - options.clockwise : 0,
+                    defined(options.clockwise) ? 1 - options.clockwise : 0,
                     cx + (fullCircle ? -0.001 : cInnerRadius * innerCosStart),
                     cy + cInnerRadius * innerSinStart
                 ];
@@ -289,7 +297,7 @@
         }
     }
 
-    H.wrap(H.Renderer.prototype.symbols, 'arc', function () {
+    wrap(Renderer.prototype.symbols, 'arc', function () {
         const [, x, y, w, h, options] = arguments,
             path = oldArc(x, y, w, h, options),
             {
@@ -309,7 +317,7 @@
         const alpha = end - start - (2 * padding) / r,
             sinHalfAlpha = Math.sin(alpha / 2),
             borderRadius = Math.max(Math.min(
-                H.relativeLength(options.borderRadius || 0, r - innerR),
+                relativeLength(options.borderRadius || 0, r - innerR),
                 // Cap to half the sector radius
                 (r - innerR) / 2,
                 // For smaller pie slices, cap to the largest small circle that
@@ -355,8 +363,8 @@
         return path;
     });
 
-    H.wrap(
-        H.Series.types.pie.prototype.pointClass.prototype,
+    wrap(
+        Series.types.pie.prototype.pointClass.prototype,
         'haloPath',
         function (proceed, size) {
             const shapeArgs = this.shapeArgs;
@@ -380,7 +388,7 @@
         }
     );
 
-    H.wrap(H.Series.types.pie.prototype, 'translate', function (
+    wrap(Series.types.pie.prototype, 'translate', function (
         proceed,
         positions
     ) {
@@ -391,8 +399,7 @@
         }
 
         const r = positions[2] / 2;
-        const padding =
-            H.relativeLength(this.options.pointPadding || 0, r) / 2;
+        const padding = relativeLength(this.options.pointPadding || 0, r) / 2;
         const len = this.points.length;
 
         for (let i = 0; i < len; i++) {
@@ -460,7 +467,7 @@ Highcharts.chart('container', {
             ['UK', 200]
         ],
         borderRadius: '4%',
-        borderColor: '#000',
+        borderColor: 'var(--highcharts-neutral-color-80)',
         borderWidth: 1,
         innerSize: '30%',
         pointPadding: 10 // pixels or percentage

@@ -171,7 +171,7 @@ const ColumnSeriesDefaults: PlotOptionsOf<ColumnSeries> = {
      * @sample {highcharts} highcharts/plotoptions/column-pointpadding-none/
      *         0 for tightly packed columns
      * @sample {highcharts} highcharts/plotoptions/pie-pointpadding/
-     *         pie point padding plugin
+     *         Pie point padding plugin
      *
      * @product highcharts highstock gantt
      */
