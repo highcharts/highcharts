@@ -71,7 +71,7 @@ export interface CandlestickSeriesOptions extends OHLCSeriesOptions {
     /**
      * What type of legend symbol to render for this series. For candlestick
      * series, the default is `candlestick`, showing a filled (down) and a
-     * hollow (up) candle, each a wick with a rectangular body.
+     * hollow (up) candle, each being a wick with a rectangular body.
      *
      * @default candlestick
      * @apioption plotOptions.candlestick.legendSymbol
