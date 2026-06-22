@@ -667,6 +667,10 @@ export interface SeriesOptions {
      * ```
      *
      * @type    {Highcharts.DataMappingOptionsObject}
+     * @sample highcharts/datatable/datamapping
+     *         Basic data mapping
+     * @sample highcharts/datatable/datamapping-dynamic
+     *         Data mapping with dynamic updates
      * @sample {highcharts} highcharts/datatable/series-datatable-multiple
      *         Series with two data tables
      * @sample {highcharts} highcharts/datatable/nested-keys Nested keys
@@ -1080,6 +1084,9 @@ export interface SeriesOptions {
 
     /**
      * A collection of options for different series states.
+     *
+     * In addition to the options documented under each state, any option from
+     * the parent series type can be set, with exception of `data` and `states`.
      */
     states?: SeriesStatesOptions<SeriesOptions>;
 

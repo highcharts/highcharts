@@ -512,8 +512,7 @@ class VennSeries extends ScatterSeries {
         const series = this,
             seriesOptions = series.options || {},
             pointOptions = point?.options || {},
-            stateOptions =
-                (state && (seriesOptions.states as any)[state as any]) || {},
+            stateOptions = (state && seriesOptions.states?.[state]) || {},
             options = merge(
                 seriesOptions,
                 pointOptions,
@@ -523,7 +522,7 @@ class VennSeries extends ScatterSeries {
         // Return resulting values for the attributes.
         return {
             'fill': color(options.color || point.color)
-                .brighten(options.brightness as any)
+                .brighten(options.brightness || 0)
                 .get(),
             // Set opacity directly to the SVG element, not to pattern #14372.
             opacity: options.opacity,

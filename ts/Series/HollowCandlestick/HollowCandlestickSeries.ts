@@ -251,7 +251,7 @@ class HollowCandlestickSeries extends CandlestickSeries {
      * @function Highcharts.seriesTypes.hollowcandlestick#init
      */
     public init(): void {
-        super.init.apply(this, arguments as any);
+        super.init.apply(this, arguments);
 
         this.hollowCandlestickData = [];
     }
@@ -311,11 +311,11 @@ class HollowCandlestickSeries extends CandlestickSeries {
 
         // Select or hover states
         if (state) {
-            stateOptions = (this.options.states as any)[state];
+            stateOptions = this.options.states?.[state] || {};
             attribs.fill = stateOptions.color || attribs.fill;
             attribs.stroke = stateOptions.lineColor || attribs.stroke;
-            attribs['stroke-width'] =
-                stateOptions.lineWidth || attribs['stroke-width'];
+            attribs['stroke-width'] = stateOptions.lineWidth ||
+                attribs['stroke-width'];
         }
         return attribs;
     }
