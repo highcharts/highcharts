@@ -4730,23 +4730,11 @@ class Axis {
     ): void {
         const chart = this.chart;
 
-        // @todo: Look for update for each case
-        const fullRebuild = options && (
-            // Wait for #23894
-            'overscroll' in options
-        );
-
         fireEvent(this, 'update', { options });
 
         options = merge(this.userOptions, options);
 
-        if (fullRebuild) {
-            this.destroy(true);
-
-        } else {
-            this.isDirty = true;
-            this.forceRedraw = true;
-        }
+        this.isDirty = this.forceRedraw = true;
 
         this.init(chart, options);
 
