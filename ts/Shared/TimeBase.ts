@@ -443,12 +443,9 @@ class TimeBase {
         );
 
         if (this.timezone !== 'UTC') {
-            const offset = this.getTimezoneOffset(d);
+            const offset = this.getTimezoneOffset(d),
+                localHours = (hours - offset / timeUnits.hour + 24) % 24;
             d += offset;
-
-            // Adjustments close to DST transitions
-            const initialOffsetCheckLocalHour =
-                (hours - offset / timeUnits.hour + 24) % 24;
 
             if (
                 // Limit the number of calls to `getTimezoneOffset` to months
@@ -456,12 +453,9 @@ class TimeBase {
                 // https://en.wikipedia.org/wiki/Daylight_saving_time_by_country,
                 // DST change may only occur in these months.
                 [2, 3, 8, 9, 10, 11].indexOf(month) !== -1 &&
-                (
-                    hours < 5 ||
-                    hours > 20 ||
-                    initialOffsetCheckLocalHour < 5 ||
-                    initialOffsetCheckLocalHour > 20
-                )
+
+                // DST changes only occur at night (#24420)
+                (localHours < 5 || localHours > 20)
             ) {
                 const newOffset = this.getTimezoneOffset(d);
 
