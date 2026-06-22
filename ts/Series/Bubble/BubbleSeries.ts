@@ -92,10 +92,6 @@ interface KDPointSearchObject extends KDPointSearchObjectBase {
  *
  * */
 
-/**
- * Add logic to pad each axis with the amount of pixels necessary to avoid the
- * bubbles to overflow.
- */
 function onAxisFoundExtremes(
     this: Axis
 ): void {
@@ -157,9 +153,17 @@ function onAxisFoundExtremes(
     // Apply the padding to the min and max properties
     if (hasActiveSeries && range > 0 && !this.logarithmic) {
         pxMax -= axisLength;
+
+        // #8901
+        const isCategoryAxis =
+            !!(this.categories?.length || this.options.type === 'category');
+        const hasUserMin = defined(pick(this.options.min, this.userMin));
+        const pxMinUsed = (isCategoryAxis || hasUserMin) ?
+            Math.max(0, pxMin) : pxMin;
+
         transA *= (
             axisLength +
-            Math.max(0, pxMin) - // #8901
+            pxMinUsed -
             Math.min(pxMax, axisLength)
         ) / axisLength;
         (
@@ -169,16 +173,91 @@ function onAxisFoundExtremes(
             ] as Array<[string, string, number]>
         ).forEach((keys: [string, string, number]): void => {
             if (
-                typeof pick(
+                !defined(pick(
                     (this.options as any)[keys[0]],
                     (this as any)[keys[1]]
-                ) === 'undefined'
+                ))
             ) {
                 (this as any)[keys[0]] += keys[2] / transA;
             }
         });
     }
+}
 
+function onAxisAfterSetTickPositions(
+    this: Axis
+): void {
+    const { coll, isXAxis } = this;
+
+    if (
+        coll !== 'xAxis' && coll !== 'yAxis' ||
+        this.logarithmic
+    ) {
+        return;
+    }
+
+    const axisLength = this.len,
+        hasUserMin = defined(pick(this.options.min, this.userMin)),
+        hasUserMax = defined(pick(this.options.max, this.userMax));
+
+    if (hasUserMin && hasUserMax) {
+        return;
+    }
+
+    const axisMin = this.min || 0,
+        axisMax = this.max || 0;
+
+    let requiredMin = axisMin,
+        requiredMax = axisMax,
+        hasActiveSeries = false;
+
+    this.series.forEach((series): void => {
+        if (!series.bubblePadding || !series.reserveSpace()) {
+            return;
+        }
+
+        hasActiveSeries = true;
+
+        const data = series.getColumn(isXAxis ? 'x' : 'y');
+
+        let i = data.length;
+        while (i--) {
+            const d = data[i];
+            if (!isNumber(d)) {
+                continue;
+            }
+            const r = series.radii && series.radii[i] || 0;
+            if (r >= axisLength) {
+                continue; // Bubble fills full plot length — cannot fit.
+            }
+            if (!hasUserMin) {
+                requiredMin = Math.min(
+                    requiredMin,
+                    (r * axisMax - d * axisLength) / (r - axisLength)
+                );
+            }
+            if (!hasUserMax) {
+                requiredMax = Math.max(
+                    requiredMax,
+                    (d * axisLength - r * axisMin) / (axisLength - r)
+                );
+            }
+        }
+    });
+
+    if (!hasActiveSeries) {
+        return;
+    }
+
+    // Tolerance to avoid floating-point noise shifting tick positions. #24039
+    const eps = 1e-9 * (axisMax - axisMin);
+
+    if (!hasUserMin && requiredMin < axisMin - eps) {
+        this.min = requiredMin;
+    }
+    if (!hasUserMax && requiredMax > axisMax + eps) {
+        this.max = requiredMax;
+    }
 }
 
 /**
@@ -514,6 +593,11 @@ class BubbleSeries extends ScatterSeries {
 
         if (pushUnique(composed, 'Series.Bubble')) {
             addEvent(AxisClass, 'foundExtremes', onAxisFoundExtremes);
+            addEvent(
+                AxisClass,
+                'afterSetTickPositions',
+                onAxisAfterSetTickPositions
+            );
             addEvent(
                 AxisClass,
                 'afterRender',
