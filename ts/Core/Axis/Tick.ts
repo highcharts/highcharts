@@ -379,7 +379,11 @@ class Tick {
             return axis.defaultLabelFormatter.call(ctx);
         };
 
-        // Create or update the label
+        /**
+         * The rendered text label of the tick.
+         * @name Highcharts.Tick#label
+         * @type {Highcharts.SVGElement|undefined}
+         */
         tick.label = tick.createLabel(
             labelFormatter.call(ctx, ctx),
             labelOptions
