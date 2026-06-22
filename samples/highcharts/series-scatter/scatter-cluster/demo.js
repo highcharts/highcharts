@@ -68,7 +68,7 @@ function drawChart(dataset, clusterIds) {
 }
 
 
-const dataset = [
+const engytime = [
     [
         1.388261,
         2.076096
@@ -16510,10 +16510,58 @@ function kmeans(dataset, k, maxIterations = 100) {
     return { centroids, assignments };
 }
 
-var out = kmeans(dataset, 3);
-var clusterIds = out.assignments;
+// Indices of all points within distance eps of the given point.
+function neighbours(dataset, point, eps) {
+    return dataset.reduce((acc, other, i) => {
+        if (distance(point, other) <= eps ** 2) {
+            acc.push(i);
+        }
+        return acc;
+    }, []);
+}
+
+// Density-based clustering. Clusters are numbered from 1; outliers keep ID 0.
+function dbscan(dataset, eps, minPts) {
+    const assignments = new Array(dataset.length).fill(0);
+    const visited = new Array(dataset.length).fill(false);
+    let cluster = 0;
+
+    dataset.forEach((point, i) => {
+        if (visited[i]) {
+            return;
+        }
+        visited[i] = true;
+
+        const seeds = neighbours(dataset, point, eps);
+        if (seeds.length < minPts) {
+            return; // Too sparse — leave as an outlier (ID 0).
+        }
+
+        // Grow a new cluster, expanding through density-reachable points.
+        cluster++;
+        assignments[i] = cluster;
+        for (let s = 0; s < seeds.length; s++) {
+            const j = seeds[s];
+            if (!visited[j]) {
+                visited[j] = true;
+                const more = neighbours(dataset, dataset[j], eps);
+                if (more.length >= minPts) {
+                    seeds.push(...more);
+                }
+            }
+            if (assignments[j] === 0) {
+                assignments[j] = cluster;
+            }
+        }
+    });
+
+    return { assignments };
+}
+// eslint-disable-next-line no-unused-vars
+var kmeansOut = kmeans(engytime, 2);
+var dbScanOut = dbscan(engytime, 0.2, 10);
+var clusterIds = dbScanOut.assignments;
 
 console.log(clusterIds);
 
-
-drawChart(dataset, clusterIds);
+drawChart(engytime, clusterIds);
