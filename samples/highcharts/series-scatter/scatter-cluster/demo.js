@@ -1,10 +1,10 @@
-Highcharts.setOptions({
-    colors: [
-        'rgba(5,141,199,0.5)', 'rgba(80,180,50,0.5)', 'rgba(237,86,27,0.5)'
-    ]
-});
+// Highcharts.setOptions({
+//     colors: [
+//         'rgba(5,141,199,0.5)', 'rgba(80,180,50,0.5)', 'rgba(237,86,27,0.5)'
+//     ]
+// });
 
-function drawChart(dataset1, dataset2) {
+function drawChart(dataset, clusterIds) {
 
     Highcharts.chart('container', {
         chart: {
@@ -51,20 +51,24 @@ function drawChart(dataset1, dataset2) {
         series: [
             {
                 type: 'scatter',
-                data: dataset1,
-                color: 'red'
-            },
-            {
-                type: 'scatter',
-                data: dataset2,
-                color: 'blue'
+                // colorKey: 'colorValue',
+                data: dataset.map((point, i) => ({
+                    x: point[0],
+                    y: point[1],
+                    color: Highcharts.getOptions().colors[clusterIds[i]]
+                }))
             }
+            // {
+            //     type: 'scatter',
+            //     data: dataset2,
+            //     color: 'blue'
+            // }
         ]
     });
 }
 
 
-const dataset1 = [
+const dataset = [
     [
         1.388261,
         2.076096
@@ -8256,10 +8260,7 @@ const dataset1 = [
     [
         1.67372,
         2.551146
-    ]
-];
-
-const dataset2 = [
+    ],
     [
         -1.176989,
         1.221327
@@ -16454,4 +16455,65 @@ const dataset2 = [
     ]
 ];
 
-drawChart(dataset1, dataset2);
+
+// Squared Euclidean distance between two points.
+function distance(a, b) {
+    return a.reduce((sum, val, i) => sum + (val - b[i]) ** 2, 0);
+}
+
+// Element-wise mean of a set of points (the centroid).
+function centroid(points) {
+    const dims = points[0].length;
+    return points.reduce(
+        (acc, p) => acc.map((val, i) => val + p[i] / points.length),
+        new Array(dims).fill(0)
+    );
+}
+
+// Index of the centroid nearest to the given point.
+function nearest(point, centroids) {
+    let best = 0;
+    centroids.forEach((c, i) => {
+        if (distance(point, c) < distance(point, centroids[best])) {
+            best = i;
+        }
+    });
+    return best;
+}
+
+function kmeans(dataset, k, maxIterations = 100) {
+    // Initialise centroids with k randomly chosen, distinct data points.
+    const centroids = [...dataset]
+        .sort(() => Math.random() - 0.5)
+        .slice(0, k);
+
+    let assignments = dataset.map(point => nearest(point, centroids));
+
+    for (let iter = 0; iter < maxIterations; iter++) {
+        const current = assignments;
+
+        // Recompute each centroid as the mean of its assigned points.
+        centroids.forEach((_, i) => {
+            const members = dataset.filter((_, j) => current[j] === i);
+            if (members.length) {
+                centroids[i] = centroid(members);
+            }
+        });
+
+        // Reassign points; stop once no assignment changes.
+        assignments = dataset.map(point => nearest(point, centroids));
+        if (assignments.every((id, i) => id === current[i])) {
+            break;
+        }
+    }
+
+    return { centroids, assignments };
+}
+
+var out = kmeans(dataset, 3);
+var clusterIds = out.assignments;
+
+console.log(clusterIds);
+
+
+drawChart(dataset, clusterIds);
