@@ -421,6 +421,29 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      */
 
     /**
+     * Options for a specific series-level data table. The `dataTable` option
+     * can be either a configuration object or an instance of the `DataTable`
+     * class. If a `DataTable` instance is passed, it will be used directly. If
+     * a configuration object is passed, a new `DataTable` instance will be
+     * created based on the provided configuration.
+     *
+     * @type   {Highcharts.DataTable|Highcharts.DataTableOptionsObject}
+     * @sample {highcharts} highcharts/datatable/series-datatable/
+     *         Series with one data table each
+     * @sample {highcharts} highcharts/datatable/series-datatable-multiple/
+     *         Series with two data tables
+     * @sample {highstock} stock/datatable/series-datatable/
+     *         Series with one data table each
+     * @sample {highstock} stock/datatable/series-datatable-multiple/
+     *         Series with two data tables
+     * @sample {highmaps} maps/datatable/series-datatable
+     *         Series-level data table
+     *
+     * @since 13.0.0
+     * @apioption plotOptions.series.dataTable
+     */
+
+    /**
      * Enable or disable the mouse tracking for a specific series. This
      * includes point tooltips and click events on graphs and points. For
      * large datasets it improves performance.
