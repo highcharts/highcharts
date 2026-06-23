@@ -403,7 +403,7 @@ function renderStackShadow(
                             path: {
                                 d: shape.definition,
                                 fill: shadowOptions.color ||
-                                    '#dedede',
+                                    'var(--highcharts-neutral-color-20)',
                                 strokeWidth: strokeWidth,
                                 stroke: shadowOptions.borderColor ||
                                 'transparent'
@@ -414,7 +414,7 @@ function renderStackShadow(
                             height: height,
                             patternContentUnits: 'objectBoundingBox',
                             backgroundColor: 'none',
-                            color: '#dedede'
+                            color: 'var(--highcharts-neutral-color-20)'
                         }
                     }
                 })
@@ -761,7 +761,7 @@ export default PictorialSeries;
  *
  * @declare   Highcharts.YAxisOptions
  * @type      {Highcharts.ColorType}
- * @default   #dedede
+ * @default   var(--highcharts-neutral-color-20)
  * @product   highcharts
  * @requires  modules/pictorial
  * @apioption yAxis.stackShadow.color
@@ -772,7 +772,7 @@ export default PictorialSeries;
  *
  * @declare   Highcharts.YAxisOptions
  * @type      {boolean}
- * @default   undefined
+ * @default   false
  * @product   highcharts
  * @requires  modules/pictorial
  * @apioption yAxis.stackShadow.enabled

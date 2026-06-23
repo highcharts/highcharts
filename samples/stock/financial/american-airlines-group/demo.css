@@ -57,3 +57,7 @@
     border: solid 1px var(--highcharts-neutral-color-20);
     border-bottom: none;
 }
+
+.highcharts-description {
+    padding: 0 10px;
+}

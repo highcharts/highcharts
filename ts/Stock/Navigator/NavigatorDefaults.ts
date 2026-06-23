@@ -20,9 +20,6 @@
 
 import type NavigatorOptions from './NavigatorOptions';
 
-import Color from '../../Core/Color/Color.js';
-const { parse: color } = Color;
-import { Palette } from '../../Core/Color/Palettes.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const { seriesTypes } = SeriesRegistry;
 
@@ -202,14 +199,14 @@ const NavigatorDefaults: NavigatorOptions = {
          *
          * @type {Highcharts.ColorType}
          */
-        backgroundColor: Palette.neutralColor5,
+        backgroundColor: 'var(--highcharts-neutral-color-5)',
 
         /**
          * The stroke for the handle border and the stripes inside.
          *
          * @type {Highcharts.ColorType}
          */
-        borderColor: Palette.neutralColor40
+        borderColor: 'var(--highcharts-neutral-color-40)'
     },
 
     /**
@@ -225,9 +222,8 @@ const NavigatorDefaults: NavigatorOptions = {
      *         Blue, semi transparent mask
      *
      * @type    {Highcharts.ColorType}
-     * @default rgba(102,133,194,0.3)
      */
-    maskFill: color(Palette.highlightColor60).setOpacity(0.3).get(),
+    maskFill: 'color-mix(in srgb, var(--highcharts-highlight-color-60) 30%, transparent)', // eslint-disable-line max-len
 
     /**
      * The color of the line marking the currently zoomed area in the
@@ -238,7 +234,7 @@ const NavigatorDefaults: NavigatorOptions = {
      *
      * @type {Highcharts.ColorType}
      */
-    outlineColor: Palette.neutralColor40,
+    outlineColor: 'var(--highcharts-neutral-color-40)',
 
     /**
      * The width of the line marking the currently zoomed area in the
@@ -487,7 +483,7 @@ const NavigatorDefaults: NavigatorOptions = {
 
         lineWidth: 0,
 
-        gridLineColor: Palette.neutralColor10,
+        gridLineColor: 'var(--highcharts-neutral-color-10)',
 
         id: 'navigator-x-axis',
 
@@ -504,7 +500,7 @@ const NavigatorDefaults: NavigatorOptions = {
              */
             style: {
                 /** @ignore */
-                color: Palette.neutralColor100,
+                color: 'var(--highcharts-neutral-color-100)',
                 /** @ignore */
                 fontSize: '0.7em',
                 /** @ignore */

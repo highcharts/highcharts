@@ -1,0 +1,35 @@
+<script src="https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/grid-pro.js"></script>
+
+<div class="demo">
+    <div class="bench-controls">
+        <label>
+            Source rows
+            <select id="row-count">
+                <option value="10000">10,000</option>
+                <option value="50000">50,000</option>
+                <option value="100000" selected>100,000</option>
+            </select>
+        </label>
+        <button type="button" id="build-grid">Rebuild</button>
+        <button type="button" id="expand-all" disabled>Expand all</button>
+        <button type="button" id="collapse-all" disabled>Collapse all</button>
+    </div>
+
+    <div class="bench-stats">
+        <div><span class="bench-label">Source rows</span><span id="source-rows">-</span></div>
+        <div><span class="bench-label">Total tree nodes</span><span id="tree-nodes">-</span></div>
+        <div><span class="bench-label">Generated parents</span><span id="generated-parents">-</span></div>
+        <div><span class="bench-label">Visible nodes</span><span id="visible-nodes">-</span></div>
+        <div><span class="bench-label">Initial build</span><span id="build-time">-</span></div>
+        <div><span class="bench-label">Status</span><span id="status">Idle</span></div>
+    </div>
+
+    <div id="container"></div>
+
+    <p class="highcharts-description">
+        This study generates up to 100,000 source rows for a path-based
+        TreeView with aggregated columns and no explicit <code>idColumn</code>.
+        Use it to check initial build and basic expand/collapse performance
+        with row virtualization enabled.
+    </p>
+</div>

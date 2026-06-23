@@ -20,8 +20,6 @@
 
 import type BoxPlotSeriesOptions from './BoxPlotSeriesOptions';
 
-import { Palette } from '../../Core/Color/Palettes.js';
-
 /* *
  *
  *  API Options
@@ -42,13 +40,28 @@ import { Palette } from '../../Core/Color/Palettes.js';
  *         Jittered scatter plot on top of a box plot
  *
  * @extends      plotOptions.column
- * @excluding    borderColor, borderRadius, borderWidth, groupZPadding,
+ * @excluding    borderColor, borderWidth, groupZPadding,
  *               states, boostThreshold, boostBlending
  * @product      highcharts
  * @requires     highcharts-more
  * @optionparent plotOptions.boxplot
  */
 const BoxPlotSeriesDefaults: BoxPlotSeriesOptions = {
+
+    /**
+     * The corner radius of the border surrounding the box. A number
+     * signifies pixels. A percentage string, like for example `50%`, signifies
+     * a size relative to the box width.
+     *
+     * @sample {highcharts} highcharts/demo/violin-plot/
+     *         Box plot with rounded corners
+     *
+     * @type    {number|string|Highcharts.BorderRadiusOptionsObject}
+     * @default 0
+     * @since   next
+     * @product highcharts
+     */
+    borderRadius: 0,
 
     /**
      * The Y axis value to serve as the base for the columns, for
@@ -101,7 +114,7 @@ const BoxPlotSeriesDefaults: BoxPlotSeriesOptions = {
      * @since   3.0
      * @product highcharts
      */
-    fillColor: Palette.backgroundColor,
+    fillColor: 'var(--highcharts-background-color)',
 
     /**
      * The width of the line surrounding the box. If any of

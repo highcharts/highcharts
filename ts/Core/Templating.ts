@@ -191,19 +191,11 @@ function format(
     owner?: Templating.Owner
 ): string {
 
-    // eslint-disable-next-line prefer-regex-literals
-    const regex = new RegExp(
-            '\\{([\\p{L}\\p{M}\\d:\\.,;\\-\\/<>\\[\\]%_@+"\'’= #\\(\\)]+)\\}',
-            'gu'
-        ),
+    const regex = /\{([^{}]+)\}/g,
         // The sub expression regex is the same as the top expression regex,
         // but except parens and block helpers (#), and surrounded by parens
         // instead of curly brackets.
-        // eslint-disable-next-line prefer-regex-literals
-        subRegex = new RegExp(
-            '\\(([\\p{L}\\p{M}\\d:\\.,;\\-\\/<>\\[\\]%_@+"\'= ]+)\\)',
-            'gu'
-        ),
+        subRegex = /\(([^()]+)\)/g,
         matches = [],
         floatRegex = /f$/,
         decRegex = /\.(\d)/,
