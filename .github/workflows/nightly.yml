@@ -310,9 +310,12 @@ jobs:
 
       - name: Upload benchmark base results
         run: |
-          npx gulp dist-benchmark-results \
-          --tag ${HIGHCHARTS_VERSION} \
-          --bucket ${HIGHCHARTS_VISUAL_TESTS_BUCKET}
+          aws s3 sync tmp/benchmarks/base/ \
+          "s3://${HIGHCHARTS_VISUAL_TESTS_BUCKET}/benchmarks/reference/latest/" \
+          --exclude "*" --include "Stock/*.json"
+          aws s3 sync tmp/benchmarks/base/ \
+          "s3://${HIGHCHARTS_VISUAL_TESTS_BUCKET}/benchmarks/reference/${HIGHCHARTS_VERSION}/" \
+          --exclude "*" --include "Stock/*.json"
 
 
   nightly_dist:
