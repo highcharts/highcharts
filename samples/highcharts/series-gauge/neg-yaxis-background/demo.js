@@ -1,4 +1,4 @@
-Highcharts.chart('container-rpm', {
+Highcharts.chart('container', {
 
     chart: {
         type: 'gauge'
@@ -6,16 +6,6 @@ Highcharts.chart('container-rpm', {
 
     title: {
         text: 'Negative yAxis.min on solid gauge (#3010)'
-    },
-
-    pane: {
-        startAngle: -90,
-        endAngle: 90,
-        background: {
-            innerRadius: '60%',
-            outerRadius: '100%',
-            shape: 'arc'
-        }
     },
 
     yAxis: {

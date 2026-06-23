@@ -19,6 +19,9 @@ module.exports = {
         { from: 'maps/create-custom-maps-for-highmaps', to: 'maps/create-custom-maps' },
         { from: 'stock/understanding-highstock', to: 'stock/understanding-highcharts-stock' },
         { from: 'getting-started/compatibility', to: 'getting-started/system-requirements' },
+        { from: 'getting-started/install-from-npm', to: 'getting-started/installation' },
+        { from: 'getting-started/installation-with-esm', to: 'getting-started/installation' },
+        { from: 'getting-started/installation-with-amd-commonjs', to: 'getting-started/installation' },
         { from: 'getting-started/how-to-create-custom-highcharts-files', to: 'getting-started/how-to-create-custom-highcharts-packages' },
         { from: 'chart-and-series-types/packed-bubble-charts', to: 'chart-and-series-types/packed-bubble' },
         { from: 'chart-concepts/navigator', to: 'stock/navigator' },
@@ -67,6 +70,7 @@ module.exports = {
         { from: 'dashboards/dashboards-with-react', to: 'dashboards/wrappers/dashboards-with-react' },
         { from: 'dashboards/dashboards-with-vue', to: 'dashboards/wrappers/dashboards-with-vue' },
         // Special case for xmlns schema in Map Collection
+        // # --> https://github.com/highcharts/doc-builder/issues/58
         { from: 'mc', to: 'maps/map-collection#map-properties' }
     ]
 };

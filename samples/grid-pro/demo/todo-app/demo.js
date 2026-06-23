@@ -95,6 +95,7 @@ const columns = [{
 
 // Grid setup
 const todoGrid = Grid.grid('container', {
+    gridKey: 'YOUR-GRID-KEY-HERE',
     time: {
         locale: ''
     },
@@ -132,6 +133,7 @@ const todoGrid = Grid.grid('container', {
 });
 
 const doneGrid = Grid.grid('container-done', {
+    gridKey: 'YOUR-GRID-KEY-HERE',
     data: {
         columns: {
             Done: [true, true, true],

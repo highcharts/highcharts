@@ -517,7 +517,7 @@ class Legend {
         if (!this.chart.styledMode) {
             const { itemHiddenStyle = {} } = this,
                 hiddenColor = itemHiddenStyle.color,
-                { fillColor, lineColor, marker } =
+                { fillColor, lineColor } =
                     (item as Series).options,
                 legendSymbolOpt = item instanceof Series ?
                     item.options?.legendSymbol : void 0,
@@ -539,11 +539,14 @@ class Legend {
             line?.attr(colorizeHidden({ stroke: lineColor || item.color }));
 
             if (symbol) {
-                // Apply marker options. legendSymbol.marker properties take
-                // priority over the result of pointAttribs().
-                const markerAttribs = marker && symbol.isMarker ? // #585
-                    (item as Series).pointAttribs() :
-                    { fill: item.color };
+                // Apply legend symbol attributes. legendSymbol.marker
+                // properties take priority over the result of pointAttribs().
+                const markerAttribs = (item as Point).series ?
+                    // When `legendType` is `point`, like pie series
+                    (item as Point).series.pointAttribs?.(item as Point) :
+                    // When `legendType` is `series`, like line or column series
+                    (item as Series).pointAttribs?.() || { fill: item.color };
+
                 if (legendMarker) {
                     if (legendMarker.fillColor) {
                         markerAttribs.fill = legendMarker.fillColor as string;

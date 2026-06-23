@@ -854,7 +854,7 @@ extend(FlowMapSeries.prototype, {
     pointClass: FlowMapPoint,
     pointArrayMap: ['from', 'to', 'weight'],
     drawPoints: ColumnSeries.prototype.drawPoints,
-    dataColumnKeys: ColumnSeries.prototype.dataColumnKeys,
+    getDataColumnKeys: ColumnSeries.prototype.getDataColumnKeys,
     // Make it work on zoom or pan.
     useMapGeometry: true
 });
@@ -895,6 +895,7 @@ export default FlowMapSeries;
  * boostThreshold, borderColor, borderWidth, dashStyle, dataLabels, dragDrop,
  * joinBy, mapData, negativeColor, onPoint, shadow, showCheckbox
  * @product   highmaps
+ * @requires     modules/flowmap
  * @apioption series.flowmap
  */
 

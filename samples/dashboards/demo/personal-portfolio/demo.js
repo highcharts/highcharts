@@ -9,12 +9,10 @@ const commonMSOptions = {
     }
 };
 
-
 const basicInvestmentPlan = {
     interval: 30, // Every 30 days
     amount: 200   // Amount in EUR
 };
-
 
 const stockCollection = [{
     tradingSymbol: 'NFLX',
@@ -33,7 +31,6 @@ const stockCollection = [{
     ISIN: 'US02079K3059',
     SecID: '0P000002HD'
 }];
-
 
 // Simulation of personal portfolio
 const generatePortfolio = (investmentPlan, stockPrices) => {
@@ -60,13 +57,11 @@ const generatePortfolio = (investmentPlan, stockPrices) => {
     };
 };
 
-
 const getHoldings = weight => stockCollection.map(stock => ({
     id: stock.ISIN,
     idType: 'ISIN',
     ...(weight && { weight })
 }));
-
 
 // Return the sum of the last indices of arrays
 const getCurrentTotal = arrOfArr => {
@@ -93,7 +88,6 @@ const getCurrentTotal = arrOfArr => {
 
     await timeSeriesConnector.load();
 
-
     const { Date: dates, ...companies } =
         timeSeriesConnector.getTable().getColumns();
 
@@ -116,7 +110,6 @@ const getCurrentTotal = arrOfArr => {
 
         holdings.push(holding);
         investedAmounts.push(investedAmount);
-
     });
 
     const investedAmountTotal = getCurrentTotal(investedAmounts),
@@ -191,7 +184,6 @@ const getCurrentTotal = arrOfArr => {
             id: 'invested',
             className: 'dotted-line'
         }],
-
         responsive: {
             rules: [{
                 condition: {
@@ -220,15 +212,8 @@ const getCurrentTotal = arrOfArr => {
             floating: true
         },
         pane: {
-            background: [{
-                borderRadius: 30,
-                borderWidth: 0,
-                outerRadius: '100%',
-                innerRadius: '85%',
-                shape: 'arc'
-            }],
-            size: 250,
-            center: ['50%', '90%'],
+            innerSize: '85%',
+            borderRadius: '50%',
             endAngle: 80,
             startAngle: -80
         },
@@ -237,8 +222,6 @@ const getCurrentTotal = arrOfArr => {
         },
         plotOptions: {
             series: {
-                borderRadius: 20,
-                innerRadius: '85%',
                 dataLabels: {
                     format: '<div style="text-align:center; ' +
                         'margin-top: -20px">' +
@@ -273,6 +256,7 @@ const getCurrentTotal = arrOfArr => {
             zIndex: 10
         }
     };
+
     const goalAnalysisKPIOptions = {
         chart: {
             height: 186,
@@ -286,10 +270,8 @@ const getCurrentTotal = arrOfArr => {
         pane: {
             startAngle: 0,
             endAngle: 360,
-            background: [{
-                innerRadius: '90%',
-                outerRadius: '115%'
-            }]
+            innerSize: '80%',
+            borderRadius: '50%'
         },
         accessibility: {
             typeDescription: 'circular gauge',
@@ -311,7 +293,6 @@ const getCurrentTotal = arrOfArr => {
             enabled: false
         },
         series: [{
-            borderRadius: 30,
             dataLabels: {
                 format: '<div style="text-align:center; ' +
                     'margin-top: -40px">' +
@@ -320,9 +301,7 @@ const getCurrentTotal = arrOfArr => {
                     'text-align: center;">Goal probability</div>' +
                     '</div>',
                 useHTML: true
-            },
-            innerRadius: '90%',
-            radius: '115%'
+            }
         }]
     };
 

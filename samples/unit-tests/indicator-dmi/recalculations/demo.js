@@ -155,7 +155,7 @@ QUnit.test(
 
         assert.strictEqual(
             DMIIndicator.graph.element.getAttribute('stroke'),
-            Highcharts.defaultOptions.colors[1],
+            'var(--highcharts-color-1)',
             'The DX line color should be correct.'
         );
 

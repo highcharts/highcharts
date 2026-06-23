@@ -34,8 +34,10 @@ Grid.grid('container', {
     }, {
         id: 'stock',
         filtering: {
-            condition: 'greaterThan',
-            value: 50
+            rule: {
+                operator: 'greaterThan',
+                value: 50
+            }
         }
     }, {
         id: 'price',

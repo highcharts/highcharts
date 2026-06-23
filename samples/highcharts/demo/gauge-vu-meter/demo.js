@@ -52,6 +52,8 @@ Highcharts.chart('container', {
                 color: '#333'
             }
         },
+        lineWidth: 1,
+        offset: 0,
         plotBands: [{
             from: 0,
             to: 6,
@@ -63,7 +65,9 @@ Highcharts.chart('container', {
         title: {
             text: 'VU<br/><span style="font-size:8px">Channel A</span>',
             y: -40
-        }
+        },
+        startOnTick: false,
+        endOnTick: false
     }, {
         min: -20,
         max: 6,
@@ -76,6 +80,8 @@ Highcharts.chart('container', {
                 color: '#333'
             }
         },
+        lineWidth: 1,
+        offset: 0,
         plotBands: [{
             from: 0,
             to: 6,
@@ -87,17 +93,22 @@ Highcharts.chart('container', {
         title: {
             text: 'VU<br/><span style="font-size:8px">Channel B</span>',
             y: -40
-        }
+        },
+        startOnTick: false,
+        endOnTick: false
     }],
 
     plotOptions: {
         gauge: {
+            clip: true,
             dataLabels: {
                 enabled: false
             },
             dial: {
                 backgroundColor: '#333',
-                radius: '100%'
+                radius: '100%',
+                baseWidth: 4,
+                topWidth: 1
             }
         }
     },
