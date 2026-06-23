@@ -31,7 +31,9 @@ function drawChart(dataset, clusterIds) {
             }
         },
         legend: {
-            enabled: true
+            enabled: true,
+            symbolWidth: 0,
+            symbolPadding: 0
         },
         plotOptions: {
             scatter: {
@@ -16454,7 +16456,7 @@ const engytime = [
         -0.763974
     ]
 ];
-// eslint-disable-next-line no-unused-vars
+
 const ds577 = [
     [
         4.489013,
@@ -18868,11 +18870,100 @@ function dbscan(dataset, eps, minPts) {
 
     return { assignments };
 }
+
+// Agglomerative hierarchical clustering using Ward's method. The naive version
+// is O(n^3); this uses the nearest-neighbour chain algorithm, which produces
+// the exact same merges in O(n^2). Stops once k clusters remain.
+function hierarchical(dataset, k) {
+    // Active clusters: centroid, size and members. Slots are set to null as
+    // clusters get merged away.
+    const clusters = dataset.map((point, i) => ({
+        centroid: point,
+        size: 1,
+        members: [i]
+    }));
+    let active = clusters.length;
+
+    // Ward merge cost: the increase in within-cluster variance.
+    function ward(a, b) {
+        return (a.size * b.size) / (a.size + b.size) *
+            distance(a.centroid, b.centroid);
+    }
+
+    // Nearest active cluster to `from` (by Ward cost), and that cost.
+    function nearest(from) {
+        let best = -1;
+        let cost = Infinity;
+        clusters.forEach((c, i) => {
+            if (i !== from && c && ward(clusters[from], c) < cost) {
+                cost = ward(clusters[from], c);
+                best = i;
+            }
+        });
+        return best;
+    }
+
+    const chain = [];
+    while (active > k) {
+        if (chain.length === 0) {
+            chain.push(clusters.findIndex(Boolean));
+        }
+
+        const top = chain[chain.length - 1];
+        const nn = nearest(top);
+
+        // A reciprocal nearest pair (nn points back to the previous link) is
+        // guaranteed to be a correct Ward merge, so merge them.
+        if (chain.length >= 2 && nn === chain[chain.length - 2]) {
+            chain.pop();
+            chain.pop();
+
+            const a = clusters[top];
+            const b = clusters[nn];
+            const size = a.size + b.size;
+            clusters[top] = {
+                centroid: a.centroid.map(
+                    (val, i) => (val * a.size + b.centroid[i] * b.size) / size
+                ),
+                size,
+                members: a.members.concat(b.members)
+            };
+            clusters[nn] = null;
+            active--;
+        } else {
+            chain.push(nn);
+        }
+    }
+
+    // Label each point with the index of its final cluster.
+    const assignments = new Array(dataset.length);
+    clusters.filter(Boolean).forEach((cluster, id) => cluster.members.forEach(
+        i => {
+            assignments[i] = id;
+        }
+    ));
+
+    return { assignments };
+}
+
+var engykmeansOut = kmeans(engytime, 2);
+var engydbScanOut = dbscan(engytime, 0.2, 10);
+var engyHierOut = hierarchical(engytime, 2);
+var dskmeansOut = kmeans(ds577, 3);
+var dsdbScanOut = dbscan(ds577, 0.3, 5);
+var dsHierOut = hierarchical(ds577, 3);
+
 // eslint-disable-next-line no-unused-vars
-var kmeansOut = kmeans(engytime, 2);
-var dbScanOut = dbscan(engytime, 0.2, 10);
-var clusterIds = dbScanOut.assignments;
+var engykmeansId = engykmeansOut.assignments;
+// eslint-disable-next-line no-unused-vars
+var engydbScanId = engydbScanOut.assignments;
+// eslint-disable-next-line no-unused-vars
+var engyHierId = engyHierOut.assignments;
+// eslint-disable-next-line no-unused-vars
+var dskmeansId = dskmeansOut.assignments;
+// eslint-disable-next-line no-unused-vars
+var dsdbScanId = dsdbScanOut.assignments;
+var dsHierId = dsHierOut.assignments;
+console.log(dsHierId);
 
-console.log(clusterIds);
-
-drawChart(engytime, clusterIds);
+drawChart(engytime, engyHierId);
