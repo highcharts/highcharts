@@ -228,15 +228,21 @@ function onAxisAfterSetTickPositions(
             }
             const r = series.radii && series.radii[i] || 0;
             if (r >= axisLength) {
-                continue; // Bubble fills full plot length — cannot fit.
+                continue;
             }
-            if (!hasUserMin) {
+            const range = axisMax - axisMin,
+                pxPos = range > 0 ?
+                    (d - axisMin) / range * axisLength :
+                    axisLength / 2;
+
+            // Only correct if this bubble actually overflows.
+            if (!hasUserMin && pxPos - r < 0) {
                 requiredMin = Math.min(
                     requiredMin,
                     (r * axisMax - d * axisLength) / (r - axisLength)
                 );
             }
-            if (!hasUserMax) {
+            if (!hasUserMax && pxPos + r > axisLength) {
                 requiredMax = Math.max(
                     requiredMax,
                     (d * axisLength - r * axisMin) / (axisLength - r)
@@ -249,13 +255,10 @@ function onAxisAfterSetTickPositions(
         return;
     }
 
-    // Tolerance to avoid floating-point noise shifting tick positions. #24039
-    const eps = 1e-9 * (axisMax - axisMin);
-
-    if (!hasUserMin && requiredMin < axisMin - eps) {
+    if (!hasUserMin && requiredMin < axisMin) {
         this.min = requiredMin;
     }
-    if (!hasUserMax && requiredMax > axisMax + eps) {
+    if (!hasUserMax && requiredMax > axisMax) {
         this.max = requiredMax;
     }
 }
