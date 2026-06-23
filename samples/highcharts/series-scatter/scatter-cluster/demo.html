@@ -6,6 +6,15 @@
 
 <figure class="highcharts-figure">
     <div id="container"></div>
+    <select name="Dataset" id="datasetSelector", onchange="udc()">
+        <option value=0 selected>engytime</option>
+        <option value=1>ds577</option>
+    </select>
+    <select name="Clustering Algorithm" id="clusteringSelector", onchange="udc()">
+        <option value=0 selected>K-means centroid</option>
+        <option value=1>DBSCAN</option>
+        <option value=2>Hirearcical</option>
+    </select>
     <p class="highcharts-description">
         Scatter charts can be used to visualize clustered data, helping to distinguish the different clusters.
     </p>

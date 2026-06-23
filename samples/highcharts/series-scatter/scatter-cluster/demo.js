@@ -12,7 +12,8 @@ function drawChart(dataset, clusterIds) {
             zooming: {
                 type: 'xy'
             },
-            height: '100%'
+            height: '100%',
+            animation: false
         },
         title: {
             text: 'Scatterplot with clusters'
@@ -47,24 +48,19 @@ function drawChart(dataset, clusterIds) {
                             enabled: false
                         }
                     }
-                }
+                },
+                animation: false
             }
         },
         series: [
             {
                 type: 'scatter',
-                // colorKey: 'colorValue',
                 data: dataset.map((point, i) => ({
                     x: point[0],
                     y: point[1],
                     color: Highcharts.getOptions().colors[clusterIds[i]]
                 }))
             }
-            // {
-            //     type: 'scatter',
-            //     data: dataset2,
-            //     color: 'blue'
-            // }
         ]
     });
 }
@@ -18965,5 +18961,17 @@ var dskmeansId = dskmeansOut.assignments;
 var dsdbScanId = dsdbScanOut.assignments;
 var dsHierId = dsHierOut.assignments;
 console.log(dsHierId);
+const datasets = [engytime, ds577];
+const clusterIds = [
+    [engykmeansId, engydbScanId, engyHierId],
+    [dskmeansId, dsdbScanId, dsHierId]
+];
 
-drawChart(engytime, engyHierId);
+function udc() {
+    var dataset = document.getElementById('datasetSelector').value;
+    var clustering = document.getElementById('clusteringSelector').value;
+    console.log(dataset, clustering);
+    drawChart(datasets[dataset], clusterIds[dataset][clustering]);
+}
+
+udc();
