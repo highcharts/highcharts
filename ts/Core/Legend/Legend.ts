@@ -549,11 +549,10 @@ class Legend {
 
                 if (legendMarker) {
                     if (legendMarker.fillColor) {
-                        markerAttribs.fill = legendMarker.fillColor as string;
+                        markerAttribs.fill = legendMarker.fillColor;
                     }
                     if (legendMarker.lineColor) {
-                        markerAttribs.stroke =
-                            legendMarker.lineColor as string;
+                        markerAttribs.stroke = legendMarker.lineColor;
                     }
                     if (defined(legendMarker.lineWidth)) {
                         markerAttribs['stroke-width'] = legendMarker.lineWidth;
