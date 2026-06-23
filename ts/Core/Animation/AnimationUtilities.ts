@@ -61,7 +61,7 @@ import {
  * This function always relates to a chart, and sets a property on the renderer,
  * so it should be moved to the SVGRenderer.
  */
-function setAnimation(
+export function setAnimation(
     animation: (boolean|Partial<AnimationOptions>|undefined),
     chart: Chart
 ): void {
@@ -114,7 +114,7 @@ export function animObject(
  * @return {number}
  *        The numeric value.
  */
-function getDeferredAnimation(
+export function getDeferredAnimation(
     chart: Chart,
     animation: (boolean|Partial<AnimationOptions>|undefined),
     series?: Series
@@ -166,7 +166,7 @@ function getDeferredAnimation(
  *
  * @return {void}
  */
-function animate(
+export function animate(
     el: (HTMLDOMElement|SVGElement),
     params: (CSSObject|SVGAttributes),
     opt?: boolean|Partial<AnimationOptions>
@@ -249,7 +249,7 @@ function animate(
  * improvement in all cases where we stop the animation from .attr. Instead of
  * stopping everything, we can just stop the actual attributes we're setting.
  */
-function stop(el: SVGElement|HTMLElement, prop?: string): void {
+export function stop(el: SVGElement|HTMLElement, prop?: string): void {
     let i = Fx.timers.length;
 
     // Remove timers related to this element (#4519)
@@ -259,22 +259,6 @@ function stop(el: SVGElement|HTMLElement, prop?: string): void {
         }
     }
 }
-
-const animationExports = {
-    animate,
-    animObject,
-    getDeferredAnimation,
-    setAnimation,
-    stop
-};
-
-/* *
- *
- *  Default Export
- *
- * */
-
-export default animationExports;
 
 /* *
  *

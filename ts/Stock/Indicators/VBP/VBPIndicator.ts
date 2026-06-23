@@ -38,8 +38,7 @@ import type {
 import type { TypedArray } from '../../../Shared/Types';
 import VBPPoint from './VBPPoint.js';
 
-import A from '../../../Core/Animation/AnimationUtilities.js';
-const { animObject } = A;
+import { animObject } from '../../../Core/Animation/AnimationUtilities.js';
 import H from '../../../Core/Globals.js';
 const { noop } = H;
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
