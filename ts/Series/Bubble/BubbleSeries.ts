@@ -173,6 +173,10 @@ function onAxisFoundExtremes(
                 (this as any)[keys[0]] += keys[2] / transA;
             }
         });
+
+        // Store values so afterSetTickPositions can detect tick snap. #24039
+        (this as any).bubbleMinAfterPadding = this.min;
+        (this as any).bubbleMaxAfterPadding = this.max;
     }
 }
 
@@ -193,6 +197,15 @@ function onAxisAfterSetTickPositions(
         hasUserMax = defined(pick(this.options.max, this.userMax));
 
     if (hasUserMin && hasUserMax) {
+        return;
+    }
+
+    // Only correct if tick snap shifted the axis after onAxisFoundExtremes
+    // already padded it — otherwise we cause a double expansion. #24039
+    if (
+        this.min === (this as any).bubbleMinAfterPadding &&
+        this.max === (this as any).bubbleMaxAfterPadding
+    ) {
         return;
     }
 
