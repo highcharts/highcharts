@@ -153,17 +153,9 @@ function onAxisFoundExtremes(
     // Apply the padding to the min and max properties
     if (hasActiveSeries && range > 0 && !this.logarithmic) {
         pxMax -= axisLength;
-
-        // #8901
-        const isCategoryAxis =
-            !!(this.categories?.length || this.options.type === 'category');
-        const hasUserMin = defined(pick(this.options.min, this.userMin));
-        const pxMinUsed = (isCategoryAxis || hasUserMin) ?
-            Math.max(0, pxMin) : pxMin;
-
         transA *= (
             axisLength +
-            pxMinUsed -
+            Math.max(0, pxMin) - // #8901
             Math.min(pxMax, axisLength)
         ) / axisLength;
         (
@@ -173,10 +165,10 @@ function onAxisFoundExtremes(
             ] as Array<[string, string, number]>
         ).forEach((keys: [string, string, number]): void => {
             if (
-                !defined(pick(
+                typeof pick(
                     (this.options as any)[keys[0]],
                     (this as any)[keys[1]]
-                ))
+                ) === 'undefined'
             ) {
                 (this as any)[keys[0]] += keys[2] / transA;
             }
@@ -193,14 +185,6 @@ function onAxisAfterSetTickPositions(
         coll !== 'xAxis' && coll !== 'yAxis' ||
         this.logarithmic
     ) {
-        return;
-    }
-
-    const defaultTickSnap = !isXAxis,
-        startOnTick = pick(this.options.startOnTick, defaultTickSnap),
-        endOnTick = pick(this.options.endOnTick, defaultTickSnap);
-
-    if (!startOnTick && !endOnTick) {
         return;
     }
 
