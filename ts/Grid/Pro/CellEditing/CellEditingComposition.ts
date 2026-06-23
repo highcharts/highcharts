@@ -4,12 +4,13 @@
  *
  *  (c) 2020-2026 Highsoft AS
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  *  Authors:
- *  - Dawid Dragula
+ *  - Dawid Draguła
  *  - Sebastian Bochan
  *
  * */
@@ -187,10 +188,10 @@ function createEditModeRenderer(column: Column): EditModeRendererType {
  * Callback function called after column initialization.
  */
 function afterColumnInit(this: Column): void {
-    const { options } = this;
-
-    if (options?.cells?.editMode?.enabled) {
+    if (this.viewport.grid.columnPolicy.isColumnEditable(this.id)) {
         this.editModeRenderer = createEditModeRenderer(this);
+    } else {
+        delete this.editModeRenderer;
     }
 }
 
@@ -206,7 +207,8 @@ function onCellKeyDown(
 ): void {
     if (
         e.originalEvent?.key !== 'Enter' ||
-        !this.column.editModeRenderer
+        !this.column.editModeRenderer ||
+        !this.isEditable()
     ) {
         return;
     }
@@ -218,7 +220,7 @@ function onCellKeyDown(
  * Callback function called when a cell is double clicked.
  */
 function onCellDblClick(this: TableCell): void {
-    if (this.column.editModeRenderer) {
+    if (this.column.editModeRenderer && this.isEditable()) {
         this.row.viewport.cellEditing?.startEditing(this);
     }
 }
@@ -228,17 +230,22 @@ function onCellDblClick(this: TableCell): void {
  */
 function addEditableCellA11yHint(this: TableCell): void {
     const a11y = this.row.viewport.grid.accessibility;
-    if (!a11y || this.a11yEditableHint?.isConnected) {
+    if (!a11y) {
         return;
     }
 
     const editableLang = this.row.viewport.grid.options
         ?.lang?.accessibility?.cellEditing?.editable;
 
-    if (!this.column.options.cells?.editMode?.enabled || !editableLang) {
+    if (!this.isEditable() || !editableLang) {
+        this.a11yEditableHint?.remove();
+        delete this.a11yEditableHint;
         return;
     }
 
+    if (this.a11yEditableHint?.isConnected) {
+        return;
+    }
 
     this.a11yEditableHint = makeHTMLElement('span', {
         className: Globals.getClassName('visuallyHidden'),
@@ -411,6 +418,8 @@ declare module '../../Core/Options' {
          * Whether to enabled the cell edit mode functionality. It allows to
          * edit the cell value in a separate input field that is displayed
          * after double-clicking the cell or pressing the Enter key.
+         *
+         * @sample grid-pro/basic/cell-editing Cell editing
          */
         editMode?: ColumnEditModeOptions;
     }

@@ -5,8 +5,9 @@
  *  (c) 2010-2026 Highsoft AS
  *  Author: Paweł Fus
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -54,7 +55,7 @@ const {
     initDataLabelsDefer
 } = D;
 
-import TextPath from '../../Extensions/TextPath.js';
+import { composeTextPath } from '../../Extensions/TextPath.js';
 import {
     addEvent,
     defined,
@@ -62,7 +63,7 @@ import {
     merge,
     pick
 } from '../../Shared/Utilities.js';
-TextPath.compose(SVGElement);
+composeTextPath(SVGElement);
 
 /* *
  *
@@ -257,6 +258,7 @@ class NetworkgraphSeries extends Series {
         if (this.options.nodes) {
             this.options.nodes.forEach(
                 function (
+                    this: NetworkgraphSeries,
                     nodeOptions: NodesComposition.PointCompositionOptions
                 ): void {
                     if (!this.nodeLookup[nodeOptions.id as any]) {
@@ -305,7 +307,7 @@ class NetworkgraphSeries extends Series {
 
     /**
      * Set index for each node. Required for proper `node.update()`.
-     * Note that links are indexated out of the box in `generatePoints()`.
+     * Note that links are indexed out of the box in `generatePoints()`.
      *
      * @private
      */
@@ -388,7 +390,7 @@ class NetworkgraphSeries extends Series {
     ): SVGAttributes {
         // By default, only `selected` state is passed on
         const pointState = state || point && point.state || 'normal',
-            stateOptions = (this.options.states as any)[pointState];
+            stateOptions = this.options.states?.[pointState];
 
         let attribs = Series.prototype.pointAttribs.call(
             this,
@@ -398,18 +400,17 @@ class NetworkgraphSeries extends Series {
 
         if (point && !point.isNode) {
             attribs = point.getLinkAttributes();
-            // For link, get prefixed names:
+            // For link, get nested names:
             if (stateOptions) {
                 attribs = {
-                    // TO DO: API?
-                    stroke: stateOptions.linkColor || attribs.stroke,
-                    dashstyle: (
-                        stateOptions.linkDashStyle || attribs.dashstyle
-                    ),
-                    opacity: pick(
-                        stateOptions.linkOpacity, attribs.opacity
-                    ),
-                    'stroke-width': stateOptions.linkColor ||
+                    stroke: stateOptions.link?.color || attribs.stroke,
+                    dashstyle: stateOptions.link?.dashStyle ||
+                        attribs.dashstyle,
+                    // Deprecated linkOpacity, but keep for backwards compat.
+                    opacity: (stateOptions as any).linkOpacity ??
+                        stateOptions.link?.opacity ??
+                        attribs.opacity,
+                    'stroke-width': stateOptions.link?.width ||
                         attribs['stroke-width']
                 };
             }
@@ -484,7 +485,7 @@ class NetworkgraphSeries extends Series {
     }
 
     /**
-     * Run pre-translation and register nodes&links to the deffered layout.
+     * Run pre-translation and register nodes&links to the deferred layout.
      * @private
      */
     public translate(): void {

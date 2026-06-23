@@ -135,7 +135,7 @@ Grid.grid('container', {
 });
 ```
 
-See the [live responsive sample](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/grid-lite/basic/responsive-rules/).
+See the [live responsive demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/grid-lite/demo/responsive-rules/).
 
 ## API reference
 

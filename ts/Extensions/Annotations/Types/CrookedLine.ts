@@ -39,6 +39,7 @@ if (defaultOptions.annotations?.types) {
     *         Crooked line
     *
     * @product      highstock
+    * @requires     modules/annotations-advanced
     * @optionparent annotations.types.crookedLine
     */
     defaultOptions.annotations.types.crookedLine = {
@@ -205,6 +206,7 @@ class CrookedLine extends Annotation {
     public addControlPoints(): void {
         this.getControlPointsOptions().forEach(
             function (
+                this: CrookedLine,
                 pointOptions: AnnotationMockPointOptionsObject,
                 i: number
             ): void {

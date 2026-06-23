@@ -3,10 +3,11 @@
  *  Parallel coordinates module
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Pawel Fus
+ *  Author: Paweł Fus
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -56,7 +57,7 @@ const chartDefaults: ParallelCoordinatesOptions = {
      * ```js
      * parallelAxes: {
      *    lineWidth: 1,       // classic mode only
-     *    gridlinesWidth: 0,  // classic mode only
+     *    gridLineWidth: 0,  // classic mode only
      *    title: {
      *        text: '',
      *        reserveSpace: false

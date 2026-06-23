@@ -4,11 +4,11 @@
         'https://cdn.jsdelivr.net/gh/highcharts/highcharts@4cb098f6c3/samples/data/large-heatmap.csv'
     ).then(res => res.text());
 
+    const dataTable = new Highcharts.Data({ csv }).getDataTable();
+
     Highcharts.chart('container', {
 
-        data: {
-            csv
-        },
+        dataTable,
 
         chart: {
             type: 'heatmap'
@@ -64,10 +64,10 @@
 
         colorAxis: {
             stops: [
-                [0, '#3060cf'],
-                [0.5, '#fffbbc'],
-                [0.9, '#c4463a'],
-                [1, '#c4463a']
+                [0, 'var(--highcharts-color-0)'],
+                [0.5, 'var(--highcharts-background-color)'],
+                [0.9, 'var(--highcharts-color-3)'],
+                [1, 'var(--highcharts-color-3)']
             ],
             min: -15,
             max: 25,
@@ -79,6 +79,11 @@
         },
 
         series: [{
+            dataMapping: {
+                x: 'Date',
+                y: 'Time',
+                value: 'Temperature'
+            },
             boostThreshold: 100,
             borderWidth: 0,
             nullColor: '#EFEFEF',

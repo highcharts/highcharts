@@ -4,8 +4,11 @@ authors:
   - Torstein Hønsi
 js_wrap: b
 tags:
+  - Highcharts overview
   - Highcharts Stock demo
 categories:
+  - Basics:
+      priority: 10
   - Chart types:
       priority: 4
 ...

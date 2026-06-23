@@ -1,7 +1,7 @@
 ---
 name: Highcharts Dashboards Component KPI
 authors:
-  - Pawel Lysy
+  - Paweł Lysy
 js_wrap: b
 tags:
   - Highcharts Dashboards demo

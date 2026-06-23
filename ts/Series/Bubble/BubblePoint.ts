@@ -1,10 +1,11 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -39,6 +40,9 @@ const {
  *
  * */
 
+/**
+ * @internal
+ */
 class BubblePoint extends ScatterPoint {
 
     /* *
@@ -59,7 +63,7 @@ class BubblePoint extends ScatterPoint {
 
 
     /**
-     * @private
+     * @internal
      */
     public haloPath(size: number): SVGPath {
         const computedSize = (
@@ -108,4 +112,7 @@ extend(BubblePoint.prototype, {
  *
  * */
 
+/**
+ * @internal
+ */
 export default BubblePoint;

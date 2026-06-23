@@ -150,3 +150,129 @@ QUnit.test(
         );
     }
 );
+
+// Skipped for v13. We need to consider whether extended data should be
+// supported in boosted series, because it adds complexity and slows down the
+// performance. The idea of the Boost module is to support only a faster subset
+// of functionality. If we decide to support it, the scatterProcessData function
+// needs to loop over all columns in the data table and copy values over to
+// processed data.
+QUnit.skip(
+    'Scatter with boost should keep `keys` values after zoom (#23771)',
+    function (assert) {
+        const chart = Highcharts.chart('container', {
+            chart: {
+                type: 'scatter',
+                zooming: {
+                    type: 'x'
+                }
+            },
+            boost: {
+                usePreAllocated: true
+            },
+            xAxis: {
+                min: 0,
+                max: 100
+            },
+            yAxis: {
+                min: 0,
+                max: 10
+            },
+            series: [{
+                boostThreshold: 1,
+                cropThreshold: 1,
+                keys: ['x', 'y', 'label'],
+                data: [
+                    [0, 1],
+                    [20, 2],
+                    [40, 3, 'C'],
+                    [60, 4, 'D'],
+                    [80, 5, 'E'],
+                    [100, 6, 'F']
+                ]
+            }]
+        });
+        const series = chart.series[0];
+
+        assert.strictEqual(
+            series.boost.getPoint(series.points[2]).label,
+            'C',
+            'The keyed value should be available before zoom'
+        );
+
+        chart.xAxis[0].setExtremes(40, 100);
+
+        assert.strictEqual(
+            series.boost.getPoint(series.points[0]).label,
+            'C',
+            'The keyed value should stay mapped after zoom'
+        );
+    }
+);
+
+// Skipped for v13. We need to consider whether extended data should be
+// supported in boosted series, because it adds complexity and slows down the
+// performance. If we decide to support it, the scatterProcessData function
+// needs to loop over all columns in the data table and copy values over to
+// processed data.
+QUnit.skip(
+    'Scatter boost should keep remapped keys after zoom (#23771, user demo)',
+    function (assert) {
+        const size = 18;
+        const data = [];
+        let at = 0;
+
+        for (let i = 1; i <= size; i++) {
+            for (let j = 1; j <= size; j++) {
+                data.push([i, j, i + j, at++]);
+            }
+        }
+
+        const chart = Highcharts.chart('container', {
+            chart: {
+                type: 'scatter',
+                zooming: {
+                    type: 'xy'
+                }
+            },
+            xAxis: {
+                min: 1,
+                max: size
+            },
+            yAxis: {
+                min: 1,
+                max: size
+            },
+            series: [{
+                boostThreshold: 200,
+                cropThreshold: 1,
+                keys: ['y', 'x', 'sum', 'at'],
+                data
+            }]
+        });
+        const series = chart.series[0];
+        const beforeZoomPoint = series.boost.getPoint(series.points[0]);
+
+        assert.strictEqual(
+            beforeZoomPoint.sum,
+            beforeZoomPoint.x + beforeZoomPoint.y,
+            'The remapped key should be available before zoom'
+        );
+
+        chart.xAxis[0].setExtremes(10, 18);
+        chart.yAxis[0].setExtremes(10, 18);
+
+        const afterZoomPoint = series.boost.getPoint(series.points[0]);
+
+        assert.strictEqual(
+            afterZoomPoint.sum,
+            afterZoomPoint.x + afterZoomPoint.y,
+            'The remapped key should stay mapped after zoom'
+        );
+        assert.strictEqual(
+            ((afterZoomPoint.y - 1) * size) + (afterZoomPoint.x - 1),
+            afterZoomPoint.at,
+            'The keyed value should stay aligned with x/y after zoom'
+        );
+    }
+);

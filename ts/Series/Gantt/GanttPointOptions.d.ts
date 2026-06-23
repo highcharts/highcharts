@@ -4,8 +4,9 @@
  *
  *  Author: Lars A. V. Cabrera
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -16,7 +17,6 @@
  *
  * */
 
-import type ColorType from '../../Core/Color/ColorType';
 import type { GanttDependencyOptions } from './GanttSeriesOptions';
 import type {
     XRangePointOptions,
@@ -69,18 +69,13 @@ export interface GanttPointOptions extends XRangePointOptions {
      */
 
     /**
-     * Progress indicator, how much of the task completed. If it is a number,
-     * the `fill` will be applied automatically.
+     * Progress indicator, how much of the task completed. When set as a number,
+     * works as `{ amount: number }`.
      *
      * @sample {gantt} gantt/demo/progress-indicator
      *         Progress indicator
-     *
-     * @extends series.xrange.data.partialFill
-     *
-     * @product gantt
      */
     completed?: (number|GanttPointCompletedOptions);
-
 
     /**
      * The ID of the point (task) that this point depends on in Gantt charts.
@@ -150,23 +145,19 @@ export interface GanttPointOptions extends XRangePointOptions {
  */
 export interface GanttPointCompletedOptions
     extends XRangePointPartialFillOptions {
-
-    /**
-     * The fill of the progress indicator. Defaults to a darkened variety of the
-     * main color.
-     *
-     * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-     */
-    fill?: ColorType;
-
     /**
      * The amount of the progress indicator, ranging from 0 (not started) to 1
      * (finished).
      *
      * @default 0
      */
-    amount?: number;
+    amount?: XRangePointPartialFillOptions['amount'];
 
+    /**
+     * The fill of the progress indicator. Defaults to a darkened variety of the
+     * main color.
+     */
+    fill?: XRangePointPartialFillOptions['fill'];
 }
 
 /* *

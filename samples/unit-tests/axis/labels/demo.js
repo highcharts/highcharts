@@ -602,54 +602,71 @@ QUnit.test('X axis label rotation ignored step(#3971)', function (assert) {
 QUnit.test(
     'Auto label alignment is still working when step is set',
     function (assert) {
-        var chart = $('#container')
-            .highcharts({
-                chart: {
-                    marginBottom: 80
-                },
-                xAxis: {
-                    categories: [
-                        'Loooooong',
-                        'Feb',
-                        'Mar',
-                        'Apr',
-                        'May',
-                        'Jun',
-                        'Jul',
-                        'Aug',
-                        'Sep',
-                        'Oct',
-                        'Nov',
-                        'Dec'
-                    ],
-                    labels: {
-                        step: 1,
-                        rotation: -90
-                    }
-                },
+        const chart = Highcharts.chart('container', {
+            chart: {
+                marginBottom: 80
+            },
+            xAxis: {
+                categories: [
+                    'Looooooooooooong',
+                    'Feb',
+                    'Mar',
+                    'Apr',
+                    'May',
+                    'Jun',
+                    'Jul',
+                    'Aug',
+                    'Sep',
+                    'Oct',
+                    'Nov',
+                    'Dec'
+                ],
+                labels: {
+                    step: 1,
+                    rotation: -90
+                }
+            },
 
-                series: [
-                    {
-                        data: [
-                            29.9,
-                            71.5,
-                            106.4,
-                            129.2,
-                            144.0,
-                            176.0,
-                            135.6,
-                            148.5,
-                            216.4,
-                            194.1,
-                            95.6,
-                            54.4
-                        ]
-                    }
-                ]
-            })
-            .highcharts();
+            series: [
+                {
+                    data: [
+                        29.9,
+                        71.5,
+                        106.4,
+                        129.2,
+                        144.0,
+                        176.0,
+                        135.6,
+                        148.5,
+                        216.4,
+                        194.1,
+                        95.6,
+                        54.4
+                    ]
+                }
+            ]
+        });
 
-        assert.strictEqual(chart.xAxis[0].labelAlign, 'right', 'Rigth aligned');
+        assert.strictEqual(chart.xAxis[0].labelAlign, 'right', 'Right aligned');
+
+        chart.update({
+            xAxis: {
+                labels: {
+                    rotation: -45
+                }
+            },
+            yAxis: {
+                title: {
+                    text: null
+                }
+            }
+        });
+
+        assert.ok(
+            chart.xAxis[0].ticks[0].label.element.getBoundingClientRect().x > 0,
+            'Rotated step labels should not be clipped on the left edge, ' +
+            '#23674.'
+        );
     }
 );
 
@@ -1043,6 +1060,107 @@ QUnit.test('Label reserve space', function (assert) {
         oppositeBBox.width >= baseBBox.width * 0.95,
         `#21172,
             Opposite yAxis label should not be narrower than normal yAxis label`
+    );
+
+    // #23527 Test short labels
+    chart.update({
+        chart: {
+            marginLeft: void 0,
+            spacingLeft: void 0
+        },
+        yAxis: [{
+            opposite: false,
+            labels: {
+                format: 'LBL',
+                rotation: 0,
+                style: {
+                    fontSize: 20
+                }
+            }
+        }]
+    });
+
+    let unrotatedPlotLeft = chart.plotLeft;
+    chart.update({
+        yAxis: [{
+            labels: {
+                rotation: -45
+            }
+        }]
+    });
+    assert.ok(
+        unrotatedPlotLeft >= chart.plotLeft,
+        'Short rotated label should not increase the plot left margin (#23527).'
+    );
+
+    // #23527 Test long labels
+    chart.update({
+        yAxis: [{
+            labels: {
+                format: 'ReallyLongLabel',
+                rotation: 0
+            }
+        }]
+    });
+    unrotatedPlotLeft = chart.plotLeft;
+    chart.update({
+        yAxis: [{
+            labels: {
+                rotation: -45
+            }
+        }]
+    });
+    assert.ok(
+        unrotatedPlotLeft >= chart.plotLeft,
+        'Long rotated label should not increase the plot left margin (#23527).'
+    );
+
+    chart.update({
+        yAxis: {
+            lineWidth: 1,
+            labels: {
+                align: 'left',
+                rotation: 0,
+                format: 'Label'
+            }
+        }
+    });
+
+    const plotLeft = chart.plotLeft;
+    chart.update({
+        yAxis: {
+            labels: {
+                rotation: 45
+            }
+        }
+    });
+    assert.strictEqual(
+        chart.plotLeft,
+        plotLeft,
+        'chart.plotLeft should not change when rotating labels with align left.'
+    );
+    chart.update({
+        yAxis: {
+            opposite: true,
+            labels: {
+                rotation: 0,
+                align: 'right'
+            }
+        }
+    });
+    const plotWidth = chart.plotWidth;
+    chart.update({
+        yAxis: {
+            labels: {
+                rotation: 45
+            }
+        }
+    });
+    assert.strictEqual(
+        chart.plotWidth,
+        plotWidth,
+        `chart.plotWidth should not change when rotating labels with align right
+        on opposite y-axis.`
     );
 });
 

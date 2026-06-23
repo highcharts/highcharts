@@ -40,7 +40,7 @@ export interface DragDropGuideBoxDefaultOptions extends DragDropGuideBoxOptions 
     /**
      * Guide box fill color.
      *
-     * @type  {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @type  {Highcharts.ColorType}
      * @default 'rgba(0, 0, 0, 0.1)'
      * @since 6.2.0
      */
@@ -261,7 +261,7 @@ export interface DragDropHandleOptions {
     /**
      * The fill color of the drag handles.
      *
-     * @type  {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+     * @type  {Highcharts.ColorType}
      * @since 6.2.0
      */
     color?: ColorType;
@@ -309,6 +309,41 @@ export interface DragDropHandleOptions {
      * @since 6.2.0
      */
     zIndex?: number;
+}
+
+declare module '../../Core/Chart/ChartOptions' {
+    interface ChartOptions {
+        /**
+         * Deprecated. Use
+         * [chart.zooming.key](#chart.zooming.key)
+         * instead.
+         *
+         * Set a key to hold when dragging to zoom the chart. This is useful to
+         * avoid zooming while moving points. Should be set different than
+         * [chart.panKey](#chart.panKey).
+         *
+         * @since      6.2.0
+         * @deprecated 10.2.1
+         * @requires   modules/draggable-points
+         */
+        zoomKey?: 'alt' | 'ctrl' | 'meta' | 'shift';
+    }
+
+    interface ChartZoomingOptions {
+        /**
+         * Set a key to hold when dragging to zoom the chart. This is useful to
+         * avoid zooming while moving points. Should be set different than
+         * [chart.panKey](#chart.panKey).
+         *
+         * **Note:** If both zooming and panning are enabled without keys,
+         * zooming will take precedence by default. To prioritize panning,
+         * either set zooming key or [chart.panKey](#chart.panKey).
+         *
+         * @since    10.2.1
+         * @requires modules/draggable-points
+         */
+        key?: 'alt' | 'ctrl' | 'meta' | 'shift';
+    }
 }
 
 declare module '../../Core/Series/PointOptions' {

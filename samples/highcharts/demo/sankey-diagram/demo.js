@@ -175,7 +175,8 @@ Highcharts.chart('container', {
         name: 'Sankey demo series',
         dataLabels: {
             style: {
-                color: 'var(--highcharts-neutral-color-100, #000)'
+                color: 'var(--highcharts-neutral-color-100, #000)',
+                textOutline: '2px contrast'
             }
         }
     }]

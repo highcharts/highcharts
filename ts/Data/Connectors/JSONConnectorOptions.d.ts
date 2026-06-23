@@ -2,12 +2,13 @@
  *
  *  (c) 2009-2026 Highsoft AS
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  *  Authors:
- *  - Pawel Lysy
+ *  - Paweł Lysy
  *  - Kamil Kubik
  *
  * */
@@ -30,6 +31,9 @@ import type { JSONData } from '../Converters/JSONConverterOptions';
 
 /**
  * Options of the JSONConnector.
+ *
+ * @sample grid-lite/basic/data-connector-json
+ *         Grid with JSON connector
  */
 export interface JSONConnectorOptions extends DataConnectorOptions {
     /**
@@ -91,7 +95,7 @@ export interface JSONConnectorOptions extends DataConnectorOptions {
      * Allows defining multiple data tables within a single connector to adjust
      * options or data parsing in various ways based on the same data source.
      *
-     * @example
+     * ```js
      * dataPool: {
      *     connectors: [{
      *         id: 'data-connector',
@@ -131,6 +135,7 @@ export interface JSONConnectorOptions extends DataConnectorOptions {
      *         }]
      *     }]
      * }
+     * ```
      **/
     dataTables?: JSONDataTableConnectorOptions[];
 
@@ -146,12 +151,13 @@ export interface JSONConnectorOptions extends DataConnectorOptions {
  * The key is the column name (later used as a reference), and the value is
  * an array of keys that are used to access the data.
  *
- * @example
+ * ```js
  * columnIds: {
  *     InstanceType: ['InstanceType'],
  *     DiskSpace: ['DiskSpace', 'RootDisk', 'SizeGB'],
  *     ReadOps: ['DiskOperations', 0, 'ReadOps']
  * },
+ * ```
  */
 export interface ColumnIdsOptions {
     [key: string]: (string|number)[]

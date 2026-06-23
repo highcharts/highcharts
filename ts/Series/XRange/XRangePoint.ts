@@ -3,10 +3,11 @@
  *  X-range series module
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Torstein Honsi, Lars A. V. Cabrera
+ *  Author: Torstein Hønsi, Lars A. V. Cabrera
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -84,11 +85,13 @@ class XRangePoint extends ColumnPoint {
         series: Series,
         point: Point
     ): AnyRecord {
-        const colors = series.options.colors || series.chart.options.colors,
+        const chart = series.chart,
+            colors = series.options.colors ||
+                chart.options.colors,
             colorCount = colors ?
                 colors.length :
-                series.chart.options.chart.colorCount as any,
-            colorIndex = (point.y as any) % colorCount,
+                (chart.options.chart.colorCount || 1),
+            colorIndex = (point.y || 0) % colorCount,
             color = colors?.[colorIndex];
 
         return {
@@ -142,12 +145,14 @@ class XRangePoint extends ColumnPoint {
      *
      * @private
      */
-    public constructor(series: XRangeSeries, options: XRangePointOptions) {
-        super(series, options);
+    public constructor(
+        series: XRangeSeries,
+        options: XRangePointOptions,
+        x: number
+    ) {
+        super(series, options, x);
 
-        if (!this.y) {
-            this.y = 0;
-        }
+        this.y ||= 0;
     }
 
     /**

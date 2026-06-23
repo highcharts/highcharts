@@ -1,14 +1,15 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Authors: Kamil Musialowski, Markus Barstad
+ *  Authors: Kamil Musiałowski, Markus Barstad
  *
  *  Shared cross marker symbol registration used by series modules.
  *  This keeps `cross` out of Core SVG symbols while allowing modules
  *  like PointAndFigure and Contour to compose it when needed.
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */

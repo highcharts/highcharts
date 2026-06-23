@@ -1,10 +1,11 @@
 /* *
  *
  *  (c) 2010-2026 Highsoft AS
- *  Author: Grzegorz Blachlinski, Sebastian Bochan
+ *  Author: Grzegorz Blachliński, Sebastian Bochan
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -54,7 +55,7 @@ const {
     initDataLabelsDefer
 } = D;
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
-import TextPath from '../../Extensions/TextPath.js';
+import { composeTextPath } from '../../Extensions/TextPath.js';
 import {
     addEvent,
     clamp,
@@ -66,7 +67,7 @@ import {
     merge,
     pick
 } from '../../Shared/Utilities.js';
-TextPath.compose(SVGElement);
+composeTextPath(SVGElement);
 
 /* *
  *
@@ -575,7 +576,7 @@ class PackedBubbleSeries extends BubbleSeries {
         // pointer = chart.pointer,
         // onMouseOver = function (e: PointerEvent): void {
         //     const point = pointer.getPointFromEvent(e);
-        //     // undefined on graph in scatterchart
+        //     // undefined on graph in scatter chart
         //     if (typeof point !== 'undefined') {
         //         pointer.isDirectTouch = true;
         //         point.onMouseOver(e);

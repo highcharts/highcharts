@@ -1,3 +1,5 @@
+/* eslint-disable no-underscore-dangle */
+
 async function createGrid(containerId, updateOnChange) {
     return await Grid.grid(containerId, {
         data: {
@@ -31,6 +33,8 @@ function attachUpdateRowsCounter(grid, inputEl) {
     };
 }
 
+window.__updateOnChangeReady = false;
+
 (async () => {
     const gridAuto = await createGrid('container-auto', true);
     const gridManual = await createGrid('container-manual', false);
@@ -47,13 +51,13 @@ function attachUpdateRowsCounter(grid, inputEl) {
     };
 
     document.getElementById('auto-set-cell').addEventListener('click', () => {
-        gridAuto.dataTable.setCell('weight', 0, 123);
+        gridAuto.dataProvider.getDataTable().setCell('weight', 0, 123);
     });
 
     document
         .getElementById('auto-edit-cell')
         .addEventListener('click', async () => {
-            await gridAuto.viewport.rows[0].cells[1].editValue(200);
+            await gridAuto.viewport.rows[0].cells[1].setValue(200, true);
         });
 
     document
@@ -63,7 +67,7 @@ function attachUpdateRowsCounter(grid, inputEl) {
         });
 
     document.getElementById('manual-set-cell').addEventListener('click', () => {
-        gridManual.dataTable.setCell('weight', 0, 321);
+        gridManual.dataProvider.getDataTable().setCell('weight', 0, 321);
     });
 
     document
@@ -78,4 +82,5 @@ function attachUpdateRowsCounter(grid, inputEl) {
         counters.manual.reset();
     });
 
+    window.__updateOnChangeReady = true;
 })();

@@ -4,12 +4,13 @@
  *
  *  (c) 2020-2026 Highsoft AS
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  *  Authors:
- *  - Dawid Dragula
+ *  - Dawid Draguła
  *
  * */
 
@@ -25,10 +26,15 @@
 import type {
     FilterCondition
 } from '../../../Data/Modifiers/FilterModifierOptions.js';
-import type { FilteringCondition } from '../Options.js';
+import type {
+    ColumnFilteringOptions,
+    FilteringCondition
+} from '../Options.js';
 
 import FilterModifier from '../../../Data/Modifiers/FilterModifier.js';
 import QueryingController from './QueryingController.js';
+import type { Condition } from '../Table/Actions/ColumnFiltering/FilteringTypes.js';
+import { operatorAliases } from '../Table/Actions/ColumnFiltering/FilteringTypes.js';
 import { isString } from '../../../Shared/Utilities.js';
 
 
@@ -99,9 +105,18 @@ class FilteringController {
      */
     public static mapOptionsToFilter(
         columnId: string,
-        options: FilteringCondition
+        options: ColumnFilteringOptions
     ): FilterCondition | undefined {
-        const { condition, value } = options;
+        const condition = options.rule?.operator ?? options.condition;
+        let operator: Condition | undefined;
+        if (condition) {
+            // TODO: Remove, deprecated.
+            // Legacy `before`/`after` → `lessThan`/`greaterThan` aliases.
+            const alias =
+                operatorAliases[condition as keyof typeof operatorAliases];
+            operator = (alias ?? condition) as Condition;
+        }
+        const value = options.rule?.value ?? options.value;
         const isStringValue = isString(value);
         const stringifiedValue = isStringValue ? value : '';
         const nonValueConditions = ['empty', 'notEmpty', 'true', 'false'];
@@ -110,12 +125,12 @@ class FilteringController {
             (
                 typeof value === 'undefined' ||
                 (isStringValue && !stringifiedValue)
-            ) && !nonValueConditions.includes(condition ?? '')
+            ) && !nonValueConditions.includes(operator ?? '')
         ) {
             return;
         }
 
-        switch (condition) {
+        switch (operator) {
             case 'contains':
                 return {
                     columnId,
@@ -189,20 +204,6 @@ class FilteringController {
                     value
                 };
 
-            case 'before':
-                return {
-                    columnId,
-                    operator: '<',
-                    value
-                };
-
-            case 'after':
-                return {
-                    columnId,
-                    operator: '>',
-                    value
-                };
-
             case 'empty':
                 return {
                     columnId,
@@ -237,31 +238,103 @@ class FilteringController {
     }
 
     /**
+     * Compares two serializable filter conditions produced from Grid options.
+     *
+     * @param left
+     * The current filter condition.
+     *
+     * @param right
+     * The next filter condition.
+     */
+    public static filterConditionsEqual(
+        left?: FilterCondition,
+        right?: FilterCondition
+    ): boolean {
+        if (left === right) {
+            return true;
+        }
+
+        if (!left || !right) {
+            return false;
+        }
+
+        if (
+            typeof left === 'function' ||
+            typeof right === 'function' ||
+            left.operator !== right.operator
+        ) {
+            return false;
+        }
+
+        if ('condition' in left || 'condition' in right) {
+            return (
+                'condition' in left &&
+                'condition' in right &&
+                FilteringController.filterConditionsEqual(
+                    left.condition,
+                    right.condition
+                )
+            );
+        }
+
+        if ('conditions' in left || 'conditions' in right) {
+            return (
+                'conditions' in left &&
+                'conditions' in right &&
+                left.conditions.length === right.conditions.length &&
+                left.conditions.every((condition, index): boolean =>
+                    FilteringController.filterConditionsEqual(
+                        condition,
+                        right.conditions[index]
+                    )
+                )
+            );
+        }
+
+        return (
+            'columnId' in left &&
+            'columnId' in right &&
+            left.columnId === right.columnId &&
+            left.value === right.value &&
+            (
+                ('ignoreCase' in left ? left.ignoreCase : void 0) ===
+                ('ignoreCase' in right ? right.ignoreCase : void 0)
+            )
+        );
+    }
+
+    /**
      * Loads filtering options from the data grid options.
      */
     public loadOptions(): void {
-        const columnOptionsMap = this.querying.grid.columnOptionsMap;
+        const columnPolicy = this.querying.grid.columnPolicy;
         const newConditions: Record<string, FilterCondition> = {};
 
-        if (columnOptionsMap) {
-            const columnIds = Object.keys(columnOptionsMap);
-            for (let i = 0, iEnd = columnIds.length; i < iEnd; ++i) {
-                const columnId = columnIds[i];
-                const filteringOptions =
-                    columnOptionsMap[columnId]?.options?.filtering;
+        const columnIds = columnPolicy.getColumnIds();
+        for (let i = 0, iEnd = columnIds.length; i < iEnd; ++i) {
+            const columnId = columnIds[i];
+            if (columnPolicy.isColumnUnbound(columnId)) {
+                continue;
+            }
+            const sourceColumnId = columnPolicy.getColumnSourceId(columnId);
+            const filteringOptions = columnPolicy
+                .getIndividualColumnOptions(columnId)
+                ?.filtering;
 
-                if (!filteringOptions) {
-                    continue;
-                }
+            if (
+                !filteringOptions ||
+                !sourceColumnId
+            ) {
+                continue;
+            }
 
-                const condition = FilteringController.mapOptionsToFilter(
-                    columnId,
-                    filteringOptions
-                );
+            const condition = FilteringController.mapOptionsToFilter(
+                sourceColumnId,
+                filteringOptions
+            );
 
-                if (condition) {
-                    newConditions[columnId] = condition;
-                }
+            if (condition) {
+                newConditions[columnId] = condition;
             }
         }
 
@@ -282,8 +355,17 @@ class FilteringController {
         columnId: string,
         options: FilteringCondition
     ): void {
+        if (this.querying.grid.columnPolicy.isColumnUnbound(columnId)) {
+            return;
+        }
+        const sourceColumnId = this.querying.grid
+            .columnPolicy.getColumnSourceId(columnId);
+        if (!sourceColumnId) {
+            return;
+        }
+
         const condition = FilteringController.mapOptionsToFilter(
-            columnId,
+            sourceColumnId,
             options
         );
 

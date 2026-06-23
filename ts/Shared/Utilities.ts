@@ -2,8 +2,9 @@
  *
  *  (c) 2009-2026 Highsoft AS
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -341,8 +342,8 @@ export function createElement(
 }
 
 /**
- * Utility for crisping a line position to the nearest full pixel depening on
- * the line width
+ * Utility for crisping a line position to the nearest full pixel depending on
+ * the line width.
  *
  * @internal
  * @param {number} value       The raw pixel position
@@ -545,7 +546,7 @@ export function diffObjects(
 }
 
 /**
- * Remove the last occurence of an item from an array.
+ * Remove the last occurrence of an item from an array.
  *
  * @function Highcharts.erase
  *
@@ -598,7 +599,7 @@ export function extend<T>(a: (T|undefined), b: Partial<T>): T {
 /**
  * Extend a prototyped class by new members.
  *
- * @deprecated
+ * @deprecated 11.0.0
  * @function Highcharts.extendClass<T>
  *
  * @param {Highcharts.Class<T>} parent
@@ -1237,7 +1238,7 @@ export function merge<T>(
 /**
  * Take an interval and normalize it to multiples of round numbers.
  *
- * @deprecated
+ * @deprecated 5.0.3
  * @function Highcharts.normalizeTickInterval
  *
  * @param {number} interval
@@ -1675,7 +1676,7 @@ export function splat<T>(obj: T|Array<T>): Array<T> {
 
 /**
  * Sort an object array and keep the order of equal items. The ECMAScript
- * standard does not specify the behaviour when items are equal.
+ * standard does not specify the behavior when items are equal.
  *
  * @function Highcharts.stableSort
  *
@@ -1794,6 +1795,21 @@ export function wrap<T, K extends FunctionNamesOf<T>>(
             [].slice.call(arguments)
         ) as Parameters<typeof func>);
     } as T[K];
+}
+
+/* *
+ *
+ *  Enums
+ *
+ * */
+
+/**
+ * Limits for regex check to prevent overload of regex engine.
+ * @internal
+ */
+export const enum RegexLimits {
+    shortLimit = 1000,
+    svgLimit = 1e8
 }
 
 /* *

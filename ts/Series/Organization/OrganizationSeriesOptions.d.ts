@@ -3,10 +3,11 @@
  *  Organization chart module
  *
  *  (c) 2018-2026 Highsoft AS
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -25,6 +26,9 @@ import type {
     SankeySeriesOptions
 } from '../Sankey/SankeySeriesOptions';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
+import type {
+    SeriesLinkOptionsBase
+} from '../Networkgraph/NetworkgraphSeriesOptions';
 
 /* *
  *
@@ -47,13 +51,13 @@ export type OrganizationLinkTypeValues = 'curved' | 'straight' | 'orthogonal';
 
 export type OrganizationNodesLayoutValue = ('normal'|'hanging');
 
-export interface OrganizationLinkOptions {
-    linkOpacity?: number;
+export interface OrganizationLinkOptions extends SeriesLinkOptionsBase {
     curveFactor?: number;
-    color?: ColorString;
     lineWidth?: number;
-    type?: OrganizationLinkTypeValues;
+    linkOpacity?: number;
+    offset?: number;
     radius?: number;
+    type?: OrganizationLinkTypeValues;
 }
 
 export type OrganizationHangingIndentTranslationValue = (

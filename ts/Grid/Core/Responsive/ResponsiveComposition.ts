@@ -4,12 +4,13 @@
  *
  *  (c) 2020-2026 Highsoft AS
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  *  Authors:
- *  - Dawid Dragula
+ *  - Dawid Draguła
  *
  * */
 
@@ -68,17 +69,44 @@ export function compose(
  */
 function initResizeObserver(this: Grid): void {
     destroyResizeObserver.call(this);
-    if (!this.container) {
+    if (!this.container || !this.contentWrapper) {
         return;
     }
 
     this.activeRules = new Set();
 
+    // Synchronously evaluate responsive rules so the first render already
+    // uses the correct options (avoids a redundant second render).
+    if (!this.updatingResponsive) {
+        const rules = this.options?.responsive?.rules || [];
+        if (rules.length > 0) {
+            const { clientWidth: width, clientHeight: height } =
+                this.container;
+            const fakeEntry = {
+                contentRect: { width, height }
+            } as ResizeObserverEntry;
+            const matchingRules: RuleOptions[] = [];
+
+            for (const rule of rules) {
+                if (typeof rule._id === 'undefined') {
+                    rule._id = uniqueKey();
+                }
+
+                if (matchResponsiveRule.call(this, rule, fakeEntry)) {
+                    matchingRules.push(rule);
+                }
+            }
+
+            this.activeRules = new Set(matchingRules);
+            setResponsive.call(this, matchingRules, false);
+        }
+    }
+
     this.resizeObserver = new ResizeObserver((entries): void => {
         onResize.call(this, entries[0]);
     });
 
-    this.resizeObserver.observe(this.container);
+    this.resizeObserver.observe(this.contentWrapper);
 }
 
 /**
@@ -132,22 +160,36 @@ function matchResponsiveRule(
  *
  * @param matchingRules
  * Active responsive rules.
+ *
+ * @param redraw
+ * Whether to redraw the grid. Default is `true`.
  */
-function setResponsive(this: Grid, matchingRules: RuleOptions[]): void {
+function setResponsive(
+    this: Grid,
+    matchingRules: RuleOptions[],
+    redraw = true
+): void {
     const ruleIds = matchingRules.map((rule): string => rule._id as string);
     const ruleIdsString = (ruleIds.toString() || void 0);
     const currentRuleIds = this.currentResponsive?.ruleIds;
 
-    if (ruleIdsString === currentRuleIds) {
+    if (ruleIdsString === currentRuleIds || this.updatingResponsive) {
         return;
     }
+
+    this.updatingResponsive = true;
+
+    let lastUpdate: Promise<void> | undefined;
 
     if (this.currentResponsive) {
         const undoOptions = this.currentResponsive.undoOptions;
         this.currentResponsive = void 0;
-        this.updatingResponsive = true;
-        void this.update(undoOptions as Options, true);
-        this.updatingResponsive = false;
+
+        if (redraw) {
+            lastUpdate = this.update(undoOptions as Options, true);
+        } else {
+            this.update(undoOptions as Options, false);
+        }
     }
 
     if (ruleIdsString) {
@@ -177,9 +219,21 @@ function setResponsive(this: Grid, matchingRules: RuleOptions[]): void {
             undoOptions
         };
 
-        if (!this.updatingResponsive) {
-            void this.update(mergedOptions as Options, true);
+        if (redraw) {
+            lastUpdate = this.update(mergedOptions as Options, true);
+        } else {
+            this.update(mergedOptions as Options, false);
         }
+    }
+
+    // Keep the flag alive until the last queued update finishes so that
+    // ResizeObserver callbacks arriving in the meantime are ignored.
+    if (lastUpdate !== void 0) {
+        void lastUpdate.then((): void => {
+            this.updatingResponsive = false;
+        });
+    } else {
+        this.updatingResponsive = false;
     }
 }
 
@@ -286,7 +340,7 @@ function syncColumnIds(
  * The resize observer entry.
  */
 function onResize(this: Grid, entry: ResizeObserverEntry): void {
-    if (!this.activeRules) {
+    if (!this.activeRules || this.updatingResponsive) {
         return;
     }
 
@@ -318,6 +372,8 @@ declare module '../Options' {
         /**
          * Allows setting a set of rules to apply for different screen or grid
          * sizes. Each rule specifies additional grid options.
+         *
+         * @sample grid-lite/demo/responsive-rules Responsive rules
          */
         responsive?: ResponsiveOptions;
     }

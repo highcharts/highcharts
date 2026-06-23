@@ -3,10 +3,11 @@
  *  Client side exporting module
  *
  *  (c) 2015-2026 Highsoft AS
- *  Author: Torstein Honsi / Oystein Moseng
+ *  Author: Torstein Hønsi / Øystein Moseng
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -47,6 +48,7 @@ const {
     win
 } = G;
 import OfflineExportingDefaults from './OfflineExportingDefaults.js';
+import { error } from '../../Core/Utilities.js';
 import { addEvent, extend, pushUnique } from '../../Shared/Utilities.js';
 
 /* *
@@ -113,9 +115,70 @@ namespace OfflineExporting {
 
     /* *
      *
+     *  Constants
+     *
+     * */
+
+    const invalidLibURLErrorPrefix = 'Invalid exporting.libURL:';
+    /* *
+     *
      *  Functions
      *
      * */
+
+    /**
+     * Check if the PDF export dependencies are already loaded on window.
+     *
+     * @private
+     */
+    function hasPdfDependencies(): boolean {
+        return !!(
+            win &&
+            win.jspdf?.jsPDF &&
+            win.svg2pdf
+        );
+    }
+
+    /**
+     * Validate and normalize an opt-in libURL.
+     *
+     * @private
+     */
+    function normalizeOptInLibURL(
+        optInLibURL?: string
+    ): (string | undefined) {
+        if (!optInLibURL) {
+            return void 0;
+        }
+
+        const normalizedLibURL = optInLibURL.slice(-1) !== '/' ?
+            optInLibURL + '/' :
+            optInLibURL;
+
+        let isValidLibURL: boolean;
+
+        if (win.URL?.canParse) {
+            isValidLibURL = win.URL.canParse(normalizedLibURL, doc.baseURI);
+        } else {
+            try {
+                // The baseURI allows both absolute and relative paths.
+                const parsedURL = new win.URL(normalizedLibURL, doc.baseURI);
+                isValidLibURL = !!parsedURL.href;
+            } catch {
+                isValidLibURL = false;
+            }
+        }
+
+        if (!isValidLibURL) {
+            throw new Error(
+                `${invalidLibURLErrorPrefix} "${optInLibURL}". ` +
+                'Provide a valid URL or path to the jsPDF and svg2pdf ' +
+                'scripts.'
+            );
+        }
+
+        return normalizedLibURL;
+    }
 
     /**
      * Composition function.
@@ -140,6 +203,7 @@ namespace OfflineExporting {
                 e: Exporting.DownloadSVGEventArgs
             ): Promise<void> {
                 const { svg, exportingOptions, exporting, preventDefault } = e;
+                const chart = exporting?.chart;
 
                 // Check if PDF export is requested
                 if (exportingOptions?.type === 'application/pdf') {
@@ -152,20 +216,37 @@ namespace OfflineExporting {
                         const {
                             type,
                             filename,
-                            scale,
-                            libURL
+                            scale
                         } = G.Exporting.prepareImageOptions(exportingOptions);
+                        const optInLibURL =
+                            exportingOptions.libURL ||
+                            chart?.options.exporting?.libURL;
+                        const normalizedLibURL = normalizeOptInLibURL(
+                            optInLibURL
+                        );
 
                         // Local PDF download
                         if (type === 'application/pdf') {
-                            // Must load pdf libraries first if not found. Don't
-                            // destroy the object URL yet since we are doing
-                            // things asynchronously
-                            if (!win.jspdf?.jsPDF) {
-                                // Get jspdf
-                                await getScript(`${libURL}jspdf.js`);
-                                // Get svg2pdf
-                                await getScript(`${libURL}svg2pdf.js`);
+                            if (!hasPdfDependencies()) {
+                                if (!normalizedLibURL) {
+                                    throw new Error(
+                                        'PDF export requires jsPDF and svg2pdf.'
+                                    );
+                                }
+
+                                // Must load pdf libraries first if not found.
+                                // Don't destroy the object URL yet since we are
+                                // doing things asynchronously
+                                if (!win.jspdf?.jsPDF) {
+                                    await getScript(
+                                        `${normalizedLibURL}jspdf.js`
+                                    );
+                                }
+                                if (!win.svg2pdf) {
+                                    await getScript(
+                                        `${normalizedLibURL}svg2pdf.js`
+                                    );
+                                }
                             }
 
                             // Call the PDF download if SVG element found
@@ -176,11 +257,28 @@ namespace OfflineExporting {
                                 exportingOptions?.pdfFont
                             );
                         }
-                    } catch (error) {
+                    } catch (caughtError) {
+                        const exportError = caughtError as Error;
+
+                        if (
+                            exportingOptions?.fallbackToExportServer !==
+                                false &&
+                            exportError.message.indexOf(
+                                invalidLibURLErrorPrefix
+                            ) === 0
+                        ) {
+                            error(
+                                `${exportError.message} Falling back to ` +
+                                'export server.',
+                                false,
+                                chart
+                            );
+                        }
+
                         // Try to fallback to the server
                         await exporting?.fallbackToServer(
                             exportingOptions,
-                            error as Error
+                            exportError
                         );
                     }
                 }
@@ -191,6 +289,23 @@ namespace OfflineExporting {
         if (!pushUnique(composed, 'OfflineExporting')) {
             return;
         }
+
+        addEvent(Chart, 'load', function (this: Chart): void {
+            // The load event also runs for server-export chart copies.
+            // Skip warnings in that case.
+            if (this.renderer.forExport || hasPdfDependencies()) {
+                return;
+            }
+
+            if (!this.options.exporting?.libURL) {
+                error(
+                    'Warning: exporting.libURL not defined, PDF client side ' +
+                    'export will not work',
+                    false,
+                    this
+                );
+            }
+        });
 
         // Adding wrappers for the deprecated functions
         extend(Chart.prototype, {
@@ -218,6 +333,10 @@ namespace OfflineExporting {
     }
 
     /**
+     * Deprecated. Use
+     * [Exporting.downloadSVG](https://api.highcharts.com/class-reference/Highcharts.Exporting#downloadSVG)
+     * instead.
+     *
      * Get data URL to an image of an SVG and call download on it options
      * object:
      * - **filename:** Name of resulting downloaded file without extension.
@@ -228,11 +347,10 @@ namespace OfflineExporting {
      * - **scale:** Scaling factor of downloaded image compared to source.
      * Default is `1`.
      * - **libURL:** URL pointing to location of dependency scripts to download
-     * on demand. Default is the exporting.libURL option of the global
-     * Highcharts options pointing to our server.
+     * on demand.
      *
      * @function Highcharts.downloadSVGLocal
-     * @deprecated
+     * @deprecated 11.4.4
      *
      * @param {string} svg
      * The generated SVG

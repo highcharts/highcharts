@@ -2,10 +2,11 @@
  *
  *  Highcharts Drilldown module
  *
- *  Author: Torstein Honsi
+ *  Author: Torstein Hønsi
  *
- *  A commercial license may be required depending on use.
- *  See www.highcharts.com/license
+ *  Integration of this software requires a license.
+ *  - For commercial use, see www.highcharts.com/license
+ *  - For non-commercial, see www.highcharts.com/license-eula
  *
  *
  * */
@@ -19,8 +20,6 @@
  * */
 
 import type DrilldownOptions from './DrilldownOptions';
-
-import { Palette } from '../../Core/Color/Palettes.js';
 
 /* *
  *
@@ -101,7 +100,7 @@ const DrilldownDefaults: DrilldownOptions = {
         /** @ignore-option */
         cursor: 'pointer',
         /** @ignore-option */
-        color: Palette.highlightColor100,
+        color: 'var(--highcharts-highlight-color-100)',
         /** @ignore-option */
         fontWeight: 'bold',
         /** @ignore-option */
@@ -126,7 +125,7 @@ const DrilldownDefaults: DrilldownOptions = {
      */
     activeDataLabelStyle: {
         cursor: 'pointer',
-        color: Palette.highlightColor100,
+        color: 'var(--highcharts-highlight-color-100)',
         fontWeight: 'bold',
         textDecoration: 'underline'
     },
