@@ -315,6 +315,25 @@ QUnit.test('getSVGForExport XHTML', async function (assert) {
     );
 });
 
+QUnit.test('getSVG with Stock Tools GUI (#24754)', function (assert) {
+    const chart = Highcharts.stockChart('container', {
+        stockTools: {
+            gui: {
+                enabled: true
+            }
+        },
+        series: [{
+            data: [0, 4, 5, 3, 4]
+        }]
+    });
+
+    assert.strictEqual(
+        chart.exporting.getSVG().indexOf('highcharts-stocktools-wrapper'),
+        -1,
+        'Stock Tools wrapper should not be present in the exported SVG'
+    );
+});
+
 QUnit.test('getSVG for boosted chart', async function (assert) {
     const chart = Highcharts.chart('container', {
         boost: {
