@@ -5,6 +5,21 @@
 // });
 
 function drawChart(dataset, clusterIds) {
+    Highcharts.setOptions({
+        palette: {
+            colors: [
+                '#000000', '#e41a1c', '#377eb8', '#4daf4a',
+                '#984ea3', '#ff7f00', '#ffff33', '#a65628'
+            ],
+            dark: {
+                colors: [
+                    '#ffffff', '#f94043', '#619ccc', '#77d573',
+                    '#d17bde', '#ff7f00', '#ffff33', '#9e6849'
+                ]
+            }
+        }
+    });
+
     Highcharts.chart('container', {
         chart: {
             type: 'scatter',
