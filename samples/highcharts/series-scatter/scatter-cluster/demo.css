@@ -61,3 +61,39 @@ body {
 .highcharts-description {
     margin: 0.3rem 10px;
 }
+
+.chart-controls {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.75em;
+    margin: 0.5em 10px;
+}
+
+select {
+    appearance: none;
+    padding: 0.4em 2em 0.4em 0.75em;
+    font-family: inherit;
+    font-size: 0.9em;
+    color: var(--highcharts-neutral-color-100);
+    background-color: var(--highcharts-background-color);
+    border: 1px solid var(--highcharts-neutral-color-20, #ccc);
+    border-radius: 4px;
+    cursor: pointer;
+
+    /* Custom dropdown arrow */
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'><path d='M2 4l4 4 4-4' fill='none' stroke='gray' stroke-width='1.5'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 0.6em center;
+    transition: border-color 0.2s ease;
+}
+
+select:hover {
+    border-color: var(--highcharts-neutral-color-40, #999);
+}
+
+select:focus {
+    outline: none;
+    border-color: var(--highcharts-color-0, #2caffe);
+    box-shadow: 0 0 0 2px var(--highcharts-highlight-color-20, rgba(44, 175, 254, 0.2));
+}
