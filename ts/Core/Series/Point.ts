@@ -924,7 +924,10 @@ class Point {
             i = 0;
 
         zone = zones[i];
-        while ((this as any)[zoneAxis] >= (zone?.value as any)) {
+        while (
+            i < zones.length &&
+            (this as any)[zoneAxis] >= (zone.value as any)
+        ) {
             zone = zones[++i];
         }
 
