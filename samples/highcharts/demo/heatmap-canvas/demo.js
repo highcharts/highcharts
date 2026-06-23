@@ -4,10 +4,7 @@
         'https://cdn.jsdelivr.net/gh/highcharts/highcharts@5cd39e6abf/samples/data/large-heatmap.csv'
     ).then(res => res.text());
 
-    const dataTable = new Highcharts.Data({
-        csv,
-        parseDate: false
-    }).getDataTable();
+    const dataTable = new Highcharts.Data({ csv }).getDataTable();
 
     Highcharts.chart('container', {
 
@@ -88,7 +85,6 @@
                 value: 'Temperature'
             },
             boostThreshold: 100,
-            turboThreshold: 0, // To allow parsing date strings in data mapping
             borderWidth: 0,
             nullColor: '#EFEFEF',
             colsize: 24 * 36e5, // One day
