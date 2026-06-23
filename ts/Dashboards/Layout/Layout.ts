@@ -144,9 +144,15 @@ class Layout extends GUIElement {
      */
     public setRows(): void {
         const layout = this,
-            rowsElements = (layout.options.rows ?? layout.container && layout.container.getElementsByClassName(
-                    layout.options.rowClassName || ''
-                )) || [];
+            rowsElements = (
+                layout.options.rows ??
+                (
+                    layout.container &&
+                    layout.container.getElementsByClassName(
+                        layout.options.rowClassName || ''
+                    )
+                )
+            ) || [];
 
         let rowElement,
             i, iEnd;
