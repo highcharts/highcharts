@@ -196,6 +196,14 @@ function onAxisAfterSetTickPositions(
         return;
     }
 
+    const defaultTickSnap = !isXAxis,
+        startOnTick = pick(this.options.startOnTick, defaultTickSnap),
+        endOnTick = pick(this.options.endOnTick, defaultTickSnap);
+
+    if (!startOnTick && !endOnTick) {
+        return;
+    }
+
     const axisLength = this.len,
         hasUserMin = defined(pick(this.options.min, this.userMin)),
         hasUserMax = defined(pick(this.options.max, this.userMax));
