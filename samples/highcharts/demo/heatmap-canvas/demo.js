@@ -4,7 +4,10 @@
         'https://cdn.jsdelivr.net/gh/highcharts/highcharts@4cb098f6c3/samples/data/large-heatmap.csv'
     ).then(res => res.text());
 
-    const dataTable = new Highcharts.Data({ csv }).getDataTable();
+    const dataTable = new Highcharts.Data({
+        csv,
+        parseDate: false
+    }).getDataTable();
 
     Highcharts.chart('container', {
 
@@ -64,10 +67,10 @@
 
         colorAxis: {
             stops: [
-                [0, 'var(--highcharts-color-0)'],
+                [0, '#3060cf'],
                 [0.5, 'var(--highcharts-background-color)'],
-                [0.9, 'var(--highcharts-color-3)'],
-                [1, 'var(--highcharts-color-3)']
+                [0.9, '#fe6a35'],
+                [1, '#c4463a']
             ],
             min: -15,
             max: 25,
@@ -85,9 +88,10 @@
                 value: 'Temperature'
             },
             boostThreshold: 100,
+            turboThreshold: 0, // To allow parsing date strings in data mapping
             borderWidth: 0,
             nullColor: '#EFEFEF',
-            colsize: 24 * 36e5, // one day
+            colsize: 24 * 36e5, // One day
             tooltip: {
                 headerFormat: 'Temperature<br/>',
                 pointFormat: '{point.x:%e %b, %Y} {point.y}:00: ' +
