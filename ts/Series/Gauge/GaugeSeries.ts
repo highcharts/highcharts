@@ -46,7 +46,6 @@ import {
     extend,
     isNumber,
     merge,
-    pick,
     relativeLength
 } from '../../Shared/Utilities.js';
 
@@ -684,7 +683,7 @@ class GaugeSeries extends Series {
         Series.prototype.setData.call(this, data, false);
         this.processData();
         this.generatePoints();
-        if (pick(redraw, true)) {
+        if ((redraw ?? true)) {
             this.chart.redraw();
         }
     }

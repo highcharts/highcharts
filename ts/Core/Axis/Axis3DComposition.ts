@@ -39,7 +39,7 @@ const {
     shapeArea
 } = Math3D;
 import Tick3D from './Tick3DComposition.js';
-import { addEvent, merge, pick, wrap } from '../../Shared/Utilities.js';
+import { addEvent, merge, wrap } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -95,8 +95,8 @@ function onAxisAfterSetOptions(
 
     if (chart.is3d?.() && axis.coll !== 'colorAxis') {
         this.clippable = false;
-        options.tickWidth = pick(options.tickWidth, 0);
-        options.gridLineWidth = pick(options.gridLineWidth, 1);
+        options.tickWidth = (options.tickWidth ?? 0);
+        options.gridLineWidth = (options.gridLineWidth ?? 1);
     }
 }
 
@@ -314,8 +314,8 @@ function wrapAxisGetSlotWidth(
                 y: chart.plotHeight / 2,
                 z: options3d.depth / 2,
                 vd: (
-                    pick(options3d.depth, 1) *
-                    pick(options3d.viewDistance, 0)
+                    (options3d.depth ?? 1) *
+                    (options3d.viewDistance ?? 0)
                 )
             },
             index = tickPositions.indexOf(tick.pos),
@@ -485,12 +485,12 @@ class Axis3DAdditions {
 
         const alpha = deg2rad * (chart.options.chart.options3d as any).alpha,
             beta = deg2rad * (chart.options.chart.options3d as any).beta,
-            positionMode = pick(
-                isTitle && (axis.options.title as any).position3d,
+            positionMode = (
+                (isTitle && (axis.options.title as any).position3d) ??
                 axis.options.labels.position3d
             ),
-            skew = pick(
-                isTitle && (axis.options.title as any).skew3d,
+            skew = (
+                (isTitle && (axis.options.title as any).skew3d) ??
                 axis.options.labels.skew3d
             ),
             frame = chart.chart3d.frame3d,

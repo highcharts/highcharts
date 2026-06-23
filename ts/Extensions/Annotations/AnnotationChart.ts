@@ -37,7 +37,6 @@ import {
     fireEvent,
     isArray,
     isObject,
-    pick,
     wrap
 } from '../../Shared/Utilities.js';
 
@@ -166,7 +165,7 @@ function chartAddAnnotation(
 
     this.options.annotations.push(annotation.options);
 
-    if (pick(redraw, true)) {
+    if ((redraw ?? true)) {
         annotation.redraw();
         annotation.graphic.attr({
             opacity: 1

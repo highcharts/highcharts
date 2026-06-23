@@ -34,8 +34,7 @@ import {
     clamp,
     extend,
     fireEvent,
-    merge,
-    pick
+    merge
 } from '../../Shared/Utilities.js';
 
 /* *
@@ -141,14 +140,10 @@ class VariablePieSeries extends PieSeries {
         );
 
         if (zData.length) {
-            zMin = pick(
-                seriesOptions.zMin,
-                arrayMin(zData.filter(series.zValEval))
-            );
-            zMax = pick(
-                seriesOptions.zMax,
-                arrayMax(zData.filter(series.zValEval))
-            );
+            zMin =
+                seriesOptions.zMin ?? arrayMin(zData.filter(series.zValEval));
+            zMax =
+                seriesOptions.zMax ?? arrayMax(zData.filter(series.zValEval));
             this.getRadii(zMin, zMax, series.minPxSize, series.maxPxSize);
         }
     }
@@ -290,10 +285,9 @@ class VariablePieSeries extends PieSeries {
             slicedOffset: number = options.slicedOffset as any,
             startAngle = options.startAngle || 0,
             startAngleRad = Math.PI / 180 * (startAngle - 90),
-            endAngleRad = Math.PI / 180 * (pick(
-                options.endAngle,
-                startAngle + 360
-            ) - 90),
+            endAngleRad = Math.PI / 180 * (
+                (options.endAngle ?? startAngle + 360) - 90
+            ),
             circ = endAngleRad - startAngleRad, // 2 * Math.PI,
             points = series.points,
             ignoreHiddenPoint = options.ignoreHiddenPoint;

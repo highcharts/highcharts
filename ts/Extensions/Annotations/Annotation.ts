@@ -68,7 +68,6 @@ import {
     erase,
     fireEvent,
     merge,
-    pick,
     splat
 } from '../../Shared/Utilities.js';
 
@@ -710,7 +709,7 @@ class Annotation extends EventEmitter implements ControlTarget {
             }
 
             item.redraw(
-                pick(animation, true) && item.graphic.placed
+                (animation ?? true) && item.graphic.placed
             );
 
             if (item.points.length) {
@@ -917,7 +916,7 @@ class Annotation extends EventEmitter implements ControlTarget {
     ): void {
         const options = this.options,
             navigation = this.chart.navigationBindings,
-            visibility = pick(visible, !options.visible);
+            visibility = (visible ?? !options.visible);
 
         this.graphic.attr(
             'visibility',
@@ -978,7 +977,7 @@ class Annotation extends EventEmitter implements ControlTarget {
         chart.options.annotations[userOptionsIndex] = this.options;
 
         this.isUpdating = true;
-        if (pick(redraw, true)) {
+        if ((redraw ?? true)) {
             chart.drawAnnotations();
         }
 

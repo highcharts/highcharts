@@ -48,7 +48,7 @@ const {
     shapeArea
 } = Math3D;
 import SVGElement3D from './SVGElement3D.js';
-import { defined, extend, merge, pick } from '../../../Shared/Utilities.js';
+import { defined, extend, merge } from '../../../Shared/Utilities.js';
 
 /* *
  *
@@ -301,12 +301,10 @@ namespace SVGRenderer3D {
                     defined(hash.insidePlotArea)
                 )
             ) {
-                this.enabled = pick(hash.enabled, this.enabled);
-                this.vertexes = pick(hash.vertexes, this.vertexes);
-                this.insidePlotArea = pick(
-                    hash.insidePlotArea,
-                    this.insidePlotArea
-                );
+                this.enabled = (hash.enabled ?? this.enabled);
+                this.vertexes = (hash.vertexes ?? this.vertexes);
+                this.insidePlotArea =
+                    hash.insidePlotArea ?? this.insidePlotArea;
                 delete hash.enabled;
                 delete hash.vertexes;
                 delete hash.insidePlotArea;
@@ -339,12 +337,10 @@ namespace SVGRenderer3D {
                     defined(params.insidePlotArea)
                 )
             ) {
-                this.enabled = pick(params.enabled, this.enabled);
-                this.vertexes = pick(params.vertexes, this.vertexes);
-                this.insidePlotArea = pick(
-                    params.insidePlotArea,
-                    this.insidePlotArea
-                );
+                this.enabled = (params.enabled ?? this.enabled);
+                this.vertexes = (params.vertexes ?? this.vertexes);
+                this.insidePlotArea =
+                    params.insidePlotArea ?? this.insidePlotArea;
                 delete params.enabled;
                 delete params.vertexes;
                 delete params.insidePlotArea;
@@ -918,7 +914,7 @@ namespace SVGRenderer3D {
             delete params.z;
 
             const anim = animObject(
-                pick(animation, this.renderer.globalAnimation)
+                (animation ?? this.renderer.globalAnimation)
             );
 
             if (anim.duration) {
@@ -936,7 +932,7 @@ namespace SVGRenderer3D {
                             pos: number
                         ): number => (
                             (from as any)[key] + (
-                                pick(to[key], (from as any)[key]) -
+                                (to[key] ?? (from as any)[key]) -
                                 (from as any)[key]
                             ) * pos
                         );

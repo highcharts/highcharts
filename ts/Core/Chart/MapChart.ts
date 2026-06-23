@@ -31,7 +31,7 @@ import D from '../Defaults.js';
 const { getOptions } = D;
 import SVGRenderer from '../Renderer/SVG/SVGRenderer.js';
 import '../../Maps/MapSymbols.js';
-import { isNumber, merge, pick } from '../../Shared/Utilities.js';
+import { isNumber, merge } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -105,15 +105,14 @@ class MapChart extends Chart {
                     type: 'map'
                 },
                 credits: {
-                    mapText: pick(
-                        (defaultCreditsOptions as any).mapText,
+                    mapText: (
+                        (defaultCreditsOptions as any).mapText ??
                         ' \u00a9 <a href="{geojson.copyrightUrl}">' +
                             '{geojson.copyrightShort}</a>'
                     ),
-                    mapTextFull: pick(
-                        (defaultCreditsOptions as any).mapTextFull,
+                    mapTextFull:
+                        (defaultCreditsOptions as any).mapTextFull ??
                         '{geojson.copyright}'
-                    )
                 },
                 mapView: {}, // Required to enable Chart.mapView
                 tooltip: {
@@ -293,7 +292,7 @@ namespace MapChart {
         c?: Chart.CallbackFunction|true
     ): MapChart|Promise<MapChart> {
         const chart = new MapChart(a as any, b as any, c);
-        return chart.promise || chart;
+        return chart.promise ?? chart;
     }
     /* eslint-enable jsdoc/check-param-names */
 

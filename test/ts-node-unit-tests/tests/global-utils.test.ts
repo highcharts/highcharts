@@ -38,7 +38,6 @@ describe('Global utilities', () => {
         'objectEach',
         'offset',
         'pad',
-        'pick',
         'pInt',
         'relativeLength',
         'removeEvent',

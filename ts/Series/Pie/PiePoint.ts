@@ -34,7 +34,6 @@ import {
     addEvent,
     extend,
     isNumber,
-    pick,
     relativeLength
 } from '../../Shared/Utilities.js';
 
@@ -229,7 +228,7 @@ class PiePoint extends Point {
         setAnimation(animation, chart);
 
         // Redraw is true by default
-        redraw = pick(redraw, true);
+        redraw = (redraw ?? true);
 
         this.sliced = this.options.sliced = sliced ?? !this.sliced;
 

@@ -43,7 +43,6 @@ import {
     addEvent,
     fireEvent,
     objectEach,
-    pick,
     removeEvent
 } from '../../Shared/Utilities.js';
 
@@ -364,8 +363,8 @@ abstract class EventEmitter {
             function (): void {
                 // Sometimes the target is the annotation and sometimes its the
                 // controllable
-                const annotation = pick(
-                    emitter.target && emitter.target.annotation,
+                const annotation = (
+                    (emitter.target && emitter.target.annotation) ??
                     emitter.target
                 ) as Annotation;
                 if (annotation) {
@@ -377,10 +376,7 @@ abstract class EventEmitter {
                 emitter.chart.hasDraggedAnnotation = false;
                 if (emitter.hasDragged) {
                     // ControlPoints vs Annotation:
-                    fireEvent(pick(
-                        annotation, // #15952
-                        emitter
-                    ), 'afterUpdate');
+                    fireEvent((annotation ?? emitter), 'afterUpdate');
                 }
                 emitter.hasDragged = false;
                 emitter.onMouseUp();

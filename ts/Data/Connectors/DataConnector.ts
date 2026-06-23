@@ -43,7 +43,7 @@ import DataTable, {
     type ColumnCollection as DataTableColumnCollection
 } from '../DataTable.js';
 import { DeepPartial } from '../../Shared/Types';
-import { addEvent, fireEvent, merge, pick } from '../../Shared/Utilities.js';
+import { addEvent, fireEvent, merge } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -260,7 +260,7 @@ abstract class DataConnector implements DataEventEmitter<Event> {
 
         if (names.length) {
             return names.sort((a, b): number => (
-                pick(columns[a].index, 0) - pick(columns[b].index, 0)
+                (columns[a].index ?? 0) - (columns[b].index ?? 0)
             ));
         }
     }

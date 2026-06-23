@@ -59,7 +59,6 @@ import {
     fireEvent,
     isArray,
     isNumber,
-    pick,
     pushUnique,
     wrap
 } from '../../Shared/Utilities.js';
@@ -204,15 +203,12 @@ function allocateIfNotSeriesBoosting(
  * True, if boost is enabled.
  */
 function boostEnabled(chart: Chart): boolean {
-    return pick(
-        (
-            chart &&
+    return ((
+        chart &&
             chart.options &&
             chart.options.boost &&
             chart.options.boost.enabled
-        ),
-        true
-    );
+    ) ?? true);
 }
 
 /** @internal */
@@ -794,7 +790,7 @@ function hasExtremes(
     checkX?: boolean
 ): boolean {
     const options = series.options,
-        threshold = pick(options.boostThreshold, Number.MAX_VALUE);
+        threshold = (options.boostThreshold ?? Number.MAX_VALUE);
 
     if (threshold === 0) {
         return false;
@@ -826,7 +822,7 @@ const getSeriesBoosting = (
     data?: Array<(PointOptions|PointShortOptions)>|Types.TypedArray
 ): boolean => {
     const { options, forceCrop, chart } = series,
-        threshold = pick(options.boostThreshold, Number.MAX_VALUE);
+        threshold = (options.boostThreshold ?? Number.MAX_VALUE);
 
     // Return early if either will be grouped or boost is disabled.
     if (forceCrop || threshold === 0) {
@@ -990,12 +986,9 @@ function getPoint(
         }
     }
 
-    point.category = pick(
-        xAxis.categories ?
-            xAxis.categories[point.x] :
-            point.x, // @todo simplify
-        point.x
-    );
+    point.category = (xAxis.categories ?
+        xAxis.categories[point.x] :
+        point.x ?? point.x);
     point.key = point.name ?? point.category;
 
     point.dist = boostPoint.dist;
@@ -1204,7 +1197,7 @@ function seriesRenderCanvas(this: Series): void {
             this.options.xData ||
             this.getColumn('x', true)
         ),
-        lineWidth = pick(options.lineWidth, 1),
+        lineWidth = (options.lineWidth ?? 1),
         nullYSubstitute = options.nullInteraction && yMin,
         tooltip = chart.tooltip;
 

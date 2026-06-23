@@ -55,7 +55,6 @@ import {
     isArray,
     isNumber,
     merge,
-    pick,
     removeEvent,
     splat
 } from '../../Shared/Utilities.js';
@@ -691,24 +690,19 @@ class Navigator {
             // it. For example hidden series, but visible navigator (#6022).
             if (rendered) {
                 pxMin = 0;
-                pxMax = pick(xAxis.width, scrollbarXAxis.width);
+                pxMax = (xAxis.width ?? scrollbarXAxis.width);
             } else {
                 return;
             }
         }
 
-        navigator.left = pick(
-            xAxis.left,
-            // In case of scrollbar only, without navigator
-            chart.plotLeft + scrollButtonSize +
-            (inverted ? chart.plotWidth : 0)
-        );
+        navigator.left = (xAxis.left ?? chart.plotLeft + scrollButtonSize +
+            (inverted ? chart.plotWidth : 0));
 
-        let zoomedMax = navigator.size = navigatorSize = pick(
-            xAxis.len,
+        let zoomedMax = navigator.size = navigatorSize =
+            xAxis.len ??
             (inverted ? chart.plotHeight : chart.plotWidth) -
-            2 * scrollButtonSize
-        );
+                2 * scrollButtonSize;
 
         if (inverted) {
             navigatorWidth = scrollbarHeight;
@@ -717,8 +711,8 @@ class Navigator {
         }
 
         // Get the pixel position of the handles
-        pxMin = pick(pxMin, xAxis.toPixels(min, true));
-        pxMax = pick(pxMax, xAxis.toPixels(max, true));
+        pxMin = (pxMin ?? xAxis.toPixels(min, true));
+        pxMax = (pxMax ?? xAxis.toPixels(max, true));
 
         // Verify (#1851, #2238)
         if (!isNumber(pxMin) || Math.abs(pxMin) === Infinity) {
@@ -1130,14 +1124,9 @@ class Navigator {
             }
             if (
                 navigator.hasDragged &&
-                pick(
-                    navigator.scrollbarOptions?.liveRedraw,
-
-                    // By default, don't run live redraw on touch
-                    // devices or if the chart is in boost.
-                    !isTouchDevice &&
-                    !this.chart.boosted
-                )
+                (navigator.scrollbarOptions?.liveRedraw ?? (
+                    !isTouchDevice && !this.chart.boosted
+                ))
             ) {
                 e.DOMType = e.type;
                 setTimeout(function (): void {
@@ -1393,12 +1382,12 @@ class Navigator {
                     offset: 0,
                     index: yAxisIndex,
                     isInternal: true,
-                    reversed: pick(
+                    reversed: (
                         (
                             navigatorOptions.yAxis &&
                             navigatorOptions.yAxis.reversed
-                        ),
-                        (chart.yAxis[0] && chart.yAxis[0].reversed),
+                        ) ??
+                        (chart.yAxis[0] && chart.yAxis[0].reversed) ??
                         false
                     ), // #14060
                     zoomEnabled: false
@@ -1545,10 +1534,9 @@ class Navigator {
         const navigatorOptions = this.navigatorOptions,
             navigatorEnabled = this.navigatorEnabled,
             chart = this.chart;
-        this.opposite = pick(
-            navigatorOptions.opposite,
-            Boolean(!navigatorEnabled && chart.inverted)
-        ); // #6262
+        this.opposite =
+            navigatorOptions.opposite ??
+            Boolean(!navigatorEnabled && chart.inverted); // #6262
     }
 
     /**
@@ -1571,26 +1559,20 @@ class Navigator {
 
         if (!returnFalseOnNoBaseSeries || baseAxis.dataMin !== null) {
             ret = {
-                dataMin: pick( // #4053
-                    time.parse(navAxisOptions?.min),
-                    numExt(
-                        'min',
-                        time.parse(baseAxisOptions.min) as any,
-                        baseAxis.dataMin as any,
-                        navAxis.dataMin as any,
-                        navAxis.min as any
-                    )
-                ),
-                dataMax: pick(
-                    time.parse(navAxisOptions?.max),
-                    numExt(
-                        'max',
-                        time.parse(baseAxisOptions.max) as any,
-                        baseAxis.dataMax as any,
-                        navAxis.dataMax as any,
-                        navAxis.max as any
-                    )
-                )
+                dataMin: (time.parse(navAxisOptions?.min) ?? numExt(
+                    'min',
+                    time.parse(baseAxisOptions.min) as any,
+                    baseAxis.dataMin as any,
+                    navAxis.dataMin as any,
+                    navAxis.min as any
+                )),
+                dataMax: (time.parse(navAxisOptions?.max) ?? numExt(
+                    'max',
+                    time.parse(baseAxisOptions.max) as any,
+                    baseAxis.dataMax as any,
+                    navAxis.dataMax as any,
+                    navAxis.max as any
+                ))
             };
         }
 
@@ -1756,11 +1738,9 @@ class Navigator {
                 );
 
                 // Once nav series type is resolved, pick correct pointRange
-                mergedNavSeriesOptions.pointRange = pick(
-                    // Strictly set pointRange in options
-                    userNavOptions.pointRange,
-                    baseNavigatorOptions.pointRange,
-                    // Fallback to default values, e.g. `null` for column
+                mergedNavSeriesOptions.pointRange = (
+                    userNavOptions.pointRange ??
+                    baseNavigatorOptions.pointRange ??
                     defaultOptions.plotOptions[
                         mergedNavSeriesOptions.type || 'line'
                     ]?.pointRange
@@ -1995,9 +1975,9 @@ class Navigator {
             range = baseMax - baseMin,
             stickToMin = navigator?.stickToMin,
             stickToMax = navigator?.stickToMax,
-            overscroll = pick(baseXAxis.ordinal?.convertOverscroll(
+            overscroll = (baseXAxis.ordinal?.convertOverscroll(
                 baseXAxis.options.overscroll
-            ), 0),
+            ) ?? 0),
             navigatorSeries =
                 (navigator as any).series && (navigator as any).series[0],
             hasSetExtremes = !!baseXAxis.setExtremes,
@@ -2071,10 +2051,10 @@ class Navigator {
 
         // If the scrollbar is scrolled all the way to the right, keep right as
         // new data comes in, unless user set navigator.stickToMax to false.
-        navigator.stickToMax = pick(
+        navigator.stickToMax = (
             this.chart.options.navigator &&
-            this.chart.options.navigator.stickToMax, shouldStickToMax
-        );
+            this.chart.options.navigator.stickToMax
+        ) ?? shouldStickToMax;
 
         navigator.stickToMin = navigator.shouldStickToMin(
             baseSeries,

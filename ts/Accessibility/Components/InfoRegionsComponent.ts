@@ -58,7 +58,7 @@ const {
     stripHTMLTagsFromString,
     visuallyHideElement
 } = HU;
-import { attr, pick, replaceNested } from '../../Shared/Utilities.js';
+import { attr, replaceNested } from '../../Shared/Utilities.js';
 
 
 /* *
@@ -815,12 +815,14 @@ class InfoRegionsComponent extends AccessibilityComponent {
                 defaultCondition: boolean
             ): boolean {
                 const axes = chart[collectionKey];
-                return axes.length > 1 || axes[0] &&
-                pick(
-                    axes[0].options.accessibility &&
-                    axes[0].options.accessibility.enabled,
-                    defaultCondition
-                );
+                const axisA11yEnabled = axes[0] ?
+                    (
+                        axes[0].options.accessibility &&
+                        axes[0].options.accessibility.enabled
+                    ) :
+                    void 0;
+
+                return axes.length > 1 || (axisA11yEnabled ?? defaultCondition);
             },
             hasNoMap = !!chart.types &&
                 chart.types.indexOf('map') < 0 &&

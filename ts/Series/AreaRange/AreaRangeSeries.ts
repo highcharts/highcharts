@@ -48,8 +48,7 @@ import {
     extend,
     isArray,
     isNumber,
-    merge,
-    pick
+    merge
 } from '../../Shared/Utilities.js';
 
 /* *
@@ -327,7 +326,7 @@ class AreaRangeSeries extends AreaSeries {
                 rectPlotX: point.rectPlotX,
                 yBottom: point.yBottom,
                 // `plotHighX` is for polar charts
-                plotX: pick(point.plotHighX, point.plotX),
+                plotX: (point.plotHighX ?? point.plotX),
                 plotY: point.plotHigh,
                 isNull: point.isNull
             };
@@ -637,7 +636,7 @@ class AreaRangeSeries extends AreaSeries {
             if (defined(point.plotHighX)) {
                 point.plotX = point.plotHighX;
             }
-            point.y = pick(point.high, point.origProps.y); // #15523
+            point.y = (point.high ?? point.origProps.y); // #15523
             point.negative = point.y < (series.options.threshold || 0);
             if (series.zones.length) {
                 point.zone = point.getZone();

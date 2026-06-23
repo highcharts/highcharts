@@ -63,7 +63,6 @@ import {
     isNumber,
     isObject,
     merge,
-    pick,
     pushUnique,
     relativeLength,
     splat,
@@ -750,7 +749,7 @@ function onSeriesAfterTranslate(
                 !series.yAxis.reversed
             ) {
                 if (
-                    pick(points[i].y, Number.MIN_VALUE) < yAxis.min ||
+                    (points[i].y ?? Number.MIN_VALUE) < yAxis.min ||
                     points[i].x < xAxis.min ||
                     points[i].x > xAxis.max
                 ) {
@@ -904,7 +903,7 @@ function wrapColumnSeriesAlignDataLabel(
     isNew?: boolean
 ): void {
     const chart = this.chart,
-        inside = pick(options.inside, !!this.options.stacking);
+        inside = (options.inside ?? !!this.options.stacking);
 
     let angle,
         shapeArgs,
@@ -952,9 +951,9 @@ function wrapColumnSeriesAlignDataLabel(
                 });
             }
 
-            options.align = pick(options.align, 'center');
+            options.align = (options.align ?? 'center');
             options.verticalAlign =
-                pick(options.verticalAlign, 'middle');
+                (options.verticalAlign ?? 'middle');
         }
 
         Series.prototype.alignDataLabel.call(
@@ -1355,10 +1354,8 @@ function wrapSeriesAnimate(
         if (series.isRadialBar) {
             if (!init) {
                 // Run the pie animation for radial bars
-                series.startAngleRad = pick(
-                    series.translatedThreshold,
-                    series.xAxis.startAngleRad
-                );
+                series.startAngleRad =
+                    series.translatedThreshold ?? series.xAxis.startAngleRad;
                 H.seriesTypes.pie.prototype.animate.call(series, init);
             }
         } else {
@@ -1673,7 +1670,7 @@ class PolarAdditions {
             paneInnerR = center[3] / 2;
 
         let r = len - high + paneInnerR,
-            innerR = len - pick(low, len) + paneInnerR;
+            innerR = len - (low ?? len) + paneInnerR;
 
         // Prevent columns from shooting through the pane's center
         if (series.yAxis.reversed) {

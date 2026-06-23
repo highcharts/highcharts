@@ -70,7 +70,6 @@ import {
     isObject,
     merge,
     objectEach,
-    pick,
     splat
 } from '../../Shared/Utilities.js';
 
@@ -355,10 +354,9 @@ class MapSeries extends ScatterSeries {
                         // When strokeWidth is animating
                         if (animateIn || animateOut) {
 
-                            const strokeWidth = pick(
-                                    series.getStrokeWidth(series.options),
-                                    1 // Styled mode
-                                ),
+                            const strokeWidth =
+                                    series.getStrokeWidth(series.options) ??
+                                    1,
                                 inheritedStrokeWidth = (
                                     strokeWidth /
                                     (
@@ -398,10 +396,7 @@ class MapSeries extends ScatterSeries {
         transformGroups.forEach((transformGroup, i): void => {
             const view = i === 0 ? mapView : mapView.insets[i - 1],
                 svgTransform = view.getSVGTransform(),
-                strokeWidth = pick(
-                    this.getStrokeWidth(this.options),
-                    1 // Styled mode
-                );
+                strokeWidth = (this.getStrokeWidth(this.options) ?? 1);
 
             /*
             Animate or move to the new zoom level. In order to prevent
@@ -549,14 +544,10 @@ class MapSeries extends ScatterSeries {
                     if (!point.bounds) {
                         let bounds = point.getProjectedBounds(projection);
                         if (bounds) {
-                            point.labelrank = pick(
-                                point.labelrank,
-                                // Bigger shape, higher rank
-                                (
-                                    (bounds.x2 - bounds.x1) *
+                            point.labelrank = (point.labelrank ?? (
+                                (bounds.x2 - bounds.x1) *
                                     (bounds.y2 - bounds.y1)
-                                )
-                            );
+                            ));
 
                             const { midX, midY } = bounds;
                             if (insets && isNumber(midX) && isNumber(midY)) {

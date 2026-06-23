@@ -41,8 +41,7 @@ import {
     defined,
     extend,
     isNumber,
-    merge,
-    pick
+    merge
 } from '../../../Shared/Utilities.js';
 
 if (defaultOptions.annotations?.types) {
@@ -865,8 +864,8 @@ class Measure extends Annotation {
                     return {
                         x: annotation.xAxisMin,
                         y: annotation.yAxisMin,
-                        xAxis: pick(typeOptions.xAxis, options.xAxis),
-                        yAxis: pick(typeOptions.yAxis, options.yAxis)
+                        xAxis: (typeOptions.xAxis ?? options.xAxis),
+                        yAxis: (typeOptions.yAxis ?? options.yAxis)
                     };
                 } as any,
                 text: (

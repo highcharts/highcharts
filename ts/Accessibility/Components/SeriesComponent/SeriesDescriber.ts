@@ -53,8 +53,7 @@ import {
     defined,
     find,
     isString,
-    isNumber,
-    pick
+    isNumber
 } from '../../../Shared/Utilities.js';
 
 
@@ -159,11 +158,11 @@ function addMockPointElement(
             firstGraphic.parentGroup :
             series.graph || series.group,
         mockPos = firstPointWithGraphic ? {
-            x: pick(point.plotX, firstPointWithGraphic.plotX, 0),
-            y: pick(point.plotY, firstPointWithGraphic.plotY, 0)
+            x: (point.plotX ?? firstPointWithGraphic.plotX ?? 0),
+            y: (point.plotY ?? firstPointWithGraphic.plotY ?? 0)
         } : {
-            x: pick(point.plotX, 0),
-            y: pick(point.plotY, 0)
+            x: (point.plotX ?? 0),
+            y: (point.plotY ?? 0)
         },
         mockElement = makeMockElement(point, mockPos);
 
@@ -390,7 +389,8 @@ function getPointArrayMapValueDescription(
         keyToValStr = function (key: string): string|undefined {
             const num = pointNumberToString(
                 point,
-                pick((point as any)[key], (point.options as any)[key])
+                ((point as any)[key] ?? (point.options as any)[key]
+                )
             );
             return num !== void 0 ?
                 key + ': ' + pre + num + suf :
@@ -485,11 +485,13 @@ function getPointValueDescription(
             seriesA11yOptions.point.valueDescriptionFormat,
         pointValueDescriptionFormat = seriesValueDescFormat ||
             chart.options.accessibility.point.valueDescriptionFormat,
-        showXDescription = pick(
-            series.xAxis &&
-            series.xAxis.options.accessibility &&
-            series.xAxis.options.accessibility.enabled,
-            !chart.angular && series.type !== 'flowmap'
+        showXDescription = (
+            (
+                series.xAxis &&
+                series.xAxis.options.accessibility &&
+                series.xAxis.options.accessibility.enabled
+            ) ??
+            (!chart.angular && series.type !== 'flowmap')
         ),
         xDesc = showXDescription ? getPointXDescription(point) : '',
         context = {
@@ -654,10 +656,10 @@ function defaultSeriesDescriptionFormatter(
         ) + (
             shouldDescribeAxis('xAxis') ? ' ' + xAxisInfo + '.' : ''
         ),
-        formatStr = pick(
-            series.options.accessibility &&
-                series.options.accessibility.descriptionFormat,
-            chart.options.accessibility.series.descriptionFormat,
+        formatStr = (
+            (series.options.accessibility &&
+                series.options.accessibility.descriptionFormat) ??
+            chart.options.accessibility.series.descriptionFormat ??
             ''
         );
 

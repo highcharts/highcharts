@@ -27,7 +27,7 @@ import Annotation from '../Annotation.js';
 import D from '../../../Core/Defaults.js';
 const { defaultOptions } = D;
 import MockPoint from '../MockPoint.js';
-import { merge, pick } from '../../../Shared/Utilities.js';
+import { merge } from '../../../Shared/Utilities.js';
 
 if (defaultOptions.annotations?.types) {
     /**
@@ -110,8 +110,8 @@ class VerticalLine extends Annotation {
             chart = annotation.chart,
             inverted = chart.inverted,
             point = annotation.points[0],
-            left = pick(point.series.yAxis?.left, 0),
-            top = pick(point.series.yAxis?.top, 0),
+            left = (point.series.yAxis?.left ?? 0),
+            top = (point.series.yAxis?.top ?? 0),
             offset = annotation.options.typeOptions?.label?.offset || 0,
             y = MockPoint.pointToPixels(point, true)[inverted ? 'x' : 'y'];
 
@@ -131,8 +131,8 @@ class VerticalLine extends Annotation {
             inverted = chart.inverted,
             typeOptions = annotation.options.typeOptions,
             point = annotation.points[0],
-            left = pick(point.series.yAxis && point.series.yAxis.left, 0),
-            top = pick(point.series.yAxis && point.series.yAxis.top, 0),
+            left = ((point.series.yAxis && point.series.yAxis.left) ?? 0),
+            top = ((point.series.yAxis && point.series.yAxis.top) ?? 0),
             y = MockPoint.pointToPixels(point, true)[inverted ? 'x' : 'y'];
 
         let yOffset = typeOptions?.yOffset || 0;

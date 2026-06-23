@@ -48,7 +48,6 @@ import {
     extend,
     isArray,
     merge,
-    pick,
     relativeLength
 } from '../../Shared/Utilities.js';
 
@@ -491,23 +490,21 @@ class FlowMapSeries extends MapLineSeries {
         const attrs =
             MapSeries.prototype.pointAttribs.call(this, point, state);
 
-        attrs.fill = pick(
-            point.options.fillColor,
-            point.options.color,
-            this.options.fillColor === 'none' ? null : this.options.fillColor,
-            this.color
-        );
+        attrs.fill =
+            point.options.fillColor ??
+            point.options.color ??
+            (
+                this.options.fillColor === 'none' ?
+                    void 0 :
+                    this.options.fillColor
+            ) ??
+            this.color;
 
-        attrs['fill-opacity'] = pick(
-            point.options.fillOpacity,
-            this.options.fillOpacity
-        );
+        attrs['fill-opacity'] =
+            point.options.fillOpacity ?? this.options.fillOpacity;
 
-        attrs['stroke-width'] = pick(
-            point.options.lineWidth,
-            this.options.lineWidth,
-            1
-        );
+        attrs['stroke-width'] =
+            point.options.lineWidth ?? this.options.lineWidth ?? 1;
 
         if (point.options.opacity) {
             attrs.opacity = point.options.opacity;
@@ -597,8 +594,8 @@ class FlowMapSeries extends MapLineSeries {
                 averageY += (fromPos.y + toPos.y) / 2;
             }
 
-            if (pick(point.options.weight, this.options.weight)) {
-                weights.push(pick(point.options.weight, this.options.weight));
+            if ((point.options.weight ?? this.options.weight)) {
+                weights.push((point.options.weight ?? this.options.weight));
             }
         });
 
@@ -629,10 +626,7 @@ class FlowMapSeries extends MapLineSeries {
 
             // When updating point from null to normal value, set a real color
             // (don't keep nullColor).
-            point.color = pick(
-                point.options.color,
-                point.series.color
-            );
+            point.color = (point.options.color ?? point.series.color);
         });
     }
 
@@ -649,19 +643,15 @@ class FlowMapSeries extends MapLineSeries {
                 this.options.markerEnd,
                 pointOptions.markerEnd
             ),
-            growTowards = pick(
-                pointOptions.growTowards,
-                this.options.growTowards
-            ),
+            growTowards =
+                pointOptions.growTowards ?? this.options.growTowards,
             fromX = fromPos.x || 0,
             fromY = fromPos.y || 0;
 
         let toX = toPos.x || 0,
             toY = toPos.y || 0,
-            curveFactor = pick(
-                pointOptions.curveFactor,
-                this.options.curveFactor
-            ),
+            curveFactor =
+                pointOptions.curveFactor ?? this.options.curveFactor,
             offset = markerEndOptions && markerEndOptions.enabled &&
                 markerEndOptions.height || 0;
 

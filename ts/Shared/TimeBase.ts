@@ -146,8 +146,8 @@ class TimeBase {
         options?: TimeBase.TimeOptions,
         lang?: LangOptionsCore
     ) {
-        this.update(options);
         this.lang = lang;
+        this.update(options);
     }
 
     /* *
@@ -331,7 +331,11 @@ class TimeBase {
     public dateTimeFormat(
         options: Intl.DateTimeFormatOptions|string,
         timestamp?: number|Date,
-        locale: string|Array<string>|undefined = this.options.locale || pageLang
+        locale: string|Array<string>|undefined = (
+            this.options.locale ||
+            this.lang?.locale ||
+            pageLang
+        )
     ): string {
         const cacheKey = JSON.stringify(options) + locale;
         if (isString(options)) {

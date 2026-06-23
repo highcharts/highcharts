@@ -54,8 +54,7 @@ import {
     extend,
     isNumber,
     isObject,
-    merge,
-    pick
+    merge
 } from '../../Shared/Utilities.js';
 import { error } from '../../Core/Utilities.js';
 
@@ -326,8 +325,8 @@ class GeoHeatmapSeries extends MapSeries {
                     points
                 } = series,
                 [colsize, rowsize] = [
-                    pick(seriesOptions.colsize, 1),
-                    pick(seriesOptions.rowsize, 1)
+                    (seriesOptions.colsize ?? 1),
+                    (seriesOptions.rowsize ?? 1)
                 ],
                 // Calculate dimensions based on series bounds
                 topLeft = mapView.projectedUnitsToPixels({
@@ -586,10 +585,7 @@ class GeoHeatmapSeries extends MapSeries {
         const projectedPixelData = new Uint8ClampedArray(
                 projectedWidth * projectedHeight * 4
             ),
-            lambda = pick(
-                mapView.projection.options.rotation?.[0],
-                0
-            ),
+            lambda = (mapView.projection.options.rotation?.[0] ?? 0),
             widthFactor = canvas.width / 360,
             heightFactor = -1 * canvas.height / 180;
         let y = -1;

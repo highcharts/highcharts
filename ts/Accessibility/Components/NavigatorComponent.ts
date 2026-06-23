@@ -46,7 +46,6 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import {
     clamp,
     internalClearTimeout,
-    pick,
     syncTimeout
 } from '../../Shared/Utilities.js';
 
@@ -85,7 +84,7 @@ class NavigatorComponent extends AccessibilityComponent {
                         .updateGroupProxyElementPositions('navigator');
                     component.updateHandleValues();
                 }, animObject(
-                    pick(this.chart.renderer.globalAnimation, true)
+                    (this.chart.renderer.globalAnimation ?? true)
                 ).duration);
             }
         });

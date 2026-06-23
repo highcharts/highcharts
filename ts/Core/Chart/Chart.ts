@@ -108,7 +108,6 @@ import {
     isString,
     merge,
     objectEach,
-    pick,
     pInt,
     relativeLength,
     removeEvent,
@@ -349,7 +348,7 @@ class Chart {
         c?: Chart.CallbackFunction|true
     ): Chart|Promise<Chart> {
         const chart = new Chart(a as any, b as any, c);
-        return chart.promise || chart;
+        return chart.promise ?? chart;
     }
     /* eslint-enable jsdoc/check-param-names */
 
@@ -803,14 +802,11 @@ class Chart {
 
         chart.zooming = {
             ...zooming,
-            type: pick(options.zoomType, zooming.type),
-            key: pick(options.zoomKey, zooming.key),
-            pinchType: pick(options.pinchType, zooming.pinchType),
-            singleTouch: pick(
-                options.zoomBySingleTouch,
-                zooming.singleTouch,
-                false
-            ),
+            type: (options.zoomType ?? zooming.type),
+            key: (options.zoomKey ?? zooming.key),
+            pinchType: (options.pinchType ?? zooming.pinchType),
+            singleTouch:
+                options.zoomBySingleTouch ?? zooming.singleTouch ?? false,
             resetButton: merge(
                 zooming.resetButton,
                 options.resetZoomButton
@@ -1563,7 +1559,7 @@ class Chart {
             // inspect the generated series.points.
             series.getPointsCollection()
                 .forEach((point): void => {
-                    if (pick(point.selectedStaging, point.selected)) {
+                    if ((point.selectedStaging ?? point.selected)) {
                         acc.push(point);
                     }
                 });
@@ -2152,7 +2148,7 @@ class Chart {
             chartWidth = chart.chartWidth;
             if (!chart.styledMode) {
                 css(container, {
-                    width: pick(optionsChart.style?.width, chartWidth + 'px')
+                    width: (optionsChart.style?.width ?? chartWidth + 'px')
                 });
             }
         }
@@ -3035,10 +3031,7 @@ class Chart {
                 mockTick.destroy();
                 if (
                     label &&
-                    pick(
-                        labels.reserveSpace,
-                        !isNumber(options.crossing)
-                    )
+                    (labels.reserveSpace ?? !isNumber(options.crossing))
                 ) {
                     expectedSpace = label.getBBox().height +
                         labels.distance +
@@ -3476,7 +3469,7 @@ class Chart {
         let series: (Series|undefined);
 
         if (options) { // <- not necessary
-            redraw = pick(redraw, true); // Defaults to true
+            redraw = (redraw ?? true); // Defaults to true
 
             fireEvent(
                 chart,
@@ -3599,7 +3592,7 @@ class Chart {
     ): Axis {
         const axis = new Axis(this, options.axis, coll);
 
-        if (pick(options.redraw, true)) {
+        if ((options.redraw ?? true)) {
             this.redraw(options.animation);
         }
 
@@ -3666,7 +3659,8 @@ class Chart {
         // Update text
         AST.setElementHTML(
             loadingSpan,
-            pick(str, options.lang.loading, '')
+            (str ?? options.lang.loading ?? ''
+            )
         );
 
         if (!chart.styledMode) {
@@ -3948,7 +3942,7 @@ class Chart {
 
                     // No match by id found, match by index instead
                     if (!item && (chart as any)[coll]) {
-                        item = (chart as any)[coll][pick(newOptions.index, i)];
+                        item = (chart as any)[coll][(newOptions.index ?? i)];
 
                         // Check if we grabbed an item with an existing but
                         // different id (#13541). Check that the item in this
@@ -4049,7 +4043,7 @@ class Chart {
             (isNumber(newHeight) && newHeight !== chart.chartHeight)
         ) {
             chart.setSize(newWidth as number, newHeight as number, animation);
-        } else if (pick(redraw, true)) {
+        } else if ((redraw ?? true)) {
             chart.redraw(animation);
         }
 
@@ -4262,8 +4256,8 @@ class Chart {
                 } = axis,
                 wh = horiz ? 'width' : 'height',
                 xy = horiz ? 'x' : 'y',
-                toLength = pick(to[wh], axis.len),
-                fromLength = pick(from[wh], axis.len),
+                toLength = (to[wh] ?? axis.len),
+                fromLength = (from[wh] ?? axis.len),
                 // If fingers pinched very close on this axis, treat as pan
                 scale = Math.abs(toLength) < 10 ?
                     1 :

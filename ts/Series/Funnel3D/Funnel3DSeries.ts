@@ -40,7 +40,7 @@ const {
         column: ColumnSeries
     }
 } = SeriesRegistry;
-import { extend, merge, pick, relativeLength } from '../../Shared/Utilities.js';
+import { extend, merge, relativeLength } from '../../Shared/Utilities.js';
 
 /* *
  *
@@ -106,23 +106,20 @@ class Funnel3DSeries extends ColumnSeries {
         const series = this,
             dlBoxRaw = point.dlBoxRaw,
             inverted = series.chart.inverted,
-            below = (point.plotY as any) > pick(
-                series.translatedThreshold,
-                series.yAxis.len
-            ),
-            inside = pick(options.inside, !!series.options.stacking),
+            below =
+                (point.plotY as any) >
+                (series.translatedThreshold ?? series.yAxis.len),
+            inside = (options.inside ?? !!series.options.stacking),
             dlBox: BBoxObject = {
                 x: dlBoxRaw.x,
                 y: dlBoxRaw.y,
                 height: 0
             } as any;
 
-        options.align = pick(
-            options.align,
+        options.align = options.align ?? (
             !inverted || inside ? 'center' : below ? 'right' : 'left'
         );
-        options.verticalAlign = pick(
-            options.verticalAlign,
+        options.verticalAlign = options.verticalAlign ?? (
             inverted || inside ? 'middle' : below ? 'top' : 'bottom'
         );
 
@@ -271,10 +268,9 @@ class Funnel3DSeries extends ColumnSeries {
             h = y3 - y1;
             shapeArgs = {
                 // For fill setter
-                gradientForSides: pick(
-                    point.options.gradientForSides,
-                    options.gradientForSides
-                ),
+                gradientForSides:
+                    point.options.gradientForSides ??
+                    options.gradientForSides,
 
                 x: centerX,
                 y: y1,

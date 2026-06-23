@@ -64,8 +64,7 @@ import {
     fireEvent,
     isArray,
     isNumber,
-    merge,
-    pick
+    merge
 } from '../../Shared/Utilities.js';
 composeTextPath(SVGElement);
 
@@ -335,8 +334,8 @@ class PackedBubbleSeries extends BubbleSeries {
             });
         });
 
-        zMin = pick(zMin, valMin);
-        zMax = pick(zMax, valMax);
+        zMin = (zMin ?? valMin);
+        zMax = (zMax ?? valMax);
 
         return [zMin, zMax];
     }
@@ -526,10 +525,7 @@ class PackedBubbleSeries extends BubbleSeries {
                 ),
                 opacity: nodeMarker.fillOpacity,
                 stroke: nodeMarker.lineColor || this.color,
-                'stroke-width': pick(
-                    nodeMarker.lineWidth,
-                    this.options.lineWidth
-                )
+                'stroke-width': (nodeMarker.lineWidth ?? this.options.lineWidth)
             };
 
         let parentAttribs: SVGAttributes = {};
@@ -1188,7 +1184,7 @@ class PackedBubbleSeries extends BubbleSeries {
                 // Update the series points with the val from positions
                 // array
                 point = data[position[4] as any];
-                radius = pick(position[2], void 0);
+                radius = (position[2] ?? void 0);
 
                 if (!useSimulation) {
                     point.plotX = (

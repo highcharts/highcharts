@@ -42,8 +42,7 @@ import {
     erase,
     fireEvent,
     merge,
-    objectEach,
-    pick
+    objectEach
 } from '../../../Shared/Utilities.js';
 
 /* *
@@ -238,10 +237,8 @@ class PlotLineOrBand {
         if (!chart.styledMode) {
             if (isLine) {
                 attribs.stroke = color || 'var(--highcharts-neutral-color-40)';
-                attribs['stroke-width'] = pick(
-                    (options as PlotLineOptions).width,
-                    1
-                );
+                attribs['stroke-width'] =
+                    (options as PlotLineOptions).width ?? 1;
                 if ((options as PlotLineOptions).dashStyle) {
                     attribs.dashstyle = (options as PlotLineOptions).dashStyle;
                 }

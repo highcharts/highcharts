@@ -47,7 +47,6 @@ import {
     isString,
     merge,
     objectEach,
-    pick,
     pInt,
     splat
 } from '../../Shared/Utilities.js';
@@ -343,7 +342,7 @@ namespace DataLabel {
                     // that parts of the align box is inside the plot area
                     // (#12370). When stacking, it is always inside regardless
                     // of the option (#15148).
-                    pick(options.inside, !!this.options.stacking) &&
+                    (options.inside ?? !!this.options.stacking) &&
                     alignTo &&
                     chart.isInsidePlot(
                         plotX,
@@ -471,8 +470,8 @@ namespace DataLabel {
             //     zIndex: 20
             // }).add();
             // chart.renderer.circle(
-            //     chart.plotLeft + pick(dataLabel.alignAttr.x, 0),
-            //     chart.plotTop + pick(dataLabel.alignAttr.y, 0),
+            //     chart.plotLeft + (dataLabel.alignAttr.x ?? 0),
+            //     chart.plotTop + (dataLabel.alignAttr.y ?? 0),
             //     2
             // ).attr({
             //     fill: 'red',
@@ -764,12 +763,9 @@ namespace DataLabel {
                     if (labelEnabled) {
                         // Create individual options structure that can be
                         // extended without affecting others
-                        formatString = pick(
-                            (labelOptions as any)[
-                                point.formatPrefix + 'Format'
-                            ],
-                            labelOptions.format
-                        );
+                        formatString = ((labelOptions as any)[
+                            point.formatPrefix + 'Format'
+                        ] ?? labelOptions.format);
 
                         labelText = defined(formatString) ?
                             format(formatString, point, chart) :
@@ -784,12 +780,13 @@ namespace DataLabel {
 
                         if (!chart.styledMode) {
                             // Determine the color
-                            style.color = pick(
-                                labelOptions.color,
-                                style.color,
-                                isString(series.color) ? series.color : void 0,
-                                'var(--highcharts-neutral-color-100)'
-                            );
+                            style.color = (
+                                isString(labelOptions.color) ?
+                                    labelOptions.color :
+                                    void 0
+                            ) ?? style.color ?? (
+                                isString(series.color) ? series.color : void 0
+                            ) ?? 'var(--highcharts-neutral-color-100)';
                             // Get automated contrast color
                             if (style.color === 'contrast') {
                                 if (backgroundColor !== 'none') {
