@@ -227,14 +227,13 @@ function onAxisAfterSetTickPositions(
                     (d - axisMin) / range * axisLength :
                     axisLength / 2;
 
-            // Only correct if this bubble actually overflows.
-            if (!hasUserMin && pxPos - r < 0) {
+            if (!hasUserMin && pxPos - r < -1) {
                 requiredMin = Math.min(
                     requiredMin,
                     (r * axisMax - d * axisLength) / (r - axisLength)
                 );
             }
-            if (!hasUserMax && pxPos + r > axisLength) {
+            if (!hasUserMax && pxPos + r > axisLength + 1) {
                 requiredMax = Math.max(
                     requiredMax,
                     (d * axisLength - r * axisMin) / (axisLength - r)
