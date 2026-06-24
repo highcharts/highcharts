@@ -1,9 +1,3 @@
-// Highcharts.setOptions({
-//     colors: [
-//         'rgba(5,141,199,0.5)', 'rgba(80,180,50,0.5)', 'rgba(237,86,27,0.5)'
-//     ]
-// });
-
 function drawChart(dataset, clusterIds) {
     Highcharts.setOptions({
         palette: {
@@ -23,9 +17,6 @@ function drawChart(dataset, clusterIds) {
     Highcharts.chart('container', {
         chart: {
             type: 'scatter',
-            zooming: {
-                type: 'xy'
-            },
             height: '100%',
             animation: false
         },
@@ -46,9 +37,10 @@ function drawChart(dataset, clusterIds) {
             }
         },
         legend: {
-            enabled: true,
-            symbolWidth: 0,
-            symbolPadding: 0
+            enabled: false
+        },
+        tooltip: {
+            enabled: false
         },
         plotOptions: {
             scatter: {
@@ -58,9 +50,7 @@ function drawChart(dataset, clusterIds) {
                 },
                 states: {
                     hover: {
-                        marker: {
-                            enabled: false
-                        }
+                        enabled: false
                     }
                 },
                 animation: false
@@ -19982,12 +19972,12 @@ const pathbased = [
 ];
 
 
-// Squared Euclidean distance between two points.
+// Squared Euclidean distance
 function distance(a, b) {
     return a.reduce((sum, val, i) => sum + (val - b[i]) ** 2, 0);
 }
 
-// Element-wise mean of a set of points (the centroid).
+// Element-wise mean of a set of points
 function centroid(points) {
     const dims = points[0].length;
     return points.reduce(
@@ -19996,7 +19986,7 @@ function centroid(points) {
     );
 }
 
-// Index of the centroid nearest to the given point.
+// Index of the centroid nearest to the given point
 function nearest(point, centroids) {
     let best = 0;
     centroids.forEach((c, i) => {
@@ -20008,7 +19998,7 @@ function nearest(point, centroids) {
 }
 
 function kmeans(dataset, k, maxIterations = 100) {
-    // Initialise centroids with k randomly chosen, distinct data points.
+    // Initialise centroids with k randomly chosen, distinct data points
     const centroids = [...dataset]
         .sort(() => Math.random() - 0.5)
         .slice(0, k);
@@ -20018,7 +20008,7 @@ function kmeans(dataset, k, maxIterations = 100) {
     for (let iter = 0; iter < maxIterations; iter++) {
         const current = assignments;
 
-        // Recompute each centroid as the mean of its assigned points.
+        // Recompute each centroid as the mean of its assigned points
         centroids.forEach((_, i) => {
             const members = dataset.filter((_, j) => current[j] === i);
             if (members.length) {
@@ -20026,18 +20016,17 @@ function kmeans(dataset, k, maxIterations = 100) {
             }
         });
 
-        // Reassign points; stop once no assignment changes.
+        // Reassign points; stop once no assignment changes
         assignments = dataset.map(point => nearest(point, centroids));
         if (assignments.every((id, i) => id === current[i])) {
             break;
         }
     }
 
-    // Number clusters from 1 to stay consistent with dbscan (0 = outlier).
     return { centroids, assignments: assignments.map(id => id + 1) };
 }
 
-// Indices of all points within distance eps of the given point.
+// Indices of all points within distance eps of the given point
 function neighbours(dataset, point, eps) {
     return dataset.reduce((acc, other, i) => {
         if (distance(point, other) <= eps ** 2) {
@@ -20047,7 +20036,7 @@ function neighbours(dataset, point, eps) {
     }, []);
 }
 
-// Density-based clustering. Clusters are numbered from 1; outliers keep ID 0.
+// Density-based clustering. Clusters are numbered from 1, outliers keep ID 0
 function dbscan(dataset, eps, minPts) {
     const assignments = new Array(dataset.length).fill(0);
     const visited = new Array(dataset.length).fill(false);
@@ -20061,10 +20050,10 @@ function dbscan(dataset, eps, minPts) {
 
         const seeds = neighbours(dataset, point, eps);
         if (seeds.length < minPts) {
-            return; // Too sparse — leave as an outlier (ID 0).
+            return; // Too sparse — leave as an outlier
         }
 
-        // Grow a new cluster, expanding through density-reachable points.
+        // Grow a new cluster, expanding through density-reachable points
         cluster++;
         assignments[i] = cluster;
         for (let s = 0; s < seeds.length; s++) {
@@ -20085,12 +20074,12 @@ function dbscan(dataset, eps, minPts) {
     return { assignments };
 }
 
-// Agglomerative hierarchical clustering using Ward's method. The naive version
-// is O(n^3); this uses the nearest-neighbour chain algorithm, which produces
-// the exact same merges in O(n^2). Stops once k clusters remain.
+// Agglomerative hierarchical clustering using Ward's method.
+// This uses the nearest-neighbour chain algorithm, which produces
+// the merges in O(n^2). Stops once k clusters remain
 function hierarchical(dataset, k) {
     // Active clusters: centroid, size and members. Slots are set to null as
-    // clusters get merged away.
+    // clusters get merged away
     const clusters = dataset.map((point, i) => ({
         centroid: point,
         size: 1,
@@ -20098,13 +20087,13 @@ function hierarchical(dataset, k) {
     }));
     let active = clusters.length;
 
-    // Ward merge cost: the increase in within-cluster variance.
+    // Ward merge cost: the increase in within-cluster variance
     function ward(a, b) {
         return (a.size * b.size) / (a.size + b.size) *
             distance(a.centroid, b.centroid);
     }
 
-    // Nearest active cluster to `from` (by Ward cost), and that cost.
+    // Nearest active cluster to `from` (by Ward cost), and that cost
     function nearest(from) {
         let best = -1;
         let cost = Infinity;
@@ -20127,7 +20116,7 @@ function hierarchical(dataset, k) {
         const nn = nearest(top);
 
         // A reciprocal nearest pair (nn points back to the previous link) is
-        // guaranteed to be a correct Ward merge, so merge them.
+        // guaranteed to be a correct Ward merge, so merge them
         if (chain.length >= 2 && nn === chain[chain.length - 2]) {
             chain.pop();
             chain.pop();
@@ -20149,8 +20138,7 @@ function hierarchical(dataset, k) {
         }
     }
 
-    // Label each point with its final cluster, numbered from 1 to stay
-    // consistent with dbscan (0 = outlier).
+    // Label each point with its final cluster
     const assignments = new Array(dataset.length);
     clusters.filter(Boolean).forEach((cluster, id) => cluster.members.forEach(
         i => {

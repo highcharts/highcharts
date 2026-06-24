@@ -1,5 +1,5 @@
 ---
-name: Cluster plot
+name: Clustering plot
 authors:
   - Tord Vikestad
 js_wrap: b
