@@ -53,7 +53,7 @@ const createMap = (
         maxZoom: 30,
         projection: {
             name: 'Orthographic',
-            rotation: [60, -30]
+            rotation: [20, -30]
         }
     },
 
@@ -81,15 +81,21 @@ const createMap = (
         id: 'graticule',
         type: 'mapline',
         data: graticuleData,
-        nullColor: 'rgba(0, 0, 0, 0.05)',
+        nullColor: '#aaa3',
         accessibility: {
             enabled: false
         },
-        enableMouseTracking: false
+        enableMouseTracking: false,
+        states: {
+            inactive: {
+                enabled: false
+            }
+        }
     }, {
         data,
         joinBy: ['iso-a2', 'code'],
         name: 'Population density',
+        borderColor: '#aaa',
         states: {
             hover: {
                 color: '#a4edba',
@@ -149,9 +155,10 @@ const graticuleData = ((
     return data;
 })(15, 10);
 
-// Add flight route after initial animation of the main series
+// Add flight route and gentle rotation after the initial animation of the
+// main series.
 Highcharts.addEvent(Highcharts.Series, 'afterAnimate', function () {
-    const chart = this.chart;
+    const chart = this.chart as Highcharts.MapChart;
 
     if (this.options.id === 'choropleth') {
         chart.addSeries({
@@ -196,8 +203,31 @@ Highcharts.addEvent(Highcharts.Series, 'afterAnimate', function () {
             }
         }, false);
         chart.redraw(false);
+
+        // Start a gentle rotation
+        const rotationInterval = setInterval(() => {
+            const projectionOptions = chart.options.mapView.projection as
+                Highcharts.MapViewProjectionOptions;
+            chart.update({
+                mapView: {
+                    projection: {
+                        rotation: [
+                            projectionOptions.rotation[0] + 0.1,
+                            projectionOptions.rotation[1]
+                        ]
+                    }
+                }
+            }, undefined, undefined, false);
+        }, 50);
+
+        // Clear once the user drags the globe
+        document.getElementById('container')
+            ?.addEventListener('mousedown', () => {
+                clearInterval(rotationInterval);
+            });
     }
 });
+
 
 // Render a circle filled with a radial gradient behind the globe to make it
 // appear as the sea around the continents
