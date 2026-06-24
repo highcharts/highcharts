@@ -1,10 +1,21 @@
-/**
- * Create the map instance
- */
+// Extend some types
+declare namespace Highcharts {
+    // Allow a custom property on the map chart
+    interface MapChart {
+        sea?: Highcharts.SVGElement;
+    }
+
+    // Some internal properties on the series
+    interface Series {
+        bounds?: Highcharts.MapBounds;
+    }
+}
+
+// Create the map instance
 const createMap = (
-    topology,
-    data,
-    graticuleData
+    topology: Highcharts.TopoJSON,
+    data: Highcharts.SeriesMapDataOptions[],
+    graticuleData: Highcharts.SeriesMaplineDataOptions[]
 ) =>  Highcharts.mapChart('container', {
     chart: {
         map: topology
@@ -97,8 +108,11 @@ const createMap = (
 });
 
 // Create the coordinates for the graticule, the grid of meridians and parallels
-const graticuleData = ((meridianStep, parallelStep) => {
-    const data = [];
+const graticuleData = ((
+    meridianStep: number,
+    parallelStep: number
+): Highcharts.SeriesMaplineDataOptions[] => {
+    const data: Highcharts.SeriesMaplineDataOptions[] = [];
 
     // Meridians
     for (let x = -180; x <= 180; x += meridianStep) {
@@ -119,7 +133,7 @@ const graticuleData = ((meridianStep, parallelStep) => {
 
     // Parallels
     for (let y = -90; y <= 90; y += parallelStep) {
-        const coordinates = [];
+        const coordinates: [number, number][] = [];
         for (let x = -180; x <= 180; x += 5) {
             coordinates.push([x, y]);
         }
@@ -187,8 +201,12 @@ Highcharts.addEvent(Highcharts.Series, 'afterAnimate', function () {
 
 // Render a circle filled with a radial gradient behind the globe to make it
 // appear as the sea around the continents
-Highcharts.addEvent(Highcharts.Chart, 'render', function () {
-    let verb = 'animate';
+Highcharts.addEvent(Highcharts.MapChart, 'render', function () {
+
+    const graticule = this.get('graticule') as Highcharts.Series;
+
+    let verb: 'animate' | 'attr' = 'animate';
+
     if (!this.sea) {
         this.sea = this.renderer
             .circle()
@@ -206,11 +224,11 @@ Highcharts.addEvent(Highcharts.Chart, 'render', function () {
                 },
                 zIndex: -1
             })
-            .add(this.get('graticule').group);
+            .add(graticule.group);
         verb = 'attr';
     }
 
-    const bounds = this.get('graticule').bounds,
+    const bounds = graticule.bounds,
         p1 = this.mapView.projectedUnitsToPixels({
             x: bounds.x1,
             y: bounds.y1
@@ -219,7 +237,8 @@ Highcharts.addEvent(Highcharts.Chart, 'render', function () {
             x: bounds.x2,
             y: bounds.y2
         });
-    this.sea[verb]({
+
+    this.sea?.[verb]({
         cx: (p1.x + p2.x) / 2,
         cy: (p1.y + p2.y) / 2,
         r: Math.min(p2.x - p1.x, p1.y - p2.y) / 2
@@ -230,12 +249,12 @@ Highcharts.addEvent(Highcharts.Chart, 'render', function () {
 (async () => {
 
     // Get the map
-    const topology = await fetch(
+    const topology: Highcharts.TopoJSON = await fetch(
         'https://code.highcharts.com/mapdata/custom/world.topo.json'
     ).then(response => response.json());
 
     // Get the data
-    const data = await fetch(
+    const data: Highcharts.SeriesMapDataOptions[] = await fetch(
         'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v13.0.0/samples/data/world-population-density.json'
     ).then(response => response.json());
 

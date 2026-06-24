@@ -470,7 +470,11 @@ class Series {
     /** @internal */
     public graphPath?: SVGPath;
 
-    /** @internal */
+    /**
+     * The main group for the series' graphics.
+     *
+     * @readonly
+     */
     public group?: SVGElement;
 
     /** @internal */
@@ -707,6 +711,13 @@ class Series {
      * lack a `y`-value.
      * @name Highcharts.Series#dataMin
      * @type {number|undefined}
+     * @readonly
+     */
+    /**
+     * The main group for the series' graphics.
+     *
+     * @name Highcharts.Series#group
+     * @type {Highcharts.SVGElement}
      * @readonly
      */
     /**
