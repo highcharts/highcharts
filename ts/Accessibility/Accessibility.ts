@@ -36,6 +36,7 @@ import H from '../Core/Globals.js';
 const { doc } = H;
 import HU from './Utils/HTMLUtilities.js';
 const {
+    escapeStringForHTML,
     removeElement,
     stripHTMLTagsFromString
 } = HU;
@@ -430,7 +431,7 @@ namespace Accessibility {
      * is serialized.
      * @private
      */
-    function chartOnBeforeGetSVG(
+    function chartOnGetSVG(
         this: ChartComposition,
         e: { chartCopy: Chart }
     ): void {
@@ -448,10 +449,7 @@ namespace Accessibility {
             return;
         }
 
-        const safe = stripHTMLTagsFromString(text, true)
-            .replace(/&/g, '&amp;')
-            .replace(/</g, '&lt;')
-            .replace(/>/g, '&gt;');
+        const safe = escapeStringForHTML(stripHTMLTagsFromString(text, true));
         if (!safe.trim()) {
             return;
         }
@@ -598,8 +596,8 @@ namespace Accessibility {
             );
             addEvent(
                 ChartClass as typeof ChartComposition,
-                'beforeGetSVG',
-                chartOnBeforeGetSVG
+                'getSVG',
+                chartOnGetSVG
             );
 
             // Mark dirty for update
