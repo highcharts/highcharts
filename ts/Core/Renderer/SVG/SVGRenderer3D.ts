@@ -941,8 +941,8 @@ namespace SVGRenderer3D {
                         );
 
                     anim.step = function (a: unknown, fx: Fx): void {
-                        if (fx.prop === randomProp) {
-                            fx.elem.setPaths(merge(from, {
+                        if (fx.prop === randomProp && fx.elem) {
+                            (fx.elem as SVGElement).setPaths(merge(from, {
                                 x: interpolate('x', fx.pos),
                                 y: interpolate('y', fx.pos),
                                 r: interpolate('r', fx.pos),
