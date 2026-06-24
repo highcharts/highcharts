@@ -1,3 +1,23 @@
+/**
+ * Checks that @default doclets on typed Options interface properties match the
+ * values in the corresponding *Defaults.ts files.
+ *
+ * How it works:
+ * - Scans `ts/**\/*Options.ts` files (excludes Dashboards, Grid, masters, .d.ts)
+ * - For each Options file that has a matching `*Defaults.ts` sibling, finds all
+ *   `const x: SomeType = { ... }` variable declarations in the Defaults file
+ * - For each such typed const, looks up the interface with the same name in the
+ *   Options file and collects @default doclets from its properties
+ * - Reports mismatches between documented and actual defaults
+ *
+ * Limitations:
+ * - Only checks properties that are explicitly set in the Defaults const; properties
+ *   whose defaults come from parent merges or inheritance are not verified here
+ * - Recurses only into inline type literals — does not follow named type references
+ *   (e.g. a property typed as `SomeOtherOptions` won't have its members checked)
+ * - Skips @default doclets that contain template expressions (e.g. ${palette.*})
+ */
+
 import { describe, it } from 'node:test';
 import { strictEqual } from 'node:assert';
 import { existsSync } from 'node:fs';
@@ -64,10 +84,7 @@ function collectMembers(
         const path = getPath(prefix, name);
         const docletDefault = getDocletDefault(member);
 
-        if (
-            prefix &&
-            docletDefault
-        ) {
+        if (docletDefault) {
             defaults.set(path, docletDefault);
         }
 
@@ -171,7 +188,8 @@ function getDocletDefault(node: TS.Node): (string|undefined) {
 
     if (
         !comment ||
-        /^\{[a-z|]+\}\s/u.test(comment)
+        /^\{[a-z|]+\}\s/u.test(comment) ||
+        comment.includes('${')
     ) {
         return;
     }
@@ -223,9 +241,10 @@ function normalizeExpression(
     }
 
     if (TS.isPrefixUnaryExpression(expression)) {
+        const operator = TS.tokenToString(expression.operator);
         const value = normalizeExpression(expression.operand);
 
-        return value ? `${expression.operator}${value}` : void 0;
+        return operator && value ? `${operator}${value}` : void 0;
     }
 
     if (TS.isVoidExpression(expression)) {
@@ -399,9 +418,156 @@ function stringifyComment(
         .trim();
 }
 
+function parseSource(code: string): TS.SourceFile {
+    return TS.createSourceFile(
+        'test.ts',
+        code,
+        TS.ScriptTarget.Latest,
+        true,
+        TS.ScriptKind.TS
+    );
+}
+
+describe('Helper: normalizeTextValue', () => {
+    it('normalizes primitive literals', () => {
+        strictEqual(normalizeTextValue('true'), 'true');
+        strictEqual(normalizeTextValue('false'), 'false');
+        strictEqual(normalizeTextValue('null'), 'null');
+        strictEqual(normalizeTextValue('undefined'), 'undefined');
+        strictEqual(normalizeTextValue('42'), '42');
+        strictEqual(normalizeTextValue('-1'), '-1');
+    });
+
+    it('normalizes string literals to single-quoted form', () => {
+        strictEqual(normalizeTextValue("'hello'"), "'hello'");
+        strictEqual(normalizeTextValue('"world"'), "'world'");
+    });
+
+    it('normalizes object literals, stripping quoted keys', () => {
+        strictEqual(
+            normalizeTextValue('{ "cursor": "pointer", "color": "#000" }'),
+            "{ cursor: 'pointer', color: '#000' }"
+        );
+    });
+
+    it('normalizes array literals', () => {
+        strictEqual(normalizeTextValue('[1, 2, 3]'), '[1, 2, 3]');
+        strictEqual(
+            normalizeTextValue("['a', 'b']"),
+            "['a', 'b']"
+        );
+    });
+});
+
+describe('Helper: collectDefaultTags', () => {
+    it('collects @default from top-level interface properties', () => {
+        const src = parseSource(`
+            interface FooOptions {
+                /** @default 'red' */
+                color?: string;
+                /** @default 10 */
+                size?: number;
+                noDefault?: boolean;
+            }
+        `);
+
+        const defaults = collectDefaultTags(src, 'FooOptions');
+        strictEqual(defaults.get('color'), "'red'");
+        strictEqual(defaults.get('size'), '10');
+        strictEqual(defaults.has('noDefault'), false);
+    });
+
+    it('collects @default from nested inline type literals', () => {
+        const src = parseSource(`
+            interface FooOptions {
+                animation?: {
+                    /** @default 500 */
+                    duration?: number;
+                    /** @default true */
+                    enabled?: boolean;
+                };
+            }
+        `);
+
+        const defaults = collectDefaultTags(src, 'FooOptions');
+        strictEqual(defaults.get('animation.duration'), '500');
+        strictEqual(defaults.get('animation.enabled'), 'true');
+    });
+
+    it('skips @default with JSDoc type annotation pattern ({type} text)', () => {
+        const src = parseSource(`
+            interface FooOptions {
+                /** @default {string} some-value */
+                color?: string;
+            }
+        `);
+
+        const defaults = collectDefaultTags(src, 'FooOptions');
+        strictEqual(defaults.size, 0);
+    });
+
+    it('skips @default containing template expressions', () => {
+        const src = parseSource(
+            'interface FooOptions {\n' +
+            '    /** @default ${palette.backgroundColor} */\n' +
+            '    color?: string;\n' +
+            '}'
+        );
+
+        const defaults = collectDefaultTags(src, 'FooOptions');
+        strictEqual(defaults.size, 0);
+    });
+});
+
+describe('Helper: collectDefaultsFromObject', () => {
+    it('collects top-level and nested property values', () => {
+        const src = parseSource(`
+            const FooDefaults: FooOptions = {
+                enabled: true,
+                size: 10,
+                label: {
+                    text: 'hello',
+                    fontSize: 12
+                }
+            };
+        `);
+
+        const statement = src.statements[0] as TS.VariableStatement;
+        const decl = statement.declarationList.declarations[0];
+        const obj = decl.initializer as TS.ObjectLiteralExpression;
+        const defaults = collectDefaultsFromObject(obj);
+
+        strictEqual(defaults.get('enabled'), 'true');
+        strictEqual(defaults.get('size'), '10');
+        strictEqual(defaults.get('label'), "{ text: 'hello', fontSize: 12 }");
+        strictEqual(defaults.get('label.text'), "'hello'");
+        strictEqual(defaults.get('label.fontSize'), '12');
+    });
+
+    it('normalizes string values to single-quoted form', () => {
+        const src = parseSource(`
+            const FooDefaults: FooOptions = {
+                mode: 'responsive',
+                type: "line"
+            };
+        `);
+
+        const statement = src.statements[0] as TS.VariableStatement;
+        const decl = statement.declarationList.declarations[0];
+        const obj = decl.initializer as TS.ObjectLiteralExpression;
+        const defaults = collectDefaultsFromObject(obj);
+
+        strictEqual(defaults.get('mode'), "'responsive'");
+        strictEqual(defaults.get('type'), "'line'");
+    });
+});
+
 describe('Options @default doclets', () => {
-    it('should match paired defaults files', () => {
+    it('should match paired defaults files', (t) => {
         const failures: Array<string> = [];
+        let checksPerformed = 0;
+        let pairedCount = 0;
+
         const optionsFiles = glob.sync(OPTIONS_GLOB, {
             cwd: REPO_ROOT,
             ignore: IGNORE_GLOBS
@@ -416,6 +582,8 @@ describe('Options @default doclets', () => {
             if (!existsSync(join(REPO_ROOT, defaultsPath))) {
                 continue;
             }
+
+            pairedCount++;
 
             const optionsSource = TS.createSourceFile(
                 optionsPath,
@@ -440,14 +608,12 @@ describe('Options @default doclets', () => {
                 );
 
                 for (const [path, expected] of docletDefaults) {
-                    const actual = actualDefaults.get(path);
-
-                    if (
-                        typeof actual === 'undefined' &&
-                        expected === 'undefined'
-                    ) {
+                    if (!actualDefaults.has(path)) {
                         continue;
                     }
+
+                    checksPerformed++;
+                    const actual = actualDefaults.get(path);
 
                     if (actual !== expected) {
                         failures.push(
@@ -458,13 +624,19 @@ describe('Options @default doclets', () => {
                                 ))}`,
                                 `${interfaceName}.${path}`,
                                 `expected @default ${expected}`,
-                                `actual ${actual ?? '[missing]'}`
+                                `actual ${actual}`
                             ].join(' | ')
                         );
                     }
                 }
             }
         }
+
+        t.diagnostic(
+            `Checked ${checksPerformed} @default doclet(s) across ` +
+            `${optionsFiles.length} Options files ` +
+            `(${pairedCount} paired with Defaults).`
+        );
 
         strictEqual(failures.length, 0, failures.join('\n'));
     });
