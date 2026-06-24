@@ -174,7 +174,10 @@ function onAxisFoundExtremes(
             }
         });
 
-        // Store values so afterSetTickPositions can detect tick snap. #24039
+    }
+
+    // Store values so afterSetTickPositions can detect tick snap. #24039
+    if (hasActiveSeries) {
         (this as any).bubbleMinAfterPadding = this.min;
         (this as any).bubbleMaxAfterPadding = this.max;
     }
