@@ -69,6 +69,14 @@ const ContourSeriesDefaults: ContourSeriesOptions = {
      */
 
     /**
+     * The color of the contour lines
+     *
+     * @type      {string}
+     * @default   #000000
+     * @apioption plotOptions.contour.lineColor
+     */
+
+    /**
      * This setting controls the visibility and size of contour lines. For now,
      * only '1' and '0' are valid options, effectively controlling the
      * visibility of the lines.
