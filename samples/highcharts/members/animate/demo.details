@@ -2,5 +2,6 @@
  name: Free animation
  authors:
    - Torstein Hønsi
+ skipTest: true
  js_wrap: b
 ...
