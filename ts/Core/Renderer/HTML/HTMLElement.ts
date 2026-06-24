@@ -384,7 +384,9 @@ class HTMLElement extends SVGElement {
                 .css({
                     background: 'transparent',
                     // 3px is to avoid clipping on the right
-                    margin: '0 3px 0 0'
+                    margin: '0 3px 0 0',
+                    // Avoid inheriting padding from page body (#24779)
+                    padding: 0
                 })
                 .add(foreignObject)
         );

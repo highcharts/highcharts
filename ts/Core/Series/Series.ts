@@ -62,11 +62,10 @@ import type SVGPath from '../Renderer/SVG/SVGPath';
 import type { SymbolKey } from '../Renderer/SVG/SymbolType';
 import type TooltipOptions from '../TooltipOptions';
 
-import A from '../Animation/AnimationUtilities.js';
-const {
+import {
     animObject,
     setAnimation
-} = A;
+} from '../Animation/AnimationUtilities.js';
 import DataTableCore from '../../Data/DataTableCore.js';
 import D from '../Defaults.js';
 const { defaultOptions } = D;
@@ -4454,11 +4453,13 @@ class Series {
      *         Both X and Y values given
      * @sample highcharts/members/series-addpoint-pie/
      *         Append pie slice
-     * @sample stock/members/series-addpoint/
+     * @sample highcharts/datatable/datamapping-dynamic
+     *         Alternative approach with data table
+     * @sample {highstock} stock/members/series-addpoint/
      *         Append 100 points in Highcharts Stock
-     * @sample stock/members/series-addpoint-shift/
+     * @sample {highstock} stock/members/series-addpoint-shift/
      *         Append and shift in Highcharts Stock
-     * @sample maps/members/series-addpoint/
+     * @sample {highmaps} maps/members/series-addpoint/
      *         Add a point in Highmaps
      *
      * @function Highcharts.Series#addPoint

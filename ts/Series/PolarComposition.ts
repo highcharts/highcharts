@@ -45,9 +45,8 @@ import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import type SVGRenderer from '../Core/Renderer/SVG/SVGRenderer';
 import type Tick from '../Core/Axis/Tick';
 
-import A from '../Core/Animation/AnimationUtilities.js';
-const { animObject } = A;
-import { optionsToBorderRadiusObject } from '../Extensions/BorderRadius.js';
+import { animObject } from '../Core/Animation/AnimationUtilities.js';
+import { borderRadiusObject } from '../Extensions/BorderRadius.js';
 import D from '../Core/Defaults.js';
 const { defaultOptions } = D;
 import H from '../Core/Globals.js';
@@ -681,7 +680,7 @@ function onSeriesAfterColumnTranslate(
         const seriesDefault = defaultOptions.plotOptions
                 ?.[this.type]
                 ?.borderRadius,
-            { scope, where = 'end' } = optionsToBorderRadiusObject(
+            { scope, where = 'end' } = borderRadiusObject(
                 options.borderRadius,
                 isObject(seriesDefault) ? seriesDefault : {}
             );
@@ -1119,7 +1118,7 @@ function onAfterColumnTranslate(
                 r = Math.max(barX + (point.pointWidth || 0), 0);
 
                 // Handle border radius
-                const brOption = optionsToBorderRadiusObject(
+                const brOption = borderRadiusObject(
                         options.borderRadius
                     ),
                     borderRadius = relativeLength(brOption.radius, r - innerR);

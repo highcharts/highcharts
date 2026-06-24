@@ -32,8 +32,7 @@ import type Series from '../Core/Series/Series';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 
-import A from '../Core/Animation/AnimationUtilities.js';
-const { stop } = A;
+import { stop } from '../Core/Animation/AnimationUtilities.js';
 import H from '../Core/Globals.js';
 const { composed } = H;
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
