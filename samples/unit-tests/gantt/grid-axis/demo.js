@@ -2364,15 +2364,12 @@ QUnit.test(
             delete axis.grid;
         });
 
-        let error;
-        try {
-            chart.destroy();
-        } catch (e) {
-            error = e;
-        }
+        // Failure would be a TypeError thrown by onDestroy, which QUnit
+        // catches by itself.
+        chart.destroy();
 
-        assert.notOk(
-            error,
+        assert.ok(
+            true,
             'Destroying a chart with axes without grid additions should ' +
             'not throw TypeError.'
         );
