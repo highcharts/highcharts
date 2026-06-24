@@ -26,5 +26,3 @@ Highcharts.chart('container', {
         }
     }]
 });
-
-console.log(Highcharts.charts[0].series[0].dataTable);
