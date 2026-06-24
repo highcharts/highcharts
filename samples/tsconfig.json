@@ -9,6 +9,8 @@
         "stripInternal": true,
         "baseUrl": "../",
         "module": "none",
+        "moduleDetection": "force",
+        "allowUmdGlobalAccess": true,
         "moduleResolution": "node",
         "target": "ES2022",
         "lib": [
