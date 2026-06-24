@@ -252,8 +252,8 @@ Highcharts.addEvent(Highcharts.MapChart, 'render', function () {
                         r: 1
                     },
                     stops: [
-                        [0, 'light-dark(white, #258)'],
-                        [1, 'light-dark(lightblue, #446)']
+                        [0, 'light-dark(white, #0074e8)'],
+                        [1, 'light-dark(lightblue, #000061)']
                     ]
                 },
                 zIndex: -1
