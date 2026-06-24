@@ -235,6 +235,10 @@ Highcharts.addEvent(Highcharts.MapChart, 'render', function () {
 
     const graticule = this.get('graticule') as Highcharts.Series;
 
+    if (!graticule) {
+        return;
+    }
+
     let verb: 'animate' | 'attr' = 'animate';
 
     if (!this.sea) {
