@@ -35,10 +35,10 @@ import type SVGElement from '../Renderer/SVG/SVGElement';
 import type SVGLabel from '../Renderer/SVG/SVGLabel';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 import type { SymbolKey } from '../Renderer/SVG/SymbolType';
+import type { DeepPartial } from '../../Shared/Types';
 
 import AST from '../Renderer/HTML/AST.js';
-import A from '../Animation/AnimationUtilities.js';
-const { animObject } = A;
+import { animObject } from '../Animation/AnimationUtilities.js';
 import D from '../Defaults.js';
 const { defaultOptions } = D;
 import F from '../Templating.js';
@@ -1636,27 +1636,22 @@ class Point {
         const point = this,
             series = point.series,
             previousState = point.state,
-            stateOptions = (
-                (series.options.states as any)[state || 'normal'] ||
-                {}
-            ),
+            stateOptions = series.options.states?.[state || 'normal'] || {},
             markerOptions = (
-                (defaultOptions.plotOptions as any)[
-                    series.type as any
-                ].marker &&
+                defaultOptions.plotOptions?.[series.type]?.marker &&
                 series.options.marker
             ),
-            normalDisabled = (markerOptions && markerOptions.enabled === false),
+            normalDisabled = markerOptions?.enabled === false,
             markerStateOptions = markerOptions?.states?.[state || 'normal'] ||
                 {},
-            stateDisabled = (markerStateOptions as any).enabled === false,
+            stateDisabled = markerStateOptions.enabled === false,
             pointMarker = point.marker || {},
             chart = series.chart,
             hasMarkers = (markerOptions && series.markerAttribs);
         let halo = series.halo,
             markerAttribs,
             pointAttribs: SVGAttributes,
-            pointAttribsAnimation: AnimationOptions,
+            pointAttribsAnimation: (boolean|DeepPartial<AnimationOptions>|undefined),
             stateMarkerGraphic = series.stateMarkerGraphic,
             newSymbol: (SymbolKey|undefined);
 
@@ -1675,16 +1670,13 @@ class Point {
             // General point marker's state options is disabled
             (state && (
                 stateDisabled ||
-                (normalDisabled &&
-                (markerStateOptions as any).enabled === false)
+                (normalDisabled && markerStateOptions.enabled === false)
             )) ||
 
             // Individual point marker's state options is disabled
             (
                 state &&
-                pointMarker.states &&
-                (pointMarker.states as any)[state] &&
-                (pointMarker.states as any)[state].enabled === false
+                pointMarker.states?.[state]?.enabled === false
             ) // #1610
 
         ) {
@@ -1710,8 +1702,8 @@ class Point {
 
             if (!chart.styledMode) {
                 pointAttribs = series.pointAttribs(point, state);
-                pointAttribsAnimation = pick(
-                    chart.options.chart.animation,
+                pointAttribsAnimation = (
+                    chart.options.chart.animation ??
                     stateOptions.animation
                 );
                 const opacity = pointAttribs.opacity;
@@ -1747,10 +1739,10 @@ class Point {
             if (markerAttribs) {
                 point.graphic.animate(
                     markerAttribs,
-                    pick(
+                    (
                         // Turn off globally:
-                        chart.options.chart.animation,
-                        (markerStateOptions as any).animation,
+                        chart.options.chart.animation ??
+                        markerStateOptions.animation ??
                         (markerOptions as any).animation
                     )
                 );
@@ -1824,12 +1816,14 @@ class Point {
         }
 
         // Show me your halo
-        const haloOptions = stateOptions.halo;
+        const haloOptions = isObject(stateOptions.halo) ?
+            stateOptions.halo :
+            {};
         const markerGraphic = (point.graphic || stateMarkerGraphic);
         const markerVisibility = markerGraphic?.visibility || 'inherit';
 
         if (
-            haloOptions?.size &&
+            haloOptions.size &&
             markerGraphic &&
             markerVisibility !== 'hidden' &&
             !point.isCluster
@@ -1840,7 +1834,7 @@ class Point {
                     .add(markerGraphic.parentGroup);
             }
             halo.show()[move ? 'animate' : 'attr']({
-                d: point.haloPath(haloOptions.size) as any
+                d: point.haloPath(haloOptions.size)
             });
             halo.attr({
                 'class': 'highcharts-halo highcharts-color-' +

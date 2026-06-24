@@ -62,11 +62,8 @@ const board = Dashboards.board('container', {
             pane: {
                 startAngle: -150,
                 endAngle: 150,
-                background: {
-                    innerRadius: '60%',
-                    outerRadius: '100%',
-                    shape: 'arc'
-                }
+                innerSize: '60%',
+                borderRadius: '50%'
             },
             yAxis: {
                 min: 0,
@@ -76,11 +73,7 @@ const board = Dashboards.board('container', {
                 dataLabels: {
                     enabled: false
                 },
-                rounded: true,
-                data: [{
-                    innerRadius: '60%',
-                    outerRadius: '100%'
-                }]
+                data: [{}]
             }]
         }
     }, {
