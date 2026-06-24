@@ -891,7 +891,7 @@ export interface ChartOptions {
      * @see In styled mode, the selection marker fill is set with the
      *      `.highcharts-selection-marker` class.
      *
-     * @default   rgba(51,92,173,0.25)
+     * @default   'color-mix(in srgb, var(--highcharts-highlight-color-80) 25%, transparent)'
      * @since     2.1.7
      */
     selectionMarkerFill?: ColorType;

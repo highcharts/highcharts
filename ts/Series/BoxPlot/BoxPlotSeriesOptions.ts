@@ -172,7 +172,7 @@ export interface BoxPlotSeriesOptions extends ColumnSeriesOptions {
      *
      * @type {Highcharts.ColorType}
      *
-     * @default #ffffff
+     * @default 'var(--highcharts-background-color)'
      *
      * @since 3.0
      *

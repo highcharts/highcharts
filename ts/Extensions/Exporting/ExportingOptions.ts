@@ -152,7 +152,7 @@ export interface ExportingOptions {
      * support it. This also applies to downloaded SVG that you want to
      * open in a desktop client.
      *
-     * @default false
+     * @default true
      * @since   4.1.8
      */
     allowHTML?: boolean;

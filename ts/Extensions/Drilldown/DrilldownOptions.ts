@@ -159,7 +159,7 @@ export interface DrilldownOptions {
      *         Label styles
      *
      * @type    {Highcharts.CSSObject}
-     * @default { "cursor": "pointer", "color": "#003399", "fontWeight": "bold", "textDecoration": "underline" }
+     * @default { "cursor": "pointer", "color": "var(--highcharts-highlight-color-100)", "fontWeight": "bold", "textDecoration": "underline" }
      * @since   3.0.8
      * @product highcharts highmaps
      */
@@ -177,7 +177,7 @@ export interface DrilldownOptions {
      *         Label styles
      *
      * @type    {Highcharts.CSSObject}
-     * @default { "cursor": "pointer", "color": "#003399", "fontWeight": "bold", "textDecoration": "underline" }
+     * @default { "cursor": "pointer", "color": "var(--highcharts-highlight-color-100)", "fontWeight": "bold", "textDecoration": "underline" }
      * @since   3.0.8
      * @product highcharts highmaps
      */
