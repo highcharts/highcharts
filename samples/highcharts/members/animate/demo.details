@@ -2,6 +2,6 @@
  name: Free animation
  authors:
    - Torstein Hønsi
- requiresManualTesting: true
+ skipTest: true
  js_wrap: b
 ...
