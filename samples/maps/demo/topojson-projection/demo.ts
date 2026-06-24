@@ -198,6 +198,10 @@ Highcharts.addEvent(Highcharts.Series, 'afterAnimate', function () {
                 }
             }],
             color: '#313f77',
+            marker: {
+                lineWidth: 1,
+                lineColor: '#fff'
+            },
             accessibility: {
                 enabled: false
             }
