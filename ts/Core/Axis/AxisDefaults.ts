@@ -1632,7 +1632,7 @@ namespace AxisDefaults {
          * @sample {highstock} stock/xaxis/offset/
          *         Y axis offset by 70 px
          *
-         * @type {number}
+         * @type {number|string}
          */
         offset: void 0,
 
