@@ -67,6 +67,9 @@ jobs:
       - name: Lint definitions
         run: npx gulp lint-dts
 
+      - name: Type-check samples
+        run: npx tsc -p samples
+
   lint_samples:
     timeout-minutes: 10
     runs-on: ubuntu-latest
