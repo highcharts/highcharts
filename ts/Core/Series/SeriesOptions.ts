@@ -710,7 +710,12 @@ export interface SeriesOptions {
      *
      * @since 13.0.0
      */
-    dataTable?: DataTableCore|DataTableOptionsObject;
+    dataTable?: (
+        DataTableCore|
+        DataTableOptionsObject|
+        Array<DataTableCore|DataTableOptionsObject>
+    );
+
     enableMouseTracking?: boolean;
 
     /**

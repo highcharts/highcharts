@@ -427,7 +427,7 @@ const seriesDefaults: PlotOptionsOf<Series> = {
      * a configuration object is passed, a new `DataTable` instance will be
      * created based on the provided configuration.
      *
-     * @type   {Highcharts.DataTable|Highcharts.DataTableOptionsObject}
+     * @type   {Highcharts.DataTable|Highcharts.DataTableOptionsObject|Array<Highcharts.DataTable|Highcharts.DataTableOptionsObject>}
      * @sample {highcharts} highcharts/datatable/series-datatable/
      *         Series with one data table each
      * @sample {highcharts} highcharts/datatable/series-datatable-multiple/
