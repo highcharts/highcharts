@@ -68,30 +68,6 @@ import { uniqueKey } from '../../Core/Utilities.js';
 
 /* *
  *
- *  Declarations
- *
- * */
-
-export type GridKeyStatus = 'valid' | 'invalid' | 'missing' | 'expired';
-
-export interface GridCapabilities {
-    filtering: boolean;
-    sorting: boolean;
-    pinning: boolean;
-    treeView: boolean;
-    pagination: boolean;
-    editMode: boolean;
-    cellFormat: boolean;
-    cellFormatter: boolean;
-    strictHeights: boolean;
-    customTheme: boolean;
-    header: boolean;
-    remoteOperations: boolean;
-    key: GridKeyStatus;
-}
-
-/* *
- *
  *  Class
  *
  * */
@@ -190,25 +166,6 @@ export class Grid {
      * The Pagination controller.
      */
     public pagination?: Pagination;
-
-    /**
-     * Derived feature state for telemetry and debugging.
-     */
-    public capabilities: GridCapabilities = {
-        filtering: false,
-        sorting: false,
-        pinning: false,
-        treeView: false,
-        pagination: false,
-        editMode: false,
-        cellFormat: false,
-        cellFormatter: false,
-        strictHeights: false,
-        customTheme: false,
-        header: true,
-        remoteOperations: false,
-        key: 'missing'
-    };
 
     /**
      * The caption element of the Grid.
@@ -538,94 +495,6 @@ export class Grid {
     }
 
     /**
-     * Updates the derived Grid capabilities state.
-     *
-     * @internal
-     */
-    public updateCapabilities(): void {
-        const capabilities = this.capabilities;
-        const options = this.options;
-        const columnDefaults = options?.columnDefaults;
-        const columns = options?.columns || [];
-        const rendering = this.options?.rendering;
-        const dataOptions = this.options?.data;
-        const pinning = rendering?.rows?.pinning;
-        const treeView = (dataOptions as {
-            treeView?: { enabled?: boolean };
-        } | undefined)?.treeView;
-
-        capabilities.filtering = this.hasColumnOption(
-            columns,
-            (column): boolean => column.filtering?.enabled === true,
-            columnDefaults?.filtering?.enabled === true
-        );
-        capabilities.sorting = this.hasColumnOption(
-            columns,
-            (column): boolean => column.sorting?.enabled !== false,
-            columnDefaults?.sorting?.enabled !== false
-        );
-        capabilities.pinning = !!(
-            pinning &&
-            pinning.enabled !== false &&
-            (
-                this.userOptions.rendering?.rows?.pinning ||
-                pinning.topIds?.length ||
-                pinning.bottomIds?.length ||
-                pinning.resolve
-            )
-        );
-        capabilities.treeView = !!treeView && treeView.enabled !== false;
-        capabilities.pagination = options?.pagination?.enabled === true;
-        capabilities.editMode = this.hasColumnOption(
-            columns,
-            (column): boolean => column.cells?.editMode?.enabled === true,
-            columnDefaults?.cells?.editMode?.enabled === true
-        );
-        capabilities.cellFormat = this.hasColumnOption(
-            columns,
-            (column): boolean => column.cells?.format !== void 0,
-            columnDefaults?.cells?.format !== void 0
-        );
-        capabilities.cellFormatter = this.hasColumnOption(
-            columns,
-            (column): boolean => column.cells?.formatter !== void 0,
-            columnDefaults?.cells?.formatter !== void 0
-        );
-        capabilities.strictHeights =
-            rendering?.rows?.strictHeights === true;
-        capabilities.customTheme = (
-            rendering?.theme ??
-            defaultOptions.rendering?.theme
-        ) !== defaultOptions.rendering?.theme;
-        capabilities.header = rendering?.header?.enabled !== false;
-        capabilities.remoteOperations = (
-            dataOptions?.providerType === 'remote' &&
-            !!DataProviderRegistry.types[dataOptions.providerType]
-        );
-        capabilities.key = 'missing';
-
-        fireEvent(this, 'updateCapabilities', { capabilities });
-    }
-
-    private hasColumnOption(
-        columns: IndividualColumnOptions[],
-        check: (column: IndividualColumnOptions) => boolean,
-        defaultsEnabled: boolean
-    ): boolean {
-        if (defaultsEnabled) {
-            return true;
-        }
-
-        for (let i = 0, iEnd = columns.length; i < iEnd; ++i) {
-            if (columns[i].enabled !== false && check(columns[i])) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    /**
      * Cleans up and reloads the column options from the `userOptions.columns`.
      * Generates the internal column options map from the options.columns array.
      */
@@ -934,7 +803,6 @@ export class Grid {
         }
 
         const finish = (): void => {
-            this.updateCapabilities();
             fireEvent(this, 'afterUpdate', {
                 scope: 'grid',
                 options,
@@ -1217,8 +1085,6 @@ export class Grid {
             await this.redraw();
         }
 
-        this.updateCapabilities();
-
         fireEvent(this, 'afterUpdate', {
             scope: 'column',
             options,
@@ -1366,7 +1232,6 @@ export class Grid {
         await this.querying.proceed();
 
         await this.renderViewport();
-        this.updateCapabilities();
 
         this.isRendered = true;
         if (clearDirtyFlags) {

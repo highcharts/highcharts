@@ -23,7 +23,9 @@
  * */
 
 import type Grid from '../../Core/Grid';
-import type { GridCapabilities } from '../../Core/Grid';
+import type {
+    GridCapabilities
+} from '../../Core/Capabilities/CapabilitiesComposition';
 
 import { getStatus, validate } from './LicenseValidation.js';
 import Globals from '../../Core/Globals.js';
