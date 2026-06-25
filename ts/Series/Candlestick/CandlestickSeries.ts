@@ -141,7 +141,6 @@ class CandlestickSeries extends OHLCSeries {
         super.drawLegendSymbol(legend, item);
 
         const { chart } = this,
-            { renderer } = chart,
             legendItem = item.legendItem || {},
             symbolHeight = legend.symbolHeight,
             squareSymbol = legend.options.squareSymbol,
@@ -155,7 +154,7 @@ class CandlestickSeries extends OHLCSeries {
             boxes: NonNullable<CandlestickSeries['legendSymbolBoxes']> = [],
             // A bordered box; `up` flags the hollow (background-filled) candle
             box = (rect: FinancialSymbols.Rect, up?: boolean): void => {
-                const element = renderer
+                const element = chart.renderer
                     .rect(rect.x, rect.y, rect.width, rect.height, rect.r)
                     .addClass('highcharts-point')
                     .attr({ zIndex: 3 })

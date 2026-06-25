@@ -41,12 +41,10 @@
             height: '33%'
         }, {
             top: '33%',
-            height: '33%',
-            offset: 0
+            height: '33%'
         }, {
             top: '66%',
-            height: '34%',
-            offset: 0
+            height: '34%'
         }],
 
         series: [{

@@ -129,9 +129,9 @@ export interface OHLCSeriesOptions extends HLCSeriesOptions {
     data?: Array<(OHLCPointOptions|PointShortOptions)>;
 
     /**
-     * What type of legend symbol to render for this series. For OHLC series
-     * this defaults to `ohlc`, showing two stems, each with an open tick on
-     * the left and a close tick on the right.
+     * What type of legend symbol to render for this series. For OHLC series,
+     * the default is `ohlc`, showing two stems, each with an open tick on the
+     * left and a close tick on the right.
      *
      * @default ohlc
      * @apioption plotOptions.ohlc.legendSymbol

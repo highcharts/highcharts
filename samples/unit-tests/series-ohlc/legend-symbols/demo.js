@@ -38,6 +38,9 @@ QUnit.test(
         const candlestick = chart.series[2],
             boxes = () => Array.from(
                 candlestick.legendItem.group.element.querySelectorAll('rect')
+            ),
+            filledBody = () => boxes().find(
+                rect => !rect.classList.contains('highcharts-point-up')
             );
 
         // The candlestick draws its two box bodies as separate bordered rects.
@@ -54,21 +57,24 @@ QUnit.test(
             'Candlestick hollow body should be filled with upColor'
         );
 
+        // The filled body defaults to the series color when no override is set.
+        assert.strictEqual(
+            filledBody().getAttribute('fill'),
+            candlestick.color,
+            'Candlestick filled body should default to the series color'
+        );
+
         // `legendSymbolColor` recolors the filled (series-color) body (#24567).
         candlestick.update({ legendSymbolColor: '#00ff00' });
         assert.strictEqual(
-            boxes().find(
-                rect => !rect.classList.contains('highcharts-point-up')
-            ).getAttribute('fill'),
+            filledBody().getAttribute('fill'),
             '#00ff00',
             'Candlestick filled body should honor legendSymbolColor'
         );
         candlestick.update({ legendSymbolColor: void 0 });
 
         // Hiding the series dims the boxes along with the wicks.
-        const filledBox = boxes().find(
-                rect => !rect.classList.contains('highcharts-point-up')
-            ),
+        const filledBox = filledBody(),
             visibleFill = filledBox.getAttribute('fill');
 
         candlestick.setVisible(false);
