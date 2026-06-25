@@ -2,26 +2,25 @@
 <script src="https://code.highcharts.com/modules/exporting.js"></script>
 <script src="https://code.highcharts.com/modules/export-data.js"></script>
 <script src="https://code.highcharts.com/modules/accessibility.js"></script>
-<script src="https://code.highcharts.com/themes/adaptive.js"></script>
 
 <figure class="highcharts-figure">
     <div id="container"></div>
     <div class="chart-controls">
-        <select name="Dataset" id="datasetSelector" onchange="udc()">
+        <select name="Dataset" aria-label="Dataset" id="datasetSelector" onchange="udc()">
             <option value=0 selected>Engytime</option>
             <option value=1>DS-577</option>
             <option value=2>Pathbased</option>
         </select>
-        <select name="Clustering Algorithm" id="clusteringSelector" onchange="udc()">
+        <select name="Clustering Algorithm" aria-label="Clustering Algorithm" id="clusteringSelector" onchange="udc()">
             <option value=0 selected>K-means centroid</option>
             <option value=1>DBSCAN</option>
-            <option value=2>Hirearcical</option>
+            <option value=2>Hierarcical</option>
         </select>
     </div>
     <p class="highcharts-description">
         Scatter charts plot each data point along two axes, making them ideal for revealing structure in
         unlabeled data. Points that sit close together form visible groups, so clusters emerge naturally as
-        dense regions of the plot. In this demo, two datasets are grouped using three different clustering
+        dense regions of the plot. In this demo, three datasets are grouped using three different clustering
         algorithms with each cluster drawn in its own color.
         Switch between the datasets and algorithms to compare how each method partitions the same points.
         <br>
