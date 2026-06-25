@@ -1,0 +1,64 @@
+.theme-custom {
+    --hcg-border-width: 1px;
+    --hcg-border-style: solid;
+    --hcg-border-color: #d6d6d6;
+    --hcg-border-radius: 8px;
+    --hcg-column-border-width: 0;
+    --hcg-row-border-width: 1px;
+
+    --hcg-padding: 8px;
+    --hcg-header-vertical-padding: 8px;
+
+    --hcg-row-even-background: lightgrey;
+    --hcg-cell-hover-background: var(grey);
+    --hcg-column-hover-background: var(grey);
+    --hcg-hover-opacity: 18%;
+    --hcg-cell-hover-opacity: 60%;
+}
+.theme-custom td.stockSparklines {
+    cursor: pointer;
+}
+.touch-device td.stockSparklines .highcharts-container {
+    pointer-events: none;
+}
+
+.theme-custom .price-change-header {
+    text-align: center;
+    display: block;
+}
+.theme-custom .price-header {
+    display: inline-block;
+    text-align: center;
+    white-space: normal;
+}
+
+#spark-popup-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+}
+#spark-popup-overlay.open {
+    display: flex;
+}
+#spark-popup {
+    background: #fefeff;
+    border-radius: 8px;
+    padding: 24px;
+    width: 90vw;
+    max-height: 90vw;
+    position: relative;
+}
+#spark-popup-close {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    cursor: pointer;
+    color: #040404;
+    font-size: 24px;
+    background: none;
+    border: none;
+}
