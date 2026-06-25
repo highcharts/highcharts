@@ -31,7 +31,6 @@ import { defined } from '../../Shared/Utilities.js';
 const {
     column: ColumnSeries
 } = SeriesRegistry.seriesTypes;
-const { format } = Templating;
 
 /* *
  *
@@ -181,8 +180,7 @@ class SankeyPoint extends ColumnSeries.prototype.pointClass {
      * @internal
      */
     public tooltipFormatter(pointFormat: string): string {
-        const series = this.series,
-            { selfLinkWeight } = this,
+        const { series, selfLinkWeight } = this,
             tooltip = Point.prototype.tooltipFormatter.call(
                 this,
                 pointFormat
@@ -192,7 +190,7 @@ class SankeyPoint extends ColumnSeries.prototype.pointClass {
             return tooltip;
         }
 
-        return tooltip + format(
+        return tooltip + Templating.format(
             series.tooltipOptions.nodeSelfLinkFormat || '',
             {
                 point: this,

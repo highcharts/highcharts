@@ -62,9 +62,6 @@ import {
 } from '../../Shared/Utilities.js';
 composeTextPath(SVGElement);
 
-const CIRCULAR_LINK_BEND = 20,
-    CIRCULAR_LINK_MARGIN = 8;
-
 /**
  * Visit the flow-axis coordinates of M/L/C path segments, stored at even
  * indexes from 2.
@@ -109,6 +106,19 @@ class SankeySeries extends ColumnSeries {
         ColumnSeries.defaultOptions,
         SankeySeriesDefaults
     );
+
+    /**
+     * Bend radius of circular links, in pixels.
+     * @private
+     */
+    private static readonly CIRCULAR_LINK_BEND = 20;
+
+    /**
+     * Clearance between a circular link and the node it bends around, in
+     * pixels.
+     * @private
+     */
+    private static readonly CIRCULAR_LINK_MARGIN = 8;
 
     /* *
      *
@@ -559,8 +569,8 @@ class SankeySeries extends ColumnSeries {
     ): void {
         const chart = this.chart,
             nodeColumns = this.nodeColumns,
-            bend = CIRCULAR_LINK_BEND,
-            margin = bend + CIRCULAR_LINK_MARGIN,
+            bend = SankeySeries.CIRCULAR_LINK_BEND,
+            margin = bend + SankeySeries.CIRCULAR_LINK_MARGIN,
             firstH = firstWeight ? this.getLinkHeight(firstWeight) : 0,
             lastH = lastWeight ? this.getLinkHeight(lastWeight) : 0,
             maxBandY = Math.max(firstH, lastH);
@@ -772,7 +782,8 @@ class SankeySeries extends ColumnSeries {
         // `linkHeight + bend + margin`. Reserve that space from the
         // column-axis range so ALL columns shift evenly inward, instead of
         // squeezing col 0 / last col against their neighbors.
-        const margin = CIRCULAR_LINK_BEND + CIRCULAR_LINK_MARGIN;
+        const margin = SankeySeries.CIRCULAR_LINK_BEND +
+            SankeySeries.CIRCULAR_LINK_MARGIN;
         this.firstColCircShift = firstColCircLinkMaxH ?
             firstColCircLinkMaxH + margin : 0;
         const lastColCircShift = lastColCircLinkMaxH ?
@@ -990,7 +1001,7 @@ class SankeySeries extends ColumnSeries {
         // whose explicit `column` places the target left of the source. #8218.
         } else if (typeof toY === 'number') {
             // Route in natural flow coordinates, then mirror inverted charts.
-            const bend = CIRCULAR_LINK_BEND,
+            const bend = SankeySeries.CIRCULAR_LINK_BEND,
                 plotSizeY = chart.plotSizeY || 0,
                 colSign = inverted ? -1 : 1,
                 lh = Math.abs(linkHeight),
@@ -1282,7 +1293,7 @@ extend(SankeySeries.prototype, {
     noSharedTooltip: true,
     pointArrayMap: ['from', 'to', 'weight'],
     pointClass: SankeyPoint,
-    searchPoint: H.noop as any,
+    searchPoint: H.noop,
     useCircularLayout: true
 });
 

@@ -27,7 +27,6 @@ Highcharts.chart('container', {
     }],
     tooltip: {
         // Appended to a node tooltip when the node has a self-referencing link
-        nodeSelfLinkFormat: 'Loops back to itself: ' +
-            '<b>{selfLinkWeight}</b><br/>'
+        nodeSelfLinkFormat: 'Loops back to itself: <b>{selfLinkWeight}</b><br/>'
     }
 });
