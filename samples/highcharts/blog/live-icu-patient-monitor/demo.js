@@ -59,60 +59,89 @@ function getNextVitals() {
 }
 
 // Seed initial 30 seconds of data
-function buildInitialData() {
-    const now = new Date().getTime();
-    const series = { hr: [], spo2: [], sbp: [], rr: [] };
+const now = new Date().getTime();
+const columns = { time: [], hr: [], spo2: [], sbp: [], rr: [] };
 
-    for (let i = -29; i <= 0; i++) {
-        const t = now + i * 1000;
-        const v = getNextVitals();
-        series.hr.push([t, v.hr]);
-        series.spo2.push([t, v.spo2]);
-        series.sbp.push([t, v.sbp]);
-        series.rr.push([t, v.rr]);
-    }
-    return series;
+for (let i = -29; i <= 0; i++) {
+    const t = now + i * 1000;
+    const v = getNextVitals();
+    columns.time.push(t);
+    columns.hr.push(v.hr);
+    columns.spo2.push(v.spo2);
+    columns.sbp.push(v.sbp);
+    columns.rr.push(v.rr);
 }
 
-// Pulsating marker on new point
-Highcharts.addEvent(Highcharts.Series, 'addPoint', e => {
-    const point = e.point,
-        series = e.target;
+const dataTable = new Highcharts.DataTable({ columns });
 
-    if (!series.pulse) {
-        series.pulse = series.chart.renderer.circle().add(series.markerGroup);
+// Palette — centralized color system for dark ICU theme
+Highcharts.setOptions({
+    colorScheme: 'dark',
+    palette: {
+        dark: {
+            backgroundColor: '#0d1117',
+            neutralColor:    '#e2e8f0',
+            highlightColor:  '#ef4444',
+            colors: [
+                '#ef4444',   // Heart rate – red
+                '#38bdf8',   // SpO₂ – sky blue
+                '#f59e0b',   // Systolic BP – amber
+                '#a78bfa'    // Respiratory rate – violet
+            ]
+        }
     }
-
-    setTimeout(() => {
-        series.pulse
-            .attr({
-                x: series.xAxis.toPixels(point.x, true),
-                y: series.yAxis.toPixels(point.y, true),
-                r: 4,
-                opacity: 1,
-                fill: series.color
-            })
-            .animate({ r: 16, opacity: 0 }, { duration: 900 });
-    }, 1);
 });
 
-const initial = buildInitialData();
-
 Highcharts.chart('container', {
+
+    dataTable,
+
     chart: {
-        backgroundColor: '#0d1117',
         style: { fontFamily: '\'Courier New\', monospace' },
         animation: { duration: 500 },
         events: {
             load: function () {
                 const c = this;
                 setInterval(function () {
-                    const x = new Date().getTime();
                     const v = getNextVitals();
-                    c.series[0].addPoint([x, v.hr],   true, true);
-                    c.series[1].addPoint([x, v.spo2], true, true);
-                    c.series[2].addPoint([x, v.sbp],  true, true);
-                    c.series[3].addPoint([x, v.rr],   true, true);
+                    dataTable.deleteRows(0);
+                    dataTable.setRow({
+                        time: new Date().getTime(),
+                        hr:   v.hr,
+                        spo2: v.spo2,
+                        sbp:  v.sbp,
+                        rr:   v.rr
+                    });
+
+                    // Pulsating marker on newest point
+                    setTimeout(function () {
+                        c.series.forEach(function (series) {
+                            if (!series.pulse) {
+                                series.pulse = c.renderer.circle()
+                                    .add(series.markerGroup);
+                            }
+                            const point =
+                                series.points[series.points.length - 1];
+                            if (point) {
+                                series.pulse
+                                    .attr({
+                                        x: series.xAxis.toPixels(
+                                            point.x, true
+                                        ),
+                                        y: series.yAxis.toPixels(
+                                            point.y, true
+                                        ),
+                                        r: 4,
+                                        opacity: 1,
+                                        fill: series.color
+                                    })
+                                    .animate(
+                                        { r: 16, opacity: 0 },
+                                        { duration: 900 }
+                                    );
+                            }
+                        });
+                    }, 500);
                 }, 1000);
             }
         }
@@ -122,7 +151,7 @@ Highcharts.chart('container', {
 
     title: {
         text: '⚠ ICU Patient Monitor - Live Feed',
-        style: { color: '#e2e8f0', fontSize: '15px', fontWeight: '600' }
+        style: { fontSize: '15px', fontWeight: '600' }
     },
     subtitle: {
         text: 'ICU Bed 3 · Patient ID 7742 · ' +
@@ -133,21 +162,15 @@ Highcharts.chart('container', {
     xAxis: {
         type: 'datetime',
         tickPixelInterval: 120,
-        maxPadding: 0.1,
-        labels: { style: { color: '#64748b', fontSize: '10px' } },
-        lineColor: '#1f2937',
-        tickColor: '#1f2937'
+        maxPadding: 0.1
     },
 
     yAxis: [{
         title: {
-            text: 'HR / RR',
-            style: { color: '#64748b', fontSize: '10px' }
+            text: 'HR / RR'
         },
         min: 0,
         max: 160,
-        gridLineColor: '#1f2937',
-        labels: { style: { color: '#64748b', fontSize: '10px' } },
         plotBands: [{
             from: 60,
             to: 100,
@@ -161,14 +184,11 @@ Highcharts.chart('container', {
         }]
     }, {
         title: {
-            text: 'SpO₂ / SBP',
-            style: { color: '#64748b', fontSize: '10px' }
+            text: 'SpO₂ / SBP'
         },
         min: 60,
         max: 200,
         opposite: true,
-        gridLineColor: '#1f2937',
-        labels: { style: { color: '#64748b', fontSize: '10px' } },
         plotBands: [{
             from: 95,
             to: 100,
@@ -184,16 +204,11 @@ Highcharts.chart('container', {
 
     tooltip: {
         shared: true,
-        backgroundColor: '#1f2937',
-        borderColor: '#374151',
-        style: { color: '#e2e8f0', fontSize: '11px' },
         shadow: false,
         headerFormat: '<b style="color:#94a3b8">{point.key}</b><br/>'
     },
 
     legend: {
-        itemStyle: { color: '#94a3b8', fontSize: '11px' },
-        itemHoverStyle: { color: '#e2e8f0' },
         backgroundColor: 'transparent'
     },
 
@@ -212,12 +227,17 @@ Highcharts.chart('container', {
         }
     },
 
+    plotOptions: {
+        series: {
+            dataMapping: { x: 'time' }
+        }
+    },
+
     series: [{
         name: 'Heart rate',
         yAxis: 0,
         type: 'spline',
-        data: initial.hr,
-        color: '#ef4444',
+        dataMapping: { y: 'hr' },
         lineWidth: 2,
         marker: { radius: 3, enabled: false },
         tooltip: { valueSuffix: ' bpm' }
@@ -225,8 +245,7 @@ Highcharts.chart('container', {
         name: 'SpO₂',
         yAxis: 1,
         type: 'spline',
-        data: initial.spo2,
-        color: '#38bdf8',
+        dataMapping: { y: 'spo2' },
         lineWidth: 2,
         marker: { radius: 3, enabled: false },
         tooltip: { valueSuffix: ' %' }
@@ -234,8 +253,7 @@ Highcharts.chart('container', {
         name: 'Systolic BP',
         yAxis: 1,
         type: 'spline',
-        data: initial.sbp,
-        color: '#f59e0b',
+        dataMapping: { y: 'sbp' },
         lineWidth: 2,
         marker: { radius: 3, enabled: false },
         tooltip: { valueSuffix: ' mmHg' }
@@ -243,8 +261,7 @@ Highcharts.chart('container', {
         name: 'Respiratory rate',
         yAxis: 0,
         type: 'spline',
-        data: initial.rr,
-        color: '#a78bfa',
+        dataMapping: { y: 'rr' },
         lineWidth: 2,
         dashStyle: 'ShortDot',
         marker: { radius: 3, enabled: false },
