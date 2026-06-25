@@ -1,7 +1,7 @@
 /**
- * Button and tag color variables from highsoft-ui
+ * Button, tag, surface, common, and text color variables from highsoft-ui
  * Required for Header/Footer components to render correctly
- * Source: highsoft-ui/dist/scss/variables.scss
+ * Source: highsoft-ui/dist/highsoft-ui.css (v1.0.140)
  */
 
 :root {
@@ -144,7 +144,18 @@
     --tags-danger-border: var(--primitives-danger-700);
 }
 
-[data-theme="dark"] {
+/**
+ * Surface, common, and text dark-mode overrides from highsoft-ui.
+ *
+ * Why `html[data-theme="dark"]`?
+ * highsoft-ui's bundled CSS defines dark variables under `[data-theme=dark]`
+ * (specificity 0,1,0) but then re-declares light values under `:root`
+ * (also 0,1,0) later in source order — so light wins by cascade.
+ * Prepending `html` gives specificity 0,1,1 which beats both regardless
+ * of source order. ThemeProvider sets data-theme on <html>.
+ */
+html[data-theme="dark"] {
+    /* Buttons */
     --button-text: var(--primitives-neutral-0);
     --button-transparent-border: #0005;
     --button-transparent-border-hover: #0006;
@@ -267,6 +278,8 @@
     --button-colors-danger-stroke-outer-hover: var(--primitives-danger-600);
     --button-colors-danger-stroke-outer-disabled: var(--primitives-neutral-300);
     --button-colors-danger-stroke-outer-pressed: var(--primitives-neutral-200);
+
+    /* Tags */
     --tags-neutral-background: var(--primitives-neutral-600);
     --tags-neutral-text: var(--primitives-neutral-0);
     --tags-neutral-border: var(--primitives-neutral-500);
@@ -282,4 +295,62 @@
     --tags-danger-text: var(--primitives-neutral-0);
     --tags-danger-background: var(--primitives-danger-600);
     --tags-danger-border: var(--primitives-danger-500);
+
+    /* stylelint-disable custom-property-pattern */
+
+    /* Surface UI */
+    --HS-surface-ui-background-0: var(--primitives-neutral-900);
+    --HS-surface-ui-background-50: var(--primitives-neutral-800);
+    --HS-surface-ui-background-100: var(--primitives-neutral-750);
+    --HS-surface-ui-border-25: var(--primitives-neutral-900);
+    --HS-surface-ui-border-50: var(--primitives-neutral-800);
+    --HS-surface-ui-border-100: var(--primitives-neutral-700);
+    --HS-surface-ui-border-200: var(--primitives-neutral-600);
+    --HS-surface-ui-border-300: var(--primitives-neutral-600);
+    --HS-surface-ui-border-400: var(--primitives-neutral-600);
+    --HS-surface-ui-border-1000: var(--primitives-neutral-0);
+
+    /* Surface Brand */
+    --HS-surface-brand-background-50: var(--primitives-brand-600);
+    --HS-surface-brand-background-100: var(--primitives-brand-700);
+    --HS-surface-brand-background-200: var(--primitives-brand-800);
+    --HS-surface-brand-background-300: var(--primitives-brand-900);
+    --HS-surface-brand-background-1000: var(--primitives-brand-50);
+    --HS-surface-brand-border-100: var(--primitives-brand-400);
+    --HS-surface-brand-border-200: var(--primitives-brand-500);
+    --HS-surface-brand-border-300: var(--primitives-brand-600);
+    --HS-surface-brand-border-400: var(--primitives-brand-600);
+    --HS-surface-brand-border-500: var(--primitives-brand-700);
+
+    /* Surface Status */
+    --HS-surface-success-background: var(--primitives-success-700);
+    --HS-surface-success-background-boxed: var(--primitives-success-200);
+    --HS-surface-success-border: var(--primitives-success-300);
+    --HS-surface-success-border-boxed: var(--primitives-success-300);
+    --HS-surface-danger-background: var(--primitives-danger-1200);
+    --HS-surface-danger-background-boxed: var(--primitives-danger-1100);
+    --HS-surface-danger-border: var(--primitives-danger-700);
+    --HS-surface-danger-border-boxed: var(--primitives-danger-600);
+    --HS-surface-attention-background: var(--primitives-attention-100);
+    --HS-surface-attention-background-boxed: var(--primitives-attention-200);
+    --HS-surface-attention-border: var(--primitives-attention-300);
+    --HS-surface-attention-border-boxed: var(--primitives-attention-300);
+
+    /* Common */
+    --HS-common-background: var(--primitives-neutral-950);
+
+    /* Text */
+    --HS-text-primary-default: var(--primitives-neutral-25);
+    --HS-text-secondary-default: var(--primitives-neutral-200);
+    --HS-text-tertiary-default: var(--primitives-neutral-400);
+    --HS-text-brand-default: var(--primitives-brand-500);
+    --HS-text-brand-default-alt: var(--primitives-brand-400);
+    --HS-text-brand-selected: var(--primitives-brand-50);
+    --HS-text-success-Primary: var(--primitives-success-300);
+    --HS-text-success-Secondary: var(--primitives-success-500);
+    --HS-text-success-default-alt: var(--primitives-neutral-0);
+    --HS-text-attention-default: var(--primitives-neutral-0);
+    --HS-text-attention-default-alt: var(--primitives-neutral-0);
+    --HS-text-danger-default: var(--primitives-danger-500);
+    /* stylelint-enable custom-property-pattern */
 }
