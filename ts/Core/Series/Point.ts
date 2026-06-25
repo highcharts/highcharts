@@ -38,8 +38,7 @@ import type { SymbolKey } from '../Renderer/SVG/SymbolType';
 import type { DeepPartial } from '../../Shared/Types';
 
 import AST from '../Renderer/HTML/AST.js';
-import A from '../Animation/AnimationUtilities.js';
-const { animObject } = A;
+import { animObject } from '../Animation/AnimationUtilities.js';
 import D from '../Defaults.js';
 const { defaultOptions } = D;
 import F from '../Templating.js';
