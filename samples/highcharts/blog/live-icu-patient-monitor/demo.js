@@ -80,8 +80,8 @@ Highcharts.setOptions({
     palette: {
         dark: {
             backgroundColor: '#0d1117',
-            neutralColor:    '#e2e8f0',
-            highlightColor:  '#ef4444',
+            neutralColor: '#e2e8f0',
+            highlightColor: '#ef4444',
             colors: [
                 '#ef4444',   // Heart rate – red
                 '#38bdf8',   // SpO₂ – sky blue
@@ -107,10 +107,10 @@ Highcharts.chart('container', {
                     dataTable.deleteRows(0);
                     dataTable.setRow({
                         time: new Date().getTime(),
-                        hr:   v.hr,
+                        hr: v.hr,
                         spo2: v.spo2,
-                        sbp:  v.sbp,
-                        rr:   v.rr
+                        sbp: v.sbp,
+                        rr: v.rr
                     });
 
                     // Pulsating marker on newest point
