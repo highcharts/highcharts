@@ -386,6 +386,16 @@ class TreeProjectionController {
     }
 
     /**
+     * Returns source column ids hidden from the projected table.
+     */
+    public getHiddenSourceColumnIds(): string[] | undefined {
+        const input = this.options?.input;
+        return input?.type === 'grouping' ?
+            input.groupBy.slice() :
+            void 0;
+    }
+
+    /**
      * Returns whether a projected cell is currently derived from aggregation.
      *
      * @param rowId
@@ -1236,7 +1246,7 @@ class TreeProjectionController {
         if (
             !activeSortings.length ||
             !activeSortings.some((sorting): boolean =>
-                this.hasColumnAggregation(sorting.sourceColumnId)
+                this.requiresProjectedTreeSort(sorting.sourceColumnId)
             )
         ) {
             return;
@@ -1314,6 +1324,19 @@ class TreeProjectionController {
             const children = childrenByParent.get(rowId);
             rowState.childrenIds = children ? children.slice() : [];
         }
+    }
+
+    /**
+     * Returns whether sorting the column depends on projected tree values.
+     *
+     * @param sourceColumnId
+     * Source column id.
+     */
+    private requiresProjectedTreeSort(sourceColumnId: string): boolean {
+        return (
+            this.hasColumnAggregation(sourceColumnId) ||
+            this.isGroupingDisplayColumn(sourceColumnId)
+        );
     }
 
     /**

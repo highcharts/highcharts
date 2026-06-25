@@ -1434,4 +1434,106 @@ describe('TreeProjectionController', () => {
 
         grid.destroy();
     });
+
+    it('should hide configured grouping source columns from rendered columns', async () => {
+        const { win, doc, el } = setupDOM();
+        mockObservers(win);
+        installGridDOMGlobals(win, doc);
+
+        const Grid = await loadGridPro();
+
+        const grid = await Grid.grid(el, {
+            data: {
+                columns: {
+                    region: ['North', 'South'],
+                    product: ['Alpha', 'Beta'],
+                    amount: [1, 2]
+                },
+                treeView: {
+                    input: {
+                        type: 'grouping',
+                        groupBy: 'region'
+                    },
+                    expandedRowIds: 'all'
+                }
+            },
+            columns: [{
+                id: 'region',
+                width: 120
+            }, {
+                id: 'product'
+            }]
+        }, true);
+
+        grid.viewport?.resizeObserver?.disconnect();
+
+        deepStrictEqual(
+            (grid.dataProvider as any).getDataTable(true).getColumnIds(),
+            ['Group', 'product', 'amount'],
+            'The projected table should not include grouped source columns.'
+        );
+        deepStrictEqual(
+            grid.enabledColumns,
+            ['Group', 'product', 'amount'],
+            'Configured grouped source columns should be hidden from render.'
+        );
+        deepStrictEqual(
+            grid.viewport.columns.map((column: AnyRecord): string => column.id),
+            ['Group', 'product', 'amount'],
+            'Rendered columns should match the grouped projection.'
+        );
+
+        grid.destroy();
+    });
+
+    it('should sort generated group rows by the grouping display column', async () => {
+        const { win, doc, el } = setupDOM();
+        mockObservers(win);
+        installGridDOMGlobals(win, doc);
+
+        const Grid = await loadGridPro();
+
+        const grid = await Grid.grid(el, {
+            data: {
+                columns: {
+                    region: ['North', 'North', 'South', 'East'],
+                    product: ['Alpha', 'Beta', 'Gamma', 'Delta'],
+                    amount: [1, 2, 3, 4]
+                },
+                treeView: {
+                    input: {
+                        type: 'grouping',
+                        groupBy: 'region'
+                    },
+                    expandedRowIds: 'all'
+                }
+            }
+        }, true);
+
+        grid.viewport?.resizeObserver?.disconnect();
+
+        await grid.setSorting([{
+            columnId: 'Group',
+            order: 'asc'
+        }]);
+
+        deepStrictEqual(
+            (grid.dataProvider as any).getDataTable(true).columns.Group,
+            ['East', null, 'North', null, null, 'South', null],
+            'Ascending sorting should order generated groups by label.'
+        );
+
+        await grid.setSorting([{
+            columnId: 'Group',
+            order: 'desc'
+        }]);
+
+        deepStrictEqual(
+            (grid.dataProvider as any).getDataTable(true).columns.Group,
+            ['South', null, 'North', null, null, 'East', null],
+            'Descending sorting should order generated groups by label.'
+        );
+
+        grid.destroy();
+    });
 });

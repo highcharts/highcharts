@@ -232,10 +232,14 @@ function onProjectPresentationTable(
 
     try {
         controller.sync();
+        this.columnPolicy.setHiddenSourceColumnIds(
+            controller.getHiddenSourceColumnIds()
+        );
         TreeViewValidation.syncTreePathValidationRules(this);
         e.table = controller.projectTable(e.table);
         this.columnPolicy.setAvailableSourceColumnIds(e.table.getColumnIds());
     } catch (error) {
+        this.columnPolicy.setHiddenSourceColumnIds();
         // eslint-disable-next-line no-console
         console.error((error as { message?: string }).message || error);
     }
