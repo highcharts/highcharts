@@ -16,11 +16,6 @@ body {
     padding: 0;
 }
 
-#chart-container {
-    display: flex;
-    flex-wrap: wrap;
-    border-radius: 7px;
-}
 
 body,
 #demo-content {
