@@ -69,9 +69,9 @@ const ContourSeriesDefaults: ContourSeriesOptions = {
      */
 
     /**
-     * The color of the contour lines
+     * The color of the contour lines.
      *
-     * @type      {string}
+     * @type      {Highcharts.ColorType}
      * @default   #000000
      * @apioption plotOptions.contour.lineColor
      */
