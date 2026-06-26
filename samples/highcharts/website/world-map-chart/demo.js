@@ -615,6 +615,13 @@ async function renderChart() {
                                 mapChart.tooltip.refresh(mapPoint);
                                 mapChart.pointer.applyInactiveState([mapPoint]);
                                 mapPoint.setState('hover');
+                                // eslint-disable-next-line max-len
+                                if (mapChart.colorAxis && mapChart.colorAxis[0]) {
+                                    // eslint-disable-next-line max-len
+                                    mapChart.colorAxis[0].drawCrosshair(null, mapPoint);
+                                }
+
+                                mapChart.redraw();
                                 renderChartInTooltip(point);
                             }
                         });
