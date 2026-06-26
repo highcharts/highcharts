@@ -58,8 +58,8 @@ const createMap = (
     },
 
     colorAxis: {
-        minColor: '#BFCFAD',
-        maxColor: '#31784B',
+        minColor: 'light-dark(#BFCFAD, #78a37c)',
+        maxColor: 'light-dark(#31784B, #0b250d)',
         max: 800
     },
 
@@ -95,13 +95,14 @@ const createMap = (
         data,
         joinBy: ['iso-a2', 'code'],
         name: 'Population density',
-        borderColor: '#aaa',
+        borderColor: 'light-dark(#aaa, #333)',
         states: {
             hover: {
                 color: '#a4edba',
                 borderColor: '#333333'
             }
         },
+        nullColor: 'light-dark(#c0c0c0, #aaa)',
         dataLabels: {
             enabled: false,
             format: '{point.name}'
@@ -174,7 +175,7 @@ Highcharts.addEvent(Highcharts.Series, 'afterAnimate', function () {
                         [-118.24, 34.05] // Los Angeles
                     ]
                 },
-                color: '#313f77'
+                color: 'light-dark(#313f77, #fff)'
             }],
             lineWidth: 2,
             accessibility: {
@@ -226,7 +227,7 @@ Highcharts.addEvent(Highcharts.Series, 'afterAnimate', function () {
 
         // Clear once the user drags the globe
         document.getElementById('container')
-            ?.addEventListener('mousedown', () => {
+            ?.addEventListener('mouseover', () => {
                 clearInterval(rotationInterval);
             });
     }
