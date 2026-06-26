@@ -62,20 +62,24 @@ const marketIndex = {
 };
 
 const getHoldings = [
-  ...stockCollection.map(stock => ({ id: stock.ISIN, idType: 'ISIN' })),
-  { id: marketIndex.ISIN, idType: 'ISIN' }
+    ...stockCollection.map(stock => ({ id: stock.ISIN, idType: 'ISIN' })),
+    { id: marketIndex.ISIN, idType: 'ISIN' }
 ];
 
-const WINDOW_SIZE = 90;       //amount of data points used in the price evolution graph
-const ANIMATION_SPEED = 1000; //millisecond delay per update
+const ANIMATION_SPEED = 1000;
+const WINDOW_SIZE = 20;
 const TIME_PERIODS = [
     { label: '1', days: 7 },
-    { label: '2', days:  30},
-    { label: '3', days: 90}
+    { label: '2', days: 30 },
+    { label: '3', days: 90 }
 ];
+const INITIAL_VISIBLE_COUNT = Math.max(
+    ...TIME_PERIODS.map(({ days }) => days)
+);
 
 (async () => {
-    const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+    const isTouchDevice = 'ontouchstart' in window
+        || navigator.maxTouchPoints > 0;
     if (isTouchDevice) {
         document.body.classList.add('touch-device');
     }
@@ -99,39 +103,56 @@ const TIME_PERIODS = [
     };
 
     function calculateDeltas(prices, visibleCount) {
-        return TIME_PERIODS.map(({ days }) =>
-            prices[visibleCount - 1] != null && prices[visibleCount - 1 - days] != null ? 
-                (prices[visibleCount - 1] - prices[visibleCount - 1 - days]).toFixed(2)
-                : '0'
-        ).map(Number);
+        return TIME_PERIODS.map(({ days }) => {
+            const currentPrice = prices[visibleCount - 1];
+            const previousPrice = prices[visibleCount - 1 - days];
+
+            if (
+                currentPrice === null
+                || typeof currentPrice === 'undefined'
+                || previousPrice === null
+                || typeof previousPrice === 'undefined'
+            ) {
+                return 0;
+            }
+
+            return Number((currentPrice - previousPrice).toFixed(2));
+        });
     }
     function calculateRowValues(prices, visibleCount) {
         return {
             spark: toSpark(prices, visibleCount),
             latestPrice: Number(prices[visibleCount - 1]?.toFixed(2) ?? ''),
-            deltaValues: calculateDeltas(prices, visibleCount),
+            deltaValues: calculateDeltas(prices, visibleCount)
         };
     }
     function formatDelta(value) {
+        const formattedValue = Math.abs(value).toFixed(2);
+
         if (value > 0) {
-            return `<span style='color: #4caf50;'>&uarr; ${value}</span>`;
-        } 
-        if (value < 0) {
-            return `<span style='color: #f44336;'>&#8595; ${-value}</span>`;
+            return `<span style='color: #4caf50;'>${formattedValue} &uarr;</span>`;
         }
-        return `<span>${value}</span>`;
+        if (value < 0) {
+            return `<span style='color: #f44336;'>${formattedValue} &#8595;</span>`;
+        }
+        return `<span>${formattedValue}</span>`;
     }
-        
+
     try {
         await connector.load();
         const table = connector.getTable();
-        let visibleCount = WINDOW_SIZE;
-        const cachedPrices = stockCollection.map(stock => getPrices(table, stock));
+        let visibleCount = INITIAL_VISIBLE_COUNT;
+        const cachedPrices = stockCollection.map(
+            stock => getPrices(table, stock)
+        );
         const indexPrice = getPrices(table, marketIndex);
 
         const rows = stockCollection.map((stock, i) => {
             const prices = cachedPrices[i];
-            const { spark, latestPrice, deltaValues } = calculateRowValues(prices, visibleCount);
+            const { spark, latestPrice, deltaValues } = calculateRowValues(
+                prices,
+                visibleCount
+            );
             return {
                 ticker: stock.ticker,
                 priceEvolution: spark,
@@ -139,8 +160,8 @@ const TIME_PERIODS = [
                 oneMonthChange: deltaValues[1],
                 threeMonthChange: deltaValues[2],
                 price: latestPrice
-            }
-        })
+            };
+        });
 
         const maxSeriesLength = Math.max(...cachedPrices.map(p => p.length), 0);
         const gridData = new Grid.DataTable({
@@ -153,49 +174,54 @@ const TIME_PERIODS = [
                 price: rows.map(row => row.price)
             }
         });
-        const timePeriodHeader = {
-            format: '<span class="price-change-header">Price Change</span>',
-            columns: [{
-                columnId: 'oneWeekChange',
-                format: '1 Week'
-            }, {
-                columnId: 'oneMonthChange',
-                format: '1 Month'
-            }, {
-                columnId: 'threeMonthChange',
-                format: '3 Months'
-            }]
-        };
         const compactTimePeriodHeader = {
             columnId: 'oneMonthChange',
-            format: '1 Month Change'
+            format: '1 Month'
         };
-        const priceHeaderFormat = '<span class="price-header">Price <wbr>(EUR)</span>';
+        const priceHeaderFormat = (
+            '<span class="price-header">Price <wbr>(EUR)</span>'
+        );
         const defaultHeader = [{
             columnId: 'ticker',
             format: 'Company'
         }, {
             columnId: 'priceEvolution',
             format: 'Price Evolution'
-        },
-        timePeriodHeader,
-        {
+        }, {
+            columnId: 'oneWeekChange',
+            format: '1 Week'
+        }, {
+            columnId: 'oneMonthChange',
+            format: '1 Month'
+        }, {
+            columnId: 'threeMonthChange',
+            format: '3 Months'
+        }, {
             columnId: 'price',
             format: priceHeaderFormat
         }];
-        const compactHeader = defaultHeader.map(entry =>
-        entry === timePeriodHeader ? compactTimePeriodHeader : entry);
+        const compactHeader = defaultHeader
+            .filter(entry => ![
+                'oneWeekChange',
+                'threeMonthChange'
+            ].includes(entry.columnId))
+            .map(entry => (
+                entry.columnId === 'oneMonthChange' ?
+                    compactTimePeriodHeader :
+                    entry
+            ));
 
         const grid = Grid.grid('container', {
             data: { dataTable: gridData },
             columnDefaults: {
                 sorting: {
-                    orderSequence: ['desc', 'asc']
+                    orderSequence: ['asc', 'desc'],
+                    order: 'asc'
                 }
             },
-            rendering: { 
-                rows: { 
-                    strictHeights: true 
+            rendering: {
+                rows: {
+                    strictHeights: true
                 },
                 theme: 'theme-custom'
             },
@@ -212,9 +238,13 @@ const TIME_PERIODS = [
                     events: {
                         click: function () {
                             const rowIndex = this.row.index;
-                            const ticker = this.row.data['ticker'];
-                            const stock = stockCollection.find(s => s.ticker === ticker);
-                            if (!stock) return;
+                            const ticker = this.row.data.ticker;
+                            const stock = stockCollection.find(
+                                s => s.ticker === ticker
+                            );
+                            if (!stock) {
+                                return;
+                            }
                             openStockChart(stock, rowIndex, visibleCount);
                         }
                     },
@@ -224,24 +254,31 @@ const TIME_PERIODS = [
                             const y = (data || '').split(',').map(Number);
 
                             return {
-                                tooltip: { 
+                                tooltip: {
                                     enabled: true,
                                     outside: true,
                                     formatter: function () {
-                                        return `<b>${this.y.toFixed(2)} EUR</b>`;
+                                        return (
+                                            `<b>${this.y.toFixed(2)} EUR</b>`
+                                        );
                                     }
                                 },
                                 chart: {
                                     animation: true
                                 },
-                                plotOptions: { 
+                                plotOptions: {
                                     series: {
-                                        enableMouseTracking: true,
+                                        enableMouseTracking: true
                                     }
                                 },
-                                series: [{ data: y,
-                                    animation : {duration: ANIMATION_SPEED},
-                                    color: y[y.length - 1] >= y[0] ? '#4caf50' : '#f44336'
+                                series: [{
+                                    data: y,
+                                    animation: {
+                                        duration: ANIMATION_SPEED
+                                    },
+                                    color: y[y.length - 1] >= y[0] ?
+                                        '#4caf50' :
+                                        '#f44336'
                                 }]
                             };
                         }
@@ -279,30 +316,33 @@ const TIME_PERIODS = [
                 header: { format: priceHeaderFormat },
                 width: '10%'
             }
-        ],   
-        responsive: {
-            rules: [{
-                condition: {
-                    maxWidth: 900
-                },
-                gridOptions: {
-                    header: compactHeader,
-                    columns: [{
-                        id: 'oneMonthChange',
-                        width: '20%'
-                    }, {
-                        id: 'price',
-                        width: '15%'
-                    }],
-                }
-            }]
-        }     
-    });
+            ],
+            responsive: {
+                rules: [{
+                    condition: {
+                        maxWidth: 900
+                    },
+                    gridOptions: {
+                        header: compactHeader,
+                        columns: [{
+                            id: 'oneMonthChange',
+                            width: '20%'
+                        }, {
+                            id: 'price',
+                            width: '15%'
+                        }]
+                    }
+                }]
+            }
+        });
 
         async function refreshSparkline() {
             visibleCount = Math.min(visibleCount + 1, maxSeriesLength);
             stockCollection.forEach((_, rowIndex) => {
-                const { spark, latestPrice, deltaValues } = calculateRowValues(cachedPrices[rowIndex], visibleCount);
+                const { spark, latestPrice, deltaValues } = calculateRowValues(
+                    cachedPrices[rowIndex],
+                    visibleCount
+                );
 
                 gridData.setCell('priceEvolution', rowIndex, spark);
                 gridData.setCell('oneWeekChange', rowIndex, deltaValues[0]);
@@ -327,7 +367,7 @@ const TIME_PERIODS = [
             });
         }
         setInterval(refreshSparkline, ANIMATION_SPEED);
-        const overlay = document.getElementById("spark-popup-overlay");
+        const overlay = document.getElementById('spark-popup-overlay');
         let popupInterval = null;
         // Close on overlay or button click
         function closePopup() {
@@ -336,9 +376,13 @@ const TIME_PERIODS = [
             popupInterval = null;
         }
         overlay.addEventListener('click', e => {
-            if (e.target === overlay) closePopup();
+            if (e.target === overlay) {
+                closePopup();
+            }
         });
-        document.getElementById('spark-popup-close').addEventListener('click', closePopup);
+        document
+            .getElementById('spark-popup-close')
+            .addEventListener('click', closePopup);
 
         function openStockChart(stock, rowIndex, visibleCount) {
             const prices = cachedPrices[rowIndex];
@@ -346,15 +390,17 @@ const TIME_PERIODS = [
 
             const end = Math.min(visibleCount, prices.length);
 
-            //slicing from zero to let user view entire timeline
+            // Slicing from zero to let user view entire timeline.
             const yData = prices.slice(0, end).map(Number);
             const xData = dates.slice(0, end);
 
-            const indexPrice = getPrices(table, marketIndex);
             const indexData = indexPrice.slice(0, end).map(Number);
 
-            const tolltipPointFormat = '<span style="color:{point.color}">\u25CF</span> ' +
-                            '{series.name}</br> <b>{point.y} EUR</b> ' + '({point.change}%)<br/>';
+            const tolltipPointFormat = (
+                '<span style="color:{point.color}">\u25CF</span> '
+                + '{series.name}</br> <b>{point.y} EUR</b> '
+                + '({point.change:.2f}%)<br/>'
+            );
             overlay.classList.add('open');
             Highcharts.stockChart('spark-popup-chart', {
                 chart: {
@@ -362,22 +408,45 @@ const TIME_PERIODS = [
                         load: function () {
                             const stockSeries = this.series[0];
                             const indexSeries = this.series[1];
-                            if (popupInterval) clearInterval(popupInterval);
+                            if (popupInterval) {
+                                clearInterval(popupInterval);
+                            }
                             popupInterval = setInterval(function () {
-                                visibleCount = Math.min(visibleCount + 1, maxSeriesLength);
-                                const end = Math.min(visibleCount, prices.length);
+                                visibleCount = Math.min(
+                                    visibleCount + 1,
+                                    maxSeriesLength
+                                );
+                                const end = Math.min(
+                                    visibleCount,
+                                    prices.length
+                                );
                                 const newStockY = prices[end - 1];
                                 const newIndexY = indexPrice[end - 1];
                                 const newX = dates[end - 1];
 
-                                if (end >= prices.length || end >= dates.length || newStockY == null || newX == null) {
+                                if (
+                                    end >= prices.length
+                                    || end >= dates.length
+                                    || newStockY === null
+                                    || typeof newStockY === 'undefined'
+                                    || newX === null
+                                    || typeof newX === 'undefined'
+                                ) {
                                     clearInterval(popupInterval);
                                     popupInterval = null;
                                     return;
                                 }
-                                
-                                stockSeries.addPoint([newX, newStockY], true, false);
-                                indexSeries.addPoint([newX, newIndexY], true, false);
+
+                                stockSeries.addPoint(
+                                    [newX, newStockY],
+                                    true,
+                                    false
+                                );
+                                indexSeries.addPoint(
+                                    [newX, newIndexY],
+                                    true,
+                                    false
+                                );
                             }, ANIMATION_SPEED);
                         }
                     }
@@ -388,8 +457,17 @@ const TIME_PERIODS = [
                 title: {
                     text: stock.ticker
                 },
+                yAxis: {
+                    labels: {
+                        format: '{text}%'
+                    }
+                },
+                legend: {
+                    enabled: true
+                },
                 series: [{
                     name: stock.ticker,
+                    showInLegend: true,
                     data: xData.map((x, i) => [x, yData[i]]),
                     compare: 'percent',
                     compareStart: true,
@@ -399,6 +477,7 @@ const TIME_PERIODS = [
                     }
                 }, {
                     name: marketIndex.ticker,
+                    showInLegend: true,
                     data: xData.map((x, i) => [x, indexData[i]]),
                     compare: 'percent',
                     compareStart: true,
@@ -410,6 +489,8 @@ const TIME_PERIODS = [
             });
         }
     } catch (err) {
-        document.getElementById('container').textContent = 'Failed to load data: ' + err.message;
+        document.getElementById('container').textContent = (
+            'Failed to load data: ' + err.message
+        );
     }
 })();

@@ -9,9 +9,9 @@
     --hcg-padding: 8px;
     --hcg-header-vertical-padding: 8px;
 
-    --hcg-row-even-background: lightgrey;
-    --hcg-cell-hover-background: var(grey);
-    --hcg-column-hover-background: var(grey);
+    --hcg-row-even-background: #d3d3d3;
+    --hcg-cell-hover-background: #808080;
+    --hcg-column-hover-background: #808080;
     --hcg-hover-opacity: 18%;
     --hcg-cell-hover-opacity: 60%;
 }
@@ -22,10 +22,6 @@
     pointer-events: none;
 }
 
-.theme-custom .price-change-header {
-    text-align: center;
-    display: block;
-}
 .theme-custom .price-header {
     display: inline-block;
     text-align: center;
