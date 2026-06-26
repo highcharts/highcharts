@@ -2,13 +2,12 @@
     "compilerOptions": {
         "downlevelIteration": true,
         "sourceMap": false,
-        "noEmitOnError": true,
         "noImplicitAny": true,
         "noImplicitThis": true,
         "strict": false,
         "stripInternal": true,
         "baseUrl": "../",
-        "module": "none",
+        "module": "es2022",
         "moduleDetection": "auto",
         "allowUmdGlobalAccess": true,
         "moduleResolution": "node",
@@ -37,5 +36,12 @@
         "maps/**/*.ts",
         "stock/**/*.ts",
         "unit-tests/**/*.ts"
+    ],
+    "references": [
+        { "path": "./tsconfig.gantt.json" },
+        { "path": "./tsconfig.highcharts.json" },
+        { "path": "./tsconfig.maps.json" },
+        { "path": "./tsconfig.stock.json" },
+        { "path": "./tsconfig.unit-tests.json" }
     ]
 }
