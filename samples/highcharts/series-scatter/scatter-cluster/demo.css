@@ -76,7 +76,21 @@ body {
     margin: 0.5em 10px;
 }
 
+.control {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25em;
+}
+
+.control label {
+    font-size: 0.75em;
+    font-weight: 600;
+    color: var(--highcharts-neutral-color-60, #666);
+}
+
 select {
+    width: 100%;
+    box-sizing: border-box;
     appearance: none;
     padding: 0.4em 2em 0.4em 0.75em;
     font-family: inherit;
