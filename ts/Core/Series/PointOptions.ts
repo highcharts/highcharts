@@ -487,6 +487,9 @@ export interface PointOptions {
      *
      * @sample {highcharts} highcharts/point/color/
      * Mark the highest point
+     *
+     * @sample {highcharts} highcharts/series-scatter/scatter-cluster
+     * Color every point individually
      */
     color?: ColorType;
 

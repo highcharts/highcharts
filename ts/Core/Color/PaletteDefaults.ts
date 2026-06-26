@@ -115,6 +115,9 @@ const palette: PaletteOptions = {
     /**
      * Palette options for dark mode.
      *
+     * @sample highcharts/series-scatter/scatter-cluster
+     *         Color palette for Dark Mode
+     *
      * @extends palette.light
      */
     dark: {
@@ -122,6 +125,9 @@ const palette: PaletteOptions = {
          * Colors for data series and points. This array extends the colors
          * defined for the general `palette.colors` array, item by item. If an
          * item is `null` or `undefined`, the general color will be used.
+         *
+         * @sample highcharts/series-scatter/scatter-cluster
+         *         Colors for Dark Mode
          *
          * @type   {Array<Highcharts.ColorString|null|undefined>}
          * @apioption palette.dark.colors
