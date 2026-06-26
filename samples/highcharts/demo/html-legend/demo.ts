@@ -1,11 +1,12 @@
-// Extend the Series class to add custom properties for the legend and tooltip
-interface Series extends Highcharts.Series {
-    keepProps: string[];
-    tr?: HTMLElement;
-    trRefresh?: boolean;
-    last?: string;
-    min?: string;
-    max?: string;
+declare namespace Highcharts {
+    interface Series {
+        keepProps: string[];
+        tr?: HTMLElement;
+        trRefresh?: boolean;
+        last?: string;
+        min?: string;
+        max?: string;
+    }
 }
 
 // Plugin to render custom HTML legend and custom HTML tooltip outside chart
@@ -20,10 +21,10 @@ interface Series extends Highcharts.Series {
         tooltipMaxValue = document.getElementById('tooltip-max-value');
 
     // Do now remove tr while updating the series
-    (Series as unknown as Series).keepProps.push('tr');
+    (Series as unknown as Highcharts.Series).keepProps.push('tr');
 
     addEvent(Chart, 'render', function () {
-        const series = this.series as Series[];
+        const series = this.series;
 
         // Function to update the tooltip and legend row styles based on hover
         // state
@@ -38,10 +39,8 @@ interface Series extends Highcharts.Series {
             );
 
             if (this.hoverPoint) {
-                const tooltipHeaderValue = document.getElementById(
-                        'tooltip-header-value'
-                    ),
-                    series = this.hoverPoint.series as Series;
+                const tooltipHeaderValue =
+                    document.getElementById('tooltip-header-value');
                 tooltipHeaderValue.style.backgroundColor =
                     color(this.hoverPoint.color).get() as string;
                 tooltipSeriesName.innerHTML =
@@ -50,9 +49,9 @@ interface Series extends Highcharts.Series {
                     this.options.tooltip.pointFormat,
                     this.hoverPoint
                 );
-                tooltipLastValue.innerHTML = series.last;
-                tooltipMinValue.innerHTML = series.min;
-                tooltipMaxValue.innerHTML = series.max;
+                tooltipLastValue.innerHTML = this.hoverPoint.series.last;
+                tooltipMinValue.innerHTML = this.hoverPoint.series.min;
+                tooltipMaxValue.innerHTML = this.hoverPoint.series.max;
             } else {
                 tooltipSeriesName.innerHTML = `- ${name}`;
                 tooltipValue.innerHTML = `- ${valueSuffix}`;
@@ -147,14 +146,14 @@ interface Series extends Highcharts.Series {
         addEvent(Series, 'mouseOut', highlightRow);
     });
 
-    addEvent(Series, 'remove', function (this: Series) {
+    addEvent(Series, 'remove', function () {
         if (this.tr) {
             this.tr.remove();
             delete this.tr;
         }
     });
 
-    addEvent(Series, 'afterUpdate', function (this: Series) {
+    addEvent(Series, 'afterUpdate', function () {
         if (this.tr) {
             this.trRefresh = true;
         }

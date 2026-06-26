@@ -9,7 +9,7 @@
         "stripInternal": true,
         "baseUrl": "../",
         "module": "none",
-        "moduleDetection": "force",
+        "moduleDetection": "auto",
         "allowUmdGlobalAccess": true,
         "moduleResolution": "node",
         "target": "ES2022",
