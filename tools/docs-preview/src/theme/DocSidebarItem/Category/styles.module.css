@@ -1,0 +1,129 @@
+.categoryItem {
+    list-style: none;
+}
+
+.categoryItem + .categoryItem {
+    margin-top: var(--item-spacing-100);
+}
+
+.categoryLevel1 {
+    margin-top: var(--item-spacing-700);
+}
+
+.categoryLevel1:first-child {
+    margin-top: 0;
+}
+
+.categoryLevel1 > .categoryRow {
+    margin-bottom: var(--item-spacing-200);
+}
+
+.categoryLevel1 > .categoryRow .categoryLinkLabel {
+    color: var(--HS-text-secondary-default);
+    font-size: var(--typography-size-75);
+    font-weight: var(--typography-weight-semi);
+    letter-spacing: 0.05em;
+    line-height: var(--typography-lineHeight-ui);
+    text-transform: uppercase;
+}
+
+.categoryLevel1.categoryItemActive > .categoryRow .categoryLinkLabel {
+    color: var(--HS-text-brand-default-alt);
+}
+
+.categoryRow {
+    display: flex;
+    align-items: center;
+    gap: var(--item-spacing-100);
+    border-radius: var(--border_radius-size-8);
+}
+
+.categoryRow:hover {
+    background: var(--HS-surface-ui-background-50);
+}
+
+.categoryRowCurrent {
+    background: var(--HS-surface-brand-background-50);
+}
+
+.categoryRowCurrent:hover {
+    background: var(--HS-surface-brand-background-50);
+}
+
+.categoryLink {
+    flex: 1 1 auto;
+    min-width: 0;
+    padding: var(--containers-inner-padding-100) var(--containers-inner-padding-200);
+    border-radius: var(--border_radius-size-8);
+    color: var(--HS-text-primary-default);
+    font-size: var(--typography-size-100);
+    font-weight: var(--typography-weight-medium);
+    line-height: var(--typography-lineHeight-text);
+    text-decoration: none;
+}
+
+.categoryLink:hover {
+    color: var(--HS-text-primary-default);
+    text-decoration: none;
+}
+
+.categoryLink:focus-visible {
+    outline: 2px solid var(--HS-surface-brand-border-200);
+    outline-offset: 2px;
+}
+
+.categoryLinkLabel {
+    display: block;
+    overflow: hidden;
+    color: inherit;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.caretButton {
+    display: inline-flex;
+    flex: 0 0 1.375rem;
+    align-items: center;
+    justify-content: center;
+    width: 1.375rem;
+    height: 1.375rem;
+    padding: 0;
+    border: 0;
+    border-radius: var(--border_radius-size-4);
+    background: transparent;
+    color: var(--HS-text-tertiary-default);
+    cursor: pointer;
+}
+
+.caretButton:hover {
+    background: var(--HS-surface-ui-background-100);
+    color: var(--HS-text-primary-default);
+}
+
+.caretButton:focus-visible {
+    outline: 2px solid var(--HS-surface-brand-border-200);
+    outline-offset: 2px;
+}
+
+.caret {
+    width: 0.375rem;
+    height: 0.375rem;
+    border-right: 1.5px solid currentColor;
+    border-bottom: 1.5px solid currentColor;
+    transform: rotate(45deg);
+    transition: transform var(--animations-bounce-fast);
+}
+
+.categoryItemCollapsed > .categoryRow .caret {
+    transform: rotate(-45deg);
+}
+
+.group {
+    margin: var(--item-spacing-100) 0 var(--item-spacing-300) var(--item-spacing-500);
+    padding-left: var(--containers-inner-padding-300);
+    border-left: 1px solid var(--HS-surface-ui-border-100);
+}
+
+.categoryItemActive > .group {
+    border-left-color: var(--HS-surface-brand-border-200);
+}

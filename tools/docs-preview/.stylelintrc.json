@@ -1,0 +1,18 @@
+{
+    "extends": "../../.stylelintrc.json",
+    "rules": {
+        "custom-property-empty-line-before": null,
+        "custom-property-pattern": null,
+        "declaration-colon-newline-after": null,
+        "indentation": null,
+        "max-line-length": null,
+        "selector-pseudo-class-no-unknown": [
+            true,
+            {
+                "ignorePseudoClasses": ["global"]
+            }
+        ],
+        "string-quotes": null,
+        "value-keyword-case": null
+    }
+}

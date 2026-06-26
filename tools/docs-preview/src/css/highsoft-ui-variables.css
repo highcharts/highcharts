@@ -296,8 +296,6 @@ html[data-theme="dark"] {
     --tags-danger-background: var(--primitives-danger-600);
     --tags-danger-border: var(--primitives-danger-500);
 
-    /* stylelint-disable custom-property-pattern */
-
     /* Surface UI */
     --HS-surface-ui-background-0: var(--primitives-neutral-900);
     --HS-surface-ui-background-50: var(--primitives-neutral-800);
@@ -352,5 +350,4 @@ html[data-theme="dark"] {
     --HS-text-attention-default: var(--primitives-neutral-0);
     --HS-text-attention-default-alt: var(--primitives-neutral-0);
     --HS-text-danger-default: var(--primitives-danger-500);
-    /* stylelint-enable custom-property-pattern */
 }

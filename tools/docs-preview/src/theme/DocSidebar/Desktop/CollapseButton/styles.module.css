@@ -1,0 +1,31 @@
+.collapseSidebarButton {
+    display: none;
+}
+
+@media (min-width: 997px) {
+    .collapseSidebarButtonWrap {
+        position: sticky;
+        bottom: 0;
+        display: flex;
+        padding: var(--containers-inner-padding-300) var(--containers-inner-padding-500);
+        background: var(--HS-common-background);
+        border-top: 1px solid var(--HS-surface-ui-border-100);
+    }
+
+    .collapseSidebarButton {
+        display: inline-flex !important;
+        width: 100%;
+        justify-content: flex-start;
+        margin: 0;
+        color: var(--HS-text-secondary-default);
+    }
+}
+
+.collapseIcon {
+    display: inline-block;
+    width: 0.4375rem;
+    height: 0.4375rem;
+    border-bottom: 1.5px solid currentColor;
+    border-left: 1.5px solid currentColor;
+    transform: rotate(45deg);
+}

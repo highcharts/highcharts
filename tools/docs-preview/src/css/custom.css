@@ -5,6 +5,10 @@
 :root {
     color-scheme: light;
 
+    --doc-sidebar-width: 20rem;
+    --doc-sidebar-hidden-width: 2.25rem;
+    --doc-sidebar-resizer-width: 0.75rem;
+
     --ifm-color-primary: var(--primitives-brand-600);
     --ifm-color-primary-dark: var(--primitives-brand-700);
     --ifm-color-primary-darker: var(--primitives-brand-800);
@@ -51,6 +55,11 @@
     --ifm-navbar-shadow: unset;
     --ifm-navbar-padding-horizontal: unset;
     --ifm-navbar-padding-vertical: unset;
+    --ifm-menu-color-background-active: var(--HS-surface-brand-background-50);
+    --ifm-menu-color-background-hover: var(--HS-surface-ui-background-50);
+    --ifm-menu-color-active: var(--HS-text-primary-default);
+    --ifm-menu-color: var(--HS-text-primary-default);
+    --ifm-toc-border-color: var(--HS-surface-ui-border-100);
 }
 
 /* For readability concerns, you should choose a lighter palette in dark mode. */
@@ -108,7 +117,7 @@ nav.navbar {
 .menu__list-item a:has(.grid-pro-badge) {
     text-decoration: none;
     justify-content: flex-start;
-    gap: 0.5em;
+    gap: var(--item-spacing-400);
 }
 
 .grid-pro-badge {
@@ -174,12 +183,6 @@ main h6:has(.grid-pro-badge) .grid-pro-badge {
     margin-top: 0.7em;
 }
 
-.theme-layout-navbar {
-    &:has(button[aria-expanded="true"]) {
-        height: 100vh;
-    }
-}
-
 [data-theme="dark"] .grid-pro-badge {
     border-color: var(--primitives-success-500);
     background: var(--primitives-success-100);
@@ -196,4 +199,91 @@ iframe {
 .iframe-container {
     margin-top: 15px;
     margin-bottom: 15px;
+}
+
+/* ===== Mobile Navigation Overrides ===== */
+@media (max-width: 996px) {
+    /* Style the Docusaurus mobile sidebar toggle to integrate with Header */
+    button.navbar__toggle.clean-btn {
+        color: var(--HS-text-primary-default);
+        padding: 8px;
+        margin: 0;
+        border: none;
+        background: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    button.navbar__toggle.clean-btn svg {
+        width: 20px;
+        height: 20px;
+    }
+
+    /* Theme the mobile sidebar drawer to match desktop sidebar */
+    .navbar-sidebar {
+        background: var(--HS-common-background);
+        border-right: 1px solid var(--HS-surface-ui-border-100);
+        font-family: "IBM Plex Sans", var(--typography-font-family), sans-serif;
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100dvh;
+        z-index: 10;
+    }
+
+    /* Close button padding */
+    .navbar-sidebar__brand {
+        padding: var(--containers-inner-padding-400) var(--containers-inner-padding-600);
+    }
+
+    .navbar-sidebar__close.clean-btn {
+        padding: 8px;
+    }
+
+    .navbar-sidebar .menu__link {
+        color: var(--HS-text-secondary-default);
+        font-size: var(--typography-size-100);
+        font-weight: var(--typography-weight-regular);
+        padding: var(--containers-inner-padding-400) var(--containers-inner-padding-600);
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+        gap: var(--item-spacing-200);
+        border-radius: 0;
+    }
+
+    .navbar-sidebar .menu__link:hover {
+        color: var(--HS-text-primary-default);
+        background: var(--HS-surface-ui-background-50);
+    }
+
+    .navbar-sidebar .menu__link--active {
+        color: var(--HS-text-primary-default);
+        background: var(--HS-surface-brand-background-50);
+        font-weight: var(--typography-weight-semi);
+    }
+
+    .navbar-sidebar .menu__list-item {
+        margin: 0;
+    }
+
+    .navbar-sidebar .menu__list-item-collapsible {
+        border-radius: 0;
+    }
+
+    .navbar-sidebar .menu {
+        padding: var(--containers-inner-padding-400) 0;
+    }
+
+    /* Backdrop overlay when sidebar drawer is open */
+    .navbar-sidebar__backdrop {
+        background: rgba(0, 0, 0, 0.5);
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 100dvh;
+        z-index: 9;
+    }
 }

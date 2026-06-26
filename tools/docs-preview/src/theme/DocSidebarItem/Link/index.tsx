@@ -7,6 +7,7 @@ import Link from '@docusaurus/Link';
 import isInternalUrl from '@docusaurus/isInternalUrl';
 import IconExternalLink from '@theme/Icon/ExternalLink';
 import styles from '@docusaurus/theme-classic/src/theme/DocSidebarItem/Link/styles.module.css';
+import localStyles from './styles.module.css';
 import GridProBadge from '../../../components/GridProBadge';
 
 const GRID_PRO_TOKEN = '__grid_pro__';
@@ -44,12 +45,14 @@ export default function DocSidebarItemLink(
                     ThemeClassNames.docs.docSidebarItemLink,
                     ThemeClassNames.docs.docSidebarItemLinkLevel(props.level),
                     'menu__list-item',
+                    localStyles.linkItem,
+                    localStyles[`linkLevel${props.level}`],
                     className
                 )}
                 key={String(label)}
             >
                 <Link
-                    className="menu__link"
+                    className={clsx('menu__link', localStyles.link)}
                     autoAddBaseUrl={autoAddBaseUrl}
                     to={href}
                 >
@@ -75,6 +78,8 @@ export default function DocSidebarItemLink(
                 ThemeClassNames.docs.docSidebarItemLink,
                 ThemeClassNames.docs.docSidebarItemLinkLevel(level),
                 'menu__list-item',
+                localStyles.linkItem,
+                localStyles[`linkLevel${level}`],
                 className
             )}
             key={label}
@@ -82,9 +87,11 @@ export default function DocSidebarItemLink(
             <Link
                 className={clsx(
                     'menu__link',
+                    localStyles.link,
                     !isInternalLink && styles.menuExternalLink,
                     {
                         'menu__link--active': isActive,
+                        [localStyles.linkActive]: isActive,
                     }
                 )}
                 autoAddBaseUrl={autoAddBaseUrl}
