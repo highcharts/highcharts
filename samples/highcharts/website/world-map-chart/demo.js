@@ -621,7 +621,6 @@ async function renderChart() {
                                     mapChart.colorAxis[0].drawCrosshair(null, mapPoint);
                                 }
 
-                                mapChart.redraw();
                                 renderChartInTooltip(point);
                             }
                         });
