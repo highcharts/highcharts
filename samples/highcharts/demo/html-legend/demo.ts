@@ -1,6 +1,8 @@
 declare namespace Highcharts {
-    interface Series {
+    interface ExtendedSeries {
         keepProps: string[];
+    }
+    interface Series {
         tr?: HTMLElement;
         trRefresh?: boolean;
         last?: string;
@@ -21,7 +23,7 @@ declare namespace Highcharts {
         tooltipMaxValue = document.getElementById('tooltip-max-value');
 
     // Do now remove tr while updating the series
-    (Series as unknown as Highcharts.Series).keepProps.push('tr');
+    (Series as unknown as Highcharts.ExtendedSeries).keepProps.push('tr');
 
     addEvent(Chart, 'render', function () {
         const series = this.series;

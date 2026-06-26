@@ -690,11 +690,11 @@ export interface SeriesOptions {
     dataSorting?: SeriesDataSortingOptions;
 
     /**
-     * Options for a specific series-level data table. The `dataTable` option
-     * can be either a configuration object or an instance of the
-     * `DataTable` class. If a `DataTable` instance is passed, it will
-     * be used directly. If a configuration object is passed, a new
-     * `DataTable` instance will be created based on the provided
+     * Options for a specific series-level data table or an array of data
+     * tables. The `dataTable` option can be either a configuration object or an
+     * instance of the `DataTable` class. If a `DataTable` instance is passed,
+     * it will be used directly. If a configuration object or an array is
+     * passed, a new `DataTable` instance will be created based on the provided
      * configuration.
      *
      * @sample {highcharts} highcharts/datatable/series-datatable/
