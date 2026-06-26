@@ -2351,3 +2351,27 @@ QUnit.test('slotWidth', assert => {
         'Non-styled and styled mode labels width should be the similar, #22943'
     );
 });
+
+QUnit.test(
+    'Destroying a chart should not throw a TypeError for axes without grid ' +
+    'additions, #24644',
+    function (assert) {
+        const chart = Highcharts.chart('container', {
+            series: [{ data: [1, 2, 3] }]
+        });
+
+        chart.axes.forEach(axis => {
+            delete axis.grid;
+        });
+
+        // Failure would be a TypeError thrown by onDestroy, which QUnit
+        // catches by itself.
+        chart.destroy();
+
+        assert.ok(
+            true,
+            'Destroying a chart with axes without grid additions should ' +
+            'not throw TypeError.'
+        );
+    }
+);
