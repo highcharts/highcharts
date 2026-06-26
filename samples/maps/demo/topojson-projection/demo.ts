@@ -210,25 +210,38 @@ Highcharts.addEvent(Highcharts.Series, 'afterAnimate', function () {
         chart.redraw(false);
 
         // Start a gentle rotation
-        const rotationInterval = setInterval(() => {
-            const projectionOptions = chart.options.mapView.projection as
-                Highcharts.MapViewProjectionOptions;
+        let rotationFrame = 0,
+            lastTimestamp: number | undefined;
+
+        const rotate = (timestamp: number): void => {
+            const elapsed = lastTimestamp === undefined ?
+                    0 :
+                    timestamp - lastTimestamp,
+                projectionOptions = chart.options.mapView.projection as
+                    Highcharts.MapViewProjectionOptions;
+
+            lastTimestamp = timestamp;
             chart.update({
                 mapView: {
                     projection: {
                         rotation: [
-                            projectionOptions.rotation[0] + 0.1,
+                            projectionOptions.rotation[0] +
+                                (elapsed * 0.1 / 50),
                             projectionOptions.rotation[1]
                         ]
                     }
                 }
             }, undefined, undefined, false);
-        }, 50);
+
+            rotationFrame = requestAnimationFrame(rotate);
+        };
+
+        rotationFrame = requestAnimationFrame(rotate);
 
         // Clear once the user drags the globe
         document.getElementById('container')
             ?.addEventListener('mouseover', () => {
-                clearInterval(rotationInterval);
+                cancelAnimationFrame(rotationFrame);
             });
     }
 });
