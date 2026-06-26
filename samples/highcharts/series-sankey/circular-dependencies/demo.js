@@ -24,9 +24,5 @@ Highcharts.chart('container', {
         ],
         type: 'sankey',
         name: 'Sankey demo series'
-    }],
-    tooltip: {
-        // Appended to a node tooltip when the node has a self-referencing link
-        nodeSelfLinkFormat: 'Loops back to itself: <b>{selfLinkWeight}</b><br/>'
-    }
+    }]
 });

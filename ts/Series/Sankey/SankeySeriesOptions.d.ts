@@ -594,7 +594,6 @@ export interface SankeySeriesStatesInactiveOptions
 export interface SankeySeriesTooltipOptions extends ColumnSeriesTooltipOptions {
     nodeFormat?: string;
     nodeFormatter?: Templating.FormatterCallback<SankeyPoint>;
-    nodeSelfLinkFormat?: string;
 }
 
 /* *

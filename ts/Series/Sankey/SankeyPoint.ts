@@ -26,7 +26,6 @@ import type SankeySeries from './SankeySeries';
 import NodesComposition from '../NodesComposition.js';
 import Point from '../../Core/Series/Point.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-import Templating from '../../Core/Templating.js';
 import { defined } from '../../Shared/Utilities.js';
 const {
     column: ColumnSeries
@@ -76,8 +75,6 @@ class SankeyPoint extends ColumnSeries.prototype.pointClass {
     public options!: SankeyPointOptions;
 
     public outgoing?: boolean;
-
-    public selfLinkWeight?: number;
 
     public series!: SankeySeries;
 
@@ -170,34 +167,6 @@ class SankeyPoint extends ColumnSeries.prototype.pointClass {
      */
     public isValid(): boolean {
         return this.isNode || typeof this.weight === 'number';
-    }
-
-    /**
-     * Extend the default node tooltip with hidden self-link information. Only
-     * the circular Sankey layout hides self-links (rendering an empty path),
-     * so the derived series (arc diagram, dependency wheel, organization)
-     * that opt out of circular layout render self-links normally and skip it.
-     * @internal
-     */
-    public tooltipFormatter(pointFormat: string): string {
-        const { series, selfLinkWeight } = this,
-            tooltip = Point.prototype.tooltipFormatter.call(
-                this,
-                pointFormat
-            );
-
-        if (!this.isNode || !series.useCircularLayout || !selfLinkWeight) {
-            return tooltip;
-        }
-
-        return tooltip + Templating.format(
-            series.tooltipOptions.nodeSelfLinkFormat || '',
-            {
-                point: this,
-                selfLinkWeight
-            },
-            series.chart
-        );
     }
 
 }
