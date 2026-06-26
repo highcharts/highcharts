@@ -1,8 +1,5 @@
 Highcharts.chart('container', {
     chart: {
-        type: 'line',
-        borderWidth: 1,
-        plotBorderWidth: 1,
         marginLeft: 'var(--chart-left-gap)',
         marginTop: 'var(--gap)',
         marginRight: '2em',

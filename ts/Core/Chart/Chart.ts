@@ -2617,7 +2617,7 @@ class Chart {
             plotBorderWidth = chartOptions.plotBorderWidth || 0,
             halfWidth = Math.round(plotBorderWidth) / 2;
 
-        // Resolve numbers, percentages and CSS length expressions to pixels.
+        // Create margin and spacing array
         (['margin', 'spacing'] as ('margin'|'spacing')[]).forEach((
             target
         ): void => {
