@@ -68,13 +68,13 @@ const getHoldings = [
 
 const ANIMATION_SPEED = 1000;
 const WINDOW_SIZE = 20;
-const TIME_PERIODS = [
-    { label: '1', days: 7 },
-    { label: '2', days: 30 },
-    { label: '3', days: 90 }
+const CHANGE_COLUMNS = [
+    { id: 'oneDayChange', label: '1 Day', days: 1 },
+    { id: 'oneWeekChange', label: '1 Week', days: 7 },
+    { id: 'oneMonthChange', label: '1 Month', days: 30 }
 ];
 const INITIAL_VISIBLE_COUNT = Math.max(
-    ...TIME_PERIODS.map(({ days }) => days)
+    ...CHANGE_COLUMNS.map(({ days }) => days)
 );
 
 (async () => {
@@ -88,13 +88,26 @@ const INITIAL_VISIBLE_COUNT = Math.max(
         series: { type: 'Price' },
         securities: getHoldings,
         startDate: '2022-05-01',
-        endDate: '2023-12-31',
+        endDate: '2023-05-31',
         currencyId: 'EUR'
     });
+    const sparkStringCache = new WeakMap();
     const toSpark = (col, count) => {
         const end = Math.min(count, col.length);
         const start = Math.max(0, end - WINDOW_SIZE);
-        return col.slice(start, end).map(Number).join(', ');
+        const cacheKey = `${start}:${end}`;
+        let cachedStrings = sparkStringCache.get(col);
+
+        if (!cachedStrings) {
+            cachedStrings = new Map();
+            sparkStringCache.set(col, cachedStrings);
+        }
+
+        if (!cachedStrings.has(cacheKey)) {
+            cachedStrings.set(cacheKey, col.slice(start, end).join(', '));
+        }
+
+        return cachedStrings.get(cacheKey);
     };
 
     const getPrices = (table, stock) => {
@@ -103,7 +116,7 @@ const INITIAL_VISIBLE_COUNT = Math.max(
     };
 
     function calculateDeltas(prices, visibleCount) {
-        return TIME_PERIODS.map(({ days }) => {
+        return CHANGE_COLUMNS.map(({ days }) => {
             const currentPrice = prices[visibleCount - 1];
             const previousPrice = prices[visibleCount - 1 - days];
 
@@ -116,7 +129,9 @@ const INITIAL_VISIBLE_COUNT = Math.max(
                 return 0;
             }
 
-            return Number((currentPrice - previousPrice).toFixed(2));
+            return Number((
+                (currentPrice - previousPrice) / previousPrice * 100
+            ).toFixed(2));
         });
     }
     function calculateRowValues(prices, visibleCount) {
@@ -130,12 +145,12 @@ const INITIAL_VISIBLE_COUNT = Math.max(
         const formattedValue = Math.abs(value).toFixed(2);
 
         if (value > 0) {
-            return `<span style='color: #4caf50;'>${formattedValue} &uarr;</span>`;
+            return `<span style='color: #4caf50;'>${formattedValue}% &uarr;</span>`;
         }
         if (value < 0) {
-            return `<span style='color: #f44336;'>${formattedValue} &#8595;</span>`;
+            return `<span style='color: #f44336;'>${formattedValue}% &#8595;</span>`;
         }
-        return `<span>${formattedValue}</span>`;
+        return `<span>${formattedValue}%</span>`;
     }
 
     try {
@@ -156,9 +171,12 @@ const INITIAL_VISIBLE_COUNT = Math.max(
             return {
                 ticker: stock.ticker,
                 priceEvolution: spark,
-                oneWeekChange: deltaValues[0],
-                oneMonthChange: deltaValues[1],
-                threeMonthChange: deltaValues[2],
+                ...Object.fromEntries(
+                    CHANGE_COLUMNS.map(({ id }, index) => [
+                        id,
+                        deltaValues[index]
+                    ])
+                ),
                 price: latestPrice
             };
         });
@@ -168,16 +186,15 @@ const INITIAL_VISIBLE_COUNT = Math.max(
             columns: {
                 ticker: rows.map(row => row.ticker),
                 priceEvolution: rows.map(row => row.priceEvolution),
-                oneWeekChange: rows.map(row => row.oneWeekChange),
-                oneMonthChange: rows.map(row => row.oneMonthChange),
-                threeMonthChange: rows.map(row => row.threeMonthChange),
+                ...Object.fromEntries(
+                    CHANGE_COLUMNS.map(({ id }) => [
+                        id,
+                        rows.map(row => row[id])
+                    ])
+                ),
                 price: rows.map(row => row.price)
             }
         });
-        const compactTimePeriodHeader = {
-            columnId: 'oneMonthChange',
-            format: '1 Month'
-        };
         const priceHeaderFormat = (
             '<span class="price-header">Price <wbr>(EUR)</span>'
         );
@@ -187,36 +204,28 @@ const INITIAL_VISIBLE_COUNT = Math.max(
         }, {
             columnId: 'priceEvolution',
             format: 'Price Evolution'
-        }, {
-            columnId: 'oneWeekChange',
-            format: '1 Week'
-        }, {
-            columnId: 'oneMonthChange',
-            format: '1 Month'
-        }, {
-            columnId: 'threeMonthChange',
-            format: '3 Months'
-        }, {
+        },
+        ...CHANGE_COLUMNS.map(({ id, label }) => ({
+            columnId: id,
+            format: label
+        })),
+        {
             columnId: 'price',
             format: priceHeaderFormat
         }];
+        const compactHiddenColumns = [
+            CHANGE_COLUMNS[0].id,
+            CHANGE_COLUMNS[2].id
+        ];
         const compactHeader = defaultHeader
-            .filter(entry => ![
-                'oneWeekChange',
-                'threeMonthChange'
-            ].includes(entry.columnId))
-            .map(entry => (
-                entry.columnId === 'oneMonthChange' ?
-                    compactTimePeriodHeader :
-                    entry
-            ));
+            .filter(entry => !compactHiddenColumns.includes(entry.columnId));
 
         const grid = Grid.grid('container', {
             data: { dataTable: gridData },
             columnDefaults: {
                 sorting: {
-                    orderSequence: ['asc', 'desc'],
-                    order: 'asc'
+                    orderSequence: ['desc', 'asc'],
+                    order: 'desc'
                 }
             },
             rendering: {
@@ -262,10 +271,10 @@ const INITIAL_VISIBLE_COUNT = Math.max(
                                             `<b>${this.y.toFixed(2)} EUR</b>`
                                         );
                                     }
-                                },
+                                },/*
                                 chart: {
                                     animation: true
-                                },
+                                },*/
                                 plotOptions: {
                                     series: {
                                         enableMouseTracking: true
@@ -273,9 +282,9 @@ const INITIAL_VISIBLE_COUNT = Math.max(
                                 },
                                 series: [{
                                     data: y,
-                                    animation: {
+                                    /*animation: {
                                         duration: ANIMATION_SPEED
-                                    },
+                                    },*/
                                     color: y[y.length - 1] >= y[0] ?
                                         '#4caf50' :
                                         '#f44336'
@@ -284,34 +293,18 @@ const INITIAL_VISIBLE_COUNT = Math.max(
                         }
                     }
                 }
-            }, {
-                id: 'oneWeekChange',
-                header: { format: '1 Week (EUR)' },
+            },
+            ...CHANGE_COLUMNS.map(({ id, label }) => ({
+                id,
+                header: { format: `${label} (%)` },
                 cells: {
                     formatter: function () {
                         return formatDelta(this.value);
                     }
                 },
                 width: '10%'
-            }, {
-                id: 'oneMonthChange',
-                header: { format: '1 Month (EUR)' },
-                cells: {
-                    formatter: function () {
-                        return formatDelta(this.value);
-                    }
-                },
-                width: '10%'
-            }, {
-                id: 'threeMonthChange',
-                header: { format: '3 Months (EUR)' },
-                cells: {
-                    formatter: function () {
-                        return formatDelta(this.value);
-                    }
-                },
-                width: '10%'
-            }, {
+            })),
+            {
                 id: 'price',
                 header: { format: priceHeaderFormat },
                 width: '10%'
@@ -325,8 +318,8 @@ const INITIAL_VISIBLE_COUNT = Math.max(
                     gridOptions: {
                         header: compactHeader,
                         columns: [{
-                            id: 'oneMonthChange',
-                            width: '20%'
+                            id: CHANGE_COLUMNS[1].id,
+                            width: '15%'
                         }, {
                             id: 'price',
                             width: '15%'
@@ -345,9 +338,9 @@ const INITIAL_VISIBLE_COUNT = Math.max(
                 );
 
                 gridData.setCell('priceEvolution', rowIndex, spark);
-                gridData.setCell('oneWeekChange', rowIndex, deltaValues[0]);
-                gridData.setCell('oneMonthChange', rowIndex, deltaValues[1]);
-                gridData.setCell('threeMonthChange', rowIndex, deltaValues[2]);
+                CHANGE_COLUMNS.forEach(({ id }, index) => {
+                    gridData.setCell(id, rowIndex, deltaValues[index]);
+                });
                 gridData.setCell('price', rowIndex, latestPrice);
             });
             await grid.querying.proceed(true);
@@ -366,14 +359,22 @@ const INITIAL_VISIBLE_COUNT = Math.max(
                 row.cells.forEach(cell => cell.setValue());
             });
         }
-        setInterval(refreshSparkline, ANIMATION_SPEED);
+        const gridInterval = setInterval(async () => {
+            if (visibleCount >= maxSeriesLength) {
+                clearInterval(gridInterval);
+                return;
+            }
+            await refreshSparkline();
+        }, ANIMATION_SPEED);
         const overlay = document.getElementById('spark-popup-overlay');
+        let popupChart = null;
         let popupInterval = null;
         // Close on overlay or button click
         function closePopup() {
             overlay.classList.remove('open');
             clearInterval(popupInterval);
             popupInterval = null;
+            popupChart.destroy();
         }
         overlay.addEventListener('click', e => {
             if (e.target === overlay) {
@@ -402,22 +403,20 @@ const INITIAL_VISIBLE_COUNT = Math.max(
                 + '({point.change:.2f}%)<br/>'
             );
             overlay.classList.add('open');
-            Highcharts.stockChart('spark-popup-chart', {
+            popupChart = Highcharts.stockChart('spark-popup-chart', {
                 chart: {
                     events: {
                         load: function () {
                             const stockSeries = this.series[0];
                             const indexSeries = this.series[1];
-                            if (popupInterval) {
-                                clearInterval(popupInterval);
-                            }
+                            let popupVisible = visibleCount;
                             popupInterval = setInterval(function () {
-                                visibleCount = Math.min(
-                                    visibleCount + 1,
+                                popupVisible = Math.min(
+                                    popupVisible + 1,
                                     maxSeriesLength
                                 );
                                 const end = Math.min(
-                                    visibleCount,
+                                    popupVisible,
                                     prices.length
                                 );
                                 const newStockY = prices[end - 1];
@@ -452,7 +451,30 @@ const INITIAL_VISIBLE_COUNT = Math.max(
                     }
                 },
                 rangeSelector: {
-                    selected: 1
+                    buttons: [{
+                        count: 1,
+                        type: 'week',
+                        text: '1W'
+                    }, {
+                        count: 1,
+                        type: 'month',
+                        text: '1M'
+                    }, {
+                        count: 3,
+                        type: 'month',
+                        text: '3M'
+                    }, {
+                        count: 6,
+                        type: 'month',
+                        text: '6M'
+                    }, {
+                        count: 1,
+                        type: 'year',
+                        text: '1Y'
+                    }, {
+                        type: 'all',
+                        text: 'All'
+                    }],
                 },
                 title: {
                     text: stock.ticker

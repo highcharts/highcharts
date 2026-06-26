@@ -9,9 +9,8 @@
     --hcg-padding: 8px;
     --hcg-header-vertical-padding: 8px;
 
-    --hcg-row-even-background: #d3d3d3;
-    --hcg-cell-hover-background: #808080;
-    --hcg-column-hover-background: #808080;
+    --hcg-row-even-background: #ececec;
+    --hcg-row-hover-background: #808080;
     --hcg-hover-opacity: 18%;
     --hcg-cell-hover-opacity: 60%;
 }
@@ -26,6 +25,12 @@
     display: inline-block;
     text-align: center;
     white-space: normal;
+}
+.theme-custom .price-evolution-header-date {
+    display: block;
+    font-size: 0.85em;
+    font-weight: normal;
+    margin-top: 2px;
 }
 
 #spark-popup-overlay {

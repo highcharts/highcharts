@@ -3,12 +3,15 @@
     <head>
         <meta charset="utf-8" />
         <title>Stock Grid Demo</title>
-        <script src="https://code.highcharts.com/highcharts.js"></script>
-        <script src="https://code.highcharts.com/stock/modules/stock.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/@highcharts/connectors-morningstar@3.2.0/connectors-morningstar.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/grid-pro.js"></script>
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/css/grid-pro.css" />
+        <link rel="preconnect" href="https://demo-live-data.highcharts.com" crossorigin>
+        <link rel="preconnect" href="https://cdn.jsdelivr.net">
+        <link rel="preconnect" href="https://code.highcharts.com">
         <link rel="stylesheet" href="demo.css">
+        <script defer src="https://code.highcharts.com/highcharts.js"></script>
+        <script defer src="https://code.highcharts.com/stock/modules/stock.js"></script>
+        <script defer src="https://cdn.jsdelivr.net/npm/@highcharts/connectors-morningstar@3.2.0/connectors-morningstar.js"></script>
+        <script defer src="https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/grid-pro.js"></script>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@highcharts/grid-pro/css/grid-pro.css" />
     </head>
     <body>
         <div id="container"></div>
@@ -18,6 +21,6 @@
                 <div id="spark-popup-chart"></div>
             </div>
         </div>
-        <script src="demo.js"> </script>
+        <script defer src="demo.js"></script>
     </body>
 </html>
